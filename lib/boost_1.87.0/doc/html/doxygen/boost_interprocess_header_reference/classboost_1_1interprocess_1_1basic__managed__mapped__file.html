@@ -1,0 +1,223 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template basic_managed_mapped_file</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../../interprocess/indexes_reference.html#doxygen.boost_interprocess_header_reference.managed__mapped__file_8hpp" title="Header &lt;boost/interprocess/managed_mapped_file.hpp&gt;">
+<link rel="prev" href="managed__heap__memory_8hpp_1a88f79e25afba1cc358d5db50435dc58d.html" title="Type definition wmanaged_heap_memory">
+<link rel="next" href="managed__mapped__file_8hpp_1a0d4da159703df101158c50948bb69156.html" title="Type definition managed_mapped_file">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="managed__heap__memory_8hpp_1a88f79e25afba1cc358d5db50435dc58d.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../interprocess/indexes_reference.html#doxygen.boost_interprocess_header_reference.managed__mapped__file_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="managed__mapped__file_8hpp_1a0d4da159703df101158c50948bb69156.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__managed__mapped__file"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template basic_managed_mapped_file</span></h2>
+<p>boost::interprocess::basic_managed_mapped_file</p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../interprocess/indexes_reference.html#doxygen.boost_interprocess_header_reference.managed__mapped__file_8hpp" title="Header &lt;boost/interprocess/managed_mapped_file.hpp&gt;">boost/interprocess/managed_mapped_file.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharType<span class="special">,</span> <span class="keyword">typename</span> AllocationAlgorithm<span class="special">,</span> 
+         <span class="keyword">template</span><span class="special">&lt;</span> <span class="keyword">class</span> <span class="identifier">IndexConfig</span> <span class="special">&gt;</span> <span class="keyword">class</span> IndexType<span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1interprocess_1_1basic__managed__mapped__file.html" title="Class template basic_managed_mapped_file">basic_managed_mapped_file</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// <a class="link" href="classboost_1_1interprocess_1_1basic__managed__mapped__file.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__managed__mapped__filetypes">types</a></span>
+  <span class="keyword">typedef</span> <span class="identifier">implementation_defined</span> <a class="link" href="classboost_1_1interprocess_1_1basic__managed__mapped__file.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__managed__mapped__file_1a6d81bfd072ddfb4025b57ac33d78458c"><span class="identifier">size_type</span></a><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="../boost_container_header_reference/classboost_1_1container_1_1flat__multiset.html#id35-bb">public member functions</a></span>
+  <a class="link" href="classboost_1_1interprocess_1_1basic__managed__mapped__file.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__managed__mapped__file_1a20f6e85e850fab43beace4f0366a0661"><span class="identifier">basic_managed_mapped_file</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1interprocess_1_1basic__managed__mapped__file.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__managed__mapped__file_1ac1836fcd14dce99e9edc657020084097"><span class="identifier">basic_managed_mapped_file</span></a><span class="special">(</span><a class="link" href="structboost_1_1interprocess_1_1create__only__t.html" title="Struct create_only_t">create_only_t</a><span class="special">,</span> <span class="keyword">const</span> <span class="keyword">char</span> <span class="special">*</span><span class="special">,</span> <span class="identifier">size_type</span><span class="special">,</span> 
+                            <span class="keyword">const</span> <span class="keyword">void</span> <span class="special">*</span> <span class="special">=</span> <span class="number">0</span><span class="special">,</span> 
+                            <span class="keyword">const</span> <a class="link" href="classboost_1_1interprocess_1_1permissions.html" title="Class permissions">permissions</a> <span class="special">&amp;</span> <span class="special">=</span> <span class="identifier">permissions</span><span class="special">(</span><span class="special">)</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1interprocess_1_1basic__managed__mapped__file.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__managed__mapped__file_1abb85ee0d4f32946a9f5ae4eef1f9f911"><span class="identifier">basic_managed_mapped_file</span></a><span class="special">(</span><a class="link" href="structboost_1_1interprocess_1_1open__or__create__t.html" title="Struct open_or_create_t">open_or_create_t</a><span class="special">,</span> <span class="keyword">const</span> <span class="keyword">char</span> <span class="special">*</span><span class="special">,</span> <span class="identifier">size_type</span><span class="special">,</span> 
+                            <span class="keyword">const</span> <span class="keyword">void</span> <span class="special">*</span> <span class="special">=</span> <span class="number">0</span><span class="special">,</span> 
+                            <span class="keyword">const</span> <a class="link" href="classboost_1_1interprocess_1_1permissions.html" title="Class permissions">permissions</a> <span class="special">&amp;</span> <span class="special">=</span> <span class="identifier">permissions</span><span class="special">(</span><span class="special">)</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1interprocess_1_1basic__managed__mapped__file.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__managed__mapped__file_1a585626edd85318693757a32156370e26"><span class="identifier">basic_managed_mapped_file</span></a><span class="special">(</span><a class="link" href="structboost_1_1interprocess_1_1open__only__t.html" title="Struct open_only_t">open_only_t</a><span class="special">,</span> <span class="keyword">const</span> <span class="keyword">char</span> <span class="special">*</span><span class="special">,</span> <span class="keyword">const</span> <span class="keyword">void</span> <span class="special">*</span> <span class="special">=</span> <span class="number">0</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1interprocess_1_1basic__managed__mapped__file.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__managed__mapped__file_1a4bc9657a763428dab51253a19fcddd6e"><span class="identifier">basic_managed_mapped_file</span></a><span class="special">(</span><a class="link" href="structboost_1_1interprocess_1_1open__copy__on__write__t.html" title="Struct open_copy_on_write_t">open_copy_on_write_t</a><span class="special">,</span> <span class="keyword">const</span> <span class="keyword">char</span> <span class="special">*</span><span class="special">,</span> 
+                            <span class="keyword">const</span> <span class="keyword">void</span> <span class="special">*</span> <span class="special">=</span> <span class="number">0</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1interprocess_1_1basic__managed__mapped__file.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__managed__mapped__file_1a797317c52a6fcece0b5d0ca1eb1cf8bb"><span class="identifier">basic_managed_mapped_file</span></a><span class="special">(</span><a class="link" href="structboost_1_1interprocess_1_1open__read__only__t.html" title="Struct open_read_only_t">open_read_only_t</a><span class="special">,</span> <span class="keyword">const</span> <span class="keyword">char</span> <span class="special">*</span><span class="special">,</span> <span class="keyword">const</span> <span class="keyword">void</span> <span class="special">*</span> <span class="special">=</span> <span class="number">0</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1interprocess_1_1basic__managed__mapped__file.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__managed__mapped__file_1a85dba7faa899af9972bf5fe927cc9ba9"><span class="identifier">basic_managed_mapped_file</span></a><span class="special">(</span><a class="link" href="structboost_1_1interprocess_1_1create__only__t.html" title="Struct create_only_t">create_only_t</a><span class="special">,</span> <span class="keyword">const</span> <span class="keyword">wchar_t</span> <span class="special">*</span><span class="special">,</span> <span class="identifier">size_type</span><span class="special">,</span> 
+                            <span class="keyword">const</span> <span class="keyword">void</span> <span class="special">*</span> <span class="special">=</span> <span class="number">0</span><span class="special">,</span> 
+                            <span class="keyword">const</span> <a class="link" href="classboost_1_1interprocess_1_1permissions.html" title="Class permissions">permissions</a> <span class="special">&amp;</span> <span class="special">=</span> <span class="identifier">permissions</span><span class="special">(</span><span class="special">)</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1interprocess_1_1basic__managed__mapped__file.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__managed__mapped__file_1a101af5e1d71156a36204384050294a86"><span class="identifier">basic_managed_mapped_file</span></a><span class="special">(</span><a class="link" href="structboost_1_1interprocess_1_1open__or__create__t.html" title="Struct open_or_create_t">open_or_create_t</a><span class="special">,</span> <span class="keyword">const</span> <span class="keyword">wchar_t</span> <span class="special">*</span><span class="special">,</span> <span class="identifier">size_type</span><span class="special">,</span> 
+                            <span class="keyword">const</span> <span class="keyword">void</span> <span class="special">*</span> <span class="special">=</span> <span class="number">0</span><span class="special">,</span> 
+                            <span class="keyword">const</span> <a class="link" href="classboost_1_1interprocess_1_1permissions.html" title="Class permissions">permissions</a> <span class="special">&amp;</span> <span class="special">=</span> <span class="identifier">permissions</span><span class="special">(</span><span class="special">)</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1interprocess_1_1basic__managed__mapped__file.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__managed__mapped__file_1aeac7e6cc5adca302cb70c7996d98128d"><span class="identifier">basic_managed_mapped_file</span></a><span class="special">(</span><a class="link" href="structboost_1_1interprocess_1_1open__only__t.html" title="Struct open_only_t">open_only_t</a><span class="special">,</span> <span class="keyword">const</span> <span class="keyword">wchar_t</span> <span class="special">*</span><span class="special">,</span> <span class="keyword">const</span> <span class="keyword">void</span> <span class="special">*</span> <span class="special">=</span> <span class="number">0</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1interprocess_1_1basic__managed__mapped__file.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__managed__mapped__file_1a2450e9df6b914b05c20787e41a129727"><span class="identifier">basic_managed_mapped_file</span></a><span class="special">(</span><a class="link" href="structboost_1_1interprocess_1_1open__copy__on__write__t.html" title="Struct open_copy_on_write_t">open_copy_on_write_t</a><span class="special">,</span> <span class="keyword">const</span> <span class="keyword">wchar_t</span> <span class="special">*</span><span class="special">,</span> 
+                            <span class="keyword">const</span> <span class="keyword">void</span> <span class="special">*</span> <span class="special">=</span> <span class="number">0</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1interprocess_1_1basic__managed__mapped__file.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__managed__mapped__file_1ad558268d3533613a53e56677680852d1"><span class="identifier">basic_managed_mapped_file</span></a><span class="special">(</span><a class="link" href="structboost_1_1interprocess_1_1open__read__only__t.html" title="Struct open_read_only_t">open_read_only_t</a><span class="special">,</span> <span class="keyword">const</span> <span class="keyword">wchar_t</span> <span class="special">*</span><span class="special">,</span> 
+                            <span class="keyword">const</span> <span class="keyword">void</span> <span class="special">*</span> <span class="special">=</span> <span class="number">0</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1interprocess_1_1basic__managed__mapped__file.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__managed__mapped__file_1a0090e2fb3e1d3060eb16b08e6e7d2bb3"><span class="identifier">basic_managed_mapped_file</span></a><span class="special">(</span><a class="link" href="classboost_1_1interprocess_1_1basic__managed__mapped__file.html" title="Class template basic_managed_mapped_file">basic_managed_mapped_file</a> <span class="special">&amp;&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1interprocess_1_1basic__managed__mapped__file.html" title="Class template basic_managed_mapped_file">basic_managed_mapped_file</a> <span class="special">&amp;</span> <a class="link" href="classboost_1_1interprocess_1_1basic__managed__mapped__file.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__managed__mapped__file_1af55af01b19b6bda7266fbeebe8a85199"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><a class="link" href="classboost_1_1interprocess_1_1basic__managed__mapped__file.html" title="Class template basic_managed_mapped_file">basic_managed_mapped_file</a> <span class="special">&amp;&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1interprocess_1_1basic__managed__mapped__file.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__managed__mapped__file_1a1d29c31fa0708c410bf63421955e62f3"><span class="special">~</span><span class="identifier">basic_managed_mapped_file</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1interprocess_1_1basic__managed__mapped__file.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__managed__mapped__file_1af11240748cce900f06155d1253a62975"><span class="identifier">swap</span></a><span class="special">(</span><a class="link" href="classboost_1_1interprocess_1_1basic__managed__mapped__file.html" title="Class template basic_managed_mapped_file">basic_managed_mapped_file</a> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1interprocess_1_1basic__managed__mapped__file.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__managed__mapped__file_1ab509822f0fd06e9be89beba80f4e0795"><span class="identifier">flush</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="../boost_container_header_reference/classboost_1_1container_1_1flat__multiset.html#id36-bb">public static functions</a></span>
+  <span class="keyword">static</span> <span class="keyword">bool</span> <a class="link" href="classboost_1_1interprocess_1_1basic__managed__mapped__file.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__managed__mapped__file_1a9bfe451d8a62c2e2ee1da4129d571236"><span class="identifier">grow</span></a><span class="special">(</span><span class="keyword">const</span> <span class="keyword">char</span> <span class="special">*</span><span class="special">,</span> <span class="identifier">size_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">bool</span> <a class="link" href="classboost_1_1interprocess_1_1basic__managed__mapped__file.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__managed__mapped__file_1a2ceee03407c61aabeb924db009a26e65"><span class="identifier">shrink_to_fit</span></a><span class="special">(</span><span class="keyword">const</span> <span class="keyword">char</span> <span class="special">*</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">bool</span> <a class="link" href="classboost_1_1interprocess_1_1basic__managed__mapped__file.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__managed__mapped__file_1a9110611b8cb6e4b806cbe206256ebe63"><span class="identifier">grow</span></a><span class="special">(</span><span class="keyword">const</span> <span class="keyword">wchar_t</span> <span class="special">*</span><span class="special">,</span> <span class="identifier">size_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">bool</span> <a class="link" href="classboost_1_1interprocess_1_1basic__managed__mapped__file.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__managed__mapped__file_1a9a3895e6ce438b45404fddc3adac4284"><span class="identifier">shrink_to_fit</span></a><span class="special">(</span><span class="keyword">const</span> <span class="keyword">wchar_t</span> <span class="special">*</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.17.19.3.36.3.4"></a><h2>Description</h2>
+<p>A basic mapped file named object creation class. Initializes the mapped file. Inherits all basic functionality from basic_managed_memory_impl&lt;CharType, AllocationAlgorithm, IndexType&gt; </p>
+<div class="refsect2">
+<a name="id-1.3.17.19.3.36.3.4.3"></a><h3>
+<a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__managed__mapped__filetypes"></a><code class="computeroutput">basic_managed_mapped_file</code> 
+        public
+       types</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem">
+<p>
+<span class="keyword">typedef</span> <span class="identifier">implementation_defined</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__managed__mapped__file_1a6d81bfd072ddfb4025b57ac33d78458c"></a><span class="identifier">size_type</span><span class="special">;</span></p>
+<p>Unsigned integral type enough to represent the size of a <a class="link" href="classboost_1_1interprocess_1_1basic__managed__mapped__file.html" title="Class template basic_managed_mapped_file">basic_managed_mapped_file</a>. </p>
+</li></ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.17.19.3.36.3.4.4"></a><h3>
+<a name="id35-bb"></a><code class="computeroutput">basic_managed_mapped_file</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__managed__mapped__file_1a20f6e85e850fab43beace4f0366a0661"></a><span class="identifier">basic_managed_mapped_file</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>Creates mapped file and creates and places the segment manager. This can throw. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__managed__mapped__file_1ac1836fcd14dce99e9edc657020084097"></a><span class="identifier">basic_managed_mapped_file</span><span class="special">(</span><a class="link" href="structboost_1_1interprocess_1_1create__only__t.html" title="Struct create_only_t">create_only_t</a><span class="special">,</span> <span class="keyword">const</span> <span class="keyword">char</span> <span class="special">*</span> name<span class="special">,</span> <span class="identifier">size_type</span> size<span class="special">,</span> 
+                          <span class="keyword">const</span> <span class="keyword">void</span> <span class="special">*</span> addr <span class="special">=</span> <span class="number">0</span><span class="special">,</span> 
+                          <span class="keyword">const</span> <a class="link" href="classboost_1_1interprocess_1_1permissions.html" title="Class permissions">permissions</a> <span class="special">&amp;</span> perm <span class="special">=</span> <span class="identifier">permissions</span><span class="special">(</span><span class="special">)</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Creates mapped file and creates and places the segment manager. This can throw. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__managed__mapped__file_1abb85ee0d4f32946a9f5ae4eef1f9f911"></a><span class="identifier">basic_managed_mapped_file</span><span class="special">(</span><a class="link" href="structboost_1_1interprocess_1_1open__or__create__t.html" title="Struct open_or_create_t">open_or_create_t</a><span class="special">,</span> <span class="keyword">const</span> <span class="keyword">char</span> <span class="special">*</span> name<span class="special">,</span> <span class="identifier">size_type</span> size<span class="special">,</span> 
+                          <span class="keyword">const</span> <span class="keyword">void</span> <span class="special">*</span> addr <span class="special">=</span> <span class="number">0</span><span class="special">,</span> 
+                          <span class="keyword">const</span> <a class="link" href="classboost_1_1interprocess_1_1permissions.html" title="Class permissions">permissions</a> <span class="special">&amp;</span> perm <span class="special">=</span> <span class="identifier">permissions</span><span class="special">(</span><span class="special">)</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Creates mapped file and creates and places the segment manager if segment was not created. If segment was created it connects to the segment. This can throw. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__managed__mapped__file_1a585626edd85318693757a32156370e26"></a><span class="identifier">basic_managed_mapped_file</span><span class="special">(</span><a class="link" href="structboost_1_1interprocess_1_1open__only__t.html" title="Struct open_only_t">open_only_t</a><span class="special">,</span> <span class="keyword">const</span> <span class="keyword">char</span> <span class="special">*</span> name<span class="special">,</span> 
+                          <span class="keyword">const</span> <span class="keyword">void</span> <span class="special">*</span> addr <span class="special">=</span> <span class="number">0</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Connects to a created mapped file and its segment manager. This can throw. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__managed__mapped__file_1a4bc9657a763428dab51253a19fcddd6e"></a><span class="identifier">basic_managed_mapped_file</span><span class="special">(</span><a class="link" href="structboost_1_1interprocess_1_1open__copy__on__write__t.html" title="Struct open_copy_on_write_t">open_copy_on_write_t</a><span class="special">,</span> <span class="keyword">const</span> <span class="keyword">char</span> <span class="special">*</span> name<span class="special">,</span> 
+                          <span class="keyword">const</span> <span class="keyword">void</span> <span class="special">*</span> addr <span class="special">=</span> <span class="number">0</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Connects to a created mapped file and its segment manager in copy_on_write mode. This can throw. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__managed__mapped__file_1a797317c52a6fcece0b5d0ca1eb1cf8bb"></a><span class="identifier">basic_managed_mapped_file</span><span class="special">(</span><a class="link" href="structboost_1_1interprocess_1_1open__read__only__t.html" title="Struct open_read_only_t">open_read_only_t</a><span class="special">,</span> <span class="keyword">const</span> <span class="keyword">char</span> <span class="special">*</span> name<span class="special">,</span> 
+                          <span class="keyword">const</span> <span class="keyword">void</span> <span class="special">*</span> addr <span class="special">=</span> <span class="number">0</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Connects to a created mapped file and its segment manager in read-only mode. This can throw. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__managed__mapped__file_1a85dba7faa899af9972bf5fe927cc9ba9"></a><span class="identifier">basic_managed_mapped_file</span><span class="special">(</span><a class="link" href="structboost_1_1interprocess_1_1create__only__t.html" title="Struct create_only_t">create_only_t</a><span class="special">,</span> <span class="keyword">const</span> <span class="keyword">wchar_t</span> <span class="special">*</span> name<span class="special">,</span> <span class="identifier">size_type</span> size<span class="special">,</span> 
+                          <span class="keyword">const</span> <span class="keyword">void</span> <span class="special">*</span> addr <span class="special">=</span> <span class="number">0</span><span class="special">,</span> 
+                          <span class="keyword">const</span> <a class="link" href="classboost_1_1interprocess_1_1permissions.html" title="Class permissions">permissions</a> <span class="special">&amp;</span> perm <span class="special">=</span> <span class="identifier">permissions</span><span class="special">(</span><span class="special">)</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Creates mapped file and creates and places the segment manager. This can throw.</p>
+<p>Note: This function is only available on operating systems with native wchar_t APIs (e.g. Windows). </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__managed__mapped__file_1a101af5e1d71156a36204384050294a86"></a><span class="identifier">basic_managed_mapped_file</span><span class="special">(</span><a class="link" href="structboost_1_1interprocess_1_1open__or__create__t.html" title="Struct open_or_create_t">open_or_create_t</a><span class="special">,</span> <span class="keyword">const</span> <span class="keyword">wchar_t</span> <span class="special">*</span> name<span class="special">,</span> 
+                          <span class="identifier">size_type</span> size<span class="special">,</span> <span class="keyword">const</span> <span class="keyword">void</span> <span class="special">*</span> addr <span class="special">=</span> <span class="number">0</span><span class="special">,</span> 
+                          <span class="keyword">const</span> <a class="link" href="classboost_1_1interprocess_1_1permissions.html" title="Class permissions">permissions</a> <span class="special">&amp;</span> perm <span class="special">=</span> <span class="identifier">permissions</span><span class="special">(</span><span class="special">)</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Creates mapped file and creates and places the segment manager if segment was not created. If segment was created it connects to the segment. This can throw.</p>
+<p>Note: This function is only available on operating systems with native wchar_t APIs (e.g. Windows). </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__managed__mapped__file_1aeac7e6cc5adca302cb70c7996d98128d"></a><span class="identifier">basic_managed_mapped_file</span><span class="special">(</span><a class="link" href="structboost_1_1interprocess_1_1open__only__t.html" title="Struct open_only_t">open_only_t</a><span class="special">,</span> <span class="keyword">const</span> <span class="keyword">wchar_t</span> <span class="special">*</span> name<span class="special">,</span> 
+                          <span class="keyword">const</span> <span class="keyword">void</span> <span class="special">*</span> addr <span class="special">=</span> <span class="number">0</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Connects to a created mapped file and its segment manager. This can throw.</p>
+<p>Note: This function is only available on operating systems with native wchar_t APIs (e.g. Windows). </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__managed__mapped__file_1a2450e9df6b914b05c20787e41a129727"></a><span class="identifier">basic_managed_mapped_file</span><span class="special">(</span><a class="link" href="structboost_1_1interprocess_1_1open__copy__on__write__t.html" title="Struct open_copy_on_write_t">open_copy_on_write_t</a><span class="special">,</span> <span class="keyword">const</span> <span class="keyword">wchar_t</span> <span class="special">*</span> name<span class="special">,</span> 
+                          <span class="keyword">const</span> <span class="keyword">void</span> <span class="special">*</span> addr <span class="special">=</span> <span class="number">0</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Connects to a created mapped file and its segment manager in copy_on_write mode. This can throw.</p>
+<p>Note: This function is only available on operating systems with native wchar_t APIs (e.g. Windows). </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__managed__mapped__file_1ad558268d3533613a53e56677680852d1"></a><span class="identifier">basic_managed_mapped_file</span><span class="special">(</span><a class="link" href="structboost_1_1interprocess_1_1open__read__only__t.html" title="Struct open_read_only_t">open_read_only_t</a><span class="special">,</span> <span class="keyword">const</span> <span class="keyword">wchar_t</span> <span class="special">*</span> name<span class="special">,</span> 
+                          <span class="keyword">const</span> <span class="keyword">void</span> <span class="special">*</span> addr <span class="special">=</span> <span class="number">0</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Connects to a created mapped file and its segment manager in read-only mode. This can throw.</p>
+<p>Note: This function is only available on operating systems with native wchar_t APIs (e.g. Windows). </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__managed__mapped__file_1a0090e2fb3e1d3060eb16b08e6e7d2bb3"></a><span class="identifier">basic_managed_mapped_file</span><span class="special">(</span><a class="link" href="classboost_1_1interprocess_1_1basic__managed__mapped__file.html" title="Class template basic_managed_mapped_file">basic_managed_mapped_file</a> <span class="special">&amp;&amp;</span> moved<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>Moves the ownership of "moved"'s managed memory to *this. Does not throw </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a class="link" href="classboost_1_1interprocess_1_1basic__managed__mapped__file.html" title="Class template basic_managed_mapped_file">basic_managed_mapped_file</a> <span class="special">&amp;</span> 
+<a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__managed__mapped__file_1af55af01b19b6bda7266fbeebe8a85199"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><a class="link" href="classboost_1_1interprocess_1_1basic__managed__mapped__file.html" title="Class template basic_managed_mapped_file">basic_managed_mapped_file</a> <span class="special">&amp;&amp;</span> moved<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>Moves the ownership of "moved"'s managed memory to *this. Does not throw </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__managed__mapped__file_1a1d29c31fa0708c410bf63421955e62f3"></a><span class="special">~</span><span class="identifier">basic_managed_mapped_file</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Destroys *this and indicates that the calling process is finished using the resource. The destructor function will deallocate any system resources allocated by the system for use by this process for this resource. The resource can still be opened again calling the open constructor overload. To erase the resource from the system use remove(). </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__managed__mapped__file_1af11240748cce900f06155d1253a62975"></a><span class="identifier">swap</span><span class="special">(</span><a class="link" href="classboost_1_1interprocess_1_1basic__managed__mapped__file.html" title="Class template basic_managed_mapped_file">basic_managed_mapped_file</a> <span class="special">&amp;</span> other<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>Swaps the ownership of the managed mapped memories managed by *this and other. Never throws. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__managed__mapped__file_1ab509822f0fd06e9be89beba80f4e0795"></a><span class="identifier">flush</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Flushes cached data to file. Never throws </p>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.17.19.3.36.3.4.5"></a><h3>
+<a name="id36-bb"></a><code class="computeroutput">basic_managed_mapped_file</code> public static functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="keyword">bool</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__managed__mapped__file_1a9bfe451d8a62c2e2ee1da4129d571236"></a><span class="identifier">grow</span><span class="special">(</span><span class="keyword">const</span> <span class="keyword">char</span> <span class="special">*</span> filename<span class="special">,</span> <span class="identifier">size_type</span> extra_bytes<span class="special">)</span><span class="special">;</span></pre>
+<p>Tries to resize mapped file so that we have room for more objects.</p>
+<p>This function is not synchronized so no other thread or process should be reading or writing the file</p>
+<p>Since the memory will be remapped after the underlying file is grown, it can't work with segments using raw pointers. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="keyword">bool</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__managed__mapped__file_1a2ceee03407c61aabeb924db009a26e65"></a><span class="identifier">shrink_to_fit</span><span class="special">(</span><span class="keyword">const</span> <span class="keyword">char</span> <span class="special">*</span> filename<span class="special">)</span><span class="special">;</span></pre>
+<p>Tries to resize mapped file to minimized the size of the file.</p>
+<p>This function is not synchronized so no other thread or process should be reading or writing the file </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="keyword">bool</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__managed__mapped__file_1a9110611b8cb6e4b806cbe206256ebe63"></a><span class="identifier">grow</span><span class="special">(</span><span class="keyword">const</span> <span class="keyword">wchar_t</span> <span class="special">*</span> filename<span class="special">,</span> <span class="identifier">size_type</span> extra_bytes<span class="special">)</span><span class="special">;</span></pre>
+<p>Tries to resize mapped file so that we have room for more objects.</p>
+<p>This function is not synchronized so no other thread or process should be reading or writing the file</p>
+<p>Note: This function is only available on operating systems with native wchar_t APIs (e.g. Windows). </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="keyword">bool</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__managed__mapped__file_1a9a3895e6ce438b45404fddc3adac4284"></a><span class="identifier">shrink_to_fit</span><span class="special">(</span><span class="keyword">const</span> <span class="keyword">wchar_t</span> <span class="special">*</span> filename<span class="special">)</span><span class="special">;</span></pre>
+<p>Tries to resize mapped file to minimized the size of the file.</p>
+<p>This function is not synchronized so no other thread or process should be reading or writing the file</p>
+<p>Note: This function is only available on operating systems with native wchar_t APIs (e.g. Windows). </p>
+</li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2005-2024 Ion Gaztanaga<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="managed__heap__memory_8hpp_1a88f79e25afba1cc358d5db50435dc58d.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../interprocess/indexes_reference.html#doxygen.boost_interprocess_header_reference.managed__mapped__file_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="managed__mapped__file_8hpp_1a0d4da159703df101158c50948bb69156.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

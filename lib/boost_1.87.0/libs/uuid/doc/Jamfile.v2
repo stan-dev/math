@@ -1,0 +1,21 @@
+# Copyright 2024 Christian Mazakas
+# Distributed under the Boost Software License, Version 1.0. (See accompanying
+# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+import asciidoctor ;
+
+html uuid.html : uuid.adoc ;
+
+install html_ : uuid.html : <location>html ;
+
+pdf uuid.pdf : uuid.adoc ;
+explicit uuid.pdf ;
+
+install pdf_ : uuid.pdf : <location>pdf ;
+explicit pdf_ ;
+
+###############################################################################
+alias boostdoc ;
+explicit boostdoc ;
+alias boostrelease : html_ ;
+explicit boostrelease ;

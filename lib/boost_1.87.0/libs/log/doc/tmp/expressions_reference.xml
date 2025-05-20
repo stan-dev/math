@@ -1,0 +1,3190 @@
+<?xml version="1.0" standalone="yes"?>
+<library-reference id="expressions"><title>Expressions</title><header id="doxygen.expressions.attr_8hpp" name="boost/log/expressions/attr.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>21.07.2012</para>
+
+The header contains implementation of a generic attribute placeholder in template expressions. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="expressions">
+<class id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1attribute__actor" name="attribute_actor"><template>
+      <template-type-parameter name="T"/>
+      <template-type-parameter name="FallbackPolicyT"/>
+      <template-type-parameter name="TagT"/>
+      <template-nontype-parameter name="ActorT"><type>template&lt; typename &gt; class</type></template-nontype-parameter>
+    </template><inherit access="public">ActorT&lt; attribute_terminal&lt; T, FallbackPolicyT, TagT &gt; &gt;</inherit><description><para>An attribute value extraction terminal actor </para></description><typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1attribute__actor_1af1789638d0a752af7a01ba27a431336e" name="tag_type"><purpose>Attribute tag type. </purpose><type>TagT</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1attribute__actor_1a2e440739dc9c4b7d52309f8634dea29c" name="fallback_policy"><purpose>Fallback policy. </purpose><type>FallbackPolicyT</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1attribute__actor_1acce4f031ec5d79afe0ad55acebae87ba" name="terminal_type"><purpose>Base terminal type. </purpose><type><classname>attribute_terminal</classname>&lt; T, fallback_policy, tag_type &gt;</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1attribute__actor_1a518fb13207dd1a724cb46f50f4576711" name="value_type"><purpose>Attribute value type. </purpose><type>terminal_type::value_type</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1attribute__actor_1a32cf16ea7a6a30ea993ec54ac949c46d" name="base_type"><purpose>Base actor type. </purpose><type>ActorT&lt; terminal_type &gt;</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1attribute__actor_1a5c066ba1d9d50c7295366351d1e18797" name="or_none_result_type"><purpose>Expression with cached attribute name. </purpose><type><classname>attribute_actor</classname>&lt; value_type, fallback_to_none, tag_type, ActorT &gt;</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1attribute__actor_1a953231c77d9c17f1daf42f4b1bfdbedb" name="or_throw_result_type"><purpose>Expression with cached attribute name. </purpose><type><classname>attribute_actor</classname>&lt; value_type, fallback_to_throw, tag_type, ActorT &gt;</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1attribute__actor_1a26281444e12ef2665d2c763b98219d10" specifiers="explicit"><parameter name="act"><paramtype>base_type const &amp;</paramtype></parameter><purpose>Initializing constructor. </purpose></constructor>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1attribute__actor_1ab4930a89e24e98e354a4803de84f0dc5" name="get_name" cv="const"><type>attribute_name</type><description><para>
+</para></description><returns><para>The attribute name </para>
+</returns></method>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1attribute__actor_1a54e65b79177918fcf47f5a5a9ae2a7b1" name="get_fallback_policy" cv="const"><type>fallback_policy const &amp;</type><description><para>
+</para></description><returns><para>Fallback policy </para>
+</returns></method>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1attribute__actor_1a1a3c222543fd18f92e40278694bde320" name="or_none" cv="const"><type>or_none_result_type</type><purpose>Generates an expression that extracts the attribute value or a default value. </purpose></method>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1attribute__actor_1a5af8b945a0c25ab611a9e6b5a62b3531" name="or_throw" cv="const"><type>or_throw_result_type</type><purpose>Generates an expression that extracts the attribute value or throws an exception. </purpose></method>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1attribute__actor_1aca8e49533ce23275f4bc7a18d9776b70" name="or_default" cv="const"><type><classname>attribute_actor</classname>&lt; value_type, fallback_to_default&lt; DefaultT &gt;, tag_type, ActorT &gt;</type><template>
+          <template-type-parameter name="DefaultT"/>
+        </template><parameter name="def_val"><paramtype>DefaultT const &amp;</paramtype></parameter><purpose>Generates an expression that extracts the attribute value or a default value. </purpose></method>
+</method-group>
+</class><class id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1attribute__terminal" name="attribute_terminal"><template>
+      <template-type-parameter name="T"/>
+      <template-type-parameter name="FallbackPolicyT"/>
+      <template-type-parameter name="TagT"/>
+    </template><description><para>An attribute value extraction terminal </para></description><struct id="doxygen.expressions.structboost_1_1log_1_1expressions_1_1attribute__terminal_1_1result" name="result"><template>
+      <template-type-parameter name=""/>
+    </template><purpose>Function result type. </purpose></struct><struct-specialization id="doxygen.expressions.structboost_1_1log_1_1expressions_1_1attribute__terminal_1_1result_3_01ThisT_07ContextT_08_01_4" name="result"><template>
+      <template-type-parameter name="ThisT"/>
+      <template-type-parameter name="ContextT"/>
+    </template><specialization><template-arg>ThisT(ContextT)</template-arg></specialization><typedef id="doxygen.expressions.structboost_1_1log_1_1expressions_1_1attribute__terminal_1_1result_3_01ThisT_07ContextT_08_01_4_1a95855a2ccdbd0ee02f77b061ff06f5e5" name="env_type"><type>remove_cv&lt; typenameremove_reference&lt; typenamephoenix::result_of::env&lt; ContextT &gt;::type &gt;::type &gt;::type</type></typedef>
+<typedef id="doxygen.expressions.structboost_1_1log_1_1expressions_1_1attribute__terminal_1_1result_3_01ThisT_07ContextT_08_01_4_1a86d30eb2d12ed4b01c4700a00b0b544b" name="args_type"><type>env_type::args_type</type></typedef>
+<typedef id="doxygen.expressions.structboost_1_1log_1_1expressions_1_1attribute__terminal_1_1result_3_01ThisT_07ContextT_08_01_4_1a391f6699927ee60c0120715ab309bb19" name="cv_value_extractor_type"><type><emphasis>unspecified</emphasis></type></typedef>
+<typedef id="doxygen.expressions.structboost_1_1log_1_1expressions_1_1attribute__terminal_1_1result_3_01ThisT_07ContextT_08_01_4_1a442b32a5226af0ce402a2515108ec0b3" name="type"><type>boost::result_of&lt; cv_value_extractor_type(attribute_nameconst &amp;, typenamefusion::result_of::at_c&lt; args_type, 0 &gt;::type)&gt;::type</type></typedef>
+</struct-specialization><typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1attribute__terminal_1af1789638d0a752af7a01ba27a431336e" name="tag_type"><purpose>Attribute tag type. </purpose><type>TagT</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1attribute__terminal_1aa64044f98c4dac4951010e037f58e17c" name="value_type"><purpose>Attribute value type. </purpose><type>value_extractor_type::value_type</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1attribute__terminal_1a3336122f8fc8400c22f5d3be75eadb3c" name="fallback_policy"><purpose>Fallback policy type. </purpose><type>value_extractor_type::fallback_policy</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1attribute__terminal_1a4d7c3b7af0ae3443f9c7f80b441b6a4d" specifiers="explicit"><parameter name="name"><paramtype>attribute_name const &amp;</paramtype></parameter><description><para>Initializing constructor </para></description></constructor>
+<constructor id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1attribute__terminal_1acfb74697286607374e32d0b00b302db8"><template>
+          <template-type-parameter name="U"/>
+        </template><parameter name="name"><paramtype>attribute_name const &amp;</paramtype></parameter><parameter name="arg"><paramtype>U const &amp;</paramtype></parameter><description><para>Initializing constructor </para></description></constructor>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1attribute__terminal_1ab4930a89e24e98e354a4803de84f0dc5" name="get_name" cv="const"><type>attribute_name</type><description><para>
+</para></description><returns><para>Attribute value name </para>
+</returns></method>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1attribute__terminal_1a54e65b79177918fcf47f5a5a9ae2a7b1" name="get_fallback_policy" cv="const"><type>fallback_policy const &amp;</type><description><para>
+</para></description><returns><para>Fallback policy </para>
+</returns></method>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1attribute__terminal_1a276ff7069b885412fb9295dfd6f787d8" name="operator()"><type><classname>result</classname>&lt; <classname>this_type</classname>(ContextTconst &amp;)&gt;::type</type><template>
+          <template-type-parameter name="ContextT"/>
+        </template><parameter name="ctx"><paramtype>ContextT const &amp;</paramtype></parameter><description><para>The operator extracts attribute value </para></description></method>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1attribute__terminal_1ad08d7a7285f7bf42d726210a91d86241" name="operator()" cv="const"><type><classname>result</classname>&lt; constthis_type(ContextTconst &amp;)&gt;::type</type><template>
+          <template-type-parameter name="ContextT"/>
+        </template><parameter name="ctx"><paramtype>ContextT const &amp;</paramtype></parameter><description><para>The operator extracts attribute value </para></description></method>
+<constructor id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1attribute__terminal_1a1cac6003cdeb796ee484ecbea2df0db8" cv="= delete"/>
+</method-group>
+</class><function id="doxygen.expressions.attr_8hpp_1a4092770e33ec0ec13894eebf01050a76" name="attr"><type><classname>attribute_actor</classname>&lt; AttributeValueT &gt;</type><template>
+          <template-type-parameter name="AttributeValueT"/>
+        </template><parameter name="name"><paramtype>attribute_name const &amp;</paramtype></parameter><description><para>The function generates a terminal node in a template expression. The node will extract the value of the attribute with the specified name and type. </para></description></function>
+<function id="doxygen.expressions.attr_8hpp_1a5e679061b2ae6d2d6f2b1e75ee5a2232" name="attr"><type><classname>attribute_actor</classname>&lt; AttributeValueT, fallback_to_none, TagT &gt;</type><template>
+          <template-type-parameter name="AttributeValueT"/>
+          <template-type-parameter name="TagT"/>
+        </template><parameter name="name"><paramtype>attribute_name const &amp;</paramtype></parameter><description><para>The function generates a terminal node in a template expression. The node will extract the value of the attribute with the specified name and type. </para></description></function>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.expressions.attr__fwd_8hpp" name="boost/log/expressions/attr_fwd.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>21.07.2012</para>
+
+The header contains forward declaration of a generic attribute placeholder in template expressions. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="expressions">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.expressions.filter_8hpp" name="boost/log/expressions/filter.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>13.07.2012</para>
+
+The header contains a filter function object definition. </para><namespace name="boost">
+<namespace name="log">
+<class id="doxygen.expressions.classboost_1_1log_1_1filter" name="filter"><description><para>Log record filter function wrapper. </para></description><struct id="doxygen.expressions.structboost_1_1log_1_1filter_1_1default__filter" name="default_filter"><purpose>Default filter, always returns <computeroutput>true</computeroutput>. </purpose><typedef id="doxygen.expressions.structboost_1_1log_1_1filter_1_1default__filter_1a686b9d94028b8d69200c6e0f7698d90f" name="result_type"><type>bool</type></typedef>
+<method-group name="public member functions">
+<method id="doxygen.expressions.structboost_1_1log_1_1filter_1_1default__filter_1a41deec00b74f2173f1d52299fd06e7b3" name="operator()" cv="const"><type>result_type</type><parameter name=""><paramtype>attribute_value_set const &amp;</paramtype></parameter></method>
+</method-group>
+</struct><typedef id="doxygen.expressions.classboost_1_1log_1_1filter_1a686b9d94028b8d69200c6e0f7698d90f" name="result_type"><purpose>Result type. </purpose><type>bool</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.expressions.classboost_1_1log_1_1filter_1a8122d3c1ef2a61359b75a97363a4d89b"><description><para>Default constructor. Creates a filter that always returns <computeroutput>true</computeroutput>. </para></description></constructor>
+<constructor id="doxygen.expressions.classboost_1_1log_1_1filter_1a467da6d3d12d5ba5afc5834b4880c9c0"><parameter name="that"><paramtype><classname>filter</classname> const &amp;</paramtype></parameter><description><para>Copy constructor </para></description></constructor>
+<constructor id="doxygen.expressions.classboost_1_1log_1_1filter_1aaed18f54c0dc85a398f5cbc8cb9dea1b" cv="noexcept"><parameter name="that"><paramtype><classname>filter</classname> &amp;&amp;</paramtype></parameter><description><para>Move constructor. The moved-from filter is left in an unspecified state. </para></description></constructor>
+<constructor id="doxygen.expressions.classboost_1_1log_1_1filter_1a633397c1de39ab5956531ec8b0a15064"><template>
+          <template-type-parameter name="FunT"/>
+        </template><parameter name="fun"><paramtype>FunT &amp;&amp;</paramtype></parameter><description><para>Initializing constructor. Creates a filter which will invoke the specified function object. </para></description></constructor>
+<copy-assignment id="doxygen.expressions.classboost_1_1log_1_1filter_1ac02df72c1366a4653fe2add10d15e885" cv="noexcept"><type><classname>filter</classname> &amp;</type><parameter name="that"><paramtype><classname>filter</classname> &amp;&amp;</paramtype></parameter><description><para>Move assignment. The moved-from filter is left in an unspecified state. </para></description></copy-assignment>
+<copy-assignment id="doxygen.expressions.classboost_1_1log_1_1filter_1a4f8afe7d6469cb27268925c3f2ae63af"><type><classname>filter</classname> &amp;</type><parameter name="that"><paramtype><classname>filter</classname> const &amp;</paramtype></parameter><description><para>Copy assignment. </para></description></copy-assignment>
+<copy-assignment id="doxygen.expressions.classboost_1_1log_1_1filter_1a8d661e73fa3982a9e26483548508845e"><type><classname>filter</classname> &amp;</type><template>
+          <template-type-parameter name="FunT"/>
+        </template><parameter name="fun"><paramtype>FunT const &amp;</paramtype></parameter><description><para>Initializing assignment. Sets the specified function object to the filter. </para></description></copy-assignment>
+<method id="doxygen.expressions.classboost_1_1log_1_1filter_1a3435c51b5d6d31720d1656835448a3ec" name="operator()" cv="const"><type>result_type</type><parameter name="values"><paramtype>attribute_value_set const &amp;</paramtype><description><para>Attribute values of the log record. </para></description></parameter><description><para>Filtering operator.</para><para>
+
+</para></description><returns><para><computeroutput>true</computeroutput> if the log record passes the filter, <computeroutput>false</computeroutput> otherwise. </para>
+</returns></method>
+<method id="doxygen.expressions.classboost_1_1log_1_1filter_1ad20897c5c8bd47f5d4005989bead0e55" name="reset"><type>void</type><description><para>Resets the filter to the default. The default filter always returns <computeroutput>true</computeroutput>. </para></description></method>
+<method id="doxygen.expressions.classboost_1_1log_1_1filter_1ae5b59b11b92eff0f450e60221b22273b" name="swap" cv="noexcept"><type>void</type><parameter name="that"><paramtype><classname>filter</classname> &amp;</paramtype></parameter><description><para>Swaps two filters </para></description></method>
+</method-group>
+</class>
+<function id="doxygen.expressions.filter_8hpp_1a12a6179fa9c8c6b9edc648a956689b36" name="swap"><type>void</type><parameter name="left"><paramtype><classname>filter</classname> &amp;</paramtype></parameter><parameter name="right"><paramtype><classname>filter</classname> &amp;</paramtype></parameter></function>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.expressions.formatter_8hpp" name="boost/log/expressions/formatter.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>13.07.2012</para>
+
+The header contains a formatter function object definition. </para><namespace name="boost">
+<namespace name="log">
+<class id="doxygen.expressions.classboost_1_1log_1_1basic__formatter" name="basic_formatter"><template>
+      <template-type-parameter name="CharT"/>
+    </template><description><para>Log record formatter function wrapper. </para></description><typedef id="doxygen.expressions.classboost_1_1log_1_1basic__formatter_1a9362b0e17335e9c13246f970c962d645" name="result_type"><purpose>Result type. </purpose><type>void</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1basic__formatter_1ac300472e15c13f0e7c25cec82c665240" name="char_type"><purpose>Character type. </purpose><type>CharT</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1basic__formatter_1aa8678b6f62f444d3adc917f499bb31e8" name="stream_type"><purpose>Output stream type. </purpose><type>basic_formatting_ostream&lt; char_type &gt;</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.expressions.classboost_1_1log_1_1basic__formatter_1a06f64347d7f42c6867e907972e25612d"><description><para>Default constructor. Creates a formatter that only outputs log message. </para></description></constructor>
+<constructor id="doxygen.expressions.classboost_1_1log_1_1basic__formatter_1a5d38d715650842f26cf56868857b0dd9"><parameter name="that"><paramtype><classname>basic_formatter</classname> const &amp;</paramtype></parameter><description><para>Copy constructor </para></description></constructor>
+<constructor id="doxygen.expressions.classboost_1_1log_1_1basic__formatter_1a2a61617d7ce296ddec1174ea67808125" cv="noexcept"><parameter name="that"><paramtype><classname>this_type</classname> &amp;&amp;</paramtype></parameter><description><para>Move constructor. The moved-from formatter is left in an unspecified state. </para></description></constructor>
+<constructor id="doxygen.expressions.classboost_1_1log_1_1basic__formatter_1a07053c110308019b40767a9a015e37bd"><template>
+          <template-type-parameter name="FunT"/>
+        </template><parameter name="fun"><paramtype>FunT &amp;&amp;</paramtype></parameter><description><para>Initializing constructor. Creates a formatter which will invoke the specified function object. </para></description></constructor>
+<copy-assignment id="doxygen.expressions.classboost_1_1log_1_1basic__formatter_1a010d59773d9e31b03002176a92701d6a" cv="noexcept"><type><classname>basic_formatter</classname> &amp;</type><parameter name="that"><paramtype><classname>this_type</classname> &amp;&amp;</paramtype></parameter><description><para>Move assignment. The moved-from formatter is left in an unspecified state. </para></description></copy-assignment>
+<copy-assignment id="doxygen.expressions.classboost_1_1log_1_1basic__formatter_1aa3c05d88eb6d1d9ebbc1f1d4a97ef190"><type><classname>basic_formatter</classname> &amp;</type><parameter name="that"><paramtype><classname>this_type</classname> const &amp;</paramtype></parameter><description><para>Copy assignment. </para></description></copy-assignment>
+<copy-assignment id="doxygen.expressions.classboost_1_1log_1_1basic__formatter_1a84c36d869b9157c7f9819b92e55e2914"><type><classname>basic_formatter</classname> &amp;</type><template>
+          <template-type-parameter name="FunT"/>
+        </template><parameter name="fun"><paramtype>FunT &amp;&amp;</paramtype></parameter><description><para>Initializing assignment. Sets the specified function object to the formatter. </para></description></copy-assignment>
+<method id="doxygen.expressions.classboost_1_1log_1_1basic__formatter_1a30bc10653f730cb48cf8f22ab95adcb1" name="operator()" cv="const"><type>result_type</type><parameter name="rec"><paramtype>record_view const &amp;</paramtype><description><para>A log record to format. </para></description></parameter><parameter name="strm"><paramtype>stream_type &amp;</paramtype><description><para>A stream to put the formatted characters to. </para></description></parameter><description><para>Formatting operator.</para><para>
+</para></description></method>
+<method id="doxygen.expressions.classboost_1_1log_1_1basic__formatter_1ad20897c5c8bd47f5d4005989bead0e55" name="reset"><type>void</type><description><para>Resets the formatter to the default. The default formatter only outputs message text. </para></description></method>
+<method id="doxygen.expressions.classboost_1_1log_1_1basic__formatter_1a1f5bb05679a6fb8f55b5cac0d319d8b3" name="swap" cv="noexcept"><type>void</type><parameter name="that"><paramtype><classname>basic_formatter</classname> &amp;</paramtype></parameter><description><para>Swaps two formatters </para></description></method>
+</method-group>
+</class><namespace name="expressions">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+<typedef id="doxygen.expressions.formatter_8hpp_1adfb25f1023c7e2de627832b2517973bb" name="formatter"><type><classname>basic_formatter</classname>&lt; char &gt;</type></typedef>
+<typedef id="doxygen.expressions.formatter_8hpp_1a2a412b850eec24bebe85c320da404ebf" name="wformatter"><type><classname>basic_formatter</classname>&lt; wchar_t &gt;</type></typedef>
+<function id="doxygen.expressions.formatter_8hpp_1af754746514edd2cbdf2dce065e4608c4" name="swap"><type>void</type><template>
+          <template-type-parameter name="CharT"/>
+        </template><parameter name="left"><paramtype><classname>basic_formatter</classname>&lt; CharT &gt; &amp;</paramtype></parameter><parameter name="right"><paramtype><classname>basic_formatter</classname>&lt; CharT &gt; &amp;</paramtype></parameter></function>
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.expressions.formatters_8hpp" name="boost/log/expressions/formatters.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>10.11.2012</para>
+
+The header includes all template expression formatters. </para></header>
+<header id="doxygen.expressions.auto__newline_8hpp" name="boost/log/expressions/formatters/auto_newline.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>23.06.2019</para>
+
+The header contains implementation of formatter for inserting a newline, unless there is already one inserted. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="expressions">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.expressions.c__decorator_8hpp" name="boost/log/expressions/formatters/c_decorator.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>18.11.2012</para>
+
+The header contains implementation of C-style character decorators. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="expressions">
+<class id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1c__ascii__pattern__replacer" name="c_ascii_pattern_replacer"><template>
+      <template-type-parameter name="CharT"/>
+    </template><inherit access="public">boost::log::expressions::pattern_replacer&lt; CharT &gt;</inherit><description><para>A character decorator implementation that escapes all non-prontable and non-ASCII characters in the output with C-style escape sequences. </para></description><typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1c__ascii__pattern__replacer_1a21bf7bfc088e7aa0bd86374137564db4" name="result_type"><purpose>Result type. </purpose><type>base_type::result_type</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1c__ascii__pattern__replacer_1af20a9965bfb788c1b76d2e9d180542c1" name="char_type"><purpose>Character type. </purpose><type>base_type::char_type</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1c__ascii__pattern__replacer_1a7085e94a35a28ab5acb94c624d563983" name="string_type"><purpose>String type. </purpose><type>base_type::string_type</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1c__ascii__pattern__replacer_1ad2c64e193a224d327375ebd9bded6933"><purpose>Default constructor. </purpose></constructor>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1c__ascii__pattern__replacer_1a8b0f2a18cab0ff1b1473e89b10687e31" name="operator()" cv="const"><type>result_type</type><parameter name="str"><paramtype>string_type &amp;</paramtype></parameter><parameter name="start_pos"><paramtype>typename string_type::size_type</paramtype><default>0</default></parameter><purpose>Applies string replacements starting from the specified position. </purpose></method>
+</method-group>
+</class><data-member id="doxygen.expressions.c__decorator_8hpp_1aca188b4d9c1f5fd2cc40fb7f2238ddf4" name="c_decor"><type><emphasis>unspecified</emphasis></type><description><para>C-style decorator generator object. The decorator replaces characters with specific meaning in C language with the corresponding escape sequences. The generator provides <computeroutput>operator[]</computeroutput> that can be used to construct the actual decorator. For example:</para><para><computeroutput> c_decor[ stream &lt;&lt; <link linkend="doxygen.expressions.attr_8hpp_1a4092770e33ec0ec13894eebf01050a76">attr&lt; std::string &gt;</link>("MyAttr") ] </computeroutput></para><para>For wide-character formatting there is the similar <computeroutput>wc_decor</computeroutput> decorator generator object. </para></description></data-member>
+<data-member id="doxygen.expressions.c__decorator_8hpp_1a96f4e03c27b0e83840280b1115cd16cb" name="wc_decor"><type><emphasis>unspecified</emphasis></type></data-member>
+<data-member id="doxygen.expressions.c__decorator_8hpp_1a651239a7d2cb4258a8d28d9ed0a56598" name="c_ascii_decor"><type><emphasis>unspecified</emphasis></type><description><para>C-style decorator generator object. Acts similarly to <computeroutput>c_decor</computeroutput>, except that <computeroutput>c_ascii_decor</computeroutput> also converts all non-ASCII and non-printable ASCII characters, except for space character, into C-style hexadecimal escape sequences. The generator provides <computeroutput>operator[]</computeroutput> that can be used to construct the actual decorator. For example:</para><para><computeroutput> c_ascii_decor[ stream &lt;&lt; <link linkend="doxygen.expressions.attr_8hpp_1a4092770e33ec0ec13894eebf01050a76">attr&lt; std::string &gt;</link>("MyAttr") ] </computeroutput></para><para>For wide-character formatting there is the similar <computeroutput>wc_ascii_decor</computeroutput> decorator generator object. </para></description></data-member>
+<data-member id="doxygen.expressions.c__decorator_8hpp_1acfdcd7a573fb0e86cfb69a2c973e5800" name="wc_ascii_decor"><type><emphasis>unspecified</emphasis></type></data-member>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<function id="doxygen.expressions.c__decorator_8hpp_1aaa01ebe9ba5f0c48848715fdc3da313b" name="make_c_decor"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="CharT"/>
+        </template><description><para>The function creates a C-style decorator generator for arbitrary character type. </para></description></function>
+<function id="doxygen.expressions.c__decorator_8hpp_1a486daad22423f11e65694ee0e7661e14" name="make_c_ascii_decor"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="CharT"/>
+        </template><description><para>The function creates a C-style decorator generator for arbitrary character type. </para></description></function>
+</namespace>
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.expressions.char__decorator_8hpp" name="boost/log/expressions/formatters/char_decorator.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>17.11.2012</para>
+
+The header contains implementation of a character decorator. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="expressions">
+<class id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1char__decorator__actor" name="char_decorator_actor"><template>
+      <template-type-parameter name="SubactorT"/>
+      <template-type-parameter name="ImplT"/>
+      <template-nontype-parameter name="ActorT"><type>template&lt; typename &gt; class</type><default>phoenix::actor</default></template-nontype-parameter>
+    </template><inherit access="public">phoenix::actor&lt; char_decorator_terminal&lt; SubactorT, ImplT &gt; &gt;</inherit><description><para>Character decorator actor </para></description><typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1char__decorator__actor_1a91d4887739244b2ee3ce56d4d3793c1c" name="terminal_type"><purpose>Base terminal type. </purpose><type><classname>char_decorator_terminal</classname>&lt; SubactorT, ImplT &gt;</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1char__decorator__actor_1a8e6e38db6111077cfd4db03c148ec8eb" name="char_type"><purpose>Character type. </purpose><type>terminal_type::char_type</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1char__decorator__actor_1a32cf16ea7a6a30ea993ec54ac949c46d" name="base_type"><purpose>Base actor type. </purpose><type>ActorT&lt; terminal_type &gt;</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1char__decorator__actor_1a35491b4686befcc2736ef6e38d175ea3" specifiers="explicit"><parameter name="act"><paramtype>base_type const &amp;</paramtype></parameter><purpose>Initializing constructor. </purpose></constructor>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1char__decorator__actor_1a071ecb630140942458cde91d5a3a9be2" name="get_terminal" cv="const"><type>terminal_type const &amp;</type><purpose>Returns reference to the terminal. </purpose></method>
+</method-group>
+</class><class id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1char__decorator__terminal" name="char_decorator_terminal"><template>
+      <template-type-parameter name="SubactorT"/>
+      <template-type-parameter name="ImplT"/>
+    </template><description><para>Character decorator terminal class. This formatter allows to modify strings generated by other formatters on character level. The most obvious application of decorators is replacing a certain set of characters with decorated equivalents to satisfy requirements of text-based sinks.</para><para>The <computeroutput><link linkend="doxygen.expressions.classboost_1_1log_1_1expressions_1_1char__decorator__terminal">char_decorator_terminal</link></computeroutput> class aggregates the formatter being decorated, and a set of string pairs that are used as decorations. All decorations are applied sequentially. The <computeroutput><link linkend="doxygen.expressions.classboost_1_1log_1_1expressions_1_1char__decorator__terminal">char_decorator_terminal</link></computeroutput> class is a formatter itself, so it can be used to construct more complex formatters, including nesting decorators. </para></description><typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1char__decorator__terminal_1a40d4476cf4a1ec3d6a401afe369e2f0b" name="impl_type"><purpose>Implementation type. </purpose><type>ImplT</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1char__decorator__terminal_1af36e4d8a2c3aed9e2049f7c9c9c62f20" name="char_type"><purpose>Character type. </purpose><type>impl_type::char_type</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1char__decorator__terminal_1a3c724ff145eec6631a4584fc4ce515e1" name="string_type"><purpose>String type. </purpose><type>impl_type::string_type</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1char__decorator__terminal_1aa8678b6f62f444d3adc917f499bb31e8" name="stream_type"><purpose>Stream type. </purpose><type>basic_formatting_ostream&lt; char_type &gt;</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1char__decorator__terminal_1a9fd84cac3efe77f96a0372abcc3d1b8c" name="subactor_type"><purpose>Adopted actor type. </purpose><type>SubactorT</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1char__decorator__terminal_1a62b6ef1000cc599d117fe4d2caf8de4d" name="result_type"><purpose>Result type definition. </purpose><type>string_type</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1char__decorator__terminal_1a99a34261815eb46f1bcc812a8aaa58e7"><parameter name="sub"><paramtype>subactor_type const &amp;</paramtype></parameter><parameter name="impl"><paramtype>impl_type const &amp;</paramtype></parameter><description><para>Initializing constructor. </para></description></constructor>
+<constructor id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1char__decorator__terminal_1a88934ad60579cc34e93f939f4b20b9fc"><parameter name="that"><paramtype><classname>char_decorator_terminal</classname> const &amp;</paramtype></parameter><description><para>Copy constructor </para></description></constructor>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1char__decorator__terminal_1accd2e574260698ef0d176217c335e72a" name="get_subactor" cv="const"><type>subactor_type const &amp;</type><description><para>
+</para></description><returns><para>Adopted subactor </para>
+</returns></method>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1char__decorator__terminal_1a29db53362d2230be0f46773a84d38c6c" name="get_impl" cv="const"><type>impl_type const &amp;</type><description><para>
+</para></description><returns><para>Implementation </para>
+</returns></method>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1char__decorator__terminal_1aebe6ad971024f54e009666b41f826fa5" name="operator()"><type>result_type</type><template>
+          <template-type-parameter name="ContextT"/>
+        </template><parameter name="ctx"><paramtype>ContextT const &amp;</paramtype></parameter><description><para>Invokation operator </para></description></method>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1char__decorator__terminal_1a109902b29c52db15c0e9092bcb38d5d9" name="operator()" cv="const"><type>result_type</type><template>
+          <template-type-parameter name="ContextT"/>
+        </template><parameter name="ctx"><paramtype>ContextT const &amp;</paramtype></parameter><description><para>Invokation operator </para></description></method>
+<constructor id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1char__decorator__terminal_1a139fac44aeafa73819f9c8466987df1c" cv="= delete"/>
+</method-group>
+</class><class id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1pattern__replacer" name="pattern_replacer"><template>
+      <template-type-parameter name="CharT"/>
+    </template><description><para>A simple character decorator implementation. This implementation replaces string patterns in the source string with the fixed replacements. Source patterns and replacements can be specified at the object construction. </para></description><struct id="doxygen.expressions.structboost_1_1log_1_1expressions_1_1pattern__replacer_1_1string__lengths" name="string_lengths"><purpose>Lengths of source pattern and replacement. </purpose><data-member id="doxygen.expressions.structboost_1_1log_1_1expressions_1_1pattern__replacer_1_1string__lengths_1ae10b06e2839894167904ef8e5e416f86" name="from_len"><type>unsigned int</type></data-member>
+<data-member id="doxygen.expressions.structboost_1_1log_1_1expressions_1_1pattern__replacer_1_1string__lengths_1a82b246c60e0737f90986b0dd8b34f860" name="to_len"><type>unsigned int</type></data-member>
+</struct><typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1pattern__replacer_1a9362b0e17335e9c13246f970c962d645" name="result_type"><purpose>Result type. </purpose><type>void</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1pattern__replacer_1ac300472e15c13f0e7c25cec82c665240" name="char_type"><purpose>Character type. </purpose><type>CharT</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1pattern__replacer_1a881bde00510e3840918efc9a3058056c" name="string_type"><purpose>String type. </purpose><type>std::basic_string&lt; char_type &gt;</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1pattern__replacer_1ada3ba46080742a27451893939e488835" specifiers="explicit"><template>
+          <template-type-parameter name="RangeT"/>
+        </template><parameter name="decorations"><paramtype>RangeT const &amp;</paramtype></parameter><description><para>Initializing constructor. Creates a pattern replacer with the specified <emphasis>decorations</emphasis>. The provided decorations must be a sequence of <computeroutput>std::pair</computeroutput> of strings. The first element of each pair is the source pattern, and the second one is the corresponding replacement. </para></description></constructor>
+<constructor id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1pattern__replacer_1ab44ddf57495b436d78a7f9042895f32d"><template>
+          <template-type-parameter name="FromRangeT"/>
+          <template-type-parameter name="ToRangeT"/>
+        </template><parameter name="from"><paramtype>FromRangeT const &amp;</paramtype></parameter><parameter name="to"><paramtype>ToRangeT const &amp;</paramtype></parameter><description><para>Initializing constructor. Creates a pattern replacer with decorations specified in form of two same-sized string sequences. Each <computeroutput>i</computeroutput>'th decoration will be <computeroutput>from[i]</computeroutput> -&gt; <computeroutput>to[i]</computeroutput>. </para></description></constructor>
+<constructor id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1pattern__replacer_1a4e0c7e3ddc6e7da74aa29bac8099f2d2"><parameter name="that"><paramtype><classname>pattern_replacer</classname> const &amp;</paramtype></parameter><purpose>Copy constructor. </purpose></constructor>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1pattern__replacer_1a8b0f2a18cab0ff1b1473e89b10687e31" name="operator()" cv="const"><type>result_type</type><parameter name="str"><paramtype>string_type &amp;</paramtype></parameter><parameter name="start_pos"><paramtype>typename string_type::size_type</paramtype><default>0</default></parameter><purpose>Applies string replacements starting from the specified position. </purpose></method>
+</method-group>
+<method-group name="private static functions">
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1pattern__replacer_1a494349e11e4097cb143ef07eeb16c9d7" name="string_begin" specifiers="static"><type>char_type *</type><parameter name="p"><paramtype>char_type *</paramtype></parameter></method>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1pattern__replacer_1a17d2ac2d2a4607ee1046be1a7a7987b7" name="string_begin" specifiers="static"><type>const char_type *</type><parameter name="p"><paramtype>const char_type *</paramtype></parameter></method>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1pattern__replacer_1afe1835b50a4126267e93b6cf0a5964cc" name="string_begin" specifiers="static"><type>range_const_iterator&lt; RangeT &gt;::type</type><template>
+          <template-type-parameter name="RangeT"/>
+        </template><parameter name="r"><paramtype>RangeT const &amp;</paramtype></parameter></method>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1pattern__replacer_1af89782631cad43f6d1831e1a460b3c91" name="string_end" specifiers="static"><type>char_type *</type><parameter name="p"><paramtype>char_type *</paramtype></parameter></method>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1pattern__replacer_1ab726ceca2880012fee9e88aaf92d81e1" name="string_end" specifiers="static"><type>const char_type *</type><parameter name="p"><paramtype>const char_type *</paramtype></parameter></method>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1pattern__replacer_1a9b639b2dcba152a13add172a47618690" name="string_end" specifiers="static"><type>range_const_iterator&lt; RangeT &gt;::type</type><template>
+          <template-type-parameter name="RangeT"/>
+        </template><parameter name="r"><paramtype>RangeT const &amp;</paramtype></parameter></method>
+</method-group>
+</class>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<function id="doxygen.expressions.char__decorator_8hpp_1a3d053d15ef958330ce0a68e2e7e0a4c3" name="char_decor"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="RangeT"/>
+        </template><parameter name="decorations"><paramtype>RangeT const &amp;</paramtype><description><para>A sequence of string pairs that will be used as decorations. Every <computeroutput>decorations[i].first</computeroutput> substring occurrence in the output will be replaced with <computeroutput>decorations[i].second</computeroutput>. </para></description></parameter><description><para>The function returns a decorator generator object. The generator provides <computeroutput>operator[]</computeroutput> that can be used to construct the actual decorator.</para><para>
+</para></description></function>
+<function id="doxygen.expressions.char__decorator_8hpp_1ad974becced548bc66ed7845b3ed872e1" name="char_decor"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="FromRangeT"/>
+          <template-type-parameter name="ToRangeT"/>
+        </template><parameter name="from"><paramtype>FromRangeT const &amp;</paramtype><description><para>A sequence of strings that will be sought in the output. </para></description></parameter><parameter name="to"><paramtype>ToRangeT const &amp;</paramtype><description><para>A sequence of strings that will be used as replacements.</para></description></parameter><description><para>The function returns a decorator generator object. The generator provides <computeroutput>operator[]</computeroutput> that can be used to construct the actual decorator.</para><para>
+<note><para>The <emphasis>from</emphasis> and <emphasis>to</emphasis> sequences mush be of the same size. Every <computeroutput>from[i]</computeroutput> substring occurrence in the output will be replaced with <computeroutput>to[i]</computeroutput>. </para>
+</note>
+</para></description></function>
+
+
+</namespace>
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.expressions.csv__decorator_8hpp" name="boost/log/expressions/formatters/csv_decorator.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>18.11.2012</para>
+
+The header contains implementation of a CSV-style character decorator. See: <ulink url="http://en.wikipedia.org/wiki/Comma-separated_values">http://en.wikipedia.org/wiki/Comma-separated_values</ulink> </para><namespace name="boost">
+<namespace name="log">
+<namespace name="expressions">
+<data-member id="doxygen.expressions.csv__decorator_8hpp_1aead521f794ae894276d65608b074e7f4" name="csv_decor"><type><emphasis>unspecified</emphasis></type><description><para>CSV-style decorator generator object. The decorator doubles double quotes that may be found in the output. See <ulink url="http://en.wikipedia.org/wiki/Comma-separated_values">http://en.wikipedia.org/wiki/Comma-separated_values</ulink> for more information on the CSV format. The generator provides <computeroutput>operator[]</computeroutput> that can be used to construct the actual decorator. For example:</para><para><computeroutput> csv_decor[ stream &lt;&lt; <link linkend="doxygen.expressions.attr_8hpp_1a4092770e33ec0ec13894eebf01050a76">attr&lt; std::string &gt;</link>("MyAttr") ] </computeroutput></para><para>For wide-character formatting there is the similar <computeroutput>wcsv_decor</computeroutput> decorator generator object. </para></description></data-member>
+<data-member id="doxygen.expressions.csv__decorator_8hpp_1a1c51bd644ca0f05f1b466e96b218cd77" name="wcsv_decor"><type><emphasis>unspecified</emphasis></type></data-member>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<function id="doxygen.expressions.csv__decorator_8hpp_1a4d9e3280528e2c28f20132ecf54c013a" name="make_csv_decor"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="CharT"/>
+        </template><description><para>The function creates an CSV-style decorator generator for arbitrary character type. </para></description></function>
+
+
+
+
+</namespace>
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.expressions.date__time_8hpp" name="boost/log/expressions/formatters/date_time.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>16.09.2012</para>
+
+The header contains a formatter function for date and time attribute values. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="expressions">
+<class id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__date__time__actor" name="format_date_time_actor"><template>
+      <template-type-parameter name="T"/>
+      <template-type-parameter name="FallbackPolicyT"/>
+      <template-type-parameter name="CharT"/>
+      <template-nontype-parameter name="ActorT"><type>template&lt; typename &gt; class</type><default>phoenix::actor</default></template-nontype-parameter>
+    </template><inherit access="public">phoenix::actor&lt; format_date_time_terminal&lt; T, FallbackPolicyT, CharT &gt; &gt;</inherit><description><para>Date and time formatter actor. </para></description><typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__date__time__actor_1a265a253612b46abed17c61b0a5e5ce30" name="value_type"><purpose>Attribute value type. </purpose><type>T</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__date__time__actor_1ac300472e15c13f0e7c25cec82c665240" name="char_type"><purpose>Character type. </purpose><type>CharT</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__date__time__actor_1a2e440739dc9c4b7d52309f8634dea29c" name="fallback_policy"><purpose>Fallback policy. </purpose><type>FallbackPolicyT</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__date__time__actor_1aad3d84b05a8828aae0b31b7ec218e828" name="terminal_type"><purpose>Base terminal type. </purpose><type><classname>format_date_time_terminal</classname>&lt; value_type, fallback_policy, char_type &gt;</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__date__time__actor_1a4a7670862bd30da2fcc8e0d801abb385" name="formatter_function_type"><purpose>Formatter function. </purpose><type>terminal_type::formatter_function_type</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__date__time__actor_1a32cf16ea7a6a30ea993ec54ac949c46d" name="base_type"><purpose>Base actor type. </purpose><type>ActorT&lt; terminal_type &gt;</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__date__time__actor_1af6c62f43796268fa88ab3bc5badf00ea" specifiers="explicit"><parameter name="act"><paramtype>base_type const &amp;</paramtype></parameter><purpose>Initializing constructor. </purpose></constructor>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__date__time__actor_1ab4930a89e24e98e354a4803de84f0dc5" name="get_name" cv="const"><type>attribute_name</type><description><para>
+</para></description><returns><para>The attribute name </para>
+</returns></method>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__date__time__actor_1a54e65b79177918fcf47f5a5a9ae2a7b1" name="get_fallback_policy" cv="const"><type>fallback_policy const &amp;</type><description><para>
+</para></description><returns><para>Fallback policy </para>
+</returns></method>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__date__time__actor_1a2b09d159d86580648d353388d4b1e11e" name="get_formatter_function" cv="const"><type>formatter_function_type const &amp;</type><description><para>
+</para></description><returns><para>Formatter function </para>
+</returns></method>
+</method-group>
+</class><class id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__date__time__terminal" name="format_date_time_terminal"><template>
+      <template-type-parameter name="T"/>
+      <template-type-parameter name="FallbackPolicyT"/>
+      <template-type-parameter name="CharT"/>
+    </template><description><para>Date and time formatter terminal. </para></description><typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__date__time__terminal_1a265a253612b46abed17c61b0a5e5ce30" name="value_type"><purpose>Attribute value type. </purpose><type>T</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__date__time__terminal_1a2e440739dc9c4b7d52309f8634dea29c" name="fallback_policy"><purpose>Fallback policy. </purpose><type>FallbackPolicyT</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__date__time__terminal_1ac300472e15c13f0e7c25cec82c665240" name="char_type"><purpose>Character type. </purpose><type>CharT</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__date__time__terminal_1a881bde00510e3840918efc9a3058056c" name="string_type"><purpose>String type. </purpose><type>std::basic_string&lt; char_type &gt;</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__date__time__terminal_1aa8678b6f62f444d3adc917f499bb31e8" name="stream_type"><purpose>Formatting stream type. </purpose><type>basic_formatting_ostream&lt; char_type &gt;</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__date__time__terminal_1afebb69a3554f6cf419b99f93d78a29cb" name="formatter_function_type"><purpose>Formatter function. </purpose><type><emphasis>unspecified</emphasis></type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__date__time__terminal_1a62b6ef1000cc599d117fe4d2caf8de4d" name="result_type"><purpose>Function result type. </purpose><type>string_type</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__date__time__terminal_1a6c7478ec2c7ed54c9a7ddade92ce4082"><parameter name="name"><paramtype>attribute_name const &amp;</paramtype></parameter><parameter name="fallback"><paramtype>fallback_policy const &amp;</paramtype></parameter><parameter name="format"><paramtype>string_type const &amp;</paramtype></parameter><purpose>Initializing constructor. </purpose></constructor>
+<constructor id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__date__time__terminal_1ac94b5af8a9bb15e36133f13b07d3a429"><parameter name="that"><paramtype><classname>format_date_time_terminal</classname> const &amp;</paramtype></parameter><purpose>Copy constructor. </purpose></constructor>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__date__time__terminal_1ab4930a89e24e98e354a4803de84f0dc5" name="get_name" cv="const"><type>attribute_name</type><purpose>Returns attribute name. </purpose></method>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__date__time__terminal_1a54e65b79177918fcf47f5a5a9ae2a7b1" name="get_fallback_policy" cv="const"><type>fallback_policy const &amp;</type><purpose>Returns fallback policy. </purpose></method>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__date__time__terminal_1a2b09d159d86580648d353388d4b1e11e" name="get_formatter_function" cv="const"><type>formatter_function_type const &amp;</type><purpose>Retruns formatter function. </purpose></method>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__date__time__terminal_1aebe6ad971024f54e009666b41f826fa5" name="operator()"><type>result_type</type><template>
+          <template-type-parameter name="ContextT"/>
+        </template><parameter name="ctx"><paramtype>ContextT const &amp;</paramtype></parameter><purpose>Invokation operator. </purpose></method>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__date__time__terminal_1a109902b29c52db15c0e9092bcb38d5d9" name="operator()" cv="const"><type>result_type</type><template>
+          <template-type-parameter name="ContextT"/>
+        </template><parameter name="ctx"><paramtype>ContextT const &amp;</paramtype></parameter><purpose>Invokation operator. </purpose></method>
+<constructor id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__date__time__terminal_1adb132bd7c6cb6e53dbc809e569c2d231" cv="= delete"/>
+</method-group>
+</class>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<function id="doxygen.expressions.date__time_8hpp_1a30264200aaf62ee0ffa1cd6fc021ba04" name="format_date_time"><type><classname>format_date_time_actor</classname>&lt; AttributeValueT, fallback_to_none, CharT &gt;</type><template>
+          <template-type-parameter name="AttributeValueT"/>
+          <template-type-parameter name="CharT"/>
+        </template><parameter name="name"><paramtype>attribute_name const &amp;</paramtype><description><para>Attribute name </para></description></parameter><parameter name="format"><paramtype>const CharT *</paramtype><description><para>Format string </para></description></parameter><description><para>The function generates a manipulator node in a template expression. The manipulator must participate in a formatting expression (stream output or <computeroutput>format</computeroutput> placeholder filler).</para><para>
+</para></description></function>
+<function id="doxygen.expressions.date__time_8hpp_1a2fff7783b17cb29d9724b2ed71a87053" name="format_date_time"><type><classname>format_date_time_actor</classname>&lt; AttributeValueT, fallback_to_none, CharT &gt;</type><template>
+          <template-type-parameter name="AttributeValueT"/>
+          <template-type-parameter name="CharT"/>
+        </template><parameter name="name"><paramtype>attribute_name const &amp;</paramtype><description><para>Attribute name </para></description></parameter><parameter name="format"><paramtype>std::basic_string&lt; CharT &gt; const &amp;</paramtype><description><para>Format string </para></description></parameter><description><para>The function generates a manipulator node in a template expression. The manipulator must participate in a formatting expression (stream output or <computeroutput>format</computeroutput> placeholder filler).</para><para>
+</para></description></function>
+<function id="doxygen.expressions.date__time_8hpp_1a0e05ab90a029911a7e7c3bd0c3cc88b8" name="format_date_time"><type><classname>format_date_time_actor</classname>&lt; typename DescriptorT::value_type, fallback_to_none, CharT, ActorT &gt;</type><template>
+          <template-type-parameter name="DescriptorT"/>
+          <template-nontype-parameter name="ActorT"><type>template&lt; typename &gt; class</type></template-nontype-parameter>
+          <template-type-parameter name="CharT"/>
+        </template><parameter name="keyword"><paramtype><classname>attribute_keyword</classname>&lt; DescriptorT, ActorT &gt; const &amp;</paramtype><description><para>Attribute keyword </para></description></parameter><parameter name="format"><paramtype>const CharT *</paramtype><description><para>Format string </para></description></parameter><description><para>The function generates a manipulator node in a template expression. The manipulator must participate in a formatting expression (stream output or <computeroutput>format</computeroutput> placeholder filler).</para><para>
+</para></description></function>
+<function id="doxygen.expressions.date__time_8hpp_1a54afc5c8c95314d21966cd57106ac58f" name="format_date_time"><type><classname>format_date_time_actor</classname>&lt; typename DescriptorT::value_type, fallback_to_none, CharT, ActorT &gt;</type><template>
+          <template-type-parameter name="DescriptorT"/>
+          <template-nontype-parameter name="ActorT"><type>template&lt; typename &gt; class</type></template-nontype-parameter>
+          <template-type-parameter name="CharT"/>
+        </template><parameter name="keyword"><paramtype><classname>attribute_keyword</classname>&lt; DescriptorT, ActorT &gt; const &amp;</paramtype><description><para>Attribute keyword </para></description></parameter><parameter name="format"><paramtype>std::basic_string&lt; CharT &gt; const &amp;</paramtype><description><para>Format string </para></description></parameter><description><para>The function generates a manipulator node in a template expression. The manipulator must participate in a formatting expression (stream output or <computeroutput>format</computeroutput> placeholder filler).</para><para>
+</para></description></function>
+<function id="doxygen.expressions.date__time_8hpp_1a320134de6d7c6418ae61579322decc1a" name="format_date_time"><type><classname>format_date_time_actor</classname>&lt; T, FallbackPolicyT, CharT, ActorT &gt;</type><template>
+          <template-type-parameter name="T"/>
+          <template-type-parameter name="FallbackPolicyT"/>
+          <template-type-parameter name="TagT"/>
+          <template-nontype-parameter name="ActorT"><type>template&lt; typename &gt; class</type></template-nontype-parameter>
+          <template-type-parameter name="CharT"/>
+        </template><parameter name="placeholder"><paramtype><classname>attribute_actor</classname>&lt; T, FallbackPolicyT, TagT, ActorT &gt; const &amp;</paramtype><description><para>Attribute placeholder </para></description></parameter><parameter name="format"><paramtype>const CharT *</paramtype><description><para>Format string </para></description></parameter><description><para>The function generates a manipulator node in a template expression. The manipulator must participate in a formatting expression (stream output or <computeroutput>format</computeroutput> placeholder filler).</para><para>
+</para></description></function>
+<function id="doxygen.expressions.date__time_8hpp_1ad4f26a69eabd9b9f214caddd5d6cd7c2" name="format_date_time"><type><classname>format_date_time_actor</classname>&lt; T, FallbackPolicyT, CharT, ActorT &gt;</type><template>
+          <template-type-parameter name="T"/>
+          <template-type-parameter name="FallbackPolicyT"/>
+          <template-type-parameter name="TagT"/>
+          <template-nontype-parameter name="ActorT"><type>template&lt; typename &gt; class</type></template-nontype-parameter>
+          <template-type-parameter name="CharT"/>
+        </template><parameter name="placeholder"><paramtype><classname>attribute_actor</classname>&lt; T, FallbackPolicyT, TagT, ActorT &gt; const &amp;</paramtype><description><para>Attribute placeholder </para></description></parameter><parameter name="format"><paramtype>std::basic_string&lt; CharT &gt; const &amp;</paramtype><description><para>Format string </para></description></parameter><description><para>The function generates a manipulator node in a template expression. The manipulator must participate in a formatting expression (stream output or <computeroutput>format</computeroutput> placeholder filler).</para><para>
+</para></description></function>
+
+
+
+
+
+</namespace>
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.expressions.format_8hpp" name="boost/log/expressions/formatters/format.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>15.11.2012</para>
+
+The header contains a generic log record formatter function. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="expressions">
+<class id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__terminal" name="format_terminal"><template>
+      <template-type-parameter name="CharT"/>
+    </template><purpose>Template expressions terminal node with Boost.Format-like formatter. </purpose><typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__terminal_1ac300472e15c13f0e7c25cec82c665240" name="char_type"><purpose>Character type. </purpose><type>CharT</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__terminal_1ad0d101ef35df3ce54aa2fd0561b39dd9" name="format_type"><purpose>Boost.Format formatter type. </purpose><type><emphasis>unspecified</emphasis></type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__terminal_1a881bde00510e3840918efc9a3058056c" name="string_type"><purpose>String type. </purpose><type>std::basic_string&lt; char_type &gt;</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__terminal_1a64453247ff25fa5df69ef3be3f4bb2cd" name="result_type"><purpose>Terminal result type. </purpose><type>format_type::pump</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__terminal_1a4b67a73f2707d513f08e9d3ca9a0e6a8" specifiers="explicit"><parameter name="format"><paramtype>const char_type *</paramtype></parameter><purpose>Initializing constructor. </purpose></constructor>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__terminal_1a109902b29c52db15c0e9092bcb38d5d9" name="operator()" cv="const"><type>result_type</type><template>
+          <template-type-parameter name="ContextT"/>
+        </template><parameter name="ctx"><paramtype>ContextT const &amp;</paramtype></parameter><purpose>Invokation operator. </purpose></method>
+<constructor id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__terminal_1ad875ce9c57ef3342e9dbd6329b8c0682" cv="= delete"/>
+</method-group>
+</class>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<function id="doxygen.expressions.format_8hpp_1a58a59f21be70dbd66a9542deb4489331" name="format"><type>phoenix::actor&lt; <classname>format_terminal</classname>&lt; CharT &gt; &gt;</type><template>
+          <template-type-parameter name="CharT"/>
+        </template><parameter name="fmt"><paramtype>const CharT *</paramtype></parameter><description><para>The function generates a terminal node in a template expression. The node will perform log record formatting according to the provided format string. </para></description></function>
+<function id="doxygen.expressions.format_8hpp_1a07e7932cbc34f8b3ede6a8b6efa846d8" name="format"><type>phoenix::actor&lt; <classname>format_terminal</classname>&lt; CharT &gt; &gt;</type><template>
+          <template-type-parameter name="CharT"/>
+          <template-type-parameter name="TraitsT"/>
+          <template-type-parameter name="AllocatorT"/>
+        </template><parameter name="fmt"><paramtype>std::basic_string&lt; CharT, TraitsT, AllocatorT &gt; const &amp;</paramtype></parameter><description><para>The function generates a terminal node in a template expression. The node will perform log record formatting according to the provided format string. </para></description></function>
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.expressions.if_8hpp" name="boost/log/expressions/formatters/if.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>17.11.2012</para>
+
+The header contains implementation of a conditional formatter. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="expressions">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<function id="doxygen.expressions.if_8hpp_1a8f4a35e2039356b0295f7f0a69d4eb8a" name="if_"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="CondT"/>
+        </template><parameter name="cond"><paramtype>CondT const &amp;</paramtype><description><para>A filter expression that will be used as the condition </para></description></parameter><description><para>The function returns a conditional formatter generator object. The generator provides <computeroutput>operator[]</computeroutput> that can be used to construct the actual formatter. The formatter must participate in a streaming expression.</para><para>
+</para></description></function>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.expressions.max__size__decorator_8hpp" name="boost/log/expressions/formatters/max_size_decorator.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>06.07.2016</para>
+
+The header contains implementation of a string length limiting decorator. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="expressions">
+<class id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1max__size__decorator__actor" name="max_size_decorator_actor"><template>
+      <template-type-parameter name="SubactorT"/>
+      <template-type-parameter name="CharT"/>
+      <template-nontype-parameter name="ActorT"><type>template&lt; typename &gt; class</type><default>phoenix::actor</default></template-nontype-parameter>
+    </template><inherit access="public">phoenix::actor&lt; max_size_decorator_terminal&lt; SubactorT, CharT &gt; &gt;</inherit><description><para>Character decorator actor </para></description><typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1max__size__decorator__actor_1aa66249cecf16acacba8f1a2d8c2c4c8d" name="terminal_type"><purpose>Base terminal type. </purpose><type><classname>max_size_decorator_terminal</classname>&lt; SubactorT, CharT &gt;</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1max__size__decorator__actor_1a8e6e38db6111077cfd4db03c148ec8eb" name="char_type"><purpose>Character type. </purpose><type>terminal_type::char_type</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1max__size__decorator__actor_1a32cf16ea7a6a30ea993ec54ac949c46d" name="base_type"><purpose>Base actor type. </purpose><type>ActorT&lt; terminal_type &gt;</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1max__size__decorator__actor_1afe3fb04e4b12a7dc9f69300e879d14cd" specifiers="explicit"><parameter name="act"><paramtype>base_type const &amp;</paramtype></parameter><purpose>Initializing constructor. </purpose></constructor>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1max__size__decorator__actor_1a071ecb630140942458cde91d5a3a9be2" name="get_terminal" cv="const"><type>terminal_type const &amp;</type><purpose>Returns reference to the terminal. </purpose></method>
+</method-group>
+</class><class id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1max__size__decorator__terminal" name="max_size_decorator_terminal"><template>
+      <template-type-parameter name="SubactorT"/>
+      <template-type-parameter name="CharT"/>
+    </template><description><para>String size limiting decorator terminal class. This formatter allows to limit the maximum total length of the strings generated by other formatters.</para><para>The <computeroutput><link linkend="doxygen.expressions.classboost_1_1log_1_1expressions_1_1max__size__decorator__terminal">max_size_decorator_terminal</link></computeroutput> class aggregates the formatter being decorated, the maximum string length it can produce and an optional truncation marker string, which will be put at the end of the output if the limit is exceeded. Note that the marker length is included in the limit and as such must not exceed it. The <computeroutput><link linkend="doxygen.expressions.classboost_1_1log_1_1expressions_1_1max__size__decorator__terminal">max_size_decorator_terminal</link></computeroutput> class is a formatter itself, so it can be used to construct more complex formatters, including nesting decorators. </para></description><typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1max__size__decorator__terminal_1ac300472e15c13f0e7c25cec82c665240" name="char_type"><purpose>Character type. </purpose><type>CharT</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1max__size__decorator__terminal_1a881bde00510e3840918efc9a3058056c" name="string_type"><purpose>String type. </purpose><type>std::basic_string&lt; char_type &gt;</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1max__size__decorator__terminal_1a89a6dcafb6130e3e1bcd6d1285e0dd6f" name="size_type"><purpose>String size type. </purpose><type>std::size_t</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1max__size__decorator__terminal_1aa8678b6f62f444d3adc917f499bb31e8" name="stream_type"><purpose>Stream type. </purpose><type>basic_formatting_ostream&lt; char_type &gt;</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1max__size__decorator__terminal_1a9fd84cac3efe77f96a0372abcc3d1b8c" name="subactor_type"><purpose>Adopted actor type. </purpose><type>SubactorT</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1max__size__decorator__terminal_1a62b6ef1000cc599d117fe4d2caf8de4d" name="result_type"><purpose>Result type definition. </purpose><type>string_type</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1max__size__decorator__terminal_1a10d9b2fc9c4d0295c942840bcdafc820"><parameter name="sub"><paramtype>subactor_type const &amp;</paramtype></parameter><parameter name="max_size"><paramtype>size_type</paramtype></parameter><parameter name="overflow_marker"><paramtype>string_type const &amp;</paramtype><default>string_type()</default></parameter><description><para>Initializing constructor. </para></description></constructor>
+<constructor id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1max__size__decorator__terminal_1a9f7ec252122ca04a50257eb9121ebaa9"><parameter name="that"><paramtype><classname>max_size_decorator_terminal</classname> const &amp;</paramtype></parameter><description><para>Copy constructor </para></description></constructor>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1max__size__decorator__terminal_1accd2e574260698ef0d176217c335e72a" name="get_subactor" cv="const"><type>subactor_type const &amp;</type><description><para>
+</para></description><returns><para>Adopted subactor </para>
+</returns></method>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1max__size__decorator__terminal_1a35eeaa89ebad00e76d349ee92338c5f0" name="get_max_size" cv="const"><type>size_type</type><description><para>
+</para></description><returns><para>Max string size limit </para>
+</returns></method>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1max__size__decorator__terminal_1ad29bfe2dee2a4801d447e62504edf367" name="get_overflow_marker" cv="const"><type>string_type const &amp;</type><description><para>
+</para></description><returns><para>Max string size limit </para>
+</returns></method>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1max__size__decorator__terminal_1aebe6ad971024f54e009666b41f826fa5" name="operator()"><type>result_type</type><template>
+          <template-type-parameter name="ContextT"/>
+        </template><parameter name="ctx"><paramtype>ContextT const &amp;</paramtype></parameter><description><para>Invokation operator </para></description></method>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1max__size__decorator__terminal_1a109902b29c52db15c0e9092bcb38d5d9" name="operator()" cv="const"><type>result_type</type><template>
+          <template-type-parameter name="ContextT"/>
+        </template><parameter name="ctx"><paramtype>ContextT const &amp;</paramtype></parameter><description><para>Invokation operator </para></description></method>
+<constructor id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1max__size__decorator__terminal_1a8d8d194deb269393621b960860b6d351" cv="= delete"/>
+</method-group>
+</class>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<function id="doxygen.expressions.max__size__decorator_8hpp_1acd36323a11148f91c17dc1bf57d816f6" name="max_size_decor"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="CharT"/>
+        </template><parameter name="max_size"><paramtype>std::size_t</paramtype><description><para>The maximum number of characters (i.e. string element objects) that the decorated formatter can produce. </para></description></parameter><description><para>The function returns a decorator generator object. The generator provides <computeroutput>operator[]</computeroutput> that can be used to construct the actual decorator.</para><para>
+</para></description></function>
+<function id="doxygen.expressions.max__size__decorator_8hpp_1ad7a0c1f20dde0d0ada95c52d9ab89044" name="max_size_decor"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="CharT"/>
+        </template><parameter name="max_size"><paramtype>std::size_t</paramtype><description><para>The maximum number of characters (i.e. string element objects) that the decorated formatter can produce. </para></description></parameter><parameter name="overflow_marker"><paramtype>const CharT *</paramtype><description><para>The marker string which is appended to the output if the <emphasis>max_size</emphasis> limit is exceeded. Must be a non-null pointer to a zero-terminated string.</para></description></parameter><description><para>The function returns a decorator generator object. The generator provides <computeroutput>operator[]</computeroutput> that can be used to construct the actual decorator.</para><para>
+
+</para></description><requires><para>The <emphasis>overflow_marker</emphasis> length must not exceed the <emphasis>max_size</emphasis> limit. </para>
+</requires></function>
+<function id="doxygen.expressions.max__size__decorator_8hpp_1a52396e206a3c866e7628a1ee782226ca" name="max_size_decor"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="CharT"/>
+        </template><parameter name="max_size"><paramtype>std::size_t</paramtype><description><para>The maximum number of characters (i.e. string element objects) that the decorated formatter can produce. </para></description></parameter><parameter name="overflow_marker"><paramtype>std::basic_string&lt; CharT &gt; const &amp;</paramtype><description><para>The marker string which is appended to the output if the <emphasis>max_size</emphasis> limit is exceeded.</para></description></parameter><description><para>The function returns a decorator generator object. The generator provides <computeroutput>operator[]</computeroutput> that can be used to construct the actual decorator.</para><para>
+
+</para></description><requires><para>The <emphasis>overflow_marker</emphasis> length must not exceed the <emphasis>max_size</emphasis> limit. </para>
+</requires></function>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.expressions.named__scope_8hpp" name="boost/log/expressions/formatters/named_scope.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>11.11.2012</para>
+
+The header contains a formatter function for named scope attribute values. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="expressions">
+<class id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__named__scope__actor" name="format_named_scope_actor"><template>
+      <template-type-parameter name="FallbackPolicyT"/>
+      <template-type-parameter name="CharT"/>
+      <template-nontype-parameter name="ActorT"><type>template&lt; typename &gt; class</type><default>phoenix::actor</default></template-nontype-parameter>
+    </template><inherit access="public">phoenix::actor&lt; format_named_scope_terminal&lt; FallbackPolicyT, CharT &gt; &gt;</inherit><description><para>Named scope formatter actor. </para></description><typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__named__scope__actor_1ac300472e15c13f0e7c25cec82c665240" name="char_type"><purpose>Character type. </purpose><type>CharT</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__named__scope__actor_1a2e440739dc9c4b7d52309f8634dea29c" name="fallback_policy"><purpose>Fallback policy. </purpose><type>FallbackPolicyT</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__named__scope__actor_1a9c6c6a6fe4fb259586ad60b8f8962322" name="terminal_type"><purpose>Base terminal type. </purpose><type><classname>format_named_scope_terminal</classname>&lt; fallback_policy, char_type &gt;</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__named__scope__actor_1a518fb13207dd1a724cb46f50f4576711" name="value_type"><purpose>Attribute value type. </purpose><type>terminal_type::value_type</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__named__scope__actor_1a4a7670862bd30da2fcc8e0d801abb385" name="formatter_function_type"><purpose>Formatter function. </purpose><type>terminal_type::formatter_function_type</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__named__scope__actor_1a32cf16ea7a6a30ea993ec54ac949c46d" name="base_type"><purpose>Base actor type. </purpose><type>ActorT&lt; terminal_type &gt;</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__named__scope__actor_1ad5b4065532ca341c49fc9249cc5e8462" specifiers="explicit"><parameter name="act"><paramtype>base_type const &amp;</paramtype></parameter><purpose>Initializing constructor. </purpose></constructor>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__named__scope__actor_1ab4930a89e24e98e354a4803de84f0dc5" name="get_name" cv="const"><type>attribute_name</type><description><para>
+</para></description><returns><para>The attribute name </para>
+</returns></method>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__named__scope__actor_1a54e65b79177918fcf47f5a5a9ae2a7b1" name="get_fallback_policy" cv="const"><type>fallback_policy const &amp;</type><description><para>
+</para></description><returns><para>Fallback policy </para>
+</returns></method>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__named__scope__actor_1a2b09d159d86580648d353388d4b1e11e" name="get_formatter_function" cv="const"><type>formatter_function_type const &amp;</type><description><para>
+</para></description><returns><para>Formatter function </para>
+</returns></method>
+</method-group>
+</class><class id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__named__scope__terminal" name="format_named_scope_terminal"><template>
+      <template-type-parameter name="FallbackPolicyT"/>
+      <template-type-parameter name="CharT"/>
+    </template><description><para>Named scope formatter terminal. </para></description><typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__named__scope__terminal_1a85dc4d875334369c15a3225e90049640" name="value_type"><purpose>Attribute value type. </purpose><type>attributes::named_scope::value_type</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__named__scope__terminal_1a2e440739dc9c4b7d52309f8634dea29c" name="fallback_policy"><purpose>Fallback policy. </purpose><type>FallbackPolicyT</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__named__scope__terminal_1ac300472e15c13f0e7c25cec82c665240" name="char_type"><purpose>Character type. </purpose><type>CharT</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__named__scope__terminal_1a881bde00510e3840918efc9a3058056c" name="string_type"><purpose>String type. </purpose><type>std::basic_string&lt; char_type &gt;</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__named__scope__terminal_1aa8678b6f62f444d3adc917f499bb31e8" name="stream_type"><purpose>Formatting stream type. </purpose><type>basic_formatting_ostream&lt; char_type &gt;</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__named__scope__terminal_1a4c6fe792a101013dcbc778d5774b5b8f" name="formatter_function_type"><purpose>Formatter function. </purpose><type><emphasis>unspecified</emphasis></type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__named__scope__terminal_1a62b6ef1000cc599d117fe4d2caf8de4d" name="result_type"><purpose>Function result type. </purpose><type>string_type</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__named__scope__terminal_1a6f1c112f31bd18e24a45cc670faea1aa"><template>
+          <template-type-parameter name="FormatT"/>
+        </template><parameter name="name"><paramtype>attribute_name const &amp;</paramtype></parameter><parameter name="fallback"><paramtype>fallback_policy const &amp;</paramtype></parameter><parameter name="element_format"><paramtype>FormatT const &amp;</paramtype></parameter><parameter name="delimiter"><paramtype>string_type const &amp;</paramtype></parameter><parameter name="incomplete_marker"><paramtype>string_type const &amp;</paramtype></parameter><parameter name="empty_marker"><paramtype>string_type const &amp;</paramtype></parameter><parameter name="depth"><paramtype>value_type::size_type</paramtype></parameter><parameter name="direction"><paramtype>scope_iteration_direction</paramtype></parameter><purpose>Initializing constructor. </purpose></constructor>
+<constructor id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__named__scope__terminal_1a74b74112c312202e12bd8cd3d13ff692"><parameter name="that"><paramtype><classname>format_named_scope_terminal</classname> const &amp;</paramtype></parameter><purpose>Copy constructor. </purpose></constructor>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__named__scope__terminal_1ab4930a89e24e98e354a4803de84f0dc5" name="get_name" cv="const"><type>attribute_name</type><purpose>Returns attribute name. </purpose></method>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__named__scope__terminal_1a54e65b79177918fcf47f5a5a9ae2a7b1" name="get_fallback_policy" cv="const"><type>fallback_policy const &amp;</type><purpose>Returns fallback policy. </purpose></method>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__named__scope__terminal_1a2b09d159d86580648d353388d4b1e11e" name="get_formatter_function" cv="const"><type>formatter_function_type const &amp;</type><purpose>Retruns formatter function. </purpose></method>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__named__scope__terminal_1aebe6ad971024f54e009666b41f826fa5" name="operator()"><type>result_type</type><template>
+          <template-type-parameter name="ContextT"/>
+        </template><parameter name="ctx"><paramtype>ContextT const &amp;</paramtype></parameter><purpose>Invokation operator. </purpose></method>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__named__scope__terminal_1a109902b29c52db15c0e9092bcb38d5d9" name="operator()" cv="const"><type>result_type</type><template>
+          <template-type-parameter name="ContextT"/>
+        </template><parameter name="ctx"><paramtype>ContextT const &amp;</paramtype></parameter><purpose>Invokation operator. </purpose></method>
+<constructor id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__named__scope__terminal_1aec4f44052aaa3e0dd8f740a87150b1bd" cv="= delete"/>
+</method-group>
+</class><enum id="doxygen.expressions.named__scope_8hpp_1a12a6ab3af041d51ff8401669846057a1" name="scope_iteration_direction"><enumvalue id="doxygen.expressions.named__scope_8hpp_1a12a6ab3af041d51ff8401669846057a1a726a0af5164861adac8c015a742dcf21" name="forward"><purpose>Iterate through scopes from outermost to innermost. </purpose></enumvalue><enumvalue id="doxygen.expressions.named__scope_8hpp_1a12a6ab3af041d51ff8401669846057a1a5a40f8ecbed801e00fddb306fc5666f0" name="reverse"><purpose>Iterate through scopes from innermost to outermost. </purpose></enumvalue><purpose>Scope iteration directions. </purpose></enum>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<function id="doxygen.expressions.named__scope_8hpp_1a5c3a44308ce796adfc3a32c41823021b" name="format_named_scope"><type><classname>format_named_scope_actor</classname>&lt; fallback_to_none, CharT &gt;</type><template>
+          <template-type-parameter name="CharT"/>
+        </template><parameter name="name"><paramtype>attribute_name const &amp;</paramtype><description><para>Attribute name </para></description></parameter><parameter name="element_format"><paramtype>const CharT *</paramtype><description><para>Format string for a single named scope </para></description></parameter><description><para>The function generates a manipulator node in a template expression. The manipulator must participate in a formatting expression (stream output or <computeroutput>format</computeroutput> placeholder filler).</para><para>
+</para></description></function>
+<function id="doxygen.expressions.named__scope_8hpp_1a6210a4a7564c5475a4c7bbc9ca7ccc13" name="format_named_scope"><type><classname>format_named_scope_actor</classname>&lt; fallback_to_none, CharT &gt;</type><template>
+          <template-type-parameter name="CharT"/>
+        </template><parameter name="name"><paramtype>attribute_name const &amp;</paramtype><description><para>Attribute name </para></description></parameter><parameter name="element_format"><paramtype>std::basic_string&lt; CharT &gt; const &amp;</paramtype><description><para>Format string for a single named scope </para></description></parameter><description><para>The function generates a manipulator node in a template expression. The manipulator must participate in a formatting expression (stream output or <computeroutput>format</computeroutput> placeholder filler).</para><para>
+</para></description></function>
+<function id="doxygen.expressions.named__scope_8hpp_1aa2a6aa0503c70ad862ccc2989a13e88a" name="format_named_scope"><type><classname>format_named_scope_actor</classname>&lt; fallback_to_none, CharT, ActorT &gt;</type><template>
+          <template-type-parameter name="DescriptorT"/>
+          <template-nontype-parameter name="ActorT"><type>template&lt; typename &gt; class</type></template-nontype-parameter>
+          <template-type-parameter name="CharT"/>
+        </template><parameter name="keyword"><paramtype><classname>attribute_keyword</classname>&lt; DescriptorT, ActorT &gt; const &amp;</paramtype><description><para>Attribute keyword </para></description></parameter><parameter name="element_format"><paramtype>const CharT *</paramtype><description><para>Format string for a single named scope </para></description></parameter><description><para>The function generates a manipulator node in a template expression. The manipulator must participate in a formatting expression (stream output or <computeroutput>format</computeroutput> placeholder filler).</para><para>
+</para></description></function>
+<function id="doxygen.expressions.named__scope_8hpp_1a6467e2036013b09b13df6b84cc869b6f" name="format_named_scope"><type><classname>format_named_scope_actor</classname>&lt; fallback_to_none, CharT, ActorT &gt;</type><template>
+          <template-type-parameter name="DescriptorT"/>
+          <template-nontype-parameter name="ActorT"><type>template&lt; typename &gt; class</type></template-nontype-parameter>
+          <template-type-parameter name="CharT"/>
+        </template><parameter name="keyword"><paramtype><classname>attribute_keyword</classname>&lt; DescriptorT, ActorT &gt; const &amp;</paramtype><description><para>Attribute keyword </para></description></parameter><parameter name="element_format"><paramtype>std::basic_string&lt; CharT &gt; const &amp;</paramtype><description><para>Format string for a single named scope </para></description></parameter><description><para>The function generates a manipulator node in a template expression. The manipulator must participate in a formatting expression (stream output or <computeroutput>format</computeroutput> placeholder filler).</para><para>
+</para></description></function>
+<function id="doxygen.expressions.named__scope_8hpp_1aa2ce322083f849cbfc539ee5c5e48c65" name="format_named_scope"><type><classname>format_named_scope_actor</classname>&lt; FallbackPolicyT, CharT, ActorT &gt;</type><template>
+          <template-type-parameter name="T"/>
+          <template-type-parameter name="FallbackPolicyT"/>
+          <template-type-parameter name="TagT"/>
+          <template-nontype-parameter name="ActorT"><type>template&lt; typename &gt; class</type></template-nontype-parameter>
+          <template-type-parameter name="CharT"/>
+        </template><parameter name="placeholder"><paramtype><classname>attribute_actor</classname>&lt; T, FallbackPolicyT, TagT, ActorT &gt; const &amp;</paramtype><description><para>Attribute placeholder </para></description></parameter><parameter name="element_format"><paramtype>const CharT *</paramtype><description><para>Format string for a single named scope </para></description></parameter><description><para>The function generates a manipulator node in a template expression. The manipulator must participate in a formatting expression (stream output or <computeroutput>format</computeroutput> placeholder filler).</para><para>
+</para></description></function>
+<function id="doxygen.expressions.named__scope_8hpp_1a8de45d979191572654d3a082778321b5" name="format_named_scope"><type><classname>format_named_scope_actor</classname>&lt; FallbackPolicyT, CharT, ActorT &gt;</type><template>
+          <template-type-parameter name="T"/>
+          <template-type-parameter name="FallbackPolicyT"/>
+          <template-type-parameter name="TagT"/>
+          <template-nontype-parameter name="ActorT"><type>template&lt; typename &gt; class</type></template-nontype-parameter>
+          <template-type-parameter name="CharT"/>
+        </template><parameter name="placeholder"><paramtype><classname>attribute_actor</classname>&lt; T, FallbackPolicyT, TagT, ActorT &gt; const &amp;</paramtype><description><para>Attribute placeholder </para></description></parameter><parameter name="element_format"><paramtype>std::basic_string&lt; CharT &gt; const &amp;</paramtype><description><para>Format string for a single named scope </para></description></parameter><description><para>The function generates a manipulator node in a template expression. The manipulator must participate in a formatting expression (stream output or <computeroutput>format</computeroutput> placeholder filler).</para><para>
+</para></description></function>
+<overloaded-function id="doxygen.expressions.named__scope_8hpp_1ad5e2bdd7dea2220e7781bd9813f2c7b9" name="format_named_scope"><signature><type>unspecified</type><template>
+          <template-nontype-parameter name="ArgsT"><type>typename...</type></template-nontype-parameter>
+        </template><parameter name="name"><paramtype>attribute_name const &amp;</paramtype><description><para>Attribute name </para></description></parameter><parameter name="args"><paramtype>ArgsT... const &amp;</paramtype><description><para>An set of named parameters. Supported parameters: <itemizedlist>
+<listitem><para><computeroutput>format</computeroutput> - A format string for named scopes. The string can contain "%n", "%f" and "%l" placeholders for the scope name, file and line number, respectively. This parameter is mandatory. </para>
+</listitem>
+<listitem><para><computeroutput>delimiter</computeroutput> - A string that is used to delimit the formatted scope names. Default: "-&gt;" or "&lt;-", depending on the iteration direction. </para>
+</listitem>
+<listitem><para><computeroutput>incomplete_marker</computeroutput> - A string that is used to indicate that the list was printed incomplete because of depth limitation. Default: "...". </para>
+</listitem>
+<listitem><para><computeroutput>empty_marker</computeroutput> - A string that is output in case if the scope list is empty. Default: "", i.e. nothing is output. </para>
+</listitem>
+<listitem><para><computeroutput>iteration</computeroutput> - Iteration direction, see <computeroutput>scope_iteration_direction</computeroutput> enumeration. Default: forward. </para>
+</listitem>
+<listitem><para><computeroutput>depth</computeroutput> - Iteration depth. Default: unlimited. </para>
+</listitem>
+</itemizedlist>
+</para></description></parameter></signature><signature><type>unspecified</type><template>
+          <template-type-parameter name="DescriptorT"/>
+          <template-nontype-parameter name="ActorT"><type>template&lt; typename &gt; class</type></template-nontype-parameter>
+          <template-nontype-parameter name="ArgsT"><type>typename...</type></template-nontype-parameter>
+        </template><parameter name="keyword"><paramtype><classname>attribute_keyword</classname>&lt; DescriptorT, ActorT &gt; const &amp;</paramtype></parameter><parameter name="args"><paramtype>ArgsT... const &amp;</paramtype></parameter></signature><signature><type>unspecified</type><template>
+          <template-type-parameter name="T"/>
+          <template-type-parameter name="FallbackPolicyT"/>
+          <template-type-parameter name="TagT"/>
+          <template-nontype-parameter name="ActorT"><type>template&lt; typename &gt; class</type></template-nontype-parameter>
+          <template-nontype-parameter name="ArgsT"><type>typename...</type></template-nontype-parameter>
+        </template><parameter name="placeholder"><paramtype><classname>attribute_actor</classname>&lt; T, FallbackPolicyT, TagT, ActorT &gt; const &amp;</paramtype></parameter><parameter name="args"><paramtype>ArgsT... const &amp;</paramtype></parameter></signature><description><para>Formatter generator. Construct the named scope formatter with the specified formatting parameters.</para><para>
+</para></description></overloaded-function>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.expressions.stream_8hpp" name="boost/log/expressions/formatters/stream.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>24.07.2012</para>
+
+The header contains implementation of a stream placeholder in template expressions. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="expressions">
+<typedef id="doxygen.expressions.stream_8hpp_1af022e5aafb61f8d8d93632c007e19c49" name="stream_type"><description><para>Stream placeholder type in formatter template expressions. </para></description><type>phoenix::expression::argument&lt; 2 &gt;::type</type></typedef>
+<data-member id="doxygen.expressions.stream_8hpp_1a42fa69cf0bcc6dd6b83d0e8f0c531938" name="stream"><type>const stream_type</type><description><para>Stream placeholder in formatter template expressions. </para></description></data-member>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.expressions.wrap__formatter_8hpp" name="boost/log/expressions/formatters/wrap_formatter.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>24.11.2012</para>
+
+The header contains a formatter function wrapper that enables third-party functions to participate in formatting expressions. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="expressions">
+<class id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1wrapped__formatter__actor" name="wrapped_formatter_actor"><template>
+      <template-type-parameter name="FunT"/>
+      <template-type-parameter name="CharT"/>
+      <template-nontype-parameter name="ActorT"><type>template&lt; typename &gt; class</type><default>phoenix::actor</default></template-nontype-parameter>
+    </template><inherit access="public">phoenix::actor&lt; wrapped_formatter_terminal&lt; FunT, CharT &gt; &gt;</inherit><description><para>Wrapped formatter function actor. </para></description><typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1wrapped__formatter__actor_1ac300472e15c13f0e7c25cec82c665240" name="char_type"><purpose>Character type. </purpose><type>CharT</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1wrapped__formatter__actor_1adaa50c05541b2915704a1b2b533b7b74" name="function_type"><purpose>Wrapped function type. </purpose><type>FunT</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1wrapped__formatter__actor_1a1ed8a0b543c1426666af7aa6dfed9a88" name="terminal_type"><purpose>Base terminal type. </purpose><type><classname>wrapped_formatter_terminal</classname>&lt; function_type, char_type &gt;</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1wrapped__formatter__actor_1a32cf16ea7a6a30ea993ec54ac949c46d" name="base_type"><purpose>Base actor type. </purpose><type>ActorT&lt; terminal_type &gt;</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1wrapped__formatter__actor_1ae5b235c23e911e8f0bb4336e71b93cdc" specifiers="explicit"><parameter name="act"><paramtype>base_type const &amp;</paramtype></parameter><purpose>Initializing constructor. </purpose></constructor>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1wrapped__formatter__actor_1a4e18c1066b4cdadaf10c4e6d44ae4342" name="get_function" cv="const"><type>function_type const &amp;</type><description><para>
+</para></description><returns><para>The wrapped function </para>
+</returns></method>
+</method-group>
+</class><class id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1wrapped__formatter__terminal" name="wrapped_formatter_terminal"><template>
+      <template-type-parameter name="FunT"/>
+      <template-type-parameter name="CharT"/>
+    </template><description><para>Formatter function wrapper terminal. </para></description><typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1wrapped__formatter__terminal_1ac300472e15c13f0e7c25cec82c665240" name="char_type"><purpose>Character type. </purpose><type>CharT</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1wrapped__formatter__terminal_1a881bde00510e3840918efc9a3058056c" name="string_type"><purpose>String type. </purpose><type>std::basic_string&lt; char_type &gt;</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1wrapped__formatter__terminal_1aa8678b6f62f444d3adc917f499bb31e8" name="stream_type"><purpose>Formatting stream type. </purpose><type>basic_formatting_ostream&lt; char_type &gt;</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1wrapped__formatter__terminal_1adaa50c05541b2915704a1b2b533b7b74" name="function_type"><purpose>Wrapped function type. </purpose><type>FunT</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1wrapped__formatter__terminal_1a62b6ef1000cc599d117fe4d2caf8de4d" name="result_type"><purpose>Formatter result type. </purpose><type>string_type</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1wrapped__formatter__terminal_1a6e153ae60a310530f888fd04b3ccfc05" specifiers="explicit"><parameter name="fun"><paramtype>function_type const &amp;</paramtype></parameter><purpose>Initializing construction. </purpose></constructor>
+<constructor id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1wrapped__formatter__terminal_1a2800acf0dc521fc4baa230ddac93a869"><parameter name="that"><paramtype><classname>wrapped_formatter_terminal</classname> const &amp;</paramtype></parameter><purpose>Copy constructor. </purpose></constructor>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1wrapped__formatter__terminal_1a4e18c1066b4cdadaf10c4e6d44ae4342" name="get_function" cv="const"><type>function_type const &amp;</type><purpose>Returns the wrapped function. </purpose></method>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1wrapped__formatter__terminal_1aebe6ad971024f54e009666b41f826fa5" name="operator()"><type>result_type</type><template>
+          <template-type-parameter name="ContextT"/>
+        </template><parameter name="ctx"><paramtype>ContextT const &amp;</paramtype></parameter><purpose>Invokation operator. </purpose></method>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1wrapped__formatter__terminal_1a109902b29c52db15c0e9092bcb38d5d9" name="operator()" cv="const"><type>result_type</type><template>
+          <template-type-parameter name="ContextT"/>
+        </template><parameter name="ctx"><paramtype>ContextT const &amp;</paramtype></parameter><purpose>Invokation operator. </purpose></method>
+</method-group>
+</class>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<function id="doxygen.expressions.wrap__formatter_8hpp_1ac65c839fd32682367c56989f11940c9f" name="wrap_formatter"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="FunT"/>
+        </template><parameter name="fun"><paramtype>FunT const &amp;</paramtype></parameter><description><para>The function wraps a function object in order it to be able to participate in formatting expressions. The wrapped function object must be compatible with the following signature:</para><programlisting>
+void (record_view const&amp;, basic_formatting_ostream&lt; CharT &gt;&amp;)
+</programlisting><para>where <computeroutput>CharT</computeroutput> is the character type of the formatting expression. </para></description></function>
+<function id="doxygen.expressions.wrap__formatter_8hpp_1a2eb9d1e5959e800d62ea78ae5654298e" name="wrap_formatter"><type><classname>wrapped_formatter_actor</classname>&lt; FunT, CharT &gt;</type><template>
+          <template-type-parameter name="CharT"/>
+          <template-type-parameter name="FunT"/>
+        </template><parameter name="fun"><paramtype>FunT const &amp;</paramtype></parameter><description><para>The function wraps a function object in order it to be able to participate in formatting expressions. The wrapped function object must be compatible with the following signature:</para><programlisting>
+void (record_view const&amp;, basic_formatting_ostream&lt; CharT &gt;&amp;)
+</programlisting><para>where <computeroutput>CharT</computeroutput> is the character type of the formatting expression. </para></description></function>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.expressions.xml__decorator_8hpp" name="boost/log/expressions/formatters/xml_decorator.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>18.11.2012</para>
+
+The header contains implementation of a XML-style character decorator. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="expressions">
+<data-member id="doxygen.expressions.xml__decorator_8hpp_1aabac1e8892203b38703c6297a443ba81" name="xml_decor"><type><emphasis>unspecified</emphasis></type><description><para>XML-style decorator generator object. The decorator replaces characters that have special meaning in XML documents with the corresponding decorated counterparts. The generator provides <computeroutput>operator[]</computeroutput> that can be used to construct the actual decorator. For example:</para><para><computeroutput> xml_decor[ stream &lt;&lt; <link linkend="doxygen.expressions.attr_8hpp_1a4092770e33ec0ec13894eebf01050a76">attr&lt; std::string &gt;</link>("MyAttr") ] </computeroutput></para><para>For wide-character formatting there is the similar <computeroutput>wxml_decor</computeroutput> decorator generator object. </para></description></data-member>
+<data-member id="doxygen.expressions.xml__decorator_8hpp_1aeab52a46751b08f69d5341b9791b4533" name="wxml_decor"><type><emphasis>unspecified</emphasis></type></data-member>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<function id="doxygen.expressions.xml__decorator_8hpp_1a6629b9c08fe869273fe49518acdd4fdc" name="make_xml_decor"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="CharT"/>
+        </template><description><para>The function creates an XML-style decorator generator for arbitrary character type. </para></description></function>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.expressions.is__keyword__descriptor_8hpp" name="boost/log/expressions/is_keyword_descriptor.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>14.07.2012</para>
+
+The header contains attribute keyword descriptor detection trait. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="expressions">
+<struct id="doxygen.expressions.structboost_1_1log_1_1expressions_1_1is__keyword__descriptor" name="is_keyword_descriptor"><template>
+      <template-type-parameter name="T"/>
+      <template-type-parameter name="VoidT"><default>void</default></template-type-parameter>
+    </template><inherit access="public">false_</inherit><description><para>The metafunction detects if the type <computeroutput>T</computeroutput> is a keyword descriptor </para></description></struct><struct id="doxygen.expressions.structboost_1_1log_1_1expressions_1_1keyword__descriptor" name="keyword_descriptor"><description><para>Base class for keyword descriptors. All keyword descriptors must derive from this class to support the <computeroutput><link linkend="doxygen.expressions.structboost_1_1log_1_1expressions_1_1is__keyword__descriptor">is_keyword_descriptor</link></computeroutput> trait. </para></description></struct>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.expressions.keyword_8hpp" name="boost/log/expressions/keyword.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>29.01.2012</para>
+
+The header contains attribute keyword declaration. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="expressions">
+<struct id="doxygen.expressions.structboost_1_1log_1_1expressions_1_1attribute__keyword" name="attribute_keyword"><template>
+      <template-type-parameter name="DescriptorT"/>
+      <template-nontype-parameter name="ActorT"><type>template&lt; typename &gt; class</type></template-nontype-parameter>
+    </template><purpose>This class implements an expression template keyword. </purpose><description><para>This class implements an expression template keyword. It is used to start template expressions involving attribute values. </para></description><typedef id="doxygen.expressions.structboost_1_1log_1_1expressions_1_1attribute__keyword_1a446b1e299bb9bf2efc770e41a1cde06f" name="this_type"><purpose>Self type. </purpose><type><classname>attribute_keyword</classname></type></typedef>
+<typedef id="doxygen.expressions.structboost_1_1log_1_1expressions_1_1attribute__keyword_1a148c06f35c48b3f89847219c346b4295" name="descriptor_type"><purpose>Attribute descriptor type. </purpose><type>DescriptorT</type></typedef>
+<typedef id="doxygen.expressions.structboost_1_1log_1_1expressions_1_1attribute__keyword_1a357a1a69406a8208561114fc74dfa1be" name="value_type"><purpose>Attribute value type. </purpose><type>descriptor_type::value_type</type></typedef>
+<typedef id="doxygen.expressions.structboost_1_1log_1_1expressions_1_1attribute__keyword_1a2a271cb0c99ccbb08aa478a2d76f548e" name="or_none_result_type"><purpose>Expression with cached attribute name. </purpose><type><classname>attribute_actor</classname>&lt; value_type, fallback_to_none, descriptor_type, ActorT &gt;</type></typedef>
+<typedef id="doxygen.expressions.structboost_1_1log_1_1expressions_1_1attribute__keyword_1a27f85cd349742c5637f941ec0150ca94" name="or_throw_result_type"><purpose>Expression with cached attribute name. </purpose><type><classname>attribute_actor</classname>&lt; value_type, fallback_to_throw, descriptor_type, ActorT &gt;</type></typedef>
+<method-group name="public static functions">
+<method id="doxygen.expressions.structboost_1_1log_1_1expressions_1_1attribute__keyword_1a88d96fec3f25c130daf187beb5caa5c3" name="get_name" specifiers="static"><type>attribute_name</type><purpose>Returns attribute name. </purpose></method>
+<method id="doxygen.expressions.structboost_1_1log_1_1expressions_1_1attribute__keyword_1ab8abea6669b24e04da51a69ebcb64985" name="or_none" specifiers="static"><type>or_none_result_type</type><purpose>Generates an expression that extracts the attribute value or a default value. </purpose></method>
+<method id="doxygen.expressions.structboost_1_1log_1_1expressions_1_1attribute__keyword_1a756a6e4144728d1b3707923d6fa32864" name="or_throw" specifiers="static"><type>or_throw_result_type</type><purpose>Generates an expression that extracts the attribute value or throws an exception. </purpose></method>
+<method id="doxygen.expressions.structboost_1_1log_1_1expressions_1_1attribute__keyword_1a210b5be87b6dce09559f16fafddd662d" name="or_default" specifiers="static"><type><classname>attribute_actor</classname>&lt; value_type, fallback_to_default&lt; DefaultT &gt;, descriptor_type, ActorT &gt;</type><template>
+          <template-type-parameter name="DefaultT"/>
+        </template><parameter name="def_val"><paramtype>DefaultT const &amp;</paramtype></parameter><purpose>Generates an expression that extracts the attribute value or a default value. </purpose></method>
+</method-group>
+</struct>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+
+
+</namespace>
+</namespace>
+<macro id="doxygen.expressions.keyword_8hpp_1abf9ab7cdd5e8088501b58b9d466d3543" name="BOOST_LOG_ATTRIBUTE_KEYWORD_TYPE" kind="functionlike"><macro-parameter name="keyword_"><description><para>Keyword name </para></description></macro-parameter><macro-parameter name="name_"><description><para>Attribute name string </para></description></macro-parameter><macro-parameter name="value_type_"><description><para>Attribute value type </para></description></macro-parameter><purpose>The macro declares an attribute keyword type. </purpose><description><para>The macro should be used at a namespace scope. It expands into an attribute keyword type definition, including the <computeroutput>tag</computeroutput> namespace and the keyword tag type within which has the following layout:</para><para><programlisting language="c++">namespace tag
+{
+  struct keyword_ :
+    public boost::log::expressions::keyword_descriptor
+  {
+    typedef value_type_ value_type;
+    static boost::log::attribute_name get_name();
+  };
+}
+
+typedef boost::log::expressions::attribute_keyword&lt; tag::keyword_ &gt; keyword_type;
+</programlisting></para><para>The <computeroutput>get_name</computeroutput> method returns the attribute name.</para><para><note><para>This macro only defines the type of the keyword. To also define the keyword object, use the <computeroutput>BOOST_LOG_ATTRIBUTE_KEYWORD</computeroutput> macro instead.</para>
+</note>
+
+</para></description></macro>
+<macro id="doxygen.expressions.keyword_8hpp_1a0da0c9f1e3e57d3506cd5aac06d00dd0" name="BOOST_LOG_ATTRIBUTE_KEYWORD" kind="functionlike"><macro-parameter name="keyword_"><description><para>Keyword name </para></description></macro-parameter><macro-parameter name="name_"><description><para>Attribute name string </para></description></macro-parameter><macro-parameter name="value_type_"><description><para>Attribute value type </para></description></macro-parameter><purpose>The macro declares an attribute keyword. </purpose><description><para>The macro provides definitions similar to <computeroutput>BOOST_LOG_ATTRIBUTE_KEYWORD_TYPE</computeroutput> and additionally defines the keyword object.</para><para>
+</para></description></macro>
+</header>
+<header id="doxygen.expressions.keyword__fwd_8hpp" name="boost/log/expressions/keyword_fwd.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>29.01.2012</para>
+
+The header contains attribute keyword forward declaration. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="expressions">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.expressions.message_8hpp" name="boost/log/expressions/message.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>13.07.2012</para>
+
+The header contains log message keyword declaration. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="expressions">
+<namespace name="tag">
+<struct id="doxygen.expressions.structboost_1_1log_1_1expressions_1_1tag_1_1message" name="message"><inherit access="public">keyword_descriptor</inherit><description><para>Generic log message attribute descriptor. </para></description><typedef id="doxygen.expressions.structboost_1_1log_1_1expressions_1_1tag_1_1message_1af115472433e70586d2d983bc54108d29" name="attribute_type"><type>void</type></typedef>
+<typedef id="doxygen.expressions.structboost_1_1log_1_1expressions_1_1tag_1_1message_1a35f3aa2d3caeb9dd291a2c6cdb447961" name="value_type"><type>mpl::vector2&lt; std::string, std::wstring &gt;</type></typedef>
+<method-group name="public static functions">
+<method id="doxygen.expressions.structboost_1_1log_1_1expressions_1_1tag_1_1message_1a88d96fec3f25c130daf187beb5caa5c3" name="get_name" specifiers="static"><type>attribute_name</type></method>
+</method-group>
+</struct><struct id="doxygen.expressions.structboost_1_1log_1_1expressions_1_1tag_1_1smessage" name="smessage"><inherit access="public">keyword_descriptor</inherit><description><para>Narrow character log message attribute descriptor. </para></description><typedef id="doxygen.expressions.structboost_1_1log_1_1expressions_1_1tag_1_1smessage_1af115472433e70586d2d983bc54108d29" name="attribute_type"><type>void</type></typedef>
+<typedef id="doxygen.expressions.structboost_1_1log_1_1expressions_1_1tag_1_1smessage_1a4388f40bf933b7cfbf56d47d06cc0a1b" name="value_type"><type>std::string</type></typedef>
+<method-group name="public static functions">
+<method id="doxygen.expressions.structboost_1_1log_1_1expressions_1_1tag_1_1smessage_1a88d96fec3f25c130daf187beb5caa5c3" name="get_name" specifiers="static"><type>attribute_name</type></method>
+</method-group>
+</struct><struct id="doxygen.expressions.structboost_1_1log_1_1expressions_1_1tag_1_1wmessage" name="wmessage"><inherit access="public">keyword_descriptor</inherit><description><para>Wide character log message attribute descriptor. </para></description><typedef id="doxygen.expressions.structboost_1_1log_1_1expressions_1_1tag_1_1wmessage_1af115472433e70586d2d983bc54108d29" name="attribute_type"><type>void</type></typedef>
+<typedef id="doxygen.expressions.structboost_1_1log_1_1expressions_1_1tag_1_1wmessage_1acd5b2a735f286949ba116af560b74993" name="value_type"><type>std::wstring</type></typedef>
+<method-group name="public static functions">
+<method id="doxygen.expressions.structboost_1_1log_1_1expressions_1_1tag_1_1wmessage_1a88d96fec3f25c130daf187beb5caa5c3" name="get_name" specifiers="static"><type>attribute_name</type></method>
+</method-group>
+</struct></namespace>
+<typedef id="doxygen.expressions.message_8hpp_1a6faf388713a7fbb08049018acf309967" name="message_type"><description><para>Generic message keyword type. </para></description><type><classname>attribute_keyword</classname>&lt; <classname>tag::message</classname> &gt;</type></typedef>
+<typedef id="doxygen.expressions.message_8hpp_1a7b976f53a0f947685db999a546ccfe72" name="smessage_type"><description><para>Narrow message keyword type. </para></description><type><classname>attribute_keyword</classname>&lt; <classname>tag::smessage</classname> &gt;</type></typedef>
+<typedef id="doxygen.expressions.message_8hpp_1ad95167d183196776b052ed89ea41d4e5" name="wmessage_type"><description><para>Wide message keyword type. </para></description><type><classname>attribute_keyword</classname>&lt; <classname>tag::wmessage</classname> &gt;</type></typedef>
+<data-member id="doxygen.expressions.message_8hpp_1a5ac32ca6e2355607837847659885cdea" name="message"><type>const message_type</type><description><para>Generic message keyword. </para></description></data-member>
+<data-member id="doxygen.expressions.message_8hpp_1a0fa39439efc0107725229999ff9041e8" name="smessage"><type>const smessage_type</type><description><para>Narrow message keyword. </para></description></data-member>
+<data-member id="doxygen.expressions.message_8hpp_1a7dd2634a51840196c81f2b6bbaef7063" name="wmessage"><type>const wmessage_type</type><description><para>Wide message keyword. </para></description></data-member>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.expressions.predicates_8hpp" name="boost/log/expressions/predicates.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>29.01.2012</para>
+
+The header includes all template expression predicates. </para></header>
+<header id="doxygen.expressions.begins__with_8hpp" name="boost/log/expressions/predicates/begins_with.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>02.09.2012</para>
+
+The header contains implementation of a <computeroutput>begins_with</computeroutput> predicate in template expressions. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="expressions">
+<typedef id="doxygen.expressions.begins__with_8hpp_1aaa8bdadb24514ebddc995c0d115665b2" name="attribute_begins_with"><description><para>The predicate checks if the attribute value begins with a substring. The attribute value is assumed to be of a string type. </para></description><type><emphasis>unspecified</emphasis></type></typedef>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<function id="doxygen.expressions.begins__with_8hpp_1acbda274757fbce454ac166cf73b8bc66" name="begins_with"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="T"/>
+          <template-type-parameter name="FallbackPolicyT"/>
+          <template-type-parameter name="TagT"/>
+          <template-nontype-parameter name="ActorT"><type>template&lt; typename &gt; class</type></template-nontype-parameter>
+          <template-type-parameter name="SubstringT"/>
+        </template><parameter name="attr"><paramtype><classname>attribute_actor</classname>&lt; T, FallbackPolicyT, TagT, ActorT &gt; const &amp;</paramtype></parameter><parameter name="substring"><paramtype>SubstringT const &amp;</paramtype></parameter><description><para>The function generates a terminal node in a template expression. The node will check if the attribute value, which is assumed to be a string, begins with the specified substring. </para></description></function>
+<function id="doxygen.expressions.begins__with_8hpp_1a4d9655410e1f3e0ccf66f153d184dde6" name="begins_with"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="DescriptorT"/>
+          <template-nontype-parameter name="ActorT"><type>template&lt; typename &gt; class</type></template-nontype-parameter>
+          <template-type-parameter name="SubstringT"/>
+        </template><parameter name=""><paramtype><classname>attribute_keyword</classname>&lt; DescriptorT, ActorT &gt; const &amp;</paramtype></parameter><parameter name="substring"><paramtype>SubstringT const &amp;</paramtype></parameter><description><para>The function generates a terminal node in a template expression. The node will check if the attribute value, which is assumed to be a string, begins with the specified substring. </para></description></function>
+<function id="doxygen.expressions.begins__with_8hpp_1ad04e947a7c756e2e398cc2886142f04c" name="begins_with"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="T"/>
+          <template-type-parameter name="SubstringT"/>
+        </template><parameter name="name"><paramtype>attribute_name const &amp;</paramtype></parameter><parameter name="substring"><paramtype>SubstringT const &amp;</paramtype></parameter><description><para>The function generates a terminal node in a template expression. The node will check if the attribute value, which is assumed to be a string, begins with the specified substring. </para></description></function>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.expressions.channel__severity__filter_8hpp" name="boost/log/expressions/predicates/channel_severity_filter.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>25.11.2012</para>
+
+The header contains implementation of a minimal severity per channel filter. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="expressions">
+<class id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1channel__severity__filter__actor" name="channel_severity_filter_actor"><template>
+      <template-type-parameter name="ChannelT"/>
+      <template-type-parameter name="SeverityT"/>
+      <template-type-parameter name="ChannelFallbackT"><default>fallback_to_none</default></template-type-parameter>
+      <template-type-parameter name="SeverityFallbackT"><default>fallback_to_none</default></template-type-parameter>
+      <template-type-parameter name="ChannelOrderT"><default>less</default></template-type-parameter>
+      <template-type-parameter name="SeverityCompareT"><default>greater_equal</default></template-type-parameter>
+      <template-type-parameter name="AllocatorT"><default>use_std_allocator</default></template-type-parameter>
+      <template-nontype-parameter name="ActorT"><type>template&lt; typename &gt; class</type><default>phoenix::actor</default></template-nontype-parameter>
+    </template><inherit access="public">phoenix::actor&lt; channel_severity_filter_terminal&lt; ChannelT, SeverityT, fallback_to_none, fallback_to_none, less, greater_equal, use_std_allocator &gt; &gt;</inherit><class id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1channel__severity__filter__actor_1_1subscript__result" name="subscript_result"><purpose>An auxiliary pseudo-reference to implement insertion through subscript operator. </purpose><method-group name="public member functions">
+<constructor id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1channel__severity__filter__actor_1_1subscript__result_1a98d075f06025793923f3a7a8e0eec2ba"><parameter name="owner"><paramtype>channel_severity_filter_actor &amp;</paramtype></parameter><parameter name="channel"><paramtype>channel_value_type const &amp;</paramtype></parameter></constructor>
+<copy-assignment id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1channel__severity__filter__actor_1_1subscript__result_1ab4ccf5dd2046b1dd0b52acf18930db91"><type>void</type><parameter name="severity"><paramtype>severity_value_type const &amp;</paramtype></parameter></copy-assignment>
+</method-group>
+</class><typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1channel__severity__filter__actor_1ad5af77a7eb9c90716c55222b216ca704" name="terminal_type"><purpose>Terminal type. </purpose><type>channel_severity_filter_terminal&lt; ChannelT, SeverityT, ChannelFallbackT, SeverityFallbackT, ChannelOrderT, SeverityCompareT, AllocatorT &gt;</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1channel__severity__filter__actor_1a32cf16ea7a6a30ea993ec54ac949c46d" name="base_type"><purpose>Base actor type. </purpose><type>ActorT&lt; terminal_type &gt;</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1channel__severity__filter__actor_1a3d583836edf6e1d9141370544f4ba9f0" name="channel_value_type"><purpose>Channel attribute value type. </purpose><type>terminal_type::channel_value_type</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1channel__severity__filter__actor_1a11f679b38eb88d8036eff274142a2357" name="channel_fallback_policy"><purpose>Channel fallback policy. </purpose><type>terminal_type::channel_fallback_policy</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1channel__severity__filter__actor_1ab643708e629c17d05e3ef655fbf10b22" name="severity_value_type"><purpose>Severity level attribute value type. </purpose><type>terminal_type::severity_value_type</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1channel__severity__filter__actor_1ac3c77b465f09775bf983b9eeaa6eeade" name="severity_fallback_policy"><purpose>Severity level fallback policy. </purpose><type>terminal_type::severity_fallback_policy</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1channel__severity__filter__actor_1a03835306681c40a89793fa6e0aa12559" specifiers="explicit"><parameter name="act"><paramtype>base_type const &amp;</paramtype></parameter><purpose>Initializing constructor. </purpose></constructor>
+<constructor id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1channel__severity__filter__actor_1a4a2f56aa253253338ebd09fa9b77681f"><parameter name="that"><paramtype>channel_severity_filter_actor const &amp;</paramtype></parameter><purpose>Copy constructor. </purpose></constructor>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1channel__severity__filter__actor_1a93c8f81529875fec20e607f9133273b8" name="set_default"><type>this_type &amp;</type><parameter name="def"><paramtype>bool</paramtype></parameter><purpose>Sets the default function result. </purpose></method>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1channel__severity__filter__actor_1a6f5e13693bc878cb3cac5e3a78198305" name="add"><type>this_type &amp;</type><parameter name="channel"><paramtype>channel_value_type const &amp;</paramtype></parameter><parameter name="severity"><paramtype>severity_value_type const &amp;</paramtype></parameter><purpose>Adds a new element to the mapping. </purpose></method>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1channel__severity__filter__actor_1a5d5402618673a73ddf2126616667e097" name="operator[]"><type>subscript_result</type><parameter name="channel"><paramtype>channel_value_type const &amp;</paramtype></parameter><purpose>Alternative interface for adding a new element to the mapping. </purpose></method>
+</method-group>
+</class><class id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1channel__severity__filter__terminal" name="channel_severity_filter_terminal"><template>
+      <template-type-parameter name="ChannelT"/>
+      <template-type-parameter name="SeverityT"/>
+      <template-type-parameter name="ChannelFallbackT"><default>fallback_to_none</default></template-type-parameter>
+      <template-type-parameter name="SeverityFallbackT"><default>fallback_to_none</default></template-type-parameter>
+      <template-type-parameter name="ChannelOrderT"><default>less</default></template-type-parameter>
+      <template-type-parameter name="SeverityCompareT"><default>greater_equal</default></template-type-parameter>
+      <template-type-parameter name="AllocatorT"><default>use_std_allocator</default></template-type-parameter>
+    </template><struct id="doxygen.expressions.structboost_1_1log_1_1expressions_1_1channel__severity__filter__terminal_1_1channel__visitor" name="channel_visitor"><template>
+      <template-type-parameter name="ArgT"/>
+    </template><purpose>Channel visitor. </purpose><typedef id="doxygen.expressions.structboost_1_1log_1_1expressions_1_1channel__severity__filter__terminal_1_1channel__visitor_1a9362b0e17335e9c13246f970c962d645" name="result_type"><type>void</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.expressions.structboost_1_1log_1_1expressions_1_1channel__severity__filter__terminal_1_1channel__visitor_1aa76f26d392b5b442f1684051b02abe53"><parameter name="self"><paramtype>channel_severity_filter_terminal const &amp;</paramtype></parameter><parameter name="arg"><paramtype>ArgT</paramtype></parameter><parameter name="res"><paramtype>bool &amp;</paramtype></parameter></constructor>
+<method id="doxygen.expressions.structboost_1_1log_1_1expressions_1_1channel__severity__filter__terminal_1_1channel__visitor_1a41dfe3f460aca47cdcecc21de5e8b1a8" name="operator()" cv="const"><type>result_type</type><parameter name="channel"><paramtype>channel_value_type const &amp;</paramtype></parameter></method>
+</method-group>
+</struct><struct id="doxygen.expressions.structboost_1_1log_1_1expressions_1_1channel__severity__filter__terminal_1_1severity__visitor" name="severity_visitor"><purpose>Severity level visitor. </purpose><typedef id="doxygen.expressions.structboost_1_1log_1_1expressions_1_1channel__severity__filter__terminal_1_1severity__visitor_1a9362b0e17335e9c13246f970c962d645" name="result_type"><type>void</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.expressions.structboost_1_1log_1_1expressions_1_1channel__severity__filter__terminal_1_1severity__visitor_1a651e33b24e802f0918d7a2fc292f36fc"><parameter name="self"><paramtype>channel_severity_filter_terminal const &amp;</paramtype></parameter><parameter name="severity"><paramtype>severity_value_type const &amp;</paramtype></parameter><parameter name="res"><paramtype>bool &amp;</paramtype></parameter></constructor>
+<method id="doxygen.expressions.structboost_1_1log_1_1expressions_1_1channel__severity__filter__terminal_1_1severity__visitor_1aec046660b6a9b974fb1449de0b7b3a82" name="operator()" cv="const"><type>result_type</type><parameter name="severity"><paramtype>severity_value_type const &amp;</paramtype></parameter></method>
+</method-group>
+</struct><typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1channel__severity__filter__terminal_1a686b9d94028b8d69200c6e0f7698d90f" name="result_type"><purpose>Function result type. </purpose><type>bool</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1channel__severity__filter__terminal_1a4e61dcc60e0a5f56d3fc17f9f891d803" name="channel_value_type"><purpose>Channel attribute value type. </purpose><type>ChannelT</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1channel__severity__filter__terminal_1a845d6b6581eb2b3113f46067d689b942" name="channel_fallback_policy"><purpose>Channel fallback policy. </purpose><type>ChannelFallbackT</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1channel__severity__filter__terminal_1a921b97c1adb20235888808330467e32f" name="severity_value_type"><purpose>Severity level attribute value type. </purpose><type>SeverityT</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1channel__severity__filter__terminal_1a92f558480e947f810f2f7ba34f9c0ec5" name="severity_fallback_policy"><purpose>Severity level fallback policy. </purpose><type>SeverityFallbackT</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1channel__severity__filter__terminal_1acfbd8c4a2dbd0a894b6a40c84d2d115d"><parameter name="channel_name"><paramtype>attribute_name const &amp;</paramtype></parameter><parameter name="severity_name"><paramtype>attribute_name const &amp;</paramtype></parameter><parameter name="channel_fallback"><paramtype>channel_fallback_policy const &amp;</paramtype><default>channel_fallback_policy()</default></parameter><parameter name="severity_fallback"><paramtype>severity_fallback_policy const &amp;</paramtype><default>severity_fallback_policy()</default></parameter><parameter name="channel_order"><paramtype>ChannelOrderT const &amp;</paramtype><default>ChannelOrderT()</default></parameter><parameter name="severity_compare"><paramtype>SeverityCompareT const &amp;</paramtype><default>SeverityCompareT()</default></parameter><purpose>Initializing constructor. </purpose></constructor>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1channel__severity__filter__terminal_1ae12167e21feef2c9642944f0e7ef3776" name="add"><type>void</type><parameter name="channel"><paramtype>channel_value_type const &amp;</paramtype></parameter><parameter name="severity"><paramtype>severity_value_type const &amp;</paramtype></parameter><purpose>Adds a new element to the mapping. </purpose></method>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1channel__severity__filter__terminal_1a2aa40766c54fb2180e0425cea041951e" name="set_default"><type>void</type><parameter name="def"><paramtype>bool</paramtype></parameter><purpose>Sets the default result of the predicate. </purpose></method>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1channel__severity__filter__terminal_1a109902b29c52db15c0e9092bcb38d5d9" name="operator()" cv="const"><type>result_type</type><template>
+          <template-type-parameter name="ContextT"/>
+        </template><parameter name="ctx"><paramtype>ContextT const &amp;</paramtype></parameter><purpose>Invokation operator. </purpose></method>
+</method-group>
+<method-group name="private member functions">
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1channel__severity__filter__terminal_1ad91045e60d537793f942e014e3d78203" name="visit_channel" cv="const"><type>void</type><template>
+          <template-type-parameter name="ArgT"/>
+        </template><parameter name="channel"><paramtype>channel_value_type const &amp;</paramtype></parameter><parameter name="arg"><paramtype>ArgT const &amp;</paramtype></parameter><parameter name="res"><paramtype>bool &amp;</paramtype></parameter><purpose>Visits channel name. </purpose></method>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1channel__severity__filter__terminal_1adb561a3f2d72b93305c9ec8aa767cec5" name="visit_severity" cv="const"><type>void</type><parameter name="left"><paramtype>severity_value_type const &amp;</paramtype></parameter><parameter name="right"><paramtype>severity_value_type const &amp;</paramtype></parameter><parameter name="res"><paramtype>bool &amp;</paramtype></parameter><purpose>Visits severity level. </purpose></method>
+</method-group>
+</class>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<function id="doxygen.expressions.channel__severity__filter_8hpp_1a98f26e21f5ccab9f9ba23a1e96af7440" name="channel_severity_filter"><type>channel_severity_filter_actor&lt; ChannelT, SeverityT &gt;</type><template>
+          <template-type-parameter name="ChannelT"/>
+          <template-type-parameter name="SeverityT"/>
+        </template><parameter name="channel_name"><paramtype>attribute_name const &amp;</paramtype></parameter><parameter name="severity_name"><paramtype>attribute_name const &amp;</paramtype></parameter><description><para>The function generates a filtering predicate that checks the severity levels of log records in different channels. The predicate will return <computeroutput>true</computeroutput> if the record severity level is not less than the threshold for the channel the record belongs to. </para></description></function>
+<function id="doxygen.expressions.channel__severity__filter_8hpp_1a7f42e49252ad18add339a7729e320669" name="channel_severity_filter"><type>channel_severity_filter_actor&lt; typename ChannelDescriptorT::value_type, SeverityT, fallback_to_none, fallback_to_none, less, greater_equal, use_std_allocator, ActorT &gt;</type><template>
+          <template-type-parameter name="SeverityT"/>
+          <template-type-parameter name="ChannelDescriptorT"/>
+          <template-nontype-parameter name="ActorT"><type>template&lt; typename &gt; class</type></template-nontype-parameter>
+        </template><parameter name="channel_keyword"><paramtype><classname>attribute_keyword</classname>&lt; ChannelDescriptorT, ActorT &gt; const &amp;</paramtype></parameter><parameter name="severity_name"><paramtype>attribute_name const &amp;</paramtype></parameter><purpose>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. </purpose></function>
+<function id="doxygen.expressions.channel__severity__filter_8hpp_1a364227b4300903c62b03f93242f74fad" name="channel_severity_filter"><type>channel_severity_filter_actor&lt; ChannelT, typename SeverityDescriptorT::value_type, fallback_to_none, fallback_to_none, less, greater_equal, use_std_allocator, ActorT &gt;</type><template>
+          <template-type-parameter name="ChannelT"/>
+          <template-type-parameter name="SeverityDescriptorT"/>
+          <template-nontype-parameter name="ActorT"><type>template&lt; typename &gt; class</type></template-nontype-parameter>
+        </template><parameter name="channel_name"><paramtype>attribute_name const &amp;</paramtype></parameter><parameter name="severity_keyword"><paramtype><classname>attribute_keyword</classname>&lt; SeverityDescriptorT, ActorT &gt; const &amp;</paramtype></parameter><purpose>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. </purpose></function>
+<function id="doxygen.expressions.channel__severity__filter_8hpp_1a1a8e472de02b0fb188b5bedbe9ffa59f" name="channel_severity_filter"><type>channel_severity_filter_actor&lt; typename ChannelDescriptorT::value_type, typename SeverityDescriptorT::value_type, fallback_to_none, fallback_to_none, less, greater_equal, use_std_allocator, ActorT &gt;</type><template>
+          <template-type-parameter name="ChannelDescriptorT"/>
+          <template-type-parameter name="SeverityDescriptorT"/>
+          <template-nontype-parameter name="ActorT"><type>template&lt; typename &gt; class</type></template-nontype-parameter>
+        </template><parameter name="channel_keyword"><paramtype><classname>attribute_keyword</classname>&lt; ChannelDescriptorT, ActorT &gt; const &amp;</paramtype></parameter><parameter name="severity_keyword"><paramtype><classname>attribute_keyword</classname>&lt; SeverityDescriptorT, ActorT &gt; const &amp;</paramtype></parameter><purpose>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. </purpose></function>
+<function id="doxygen.expressions.channel__severity__filter_8hpp_1adddca29bd056870a1bdf25514b175d9c" name="channel_severity_filter"><type>channel_severity_filter_actor&lt; ChannelT, SeverityT, ChannelFallbackT, fallback_to_none, less, greater_equal, use_std_allocator, ActorT &gt;</type><template>
+          <template-type-parameter name="SeverityT"/>
+          <template-type-parameter name="ChannelT"/>
+          <template-type-parameter name="ChannelFallbackT"/>
+          <template-type-parameter name="ChannelTagT"/>
+          <template-nontype-parameter name="ActorT"><type>template&lt; typename &gt; class</type></template-nontype-parameter>
+        </template><parameter name="channel_placeholder"><paramtype><classname>attribute_actor</classname>&lt; ChannelT, ChannelFallbackT, ChannelTagT, ActorT &gt; const &amp;</paramtype></parameter><parameter name="severity_name"><paramtype>attribute_name const &amp;</paramtype></parameter><purpose>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. </purpose></function>
+<function id="doxygen.expressions.channel__severity__filter_8hpp_1aa3b58da95e648f90827e930e51901889" name="channel_severity_filter"><type>channel_severity_filter_actor&lt; ChannelT, SeverityT, fallback_to_none, SeverityFallbackT, less, greater_equal, use_std_allocator, ActorT &gt;</type><template>
+          <template-type-parameter name="ChannelT"/>
+          <template-type-parameter name="SeverityT"/>
+          <template-type-parameter name="SeverityFallbackT"/>
+          <template-type-parameter name="SeverityTagT"/>
+          <template-nontype-parameter name="ActorT"><type>template&lt; typename &gt; class</type></template-nontype-parameter>
+        </template><parameter name="channel_name"><paramtype>attribute_name const &amp;</paramtype></parameter><parameter name="severity_placeholder"><paramtype><classname>attribute_actor</classname>&lt; SeverityT, SeverityFallbackT, SeverityTagT, ActorT &gt; const &amp;</paramtype></parameter><purpose>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. </purpose></function>
+<function id="doxygen.expressions.channel__severity__filter_8hpp_1a5aee34b210c013a130f5b4fde3d296e9" name="channel_severity_filter"><type>channel_severity_filter_actor&lt; ChannelT, SeverityT, ChannelFallbackT, SeverityFallbackT, less, greater_equal, use_std_allocator, ActorT &gt;</type><template>
+          <template-type-parameter name="ChannelT"/>
+          <template-type-parameter name="ChannelFallbackT"/>
+          <template-type-parameter name="ChannelTagT"/>
+          <template-type-parameter name="SeverityT"/>
+          <template-type-parameter name="SeverityFallbackT"/>
+          <template-type-parameter name="SeverityTagT"/>
+          <template-nontype-parameter name="ActorT"><type>template&lt; typename &gt; class</type></template-nontype-parameter>
+        </template><parameter name="channel_placeholder"><paramtype><classname>attribute_actor</classname>&lt; ChannelT, ChannelFallbackT, ChannelTagT, ActorT &gt; const &amp;</paramtype></parameter><parameter name="severity_placeholder"><paramtype><classname>attribute_actor</classname>&lt; SeverityT, SeverityFallbackT, SeverityTagT, ActorT &gt; const &amp;</paramtype></parameter><purpose>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. </purpose></function>
+<function id="doxygen.expressions.channel__severity__filter_8hpp_1af2577c0d70cdfb9601dd0f9f21138673" name="channel_severity_filter"><type>channel_severity_filter_actor&lt; ChannelT, SeverityT, fallback_to_none, fallback_to_none, less, SeverityCompareT &gt;</type><template>
+          <template-type-parameter name="ChannelT"/>
+          <template-type-parameter name="SeverityT"/>
+          <template-type-parameter name="SeverityCompareT"/>
+        </template><parameter name="channel_name"><paramtype>attribute_name const &amp;</paramtype></parameter><parameter name="severity_name"><paramtype>attribute_name const &amp;</paramtype></parameter><parameter name="severity_compare"><paramtype>SeverityCompareT const &amp;</paramtype></parameter><purpose>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. </purpose></function>
+<function id="doxygen.expressions.channel__severity__filter_8hpp_1a7188ca65c29096807400f628862d2e90" name="channel_severity_filter"><type>channel_severity_filter_actor&lt; typename ChannelDescriptorT::value_type, SeverityT, fallback_to_none, fallback_to_none, less, SeverityCompareT, use_std_allocator, ActorT &gt;</type><template>
+          <template-type-parameter name="SeverityT"/>
+          <template-type-parameter name="ChannelDescriptorT"/>
+          <template-nontype-parameter name="ActorT"><type>template&lt; typename &gt; class</type></template-nontype-parameter>
+          <template-type-parameter name="SeverityCompareT"/>
+        </template><parameter name="channel_keyword"><paramtype><classname>attribute_keyword</classname>&lt; ChannelDescriptorT, ActorT &gt; const &amp;</paramtype></parameter><parameter name="severity_name"><paramtype>attribute_name const &amp;</paramtype></parameter><parameter name="severity_compare"><paramtype>SeverityCompareT const &amp;</paramtype></parameter><purpose>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. </purpose></function>
+<function id="doxygen.expressions.channel__severity__filter_8hpp_1a7e9635d49a587ccfd6aa1e1331a9be64" name="channel_severity_filter"><type>channel_severity_filter_actor&lt; ChannelT, typename SeverityDescriptorT::value_type, fallback_to_none, fallback_to_none, less, SeverityCompareT, use_std_allocator, ActorT &gt;</type><template>
+          <template-type-parameter name="ChannelT"/>
+          <template-type-parameter name="SeverityDescriptorT"/>
+          <template-nontype-parameter name="ActorT"><type>template&lt; typename &gt; class</type></template-nontype-parameter>
+          <template-type-parameter name="SeverityCompareT"/>
+        </template><parameter name="channel_name"><paramtype>attribute_name const &amp;</paramtype></parameter><parameter name="severity_keyword"><paramtype><classname>attribute_keyword</classname>&lt; SeverityDescriptorT, ActorT &gt; const &amp;</paramtype></parameter><parameter name="severity_compare"><paramtype>SeverityCompareT const &amp;</paramtype></parameter><purpose>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. </purpose></function>
+<function id="doxygen.expressions.channel__severity__filter_8hpp_1ab98c26901d3d77ce53a4fa2afb22aa4e" name="channel_severity_filter"><type>channel_severity_filter_actor&lt; typename ChannelDescriptorT::value_type, typename SeverityDescriptorT::value_type, fallback_to_none, fallback_to_none, less, SeverityCompareT, use_std_allocator, ActorT &gt;</type><template>
+          <template-type-parameter name="ChannelDescriptorT"/>
+          <template-type-parameter name="SeverityDescriptorT"/>
+          <template-nontype-parameter name="ActorT"><type>template&lt; typename &gt; class</type></template-nontype-parameter>
+          <template-type-parameter name="SeverityCompareT"/>
+        </template><parameter name="channel_keyword"><paramtype><classname>attribute_keyword</classname>&lt; ChannelDescriptorT, ActorT &gt; const &amp;</paramtype></parameter><parameter name="severity_keyword"><paramtype><classname>attribute_keyword</classname>&lt; SeverityDescriptorT, ActorT &gt; const &amp;</paramtype></parameter><parameter name="severity_compare"><paramtype>SeverityCompareT const &amp;</paramtype></parameter><purpose>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. </purpose></function>
+<function id="doxygen.expressions.channel__severity__filter_8hpp_1aa933057244f9b6b48607294d27e6b5c4" name="channel_severity_filter"><type>channel_severity_filter_actor&lt; ChannelT, SeverityT, ChannelFallbackT, fallback_to_none, less, SeverityCompareT, use_std_allocator, ActorT &gt;</type><template>
+          <template-type-parameter name="SeverityT"/>
+          <template-type-parameter name="ChannelT"/>
+          <template-type-parameter name="ChannelFallbackT"/>
+          <template-type-parameter name="ChannelTagT"/>
+          <template-nontype-parameter name="ActorT"><type>template&lt; typename &gt; class</type></template-nontype-parameter>
+          <template-type-parameter name="SeverityCompareT"/>
+        </template><parameter name="channel_placeholder"><paramtype><classname>attribute_actor</classname>&lt; ChannelT, ChannelFallbackT, ChannelTagT, ActorT &gt; const &amp;</paramtype></parameter><parameter name="severity_name"><paramtype>attribute_name const &amp;</paramtype></parameter><parameter name="severity_compare"><paramtype>SeverityCompareT const &amp;</paramtype></parameter><purpose>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. </purpose></function>
+<function id="doxygen.expressions.channel__severity__filter_8hpp_1a03f0e25f5de64a89498f188c77423e9e" name="channel_severity_filter"><type>channel_severity_filter_actor&lt; ChannelT, SeverityT, fallback_to_none, SeverityFallbackT, less, SeverityCompareT, use_std_allocator, ActorT &gt;</type><template>
+          <template-type-parameter name="ChannelT"/>
+          <template-type-parameter name="SeverityT"/>
+          <template-type-parameter name="SeverityFallbackT"/>
+          <template-type-parameter name="SeverityTagT"/>
+          <template-nontype-parameter name="ActorT"><type>template&lt; typename &gt; class</type></template-nontype-parameter>
+          <template-type-parameter name="SeverityCompareT"/>
+        </template><parameter name="channel_name"><paramtype>attribute_name const &amp;</paramtype></parameter><parameter name="severity_placeholder"><paramtype><classname>attribute_actor</classname>&lt; SeverityT, SeverityFallbackT, SeverityTagT, ActorT &gt; const &amp;</paramtype></parameter><parameter name="severity_compare"><paramtype>SeverityCompareT const &amp;</paramtype></parameter><purpose>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. </purpose></function>
+<function id="doxygen.expressions.channel__severity__filter_8hpp_1a5de40ee4648bab3124657fc574342dc1" name="channel_severity_filter"><type>channel_severity_filter_actor&lt; ChannelT, SeverityT, ChannelFallbackT, SeverityFallbackT, less, SeverityCompareT, use_std_allocator, ActorT &gt;</type><template>
+          <template-type-parameter name="ChannelT"/>
+          <template-type-parameter name="ChannelFallbackT"/>
+          <template-type-parameter name="ChannelTagT"/>
+          <template-type-parameter name="SeverityT"/>
+          <template-type-parameter name="SeverityFallbackT"/>
+          <template-type-parameter name="SeverityTagT"/>
+          <template-nontype-parameter name="ActorT"><type>template&lt; typename &gt; class</type></template-nontype-parameter>
+          <template-type-parameter name="SeverityCompareT"/>
+        </template><parameter name="channel_placeholder"><paramtype><classname>attribute_actor</classname>&lt; ChannelT, ChannelFallbackT, ChannelTagT, ActorT &gt; const &amp;</paramtype></parameter><parameter name="severity_placeholder"><paramtype><classname>attribute_actor</classname>&lt; SeverityT, SeverityFallbackT, SeverityTagT, ActorT &gt; const &amp;</paramtype></parameter><parameter name="severity_compare"><paramtype>SeverityCompareT const &amp;</paramtype></parameter><purpose>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. </purpose></function>
+<function id="doxygen.expressions.channel__severity__filter_8hpp_1a018c9ded28a11e9a0069e4c7a8cbd4c3" name="channel_severity_filter"><type>channel_severity_filter_actor&lt; ChannelT, SeverityT, fallback_to_none, fallback_to_none, ChannelOrderT, SeverityCompareT &gt;</type><template>
+          <template-type-parameter name="ChannelT"/>
+          <template-type-parameter name="SeverityT"/>
+          <template-type-parameter name="SeverityCompareT"/>
+          <template-type-parameter name="ChannelOrderT"/>
+        </template><parameter name="channel_name"><paramtype>attribute_name const &amp;</paramtype></parameter><parameter name="severity_name"><paramtype>attribute_name const &amp;</paramtype></parameter><parameter name="severity_compare"><paramtype>SeverityCompareT const &amp;</paramtype></parameter><parameter name="channel_order"><paramtype>ChannelOrderT const &amp;</paramtype></parameter><purpose>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. </purpose></function>
+<function id="doxygen.expressions.channel__severity__filter_8hpp_1a8d75d0afe4b8bcaebdb62d4af20dae5e" name="channel_severity_filter"><type>channel_severity_filter_actor&lt; typename ChannelDescriptorT::value_type, SeverityT, fallback_to_none, fallback_to_none, ChannelOrderT, SeverityCompareT, use_std_allocator, ActorT &gt;</type><template>
+          <template-type-parameter name="SeverityT"/>
+          <template-type-parameter name="ChannelDescriptorT"/>
+          <template-nontype-parameter name="ActorT"><type>template&lt; typename &gt; class</type></template-nontype-parameter>
+          <template-type-parameter name="SeverityCompareT"/>
+          <template-type-parameter name="ChannelOrderT"/>
+        </template><parameter name="channel_keyword"><paramtype><classname>attribute_keyword</classname>&lt; ChannelDescriptorT, ActorT &gt; const &amp;</paramtype></parameter><parameter name="severity_name"><paramtype>attribute_name const &amp;</paramtype></parameter><parameter name="severity_compare"><paramtype>SeverityCompareT const &amp;</paramtype></parameter><parameter name="channel_order"><paramtype>ChannelOrderT const &amp;</paramtype></parameter><purpose>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. </purpose></function>
+<function id="doxygen.expressions.channel__severity__filter_8hpp_1a47d77c1091a5a915c5847b1bac7fc193" name="channel_severity_filter"><type>channel_severity_filter_actor&lt; ChannelT, typename SeverityDescriptorT::value_type, fallback_to_none, fallback_to_none, ChannelOrderT, SeverityCompareT, use_std_allocator, ActorT &gt;</type><template>
+          <template-type-parameter name="ChannelT"/>
+          <template-type-parameter name="SeverityDescriptorT"/>
+          <template-nontype-parameter name="ActorT"><type>template&lt; typename &gt; class</type></template-nontype-parameter>
+          <template-type-parameter name="SeverityCompareT"/>
+          <template-type-parameter name="ChannelOrderT"/>
+        </template><parameter name="channel_name"><paramtype>attribute_name const &amp;</paramtype></parameter><parameter name="severity_keyword"><paramtype><classname>attribute_keyword</classname>&lt; SeverityDescriptorT, ActorT &gt; const &amp;</paramtype></parameter><parameter name="severity_compare"><paramtype>SeverityCompareT const &amp;</paramtype></parameter><parameter name="channel_order"><paramtype>ChannelOrderT const &amp;</paramtype></parameter><purpose>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. </purpose></function>
+<function id="doxygen.expressions.channel__severity__filter_8hpp_1ad182381b2d23839a1b82193480b42610" name="channel_severity_filter"><type>channel_severity_filter_actor&lt; typename ChannelDescriptorT::value_type, typename SeverityDescriptorT::value_type, fallback_to_none, fallback_to_none, ChannelOrderT, SeverityCompareT, use_std_allocator, ActorT &gt;</type><template>
+          <template-type-parameter name="ChannelDescriptorT"/>
+          <template-type-parameter name="SeverityDescriptorT"/>
+          <template-nontype-parameter name="ActorT"><type>template&lt; typename &gt; class</type></template-nontype-parameter>
+          <template-type-parameter name="SeverityCompareT"/>
+          <template-type-parameter name="ChannelOrderT"/>
+        </template><parameter name="channel_keyword"><paramtype><classname>attribute_keyword</classname>&lt; ChannelDescriptorT, ActorT &gt; const &amp;</paramtype></parameter><parameter name="severity_keyword"><paramtype><classname>attribute_keyword</classname>&lt; SeverityDescriptorT, ActorT &gt; const &amp;</paramtype></parameter><parameter name="severity_compare"><paramtype>SeverityCompareT const &amp;</paramtype></parameter><parameter name="channel_order"><paramtype>ChannelOrderT const &amp;</paramtype></parameter><purpose>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. </purpose></function>
+<function id="doxygen.expressions.channel__severity__filter_8hpp_1a505ef906cd9cef0a9d3d58ee57cb063b" name="channel_severity_filter"><type>channel_severity_filter_actor&lt; ChannelT, SeverityT, ChannelFallbackT, fallback_to_none, ChannelOrderT, SeverityCompareT, use_std_allocator, ActorT &gt;</type><template>
+          <template-type-parameter name="SeverityT"/>
+          <template-type-parameter name="ChannelT"/>
+          <template-type-parameter name="ChannelFallbackT"/>
+          <template-type-parameter name="ChannelTagT"/>
+          <template-nontype-parameter name="ActorT"><type>template&lt; typename &gt; class</type></template-nontype-parameter>
+          <template-type-parameter name="SeverityCompareT"/>
+          <template-type-parameter name="ChannelOrderT"/>
+        </template><parameter name="channel_placeholder"><paramtype><classname>attribute_actor</classname>&lt; ChannelT, ChannelFallbackT, ChannelTagT, ActorT &gt; const &amp;</paramtype></parameter><parameter name="severity_name"><paramtype>attribute_name const &amp;</paramtype></parameter><parameter name="severity_compare"><paramtype>SeverityCompareT const &amp;</paramtype></parameter><parameter name="channel_order"><paramtype>ChannelOrderT const &amp;</paramtype></parameter><purpose>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. </purpose></function>
+<function id="doxygen.expressions.channel__severity__filter_8hpp_1ab8df261e6666f820009d90f21355fdf0" name="channel_severity_filter"><type>channel_severity_filter_actor&lt; ChannelT, SeverityT, fallback_to_none, SeverityFallbackT, ChannelOrderT, SeverityCompareT, use_std_allocator, ActorT &gt;</type><template>
+          <template-type-parameter name="ChannelT"/>
+          <template-type-parameter name="SeverityT"/>
+          <template-type-parameter name="SeverityFallbackT"/>
+          <template-type-parameter name="SeverityTagT"/>
+          <template-nontype-parameter name="ActorT"><type>template&lt; typename &gt; class</type></template-nontype-parameter>
+          <template-type-parameter name="SeverityCompareT"/>
+          <template-type-parameter name="ChannelOrderT"/>
+        </template><parameter name="channel_name"><paramtype>attribute_name const &amp;</paramtype></parameter><parameter name="severity_placeholder"><paramtype><classname>attribute_actor</classname>&lt; SeverityT, SeverityFallbackT, SeverityTagT, ActorT &gt; const &amp;</paramtype></parameter><parameter name="severity_compare"><paramtype>SeverityCompareT const &amp;</paramtype></parameter><parameter name="channel_order"><paramtype>ChannelOrderT const &amp;</paramtype></parameter><purpose>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. </purpose></function>
+<function id="doxygen.expressions.channel__severity__filter_8hpp_1aa656969ce2792055584bc23f42e0d159" name="channel_severity_filter"><type>channel_severity_filter_actor&lt; ChannelT, SeverityT, ChannelFallbackT, SeverityFallbackT, ChannelOrderT, SeverityCompareT, use_std_allocator, ActorT &gt;</type><template>
+          <template-type-parameter name="ChannelT"/>
+          <template-type-parameter name="ChannelFallbackT"/>
+          <template-type-parameter name="ChannelTagT"/>
+          <template-type-parameter name="SeverityT"/>
+          <template-type-parameter name="SeverityFallbackT"/>
+          <template-type-parameter name="SeverityTagT"/>
+          <template-nontype-parameter name="ActorT"><type>template&lt; typename &gt; class</type></template-nontype-parameter>
+          <template-type-parameter name="SeverityCompareT"/>
+          <template-type-parameter name="ChannelOrderT"/>
+        </template><parameter name="channel_placeholder"><paramtype><classname>attribute_actor</classname>&lt; ChannelT, ChannelFallbackT, ChannelTagT, ActorT &gt; const &amp;</paramtype></parameter><parameter name="severity_placeholder"><paramtype><classname>attribute_actor</classname>&lt; SeverityT, SeverityFallbackT, SeverityTagT, ActorT &gt; const &amp;</paramtype></parameter><parameter name="severity_compare"><paramtype>SeverityCompareT const &amp;</paramtype></parameter><parameter name="channel_order"><paramtype>ChannelOrderT const &amp;</paramtype></parameter><purpose>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. </purpose></function>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.expressions.contains_8hpp" name="boost/log/expressions/predicates/contains.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>02.09.2012</para>
+
+The header contains implementation of a <computeroutput>contains</computeroutput> predicate in template expressions. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="expressions">
+<typedef id="doxygen.expressions.contains_8hpp_1a86a6d5825646442c1591267eb4d6a005" name="attribute_contains"><description><para>The predicate checks if the attribute value contains a substring. The attribute value is assumed to be of a string type. </para></description><type><emphasis>unspecified</emphasis></type></typedef>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<function id="doxygen.expressions.contains_8hpp_1a058fdd2241c555c63eb53b64d4d5f088" name="contains"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="T"/>
+          <template-type-parameter name="FallbackPolicyT"/>
+          <template-type-parameter name="TagT"/>
+          <template-nontype-parameter name="ActorT"><type>template&lt; typename &gt; class</type></template-nontype-parameter>
+          <template-type-parameter name="SubstringT"/>
+        </template><parameter name="attr"><paramtype><classname>attribute_actor</classname>&lt; T, FallbackPolicyT, TagT, ActorT &gt; const &amp;</paramtype></parameter><parameter name="substring"><paramtype>SubstringT const &amp;</paramtype></parameter><description><para>The function generates a terminal node in a template expression. The node will check if the attribute value, which is assumed to be a string, contains the specified substring. </para></description></function>
+<function id="doxygen.expressions.contains_8hpp_1a28c8ce5e8e14a3976a38a301444190c0" name="contains"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="DescriptorT"/>
+          <template-nontype-parameter name="ActorT"><type>template&lt; typename &gt; class</type></template-nontype-parameter>
+          <template-type-parameter name="SubstringT"/>
+        </template><parameter name=""><paramtype><classname>attribute_keyword</classname>&lt; DescriptorT, ActorT &gt; const &amp;</paramtype></parameter><parameter name="substring"><paramtype>SubstringT const &amp;</paramtype></parameter><description><para>The function generates a terminal node in a template expression. The node will check if the attribute value, which is assumed to be a string, contains the specified substring. </para></description></function>
+<function id="doxygen.expressions.contains_8hpp_1a6a0e72277f3724e10eebf47362441824" name="contains"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="T"/>
+          <template-type-parameter name="SubstringT"/>
+        </template><parameter name="name"><paramtype>attribute_name const &amp;</paramtype></parameter><parameter name="substring"><paramtype>SubstringT const &amp;</paramtype></parameter><description><para>The function generates a terminal node in a template expression. The node will check if the attribute value, which is assumed to be a string, contains the specified substring. </para></description></function>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.expressions.ends__with_8hpp" name="boost/log/expressions/predicates/ends_with.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>02.09.2012</para>
+
+The header contains implementation of a <computeroutput>ends_with</computeroutput> predicate in template expressions. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="expressions">
+<typedef id="doxygen.expressions.ends__with_8hpp_1a1ab2e813996fe7420925832424b737c9" name="attribute_ends_with"><description><para>The predicate checks if the attribute value ends with a substring. The attribute value is assumed to be of a string type. </para></description><type><emphasis>unspecified</emphasis></type></typedef>
+
+
+
+
+
+
+
+
+
+
+
+<function id="doxygen.expressions.ends__with_8hpp_1a1193a9724a334d8eedba277ec7d44e79" name="ends_with"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="T"/>
+          <template-type-parameter name="FallbackPolicyT"/>
+          <template-type-parameter name="TagT"/>
+          <template-nontype-parameter name="ActorT"><type>template&lt; typename &gt; class</type></template-nontype-parameter>
+          <template-type-parameter name="SubstringT"/>
+        </template><parameter name="attr"><paramtype><classname>attribute_actor</classname>&lt; T, FallbackPolicyT, TagT, ActorT &gt; const &amp;</paramtype></parameter><parameter name="substring"><paramtype>SubstringT const &amp;</paramtype></parameter><description><para>The function generates a terminal node in a template expression. The node will check if the attribute value, which is assumed to be a string, ends with the specified substring. </para></description></function>
+<function id="doxygen.expressions.ends__with_8hpp_1a279a91f0cb07cd199cd250e9b82a068c" name="ends_with"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="DescriptorT"/>
+          <template-nontype-parameter name="ActorT"><type>template&lt; typename &gt; class</type></template-nontype-parameter>
+          <template-type-parameter name="SubstringT"/>
+        </template><parameter name=""><paramtype><classname>attribute_keyword</classname>&lt; DescriptorT, ActorT &gt; const &amp;</paramtype></parameter><parameter name="substring"><paramtype>SubstringT const &amp;</paramtype></parameter><description><para>The function generates a terminal node in a template expression. The node will check if the attribute value, which is assumed to be a string, ends with the specified substring. </para></description></function>
+<function id="doxygen.expressions.ends__with_8hpp_1aa8c5160a541929d2e9e5b155dd93fd1d" name="ends_with"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="T"/>
+          <template-type-parameter name="SubstringT"/>
+        </template><parameter name="name"><paramtype>attribute_name const &amp;</paramtype></parameter><parameter name="substring"><paramtype>SubstringT const &amp;</paramtype></parameter><description><para>The function generates a terminal node in a template expression. The node will check if the attribute value, which is assumed to be a string, ends with the specified substring. </para></description></function>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.expressions.has__attr_8hpp" name="boost/log/expressions/predicates/has_attr.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>23.07.2012</para>
+
+The header contains implementation of a generic attribute presence checker in template expressions. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="expressions">
+<class id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1has__attribute" name="has_attribute"><template>
+      <template-type-parameter name="T"/>
+    </template><description><para>An attribute value presence checker. </para></description><typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1has__attribute_1a686b9d94028b8d69200c6e0f7698d90f" name="result_type"><purpose>Function result_type. </purpose><type>bool</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1has__attribute_1a265a253612b46abed17c61b0a5e5ce30" name="value_type"><purpose>Expected attribute value type. </purpose><type>T</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1has__attribute_1afcfd3a374246cf47cd96edf76526b6d9" specifiers="explicit"><parameter name="name"><paramtype>attribute_name const &amp;</paramtype><description><para>Attribute name </para></description></parameter><description><para>Initializing constructor</para><para>
+</para></description></constructor>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1has__attribute_1a8189f01f8c3841f3554100cee5568fa9" name="operator()" cv="const"><type>result_type</type><template>
+          <template-type-parameter name="ArgT"/>
+        </template><parameter name="arg"><paramtype>ArgT const &amp;</paramtype><description><para>A set of attribute values or a log record </para></description></parameter><description><para>Checking operator</para><para>
+
+</para></description><returns><para><computeroutput>true</computeroutput> if the log record contains the sought attribute value, <computeroutput>false</computeroutput> otherwise </para>
+</returns></method>
+</method-group>
+</class><class-specialization id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1has__attribute_3_01void_01_4" name="has_attribute"><template>
+    </template><specialization><template-arg>void</template-arg></specialization><description><para>An attribute value presence checker. This specialization does not check the type of the attribute value. </para></description><typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1has__attribute_3_01void_01_4_1a686b9d94028b8d69200c6e0f7698d90f" name="result_type"><purpose>Function result_type. </purpose><type>bool</type></typedef>
+<typedef id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1has__attribute_3_01void_01_4_1a9c85f50eb8b41cf8c88aadc67b632316" name="value_type"><purpose>Expected attribute value type. </purpose><type>void</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1has__attribute_3_01void_01_4_1afcfd3a374246cf47cd96edf76526b6d9" specifiers="explicit"><parameter name="name"><paramtype>attribute_name const &amp;</paramtype><description><para>Attribute name </para></description></parameter><description><para>Initializing constructor</para><para>
+</para></description></constructor>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1has__attribute_3_01void_01_4_1a92d00a99f4772316b45a96df47a50f18" name="operator()" cv="const"><type>result_type</type><parameter name="attrs"><paramtype>attribute_value_set const &amp;</paramtype><description><para>A set of attribute values </para></description></parameter><description><para>Checking operator</para><para>
+
+</para></description><returns><para><computeroutput>true</computeroutput> if the log record contains the sought attribute value, <computeroutput>false</computeroutput> otherwise </para>
+</returns></method>
+<method id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1has__attribute_3_01void_01_4_1ad38d93bda4fd02880eb31ba6e7000527" name="operator()" cv="const"><type>result_type</type><parameter name="rec"><paramtype>boost::log::record_view const &amp;</paramtype><description><para>A log record </para></description></parameter><description><para>Checking operator</para><para>
+
+</para></description><returns><para><computeroutput>true</computeroutput> if the log record contains the sought attribute value, <computeroutput>false</computeroutput> otherwise </para>
+</returns></method>
+</method-group>
+</class-specialization>
+
+
+
+
+
+
+
+<function id="doxygen.expressions.has__attr_8hpp_1adf338121e617ed6d9bd593aa2edcc2e1" name="has_attr"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="AttributeValueT"/>
+        </template><parameter name="name"><paramtype>attribute_name const &amp;</paramtype></parameter><description><para>The function generates a terminal node in a template expression. The node will check for the attribute value presence in a log record. The node will also check that the attribute value has the specified type, if present. </para></description></function>
+<function id="doxygen.expressions.has__attr_8hpp_1ad2a028fe1a55d6fd2e32aa4ad0b2d7e5" name="has_attr"><type><emphasis>unspecified</emphasis></type><parameter name="name"><paramtype>attribute_name const &amp;</paramtype></parameter><description><para>The function generates a terminal node in a template expression. The node will check for the attribute value presence in a log record. </para></description></function>
+<function id="doxygen.expressions.has__attr_8hpp_1a36626997f9982e8fc46026488bda705c" name="has_attr"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="DescriptorT"/>
+          <template-nontype-parameter name="ActorT"><type>template&lt; typename &gt; class</type></template-nontype-parameter>
+        </template><parameter name=""><paramtype><classname>attribute_keyword</classname>&lt; DescriptorT, ActorT &gt; const &amp;</paramtype></parameter><description><para>The function generates a terminal node in a template expression. The node will check for the attribute value presence in a log record. The node will also check that the attribute value has the specified type, if present. </para></description></function>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.expressions.is__debugger__present_8hpp" name="boost/log/expressions/predicates/is_debugger_present.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>05.12.2012</para>
+
+The header contains implementation of the <computeroutput>is_debugger_present</computeroutput> predicate in template expressions. </para></header>
+<header id="doxygen.expressions.is__in__range_8hpp" name="boost/log/expressions/predicates/is_in_range.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>02.09.2012</para>
+
+The header contains implementation of an <computeroutput>is_in_range</computeroutput> predicate in template expressions. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="expressions">
+<typedef id="doxygen.expressions.is__in__range_8hpp_1ad4bff2da3adc7340bac49c5636562060" name="attribute_is_in_range"><description><para>The predicate checks if the attribute value contains a substring. The attribute value is assumed to be of a string type. </para></description><type><emphasis>unspecified</emphasis></type></typedef>
+
+
+
+
+
+<function id="doxygen.expressions.is__in__range_8hpp_1a996650fa93ba1ae8a95a280647d2dfe1" name="is_in_range"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="T"/>
+          <template-type-parameter name="FallbackPolicyT"/>
+          <template-type-parameter name="TagT"/>
+          <template-nontype-parameter name="ActorT"><type>template&lt; typename &gt; class</type></template-nontype-parameter>
+          <template-type-parameter name="BoundaryT"/>
+        </template><parameter name="attr"><paramtype><classname>attribute_actor</classname>&lt; T, FallbackPolicyT, TagT, ActorT &gt; const &amp;</paramtype></parameter><parameter name="least"><paramtype>BoundaryT const &amp;</paramtype></parameter><parameter name="most"><paramtype>BoundaryT const &amp;</paramtype></parameter><description><para>The function generates a terminal node in a template expression. The node will check if the attribute value is in the specified range. The range must be half-open, that is the predicate will be equivalent to <computeroutput>least &lt;= attr &lt; most</computeroutput>. </para></description></function>
+<function id="doxygen.expressions.is__in__range_8hpp_1a75ae56a935f39432f500cfea0a1cf9b2" name="is_in_range"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="DescriptorT"/>
+          <template-nontype-parameter name="ActorT"><type>template&lt; typename &gt; class</type></template-nontype-parameter>
+          <template-type-parameter name="BoundaryT"/>
+        </template><parameter name=""><paramtype><classname>attribute_keyword</classname>&lt; DescriptorT, ActorT &gt; const &amp;</paramtype></parameter><parameter name="least"><paramtype>BoundaryT const &amp;</paramtype></parameter><parameter name="most"><paramtype>BoundaryT const &amp;</paramtype></parameter><description><para>The function generates a terminal node in a template expression. The node will check if the attribute value is in the specified range. The range must be half-open, that is the predicate will be equivalent to <computeroutput>least &lt;= attr &lt; most</computeroutput>. </para></description></function>
+<function id="doxygen.expressions.is__in__range_8hpp_1a47bf28d38c1e2c90c20b5a06d8b69979" name="is_in_range"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="T"/>
+          <template-type-parameter name="BoundaryT"/>
+        </template><parameter name="name"><paramtype>attribute_name const &amp;</paramtype></parameter><parameter name="least"><paramtype>BoundaryT const &amp;</paramtype></parameter><parameter name="most"><paramtype>BoundaryT const &amp;</paramtype></parameter><description><para>The function generates a terminal node in a template expression. The node will check if the attribute value is in the specified range. The range must be half-open, that is the predicate will be equivalent to <computeroutput>least &lt;= attr &lt; most</computeroutput>. </para></description></function>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.expressions.matches_8hpp" name="boost/log/expressions/predicates/matches.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>02.09.2012</para>
+
+The header contains implementation of a <computeroutput>matches</computeroutput> predicate in template expressions. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="expressions">
+<class id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1attribute__matches" name="attribute_matches"><template>
+      <template-type-parameter name="T"/>
+      <template-type-parameter name="RegexT"/>
+      <template-type-parameter name="FallbackPolicyT"><default>fallback_to_none</default></template-type-parameter>
+    </template><description><para>The predicate checks if the attribute value matches a regular expression. The attribute value is assumed to be of a string type. </para></description><method-group name="public member functions">
+<constructor id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1attribute__matches_1a22e75084047660f764483c43579cc5d2"><parameter name="name"><paramtype>attribute_name const &amp;</paramtype><description><para>Attribute name </para></description></parameter><parameter name="rex"><paramtype>RegexT const &amp;</paramtype><description><para>The regular expression to match the attribute value against </para></description></parameter><description><para>Initializing constructor</para><para>
+</para></description></constructor>
+<constructor id="doxygen.expressions.classboost_1_1log_1_1expressions_1_1attribute__matches_1afe12899ca0780c047e90630833667952"><template>
+          <template-type-parameter name="U"/>
+        </template><parameter name="name"><paramtype>attribute_name const &amp;</paramtype><description><para>Attribute name </para></description></parameter><parameter name="rex"><paramtype>RegexT const &amp;</paramtype><description><para>The regular expression to match the attribute value against </para></description></parameter><parameter name="arg"><paramtype>U const &amp;</paramtype><description><para>Additional parameter for the fallback policy </para></description></parameter><description><para>Initializing constructor</para><para>
+</para></description></constructor>
+</method-group>
+</class>
+
+<function id="doxygen.expressions.matches_8hpp_1adcefdc2be04b89ba4a6b49f3998faa1a" name="matches"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="T"/>
+          <template-type-parameter name="FallbackPolicyT"/>
+          <template-type-parameter name="TagT"/>
+          <template-nontype-parameter name="ActorT"><type>template&lt; typename &gt; class</type></template-nontype-parameter>
+          <template-type-parameter name="RegexT"/>
+        </template><parameter name="attr"><paramtype><classname>attribute_actor</classname>&lt; T, FallbackPolicyT, TagT, ActorT &gt; const &amp;</paramtype></parameter><parameter name="rex"><paramtype>RegexT const &amp;</paramtype></parameter><description><para>The function generates a terminal node in a template expression. The node will check if the attribute value, which is assumed to be a string, matches the specified regular expression. </para></description></function>
+<function id="doxygen.expressions.matches_8hpp_1ae880128b89a6f703f073d27b6d2b1fd4" name="matches"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="DescriptorT"/>
+          <template-nontype-parameter name="ActorT"><type>template&lt; typename &gt; class</type></template-nontype-parameter>
+          <template-type-parameter name="RegexT"/>
+        </template><parameter name=""><paramtype><classname>attribute_keyword</classname>&lt; DescriptorT, ActorT &gt; const &amp;</paramtype></parameter><parameter name="rex"><paramtype>RegexT const &amp;</paramtype></parameter><description><para>The function generates a terminal node in a template expression. The node will check if the attribute value, which is assumed to be a string, matches the specified regular expression. </para></description></function>
+<function id="doxygen.expressions.matches_8hpp_1ab92d1d190f54e219b6701e132c817a5a" name="matches"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="T"/>
+          <template-type-parameter name="RegexT"/>
+        </template><parameter name="name"><paramtype>attribute_name const &amp;</paramtype></parameter><parameter name="rex"><paramtype>RegexT const &amp;</paramtype></parameter><description><para>The function generates a terminal node in a template expression. The node will check if the attribute value, which is assumed to be a string, matches the specified regular expression. </para></description></function>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+
+
+</namespace>
+</namespace>
+<macro id="doxygen.expressions.matches_8hpp_1ab36e56292ee26802c8f57dca92f60fcd" name="BOOST_LOG_AUX_FORCEINLINE_MSVC_BUG982738"/>
+</header>
+<header id="doxygen.expressions.record_8hpp" name="boost/log/expressions/record.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>25.07.2012</para>
+
+The header contains implementation of a log record placeholder in template expressions. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="expressions">
+<typedef id="doxygen.expressions.record_8hpp_1ab9ec4f42326830849a14e7b75bdd0227" name="record_type"><description><para>Log record placeholder type in formatter template expressions. </para></description><type>phoenix::expression::argument&lt; 1 &gt;::type</type></typedef>
+<data-member id="doxygen.expressions.record_8hpp_1a9f618cf55a4264e978f951c55da84155" name="record"><type>const record_type</type><description><para>Log record placeholder in formatter template expressions. </para></description></data-member>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+
+
+</namespace>
+</namespace>
+</header>
+</library-reference>

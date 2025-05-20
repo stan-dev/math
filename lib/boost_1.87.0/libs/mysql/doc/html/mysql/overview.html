@@ -1,0 +1,633 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Overview</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="prev" href="tutorial_error_handling.html" title="Tutorial 7: Error handling">
+<link rel="next" href="connection_establishment.html" title="Connection establishment and termination">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="tutorial_error_handling.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="connection_establishment.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="mysql.overview"></a><a class="link" href="overview.html" title="Overview">Overview</a>
+</h2></div></div></div>
+<p>
+      This section briefly explains the library main classes and functions, and how
+      to use them.
+    </p>
+<p>
+      Boost.MySQL exposes sync and async functions implementing functionality involving
+      I/O. As explained <a class="link" href="tutorial_async.html" title="Tutorial 2: going async with C++20 coroutines">in the second tutorial</a>,
+      it's advisable to use async functions when possible, because they are more
+      flexible.
+    </p>
+<p>
+      Boost.MySQL supports the Boost.Asio universal async model. This means that
+      a variety of async programming paradigms can be used with the library, including
+      callbacks, stackful coroutines and C++20 coroutines. We will use C++20 coroutines
+      throughout the document because they're easy to use.
+    </p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+        Still not using C++20? Don't worry, you can use <a class="link" href="examples/coroutines_cpp11.html" title="Stackful coroutines (async functions in C++11)">stackful
+        coroutines</a> and <a class="link" href="examples/callbacks.html" title="Callbacks (async functions in C++11)">callbacks</a>
+        even in C++11.
+      </p></td></tr>
+</table></div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="mysql.overview.connection_establishment"></a><a class="link" href="overview.html#mysql.overview.connection_establishment" title="Connection establishment">Connection establishment</a>
+</h3></div></div></div>
+<p>
+        <a class="link" href="ref/boost__mysql__any_connection.html" title="any_connection"><code class="literal">any_connection</code></a>
+        is the most primitive I/O object in the library. It can establish and close
+        connections, run queries and manage prepared statements. Like most I/O objects,
+        <code class="computeroutput"><span class="identifier">any_connection</span></code> can be constructed
+        from an execution context:
+      </p>
+<pre class="programlisting"><span class="comment">// The execution context, required to run I/O operations.</span>
+<span class="identifier">asio</span><span class="special">::</span><span class="identifier">io_context</span> <span class="identifier">ctx</span><span class="special">;</span>
+
+<span class="comment">// Represents a connection to the MySQL server.</span>
+<span class="identifier">mysql</span><span class="special">::</span><span class="identifier">any_connection</span> <span class="identifier">conn</span><span class="special">(</span><span class="identifier">ctx</span><span class="special">);</span>
+</pre>
+<p>
+        <code class="computeroutput"><span class="identifier">any_connection</span></code> is named like
+        this for historic reasons: a templated connection class came before it. We
+        currently recommend using <code class="computeroutput"><span class="identifier">any_connection</span></code>
+        for new code because it's simpler and more powerful.
+      </p>
+<p>
+        The MySQL client/server protocol is session-oriented. Before anything else,
+        you must perform session establishment by calling <a class="link" href="ref/boost__mysql__any_connection/async_connect.html" title="any_connection::async_connect"><code class="literal">any_connection::async_connect</code></a>:
+      </p>
+<pre class="programlisting"><span class="comment">// The hostname, username, password and database to use.</span>
+<span class="identifier">mysql</span><span class="special">::</span><span class="identifier">connect_params</span> <span class="identifier">params</span><span class="special">;</span>
+<span class="identifier">params</span><span class="special">.</span><span class="identifier">server_address</span><span class="special">.</span><span class="identifier">emplace_host_and_port</span><span class="special">(</span><span class="identifier">server_hostname</span><span class="special">);</span>  <span class="comment">// hostname</span>
+<span class="identifier">params</span><span class="special">.</span><span class="identifier">username</span> <span class="special">=</span> <span class="identifier">mysql_username</span><span class="special">;</span>
+<span class="identifier">params</span><span class="special">.</span><span class="identifier">password</span> <span class="special">=</span> <span class="identifier">mysql_password</span><span class="special">;</span>
+<span class="identifier">params</span><span class="special">.</span><span class="identifier">database</span> <span class="special">=</span> <span class="string">"boost_mysql_examples"</span><span class="special">;</span>
+
+<span class="comment">// Connect to the server</span>
+<span class="identifier">co_await</span> <span class="identifier">conn</span><span class="special">.</span><span class="identifier">async_connect</span><span class="special">(</span><span class="identifier">params</span><span class="special">);</span>
+</pre>
+<p>
+        <a class="link" href="ref/boost__mysql__any_connection/async_connect.html" title="any_connection::async_connect"><code class="literal">async_connect</code></a>
+        performs the hostname resolution, TCP session establishment, TLS handshake
+        and MySQL handshake. By default, TLS is used if the server supports it.
+      </p>
+<p>
+        You can configure a number of parameters here, including the database to
+        use, TLS options and buffer sizes. See <a class="link" href="connection_establishment.html" title="Connection establishment and termination">this
+        section</a> for more info.
+      </p>
+<p>
+        Boost.MySQL also supports <a class="link" href="connection_establishment.html#mysql.connection_establishment.unix" title="UNIX sockets">using
+        UNIX-domain sockets</a>.
+      </p>
+<p>
+        To cleanly terminate a connection, use <a class="link" href="ref/boost__mysql__any_connection/async_close.html" title="any_connection::async_close"><code class="literal">async_close</code></a>.
+        This sends a packet informing of the imminent close and shuts down TLS. The
+        connection destructor will also close the socket, so no leak occurs.
+      </p>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="mysql.overview.running_queries"></a><a class="link" href="overview.html#mysql.overview.running_queries" title="Running queries">Running queries</a>
+</h3></div></div></div>
+<p>
+        The simplest way to run a SQL query is using <a class="link" href="ref/boost__mysql__any_connection/async_execute.html" title="any_connection::async_execute"><code class="literal">any_connection::async_execute</code></a>.
+        You can execute queries by passing a string as first parameter:
+      </p>
+<pre class="programlisting"><span class="comment">// Executes 'SELECT 1' and reads the resulting rows into memory</span>
+<span class="identifier">mysql</span><span class="special">::</span><span class="identifier">results</span> <span class="identifier">result</span><span class="special">;</span>
+<span class="identifier">co_await</span> <span class="identifier">conn</span><span class="special">.</span><span class="identifier">async_execute</span><span class="special">(</span><span class="string">"SELECT 1"</span><span class="special">,</span> <span class="identifier">result</span><span class="special">);</span>
+</pre>
+<p>
+        Most queries contain user-supplied input. <span class="bold"><strong>Never use
+        raw string concatenation</strong></span> to build queries, since this is vulnerable
+        to SQL injection. Boost.MySQL provides two interfaces to run queries with
+        parameters:
+      </p>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Feature
+                </p>
+              </th>
+<th>
+                <p>
+                  Code
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="sql_formatting.html" title="Text queries and client-side SQL formatting">Client-side SQL formatting</a>:
+                </p>
+                <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+                      Securely expands queries client-side.
+                    </li>
+<li class="listitem">
+                      Text-based protocol.
+                    </li>
+<li class="listitem">
+                      Adequate for general use.
+                    </li>
+</ul></div>
+              </td>
+<td>
+<pre class="table-programlisting"><span class="comment">// If employee_id is 42, executes 'SELECT first_name FROM employee WHERE id = 42'</span>
+<span class="identifier">mysql</span><span class="special">::</span><span class="identifier">results</span> <span class="identifier">result</span><span class="special">;</span>
+<span class="identifier">co_await</span> <span class="identifier">conn</span><span class="special">.</span><span class="identifier">async_execute</span><span class="special">(</span>
+    <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">with_params</span><span class="special">(</span><span class="string">"SELECT first_name FROM employee WHERE id = {}"</span><span class="special">,</span> <span class="identifier">employee_id</span><span class="special">),</span>
+    <span class="identifier">result</span>
+<span class="special">);</span>
+</pre>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="prepared_statements.html" title="Prepared statements">Prepared statements</a>:
+                </p>
+                <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+                      Parsed and executed in two different operations.
+                    </li>
+<li class="listitem">
+                      Binary protocol.
+                    </li>
+<li class="listitem">
+                      Adequate when running a query several times or retrieving lots
+                      of numeric data.
+                    </li>
+</ul></div>
+              </td>
+<td>
+<pre class="table-programlisting"><span class="comment">// First prepare the statement. Parsing happens server-side.</span>
+<span class="identifier">mysql</span><span class="special">::</span><span class="identifier">statement</span> <span class="identifier">stmt</span> <span class="special">=</span> <span class="identifier">co_await</span> <span class="identifier">conn</span><span class="special">.</span><span class="identifier">async_prepare_statement</span><span class="special">(</span>
+    <span class="string">"SELECT first_name FROM employee WHERE company_id = ?"</span>
+<span class="special">);</span>
+
+<span class="comment">// Now execute it. Parameter substitution happens server-side.</span>
+<span class="identifier">mysql</span><span class="special">::</span><span class="identifier">results</span> <span class="identifier">result</span><span class="special">;</span>
+<span class="identifier">co_await</span> <span class="identifier">conn</span><span class="special">.</span><span class="identifier">async_execute</span><span class="special">(</span><span class="identifier">stmt</span><span class="special">.</span><span class="identifier">bind</span><span class="special">(</span><span class="identifier">employee_id</span><span class="special">),</span> <span class="identifier">result</span><span class="special">);</span>
+</pre>
+              </td>
+</tr>
+</tbody>
+</table></div>
+<p>
+        By default, we recommend using <a class="link" href="ref/boost__mysql__with_params.html" title="with_params"><code class="literal">with_params</code></a>
+        because it's simpler and entails less round-trips to the server. See <a class="link" href="sql_formatting.html#mysql.sql_formatting.comparison" title="Prepared statements vs. client-side SQL formatting">the comparison section</a> for
+        more info.
+      </p>
+<p>
+        Client-side SQL formatting can also be used to <a class="link" href="sql_formatting_advanced.html#mysql.sql_formatting_advanced.expand" title="Formatting queries without executing them">expand
+        queries</a> without sending them to the server.
+      </p>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="mysql.overview.the_dynamic_and_the_static_inter"></a><a class="link" href="overview.html#mysql.overview.the_dynamic_and_the_static_inter" title="The dynamic and the static interfaces">The
+      dynamic and the static interfaces</a>
+</h3></div></div></div>
+<p>
+        In MySQL, a <span class="emphasis"><em>resultset</em></span> refers to the results generated
+        by a SQL query. A resultset is composed of rows, <a class="link" href="meta.html" title="Metadata">metadata</a>
+        and additional info, like the last insert ID.
+      </p>
+<p>
+        There are two different interfaces to access resultsets. You can use the
+        <a class="link" href="ref/boost__mysql__results.html" title="results"><code class="literal">results</code></a>
+        class to access rows using a dynamically-typed interface, using variant-like
+        objects to represent values retrieved from the server. On other other hand,
+        <a class="link" href="ref/boost__mysql__static_results.html" title="static_results"><code class="literal">static_results</code></a>
+        is statically-typed. You specify the shape of your rows at compile-time,
+        and the library will parse the retrieved values for you into the types you
+        provide.
+      </p>
+<p>
+        You can use almost every feature in this library (including text queries
+        and prepared statements) with both interfaces.
+      </p>
+<p>
+        For example, given the following table :
+      </p>
+<pre class="programlisting">CREATE TABLE employee(
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    ... -- other fields not relevant for us
+);
+</pre>
+<p>
+        This is how you would access its contents using either of the interfaces:
+      </p>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Interface
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+<th>
+                <p>
+                  Example
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  Dynamic interface: <a class="link" href="ref/boost__mysql__results.html" title="results"><code class="literal">results</code></a>
+                </p>
+              </td>
+<td>
+                <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+                      Variant based
+                    </li>
+<li class="listitem">
+                      Available in C++11
+                    </li>
+<li class="listitem">
+                      <a class="link" href="dynamic_interface.html" title="The dynamic interface">Learn more</a>
+                    </li>
+</ul></div>
+              </td>
+<td>
+<pre class="table-programlisting"><span class="comment">// Passing a results to async_execute selects the dynamic interface</span>
+<span class="identifier">mysql</span><span class="special">::</span><span class="identifier">results</span> <span class="identifier">result</span><span class="special">;</span>
+<span class="identifier">co_await</span> <span class="identifier">conn</span><span class="special">.</span><span class="identifier">async_execute</span><span class="special">(</span><span class="string">"SELECT id, first_name, last_name FROM employee"</span><span class="special">,</span> <span class="identifier">result</span><span class="special">);</span>
+
+<span class="comment">// Every employee is a collection of fields, which are variant-like objects</span>
+<span class="comment">// that represent data. We use as_string() to cast them to the appropriate type</span>
+<span class="keyword">for</span> <span class="special">(</span><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">row_view</span> <span class="identifier">emp</span> <span class="special">:</span> <span class="identifier">result</span><span class="special">.</span><span class="identifier">rows</span><span class="special">())</span>
+<span class="special">{</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"First name: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">emp</span><span class="special">.</span><span class="identifier">at</span><span class="special">(</span><span class="number">1</span><span class="special">).</span><span class="identifier">as_string</span><span class="special">()</span> <span class="special">&lt;&lt;</span> <span class="string">", last name: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">emp</span><span class="special">.</span><span class="identifier">at</span><span class="special">(</span><span class="number">2</span><span class="special">).</span><span class="identifier">as_string</span><span class="special">()</span>
+              <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;</span>
+<span class="special">}</span>
+</pre>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  Static interface: <a class="link" href="ref/boost__mysql__static_results.html" title="static_results"><code class="literal">static_results</code></a>
+                </p>
+              </td>
+<td>
+                <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+                      Parses rows into your own types
+                    </li>
+<li class="listitem">
+                      Requires C++20 when using Boost.Pfr, C++14 when using Boost.Describe
+                    </li>
+<li class="listitem">
+                      <a class="link" href="static_interface.html" title="The static interface">Learn more</a>
+                    </li>
+</ul></div>
+              </td>
+<td>
+<pre class="table-programlisting"><span class="comment">// This must be placed at namespace scope.</span>
+<span class="comment">// Should contain a member for each field of interest present in our query.</span>
+<span class="comment">// Declaration order doesn't need to match field order in the query.</span>
+<span class="comment">// Field names should match the ones in our query</span>
+<span class="keyword">struct</span> <span class="identifier">employee</span>
+<span class="special">{</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">int64_t</span> <span class="identifier">id</span><span class="special">;</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">first_name</span><span class="special">;</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">last_name</span><span class="special">;</span>
+<span class="special">};</span>
+</pre>
+                <p>
+                  <br>
+                </p>
+<pre class="table-programlisting"><span class="comment">//</span>
+<span class="comment">// This must be placed inside your function or method:</span>
+<span class="comment">//</span>
+
+<span class="comment">// Passing a static_results to async_execute selects the static interface</span>
+<span class="identifier">mysql</span><span class="special">::</span><span class="identifier">static_results</span><span class="special">&lt;</span><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">pfr_by_name</span><span class="special">&lt;</span><span class="identifier">employee</span><span class="special">&gt;&gt;</span> <span class="identifier">result</span><span class="special">;</span>
+<span class="identifier">co_await</span> <span class="identifier">conn</span><span class="special">.</span><span class="identifier">async_execute</span><span class="special">(</span><span class="string">"SELECT id, first_name, last_name FROM employee"</span><span class="special">,</span> <span class="identifier">result</span><span class="special">);</span>
+
+<span class="comment">// Query results are parsed directly into your own type</span>
+<span class="keyword">for</span> <span class="special">(</span><span class="keyword">const</span> <span class="identifier">employee</span><span class="special">&amp;</span> <span class="identifier">emp</span> <span class="special">:</span> <span class="identifier">result</span><span class="special">.</span><span class="identifier">rows</span><span class="special">())</span>
+<span class="special">{</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"First name: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">emp</span><span class="special">.</span><span class="identifier">first_name</span> <span class="special">&lt;&lt;</span> <span class="string">", last name: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">emp</span><span class="special">.</span><span class="identifier">last_name</span> <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;</span>
+<span class="special">}</span>
+</pre>
+              </td>
+</tr>
+</tbody>
+</table></div>
+<p>
+        Prefer using the static interface when possible.
+      </p>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="mysql.overview.running_insert_update_and_delete"></a><a class="link" href="overview.html#mysql.overview.running_insert_update_and_delete" title="Running INSERT, UPDATE and DELETE statements">Running
+      INSERT, UPDATE and DELETE statements</a>
+</h3></div></div></div>
+<p>
+        The same APIs explained above can be used for SQL statements that don't retrieve
+        data:
+      </p>
+<pre class="programlisting"><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">results</span> <span class="identifier">result</span><span class="special">;</span>
+<span class="identifier">co_await</span> <span class="identifier">conn</span><span class="special">.</span><span class="identifier">async_execute</span><span class="special">(</span>
+    <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">with_params</span><span class="special">(</span><span class="string">"UPDATE employee SET first_name = {} WHERE id = {}"</span><span class="special">,</span> <span class="identifier">new_name</span><span class="special">,</span> <span class="identifier">employee_id</span><span class="special">),</span>
+    <span class="identifier">result</span>
+<span class="special">);</span>
+</pre>
+<p>
+        When performing INSERTs, you might find <a class="link" href="ref/boost__mysql__results/last_insert_id.html" title="results::last_insert_id"><code class="literal">results::last_insert_id</code></a>
+        handy, which retrieves the last AUTO INCREMENT ID generated by the executed
+        statement.
+      </p>
+<p>
+        See <a class="link" href="tutorial_updates_transactions.html" title="Tutorial 5: UPDATEs, transactions and semicolon-separated queries">our tutorial on UPDATEs
+        and transactions</a> for more info.
+      </p>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="mysql.overview.async"></a><a class="link" href="overview.html#mysql.overview.async" title="Single outstanding async operation per connection">Single outstanding async operation
+      per connection</a>
+</h3></div></div></div>
+<p>
+        At any given point in time, a <code class="computeroutput"><span class="identifier">any_connection</span></code>
+        may only have a single async operation outstanding. Because MySQL sessions
+        are stateful, and to keep the implementation simple, messages are written
+        to the underlying transport without any locking or queueing. If you perform
+        several async operations concurrently on a single connection without any
+        serialization, messages from different operations will be interleaved, leading
+        to undefined behavior.
+      </p>
+<p>
+        For example, doing the following is illegal and should be avoided:
+      </p>
+<pre class="programlisting"><span class="comment">// Coroutine body</span>
+<span class="comment">// DO NOT DO THIS!!!!</span>
+<span class="identifier">mysql</span><span class="special">::</span><span class="identifier">results</span> <span class="identifier">result1</span><span class="special">,</span> <span class="identifier">result2</span><span class="special">;</span>
+<span class="identifier">co_await</span> <span class="identifier">asio</span><span class="special">::</span><span class="identifier">experimental</span><span class="special">::</span><span class="identifier">make_parallel_group</span><span class="special">(</span>
+    <span class="identifier">conn</span><span class="special">.</span><span class="identifier">async_execute</span><span class="special">(</span><span class="string">"SELECT 1"</span><span class="special">,</span> <span class="identifier">result1</span><span class="special">,</span> <span class="identifier">asio</span><span class="special">::</span><span class="identifier">deferred</span><span class="special">),</span>
+    <span class="identifier">conn</span><span class="special">.</span><span class="identifier">async_execute</span><span class="special">(</span><span class="string">"SELECT 2"</span><span class="special">,</span> <span class="identifier">result2</span><span class="special">,</span> <span class="identifier">asio</span><span class="special">::</span><span class="identifier">deferred</span><span class="special">)</span>
+<span class="special">)</span>
+    <span class="special">.</span><span class="identifier">async_wait</span><span class="special">(</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">experimental</span><span class="special">::</span><span class="identifier">wait_for_all</span><span class="special">(),</span> <span class="identifier">asio</span><span class="special">::</span><span class="identifier">deferred</span><span class="special">);</span>
+</pre>
+<p>
+        If you need to perform queries in parallel, open more connections to the
+        server.
+      </p>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="mysql.overview.errors"></a><a class="link" href="overview.html#mysql.overview.errors" title="Error handling">Error handling</a>
+</h3></div></div></div>
+<p>
+        An operation fails if a network error happens, a protocol violation is encountered,
+        or the server reports an error. For instance, SQL syntax errors make <code class="computeroutput"><span class="identifier">async_execute</span></code> fail.
+      </p>
+<p>
+        When the server reports an error, it provides a diagnostic string describing
+        what happened. The <a class="link" href="ref/boost__mysql__diagnostics.html" title="diagnostics"><code class="literal">diagnostics</code></a>
+        class encapsulates this message. Some library functions generate diagnostics
+        strings, too.
+      </p>
+<p>
+        Both the sync functions in <a class="link" href="tutorial_sync.html" title="Tutorial 1: hello world!">the first
+        tutorial</a> and the coroutines in this exposition throw exceptions when
+        they fail. The exception type is <a class="link" href="ref/boost__mysql__error_with_diagnostics.html" title="error_with_diagnostics"><code class="literal">error_with_diagnostics</code></a>,
+        which inherits from <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">system</span><span class="special">::</span><span class="identifier">system_error</span></code>
+        and adds a <a class="link" href="ref/boost__mysql__diagnostics.html" title="diagnostics"><code class="literal">diagnostics</code></a>
+        object. Async functions use <a class="link" href="ref/boost__mysql__with_diagnostics.html" title="with_diagnostics"><code class="literal">with_diagnostics</code></a>,
+        a completion token adapter, to transparently include diagnostics in exceptions.
+      </p>
+<p>
+        You can avoid exceptions when using coroutines with <code class="computeroutput"><span class="identifier">asio</span><span class="special">::</span><span class="identifier">redirect_error</span></code>:
+      </p>
+<pre class="programlisting"><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">error_code</span> <span class="identifier">ec</span><span class="special">;</span>
+<span class="identifier">mysql</span><span class="special">::</span><span class="identifier">diagnostics</span> <span class="identifier">diag</span><span class="special">;</span>
+<span class="identifier">mysql</span><span class="special">::</span><span class="identifier">results</span> <span class="identifier">result</span><span class="special">;</span>
+
+<span class="comment">// The provided SQL is invalid. The server will return an error.</span>
+<span class="comment">// ec will be set to a non-zero value, and diag will be populated</span>
+<span class="identifier">co_await</span> <span class="identifier">conn</span><span class="special">.</span><span class="identifier">async_execute</span><span class="special">(</span><span class="string">"this is not SQL!"</span><span class="special">,</span> <span class="identifier">result</span><span class="special">,</span> <span class="identifier">diag</span><span class="special">,</span> <span class="identifier">asio</span><span class="special">::</span><span class="identifier">redirect_error</span><span class="special">(</span><span class="identifier">ec</span><span class="special">));</span>
+<span class="keyword">if</span> <span class="special">(</span><span class="identifier">ec</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="comment">// The error code will likely report a syntax error</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"Operation failed with error code: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">ec</span> <span class="special">&lt;&lt;</span> <span class="char">'\n'</span><span class="special">;</span>
+
+    <span class="comment">// diag.server_message() will contain the classic phrase</span>
+    <span class="comment">// "You have an error in your SQL syntax; check the manual..."</span>
+    <span class="comment">// Bear in mind that server_message() may contain user input, so treat it with caution</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"Server diagnostics: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">diag</span><span class="special">.</span><span class="identifier">server_message</span><span class="special">()</span> <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;</span>
+<span class="special">}</span>
+</pre>
+<p>
+        <a class="link" href="ref/boost__mysql__error_code.html" title="error_code"><code class="literal">mysql::error_code</code></a>
+        is an alias for <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">system</span><span class="special">::</span><span class="identifier">error_code</span></code>.
+      </p>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="mysql.overview.multi_function_operations"></a><a class="link" href="overview.html#mysql.overview.multi_function_operations" title="Multi-function operations">Multi-function
+      operations</a>
+</h3></div></div></div>
+<p>
+        Until now, we've been using <a class="link" href="ref/boost__mysql__any_connection/async_execute.html" title="any_connection::async_execute"><code class="literal">async_execute</code></a>,
+        which executes some SQL and reads all generated data into an in-memory object.
+      </p>
+<p>
+        Some use cases may not fit in this simple pattern. For example:
+      </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+            When reading a very big resultset, it may not be efficient (or even possible)
+            to completely load it in memory. Reading rows in batches may be more
+            adequate.
+          </li>
+<li class="listitem">
+            If rows contain very long <code class="computeroutput"><span class="identifier">TEXT</span></code>
+            or <code class="computeroutput"><span class="identifier">BLOB</span></code> fields, it may
+            not be adequate to copy these values from the network buffer into the
+            <code class="computeroutput"><span class="identifier">results</span></code> object. A view-based
+            approach may be better.
+          </li>
+</ul></div>
+<p>
+        For these cases, we can break the execute operation into several steps, using
+        a <span class="emphasis"><em>multi-function operation</em></span> (the term is coined by this
+        library). This example reads an entire table in batches, which can be the
+        case in an ETL process:
+      </p>
+<pre class="programlisting"><span class="comment">// execution_state stores state about our operation, and must be passed to all functions</span>
+<span class="identifier">mysql</span><span class="special">::</span><span class="identifier">execution_state</span> <span class="identifier">st</span><span class="special">;</span>
+
+<span class="comment">// Writes the query request and reads the server response, but not the rows</span>
+<span class="identifier">co_await</span> <span class="identifier">conn</span><span class="special">.</span><span class="identifier">async_start_execution</span><span class="special">(</span><span class="string">"SELECT first_name, last_name FROM employee"</span><span class="special">,</span> <span class="identifier">st</span><span class="special">);</span>
+
+<span class="comment">// Reads all the returned rows, in batches.</span>
+<span class="comment">// st.should_read_rows() returns false once there are no more rows to read</span>
+<span class="keyword">while</span> <span class="special">(</span><span class="identifier">st</span><span class="special">.</span><span class="identifier">should_read_rows</span><span class="special">())</span>
+<span class="special">{</span>
+    <span class="comment">// row_batch will be valid until conn performs the next network operation</span>
+    <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">rows_view</span> <span class="identifier">row_batch</span> <span class="special">=</span> <span class="identifier">co_await</span> <span class="identifier">conn</span><span class="special">.</span><span class="identifier">async_read_some_rows</span><span class="special">(</span><span class="identifier">st</span><span class="special">);</span>
+
+    <span class="keyword">for</span> <span class="special">(</span><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">row_view</span> <span class="identifier">emp</span> <span class="special">:</span> <span class="identifier">row_batch</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="comment">// Process the employee as required</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"Name:"</span> <span class="special">&lt;&lt;</span> <span class="identifier">emp</span><span class="special">.</span><span class="identifier">at</span><span class="special">(</span><span class="number">0</span><span class="special">)</span> <span class="special">&lt;&lt;</span> <span class="string">" "</span> <span class="special">&lt;&lt;</span> <span class="identifier">emp</span><span class="special">.</span><span class="identifier">at</span><span class="special">(</span><span class="number">1</span><span class="special">)</span> <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;</span>
+    <span class="special">}</span>
+<span class="special">}</span>
+</pre>
+<div class="warning"><table border="0" summary="Warning">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Warning]" src="../../../../../doc/src/images/warning.png"></td>
+<th align="left">Warning</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+          Once you start a multi-function operation with <a class="link" href="ref/boost__mysql__any_connection/async_start_execution.html" title="any_connection::async_start_execution"><code class="literal">async_start_execution</code></a>,
+          the server immediately sends all rows to the client. <span class="bold"><strong>You
+          must read all rows</strong></span> before engaging in further operations. Otherwise,
+          you will encounter packet mismatches, which can lead to bugs and vulnerabilities!
+        </p></td></tr>
+</table></div>
+<p>
+        Multi-function operations are powerful but complex. Only use them when there
+        is a strong reason to do so. Multi-function operations also work with the
+        static interface. Please refer to <a class="link" href="multi_function.html" title="Multi-function operations">this
+        section</a> for more information on these operations.
+      </p>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="mysql.overview.connection_pools"></a><a class="link" href="overview.html#mysql.overview.connection_pools" title="Connection pools">Connection pools</a>
+</h3></div></div></div>
+<p>
+        Connection pooling is a technique where several long-lived connections are
+        re-used for independent logical operations. When compared to establishing
+        individual connections, it has the following benefits:
+      </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+            It provides better performance. Please consult <a class="link" href="connection_pool.html#mysql.connection_pool.benchmarks">our
+            benchmarks</a> for more info.
+          </li>
+<li class="listitem">
+            It simplifies connection management. The connection pool will establish
+            sessions, perform retries and apply timeouts out of the box.
+          </li>
+</ul></div>
+<p>
+        This is how you can create a pool of connections:
+      </p>
+<pre class="programlisting"><span class="comment">// pool_params contains configuration for the pool.</span>
+<span class="comment">// You must specify enough information to establish a connection,</span>
+<span class="comment">// including the server address and credentials.</span>
+<span class="comment">// You can configure a lot of other things, like pool limits</span>
+<span class="identifier">boost</span><span class="special">::</span><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">pool_params</span> <span class="identifier">params</span><span class="special">;</span>
+<span class="identifier">params</span><span class="special">.</span><span class="identifier">server_address</span><span class="special">.</span><span class="identifier">emplace_host_and_port</span><span class="special">(</span><span class="identifier">server_hostname</span><span class="special">);</span>
+<span class="identifier">params</span><span class="special">.</span><span class="identifier">username</span> <span class="special">=</span> <span class="identifier">mysql_username</span><span class="special">;</span>
+<span class="identifier">params</span><span class="special">.</span><span class="identifier">password</span> <span class="special">=</span> <span class="identifier">mysql_password</span><span class="special">;</span>
+<span class="identifier">params</span><span class="special">.</span><span class="identifier">database</span> <span class="special">=</span> <span class="string">"boost_mysql_examples"</span><span class="special">;</span>
+
+<span class="comment">// The I/O context, required by all I/O operations</span>
+<span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">io_context</span> <span class="identifier">ctx</span><span class="special">;</span>
+
+<span class="comment">// Construct a pool of connections. The context will be used internally</span>
+<span class="comment">// to create the connections and other I/O objects</span>
+<span class="identifier">boost</span><span class="special">::</span><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">connection_pool</span> <span class="identifier">pool</span><span class="special">(</span><span class="identifier">ctx</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">move</span><span class="special">(</span><span class="identifier">params</span><span class="special">));</span>
+
+<span class="comment">// You need to call async_run on the pool before doing anything useful with it.</span>
+<span class="comment">// async_run creates connections and keeps them healthy. It must be called</span>
+<span class="comment">// only once per pool.</span>
+<span class="comment">// The detached completion token means that we don't want to be notified when</span>
+<span class="comment">// the operation ends. It's similar to a no-op callback.</span>
+<span class="identifier">pool</span><span class="special">.</span><span class="identifier">async_run</span><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">detached</span><span class="special">);</span>
+</pre>
+<p>
+        <a class="link" href="ref/boost__mysql__connection_pool/async_run.html" title="connection_pool::async_run"><code class="literal">connection_pool::async_run</code></a>
+        must be called exactly once per pool. This function takes care of actually
+        keeping connections healthy.
+      </p>
+<p>
+        To retrieve a connection, use <a class="link" href="ref/boost__mysql__connection_pool/async_get_connection.html" title="connection_pool::async_get_connection"><code class="literal">connection_pool::async_get_connection</code></a>:
+      </p>
+<pre class="programlisting"><span class="comment">// Use connection pools for functions that will be called</span>
+<span class="comment">// repeatedly during the application lifetime.</span>
+<span class="comment">// An HTTP server handler function is a good candidate.</span>
+<span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">awaitable</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">int64_t</span><span class="special">&gt;</span> <span class="identifier">get_num_employees</span><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">connection_pool</span><span class="special">&amp;</span> <span class="identifier">pool</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="comment">// Get a fresh connection from the pool.</span>
+    <span class="comment">// pooled_connection is a proxy to an any_connection object.</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">pooled_connection</span> <span class="identifier">conn</span> <span class="special">=</span> <span class="identifier">co_await</span> <span class="identifier">pool</span><span class="special">.</span><span class="identifier">async_get_connection</span><span class="special">();</span>
+
+    <span class="comment">// Use pooled_connection::operator-&gt; to access the underlying any_connection.</span>
+    <span class="comment">// Let's use the connection</span>
+    <span class="identifier">results</span> <span class="identifier">result</span><span class="special">;</span>
+    <span class="identifier">co_await</span> <span class="identifier">conn</span><span class="special">-&gt;</span><span class="identifier">async_execute</span><span class="special">(</span><span class="string">"SELECT COUNT(*) FROM employee"</span><span class="special">,</span> <span class="identifier">result</span><span class="special">);</span>
+    <span class="identifier">co_return</span> <span class="identifier">result</span><span class="special">.</span><span class="identifier">rows</span><span class="special">().</span><span class="identifier">at</span><span class="special">(</span><span class="number">0</span><span class="special">).</span><span class="identifier">at</span><span class="special">(</span><span class="number">0</span><span class="special">).</span><span class="identifier">as_int64</span><span class="special">();</span>
+
+    <span class="comment">// When conn is destroyed, the connection is returned to the pool</span>
+<span class="special">}</span>
+</pre>
+<p>
+        For more info, see <a class="link" href="connection_pool.html" title="Connection pools">this section</a>.
+      </p>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="tutorial_error_handling.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="connection_establishment.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

@@ -1,0 +1,15 @@
+# Copyright 2023 Matt Borland
+# Distributed under the Boost Software License, Version 1.0.
+# https://www.boost.org/LICENSE_1_0.txt
+
+import modules ;
+import path ;
+
+lib quadmath ;
+lib double-conversion ;
+
+exe has_float128 : has_float128.cpp quadmath ;
+exe has_double_conversion : has_double_conversion.cpp double-conversion ;
+
+explicit has_float128 ;
+explicit has_double_conversion ;

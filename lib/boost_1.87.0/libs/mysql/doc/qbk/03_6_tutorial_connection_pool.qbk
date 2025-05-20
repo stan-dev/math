@@ -1,0 +1,150 @@
+[/
+    Copyright (c) 2019-2024 Ruben Perez Hidalgo (rubenperez038 at gmail dot com)
+   
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+]
+
+[section:tutorial_connection_pool Tutorial 6: Connection pools]
+
+All our programs until now have used one-shot connections.
+They also didn't feature any fault tolerance:
+if the server is unavailable, our program throws an exception
+and terminates. Most real world scenarios require
+long-lived, reliable connections, instead.
+
+In this tutorial, we will implement a server for a simple request-reply
+protocol. The protocol allows clients to retrieve the full name of
+an employee given their ID.
+We will use [reflink connection_pool] to maintain a set of healthy connections
+that we can use when a client connects to our server.
+
+
+
+
+[heading The protocol]
+
+The protocol is TCP based, and can be described as follows:
+
+* After connecting, the client sends a message containing the employee ID,
+  encoded as an 8-byte, big-endian integer.
+* The server replies with a string containing the employee full name,
+  or "NOT_FOUND", if the ID doesn't match any employee.
+* The connection is closed after that.
+
+This protocol is intentionally overly simplistic, and
+shouldn't be used in production. See our
+[link mysql.examples.connection_pool HTTP examples]
+for more advanced use cases.
+
+
+
+
+[heading Creating a connection pool]
+
+[reflink connection_pool] is an I/O object that contains
+[reflink any_connection] objects, and can be
+constructed from an execution context and a [reflink pool_params]
+config struct:
+
+[tutorial_connection_pool_create]
+
+A single connection pool is usually created per application.
+
+[refmem connection_pool async_run] should be called once per pool:
+
+[tutorial_connection_pool_run]
+
+
+
+
+
+
+[heading Using pooled connections]
+
+Let's first write a coroutine that encapsulates database access.
+Given an employee ID, it should return the string to be sent as response to the client.
+Don't worry about error handling for now - we will take care of it in the next tutorial.
+
+When using a pool, we don't need to explicitly create, connect or close connections.
+Instead, we use [refmem connection_pool async_get_connection] to obtain them from the pool:
+
+[tutorial_connection_pool_get_connection]
+
+[reflink pooled_connection] is a wrapper around [reflink any_connection],
+with some pool-specific additions. We can use it like a regular connection:
+
+[tutorial_connection_pool_use]
+
+When a [reflink pooled_connection] is destroyed, the connection is returned
+to the pool. The underlying connection will be cleaned up using a lightweight
+session reset mechanism and recycled.
+Subsequent [refmemunq connection_pool async_get_connection]
+calls may retrieve the same connection. This improves efficiency,
+since session establishment is costly.
+
+[refmemunq connection_pool async_get_connection] waits
+for a client connection to become available before completing.
+If the server is unavailable or credentials are invalid,
+it may wait indefinitely. This is a problem for both development and production.
+We can solve this by using [asioreflink cancel_after cancel_after],
+which allows setting timeouts to async operations:
+
+[tutorial_connection_pool_get_connection_timeout]
+
+Don't worry if you don't fully understand how this works.
+We will go into more detail on [asioreflink cancel_after cancel_after],
+cancellations and completion tokens in the next tutorial.
+
+Putting all pieces together, our coroutine becomes:
+
+[tutorial_connection_pool_db]
+
+
+
+
+[heading Handling a client session]
+
+Let's now build a function that handles a client sessions,
+invoking the database access logic in the process:
+
+[tutorial_connection_pool_session]
+
+
+
+
+[heading Listening for connections]
+
+We now need logic to accept incoming TCP connections.
+We will use an `asio::ip::tcp::acceptor` object
+to accomplish it, listening for connections in a loop
+until the server is stopped:
+
+[tutorial_connection_pool_listener]
+
+
+
+
+[heading Waiting for signals]
+
+Finally, we need a way to stop our program. We will use an `asio::signal_set` object
+to catch signals, and call `io_context::stop` when Ctrl-C is pressed:
+
+[tutorial_connection_pool_signals]
+
+Putting all these pieces together, our main program becomes:
+
+[tutorial_connection_pool_main]
+
+
+
+
+[heading Wrapping up]
+
+Full program listing for this tutorial is [link mysql.examples.tutorial_connection_pool here].
+
+For simplicity, we've left error handling out of this tutorial.
+This is usually very important in a server like the one we've written,
+and is the topic of our [link mysql.tutorial_error_handling next tutorial].
+
+[endsect]

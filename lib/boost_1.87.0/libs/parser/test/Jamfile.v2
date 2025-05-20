@@ -1,0 +1,50 @@
+# Copyright 2024 T. Zachary Laine
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at
+# http://www.boost.org/LICENSE_1_0.txt)
+
+import config : requires ;
+import testing ;
+
+project
+  : requirements <library>/boost/charconv//boost_charconv
+  ;
+
+compile compile_all_t.cpp ;
+compile compile_attribute.cpp ;
+compile compile_combining_groups.cpp ;
+compile compile_or_attribute.cpp ;
+compile compile_seq_attribute.cpp ;
+compile compile_tests_main.cpp ;
+
+run aggr_tuple_assignment.cpp ;
+run case_fold_generated.cpp ;
+run class_type.cpp ;
+run github_issues.cpp ;
+run hl.cpp ;
+run merge_separate.cpp ;
+run no_case.cpp ;
+run parse_coords_new.cpp ;
+run parse_empty.cpp ;
+run parser_action.cpp ;
+run parser_action_with_params.cpp ;
+run parser_api.cpp ;
+run parser_attributes.cpp ;
+run parser.cpp ;
+run parser_if_switch.cpp ;
+run parser_lazy_params.cpp ;
+run parser_or_permutations_1.cpp ;
+run parser_or_permutations_2.cpp ;
+run parser_perm.cpp ;
+run parser_quoted_string.cpp ;
+run parser_rule.cpp ;
+run parser_rule_with_params.cpp ;
+run parser_seq_permutations_1.cpp ;
+run parser_seq_permutations_2.cpp ;
+run parser_symbol_table.cpp ;
+run replace.cpp ;
+run search.cpp ;
+run split.cpp ;
+run tracing.cpp ;
+run transform_replace.cpp ;
+run tuple_aggregate.cpp ;

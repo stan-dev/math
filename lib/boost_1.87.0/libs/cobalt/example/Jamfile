@@ -1,0 +1,30 @@
+# Copyright (c) 2022 Klemens D. Morgenstern
+#
+# Distributed under the Boost Software License, Version 1.0. (See accompanying
+# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+
+import os ;
+import-search /boost/cobalt ;
+import boost-cobalt ;
+
+
+project : requirements
+  <define>BOOST_ASIO_NO_DEPRECATED
+  <toolset>msvc:<define>_SCL_SECURE_NO_WARNINGS
+  <toolset>msvc:<define>_CRT_SECURE_NO_DEPRECATE
+  <toolset>msvc:<cxxflags>/bigobj
+  <target-os>windows:<define>WIN32_LEAN_AND_MEAN
+  <target-os>linux:<linkflags>-lpthread
+  <toolset>clang-15:<boost.cobalt.pmr>boost-container
+  <toolset>clang-14:<boost.cobalt.pmr>boost-container
+;
+
+exe channel      : channel.cpp       /boost/cobalt//boost_cobalt ;
+exe delay        : delay.cpp         /boost/cobalt//boost_cobalt ;
+exe delay_op     : delay_op.cpp      /boost/cobalt//boost_cobalt ;
+exe echo_server  : echo_server.cpp   /boost/cobalt//boost_cobalt ;
+exe outcome      : outcome.cpp       /boost/cobalt//boost_cobalt /boost/outcome//boost_outcome ;
+exe thread       : thread.cpp        /boost/cobalt//boost_cobalt ;
+exe thread_pool  : thread_pool.cpp   /boost/cobalt//boost_cobalt ;
+# exe ticker     : ticker.cpp        /boost/cobalt//boost_cobalt /boost/json//boost_json ;

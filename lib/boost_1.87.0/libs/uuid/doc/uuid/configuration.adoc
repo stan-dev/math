@@ -1,0 +1,57 @@
+[#configuration]
+= Configuration
+
+:idprefix: configuration_
+
+The library does not require building or any special configuration to be used.
+However, there are a few options that can be enabled by defining macros prior to including library headers.
+
+== Instruction Set
+
+[%autowidth]
+|===
+|Macro |Description
+
+|`BOOST_UUID_NO_SIMD`
+|If defined, disables any optimizations for https://en.wikipedia.org/wiki/SIMD[SIMD]-enabled processors.
+ Generic versions of algorithms will be used instead.
+ This may result in suboptimal performance.
+ By default, optimized algorithms are used, when the library is able to detect the availability of SIMD extensions at compile time.
+
+
+|`BOOST_UUID_USE_SSE2`
+|If defined, enables optimizations for https://en.wikipedia.org/wiki/SSE2[SSE2] extensions available in x86 processors.
+
+|`BOOST_UUID_USE_SSE3`
+|If defined, enables optimizations for https://en.wikipedia.org/wiki/SSE3[SSE3] extensions available in x86 processors.
+
+|`BOOST_UUID_USE_SSE41`
+|If defined, enables optimizations for https://en.wikipedia.org/wiki/SSE4#SSE4.1[SSE4.1] extensions available in x86 processors.
+
+|`BOOST_UUID_USE_AVX`
+|If defined, enables optimizations for https://en.wikipedia.org/wiki/Advanced_Vector_Extensions[AVX] extensions available in modern x86 processors.
+
+|`BOOST_UUID_USE_AVX10_1`
+|If defined, enables optimizations for https://en.wikipedia.org/wiki/AVX-512[AVX-512] and https://en.wikipedia.org/wiki/Advanced_Vector_Extensions#AVX10[AVX10.1] extensions available in modern x86 processors.
+ The library does not require 512-bit vectors and is compatible with CPUs implementing AVX-512F, CD, VL, BW and DQ instruction subsets (i.e. equivalent to Intel Skylake-X).
+
+|===
+
+By default the library attempts to detect the availability of SIMD extensions in the target CPU at compile time and automatically defines the appropriate macros if succeeded.
+The `BOOST_UUID_USE_SSE*` and `BOOST_UUID_USE_AVX*` macros can be defined by users, if auto-detection fails and it is known that the target CPU will have the extension.
+Do not enable these extensions unless you're certain that they will always be available on any machine that will run your program.
+The library performs no run time checks, so if an extension is missing, the program will likely crash.
+Note that enabling more advanced extensions implies that more basic ones are also available.
+
+== Alignment
+
+[%autowidth]
+|===
+|Macro |Description
+
+|`BOOST_UUID_DISABLE_ALIGNMENT`
+|If defined, leaves `uuid` unaligned (alignment of 1, same as `std::uint8_t`). This was the behavior before release 1.86.
+
+|===
+
+By default, `uuid` has the same alignment as `std::uint64_t`. Define `BOOST_UUID_DISABLE_ALIGNMENT` to leave it unaligned.

@@ -1,0 +1,78 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>any_connection_params::ssl_context</title>
+<link rel="stylesheet" href="../../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../boost__mysql__any_connection_params.html" title="any_connection_params">
+<link rel="prev" href="../boost__mysql__any_connection_params.html" title="any_connection_params">
+<link rel="next" href="initial_buffer_size.html" title="any_connection_params::initial_buffer_size">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../boost__mysql__any_connection_params.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost__mysql__any_connection_params.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="initial_buffer_size.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h5 class="title">
+<a name="mysql.ref.boost__mysql__any_connection_params.ssl_context"></a><a class="link" href="ssl_context.html" title="any_connection_params::ssl_context">any_connection_params::ssl_context</a>
+</h5></div></div></div>
+<p>
+          <a class="indexterm" name="id47486"></a>
+An external SSL context containing options
+          to configure TLS.
+        </p>
+<h6>
+<a name="mysql.ref.boost__mysql__any_connection_params.ssl_context.h0"></a>
+          <span class="phrase"><a name="mysql.ref.boost__mysql__any_connection_params.ssl_context.synopsis"></a></span><a class="link" href="ssl_context.html#mysql.ref.boost__mysql__any_connection_params.ssl_context.synopsis">Synopsis</a>
+        </h6>
+<pre class="programlisting"><span class="identifier">asio</span><span class="special">::</span><span class="identifier">ssl</span><span class="special">::</span><span class="identifier">context</span><span class="special">*</span> <span class="identifier">ssl_context</span> <span class="special">{};</span>
+</pre>
+<h6>
+<a name="mysql.ref.boost__mysql__any_connection_params.ssl_context.h1"></a>
+          <span class="phrase"><a name="mysql.ref.boost__mysql__any_connection_params.ssl_context.description"></a></span><a class="link" href="ssl_context.html#mysql.ref.boost__mysql__any_connection_params.ssl_context.description">Description</a>
+        </h6>
+<p>
+          Relevant only for SSL connections (those that result on <a class="link" href="../boost__mysql__any_connection/uses_ssl.html" title="any_connection::uses_ssl"><code class="computeroutput"><span class="identifier">any_connection</span><span class="special">::</span><span class="identifier">uses_ssl</span></code></a> returning <code class="computeroutput"><span class="keyword">true</span></code>).
+        </p>
+<p>
+          If the connection is configured to use TLS, an internal <code class="computeroutput"><span class="identifier">asio</span><span class="special">::</span><span class="identifier">ssl</span><span class="special">::</span><span class="identifier">stream</span></code>
+          object will be created. If this member is set to a non-null value, this
+          internal object will be initialized using the passed context. This is the
+          only way to configure TLS options in <code class="computeroutput"><span class="identifier">any_connection</span></code>.
+        </p>
+<p>
+          If the connection is configured to use TLS and this member is <code class="computeroutput"><span class="keyword">nullptr</span></code>, an internal <code class="computeroutput"><span class="identifier">asio</span><span class="special">::</span><span class="identifier">ssl</span><span class="special">::</span><span class="identifier">context</span></code>
+          object with suitable default options will be created.
+        </p>
+<h6>
+<a name="mysql.ref.boost__mysql__any_connection_params.ssl_context.h2"></a>
+          <span class="phrase"><a name="mysql.ref.boost__mysql__any_connection_params.ssl_context.object_lifetimes"></a></span><a class="link" href="ssl_context.html#mysql.ref.boost__mysql__any_connection_params.ssl_context.object_lifetimes">Object
+          lifetimes</a>
+        </h6>
+<p>
+          If set to non-null, the pointee object must be kept alive until all <a class="link" href="../boost__mysql__any_connection.html" title="any_connection"><code class="computeroutput"><span class="identifier">any_connection</span></code></a>
+          objects constructed from <code class="computeroutput"><span class="special">*</span><span class="keyword">this</span></code> are destroyed.
+        </p>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../boost__mysql__any_connection_params.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost__mysql__any_connection_params.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="initial_buffer_size.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

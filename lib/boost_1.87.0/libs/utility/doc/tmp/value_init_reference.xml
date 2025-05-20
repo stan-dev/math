@@ -1,0 +1,51 @@
+<?xml version="1.0" standalone="yes"?>
+<library-reference id="value_init.reference"><title>Reference</title><header id="doxygen.value_init.reference.value__init_8hpp" name="boost/utility/value_init.hpp">
+<namespace name="boost">
+<class id="doxygen.value_init.reference.classboost_1_1initialized" name="initialized"><template>
+      <template-type-parameter name="T"/>
+    </template><method-group name="public member functions">
+<constructor id="doxygen.value_init.reference.classboost_1_1initialized_1ab0926e26fc13cece3cba8e9a06abd76b"/>
+<constructor id="doxygen.value_init.reference.classboost_1_1initialized_1a4d56a50212154caf22e22c936e01bc78" specifiers="explicit"><parameter name="arg"><paramtype>T const &amp;</paramtype></parameter></constructor>
+<method id="doxygen.value_init.reference.classboost_1_1initialized_1adfaea014cc5fe1208c27af3ee5541e87" name="data" cv="const"><type>T const &amp;</type></method>
+<method id="doxygen.value_init.reference.classboost_1_1initialized_1ac1b3f9b530f057e1391416f1eb2121b8" name="data"><type>T &amp;</type></method>
+<method id="doxygen.value_init.reference.classboost_1_1initialized_1adf9d0463895f8b0f164405f07be20e4e" name="swap"><type>void</type><parameter name="arg"><paramtype><classname>initialized</classname> &amp;</paramtype></parameter></method>
+<method id="doxygen.value_init.reference.classboost_1_1initialized_1a7aad5e6bc739a354d7a1f8c3ba05dd07" name="conversion-operator" cv="const"><type>T const &amp;</type></method>
+<method id="doxygen.value_init.reference.classboost_1_1initialized_1a20ab262d6f798aa57a3aefd558c10315" name="conversion-operator"><type>T&amp;</type></method>
+</method-group>
+</class><class id="doxygen.value_init.reference.classboost_1_1initialized__value__t" name="initialized_value_t"><method-group name="public member functions">
+<method id="doxygen.value_init.reference.classboost_1_1initialized__value__t_1a8cdbd834f0c02849839765bc314600ff" name="conversion-operator" cv="const"><type>T</type><template>
+          <template-type-parameter name="T"/>
+        </template></method>
+</method-group>
+</class><class id="doxygen.value_init.reference.classboost_1_1value__initialized" name="value_initialized"><template>
+      <template-type-parameter name="T"/>
+    </template><method-group name="public member functions">
+<constructor id="doxygen.value_init.reference.classboost_1_1value__initialized_1a1757594a619ecd6532255bd396fbb113"/>
+<method id="doxygen.value_init.reference.classboost_1_1value__initialized_1a6ca9b94ebdd65f807c39ddb72ce91e82" name="data" cv="const"><type>T const &amp;</type></method>
+<method id="doxygen.value_init.reference.classboost_1_1value__initialized_1a48d26471f2a2bebcf00aea9b7cd8d78e" name="data"><type>T &amp;</type></method>
+<method id="doxygen.value_init.reference.classboost_1_1value__initialized_1ade948bf1b4f02c2d0940ddde198f985f" name="swap"><type>void</type><parameter name="arg"><paramtype><classname>value_initialized</classname> &amp;</paramtype></parameter></method>
+<method id="doxygen.value_init.reference.classboost_1_1value__initialized_1adcdf80bfae06e95ae42e776175b593c1" name="conversion-operator" cv="const"><type>T const &amp;</type></method>
+<method id="doxygen.value_init.reference.classboost_1_1value__initialized_1a060bc708b3833fb6faf079b5dd2b1d2a" name="conversion-operator"><type>T&amp;</type></method>
+</method-group>
+</class><data-member id="doxygen.value_init.reference.value__init_8hpp_1a7ae36ebc46549c7b5c1264158776e5d6" name="initialized_value"><type><classname>initialized_value_t</classname> const</type></data-member>
+<function id="doxygen.value_init.reference.value__init_8hpp_1a0ef0d92f648cb80281142d8570389059" name="get"><type>T const &amp;</type><template>
+          <template-type-parameter name="T"/>
+        </template><parameter name="x"><paramtype><classname>initialized</classname>&lt; T &gt; const &amp;</paramtype></parameter></function>
+<function id="doxygen.value_init.reference.value__init_8hpp_1a0b86e7fc1bdf84050d0842ee9f3d7591" name="get"><type>T &amp;</type><template>
+          <template-type-parameter name="T"/>
+        </template><parameter name="x"><paramtype><classname>initialized</classname>&lt; T &gt; &amp;</paramtype></parameter></function>
+<function id="doxygen.value_init.reference.value__init_8hpp_1a4a6d1f3d94b806ecc6df377dedd65a74" name="swap"><type>void</type><template>
+          <template-type-parameter name="T"/>
+        </template><parameter name="lhs"><paramtype><classname>initialized</classname>&lt; T &gt; &amp;</paramtype></parameter><parameter name="rhs"><paramtype><classname>initialized</classname>&lt; T &gt; &amp;</paramtype></parameter></function>
+<function id="doxygen.value_init.reference.value__init_8hpp_1a70bfb1803bddf3d29318f47a7733a404" name="get"><type>T const &amp;</type><template>
+          <template-type-parameter name="T"/>
+        </template><parameter name="x"><paramtype><classname>value_initialized</classname>&lt; T &gt; const &amp;</paramtype></parameter></function>
+<function id="doxygen.value_init.reference.value__init_8hpp_1a135b8e6c4345983490f60479918b9e31" name="get"><type>T &amp;</type><template>
+          <template-type-parameter name="T"/>
+        </template><parameter name="x"><paramtype><classname>value_initialized</classname>&lt; T &gt; &amp;</paramtype></parameter></function>
+<function id="doxygen.value_init.reference.value__init_8hpp_1a9f7525fc1a7f6d7ac17618e0007da46a" name="swap"><type>void</type><template>
+          <template-type-parameter name="T"/>
+        </template><parameter name="lhs"><paramtype><classname>value_initialized</classname>&lt; T &gt; &amp;</paramtype></parameter><parameter name="rhs"><paramtype><classname>value_initialized</classname>&lt; T &gt; &amp;</paramtype></parameter></function>
+</namespace>
+</header>
+</library-reference>

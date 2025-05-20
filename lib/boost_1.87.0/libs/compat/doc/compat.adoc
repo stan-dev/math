@@ -1,0 +1,23 @@
+////
+Copyright 2018, 2023 Peter Dimov
+Distributed under the Boost Software License, Version 1.0.
+https://www.boost.org/LICENSE_1_0.txt
+////
+
+# Boost.Compat
+{cpp}11 Implementations of Standard Components Added in Later {cpp} Standards
+:toc: left
+:toclevels: 4
+:idprefix:
+:docinfo: private-footer
+:source-highlighter: rouge
+:source-language: c++
+
+:leveloffset: +1
+
+include::compat/overview.adoc[]
+include::compat/changelog.adoc[]
+include::compat/reference.adoc[]
+include::compat/copyright.adoc[]
+
+:leveloffset: -1

@@ -1,0 +1,265 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Tutorial 3: queries with parameters</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="prev" href="tutorial_async.html" title="Tutorial 2: going async with C++20 coroutines">
+<link rel="next" href="tutorial_static_interface.html" title="Tutorial 4: the static interface">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="tutorial_async.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="tutorial_static_interface.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="mysql.tutorial_with_params"></a><a class="link" href="tutorial_with_params.html" title="Tutorial 3: queries with parameters">Tutorial 3: queries with parameters</a>
+</h2></div></div></div>
+<p>
+      Until now, our SQL queries were hard-coded string literals. However, most real-world
+      use cases involve running queries containing user-supplied parameters.
+    </p>
+<p>
+      In this tutorial, we will be using an employee database. You can obtain this
+      sample database by sourcing the <code class="computeroutput"><span class="identifier">example</span><span class="special">/</span><span class="identifier">db_setup</span><span class="special">.</span><span class="identifier">sql</span></code> file
+      in Boost.MySQL source code repository.
+    </p>
+<p>
+      The employee table is defined as:
+    </p>
+<pre class="programlisting">CREATE TABLE employee(
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    ... -- other fields not relevant for us
+);
+</pre>
+<p>
+      We will write a program that retrieves an employee by ID and prints their full
+      name. The employee ID will be supplied by the user as a command line argument.
+      In more realistic examples, you may get it from a file or HTTP request.
+    </p>
+<h4>
+<a name="mysql.tutorial_with_params.h0"></a>
+      <span class="phrase"><a name="mysql.tutorial_with_params.avoiding_sql_injection"></a></span><a class="link" href="tutorial_with_params.html#mysql.tutorial_with_params.avoiding_sql_injection">Avoiding
+      SQL injection</a>
+    </h4>
+<p>
+      We need to build a query like the following:
+    </p>
+<pre class="programlisting">SELECT first_name, last_name FROM employee WHERE id = &lt;actual-id&gt;
+</pre>
+<p>
+      Replacing <code class="computeroutput"><span class="special">&lt;</span><span class="identifier">actual</span><span class="special">-</span><span class="identifier">id</span><span class="special">&gt;</span></code>
+      by the value passed by the user.
+    </p>
+<p>
+      Since we don't control the employee ID, we must consider it <span class="bold"><strong>untrusted</strong></span>.
+      We must <span class="bold"><strong>never use raw string concatenation</strong></span>
+      to build queries. Otherwise, malicious values can cause SQL injection vulnerabilities,
+      which are extremely severe.
+    </p>
+<p>
+      Boost.MySQL offers two options to deal with this:
+    </p>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+          Compose the query dynamically in the client, using specialized tools to
+          avoid SQL injection. This option is versatile, simple and appropriate for
+          general use.
+        </li>
+<li class="listitem">
+          Perform parameter substitution server side using <a class="link" href="prepared_statements.html" title="Prepared statements">prepared
+          statements</a>. This is more complex and better suited for cases involving
+          lots of numeric data or executing same query repeatedly.
+        </li>
+</ol></div>
+<p>
+      In this tutorial, we will use client-side generation (termed <a class="link" href="sql_formatting.html" title="Text queries and client-side SQL formatting">client-side
+      SQL formatting</a> throughout the documentation).
+    </p>
+<h4>
+<a name="mysql.tutorial_with_params.h1"></a>
+      <span class="phrase"><a name="mysql.tutorial_with_params.using_with_params"></a></span><a class="link" href="tutorial_with_params.html#mysql.tutorial_with_params.using_with_params">Using
+      with_params</a>
+    </h4>
+<p>
+      <a class="link" href="ref/boost__mysql__any_connection/async_execute.html" title="any_connection::async_execute"><code class="literal">any_connection::async_execute</code></a>
+      can also deal with queries with parameters. We need to replace the string literal
+      by a call to <a class="link" href="ref/boost__mysql__with_params.html" title="with_params"><code class="literal">with_params</code></a>,
+      passing a query template and the actual values of the parameters:
+    </p>
+<pre class="programlisting"><span class="comment">// Execute the query with the given parameters. When executed, with_params</span>
+<span class="comment">// expands the given query string template and sends it to the server for execution.</span>
+<span class="comment">// {} are placeholders, as in std::format. Values are escaped as required to prevent</span>
+<span class="comment">// SQL injection.</span>
+<span class="identifier">mysql</span><span class="special">::</span><span class="identifier">results</span> <span class="identifier">result</span><span class="special">;</span>
+<span class="identifier">co_await</span> <span class="identifier">conn</span><span class="special">.</span><span class="identifier">async_execute</span><span class="special">(</span>
+    <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">with_params</span><span class="special">(</span><span class="string">"SELECT first_name, last_name FROM employee WHERE id = {}"</span><span class="special">,</span> <span class="identifier">employee_id</span><span class="special">),</span>
+    <span class="identifier">result</span>
+<span class="special">);</span>
+</pre>
+<p>
+      The query template uses a syntax similar to <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">format</span></code>.
+      You can use numbers, strings, dates, times and many other types as parameters.
+      More information about client-side SQL formatting is available in <a class="link" href="sql_formatting.html" title="Text queries and client-side SQL formatting">this
+      page</a>.
+    </p>
+<h4>
+<a name="mysql.tutorial_with_params.h2"></a>
+      <span class="phrase"><a name="mysql.tutorial_with_params.using_the_retrieved_rows"></a></span><a class="link" href="tutorial_with_params.html#mysql.tutorial_with_params.using_the_retrieved_rows">Using
+      the retrieved rows</a>
+    </h4>
+<p>
+      Our query might return either one row (if an employee is found) or none (if
+      no employee with the given ID exists). Accounting for this:
+    </p>
+<pre class="programlisting"><span class="comment">// Did we find an employee with that ID?</span>
+<span class="keyword">if</span> <span class="special">(</span><span class="identifier">result</span><span class="special">.</span><span class="identifier">rows</span><span class="special">().</span><span class="identifier">empty</span><span class="special">())</span>
+<span class="special">{</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"Employee not found"</span> <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;</span>
+<span class="special">}</span>
+<span class="keyword">else</span>
+<span class="special">{</span>
+    <span class="comment">// Print the retrieved details. The first field is the first name,</span>
+    <span class="comment">// and the second, the last name.</span>
+    <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">row_view</span> <span class="identifier">employee</span> <span class="special">=</span> <span class="identifier">result</span><span class="special">.</span><span class="identifier">rows</span><span class="special">().</span><span class="identifier">at</span><span class="special">(</span><span class="number">0</span><span class="special">);</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"Employee's name is: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">employee</span><span class="special">.</span><span class="identifier">at</span><span class="special">(</span><span class="number">0</span><span class="special">)</span> <span class="special">&lt;&lt;</span> <span class="char">' '</span> <span class="special">&lt;&lt;</span> <span class="identifier">employee</span><span class="special">.</span><span class="identifier">at</span><span class="special">(</span><span class="number">1</span><span class="special">)</span> <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;</span>
+<span class="special">}</span>
+</pre>
+<h4>
+<a name="mysql.tutorial_with_params.h3"></a>
+      <span class="phrase"><a name="mysql.tutorial_with_params.connecting_with_database"></a></span><a class="link" href="tutorial_with_params.html#mysql.tutorial_with_params.connecting_with_database">Connecting
+      with database</a>
+    </h4>
+<p>
+      If you've run <code class="computeroutput"><span class="identifier">example</span><span class="special">/</span><span class="identifier">db_setup</span><span class="special">.</span><span class="identifier">sql</span></code>, the <code class="computeroutput"><span class="identifier">employee</span></code>
+      table exists within the <code class="computeroutput"><span class="identifier">boost_mysql_examples</span></code>
+      database. To use this table without qualification, we need to specify a database
+      name when connecting. This is achieved by setting <a class="link" href="ref/boost__mysql__connect_params/database.html" title="connect_params::database"><code class="literal">connect_params::database</code></a>:
+    </p>
+<pre class="programlisting"><span class="comment">// The hostname, username, password and database to use.</span>
+<span class="identifier">mysql</span><span class="special">::</span><span class="identifier">connect_params</span> <span class="identifier">params</span><span class="special">;</span>
+<span class="identifier">params</span><span class="special">.</span><span class="identifier">server_address</span><span class="special">.</span><span class="identifier">emplace_host_and_port</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">(</span><span class="identifier">server_hostname</span><span class="special">));</span>
+<span class="identifier">params</span><span class="special">.</span><span class="identifier">username</span> <span class="special">=</span> <span class="identifier">username</span><span class="special">;</span>
+<span class="identifier">params</span><span class="special">.</span><span class="identifier">password</span> <span class="special">=</span> <span class="identifier">password</span><span class="special">;</span>
+<span class="identifier">params</span><span class="special">.</span><span class="identifier">database</span> <span class="special">=</span> <span class="string">"boost_mysql_examples"</span><span class="special">;</span>
+</pre>
+<h4>
+<a name="mysql.tutorial_with_params.h4"></a>
+      <span class="phrase"><a name="mysql.tutorial_with_params.creating_the_connection_inside_t"></a></span><a class="link" href="tutorial_with_params.html#mysql.tutorial_with_params.creating_the_connection_inside_t">Creating
+      the connection inside the coroutine</a>
+    </h4>
+<p>
+      Since we're connecting and closing the connection in our coroutine, it makes
+      sense to make it a local variable, instead of passing it as parameter. Recall
+      that we need a reference to an execution context (i.e. <code class="computeroutput"><span class="identifier">io_context</span></code>)
+      to build a connection. We could pass the <code class="computeroutput"><span class="identifier">io_context</span></code>
+      as a parameter to our coroutine, but there's a simpler way: coroutines already
+      hold a reference to where they are executing:
+    </p>
+<pre class="programlisting"><span class="comment">// The connection will use the same executor as the coroutine</span>
+<span class="identifier">mysql</span><span class="special">::</span><span class="identifier">any_connection</span> <span class="identifier">conn</span><span class="special">(</span><span class="identifier">co_await</span> <span class="identifier">asio</span><span class="special">::</span><span class="identifier">this_coro</span><span class="special">::</span><span class="identifier">executor</span><span class="special">);</span>
+</pre>
+<p>
+      The expression <code class="computeroutput"><span class="identifier">co_await</span> <span class="identifier">asio</span><span class="special">::</span><span class="identifier">this_coro</span><span class="special">::</span><span class="identifier">executor</span></code>
+      retrieves the <span class="bold"><strong>executor</strong></span> that our coroutine
+      is using. An executor is a lightweight handle to an execution context, and
+      can be used to create our connection.
+    </p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+        <code class="computeroutput"><span class="identifier">co_await</span> <span class="identifier">asio</span><span class="special">::</span><span class="identifier">this_coro</span><span class="special">::</span><span class="identifier">executor</span></code>
+        does not perform any I/O. It only retrieves the current coroutine's executor.
+      </p></td></tr>
+</table></div>
+<h4>
+<a name="mysql.tutorial_with_params.h5"></a>
+      <span class="phrase"><a name="mysql.tutorial_with_params.wrapping_up"></a></span><a class="link" href="tutorial_with_params.html#mysql.tutorial_with_params.wrapping_up">Wrapping
+      up</a>
+    </h4>
+<p>
+      With all these changes, this is how our coroutine looks like:
+    </p>
+<pre class="programlisting"><span class="identifier">asio</span><span class="special">::</span><span class="identifier">awaitable</span><span class="special">&lt;</span><span class="keyword">void</span><span class="special">&gt;</span> <span class="identifier">coro_main</span><span class="special">(</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">server_hostname</span><span class="special">,</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">username</span><span class="special">,</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">password</span><span class="special">,</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">int64_t</span> <span class="identifier">employee_id</span>
+<span class="special">)</span>
+<span class="special">{</span>
+    <span class="comment">// The connection will use the same executor as the coroutine</span>
+    <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">any_connection</span> <span class="identifier">conn</span><span class="special">(</span><span class="identifier">co_await</span> <span class="identifier">asio</span><span class="special">::</span><span class="identifier">this_coro</span><span class="special">::</span><span class="identifier">executor</span><span class="special">);</span>
+
+    <span class="comment">// The hostname, username, password and database to use.</span>
+    <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">connect_params</span> <span class="identifier">params</span><span class="special">;</span>
+    <span class="identifier">params</span><span class="special">.</span><span class="identifier">server_address</span><span class="special">.</span><span class="identifier">emplace_host_and_port</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">(</span><span class="identifier">server_hostname</span><span class="special">));</span>
+    <span class="identifier">params</span><span class="special">.</span><span class="identifier">username</span> <span class="special">=</span> <span class="identifier">username</span><span class="special">;</span>
+    <span class="identifier">params</span><span class="special">.</span><span class="identifier">password</span> <span class="special">=</span> <span class="identifier">password</span><span class="special">;</span>
+    <span class="identifier">params</span><span class="special">.</span><span class="identifier">database</span> <span class="special">=</span> <span class="string">"boost_mysql_examples"</span><span class="special">;</span>
+
+    <span class="comment">// Connect to the server</span>
+    <span class="identifier">co_await</span> <span class="identifier">conn</span><span class="special">.</span><span class="identifier">async_connect</span><span class="special">(</span><span class="identifier">params</span><span class="special">);</span>
+
+    <span class="comment">// Execute the query with the given parameters. When executed, with_params</span>
+    <span class="comment">// expands the given query string template and sends it to the server for execution.</span>
+    <span class="comment">// {} are placeholders, as in std::format. Values are escaped as required to prevent</span>
+    <span class="comment">// SQL injection.</span>
+    <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">results</span> <span class="identifier">result</span><span class="special">;</span>
+    <span class="identifier">co_await</span> <span class="identifier">conn</span><span class="special">.</span><span class="identifier">async_execute</span><span class="special">(</span>
+        <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">with_params</span><span class="special">(</span><span class="string">"SELECT first_name, last_name FROM employee WHERE id = {}"</span><span class="special">,</span> <span class="identifier">employee_id</span><span class="special">),</span>
+        <span class="identifier">result</span>
+    <span class="special">);</span>
+
+    <span class="comment">// Did we find an employee with that ID?</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">result</span><span class="special">.</span><span class="identifier">rows</span><span class="special">().</span><span class="identifier">empty</span><span class="special">())</span>
+    <span class="special">{</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"Employee not found"</span> <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;</span>
+    <span class="special">}</span>
+    <span class="keyword">else</span>
+    <span class="special">{</span>
+        <span class="comment">// Print the retrieved details. The first field is the first name,</span>
+        <span class="comment">// and the second, the last name.</span>
+        <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">row_view</span> <span class="identifier">employee</span> <span class="special">=</span> <span class="identifier">result</span><span class="special">.</span><span class="identifier">rows</span><span class="special">().</span><span class="identifier">at</span><span class="special">(</span><span class="number">0</span><span class="special">);</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"Employee's name is: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">employee</span><span class="special">.</span><span class="identifier">at</span><span class="special">(</span><span class="number">0</span><span class="special">)</span> <span class="special">&lt;&lt;</span> <span class="char">' '</span> <span class="special">&lt;&lt;</span> <span class="identifier">employee</span><span class="special">.</span><span class="identifier">at</span><span class="special">(</span><span class="number">1</span><span class="special">)</span> <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;</span>
+    <span class="special">}</span>
+
+    <span class="comment">// Close the connection</span>
+    <span class="identifier">co_await</span> <span class="identifier">conn</span><span class="special">.</span><span class="identifier">async_close</span><span class="special">();</span>
+<span class="special">}</span>
+</pre>
+<p>
+      Full program listing for this tutorial is <a class="link" href="examples/tutorial_with_params.html" title="Tutorial 3 listing: queries with parameters">here</a>.
+    </p>
+<p>
+      You can now proceed to <a class="link" href="tutorial_static_interface.html" title="Tutorial 4: the static interface">the
+      next tutorial</a>.
+    </p>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="tutorial_async.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="tutorial_static_interface.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

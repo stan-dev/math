@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Function template parse</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../../headers.html#doxygen.headers.parser_8hpp" title="Header &lt;boost/parser/parser.hpp&gt;">
+<link rel="prev" href="namespaceboost_1_1parser_1a01062b95df7ecade5b85a9d69afc101a.html" title="Function template prefix_parse">
+<link rel="next" href="namespaceboost_1_1parser_1a1c52faefcdce2faf2054d7acf30f6dee.html" title="Function template prefix_parse">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="namespaceboost_1_1parser_1a01062b95df7ecade5b85a9d69afc101a.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../headers.html#doxygen.headers.parser_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="namespaceboost_1_1parser_1a1c52faefcdce2faf2054d7acf30f6dee.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.headers.namespaceboost_1_1parser_1a0c59b96667f34d0460e0fde39dffcd28"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Function template parse</span></h2>
+<p>boost::parser::parse</p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../headers.html#doxygen.headers.parser_8hpp" title="Header &lt;boost/parser/parser.hpp&gt;">boost/parser/parser.hpp</a>&gt;
+
+</span>
+<span class="keyword">template</span><span class="special">&lt;</span><span class="identifier">parsable_range</span> R<span class="special">,</span> <span class="keyword">typename</span> Parser<span class="special">,</span> <span class="keyword">typename</span> GlobalState<span class="special">,</span> 
+         <span class="keyword">typename</span> ErrorHandler<span class="special">&gt;</span> 
+  <span class="keyword">auto</span> <span class="identifier">parse</span><span class="special">(</span><span class="identifier">R</span> <span class="keyword">const</span> <span class="special">&amp;</span> r<span class="special">,</span> 
+             <a class="link" href="structboost_1_1parser_1_1parser__interface.html" title="Struct template parser_interface">parser_interface</a><span class="special">&lt;</span> <span class="identifier">Parser</span><span class="special">,</span> <span class="identifier">GlobalState</span><span class="special">,</span> <span class="identifier">ErrorHandler</span> <span class="special">&gt;</span> <span class="keyword">const</span> <span class="special">&amp;</span> parser<span class="special">,</span> 
+             <span class="identifier">trace</span> trace_mode <span class="special">=</span> <span class="identifier">trace</span><span class="special">::</span><span class="identifier">off</span><span class="special">)</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.27.11.5.105.4"></a><h2>Description</h2>
+<p>Parses <code class="computeroutput">r</code> using <code class="computeroutput">parser</code>. Returns a <code class="computeroutput">std::optional</code> containing the attribute produced by <code class="computeroutput">parser</code> on parse success, and <code class="computeroutput">std::nullopt</code> on parse failure. The entire input range <code class="computeroutput">r</code> must be consumed for the parse to be considered successful. If <code class="computeroutput">trace_mode == <a class="link" href="namespaceboost_1_1parser_1a70159b38d52d5203b78c0078c2f4e7f6.html#doxygen.headers.namespaceboost_1_1parser_1a70159b38d52d5203b78c0078c2f4e7f6aed2b5c0139cec8ad2873829dc1117d50">trace::on</a></code>, a verbose trace of the parse will be streamed to <code class="computeroutput">std::cout</code>.</p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Template Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">ErrorHandler</code></span></p></td>
+<td><p>Constrained by <code class="computeroutput">error_handler&lt;ErrorHandler,std::ranges::iterator_t&lt;decltype(subrange_of(r))&gt;, std::ranges::sentinel_t&lt;decltype(subrange_of(r))&gt;, GlobalState&gt;</code>, where <code class="computeroutput">subrange_of</code> is an implementation detail that: creates subranges out of pointers; trims trailing zeros off of bounded arrays (such as string literals); and transcodes to UTF-32 if the input is non-<code class="computeroutput">char</code>. </p></td>
+</tr></tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2020 T. Zachary Laine<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="namespaceboost_1_1parser_1a01062b95df7ecade5b85a9d69afc101a.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../headers.html#doxygen.headers.parser_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="namespaceboost_1_1parser_1a1c52faefcdce2faf2054d7acf30f6dee.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

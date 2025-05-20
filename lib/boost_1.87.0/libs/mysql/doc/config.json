@@ -1,0 +1,26 @@
+{
+    "include_private": false,
+    "legacy_behavior": false,
+    "external_marker": "!EXTERNAL!",
+    "link_prefix": "mysql.ref.",
+    "default_namespace": "boost::mysql",
+    "convenience_header": "boost/mysql.hpp",
+    "replace_strings": {
+        "__see_below__": "``['see-below]``",
+        "\\bclass CompletionToken\\b": "class __CompletionToken__",
+        "\\bclass ExecutionContext\\b": "class __ExecutionContext__",
+        "\\bclass ExecutionRequest\\b": "class __ExecutionRequest__",
+        "\\bclass ExecutionStateType\\b": "class __ExecutionStateType__",
+        "\\bclass Executor\\b": "class __Executor__",
+        "\\bclass FieldViewFwdIterator\\b": "class __FieldViewFwdIterator__",
+        "\\bclass Formattable\\b": "class __Formattable__",
+        "\\bclass OutputString\\b": "class __OutputString__",
+        "\\bclass ResultsType\\b": "class __ResultsType__",
+        "\\bclass SocketStream\\b": "class __SocketStream__",
+        "\\bclass StaticRow\\b": "class __StaticRow__",
+        "\\bclass Stream\\b": "class __Stream__",
+        "\\bclass WritableField\\b": "class __WritableField__",
+        "\\bclass WritableFieldTuple\\b": "class __WritableFieldTuple__",
+        "\\bBOOST_MYSQL_FORMATTABLE\\b": "class"
+    }
+}

@@ -1,0 +1,113 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>sequence_range_t</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../../pt01.html" title="Part Two: Reference. ">
+<link rel="prev" href="boost__mysql__rows_view/operator__not__eq_.html" title="rows_view::operator!=">
+<link rel="next" href="boost__mysql__ssl_mode.html" title="ssl_mode">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="boost__mysql__rows_view/operator__not__eq_.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../pt01.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="boost__mysql__ssl_mode.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="mysql.ref.boost__mysql__sequence_range_t"></a><a class="link" href="boost__mysql__sequence_range_t.html" title="sequence_range_t">sequence_range_t</a>
+</h4></div></div></div>
+<p>
+        <a class="indexterm" name="id89226"></a>
+The type of range produced by <a class="link" href="boost__mysql__sequence.html" title="sequence"><code class="computeroutput"><span class="identifier">sequence</span></code></a>.
+      </p>
+<h5>
+<a name="mysql.ref.boost__mysql__sequence_range_t.h0"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__sequence_range_t.synopsis"></a></span><a class="link" href="boost__mysql__sequence_range_t.html#mysql.ref.boost__mysql__sequence_range_t.synopsis">Synopsis</a>
+      </h5>
+<p>
+        Defined in header <code class="literal">&lt;<a href="https://github.com/boostorg/mysql/blob/master/include/boost/mysql/sequence.hpp" target="_top">boost/mysql/sequence.hpp</a>&gt;</code>
+      </p>
+<pre class="programlisting"><span class="keyword">template</span><span class="special">&lt;</span>
+    <span class="keyword">class</span> <span class="identifier">T</span><span class="special">&gt;</span>
+<span class="keyword">using</span> <span class="identifier">sequence_range_t</span> <span class="special">=</span> <span class="emphasis"><em>see-below</em></span><span class="special">;</span>
+</pre>
+<h5>
+<a name="mysql.ref.boost__mysql__sequence_range_t.h1"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__sequence_range_t.description"></a></span><a class="link" href="boost__mysql__sequence_range_t.html#mysql.ref.boost__mysql__sequence_range_t.description">Description</a>
+      </h5>
+<p>
+        This type trait can be used to obtain the range type produced by calling
+        <a class="link" href="boost__mysql__sequence.html" title="sequence"><code class="computeroutput"><span class="identifier">sequence</span></code></a>.
+        This type is used as the <code class="computeroutput"><span class="identifier">Range</span></code>
+        template parameter in <a class="link" href="boost__mysql__format_sequence.html" title="format_sequence"><code class="computeroutput"><span class="identifier">format_sequence</span></code></a>.
+      </p>
+<p>
+        By default, <a class="link" href="boost__mysql__sequence.html" title="sequence"><code class="computeroutput"><span class="identifier">sequence</span></code></a> copies its input range,
+        unless using <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">ref</span></code>. C arrays are copied into <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">array</span></code>
+        objects. This type trait accounts these transformations.
+      </p>
+<p>
+        Formally, given the input range type <code class="computeroutput"><span class="identifier">T</span></code>
+        (which can be a reference with cv-qualifiers):
+      </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+            If <code class="computeroutput"><span class="identifier">T</span></code> is a C array or
+            a reference to one (as per <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">is_array</span></code>),
+            and the array elements' type is <code class="computeroutput"><span class="identifier">U</span></code>,
+            yields <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">array</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">remove_cv_t</span><span class="special">&lt;</span><span class="identifier">U</span><span class="special">&gt;,</span> <span class="identifier">N</span><span class="special">&gt;</span></code>.
+          </li>
+<li class="listitem">
+            If <code class="computeroutput"><span class="identifier">T</span></code> is a <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">reference_wrapper</span><span class="special">&lt;</span><span class="identifier">U</span><span class="special">&gt;</span></code>
+            object, or a reference to one, yields <code class="computeroutput"><span class="identifier">U</span><span class="special">&amp;</span></code>.
+          </li>
+<li class="listitem">
+            Otherwise, yields <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">remove_cvref_t</span><span class="special">&lt;</span><span class="identifier">T</span><span class="special">&gt;</span></code>.
+          </li>
+</ul></div>
+<p>
+        Examples:
+      </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+            <code class="computeroutput"><span class="identifier">sequence_range_t</span><span class="special">&lt;</span><span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span><span class="keyword">int</span><span class="special">&gt;&amp;&gt;</span></code> is <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span><span class="keyword">int</span><span class="special">&gt;</span></code>.
+          </li>
+<li class="listitem">
+            <code class="computeroutput"><span class="identifier">sequence_range_t</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">reference_wrapper</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span><span class="keyword">int</span><span class="special">&gt;&gt;&gt;</span></code>
+            is <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span><span class="keyword">int</span><span class="special">&gt;&amp;</span></code>.
+          </li>
+<li class="listitem">
+            <code class="computeroutput"><span class="identifier">sequence_range_t</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">reference_wrapper</span><span class="special">&lt;</span><span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span><span class="keyword">int</span><span class="special">&gt;&gt;&gt;</span></code> is <code class="computeroutput"><span class="keyword">const</span>
+            <span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span><span class="keyword">int</span><span class="special">&gt;&amp;</span></code>.
+          </li>
+<li class="listitem">
+            <code class="computeroutput"><span class="identifier">sequence_range_t</span><span class="special">&lt;</span><span class="keyword">int</span><span class="special">(&amp;)[</span><span class="number">4</span><span class="special">]&gt;</span></code>
+            is <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">array</span><span class="special">&lt;</span><span class="keyword">int</span><span class="special">,</span> <span class="number">4</span><span class="special">&gt;</span></code>.
+          </li>
+</ul></div>
+<p>
+        Convenience header <code class="literal">&lt;<a href="https://github.com/boostorg/mysql/blob/master/include/boost/mysql.hpp" target="_top">boost/mysql.hpp</a>&gt;</code>
+      </p>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="boost__mysql__rows_view/operator__not__eq_.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../pt01.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="boost__mysql__ssl_mode.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

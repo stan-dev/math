@@ -1,0 +1,198 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template non_central_chi_squared_distribution</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../../boost_random/reference.html#doxygen.headers.non__central__chi__squared__distribution_8hpp" title="Header &lt;boost/random/non_central_chi_squared_distribution.hpp&gt;">
+<link rel="prev" href="niederreiter__base2_8hpp_1a3772b4064e1b25e840878144df3951b2.html" title="Type definition niederreiter_base2">
+<link rel="next" href="classboost_1_1random_1_1non__central__chi__squared__distribution_1_1param__type.html" title="Class param_type">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="niederreiter__base2_8hpp_1a3772b4064e1b25e840878144df3951b2.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_random/reference.html#doxygen.headers.non__central__chi__squared__distribution_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1random_1_1non__central__chi__squared__distribution_1_1param__type.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.headers.classboost_1_1random_1_1non__central__chi__squared__distribution"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template non_central_chi_squared_distribution</span></h2>
+<p>boost::random::non_central_chi_squared_distribution</p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../boost_random/reference.html#doxygen.headers.non__central__chi__squared__distribution_8hpp" title="Header &lt;boost/random/non_central_chi_squared_distribution.hpp&gt;">boost/random/non_central_chi_squared_distribution.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> RealType <span class="special">=</span> <span class="keyword">double</span><span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution.html" title="Class template non_central_chi_squared_distribution">non_central_chi_squared_distribution</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">RealType</span> <a name="doxygen.headers.classboost_1_1random_1_1non__central__chi__squared__distribution_1a477f6f451720b3a7f59549e276f8df04"></a><span class="identifier">result_type</span><span class="special">;</span>
+  <span class="keyword">typedef</span> <span class="identifier">RealType</span> <a name="doxygen.headers.classboost_1_1random_1_1non__central__chi__squared__distribution_1aa9884c3879e20f3d5de10e453f9638c3"></a><span class="identifier">input_type</span><span class="special">;</span> 
+
+  <span class="comment">// member classes/structs/unions</span>
+
+  <span class="keyword">class</span> <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">{</span>
+  <span class="keyword">public</span><span class="special">:</span>
+    <span class="comment">// types</span>
+    <span class="keyword">typedef</span> <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution.html" title="Class template non_central_chi_squared_distribution">non_central_chi_squared_distribution</a> <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1non__central__chi__squared__distribution_1_1param__type_1ac03ada3794f47ebb9a7fec63701a1627"><span class="identifier">distribution_type</span></a><span class="special">;</span>
+
+    <span class="comment">// <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution_1_1param__type.html#id-1_3_34_5_6_30_1_1_1_3_2-bb">public member functions</a></span>
+    <span class="keyword">explicit</span> <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1non__central__chi__squared__distribution_1_1param__type_1a2103260b26d8988cbf4a5560a567c539"><span class="identifier">param_type</span></a><span class="special">(</span><span class="identifier">RealType</span> <span class="special">=</span> <span class="number">1</span><span class="special">,</span> <span class="identifier">RealType</span> <span class="special">=</span> <span class="number">1</span><span class="special">)</span><span class="special">;</span>
+    <span class="identifier">RealType</span> <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1non__central__chi__squared__distribution_1_1param__type_1a5cc1055267d957c0b3e603b30e083cf9"><span class="identifier">k</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+    <span class="identifier">RealType</span> <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1non__central__chi__squared__distribution_1_1param__type_1a22281f4b7fdbce22f20376873a36832e"><span class="identifier">lambda</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+
+    <span class="comment">// <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution_1_1param__type.html#id-1_3_34_5_6_30_1_1_1_3_3-bb">friend functions</a></span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits<span class="special">&gt;</span> 
+      <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+      <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1non__central__chi__squared__distribution_1_1param__type_1a36d2820c7e758fa1a94fdd5d74949e54"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits<span class="special">&gt;</span> 
+      <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+      <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1non__central__chi__squared__distribution_1_1param__type_1aa94ff75dd5871ee80a6fc0a095c75bd0"><span class="keyword">operator</span><span class="special">&gt;&gt;</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">bool</span> <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1non__central__chi__squared__distribution_1_1param__type_1ae6f3b58e629ce7a54b5e18a4f05dbc5a"><span class="keyword">operator</span><span class="special">==</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">bool</span> <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1non__central__chi__squared__distribution_1_1param__type_1aa559d0d98e88e84417364a89b83cf5b2"><span class="keyword">operator</span><span class="special">!=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="special">}</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution.html#id-1_3_34_5_6_30_1_1_1_6-bb">public member functions</a></span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution.html#doxygen.headers.classboost_1_1random_1_1non__central__chi__squared__distribution_1a280ff8db3119c3ec7331f129351a2e8f"><span class="identifier">non_central_chi_squared_distribution</span></a><span class="special">(</span><span class="identifier">RealType</span> <span class="special">=</span> <span class="number">1</span><span class="special">,</span> <span class="identifier">RealType</span> <span class="special">=</span> <span class="number">1</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution.html#doxygen.headers.classboost_1_1random_1_1non__central__chi__squared__distribution_1a9b212448512b7e2c9e38dcf5b54191fa"><span class="identifier">non_central_chi_squared_distribution</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> URNG<span class="special">&gt;</span> 
+    <span class="identifier">RealType</span> <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution.html#doxygen.headers.classboost_1_1random_1_1non__central__chi__squared__distribution_1a373c94cd608f3828e95ccf9045b82ddb"><span class="keyword">operator</span><span class="special">(</span><span class="special">)</span></a><span class="special">(</span><span class="identifier">URNG</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> URNG<span class="special">&gt;</span> <span class="identifier">RealType</span> <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution.html#doxygen.headers.classboost_1_1random_1_1non__central__chi__squared__distribution_1a209a4d730a214aa769d287619348ae4b"><span class="keyword">operator</span><span class="special">(</span><span class="special">)</span></a><span class="special">(</span><span class="identifier">URNG</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">RealType</span> <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution.html#doxygen.headers.classboost_1_1random_1_1non__central__chi__squared__distribution_1a87a9420789d6d56c61734cc54fd89180"><span class="identifier">k</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">RealType</span> <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution.html#doxygen.headers.classboost_1_1random_1_1non__central__chi__squared__distribution_1a394027ac654aa59ac61a277efebf97df"><span class="identifier">lambda</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution_1_1param__type.html" title="Class param_type">param_type</a> <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution.html#doxygen.headers.classboost_1_1random_1_1non__central__chi__squared__distribution_1ab5e5c33b56791305e33881226c7a117b"><span class="identifier">param</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution.html#doxygen.headers.classboost_1_1random_1_1non__central__chi__squared__distribution_1a58e5affc1c6659e22414ae0e9e64e648"><span class="identifier">param</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution.html#doxygen.headers.classboost_1_1random_1_1non__central__chi__squared__distribution_1a27aa8e5416b696476440aac2dc5997f3"><span class="identifier">reset</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">RealType</span> <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution.html#doxygen.headers.classboost_1_1random_1_1non__central__chi__squared__distribution_1addfdda7e45ed23f7999d5de4fb08cb9e"><span class="identifier">min</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">RealType</span> <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution.html#doxygen.headers.classboost_1_1random_1_1non__central__chi__squared__distribution_1a426339e6cd0a3e81ae0229f95936e18f"><span class="identifier">max</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution.html#id-1_3_34_5_6_30_1_1_1_7-bb">friend functions</a></span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits<span class="special">&gt;</span> 
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+    <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution.html#doxygen.headers.classboost_1_1random_1_1non__central__chi__squared__distribution_1a016706059c2f60eae7e7dcf1b09f9b54"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">,</span> 
+               <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution.html" title="Class template non_central_chi_squared_distribution">non_central_chi_squared_distribution</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits<span class="special">&gt;</span> 
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+    <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution.html#doxygen.headers.classboost_1_1random_1_1non__central__chi__squared__distribution_1a70ba5bd91f2880f20d5f7497486550cb"><span class="keyword">operator</span><span class="special">&gt;&gt;</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">,</span> 
+               <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution.html" title="Class template non_central_chi_squared_distribution">non_central_chi_squared_distribution</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution.html#doxygen.headers.classboost_1_1random_1_1non__central__chi__squared__distribution_1aa1e0c119e064f187c296af9d8d2be081"><span class="keyword">operator</span><span class="special">==</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution.html" title="Class template non_central_chi_squared_distribution">non_central_chi_squared_distribution</a> <span class="special">&amp;</span><span class="special">,</span> 
+                  <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution.html" title="Class template non_central_chi_squared_distribution">non_central_chi_squared_distribution</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution.html#doxygen.headers.classboost_1_1random_1_1non__central__chi__squared__distribution_1af3556cd746f9356c9d1b64b4969388b9"><span class="keyword">operator</span><span class="special">!=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution.html" title="Class template non_central_chi_squared_distribution">non_central_chi_squared_distribution</a> <span class="special">&amp;</span><span class="special">,</span> 
+                  <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution.html" title="Class template non_central_chi_squared_distribution">non_central_chi_squared_distribution</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.34.5.6.29.3.4"></a><h2>Description</h2>
+<p>The noncentral chi-squared distribution is a real valued distribution with two parameter, <code class="computeroutput">k</code> and <code class="computeroutput">lambda</code>. The distribution produces values &gt; 0.</p>
+<p>This is the distribution of the sum of squares of k Normal distributed variates each with variance one and <span class="inlinemediaobject"><img src="../../images/random//form_32.png"></span> the sum of squares of the normal means.</p>
+<p>The distribution function is <span class="inlinemediaobject"><img src="../../images/random//form_33.png"></span>. where <span class="inlinemediaobject"><img src="../../images/random//form_34.png"></span> is a modified Bessel function of the first kind.</p>
+<p>The algorithm is taken from</p>
+<p> </p>
+<div class="blockquote"><blockquote class="blockquote"><p>  "Monte Carlo Methods in Financial Engineering", Paul Glasserman, 2003, XIII, 596 p, Stochastic Modelling and Applied Probability, Vol. 53, ISBN 978-0-387-21617-1, p 124, Fig. 3.5.  </p></blockquote></div>
+<p>  </p>
+<div class="refsect2">
+<a name="id-1.3.34.5.6.29.3.4.7"></a><h3>
+<a name="id-1_3_34_5_6_30_1_1_1_6-bb"></a><code class="computeroutput">non_central_chi_squared_distribution</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.headers.classboost_1_1random_1_1non__central__chi__squared__distribution_1a280ff8db3119c3ec7331f129351a2e8f"></a><span class="identifier">non_central_chi_squared_distribution</span><span class="special">(</span><span class="identifier">RealType</span> k <span class="special">=</span> <span class="number">1</span><span class="special">,</span> 
+                                              <span class="identifier">RealType</span> lambda <span class="special">=</span> <span class="number">1</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Construct a <code class="computeroutput"><a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution.html" title="Class template non_central_chi_squared_distribution">non_central_chi_squared_distribution</a></code> object. <code class="computeroutput">k</code> and <code class="computeroutput">lambda</code> are the parameter of the distribution.</p>
+<p>Requires: k &gt; 0 &amp;&amp; lambda &gt; 0 </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.headers.classboost_1_1random_1_1non__central__chi__squared__distribution_1a9b212448512b7e2c9e38dcf5b54191fa"></a><span class="identifier">non_central_chi_squared_distribution</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span> param<span class="special">)</span><span class="special">;</span></pre>
+<p>Construct a <code class="computeroutput"><a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution.html" title="Class template non_central_chi_squared_distribution">non_central_chi_squared_distribution</a></code> object from the parameter. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> URNG<span class="special">&gt;</span> 
+  <span class="identifier">RealType</span> <a name="doxygen.headers.classboost_1_1random_1_1non__central__chi__squared__distribution_1a373c94cd608f3828e95ccf9045b82ddb"></a><span class="keyword">operator</span><span class="special">(</span><span class="special">)</span><span class="special">(</span><span class="identifier">URNG</span> <span class="special">&amp;</span> eng<span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span> param<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns a random variate distributed according to the non central chi squared distribution specified by <code class="computeroutput">param</code>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> URNG<span class="special">&gt;</span> <span class="identifier">RealType</span> <a name="doxygen.headers.classboost_1_1random_1_1non__central__chi__squared__distribution_1a209a4d730a214aa769d287619348ae4b"></a><span class="keyword">operator</span><span class="special">(</span><span class="special">)</span><span class="special">(</span><span class="identifier">URNG</span> <span class="special">&amp;</span> eng<span class="special">)</span><span class="special">;</span></pre>
+<p>Returns a random variate distributed according to the non central chi squared distribution. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">RealType</span> <a name="doxygen.headers.classboost_1_1random_1_1non__central__chi__squared__distribution_1a87a9420789d6d56c61734cc54fd89180"></a><span class="identifier">k</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns the <code class="computeroutput">k</code> parameter of the distribution. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">RealType</span> <a name="doxygen.headers.classboost_1_1random_1_1non__central__chi__squared__distribution_1a394027ac654aa59ac61a277efebf97df"></a><span class="identifier">lambda</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns the <code class="computeroutput">lambda</code> parameter of the distribution. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution_1_1param__type.html" title="Class param_type">param_type</a> <a name="doxygen.headers.classboost_1_1random_1_1non__central__chi__squared__distribution_1ab5e5c33b56791305e33881226c7a117b"></a><span class="identifier">param</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns the parameters of the distribution. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.headers.classboost_1_1random_1_1non__central__chi__squared__distribution_1a58e5affc1c6659e22414ae0e9e64e648"></a><span class="identifier">param</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span> param<span class="special">)</span><span class="special">;</span></pre>
+<p>Sets parameters of the distribution. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.headers.classboost_1_1random_1_1non__central__chi__squared__distribution_1a27aa8e5416b696476440aac2dc5997f3"></a><span class="identifier">reset</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Resets the distribution, so that subsequent uses does not depend on values already produced by it. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">RealType</span> <a name="doxygen.headers.classboost_1_1random_1_1non__central__chi__squared__distribution_1addfdda7e45ed23f7999d5de4fb08cb9e"></a><span class="identifier">min</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns the smallest value that the distribution can produce. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">RealType</span> <a name="doxygen.headers.classboost_1_1random_1_1non__central__chi__squared__distribution_1a426339e6cd0a3e81ae0229f95936e18f"></a><span class="identifier">max</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns the largest value that the distribution can produce. </p>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.34.5.6.29.3.4.8"></a><h3>
+<a name="id-1_3_34_5_6_30_1_1_1_7-bb"></a><code class="computeroutput">non_central_chi_squared_distribution</code> friend functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits<span class="special">&gt;</span> 
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+  <a name="doxygen.headers.classboost_1_1random_1_1non__central__chi__squared__distribution_1a016706059c2f60eae7e7dcf1b09f9b54"></a><span class="keyword">operator</span><span class="special">&lt;&lt;</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> os<span class="special">,</span> 
+             <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution.html" title="Class template non_central_chi_squared_distribution">non_central_chi_squared_distribution</a> <span class="special">&amp;</span> dist<span class="special">)</span><span class="special">;</span></pre>
+<p>Writes the parameters of the distribution to a <code class="computeroutput">std::ostream</code>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits<span class="special">&gt;</span> 
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+  <a name="doxygen.headers.classboost_1_1random_1_1non__central__chi__squared__distribution_1a70ba5bd91f2880f20d5f7497486550cb"></a><span class="keyword">operator</span><span class="special">&gt;&gt;</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> is<span class="special">,</span> 
+             <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution.html" title="Class template non_central_chi_squared_distribution">non_central_chi_squared_distribution</a> <span class="special">&amp;</span> dist<span class="special">)</span><span class="special">;</span></pre>
+<p>reads the parameters of the distribution from a <code class="computeroutput">std::istream</code>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.headers.classboost_1_1random_1_1non__central__chi__squared__distribution_1aa1e0c119e064f187c296af9d8d2be081"></a><span class="keyword">operator</span><span class="special">==</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution.html" title="Class template non_central_chi_squared_distribution">non_central_chi_squared_distribution</a> <span class="special">&amp;</span> lhs<span class="special">,</span> 
+                <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution.html" title="Class template non_central_chi_squared_distribution">non_central_chi_squared_distribution</a> <span class="special">&amp;</span> rhs<span class="special">)</span><span class="special">;</span></pre>
+<p>Returns true if two distributions have the same parameters and produce the same sequence of random numbers given equal generators. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.headers.classboost_1_1random_1_1non__central__chi__squared__distribution_1af3556cd746f9356c9d1b64b4969388b9"></a><span class="keyword">operator</span><span class="special">!=</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution.html" title="Class template non_central_chi_squared_distribution">non_central_chi_squared_distribution</a> <span class="special">&amp;</span> lhs<span class="special">,</span> 
+                <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1non__central__chi__squared__distribution.html" title="Class template non_central_chi_squared_distribution">non_central_chi_squared_distribution</a> <span class="special">&amp;</span> rhs<span class="special">)</span><span class="special">;</span></pre>
+<p>Returns true if two distributions have different parameters and/or can produce different sequences of random numbers given equal generators. </p>
+</li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2000-2005 Jens Maurer<br>Copyright © 2009, 2010 Steven Watanabe<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="niederreiter__base2_8hpp_1a3772b4064e1b25e840878144df3951b2.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_random/reference.html#doxygen.headers.non__central__chi__squared__distribution_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1random_1_1non__central__chi__squared__distribution_1_1param__type.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

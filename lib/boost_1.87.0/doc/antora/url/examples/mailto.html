@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+        <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>mailto URLs :: Boost Libraries Documentation</title>
+  <link rel="canonical" href="https://antora.cppalliance.org/master/lib/doc/url/examples/mailto.html">
+    <link rel="prev" href="finicky.html">
+    <link rel="next" href="magnet-link.html">
+  <meta name="generator" content="Antora 3.1.9">
+    <link rel="stylesheet" href="../../_/css/boostlook.css">
+    <link rel="stylesheet" href="../../_/css/site.css">
+    <link rel="stylesheet" href="../../_/css/vendor/tabs.css">
+    <script>var uiRootPath = '../../_'</script>
+  </head>
+  <body class="article toc2 toc-left">
+    <div class="boostlook">
+  <div id="header">
+    <div id="toc" class="nav-container toc2" data-component="url" data-version="">
+  <aside class="nav">
+    <button class="nav-close"></button>
+    <div class="panels">
+      <div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+      <h3 class="title"><a href="../index.html">Boost.URL</a></h3>
+      <ul class="nav-list">
+        <ul class="nav-list">
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../quicklook.html">Quick Look</a>
+        </li>
+              <li class="" data-depth="1">
+            <a class="nav-link" href="../urls/index.html">URLs</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/parsing.html">Parsing</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/containers.html">Containers</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/segments.html">Segments</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/params.html">Params</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/normalization.html">Normalization</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/stringtoken.html">String Token</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/percent-encoding.html">Percent Encoding</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/formatting.html">Formatting</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../grammar/index.html">Customization</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/rules.html">Parse Rules</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/charset.html">Character Sets</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/combinators.html">Compound Rules</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/range.html">Ranges</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/rfc3986.html">RFC 3986</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Examples</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="qrcode.html">QR Code</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="finicky.html">Finicky</a>
+        </li>
+              <li class=" is-current-page" data-depth="2">
+            <a class="nav-link" href="mailto.html">mailto URLs</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="magnet-link.html">Magnet Link</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="file-router.html">File Router</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="router.html">Router</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="sanitize.html">Sanitizing URLs</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../reference.html">Reference</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <span class="nav-text">Concepts</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="3">
+            <a class="nav-link" href="../concepts/CharSet.html">CharSet</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="../concepts/Rule.html">Rule</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="../concepts/StringToken.html">StringToken</a>
+        </li>
+        </ul>
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../HelpCard.html">Help Card</a>
+        </li>
+        </ul>
+  </ul>
+  </ul>
+  </nav>
+</div>
+    </div>
+  </aside>
+</div>
+</div>
+  <div id="content">
+    <article class="doc max-width-reset">
+  <div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li>
+      <a href="../index.html" aria-label="Home: Boost.URL">
+        <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 -960 960 960" fill="#000000" aria-hidden="true"><path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z"/></svg>
+      </a>
+    </li>
+    <li>Examples</li>
+    <li><a href="mailto.html">mailto URLs</a></li>
+  </ul>
+</nav>
+<div class="spirit-nav">
+    <a accesskey="p" href="finicky.html"><span class="material-symbols-outlined" title="Previous: Finicky">arrow_back</span></a>
+    <a accesskey="p" href="magnet-link.html"><span class="material-symbols-outlined" title="Next: Magnet Link">arrow_forward</span></a>
+</div>
+</div>
+    <h1 class="page">mailto URLs</h1>
+  <div class="paragraph">
+<p><code>mailto</code> is a URL scheme for email addresses. <code>mailto</code> URL are used on websites to allow users to email a specific address directly from an HTML document.</p>
+</div>
+<div class="paragraph">
+<p>This example parses a mailto URL into a new view type and prints its components to standard output.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">/*
+    This example parses a mailto URL into a new
+    view type and prints its components to
+    standard output.
+*/
+
+#include &lt;boost/url/grammar/ci_string.hpp&gt;
+#include &lt;boost/url/grammar/parse.hpp&gt;
+#include &lt;boost/url/optional.hpp&gt;
+#include &lt;boost/url/rfc/absolute_uri_rule.hpp&gt;
+#include &lt;boost/url/url.hpp&gt;
+#include &lt;boost/url/url_view.hpp&gt;
+#include &lt;algorithm&gt;
+#include &lt;iostream&gt;
+#include "rfc.hpp"
+
+namespace urls = boost::urls;
+
+// fwd-declaration for mailto_view
+struct mailto_rule_t;
+
+/// A new url type for mailto URLs
+/**
+    This class represents a URI with the mailto
+    scheme.
+
+    Unlike a urls::url_view, which only represents
+    the general syntax of urls, a mailto_view
+    represents a reference to fields that are
+    relevant to mailto URLs, while ignoring
+    elements of the general syntax
+    that are not relevant to the scheme.
+
+    This allows us to use the general syntax
+    parsers to create a representation that
+    is more appropriate for the specified scheme
+    syntax.
+
+    @par Specification
+    @li &lt;a href="https://www.rfc-editor.org/rfc/rfc6068"
+        &gt;The 'mailto' URI Scheme&lt;/a&gt;
+    @li &lt;a href="https://www.rfc-editor.org/errata/rfc6068"
+        &gt;RFC Errata Report&lt;/a&gt;
+
+    @par References
+    @li &lt;a href="https://en.wikipedia.org/wiki/Mailto"
+        &gt;mailto (Wikipedia)&lt;/a&gt;
+
+ */
+class mailto_view
+{
+    urls::url_view u_;
+
+public:
+    /// Return the specified email address in the URL
+    /**
+        A mailto URL might contain multiple email
+        addresses separated by commas.
+
+        The first addresses are represented in
+        the path. Other addresses are in
+        any query parameter whose key is "to".
+
+        @param i Address index
+
+        @return The specified address
+     */
+    std::string
+    address(std::size_t i = 0) const;
+
+    /// @copydoc address()
+    urls::pct_string_view
+    encoded_address(std::size_t i = 0) const noexcept;
+
+    /// Return number of email addresses in the URL
+    std::size_t
+    size() const noexcept;
+
+    /// Return the specified cc email address in the URL
+    /**
+        A mailto URL might contain multiple cc
+        email addresses separated by commas.
+
+        Addresses can be represented in any query
+        parameter whose key is "cc".
+
+        @param i Address index
+
+        @return The specified cc address
+     */
+    std::string
+    cc(std::size_t i) const;
+
+    /// @copydoc cc()
+    urls::pct_string_view
+    encoded_cc(std::size_t i) const noexcept;
+
+    /// Return number of "cc" email addresses in the URL
+    std::size_t
+    size_cc() const noexcept;
+
+    /// Return email message subject
+    std::string
+    subject() const;
+
+    /// @copydoc subject()
+    urls::pct_string_view
+    encoded_subject() const noexcept;
+
+    /// Return email message body
+    std::string
+    body() const;
+
+    /// @copydoc body()
+    urls::pct_string_view
+    encoded_body() const noexcept;
+
+    friend
+    std::ostream&amp;
+    operator&lt;&lt;(std::ostream&amp; os, mailto_view m)
+    {
+        return os &lt;&lt; m.u_;
+    }
+
+private:
+    // Count number of addresses in a string
+    static
+    std::size_t
+    addr_in_str(boost::core::string_view s);
+
+    // Get the ith address from a string
+    static
+    boost::optional&lt;urls::pct_string_view&gt;
+    get_nth_address(boost::core::string_view to, std::size_t &amp;i) noexcept;
+
+    // Get param value or empty otherwise
+    urls::pct_string_view
+    param_or_empty(urls::pct_string_view k) const noexcept;
+
+    friend mailto_rule_t;
+};
+
+/** Rule to match a mailto URL
+*/
+struct mailto_rule_t
+{
+    /// Value type returned by the rule
+    using value_type = mailto_view;
+
+    /// Parse a sequence of characters into a mailto_view
+    boost::system::result&lt; value_type &gt;
+    parse( char const*&amp; it, char const* end ) const noexcept;
+};
+
+constexpr mailto_rule_t mailto_rule{};
+
+/** Return a parsed mailto URL from a string, or error.
+
+    This is a more convenient user-facing function
+    to parse mailto URLs.
+*/
+boost::system::result&lt; mailto_view &gt;
+parse_mailto( boost::core::string_view s ) noexcept
+{
+    return urls::grammar::parse(s, mailto_rule);
+}
+
+int main(int argc, char** argv)
+{
+    // This example shows how to use custom parsing
+    // to process alternate URI schemes, in this
+    // case "mailto"
+    if (argc != 2) {
+        std::cout &lt;&lt; argv[0] &lt;&lt; "\n";
+        std::cout &lt;&lt; "mailto &lt;URL&gt;\n"
+                     "examples:\n"
+                     // Single e-mail address
+                     "mailto mailto:someone@example.com\n"
+                     // Two e-mail addresses
+                     "mailto mailto:someone@example.com,someoneelse@example.com\n"
+                     // E-mail headers
+                     "mailto mailto:someone@example.com?subject=Our%20meeting&amp;cc=someone_else@example.com&amp;body=Hi%21\n"
+                     // E-mail headers only
+                     "mailto mailto:?to=&amp;subject=mailto%20example&amp;body=https%3A%2F%2Fen.wikipedia.org%2Fwiki%2FMailto\n"
+                     // All fields
+                     "mailto mailto:someone@example.com,%73omeoneelse@me.com?to=thirdperson@example.com&amp;subject=Our%20meeting&amp;cc=someone_else@example.com,onemore@ex%61mple.com&amp;body=Hi%21\n";
+        return EXIT_FAILURE;
+    }
+
+    boost::system::result&lt;mailto_view&gt; r =
+        parse_mailto(argv[1]);
+    if (!r)
+        return EXIT_FAILURE;
+
+    mailto_view m = *r;
+    std::cout &lt;&lt; "link: " &lt;&lt; m &lt;&lt; "\n";
+
+    for (std::size_t i = 0; i &lt; m.size(); ++i)
+        std::cout &lt;&lt;
+            "to[" &lt;&lt; i &lt;&lt; "]: " &lt;&lt;
+            m.address(i) &lt;&lt; "\n";
+
+    for (std::size_t i = 0; i &lt; m.size_cc(); ++i)
+        std::cout &lt;&lt;
+            "cc[" &lt;&lt; i &lt;&lt; "]: " &lt;&lt;
+            m.address(i) &lt;&lt; "\n";
+
+    std::cout &lt;&lt; "subject: " &lt;&lt; m.subject() &lt;&lt; "\n";
+    std::cout &lt;&lt; "body: " &lt;&lt; m.body() &lt;&lt; "\n";
+
+    return EXIT_SUCCESS;
+}
+
+std::string
+mailto_view::address(std::size_t i) const
+{
+    return encoded_address(i).decode();
+}
+
+urls::pct_string_view
+mailto_view::encoded_address(std::size_t i) const noexcept
+{
+    // Look for ith email address in the path string
+    auto s = get_nth_address(u_.encoded_path(), i);
+    if (s)
+        return *s;
+
+    // Look for ith email address in one of the "to" headers
+    auto ps = u_.encoded_params();
+    auto it = ps.find("to", urls::ignore_case);
+    while (it != ps.end())
+    {
+        s = get_nth_address((*it++).value, i);
+        if (s)
+            return *s;
+        it = ps.find(it, "to", urls::ignore_case);
+    }
+    return {};
+}
+
+std::size_t
+mailto_view::size() const noexcept
+{
+    // Count addresses in path
+    std::size_t n = addr_in_str(u_.encoded_path());
+
+    // Count addresses in "to" headers
+    auto ps = u_.encoded_params();
+    auto it = ps.find("to", urls::ignore_case);
+    while (it != ps.end())
+    {
+        n += addr_in_str((*it++).value);
+        it = ps.find(it, "to", urls::ignore_case);
+    }
+    return n;
+}
+
+std::string
+mailto_view::cc(std::size_t i) const
+{
+    return encoded_cc(i).decode();
+}
+
+urls::pct_string_view
+mailto_view::encoded_cc(std::size_t i) const noexcept
+{
+    // Look for ith email address in one of the "to" headers
+    auto ps = u_.encoded_params();
+    auto it = ps.find("cc", urls::ignore_case);
+    while (it != ps.end())
+    {
+        auto s = get_nth_address((*it++).value, i);
+        if (s)
+            return *s;
+        it = ps.find(it, "cc", urls::ignore_case);
+    }
+    return {};
+}
+
+std::size_t
+mailto_view::size_cc() const noexcept
+{
+    // Count addresses in "to" headers
+    std::size_t n = 0;
+    auto ps = u_.encoded_params();
+    auto it = ps.find("cc", urls::ignore_case);
+    while (it != ps.end())
+    {
+        n += addr_in_str((*it++).value);
+        it = ps.find(it, "cc", urls::ignore_case);
+    }
+    return n;
+}
+
+std::string
+mailto_view::subject() const
+{
+    return encoded_subject().decode();
+}
+
+urls::pct_string_view
+mailto_view::encoded_subject() const noexcept
+{
+    return param_or_empty("subject");
+}
+
+std::string
+mailto_view::mailto_view::body() const
+{
+    return encoded_body().decode();
+}
+
+urls::pct_string_view
+mailto_view::encoded_body() const noexcept
+{
+    return param_or_empty("body");
+}
+
+std::size_t
+mailto_view::addr_in_str(boost::core::string_view s)
+{
+    std::size_t n = 0;
+    bool empty = true;
+    for (char c : s)
+    {
+        if (c == ',')
+        {
+            n += !empty;
+            empty = true;
+        }
+        else
+        {
+            empty = false;
+        }
+    }
+    n += !empty;
+    return n;
+}
+
+boost::optional&lt;urls::pct_string_view&gt;
+mailto_view::get_nth_address(boost::core::string_view to, std::size_t &amp;i) noexcept
+{
+    auto p = to.find(',');
+    while (p != boost::core::string_view::npos)
+    {
+        if (i == 0)
+            return urls::pct_string_view(
+                to.substr(0, p));
+        --i;
+        to.remove_prefix(p + 1);
+        p = to.find(',');
+    }
+    if (!to.empty())
+    {
+        if (i == 0)
+            return urls::pct_string_view(
+                to.substr(0, p));
+        --i;
+    }
+    return boost::none;
+}
+
+urls::pct_string_view
+mailto_view::param_or_empty(urls::pct_string_view k) const noexcept
+{
+    auto ps = u_.encoded_params();
+    auto it = ps.find(k, urls::ignore_case);
+    if (it != ps.end())
+        return (*it).value;
+    return {};
+}
+
+auto
+mailto_rule_t::parse( char const*&amp; it, char const* end ) const noexcept
+    -&gt; boost::system::result&lt; value_type &gt;
+{
+    // Syntax-based rules
+    boost::system::result&lt;urls::url_view&gt; r =
+        urls::grammar::parse(it, end, urls::absolute_uri_rule);
+    if (!r)
+        return r.error();
+
+    // Scheme-based rules
+    mailto_view m;
+    m.u_ = *r;
+    auto valid_header = [](urls::param_pct_view p) {
+        return
+            urls::grammar::parse(p.key, hfname_rule) &amp;&amp;
+            urls::grammar::parse(p.value, hfvalue_rule) &amp;&amp;
+            p.has_value &amp;&amp;
+            (!urls::grammar::ci_is_equal(p.key, "to") ||
+             urls::grammar::parse(p.value, addr_spec_rule));
+    };
+    auto ps = m.u_.encoded_params();
+    if (m.u_.scheme() == "mailto" &amp;&amp;
+        !m.u_.has_authority() &amp;&amp;
+        urls::grammar::parse(m.u_.encoded_path(), to_rule) &amp;&amp;
+        std::all_of(ps.begin(), ps.end(), valid_header))
+        return m;
+    return urls::grammar::error::invalid;
+}</code></pre>
+</div>
+</div>
+  <div class="edit-this-page">
+      <a href="https://github.com/boostorg/url/edit/develop/doc/modules/ROOT/pages/examples/mailto.adoc">Edit this Page</a>
+      </div>
+      <nav class="pagination">
+        <span class="prev"><a href="finicky.html">Finicky</a></span>
+        <span class="next"><a href="magnet-link.html">Magnet Link</a></span>
+    </nav>
+</article>
+</div>
+  <div id="footer">
+  <script id="site-script" src="../../_/js/site.js" data-ui-root-path="../../_"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+<script async src="../../_/js/vendor/tabs.js" data-sync-storage-key="preferred-tab"></script>
+</div>
+</div>
+  </body>
+</html>

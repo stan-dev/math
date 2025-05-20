@@ -1,0 +1,61 @@
+# Copyright (C) 2005-2006 Douglas Gregor <doug.gregor@gmail.com>
+#
+# Distributed under the Boost Software License, Version 1.0. (See accompanying
+# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt.)
+project boost/mpi/doc ;
+
+using quickbook ;
+using boostbook ;
+using doxygen ;
+
+doxygen mpi_autodoc
+  : [ glob
+    ../include/boost/mpi.hpp
+    ../include/boost/mpi/allocator.hpp
+    ../include/boost/mpi/cartesian_communicator.hpp
+    ../include/boost/mpi/collectives.hpp
+    ../include/boost/mpi/collectives_fwd.hpp
+    ../include/boost/mpi/communicator.hpp
+    ../include/boost/mpi/config.hpp
+    ../include/boost/mpi/datatype.hpp
+    ../include/boost/mpi/datatype_fwd.hpp
+    ../include/boost/mpi/environment.hpp
+    ../include/boost/mpi/exception.hpp
+    ../include/boost/mpi/graph_communicator.hpp
+    ../include/boost/mpi/group.hpp
+    ../include/boost/mpi/intercommunicator.hpp
+    ../include/boost/mpi/nonblocking.hpp
+    ../include/boost/mpi/operations.hpp
+    ../include/boost/mpi/packed_iarchive.hpp
+    ../include/boost/mpi/packed_oarchive.hpp
+    ../include/boost/mpi/skeleton_and_content.hpp
+    ../include/boost/mpi/skeleton_and_content_fwd.hpp
+    ../include/boost/mpi/status.hpp
+    ../include/boost/mpi/request.hpp
+    ../include/boost/mpi/timer.hpp
+    ../include/boost/mpi/inplace.hpp
+    ../include/boost/mpi/python.hpp
+    ]
+  : <doxygen:param>MACRO_EXPANSION=YES
+    <doxygen:param>EXPAND_ONLY_PREDEF=YES
+    <doxygen:param>"PREDEFINED=BOOST_MPI_HAS_MEMORY_ALLOCATION= BOOST_MPI_HAS_NOARG_INITIALIZATION= MPI_VERSION=2 BOOST_MPI_DOXYGEN="
+  ;
+
+xml mpi : mpi.qbk ;
+
+boostbook standalone : mpi mpi_autodoc
+              :
+              <xsl:param>boost.root=../../../..
+              <format>pdf:<xsl:param>max-columns=66
+              <format>pdf:<xsl:param>boost.url.prefix=http://www.boost.org/doc/libs/release/doc/html
+              ;
+
+###############################################################################
+alias boostdoc
+    : mpi
+    :
+    : <dependency>mpi_autodoc
+    : ;
+explicit boostdoc ;
+alias boostrelease ;
+explicit boostrelease ;

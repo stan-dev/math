@@ -1,0 +1,73 @@
+[#examples]
+= Examples
+
+:idprefix: examples_
+
+== Tagging
+
+[source,c++]
+----
+// example of tagging an object with a uuid
+// see boost/libs/uuid/test/test_tagging.cpp
+
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_generators.hpp>
+
+class object
+{
+public:
+    object()
+        : tag(boost::uuids::random_generator()())
+        , state(0)
+    {}
+
+    explicit object(int state)
+        : tag(boost::uuids::random_generator()())
+        , state(state)
+    {}
+
+    object(object const& rhs)
+        : tag(rhs.tag)
+        , state(rhs.state)
+    {}
+
+    bool operator==(object const& rhs) const {
+        return tag == rhs.tag;
+    }
+
+    object& operator=(object const& rhs) {
+        tag = rhs.tag;
+        state = rhs.state;
+    }
+
+    int get_state() const { return state; }
+    void set_state(int new_state) { state = new_state; }
+
+private:
+    boost::uuids::uuid tag;
+
+    int state;
+};
+
+object o1(1);
+object o2 = o1;
+o2.set_state(2);
+assert(o1 == o2);
+
+object o3(3);
+assert(o1 != o3);
+assert(o2 != o3);
+----
+
+== Byte Extraction
+
+It is sometimes useful to get at the 16 bytes of a `uuid` directly. Typical use is as follows:
+
+[source,c++]
+----
+boost::uuids::uuid u;
+std::vector<std::uint8_t> v(u.size());
+std::copy(u.begin(), u.end(), v.begin());
+----
+
+Note: `boost::uuids::uuid::size()` always returns 16.

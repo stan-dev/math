@@ -1,0 +1,392 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Multi-resultset: stored procedures and multi-queries</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="prev" href="static_interface.html" title="The static interface">
+<link rel="next" href="multi_function.html" title="Multi-function operations">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="static_interface.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="multi_function.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="mysql.multi_resultset"></a><a class="link" href="multi_resultset.html" title="Multi-resultset: stored procedures and multi-queries">Multi-resultset: stored procedures
+    and multi-queries</a>
+</h2></div></div></div>
+<h4>
+<a name="mysql.multi_resultset.h0"></a>
+      <span class="phrase"><a name="mysql.multi_resultset.using_stored_procedures"></a></span><a class="link" href="multi_resultset.html#mysql.multi_resultset.using_stored_procedures">Using
+      stored procedures</a>
+    </h4>
+<p>
+      <a href="https://dev.mysql.com/doc/refman/8.0/en/create-procedure.html" target="_top">Stored
+      procedures</a> can be called using the <code class="computeroutput"><span class="identifier">CALL</span></code>
+      SQL statement. You can use <code class="computeroutput"><span class="identifier">CALL</span></code>
+      statements from both text queries and prepared statements, in a similar way
+      to other SQL statements. Contrary to other statements, <code class="computeroutput"><span class="identifier">CALL</span></code>
+      may generate more than one resultset.
+    </p>
+<p>
+      For example, given a stored procedure like this:
+    </p>
+<p>
+</p>
+<pre class="programlisting"><span class="identifier">CREATE</span> <span class="identifier">PROCEDURE</span> <span class="identifier">get_employees</span><span class="special">(</span><span class="identifier">IN</span> <span class="identifier">pin_company_id</span> <span class="identifier">CHAR</span><span class="special">(</span><span class="number">10</span><span class="special">))</span>
+<span class="identifier">BEGIN</span>
+    <span class="identifier">START</span> <span class="identifier">TRANSACTION</span> <span class="identifier">READ</span> <span class="identifier">ONLY</span><span class="special">;</span>
+    <span class="identifier">SELECT</span> <span class="identifier">id</span><span class="special">,</span> <span class="identifier">name</span><span class="special">,</span> <span class="identifier">tax_id</span> <span class="identifier">FROM</span> <span class="identifier">company</span> <span class="identifier">WHERE</span> <span class="identifier">id</span> <span class="special">=</span> <span class="identifier">pin_company_id</span><span class="special">;</span>
+    <span class="identifier">SELECT</span> <span class="identifier">first_name</span><span class="special">,</span> <span class="identifier">last_name</span><span class="special">,</span> <span class="identifier">salary</span> <span class="identifier">FROM</span> <span class="identifier">employee</span> <span class="identifier">WHERE</span> <span class="identifier">company_id</span> <span class="special">=</span> <span class="identifier">pin_company_id</span><span class="special">;</span>
+    <span class="identifier">COMMIT</span><span class="special">;</span>
+<span class="identifier">END</span>
+</pre>
+<p>
+    </p>
+<p>
+      A statement like <code class="computeroutput"><span class="identifier">CALL</span> <span class="identifier">get_employees</span><span class="special">(</span><span class="char">'my_company'</span><span class="special">)</span></code>
+      will generate three resultsets:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          A first resultset containing the company matched by the first <code class="computeroutput"><span class="identifier">SELECT</span></code>.
+        </li>
+<li class="listitem">
+          A second resultset containing the employees matched by the second <code class="computeroutput"><span class="identifier">SELECT</span></code>.
+        </li>
+<li class="listitem">
+          A third, empty resultset containing information about the <code class="computeroutput"><span class="identifier">CALL</span></code> statement.
+        </li>
+</ul></div>
+<p>
+      Every resultset contains its own rows, metadata, last insert ID, affected rows
+      and so on.
+    </p>
+<h4>
+<a name="mysql.multi_resultset.h1"></a>
+      <span class="phrase"><a name="mysql.multi_resultset.calling_procedures_using_the_dyn"></a></span><a class="link" href="multi_resultset.html#mysql.multi_resultset.calling_procedures_using_the_dyn">Calling procedures
+      using the dynamic interface</a>
+    </h4>
+<p>
+      The same <a class="link" href="ref/boost__mysql__results.html" title="results"><code class="literal">results</code></a>
+      class we've been using supports storing more than one resultset. You can execute
+      a <code class="computeroutput"><span class="identifier">CALL</span></code> statement as any other
+      SQL statement:
+    </p>
+<pre class="programlisting"><span class="comment">// We're using the dynamic interface. results can stored multiple resultsets</span>
+<span class="identifier">results</span> <span class="identifier">result</span><span class="special">;</span>
+
+<span class="comment">// The procedure parameter, employee_id, will likely be obtained from an untrusted source,</span>
+<span class="comment">// so we will use a prepared statement</span>
+<span class="identifier">statement</span> <span class="identifier">get_employee_stmt</span> <span class="special">=</span> <span class="identifier">conn</span><span class="special">.</span><span class="identifier">prepare_statement</span><span class="special">(</span><span class="string">"CALL get_employees(?)"</span><span class="special">);</span>
+
+<span class="comment">// Obtain the parameters required to call the statement, e.g. from a file or HTTP message</span>
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">int64_t</span> <span class="identifier">employee_id</span> <span class="special">=</span> <span class="identifier">get_employee_id</span><span class="special">();</span>
+
+<span class="comment">// Call the statement</span>
+<span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="identifier">get_employee_stmt</span><span class="special">.</span><span class="identifier">bind</span><span class="special">(</span><span class="identifier">employee_id</span><span class="special">),</span> <span class="identifier">result</span><span class="special">);</span>
+
+<span class="comment">// results can be used as a random-access collection of resultsets.</span>
+<span class="comment">// result.at(0).rows() returns the matched companies, if any</span>
+<span class="identifier">rows_view</span> <span class="identifier">matched_company</span> <span class="special">=</span> <span class="identifier">result</span><span class="special">.</span><span class="identifier">at</span><span class="special">(</span><span class="number">0</span><span class="special">).</span><span class="identifier">rows</span><span class="special">();</span>
+
+<span class="comment">// We can do the same to access the matched employees</span>
+<span class="identifier">rows_view</span> <span class="identifier">matched_employees</span> <span class="special">=</span> <span class="identifier">result</span><span class="special">.</span><span class="identifier">at</span><span class="special">(</span><span class="number">1</span><span class="special">).</span><span class="identifier">rows</span><span class="special">();</span>
+
+<span class="comment">// Use matched_company and matched_employees as required</span>
+</pre>
+<p>
+      In this context, <code class="computeroutput"><span class="identifier">results</span></code> can
+      be seen as a random-access collection of resultsets. You can access resultsets
+      by index using <a class="link" href="ref/boost__mysql__results/at.html" title="results::at"><code class="literal">results::at</code></a>
+      and <a class="link" href="ref/boost__mysql__results/operator__lb__rb_.html" title="results::operator[]"><code class="literal">results::operator[]</code></a>.
+      These operations yield a <a class="link" href="ref/boost__mysql__resultset_view.html" title="resultset_view"><code class="literal">resultset_view</code></a>,
+      which is a lightweight object pointing into memory owned by the <code class="computeroutput"><span class="identifier">results</span></code> object. You can take ownserhip of
+      a <code class="computeroutput"><span class="identifier">resultset_view</span></code> using the
+      <a class="link" href="ref/boost__mysql__resultset.html" title="resultset"><code class="literal">resultset</code></a>
+      class. For example:
+    </p>
+<pre class="programlisting"><span class="comment">// result is actually a random-access collection of resultsets.</span>
+<span class="comment">// The INSERT is the 2nd query, so we can access its resultset like this:</span>
+<span class="identifier">boost</span><span class="special">::</span><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">resultset_view</span> <span class="identifier">insert_result</span> <span class="special">=</span> <span class="identifier">result</span><span class="special">.</span><span class="identifier">at</span><span class="special">(</span><span class="number">1</span><span class="special">);</span>
+
+<span class="comment">// A resultset has metadata, rows, and additional data, like the last insert ID:</span>
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">int64_t</span> <span class="identifier">post_id</span> <span class="special">=</span> <span class="identifier">insert_result</span><span class="special">.</span><span class="identifier">last_insert_id</span><span class="special">();</span>
+
+<span class="comment">// The SELECT result is the third one, so we can access it like this:</span>
+<span class="identifier">boost</span><span class="special">::</span><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">resultset_view</span> <span class="identifier">select_result</span> <span class="special">=</span> <span class="identifier">result</span><span class="special">.</span><span class="identifier">at</span><span class="special">(</span><span class="number">2</span><span class="special">);</span>
+
+<span class="comment">// select_result is a view that points into result.</span>
+<span class="comment">// We can take ownership of it using the resultset class:</span>
+<span class="identifier">boost</span><span class="special">::</span><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">resultset</span> <span class="identifier">owning_select_result</span><span class="special">(</span><span class="identifier">select_result</span><span class="special">);</span>  <span class="comment">// valid even after result is destroyed</span>
+
+<span class="comment">// We can access rows of resultset objects as usual:</span>
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">int64_t</span> <span class="identifier">num_posts</span> <span class="special">=</span> <span class="identifier">owning_select_result</span><span class="special">.</span><span class="identifier">rows</span><span class="special">().</span><span class="identifier">at</span><span class="special">(</span><span class="number">0</span><span class="special">).</span><span class="identifier">at</span><span class="special">(</span><span class="number">0</span><span class="special">).</span><span class="identifier">as_int64</span><span class="special">();</span>
+</pre>
+<h4>
+<a name="mysql.multi_resultset.h2"></a>
+      <span class="phrase"><a name="mysql.multi_resultset.calling_procedures_using_the_sta"></a></span><a class="link" href="multi_resultset.html#mysql.multi_resultset.calling_procedures_using_the_sta">Calling procedures
+      using the static interface</a>
+    </h4>
+<p>
+      The <a class="link" href="ref/boost__mysql__static_results.html" title="static_results"><code class="literal">static_results</code></a>
+      class supports operations that return multiple resultsets, too. As with other
+      SQL statements, we need to define the row types in our resultsets in advance:
+    </p>
+<pre class="programlisting"><span class="comment">// Describes the first resultset</span>
+<span class="keyword">struct</span> <span class="identifier">company</span>
+<span class="special">{</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">id</span><span class="special">;</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">name</span><span class="special">;</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">tax_id</span><span class="special">;</span>
+<span class="special">};</span>
+<span class="identifier">BOOST_DESCRIBE_STRUCT</span><span class="special">(</span><span class="identifier">company</span><span class="special">,</span> <span class="special">(),</span> <span class="special">(</span><span class="identifier">id</span><span class="special">,</span> <span class="identifier">name</span><span class="special">,</span> <span class="identifier">tax_id</span><span class="special">))</span>
+
+<span class="comment">// Describes the second resultset</span>
+<span class="keyword">struct</span> <span class="identifier">employee</span>
+<span class="special">{</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">first_name</span><span class="special">;</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">last_name</span><span class="special">;</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">optional</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">uint64_t</span><span class="special">&gt;</span> <span class="identifier">salary</span><span class="special">;</span>
+<span class="special">};</span>
+<span class="identifier">BOOST_DESCRIBE_STRUCT</span><span class="special">(</span><span class="identifier">employee</span><span class="special">,</span> <span class="special">(),</span> <span class="special">(</span><span class="identifier">first_name</span><span class="special">,</span> <span class="identifier">last_name</span><span class="special">,</span> <span class="identifier">salary</span><span class="special">))</span>
+
+<span class="comment">// The last resultset will always be empty.</span>
+<span class="comment">// We can use an empty tuple to represent it.</span>
+<span class="keyword">using</span> <span class="identifier">empty</span> <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">tuple</span><span class="special">&lt;&gt;;</span>
+</pre>
+<p>
+      We can now use <code class="computeroutput"><span class="identifier">static_results</span></code>,
+      passing it as many template arguments as resultsets we expect. The library
+      will check that the correct number of resultsets are actually returned by the
+      server, and will parse them into the row types that we provided:
+    </p>
+<pre class="programlisting"><span class="comment">// We must list all the resultset types the operation returns as template arguments</span>
+<span class="identifier">static_results</span><span class="special">&lt;</span><span class="identifier">company</span><span class="special">,</span> <span class="identifier">employee</span><span class="special">,</span> <span class="identifier">empty</span><span class="special">&gt;</span> <span class="identifier">result</span><span class="special">;</span>
+<span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="string">"CALL get_employees('HGS')"</span><span class="special">,</span> <span class="identifier">result</span><span class="special">);</span>
+
+<span class="comment">// We can use rows&lt;0&gt;() to access the rows for the first resultset</span>
+<span class="keyword">if</span> <span class="special">(</span><span class="identifier">result</span><span class="special">.</span><span class="identifier">rows</span><span class="special">&lt;</span><span class="number">0</span><span class="special">&gt;().</span><span class="identifier">empty</span><span class="special">())</span>
+<span class="special">{</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"Company not found"</span> <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;</span>
+<span class="special">}</span>
+<span class="keyword">else</span>
+<span class="special">{</span>
+    <span class="keyword">const</span> <span class="identifier">company</span><span class="special">&amp;</span> <span class="identifier">comp</span> <span class="special">=</span> <span class="identifier">result</span><span class="special">.</span><span class="identifier">rows</span><span class="special">&lt;</span><span class="number">0</span><span class="special">&gt;()[</span><span class="number">0</span><span class="special">];</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"Company name: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">comp</span><span class="special">.</span><span class="identifier">name</span> <span class="special">&lt;&lt;</span> <span class="string">", tax_id: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">comp</span><span class="special">.</span><span class="identifier">tax_id</span> <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;</span>
+<span class="special">}</span>
+
+<span class="comment">// rows&lt;1&gt;() will return the rows for the second resultset</span>
+<span class="keyword">for</span> <span class="special">(</span><span class="keyword">const</span> <span class="identifier">employee</span><span class="special">&amp;</span> <span class="identifier">emp</span> <span class="special">:</span> <span class="identifier">result</span><span class="special">.</span><span class="identifier">rows</span><span class="special">&lt;</span><span class="number">1</span><span class="special">&gt;())</span>
+<span class="special">{</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"Employee "</span> <span class="special">&lt;&lt;</span> <span class="identifier">emp</span><span class="special">.</span><span class="identifier">first_name</span> <span class="special">&lt;&lt;</span> <span class="string">" "</span> <span class="special">&lt;&lt;</span> <span class="identifier">emp</span><span class="special">.</span><span class="identifier">last_name</span> <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;</span>
+<span class="special">}</span>
+</pre>
+<p>
+      Use <a class="link" href="ref/boost__mysql__static_results/rows.html" title="static_results::rows"><code class="literal">static_results::rows</code></a>
+      with an explicit index to access each resultset's data. You can also use explicit
+      indices with the other accessor functions, like <a class="link" href="ref/boost__mysql__static_results/meta.html" title="static_results::meta"><code class="literal">static_results::meta</code></a>
+      and <a class="link" href="ref/boost__mysql__static_results/last_insert_id.html" title="static_results::last_insert_id"><code class="literal">static_results::last_insert_id</code></a>.
+    </p>
+<p>
+      For more information about the static interface, please refer to <a class="link" href="static_interface.html" title="The static interface">this
+      section</a>.
+    </p>
+<h4>
+<a name="mysql.multi_resultset.h3"></a>
+      <span class="phrase"><a name="mysql.multi_resultset.determining_the_number_of_result"></a></span><a class="link" href="multi_resultset.html#mysql.multi_resultset.determining_the_number_of_result">Determining
+      the number of resultsets</a>
+    </h4>
+<p>
+      To know the number of resultsets to expect from a <code class="computeroutput"><span class="identifier">CALL</span></code>
+      statement, use these rules:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          For every statement that retrieves data (e.g. a <code class="computeroutput"><span class="identifier">SELECT</span></code>
+          statement), a resultset is sent. <code class="computeroutput"><span class="identifier">SELECT</span>
+          <span class="special">...</span> <span class="identifier">INTO</span>
+          <span class="special">&lt;</span><span class="identifier">variables</span><span class="special">&gt;</span></code> statements don't cause a resultset
+          to be sent.
+        </li>
+<li class="listitem">
+          Statements that don't retrieve columns (e.g. <code class="computeroutput"><span class="identifier">UPDATE</span></code>,
+          <code class="computeroutput"><span class="identifier">DELETE</span></code>) don't cause a resultset
+          to be sent.
+        </li>
+<li class="listitem">
+          An empty resultset containing information about the <code class="computeroutput"><span class="identifier">CALL</span></code>
+          statement execution is always sent last.
+        </li>
+</ul></div>
+<p>
+      Some examples:
+    </p>
+<pre class="programlisting">-- Calling proc1 produces only 1 resultset because it only contains statements that
+-- don't retrieve data
+CREATE PROCEDURE proc1(IN pin_order_id INT, IN pin_quantity INT)
+BEGIN
+    START TRANSACTION;
+    UPDATE orders SET quantity = pin_quantity WHERE id = pin_order_id;
+    INSERT INTO audit_log (msg) VALUES ("Updated order...");
+    COMMIT;
+END
+</pre>
+<pre class="programlisting">-- Calling proc2 produces 3 resultsets: one for the orders SELECT, one for the
+-- line_items SELECT, and one for the CALL statement
+CREATE PROCEDURE proc2(IN pin_order_id INT)
+BEGIN
+    START TRANSACTION READ ONLY;
+    SELECT * FROM orders WHERE id = pin_order_id;
+    SELECT * FROM line_items WHERE order_id = pin_order_id;
+    COMMIT;
+END
+</pre>
+<h4>
+<a name="mysql.multi_resultset.h4"></a>
+      <span class="phrase"><a name="mysql.multi_resultset.output_parameters"></a></span><a class="link" href="multi_resultset.html#mysql.multi_resultset.output_parameters">Output
+      parameters</a>
+    </h4>
+<p>
+      You can get the value of <code class="computeroutput"><span class="identifier">OUT</span></code>
+      and <code class="computeroutput"><span class="identifier">INOUT</span></code> parameters in stored
+      procedures by using prepared statement placeholders for them. When doing this,
+      you will receive another resultset with a single row containing all output
+      parameter values. This resultset is located after all resultsets generated
+      by <code class="computeroutput"><span class="identifier">SELECT</span></code>s, and before the
+      final, empty resultset.
+    </p>
+<p>
+      For example, given this procedure:
+    </p>
+<p>
+</p>
+<pre class="programlisting"><span class="identifier">CREATE</span> <span class="identifier">PROCEDURE</span> <span class="identifier">create_employee</span><span class="special">(</span>
+    <span class="identifier">IN</span>  <span class="identifier">pin_company_id</span> <span class="identifier">CHAR</span><span class="special">(</span><span class="number">10</span><span class="special">),</span>
+    <span class="identifier">IN</span>  <span class="identifier">pin_first_name</span> <span class="identifier">VARCHAR</span><span class="special">(</span><span class="number">100</span><span class="special">),</span>
+    <span class="identifier">IN</span>  <span class="identifier">pin_last_name</span> <span class="identifier">VARCHAR</span><span class="special">(</span><span class="number">100</span><span class="special">),</span>
+    <span class="identifier">OUT</span> <span class="identifier">pout_employee_id</span> <span class="identifier">INT</span>
+<span class="special">)</span>
+<span class="identifier">BEGIN</span>
+    <span class="identifier">START</span> <span class="identifier">TRANSACTION</span><span class="special">;</span>
+    <span class="identifier">INSERT</span> <span class="identifier">INTO</span> <span class="identifier">employee</span> <span class="special">(</span><span class="identifier">company_id</span><span class="special">,</span> <span class="identifier">first_name</span><span class="special">,</span> <span class="identifier">last_name</span><span class="special">)</span>
+        <span class="identifier">VALUES</span> <span class="special">(</span><span class="identifier">pin_company_id</span><span class="special">,</span> <span class="identifier">pin_first_name</span><span class="special">,</span> <span class="identifier">pin_last_name</span><span class="special">);</span>
+    <span class="identifier">SET</span> <span class="identifier">pout_employee_id</span> <span class="special">=</span> <span class="identifier">LAST_INSERT_ID</span><span class="special">();</span>
+    <span class="identifier">INSERT</span> <span class="identifier">INTO</span> <span class="identifier">audit_log</span> <span class="special">(</span><span class="identifier">msg</span><span class="special">)</span> <span class="identifier">VALUES</span> <span class="special">(</span><span class="char">'Created new employee...'</span><span class="special">);</span>
+    <span class="identifier">COMMIT</span><span class="special">;</span>
+<span class="identifier">END</span>
+</pre>
+<p>
+    </p>
+<p>
+      You can use:
+    </p>
+<pre class="programlisting"><span class="comment">// To retrieve output parameters, you must use prepared statements. Text queries don't support this</span>
+<span class="comment">// We specify placeholders for both IN and OUT parameters</span>
+<span class="identifier">statement</span> <span class="identifier">stmt</span> <span class="special">=</span> <span class="identifier">conn</span><span class="special">.</span><span class="identifier">prepare_statement</span><span class="special">(</span><span class="string">"CALL create_employee(?, ?, ?, ?)"</span><span class="special">);</span>
+
+<span class="comment">// When executing the statement, we provide an actual value for the IN parameters,</span>
+<span class="comment">// and a dummy value for the OUT parameter. This value will be ignored, but it's required by the</span>
+<span class="comment">// protocol</span>
+<span class="identifier">results</span> <span class="identifier">result</span><span class="special">;</span>
+<span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="identifier">stmt</span><span class="special">.</span><span class="identifier">bind</span><span class="special">(</span><span class="string">"HGS"</span><span class="special">,</span> <span class="string">"John"</span><span class="special">,</span> <span class="string">"Doe"</span><span class="special">,</span> <span class="keyword">nullptr</span><span class="special">),</span> <span class="identifier">result</span><span class="special">);</span>
+
+<span class="comment">// Retrieve output parameters. This row_view has an element per</span>
+<span class="comment">// OUT or INOUT parameter that used a ? placeholder</span>
+<span class="identifier">row_view</span> <span class="identifier">output_params</span> <span class="special">=</span> <span class="identifier">result</span><span class="special">.</span><span class="identifier">out_params</span><span class="special">();</span>
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">int64_t</span> <span class="identifier">new_employee_id</span> <span class="special">=</span> <span class="identifier">output_params</span><span class="special">.</span><span class="identifier">at</span><span class="special">(</span><span class="number">0</span><span class="special">).</span><span class="identifier">as_int64</span><span class="special">();</span>
+</pre>
+<p>
+      <a class="link" href="ref/boost__mysql__results/out_params.html" title="results::out_params"><code class="literal">results::out_params</code></a>
+      simplifies the process.
+    </p>
+<div class="warning"><table border="0" summary="Warning">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Warning]" src="../../../../../doc/src/images/warning.png"></td>
+<th align="left">Warning</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+        Due to a bug in MySQL, some <code class="computeroutput"><span class="identifier">OUT</span></code>
+        parameters are sent with wrong types. Concretely, string parameters are always
+        sent as blobs, so you will have to use <a class="link" href="ref/boost__mysql__field_view/as_blob.html" title="field_view::as_blob"><code class="literal">field_view::as_blob</code></a>
+        instead of <a class="link" href="ref/boost__mysql__field_view/as_string.html" title="field_view::as_string"><code class="literal">field_view::as_string</code></a>.
+      </p></td></tr>
+</table></div>
+<h4>
+<a name="mysql.multi_resultset.h5"></a>
+      <span class="phrase"><a name="mysql.multi_resultset.multi_queries"></a></span><a class="link" href="multi_resultset.html#mysql.multi_resultset.multi_queries">Semicolon-separated
+      queries</a>
+    </h4>
+<p>
+      It is possible to run several semicolon-separated text queries in a single
+      <a class="link" href="ref/boost__mysql__connection/execute.html" title="connection::execute"><code class="literal">connection::execute</code></a>
+      call. For security, this capability is disabled by default. Enabling it requires
+      setting <a class="link" href="ref/boost__mysql__handshake_params/multi_queries.html" title="handshake_params::multi_queries"><code class="literal">handshake_params::multi_queries</code></a>
+      before connecting:
+    </p>
+<pre class="programlisting"><span class="comment">// The username and password to use</span>
+<span class="identifier">boost</span><span class="special">::</span><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">handshake_params</span> <span class="identifier">params</span><span class="special">(</span>
+    <span class="identifier">mysql_username</span><span class="special">,</span>         <span class="comment">// username, as a string</span>
+    <span class="identifier">mysql_password</span><span class="special">,</span>         <span class="comment">// password, as a string</span>
+    <span class="string">"boost_mysql_examples"</span>  <span class="comment">// database</span>
+<span class="special">);</span>
+
+<span class="comment">// Allows running multiple semicolon-separated in a single call.</span>
+<span class="comment">// We must set this before calling connect</span>
+<span class="identifier">params</span><span class="special">.</span><span class="identifier">set_multi_queries</span><span class="special">(</span><span class="keyword">true</span><span class="special">);</span>
+
+<span class="comment">// Connect to the server specifying that we want support for multi-queries</span>
+<span class="identifier">conn</span><span class="special">.</span><span class="identifier">connect</span><span class="special">(</span><span class="identifier">endpoint</span><span class="special">,</span> <span class="identifier">params</span><span class="special">);</span>
+
+<span class="comment">// We can now use the multi-query feature.</span>
+<span class="comment">// This will result in three resultsets, one per query.</span>
+<span class="identifier">results</span> <span class="identifier">result</span><span class="special">;</span>
+<span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span>
+    <span class="identifier">R</span><span class="string">"(
+        CREATE TEMPORARY TABLE posts (
+            id INT PRIMARY KEY AUTO_INCREMENT,
+            title VARCHAR (256),
+            body TEXT
+        );
+        INSERT INTO posts (title, body) VALUES ('Breaking news', 'Something happened!');
+        SELECT COUNT(*) FROM posts;
+    )"</span><span class="special">,</span>
+    <span class="identifier">result</span>
+<span class="special">);</span>
+</pre>
+<p>
+      Note that statements like <code class="computeroutput"><span class="identifier">DELIMITER</span></code>
+      <span class="bold"><strong>do not work</strong></span> using this feature. This is because
+      <code class="computeroutput"><span class="identifier">DELIMITER</span></code> is a pseudo-command
+      for the <code class="computeroutput"><span class="identifier">mysql</span></code> command line
+      tool, not actual SQL.
+    </p>
+<p>
+      You can also use the static interface with multi-queries. It works the same
+      as with stored procedures.
+    </p>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="static_interface.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="multi_function.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

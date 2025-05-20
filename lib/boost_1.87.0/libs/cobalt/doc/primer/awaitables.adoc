@@ -1,0 +1,70 @@
+== Awaitables
+
+Awaitables are types that can be used in a `co_await` expression.
+
+[source,cpp,subs="+quotes"]
+----
+struct awaitable_prototype
+{
+    bool await_ready();
+
+    template<typename T>
+    __see_below__ await_suspend(std::coroutine_handle<T>);
+
+    __return_type__  await_resume();
+};
+----
+
+NOTE: Type will be implicitly converted into an awaitable if there is an `operator co_await` call available.
+This documentation will use `awaitable` to include these types,
+and "actual_awaitable" to refer to type conforming to the above prototype.
+
+ifdef::generate-diagram[]
+[mermaid, target=awaitables]
+----
+flowchart TD
+    aw{await_ready?}
+    aw ---->|true| ar[await_resume]
+    aw -->|false| as[await_suspend]
+    as -->|Resume| ar
+----
+endif::[]
+
+ifndef::generate-diagram[]
+image::awaitables.png[]
+endif::[]
+
+In a `co_await` expression the waiting coroutine will first invoke
+`await_ready` to check if the coroutine needs to suspend.
+When ready, it goes directly to `await_resume` to get the value,
+as there is no suspension needed.
+Otherwise, it will suspend itself and call `await_suspend` with a
+`std::coroutine_handle` to its own promise.
+
+NOTE: `std::coroutine_handle<void>` can be used for type erasure.
+
+
+The __return_type__ is the result type of the `co_await expression`, e.g. `int`:
+
+[source,cpp]
+----
+int i = co_await awaitable_with_int_result();
+----
+
+The return type of the `await_suspend` can be three things:
+
+- `void`
+- `bool`
+- `std::coroutine_handle<U>`
+
+If it is void the awaiting coroutine remains suspended. If it is `bool`,
+the value will be checked, and if false, the awaiting coroutine will resume right away.
+
+If a `std::coroutine_handle` is returned, this coroutine will be resumed.
+The latter allows `await_suspend` to return the handle passed in,
+being effectively the same as returning `false`.
+
+If the awaiting coroutine gets re-resumed right away, i.e. after calling await_resume,
+it is referred to as "immediate completion" within this library.
+This is not to be confused with a non-suspending awaitable, i.e. one that returns `true` from `await_ready`.
+

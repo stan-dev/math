@@ -1,0 +1,493 @@
+<?xml version="1.0" standalone="yes"?>
+<library-reference id="reference"><title>Reference</title><header id="doxygen.reference.defer_8hpp" name="boost/scope/defer.hpp">
+<para>This header contains definition of <computeroutput>defer_guard</computeroutput> template. </para><namespace name="boost">
+<namespace name="scope">
+<class id="doxygen.reference.classboost_1_1scope_1_1defer__guard" name="defer_guard"><template>
+      <template-type-parameter name="Func"/>
+    </template><purpose>Defer guard that invokes a function upon leaving the scope. </purpose><description><para>The scope guard wraps a function object callable with no arguments that can be one of:</para><para><itemizedlist>
+<listitem><para>A user-defined class with a public <computeroutput>operator()</computeroutput>. </para>
+</listitem>
+<listitem><para>An lvalue reference to such class. </para>
+</listitem>
+<listitem><para>An lvalue reference or pointer to function taking no arguments.</para>
+</listitem>
+</itemizedlist>
+The defer guard unconditionally invokes the wrapped function object on destruction. </para></description><method-group name="public member functions">
+<constructor id="doxygen.reference.classboost_1_1scope_1_1defer__guard_1a6384f62d0c0ecf668fc1425f36066b4f" cv="noexcept(...)"><template>
+          <template-type-parameter name="F"/>
+        </template><parameter name="func"><paramtype>F &amp;&amp;</paramtype><description><para>The callable function object to invoke on destruction. </para></description></parameter><purpose>Constructs a defer guard with a given callable function object. </purpose><description><para><emphasis role="bold">Requires:</emphasis> <computeroutput>Func</computeroutput> is constructible from <emphasis>func</emphasis>.</para><para><emphasis role="bold">Effects:</emphasis> If <computeroutput>Func</computeroutput> is nothrow constructible from <computeroutput>F&amp;&amp;</computeroutput> then constructs <computeroutput>Func</computeroutput> from <computeroutput>std::forward&lt; F &gt;(func)</computeroutput>, otherwise constructs from <computeroutput>func</computeroutput>.</para><para>If <computeroutput>Func</computeroutput> construction throws, invokes <emphasis>func</emphasis> before returning with the exception.</para><para><emphasis role="bold">Throws:</emphasis> Nothing, unless construction of the function object throws.</para><para>
+</para></description></constructor>
+<constructor id="doxygen.reference.classboost_1_1scope_1_1defer__guard_1ab272ef3dcb25a1d07afc9511c9333493" cv="= delete"><parameter name=""><paramtype><classname>defer_guard</classname> const &amp;</paramtype></parameter></constructor>
+<copy-assignment id="doxygen.reference.classboost_1_1scope_1_1defer__guard_1ad14409139f46656ed297055723cc3a17" cv="= delete"><type><classname>defer_guard</classname> &amp;</type><parameter name=""><paramtype><classname>defer_guard</classname> const &amp;</paramtype></parameter></copy-assignment>
+<destructor id="doxygen.reference.classboost_1_1scope_1_1defer__guard_1ab36f2d861502fcefb3b9951603a09df5" cv="noexcept(...)"><purpose>Invokes the wrapped callable function object and destroys the callable. </purpose><description><para><emphasis role="bold">Throws:</emphasis> Nothing, unless invoking the callable throws. </para></description></destructor>
+</method-group>
+</class>
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+<macro id="doxygen.reference.defer_8hpp_1ae66efce2069890723538f345bde914d4" name="BOOST_SCOPE_DEFER"><purpose>The macro creates a uniquely named defer guard. </purpose><description><para>The macro should be followed by a function object that should be called on leaving the current scope. Usage example:</para><para><programlisting language="c++">BOOST_SCOPE_DEFER []
+{
+    std::cout &lt;&lt; "Hello world!" &lt;&lt; std::endl;
+};
+</programlisting></para><para><note><para>Using this macro requires C++17. </para>
+</note>
+</para></description></macro>
+</header>
+<header id="doxygen.reference.error__code__checker_8hpp" name="boost/scope/error_code_checker.hpp">
+<para>This header contains definition of <computeroutput>error_code_checker</computeroutput> type. </para><namespace name="boost">
+<namespace name="scope">
+<class id="doxygen.reference.classboost_1_1scope_1_1error__code__checker" name="error_code_checker"><template>
+      <template-type-parameter name="ErrorCode"><purpose><para>Error code type. </para></purpose></template-type-parameter>
+    </template><purpose>A predicate for checking whether an error code indicates error. </purpose><description><para>The predicate captures a reference to an external error code object, which it tests for an error indication when called. The error code object must remain valid for the whole lifetime duration of the predicate.</para><para>For an error code object <computeroutput>ec</computeroutput>, an expression <computeroutput>!ec</computeroutput> must be valid, never throw exceptions, and return a value contextually convertible to <computeroutput>bool</computeroutput>. If the returned value converts to <computeroutput>false</computeroutput>, then this is taken as an error indication, and the predicate returns <computeroutput>true</computeroutput>. Otherwise, the predicate returns <computeroutput>false</computeroutput>.</para><para>A few examples of error code types:</para><para><itemizedlist>
+<listitem><para><computeroutput>std::error_code</computeroutput> or <computeroutput>boost::system::error_code</computeroutput>, </para>
+</listitem>
+<listitem><para><computeroutput>std::expected</computeroutput>, <computeroutput>boost::outcome_v2::basic_outcome</computeroutput> or <computeroutput>boost::outcome_v2::basic_result</computeroutput>, </para>
+</listitem>
+<listitem><para><computeroutput>int</computeroutput>, where the value of 0 indicates no error, </para>
+</listitem>
+<listitem><para><computeroutput>bool</computeroutput>, where the value of <computeroutput>false</computeroutput> indicates no error, </para>
+</listitem>
+<listitem><para><computeroutput>T*</computeroutput>, where a null pointer indicates no error.</para>
+</listitem>
+</itemizedlist>
+
+</para></description><typedef id="doxygen.reference.classboost_1_1scope_1_1error__code__checker_1ada131968f475fecfae0af6dc0fa6fa64" name="result_type"><purpose>Predicate result type. </purpose><type>bool</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.reference.classboost_1_1scope_1_1error__code__checker_1aeef699b2a4674cca4a59afb5782cb830" specifiers="explicit" cv="noexcept"><parameter name="ec"><paramtype>ErrorCode &amp;</paramtype></parameter><purpose>Constructs the predicate. </purpose><description><para>Upon construction, the predicate saves a reference to the external error code object. The referenced object must remain valid for the whole lifetime duration of the predicate.</para><para><emphasis role="bold">Throws:</emphasis> Nothing. </para></description></constructor>
+<method id="doxygen.reference.classboost_1_1scope_1_1error__code__checker_1adfea1712dce0daa589f06371a6f281d3" name="operator()" cv="const noexcept"><type>result_type</type><purpose>Checks if the error code indicates error. </purpose><description><para><emphasis role="bold">Throws:</emphasis> Nothing.</para><para>
+</para></description><returns><para>As if <computeroutput>!!ec</computeroutput>, where <computeroutput>ec</computeroutput> is the error code object passed to the predicate constructor. </para>
+</returns></method>
+</method-group>
+</class>
+
+
+
+
+
+
+
+<function id="doxygen.reference.error__code__checker_8hpp_1ab8a815ec04a8603fed78745d50382e87" name="check_error_code"><type><classname>error_code_checker</classname>&lt; ErrorCode &gt;</type><template>
+          <template-type-parameter name="ErrorCode"/>
+        </template><parameter name="ec"><paramtype>ErrorCode &amp;</paramtype></parameter><purpose>Creates a predicate for checking whether an exception is being thrown. </purpose><description><para><emphasis role="bold">Throws:</emphasis> Nothing. </para></description></function>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.reference.exception__checker_8hpp" name="boost/scope/exception_checker.hpp">
+<para>This header contains definition of <computeroutput>exception_checker</computeroutput> type. </para><namespace name="boost">
+<namespace name="scope">
+<class id="doxygen.reference.classboost_1_1scope_1_1exception__checker" name="exception_checker"><purpose>A predicate for checking whether an exception is being thrown. </purpose><description><para>On construction, the predicate captures the current number of uncaught exceptions, which it then compares with the number of uncaught exceptions at the point when it is called. If the number increased then a new exception is detected and the predicate returns <computeroutput>true</computeroutput>.</para><para><note><para>This predicate is designed for a specific use case with scope guards created on the stack. It is incompatible with C++20 coroutines and similar facilities (e.g. fibers and userspace context switching), where the thread of execution may be suspended after the predicate captures the number of uncaught exceptions and then resumed in a different context, where the number of uncaught exceptions has changed. Similarly, it is incompatible with usage patterns where the predicate is cached after construction and is invoked after the thread has left the scope where the predicate was constructed (e.g. when the predicate is stored as a class data member or a namespace-scope variable). </para>
+</note>
+</para></description><typedef id="doxygen.reference.classboost_1_1scope_1_1exception__checker_1ada131968f475fecfae0af6dc0fa6fa64" name="result_type"><purpose>Predicate result type. </purpose><type>bool</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.reference.classboost_1_1scope_1_1exception__checker_1a9877123f826925bba34434b6b2f6227a" cv="noexcept"><purpose>Constructs the predicate. </purpose><description><para>Upon construction, the predicate saves the current number of uncaught exceptions. This information will be used when calling the predicate to detect if a new exception is being thrown.</para><para><emphasis role="bold">Throws:</emphasis> Nothing. </para></description></constructor>
+<method id="doxygen.reference.classboost_1_1scope_1_1exception__checker_1adfea1712dce0daa589f06371a6f281d3" name="operator()" cv="const noexcept"><type>result_type</type><purpose>Checks if an exception is being thrown. </purpose><description><para><emphasis role="bold">Throws:</emphasis> Nothing.</para><para>
+</para></description><returns><para><computeroutput>true</computeroutput> if the number of uncaught exceptions at the point of call is greater than that at the point of construction of the predicate, otherwise <computeroutput>false</computeroutput>. </para>
+</returns></method>
+</method-group>
+</class>
+
+
+
+
+
+
+<function id="doxygen.reference.exception__checker_8hpp_1a29641e1fa2da14116686b4434b949d88" name="check_exception"><type><classname>exception_checker</classname></type><purpose>Creates a predicate for checking whether an exception is being thrown. </purpose><description><para><emphasis role="bold">Throws:</emphasis> Nothing. </para></description></function>
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.reference.fd__deleter_8hpp" name="boost/scope/fd_deleter.hpp">
+<para>This header contains definition of a deleter function object for POSIX-like file descriptors for use with <computeroutput>unique_resource</computeroutput>. </para><namespace name="boost">
+<namespace name="scope">
+<struct id="doxygen.reference.structboost_1_1scope_1_1fd__deleter" name="fd_deleter"><purpose>POSIX-like file descriptor deleter. </purpose><typedef id="doxygen.reference.structboost_1_1scope_1_1fd__deleter_1aa5c87ed6aeb3c16663e0b4e7c5625fa2" name="result_type"><type>void</type></typedef>
+<method-group name="public member functions">
+<method id="doxygen.reference.structboost_1_1scope_1_1fd__deleter_1a69e4b1530f5e6a12091a6fa0fcb39c70" name="operator()" cv="const noexcept"><type>result_type</type><parameter name="fd"><paramtype>int</paramtype></parameter><purpose>Closes the file descriptor. </purpose></method>
+</method-group>
+</struct>
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.reference.fd__resource__traits_8hpp" name="boost/scope/fd_resource_traits.hpp">
+<para>This header contains definition of <computeroutput>unique_resource</computeroutput> traits for compatibility with POSIX-like file descriptors. </para><namespace name="boost">
+<namespace name="scope">
+<struct id="doxygen.reference.structboost_1_1scope_1_1fd__resource__traits" name="fd_resource_traits"><purpose>POSIX-like file descriptor resource traits. </purpose><method-group name="public static functions">
+<method id="doxygen.reference.structboost_1_1scope_1_1fd__resource__traits_1af7dfff31bf8442c99b5320684188bbe5" name="make_default" cv="noexcept" specifiers="static"><type>int</type><purpose>Creates a default fd value. </purpose></method>
+<method id="doxygen.reference.structboost_1_1scope_1_1fd__resource__traits_1a993dbeee3ddbcbe5e78d9f1af036962a" name="is_allocated" cv="noexcept" specifiers="static"><type>bool</type><parameter name="fd"><paramtype>int</paramtype></parameter><purpose>Tests if the fd is allocated (valid) </purpose></method>
+</method-group>
+</struct>
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.reference.scope__exit_8hpp" name="boost/scope/scope_exit.hpp">
+<para>This header contains definition of <computeroutput>scope_exit</computeroutput> template. </para><namespace name="boost">
+<namespace name="scope">
+<class id="doxygen.reference.classboost_1_1scope_1_1always__true" name="always_true"><purpose>A predicate that always returns <computeroutput>true</computeroutput>. </purpose><description><para>This predicate can be used as the default condition function object for <computeroutput><link linkend="doxygen.reference.classboost_1_1scope_1_1scope__exit">scope_exit</link></computeroutput> and similar scope guards. </para></description><typedef id="doxygen.reference.classboost_1_1scope_1_1always__true_1ada131968f475fecfae0af6dc0fa6fa64" name="result_type"><purpose>Predicate result type. </purpose><type>bool</type></typedef>
+<method-group name="public member functions">
+<method id="doxygen.reference.classboost_1_1scope_1_1always__true_1adfea1712dce0daa589f06371a6f281d3" name="operator()" cv="const noexcept"><type>result_type</type><description><para><emphasis role="bold">Throws:</emphasis> Nothing.</para><para>
+</para></description><returns><para><computeroutput>true</computeroutput>. </para>
+</returns></method>
+</method-group>
+</class><class id="doxygen.reference.classboost_1_1scope_1_1scope__exit" name="scope_exit"><template>
+      <template-type-parameter name="Func"><purpose><para>Scope guard action function object type. </para></purpose></template-type-parameter>
+      <template-type-parameter name="Cond"><default>always_true</default><purpose><para>Scope guard condition function object type. </para></purpose></template-type-parameter>
+    </template><purpose>Scope exit guard that conditionally invokes a function upon leaving the scope. </purpose><description><para>The scope guard wraps two function objects: the scope guard action and a condition for invoking the action. Both function objects must be callable with no arguments and can be one of:</para><para><itemizedlist>
+<listitem><para>A user-defined class with a public <computeroutput>operator()</computeroutput>. </para>
+</listitem>
+<listitem><para>An lvalue reference to such class. </para>
+</listitem>
+<listitem><para>An lvalue reference or pointer to function taking no arguments.</para>
+</listitem>
+</itemizedlist>
+The condition function object <computeroutput>operator()</computeroutput> must return a value contextually convertible to <computeroutput>true</computeroutput>, if the action function object is allowed to be executed, and <computeroutput>false</computeroutput> otherwise. Additionally, the condition function object <computeroutput>operator()</computeroutput> must not throw, as otherwise the action function object may not be called.</para><para>The condition function object is optional, and if not specified in template parameters, the scope guard will operate as if the condition always returns <computeroutput>true</computeroutput>.</para><para>The scope guard can be in either active or inactive state. By default, the constructed scope guard is active. When active, and condition function object returns <computeroutput>true</computeroutput>, the scope guard invokes the wrapped action function object on destruction. Otherwise, the scope guard does not call the wrapped action function object.</para><para>The scope guard can be made inactive by moving-from the scope guard or calling <computeroutput>set_active(false)</computeroutput>. An inactive scope guard can be made active by calling <computeroutput>set_active(true)</computeroutput>. If a moved-from scope guard is active on destruction, the behavior is undefined.</para><para>
+</para></description><method-group name="public member functions">
+<constructor id="doxygen.reference.classboost_1_1scope_1_1scope__exit_1a0978d9e74414d524ce46d63a14540234" specifiers="explicit" cv="noexcept(...)"><template>
+          <template-type-parameter name="F"/>
+        </template><parameter name="func"><paramtype>F &amp;&amp;</paramtype><description><para>The callable action function object to invoke on destruction. </para></description></parameter><parameter name="active"><paramtype>bool</paramtype><default>true</default><description><para>Indicates whether the scope guard should be active upon construction.</para></description></parameter><purpose>Constructs a scope guard with a given callable action function object. </purpose><description><para><emphasis role="bold">Requires:</emphasis> <computeroutput>Func</computeroutput> is constructible from <emphasis>func</emphasis>. <computeroutput>Cond</computeroutput> is nothrow default-constructible and is not a pointer to function.</para><para><note><para>The requirement for <computeroutput>Cond</computeroutput> default constructor to be non-throwing is to allow for the condition function object to be called in case if constructing either function object throws.</para>
+</note>
+<emphasis role="bold">Effects:</emphasis> Constructs the scope guard as if by calling <computeroutput><link linkend="doxygen.reference.classboost_1_1scope_1_1scope__exit">scope_exit</link>(std::forward&lt; F &gt;(func), Cond(), active)</computeroutput>.</para><para><emphasis role="bold">Throws:</emphasis> Nothing, unless construction of the function objects throw.</para><para>
+
+</para></description><postconditions><para><computeroutput>this-&gt;<link linkend="doxygen.reference.classboost_1_1scope_1_1scope__exit_1a668a434653609be367d851053fc4263b">active()</link> == active</computeroutput> </para>
+</postconditions></constructor>
+<constructor id="doxygen.reference.classboost_1_1scope_1_1scope__exit_1a8ed23f5689ad4fdbec67d03ac10e8dfe" specifiers="explicit" cv="noexcept(...)"><template>
+          <template-type-parameter name="F"/>
+          <template-type-parameter name="C"/>
+        </template><parameter name="func"><paramtype>F &amp;&amp;</paramtype><description><para>The callable action function object to invoke on destruction. </para></description></parameter><parameter name="cond"><paramtype>C &amp;&amp;</paramtype><description><para>The callable condition function object. </para></description></parameter><parameter name="active"><paramtype>bool</paramtype><default>true</default><description><para>Indicates whether the scope guard should be active upon construction.</para></description></parameter><purpose>Constructs a scope guard with a given callable action and condition function objects. </purpose><description><para><emphasis role="bold">Requires:</emphasis> <computeroutput>Func</computeroutput> is constructible from <emphasis>func</emphasis>. <computeroutput>Cond</computeroutput> is constructible from <emphasis>cond</emphasis>.</para><para><emphasis role="bold">Effects:</emphasis> If <computeroutput>Func</computeroutput> is nothrow constructible from <computeroutput>F&amp;&amp;</computeroutput> then constructs <computeroutput>Func</computeroutput> from <computeroutput>std::forward&lt; F &gt;(func)</computeroutput>, otherwise constructs from <computeroutput>func</computeroutput>. If <computeroutput>Cond</computeroutput> is nothrow constructible from <computeroutput>C&amp;&amp;</computeroutput> then constructs <computeroutput>Cond</computeroutput> from <computeroutput>std::forward&lt; C &gt;(cond)</computeroutput>, otherwise constructs from <computeroutput>cond</computeroutput>.</para><para>If <computeroutput>Func</computeroutput> or <computeroutput>Cond</computeroutput> construction throws and <emphasis>active</emphasis> is <computeroutput>true</computeroutput>, invokes <emphasis>cond</emphasis> and, if it returns <computeroutput>true</computeroutput>, <emphasis>func</emphasis> before returning with the exception.</para><para><emphasis role="bold">Throws:</emphasis> Nothing, unless construction of the function objects throw.</para><para>
+
+</para></description><postconditions><para><computeroutput>this-&gt;<link linkend="doxygen.reference.classboost_1_1scope_1_1scope__exit_1a668a434653609be367d851053fc4263b">active()</link> == active</computeroutput> </para>
+</postconditions></constructor>
+<constructor id="doxygen.reference.classboost_1_1scope_1_1scope__exit_1aefd65333b7bf16a54a57a9020ecf64d7" cv="noexcept(...)"><parameter name="that"><paramtype><classname>scope_exit</classname> &amp;&amp;</paramtype><description><para>Move source.</para></description></parameter><purpose>Move-constructs a scope guard. </purpose><description><para><emphasis role="bold">Requires:</emphasis> <computeroutput>Func</computeroutput> and <computeroutput>Cond</computeroutput> are nothrow move-constructible or copy-constructible.</para><para><emphasis role="bold">Effects:</emphasis> If <computeroutput>Func</computeroutput> is nothrow move-constructible then move-constructs <computeroutput>Func</computeroutput> from a member of <emphasis>that</emphasis>, otherwise copy-constructs <computeroutput>Func</computeroutput>. If <computeroutput>Cond</computeroutput> is nothrow move-constructible then move-constructs <computeroutput>Cond</computeroutput> from a member of <emphasis>that</emphasis>, otherwise copy-constructs <computeroutput>Cond</computeroutput>.</para><para>If <computeroutput>Func</computeroutput> or <computeroutput>Cond</computeroutput> construction throws and <computeroutput>that.active() == true</computeroutput>, invokes <computeroutput>Cond</computeroutput> object stored in <emphasis>that</emphasis> and, if it returns <computeroutput>true</computeroutput>, <emphasis>Func</emphasis> object (either the newly constructed one, if its construction succeeded, or the original one stored in <emphasis>that</emphasis>) before returning with the exception.</para><para>If the construction succeeds, marks <emphasis>that</emphasis> as inactive.</para><para><emphasis role="bold">Throws:</emphasis> Nothing, unless move-construction of the function objects throw.</para><para>
+
+</para></description><postconditions><para><computeroutput>that.active() == false</computeroutput> </para>
+</postconditions></constructor>
+<copy-assignment id="doxygen.reference.classboost_1_1scope_1_1scope__exit_1a1b9158d7f2c6a29601cd09dbc2f0fb4c" cv="= delete"><type><classname>scope_exit</classname> &amp;</type><parameter name=""><paramtype><classname>scope_exit</classname> &amp;&amp;</paramtype></parameter></copy-assignment>
+<constructor id="doxygen.reference.classboost_1_1scope_1_1scope__exit_1a11f975d7a40e9b606329e34baed518b2" cv="= delete"><parameter name=""><paramtype><classname>scope_exit</classname> const &amp;</paramtype></parameter></constructor>
+<copy-assignment id="doxygen.reference.classboost_1_1scope_1_1scope__exit_1a320f1713a52555d371f9f78751c0d7d3" cv="= delete"><type><classname>scope_exit</classname> &amp;</type><parameter name=""><paramtype><classname>scope_exit</classname> const &amp;</paramtype></parameter></copy-assignment>
+<destructor id="doxygen.reference.classboost_1_1scope_1_1scope__exit_1ac158cb2300f728efbd08bf613ebeae24" cv="noexcept(...)"><purpose>If <computeroutput><link linkend="doxygen.reference.classboost_1_1scope_1_1scope__exit_1a668a434653609be367d851053fc4263b">active()</link> == true</computeroutput>, and invoking the condition function object returns <computeroutput>true</computeroutput>, invokes the wrapped callable action function object. Destroys the function objects. </purpose><description><para><emphasis role="bold">Throws:</emphasis> Nothing, unless invoking a function object throws. </para></description></destructor>
+<method id="doxygen.reference.classboost_1_1scope_1_1scope__exit_1a668a434653609be367d851053fc4263b" name="active" cv="const noexcept"><type>bool</type><purpose>Returns <computeroutput>true</computeroutput> if the scope guard is active, otherwise <computeroutput>false</computeroutput>. </purpose><description><para><note><para>This method does not call the condition function object specified on construction.</para>
+</note>
+<emphasis role="bold">Throws:</emphasis> Nothing. </para></description></method>
+<method id="doxygen.reference.classboost_1_1scope_1_1scope__exit_1abba97b3279b9f4be1562cffbba0b064a" name="set_active" cv="noexcept"><type>void</type><parameter name="active"><paramtype>bool</paramtype><description><para>The active status to set.</para></description></parameter><purpose>Activates or deactivates the scope guard. </purpose><description><para><emphasis role="bold">Throws:</emphasis> Nothing.</para><para>
+
+</para></description><postconditions><para><computeroutput>this-&gt;<link linkend="doxygen.reference.classboost_1_1scope_1_1scope__exit_1a668a434653609be367d851053fc4263b">active()</link> == active</computeroutput> </para>
+</postconditions></method>
+</method-group>
+</class>
+
+
+
+
+<function id="doxygen.reference.scope__exit_8hpp_1ad709fd37af144ca8f7dfaefe244c1bee" name="make_scope_exit"><type><classname>scope_exit</classname>&lt; typename std::decay&lt; F &gt;::type &gt;</type><template>
+          <template-type-parameter name="F"/>
+        </template><parameter name="func"><paramtype>F &amp;&amp;</paramtype><description><para>The callable action function object to invoke on destruction. </para></description></parameter><parameter name="active"><paramtype>bool</paramtype><default>true</default><description><para>Indicates whether the scope guard should be active upon construction. </para></description></parameter><purpose>Creates a scope guard with a given action function object. </purpose><description><para><emphasis role="bold">Effects:</emphasis> Constructs a scope guard as if by calling <computeroutput><link linkend="doxygen.reference.classboost_1_1scope_1_1scope__exit">scope_exit</link>&lt; std::decay_t&lt; F &gt; &gt;(std::forward&lt; F &gt;(func), active)</computeroutput>.</para><para>
+</para></description></function>
+<function id="doxygen.reference.scope__exit_8hpp_1aab59df6902905c0a4adc00ed8c0b5483" name="make_scope_exit"><type><classname>scope_exit</classname>&lt; typename std::decay&lt; F &gt;::type, typename std::decay&lt; C &gt;::type &gt;</type><template>
+          <template-type-parameter name="F"/>
+          <template-type-parameter name="C"/>
+        </template><parameter name="func"><paramtype>F &amp;&amp;</paramtype><description><para>The callable action function object to invoke on destruction. </para></description></parameter><parameter name="cond"><paramtype>C &amp;&amp;</paramtype><description><para>The callable condition function object. </para></description></parameter><parameter name="active"><paramtype>bool</paramtype><default>true</default><description><para>Indicates whether the scope guard should be active upon construction. </para></description></parameter><purpose>Creates a conditional scope guard with given callable function objects. </purpose><description><para><emphasis role="bold">Effects:</emphasis> Constructs a scope guard as if by calling <computeroutput><link linkend="doxygen.reference.classboost_1_1scope_1_1scope__exit">scope_exit</link>&lt; std::decay_t&lt; F &gt;, std::decay_t&lt; C &gt; &gt;( std::forward&lt; F &gt;(func), std::forward&lt; C &gt;(cond), active)</computeroutput>.</para><para>
+</para></description></function>
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.reference.scope__fail_8hpp" name="boost/scope/scope_fail.hpp">
+<para>This header contains definition of <computeroutput>scope_fail</computeroutput> template. </para><namespace name="boost">
+<namespace name="scope">
+<class id="doxygen.reference.classboost_1_1scope_1_1scope__fail" name="scope_fail"><template>
+      <template-type-parameter name="Func"><purpose><para>Scope guard action function object type. </para></purpose></template-type-parameter>
+      <template-type-parameter name="Cond"><default>exception_checker</default><purpose><para>Scope guard failure condition function object type. </para></purpose></template-type-parameter>
+    </template><inherit access="public">boost::scope::scope_exit&lt; Func, exception_checker &gt;</inherit><purpose>Scope exit guard that invokes a function upon leaving the scope, if a failure condition is satisfied. </purpose><description><para>The scope guard wraps two function objects: the scope guard action and a failure condition for invoking the action. Both function objects must be callable with no arguments and can be one of:</para><para><itemizedlist>
+<listitem><para>A user-defined class with a public <computeroutput>operator()</computeroutput>. </para>
+</listitem>
+<listitem><para>An lvalue reference to such class. </para>
+</listitem>
+<listitem><para>An lvalue reference or pointer to function taking no arguments.</para>
+</listitem>
+</itemizedlist>
+The condition function object <computeroutput>operator()</computeroutput> must return a value contextually convertible to <computeroutput>true</computeroutput>, if the failure is detected and the action function object is allowed to be executed, and <computeroutput>false</computeroutput> otherwise. Additionally, the failure condition function object <computeroutput>operator()</computeroutput> must not throw, as otherwise the action function object may not be called. If not specified, the default failure condition checks whether the scope is left due to an exception - the action function object will not be called if the scope is left normally.</para><para><formalpara><title>See Also:</title><para><link linkend="doxygen.reference.classboost_1_1scope_1_1scope__exit">scope_exit</link> </para>
+</formalpara>
+<formalpara><title>See Also:</title><para><link linkend="doxygen.reference.classboost_1_1scope_1_1scope__success">scope_success</link></para>
+</formalpara>
+
+</para></description><method-group name="public member functions">
+<constructor id="doxygen.reference.classboost_1_1scope_1_1scope__fail_1a1242746792046dc7e8f949b9269ced89" specifiers="explicit" cv="noexcept(...)"><template>
+          <template-type-parameter name="F"/>
+        </template><parameter name="func"><paramtype>F &amp;&amp;</paramtype><description><para>The callable action function object to invoke on destruction. </para></description></parameter><parameter name="active"><paramtype>bool</paramtype><default>true</default><description><para>Indicates whether the scope guard should be active upon construction.</para></description></parameter><purpose>Constructs a scope guard with a given callable function object. </purpose><description><para><emphasis role="bold">Requires:</emphasis> <computeroutput>Func</computeroutput> is constructible from <emphasis>func</emphasis>. <computeroutput>Cond</computeroutput> is nothrow default-constructible.</para><para><emphasis role="bold">Effects:</emphasis> Constructs the scope guard as if by calling <computeroutput><link linkend="doxygen.reference.classboost_1_1scope_1_1scope__fail">scope_fail</link>(std::forward&lt; F &gt;(func), Cond(), active)</computeroutput>.</para><para><emphasis role="bold">Throws:</emphasis> Nothing, unless construction of the function objects throw.</para><para>
+
+</para></description><postconditions><para><computeroutput>this-&gt;<link linkend="doxygen.reference.classboost_1_1scope_1_1scope__exit_1a668a434653609be367d851053fc4263b">active()</link> == active</computeroutput> </para>
+</postconditions></constructor>
+<constructor id="doxygen.reference.classboost_1_1scope_1_1scope__fail_1ae1840c99a617c7b5f5f18c6840e384ef" specifiers="explicit" cv="noexcept(...)"><template>
+          <template-type-parameter name="F"/>
+          <template-type-parameter name="C"/>
+        </template><parameter name="func"><paramtype>F &amp;&amp;</paramtype><description><para>The callable action function object to invoke on destruction. </para></description></parameter><parameter name="cond"><paramtype>C &amp;&amp;</paramtype><description><para>The callable failure condition function object. </para></description></parameter><parameter name="active"><paramtype>bool</paramtype><default>true</default><description><para>Indicates whether the scope guard should be active upon construction.</para></description></parameter><purpose>Constructs a scope guard with a given callable action and failure condition function objects. </purpose><description><para><emphasis role="bold">Requires:</emphasis> <computeroutput>Func</computeroutput> is constructible from <emphasis>func</emphasis>. <computeroutput>Cond</computeroutput> is constructible from <emphasis>cond</emphasis>.</para><para><emphasis role="bold">Effects:</emphasis> If <computeroutput>Func</computeroutput> is nothrow constructible from <computeroutput>F&amp;&amp;</computeroutput> then constructs <computeroutput>Func</computeroutput> from <computeroutput>std::forward&lt; F &gt;(func)</computeroutput>, otherwise constructs from <computeroutput>func</computeroutput>. If <computeroutput>Cond</computeroutput> is nothrow constructible from <computeroutput>C&amp;&amp;</computeroutput> then constructs <computeroutput>Cond</computeroutput> from <computeroutput>std::forward&lt; C &gt;(cond)</computeroutput>, otherwise constructs from <computeroutput>cond</computeroutput>.</para><para>If <computeroutput>Func</computeroutput> or <computeroutput>Cond</computeroutput> construction throws and <emphasis>active</emphasis> is <computeroutput>true</computeroutput>, invokes <emphasis>cond</emphasis> and, if it returns <computeroutput>true</computeroutput>, <emphasis>func</emphasis> before returning with the exception.</para><para><emphasis role="bold">Throws:</emphasis> Nothing, unless construction of the function objects throw.</para><para>
+
+</para></description><postconditions><para><computeroutput>this-&gt;<link linkend="doxygen.reference.classboost_1_1scope_1_1scope__exit_1a668a434653609be367d851053fc4263b">active()</link> == active</computeroutput> </para>
+</postconditions></constructor>
+<constructor id="doxygen.reference.classboost_1_1scope_1_1scope__fail_1a9eeabe1660b7575bf218d4ae4e9688f2" cv="noexcept(...)"><parameter name="that"><paramtype><classname>scope_fail</classname> &amp;&amp;</paramtype><description><para>Move source.</para></description></parameter><purpose>Move-constructs a scope guard. </purpose><description><para><emphasis role="bold">Requires:</emphasis> <computeroutput>Func</computeroutput> and <computeroutput>Cond</computeroutput> are nothrow move-constructible or copy-constructible.</para><para><emphasis role="bold">Effects:</emphasis> If <computeroutput>Func</computeroutput> is nothrow move-constructible then move-constructs <computeroutput>Func</computeroutput> from a member of <emphasis>that</emphasis>, otherwise copy-constructs <computeroutput>Func</computeroutput>. If <computeroutput>Cond</computeroutput> is nothrow move-constructible then move-constructs <computeroutput>Cond</computeroutput> from a member of <emphasis>that</emphasis>, otherwise copy-constructs <computeroutput>Cond</computeroutput>.</para><para>If <computeroutput>Func</computeroutput> or <computeroutput>Cond</computeroutput> construction throws and <computeroutput>that.active() == true</computeroutput>, invokes <computeroutput>Cond</computeroutput> object stored in <emphasis>that</emphasis> and, if it returns <computeroutput>true</computeroutput>, <emphasis>Func</emphasis> object (either the newly constructed one, if its construction succeeded, or the original one stored in <emphasis>that</emphasis>) before returning with the exception.</para><para>If the construction succeeds, marks <emphasis>that</emphasis> as inactive.</para><para><emphasis role="bold">Throws:</emphasis> Nothing, unless move-construction of the function objects throw.</para><para>
+
+</para></description><postconditions><para><computeroutput>that.active() == false</computeroutput> </para>
+</postconditions></constructor>
+<copy-assignment id="doxygen.reference.classboost_1_1scope_1_1scope__fail_1a859ad3b71606a349083fb1ff2a8ddb23" cv="= delete"><type><classname>scope_fail</classname> &amp;</type><parameter name=""><paramtype><classname>scope_fail</classname> &amp;&amp;</paramtype></parameter></copy-assignment>
+<constructor id="doxygen.reference.classboost_1_1scope_1_1scope__fail_1aba908c8c8528b29945179225500312a0" cv="= delete"><parameter name=""><paramtype><classname>scope_fail</classname> const &amp;</paramtype></parameter></constructor>
+<copy-assignment id="doxygen.reference.classboost_1_1scope_1_1scope__fail_1a3a6d3b5c5b203f45a1fea8ce12872507" cv="= delete"><type><classname>scope_fail</classname> &amp;</type><parameter name=""><paramtype><classname>scope_fail</classname> const &amp;</paramtype></parameter></copy-assignment>
+</method-group>
+</class>
+
+
+<function id="doxygen.reference.scope__fail_8hpp_1a49d72b7603a33daa80fa0828ca1a6eeb" name="make_scope_fail"><type><classname>scope_fail</classname>&lt; typename std::decay&lt; F &gt;::type &gt;</type><template>
+          <template-type-parameter name="F"/>
+        </template><parameter name="func"><paramtype>F &amp;&amp;</paramtype><description><para>The callable function object to invoke on destruction. </para></description></parameter><parameter name="active"><paramtype>bool</paramtype><default>true</default><description><para>Indicates whether the scope guard should be active upon construction. </para></description></parameter><purpose>Creates a scope fail guard with a given action function object. </purpose><description><para><emphasis role="bold">Effects:</emphasis> Constructs a scope guard as if by calling <computeroutput><link linkend="doxygen.reference.classboost_1_1scope_1_1scope__fail">scope_fail</link>&lt; std::decay_t&lt; F &gt; &gt;(std::forward&lt; F &gt;(func), active)</computeroutput>.</para><para>
+</para></description></function>
+<function id="doxygen.reference.scope__fail_8hpp_1acbbdb418313da9077ffd5177770fc6a0" name="make_scope_fail"><type><classname>scope_fail</classname>&lt; typename std::decay&lt; F &gt;::type, typename std::decay&lt; C &gt;::type &gt;</type><template>
+          <template-type-parameter name="F"/>
+          <template-type-parameter name="C"/>
+        </template><parameter name="func"><paramtype>F &amp;&amp;</paramtype><description><para>The callable action function object to invoke on destruction. </para></description></parameter><parameter name="cond"><paramtype>C &amp;&amp;</paramtype><description><para>The callable failure condition function object. </para></description></parameter><parameter name="active"><paramtype>bool</paramtype><default>true</default><description><para>Indicates whether the scope guard should be active upon construction. </para></description></parameter><purpose>Creates a scope fail with given callable function objects. </purpose><description><para><emphasis role="bold">Effects:</emphasis> Constructs a scope guard as if by calling <computeroutput><link linkend="doxygen.reference.classboost_1_1scope_1_1scope__fail">scope_fail</link>&lt; std::decay_t&lt; F &gt;, std::decay_t&lt; C &gt; &gt;( std::forward&lt; F &gt;(func), std::forward&lt; C &gt;(cond), active)</computeroutput>.</para><para>
+</para></description></function>
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.reference.scope__success_8hpp" name="boost/scope/scope_success.hpp">
+<para>This header contains definition of <computeroutput>scope_success</computeroutput> template. </para><namespace name="boost">
+<namespace name="scope">
+<class id="doxygen.reference.classboost_1_1scope_1_1scope__success" name="scope_success"><template>
+      <template-type-parameter name="Func"><purpose><para>Scope guard action function object type. </para></purpose></template-type-parameter>
+      <template-type-parameter name="Cond"><default>exception_checker</default><purpose><para>Scope guard failure condition function object type. </para></purpose></template-type-parameter>
+    </template><purpose>Scope exit guard that invokes a function upon leaving the scope, if a failure condition is not satisfied. </purpose><description><para>The scope guard wraps two function objects: the scope guard action and a failure condition for invoking the action. Both function objects must be callable with no arguments and can be one of:</para><para><itemizedlist>
+<listitem><para>A user-defined class with a public <computeroutput>operator()</computeroutput>. </para>
+</listitem>
+<listitem><para>An lvalue reference to such class. </para>
+</listitem>
+<listitem><para>An lvalue reference or pointer to function taking no arguments.</para>
+</listitem>
+</itemizedlist>
+The condition function object <computeroutput>operator()</computeroutput> must return a value contextually convertible to <computeroutput>true</computeroutput>, if the failure is detected and the action function object is not allowed to be executed, and <computeroutput>false</computeroutput> otherwise. Additionally, the failure condition function object <computeroutput>operator()</computeroutput> must not throw, as otherwise the action function object may not be called. If not specified, the default failure condition checks whether the scope is left due to an exception - the action function object will only be called if the scope is left normally.</para><para><formalpara><title>See Also:</title><para><link linkend="doxygen.reference.classboost_1_1scope_1_1scope__exit">scope_exit</link> </para>
+</formalpara>
+<formalpara><title>See Also:</title><para><link linkend="doxygen.reference.classboost_1_1scope_1_1scope__fail">scope_fail</link></para>
+</formalpara>
+
+</para></description><method-group name="public member functions">
+<constructor id="doxygen.reference.classboost_1_1scope_1_1scope__success_1aee2fb18e2b533b2a8e018a941c475827" specifiers="explicit" cv="noexcept(...)"><template>
+          <template-type-parameter name="F"/>
+        </template><parameter name="func"><paramtype>F &amp;&amp;</paramtype><description><para>The callable action function object to invoke on destruction. </para></description></parameter><parameter name="active"><paramtype>bool</paramtype><default>true</default><description><para>Indicates whether the scope guard should be active upon construction.</para></description></parameter><purpose>Constructs a scope guard with a given callable function object. </purpose><description><para><emphasis role="bold">Requires:</emphasis> <computeroutput>Func</computeroutput> is constructible from <emphasis>func</emphasis>. <computeroutput>Cond</computeroutput> is nothrow default-constructible.</para><para><emphasis role="bold">Effects:</emphasis> Constructs the scope guard as if by calling <computeroutput><link linkend="doxygen.reference.classboost_1_1scope_1_1scope__success">scope_success</link>(std::forward&lt; F &gt;(func), Cond(), active)</computeroutput>.</para><para><emphasis role="bold">Throws:</emphasis> Nothing, unless construction of the function objects throw.</para><para>
+
+</para></description><postconditions><para><computeroutput>this-&gt;<link linkend="doxygen.reference.classboost_1_1scope_1_1scope__exit_1a668a434653609be367d851053fc4263b">active()</link> == active</computeroutput> </para>
+</postconditions></constructor>
+<constructor id="doxygen.reference.classboost_1_1scope_1_1scope__success_1a02944c0067ed0fe73251a0691bb5716d" specifiers="explicit" cv="noexcept(...)"><template>
+          <template-type-parameter name="F"/>
+          <template-type-parameter name="C"/>
+        </template><parameter name="func"><paramtype>F &amp;&amp;</paramtype><description><para>The callable action function object to invoke on destruction. </para></description></parameter><parameter name="cond"><paramtype>C &amp;&amp;</paramtype><description><para>The callable failure condition function object. </para></description></parameter><parameter name="active"><paramtype>bool</paramtype><default>true</default><description><para>Indicates whether the scope guard should be active upon construction.</para></description></parameter><purpose>Constructs a scope guard with a given callable action and failure condition function objects. </purpose><description><para><emphasis role="bold">Requires:</emphasis> <computeroutput>Func</computeroutput> is constructible from <emphasis>func</emphasis>. <computeroutput>Cond</computeroutput> is constructible from <emphasis>cond</emphasis>.</para><para><emphasis role="bold">Effects:</emphasis> If <computeroutput>Func</computeroutput> is nothrow constructible from <computeroutput>F&amp;&amp;</computeroutput> then constructs <computeroutput>Func</computeroutput> from <computeroutput>std::forward&lt; F &gt;(func)</computeroutput>, otherwise constructs from <computeroutput>func</computeroutput>. If <computeroutput>Cond</computeroutput> is nothrow constructible from <computeroutput>C&amp;&amp;</computeroutput> then constructs <computeroutput>Cond</computeroutput> from <computeroutput>std::forward&lt; C &gt;(cond)</computeroutput>, otherwise constructs from <computeroutput>cond</computeroutput>.</para><para>If <computeroutput>Func</computeroutput> or <computeroutput>Cond</computeroutput> construction throws and <emphasis>active</emphasis> is <computeroutput>true</computeroutput>, invokes <emphasis>cond</emphasis> and, if it returns <computeroutput>true</computeroutput>, <emphasis>func</emphasis> before returning with the exception.</para><para><emphasis role="bold">Throws:</emphasis> Nothing, unless construction of the function objects throw.</para><para>
+
+</para></description><postconditions><para><computeroutput>this-&gt;<link linkend="doxygen.reference.classboost_1_1scope_1_1scope__exit_1a668a434653609be367d851053fc4263b">active()</link> == active</computeroutput> </para>
+</postconditions></constructor>
+<constructor id="doxygen.reference.classboost_1_1scope_1_1scope__success_1af10666c330e9f6fedc3a63d3afef2d06" cv="noexcept(...)"><parameter name="that"><paramtype><classname>scope_success</classname> &amp;&amp;</paramtype><description><para>Move source.</para></description></parameter><purpose>Move-constructs a scope guard. </purpose><description><para><emphasis role="bold">Requires:</emphasis> <computeroutput>Func</computeroutput> and <computeroutput>Cond</computeroutput> are nothrow move-constructible or copy-constructible.</para><para><emphasis role="bold">Effects:</emphasis> If <computeroutput>Func</computeroutput> is nothrow move-constructible then move-constructs <computeroutput>Func</computeroutput> from a member of <emphasis>that</emphasis>, otherwise copy-constructs <computeroutput>Func</computeroutput>. If <computeroutput>Cond</computeroutput> is nothrow move-constructible then move-constructs <computeroutput>Cond</computeroutput> from a member of <emphasis>that</emphasis>, otherwise copy-constructs <computeroutput>Cond</computeroutput>.</para><para>If <computeroutput>Func</computeroutput> or <computeroutput>Cond</computeroutput> construction throws and <computeroutput>that.active() == true</computeroutput>, invokes <computeroutput>Cond</computeroutput> object stored in <emphasis>that</emphasis> and, if it returns <computeroutput>true</computeroutput>, <emphasis>Func</emphasis> object (either the newly constructed one, if its construction succeeded, or the original one stored in <emphasis>that</emphasis>) before returning with the exception.</para><para>If the construction succeeds, marks <emphasis>that</emphasis> as inactive.</para><para><emphasis role="bold">Throws:</emphasis> Nothing, unless move-construction of the function objects throw.</para><para>
+
+</para></description><postconditions><para><computeroutput>that.active() == false</computeroutput> </para>
+</postconditions></constructor>
+<copy-assignment id="doxygen.reference.classboost_1_1scope_1_1scope__success_1aa2db7407bb60a6b8e4a2634f7ef3f06d" cv="= delete"><type><classname>scope_success</classname> &amp;</type><parameter name=""><paramtype><classname>scope_success</classname> &amp;&amp;</paramtype></parameter></copy-assignment>
+<constructor id="doxygen.reference.classboost_1_1scope_1_1scope__success_1ab956c89594340f0c45338057b29e4111" cv="= delete"><parameter name=""><paramtype><classname>scope_success</classname> const &amp;</paramtype></parameter></constructor>
+<copy-assignment id="doxygen.reference.classboost_1_1scope_1_1scope__success_1a950f1f8313ac3466a5efa2d5480bb339" cv="= delete"><type><classname>scope_success</classname> &amp;</type><parameter name=""><paramtype><classname>scope_success</classname> const &amp;</paramtype></parameter></copy-assignment>
+</method-group>
+</class>
+<function id="doxygen.reference.scope__success_8hpp_1a8f2bf29c89418c25c5d5230d9be7f9e4" name="make_scope_success"><type><classname>scope_success</classname>&lt; typename std::decay&lt; F &gt;::type &gt;</type><template>
+          <template-type-parameter name="F"/>
+        </template><parameter name="func"><paramtype>F &amp;&amp;</paramtype><description><para>The callable function object to invoke on destruction. </para></description></parameter><parameter name="active"><paramtype>bool</paramtype><default>true</default><description><para>Indicates whether the scope guard should be active upon construction. </para></description></parameter><purpose>Creates a scope fail guard with a given action function object. </purpose><description><para><emphasis role="bold">Effects:</emphasis> Constructs a scope guard as if by calling <computeroutput><link linkend="doxygen.reference.classboost_1_1scope_1_1scope__success">scope_success</link>&lt; std::decay_t&lt; F &gt; &gt;(std::forward&lt; F &gt;(func), active)</computeroutput>.</para><para>
+</para></description></function>
+<function id="doxygen.reference.scope__success_8hpp_1aa0c19537e93aab5bddd31968dfdbcb2e" name="make_scope_success"><type><classname>scope_success</classname>&lt; typename std::decay&lt; F &gt;::type, typename std::decay&lt; C &gt;::type &gt;</type><template>
+          <template-type-parameter name="F"/>
+          <template-type-parameter name="C"/>
+        </template><parameter name="func"><paramtype>F &amp;&amp;</paramtype><description><para>The callable action function object to invoke on destruction. </para></description></parameter><parameter name="cond"><paramtype>C &amp;&amp;</paramtype><description><para>The callable failure condition function object. </para></description></parameter><parameter name="active"><paramtype>bool</paramtype><default>true</default><description><para>Indicates whether the scope guard should be active upon construction. </para></description></parameter><purpose>Creates a scope fail with given callable function objects. </purpose><description><para><emphasis role="bold">Effects:</emphasis> Constructs a scope guard as if by calling <computeroutput><link linkend="doxygen.reference.classboost_1_1scope_1_1scope__success">scope_success</link>&lt; std::decay_t&lt; F &gt;, std::decay_t&lt; C &gt; &gt;( std::forward&lt; F &gt;(func), std::forward&lt; C &gt;(cond), active)</computeroutput>.</para><para>
+</para></description></function>
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.reference.unique__fd_8hpp" name="boost/scope/unique_fd.hpp">
+<para>This header contains definition of <computeroutput>unique_fd</computeroutput> type. </para><namespace name="boost">
+<namespace name="scope">
+<typedef id="doxygen.reference.unique__fd_8hpp_1a8c28f727f2b9f9036b2762a40662d86b" name="unique_fd"><purpose>Unique POSIX-like file descriptor resource. </purpose><type><classname>unique_resource</classname>&lt; int, <classname>fd_deleter</classname>, <classname>fd_resource_traits</classname> &gt;</type></typedef>
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.reference.unique__resource_8hpp" name="boost/scope/unique_resource.hpp">
+<para>This header contains definition of <computeroutput>unique_resource</computeroutput> template. </para><namespace name="boost">
+<namespace name="scope">
+<struct id="doxygen.reference.structboost_1_1scope_1_1default__resource__t" name="default_resource_t"/><struct id="doxygen.reference.structboost_1_1scope_1_1unallocated__resource" name="unallocated_resource"><template>
+      <template-nontype-parameter name="DefaultValue"><type>auto</type></template-nontype-parameter>
+      <template-nontype-parameter name="UnallocatedValues"><type>auto...</type></template-nontype-parameter>
+    </template><purpose>Simple resource traits for one or more unallocated resource values. </purpose><description><para>This class template generates resource traits for <computeroutput><link linkend="doxygen.reference.classboost_1_1scope_1_1unique__resource">unique_resource</link></computeroutput> that specify one or more unallocated resource values. The first value, specified in the <computeroutput>DefaultValue</computeroutput> non-type template parameter, is considered the default. The other values, listed in <computeroutput>UnallocatedValues</computeroutput>, are optional. Any resource values other than <computeroutput>DefaultValue</computeroutput> or listed in <computeroutput>UnallocatedValues</computeroutput> are considered as allocated.</para><para>In order for the generated resource traits to enable optimized implementation of <computeroutput><link linkend="doxygen.reference.classboost_1_1scope_1_1unique__resource">unique_resource</link></computeroutput>, the resource type must support non-throwing construction and assignment from, and comparison for (in)equality with <computeroutput>DefaultValue</computeroutput> or any of the resource values listed in <computeroutput>UnallocatedValues</computeroutput>. </para></description><method-group name="public static functions">
+<method id="doxygen.reference.structboost_1_1scope_1_1unallocated__resource_1afa9dd18f5e5eb9b02cee3d4fc08eb321" name="make_default" cv="noexcept" specifiers="static"><type>decltype(DefaultValue)</type><purpose>Returns the default resource value. </purpose></method>
+<method id="doxygen.reference.structboost_1_1scope_1_1unallocated__resource_1ae023c418046c96e9250e64d60d84339e" name="is_allocated" cv="noexcept" specifiers="static"><type>bool</type><template>
+          <template-type-parameter name="Resource"/>
+        </template><parameter name="res"><paramtype>Resource const &amp;</paramtype></parameter><purpose>Tests if <emphasis>res</emphasis> is an allocated resource value. </purpose></method>
+</method-group>
+</struct><class id="doxygen.reference.classboost_1_1scope_1_1unique__resource" name="unique_resource"><template>
+      <template-type-parameter name="Resource"><purpose><para>Resource type. </para></purpose></template-type-parameter>
+      <template-type-parameter name="Deleter"><purpose><para>Resource deleter function object type. </para></purpose></template-type-parameter>
+      <template-type-parameter name="Traits"><default>void</default><purpose><para>Optional resource traits type. </para></purpose></template-type-parameter>
+    </template><purpose>RAII wrapper for automatically reclaiming arbitrary resources. </purpose><description><para>A <computeroutput><link linkend="doxygen.reference.classboost_1_1scope_1_1unique__resource">unique_resource</link></computeroutput> object exclusively owns wrapped resource and invokes the deleter function object on it on destruction. The wrapped resource can have any type that is:</para><para><itemizedlist>
+<listitem><para>Move-constructible, where the move constructor is marked as <computeroutput>noexcept</computeroutput>, or </para>
+</listitem>
+<listitem><para>Copy-constructible, or </para>
+</listitem>
+<listitem><para>An lvalue reference to an object type.</para>
+</listitem>
+</itemizedlist>
+The deleter must be a function object type that is callable on an lvalue of the resource type. The deleter must be copy-constructible.</para><para>An optional resource traits template parameter may be specified. Resource traits can be used to optimize <computeroutput><link linkend="doxygen.reference.classboost_1_1scope_1_1unique__resource">unique_resource</link></computeroutput> implementation when the following conditions are met:</para><para><itemizedlist>
+<listitem><para>There is at least one value of the resource type that is considered unallocated (that is, no allocated resource shall be equal to one of the unallocated resource values). The unallocated resource values need not be deallocated using the deleter. </para>
+</listitem>
+<listitem><para>One of the unallocated resource values can be considered the default. Constructing the default resource value and assigning it to a resource object (whether allocated or not) shall not throw exceptions. </para>
+</listitem>
+<listitem><para>Resource objects can be tested for being unallocated. Such a test shall not throw exceptions.</para>
+</listitem>
+</itemizedlist>
+If specified, the resource traits must be a class type that has the following public static members:</para><para><itemizedlist>
+<listitem><para><computeroutput>R make_default() noexcept</computeroutput> - must return the default resource value such that <computeroutput>std::is_constructible&lt; Resource, R &gt;::value &amp;&amp; std::is_nothrow_assignable&lt; Resource&amp;, R &gt;::value</computeroutput> is <computeroutput>true</computeroutput>. </para>
+</listitem>
+<listitem><para><computeroutput>bool is_allocated(Resource const&amp; res) noexcept</computeroutput> - must return <computeroutput>true</computeroutput> if <computeroutput>res</computeroutput> is not one of the unallocated resource values and <computeroutput>false</computeroutput> otherwise.</para>
+</listitem>
+</itemizedlist>
+Note that <computeroutput>is_allocated(make_default())</computeroutput> must always return <computeroutput>false</computeroutput>.</para><para>When resource traits satisfying the above requirements are specified, <computeroutput><link linkend="doxygen.reference.classboost_1_1scope_1_1unique__resource">unique_resource</link></computeroutput> will be able to avoid storing additional indication of whether the owned resource object needs to be deallocated with the deleter on destruction. It will use the default resource value to initialize the owned resource object when <computeroutput><link linkend="doxygen.reference.classboost_1_1scope_1_1unique__resource">unique_resource</link></computeroutput> is not in the allocated state. Additionally, it will be possible to construct <computeroutput><link linkend="doxygen.reference.classboost_1_1scope_1_1unique__resource">unique_resource</link></computeroutput> with unallocated resource values, which will create <computeroutput><link linkend="doxygen.reference.classboost_1_1scope_1_1unique__resource">unique_resource</link></computeroutput> objects in unallocated state (the deleter will not be called on unallocated resource values).</para><para>
+</para></description><typedef id="doxygen.reference.classboost_1_1scope_1_1unique__resource_1aece91de9570c00090d1e04522236a96b" name="resource_type"><purpose>Resource type. </purpose><type>Resource</type></typedef>
+<typedef id="doxygen.reference.classboost_1_1scope_1_1unique__resource_1a0f021b62a0162dd6080d0460139a8785" name="deleter_type"><purpose>Deleter type. </purpose><type>Deleter</type></typedef>
+<typedef id="doxygen.reference.classboost_1_1scope_1_1unique__resource_1a7762fa62b377a4fe9013a86afeb00b99" name="traits_type"><purpose>Resource traits. </purpose><type>Traits</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.reference.classboost_1_1scope_1_1unique__resource_1a399d5a11543c898f52254b8b30305f06" cv="noexcept(...)"><purpose>Constructs an unallocated unique resource guard. </purpose><description><para><emphasis role="bold">Requires:</emphasis> Default <computeroutput>Resource</computeroutput> value can be constructed. <computeroutput>Deleter</computeroutput> is default-constructible and is not a pointer to function.</para><para><emphasis role="bold">Effects:</emphasis> Initializes the <computeroutput>Resource</computeroutput> object with the default resource value. Default-constructs the <computeroutput>Deleter</computeroutput> object.</para><para><emphasis role="bold">Throws:</emphasis> Nothing, unless construction of <computeroutput>Resource</computeroutput> or <computeroutput>Deleter</computeroutput> throws.</para><para>
+</para></description><postconditions><para><computeroutput>this-&gt;<link linkend="doxygen.reference.classboost_1_1scope_1_1unique__resource_1ab50d2dd49c85000fa75833f9df2556e3">allocated()</link> == false</computeroutput> </para>
+</postconditions></constructor>
+<constructor id="doxygen.reference.classboost_1_1scope_1_1unique__resource_1ac09d9731459096ae7f73c45f6410ef38" cv="noexcept(...)"><template>
+          <template-type-parameter name="D"/>
+        </template><parameter name="res"><paramtype>default_resource_t</paramtype><description><para>A tag argument indicating default resource value. </para></description></parameter><parameter name="del"><paramtype>D &amp;&amp;</paramtype><description><para>Resource deleter function object.</para></description></parameter><purpose>Constructs an unallocated unique resource guard with the given deleter. </purpose><description><para><emphasis role="bold">Requires:</emphasis> Default <computeroutput>Resource</computeroutput> value can be constructed and <computeroutput>Deleter</computeroutput> is constructible from <emphasis>del</emphasis>.</para><para><emphasis role="bold">Effects:</emphasis> Initializes the <computeroutput>Resource</computeroutput> value with the default resource value. If <computeroutput>Deleter</computeroutput> is nothrow constructible from <computeroutput>D&amp;&amp;</computeroutput> then constructs <computeroutput>Deleter</computeroutput> from <computeroutput>std::forward&lt; D &gt;(del)</computeroutput>, otherwise constructs from <computeroutput>del</computeroutput>.</para><para><emphasis role="bold">Throws:</emphasis> Nothing, unless construction of <computeroutput>Resource</computeroutput> or <computeroutput>Deleter</computeroutput> throws.</para><para>
+
+</para></description><postconditions><para><computeroutput>this-&gt;<link linkend="doxygen.reference.classboost_1_1scope_1_1unique__resource_1ab50d2dd49c85000fa75833f9df2556e3">allocated()</link> == false</computeroutput> </para>
+</postconditions></constructor>
+<constructor id="doxygen.reference.classboost_1_1scope_1_1unique__resource_1a26204cdc4d828579edf28a81e04dd1ea" specifiers="explicit" cv="noexcept(...)"><template>
+          <template-type-parameter name="R"/>
+        </template><parameter name="res"><paramtype>R &amp;&amp;</paramtype><description><para>Resource object. </para></description></parameter><purpose>Constructs a unique resource guard with the given resource and a default-constructed deleter. </purpose><description><para><emphasis role="bold">Requires:</emphasis> <computeroutput>Resource</computeroutput> is constructible from <emphasis>res</emphasis>. <computeroutput>Deleter</computeroutput> is default-constructible and is not a pointer to function.</para><para><emphasis role="bold">Effects:</emphasis> Constructs the unique resource object as if by calling <computeroutput><link linkend="doxygen.reference.classboost_1_1scope_1_1unique__resource">unique_resource</link>(std::forward&lt; R &gt;(res), Deleter())</computeroutput>.</para><para><emphasis role="bold">Throws:</emphasis> Nothing, unless construction of <computeroutput>Resource</computeroutput> or <computeroutput>Deleter</computeroutput> throws.</para><para>
+</para></description></constructor>
+<constructor id="doxygen.reference.classboost_1_1scope_1_1unique__resource_1a6f761d62c30b05c62cab58329bc66455" cv="noexcept(...)"><template>
+          <template-type-parameter name="R"/>
+          <template-type-parameter name="D"/>
+        </template><parameter name="res"><paramtype>R &amp;&amp;</paramtype><description><para>Resource object. </para></description></parameter><parameter name="del"><paramtype>D &amp;&amp;</paramtype><description><para>Resource deleter function object.</para></description></parameter><purpose>Constructs a unique resource guard with the given resource and deleter. </purpose><description><para><emphasis role="bold">Requires:</emphasis> <computeroutput>Resource</computeroutput> is constructible from <emphasis>res</emphasis> and <computeroutput>Deleter</computeroutput> is constructible from <emphasis>del</emphasis>.</para><para><emphasis role="bold">Effects:</emphasis> If <computeroutput>Resource</computeroutput> is nothrow constructible from <computeroutput>R&amp;&amp;</computeroutput> then constructs <computeroutput>Resource</computeroutput> from <computeroutput>std::forward&lt; R &gt;(res)</computeroutput>, otherwise constructs from <computeroutput>res</computeroutput>. If <computeroutput>Deleter</computeroutput> is nothrow constructible from <computeroutput>D&amp;&amp;</computeroutput> then constructs <computeroutput>Deleter</computeroutput> from <computeroutput>std::forward&lt; D &gt;(del)</computeroutput>, otherwise constructs from <computeroutput>del</computeroutput>.</para><para>If construction of <computeroutput>Resource</computeroutput> or <computeroutput>Deleter</computeroutput> throws and <emphasis>res</emphasis> is not an unallocated resource value, invokes <emphasis>del</emphasis> on <emphasis>res</emphasis> (if <computeroutput>Resource</computeroutput> construction failed) or the constructed <computeroutput>Resource</computeroutput> object (if <computeroutput>Deleter</computeroutput> construction failed).</para><para><emphasis role="bold">Throws:</emphasis> Nothing, unless construction of <computeroutput>Resource</computeroutput> or <computeroutput>Deleter</computeroutput> throws.</para><para>
+
+</para></description><postconditions><para>If <emphasis>res</emphasis> is an unallocated resource value then <computeroutput>this-&gt;<link linkend="doxygen.reference.classboost_1_1scope_1_1unique__resource_1ab50d2dd49c85000fa75833f9df2556e3">allocated()</link> == false</computeroutput>, otherwise <computeroutput>this-&gt;<link linkend="doxygen.reference.classboost_1_1scope_1_1unique__resource_1ab50d2dd49c85000fa75833f9df2556e3">allocated()</link> == true</computeroutput>. </para>
+</postconditions></constructor>
+<constructor id="doxygen.reference.classboost_1_1scope_1_1unique__resource_1a2685273772192d7effa6c72aad791d08" cv="= delete"><parameter name=""><paramtype><classname>unique_resource</classname> const &amp;</paramtype></parameter></constructor>
+<copy-assignment id="doxygen.reference.classboost_1_1scope_1_1unique__resource_1a565a9e7dc64d0bb41bdc508ac2f14716" cv="= delete"><type><classname>unique_resource</classname> &amp;</type><parameter name=""><paramtype><classname>unique_resource</classname> const &amp;</paramtype></parameter></copy-assignment>
+<constructor id="doxygen.reference.classboost_1_1scope_1_1unique__resource_1a73018eb2f3623297dbc0c126b1bb481c" cv="noexcept(...)"><parameter name="that"><paramtype><classname>unique_resource</classname> &amp;&amp;</paramtype><description><para>Move source.</para></description></parameter><purpose>Move-constructs a unique resource guard. </purpose><description><para><emphasis role="bold">Requires:</emphasis> <computeroutput>Resource</computeroutput> and <computeroutput>Deleter</computeroutput> are move-constructible.</para><para><emphasis role="bold">Effects:</emphasis> If <computeroutput>Resource</computeroutput> is nothrow move-constructible then move-constructs <computeroutput>Resource</computeroutput>, otherwise copy-constructs. If <computeroutput>Deleter</computeroutput> is nothrow move-constructible then move-constructs <computeroutput>Deleter</computeroutput>, otherwise copy-constructs. Deactivates the moved-from unique resource object.</para><para>If an exception is thrown during construction, <emphasis>that</emphasis> is left in its original state.</para><para><note><para>This logic ensures that in case of exception the resource is not leaked and remains owned by the move source.</para>
+</note>
+<emphasis role="bold">Throws:</emphasis> Nothing, unless construction of <computeroutput>Resource</computeroutput> or <computeroutput>Deleter</computeroutput> throws.</para><para>
+
+</para></description><postconditions><para>Let <computeroutput>allocated</computeroutput> be equal to <computeroutput>that.allocated()</computeroutput> prior to the operation. Then <computeroutput>this-&gt;<link linkend="doxygen.reference.classboost_1_1scope_1_1unique__resource_1ab50d2dd49c85000fa75833f9df2556e3">allocated()</link> == allocated</computeroutput> and <computeroutput>that.allocated() == false</computeroutput>. </para>
+</postconditions></constructor>
+<copy-assignment id="doxygen.reference.classboost_1_1scope_1_1unique__resource_1a8e9fd530d971fe34148625ef10e4be9f" cv="noexcept(...)"><type><classname>unique_resource</classname> &amp;</type><parameter name="that"><paramtype><classname>unique_resource</classname> &amp;&amp;</paramtype><description><para>Move source.</para></description></parameter><purpose>Move-assigns a unique resource guard. </purpose><description><para><emphasis role="bold">Requires:</emphasis> <computeroutput>Resource</computeroutput> and <computeroutput>Deleter</computeroutput> are move-assignable.</para><para><emphasis role="bold">Effects:</emphasis> Calls <computeroutput>this-&gt;<link linkend="doxygen.reference.classboost_1_1scope_1_1unique__resource_1aa6910e2f06b7acd5f110ff4002f490bd">reset()</link></computeroutput>. Then, if <computeroutput>Deleter</computeroutput> is nothrow move-assignable, move-assigns the <computeroutput>Deleter</computeroutput> object first and the <computeroutput>Resource</computeroutput> object next. Otherwise, move-assigns the objects in reverse order. Lastly, deactivates the moved-from unique resource object.</para><para>If an exception is thrown, <emphasis>that</emphasis> is left in its original state.</para><para><note><para>The different orders of assignment ensure that in case of exception the resource is not leaked and remains owned by the move source.</para>
+</note>
+<emphasis role="bold">Throws:</emphasis> Nothing, unless assignment of <computeroutput>Resource</computeroutput> or <computeroutput>Deleter</computeroutput> throws.</para><para>
+
+</para></description><postconditions><para>Let <computeroutput>allocated</computeroutput> be equal to <computeroutput>that.allocated()</computeroutput> prior to the operation. Then <computeroutput>this-&gt;<link linkend="doxygen.reference.classboost_1_1scope_1_1unique__resource_1ab50d2dd49c85000fa75833f9df2556e3">allocated()</link> == allocated</computeroutput> and <computeroutput>that.allocated() == false</computeroutput>. </para>
+</postconditions></copy-assignment>
+<destructor id="doxygen.reference.classboost_1_1scope_1_1unique__resource_1abffa1cf26af00c2f075c280917c6a7d8" cv="noexcept(...)"><purpose>If the resource is allocated, calls the deleter function on it. Destroys the resource and the deleter. </purpose><description><para><emphasis role="bold">Throws:</emphasis> Nothing, unless invoking the deleter throws. </para></description></destructor>
+<method id="doxygen.reference.classboost_1_1scope_1_1unique__resource_1a420e60e9788bfa3b52aa3aab72ea3a5e" name="conversion-operator" cv="const noexcept" specifiers="explicit"><type>bool</type><purpose>Returns <computeroutput>true</computeroutput> if the resource is allocated and to be reclaimed by the deleter, otherwise <computeroutput>false</computeroutput>. </purpose><description><para><note><para>This method does not test the value of the resource.</para>
+</note>
+<emphasis role="bold">Throws:</emphasis> Nothing. </para></description></method>
+<method id="doxygen.reference.classboost_1_1scope_1_1unique__resource_1ab50d2dd49c85000fa75833f9df2556e3" name="allocated" cv="const noexcept"><type>bool</type><purpose>Returns <computeroutput>true</computeroutput> if the resource is allocated and to be reclaimed by the deleter, otherwise <computeroutput>false</computeroutput>. </purpose><description><para><emphasis role="bold">Throws:</emphasis> Nothing. </para></description></method>
+<method id="doxygen.reference.classboost_1_1scope_1_1unique__resource_1afe9d14f203660128e2ad7965b18c9960" name="get" cv="const noexcept"><type>resource_type const &amp;</type><purpose>Returns a reference to the resource object. </purpose><description><para><emphasis role="bold">Throws:</emphasis> Nothing. </para></description></method>
+<method id="doxygen.reference.classboost_1_1scope_1_1unique__resource_1a3f1447c8224d72150b25814e6550ea3c" name="get_deleter" cv="const noexcept"><type>deleter_type const &amp;</type><purpose>Returns a reference to the deleter object. </purpose><description><para><emphasis role="bold">Throws:</emphasis> Nothing. </para></description></method>
+<method id="doxygen.reference.classboost_1_1scope_1_1unique__resource_1a4fd0fa43d212f9effc3366b8bce40fb5" name="release" cv="noexcept"><type>void</type><purpose>Marks the resource as unallocated. Does not call the deleter if the resource was previously allocated. </purpose><description><para><emphasis role="bold">Throws:</emphasis> Nothing.</para><para>
+</para></description><postconditions><para><computeroutput>this-&gt;<link linkend="doxygen.reference.classboost_1_1scope_1_1unique__resource_1ab50d2dd49c85000fa75833f9df2556e3">allocated()</link> == false</computeroutput> </para>
+</postconditions></method>
+<method id="doxygen.reference.classboost_1_1scope_1_1unique__resource_1aa6910e2f06b7acd5f110ff4002f490bd" name="reset" cv="noexcept(...)"><type>void</type><purpose>If the resource is allocated, calls the deleter function on it and marks the resource as unallocated. </purpose><description><para><emphasis role="bold">Throws:</emphasis> Nothing, unless invoking the deleter throws.</para><para>
+</para></description><postconditions><para><computeroutput>this-&gt;<link linkend="doxygen.reference.classboost_1_1scope_1_1unique__resource_1ab50d2dd49c85000fa75833f9df2556e3">allocated()</link> == false</computeroutput> </para>
+</postconditions></method>
+<method id="doxygen.reference.classboost_1_1scope_1_1unique__resource_1a3e47d63e4f240ba0f5da933482b0495f" name="reset" cv="noexcept(...)"><type>void</type><template>
+          <template-type-parameter name="R"/>
+        </template><parameter name="res"><paramtype>R &amp;&amp;</paramtype><description><para>Resource object to assign.</para></description></parameter><purpose>Assigns a new resource object to the unique resource wrapper. </purpose><description><para><emphasis role="bold">Effects:</emphasis> Calls <computeroutput>this-&gt;<link linkend="doxygen.reference.classboost_1_1scope_1_1unique__resource_1aa6910e2f06b7acd5f110ff4002f490bd">reset()</link></computeroutput>. Then, if <computeroutput>Resource</computeroutput> is nothrow assignable from <computeroutput>R&amp;&amp;</computeroutput>, assigns <computeroutput>std::forward&lt; R &gt;(res)</computeroutput> to the stored resource object, otherwise assigns <computeroutput>res</computeroutput>.</para><para>If <emphasis>res</emphasis> is not an unallocated resource value and an exception is thrown during the operation, invokes the stored deleter on <emphasis>res</emphasis> before returning with the exception.</para><para><emphasis role="bold">Throws:</emphasis> Nothing, unless invoking the deleter throws.</para><para>
+
+</para></description><postconditions><para><computeroutput>this-&gt;<link linkend="doxygen.reference.classboost_1_1scope_1_1unique__resource_1ab50d2dd49c85000fa75833f9df2556e3">allocated()</link> == false</computeroutput> </para>
+</postconditions></method>
+<method id="doxygen.reference.classboost_1_1scope_1_1unique__resource_1aa4a0ef824a4fc424757374f7600170d2" name="operator-&gt;" cv="const noexcept"><type>resource_type const &amp;</type><purpose>Invokes indirection on the resource object. </purpose><description><para><emphasis role="bold">Requires:</emphasis> <computeroutput>Resource</computeroutput> is dereferenceable.</para><para><emphasis role="bold">Effects:</emphasis> Returns a reference to the resource object as if by calling <computeroutput><link linkend="doxygen.reference.classboost_1_1scope_1_1unique__resource_1afe9d14f203660128e2ad7965b18c9960">get()</link></computeroutput>.</para><para><note><para>If <computeroutput>Resource</computeroutput> is not a pointer type, the compiler will invoke its <computeroutput>operator-&gt;</computeroutput>. Such call sequence will continue until a pointer is obtained.</para>
+</note>
+<emphasis role="bold">Throws:</emphasis> Nothing. Note that any implicit subsequent calls to other <computeroutput>operator-&gt;</computeroutput> functions that are caused by this call may have different throw conditions. </para></description></method>
+<method id="doxygen.reference.classboost_1_1scope_1_1unique__resource_1a9b7292c0085155ef5b3f0ff33cf79848" name="operator*" cv="const noexcept(...)"><type>auto</type><purpose>Dereferences the resource object. </purpose><description><para><emphasis role="bold">Requires:</emphasis> <computeroutput>Resource</computeroutput> is dereferenceable.</para><para><emphasis role="bold">Effects:</emphasis> Returns the result of dereferencing the resource object as if by calling <computeroutput>*get()</computeroutput>.</para><para><emphasis role="bold">Throws:</emphasis> Nothing, unless dereferencing the resource object throws. </para></description></method>
+<method id="doxygen.reference.classboost_1_1scope_1_1unique__resource_1a390ff95ed46ac302cadde81b9b157aad" name="swap" cv="noexcept(...)"><type>void</type><parameter name="that"><paramtype><classname>unique_resource</classname> &amp;</paramtype><description><para>Unique resource wrapper to swap with. </para></description></parameter><purpose>Swaps two unique resource wrappers. </purpose><description><para><emphasis role="bold">Requires:</emphasis> <computeroutput>Resource</computeroutput> and <computeroutput>Deleter</computeroutput> are swappable. At least one of <computeroutput>Resource</computeroutput> and <computeroutput>Deleter</computeroutput> is nothrow swappable.</para><para><emphasis role="bold">Effects:</emphasis> Swaps the resource objects and deleter objects stored in <computeroutput>*this</computeroutput> and <emphasis>that</emphasis> as if by calling unqualified <computeroutput>swap</computeroutput> in a context where <computeroutput>std::swap</computeroutput> is found by overload resolution.</para><para>If an exception is thrown, and the failed swap operation supports strong exception guarantee, both <computeroutput>*this</computeroutput> and <emphasis>that</emphasis> are left in their original states.</para><para><emphasis role="bold">Throws:</emphasis> Nothing, unless swapping the resource objects or deleters throw.</para><para>
+</para></description></method>
+</method-group>
+<method-group name="friend functions">
+<method id="doxygen.reference.classboost_1_1scope_1_1unique__resource_1a98787099f36787dc31b14a9fcc8d3498" name="swap" cv="noexcept(...)"><type>void</type><parameter name="left"><paramtype><classname>unique_resource</classname> &amp;</paramtype></parameter><parameter name="right"><paramtype><classname>unique_resource</classname> &amp;</paramtype></parameter><purpose>Swaps two unique resource wrappers. </purpose><description><para><emphasis role="bold">Effects:</emphasis> As if <computeroutput>left.swap(right)</computeroutput>. </para></description></method>
+</method-group>
+</class><data-member id="doxygen.reference.unique__resource_8hpp_1a970dcf160d71b25082989f9bc8e5bff3" name="default_resource"><type>constexpr default_resource_t</type><purpose>Keyword representing default, unallocated resource argument. </purpose></data-member>
+<function id="doxygen.reference.unique__resource__fwd_8hpp_1a9c005a6f171905bbecb1adb1aca23948" name="make_unique_resource_checked"><type><classname>unique_resource</classname>&lt; typename std::decay&lt; Resource &gt;::type, typename std::decay&lt; Deleter &gt;::type &gt;</type><template>
+          <template-type-parameter name="Resource"/>
+          <template-type-parameter name="Deleter"/>
+          <template-type-parameter name="Invalid"><default>typename std::decay&lt; Resource &gt;::type</default></template-type-parameter>
+        </template><parameter name="res"><paramtype>Resource &amp;&amp;</paramtype><description><para>Resource to wrap. </para></description></parameter><parameter name="invalid"><paramtype>Invalid const &amp;</paramtype><description><para>An invalid value for the resource. </para></description></parameter><parameter name="del"><paramtype>Deleter &amp;&amp;</paramtype><description><para>A deleter to invoke on the resource to free it. </para></description></parameter><purpose>Checks if the resource is valid and creates a <computeroutput><link linkend="doxygen.reference.classboost_1_1scope_1_1unique__resource">unique_resource</link></computeroutput> wrapper. </purpose><description><para><emphasis role="bold">Effects:</emphasis> If the resource <emphasis>res</emphasis> is not equal to <emphasis>invalid</emphasis>, creates a unique resource wrapper that is in allocated state and owns <emphasis>res</emphasis>. Otherwise creates a unique resource wrapper in unallocated state.</para><para><note><para>This function does not call <emphasis>del</emphasis> if <emphasis>res</emphasis> is equal to <emphasis>invalid</emphasis>.</para>
+</note>
+<emphasis role="bold">Throws:</emphasis> Nothing, unless <computeroutput><link linkend="doxygen.reference.classboost_1_1scope_1_1unique__resource">unique_resource</link></computeroutput> constructor throws.</para><para>
+</para></description></function>
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.reference.unique__resource__fwd_8hpp" name="boost/scope/unique_resource_fwd.hpp">
+<para>This header contains forward declaration of <computeroutput>unique_resource</computeroutput> template. </para><namespace name="boost">
+<namespace name="scope">
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+</library-reference>

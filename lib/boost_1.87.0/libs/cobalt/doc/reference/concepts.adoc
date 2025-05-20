@@ -1,0 +1,21 @@
+[#concepts]
+== cobalt/concepts.hpp
+
+[#awaitable]
+=== Awaitable
+
+An awaitable is an expression that can be used with `co_await`.
+
+[source,cpp]
+----
+include::../../include/boost/cobalt/concepts.hpp[tag=outline]
+----
+
+WARNING: <<awaitable,awaitables>> in this library require that the coroutine promise
+return their executor by const reference if they provide one. Otherwise it'll use `this_thread::get_executor()`.
+
+[#enable_awaitables]
+=== Enable awaitables
+
+Inheriting `enable_awaitables` will enable a coroutine to co_await anything through `await_transform`
+that would be `co_await`-able in the absence of any `await_transform`.

@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template wrapping_int2</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../../date_time/doxy.html#doxygen.date_time_reference.wrapping__int_8hpp" title="Header &lt;boost/date_time/wrapping_int.hpp&gt;">
+<link rel="prev" href="classboost_1_1date__time_1_1wrapping__int.html" title="Class template wrapping_int">
+<link rel="next" href="structboost_1_1date__time_1_1year__month__day__base.html" title="Struct template year_month_day_base">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1date__time_1_1wrapping__int.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../date_time/doxy.html#doxygen.date_time_reference.wrapping__int_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="structboost_1_1date__time_1_1year__month__day__base.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.date_time_reference.classboost_1_1date__time_1_1wrapping__int2"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template wrapping_int2</span></h2>
+<p>boost::date_time::wrapping_int2 — A wrapping integer used to wrap around at the top (WARNING: only instantiate with a signed type) </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../date_time/doxy.html#doxygen.date_time_reference.wrapping__int_8hpp" title="Header &lt;boost/date_time/wrapping_int.hpp&gt;">boost/date_time/wrapping_int.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> int_type_<span class="special">,</span> <span class="identifier">int_type_</span> wrap_min<span class="special">,</span> <span class="identifier">int_type_</span> wrap_max<span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1date__time_1_1wrapping__int2.html" title="Class template wrapping_int2">wrapping_int2</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">int_type_</span> <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1wrapping__int2_1a47b507341fc2e79e88bd20376778bcbf"></a><span class="identifier">int_type</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1date__time_1_1wrapping__int2.html#id-1_3_12_15_3_59_1_1_2_5-bb">public static functions</a></span>
+  <span class="keyword">static</span> <span class="identifier">BOOST_CONSTEXPR</span> <span class="identifier">int_type</span> <a class="link" href="classboost_1_1date__time_1_1wrapping__int2.html#doxygen.date_time_reference.classboost_1_1date__time_1_1wrapping__int2_1a4a9501e1c6b0d175333923a7acb0e925"><span class="identifier">wrap_value</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="identifier">BOOST_CONSTEXPR</span> <span class="identifier">int_type</span> <a class="link" href="classboost_1_1date__time_1_1wrapping__int2.html#doxygen.date_time_reference.classboost_1_1date__time_1_1wrapping__int2_1a08e283770a3be201985b4f58d06e20d3"><span class="identifier">min_value</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1date__time_1_1wrapping__int2.html#id-1_3_12_15_3_59_1_1_2_6-bb">public member functions</a></span>
+  <a class="link" href="classboost_1_1date__time_1_1wrapping__int2.html#doxygen.date_time_reference.classboost_1_1date__time_1_1wrapping__int2_1aa6b3ebb0cc46421720a750a4b5b18263"><span class="identifier">wrapping_int2</span></a><span class="special">(</span><span class="identifier">int_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">BOOST_CONSTEXPR</span> <span class="identifier">int_type</span> <a class="link" href="classboost_1_1date__time_1_1wrapping__int2.html#doxygen.date_time_reference.classboost_1_1date__time_1_1wrapping__int2_1accdab8d9d7ebd99af3077ae100be3490"><span class="identifier">as_int</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">BOOST_CONSTEXPR</span> <a class="link" href="classboost_1_1date__time_1_1wrapping__int2.html#doxygen.date_time_reference.classboost_1_1date__time_1_1wrapping__int2_1a2eeb83d6ab40053bb3e67208fc8e581b"><span class="keyword">operator</span> <span class="identifier">int_type</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> IntT<span class="special">&gt;</span> <span class="identifier">BOOST_CXX14_CONSTEXPR</span> <span class="identifier">IntT</span> <a class="link" href="classboost_1_1date__time_1_1wrapping__int2.html#doxygen.date_time_reference.classboost_1_1date__time_1_1wrapping__int2_1ab4ae2632adde0ebae7bf10062285210a"><span class="identifier">add</span></a><span class="special">(</span><span class="identifier">IntT</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> IntT<span class="special">&gt;</span> <span class="identifier">BOOST_CXX14_CONSTEXPR</span> <span class="identifier">IntT</span> <a class="link" href="classboost_1_1date__time_1_1wrapping__int2.html#doxygen.date_time_reference.classboost_1_1date__time_1_1wrapping__int2_1a05a08c046504c307a70d0e3e9e89827f"><span class="identifier">subtract</span></a><span class="special">(</span><span class="identifier">IntT</span><span class="special">)</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1date__time_1_1wrapping__int2.html#id-1_3_12_15_3_59_1_1_2_7-bb">private member functions</a></span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> IntT<span class="special">&gt;</span> <span class="identifier">BOOST_CXX14_CONSTEXPR</span> <span class="identifier">IntT</span> <a class="link" href="classboost_1_1date__time_1_1wrapping__int2.html#doxygen.date_time_reference.classboost_1_1date__time_1_1wrapping__int2_1aea1654142c50cffe8fb607325b5aabb6"><span class="identifier">calculate_wrap</span></a><span class="special">(</span><span class="identifier">IntT</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.12.15.3.58.4.4"></a><h2>Description</h2>
+<p>Bad name, quick impl to fix a bug – fix later!! This allows the wrap to restart at a value other than 0. </p>
+<div class="refsect2">
+<a name="id-1.3.12.15.3.58.4.4.3"></a><h3>
+<a name="id-1_3_12_15_3_59_1_1_2_5-bb"></a><code class="computeroutput">wrapping_int2</code> public static functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem"><pre class="literallayout"><span class="keyword">static</span> <span class="identifier">BOOST_CONSTEXPR</span> <span class="identifier">int_type</span> <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1wrapping__int2_1a4a9501e1c6b0d175333923a7acb0e925"></a><span class="identifier">wrap_value</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">static</span> <span class="identifier">BOOST_CONSTEXPR</span> <span class="identifier">int_type</span> <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1wrapping__int2_1a08e283770a3be201985b4f58d06e20d3"></a><span class="identifier">min_value</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre></li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.12.15.3.58.4.4.4"></a><h3>
+<a name="id-1_3_12_15_3_59_1_1_2_6-bb"></a><code class="computeroutput">wrapping_int2</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.date_time_reference.classboost_1_1date__time_1_1wrapping__int2_1aa6b3ebb0cc46421720a750a4b5b18263"></a><span class="identifier">wrapping_int2</span><span class="special">(</span><span class="identifier">int_type</span> v<span class="special">)</span><span class="special">;</span></pre>
+<p>If initializing value is out of range of [wrap_min, wrap_max], value will be initialized to closest of min or max </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">BOOST_CONSTEXPR</span> <span class="identifier">int_type</span> <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1wrapping__int2_1accdab8d9d7ebd99af3077ae100be3490"></a><span class="identifier">as_int</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Explicit converion method. </li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">BOOST_CONSTEXPR</span> <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1wrapping__int2_1a2eeb83d6ab40053bb3e67208fc8e581b"></a><span class="keyword">operator</span> <span class="identifier">int_type</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> IntT<span class="special">&gt;</span> <span class="identifier">BOOST_CXX14_CONSTEXPR</span> <span class="identifier">IntT</span> <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1wrapping__int2_1ab4ae2632adde0ebae7bf10062285210a"></a><span class="identifier">add</span><span class="special">(</span><span class="identifier">IntT</span> v<span class="special">)</span><span class="special">;</span></pre>Add, return number of wraps performed. <p>The sign of the returned value will indicate which direction the wraps went. Ex: add a negative number and wrapping under could occur, this would be indicated by a negative return value. If wrapping over took place, a positive value would be returned </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> IntT<span class="special">&gt;</span> <span class="identifier">BOOST_CXX14_CONSTEXPR</span> <span class="identifier">IntT</span> <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1wrapping__int2_1a05a08c046504c307a70d0e3e9e89827f"></a><span class="identifier">subtract</span><span class="special">(</span><span class="identifier">IntT</span> v<span class="special">)</span><span class="special">;</span></pre>Subtract will return '-d' if wrapping under took place ('d' is the number of wraps) <p>The sign of the returned value will indicate which direction the wraps went. Ex: subtract a negative number and wrapping over could occur, this would be indicated by a positive return value. If wrapping under took place, a negative value would be returned </p>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.12.15.3.58.4.4.5"></a><h3>
+<a name="id-1_3_12_15_3_59_1_1_2_7-bb"></a><code class="computeroutput">wrapping_int2</code> private member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> IntT<span class="special">&gt;</span> <span class="identifier">BOOST_CXX14_CONSTEXPR</span> <span class="identifier">IntT</span> <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1wrapping__int2_1aea1654142c50cffe8fb607325b5aabb6"></a><span class="identifier">calculate_wrap</span><span class="special">(</span><span class="identifier">IntT</span> wrap<span class="special">)</span><span class="special">;</span></pre></li></ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2001-2005 CrystalClear Software, Inc<p>Subject to the Boost Software License, Version 1.0. (See accompanying file
+    <code class="filename">LICENSE_1_0.txt</code> or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)</p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1date__time_1_1wrapping__int.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../date_time/doxy.html#doxygen.date_time_reference.wrapping__int_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="structboost_1_1date__time_1_1year__month__day__base.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

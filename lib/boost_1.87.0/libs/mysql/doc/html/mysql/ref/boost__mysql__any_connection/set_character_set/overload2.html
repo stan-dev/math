@@ -1,0 +1,85 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>any_connection::set_character_set (2 of 2 overloads)</title>
+<link rel="stylesheet" href="../../../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../set_character_set.html" title="any_connection::set_character_set">
+<link rel="prev" href="overload1.html" title="any_connection::set_character_set (1 of 2 overloads)">
+<link rel="next" href="../async_set_character_set.html" title="any_connection::async_set_character_set">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="overload1.html"><img src="../../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../set_character_set.html"><img src="../../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../../index.html"><img src="../../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../async_set_character_set.html"><img src="../../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h6 class="title">
+<a name="mysql.ref.boost__mysql__any_connection.set_character_set.overload2"></a><a class="link" href="overload2.html" title="any_connection::set_character_set (2 of 2 overloads)">any_connection::set_character_set
+          (2 of 2 overloads)</a>
+</h6></div></div></div>
+<p>
+            Sets the connection's character set, as per SET NAMES.
+          </p>
+<h6>
+<a name="mysql.ref.boost__mysql__any_connection.set_character_set.overload2.h0"></a>
+            <span class="phrase"><a name="mysql.ref.boost__mysql__any_connection.set_character_set.overload2.synopsis"></a></span><a class="link" href="overload2.html#mysql.ref.boost__mysql__any_connection.set_character_set.overload2.synopsis">Synopsis</a>
+          </h6>
+<pre class="programlisting"><span class="keyword">void</span>
+<span class="identifier">set_character_set</span><span class="special">(</span>
+    <span class="keyword">const</span> <a class="link" href="../../boost__mysql__character_set.html" title="character_set"><code class="literal">character_set</code></a><span class="special">&amp;</span> <span class="identifier">charset</span><span class="special">);</span>
+</pre>
+<h6>
+<a name="mysql.ref.boost__mysql__any_connection.set_character_set.overload2.h1"></a>
+            <span class="phrase"><a name="mysql.ref.boost__mysql__any_connection.set_character_set.overload2.description"></a></span><a class="link" href="overload2.html#mysql.ref.boost__mysql__any_connection.set_character_set.overload2.description">Description</a>
+          </h6>
+<p>
+            Sets the connection's character set by running a <a href="https://dev.mysql.com/doc/refman/8.0/en/set-names.html" target="_top"><code class="computeroutput"><span class="identifier">SET</span> <span class="identifier">NAMES</span></code></a>
+            SQL statement, using the passed <a class="link" href="../../boost__mysql__character_set/name.html" title="character_set::name"><code class="computeroutput"><span class="identifier">character_set</span><span class="special">::</span><span class="identifier">name</span></code></a> as the charset name to
+            set.
+          </p>
+<p>
+            This function will also update the value returned by <a class="link" href="../current_character_set.html" title="any_connection::current_character_set"><code class="computeroutput"><span class="identifier">current_character_set</span></code></a>, so prefer
+            using this function over raw SQL statements.
+          </p>
+<p>
+            If the server was unable to set the character set to the requested value
+            (e.g. because the server does not support the requested charset), this
+            function will fail, as opposed to how <a class="link" href="../connect.html" title="any_connection::connect"><code class="computeroutput"><span class="identifier">connect</span></code></a> behaves when an unsupported
+            collation is passed. This is a limitation of MySQL servers.
+          </p>
+<p>
+            You need to perform connection establishment for this function to succeed,
+            since it involves communicating with the server.
+          </p>
+<h6>
+<a name="mysql.ref.boost__mysql__any_connection.set_character_set.overload2.h2"></a>
+            <span class="phrase"><a name="mysql.ref.boost__mysql__any_connection.set_character_set.overload2.object_lifetimes"></a></span><a class="link" href="overload2.html#mysql.ref.boost__mysql__any_connection.set_character_set.overload2.object_lifetimes">Object
+            lifetimes</a>
+          </h6>
+<p>
+            <code class="computeroutput"><span class="identifier">charset</span></code> will be copied
+            as required, and does not need to be kept alive.
+          </p>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="overload1.html"><img src="../../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../set_character_set.html"><img src="../../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../../index.html"><img src="../../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../async_set_character_set.html"><img src="../../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

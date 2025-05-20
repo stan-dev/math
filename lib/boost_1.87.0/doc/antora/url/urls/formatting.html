@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+        <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Formatting :: Boost Libraries Documentation</title>
+  <link rel="canonical" href="https://antora.cppalliance.org/master/lib/doc/url/urls/formatting.html">
+    <link rel="prev" href="percent-encoding.html">
+    <link rel="next" href="../grammar/index.html">
+  <meta name="generator" content="Antora 3.1.9">
+    <link rel="stylesheet" href="../../_/css/boostlook.css">
+    <link rel="stylesheet" href="../../_/css/site.css">
+    <link rel="stylesheet" href="../../_/css/vendor/tabs.css">
+    <script>var uiRootPath = '../../_'</script>
+  </head>
+  <body class="article toc2 toc-left">
+    <div class="boostlook">
+  <div id="header">
+    <div id="toc" class="nav-container toc2" data-component="url" data-version="">
+  <aside class="nav">
+    <button class="nav-close"></button>
+    <div class="panels">
+      <div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+      <h3 class="title"><a href="../index.html">Boost.URL</a></h3>
+      <ul class="nav-list">
+        <ul class="nav-list">
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../quicklook.html">Quick Look</a>
+        </li>
+              <li class="" data-depth="1">
+            <a class="nav-link" href="index.html">URLs</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="parsing.html">Parsing</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="containers.html">Containers</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="segments.html">Segments</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="params.html">Params</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="normalization.html">Normalization</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="stringtoken.html">String Token</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="percent-encoding.html">Percent Encoding</a>
+        </li>
+              <li class=" is-current-page" data-depth="2">
+            <a class="nav-link" href="formatting.html">Formatting</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../grammar/index.html">Customization</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/rules.html">Parse Rules</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/charset.html">Character Sets</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/combinators.html">Compound Rules</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/range.html">Ranges</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/rfc3986.html">RFC 3986</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Examples</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/qrcode.html">QR Code</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/finicky.html">Finicky</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/mailto.html">mailto URLs</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/magnet-link.html">Magnet Link</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/file-router.html">File Router</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/router.html">Router</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/sanitize.html">Sanitizing URLs</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../reference.html">Reference</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <span class="nav-text">Concepts</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="3">
+            <a class="nav-link" href="../concepts/CharSet.html">CharSet</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="../concepts/Rule.html">Rule</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="../concepts/StringToken.html">StringToken</a>
+        </li>
+        </ul>
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../HelpCard.html">Help Card</a>
+        </li>
+        </ul>
+  </ul>
+  </ul>
+  </nav>
+</div>
+    </div>
+  </aside>
+</div>
+</div>
+  <div id="content">
+    <article class="doc max-width-reset">
+  <div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li>
+      <a href="../index.html" aria-label="Home: Boost.URL">
+        <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 -960 960 960" fill="#000000" aria-hidden="true"><path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z"/></svg>
+      </a>
+    </li>
+    <li><a href="index.html">URLs</a></li>
+    <li><a href="formatting.html">Formatting</a></li>
+  </ul>
+</nav>
+<div class="spirit-nav">
+    <a accesskey="p" href="percent-encoding.html"><span class="material-symbols-outlined" title="Previous: Percent Encoding">arrow_back</span></a>
+    <a accesskey="p" href="index.html"><span class="material-symbols-outlined" title="Up: URLs">arrow_upward</span></a>
+    <a accesskey="p" href="../grammar/index.html"><span class="material-symbols-outlined" title="Next: Customization">arrow_forward</span></a>
+</div>
+</div>
+    <h1 class="page">Formatting</h1>
+  <div class="paragraph">
+<p>Algorithms to format URLs construct a mutable URL by parsing and applying arguments to a URL template.
+The following example uses the <code><a href="../reference/boost/urls/format.html" class="xref page">format</a></code>
+function to construct an absolute URL:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">url u = format("{}://{}:{}/rfc/{}", "https", "www.ietf.org", 80, "rfc2396.txt");
+assert(u.buffer() == "https://www.ietf.org:80/rfc/rfc2396.txt");</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The rules for a format URL string are the same as for a <code>std::format_string</code>, where replacement fields are delimited by curly braces.
+The URL type is inferred from the format string.</p>
+</div>
+<div class="paragraph">
+<p>The URL components to which replacement fields belong are identified before replacement is applied and any invalid characters for that formatted argument are percent-escaped:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">url u = format("https://{}/{}", "www.boost.org", "Hello world!");
+assert(u.buffer() == "https://www.boost.org/Hello%20world!");</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Delimiters in the URL template, such as <code>":"</code>, <code>"//"</code>, <code>"?"</code>, and <code>"#"</code>, unambiguously associate each replacement field to a URL component.
+All other characters are normalized to ensure the URL is valid:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">url u = format("{}:{}", "mailto", "someone@example.com");
+assert(u.buffer() == "mailto:someone@example.com");
+assert(u.scheme() == "mailto");
+assert(u.path() == "someone@example.com");</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">url u = format("{}{}", "mailto:", "someone@example.com");
+assert(u.buffer() == "mailto%3Asomeone@example.com");
+assert(!u.has_scheme());
+assert(u.path() == "mailto:someone@example.com");
+assert(u.encoded_path() == "mailto%3Asomeone@example.com");</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The function <code><a href="../reference/boost/urls/format_to.html" class="xref page">format_to</a></code> can be used to format URLs into any modifiable URL container.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">static_url&lt;50&gt; u;
+format_to(u, "{}://{}:{}/rfc/{}", "https", "www.ietf.org", 80, "rfc2396.txt");
+assert(u.buffer() == "https://www.ietf.org:80/rfc/rfc2396.txt");</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>As with <code><a href="https://en.cppreference.com/w/cpp/utility/format/format" target="_blank" rel="noopener">std::format</a></code>, positional and named arguments are supported.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">url u = format("{0}://{2}:{1}/{3}{4}{3}", "https", 80, "www.ietf.org", "abra", "cad");
+assert(u.buffer() == "https://www.ietf.org:80/abracadabra");</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code><a href="../reference/boost/urls/arg.html" class="xref page">arg</a></code> function can be used to associate names with arguments:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">url u = format("https://example.com/~{username}", arg("username", "mark"));
+assert(u.buffer() == "https://example.com/~mark");</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A second overload based on <code><a href="https://en.cppreference.com/w/cpp/utility/initializer_list" target="_blank" rel="noopener">std::initializer_list</a></code>
+is provided for both <code><a href="../reference/boost/urls/format.html" class="xref page">format</a></code> and <code><a href="../reference/boost/urls/format_to.html" class="xref page">format_to</a></code>.
+These overloads can help with lists of named arguments:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">boost::core::string_view fmt = "{scheme}://{host}:{port}/{dir}/{file}";
+url u = format(fmt, {{"scheme", "https"}, {"port", 80}, {"host", "example.com"}, {"dir", "path/to"}, {"file", "file.txt"}});
+assert(u.buffer() == "https://example.com:80/path/to/file.txt");</code></pre>
+</div>
+</div>
+  <div class="edit-this-page">
+      <a href="https://github.com/boostorg/url/edit/develop/doc/modules/ROOT/pages/urls/formatting.adoc">Edit this Page</a>
+      </div>
+      <nav class="pagination">
+        <span class="prev"><a href="percent-encoding.html">Percent Encoding</a></span>
+        <span class="next"><a href="../grammar/index.html">Customization</a></span>
+    </nav>
+</article>
+</div>
+  <div id="footer">
+  <script id="site-script" src="../../_/js/site.js" data-ui-root-path="../../_"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+<script async src="../../_/js/vendor/tabs.js" data-sync-storage-key="preferred-tab"></script>
+</div>
+</div>
+  </body>
+</html>

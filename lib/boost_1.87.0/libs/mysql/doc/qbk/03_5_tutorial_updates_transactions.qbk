@@ -1,0 +1,149 @@
+[/
+    Copyright (c) 2019-2024 Ruben Perez Hidalgo (rubenperez038 at gmail dot com)
+   
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+]
+
+[section:tutorial_updates_transactions Tutorial 5: UPDATEs, transactions and semicolon-separated queries]
+
+All the previous tutorials have only used `SELECT` statements, but
+Boost.MySQL is not limited to them. Using [refmemunq any_connection async_execute]
+you can run any SQL statement supported by MySQL.
+
+In this tutorial, we will write a program that changes the first name of an
+employee, given their ID, and prints the updated employee details.
+We will use an `UPDATE` and transaction management statements.
+`INSERT` and `DELETE` statements have similar mechanics.
+
+
+
+[heading A simple UPDATE]
+
+We can use the same tools and functions as in previous tutorials:
+
+[tutorial_updates_transactions_update]
+
+By default, auto-commit is enabled, meaning that when `async_execute`
+returns, the `UPDATE` is visible to other client connections.
+
+
+
+
+[heading Checking that the UPDATE took effect]
+
+The above query will succeed even if there was no employee with the given ID.
+We would like to retrieve the updated employee details on success, and emit
+a useful error message if no employee was matched.
+
+We may be tempted to use [refmem results affected_rows] at first, but
+this doesn't convey the information we're looking for:
+a row may be matched but not affected. For example, if you try to
+set `first_name` to the same value it already has,
+MySQL will count the row as a matched, but not affected.
+
+
+MySQL does not support the `UPDATE ... RETURNING` syntax, so we will
+have to retrieve the employee manually after updating it.
+We can add the following after our `UPDATE`:
+
+[tutorial_updates_transactions_select]
+
+However, the code above contains a race condition. Imagine the following situation:
+
+* The `UPDATE` is issued. No employee is matched.
+* Before our program sends the `SELECT` query, a different program inserts
+  an employee with the ID that we're trying to update.
+* Our program runs the `SELECT` statement and retrieves the newly inserted row.
+
+To our program, it looks like we succeeded performing the update, when
+we really didn't. Depending on the nature of our program, this may
+or may not have serious consequences, but it's something we should avoid.
+
+
+[heading Avoiding the race condition with a transaction block]
+
+We can fix the race condition using transactions.
+In MySQL, a transaction block is opened with `START TRANSACTION`.
+Subsequent statements will belong to the transaction block,
+until the transaction either commits or is rolled back.
+A `COMMIT` statement commits the transaction.
+A rollback happens if the connection that initiated the transaction
+closes or an explicit `ROLLBACK` statement is used.
+
+We will enclose our `UPDATE` and `SELECT` statements in
+a transaction block. This will ensure that the `SELECT`
+will get the updated row, if any:
+
+[tutorial_updates_transactions_txn]
+
+
+
+
+[heading Using multi-queries]
+
+While the code we've written is correct, it's not very performant.
+We're incurring in 4 round-trips to the server, when our queries don't depend
+on the result of previous ones. The round-trips occur within a transaction
+block, which causes certain database rows to be locked, increasing contention.
+We can improve the situation by running our four statements in a single batch.
+
+Multi-queries are a protocol feature that lets you execute several queries
+at once. Individual queries must be separated by semicolons.
+
+Multi-queries are disabled by default. To enable them, set
+[refmem connect_params multi_queries] to `true` before connecting:
+
+[tutorial_updates_transactions_connect]
+
+Multi-queries can be composed an executed using the same
+functions we've been using:
+
+[tutorial_updates_transactions_multi_queries]
+
+Accessing the results is slightly different. MySQL returns 4 resultsets,
+one for each query. In Boost.MySQL, this operation is said to be
+[link mysql.multi_resultset multi-resultset].
+[reflink results] can actually store more than one resultset.
+[refmem results rows] actually accesses the rows in the first resultset,
+because it's the most common use case.
+
+We want to get the rows retrieved by the `SELECT` statement,
+which corresponds to the third resultset.
+[refmem results at] returns a [reflink resultset_view] containing data
+for the requested resultset:
+
+[tutorial_updates_transactions_dynamic_results]
+
+
+[heading Using manual indices in with_params]
+
+Repeating `employee_id` in the parameter list passed to `with_params`
+violates the DRY principle.
+As with `std::format`, we can refer to a format argument more than once
+by using manual indices:
+
+[tutorial_updates_transactions_manual_indices]
+
+
+
+[heading Using the static interface with multi-resultset]
+
+Finally, we can rewrite our code to use the static interface so it's safer.
+In multi-resultset scenarios, we can pass as many row types
+to [reflink static_results] as resultsets we expect.
+We can use the empty tuple (`std::tuple<>`) as a row type
+for operations that don't return rows, like the `UPDATE`.
+Our code becomes:
+
+[tutorial_updates_transactions_static]
+
+
+[heading Wrapping up]
+
+Full program listing for this tutorial is [link mysql.examples.tutorial_updates_transactions here].
+
+You can now proceed to [link mysql.tutorial_connection_pool the next tutorial].
+
+
+[endsect]

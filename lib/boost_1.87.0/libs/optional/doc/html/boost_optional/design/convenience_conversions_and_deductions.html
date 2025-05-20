@@ -1,0 +1,163 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Convenience Conversions and Deductions</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Boost.Optional">
+<link rel="up" href="../../optional/design.html" title="Design Overview and Rationale">
+<link rel="prev" href="relational_operators.html" title="Relational operators">
+<link rel="next" href="io_operators.html" title="IO operators">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="relational_operators.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../optional/design.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="io_operators.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="boost_optional.design.convenience_conversions_and_deductions"></a><a class="link" href="convenience_conversions_and_deductions.html" title="Convenience Conversions and Deductions">Convenience
+      Conversions and Deductions</a>
+</h3></div></div></div>
+<p>
+        Unlike <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">optional</span></code>, <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">optional</span></code>
+        does not offer a number of "convenience" converting constructors,
+        mixed relational operations and deductions for class template parameters.
+      </p>
+<pre class="programlisting"><span class="identifier">std</span><span class="special">::</span><span class="identifier">optional</span> <span class="identifier">oi</span> <span class="special">=</span> <span class="number">1</span><span class="special">;</span>                 <span class="comment">// OK</span>
+
+<span class="identifier">std</span><span class="special">:</span><span class="identifier">string_view</span> <span class="identifier">sv</span> <span class="special">=</span> <span class="string">"hi"</span><span class="special">;</span>
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">optional</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">&gt;</span> <span class="identifier">os</span> <span class="special">=</span> <span class="identifier">sv</span><span class="special">;</span>   <span class="comment">// OK</span>
+<span class="identifier">os</span> <span class="special">==</span> <span class="identifier">sv</span><span class="special">;</span>                             <span class="comment">// OK</span>
+
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">optional</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">&gt;</span> <span class="identifier">osv</span><span class="special">;</span>
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">optional</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">&gt;</span> <span class="identifier">os2</span> <span class="special">=</span> <span class="identifier">osv</span><span class="special">;</span> <span class="comment">// OK</span>
+<span class="identifier">os2</span> <span class="special">==</span> <span class="identifier">osv</span><span class="special">;</span>                           <span class="comment">// OK</span>
+</pre>
+<p>
+        They are practical, and sometimes stem from the argument for consistency:
+        if <code class="computeroutput"><span class="special">(</span><span class="identifier">optT</span>
+        <span class="special">&amp;&amp;</span> <span class="special">*</span><span class="identifier">optT</span> <span class="special">==</span> <span class="identifier">u</span><span class="special">)</span></code> works
+        then <code class="computeroutput"><span class="special">(</span><span class="identifier">optT</span>
+        <span class="special">==</span> <span class="identifier">u</span><span class="special">)</span></code> should also work.
+      </p>
+<p>
+        However, these intelligent convenience functions sometimes produce results
+        that are counter to the programmer intentions and produce silent bugs.
+      </p>
+<p>
+        Consider a more complicated example:
+      </p>
+<pre class="programlisting"><span class="identifier">Threshold</span> <span class="identifier">th</span> <span class="special">=</span> <span class="comment">/*...*/</span><span class="special">;</span>
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">optional</span> <span class="identifier">o</span> <span class="special">=</span> <span class="identifier">th</span><span class="special">;</span>
+<span class="identifier">assert</span> <span class="special">(</span><span class="identifier">o</span><span class="special">);</span>
+</pre>
+<p>
+        In this code, can we expect that thus initialized <code class="computeroutput"><span class="identifier">optional</span></code>
+        contains a value? The answer is: it depends on the type of <code class="computeroutput"><span class="identifier">Threshold</span></code>. It can be defined as:
+      </p>
+<pre class="programlisting"><span class="keyword">using</span> <span class="identifier">Threshold</span> <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">optional</span><span class="special">&lt;</span><span class="keyword">int</span><span class="special">&gt;;</span>
+</pre>
+<p>
+        And then the assertion will fire. This is because in this case the intelligence
+        decides that since we already have an optional, the additional wrapping into
+        a yet another optional is unnecessary.
+      </p>
+<p>
+        If we explicitly specify the template type, the situation doesn't get less
+        complicated.
+      </p>
+<pre class="programlisting"><span class="identifier">Threshold</span> <span class="identifier">th</span><span class="special">;</span>
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">optional</span><span class="special">&lt;</span><span class="identifier">Threshold</span><span class="special">&gt;</span> <span class="identifier">o</span> <span class="special">=</span> <span class="identifier">th</span><span class="special">;</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">o</span><span class="special">);</span>
+</pre>
+<p>
+        Can this assertion fire? Now we have two competing constructors:
+      </p>
+<pre class="programlisting"><span class="keyword">template</span> <span class="special">&lt;</span><span class="keyword">typename</span> <span class="identifier">U</span><span class="special">&gt;</span>
+<span class="identifier">optional</span><span class="special">(</span><span class="identifier">U</span> <span class="keyword">const</span><span class="special">&amp;);</span>
+
+<span class="keyword">template</span> <span class="special">&lt;</span><span class="keyword">typename</span> <span class="identifier">U</span><span class="special">&gt;</span>
+<span class="identifier">optional</span><span class="special">(</span><span class="identifier">optional</span><span class="special">&lt;</span><span class="identifier">U</span><span class="special">&gt;</span> <span class="keyword">const</span><span class="special">&amp;);</span>
+</pre>
+<p>
+        Which one will get chosen? Actually, we are lucky, and it is going to be
+        the first one due to concept tricks. But let's try a different example:
+      </p>
+<pre class="programlisting"><span class="identifier">Threshold</span> <span class="identifier">th</span><span class="special">;</span>
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">optional</span><span class="special">&lt;</span><span class="identifier">Threshold</span><span class="special">&gt;</span> <span class="identifier">o</span> <span class="special">=</span> <span class="identifier">th</span><span class="special">;</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">o</span><span class="special">);</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">o</span> <span class="special">==</span> <span class="identifier">th</span><span class="special">);</span>
+</pre>
+<p>
+        Here, the first assertion passes, but the second one fires. This is because
+        there are two competing overloads of the comparison operator:
+      </p>
+<pre class="programlisting"><span class="keyword">template</span> <span class="special">&lt;</span><span class="keyword">typename</span> <span class="identifier">T</span><span class="special">,</span> <span class="keyword">typename</span> <span class="identifier">U</span><span class="special">&gt;</span>
+<span class="keyword">bool</span> <span class="keyword">operator</span><span class="special">==(</span><span class="identifier">optional</span><span class="special">&lt;</span><span class="identifier">T</span><span class="special">&gt;</span> <span class="keyword">const</span><span class="special">&amp;,</span> <span class="identifier">U</span> <span class="keyword">const</span><span class="special">&amp;);</span>
+
+<span class="keyword">template</span> <span class="special">&lt;</span><span class="keyword">typename</span> <span class="identifier">T</span><span class="special">,</span> <span class="keyword">typename</span> <span class="identifier">U</span><span class="special">&gt;</span>
+<span class="keyword">bool</span> <span class="keyword">operator</span><span class="special">==(</span><span class="identifier">optional</span><span class="special">&lt;</span><span class="identifier">T</span><span class="special">&gt;</span> <span class="keyword">const</span><span class="special">&amp;,</span> <span class="identifier">optional</span><span class="special">&lt;</span><span class="identifier">U</span><span class="special">&gt;</span> <span class="keyword">const</span><span class="special">&amp;);</span>
+</pre>
+<p>
+        And this time there is no concept trickery, so the second overload is chosen,
+        and gives different results: we are comparing an optional object <code class="computeroutput"><span class="identifier">th</span></code>, which does not contain a value, with
+        an optional object <code class="computeroutput"><span class="identifier">o</span></code> which
+        does contain a value.
+      </p>
+<p>
+        This problem -- that the operations compile, but have runtime behavior counter
+        to programmer's intuition -- gains new significance with the introduction
+        of concepts to C++.
+      </p>
+<pre class="programlisting"><span class="keyword">static_assert</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">equality_comparable_with</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">optional</span><span class="special">&lt;</span><span class="identifier">Threshold</span><span class="special">&gt;,</span> <span class="identifier">Threshold</span><span class="special">&gt;);</span>
+</pre>
+<p>
+        Concepts have both syntactic constraints and semantic constraints. Syntactic
+        constraints are statically checked by the compiler. For semantic constraints,
+        functions that use the concept trust the programmer that these constraints
+        are met, and if not, this is <a href="https://en.cppreference.com/w/cpp/language/ub" target="_top"><span class="emphasis"><em>undefined
+        behavior</em></span></a>.
+      </p>
+<p>
+        These are problems with <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">optional</span></code>.
+        <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">optional</span></code> doesn't have these problems, because
+        it does not offer the said convenience operations.
+      </p>
+<p>
+        The design principle for <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">optional</span></code>
+        is not to offer functionality that nicely deduces the programmer intentions
+        in 95% of the cases, and in the remaining 5% renders effects counter to programmer
+        expectations.
+      </p>
+<p>
+        Instead, this library recommends using a more verbose syntax that works in
+        100% of the cases:
+      </p>
+<pre class="programlisting"><span class="identifier">Threshold</span> <span class="identifier">th</span><span class="special">;</span>
+<span class="keyword">auto</span> <span class="identifier">o</span> <span class="special">=</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">make_potional</span><span class="special">(</span><span class="identifier">th</span><span class="special">);</span>   <span class="comment">// *always* add a new layer of optionality</span>
+
+<span class="keyword">return</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">equal_pointees</span><span class="special">(</span><span class="identifier">o</span><span class="special">,</span> <span class="identifier">th</span><span class="special">);</span> <span class="comment">// *always* unpack optionals for comparison</span>
+<span class="keyword">return</span> <span class="identifier">o</span> <span class="special">&amp;&amp;</span> <span class="special">*</span><span class="identifier">o</span> <span class="special">==</span> <span class="identifier">th</span><span class="special">;</span>    <span class="comment">// *always* treat the right-hand side argument as value</span>
+</pre>
+</div>
+<div class="copyright-footer">Copyright © 2003-2007 Fernando Luis Cacciola Carballal<br>Copyright © 2014-2024 Andrzej Krzemieński<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="relational_operators.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../optional/design.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="io_operators.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

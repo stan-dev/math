@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+        <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Containers :: Boost Libraries Documentation</title>
+  <link rel="canonical" href="https://antora.cppalliance.org/master/lib/doc/url/urls/containers.html">
+    <link rel="prev" href="parsing.html">
+    <link rel="next" href="segments.html">
+  <meta name="generator" content="Antora 3.1.9">
+    <link rel="stylesheet" href="../../_/css/boostlook.css">
+    <link rel="stylesheet" href="../../_/css/site.css">
+    <link rel="stylesheet" href="../../_/css/vendor/tabs.css">
+    <script>var uiRootPath = '../../_'</script>
+  </head>
+  <body class="article toc2 toc-left">
+    <div class="boostlook">
+  <div id="header">
+    <div id="toc" class="nav-container toc2" data-component="url" data-version="">
+  <aside class="nav">
+    <button class="nav-close"></button>
+    <div class="panels">
+      <div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+      <h3 class="title"><a href="../index.html">Boost.URL</a></h3>
+      <ul class="nav-list">
+        <ul class="nav-list">
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../quicklook.html">Quick Look</a>
+        </li>
+              <li class="" data-depth="1">
+            <a class="nav-link" href="index.html">URLs</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="parsing.html">Parsing</a>
+        </li>
+              <li class=" is-current-page" data-depth="2">
+            <a class="nav-link" href="containers.html">Containers</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="segments.html">Segments</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="params.html">Params</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="normalization.html">Normalization</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="stringtoken.html">String Token</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="percent-encoding.html">Percent Encoding</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="formatting.html">Formatting</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../grammar/index.html">Customization</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/rules.html">Parse Rules</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/charset.html">Character Sets</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/combinators.html">Compound Rules</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/range.html">Ranges</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/rfc3986.html">RFC 3986</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Examples</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/qrcode.html">QR Code</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/finicky.html">Finicky</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/mailto.html">mailto URLs</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/magnet-link.html">Magnet Link</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/file-router.html">File Router</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/router.html">Router</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/sanitize.html">Sanitizing URLs</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../reference.html">Reference</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <span class="nav-text">Concepts</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="3">
+            <a class="nav-link" href="../concepts/CharSet.html">CharSet</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="../concepts/Rule.html">Rule</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="../concepts/StringToken.html">StringToken</a>
+        </li>
+        </ul>
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../HelpCard.html">Help Card</a>
+        </li>
+        </ul>
+  </ul>
+  </ul>
+  </nav>
+</div>
+    </div>
+  </aside>
+</div>
+</div>
+  <div id="content">
+    <article class="doc max-width-reset">
+  <div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li>
+      <a href="../index.html" aria-label="Home: Boost.URL">
+        <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 -960 960 960" fill="#000000" aria-hidden="true"><path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z"/></svg>
+      </a>
+    </li>
+    <li><a href="index.html">URLs</a></li>
+    <li><a href="containers.html">Containers</a></li>
+  </ul>
+</nav>
+<div class="spirit-nav">
+    <a accesskey="p" href="parsing.html"><span class="material-symbols-outlined" title="Previous: Parsing">arrow_back</span></a>
+    <a accesskey="p" href="index.html"><span class="material-symbols-outlined" title="Up: URLs">arrow_upward</span></a>
+    <a accesskey="p" href="segments.html"><span class="material-symbols-outlined" title="Next: Segments">arrow_forward</span></a>
+</div>
+</div>
+    <h1 class="page">Containers</h1>
+  <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Three containers are provided for interacting with URLs:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url.html" class="xref page">url</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A valid, modifiable URL which performs dynamic memory allocation
+to store the character buffer.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view.html" class="xref page">url_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A read-only reference to a character buffer containing a valid URL.
+The view does not retain ownership of the underlying character buffer;
+instead, it is managed by the caller.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/static_url.html" class="xref page">static_url</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A valid, modifiable URL which stores the character buffer
+inside the class itself. This is a class template, where
+the maximum buffer size is a non-type template parameter.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Inheritance provides the observer and modifier public members; class
+<code><a href="../reference/boost/urls/url_view_base.html" class="xref page">url_view_base</a></code>
+has all the observers, while class
+<code><a href="../reference/boost/urls/url_base.html" class="xref page">url_base</a></code>
+has all the modifiers.
+Although the members are public, these base classes can only be constructed by the library as needed to support the implementation.
+The class hierarchy looks like this:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/ClassHierarchy.svg" alt="ClassHierarchy">
+</div>
+</div>
+<div class="paragraph">
+<p>Throughout this documentation and especially below, when an observer is discussed, it is applicable to all three derived containers shown in the table above.
+When a modifier is discussed, it is relevant to the containers
+<code><a href="../reference/boost/urls/url.html" class="xref page">url</a></code> and <code><a href="../reference/boost/urls/static_url.html" class="xref page">static_url</a></code>.
+The tables and exposition which follow describe the available observers and modifiers, along with notes relating important behaviors or special requirements.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_scheme"><a class="anchor" href="#_scheme"></a>Scheme</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The scheme is represented as a case-insensitive string, along with an enumeration constant which acts as a numeric indentifier when the string matches one of the well-known schemes: http, https, ws, wss, file, and ftp.
+Characters in the scheme are never escaped; only letters and numbers are allowed, and the first character must be a letter.</p>
+</div>
+<div class="paragraph">
+<p>These members are used to inspect and modify the scheme:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Function</th>
+<th class="tableblock halign-left valign-top">Return Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/has_scheme.html" class="xref page">has_scheme</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="https://en.cppreference.com/w/cpp/language/types#Boolean_type" target="_blank" rel="noopener">bool</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return <code><a href="https://en.cppreference.com/w/cpp/language/types#Boolean_type" target="_blank" rel="noopener">true</a></code> if a scheme is present.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/scheme.html" class="xref page">scheme</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="https://www.boost.org/doc/libs/master/libs/core/doc/html/" target="_blank" rel="noopener">string_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return the scheme as a string, or the empty string if there is no scheme.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/scheme_id.html" class="xref page">scheme_id</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/scheme.html" class="xref page">scheme</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return the scheme as an enumerated constant, the value
+<code><a href="../reference/boost/urls/scheme.html" class="xref page">scheme::unknown</a></code>
+if the scheme is not one of the well-known schemes, or the value
+<code><a href="../reference/boost/urls/scheme.html" class="xref page">scheme::none</a></code>
+if there is no scheme.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Function</th>
+<th class="tableblock halign-left valign-top">Parameters</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_base.html" class="xref page">set_scheme</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="https://www.boost.org/doc/libs/master/libs/core/doc/html/" target="_blank" rel="noopener">string_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set the scheme to a string.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_base.html" class="xref page">set_scheme_id</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/scheme.html" class="xref page">scheme</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set the scheme to a well-known scheme constant.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_base.html" class="xref page">remove_scheme</a></code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Remove the scheme if present.
+This includes the trailing colon (":").</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_authority"><a class="anchor" href="#_authority"></a>Authority</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The authority is an optional part whose presence is indicated by an unescaped double slash ("//") immediately following the scheme, or at the beginning if the scheme is not present.
+It contains three components: an optional userinfo, the host, and an optional port.
+The authority in this diagram has all three components:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/AuthorityDiagram.svg" alt="AuthorityDiagram">
+</div>
+</div>
+<div class="paragraph">
+<p>An empty authority, corresponding to just a zero-length host component, is distinct from the absence of an authority.
+These members are used to inspect and modify the authority as a whole string:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Function</th>
+<th class="tableblock halign-left valign-top">Return Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/has_authority.html" class="xref page">has_authority</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="https://en.cppreference.com/w/cpp/language/types#Boolean_type" target="_blank" rel="noopener">bool</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return <code><a href="https://en.cppreference.com/w/cpp/language/types#Boolean_type" target="_blank" rel="noopener">true</a></code> if an authority is present.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/authority.html" class="xref page">authority</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/authority_view.html" class="xref page">authority_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return the authority as a decoded string.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/encoded_authority.html" class="xref page">encoded_authority</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/pct_string_view.html" class="xref page">pct_string_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return the authority as a read-only view.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Function</th>
+<th class="tableblock halign-left valign-top">Parameters</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_base.html" class="xref page">set_encoded_authority</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/pct_string_view.html" class="xref page">pct_string_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set the authority to the string, which may contain percent escapes.
+Reserved characters are percent-escaped automatically.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_base.html" class="xref page">remove_authority</a></code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Remove the authority if present.
+This includes the leading double slash ("//").</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The paragraphs and tables that follow describe how to interact with the individual parts of the authority.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_userinfo"><a class="anchor" href="#_userinfo"></a>Userinfo</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>An authority may have an optional userinfo, which consists of a user and optional password.
+The presence of the userinfo is indicated by an unescaped at sign ("@") which comes afterwards.
+The password if present is prefixed by an unescaped colon (":").
+An empty password string is distinct from no password.
+This table shows various URLs with userinfos, and the corresponding user and password:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">URL</th>
+<th class="tableblock halign-left valign-top">User</th>
+<th class="tableblock halign-left valign-top">Password</th>
+<th class="tableblock halign-left valign-top">Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>//user:pass@</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>"user"</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>"pass"</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>User and password</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>//@</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>""</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Empty user, no password</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>//user@</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>"user"</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>No password</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>//user:@</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>"user"</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>""</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Empty password</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>//:pass@</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>""</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>"pass"</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Empty user</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>//:@</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>""</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>""</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Empty user and password</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-caution" title="Caution"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Although the specification allows the format username:password, the password component is deprecated and should be avoided if possible or otherwise used with care.
+It is not recommended to transfer password data through URLs unless it is an empty string indicating no password.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>These members are used to inspect and modify the userinfo:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Function</th>
+<th class="tableblock halign-left valign-top">Return Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/has_userinfo.html" class="xref page">has_userinfo</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="https://en.cppreference.com/w/cpp/language/types#Boolean_type" target="_blank" rel="noopener">bool</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return <code><a href="https://en.cppreference.com/w/cpp/language/types#Boolean_type" target="_blank" rel="noopener">true</a></code> if a userinfo is present.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/has_password.html" class="xref page">has_password</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="https://en.cppreference.com/w/cpp/language/types#Boolean_type" target="_blank" rel="noopener">bool</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return <code><a href="https://en.cppreference.com/w/cpp/language/types#Boolean_type" target="_blank" rel="noopener">true</a></code> if a password is present.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/user.html" class="xref page">user</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="https://en.cppreference.com/w/cpp/string/basic_string" target="_blank" rel="noopener">std::string</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return the user as a decoded string.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/password.html" class="xref page">password</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="https://en.cppreference.com/w/cpp/string/basic_string" target="_blank" rel="noopener">std::string</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return the password as a decoded string.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/userinfo.html" class="xref page">userinfo</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="https://en.cppreference.com/w/cpp/string/basic_string" target="_blank" rel="noopener">std::string</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return the userinfo as a decoded string.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/encoded_user.html" class="xref page">encoded_user</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/pct_string_view.html" class="xref page">pct_string_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return the user.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/encoded_password.html" class="xref page">encoded_password</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/pct_string_view.html" class="xref page">pct_string_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return the password, or an empty string if no password is present.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/encoded_userinfo.html" class="xref page">encoded_userinfo</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/pct_string_view.html" class="xref page">pct_string_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return the userinfo.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Function</th>
+<th class="tableblock halign-left valign-top">Parameters</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_base.html" class="xref page">set_user</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="https://www.boost.org/doc/libs/master/libs/core/doc/html/" target="_blank" rel="noopener">string_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set the user to the string.
+Reserved characters are percent-escaped automatically.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_base.html" class="xref page">set_password</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="https://www.boost.org/doc/libs/master/libs/core/doc/html/" target="_blank" rel="noopener">string_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set the password to the string.
+Reserved characters are percent-escaped automatically.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_base.html" class="xref page">set_userinfo</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="https://www.boost.org/doc/libs/master/libs/core/doc/html/" target="_blank" rel="noopener">string_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set the userinfo to the string.
+Reserved characters are percent-escaped automatically.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_base.html" class="xref page">set_encoded_user</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/pct_string_view.html" class="xref page">pct_string_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set the user to the string, which may contain percent escapes.
+Reserved characters are percent-escaped automatically.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_base.html" class="xref page">set_encoded_password</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/pct_string_view.html" class="xref page">pct_string_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set the password to the string, which may contain percent escapes.
+Reserved characters are percent-escaped automatically.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_base.html" class="xref page">set_encoded_userinfo</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/pct_string_view.html" class="xref page">pct_string_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set the userinfo to the string, which may contain percent escapes.
+Reserved characters are percent-escaped automatically.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_base.html" class="xref page">remove_password</a></code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Remove the password if present.
+This includes the password separator colon (":").</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_base.html" class="xref page">remove_userinfo</a></code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Remove the userinfo if present.
+This includes the user and password separator colon (":")
+and the trailing at sign ("@").</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_host"><a class="anchor" href="#_host"></a>Host</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The host portion of the authority is a string which can be a host name, an IPv4 address, an IPv6 address, or an IPvFuture address depending on the contents.
+The host is always defined if an authority is present, even if the resulting host string would be zero length.</p>
+</div>
+<div class="paragraph">
+<p>These members are used to inspect and modify the host:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Function</th>
+<th class="tableblock halign-left valign-top">Return Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/host_type.html" class="xref page">host_type</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/host_type.html" class="xref page">host_type</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return the host type enumeration constant.
+If there is no authority, this is the value
+<code><a href="../reference/boost/urls/host_type.html" class="xref page">host_type::none</a></code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/host.html" class="xref page">host</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="https://en.cppreference.com/w/cpp/string/basic_string" target="_blank" rel="noopener">std::string</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return the host as a decoded string, or an empty string if there is
+no authority.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/host_address.html" class="xref page">host_address</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="https://en.cppreference.com/w/cpp/string/basic_string" target="_blank" rel="noopener">std::string</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return the host as a decoded string.
+If the host type is
+<code><a href="../reference/boost/urls/host_type.html" class="xref page">host_type::ipv6</a></code> or
+<code><a href="../reference/boost/urls/host_type.html" class="xref page">host_type::ipvfuture</a></code>,
+the enclosing brackets are removed.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/host_name.html" class="xref page">host_name</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="https://en.cppreference.com/w/cpp/string/basic_string" target="_blank" rel="noopener">std::string</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return the host name as a decoded string, or the empty string if
+the host type is not
+<code><a href="../reference/boost/urls/host_type.html" class="xref page">host_type::name</a></code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/host_ipv4_address.html" class="xref page">host_ipv4_address</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/ipv4_address.html" class="xref page">ipv4_address</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return the host as an <code><a href="../reference/boost/urls/ipv4_address.html" class="xref page">ipv4_address</a></code>.
+If the host type is not
+<code><a href="../reference/boost/urls/host_type.html" class="xref page">host_type::ipv4</a></code>,
+a default-constructed value is returned.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/host_ipv6_address.html" class="xref page">host_ipv6_address</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/ipv6_address.html" class="xref page">ipv6_address</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return the host as an <code><a href="../reference/boost/urls/ipv6_address.html" class="xref page">ipv6_address</a></code>.
+If the host type is not
+<code><a href="../reference/boost/urls/host_type.html" class="xref page">host_type::ipv6</a></code>,
+a default-constructed value is returned.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/host_ipvfuture.html" class="xref page">host_ipvfuture</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="https://www.boost.org/doc/libs/master/libs/core/doc/html/" target="_blank" rel="noopener">string_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return the host as a string without enclosing brackets if
+the host type is
+<code><a href="../reference/boost/urls/host_type.html" class="xref page">host_type::ipvfuture</a></code>,
+otherwise return an empty string.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/encoded_host.html" class="xref page">encoded_host</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/pct_string_view.html" class="xref page">pct_string_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return the host, or an empty string if there is no authority.
+This includes enclosing brackets if the host type is
+<code><a href="../reference/boost/urls/host_type.html" class="xref page">host_type::ipv6</a></code> or
+<code><a href="../reference/boost/urls/host_type.html" class="xref page">host_type::ipvfuture</a></code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/encoded_host_address.html" class="xref page">encoded_host_address</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/pct_string_view.html" class="xref page">pct_string_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return the host.
+If the host type is
+<code><a href="../reference/boost/urls/host_type.html" class="xref page">host_type::ipv6</a></code> or
+<code><a href="../reference/boost/urls/host_type.html" class="xref page">host_type::ipvfuture</a></code>,
+the enclosing brackets are removed.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/encoded_host_name.html" class="xref page">encoded_host_name</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/pct_string_view.html" class="xref page">pct_string_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return the host name as a string. If the host type is not
+<code><a href="../reference/boost/urls/host_type.html" class="xref page">host_type::name</a></code>,
+an empty string is returned.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Function</th>
+<th class="tableblock halign-left valign-top">Parameters</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_base.html" class="xref page">set_host</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="https://www.boost.org/doc/libs/master/libs/core/doc/html/" target="_blank" rel="noopener">string_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set the host to the string, depending on the contents. If
+the string is a valid IPv4 address, a valid IPv6 address
+enclosed in brackets, or a valid IPvFuture address enclosed
+in brackets then the resulting host type is
+<code><a href="../reference/boost/urls/host_type.html" class="xref page">host_type::ipv4</a></code>,
+<code><a href="../reference/boost/urls/host_type.html" class="xref page">host_type::ipv6</a></code>, or
+<code><a href="../reference/boost/urls/host_type.html" class="xref page">host_type::ipvfuture</a></code>
+respectively. Otherwise, the host type is
+<code><a href="../reference/boost/urls/host_type.html" class="xref page">host_type::name</a></code>, and
+any reserved characters are percent-escaped automatically.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_base.html" class="xref page">set_host_address</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="https://www.boost.org/doc/libs/master/libs/core/doc/html/" target="_blank" rel="noopener">string_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set the host to the string, depending on the contents. If
+the string is a valid IPv4 address, a valid IPv6 address, or
+a valid IPvFuture address then the resulting host type is
+<code><a href="../reference/boost/urls/host_type.html" class="xref page">host_type::ipv4</a></code>,
+<code><a href="../reference/boost/urls/host_type.html" class="xref page">host_type::ipv6</a></code>, or
+<code><a href="../reference/boost/urls/host_type.html" class="xref page">host_type::ipvfuture</a></code>
+respectively. Otherwise, the host type is
+<code><a href="../reference/boost/urls/host_type.html" class="xref page">host_type::name</a></code>, and
+any reserved characters are percent-escaped automatically.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_base.html" class="xref page">set_host_ipv4</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/ipv4_address.html" class="xref page">ipv4_address</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set the host to the IPv4 address. The host type is
+<code><a href="../reference/boost/urls/host_type.html" class="xref page">host_type::ipv4</a></code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_base.html" class="xref page">set_host_ipv6</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/ipv6_address.html" class="xref page">ipv6_address</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set the host to the IPv6 address. The host type is
+<code><a href="../reference/boost/urls/host_type.html" class="xref page">host_type::ipv6</a></code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_base.html" class="xref page">set_host_ipvfuture</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="https://www.boost.org/doc/libs/master/libs/core/doc/html/" target="_blank" rel="noopener">string_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set the host to the IPvFuture address, which should not include
+square brackets. The host type is
+<code><a href="../reference/boost/urls/host_type.html" class="xref page">host_type::ipvfuture</a></code>.
+If the string is not a valid IPvFuture address, an exception
+is thrown.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_base.html" class="xref page">set_host_name</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="https://www.boost.org/doc/libs/master/libs/core/doc/html/" target="_blank" rel="noopener">string_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set the host to the string.
+Any reserved characters are percent-escaped automatically.
+The host type is
+<code><a href="../reference/boost/urls/host_type.html" class="xref page">host_type::name</a></code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_base.html" class="xref page">set_encoded_host</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/pct_string_view.html" class="xref page">pct_string_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set the host to the string, depending on the contents. If
+the string is a valid IPv4 address, a valid IPv6 address
+enclosed in brackets, or a valid IPvFuture address enclosed
+in brackets then the resulting host type is
+<code><a href="../reference/boost/urls/host_type.html" class="xref page">host_type::ipv4</a></code>,
+<code><a href="../reference/boost/urls/host_type.html" class="xref page">host_type::ipv6</a></code>, or
+<code><a href="../reference/boost/urls/host_type.html" class="xref page">host_type::ipvfuture</a></code>
+respectively. Otherwise, the host type is
+<code><a href="../reference/boost/urls/host_type.html" class="xref page">host_type::name</a></code>, the
+string may contain percent escapes, and any reserved characters
+are percent-escaped automatically.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_base.html" class="xref page">set_encoded_host_address</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/pct_string_view.html" class="xref page">pct_string_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set the host to the string, depending on the contents. If
+the string is a valid IPv4 address, a valid IPv6 address, or
+a valid IPvFuture address then the resulting host type is
+<code><a href="../reference/boost/urls/host_type.html" class="xref page">host_type::ipv4</a></code>,
+<code><a href="../reference/boost/urls/host_type.html" class="xref page">host_type::ipv6</a></code>, or
+<code><a href="../reference/boost/urls/host_type.html" class="xref page">host_type::ipvfuture</a></code>
+respectively. Otherwise, the host type is
+<code><a href="../reference/boost/urls/host_type.html" class="xref page">host_type::name</a></code>, the
+string may contain percent escapes, and and
+any reserved characters are percent-escaped automatically.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_base.html" class="xref page">set_encoded_host_name</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/pct_string_view.html" class="xref page">pct_string_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set the host to the string, which may contain percent escapes.
+Any reserved characters are percent-escaped automatically.
+The host type is
+<code><a href="../reference/boost/urls/host_type.html" class="xref page">host_type::name</a></code>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_port"><a class="anchor" href="#_port"></a>Port</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The port is a string of digits, possibly of zero length.
+The presence of a port is indicated by a colon prefix (":") appearing after the host and userinfo.
+A zero length port string is distinct from the absence of a port.
+The library represents the port with both a decimal string and an unsigned 16-bit integer.
+If the numeric value of the string would exceed the range of the integer, then it is mapped to the number zero.</p>
+</div>
+<div class="paragraph">
+<p>These members are used to inspect and modify the port:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Function</th>
+<th class="tableblock halign-left valign-top">Return Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/has_port.html" class="xref page">has_port</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="https://en.cppreference.com/w/cpp/language/types#Boolean_type" target="_blank" rel="noopener">bool</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return <code><a href="https://en.cppreference.com/w/cpp/language/types#Boolean_type" target="_blank" rel="noopener">true</a></code> if a port is present.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/port.html" class="xref page">port</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="https://www.boost.org/doc/libs/master/libs/core/doc/html/" target="_blank" rel="noopener">string_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return the port as a string, or an empty string if there is no port.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/port_number.html" class="xref page">port_number</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="https://en.cppreference.com/w/cpp/types/integer" target="_blank" rel="noopener">std::uint16_t</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return the port as an unsigned integer. If the number would be
+greater than 65535, then zero is returned.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Function</th>
+<th class="tableblock halign-left valign-top">Parameters</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_base.html" class="xref page">set_port</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="https://www.boost.org/doc/libs/master/libs/core/doc/html/" target="_blank" rel="noopener">string_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set the port to a string.
+If the string contains any character which is not a digit,
+an exception is thrown.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_base.html" class="xref page">set_port_number</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="https://en.cppreference.com/w/cpp/types/integer" target="_blank" rel="noopener">std::uint16_t</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set the port to a number.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_base.html" class="xref page">remove_port</a></code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Remove the port if present.
+This does not remove the authority.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_path"><a class="anchor" href="#_path"></a>Path</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Depending on the scheme, the path may be treated as a string, or as a hierarchically structured sequence of segments delimited by unescaped forward-slashes ("/").
+A path is <em>always</em> defined for every URL, even if it is the empty string.</p>
+</div>
+<div class="paragraph">
+<p>These members are used to inspect and modify the path:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Function</th>
+<th class="tableblock halign-left valign-top">Return Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/is_path_absolute.html" class="xref page">is_path_absolute</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="https://en.cppreference.com/w/cpp/language/types#Boolean_type" target="_blank" rel="noopener">bool</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return <code><a href="https://en.cppreference.com/w/cpp/language/types#Boolean_type" target="_blank" rel="noopener">true</a></code> if the path starts with a forward slash ("/").</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>path</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="https://en.cppreference.com/w/cpp/string/basic_string" target="_blank" rel="noopener">std::string</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return the path as a decoded string.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/encoded_path.html" class="xref page">encoded_path</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/pct_string_view.html" class="xref page">pct_string_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return the path.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/segments.html" class="xref page">segments</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/segments_view.html" class="xref page">segments_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return the path as a range of decoded segments.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/encoded_segments.html" class="xref page">encoded_segments</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/segments_encoded_view.html" class="xref page">segments_encoded_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return the path as a range of segments.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Function</th>
+<th class="tableblock halign-left valign-top">Parameters</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_base.html" class="xref page">set_path</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="https://www.boost.org/doc/libs/master/libs/core/doc/html/" target="_blank" rel="noopener">string_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set the path to the string.
+Reserved characters are percent-escaped automatically.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_base.html" class="xref page">set_path_absolute</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="https://en.cppreference.com/w/cpp/language/types#Boolean_type" target="_blank" rel="noopener">bool</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set whether the path is absolute.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_base.html" class="xref page">set_encoded_path</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/pct_string_view.html" class="xref page">pct_string_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set the path to the string, which may contain percent escapes.
+Reserved characters are percent-escaped automatically.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/segments.html" class="xref page">segments</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/segments_ref.html" class="xref page">segments_ref</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return the path as a modifiable range of decoded segments.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/encoded_segments.html" class="xref page">encoded_segments</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/segments_encoded_ref.html" class="xref page">segments_encoded_ref</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return the path as a modifiable range of segments.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The segments-based containers
+<code><a href="../reference/boost/urls/segments_view.html" class="xref page">segments_view</a></code>, <code><a href="../reference/boost/urls/segments_ref.html" class="xref page">segments_ref</a></code>,
+<code><a href="../reference/boost/urls/segments_encoded_view.html" class="xref page">segments_encoded_view</a></code>, and <code><a href="../reference/boost/urls/segments_encoded_ref.html" class="xref page">segments_encoded_ref</a></code>
+are discussed in a later section.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_query"><a class="anchor" href="#_query"></a>Query</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Depending on the scheme, the query may be treated as a string, or as a structured series of key-value pairs (called "params") separated by unescaped ampersands ("&amp;").
+The query is optional; an empty query string is distinct from no query.</p>
+</div>
+<div class="paragraph">
+<p>These members are used to inspect and modify the query:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Function</th>
+<th class="tableblock halign-left valign-top">Return Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/has_query.html" class="xref page">has_query</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="https://en.cppreference.com/w/cpp/language/types#Boolean_type" target="_blank" rel="noopener">bool</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return <code><a href="https://en.cppreference.com/w/cpp/language/types#Boolean_type" target="_blank" rel="noopener">true</a></code> if a query is present.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/query.html" class="xref page">query</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="https://en.cppreference.com/w/cpp/string/basic_string" target="_blank" rel="noopener">std::string</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return the query as a decoded string.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/encoded_query.html" class="xref page">encoded_query</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/pct_string_view.html" class="xref page">pct_string_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return the query.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/params.html" class="xref page">params</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/params_view.html" class="xref page">params_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return the query as a read-only range of decoded params.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/encoded_params.html" class="xref page">encoded_params</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/params_encoded_view.html" class="xref page">params_encoded_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return the query as a read-only range of params.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Function</th>
+<th class="tableblock halign-left valign-top">Parameters</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_base.html" class="xref page">set_query</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="https://www.boost.org/doc/libs/master/libs/core/doc/html/" target="_blank" rel="noopener">string_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set the query to a string.
+Reserved characters are percent-escaped automatically.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_base.html" class="xref page">set_encoded_query</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/pct_string_view.html" class="xref page">pct_string_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set the query to a string, which may contain percent escapes.
+Reserved characters are percent-escaped automatically.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/params.html" class="xref page">params</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/params_ref.html" class="xref page">params_ref</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return the query as a modifiable range of decoded params.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/encoded_params.html" class="xref page">encoded_params</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/params_encoded_ref.html" class="xref page">params_encoded_ref</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return the query as a modifiable range of params.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_base.html" class="xref page">remove_query</a></code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Remove the query.
+This also removes the leading question mark ("?") if present.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The params-based containers
+<code><a href="../reference/boost/urls/params_view.html" class="xref page">params_view</a></code>, <code><a href="../reference/boost/urls/params_ref.html" class="xref page">params_ref</a></code>,
+<code><a href="../reference/boost/urls/params_encoded_view.html" class="xref page">params_encoded_view</a></code>, and <code><a href="../reference/boost/urls/params_encoded_ref.html" class="xref page">params_encoded_ref</a></code>
+are discussed in a later section.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_fragment"><a class="anchor" href="#_fragment"></a>Fragment</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The fragment is treated as a string; there is no common, structured interpretation of the contents.</p>
+</div>
+<div class="paragraph">
+<p>These members are used to inspect and modify the fragment:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Function</th>
+<th class="tableblock halign-left valign-top">Return Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/has_fragment.html" class="xref page">has_fragment</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="https://en.cppreference.com/w/cpp/language/types#Boolean_type" target="_blank" rel="noopener">bool</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return <code><a href="https://en.cppreference.com/w/cpp/language/types#Boolean_type" target="_blank" rel="noopener">true</a></code> if a fragment is present.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/fragment.html" class="xref page">fragment</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="https://en.cppreference.com/w/cpp/string/basic_string" target="_blank" rel="noopener">std::string</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return the fragment as a decoded string.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/encoded_fragment.html" class="xref page">encoded_fragment</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/pct_string_view.html" class="xref page">pct_string_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return the fragment.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Function</th>
+<th class="tableblock halign-left valign-top">Parameters</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_base.html" class="xref page">set_fragment</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="https://www.boost.org/doc/libs/master/libs/core/doc/html/" target="_blank" rel="noopener">string_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set the fragment to the string.
+Reserved characters are percent-escaped automatically.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_base.html" class="xref page">set_encoded_fragment</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/pct_string_view.html" class="xref page">pct_string_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set the fragment to the string, which may contain percent escapes.
+Reserved characters are percent-escaped automatically.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_base.html" class="xref page">remove_fragment</a></code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Remove the fragment.
+This also removes the leading pound sign ("#") if present.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_compound_fields"><a class="anchor" href="#_compound_fields"></a>Compound Fields</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For convenience, these observers and modifiers for aggregated subsets of the URL are provided:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Function</th>
+<th class="tableblock halign-left valign-top">Return Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/encoded_host_and_port.html" class="xref page">encoded_host_and_port</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/pct_string_view.html" class="xref page">pct_string_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return the host and port as a string with percent escapes.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/encoded_origin.html" class="xref page">encoded_origin</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/pct_string_view.html" class="xref page">pct_string_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return only the scheme and authority parts as an individual string.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/encoded_resource.html" class="xref page">encoded_resource</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/pct_string_view.html" class="xref page">pct_string_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return only the path, query, and fragment parts as an individual string.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/encoded_target.html" class="xref page">encoded_target</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/pct_string_view.html" class="xref page">pct_string_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return only the path and query parts as an individual string.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Function</th>
+<th class="tableblock halign-left valign-top">Parameters</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_base.html" class="xref page">remove_origin</a></code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Remove the scheme and authority parts from the URL.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+  <div class="edit-this-page">
+      <a href="https://github.com/boostorg/url/edit/develop/doc/modules/ROOT/pages/urls/containers.adoc">Edit this Page</a>
+      </div>
+      <nav class="pagination">
+        <span class="prev"><a href="parsing.html">Parsing</a></span>
+        <span class="next"><a href="segments.html">Segments</a></span>
+    </nav>
+</article>
+</div>
+  <div id="footer">
+  <script id="site-script" src="../../_/js/site.js" data-ui-root-path="../../_"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+<script async src="../../_/js/vendor/tabs.js" data-sync-storage-key="preferred-tab"></script>
+</div>
+</div>
+  </body>
+</html>

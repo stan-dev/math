@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+        <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>URLs :: Boost Libraries Documentation</title>
+  <link rel="canonical" href="https://antora.cppalliance.org/master/lib/doc/url/urls/index.html">
+    <link rel="prev" href="../quicklook.html">
+    <link rel="next" href="parsing.html">
+  <meta name="generator" content="Antora 3.1.9">
+    <link rel="stylesheet" href="../../_/css/boostlook.css">
+    <link rel="stylesheet" href="../../_/css/site.css">
+    <link rel="stylesheet" href="../../_/css/vendor/tabs.css">
+    <script>var uiRootPath = '../../_'</script>
+  </head>
+  <body class="article toc2 toc-left">
+    <div class="boostlook">
+  <div id="header">
+    <div id="toc" class="nav-container toc2" data-component="url" data-version="">
+  <aside class="nav">
+    <button class="nav-close"></button>
+    <div class="panels">
+      <div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+      <h3 class="title"><a href="../index.html">Boost.URL</a></h3>
+      <ul class="nav-list">
+        <ul class="nav-list">
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../quicklook.html">Quick Look</a>
+        </li>
+              <li class=" is-current-page" data-depth="1">
+            <a class="nav-link" href="index.html">URLs</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="parsing.html">Parsing</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="containers.html">Containers</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="segments.html">Segments</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="params.html">Params</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="normalization.html">Normalization</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="stringtoken.html">String Token</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="percent-encoding.html">Percent Encoding</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="formatting.html">Formatting</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../grammar/index.html">Customization</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/rules.html">Parse Rules</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/charset.html">Character Sets</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/combinators.html">Compound Rules</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/range.html">Ranges</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/rfc3986.html">RFC 3986</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Examples</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/qrcode.html">QR Code</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/finicky.html">Finicky</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/mailto.html">mailto URLs</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/magnet-link.html">Magnet Link</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/file-router.html">File Router</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/router.html">Router</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/sanitize.html">Sanitizing URLs</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../reference.html">Reference</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <span class="nav-text">Concepts</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="3">
+            <a class="nav-link" href="../concepts/CharSet.html">CharSet</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="../concepts/Rule.html">Rule</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="../concepts/StringToken.html">StringToken</a>
+        </li>
+        </ul>
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../HelpCard.html">Help Card</a>
+        </li>
+        </ul>
+  </ul>
+  </ul>
+  </nav>
+</div>
+    </div>
+  </aside>
+</div>
+</div>
+  <div id="content">
+    <article class="doc max-width-reset">
+  <div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li>
+      <a href="../index.html" aria-label="Home: Boost.URL">
+        <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 -960 960 960" fill="#000000" aria-hidden="true"><path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z"/></svg>
+      </a>
+    </li>
+    <li><a href="index.html">URLs</a></li>
+  </ul>
+</nav>
+<div class="spirit-nav">
+    <a accesskey="p" href="../quicklook.html"><span class="material-symbols-outlined" title="Previous: Quick Look">arrow_back</span></a>
+    <a accesskey="p" href="parsing.html"><span class="material-symbols-outlined" title="Next: Parsing">arrow_forward</span></a>
+</div>
+</div>
+    <h1 class="page">URLs</h1>
+  <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>A URL, short for "Uniform Resource Locator," is a compact string
+of characters identifying an abstract or physical resource.
+It has these five parts, with may be optional or disallowed
+depending on the context:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/PartsDiagram.svg" alt="PartsDiagram">
+</div>
+</div>
+<div class="paragraph">
+<p>Each part&#8217;s syntax is defined by a set of production rules in
+<a href="https://tools.ietf.org/html/rfc3986" target="blank_">rfc3986</a>. All valid URLs conform to this grammar, also called
+the "generic syntax." Here is an example URL which describes a
+file and its location on a network host:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-asciidoc hljs" data-lang="asciidoc">https://www.example.com/path/to/file.txt?userid=1001&amp;pages=3&amp;results=full#page1</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The parts and their corresponding text is as follows:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Part</th>
+<th class="tableblock halign-left valign-top">Text</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><em>scheme</em></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>"https"</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><em>authority</em></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>"www.example.com"</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><em>path</em></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>"/path/to/file.txt"</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><em>query</em></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>"userid=1001&amp;pages=3&amp;results=full"</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><em>fragment</em></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>"page1"</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The production rule for the example above is called a <em>URI</em>,
+which can contain all five parts. The specification using
+<a href="https://datatracker.ietf.org/doc/html/rfc2234" target="blank_"><em>ABNF notation</em></a>
+is:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-asciidoc hljs" data-lang="asciidoc">URI           = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
+
+hier-part     = "//" authority path-abempty
+              / path-absolute
+              / path-rootless
+              / path-empty</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In this notation, the square brackets ("\// [" and "\]") denote optional
+elements, quoted text represents character literals, and slashes are
+used to indicate a choice between one of several elements. For the
+complete specification of ABNF notation please consult
+<a href="https://datatracker.ietf.org/doc/html/rfc2234" target="blank_">rfc2234</a>,
+"Augmented BNF for Syntax Specifications."
+When using this library to process or create URLs, it is necessary
+to choose which of these top-level production rules are applicable
+for a given use-case:
+<em>absolute-URI</em>, <em>origin-form</em>, <em>relative-ref</em>, <em>URI</em>, or
+<em>URI-reference</em>. These are discussed in greater depth later.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_scheme"><a class="anchor" href="#_scheme"></a>Scheme</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The most important part is the <em>scheme</em>, whose production rule is:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-asciidoc hljs" data-lang="asciidoc">scheme        = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The scheme, which some informal texts incorrectly refer to as
+"protocol", defines how the rest of the URL is interpreted.
+Public schemes are registered and managed by the
+<a href="https://en.wikipedia.org/wiki/Internet_Assigned_Numbers_Authority" target="blank_">Internet Assigned Numbers Authority</a> (IANA).
+Here are some registered schemes and their corresponding
+specifications:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Scheme</th>
+<th class="tableblock halign-left valign-top">Specification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><strong>http</strong></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://datatracker.ietf.org/doc/html/rfc7230#section-2.7.1" target="blank_">http URI Scheme (rfc7230)</a></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><strong>magnet</strong></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://en.wikipedia.org/wiki/Magnet_URI_scheme" target="blank_">Magnet URI scheme</a></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><strong>mailto</strong></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://datatracker.ietf.org/doc/html/rfc6068" target="blank_">The 'mailto' URI Scheme (rfc6068)</a></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><strong>payto</strong></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://datatracker.ietf.org/doc/html/rfc8905" target="blank_">The 'payto' URI Scheme for Payments (rfc8905)</a></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><strong>telnet</strong></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://datatracker.ietf.org/doc/html/rfc4248" target="blank_">The telnet URI Scheme (rfc4248)</a></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><strong>urn</strong></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://datatracker.ietf.org/doc/html/rfc2141" target="blank_">URN Syntax</a></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Private schemes are possible, defined by organizations to enumerate internal
+resources such as documents or physical devices, or to facilitate the operation
+of their software. These are not subject to the same rigor as the registered
+ones; they can be developed and modified by the organization to meet specific
+needs with less concern for interoperability or backward compatibility. Note
+that private does not imply secret; some private schemes such as Amazon&#8217;s "s3"
+have publicly available specifications and are quite popular. Here are some
+examples:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Scheme</th>
+<th class="tableblock halign-left valign-top">Specification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><strong>app</strong></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://www.w3.org/TR/app-uri/" target="blank_">app: URL Scheme</a></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><strong>odbc</strong></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://datatracker.ietf.org/doc/html/draft-patrick-lambert-odbc-uri-scheme" target="blank_">ODBC URI Scheme</a></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><strong>slack</strong></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://api.slack.com/reference/deep-linking" target="blank_">Reference: Deep linking into Slack</a></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>In some cases the scheme is implied by the surrounding context and
+therefore omitted. Here is a complete HTTP/1.1 GET request for the
+target URL "/index.htm":</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-asciidoc hljs" data-lang="asciidoc">GET /index.htm HTTP/1.1
+Host: www.example.com
+Accept: text/html
+User-Agent: Beast</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The scheme of "http" is implied here because the context is already an HTTP
+request. The production rule for the URL in the request above is called
+<em>origin-form</em>, defined in the
+<a href="https://datatracker.ietf.org/doc/html/rfc7230#section-5.3.1" target="blank_">HTTP specification</a>
+thusly:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-asciidoc hljs" data-lang="asciidoc">origin-form    = absolute-path [ "?" query ]
+
+absolute-path  = 1*( "/" segment )</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>All URLs have a scheme, whether it is explicit or implicit.
+The scheme determines what the rest of the URL means.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Here are some more examples of URLs using various schemes (and one example
+of something that is not a URL):</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">URL</th>
+<th class="tableblock halign-left valign-top">Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>https://www.boost.org/index.html</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Hierarchical URL with <code>https</code> protocol. Resource in the HTTP protocol.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>ftp://host.dom/etc/motd</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Hierarchical URL with <code>ftp</code> scheme. Resource in the FTP protocol.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>urn:isbn:045145052</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Opaque URL with <code>urn</code> scheme. Identifies <code>isbn</code> resource.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>mailto:person@example.com</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Opaque URL with <code>mailto</code> scheme. Identifies e-mail address.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>index.html</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>URL reference. Missing scheme and authority.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>www.boost.org</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>A Protocol-Relative Link (PRL). <strong>Not</strong>.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_authority"><a class="anchor" href="#_authority"></a>Authority</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The authority determines how a resource can be accessed.
+It contains two parts: the
+<a href="https://www.rfc-editor.org/rfc/rfc3986#section-3.2.1" target="blank_"><em>userinfo</em></a>
+that holds identity credentials, and the
+<a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2" target="blank_"><em>host</em></a>
+and
+<a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3" target="blank_"><em>port</em></a>
+which identify a communication endpoint having dominion
+over the resource described in the remainder of the URL.
+This is the ABNF specification for the authority part:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-asciidoc hljs" data-lang="asciidoc">authority   = [ user [ ":" password ] "@" ] host [ ":" port ]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The combination of user and optional password is called the
+<em>userinfo</em>.</p>
+</div>
+<div class="paragraph">
+<p>The authority determines how a resource can be accessed.
+It contains two parts: the
+<a href="https://www.rfc-editor.org/rfc/rfc3986#section-3.2.1" target="blank_"><em>userinfo</em></a>
+that holds identity credentials, and the
+<a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2" target="blank_"><em>host</em></a>
+and
+<a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3" target="blank_"><em>port</em></a>
+which identify a communication endpoint having dominion
+over the resource described in the remainder of the URL.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/AuthorityDiagram.svg" alt="AuthorityDiagram">
+</div>
+</div>
+<div class="paragraph">
+<p>Some observations:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The use of the password field is deprecated.</p>
+</li>
+<li>
+<p>The authority always has a defined host field, even if empty.</p>
+</li>
+<li>
+<p>The host can be a name, or an IPv4, an IPv6, or an IPvFuture address.</p>
+</li>
+<li>
+<p>All but the port field use percent-encoding to escape delimiters.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The host subcomponent represents where resources
+are located.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Note that if an authority is present, the host is always
+defined even if it is the empty string (corresponding
+to a zero-length <em>reg-name</em> in the BNF).</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">url_view u( "https:///path/to_resource" );
+assert( u.has_authority() );
+assert( u.authority().buffer().empty() );
+assert( u.path() == "/path/to_resource" );</code></pre>
+</div>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The authority component also influences how we should
+interpret the URL path. If the authority is present,
+the path component must either be empty or begin with
+a slash.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Although the specification allows the format <code>username:password</code>,
+the password component should be used with care.</p>
+</div>
+<div class="paragraph">
+<p>It is not recommended to transfer password data through URLs
+unless this is an empty string indicating no password.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_containers"><a class="anchor" href="#_containers"></a>Containers</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This library provides the following containers, which
+are capable of storing any possible URL:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code><a href="../reference/boost/urls/url.html" class="xref page">url</a></code>: A modifiable container for a URL.</p>
+</li>
+<li>
+<p><code><a href="../reference/boost/urls/url_view.html" class="xref page">url_view</a></code>: A non-owning reference to a valid URL.</p>
+</li>
+<li>
+<p><code><a href="../reference/boost/urls/static_url.html" class="xref page">static_url</a></code>: A URL with fixed-capacity storage.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>These containers maintain a useful invariant: they
+always contain a valid URL. In addition, the library
+provides the <code><a href="../reference/boost/urls/authority_view.html" class="xref page">authority_view</a></code> container which holds
+a non-modifiable reference to a valid <em>authority</em>.
+An authority by itself, is not a valid URL.</p>
+</div>
+<div class="paragraph">
+<p>In the sections that follow we describe the mechanisms use to
+parse strings using various specific grammars, followed by the
+interface for inspecting and modified each of the main parts of
+the URL. Finally we discuss important algorithms availble to
+use with URLs.</p>
+</div>
+</div>
+</div>
+  <div class="edit-this-page">
+      <a href="https://github.com/boostorg/url/edit/develop/doc/modules/ROOT/pages/urls/index.adoc">Edit this Page</a>
+      </div>
+      <nav class="pagination">
+        <span class="prev"><a href="../quicklook.html">Quick Look</a></span>
+        <span class="next"><a href="parsing.html">Parsing</a></span>
+    </nav>
+</article>
+</div>
+  <div id="footer">
+  <script id="site-script" src="../../_/js/site.js" data-ui-root-path="../../_"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+<script async src="../../_/js/vendor/tabs.js" data-sync-storage-key="preferred-tab"></script>
+</div>
+</div>
+  </body>
+</html>

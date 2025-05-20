@@ -1,0 +1,109 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template strided_iterator</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.Compute">
+<link rel="up" href="../../boost_compute/reference.html#doxygen.header_reference.strided__iterator_8hpp" title="Header &lt;boost/compute/iterator/strided_iterator.hpp&gt;">
+<link rel="prev" href="permutation__iterator_8hpp_1a0592cbbf2a9f590b05eae7f2a7c016ee.html" title="Function template make_permutation_iterator">
+<link rel="next" href="strided__iterator_8hpp_1ae5eb8f260ce5dbfe86608230c86e3b89.html" title="Function template make_strided_iterator">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="permutation__iterator_8hpp_1a0592cbbf2a9f590b05eae7f2a7c016ee.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_compute/reference.html#doxygen.header_reference.strided__iterator_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="strided__iterator_8hpp_1ae5eb8f260ce5dbfe86608230c86e3b89.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.header_reference.classboost_1_1compute_1_1strided__iterator"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template strided_iterator</span></h2>
+<p>boost::compute::strided_iterator — An iterator adaptor with adjustable iteration step. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../boost_compute/reference.html#doxygen.header_reference.strided__iterator_8hpp" title="Header &lt;boost/compute/iterator/strided_iterator.hpp&gt;">boost/compute/iterator/strided_iterator.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Iterator<span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1compute_1_1strided__iterator.html" title="Class template strided_iterator">strided_iterator</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="emphasis"><em><span class="identifier">unspecified</span></em></span>                 <a name="doxygen.header_reference.classboost_1_1compute_1_1strided__iterator_1a18521510223b7838b2394409a24aa183"></a><span class="identifier">super_type</span><span class="special">;</span>     
+  <span class="keyword">typedef</span> <span class="identifier">super_type</span><span class="special">::</span><span class="identifier">value_type</span>      <a name="doxygen.header_reference.classboost_1_1compute_1_1strided__iterator_1a4f12b185b632d5cc711f13110c161129"></a><span class="identifier">value_type</span><span class="special">;</span>     
+  <span class="keyword">typedef</span> <span class="identifier">super_type</span><span class="special">::</span><span class="identifier">reference</span>       <a name="doxygen.header_reference.classboost_1_1compute_1_1strided__iterator_1a50b96585a0e0031bc4fcde4a53235ccf"></a><span class="identifier">reference</span><span class="special">;</span>      
+  <span class="keyword">typedef</span> <span class="identifier">super_type</span><span class="special">::</span><span class="identifier">base_type</span>       <a name="doxygen.header_reference.classboost_1_1compute_1_1strided__iterator_1a691a0f913349d380b54739af11c58994"></a><span class="identifier">base_type</span><span class="special">;</span>      
+  <span class="keyword">typedef</span> <span class="identifier">super_type</span><span class="special">::</span><span class="identifier">difference_type</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1strided__iterator_1ab20e87be93b234cbe24ad13f3e8cfd50"></a><span class="identifier">difference_type</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1compute_1_1strided__iterator.html#id65-bb">public member functions</a></span>
+  <a class="link" href="classboost_1_1compute_1_1strided__iterator.html#doxygen.header_reference.classboost_1_1compute_1_1strided__iterator_1a9f120aa66554960116997ae1c4030d2d"><span class="identifier">strided_iterator</span></a><span class="special">(</span><span class="identifier">Iterator</span><span class="special">,</span> <span class="identifier">difference_type</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1compute_1_1strided__iterator.html#doxygen.header_reference.classboost_1_1compute_1_1strided__iterator_1a778ea031986cbbf72ac206d4419ca840"><span class="identifier">strided_iterator</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1strided__iterator.html" title="Class template strided_iterator">strided_iterator</a><span class="special">&lt;</span> <span class="identifier">Iterator</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1compute_1_1strided__iterator.html" title="Class template strided_iterator">strided_iterator</a><span class="special">&lt;</span> <span class="identifier">Iterator</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+  <a class="link" href="classboost_1_1compute_1_1strided__iterator.html#doxygen.header_reference.classboost_1_1compute_1_1strided__iterator_1ad54b01561a9e43d996d6dc6e52abd01b"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1strided__iterator.html" title="Class template strided_iterator">strided_iterator</a><span class="special">&lt;</span> <span class="identifier">Iterator</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1compute_1_1strided__iterator.html#doxygen.header_reference.classboost_1_1compute_1_1strided__iterator_1a500af63ba2c633f19322af584c858470"><span class="special">~</span><span class="identifier">strided_iterator</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">size_t</span> <a class="link" href="classboost_1_1compute_1_1strided__iterator.html#doxygen.header_reference.classboost_1_1compute_1_1strided__iterator_1a0b1595ef2752b1dd8fd6528e2d190792"><span class="identifier">get_index</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">const</span> <span class="identifier">buffer</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1compute_1_1strided__iterator.html#doxygen.header_reference.classboost_1_1compute_1_1strided__iterator_1a3dd9747b3090e65a548dd49537abf117"><span class="identifier">get_buffer</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> IndexExpression<span class="special">&gt;</span> 
+    <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a class="link" href="classboost_1_1compute_1_1strided__iterator.html#doxygen.header_reference.classboost_1_1compute_1_1strided__iterator_1ae62ec124db206b98fa734b2358421b76"><span class="keyword">operator</span><span class="special">[</span><span class="special">]</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">IndexExpression</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1compute_1_1strided__iterator.html#id66-bb">private member functions</a></span>
+  <span class="identifier">reference</span> <a class="link" href="classboost_1_1compute_1_1strided__iterator.html#doxygen.header_reference.classboost_1_1compute_1_1strided__iterator_1a4db98d018e8c93ee8335ce5c7d383c43"><span class="identifier">dereference</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1compute_1_1strided__iterator.html#doxygen.header_reference.classboost_1_1compute_1_1strided__iterator_1a07cfd35da5617beb6d76cca3ee2fb939"><span class="identifier">equal</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1strided__iterator.html" title="Class template strided_iterator">strided_iterator</a><span class="special">&lt;</span> <span class="identifier">Iterator</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1compute_1_1strided__iterator.html#doxygen.header_reference.classboost_1_1compute_1_1strided__iterator_1a8543230fb22075b3d2e28bc37b97aa18"><span class="identifier">increment</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1compute_1_1strided__iterator.html#doxygen.header_reference.classboost_1_1compute_1_1strided__iterator_1a5f4adeeaa0de390a14a9efa73e4f7d32"><span class="identifier">decrement</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1compute_1_1strided__iterator.html#doxygen.header_reference.classboost_1_1compute_1_1strided__iterator_1ab9b699f93f833ef0c773392c98f79f6d"><span class="identifier">advance</span></a><span class="special">(</span><span class="keyword">typename</span> <span class="identifier">super_type</span><span class="special">::</span><span class="identifier">difference_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">difference_type</span> <a class="link" href="classboost_1_1compute_1_1strided__iterator.html#doxygen.header_reference.classboost_1_1compute_1_1strided__iterator_1ac003f273d68e12871c2f0deb87a9dade"><span class="identifier">distance_to</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1strided__iterator.html" title="Class template strided_iterator">strided_iterator</a><span class="special">&lt;</span> <span class="identifier">Iterator</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id33761"></a><h2>Description</h2>
+<p>The strided iterator adaptor skips over multiple elements each time it is incremented or decremented.</p>
+<p><b>See Also: </b><a class="link" href="classboost_1_1compute_1_1buffer__iterator.html" title="Class template buffer_iterator">buffer_iterator</a>, make_strided_iterator(), make_strided_iterator_end() </p>
+<p>
+</p>
+<div class="refsect2">
+<a name="id33769"></a><h3>
+<a name="id65-bb"></a><code class="computeroutput">strided_iterator</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem"><pre class="literallayout"><a name="doxygen.header_reference.classboost_1_1compute_1_1strided__iterator_1a9f120aa66554960116997ae1c4030d2d"></a><span class="identifier">strided_iterator</span><span class="special">(</span><span class="identifier">Iterator</span> iterator<span class="special">,</span> <span class="identifier">difference_type</span> stride<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a name="doxygen.header_reference.classboost_1_1compute_1_1strided__iterator_1a778ea031986cbbf72ac206d4419ca840"></a><span class="identifier">strided_iterator</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1strided__iterator.html" title="Class template strided_iterator">strided_iterator</a><span class="special">&lt;</span> <span class="identifier">Iterator</span> <span class="special">&gt;</span> <span class="special">&amp;</span> other<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a class="link" href="classboost_1_1compute_1_1strided__iterator.html" title="Class template strided_iterator">strided_iterator</a><span class="special">&lt;</span> <span class="identifier">Iterator</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+<a name="doxygen.header_reference.classboost_1_1compute_1_1strided__iterator_1ad54b01561a9e43d996d6dc6e52abd01b"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1strided__iterator.html" title="Class template strided_iterator">strided_iterator</a><span class="special">&lt;</span> <span class="identifier">Iterator</span> <span class="special">&gt;</span> <span class="special">&amp;</span> other<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a name="doxygen.header_reference.classboost_1_1compute_1_1strided__iterator_1a500af63ba2c633f19322af584c858470"></a><span class="special">~</span><span class="identifier">strided_iterator</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">size_t</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1strided__iterator_1a0b1595ef2752b1dd8fd6528e2d190792"></a><span class="identifier">get_index</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">const</span> <span class="identifier">buffer</span> <span class="special">&amp;</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1strided__iterator_1a3dd9747b3090e65a548dd49537abf117"></a><span class="identifier">get_buffer</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> IndexExpression<span class="special">&gt;</span> 
+  <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a name="doxygen.header_reference.classboost_1_1compute_1_1strided__iterator_1ae62ec124db206b98fa734b2358421b76"></a><span class="keyword">operator</span><span class="special">[</span><span class="special">]</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">IndexExpression</span> <span class="special">&amp;</span> expr<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id33870"></a><h3>
+<a name="id66-bb"></a><code class="computeroutput">strided_iterator</code> private member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem"><pre class="literallayout"><span class="identifier">reference</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1strided__iterator_1a4db98d018e8c93ee8335ce5c7d383c43"></a><span class="identifier">dereference</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1strided__iterator_1a07cfd35da5617beb6d76cca3ee2fb939"></a><span class="identifier">equal</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1strided__iterator.html" title="Class template strided_iterator">strided_iterator</a><span class="special">&lt;</span> <span class="identifier">Iterator</span> <span class="special">&gt;</span> <span class="special">&amp;</span> other<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1strided__iterator_1a8543230fb22075b3d2e28bc37b97aa18"></a><span class="identifier">increment</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1strided__iterator_1a5f4adeeaa0de390a14a9efa73e4f7d32"></a><span class="identifier">decrement</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1strided__iterator_1ab9b699f93f833ef0c773392c98f79f6d"></a><span class="identifier">advance</span><span class="special">(</span><span class="keyword">typename</span> <span class="identifier">super_type</span><span class="special">::</span><span class="identifier">difference_type</span> n<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">difference_type</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1strided__iterator_1ac003f273d68e12871c2f0deb87a9dade"></a><span class="identifier">distance_to</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1strided__iterator.html" title="Class template strided_iterator">strided_iterator</a><span class="special">&lt;</span> <span class="identifier">Iterator</span> <span class="special">&gt;</span> <span class="special">&amp;</span> other<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2013, 2014 Kyle Lutz<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="permutation__iterator_8hpp_1a0592cbbf2a9f590b05eae7f2a7c016ee.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_compute/reference.html#doxygen.header_reference.strided__iterator_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="strided__iterator_8hpp_1ae5eb8f260ce5dbfe86608230c86e3b89.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

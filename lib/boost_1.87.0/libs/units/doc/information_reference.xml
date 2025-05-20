@@ -1,0 +1,82 @@
+<?xml version="1.0" standalone="yes"?>
+<library-reference id="information_system_reference"><title>Information System Reference</title><header id="doxygen.information_system_reference.information_8hpp" name="boost/units/systems/information.hpp">
+</header>
+<header id="doxygen.information_system_reference.bit_8hpp" name="boost/units/systems/information/bit.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="information">
+<namespace name="hu">
+<namespace name="bit">
+<typedef id="doxygen.information_system_reference.namespaceboost_1_1units_1_1information_1_1hu_1_1bit_1a849f203c5b7c866ca1d6eeffed41f3d7" name="info"><type>unit&lt; information_dimension, make_system&lt; bit_base_unit &gt;::type &gt;</type></typedef>
+</namespace>
+</namespace>
+<data-member id="doxygen.information_system_reference.namespaceboost_1_1units_1_1information_1a62f3ae1245519bf48dde9940fcf70e09" name="bit" specifiers="static"><type>const hu::bit::info</type></data-member>
+<data-member id="doxygen.information_system_reference.namespaceboost_1_1units_1_1information_1a4fab6b9d06b9022fe19906bf128a1474" name="bits" specifiers="static"><type>const hu::bit::info</type></data-member>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.information_system_reference.byte_8hpp" name="boost/units/systems/information/byte.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="information">
+<namespace name="hu">
+<namespace name="byte">
+<typedef id="doxygen.information_system_reference.namespaceboost_1_1units_1_1information_1_1hu_1_1byte_1a39b9c61e8116619348c5d742e5c8f8a0" name="info"><type>unit&lt; information_dimension, system &gt;</type></typedef>
+</namespace>
+</namespace>
+<typedef id="doxygen.information_system_reference.namespaceboost_1_1units_1_1information_1a2cde73e58025499528678cfac68c75c2" name="system"><type>make_system&lt; byte_base_unit &gt;::type</type></typedef>
+<typedef id="doxygen.information_system_reference.namespaceboost_1_1units_1_1information_1a2a9afdda7a8296d76276a0901789b2a1" name="dimensionless"><type>unit&lt; dimensionless_type, system &gt;</type></typedef>
+<typedef id="doxygen.information_system_reference.namespaceboost_1_1units_1_1information_1a44690d846a14b86b1fcf9611b4b309d5" name="info"><type>hu::byte::info</type></typedef>
+<data-member id="doxygen.information_system_reference.namespaceboost_1_1units_1_1information_1a2e2181d110049ac1ef688460e7ba9cf8" name="byte" specifiers="static"><type>const hu::byte::info</type></data-member>
+<data-member id="doxygen.information_system_reference.namespaceboost_1_1units_1_1information_1ac1d7f0db6aca7a6c4ee4d5d3b38cf125" name="bytes" specifiers="static"><type>const hu::byte::info</type></data-member>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.information_system_reference.hartley_8hpp" name="boost/units/systems/information/hartley.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="information">
+<namespace name="hu">
+<namespace name="hartley">
+<typedef id="doxygen.information_system_reference.namespaceboost_1_1units_1_1information_1_1hu_1_1hartley_1ab4693cfcf98c6281c018f9a758246b08" name="info"><type>unit&lt; information_dimension, make_system&lt; hartley_base_unit &gt;::type &gt;</type></typedef>
+</namespace>
+</namespace>
+<data-member id="doxygen.information_system_reference.namespaceboost_1_1units_1_1information_1ad8f521805cc5db42c4978980a01e6931" name="hartley" specifiers="static"><type>const hu::hartley::info</type></data-member>
+<data-member id="doxygen.information_system_reference.namespaceboost_1_1units_1_1information_1a08e4768aa31fad54c8d8906b717e4b72" name="hartleys" specifiers="static"><type>const hu::hartley::info</type></data-member>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.information_system_reference.nat_8hpp" name="boost/units/systems/information/nat.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="information">
+<namespace name="hu">
+<namespace name="nat">
+<typedef id="doxygen.information_system_reference.namespaceboost_1_1units_1_1information_1_1hu_1_1nat_1a581fb9dcab4e0b748fe05a7d9c64d5f4" name="info"><type>unit&lt; information_dimension, make_system&lt; nat_base_unit &gt;::type &gt;</type></typedef>
+</namespace>
+</namespace>
+<data-member id="doxygen.information_system_reference.namespaceboost_1_1units_1_1information_1a028a774c94e2d9059ceb68d53598e52c" name="nat" specifiers="static"><type>const hu::nat::info</type></data-member>
+<data-member id="doxygen.information_system_reference.namespaceboost_1_1units_1_1information_1a4a40330136b6a30179389f97cc58370d" name="nats" specifiers="static"><type>const hu::nat::info</type></data-member>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.information_system_reference.shannon_8hpp" name="boost/units/systems/information/shannon.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="information">
+<namespace name="hu">
+<namespace name="shannon">
+<typedef id="doxygen.information_system_reference.namespaceboost_1_1units_1_1information_1_1hu_1_1shannon_1acf57eb048b615692182d2cfaedafd3dc" name="info"><type>unit&lt; information_dimension, make_system&lt; shannon_base_unit &gt;::type &gt;</type></typedef>
+</namespace>
+</namespace>
+<data-member id="doxygen.information_system_reference.namespaceboost_1_1units_1_1information_1a60618542791715caadd76b6b02a7d216" name="shannon" specifiers="static"><type>const hu::shannon::info</type></data-member>
+<data-member id="doxygen.information_system_reference.namespaceboost_1_1units_1_1information_1a59210d1cfff3f1818351b092bc27fc67" name="shannons" specifiers="static"><type>const hu::shannon::info</type></data-member>
+</namespace>
+</namespace>
+</namespace>
+</header>
+</library-reference>

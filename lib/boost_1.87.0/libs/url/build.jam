@@ -1,0 +1,34 @@
+# Copyright René Ferdinand Rivera Morell 2023-2024
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at
+# http://www.boost.org/LICENSE_1_0.txt)
+
+require-b2 5.2 ;
+
+constant boost_dependencies :
+    /boost/align//boost_align
+    /boost/assert//boost_assert
+    /boost/config//boost_config
+    /boost/core//boost_core
+    /boost/mp11//boost_mp11
+    /boost/optional//boost_optional
+    /boost/static_assert//boost_static_assert
+    /boost/system//boost_system
+    /boost/type_traits//boost_type_traits
+    /boost/variant2//boost_variant2 ;
+
+project /boost/url
+    : common-requirements
+        <include>include
+    ;
+
+explicit
+    [ alias boost_url : build//boost_url ]
+    [ alias url_sources : build//url_sources ]
+    [ alias all : boost_url url_sources example test ]
+    ;
+
+call-if : boost-library url
+    : install boost_url
+    ;
+

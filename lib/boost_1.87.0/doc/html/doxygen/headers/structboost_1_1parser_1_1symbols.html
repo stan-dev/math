@@ -1,0 +1,133 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Struct template symbols</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../../headers.html#doxygen.headers.parser_8hpp" title="Header &lt;boost/parser/parser.hpp&gt;">
+<link rel="prev" href="structboost_1_1parser_1_1skip__directive.html" title="Struct template skip_directive">
+<link rel="next" href="structboost_1_1parser_1_1transform__directive.html" title="Struct template transform_directive">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="structboost_1_1parser_1_1skip__directive.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../headers.html#doxygen.headers.parser_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="structboost_1_1parser_1_1transform__directive.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.headers.structboost_1_1parser_1_1symbols"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Struct template symbols</span></h2>
+<p>boost::parser::symbols</p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../headers.html#doxygen.headers.parser_8hpp" title="Header &lt;boost/parser/parser.hpp&gt;">boost/parser/parser.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> 
+<span class="keyword">struct</span> <a class="link" href="structboost_1_1parser_1_1symbols.html" title="Struct template symbols">symbols</a> <span class="special">:</span> <span class="keyword">public</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">parser</span><span class="special">::</span><span class="identifier">parser_interface</span><span class="special">&lt;</span> <span class="identifier">symbol_parser</span><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&gt;</span> <span class="special">{</span>
+
+  <span class="comment">// <a class="link" href="structboost_1_1parser_1_1symbols.html#id-1_3_27_11_5_1_1_16_4-bb">public member functions</a></span>
+  <a class="link" href="structboost_1_1parser_1_1symbols.html#doxygen.headers.structboost_1_1parser_1_1symbols_1a88055cd82f1141cc78790bb8f83c861f"><span class="identifier">symbols</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="structboost_1_1parser_1_1symbols.html#doxygen.headers.structboost_1_1parser_1_1symbols_1a91dcf6d29a36090a1f541b1d26283d1a"><span class="identifier">symbols</span></a><span class="special">(</span><span class="keyword">char</span> <span class="keyword">const</span> <span class="special">*</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="structboost_1_1parser_1_1symbols.html#doxygen.headers.structboost_1_1parser_1_1symbols_1a5aad0833f8bf1a7852ab60aa812238e2"><span class="identifier">symbols</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">initializer_list</span><span class="special">&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">pair</span><span class="special">&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string_view</span><span class="special">,</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&gt;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="structboost_1_1parser_1_1symbols.html#doxygen.headers.structboost_1_1parser_1_1symbols_1a7f67a7cc37b8929949c575876b2c91e6"><span class="identifier">symbols</span></a><span class="special">(</span><span class="keyword">char</span> <span class="keyword">const</span> <span class="special">*</span><span class="special">,</span> 
+          <span class="identifier">std</span><span class="special">::</span><span class="identifier">initializer_list</span><span class="special">&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">pair</span><span class="special">&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string_view</span><span class="special">,</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&gt;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="structboost_1_1parser_1_1symbols.html#doxygen.headers.structboost_1_1parser_1_1symbols_1a2be59d85969aba79421c2d51c2f361cf"><span class="identifier">insert_for_next_parse</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">string_view</span><span class="special">,</span> <span class="identifier">T</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="structboost_1_1parser_1_1symbols.html#doxygen.headers.structboost_1_1parser_1_1symbols_1ac04de3d7e673fabb432a38d1e54d3bcc"><span class="identifier">erase_for_next_parse</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">string_view</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="structboost_1_1parser_1_1symbols.html#doxygen.headers.structboost_1_1parser_1_1symbols_1a40f8b5490d21d6c706500e8dd61b3283"><span class="identifier">clear_for_next_parse</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Context<span class="special">&gt;</span> 
+    <span class="keyword">void</span> <a class="link" href="structboost_1_1parser_1_1symbols.html#doxygen.headers.structboost_1_1parser_1_1symbols_1ad94e0a8206ec4d97b5274eedd64843e2"><span class="identifier">insert_for_next_parse</span></a><span class="special">(</span><span class="identifier">Context</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string_view</span><span class="special">,</span> <span class="identifier">T</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Context<span class="special">&gt;</span> 
+    <span class="keyword">void</span> <a class="link" href="structboost_1_1parser_1_1symbols.html#doxygen.headers.structboost_1_1parser_1_1symbols_1ad7104d28d5fcba14ec0f8bec46ffc652"><span class="identifier">erase_for_next_parse</span></a><span class="special">(</span><span class="identifier">Context</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string_view</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Context<span class="special">&gt;</span> <span class="keyword">void</span> <a class="link" href="structboost_1_1parser_1_1symbols.html#doxygen.headers.structboost_1_1parser_1_1symbols_1ad2bede36c1b123376f363aeb9f37dd46"><span class="identifier">clear_for_next_parse</span></a><span class="special">(</span><span class="identifier">Context</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Context<span class="special">&gt;</span> 
+    <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a class="link" href="structboost_1_1parser_1_1symbols.html#doxygen.headers.structboost_1_1parser_1_1symbols_1af747033b1dab61bc0610e70cf6bbc441"><span class="identifier">find</span></a><span class="special">(</span><span class="identifier">Context</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string_view</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Context<span class="special">&gt;</span> 
+    <span class="keyword">void</span> <a class="link" href="structboost_1_1parser_1_1symbols.html#doxygen.headers.structboost_1_1parser_1_1symbols_1a82fc1e527a5b46ab534f4a4c59f0ae7d"><span class="identifier">insert</span></a><span class="special">(</span><span class="identifier">Context</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string_view</span><span class="special">,</span> <span class="identifier">T</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Context<span class="special">&gt;</span> 
+    <span class="keyword">void</span> <a class="link" href="structboost_1_1parser_1_1symbols.html#doxygen.headers.structboost_1_1parser_1_1symbols_1a532fcd73daff1712f154782989955758"><span class="identifier">erase</span></a><span class="special">(</span><span class="identifier">Context</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string_view</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Context<span class="special">&gt;</span> <span class="keyword">void</span> <a class="link" href="structboost_1_1parser_1_1symbols.html#doxygen.headers.structboost_1_1parser_1_1symbols_1a0cf3757958d1a1f4c0bac5dc41aa021b"><span class="identifier">clear</span></a><span class="special">(</span><span class="identifier">Context</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.27.11.5.31.4"></a><h2>Description</h2>
+<p>A <code class="computeroutput">symbols&lt;T&gt;</code> represents the initial state of a symbol table parser that produces attributes of type <code class="computeroutput">T</code>. The entries in the symbol table can be changed during parsing, but those mutations to not affect the <code class="computeroutput">symbols&lt;T&gt;</code> object itself; all mutations happen to a copy of the symbol table in the parse context. For table entries that should be used during every parse, add entries via <code class="computeroutput">add()</code> or <code class="computeroutput">operator()</code>. For mid-parse mutations, use <code class="computeroutput"><a class="link" href="structboost_1_1parser_1_1symbols.html#doxygen.headers.structboost_1_1parser_1_1symbols_1a82fc1e527a5b46ab534f4a4c59f0ae7d">insert()</a></code> and <code class="computeroutput"><a class="link" href="structboost_1_1parser_1_1symbols.html#doxygen.headers.structboost_1_1parser_1_1symbols_1a532fcd73daff1712f154782989955758">erase()</a></code>. </p>
+<div class="refsect2">
+<a name="id-1.3.27.11.5.31.4.3"></a><h3>
+<a name="id-1_3_27_11_5_1_1_16_4-bb"></a><code class="computeroutput">symbols</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem"><pre class="literallayout"><a name="doxygen.headers.structboost_1_1parser_1_1symbols_1a88055cd82f1141cc78790bb8f83c861f"></a><span class="identifier">symbols</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a name="doxygen.headers.structboost_1_1parser_1_1symbols_1a91dcf6d29a36090a1f541b1d26283d1a"></a><span class="identifier">symbols</span><span class="special">(</span><span class="keyword">char</span> <span class="keyword">const</span> <span class="special">*</span> diagnostic_text<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a name="doxygen.headers.structboost_1_1parser_1_1symbols_1a5aad0833f8bf1a7852ab60aa812238e2"></a><span class="identifier">symbols</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">initializer_list</span><span class="special">&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">pair</span><span class="special">&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string_view</span><span class="special">,</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&gt;</span> il<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a name="doxygen.headers.structboost_1_1parser_1_1symbols_1a7f67a7cc37b8929949c575876b2c91e6"></a><span class="identifier">symbols</span><span class="special">(</span><span class="keyword">char</span> <span class="keyword">const</span> <span class="special">*</span> diagnostic_text<span class="special">,</span> 
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">initializer_list</span><span class="special">&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">pair</span><span class="special">&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string_view</span><span class="special">,</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&gt;</span> il<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.headers.structboost_1_1parser_1_1symbols_1a2be59d85969aba79421c2d51c2f361cf"></a><span class="identifier">insert_for_next_parse</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">string_view</span> str<span class="special">,</span> <span class="identifier">T</span> x<span class="special">)</span><span class="special">;</span></pre>
+<p>Inserts an entry consisting of a UTF-8 string <code class="computeroutput">str</code> to match, and an associated attribute <code class="computeroutput">x</code>, to <code class="computeroutput">*this</code>. The entry is added for use in all subsequent top-level parses. Subsequent lookups during the current top-level parse will not necessarily match <code class="computeroutput">str</code>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.headers.structboost_1_1parser_1_1symbols_1ac04de3d7e673fabb432a38d1e54d3bcc"></a><span class="identifier">erase_for_next_parse</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">string_view</span> str<span class="special">)</span><span class="special">;</span></pre>
+<p>Erases the entry whose UTF-8 match string is <code class="computeroutput">str</code>, from <code class="computeroutput">*this</code>. The entry will no longer be available for use in all subsequent top-level parses. <code class="computeroutput">str</code> will not be removed from the symbols matched in the current top-level parse. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.headers.structboost_1_1parser_1_1symbols_1a40f8b5490d21d6c706500e8dd61b3283"></a><span class="identifier">clear_for_next_parse</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Erases all the entries from the copy of the symbol table inside the parse context <code class="computeroutput">context</code>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Context<span class="special">&gt;</span> 
+  <span class="keyword">void</span> <a name="doxygen.headers.structboost_1_1parser_1_1symbols_1ad94e0a8206ec4d97b5274eedd64843e2"></a><span class="identifier">insert_for_next_parse</span><span class="special">(</span><span class="identifier">Context</span> <span class="keyword">const</span> <span class="special">&amp;</span> context<span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string_view</span> str<span class="special">,</span> 
+                             <span class="identifier">T</span> x<span class="special">)</span><span class="special">;</span></pre>
+<p>Inserts an entry consisting of a UTF-8 string <code class="computeroutput">str</code> to match, and an associated attribute <code class="computeroutput">x</code>, to <code class="computeroutput">*this</code>. The entry is added for use in all subsequent top-level parses. Subsequent lookups during the current top-level parse will not necessarily match <code class="computeroutput">str</code>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Context<span class="special">&gt;</span> 
+  <span class="keyword">void</span> <a name="doxygen.headers.structboost_1_1parser_1_1symbols_1ad7104d28d5fcba14ec0f8bec46ffc652"></a><span class="identifier">erase_for_next_parse</span><span class="special">(</span><span class="identifier">Context</span> <span class="keyword">const</span> <span class="special">&amp;</span> context<span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string_view</span> str<span class="special">)</span><span class="special">;</span></pre>
+<p>Erases the entry whose UTF-8 match string is <code class="computeroutput">str</code>, from <code class="computeroutput">*this</code>. The entry will no longer be available for use in all subsequent top-level parses. <code class="computeroutput">str</code> will not be removed from the symbols matched in the current top-level parse. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Context<span class="special">&gt;</span> <span class="keyword">void</span> <a name="doxygen.headers.structboost_1_1parser_1_1symbols_1ad2bede36c1b123376f363aeb9f37dd46"></a><span class="identifier">clear_for_next_parse</span><span class="special">(</span><span class="identifier">Context</span> <span class="keyword">const</span> <span class="special">&amp;</span> context<span class="special">)</span><span class="special">;</span></pre>
+<p>Erases all the entries from the copy of the symbol table inside the parse context <code class="computeroutput">context</code>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Context<span class="special">&gt;</span> 
+  <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a name="doxygen.headers.structboost_1_1parser_1_1symbols_1af747033b1dab61bc0610e70cf6bbc441"></a><span class="identifier">find</span><span class="special">(</span><span class="identifier">Context</span> <span class="keyword">const</span> <span class="special">&amp;</span> context<span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string_view</span> str<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Uses UTF-8 string <code class="computeroutput">str</code> to look up an attribute in the table during parsing, returning it as an optional reference. The lookup is done on the copy of the symbol table inside the parse context <code class="computeroutput">context</code>, not <code class="computeroutput">*this</code>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Context<span class="special">&gt;</span> 
+  <span class="keyword">void</span> <a name="doxygen.headers.structboost_1_1parser_1_1symbols_1a82fc1e527a5b46ab534f4a4c59f0ae7d"></a><span class="identifier">insert</span><span class="special">(</span><span class="identifier">Context</span> <span class="keyword">const</span> <span class="special">&amp;</span> context<span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string_view</span> str<span class="special">,</span> <span class="identifier">T</span> x<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Inserts an entry consisting of a UTF-8 string to match <code class="computeroutput">str</code>, and an associtated attribute <code class="computeroutput">x</code>, to the copy of the symbol table inside the parse context <code class="computeroutput">context</code>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Context<span class="special">&gt;</span> 
+  <span class="keyword">void</span> <a name="doxygen.headers.structboost_1_1parser_1_1symbols_1a532fcd73daff1712f154782989955758"></a><span class="identifier">erase</span><span class="special">(</span><span class="identifier">Context</span> <span class="keyword">const</span> <span class="special">&amp;</span> context<span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string_view</span> str<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Erases the entry whose UTF-8 match string is <code class="computeroutput">str</code> from the copy of the symbol table inside the parse context <code class="computeroutput">context</code>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Context<span class="special">&gt;</span> <span class="keyword">void</span> <a name="doxygen.headers.structboost_1_1parser_1_1symbols_1a0cf3757958d1a1f4c0bac5dc41aa021b"></a><span class="identifier">clear</span><span class="special">(</span><span class="identifier">Context</span> <span class="keyword">const</span> <span class="special">&amp;</span> context<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Erases all the entries from the copy of the symbol table inside the parse context <code class="computeroutput">context</code>. </p>
+</li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2020 T. Zachary Laine<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="structboost_1_1parser_1_1skip__directive.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../headers.html#doxygen.headers.parser_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="structboost_1_1parser_1_1transform__directive.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

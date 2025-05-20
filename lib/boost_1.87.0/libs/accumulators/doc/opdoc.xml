@@ -1,0 +1,714 @@
+<?xml version="1.0" standalone="yes"?>
+<library-reference id="numeric_operators_library_reference"><title>Numeric Operators Library Reference</title><header id="doxygen.numeric_operators_library_reference.functional_8hpp" name="boost/accumulators/numeric/functional.hpp">
+<namespace name="boost">
+<namespace name="numeric">
+<struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1default__" name="default_"><template>
+      <template-type-parameter name="T"/>
+    </template><typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1default___1a892506421fa9ce6bbb00e7882f5d7fc0" name="type"><type><classname>default_</classname></type></typedef>
+<typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1default___1aeefd4a08ccd588f1288d2d554fd241bc" name="value_type"><type>T</type></typedef>
+<data-member id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1default___1a552c33bd36eff038f4ac02d64415f54f" name="value" specifiers="static"><type>T const</type></data-member>
+<method-group name="public member functions">
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1default___1aff46e96da3584fda339bfea1f206c012" name="conversion-operator" cv="const"><type>T const &amp;</type></method>
+</method-group>
+</struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1one" name="one"><template>
+      <template-type-parameter name="T"/>
+    </template><typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1one_1a8c26cef38485d1401b98ea5375202361" name="type"><type><classname>one</classname></type></typedef>
+<typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1one_1ad1241388ad69f17d98ef37d232f80d3d" name="value_type"><type>T</type></typedef>
+<data-member id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1one_1aee0e592225d38ae037ac1ae625860441" name="value" specifiers="static"><type>T const</type></data-member>
+<method-group name="public member functions">
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1one_1a9e2dd99010b9af756b7fe3372559d3ad" name="conversion-operator" cv="const"><type>T const &amp;</type></method>
+</method-group>
+</struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1one__or__default" name="one_or_default"><template>
+      <template-type-parameter name="T"/>
+    </template><inherit access="public">mpl::if_::type</inherit></struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1zero" name="zero"><template>
+      <template-type-parameter name="T"/>
+    </template><typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1zero_1a7c38b11738917217f043e33326678b89" name="type"><type><classname>zero</classname></type></typedef>
+<typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1zero_1a7b623f8b4fb94963bd192796d3a96f06" name="value_type"><type>T</type></typedef>
+<data-member id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1zero_1a3f776b2731dec5186051f7a42b7b98bb" name="value" specifiers="static"><type>T const</type></data-member>
+<method-group name="public member functions">
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1zero_1a4968f98fb3bf3be9eb79fe2d08ef4c0f" name="conversion-operator" cv="const"><type>T const &amp;</type></method>
+</method-group>
+</struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1zero__or__default" name="zero_or_default"><template>
+      <template-type-parameter name="T"/>
+    </template><inherit access="public">mpl::if_::type</inherit></struct><namespace name="functional">
+<struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__max" name="as_max"><template>
+      <template-type-parameter name="Arg"/>
+      <template-type-parameter name="Tag"/>
+    </template><inherit access="public">boost::numeric::functional::as_max_base&lt; Arg, void &gt;</inherit></struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__max__base" name="as_max_base"><template>
+      <template-type-parameter name="Arg"/>
+      <template-type-parameter name="EnableIf"/>
+    </template><typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__max__base_1a93e4accdf796af7b43db03b0487aaeca" name="argument_type"><type>Arg</type></typedef>
+<typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__max__base_1aec47672acc3264a51de41e0625e84680" name="result_type"><type>remove_const&lt; Arg &gt;::type</type></typedef>
+<method-group name="public member functions">
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__max__base_1a5c6509795847e4dc86593063a5c9f56a" name="BOOST_STATIC_ASSERT"><type/><parameter name=""><paramtype>std::numeric_limits&lt; typename remove_const&lt; Arg &gt;::type &gt;::is_specialized</paramtype></parameter></method>
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__max__base_1a9acc8af87404aef0d28efe21c9ff98b1" name="operator()" cv="const"><type>remove_const&lt; Arg &gt;::type</type><parameter name=""><paramtype>Arg &amp;</paramtype></parameter></method>
+</method-group>
+</struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__min" name="as_min"><template>
+      <template-type-parameter name="Arg"/>
+      <template-type-parameter name="Tag"/>
+    </template><inherit access="public">boost::numeric::functional::as_min_base&lt; Arg, void &gt;</inherit></struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__min__base" name="as_min_base"><template>
+      <template-type-parameter name="Arg"/>
+      <template-type-parameter name="EnableIf"/>
+    </template><typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__min__base_1affc82b107908cf167813bc74c39e73ed" name="argument_type"><type>Arg</type></typedef>
+<typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__min__base_1a87361a8e7ed1bc9bea8f1358343efa0c" name="result_type"><type>remove_const&lt; Arg &gt;::type</type></typedef>
+<method-group name="public member functions">
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__min__base_1af5e8433caae7d8538210faef8398cb3a" name="BOOST_STATIC_ASSERT"><type/><parameter name=""><paramtype>std::numeric_limits&lt; typename remove_const&lt; Arg &gt;::type &gt;::is_specialized</paramtype></parameter></method>
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__min__base_1a04ea03bbae3f4d47c06a1aac1dece1e2" name="operator()" cv="const"><type>remove_const&lt; Arg &gt;::type</type><parameter name=""><paramtype>Arg &amp;</paramtype></parameter></method>
+</method-group>
+</struct><struct-specialization id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__min__base_3_01Arg_00_01typename_01enable__if_3_01is_c2ab266b06f07f849d411a6b8358e042" name="as_min_base"><template>
+      <template-type-parameter name="Arg"/>
+    </template><specialization><template-arg>Arg</template-arg><template-arg>typename enable_if&lt; is_floating_point&lt; Arg &gt; &gt;::type</template-arg></specialization><typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__min__base_3_01Arg_00_01typename_01enable__if_3_01is_c2ab266b06f07f849d411a6b8358e042_1a7fcbb80cbcd6c26962a69b1f9b7d989a" name="argument_type"><type>Arg</type></typedef>
+<typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__min__base_3_01Arg_00_01typename_01enable__if_3_01is_c2ab266b06f07f849d411a6b8358e042_1a03889d0bd8f376dbc71299e8c90bd962" name="result_type"><type>remove_const&lt; Arg &gt;::type</type></typedef>
+<method-group name="public member functions">
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__min__base_3_01Arg_00_01typename_01enable__if_3_01is_c2ab266b06f07f849d411a6b8358e042_1a9cba7148a1fccbd742e8eb1a0ef44633" name="BOOST_STATIC_ASSERT"><type/><parameter name=""><paramtype>std::numeric_limits&lt; typename remove_const&lt; Arg &gt;::type &gt;::is_specialized</paramtype></parameter></method>
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__min__base_3_01Arg_00_01typename_01enable__if_3_01is_c2ab266b06f07f849d411a6b8358e042_1a862e2940e81f017c8c83e2eac6dab30e" name="operator()" cv="const"><type>remove_const&lt; Arg &gt;::type</type><parameter name=""><paramtype>Arg &amp;</paramtype></parameter></method>
+</method-group>
+</struct-specialization><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__one" name="as_one"><template>
+      <template-type-parameter name="Arg"/>
+      <template-type-parameter name="Tag"/>
+    </template><inherit access="public">boost::numeric::functional::as_one_base&lt; Arg, void &gt;</inherit></struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__one__base" name="as_one_base"><template>
+      <template-type-parameter name="Arg"/>
+      <template-type-parameter name="EnableIf"/>
+    </template><typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__one__base_1a11f1a42cf8dd6fcc99214777def699dc" name="argument_type"><type>Arg</type></typedef>
+<typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__one__base_1a4ef6db9c8757dd9c7af8dd2517e362fb" name="result_type"><type>remove_const&lt; Arg &gt;::type</type></typedef>
+<method-group name="public member functions">
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__one__base_1a8720b322b68ba56a965bcbf14dfae402" name="operator()" cv="const"><type>remove_const&lt; Arg &gt;::type</type><parameter name=""><paramtype>Arg &amp;</paramtype></parameter></method>
+</method-group>
+</struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__zero" name="as_zero"><template>
+      <template-type-parameter name="Arg"/>
+      <template-type-parameter name="Tag"/>
+    </template><inherit access="public">boost::numeric::functional::as_zero_base&lt; Arg, void &gt;</inherit></struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__zero__base" name="as_zero_base"><template>
+      <template-type-parameter name="Arg"/>
+      <template-type-parameter name="EnableIf"/>
+    </template><typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__zero__base_1aca3a0204c7fe1b7dd1317625c85d483b" name="argument_type"><type>Arg</type></typedef>
+<typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__zero__base_1a40dbe475089a373085982f90f1e5458a" name="result_type"><type>remove_const&lt; Arg &gt;::type</type></typedef>
+<method-group name="public member functions">
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__zero__base_1a05ee1c234e872db8b15252fd92c4dbda" name="operator()" cv="const"><type>remove_const&lt; Arg &gt;::type</type><parameter name=""><paramtype>Arg &amp;</paramtype></parameter></method>
+</method-group>
+</struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1assign" name="assign"><template>
+      <template-type-parameter name="Left"/>
+      <template-type-parameter name="Right"/>
+      <template-type-parameter name="LeftTag"><default>typename tag&lt;Left&gt;::type</default></template-type-parameter>
+      <template-type-parameter name="RightTag"><default>typename tag&lt;Right&gt;::type</default></template-type-parameter>
+    </template><inherit access="public">boost::numeric::functional::assign_base&lt; Left, Right, void &gt;</inherit></struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1assign__base" name="assign_base"><template>
+      <template-type-parameter name="Left"/>
+      <template-type-parameter name="Right"/>
+      <template-type-parameter name="EnableIf"><default>void</default></template-type-parameter>
+    </template><inherit access="public">std::binary_function&lt; Left, Right, typeof(lvalue&lt; Left &gt;()=lvalue&lt; Right &gt;())&gt;</inherit><method-group name="public member functions">
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1assign__base_1aae704e2f8ea970cd9741789baa2be022" name="operator()" cv="const"><type>result_type</type><parameter name="left"><paramtype>Left &amp;</paramtype></parameter><parameter name="right"><paramtype>Right &amp;</paramtype></parameter><description><para>
+</para></description><returns><para>left = right </para>
+</returns></method>
+</method-group>
+</struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1complement" name="complement"><template>
+      <template-type-parameter name="Arg"/>
+      <template-type-parameter name="Tag"><default>typename tag&lt;Arg&gt;::type</default></template-type-parameter>
+    </template><inherit access="public">boost::numeric::functional::complement_base&lt; Arg, void &gt;</inherit></struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1complement__base" name="complement_base"><template>
+      <template-type-parameter name="Arg"/>
+      <template-type-parameter name="EnableIf"><default>void</default></template-type-parameter>
+    </template><inherit access="public">std::unary_function&lt; Arg, typeof(~ lvalue&lt; Arg &gt;())&gt;</inherit><method-group name="public member functions">
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1complement__base_1a4b62acb1aa04ef2454609dd62da559be" name="operator()" cv="const"><type>result_type</type><parameter name="arg"><paramtype>Arg &amp;</paramtype></parameter><description><para>
+</para></description><returns><para>~ arg </para>
+</returns></method>
+</method-group>
+</struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1divides" name="divides"><template>
+      <template-type-parameter name="Left"/>
+      <template-type-parameter name="Right"/>
+      <template-type-parameter name="LeftTag"><default>typename tag&lt;Left&gt;::type</default></template-type-parameter>
+      <template-type-parameter name="RightTag"><default>typename tag&lt;Right&gt;::type</default></template-type-parameter>
+    </template><inherit access="public">boost::numeric::functional::divides_base&lt; Left, Right, void &gt;</inherit></struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1divides__assign" name="divides_assign"><template>
+      <template-type-parameter name="Left"/>
+      <template-type-parameter name="Right"/>
+      <template-type-parameter name="LeftTag"><default>typename tag&lt;Left&gt;::type</default></template-type-parameter>
+      <template-type-parameter name="RightTag"><default>typename tag&lt;Right&gt;::type</default></template-type-parameter>
+    </template><inherit access="public">boost::numeric::functional::divides_assign_base&lt; Left, Right, void &gt;</inherit></struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1divides__assign__base" name="divides_assign_base"><template>
+      <template-type-parameter name="Left"/>
+      <template-type-parameter name="Right"/>
+      <template-type-parameter name="EnableIf"><default>void</default></template-type-parameter>
+    </template><inherit access="public">std::binary_function&lt; Left, Right, typeof(lvalue&lt; Left &gt;()/=lvalue&lt; Right &gt;())&gt;</inherit><method-group name="public member functions">
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1divides__assign__base_1a065a8a8feea61bb270565f26e3be1934" name="operator()" cv="const"><type>result_type</type><parameter name="left"><paramtype>Left &amp;</paramtype></parameter><parameter name="right"><paramtype>Right &amp;</paramtype></parameter><description><para>
+</para></description><returns><para>left /= right </para>
+</returns></method>
+</method-group>
+</struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1divides__base" name="divides_base"><template>
+      <template-type-parameter name="Left"/>
+      <template-type-parameter name="Right"/>
+      <template-type-parameter name="EnableIf"><default>void</default></template-type-parameter>
+    </template><inherit access="public">std::binary_function&lt; Left, Right, typeof(lvalue&lt; Left &gt;()/lvalue&lt; Right &gt;())&gt;</inherit><method-group name="public member functions">
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1divides__base_1a1204404aa98d145b8321b20af7146751" name="operator()" cv="const"><type>result_type</type><parameter name="left"><paramtype>Left &amp;</paramtype></parameter><parameter name="right"><paramtype>Right &amp;</paramtype></parameter><description><para>
+</para></description><returns><para>left / right </para>
+</returns></method>
+</method-group>
+</struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1equal__to" name="equal_to"><template>
+      <template-type-parameter name="Left"/>
+      <template-type-parameter name="Right"/>
+      <template-type-parameter name="LeftTag"><default>typename tag&lt;Left&gt;::type</default></template-type-parameter>
+      <template-type-parameter name="RightTag"><default>typename tag&lt;Right&gt;::type</default></template-type-parameter>
+    </template><inherit access="public">boost::numeric::functional::equal_to_base&lt; Left, Right, void &gt;</inherit></struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1equal__to__base" name="equal_to_base"><template>
+      <template-type-parameter name="Left"/>
+      <template-type-parameter name="Right"/>
+      <template-type-parameter name="EnableIf"><default>void</default></template-type-parameter>
+    </template><inherit access="public">std::binary_function&lt; Left, Right, typeof(lvalue&lt; Left &gt;()==lvalue&lt; Right &gt;())&gt;</inherit><method-group name="public member functions">
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1equal__to__base_1a9144a536ca2345a83246403f736eb3ff" name="operator()" cv="const"><type>result_type</type><parameter name="left"><paramtype>Left &amp;</paramtype></parameter><parameter name="right"><paramtype>Right &amp;</paramtype></parameter><description><para>
+</para></description><returns><para>left == right </para>
+</returns></method>
+</method-group>
+</struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1fdiv" name="fdiv"><template>
+      <template-type-parameter name="Left"/>
+      <template-type-parameter name="Right"/>
+      <template-type-parameter name="LeftTag"/>
+      <template-type-parameter name="RightTag"/>
+    </template><inherit access="public">boost::numeric::functional::fdiv_base&lt; Left, Right, void &gt;</inherit></struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1fdiv__base" name="fdiv_base"><template>
+      <template-type-parameter name="Left"/>
+      <template-type-parameter name="Right"/>
+      <template-type-parameter name="EnableIf"/>
+    </template><inherit access="public">boost::numeric::functional::divides&lt; Left, Right &gt;</inherit></struct><struct-specialization id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1fdiv__base_3_01Left_00_01Right_00_01typename_01enable__i9376e2c4787bbc4bf0fa5b661128dee6" name="fdiv_base"><template>
+      <template-type-parameter name="Left"/>
+      <template-type-parameter name="Right"/>
+    </template><specialization><template-arg>Left</template-arg><template-arg>Right</template-arg><template-arg>typename enable_if&lt; are_integral&lt; Left</template-arg><template-arg>Right &gt; &gt;::type</template-arg></specialization><inherit access="public">boost::numeric::functional::divides&lt; double const, double const &gt;</inherit></struct-specialization><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1greater" name="greater"><template>
+      <template-type-parameter name="Left"/>
+      <template-type-parameter name="Right"/>
+      <template-type-parameter name="LeftTag"><default>typename tag&lt;Left&gt;::type</default></template-type-parameter>
+      <template-type-parameter name="RightTag"><default>typename tag&lt;Right&gt;::type</default></template-type-parameter>
+    </template><inherit access="public">boost::numeric::functional::greater_base&lt; Left, Right, void &gt;</inherit></struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1greater__base" name="greater_base"><template>
+      <template-type-parameter name="Left"/>
+      <template-type-parameter name="Right"/>
+      <template-type-parameter name="EnableIf"><default>void</default></template-type-parameter>
+    </template><inherit access="public">std::binary_function&lt; Left, Right, typeof(lvalue&lt; Left &gt;() &gt; lvalue&lt; Right &gt;())&gt;</inherit><method-group name="public member functions">
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1greater__base_1a638053f512886cbfeae398f570c17585" name="operator()" cv="const"><type>result_type</type><parameter name="left"><paramtype>Left &amp;</paramtype></parameter><parameter name="right"><paramtype>Right &amp;</paramtype></parameter><description><para>
+</para></description><returns><para>left &gt; right </para>
+</returns></method>
+</method-group>
+</struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1greater__equal" name="greater_equal"><template>
+      <template-type-parameter name="Left"/>
+      <template-type-parameter name="Right"/>
+      <template-type-parameter name="LeftTag"><default>typename tag&lt;Left&gt;::type</default></template-type-parameter>
+      <template-type-parameter name="RightTag"><default>typename tag&lt;Right&gt;::type</default></template-type-parameter>
+    </template><inherit access="public">boost::numeric::functional::greater_equal_base&lt; Left, Right, void &gt;</inherit></struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1greater__equal__base" name="greater_equal_base"><template>
+      <template-type-parameter name="Left"/>
+      <template-type-parameter name="Right"/>
+      <template-type-parameter name="EnableIf"><default>void</default></template-type-parameter>
+    </template><inherit access="public">std::binary_function&lt; Left, Right, typeof(lvalue&lt; Left &gt;() &gt;=lvalue&lt; Right &gt;())&gt;</inherit><method-group name="public member functions">
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1greater__equal__base_1a74679e1ecc3d9de0432ff0cc37605e46" name="operator()" cv="const"><type>result_type</type><parameter name="left"><paramtype>Left &amp;</paramtype></parameter><parameter name="right"><paramtype>Right &amp;</paramtype></parameter><description><para>
+</para></description><returns><para>left &gt;= right </para>
+</returns></method>
+</method-group>
+</struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1left__ref" name="left_ref"><template>
+      <template-type-parameter name="Left"/>
+      <template-type-parameter name="Right"/>
+    </template><typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1left__ref_1af5cc84b12c963750419691ceae875718" name="type"><type>Left &amp;</type></typedef>
+</struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1less" name="less"><template>
+      <template-type-parameter name="Left"/>
+      <template-type-parameter name="Right"/>
+      <template-type-parameter name="LeftTag"><default>typename tag&lt;Left&gt;::type</default></template-type-parameter>
+      <template-type-parameter name="RightTag"><default>typename tag&lt;Right&gt;::type</default></template-type-parameter>
+    </template><inherit access="public">boost::numeric::functional::less_base&lt; Left, Right, void &gt;</inherit></struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1less__base" name="less_base"><template>
+      <template-type-parameter name="Left"/>
+      <template-type-parameter name="Right"/>
+      <template-type-parameter name="EnableIf"><default>void</default></template-type-parameter>
+    </template><inherit access="public">std::binary_function&lt; Left, Right, typeof(lvalue&lt; Left &gt;()&lt; lvalue&lt; Right &gt;())&gt;</inherit><method-group name="public member functions">
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1less__base_1ad2e4c0de93894088c8c9050422d19e07" name="operator()" cv="const"><type>result_type</type><parameter name="left"><paramtype>Left &amp;</paramtype></parameter><parameter name="right"><paramtype>Right &amp;</paramtype></parameter><description><para>
+</para></description><returns><para>left &lt; right </para>
+</returns></method>
+</method-group>
+</struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1less__equal" name="less_equal"><template>
+      <template-type-parameter name="Left"/>
+      <template-type-parameter name="Right"/>
+      <template-type-parameter name="LeftTag"><default>typename tag&lt;Left&gt;::type</default></template-type-parameter>
+      <template-type-parameter name="RightTag"><default>typename tag&lt;Right&gt;::type</default></template-type-parameter>
+    </template><inherit access="public">boost::numeric::functional::less_equal_base&lt; Left, Right, void &gt;</inherit></struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1less__equal__base" name="less_equal_base"><template>
+      <template-type-parameter name="Left"/>
+      <template-type-parameter name="Right"/>
+      <template-type-parameter name="EnableIf"><default>void</default></template-type-parameter>
+    </template><inherit access="public">std::binary_function&lt; Left, Right, typeof(lvalue&lt; Left &gt;()&lt;=lvalue&lt; Right &gt;())&gt;</inherit><method-group name="public member functions">
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1less__equal__base_1a5f8d3e2e9ef6347bbe1a233be3c41771" name="operator()" cv="const"><type>result_type</type><parameter name="left"><paramtype>Left &amp;</paramtype></parameter><parameter name="right"><paramtype>Right &amp;</paramtype></parameter><description><para>
+</para></description><returns><para>left &lt;= right </para>
+</returns></method>
+</method-group>
+</struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1logical__not" name="logical_not"><template>
+      <template-type-parameter name="Arg"/>
+      <template-type-parameter name="Tag"><default>typename tag&lt;Arg&gt;::type</default></template-type-parameter>
+    </template><inherit access="public">boost::numeric::functional::logical_not_base&lt; Arg, void &gt;</inherit></struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1logical__not__base" name="logical_not_base"><template>
+      <template-type-parameter name="Arg"/>
+      <template-type-parameter name="EnableIf"><default>void</default></template-type-parameter>
+    </template><inherit access="public">std::unary_function&lt; Arg, typeof(! lvalue&lt; Arg &gt;())&gt;</inherit><method-group name="public member functions">
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1logical__not__base_1aa895446512445af72a6205bd9d353479" name="operator()" cv="const"><type>result_type</type><parameter name="arg"><paramtype>Arg &amp;</paramtype></parameter><description><para>
+</para></description><returns><para>! arg </para>
+</returns></method>
+</method-group>
+</struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1max__assign" name="max_assign"><template>
+      <template-type-parameter name="Left"/>
+      <template-type-parameter name="Right"/>
+      <template-type-parameter name="LeftTag"/>
+      <template-type-parameter name="RightTag"/>
+    </template><inherit access="public">boost::numeric::functional::max_assign_base&lt; Left, Right, void &gt;</inherit></struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1max__assign__base" name="max_assign_base"><template>
+      <template-type-parameter name="Left"/>
+      <template-type-parameter name="Right"/>
+      <template-type-parameter name="EnableIf"/>
+    </template><typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1max__assign__base_1adcef9d452581c9e863d1c00dc4d6988b" name="first_argument_type"><type>Left</type></typedef>
+<typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1max__assign__base_1aa220c76d9583afb06735efd259fb5862" name="second_argument_type"><type>Right</type></typedef>
+<typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1max__assign__base_1ab2c88f952172b9444b693c0418c25f88" name="result_type"><type>void</type></typedef>
+<method-group name="public member functions">
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1max__assign__base_1a3b4117152385c5c240365ebb39af48dc" name="operator()" cv="const"><type>void</type><parameter name="left"><paramtype>Left &amp;</paramtype></parameter><parameter name="right"><paramtype>Right &amp;</paramtype></parameter></method>
+</method-group>
+</struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1min__assign" name="min_assign"><template>
+      <template-type-parameter name="Left"/>
+      <template-type-parameter name="Right"/>
+      <template-type-parameter name="LeftTag"/>
+      <template-type-parameter name="RightTag"/>
+    </template><inherit access="public">boost::numeric::functional::min_assign_base&lt; Left, Right, void &gt;</inherit></struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1min__assign__base" name="min_assign_base"><template>
+      <template-type-parameter name="Left"/>
+      <template-type-parameter name="Right"/>
+      <template-type-parameter name="EnableIf"/>
+    </template><typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1min__assign__base_1a1154ff8b3a7f940f454a95f920fda268" name="first_argument_type"><type>Left</type></typedef>
+<typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1min__assign__base_1a79c8c73d3d9c0b2a3595eb028aacfcbe" name="second_argument_type"><type>Right</type></typedef>
+<typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1min__assign__base_1abdb504102ddf20e86bb7308eccb53401" name="result_type"><type>void</type></typedef>
+<method-group name="public member functions">
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1min__assign__base_1a2f62bef950069d65ec8426f5177efb51" name="operator()" cv="const"><type>void</type><parameter name="left"><paramtype>Left &amp;</paramtype></parameter><parameter name="right"><paramtype>Right &amp;</paramtype></parameter></method>
+</method-group>
+</struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1minus" name="minus"><template>
+      <template-type-parameter name="Left"/>
+      <template-type-parameter name="Right"/>
+      <template-type-parameter name="LeftTag"><default>typename tag&lt;Left&gt;::type</default></template-type-parameter>
+      <template-type-parameter name="RightTag"><default>typename tag&lt;Right&gt;::type</default></template-type-parameter>
+    </template><inherit access="public">boost::numeric::functional::minus_base&lt; Left, Right, void &gt;</inherit></struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1minus__assign" name="minus_assign"><template>
+      <template-type-parameter name="Left"/>
+      <template-type-parameter name="Right"/>
+      <template-type-parameter name="LeftTag"><default>typename tag&lt;Left&gt;::type</default></template-type-parameter>
+      <template-type-parameter name="RightTag"><default>typename tag&lt;Right&gt;::type</default></template-type-parameter>
+    </template><inherit access="public">boost::numeric::functional::minus_assign_base&lt; Left, Right, void &gt;</inherit></struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1minus__assign__base" name="minus_assign_base"><template>
+      <template-type-parameter name="Left"/>
+      <template-type-parameter name="Right"/>
+      <template-type-parameter name="EnableIf"><default>void</default></template-type-parameter>
+    </template><inherit access="public">std::binary_function&lt; Left, Right, typeof(lvalue&lt; Left &gt;() -=lvalue&lt; Right &gt;())&gt;</inherit><method-group name="public member functions">
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1minus__assign__base_1a15539eda3772a1b1eeff4d02cdccd207" name="operator()" cv="const"><type>result_type</type><parameter name="left"><paramtype>Left &amp;</paramtype></parameter><parameter name="right"><paramtype>Right &amp;</paramtype></parameter><description><para>
+</para></description><returns><para>left -= right </para>
+</returns></method>
+</method-group>
+</struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1minus__base" name="minus_base"><template>
+      <template-type-parameter name="Left"/>
+      <template-type-parameter name="Right"/>
+      <template-type-parameter name="EnableIf"><default>void</default></template-type-parameter>
+    </template><inherit access="public">std::binary_function&lt; Left, Right, typeof(lvalue&lt; Left &gt;() - lvalue&lt; Right &gt;())&gt;</inherit><method-group name="public member functions">
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1minus__base_1af28dee352be2fada4e691f2016f80751" name="operator()" cv="const"><type>result_type</type><parameter name="left"><paramtype>Left &amp;</paramtype></parameter><parameter name="right"><paramtype>Right &amp;</paramtype></parameter><description><para>
+</para></description><returns><para>left - right </para>
+</returns></method>
+</method-group>
+</struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1modulus" name="modulus"><template>
+      <template-type-parameter name="Left"/>
+      <template-type-parameter name="Right"/>
+      <template-type-parameter name="LeftTag"><default>typename tag&lt;Left&gt;::type</default></template-type-parameter>
+      <template-type-parameter name="RightTag"><default>typename tag&lt;Right&gt;::type</default></template-type-parameter>
+    </template><inherit access="public">boost::numeric::functional::modulus_base&lt; Left, Right, void &gt;</inherit></struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1modulus__assign" name="modulus_assign"><template>
+      <template-type-parameter name="Left"/>
+      <template-type-parameter name="Right"/>
+      <template-type-parameter name="LeftTag"><default>typename tag&lt;Left&gt;::type</default></template-type-parameter>
+      <template-type-parameter name="RightTag"><default>typename tag&lt;Right&gt;::type</default></template-type-parameter>
+    </template><inherit access="public">boost::numeric::functional::modulus_assign_base&lt; Left, Right, void &gt;</inherit></struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1modulus__assign__base" name="modulus_assign_base"><template>
+      <template-type-parameter name="Left"/>
+      <template-type-parameter name="Right"/>
+      <template-type-parameter name="EnableIf"><default>void</default></template-type-parameter>
+    </template><inherit access="public">std::binary_function&lt; Left, Right, typeof(lvalue&lt; Left &gt;() %=lvalue&lt; Right &gt;())&gt;</inherit><method-group name="public member functions">
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1modulus__assign__base_1a40aac449a295d4d59ccbae5cc77d6014" name="operator()" cv="const"><type>result_type</type><parameter name="left"><paramtype>Left &amp;</paramtype></parameter><parameter name="right"><paramtype>Right &amp;</paramtype></parameter><description><para>
+</para></description><returns><para>left %= right </para>
+</returns></method>
+</method-group>
+</struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1modulus__base" name="modulus_base"><template>
+      <template-type-parameter name="Left"/>
+      <template-type-parameter name="Right"/>
+      <template-type-parameter name="EnableIf"><default>void</default></template-type-parameter>
+    </template><inherit access="public">std::binary_function&lt; Left, Right, typeof(lvalue&lt; Left &gt;() % lvalue&lt; Right &gt;())&gt;</inherit><method-group name="public member functions">
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1modulus__base_1abb2b64b3c75b891558f90cf2fbfb6df7" name="operator()" cv="const"><type>result_type</type><parameter name="left"><paramtype>Left &amp;</paramtype></parameter><parameter name="right"><paramtype>Right &amp;</paramtype></parameter><description><para>
+</para></description><returns><para>left % right </para>
+</returns></method>
+</method-group>
+</struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1multiplies" name="multiplies"><template>
+      <template-type-parameter name="Left"/>
+      <template-type-parameter name="Right"/>
+      <template-type-parameter name="LeftTag"><default>typename tag&lt;Left&gt;::type</default></template-type-parameter>
+      <template-type-parameter name="RightTag"><default>typename tag&lt;Right&gt;::type</default></template-type-parameter>
+    </template><inherit access="public">boost::numeric::functional::multiplies_base&lt; Left, Right, void &gt;</inherit></struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1multiplies__assign" name="multiplies_assign"><template>
+      <template-type-parameter name="Left"/>
+      <template-type-parameter name="Right"/>
+      <template-type-parameter name="LeftTag"><default>typename tag&lt;Left&gt;::type</default></template-type-parameter>
+      <template-type-parameter name="RightTag"><default>typename tag&lt;Right&gt;::type</default></template-type-parameter>
+    </template><inherit access="public">boost::numeric::functional::multiplies_assign_base&lt; Left, Right, void &gt;</inherit></struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1multiplies__assign__base" name="multiplies_assign_base"><template>
+      <template-type-parameter name="Left"/>
+      <template-type-parameter name="Right"/>
+      <template-type-parameter name="EnableIf"><default>void</default></template-type-parameter>
+    </template><inherit access="public">std::binary_function&lt; Left, Right, typeof(lvalue&lt; Left &gt;() *=lvalue&lt; Right &gt;())&gt;</inherit><method-group name="public member functions">
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1multiplies__assign__base_1a59aaa5aeb94306aa598caebb9ed3d667" name="operator()" cv="const"><type>result_type</type><parameter name="left"><paramtype>Left &amp;</paramtype></parameter><parameter name="right"><paramtype>Right &amp;</paramtype></parameter><description><para>
+</para></description><returns><para>left *= right </para>
+</returns></method>
+</method-group>
+</struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1multiplies__base" name="multiplies_base"><template>
+      <template-type-parameter name="Left"/>
+      <template-type-parameter name="Right"/>
+      <template-type-parameter name="EnableIf"><default>void</default></template-type-parameter>
+    </template><inherit access="public">std::binary_function&lt; Left, Right, typeof(lvalue&lt; Left &gt;() *lvalue&lt; Right &gt;())&gt;</inherit><method-group name="public member functions">
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1multiplies__base_1aa43c720542f6a2eb60551cd9621c0c7f" name="operator()" cv="const"><type>result_type</type><parameter name="left"><paramtype>Left &amp;</paramtype></parameter><parameter name="right"><paramtype>Right &amp;</paramtype></parameter><description><para>
+</para></description><returns><para>left * right </para>
+</returns></method>
+</method-group>
+</struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1not__equal__to" name="not_equal_to"><template>
+      <template-type-parameter name="Left"/>
+      <template-type-parameter name="Right"/>
+      <template-type-parameter name="LeftTag"><default>typename tag&lt;Left&gt;::type</default></template-type-parameter>
+      <template-type-parameter name="RightTag"><default>typename tag&lt;Right&gt;::type</default></template-type-parameter>
+    </template><inherit access="public">boost::numeric::functional::not_equal_to_base&lt; Left, Right, void &gt;</inherit></struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1not__equal__to__base" name="not_equal_to_base"><template>
+      <template-type-parameter name="Left"/>
+      <template-type-parameter name="Right"/>
+      <template-type-parameter name="EnableIf"><default>void</default></template-type-parameter>
+    </template><inherit access="public">std::binary_function&lt; Left, Right, typeof(lvalue&lt; Left &gt;() !=lvalue&lt; Right &gt;())&gt;</inherit><method-group name="public member functions">
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1not__equal__to__base_1ad7f8f5e5bed744fca52b6fb3d71578de" name="operator()" cv="const"><type>result_type</type><parameter name="left"><paramtype>Left &amp;</paramtype></parameter><parameter name="right"><paramtype>Right &amp;</paramtype></parameter><description><para>
+</para></description><returns><para>left != right </para>
+</returns></method>
+</method-group>
+</struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1plus" name="plus"><template>
+      <template-type-parameter name="Left"/>
+      <template-type-parameter name="Right"/>
+      <template-type-parameter name="LeftTag"><default>typename tag&lt;Left&gt;::type</default></template-type-parameter>
+      <template-type-parameter name="RightTag"><default>typename tag&lt;Right&gt;::type</default></template-type-parameter>
+    </template><inherit access="public">boost::numeric::functional::plus_base&lt; Left, Right, void &gt;</inherit></struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1plus__assign" name="plus_assign"><template>
+      <template-type-parameter name="Left"/>
+      <template-type-parameter name="Right"/>
+      <template-type-parameter name="LeftTag"><default>typename tag&lt;Left&gt;::type</default></template-type-parameter>
+      <template-type-parameter name="RightTag"><default>typename tag&lt;Right&gt;::type</default></template-type-parameter>
+    </template><inherit access="public">boost::numeric::functional::plus_assign_base&lt; Left, Right, void &gt;</inherit></struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1plus__assign__base" name="plus_assign_base"><template>
+      <template-type-parameter name="Left"/>
+      <template-type-parameter name="Right"/>
+      <template-type-parameter name="EnableIf"><default>void</default></template-type-parameter>
+    </template><inherit access="public">std::binary_function&lt; Left, Right, typeof(lvalue&lt; Left &gt;()+=lvalue&lt; Right &gt;())&gt;</inherit><method-group name="public member functions">
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1plus__assign__base_1a95bf2dcc2692b4d8c437300929e40a2e" name="operator()" cv="const"><type>result_type</type><parameter name="left"><paramtype>Left &amp;</paramtype></parameter><parameter name="right"><paramtype>Right &amp;</paramtype></parameter><description><para>
+</para></description><returns><para>left += right </para>
+</returns></method>
+</method-group>
+</struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1plus__base" name="plus_base"><template>
+      <template-type-parameter name="Left"/>
+      <template-type-parameter name="Right"/>
+      <template-type-parameter name="EnableIf"><default>void</default></template-type-parameter>
+    </template><inherit access="public">std::binary_function&lt; Left, Right, typeof(lvalue&lt; Left &gt;()+lvalue&lt; Right &gt;())&gt;</inherit><method-group name="public member functions">
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1plus__base_1a3ead182d91369d6efc1f6d9c907e2362" name="operator()" cv="const"><type>result_type</type><parameter name="left"><paramtype>Left &amp;</paramtype></parameter><parameter name="right"><paramtype>Right &amp;</paramtype></parameter><description><para>
+</para></description><returns><para>left + right </para>
+</returns></method>
+</method-group>
+</struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1promote" name="promote"><template>
+      <template-type-parameter name="To"/>
+      <template-type-parameter name="From"/>
+      <template-type-parameter name="ToTag"/>
+      <template-type-parameter name="FromTag"/>
+    </template><inherit access="public">boost::numeric::functional::promote_base&lt; To, From, void &gt;</inherit></struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1promote__base" name="promote_base"><template>
+      <template-type-parameter name="To"/>
+      <template-type-parameter name="From"/>
+      <template-type-parameter name="EnableIf"/>
+    </template><typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1promote__base_1af715712fc08200b310cb0282dfebee2e" name="argument_type"><type>From</type></typedef>
+<typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1promote__base_1ad55e4c9e72cc3c9dadade19991578765" name="result_type"><type>To</type></typedef>
+<method-group name="public member functions">
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1promote__base_1a1da647d146a0ffa7133f2b4721186ffc" name="operator()" cv="const"><type>To</type><parameter name="from"><paramtype>From &amp;</paramtype></parameter></method>
+</method-group>
+</struct><struct-specialization id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1promote__base_3_01ToFrom_00_01ToFrom_00_01void_01_4" name="promote_base"><template>
+      <template-type-parameter name="ToFrom"/>
+    </template><specialization><template-arg>ToFrom</template-arg><template-arg>ToFrom</template-arg><template-arg>void</template-arg></specialization><typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1promote__base_3_01ToFrom_00_01ToFrom_00_01void_01_4_1a3553807c4cc94a4a6d4e4d750be31926" name="argument_type"><type>ToFrom</type></typedef>
+<typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1promote__base_3_01ToFrom_00_01ToFrom_00_01void_01_4_1a0417f9d4dffeb3e8fc7d1c0ff364ff44" name="result_type"><type>ToFrom</type></typedef>
+<method-group name="public member functions">
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1promote__base_3_01ToFrom_00_01ToFrom_00_01void_01_4_1a75f170971532911c8c3c6af1d8a43eb2" name="operator()"><type>ToFrom &amp;</type><parameter name="tofrom"><paramtype>ToFrom &amp;</paramtype></parameter></method>
+</method-group>
+</struct-specialization><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1unary__minus" name="unary_minus"><template>
+      <template-type-parameter name="Arg"/>
+      <template-type-parameter name="Tag"><default>typename tag&lt;Arg&gt;::type</default></template-type-parameter>
+    </template><inherit access="public">boost::numeric::functional::unary_minus_base&lt; Arg, void &gt;</inherit></struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1unary__minus__base" name="unary_minus_base"><template>
+      <template-type-parameter name="Arg"/>
+      <template-type-parameter name="EnableIf"><default>void</default></template-type-parameter>
+    </template><inherit access="public">std::unary_function&lt; Arg, typeof(- lvalue&lt; Arg &gt;())&gt;</inherit><method-group name="public member functions">
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1unary__minus__base_1af52dbb99c051f939693b631883334879" name="operator()" cv="const"><type>result_type</type><parameter name="arg"><paramtype>Arg &amp;</paramtype></parameter><description><para>
+</para></description><returns><para>- arg </para>
+</returns></method>
+</method-group>
+</struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1unary__plus" name="unary_plus"><template>
+      <template-type-parameter name="Arg"/>
+      <template-type-parameter name="Tag"><default>typename tag&lt;Arg&gt;::type</default></template-type-parameter>
+    </template><inherit access="public">boost::numeric::functional::unary_plus_base&lt; Arg, void &gt;</inherit></struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1unary__plus__base" name="unary_plus_base"><template>
+      <template-type-parameter name="Arg"/>
+      <template-type-parameter name="EnableIf"><default>void</default></template-type-parameter>
+    </template><inherit access="public">std::unary_function&lt; Arg, typeof(+lvalue&lt; Arg &gt;())&gt;</inherit><method-group name="public member functions">
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1unary__plus__base_1a529020e40484bf882acbd261ce859ff4" name="operator()" cv="const"><type>result_type</type><parameter name="arg"><paramtype>Arg &amp;</paramtype></parameter><description><para>
+</para></description><returns><para>+ arg </para>
+</returns></method>
+</method-group>
+</struct></namespace>
+<namespace name="op">
+<struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1op_1_1as__max" name="as_max"/><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1op_1_1as__min" name="as_min"/><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1op_1_1as__one" name="as_one"/><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1op_1_1as__zero" name="as_zero"/><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1op_1_1assign" name="assign"/><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1op_1_1complement" name="complement"/><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1op_1_1divides" name="divides"/><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1op_1_1divides__assign" name="divides_assign"/><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1op_1_1equal__to" name="equal_to"/><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1op_1_1fdiv" name="fdiv"/><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1op_1_1greater" name="greater"/><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1op_1_1greater__equal" name="greater_equal"/><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1op_1_1less" name="less"/><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1op_1_1less__equal" name="less_equal"/><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1op_1_1logical__not" name="logical_not"/><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1op_1_1max__assign" name="max_assign"/><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1op_1_1min__assign" name="min_assign"/><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1op_1_1minus" name="minus"/><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1op_1_1minus__assign" name="minus_assign"/><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1op_1_1modulus" name="modulus"/><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1op_1_1modulus__assign" name="modulus_assign"/><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1op_1_1multiplies" name="multiplies"/><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1op_1_1multiplies__assign" name="multiplies_assign"/><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1op_1_1not__equal__to" name="not_equal_to"/><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1op_1_1plus" name="plus"/><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1op_1_1plus__assign" name="plus_assign"/><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1op_1_1promote" name="promote"><template>
+      <template-type-parameter name="To"/>
+    </template></struct><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1op_1_1unary__minus" name="unary_minus"/><struct id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1op_1_1unary__plus" name="unary_plus"/></namespace>
+<function id="doxygen.numeric_operators_library_reference.namespaceboost_1_1numeric_1aea7c4d69f6d068fe3ab1350178c2945a" name="promote"><type>lazy_disable_if&lt; is_const&lt; From &gt;, mpl::if_&lt; is_same&lt; To, From &gt;, To &amp;, To &gt; &gt;::type</type><template>
+          <template-type-parameter name="To"/>
+          <template-type-parameter name="From"/>
+        </template><parameter name="from"><paramtype>From &amp;</paramtype></parameter></function>
+<function id="doxygen.numeric_operators_library_reference.namespaceboost_1_1numeric_1af08531595f6df8fd79c2e1b71dd03a3c" name="promote"><type>mpl::if_&lt; is_same&lt; Toconst, Fromconst &gt;, Toconst &amp;, Toconst &gt;::type</type><template>
+          <template-type-parameter name="To"/>
+          <template-type-parameter name="From"/>
+        </template><parameter name="from"><paramtype>From const &amp;</paramtype></parameter></function>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.numeric_operators_library_reference.complex_8hpp" name="boost/accumulators/numeric/functional/complex.hpp">
+<namespace name="boost">
+<namespace name="numeric">
+<namespace name="operators">
+
+
+
+
+
+
+
+
+
+
+
+
+<function id="doxygen.numeric_operators_library_reference.namespaceboost_1_1numeric_1_1operators_1aa3cb475386e66de21925dc093cf0039e" name="operator*"><type>disable_if&lt; mpl::or_&lt; is_same&lt; T, U &gt;, is_same&lt; std::complex&lt; T &gt;, U &gt; &gt;, std::complex&lt; T &gt; &gt;::type</type><template>
+          <template-type-parameter name="T"/>
+          <template-type-parameter name="U"/>
+        </template><parameter name="ri"><paramtype>std::complex&lt; T &gt;</paramtype></parameter><parameter name="u"><paramtype>U const &amp;</paramtype></parameter></function>
+<function id="doxygen.numeric_operators_library_reference.namespaceboost_1_1numeric_1_1operators_1a86e0a82c75213af6baa2addf18c26f32" name="operator/"><type>disable_if&lt; mpl::or_&lt; is_same&lt; T, U &gt;, is_same&lt; std::complex&lt; T &gt;, U &gt; &gt;, std::complex&lt; T &gt; &gt;::type</type><template>
+          <template-type-parameter name="T"/>
+          <template-type-parameter name="U"/>
+        </template><parameter name="ri"><paramtype>std::complex&lt; T &gt;</paramtype></parameter><parameter name="u"><paramtype>U const &amp;</paramtype></parameter></function>
+</namespace>
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.numeric_operators_library_reference.valarray_8hpp" name="boost/accumulators/numeric/functional/valarray.hpp">
+<namespace name="boost">
+<namespace name="numeric">
+<namespace name="functional">
+<struct-specialization id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__max_3_01T_00_01std__valarray__tag_01_4" name="as_max"><template>
+      <template-type-parameter name="T"/>
+    </template><specialization><template-arg>T</template-arg><template-arg>std_valarray_tag</template-arg></specialization><typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__max_3_01T_00_01std__valarray__tag_01_4_1aea6ebe69851307816c8767ff09baf98d" name="argument_type"><type>T</type></typedef>
+<typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__max_3_01T_00_01std__valarray__tag_01_4_1ac877df09b6c775a5a458a306aed22633" name="result_type"><type>remove_const&lt; T &gt;::type</type></typedef>
+<method-group name="public member functions">
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__max_3_01T_00_01std__valarray__tag_01_4_1a9e060b0d79413b14e1b9cd749ba5c8ab" name="operator()" cv="const"><type>remove_const&lt; T &gt;::type</type><parameter name="arr"><paramtype>T &amp;</paramtype></parameter></method>
+</method-group>
+</struct-specialization><struct-specialization id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__min_3_01T_00_01std__valarray__tag_01_4" name="as_min"><template>
+      <template-type-parameter name="T"/>
+    </template><specialization><template-arg>T</template-arg><template-arg>std_valarray_tag</template-arg></specialization><typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__min_3_01T_00_01std__valarray__tag_01_4_1aae53ce4eb498ad7663cd5e00adfc51da" name="argument_type"><type>T</type></typedef>
+<typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__min_3_01T_00_01std__valarray__tag_01_4_1a58ea9d5ffef83f679c1107ac409e4647" name="result_type"><type>remove_const&lt; T &gt;::type</type></typedef>
+<method-group name="public member functions">
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__min_3_01T_00_01std__valarray__tag_01_4_1afaa41b206fa65acbee9c36f176c31bb4" name="operator()" cv="const"><type>remove_const&lt; T &gt;::type</type><parameter name="arr"><paramtype>T &amp;</paramtype></parameter></method>
+</method-group>
+</struct-specialization><struct-specialization id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__one_3_01T_00_01std__valarray__tag_01_4" name="as_one"><template>
+      <template-type-parameter name="T"/>
+    </template><specialization><template-arg>T</template-arg><template-arg>std_valarray_tag</template-arg></specialization><typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__one_3_01T_00_01std__valarray__tag_01_4_1ab0cdef0207b938236257e0909b4001d0" name="argument_type"><type>T</type></typedef>
+<typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__one_3_01T_00_01std__valarray__tag_01_4_1a08680b9be7067c89e5fce32197402501" name="result_type"><type>remove_const&lt; T &gt;::type</type></typedef>
+<method-group name="public member functions">
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__one_3_01T_00_01std__valarray__tag_01_4_1ad49f8d96b5cbd07cc484c548955c4745" name="operator()" cv="const"><type>remove_const&lt; T &gt;::type</type><parameter name="arr"><paramtype>T &amp;</paramtype></parameter></method>
+</method-group>
+</struct-specialization><struct-specialization id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__zero_3_01T_00_01std__valarray__tag_01_4" name="as_zero"><template>
+      <template-type-parameter name="T"/>
+    </template><specialization><template-arg>T</template-arg><template-arg>std_valarray_tag</template-arg></specialization><typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__zero_3_01T_00_01std__valarray__tag_01_4_1a23c7ae1a5ded7f8fe0de135206d3bc6e" name="argument_type"><type>T</type></typedef>
+<typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__zero_3_01T_00_01std__valarray__tag_01_4_1ac482a8447822ac92f20e5cde601d22a1" name="result_type"><type>remove_const&lt; T &gt;::type</type></typedef>
+<method-group name="public member functions">
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__zero_3_01T_00_01std__valarray__tag_01_4_1af0017a4dab056ce065fdf7bd4ee114ce" name="operator()" cv="const"><type>remove_const&lt; T &gt;::type</type><parameter name="arr"><paramtype>T &amp;</paramtype></parameter></method>
+</method-group>
+</struct-specialization><struct-specialization id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1fdiv_3_01Left_00_01Right_00_01std__valarray__tag_00_01RightTag_01_4" name="fdiv"><template>
+      <template-type-parameter name="Left"/>
+      <template-type-parameter name="Right"/>
+      <template-type-parameter name="RightTag"/>
+    </template><specialization><template-arg>Left</template-arg><template-arg>Right</template-arg><template-arg>std_valarray_tag</template-arg><template-arg>RightTag</template-arg></specialization><inherit access="public">mpl::if_::type</inherit></struct-specialization><struct-specialization id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1max__assign_3_01Left_00_01Right_00_01std__valarray__tag_00_01std__valarray__tag_01_4" name="max_assign"><template>
+      <template-type-parameter name="Left"/>
+      <template-type-parameter name="Right"/>
+    </template><specialization><template-arg>Left</template-arg><template-arg>Right</template-arg><template-arg>std_valarray_tag</template-arg><template-arg>std_valarray_tag</template-arg></specialization><typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1max__assign_3_01Left_00_01Right_00_01std__valarray__tag_00_01std__valarray__tag_01_4_1a63d86f76fe543ddf8e3b3e91a3e29c49" name="first_argument_type"><type>Left</type></typedef>
+<typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1max__assign_3_01Left_00_01Right_00_01std__valarray__tag_00_01std__valarray__tag_01_4_1a8473e562a73c8a699080218247cef228" name="second_argument_type"><type>Right</type></typedef>
+<typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1max__assign_3_01Left_00_01Right_00_01std__valarray__tag_00_01std__valarray__tag_01_4_1a780f76230fa06db1a411912f8a3fdd4b" name="result_type"><type>void</type></typedef>
+<method-group name="public member functions">
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1max__assign_3_01Left_00_01Right_00_01std__valarray__tag_00_01std__valarray__tag_01_4_1a0b72d4660f27e7eb1172d4b20bc47922" name="operator()" cv="const"><type>void</type><parameter name="left"><paramtype>Left &amp;</paramtype></parameter><parameter name="right"><paramtype>Right &amp;</paramtype></parameter></method>
+</method-group>
+</struct-specialization><struct-specialization id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1min__assign_3_01Left_00_01Right_00_01std__valarray__tag_00_01std__valarray__tag_01_4" name="min_assign"><template>
+      <template-type-parameter name="Left"/>
+      <template-type-parameter name="Right"/>
+    </template><specialization><template-arg>Left</template-arg><template-arg>Right</template-arg><template-arg>std_valarray_tag</template-arg><template-arg>std_valarray_tag</template-arg></specialization><typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1min__assign_3_01Left_00_01Right_00_01std__valarray__tag_00_01std__valarray__tag_01_4_1a74f8a7858c34ca12a01fcf0ab3b6abdd" name="first_argument_type"><type>Left</type></typedef>
+<typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1min__assign_3_01Left_00_01Right_00_01std__valarray__tag_00_01std__valarray__tag_01_4_1a707e648aec3b00e3d17109d8c2c006ed" name="second_argument_type"><type>Right</type></typedef>
+<typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1min__assign_3_01Left_00_01Right_00_01std__valarray__tag_00_01std__valarray__tag_01_4_1a9a67fd3ca810931ad625adca8a71c329" name="result_type"><type>void</type></typedef>
+<method-group name="public member functions">
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1min__assign_3_01Left_00_01Right_00_01std__valarray__tag_00_01std__valarray__tag_01_4_1a1c9a106da8602f23899d8841928202e5" name="operator()" cv="const"><type>void</type><parameter name="left"><paramtype>Left &amp;</paramtype></parameter><parameter name="right"><paramtype>Right &amp;</paramtype></parameter></method>
+</method-group>
+</struct-specialization><struct-specialization id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1promote_3_01bool_01const_00_01From_00_01void_00_01std__valarray__tag_01_4" name="promote"><template>
+      <template-type-parameter name="From"/>
+    </template><specialization><template-arg>bool const</template-arg><template-arg>From</template-arg><template-arg>void</template-arg><template-arg>std_valarray_tag</template-arg></specialization><inherit access="public">boost::numeric::functional::promote&lt; bool, From, void, std_valarray_tag &gt;</inherit></struct-specialization><struct-specialization id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1promote_3_01bool_00_01From_00_01void_00_01std__valarray__tag_01_4" name="promote"><template>
+      <template-type-parameter name="From"/>
+    </template><specialization><template-arg>bool</template-arg><template-arg>From</template-arg><template-arg>void</template-arg><template-arg>std_valarray_tag</template-arg></specialization><typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1promote_3_01bool_00_01From_00_01void_00_01std__valarray__tag_01_4_1a52199dde1e39108903ac3a40b2be9e08" name="argument_type"><type>From</type></typedef>
+<typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1promote_3_01bool_00_01From_00_01void_00_01std__valarray__tag_01_4_1a6649ceb0097f79a3ad35ce78b9358c93" name="result_type"><type>bool</type></typedef>
+<method-group name="public member functions">
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1promote_3_01bool_00_01From_00_01void_00_01std__valarray__tag_01_4_1a2024d6faab0870ed4d601e57d52a95aa" name="operator()" cv="const"><type>bool</type><parameter name="arr"><paramtype>From &amp;</paramtype></parameter></method>
+</method-group>
+</struct-specialization><struct-specialization id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1promote_3_01To_00_01From_00_01std__valarray__tag_00_01std__valarray__tag_01_4" name="promote"><template>
+      <template-type-parameter name="To"/>
+      <template-type-parameter name="From"/>
+    </template><specialization><template-arg>To</template-arg><template-arg>From</template-arg><template-arg>std_valarray_tag</template-arg><template-arg>std_valarray_tag</template-arg></specialization><typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1promote_3_01To_00_01From_00_01std__valarray__tag_00_01std__valarray__tag_01_4_1ac219424cffc6366ccd662c765a380c34" name="argument_type"><type>From</type></typedef>
+<typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1promote_3_01To_00_01From_00_01std__valarray__tag_00_01std__valarray__tag_01_4_1a02cffeb130e86d2417a2c6be3ca6d72d" name="result_type"><type>To</type></typedef>
+<method-group name="public member functions">
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1promote_3_01To_00_01From_00_01std__valarray__tag_00_01std__valarray__tag_01_4_1a6b5dc2b5872059affe7b2e2158133612" name="operator()" cv="const"><type>To</type><parameter name="arr"><paramtype>From &amp;</paramtype></parameter></method>
+</method-group>
+</struct-specialization><struct-specialization id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1promote_3_01ToFrom_00_01ToFrom_00_01std__valarray__tag_00_01std__valarray__tag_01_4" name="promote"><template>
+      <template-type-parameter name="ToFrom"/>
+    </template><specialization><template-arg>ToFrom</template-arg><template-arg>ToFrom</template-arg><template-arg>std_valarray_tag</template-arg><template-arg>std_valarray_tag</template-arg></specialization><typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1promote_3_01ToFrom_00_01ToFrom_00_01std__valarray__tag_00_01std__valarray__tag_01_4_1aa472cfda65e87486b0024493be4ec3e0" name="argument_type"><type>ToFrom</type></typedef>
+<typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1promote_3_01ToFrom_00_01ToFrom_00_01std__valarray__tag_00_01std__valarray__tag_01_4_1a076d7d3045783b7b2c6a321051124009" name="result_type"><type>ToFrom</type></typedef>
+<method-group name="public member functions">
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1promote_3_01ToFrom_00_01ToFrom_00_01std__valarray__tag_00_01std__valarray__tag_01_4_1afb71467f899bdf80ea5e8a4d190c00b1" name="operator()" cv="const"><type>ToFrom &amp;</type><parameter name="tofrom"><paramtype>ToFrom &amp;</paramtype></parameter></method>
+</method-group>
+</struct-specialization><struct-specialization id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1tag_3_01std_1_1valarray_3_01T_01_4_01_4" name="tag"><template>
+      <template-type-parameter name="T"/>
+    </template><specialization><template-arg>std::valarray&lt; T &gt;</template-arg></specialization><typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1tag_3_01std_1_1valarray_3_01T_01_4_01_4_1aa60ed4aa2cdacad29b979d24dce72115" name="type"><type>std_valarray_tag</type></typedef>
+</struct-specialization></namespace>
+<namespace name="operators">
+
+
+
+
+
+
+
+
+
+<function id="doxygen.numeric_operators_library_reference.namespaceboost_1_1numeric_1_1operators_1a974158618f6c518e0e3747c0b9b2aed0" name="operator/"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="Left"/>
+          <template-type-parameter name="Right"/>
+        </template><parameter name="left"><paramtype>std::valarray&lt; Left &gt; const &amp;</paramtype></parameter><parameter name="right"><paramtype>Right const &amp;</paramtype></parameter></function>
+<function id="doxygen.numeric_operators_library_reference.namespaceboost_1_1numeric_1_1operators_1a71fcdc1fbce495155db041c984f6860b" name="operator*"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="Left"/>
+          <template-type-parameter name="Right"/>
+        </template><parameter name="left"><paramtype>std::valarray&lt; Left &gt; const &amp;</paramtype></parameter><parameter name="right"><paramtype>Right const &amp;</paramtype></parameter></function>
+<function id="doxygen.numeric_operators_library_reference.namespaceboost_1_1numeric_1_1operators_1a0b0c52b68aa9421527788a1ec4463b70" name="operator+"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="Left"/>
+          <template-type-parameter name="Right"/>
+        </template><parameter name="left"><paramtype>std::valarray&lt; Left &gt; const &amp;</paramtype></parameter><parameter name="right"><paramtype>std::valarray&lt; Right &gt; const &amp;</paramtype></parameter></function>
+
+
+</namespace>
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.numeric_operators_library_reference.vector_8hpp" name="boost/accumulators/numeric/functional/vector.hpp">
+<namespace name="boost">
+<namespace name="numeric">
+<namespace name="functional">
+<struct-specialization id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__max_3_01T_00_01std__vector__tag_01_4" name="as_max"><template>
+      <template-type-parameter name="T"/>
+    </template><specialization><template-arg>T</template-arg><template-arg>std_vector_tag</template-arg></specialization><typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__max_3_01T_00_01std__vector__tag_01_4_1a7b8d52d804d673a29c12abb5a3fd3417" name="argument_type"><type>T</type></typedef>
+<typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__max_3_01T_00_01std__vector__tag_01_4_1a29f66c9fe70a54bd98ecf0e8b66f7a0a" name="result_type"><type>remove_const&lt; T &gt;::type</type></typedef>
+<method-group name="public member functions">
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__max_3_01T_00_01std__vector__tag_01_4_1a59b42a15a082f240286ca1b61cd9ab8a" name="operator()" cv="const"><type>remove_const&lt; T &gt;::type</type><parameter name="arr"><paramtype>T &amp;</paramtype></parameter></method>
+</method-group>
+</struct-specialization><struct-specialization id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__min_3_01T_00_01std__vector__tag_01_4" name="as_min"><template>
+      <template-type-parameter name="T"/>
+    </template><specialization><template-arg>T</template-arg><template-arg>std_vector_tag</template-arg></specialization><typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__min_3_01T_00_01std__vector__tag_01_4_1a10014b6663fa4814e9d3366066e023bf" name="argument_type"><type>T</type></typedef>
+<typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__min_3_01T_00_01std__vector__tag_01_4_1a27825937d142c98cffd475015d179d05" name="result_type"><type>remove_const&lt; T &gt;::type</type></typedef>
+<method-group name="public member functions">
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__min_3_01T_00_01std__vector__tag_01_4_1a961f872235a497f05df7894f5b0720c7" name="operator()" cv="const"><type>remove_const&lt; T &gt;::type</type><parameter name="arr"><paramtype>T &amp;</paramtype></parameter></method>
+</method-group>
+</struct-specialization><struct-specialization id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__one_3_01T_00_01std__vector__tag_01_4" name="as_one"><template>
+      <template-type-parameter name="T"/>
+    </template><specialization><template-arg>T</template-arg><template-arg>std_vector_tag</template-arg></specialization><typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__one_3_01T_00_01std__vector__tag_01_4_1a9bc4dcf59f093181466100b3ec9f2976" name="argument_type"><type>T</type></typedef>
+<typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__one_3_01T_00_01std__vector__tag_01_4_1a06f4177bca88382d8c52ac2e5284405f" name="result_type"><type>remove_const&lt; T &gt;::type</type></typedef>
+<method-group name="public member functions">
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__one_3_01T_00_01std__vector__tag_01_4_1a487fd450eff7415c5718e535d0933a55" name="operator()" cv="const"><type>remove_const&lt; T &gt;::type</type><parameter name="arr"><paramtype>T &amp;</paramtype></parameter></method>
+</method-group>
+</struct-specialization><struct-specialization id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__zero_3_01T_00_01std__vector__tag_01_4" name="as_zero"><template>
+      <template-type-parameter name="T"/>
+    </template><specialization><template-arg>T</template-arg><template-arg>std_vector_tag</template-arg></specialization><typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__zero_3_01T_00_01std__vector__tag_01_4_1a24709d30e9a6408c7f96655a697dff4e" name="argument_type"><type>T</type></typedef>
+<typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__zero_3_01T_00_01std__vector__tag_01_4_1af393a5cea1b79a4c772d25fec3d8a887" name="result_type"><type>remove_const&lt; T &gt;::type</type></typedef>
+<method-group name="public member functions">
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1as__zero_3_01T_00_01std__vector__tag_01_4_1a3256d4598f553cb1022999e596c4c0ac" name="operator()" cv="const"><type>remove_const&lt; T &gt;::type</type><parameter name="arr"><paramtype>T &amp;</paramtype></parameter></method>
+</method-group>
+</struct-specialization><struct-specialization id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1fdiv_3_01Left_00_01Right_00_01std__vector__tag_00_01void_01_4" name="fdiv"><template>
+      <template-type-parameter name="Left"/>
+      <template-type-parameter name="Right"/>
+    </template><specialization><template-arg>Left</template-arg><template-arg>Right</template-arg><template-arg>std_vector_tag</template-arg><template-arg>void</template-arg></specialization><inherit access="public">mpl::if_::type</inherit></struct-specialization><struct-specialization id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1max__assign_3_01Left_00_01Right_00_01std__vector__tag_00_01std__vector__tag_01_4" name="max_assign"><template>
+      <template-type-parameter name="Left"/>
+      <template-type-parameter name="Right"/>
+    </template><specialization><template-arg>Left</template-arg><template-arg>Right</template-arg><template-arg>std_vector_tag</template-arg><template-arg>std_vector_tag</template-arg></specialization><typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1max__assign_3_01Left_00_01Right_00_01std__vector__tag_00_01std__vector__tag_01_4_1a563621cce41c5ac73cf40068d203f052" name="first_argument_type"><type>Left</type></typedef>
+<typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1max__assign_3_01Left_00_01Right_00_01std__vector__tag_00_01std__vector__tag_01_4_1a4e4aa2d6f8ce9a379380f6edcb96bed9" name="second_argument_type"><type>Right</type></typedef>
+<typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1max__assign_3_01Left_00_01Right_00_01std__vector__tag_00_01std__vector__tag_01_4_1a66afc6d30d218cc1573c902708f8e7f9" name="result_type"><type>void</type></typedef>
+<method-group name="public member functions">
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1max__assign_3_01Left_00_01Right_00_01std__vector__tag_00_01std__vector__tag_01_4_1aa726449dc7acba811bc53abd9dda2815" name="operator()" cv="const"><type>void</type><parameter name="left"><paramtype>Left &amp;</paramtype></parameter><parameter name="right"><paramtype>Right &amp;</paramtype></parameter></method>
+</method-group>
+</struct-specialization><struct-specialization id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1min__assign_3_01Left_00_01Right_00_01std__vector__tag_00_01std__vector__tag_01_4" name="min_assign"><template>
+      <template-type-parameter name="Left"/>
+      <template-type-parameter name="Right"/>
+    </template><specialization><template-arg>Left</template-arg><template-arg>Right</template-arg><template-arg>std_vector_tag</template-arg><template-arg>std_vector_tag</template-arg></specialization><typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1min__assign_3_01Left_00_01Right_00_01std__vector__tag_00_01std__vector__tag_01_4_1a2d90ee4a25deefe637903e1c11e2ae79" name="first_argument_type"><type>Left</type></typedef>
+<typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1min__assign_3_01Left_00_01Right_00_01std__vector__tag_00_01std__vector__tag_01_4_1aeff16c6e91ca5e0b037de78e7d56139c" name="second_argument_type"><type>Right</type></typedef>
+<typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1min__assign_3_01Left_00_01Right_00_01std__vector__tag_00_01std__vector__tag_01_4_1ab0fa6c92050ea0d7897f796a04aa87d9" name="result_type"><type>void</type></typedef>
+<method-group name="public member functions">
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1min__assign_3_01Left_00_01Right_00_01std__vector__tag_00_01std__vector__tag_01_4_1a28067a321898de5cae8e744753655301" name="operator()" cv="const"><type>void</type><parameter name="left"><paramtype>Left &amp;</paramtype></parameter><parameter name="right"><paramtype>Right &amp;</paramtype></parameter></method>
+</method-group>
+</struct-specialization><struct-specialization id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1promote_3_01To_00_01From_00_01std__vector__tag_00_01std__vector__tag_01_4" name="promote"><template>
+      <template-type-parameter name="To"/>
+      <template-type-parameter name="From"/>
+    </template><specialization><template-arg>To</template-arg><template-arg>From</template-arg><template-arg>std_vector_tag</template-arg><template-arg>std_vector_tag</template-arg></specialization><typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1promote_3_01To_00_01From_00_01std__vector__tag_00_01std__vector__tag_01_4_1abe772672ae16edcf1e8e828fb938d023" name="argument_type"><type>From</type></typedef>
+<typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1promote_3_01To_00_01From_00_01std__vector__tag_00_01std__vector__tag_01_4_1adcfc7fc86f86c343fda001c7cf527923" name="result_type"><type>To</type></typedef>
+<method-group name="public member functions">
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1promote_3_01To_00_01From_00_01std__vector__tag_00_01std__vector__tag_01_4_1abd59c46a307b2d817cd2cdf243a032c7" name="operator()" cv="const"><type>To</type><parameter name="arr"><paramtype>From &amp;</paramtype></parameter></method>
+</method-group>
+</struct-specialization><struct-specialization id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1promote_3_01ToFrom_00_01ToFrom_00_01std__vector__tag_00_01std__vector__tag_01_4" name="promote"><template>
+      <template-type-parameter name="ToFrom"/>
+    </template><specialization><template-arg>ToFrom</template-arg><template-arg>ToFrom</template-arg><template-arg>std_vector_tag</template-arg><template-arg>std_vector_tag</template-arg></specialization><typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1promote_3_01ToFrom_00_01ToFrom_00_01std__vector__tag_00_01std__vector__tag_01_4_1a2c758975b38da76d5d9f5d54b05ef42b" name="argument_type"><type>ToFrom</type></typedef>
+<typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1promote_3_01ToFrom_00_01ToFrom_00_01std__vector__tag_00_01std__vector__tag_01_4_1a8648e27d509d6d52c7dc08e4de259e8e" name="result_type"><type>ToFrom</type></typedef>
+<method-group name="public member functions">
+<method id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1promote_3_01ToFrom_00_01ToFrom_00_01std__vector__tag_00_01std__vector__tag_01_4_1af8fa8f99dcf43742c14c1cce67974d5d" name="operator()" cv="const"><type>ToFrom &amp;</type><parameter name="tofrom"><paramtype>ToFrom &amp;</paramtype></parameter></method>
+</method-group>
+</struct-specialization><struct-specialization id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1tag_3_01std_1_1vector_3_01T_00_01Al_01_4_01_4" name="tag"><template>
+      <template-type-parameter name="T"/>
+      <template-type-parameter name="Al"/>
+    </template><specialization><template-arg>std::vector&lt; T</template-arg><template-arg>Al &gt;</template-arg></specialization><typedef id="doxygen.numeric_operators_library_reference.structboost_1_1numeric_1_1functional_1_1tag_3_01std_1_1vector_3_01T_00_01Al_01_4_01_4_1a6934eb8aeee48c612d43b05ee779f20b" name="type"><type>std_vector_tag</type></typedef>
+</struct-specialization></namespace>
+<namespace name="operators">
+<function id="doxygen.numeric_operators_library_reference.namespaceboost_1_1numeric_1_1operators_1af64b7cea12862eda9731c451b94b83fc" name="operator/"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="Left"/>
+          <template-type-parameter name="Right"/>
+        </template><parameter name="left"><paramtype>std::vector&lt; Left &gt; const &amp;</paramtype></parameter><parameter name="right"><paramtype>Right const &amp;</paramtype></parameter></function>
+<function id="doxygen.numeric_operators_library_reference.namespaceboost_1_1numeric_1_1operators_1a8ab18d47d45f6f6367746d6ab550f3ec" name="operator/"><type>std::vector&lt; typename <classname>functional::divides</classname>&lt; Left, Right &gt;::result_type &gt;</type><template>
+          <template-type-parameter name="Left"/>
+          <template-type-parameter name="Right"/>
+        </template><parameter name="left"><paramtype>std::vector&lt; Left &gt; const &amp;</paramtype></parameter><parameter name="right"><paramtype>std::vector&lt; Right &gt; const &amp;</paramtype></parameter></function>
+<function id="doxygen.numeric_operators_library_reference.namespaceboost_1_1numeric_1_1operators_1acd1b7f6a48c562aa74b48ba6cdd2b76b" name="operator*"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="Left"/>
+          <template-type-parameter name="Right"/>
+        </template><parameter name="left"><paramtype>std::vector&lt; Left &gt; const &amp;</paramtype></parameter><parameter name="right"><paramtype>Right const &amp;</paramtype></parameter></function>
+<function id="doxygen.numeric_operators_library_reference.namespaceboost_1_1numeric_1_1operators_1a484cac24d5f485ac010c4ed26441884b" name="operator*"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="Left"/>
+          <template-type-parameter name="Right"/>
+        </template><parameter name="left"><paramtype>Left const &amp;</paramtype></parameter><parameter name="right"><paramtype>std::vector&lt; Right &gt; const &amp;</paramtype></parameter></function>
+<function id="doxygen.numeric_operators_library_reference.namespaceboost_1_1numeric_1_1operators_1a9313dea1030c472a04da7dc8c0c53af3" name="operator*"><type>std::vector&lt; typename <classname>functional::multiplies</classname>&lt; Left, Right &gt;::result_type &gt;</type><template>
+          <template-type-parameter name="Left"/>
+          <template-type-parameter name="Right"/>
+        </template><parameter name="left"><paramtype>std::vector&lt; Left &gt; const &amp;</paramtype></parameter><parameter name="right"><paramtype>std::vector&lt; Right &gt; const &amp;</paramtype></parameter></function>
+<function id="doxygen.numeric_operators_library_reference.namespaceboost_1_1numeric_1_1operators_1a6c995df520f078225cb0778c210af178" name="operator+"><type>std::vector&lt; typename <classname>functional::plus</classname>&lt; Left, Right &gt;::result_type &gt;</type><template>
+          <template-type-parameter name="Left"/>
+          <template-type-parameter name="Right"/>
+        </template><parameter name="left"><paramtype>std::vector&lt; Left &gt; const &amp;</paramtype></parameter><parameter name="right"><paramtype>std::vector&lt; Right &gt; const &amp;</paramtype></parameter></function>
+<function id="doxygen.numeric_operators_library_reference.namespaceboost_1_1numeric_1_1operators_1a8aa03b51be73a95243dc84d04e0e5492" name="operator-"><type>std::vector&lt; typename <classname>functional::minus</classname>&lt; Left, Right &gt;::result_type &gt;</type><template>
+          <template-type-parameter name="Left"/>
+          <template-type-parameter name="Right"/>
+        </template><parameter name="left"><paramtype>std::vector&lt; Left &gt; const &amp;</paramtype></parameter><parameter name="right"><paramtype>std::vector&lt; Right &gt; const &amp;</paramtype></parameter></function>
+<function id="doxygen.numeric_operators_library_reference.namespaceboost_1_1numeric_1_1operators_1ae62d2a6a3694845a0f1cf8babb6ee1b2" name="operator+="><type>std::vector&lt; Left &gt; &amp;</type><template>
+          <template-type-parameter name="Left"/>
+        </template><parameter name="left"><paramtype>std::vector&lt; Left &gt; &amp;</paramtype></parameter><parameter name="right"><paramtype>std::vector&lt; Left &gt; const &amp;</paramtype></parameter></function>
+<function id="doxygen.numeric_operators_library_reference.namespaceboost_1_1numeric_1_1operators_1a83b7c6e2e9d4e3b129d7d2e19acea641" name="operator-"><type>std::vector&lt; typename <classname>functional::unary_minus</classname>&lt; Arg &gt;::result_type &gt;</type><template>
+          <template-type-parameter name="Arg"/>
+        </template><parameter name="arg"><paramtype>std::vector&lt; Arg &gt; const &amp;</paramtype></parameter></function>
+
+
+
+
+
+</namespace>
+
+
+</namespace>
+</namespace>
+</header>
+</library-reference>

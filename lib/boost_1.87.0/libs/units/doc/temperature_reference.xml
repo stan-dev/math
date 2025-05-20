@@ -1,0 +1,26 @@
+<?xml version="1.0" standalone="yes"?>
+<library-reference id="temperature_system_reference"><title>Temperature System Reference</title><header id="doxygen.temperature_system_reference.celsius_8hpp" name="boost/units/systems/temperature/celsius.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="celsius">
+<typedef id="doxygen.temperature_system_reference.namespaceboost_1_1units_1_1celsius_1ae84ff2f783ea4eb1dc9b280c5962c8ee" name="system"><type>make_system&lt; boost::units::temperature::celsius_base_unit &gt;::type</type></typedef>
+<typedef id="doxygen.temperature_system_reference.namespaceboost_1_1units_1_1celsius_1a5f02d100e0c18a80d181580e6bd3bd74" name="temperature"><type>unit&lt; temperature_dimension, system &gt;</type></typedef>
+<data-member id="doxygen.temperature_system_reference.namespaceboost_1_1units_1_1celsius_1af94c2f55e39abdd88fedb2481b3c025b" name="degree" specifiers="static"><type>const temperature</type></data-member>
+<data-member id="doxygen.temperature_system_reference.namespaceboost_1_1units_1_1celsius_1a4ec392fef2aa0e1a79574f9652761859" name="degrees" specifiers="static"><type>const temperature</type></data-member>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.temperature_system_reference.fahrenheit_8hpp" name="boost/units/systems/temperature/fahrenheit.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="fahrenheit">
+<typedef id="doxygen.temperature_system_reference.namespaceboost_1_1units_1_1fahrenheit_1a5ceaba8f58b5cee9c91293149a02c914" name="system"><type>make_system&lt; boost::units::temperature::fahrenheit_base_unit &gt;::type</type></typedef>
+<typedef id="doxygen.temperature_system_reference.namespaceboost_1_1units_1_1fahrenheit_1ae53822c005ed313d9352adfae013becb" name="temperature"><type>unit&lt; temperature_dimension, system &gt;</type></typedef>
+<data-member id="doxygen.temperature_system_reference.namespaceboost_1_1units_1_1fahrenheit_1aca0af304c4ffb1b8f82bfff653d85912" name="degree" specifiers="static"><type>const temperature</type></data-member>
+<data-member id="doxygen.temperature_system_reference.namespaceboost_1_1units_1_1fahrenheit_1a76356cf1a6ae3139b1c8eb59f15ad023" name="degrees" specifiers="static"><type>const temperature</type></data-member>
+</namespace>
+</namespace>
+</namespace>
+</header>
+</library-reference>

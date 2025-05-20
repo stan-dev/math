@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+        <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Sanitizing URLs :: Boost Libraries Documentation</title>
+  <link rel="canonical" href="https://antora.cppalliance.org/master/lib/doc/url/examples/sanitize.html">
+    <link rel="prev" href="router.html">
+    <link rel="next" href="../reference.html">
+  <meta name="generator" content="Antora 3.1.9">
+    <link rel="stylesheet" href="../../_/css/boostlook.css">
+    <link rel="stylesheet" href="../../_/css/site.css">
+    <link rel="stylesheet" href="../../_/css/vendor/tabs.css">
+    <script>var uiRootPath = '../../_'</script>
+  </head>
+  <body class="article toc2 toc-left">
+    <div class="boostlook">
+  <div id="header">
+    <div id="toc" class="nav-container toc2" data-component="url" data-version="">
+  <aside class="nav">
+    <button class="nav-close"></button>
+    <div class="panels">
+      <div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+      <h3 class="title"><a href="../index.html">Boost.URL</a></h3>
+      <ul class="nav-list">
+        <ul class="nav-list">
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../quicklook.html">Quick Look</a>
+        </li>
+              <li class="" data-depth="1">
+            <a class="nav-link" href="../urls/index.html">URLs</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/parsing.html">Parsing</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/containers.html">Containers</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/segments.html">Segments</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/params.html">Params</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/normalization.html">Normalization</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/stringtoken.html">String Token</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/percent-encoding.html">Percent Encoding</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/formatting.html">Formatting</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../grammar/index.html">Customization</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/rules.html">Parse Rules</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/charset.html">Character Sets</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/combinators.html">Compound Rules</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/range.html">Ranges</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/rfc3986.html">RFC 3986</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Examples</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="qrcode.html">QR Code</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="finicky.html">Finicky</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="mailto.html">mailto URLs</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="magnet-link.html">Magnet Link</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="file-router.html">File Router</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="router.html">Router</a>
+        </li>
+              <li class=" is-current-page" data-depth="2">
+            <a class="nav-link" href="sanitize.html">Sanitizing URLs</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../reference.html">Reference</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <span class="nav-text">Concepts</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="3">
+            <a class="nav-link" href="../concepts/CharSet.html">CharSet</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="../concepts/Rule.html">Rule</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="../concepts/StringToken.html">StringToken</a>
+        </li>
+        </ul>
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../HelpCard.html">Help Card</a>
+        </li>
+        </ul>
+  </ul>
+  </ul>
+  </nav>
+</div>
+    </div>
+  </aside>
+</div>
+</div>
+  <div id="content">
+    <article class="doc max-width-reset">
+  <div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li>
+      <a href="../index.html" aria-label="Home: Boost.URL">
+        <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 -960 960 960" fill="#000000" aria-hidden="true"><path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z"/></svg>
+      </a>
+    </li>
+    <li>Examples</li>
+    <li><a href="sanitize.html">Sanitizing URLs</a></li>
+  </ul>
+</nav>
+<div class="spirit-nav">
+    <a accesskey="p" href="router.html"><span class="material-symbols-outlined" title="Previous: Router">arrow_back</span></a>
+    <a accesskey="p" href="../reference.html"><span class="material-symbols-outlined" title="Next: Reference">arrow_forward</span></a>
+</div>
+</div>
+    <h1 class="page">Sanitizing URLs</h1>
+  <div class="paragraph">
+<p>This example parses a non-strict or invalid URL
+into path components according to its delimiters.
+This pattern can be adapted to the requirements of other
+applications.</p>
+</div>
+<div class="paragraph">
+<p>Once the non-strict components are determined, a new URL is
+created and its parts are set with the <code>set_encoded_X</code>
+functions, which will encode any invalid chars accordingly.</p>
+</div>
+<div class="paragraph">
+<p>This sort of transformation is useful in applications that are
+extremely loose in what kinds of URLs they accept, such as
+browsers. The sanitized URL can later be used for machine-to-machine
+communication.</p>
+</div>
+<div class="paragraph">
+<p>Using non-strict URLs directly is a security concern in
+machine-to-machine communication, is ambiguous, and also
+involve an extra cost for the transformations.</p>
+</div>
+<div class="paragraph">
+<p>Different transformations are required by different applications to
+construct a valid URL appropriate for machine-to-machine communication.
+For instance, if an invalid relative reference includes something that
+looks like a host in the first path segment, browsers usually interpret
+that as the host with an implicit "https" scheme. Other applications
+also have other implicit schemes.</p>
+</div>
+<div class="paragraph">
+<p>The example also identifies whether the input url is already valid.
+It includes diagnostics that can be used to help the user determine
+if a URL is invalid and why it&#8217;s invalid.</p>
+</div>
+<div class="paragraph">
+<p>Once all transformations are applied, the result is a URL
+appropriate for machine-to-machine communication.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">/*
+    This example parses a non-strict / invalid URL
+    into path components according to its delimiters.
+    This pattern can be adapted to the requirements of other
+    applications.
+
+    Once the non-strict components are determined, a new URL is
+    created and its parts are set with the set_encoded_X
+    functions, which will encode any invalid chars accordingly.
+
+    This sort of transformation is useful in applications that are
+    extremely loose in what kinds of URLs they accept, such as
+    browsers. The sanitized URL can later be used for machine-to-machine
+    communication.
+
+    Using non-strict URLs directly is a security concern in
+    machine-to-machine communication, is ambiguous, and also
+    involve an extra cost for the transformations.
+
+    Different transformations are required by different applications to
+    construct a valid URL appropriate for machine-to-machine communication.
+    For instance, if an invalid relative reference includes something that
+    looks like a host in the first path segment, browsers usually interpret
+    that as the host with an implicit "https" scheme. Other applications
+    also have other implicit schemes.
+
+    The example also identifies whether the input url is already valid.
+    It includes diagnostics that can be used to help the user determine
+    if a URL is invalid and why it's invalid.
+
+    Once all transformations are applied, the result is a URL
+    appropriate for machine-to-machine communication.
+*/
+
+#include &lt;boost/url/url.hpp&gt;
+#include &lt;boost/url/parse.hpp&gt;
+#include &lt;boost/url/parse_path.hpp&gt;
+#include &lt;boost/url/string_view.hpp&gt;
+#include &lt;boost/url/grammar/alpha_chars.hpp&gt;
+#include &lt;boost/url/grammar/charset.hpp&gt;
+#include &lt;boost/url/grammar/digit_chars.hpp&gt;
+#include &lt;boost/url/grammar/lut_chars.hpp&gt;
+#include &lt;algorithm&gt;
+#include &lt;iostream&gt;
+#include &lt;array&gt;
+
+namespace urls = boost::urls;
+namespace core = boost::core;
+
+struct url_components
+{
+    core::string_view scheme;
+    core::string_view user;
+    core::string_view password;
+    core::string_view hostname;
+    core::string_view port;
+    core::string_view path;
+    core::string_view query;
+    core::string_view fragment;
+};
+
+core::string_view
+port_of_scheme(core::string_view scheme_str) {
+    static std::array&lt;std::pair&lt;core::string_view, core::string_view&gt;, 21&gt; scheme_ports =
+    {{
+         {"http", "80"},
+         {"ftp", "21"},
+         {"https", "443"},
+         {"gopher", "70"},
+         {"ldap", "389"},
+         {"nntp", "119"},
+         {"snews", "563"},
+         {"imap", "143"},
+         {"pop", "110"},
+         {"sip", "5060"},
+         {"rtsp", "554"},
+         {"wais", "210"},
+         {"z39.50r", "210"},
+         {"z39.50s", "210"},
+         {"prospero", "191"},
+         {"nfs", "2049"},
+         {"tip", "3372"},
+         {"acap", "674"},
+         {"telnet", "23"},
+         {"ssh", "22"},
+         {"", "65535"}
+    }};
+
+    auto iequals = [](core::string_view a, core::string_view b)
+    {
+        if (b.size() != a.size()) {
+            return false;
+        }
+        for (unsigned int i = 0; i &lt; a.size(); ++i) {
+            if (std::tolower(a[i]) != std::tolower(b[i])) {
+                return false;
+            }
+        }
+        return true;
+    };
+
+    auto const&amp; it = std::find_if(
+        scheme_ports.begin(),
+        scheme_ports.end(),
+        [&amp;](std::pair&lt;core::string_view, core::string_view&gt; const&amp; s) {
+        return iequals(s.first, scheme_str);
+    });
+
+    if (it != scheme_ports.end()) {
+        return it-&gt;second;
+    } else {
+        return {};
+    }
+}
+
+void
+extract_relative_ref(
+    core::string_view hostinfo_relative,
+    url_components &amp;out)
+{
+    // split path and query#fragment
+    constexpr urls::grammar::lut_chars path_end_chars("?#\0");
+    auto it = urls::grammar::find_if(
+        hostinfo_relative.begin(),
+        hostinfo_relative.end(), path_end_chars);
+    core::string_view query_and_frag = hostinfo_relative.substr(it - hostinfo_relative.begin());
+    if (query_and_frag != hostinfo_relative)
+        out.path = hostinfo_relative.substr(
+            0, query_and_frag.data() - hostinfo_relative.data());
+    if (query_and_frag.empty())
+        return;
+
+    // ?query#fragment
+    if (query_and_frag.front() == '?') {
+        query_and_frag = query_and_frag.substr(1);
+        core::string_view::size_type hash_pos = query_and_frag.find('#');
+        if (hash_pos != core::string_view::npos) {
+            core::string_view fragment_part = query_and_frag.substr(hash_pos);
+            out.fragment = fragment_part.substr(1);
+            out.query = query_and_frag.substr(
+                0, fragment_part.data() - query_and_frag.data());
+        } else {
+            out.query = query_and_frag;
+        }
+        return;
+    }
+
+    // fragment
+    out.fragment = query_and_frag.substr(1);
+}
+
+void
+extract_userinfo_relative(
+    core::string_view relative_ref,
+    core::string_view userinfo_relative,
+    core::string_view host_info,
+    url_components&amp; out) {
+    // We expect userinfo_relative to point to the first character of
+    // the hostname.  If there's a port it is the first colon,
+    // except with IPv6.
+    auto host_end_pos = host_info.find(':');
+    if (host_end_pos == core::string_view::npos)
+    {
+        // definitely no port
+        out.hostname = userinfo_relative.substr(
+            0, relative_ref.data() - userinfo_relative.data());
+        return extract_relative_ref(relative_ref, out);
+    }
+
+    // extract hostname and port
+    out.hostname = userinfo_relative.substr(0, host_end_pos);
+    core::string_view host_relative = userinfo_relative.substr(host_end_pos + 1);
+    out.port = host_relative.substr(0, relative_ref.data() - host_relative.data());
+
+    // validate port
+    bool const valid_port =
+        urls::grammar::find_if_not(
+            out.port.begin(),
+            out.port.end(),
+            urls::grammar::digit_chars)
+        == out.port.end();
+    if (!valid_port)
+    {
+        // move port to hostname where it can be encoded
+        out.hostname = {out.hostname.begin(), out.port.end()};
+        out.port = {};
+    }
+
+    extract_relative_ref(relative_ref, out);
+    if (out.port.empty() &amp;&amp; !out.scheme.empty())
+        out.port = port_of_scheme(out.scheme);
+}
+
+void
+extract_scheme_relative(
+    core::string_view scheme_relative,
+    url_components &amp;out)
+{
+    // hostinfo
+    constexpr urls::grammar::lut_chars hostinfo_end_chars("/?#\0");
+    auto it = urls::grammar::find_if(
+        scheme_relative.begin(),
+        scheme_relative.end(),
+        hostinfo_end_chars);
+    auto path_offset = (std::min)(
+        scheme_relative.size(),
+        static_cast&lt;std::size_t&gt;(it - scheme_relative.begin()));
+    core::string_view host_info = scheme_relative.substr(0, path_offset);
+
+    // userinfo
+    core::string_view relative_ref = scheme_relative.substr(path_offset);
+    auto host_offset = host_info.find_last_of('@');
+    if (host_offset == core::string_view::npos)
+        return extract_userinfo_relative(
+            relative_ref,
+            scheme_relative,
+            host_info,
+            out);
+
+    // password
+    core::string_view userinfo_at_relative = scheme_relative.substr(host_offset);
+    core::string_view userinfo(host_info.data(), userinfo_at_relative.data() - host_info.data());
+    auto password_offset = std::min(userinfo.size(), userinfo.find(':'));
+    if (password_offset != userinfo.size()) {
+        out.user = scheme_relative.substr(0, password_offset);
+        core::string_view password = scheme_relative.substr(password_offset + 1);
+        out.password = password.substr(0, userinfo_at_relative.data() - password.data());
+    } else {
+        out.user = scheme_relative.substr(0, userinfo_at_relative.data() - scheme_relative.data());
+    }
+
+    // userinfo-relative
+    core::string_view userinfo_relative = userinfo_at_relative.substr(1);
+    it = urls::grammar::find_if(
+        userinfo_relative.begin(),
+        userinfo_relative.end(),
+        hostinfo_end_chars);
+    path_offset = (std::min)(
+        userinfo_relative.size(),
+        static_cast&lt;std::size_t&gt;(it - userinfo_relative.begin()));
+    host_info = userinfo_relative.substr(0, path_offset);
+    extract_userinfo_relative(
+        relative_ref,
+        userinfo_relative,
+        host_info,
+        out);
+}
+
+void
+extract_uri_components(
+   core::string_view s,
+   url_components &amp;out)
+{
+    if (s.starts_with("//") &amp;&amp; !s.starts_with("///"))
+        return extract_scheme_relative(s.substr(2), out);
+
+    if (s.starts_with('/'))
+        return extract_relative_ref(s, out);
+
+    // extract scheme
+    // first char in a scheme must be letter (we accept uppercase here)
+    bool has_scheme = false;
+    if (!s.empty() &amp;&amp; urls::grammar::alpha_chars(s.front())) {
+        constexpr
+            urls::grammar::lut_chars scheme_chars(
+                "0123456789+-.ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
+        char const* it = urls::grammar::find_if_not(
+            s.begin() + 1, s.end(), scheme_chars);
+        size_t scheme_size = (std::min)(
+            s.size(), static_cast&lt;std::size_t&gt;(it - s.begin()));
+        // scheme must be non-empty and followed by ':'
+        if (s.size() &gt; scheme_size &amp;&amp; s[scheme_size] == ':') {
+            out.scheme = s.substr(0, scheme_size);
+            has_scheme = true;
+        }
+    }
+
+    // The usual route, parse scheme first
+    core::string_view scheme_relative = s;
+    if (has_scheme)
+        scheme_relative = s.substr(out.scheme.size() + 1);
+
+    const bool has_authority = scheme_relative.starts_with("//");
+    const bool is_relative_ref = !has_scheme &amp;&amp; !has_authority;
+    if (is_relative_ref)
+    {
+        // this is the trick browsers usually apply when 1) there's no
+        // authority because the "//" is missing, 2) the scheme is also missing,
+        // and 3) the first path segment looks like an authority
+        //
+        // This behavior is widespread, although it's ambiguous because valid
+        // host characters are also valid path characters.
+        //
+        // It's this rule that allows for things like "www.boost.org" in the
+        // browser. This is an invalid URL because it has no "//" to indicate
+        // this is the authority and "www.boost.org" is a perfectly valid
+        // path segment.
+        auto first_seg_offset = (std::min)(s.size(), s.find_first_of('/'));
+        core::string_view first_seg = s.substr(0, first_seg_offset);
+        auto host_delimiter_pos = first_seg.find_first_of(".:");
+        bool const looks_like_authority =
+            urls::parse_authority(first_seg) &amp;&amp;
+            host_delimiter_pos != core::string_view::npos &amp;&amp;
+            host_delimiter_pos != first_seg.size() - 1;
+        if (looks_like_authority)
+            return extract_scheme_relative(s, out);
+
+        // if the first_seg is really a seg, parse as relative ref
+        return extract_relative_ref(s, out);
+    }
+
+    if (has_authority)
+        scheme_relative = scheme_relative.substr(2);
+
+    // all that's left is a relative path
+    return extract_relative_ref(scheme_relative, out);
+}
+
+void
+sanitize_uri(core::string_view s, urls::url_base&amp; dest) {
+    url_components o;
+    dest.clear();
+    extract_uri_components(s, o);
+    if (o.scheme.data())
+        dest.set_scheme(o.scheme);
+    if (o.user.data())
+        dest.set_encoded_user(o.user);
+    if (o.password.data())
+        dest.set_encoded_password(o.password);
+    if (o.hostname.data())
+        dest.set_encoded_host(o.hostname);
+    if (o.port.data())
+        dest.set_port(o.port);
+    if (o.path.data())
+        dest.set_encoded_path(o.path);
+    if (o.query.data())
+        dest.set_encoded_query(o.query);
+    if (o.fragment.data())
+        dest.set_encoded_fragment(o.fragment);
+}
+
+urls::url
+sanitize_uri(core::string_view s) {
+    urls::url u;
+    sanitize_uri(s, u);
+    return u;
+}
+
+void
+print_url_components(urls::url_view u)
+{
+    std::cout &lt;&lt; "url: " &lt;&lt; u.buffer() &lt;&lt; '\n';
+    if (u.has_scheme())
+        std::cout &lt;&lt; "scheme: " &lt;&lt; u.scheme() &lt;&lt; '\n';
+    if (u.has_userinfo())
+        std::cout &lt;&lt; "user: " &lt;&lt; u.encoded_user() &lt;&lt; '\n';
+    if (u.has_password())
+        std::cout &lt;&lt; "password: " &lt;&lt; u.encoded_password() &lt;&lt; '\n';
+    if (u.has_authority())
+        std::cout &lt;&lt; "hostname: " &lt;&lt; u.encoded_host() &lt;&lt; '\n';
+    if (u.has_port())
+        std::cout &lt;&lt; "port: " &lt;&lt; u.port() &lt;&lt; '\n';
+    std::cout &lt;&lt; "path: " &lt;&lt; u.encoded_path() &lt;&lt; '\n';
+    std::cout &lt;&lt; "segments:\n";
+    for (auto seg: u.encoded_segments())
+        std::cout &lt;&lt; "- " &lt;&lt; seg &lt;&lt; '\n';
+    if (u.has_query())
+        std::cout &lt;&lt; "query: " &lt;&lt; u.encoded_query() &lt;&lt; '\n';
+    std::cout &lt;&lt; "params:\n";
+    for (auto param: u.encoded_params())
+    {
+        if (param.has_value)
+            std::cout &lt;&lt; "- " &lt;&lt; param.key &lt;&lt; ": " &lt;&lt; param.value &lt;&lt; '\n';
+        else
+            std::cout &lt;&lt; "- " &lt;&lt; param.key &lt;&lt; '\n';
+    }
+    if (u.has_fragment())
+        std::cout &lt;&lt; "fragment: " &lt;&lt; u.encoded_fragment() &lt;&lt; '\n';
+}
+
+int
+main(int argc, char **argv)
+{
+    if (argc != 2)
+    {
+        core::string_view exec = argv[0];
+        auto p = exec.find_last_of("/\\");
+        if (p != core::string_view::npos)
+            exec = exec.substr(p);
+        std::cerr
+            &lt;&lt; "Usage: " &lt;&lt; exec
+            &lt;&lt; " &lt;url&gt;\n"
+               "target: a non-strict url\n";
+        return EXIT_FAILURE;
+    }
+
+    core::string_view uri_str = argv[1];
+
+    boost::system::result&lt;urls::url_view&gt; ru = urls::parse_uri_reference(uri_str);
+    if (ru)
+    {
+        urls::url_view u = *ru;
+        if (u.has_scheme() &amp;&amp; u.has_fragment())
+            std::cout &lt;&lt; "Input is a valid URL\n";
+        else if (u.has_scheme())
+            std::cout &lt;&lt; "Input is a valid absolute URL\n";
+        else
+            std::cout &lt;&lt; "Input is a valid relative URL\n";
+        print_url_components(u);
+        return EXIT_SUCCESS;
+    }
+
+    std::cout &lt;&lt; "Sanitizing URL:\n";
+    std::cout &lt;&lt; "input: " &lt;&lt; uri_str &lt;&lt; '\n';
+    urls::url u = sanitize_uri(uri_str);
+    print_url_components(u);
+    return EXIT_SUCCESS;
+}</code></pre>
+</div>
+</div>
+  <div class="edit-this-page">
+      <a href="https://github.com/boostorg/url/edit/develop/doc/modules/ROOT/pages/examples/sanitize.adoc">Edit this Page</a>
+      </div>
+      <nav class="pagination">
+        <span class="prev"><a href="router.html">Router</a></span>
+        <span class="next"><a href="../reference.html">Reference</a></span>
+    </nav>
+</article>
+</div>
+  <div id="footer">
+  <script id="site-script" src="../../_/js/site.js" data-ui-root-path="../../_"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+<script async src="../../_/js/vendor/tabs.js" data-sync-storage-key="preferred-tab"></script>
+</div>
+</div>
+  </body>
+</html>

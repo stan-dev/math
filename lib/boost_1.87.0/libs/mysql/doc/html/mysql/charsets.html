@@ -1,0 +1,526 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Character sets and collations</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="prev" href="meta.html" title="Metadata">
+<link rel="next" href="time_types.html" title="Time types: date, datetime and time">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="meta.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="time_types.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="mysql.charsets"></a><a class="link" href="charsets.html" title="Character sets and collations">Character sets and collations</a>
+</h2></div></div></div>
+<p>
+      According to <a href="https://dev.mysql.com/doc/refman/8.0/en/charset.html" target="_top">MySQL
+      docs</a>, a <span class="bold"><strong>character set</strong></span> is <span class="emphasis"><em>a
+      set of symbols and their respective encodings</em></span>. <code class="computeroutput"><span class="identifier">utf8mb4</span></code>,
+      <code class="computeroutput"><span class="identifier">utf16</span></code> and <code class="computeroutput"><span class="identifier">ascii</span></code>
+      are character sets supported by MySQL. A <span class="bold"><strong>collation</strong></span>
+      is a set of rules to compare characters, and is associated to a single character
+      set. For example, <code class="computeroutput"><span class="identifier">utf8mb4_spanish_ci</span></code>
+      compares <code class="computeroutput"><span class="identifier">utf8mb4</span></code> characters
+      in a case-insensitive way.
+    </p>
+<h4>
+<a name="mysql.charsets.h0"></a>
+      <span class="phrase"><a name="mysql.charsets.the_connection_character_set_and"></a></span><a class="link" href="charsets.html#mysql.charsets.the_connection_character_set_and">The
+      connection character set and collation</a>
+    </h4>
+<p>
+      Every client session has an associated character set and collation. The <span class="bold"><strong>connection's character set determines the encoding for character
+      strings sent to and retrieved from the server</strong></span>. This includes SQL
+      query strings, string fields and column names in metadata. The connection's
+      collation is used for string literal comparison. The connection's character
+      set and collation can be changed dynamically using SQL.
+    </p>
+<p>
+      By default, Boost.MySQL connections use <code class="computeroutput"><span class="identifier">utf8mb4_general_ci</span></code>,
+      thus <span class="bold"><strong>using UTF-8 for all strings</strong></span>. We recommend
+      using this default, as MySQL character sets are easy to get wrong.
+    </p>
+<p>
+      The connection's character set is not linked to the character set specified
+      for databases, tables and columns. Consider the following declaration:
+    </p>
+<pre class="programlisting"><span class="identifier">CREATE</span> <span class="identifier">TABLE</span> <span class="identifier">test_table</span><span class="special">(</span>
+    <span class="identifier">col1</span> <span class="identifier">TEXT</span> <span class="identifier">CHARACTER</span> <span class="identifier">SET</span> <span class="identifier">utf16</span> <span class="identifier">COLLATE</span> <span class="identifier">utf16_spanish_ci</span>
+<span class="special">);</span>
+</pre>
+<p>
+      Data stored in <code class="computeroutput"><span class="identifier">col1</span></code> will be
+      encoded using UTF-16 and use <code class="computeroutput"><span class="identifier">utf16_spanish_ci</span></code>
+      for comparisons. However, when sent to the client, <span class="bold"><strong>it
+      will be converted to the connection's character set</strong></span>.
+    </p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+        <code class="computeroutput"><span class="identifier">utf8mb4</span></code> is how MySQL calls
+        regular UTF-8. Confusingly, MySQL has a character set named <code class="computeroutput"><span class="identifier">utf8</span></code> which is not UTF-8 compliant.
+      </p></td></tr>
+</table></div>
+<h4>
+<a name="mysql.charsets.h1"></a>
+      <span class="phrase"><a name="mysql.charsets.connection_character_set_effects"></a></span><a class="link" href="charsets.html#mysql.charsets.connection_character_set_effects">Connection
+      character set effects</a>
+    </h4>
+<p>
+      The connection's character set is crucial because it affects the encoding of
+      most string fields. The following is a summary of what's affected:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          SQL query strings passed to <a class="link" href="ref/boost__mysql__any_connection/async_execute.html" title="any_connection::async_execute"><code class="literal">async_execute</code></a>
+          and <a class="link" href="ref/boost__mysql__any_connection/async_prepare_statement.html" title="any_connection::async_prepare_statement"><code class="literal">async_prepare_statement</code></a>
+          must be sent using the connection's character set. Otherwise, server-side
+          parsing errors may happen.
+        </li>
+<li class="listitem">
+          SQL templates and string values passed to <a class="link" href="ref/boost__mysql__with_params.html" title="with_params"><code class="literal">with_params</code></a>
+          and <a class="link" href="ref/boost__mysql__format_sql.html" title="format_sql"><code class="literal">format_sql</code></a>
+          must be encoded using the connection's character set. Otherwise, values
+          will be rejected by Boost.MySQL when composing the query. Connections
+          <a class="link" href="charsets.html#mysql.charsets.tracking">track the character set in use</a>
+          to detect these errors. If you bypass character set tracking (e.g. by using
+          <code class="computeroutput"><span class="identifier">SET</span> <span class="identifier">NAMES</span></code>
+          instead of <a class="link" href="ref/boost__mysql__any_connection/async_set_character_set.html" title="any_connection::async_set_character_set"><code class="literal">async_set_character_set</code></a>),
+          you may run into vulnerabilities.
+        </li>
+<li class="listitem">
+          Statement string parameters passed to <a class="link" href="ref/boost__mysql__statement/bind.html" title="statement::bind"><code class="literal">statement::bind</code></a>
+          should use the connection's character set. Otherwise, MySQL may reject
+          the values.
+        </li>
+<li class="listitem">
+          String values in rows and metadata retrieved from the server use the connection's
+          character set.
+        </li>
+<li class="listitem">
+          Server-supplied diagnostic messages (<a class="link" href="ref/boost__mysql__diagnostics/server_message.html" title="diagnostics::server_message"><code class="literal">diagnostics::server_message</code></a>)
+          also use the connection's character set.
+        </li>
+</ul></div>
+<p>
+      To sum up, to properly use a connection, it's crucial to know the character
+      set it's using.
+    </p>
+<h4>
+<a name="mysql.charsets.h2"></a>
+      <span class="phrase"><a name="mysql.charsets.character_set_recommendations"></a></span><a class="link" href="charsets.html#mysql.charsets.character_set_recommendations">Character
+      set recommendations</a>
+    </h4>
+<p>
+      The following sections provide a deep explanation on how character sets work
+      in MySQL. If you don't have the time to read them, stick to the following advice:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          <span class="bold"><strong>Always use the default UTF-8</strong></span>. Character
+          sets in MySQL are complex and full of caveats. If you need to use a different
+          encoding in your application, convert your data to/from UTF-8 when interacting
+          with the server. The default <a class="link" href="ref/boost__mysql__connect_params.html" title="connect_params"><code class="literal">connect_params</code></a>
+          ensure that UTF-8 is used, without the need to run any SQL.
+        </li>
+<li class="listitem">
+          <span class="bold"><strong>Don't execute SET NAMES</strong></span> statements or
+          change the <code class="computeroutput"><span class="identifier">character_set_client</span></code>
+          and <code class="computeroutput"><span class="identifier">character_set_results</span></code>
+          session variables using <code class="computeroutput"><span class="identifier">async_execute</span></code>.
+          This breaks character set tracking, which can lead to vulnerabilities.
+        </li>
+<li class="listitem">
+          Don't use <a class="link" href="ref/boost__mysql__any_connection/async_reset_connection.html" title="any_connection::async_reset_connection"><code class="literal">async_reset_connection</code></a>
+          unless you know what you're doing. If you need to reuse connections, use
+          <a class="link" href="ref/boost__mysql__connection_pool.html" title="connection_pool"><code class="literal">connection_pool</code></a>,
+          instead.
+        </li>
+<li class="listitem">
+          Connections obtained from a <a class="link" href="ref/boost__mysql__connection_pool.html" title="connection_pool"><code class="literal">connection_pool</code></a>
+          always use <code class="computeroutput"><span class="identifier">utf8mb4</span></code>. When
+          connections are returned to the pool, their character set is reset to
+          <code class="computeroutput"><span class="identifier">utf8mb4</span></code>.
+        </li>
+</ul></div>
+<h4>
+<a name="mysql.charsets.h3"></a>
+      <span class="phrase"><a name="mysql.charsets.tracking"></a></span><a class="link" href="charsets.html#mysql.charsets.tracking">Character
+      set tracking</a>
+    </h4>
+<p>
+      There is a number of actions that can change the connection's character set:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          When connecting with <a class="link" href="ref/boost__mysql__any_connection/async_connect.html" title="any_connection::async_connect"><code class="literal">async_connect</code></a>,
+          a numeric collation ID is supplied to the server. You can change it using
+          <a class="link" href="ref/boost__mysql__connect_params/connection_collation.html" title="connect_params::connection_collation"><code class="literal">connect_params::connection_collation</code></a>.
+          The <code class="literal">&lt;<a href="https://github.com/boostorg/mysql/blob/master/include/boost/mysql/mysql_collations.hpp" target="_top">boost/mysql/mysql_collations.hpp</a>&gt;</code>
+          and <code class="literal">&lt;<a href="https://github.com/boostorg/mysql/blob/master/include/boost/mysql/mariadb_collations.hpp" target="_top">boost/mysql/mariadb_collations.hpp</a>&gt;</code>
+          headers contain available collation IDs. If the server recognizes the passed
+          collation, the connection's character set will be the one associated to
+          the collation. If it doesn't, the connection <span class="bold"><strong>will
+          silently fall back to the server's default character set</strong></span> (usually
+          <code class="computeroutput"><span class="identifier">latin1</span></code>, which is not Unicode).
+          This can happen when trying to use a newer collation, like <code class="computeroutput"><span class="identifier">utf8mb4_0900_ai_ci</span></code>, with an old MySQL
+          5.7 server. By default, Boost.MySQL uses <code class="computeroutput"><span class="identifier">utf8mb4_general_ci</span></code>,
+          supported by all servers.
+        </li>
+<li class="listitem">
+          Using <a class="link" href="ref/boost__mysql__any_connection/async_reset_connection.html" title="any_connection::async_reset_connection"><code class="literal">async_reset_connection</code></a>
+          resets the connection's character set <span class="bold"><strong>to the server's
+          default character set</strong></span>.
+        </li>
+<li class="listitem">
+          Using <a class="link" href="ref/boost__mysql__any_connection/async_set_character_set.html" title="any_connection::async_set_character_set"><code class="literal">async_set_character_set</code></a>
+          executes a <code class="computeroutput"><span class="identifier">SET</span> <span class="identifier">NAMES</span></code>
+          statement to set the connection's character set. Executing a pipeline with
+          a set character set stage has the same results.
+        </li>
+<li class="listitem">
+          Manually executing a <code class="computeroutput"><span class="identifier">SET</span> <span class="identifier">NAMES</span></code>, <code class="computeroutput"><span class="identifier">SET</span>
+          <span class="identifier">CHARACTER</span> <span class="identifier">SET</span></code>
+          or modifying the <code class="computeroutput"><span class="identifier">character_set_client</span></code>
+          and <code class="computeroutput"><span class="identifier">character_set_results</span></code>
+          change the connection's character set. <span class="bold"><strong>Don't do this</strong></span>,
+          as it will confuse character set tracking.
+        </li>
+</ul></div>
+<p>
+      <a class="link" href="ref/boost__mysql__any_connection.html" title="any_connection"><code class="literal">any_connection</code></a>
+      attempts to track the connection's current character set because it's required
+      to securely perform client-side SQL formatting. This info is available using
+      <a class="link" href="ref/boost__mysql__any_connection/current_character_set.html" title="any_connection::current_character_set"><code class="literal">any_connection::current_character_set</code></a>,
+      which returns a <a class="link" href="ref/boost__mysql__character_set.html" title="character_set"><code class="literal">character_set</code></a>
+      object. The current character set is also used by <code class="computeroutput"><span class="identifier">async_execute</span></code>
+      when a <a class="link" href="ref/boost__mysql__with_params_t.html" title="with_params_t"><code class="literal">with_params_t</code></a>
+      object is passed, and by <a class="link" href="ref/boost__mysql__any_connection/format_opts.html" title="any_connection::format_opts"><code class="literal">any_connection::format_opts</code></a>.
+    </p>
+<p>
+      The MySQL protocol has limited support for character set tracking, so this
+      task requires some help from the user. Some situations can make the current
+      character set to be unknown. If this happens, executing a <a class="link" href="ref/boost__mysql__with_params_t.html" title="with_params_t"><code class="literal">with_params_t</code></a>
+      fails with <code class="computeroutput"><span class="identifier">client_errc</span><span class="special">::</span><span class="identifier">unknown_character_set</span></code>. <a class="link" href="ref/boost__mysql__any_connection/current_character_set.html" title="any_connection::current_character_set"><code class="literal">any_connection::current_character_set</code></a>
+      and <a class="link" href="ref/boost__mysql__any_connection/format_opts.html" title="any_connection::format_opts"><code class="literal">any_connection::format_opts</code></a>
+      also return this error.
+    </p>
+<p>
+      Following the above points, this is how tracking works:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          Before connection establishment, the current character set is always unknown.
+        </li>
+<li class="listitem">
+          After <a class="link" href="ref/boost__mysql__any_connection/async_connect.html" title="any_connection::async_connect"><code class="literal">async_connect</code></a>
+          succeeds, conservative heuristics are used to determine the current character
+          set. If the passed <a class="link" href="ref/boost__mysql__connect_params/connection_collation.html" title="connect_params::connection_collation"><code class="literal">connect_params::connection_collation</code></a>
+          is known to be accepted by all supported servers, its associated character
+          set becomes the current one. If the library is not sure, the current character
+          set is left unknown (this is the safe choice to avoid vulnerabilities).
+          Note that leaving <a class="link" href="ref/boost__mysql__connect_params/connection_collation.html" title="connect_params::connection_collation"><code class="literal">connection_collation</code></a>
+          to its default value always sets the current character set to <a class="link" href="ref/boost__mysql__utf8mb4_charset.html" title="utf8mb4_charset"><code class="literal">utf8mb4_charset</code></a>.
+        </li>
+<li class="listitem">
+          A successful <a class="link" href="ref/boost__mysql__any_connection/async_set_character_set.html" title="any_connection::async_set_character_set"><code class="literal">async_set_character_set</code></a>
+          sets the current character set to the passed one. The same applies for
+          a successful set character set pipeline stage.
+        </li>
+<li class="listitem">
+          Calling <a class="link" href="ref/boost__mysql__any_connection/async_reset_connection.html" title="any_connection::async_reset_connection"><code class="literal">async_reset_connection</code></a>
+          makes the current character set unknown.
+        </li>
+</ul></div>
+<div class="warning"><table border="0" summary="Warning">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Warning]" src="../../../../../doc/src/images/warning.png"></td>
+<th align="left">Warning</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+        <span class="bold"><strong>Do not execute <code class="computeroutput"><span class="identifier">SET</span>
+        <span class="identifier">NAMES</span></code></strong></span>, <code class="computeroutput"><span class="identifier">SET</span> <span class="identifier">CHARACTER</span>
+        <span class="identifier">SET</span></code> or any other SQL statement
+        that modifies <code class="computeroutput"><span class="identifier">character_set_client</span></code>
+        using <code class="computeroutput"><span class="identifier">async_execute</span></code>. This
+        will make character set information stored in the client invalid.
+      </p></td></tr>
+</table></div>
+<h4>
+<a name="mysql.charsets.h4"></a>
+      <span class="phrase"><a name="mysql.charsets.custom"></a></span><a class="link" href="charsets.html#mysql.charsets.custom">Adding
+      support for a character set</a>
+    </h4>
+<p>
+      Built-in support is provided for <code class="computeroutput"><span class="identifier">utf8mb4</span></code>
+      (<a class="link" href="ref/boost__mysql__utf8mb4_charset.html" title="utf8mb4_charset"><code class="literal">utf8mb4_charset</code></a>)
+      and <code class="computeroutput"><span class="identifier">ascii</span></code> (<a class="link" href="ref/boost__mysql__ascii_charset.html" title="ascii_charset"><code class="literal">ascii_charset</code></a>).
+      We strongly encourage you to always use <code class="computeroutput"><span class="identifier">utf8mb4</span></code>.
+      Note that MySQL doesn't support setting the connection's character set to UTF-16
+      or UTF-32.
+    </p>
+<p>
+      If you really need to use a different character set, you can implement them
+      by creating <a class="link" href="ref/boost__mysql__character_set.html" title="character_set"><code class="literal">character_set</code></a>
+      objects. You can then pass them to functions like <a class="link" href="ref/boost__mysql__any_connection/set_character_set.html" title="any_connection::set_character_set"><code class="literal">set_character_set</code></a>
+      like the built-in ones.
+    </p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+        This is an advanced technique. Don't use it unless you know what you are
+        doing.
+      </p></td></tr>
+</table></div>
+<p>
+      The structure has the following members:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          <a class="link" href="ref/boost__mysql__character_set/name.html" title="character_set::name"><code class="literal">character_set::name</code></a>
+          must match the name you would use in <code class="computeroutput"><span class="identifier">SET</span>
+          <span class="identifier">NAMES</span></code>.
+        </li>
+<li class="listitem">
+          <a class="link" href="ref/boost__mysql__character_set/next_char.html" title="character_set::next_char"><code class="literal">character_set::next_char</code></a>
+          is used to iterate the string. It must return the length in bytes of the
+          first code point in the string, or 0 if the code point is invalid.
+        </li>
+</ul></div>
+<p>
+      For example, this is how you could implement the <code class="computeroutput"><span class="identifier">utf8mb4</span></code>
+      character set. For brevity, only a small part of the implementation is shown
+      - have a look at the definition of <a class="link" href="ref/boost__mysql__utf8mb4_charset.html" title="utf8mb4_charset"><code class="literal">utf8mb4_charset</code></a>
+      for a full implementation.
+    </p>
+<pre class="programlisting"><span class="comment">// next_char must interpret input as a string encoded according to the</span>
+<span class="comment">// utf8mb4 character set and return the size of the first character,</span>
+<span class="comment">// or 0 if the byte sequence does not represent a valid character.</span>
+<span class="comment">// It must not throw exceptions.</span>
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">utf8mb4_next_char</span><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">span</span><span class="special">&lt;</span><span class="keyword">const</span> <span class="keyword">unsigned</span> <span class="keyword">char</span><span class="special">&gt;</span> <span class="identifier">input</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="comment">// Input strings are never empty - they always have 1 byte, at least.</span>
+    <span class="identifier">assert</span><span class="special">(!</span><span class="identifier">input</span><span class="special">.</span><span class="identifier">empty</span><span class="special">());</span>
+
+    <span class="comment">// In UTF8, we need to look at the first byte to know the character's length</span>
+    <span class="keyword">auto</span> <span class="identifier">first_char</span> <span class="special">=</span> <span class="identifier">input</span><span class="special">[</span><span class="number">0</span><span class="special">];</span>
+
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">first_char</span> <span class="special">&lt;</span> <span class="number">0x80</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="comment">// 0x00 to 0x7F: ASCII range. The character is 1 byte long</span>
+        <span class="keyword">return</span> <span class="number">1</span><span class="special">;</span>
+    <span class="special">}</span>
+    <span class="keyword">else</span> <span class="keyword">if</span> <span class="special">(</span><span class="identifier">first_char</span> <span class="special">&lt;=</span> <span class="number">0xc1</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="comment">// 0x80 to 0xc1: invalid. No UTF8 character starts with such a byte</span>
+        <span class="keyword">return</span> <span class="number">0</span><span class="special">;</span>
+    <span class="special">}</span>
+    <span class="keyword">else</span> <span class="keyword">if</span> <span class="special">(</span><span class="identifier">first_char</span> <span class="special">&lt;=</span> <span class="number">0xdf</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="comment">// 0xc2 to 0xdf: two byte characters.</span>
+        <span class="comment">// It's vital that we check that the characters are valid. Otherwise, vulnerabilities can arise.</span>
+
+        <span class="comment">// Check that the string has enough bytes</span>
+        <span class="keyword">if</span> <span class="special">(</span><span class="identifier">input</span><span class="special">.</span><span class="identifier">size</span><span class="special">()</span> <span class="special">&lt;</span> <span class="number">2u</span><span class="special">)</span>
+            <span class="keyword">return</span> <span class="number">0</span><span class="special">;</span>
+
+        <span class="comment">// The second byte must be between 0x80 and 0xbf. Otherwise, the character is invalid</span>
+        <span class="comment">// Do not skip this check - otherwise escaping will yield invalid results</span>
+        <span class="keyword">if</span> <span class="special">(</span><span class="identifier">input</span><span class="special">[</span><span class="number">1</span><span class="special">]</span> <span class="special">&lt;</span> <span class="number">0x80</span> <span class="special">||</span> <span class="identifier">input</span><span class="special">[</span><span class="number">1</span><span class="special">]</span> <span class="special">&gt;</span> <span class="number">0xbf</span><span class="special">)</span>
+            <span class="keyword">return</span> <span class="number">0</span><span class="special">;</span>
+
+        <span class="comment">// Valid, 2 byte character</span>
+        <span class="keyword">return</span> <span class="number">2</span><span class="special">;</span>
+    <span class="special">}</span>
+    <span class="comment">// Omitted: 3 and 4 byte long characters</span>
+    <span class="keyword">else</span>
+    <span class="special">{</span>
+        <span class="keyword">return</span> <span class="number">0</span><span class="special">;</span>
+    <span class="special">}</span>
+<span class="special">}</span>
+</pre>
+<h4>
+<a name="mysql.charsets.h5"></a>
+      <span class="phrase"><a name="mysql.charsets.character_set_results_and_charac"></a></span><a class="link" href="charsets.html#mysql.charsets.character_set_results_and_charac">character_set_results
+      and character_set_client</a>
+    </h4>
+<p>
+      Setting the connection's character set during connection establishment or using
+      <a class="link" href="ref/boost__mysql__any_connection/async_set_character_set.html" title="any_connection::async_set_character_set"><code class="literal">async_set_character_set</code></a>
+      has the ultimate effect of changing some session variables. This section lists
+      them as a reference. We <span class="bold"><strong>strongly encourage you not to
+      modify them manually</strong></span>, as this will confuse character set tracking.
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          <a href="https://dev.mysql.com/doc/refman/8.0/en/server-system-variables.html#sysvar_character_set_client" target="_top">character_set_client</a>
+          determines the encoding that SQL statements sent to the server should have.
+          This includes the SQL strings passed to <a class="link" href="ref/boost__mysql__any_connection/async_execute.html" title="any_connection::async_execute"><code class="literal">async_execute</code></a>
+          and <a class="link" href="ref/boost__mysql__any_connection/async_prepare_statement.html" title="any_connection::async_prepare_statement"><code class="literal">async_prepare_statement</code></a>,
+          and string parameters passed to <a class="link" href="ref/boost__mysql__statement/bind.html" title="statement::bind"><code class="literal">statement::bind</code></a>.
+          Not all character sets are permissible in <code class="computeroutput"><span class="identifier">character_set_client</span></code>.
+          For example, UTF-16 and UTF-32 based character sets won't be accepted.
+        </li>
+<li class="listitem">
+          <a href="https://dev.mysql.com/doc/refman/8.0/en/server-system-variables.html#sysvar_character_set_results" target="_top">character_set_results</a>
+          determines the encoding that the server will use to send any kind of result,
+          including string fields retrieved by <a class="link" href="ref/boost__mysql__connection/execute.html" title="connection::execute"><code class="literal">connection::execute</code></a>,
+          metadata like <a class="link" href="ref/boost__mysql__metadata/column_name.html" title="metadata::column_name"><code class="literal">metadata::column_name</code></a>
+          and error messages. Note that <a class="link" href="ref/boost__mysql__metadata/column_collation.html" title="metadata::column_collation"><code class="literal">metadata::column_collation</code></a>
+          reflects the character set and collation the server has converted the column
+          to before sending it to the client. In the above example, <code class="computeroutput"><span class="identifier">metadata</span><span class="special">::</span><span class="identifier">column_collation</span></code> will be the default
+          collation for UTF16, rather than <code class="computeroutput"><span class="identifier">latin1_swedish_ci</span></code>.
+        </li>
+</ul></div>
+<p>
+      The table below summarizes the encoding used by each piece of functionality
+      in this library:
+    </p>
+<div class="informaltable">
+<a name="mysql.charsets.string_encoding"></a><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+              <p>
+                Functionality
+              </p>
+            </th>
+<th>
+              <p>
+                Encoding given by...
+              </p>
+            </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+              <p>
+                SQL query strings passed to <a class="link" href="ref/boost__mysql__any_connection/async_execute.html" title="any_connection::async_execute"><code class="literal">async_execute</code></a>
+                and <a class="link" href="ref/boost__mysql__any_connection/async_prepare_statement.html" title="any_connection::async_prepare_statement"><code class="literal">async_prepare_statement</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">character_set_client</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                Strings used with <a class="link" href="ref/boost__mysql__with_params.html" title="with_params"><code class="literal">with_params</code></a>
+                and <a class="link" href="ref/boost__mysql__format_sql.html" title="format_sql"><code class="literal">format_sql</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">character_set_client</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                String values passed as parameters to <a class="link" href="ref/boost__mysql__statement/bind.html" title="statement::bind"><code class="literal">statement::bind</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">character_set_client</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                String fields in rows retrieved from the server
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">character_set_results</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                Metadata strings:<br> <br> <a class="link" href="ref/boost__mysql__metadata/database.html" title="metadata::database"><code class="literal">metadata::database</code></a><br>
+                <a class="link" href="ref/boost__mysql__metadata/table.html" title="metadata::table"><code class="literal">metadata::table</code></a><br>
+                <a class="link" href="ref/boost__mysql__metadata/original_table.html" title="metadata::original_table"><code class="literal">metadata::original_table</code></a><br>
+                <a class="link" href="ref/boost__mysql__metadata/column_name.html" title="metadata::column_name"><code class="literal">metadata::column_name</code></a><br>
+                <a class="link" href="ref/boost__mysql__metadata/original_column_name.html" title="metadata::original_column_name"><code class="literal">metadata::original_column_name</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">character_set_results</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                Server-generated error messages: <a class="link" href="ref/boost__mysql__diagnostics/server_message.html" title="diagnostics::server_message"><code class="literal">diagnostics::server_message</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">character_set_results</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                Informational messages:<br> <br> <a class="link" href="ref/boost__mysql__results/info.html" title="results::info"><code class="literal">results::info</code></a><br>
+                <a class="link" href="ref/boost__mysql__execution_state/info.html" title="execution_state::info"><code class="literal">execution_state::info</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                ASCII. These can only contain ASCII characters and are always ASCII
+                encoded. More info in <a href="https://dev.mysql.com/doc/c-api/8.0/en/mysql-info.html" target="_top">this
+                section</a>.
+              </p>
+            </td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="meta.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="time_types.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

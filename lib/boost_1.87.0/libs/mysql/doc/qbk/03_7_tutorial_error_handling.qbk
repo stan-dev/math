@@ -1,0 +1,246 @@
+[/
+    Copyright (c) 2019-2024 Ruben Perez Hidalgo (rubenperez038 at gmail dot com)
+   
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+]
+
+[section:tutorial_error_handling Tutorial 7: Error handling]
+
+The [link mysql.tutorial_connection_pool previous tutorial]
+did not include any error handling. When an error is encountered
+while talking to the DB or the client, an exception is thrown and
+the program terminates. This is undesirable in server programs like the one we're writing.
+
+To add error handling, we can just add try/catch blocks to prevent exception propagation.
+However, many code bases discourage the use of exceptions for non-exceptional circumstances,
+like I/O errors. In this tutorial, we will learn how to manage I/O errors without exceptions
+by using [asioreflink as_tuple as_tuple] and error codes.
+
+
+[heading Error handling strategy]
+
+There are two kind of I/O errors that our program can encounter:
+
+* Reading and writing to the client may fail. This can happen if
+  the client program is faulty or a network error happens.
+  In this case, we should log the problem and close the connection.
+* Talking to the database may fail. This can happen if [refmemunq connection_pool async_get_connection]
+  is cancelled because of a timeout. In this case, we will return a special string (`"ERROR"`)
+  to the client, signalling that we can't fulfill the request, and log the problem.
+
+Additionally, we will modify how we use `asio::cancel_after` to make the system more reliable.
+
+
+
+
+[heading Completion tokens]
+
+Before proceeding, we need to understand what a completion token is.
+The concepts in this section are not specific to Boost.MySQL, but apply
+to Asio and all Asio-compatible libraries. Since Asio docs can be terse,
+we explain them here to facilitate the reader.
+
+All asynchronous operations accept an optional, last parameter specifying what
+to do when the operation completes.
+This last parameter is the operation's
+[@boost:/doc/html/boost_asio/reference/asynchronous_operations.html#boost_asio.reference.asynchronous_operations.completion_tokens_and_handlers completion token].
+
+Callbacks are valid completion tokens. Taking [refmemunq connection_pool async_get_connection]
+as example, the following is valid:
+
+[tutorial_error_handling_callbacks]
+
+We have already been using this when creating coroutines.
+`asio::co_spawn` is also an async operation, and the callback we pass
+as its last parameter is the completion token.
+
+You might consider using callbacks if your compiler doesn't support coroutines,
+or just by personal preference. [link mysql.examples.callbacks This example]
+demonstrates how to use them.
+
+If you don't specify a completion token, the operation's [*default completion token]
+will be used. This is usually `asio::deferred` or `mysql::with_diagnostics(asio::deferred)`
+[footnote [reflink with_diagnostics] is an adapter completion token that enhances
+thrown exceptions with a diagnostic string supplied by the server.
+`mysql::with_diagnostics(asio::deferred)` is otherwise equivalent to `asio::deferred`.].
+These tokens transform asynchronous operations into awaitables,
+so we can use them in C++20 coroutines.
+
+The default completion token for [refmemunq connection_pool async_get_connection] is
+`mysql::with_diagnostics(asio::deferred)`. This means that the following two are equivalent:
+
+[tutorial_error_handling_default_tokens]
+
+Completion tokens are generic: once you learn how to use one, you can use it
+with any Asio-compliant async operation. This includes all functions in Boost.Asio,
+Boost.MySQL, Boost.Beast and Boost.Redis. We say that operations in these libraries
+are compliant with Asio's universal async model. Writing these is hard, but they're easy to use!
+
+
+
+
+
+[heading Adapter completion tokens]
+
+Some tokens don't fully specify what to do when the operation completes,
+but rather modify some aspect of how the operation executes.
+They wrap (or adapt) other completion tokens. The underlying token
+determines what to do when the operation completes.
+
+[asioreflink cancel_after cancel_after] is an adapter token.
+It modifies how an operation executes by setting a timeout,
+but it doesn't specify what to do on completion.
+
+Adapter tokens can be passed an optional completion token
+as the last argument. If the token is omitted, the default
+one will be used. Continuing with our example:
+
+[tutorial_error_handling_adapter_tokens]
+
+
+[heading Handler signature and exceptions]
+
+Each async operation has an associated handler signature.
+We can find these signatures in the documentation for each operation.
+The handler signature is the prototype that a callback function
+passed as completion token would need to have to be compatible with the operation.
+
+The handler signature for [refmemunq connection_pool async_get_connection]
+is `void(boost::system::error_code, mysql::pooled_connection)`.
+
+However, when we invoke `co_await` on the awaitable returned by `async_get_connection`,
+we don't get any `error_code`. This is because `co_await` inspects
+the handler signature at compile-time, looking for an `error_code` as first parameter.
+If it finds it, `co_await` will remove it from the argument list, returning
+only the `pooled_connection`. At runtime, the error code is checked.
+If the code indicates a failure, an exception is thrown.
+
+This mechanism is important to understand how `as_tuple` works.
+
+
+
+
+[heading asio::as_tuple]
+
+[asioreflink as_tuple as_tuple] is another adapter completion token
+that can be used to prevent exceptions. It modifies the operation's
+handler signature, packing all arguments into a `std::tuple`.
+This inhibits the automatic error code checks explained in the previous section, 
+thus preventing exceptions on I/O failure. Continuing with our example:
+
+[tutorial_error_handling_as_tuple]
+
+In practice, it's usually better to use structured bindings:
+
+[tutorial_error_handling_as_tuple_structured_bindings]
+
+All the properties of adapter completion tokens apply:
+
+[tutorial_error_handling_as_tuple_default_tokens]
+
+Adapter tokens can be combined. To apply a timeout to the operation
+while avoiding exceptions, you can use:
+
+[tutorial_error_handling_as_tuple_cancel_after]
+
+
+
+
+
+[heading Using asio::as_tuple for database code]
+
+Let's apply [asioreflink as_tuple as_tuple] to our database logic.
+We will remove timeouts for now - we will add them back later.
+
+[tutorial_error_handling_db_nodiag]
+
+
+
+
+
+
+[heading Diagnostics objects]
+
+While what we wrote works, it can be improved. When a database operation fails, the server
+may supply an error string with information about what went wrong. Boost.MySQL may also
+generate such strings in certain cases. We get this automatically
+when using exceptions. Thanks to [reflink with_diagnostics] and default completion tokens,
+the library throws [reflink error_with_diagnostics] objects,
+which inherit from `boost::system::system_error`
+and have a [refmemunq error_with_diagnostics get_diagnostics] member.
+
+When using error codes, we need to handle diagnostics manually.
+All functions in Boost.MySQL are overloaded to accept a [reflink diagnostics]
+output parameter. It will be populated with extra information in case of error.
+
+Let's update our code to use diagnostics:
+
+[tutorial_error_handling_db]
+
+We also need to write the function to log errors:
+
+[tutorial_error_handling_log_error]
+
+[refmem diagnostics client_message] and [refmem diagnostics server_message] differ
+in their origin. Client messages never contain user-supplied input, and can always
+be used safely. Server messages may contain user input, and should be treated with
+more caution (logging them is fine).
+
+
+
+
+
+[heading Using asio::as_tuple with client reads and writes]
+
+Since `asio::read` and `asio::write` are compliant async operations,
+we can use [asioreflink as_tuple as_tuple] with them, too:
+
+[tutorial_error_handling_session_as_tuple]
+
+
+
+
+
+[heading Timeouts]
+
+Our session handler has three logical steps:
+
+* Read a request from the client.
+* Access the database.
+* Write the response to the client.
+
+Each of these steps may take long to complete. We will set a separate timeout
+to each one.
+
+Client reads and writes are the easiest ones to handle -
+we just need to combine `as_tuple` and `cancel_after`:
+
+[tutorial_error_handling_read_timeout]
+
+The database logic is more involved. Ideally, we would like
+to set a timeout to the overall database access operation, rather
+than to individual steps. However, a `co_await` expression
+isn't an async operation, and can't be passed a completion token.
+We can fix this by replacing plain `co_await` by `asio::co_spawn`,
+which accepts a completion token:
+
+[tutorial_error_handling_db_timeout]
+
+With these modifications, the session handler becomes:
+
+[tutorial_error_handling_session]
+
+With these modifications, our server is ready!
+
+
+
+[heading Wrapping up]
+
+Full program listing for this tutorial is [link mysql.examples.tutorial_error_handling here].
+
+This concludes our tutorial series. You can now look at the [link mysql.overview overview section]
+to learn more about the library features, or to the [link mysql.examples example section]
+if you prefer to learn by doing.
+
+[endsect]

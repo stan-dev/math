@@ -1,0 +1,220 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>experimental::promise</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../boost_asio.html" title="Boost.Asio">
+<link rel="up" href="../reference.html" title="Reference">
+<link rel="prev" href="experimental__parallel_group/signature.html" title="experimental::parallel_group::signature">
+<link rel="next" href="experimental__promise/cancel.html" title="experimental::promise::cancel">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="experimental__parallel_group/signature.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../reference.html"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../boost_asio.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="experimental__promise/cancel.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="boost_asio.reference.experimental__promise"></a><a class="link" href="experimental__promise.html" title="experimental::promise">experimental::promise</a>
+</h3></div></div></div>
+<p>
+        <a class="indexterm" name="boost_asio.indexterm.experimental__promise"></a>
+      </p>
+<p>
+        A disposable handle for an eager operation.
+      </p>
+<pre class="programlisting"><span class="keyword">template</span><span class="special">&lt;</span>
+    <span class="keyword">typename</span> <span class="identifier">Signature</span> <span class="special">=</span> <span class="keyword">void</span><span class="special">(),</span>
+    <span class="keyword">typename</span> <a class="link" href="Executor1.html" title="Executor requirements">Executor</a> <span class="special">=</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">any_io_executor</span><span class="special">,</span>
+    <span class="keyword">typename</span> <span class="identifier">Allocator</span> <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">allocator</span><span class="special">&lt;</span><span class="keyword">void</span><span class="special">&gt;&gt;</span>
+<span class="keyword">struct</span> <span class="identifier">promise</span>
+</pre>
+<h5>
+<a name="boost_asio.reference.experimental__promise.h0"></a>
+        <span class="phrase"><a name="boost_asio.reference.experimental__promise.types"></a></span><a class="link" href="experimental__promise.html#boost_asio.reference.experimental__promise.types">Types</a>
+      </h5>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Name
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody><tr>
+<td>
+                <p>
+                  <a class="link" href="experimental__promise/value_type.html" title="experimental::promise::value_type"><span class="bold"><strong>value_type</strong></span></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  The value that's returned by the promise.
+                </p>
+              </td>
+</tr></tbody>
+</table></div>
+<h5>
+<a name="boost_asio.reference.experimental__promise.h1"></a>
+        <span class="phrase"><a name="boost_asio.reference.experimental__promise.member_functions"></a></span><a class="link" href="experimental__promise.html#boost_asio.reference.experimental__promise.member_functions">Member
+        Functions</a>
+      </h5>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Name
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="experimental__promise/cancel.html" title="experimental::promise::cancel"><span class="bold"><strong>cancel</strong></span></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Cancel the promise. Usually done through the destructor.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="experimental__promise/completed.html" title="experimental::promise::completed"><span class="bold"><strong>completed</strong></span></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Check if the promise is completed already.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="experimental__promise/operator_lp__rp_.html" title="experimental::promise::operator()"><span class="bold"><strong>operator()</strong></span></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Wait for the promise to become ready.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="experimental__promise/promise.html" title="experimental::promise::promise"><span class="bold"><strong>promise</strong></span></a> <span class="silver">[constructor]</span>
+                </p>
+              </td>
+<td>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="experimental__promise/_promise.html" title="experimental::promise::~promise"><span class="bold"><strong>~promise</strong></span></a> <span class="silver">[destructor]</span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Destruct the promise and cancel the operation.
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl class="variablelist">
+<dt><span class="term">Signature</span></dt>
+<dd><p>
+              The signature of the operation.
+            </p></dd>
+<dt><span class="term">Executor</span></dt>
+<dd><p>
+              The executor to be used by the promise (taken from the operation).
+            </p></dd>
+<dt><span class="term">Allocator</span></dt>
+<dd><p>
+              The allocator used for the promise. Can be set through use_allocator.
+            </p></dd>
+</dl>
+</div>
+<p>
+        A promise can be used to initiate an asynchronous option that can be completed
+        later. If the promise gets destroyed before completion, the operation gets
+        a cancel signal and the result is ignored.
+      </p>
+<p>
+        A promise fulfills the requirements of async_operation.
+      </p>
+<h5>
+<a name="boost_asio.reference.experimental__promise.h2"></a>
+        <span class="phrase"><a name="boost_asio.reference.experimental__promise.examples"></a></span><a class="link" href="experimental__promise.html#boost_asio.reference.experimental__promise.examples">Examples</a>
+      </h5>
+<p>
+        Reading and writing from one coroutine.
+      </p>
+<pre class="programlisting"><span class="identifier">awaitable</span><span class="special">&lt;</span><span class="keyword">void</span><span class="special">&gt;</span> <span class="identifier">read_write_some</span><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">ip</span><span class="special">::</span><span class="identifier">tcp</span><span class="special">::</span><span class="identifier">socket</span> <span class="special">&amp;</span> <span class="identifier">sock</span><span class="special">,</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">mutable_buffer</span> <span class="identifier">read_buf</span><span class="special">,</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">const_buffer</span> <span class="identifier">to_write</span><span class="special">)</span>
+<span class="special">{</span>
+  <span class="keyword">auto</span> <span class="identifier">p</span> <span class="special">=</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">async_read</span><span class="special">(</span><span class="identifier">read_buf</span><span class="special">,</span>
+      <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">experimental</span><span class="special">::</span><span class="identifier">use_promise</span><span class="special">);</span>
+  <span class="identifier">co_await</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">async_write_some</span><span class="special">(</span><span class="identifier">to_write</span><span class="special">);</span>
+  <span class="identifier">co_await</span> <span class="identifier">p</span><span class="special">;</span>
+<span class="special">}</span>
+</pre>
+<h5>
+<a name="boost_asio.reference.experimental__promise.h3"></a>
+        <span class="phrase"><a name="boost_asio.reference.experimental__promise.requirements"></a></span><a class="link" href="experimental__promise.html#boost_asio.reference.experimental__promise.requirements">Requirements</a>
+      </h5>
+<p>
+        <span class="emphasis"><em>Header: </em></span><code class="literal">boost/asio/experimental/promise.hpp</code>
+      </p>
+<p>
+        <span class="emphasis"><em>Convenience header: </em></span>None
+      </p>
+</div>
+<div class="copyright-footer">Copyright © 2003-2024 Christopher M. Kohlhoff<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="experimental__parallel_group/signature.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../reference.html"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../boost_asio.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="experimental__promise/cancel.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

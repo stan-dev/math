@@ -1,0 +1,182 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class file_lock</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../../interprocess/indexes_reference.html#doxygen.boost_interprocess_header_reference.file__lock_8hpp" title="Header &lt;boost/interprocess/sync/file_lock.hpp&gt;">
+<link rel="prev" href="classboost_1_1interprocess_1_1basic__vectorstream.html" title="Class template basic_vectorstream">
+<link rel="next" href="classboost_1_1interprocess_1_1interprocess__condition.html" title="Class interprocess_condition">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1interprocess_1_1basic__vectorstream.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../interprocess/indexes_reference.html#doxygen.boost_interprocess_header_reference.file__lock_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1interprocess_1_1interprocess__condition.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1file__lock"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class file_lock</span></h2>
+<p>boost::interprocess::file_lock</p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../interprocess/indexes_reference.html#doxygen.boost_interprocess_header_reference.file__lock_8hpp" title="Header &lt;boost/interprocess/sync/file_lock.hpp&gt;">boost/interprocess/sync/file_lock.hpp</a>&gt;
+
+</span>
+<span class="keyword">class</span> <a class="link" href="classboost_1_1interprocess_1_1file__lock.html" title="Class file_lock">file_lock</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1interprocess_1_1file__lock.html#id76-bb">public member functions</a></span>
+  <a class="link" href="classboost_1_1interprocess_1_1file__lock.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1file__lock_1a2d7bc116603676749ec9b54f88d6377f"><span class="identifier">file_lock</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1interprocess_1_1file__lock.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1file__lock_1adfabfb38b63d9a49c715654766e29609"><span class="identifier">file_lock</span></a><span class="special">(</span><span class="keyword">const</span> <span class="keyword">char</span> <span class="special">*</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1interprocess_1_1file__lock.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1file__lock_1a2f227f89306acfc09b64ccdbc29cb3cf"><span class="identifier">file_lock</span></a><span class="special">(</span><span class="keyword">const</span> <span class="keyword">wchar_t</span> <span class="special">*</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1interprocess_1_1file__lock.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1file__lock_1a85671a1f6ed3ff31585649f1c1d70daf"><span class="identifier">file_lock</span></a><span class="special">(</span><a class="link" href="classboost_1_1interprocess_1_1file__lock.html" title="Class file_lock">file_lock</a> <span class="special">&amp;&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1interprocess_1_1file__lock.html" title="Class file_lock">file_lock</a> <span class="special">&amp;</span> <a class="link" href="classboost_1_1interprocess_1_1file__lock.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1file__lock_1a5f95c28133e5b5db0773a3366e0d39d0"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><a class="link" href="classboost_1_1interprocess_1_1file__lock.html" title="Class file_lock">file_lock</a> <span class="special">&amp;&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1interprocess_1_1file__lock.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1file__lock_1a12f7ac4e5151281b937dc95df2a1af33"><span class="special">~</span><span class="identifier">file_lock</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1interprocess_1_1file__lock.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1file__lock_1af62a63603f16aaa484d43bd1654c9cb7"><span class="identifier">swap</span></a><span class="special">(</span><a class="link" href="classboost_1_1interprocess_1_1file__lock.html" title="Class file_lock">file_lock</a> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1interprocess_1_1file__lock.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1file__lock_1aed7c17b66fd26ba505b9b6eeb680ddf1"><span class="identifier">lock</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1interprocess_1_1file__lock.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1file__lock_1a2c15c43072c92a89cfb6339241effe93"><span class="identifier">try_lock</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> TimePoint<span class="special">&gt;</span> <span class="keyword">bool</span> <a class="link" href="classboost_1_1interprocess_1_1file__lock.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1file__lock_1a94235c95ab47c1561096f4726da5aa73"><span class="identifier">timed_lock</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">TimePoint</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> TimePoint<span class="special">&gt;</span> <span class="keyword">bool</span> <a class="link" href="classboost_1_1interprocess_1_1file__lock.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1file__lock_1a462fdae065ee93e952e112b17ce27756"><span class="identifier">try_lock_until</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">TimePoint</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Duration<span class="special">&gt;</span> <span class="keyword">bool</span> <a class="link" href="classboost_1_1interprocess_1_1file__lock.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1file__lock_1aaba12f4923439cb047768a6d1e73eecb"><span class="identifier">try_lock_for</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">Duration</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1interprocess_1_1file__lock.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1file__lock_1a2672913a254aad2b44e8232757b90f02"><span class="identifier">unlock</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1interprocess_1_1file__lock.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1file__lock_1afb87ed5639b06e1517c0bc15a1f2f07f"><span class="identifier">lock_sharable</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1interprocess_1_1file__lock.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1file__lock_1a43c9cf41d63f8ae21e8b2c9f21ff0bb3"><span class="identifier">lock_shared</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1interprocess_1_1file__lock.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1file__lock_1ad1f8183defe5442a2bff3fefa0104b55"><span class="identifier">try_lock_sharable</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1interprocess_1_1file__lock.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1file__lock_1a094fb5aa626a9b45b2f4bbb1fb835d2b"><span class="identifier">try_lock_shared</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> TimePoint<span class="special">&gt;</span> <span class="keyword">bool</span> <a class="link" href="classboost_1_1interprocess_1_1file__lock.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1file__lock_1a759afc0b0ba35019cf30f4699d154873"><span class="identifier">timed_lock_sharable</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">TimePoint</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> TimePoint<span class="special">&gt;</span> <span class="keyword">bool</span> <a class="link" href="classboost_1_1interprocess_1_1file__lock.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1file__lock_1aafa53077663605af3fc8b77cfaefa685"><span class="identifier">try_lock_shared_until</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">TimePoint</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Duration<span class="special">&gt;</span> <span class="keyword">bool</span> <a class="link" href="classboost_1_1interprocess_1_1file__lock.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1file__lock_1af432ff2721d89ed28e9ca05fcd45a8a6"><span class="identifier">try_lock_shared_for</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">Duration</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1interprocess_1_1file__lock.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1file__lock_1a7cc41e8b3d4c71761d2ae7eb314e5a7f"><span class="identifier">unlock_sharable</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1interprocess_1_1file__lock.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1file__lock_1a2c9887c3342b7ca8790d1cb0e5f39ee7"><span class="identifier">unlock_shared</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.17.19.3.57.4.4"></a><h2>Description</h2>
+<p>A file lock, is a mutual exclusion utility similar to a mutex using a file. A file lock has sharable and exclusive locking capabilities and can be used with <a class="link" href="classboost_1_1interprocess_1_1scoped__lock.html" title="Class template scoped_lock">scoped_lock</a> and <a class="link" href="classboost_1_1interprocess_1_1sharable__lock.html" title="Class template sharable_lock">sharable_lock</a> classes. A file lock can't guarantee synchronization between threads of the same process so just use file locks to synchronize threads from different processes. </p>
+<div class="refsect2">
+<a name="id-1.3.17.19.3.57.4.4.3"></a><h3>
+<a name="id76-bb"></a><code class="computeroutput">file_lock</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1file__lock_1a2d7bc116603676749ec9b54f88d6377f"></a><span class="identifier">file_lock</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>Constructs an empty file mapping. Does not throw </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1file__lock_1adfabfb38b63d9a49c715654766e29609"></a><span class="identifier">file_lock</span><span class="special">(</span><span class="keyword">const</span> <span class="keyword">char</span> <span class="special">*</span> name<span class="special">)</span><span class="special">;</span></pre>
+<p>Opens a file lock. Throws <a class="link" href="classboost_1_1interprocess_1_1interprocess__exception.html" title="Class interprocess_exception">interprocess_exception</a> if the file does not exist or there are no operating system resources. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1file__lock_1a2f227f89306acfc09b64ccdbc29cb3cf"></a><span class="identifier">file_lock</span><span class="special">(</span><span class="keyword">const</span> <span class="keyword">wchar_t</span> <span class="special">*</span> name<span class="special">)</span><span class="special">;</span></pre>
+<p>Opens a file lock. Throws <a class="link" href="classboost_1_1interprocess_1_1interprocess__exception.html" title="Class interprocess_exception">interprocess_exception</a> if the file does not exist or there are no operating system resources.</p>
+<p>Note: This function is only available on operating systems with native wchar_t APIs (e.g. Windows). </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1file__lock_1a85671a1f6ed3ff31585649f1c1d70daf"></a><span class="identifier">file_lock</span><span class="special">(</span><a class="link" href="classboost_1_1interprocess_1_1file__lock.html" title="Class file_lock">file_lock</a> <span class="special">&amp;&amp;</span> moved<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>Moves the ownership of "moved"'s file mapping object to *this. After the call, "moved" does not represent any file mapping object. Does not throw </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a class="link" href="classboost_1_1interprocess_1_1file__lock.html" title="Class file_lock">file_lock</a> <span class="special">&amp;</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1file__lock_1a5f95c28133e5b5db0773a3366e0d39d0"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><a class="link" href="classboost_1_1interprocess_1_1file__lock.html" title="Class file_lock">file_lock</a> <span class="special">&amp;&amp;</span> moved<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>Moves the ownership of "moved"'s file mapping to *this. After the call, "moved" does not represent any file mapping. Does not throw </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1file__lock_1a12f7ac4e5151281b937dc95df2a1af33"></a><span class="special">~</span><span class="identifier">file_lock</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>Closes a file lock. Does not throw. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1file__lock_1af62a63603f16aaa484d43bd1654c9cb7"></a><span class="identifier">swap</span><span class="special">(</span><a class="link" href="classboost_1_1interprocess_1_1file__lock.html" title="Class file_lock">file_lock</a> <span class="special">&amp;</span> other<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>Swaps two file_locks. Does not throw. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1file__lock_1aed7c17b66fd26ba505b9b6eeb680ddf1"></a><span class="identifier">lock</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Requires: The calling thread does not own the mutex.</p>
+<p>Effects: The calling thread tries to obtain exclusive ownership of the mutex, and if another thread has exclusive, or sharable ownership of the mutex, it waits until it can obtain the ownership. Throws: <a class="link" href="classboost_1_1interprocess_1_1interprocess__exception.html" title="Class interprocess_exception">interprocess_exception</a> on error.</p>
+<p>Note: A program may deadlock if the thread that has ownership calls this function. If the implementation can detect the deadlock, an exception could be thrown. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1file__lock_1a2c15c43072c92a89cfb6339241effe93"></a><span class="identifier">try_lock</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Requires: The calling thread does not own the mutex.</p>
+<p>Effects: The calling thread tries to acquire exclusive ownership of the mutex without waiting. If no other thread has exclusive, or sharable ownership of the mutex this succeeds. Returns: If it can acquire exclusive ownership immediately returns true. If it has to wait, returns false. Throws: <a class="link" href="classboost_1_1interprocess_1_1interprocess__exception.html" title="Class interprocess_exception">interprocess_exception</a> on error.</p>
+<p>Note: A program may deadlock if the thread that has ownership calls this function. If the implementation can detect the deadlock, an exception could be thrown. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> TimePoint<span class="special">&gt;</span> <span class="keyword">bool</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1file__lock_1a94235c95ab47c1561096f4726da5aa73"></a><span class="identifier">timed_lock</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">TimePoint</span> <span class="special">&amp;</span> abs_time<span class="special">)</span><span class="special">;</span></pre>
+<p>Requires: The calling thread does not own the mutex.</p>
+<p>Effects: The calling thread tries to acquire exclusive ownership of the mutex waiting if necessary until no other thread has exclusive, or sharable ownership of the mutex or abs_time is reached. Returns: If acquires exclusive ownership, returns true. Otherwise returns false. Throws: <a class="link" href="classboost_1_1interprocess_1_1interprocess__exception.html" title="Class interprocess_exception">interprocess_exception</a> on error.</p>
+<p>Note: A program may deadlock if the thread that has ownership calls this function. If the implementation can detect the deadlock, an exception could be thrown. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> TimePoint<span class="special">&gt;</span> <span class="keyword">bool</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1file__lock_1a462fdae065ee93e952e112b17ce27756"></a><span class="identifier">try_lock_until</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">TimePoint</span> <span class="special">&amp;</span> abs_time<span class="special">)</span><span class="special">;</span></pre>
+<p>Same as <code class="computeroutput">timed_lock</code>, but this function is modeled after the standard library interface. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Duration<span class="special">&gt;</span> <span class="keyword">bool</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1file__lock_1aaba12f4923439cb047768a6d1e73eecb"></a><span class="identifier">try_lock_for</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">Duration</span> <span class="special">&amp;</span> dur<span class="special">)</span><span class="special">;</span></pre>
+<p>Same as <code class="computeroutput">timed_lock</code>, but this function is modeled after the standard library interface. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1file__lock_1a2672913a254aad2b44e8232757b90f02"></a><span class="identifier">unlock</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Precondition: The thread must have exclusive ownership of the mutex. Effects: The calling thread releases the exclusive ownership of the mutex. Throws: An exception derived from <a class="link" href="classboost_1_1interprocess_1_1interprocess__exception.html" title="Class interprocess_exception">interprocess_exception</a> on error. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1file__lock_1afb87ed5639b06e1517c0bc15a1f2f07f"></a><span class="identifier">lock_sharable</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Requires: The calling thread does not own the mutex.</p>
+<p>Effects: The calling thread tries to obtain sharable ownership of the mutex, and if another thread has exclusive ownership of the mutex, waits until it can obtain the ownership. Throws: <a class="link" href="classboost_1_1interprocess_1_1interprocess__exception.html" title="Class interprocess_exception">interprocess_exception</a> on error.</p>
+<p>Note: A program may deadlock if the thread that owns a mutex object calls this function. If the implementation can detect the deadlock, an exception could be thrown. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1file__lock_1a43c9cf41d63f8ae21e8b2c9f21ff0bb3"></a><span class="identifier">lock_shared</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Same as <code class="computeroutput">lock_sharable</code> but with a std-compatible interface </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1file__lock_1ad1f8183defe5442a2bff3fefa0104b55"></a><span class="identifier">try_lock_sharable</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Effects: The calling thread tries to acquire sharable ownership of the mutex without waiting. If no other thread has exclusive ownership of the mutex this succeeds. Returns: If it can acquire sharable ownership immediately returns true. If it has to wait, returns false. Throws: <a class="link" href="classboost_1_1interprocess_1_1interprocess__exception.html" title="Class interprocess_exception">interprocess_exception</a> on error. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1file__lock_1a094fb5aa626a9b45b2f4bbb1fb835d2b"></a><span class="identifier">try_lock_shared</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Same as <code class="computeroutput">try_lock_sharable</code> but with a std-compatible interface </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> TimePoint<span class="special">&gt;</span> 
+  <span class="keyword">bool</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1file__lock_1a759afc0b0ba35019cf30f4699d154873"></a><span class="identifier">timed_lock_sharable</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">TimePoint</span> <span class="special">&amp;</span> abs_time<span class="special">)</span><span class="special">;</span></pre>
+<p>Effects: The calling thread tries to acquire sharable ownership of the mutex waiting if necessary until no other thread has exclusive ownership of the mutex or abs_time is reached. Returns: If acquires sharable ownership, returns true. Otherwise returns false. Throws: <a class="link" href="classboost_1_1interprocess_1_1interprocess__exception.html" title="Class interprocess_exception">interprocess_exception</a> on error. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> TimePoint<span class="special">&gt;</span> 
+  <span class="keyword">bool</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1file__lock_1aafa53077663605af3fc8b77cfaefa685"></a><span class="identifier">try_lock_shared_until</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">TimePoint</span> <span class="special">&amp;</span> abs_time<span class="special">)</span><span class="special">;</span></pre>
+<p>Same as <code class="computeroutput">timed_lock_sharable</code>, but this function is modeled after the standard library interface. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Duration<span class="special">&gt;</span> <span class="keyword">bool</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1file__lock_1af432ff2721d89ed28e9ca05fcd45a8a6"></a><span class="identifier">try_lock_shared_for</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">Duration</span> <span class="special">&amp;</span> dur<span class="special">)</span><span class="special">;</span></pre>
+<p>Same as <code class="computeroutput">timed_lock_sharable</code>, but this function is modeled after the standard library interface. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1file__lock_1a7cc41e8b3d4c71761d2ae7eb314e5a7f"></a><span class="identifier">unlock_sharable</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Precondition: The thread must have sharable ownership of the mutex. Effects: The calling thread releases the sharable ownership of the mutex. Throws: An exception derived from <a class="link" href="classboost_1_1interprocess_1_1interprocess__exception.html" title="Class interprocess_exception">interprocess_exception</a> on error. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1file__lock_1a2c9887c3342b7ca8790d1cb0e5f39ee7"></a><span class="identifier">unlock_shared</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Same as <code class="computeroutput">unlock_sharable</code> but with a std-compatible interface </p>
+</li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2005-2024 Ion Gaztanaga<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1interprocess_1_1basic__vectorstream.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../interprocess/indexes_reference.html#doxygen.boost_interprocess_header_reference.file__lock_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1interprocess_1_1interprocess__condition.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

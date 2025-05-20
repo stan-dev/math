@@ -1,0 +1,225 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Boost containers compatible with Boost.Interprocess</title>
+<link rel="stylesheet" href="../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../interprocess.html" title="Chapter 16. Boost.Interprocess">
+<link rel="prev" href="containers_explained.html" title="Containers in managed memory segments">
+<link rel="next" href="memory_algorithms.html" title="Memory allocation algorithms">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../boost.png"></td>
+<td align="center"><a href="../../../index.html">Home</a></td>
+<td align="center"><a href="../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="containers_explained.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../interprocess.html"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="memory_algorithms.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="interprocess.additional_containers"></a><a class="link" href="additional_containers.html" title="Boost containers compatible with Boost.Interprocess">Boost containers compatible
+    with Boost.Interprocess</a>
+</h2></div></div></div>
+<div class="toc"><dl class="toc">
+<dt><span class="section"><a href="additional_containers.html#interprocess.additional_containers.unordered">Boost unordered
+      containers</a></span></dt>
+<dt><span class="section"><a href="additional_containers.html#interprocess.additional_containers.multi_index">Boost.MultiIndex
+      containers</a></span></dt>
+</dl></div>
+<p>
+      As mentioned, container developers might need to change their implementation
+      to make them compatible with Boost.Interprocess, because implementation usually
+      ignore allocators with smart pointers. Hopefully several Boost containers are
+      compatible with <span class="bold"><strong>Interprocess</strong></span>.
+    </p>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="interprocess.additional_containers.unordered"></a><a class="link" href="additional_containers.html#interprocess.additional_containers.unordered" title="Boost unordered containers">Boost unordered
+      containers</a>
+</h3></div></div></div>
+<p>
+        <span class="bold"><strong>Boost.Unordered</strong></span> containers are compatible
+        with Interprocess, so programmers can store hash containers in shared memory
+        and memory mapped files. Here is a small example storing <code class="computeroutput"><span class="identifier">unordered_map</span></code>
+        in shared memory:
+      </p>
+<pre class="programlisting"><span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">interprocess</span><span class="special">/</span><span class="identifier">managed_shared_memory</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">interprocess</span><span class="special">/</span><span class="identifier">allocators</span><span class="special">/</span><span class="identifier">allocator</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+
+
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">unordered_map</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>     <span class="comment">//boost::unordered_map</span>
+
+
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">functional</span><span class="special">&gt;</span>                  <span class="comment">//std::equal_to</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">container_hash</span><span class="special">/</span><span class="identifier">hash</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>   <span class="comment">//boost::hash</span>
+
+
+<span class="keyword">int</span> <span class="identifier">main</span> <span class="special">()</span>
+<span class="special">{</span>
+   <span class="keyword">using</span> <span class="keyword">namespace</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">interprocess</span><span class="special">;</span>
+   <span class="comment">//Remove shared memory on construction and destruction</span>
+   <span class="keyword">struct</span> <span class="identifier">shm_remove</span>
+   <span class="special">{</span>
+      <span class="identifier">shm_remove</span><span class="special">()</span> <span class="special">{</span> <span class="identifier">shared_memory_object</span><span class="special">::</span><span class="identifier">remove</span><span class="special">(</span>"MyName"<span class="special">);</span> <span class="special">}</span>
+      <span class="special">~</span><span class="identifier">shm_remove</span><span class="special">(){</span> <span class="identifier">shared_memory_object</span><span class="special">::</span><span class="identifier">remove</span><span class="special">(</span>"MyName"<span class="special">);</span> <span class="special">}</span>
+   <span class="special">}</span> <span class="identifier">remover</span><span class="special">;</span>
+
+   <span class="comment">//Create shared memory</span>
+   <span class="identifier">managed_shared_memory</span> <span class="identifier">segment</span><span class="special">(</span><span class="identifier">create_only</span><span class="special">,</span> "MyName"<span class="special">,</span> <span class="number">65536</span><span class="special">);</span>
+
+   <span class="comment">//Note that unordered_map&lt;Key, MappedType&gt;'s value_type is std::pair&lt;const Key, MappedType&gt;,</span>
+   <span class="comment">//so the allocator must allocate that pair.</span>
+   <span class="keyword">typedef</span> <span class="keyword">int</span>    <span class="identifier">KeyType</span><span class="special">;</span>
+   <span class="keyword">typedef</span> <span class="keyword">float</span>  <span class="identifier">MappedType</span><span class="special">;</span>
+   <span class="keyword">typedef</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">pair</span><span class="special">&lt;</span><span class="keyword">const</span> <span class="keyword">int</span><span class="special">,</span> <span class="keyword">float</span><span class="special">&gt;</span> <span class="identifier">ValueType</span><span class="special">;</span>
+
+   <span class="comment">//Typedef the allocator</span>
+   <span class="keyword">typedef</span> <span class="identifier">allocator</span><span class="special">&lt;</span><span class="identifier">ValueType</span><span class="special">,</span> <span class="identifier">managed_shared_memory</span><span class="special">::</span><span class="identifier">segment_manager</span><span class="special">&gt;</span> <span class="identifier">ShmemAllocator</span><span class="special">;</span>
+
+   <span class="comment">//Alias an unordered_map of ints that uses the previous STL-like allocator.</span>
+   <span class="keyword">typedef</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">unordered_map</span>
+      <span class="special">&lt;</span> <span class="identifier">KeyType</span>               <span class="special">,</span> <span class="identifier">MappedType</span>
+      <span class="special">,</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">hash</span><span class="special">&lt;</span><span class="identifier">KeyType</span><span class="special">&gt;</span>  <span class="special">,</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">equal_to</span><span class="special">&lt;</span><span class="identifier">KeyType</span><span class="special">&gt;</span>
+      <span class="special">,</span> <span class="identifier">ShmemAllocator</span><span class="special">&gt;</span>
+   <span class="identifier">MyHashMap</span><span class="special">;</span>
+
+   <span class="comment">//Construct a shared memory hash map.</span>
+   <span class="comment">//Note that the first parameter is the initial bucket count and</span>
+   <span class="comment">//after that, the hash function, the equality function and the allocator</span>
+   <span class="identifier">MyHashMap</span> <span class="special">*</span><span class="identifier">myhashmap</span> <span class="special">=</span> <span class="identifier">segment</span><span class="special">.</span><span class="identifier">construct</span><span class="special">&lt;</span><span class="identifier">MyHashMap</span><span class="special">&gt;(</span><span class="string">"MyHashMap"</span><span class="special">)</span>  <span class="comment">//object name</span>
+      <span class="special">(</span> <span class="number">3u</span><span class="special">,</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">hash</span><span class="special">&lt;</span><span class="keyword">int</span><span class="special">&gt;(),</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">equal_to</span><span class="special">&lt;</span><span class="keyword">int</span><span class="special">&gt;()</span>                  <span class="comment">//</span>
+      <span class="special">,</span> <span class="identifier">segment</span><span class="special">.</span><span class="identifier">get_allocator</span><span class="special">&lt;</span><span class="identifier">ValueType</span><span class="special">&gt;());</span>                         <span class="comment">//allocator instance</span>
+
+   <span class="comment">//Insert data in the hash map</span>
+   <span class="keyword">for</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">i</span> <span class="special">=</span> <span class="number">0</span><span class="special">;</span> <span class="identifier">i</span> <span class="special">&lt;</span> <span class="number">100u</span><span class="special">;</span> <span class="special">++</span><span class="identifier">i</span><span class="special">){</span>
+      <span class="identifier">myhashmap</span><span class="special">-&gt;</span><span class="identifier">insert</span><span class="special">(</span><span class="identifier">ValueType</span><span class="special">((</span><span class="keyword">int</span><span class="special">)</span><span class="identifier">i</span><span class="special">,</span> <span class="special">(</span><span class="keyword">float</span><span class="special">)</span><span class="identifier">i</span><span class="special">));</span>
+   <span class="special">}</span>
+   <span class="keyword">return</span> <span class="number">0</span><span class="special">;</span>
+<span class="special">}</span>
+</pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="interprocess.additional_containers.multi_index"></a><a class="link" href="additional_containers.html#interprocess.additional_containers.multi_index" title="Boost.MultiIndex containers">Boost.MultiIndex
+      containers</a>
+</h3></div></div></div>
+<p>
+        The widely used <span class="bold"><strong>Boost.MultiIndex</strong></span> library
+        is compatible with <span class="bold"><strong>Boost.Interprocess</strong></span> so
+        we can construct pretty good databases in shared memory. Constructing databases
+        in shared memory is a bit tougher than in normal memory, usually because
+        those databases contain strings and those strings need to be placed in shared
+        memory. Shared memory strings require an allocator in their constructors
+        so this usually makes object insertion a bit more complicated.
+      </p>
+<p>
+        Here is an example that shows how to put a multi index container in shared
+        memory:
+      </p>
+<pre class="programlisting"><span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">interprocess</span><span class="special">/</span><span class="identifier">managed_shared_memory</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">interprocess</span><span class="special">/</span><span class="identifier">allocators</span><span class="special">/</span><span class="identifier">allocator</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">container</span><span class="special">/</span><span class="identifier">string</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+
+
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">multi_index_container</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">multi_index</span><span class="special">/</span><span class="identifier">member</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">multi_index</span><span class="special">/</span><span class="identifier">ordered_index</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+
+
+<span class="keyword">using</span> <span class="keyword">namespace</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">interprocess</span><span class="special">;</span>
+<span class="keyword">namespace</span> <span class="identifier">bmi</span> <span class="special">=</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">multi_index</span><span class="special">;</span>
+
+<span class="keyword">typedef</span> <span class="identifier">managed_shared_memory</span><span class="special">::</span><span class="identifier">allocator</span><span class="special">&lt;</span><span class="keyword">char</span><span class="special">&gt;::</span><span class="identifier">type</span>              <span class="identifier">char_allocator</span><span class="special">;</span>
+<span class="keyword">typedef</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">container</span><span class="special">::</span><span class="identifier">basic_string</span><span class="special">&lt;</span><span class="keyword">char</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">char_traits</span><span class="special">&lt;</span><span class="keyword">char</span><span class="special">&gt;,</span> <span class="identifier">char_allocator</span><span class="special">&gt;</span><span class="identifier">shm_string</span><span class="special">;</span>
+
+<span class="comment">//Data to insert in shared memory</span>
+<span class="keyword">struct</span> <span class="identifier">employee</span>
+<span class="special">{</span>
+   <span class="keyword">int</span>         <span class="identifier">id</span><span class="special">;</span>
+   <span class="keyword">int</span>         <span class="identifier">age</span><span class="special">;</span>
+   <span class="identifier">shm_string</span>  <span class="identifier">name</span><span class="special">;</span>
+   <span class="identifier">employee</span><span class="special">(</span> <span class="keyword">int</span> <span class="identifier">id_</span>
+           <span class="special">,</span> <span class="keyword">int</span> <span class="identifier">age_</span>
+           <span class="special">,</span> <span class="keyword">const</span> <span class="keyword">char</span> <span class="special">*</span><span class="identifier">name_</span>
+           <span class="special">,</span> <span class="keyword">const</span> <span class="identifier">char_allocator</span> <span class="special">&amp;</span><span class="identifier">a</span><span class="special">)</span>
+      <span class="special">:</span> <span class="identifier">id</span><span class="special">(</span><span class="identifier">id_</span><span class="special">),</span> <span class="identifier">age</span><span class="special">(</span><span class="identifier">age_</span><span class="special">),</span> <span class="identifier">name</span><span class="special">(</span><span class="identifier">name_</span><span class="special">,</span> <span class="identifier">a</span><span class="special">)</span>
+   <span class="special">{}</span>
+<span class="special">};</span>
+
+<span class="comment">//Tags</span>
+<span class="keyword">struct</span> <span class="identifier">id</span><span class="special">{};</span>
+<span class="keyword">struct</span> <span class="identifier">age</span><span class="special">{};</span>
+<span class="keyword">struct</span> <span class="identifier">name</span><span class="special">{};</span>
+
+<span class="comment">// Define a multi_index_container of employees with following indices:</span>
+<span class="comment">//   - a unique index sorted by employee::int,</span>
+<span class="comment">//   - a non-unique index sorted by employee::name,</span>
+<span class="comment">//   - a non-unique index sorted by employee::age.</span>
+<span class="keyword">typedef</span> <span class="identifier">bmi</span><span class="special">::</span><span class="identifier">multi_index_container</span><span class="special">&lt;</span>
+  <span class="identifier">employee</span><span class="special">,</span>
+  <span class="identifier">bmi</span><span class="special">::</span><span class="identifier">indexed_by</span><span class="special">&lt;</span>
+    <span class="identifier">bmi</span><span class="special">::</span><span class="identifier">ordered_unique</span>
+      <span class="special">&lt;</span><span class="identifier">bmi</span><span class="special">::</span><span class="identifier">tag</span><span class="special">&lt;</span><span class="identifier">id</span><span class="special">&gt;,</span>  <span class="identifier">bmi</span><span class="special">::</span><span class="identifier">member</span><span class="special">&lt;</span><span class="identifier">employee</span><span class="special">,</span><span class="keyword">int</span><span class="special">,&amp;</span><span class="identifier">employee</span><span class="special">::</span><span class="identifier">id</span><span class="special">&gt;</span> <span class="special">&gt;,</span>
+    <span class="identifier">bmi</span><span class="special">::</span><span class="identifier">ordered_non_unique</span><span class="special">&lt;</span>
+      <span class="identifier">bmi</span><span class="special">::</span><span class="identifier">tag</span><span class="special">&lt;</span><span class="identifier">name</span><span class="special">&gt;,</span> <span class="identifier">bmi</span><span class="special">::</span><span class="identifier">member</span><span class="special">&lt;</span><span class="identifier">employee</span><span class="special">,</span><span class="identifier">shm_string</span><span class="special">,&amp;</span><span class="identifier">employee</span><span class="special">::</span><span class="identifier">name</span><span class="special">&gt;</span> <span class="special">&gt;,</span>
+    <span class="identifier">bmi</span><span class="special">::</span><span class="identifier">ordered_non_unique</span>
+      <span class="special">&lt;</span><span class="identifier">bmi</span><span class="special">::</span><span class="identifier">tag</span><span class="special">&lt;</span><span class="identifier">age</span><span class="special">&gt;,</span> <span class="identifier">bmi</span><span class="special">::</span><span class="identifier">member</span><span class="special">&lt;</span><span class="identifier">employee</span><span class="special">,</span><span class="keyword">int</span><span class="special">,&amp;</span><span class="identifier">employee</span><span class="special">::</span><span class="identifier">age</span><span class="special">&gt;</span> <span class="special">&gt;</span> <span class="special">&gt;,</span>
+  <span class="identifier">managed_shared_memory</span><span class="special">::</span><span class="identifier">allocator</span><span class="special">&lt;</span><span class="identifier">employee</span><span class="special">&gt;::</span><span class="identifier">type</span>
+<span class="special">&gt;</span> <span class="identifier">employee_set</span><span class="special">;</span>
+
+<span class="keyword">int</span> <span class="identifier">main</span> <span class="special">()</span>
+<span class="special">{</span>
+   <span class="comment">//Remove shared memory on construction and destruction</span>
+   <span class="keyword">struct</span> <span class="identifier">shm_remove</span>
+   <span class="special">{</span>
+      <span class="identifier">shm_remove</span><span class="special">()</span> <span class="special">{</span> <span class="identifier">shared_memory_object</span><span class="special">::</span><span class="identifier">remove</span><span class="special">(</span>"MyName"<span class="special">);</span> <span class="special">}</span>
+      <span class="special">~</span><span class="identifier">shm_remove</span><span class="special">(){</span> <span class="identifier">shared_memory_object</span><span class="special">::</span><span class="identifier">remove</span><span class="special">(</span>"MyName"<span class="special">);</span> <span class="special">}</span>
+   <span class="special">}</span> <span class="identifier">remover</span><span class="special">;</span>
+
+   <span class="comment">//Create shared memory</span>
+   <span class="identifier">managed_shared_memory</span> <span class="identifier">segment</span><span class="special">(</span><span class="identifier">create_only</span><span class="special">,</span>"MyName"<span class="special">,</span> <span class="number">65536</span><span class="special">);</span>
+
+   <span class="comment">//Construct the multi_index in shared memory</span>
+   <span class="identifier">employee_set</span> <span class="special">*</span><span class="identifier">es</span> <span class="special">=</span> <span class="identifier">segment</span><span class="special">.</span><span class="identifier">construct</span><span class="special">&lt;</span><span class="identifier">employee_set</span><span class="special">&gt;</span>
+      <span class="special">(</span><span class="string">"My MultiIndex Container"</span><span class="special">)</span>            <span class="comment">//Container's name in shared memory</span>
+      <span class="special">(</span> <span class="identifier">employee_set</span><span class="special">::</span><span class="identifier">ctor_args_list</span><span class="special">()</span>
+      <span class="special">,</span> <span class="identifier">segment</span><span class="special">.</span><span class="identifier">get_allocator</span><span class="special">&lt;</span><span class="identifier">employee</span><span class="special">&gt;());</span>  <span class="comment">//Ctor parameters</span>
+
+   <span class="comment">//Now insert elements</span>
+   <span class="identifier">char_allocator</span> <span class="identifier">ca</span><span class="special">(</span><span class="identifier">segment</span><span class="special">.</span><span class="identifier">get_allocator</span><span class="special">&lt;</span><span class="keyword">char</span><span class="special">&gt;());</span>
+   <span class="identifier">es</span><span class="special">-&gt;</span><span class="identifier">insert</span><span class="special">(</span><span class="identifier">employee</span><span class="special">(</span><span class="number">0</span><span class="special">,</span><span class="number">31</span><span class="special">,</span> <span class="string">"Joe"</span><span class="special">,</span> <span class="identifier">ca</span><span class="special">));</span>
+   <span class="identifier">es</span><span class="special">-&gt;</span><span class="identifier">insert</span><span class="special">(</span><span class="identifier">employee</span><span class="special">(</span><span class="number">1</span><span class="special">,</span><span class="number">27</span><span class="special">,</span> <span class="string">"Robert"</span><span class="special">,</span> <span class="identifier">ca</span><span class="special">));</span>
+   <span class="identifier">es</span><span class="special">-&gt;</span><span class="identifier">insert</span><span class="special">(</span><span class="identifier">employee</span><span class="special">(</span><span class="number">2</span><span class="special">,</span><span class="number">40</span><span class="special">,</span> <span class="string">"John"</span><span class="special">,</span> <span class="identifier">ca</span><span class="special">));</span>
+   <span class="keyword">return</span> <span class="number">0</span><span class="special">;</span>
+<span class="special">}</span>
+</pre>
+</div>
+<p>
+      Programmers can place <span class="bold"><strong>Boost.CircularBuffer</strong></span>
+      containers in shared memory provided they disable debugging facilities with
+      defines <code class="computeroutput"><span class="identifier">BOOST_CB_DISABLE_DEBUG</span></code>
+      or the more general <code class="computeroutput"><span class="identifier">NDEBUG</span></code>.
+      The reason is that those debugging facilities are only compatible with raw
+      pointers.
+    </p>
+</div>
+<div class="copyright-footer">Copyright © 2005-2024 Ion Gaztanaga<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="containers_explained.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../interprocess.html"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="memory_algorithms.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

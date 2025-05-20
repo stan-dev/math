@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>C Results - Boost.Outcome documentation</title>
+<link rel="stylesheet" href="../../css/boost.css" type="text/css">
+<meta name="generator" content="Hugo 0.52 with Boostdoc theme">
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+
+<link rel="icon" href="../../images/favicon.ico" type="image/ico"/>
+<body><div class="spirit-nav">
+<a accesskey="p" href="../../experimental/c-api/from-cxx/example2.html"><img src="../../images/prev.png" alt="Prev"></a>
+    <a accesskey="u" href="../../experimental/c-api.html"><img src="../../images/up.png" alt="Up"></a>
+    <a accesskey="h" href="../../index.html"><img src="../../images/home.png" alt="Home"></a><a accesskey="n" href="../../experimental/c-api/from-c/system_code.html"><img src="../../images/next.png" alt="Next"></a></div><div id="content">
+
+  <div class="titlepage"><div><div><h1 style="clear: both">C Results</h1></div></div></div>
+<p>The C macro API header <code>&lt;boost/outcome/experimental/result.h&gt;</code> has some macros for working with any kind of Result:</p>
+
+<dl>
+<dt><code>BOOST_OUTCOME_C_DECLARE_RESULT(ident, T, E)</code>
+<dd>Declares to C a <code>basic_result<T, E></code> type uniquely
+identified by <code>ident</code>. <code>T</code> is available at the
+member variable <code>.value</code>, and <code>E</code> is available
+at the member variable <code>.error</code>. If you call this from within
+C++, make SURE it is not within a <code>extern "C"</code> block!
+
+<dt><code>BOOST_OUTCOME_C_RESULT(ident)</code>
+<dd>A reference to a previously declared <code>result</code> type with
+unique <code>ident</code>.
+
+<dt><code>BOOST_OUTCOME_C_RESULT_HAS_VALUE(r)</code>
+<dd>Evaluates to 1 (true) if the input <code>result</code> has a value.
+
+<dt><code>BOOST_OUTCOME_C_RESULT_HAS_ERROR(r)</code>
+<dd>Evaluates to 1 (true) if the input <code>result</code> has an error.
+
+<dt><code>BOOST_OUTCOME_C_RESULT_ERROR_IS_ERRNO(r)</code>
+<dd>Evaluates to 1 (true) if the input <code>result</code>'s error value
+is a code in the POSIX <code>errno</code> domain.
+</dl>
+
+<p>The above let you work, somewhat awkwardly, with any C-compatible
+<code>basic_result&lt;T, E&gt;</code>. <code>basic_result&lt;T, E&gt;</code> is trivially copyable and
+standard layout if its <code>T</code> and <code>E</code> are both so, and it has the C layout:</p>
+<div class="highlight"><pre class="chroma"><code class="language-c++" data-lang="c++"><span class="k">struct</span> <span class="n">cxx_result_</span><span class="cp">##ident
+</span><span class="cp"></span><span class="p">{</span>
+  <span class="k">union</span>
+  <span class="p">{</span>
+    <span class="n">T</span> <span class="n">value</span><span class="p">;</span>
+    <span class="n">E</span> <span class="n">error</span><span class="p">;</span>
+  <span class="p">};</span>
+  <span class="kt">unsigned</span> <span class="n">flags</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div>
+<p>Note that this layout is different to that of <a href="../../experimental/c-api/from-c.html"><code>BOOST_OUTCOME_C_DECLARE_STATUS_CODE</code></a>
+as the C++ <code>result</code> has a different layout if <code>E</code> is a status code.</p>
+
+
+
+        </div><p><small>Last revised: July 17, 2024 at 17:54:05 &#43;0100</small></p>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../../experimental/c-api/from-cxx/example2.html"><img src="../../images/prev.png" alt="Prev"></a>
+    <a accesskey="u" href="../../experimental/c-api.html"><img src="../../images/up.png" alt="Up"></a>
+    <a accesskey="h" href="../../index.html"><img src="../../images/home.png" alt="Home"></a><a accesskey="n" href="../../experimental/c-api/from-c/system_code.html"><img src="../../images/next.png" alt="Next"></a></div></body>
+</html>

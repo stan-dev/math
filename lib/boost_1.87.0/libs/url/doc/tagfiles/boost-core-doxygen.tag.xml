@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<tagfile>
+    <compound kind="namespace">
+        <name>boost::core</name>
+        <filename></filename>
+        <class kind="class">boost::core::string_view</class>
+    </compound>
+    <compound kind="class">
+        <name>boost::core::string_view</name>
+        <filename></filename>
+    </compound>
+</tagfile>

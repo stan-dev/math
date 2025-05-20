@@ -1,0 +1,23 @@
+//
+// Copyright (c) 2023 Alan de Freitas (alandefreitas@gmail.com)
+//
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt)
+//
+// Official repository: https://github.com/boostorg/url
+//
+
+= Finicky
+
+This example shows how to classify URLs according to a set of rules.
+It is inspired by https://github.com/johnste/finicky[Finicky,window=blank_] application.
+
+The URLs are classified and redirected to a browser according to their category.
+See the example `config.json` file.
+
+[source,cpp]
+----
+include::example$example/finicky.cpp[tag=example_finicky,indent=0]
+----
+
+

@@ -1,0 +1,121 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>config_from_env</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../boost_asio.html" title="Boost.Asio">
+<link rel="up" href="../reference.html" title="Reference">
+<link rel="prev" href="config_from_concurrency_hint/make.html" title="config_from_concurrency_hint::make">
+<link rel="next" href="config_from_env/config_from_env.html" title="config_from_env::config_from_env">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="config_from_concurrency_hint/make.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../reference.html"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../boost_asio.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="config_from_env/config_from_env.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="boost_asio.reference.config_from_env"></a><a class="link" href="config_from_env.html" title="config_from_env">config_from_env</a>
+</h3></div></div></div>
+<p>
+        <a class="indexterm" name="boost_asio.indexterm.config_from_env"></a>
+      </p>
+<p>
+        Configures an execution context by reading environment variables.
+      </p>
+<pre class="programlisting"><span class="keyword">class</span> <span class="identifier">config_from_env</span> <span class="special">:</span>
+  <span class="keyword">public</span> <span class="identifier">execution_context</span><span class="special">::</span><span class="identifier">service_maker</span>
+</pre>
+<h5>
+<a name="boost_asio.reference.config_from_env.h0"></a>
+        <span class="phrase"><a name="boost_asio.reference.config_from_env.member_functions"></a></span><a class="link" href="config_from_env.html#boost_asio.reference.config_from_env.member_functions">Member Functions</a>
+      </h5>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Name
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="config_from_env/config_from_env.html" title="config_from_env::config_from_env"><span class="bold"><strong>config_from_env</strong></span></a> <span class="silver">[constructor]</span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Construct with the default prefix "asio". <br> <span class="silver"> —</span><br>
+                  Construct with a specified prefix.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="config_from_env/make.html" title="config_from_env::make"><span class="bold"><strong>make</strong></span></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Add a concrete service to the specified execution context.
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+<p>
+        The environment variable names are formed by concatenating the prefix, section,
+        and key, with underscore as delimiter, and then converting the resulting
+        string to upper case.
+      </p>
+<h5>
+<a name="boost_asio.reference.config_from_env.h1"></a>
+        <span class="phrase"><a name="boost_asio.reference.config_from_env.example"></a></span><a class="link" href="config_from_env.html#boost_asio.reference.config_from_env.example">Example</a>
+      </h5>
+<pre class="programlisting"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">io_context</span> <span class="identifier">my_io_context</span><span class="special">{</span>
+   <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">config_from_env</span><span class="special">{</span><span class="string">"my_app"</span><span class="special">}};</span>
+</pre>
+<h5>
+<a name="boost_asio.reference.config_from_env.h2"></a>
+        <span class="phrase"><a name="boost_asio.reference.config_from_env.requirements"></a></span><a class="link" href="config_from_env.html#boost_asio.reference.config_from_env.requirements">Requirements</a>
+      </h5>
+<p>
+        <span class="emphasis"><em>Header: </em></span><code class="literal">boost/asio/config.hpp</code>
+      </p>
+<p>
+        <span class="emphasis"><em>Convenience header: </em></span><code class="literal">boost/asio.hpp</code>
+      </p>
+</div>
+<div class="copyright-footer">Copyright © 2003-2024 Christopher M. Kohlhoff<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="config_from_concurrency_hint/make.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../reference.html"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../boost_asio.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="config_from_env/config_from_env.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

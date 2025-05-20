@@ -1,0 +1,660 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Attributes</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="index.html" title="Chapter 1. Boost.Log v2">
+<link rel="up" href="log/reference.html" title="Reference">
+<link rel="prev" href="doxygen/core_components/record__view_8hpp_1abea2e8d3767c5a9a041624d76fd37cbc.html" title="Function swap">
+<link rel="next" href="doxygen/attributes/classboost_1_1log_1_1attribute.html" title="Class attribute">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr><td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td></tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="doxygen/core_components/record__view_8hpp_1abea2e8d3767c5a9a041624d76fd37cbc.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="log/reference.html"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="doxygen/attributes/classboost_1_1log_1_1attribute.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="attributes"></a>Attributes</h3></div></div></div>
+<div class="toc"><dl class="toc">
+<dt><span class="section"><a href="attributes.html#doxygen.attributes.attribute_8hpp">Header &lt;boost/log/attributes/attribute.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="attributes.html#doxygen.attributes.attribute__cast_8hpp">Header &lt;boost/log/attributes/attribute_cast.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="attributes.html#doxygen.attributes.attribute__name_8hpp">Header &lt;boost/log/attributes/attribute_name.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="attributes.html#doxygen.attributes.attribute__set_8hpp">Header &lt;boost/log/attributes/attribute_set.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="attributes.html#doxygen.attributes.attribute__value_8hpp">Header &lt;boost/log/attributes/attribute_value.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="attributes.html#doxygen.attributes.attribute__value__impl_8hpp">Header &lt;boost/log/attributes/attribute_value_impl.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="attributes.html#doxygen.attributes.attribute__value__set_8hpp">Header &lt;boost/log/attributes/attribute_value_set.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="attributes.html#doxygen.attributes.clock_8hpp">Header &lt;boost/log/attributes/clock.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="attributes.html#doxygen.attributes.constant_8hpp">Header &lt;boost/log/attributes/constant.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="attributes.html#doxygen.attributes.counter_8hpp">Header &lt;boost/log/attributes/counter.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="attributes.html#doxygen.attributes.current__process__id_8hpp">Header &lt;boost/log/attributes/current_process_id.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="attributes.html#doxygen.attributes.current__process__name_8hpp">Header &lt;boost/log/attributes/current_process_name.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="attributes.html#doxygen.attributes.current__thread__id_8hpp">Header &lt;boost/log/attributes/current_thread_id.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="attributes.html#doxygen.attributes.fallback__policy_8hpp">Header &lt;boost/log/attributes/fallback_policy.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="attributes.html#doxygen.attributes.fallback__policy__fwd_8hpp">Header &lt;boost/log/attributes/fallback_policy_fwd.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="attributes.html#doxygen.attributes.function_8hpp">Header &lt;boost/log/attributes/function.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="attributes.html#doxygen.attributes.mutable__constant_8hpp">Header &lt;boost/log/attributes/mutable_constant.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="attributes.html#doxygen.attributes.named__scope_8hpp">Header &lt;boost/log/attributes/named_scope.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="attributes.html#doxygen.attributes.scoped__attribute_8hpp">Header &lt;boost/log/attributes/scoped_attribute.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="attributes.html#doxygen.attributes.time__traits_8hpp">Header &lt;boost/log/attributes/time_traits.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="attributes.html#doxygen.attributes.timer_8hpp">Header &lt;boost/log/attributes/timer.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="attributes.html#doxygen.attributes.value__extraction_8hpp">Header &lt;boost/log/attributes/value_extraction.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="attributes.html#doxygen.attributes.value__extraction__fwd_8hpp">Header &lt;boost/log/attributes/value_extraction_fwd.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="attributes.html#doxygen.attributes.value__visitation_8hpp">Header &lt;boost/log/attributes/value_visitation.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="attributes.html#doxygen.attributes.value__visitation__fwd_8hpp">Header &lt;boost/log/attributes/value_visitation_fwd.hpp&gt;</a></span></dt>
+</dl></div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.attributes.attribute_8hpp"></a>Header &lt;<a href="../../../../boost/log/attributes/attribute.hpp" target="_top">boost/log/attributes/attribute.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>15.04.2007</p>
+<p>
+
+The header contains attribute interface definition. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">class</span> <a class="link" href="doxygen/attributes/classboost_1_1log_1_1attribute.html" title="Class attribute">attribute</a><span class="special">;</span>
+    <span class="keyword">void</span> <a class="link" href="doxygen/attributes/attribute_8hpp_1a880347f1d54a8aea75a0e2bebe8a3cbc.html" title="Function swap"><span class="identifier">swap</span></a><span class="special">(</span><a class="link" href="doxygen/attributes/classboost_1_1log_1_1attribute.html" title="Class attribute">attribute</a> <span class="special">&amp;</span><span class="special">,</span> <a class="link" href="doxygen/attributes/classboost_1_1log_1_1attribute.html" title="Class attribute">attribute</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.attributes.attribute__cast_8hpp"></a>Header &lt;<a href="../../../../boost/log/attributes/attribute_cast.hpp" target="_top">boost/log/attributes/attribute_cast.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>06.08.2010</p>
+<p>
+
+The header contains utilities for casting between attribute factories. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> <span class="identifier">T</span> <a class="link" href="doxygen/attributes/attribute__cast_8hpp_1a5a80d3aced95644715e22060f0576e52.html" title="Function template attribute_cast"><span class="identifier">attribute_cast</span></a><span class="special">(</span><a class="link" href="doxygen/attributes/classboost_1_1log_1_1attribute.html" title="Class attribute">attribute</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">namespace</span> <span class="identifier">attributes</span> <span class="special">{</span>
+      <span class="keyword">class</span> <a class="link" href="doxygen/attributes/classboost_1_1log_1_1attributes_1_1cast__source.html" title="Class cast_source">cast_source</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.attributes.attribute__name_8hpp"></a>Header &lt;<a href="../../../../boost/log/attributes/attribute_name.hpp" target="_top">boost/log/attributes/attribute_name.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>28.06.2010</p>
+<p>
+
+The header contains attribute name interface definition. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">class</span> <a class="link" href="doxygen/attributes/classboost_1_1log_1_1attribute__name.html" title="Class attribute_name">attribute_name</a><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> TraitsT<span class="special">&gt;</span> 
+      <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">TraitsT</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+      <a class="link" href="doxygen/attributes/attribute__name_8hpp_1a0a61745b0a92fb8cf8ed7a4548787e65.html" title="Function template operator&lt;&lt;"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">TraitsT</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">,</span> 
+                 <a class="link" href="doxygen/attributes/classboost_1_1log_1_1attribute__name.html" title="Class attribute_name">attribute_name</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.attributes.attribute__set_8hpp"></a>Header &lt;<a href="../../../../boost/log/attributes/attribute_set.hpp" target="_top">boost/log/attributes/attribute_set.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>08.03.2007</p>
+<p>
+
+This header contains definition of the attribute set container. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">class</span> <a class="link" href="doxygen/attributes/classboost_1_1log_1_1attribute__set.html" title="Class attribute_set">attribute_set</a><span class="special">;</span>
+    <span class="keyword">void</span> <a class="link" href="doxygen/attributes/attribute__set_8hpp_1abaf76d38e79800220a1c3bbe9beb8daf.html" title="Function swap"><span class="identifier">swap</span></a><span class="special">(</span><a class="link" href="doxygen/attributes/classboost_1_1log_1_1attribute__set.html" title="Class attribute_set">attribute_set</a> <span class="special">&amp;</span><span class="special">,</span> <a class="link" href="doxygen/attributes/classboost_1_1log_1_1attribute__set.html" title="Class attribute_set">attribute_set</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.attributes.attribute__value_8hpp"></a>Header &lt;<a href="../../../../boost/log/attributes/attribute_value.hpp" target="_top">boost/log/attributes/attribute_value.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>21.05.2010</p>
+<p>
+
+The header contains <code class="computeroutput">attribute_value</code> class definition. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">class</span> <a class="link" href="doxygen/attributes/classboost_1_1log_1_1attribute__value.html" title="Class attribute_value">attribute_value</a><span class="special">;</span>
+    <span class="keyword">void</span> <a class="link" href="doxygen/attributes/attribute__value_8hpp_1a1ed608fee1b0e3da94e240abfa11a3a1.html" title="Function swap"><span class="identifier">swap</span></a><span class="special">(</span><a class="link" href="doxygen/attributes/classboost_1_1log_1_1attribute__value.html" title="Class attribute_value">attribute_value</a> <span class="special">&amp;</span><span class="special">,</span> <a class="link" href="doxygen/attributes/classboost_1_1log_1_1attribute__value.html" title="Class attribute_value">attribute_value</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.attributes.attribute__value__impl_8hpp"></a>Header &lt;<a href="../../../../boost/log/attributes/attribute_value_impl.hpp" target="_top">boost/log/attributes/attribute_value_impl.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>24.06.2007</p>
+<p>
+
+The header contains an implementation of a basic attribute value implementation class. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">attributes</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="doxygen/attributes/classboost_1_1log_1_1attributes_1_1attribute__value__impl.html" title="Class template attribute_value_impl">attribute_value_impl</a><span class="special">;</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> <a class="link" href="doxygen/attributes/classboost_1_1log_1_1attribute__value.html" title="Class attribute_value">attribute_value</a> <a class="link" href="doxygen/attributes/attribute__value__impl_8hpp_1a4d58e54ae1e872e745d79d4da79b0e82.html" title="Function template make_attribute_value"><span class="identifier">make_attribute_value</span></a><span class="special">(</span><span class="identifier">T</span> <span class="special">&amp;&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.attributes.attribute__value__set_8hpp"></a>Header &lt;<a href="../../../../boost/log/attributes/attribute_value_set.hpp" target="_top">boost/log/attributes/attribute_value_set.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>21.04.2007</p>
+<p>
+
+This header file contains definition of attribute value set. The set is constructed from three attribute sets (global, thread-specific and source-specific) and contains attribute values. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">class</span> <a class="link" href="doxygen/attributes/classboost_1_1log_1_1attribute__value__set.html" title="Class attribute_value_set">attribute_value_set</a><span class="special">;</span>
+    <span class="keyword">void</span> <a class="link" href="doxygen/attributes/attribute__value__set_8hpp_1ab0b63cc84226502459044f57505574d7.html" title="Function swap"><span class="identifier">swap</span></a><span class="special">(</span><a class="link" href="doxygen/attributes/classboost_1_1log_1_1attribute__value__set.html" title="Class attribute_value_set">attribute_value_set</a> <span class="special">&amp;</span><span class="special">,</span> <a class="link" href="doxygen/attributes/classboost_1_1log_1_1attribute__value__set.html" title="Class attribute_value_set">attribute_value_set</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.attributes.clock_8hpp"></a>Header &lt;<a href="../../../../boost/log/attributes/clock.hpp" target="_top">boost/log/attributes/clock.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>01.12.2007</p>
+<p>
+
+The header contains wall clock attribute implementation and typedefs. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">attributes</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> TimeTraitsT<span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="doxygen/attributes/classboost_1_1log_1_1attributes_1_1basic__clock.html" title="Class template basic_clock">basic_clock</a><span class="special">;</span>
+
+      <span class="keyword">typedef</span> <a class="link" href="doxygen/attributes/classboost_1_1log_1_1attributes_1_1basic__clock.html" title="Class template basic_clock">basic_clock</a><span class="special">&lt;</span> <a class="link" href="doxygen/attributes/structboost_1_1log_1_1attributes_1_1utc__time__traits.html" title="Struct utc_time_traits">utc_time_traits</a> <span class="special">&gt;</span> <a name="doxygen.attributes.clock_8hpp_1adba81e923229e4d37025a934748fc4c5"></a><span class="identifier">utc_clock</span><span class="special">;</span>  <span class="comment">// Attribute that returns current UTC time. </span>
+      <span class="keyword">typedef</span> <a class="link" href="doxygen/attributes/classboost_1_1log_1_1attributes_1_1basic__clock.html" title="Class template basic_clock">basic_clock</a><span class="special">&lt;</span> <a class="link" href="doxygen/attributes/structboost_1_1log_1_1attributes_1_1local__time__traits.html" title="Struct local_time_traits">local_time_traits</a> <span class="special">&gt;</span> <a name="doxygen.attributes.clock_8hpp_1a72cdaee24619664981f96f5f24d31311"></a><span class="identifier">local_clock</span><span class="special">;</span>  <span class="comment">// Attribute that returns current local time. </span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.attributes.constant_8hpp"></a>Header &lt;<a href="../../../../boost/log/attributes/constant.hpp" target="_top">boost/log/attributes/constant.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>15.04.2007</p>
+<p>
+
+The header contains implementation of a constant attribute. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">attributes</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="doxygen/attributes/classboost_1_1log_1_1attributes_1_1constant.html" title="Class template constant">constant</a><span class="special">;</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a class="link" href="doxygen/attributes/constant_8hpp_1ad543f2143ade8eba73f797367a5ed40d.html" title="Function template make_constant"><span class="identifier">make_constant</span></a><span class="special">(</span><span class="identifier">BOOST_FWD_REF</span><span class="special">(</span><span class="identifier">T</span><span class="special">)</span><span class="special">)</span><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.attributes.counter_8hpp"></a>Header &lt;<a href="../../../../boost/log/attributes/counter.hpp" target="_top">boost/log/attributes/counter.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>01.05.2007</p>
+<p>
+
+The header contains implementation of the counter attribute. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">attributes</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="doxygen/attributes/classboost_1_1log_1_1attributes_1_1counter.html" title="Class template counter">counter</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.attributes.current__process__id_8hpp"></a>Header &lt;<a href="../../../../boost/log/attributes/current_process_id.hpp" target="_top">boost/log/attributes/current_process_id.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>12.09.2009</p>
+<p>
+
+The header contains implementation of a current process id attribute </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">typedef</span> <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a name="doxygen.attributes.current__process__id_8hpp_1a4dd9805e23a3d0880408cc00a542b582"></a><span class="identifier">process_id</span><span class="special">;</span>  <span class="comment">// Process identifier type used by the library. </span>
+    <span class="keyword">namespace</span> <span class="identifier">attributes</span> <span class="special">{</span>
+      <span class="keyword">class</span> <a class="link" href="doxygen/attributes/classboost_1_1log_1_1attributes_1_1current__process__id.html" title="Class current_process_id">current_process_id</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.attributes.current__process__name_8hpp"></a>Header &lt;<a href="../../../../boost/log/attributes/current_process_name.hpp" target="_top">boost/log/attributes/current_process_name.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>29.07.2012</p>
+<p>
+
+The header contains implementation of a current process name attribute </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">attributes</span> <span class="special">{</span>
+      <span class="keyword">class</span> <a class="link" href="doxygen/attributes/classboost_1_1log_1_1attributes_1_1current__process__name.html" title="Class current_process_name">current_process_name</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.attributes.current__thread__id_8hpp"></a>Header &lt;<a href="../../../../boost/log/attributes/current_thread_id.hpp" target="_top">boost/log/attributes/current_thread_id.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>12.09.2009</p>
+<p>
+
+The header contains implementation of a current thread id attribute </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">typedef</span> <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a name="doxygen.attributes.current__thread__id_8hpp_1ab6129441ba23ad42d391bffe8c1aec88"></a><span class="identifier">thread_id</span><span class="special">;</span>  <span class="comment">// Thread identifier type. </span>
+    <span class="keyword">namespace</span> <span class="identifier">attributes</span> <span class="special">{</span>
+      <span class="keyword">class</span> <a class="link" href="doxygen/attributes/classboost_1_1log_1_1attributes_1_1current__thread__id.html" title="Class current_thread_id">current_thread_id</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.attributes.fallback__policy_8hpp"></a>Header &lt;<a href="../../../../boost/log/attributes/fallback_policy.hpp" target="_top">boost/log/attributes/fallback_policy.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>18.08.2012</p>
+<p>
+
+The header contains definition of fallback policies when attribute value visitation or extraction fails. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> DefaultT<span class="special">&gt;</span> <span class="keyword">struct</span> <a class="link" href="doxygen/attributes/structboost_1_1log_1_1fallback__to__default.html" title="Struct template fallback_to_default">fallback_to_default</a><span class="special">;</span>
+    <span class="keyword">struct</span> <a class="link" href="doxygen/attributes/structboost_1_1log_1_1fallback__to__none.html" title="Struct fallback_to_none">fallback_to_none</a><span class="special">;</span>
+    <span class="keyword">struct</span> <a class="link" href="doxygen/attributes/structboost_1_1log_1_1fallback__to__throw.html" title="Struct fallback_to_throw">fallback_to_throw</a><span class="special">;</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.attributes.fallback__policy__fwd_8hpp"></a>Header &lt;<a href="../../../../boost/log/attributes/fallback_policy_fwd.hpp" target="_top">boost/log/attributes/fallback_policy_fwd.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>18.08.2012</p>
+<p>
+
+The header contains forward declaration of fallback policies when attribute value visitation or extraction fails. </p>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.attributes.function_8hpp"></a>Header &lt;<a href="../../../../boost/log/attributes/function.hpp" target="_top">boost/log/attributes/function.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>24.06.2007</p>
+<p>
+
+The header contains implementation of an attribute that calls a third-party function on value acquisition. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">attributes</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> R<span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="doxygen/attributes/classboost_1_1log_1_1attributes_1_1function.html" title="Class template function">function</a><span class="special">;</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> 
+        <a class="link" href="doxygen/attributes/classboost_1_1log_1_1attributes_1_1function.html" title="Class template function">function</a><span class="special">&lt;</span> <span class="keyword">typename</span> <span class="identifier">remove_cv</span><span class="special">&lt;</span> <span class="keyword">typename</span> <span class="identifier">remove_reference</span><span class="special">&lt;</span> <span class="keyword">typename</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">result_of</span><span class="special">&lt;</span> <span class="identifier">T</span><span class="special">(</span><span class="special">)</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> <span class="special">&gt;</span> 
+        <a class="link" href="doxygen/attributes/function_8hpp_1a7999722280fbd781e428b798b12fce30.html" title="Function template make_function"><span class="identifier">make_function</span></a><span class="special">(</span><span class="identifier">T</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.attributes.mutable__constant_8hpp"></a>Header &lt;<a href="../../../../boost/log/attributes/mutable_constant.hpp" target="_top">boost/log/attributes/mutable_constant.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>06.11.2007</p>
+<p>
+
+The header contains implementation of a mutable constant attribute. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">attributes</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">,</span> <span class="keyword">typename</span> MutexT <span class="special">=</span> <span class="keyword">void</span><span class="special">,</span> 
+               <span class="keyword">typename</span> ScopedWriteLockT <span class="special">=</span> <span class="keyword">auto</span><span class="special">,</span> 
+               <span class="keyword">typename</span> ScopedReadLockT <span class="special">=</span> <span class="keyword">auto</span><span class="special">&gt;</span> 
+        <span class="keyword">class</span> <a class="link" href="doxygen/attributes/classboost_1_1log_1_1attributes_1_1mutable__constant.html" title="Class template mutable_constant">mutable_constant</a><span class="special">;</span>
+
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="doxygen/attributes/classboost_1_1log_1_1attributes_1_1mutable__constant_3_01T_00_01void_00_01void_00_01void_01_4.html" title="Class template mutable_constant&lt;T, void, void, void&gt;">mutable_constant</a><span class="special">&lt;</span><span class="identifier">T</span><span class="special">,</span> <span class="keyword">void</span><span class="special">,</span> <span class="keyword">void</span><span class="special">,</span> <span class="keyword">void</span><span class="special">&gt;</span><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.attributes.named__scope_8hpp"></a>Header &lt;<a href="../../../../boost/log/attributes/named_scope.hpp" target="_top">boost/log/attributes/named_scope.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>24.06.2007</p>
+<p>
+
+The header contains implementation of named scope container and an attribute that allows to put the named scope to log. A number of convenience macros are also provided. </p>
+<pre class="synopsis">
+
+<a class="link" href="doxygen/attributes/named__scope_8hpp_1ab039c4e803221a973a9b216f8f6cda79.html" title="Macro BOOST_LOG_NAMED_SCOPE">BOOST_LOG_NAMED_SCOPE</a>(name)
+<a class="link" href="doxygen/attributes/named__scope_8hpp_1adecd3a19e0edbdac754c42de0a095064.html" title="Macro BOOST_LOG_FUNCTION">BOOST_LOG_FUNCTION</a>()
+<a class="link" href="doxygen/attributes/named__scope_8hpp_1a945e524716da1bae7b920ec76a77cc00.html" title="Macro BOOST_LOG_FUNC">BOOST_LOG_FUNC</a>()</pre>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">attributes</span> <span class="special">{</span>
+      <span class="keyword">class</span> <a class="link" href="doxygen/attributes/classboost_1_1log_1_1attributes_1_1named__scope.html" title="Class named_scope">named_scope</a><span class="special">;</span>
+
+      <span class="keyword">struct</span> <a class="link" href="doxygen/attributes/structboost_1_1log_1_1attributes_1_1named__scope__entry.html" title="Struct named_scope_entry">named_scope_entry</a><span class="special">;</span>
+
+      <span class="keyword">class</span> <a class="link" href="doxygen/attributes/classboost_1_1log_1_1attributes_1_1named__scope__list.html" title="Class named_scope_list">named_scope_list</a><span class="special">;</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> TraitsT<span class="special">&gt;</span> 
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">TraitsT</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+        <a class="link" href="doxygen/attributes/named__scope_8hpp_1aec21a17c7cb10e7604fbff6c8497b520.html" title="Function template operator&lt;&lt;"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">TraitsT</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">,</span> 
+                   <a class="link" href="doxygen/attributes/classboost_1_1log_1_1attributes_1_1named__scope__list.html" title="Class named_scope_list">named_scope_list</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.attributes.scoped__attribute_8hpp"></a>Header &lt;<a href="../../../../boost/log/attributes/scoped_attribute.hpp" target="_top">boost/log/attributes/scoped_attribute.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>13.05.2007</p>
+<p>
+
+The header contains definition of facilities to define scoped attributes. </p>
+<pre class="synopsis">
+
+<a class="link" href="doxygen/attributes/scoped__attribute_8hpp_1a7ba1cb12c619cb4c1953ee9a4db25fb3.html" title="Macro BOOST_LOG_SCOPED_LOGGER_ATTR">BOOST_LOG_SCOPED_LOGGER_ATTR</a>(logger, attr_name, attr)
+<a class="link" href="doxygen/attributes/scoped__attribute_8hpp_1af24eb7d3a843b8a3641d0d1e33e46665.html" title="Macro BOOST_LOG_SCOPED_LOGGER_TAG">BOOST_LOG_SCOPED_LOGGER_TAG</a>(logger, attr_name, attr_value)
+<a class="link" href="doxygen/attributes/scoped__attribute_8hpp_1aeb1515c5d3a0b4a25e249e187d52ade6.html" title="Macro BOOST_LOG_SCOPED_THREAD_ATTR">BOOST_LOG_SCOPED_THREAD_ATTR</a>(attr_name, attr)
+<a class="link" href="doxygen/attributes/scoped__attribute_8hpp_1a273dcdec1088b77401736a24eacda764.html" title="Macro BOOST_LOG_SCOPED_THREAD_TAG">BOOST_LOG_SCOPED_THREAD_TAG</a>(attr_name, attr_value)</pre>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">typedef</span> <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a name="doxygen.attributes.scoped__attribute_8hpp_1a1c14867af18c28847f161456c694c24b"></a><span class="identifier">scoped_attribute</span><span class="special">;</span>  <span class="comment">// Scoped attribute guard type. </span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> LoggerT<span class="special">&gt;</span> 
+      <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a class="link" href="doxygen/attributes/scoped__attribute_8hpp_1a3b556d44e616706ee8da6acd211f90ee.html" title="Function template add_scoped_logger_attribute"><span class="identifier">add_scoped_logger_attribute</span></a><span class="special">(</span><span class="identifier">LoggerT</span> <span class="special">&amp;</span><span class="special">,</span> 
+                                              <a class="link" href="doxygen/attributes/classboost_1_1log_1_1attribute__name.html" title="Class attribute_name">attribute_name</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> 
+                                              <a class="link" href="doxygen/attributes/classboost_1_1log_1_1attribute.html" title="Class attribute">attribute</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a class="link" href="doxygen/attributes/scoped__attribute_8hpp_1ac221b5381f9d681d6f5a0b90090e0996.html" title="Function add_scoped_thread_attribute"><span class="identifier">add_scoped_thread_attribute</span></a><span class="special">(</span><a class="link" href="doxygen/attributes/classboost_1_1log_1_1attribute__name.html" title="Class attribute_name">attribute_name</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> 
+                                            <a class="link" href="doxygen/attributes/classboost_1_1log_1_1attribute.html" title="Class attribute">attribute</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.attributes.time__traits_8hpp"></a>Header &lt;<a href="../../../../boost/log/attributes/time_traits.hpp" target="_top">boost/log/attributes/time_traits.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>01.12.2007</p>
+<p>
+
+The header contains implementation of time traits that are used in various parts of the library to acquire current time. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">attributes</span> <span class="special">{</span>
+      <span class="keyword">struct</span> <a class="link" href="doxygen/attributes/structboost_1_1log_1_1attributes_1_1basic__time__traits.html" title="Struct basic_time_traits">basic_time_traits</a><span class="special">;</span>
+      <span class="keyword">struct</span> <a class="link" href="doxygen/attributes/structboost_1_1log_1_1attributes_1_1local__time__traits.html" title="Struct local_time_traits">local_time_traits</a><span class="special">;</span>
+      <span class="keyword">struct</span> <a class="link" href="doxygen/attributes/structboost_1_1log_1_1attributes_1_1utc__time__traits.html" title="Struct utc_time_traits">utc_time_traits</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.attributes.timer_8hpp"></a>Header &lt;<a href="../../../../boost/log/attributes/timer.hpp" target="_top">boost/log/attributes/timer.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>02.12.2007</p>
+<p>
+
+The header contains implementation of a stop watch attribute. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">attributes</span> <span class="special">{</span>
+      <span class="keyword">class</span> <a class="link" href="doxygen/attributes/classboost_1_1log_1_1attributes_1_1timer.html" title="Class timer">timer</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.attributes.value__extraction_8hpp"></a>Header &lt;<a href="../../../../boost/log/attributes/value_extraction.hpp" target="_top">boost/log/attributes/value_extraction.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>01.03.2008</p>
+<p>
+
+The header contains implementation of tools for extracting an attribute value from the view. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">,</span> <span class="keyword">typename</span> FallbackPolicyT<span class="special">,</span> <span class="keyword">typename</span> TagT<span class="special">&gt;</span> 
+      <span class="keyword">class</span> <a class="link" href="doxygen/attributes/classboost_1_1log_1_1value__extractor.html" title="Class template value_extractor">value_extractor</a><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">,</span> <span class="keyword">typename</span> TagT <span class="special">=</span> <span class="keyword">void</span><span class="special">&gt;</span> 
+      <a class="link" href="doxygen/attributes/structboost_1_1log_1_1result__of_1_1extract.html" title="Struct template extract">result_of::extract</a><span class="special">&lt;</span> <span class="identifier">T</span><span class="special">,</span> <span class="identifier">TagT</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> 
+      <a class="link" href="doxygen/attributes/value__extraction_8hpp_1a6c4825f16d1bb13ea6369f996fd77dc6.html" title="Function template extract"><span class="identifier">extract</span></a><span class="special">(</span><a class="link" href="doxygen/attributes/classboost_1_1log_1_1attribute__name.html" title="Class attribute_name">attribute_name</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <a class="link" href="doxygen/attributes/classboost_1_1log_1_1attribute__value__set.html" title="Class attribute_value_set">attribute_value_set</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">,</span> <span class="keyword">typename</span> TagT <span class="special">=</span> <span class="keyword">void</span><span class="special">&gt;</span> 
+      <a class="link" href="doxygen/attributes/structboost_1_1log_1_1result__of_1_1extract.html" title="Struct template extract">result_of::extract</a><span class="special">&lt;</span> <span class="identifier">T</span><span class="special">,</span> <span class="identifier">TagT</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> 
+      <a class="link" href="doxygen/attributes/value__extraction_8hpp_1af1dc5a28aa0f1e887ad7c20c3590d66d.html" title="Function template extract"><span class="identifier">extract</span></a><span class="special">(</span><a class="link" href="doxygen/attributes/classboost_1_1log_1_1attribute__name.html" title="Class attribute_name">attribute_name</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">record</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">,</span> <span class="keyword">typename</span> TagT <span class="special">=</span> <span class="keyword">void</span><span class="special">&gt;</span> 
+      <a class="link" href="doxygen/attributes/structboost_1_1log_1_1result__of_1_1extract.html" title="Struct template extract">result_of::extract</a><span class="special">&lt;</span> <span class="identifier">T</span><span class="special">,</span> <span class="identifier">TagT</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> 
+      <a class="link" href="doxygen/attributes/value__extraction_8hpp_1ae4817fd7a14d1295f139d9bc6f345f40.html" title="Function template extract"><span class="identifier">extract</span></a><span class="special">(</span><a class="link" href="doxygen/attributes/classboost_1_1log_1_1attribute__name.html" title="Class attribute_name">attribute_name</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">record_view</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">,</span> <span class="keyword">typename</span> TagT <span class="special">=</span> <span class="keyword">void</span><span class="special">&gt;</span> 
+      <a class="link" href="doxygen/attributes/structboost_1_1log_1_1result__of_1_1extract.html" title="Struct template extract">result_of::extract</a><span class="special">&lt;</span> <span class="identifier">T</span><span class="special">,</span> <span class="identifier">TagT</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> <a class="link" href="doxygen/attributes/value__extraction_8hpp_1a371192f568d358273902ccc2d1647f17.html" title="Function template extract"><span class="identifier">extract</span></a><span class="special">(</span><a class="link" href="doxygen/attributes/classboost_1_1log_1_1attribute__value.html" title="Class attribute_value">attribute_value</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">,</span> <span class="keyword">typename</span> TagT <span class="special">=</span> <span class="keyword">void</span><span class="special">&gt;</span> 
+      <a class="link" href="doxygen/attributes/structboost_1_1log_1_1result__of_1_1extract__or__throw.html" title="Struct template extract_or_throw">result_of::extract_or_throw</a><span class="special">&lt;</span> <span class="identifier">T</span><span class="special">,</span> <span class="identifier">TagT</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> 
+      <a class="link" href="doxygen/attributes/value__extraction_8hpp_1a81b929d63a6313f734e4d56e39e18943.html" title="Function template extract_or_throw"><span class="identifier">extract_or_throw</span></a><span class="special">(</span><a class="link" href="doxygen/attributes/classboost_1_1log_1_1attribute__name.html" title="Class attribute_name">attribute_name</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <a class="link" href="doxygen/attributes/classboost_1_1log_1_1attribute__value__set.html" title="Class attribute_value_set">attribute_value_set</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">,</span> <span class="keyword">typename</span> TagT <span class="special">=</span> <span class="keyword">void</span><span class="special">&gt;</span> 
+      <a class="link" href="doxygen/attributes/structboost_1_1log_1_1result__of_1_1extract__or__throw.html" title="Struct template extract_or_throw">result_of::extract_or_throw</a><span class="special">&lt;</span> <span class="identifier">T</span><span class="special">,</span> <span class="identifier">TagT</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> 
+      <a class="link" href="doxygen/attributes/value__extraction_8hpp_1a52c169a965b388d5e64f0120d451ded5.html" title="Function template extract_or_throw"><span class="identifier">extract_or_throw</span></a><span class="special">(</span><a class="link" href="doxygen/attributes/classboost_1_1log_1_1attribute__name.html" title="Class attribute_name">attribute_name</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">record</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">,</span> <span class="keyword">typename</span> TagT <span class="special">=</span> <span class="keyword">void</span><span class="special">&gt;</span> 
+      <a class="link" href="doxygen/attributes/structboost_1_1log_1_1result__of_1_1extract__or__throw.html" title="Struct template extract_or_throw">result_of::extract_or_throw</a><span class="special">&lt;</span> <span class="identifier">T</span><span class="special">,</span> <span class="identifier">TagT</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> 
+      <a class="link" href="doxygen/attributes/value__extraction_8hpp_1a9d762f91dfd9c5fe3c2b0820266f51b4.html" title="Function template extract_or_throw"><span class="identifier">extract_or_throw</span></a><span class="special">(</span><a class="link" href="doxygen/attributes/classboost_1_1log_1_1attribute__name.html" title="Class attribute_name">attribute_name</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">record_view</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">,</span> <span class="keyword">typename</span> TagT <span class="special">=</span> <span class="keyword">void</span><span class="special">&gt;</span> 
+      <a class="link" href="doxygen/attributes/structboost_1_1log_1_1result__of_1_1extract__or__throw.html" title="Struct template extract_or_throw">result_of::extract_or_throw</a><span class="special">&lt;</span> <span class="identifier">T</span><span class="special">,</span> <span class="identifier">TagT</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> 
+      <a class="link" href="doxygen/attributes/value__extraction_8hpp_1ad96f0397b541184f541a5bb1767d83f7.html" title="Function template extract_or_throw"><span class="identifier">extract_or_throw</span></a><span class="special">(</span><a class="link" href="doxygen/attributes/classboost_1_1log_1_1attribute__value.html" title="Class attribute_value">attribute_value</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">,</span> <span class="keyword">typename</span> TagT <span class="special">=</span> <span class="keyword">void</span><span class="special">,</span> <span class="keyword">typename</span> DefaultT<span class="special">&gt;</span> 
+      <a class="link" href="doxygen/attributes/structboost_1_1log_1_1result__of_1_1extract__or__default.html" title="Struct template extract_or_default">result_of::extract_or_default</a><span class="special">&lt;</span> <span class="identifier">T</span><span class="special">,</span> <span class="identifier">DefaultT</span><span class="special">,</span> <span class="identifier">TagT</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> 
+      <a class="link" href="doxygen/attributes/value__extraction_8hpp_1acb9aad8dd6f3803bbcd2f115b41c245d.html" title="Function template extract_or_default"><span class="identifier">extract_or_default</span></a><span class="special">(</span><a class="link" href="doxygen/attributes/classboost_1_1log_1_1attribute__name.html" title="Class attribute_name">attribute_name</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <a class="link" href="doxygen/attributes/classboost_1_1log_1_1attribute__value__set.html" title="Class attribute_value_set">attribute_value_set</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> 
+                         <span class="identifier">DefaultT</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">,</span> <span class="keyword">typename</span> TagT <span class="special">=</span> <span class="keyword">void</span><span class="special">,</span> <span class="keyword">typename</span> DefaultT<span class="special">&gt;</span> 
+      <a class="link" href="doxygen/attributes/structboost_1_1log_1_1result__of_1_1extract__or__default.html" title="Struct template extract_or_default">result_of::extract_or_default</a><span class="special">&lt;</span> <span class="identifier">T</span><span class="special">,</span> <span class="identifier">DefaultT</span><span class="special">,</span> <span class="identifier">TagT</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> 
+      <a class="link" href="doxygen/attributes/value__extraction_8hpp_1a715c6ca1c7eac36a186269e3785dd66c.html" title="Function template extract_or_default"><span class="identifier">extract_or_default</span></a><span class="special">(</span><a class="link" href="doxygen/attributes/classboost_1_1log_1_1attribute__name.html" title="Class attribute_name">attribute_name</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">record</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> 
+                         <span class="identifier">DefaultT</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">,</span> <span class="keyword">typename</span> TagT <span class="special">=</span> <span class="keyword">void</span><span class="special">,</span> <span class="keyword">typename</span> DefaultT<span class="special">&gt;</span> 
+      <a class="link" href="doxygen/attributes/structboost_1_1log_1_1result__of_1_1extract__or__default.html" title="Struct template extract_or_default">result_of::extract_or_default</a><span class="special">&lt;</span> <span class="identifier">T</span><span class="special">,</span> <span class="identifier">DefaultT</span><span class="special">,</span> <span class="identifier">TagT</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> 
+      <a class="link" href="doxygen/attributes/value__extraction_8hpp_1a26c610ff78fd2f7fd6ca181c4a0073d7.html" title="Function template extract_or_default"><span class="identifier">extract_or_default</span></a><span class="special">(</span><a class="link" href="doxygen/attributes/classboost_1_1log_1_1attribute__name.html" title="Class attribute_name">attribute_name</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">record_view</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> 
+                         <span class="identifier">DefaultT</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">,</span> <span class="keyword">typename</span> TagT <span class="special">=</span> <span class="keyword">void</span><span class="special">,</span> <span class="keyword">typename</span> DefaultT<span class="special">&gt;</span> 
+      <a class="link" href="doxygen/attributes/structboost_1_1log_1_1result__of_1_1extract__or__default.html" title="Struct template extract_or_default">result_of::extract_or_default</a><span class="special">&lt;</span> <span class="identifier">T</span><span class="special">,</span> <span class="identifier">DefaultT</span><span class="special">,</span> <span class="identifier">TagT</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> 
+      <a class="link" href="doxygen/attributes/value__extraction_8hpp_1a8799f9c5d73cee7b9b9d28d750d3c7ce.html" title="Function template extract_or_default"><span class="identifier">extract_or_default</span></a><span class="special">(</span><a class="link" href="doxygen/attributes/classboost_1_1log_1_1attribute__value.html" title="Class attribute_value">attribute_value</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">DefaultT</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> DescriptorT<span class="special">,</span> <span class="keyword">template</span><span class="special">&lt;</span> <span class="keyword">typename</span> <span class="special">&gt;</span> <span class="keyword">class</span> ActorT<span class="special">&gt;</span> 
+      <a class="link" href="doxygen/attributes/structboost_1_1log_1_1result__of_1_1extract.html" title="Struct template extract">result_of::extract</a><span class="special">&lt;</span> <span class="identifier">typenameDescriptorT</span><span class="special">::</span><span class="identifier">value_type</span><span class="special">,</span> <span class="identifier">DescriptorT</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> 
+      <a class="link" href="doxygen/attributes/value__extraction_8hpp_1a50c4bc27937d11913da756700c1c3761.html" title="Function template extract"><span class="identifier">extract</span></a><span class="special">(</span><span class="identifier">expressions</span><span class="special">::</span><span class="identifier">attribute_keyword</span><span class="special">&lt;</span> <span class="identifier">DescriptorT</span><span class="special">,</span> <span class="identifier">ActorT</span> <span class="special">&gt;</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> 
+              <a class="link" href="doxygen/attributes/classboost_1_1log_1_1attribute__value__set.html" title="Class attribute_value_set">attribute_value_set</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> DescriptorT<span class="special">,</span> <span class="keyword">template</span><span class="special">&lt;</span> <span class="keyword">typename</span> <span class="special">&gt;</span> <span class="keyword">class</span> ActorT<span class="special">&gt;</span> 
+      <a class="link" href="doxygen/attributes/structboost_1_1log_1_1result__of_1_1extract.html" title="Struct template extract">result_of::extract</a><span class="special">&lt;</span> <span class="identifier">typenameDescriptorT</span><span class="special">::</span><span class="identifier">value_type</span><span class="special">,</span> <span class="identifier">DescriptorT</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> 
+      <a class="link" href="doxygen/attributes/value__extraction_8hpp_1a2543c5cb9782d178a7d75d75937ef2a5.html" title="Function template extract"><span class="identifier">extract</span></a><span class="special">(</span><span class="identifier">expressions</span><span class="special">::</span><span class="identifier">attribute_keyword</span><span class="special">&lt;</span> <span class="identifier">DescriptorT</span><span class="special">,</span> <span class="identifier">ActorT</span> <span class="special">&gt;</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> 
+              <span class="identifier">record</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> DescriptorT<span class="special">,</span> <span class="keyword">template</span><span class="special">&lt;</span> <span class="keyword">typename</span> <span class="special">&gt;</span> <span class="keyword">class</span> ActorT<span class="special">&gt;</span> 
+      <a class="link" href="doxygen/attributes/structboost_1_1log_1_1result__of_1_1extract.html" title="Struct template extract">result_of::extract</a><span class="special">&lt;</span> <span class="identifier">typenameDescriptorT</span><span class="special">::</span><span class="identifier">value_type</span><span class="special">,</span> <span class="identifier">DescriptorT</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> 
+      <a class="link" href="doxygen/attributes/value__extraction_8hpp_1a8011d6bbf3a004e62c2a426c7e3e9529.html" title="Function template extract"><span class="identifier">extract</span></a><span class="special">(</span><span class="identifier">expressions</span><span class="special">::</span><span class="identifier">attribute_keyword</span><span class="special">&lt;</span> <span class="identifier">DescriptorT</span><span class="special">,</span> <span class="identifier">ActorT</span> <span class="special">&gt;</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> 
+              <span class="identifier">record_view</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> DescriptorT<span class="special">,</span> <span class="keyword">template</span><span class="special">&lt;</span> <span class="keyword">typename</span> <span class="special">&gt;</span> <span class="keyword">class</span> ActorT<span class="special">&gt;</span> 
+      <a class="link" href="doxygen/attributes/structboost_1_1log_1_1result__of_1_1extract__or__throw.html" title="Struct template extract_or_throw">result_of::extract_or_throw</a><span class="special">&lt;</span> <span class="identifier">typenameDescriptorT</span><span class="special">::</span><span class="identifier">value_type</span><span class="special">,</span> <span class="identifier">DescriptorT</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> 
+      <a class="link" href="doxygen/attributes/value__extraction_8hpp_1ac9b6cd8d73f0579fbba41e399c3c998b.html" title="Function template extract_or_throw"><span class="identifier">extract_or_throw</span></a><span class="special">(</span><span class="identifier">expressions</span><span class="special">::</span><span class="identifier">attribute_keyword</span><span class="special">&lt;</span> <span class="identifier">DescriptorT</span><span class="special">,</span> <span class="identifier">ActorT</span> <span class="special">&gt;</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> 
+                       <a class="link" href="doxygen/attributes/classboost_1_1log_1_1attribute__value__set.html" title="Class attribute_value_set">attribute_value_set</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> DescriptorT<span class="special">,</span> <span class="keyword">template</span><span class="special">&lt;</span> <span class="keyword">typename</span> <span class="special">&gt;</span> <span class="keyword">class</span> ActorT<span class="special">&gt;</span> 
+      <a class="link" href="doxygen/attributes/structboost_1_1log_1_1result__of_1_1extract__or__throw.html" title="Struct template extract_or_throw">result_of::extract_or_throw</a><span class="special">&lt;</span> <span class="identifier">typenameDescriptorT</span><span class="special">::</span><span class="identifier">value_type</span><span class="special">,</span> <span class="identifier">DescriptorT</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> 
+      <a class="link" href="doxygen/attributes/value__extraction_8hpp_1acd2abb006056f4fee100b6b41e81a8da.html" title="Function template extract_or_throw"><span class="identifier">extract_or_throw</span></a><span class="special">(</span><span class="identifier">expressions</span><span class="special">::</span><span class="identifier">attribute_keyword</span><span class="special">&lt;</span> <span class="identifier">DescriptorT</span><span class="special">,</span> <span class="identifier">ActorT</span> <span class="special">&gt;</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> 
+                       <span class="identifier">record</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> DescriptorT<span class="special">,</span> <span class="keyword">template</span><span class="special">&lt;</span> <span class="keyword">typename</span> <span class="special">&gt;</span> <span class="keyword">class</span> ActorT<span class="special">&gt;</span> 
+      <a class="link" href="doxygen/attributes/structboost_1_1log_1_1result__of_1_1extract__or__throw.html" title="Struct template extract_or_throw">result_of::extract_or_throw</a><span class="special">&lt;</span> <span class="identifier">typenameDescriptorT</span><span class="special">::</span><span class="identifier">value_type</span><span class="special">,</span> <span class="identifier">DescriptorT</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> 
+      <a class="link" href="doxygen/attributes/value__extraction_8hpp_1ade6bb8c20149885ef075f78d8fbab6f0.html" title="Function template extract_or_throw"><span class="identifier">extract_or_throw</span></a><span class="special">(</span><span class="identifier">expressions</span><span class="special">::</span><span class="identifier">attribute_keyword</span><span class="special">&lt;</span> <span class="identifier">DescriptorT</span><span class="special">,</span> <span class="identifier">ActorT</span> <span class="special">&gt;</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> 
+                       <span class="identifier">record_view</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> DescriptorT<span class="special">,</span> <span class="keyword">template</span><span class="special">&lt;</span> <span class="keyword">typename</span> <span class="special">&gt;</span> <span class="keyword">class</span> ActorT<span class="special">,</span> 
+             <span class="keyword">typename</span> DefaultT<span class="special">&gt;</span> 
+      <a class="link" href="doxygen/attributes/structboost_1_1log_1_1result__of_1_1extract__or__default.html" title="Struct template extract_or_default">result_of::extract_or_default</a><span class="special">&lt;</span> <span class="identifier">typenameDescriptorT</span><span class="special">::</span><span class="identifier">value_type</span><span class="special">,</span> <span class="identifier">DefaultT</span><span class="special">,</span> <span class="identifier">DescriptorT</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> 
+      <a class="link" href="doxygen/attributes/value__extraction_8hpp_1a9f0770e19b7f9e406e8e24a80f8bf792.html" title="Function template extract_or_default"><span class="identifier">extract_or_default</span></a><span class="special">(</span><span class="identifier">expressions</span><span class="special">::</span><span class="identifier">attribute_keyword</span><span class="special">&lt;</span> <span class="identifier">DescriptorT</span><span class="special">,</span> <span class="identifier">ActorT</span> <span class="special">&gt;</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> 
+                         <a class="link" href="doxygen/attributes/classboost_1_1log_1_1attribute__value__set.html" title="Class attribute_value_set">attribute_value_set</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">DefaultT</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> DescriptorT<span class="special">,</span> <span class="keyword">template</span><span class="special">&lt;</span> <span class="keyword">typename</span> <span class="special">&gt;</span> <span class="keyword">class</span> ActorT<span class="special">,</span> 
+             <span class="keyword">typename</span> DefaultT<span class="special">&gt;</span> 
+      <a class="link" href="doxygen/attributes/structboost_1_1log_1_1result__of_1_1extract__or__default.html" title="Struct template extract_or_default">result_of::extract_or_default</a><span class="special">&lt;</span> <span class="identifier">typenameDescriptorT</span><span class="special">::</span><span class="identifier">value_type</span><span class="special">,</span> <span class="identifier">DefaultT</span><span class="special">,</span> <span class="identifier">DescriptorT</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> 
+      <a class="link" href="doxygen/attributes/value__extraction_8hpp_1af90c847cd0cfa44a584f6742e99154a7.html" title="Function template extract_or_default"><span class="identifier">extract_or_default</span></a><span class="special">(</span><span class="identifier">expressions</span><span class="special">::</span><span class="identifier">attribute_keyword</span><span class="special">&lt;</span> <span class="identifier">DescriptorT</span><span class="special">,</span> <span class="identifier">ActorT</span> <span class="special">&gt;</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> 
+                         <span class="identifier">record</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">DefaultT</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> DescriptorT<span class="special">,</span> <span class="keyword">template</span><span class="special">&lt;</span> <span class="keyword">typename</span> <span class="special">&gt;</span> <span class="keyword">class</span> ActorT<span class="special">,</span> 
+             <span class="keyword">typename</span> DefaultT<span class="special">&gt;</span> 
+      <a class="link" href="doxygen/attributes/structboost_1_1log_1_1result__of_1_1extract__or__default.html" title="Struct template extract_or_default">result_of::extract_or_default</a><span class="special">&lt;</span> <span class="identifier">typenameDescriptorT</span><span class="special">::</span><span class="identifier">value_type</span><span class="special">,</span> <span class="identifier">DefaultT</span><span class="special">,</span> <span class="identifier">DescriptorT</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> 
+      <a class="link" href="doxygen/attributes/value__extraction_8hpp_1a346e6615f41a43bed9f921be4f1dc605.html" title="Function template extract_or_default"><span class="identifier">extract_or_default</span></a><span class="special">(</span><span class="identifier">expressions</span><span class="special">::</span><span class="identifier">attribute_keyword</span><span class="special">&lt;</span> <span class="identifier">DescriptorT</span><span class="special">,</span> <span class="identifier">ActorT</span> <span class="special">&gt;</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> 
+                         <span class="identifier">record_view</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">DefaultT</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">namespace</span> <span class="identifier">result_of</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">,</span> <span class="keyword">typename</span> TagT<span class="special">&gt;</span> <span class="keyword">struct</span> <a class="link" href="doxygen/attributes/structboost_1_1log_1_1result__of_1_1extract.html" title="Struct template extract">extract</a><span class="special">;</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">,</span> <span class="keyword">typename</span> DefaultT<span class="special">,</span> <span class="keyword">typename</span> TagT<span class="special">&gt;</span> 
+        <span class="keyword">struct</span> <a class="link" href="doxygen/attributes/structboost_1_1log_1_1result__of_1_1extract__or__default.html" title="Struct template extract_or_default">extract_or_default</a><span class="special">;</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">,</span> <span class="keyword">typename</span> TagT<span class="special">&gt;</span> <span class="keyword">struct</span> <a class="link" href="doxygen/attributes/structboost_1_1log_1_1result__of_1_1extract__or__throw.html" title="Struct template extract_or_throw">extract_or_throw</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.attributes.value__extraction__fwd_8hpp"></a>Header &lt;<a href="../../../../boost/log/attributes/value_extraction_fwd.hpp" target="_top">boost/log/attributes/value_extraction_fwd.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>01.03.2008</p>
+<p>
+
+The header contains forward declaration of tools for extracting attribute values from the view. </p>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.attributes.value__visitation_8hpp"></a>Header &lt;<a href="../../../../boost/log/attributes/value_visitation.hpp" target="_top">boost/log/attributes/value_visitation.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>01.03.2008</p>
+<p>
+
+The header contains implementation of convenience tools to apply visitors to an attribute value in the view. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">,</span> <span class="keyword">typename</span> FallbackPolicyT<span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="doxygen/attributes/classboost_1_1log_1_1value__visitor__invoker.html" title="Class template value_visitor_invoker">value_visitor_invoker</a><span class="special">;</span>
+    <span class="keyword">class</span> <a class="link" href="doxygen/attributes/classboost_1_1log_1_1visitation__result.html" title="Class visitation_result">visitation_result</a><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">,</span> <span class="keyword">typename</span> VisitorT<span class="special">&gt;</span> 
+      <a class="link" href="doxygen/attributes/classboost_1_1log_1_1visitation__result.html" title="Class visitation_result">visitation_result</a> 
+      <a class="link" href="doxygen/attributes/value__visitation_8hpp_1ae00600203d3abcc6ddba8735e420c3f0.html" title="Function template visit"><span class="identifier">visit</span></a><span class="special">(</span><a class="link" href="doxygen/attributes/classboost_1_1log_1_1attribute__name.html" title="Class attribute_name">attribute_name</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <a class="link" href="doxygen/attributes/classboost_1_1log_1_1attribute__value__set.html" title="Class attribute_value_set">attribute_value_set</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">VisitorT</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">,</span> <span class="keyword">typename</span> VisitorT<span class="special">&gt;</span> 
+      <a class="link" href="doxygen/attributes/classboost_1_1log_1_1visitation__result.html" title="Class visitation_result">visitation_result</a> 
+      <a class="link" href="doxygen/attributes/value__visitation_8hpp_1a3699a2baf25f85c716786281fb3bcc25.html" title="Function template visit"><span class="identifier">visit</span></a><span class="special">(</span><a class="link" href="doxygen/attributes/classboost_1_1log_1_1attribute__name.html" title="Class attribute_name">attribute_name</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">record</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">VisitorT</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">,</span> <span class="keyword">typename</span> VisitorT<span class="special">&gt;</span> 
+      <a class="link" href="doxygen/attributes/classboost_1_1log_1_1visitation__result.html" title="Class visitation_result">visitation_result</a> 
+      <a class="link" href="doxygen/attributes/value__visitation_8hpp_1ae4cb7d152fb21cf479b510841ddf7067.html" title="Function template visit"><span class="identifier">visit</span></a><span class="special">(</span><a class="link" href="doxygen/attributes/classboost_1_1log_1_1attribute__name.html" title="Class attribute_name">attribute_name</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">record_view</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">VisitorT</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">,</span> <span class="keyword">typename</span> VisitorT<span class="special">&gt;</span> 
+      <a class="link" href="doxygen/attributes/classboost_1_1log_1_1visitation__result.html" title="Class visitation_result">visitation_result</a> <a class="link" href="doxygen/attributes/value__visitation_8hpp_1a7cdfb8b0f8ee2d334cef5a8cc63e8f68.html" title="Function template visit"><span class="identifier">visit</span></a><span class="special">(</span><a class="link" href="doxygen/attributes/classboost_1_1log_1_1attribute__value.html" title="Class attribute_value">attribute_value</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">VisitorT</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> DescriptorT<span class="special">,</span> <span class="keyword">template</span><span class="special">&lt;</span> <span class="keyword">typename</span> <span class="special">&gt;</span> <span class="keyword">class</span> ActorT<span class="special">,</span> 
+             <span class="keyword">typename</span> VisitorT<span class="special">&gt;</span> 
+      <a class="link" href="doxygen/attributes/classboost_1_1log_1_1visitation__result.html" title="Class visitation_result">visitation_result</a> 
+      <a class="link" href="doxygen/attributes/value__visitation_8hpp_1a3c345b1cc18f948b9caf706c57bf473c.html" title="Function template visit"><span class="identifier">visit</span></a><span class="special">(</span><span class="identifier">expressions</span><span class="special">::</span><span class="identifier">attribute_keyword</span><span class="special">&lt;</span> <span class="identifier">DescriptorT</span><span class="special">,</span> <span class="identifier">ActorT</span> <span class="special">&gt;</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> 
+            <a class="link" href="doxygen/attributes/classboost_1_1log_1_1attribute__value__set.html" title="Class attribute_value_set">attribute_value_set</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">VisitorT</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> DescriptorT<span class="special">,</span> <span class="keyword">template</span><span class="special">&lt;</span> <span class="keyword">typename</span> <span class="special">&gt;</span> <span class="keyword">class</span> ActorT<span class="special">,</span> 
+             <span class="keyword">typename</span> VisitorT<span class="special">&gt;</span> 
+      <a class="link" href="doxygen/attributes/classboost_1_1log_1_1visitation__result.html" title="Class visitation_result">visitation_result</a> 
+      <a class="link" href="doxygen/attributes/value__visitation_8hpp_1a8b613739ba57311ee80e35dc077c9c82.html" title="Function template visit"><span class="identifier">visit</span></a><span class="special">(</span><span class="identifier">expressions</span><span class="special">::</span><span class="identifier">attribute_keyword</span><span class="special">&lt;</span> <span class="identifier">DescriptorT</span><span class="special">,</span> <span class="identifier">ActorT</span> <span class="special">&gt;</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> 
+            <span class="identifier">record</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">VisitorT</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> DescriptorT<span class="special">,</span> <span class="keyword">template</span><span class="special">&lt;</span> <span class="keyword">typename</span> <span class="special">&gt;</span> <span class="keyword">class</span> ActorT<span class="special">,</span> 
+             <span class="keyword">typename</span> VisitorT<span class="special">&gt;</span> 
+      <a class="link" href="doxygen/attributes/classboost_1_1log_1_1visitation__result.html" title="Class visitation_result">visitation_result</a> 
+      <a class="link" href="doxygen/attributes/value__visitation_8hpp_1a6f8fc93fc9f3ba35ab9db7af0338172e.html" title="Function template visit"><span class="identifier">visit</span></a><span class="special">(</span><span class="identifier">expressions</span><span class="special">::</span><span class="identifier">attribute_keyword</span><span class="special">&lt;</span> <span class="identifier">DescriptorT</span><span class="special">,</span> <span class="identifier">ActorT</span> <span class="special">&gt;</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> 
+            <span class="identifier">record_view</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">VisitorT</span><span class="special">)</span><span class="special">;</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.attributes.value__visitation__fwd_8hpp"></a>Header &lt;<a href="../../../../boost/log/attributes/value_visitation_fwd.hpp" target="_top">boost/log/attributes/value_visitation_fwd.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>01.03.2008</p>
+<p>
+
+The header contains forward declaration of convenience tools to apply visitors to an attribute value in the view. </p>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2007-2024 Andrey Semashev<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>).
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="doxygen/core_components/record__view_8hpp_1abea2e8d3767c5a9a041624d76fd37cbc.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="log/reference.html"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="doxygen/attributes/classboost_1_1log_1_1attribute.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

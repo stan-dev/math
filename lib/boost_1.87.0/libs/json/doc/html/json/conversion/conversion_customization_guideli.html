@@ -1,0 +1,79 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Conversion customization guidelines</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.JSON">
+<link rel="up" href="../conversion.html" title="Value Conversion">
+<link rel="prev" href="direct_parsing.html" title="Direct parsing">
+<link rel="next" href="../allocators.html" title="Allocators">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="direct_parsing.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../conversion.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../allocators.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="json.conversion.conversion_customization_guideli"></a><a class="link" href="conversion_customization_guideli.html" title="Conversion customization guidelines">Conversion
+      customization guidelines</a>
+</h3></div></div></div>
+<p>
+        With so many options, it can be hard to choose the best way to customise
+        conversion for your type. In this section, we will discuss those options
+        and suggest which to choose when.
+      </p>
+<p>
+        The first advice is to use one of the library-provided conversions, rather
+        then providing a custom one, unless the resulting format is undesirable.
+        If the library deduces the wrong conversion category, you can opt out by
+        specialising the relevant trait to inherit from <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">false_type</span></code>.
+      </p>
+<p>
+        If library-provided conversions are suitable for you, you have the option
+        to use direct conversions. This also puts the requirement of being default
+        constructible on many of your types.
+      </p>
+<p>
+        The next thing to consider is whether your conversions are intended for internal
+        use, or whether your users are not members of your team. If your users are
+        external, then they will ultimately determine the conditions in which these
+        conversions will be used. Conversely, for internal libraries and applications,
+        you have the full control of usage conditions.
+      </p>
+<p>
+        If your users are external, they and not you decide whether throwing exceptions
+        is acceptable. So, in this case it is better to use non-throwing <code class="computeroutput"><span class="identifier">tag_invoke</span></code> overloads. In addition, for
+        customising conversion of composite types, always use <code class="computeroutput"><span class="identifier">tag_invoke</span></code>
+        overload with 2 context parameters. This will allow correct context propagation
+        to elements of composites. This will also allow propagation of exceptions
+        from conversion of elements.
+      </p>
+<p>
+        Finally, it is worth mentioning that due to the ability to provide conversions
+        to JSON containers without a binary dependency on the library, you don't
+        have to push such dependency on your users. This is particularly relevant
+        for libraries for which interoperation with Boost.JSON is only ancillary.
+      </p>
+</div>
+<div class="copyright-footer">Copyright © 2019, 2020 Vinnie Falco<br>Copyright © 2020 Krystian Stasiowski<br>Copyright © 2022 Dmitry Arkhipov<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="direct_parsing.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../conversion.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../allocators.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

@@ -1,0 +1,72 @@
+////
+Copyright 2024 Ruben Perez Hidalgo
+Distributed under the Boost Software License, Version 1.0.
+https://www.boost.org/LICENSE_1_0.txt
+////
+
+[#to_array]
+# <boost/compat/to_array.hpp>
+:idprefix: ref_to_array_
+
+## Description
+
+The header `<boost/compat/to_array.hpp>` implements, in a portable way, the C++20
+`std::to_array` function, present in the `<array>` header.
+
+`to_array` creates a `std::array` from a single-dimensional C array,
+performing an element-wise copy or move.
+
+## Example
+
+```cpp
+int input [] = {1, 2, 3};
+std::array<int, 3> output = boost::compat::to_array(input);
+assert((
+    output == std::array<int, 3>{{1, 2, 3}}
+));
+```
+
+## Synopsis
+
+```cpp
+namespace boost
+{
+namespace compat
+{
+
+template <class T, std::size_t N>
+constexpr std::array<remove_cv_t<T>, N> to_array(T (&a)[N]);
+
+template <class T, std::size_t N>
+constexpr std::array<remove_cv_t<T>, N> to_array(T (&&a)[N]);
+
+} // namespace compat
+} // namespace boost
+```
+
+## to_array
+
+```cpp
+template <class T, std::size_t N>
+constexpr std::array<remove_cv_t<T>, N> to_array(T (&&a)[N]);
+```
+
+[horizontal]
+Effects:;; Creates an array of `N` elements by copying elements in `a`.
+           For every `i` in `0, ..., N-1`, copy-initializes the i-th element
+           in the output array from `a[i]`.
+Type requirements:;; `std::is_constructible_v<remove_cv_t<T>, T&> && !std::is_array_v<T>`.
+                     Otherwise, the overload is ill-formed.
+
+
+```cpp
+template <class T, std::size_t N>
+constexpr std::array<remove_cvref_t<T>, N> to_array(T (&a)[N]);
+```
+
+[horizontal]
+Effects:;; Creates an array of `N` elements by moving elements in `a`.
+           For every `i` in `0, ..., N-1`, move-initializes the i-th element
+           in the output array from `std::move(a[i])`.
+Type requirements:;; `std::is_constructible_v<remove_cv_t<T>, T&&> && !std::is_array_v<T>`.
+                     Otherwise, the overload is ill-formed.

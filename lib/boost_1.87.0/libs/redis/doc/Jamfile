@@ -1,0 +1,92 @@
+project redis/doc ;
+
+import doxygen ;
+import path ;
+import sequence ;
+
+# All paths must be absolute to work well with the Doxygen rules.
+path-constant this_dir : . ;
+path-constant target_dir : html ;
+path-constant redis_root_dir : .. ;
+path-constant include_dir : ../include ;
+path-constant examples_dir : ../example ;
+path-constant readme : ../README.md ;
+path-constant layout_file : DoxygenLayout.xml ;
+path-constant header : header.html ;
+path-constant footer : footer.html ;
+
+local stylesheet_files = [ path.glob $(this_dir) : *.css ] ;
+local includes = [ path.glob-tree $(include_dir) : *.hpp *.cpp ] ;
+local examples = [ path.glob-tree $(examples_dir) : *.hpp *.cpp ] ;
+
+# If passed directly, several HTML_EXTRA_STYLESHEET tags are generated,
+# which is not correct.
+local stylesheet_arg = [ sequence.join "\"$(stylesheet_files)\"" : " " ] ;
+
+# The doxygen rule requires the target name to end in .html to generate HTML files
+doxygen doc.html
+    :
+        $(includes) $(examples) $(readme)
+    :
+        <doxygen:param>"PROJECT_NAME=Boost.Redis"
+        <doxygen:param>PROJECT_NUMBER="1.84.0"
+        <doxygen:param>PROJECT_BRIEF="A redis client library"
+        <doxygen:param>"STRIP_FROM_PATH=\"$(redis_root_dir)\""
+        <doxygen:param>"STRIP_FROM_INC_PATH=\"$(include_dir)\""
+        <doxygen:param>BUILTIN_STL_SUPPORT=YES
+        <doxygen:param>INLINE_SIMPLE_STRUCTS=YES
+        <doxygen:param>HIDE_UNDOC_MEMBERS=YES
+        <doxygen:param>HIDE_UNDOC_CLASSES=YES
+        <doxygen:param>SHOW_HEADERFILE=YES
+        <doxygen:param>SORT_BRIEF_DOCS=YES
+        <doxygen:param>SORT_MEMBERS_CTORS_1ST=YES
+        <doxygen:param>SHOW_FILES=NO
+        <doxygen:param>SHOW_NAMESPACES=NO
+        <doxygen:param>"LAYOUT_FILE=\"$(layout_file)\""
+        <doxygen:param>WARN_IF_INCOMPLETE_DOC=YES
+        <doxygen:param>FILE_PATTERNS="*.hpp *.cpp"
+        <doxygen:param>EXCLUDE_SYMBOLS=std
+        <doxygen:param>"USE_MDFILE_AS_MAINPAGE=\"$(readme)\""
+        <doxygen:param>SOURCE_BROWSER=YES
+        <doxygen:param>"HTML_HEADER=\"$(header)\""
+        <doxygen:param>"HTML_FOOTER=\"$(footer)\""
+        <doxygen:param>"HTML_EXTRA_STYLESHEET=$(stylesheet_arg)"
+        <doxygen:param>HTML_TIMESTAMP=YES
+        <doxygen:param>GENERATE_TREEVIEW=YES
+        <doxygen:param>FULL_SIDEBAR=YES
+        <doxygen:param>DISABLE_INDEX=YES
+        <doxygen:param>ENUM_VALUES_PER_LINE=0
+        <doxygen:param>OBFUSCATE_EMAILS=YES
+        <doxygen:param>USE_MATHJAX=YES
+        <doxygen:param>MATHJAX_VERSION=MathJax_2
+        <doxygen:param>MATHJAX_RELPATH="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/"
+        <doxygen:param>MACRO_EXPANSION=YES
+        <doxygen:param>HAVE_DOT=NO
+        <doxygen:param>CLASS_GRAPH=NO
+        <doxygen:param>DIRECTORY_GRAPH=NO
+    ;
+
+explicit doc.html ;
+
+# The doxygen rule only informs b2 about the main HTML file, and not about
+# all the doc directory that gets generated. Using the install rule copies
+# only a single file, which is incorrect. This is a workaround to copy
+# the generated docs to the doc/html directory, where they should be.
+make copyhtml.tag : doc.html : @copy_html_dir ;
+explicit copyhtml.tag ;
+actions copy_html_dir
+{
+    rm -rf $(target_dir)
+    mkdir -p $(target_dir)
+    cp -r $(<:D)/html/doc/* $(target_dir)/
+    echo "Stamped" > "$(<)"
+}
+
+# These are used to inform the build system of the
+# means to build the integrated and stand-alone docs.
+
+alias boostdoc ;
+explicit boostdoc ;
+
+alias boostrelease : copyhtml.tag ;
+explicit boostrelease ;

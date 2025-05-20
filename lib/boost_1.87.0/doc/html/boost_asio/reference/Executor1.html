@@ -1,0 +1,431 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Executor requirements</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../boost_asio.html" title="Boost.Asio">
+<link rel="up" href="../reference.html" title="Reference">
+<link rel="prev" href="ExecutionContext.html" title="Execution context requirements">
+<link rel="next" href="GettableSerialPortOption.html" title="Gettable serial port option requirements">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="ExecutionContext.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../reference.html"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../boost_asio.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="GettableSerialPortOption.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="boost_asio.reference.Executor1"></a><a class="link" href="Executor1.html" title="Executor requirements">Executor requirements</a>
+</h3></div></div></div>
+<h5>
+<a name="boost_asio.reference.Executor1.h0"></a>
+        <span class="phrase"><a name="boost_asio.reference.Executor1.standard_executors"></a></span><a class="link" href="Executor1.html#boost_asio.reference.Executor1.standard_executors">Standard
+        executors</a>
+      </h5>
+<p>
+        Let <code class="computeroutput"><span class="identifier">executor</span><span class="special">-</span><span class="identifier">of</span><span class="special">-</span><span class="identifier">impl</span></code>
+        be the exposition-only concept
+      </p>
+<pre class="programlisting"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">E</span><span class="special">,</span> <span class="keyword">class</span> <span class="identifier">F</span><span class="special">&gt;</span>
+  <span class="identifier">concept</span> <span class="identifier">executor</span><span class="special">-</span><span class="identifier">of</span><span class="special">-</span><span class="identifier">impl</span> <span class="special">=</span>
+    <span class="identifier">invocable</span><span class="special">&lt;</span><span class="identifier">decay_t</span><span class="special">&lt;</span><span class="identifier">F</span><span class="special">&gt;&amp;&gt;</span> <span class="special">&amp;&amp;</span>
+    <span class="identifier">constructible_from</span><span class="special">&lt;</span><span class="identifier">decay_t</span><span class="special">&lt;</span><span class="identifier">F</span><span class="special">&gt;,</span> <span class="identifier">F</span><span class="special">&gt;</span> <span class="special">&amp;&amp;</span>
+    <span class="identifier">move_constructible</span><span class="special">&lt;</span><span class="identifier">decay_t</span><span class="special">&lt;</span><span class="identifier">F</span><span class="special">&gt;&gt;</span> <span class="special">&amp;&amp;</span>
+    <span class="identifier">copy_constructible</span><span class="special">&lt;</span><span class="identifier">E</span><span class="special">&gt;</span> <span class="special">&amp;&amp;</span>
+    <span class="identifier">is_nothrow_copy_constructible_v</span><span class="special">&lt;</span><span class="identifier">E</span><span class="special">&gt;</span> <span class="special">&amp;&amp;</span>
+    <span class="identifier">equality_comparable</span><span class="special">&lt;</span><span class="identifier">E</span><span class="special">&gt;</span> <span class="comment">/* nothrow */</span> <span class="special">&amp;&amp;</span>
+    <span class="identifier">requires</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">E</span><span class="special">&amp;</span> <span class="identifier">e</span><span class="special">,</span> <span class="identifier">F</span><span class="special">&amp;&amp;</span> <span class="identifier">f</span><span class="special">)</span> <span class="special">{</span>
+      <span class="identifier">e</span><span class="special">.</span><span class="identifier">execute</span><span class="special">((</span><span class="identifier">F</span><span class="special">&amp;&amp;)</span><span class="identifier">f</span><span class="special">);</span>
+    <span class="special">};</span>
+</pre>
+<p>
+        Then the <code class="computeroutput"><span class="identifier">executor</span></code> and <code class="computeroutput"><span class="identifier">executor_of</span></code> concepts are defined as follows:
+      </p>
+<pre class="programlisting"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">E</span><span class="special">&gt;</span>
+  <span class="identifier">concept</span> <span class="identifier">executor</span> <span class="special">=</span>
+    <span class="identifier">executor</span><span class="special">-</span><span class="identifier">of</span><span class="special">-</span><span class="identifier">impl</span><span class="special">&lt;</span><span class="identifier">E</span><span class="special">,</span> <span class="identifier">execution</span><span class="special">::</span><span class="identifier">invocable_archetype</span><span class="special">&gt;;</span>
+
+<span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">E</span><span class="special">,</span> <span class="keyword">class</span> <span class="identifier">F</span><span class="special">&gt;</span>
+  <span class="identifier">concept</span> <span class="identifier">executor_of</span> <span class="special">=</span>
+    <span class="identifier">executor</span><span class="special">&lt;</span><span class="identifier">E</span><span class="special">&gt;</span> <span class="special">&amp;&amp;</span>
+    <span class="identifier">executor</span><span class="special">-</span><span class="identifier">of</span><span class="special">-</span><span class="identifier">impl</span><span class="special">&lt;</span><span class="identifier">E</span><span class="special">,</span> <span class="identifier">F</span><span class="special">&gt;;</span>
+</pre>
+<p>
+        Neither an executor's equality comparison nor <code class="computeroutput"><span class="identifier">swap</span></code>
+        operation shall exit via an exception.
+      </p>
+<p>
+        None of an executor type's copy constructor, destructor, equality comparison,
+        <code class="computeroutput"><span class="identifier">swap</span></code> function, <code class="computeroutput"><span class="identifier">execute</span></code> function, or associated <code class="computeroutput"><span class="identifier">query</span></code> functions shall introduce data races
+        as a result of concurrent invocations of those functions from different threads.
+      </p>
+<p>
+        For any two (possibly const) values <code class="computeroutput"><span class="identifier">x1</span></code>
+        and <code class="computeroutput"><span class="identifier">x2</span></code> of some executor type
+        <code class="computeroutput"><span class="identifier">X</span></code>, <code class="computeroutput"><span class="identifier">x1</span>
+        <span class="special">==</span> <span class="identifier">x2</span></code>
+        shall return <code class="computeroutput"><span class="keyword">true</span></code> only if <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">query</span><span class="special">(</span><span class="identifier">x1</span><span class="special">,</span><span class="identifier">p</span><span class="special">)</span> <span class="special">==</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">query</span><span class="special">(</span><span class="identifier">x2</span><span class="special">,</span><span class="identifier">p</span><span class="special">)</span></code> for
+        every property <code class="computeroutput"><span class="identifier">p</span></code> where both
+        <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">query</span><span class="special">(</span><span class="identifier">x1</span><span class="special">,</span><span class="identifier">p</span><span class="special">)</span></code> and <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">query</span><span class="special">(</span><span class="identifier">x2</span><span class="special">,</span><span class="identifier">p</span><span class="special">)</span></code> are
+        well-formed and result in a non-void type that is <code class="computeroutput"><span class="identifier">equality_comparable</span></code>
+        (C++Std [equalitycomparable]). [<span class="emphasis"><em>Note:</em></span> The above requirements
+        imply that <code class="computeroutput"><span class="identifier">x1</span> <span class="special">==</span>
+        <span class="identifier">x2</span></code> returns <code class="computeroutput"><span class="keyword">true</span></code>
+        if <code class="computeroutput"><span class="identifier">x1</span></code> and <code class="computeroutput"><span class="identifier">x2</span></code>
+        can be interchanged with identical effects. An executor may conceptually
+        contain additional properties which are not exposed by a named property type
+        that can be observed via <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">query</span></code>;
+        in this case, it is up to the concrete executor implementation to decide
+        if these properties affect equality. Returning <code class="computeroutput"><span class="keyword">false</span></code>
+        does not necessarily imply that the effects are not identical. —<span class="emphasis"><em>end
+        note</em></span>]
+      </p>
+<p>
+        An executor type's destructor shall not block pending completion of the submitted
+        function objects. [<span class="emphasis"><em>Note:</em></span> The ability to wait for completion
+        of submitted function objects may be provided by the associated execution
+        context. —<span class="emphasis"><em>end note</em></span>]
+      </p>
+<p>
+        In addition to the above requirements, types <code class="computeroutput"><span class="identifier">E</span></code>
+        and <code class="computeroutput"><span class="identifier">F</span></code> model <code class="computeroutput"><span class="identifier">executor_of</span></code> only if they satisfy the requirements
+        of the Table below.
+      </p>
+<p>
+        Let:
+      </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+            <code class="computeroutput"><span class="identifier">e</span></code> denotes a (possibly
+            const) executor object of type <code class="computeroutput"><span class="identifier">E</span></code>,
+          </li>
+<li class="listitem">
+            <code class="computeroutput"><span class="identifier">cf</span></code> denotes the function
+            object <code class="computeroutput"><span class="identifier">DECAY_COPY</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">forward</span><span class="special">&lt;</span><span class="identifier">F</span><span class="special">&gt;(</span><span class="identifier">f</span><span class="special">))</span></code>
+          </li>
+<li class="listitem">
+            <code class="computeroutput"><span class="identifier">f</span></code> denotes a function
+            of type <code class="computeroutput"><span class="identifier">F</span><span class="special">&amp;&amp;</span></code>
+            invocable as <code class="computeroutput"><span class="identifier">cf</span><span class="special">()</span></code>
+            and where <code class="computeroutput"><span class="identifier">decay_t</span><span class="special">&lt;</span><span class="identifier">F</span><span class="special">&gt;</span></code>
+            models <code class="computeroutput"><span class="identifier">move_constructible</span></code>.
+          </li>
+</ul></div>
+<p>
+        The expression <code class="computeroutput"><span class="identifier">e</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="identifier">f</span><span class="special">)</span></code>:
+      </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+            Evaluates <code class="computeroutput"><span class="identifier">DECAY_COPY</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">forward</span><span class="special">&lt;</span><span class="identifier">F</span><span class="special">&gt;(</span><span class="identifier">f</span><span class="special">))</span></code> on the calling thread to create <code class="computeroutput"><span class="identifier">cf</span></code> that will be invoked at most once
+            by an execution agent.
+          </li>
+<li class="listitem">
+            May block pending completion of this invocation. Synchronizes with [intro.multithread]
+            the invocation of <code class="computeroutput"><span class="identifier">f</span></code>.
+          </li>
+<li class="listitem">
+            Shall not propagate any exception thrown by the function object or any
+            other function submitted to the executor.
+          </li>
+</ul></div>
+<p>
+        [<span class="emphasis"><em>Note:</em></span> The treatment of exceptions thrown by one-way
+        submitted functions is implementation-defined. The forward progress guarantee
+        of the associated execution agent(s) is implementation-defined. —<span class="emphasis"><em>end
+        note</em></span>]
+      </p>
+<h5>
+<a name="boost_asio.reference.Executor1.h1"></a>
+        <span class="phrase"><a name="boost_asio.reference.Executor1.networking_ts_style_executors"></a></span><a class="link" href="Executor1.html#boost_asio.reference.Executor1.networking_ts_style_executors">Networking
+        TS-style executors</a>
+      </h5>
+<p>
+        The library describes a standard set of requirements for <span class="emphasis"><em>executors</em></span>.
+        A type meeting the <code class="computeroutput"><span class="identifier">Executor</span></code>
+        requirements embodies a set of rules for determining how submitted function
+        objects are to be executed.
+      </p>
+<p>
+        A type <code class="computeroutput"><span class="identifier">X</span></code> meets the <code class="computeroutput"><span class="identifier">Executor</span></code> requirements if it satisfies the
+        requirements of <code class="computeroutput"><span class="identifier">CopyConstructible</span></code>
+        (C++Std [copyconstructible]) and <code class="computeroutput"><span class="identifier">Destructible</span></code>
+        (C++Std [destructible]), as well as the additional requirements listed below.
+      </p>
+<p>
+        No constructor, comparison operator, copy operation, move operation, swap
+        operation, or member functions <code class="computeroutput"><span class="identifier">context</span></code>,
+        <code class="computeroutput"><span class="identifier">on_work_started</span></code>, and <code class="computeroutput"><span class="identifier">on_work_finished</span></code> on these types shall exit
+        via an exception.
+      </p>
+<p>
+        The executor copy constructor, comparison operators, and other member functions
+        defined in these requirements shall not introduce data races as a result
+        of concurrent calls to those functions from different threads.
+      </p>
+<p>
+        Let <code class="computeroutput"><span class="identifier">ctx</span></code> be the execution
+        context returned by the executor's <code class="computeroutput"><span class="identifier">context</span><span class="special">()</span></code> member function. An executor becomes <span class="emphasis"><em>invalid</em></span>
+        when the first call to <code class="computeroutput"><span class="identifier">ctx</span><span class="special">.</span><span class="identifier">shutdown</span><span class="special">()</span></code> returns. The effect of calling <code class="computeroutput"><span class="identifier">on_work_started</span></code>, <code class="computeroutput"><span class="identifier">on_work_finished</span></code>,
+        <code class="computeroutput"><span class="identifier">dispatch</span></code>, <code class="computeroutput"><span class="identifier">post</span></code>,
+        or <code class="computeroutput"><span class="identifier">defer</span></code> on an invalid executor
+        is undefined. [<span class="emphasis"><em>Note:</em></span> The copy constructor, comparison
+        operators, and <code class="computeroutput"><span class="identifier">context</span><span class="special">()</span></code>
+        member function continue to remain valid until <code class="computeroutput"><span class="identifier">ctx</span></code>
+        is destroyed. —<span class="emphasis"><em>end note</em></span>]
+      </p>
+<p>
+        In the table below, <code class="computeroutput"><span class="identifier">x1</span></code> and
+        <code class="computeroutput"><span class="identifier">x2</span></code> denote (possibly const)
+        values of type <code class="computeroutput"><span class="identifier">X</span></code>, <code class="computeroutput"><span class="identifier">mx1</span></code> denotes an xvalue of type <code class="computeroutput"><span class="identifier">X</span></code>, <code class="computeroutput"><span class="identifier">f</span></code>
+        denotes a <code class="computeroutput"><span class="identifier">MoveConstructible</span></code>
+        (C++Std [moveconstructible]) function object callable with zero arguments,
+        <code class="computeroutput"><span class="identifier">a</span></code> denotes a (possibly const)
+        value of type <code class="computeroutput"><span class="identifier">A</span></code> meeting the
+        <code class="computeroutput"><span class="identifier">Allocator</span></code> requirements (C++Std
+        [allocator.requirements]), and <code class="computeroutput"><span class="identifier">u</span></code>
+        denotes an identifier.
+      </p>
+<div class="table">
+<a name="boost_asio.reference.Executor1.t0"></a><p class="title"><b>Table 19. Executor requirements</b></p>
+<div class="table-contents"><table class="table" summary="Executor requirements">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  expression
+                </p>
+              </th>
+<th>
+                <p>
+                  type
+                </p>
+              </th>
+<th>
+                <p>
+                  assertion/note<br> pre/post-conditions
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <code class="computeroutput"><span class="identifier">X</span> <span class="identifier">u</span><span class="special">(</span><span class="identifier">x1</span><span class="special">);</span></code>
+                </p>
+              </td>
+<td>
+              </td>
+<td>
+                <p>
+                  Shall not exit via an exception.<br> <br> post: <code class="computeroutput"><span class="identifier">u</span> <span class="special">==</span>
+                  <span class="identifier">x1</span></code> and <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">addressof</span><span class="special">(</span><span class="identifier">u</span><span class="special">.</span><span class="identifier">context</span><span class="special">())</span>
+                  <span class="special">==</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">addressof</span><span class="special">(</span><span class="identifier">x1</span><span class="special">.</span><span class="identifier">context</span><span class="special">()).</span></code>
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <code class="computeroutput"><span class="identifier">X</span> <span class="identifier">u</span><span class="special">(</span><span class="identifier">mx1</span><span class="special">);</span></code>
+                </p>
+              </td>
+<td>
+              </td>
+<td>
+                <p>
+                  Shall not exit via an exception.<br> <br> post: <code class="computeroutput"><span class="identifier">u</span></code> equals the prior value of
+                  <code class="computeroutput"><span class="identifier">mx1</span></code> and <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">addressof</span><span class="special">(</span><span class="identifier">u</span><span class="special">.</span><span class="identifier">context</span><span class="special">())</span></code>
+                  equals the prior value of <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">addressof</span><span class="special">(</span><span class="identifier">mx1</span><span class="special">.</span><span class="identifier">context</span><span class="special">())</span></code>.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <code class="computeroutput"><span class="identifier">x1</span> <span class="special">==</span>
+                  <span class="identifier">x2</span></code>
+                </p>
+              </td>
+<td>
+                <p>
+                  <code class="computeroutput"><span class="keyword">bool</span></code>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns <code class="computeroutput"><span class="keyword">true</span></code> only
+                  if <code class="computeroutput"><span class="identifier">x1</span></code> and <code class="computeroutput"><span class="identifier">x2</span></code> can be interchanged with identical
+                  effects in any of the expressions defined in these type requirements.
+                  [<span class="emphasis"><em>Note:</em></span> Returning <code class="computeroutput"><span class="keyword">false</span></code>
+                  does not necessarily imply that the effects are not identical.
+                  —<span class="emphasis"><em>end note</em></span>] <br> <br> <code class="computeroutput"><span class="keyword">operator</span><span class="special">==</span></code> shall be reflexive, symmetric,
+                  and transitive, and shall not exit via an exception.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <code class="computeroutput"><span class="identifier">x1</span> <span class="special">!=</span>
+                  <span class="identifier">x2</span></code>
+                </p>
+              </td>
+<td>
+                <p>
+                  <code class="computeroutput"><span class="keyword">bool</span></code>
+                </p>
+              </td>
+<td>
+                <p>
+                  Same as <code class="computeroutput"><span class="special">!(</span><span class="identifier">x1</span>
+                  <span class="special">==</span> <span class="identifier">x2</span><span class="special">)</span></code>.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <code class="computeroutput"><span class="identifier">x1</span><span class="special">.</span><span class="identifier">context</span><span class="special">()</span></code>
+                </p>
+              </td>
+<td>
+                <p>
+                  <code class="computeroutput"><span class="identifier">execution_context</span><span class="special">&amp;</span></code>, or <code class="computeroutput"><span class="identifier">E</span><span class="special">&amp;</span></code> where <code class="computeroutput"><span class="identifier">E</span></code>
+                  is a type that satifisfies the <a class="link" href="ExecutionContext.html" title="Execution context requirements"><code class="computeroutput"><span class="identifier">ExecutionContext</span></code></a> requirements.
+                </p>
+              </td>
+<td>
+                <p>
+                  Shall not exit via an exception.<br> <br> The comparison operators
+                  and member functions defined in these requirements shall not alter
+                  the reference returned by this function.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <code class="computeroutput"><span class="identifier">x1</span><span class="special">.</span><span class="identifier">on_work_started</span><span class="special">()</span></code>
+                </p>
+              </td>
+<td>
+              </td>
+<td>
+                <p>
+                  Shall not exit via an exception.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <code class="computeroutput"><span class="identifier">x1</span><span class="special">.</span><span class="identifier">on_work_finished</span><span class="special">()</span></code>
+                </p>
+              </td>
+<td>
+              </td>
+<td>
+                <p>
+                  Shall not exit via an exception.<br> <br> Precondition: A preceding
+                  call <code class="computeroutput"><span class="identifier">x2</span><span class="special">.</span><span class="identifier">on_work_started</span><span class="special">()</span></code>
+                  where <code class="computeroutput"><span class="identifier">x1</span> <span class="special">==</span>
+                  <span class="identifier">x2</span></code>.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <code class="computeroutput"><span class="identifier">x1</span><span class="special">.</span><span class="identifier">dispatch</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">move</span><span class="special">(</span><span class="identifier">f</span><span class="special">),</span><span class="identifier">a</span><span class="special">)</span></code>
+                </p>
+              </td>
+<td>
+              </td>
+<td>
+                <p>
+                  Effects: Creates an object <code class="computeroutput"><span class="identifier">f1</span></code>
+                  initialized with <code class="literal"><span class="emphasis"><em>DECAY_COPY</em></span></code><code class="computeroutput"><span class="special">(</span><span class="identifier">forward</span><span class="special">&lt;</span><span class="identifier">Func</span><span class="special">&gt;(</span><span class="identifier">f</span><span class="special">))</span></code> (C++Std [thread.decaycopy]) in
+                  the current thread of execution . Calls <code class="computeroutput"><span class="identifier">f1</span><span class="special">()</span></code> at most once. The executor may
+                  block forward progress of the caller until <code class="computeroutput"><span class="identifier">f1</span><span class="special">()</span></code> finishes execution.<br> <br>
+                  Executor implementations should use the supplied allocator to allocate
+                  any memory required to store the function object. Prior to invoking
+                  the function object, the executor shall deallocate any memory allocated.
+                  [<span class="emphasis"><em>Note:</em></span> Executors defined in this Technical
+                  Specification always use the supplied allocator unless otherwise
+                  specified. —<span class="emphasis"><em>end note</em></span>] <br> <br> Synchronization:
+                  The invocation of <code class="computeroutput"><span class="identifier">dispatch</span></code>
+                  synchronizes with (C++Std [intro.multithread]) the invocation of
+                  <code class="computeroutput"><span class="identifier">f1</span></code>.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <code class="computeroutput"><span class="identifier">x1</span><span class="special">.</span><span class="identifier">post</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">move</span><span class="special">(</span><span class="identifier">f</span><span class="special">),</span><span class="identifier">a</span><span class="special">)</span></code><br>
+                  <code class="computeroutput"><span class="identifier">x1</span><span class="special">.</span><span class="identifier">defer</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">move</span><span class="special">(</span><span class="identifier">f</span><span class="special">),</span><span class="identifier">a</span><span class="special">)</span></code>
+                </p>
+              </td>
+<td>
+              </td>
+<td>
+                <p>
+                  Effects: Creates an object <code class="computeroutput"><span class="identifier">f1</span></code>
+                  initialized with <code class="literal"><span class="emphasis"><em>DECAY_COPY</em></span></code><code class="computeroutput"><span class="special">(</span><span class="identifier">forward</span><span class="special">&lt;</span><span class="identifier">Func</span><span class="special">&gt;(</span><span class="identifier">f</span><span class="special">))</span></code> in the current thread of execution.
+                  Calls <code class="computeroutput"><span class="identifier">f1</span><span class="special">()</span></code>
+                  at most once. The executor shall not block forward progress of
+                  the caller pending completion of <code class="computeroutput"><span class="identifier">f1</span><span class="special">()</span></code>.<br> <br> Executor implementations
+                  should use the supplied allocator to allocate any memory required
+                  to store the function object. Prior to invoking the function object,
+                  the executor shall deallocate any memory allocated. [<span class="emphasis"><em>Note:</em></span>
+                  Executors defined in this Technical Specification always use the
+                  supplied allocator unless otherwise specified. —<span class="emphasis"><em>end note</em></span>]
+                  <br> <br> Synchronization: The invocation of <code class="computeroutput"><span class="identifier">post</span></code> or <code class="computeroutput"><span class="identifier">defer</span></code>
+                  synchronizes with (C++Std [intro.multithread]) the invocation of
+                  <code class="computeroutput"><span class="identifier">f1</span></code>.<br> <br>
+                  [<span class="emphasis"><em>Note:</em></span> Although the requirements placed on
+                  <code class="computeroutput"><span class="identifier">defer</span></code> are identical
+                  to <code class="computeroutput"><span class="identifier">post</span></code>, the use
+                  of <code class="computeroutput"><span class="identifier">post</span></code> conveys
+                  a preference that the caller <span class="emphasis"><em>does not</em></span> block
+                  the first step of <code class="literal">f1</code>'s progress, whereas <code class="computeroutput"><span class="identifier">defer</span></code> conveys a preference that
+                  the caller <span class="emphasis"><em>does</em></span> block the first step of <code class="literal">f1</code>.
+                  One use of <code class="computeroutput"><span class="identifier">defer</span></code>
+                  is to convey the intention of the caller that <code class="literal">f1</code>
+                  is a continuation of the current call context. The executor may
+                  use this information to optimize or otherwise adjust the way in
+                  which <code class="computeroutput"><span class="identifier">f1</span></code> is invoked.
+                  —<span class="emphasis"><em>end note</em></span>]
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break">
+</div>
+<div class="copyright-footer">Copyright © 2003-2024 Christopher M. Kohlhoff<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="ExecutionContext.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../reference.html"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../boost_asio.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="GettableSerialPortOption.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

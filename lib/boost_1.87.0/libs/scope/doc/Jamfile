@@ -1,0 +1,115 @@
+# Copyright 2023 Andrey Semashev
+#
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at
+# https://www.boost.org/LICENSE_1_0.txt)
+
+using quickbook ;
+using boostbook ;
+using doxygen ;
+using xsltproc ;
+
+import set ;
+import doxygen ;
+import xsltproc ;
+import notfile ;
+import path ;
+import project ;
+
+project boost/libs/scope/doc ;
+
+local doxygen_params =
+        <doxygen:param>RECURSIVE=YES
+        <doxygen:param>ALPHABETICAL_INDEX=YES
+        <doxygen:param>REPEAT_BRIEF=YES
+        <doxygen:param>ALWAYS_DETAILED_SEC=YES
+        <doxygen:param>BRIEF_MEMBER_DESC=NO
+        <doxygen:param>ABBREVIATE_BRIEF=YES
+        <doxygen:param>INHERIT_DOCS=YES
+        <doxygen:param>HIDE_UNDOC_MEMBERS=YES
+        <doxygen:param>HIDE_UNDOC_CLASSES=YES
+        <doxygen:param>HIDE_SCOPE_NAMES=YES
+        <doxygen:param>EXTRACT_ALL=NO
+        <doxygen:param>EXTRACT_PRIVATE=NO
+        <doxygen:param>BUILTIN_STL_SUPPORT=YES
+        <doxygen:param>ENABLE_PREPROCESSING=YES
+        <doxygen:param>MACRO_EXPANSION=YES
+        <doxygen:param>TAB_SIZE=4
+        <doxygen:param>SOURCE_BROWSER=YES
+        <doxygen:param>VERBATIM_HEADERS=NO
+#        <doxygen:param>SEARCH_INCLUDES=YES
+#        <doxygen:param>"INCLUDE_PATH=../../.."
+#        <doxygen:param>EXCLUDE_SYMBOLS="detail detail::*"
+        <doxygen:param>"PREDEFINED=BOOST_SCOPE_DOXYGEN \\
+                        BOOST_SCOPE_DETAIL_DOC_ALT(alt, ...)=alt \\
+                        BOOST_SCOPE_DETAIL_DOC_HIDDEN(...)=... \\
+                        BOOST_SCOPE_DETAIL_DOC(...)=__VA_ARGS__ \\
+                        BOOST_NO_CXX17_DEDUCTION_GUIDES=1 \\
+                        BOOST_SYMBOL_VISIBLE= \\
+                        BOOST_FORCEINLINE=inline \\
+                        BOOST_INLINE_VARIABLE=inline \\
+                        BOOST_CXX14_CONSTEXPR=constexpr"
+        <xsl:param>boost.doxygen.detailns=detail
+#        <xsl:param>boost.doxygen.detail=implementation_
+    ;
+
+
+local top_level_includes =
+    [ glob
+        ../include/boost/scope/*.hpp
+    ] ;
+
+
+# This rule generates *.qbk files with macros with references to files, classes, etc. from the doxygen resulting *.xml files.
+rule gen-references ( target : source : properties * )
+{
+    DEPENDS target : source ;
+    local source-path = [ path.make [ on $(source) return $(LOCATE) ] ] ;
+    STYLESHEET on $(target) = [ path.native [ path.join [ path.parent $(source-path) ] gen_references.xsl ] ] ;
+    local target-name = $(source:B) ;
+    TARGET on $(target) = [ path.native [ path.join $(source-path) $(target-name:S=.qbk) ] ] ;
+}
+actions gen-references
+{
+    $(NAME:E=xsltproc) -o "$(TARGET)" "$(STYLESHEET)" "$(>)"
+}
+
+
+doxygen top_level_reference
+    :
+        $(top_level_includes)
+    :
+        $(doxygen_params)
+        <xsl:param>"boost.doxygen.reftitle=Reference"
+        <location>tmp
+    ;
+
+notfile top_level_refs : @gen-references : top_level_reference.xml ;
+
+
+xml scope_doc
+    :
+        scope.qbk
+    :
+        <dependency>top_level_refs
+    ;
+
+boostbook scope
+    :
+        scope_doc
+    :
+        <xsl:param>"boost.root=../../../.."
+        <xsl:param>"boost.libraries=../../../libs/libraries.htm"
+        <xsl:param>"nav.layout=none"
+        <xsl:param>"boost.image=Boost"
+        <xsl:param>"navig.graphics=1"
+        <xsl:param>"chunk.section.depth=1"
+        <xsl:param>"boost.compact.function=0"
+        <format>pdf:<xsl:param>"boost.url.prefix=https://www.boost.org/doc/libs/release/libs/scope/doc/html"
+    ;
+
+###############################################################################
+alias boostdoc ;
+explicit boostdoc ;
+alias boostrelease : scope ;
+explicit boostrelease ;

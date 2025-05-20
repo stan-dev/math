@@ -1,0 +1,695 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template list</title>
+<link rel="stylesheet" href="../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../intrusive/reference.html#doxygen.list_8hpp" title="Header &lt;boost/intrusive/list.hpp&gt;">
+<link rel="prev" href="link__mode_8hpp_1a78f33f6f20c898563c4449b5cff5d9c3.html" title="Type link_mode_type">
+<link rel="next" href="structboost_1_1intrusive_1_1make__list.html" title="Struct template make_list">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../boost.png"></td>
+<td align="center"><a href="../../../index.html">Home</a></td>
+<td align="center"><a href="../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="link__mode_8hpp_1a78f33f6f20c898563c4449b5cff5d9c3.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../intrusive/reference.html#doxygen.list_8hpp"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="structboost_1_1intrusive_1_1make__list.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.classboost_1_1intrusive_1_1list"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template list</span></h2>
+<p>boost::intrusive::list</p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../intrusive/reference.html#doxygen.list_8hpp" title="Header &lt;boost/intrusive/list.hpp&gt;">boost/intrusive/list.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">,</span> <span class="keyword">class</span> <span class="special">...</span> Options<span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1intrusive_1_1list.html" title="Class template list">list</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">ValueTraits</span>                                          <a name="doxygen.classboost_1_1intrusive_1_1list_1a985d44369a35024e65a0204ea012e08e"></a><span class="identifier">value_traits</span><span class="special">;</span>          
+  <span class="keyword">typedef</span> <span class="identifier">value_traits</span><span class="special">::</span><span class="identifier">pointer</span>                                <a name="doxygen.classboost_1_1intrusive_1_1list_1a214b7d75f518f5fa6234af51ecfc3024"></a><span class="identifier">pointer</span><span class="special">;</span>               
+  <span class="keyword">typedef</span> <span class="identifier">value_traits</span><span class="special">::</span><span class="identifier">const_pointer</span>                          <a name="doxygen.classboost_1_1intrusive_1_1list_1abc6a1165308482b7fd58e37ad236c8c7"></a><span class="identifier">const_pointer</span><span class="special">;</span>         
+  <span class="keyword">typedef</span> <a class="link" href="structboost_1_1intrusive_1_1pointer__traits.html" title="Struct template pointer_traits">pointer_traits</a><span class="special">&lt;</span> <span class="identifier">pointer</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">element_type</span>              <a name="doxygen.classboost_1_1intrusive_1_1list_1a421d6aee975cda1b9118e4c07610eaa7"></a><span class="identifier">value_type</span><span class="special">;</span>            
+  <span class="keyword">typedef</span> <a class="link" href="structboost_1_1intrusive_1_1pointer__traits.html" title="Struct template pointer_traits">pointer_traits</a><span class="special">&lt;</span> <span class="identifier">pointer</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">reference</span>                 <a name="doxygen.classboost_1_1intrusive_1_1list_1aee9a84ab1fcfed336e947a62fcee4843"></a><span class="identifier">reference</span><span class="special">;</span>             
+  <span class="keyword">typedef</span> <a class="link" href="structboost_1_1intrusive_1_1pointer__traits.html" title="Struct template pointer_traits">pointer_traits</a><span class="special">&lt;</span> <span class="identifier">const_pointer</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">reference</span>           <a name="doxygen.classboost_1_1intrusive_1_1list_1a60b93ac8856aadaa2ec8545c36a87b67"></a><span class="identifier">const_reference</span><span class="special">;</span>       
+  <span class="keyword">typedef</span> <a class="link" href="structboost_1_1intrusive_1_1pointer__traits.html" title="Struct template pointer_traits">pointer_traits</a><span class="special">&lt;</span> <span class="identifier">pointer</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">difference_type</span>           <a name="doxygen.classboost_1_1intrusive_1_1list_1a4e2615293afa02b443f344bcc1f1bcf6"></a><span class="identifier">difference_type</span><span class="special">;</span>       
+  <span class="keyword">typedef</span> <span class="identifier">SizeType</span>                                             <a name="doxygen.classboost_1_1intrusive_1_1list_1aab02e26f21ba5e37b8dc25c713e62880"></a><span class="identifier">size_type</span><span class="special">;</span>             
+  <span class="keyword">typedef</span> <span class="identifier">list_iterator</span><span class="special">&lt;</span> <span class="identifier">value_traits</span><span class="special">,</span> <span class="keyword">false</span> <span class="special">&gt;</span>                 <a name="doxygen.classboost_1_1intrusive_1_1list_1a47133dbac742951a62fb5c0d325ab384"></a><span class="identifier">iterator</span><span class="special">;</span>              
+  <span class="keyword">typedef</span> <span class="identifier">list_iterator</span><span class="special">&lt;</span> <span class="identifier">value_traits</span><span class="special">,</span> <span class="keyword">true</span> <span class="special">&gt;</span>                  <a name="doxygen.classboost_1_1intrusive_1_1list_1a53ee5ac7fb1c491df35e151f62f59d78"></a><span class="identifier">const_iterator</span><span class="special">;</span>        
+  <span class="keyword">typedef</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">intrusive</span><span class="special">::</span><span class="identifier">reverse_iterator</span><span class="special">&lt;</span> <span class="identifier">iterator</span> <span class="special">&gt;</span>       <a name="doxygen.classboost_1_1intrusive_1_1list_1a0490fedd97508333e0126026561c4be1"></a><span class="identifier">reverse_iterator</span><span class="special">;</span>      
+  <span class="keyword">typedef</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">intrusive</span><span class="special">::</span><span class="identifier">reverse_iterator</span><span class="special">&lt;</span> <span class="identifier">const_iterator</span> <span class="special">&gt;</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1afd3b2dc27de4ff448db60ef9e489646c"></a><span class="identifier">const_reverse_iterator</span><span class="special">;</span>
+  <span class="keyword">typedef</span> <span class="identifier">value_traits</span><span class="special">::</span><span class="identifier">node_traits</span>                            <a name="doxygen.classboost_1_1intrusive_1_1list_1a6bdc311b68acba7be428b39fc42db572"></a><span class="identifier">node_traits</span><span class="special">;</span>           
+  <span class="keyword">typedef</span> <span class="identifier">node_traits</span><span class="special">::</span><span class="identifier">node</span>                                    <a name="doxygen.classboost_1_1intrusive_1_1list_1a5d8d41fcf5785b4716ec811d1bc9b764"></a><span class="identifier">node</span><span class="special">;</span>                  
+  <span class="keyword">typedef</span> <span class="identifier">node_traits</span><span class="special">::</span><span class="identifier">node_ptr</span>                                <a name="doxygen.classboost_1_1intrusive_1_1list_1a728faa17576579e2feda8055dcee81b0"></a><span class="identifier">node_ptr</span><span class="special">;</span>              
+  <span class="keyword">typedef</span> <span class="identifier">node_traits</span><span class="special">::</span><span class="identifier">const_node_ptr</span>                          <a name="doxygen.classboost_1_1intrusive_1_1list_1af957167f1040d48ab0024019c94a5ff0"></a><span class="identifier">const_node_ptr</span><span class="special">;</span>        
+  <span class="keyword">typedef</span> <a class="link" href="classboost_1_1intrusive_1_1circular__list__algorithms.html" title="Class template circular_list_algorithms">circular_list_algorithms</a><span class="special">&lt;</span> <span class="identifier">node_traits</span> <span class="special">&gt;</span>              <a name="doxygen.classboost_1_1intrusive_1_1list_1a1f9de3cac6f9884644bcfd79400c3b0d"></a><span class="identifier">node_algorithms</span><span class="special">;</span>       
+  <span class="keyword">typedef</span> <span class="emphasis"><em><span class="identifier">unspecified</span></em></span>                                          <a name="doxygen.classboost_1_1intrusive_1_1list_1afa1e6c3b692efa02d6196e69012b1b84"></a><span class="identifier">header_holder_type</span><span class="special">;</span>    
+
+  <span class="comment">// <a class="link" href="classboost_1_1intrusive_1_1list.html#id53-bb">public member functions</a></span>
+  <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1ad0c63604a98fb2fbbaec0f4f43c12f34"><span class="identifier">list</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1ae40b2211648c4643f90f3c16fe3d07a7"><span class="identifier">list</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">value_traits</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Iterator<span class="special">&gt;</span> 
+    <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a1ef7eca62a55189e8da0c6d2c252d46e"><span class="identifier">list</span></a><span class="special">(</span><span class="identifier">Iterator</span><span class="special">,</span> <span class="identifier">Iterator</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">value_traits</span> <span class="special">&amp;</span> <span class="special">=</span> <span class="identifier">value_traits</span><span class="special">(</span><span class="special">)</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a5afa7f7c0ec109622bafe9492a631a73"><span class="identifier">list</span></a><span class="special">(</span><a class="link" href="classboost_1_1intrusive_1_1list.html" title="Class template list">list</a> <span class="special">&amp;&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1intrusive_1_1list.html" title="Class template list">list</a> <span class="special">&amp;</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1ad10e2544ef8086bcdb6d74d9cbcdc462"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><a class="link" href="classboost_1_1intrusive_1_1list.html" title="Class template list">list</a> <span class="special">&amp;&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a0ac3ca9b6aa98b1fa1100508d17ebf43"><span class="special">~</span><span class="identifier">list</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1ad97526a9559c899006a5e21c0aaba092"><span class="identifier">push_back</span></a><span class="special">(</span><span class="identifier">reference</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a586ed16a809412d678ba1225ac8316b9"><span class="identifier">push_front</span></a><span class="special">(</span><span class="identifier">reference</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a41b56679a9abcea2a0ca51e98e0110d7"><span class="identifier">pop_back</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Disposer<span class="special">&gt;</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1aa93173eaf8c78a3ea6698f8a42cb466b"><span class="identifier">pop_back_and_dispose</span></a><span class="special">(</span><span class="identifier">Disposer</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a8d1687b611e5a1d4178cb6ebe284ed11"><span class="identifier">pop_front</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Disposer<span class="special">&gt;</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a13a912a68a7f9b9bfa337b95c8520d16"><span class="identifier">pop_front_and_dispose</span></a><span class="special">(</span><span class="identifier">Disposer</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">reference</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a951874e4ce83665bf9f2c2e2753ff808"><span class="identifier">front</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">const_reference</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1ae91cf2ec0531df3b6a89b03c639d95bc"><span class="identifier">front</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">reference</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a83987ce3d5997b8187c9b094dcbf63d1"><span class="identifier">back</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">const_reference</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1ad4ff4def188411499e0e48866b35b9d9"><span class="identifier">back</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">iterator</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1afb49d4991111161f971371251a664787"><span class="identifier">begin</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">const_iterator</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a1bcbc1e924776a8dfc2281e83c2eb2b9"><span class="identifier">begin</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">const_iterator</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1ad6bcea2ae323b44aec87546f9e7a40bb"><span class="identifier">cbegin</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">iterator</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a3b2796bfd67cb0ca2832e24786790996"><span class="identifier">end</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">const_iterator</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a900f24c455a4a19ddf8fc6fc88b54b2a"><span class="identifier">end</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">const_iterator</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1adb6a9fc06d2a868407a9ab2495c80e78"><span class="identifier">cend</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">reverse_iterator</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1abe68c3a9ef81a9ad36086db3b4eeb988"><span class="identifier">rbegin</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">const_reverse_iterator</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a3e2ccde26c36f5f82965bfd588e2b24d"><span class="identifier">rbegin</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">const_reverse_iterator</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a2200fa7f1520ee5b3a0fcd08dc7aae26"><span class="identifier">crbegin</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">reverse_iterator</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1aa1318b9ddafb1e9e16723acfd8cee512"><span class="identifier">rend</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">const_reverse_iterator</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1ac8c776abdedb43c79f93cd236860c5da"><span class="identifier">rend</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">const_reverse_iterator</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a0e99e18c1b79b02a3b52327a014cb66b"><span class="identifier">crend</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">size_type</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a37f32d45ded5bec6875d394b1604cd6a"><span class="identifier">size</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1affc274e6001eff8b27ca023907185c5b"><span class="identifier">empty</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a422e1f7f9e7b00069b312be95c8258d7"><span class="identifier">swap</span></a><span class="special">(</span><a class="link" href="classboost_1_1intrusive_1_1list.html" title="Class template list">list</a> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1aeaa504a99438df3ae420f65fd1befd03"><span class="identifier">shift_backwards</span></a><span class="special">(</span><span class="identifier">size_type</span> <span class="special">=</span> <span class="number">1</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a570cee0d8d118f30f0961592f713c4ff"><span class="identifier">shift_forward</span></a><span class="special">(</span><span class="identifier">size_type</span> <span class="special">=</span> <span class="number">1</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">iterator</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1acf2430b91167248da60c2501d19ea7f2"><span class="identifier">erase</span></a><span class="special">(</span><span class="identifier">const_iterator</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">iterator</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a62a300b5ac8d90effbdd5c42f7b177cd"><span class="identifier">erase</span></a><span class="special">(</span><span class="identifier">const_iterator</span><span class="special">,</span> <span class="identifier">const_iterator</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">iterator</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a33031305bbe4989af154dc29de2e1fe2"><span class="identifier">erase</span></a><span class="special">(</span><span class="identifier">const_iterator</span><span class="special">,</span> <span class="identifier">const_iterator</span><span class="special">,</span> <span class="identifier">size_type</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Disposer<span class="special">&gt;</span> 
+    <span class="identifier">iterator</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1ae114f1f6a62a15c3c6d93912c1064358"><span class="identifier">erase_and_dispose</span></a><span class="special">(</span><span class="identifier">const_iterator</span><span class="special">,</span> <span class="identifier">Disposer</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Disposer<span class="special">&gt;</span> 
+    <span class="identifier">iterator</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a759198e5dbf81accad3bf880c0136306"><span class="identifier">erase_and_dispose</span></a><span class="special">(</span><span class="identifier">const_iterator</span><span class="special">,</span> <span class="identifier">const_iterator</span><span class="special">,</span> <span class="identifier">Disposer</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a043f148d16219430aff57e0f67842c98"><span class="identifier">clear</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Disposer<span class="special">&gt;</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a03bdfdb82c1efd70dba1957cae0d8941"><span class="identifier">clear_and_dispose</span></a><span class="special">(</span><span class="identifier">Disposer</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Cloner<span class="special">,</span> <span class="keyword">typename</span> Disposer<span class="special">&gt;</span> 
+    <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1ab450633e5d1877cd97c69f1a0dcab529"><span class="identifier">clone_from</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1intrusive_1_1list.html" title="Class template list">list</a> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">Cloner</span><span class="special">,</span> <span class="identifier">Disposer</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Cloner<span class="special">,</span> <span class="keyword">typename</span> Disposer<span class="special">&gt;</span> 
+    <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a91c26bf198be4afe3d8b5f361172da96"><span class="identifier">clone_from</span></a><span class="special">(</span><a class="link" href="classboost_1_1intrusive_1_1list.html" title="Class template list">list</a> <span class="special">&amp;&amp;</span><span class="special">,</span> <span class="identifier">Cloner</span><span class="special">,</span> <span class="identifier">Disposer</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">iterator</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a6e75f01aa720c3b9fd122486327b2fd5"><span class="identifier">insert</span></a><span class="special">(</span><span class="identifier">const_iterator</span><span class="special">,</span> <span class="identifier">reference</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Iterator<span class="special">&gt;</span> 
+    <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1aa30e76f3e128402ecd101abafcf2b0fa"><span class="identifier">insert</span></a><span class="special">(</span><span class="identifier">const_iterator</span><span class="special">,</span> <span class="identifier">Iterator</span><span class="special">,</span> <span class="identifier">Iterator</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Iterator<span class="special">&gt;</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1adcb6772facf04de438e57f7747f72e99"><span class="identifier">assign</span></a><span class="special">(</span><span class="identifier">Iterator</span><span class="special">,</span> <span class="identifier">Iterator</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Iterator<span class="special">,</span> <span class="keyword">typename</span> Disposer<span class="special">&gt;</span> 
+    <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1ae3f6aae83c6291dfcdada07ceac24d51"><span class="identifier">dispose_and_assign</span></a><span class="special">(</span><span class="identifier">Disposer</span><span class="special">,</span> <span class="identifier">Iterator</span><span class="special">,</span> <span class="identifier">Iterator</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a3212224591f19c3d5fd7692453983006"><span class="identifier">splice</span></a><span class="special">(</span><span class="identifier">const_iterator</span><span class="special">,</span> <a class="link" href="classboost_1_1intrusive_1_1list.html" title="Class template list">list</a> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a47d58d38f572de3285263f5ad3a658cc"><span class="identifier">splice</span></a><span class="special">(</span><span class="identifier">const_iterator</span><span class="special">,</span> <a class="link" href="classboost_1_1intrusive_1_1list.html" title="Class template list">list</a> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">const_iterator</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a073b156c192223abdba17c56024a5279"><span class="identifier">splice</span></a><span class="special">(</span><span class="identifier">const_iterator</span><span class="special">,</span> <a class="link" href="classboost_1_1intrusive_1_1list.html" title="Class template list">list</a> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">const_iterator</span><span class="special">,</span> <span class="identifier">const_iterator</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a3e4fdf25968acb0a91abe24bd4b304dd"><span class="identifier">splice</span></a><span class="special">(</span><span class="identifier">const_iterator</span><span class="special">,</span> <a class="link" href="classboost_1_1intrusive_1_1list.html" title="Class template list">list</a> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">const_iterator</span><span class="special">,</span> <span class="identifier">const_iterator</span><span class="special">,</span> 
+              <span class="identifier">size_type</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1aaff11e279a5ddb81b80d5a5125940636"><span class="identifier">sort</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Predicate<span class="special">&gt;</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1aa3821c344d08f61727f81b03f1cc4702"><span class="identifier">sort</span></a><span class="special">(</span><span class="identifier">Predicate</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a5de7ac4f75ba6255edd47ccb7eb9c6f4"><span class="identifier">merge</span></a><span class="special">(</span><a class="link" href="classboost_1_1intrusive_1_1list.html" title="Class template list">list</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Predicate<span class="special">&gt;</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a6c8f9750f4aba1dd130f1787a7a57778"><span class="identifier">merge</span></a><span class="special">(</span><a class="link" href="classboost_1_1intrusive_1_1list.html" title="Class template list">list</a> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">Predicate</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a4b546d17acc447a2a651beeed102a33c"><span class="identifier">reverse</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1abe8373184d4c87ed6517d3757840e533"><span class="identifier">remove</span></a><span class="special">(</span><span class="identifier">const_reference</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Disposer<span class="special">&gt;</span> 
+    <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1ad9f42ec6c40374fb41fbc2405bb3aa54"><span class="identifier">remove_and_dispose</span></a><span class="special">(</span><span class="identifier">const_reference</span><span class="special">,</span> <span class="identifier">Disposer</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Pred<span class="special">&gt;</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a4f8a1cc8bb38fe6da372a860c505a78d"><span class="identifier">remove_if</span></a><span class="special">(</span><span class="identifier">Pred</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Pred<span class="special">,</span> <span class="keyword">typename</span> Disposer<span class="special">&gt;</span> 
+    <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a1870dc8c53d839e8eeddba76a4dc46a2"><span class="identifier">remove_and_dispose_if</span></a><span class="special">(</span><span class="identifier">Pred</span><span class="special">,</span> <span class="identifier">Disposer</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a3388a3cf109f85a1dad6dbbacd982a36"><span class="identifier">unique</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> BinaryPredicate<span class="special">&gt;</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a13c7cc421b2c7efab4b13a6e3a420d84"><span class="identifier">unique</span></a><span class="special">(</span><span class="identifier">BinaryPredicate</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Disposer<span class="special">&gt;</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1ad87c9a03fb873f42909c3520c2b2992b"><span class="identifier">unique_and_dispose</span></a><span class="special">(</span><span class="identifier">Disposer</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> BinaryPredicate<span class="special">,</span> <span class="keyword">typename</span> Disposer<span class="special">&gt;</span> 
+    <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1ad7806e8639fae3225a5e0d1a3cc8a2b0"><span class="identifier">unique_and_dispose</span></a><span class="special">(</span><span class="identifier">BinaryPredicate</span><span class="special">,</span> <span class="identifier">Disposer</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">iterator</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a67823b0e3f23d5b83e0642ca5fd92ade"><span class="identifier">iterator_to</span></a><span class="special">(</span><span class="identifier">reference</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">const_iterator</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1aa00740cbc8811b20ef6cfb2bfe1dc589"><span class="identifier">iterator_to</span></a><span class="special">(</span><span class="identifier">const_reference</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a0bdaaff4d5357be6e1d6817f22e176c1"><span class="identifier">check</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1intrusive_1_1list.html#id54-bb">public static functions</a></span>
+  <span class="keyword">static</span> <a class="link" href="classboost_1_1intrusive_1_1list.html" title="Class template list">list</a> <span class="special">&amp;</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a706c94988834ddcaf00ea4422b3e3dbc"><span class="identifier">container_from_end_iterator</span></a><span class="special">(</span><span class="identifier">iterator</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1intrusive_1_1list.html" title="Class template list">list</a> <span class="special">&amp;</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a89349e7583d04acab96df2adcdbf21e5"><span class="identifier">container_from_end_iterator</span></a><span class="special">(</span><span class="identifier">const_iterator</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="identifier">iterator</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a98d78c61de9955d8429c6df62bc4dfbc"><span class="identifier">s_iterator_to</span></a><span class="special">(</span><span class="identifier">reference</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="identifier">const_iterator</span> <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1ae7f075a437ffe8a66cf0347ed7fd22c8"><span class="identifier">s_iterator_to</span></a><span class="special">(</span><span class="identifier">const_reference</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+
+  <span class="comment">// public data members</span>
+  <span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">bool</span> <span class="identifier">constant_time_size</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">bool</span> <span class="identifier">stateful_value_traits</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">bool</span> <span class="identifier">has_container_from_iterator</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.18.42.18.3.4"></a><h2>Description</h2>
+<p>The class template list is an intrusive container that mimics most of the interface of std::list as described in the C++ standard.</p>
+<p>The template parameter <code class="computeroutput">T</code> is the type to be managed by the container. The user can specify additional options and if no options are provided default options are used.</p>
+<p>The container supports the following options: <code class="computeroutput">base_hook&lt;&gt;/member_hook&lt;&gt;/value_traits&lt;&gt;</code>, <code class="computeroutput">constant_time_size&lt;&gt;</code> and <code class="computeroutput">size_type&lt;&gt;</code>. </p>
+<div class="refsect2">
+<a name="id-1.3.18.42.18.3.4.5"></a><h3>
+<a name="id53-bb"></a><code class="computeroutput">list</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.classboost_1_1intrusive_1_1list_1ad0c63604a98fb2fbbaec0f4f43c12f34"></a><span class="identifier">list</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: constructs an empty list.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant</p>
+<p><span class="bold"><strong>Throws</strong></span>: If value_traits::node_traits::node constructor throws (this does not happen with predefined Boost.Intrusive hooks). </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1ae40b2211648c4643f90f3c16fe3d07a7"></a><span class="identifier">list</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">value_traits</span> <span class="special">&amp;</span> v_traits<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: constructs an empty list.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant</p>
+<p><span class="bold"><strong>Throws</strong></span>: If value_traits::node_traits::node constructor throws (this does not happen with predefined Boost.Intrusive hooks). </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Iterator<span class="special">&gt;</span> 
+  <a name="doxygen.classboost_1_1intrusive_1_1list_1a1ef7eca62a55189e8da0c6d2c252d46e"></a><span class="identifier">list</span><span class="special">(</span><span class="identifier">Iterator</span> b<span class="special">,</span> <span class="identifier">Iterator</span> e<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">value_traits</span> <span class="special">&amp;</span> v_traits <span class="special">=</span> <span class="identifier">value_traits</span><span class="special">(</span><span class="special">)</span><span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: Dereferencing iterator must yield an lvalue of type value_type.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Constructs a list equal to the range [first,last).</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear in distance(b, e). No copy constructors are called.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If value_traits::node_traits::node constructor throws (this does not happen with predefined Boost.Intrusive hooks). </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.classboost_1_1intrusive_1_1list_1a5afa7f7c0ec109622bafe9492a631a73"></a><span class="identifier">list</span><span class="special">(</span><a class="link" href="classboost_1_1intrusive_1_1list.html" title="Class template list">list</a> <span class="special">&amp;&amp;</span> x<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Constructs a container moving resources from another container. Internal value traits are move constructed and nodes belonging to x (except the node representing the "end") are linked to *this.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If value_traits::node_traits::node's move constructor throws (this does not happen with predefined Boost.Intrusive hooks) or the move constructor of value traits throws. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a class="link" href="classboost_1_1intrusive_1_1list.html" title="Class template list">list</a> <span class="special">&amp;</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1ad10e2544ef8086bcdb6d74d9cbcdc462"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><a class="link" href="classboost_1_1intrusive_1_1list.html" title="Class template list">list</a> <span class="special">&amp;&amp;</span> x<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Equivalent to swap </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.classboost_1_1intrusive_1_1list_1a0ac3ca9b6aa98b1fa1100508d17ebf43"></a><span class="special">~</span><span class="identifier">list</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: If it's not a safe-mode or an auto-unlink value_type the destructor does nothing (ie. no code is generated). Otherwise it detaches all elements from this. In this case the objects in the list are not deleted (i.e. no destructors are called), but the hooks according to the ValueTraits template parameter are set to their default value.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear to the number of elements in the list, if it's a safe-mode or auto-unlink value . Otherwise constant. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1ad97526a9559c899006a5e21c0aaba092"></a><span class="identifier">push_back</span><span class="special">(</span><span class="identifier">reference</span> value<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: value must be an lvalue.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Inserts the value in the back of the list. No copy constructors are called.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant.</p>
+<p><span class="bold"><strong>Note</strong></span>: Does not affect the validity of iterators and references. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1a586ed16a809412d678ba1225ac8316b9"></a><span class="identifier">push_front</span><span class="special">(</span><span class="identifier">reference</span> value<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: value must be an lvalue.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Inserts the value in the front of the list. No copy constructors are called.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant.</p>
+<p><span class="bold"><strong>Note</strong></span>: Does not affect the validity of iterators and references. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1a41b56679a9abcea2a0ca51e98e0110d7"></a><span class="identifier">pop_back</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Erases the last element of the list. No destructors are called.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant.</p>
+<p><span class="bold"><strong>Note</strong></span>: Invalidates the iterators (but not the references) to the erased element. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Disposer<span class="special">&gt;</span> 
+  <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1aa93173eaf8c78a3ea6698f8a42cb466b"></a><span class="identifier">pop_back_and_dispose</span><span class="special">(</span><span class="identifier">Disposer</span> disposer<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: Disposer::operator()(pointer) shouldn't throw.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Erases the last element of the list. No destructors are called. Disposer::operator()(pointer) is called for the removed element.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant.</p>
+<p><span class="bold"><strong>Note</strong></span>: Invalidates the iterators to the erased element. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1a8d1687b611e5a1d4178cb6ebe284ed11"></a><span class="identifier">pop_front</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Erases the first element of the list. No destructors are called.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant.</p>
+<p><span class="bold"><strong>Note</strong></span>: Invalidates the iterators (but not the references) to the erased element. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Disposer<span class="special">&gt;</span> 
+  <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1a13a912a68a7f9b9bfa337b95c8520d16"></a><span class="identifier">pop_front_and_dispose</span><span class="special">(</span><span class="identifier">Disposer</span> disposer<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: Disposer::operator()(pointer) shouldn't throw.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Erases the first element of the list. No destructors are called. Disposer::operator()(pointer) is called for the removed element.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant.</p>
+<p><span class="bold"><strong>Note</strong></span>: Invalidates the iterators to the erased element. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">reference</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1a951874e4ce83665bf9f2c2e2753ff808"></a><span class="identifier">front</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Returns a reference to the first element of the list.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_reference</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1ae91cf2ec0531df3b6a89b03c639d95bc"></a><span class="identifier">front</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Returns a const_reference to the first element of the list.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">reference</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1a83987ce3d5997b8187c9b094dcbf63d1"></a><span class="identifier">back</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Returns a reference to the last element of the list.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_reference</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1ad4ff4def188411499e0e48866b35b9d9"></a><span class="identifier">back</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Returns a const_reference to the last element of the list.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">iterator</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1afb49d4991111161f971371251a664787"></a><span class="identifier">begin</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Returns an iterator to the first element contained in the list.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_iterator</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1a1bcbc1e924776a8dfc2281e83c2eb2b9"></a><span class="identifier">begin</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Returns a const_iterator to the first element contained in the list.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_iterator</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1ad6bcea2ae323b44aec87546f9e7a40bb"></a><span class="identifier">cbegin</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Returns a const_iterator to the first element contained in the list.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">iterator</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1a3b2796bfd67cb0ca2832e24786790996"></a><span class="identifier">end</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Returns an iterator to the end of the list.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_iterator</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1a900f24c455a4a19ddf8fc6fc88b54b2a"></a><span class="identifier">end</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Returns a const_iterator to the end of the list.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_iterator</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1adb6a9fc06d2a868407a9ab2495c80e78"></a><span class="identifier">cend</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Returns a constant iterator to the end of the list.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">reverse_iterator</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1abe68c3a9ef81a9ad36086db3b4eeb988"></a><span class="identifier">rbegin</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Returns a reverse_iterator pointing to the beginning of the reversed list.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_reverse_iterator</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1a3e2ccde26c36f5f82965bfd588e2b24d"></a><span class="identifier">rbegin</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Returns a const_reverse_iterator pointing to the beginning of the reversed list.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_reverse_iterator</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1a2200fa7f1520ee5b3a0fcd08dc7aae26"></a><span class="identifier">crbegin</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Returns a const_reverse_iterator pointing to the beginning of the reversed list.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">reverse_iterator</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1aa1318b9ddafb1e9e16723acfd8cee512"></a><span class="identifier">rend</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Returns a reverse_iterator pointing to the end of the reversed list.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_reverse_iterator</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1ac8c776abdedb43c79f93cd236860c5da"></a><span class="identifier">rend</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Returns a const_reverse_iterator pointing to the end of the reversed list.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_reverse_iterator</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1a0e99e18c1b79b02a3b52327a014cb66b"></a><span class="identifier">crend</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Returns a const_reverse_iterator pointing to the end of the reversed list.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">size_type</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1a37f32d45ded5bec6875d394b1604cd6a"></a><span class="identifier">size</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Returns the number of the elements contained in the list.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear to the number of elements contained in the list. if constant-time size option is disabled. Constant time otherwise.</p>
+<p><span class="bold"><strong>Note</strong></span>: Does not affect the validity of iterators and references. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1affc274e6001eff8b27ca023907185c5b"></a><span class="identifier">empty</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Returns true if the list contains no elements.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant.</p>
+<p><span class="bold"><strong>Note</strong></span>: Does not affect the validity of iterators and references. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1a422e1f7f9e7b00069b312be95c8258d7"></a><span class="identifier">swap</span><span class="special">(</span><a class="link" href="classboost_1_1intrusive_1_1list.html" title="Class template list">list</a> <span class="special">&amp;</span> other<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Swaps the elements of x and *this.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant.</p>
+<p><span class="bold"><strong>Note</strong></span>: Does not affect the validity of iterators and references. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1aeaa504a99438df3ae420f65fd1befd03"></a><span class="identifier">shift_backwards</span><span class="special">(</span><span class="identifier">size_type</span> n <span class="special">=</span> <span class="number">1</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Moves backwards all the elements, so that the first element becomes the second, the second becomes the third... the last element becomes the first one.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear to the number of shifts.</p>
+<p><span class="bold"><strong>Note</strong></span>: Does not affect the validity of iterators and references. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1a570cee0d8d118f30f0961592f713c4ff"></a><span class="identifier">shift_forward</span><span class="special">(</span><span class="identifier">size_type</span> n <span class="special">=</span> <span class="number">1</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Moves forward all the elements, so that the second element becomes the first, the third becomes the second... the first element becomes the last one.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear to the number of shifts.</p>
+<p><span class="bold"><strong>Note</strong></span>: Does not affect the validity of iterators and references. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">iterator</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1acf2430b91167248da60c2501d19ea7f2"></a><span class="identifier">erase</span><span class="special">(</span><span class="identifier">const_iterator</span> i<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Erases the element pointed by i of the list. No destructors are called.</p>
+<p><span class="bold"><strong>Returns</strong></span>: the first element remaining beyond the removed element, or <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a3b2796bfd67cb0ca2832e24786790996">end()</a> if no such element exists.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant.</p>
+<p><span class="bold"><strong>Note</strong></span>: Invalidates the iterators (but not the references) to the erased element. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">iterator</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1a62a300b5ac8d90effbdd5c42f7b177cd"></a><span class="identifier">erase</span><span class="special">(</span><span class="identifier">const_iterator</span> b<span class="special">,</span> <span class="identifier">const_iterator</span> e<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: b and e must be valid iterators to elements in *this.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Erases the element range pointed by b and e No destructors are called.</p>
+<p><span class="bold"><strong>Returns</strong></span>: the first element remaining beyond the removed elements, or <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a3b2796bfd67cb0ca2832e24786790996">end()</a> if no such element exists.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear to the number of erased elements if it's a safe-mode or auto-unlink value, or constant-time size is enabled. Constant-time otherwise.</p>
+<p><span class="bold"><strong>Note</strong></span>: Invalidates the iterators (but not the references) to the erased elements. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">iterator</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1a33031305bbe4989af154dc29de2e1fe2"></a><span class="identifier">erase</span><span class="special">(</span><span class="identifier">const_iterator</span> b<span class="special">,</span> <span class="identifier">const_iterator</span> e<span class="special">,</span> <span class="identifier">size_type</span> n<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: b and e must be valid iterators to elements in *this. n must be distance(b, e).</p>
+<p><span class="bold"><strong>Effects</strong></span>: Erases the element range pointed by b and e No destructors are called.</p>
+<p><span class="bold"><strong>Returns</strong></span>: the first element remaining beyond the removed elements, or <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a3b2796bfd67cb0ca2832e24786790996">end()</a> if no such element exists.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear to the number of erased elements if it's a safe-mode or auto-unlink value is enabled. Constant-time otherwise.</p>
+<p><span class="bold"><strong>Note</strong></span>: Invalidates the iterators (but not the references) to the erased elements. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Disposer<span class="special">&gt;</span> 
+  <span class="identifier">iterator</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1ae114f1f6a62a15c3c6d93912c1064358"></a><span class="identifier">erase_and_dispose</span><span class="special">(</span><span class="identifier">const_iterator</span> i<span class="special">,</span> <span class="identifier">Disposer</span> disposer<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: Disposer::operator()(pointer) shouldn't throw.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Erases the element pointed by i of the list. No destructors are called. Disposer::operator()(pointer) is called for the removed element.</p>
+<p><span class="bold"><strong>Returns</strong></span>: the first element remaining beyond the removed element, or <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a3b2796bfd67cb0ca2832e24786790996">end()</a> if no such element exists.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant.</p>
+<p><span class="bold"><strong>Note</strong></span>: Invalidates the iterators to the erased element. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Disposer<span class="special">&gt;</span> 
+  <span class="identifier">iterator</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1a759198e5dbf81accad3bf880c0136306"></a><span class="identifier">erase_and_dispose</span><span class="special">(</span><span class="identifier">const_iterator</span> b<span class="special">,</span> <span class="identifier">const_iterator</span> e<span class="special">,</span> 
+                             <span class="identifier">Disposer</span> disposer<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: Disposer::operator()(pointer) shouldn't throw.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Erases the element range pointed by b and e No destructors are called. Disposer::operator()(pointer) is called for the removed elements.</p>
+<p><span class="bold"><strong>Returns</strong></span>: the first element remaining beyond the removed elements, or <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a3b2796bfd67cb0ca2832e24786790996">end()</a> if no such element exists.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear to the number of elements erased.</p>
+<p><span class="bold"><strong>Note</strong></span>: Invalidates the iterators to the erased elements. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1a043f148d16219430aff57e0f67842c98"></a><span class="identifier">clear</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Erases all the elements of the container. No destructors are called.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear to the number of elements of the list. if it's a safe-mode or auto-unlink value_type. Constant time otherwise.</p>
+<p><span class="bold"><strong>Note</strong></span>: Invalidates the iterators (but not the references) to the erased elements. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Disposer<span class="special">&gt;</span> <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1a03bdfdb82c1efd70dba1957cae0d8941"></a><span class="identifier">clear_and_dispose</span><span class="special">(</span><span class="identifier">Disposer</span> disposer<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: Disposer::operator()(pointer) shouldn't throw.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Erases all the elements of the container. No destructors are called. Disposer::operator()(pointer) is called for the removed elements.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear to the number of elements of the list.</p>
+<p><span class="bold"><strong>Note</strong></span>: Invalidates the iterators to the erased elements. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Cloner<span class="special">,</span> <span class="keyword">typename</span> Disposer<span class="special">&gt;</span> 
+  <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1ab450633e5d1877cd97c69f1a0dcab529"></a><span class="identifier">clone_from</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1intrusive_1_1list.html" title="Class template list">list</a> <span class="special">&amp;</span> src<span class="special">,</span> <span class="identifier">Cloner</span> cloner<span class="special">,</span> <span class="identifier">Disposer</span> disposer<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: Disposer::operator()(pointer) shouldn't throw. Cloner should yield to nodes equivalent to the original nodes.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Erases all the elements from *this calling Disposer::operator()(pointer), clones all the elements from src calling Cloner::operator()(const_reference ) and inserts them on *this.</p>
+<p>If cloner throws, all cloned elements are unlinked and disposed calling Disposer::operator()(pointer).</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear to erased plus inserted elements.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If cloner throws. Basic guarantee. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Cloner<span class="special">,</span> <span class="keyword">typename</span> Disposer<span class="special">&gt;</span> 
+  <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1a91c26bf198be4afe3d8b5f361172da96"></a><span class="identifier">clone_from</span><span class="special">(</span><a class="link" href="classboost_1_1intrusive_1_1list.html" title="Class template list">list</a> <span class="special">&amp;&amp;</span> src<span class="special">,</span> <span class="identifier">Cloner</span> cloner<span class="special">,</span> <span class="identifier">Disposer</span> disposer<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: Disposer::operator()(pointer) shouldn't throw. Cloner should yield to nodes equivalent to the original nodes.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Erases all the elements from *this calling Disposer::operator()(pointer), clones all the elements from src calling Cloner::operator()(reference) and inserts them on *this.</p>
+<p>If cloner throws, all cloned elements are unlinked and disposed calling Disposer::operator()(pointer).</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear to erased plus inserted elements.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If cloner throws. Basic guarantee. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">iterator</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1a6e75f01aa720c3b9fd122486327b2fd5"></a><span class="identifier">insert</span><span class="special">(</span><span class="identifier">const_iterator</span> p<span class="special">,</span> <span class="identifier">reference</span> value<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: value must be an lvalue and p must be a valid iterator of *this.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Inserts the value before the position pointed by p.</p>
+<p><span class="bold"><strong>Returns</strong></span>: An iterator to the inserted element.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant time. No copy constructors are called.</p>
+<p><span class="bold"><strong>Note</strong></span>: Does not affect the validity of iterators and references. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Iterator<span class="special">&gt;</span> 
+  <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1aa30e76f3e128402ecd101abafcf2b0fa"></a><span class="identifier">insert</span><span class="special">(</span><span class="identifier">const_iterator</span> p<span class="special">,</span> <span class="identifier">Iterator</span> b<span class="special">,</span> <span class="identifier">Iterator</span> e<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: Dereferencing iterator must yield an lvalue of type value_type and p must be a valid iterator of *this.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Inserts the range pointed by b and e before the position p. No copy constructors are called.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear to the number of elements inserted.</p>
+<p><span class="bold"><strong>Note</strong></span>: Does not affect the validity of iterators and references. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Iterator<span class="special">&gt;</span> <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1adcb6772facf04de438e57f7747f72e99"></a><span class="identifier">assign</span><span class="special">(</span><span class="identifier">Iterator</span> b<span class="special">,</span> <span class="identifier">Iterator</span> e<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: Dereferencing iterator must yield an lvalue of type value_type.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Clears the list and inserts the range pointed by b and e. No destructors or copy constructors are called.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear to the number of elements inserted plus linear to the elements contained in the list if it's a safe-mode or auto-unlink value. Linear to the number of elements inserted in the list otherwise.</p>
+<p><span class="bold"><strong>Note</strong></span>: Invalidates the iterators (but not the references) to the erased elements. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Iterator<span class="special">,</span> <span class="keyword">typename</span> Disposer<span class="special">&gt;</span> 
+  <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1ae3f6aae83c6291dfcdada07ceac24d51"></a><span class="identifier">dispose_and_assign</span><span class="special">(</span><span class="identifier">Disposer</span> disposer<span class="special">,</span> <span class="identifier">Iterator</span> b<span class="special">,</span> <span class="identifier">Iterator</span> e<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: Disposer::operator()(pointer) shouldn't throw.</p>
+<p><span class="bold"><strong>Requires</strong></span>: Dereferencing iterator must yield an lvalue of type value_type.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Clears the list and inserts the range pointed by b and e. No destructors or copy constructors are called. Disposer::operator()(pointer) is called for the removed elements.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear to the number of elements inserted plus linear to the elements contained in the list.</p>
+<p><span class="bold"><strong>Note</strong></span>: Invalidates the iterators (but not the references) to the erased elements. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1a3212224591f19c3d5fd7692453983006"></a><span class="identifier">splice</span><span class="special">(</span><span class="identifier">const_iterator</span> p<span class="special">,</span> <a class="link" href="classboost_1_1intrusive_1_1list.html" title="Class template list">list</a> <span class="special">&amp;</span> x<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: p must be a valid iterator of *this.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Transfers all the elements of list x to this list, before the the element pointed by p. No destructors or copy constructors are called.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant.</p>
+<p><span class="bold"><strong>Note</strong></span>: Iterators of values obtained from list x now point to elements of this list. Iterators of this list and all the references are not invalidated. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1a47d58d38f572de3285263f5ad3a658cc"></a><span class="identifier">splice</span><span class="special">(</span><span class="identifier">const_iterator</span> p<span class="special">,</span> <a class="link" href="classboost_1_1intrusive_1_1list.html" title="Class template list">list</a> <span class="special">&amp;</span> x<span class="special">,</span> <span class="identifier">const_iterator</span> new_ele<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: p must be a valid iterator of *this. new_ele must point to an element contained in list x.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Transfers the value pointed by new_ele, from list x to this list, before the element pointed by p. No destructors or copy constructors are called. If p == new_ele or p == ++new_ele, this function is a null operation.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant.</p>
+<p><span class="bold"><strong>Note</strong></span>: Iterators of values obtained from list x now point to elements of this list. Iterators of this list and all the references are not invalidated. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1a073b156c192223abdba17c56024a5279"></a><span class="identifier">splice</span><span class="special">(</span><span class="identifier">const_iterator</span> p<span class="special">,</span> <a class="link" href="classboost_1_1intrusive_1_1list.html" title="Class template list">list</a> <span class="special">&amp;</span> x<span class="special">,</span> <span class="identifier">const_iterator</span> f<span class="special">,</span> <span class="identifier">const_iterator</span> e<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: p must be a valid iterator of *this. f and e must point to elements contained in list x.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Transfers the range pointed by f and e from list x to this list, before the element pointed by p. No destructors or copy constructors are called.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear to the number of elements transferred if constant-time size option is enabled. Constant-time otherwise.</p>
+<p><span class="bold"><strong>Note</strong></span>: Iterators of values obtained from list x now point to elements of this list. Iterators of this list and all the references are not invalidated. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1a3e4fdf25968acb0a91abe24bd4b304dd"></a><span class="identifier">splice</span><span class="special">(</span><span class="identifier">const_iterator</span> p<span class="special">,</span> <a class="link" href="classboost_1_1intrusive_1_1list.html" title="Class template list">list</a> <span class="special">&amp;</span> x<span class="special">,</span> <span class="identifier">const_iterator</span> f<span class="special">,</span> <span class="identifier">const_iterator</span> e<span class="special">,</span> 
+            <span class="identifier">size_type</span> n<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: p must be a valid iterator of *this. f and e must point to elements contained in list x. n == distance(f, e)</p>
+<p><span class="bold"><strong>Effects</strong></span>: Transfers the range pointed by f and e from list x to this list, before the element pointed by p. No destructors or copy constructors are called.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant.</p>
+<p><span class="bold"><strong>Note</strong></span>: Iterators of values obtained from list x now point to elements of this list. Iterators of this list and all the references are not invalidated. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1aaff11e279a5ddb81b80d5a5125940636"></a><span class="identifier">sort</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: This function sorts the list *this according to operator &lt;. The sort is stable, that is, the relative order of equivalent elements is preserved.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If value_traits::node_traits::node constructor throws (this does not happen with predefined Boost.Intrusive hooks) or operator &lt; throws. Basic guarantee.</p>
+<p><span class="bold"><strong>Notes</strong></span>: Iterators and references are not invalidated.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: The number of comparisons is approximately N log N, where N is the list's size. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Predicate<span class="special">&gt;</span> <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1aa3821c344d08f61727f81b03f1cc4702"></a><span class="identifier">sort</span><span class="special">(</span><span class="identifier">Predicate</span> p<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: p must be a comparison function that induces a strict weak ordering</p>
+<p><span class="bold"><strong>Effects</strong></span>: This function sorts the list *this according to p. The sort is stable, that is, the relative order of equivalent elements is preserved.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If value_traits::node_traits::node constructor throws (this does not happen with predefined Boost.Intrusive hooks) or the predicate throws. Basic guarantee.</p>
+<p><span class="bold"><strong>Notes</strong></span>: This won't throw if list_base_hook&lt;&gt; or <a class="link" href="classboost_1_1intrusive_1_1list__member__hook.html" title="Class template list_member_hook">list_member_hook</a> are used. Iterators and references are not invalidated.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: The number of comparisons is approximately N log N, where N is the list's size. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1a5de7ac4f75ba6255edd47ccb7eb9c6f4"></a><span class="identifier">merge</span><span class="special">(</span><a class="link" href="classboost_1_1intrusive_1_1list.html" title="Class template list">list</a> <span class="special">&amp;</span> x<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: This function removes all of x's elements and inserts them in order into *this according to operator &lt;. The merge is stable; that is, if an element from *this is equivalent to one from x, then the element from *this will precede the one from x.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If operator &lt; throws. Basic guarantee.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: This function is linear time: it performs at most <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a37f32d45ded5bec6875d394b1604cd6a">size()</a> + x.size() - 1 comparisons.</p>
+<p><span class="bold"><strong>Note</strong></span>: Iterators and references are not invalidated </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Predicate<span class="special">&gt;</span> <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1a6c8f9750f4aba1dd130f1787a7a57778"></a><span class="identifier">merge</span><span class="special">(</span><a class="link" href="classboost_1_1intrusive_1_1list.html" title="Class template list">list</a> <span class="special">&amp;</span> x<span class="special">,</span> <span class="identifier">Predicate</span> p<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: p must be a comparison function that induces a strict weak ordering and both *this and x must be sorted according to that ordering The lists x and *this must be distinct.</p>
+<p><span class="bold"><strong>Effects</strong></span>: This function removes all of x's elements and inserts them in order into *this. The merge is stable; that is, if an element from *this is equivalent to one from x, then the element from *this will precede the one from x.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If the predicate throws. Basic guarantee.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: This function is linear time: it performs at most <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a37f32d45ded5bec6875d394b1604cd6a">size()</a> + x.size() - 1 comparisons.</p>
+<p><span class="bold"><strong>Note</strong></span>: Iterators and references are not invalidated. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1a4b546d17acc447a2a651beeed102a33c"></a><span class="identifier">reverse</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Reverses the order of elements in the list.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: This function is linear time.</p>
+<p><span class="bold"><strong>Note</strong></span>: Iterators and references are not invalidated </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1abe8373184d4c87ed6517d3757840e533"></a><span class="identifier">remove</span><span class="special">(</span><span class="identifier">const_reference</span> value<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Removes all the elements that compare equal to value. No destructors are called.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If operator == throws. Basic guarantee.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear time. It performs exactly <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a37f32d45ded5bec6875d394b1604cd6a">size()</a> comparisons for equality.</p>
+<p><span class="bold"><strong>Note</strong></span>: The relative order of elements that are not removed is unchanged, and iterators to elements that are not removed remain valid. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Disposer<span class="special">&gt;</span> 
+  <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1ad9f42ec6c40374fb41fbc2405bb3aa54"></a><span class="identifier">remove_and_dispose</span><span class="special">(</span><span class="identifier">const_reference</span> value<span class="special">,</span> <span class="identifier">Disposer</span> disposer<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: Disposer::operator()(pointer) shouldn't throw.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Removes all the elements that compare equal to value. Disposer::operator()(pointer) is called for every removed element.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If operator == throws. Basic guarantee.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear time. It performs exactly <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a37f32d45ded5bec6875d394b1604cd6a">size()</a> comparisons for equality.</p>
+<p><span class="bold"><strong>Note</strong></span>: The relative order of elements that are not removed is unchanged, and iterators to elements that are not removed remain valid. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Pred<span class="special">&gt;</span> <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1a4f8a1cc8bb38fe6da372a860c505a78d"></a><span class="identifier">remove_if</span><span class="special">(</span><span class="identifier">Pred</span> pred<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Removes all the elements for which a specified predicate is satisfied. No destructors are called.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If pred throws. Basic guarantee.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear time. It performs exactly <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a37f32d45ded5bec6875d394b1604cd6a">size()</a> calls to the predicate.</p>
+<p><span class="bold"><strong>Note</strong></span>: The relative order of elements that are not removed is unchanged, and iterators to elements that are not removed remain valid. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Pred<span class="special">,</span> <span class="keyword">typename</span> Disposer<span class="special">&gt;</span> 
+  <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1a1870dc8c53d839e8eeddba76a4dc46a2"></a><span class="identifier">remove_and_dispose_if</span><span class="special">(</span><span class="identifier">Pred</span> pred<span class="special">,</span> <span class="identifier">Disposer</span> disposer<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: Disposer::operator()(pointer) shouldn't throw.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Removes all the elements for which a specified predicate is satisfied. Disposer::operator()(pointer) is called for every removed element.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If pred throws. Basic guarantee.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear time. It performs exactly <a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a37f32d45ded5bec6875d394b1604cd6a">size()</a> comparisons for equality.</p>
+<p><span class="bold"><strong>Note</strong></span>: The relative order of elements that are not removed is unchanged, and iterators to elements that are not removed remain valid. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1a3388a3cf109f85a1dad6dbbacd982a36"></a><span class="identifier">unique</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Removes adjacent duplicate elements or adjacent elements that are equal from the list. No destructors are called.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If the comparison operator throws. Basic guarantee.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear time (<a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a37f32d45ded5bec6875d394b1604cd6a">size()</a>-1 comparisons calls to pred()).</p>
+<p><span class="bold"><strong>Note</strong></span>: The relative order of elements that are not removed is unchanged, and iterators to elements that are not removed remain valid. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> BinaryPredicate<span class="special">&gt;</span> <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1a13c7cc421b2c7efab4b13a6e3a420d84"></a><span class="identifier">unique</span><span class="special">(</span><span class="identifier">BinaryPredicate</span> pred<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Removes adjacent duplicate elements or adjacent elements that satisfy some binary predicate from the list. No destructors are called.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If pred throws. Basic guarantee.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear time (<a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a37f32d45ded5bec6875d394b1604cd6a">size()</a>-1 comparisons equality comparisons).</p>
+<p><span class="bold"><strong>Note</strong></span>: The relative order of elements that are not removed is unchanged, and iterators to elements that are not removed remain valid. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Disposer<span class="special">&gt;</span> <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1ad87c9a03fb873f42909c3520c2b2992b"></a><span class="identifier">unique_and_dispose</span><span class="special">(</span><span class="identifier">Disposer</span> disposer<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: Disposer::operator()(pointer) shouldn't throw.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Removes adjacent duplicate elements or adjacent elements that are equal from the list. Disposer::operator()(pointer) is called for every removed element.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If the equality operator throws. Basic guarantee.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear time (<a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a37f32d45ded5bec6875d394b1604cd6a">size()</a>-1) comparisons equality comparisons.</p>
+<p><span class="bold"><strong>Note</strong></span>: The relative order of elements that are not removed is unchanged, and iterators to elements that are not removed remain valid. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> BinaryPredicate<span class="special">,</span> <span class="keyword">typename</span> Disposer<span class="special">&gt;</span> 
+  <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1ad7806e8639fae3225a5e0d1a3cc8a2b0"></a><span class="identifier">unique_and_dispose</span><span class="special">(</span><span class="identifier">BinaryPredicate</span> pred<span class="special">,</span> <span class="identifier">Disposer</span> disposer<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: Disposer::operator()(pointer) shouldn't throw.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Removes adjacent duplicate elements or adjacent elements that satisfy some binary predicate from the list. Disposer::operator()(pointer) is called for every removed element.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If pred throws. Basic guarantee.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear time (<a class="link" href="classboost_1_1intrusive_1_1list.html#doxygen.classboost_1_1intrusive_1_1list_1a37f32d45ded5bec6875d394b1604cd6a">size()</a>-1) comparisons equality comparisons.</p>
+<p><span class="bold"><strong>Note</strong></span>: The relative order of elements that are not removed is unchanged, and iterators to elements that are not removed remain valid. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">iterator</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1a67823b0e3f23d5b83e0642ca5fd92ade"></a><span class="identifier">iterator_to</span><span class="special">(</span><span class="identifier">reference</span> value<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: value must be a reference to a value inserted in a list.</p>
+<p><span class="bold"><strong>Effects</strong></span>: This function returns a const_iterator pointing to the element</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant time.</p>
+<p><span class="bold"><strong>Note</strong></span>: Iterators and references are not invalidated. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_iterator</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1aa00740cbc8811b20ef6cfb2bfe1dc589"></a><span class="identifier">iterator_to</span><span class="special">(</span><span class="identifier">const_reference</span> value<span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: value must be a const reference to a value inserted in a list.</p>
+<p><span class="bold"><strong>Effects</strong></span>: This function returns an iterator pointing to the element.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant time.</p>
+<p><span class="bold"><strong>Note</strong></span>: Iterators and references are not invalidated. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1a0bdaaff4d5357be6e1d6817f22e176c1"></a><span class="identifier">check</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Asserts the integrity of the container.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear time.</p>
+<p><span class="bold"><strong>Note</strong></span>: The method has no effect when asserts are turned off (e.g., with NDEBUG). Experimental function, interface might change in future versions. </p>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.18.42.18.3.4.6"></a><h3>
+<a name="id54-bb"></a><code class="computeroutput">list</code> public static functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <a class="link" href="classboost_1_1intrusive_1_1list.html" title="Class template list">list</a> <span class="special">&amp;</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1a706c94988834ddcaf00ea4422b3e3dbc"></a><span class="identifier">container_from_end_iterator</span><span class="special">(</span><span class="identifier">iterator</span> end_iterator<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Precondition</strong></span>: end_iterator must be a valid end iterator of list.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Returns a const reference to the list associated to the end iterator</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1intrusive_1_1list.html" title="Class template list">list</a> <span class="special">&amp;</span> 
+<a name="doxygen.classboost_1_1intrusive_1_1list_1a89349e7583d04acab96df2adcdbf21e5"></a><span class="identifier">container_from_end_iterator</span><span class="special">(</span><span class="identifier">const_iterator</span> end_iterator<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Precondition</strong></span>: end_iterator must be a valid end const_iterator of list.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Returns a const reference to the list associated to the end iterator</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="identifier">iterator</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1a98d78c61de9955d8429c6df62bc4dfbc"></a><span class="identifier">s_iterator_to</span><span class="special">(</span><span class="identifier">reference</span> value<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: value must be a reference to a value inserted in a list.</p>
+<p><span class="bold"><strong>Effects</strong></span>: This function returns a const_iterator pointing to the element</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant time.</p>
+<p><span class="bold"><strong>Note</strong></span>: Iterators and references are not invalidated. This static function is available only if the <span class="emphasis"><em>value traits</em></span> is stateless. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="identifier">const_iterator</span> <a name="doxygen.classboost_1_1intrusive_1_1list_1ae7f075a437ffe8a66cf0347ed7fd22c8"></a><span class="identifier">s_iterator_to</span><span class="special">(</span><span class="identifier">const_reference</span> value<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: value must be a const reference to a value inserted in a list.</p>
+<p><span class="bold"><strong>Effects</strong></span>: This function returns an iterator pointing to the element.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant time.</p>
+<p><span class="bold"><strong>Note</strong></span>: Iterators and references are not invalidated. This static function is available only if the <span class="emphasis"><em>value traits</em></span> is stateless. </p>
+</li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2005 Olaf Krzikalla<br>Copyright © 2006-2015 Ion Gaztanaga<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="link__mode_8hpp_1a78f33f6f20c898563c4449b5cff5d9c3.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../intrusive/reference.html#doxygen.list_8hpp"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="structboost_1_1intrusive_1_1make__list.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

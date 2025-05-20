@@ -1,0 +1,87 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template insert_iterator</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.Icl">
+<link rel="up" href="iterator_8hpp.html" title="Header &lt;boost/icl/iterator.hpp&gt;">
+<link rel="prev" href="classboost_1_1icl_1_1add__iterator.html" title="Class template add_iterator">
+<link rel="next" href="iterator_8hpp_1a263c3021400b9da6addea4346bb6d2e7.html" title="Function template adder">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1icl_1_1add__iterator.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="iterator_8hpp.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="iterator_8hpp_1a263c3021400b9da6addea4346bb6d2e7.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.interval_container_library_reference.classboost_1_1icl_1_1insert__iterator"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template insert_iterator</span></h2>
+<p>boost::icl::insert_iterator — Performes an insertion using a container's memberfunction add, when operator= is called. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="iterator_8hpp.html" title="Header &lt;boost/icl/iterator.hpp&gt;">boost/icl/iterator.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ContainerT<span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1icl_1_1insert__iterator.html" title="Class template insert_iterator">insert_iterator</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">ContainerT</span>               <a name="doxygen.interval_container_library_reference.classboost_1_1icl_1_1insert__iterator_1a0b2fd6e40fa6def810cc5ca719a0d82b"></a><span class="identifier">container_type</span><span class="special">;</span>     <span class="comment">// The container's type. </span>
+  <span class="keyword">typedef</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">output_iterator_tag</span> <a name="doxygen.interval_container_library_reference.classboost_1_1icl_1_1insert__iterator_1af2d86d03167bb3ad77f2c53de38a364b"></a><span class="identifier">iterator_category</span><span class="special">;</span>
+  <span class="keyword">typedef</span> <span class="keyword">void</span>                     <a name="doxygen.interval_container_library_reference.classboost_1_1icl_1_1insert__iterator_1af7f6861d526ef097bd77db7ec8c540c8"></a><span class="identifier">value_type</span><span class="special">;</span>       
+  <span class="keyword">typedef</span> <span class="keyword">void</span>                     <a name="doxygen.interval_container_library_reference.classboost_1_1icl_1_1insert__iterator_1a3c4d940d910785daa7b3a50f8f67b9ef"></a><span class="identifier">difference_type</span><span class="special">;</span>  
+  <span class="keyword">typedef</span> <span class="keyword">void</span>                     <a name="doxygen.interval_container_library_reference.classboost_1_1icl_1_1insert__iterator_1a0d87c578a2b202b85f0ce0742f5ce865"></a><span class="identifier">pointer</span><span class="special">;</span>          
+  <span class="keyword">typedef</span> <span class="keyword">void</span>                     <a name="doxygen.interval_container_library_reference.classboost_1_1icl_1_1insert__iterator_1a1ded0a6a253216fe6a76fa0b98721a96"></a><span class="identifier">reference</span><span class="special">;</span>        
+
+  <span class="comment">// <a class="link" href="classboost_1_1icl_1_1insert__iterator.html#id113-bb">public member functions</a></span>
+  <a class="link" href="classboost_1_1icl_1_1insert__iterator.html#doxygen.interval_container_library_reference.classboost_1_1icl_1_1insert__iterator_1a09e18dc67bf801de4ebdf3b60a99f21d"><span class="identifier">insert_iterator</span></a><span class="special">(</span><span class="identifier">ContainerT</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">typename</span> <span class="identifier">ContainerT</span><span class="special">::</span><span class="identifier">iterator</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1icl_1_1insert__iterator.html" title="Class template insert_iterator">insert_iterator</a> <span class="special">&amp;</span> <a class="link" href="classboost_1_1icl_1_1insert__iterator.html#doxygen.interval_container_library_reference.classboost_1_1icl_1_1insert__iterator_1adcb608fae8820de59cd1336d0781bf6f"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><span class="keyword">typename</span> <span class="identifier">ContainerT</span><span class="special">::</span><span class="identifier">const_reference</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1icl_1_1insert__iterator.html" title="Class template insert_iterator">insert_iterator</a> <span class="special">&amp;</span> <a class="link" href="classboost_1_1icl_1_1insert__iterator.html#doxygen.interval_container_library_reference.classboost_1_1icl_1_1insert__iterator_1a94e679fa5519c815de2ef89698b98b0e"><span class="keyword">operator</span><span class="special">*</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1icl_1_1insert__iterator.html" title="Class template insert_iterator">insert_iterator</a> <span class="special">&amp;</span> <a class="link" href="classboost_1_1icl_1_1insert__iterator.html#doxygen.interval_container_library_reference.classboost_1_1icl_1_1insert__iterator_1ad00718c56bd949b51c1ca8f4823941d1"><span class="keyword">operator</span><span class="special">++</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1icl_1_1insert__iterator.html" title="Class template insert_iterator">insert_iterator</a> <span class="special">&amp;</span> <a class="link" href="classboost_1_1icl_1_1insert__iterator.html#doxygen.interval_container_library_reference.classboost_1_1icl_1_1insert__iterator_1a6f86f4b98d00ddfdcfb5abfada169c68"><span class="keyword">operator</span><span class="special">++</span></a><span class="special">(</span><span class="keyword">int</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id55010"></a><h2>Description</h2>
+<div class="refsect2">
+<a name="id55012"></a><h3>
+<a name="id113-bb"></a><code class="computeroutput">insert_iterator</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.interval_container_library_reference.classboost_1_1icl_1_1insert__iterator_1a09e18dc67bf801de4ebdf3b60a99f21d"></a><span class="identifier">insert_iterator</span><span class="special">(</span><span class="identifier">ContainerT</span> <span class="special">&amp;</span> cont<span class="special">,</span> <span class="keyword">typename</span> <span class="identifier">ContainerT</span><span class="special">::</span><span class="identifier">iterator</span> iter<span class="special">)</span><span class="special">;</span></pre>
+<p>An <a class="link" href="classboost_1_1icl_1_1insert__iterator.html" title="Class template insert_iterator">insert_iterator</a> is constructed with a container and a position that has to be maintained. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a class="link" href="classboost_1_1icl_1_1insert__iterator.html" title="Class template insert_iterator">insert_iterator</a> <span class="special">&amp;</span> <a name="doxygen.interval_container_library_reference.classboost_1_1icl_1_1insert__iterator_1adcb608fae8820de59cd1336d0781bf6f"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><span class="keyword">typename</span> <span class="identifier">ContainerT</span><span class="special">::</span><span class="identifier">const_reference</span> value<span class="special">)</span><span class="special">;</span></pre>
+<p>This assignment operator adds the <code class="computeroutput">value</code> before the current position. It maintains it's position by incrementing after addition. <br>
+ </p>
+</li>
+<li class="listitem"><pre class="literallayout"><a class="link" href="classboost_1_1icl_1_1insert__iterator.html" title="Class template insert_iterator">insert_iterator</a> <span class="special">&amp;</span> <a name="doxygen.interval_container_library_reference.classboost_1_1icl_1_1insert__iterator_1a94e679fa5519c815de2ef89698b98b0e"></a><span class="keyword">operator</span><span class="special">*</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a class="link" href="classboost_1_1icl_1_1insert__iterator.html" title="Class template insert_iterator">insert_iterator</a> <span class="special">&amp;</span> <a name="doxygen.interval_container_library_reference.classboost_1_1icl_1_1insert__iterator_1ad00718c56bd949b51c1ca8f4823941d1"></a><span class="keyword">operator</span><span class="special">++</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a class="link" href="classboost_1_1icl_1_1insert__iterator.html" title="Class template insert_iterator">insert_iterator</a> <span class="special">&amp;</span> <a name="doxygen.interval_container_library_reference.classboost_1_1icl_1_1insert__iterator_1a6f86f4b98d00ddfdcfb5abfada169c68"></a><span class="keyword">operator</span><span class="special">++</span><span class="special">(</span><span class="keyword">int</span><span class="special">)</span><span class="special">;</span></pre></li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2007-2010 Joachim
+      Faulhaber<br>Copyright © 1999-2006 Cortex Software
+      GmbH<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1icl_1_1add__iterator.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="iterator_8hpp.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="iterator_8hpp_1a263c3021400b9da6addea4346bb6d2e7.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

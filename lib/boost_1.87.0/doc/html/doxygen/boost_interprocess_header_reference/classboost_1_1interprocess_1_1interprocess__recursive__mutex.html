@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class interprocess_recursive_mutex</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../../interprocess/indexes_reference.html#doxygen.boost_interprocess_header_reference.interprocess__recursive__mutex_8hpp" title="Header &lt;boost/interprocess/sync/interprocess_recursive_mutex.hpp&gt;">
+<link rel="prev" href="classboost_1_1interprocess_1_1interprocess__mutex.html" title="Class interprocess_mutex">
+<link rel="next" href="classboost_1_1interprocess_1_1interprocess__semaphore.html" title="Class interprocess_semaphore">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1interprocess_1_1interprocess__mutex.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../interprocess/indexes_reference.html#doxygen.boost_interprocess_header_reference.interprocess__recursive__mutex_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1interprocess_1_1interprocess__semaphore.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1interprocess__recursive__mutex"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class interprocess_recursive_mutex</span></h2>
+<p>boost::interprocess::interprocess_recursive_mutex</p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../interprocess/indexes_reference.html#doxygen.boost_interprocess_header_reference.interprocess__recursive__mutex_8hpp" title="Header &lt;boost/interprocess/sync/interprocess_recursive_mutex.hpp&gt;">boost/interprocess/sync/interprocess_recursive_mutex.hpp</a>&gt;
+
+</span>
+<span class="keyword">class</span> <a class="link" href="classboost_1_1interprocess_1_1interprocess__recursive__mutex.html" title="Class interprocess_recursive_mutex">interprocess_recursive_mutex</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+
+  <span class="comment">// <a class="link" href="../boost_container_header_reference/classboost_1_1container_1_1pmr_1_1memory__resource.html#id80-bb">public member functions</a></span>
+  <a class="link" href="classboost_1_1interprocess_1_1interprocess__recursive__mutex.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1interprocess__recursive__mutex_1a404d12deab37f96d91dd5731108f92e8"><span class="identifier">interprocess_recursive_mutex</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1interprocess_1_1interprocess__recursive__mutex.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1interprocess__recursive__mutex_1a167637d44bf2adc54bf6e739c937876a"><span class="special">~</span><span class="identifier">interprocess_recursive_mutex</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1interprocess_1_1interprocess__recursive__mutex.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1interprocess__recursive__mutex_1af4b16acaf49305d56499836f0474e0cb"><span class="identifier">lock</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1interprocess_1_1interprocess__recursive__mutex.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1interprocess__recursive__mutex_1a0e885f0c11ea9c032a504bf0bc23b760"><span class="identifier">try_lock</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> TimePoint<span class="special">&gt;</span> <span class="keyword">bool</span> <a class="link" href="classboost_1_1interprocess_1_1interprocess__recursive__mutex.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1interprocess__recursive__mutex_1a997fed3dd67abdc24e45cbb86cebd796"><span class="identifier">timed_lock</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">TimePoint</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> TimePoint<span class="special">&gt;</span> <span class="keyword">bool</span> <a class="link" href="classboost_1_1interprocess_1_1interprocess__recursive__mutex.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1interprocess__recursive__mutex_1a275b00e3a8366bf2538bb2b779820b29"><span class="identifier">try_lock_until</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">TimePoint</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Duration<span class="special">&gt;</span> <span class="keyword">bool</span> <a class="link" href="classboost_1_1interprocess_1_1interprocess__recursive__mutex.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1interprocess__recursive__mutex_1a1487d8ba99e5825dd67e9d64ee34a153"><span class="identifier">try_lock_for</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">Duration</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1interprocess_1_1interprocess__recursive__mutex.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1interprocess__recursive__mutex_1a90e3898f5893d07ecd17ccfa9fcfd009"><span class="identifier">unlock</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.17.19.3.61.4.4"></a><h2>Description</h2>
+<p>Wraps a <a class="link" href="classboost_1_1interprocess_1_1interprocess__mutex.html" title="Class interprocess_mutex">interprocess_mutex</a> that can be placed in shared memory and can be shared between processes. Allows several locking calls by the same process. Allows timed lock tries </p>
+<div class="refsect2">
+<a name="id-1.3.17.19.3.61.4.4.3"></a><h3>
+<a name="id80-bb"></a><code class="computeroutput">interprocess_recursive_mutex</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1interprocess__recursive__mutex_1a404d12deab37f96d91dd5731108f92e8"></a><span class="identifier">interprocess_recursive_mutex</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Constructor. Throws <a class="link" href="classboost_1_1interprocess_1_1interprocess__exception.html" title="Class interprocess_exception">interprocess_exception</a> on error. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1interprocess__recursive__mutex_1a167637d44bf2adc54bf6e739c937876a"></a><span class="special">~</span><span class="identifier">interprocess_recursive_mutex</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Destructor. If any process uses the mutex after the destructor is called the result is undefined. Does not throw. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1interprocess__recursive__mutex_1af4b16acaf49305d56499836f0474e0cb"></a><span class="identifier">lock</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Effects: The calling thread tries to obtain ownership of the mutex, and if another thread has ownership of the mutex, it waits until it can obtain the ownership. If a thread takes ownership of the mutex the mutex must be unlocked by the same mutex. The mutex must be unlocked the same number of times it is locked. Throws: <a class="link" href="classboost_1_1interprocess_1_1interprocess__exception.html" title="Class interprocess_exception">interprocess_exception</a> on error.</p>
+<p>Note: A program shall not deadlock if the thread that has ownership calls this function. <br>
+ </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1interprocess__recursive__mutex_1a0e885f0c11ea9c032a504bf0bc23b760"></a><span class="identifier">try_lock</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Tries to lock the <a class="link" href="classboost_1_1interprocess_1_1interprocess__mutex.html" title="Class interprocess_mutex">interprocess_mutex</a>, returns false when <a class="link" href="classboost_1_1interprocess_1_1interprocess__mutex.html" title="Class interprocess_mutex">interprocess_mutex</a> is already locked, returns true when success. The mutex must be unlocked the same number of times it is locked. Throws: <a class="link" href="classboost_1_1interprocess_1_1interprocess__exception.html" title="Class interprocess_exception">interprocess_exception</a> if a severe error is found</p>
+<p>Note: A program shall not deadlock if the thread that has ownership calls this function. <br>
+ </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> TimePoint<span class="special">&gt;</span> <span class="keyword">bool</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1interprocess__recursive__mutex_1a997fed3dd67abdc24e45cbb86cebd796"></a><span class="identifier">timed_lock</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">TimePoint</span> <span class="special">&amp;</span> abs_time<span class="special">)</span><span class="special">;</span></pre>
+<p>Tries to lock the <a class="link" href="classboost_1_1interprocess_1_1interprocess__mutex.html" title="Class interprocess_mutex">interprocess_mutex</a>, if <a class="link" href="classboost_1_1interprocess_1_1interprocess__mutex.html" title="Class interprocess_mutex">interprocess_mutex</a> can't be locked before abs_time time, returns false. The mutex must be unlocked the same number of times it is locked. Throws: <a class="link" href="classboost_1_1interprocess_1_1interprocess__exception.html" title="Class interprocess_exception">interprocess_exception</a> if a severe error is found</p>
+<p>Note: A program shall not deadlock if the thread that has ownership calls this function. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> TimePoint<span class="special">&gt;</span> <span class="keyword">bool</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1interprocess__recursive__mutex_1a275b00e3a8366bf2538bb2b779820b29"></a><span class="identifier">try_lock_until</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">TimePoint</span> <span class="special">&amp;</span> abs_time<span class="special">)</span><span class="special">;</span></pre>
+<p>Same as <code class="computeroutput">timed_lock</code>, but this function is modeled after the standard library interface. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Duration<span class="special">&gt;</span> <span class="keyword">bool</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1interprocess__recursive__mutex_1a1487d8ba99e5825dd67e9d64ee34a153"></a><span class="identifier">try_lock_for</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">Duration</span> <span class="special">&amp;</span> dur<span class="special">)</span><span class="special">;</span></pre>
+<p>Same as <code class="computeroutput">timed_lock</code>, but this function is modeled after the standard library interface. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1interprocess__recursive__mutex_1a90e3898f5893d07ecd17ccfa9fcfd009"></a><span class="identifier">unlock</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Effects: The calling thread releases the exclusive ownership of the mutex. If the mutex supports recursive locking, the mutex must be unlocked the same number of times it is locked. Throws: <a class="link" href="classboost_1_1interprocess_1_1interprocess__exception.html" title="Class interprocess_exception">interprocess_exception</a> on error. </p>
+</li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2005-2024 Ion Gaztanaga<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1interprocess_1_1interprocess__mutex.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../interprocess/indexes_reference.html#doxygen.boost_interprocess_header_reference.interprocess__recursive__mutex_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1interprocess_1_1interprocess__semaphore.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

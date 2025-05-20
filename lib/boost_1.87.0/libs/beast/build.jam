@@ -1,0 +1,48 @@
+# Copyright René Ferdinand Rivera Morell 2023-2024
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at
+# http://www.boost.org/LICENSE_1_0.txt)
+
+require-b2 5.2 ;
+
+import feature ;
+
+constant boost_dependencies :
+    /boost/asio//boost_asio
+    /boost/assert//boost_assert
+    /boost/bind//boost_bind
+    /boost/config//boost_config
+    /boost/container//boost_container
+    /boost/container_hash//boost_container_hash
+    /boost/core//boost_core
+    /boost/endian//boost_endian
+    /boost/intrusive//boost_intrusive
+    /boost/logic//boost_logic
+    /boost/mp11//boost_mp11
+    /boost/optional//boost_optional
+    /boost/preprocessor//boost_preprocessor
+    /boost/smart_ptr//boost_smart_ptr
+    /boost/static_assert//boost_static_assert
+    /boost/static_string//boost_static_string
+    /boost/system//boost_system
+    /boost/throw_exception//boost_throw_exception
+    /boost/type_index//boost_type_index
+    /boost/type_traits//boost_type_traits
+    /boost/winapi//boost_winapi ;
+
+project /boost/beast
+    : common-requirements
+        <include>include
+    ;
+
+explicit
+    [ alias boost_beast : : : : <library>$(boost_dependencies) ]
+    [ alias all : boost_beast example test ]
+    ;
+
+call-if : boost-library beast
+    ;
+
+feature.feature boost.beast.allow-deprecated : on off : propagated ;
+feature.feature boost.beast.separate-compilation : on off : propagated ;
+feature.feature boost.beast.valgrind : on off : optional propagated ;

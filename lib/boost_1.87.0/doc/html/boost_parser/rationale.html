@@ -1,0 +1,438 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Rationale</title>
+<link rel="stylesheet" href="../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../parser.html" title="Chapter 26. Boost.Parser">
+<link rel="prev" href="../doxygen/headers/namespaceboost_1_1parser_1af2e6576c852ac796a5bdea3c8ed321b8.html" title="Function template get">
+<link rel="next" href="../boost_pfr.html" title="Chapter 27. Boost.PFR 2.2">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../boost.png"></td>
+<td align="center"><a href="../../../index.html">Home</a></td>
+<td align="center"><a href="../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../doxygen/headers/namespaceboost_1_1parser_1af2e6576c852ac796a5bdea3c8ed321b8.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../parser.html"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../boost_pfr.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="boost_parser.rationale"></a><a class="link" href="rationale.html" title="Rationale">Rationale</a>
+</h2></div></div></div>
+<h4>
+<a name="boost_parser.rationale.h0"></a>
+      <span class="phrase"><a name="boost_parser.rationale._globalname_alt__boost__parser__char____code__phrase_role__identifier__char___phrase___code___globalname__s_attribute_type_is_polymorphic"></a></span><a class="link" href="rationale.html#boost_parser.rationale._globalname_alt__boost__parser__char____code__phrase_role__identifier__char___phrase___code___globalname__s_attribute_type_is_polymorphic">char_'s
+      attribute type is polymorphic</a>
+    </h4>
+<p>
+      The majority use case for parsing with Boost.Parser is Unicode-aware parsing.
+      Those users should be able simply to use <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a289f0b7681e314892648e2768a040d56.html" title="Global char_">char_</a></code> and have it "just
+      work". In the case of Unicode, that "just working" implies that
+      every element of the input range should be a code point.
+    </p>
+<p>
+      Some users will insist that their parsing needs are entirely ASCII. Yet other
+      users cannot use Unicode, because they use some encoding that is not a subset
+      of the Unicode encoding, like EBCDIC. For these users, they can just parse
+      input sequences of <code class="computeroutput">char</code>, and that will "just work" for
+      them. For them, this means that every element of the input range that is parsed
+      should be a <code class="computeroutput">char</code>.
+    </p>
+<p>
+      This is exactly what <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a289f0b7681e314892648e2768a040d56.html" title="Global char_">char_</a></code>
+      does, and why it does it.
+    </p>
+<h4>
+<a name="boost_parser.rationale.h1"></a>
+      <span class="phrase"><a name="boost_parser.rationale._classname_alt__boost__parser__none___code__phrase_role__identifier__none__phrase___code___classname__is_weird"></a></span><a class="link" href="rationale.html#boost_parser.rationale._classname_alt__boost__parser__none___code__phrase_role__identifier__none__phrase___code___classname__is_weird">none
+      is weird</a>
+    </h4>
+<p>
+      Yes, and it's generally not a good programming practice to use a type which
+      is so loose (anything can be assigned to it, it's implicitly convertible to
+      anything, etc.). However, it is better than the alternative. Consider this
+      semantic action:
+    </p>
+<pre class="programlisting">[](auto &amp; ctx) { _attr(ctx) = 42; }
+</pre>
+<p>
+      If attached to an int-parser, this is fine. If attached to an epsilon parser
+      (which has no attribute), this silently does nothing. However, in debug mode
+      the assignment in this semantic action will hit a <code class="computeroutput">BOOST_ASSERT(false)</code>,
+      and lead the user to a big inline comment about how they got there. This is
+      a far more understandable failure mode for most programmers than the arbitrarily-deep
+      template instantiation stack — and baffling type of <code class="computeroutput">ctx</code>
+      — that would result if the expression <code class="computeroutput">_attr(ctx)</code> were ill-formed.
+    </p>
+<p>
+      The use of <code class="computeroutput"><a class="link" href="../doxygen/headers/structboost_1_1parser_1_1none.html" title="Struct none">none</a></code>
+      turns an entirely compile-time debugging operation into a run-time debugging
+      one. Usually, this is the opposite of what we want as C++ users. In light of
+      just how inscrutable error messages are that come from parser combinator libraries,
+      using your favorite debugger to step through the stack to diagnose the problem
+      is a <span class="bold"><strong>much</strong></span> faster way to fix problems.
+    </p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+        The example below is taken from an older version of Boost.Parser, so some
+        of the symbol names may be unfamiliar. However, it's a real example, and
+        it applies just as well to later versions of Boost.Parser.
+      </p></td></tr>
+</table></div>
+<p>
+      To demonstrate the difference, I added these three lines to the end of the
+      <code class="computeroutput">object_init</code> lambda in the <a class="link" href="extended_examples.html#boost_parser.extended_examples.parsing_json" title="Parsing JSON">Parsing
+      JSON</a>:
+    </p>
+<pre class="programlisting">auto x = _locals(ctx);
+if (x)
+    std::cout &lt;&lt; "Oops!  What x?";
+</pre>
+<p>
+      The parser that <code class="computeroutput">object_init</code> is attached to has no locals. Here
+      is an example of how you can investigate this error at run time:
+    </p>
+<p>
+</p>
+<pre class="programlisting">$ gdb --args example/json ../meta/libraries.json
+GNU gdb (Ubuntu 9.1-0ubuntu1) 9.1
+Copyright (C) 2020 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later &lt;http://gnu.org/licenses/gpl.html&gt;
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+Type "show copying" and "show warranty" for details.
+This GDB was configured as "x86_64-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+&lt;http://www.gnu.org/software/gdb/bugs/&gt;.
+Find the GDB manual and other documentation resources online at:
+    &lt;http://www.gnu.org/software/gdb/documentation/&gt;.
+
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from example/json...
+(gdb) r
+Starting program: /home/tzlaine/parser/build/example/json ../meta/libraries.json
+json: /home/tzlaine/parser/include/boost/parser/parser.hpp:344: void boost::parser::none::fail() const: Assertion `false' failed.
+
+Program received signal SIGABRT, Aborted.
+__GI_raise (sig=sig@entry=6) at ../sysdeps/unix/sysv/linux/raise.c:50
+50      ../sysdeps/unix/sysv/linux/raise.c: No such file or directory.
+(gdb) up
+#1  0x00007ffff7bdf859 in __GI_abort () at abort.c:79
+79      abort.c: No such file or directory.
+(gdb)
+#2  0x00007ffff7bdf729 in __assert_fail_base (
+    fmt=0x7ffff7d75588 "%s%s%s:%u: %s%sAssertion `%s' failed.\n%n",
+    assertion=0x5555555f7a2c "false",
+    file=0x5555555f7dd8 "/home/tzlaine/parser/include/boost/parser/parser.hpp", line=344,
+    function=&lt;optimized out&gt;) at assert.c:92
+92      assert.c: No such file or directory.
+(gdb)
+#3  0x00007ffff7bf0f36 in __GI___assert_fail (assertion=0x5555555f7a2c "false",
+    file=0x5555555f7dd8 "/home/tzlaine/parser/include/boost/parser/parser.hpp", line=344,
+    function=0x5555555f7db0 "void boost::parser::none::fail() const") at assert.c:101
+101     in assert.c
+(gdb)
+#4  0x000055555555f99b in boost::parser::none::fail (this=0x7fffffffc2f0)
+    at /home/tzlaine/parser/include/boost/parser/parser.hpp:344
+344                 BOOST_ASSERT(false);
+(gdb)
+#5  0x000055555559d380 in boost::parser::none::operator bool&lt;bool&gt;() const (this=0x7fffffffc2f0)
+    at /home/tzlaine/parser/include/boost/parser/parser.hpp:83
+83                  fail();
+(gdb)
+#6  0x0000555555590a6b in _ZNK4json11object_initMUlRT_E_clIKN5boost4hana6detail8map_implINS6_10hash_tableIJNS6_6bucketINS4_6parser6detail9begin_tagEJLm0EEEENS9_INSB_7end_tagEJLm1EEEENS9_INSB_8pass_tagEJLm2EEEENS9_INSB_10locals_tagEJLm3EEEENS9_INSB_15rule_params_tagEJLm4EEEENS9_INSB_11globals_tagEJLm5EEEENS9_INSB_16trace_indent_tagEJLm6EEEENS9_INSB_17error_handler_tagEJLm7EEEENS9_INSB_13callbacks_tagEJLm8EEEENS9_INSB_22symbol_table_tries_tagEJLm9EEEENS9_INSB_7val_tagEJLm10EEEENS9_INSB_8attr_tagEJLm11EEEENS9_INSB_9where_tagEJLm12EEEEEEENS5_11basic_tupleIJNS5_4pairINS5_9type_implISC_E1_ENS4_4text20utf_8_to_32_iteratorIPKcS1B_NS18_25use_replacement_characterEEEEENS14_INS15_ISE_E1_ES1D_EENS14_INS15_ISG_E1_EPbEENS14_INS15_ISI_E1_ENSB_4nopeEEENS14_INS15_ISK_E1_ES1O_EENS14_INS15_ISM_E1_EPNS_12global_stateEEENS14_INS15_ISO_E1_EPiEENS14_INS15_ISQ_E1_EPKNSA_22callback_error_handlerEEENS14_INS15_ISS_E1_ES1O_EENS14_INS15_ISU_E1_EPSt3mapIPvNS4_3anyESt4lessIS2E_ESaISt4pairIKS2E_S2F_EEEEENS14_INS15_ISW_E1_EPNS_5valueEEENS14_INS15_ISY_E1_EPS1O_EENS14_INS15_IS10_E1_EPKNSA_4viewIS1D_S1D_EEEEEEEEEEEDaS1_ (__closure=0x7fffffffc9b1, ctx=...)
+    at /home/tzlaine/parser/example/json.cpp:103
+103             if (x)
+(gdb) l
+98              auto &amp; globals = _globals(ctx);
+99              if (globals.max_recursive_open_count &lt; ++globals.recursive_open_count)
+100                 throw excessive_nesting(_where(ctx).begin());
+101             _val(ctx) = object();
+102             auto x = _locals(ctx);
+103             if (x)
+104                 std::cout &lt;&lt; "Oops!  What x?";
+105         };
+106
+107         // We need object_insert because we can't just insert into the json::value
+(gdb)
+</pre>
+<p>
+    </p>
+<p>
+      To find the problem, I just had to move up the stack, with GDB's "up"
+      command, until I saw that I was in my own code. Then I listed the code surrounding
+      the offending line, as you see above. If I were to keep going up the stack,
+      I would move through the exact chain of template instantiations — at
+      the exact lines of code where they appear — in a few seconds.
+    </p>
+<p>
+      This is how the same problem looks with <code class="computeroutput">BOOST_PARSER_NO_RUNTIME_ASSERTIONS</code>
+      defined, the definition of which makes the code we added ill-formed instead
+      of a run time error:
+    </p>
+<p>
+</p>
+<pre class="programlisting">$ make json
+Scanning dependencies of target json
+[ 50%] Building CXX object example/CMakeFiles/json.dir/json.cpp.o
+
+/home/tzlaine/parser/example/json.cpp: In instantiation of ‘json::&lt;lambda(auto:58&amp;)&gt; [with auto:58 = const boost::hana::detail::map_impl&lt;boost::hana::detail::hash_table&lt;boost::hana::detail::bucket&lt;boost::parser::detail::begin_tag, 0&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::end_tag, 1&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::pass_tag, 2&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::locals_tag, 3&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::rule_params_tag, 4&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::globals_tag, 5&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::trace_indent_tag, 6&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::error_handler_tag, 7&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::callbacks_tag, 8&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::symbol_table_tries_tag, 9&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::val_tag, 10&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::attr_tag, 11&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::where_tag, 12&gt; &gt;, boost::hana::basic_tuple&lt;boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::begin_tag&gt;::_, boost::text::utf_8_to_32_iterator&lt;const char*, const char*, boost::text::use_replacement_character&gt; &gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::end_tag&gt;::_, boost::text::utf_8_to_32_iterator&lt;const char*, const char*, boost::text::use_replacement_character&gt; &gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::pass_tag&gt;::_, bool*&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::locals_tag&gt;::_, boost::parser::detail::nope&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::rule_params_tag&gt;::_, boost::parser::detail::nope&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::globals_tag&gt;::_, json::global_state*&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::trace_indent_tag&gt;::_, int*&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::error_handler_tag&gt;::_, const boost::parser::callback_error_handler*&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::callbacks_tag&gt;::_, boost::parser::detail::nope&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::symbol_table_tries_tag&gt;::_, std::map&lt;void*, boost::any, std::less&lt;void*&gt;, std::allocator&lt;std::pair&lt;void* const, boost::any&gt; &gt; &gt;*&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::val_tag&gt;::_, json::value*&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::attr_tag&gt;::_, boost::parser::detail::nope*&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::where_tag&gt;::_, const boost::parser::view&lt;boost::text::utf_8_to_32_iterator&lt;const char*, const char*, boost::text::use_replacement_character&gt;, boost::text::utf_8_to_32_iterator&lt;const char*, const char*, boost::text::use_replacement_character&gt; &gt;*&gt; &gt; &gt;]’:
+/home/tzlaine/parser/include/boost/parser/parser.hpp:3216:24:   required from ‘void boost::parser::action_parser&lt;Parser, Action&gt;::call(boost::hana::bool_&lt;UseCallbacks&gt;, Iter&amp;, Sentinel, const Context&amp;, const SkipParser&amp;, boost::parser::detail::flags, bool&amp;, Attribute&amp;) const [with bool UseCallbacks = false; Iter = boost::text::utf_8_to_32_iterator&lt;const char*, const char*, boost::text::use_replacement_character&gt;; Sentinel = boost::text::utf_8_to_32_iterator&lt;const char*, const char*, boost::text::use_replacement_character&gt;; Context = boost::hana::detail::map_impl&lt;boost::hana::detail::hash_table&lt;boost::hana::detail::bucket&lt;boost::parser::detail::begin_tag, 0&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::end_tag, 1&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::pass_tag, 2&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::attr_tag, 3&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::locals_tag, 4&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::rule_params_tag, 5&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::globals_tag, 6&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::trace_indent_tag, 7&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::error_handler_tag, 8&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::callbacks_tag, 9&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::symbol_table_tries_tag, 10&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::val_tag, 11&gt; &gt;, boost::hana::basic_tuple&lt;boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::begin_tag&gt;::_, boost::text::utf_8_to_32_iterator&lt;const char*, const char*, boost::text::use_replacement_character&gt; &gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::end_tag&gt;::_, boost::text::utf_8_to_32_iterator&lt;const char*, const char*, boost::text::use_replacement_character&gt; &gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::pass_tag&gt;::_, bool*&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::attr_tag&gt;::_, boost::parser::detail::nope&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::locals_tag&gt;::_, boost::parser::detail::nope&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::rule_params_tag&gt;::_, boost::parser::detail::nope&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::globals_tag&gt;::_, json::global_state*&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::trace_indent_tag&gt;::_, int*&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::error_handler_tag&gt;::_, const boost::parser::callback_error_handler*&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::callbacks_tag&gt;::_, boost::parser::detail::nope&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::symbol_table_tries_tag&gt;::_, std::map&lt;void*, boost::any, std::less&lt;void*&gt;, std::allocator&lt;std::pair&lt;void* const, boost::any&gt; &gt; &gt;*&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::val_tag&gt;::_, json::value*&gt; &gt; &gt;; SkipParser = boost::parser::rule&lt;json::ws&gt;; Attribute = boost::parser::detail::nope; Parser = boost::parser::omit_parser&lt;boost::parser::char_parser&lt;char, void&gt; &gt;; Action = json::&lt;lambda(auto:58&amp;)&gt;; boost::hana::bool_&lt;UseCallbacks&gt; = boost::hana::integral_constant&lt;bool, false&gt;]’
+/home/tzlaine/parser/include/boost/parser/parser.hpp:3175:17:   required from ‘boost::parser::detail::nope boost::parser::action_parser&lt;Parser, Action&gt;::call(boost::hana::bool_&lt;UseCallbacks&gt;, Iter&amp;, Sentinel, const Context&amp;, const SkipParser&amp;, boost::parser::detail::flags, bool&amp;) const [with bool UseCallbacks = false; Iter = boost::text::utf_8_to_32_iterator&lt;const char*, const char*, boost::text::use_replacement_character&gt;; Sentinel = boost::text::utf_8_to_32_iterator&lt;const char*, const char*, boost::text::use_replacement_character&gt;; Context = boost::hana::detail::map_impl&lt;boost::hana::detail::hash_table&lt;boost::hana::detail::bucket&lt;boost::parser::detail::begin_tag, 0&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::end_tag, 1&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::pass_tag, 2&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::attr_tag, 3&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::locals_tag, 4&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::rule_params_tag, 5&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::globals_tag, 6&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::trace_indent_tag, 7&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::error_handler_tag, 8&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::callbacks_tag, 9&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::symbol_table_tries_tag, 10&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::val_tag, 11&gt; &gt;, boost::hana::basic_tuple&lt;boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::begin_tag&gt;::_, boost::text::utf_8_to_32_iterator&lt;const char*, const char*, boost::text::use_replacement_character&gt; &gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::end_tag&gt;::_, boost::text::utf_8_to_32_iterator&lt;const char*, const char*, boost::text::use_replacement_character&gt; &gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::pass_tag&gt;::_, bool*&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::attr_tag&gt;::_, boost::parser::detail::nope&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::locals_tag&gt;::_, boost::parser::detail::nope&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::rule_params_tag&gt;::_, boost::parser::detail::nope&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::globals_tag&gt;::_, json::global_state*&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::trace_indent_tag&gt;::_, int*&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::error_handler_tag&gt;::_, const boost::parser::callback_error_handler*&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::callbacks_tag&gt;::_, boost::parser::detail::nope&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::symbol_table_tries_tag&gt;::_, std::map&lt;void*, boost::any, std::less&lt;void*&gt;, std::allocator&lt;std::pair&lt;void* const, boost::any&gt; &gt; &gt;*&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::val_tag&gt;::_, json::value*&gt; &gt; &gt;; SkipParser = boost::parser::rule&lt;json::ws&gt;; Parser = boost::parser::omit_parser&lt;boost::parser::char_parser&lt;char, void&gt; &gt;; Action = json::&lt;lambda(auto:58&amp;)&gt;; boost::hana::bool_&lt;UseCallbacks&gt; = boost::hana::integral_constant&lt;bool, false&gt;]’
+/home/tzlaine/parser/include/boost/parser/parser.hpp:2745:35:   required from ‘auto boost::parser::seq_parser&lt;ParserTuple, BacktrackingTuple&gt;::dummy_use_parser_t&lt;UseCallbacks, Iter, Sentinel, Context, SkipParser&gt;::operator()(const Parser&amp;) const [with Parser = boost::parser::action_parser&lt;boost::parser::omit_parser&lt;boost::parser::char_parser&lt;char, void&gt; &gt;, json::&lt;lambda(auto:58&amp;)&gt; &gt;; bool UseCallbacks = false; Iter = boost::text::utf_8_to_32_iterator&lt;const char*, const char*, boost::text::use_replacement_character&gt;; Sentinel = boost::text::utf_8_to_32_iterator&lt;const char*, const char*, boost::text::use_replacement_character&gt;; Context = boost::hana::detail::map_impl&lt;boost::hana::detail::hash_table&lt;boost::hana::detail::bucket&lt;boost::parser::detail::begin_tag, 0&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::end_tag, 1&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::pass_tag, 2&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::attr_tag, 3&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::locals_tag, 4&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::rule_params_tag, 5&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::globals_tag, 6&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::trace_indent_tag, 7&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::error_handler_tag, 8&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::callbacks_tag, 9&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::symbol_table_tries_tag, 10&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::val_tag, 11&gt; &gt;, boost::hana::basic_tuple&lt;boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::begin_tag&gt;::_, boost::text::utf_8_to_32_iterator&lt;const char*, const char*, boost::text::use_replacement_character&gt; &gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::end_tag&gt;::_, boost::text::utf_8_to_32_iterator&lt;const char*, const char*, boost::text::use_replacement_character&gt; &gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::pass_tag&gt;::_, bool*&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::attr_tag&gt;::_, boost::parser::detail::nope&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::locals_tag&gt;::_, boost::parser::detail::nope&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::rule_params_tag&gt;::_, boost::parser::detail::nope&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::globals_tag&gt;::_, json::global_state*&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::trace_indent_tag&gt;::_, int*&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::error_handler_tag&gt;::_, const boost::parser::callback_error_handler*&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::callbacks_tag&gt;::_, boost::parser::detail::nope&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::symbol_table_tries_tag&gt;::_, std::map&lt;void*, boost::any, std::less&lt;void*&gt;, std::allocator&lt;std::pair&lt;void* const, boost::any&gt; &gt; &gt;*&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::val_tag&gt;::_, json::value*&gt; &gt; &gt;; SkipParser = boost::parser::rule&lt;json::ws&gt;; ParserTuple = boost::hana::tuple&lt;boost::parser::action_parser&lt;boost::parser::omit_parser&lt;boost::parser::char_parser&lt;char, void&gt; &gt;, json::&lt;lambda(auto:58&amp;)&gt; &gt;, boost::parser::opt_parser&lt;boost::parser::delimited_seq_parser&lt;boost::parser::action_parser&lt;boost::parser::rule_parser&lt;false, json::object_element, boost::hana::tuple&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, json::value&gt;, boost::parser::detail::nope, boost::parser::detail::nope&gt;, json::&lt;lambda(auto:59&amp;)&gt; &gt;, boost::parser::omit_parser&lt;boost::parser::char_parser&lt;char, void&gt; &gt; &gt; &gt;, boost::parser::omit_parser&lt;boost::parser::char_parser&lt;char, void&gt; &gt; &gt;; BacktrackingTuple = boost::hana::tuple&lt;boost::hana::integral_constant&lt;bool, true&gt;, boost::hana::integral_constant&lt;bool, true&gt;, boost::hana::integral_constant&lt;bool, false&gt; &gt;]’
+/home/tzlaine/boost_1_71_0/boost/hana/transform.hpp:62:42:   required from ‘constexpr auto boost::hana::transform_impl&lt;S, boost::hana::when&lt;boost::hana::Sequence&lt;S&gt;::value&gt; &gt;::transformer&lt;F&gt;::operator()(Xs&amp;&amp; ...) const [with Xs = {const boost::parser::action_parser&lt;boost::parser::omit_parser&lt;boost::parser::char_parser&lt;char, void&gt; &gt;, json::&lt;lambda(auto:58&amp;)&gt; &gt;&amp;, const boost::parser::opt_parser&lt;boost::parser::delimited_seq_parser&lt;boost::parser::action_parser&lt;boost::parser::rule_parser&lt;false, json::object_element, boost::hana::tuple&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, json::value&gt;, boost::parser::detail::nope, boost::parser::detail::nope&gt;, json::&lt;lambda(auto:59&amp;)&gt; &gt;, boost::parser::omit_parser&lt;boost::parser::char_parser&lt;char, void&gt; &gt; &gt; &gt;&amp;, const boost::parser::omit_parser&lt;boost::parser::char_parser&lt;char, void&gt; &gt;&amp;}; F = const boost::parser::seq_parser&lt;boost::hana::tuple&lt;boost::parser::action_parser&lt;boost::parser::omit_parser&lt;boost::parser::char_parser&lt;char, void&gt; &gt;, json::&lt;lambda(auto:58&amp;)&gt; &gt;, boost::parser::opt_parser&lt;boost::parser::delimited_seq_parser&lt;boost::parser::action_parser&lt;boost::parser::rule_parser&lt;false, json::object_element, boost::hana::tuple&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, json::value&gt;, boost::parser::detail::nope, boost::parser::detail::nope&gt;, json::&lt;lambda(auto:59&amp;)&gt; &gt;, boost::parser::omit_parser&lt;boost::parser::char_parser&lt;char, void&gt; &gt; &gt; &gt;, boost::parser::omit_parser&lt;boost::parser::char_parser&lt;char, void&gt; &gt; &gt;, boost::hana::tuple&lt;boost::hana::integral_constant&lt;bool, true&gt;, boost::hana::integral_constant&lt;bool, true&gt;, boost::hana::integral_constant&lt;bool, false&gt; &gt; &gt;::dummy_use_parser_t&lt;false, boost::text::utf_8_to_32_iterator&lt;const char*, const char*, boost::text::use_replacement_character&gt;, boost::text::utf_8_to_32_iterator&lt;const char*, const char*, boost::text::use_replacement_character&gt;, boost::hana::detail::map_impl&lt;boost::hana::detail::hash_table&lt;boost::hana::detail::bucket&lt;boost::parser::detail::begin_tag, 0&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::end_tag, 1&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::pass_tag, 2&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::attr_tag, 3&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::locals_tag, 4&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::rule_params_tag, 5&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::globals_tag, 6&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::trace_indent_tag, 7&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::error_handler_tag, 8&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::callbacks_tag, 9&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::symbol_table_tries_tag, 10&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::val_tag, 11&gt; &gt;, boost::hana::basic_tuple&lt;boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::begin_tag&gt;::_, boost::text::utf_8_to_32_iterator&lt;const char*, const char*, boost::text::use_replacement_character&gt; &gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::end_tag&gt;::_, boost::text::utf_8_to_32_iterator&lt;const char*, const char*, boost::text::use_replacement_character&gt; &gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::pass_tag&gt;::_, bool*&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::attr_tag&gt;::_, boost::parser::detail::nope&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::locals_tag&gt;::_, boost::parser::detail::nope&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::rule_params_tag&gt;::_, boost::parser::detail::nope&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::globals_tag&gt;::_, json::global_state*&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::trace_indent_tag&gt;::_, int*&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::error_handler_tag&gt;::_, const boost::parser::callback_error_handler*&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::callbacks_tag&gt;::_, boost::parser::detail::nope&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::symbol_table_tries_tag&gt;::_, std::map&lt;void*, boost::any, std::less&lt;void*&gt;, std::allocator&lt;std::pair&lt;void* const, boost::any&gt; &gt; &gt;*&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::val_tag&gt;::_, json::value*&gt; &gt; &gt;, boost::parser::rule&lt;json::ws&gt; &gt;*; S = boost::hana::tuple_tag]’
+/home/tzlaine/boost_1_71_0/boost/hana/basic_tuple.hpp:115:39:   required from ‘static constexpr decltype(auto) boost::hana::unpack_impl&lt;boost::hana::basic_tuple_tag&gt;::apply(const boost::hana::detail::basic_tuple_impl&lt;std::integer_sequence&lt;long unsigned int, _Idx ...&gt;, Xn ...&gt;&amp;, F&amp;&amp;) [with long unsigned int ...i = {0, 1, 2}; Xn = {boost::parser::action_parser&lt;boost::parser::omit_parser&lt;boost::parser::char_parser&lt;char, void&gt; &gt;, json::&lt;lambda(auto:58&amp;)&gt; &gt;, boost::parser::opt_parser&lt;boost::parser::delimited_seq_parser&lt;boost::parser::action_parser&lt;boost::parser::rule_parser&lt;false, json::object_element, boost::hana::tuple&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, json::value&gt;, boost::parser::detail::nope, boost::parser::detail::nope&gt;, json::&lt;lambda(auto:59&amp;)&gt; &gt;, boost::parser::omit_parser&lt;boost::parser::char_parser&lt;char, void&gt; &gt; &gt; &gt;, boost::parser::omit_parser&lt;boost::parser::char_parser&lt;char, void&gt; &gt;}; F = boost::hana::transform_impl&lt;boost::hana::tuple_tag, boost::hana::when&lt;true&gt; &gt;::transformer&lt;const boost::parser::seq_parser&lt;boost::hana::tuple&lt;boost::parser::action_parser&lt;boost::parser::omit_parser&lt;boost::parser::char_parser&lt;char, void&gt; &gt;, json::&lt;lambda(auto:58&amp;)&gt; &gt;, boost::parser::opt_parser&lt;boost::parser::delimited_seq_parser&lt;boost::parser::action_parser&lt;boost::parser::rule_parser&lt;false, json::object_element, boost::hana::tuple&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, json::value&gt;, boost::parser::detail::nope, boost::parser::detail::nope&gt;, json::&lt;lambda(auto:59&amp;)&gt; &gt;, boost::parser::omit_parser&lt;boost::parser::char_parser&lt;char, void&gt; &gt; &gt; &gt;, boost::parser::omit_parser&lt;boost::parser::char_parser&lt;char, void&gt; &gt; &gt;, boost::hana::tuple&lt;boost::hana::integral_constant&lt;bool, true&gt;, boost::hana::integral_constant&lt;bool, true&gt;, boost::hana::integral_constant&lt;bool, false&gt; &gt; &gt;::dummy_use_parser_t&lt;false, boost::text::utf_8_to_32_iterator&lt;const char*, const char*, boost::text::use_replacement_character&gt;, boost::text::utf_8_to_32_iterator&lt;const char*, const char*, boost::text::use_replacement_character&gt;, boost::hana::detail::map_impl&lt;boost::hana::detail::hash_table&lt;boost::hana::detail::bucket&lt;boost::parser::detail::begin_tag, 0&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::end_tag, 1&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::pass_tag, 2&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::attr_tag, 3&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::locals_tag, 4&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::rule_params_tag, 5&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::globals_tag, 6&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::trace_indent_tag, 7&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::error_handler_tag, 8&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::callbacks_tag, 9&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::symbol_table_tries_tag, 10&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::val_tag, 11&gt; &gt;, boost::hana::basic_tuple&lt;boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::begin_tag&gt;::_, boost::text::utf_8_to_32_iterator&lt;const char*, const char*, boost::text::use_replacement_character&gt; &gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::end_tag&gt;::_, boost::text::utf_8_to_32_iterator&lt;const char*, const char*, boost::text::use_replacement_character&gt; &gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::pass_tag&gt;::_, bool*&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::attr_tag&gt;::_, boost::parser::detail::nope&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::locals_tag&gt;::_, boost::parser::detail::nope&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::rule_params_tag&gt;::_, boost::parser::detail::nope&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::globals_tag&gt;::_, json::global_state*&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::trace_indent_tag&gt;::_, int*&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::error_handler_tag&gt;::_, const boost::parser::callback_error_handler*&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::callbacks_tag&gt;::_, boost::parser::detail::nope&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::symbol_table_tries_tag&gt;::_, std::map&lt;void*, boost::any, std::less&lt;void*&gt;, std::allocator&lt;std::pair&lt;void* const, boost::any&gt; &gt; &gt;*&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::val_tag&gt;::_, json::value*&gt; &gt; &gt;, boost::parser::rule&lt;json::ws&gt; &gt;*&gt;]’
+/home/tzlaine/boost_1_71_0/boost/hana/unpack.hpp:47:29:   [ skipping 20 instantiation contexts, use -ftemplate-backtrace-limit=0 to disable ]
+/home/tzlaine/parser/example/json.cpp:262:5:   required from ‘void json::parse_rule(boost::parser::rule_parser&lt;false, json::value_tag, json::value, boost::parser::detail::nope, boost::parser::detail::nope&gt;::tag_type*, boost::hana::bool_&lt;b&gt;, Iter&amp;, Sentinel, const Context&amp;, const SkipParser&amp;, boost::parser::detail::flags, bool&amp;, Attribute&amp;) [with bool UseCallbacks = false; Iter = boost::text::utf_8_to_32_iterator&lt;const char*, const char*, boost::text::use_replacement_character&gt;; Sentinel = boost::text::utf_8_to_32_iterator&lt;const char*, const char*, boost::text::use_replacement_character&gt;; Context = boost::hana::detail::map_impl&lt;boost::hana::detail::hash_table&lt;boost::hana::detail::bucket&lt;boost::parser::detail::begin_tag, 0&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::end_tag, 1&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::pass_tag, 2&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::attr_tag, 3&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::locals_tag, 4&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::rule_params_tag, 5&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::globals_tag, 6&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::trace_indent_tag, 7&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::error_handler_tag, 8&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::callbacks_tag, 9&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::symbol_table_tries_tag, 10&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::val_tag, 11&gt; &gt;, boost::hana::basic_tuple&lt;boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::begin_tag&gt;::_, boost::text::utf_8_to_32_iterator&lt;const char*, const char*, boost::text::use_replacement_character&gt; &gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::end_tag&gt;::_, boost::text::utf_8_to_32_iterator&lt;const char*, const char*, boost::text::use_replacement_character&gt; &gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::pass_tag&gt;::_, bool*&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::attr_tag&gt;::_, boost::parser::detail::nope&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::locals_tag&gt;::_, boost::parser::detail::nope&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::rule_params_tag&gt;::_, boost::parser::detail::nope&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::globals_tag&gt;::_, json::global_state*&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::trace_indent_tag&gt;::_, int*&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::error_handler_tag&gt;::_, const boost::parser::callback_error_handler*&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::callbacks_tag&gt;::_, boost::parser::detail::nope&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::symbol_table_tries_tag&gt;::_, std::map&lt;void*, boost::any, std::less&lt;void*&gt;, std::allocator&lt;std::pair&lt;void* const, boost::any&gt; &gt; &gt;*&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::val_tag&gt;::_, json::value*&gt; &gt; &gt;; SkipParser = boost::parser::rule&lt;json::ws&gt;; Attribute = json::value; boost::parser::rule_parser&lt;false, json::value_tag, json::value, boost::parser::detail::nope, boost::parser::detail::nope&gt;::tag_type = json::value_tag; boost::hana::bool_&lt;b&gt; = boost::hana::integral_constant&lt;bool, false&gt;]’
+/home/tzlaine/parser/include/boost/parser/parser.hpp:3707:23:   required from ‘boost::parser::rule_parser&lt;false, TagType, Attribute, LocalState, ParamsTuple&gt;::attr_type boost::parser::rule_parser&lt;false, TagType, Attribute, LocalState, ParamsTuple&gt;::call(boost::hana::bool_&lt;UseCallbacks&gt;, Iter&amp;, Sentinel, const Context&amp;, const SkipParser&amp;, boost::parser::detail::flags, bool&amp;) const [with bool UseCallbacks = false; Iter = boost::text::utf_8_to_32_iterator&lt;const char*, const char*, boost::text::use_replacement_character&gt;; Sentinel = boost::text::utf_8_to_32_iterator&lt;const char*, const char*, boost::text::use_replacement_character&gt;; Context = boost::hana::detail::map_impl&lt;boost::hana::detail::hash_table&lt;boost::hana::detail::bucket&lt;boost::parser::detail::begin_tag, 0&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::end_tag, 1&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::pass_tag, 2&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::val_tag, 3&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::attr_tag, 4&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::locals_tag, 5&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::rule_params_tag, 6&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::globals_tag, 7&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::trace_indent_tag, 8&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::error_handler_tag, 9&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::callbacks_tag, 10&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::symbol_table_tries_tag, 11&gt; &gt;, boost::hana::basic_tuple&lt;boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::begin_tag&gt;::_, boost::text::utf_8_to_32_iterator&lt;const char*, const char*, boost::text::use_replacement_character&gt; &gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::end_tag&gt;::_, boost::text::utf_8_to_32_iterator&lt;const char*, const char*, boost::text::use_replacement_character&gt; &gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::pass_tag&gt;::_, bool*&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::val_tag&gt;::_, boost::parser::detail::nope&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::attr_tag&gt;::_, boost::parser::detail::nope&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::locals_tag&gt;::_, boost::parser::detail::nope&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::rule_params_tag&gt;::_, boost::parser::detail::nope&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::globals_tag&gt;::_, json::global_state*&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::trace_indent_tag&gt;::_, int*&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::error_handler_tag&gt;::_, const boost::parser::callback_error_handler*&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::callbacks_tag&gt;::_, boost::parser::detail::nope&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::symbol_table_tries_tag&gt;::_, std::map&lt;void*, boost::any, std::less&lt;void*&gt;, std::allocator&lt;std::pair&lt;void* const, boost::any&gt; &gt; &gt;*&gt; &gt; &gt;; SkipParser = boost::parser::rule&lt;json::ws&gt;; TagType = json::value_tag; Attribute = json::value; LocalState = boost::parser::detail::nope; ParamsTuple = boost::parser::detail::nope; boost::parser::rule_parser&lt;false, TagType, Attribute, LocalState, ParamsTuple&gt;::attr_type = json::value; boost::hana::bool_&lt;UseCallbacks&gt; = boost::hana::integral_constant&lt;bool, false&gt;]’
+/home/tzlaine/parser/include/boost/parser/parser.hpp:4155:32:   required from ‘auto boost::parser::parser_interface&lt;Parser, GlobalState, ErrorHandler&gt;::operator()(boost::hana::bool_&lt;UseCallbacks&gt;, Iter&amp;, Sentinel, const Context&amp;, const SkipParserType&amp;, boost::parser::detail::flags, bool&amp;) const [with bool UseCallbacks = false; Iter = boost::text::utf_8_to_32_iterator&lt;const char*, const char*, boost::text::use_replacement_character&gt;; Sentinel = boost::text::utf_8_to_32_iterator&lt;const char*, const char*, boost::text::use_replacement_character&gt;; Context = boost::hana::detail::map_impl&lt;boost::hana::detail::hash_table&lt;boost::hana::detail::bucket&lt;boost::parser::detail::begin_tag, 0&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::end_tag, 1&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::pass_tag, 2&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::val_tag, 3&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::attr_tag, 4&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::locals_tag, 5&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::rule_params_tag, 6&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::globals_tag, 7&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::trace_indent_tag, 8&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::error_handler_tag, 9&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::callbacks_tag, 10&gt;, boost::hana::detail::bucket&lt;boost::parser::detail::symbol_table_tries_tag, 11&gt; &gt;, boost::hana::basic_tuple&lt;boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::begin_tag&gt;::_, boost::text::utf_8_to_32_iterator&lt;const char*, const char*, boost::text::use_replacement_character&gt; &gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::end_tag&gt;::_, boost::text::utf_8_to_32_iterator&lt;const char*, const char*, boost::text::use_replacement_character&gt; &gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::pass_tag&gt;::_, bool*&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::val_tag&gt;::_, boost::parser::detail::nope&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::attr_tag&gt;::_, boost::parser::detail::nope&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::locals_tag&gt;::_, boost::parser::detail::nope&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::rule_params_tag&gt;::_, boost::parser::detail::nope&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::globals_tag&gt;::_, json::global_state*&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::trace_indent_tag&gt;::_, int*&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::error_handler_tag&gt;::_, const boost::parser::callback_error_handler*&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::callbacks_tag&gt;::_, boost::parser::detail::nope&gt;, boost::hana::pair&lt;boost::hana::type_impl&lt;boost::parser::detail::symbol_table_tries_tag&gt;::_, std::map&lt;void*, boost::any, std::less&lt;void*&gt;, std::allocator&lt;std::pair&lt;void* const, boost::any&gt; &gt; &gt;*&gt; &gt; &gt;; SkipParserType = boost::parser::rule&lt;json::ws&gt;; Parser = boost::parser::rule_parser&lt;false, json::value_tag, json::value, boost::parser::detail::nope, boost::parser::detail::nope&gt;; GlobalState = json::global_state&amp;; ErrorHandler = boost::parser::callback_error_handler&amp;; boost::hana::bool_&lt;UseCallbacks&gt; = boost::hana::integral_constant&lt;bool, false&gt;]’
+/home/tzlaine/parser/include/boost/parser/parser.hpp:1808:43:   required from ‘auto boost::parser::detail::skip_parse_impl(Iter&amp;, Sentinel, const Parser&amp;, const SkipParser&amp;, const ErrorHandler&amp;) [with bool Debug = true; Iter = boost::text::utf_8_to_32_iterator&lt;const char*, const char*, boost::text::use_replacement_character&gt;; Sentinel = boost::text::utf_8_to_32_iterator&lt;const char*, const char*, boost::text::use_replacement_character&gt;; Parser = boost::parser::parser_interface&lt;boost::parser::rule_parser&lt;false, json::value_tag, json::value, boost::parser::detail::nope, boost::parser::detail::nope&gt;, json::global_state&amp;, boost::parser::callback_error_handler&amp;&gt;; SkipParser = boost::parser::rule&lt;json::ws&gt;; ErrorHandler = boost::parser::callback_error_handler]’
+/home/tzlaine/parser/include/boost/parser/parser.hpp:6369:53:   required from ‘auto boost::parser::parse(I&amp;, S, const boost::parser::parser_interface&lt;Parser, GlobalState, ErrorHandler&gt;&amp;, const boost::parser::rule&lt;TagType, Attribute, LocalState, ParamsTuple&gt;&amp;, boost::parser::trace) [with I = boost::text::utf_8_to_32_iterator&lt;const char*, const char*, boost::text::use_replacement_character&gt;; S = boost::text::utf_8_to_32_iterator&lt;const char*, const char*, boost::text::use_replacement_character&gt;; Parser = boost::parser::rule_parser&lt;false, json::value_tag, json::value, boost::parser::detail::nope, boost::parser::detail::nope&gt;; GlobalState = json::global_state&amp;; ErrorHandler = boost::parser::callback_error_handler&amp;; TagType = json::ws; Attribute = boost::parser::detail::nope; LocalState = boost::parser::detail::nope; ParamsTuple = boost::parser::detail::nope]’
+/home/tzlaine/parser/example/json.cpp:313:53:   required from here
+/home/tzlaine/parser/example/json.cpp:103:13: error: could not convert ‘x’ from ‘boost::parser::none’ to ‘bool’
+  103 |         if (x)
+      |             ^
+      |             |
+      |             boost::parser::none
+make[3]: *** [example/CMakeFiles/json.dir/build.make:63: example/CMakeFiles/json.dir/json.cpp.o] Error 1
+make[2]: *** [CMakeFiles/Makefile2:1668: example/CMakeFiles/json.dir/all] Error 2
+make[1]: *** [CMakeFiles/Makefile2:1675: example/CMakeFiles/json.dir/rule] Error 2
+make: *** [Makefile:827: json] Error 2
+</pre>
+<p>
+    </p>
+<p>
+      Some very familiar problems should be noted here:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          Most of the template instantiation stack is missing (20 instantiation contexts,
+          as you can see indicated in the middle). If the problem occurred there,
+          it's that much harder to find.
+        </li>
+<li class="listitem">
+          That's a lot of text to try and read and understand (try scrolling horizontally,
+          there's a lot more).
+        </li>
+<li class="listitem">
+          Worst of all, <code class="computeroutput">object_init</code> may be used with multiple rules,
+          some of which have locals, and some of which do not. While it's nice that
+          the last line of the error diagnostic points us to the ill-formed use of
+          a <code class="computeroutput"><a class="link" href="../doxygen/headers/structboost_1_1parser_1_1none.html" title="Struct none">none</a></code>,
+          we don't know which <span class="bold"><strong>parser plus semantic action</strong></span>
+          is the problem. With a stack trace in a debugger, we would know that in
+          a few seconds. In this case, we'd have a long slog trying to figure out
+          exactly where the problem lies.
+        </li>
+</ul></div>
+<h4>
+<a name="boost_parser.rationale.h2"></a>
+      <span class="phrase"><a name="boost_parser.rationale.attribute_types_are_flexible"></a></span><a class="link" href="rationale.html#boost_parser.rationale.attribute_types_are_flexible">Attribute
+      types are flexible</a>
+    </h4>
+<p>
+      This is how we get genericity in attribute generation. In the STL, we can use
+      multiple types of container with the algorithms because iterators act as the
+      glue that connects algorithms to containers. With attribute generation, there
+      are instead arbitrary types being constructed and inserted into containers.
+      Allowing the insertion to happen on arbitrary types that model the <code class="computeroutput">container</code>
+      concept is what allows generic use of different containers.
+    </p>
+<h4>
+<a name="boost_parser.rationale.h3"></a>
+      <span class="phrase"><a name="boost_parser.rationale.sequences_of_character_type_are_treated_specially"></a></span><a class="link" href="rationale.html#boost_parser.rationale.sequences_of_character_type_are_treated_specially">Sequences
+      of character type are treated specially</a>
+    </h4>
+<p>
+      Boost.Parser attempts to keep the rules for attribute generation simple. However,
+      there are some rules for attribute generation that only apply to character
+      types like <code class="computeroutput">char</code> and <code class="computeroutput">char32_t</code>. Sequences of these
+      produce a <code class="computeroutput">std::string</code> attribute, while sequences of every other
+      type produce <code class="computeroutput">std::vector</code>s. There are a couple of reasons for this.
+    </p>
+<p>
+      First, strings and vectors are different. We know that strings are just arrays
+      of numbers, but we have a whole different type for them, <code class="computeroutput">std::string</code>.
+      It has a different API, and other code that operates on text expects a string
+      instead of some other container. Arrays of characters are already considered
+      special by the standard library and common practice in C++.
+    </p>
+<p>
+      Second, When you write a parser that parses multiple characters in a row, you
+      are typically trying to produce a string attribute, rather than a few individual
+      character values. When you use multiple non-character parsers in a row, you
+      are typically trying to produce multiple values. For instance:
+    </p>
+<pre class="programlisting">namespace bp = boost::parser;
+auto parser_1 = bp::char_ &gt;&gt; bp::char_ &gt;&gt; -bp::char_;
+auto parser_2 = +(bp::char_ - ' ') &gt;&gt; ' ' &gt;&gt; +(bp::char_ - ' ');
+</pre>
+<p>
+      I don't know about you, but I've rarely written a parser like <code class="computeroutput">parser_1</code>
+      and wanted to produce a <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a1792fbe3b24e0dcf5dc9d31005995c1e.html" title="Type definition tuple">boost::parser::tuple</a>&lt;char,
+      char, std::optional&lt;char&gt;&gt;</code>. Similarly, I've rarely written
+      a parser like <code class="computeroutput">parser_2</code> and wanted a <code class="computeroutput">std::vector&lt;std::string&gt;</code>.
+    </p>
+<p>
+      Boost.Parser therefore makes the common case the default behavior, and provides
+      you with the <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a11728b9935b826cf6a066766b347f17b.html" title="Global merge">merge[]</a></code> and <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a1c4c5ec9144e8f4d1e1e1cb848a0ae04.html" title="Global separate">separate[]</a></code>
+      directives to let you opt-in to generating the less-common attributes.
+    </p>
+<h4>
+<a name="boost_parser.rationale.h4"></a>
+      <span class="phrase"><a name="boost_parser.rationale.attribute_compatibility_rules_are_more_strict_than_in_spirit"></a></span><a class="link" href="rationale.html#boost_parser.rationale.attribute_compatibility_rules_are_more_strict_than_in_spirit">Attribute
+      compatibility rules are more strict than in Spirit</a>
+    </h4>
+<p>
+      Consider this parser.
+    </p>
+<pre class="programlisting">namespace bp = boost::parser;
+auto parser = -(bp::char_ % ',');
+</pre>
+<p>
+      But Boost.Parser and Spirit consider the attribute type of this parser to be
+      <code class="computeroutput">optional&lt;SEQ-OF&lt;char&gt;&gt;</code>. However, Spirit allows you
+      to parse that into a <code class="computeroutput">std::vector&lt;char&gt;</code> or a <code class="computeroutput">std::string</code>,
+      and Boost.Parser does not. Boost.Parser requires you to parse that into a
+      <code class="computeroutput">std::optional&lt;std::string&gt;</code>, or change the parser to <code class="computeroutput">-(bp::char_
+      % ',') | bp::attr(std::string{})</code>. In other words, Spirit considers an
+      optional of a-sequence-of-one-or-more to be equivalent to just a sequence,
+      because the empty state of the sequence represents the empty optional state.
+      Boost.Parser does not. Why the strictness?
+    </p>
+<p>
+      I understand why Spirit works that way — there's no loss of information,
+      so why not? However, I don't agree with that approach.
+    </p>
+<p>
+      When I write <code class="computeroutput">operator-</code>, I get a <code class="computeroutput">std::optional</code>. That's
+      a simple rule.
+    </p>
+<p>
+      If I did write <code class="computeroutput">operator-</code>, I was opting in to getting a <code class="computeroutput">std::optional</code>.
+      The code expresses that intent. If the library changes my written intent, there
+      better be a damn good reason.
+    </p>
+<p>
+      There is of course an exception to the "simple rule" above -- if
+      I write <code class="computeroutput">-p1 &gt;&gt; *p2</code>, and the <code class="computeroutput">ATTR(p1)</code> is the
+      same as <code class="computeroutput">ATTR(p2)</code>, attributes are the same, the optional value
+      gets slurped up into the container. I consider this a "damn good reason",
+      because this is a very common use case. For other, less-common cases, <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a1c4c5ec9144e8f4d1e1e1cb848a0ae04.html" title="Global separate">separate[]</a></code> can be used to keep the attributes
+      non-combining. So <code class="computeroutput">separate[-int_ &gt;&gt; *int_]</code> has the attribute
+      <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a1792fbe3b24e0dcf5dc9d31005995c1e.html" title="Type definition tuple">boost::parser::tuple</a>&lt;std::optional&lt;int&gt;,
+      std::vector&lt;int&gt;&gt;</code>. This makes opting out of this exception
+      very easy, and the intent remains visible in the code.
+    </p>
+<p>
+      By contrast, "I wrote <code class="computeroutput">-+int_</code> but I really want a <code class="computeroutput">std::vector&lt;int&gt;</code>
+      instead of a <code class="computeroutput">std::optional&lt;std::vector&lt;int&gt;&gt;</code>"
+      is not a really common use case.
+    </p>
+<p>
+      Also, Spirit-style looseness is more complicated than <code class="computeroutput">parser</code> above
+      indicates. Remember, <code class="computeroutput">int_ | eps</code> and <code class="computeroutput">-int_</code> are supposed
+      to be semantically equivalent. To do otherwise this would be a profound violation
+      of the principle of least surprise. So, if they're equivalent, we would need
+      to apply the same rule to <code class="computeroutput">int_ | eps</code>. Also, we would probably
+      need to apply it to <code class="computeroutput">if_(cond)[int_]</code>, which is also a <code class="computeroutput">std::optional&lt;int&gt;</code>.
+      This is a lot to remember, and this is complicated to implement and maintain.
+    </p>
+<p>
+      I've been using Spirit 1 and later Spirit 2 since they were released. I did
+      not know about the particular looseness discussed here; a user pointed it out
+      on Github. In many years of using these libraries, I never fully learned all
+      the attribute-compatibility rules, and was often surprised by them.
+    </p>
+<p>
+      Having a small set of rules that the user can internalize is vital; if the
+      attribute generated is different from my expressed intent, that's a problem.
+      For this not to be a problem, I need to be able to understand the rules, so
+      I can express my intent, and not be surprised.
+    </p>
+<h4>
+<a name="boost_parser.rationale.h5"></a>
+      <span class="phrase"><a name="boost_parser.rationale.out_parameter_attributes_passed_to__functionname_alt__boost__parser__parse___code__phrase_role__identifier__parse__phrase__phrase_role__special______phrase___code___functionname__are_cleared_on_parse_failure"></a></span><a class="link" href="rationale.html#boost_parser.rationale.out_parameter_attributes_passed_to__functionname_alt__boost__parser__parse___code__phrase_role__identifier__parse__phrase__phrase_role__special______phrase___code___functionname__are_cleared_on_parse_failure">Out-parameter
+      attributes passed to parse()
+      are cleared on parse failure</a>
+    </h4>
+<p>
+      At the end of a call to any of the <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ab68519dff2a5635d6a11296874fc154d.html" title="Function template parse">parse()</a></code>
+      overloads that takes an attribute out-param (including variants like <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ab9e8e193ef875ca869f2d6d43fa61fc5.html" title="Function template callback_parse">callback_parse()</a></code>, etc.), the parse either succeeds
+      or fails. If the call fails, the attribute is explicitly "cleared"
+      by assigning its default-constructed value.
+    </p>
+<p>
+      This is done because it's the less bad of two options. Consider the other option
+      first.
+    </p>
+<pre class="programlisting">// Without explicit clearing.
+namespace bp = boost::parser;
+std::vector&lt;int&gt; result;
+auto b = bp::parse("3 4 c", +bp::int_, bp::ws, result);
+assert(!b);
+assert(result == std::vector&lt;int&gt;({3, 4}));
+</pre>
+<p>
+      This is odd — the parse failed, but the out-param has partial results
+      in it anyway. This happens because the parser <code class="computeroutput">+bp::int_</code> only fails
+      if it cannot match at <code class="computeroutput">bp::int_</code> at least once. Above, it matches
+      it twice, meaning that it succeeds (if it had failed, it would have cleared
+      its attribute). It does not know that there is nothing after it that could
+      continue the parse, nor that it is being used in to do a full parse. So, the
+      over-all parse fails, but the part of the parse that fills in the out-param
+      attribute does not know do clear its attribute.
+    </p>
+<p>
+      This is why the explicit clearing behavior happens at the end of <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ab68519dff2a5635d6a11296874fc154d.html" title="Function template parse">parse()</a></code>. This is not without its downsides,
+      though. Consider this.
+    </p>
+<pre class="programlisting">// With explicit clearing.
+namespace bp = boost::parser;
+std::string str = "-42";
+int i = 3;
+bool b = parse(str, bp::uint_, i);
+assert(!b);
+assert(i == 0);
+</pre>
+<p>
+      Here, the explicit clearing replaces the previous value of <code class="computeroutput">3</code>,
+      even though the parser never touched the value! Destroying users' variables'
+      state without need may seem like a bad idea, but consider the alternative —
+      In the previous example, we had spurious values left in the out-param attribute.
+      Here, without clearing, we would have had a value left in the out-param attribute,
+      not because it was a partial result of the parse, but because the parse never
+      touched it. This is certain to be confusing, or at least surprising, behavior.
+      I deemed it better to make the failed parse case consistent, to reduce confusion.
+      The out-param attribute of type <code class="computeroutput">A</code> is always equal to <code class="computeroutput">A()</code>
+      if the parser fails. It is equal to whatever the parser sets it to —
+      or its previous value, if the parser does not mutate it — if the parse
+      succeeds.
+    </p>
+</div>
+<div class="copyright-footer">Copyright © 2020 T. Zachary Laine<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../doxygen/headers/namespaceboost_1_1parser_1af2e6576c852ac796a5bdea3c8ed321b8.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../parser.html"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../boost_pfr.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

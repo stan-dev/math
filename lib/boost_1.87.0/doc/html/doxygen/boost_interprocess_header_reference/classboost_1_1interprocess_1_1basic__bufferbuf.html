@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template basic_bufferbuf</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../../interprocess/indexes_reference.html#doxygen.boost_interprocess_header_reference.bufferstream_8hpp" title="Header &lt;boost/interprocess/streams/bufferstream.hpp&gt;">
+<link rel="prev" href="weak__ptr_8hpp_1a60fce6fe96124b684d113a427273e57d.html" title="Function template make_managed_weak_ptr">
+<link rel="next" href="classboost_1_1interprocess_1_1basic__bufferstream.html" title="Class template basic_bufferstream">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="weak__ptr_8hpp_1a60fce6fe96124b684d113a427273e57d.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../interprocess/indexes_reference.html#doxygen.boost_interprocess_header_reference.bufferstream_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1interprocess_1_1basic__bufferstream.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__bufferbuf"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template basic_bufferbuf</span></h2>
+<p>boost::interprocess::basic_bufferbuf</p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../interprocess/indexes_reference.html#doxygen.boost_interprocess_header_reference.bufferstream_8hpp" title="Header &lt;boost/interprocess/streams/bufferstream.hpp&gt;">boost/interprocess/streams/bufferstream.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> CharTraits<span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1interprocess_1_1basic__bufferbuf.html" title="Class template basic_bufferbuf">basic_bufferbuf</a> <span class="special">:</span> <span class="keyword">public</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_streambuf</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">CharTraits</span> <span class="special">&gt;</span> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">CharT</span>                                          <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__bufferbuf_1a350fc1f62ce129f29ca9ae94ff520f81"></a><span class="identifier">char_type</span><span class="special">;</span>        
+  <span class="keyword">typedef</span> <span class="identifier">CharTraits</span><span class="special">::</span><span class="identifier">int_type</span>                           <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__bufferbuf_1a9b565534548a01cd0d31648cb9ed9759"></a><span class="identifier">int_type</span><span class="special">;</span>         
+  <span class="keyword">typedef</span> <span class="identifier">CharTraits</span><span class="special">::</span><span class="identifier">pos_type</span>                           <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__bufferbuf_1a2b201854ec6127aed1b4afdf1f4ecb51"></a><span class="identifier">pos_type</span><span class="special">;</span>         
+  <span class="keyword">typedef</span> <span class="identifier">CharTraits</span><span class="special">::</span><span class="identifier">off_type</span>                           <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__bufferbuf_1ad5a21660ca8b9a65564b44bbdfffb8a0"></a><span class="identifier">off_type</span><span class="special">;</span>         
+  <span class="keyword">typedef</span> <span class="identifier">CharTraits</span>                                     <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__bufferbuf_1a13a10f87aa1eedfa38bb41ceec4d9faf"></a><span class="identifier">traits_type</span><span class="special">;</span>      
+  <span class="keyword">typedef</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_streambuf</span><span class="special">&lt;</span> <span class="identifier">char_type</span><span class="special">,</span> <span class="identifier">traits_type</span> <span class="special">&gt;</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__bufferbuf_1af54a4cc13701193902ae4d72a55a1335"></a><span class="identifier">basic_streambuf_t</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="../boost_container_header_reference/classboost_1_1container_1_1node__allocator.html#id68-bb">public member functions</a></span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1interprocess_1_1basic__bufferbuf.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__bufferbuf_1a56763359069e10e1239f34f41fa79cc6"><span class="identifier">basic_bufferbuf</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">ios_base</span><span class="special">::</span><span class="identifier">openmode</span> <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">ios_base</span><span class="special">::</span><span class="identifier">in</span><span class="special">|</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">ios_base</span><span class="special">::</span><span class="identifier">out</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1interprocess_1_1basic__bufferbuf.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__bufferbuf_1abeccd71ba33c1ae96301f160c9500b71"><span class="identifier">basic_bufferbuf</span></a><span class="special">(</span><span class="identifier">CharT</span> <span class="special">*</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span><span class="special">,</span> 
+                           <span class="identifier">std</span><span class="special">::</span><span class="identifier">ios_base</span><span class="special">::</span><span class="identifier">openmode</span> <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">ios_base</span><span class="special">::</span><span class="identifier">in</span><span class="special">|</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">ios_base</span><span class="special">::</span><span class="identifier">out</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">virtual</span> <a class="link" href="classboost_1_1interprocess_1_1basic__bufferbuf.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__bufferbuf_1ad5c3890fbeee951da3cb09b5bf7a8ef7"><span class="special">~</span><span class="identifier">basic_bufferbuf</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">pair</span><span class="special">&lt;</span> <span class="identifier">CharT</span> <span class="special">*</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="special">&gt;</span> <a class="link" href="classboost_1_1interprocess_1_1basic__bufferbuf.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__bufferbuf_1a69975ff7b4e2d821cac5940f7ae8ca2d"><span class="identifier">buffer</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1interprocess_1_1basic__bufferbuf.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__bufferbuf_1a24cdf1393de3f4872791eb9f94119a0c"><span class="identifier">buffer</span></a><span class="special">(</span><span class="identifier">CharT</span> <span class="special">*</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.17.19.3.54.4.4"></a><h2>Description</h2>
+<p>A streambuf class that controls the transmission of elements to and from a basic_xbufferstream. The elements are transmitted from a to a fixed size buffer </p>
+<div class="refsect2">
+<a name="id-1.3.17.19.3.54.4.4.3"></a><h3>
+<a name="id68-bb"></a><code class="computeroutput">basic_bufferbuf</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__bufferbuf_1a56763359069e10e1239f34f41fa79cc6"></a><span class="identifier">basic_bufferbuf</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">ios_base</span><span class="special">::</span><span class="identifier">openmode</span> mode <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">ios_base</span><span class="special">::</span><span class="identifier">in</span><span class="special">|</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">ios_base</span><span class="special">::</span><span class="identifier">out</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Constructor. Does not throw. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__bufferbuf_1abeccd71ba33c1ae96301f160c9500b71"></a><span class="identifier">basic_bufferbuf</span><span class="special">(</span><span class="identifier">CharT</span> <span class="special">*</span> buf<span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> length<span class="special">,</span> 
+                         <span class="identifier">std</span><span class="special">::</span><span class="identifier">ios_base</span><span class="special">::</span><span class="identifier">openmode</span> mode <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">ios_base</span><span class="special">::</span><span class="identifier">in</span><span class="special">|</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">ios_base</span><span class="special">::</span><span class="identifier">out</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Constructor. Assigns formatting buffer. Does not throw. </p>
+</li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">virtual</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__bufferbuf_1ad5c3890fbeee951da3cb09b5bf7a8ef7"></a><span class="special">~</span><span class="identifier">basic_bufferbuf</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">std</span><span class="special">::</span><span class="identifier">pair</span><span class="special">&lt;</span> <span class="identifier">CharT</span> <span class="special">*</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="special">&gt;</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__bufferbuf_1a69975ff7b4e2d821cac5940f7ae8ca2d"></a><span class="identifier">buffer</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns the pointer and size of the internal buffer. Does not throw. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1basic__bufferbuf_1a24cdf1393de3f4872791eb9f94119a0c"></a><span class="identifier">buffer</span><span class="special">(</span><span class="identifier">CharT</span> <span class="special">*</span> buf<span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> length<span class="special">)</span><span class="special">;</span></pre>
+<p>Sets the underlying buffer to a new value Does not throw. </p>
+</li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2005-2024 Ion Gaztanaga<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="weak__ptr_8hpp_1a60fce6fe96124b684d113a427273e57d.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../interprocess/indexes_reference.html#doxygen.boost_interprocess_header_reference.bufferstream_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1interprocess_1_1basic__bufferstream.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+    "key": "mysql",
+    "name": "MySQL",
+    "authors": [
+        "Rubén Pérez"
+    ],
+    "description": "MySQL client library built on top of Boost.Asio.",
+    "category": [
+        "Concurrent",
+        "IO"
+    ],
+    "maintainers": [
+        "Rubén Pérez <rubenperez038@gmail.com>"
+    ],
+    "cxxstd": "11"
+}

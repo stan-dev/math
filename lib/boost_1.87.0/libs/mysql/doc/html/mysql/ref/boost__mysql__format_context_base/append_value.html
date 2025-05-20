@@ -1,0 +1,103 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>format_context_base::append_value</title>
+<link rel="stylesheet" href="../../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../boost__mysql__format_context_base.html" title="format_context_base">
+<link rel="prev" href="append_raw.html" title="format_context_base::append_raw">
+<link rel="next" href="add_error.html" title="format_context_base::add_error">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="append_raw.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost__mysql__format_context_base.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="add_error.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h5 class="title">
+<a name="mysql.ref.boost__mysql__format_context_base.append_value"></a><a class="link" href="append_value.html" title="format_context_base::append_value">format_context_base::append_value</a>
+</h5></div></div></div>
+<p>
+          <a class="indexterm" name="id76501"></a>
+Formats a value and adds it to the output
+          string (low level).
+        </p>
+<h6>
+<a name="mysql.ref.boost__mysql__format_context_base.append_value.h0"></a>
+          <span class="phrase"><a name="mysql.ref.boost__mysql__format_context_base.append_value.synopsis"></a></span><a class="link" href="append_value.html#mysql.ref.boost__mysql__format_context_base.append_value.synopsis">Synopsis</a>
+        </h6>
+<pre class="programlisting"><a class="link" href="../boost__mysql__format_context_base.html" title="format_context_base"><code class="literal">format_context_base</code></a><span class="special">&amp;</span>
+<span class="identifier">append_value</span><span class="special">(</span>
+    <a class="link" href="../boost__mysql__formattable_ref.html" title="formattable_ref"><code class="literal">formattable_ref</code></a> <span class="identifier">value</span><span class="special">,</span>
+    <a class="link" href="../boost__mysql__constant_string_view.html" title="constant_string_view"><code class="literal">constant_string_view</code></a> <span class="identifier">format_specifiers</span> <span class="special">=</span> <a class="link" href="../boost__mysql__string_view.html" title="string_view"><code class="literal">string_view</code></a><span class="special">());</span>
+</pre>
+<h6>
+<a name="mysql.ref.boost__mysql__format_context_base.append_value.h1"></a>
+          <span class="phrase"><a name="mysql.ref.boost__mysql__format_context_base.append_value.description"></a></span><a class="link" href="append_value.html#mysql.ref.boost__mysql__format_context_base.append_value.description">Description</a>
+        </h6>
+<p>
+          value is formatted according to its type, applying the passed format specifiers.
+          If formatting generates an error (for instance, a string with invalid encoding
+          is passed), the error state may be set.
+        </p>
+<p>
+          This is a low level function. In general, prefer <a class="link" href="../boost__mysql__format_sql_to.html" title="format_sql_to"><code class="computeroutput"><span class="identifier">format_sql_to</span></code></a>, instead.
+        </p>
+<h6>
+<a name="mysql.ref.boost__mysql__format_context_base.append_value.h2"></a>
+          <span class="phrase"><a name="mysql.ref.boost__mysql__format_context_base.append_value.exception_safety"></a></span><a class="link" href="append_value.html#mysql.ref.boost__mysql__format_context_base.append_value.exception_safety">Exception
+          safety</a>
+        </h6>
+<p>
+          Basic guarantee. Memory allocations may throw.
+        </p>
+<h6>
+<a name="mysql.ref.boost__mysql__format_context_base.append_value.h3"></a>
+          <span class="phrase"><a name="mysql.ref.boost__mysql__format_context_base.append_value.errors"></a></span><a class="link" href="append_value.html#mysql.ref.boost__mysql__format_context_base.append_value.errors">Errors</a>
+        </h6>
+<p>
+          The error state may be updated with the following errors:
+        </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+              <a class="link" href="../boost__mysql__client_errc.html" title="client_errc"><code class="computeroutput"><span class="identifier">client_errc</span><span class="special">::</span><span class="identifier">invalid_encoding</span></code></a>
+              if a string with byte sequences that can't be decoded with the current
+              character set is passed.
+            </li>
+<li class="listitem">
+              <a class="link" href="../boost__mysql__client_errc.html" title="client_errc"><code class="computeroutput"><span class="identifier">client_errc</span><span class="special">::</span><span class="identifier">unformattable_value</span></code></a>
+              if a NaN or infinity <code class="computeroutput"><span class="keyword">float</span></code>
+              or <code class="computeroutput"><span class="keyword">double</span></code> is passed.
+            </li>
+<li class="listitem">
+              <a class="link" href="../boost__mysql__client_errc.html" title="client_errc"><code class="computeroutput"><span class="identifier">client_errc</span><span class="special">::</span><span class="identifier">format_string_invalid_specifier</span></code></a>
+              if <code class="computeroutput"><span class="identifier">format_specifiers</span></code>
+              includes specifiers not supported by the type being formatted.
+            </li>
+<li class="listitem">
+              Any other error code that user-supplied formatter specializations may
+              add using <a class="link" href="add_error.html" title="format_context_base::add_error"><code class="computeroutput"><span class="identifier">add_error</span></code></a>.
+            </li>
+</ul></div>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="append_raw.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost__mysql__format_context_base.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="add_error.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

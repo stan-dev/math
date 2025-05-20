@@ -1,0 +1,2557 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template static_vector</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../../boost_container_header_reference.html#doxygen.boost_container_header_reference.static__vector_8hpp" title="Header &lt;boost/container/static_vector.hpp&gt;">
+<link rel="prev" href="classboost_1_1container_1_1stable__vector.html" title="Class template stable_vector">
+<link rel="next" href="static__vector_8hpp_1a15b54bd544d6f12206efdb88305f7c85.html" title="Function template operator==">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1container_1_1stable__vector.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_container_header_reference.html#doxygen.boost_container_header_reference.static__vector_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="static__vector_8hpp_1a15b54bd544d6f12206efdb88305f7c85.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template static_vector</span></h2>
+<p>boost::container::static_vector — A variable-size array container with fixed capacity. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../boost_container_header_reference.html#doxygen.boost_container_header_reference.static__vector_8hpp" title="Header &lt;boost/container/static_vector.hpp&gt;">boost/container/static_vector.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> Capacity<span class="special">,</span> <span class="keyword">typename</span> Options <span class="special">=</span> <span class="keyword">void</span><span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">base_t</span><span class="special">::</span><span class="identifier">value_type</span>             <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a65ccb46ec782de1c0d57fecfb8652073"></a><span class="identifier">value_type</span><span class="special">;</span>              <span class="comment">// The type of elements stored in the container. </span>
+  <span class="keyword">typedef</span> <span class="identifier">base_t</span><span class="special">::</span><span class="identifier">size_type</span>              <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a34518abcc22dea0db3fd31860a0d956c"></a><span class="identifier">size_type</span><span class="special">;</span>               <span class="comment">// The unsigned integral type used by the container. </span>
+  <span class="keyword">typedef</span> <span class="identifier">base_t</span><span class="special">::</span><span class="identifier">difference_type</span>        <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1ad804e854103c5bcad43cb440c9efea2e"></a><span class="identifier">difference_type</span><span class="special">;</span>         <span class="comment">// The pointers difference type. </span>
+  <span class="keyword">typedef</span> <span class="identifier">base_t</span><span class="special">::</span><span class="identifier">pointer</span>                <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1acb1b1ba303fedb66cf9a9603cefd32ef"></a><span class="identifier">pointer</span><span class="special">;</span>                 <span class="comment">// The pointer type. </span>
+  <span class="keyword">typedef</span> <span class="identifier">base_t</span><span class="special">::</span><span class="identifier">const_pointer</span>          <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1add06f09d6b2201e2c67f6357d8022df1"></a><span class="identifier">const_pointer</span><span class="special">;</span>           <span class="comment">// The const pointer type. </span>
+  <span class="keyword">typedef</span> <span class="identifier">base_t</span><span class="special">::</span><span class="identifier">reference</span>              <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1aa5e8bd631436c64da2dc2228b00560fb"></a><span class="identifier">reference</span><span class="special">;</span>               <span class="comment">// The value reference type. </span>
+  <span class="keyword">typedef</span> <span class="identifier">base_t</span><span class="special">::</span><span class="identifier">const_reference</span>        <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a788076bb1d007e4155cfbda66af9ef05"></a><span class="identifier">const_reference</span><span class="special">;</span>         <span class="comment">// The value const reference type. </span>
+  <span class="keyword">typedef</span> <span class="identifier">base_t</span><span class="special">::</span><span class="identifier">iterator</span>               <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a0babc5b395e6090627ad3f6131f40f06"></a><span class="identifier">iterator</span><span class="special">;</span>                <span class="comment">// The iterator type. </span>
+  <span class="keyword">typedef</span> <span class="identifier">base_t</span><span class="special">::</span><span class="identifier">const_iterator</span>         <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1abaf178eeb749eea1bd1d7359610af6a3"></a><span class="identifier">const_iterator</span><span class="special">;</span>          <span class="comment">// The const iterator type. </span>
+  <span class="keyword">typedef</span> <span class="identifier">base_t</span><span class="special">::</span><span class="identifier">reverse_iterator</span>       <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1abfdfe1eec667a1b1a0d3996681e83a44"></a><span class="identifier">reverse_iterator</span><span class="special">;</span>        <span class="comment">// The reverse iterator type. </span>
+  <span class="keyword">typedef</span> <span class="identifier">base_t</span><span class="special">::</span><span class="identifier">const_reverse_iterator</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1abaa839256b6e8232b579a59450e81b4c"></a><span class="identifier">const_reverse_iterator</span><span class="special">;</span>  <span class="comment">// The const reverse iterator. </span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1container_1_1static__vector.html#id125-bb">public member functions</a></span>
+  <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a7c3168e4991b30f816db81d59922286a"><span class="identifier">static_vector</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1aadcf7af9fc01b9c962d272b747560f44"><span class="identifier">static_vector</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1ab9c538a5ccc075db5e3b40ea8c945d45"><span class="identifier">static_vector</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">,</span> <a class="link" href="structboost_1_1container_1_1default__init__t.html" title="Struct default_init_t">default_init_t</a><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a211a6ba3ee6c138593617e571b05d5de"><span class="identifier">static_vector</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">,</span> <span class="identifier">value_type</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Iterator<span class="special">&gt;</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1af58f22146b5a8fa6cd3d579cb64bc192"><span class="identifier">static_vector</span></a><span class="special">(</span><span class="identifier">Iterator</span><span class="special">,</span> <span class="identifier">Iterator</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a8d4184839facbf766e9dab0663cdff18"><span class="identifier">static_vector</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">initializer_list</span><span class="special">&lt;</span> <span class="identifier">value_type</span> <span class="special">&gt;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1aec8a32a879976ca10ff5244413a90abe"><span class="identifier">static_vector</span></a><span class="special">(</span><a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a6787251b906a04e5ac95112d39ea8b69"><span class="identifier">static_vector</span></a><span class="special">(</span><a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">allocator_type</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a990d72a106fe13249269acfa7e1b0df3"><span class="identifier">static_vector</span></a><span class="special">(</span><a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> <span class="special">&amp;&amp;</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">allocator_type</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">container</span><span class="special">::</span><span class="identifier">dtl</span><span class="special">::</span><span class="identifier">is_nothrow_move_constructible</span><span class="special">&lt;</span> <span class="identifier">value_type</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">value</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a605521aeccf1efcf1a7bea4c2a228217"><span class="identifier">static_vector</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">allocator_type</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> C<span class="special">,</span> <span class="keyword">typename</span> O<span class="special">&gt;</span> 
+    <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a4dd944c38b4bcfafb608601844e42d27"><span class="identifier">static_vector</span></a><span class="special">(</span><a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a><span class="special">&lt;</span> <span class="identifier">T</span><span class="special">,</span> <span class="identifier">C</span><span class="special">,</span> <span class="identifier">O</span> <span class="special">&gt;</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a8b2520fe9a9ce8262546e1c42c9ad43f"><span class="identifier">static_vector</span></a><span class="special">(</span><a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> <span class="special">&amp;&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">container</span><span class="special">::</span><span class="identifier">dtl</span><span class="special">::</span><span class="identifier">is_nothrow_move_constructible</span><span class="special">&lt;</span> <span class="identifier">value_type</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">value</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> C<span class="special">,</span> <span class="keyword">typename</span> O<span class="special">&gt;</span> 
+    <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a675d6cde6ca47b8cb35dcf962d48f824"><span class="identifier">static_vector</span></a><span class="special">(</span><a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a><span class="special">&lt;</span> <span class="identifier">T</span><span class="special">,</span> <span class="identifier">C</span><span class="special">,</span> <span class="identifier">O</span> <span class="special">&gt;</span> <span class="special">&amp;&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> <span class="special">&amp;</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1abf8a1795c21324bc24ac20f2a39c034f"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> <span class="special">&amp;</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a98f6e104401f295a13f18629e89cb1d4"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">initializer_list</span><span class="special">&lt;</span> <span class="identifier">value_type</span> <span class="special">&gt;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> C<span class="special">,</span> <span class="keyword">typename</span> O<span class="special">&gt;</span> 
+    <a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> <span class="special">&amp;</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1aa051d61b5b571216adfee37a56d63447"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a><span class="special">&lt;</span> <span class="identifier">T</span><span class="special">,</span> <span class="identifier">C</span><span class="special">,</span> <span class="identifier">O</span> <span class="special">&gt;</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> <span class="special">&amp;</span> 
+  <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a8c30b406fcaa0cf5699f78e4fa47f9d3"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> <span class="special">&amp;&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">container</span><span class="special">::</span><span class="identifier">dtl</span><span class="special">::</span><span class="identifier">is_nothrow_move_assignable</span><span class="special">&lt;</span> <span class="identifier">value_type</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">value</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> C<span class="special">,</span> <span class="keyword">typename</span> O<span class="special">&gt;</span> 
+    <a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> <span class="special">&amp;</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a5a7be3dd713e21ecc6fa2cc576f6ecd7"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a><span class="special">&lt;</span> <span class="identifier">T</span><span class="special">,</span> <span class="identifier">C</span><span class="special">,</span> <span class="identifier">O</span> <span class="special">&gt;</span> <span class="special">&amp;&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a8e17bd5dd83d30dba4cc274d4c8675cc"><span class="special">~</span><span class="identifier">static_vector</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a54a91b0622f73f47e6c120406e62f21a"><span class="identifier">swap</span></a><span class="special">(</span><a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> C<span class="special">,</span> <span class="keyword">typename</span> O<span class="special">&gt;</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1aaa87c6012376add7f5878ed13c9c9a48"><span class="identifier">swap</span></a><span class="special">(</span><a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a><span class="special">&lt;</span> <span class="identifier">T</span><span class="special">,</span> <span class="identifier">C</span><span class="special">,</span> <span class="identifier">O</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a5cf0d8785ddab6f6c7ad92dd43bb4958"><span class="identifier">resize</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a944d09dd0d7a7d9f2761db5f50e168fc"><span class="identifier">resize</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">,</span> <a class="link" href="structboost_1_1container_1_1default__init__t.html" title="Struct default_init_t">default_init_t</a><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a9e0c41bd56c0988b41835351aefbb83f"><span class="identifier">resize</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">,</span> <span class="identifier">value_type</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a5f87ea3bc9ee67d477a5e38e1397fe43"><span class="identifier">reserve</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a0fe7e9a5d63e5746565313ffb6ff0d27"><span class="identifier">push_back</span></a><span class="special">(</span><span class="identifier">value_type</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1aeb96341ca025fe58671d27042697dc3e"><span class="identifier">push_back</span></a><span class="special">(</span><span class="identifier">value_type</span> <span class="special">&amp;&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1af07345fea98548075649e8ce99e6bcb4"><span class="identifier">pop_back</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">iterator</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1ae24ff908ca7e4454151dfbd5076ff622"><span class="identifier">insert</span></a><span class="special">(</span><span class="identifier">const_iterator</span><span class="special">,</span> <span class="identifier">value_type</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">iterator</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1ae77846dd0a79644e5849ba18a28b220c"><span class="identifier">insert</span></a><span class="special">(</span><span class="identifier">const_iterator</span><span class="special">,</span> <span class="identifier">value_type</span> <span class="special">&amp;&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">iterator</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a124f8fe5fd93c1f57b787f436d417fd0"><span class="identifier">insert</span></a><span class="special">(</span><span class="identifier">const_iterator</span><span class="special">,</span> <span class="identifier">size_type</span><span class="special">,</span> <span class="identifier">value_type</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Iterator<span class="special">&gt;</span> 
+    <span class="identifier">iterator</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a9c8ddcaedb839974ba73d5de401c607a"><span class="identifier">insert</span></a><span class="special">(</span><span class="identifier">const_iterator</span><span class="special">,</span> <span class="identifier">Iterator</span><span class="special">,</span> <span class="identifier">Iterator</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">iterator</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a9f9595332309868fec1759a3b1709ec3"><span class="identifier">insert</span></a><span class="special">(</span><span class="identifier">const_iterator</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">initializer_list</span><span class="special">&lt;</span> <span class="identifier">value_type</span> <span class="special">&gt;</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">iterator</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a01e84ba2fcf82dd886abadc1e30b3a4e"><span class="identifier">erase</span></a><span class="special">(</span><span class="identifier">const_iterator</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">iterator</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1aa1240f7e95674f48c8b9fb3ebcf13310"><span class="identifier">erase</span></a><span class="special">(</span><span class="identifier">const_iterator</span><span class="special">,</span> <span class="identifier">const_iterator</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Iterator<span class="special">&gt;</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1adc4e2c52f96f3298f7f3f0b874587b0f"><span class="identifier">assign</span></a><span class="special">(</span><span class="identifier">Iterator</span><span class="special">,</span> <span class="identifier">Iterator</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1acc3edad81d6ed2c9e67413bb421a7bc6"><span class="identifier">assign</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">initializer_list</span><span class="special">&lt;</span> <span class="identifier">value_type</span> <span class="special">&gt;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a782c22882ca3b5b5767aa5d332d15062"><span class="identifier">assign</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">,</span> <span class="identifier">value_type</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">class</span> <span class="special">...</span> Args<span class="special">&gt;</span> <span class="identifier">reference</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1ad70e0389731f3be03a5b134c2dbafce8"><span class="identifier">emplace_back</span></a><span class="special">(</span><span class="identifier">Args</span> <span class="special">&amp;&amp;</span><span class="special">...</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">class</span> <span class="special">...</span> Args<span class="special">&gt;</span> <span class="identifier">iterator</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1ac2366eb1b6190c7f83215c732ac69e10"><span class="identifier">emplace</span></a><span class="special">(</span><span class="identifier">const_iterator</span><span class="special">,</span> <span class="identifier">Args</span> <span class="special">&amp;&amp;</span><span class="special">...</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a04c65c65f8d2af29726e8b0987f3f87a"><span class="identifier">clear</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">reference</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a776c7fcdf59945fc4228e495092898c7"><span class="identifier">at</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">const_reference</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a6acd8ae1c9c3d680d3a49fc6c5ffb6fa"><span class="identifier">at</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">reference</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a8cb6e3543b441d830c6718584463e93d"><span class="keyword">operator</span><span class="special">[</span><span class="special">]</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">const_reference</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1ac7acdecb3123e4e38b8dccf33dad829b"><span class="keyword">operator</span><span class="special">[</span><span class="special">]</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">iterator</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a0cac7513d420a2c66e077ad5c14eb9ed"><span class="identifier">nth</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">const_iterator</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a31679a1ec047529829efe8949d6ad2e1"><span class="identifier">nth</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">size_type</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a2495ed6e61fd2b94d417dde077122be9"><span class="identifier">index_of</span></a><span class="special">(</span><span class="identifier">iterator</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">size_type</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1aef0c44004c078cd10134aa3f744be35a"><span class="identifier">index_of</span></a><span class="special">(</span><span class="identifier">const_iterator</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">reference</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1abfb280a4bc64e8c99f6efabf989359ea"><span class="identifier">front</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">const_reference</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a3405d5e602af957b5961b430f5a0ed5a"><span class="identifier">front</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">reference</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a399c57e3e13fa4cd7194a08dadc976cf"><span class="identifier">back</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">const_reference</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a33fcf561c64344facfda5205fde9612a"><span class="identifier">back</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">T</span> <span class="special">*</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a5d594b1723df0c262498920f07dd6220"><span class="identifier">data</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">const</span> <span class="identifier">T</span> <span class="special">*</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a49e9c708aff9e0ef55fa36dc5b3ff499"><span class="identifier">data</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">iterator</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a4f1384a1cc2fcd4fef255a2054ebaace"><span class="identifier">begin</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">const_iterator</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1aa10c1cdbc1e3272495b0cf2a93cab610"><span class="identifier">begin</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">const_iterator</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a9ede334678f43aa9b4cc1bc44e799ea1"><span class="identifier">cbegin</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">iterator</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1ace77e76d6368a1f0034d58dfe7edcaed"><span class="identifier">end</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">const_iterator</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1adb23f4f11540ba8965a4917a20c478f2"><span class="identifier">end</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">const_iterator</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a9c8dec27064996f08cec9d21ceebd90f"><span class="identifier">cend</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">reverse_iterator</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a3535253f965e19676a3a5950e07cdbbb"><span class="identifier">rbegin</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">const_reverse_iterator</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a058cd2f6d3e0a61739b6c121b6ca6593"><span class="identifier">rbegin</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">const_reverse_iterator</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1af0136bc22eac6c72731ac7699e86741b"><span class="identifier">crbegin</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">reverse_iterator</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a13154da6e032bdef65c0450e36a5d261"><span class="identifier">rend</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">const_reverse_iterator</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a71cea82a31ae18e69372a33d0be0cfe6"><span class="identifier">rend</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">const_reverse_iterator</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1afe12f4ccc6e5d7493d287ec700fbdd3c"><span class="identifier">crend</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">size_type</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a9903e5a4a8eae0a237101f2256d72565"><span class="identifier">size</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a747c7f36d1fb8ff8ea83694b640b359d"><span class="identifier">empty</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1container_1_1static__vector.html#id126-bb">public static functions</a></span>
+  <span class="keyword">static</span> <span class="identifier">size_type</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a1721ee4a131b34c15ead5a4d2f33a1e9"><span class="identifier">capacity</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="identifier">size_type</span> <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a769040f0325cb1b92f0796ae3a22ddbe"><span class="identifier">max_size</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+
+  <span class="comment">// public data members</span>
+  <span class="identifier">BOOST_STATIC_CONSTEXPR</span> <span class="identifier">size_type</span> <span class="identifier">static_capacity</span><span class="special">;</span>  <span class="comment">// The capacity/max size of the container. </span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.9.14.40.3.4"></a><h2>Description</h2>
+<p><a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> is a sequence container like <a class="link" href="classboost_1_1container_1_1vector.html" title="Class template vector">boost::container::vector</a> with contiguous storage that can change in size, along with the static allocation, low overhead, and fixed capacity of boost::array.</p>
+<p>A <a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> is a sequence that supports random access to elements, constant time insertion and removal of elements at the end, and linear time insertion and removal of elements at the beginning or in the middle. The number of elements in a <a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> may vary dynamically up to a fixed capacity because elements are stored within the object itself similarly to an array. However, objects are initialized as they are inserted into <a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> unlike C arrays or std::array which must construct all elements on instantiation. The behavior of <a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> enables the use of statically allocated elements in cases with complex object lifetime requirements that would otherwise not be trivially possible.</p>
+<p><b>Error Handling. </b>If <code class="computeroutput"><a class="link" href="structboost_1_1container_1_1throw__on__overflow.html" title="Struct template throw_on_overflow">throw_on_overflow</a></code> option is true (default behaviour), insertion beyond the capacity result in throwing bad_alloc() if exceptions are enabled and or calling throw_bad_alloc() if not enabled. If <code class="computeroutput"><a class="link" href="structboost_1_1container_1_1throw__on__overflow.html" title="Struct template throw_on_overflow">throw_on_overflow</a></code> option is false, insertion beyond capacity results in Undefined Behaviour.</p>
+<p>
+out_of_range is thrown if out of bounds access is performed in <code class="computeroutput"><a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a776c7fcdf59945fc4228e495092898c7">at()</a></code> if exceptions are enabled, throw_out_of_range() if not enabled.</p>
+<p>
+</p>
+<div class="refsect2">
+<a name="id-1.3.9.14.40.3.4.6"></a><h3>Template Parameters</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">typename</span> T</pre>
+<p>The type of element that will be stored. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> Capacity</pre>
+<p>The maximum number of elements <a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> can store, fixed at compile time. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">typename</span> Options <span class="special">=</span> <span class="keyword">void</span></pre>
+<p>A type produced from <code class="computeroutput"><a class="link" href="structboost_1_1container_1_1static__vector__options.html" title="Struct template static_vector_options">boost::container::static_vector_options</a></code>. If no option is specified, by default throw_on_overflow&lt;true&gt; option is set. </p>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.9.14.40.3.4.7"></a><h3>
+<a name="id125-bb"></a><code class="computeroutput">static_vector</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a7c3168e4991b30f816db81d59922286a"></a><span class="identifier">static_vector</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Constructs an empty <a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a>. <p><b>Throws. </b>Nothing.</p>
+<p>
+</p>
+<p><b>Complexity. </b>Constant O(1). </p>
+<p>
+</p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1aadcf7af9fc01b9c962d272b747560f44"></a><span class="identifier">static_vector</span><span class="special">(</span><span class="identifier">size_type</span> count<span class="special">)</span><span class="special">;</span></pre>Constructs a <a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> containing count value initialized values. <p>
+</p>
+<p>
+</p>
+<p><b>Throws. </b></p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p>If T's value initialization throws </p></li>
+<li class="listitem"><p>If <code class="computeroutput">throw_on_overflow&lt;true&gt;</code> option is set and the container runs out of capacity.</p></li>
+</ul></div>
+<p>
+</p>
+<p>
+</p>
+<p><b>Complexity. </b>Linear O(N). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">count</code></span></p></td>
+<td><p>The number of values which will be contained in the container.</p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td><p><code class="computeroutput">count &lt;= <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a1721ee4a131b34c15ead5a4d2f33a1e9">capacity()</a></code></p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1ab9c538a5ccc075db5e3b40ea8c945d45"></a><span class="identifier">static_vector</span><span class="special">(</span><span class="identifier">size_type</span> count<span class="special">,</span> <a class="link" href="structboost_1_1container_1_1default__init__t.html" title="Struct default_init_t">default_init_t</a><span class="special">)</span><span class="special">;</span></pre>Constructs a <a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> containing count default initialized values. <p>
+</p>
+<p>
+</p>
+<p><b>Throws. </b></p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p>If T's default initialization throws. </p></li>
+<li class="listitem"><p>If <code class="computeroutput">throw_on_overflow&lt;true&gt;</code> option is set and the container runs out of capacity.</p></li>
+</ul></div>
+<p>
+</p>
+<p>
+</p>
+<p><b>Complexity. </b>Linear O(N).</p>
+<p>
+</p>
+<p><b>Note. </b>Non-standard extension </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">count</code></span></p></td>
+<td><p>The number of values which will be contained in the container.</p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td><p><code class="computeroutput">count &lt;= <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a1721ee4a131b34c15ead5a4d2f33a1e9">capacity()</a></code></p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a211a6ba3ee6c138593617e571b05d5de"></a><span class="identifier">static_vector</span><span class="special">(</span><span class="identifier">size_type</span> count<span class="special">,</span> <span class="identifier">value_type</span> <span class="keyword">const</span> <span class="special">&amp;</span> value<span class="special">)</span><span class="special">;</span></pre>Constructs a <a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> containing count copies of value. <p>
+</p>
+<p>
+</p>
+<p><b>Throws. </b></p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p>If T's copy constructor throws. </p></li>
+<li class="listitem"><p>If <code class="computeroutput">throw_on_overflow&lt;true&gt;</code> option is set and the container runs out of capacity.</p></li>
+</ul></div>
+<p>
+</p>
+<p>
+</p>
+<p><b>Complexity. </b>Linear O(N). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">count</code></span></p></td>
+<td><p>The number of copies of a values that will be contained in the container. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">value</code></span></p></td>
+<td><p>The value which will be used to copy construct values.</p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td><p><code class="computeroutput">count &lt;= <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a1721ee4a131b34c15ead5a4d2f33a1e9">capacity()</a></code></p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Iterator<span class="special">&gt;</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1af58f22146b5a8fa6cd3d579cb64bc192"></a><span class="identifier">static_vector</span><span class="special">(</span><span class="identifier">Iterator</span> first<span class="special">,</span> <span class="identifier">Iterator</span> last<span class="special">)</span><span class="special">;</span></pre>Constructs a <a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> containing copy of a range <code class="computeroutput">[first, last)</code>. <p>
+
+</p>
+<p><b>Throws. </b></p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p>If T's constructor taking a dereferenced Iterator throws. </p></li>
+<li class="listitem"><p>If <code class="computeroutput">throw_on_overflow&lt;true&gt;</code> option is set and the container runs out of capacity.</p></li>
+</ul></div>
+<p>
+</p>
+<p>
+</p>
+<p><b>Complexity. </b>Linear O(N). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">first</code></span></p></td>
+<td><p>The iterator to the first element in range. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">last</code></span></p></td>
+<td><p>The iterator to the one after the last element in range.</p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p><code class="computeroutput">distance(first, last) &lt;= <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a1721ee4a131b34c15ead5a4d2f33a1e9">capacity()</a></code> </p></li>
+<li class="listitem"><p>Iterator must meet the <code class="computeroutput">ForwardTraversalIterator</code> concept.</p></li>
+</ul></div>
+<p>
+</p>
+</td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a8d4184839facbf766e9dab0663cdff18"></a><span class="identifier">static_vector</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">initializer_list</span><span class="special">&lt;</span> <span class="identifier">value_type</span> <span class="special">&gt;</span> il<span class="special">)</span><span class="special">;</span></pre>Constructs a <a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> containing copy of a range <code class="computeroutput">[il.begin(), il.end())</code>. <p>
+
+</p>
+<p><b>Throws. </b></p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p>If T's constructor taking a dereferenced std::initializer_list throws. </p></li>
+<li class="listitem"><p>If <code class="computeroutput">throw_on_overflow&lt;true&gt;</code> option is set and the container runs out of capacity.</p></li>
+</ul></div>
+<p>
+</p>
+<p>
+</p>
+<p><b>Complexity. </b>Linear O(N). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">il</code></span></p></td>
+<td><p>std::initializer_list with values to initialize vector.</p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><code class="computeroutput">distance(il.begin(), il.end()) &lt;= <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a1721ee4a131b34c15ead5a4d2f33a1e9">capacity()</a></code></p></li></ul></div>
+<p>
+</p>
+</td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1aec8a32a879976ca10ff5244413a90abe"></a><span class="identifier">static_vector</span><span class="special">(</span><a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> <span class="keyword">const</span> <span class="special">&amp;</span> other<span class="special">)</span><span class="special">;</span></pre>Constructs a copy of other <a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a>. <p>
+</p>
+<p><b>Throws. </b>If T's copy constructor throws.</p>
+<p>
+</p>
+<p><b>Complexity. </b>Linear O(N). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">other</code></span></p></td>
+<td><p>The <a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> which content will be copied to this one.</p></td>
+</tr></tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem"><pre class="literallayout"><a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a6787251b906a04e5ac95112d39ea8b69"></a><span class="identifier">static_vector</span><span class="special">(</span><a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> <span class="keyword">const</span> <span class="special">&amp;</span> other<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">allocator_type</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a990d72a106fe13249269acfa7e1b0df3"></a><span class="identifier">static_vector</span><span class="special">(</span><a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> <span class="special">&amp;&amp;</span> other<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">allocator_type</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">container</span><span class="special">::</span><span class="identifier">dtl</span><span class="special">::</span><span class="identifier">is_nothrow_move_constructible</span><span class="special">&lt;</span> <span class="identifier">value_type</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">value</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a605521aeccf1efcf1a7bea4c2a228217"></a><span class="identifier">static_vector</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">allocator_type</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> C<span class="special">,</span> <span class="keyword">typename</span> O<span class="special">&gt;</span> 
+  <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a4dd944c38b4bcfafb608601844e42d27"></a><span class="identifier">static_vector</span><span class="special">(</span><a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a><span class="special">&lt;</span> <span class="identifier">T</span><span class="special">,</span> <span class="identifier">C</span><span class="special">,</span> <span class="identifier">O</span> <span class="special">&gt;</span> <span class="keyword">const</span> <span class="special">&amp;</span> other<span class="special">)</span><span class="special">;</span></pre>Constructs a copy of other <a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a>. <p>
+</p>
+<p>
+</p>
+<p><b>Throws. </b></p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p>If T's copy constructor throws. </p></li>
+<li class="listitem"><p>If <code class="computeroutput">throw_on_overflow&lt;true&gt;</code> option is set and the container runs out of capacity.</p></li>
+</ul></div>
+<p>
+</p>
+<p>
+</p>
+<p><b>Complexity. </b>Linear O(N). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">other</code></span></p></td>
+<td><p>The <a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> which content will be copied to this one.</p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td><p><code class="computeroutput">other.size() &lt;= <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a1721ee4a131b34c15ead5a4d2f33a1e9">capacity()</a></code>.</p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a8b2520fe9a9ce8262546e1c42c9ad43f"></a><span class="identifier">static_vector</span><span class="special">(</span><a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> <span class="special">&amp;&amp;</span> other<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">container</span><span class="special">::</span><span class="identifier">dtl</span><span class="special">::</span><span class="identifier">is_nothrow_move_constructible</span><span class="special">&lt;</span> <span class="identifier">value_type</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">value</span><span class="special">)</span><span class="special">;</span></pre>Move constructor. Moves Values stored in the other <a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> to this one. <p>
+</p>
+<p><b>Throws. </b></p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p>If <code class="computeroutput">has_nothrow_move&lt;T&gt;::value</code> is <code class="computeroutput">true</code> and T's move constructor throws. </p></li>
+<li class="listitem"><p>If <code class="computeroutput">has_nothrow_move&lt;T&gt;::value</code> is <code class="computeroutput">false</code> and T's copy constructor throws.</p></li>
+</ul></div>
+<p>
+</p>
+<p>
+</p>
+<p><b>Complexity. </b>Linear O(N). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">other</code></span></p></td>
+<td><p>The <a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> which content will be moved to this one.</p></td>
+</tr></tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> C<span class="special">,</span> <span class="keyword">typename</span> O<span class="special">&gt;</span> 
+  <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a675d6cde6ca47b8cb35dcf962d48f824"></a><span class="identifier">static_vector</span><span class="special">(</span><a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a><span class="special">&lt;</span> <span class="identifier">T</span><span class="special">,</span> <span class="identifier">C</span><span class="special">,</span> <span class="identifier">O</span> <span class="special">&gt;</span> <span class="special">&amp;&amp;</span> other<span class="special">)</span><span class="special">;</span></pre>Move constructor. Moves Values stored in the other <a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> to this one. <p>
+</p>
+<p>
+</p>
+<p><b>Throws. </b></p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p>If <code class="computeroutput">has_nothrow_move&lt;T&gt;::value</code> is <code class="computeroutput">true</code> and T's move constructor throws. </p></li>
+<li class="listitem"><p>If <code class="computeroutput">has_nothrow_move&lt;T&gt;::value</code> is <code class="computeroutput">false</code> and T's copy constructor throws. </p></li>
+<li class="listitem"><p>If <code class="computeroutput">throw_on_overflow&lt;true&gt;</code> option is set and the container runs out of capacity.</p></li>
+</ul></div>
+<p>
+</p>
+<p>
+</p>
+<p><b>Complexity. </b>Linear O(N). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">other</code></span></p></td>
+<td><p>The <a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> which content will be moved to this one.</p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td><p><code class="computeroutput">other.size() &lt;= <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a1721ee4a131b34c15ead5a4d2f33a1e9">capacity()</a></code></p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> <span class="special">&amp;</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1abf8a1795c21324bc24ac20f2a39c034f"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> <span class="special">&amp;</span> other<span class="special">)</span><span class="special">;</span></pre>Copy assigns Values stored in the other <a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> to this one. <p>
+</p>
+<p><b>Throws. </b>If T's copy constructor or copy assignment throws.</p>
+<p>
+</p>
+<p><b>Complexity. </b>Linear O(N). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">other</code></span></p></td>
+<td><p>The <a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> which content will be copied to this one.</p></td>
+</tr></tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> <span class="special">&amp;</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a98f6e104401f295a13f18629e89cb1d4"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">initializer_list</span><span class="special">&lt;</span> <span class="identifier">value_type</span> <span class="special">&gt;</span> il<span class="special">)</span><span class="special">;</span></pre>Copy assigns Values stored in std::initializer_list to *this. <p>
+</p>
+<p><b>Throws. </b></p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p>If T's copy constructor or copy assignment throws. </p></li>
+<li class="listitem"><p>If <code class="computeroutput">throw_on_overflow&lt;true&gt;</code> option is set and the container runs out of capacity.</p></li>
+</ul></div>
+<p>
+</p>
+<p>
+</p>
+<p><b>Complexity. </b>Linear O(N). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">il</code></span></p></td>
+<td><p>The std::initializer_list which content will be copied to this one.</p></td>
+</tr></tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> C<span class="special">,</span> <span class="keyword">typename</span> O<span class="special">&gt;</span> 
+  <a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> <span class="special">&amp;</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1aa051d61b5b571216adfee37a56d63447"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a><span class="special">&lt;</span> <span class="identifier">T</span><span class="special">,</span> <span class="identifier">C</span><span class="special">,</span> <span class="identifier">O</span> <span class="special">&gt;</span> <span class="keyword">const</span> <span class="special">&amp;</span> other<span class="special">)</span><span class="special">;</span></pre>Copy assigns Values stored in the other <a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> to this one. <p>
+</p>
+<p>
+</p>
+<p><b>Throws. </b></p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p>If T's copy constructor or copy assignment throws. </p></li>
+<li class="listitem"><p>If <code class="computeroutput">throw_on_overflow&lt;true&gt;</code> option is set and the container runs out of capacity.</p></li>
+</ul></div>
+<p>
+</p>
+<p>
+</p>
+<p><b>Complexity. </b>Linear O(N). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">other</code></span></p></td>
+<td><p>The <a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> which content will be copied to this one.</p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td><p><code class="computeroutput">other.size() &lt;= <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a1721ee4a131b34c15ead5a4d2f33a1e9">capacity()</a></code></p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> <span class="special">&amp;</span> 
+<a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a8c30b406fcaa0cf5699f78e4fa47f9d3"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> <span class="special">&amp;&amp;</span> other<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">container</span><span class="special">::</span><span class="identifier">dtl</span><span class="special">::</span><span class="identifier">is_nothrow_move_assignable</span><span class="special">&lt;</span> <span class="identifier">value_type</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">value</span><span class="special">)</span><span class="special">;</span></pre>Move assignment. Moves Values stored in the other <a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> to this one. <p>
+</p>
+<p><b>Throws. </b></p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p>If <code class="computeroutput">has_nothrow_move&lt;T&gt;::value</code> is <code class="computeroutput">true</code> and T's move constructor or move assignment throws. </p></li>
+<li class="listitem"><p>If <code class="computeroutput">has_nothrow_move&lt;T&gt;::value</code> is <code class="computeroutput">false</code> and T's copy constructor or copy assignment throws.</p></li>
+</ul></div>
+<p>
+</p>
+<p>
+</p>
+<p><b>Complexity. </b>Linear O(N). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">other</code></span></p></td>
+<td><p>The <a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> which content will be moved to this one.</p></td>
+</tr></tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> C<span class="special">,</span> <span class="keyword">typename</span> O<span class="special">&gt;</span> 
+  <a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> <span class="special">&amp;</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a5a7be3dd713e21ecc6fa2cc576f6ecd7"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a><span class="special">&lt;</span> <span class="identifier">T</span><span class="special">,</span> <span class="identifier">C</span><span class="special">,</span> <span class="identifier">O</span> <span class="special">&gt;</span> <span class="special">&amp;&amp;</span> other<span class="special">)</span><span class="special">;</span></pre>Move assignment. Moves Values stored in the other <a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> to this one. <p>
+</p>
+<p>
+</p>
+<p><b>Throws. </b></p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p>If <code class="computeroutput">has_nothrow_move&lt;T&gt;::value</code> is <code class="computeroutput">true</code> and T's move constructor or move assignment throws. </p></li>
+<li class="listitem"><p>If <code class="computeroutput">has_nothrow_move&lt;T&gt;::value</code> is <code class="computeroutput">false</code> and T's copy constructor or copy assignment throws. </p></li>
+<li class="listitem"><p>If <code class="computeroutput">throw_on_overflow&lt;true&gt;</code> option is set and the container runs out of capacity.</p></li>
+</ul></div>
+<p>
+</p>
+<p>
+</p>
+<p><b>Complexity. </b>Linear O(N). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">other</code></span></p></td>
+<td><p>The <a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> which content will be moved to this one.</p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td><p><code class="computeroutput">other.size() &lt;= <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a1721ee4a131b34c15ead5a4d2f33a1e9">capacity()</a></code></p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a8e17bd5dd83d30dba4cc274d4c8675cc"></a><span class="special">~</span><span class="identifier">static_vector</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>Destructor. Destroys Values stored in this container. <p><b>Throws. </b>Nothing</p>
+<p>
+</p>
+<p><b>Complexity. </b>Linear O(N). </p>
+<p>
+</p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a54a91b0622f73f47e6c120406e62f21a"></a><span class="identifier">swap</span><span class="special">(</span><a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> <span class="special">&amp;</span> other<span class="special">)</span><span class="special">;</span></pre>Swaps contents of the other <a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> and this one. <p>
+</p>
+<p><b>Throws. </b></p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p>If <code class="computeroutput">has_nothrow_move&lt;T&gt;::value</code> is <code class="computeroutput">true</code> and T's move constructor or move assignment throws, </p></li>
+<li class="listitem"><p>If <code class="computeroutput">has_nothrow_move&lt;T&gt;::value</code> is <code class="computeroutput">false</code> and T's copy constructor or copy assignment throws,</p></li>
+</ul></div>
+<p>
+</p>
+<p>
+</p>
+<p><b>Complexity. </b>Linear O(N). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">other</code></span></p></td>
+<td><p>The <a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> which content will be swapped with this one's content.</p></td>
+</tr></tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> C<span class="special">,</span> <span class="keyword">typename</span> O<span class="special">&gt;</span> 
+  <span class="keyword">void</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1aaa87c6012376add7f5878ed13c9c9a48"></a><span class="identifier">swap</span><span class="special">(</span><a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a><span class="special">&lt;</span> <span class="identifier">T</span><span class="special">,</span> <span class="identifier">C</span><span class="special">,</span> <span class="identifier">O</span> <span class="special">&gt;</span> <span class="special">&amp;</span> other<span class="special">)</span><span class="special">;</span></pre>Swaps contents of the other <a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> and this one. <p>
+</p>
+<p>
+</p>
+<p><b>Throws. </b></p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p>If <code class="computeroutput">has_nothrow_move&lt;T&gt;::value</code> is <code class="computeroutput">true</code> and T's move constructor or move assignment throws, </p></li>
+<li class="listitem"><p>If <code class="computeroutput">has_nothrow_move&lt;T&gt;::value</code> is <code class="computeroutput">false</code> and T's copy constructor or copy assignment throws, </p></li>
+<li class="listitem"><p>If <code class="computeroutput">throw_on_overflow&lt;true&gt;</code> option is set and the container runs out of capacity.</p></li>
+</ul></div>
+<p>
+</p>
+<p>
+</p>
+<p><b>Complexity. </b>Linear O(N). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">other</code></span></p></td>
+<td><p>The <a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a> which content will be swapped with this one's content.</p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td><p><code class="computeroutput">other.size() &lt;= <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a1721ee4a131b34c15ead5a4d2f33a1e9">capacity()</a> &amp;&amp; <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a9903e5a4a8eae0a237101f2256d72565">size()</a> &lt;= other.capacity()</code></p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a5cf0d8785ddab6f6c7ad92dd43bb4958"></a><span class="identifier">resize</span><span class="special">(</span><span class="identifier">size_type</span> count<span class="special">)</span><span class="special">;</span></pre>Inserts or erases elements at the end such that the size becomes count. New elements are value initialized. <p>
+</p>
+<p>
+</p>
+<p><b>Throws. </b></p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p>If T's value initialization throws. </p></li>
+<li class="listitem"><p>If <code class="computeroutput">throw_on_overflow&lt;true&gt;</code> option is set and the container runs out of capacity.</p></li>
+</ul></div>
+<p>
+</p>
+<p>
+</p>
+<p><b>Complexity. </b>Linear O(N). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">count</code></span></p></td>
+<td><p>The number of elements which will be stored in the container.</p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td><p><code class="computeroutput">count &lt;= <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a1721ee4a131b34c15ead5a4d2f33a1e9">capacity()</a></code></p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a944d09dd0d7a7d9f2761db5f50e168fc"></a><span class="identifier">resize</span><span class="special">(</span><span class="identifier">size_type</span> count<span class="special">,</span> <a class="link" href="structboost_1_1container_1_1default__init__t.html" title="Struct default_init_t">default_init_t</a><span class="special">)</span><span class="special">;</span></pre>Inserts or erases elements at the end such that the size becomes count. New elements are default initialized. <p>
+</p>
+<p>
+</p>
+<p><b>Throws. </b></p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p>If T's default initialization throws. </p></li>
+<li class="listitem"><p>If <code class="computeroutput">throw_on_overflow&lt;true&gt;</code> option is set and the container runs out of capacity.</p></li>
+</ul></div>
+<p>
+</p>
+<p>
+</p>
+<p><b>Complexity. </b>Linear O(N).</p>
+<p>
+</p>
+<p><b>Note. </b>Non-standard extension </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">count</code></span></p></td>
+<td><p>The number of elements which will be stored in the container.</p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td><p><code class="computeroutput">count &lt;= <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a1721ee4a131b34c15ead5a4d2f33a1e9">capacity()</a></code></p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a9e0c41bd56c0988b41835351aefbb83f"></a><span class="identifier">resize</span><span class="special">(</span><span class="identifier">size_type</span> count<span class="special">,</span> <span class="identifier">value_type</span> <span class="keyword">const</span> <span class="special">&amp;</span> value<span class="special">)</span><span class="special">;</span></pre>Inserts or erases elements at the end such that the size becomes count. New elements are copy constructed from value. <p>
+</p>
+<p>
+</p>
+<p><b>Throws. </b></p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p>If T's copy constructor throws. </p></li>
+<li class="listitem"><p>If <code class="computeroutput">throw_on_overflow&lt;true&gt;</code> option is set and the container runs out of capacity.</p></li>
+</ul></div>
+<p>
+</p>
+<p>
+</p>
+<p><b>Complexity. </b>Linear O(N). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">count</code></span></p></td>
+<td><p>The number of elements which will be stored in the container. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">value</code></span></p></td>
+<td><p>The value used to copy construct the new element.</p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td><p><code class="computeroutput">count &lt;= <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a1721ee4a131b34c15ead5a4d2f33a1e9">capacity()</a></code></p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a5f87ea3bc9ee67d477a5e38e1397fe43"></a><span class="identifier">reserve</span><span class="special">(</span><span class="identifier">size_type</span> count<span class="special">)</span><span class="special">;</span></pre>This call has no effect because the Capacity of this container is constant. <p>
+</p>
+<p>
+</p>
+<p><b>Throws. </b>If <code class="computeroutput">throw_on_overflow&lt;true&gt;</code> option is set and the container runs out of capacity.</p>
+<p>
+</p>
+<p><b>Complexity. </b>Constant O(1). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">count</code></span></p></td>
+<td><p>The number of elements which the container should be able to contain.</p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td><p><code class="computeroutput">count &lt;= <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a1721ee4a131b34c15ead5a4d2f33a1e9">capacity()</a></code></p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a0fe7e9a5d63e5746565313ffb6ff0d27"></a><span class="identifier">push_back</span><span class="special">(</span><span class="identifier">value_type</span> <span class="keyword">const</span> <span class="special">&amp;</span> value<span class="special">)</span><span class="special">;</span></pre>Adds a copy of value at the end. <p>
+</p>
+<p>
+</p>
+<p><b>Throws. </b></p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p>If T's copy constructor throws. </p></li>
+<li class="listitem"><p>If <code class="computeroutput">throw_on_overflow&lt;true&gt;</code> option is set and the container runs out of capacity.</p></li>
+</ul></div>
+<p>
+</p>
+<p>
+</p>
+<p><b>Complexity. </b>Constant O(1). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">value</code></span></p></td>
+<td><p>The value used to copy construct the new element.</p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td><p><code class="computeroutput"><a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a9903e5a4a8eae0a237101f2256d72565">size()</a> &lt; <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a1721ee4a131b34c15ead5a4d2f33a1e9">capacity()</a></code></p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1aeb96341ca025fe58671d27042697dc3e"></a><span class="identifier">push_back</span><span class="special">(</span><span class="identifier">value_type</span> <span class="special">&amp;&amp;</span> value<span class="special">)</span><span class="special">;</span></pre>Moves value to the end. <p>
+</p>
+<p>
+</p>
+<p><b>Throws. </b></p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p>If T's move constructor throws. </p></li>
+<li class="listitem"><p>If <code class="computeroutput">throw_on_overflow&lt;true&gt;</code> option is set and the container runs out of capacity.</p></li>
+</ul></div>
+<p>
+</p>
+<p>
+</p>
+<p><b>Complexity. </b>Constant O(1). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">value</code></span></p></td>
+<td><p>The value to move construct the new element.</p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td><p><code class="computeroutput"><a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a9903e5a4a8eae0a237101f2256d72565">size()</a> &lt; <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a1721ee4a131b34c15ead5a4d2f33a1e9">capacity()</a></code></p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1af07345fea98548075649e8ce99e6bcb4"></a><span class="identifier">pop_back</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Destroys last value and decreases the size. <p>
+</p>
+<p><b>Throws. </b>Nothing.</p>
+<p>
+</p>
+<p><b>Complexity. </b>Constant O(1). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td><p><code class="computeroutput">!empty()</code></p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">iterator</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1ae24ff908ca7e4454151dfbd5076ff622"></a><span class="identifier">insert</span><span class="special">(</span><span class="identifier">const_iterator</span> p<span class="special">,</span> <span class="identifier">value_type</span> <span class="keyword">const</span> <span class="special">&amp;</span> value<span class="special">)</span><span class="special">;</span></pre>Inserts a copy of element at p. <p>
+
+</p>
+<p><b>Throws. </b></p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p>If T's copy constructor or copy assignment throws </p></li>
+<li class="listitem"><p>If T's move constructor or move assignment throws. </p></li>
+<li class="listitem"><p>If <code class="computeroutput">throw_on_overflow&lt;true&gt;</code> option is set and the container runs out of capacity.</p></li>
+</ul></div>
+<p>
+</p>
+<p>
+</p>
+<p><b>Complexity. </b>Constant or linear. </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">p</code></span></p></td>
+<td><p>The position at which the new value will be inserted. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">value</code></span></p></td>
+<td><p>The value used to copy construct the new element.</p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p><code class="computeroutput">p</code> must be a valid iterator of <code class="computeroutput">*this</code> in range <code class="computeroutput">[<a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a4f1384a1cc2fcd4fef255a2054ebaace">begin()</a>, <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1ace77e76d6368a1f0034d58dfe7edcaed">end()</a>]</code>. </p></li>
+<li class="listitem"><p><code class="computeroutput"><a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a9903e5a4a8eae0a237101f2256d72565">size()</a> &lt; <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a1721ee4a131b34c15ead5a4d2f33a1e9">capacity()</a></code></p></li>
+</ul></div>
+<p>
+</p>
+</td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">iterator</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1ae77846dd0a79644e5849ba18a28b220c"></a><span class="identifier">insert</span><span class="special">(</span><span class="identifier">const_iterator</span> p<span class="special">,</span> <span class="identifier">value_type</span> <span class="special">&amp;&amp;</span> value<span class="special">)</span><span class="special">;</span></pre>Inserts a move-constructed element at p. <p>
+
+</p>
+<p><b>Throws. </b></p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p>If T's move constructor or move assignment throws. </p></li>
+<li class="listitem"><p>If <code class="computeroutput">throw_on_overflow&lt;true&gt;</code> option is set and the container runs out of capacity.</p></li>
+</ul></div>
+<p>
+</p>
+<p>
+</p>
+<p><b>Complexity. </b>Constant or linear. </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">p</code></span></p></td>
+<td><p>The position at which the new value will be inserted. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">value</code></span></p></td>
+<td><p>The value used to move construct the new element.</p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p><code class="computeroutput">p</code> must be a valid iterator of <code class="computeroutput">*this</code> in range <code class="computeroutput">[<a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a4f1384a1cc2fcd4fef255a2054ebaace">begin()</a>, <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1ace77e76d6368a1f0034d58dfe7edcaed">end()</a>]</code>. </p></li>
+<li class="listitem"><p><code class="computeroutput"><a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a9903e5a4a8eae0a237101f2256d72565">size()</a> &lt; <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a1721ee4a131b34c15ead5a4d2f33a1e9">capacity()</a></code></p></li>
+</ul></div>
+<p>
+</p>
+</td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">iterator</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a124f8fe5fd93c1f57b787f436d417fd0"></a><span class="identifier">insert</span><span class="special">(</span><span class="identifier">const_iterator</span> p<span class="special">,</span> <span class="identifier">size_type</span> count<span class="special">,</span> <span class="identifier">value_type</span> <span class="keyword">const</span> <span class="special">&amp;</span> value<span class="special">)</span><span class="special">;</span></pre>Inserts a count copies of value at p. <p>
+
+</p>
+<p><b>Throws. </b></p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p>If T's copy constructor or copy assignment throws. </p></li>
+<li class="listitem"><p>If T's move constructor or move assignment throws. </p></li>
+<li class="listitem"><p>If <code class="computeroutput">throw_on_overflow&lt;true&gt;</code> option is set and the container runs out of capacity.</p></li>
+</ul></div>
+<p>
+</p>
+<p>
+</p>
+<p><b>Complexity. </b>Linear O(N). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">p</code></span></p></td>
+<td><p>The position at which new elements will be inserted. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">count</code></span></p></td>
+<td><p>The number of new elements which will be inserted. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">value</code></span></p></td>
+<td><p>The value used to copy construct new elements.</p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p><code class="computeroutput">p</code> must be a valid iterator of <code class="computeroutput">*this</code> in range <code class="computeroutput">[<a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a4f1384a1cc2fcd4fef255a2054ebaace">begin()</a>, <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1ace77e76d6368a1f0034d58dfe7edcaed">end()</a>]</code>. </p></li>
+<li class="listitem"><p><code class="computeroutput"><a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a9903e5a4a8eae0a237101f2256d72565">size()</a> + count &lt;= <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a1721ee4a131b34c15ead5a4d2f33a1e9">capacity()</a></code></p></li>
+</ul></div>
+<p>
+</p>
+</td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Iterator<span class="special">&gt;</span> 
+  <span class="identifier">iterator</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a9c8ddcaedb839974ba73d5de401c607a"></a><span class="identifier">insert</span><span class="special">(</span><span class="identifier">const_iterator</span> p<span class="special">,</span> <span class="identifier">Iterator</span> first<span class="special">,</span> <span class="identifier">Iterator</span> last<span class="special">)</span><span class="special">;</span></pre>Inserts a copy of a range <code class="computeroutput">[first, last)</code> at p. <p>
+
+</p>
+<p><b>Throws. </b></p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p>If T's constructor and assignment taking a dereferenced <code class="computeroutput">Iterator</code>. </p></li>
+<li class="listitem"><p>If T's move constructor or move assignment throws. </p></li>
+<li class="listitem"><p>If <code class="computeroutput">throw_on_overflow&lt;true&gt;</code> option is set and the container runs out of capacity.</p></li>
+</ul></div>
+<p>
+</p>
+<p>
+</p>
+<p><b>Complexity. </b>Linear O(N). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">p</code></span></p></td>
+<td><p>The position at which new elements will be inserted. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">first</code></span></p></td>
+<td><p>The iterator to the first element of a range used to construct new elements. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">last</code></span></p></td>
+<td><p>The iterator to the one after the last element of a range used to construct new elements.</p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p><code class="computeroutput">p</code> must be a valid iterator of <code class="computeroutput">*this</code> in range <code class="computeroutput">[<a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a4f1384a1cc2fcd4fef255a2054ebaace">begin()</a>, <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1ace77e76d6368a1f0034d58dfe7edcaed">end()</a>]</code>. </p></li>
+<li class="listitem"><p><code class="computeroutput">distance(first, last) &lt;= <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a1721ee4a131b34c15ead5a4d2f33a1e9">capacity()</a></code> </p></li>
+<li class="listitem"><p><code class="computeroutput">Iterator</code> must meet the <code class="computeroutput">ForwardTraversalIterator</code> concept.</p></li>
+</ul></div>
+<p>
+</p>
+</td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">iterator</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a9f9595332309868fec1759a3b1709ec3"></a><span class="identifier">insert</span><span class="special">(</span><span class="identifier">const_iterator</span> p<span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">initializer_list</span><span class="special">&lt;</span> <span class="identifier">value_type</span> <span class="special">&gt;</span> il<span class="special">)</span><span class="special">;</span></pre>Inserts a copy of a range <code class="computeroutput">[il.begin(), il.end())</code> at p. <p>
+
+</p>
+<p><b>Throws. </b></p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p>If T's constructor and assignment taking a dereferenced std::initializer_list iterator. </p></li>
+<li class="listitem"><p>If <code class="computeroutput">throw_on_overflow&lt;true&gt;</code> option is set and the container runs out of capacity.</p></li>
+</ul></div>
+<p>
+</p>
+<p>
+</p>
+<p><b>Complexity. </b>Linear O(N). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">p</code></span></p></td>
+<td><p>The position at which new elements will be inserted. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">il</code></span></p></td>
+<td><p>The std::initializer_list which contains elements that will be inserted.</p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p><code class="computeroutput">p</code> must be a valid iterator of <code class="computeroutput">*this</code> in range <code class="computeroutput">[<a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a4f1384a1cc2fcd4fef255a2054ebaace">begin()</a>, <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1ace77e76d6368a1f0034d58dfe7edcaed">end()</a>]</code>. </p></li>
+<li class="listitem"><p><code class="computeroutput">distance(il.begin(), il.end()) &lt;= <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a1721ee4a131b34c15ead5a4d2f33a1e9">capacity()</a></code></p></li>
+</ul></div>
+<p>
+</p>
+</td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">iterator</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a01e84ba2fcf82dd886abadc1e30b3a4e"></a><span class="identifier">erase</span><span class="special">(</span><span class="identifier">const_iterator</span> p<span class="special">)</span><span class="special">;</span></pre>Erases T from p. <p>
+</p>
+<p>
+</p>
+<p><b>Throws. </b>If T's move assignment throws.</p>
+<p>
+</p>
+<p><b>Complexity. </b>Linear O(N). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">p</code></span></p></td>
+<td><p>The position of the element which will be erased from the container.</p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td><p><code class="computeroutput">p</code> must be a valid iterator of <code class="computeroutput">*this</code> in range <code class="computeroutput">[<a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a4f1384a1cc2fcd4fef255a2054ebaace">begin()</a>, <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1ace77e76d6368a1f0034d58dfe7edcaed">end()</a>)</code></p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">iterator</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1aa1240f7e95674f48c8b9fb3ebcf13310"></a><span class="identifier">erase</span><span class="special">(</span><span class="identifier">const_iterator</span> first<span class="special">,</span> <span class="identifier">const_iterator</span> last<span class="special">)</span><span class="special">;</span></pre>Erases Values from a range <code class="computeroutput">[first, last)</code>. <p>
+
+</p>
+<p><b>Throws. </b>If T's move assignment throws.</p>
+<p>
+</p>
+<p><b>Complexity. </b>Linear O(N). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">first</code></span></p></td>
+<td><p>The position of the first element of a range which will be erased from the container. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">last</code></span></p></td>
+<td><p>The position of the one after the last element of a range which will be erased from the container.</p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p><code class="computeroutput">first</code> and <code class="computeroutput">last</code> must define a valid range </p></li>
+<li class="listitem"><p>iterators must be in range <code class="computeroutput">[<a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a4f1384a1cc2fcd4fef255a2054ebaace">begin()</a>, <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1ace77e76d6368a1f0034d58dfe7edcaed">end()</a>]</code></p></li>
+</ul></div>
+<p>
+</p>
+</td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Iterator<span class="special">&gt;</span> <span class="keyword">void</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1adc4e2c52f96f3298f7f3f0b874587b0f"></a><span class="identifier">assign</span><span class="special">(</span><span class="identifier">Iterator</span> first<span class="special">,</span> <span class="identifier">Iterator</span> last<span class="special">)</span><span class="special">;</span></pre>Assigns a range <code class="computeroutput">[first, last)</code> of Values to this container. <p>
+</p>
+<p>
+</p>
+<p><b>Throws. </b></p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p>If T's copy constructor or copy assignment throws, </p></li>
+<li class="listitem"><p>If <code class="computeroutput">throw_on_overflow&lt;true&gt;</code> option is set and the container runs out of capacity.</p></li>
+</ul></div>
+<p>
+</p>
+<p>
+</p>
+<p><b>Complexity. </b>Linear O(N). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">first</code></span></p></td>
+<td><p>The iterator to the first element of a range used to construct new content of this container. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">last</code></span></p></td>
+<td><p>The iterator to the one after the last element of a range used to construct new content of this container.</p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td><p><code class="computeroutput">distance(first, last) &lt;= <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a1721ee4a131b34c15ead5a4d2f33a1e9">capacity()</a></code></p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1acc3edad81d6ed2c9e67413bb421a7bc6"></a><span class="identifier">assign</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">initializer_list</span><span class="special">&lt;</span> <span class="identifier">value_type</span> <span class="special">&gt;</span> il<span class="special">)</span><span class="special">;</span></pre>Assigns a range <code class="computeroutput">[il.begin(), il.end())</code> of Values to this container. <p>
+</p>
+<p>
+</p>
+<p><b>Throws. </b></p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p>If T's copy constructor or copy assignment throws, </p></li>
+<li class="listitem"><p>If <code class="computeroutput">throw_on_overflow&lt;true&gt;</code> option is set and the container runs out of capacity.</p></li>
+</ul></div>
+<p>
+</p>
+<p>
+</p>
+<p><b>Complexity. </b>Linear O(N). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">il</code></span></p></td>
+<td><p>std::initializer_list with values used to construct new content of this container.</p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td><p><code class="computeroutput">distance(il.begin(), il.end()) &lt;= <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a1721ee4a131b34c15ead5a4d2f33a1e9">capacity()</a></code></p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a782c22882ca3b5b5767aa5d332d15062"></a><span class="identifier">assign</span><span class="special">(</span><span class="identifier">size_type</span> count<span class="special">,</span> <span class="identifier">value_type</span> <span class="keyword">const</span> <span class="special">&amp;</span> value<span class="special">)</span><span class="special">;</span></pre>Assigns a count copies of value to this container. <p>
+</p>
+<p>
+</p>
+<p><b>Throws. </b></p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p>If T's copy constructor or copy assignment throws. </p></li>
+<li class="listitem"><p>If <code class="computeroutput">throw_on_overflow&lt;true&gt;</code> option is set and the container runs out of capacity.</p></li>
+</ul></div>
+<p>
+</p>
+<p>
+</p>
+<p><b>Complexity. </b>Linear O(N). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">count</code></span></p></td>
+<td><p>The new number of elements which will be container in the container. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">value</code></span></p></td>
+<td><p>The value which will be used to copy construct the new content.</p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td><p><code class="computeroutput">count &lt;= <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a1721ee4a131b34c15ead5a4d2f33a1e9">capacity()</a></code></p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">class</span> <span class="special">...</span> Args<span class="special">&gt;</span> <span class="identifier">reference</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1ad70e0389731f3be03a5b134c2dbafce8"></a><span class="identifier">emplace_back</span><span class="special">(</span><span class="identifier">Args</span> <span class="special">&amp;&amp;</span><span class="special">...</span> args<span class="special">)</span><span class="special">;</span></pre>Inserts a T constructed with <code class="computeroutput">std::forward&lt;Args&gt;(args)</code>... in the end of the container. <p>
+</p>
+<p>
+
+</p>
+<p><b>Throws. </b></p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p>If in-place constructor throws or T's move constructor throws. </p></li>
+<li class="listitem"><p>If <code class="computeroutput">throw_on_overflow&lt;true&gt;</code> option is set and the container runs out of capacity.</p></li>
+</ul></div>
+<p>
+</p>
+<p>
+</p>
+<p><b>Complexity. </b>Constant O(1). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">args</code></span></p></td>
+<td><p>The arguments of the constructor of the new element which will be created at the end of the container.</p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td><p><code class="computeroutput"><a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a9903e5a4a8eae0a237101f2256d72565">size()</a> &lt; <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a1721ee4a131b34c15ead5a4d2f33a1e9">capacity()</a></code></p></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>A reference to the created object.</p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">class</span> <span class="special">...</span> Args<span class="special">&gt;</span> <span class="identifier">iterator</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1ac2366eb1b6190c7f83215c732ac69e10"></a><span class="identifier">emplace</span><span class="special">(</span><span class="identifier">const_iterator</span> p<span class="special">,</span> <span class="identifier">Args</span> <span class="special">&amp;&amp;</span><span class="special">...</span> args<span class="special">)</span><span class="special">;</span></pre>Inserts a T constructed with <code class="computeroutput">std::forward&lt;Args&gt;(args)</code>... before p. <p>
+
+</p>
+<p><b>Throws. </b></p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p>If in-place constructor throws or if T's move constructor or move assignment throws. </p></li>
+<li class="listitem"><p>If <code class="computeroutput">throw_on_overflow&lt;true&gt;</code> option is set and the container runs out of capacity.</p></li>
+</ul></div>
+<p>
+</p>
+<p>
+</p>
+<p><b>Complexity. </b>Constant or linear. </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">p</code></span></p></td>
+<td><p>The position at which new elements will be inserted. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">args</code></span></p></td>
+<td><p>The arguments of the constructor of the new element.</p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p><code class="computeroutput">p</code> must be a valid iterator of <code class="computeroutput">*this</code> in range <code class="computeroutput">[<a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a4f1384a1cc2fcd4fef255a2054ebaace">begin()</a>, <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1ace77e76d6368a1f0034d58dfe7edcaed">end()</a>]</code> </p></li>
+<li class="listitem"><p><code class="computeroutput"><a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a9903e5a4a8eae0a237101f2256d72565">size()</a> &lt; <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a1721ee4a131b34c15ead5a4d2f33a1e9">capacity()</a></code></p></li>
+</ul></div>
+<p>
+</p>
+</td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a04c65c65f8d2af29726e8b0987f3f87a"></a><span class="identifier">clear</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Removes all elements from the container. <p><b>Throws. </b>Nothing.</p>
+<p>
+</p>
+<p><b>Complexity. </b>Constant O(1). </p>
+<p>
+</p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">reference</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a776c7fcdf59945fc4228e495092898c7"></a><span class="identifier">at</span><span class="special">(</span><span class="identifier">size_type</span> i<span class="special">)</span><span class="special">;</span></pre>Returns reference to the i-th element. <p>
+</p>
+<p>
+
+</p>
+<p><b>Throws. </b><code class="computeroutput">out_of_range</code> exception by default.</p>
+<p>
+</p>
+<p><b>Complexity. </b>Constant O(1). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">i</code></span></p></td>
+<td><p>The element's index.</p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td><p><code class="computeroutput">i &lt; <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a9903e5a4a8eae0a237101f2256d72565">size()</a></code></p></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>reference to the i-th element from the beginning of the container.</p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_reference</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a6acd8ae1c9c3d680d3a49fc6c5ffb6fa"></a><span class="identifier">at</span><span class="special">(</span><span class="identifier">size_type</span> i<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Returns const reference to the i-th element. <p>
+</p>
+<p>
+
+</p>
+<p><b>Throws. </b><code class="computeroutput">out_of_range</code> exception by default.</p>
+<p>
+</p>
+<p><b>Complexity. </b>Constant O(1). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">i</code></span></p></td>
+<td><p>The element's index.</p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td><p><code class="computeroutput">i &lt; <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a9903e5a4a8eae0a237101f2256d72565">size()</a></code></p></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>const reference to the i-th element from the beginning of the container.</p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">reference</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a8cb6e3543b441d830c6718584463e93d"></a><span class="keyword">operator</span><span class="special">[</span><span class="special">]</span><span class="special">(</span><span class="identifier">size_type</span> i<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Returns reference to the i-th element. <p>
+</p>
+<p>
+
+</p>
+<p><b>Throws. </b>Nothing.</p>
+<p>
+</p>
+<p><b>Complexity. </b>Constant O(1). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">i</code></span></p></td>
+<td><p>The element's index.</p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td><p><code class="computeroutput">i &lt; <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a9903e5a4a8eae0a237101f2256d72565">size()</a></code></p></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>reference to the i-th element from the beginning of the container.</p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_reference</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1ac7acdecb3123e4e38b8dccf33dad829b"></a><span class="keyword">operator</span><span class="special">[</span><span class="special">]</span><span class="special">(</span><span class="identifier">size_type</span> i<span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Returns const reference to the i-th element. <p>
+</p>
+<p>
+
+</p>
+<p><b>Throws. </b>Nothing.</p>
+<p>
+</p>
+<p><b>Complexity. </b>Constant O(1). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">i</code></span></p></td>
+<td><p>The element's index.</p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td><p><code class="computeroutput">i &lt; <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a9903e5a4a8eae0a237101f2256d72565">size()</a></code></p></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>const reference to the i-th element from the beginning of the container.</p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">iterator</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a0cac7513d420a2c66e077ad5c14eb9ed"></a><span class="identifier">nth</span><span class="special">(</span><span class="identifier">size_type</span> i<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Returns a iterator to the i-th element. <p>
+</p>
+<p>
+
+</p>
+<p><b>Throws. </b>Nothing.</p>
+<p>
+</p>
+<p><b>Complexity. </b>Constant O(1). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">i</code></span></p></td>
+<td><p>The element's index.</p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td><p><code class="computeroutput">i =&lt; <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a9903e5a4a8eae0a237101f2256d72565">size()</a></code></p></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>a iterator to the i-th element.</p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_iterator</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a31679a1ec047529829efe8949d6ad2e1"></a><span class="identifier">nth</span><span class="special">(</span><span class="identifier">size_type</span> i<span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Returns a const_iterator to the i-th element. <p>
+</p>
+<p>
+
+</p>
+<p><b>Throws. </b>Nothing by default.</p>
+<p>
+</p>
+<p><b>Complexity. </b>Constant O(1). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">i</code></span></p></td>
+<td><p>The element's index.</p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td><p><code class="computeroutput">i =&lt; <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a9903e5a4a8eae0a237101f2256d72565">size()</a></code></p></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>a const_iterator to the i-th element.</p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">size_type</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a2495ed6e61fd2b94d417dde077122be9"></a><span class="identifier">index_of</span><span class="special">(</span><span class="identifier">iterator</span> p<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Returns the index of the element pointed by p. <p>
+</p>
+<p>
+
+</p>
+<p><b>Throws. </b>Nothing.</p>
+<p>
+</p>
+<p><b>Complexity. </b>Constant O(1). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">p</code></span></p></td>
+<td><p>An iterator to the element.</p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td><p><code class="computeroutput"><a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a4f1384a1cc2fcd4fef255a2054ebaace">begin()</a> &lt;= p &lt;= <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1ace77e76d6368a1f0034d58dfe7edcaed">end()</a></code></p></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>The index of the element pointed by p.</p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">size_type</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1aef0c44004c078cd10134aa3f744be35a"></a><span class="identifier">index_of</span><span class="special">(</span><span class="identifier">const_iterator</span> p<span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Returns the index of the element pointed by p. <p>
+</p>
+<p>
+
+</p>
+<p><b>Throws. </b>Nothing.</p>
+<p>
+</p>
+<p><b>Complexity. </b>Constant O(1). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">p</code></span></p></td>
+<td><p>A const_iterator to the element.</p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td><p><code class="computeroutput"><a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a4f1384a1cc2fcd4fef255a2054ebaace">begin()</a> &lt;= p &lt;= <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1ace77e76d6368a1f0034d58dfe7edcaed">end()</a></code></p></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>a const_iterator to the i-th element.</p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">reference</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1abfb280a4bc64e8c99f6efabf989359ea"></a><span class="identifier">front</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Returns reference to the first element. <p>
+</p>
+<p>
+</p>
+<p><b>Throws. </b>Nothing.</p>
+<p>
+</p>
+<p><b>Complexity. </b>Constant O(1). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td><p><code class="computeroutput">!empty</code>()</p></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>reference to the first element from the beginning of the container.</p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_reference</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a3405d5e602af957b5961b430f5a0ed5a"></a><span class="identifier">front</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Returns const reference to the first element. <p>
+</p>
+<p>
+</p>
+<p><b>Throws. </b>Nothing.</p>
+<p>
+</p>
+<p><b>Complexity. </b>Constant O(1). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td><p><code class="computeroutput">!empty</code>()</p></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>const reference to the first element from the beginning of the container.</p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">reference</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a399c57e3e13fa4cd7194a08dadc976cf"></a><span class="identifier">back</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Returns reference to the last element. <p>
+</p>
+<p>
+</p>
+<p><b>Throws. </b>Nothing.</p>
+<p>
+</p>
+<p><b>Complexity. </b>Constant O(1). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td><p><code class="computeroutput">!empty</code>()</p></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>reference to the last element from the beginning of the container.</p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_reference</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a33fcf561c64344facfda5205fde9612a"></a><span class="identifier">back</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Returns const reference to the first element. <p>
+</p>
+<p>
+</p>
+<p><b>Throws. </b>Nothing.</p>
+<p>
+</p>
+<p><b>Complexity. </b>Constant O(1). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td><p><code class="computeroutput">!empty</code>()</p></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>const reference to the last element from the beginning of the container.</p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">T</span> <span class="special">*</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a5d594b1723df0c262498920f07dd6220"></a><span class="identifier">data</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Pointer such that <code class="computeroutput">[<a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a5d594b1723df0c262498920f07dd6220">data()</a>, <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a5d594b1723df0c262498920f07dd6220">data()</a> + <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a9903e5a4a8eae0a237101f2256d72565">size()</a>)</code> is a valid range. For a non-empty vector <code class="computeroutput"><a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a5d594b1723df0c262498920f07dd6220">data()</a> == &amp;<a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1abfb280a4bc64e8c99f6efabf989359ea">front()</a></code>. <p><b>Throws. </b>Nothing.</p>
+<p>
+</p>
+<p><b>Complexity. </b>Constant O(1). </p>
+<p>
+</p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">const</span> <span class="identifier">T</span> <span class="special">*</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a49e9c708aff9e0ef55fa36dc5b3ff499"></a><span class="identifier">data</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Const pointer such that <code class="computeroutput">[<a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a5d594b1723df0c262498920f07dd6220">data()</a>, <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a5d594b1723df0c262498920f07dd6220">data()</a> + <a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a9903e5a4a8eae0a237101f2256d72565">size()</a>)</code> is a valid range. For a non-empty vector <code class="computeroutput"><a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a5d594b1723df0c262498920f07dd6220">data()</a> == &amp;<a class="link" href="classboost_1_1container_1_1static__vector.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1abfb280a4bc64e8c99f6efabf989359ea">front()</a></code>. <p><b>Throws. </b>Nothing.</p>
+<p>
+</p>
+<p><b>Complexity. </b>Constant O(1). </p>
+<p>
+</p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">iterator</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a4f1384a1cc2fcd4fef255a2054ebaace"></a><span class="identifier">begin</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Returns iterator to the first element. <p>
+</p>
+<p><b>Throws. </b>Nothing.</p>
+<p>
+</p>
+<p><b>Complexity. </b>Constant O(1). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>iterator to the first element contained in the vector.</p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_iterator</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1aa10c1cdbc1e3272495b0cf2a93cab610"></a><span class="identifier">begin</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Returns const iterator to the first element. <p>
+</p>
+<p><b>Throws. </b>Nothing.</p>
+<p>
+</p>
+<p><b>Complexity. </b>Constant O(1). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>const_iterator to the first element contained in the vector.</p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_iterator</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a9ede334678f43aa9b4cc1bc44e799ea1"></a><span class="identifier">cbegin</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Returns const iterator to the first element. <p>
+</p>
+<p><b>Throws. </b>Nothing.</p>
+<p>
+</p>
+<p><b>Complexity. </b>Constant O(1). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>const_iterator to the first element contained in the vector.</p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">iterator</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1ace77e76d6368a1f0034d58dfe7edcaed"></a><span class="identifier">end</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Returns iterator to the one after the last element. <p>
+</p>
+<p><b>Throws. </b>Nothing.</p>
+<p>
+</p>
+<p><b>Complexity. </b>Constant O(1). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>iterator pointing to the one after the last element contained in the vector.</p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_iterator</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1adb23f4f11540ba8965a4917a20c478f2"></a><span class="identifier">end</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Returns const iterator to the one after the last element. <p>
+</p>
+<p><b>Throws. </b>Nothing.</p>
+<p>
+</p>
+<p><b>Complexity. </b>Constant O(1). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>const_iterator pointing to the one after the last element contained in the vector.</p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_iterator</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a9c8dec27064996f08cec9d21ceebd90f"></a><span class="identifier">cend</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Returns const iterator to the one after the last element. <p>
+</p>
+<p><b>Throws. </b>Nothing.</p>
+<p>
+</p>
+<p><b>Complexity. </b>Constant O(1). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>const_iterator pointing to the one after the last element contained in the vector.</p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">reverse_iterator</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a3535253f965e19676a3a5950e07cdbbb"></a><span class="identifier">rbegin</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Returns reverse iterator to the first element of the reversed container. <p>
+</p>
+<p><b>Throws. </b>Nothing.</p>
+<p>
+</p>
+<p><b>Complexity. </b>Constant O(1). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>reverse_iterator pointing to the beginning of the reversed <a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a>.</p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_reverse_iterator</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a058cd2f6d3e0a61739b6c121b6ca6593"></a><span class="identifier">rbegin</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Returns const reverse iterator to the first element of the reversed container. <p>
+</p>
+<p><b>Throws. </b>Nothing.</p>
+<p>
+</p>
+<p><b>Complexity. </b>Constant O(1). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>const_reverse_iterator pointing to the beginning of the reversed <a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a>.</p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_reverse_iterator</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1af0136bc22eac6c72731ac7699e86741b"></a><span class="identifier">crbegin</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Returns const reverse iterator to the first element of the reversed container. <p>
+</p>
+<p><b>Throws. </b>Nothing.</p>
+<p>
+</p>
+<p><b>Complexity. </b>Constant O(1). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>const_reverse_iterator pointing to the beginning of the reversed <a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a>.</p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">reverse_iterator</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a13154da6e032bdef65c0450e36a5d261"></a><span class="identifier">rend</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Returns reverse iterator to the one after the last element of the reversed container. <p>
+</p>
+<p><b>Throws. </b>Nothing.</p>
+<p>
+</p>
+<p><b>Complexity. </b>Constant O(1). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>reverse_iterator pointing to the one after the last element of the reversed <a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a>.</p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_reverse_iterator</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a71cea82a31ae18e69372a33d0be0cfe6"></a><span class="identifier">rend</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Returns const reverse iterator to the one after the last element of the reversed container. <p>
+</p>
+<p><b>Throws. </b>Nothing.</p>
+<p>
+</p>
+<p><b>Complexity. </b>Constant O(1). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>const_reverse_iterator pointing to the one after the last element of the reversed <a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a>.</p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_reverse_iterator</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1afe12f4ccc6e5d7493d287ec700fbdd3c"></a><span class="identifier">crend</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Returns const reverse iterator to the one after the last element of the reversed container. <p>
+</p>
+<p><b>Throws. </b>Nothing.</p>
+<p>
+</p>
+<p><b>Complexity. </b>Constant O(1). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>const_reverse_iterator pointing to the one after the last element of the reversed <a class="link" href="classboost_1_1container_1_1static__vector.html" title="Class template static_vector">static_vector</a>.</p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">size_type</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a9903e5a4a8eae0a237101f2256d72565"></a><span class="identifier">size</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Returns the number of stored elements. <p>
+</p>
+<p><b>Throws. </b>Nothing.</p>
+<p>
+</p>
+<p><b>Complexity. </b>Constant O(1). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>Number of elements contained in the container.</p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a747c7f36d1fb8ff8ea83694b640b359d"></a><span class="identifier">empty</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Queries if the container contains elements. <p>
+</p>
+<p><b>Throws. </b>Nothing.</p>
+<p>
+</p>
+<p><b>Complexity. </b>Constant O(1). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>true if the number of elements contained in the container is equal to 0.</p></td>
+</tr></tbody>
+</table></div>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.9.14.40.3.4.8"></a><h3>
+<a name="id126-bb"></a><code class="computeroutput">static_vector</code> public static functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="identifier">size_type</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a1721ee4a131b34c15ead5a4d2f33a1e9"></a><span class="identifier">capacity</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Returns container's capacity. <p>
+</p>
+<p><b>Throws. </b>Nothing.</p>
+<p>
+</p>
+<p><b>Complexity. </b>Constant O(1). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>container's capacity.</p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="identifier">size_type</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1static__vector_1a769040f0325cb1b92f0796ae3a22ddbe"></a><span class="identifier">max_size</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Returns container's capacity. <p>
+</p>
+<p><b>Throws. </b>Nothing.</p>
+<p>
+</p>
+<p><b>Complexity. </b>Constant O(1). </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>container's capacity.</p></td>
+</tr></tbody>
+</table></div>
+</li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2009-2018 Ion Gaztanaga<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1container_1_1stable__vector.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_container_header_reference.html#doxygen.boost_container_header_reference.static__vector_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="static__vector_8hpp_1a15b54bd544d6f12206efdb88305f7c85.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

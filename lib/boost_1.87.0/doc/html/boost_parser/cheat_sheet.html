@@ -1,0 +1,3363 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Cheat Sheet</title>
+<link rel="stylesheet" href="../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../parser.html" title="Chapter 26. Boost.Parser">
+<link rel="prev" href="this_library_s_relationship_to_boost_spirit.html" title="This Library's Relationship to Boost.Spirit">
+<link rel="next" href="tutorial.html" title="Tutorial">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../boost.png"></td>
+<td align="center"><a href="../../../index.html">Home</a></td>
+<td align="center"><a href="../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="this_library_s_relationship_to_boost_spirit.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../parser.html"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="tutorial.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="boost_parser.cheat_sheet"></a><a class="link" href="cheat_sheet.html" title="Cheat Sheet">Cheat Sheet</a>
+</h2></div></div></div>
+<p>
+      Here are all the tables containing the various Boost.Parser parsers, examples,
+      etc., all in one place. These are repeated elsewhere in different sections
+      of the tutorial.
+    </p>
+<h4>
+<a name="boost_parser.cheat_sheet.h0"></a>
+      <span class="phrase"><a name="boost_parser.cheat_sheet.the_parsers"></a></span><a class="link" href="cheat_sheet.html#boost_parser.cheat_sheet.the_parsers">The
+      parsers</a>
+    </h4>
+<p>
+      This table lists all the Boost.Parser parsers. For the callable parsers, a
+      separate entry exists for each possible arity of arguments. For a parser <code class="computeroutput"><span class="identifier">p</span></code>, if there is no entry for <code class="computeroutput"><span class="identifier">p</span></code> without arguments, <code class="computeroutput"><span class="identifier">p</span></code>
+      is a function, and cannot itself be used as a parser; it must be called. In
+      the table below:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          each entry is a global object usable directly in your parsers, unless otherwise
+          noted;
+        </li>
+<li class="listitem">
+          "code point" is used to refer to the elements of the input range,
+          which assumes that the parse is being done in the Unicode-aware code path
+          (if the parse is being done in the non-Unicode code path, read "code
+          point" as "<code class="computeroutput"><span class="keyword">char</span></code>");
+        </li>
+<li class="listitem">
+          <span class="emphasis"><em><code class="literal">RESOLVE</code></em></span><code class="computeroutput"><span class="special">()</span></code>
+          is a notional macro that expands to the resolution of parse argument or
+          evaluation of a parse predicate (see <a class="link" href="tutorial.html#boost_parser.tutorial.the_parsers_and_their_uses" title="The Parsers And Their Uses">The
+          Parsers And Their Uses</a>);
+        </li>
+<li class="listitem">
+          "<code class="computeroutput"><span class="emphasis"><em><code class="literal">RESOLVE</code></em></span><span class="special">(</span><span class="identifier">pred</span><span class="special">)</span> <span class="special">==</span> <span class="keyword">true</span></code>"
+          is a shorthand notation for "<code class="computeroutput"><span class="emphasis"><em><code class="literal">RESOLVE</code></em></span><span class="special">(</span><span class="identifier">pred</span><span class="special">)</span></code> is contextually convertible to <code class="computeroutput"><span class="keyword">bool</span></code> and <code class="computeroutput"><span class="keyword">true</span></code>";
+          likewise for <code class="computeroutput"><span class="keyword">false</span></code>;
+        </li>
+<li class="listitem">
+          <code class="computeroutput"><span class="identifier">c</span></code> is a character of type
+          <code class="computeroutput"><span class="keyword">char</span></code>, <code class="computeroutput"><span class="identifier">char8_t</span></code>,
+          or <code class="computeroutput"><span class="keyword">char32_t</span></code>;
+        </li>
+<li class="listitem">
+          <code class="computeroutput"><span class="identifier">str</span></code> is a string literal
+          of type <code class="computeroutput"><span class="keyword">char</span> <span class="keyword">const</span><span class="special">[]</span></code>, <code class="computeroutput"><span class="identifier">char8_t</span>
+          <span class="keyword">const</span> <span class="special">[]</span></code>,
+          or <code class="computeroutput"><span class="keyword">char32_t</span> <span class="keyword">const</span>
+          <span class="special">[]</span></code>;
+        </li>
+<li class="listitem">
+          <code class="computeroutput"><span class="identifier">pred</span></code> is a parse predicate;
+        </li>
+<li class="listitem">
+          <code class="computeroutput"><span class="identifier">arg0</span></code>, <code class="computeroutput"><span class="identifier">arg1</span></code>,
+          <code class="computeroutput"><span class="identifier">arg2</span></code>, ... are parse arguments;
+        </li>
+<li class="listitem">
+          <code class="computeroutput"><span class="identifier">a</span></code> is a semantic action;
+        </li>
+<li class="listitem">
+          <code class="computeroutput"><span class="identifier">r</span></code> is an object whose type
+          models <code class="computeroutput"><span class="identifier">parsable_range</span></code>;
+        </li>
+<li class="listitem">
+          <code class="computeroutput"><span class="identifier">p</span></code>, <code class="computeroutput"><span class="identifier">p1</span></code>,
+          <code class="computeroutput"><span class="identifier">p2</span></code>, ... are parsers; and
+        </li>
+<li class="listitem">
+          <code class="computeroutput"><span class="identifier">escapes</span></code> is a <code class="computeroutput"><a class="link" href="../doxygen/headers/structboost_1_1parser_1_1symbols.html" title="Struct template symbols">symbols&lt;T&gt;</a></code> object, where <code class="computeroutput"><span class="identifier">T</span></code> is <code class="computeroutput"><span class="keyword">char</span></code>
+          or <code class="computeroutput"><span class="keyword">char32_t</span></code>.
+        </li>
+</ul></div>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top">
+<p>
+        The definition of <code class="computeroutput"><span class="identifier">parsable_range</span></code>
+        is:
+      </p>
+<p>
+</p>
+<pre class="programlisting"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> <span class="identifier">T</span><span class="special">&gt;</span>
+<span class="identifier">concept</span> <span class="identifier">parsable_range</span> <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">ranges</span><span class="special">::</span><span class="identifier">forward_range</span><span class="special">&lt;</span><span class="identifier">T</span><span class="special">&gt;</span> <span class="special">&amp;&amp;</span>
+    <span class="identifier">code_unit</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">ranges</span><span class="special">::</span><span class="identifier">range_value_t</span><span class="special">&lt;</span><span class="identifier">T</span><span class="special">&gt;&gt;;</span>
+</pre>
+<p>
+      </p>
+</td></tr>
+</table></div>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+        Some of the parsers in this table consume no input. All parsers consume the
+        input they match unless otherwise stated in the table below.
+      </p></td></tr>
+</table></div>
+<div class="table">
+<a name="boost_parser.cheat_sheet.t0"></a><p class="title"><b>Table 26.1. Parsers and Their Semantics</b></p>
+<div class="table-contents"><table class="table" summary="Parsers and Their Semantics">
+<colgroup>
+<col>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+              <p>
+                Parser
+              </p>
+            </th>
+<th>
+              <p>
+                Semantics
+              </p>
+            </th>
+<th>
+              <p>
+                Attribute Type
+              </p>
+            </th>
+<th>
+              <p>
+                Notes
+              </p>
+            </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ae99af5798fd88c0cfd424c181dc13d09.html" title="Global eps">eps</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches <span class="emphasis"><em>epsilon</em></span>, the empty string. Always matches,
+                and consumes no input.
+              </p>
+            </td>
+<td>
+              <p>
+                None.
+              </p>
+            </td>
+<td>
+              <p>
+                Matching <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ae99af5798fd88c0cfd424c181dc13d09.html" title="Global eps">eps</a></code>
+                an unlimited number of times creates an infinite loop, which is undefined
+                behavior in C++. Boost.Parser will assert in debug mode when it encounters
+                <code class="computeroutput"><span class="special">*</span><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ae99af5798fd88c0cfd424c181dc13d09.html" title="Global eps">eps</a></code>, <code class="computeroutput"><span class="special">+</span><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ae99af5798fd88c0cfd424c181dc13d09.html" title="Global eps">eps</a></code>, etc (this
+                applies to unconditional <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ae99af5798fd88c0cfd424c181dc13d09.html" title="Global eps">eps</a></code> only).
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ae99af5798fd88c0cfd424c181dc13d09.html" title="Global eps">eps</a><span class="special">(</span><span class="identifier">pred</span><span class="special">)</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Fails to match the input if <code class="computeroutput"><span class="emphasis"><em><code class="literal">RESOLVE</code></em></span><span class="special">(</span><span class="identifier">pred</span><span class="special">)</span> <span class="special">==</span> <span class="keyword">false</span></code>. Otherwise, the semantics are
+                those of <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ae99af5798fd88c0cfd424c181dc13d09.html" title="Global eps">eps</a></code>.
+              </p>
+            </td>
+<td>
+              <p>
+                None.
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a13a98612c59d598c30d400ff92c7765f.html" title="Global ws">ws</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches a single whitespace code point (see note), according to the
+                Unicode White_Space property.
+              </p>
+            </td>
+<td>
+              <p>
+                None.
+              </p>
+            </td>
+<td>
+              <p>
+                For more info, see the <a href="https://www.unicode.org/Public/UCD/latest/ucd/PropList.txt" target="_top">Unicode
+                properties</a>. <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a13a98612c59d598c30d400ff92c7765f.html" title="Global ws">ws</a></code> may consume one
+                code point or two. It only consumes two code points when it matches
+                <code class="computeroutput"><span class="string">"\r\n"</span></code>.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a15e2b8331566a0b97dad680ac4855004.html" title="Global eol">eol</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches a single newline (see note), following the "hard"
+                line breaks in the Unicode line breaking algorithm.
+              </p>
+            </td>
+<td>
+              <p>
+                None.
+              </p>
+            </td>
+<td>
+              <p>
+                For more info, see the <a href="https://unicode.org/reports/tr14" target="_top">Unicode
+                Line Breaking Algorithm</a>. <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a15e2b8331566a0b97dad680ac4855004.html" title="Global eol">eol</a></code> may consume one
+                code point or two. It only consumes two code points when it matches
+                <code class="computeroutput"><span class="string">"\r\n"</span></code>.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1aeba0f48cb171e5e5f121d8ed274a43d5.html" title="Global eoi">eoi</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches only at the end of input, and consumes no input.
+              </p>
+            </td>
+<td>
+              <p>
+                None.
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a18903d5e72b8a429e91152e4e57c6e68.html" title="Function template attr">attr</a></code><code class="computeroutput"><span class="special">(</span><span class="identifier">arg0</span><span class="special">)</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Always matches, and consumes no input. Generates the attribute <code class="computeroutput"><span class="emphasis"><em><code class="literal">RESOLVE</code></em></span><span class="special">(</span><span class="identifier">arg0</span><span class="special">)</span></code>.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">decltype</span><span class="special">(</span><span class="emphasis"><em><code class="literal">RESOLVE</code></em></span><span class="special">(</span><span class="identifier">arg0</span><span class="special">))</span></code>.
+              </p>
+            </td>
+<td>
+              <p>
+                An important use case for <code class="computeroutput"><a class="link" href="../doxygen/headers/structboost_1_1parser_1_1attribute.html" title="Struct template attribute">attribute</a></code> is
+                to provide a default attribute value as a trailing alternative. For
+                instance, an <span class="bold"><strong>optional</strong></span> comma-delmited
+                list is: <code class="computeroutput"><span class="identifier">int_</span> <span class="special">%</span>
+                <span class="char">','</span> <span class="special">|</span>
+                <span class="identifier">attr</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span><span class="keyword">int</span><span class="special">&gt;)</span></code>.
+                Without the "<code class="computeroutput"><span class="special">|</span> <span class="identifier">attr</span><span class="special">(...)</span></code>",
+                at least one <code class="computeroutput"><span class="identifier">int_</span></code>
+                match would be required.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a289f0b7681e314892648e2768a040d56.html" title="Global char_">char_</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches any single code point.
+              </p>
+            </td>
+<td>
+              <p>
+                The code point type in Unicode parsing, or <code class="computeroutput"><span class="keyword">char</span></code>
+                in non-Unicode parsing. See <a class="link" href="tutorial.html#boost_parser.tutorial.attribute_generation" title="Attribute Generation">Attribute
+                Generation</a>.
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a289f0b7681e314892648e2768a040d56.html" title="Global char_">char_</a><span class="special">(</span><span class="identifier">arg0</span><span class="special">)</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches exactly the code point <code class="computeroutput"><span class="emphasis"><em><code class="literal">RESOLVE</code></em></span><span class="special">(</span><span class="identifier">arg0</span><span class="special">)</span></code>.
+              </p>
+            </td>
+<td>
+              <p>
+                The code point type in Unicode parsing, or <code class="computeroutput"><span class="keyword">char</span></code>
+                in non-Unicode parsing. See <a class="link" href="tutorial.html#boost_parser.tutorial.attribute_generation" title="Attribute Generation">Attribute
+                Generation</a>.
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a289f0b7681e314892648e2768a040d56.html" title="Global char_">char_</a><span class="special">(</span><span class="identifier">arg0</span><span class="special">,</span> <span class="identifier">arg1</span><span class="special">)</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches the next code point <code class="computeroutput"><span class="identifier">n</span></code>
+                in the input, if <code class="computeroutput"><span class="emphasis"><em><code class="literal">RESOLVE</code></em></span><span class="special">(</span><span class="identifier">arg0</span><span class="special">)</span> <span class="special">&lt;=</span>
+                <span class="identifier">n</span> <span class="special">&amp;&amp;</span>
+                <span class="identifier">n</span> <span class="special">&lt;=</span>
+                <span class="emphasis"><em><code class="literal">RESOLVE</code></em></span><span class="special">(</span><span class="identifier">arg1</span><span class="special">)</span></code>.
+              </p>
+            </td>
+<td>
+              <p>
+                The code point type in Unicode parsing, or <code class="computeroutput"><span class="keyword">char</span></code>
+                in non-Unicode parsing. See <a class="link" href="tutorial.html#boost_parser.tutorial.attribute_generation" title="Attribute Generation">Attribute
+                Generation</a>.
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a289f0b7681e314892648e2768a040d56.html" title="Global char_">char_</a><span class="special">(</span><span class="identifier">r</span><span class="special">)</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches the next code point <code class="computeroutput"><span class="identifier">n</span></code>
+                in the input, if <code class="computeroutput"><span class="identifier">n</span></code>
+                is one of the code points in <code class="computeroutput"><span class="identifier">r</span></code>.
+              </p>
+            </td>
+<td>
+              <p>
+                The code point type in Unicode parsing, or <code class="computeroutput"><span class="keyword">char</span></code>
+                in non-Unicode parsing. See <a class="link" href="tutorial.html#boost_parser.tutorial.attribute_generation" title="Attribute Generation">Attribute
+                Generation</a>.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">r</span></code> is taken to be
+                in a UTF encoding. The exact UTF used depends on <code class="computeroutput"><span class="identifier">r</span></code>'s
+                element type. If you do not pass UTF encoded ranges for <code class="computeroutput"><span class="identifier">r</span></code>, the behavior of <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a289f0b7681e314892648e2768a040d56.html" title="Global char_">char_</a></code>
+                is undefined. Note that ASCII is a subset of UTF-8, so ASCII is fine.
+                EBCDIC is not. <code class="computeroutput"><span class="identifier">r</span></code>
+                is not copied; a reference to it is taken. The lifetime of <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a289f0b7681e314892648e2768a040d56.html" title="Global char_">char_</a><span class="special">(</span><span class="identifier">r</span><span class="special">)</span></code> must be within the lifetime of
+                <code class="computeroutput"><span class="identifier">r</span></code>. This overload
+                of <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a289f0b7681e314892648e2768a040d56.html" title="Global char_">char_</a></code>
+                does <span class="bold"><strong>not</strong></span> take parse arguments.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a3d982dd5003327f579e689e9fbbf7cb4.html" title="Global cp">cp</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches a single code point.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">char32_t</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Similar to <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a289f0b7681e314892648e2768a040d56.html" title="Global char_">char_</a></code>,
+                but with a fixed <code class="computeroutput"><span class="keyword">char32_t</span></code>
+                attribute type; <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a3d982dd5003327f579e689e9fbbf7cb4.html" title="Global cp">cp</a></code> has all the same
+                call operator overloads as <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a289f0b7681e314892648e2768a040d56.html" title="Global char_">char_</a></code>, though they
+                are not repeated here, for brevity.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1adf23d22a6b9aa56e8e5d5c5bc2e97881.html" title="Global cu">cu</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches a single code point.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">char</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Similar to <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a289f0b7681e314892648e2768a040d56.html" title="Global char_">char_</a></code>,
+                but with a fixed <code class="computeroutput"><span class="keyword">char</span></code>
+                attribute type; <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1adf23d22a6b9aa56e8e5d5c5bc2e97881.html" title="Global cu">cu</a></code> has all the same
+                call operator overloads as <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a289f0b7681e314892648e2768a040d56.html" title="Global char_">char_</a></code>, though they
+                are not repeated here, for brevity. Even though the name "<code class="computeroutput"><span class="identifier">cu</span></code>" suggests that this parser
+                match at the code unit level, it does not. The name refers to the
+                attribute type generated, much like the names <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1aebfca0484fcebac2789c946c6a93b116.html" title="Global int_">int_</a></code> versus <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a5a7399c57e54ceedc43f5978ac51618a.html" title="Global uint_">uint_</a></code>.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a6b2b76f815ee8ea0b5c027335a21b31e.html" title="Global blank">blank</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Equivalent to <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a13a98612c59d598c30d400ff92c7765f.html" title="Global ws">ws</a> <span class="special">-</span>
+                <a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a15e2b8331566a0b97dad680ac4855004.html" title="Global eol">eol</a></code>.
+              </p>
+            </td>
+<td>
+              <p>
+                The code point type in Unicode parsing, or <code class="computeroutput"><span class="keyword">char</span></code>
+                in non-Unicode parsing. See the entry for <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a289f0b7681e314892648e2768a040d56.html" title="Global char_">char_</a></code>.
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a6c63e7988a7db1d57157d1d4e3d7bd62.html" title="Global control">control</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches a single control-character code point.
+              </p>
+            </td>
+<td>
+              <p>
+                The code point type in Unicode parsing, or <code class="computeroutput"><span class="keyword">char</span></code>
+                in non-Unicode parsing. See the entry for <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a289f0b7681e314892648e2768a040d56.html" title="Global char_">char_</a></code>.
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1aea87ed3dc3b9924397789d49c42cf531.html" title="Global digit">digit</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches a single decimal digit code point.
+              </p>
+            </td>
+<td>
+              <p>
+                The code point type in Unicode parsing, or <code class="computeroutput"><span class="keyword">char</span></code>
+                in non-Unicode parsing. See the entry for <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a289f0b7681e314892648e2768a040d56.html" title="Global char_">char_</a></code>.
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ae199fb8b2d014d07be3376c2664615da.html" title="Global punct">punct</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches a single punctuation code point.
+              </p>
+            </td>
+<td>
+              <p>
+                The code point type in Unicode parsing, or <code class="computeroutput"><span class="keyword">char</span></code>
+                in non-Unicode parsing. See the entry for <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a289f0b7681e314892648e2768a040d56.html" title="Global char_">char_</a></code>.
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a2b3a06a86aa310c3bfec9de34e7daef4.html" title="Global hex_digit">hex_digit</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches a single hexidecimal digit code point.
+              </p>
+            </td>
+<td>
+              <p>
+                The code point type in Unicode parsing, or <code class="computeroutput"><span class="keyword">char</span></code>
+                in non-Unicode parsing. See the entry for <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a289f0b7681e314892648e2768a040d56.html" title="Global char_">char_</a></code>.
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a30c056d60e15f4434b56739d48f578db.html" title="Global lower">lower</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches a single lower-case code point.
+              </p>
+            </td>
+<td>
+              <p>
+                The code point type in Unicode parsing, or <code class="computeroutput"><span class="keyword">char</span></code>
+                in non-Unicode parsing. See the entry for <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a289f0b7681e314892648e2768a040d56.html" title="Global char_">char_</a></code>.
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a7c75578dd1e7556cd861ed6aff46c4c5.html" title="Global upper">upper</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches a single upper-case code point.
+              </p>
+            </td>
+<td>
+              <p>
+                The code point type in Unicode parsing, or <code class="computeroutput"><span class="keyword">char</span></code>
+                in non-Unicode parsing. See the entry for <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a289f0b7681e314892648e2768a040d56.html" title="Global char_">char_</a></code>.
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1aa8c123b0cbde389f5d5eaf353169ef09.html" title="Function lit">lit</a></code><code class="computeroutput"><span class="special">(</span><span class="identifier">c</span><span class="special">)</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches exactly the given code point <code class="computeroutput"><span class="identifier">c</span></code>.
+              </p>
+            </td>
+<td>
+              <p>
+                None.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1aa8c123b0cbde389f5d5eaf353169ef09.html" title="Function lit">lit()</a></code> does <span class="bold"><strong>not</strong></span>
+                take parse arguments.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">c_l</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches exactly the given code point <code class="computeroutput"><span class="identifier">c</span></code>.
+              </p>
+            </td>
+<td>
+              <p>
+                None.
+              </p>
+            </td>
+<td>
+              <p>
+                This is a <a href="https://en.cppreference.com/w/cpp/language/user_literal" target="_top">UDL</a>
+                that represents <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1aa8c123b0cbde389f5d5eaf353169ef09.html" title="Function lit">lit</a><span class="special">(</span><span class="identifier">c</span><span class="special">)</span></code>,
+                for example <code class="computeroutput"><span class="char">'F'</span><span class="identifier">_l</span></code>.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1aa8c123b0cbde389f5d5eaf353169ef09.html" title="Function lit">lit</a></code><code class="computeroutput"><span class="special">(</span><span class="identifier">r</span><span class="special">)</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches exactly the given string <code class="computeroutput"><span class="identifier">r</span></code>.
+              </p>
+            </td>
+<td>
+              <p>
+                None.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1aa8c123b0cbde389f5d5eaf353169ef09.html" title="Function lit">lit()</a></code> does <span class="bold"><strong>not</strong></span>
+                take parse arguments.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">str_l</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches exactly the given string <code class="computeroutput"><span class="identifier">str</span></code>.
+              </p>
+            </td>
+<td>
+              <p>
+                None.
+              </p>
+            </td>
+<td>
+              <p>
+                This is a <a href="https://en.cppreference.com/w/cpp/language/user_literal" target="_top">UDL</a>
+                that represents <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1aa8c123b0cbde389f5d5eaf353169ef09.html" title="Function lit">lit</a><span class="special">(</span><span class="identifier">s</span><span class="special">)</span></code>,
+                for example <code class="computeroutput"><span class="string">"a string"</span><span class="identifier">_l</span></code>.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a7e079d756d52cf5fc94cbdca53bb8b4f.html" title="Function template string">string</a><span class="special">(</span><span class="identifier">r</span><span class="special">)</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches exactly <code class="computeroutput"><span class="identifier">r</span></code>,
+                and generates the match as an attribute.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a7e079d756d52cf5fc94cbdca53bb8b4f.html" title="Function template string">string()</a></code> does <span class="bold"><strong>not</strong></span>
+                take parse arguments.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">str_p</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches exactly <code class="computeroutput"><span class="identifier">str</span></code>,
+                and generates the match as an attribute.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                This is a <a href="https://en.cppreference.com/w/cpp/language/user_literal" target="_top">UDL</a>
+                that represents <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a7e079d756d52cf5fc94cbdca53bb8b4f.html" title="Function template string">string</a><span class="special">(</span><span class="identifier">s</span><span class="special">)</span></code>,
+                for example <code class="computeroutput"><span class="string">"a string"</span><span class="identifier">_p</span></code>.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ab79cf11acb9757d1e82abbc6ac31bf51.html" title="Global bool_">bool_</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches <code class="computeroutput"><span class="string">"true"</span></code>
+                or <code class="computeroutput"><span class="string">"false"</span></code>.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">bool</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1abbe29c0334264fd28535b8a3abec39e2.html" title="Global bin">bin</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches a binary unsigned integral value.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">unsigned</span> <span class="keyword">int</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                For example, <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1abbe29c0334264fd28535b8a3abec39e2.html" title="Global bin">bin</a></code>
+                would match <code class="computeroutput"><span class="string">"101"</span></code>,
+                and generate an attribute of <code class="computeroutput"><span class="number">5u</span></code>.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1abbe29c0334264fd28535b8a3abec39e2.html" title="Global bin">bin</a><span class="special">(</span><span class="identifier">arg0</span><span class="special">)</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches exactly the binary unsigned integral value <code class="computeroutput"><span class="emphasis"><em><code class="literal">RESOLVE</code></em></span><span class="special">(</span><span class="identifier">arg0</span><span class="special">)</span></code>.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">unsigned</span> <span class="keyword">int</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ab1dbbcfeb807e261ffaaf0224e21f7ca.html" title="Global oct">oct</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches an octal unsigned integral value.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">unsigned</span> <span class="keyword">int</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                For example, <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ab1dbbcfeb807e261ffaaf0224e21f7ca.html" title="Global oct">oct</a></code>
+                would match <code class="computeroutput"><span class="string">"31"</span></code>,
+                and generate an attribute of <code class="computeroutput"><span class="number">25u</span></code>.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ab1dbbcfeb807e261ffaaf0224e21f7ca.html" title="Global oct">oct</a><span class="special">(</span><span class="identifier">arg0</span><span class="special">)</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches exactly the octal unsigned integral value <code class="computeroutput"><span class="emphasis"><em><code class="literal">RESOLVE</code></em></span><span class="special">(</span><span class="identifier">arg0</span><span class="special">)</span></code>.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">unsigned</span> <span class="keyword">int</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1af7c7911157c8d43d4328ec6342a77a31.html" title="Global hex">hex</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches a hexadecimal unsigned integral value.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">unsigned</span> <span class="keyword">int</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                For example, <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1af7c7911157c8d43d4328ec6342a77a31.html" title="Global hex">hex</a></code>
+                would match <code class="computeroutput"><span class="string">"ff"</span></code>,
+                and generate an attribute of <code class="computeroutput"><span class="number">255u</span></code>.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1af7c7911157c8d43d4328ec6342a77a31.html" title="Global hex">hex</a><span class="special">(</span><span class="identifier">arg0</span><span class="special">)</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches exactly the hexadecimal unsigned integral value <code class="computeroutput"><span class="emphasis"><em><code class="literal">RESOLVE</code></em></span><span class="special">(</span><span class="identifier">arg0</span><span class="special">)</span></code>.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">unsigned</span> <span class="keyword">int</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a591f036e613e107e00e5136226c02ec8.html" title="Global ushort_">ushort_</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches an unsigned integral value.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">unsigned</span> <span class="keyword">short</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a591f036e613e107e00e5136226c02ec8.html" title="Global ushort_">ushort_</a><span class="special">(</span><span class="identifier">arg0</span><span class="special">)</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches exactly the unsigned integral value <code class="computeroutput"><span class="emphasis"><em><code class="literal">RESOLVE</code></em></span><span class="special">(</span><span class="identifier">arg0</span><span class="special">)</span></code>.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">unsigned</span> <span class="keyword">short</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a5a7399c57e54ceedc43f5978ac51618a.html" title="Global uint_">uint_</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches an unsigned integral value.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">unsigned</span> <span class="keyword">int</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a5a7399c57e54ceedc43f5978ac51618a.html" title="Global uint_">uint_</a><span class="special">(</span><span class="identifier">arg0</span><span class="special">)</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches exactly the unsigned integral value <code class="computeroutput"><span class="emphasis"><em><code class="literal">RESOLVE</code></em></span><span class="special">(</span><span class="identifier">arg0</span><span class="special">)</span></code>.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">unsigned</span> <span class="keyword">int</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a6225883e4382da031c727b333a585f58.html" title="Global ulong_">ulong_</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches an unsigned integral value.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">unsigned</span> <span class="keyword">long</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a6225883e4382da031c727b333a585f58.html" title="Global ulong_">ulong_</a><span class="special">(</span><span class="identifier">arg0</span><span class="special">)</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches exactly the unsigned integral value <code class="computeroutput"><span class="emphasis"><em><code class="literal">RESOLVE</code></em></span><span class="special">(</span><span class="identifier">arg0</span><span class="special">)</span></code>.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">unsigned</span> <span class="keyword">long</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ac1d1fef19c32c6b74cdc3857ffa9feb8.html" title="Global ulong_long">ulong_long</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches an unsigned integral value.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">unsigned</span> <span class="keyword">long</span>
+                <span class="keyword">long</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ac1d1fef19c32c6b74cdc3857ffa9feb8.html" title="Global ulong_long">ulong_long</a><span class="special">(</span><span class="identifier">arg0</span><span class="special">)</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches exactly the unsigned integral value <code class="computeroutput"><span class="emphasis"><em><code class="literal">RESOLVE</code></em></span><span class="special">(</span><span class="identifier">arg0</span><span class="special">)</span></code>.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">unsigned</span> <span class="keyword">long</span>
+                <span class="keyword">long</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ac1331c03e89ff310052d9a38bc75621c.html" title="Global short_">short_</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches a signed integral value.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">short</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ac1331c03e89ff310052d9a38bc75621c.html" title="Global short_">short_</a><span class="special">(</span><span class="identifier">arg0</span><span class="special">)</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches exactly the signed integral value <code class="computeroutput"><span class="emphasis"><em><code class="literal">RESOLVE</code></em></span><span class="special">(</span><span class="identifier">arg0</span><span class="special">)</span></code>.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">short</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1aebfca0484fcebac2789c946c6a93b116.html" title="Global int_">int_</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches a signed integral value.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">int</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1aebfca0484fcebac2789c946c6a93b116.html" title="Global int_">int_</a><span class="special">(</span><span class="identifier">arg0</span><span class="special">)</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches exactly the signed integral value <code class="computeroutput"><span class="emphasis"><em><code class="literal">RESOLVE</code></em></span><span class="special">(</span><span class="identifier">arg0</span><span class="special">)</span></code>.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">int</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1afdbc039990e44df91b04ef713b6d6058.html" title="Global long_">long_</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches a signed integral value.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">long</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1afdbc039990e44df91b04ef713b6d6058.html" title="Global long_">long_</a><span class="special">(</span><span class="identifier">arg0</span><span class="special">)</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches exactly the signed integral value <code class="computeroutput"><span class="emphasis"><em><code class="literal">RESOLVE</code></em></span><span class="special">(</span><span class="identifier">arg0</span><span class="special">)</span></code>.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">long</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a85f44231c5106a739257b24a2b6a40ff.html" title="Global long_long">long_long</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches a signed integral value.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">long</span> <span class="keyword">long</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a85f44231c5106a739257b24a2b6a40ff.html" title="Global long_long">long_long</a><span class="special">(</span><span class="identifier">arg0</span><span class="special">)</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches exactly the signed integral value <code class="computeroutput"><span class="emphasis"><em><code class="literal">RESOLVE</code></em></span><span class="special">(</span><span class="identifier">arg0</span><span class="special">)</span></code>.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">long</span> <span class="keyword">long</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a2c6a3d18060166bd926f3150327819a4.html" title="Global float_">float_</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches a floating-point number. <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a2c6a3d18060166bd926f3150327819a4.html" title="Global float_">float_</a></code> uses parsing
+                implementation details from <a href="https://www.boost.org/doc/libs/release/libs/spirit" target="_top">Boost.Spirit</a>.
+                The specifics of what formats are accepted can be found in their
+                <a href="https://www.boost.org/doc/libs/release/libs/spirit/doc/html/spirit/qi/reference/numeric/real.html" target="_top">real
+                number parsers</a>. Note that only the default <code class="computeroutput"><span class="identifier">RealPolicies</span></code> is supported by <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a2c6a3d18060166bd926f3150327819a4.html" title="Global float_">float_</a></code>.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">float</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a6e37283853b49605ec05b4a1969eaaac.html" title="Global double_">double_</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches a floating-point number. <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a6e37283853b49605ec05b4a1969eaaac.html" title="Global double_">double_</a></code> uses parsing
+                implementation details from <a href="https://www.boost.org/doc/libs/release/libs/spirit" target="_top">Boost.Spirit</a>.
+                The specifics of what formats are accepted can be found in their
+                <a href="https://www.boost.org/doc/libs/release/libs/spirit/doc/html/spirit/qi/reference/numeric/real.html" target="_top">real
+                number parsers</a>. Note that only the default <code class="computeroutput"><span class="identifier">RealPolicies</span></code> is supported by <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a6e37283853b49605ec05b4a1969eaaac.html" title="Global double_">double_</a></code>.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">double</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ad95e37e5cf4468149eec5f774ad977f3.html" title="Function template repeat">repeat</a><span class="special">(</span><span class="identifier">arg0</span><span class="special">)[</span><span class="identifier">p</span><span class="special">]</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches iff <code class="computeroutput"><span class="identifier">p</span></code> matches
+                exactly <code class="computeroutput"><span class="emphasis"><em><code class="literal">RESOLVE</code></em></span><span class="special">(</span><span class="identifier">arg0</span><span class="special">)</span></code> times.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code> if <code class="computeroutput"><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)</span></code> is <code class="computeroutput"><span class="keyword">char</span></code>
+                or <code class="computeroutput"><span class="keyword">char32_t</span></code>, otherwise
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)&gt;</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                The special value <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a5b813aca4da43df067039a46c9565376.html" title="Global Inf">Inf</a></code> may be used; it
+                indicates unlimited repetition. <code class="computeroutput"><span class="keyword">decltype</span><span class="special">(</span><span class="emphasis"><em><code class="literal">RESOLVE</code></em></span><span class="special">(</span><span class="identifier">arg0</span><span class="special">))</span></code> must be implicitly convertible
+                to <code class="computeroutput"><span class="identifier">int64_t</span></code>. Matching
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ae99af5798fd88c0cfd424c181dc13d09.html" title="Global eps">eps</a></code>
+                an unlimited number of times creates an infinite loop, which is undefined
+                behavior in C++. Boost.Parser will assert in debug mode when it encounters
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ad95e37e5cf4468149eec5f774ad977f3.html" title="Function template repeat">repeat</a><span class="special">(</span><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a5b813aca4da43df067039a46c9565376.html" title="Global Inf">Inf</a><span class="special">)[</span><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ae99af5798fd88c0cfd424c181dc13d09.html" title="Global eps">eps</a><span class="special">]</span></code> (this applies to unconditional
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ae99af5798fd88c0cfd424c181dc13d09.html" title="Global eps">eps</a></code>
+                only).
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ad95e37e5cf4468149eec5f774ad977f3.html" title="Function template repeat">repeat</a><span class="special">(</span><span class="identifier">arg0</span><span class="special">,</span> <span class="identifier">arg1</span><span class="special">)[</span><span class="identifier">p</span><span class="special">]</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches iff <code class="computeroutput"><span class="identifier">p</span></code> matches
+                between <code class="computeroutput"><span class="emphasis"><em><code class="literal">RESOLVE</code></em></span><span class="special">(</span><span class="identifier">arg0</span><span class="special">)</span></code> and <code class="computeroutput"><span class="emphasis"><em><code class="literal">RESOLVE</code></em></span><span class="special">(</span><span class="identifier">arg1</span><span class="special">)</span></code> times, inclusively.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code> if <code class="computeroutput"><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)</span></code> is <code class="computeroutput"><span class="keyword">char</span></code>
+                or <code class="computeroutput"><span class="keyword">char32_t</span></code>, otherwise
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)&gt;</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                The special value <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a5b813aca4da43df067039a46c9565376.html" title="Global Inf">Inf</a></code> may be used for
+                the upper bound; it indicates unlimited repetition. <code class="computeroutput"><span class="keyword">decltype</span><span class="special">(</span><span class="emphasis"><em><code class="literal">RESOLVE</code></em></span><span class="special">(</span><span class="identifier">arg0</span><span class="special">))</span></code> and <code class="computeroutput"><span class="keyword">decltype</span><span class="special">(</span><span class="emphasis"><em><code class="literal">RESOLVE</code></em></span><span class="special">(</span><span class="identifier">arg1</span><span class="special">))</span></code> each must be implicitly convertible
+                to <code class="computeroutput"><span class="identifier">int64_t</span></code>. Matching
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ae99af5798fd88c0cfd424c181dc13d09.html" title="Global eps">eps</a></code>
+                an unlimited number of times creates an infinite loop, which is undefined
+                behavior in C++. Boost.Parser will assert in debug mode when it encounters
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ad95e37e5cf4468149eec5f774ad977f3.html" title="Function template repeat">repeat</a><span class="special">(</span><span class="identifier">n</span><span class="special">,</span> <a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a5b813aca4da43df067039a46c9565376.html" title="Global Inf">Inf</a><span class="special">)[</span><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ae99af5798fd88c0cfd424c181dc13d09.html" title="Global eps">eps</a><span class="special">]</span></code> (this applies to unconditional
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ae99af5798fd88c0cfd424c181dc13d09.html" title="Global eps">eps</a></code>
+                only).
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1abfc7ab7877a423d66c6a8fb49a702bd5.html" title="Function template if_">if_</a><span class="special">(</span><span class="identifier">pred</span><span class="special">)[</span><span class="identifier">p</span><span class="special">]</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Equivalent to <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ae99af5798fd88c0cfd424c181dc13d09.html" title="Global eps">eps</a><span class="special">(</span><span class="identifier">pred</span><span class="special">)</span>
+                <span class="special">&gt;&gt;</span> <span class="identifier">p</span></code>.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">optional</span><span class="special">&lt;</span><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)&gt;</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                It is an error to write <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1abfc7ab7877a423d66c6a8fb49a702bd5.html" title="Function template if_">if_</a><span class="special">(</span><span class="identifier">pred</span><span class="special">)</span></code>.
+                That is, it is an error to omit the conditionally matched parser
+                <code class="computeroutput"><span class="identifier">p</span></code>.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ad0e7ed5270417b766644b5197a469e7c.html" title="Function template switch_">switch_</a><span class="special">(</span><span class="identifier">arg0</span><span class="special">)(</span><span class="identifier">arg1</span><span class="special">,</span> <span class="identifier">p1</span><span class="special">)(</span><span class="identifier">arg2</span><span class="special">,</span> <span class="identifier">p2</span><span class="special">)</span> <span class="special">...</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Equivalent to <code class="computeroutput"><span class="identifier">p1</span></code>
+                when <code class="computeroutput"><span class="emphasis"><em><code class="literal">RESOLVE</code></em></span><span class="special">(</span><span class="identifier">arg0</span><span class="special">)</span> <span class="special">==</span> <span class="emphasis"><em><code class="literal">RESOLVE</code></em></span><span class="special">(</span><span class="identifier">arg1</span><span class="special">)</span></code>, <code class="computeroutput"><span class="identifier">p2</span></code>
+                when <code class="computeroutput"><span class="emphasis"><em><code class="literal">RESOLVE</code></em></span><span class="special">(</span><span class="identifier">arg0</span><span class="special">)</span> <span class="special">==</span> <span class="emphasis"><em><code class="literal">RESOLVE</code></em></span><span class="special">(</span><span class="identifier">arg2</span><span class="special">)</span></code>, etc. If there is such no <code class="computeroutput"><span class="identifier">argN</span></code>, the behavior of <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ad0e7ed5270417b766644b5197a469e7c.html" title="Function template switch_">switch_()</a></code> is undefined.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">variant</span><span class="special">&lt;</span><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p1</span><span class="special">),</span> <span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p2</span><span class="special">),</span> <span class="special">...&gt;</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                It is an error to write <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ad0e7ed5270417b766644b5197a469e7c.html" title="Function template switch_">switch_</a><span class="special">(</span><span class="identifier">arg0</span><span class="special">)</span></code>.
+                That is, it is an error to omit the conditionally matched parsers
+                <code class="computeroutput"><span class="identifier">p1</span></code>, <code class="computeroutput"><span class="identifier">p2</span></code>, ....
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/structboost_1_1parser_1_1symbols.html" title="Struct template symbols">symbols&lt;T&gt;</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/structboost_1_1parser_1_1symbols.html" title="Struct template symbols">symbols</a></code>
+                is an associative container of key, value pairs. Each key is a <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code> and each value has type
+                <code class="computeroutput"><span class="identifier">T</span></code>. In the Unicode
+                parsing path, the strings are considered to be UTF-8 encoded; in
+                the non-Unicode path, no encoding is assumed. <code class="computeroutput"><a class="link" href="../doxygen/headers/structboost_1_1parser_1_1symbols.html" title="Struct template symbols">symbols</a></code> Matches the
+                longest prefix <code class="computeroutput"><span class="identifier">pre</span></code>
+                of the input that is equal to one of the keys <code class="computeroutput"><span class="identifier">k</span></code>.
+                If the length <code class="computeroutput"><span class="identifier">len</span></code>
+                of <code class="computeroutput"><span class="identifier">pre</span></code> is zero, and
+                there is no zero-length key, it does not match the input. If <code class="computeroutput"><span class="identifier">len</span></code> is positive, the generated
+                attribute is the value associated with <code class="computeroutput"><span class="identifier">k</span></code>.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">T</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Unlike the other entries in this table, <code class="computeroutput"><a class="link" href="../doxygen/headers/structboost_1_1parser_1_1symbols.html" title="Struct template symbols">symbols</a></code> is a type,
+                not an object.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1aa2226d7c167c672d4c2c0720766be73b.html" title="Global quoted_string">quoted_string</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches <code class="computeroutput"><span class="char">'"'</span></code>, followed
+                by zero or more characters, followed by <code class="computeroutput"><span class="char">'"'</span></code>.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                The result does not include the quotes. A quote within the string
+                can be written by escaping it with a backslash. A backslash within
+                the string can be written by writing two consecutive backslashes.
+                Any other use of a backslash will fail the parse. Skipping is disabled
+                while parsing the entire string, as if using <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1abfc4518d7b420ac61d70ea3405ec74fd.html" title="Global lexeme">lexeme[]</a></code>.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1aa2226d7c167c672d4c2c0720766be73b.html" title="Global quoted_string">quoted_string</a><span class="special">(</span><span class="identifier">c</span><span class="special">)</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches <code class="computeroutput"><span class="identifier">c</span></code>, followed
+                by zero or more characters, followed by <code class="computeroutput"><span class="identifier">c</span></code>.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                The result does not include the <code class="computeroutput"><span class="identifier">c</span></code>
+                quotes. A <code class="computeroutput"><span class="identifier">c</span></code> within
+                the string can be written by escaping it with a backslash. A backslash
+                within the string can be written by writing two consecutive backslashes.
+                Any other use of a backslash will fail the parse. Skipping is disabled
+                while parsing the entire string, as if using <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1abfc4518d7b420ac61d70ea3405ec74fd.html" title="Global lexeme">lexeme[]</a></code>.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1aa2226d7c167c672d4c2c0720766be73b.html" title="Global quoted_string">quoted_string</a><span class="special">(</span><span class="identifier">r</span><span class="special">)</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches some character <code class="computeroutput"><span class="identifier">Q</span></code>
+                in <code class="computeroutput"><span class="identifier">r</span></code>, followed by
+                zero or more characters, followed by <code class="computeroutput"><span class="identifier">Q</span></code>.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                The result does not include the <code class="computeroutput"><span class="identifier">Q</span></code>
+                quotes. A <code class="computeroutput"><span class="identifier">Q</span></code> within
+                the string can be written by escaping it with a backslash. A backslash
+                within the string can be written by writing two consecutive backslashes.
+                Any other use of a backslash will fail the parse. Skipping is disabled
+                while parsing the entire string, as if using <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1abfc4518d7b420ac61d70ea3405ec74fd.html" title="Global lexeme">lexeme[]</a></code>.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1aa2226d7c167c672d4c2c0720766be73b.html" title="Global quoted_string">quoted_string</a><span class="special">(</span><span class="identifier">c</span><span class="special">,</span> <span class="identifier">symbols</span><span class="special">)</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches <code class="computeroutput"><span class="identifier">c</span></code>, followed
+                by zero or more characters, followed by <code class="computeroutput"><span class="identifier">c</span></code>.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                The result does not include the <code class="computeroutput"><span class="identifier">c</span></code>
+                quotes. A <code class="computeroutput"><span class="identifier">c</span></code> within
+                the string can be written by escaping it with a backslash. A backslash
+                within the string can be written by writing two consecutive backslashes.
+                A backslash followed by a successful match using <code class="computeroutput"><span class="identifier">symbols</span></code>
+                will be interpreted as the corresponding value produced by <code class="computeroutput"><span class="identifier">symbols</span></code>. Any other use of a backslash
+                will fail the parse. Skipping is disabled while parsing the entire
+                string, as if using <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1abfc4518d7b420ac61d70ea3405ec74fd.html" title="Global lexeme">lexeme[]</a></code>.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1aa2226d7c167c672d4c2c0720766be73b.html" title="Global quoted_string">quoted_string</a><span class="special">(</span><span class="identifier">r</span><span class="special">,</span> <span class="identifier">symbols</span><span class="special">)</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches some character <code class="computeroutput"><span class="identifier">Q</span></code>
+                in <code class="computeroutput"><span class="identifier">r</span></code>, followed by
+                zero or more characters, followed by <code class="computeroutput"><span class="identifier">Q</span></code>.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                The result does not include the <code class="computeroutput"><span class="identifier">Q</span></code>
+                quotes. A <code class="computeroutput"><span class="identifier">Q</span></code> within
+                the string can be written by escaping it with a backslash. A backslash
+                within the string can be written by writing two consecutive backslashes.
+                A backslash followed by a successful match using <code class="computeroutput"><span class="identifier">symbols</span></code>
+                will be interpreted as the corresponding value produced by <code class="computeroutput"><span class="identifier">symbols</span></code>. Any other use of a backslash
+                will fail the parse. Skipping is disabled while parsing the entire
+                string, as if using <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1abfc4518d7b420ac61d70ea3405ec74fd.html" title="Global lexeme">lexeme[]</a></code>.
+              </p>
+            </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break"><div class="important"><table border="0" summary="Important">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="../../../doc/src/images/important.png"></td>
+<th align="left">Important</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+        All the character parsers, like <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a289f0b7681e314892648e2768a040d56.html" title="Global char_">char_</a></code>, <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a3d982dd5003327f579e689e9fbbf7cb4.html" title="Global cp">cp</a></code> and <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1adf23d22a6b9aa56e8e5d5c5bc2e97881.html" title="Global cu">cu</a></code> produce either <code class="computeroutput"><span class="keyword">char</span></code> or <code class="computeroutput"><span class="keyword">char32_t</span></code>
+        attributes. So when you see "<code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code>
+        if <code class="computeroutput"><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)</span></code> is
+        <code class="computeroutput"><span class="keyword">char</span></code> or <code class="computeroutput"><span class="keyword">char32_t</span></code>,
+        otherwise <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)&gt;</span></code>"
+        in the table above, that effectively means that every sequences of character
+        attributes get turned into a <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code>.
+        The only time this does not happen is when you introduce your own rules with
+        attributes using another character type (or use <code class="computeroutput"><a class="link" href="../doxygen/headers/structboost_1_1parser_1_1attribute.html" title="Struct template attribute">attribute</a></code> to do so).
+      </p></td></tr>
+</table></div>
+<h4>
+<a name="boost_parser.cheat_sheet.h1"></a>
+      <span class="phrase"><a name="boost_parser.cheat_sheet.operators_defined_on_parsers"></a></span><a class="link" href="cheat_sheet.html#boost_parser.cheat_sheet.operators_defined_on_parsers">Operators
+      defined on parsers</a>
+    </h4>
+<p>
+      Here are all the operator overloaded for parsers. In the tables below:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          <code class="computeroutput"><span class="identifier">c</span></code> is a character of type
+          <code class="computeroutput"><span class="keyword">char</span></code> or <code class="computeroutput"><span class="keyword">char32_t</span></code>;
+        </li>
+<li class="listitem">
+          <code class="computeroutput"><span class="identifier">a</span></code> is a semantic action;
+        </li>
+<li class="listitem">
+          <code class="computeroutput"><span class="identifier">r</span></code> is an object whose type
+          models <code class="computeroutput"><span class="identifier">parsable_range</span></code> (see
+          <a class="link" href="concepts.html" title="Concepts">Concepts</a>); and
+        </li>
+<li class="listitem">
+          <code class="computeroutput"><span class="identifier">p</span></code>, <code class="computeroutput"><span class="identifier">p1</span></code>,
+          <code class="computeroutput"><span class="identifier">p2</span></code>, ... are parsers.
+        </li>
+</ul></div>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+        Some of the expressions in this table consume no input. All parsers consume
+        the input they match unless otherwise stated in the table below.
+      </p></td></tr>
+</table></div>
+<div class="table">
+<a name="boost_parser.cheat_sheet.t1"></a><p class="title"><b>Table 26.2. Combining Operations and Their Semantics</b></p>
+<div class="table-contents"><table class="table" summary="Combining Operations and Their Semantics">
+<colgroup>
+<col>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+              <p>
+                Expression
+              </p>
+            </th>
+<th>
+              <p>
+                Semantics
+              </p>
+            </th>
+<th>
+              <p>
+                Attribute Type
+              </p>
+            </th>
+<th>
+              <p>
+                Notes
+              </p>
+            </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="special">!</span><span class="identifier">p</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches iff <code class="computeroutput"><span class="identifier">p</span></code> does
+                not match; consumes no input.
+              </p>
+            </td>
+<td>
+              <p>
+                None.
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="special">&amp;</span><span class="identifier">p</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches iff <code class="computeroutput"><span class="identifier">p</span></code> matches;
+                consumes no input.
+              </p>
+            </td>
+<td>
+              <p>
+                None.
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="special">*</span><span class="identifier">p</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Parses using <code class="computeroutput"><span class="identifier">p</span></code> repeatedly
+                until <code class="computeroutput"><span class="identifier">p</span></code> no longer
+                matches; always matches.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code> if <code class="computeroutput"><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)</span></code> is <code class="computeroutput"><span class="keyword">char</span></code>
+                or <code class="computeroutput"><span class="keyword">char32_t</span></code>, otherwise
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)&gt;</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matching <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ae99af5798fd88c0cfd424c181dc13d09.html" title="Global eps">eps</a></code>
+                an unlimited number of times creates an infinite loop, which is undefined
+                behavior in C++. Boost.Parser will assert in debug mode when it encounters
+                <code class="computeroutput"><span class="special">*</span><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ae99af5798fd88c0cfd424c181dc13d09.html" title="Global eps">eps</a></code> (this applies
+                to unconditional <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ae99af5798fd88c0cfd424c181dc13d09.html" title="Global eps">eps</a></code> only).
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="special">+</span><span class="identifier">p</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Parses using <code class="computeroutput"><span class="identifier">p</span></code> repeatedly
+                until <code class="computeroutput"><span class="identifier">p</span></code> no longer
+                matches; matches iff <code class="computeroutput"><span class="identifier">p</span></code>
+                matches at least once.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code> if <code class="computeroutput"><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)</span></code> is <code class="computeroutput"><span class="keyword">char</span></code>
+                or <code class="computeroutput"><span class="keyword">char32_t</span></code>, otherwise
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)&gt;</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matching <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ae99af5798fd88c0cfd424c181dc13d09.html" title="Global eps">eps</a></code>
+                an unlimited number of times creates an infinite loop, which is undefined
+                behavior in C++. Boost.Parser will assert in debug mode when it encounters
+                <code class="computeroutput"><span class="special">+</span><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ae99af5798fd88c0cfd424c181dc13d09.html" title="Global eps">eps</a></code> (this applies
+                to unconditional <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ae99af5798fd88c0cfd424c181dc13d09.html" title="Global eps">eps</a></code> only).
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="special">-</span><span class="identifier">p</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Equivalent to <code class="computeroutput"><span class="identifier">p</span> <span class="special">|</span> <a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ae99af5798fd88c0cfd424c181dc13d09.html" title="Global eps">eps</a></code>.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">optional</span><span class="special">&lt;</span><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)&gt;</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">p1</span> <span class="special">&gt;&gt;</span>
+                <span class="identifier">p2</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches iff <code class="computeroutput"><span class="identifier">p1</span></code> matches
+                and then <code class="computeroutput"><span class="identifier">p2</span></code> matches.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a1792fbe3b24e0dcf5dc9d31005995c1e.html" title="Type definition tuple">boost::parser::tuple</a><span class="special">&lt;</span><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p1</span><span class="special">),</span> <span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p2</span><span class="special">)&gt;</span></code> (See note.)
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="special">&gt;&gt;</span></code> is associative;
+                <code class="computeroutput"><span class="identifier">p1</span> <span class="special">&gt;&gt;</span>
+                <span class="identifier">p2</span> <span class="special">&gt;&gt;</span>
+                <span class="identifier">p3</span></code>, <code class="computeroutput"><span class="special">(</span><span class="identifier">p1</span> <span class="special">&gt;&gt;</span>
+                <span class="identifier">p2</span><span class="special">)</span>
+                <span class="special">&gt;&gt;</span> <span class="identifier">p3</span></code>,
+                and <code class="computeroutput"><span class="identifier">p1</span> <span class="special">&gt;&gt;</span>
+                <span class="special">(</span><span class="identifier">p2</span>
+                <span class="special">&gt;&gt;</span> <span class="identifier">p3</span><span class="special">)</span></code> are all equivalent. This attribute
+                type only applies to the case where <code class="computeroutput"><span class="identifier">p1</span></code>
+                and <code class="computeroutput"><span class="identifier">p2</span></code> both generate
+                attributes; see <a class="link" href="tutorial.html#boost_parser.tutorial.attribute_generation" title="Attribute Generation">Attribute
+                Generation</a> for the full rules.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">p</span> <span class="special">&gt;&gt;</span>
+                <span class="identifier">c</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Equivalent to <code class="computeroutput"><span class="identifier">p</span> <span class="special">&gt;&gt;</span> <span class="identifier">lit</span><span class="special">(</span><span class="identifier">c</span><span class="special">)</span></code>.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">p</span> <span class="special">&gt;&gt;</span>
+                <span class="identifier">r</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Equivalent to <code class="computeroutput"><span class="identifier">p</span> <span class="special">&gt;&gt;</span> <span class="identifier">lit</span><span class="special">(</span><span class="identifier">r</span><span class="special">)</span></code>.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">p1</span> <span class="special">&gt;</span>
+                <span class="identifier">p2</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches iff <code class="computeroutput"><span class="identifier">p1</span></code> matches
+                and then <code class="computeroutput"><span class="identifier">p2</span></code> matches.
+                No back-tracking is allowed after <code class="computeroutput"><span class="identifier">p1</span></code>
+                matches; if <code class="computeroutput"><span class="identifier">p1</span></code> matches
+                but then <code class="computeroutput"><span class="identifier">p2</span></code> does
+                not, the top-level parse fails.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a1792fbe3b24e0dcf5dc9d31005995c1e.html" title="Type definition tuple">boost::parser::tuple</a><span class="special">&lt;</span><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p1</span><span class="special">),</span> <span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p2</span><span class="special">)&gt;</span></code> (See note.)
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="special">&gt;</span></code> is associative;
+                <code class="computeroutput"><span class="identifier">p1</span> <span class="special">&gt;</span>
+                <span class="identifier">p2</span> <span class="special">&gt;</span>
+                <span class="identifier">p3</span></code>, <code class="computeroutput"><span class="special">(</span><span class="identifier">p1</span> <span class="special">&gt;</span>
+                <span class="identifier">p2</span><span class="special">)</span>
+                <span class="special">&gt;</span> <span class="identifier">p3</span></code>,
+                and <code class="computeroutput"><span class="identifier">p1</span> <span class="special">&gt;</span>
+                <span class="special">(</span><span class="identifier">p2</span>
+                <span class="special">&gt;</span> <span class="identifier">p3</span><span class="special">)</span></code> are all equivalent. This attribute
+                type only applies to the case where <code class="computeroutput"><span class="identifier">p1</span></code>
+                and <code class="computeroutput"><span class="identifier">p2</span></code> both generate
+                attributes; see <a class="link" href="tutorial.html#boost_parser.tutorial.attribute_generation" title="Attribute Generation">Attribute
+                Generation</a> for the full rules.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">p</span> <span class="special">&gt;</span>
+                <span class="identifier">c</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Equivalent to <code class="computeroutput"><span class="identifier">p</span> <span class="special">&gt;</span> <span class="identifier">lit</span><span class="special">(</span><span class="identifier">c</span><span class="special">)</span></code>.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">p</span> <span class="special">&gt;</span>
+                <span class="identifier">r</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Equivalent to <code class="computeroutput"><span class="identifier">p</span> <span class="special">&gt;</span> <span class="identifier">lit</span><span class="special">(</span><span class="identifier">r</span><span class="special">)</span></code>.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">p1</span> <span class="special">|</span>
+                <span class="identifier">p2</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches iff either <code class="computeroutput"><span class="identifier">p1</span></code>
+                matches or <code class="computeroutput"><span class="identifier">p2</span></code> matches.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">variant</span><span class="special">&lt;</span><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p1</span><span class="special">),</span> <span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p2</span><span class="special">)&gt;</span></code> (See note.)
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="special">|</span></code> is associative; <code class="computeroutput"><span class="identifier">p1</span> <span class="special">|</span>
+                <span class="identifier">p2</span> <span class="special">|</span>
+                <span class="identifier">p3</span></code>, <code class="computeroutput"><span class="special">(</span><span class="identifier">p1</span> <span class="special">|</span>
+                <span class="identifier">p2</span><span class="special">)</span>
+                <span class="special">|</span> <span class="identifier">p3</span></code>,
+                and <code class="computeroutput"><span class="identifier">p1</span> <span class="special">|</span>
+                <span class="special">(</span><span class="identifier">p2</span>
+                <span class="special">|</span> <span class="identifier">p3</span><span class="special">)</span></code> are all equivalent. This attribute
+                type only applies to the case where <code class="computeroutput"><span class="identifier">p1</span></code>
+                and <code class="computeroutput"><span class="identifier">p2</span></code> both generate
+                attributes, and where the attribute types are different; see <a class="link" href="tutorial.html#boost_parser.tutorial.attribute_generation" title="Attribute Generation">Attribute Generation</a>
+                for the full rules.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">p</span> <span class="special">|</span>
+                <span class="identifier">c</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Equivalent to <code class="computeroutput"><span class="identifier">p</span> <span class="special">|</span> <span class="identifier">lit</span><span class="special">(</span><span class="identifier">c</span><span class="special">)</span></code>.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">p</span> <span class="special">|</span>
+                <span class="identifier">r</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Equivalent to <code class="computeroutput"><span class="identifier">p</span> <span class="special">|</span> <span class="identifier">lit</span><span class="special">(</span><span class="identifier">r</span><span class="special">)</span></code>.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">p1</span> <span class="special">||</span>
+                <span class="identifier">p2</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches iff <code class="computeroutput"><span class="identifier">p1</span></code> matches
+                and <code class="computeroutput"><span class="identifier">p2</span></code> matches, regardless
+                of the order they match in.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a1792fbe3b24e0dcf5dc9d31005995c1e.html" title="Type definition tuple">boost::parser::tuple</a><span class="special">&lt;</span><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p1</span><span class="special">),</span> <span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p2</span><span class="special">)&gt;</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="special">||</span></code> is associative;
+                <code class="computeroutput"><span class="identifier">p1</span> <span class="special">||</span>
+                <span class="identifier">p2</span> <span class="special">||</span>
+                <span class="identifier">p3</span></code>, <code class="computeroutput"><span class="special">(</span><span class="identifier">p1</span> <span class="special">||</span>
+                <span class="identifier">p2</span><span class="special">)</span>
+                <span class="special">||</span> <span class="identifier">p3</span></code>,
+                and <code class="computeroutput"><span class="identifier">p1</span> <span class="special">||</span>
+                <span class="special">(</span><span class="identifier">p2</span>
+                <span class="special">||</span> <span class="identifier">p3</span><span class="special">)</span></code> are all equivalent. It is an error
+                to include a <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ae99af5798fd88c0cfd424c181dc13d09.html" title="Global eps">eps</a></code>
+                (conditional or non-conditional) in an <code class="computeroutput"><span class="keyword">operator</span><span class="special">||</span></code> expression. Though the parsers
+                are matched in any order, the attribute elements are always in the
+                order written in the <code class="computeroutput"><span class="keyword">operator</span><span class="special">||</span></code> expression.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">p1</span> <span class="special">-</span>
+                <span class="identifier">p2</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Equivalent to <code class="computeroutput"><span class="special">!</span><span class="identifier">p2</span>
+                <span class="special">&gt;&gt;</span> <span class="identifier">p1</span></code>.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p1</span><span class="special">)</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">p</span> <span class="special">-</span>
+                <span class="identifier">c</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Equivalent to <code class="computeroutput"><span class="identifier">p</span> <span class="special">-</span> <span class="identifier">lit</span><span class="special">(</span><span class="identifier">c</span><span class="special">)</span></code>.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">p</span> <span class="special">-</span>
+                <span class="identifier">r</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Equivalent to <code class="computeroutput"><span class="identifier">p</span> <span class="special">-</span> <span class="identifier">lit</span><span class="special">(</span><span class="identifier">r</span><span class="special">)</span></code>.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">p1</span> <span class="special">%</span>
+                <span class="identifier">p2</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Equivalent to <code class="computeroutput"><span class="identifier">p1</span> <span class="special">&gt;&gt;</span> <span class="special">*(</span><span class="identifier">p2</span> <span class="special">&gt;&gt;</span>
+                <span class="identifier">p1</span><span class="special">)</span></code>.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code> if <code class="computeroutput"><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)</span></code> is <code class="computeroutput"><span class="keyword">char</span></code>
+                or <code class="computeroutput"><span class="keyword">char32_t</span></code>, otherwise
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p1</span><span class="special">)&gt;</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">p</span> <span class="special">%</span>
+                <span class="identifier">c</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Equivalent to <code class="computeroutput"><span class="identifier">p</span> <span class="special">%</span> <span class="identifier">lit</span><span class="special">(</span><span class="identifier">c</span><span class="special">)</span></code>.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code> if <code class="computeroutput"><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)</span></code> is <code class="computeroutput"><span class="keyword">char</span></code>
+                or <code class="computeroutput"><span class="keyword">char32_t</span></code>, otherwise
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)&gt;</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">p</span> <span class="special">%</span>
+                <span class="identifier">r</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Equivalent to <code class="computeroutput"><span class="identifier">p</span> <span class="special">%</span> <span class="identifier">lit</span><span class="special">(</span><span class="identifier">r</span><span class="special">)</span></code>.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code> if <code class="computeroutput"><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)</span></code> is <code class="computeroutput"><span class="keyword">char</span></code>
+                or <code class="computeroutput"><span class="keyword">char32_t</span></code>, otherwise
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)&gt;</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">p</span><span class="special">[</span><span class="identifier">a</span><span class="special">]</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Matches iff <code class="computeroutput"><span class="identifier">p</span></code> matches.
+                If <code class="computeroutput"><span class="identifier">p</span></code> matches, the
+                semantic action <code class="computeroutput"><span class="identifier">a</span></code>
+                is executed.
+              </p>
+            </td>
+<td>
+              <p>
+                None.
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break"><div class="important"><table border="0" summary="Important">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="../../../doc/src/images/important.png"></td>
+<th align="left">Important</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+        All the character parsers, like <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a289f0b7681e314892648e2768a040d56.html" title="Global char_">char_</a></code>, <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a3d982dd5003327f579e689e9fbbf7cb4.html" title="Global cp">cp</a></code> and <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1adf23d22a6b9aa56e8e5d5c5bc2e97881.html" title="Global cu">cu</a></code> produce either <code class="computeroutput"><span class="keyword">char</span></code> or <code class="computeroutput"><span class="keyword">char32_t</span></code>
+        attributes. So when you see "<code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code>
+        if <code class="computeroutput"><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)</span></code> is
+        <code class="computeroutput"><span class="keyword">char</span></code> or <code class="computeroutput"><span class="keyword">char32_t</span></code>,
+        otherwise <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)&gt;</span></code>"
+        in the table above, that effectively means that every sequences of character
+        attributes get turned into a <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code>.
+        The only time this does not happen is when you introduce your own rules with
+        attributes using another character type (or use <code class="computeroutput"><a class="link" href="../doxygen/headers/structboost_1_1parser_1_1attribute.html" title="Struct template attribute">attribute</a></code> to do so).
+      </p></td></tr>
+</table></div>
+<p>
+      There are a couple of special rules not captured in the table above:
+    </p>
+<p>
+      First, the zero-or-more and one-or-more repetitions (<code class="computeroutput"><span class="keyword">operator</span><span class="special">*()</span></code> and <code class="computeroutput"><span class="keyword">operator</span><span class="special">+()</span></code>, respectively) may collapse when combined.
+      For any parser <code class="computeroutput"><span class="identifier">p</span></code>, <code class="computeroutput"><span class="special">+(+</span><span class="identifier">p</span><span class="special">)</span></code>
+      collapses to <code class="computeroutput"><span class="special">+</span><span class="identifier">p</span></code>;
+      <code class="computeroutput"><span class="special">**</span><span class="identifier">p</span></code>,
+      <code class="computeroutput"><span class="special">*+</span><span class="identifier">p</span></code>,
+      and <code class="computeroutput"><span class="special">+*</span><span class="identifier">p</span></code>
+      each collapse to just <code class="computeroutput"><span class="special">*</span><span class="identifier">p</span></code>.
+    </p>
+<p>
+      Second, using <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ae99af5798fd88c0cfd424c181dc13d09.html" title="Global eps">eps</a></code>
+      in an alternative parser as any alternative <span class="bold"><strong>except</strong></span>
+      the last one is a common source of errors; Boost.Parser disallows it. This
+      is true because, for any parser <code class="computeroutput"><span class="identifier">p</span></code>,
+      <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ae99af5798fd88c0cfd424c181dc13d09.html" title="Global eps">eps</a>
+      <span class="special">|</span> <span class="identifier">p</span></code>
+      is equivalent to <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ae99af5798fd88c0cfd424c181dc13d09.html" title="Global eps">eps</a></code>,
+      since <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ae99af5798fd88c0cfd424c181dc13d09.html" title="Global eps">eps</a></code>
+      always matches. This is not true for <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ae99af5798fd88c0cfd424c181dc13d09.html" title="Global eps">eps</a></code> parameterized with a condition.
+      For any condition <code class="computeroutput"><span class="identifier">cond</span></code>, <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ae99af5798fd88c0cfd424c181dc13d09.html" title="Global eps">eps</a><span class="special">(</span><span class="identifier">cond</span><span class="special">)</span></code>
+      is allowed to appear anywhere within an alternative parser.
+    </p>
+<h4>
+<a name="boost_parser.cheat_sheet.h2"></a>
+      <span class="phrase"><a name="boost_parser.cheat_sheet.attribute_generation_for_certain_parsers"></a></span><a class="link" href="cheat_sheet.html#boost_parser.cheat_sheet.attribute_generation_for_certain_parsers">Attribute
+      generation for certain parsers</a>
+    </h4>
+<p>
+      This table summarizes the attributes generated for all Boost.Parser parsers.
+      In the table below:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          <span class="emphasis"><em><code class="literal">RESOLVE</code></em></span><code class="computeroutput"><span class="special">()</span></code>
+          is a notional macro that expands to the resolution of parse argument or
+          evaluation of a parse predicate (see <a class="link" href="tutorial.html#boost_parser.tutorial.the_parsers_and_their_uses" title="The Parsers And Their Uses">The
+          Parsers And Their Uses</a>); and
+        </li>
+<li class="listitem">
+          <code class="computeroutput"><span class="identifier">x</span></code> and <code class="computeroutput"><span class="identifier">y</span></code>
+          represent arbitrary objects.
+        </li>
+</ul></div>
+<div class="table">
+<a name="boost_parser.cheat_sheet.t2"></a><p class="title"><b>Table 26.3. Parsers and Their Attributes</b></p>
+<div class="table-contents"><table class="table" summary="Parsers and Their Attributes">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+              <p>
+                Parser
+              </p>
+            </th>
+<th>
+              <p>
+                Attribute Type
+              </p>
+            </th>
+<th>
+              <p>
+                Notes
+              </p>
+            </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ae99af5798fd88c0cfd424c181dc13d09.html" title="Global eps">eps</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                None.
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a15e2b8331566a0b97dad680ac4855004.html" title="Global eol">eol</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                None.
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1aeba0f48cb171e5e5f121d8ed274a43d5.html" title="Global eoi">eoi</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                None.
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a18903d5e72b8a429e91152e4e57c6e68.html" title="Function template attr">attr</a><span class="special">(</span><span class="identifier">x</span><span class="special">)</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">decltype</span><span class="special">(</span><span class="emphasis"><em><code class="literal">RESOLVE</code></em></span><span class="special">(</span><span class="identifier">x</span><span class="special">))</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a289f0b7681e314892648e2768a040d56.html" title="Global char_">char_</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                The code point type in Unicode parsing, or <code class="computeroutput"><span class="keyword">char</span></code>
+                in non-Unicode parsing; see below.
+              </p>
+            </td>
+<td>
+              <p>
+                Includes all the <code class="computeroutput"><span class="identifier">_p</span></code>
+                <a href="https://en.cppreference.com/w/cpp/language/user_literal" target="_top">UDLs</a>
+                that take a single character, and all character class parsers like
+                <code class="computeroutput"><span class="identifier">control</span></code> and <code class="computeroutput"><span class="identifier">lower</span></code>.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a3d982dd5003327f579e689e9fbbf7cb4.html" title="Global cp">cp</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">char32_t</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1adf23d22a6b9aa56e8e5d5c5bc2e97881.html" title="Global cu">cu</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">char</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1aa8c123b0cbde389f5d5eaf353169ef09.html" title="Function lit">lit</a><span class="special">(</span><span class="identifier">x</span><span class="special">)</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                None.
+              </p>
+            </td>
+<td>
+              <p>
+                Includes all the <code class="computeroutput"><span class="identifier">_l</span></code>
+                <a href="https://en.cppreference.com/w/cpp/language/user_literal" target="_top">UDLs</a>.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a7e079d756d52cf5fc94cbdca53bb8b4f.html" title="Function template string">string</a><span class="special">(</span><span class="identifier">x</span><span class="special">)</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Includes all the <code class="computeroutput"><span class="identifier">_p</span></code>
+                <a href="https://en.cppreference.com/w/cpp/language/user_literal" target="_top">UDLs</a>
+                that take a string.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ab79cf11acb9757d1e82abbc6ac31bf51.html" title="Global bool_">bool_</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">bool</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1abbe29c0334264fd28535b8a3abec39e2.html" title="Global bin">bin</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">unsigned</span> <span class="keyword">int</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ab1dbbcfeb807e261ffaaf0224e21f7ca.html" title="Global oct">oct</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">unsigned</span> <span class="keyword">int</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1af7c7911157c8d43d4328ec6342a77a31.html" title="Global hex">hex</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">unsigned</span> <span class="keyword">int</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a591f036e613e107e00e5136226c02ec8.html" title="Global ushort_">ushort_</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">unsigned</span> <span class="keyword">short</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a5a7399c57e54ceedc43f5978ac51618a.html" title="Global uint_">uint_</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">unsigned</span> <span class="keyword">int</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a6225883e4382da031c727b333a585f58.html" title="Global ulong_">ulong_</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">unsigned</span> <span class="keyword">long</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ac1d1fef19c32c6b74cdc3857ffa9feb8.html" title="Global ulong_long">ulong_long</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">unsigned</span> <span class="keyword">long</span>
+                <span class="keyword">long</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ac1331c03e89ff310052d9a38bc75621c.html" title="Global short_">short_</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">short</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1aebfca0484fcebac2789c946c6a93b116.html" title="Global int_">int_</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">int</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1afdbc039990e44df91b04ef713b6d6058.html" title="Global long_">long_</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">long</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a85f44231c5106a739257b24a2b6a40ff.html" title="Global long_long">long_long</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">long</span> <span class="keyword">long</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a2c6a3d18060166bd926f3150327819a4.html" title="Global float_">float_</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">float</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a6e37283853b49605ec05b4a1969eaaac.html" title="Global double_">double_</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">double</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/structboost_1_1parser_1_1symbols.html" title="Struct template symbols">symbols&lt;T&gt;</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">T</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break"><p>
+      <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a289f0b7681e314892648e2768a040d56.html" title="Global char_">char_</a></code>
+      is a bit odd, since its attribute type is polymorphic. When you use <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a289f0b7681e314892648e2768a040d56.html" title="Global char_">char_</a></code>
+      to parse text in the non-Unicode code path (i.e. a string of <code class="computeroutput"><span class="keyword">char</span></code>), the attribute is <code class="computeroutput"><span class="keyword">char</span></code>.
+      When you use the exact same <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a289f0b7681e314892648e2768a040d56.html" title="Global char_">char_</a></code> to parse in the Unicode-aware
+      code path, all matching is code point based, and so the attribute type is the
+      type used to represent code points, <code class="computeroutput"><span class="keyword">char32_t</span></code>.
+      All parsing of UTF-8 falls under this case.
+    </p>
+<p>
+      Here, we're parsing plain <code class="computeroutput"><span class="keyword">char</span></code>s,
+      meaning that the parsing is in the non-Unicode code path, the attribute of
+      <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a289f0b7681e314892648e2768a040d56.html" title="Global char_">char_</a></code>
+      is <code class="computeroutput"><span class="keyword">char</span></code>:
+    </p>
+<pre class="programlisting"><span class="keyword">auto</span> <span class="identifier">result</span> <span class="special">=</span> <span class="identifier">parse</span><span class="special">(</span><span class="string">"some text"</span><span class="special">,</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">parser</span><span class="special">::</span><span class="identifier">char_</span><span class="special">);</span>
+<span class="keyword">static_assert</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">is_same_v</span><span class="special">&lt;</span><span class="keyword">decltype</span><span class="special">(</span><span class="identifier">result</span><span class="special">),</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">optional</span><span class="special">&lt;</span><span class="keyword">char</span><span class="special">&gt;&gt;));</span>
+</pre>
+<p>
+      When you parse UTF-8, the matching is done on a code point basis, so the attribute
+      type is <code class="computeroutput"><span class="keyword">char32_t</span></code>:
+    </p>
+<pre class="programlisting"><span class="keyword">auto</span> <span class="identifier">result</span> <span class="special">=</span> <span class="identifier">parse</span><span class="special">(</span><span class="string">"some text"</span> <span class="special">|</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">parser</span><span class="special">::</span><span class="identifier">as_utf8</span><span class="special">,</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">parser</span><span class="special">::</span><span class="identifier">char_</span><span class="special">);</span>
+<span class="keyword">static_assert</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">is_same_v</span><span class="special">&lt;</span><span class="keyword">decltype</span><span class="special">(</span><span class="identifier">result</span><span class="special">),</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">optional</span><span class="special">&lt;</span><span class="keyword">char32_t</span><span class="special">&gt;&gt;));</span>
+</pre>
+<p>
+      The good news is that usually you don't parse characters individually. When
+      you parse with <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a289f0b7681e314892648e2768a040d56.html" title="Global char_">char_</a></code>,
+      you usually parse repetition of then, which will produce a <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code>,
+      regardless of whether you're in Unicode parsing mode or not. If you do need
+      to parse individual characters, and want to lock down their attribute type,
+      you can use <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a3d982dd5003327f579e689e9fbbf7cb4.html" title="Global cp">cp</a></code>
+      and/or <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1adf23d22a6b9aa56e8e5d5c5bc2e97881.html" title="Global cu">cu</a></code>
+      to enforce a non-polymorphic attribute type.
+    </p>
+<h4>
+<a name="boost_parser.cheat_sheet.h3"></a>
+      <span class="phrase"><a name="boost_parser.cheat_sheet.attributes_for_operations_on_parsers"></a></span><a class="link" href="cheat_sheet.html#boost_parser.cheat_sheet.attributes_for_operations_on_parsers">Attributes
+      for operations on parsers</a>
+    </h4>
+<p>
+      Combining operations of course affect the generation of attributes. In the
+      tables below:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          <code class="computeroutput"><span class="identifier">m</span></code> and <code class="computeroutput"><span class="identifier">n</span></code>
+          are parse arguments that resolve to integral values;
+        </li>
+<li class="listitem">
+          <code class="computeroutput"><span class="identifier">pred</span></code> is a parse predicate;
+        </li>
+<li class="listitem">
+          <code class="computeroutput"><span class="identifier">arg0</span></code>, <code class="computeroutput"><span class="identifier">arg1</span></code>,
+          <code class="computeroutput"><span class="identifier">arg2</span></code>, ... are parse arguments;
+        </li>
+<li class="listitem">
+          <code class="computeroutput"><span class="identifier">a</span></code> is a semantic action;
+          and
+        </li>
+<li class="listitem">
+          <code class="computeroutput"><span class="identifier">p</span></code>, <code class="computeroutput"><span class="identifier">p1</span></code>,
+          <code class="computeroutput"><span class="identifier">p2</span></code>, ... are parsers that
+          generate attributes.
+        </li>
+</ul></div>
+<div class="table">
+<a name="boost_parser.cheat_sheet.t3"></a><p class="title"><b>Table 26.4. Combining Operations and Their Attributes</b></p>
+<div class="table-contents"><table class="table" summary="Combining Operations and Their Attributes">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+              <p>
+                Parser
+              </p>
+            </th>
+<th>
+              <p>
+                Attribute Type
+              </p>
+            </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="special">!</span><span class="identifier">p</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                None.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="special">&amp;</span><span class="identifier">p</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                None.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="special">*</span><span class="identifier">p</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code> if <code class="computeroutput"><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)</span></code> is <code class="computeroutput"><span class="keyword">char</span></code>
+                or <code class="computeroutput"><span class="keyword">char32_t</span></code>, otherwise
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)&gt;</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="special">+</span><span class="identifier">p</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code> if <code class="computeroutput"><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)</span></code> is <code class="computeroutput"><span class="keyword">char</span></code>
+                or <code class="computeroutput"><span class="keyword">char32_t</span></code>, otherwise
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)&gt;</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="special">+*</span><span class="identifier">p</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code> if <code class="computeroutput"><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)</span></code> is <code class="computeroutput"><span class="keyword">char</span></code>
+                or <code class="computeroutput"><span class="keyword">char32_t</span></code>, otherwise
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)&gt;</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="special">*+</span><span class="identifier">p</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code> if <code class="computeroutput"><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)</span></code> is <code class="computeroutput"><span class="keyword">char</span></code>
+                or <code class="computeroutput"><span class="keyword">char32_t</span></code>, otherwise
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)&gt;</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="special">-</span><span class="identifier">p</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">optional</span><span class="special">&lt;</span><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)&gt;</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">p1</span> <span class="special">&gt;&gt;</span>
+                <span class="identifier">p2</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a1792fbe3b24e0dcf5dc9d31005995c1e.html" title="Type definition tuple">boost::parser::tuple</a><span class="special">&lt;</span><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p1</span><span class="special">),</span> <span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p2</span><span class="special">)&gt;</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">p1</span> <span class="special">&gt;</span>
+                <span class="identifier">p2</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a1792fbe3b24e0dcf5dc9d31005995c1e.html" title="Type definition tuple">boost::parser::tuple</a><span class="special">&lt;</span><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p1</span><span class="special">),</span> <span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p2</span><span class="special">)&gt;</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">p1</span> <span class="special">&gt;&gt;</span>
+                <span class="identifier">p2</span> <span class="special">&gt;&gt;</span>
+                <span class="identifier">p3</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a1792fbe3b24e0dcf5dc9d31005995c1e.html" title="Type definition tuple">boost::parser::tuple</a><span class="special">&lt;</span><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p1</span><span class="special">),</span> <span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p2</span><span class="special">),</span> <span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p3</span><span class="special">)&gt;</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">p1</span> <span class="special">&gt;</span>
+                <span class="identifier">p2</span> <span class="special">&gt;&gt;</span>
+                <span class="identifier">p3</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a1792fbe3b24e0dcf5dc9d31005995c1e.html" title="Type definition tuple">boost::parser::tuple</a><span class="special">&lt;</span><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p1</span><span class="special">),</span> <span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p2</span><span class="special">),</span> <span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p3</span><span class="special">)&gt;</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">p1</span> <span class="special">&gt;&gt;</span>
+                <span class="identifier">p2</span> <span class="special">&gt;</span>
+                <span class="identifier">p3</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a1792fbe3b24e0dcf5dc9d31005995c1e.html" title="Type definition tuple">boost::parser::tuple</a><span class="special">&lt;</span><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p1</span><span class="special">),</span> <span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p2</span><span class="special">),</span> <span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p3</span><span class="special">)&gt;</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">p1</span> <span class="special">&gt;</span>
+                <span class="identifier">p2</span> <span class="special">&gt;</span>
+                <span class="identifier">p3</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a1792fbe3b24e0dcf5dc9d31005995c1e.html" title="Type definition tuple">boost::parser::tuple</a><span class="special">&lt;</span><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p1</span><span class="special">),</span> <span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p2</span><span class="special">),</span> <span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p3</span><span class="special">)&gt;</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">p1</span> <span class="special">|</span>
+                <span class="identifier">p2</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">variant</span><span class="special">&lt;</span><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p1</span><span class="special">),</span> <span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p2</span><span class="special">)&gt;</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">p1</span> <span class="special">|</span>
+                <span class="identifier">p2</span> <span class="special">|</span>
+                <span class="identifier">p3</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">variant</span><span class="special">&lt;</span><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p1</span><span class="special">),</span> <span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p2</span><span class="special">),</span> <span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p3</span><span class="special">)&gt;</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">p1</span> <span class="special">||</span>
+                <span class="identifier">p2</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a1792fbe3b24e0dcf5dc9d31005995c1e.html" title="Type definition tuple">boost::parser::tuple</a><span class="special">&lt;</span><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p1</span><span class="special">),</span> <span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p2</span><span class="special">)&gt;</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">p1</span> <span class="special">||</span>
+                <span class="identifier">p2</span> <span class="special">||</span>
+                <span class="identifier">p3</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a1792fbe3b24e0dcf5dc9d31005995c1e.html" title="Type definition tuple">boost::parser::tuple</a><span class="special">&lt;</span><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p1</span><span class="special">),</span> <span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p2</span><span class="special">),</span> <span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p3</span><span class="special">)&gt;</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">p1</span> <span class="special">%</span>
+                <span class="identifier">p2</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code> if <code class="computeroutput"><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)</span></code> is <code class="computeroutput"><span class="keyword">char</span></code>
+                or <code class="computeroutput"><span class="keyword">char32_t</span></code>, otherwise
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p1</span><span class="special">)&gt;</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">p</span><span class="special">[</span><span class="identifier">a</span><span class="special">]</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                None.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ad95e37e5cf4468149eec5f774ad977f3.html" title="Function template repeat">repeat</a><span class="special">(</span><span class="identifier">arg0</span><span class="special">)[</span><span class="identifier">p</span><span class="special">]</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code> if <code class="computeroutput"><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)</span></code> is <code class="computeroutput"><span class="keyword">char</span></code>
+                or <code class="computeroutput"><span class="keyword">char32_t</span></code>, otherwise
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)&gt;</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ad95e37e5cf4468149eec5f774ad977f3.html" title="Function template repeat">repeat</a><span class="special">(</span><span class="identifier">arg0</span><span class="special">,</span> <span class="identifier">arg1</span><span class="special">)[</span><span class="identifier">p</span><span class="special">]</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code> if <code class="computeroutput"><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)</span></code> is <code class="computeroutput"><span class="keyword">char</span></code>
+                or <code class="computeroutput"><span class="keyword">char32_t</span></code>, otherwise
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)&gt;</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1abfc7ab7877a423d66c6a8fb49a702bd5.html" title="Function template if_">if_</a><span class="special">(</span><span class="identifier">pred</span><span class="special">)[</span><span class="identifier">p</span><span class="special">]</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">optional</span><span class="special">&lt;</span><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)&gt;</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ad0e7ed5270417b766644b5197a469e7c.html" title="Function template switch_">switch_</a><span class="special">(</span><span class="identifier">arg0</span><span class="special">)(</span><span class="identifier">arg1</span><span class="special">,</span> <span class="identifier">p1</span><span class="special">)(</span><span class="identifier">arg2</span><span class="special">,</span> <span class="identifier">p2</span><span class="special">)...</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">variant</span><span class="special">&lt;</span><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p1</span><span class="special">),</span> <span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p2</span><span class="special">),</span> <span class="special">...&gt;</span></code>
+              </p>
+            </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break"><div class="important"><table border="0" summary="Important">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="../../../doc/src/images/important.png"></td>
+<th align="left">Important</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+        All the character parsers, like <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a289f0b7681e314892648e2768a040d56.html" title="Global char_">char_</a></code>, <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a3d982dd5003327f579e689e9fbbf7cb4.html" title="Global cp">cp</a></code> and <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1adf23d22a6b9aa56e8e5d5c5bc2e97881.html" title="Global cu">cu</a></code> produce either <code class="computeroutput"><span class="keyword">char</span></code> or <code class="computeroutput"><span class="keyword">char32_t</span></code>
+        attributes. So when you see "<code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code>
+        if <code class="computeroutput"><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)</span></code> is
+        <code class="computeroutput"><span class="keyword">char</span></code> or <code class="computeroutput"><span class="keyword">char32_t</span></code>,
+        otherwise <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)&gt;</span></code>"
+        in the table above, that effectively means that every sequences of character
+        attributes get turned into a <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code>.
+        The only time this does not happen is when you introduce your own rules with
+        attributes using another character type (or use <code class="computeroutput"><a class="link" href="../doxygen/headers/structboost_1_1parser_1_1attribute.html" title="Struct template attribute">attribute</a></code> to do so).
+      </p></td></tr>
+</table></div>
+<div class="important"><table border="0" summary="Important">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="../../../doc/src/images/important.png"></td>
+<th align="left">Important</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+        In case you did not notice it above, adding a semantic action to a parser
+        erases the parser's attribute. The attribute is still available inside the
+        semantic action as <code class="computeroutput"><span class="identifier">_attr</span><span class="special">(</span><span class="identifier">ctx</span><span class="special">)</span></code>.
+      </p></td></tr>
+</table></div>
+<h4>
+<a name="boost_parser.cheat_sheet.h4"></a>
+      <span class="phrase"><a name="boost_parser.cheat_sheet.more_attributes_for_operations_on_parsers"></a></span><a class="link" href="cheat_sheet.html#boost_parser.cheat_sheet.more_attributes_for_operations_on_parsers">More
+      attributes for operations on parsers</a>
+    </h4>
+<p>
+      In the table: <code class="computeroutput"><span class="identifier">a</span></code> is a semantic
+      action; and <code class="computeroutput"><span class="identifier">p</span></code>, <code class="computeroutput"><span class="identifier">p1</span></code>, <code class="computeroutput"><span class="identifier">p2</span></code>,
+      ... are parsers that generate attributes. Note that only <code class="computeroutput"><span class="special">&gt;&gt;</span></code>
+      is used here; <code class="computeroutput"><span class="special">&gt;</span></code> has the exact
+      same attribute generation rules.
+    </p>
+<div class="table">
+<a name="boost_parser.cheat_sheet.t4"></a><p class="title"><b>Table 26.5. Sequence and Alternative Combining Operations and Their Attributes</b></p>
+<div class="table-contents"><table class="table" summary="Sequence and Alternative Combining Operations and Their Attributes">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+              <p>
+                Expression
+              </p>
+            </th>
+<th>
+              <p>
+                Attribute Type
+              </p>
+            </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ae99af5798fd88c0cfd424c181dc13d09.html" title="Global eps">eps</a>
+                <span class="special">&gt;&gt;</span> <a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ae99af5798fd88c0cfd424c181dc13d09.html" title="Global eps">eps</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                None.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">p</span> <span class="special">&gt;&gt;</span>
+                <a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ae99af5798fd88c0cfd424c181dc13d09.html" title="Global eps">eps</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ae99af5798fd88c0cfd424c181dc13d09.html" title="Global eps">eps</a>
+                <span class="special">&gt;&gt;</span> <span class="identifier">p</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1adf23d22a6b9aa56e8e5d5c5bc2e97881.html" title="Global cu">cu</a>
+                <span class="special">&gt;&gt;</span> <a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a7e079d756d52cf5fc94cbdca53bb8b4f.html" title="Function template string">string</a><span class="special">(</span><span class="string">"str"</span><span class="special">)</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a7e079d756d52cf5fc94cbdca53bb8b4f.html" title="Function template string">string</a><span class="special">(</span><span class="string">"str"</span><span class="special">)</span> <span class="special">&gt;&gt;</span>
+                <a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1adf23d22a6b9aa56e8e5d5c5bc2e97881.html" title="Global cu">cu</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="special">*</span><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1adf23d22a6b9aa56e8e5d5c5bc2e97881.html" title="Global cu">cu</a> <span class="special">&gt;&gt;</span>
+                <a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a7e079d756d52cf5fc94cbdca53bb8b4f.html" title="Function template string">string</a><span class="special">(</span><span class="string">"str"</span><span class="special">)</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a1792fbe3b24e0dcf5dc9d31005995c1e.html" title="Type definition tuple">boost::parser::tuple</a><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">&gt;</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a7e079d756d52cf5fc94cbdca53bb8b4f.html" title="Function template string">string</a><span class="special">(</span><span class="string">"str"</span><span class="special">)</span> <span class="special">&gt;&gt;</span>
+                <span class="special">*</span><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1adf23d22a6b9aa56e8e5d5c5bc2e97881.html" title="Global cu">cu</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a1792fbe3b24e0dcf5dc9d31005995c1e.html" title="Type definition tuple">boost::parser::tuple</a><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">&gt;</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">p</span> <span class="special">&gt;&gt;</span>
+                <span class="identifier">p</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a1792fbe3b24e0dcf5dc9d31005995c1e.html" title="Type definition tuple">boost::parser::tuple</a><span class="special">&lt;</span><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">),</span> <span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)&gt;</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="special">*</span><span class="identifier">p</span>
+                <span class="special">&gt;&gt;</span> <span class="identifier">p</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code> if <code class="computeroutput"><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)</span></code> is <code class="computeroutput"><span class="keyword">char</span></code>
+                or <code class="computeroutput"><span class="keyword">char32_t</span></code>, otherwise
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)&gt;</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">p</span> <span class="special">&gt;&gt;</span>
+                <span class="special">*</span><span class="identifier">p</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code> if <code class="computeroutput"><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)</span></code> is <code class="computeroutput"><span class="keyword">char</span></code>
+                or <code class="computeroutput"><span class="keyword">char32_t</span></code>, otherwise
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)&gt;</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="special">*</span><span class="identifier">p</span>
+                <span class="special">&gt;&gt;</span> <span class="special">-</span><span class="identifier">p</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code> if <code class="computeroutput"><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)</span></code> is <code class="computeroutput"><span class="keyword">char</span></code>
+                or <code class="computeroutput"><span class="keyword">char32_t</span></code>, otherwise
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)&gt;</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="special">-</span><span class="identifier">p</span>
+                <span class="special">&gt;&gt;</span> <span class="special">*</span><span class="identifier">p</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code> if <code class="computeroutput"><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)</span></code> is <code class="computeroutput"><span class="keyword">char</span></code>
+                or <code class="computeroutput"><span class="keyword">char32_t</span></code>, otherwise
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)&gt;</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a7e079d756d52cf5fc94cbdca53bb8b4f.html" title="Function template string">string</a><span class="special">(</span><span class="string">"str"</span><span class="special">)</span> <span class="special">&gt;&gt;</span>
+                <span class="special">-</span><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1adf23d22a6b9aa56e8e5d5c5bc2e97881.html" title="Global cu">cu</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="special">-</span><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1adf23d22a6b9aa56e8e5d5c5bc2e97881.html" title="Global cu">cu</a> <span class="special">&gt;&gt;</span>
+                <a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a7e079d756d52cf5fc94cbdca53bb8b4f.html" title="Function template string">string</a><span class="special">(</span><span class="string">"str"</span><span class="special">)</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="special">!</span><span class="identifier">p1</span>
+                <span class="special">|</span> <span class="identifier">p2</span><span class="special">[</span><span class="identifier">a</span><span class="special">]</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                None.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">p</span> <span class="special">|</span>
+                <span class="identifier">p</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">p1</span> <span class="special">|</span>
+                <span class="identifier">p2</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">variant</span><span class="special">&lt;</span><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p1</span><span class="special">),</span> <span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p2</span><span class="special">)&gt;</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">p</span> <span class="special">|</span>
+                </code><code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ae99af5798fd88c0cfd424c181dc13d09.html" title="Global eps">eps</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">optional</span><span class="special">&lt;</span><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p</span><span class="special">)&gt;</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">p1</span> <span class="special">|</span>
+                <span class="identifier">p2</span> <span class="special">|</span>
+                <a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ae99af5798fd88c0cfd424c181dc13d09.html" title="Global eps">eps</a></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">optional</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">variant</span><span class="special">&lt;</span><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p1</span><span class="special">),</span> <span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p2</span><span class="special">)&gt;&gt;</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">p1</span> <span class="special">|</span>
+                <span class="identifier">p2</span><span class="special">[</span><span class="identifier">a</span><span class="special">]</span> <span class="special">|</span> <span class="identifier">p3</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">optional</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">variant</span><span class="special">&lt;</span><span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p1</span><span class="special">),</span> <span class="emphasis"><em><code class="literal">ATTR</code></em></span><span class="special">(</span><span class="identifier">p3</span><span class="special">)&gt;&gt;</span></code>
+              </p>
+            </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break">
+</div>
+<div class="copyright-footer">Copyright © 2020 T. Zachary Laine<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="this_library_s_relationship_to_boost_spirit.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../parser.html"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="tutorial.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template compressed_pair&lt;T, T&gt;</title>
+<link rel="stylesheet" href="../../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../index.html" title="Chapter 1. Boost.Utility">
+<link rel="up" href="../../../utility/utilities/compressed_pair.html#doxygen.compressed_pair.reference.detail_2compressed__pair_8hpp" title="Header &lt;boost/detail/compressed_pair.hpp&gt;">
+<link rel="prev" href="classboost_1_1compressed__pair.html" title="Class template compressed_pair">
+<link rel="next" href="../../../utility/utilities/in_place_factory.html" title="In-place Factory">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1compressed__pair.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../../utility/utilities/compressed_pair.html#doxygen.compressed_pair.reference.detail_2compressed__pair_8hpp"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../../../utility/utilities/in_place_factory.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.compressed_pair.reference.classboost_1_1compressed__pair_3_01T_00_01T_01_4"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template compressed_pair&lt;T, T&gt;</span></h2>
+<p>boost::compressed_pair&lt;T, T&gt;</p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../../utility/utilities/compressed_pair.html#doxygen.compressed_pair.reference.detail_2compressed__pair_8hpp" title="Header &lt;boost/detail/compressed_pair.hpp&gt;">boost/detail/compressed_pair.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1compressed__pair_3_01T_00_01T_01_4.html" title="Class template compressed_pair&lt;T, T&gt;">compressed_pair</a><span class="special">&lt;</span><span class="identifier">T</span><span class="special">,</span> <span class="identifier">T</span><span class="special">&gt;</span> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">T</span>                                           <a name="doxygen.compressed_pair.reference.classboost_1_1compressed__pair_3_01T_00_01T_01_4_1aa0613f25cefae4195fb445f6b1b46e14"></a><span class="identifier">first_type</span><span class="special">;</span>            
+  <span class="keyword">typedef</span> <span class="identifier">T</span>                                           <a name="doxygen.compressed_pair.reference.classboost_1_1compressed__pair_3_01T_00_01T_01_4_1ae3222ed35401de234e68336bc58f2e60"></a><span class="identifier">second_type</span><span class="special">;</span>           
+  <span class="keyword">typedef</span> <span class="identifier">call_traits</span><span class="special">&lt;</span> <span class="identifier">first_type</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">param_type</span>       <a name="doxygen.compressed_pair.reference.classboost_1_1compressed__pair_3_01T_00_01T_01_4_1a17172623032180700c551c90b198086e"></a><span class="identifier">first_param_type</span><span class="special">;</span>      
+  <span class="keyword">typedef</span> <span class="identifier">call_traits</span><span class="special">&lt;</span> <span class="identifier">second_type</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">param_type</span>      <a name="doxygen.compressed_pair.reference.classboost_1_1compressed__pair_3_01T_00_01T_01_4_1aca0092e5c1f5ef876656d15043e37ad4"></a><span class="identifier">second_param_type</span><span class="special">;</span>     
+  <span class="keyword">typedef</span> <span class="identifier">call_traits</span><span class="special">&lt;</span> <span class="identifier">first_type</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">reference</span>        <a name="doxygen.compressed_pair.reference.classboost_1_1compressed__pair_3_01T_00_01T_01_4_1ae62607f8243ce25dbe238d9c2875acff"></a><span class="identifier">first_reference</span><span class="special">;</span>       
+  <span class="keyword">typedef</span> <span class="identifier">call_traits</span><span class="special">&lt;</span> <span class="identifier">second_type</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">reference</span>       <a name="doxygen.compressed_pair.reference.classboost_1_1compressed__pair_3_01T_00_01T_01_4_1a10c0686a06a359b4a4aa8db04202d196"></a><span class="identifier">second_reference</span><span class="special">;</span>      
+  <span class="keyword">typedef</span> <span class="identifier">call_traits</span><span class="special">&lt;</span> <span class="identifier">first_type</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">const_reference</span>  <a name="doxygen.compressed_pair.reference.classboost_1_1compressed__pair_3_01T_00_01T_01_4_1af63d05b0076db0fa13ab99125aa032d6"></a><span class="identifier">first_const_reference</span><span class="special">;</span> 
+  <span class="keyword">typedef</span> <span class="identifier">call_traits</span><span class="special">&lt;</span> <span class="identifier">second_type</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">const_reference</span> <a name="doxygen.compressed_pair.reference.classboost_1_1compressed__pair_3_01T_00_01T_01_4_1a8b7824663a2722aec2e9b974b529fe8c"></a><span class="identifier">second_const_reference</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1compressed__pair_3_01T_00_01T_01_4.html#id4-bb">public member functions</a></span>
+  <a class="link" href="classboost_1_1compressed__pair_3_01T_00_01T_01_4.html#doxygen.compressed_pair.reference.classboost_1_1compressed__pair_3_01T_00_01T_01_4_1a9c48b3f2e0bd368615ee278a92c79186"><span class="identifier">compressed_pair</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1compressed__pair_3_01T_00_01T_01_4.html#doxygen.compressed_pair.reference.classboost_1_1compressed__pair_3_01T_00_01T_01_4_1aa991943dfb61fcb21883e5063387dd24"><span class="identifier">compressed_pair</span></a><span class="special">(</span><span class="identifier">first_param_type</span><span class="special">,</span> <span class="identifier">second_param_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1compressed__pair_3_01T_00_01T_01_4.html#doxygen.compressed_pair.reference.classboost_1_1compressed__pair_3_01T_00_01T_01_4_1a4290e08c92731dc7d728af0567e3b6fa"><span class="identifier">compressed_pair</span></a><span class="special">(</span><span class="identifier">first_param_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">first_reference</span> <a class="link" href="classboost_1_1compressed__pair_3_01T_00_01T_01_4.html#doxygen.compressed_pair.reference.classboost_1_1compressed__pair_3_01T_00_01T_01_4_1ae7f1fe88ceb8cf487fb9024ecac54589"><span class="identifier">first</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">first_const_reference</span> <a class="link" href="classboost_1_1compressed__pair_3_01T_00_01T_01_4.html#doxygen.compressed_pair.reference.classboost_1_1compressed__pair_3_01T_00_01T_01_4_1a765055f9a1f4636074c0ac816f2e3a2d"><span class="identifier">first</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">second_reference</span> <a class="link" href="classboost_1_1compressed__pair_3_01T_00_01T_01_4.html#doxygen.compressed_pair.reference.classboost_1_1compressed__pair_3_01T_00_01T_01_4_1a5a03b6f558c2b185e8b7030817344c95"><span class="identifier">second</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">second_const_reference</span> <a class="link" href="classboost_1_1compressed__pair_3_01T_00_01T_01_4.html#doxygen.compressed_pair.reference.classboost_1_1compressed__pair_3_01T_00_01T_01_4_1a65649ab1f39235af764135e258ec076a"><span class="identifier">second</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1compressed__pair_3_01T_00_01T_01_4.html#doxygen.compressed_pair.reference.classboost_1_1compressed__pair_3_01T_00_01T_01_4_1abc7a930f0226a486d94188e5498dc268"><span class="identifier">swap</span></a><span class="special">(</span>::boost::compressed_pair<span class="special">&lt;</span> <span class="identifier">T</span><span class="special">,</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id5525"></a><h2>Description</h2>
+<div class="refsect2">
+<a name="id5527"></a><h3>
+<a name="id4-bb"></a><code class="computeroutput">compressed_pair</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem"><pre class="literallayout"><a name="doxygen.compressed_pair.reference.classboost_1_1compressed__pair_3_01T_00_01T_01_4_1a9c48b3f2e0bd368615ee278a92c79186"></a><span class="identifier">compressed_pair</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a name="doxygen.compressed_pair.reference.classboost_1_1compressed__pair_3_01T_00_01T_01_4_1aa991943dfb61fcb21883e5063387dd24"></a><span class="identifier">compressed_pair</span><span class="special">(</span><span class="identifier">first_param_type</span> x<span class="special">,</span> <span class="identifier">second_param_type</span> y<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.compressed_pair.reference.classboost_1_1compressed__pair_3_01T_00_01T_01_4_1a4290e08c92731dc7d728af0567e3b6fa"></a><span class="identifier">compressed_pair</span><span class="special">(</span><span class="identifier">first_param_type</span> x<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">first_reference</span> <a name="doxygen.compressed_pair.reference.classboost_1_1compressed__pair_3_01T_00_01T_01_4_1ae7f1fe88ceb8cf487fb9024ecac54589"></a><span class="identifier">first</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">first_const_reference</span> <a name="doxygen.compressed_pair.reference.classboost_1_1compressed__pair_3_01T_00_01T_01_4_1a765055f9a1f4636074c0ac816f2e3a2d"></a><span class="identifier">first</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">second_reference</span> <a name="doxygen.compressed_pair.reference.classboost_1_1compressed__pair_3_01T_00_01T_01_4_1a5a03b6f558c2b185e8b7030817344c95"></a><span class="identifier">second</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">second_const_reference</span> <a name="doxygen.compressed_pair.reference.classboost_1_1compressed__pair_3_01T_00_01T_01_4_1a65649ab1f39235af764135e258ec076a"></a><span class="identifier">second</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.compressed_pair.reference.classboost_1_1compressed__pair_3_01T_00_01T_01_4_1abc7a930f0226a486d94188e5498dc268"></a><span class="identifier">swap</span><span class="special">(</span>::boost::compressed_pair<span class="special">&lt;</span> <span class="identifier">T</span><span class="special">,</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&amp;</span> y<span class="special">)</span><span class="special">;</span></pre></li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2001 Beman Dawes<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1compressed__pair.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../../utility/utilities/compressed_pair.html#doxygen.compressed_pair.reference.detail_2compressed__pair_8hpp"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../../../utility/utilities/in_place_factory.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

@@ -1,0 +1,779 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template bstree_algorithms</title>
+<link rel="stylesheet" href="../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../intrusive/reference.html#doxygen.bstree__algorithms_8hpp" title="Header &lt;boost/intrusive/bstree_algorithms.hpp&gt;">
+<link rel="prev" href="structboost_1_1intrusive_1_1make__bstree.html" title="Struct template make_bstree">
+<link rel="next" href="classboost_1_1intrusive_1_1circular__list__algorithms.html" title="Class template circular_list_algorithms">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../boost.png"></td>
+<td align="center"><a href="../../../index.html">Home</a></td>
+<td align="center"><a href="../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="structboost_1_1intrusive_1_1make__bstree.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../intrusive/reference.html#doxygen.bstree__algorithms_8hpp"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1intrusive_1_1circular__list__algorithms.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template bstree_algorithms</span></h2>
+<p>boost::intrusive::bstree_algorithms</p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../intrusive/reference.html#doxygen.bstree__algorithms_8hpp" title="Header &lt;boost/intrusive/bstree_algorithms.hpp&gt;">boost/intrusive/bstree_algorithms.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> NodeTraits<span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html" title="Class template bstree_algorithms">bstree_algorithms</a> <span class="special">:</span> <span class="keyword">public</span> <span class="identifier">bstree_algorithms_base</span><span class="special">&lt;</span> <span class="identifier">NodeTraits</span> <span class="special">&gt;</span> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">NodeTraits</span><span class="special">::</span><span class="identifier">node</span>                 <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1aa974c0e6042bc8ca7cdbcbc2b55b3d28"></a><span class="identifier">node</span><span class="special">;</span>              
+  <span class="keyword">typedef</span> <span class="identifier">NodeTraits</span>                       <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a16af0e159ed9bade1082120b22d2de0a"></a><span class="identifier">node_traits</span><span class="special">;</span>       
+  <span class="keyword">typedef</span> <span class="identifier">NodeTraits</span><span class="special">::</span><span class="identifier">node_ptr</span>             <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1affacff4bfc3aea1701566169b2c8b2f5"></a><span class="identifier">node_ptr</span><span class="special">;</span>          
+  <span class="keyword">typedef</span> <span class="identifier">NodeTraits</span><span class="special">::</span><span class="identifier">const_node_ptr</span>       <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a7451fe8593a4aed2efe3f7d6e06b310e"></a><span class="identifier">const_node_ptr</span><span class="special">;</span>    
+  <span class="keyword">typedef</span> <span class="identifier">insert_commit_data_t</span><span class="special">&lt;</span> <span class="identifier">node_ptr</span> <span class="special">&gt;</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a0a213ac9d40b71d003a5cc3bc3450ec8"></a><span class="identifier">insert_commit_data</span><span class="special">;</span>
+  <span class="keyword">typedef</span> <span class="identifier">data_for_rebalance_t</span><span class="special">&lt;</span> <span class="identifier">node_ptr</span> <span class="special">&gt;</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1ab2eea0a6aaea45435ebd16547719e84b"></a><span class="identifier">data_for_rebalance</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="boost_interprocess_header_reference/classboost_1_1interprocess_1_1private__node__allocator.html#id20-bb">public static functions</a></span>
+  <span class="keyword">static</span> <span class="identifier">node_ptr</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a934bcb142443a7a828307e5bba417fc4"><span class="identifier">begin_node</span></a><span class="special">(</span><span class="identifier">const_node_ptr</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="identifier">node_ptr</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a4e1a7e297d27bf52f73602fc86266307"><span class="identifier">end_node</span></a><span class="special">(</span><span class="identifier">const_node_ptr</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="identifier">node_ptr</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a9512ec36676ae2556ed05c3f8d1ff552"><span class="identifier">root_node</span></a><span class="special">(</span><span class="identifier">const_node_ptr</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">bool</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a8a30a4564340e9af14ed3b0a9aa6be71"><span class="identifier">unique</span></a><span class="special">(</span><span class="identifier">const_node_ptr</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="identifier">node_ptr</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a5b35e9e664c779093a1a0ddefc251c76"><span class="identifier">get_header</span></a><span class="special">(</span><span class="identifier">const_node_ptr</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a26bc47d283134ea5ab22fa129bd03701"><span class="identifier">swap_nodes</span></a><span class="special">(</span><span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">node_ptr</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a6e60c4e7c4387d52f64d273c80bd30be"><span class="identifier">swap_nodes</span></a><span class="special">(</span><span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">node_ptr</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1ae1b55ce3e82bbca22ee2ded35b33cc96"><span class="identifier">replace_node</span></a><span class="special">(</span><span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">node_ptr</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a5c7465b62bdb73d9d7599f361cd32701"><span class="identifier">replace_node</span></a><span class="special">(</span><span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">node_ptr</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="identifier">node_ptr</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a25c3b0716cc6ce6725fad394b6abb414"><span class="identifier">next_node</span></a><span class="special">(</span><span class="identifier">node_ptr</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="identifier">node_ptr</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a5cc7f794ba368a4c9829ab7501281931"><span class="identifier">prev_node</span></a><span class="special">(</span><span class="identifier">node_ptr</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="identifier">node_ptr</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1ac458becb5cf06c1f9b3c8f97b9817846"><span class="identifier">minimum</span></a><span class="special">(</span><span class="identifier">node_ptr</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="identifier">node_ptr</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a80eed8357fe86ae307b992c7df2e1593"><span class="identifier">maximum</span></a><span class="special">(</span><span class="identifier">node_ptr</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a9bbc31d7631f99c74c8f5a8b45d3598c"><span class="identifier">init</span></a><span class="special">(</span><span class="identifier">node_ptr</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">bool</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a4abd9fe41e3b1ed2cdb6b1df9507f78a"><span class="identifier">inited</span></a><span class="special">(</span><span class="identifier">const_node_ptr</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a07b49ef0c794f8a81d47ac1bcdfe95b2"><span class="identifier">init_header</span></a><span class="special">(</span><span class="identifier">node_ptr</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Disposer<span class="special">&gt;</span> 
+    <span class="keyword">static</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1ad9ed01ba444ee92e0f0c1b0d7462700e"><span class="identifier">clear_and_dispose</span></a><span class="special">(</span><span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">Disposer</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="identifier">node_ptr</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1ac2cf59eae711e291d47bc4c2227baa5b"><span class="identifier">unlink_leftmost_without_rebalance</span></a><span class="special">(</span><span class="identifier">node_ptr</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1abffaaa0070a2ccb67d454bf97daf5a63"><span class="identifier">size</span></a><span class="special">(</span><span class="identifier">const_node_ptr</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a394113454d3940883d62265dde9084ad"><span class="identifier">swap_tree</span></a><span class="special">(</span><span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">node_ptr</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">bool</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a1892997550dc6e572a4cb7297e9766be"><span class="identifier">is_header</span></a><span class="special">(</span><span class="identifier">const_node_ptr</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> KeyType<span class="special">,</span> <span class="keyword">typename</span> KeyNodePtrCompare<span class="special">&gt;</span> 
+    <span class="keyword">static</span> <span class="identifier">node_ptr</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a3ed0ef0b545170b7819c694931050da2"><span class="identifier">find</span></a><span class="special">(</span><span class="identifier">const_node_ptr</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">KeyType</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">KeyNodePtrCompare</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> KeyType<span class="special">,</span> <span class="keyword">typename</span> KeyNodePtrCompare<span class="special">&gt;</span> 
+    <span class="keyword">static</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">pair</span><span class="special">&lt;</span> <span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">node_ptr</span> <span class="special">&gt;</span> 
+    <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a3d3013bc4b61232807f410bdd1976e62"><span class="identifier">bounded_range</span></a><span class="special">(</span><span class="identifier">const_node_ptr</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">KeyType</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">KeyType</span> <span class="special">&amp;</span><span class="special">,</span> 
+                  <span class="identifier">KeyNodePtrCompare</span><span class="special">,</span> <span class="keyword">bool</span><span class="special">,</span> <span class="keyword">bool</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> KeyType<span class="special">,</span> <span class="keyword">typename</span> KeyNodePtrCompare<span class="special">&gt;</span> 
+    <span class="keyword">static</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> 
+    <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a6f6ee8b6a70da9e8fe15ed2e3c8a1980"><span class="identifier">count</span></a><span class="special">(</span><span class="identifier">const_node_ptr</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">KeyType</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">KeyNodePtrCompare</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> KeyType<span class="special">,</span> <span class="keyword">typename</span> KeyNodePtrCompare<span class="special">&gt;</span> 
+    <span class="keyword">static</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">pair</span><span class="special">&lt;</span> <span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">node_ptr</span> <span class="special">&gt;</span> 
+    <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1ae882d069e2f9696cebc1b938132d519e"><span class="identifier">equal_range</span></a><span class="special">(</span><span class="identifier">const_node_ptr</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">KeyType</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">KeyNodePtrCompare</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> KeyType<span class="special">,</span> <span class="keyword">typename</span> KeyNodePtrCompare<span class="special">&gt;</span> 
+    <span class="keyword">static</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">pair</span><span class="special">&lt;</span> <span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">node_ptr</span> <span class="special">&gt;</span> 
+    <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a4586ed06d2fe7eaddc6f6fd14a24ddb4"><span class="identifier">lower_bound_range</span></a><span class="special">(</span><span class="identifier">const_node_ptr</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">KeyType</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">KeyNodePtrCompare</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> KeyType<span class="special">,</span> <span class="keyword">typename</span> KeyNodePtrCompare<span class="special">&gt;</span> 
+    <span class="keyword">static</span> <span class="identifier">node_ptr</span> 
+    <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1ab3116b1b3b545c419bb15ad20be9da7b"><span class="identifier">lower_bound</span></a><span class="special">(</span><span class="identifier">const_node_ptr</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">KeyType</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">KeyNodePtrCompare</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> KeyType<span class="special">,</span> <span class="keyword">typename</span> KeyNodePtrCompare<span class="special">&gt;</span> 
+    <span class="keyword">static</span> <span class="identifier">node_ptr</span> 
+    <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1ace488e666751fe7ee185acc5253984e7"><span class="identifier">upper_bound</span></a><span class="special">(</span><span class="identifier">const_node_ptr</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">KeyType</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">KeyNodePtrCompare</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a7d809a80e8ac1bae430f401723875a8a"><span class="identifier">insert_unique_commit</span></a><span class="special">(</span><span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">node_ptr</span><span class="special">,</span> 
+                                   <span class="keyword">const</span> <span class="identifier">insert_commit_data</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> KeyType<span class="special">,</span> <span class="keyword">typename</span> KeyNodePtrCompare<span class="special">&gt;</span> 
+    <span class="keyword">static</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">pair</span><span class="special">&lt;</span> <span class="identifier">node_ptr</span><span class="special">,</span> <span class="keyword">bool</span> <span class="special">&gt;</span> 
+    <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1ad549d1b4bfbff1c2a5db10cd3520f227"><span class="identifier">insert_unique_check</span></a><span class="special">(</span><span class="identifier">const_node_ptr</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">KeyType</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">KeyNodePtrCompare</span><span class="special">,</span> 
+                        <span class="identifier">insert_commit_data</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> KeyType<span class="special">,</span> <span class="keyword">typename</span> KeyNodePtrCompare<span class="special">&gt;</span> 
+    <span class="keyword">static</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">pair</span><span class="special">&lt;</span> <span class="identifier">node_ptr</span><span class="special">,</span> <span class="keyword">bool</span> <span class="special">&gt;</span> 
+    <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1adc2bcf8dc207cdbd79cf6a2226b9e3bb"><span class="identifier">insert_unique_check</span></a><span class="special">(</span><span class="identifier">const_node_ptr</span><span class="special">,</span> <span class="identifier">node_ptr</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">KeyType</span> <span class="special">&amp;</span><span class="special">,</span> 
+                        <span class="identifier">KeyNodePtrCompare</span><span class="special">,</span> <span class="identifier">insert_commit_data</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> NodePtrCompare<span class="special">&gt;</span> 
+    <span class="keyword">static</span> <span class="identifier">node_ptr</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a9fa16e0639cdb5f5ee8086fde9963a6a"><span class="identifier">insert_equal</span></a><span class="special">(</span><span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">NodePtrCompare</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> NodePtrCompare<span class="special">&gt;</span> 
+    <span class="keyword">static</span> <span class="identifier">node_ptr</span> 
+    <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a7eaf24df4084435ed94c975c93f64f3a"><span class="identifier">insert_equal_upper_bound</span></a><span class="special">(</span><span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">NodePtrCompare</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> NodePtrCompare<span class="special">&gt;</span> 
+    <span class="keyword">static</span> <span class="identifier">node_ptr</span> 
+    <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1ac3bdf39cf6be86ce584b6b00780dc5ed"><span class="identifier">insert_equal_lower_bound</span></a><span class="special">(</span><span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">NodePtrCompare</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="identifier">node_ptr</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1ac8dd814851759a1b927b0faf70b6016a"><span class="identifier">insert_before</span></a><span class="special">(</span><span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">node_ptr</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a8441f2e613585577106718d5d7d33079"><span class="identifier">push_back</span></a><span class="special">(</span><span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">node_ptr</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1acd4b2fde68c738aab91af10cad9ed056"><span class="identifier">push_front</span></a><span class="special">(</span><span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">node_ptr</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a679248921c7b3571f1f049bcc38bcf2e"><span class="identifier">depth</span></a><span class="special">(</span><span class="identifier">const_node_ptr</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Cloner<span class="special">,</span> <span class="keyword">typename</span> Disposer<span class="special">&gt;</span> 
+    <span class="keyword">static</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1ae9c435ef1686795895b856060d029aed"><span class="identifier">clone</span></a><span class="special">(</span><span class="identifier">const_node_ptr</span><span class="special">,</span> <span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">Cloner</span><span class="special">,</span> <span class="identifier">Disposer</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a767291065e0ae15c7e5612c2705d19aa"><span class="identifier">erase</span></a><span class="special">(</span><span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">node_ptr</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> NodePtrCompare<span class="special">&gt;</span> 
+    <span class="keyword">static</span> <span class="keyword">bool</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1ae3afc5ca60f8d96f3bb9cd0c73a197d2"><span class="identifier">transfer_unique</span></a><span class="special">(</span><span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">NodePtrCompare</span><span class="special">,</span> <span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">node_ptr</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> NodePtrCompare<span class="special">&gt;</span> 
+    <span class="keyword">static</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1af91fe86ba54a8f9d7df17da7dbeea5ba"><span class="identifier">transfer_equal</span></a><span class="special">(</span><span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">NodePtrCompare</span><span class="special">,</span> <span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">node_ptr</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a639ce0823918c4f6cdfc561d2a1a617d"><span class="identifier">unlink</span></a><span class="special">(</span><span class="identifier">node_ptr</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a425431a5e99cd2608239f45e727131e5"><span class="identifier">rebalance</span></a><span class="special">(</span><span class="identifier">node_ptr</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="identifier">node_ptr</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a1c4c7bbf9677abf6036dffd630294483"><span class="identifier">rebalance_subtree</span></a><span class="special">(</span><span class="identifier">node_ptr</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Checker<span class="special">&gt;</span> 
+    <span class="keyword">static</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a2d67d82edcf8e7e9a8a2ee3cf9626b23"><span class="identifier">check</span></a><span class="special">(</span><span class="identifier">const_node_ptr</span><span class="special">,</span> <span class="identifier">Checker</span><span class="special">,</span> 
+                      <span class="keyword">typename</span> <span class="identifier">Checker</span><span class="special">::</span><span class="identifier">return_type</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="boost_interprocess_header_reference/classboost_1_1interprocess_1_1bad__alloc.html#id21-bb">protected static functions</a></span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> NodePtrCompare<span class="special">&gt;</span> 
+    <span class="keyword">static</span> <span class="keyword">bool</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1ac0869970c353ba82d155b05bfd3da4d7"><span class="identifier">transfer_unique</span></a><span class="special">(</span><span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">NodePtrCompare</span><span class="special">,</span> <span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">node_ptr</span><span class="special">,</span> 
+                                <span class="identifier">data_for_rebalance</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> NodePtrCompare<span class="special">&gt;</span> 
+    <span class="keyword">static</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a5182afeb279ec3f6e1c34514a2a234d2"><span class="identifier">transfer_equal</span></a><span class="special">(</span><span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">NodePtrCompare</span><span class="special">,</span> <span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">node_ptr</span><span class="special">,</span> 
+                               <span class="identifier">data_for_rebalance</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1acb133a71faa7350fdc7f73b643155b8e"><span class="identifier">erase</span></a><span class="special">(</span><span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">data_for_rebalance</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1af5cf6d662b751fc1f6bb7cc0af19b19b"><span class="identifier">subtree_size</span></a><span class="special">(</span><span class="identifier">const_node_ptr</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">bool</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1aa95361819a021084bcbd769d8182c78a"><span class="identifier">is_left_child</span></a><span class="special">(</span><span class="identifier">node_ptr</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">bool</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a69fe2118abcc547f8b5c30266a961824"><span class="identifier">is_right_child</span></a><span class="special">(</span><span class="identifier">node_ptr</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a0de46dc067099f8e0953a326fe766ad1"><span class="identifier">insert_before_check</span></a><span class="special">(</span><span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">insert_commit_data</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1aeff4e172ae74a869d38ed18d61c034b9"><span class="identifier">push_back_check</span></a><span class="special">(</span><span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">insert_commit_data</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a0e787418e55be00bc54ba1eb2ca783e0"><span class="identifier">push_front_check</span></a><span class="special">(</span><span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">insert_commit_data</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> NodePtrCompare<span class="special">&gt;</span> 
+    <span class="keyword">static</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a5ebb2e65f5ccaab876760a778e8c0590"><span class="identifier">insert_equal_check</span></a><span class="special">(</span><span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">node_ptr</span><span class="special">,</span> 
+                                   <span class="identifier">NodePtrCompare</span><span class="special">,</span> <span class="identifier">insert_commit_data</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> NodePtrCompare<span class="special">&gt;</span> 
+    <span class="keyword">static</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1ae057be5723147486e0ef4ce584a48c64"><span class="identifier">insert_equal_upper_bound_check</span></a><span class="special">(</span><span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">node_ptr</span><span class="special">,</span> 
+                                               <span class="identifier">NodePtrCompare</span><span class="special">,</span> 
+                                               <span class="identifier">insert_commit_data</span> <span class="special">&amp;</span><span class="special">,</span> 
+                                               <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="special">*</span> <span class="special">=</span> <span class="number">0</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> NodePtrCompare<span class="special">&gt;</span> 
+    <span class="keyword">static</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a7d0356f6ca3273c7b87d8365a6928506"><span class="identifier">insert_equal_lower_bound_check</span></a><span class="special">(</span><span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">node_ptr</span><span class="special">,</span> 
+                                               <span class="identifier">NodePtrCompare</span><span class="special">,</span> 
+                                               <span class="identifier">insert_commit_data</span> <span class="special">&amp;</span><span class="special">,</span> 
+                                               <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="special">*</span> <span class="special">=</span> <span class="number">0</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a6233f376fcdf48da7e57d023a75b233f"><span class="identifier">insert_commit</span></a><span class="special">(</span><span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">node_ptr</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">insert_commit_data</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a7b0a42d74737d1e71d16c9d73f7a0347"><span class="identifier">set_child</span></a><span class="special">(</span><span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">node_ptr</span><span class="special">,</span> <span class="keyword">const</span> <span class="keyword">bool</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a04036be2dde42941355f008e70092245"><span class="identifier">rotate_left_no_parent_fix</span></a><span class="special">(</span><span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">node_ptr</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a3990ad6322ebef923f33d54b1657307c"><span class="identifier">rotate_left</span></a><span class="special">(</span><span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">node_ptr</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a81ac2bf8e7ceac7fab42e2c4d94e98ab"><span class="identifier">rotate_right_no_parent_fix</span></a><span class="special">(</span><span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">node_ptr</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1ab73d9770b55a8473412ec2a283f5a252"><span class="identifier">rotate_right</span></a><span class="special">(</span><span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">node_ptr</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="boost_interprocess_header_reference/classboost_1_1interprocess_1_1interprocess__exception.html#id22-bb">private static functions</a></span>
+  <span class="keyword">static</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a921beec2472e480d949c412073e597dc"><span class="identifier">subtree_to_vine</span></a><span class="special">(</span><span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a6d5d812afacf0d91b58cb17260a77783"><span class="identifier">compress_subtree</span></a><span class="special">(</span><span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a9d893fa693d1797faf9fe4449a555efe"><span class="identifier">vine_to_subtree</span></a><span class="special">(</span><span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="identifier">node_ptr</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a2ce256dcb1ab421ffedbc4ebc627a181"><span class="identifier">get_root</span></a><span class="special">(</span><span class="identifier">node_ptr</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Cloner<span class="special">,</span> <span class="keyword">typename</span> Disposer<span class="special">&gt;</span> 
+    <span class="keyword">static</span> <span class="identifier">node_ptr</span> 
+    <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a61a8a4158a4b24d416a41ffa512854d5"><span class="identifier">clone_subtree</span></a><span class="special">(</span><span class="identifier">const_node_ptr</span><span class="special">,</span> <span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">Cloner</span><span class="special">,</span> <span class="identifier">Disposer</span><span class="special">,</span> <span class="identifier">node_ptr</span> <span class="special">&amp;</span><span class="special">,</span> 
+                  <span class="identifier">node_ptr</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Disposer<span class="special">&gt;</span> 
+    <span class="keyword">static</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a1a834dcee68c4c74a044dde0445898d3"><span class="identifier">dispose_subtree</span></a><span class="special">(</span><span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">Disposer</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> KeyType<span class="special">,</span> <span class="keyword">typename</span> KeyNodePtrCompare<span class="special">&gt;</span> 
+    <span class="keyword">static</span> <span class="identifier">node_ptr</span> 
+    <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1ad027de1ddac57b0121bcd8d5d775ecdd"><span class="identifier">lower_bound_loop</span></a><span class="special">(</span><span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">node_ptr</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">KeyType</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">KeyNodePtrCompare</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> KeyType<span class="special">,</span> <span class="keyword">typename</span> KeyNodePtrCompare<span class="special">&gt;</span> 
+    <span class="keyword">static</span> <span class="identifier">node_ptr</span> 
+    <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1add8bd1ea01d66dff7028e00f7c4f1afb"><span class="identifier">upper_bound_loop</span></a><span class="special">(</span><span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">node_ptr</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">KeyType</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">KeyNodePtrCompare</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Checker<span class="special">&gt;</span> 
+    <span class="keyword">static</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1aabad627f5d23ea8906d0736a1279e6c4"><span class="identifier">check_subtree</span></a><span class="special">(</span><span class="identifier">const_node_ptr</span><span class="special">,</span> <span class="identifier">Checker</span><span class="special">,</span> 
+                              <span class="keyword">typename</span> <span class="identifier">Checker</span><span class="special">::</span><span class="identifier">return_type</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.18.42.10.3.4"></a><h2>Description</h2>
+<p>This is an implementation of a binary search tree. A node in the search tree has references to its children and its parent. This is to allow traversal of the whole tree from a given node making the implementation of iterator a pointer to a node. At the top of the tree a node is used specially. This node's parent pointer is pointing to the root of the tree. Its left pointer points to the leftmost node in the tree and the right pointer to the rightmost one. This node is used to represent the end-iterator.                                      +---------+
+header------------------------------&gt;|         |
+                                     |         |
+            +----------(left)--------|         |--------(right)---------+
+            |                        +---------+                        |
+            |                             |                             |
+            |                             | (parent)                    |
+            |                             |                             |
+            |                             |                             |
+            |                        +---------+                        |
+ root of tree ..|......................&gt; | | | | | D | | | | | | | +----<span style="color: red">&lt;mdash&gt;&lt;/mdash&gt;</span>+------<span style="color: red">&lt;mdash&gt;&lt;/mdash&gt;</span>+----<span style="color: red">&lt;mdash&gt;&lt;/mdash&gt;</span>+ | </p>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><span class="bold"><strong></strong></span></td>
+<td><span class="bold"><strong></strong></span></td>
+<td><span class="bold"><strong></strong></span></td>
+</tr>
+<tr>
+<td> </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td> </td>
+<td> </td>
+<td> </td>
+</tr>
+<tr>
+<td> </td>
+<td> </td>
+<td> </td>
+</tr>
+</tbody>
+</table></div>
+<p>
+| +------<span style="color: red">&lt;mdash&gt;&lt;/mdash&gt;</span>+ +------<span style="color: red">&lt;mdash&gt;&lt;/mdash&gt;</span>+ | | | | | | | | | B | | F | | | | | | | | | +–+------<span style="color: red">&lt;mdash&gt;&lt;/mdash&gt;</span>+–+ +–+------<span style="color: red">&lt;mdash&gt;&lt;/mdash&gt;</span>+–+ | </p>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+<col>
+<col>
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><span class="bold"><strong></strong></span></td>
+<td><span class="bold"><strong></strong></span></td>
+<td><span class="bold"><strong></strong></span></td>
+<td><span class="bold"><strong></strong></span></td>
+<td><span class="bold"><strong></strong></span></td>
+</tr>
+<tr>
+<td> </td>
+<td> </td>
+<td> </td>
+<td> </td>
+<td> </td>
+</tr>
+</tbody>
+</table></div>
+<p>
+| +<span style="color: red">&lt;mdash&gt;&lt;/mdash&gt;</span>+--<span style="color: red">&lt;mdash&gt;&lt;/mdash&gt;</span>+ +--<span style="color: red">&lt;mdash&gt;&lt;/mdash&gt;</span>+<span style="color: red">&lt;mdash&gt;&lt;/mdash&gt;</span>+ +<span style="color: red">&lt;mdash&gt;&lt;/mdash&gt;</span>+--<span style="color: red">&lt;mdash&gt;&lt;/mdash&gt;</span>+ +--<span style="color: red">&lt;mdash&gt;&lt;/mdash&gt;</span>+<span style="color: red">&lt;mdash&gt;&lt;/mdash&gt;</span>+ | +--&gt;| | | | | | | |&lt;–+ | A | | C | | E | | G | | | | | | | | | +------<span style="color: red">&lt;mdash&gt;&lt;/mdash&gt;</span>+ +------<span style="color: red">&lt;mdash&gt;&lt;/mdash&gt;</span>+ +------<span style="color: red">&lt;mdash&gt;&lt;/mdash&gt;</span>+ +------<span style="color: red">&lt;mdash&gt;&lt;/mdash&gt;</span>+</p>
+<p><a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html" title="Class template bstree_algorithms">bstree_algorithms</a> is configured with a NodeTraits class, which encapsulates the information about the node to be manipulated. NodeTraits must support the following interface:</p>
+<p><span class="bold"><strong>Typedefs</strong></span>:</p>
+<p><code class="computeroutput">node</code>: The type of the node that forms the binary search tree</p>
+<p><code class="computeroutput">node_ptr</code>: A pointer to a node</p>
+<p><code class="computeroutput">const_node_ptr</code>: A pointer to a const node</p>
+<p><span class="bold"><strong>Static functions</strong></span>:</p>
+<p><code class="computeroutput">static node_ptr get_parent(const_node_ptr n);</code></p>
+<p><code class="computeroutput">static void set_parent(node_ptr n, node_ptr parent);</code></p>
+<p><code class="computeroutput">static node_ptr get_left(const_node_ptr n);</code></p>
+<p><code class="computeroutput">static void set_left(node_ptr n, node_ptr left);</code></p>
+<p><code class="computeroutput">static node_ptr get_right(const_node_ptr n);</code></p>
+<p><code class="computeroutput">static void set_right(node_ptr n, node_ptr right);</code> </p>
+<div class="refsect2">
+<a name="id-1.3.18.42.10.3.4.15"></a><h3>
+<a name="id20-bb"></a><code class="computeroutput">bstree_algorithms</code> public static functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="identifier">node_ptr</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a934bcb142443a7a828307e5bba417fc4"></a><span class="identifier">begin_node</span><span class="special">(</span><span class="identifier">const_node_ptr</span> header<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: 'header' is the header node of a tree.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Returns the first node of the tree, the header if the tree is empty.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant time.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="identifier">node_ptr</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a4e1a7e297d27bf52f73602fc86266307"></a><span class="identifier">end_node</span><span class="special">(</span><span class="identifier">const_node_ptr</span> header<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: 'header' is the header node of a tree.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Returns the header of the tree.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant time.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="identifier">node_ptr</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a9512ec36676ae2556ed05c3f8d1ff552"></a><span class="identifier">root_node</span><span class="special">(</span><span class="identifier">const_node_ptr</span> header<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: 'header' is the header node of a tree.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Returns the root of the tree if any, header otherwise</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant time.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="keyword">bool</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a8a30a4564340e9af14ed3b0a9aa6be71"></a><span class="identifier">unique</span><span class="special">(</span><span class="identifier">const_node_ptr</span> n<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: 'n' is a node of the tree or a node initialized by init(...) or init_node.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Returns true if the node is initialized by <a class="link" href="classboost_1_1intrusive_1_1bstree__algorithms.html#doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a9bbc31d7631f99c74c8f5a8b45d3598c">init()</a> or init_node().</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant time.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="identifier">node_ptr</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a5b35e9e664c779093a1a0ddefc251c76"></a><span class="identifier">get_header</span><span class="special">(</span><span class="identifier">const_node_ptr</span> n<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: 'n' is a node of the tree or a header node.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Returns the header of the tree.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Logarithmic.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a26bc47d283134ea5ab22fa129bd03701"></a><span class="identifier">swap_nodes</span><span class="special">(</span><span class="identifier">node_ptr</span> node1<span class="special">,</span> <span class="identifier">node_ptr</span> node2<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: node1 and node2 can't be header nodes of two trees.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Swaps two nodes. After the function node1 will be inserted in the position node2 before the function. node2 will be inserted in the position node1 had before the function.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Logarithmic.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Note</strong></span>: This function will break container ordering invariants if node1 and node2 are not equivalent according to the ordering rules.</p>
+<p>Experimental function </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a6e60c4e7c4387d52f64d273c80bd30be"></a><span class="identifier">swap_nodes</span><span class="special">(</span><span class="identifier">node_ptr</span> node1<span class="special">,</span> <span class="identifier">node_ptr</span> header1<span class="special">,</span> <span class="identifier">node_ptr</span> node2<span class="special">,</span> 
+                       <span class="identifier">node_ptr</span> header2<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: node1 and node2 can't be header nodes of two trees with header header1 and header2.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Swaps two nodes. After the function node1 will be inserted in the position node2 before the function. node2 will be inserted in the position node1 had before the function.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Note</strong></span>: This function will break container ordering invariants if node1 and node2 are not equivalent according to the ordering rules.</p>
+<p>Experimental function </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1ae1b55ce3e82bbca22ee2ded35b33cc96"></a><span class="identifier">replace_node</span><span class="special">(</span><span class="identifier">node_ptr</span> node_to_be_replaced<span class="special">,</span> <span class="identifier">node_ptr</span> new_node<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: node_to_be_replaced must be inserted in a tree and new_node must not be inserted in a tree.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Replaces node_to_be_replaced in its position in the tree with new_node. The tree does not need to be rebalanced</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Logarithmic.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Note</strong></span>: This function will break container ordering invariants if new_node is not equivalent to node_to_be_replaced according to the ordering rules. This function is faster than erasing and inserting the node, since no rebalancing and comparison is needed. Experimental function </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a5c7465b62bdb73d9d7599f361cd32701"></a><span class="identifier">replace_node</span><span class="special">(</span><span class="identifier">node_ptr</span> node_to_be_replaced<span class="special">,</span> <span class="identifier">node_ptr</span> header<span class="special">,</span> 
+                         <span class="identifier">node_ptr</span> new_node<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: node_to_be_replaced must be inserted in a tree with header "header" and new_node must not be inserted in a tree.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Replaces node_to_be_replaced in its position in the tree with new_node. The tree does not need to be rebalanced</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Note</strong></span>: This function will break container ordering invariants if new_node is not equivalent to node_to_be_replaced according to the ordering rules. This function is faster than erasing and inserting the node, since no rebalancing or comparison is needed. Experimental function </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="identifier">node_ptr</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a25c3b0716cc6ce6725fad394b6abb414"></a><span class="identifier">next_node</span><span class="special">(</span><span class="identifier">node_ptr</span> n<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: 'n' is a node from the tree except the header.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Returns the next node of the tree.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Average constant time.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="identifier">node_ptr</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a5cc7f794ba368a4c9829ab7501281931"></a><span class="identifier">prev_node</span><span class="special">(</span><span class="identifier">node_ptr</span> n<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: 'n' is a node from the tree except the leftmost node.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Returns the previous node of the tree.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Average constant time.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="identifier">node_ptr</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1ac458becb5cf06c1f9b3c8f97b9817846"></a><span class="identifier">minimum</span><span class="special">(</span><span class="identifier">node_ptr</span> n<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: 'n' is a node of a tree but not the header.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Returns the minimum node of the subtree starting at p.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Logarithmic to the size of the subtree.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="identifier">node_ptr</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a80eed8357fe86ae307b992c7df2e1593"></a><span class="identifier">maximum</span><span class="special">(</span><span class="identifier">node_ptr</span> n<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: 'n' is a node of a tree but not the header.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Returns the maximum node of the subtree starting at p.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Logarithmic to the size of the subtree.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a9bbc31d7631f99c74c8f5a8b45d3598c"></a><span class="identifier">init</span><span class="special">(</span><span class="identifier">node_ptr</span> n<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: 'n' must not be part of any tree.</p>
+<p><span class="bold"><strong>Effects</strong></span>: After the function unique(node) == true.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Nodes</strong></span>: If node is inserted in a tree, this function corrupts the tree. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="keyword">bool</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a4abd9fe41e3b1ed2cdb6b1df9507f78a"></a><span class="identifier">inited</span><span class="special">(</span><span class="identifier">const_node_ptr</span> n<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Returns true if node is in the same state as if called init(node)</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a07b49ef0c794f8a81d47ac1bcdfe95b2"></a><span class="identifier">init_header</span><span class="special">(</span><span class="identifier">node_ptr</span> header<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: header must not be part of any tree.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Initializes the header to represent an empty tree. unique(header) == true.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Nodes</strong></span>: If header is inserted in a tree, this function corrupts the tree. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Disposer<span class="special">&gt;</span> 
+  <span class="keyword">static</span> <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1ad9ed01ba444ee92e0f0c1b0d7462700e"></a><span class="identifier">clear_and_dispose</span><span class="special">(</span><span class="identifier">node_ptr</span> header<span class="special">,</span> <span class="identifier">Disposer</span> disposer<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: "disposer" must be an object function taking a node_ptr parameter and shouldn't throw.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Empties the target tree calling <code class="computeroutput">void disposer::operator()(node_ptr)</code> for every node of the tree except the header.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear to the number of element of the source tree plus the. number of elements of tree target tree when calling this function.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="identifier">node_ptr</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1ac2cf59eae711e291d47bc4c2227baa5b"></a><span class="identifier">unlink_leftmost_without_rebalance</span><span class="special">(</span><span class="identifier">node_ptr</span> header<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: header is the header of a tree.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Unlinks the leftmost node from the tree, and updates the header link to the new leftmost node.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Average complexity is constant time.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Notes</strong></span>: This function breaks the tree and the tree can only be used for more unlink_leftmost_without_rebalance calls. This function is normally used to achieve a step by step controlled destruction of the tree. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1abffaaa0070a2ccb67d454bf97daf5a63"></a><span class="identifier">size</span><span class="special">(</span><span class="identifier">const_node_ptr</span> header<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: 'header' the header of the tree.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Returns the number of nodes of the tree.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear time.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a394113454d3940883d62265dde9084ad"></a><span class="identifier">swap_tree</span><span class="special">(</span><span class="identifier">node_ptr</span> header1<span class="special">,</span> <span class="identifier">node_ptr</span> header2<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: header1 and header2 must be the header nodes of two trees.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Swaps two trees. After the function header1 will contain links to the second tree and header2 will have links to the first tree.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="keyword">bool</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a1892997550dc6e572a4cb7297e9766be"></a><span class="identifier">is_header</span><span class="special">(</span><span class="identifier">const_node_ptr</span> p<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: p is a node of a tree.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Returns true if p is the header of the tree.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> KeyType<span class="special">,</span> <span class="keyword">typename</span> KeyNodePtrCompare<span class="special">&gt;</span> 
+  <span class="keyword">static</span> <span class="identifier">node_ptr</span> 
+  <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a3ed0ef0b545170b7819c694931050da2"></a><span class="identifier">find</span><span class="special">(</span><span class="identifier">const_node_ptr</span> header<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">KeyType</span> <span class="special">&amp;</span> key<span class="special">,</span> <span class="identifier">KeyNodePtrCompare</span> comp<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: "header" must be the header node of a tree. KeyNodePtrCompare is a function object that induces a strict weak ordering compatible with the strict weak ordering used to create the the tree. KeyNodePtrCompare can compare KeyType with tree's node_ptrs.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Returns a node_ptr to the first element that is equivalent to "key" according to "comp" or "header" if that element does not exist.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Logarithmic.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If "comp" throws. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> KeyType<span class="special">,</span> <span class="keyword">typename</span> KeyNodePtrCompare<span class="special">&gt;</span> 
+  <span class="keyword">static</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">pair</span><span class="special">&lt;</span> <span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">node_ptr</span> <span class="special">&gt;</span> 
+  <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a3d3013bc4b61232807f410bdd1976e62"></a><span class="identifier">bounded_range</span><span class="special">(</span><span class="identifier">const_node_ptr</span> header<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">KeyType</span> <span class="special">&amp;</span> lower_key<span class="special">,</span> 
+                <span class="keyword">const</span> <span class="identifier">KeyType</span> <span class="special">&amp;</span> upper_key<span class="special">,</span> <span class="identifier">KeyNodePtrCompare</span> comp<span class="special">,</span> 
+                <span class="keyword">bool</span> left_closed<span class="special">,</span> <span class="keyword">bool</span> right_closed<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: "header" must be the header node of a tree. KeyNodePtrCompare is a function object that induces a strict weak ordering compatible with the strict weak ordering used to create the the tree. KeyNodePtrCompare can compare KeyType with tree's node_ptrs. 'lower_key' must not be greater than 'upper_key' according to 'comp'. If 'lower_key' == 'upper_key', ('left_closed' || 'right_closed') must be true.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Returns an a pair with the following criteria:</p>
+<p>first = lower_bound(lower_key) if left_closed, upper_bound(lower_key) otherwise</p>
+<p>second = upper_bound(upper_key) if right_closed, lower_bound(upper_key) otherwise</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Logarithmic.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If "comp" throws.</p>
+<p><span class="bold"><strong>Note</strong></span>: This function can be more efficient than calling upper_bound and lower_bound for lower_key and upper_key.</p>
+<p><span class="bold"><strong>Note</strong></span>: Experimental function, the interface might change. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> KeyType<span class="special">,</span> <span class="keyword">typename</span> KeyNodePtrCompare<span class="special">&gt;</span> 
+  <span class="keyword">static</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> 
+  <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a6f6ee8b6a70da9e8fe15ed2e3c8a1980"></a><span class="identifier">count</span><span class="special">(</span><span class="identifier">const_node_ptr</span> header<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">KeyType</span> <span class="special">&amp;</span> key<span class="special">,</span> <span class="identifier">KeyNodePtrCompare</span> comp<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: "header" must be the header node of a tree. KeyNodePtrCompare is a function object that induces a strict weak ordering compatible with the strict weak ordering used to create the the tree. KeyNodePtrCompare can compare KeyType with tree's node_ptrs.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Returns the number of elements with a key equivalent to "key" according to "comp".</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Logarithmic.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If "comp" throws. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> KeyType<span class="special">,</span> <span class="keyword">typename</span> KeyNodePtrCompare<span class="special">&gt;</span> 
+  <span class="keyword">static</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">pair</span><span class="special">&lt;</span> <span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">node_ptr</span> <span class="special">&gt;</span> 
+  <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1ae882d069e2f9696cebc1b938132d519e"></a><span class="identifier">equal_range</span><span class="special">(</span><span class="identifier">const_node_ptr</span> header<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">KeyType</span> <span class="special">&amp;</span> key<span class="special">,</span> 
+              <span class="identifier">KeyNodePtrCompare</span> comp<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: "header" must be the header node of a tree. KeyNodePtrCompare is a function object that induces a strict weak ordering compatible with the strict weak ordering used to create the the tree. KeyNodePtrCompare can compare KeyType with tree's node_ptrs.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Returns an a pair of node_ptr delimiting a range containing all elements that are equivalent to "key" according to "comp" or an empty range that indicates the position where those elements would be if there are no equivalent elements.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Logarithmic.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If "comp" throws. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> KeyType<span class="special">,</span> <span class="keyword">typename</span> KeyNodePtrCompare<span class="special">&gt;</span> 
+  <span class="keyword">static</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">pair</span><span class="special">&lt;</span> <span class="identifier">node_ptr</span><span class="special">,</span> <span class="identifier">node_ptr</span> <span class="special">&gt;</span> 
+  <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a4586ed06d2fe7eaddc6f6fd14a24ddb4"></a><span class="identifier">lower_bound_range</span><span class="special">(</span><span class="identifier">const_node_ptr</span> header<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">KeyType</span> <span class="special">&amp;</span> key<span class="special">,</span> 
+                    <span class="identifier">KeyNodePtrCompare</span> comp<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: "header" must be the header node of a tree. KeyNodePtrCompare is a function object that induces a strict weak ordering compatible with the strict weak ordering used to create the the tree. KeyNodePtrCompare can compare KeyType with tree's node_ptrs.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Returns an a pair of node_ptr delimiting a range containing the first element that is equivalent to "key" according to "comp" or an empty range that indicates the position where that element would be if there are no equivalent elements.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Logarithmic.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If "comp" throws. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> KeyType<span class="special">,</span> <span class="keyword">typename</span> KeyNodePtrCompare<span class="special">&gt;</span> 
+  <span class="keyword">static</span> <span class="identifier">node_ptr</span> 
+  <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1ab3116b1b3b545c419bb15ad20be9da7b"></a><span class="identifier">lower_bound</span><span class="special">(</span><span class="identifier">const_node_ptr</span> header<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">KeyType</span> <span class="special">&amp;</span> key<span class="special">,</span> 
+              <span class="identifier">KeyNodePtrCompare</span> comp<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: "header" must be the header node of a tree. KeyNodePtrCompare is a function object that induces a strict weak ordering compatible with the strict weak ordering used to create the the tree. KeyNodePtrCompare can compare KeyType with tree's node_ptrs.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Returns a node_ptr to the first element that is not less than "key" according to "comp" or "header" if that element does not exist.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Logarithmic.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If "comp" throws. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> KeyType<span class="special">,</span> <span class="keyword">typename</span> KeyNodePtrCompare<span class="special">&gt;</span> 
+  <span class="keyword">static</span> <span class="identifier">node_ptr</span> 
+  <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1ace488e666751fe7ee185acc5253984e7"></a><span class="identifier">upper_bound</span><span class="special">(</span><span class="identifier">const_node_ptr</span> header<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">KeyType</span> <span class="special">&amp;</span> key<span class="special">,</span> 
+              <span class="identifier">KeyNodePtrCompare</span> comp<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: "header" must be the header node of a tree. KeyNodePtrCompare is a function object that induces a strict weak ordering compatible with the strict weak ordering used to create the the tree. KeyNodePtrCompare can compare KeyType with tree's node_ptrs.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Returns a node_ptr to the first element that is greater than "key" according to "comp" or "header" if that element does not exist.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Logarithmic.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If "comp" throws. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a7d809a80e8ac1bae430f401723875a8a"></a><span class="identifier">insert_unique_commit</span><span class="special">(</span><span class="identifier">node_ptr</span> header<span class="special">,</span> <span class="identifier">node_ptr</span> new_value<span class="special">,</span> 
+                                 <span class="keyword">const</span> <span class="identifier">insert_commit_data</span> <span class="special">&amp;</span> commit_data<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: "header" must be the header node of a tree. "commit_data" must have been obtained from a previous call to "insert_unique_check". No objects should have been inserted or erased from the set between the "insert_unique_check" that filled "commit_data" and the call to "insert_commit".</p>
+<p><span class="bold"><strong>Effects</strong></span>: Inserts new_node in the set using the information obtained from the "commit_data" that a previous "insert_check" filled.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant time.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Notes</strong></span>: This function has only sense if a "insert_unique_check" has been previously executed to fill "commit_data". No value should be inserted or erased between the "insert_check" and "insert_commit" calls. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> KeyType<span class="special">,</span> <span class="keyword">typename</span> KeyNodePtrCompare<span class="special">&gt;</span> 
+  <span class="keyword">static</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">pair</span><span class="special">&lt;</span> <span class="identifier">node_ptr</span><span class="special">,</span> <span class="keyword">bool</span> <span class="special">&gt;</span> 
+  <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1ad549d1b4bfbff1c2a5db10cd3520f227"></a><span class="identifier">insert_unique_check</span><span class="special">(</span><span class="identifier">const_node_ptr</span> header<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">KeyType</span> <span class="special">&amp;</span> key<span class="special">,</span> 
+                      <span class="identifier">KeyNodePtrCompare</span> comp<span class="special">,</span> 
+                      <span class="identifier">insert_commit_data</span> <span class="special">&amp;</span> commit_data<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: "header" must be the header node of a tree. KeyNodePtrCompare is a function object that induces a strict weak ordering compatible with the strict weak ordering used to create the the tree. NodePtrCompare compares KeyType with a node_ptr.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Checks if there is an equivalent node to "key" in the tree according to "comp" and obtains the needed information to realize a constant-time node insertion if there is no equivalent node.</p>
+<p><span class="bold"><strong>Returns</strong></span>: If there is an equivalent value returns a pair containing a node_ptr to the already present node and false. If there is not equivalent key can be inserted returns true in the returned pair's boolean and fills "commit_data" that is meant to be used with the "insert_commit" function to achieve a constant-time insertion function.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Average complexity is at most logarithmic.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If "comp" throws.</p>
+<p><span class="bold"><strong>Notes</strong></span>: This function is used to improve performance when constructing a node is expensive and the user does not want to have two equivalent nodes in the tree: if there is an equivalent value the constructed object must be discarded. Many times, the part of the node that is used to impose the order is much cheaper to construct than the node and this function offers the possibility to use that part to check if the insertion will be successful.</p>
+<p>If the check is successful, the user can construct the node and use "insert_commit" to insert the node in constant-time. This gives a total logarithmic complexity to the insertion: check(O(log(N)) + commit(O(1)).</p>
+<p>"commit_data" remains valid for a subsequent "insert_unique_commit" only if no more objects are inserted or erased from the set. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> KeyType<span class="special">,</span> <span class="keyword">typename</span> KeyNodePtrCompare<span class="special">&gt;</span> 
+  <span class="keyword">static</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">pair</span><span class="special">&lt;</span> <span class="identifier">node_ptr</span><span class="special">,</span> <span class="keyword">bool</span> <span class="special">&gt;</span> 
+  <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1adc2bcf8dc207cdbd79cf6a2226b9e3bb"></a><span class="identifier">insert_unique_check</span><span class="special">(</span><span class="identifier">const_node_ptr</span> header<span class="special">,</span> <span class="identifier">node_ptr</span> hint<span class="special">,</span> 
+                      <span class="keyword">const</span> <span class="identifier">KeyType</span> <span class="special">&amp;</span> key<span class="special">,</span> <span class="identifier">KeyNodePtrCompare</span> comp<span class="special">,</span> 
+                      <span class="identifier">insert_commit_data</span> <span class="special">&amp;</span> commit_data<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: "header" must be the header node of a tree. KeyNodePtrCompare is a function object that induces a strict weak ordering compatible with the strict weak ordering used to create the the tree. NodePtrCompare compares KeyType with a node_ptr. "hint" is node from the "header"'s tree.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Checks if there is an equivalent node to "key" in the tree according to "comp" using "hint" as a hint to where it should be inserted and obtains the needed information to realize a constant-time node insertion if there is no equivalent node. If "hint" is the upper_bound the function has constant time complexity (two comparisons in the worst case).</p>
+<p><span class="bold"><strong>Returns</strong></span>: If there is an equivalent value returns a pair containing a node_ptr to the already present node and false. If there is not equivalent key can be inserted returns true in the returned pair's boolean and fills "commit_data" that is meant to be used with the "insert_commit" function to achieve a constant-time insertion function.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Average complexity is at most logarithmic, but it is amortized constant time if new_node should be inserted immediately before "hint".</p>
+<p><span class="bold"><strong>Throws</strong></span>: If "comp" throws.</p>
+<p><span class="bold"><strong>Notes</strong></span>: This function is used to improve performance when constructing a node is expensive and the user does not want to have two equivalent nodes in the tree: if there is an equivalent value the constructed object must be discarded. Many times, the part of the node that is used to impose the order is much cheaper to construct than the node and this function offers the possibility to use that part to check if the insertion will be successful.</p>
+<p>If the check is successful, the user can construct the node and use "insert_commit" to insert the node in constant-time. This gives a total logarithmic complexity to the insertion: check(O(log(N)) + commit(O(1)).</p>
+<p>"commit_data" remains valid for a subsequent "insert_unique_commit" only if no more objects are inserted or erased from the set. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> NodePtrCompare<span class="special">&gt;</span> 
+  <span class="keyword">static</span> <span class="identifier">node_ptr</span> 
+  <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a9fa16e0639cdb5f5ee8086fde9963a6a"></a><span class="identifier">insert_equal</span><span class="special">(</span><span class="identifier">node_ptr</span> h<span class="special">,</span> <span class="identifier">node_ptr</span> hint<span class="special">,</span> <span class="identifier">node_ptr</span> new_node<span class="special">,</span> 
+               <span class="identifier">NodePtrCompare</span> comp<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: "header" must be the header node of a tree. NodePtrCompare is a function object that induces a strict weak ordering compatible with the strict weak ordering used to create the the tree. NodePtrCompare compares two node_ptrs. "hint" is node from the "header"'s tree.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Inserts new_node into the tree, using "hint" as a hint to where it will be inserted. If "hint" is the upper_bound the insertion takes constant time (two comparisons in the worst case).</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Logarithmic in general, but it is amortized constant time if new_node is inserted immediately before "hint".</p>
+<p><span class="bold"><strong>Throws</strong></span>: If "comp" throws. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> NodePtrCompare<span class="special">&gt;</span> 
+  <span class="keyword">static</span> <span class="identifier">node_ptr</span> 
+  <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a7eaf24df4084435ed94c975c93f64f3a"></a><span class="identifier">insert_equal_upper_bound</span><span class="special">(</span><span class="identifier">node_ptr</span> h<span class="special">,</span> <span class="identifier">node_ptr</span> new_node<span class="special">,</span> <span class="identifier">NodePtrCompare</span> comp<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: "h" must be the header node of a tree. NodePtrCompare is a function object that induces a strict weak ordering compatible with the strict weak ordering used to create the the tree. NodePtrCompare compares two node_ptrs.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Inserts new_node into the tree before the upper bound according to "comp".</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Average complexity for insert element is at most logarithmic.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If "comp" throws. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> NodePtrCompare<span class="special">&gt;</span> 
+  <span class="keyword">static</span> <span class="identifier">node_ptr</span> 
+  <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1ac3bdf39cf6be86ce584b6b00780dc5ed"></a><span class="identifier">insert_equal_lower_bound</span><span class="special">(</span><span class="identifier">node_ptr</span> h<span class="special">,</span> <span class="identifier">node_ptr</span> new_node<span class="special">,</span> <span class="identifier">NodePtrCompare</span> comp<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: "h" must be the header node of a tree. NodePtrCompare is a function object that induces a strict weak ordering compatible with the strict weak ordering used to create the the tree. NodePtrCompare compares two node_ptrs.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Inserts new_node into the tree before the lower bound according to "comp".</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Average complexity for insert element is at most logarithmic.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If "comp" throws. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="identifier">node_ptr</span> 
+<a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1ac8dd814851759a1b927b0faf70b6016a"></a><span class="identifier">insert_before</span><span class="special">(</span><span class="identifier">node_ptr</span> header<span class="special">,</span> <span class="identifier">node_ptr</span> pos<span class="special">,</span> <span class="identifier">node_ptr</span> new_node<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: "header" must be the header node of a tree. "pos" must be a valid iterator or header (end) node. "pos" must be an iterator pointing to the successor to "new_node" once inserted according to the order of already inserted nodes. This function does not check "pos" and this precondition must be guaranteed by the caller.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Inserts new_node into the tree before "pos".</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant-time.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Note</strong></span>: If "pos" is not the successor of the newly inserted "new_node" tree invariants might be broken. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a8441f2e613585577106718d5d7d33079"></a><span class="identifier">push_back</span><span class="special">(</span><span class="identifier">node_ptr</span> header<span class="special">,</span> <span class="identifier">node_ptr</span> new_node<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: "header" must be the header node of a tree. "new_node" must be, according to the used ordering no less than the greatest inserted key.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Inserts new_node into the tree before "pos".</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant-time.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Note</strong></span>: If "new_node" is less than the greatest inserted key tree invariants are broken. This function is slightly faster than using "insert_before". </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1acd4b2fde68c738aab91af10cad9ed056"></a><span class="identifier">push_front</span><span class="special">(</span><span class="identifier">node_ptr</span> header<span class="special">,</span> <span class="identifier">node_ptr</span> new_node<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: "header" must be the header node of a tree. "new_node" must be, according to the used ordering, no greater than the lowest inserted key.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Inserts new_node into the tree before "pos".</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant-time.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Note</strong></span>: If "new_node" is greater than the lowest inserted key tree invariants are broken. This function is slightly faster than using "insert_before". </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a679248921c7b3571f1f049bcc38bcf2e"></a><span class="identifier">depth</span><span class="special">(</span><span class="identifier">const_node_ptr</span> n<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: 'n' can't be a header node.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Calculates the depth of a node: the depth of a node is the length (number of edges) of the path from the root to that node. (The root node is at depth 0.)</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Logarithmic to the number of nodes in the tree.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Cloner<span class="special">,</span> <span class="keyword">typename</span> Disposer<span class="special">&gt;</span> 
+  <span class="keyword">static</span> <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1ae9c435ef1686795895b856060d029aed"></a><span class="identifier">clone</span><span class="special">(</span><span class="identifier">const_node_ptr</span> source_header<span class="special">,</span> <span class="identifier">node_ptr</span> target_header<span class="special">,</span> 
+                    <span class="identifier">Cloner</span> cloner<span class="special">,</span> <span class="identifier">Disposer</span> disposer<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: "cloner" must be a function object taking a node_ptr and returning a new cloned node of it. "disposer" must take a node_ptr and shouldn't throw.</p>
+<p><span class="bold"><strong>Effects</strong></span>: First empties target tree calling <code class="computeroutput">void disposer::operator()(node_ptr)</code> for every node of the tree except the header.</p>
+<p>Then, duplicates the entire tree pointed by "source_header" cloning each source node with <code class="computeroutput">node_ptr Cloner::operator()(node_ptr)</code> to obtain the nodes of the target tree. If "cloner" throws, the cloned target nodes are disposed using <code class="computeroutput">void disposer(node_ptr )</code>.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear to the number of element of the source tree plus the number of elements of tree target tree when calling this function.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If cloner functor throws. If this happens target nodes are disposed. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a767291065e0ae15c7e5612c2705d19aa"></a><span class="identifier">erase</span><span class="special">(</span><span class="identifier">node_ptr</span> header<span class="special">,</span> <span class="identifier">node_ptr</span> z<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: header must be the header of a tree, z a node of that tree and z != header.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Erases node "z" from the tree with header "header".</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Amortized constant time.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> NodePtrCompare<span class="special">&gt;</span> 
+  <span class="keyword">static</span> <span class="keyword">bool</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1ae3afc5ca60f8d96f3bb9cd0c73a197d2"></a><span class="identifier">transfer_unique</span><span class="special">(</span><span class="identifier">node_ptr</span> header1<span class="special">,</span> <span class="identifier">NodePtrCompare</span> comp<span class="special">,</span> 
+                              <span class="identifier">node_ptr</span> header2<span class="special">,</span> <span class="identifier">node_ptr</span> z<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: header1 and header2 must be the headers of trees tree1 and tree2 respectively, z a non-header node of tree1. NodePtrCompare is the comparison function of tree1..</p>
+<p><span class="bold"><strong>Effects</strong></span>: Transfers node "z" from tree1 to tree2 if tree1 does not contain a node that is equivalent to z.</p>
+<p><span class="bold"><strong>Returns</strong></span>: True if the node was trasferred, false otherwise.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Logarithmic.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If the comparison throws. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> NodePtrCompare<span class="special">&gt;</span> 
+  <span class="keyword">static</span> <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1af91fe86ba54a8f9d7df17da7dbeea5ba"></a><span class="identifier">transfer_equal</span><span class="special">(</span><span class="identifier">node_ptr</span> header1<span class="special">,</span> <span class="identifier">NodePtrCompare</span> comp<span class="special">,</span> 
+                             <span class="identifier">node_ptr</span> header2<span class="special">,</span> <span class="identifier">node_ptr</span> z<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: header1 and header2 must be the headers of trees tree1 and tree2 respectively, z a non-header node of tree1. NodePtrCompare is the comparison function of tree1..</p>
+<p><span class="bold"><strong>Effects</strong></span>: Transfers node "z" from tree1 to tree2.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Logarithmic.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If the comparison throws. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a639ce0823918c4f6cdfc561d2a1a617d"></a><span class="identifier">unlink</span><span class="special">(</span><span class="identifier">node_ptr</span> n<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: 'n' is a tree node but not the header.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Unlinks the node and rebalances the tree.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Average complexity is constant time.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a425431a5e99cd2608239f45e727131e5"></a><span class="identifier">rebalance</span><span class="special">(</span><span class="identifier">node_ptr</span> header<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: header must be the header of a tree.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Rebalances the tree.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="identifier">node_ptr</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a1c4c7bbf9677abf6036dffd630294483"></a><span class="identifier">rebalance_subtree</span><span class="special">(</span><span class="identifier">node_ptr</span> old_root<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: old_root is a node of a tree. It shall not be null.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Rebalances the subtree rooted at old_root.</p>
+<p><span class="bold"><strong>Returns</strong></span>: The new root of the subtree.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Checker<span class="special">&gt;</span> 
+  <span class="keyword">static</span> <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a2d67d82edcf8e7e9a8a2ee3cf9626b23"></a><span class="identifier">check</span><span class="special">(</span><span class="identifier">const_node_ptr</span> header<span class="special">,</span> <span class="identifier">Checker</span> checker<span class="special">,</span> 
+                    <span class="keyword">typename</span> <span class="identifier">Checker</span><span class="special">::</span><span class="identifier">return_type</span> <span class="special">&amp;</span> checker_return<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Asserts the integrity of the container with additional checks provided by the user.</p>
+<p><span class="bold"><strong>Requires</strong></span>: header must be the header of a tree.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear time.</p>
+<p><span class="bold"><strong>Note</strong></span>: The method might not have effect when asserts are turned off (e.g., with NDEBUG). Experimental function, interface might change in future versions. </p>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.18.42.10.3.4.16"></a><h3>
+<a name="id21-bb"></a><code class="computeroutput">bstree_algorithms</code> protected static functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem"><pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> NodePtrCompare<span class="special">&gt;</span> 
+  <span class="keyword">static</span> <span class="keyword">bool</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1ac0869970c353ba82d155b05bfd3da4d7"></a><span class="identifier">transfer_unique</span><span class="special">(</span><span class="identifier">node_ptr</span> header1<span class="special">,</span> <span class="identifier">NodePtrCompare</span> comp<span class="special">,</span> 
+                              <span class="identifier">node_ptr</span> header2<span class="special">,</span> <span class="identifier">node_ptr</span> z<span class="special">,</span> 
+                              <span class="identifier">data_for_rebalance</span> <span class="special">&amp;</span> info<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> NodePtrCompare<span class="special">&gt;</span> 
+  <span class="keyword">static</span> <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a5182afeb279ec3f6e1c34514a2a234d2"></a><span class="identifier">transfer_equal</span><span class="special">(</span><span class="identifier">node_ptr</span> header1<span class="special">,</span> <span class="identifier">NodePtrCompare</span> comp<span class="special">,</span> 
+                             <span class="identifier">node_ptr</span> header2<span class="special">,</span> <span class="identifier">node_ptr</span> z<span class="special">,</span> 
+                             <span class="identifier">data_for_rebalance</span> <span class="special">&amp;</span> info<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">static</span> <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1acb133a71faa7350fdc7f73b643155b8e"></a><span class="identifier">erase</span><span class="special">(</span><span class="identifier">node_ptr</span> header<span class="special">,</span> <span class="identifier">node_ptr</span> z<span class="special">,</span> <span class="identifier">data_for_rebalance</span> <span class="special">&amp;</span> info<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1af5cf6d662b751fc1f6bb7cc0af19b19b"></a><span class="identifier">subtree_size</span><span class="special">(</span><span class="identifier">const_node_ptr</span> subtree<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: 'subtree' is a node of the tree but it's not the header.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Returns the number of nodes of the subtree.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear time.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="keyword">bool</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1aa95361819a021084bcbd769d8182c78a"></a><span class="identifier">is_left_child</span><span class="special">(</span><span class="identifier">node_ptr</span> p<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: p is a node of a tree.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Returns true if p is a left child.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="keyword">bool</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a69fe2118abcc547f8b5c30266a961824"></a><span class="identifier">is_right_child</span><span class="special">(</span><span class="identifier">node_ptr</span> p<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: p is a node of a tree.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Returns true if p is a right child.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing. </p>
+</li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">static</span> <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a0de46dc067099f8e0953a326fe766ad1"></a><span class="identifier">insert_before_check</span><span class="special">(</span><span class="identifier">node_ptr</span> header<span class="special">,</span> <span class="identifier">node_ptr</span> pos<span class="special">,</span> 
+                                <span class="identifier">insert_commit_data</span> <span class="special">&amp;</span> commit_data<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">static</span> <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1aeff4e172ae74a869d38ed18d61c034b9"></a><span class="identifier">push_back_check</span><span class="special">(</span><span class="identifier">node_ptr</span> header<span class="special">,</span> <span class="identifier">insert_commit_data</span> <span class="special">&amp;</span> commit_data<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">static</span> <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a0e787418e55be00bc54ba1eb2ca783e0"></a><span class="identifier">push_front_check</span><span class="special">(</span><span class="identifier">node_ptr</span> header<span class="special">,</span> 
+                             <span class="identifier">insert_commit_data</span> <span class="special">&amp;</span> commit_data<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> NodePtrCompare<span class="special">&gt;</span> 
+  <span class="keyword">static</span> <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a5ebb2e65f5ccaab876760a778e8c0590"></a><span class="identifier">insert_equal_check</span><span class="special">(</span><span class="identifier">node_ptr</span> header<span class="special">,</span> <span class="identifier">node_ptr</span> hint<span class="special">,</span> 
+                                 <span class="identifier">node_ptr</span> new_node<span class="special">,</span> <span class="identifier">NodePtrCompare</span> comp<span class="special">,</span> 
+                                 <span class="identifier">insert_commit_data</span> <span class="special">&amp;</span> commit_data<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> NodePtrCompare<span class="special">&gt;</span> 
+  <span class="keyword">static</span> <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1ae057be5723147486e0ef4ce584a48c64"></a><span class="identifier">insert_equal_upper_bound_check</span><span class="special">(</span><span class="identifier">node_ptr</span> h<span class="special">,</span> <span class="identifier">node_ptr</span> new_node<span class="special">,</span> 
+                                             <span class="identifier">NodePtrCompare</span> comp<span class="special">,</span> 
+                                             <span class="identifier">insert_commit_data</span> <span class="special">&amp;</span> commit_data<span class="special">,</span> 
+                                             <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="special">*</span> pdepth <span class="special">=</span> <span class="number">0</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> NodePtrCompare<span class="special">&gt;</span> 
+  <span class="keyword">static</span> <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a7d0356f6ca3273c7b87d8365a6928506"></a><span class="identifier">insert_equal_lower_bound_check</span><span class="special">(</span><span class="identifier">node_ptr</span> h<span class="special">,</span> <span class="identifier">node_ptr</span> new_node<span class="special">,</span> 
+                                             <span class="identifier">NodePtrCompare</span> comp<span class="special">,</span> 
+                                             <span class="identifier">insert_commit_data</span> <span class="special">&amp;</span> commit_data<span class="special">,</span> 
+                                             <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="special">*</span> pdepth <span class="special">=</span> <span class="number">0</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">static</span> <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a6233f376fcdf48da7e57d023a75b233f"></a><span class="identifier">insert_commit</span><span class="special">(</span><span class="identifier">node_ptr</span> header<span class="special">,</span> <span class="identifier">node_ptr</span> new_node<span class="special">,</span> 
+                          <span class="keyword">const</span> <span class="identifier">insert_commit_data</span> <span class="special">&amp;</span> commit_data<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">static</span> <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a7b0a42d74737d1e71d16c9d73f7a0347"></a><span class="identifier">set_child</span><span class="special">(</span><span class="identifier">node_ptr</span> header<span class="special">,</span> <span class="identifier">node_ptr</span> new_child<span class="special">,</span> 
+                      <span class="identifier">node_ptr</span> new_parent<span class="special">,</span> <span class="keyword">const</span> <span class="keyword">bool</span> link_left<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">static</span> <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a04036be2dde42941355f008e70092245"></a><span class="identifier">rotate_left_no_parent_fix</span><span class="special">(</span><span class="identifier">node_ptr</span> p<span class="special">,</span> <span class="identifier">node_ptr</span> p_right<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">static</span> <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a3990ad6322ebef923f33d54b1657307c"></a><span class="identifier">rotate_left</span><span class="special">(</span><span class="identifier">node_ptr</span> p<span class="special">,</span> <span class="identifier">node_ptr</span> p_right<span class="special">,</span> <span class="identifier">node_ptr</span> p_parent<span class="special">,</span> 
+                        <span class="identifier">node_ptr</span> header<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">static</span> <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a81ac2bf8e7ceac7fab42e2c4d94e98ab"></a><span class="identifier">rotate_right_no_parent_fix</span><span class="special">(</span><span class="identifier">node_ptr</span> p<span class="special">,</span> <span class="identifier">node_ptr</span> p_left<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">static</span> <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1ab73d9770b55a8473412ec2a283f5a252"></a><span class="identifier">rotate_right</span><span class="special">(</span><span class="identifier">node_ptr</span> p<span class="special">,</span> <span class="identifier">node_ptr</span> p_left<span class="special">,</span> <span class="identifier">node_ptr</span> p_parent<span class="special">,</span> 
+                         <span class="identifier">node_ptr</span> header<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.18.42.10.3.4.17"></a><h3>
+<a name="id22-bb"></a><code class="computeroutput">bstree_algorithms</code> private static functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem"><pre class="literallayout"><span class="keyword">static</span> <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a921beec2472e480d949c412073e597dc"></a><span class="identifier">subtree_to_vine</span><span class="special">(</span><span class="identifier">node_ptr</span> vine_tail<span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="special">&amp;</span> size<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">static</span> <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a6d5d812afacf0d91b58cb17260a77783"></a><span class="identifier">compress_subtree</span><span class="special">(</span><span class="identifier">node_ptr</span> scanner<span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> count<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">static</span> <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a9d893fa693d1797faf9fe4449a555efe"></a><span class="identifier">vine_to_subtree</span><span class="special">(</span><span class="identifier">node_ptr</span> super_root<span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> count<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="identifier">node_ptr</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a2ce256dcb1ab421ffedbc4ebc627a181"></a><span class="identifier">get_root</span><span class="special">(</span><span class="identifier">node_ptr</span> n<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: "n" must be a node inserted in a tree.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Returns a pointer to the header node of the tree.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Logarithmic.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing. </p>
+</li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Cloner<span class="special">,</span> <span class="keyword">typename</span> Disposer<span class="special">&gt;</span> 
+  <span class="keyword">static</span> <span class="identifier">node_ptr</span> 
+  <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a61a8a4158a4b24d416a41ffa512854d5"></a><span class="identifier">clone_subtree</span><span class="special">(</span><span class="identifier">const_node_ptr</span> source_parent<span class="special">,</span> <span class="identifier">node_ptr</span> target_parent<span class="special">,</span> 
+                <span class="identifier">Cloner</span> cloner<span class="special">,</span> <span class="identifier">Disposer</span> disposer<span class="special">,</span> <span class="identifier">node_ptr</span> <span class="special">&amp;</span> leftmost_out<span class="special">,</span> 
+                <span class="identifier">node_ptr</span> <span class="special">&amp;</span> rightmost_out<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Disposer<span class="special">&gt;</span> 
+  <span class="keyword">static</span> <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1a1a834dcee68c4c74a044dde0445898d3"></a><span class="identifier">dispose_subtree</span><span class="special">(</span><span class="identifier">node_ptr</span> x<span class="special">,</span> <span class="identifier">Disposer</span> disposer<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> KeyType<span class="special">,</span> <span class="keyword">typename</span> KeyNodePtrCompare<span class="special">&gt;</span> 
+  <span class="keyword">static</span> <span class="identifier">node_ptr</span> 
+  <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1ad027de1ddac57b0121bcd8d5d775ecdd"></a><span class="identifier">lower_bound_loop</span><span class="special">(</span><span class="identifier">node_ptr</span> x<span class="special">,</span> <span class="identifier">node_ptr</span> y<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">KeyType</span> <span class="special">&amp;</span> key<span class="special">,</span> 
+                   <span class="identifier">KeyNodePtrCompare</span> comp<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> KeyType<span class="special">,</span> <span class="keyword">typename</span> KeyNodePtrCompare<span class="special">&gt;</span> 
+  <span class="keyword">static</span> <span class="identifier">node_ptr</span> 
+  <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1add8bd1ea01d66dff7028e00f7c4f1afb"></a><span class="identifier">upper_bound_loop</span><span class="special">(</span><span class="identifier">node_ptr</span> x<span class="special">,</span> <span class="identifier">node_ptr</span> y<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">KeyType</span> <span class="special">&amp;</span> key<span class="special">,</span> 
+                   <span class="identifier">KeyNodePtrCompare</span> comp<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Checker<span class="special">&gt;</span> 
+  <span class="keyword">static</span> <span class="keyword">void</span> <a name="doxygen.classboost_1_1intrusive_1_1bstree__algorithms_1aabad627f5d23ea8906d0736a1279e6c4"></a><span class="identifier">check_subtree</span><span class="special">(</span><span class="identifier">const_node_ptr</span> n<span class="special">,</span> <span class="identifier">Checker</span> checker<span class="special">,</span> 
+                            <span class="keyword">typename</span> <span class="identifier">Checker</span><span class="special">::</span><span class="identifier">return_type</span> <span class="special">&amp;</span> check_return<span class="special">)</span><span class="special">;</span></pre></li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2005 Olaf Krzikalla<br>Copyright © 2006-2015 Ion Gaztanaga<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="structboost_1_1intrusive_1_1make__bstree.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../intrusive/reference.html#doxygen.bstree__algorithms_8hpp"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1intrusive_1_1circular__list__algorithms.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

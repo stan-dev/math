@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Struct template const_entry_type</title>
+<link rel="stylesheet" href="../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="classboost_1_1process_1_1v1_1_1basic__environment.html#id-1.3.30.4.8.9.3.4" title="Description">
+<link rel="prev" href="classboost_1_1process_1_1v1_1_1basic__environment.html" title="Class template basic_environment">
+<link rel="next" href="structboost_1_1process_1_1v1_1_1basic__environment_1_1entry__type.html" title="Struct template entry_type">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../boost.png"></td>
+<td align="center"><a href="../../../index.html">Home</a></td>
+<td align="center"><a href="../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1process_1_1v1_1_1basic__environment.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="classboost_1_1process_1_1v1_1_1basic__environment.html#id-1.3.30.4.8.9.3.4"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="structboost_1_1process_1_1v1_1_1basic__environment_1_1entry__type.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.structboost_1_1process_1_1v1_1_1basic__environment_1_1const__entry__type"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Struct template const_entry_type</span></h2>
+<p>boost::process::v1::basic_environment::const_entry_type</p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../mpi/reference.html#doxygen.environment_8hpp" title="Header &lt;boost/mpi/environment.hpp&gt;">boost/process/v1/environment.hpp</a>&gt;
+
+</span>
+<span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Char<span class="special">,</span> <span class="keyword">typename</span> Environment<span class="special">&gt;</span> 
+<span class="keyword">struct</span> <a class="link" href="structboost_1_1process_1_1v1_1_1basic__environment_1_1const__entry__type.html" title="Struct template const_entry_type">const_entry_type</a> <span class="special">{</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">Char</span>                             <a name="doxygen.structboost_1_1process_1_1v1_1_1basic__environment_1_1const__entry__type_1a1414ccf53da696fe6f37124b14d51298"></a><span class="identifier">value_type</span><span class="special">;</span>   
+  <span class="keyword">typedef</span> <span class="keyword">const</span> <span class="identifier">value_type</span> <span class="special">*</span>               <a name="doxygen.structboost_1_1process_1_1v1_1_1basic__environment_1_1const__entry__type_1a3aa3fd64ab98bb76bcb5c1b73a25537d"></a><span class="identifier">pointer</span><span class="special">;</span>      
+  <span class="keyword">typedef</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_string</span><span class="special">&lt;</span> <span class="identifier">value_type</span> <span class="special">&gt;</span>  <a name="doxygen.structboost_1_1process_1_1v1_1_1basic__environment_1_1const__entry__type_1a8fe07eb093b291240a99471a9beb294e"></a><span class="identifier">string_type</span><span class="special">;</span>  
+  <span class="keyword">typedef</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">iterator_range</span><span class="special">&lt;</span> <span class="identifier">pointer</span> <span class="special">&gt;</span> <a name="doxygen.structboost_1_1process_1_1v1_1_1basic__environment_1_1const__entry__type_1afe4244cab27cc493cc412c161dabc6f4"></a><span class="identifier">range</span><span class="special">;</span>        
+  <span class="keyword">typedef</span> <span class="identifier">Environment</span>                      <a name="doxygen.structboost_1_1process_1_1v1_1_1basic__environment_1_1const__entry__type_1a277bc528c9b69a50332c7af2133dc582"></a><span class="identifier">environment_t</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="reference_section_of_boost_any/classboost_1_1anys_1_1basic__any.html#id3-bb">public member functions</a></span>
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span> <span class="identifier">string_type</span> <span class="special">&gt;</span> <a class="link" href="structboost_1_1process_1_1v1_1_1basic__environment_1_1const__entry__type.html#doxygen.structboost_1_1process_1_1v1_1_1basic__environment_1_1const__entry__type_1a4b4dd3b3f1f89e2334772231d91f9a24"><span class="identifier">to_vector</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+   <a class="link" href="structboost_1_1process_1_1v1_1_1basic__environment_1_1const__entry__type.html#doxygen.structboost_1_1process_1_1v1_1_1basic__environment_1_1const__entry__type_1ada5cbe5c19a04a6c7cde1fbdeadedf64"><span class="identifier">const_entry</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">const_entry</span> <span class="special">&amp;</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">default</span><span class="special">;</span>
+  <span class="identifier">const_entry</span> <span class="special">&amp;</span> <a class="link" href="structboost_1_1process_1_1v1_1_1basic__environment_1_1const__entry__type.html#doxygen.structboost_1_1process_1_1v1_1_1basic__environment_1_1const__entry__type_1aa81c3d946251f7f81a5bcdd1de295636"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">const_entry</span> <span class="special">&amp;</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">default</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="structboost_1_1process_1_1v1_1_1basic__environment_1_1const__entry__type.html#doxygen.structboost_1_1process_1_1v1_1_1basic__environment_1_1const__entry__type_1a8932fc5bc143b97df0b23d0b11965b6d"><span class="identifier">empty</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.30.4.8.9.3.4.4.4"></a><h2>Description</h2>
+<p>Proxy class used for read access to members by [] or .<a class="link" href="classboost_1_1process_1_1v1_1_1basic__environment.html#doxygen.classboost_1_1process_1_1v1_1_1basic__environment_1a6c6d021679772c25a847ae1b063f063f">at()</a> </p>
+<div class="important"><table border="0" summary="Important">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="../../../doc/src/images/important.png"></td>
+<th align="left">Important</th>
+</tr>
+<tr><td align="left" valign="top"><p>Holds a reference to the environment it was created from. </p></td></tr>
+</table></div>
+<p>
+</p>
+<div class="refsect2">
+<a name="id-1.3.30.4.8.9.3.4.4.4.3"></a><h3>
+<a name="id3-bb"></a><code class="computeroutput">const_entry_type</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span> <span class="identifier">string_type</span> <span class="special">&gt;</span> <a name="doxygen.structboost_1_1process_1_1v1_1_1basic__environment_1_1const__entry__type_1a4b4dd3b3f1f89e2334772231d91f9a24"></a><span class="identifier">to_vector</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Split the entry by ";" or ":" and return it as a vector. Used by PATH. <p>Get the value as string. Get the name of this entry. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"> <a name="doxygen.structboost_1_1process_1_1v1_1_1basic__environment_1_1const__entry__type_1ada5cbe5c19a04a6c7cde1fbdeadedf64"></a><span class="identifier">const_entry</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">const_entry</span> <span class="special">&amp;</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">default</span><span class="special">;</span></pre>Copy Constructor. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_entry</span> <span class="special">&amp;</span> <a name="doxygen.structboost_1_1process_1_1v1_1_1basic__environment_1_1const__entry__type_1aa81c3d946251f7f81a5bcdd1de295636"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">const_entry</span> <span class="special">&amp;</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">default</span><span class="special">;</span></pre>Move Constructor. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.structboost_1_1process_1_1v1_1_1basic__environment_1_1const__entry__type_1a8932fc5bc143b97df0b23d0b11965b6d"></a><span class="identifier">empty</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Check if the entry is empty. </li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2006-2012 Julio M. Merino Vidal, Ilya Sokolov,
+      Felipe Tanus, Jeff Flinn, Boris Schaeling<br>Copyright © 2016 Klemens D. Morgenstern<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1process_1_1v1_1_1basic__environment.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="classboost_1_1process_1_1v1_1_1basic__environment.html#id-1.3.30.4.8.9.3.4"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="structboost_1_1process_1_1v1_1_1basic__environment_1_1entry__type.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

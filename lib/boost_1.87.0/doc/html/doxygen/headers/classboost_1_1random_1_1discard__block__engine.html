@@ -1,0 +1,197 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template discard_block_engine</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../../boost_random/reference.html#doxygen.headers.discard__block_8hpp" title="Header &lt;boost/random/discard_block.hpp&gt;">
+<link rel="prev" href="classboost_1_1random_1_1chi__squared__distribution_1_1param__type.html" title="Class param_type">
+<link rel="next" href="classboost_1_1random_1_1discrete__distribution.html" title="Class template discrete_distribution">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1random_1_1chi__squared__distribution_1_1param__type.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_random/reference.html#doxygen.headers.discard__block_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1random_1_1discrete__distribution.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.headers.classboost_1_1random_1_1discard__block__engine"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template discard_block_engine</span></h2>
+<p>boost::random::discard_block_engine</p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../boost_random/reference.html#doxygen.headers.discard__block_8hpp" title="Header &lt;boost/random/discard_block.hpp&gt;">boost/random/discard_block.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> UniformRandomNumberGenerator<span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> p<span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> r<span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1random_1_1discard__block__engine.html" title="Class template discard_block_engine">discard_block_engine</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">UniformRandomNumberGenerator</span> <a name="doxygen.headers.classboost_1_1random_1_1discard__block__engine_1ac4f6442e3c8a9e8d9826fe54ed42b582"></a><span class="identifier">base_type</span><span class="special">;</span>  
+  <span class="keyword">typedef</span> <span class="identifier">base_type</span><span class="special">::</span><span class="identifier">result_type</span>       <a name="doxygen.headers.classboost_1_1random_1_1discard__block__engine_1af31f316f21e78d6b9946f47cafff7750"></a><span class="identifier">result_type</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1random_1_1discard__block__engine.html#id-1_3_34_5_6_9_1_1_1_10-bb">public member functions</a></span>
+  <a class="link" href="classboost_1_1random_1_1discard__block__engine.html#doxygen.headers.classboost_1_1random_1_1discard__block__engine_1ae6193e90ecaa1305420da0ab750049b2"><span class="identifier">discard_block_engine</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1random_1_1discard__block__engine.html#doxygen.headers.classboost_1_1random_1_1discard__block__engine_1a39f6acaf87d5fca584d75b30601f3446"><span class="identifier">discard_block_engine</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">base_type</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1random_1_1discard__block__engine.html#doxygen.headers.classboost_1_1random_1_1discard__block__engine_1a0b09652165a819d5faf74f1c71cabf8b"><span class="identifier">discard_block_engine</span></a><span class="special">(</span><span class="identifier">base_type</span> <span class="special">&amp;&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1random_1_1discard__block__engine.html#doxygen.headers.classboost_1_1random_1_1discard__block__engine_1a511a705d74cc20690c046dec4f7b4da7"><span class="identifier">discard_block_engine</span></a><span class="special">(</span><span class="identifier">seed_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> SeedSeq<span class="special">&gt;</span> <span class="keyword">explicit</span> <a class="link" href="classboost_1_1random_1_1discard__block__engine.html#doxygen.headers.classboost_1_1random_1_1discard__block__engine_1a2cf69dcbb6f5b8c15a350ecd64e659e6"><span class="identifier">discard_block_engine</span></a><span class="special">(</span><span class="identifier">SeedSeq</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> It<span class="special">&gt;</span> <a class="link" href="classboost_1_1random_1_1discard__block__engine.html#doxygen.headers.classboost_1_1random_1_1discard__block__engine_1ae252cf356b825282b665c34dacea0af8"><span class="identifier">discard_block_engine</span></a><span class="special">(</span><span class="identifier">It</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">It</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1random_1_1discard__block__engine.html#doxygen.headers.classboost_1_1random_1_1discard__block__engine_1ada19134d45503116df64bca65eba1d20"><span class="identifier">seed</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1random_1_1discard__block__engine.html#doxygen.headers.classboost_1_1random_1_1discard__block__engine_1add3934b5661aff8d5477383eb535fd7b"><span class="identifier">seed</span></a><span class="special">(</span><span class="identifier">seed_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> SeedSeq<span class="special">&gt;</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1random_1_1discard__block__engine.html#doxygen.headers.classboost_1_1random_1_1discard__block__engine_1ad7b25ab2db67a0e7833601f7d77516a8"><span class="identifier">seed</span></a><span class="special">(</span><span class="identifier">SeedSeq</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> It<span class="special">&gt;</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1random_1_1discard__block__engine.html#doxygen.headers.classboost_1_1random_1_1discard__block__engine_1ab53538b62cb16d17eb2fa8f7c7aec5aa"><span class="identifier">seed</span></a><span class="special">(</span><span class="identifier">It</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">It</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">const</span> <span class="identifier">base_type</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1random_1_1discard__block__engine.html#doxygen.headers.classboost_1_1random_1_1discard__block__engine_1a619c04df6f7fe29f903f0f61bb93c77c"><span class="identifier">base</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">result_type</span> <a class="link" href="classboost_1_1random_1_1discard__block__engine.html#doxygen.headers.classboost_1_1random_1_1discard__block__engine_1ae72bc221cc088ff13ad43e81e9326e8b"><span class="keyword">operator</span><span class="special">(</span><span class="special">)</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1random_1_1discard__block__engine.html#doxygen.headers.classboost_1_1random_1_1discard__block__engine_1a868c3d38b93760e055b1ada88932655f"><span class="identifier">discard</span></a><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">uintmax_t</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> It<span class="special">&gt;</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1random_1_1discard__block__engine.html#doxygen.headers.classboost_1_1random_1_1discard__block__engine_1abf5115c36756385264d1f4181510d2c1"><span class="identifier">generate</span></a><span class="special">(</span><span class="identifier">It</span><span class="special">,</span> <span class="identifier">It</span><span class="special">)</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1random_1_1discard__block__engine.html#id-1_3_34_5_6_9_1_1_1_11-bb">public static functions</a></span>
+  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="identifier">result_type</span> <a class="link" href="classboost_1_1random_1_1discard__block__engine.html#doxygen.headers.classboost_1_1random_1_1discard__block__engine_1af5b8d205acdbb1e3623c1d4b4f00971d"><span class="identifier">min</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="identifier">result_type</span> <a class="link" href="classboost_1_1random_1_1discard__block__engine.html#doxygen.headers.classboost_1_1random_1_1discard__block__engine_1ab8bf97732d61b140c3e159a8cedb9fdf"><span class="identifier">max</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1random_1_1discard__block__engine.html#id-1_3_34_5_6_9_1_1_1_12-bb">friend functions</a></span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits<span class="special">&gt;</span> 
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+    <a class="link" href="classboost_1_1random_1_1discard__block__engine.html#doxygen.headers.classboost_1_1random_1_1discard__block__engine_1adb819e6f37e84b45f75385c941605b74"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">,</span> 
+               <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1discard__block__engine.html" title="Class template discard_block_engine">discard_block_engine</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits<span class="special">&gt;</span> 
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+    <a class="link" href="classboost_1_1random_1_1discard__block__engine.html#doxygen.headers.classboost_1_1random_1_1discard__block__engine_1aa19b569d94a451dd24daafadecd05c3f"><span class="keyword">operator</span><span class="special">&gt;&gt;</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">,</span> <a class="link" href="classboost_1_1random_1_1discard__block__engine.html" title="Class template discard_block_engine">discard_block_engine</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1random_1_1discard__block__engine.html#doxygen.headers.classboost_1_1random_1_1discard__block__engine_1a46aca8f067a5bbf7daea2254c1898358"><span class="keyword">operator</span><span class="special">==</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1discard__block__engine.html" title="Class template discard_block_engine">discard_block_engine</a> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1discard__block__engine.html" title="Class template discard_block_engine">discard_block_engine</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1random_1_1discard__block__engine.html#doxygen.headers.classboost_1_1random_1_1discard__block__engine_1a14d64d7e13f1af66fc27b772dcd3ba4e"><span class="keyword">operator</span><span class="special">!=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1discard__block__engine.html" title="Class template discard_block_engine">discard_block_engine</a> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1discard__block__engine.html" title="Class template discard_block_engine">discard_block_engine</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+
+  <span class="comment">// public data members</span>
+  <span class="keyword">static</span> <span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">block_size</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">used_block</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">bool</span> <span class="identifier">has_fixed_range</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">total_block</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">returned_block</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.34.5.6.8.3.4"></a><h2>Description</h2>
+<p>The class template  <a class="link" href="classboost_1_1random_1_1discard__block__engine.html" title="Class template discard_block_engine">discard_block_engine</a>  is a model of  <a class="link" href="../../boost_random/reference.html#boost_random.reference.concepts.pseudo_random_number_generator" title="Pseudo-Random Number Generator">pseudo-random number generator</a> . It modifies another generator by discarding parts of its output. Out of every block of <code class="computeroutput">p</code> results, the first <code class="computeroutput">r</code> will be returned and the rest discarded.</p>
+<p>Requires: 0 &lt; p &lt;= r </p>
+<div class="refsect2">
+<a name="id-1.3.34.5.6.8.3.4.4"></a><h3>
+<a name="id-1_3_34_5_6_9_1_1_1_10-bb"></a><code class="computeroutput">discard_block_engine</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.headers.classboost_1_1random_1_1discard__block__engine_1ae6193e90ecaa1305420da0ab750049b2"></a><span class="identifier">discard_block_engine</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Uses the default seed for the base generator. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.headers.classboost_1_1random_1_1discard__block__engine_1a39f6acaf87d5fca584d75b30601f3446"></a><span class="identifier">discard_block_engine</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">base_type</span> <span class="special">&amp;</span> rng<span class="special">)</span><span class="special">;</span></pre>
+<p>Constructs a new  <code class="computeroutput"><a class="link" href="classboost_1_1random_1_1discard__block__engine.html" title="Class template discard_block_engine">discard_block_engine</a></code>  with a copy of rng. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.headers.classboost_1_1random_1_1discard__block__engine_1a0b09652165a819d5faf74f1c71cabf8b"></a><span class="identifier">discard_block_engine</span><span class="special">(</span><span class="identifier">base_type</span> <span class="special">&amp;&amp;</span> rng<span class="special">)</span><span class="special">;</span></pre>
+<p>Constructs a new  <code class="computeroutput"><a class="link" href="classboost_1_1random_1_1discard__block__engine.html" title="Class template discard_block_engine">discard_block_engine</a></code>  with rng. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.headers.classboost_1_1random_1_1discard__block__engine_1a511a705d74cc20690c046dec4f7b4da7"></a><span class="identifier">discard_block_engine</span><span class="special">(</span><span class="identifier">seed_type</span> value<span class="special">)</span><span class="special">;</span></pre>
+<p>Creates a new  <code class="computeroutput"><a class="link" href="classboost_1_1random_1_1discard__block__engine.html" title="Class template discard_block_engine">discard_block_engine</a></code>  and seeds the underlying generator with <code class="computeroutput">value</code> </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> SeedSeq<span class="special">&gt;</span> <span class="keyword">explicit</span> <a name="doxygen.headers.classboost_1_1random_1_1discard__block__engine_1a2cf69dcbb6f5b8c15a350ecd64e659e6"></a><span class="identifier">discard_block_engine</span><span class="special">(</span><span class="identifier">SeedSeq</span> <span class="special">&amp;</span> seq<span class="special">)</span><span class="special">;</span></pre>
+<p>Creates a new  <code class="computeroutput"><a class="link" href="classboost_1_1random_1_1discard__block__engine.html" title="Class template discard_block_engine">discard_block_engine</a></code>  and seeds the underlying generator with <code class="computeroutput">seq</code> </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> It<span class="special">&gt;</span> <a name="doxygen.headers.classboost_1_1random_1_1discard__block__engine_1ae252cf356b825282b665c34dacea0af8"></a><span class="identifier">discard_block_engine</span><span class="special">(</span><span class="identifier">It</span> <span class="special">&amp;</span> first<span class="special">,</span> <span class="identifier">It</span> last<span class="special">)</span><span class="special">;</span></pre>
+<p>Creates a new  <code class="computeroutput"><a class="link" href="classboost_1_1random_1_1discard__block__engine.html" title="Class template discard_block_engine">discard_block_engine</a></code>  and seeds the underlying generator with first and last. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.headers.classboost_1_1random_1_1discard__block__engine_1ada19134d45503116df64bca65eba1d20"></a><span class="identifier">seed</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>default seeds the underlying generator. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.headers.classboost_1_1random_1_1discard__block__engine_1add3934b5661aff8d5477383eb535fd7b"></a><span class="identifier">seed</span><span class="special">(</span><span class="identifier">seed_type</span> s<span class="special">)</span><span class="special">;</span></pre>
+<p>Seeds the underlying generator with s. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> SeedSeq<span class="special">&gt;</span> <span class="keyword">void</span> <a name="doxygen.headers.classboost_1_1random_1_1discard__block__engine_1ad7b25ab2db67a0e7833601f7d77516a8"></a><span class="identifier">seed</span><span class="special">(</span><span class="identifier">SeedSeq</span> <span class="special">&amp;</span> seq<span class="special">)</span><span class="special">;</span></pre>
+<p>Seeds the underlying generator with seq. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> It<span class="special">&gt;</span> <span class="keyword">void</span> <a name="doxygen.headers.classboost_1_1random_1_1discard__block__engine_1ab53538b62cb16d17eb2fa8f7c7aec5aa"></a><span class="identifier">seed</span><span class="special">(</span><span class="identifier">It</span> <span class="special">&amp;</span> first<span class="special">,</span> <span class="identifier">It</span> last<span class="special">)</span><span class="special">;</span></pre>
+<p>Seeds the underlying generator with first and last. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">const</span> <span class="identifier">base_type</span> <span class="special">&amp;</span> <a name="doxygen.headers.classboost_1_1random_1_1discard__block__engine_1a619c04df6f7fe29f903f0f61bb93c77c"></a><span class="identifier">base</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns the underlying engine. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">result_type</span> <a name="doxygen.headers.classboost_1_1random_1_1discard__block__engine_1ae72bc221cc088ff13ad43e81e9326e8b"></a><span class="keyword">operator</span><span class="special">(</span><span class="special">)</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Returns the next value of the generator. </p>
+</li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.headers.classboost_1_1random_1_1discard__block__engine_1a868c3d38b93760e055b1ada88932655f"></a><span class="identifier">discard</span><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">uintmax_t</span> z<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> It<span class="special">&gt;</span> <span class="keyword">void</span> <a name="doxygen.headers.classboost_1_1random_1_1discard__block__engine_1abf5115c36756385264d1f4181510d2c1"></a><span class="identifier">generate</span><span class="special">(</span><span class="identifier">It</span> first<span class="special">,</span> <span class="identifier">It</span> last<span class="special">)</span><span class="special">;</span></pre></li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.34.5.6.8.3.4.5"></a><h3>
+<a name="id-1_3_34_5_6_9_1_1_1_11-bb"></a><code class="computeroutput">discard_block_engine</code> public static functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="identifier">result_type</span> <a name="doxygen.headers.classboost_1_1random_1_1discard__block__engine_1af5b8d205acdbb1e3623c1d4b4f00971d"></a><span class="identifier">min</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Returns the smallest value that the generator can produce. This is the same as the minimum of the underlying generator. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="identifier">result_type</span> <a name="doxygen.headers.classboost_1_1random_1_1discard__block__engine_1ab8bf97732d61b140c3e159a8cedb9fdf"></a><span class="identifier">max</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Returns the largest value that the generator can produce. This is the same as the maximum of the underlying generator. </p>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.34.5.6.8.3.4.6"></a><h3>
+<a name="id-1_3_34_5_6_9_1_1_1_12-bb"></a><code class="computeroutput">discard_block_engine</code> friend functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits<span class="special">&gt;</span> 
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+  <a name="doxygen.headers.classboost_1_1random_1_1discard__block__engine_1adb819e6f37e84b45f75385c941605b74"></a><span class="keyword">operator</span><span class="special">&lt;&lt;</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> os<span class="special">,</span> 
+             <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1discard__block__engine.html" title="Class template discard_block_engine">discard_block_engine</a> <span class="special">&amp;</span> s<span class="special">)</span><span class="special">;</span></pre>
+<p>Writes a  <code class="computeroutput"><a class="link" href="classboost_1_1random_1_1discard__block__engine.html" title="Class template discard_block_engine">discard_block_engine</a></code>  to a <code class="computeroutput">std::ostream</code>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits<span class="special">&gt;</span> 
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+  <a name="doxygen.headers.classboost_1_1random_1_1discard__block__engine_1aa19b569d94a451dd24daafadecd05c3f"></a><span class="keyword">operator</span><span class="special">&gt;&gt;</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> is<span class="special">,</span> 
+             <a class="link" href="classboost_1_1random_1_1discard__block__engine.html" title="Class template discard_block_engine">discard_block_engine</a> <span class="special">&amp;</span> s<span class="special">)</span><span class="special">;</span></pre>
+<p>Reads a  <code class="computeroutput"><a class="link" href="classboost_1_1random_1_1discard__block__engine.html" title="Class template discard_block_engine">discard_block_engine</a></code>  from a <code class="computeroutput">std::istream</code>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.headers.classboost_1_1random_1_1discard__block__engine_1a46aca8f067a5bbf7daea2254c1898358"></a><span class="keyword">operator</span><span class="special">==</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1discard__block__engine.html" title="Class template discard_block_engine">discard_block_engine</a> <span class="special">&amp;</span> x<span class="special">,</span> 
+                <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1discard__block__engine.html" title="Class template discard_block_engine">discard_block_engine</a> <span class="special">&amp;</span> y<span class="special">)</span><span class="special">;</span></pre>
+<p>Returns true if the two generators will produce identical sequences. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.headers.classboost_1_1random_1_1discard__block__engine_1a14d64d7e13f1af66fc27b772dcd3ba4e"></a><span class="keyword">operator</span><span class="special">!=</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1discard__block__engine.html" title="Class template discard_block_engine">discard_block_engine</a> <span class="special">&amp;</span> x<span class="special">,</span> 
+                <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1discard__block__engine.html" title="Class template discard_block_engine">discard_block_engine</a> <span class="special">&amp;</span> y<span class="special">)</span><span class="special">;</span></pre>
+<p>Returns true if the two generators will produce different sequences. </p>
+</li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2000-2005 Jens Maurer<br>Copyright © 2009, 2010 Steven Watanabe<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1random_1_1chi__squared__distribution_1_1param__type.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_random/reference.html#doxygen.headers.discard__block_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1random_1_1discrete__distribution.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

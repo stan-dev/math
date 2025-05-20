@@ -1,0 +1,1109 @@
+<?xml version="1.0" standalone="yes"?>
+<library-reference><header id="doxygen.adl__move__swap_8hpp" name="boost/move/adl_move_swap.hpp">
+<namespace name="boost">
+
+
+
+
+
+
+
+
+
+
+
+
+<function id="doxygen.namespaceboost_1a52b192e62544c7fb8f988a4918911f8b" name="adl_move_swap"><type>void</type><template>
+          <template-type-parameter name="T"/>
+        </template><parameter name="x"><paramtype>T &amp;</paramtype></parameter><parameter name="y"><paramtype>T &amp;</paramtype></parameter><description><para>Exchanges the values of a and b, using Argument Dependent Lookup (ADL) to select a specialized swap function if available. If no specialized swap function is available, std::swap is used.</para><para><emphasis role="bold">Exception</emphasis>: If T uses Boost.Move's move emulation and the compiler has no rvalue references then:</para><para><itemizedlist>
+<listitem><para>If T has a <computeroutput>T::swap(T&amp;)</computeroutput> member, that member is called.</para>
+</listitem><listitem><para>Otherwise a move-based swap is called, equivalent to: <computeroutput>T t(::boost::move(x)); x = ::boost::move(y); y = ::boost::move(t);</computeroutput>. </para>
+</listitem></itemizedlist>
+</para></description></function>
+<function id="doxygen.namespaceboost_1a125e6ca87c8a9c16443b14739c84db51" name="adl_move_swap_ranges"><type>ForwardIt2</type><template>
+          <template-type-parameter name="ForwardIt1"/>
+          <template-type-parameter name="ForwardIt2"/>
+        </template><parameter name="first1"><paramtype>ForwardIt1</paramtype></parameter><parameter name="last1"><paramtype>ForwardIt1</paramtype></parameter><parameter name="first2"><paramtype>ForwardIt2</paramtype></parameter><description><para>Exchanges elements between range [first1, last1) and another range starting at first2 using <link linkend="doxygen.namespaceboost_1a52b192e62544c7fb8f988a4918911f8b">boost::adl_move_swap</link>.</para><para>Parameters: first1, last1 - the first range of elements to swap first2 - beginning of the second range of elements to swap</para><para>Type requirements:<itemizedlist>
+<listitem><para>ForwardIt1, ForwardIt2 must meet the requirements of ForwardIterator.</para>
+</listitem><listitem><para>The types of dereferenced ForwardIt1 and ForwardIt2 must meet the requirements of Swappable</para>
+</listitem></itemizedlist>
+</para><para>Return value: Iterator to the element past the last element exchanged in the range beginning with first2. </para></description></function>
+<function id="doxygen.namespaceboost_1ac2172c9e9f5ebce6525261356d582219" name="adl_move_swap_ranges_backward"><type>BidirIt2</type><template>
+          <template-type-parameter name="BidirIt1"/>
+          <template-type-parameter name="BidirIt2"/>
+        </template><parameter name="first1"><paramtype>BidirIt1</paramtype></parameter><parameter name="last1"><paramtype>BidirIt1</paramtype></parameter><parameter name="last2"><paramtype>BidirIt2</paramtype></parameter></function>
+<function id="doxygen.namespaceboost_1afcc95d43fe6cc0b4ce723639a5cc9d06" name="adl_move_iter_swap"><type>void</type><template>
+          <template-type-parameter name="ForwardIt1"/>
+          <template-type-parameter name="ForwardIt2"/>
+        </template><parameter name="a"><paramtype>ForwardIt1</paramtype></parameter><parameter name="b"><paramtype>ForwardIt2</paramtype></parameter></function>
+
+
+
+</namespace>
+</header>
+<header id="doxygen.adaptive__merge_8hpp" name="boost/move/algo/adaptive_merge.hpp">
+<namespace name="boost">
+<namespace name="movelib">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<function id="doxygen.adaptive__merge_8hpp_1a12aa1712602005b52a4ebd93f723e23f" name="adaptive_merge"><type>void</type><template>
+          <template-type-parameter name="RandIt"/>
+          <template-type-parameter name="Compare"/>
+        </template><parameter name="first"><paramtype>RandIt</paramtype></parameter><parameter name="middle"><paramtype>RandIt</paramtype></parameter><parameter name="last"><paramtype>RandIt</paramtype></parameter><parameter name="comp"><paramtype>Compare</paramtype></parameter><parameter name="uninitialized"><paramtype>typename iterator_traits&lt; RandIt &gt;::value_type *</paramtype><default>0</default></parameter><parameter name="uninitialized_len"><paramtype>typename iter_size&lt; RandIt &gt;::type</paramtype><default>0</default></parameter><description><para><emphasis role="bold">Effects</emphasis>: Merges two consecutive sorted ranges [first, middle) and [middle, last) into one sorted range [first, last) according to the given comparison function comp. The algorithm is stable (if there are equivalent elements in the original two ranges, the elements from the first range (preserving their original order) precede the elements from the second range (preserving their original order).</para><para><emphasis role="bold">Requires</emphasis>:<itemizedlist>
+<listitem><para>RandIt must meet the requirements of ValueSwappable and RandomAccessIterator.</para>
+</listitem><listitem><para>The type of dereferenced RandIt must meet the requirements of MoveAssignable and MoveConstructible.</para>
+</listitem></itemizedlist>
+</para><para><emphasis role="bold">Parameters</emphasis>:<itemizedlist>
+<listitem><para>first: the beginning of the first sorted range.</para>
+</listitem><listitem><para>middle: the end of the first sorted range and the beginning of the second</para>
+</listitem><listitem><para>last: the end of the second sorted range</para>
+</listitem><listitem><para>comp: comparison function object which returns true if the first argument is is ordered before the second.</para>
+</listitem><listitem><para>uninitialized, uninitialized_len: raw storage starting on "uninitialized", able to hold "uninitialized_len" elements of type iterator_traits&lt;RandIt&gt;::value_type. Maximum performance is achieved when uninitialized_len is min(std::distance(first, middle), std::distance(middle, last)).</para>
+</listitem></itemizedlist>
+</para><para><emphasis role="bold">Throws</emphasis>: If comp throws or the move constructor, move assignment or swap of the type of dereferenced RandIt throws.</para><para><emphasis role="bold">Complexity</emphasis>: Always K x O(N) comparisons and move assignments/constructors/swaps. Constant factor for comparisons and data movement is minimized when uninitialized_len is min(std::distance(first, middle), std::distance(middle, last)). Pretty good enough performance is achieved when uninitialized_len is ceil(sqrt(std::distance(first, last)))*2.</para><para><emphasis role="bold">Caution</emphasis>: Experimental implementation, not production-ready. </para></description></function>
+</namespace>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</header>
+<header id="doxygen.adaptive__sort_8hpp" name="boost/move/algo/adaptive_sort.hpp">
+<namespace name="boost">
+<namespace name="movelib">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<function id="doxygen.adaptive__sort_8hpp_1a4bdb57913b566ac0d943797d9812ec8e" name="adaptive_sort"><type>void</type><template>
+          <template-type-parameter name="RandIt"/>
+          <template-type-parameter name="RandRawIt"/>
+          <template-type-parameter name="Compare"/>
+        </template><parameter name="first"><paramtype>RandIt</paramtype></parameter><parameter name="last"><paramtype>RandIt</paramtype></parameter><parameter name="comp"><paramtype>Compare</paramtype></parameter><parameter name="uninitialized"><paramtype>RandRawIt</paramtype></parameter><parameter name="uninitialized_len"><paramtype>typename iter_size&lt; RandIt &gt;::type</paramtype></parameter><description><para><emphasis role="bold">Effects</emphasis>: Sorts the elements in the range [first, last) in ascending order according to comparison functor "comp". The sort is stable (order of equal elements is guaranteed to be preserved). Performance is improved if additional raw storage is provided.</para><para><emphasis role="bold">Requires</emphasis>:<itemizedlist>
+<listitem><para>RandIt must meet the requirements of ValueSwappable and RandomAccessIterator.</para>
+</listitem><listitem><para>The type of dereferenced RandIt must meet the requirements of MoveAssignable and MoveConstructible.</para>
+</listitem></itemizedlist>
+</para><para><emphasis role="bold">Parameters</emphasis>:<itemizedlist>
+<listitem><para>first, last: the range of elements to sort</para>
+</listitem><listitem><para>comp: comparison function object which returns true if the first argument is is ordered before the second.</para>
+</listitem><listitem><para>uninitialized, uninitialized_len: raw storage starting on "uninitialized", able to hold "uninitialized_len" elements of type iterator_traits&lt;RandIt&gt;::value_type. Maximum performance is achieved when uninitialized_len is ceil(std::distance(first, last)/2).</para>
+</listitem></itemizedlist>
+</para><para><emphasis role="bold">Throws</emphasis>: If comp throws or the move constructor, move assignment or swap of the type of dereferenced RandIt throws.</para><para><emphasis role="bold">Complexity</emphasis>: Always K x O(Nxlog(N)) comparisons and move assignments/constructors/swaps. Comparisons are close to minimum even with no additional memory. Constant factor for data movement is minimized when uninitialized_len is ceil(std::distance(first, last)/2). Pretty good enough performance is achieved when ceil(sqrt(std::distance(first, last)))*2.</para><para><emphasis role="bold">Caution</emphasis>: Experimental implementation, not production-ready. </para></description></function>
+<function id="doxygen.adaptive__sort_8hpp_1aec902180f4f0a1b253f1808d4a1e0644" name="adaptive_sort"><type>void</type><template>
+          <template-type-parameter name="RandIt"/>
+          <template-type-parameter name="Compare"/>
+        </template><parameter name="first"><paramtype>RandIt</paramtype></parameter><parameter name="last"><paramtype>RandIt</paramtype></parameter><parameter name="comp"><paramtype>Compare</paramtype></parameter></function>
+
+</namespace>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</header>
+<header id="doxygen.predicate_8hpp" name="boost/move/algo/predicate.hpp">
+<namespace name="boost">
+<namespace name="movelib">
+<struct id="doxygen.structboost_1_1movelib_1_1antistable" name="antistable"><template>
+      <template-type-parameter name="Comp"/>
+    </template><method-group name="public member functions">
+<constructor id="doxygen.structboost_1_1movelib_1_1antistable_1aa753dcff818ac6ecf25813e7e0bb5c2a" specifiers="explicit"><parameter name="comp"><paramtype>Comp &amp;</paramtype></parameter></constructor>
+<constructor id="doxygen.structboost_1_1movelib_1_1antistable_1a29fcfc4f47a20541ddbdc57765272946"><parameter name="other"><paramtype>const antistable &amp;</paramtype></parameter></constructor>
+<method id="doxygen.structboost_1_1movelib_1_1antistable_1a82e4c361f584ed565a352d02f4f66d48" name="operator()"><type>bool</type><template>
+          <template-type-parameter name="U"/>
+          <template-type-parameter name="V"/>
+        </template><parameter name="u"><paramtype>const U &amp;</paramtype></parameter><parameter name="v"><paramtype>const V &amp;</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1movelib_1_1antistable_1aa7f55bf3805e63420c2a97c48e1029ff" name="get" cv="const"><type>const Comp &amp;</type></method>
+</method-group>
+<method-group name="private member functions">
+<copy-assignment id="doxygen.structboost_1_1movelib_1_1antistable_1a571f8ebdac012def2f830b8463393c1c"><type>antistable &amp;</type><parameter name=""><paramtype>const antistable &amp;</paramtype></parameter></copy-assignment>
+</method-group>
+</struct><class id="doxygen.classboost_1_1movelib_1_1inverse" name="inverse"><template>
+      <template-type-parameter name="Comp"/>
+    </template><method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1movelib_1_1inverse_1a28115c768bafc179b001c8330c54b2d9"/>
+<constructor id="doxygen.classboost_1_1movelib_1_1inverse_1a4b59720f862a26949e304115659d68b2" specifiers="explicit"><parameter name="comp"><paramtype>Comp</paramtype></parameter></constructor>
+<method id="doxygen.classboost_1_1movelib_1_1inverse_1aa28082e4033d48348100d3086ec7642e" name="operator()"><type>bool</type><template>
+          <template-type-parameter name="T1"/>
+          <template-type-parameter name="T2"/>
+        </template><parameter name="l"><paramtype>const T1 &amp;</paramtype></parameter><parameter name="r"><paramtype>const T2 &amp;</paramtype></parameter></method>
+</method-group>
+</class><class id="doxygen.classboost_1_1movelib_1_1negate" name="negate"><template>
+      <template-type-parameter name="Comp"/>
+    </template><method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1movelib_1_1negate_1afee4c6431d6fc04fc09c8e04ccf92984"/>
+<constructor id="doxygen.classboost_1_1movelib_1_1negate_1ad46be8d6ff9820ec2e9cbdccbd1a0c03" specifiers="explicit"><parameter name="comp"><paramtype>Comp</paramtype></parameter></constructor>
+<method id="doxygen.classboost_1_1movelib_1_1negate_1a0e66fb85549c475770e4fc092bf8efb9" name="operator()"><type>bool</type><template>
+          <template-type-parameter name="T1"/>
+          <template-type-parameter name="T2"/>
+        </template><parameter name="l"><paramtype>const T1 &amp;</paramtype></parameter><parameter name="r"><paramtype>const T2 &amp;</paramtype></parameter></method>
+</method-group>
+</class>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<function id="doxygen.predicate_8hpp_1a45357a999137aed9e38e0d8331dcee4d" name="unantistable"><type>Comp</type><template>
+          <template-type-parameter name="Comp"/>
+        </template><parameter name="comp"><paramtype>Comp</paramtype></parameter></function>
+<function id="doxygen.predicate_8hpp_1a5c9cbea2b14948dd72928109adb71d60" name="unantistable"><type>Comp</type><template>
+          <template-type-parameter name="Comp"/>
+        </template><parameter name="comp"><paramtype>antistable&lt; Comp &gt;</paramtype></parameter></function>
+
+
+
+</namespace>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</header>
+<header id="doxygen.unique_8hpp" name="boost/move/algo/unique.hpp">
+<namespace name="boost">
+<namespace name="movelib">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<function id="doxygen.unique_8hpp_1a469a213919793bf2c9059ae2ea3450e2" name="unique"><type>ForwardIterator</type><template>
+          <template-type-parameter name="ForwardIterator"/>
+          <template-type-parameter name="BinaryPredicate"/>
+        </template><parameter name="first"><paramtype>ForwardIterator</paramtype></parameter><parameter name="last"><paramtype>ForwardIterator</paramtype></parameter><parameter name="pred"><paramtype>BinaryPredicate</paramtype></parameter><description><para><emphasis role="bold">Requires</emphasis>: The comparison function shall be an equivalence relation. The type of *first shall satisfy the MoveAssignable requirements</para><para><emphasis role="bold">Effects</emphasis>: For a nonempty range, eliminates all but the first element from every consecutive group of equivalent elements referred to by the iterator i in the range [first + 1, last) for which the following conditions hold: pred(*(i - 1), *i) != false.</para><para><emphasis role="bold">Returns</emphasis>: The end of the resulting range.</para><para><emphasis role="bold">Complexity</emphasis>: For nonempty ranges, exactly (last - first) - 1 applications of the corresponding predicate. </para></description></function>
+
+
+
+
+
+</namespace>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</header>
+<header id="doxygen.algorithm_8hpp" name="boost/move/algorithm.hpp">
+<namespace name="boost">
+
+
+
+
+
+
+
+
+<function id="doxygen.namespaceboost_1a6e01d1e1d8042ecc17c78d1a8c1450f2" name="uninitialized_copy_or_move"><type>F</type><template>
+          <template-type-parameter name="I"/>
+          <template-type-parameter name="F"/>
+        </template><parameter name="f"><paramtype>I</paramtype></parameter><parameter name="l"><paramtype>I</paramtype></parameter><parameter name="r"><paramtype>F</paramtype></parameter><parameter name=""><paramtype><emphasis>unspecified</emphasis></paramtype><default>0</default></parameter></function>
+<function id="doxygen.namespaceboost_1a1b24bf795a0ec4b74060a80df85ad76f" name="copy_or_move"><type>F</type><template>
+          <template-type-parameter name="I"/>
+          <template-type-parameter name="F"/>
+        </template><parameter name="f"><paramtype>I</paramtype></parameter><parameter name="l"><paramtype>I</paramtype></parameter><parameter name="r"><paramtype>F</paramtype></parameter><parameter name=""><paramtype><emphasis>unspecified</emphasis></paramtype><default>0</default></parameter></function>
+<function id="doxygen.namespaceboost_1afeaf90ab00273ded56d32713381245dc" name="uninitialized_copy_or_move"><type>F</type><template>
+          <template-type-parameter name="I"/>
+          <template-type-parameter name="F"/>
+        </template><parameter name="f"><paramtype>I</paramtype></parameter><parameter name="l"><paramtype>I</paramtype></parameter><parameter name="r"><paramtype>F</paramtype></parameter><description><para><emphasis role="bold">Effects</emphasis>: <programlisting language="c++">for (; first != last; ++result, ++first)
+   new (static_cast&lt;void*&gt;(&amp;*result))
+      typename iterator_traits&lt;ForwardIterator&gt;::value_type(*first);
+</programlisting></para><para><emphasis role="bold">Returns</emphasis>: result</para><para><emphasis role="bold">Note</emphasis>: This function is provided because <emphasis>std::uninitialized_copy</emphasis> from some STL implementations is not compatible with <emphasis><link linkend="doxygen.classboost_1_1move__iterator">move_iterator</link></emphasis> </para></description></function>
+<function id="doxygen.namespaceboost_1a80e0d06556de096fb1441f5da4355c4e" name="copy_or_move"><type>F</type><template>
+          <template-type-parameter name="I"/>
+          <template-type-parameter name="F"/>
+        </template><parameter name="f"><paramtype>I</paramtype></parameter><parameter name="l"><paramtype>I</paramtype></parameter><parameter name="r"><paramtype>F</paramtype></parameter><description><para><emphasis role="bold">Effects</emphasis>: <programlisting language="c++">for (; first != last; ++result, ++first)
+   *result = *first;
+</programlisting></para><para><emphasis role="bold">Returns</emphasis>: result</para><para><emphasis role="bold">Note</emphasis>: This function is provided because <emphasis>std::uninitialized_copy</emphasis> from some STL implementations is not compatible with <emphasis><link linkend="doxygen.classboost_1_1move__iterator">move_iterator</link></emphasis> </para></description></function>
+
+
+
+
+
+
+
+</namespace>
+</header>
+<header id="doxygen.core_8hpp" name="boost/move/core.hpp">
+<para>This header implements macros to define movable classes and move-aware functions </para><namespace name="boost">
+<struct id="doxygen.structboost_1_1has__move__emulation__disabled" name="has_move_emulation_disabled"><template>
+      <template-type-parameter name="T"/>
+    </template><data-member id="doxygen.structboost_1_1has__move__emulation__disabled_1af6fe78586d620fe0f55e71ede7590892" name="value" specifiers="static"><type>const bool</type></data-member>
+</struct><struct id="doxygen.structboost_1_1has__move__emulation__enabled" name="has_move_emulation_enabled"><template>
+      <template-type-parameter name="T"/>
+    </template><description><para>This trait yields to a compile-time true boolean if T was marked as BOOST_MOVABLE_BUT_NOT_COPYABLE or BOOST_COPYABLE_AND_MOVABLE and rvalue references are not available on the platform. False otherwise. </para></description><data-member id="doxygen.structboost_1_1has__move__emulation__enabled_1a41adfcc01c575ed23e8cce503a55da62" name="value" specifiers="static"><type>const bool</type></data-member>
+</struct>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+<macro id="doxygen.core_8hpp_1a358a85a0713b80c331742612dae0367f" name="BOOST_MOVABLE_BUT_NOT_COPYABLE" kind="functionlike"><macro-parameter name="TYPE"/><description><para>This macro marks a type as movable but not copyable, disabling copy construction and assignment. The user will need to write a move constructor/assignment as explained in the documentation to fully write a movable but not copyable class. </para></description></macro>
+<macro id="doxygen.core_8hpp_1a2a021821de2147094b325d6849767f1c" name="BOOST_COPYABLE_AND_MOVABLE" kind="functionlike"><macro-parameter name="TYPE"/><description><para>This macro marks a type as copyable and movable. The user will need to write a move constructor/assignment and a copy assignment as explained in the documentation to fully write a copyable and movable class. </para></description></macro>
+<macro id="doxygen.core_8hpp_1a41dbf698e587e2adc7f518a2b8625436" name="BOOST_RV_REF" kind="functionlike"><macro-parameter name="TYPE"/><description><para>This macro is used to achieve portable syntax in move constructors and assignments for classes marked as BOOST_COPYABLE_AND_MOVABLE or BOOST_MOVABLE_BUT_NOT_COPYABLE </para></description></macro>
+<macro id="doxygen.core_8hpp_1aa8d981a36b56073831603aef6120652e" name="BOOST_RV_REF_BEG"><description><para>This macro is used to achieve portable syntax in move constructors and assignments for template classes marked as BOOST_COPYABLE_AND_MOVABLE or BOOST_MOVABLE_BUT_NOT_COPYABLE. As macros have problems with comma-separated template arguments, the template argument must be preceded with BOOST_RV_REF_BEG and ended with BOOST_RV_REF_END </para></description></macro>
+<macro id="doxygen.core_8hpp_1a1e4ac6029f371438042b6e6abdbc3124" name="BOOST_RV_REF_END"><description><para>This macro is used to achieve portable syntax in move constructors and assignments for template classes marked as BOOST_COPYABLE_AND_MOVABLE or BOOST_MOVABLE_BUT_NOT_COPYABLE. As macros have problems with comma-separated template arguments, the template argument must be preceded with BOOST_RV_REF_BEG and ended with BOOST_RV_REF_END </para></description></macro>
+<macro id="doxygen.core_8hpp_1a3a33a2f3b6add665b5897a10c5e481d2" name="BOOST_RV_REF_BEG_IF_CXX11"><description><para>This macro expands to BOOST_RV_REF_BEG if BOOST_NO_CXX11_RVALUE_REFERENCES is not defined, empty otherwise </para></description></macro>
+<macro id="doxygen.core_8hpp_1abfa9516be94a3d8a740a92aed6b8f0f1" name="BOOST_RV_REF_END_IF_CXX11"><description><para>This macro expands to BOOST_RV_REF_END if BOOST_NO_CXX11_RVALUE_REFERENCES is not defined, empty otherwise </para></description></macro>
+<macro id="doxygen.core_8hpp_1a37936e2bbaac51d9868f9274fb648d32" name="BOOST_COPY_ASSIGN_REF" kind="functionlike"><macro-parameter name="TYPE"/><description><para>This macro is used to achieve portable syntax in copy assignment for classes marked as BOOST_COPYABLE_AND_MOVABLE. </para></description></macro>
+<macro id="doxygen.core_8hpp_1a12ca6cade8db3b19f8be8cfdc0b0da3d" name="BOOST_FWD_REF" kind="functionlike"><macro-parameter name="TYPE"/><description><para>This macro is used to implement portable perfect forwarding as explained in the documentation. </para></description></macro>
+<macro id="doxygen.core_8hpp_1ab582644b3621ae7776dfb96e9f1d9748" name="BOOST_MOVE_RET" kind="functionlike"><macro-parameter name="RET_TYPE"/><macro-parameter name="REF"/><description><para>This macro is used to achieve portable move return semantics. The C++11 Standard allows implicit move returns when the object to be returned is designated by a lvalue and:<itemizedlist>
+<listitem><para>The criteria for elision of a copy operation are met OR</para>
+</listitem><listitem><para>The criteria would be met save for the fact that the source object is a function parameter</para>
+</listitem></itemizedlist>
+</para><para>For C++11 conforming compilers this macros only yields to REF: <computeroutput>return <link linkend="doxygen.core_8hpp_1ab582644b3621ae7776dfb96e9f1d9748">BOOST_MOVE_RET(RET_TYPE, REF)</link>;</computeroutput> -&gt; <computeroutput>return REF;</computeroutput></para><para>For compilers without rvalue references this macro does an explicit move if the move emulation is activated and the return type (RET_TYPE) is not a reference.</para><para>For non-conforming compilers with rvalue references like Visual 2010 &amp; 2012, an explicit move is performed if RET_TYPE is not a reference.</para><para><emphasis role="bold">Caution</emphasis>: When using this macro in non-conforming or C++03 compilers, a move will be performed even if the C++11 standard does not allow it (e.g. returning a static variable). The user is responsible for using this macro only to return local objects that met C++11 criteria. </para></description></macro>
+<macro id="doxygen.core_8hpp_1aa2f08196120b1b5f09f240ef498ebd7f" name="BOOST_MOVE_BASE" kind="functionlike"><macro-parameter name="BASE_TYPE"/><macro-parameter name="ARG"/><purpose>defined(BOOST_MOVE_MSVC_AUTO_MOVE_RETURN_BUG) || defined(BOOST_MOVE_DOXYGEN_INVOKED) </purpose><description><para>This macro is used to achieve portable optimal move constructors.</para><para>When implementing the move constructor, in C++03 compilers the moved-from argument must be cast to the base type before calling <computeroutput><link linkend="doxygen.namespaceboost_1afea094bc29f91eaa54e99510e1079ef2">boost::move()</link></computeroutput> due to rvalue reference limitations.</para><para>In C++11 compilers the cast from a rvalue reference of a derived type to a rvalue reference of a base type is implicit. </para></description></macro>
+<macro id="doxygen.core_8hpp_1ab5121b990a0bd5b35e62ab4d2341705c" name="BOOST_MOVE_TO_LV" kind="functionlike"><macro-parameter name="ARG"/><description><para>This macro is used to achieve portable optimal move constructors.</para><para>In C++03 mode, when accessing a member of type through a rvalue (implemented as a <computeroutput>rv&lt;T&gt; &amp;</computeroutput> type, where rv&lt;T&gt; derives from T) triggers a potential UB as the program never creates objects of type rv&lt;T&gt;. This macro casts back <computeroutput>rv&lt;T&gt;</computeroutput> to <computeroutput>T&amp;</computeroutput> so that access to member types are done through the original type.</para><para>In C++11 compilers the cast from a rvalue reference of a derived type to a rvalue reference of a base type is implicit, so it's a no-op. </para></description></macro>
+</header>
+<header id="doxygen.default__delete_8hpp" name="boost/move/default_delete.hpp">
+<para>Describes the default deleter (destruction policy) of <computeroutput>unique_ptr</computeroutput>: <computeroutput>default_delete</computeroutput>. </para><namespace name="boost">
+<namespace name="movelib">
+<struct id="doxygen.structboost_1_1movelib_1_1default__delete" name="default_delete"><template>
+      <template-type-parameter name="T"><purpose><para>The type to be deleted. It may be an incomplete type </para></purpose></template-type-parameter>
+    </template><description><para>The class template <computeroutput><link linkend="doxygen.structboost_1_1movelib_1_1default__delete">default_delete</link></computeroutput> serves as the default deleter (destruction policy) for the class template <computeroutput><link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr">unique_ptr</link></computeroutput>.</para><para>
+</para></description><method-group name="public member functions">
+<constructor id="doxygen.structboost_1_1movelib_1_1default__delete_1a6f1e81f59f8cf8ecd09bea8f0710bcd3"><description><para>Default constructor. </para></description></constructor>
+<constructor id="doxygen.structboost_1_1movelib_1_1default__delete_1a4eaf2e7db84c021d0eea2190880ea587"><parameter name=""><paramtype>const <classname>default_delete</classname> &amp;</paramtype></parameter><description><para>Trivial copy constructor </para></description></constructor>
+<copy-assignment id="doxygen.structboost_1_1movelib_1_1default__delete_1a7d4a8a979a72462d28c50bb3f1443d5c"><type><classname>default_delete</classname> &amp;</type><parameter name=""><paramtype>const <classname>default_delete</classname> &amp;</paramtype></parameter><description><para>Trivial assignment </para></description></copy-assignment>
+<constructor id="doxygen.structboost_1_1movelib_1_1default__delete_1ac24ef97660b54dca17b45589a3f87b78" cv="noexcept"><template>
+          <template-type-parameter name="U"/>
+        </template><parameter name="BOOST_MOVE_DOCIGN"><paramtype>const <classname>default_delete</classname>&lt; U &gt; &amp;</paramtype></parameter><description><para><emphasis role="bold">Effects</emphasis>: Constructs a <link linkend="doxygen.structboost_1_1movelib_1_1default__delete">default_delete</link> object from another <computeroutput><link linkend="doxygen.structboost_1_1movelib_1_1default__delete">default_delete</link><underline> object.</underline></computeroutput></para><para><computeroutput><underline><emphasis role="bold">Remarks</emphasis>: This constructor shall not participate in overload resolution unless:<itemizedlist>
+<listitem><para>If T is not an array type and U* is implicitly convertible to T*.</para>
+</listitem><listitem><para>If T is an array type and U* is a more CV qualified pointer to remove_extent&lt;T&gt;::type. </para>
+</listitem></itemizedlist>
+</underline></computeroutput></para></description></constructor>
+<copy-assignment id="doxygen.structboost_1_1movelib_1_1default__delete_1ade03e3a5474579b695e31573aecd67ad" cv="noexcept"><type><classname>default_delete</classname> &amp;</type><template>
+          <template-type-parameter name="U"/>
+        </template><parameter name=""><paramtype>const <classname>default_delete</classname>&lt; U &gt; &amp;</paramtype></parameter><description><para><emphasis role="bold">Effects</emphasis>: Constructs a <link linkend="doxygen.structboost_1_1movelib_1_1default__delete">default_delete</link> object from another <computeroutput><link linkend="doxygen.structboost_1_1movelib_1_1default__delete">default_delete</link><underline> object.</underline></computeroutput></para><para><computeroutput><underline><emphasis role="bold">Remarks</emphasis>: This constructor shall not participate in overload resolution unless:<itemizedlist>
+<listitem><para>If T is not an array type and U* is implicitly convertible to T*.</para>
+</listitem><listitem><para>If T is an array type and U* is a more CV qualified pointer to remove_extent&lt;T&gt;::type. </para>
+</listitem></itemizedlist>
+</underline></computeroutput></para></description></copy-assignment>
+<method id="doxygen.structboost_1_1movelib_1_1default__delete_1ab242cfa2e124d66b88bf5c1372fc6aab" name="operator()" cv="const noexcept"><type>void</type><template>
+          <template-type-parameter name="U"/>
+        </template><parameter name="ptr"><paramtype>U *</paramtype></parameter><description><para><emphasis role="bold">Effects</emphasis>: if T is not an array type, calls <computeroutput>delete</computeroutput> on static_cast&lt;T*&gt;(ptr), otherwise calls <computeroutput>delete[]</computeroutput> on static_cast&lt;remove_extent&lt;T&gt;::type*&gt;(ptr).</para><para><emphasis role="bold">Remarks</emphasis>: If U is an incomplete type, the program is ill-formed. This operator shall not participate in overload resolution unless:<itemizedlist>
+<listitem><para>T is not an array type and U* is convertible to T*, OR</para>
+</listitem><listitem><para>T is an array type, and remove_cv&lt;U&gt;::type is the same type as remove_cv&lt;remove_extent&lt;T&gt;::type&gt;::type and U* is convertible to remove_extent&lt;T&gt;::type*. </para>
+</listitem></itemizedlist>
+</para></description></method>
+<method id="doxygen.structboost_1_1movelib_1_1default__delete_1a8093ae62eb5d618d089d5f14116a08a0" name="operator()" cv="const noexcept"><type>void</type><parameter name=""><paramtype>std::nullptr_t</paramtype></parameter><description><para><emphasis role="bold">Effects</emphasis>: Same as <computeroutput>(<emphasis>this)(static_cast&lt;element_type</emphasis>&gt;(nullptr))</computeroutput>. </para></description></method>
+</method-group>
+</struct>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</header>
+<header id="doxygen.iterator_8hpp" name="boost/move/iterator.hpp">
+<namespace name="boost">
+<class id="doxygen.classboost_1_1back__move__insert__iterator" name="back_move_insert_iterator"><template>
+      <template-type-parameter name="C"/>
+    </template><description><para>A move insert iterator that move constructs elements at the back of a container </para></description><typedef id="doxygen.classboost_1_1back__move__insert__iterator_1a0333250c9fd61ea0575f3df77426d7da" name="container_type"><type>C</type></typedef>
+<typedef id="doxygen.classboost_1_1back__move__insert__iterator_1a52ef1123d38772725c14362e730f46bc" name="value_type"><type>C::value_type</type></typedef>
+<typedef id="doxygen.classboost_1_1back__move__insert__iterator_1accd2f3a6eaeb3b31fb52f6b06a9a06d0" name="reference"><type>C::reference</type></typedef>
+<typedef id="doxygen.classboost_1_1back__move__insert__iterator_1aa0a54987a259b4b20f9698556207a177" name="pointer"><type>C::pointer</type></typedef>
+<typedef id="doxygen.classboost_1_1back__move__insert__iterator_1a183d2a49ee852830888000dc92a0e774" name="difference_type"><type>C::difference_type</type></typedef>
+<typedef id="doxygen.classboost_1_1back__move__insert__iterator_1a9e7e3ce983ca0b2b56b532c7fbd6be9e" name="iterator_category"><type>std::output_iterator_tag</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1back__move__insert__iterator_1a65c0b9cb8abd6e6540fec87af4796ec0" specifiers="explicit"><parameter name="x"><paramtype>C &amp;</paramtype></parameter></constructor>
+<copy-assignment id="doxygen.classboost_1_1back__move__insert__iterator_1a4269612721cb3fa82faaee580eb23153"><type><classname>back_move_insert_iterator</classname> &amp;</type><parameter name="x"><paramtype>reference</paramtype></parameter></copy-assignment>
+<copy-assignment id="doxygen.classboost_1_1back__move__insert__iterator_1a4e297f9d5d34b61d081bf707cfdee142"><type><classname>back_move_insert_iterator</classname> &amp;</type><parameter name="x"><paramtype>value_type &amp;&amp;</paramtype></parameter></copy-assignment>
+<method id="doxygen.classboost_1_1back__move__insert__iterator_1ad97fb36ffb2b68db99ef9c31ca27604f" name="operator*"><type><classname>back_move_insert_iterator</classname> &amp;</type></method>
+<method id="doxygen.classboost_1_1back__move__insert__iterator_1a83fd703f0d29e6680084bb367e57f935" name="operator++"><type><classname>back_move_insert_iterator</classname> &amp;</type></method>
+<method id="doxygen.classboost_1_1back__move__insert__iterator_1a753901bfc1efffd8afcc752283da61a4" name="operator++"><type><classname>back_move_insert_iterator</classname> &amp;</type><parameter name=""><paramtype>int</paramtype></parameter></method>
+</method-group>
+</class><class id="doxygen.classboost_1_1front__move__insert__iterator" name="front_move_insert_iterator"><template>
+      <template-type-parameter name="C"/>
+    </template><description><para>A move insert iterator that move constructs elements int the front of a container </para></description><typedef id="doxygen.classboost_1_1front__move__insert__iterator_1a2360c77d98dbd7526576c262ab60bbf4" name="container_type"><type>C</type></typedef>
+<typedef id="doxygen.classboost_1_1front__move__insert__iterator_1a2d24f3361ecd33cd37999874c978e75f" name="value_type"><type>C::value_type</type></typedef>
+<typedef id="doxygen.classboost_1_1front__move__insert__iterator_1a7277c508ec9d6beeada658e317c7a8e1" name="reference"><type>C::reference</type></typedef>
+<typedef id="doxygen.classboost_1_1front__move__insert__iterator_1a253861dae0454cfcafccf377780360f0" name="pointer"><type>C::pointer</type></typedef>
+<typedef id="doxygen.classboost_1_1front__move__insert__iterator_1af5ea75aeda68f82bb31809400714330e" name="difference_type"><type>C::difference_type</type></typedef>
+<typedef id="doxygen.classboost_1_1front__move__insert__iterator_1a9818b321e28bee9750c36097b14ff479" name="iterator_category"><type>std::output_iterator_tag</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1front__move__insert__iterator_1a9cda9b473c3117121ef0217f01fb29c2" specifiers="explicit"><parameter name="x"><paramtype>C &amp;</paramtype></parameter></constructor>
+<copy-assignment id="doxygen.classboost_1_1front__move__insert__iterator_1a24890e3ac62ecc7c813f2a00f5f0d69b"><type><classname>front_move_insert_iterator</classname> &amp;</type><parameter name="x"><paramtype>reference</paramtype></parameter></copy-assignment>
+<copy-assignment id="doxygen.classboost_1_1front__move__insert__iterator_1a73648c9a556f637b4a18b1dc9021ccfe"><type><classname>front_move_insert_iterator</classname> &amp;</type><parameter name="x"><paramtype>value_type &amp;&amp;</paramtype></parameter></copy-assignment>
+<method id="doxygen.classboost_1_1front__move__insert__iterator_1a10369aad82d1ac62c63b616cadd577e0" name="operator*"><type><classname>front_move_insert_iterator</classname> &amp;</type></method>
+<method id="doxygen.classboost_1_1front__move__insert__iterator_1a354fbbb173c55a32ba4bba2fe4a83cb2" name="operator++"><type><classname>front_move_insert_iterator</classname> &amp;</type></method>
+<method id="doxygen.classboost_1_1front__move__insert__iterator_1aa639f1acbc91d5de45ca38d2a696da83" name="operator++"><type><classname>front_move_insert_iterator</classname> &amp;</type><parameter name=""><paramtype>int</paramtype></parameter></method>
+</method-group>
+</class><class id="doxygen.classboost_1_1move__insert__iterator" name="move_insert_iterator"><template>
+      <template-type-parameter name="C"/>
+    </template><typedef id="doxygen.classboost_1_1move__insert__iterator_1acdf4ea23ae8b2c29300a3b46da85a64d" name="container_type"><type>C</type></typedef>
+<typedef id="doxygen.classboost_1_1move__insert__iterator_1a6c4764ad67f6dbd322932e876d21438c" name="value_type"><type>C::value_type</type></typedef>
+<typedef id="doxygen.classboost_1_1move__insert__iterator_1a928c17ccfc8cd33f43b2e657fd073579" name="reference"><type>C::reference</type></typedef>
+<typedef id="doxygen.classboost_1_1move__insert__iterator_1a82fd8a378604616b1ef25dafcb02d546" name="pointer"><type>C::pointer</type></typedef>
+<typedef id="doxygen.classboost_1_1move__insert__iterator_1a8edb1a6f32c2b0875999f183797a31c6" name="difference_type"><type>C::difference_type</type></typedef>
+<typedef id="doxygen.classboost_1_1move__insert__iterator_1af50b271ea0c1c14407de4b1ee0baee61" name="iterator_category"><type>std::output_iterator_tag</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1move__insert__iterator_1a09baefc99eb6034fd885760ffa4e644c" specifiers="explicit"><parameter name="x"><paramtype>C &amp;</paramtype></parameter><parameter name="pos"><paramtype>typename C::iterator</paramtype></parameter></constructor>
+<copy-assignment id="doxygen.classboost_1_1move__insert__iterator_1a482e096848e86ab3a6a33732e9708e5c"><type>move_insert_iterator &amp;</type><parameter name="x"><paramtype>reference</paramtype></parameter></copy-assignment>
+<copy-assignment id="doxygen.classboost_1_1move__insert__iterator_1a510a912b34debfdf24b3aa7caa3f3c2f"><type>move_insert_iterator &amp;</type><parameter name="x"><paramtype>value_type &amp;&amp;</paramtype></parameter></copy-assignment>
+<method id="doxygen.classboost_1_1move__insert__iterator_1a99a7183b4949c0f9e2880d708e88b165" name="operator*"><type>move_insert_iterator &amp;</type></method>
+<method id="doxygen.classboost_1_1move__insert__iterator_1abaa07a00b5b02b0e0ac23b76c6da82f3" name="operator++"><type>move_insert_iterator &amp;</type></method>
+<method id="doxygen.classboost_1_1move__insert__iterator_1a5276ca4e5aba11bcb1a48c5e23ba5ad2" name="operator++"><type>move_insert_iterator &amp;</type><parameter name=""><paramtype>int</paramtype></parameter></method>
+</method-group>
+</class><class id="doxygen.classboost_1_1move__iterator" name="move_iterator"><template>
+      <template-type-parameter name="It"/>
+    </template><description><para>Class template <link linkend="doxygen.classboost_1_1move__iterator">move_iterator</link> is an iterator adaptor with the same behavior as the underlying iterator except that its dereference operator implicitly converts the value returned by the underlying iterator's dereference operator to an rvalue reference. Some generic algorithms can be called with move iterators to replace copying with moving. </para></description><typedef id="doxygen.classboost_1_1move__iterator_1a0b9506d6e1a86cf7177ad8dfcbfef130" name="iterator_type"><type>It</type></typedef>
+<typedef id="doxygen.classboost_1_1move__iterator_1a8b86dca4c6204b385e0d22f8888a8d3e" name="value_type"><type>boost::movelib::iterator_traits&lt; iterator_type &gt;::value_type</type></typedef>
+<typedef id="doxygen.classboost_1_1move__iterator_1ad92e9dea3c3c82cb29528131fda52d1f" name="reference"><type>value_type &amp;&amp;</type></typedef>
+<typedef id="doxygen.classboost_1_1move__iterator_1a9ef15dc941d8d9dd7bb59e119caa7c1e" name="pointer"><type>It</type></typedef>
+<typedef id="doxygen.classboost_1_1move__iterator_1a22c53e88917ab25cdc2b88d81cd3480a" name="difference_type"><type>boost::movelib::iterator_traits&lt; iterator_type &gt;::difference_type</type></typedef>
+<typedef id="doxygen.classboost_1_1move__iterator_1afd8a7aff08ea0181bfe35a31174142bb" name="iterator_category"><type>boost::movelib::iterator_traits&lt; iterator_type &gt;::iterator_category</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1move__iterator_1abb3d298a585c6baed7d09cd3a418784d"/>
+<constructor id="doxygen.classboost_1_1move__iterator_1a18cdf4977dced83c5c969644c3ecd175" specifiers="explicit"><parameter name="i"><paramtype>const It &amp;</paramtype></parameter></constructor>
+<constructor id="doxygen.classboost_1_1move__iterator_1a515cb3392a671cf7ae6577316571d1c0"><template>
+          <template-type-parameter name="U"/>
+        </template><parameter name="u"><paramtype>const <classname>move_iterator</classname>&lt; U &gt; &amp;</paramtype></parameter></constructor>
+<method id="doxygen.classboost_1_1move__iterator_1a4c07225df9a0f52c2b4846cfa96a80db" name="operator*" cv="const"><type>reference</type></method>
+<method id="doxygen.classboost_1_1move__iterator_1a37aed0c38d9ed53d17ebb238d79b191c" name="operator-&gt;" cv="const"><type>pointer</type></method>
+<method id="doxygen.classboost_1_1move__iterator_1a9d5a627c8844e4fb6d85ff96dceeab04" name="operator++"><type><classname>move_iterator</classname> &amp;</type></method>
+<method id="doxygen.classboost_1_1move__iterator_1acab5f3c73103cae073f762a8b0c4d574" name="operator++"><type><classname>move_iterator</classname>&lt; iterator_type &gt;</type><parameter name=""><paramtype>int</paramtype></parameter></method>
+<method id="doxygen.classboost_1_1move__iterator_1a9aeed0d54573924e896793ca2ee9a158" name="operator--"><type><classname>move_iterator</classname> &amp;</type></method>
+<method id="doxygen.classboost_1_1move__iterator_1a48e3229555fe07cdd0991c8d6f96be5e" name="operator--"><type><classname>move_iterator</classname>&lt; iterator_type &gt;</type><parameter name=""><paramtype>int</paramtype></parameter></method>
+<method id="doxygen.classboost_1_1move__iterator_1acd86508e08017b3f02f57471df13cd60" name="operator+" cv="const"><type><classname>move_iterator</classname>&lt; iterator_type &gt;</type><parameter name="n"><paramtype>difference_type</paramtype></parameter></method>
+<method id="doxygen.classboost_1_1move__iterator_1a55d6f29e6e9005057b995a9ea195e2f0" name="operator+="><type><classname>move_iterator</classname> &amp;</type><parameter name="n"><paramtype>difference_type</paramtype></parameter></method>
+<method id="doxygen.classboost_1_1move__iterator_1a58ea91c01c77d6d9d0383cc6ed78a6c3" name="operator-" cv="const"><type><classname>move_iterator</classname>&lt; iterator_type &gt;</type><parameter name="n"><paramtype>difference_type</paramtype></parameter></method>
+<method id="doxygen.classboost_1_1move__iterator_1ac79c17a4e6c85b48cbd4508c972bf7e3" name="operator-="><type><classname>move_iterator</classname> &amp;</type><parameter name="n"><paramtype>difference_type</paramtype></parameter></method>
+<method id="doxygen.classboost_1_1move__iterator_1a4fd111354a856852eea11585f875f7f3" name="operator[]" cv="const"><type>reference</type><parameter name="n"><paramtype>difference_type</paramtype></parameter></method>
+</method-group>
+</class>
+
+
+
+<function id="doxygen.namespaceboost_1af2637dcec16edfa8b7bf185cebadc657" name="make_move_iterator"><type><classname>move_iterator</classname>&lt; It &gt;</type><template>
+          <template-type-parameter name="It"/>
+        </template><parameter name="it"><paramtype>const It &amp;</paramtype></parameter><description><para><emphasis role="bold">Returns</emphasis>: move_iterator&lt;It&gt;(i). </para></description></function>
+<function id="doxygen.namespaceboost_1aa332be800ce00578cc58b733d14854c1" name="back_move_inserter"><type><classname>back_move_insert_iterator</classname>&lt; C &gt;</type><template>
+          <template-type-parameter name="C"/>
+        </template><parameter name="x"><paramtype>C &amp;</paramtype></parameter><description><para><emphasis role="bold">Returns</emphasis>: back_move_insert_iterator&lt;C&gt;(x). </para></description></function>
+<function id="doxygen.namespaceboost_1aaa9fd82eaf9ad27da185b979868a06ec" name="front_move_inserter"><type><classname>front_move_insert_iterator</classname>&lt; C &gt;</type><template>
+          <template-type-parameter name="C"/>
+        </template><parameter name="x"><paramtype>C &amp;</paramtype></parameter><description><para><emphasis role="bold">Returns</emphasis>: front_move_insert_iterator&lt;C&gt;(x). </para></description></function>
+<function id="doxygen.namespaceboost_1aebfa9f094762fa7e221367f45dbd0582" name="move_inserter"><type>move_insert_iterator&lt; C &gt;</type><template>
+          <template-type-parameter name="C"/>
+        </template><parameter name="x"><paramtype>C &amp;</paramtype></parameter><parameter name="it"><paramtype>typename C::iterator</paramtype></parameter><description><para><emphasis role="bold">Returns</emphasis>: move_insert_iterator&lt;C&gt;(x, it). </para></description></function>
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</header>
+<header id="doxygen.make__unique_8hpp" name="boost/move/make_unique.hpp">
+<para>Defines "make_unique" functions, which are factories to create instances of unique_ptr depending on the passed arguments.</para><para>This header can be a bit heavyweight in C++03 compilers due to the use of the preprocessor library, that's why it's a a separate header from <computeroutput><link linkend="doxygen.unique__ptr_8hpp">unique_ptr.hpp</link></computeroutput> </para><namespace name="boost">
+<namespace name="movelib">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<function id="doxygen.make__unique_8hpp_1a49e01e1e98d125b30d33a520fcc73876" name="make_unique"><type><classname>unique_ptr</classname>&lt; T &gt;</type><template>
+          <template-type-parameter name="T"/>
+          <template-nontype-parameter name="Args"><type>class...</type></template-nontype-parameter>
+        </template><parameter name="args"><paramtype>Args &amp;&amp;...</paramtype></parameter><description><para><emphasis role="bold">Remarks</emphasis>: This function shall not participate in overload resolution unless T is not an array.</para><para><emphasis role="bold">Returns</emphasis>: <computeroutput>unique_ptr&lt;T&gt;(new T(std::forward&lt;Args&gt;(args)...))</computeroutput>. </para></description></function>
+<function id="doxygen.make__unique_8hpp_1ae5f7657c8706d4ffa37ef3904e6ab854" name="make_unique_nothrow"><type><classname>unique_ptr</classname>&lt; T &gt;</type><template>
+          <template-type-parameter name="T"/>
+          <template-nontype-parameter name="Args"><type>class...</type></template-nontype-parameter>
+        </template><parameter name="args"><paramtype>Args &amp;&amp;...</paramtype></parameter><description><para><emphasis role="bold">Remarks</emphasis>: This function shall not participate in overload resolution unless T is not an array.</para><para><emphasis role="bold">Returns</emphasis>: <computeroutput>unique_ptr&lt;T&gt;(new T(std::nothrow)(std::forward&lt;Args&gt;(args)...))</computeroutput>. </para></description></function>
+<function id="doxygen.make__unique_8hpp_1a529b94e81ced1c3c5188d77ffd2bc1a0" name="make_unique_definit"><type><classname>unique_ptr</classname>&lt; T &gt;</type><template>
+          <template-type-parameter name="T"/>
+        </template><description><para><emphasis role="bold">Remarks</emphasis>: This function shall not participate in overload resolution unless T is not an array.</para><para><emphasis role="bold">Returns</emphasis>: <computeroutput>unique_ptr&lt;T&gt;(new T)</computeroutput> (default initialization) </para></description></function>
+<function id="doxygen.make__unique_8hpp_1ac9db3f4ed9cdeb97c4c022a911fad1d7" name="make_unique_nothrow_definit"><type><classname>unique_ptr</classname>&lt; T &gt;</type><template>
+          <template-type-parameter name="T"/>
+        </template><description><para><emphasis role="bold">Remarks</emphasis>: This function shall not participate in overload resolution unless T is not an array.</para><para><emphasis role="bold">Returns</emphasis>: <computeroutput>unique_ptr&lt;T&gt;(new T(std::nothrow)</computeroutput> (default initialization) </para></description></function>
+<function id="doxygen.make__unique_8hpp_1ac7ec23667528afdd486d4e7ab9113874" name="make_unique"><type><classname>unique_ptr</classname>&lt; T &gt;</type><template>
+          <template-type-parameter name="T"/>
+        </template><parameter name="n"><paramtype>std::size_t</paramtype></parameter><description><para><emphasis role="bold">Remarks</emphasis>: This function shall not participate in overload resolution unless T is an array of unknown bound.</para><para><emphasis role="bold">Returns</emphasis>: <computeroutput>unique_ptr&lt;T&gt;(new remove_extent_t&lt;T&gt;[n]())</computeroutput> (value initialization) </para></description></function>
+<function id="doxygen.make__unique_8hpp_1ac2a87d112af8c9965be0a20d1e7e1ca1" name="make_unique_nothrow"><type><classname>unique_ptr</classname>&lt; T &gt;</type><template>
+          <template-type-parameter name="T"/>
+        </template><parameter name="n"><paramtype>std::size_t</paramtype></parameter><description><para><emphasis role="bold">Remarks</emphasis>: This function shall not participate in overload resolution unless T is an array of unknown bound.</para><para><emphasis role="bold">Returns</emphasis>: <computeroutput>unique_ptr&lt;T&gt;(new (std::nothrow)remove_extent_t&lt;T&gt;[n]())</computeroutput> (value initialization) </para></description></function>
+<function id="doxygen.make__unique_8hpp_1aa1781495083017dcfb07cb6c761d15f3" name="make_unique_definit"><type><classname>unique_ptr</classname>&lt; T &gt;</type><template>
+          <template-type-parameter name="T"/>
+        </template><parameter name="n"><paramtype>std::size_t</paramtype></parameter><description><para><emphasis role="bold">Remarks</emphasis>: This function shall not participate in overload resolution unless T is an array of unknown bound.</para><para><emphasis role="bold">Returns</emphasis>: <computeroutput>unique_ptr&lt;T&gt;(new remove_extent_t&lt;T&gt;[n])</computeroutput> (default initialization) </para></description></function>
+<function id="doxygen.make__unique_8hpp_1adb84cc50546883826f14fa54c06dfbf4" name="make_unique_nothrow_definit"><type><classname>unique_ptr</classname>&lt; T &gt;</type><template>
+          <template-type-parameter name="T"/>
+        </template><parameter name="n"><paramtype>std::size_t</paramtype></parameter><description><para><emphasis role="bold">Remarks</emphasis>: This function shall not participate in overload resolution unless T is an array of unknown bound.</para><para><emphasis role="bold">Returns</emphasis>: <computeroutput>unique_ptr&lt;T&gt;(new (std::nothrow)remove_extent_t&lt;T&gt;[n])</computeroutput> (default initialization) </para></description></function>
+<function id="doxygen.make__unique_8hpp_1a3bab6063e98f3b0010bd2d75b7f56663" name="make_unique"><type>unspecified</type><template>
+          <template-type-parameter name="T"/>
+          <template-nontype-parameter name="Args"><type>class...</type></template-nontype-parameter>
+        </template><parameter name="..."><paramtype>Args &amp;&amp;</paramtype></parameter><description><para><emphasis role="bold">Remarks</emphasis>: This function shall not participate in overload resolution unless T is an array of known bound. </para></description></function>
+<function id="doxygen.make__unique_8hpp_1a687d8071c8acc98ca5c3beda2623a39f" name="make_unique_definit"><type>unspecified</type><template>
+          <template-type-parameter name="T"/>
+          <template-nontype-parameter name="Args"><type>class...</type></template-nontype-parameter>
+        </template><parameter name="..."><paramtype>Args &amp;&amp;</paramtype></parameter><description><para><emphasis role="bold">Remarks</emphasis>: This function shall not participate in overload resolution unless T is an array of known bound. </para></description></function>
+<function id="doxygen.make__unique_8hpp_1adeaf79eff8a3b7dd6981c4796cd467d9" name="make_unique_nothrow"><type>unspecified</type><template>
+          <template-type-parameter name="T"/>
+          <template-nontype-parameter name="Args"><type>class...</type></template-nontype-parameter>
+        </template><parameter name="..."><paramtype>Args &amp;&amp;</paramtype></parameter><description><para><emphasis role="bold">Remarks</emphasis>: This function shall not participate in overload resolution unless T is an array of known bound. </para></description></function>
+<function id="doxygen.make__unique_8hpp_1aaca69a8b3e91b9fd5e9cb0fa998e992d" name="make_unique_nothrow_definit"><type>unspecified</type><template>
+          <template-type-parameter name="T"/>
+          <template-nontype-parameter name="Args"><type>class...</type></template-nontype-parameter>
+        </template><parameter name="..."><paramtype>Args &amp;&amp;</paramtype></parameter><description><para><emphasis role="bold">Remarks</emphasis>: This function shall not participate in overload resolution unless T is an array of known bound. </para></description></function>
+
+
+
+
+
+
+</namespace>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</header>
+<header id="doxygen.algo_2move_8hpp" name="boost/move/algo/move.hpp">
+<namespace name="boost">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<function id="doxygen.namespaceboost_1aa745d64b580e12d06b1a28c9ff09a81d" name="move"><type>O</type><template>
+          <template-type-parameter name="I"/>
+          <template-type-parameter name="O"/>
+        </template><parameter name="f"><paramtype>I</paramtype></parameter><parameter name="l"><paramtype>I</paramtype></parameter><parameter name="result"><paramtype>O</paramtype></parameter><description><para><emphasis role="bold">Effects</emphasis>: Moves elements in the range [first,last) into the range [result,result + (last - first)) starting from first and proceeding to last. For each non-negative integer n &lt; (last-first), performs *(result + n) = <link linkend="doxygen.namespaceboost_1afea094bc29f91eaa54e99510e1079ef2">boost::move</link> (*(first + n)).</para><para><emphasis role="bold">Effects</emphasis>: result + (last - first).</para><para><emphasis role="bold">Requires</emphasis>: result shall not be in the range [first,last).</para><para><emphasis role="bold">Complexity</emphasis>: Exactly last - first move assignments. </para></description></function>
+<function id="doxygen.namespaceboost_1aeebb703aa304e4f9543ff790828b9a3c" name="move_backward"><type>O</type><template>
+          <template-type-parameter name="I"/>
+          <template-type-parameter name="O"/>
+        </template><parameter name="f"><paramtype>I</paramtype></parameter><parameter name="l"><paramtype>I</paramtype></parameter><parameter name="result"><paramtype>O</paramtype></parameter><description><para><emphasis role="bold">Effects</emphasis>: Moves elements in the range [first,last) into the range [result - (last-first),result) starting from last - 1 and proceeding to first. For each positive integer n &lt;= (last - first), performs *(result - n) = <link linkend="doxygen.namespaceboost_1afea094bc29f91eaa54e99510e1079ef2">boost::move</link>(*(last - n)).</para><para><emphasis role="bold">Requires</emphasis>: result shall not be in the range [first,last).</para><para><emphasis role="bold">Returns</emphasis>: result - (last - first).</para><para><emphasis role="bold">Complexity</emphasis>: Exactly last - first assignments. </para></description></function>
+<function id="doxygen.namespaceboost_1aa154babb1903b8b411f0bc5f2488590b" name="uninitialized_move"><type>F</type><template>
+          <template-type-parameter name="I"/>
+          <template-type-parameter name="F"/>
+        </template><parameter name="f"><paramtype>I</paramtype></parameter><parameter name="l"><paramtype>I</paramtype></parameter><parameter name="r"><paramtype>F</paramtype></parameter><purpose>defined(BOOST_MOVE_USE_STANDARD_LIBRARY_MOVE) </purpose><description><para><emphasis role="bold">Effects</emphasis>: <programlisting language="c++">for (; first != last; ++result, ++first)
+   new (static_cast&lt;void*&gt;(&amp;*result))
+      typename iterator_traits&lt;ForwardIterator&gt;::value_type(<link linkend="doxygen.namespaceboost_1afea094bc29f91eaa54e99510e1079ef2">boost::move</link>(*first));
+</programlisting></para><para><emphasis role="bold">Returns</emphasis>: result </para></description></function>
+</namespace>
+</header>
+<header id="doxygen.move_8hpp" name="boost/move/move.hpp">
+<para>A general library header that includes the rest of top-level headers. </para></header>
+<header id="doxygen.traits_8hpp" name="boost/move/traits.hpp">
+<namespace name="boost">
+<struct id="doxygen.structboost_1_1has__nothrow__move" name="has_nothrow_move"><template>
+      <template-type-parameter name="T"/>
+    </template><description><programlisting>boost::is_nothrow_move_constructible&lt;T&gt;::value &amp;&amp; boost::is_nothrow_move_assignable&lt;T&gt;::value </programlisting></description><data-member id="doxygen.structboost_1_1has__nothrow__move_1a9e316eb238052f9337680f9f385706e5" name="value" specifiers="static"><type>const bool</type></data-member>
+</struct><struct id="doxygen.structboost_1_1has__trivial__destructor__after__move" name="has_trivial_destructor_after_move"><template>
+      <template-type-parameter name="T"/>
+    </template><description><para>If this trait yields to true (<emphasis><link linkend="doxygen.structboost_1_1has__trivial__destructor__after__move">has_trivial_destructor_after_move</link> &lt;T&gt;::value == true</emphasis>) means that if T is used as argument of a move construction/assignment, there is no need to call T's destructor. This optimization tipically is used to improve containers' performance.</para><para>By default this trait is true if the type has trivial destructor, every class should specialize this trait if it wants to improve performance when inserted in containers. </para></description></struct>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</header>
+<header id="doxygen.unique__ptr_8hpp" name="boost/move/unique_ptr.hpp">
+<para>Describes the smart pointer unique_ptr, a drop-in replacement for std::unique_ptr, usable also from C++03 compilers.</para><para>Main differences from std::unique_ptr to avoid heavy dependencies, specially in C++03 compilers:<itemizedlist>
+<listitem><para><computeroutput>operator &lt; </computeroutput> uses pointer <computeroutput>operator &lt; </computeroutput>instead of <computeroutput>std::less&lt;common_type&gt;</computeroutput>. This avoids dependencies on <computeroutput>std::common_type</computeroutput> and <computeroutput>std::less</computeroutput> (<computeroutput>&lt;type_traits&gt;/&lt;functional&gt;</computeroutput> headers). In C++03 this avoid pulling Boost.Typeof and other cascading dependencies. As in all Boost platforms <computeroutput>operator &lt;</computeroutput> on raw pointers and other smart pointers provides strict weak ordering in practice this should not be a problem for users.</para>
+</listitem><listitem><para>assignable from literal 0 for compilers without nullptr</para>
+</listitem><listitem><para><computeroutput>unique_ptr&lt;T[]&gt;</computeroutput> is constructible and assignable from <computeroutput>unique_ptr&lt;U[]&gt;</computeroutput> if cv-less T and cv-less U are the same type and T is more CV qualified than U. </para>
+</listitem></itemizedlist>
+</para><namespace name="boost">
+<namespace name="movelib">
+<class id="doxygen.classboost_1_1movelib_1_1unique__ptr" name="unique_ptr"><template>
+      <template-type-parameter name="T"><purpose><para>Provides the type of the stored pointer. </para></purpose></template-type-parameter>
+      <template-type-parameter name="D"><default>default_delete&lt;T&gt;</default><purpose><para>The deleter type:<itemizedlist>
+<listitem><para>The default type for the template parameter D is <link linkend="doxygen.structboost_1_1movelib_1_1default__delete">default_delete</link>. A client-supplied template argument D shall be a function object type, lvalue-reference to function, or lvalue-reference to function object type for which, given a value d of type D and a value ptr of type <link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1a61f57fbe5f2045e9c53db276e3fe0fe6">unique_ptr&lt;T, D&gt;::pointer</link>, the expression d(ptr) is valid and has the effect of disposing of the pointer as appropriate for that deleter.</para>
+</listitem><listitem><para>If the deleter's type D is not a reference type, D shall satisfy the requirements of Destructible.</para>
+</listitem><listitem><para>If the type <computeroutput>remove_reference&lt;D&gt;::type::pointer</computeroutput> exists, it shall satisfy the requirements of NullablePointer. </para>
+</listitem></itemizedlist>
+</para></purpose></template-type-parameter>
+    </template><description><para>A unique pointer is an object that owns another object and manages that other object through a pointer.</para><para>More precisely, a unique pointer is an object u that stores a pointer to a second object p and will dispose of p when u is itself destroyed (e.g., when leaving block scope). In this context, u is said to own p.</para><para>The mechanism by which u disposes of p is known as p's associated deleter, a function object whose correct invocation results in p's appropriate disposition (typically its deletion).</para><para>Let the notation u.p denote the pointer stored by u, and let u.d denote the associated deleter. Upon request, u can reset (replace) u.p and u.d with another pointer and deleter, but must properly dispose of its owned object via the associated deleter before such replacement is considered completed.</para><para>Additionally, u can, upon request, transfer ownership to another unique pointer u2. Upon completion of such a transfer, the following postconditions hold:<itemizedlist>
+<listitem><para>u2.p is equal to the pre-transfer u.p,</para>
+</listitem><listitem><para>u.p is equal to nullptr, and</para>
+</listitem><listitem><para>if the pre-transfer u.d maintained state, such state has been transferred to u2.d.</para>
+</listitem></itemizedlist>
+</para><para>As in the case of a reset, u2 must properly dispose of its pre-transfer owned object via the pre-transfer associated deleter before the ownership transfer is considered complete.</para><para>Each object of a type U instantiated from the <link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr">unique_ptr</link> template specified in this subclause has the strict ownership semantics, specified above, of a unique pointer. In partial satisfaction of these semantics, each such U is MoveConstructible and MoveAssignable, but is not CopyConstructible nor CopyAssignable. The template parameter T of <link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr">unique_ptr</link> may be an incomplete type.</para><para>The uses of <link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr">unique_ptr</link> include providing exception safety for dynamically allocated memory, passing ownership of dynamically allocated memory to a function, and returning dynamically allocated memory from a function.</para><para>If T is an array type (e.g. unique_ptr&lt;MyType[]&gt;) the interface is slightly altered:<itemizedlist>
+<listitem><para>Pointers to types derived from T are rejected by the constructors, and by reset.</para>
+</listitem><listitem><para>The observers <computeroutput>operator*</computeroutput> and <computeroutput>operator-&gt;</computeroutput> are not provided.</para>
+</listitem><listitem><para>The indexing observer <computeroutput>operator[]</computeroutput> is provided.</para>
+</listitem></itemizedlist>
+</para><para>
+</para></description><typedef id="doxygen.classboost_1_1movelib_1_1unique__ptr_1a61f57fbe5f2045e9c53db276e3fe0fe6" name="pointer"><description><para>If the type <computeroutput>remove_reference&lt;D&gt;::type::pointer</computeroutput> exists, then it shall be a synonym for <computeroutput>remove_reference&lt;D&gt;::type::pointer</computeroutput>. Otherwise it shall be a synonym for T*. </para></description><type>see_documentation</type></typedef>
+<typedef id="doxygen.classboost_1_1movelib_1_1unique__ptr_1a25983c427779df5d154485057e290895" name="element_type"><description><para>If T is an array type, then element_type is equal to T. Otherwise, if T is a type in the form U[], element_type is equal to U. </para></description><type>see_documentation</type></typedef>
+<typedef id="doxygen.classboost_1_1movelib_1_1unique__ptr_1a88953b7bdf7aff47b00da6b707282283" name="deleter_type"><type>D</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1movelib_1_1unique__ptr_1a434b6b5a8408f3510f9db8a2ec4eea9a" cv="= delete"><parameter name=""><paramtype>const <classname>unique_ptr</classname> &amp;</paramtype></parameter></constructor>
+<copy-assignment id="doxygen.classboost_1_1movelib_1_1unique__ptr_1ae80289d0b35dbf84a4229360d1013aca" cv="= delete"><type><classname>unique_ptr</classname> &amp;</type><parameter name=""><paramtype>const <classname>unique_ptr</classname> &amp;</paramtype></parameter></copy-assignment>
+<constructor id="doxygen.classboost_1_1movelib_1_1unique__ptr_1ad0e421a116aa6557cc1f06cbdbdd332a" cv="noexcept"><description><para><emphasis role="bold">Requires</emphasis>: D shall satisfy the requirements of DefaultConstructible, and that construction shall not throw an exception.</para><para><emphasis role="bold">Effects</emphasis>: Constructs a <link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr">unique_ptr</link> object that owns nothing, value-initializing the stored pointer and the stored deleter.</para><para><emphasis role="bold">Postconditions</emphasis>: <computeroutput><link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1ac049e152f7db622af3303ffb6570d8dc">get()</link> == nullptr</computeroutput>. <computeroutput><link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1a5755a08d37d7c098c15e0abaa79d5c1d">get_deleter()</link></computeroutput> returns a reference to the stored deleter.</para><para><emphasis role="bold">Remarks</emphasis>: If this constructor is instantiated with a pointer type or reference type for the template argument D, the program is ill-formed. <sbr/>
+ </para></description></constructor>
+<constructor id="doxygen.classboost_1_1movelib_1_1unique__ptr_1ac84470bd933f39d379f29eac44decb86" cv="noexcept"><parameter name=""><paramtype>std::nullptr_t</paramtype></parameter><description><para><emphasis role="bold">Effects</emphasis>: Same as <computeroutput><link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1ad0e421a116aa6557cc1f06cbdbdd332a">unique_ptr()</link></computeroutput> (default constructor). </para></description></constructor>
+<constructor id="doxygen.classboost_1_1movelib_1_1unique__ptr_1a9893977a38a6dace9de1ed8ef5f8891b" specifiers="explicit" cv="noexcept"><template>
+          <template-type-parameter name="Pointer"/>
+        </template><parameter name="BOOST_MOVE_DOCIGN"><paramtype>Pointer p </paramtype></parameter><description><para><emphasis role="bold">Requires</emphasis>: D shall satisfy the requirements of DefaultConstructible, and that construction shall not throw an exception.</para><para><emphasis role="bold">Effects</emphasis>: Constructs a <link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr">unique_ptr</link> which owns p, initializing the stored pointer with p and value initializing the stored deleter.</para><para><emphasis role="bold">Postconditions</emphasis>: <computeroutput><link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1ac049e152f7db622af3303ffb6570d8dc">get()</link> == p</computeroutput>. <computeroutput><link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1a5755a08d37d7c098c15e0abaa79d5c1d">get_deleter()</link></computeroutput> returns a reference to the stored deleter.</para><para><emphasis role="bold">Remarks</emphasis>: If this constructor is instantiated with a pointer type or reference type for the template argument D, the program is ill-formed. This constructor shall not participate in overload resolution unless:<itemizedlist>
+<listitem><para>If T is not an array type and Pointer is implicitly convertible to pointer.</para>
+</listitem><listitem><para>If T is an array type and Pointer is a more CV qualified pointer to element_type. </para>
+</listitem></itemizedlist>
+</para></description></constructor>
+<constructor id="doxygen.classboost_1_1movelib_1_1unique__ptr_1a63b32abdc49a40b41539420cb0ececdd" cv="noexcept"><template>
+          <template-type-parameter name="Pointer"/>
+        </template><parameter name="p"><paramtype>Pointer</paramtype></parameter><parameter name="BOOST_MOVE_DOCIGN"><paramtype>see_documentation d1 </paramtype></parameter><description><para>The signature of this constructor depends upon whether D is a reference type.<itemizedlist>
+<listitem><para>If D is non-reference type A, then the signature is <computeroutput>unique_ptr(pointer p, const A&amp; d)</computeroutput>.</para>
+</listitem><listitem><para>If D is an lvalue-reference type A&amp;, then the signature is <computeroutput>unique_ptr(pointer p, A&amp; d)</computeroutput>.</para>
+</listitem><listitem><para>If D is an lvalue-reference type const A&amp;, then the signature is <computeroutput>unique_ptr(pointer p, const A&amp; d)</computeroutput>.</para>
+</listitem></itemizedlist>
+</para><para><emphasis role="bold">Requires</emphasis>: Either<itemizedlist>
+<listitem><para>D is not an lvalue-reference type and d is an lvalue or const rvalue. D shall satisfy the requirements of CopyConstructible, and the copy constructor of D shall not throw an exception. This <link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr">unique_ptr</link> will hold a copy of d.</para>
+</listitem><listitem><para>D is an lvalue-reference type and d is an lvalue. the type which D references need not be CopyConstructible nor MoveConstructible. This <link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr">unique_ptr</link> will hold a D which refers to the lvalue d.</para>
+</listitem></itemizedlist>
+</para><para><emphasis role="bold">Effects</emphasis>: Constructs a <link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr">unique_ptr</link> object which owns p, initializing the stored pointer with p and initializing the deleter as described above.</para><para><emphasis role="bold">Postconditions</emphasis>: <computeroutput><link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1ac049e152f7db622af3303ffb6570d8dc">get()</link> == p</computeroutput>. <computeroutput><link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1a5755a08d37d7c098c15e0abaa79d5c1d">get_deleter()</link></computeroutput> returns a reference to the stored deleter. If D is a reference type then <computeroutput><link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1a5755a08d37d7c098c15e0abaa79d5c1d">get_deleter()</link></computeroutput> returns a reference to the lvalue d.</para><para><emphasis role="bold">Remarks</emphasis>: This constructor shall not participate in overload resolution unless:<itemizedlist>
+<listitem><para>If T is not an array type and Pointer is implicitly convertible to pointer.</para>
+</listitem><listitem><para>If T is an array type and Pointer is a more CV qualified pointer to element_type. </para>
+</listitem></itemizedlist>
+</para></description></constructor>
+<constructor id="doxygen.classboost_1_1movelib_1_1unique__ptr_1a333a61cd06fa9f513eeb3d65102ec5e8" cv="noexcept"><parameter name=""><paramtype>std::nullptr_t</paramtype></parameter><parameter name="d1"><paramtype>see_documentation</paramtype></parameter><description><para><emphasis role="bold">Effects</emphasis>: Same effects as <computeroutput>template&lt;class Pointer&gt; unique_ptr(Pointer p, deleter_arg_type1 d1)</computeroutput> and additionally <computeroutput><link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1ac049e152f7db622af3303ffb6570d8dc">get()</link> == nullptr</computeroutput> </para></description></constructor>
+<constructor id="doxygen.classboost_1_1movelib_1_1unique__ptr_1a05830d89d7865a79e96ba1dd4dc2c4ae" cv="noexcept"><template>
+          <template-type-parameter name="Pointer"/>
+        </template><parameter name="p"><paramtype>Pointer</paramtype></parameter><parameter name="BOOST_MOVE_DOCIGN"><paramtype>see_documentation d2 </paramtype></parameter><description><para>The signature of this constructor depends upon whether D is a reference type.<itemizedlist>
+<listitem><para>If D is non-reference type A, then the signature is <computeroutput>unique_ptr(pointer p, A&amp;&amp; d)</computeroutput>.</para>
+</listitem><listitem><para>If D is an lvalue-reference type A&amp;, then the signature is <computeroutput>unique_ptr(pointer p, A&amp;&amp; d)</computeroutput>.</para>
+</listitem><listitem><para>If D is an lvalue-reference type const A&amp;, then the signature is <computeroutput>unique_ptr(pointer p, const A&amp;&amp; d)</computeroutput>.</para>
+</listitem></itemizedlist>
+</para><para><emphasis role="bold">Requires</emphasis>: Either<itemizedlist>
+<listitem><para>D is not an lvalue-reference type and d is a non-const rvalue. D shall satisfy the requirements of MoveConstructible, and the move constructor of D shall not throw an exception. This <link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr">unique_ptr</link> will hold a value move constructed from d.</para>
+</listitem><listitem><para>D is an lvalue-reference type and d is an rvalue, the program is ill-formed.</para>
+</listitem></itemizedlist>
+</para><para><emphasis role="bold">Effects</emphasis>: Constructs a <link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr">unique_ptr</link> object which owns p, initializing the stored pointer with p and initializing the deleter as described above.</para><para><emphasis role="bold">Postconditions</emphasis>: <computeroutput><link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1ac049e152f7db622af3303ffb6570d8dc">get()</link> == p</computeroutput>. <computeroutput><link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1a5755a08d37d7c098c15e0abaa79d5c1d">get_deleter()</link></computeroutput> returns a reference to the stored deleter. If D is a reference type then <computeroutput><link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1a5755a08d37d7c098c15e0abaa79d5c1d">get_deleter()</link></computeroutput> returns a reference to the lvalue d.</para><para><emphasis role="bold">Remarks</emphasis>: This constructor shall not participate in overload resolution unless:<itemizedlist>
+<listitem><para>If T is not an array type and Pointer is implicitly convertible to pointer.</para>
+</listitem><listitem><para>If T is an array type and Pointer is a more CV qualified pointer to element_type. </para>
+</listitem></itemizedlist>
+</para></description></constructor>
+<constructor id="doxygen.classboost_1_1movelib_1_1unique__ptr_1a8b6428cdf090051ddbf7c4e19ed00047" cv="noexcept"><parameter name=""><paramtype>std::nullptr_t</paramtype></parameter><parameter name="d2"><paramtype>see_documentation</paramtype></parameter><description><para><emphasis role="bold">Effects</emphasis>: Same effects as <computeroutput>template&lt;class Pointer&gt; unique_ptr(Pointer p, deleter_arg_type2 d2)</computeroutput> and additionally <computeroutput><link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1ac049e152f7db622af3303ffb6570d8dc">get()</link> == nullptr</computeroutput> </para></description></constructor>
+<constructor id="doxygen.classboost_1_1movelib_1_1unique__ptr_1a0fdf96c7ed4f72681b3075d896de3ec7" cv="noexcept"><parameter name="u"><paramtype><classname>unique_ptr</classname> &amp;&amp;</paramtype></parameter><description><para><emphasis role="bold">Requires</emphasis>: If D is not a reference type, D shall satisfy the requirements of MoveConstructible. Construction of the deleter from an rvalue of type D shall not throw an exception.</para><para><emphasis role="bold">Effects</emphasis>: Constructs a <link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr">unique_ptr</link> by transferring ownership from u to *this. If D is a reference type, this deleter is copy constructed from u's deleter; otherwise, this deleter is move constructed from u's deleter.</para><para><emphasis role="bold">Postconditions</emphasis>: <computeroutput><link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1ac049e152f7db622af3303ffb6570d8dc">get()</link></computeroutput> yields the value u.get() yielded before the construction. <computeroutput><link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1a5755a08d37d7c098c15e0abaa79d5c1d">get_deleter()</link></computeroutput> returns a reference to the stored deleter that was constructed from u.get_deleter(). If D is a reference type then <computeroutput><link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1a5755a08d37d7c098c15e0abaa79d5c1d">get_deleter()</link></computeroutput> and <computeroutput>u.get_deleter()</computeroutput> both reference the same lvalue deleter. </para></description></constructor>
+<constructor id="doxygen.classboost_1_1movelib_1_1unique__ptr_1a5233d8911bc0ee6306956c5af463eff8" cv="noexcept"><template>
+          <template-type-parameter name="U"/>
+          <template-type-parameter name="E"/>
+        </template><parameter name="BOOST_MOVE_DOCIGN"><paramtype>BOOST_RV_REF_BEG_IF_CXX11  <classname>unique_ptr</classname>&lt; U, E &gt; BOOST_RV_REF_END_IF_CXX11 u </paramtype></parameter><description><para><emphasis role="bold">Requires</emphasis>: If E is not a reference type, construction of the deleter from an rvalue of type E shall be well formed and shall not throw an exception. Otherwise, E is a reference type and construction of the deleter from an lvalue of type E shall be well formed and shall not throw an exception.</para><para><emphasis role="bold">Remarks</emphasis>: This constructor shall not participate in overload resolution unless:<itemizedlist>
+<listitem><para><computeroutput><link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1a61f57fbe5f2045e9c53db276e3fe0fe6">unique_ptr&lt;U, E&gt;::pointer</link></computeroutput> is implicitly convertible to pointer,</para>
+</listitem><listitem><para>U is not an array type, and</para>
+</listitem><listitem><para>either D is a reference type and E is the same type as D, or D is not a reference type and E is implicitly convertible to D.</para>
+</listitem></itemizedlist>
+</para><para><emphasis role="bold">Effects</emphasis>: Constructs a <link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr">unique_ptr</link> by transferring ownership from u to *this. If E is a reference type, this deleter is copy constructed from u's deleter; otherwise, this deleter is move constructed from u's deleter.</para><para><emphasis role="bold">Postconditions</emphasis>: <computeroutput><link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1ac049e152f7db622af3303ffb6570d8dc">get()</link></computeroutput> yields the value <computeroutput>u.get()</computeroutput> yielded before the construction. <computeroutput><link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1a5755a08d37d7c098c15e0abaa79d5c1d">get_deleter()</link></computeroutput> returns a reference to the stored deleter that was constructed from <computeroutput>u.get_deleter()</computeroutput>. </para></description></constructor>
+<destructor id="doxygen.classboost_1_1movelib_1_1unique__ptr_1aff0e26e68cf88040959ad6bb8a6504e3"><description><para><emphasis role="bold">Requires</emphasis>: The expression <computeroutput><link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1a5755a08d37d7c098c15e0abaa79d5c1d">get_deleter()</link>(<link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1ac049e152f7db622af3303ffb6570d8dc">get()</link>)</computeroutput> shall be well formed, shall have well-defined behavior, and shall not throw exceptions.</para><para><emphasis role="bold">Effects</emphasis>: If <computeroutput><link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1ac049e152f7db622af3303ffb6570d8dc">get()</link> == nullpt1r</computeroutput> there are no effects. Otherwise <computeroutput><link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1a5755a08d37d7c098c15e0abaa79d5c1d">get_deleter()</link>(<link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1ac049e152f7db622af3303ffb6570d8dc">get()</link>)</computeroutput>.</para><para><emphasis role="bold">Note</emphasis>: The use of <link linkend="doxygen.structboost_1_1movelib_1_1default__delete">default_delete</link> requires T to be a complete type </para></description></destructor>
+<copy-assignment id="doxygen.classboost_1_1movelib_1_1unique__ptr_1a09a9280f17b973755b82bc3794924fb9" cv="noexcept"><type><classname>unique_ptr</classname> &amp;</type><parameter name="u"><paramtype><classname>unique_ptr</classname> &amp;&amp;</paramtype></parameter><description><para><emphasis role="bold">Requires</emphasis>: If D is not a reference type, D shall satisfy the requirements of MoveAssignable and assignment of the deleter from an rvalue of type D shall not throw an exception. Otherwise, D is a reference type; <computeroutput>remove_reference&lt;D&gt;::type</computeroutput> shall satisfy the CopyAssignable requirements and assignment of the deleter from an lvalue of type D shall not throw an exception.</para><para><emphasis role="bold">Effects</emphasis>: Transfers ownership from u to *this as if by calling <computeroutput>reset(u.release())</computeroutput> followed by <computeroutput><link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1a5755a08d37d7c098c15e0abaa79d5c1d">get_deleter()</link> = std::forward&lt;D&gt;(u.get_deleter())</computeroutput>.</para><para><emphasis role="bold">Returns</emphasis>: *this. </para></description></copy-assignment>
+<copy-assignment id="doxygen.classboost_1_1movelib_1_1unique__ptr_1a43068f4720698d4b362aeb0aa86c7d0b" cv="noexcept"><type><classname>unique_ptr</classname> &amp;</type><template>
+          <template-type-parameter name="U"/>
+          <template-type-parameter name="E"/>
+        </template><parameter name="u"><paramtype><classname>unique_ptr</classname>&lt; U, E &gt; &amp;&amp;</paramtype></parameter><description><para><emphasis role="bold">Requires</emphasis>: If E is not a reference type, assignment of the deleter from an rvalue of type E shall be well-formed and shall not throw an exception. Otherwise, E is a reference type and assignment of the deleter from an lvalue of type E shall be well-formed and shall not throw an exception.</para><para><emphasis role="bold">Remarks</emphasis>: This operator shall not participate in overload resolution unless:<itemizedlist>
+<listitem><para><computeroutput><link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1a61f57fbe5f2045e9c53db276e3fe0fe6">unique_ptr&lt;U, E&gt;::pointer</link></computeroutput> is implicitly convertible to pointer and</para>
+</listitem><listitem><para>U is not an array type.</para>
+</listitem></itemizedlist>
+</para><para><emphasis role="bold">Effects</emphasis>: Transfers ownership from u to *this as if by calling <computeroutput>reset(u.release())</computeroutput> followed by <computeroutput><link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1a5755a08d37d7c098c15e0abaa79d5c1d">get_deleter()</link> = std::forward&lt;E&gt;(u.get_deleter())</computeroutput>.</para><para><emphasis role="bold">Returns</emphasis>: *this. </para></description></copy-assignment>
+<copy-assignment id="doxygen.classboost_1_1movelib_1_1unique__ptr_1a499853437dcfd841f9dedcdf3dbe1e5b" cv="noexcept"><type><classname>unique_ptr</classname> &amp;</type><parameter name=""><paramtype>std::nullptr_t</paramtype></parameter><description><para><emphasis role="bold">Effects</emphasis>: <computeroutput><link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1ac98921287592016bc8ee3b8288443f31">reset()</link></computeroutput>.</para><para><emphasis role="bold">Postcondition</emphasis>: <computeroutput><link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1ac049e152f7db622af3303ffb6570d8dc">get()</link> == nullptr</computeroutput></para><para><emphasis role="bold">Returns</emphasis>: *this. </para></description></copy-assignment>
+<method id="doxygen.classboost_1_1movelib_1_1unique__ptr_1a2b7eff4313f90a5b4671c3633ec8918c" name="operator*" cv="const noexcept"><type>element_type &amp;</type><description><para><emphasis role="bold">Requires</emphasis>: <computeroutput><link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1ac049e152f7db622af3303ffb6570d8dc">get()</link> != nullptr</computeroutput>.</para><para><emphasis role="bold">Returns</emphasis>: <computeroutput>*get()</computeroutput>.</para><para><emphasis role="bold">Remarks&lt;/b: If T is an array type, the program is ill-formed. </emphasis></para></description></method>
+<method id="doxygen.classboost_1_1movelib_1_1unique__ptr_1a0eb3ba945856917b3d868d899b391eac" name="operator[]" cv="const noexcept"><type>element_type &amp;</type><parameter name="i"><paramtype>std::size_t</paramtype></parameter><description><para><emphasis role="bold">Requires</emphasis>: i &lt; the number of elements in the array to which the stored pointer points.</para><para><emphasis role="bold">Returns</emphasis>: <computeroutput><link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1ac049e152f7db622af3303ffb6570d8dc">get()</link>[i]</computeroutput>.</para><para><emphasis role="bold">Remarks&lt;/b: If T is not an array type, the program is ill-formed. </emphasis></para></description></method>
+<method id="doxygen.classboost_1_1movelib_1_1unique__ptr_1a67d232aa1ff6422a600227d641294036" name="operator-&gt;" cv="const noexcept"><type>pointer</type><description><para><emphasis role="bold">Requires</emphasis>: <computeroutput><link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1ac049e152f7db622af3303ffb6570d8dc">get()</link> != nullptr</computeroutput>.</para><para><emphasis role="bold">Returns</emphasis>: <computeroutput><link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1ac049e152f7db622af3303ffb6570d8dc">get()</link></computeroutput>.</para><para><emphasis role="bold">Note</emphasis>: use typically requires that T be a complete type.</para><para><emphasis role="bold">Remarks&lt;/b: If T is an array type, the program is ill-formed. </emphasis></para></description></method>
+<method id="doxygen.classboost_1_1movelib_1_1unique__ptr_1ac049e152f7db622af3303ffb6570d8dc" name="get" cv="const noexcept"><type>pointer</type><description><para><emphasis role="bold">Returns</emphasis>: The stored pointer. </para></description></method>
+<method id="doxygen.classboost_1_1movelib_1_1unique__ptr_1a5755a08d37d7c098c15e0abaa79d5c1d" name="get_deleter" cv="noexcept"><type>D &amp;</type><description><para><emphasis role="bold">Returns</emphasis>: A reference to the stored deleter. </para></description></method>
+<method id="doxygen.classboost_1_1movelib_1_1unique__ptr_1a4c912f73a87b0e16f7a668eeffa73b5b" name="get_deleter" cv="const noexcept"><type>const D &amp;</type><description><para><emphasis role="bold">Returns</emphasis>: A reference to the stored deleter. </para></description></method>
+<method id="doxygen.classboost_1_1movelib_1_1unique__ptr_1ac89be1bf6940adfbc95b5177a92d32ec" name="conversion-operator" cv="const noexcept" specifiers="explicit"><type>bool</type><description><para><emphasis role="bold">Returns</emphasis>: Returns: <link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1ac049e152f7db622af3303ffb6570d8dc">get()</link> != nullptr. </para></description></method>
+<method id="doxygen.classboost_1_1movelib_1_1unique__ptr_1ad3edbc6d5376caf2bf064e62e67d03c4" name="release" cv="noexcept"><type>pointer</type><description><para><emphasis role="bold">Postcondition</emphasis>: <computeroutput><link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1ac049e152f7db622af3303ffb6570d8dc">get()</link> == nullptr</computeroutput>.</para><para><emphasis role="bold">Returns</emphasis>: The value <computeroutput><link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1ac049e152f7db622af3303ffb6570d8dc">get()</link></computeroutput> had at the start of the call to release. <sbr/>
+ </para></description></method>
+<method id="doxygen.classboost_1_1movelib_1_1unique__ptr_1a83d6cb55b57b798267578b76e037c33c" name="reset" cv="noexcept"><type>void</type><template>
+          <template-type-parameter name="Pointer"/>
+        </template><parameter name="p"><paramtype>Pointer</paramtype></parameter><description><para><emphasis role="bold">Requires</emphasis>: The expression <computeroutput><link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1a5755a08d37d7c098c15e0abaa79d5c1d">get_deleter()</link>(<link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1ac049e152f7db622af3303ffb6570d8dc">get()</link>)</computeroutput> shall be well formed, shall have well-defined behavior, and shall not throw exceptions.</para><para><emphasis role="bold">Effects</emphasis>: assigns p to the stored pointer, and then if the old value of the stored pointer, old_p, was not equal to nullptr, calls <computeroutput><link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1a5755a08d37d7c098c15e0abaa79d5c1d">get_deleter()</link>(old_p)</computeroutput>. Note: The order of these operations is significant because the call to <computeroutput><link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1a5755a08d37d7c098c15e0abaa79d5c1d">get_deleter()</link></computeroutput> may destroy *this.</para><para><emphasis role="bold">Postconditions</emphasis>: <computeroutput><link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1ac049e152f7db622af3303ffb6570d8dc">get()</link> == p</computeroutput>. Note: The postcondition does not hold if the call to <computeroutput><link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1a5755a08d37d7c098c15e0abaa79d5c1d">get_deleter()</link></computeroutput> destroys *this since <computeroutput>this-&gt;<link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1ac049e152f7db622af3303ffb6570d8dc">get()</link></computeroutput> is no longer a valid expression.</para><para><emphasis role="bold">Remarks</emphasis>: This constructor shall not participate in overload resolution unless:<itemizedlist>
+<listitem><para>If T is not an array type and Pointer is implicitly convertible to pointer.</para>
+</listitem><listitem><para>If T is an array type and Pointer is a more CV qualified pointer to element_type. </para>
+</listitem></itemizedlist>
+</para></description></method>
+<method id="doxygen.classboost_1_1movelib_1_1unique__ptr_1ac98921287592016bc8ee3b8288443f31" name="reset" cv="noexcept"><type>void</type><description><para><emphasis role="bold">Requires</emphasis>: The expression <computeroutput><link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1a5755a08d37d7c098c15e0abaa79d5c1d">get_deleter()</link>(<link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1ac049e152f7db622af3303ffb6570d8dc">get()</link>)</computeroutput> shall be well formed, shall have well-defined behavior, and shall not throw exceptions.</para><para><emphasis role="bold">Effects</emphasis>: assigns nullptr to the stored pointer, and then if the old value of the stored pointer, old_p, was not equal to nullptr, calls <computeroutput><link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1a5755a08d37d7c098c15e0abaa79d5c1d">get_deleter()</link>(old_p)</computeroutput>. Note: The order of these operations is significant because the call to <computeroutput><link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1a5755a08d37d7c098c15e0abaa79d5c1d">get_deleter()</link></computeroutput> may destroy *this.</para><para><emphasis role="bold">Postconditions</emphasis>: <computeroutput><link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1ac049e152f7db622af3303ffb6570d8dc">get()</link> == p</computeroutput>. Note: The postcondition does not hold if the call to <computeroutput><link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1a5755a08d37d7c098c15e0abaa79d5c1d">get_deleter()</link></computeroutput> destroys *this since <computeroutput>this-&gt;<link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1ac049e152f7db622af3303ffb6570d8dc">get()</link></computeroutput> is no longer a valid expression. </para></description></method>
+<method id="doxygen.classboost_1_1movelib_1_1unique__ptr_1af5258951c4b8999ee83a2ad15db4f05c" name="reset" cv="noexcept"><type>void</type><parameter name=""><paramtype>std::nullptr_t</paramtype></parameter><description><para><emphasis role="bold">Effects</emphasis>: Same as <computeroutput><link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1ac98921287592016bc8ee3b8288443f31">reset()</link></computeroutput> </para></description></method>
+<method id="doxygen.classboost_1_1movelib_1_1unique__ptr_1a1a7ea7665a7d0cccf982d52db05753be" name="swap" cv="noexcept"><type>void</type><parameter name="u"><paramtype><classname>unique_ptr</classname> &amp;</paramtype></parameter><description><para><emphasis role="bold">Requires</emphasis>: <computeroutput><link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1a5755a08d37d7c098c15e0abaa79d5c1d">get_deleter()</link></computeroutput> shall be swappable and shall not throw an exception under swap.</para><para><emphasis role="bold">Effects</emphasis>: Invokes swap on the stored pointers and on the stored deleters of *this and u. </para></description></method>
+</method-group>
+</class><function id="doxygen.unique__ptr_8hpp_1a8cd580734b87cf062a9a5669221eaaad" name="swap"><type>void</type><template>
+          <template-type-parameter name="T"/>
+          <template-type-parameter name="D"/>
+        </template><parameter name="x"><paramtype><classname>unique_ptr</classname>&lt; T, D &gt; &amp;</paramtype></parameter><parameter name="y"><paramtype><classname>unique_ptr</classname>&lt; T, D &gt; &amp;</paramtype></parameter><description><para><emphasis role="bold">Effects</emphasis>: Calls <computeroutput>x.swap(y)</computeroutput>. </para></description></function>
+<function id="doxygen.unique__ptr_8hpp_1a0823826cacb5a394616f2762a50cb19d" name="operator=="><type>bool</type><template>
+          <template-type-parameter name="T1"/>
+          <template-type-parameter name="D1"/>
+          <template-type-parameter name="T2"/>
+          <template-type-parameter name="D2"/>
+        </template><parameter name="x"><paramtype>const <classname>unique_ptr</classname>&lt; T1, D1 &gt; &amp;</paramtype></parameter><parameter name="y"><paramtype>const <classname>unique_ptr</classname>&lt; T2, D2 &gt; &amp;</paramtype></parameter><description><para><emphasis role="bold">Returns</emphasis>: <computeroutput>x.get() == y.get()</computeroutput>. </para></description></function>
+<function id="doxygen.unique__ptr_8hpp_1a034c9e5d69293cf93a9074e50eefdafc" name="operator!="><type>bool</type><template>
+          <template-type-parameter name="T1"/>
+          <template-type-parameter name="D1"/>
+          <template-type-parameter name="T2"/>
+          <template-type-parameter name="D2"/>
+        </template><parameter name="x"><paramtype>const <classname>unique_ptr</classname>&lt; T1, D1 &gt; &amp;</paramtype></parameter><parameter name="y"><paramtype>const <classname>unique_ptr</classname>&lt; T2, D2 &gt; &amp;</paramtype></parameter><description><para><emphasis role="bold">Returns</emphasis>: <computeroutput>x.get() != y.get()</computeroutput>. </para></description></function>
+<function id="doxygen.unique__ptr_8hpp_1a2dbc0b8d82718d0d444258a4ff088aa3" name="operator&lt;"><type>bool</type><template>
+          <template-type-parameter name="T1"/>
+          <template-type-parameter name="D1"/>
+          <template-type-parameter name="T2"/>
+          <template-type-parameter name="D2"/>
+        </template><parameter name="x"><paramtype>const <classname>unique_ptr</classname>&lt; T1, D1 &gt; &amp;</paramtype></parameter><parameter name="y"><paramtype>const <classname>unique_ptr</classname>&lt; T2, D2 &gt; &amp;</paramtype></parameter><description><para><emphasis role="bold">Returns</emphasis>: x.get() &lt; y.get().</para><para><emphasis role="bold">Remarks</emphasis>: This comparison shall induce a strict weak ordering betwen pointers. </para></description></function>
+<function id="doxygen.unique__ptr_8hpp_1a8daaec565fdaef0b4b00ec48dbe9b594" name="operator&lt;="><type>bool</type><template>
+          <template-type-parameter name="T1"/>
+          <template-type-parameter name="D1"/>
+          <template-type-parameter name="T2"/>
+          <template-type-parameter name="D2"/>
+        </template><parameter name="x"><paramtype>const <classname>unique_ptr</classname>&lt; T1, D1 &gt; &amp;</paramtype></parameter><parameter name="y"><paramtype>const <classname>unique_ptr</classname>&lt; T2, D2 &gt; &amp;</paramtype></parameter><description><para><emphasis role="bold">Returns</emphasis>: !(y &lt; x). </para></description></function>
+<function id="doxygen.unique__ptr_8hpp_1ac7ba889b402d0cf357c8c711b5a531c8" name="operator&gt;"><type>bool</type><template>
+          <template-type-parameter name="T1"/>
+          <template-type-parameter name="D1"/>
+          <template-type-parameter name="T2"/>
+          <template-type-parameter name="D2"/>
+        </template><parameter name="x"><paramtype>const <classname>unique_ptr</classname>&lt; T1, D1 &gt; &amp;</paramtype></parameter><parameter name="y"><paramtype>const <classname>unique_ptr</classname>&lt; T2, D2 &gt; &amp;</paramtype></parameter><description><para><emphasis role="bold">Returns</emphasis>: y &lt; x. </para></description></function>
+<function id="doxygen.unique__ptr_8hpp_1aff1f954f6073a8c640dec86992960af2" name="operator&gt;="><type>bool</type><template>
+          <template-type-parameter name="T1"/>
+          <template-type-parameter name="D1"/>
+          <template-type-parameter name="T2"/>
+          <template-type-parameter name="D2"/>
+        </template><parameter name="x"><paramtype>const <classname>unique_ptr</classname>&lt; T1, D1 &gt; &amp;</paramtype></parameter><parameter name="y"><paramtype>const <classname>unique_ptr</classname>&lt; T2, D2 &gt; &amp;</paramtype></parameter><description><para><emphasis role="bold">Returns</emphasis>:!(x &lt; y). </para></description></function>
+<function id="doxygen.unique__ptr_8hpp_1aca603b2b0f2c8a4dd4ac9c4990d2d4cf" name="operator=="><type>bool</type><template>
+          <template-type-parameter name="T"/>
+          <template-type-parameter name="D"/>
+        </template><parameter name="x"><paramtype>const <classname>unique_ptr</classname>&lt; T, D &gt; &amp;</paramtype></parameter><parameter name=""><paramtype>std::nullptr_t</paramtype></parameter><description><para><emphasis role="bold">Returns</emphasis>:!x. </para></description></function>
+<function id="doxygen.unique__ptr_8hpp_1ac95e767f9ae259c8a0b137b623d9b24f" name="operator=="><type>bool</type><template>
+          <template-type-parameter name="T"/>
+          <template-type-parameter name="D"/>
+        </template><parameter name=""><paramtype>std::nullptr_t</paramtype></parameter><parameter name="x"><paramtype>const <classname>unique_ptr</classname>&lt; T, D &gt; &amp;</paramtype></parameter><description><para><emphasis role="bold">Returns</emphasis>:!x. </para></description></function>
+<function id="doxygen.unique__ptr_8hpp_1aaf69de74cb2237384116d5152d750370" name="operator!="><type>bool</type><template>
+          <template-type-parameter name="T"/>
+          <template-type-parameter name="D"/>
+        </template><parameter name="x"><paramtype>const <classname>unique_ptr</classname>&lt; T, D &gt; &amp;</paramtype></parameter><parameter name=""><paramtype>std::nullptr_t</paramtype></parameter><description><para><emphasis role="bold">Returns</emphasis>: (bool)x. </para></description></function>
+<function id="doxygen.unique__ptr_8hpp_1ab5b836d0fa8d7f84fa4744c60386606f" name="operator!="><type>bool</type><template>
+          <template-type-parameter name="T"/>
+          <template-type-parameter name="D"/>
+        </template><parameter name=""><paramtype>std::nullptr_t</paramtype></parameter><parameter name="x"><paramtype>const <classname>unique_ptr</classname>&lt; T, D &gt; &amp;</paramtype></parameter><description><para><emphasis role="bold">Returns</emphasis>: (bool)x. </para></description></function>
+<function id="doxygen.unique__ptr_8hpp_1ac81bab8d263bb33e32dee4723c7f0899" name="operator&lt;"><type>bool</type><template>
+          <template-type-parameter name="T"/>
+          <template-type-parameter name="D"/>
+        </template><parameter name="x"><paramtype>const <classname>unique_ptr</classname>&lt; T, D &gt; &amp;</paramtype></parameter><parameter name=""><paramtype>std::nullptr_t</paramtype></parameter><description><para><emphasis role="bold">Requires</emphasis>: <computeroutput>operator </computeroutput> shall induce a strict weak ordering on <link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1a61f57fbe5f2045e9c53db276e3fe0fe6">unique_ptr&lt;T, D&gt;::pointer</link> values.</para><para><emphasis role="bold">Returns</emphasis>: Returns <computeroutput>x.get() &lt; pointer()</computeroutput>. </para></description></function>
+<function id="doxygen.unique__ptr_8hpp_1abbfad3487342ca39450ca1c1085620bd" name="operator&lt;"><type>bool</type><template>
+          <template-type-parameter name="T"/>
+          <template-type-parameter name="D"/>
+        </template><parameter name=""><paramtype>std::nullptr_t</paramtype></parameter><parameter name="x"><paramtype>const <classname>unique_ptr</classname>&lt; T, D &gt; &amp;</paramtype></parameter><description><para><emphasis role="bold">Requires</emphasis>: <computeroutput>operator </computeroutput> shall induce a strict weak ordering on <link linkend="doxygen.classboost_1_1movelib_1_1unique__ptr_1a61f57fbe5f2045e9c53db276e3fe0fe6">unique_ptr&lt;T, D&gt;::pointer</link> values.</para><para><emphasis role="bold">Returns</emphasis>: Returns <computeroutput>pointer() &lt; x.get()</computeroutput>. </para></description></function>
+<function id="doxygen.unique__ptr_8hpp_1a28047aa0c58ce91ec6b28b1b565d165f" name="operator&gt;"><type>bool</type><template>
+          <template-type-parameter name="T"/>
+          <template-type-parameter name="D"/>
+        </template><parameter name="x"><paramtype>const <classname>unique_ptr</classname>&lt; T, D &gt; &amp;</paramtype></parameter><parameter name=""><paramtype>std::nullptr_t</paramtype></parameter><description><para><emphasis role="bold">Returns</emphasis>: <computeroutput>nullptr &lt; x</computeroutput>. </para></description></function>
+<function id="doxygen.unique__ptr_8hpp_1a3449063a43a8620cc75253fa2cf37826" name="operator&gt;"><type>bool</type><template>
+          <template-type-parameter name="T"/>
+          <template-type-parameter name="D"/>
+        </template><parameter name=""><paramtype>std::nullptr_t</paramtype></parameter><parameter name="x"><paramtype>const <classname>unique_ptr</classname>&lt; T, D &gt; &amp;</paramtype></parameter><description><para><emphasis role="bold">Returns</emphasis>: <computeroutput>x &lt; nullptr</computeroutput>. </para></description></function>
+<function id="doxygen.unique__ptr_8hpp_1ac4aaf6c83ccd3f5b3c057916d6d5af3c" name="operator&lt;="><type>bool</type><template>
+          <template-type-parameter name="T"/>
+          <template-type-parameter name="D"/>
+        </template><parameter name="x"><paramtype>const <classname>unique_ptr</classname>&lt; T, D &gt; &amp;</paramtype></parameter><parameter name=""><paramtype>std::nullptr_t</paramtype></parameter><description><para><emphasis role="bold">Returns</emphasis>: <computeroutput>!(nullptr &lt; x)</computeroutput>. </para></description></function>
+<function id="doxygen.unique__ptr_8hpp_1aa3706ec1441fe9ad102bd30e7e2db7ab" name="operator&lt;="><type>bool</type><template>
+          <template-type-parameter name="T"/>
+          <template-type-parameter name="D"/>
+        </template><parameter name=""><paramtype>std::nullptr_t</paramtype></parameter><parameter name="x"><paramtype>const <classname>unique_ptr</classname>&lt; T, D &gt; &amp;</paramtype></parameter><description><para><emphasis role="bold">Returns</emphasis>: <computeroutput>!(x &lt; nullptr)</computeroutput>. </para></description></function>
+<function id="doxygen.unique__ptr_8hpp_1a85ba13ddd18091ec3c9c0c715d39099d" name="operator&gt;="><type>bool</type><template>
+          <template-type-parameter name="T"/>
+          <template-type-parameter name="D"/>
+        </template><parameter name="x"><paramtype>const <classname>unique_ptr</classname>&lt; T, D &gt; &amp;</paramtype></parameter><parameter name=""><paramtype>std::nullptr_t</paramtype></parameter><description><para><emphasis role="bold">Returns</emphasis>: <computeroutput>!(x &lt; nullptr)</computeroutput>. </para></description></function>
+<function id="doxygen.unique__ptr_8hpp_1a336aaafff7d2d82f65da308038b9579f" name="operator&gt;="><type>bool</type><template>
+          <template-type-parameter name="T"/>
+          <template-type-parameter name="D"/>
+        </template><parameter name=""><paramtype>std::nullptr_t</paramtype></parameter><parameter name="x"><paramtype>const <classname>unique_ptr</classname>&lt; T, D &gt; &amp;</paramtype></parameter><description><para><emphasis role="bold">Returns</emphasis>: <computeroutput>!(nullptr &lt; x)</computeroutput>. </para></description></function>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</header>
+<header id="doxygen.utility_8hpp" name="boost/move/utility.hpp">
+<para>This header includes core utilities from <computeroutput>&lt;<link linkend="doxygen.utility__core_8hpp">boost/move/utility_core.hpp</link>&gt;</computeroutput> and defines some more advanced utilities such as: </para><namespace name="boost">
+
+
+
+<function id="doxygen.namespaceboost_1a23dea2f7e25998d34f06f30da0932f08" name="move_if_noexcept"><type>rvalue_reference_or_const_lvalue_reference</type><template>
+          <template-type-parameter name="T"/>
+        </template><parameter name=""><paramtype>input_reference</paramtype></parameter><description><para>This function provides a way to convert a reference into a rvalue reference in compilers with rvalue references. For other compilers converts T &amp; into <emphasis>::boost::rv&lt;T&gt; &amp;</emphasis> so that move emulation is activated. Reference would be converted to rvalue reference only if input type is nothrow move constructible or if it has no copy constructor. In all other cases const reference would be returned </para></description></function>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</header>
+<header id="doxygen.utility__core_8hpp" name="boost/move/utility_core.hpp">
+<para>This header defines core utilities to ease the development of move-aware functions. This header minimizes dependencies from other libraries. </para><namespace name="boost">
+<struct id="doxygen.structboost_1_1enable__move__utility__emulation" name="enable_move_utility_emulation"><template>
+      <template-type-parameter name="T"/>
+    </template><description><para>This trait's internal boolean <computeroutput>value</computeroutput> is false in compilers with rvalue references and true in compilers without rvalue references.</para><para>A user can specialize this trait for a type T to false to SFINAE out <computeroutput>move</computeroutput> and <computeroutput>forward</computeroutput> so that the user can define a different move emulation for that type in namespace boost (e.g. another Boost library for its types) and avoid any overload ambiguity. </para></description><data-member id="doxygen.structboost_1_1enable__move__utility__emulation_1a8a8cbd269808ebedc640053adce4919f" name="value" specifiers="static"><type>const bool</type></data-member>
+</struct><function id="doxygen.namespaceboost_1afea094bc29f91eaa54e99510e1079ef2" name="move"><type>rvalue_reference</type><template>
+          <template-type-parameter name="T"/>
+        </template><parameter name=""><paramtype>input_reference</paramtype></parameter><description><para>This function provides a way to convert a reference into a rvalue reference in compilers with rvalue references. For other compilers if <computeroutput>T</computeroutput> is Boost.Move enabled type then it converts <computeroutput>T&amp;</computeroutput> into <computeroutput>::boost::rv&lt;T&gt; &amp;</computeroutput> so that move emulation is activated, else it returns <computeroutput>T &amp;</computeroutput>. </para></description></function>
+<function id="doxygen.namespaceboost_1a785d436bd44bf1232bbce76166cc7499" name="forward"><type>output_reference</type><template>
+          <template-type-parameter name="T"/>
+        </template><parameter name=""><paramtype>input_reference</paramtype></parameter><description><para>This function provides limited form of forwarding that is usually enough for in-place construction and avoids the exponential overloading for achieve the limited forwarding in C++03.</para><para>For compilers with rvalue references this function provides perfect forwarding.</para><para>Otherwise:<itemizedlist>
+<listitem><para>If input_reference binds to const ::boost::rv&lt;T&gt; &amp; then it output_reference is ::boost::rv&lt;T&gt; &amp;</para>
+</listitem><listitem><para>Else, output_reference is equal to input_reference. </para>
+</listitem></itemizedlist>
+</para></description></function>
+<function id="doxygen.namespaceboost_1ac0925183928c23b8dfe9ef5222aa2c25" name="move_if_not_lvalue_reference"><type>output_reference</type><template>
+          <template-type-parameter name="T"/>
+        </template><parameter name=""><paramtype>input_reference</paramtype></parameter><description><para><emphasis role="bold">Effects</emphasis>: Calls <computeroutput><link linkend="doxygen.namespaceboost_1afea094bc29f91eaa54e99510e1079ef2">boost::move</link></computeroutput> if <computeroutput>input_reference</computeroutput> is not a lvalue reference. Otherwise returns the reference </para></description></function>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</header>
+</library-reference>

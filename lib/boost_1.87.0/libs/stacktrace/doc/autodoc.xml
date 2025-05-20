@@ -1,0 +1,325 @@
+<?xml version="1.0" standalone="yes"?>
+<library-reference id="stacktrace.reference"><title>Reference</title><header id="doxygen.stacktrace.reference.stacktrace_8hpp" name="boost/stacktrace.hpp">
+</header>
+<header id="doxygen.stacktrace.reference.stacktrace_2stacktrace_8hpp" name="boost/stacktrace/stacktrace.hpp">
+<namespace name="boost">
+<namespace name="stacktrace">
+<class id="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace" name="basic_stacktrace"><template>
+      <template-type-parameter name="Allocator"><purpose><para>Allocator to use during stack capture. </para></purpose></template-type-parameter>
+    </template><description><para>Class that on construction copies minimal information about call stack into its internals and provides access to that information. 
+</para></description><typedef id="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1ae23058f79f7a891161d50d9907582f18" name="value_type"><type>std::vector&lt; <classname>boost::stacktrace::frame</classname>, Allocator &gt;::value_type</type></typedef>
+<typedef id="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a3747049f2463e00641a12ad311951db9" name="allocator_type"><type>std::vector&lt; <classname>boost::stacktrace::frame</classname>, Allocator &gt;::allocator_type</type></typedef>
+<typedef id="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a9f0331a11e55f34de2af61391ba16e49" name="pointer"><type>std::vector&lt; <classname>boost::stacktrace::frame</classname>, Allocator &gt;::const_pointer</type></typedef>
+<typedef id="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a6478a0196d84f5a17f64696fc7c23e52" name="const_pointer"><type>std::vector&lt; <classname>boost::stacktrace::frame</classname>, Allocator &gt;::const_pointer</type></typedef>
+<typedef id="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a049139e5cd508c4d3fce263236765fc8" name="reference"><type>std::vector&lt; <classname>boost::stacktrace::frame</classname>, Allocator &gt;::const_reference</type></typedef>
+<typedef id="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a411a6e519ba5ac3dc5263063aca498f1" name="const_reference"><type>std::vector&lt; <classname>boost::stacktrace::frame</classname>, Allocator &gt;::const_reference</type></typedef>
+<typedef id="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a295374c085f94a6c54432639a6ffc14b" name="size_type"><type>std::vector&lt; <classname>boost::stacktrace::frame</classname>, Allocator &gt;::size_type</type></typedef>
+<typedef id="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a6de37351e91e70f106f6531f55edd5a1" name="difference_type"><type>std::vector&lt; <classname>boost::stacktrace::frame</classname>, Allocator &gt;::difference_type</type></typedef>
+<typedef id="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a850a60be2f212198e33adc7fbf4c5590" name="iterator"><type>std::vector&lt; <classname>boost::stacktrace::frame</classname>, Allocator &gt;::const_iterator</type></typedef>
+<typedef id="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1aa1e7f2d952b48f2fca270ea0e5a2fd81" name="const_iterator"><type>std::vector&lt; <classname>boost::stacktrace::frame</classname>, Allocator &gt;::const_iterator</type></typedef>
+<typedef id="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a5dc8bc0d1d3c60033f9da9a95bac7c5c" name="reverse_iterator"><type>std::vector&lt; <classname>boost::stacktrace::frame</classname>, Allocator &gt;::const_reverse_iterator</type></typedef>
+<typedef id="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1abaf826788b07d764c5667b9162105713" name="const_reverse_iterator"><type>std::vector&lt; <classname>boost::stacktrace::frame</classname>, Allocator &gt;::const_reverse_iterator</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a98b1c2383b231cc483e646de724a2960" cv="noexcept"><purpose>Stores the current function call sequence inside *this without any decoding or any other heavy platform specific operations. </purpose><description><para><emphasis role="bold">Complexity:</emphasis> O(N) where N is call sequence length, O(1) if BOOST_STACKTRACE_USE_NOOP is defined.</para><para><emphasis role="bold">Async-Handler-Safety</emphasis>:  <link linkend="stacktrace.theoretical_async_signal_safety"> Theoretically async signal safe  </link> if Allocator construction, copying, Allocator::allocate and Allocator::deallocate are async signal safe. </para></description></constructor>
+<constructor id="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a64ae3e9d253ee3c9c92af0792fb27a61" specifiers="explicit" cv="noexcept"><parameter name="a"><paramtype>const allocator_type &amp;</paramtype><description><para>Allocator that would be passed to underlying storage. </para></description></parameter><purpose>Stores the current function call sequence inside *this without any decoding or any other heavy platform specific operations. </purpose><description><para><emphasis role="bold">Complexity:</emphasis> O(N) where N is call sequence length, O(1) if BOOST_STACKTRACE_USE_NOOP is defined.</para><para><emphasis role="bold">Async-Handler-Safety</emphasis>:  <link linkend="stacktrace.theoretical_async_signal_safety"> Theoretically async signal safe  </link> if Allocator construction, copying, Allocator::allocate and Allocator::deallocate are async signal safe.</para><para>
+</para></description></constructor>
+<constructor id="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1ac187f121b741cd55674a1ab25ff03b58" cv="noexcept"><parameter name="skip"><paramtype>std::size_t</paramtype><description><para>How many top calls to skip and do not store in *this.</para></description></parameter><parameter name="max_depth"><paramtype>std::size_t</paramtype><description><para>Max call sequence depth to collect.</para></description></parameter><parameter name="a"><paramtype>const allocator_type &amp;</paramtype><default>allocator_type()</default><description><para>Allocator that would be passed to underlying storage.</para></description></parameter><purpose>Stores [skip, skip + max_depth) of the current function call sequence inside *this without any decoding or any other heavy platform specific operations. </purpose><description><para><emphasis role="bold">Complexity:</emphasis> O(N) where N is call sequence length, O(1) if BOOST_STACKTRACE_USE_NOOP is defined.</para><para><emphasis role="bold">Async-Handler-Safety</emphasis>:  <link linkend="stacktrace.theoretical_async_signal_safety"> Theoretically async signal safe  </link> if Allocator construction, copying, Allocator::allocate and Allocator::deallocate are async signal safe.</para><para>
+
+</para></description><throws><simpara><classname>Nothing.</classname> Note that default construction of allocator may throw, however it is performed outside the constructor and exception in <computeroutput>allocator_type()</computeroutput> would not result in calling <computeroutput>std::terminate</computeroutput>. </simpara>
+</throws></constructor>
+<constructor id="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a24a471b44b65939ab6569c03fa108e43"><parameter name="st"><paramtype>const <classname>basic_stacktrace</classname> &amp;</paramtype></parameter><description><para><emphasis role="bold">Complexity:</emphasis> O(st.size())</para><para><emphasis role="bold">Async-Handler-Safety</emphasis>:  <link linkend="stacktrace.theoretical_async_signal_safety"> Theoretically async signal safe  </link> if Allocator construction, copying, Allocator::allocate and Allocator::deallocate are async signal safe. </para></description></constructor>
+<copy-assignment id="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a0f3d9ae607e524417c190dd912860b6a"><type><classname>basic_stacktrace</classname> &amp;</type><parameter name="st"><paramtype>const <classname>basic_stacktrace</classname> &amp;</paramtype></parameter><description><para><emphasis role="bold">Complexity:</emphasis> O(st.size())</para><para><emphasis role="bold">Async-Handler-Safety</emphasis>:  <link linkend="stacktrace.theoretical_async_signal_safety"> Theoretically async signal safe  </link> if Allocator construction, copying, Allocator::allocate and Allocator::deallocate are async signal safe. </para></description></copy-assignment>
+<destructor id="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a2d92ca742de0874e5aa27f475607e681"><description><para><emphasis role="bold">Complexity:</emphasis> O(1)</para><para><emphasis role="bold">Async-Handler-Safety</emphasis>:  <link linkend="stacktrace.theoretical_async_signal_safety"> Theoretically async signal safe  </link> if Allocator::deallocate is async signal safe. </para></description></destructor>
+<constructor id="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a5123272da7ae597cf1ea4a9033e2558e" cv="noexcept"><parameter name="st"><paramtype><classname>basic_stacktrace</classname> &amp;&amp;</paramtype></parameter><description><para><emphasis role="bold">Complexity:</emphasis> O(1)</para><para><emphasis role="bold">Async-Handler-Safety</emphasis>:  <link linkend="stacktrace.theoretical_async_signal_safety"> Theoretically async signal safe  </link> if Allocator construction and copying are async signal safe. </para></description></constructor>
+<copy-assignment id="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a3250f68919ab52c559c7fd49c656ef06" cv="noexcept((std::is_nothrow_move_assignable&lt; std::vector&lt; boost::stacktrace::frame, Allocator &gt; &gt;::value))"><type><classname>basic_stacktrace</classname> &amp;</type><parameter name="st"><paramtype><classname>basic_stacktrace</classname> &amp;&amp;</paramtype></parameter><description><para><emphasis role="bold">Complexity:</emphasis> O(st.size())</para><para><emphasis role="bold">Async-Handler-Safety</emphasis>:  <link linkend="stacktrace.theoretical_async_signal_safety"> Theoretically async signal safe  </link> if Allocator construction and copying are async signal safe. </para></description></copy-assignment>
+<method id="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1aa95e51db8401bc8787e96d1b03638717" name="size" cv="const noexcept"><type>size_type</type><description><para>
+<emphasis role="bold">Complexity:</emphasis> O(1)</para><para><emphasis role="bold">Async-Handler-Safety</emphasis>:  <link linkend="stacktrace.theoretical_async_signal_safety"> Theoretically async signal safe  </link>. </para></description><returns><para>Number of function names stored inside the class.</para>
+</returns></method>
+<method id="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1abb700f29ced409c1ed196b7e2ed6e955" name="operator[]" cv="const noexcept"><type>const_reference</type><parameter name="frame_no"><paramtype>std::size_t</paramtype><description><para>Zero based index of frame to return. 0 is the function index where stacktrace was constructed and index close to this-&gt;<link linkend="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1aa95e51db8401bc8787e96d1b03638717">size()</link> contains function <computeroutput>main()</computeroutput>. </para></description></parameter><description><para>
+
+<emphasis role="bold">Complexity:</emphasis> O(1).</para><para><emphasis role="bold">Async-Handler-Safety</emphasis>:  <link linkend="stacktrace.theoretical_async_signal_safety"> Theoretically async signal safe  </link>. </para></description><returns><para>frame that references the actual frame info, stored inside *this.</para>
+</returns></method>
+<method id="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1ac1743c382dee9618939e3e2c24b20e53" name="begin" cv="const noexcept"><type>const_iterator</type><description><para><emphasis role="bold">Complexity:</emphasis> O(1)</para><para><emphasis role="bold">Async-Handler-Safety</emphasis>:  <link linkend="stacktrace.theoretical_async_signal_safety"> Theoretically async signal safe  </link>. </para></description></method>
+<method id="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1af42b28b5990e60267307e02189c29c14" name="cbegin" cv="const noexcept"><type>const_iterator</type><description><para><emphasis role="bold">Complexity:</emphasis> O(1)</para><para><emphasis role="bold">Async-Handler-Safety</emphasis>:  <link linkend="stacktrace.theoretical_async_signal_safety"> Theoretically async signal safe  </link>. </para></description></method>
+<method id="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a1e6a5962de0fffeb7cb392aa4a10f588" name="end" cv="const noexcept"><type>const_iterator</type><description><para><emphasis role="bold">Complexity:</emphasis> O(1)</para><para><emphasis role="bold">Async-Handler-Safety</emphasis>:  <link linkend="stacktrace.theoretical_async_signal_safety"> Theoretically async signal safe  </link>. </para></description></method>
+<method id="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a61fea3743f976176a8ff665970fb66cc" name="cend" cv="const noexcept"><type>const_iterator</type><description><para><emphasis role="bold">Complexity:</emphasis> O(1)</para><para><emphasis role="bold">Async-Handler-Safety</emphasis>:  <link linkend="stacktrace.theoretical_async_signal_safety"> Theoretically async signal safe  </link>. </para></description></method>
+<method id="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a033387d3aae00d2d0ebd438e5d0e4a43" name="rbegin" cv="const noexcept"><type>const_reverse_iterator</type><description><para><emphasis role="bold">Complexity:</emphasis> O(1)</para><para><emphasis role="bold">Async-Handler-Safety</emphasis>:  <link linkend="stacktrace.theoretical_async_signal_safety"> Theoretically async signal safe  </link>. </para></description></method>
+<method id="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a7a3472b431fdfb5c3946355345898ade" name="crbegin" cv="const noexcept"><type>const_reverse_iterator</type><description><para><emphasis role="bold">Complexity:</emphasis> O(1)</para><para><emphasis role="bold">Async-Handler-Safety</emphasis>:  <link linkend="stacktrace.theoretical_async_signal_safety"> Theoretically async signal safe  </link>. </para></description></method>
+<method id="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1ada8b185dc80c5503358e36a153c1f829" name="rend" cv="const noexcept"><type>const_reverse_iterator</type><description><para><emphasis role="bold">Complexity:</emphasis> O(1)</para><para><emphasis role="bold">Async-Handler-Safety</emphasis>:  <link linkend="stacktrace.theoretical_async_signal_safety"> Theoretically async signal safe  </link>. </para></description></method>
+<method id="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1afdfee76757dcd622c2a89d5113b594eb" name="crend" cv="const noexcept"><type>const_reverse_iterator</type><description><para><emphasis role="bold">Complexity:</emphasis> O(1)</para><para><emphasis role="bold">Async-Handler-Safety</emphasis>:  <link linkend="stacktrace.theoretical_async_signal_safety"> Theoretically async signal safe  </link>. </para></description></method>
+<method id="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1ab9b1adc3e8883ccb82f1eb70e811d3ce" name="operator bool" cv="const noexcept" specifiers="explicit"><type>constexpr</type><purpose>Allows to check that stack trace capturing was successful. </purpose><description><para>
+<emphasis role="bold">Complexity:</emphasis> O(1)</para><para><emphasis role="bold">Async-Handler-Safety</emphasis>:  <link linkend="stacktrace.theoretical_async_signal_safety"> Theoretically async signal safe  </link>. </para></description><returns><para><computeroutput>true</computeroutput> if <computeroutput>this-&gt;<link linkend="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1aa95e51db8401bc8787e96d1b03638717">size()</link> != 0</computeroutput></para>
+</returns></method>
+<method id="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1ac52e0881188b757128613e0b50bcc679" name="empty" cv="const noexcept"><type>bool</type><purpose>Allows to check that stack trace failed. </purpose><description><para>
+<emphasis role="bold">Complexity:</emphasis> O(1)</para><para><emphasis role="bold">Async-Handler-Safety</emphasis>:  <link linkend="stacktrace.theoretical_async_signal_safety"> Theoretically async signal safe  </link>. </para></description><returns><para><computeroutput>true</computeroutput> if <computeroutput>this-&gt;<link linkend="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1aa95e51db8401bc8787e96d1b03638717">size()</link> == 0</computeroutput></para>
+</returns></method>
+<method id="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1ae9abc1bda832d843cd8aa0661a818aae" name="as_vector" cv="const noexcept"><type>const std::vector&lt; <classname>boost::stacktrace::frame</classname>, Allocator &gt; &amp;</type></method>
+</method-group>
+<method-group name="public static functions">
+<method id="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a7742caa14dda9c9ff4ef0bd2099e3998" name="from_dump" specifiers="static"><type><classname>basic_stacktrace</classname></type><template>
+          <template-type-parameter name="Char"/>
+          <template-type-parameter name="Trait"/>
+        </template><parameter name="in"><paramtype>std::basic_istream&lt; Char, Trait &gt; &amp;</paramtype></parameter><parameter name="a"><paramtype>const allocator_type &amp;</paramtype><default>allocator_type()</default></parameter><description><para>Constructs stacktrace from basic_istreamable that references the dumped stacktrace. Terminating zero frame is discarded.</para><para><emphasis role="bold">Complexity:</emphasis> O(N) </para></description></method>
+<method id="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a0451016888794ddfa8d286d7c01f5a4e" name="from_dump" specifiers="static"><type><classname>basic_stacktrace</classname></type><parameter name="begin"><paramtype>const void *</paramtype><description><para>Beginning of the memory where the stacktrace was saved using the <link linkend="doxygen.stacktrace.reference.safe__dump__to_8hpp_1af4866d1abb95a1fdf00567c035eef3c6">boost::stacktrace::safe_dump_to</link></para></description></parameter><parameter name="buffer_size_in_bytes"><paramtype>std::size_t</paramtype><description><para>Size of the memory. Usually the same value that was passed to the <link linkend="doxygen.stacktrace.reference.safe__dump__to_8hpp_1af4866d1abb95a1fdf00567c035eef3c6">boost::stacktrace::safe_dump_to</link></para></description></parameter><parameter name="a"><paramtype>const allocator_type &amp;</paramtype><default>allocator_type()</default></parameter><description><para>Constructs stacktrace from raw memory dump. Terminating zero frame is discarded.</para><para>
+<emphasis role="bold">Complexity:</emphasis> O(size) in worst case </para></description></method>
+<method id="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a71bcf932556bab79458280f2ecc73c1b" name="from_current_exception" cv="noexcept" specifiers="static"><type><classname>basic_stacktrace</classname>&lt; Allocator &gt;</type><parameter name="alloc"><paramtype>const allocator_type &amp;</paramtype><default>allocator_type()</default></parameter><description><para>Returns a <link linkend="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace">basic_stacktrace</link> object containing a stacktrace captured at the point where the currently handled exception was thrown by its initial throw-expression (i.e. not a rethrow), or an empty <link linkend="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace">basic_stacktrace</link> object if:</para><para><itemizedlist>
+<listitem><para>the <computeroutput>boost_stacktrace_from_exception</computeroutput> library is not linked to the current binary, or</para>
+</listitem><listitem><para>the initialization of stacktrace failed, or</para>
+</listitem><listitem><para>stacktrace captures are not enabled for the throwing thread, or</para>
+</listitem><listitem><para>no exception is being handled, or</para>
+</listitem><listitem><para>due to implementation-defined reasons.</para>
+</listitem></itemizedlist>
+</para><para><computeroutput>alloc</computeroutput> is passed to the constructor of the stacktrace object. Rethrowing an exception using a throw-expression with no operand does not alter the captured stacktrace.</para><para>Implements <ulink url="https://wg21.link/p2370r1">https://wg21.link/p2370r1</ulink> </para></description></method>
+</method-group>
+</class><namespace name="impl">
+</namespace>
+<typedef id="doxygen.stacktrace.reference.stacktrace_2stacktrace_8hpp_1a93d27cb0ab35478d064cb5bf14553def" name="stacktrace"><purpose>This is the typedef to use unless you'd like to provide a specific allocator to <link linkend="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace">boost::stacktrace::basic_stacktrace</link>. </purpose><type><classname>basic_stacktrace</classname></type></typedef>
+<function id="doxygen.stacktrace.reference.stacktrace_2stacktrace_8hpp_1a9378c7e3bda8c41cdc588c52d6cc1b08" name="operator&lt;"><type>bool</type><template>
+          <template-type-parameter name="Allocator1"/>
+          <template-type-parameter name="Allocator2"/>
+        </template><parameter name="lhs"><paramtype>const <classname>basic_stacktrace</classname>&lt; Allocator1 &gt; &amp;</paramtype></parameter><parameter name="rhs"><paramtype>const <classname>basic_stacktrace</classname>&lt; Allocator2 &gt; &amp;</paramtype></parameter><purpose>Compares stacktraces for less, order is platform dependent. </purpose><description><para><emphasis role="bold">Complexity:</emphasis> Amortized O(1); worst case O(size())</para><para><emphasis role="bold">Async-Handler-Safety</emphasis>:  <link linkend="stacktrace.theoretical_async_signal_safety"> Theoretically async signal safe  </link>. </para></description></function>
+<function id="doxygen.stacktrace.reference.stacktrace_2stacktrace_8hpp_1a3586c04f335d3a68d53a8916fcd2a84e" name="operator=="><type>bool</type><template>
+          <template-type-parameter name="Allocator1"/>
+          <template-type-parameter name="Allocator2"/>
+        </template><parameter name="lhs"><paramtype>const <classname>basic_stacktrace</classname>&lt; Allocator1 &gt; &amp;</paramtype></parameter><parameter name="rhs"><paramtype>const <classname>basic_stacktrace</classname>&lt; Allocator2 &gt; &amp;</paramtype></parameter><purpose>Compares stacktraces for equality. </purpose><description><para><emphasis role="bold">Complexity:</emphasis> Amortized O(1); worst case O(size())</para><para><emphasis role="bold">Async-Handler-Safety</emphasis>:  <link linkend="stacktrace.theoretical_async_signal_safety"> Theoretically async signal safe  </link>. </para></description></function>
+<function id="doxygen.stacktrace.reference.stacktrace_2stacktrace_8hpp_1a041b0d063f6477843ce406f5225329ff" name="operator&gt;"><type>bool</type><template>
+          <template-type-parameter name="Allocator1"/>
+          <template-type-parameter name="Allocator2"/>
+        </template><parameter name="lhs"><paramtype>const <classname>basic_stacktrace</classname>&lt; Allocator1 &gt; &amp;</paramtype></parameter><parameter name="rhs"><paramtype>const <classname>basic_stacktrace</classname>&lt; Allocator2 &gt; &amp;</paramtype></parameter><purpose>Comparison operators that provide platform dependant ordering and have amortized O(1) complexity; O(size()) worst case complexity; are Async-Handler-Safe. </purpose></function>
+<function id="doxygen.stacktrace.reference.stacktrace_2stacktrace_8hpp_1a32e2b50c6aacc7e387aa4eb621908567" name="operator&lt;="><type>bool</type><template>
+          <template-type-parameter name="Allocator1"/>
+          <template-type-parameter name="Allocator2"/>
+        </template><parameter name="lhs"><paramtype>const <classname>basic_stacktrace</classname>&lt; Allocator1 &gt; &amp;</paramtype></parameter><parameter name="rhs"><paramtype>const <classname>basic_stacktrace</classname>&lt; Allocator2 &gt; &amp;</paramtype></parameter></function>
+<function id="doxygen.stacktrace.reference.stacktrace_2stacktrace_8hpp_1af5fcacbe5ce4a209a0360d84990269eb" name="operator&gt;="><type>bool</type><template>
+          <template-type-parameter name="Allocator1"/>
+          <template-type-parameter name="Allocator2"/>
+        </template><parameter name="lhs"><paramtype>const <classname>basic_stacktrace</classname>&lt; Allocator1 &gt; &amp;</paramtype></parameter><parameter name="rhs"><paramtype>const <classname>basic_stacktrace</classname>&lt; Allocator2 &gt; &amp;</paramtype></parameter></function>
+<function id="doxygen.stacktrace.reference.stacktrace_2stacktrace_8hpp_1a7ac90398df044ed95b4507bc435b3ebc" name="operator!="><type>bool</type><template>
+          <template-type-parameter name="Allocator1"/>
+          <template-type-parameter name="Allocator2"/>
+        </template><parameter name="lhs"><paramtype>const <classname>basic_stacktrace</classname>&lt; Allocator1 &gt; &amp;</paramtype></parameter><parameter name="rhs"><paramtype>const <classname>basic_stacktrace</classname>&lt; Allocator2 &gt; &amp;</paramtype></parameter></function>
+<function id="doxygen.stacktrace.reference.stacktrace_2stacktrace_8hpp_1a859c47e0a6dcaf015c227727ab985dda" name="hash_value"><type>std::size_t</type><template>
+          <template-type-parameter name="Allocator"/>
+        </template><parameter name="st"><paramtype>const <classname>basic_stacktrace</classname>&lt; Allocator &gt; &amp;</paramtype></parameter><purpose>Fast hashing support, O(st.size()) complexity; Async-Handler-Safe. </purpose></function>
+<function id="doxygen.stacktrace.reference.stacktrace_2stacktrace_8hpp_1a8e0b1895b4712051120092e5084f45a1" name="to_string"><type>std::string</type><template>
+          <template-type-parameter name="Allocator"/>
+        </template><parameter name="bt"><paramtype>const <classname>basic_stacktrace</classname>&lt; Allocator &gt; &amp;</paramtype></parameter><purpose>Returns std::string with the stacktrace in a human readable format; unsafe to use in async handlers. </purpose></function>
+<function id="doxygen.stacktrace.reference.stacktrace_2stacktrace_8hpp_1a7c8f0f2e14773dc4769e2a9561e8ac3a" name="operator&lt;&lt;"><type>std::basic_ostream&lt; CharT, TraitsT &gt; &amp;</type><template>
+          <template-type-parameter name="CharT"/>
+          <template-type-parameter name="TraitsT"/>
+          <template-type-parameter name="Allocator"/>
+        </template><parameter name="os"><paramtype>std::basic_ostream&lt; CharT, TraitsT &gt; &amp;</paramtype></parameter><parameter name="bt"><paramtype>const <classname>basic_stacktrace</classname>&lt; Allocator &gt; &amp;</paramtype></parameter><purpose>Outputs stacktrace in a human readable format to the output stream <computeroutput>os</computeroutput>; unsafe to use in async handlers. </purpose></function>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.stacktrace.reference.frame__decl_8hpp" name="boost/stacktrace/detail/frame_decl.hpp">
+<para>Use &lt;<link linkend="doxygen.stacktrace.reference.frame_8hpp_source">boost/stacktrace/frame.hpp</link>&gt; header instead of this one! </para><namespace name="boost">
+<namespace name="stacktrace">
+<class id="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1frame" name="frame"><purpose>Class that stores frame/function address and can get information about it at runtime. </purpose><typedef id="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1frame_1a3137bacf54c2f963073677d91bdab891" name="native_frame_ptr_t"><type><emphasis>unspecified</emphasis></type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1frame_1ae85ee13a040bb0f0af4783783d4d51f0" cv="noexcept"><purpose>Constructs frame that references NULL address. Calls to <link linkend="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1frame_1a2f26bc7571bbd6deceb98889f0318099">source_file()</link> and <link linkend="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1frame_1a2069114ec158d46d480f0ebf5ca03a05">source_line()</link> will return empty string. Calls to <link linkend="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1frame_1a2069114ec158d46d480f0ebf5ca03a05">source_line()</link> will return 0. </purpose><description><para><emphasis role="bold">Complexity:</emphasis> O(1).</para><para><emphasis role="bold">Async-Handler-Safety</emphasis>: Safe. 
+</para></description><throws><simpara><classname>Nothing.</classname> </simpara>
+</throws></constructor>
+<constructor id="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1frame_1a37eb3694168d54068858235c3404e23d" cv="= default"><parameter name=""><paramtype>const <classname>frame</classname> &amp;</paramtype></parameter><purpose>Copy constructs frame. </purpose><description><para><emphasis role="bold">Complexity:</emphasis> O(1).</para><para><emphasis role="bold">Async-Handler-Safety</emphasis>: Safe. 
+</para></description><throws><simpara><classname>Nothing.</classname> </simpara>
+</throws></constructor>
+<copy-assignment id="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1frame_1a2bdf63b69b5e8317b28e539412c61727" cv="= default"><type>constexpr <classname>frame</classname> &amp;</type><parameter name=""><paramtype>const <classname>frame</classname> &amp;</paramtype></parameter><purpose>Copy assigns frame. </purpose><description><para><emphasis role="bold">Complexity:</emphasis> O(1).</para><para><emphasis role="bold">Async-Handler-Safety</emphasis>: Safe. 
+</para></description><throws><simpara><classname>Nothing.</classname> </simpara>
+</throws></copy-assignment>
+<constructor id="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1frame_1af5bf9118d6574f0f806cb852131405a9" specifiers="explicit" cv="noexcept"><parameter name="addr"><paramtype>native_frame_ptr_t</paramtype></parameter><purpose>Constructs frame that references addr and could later generate information about that address using platform specific features. </purpose><description><para><emphasis role="bold">Complexity:</emphasis> O(1).</para><para><emphasis role="bold">Async-Handler-Safety</emphasis>: Safe. 
+</para></description><throws><simpara><classname>Nothing.</classname> </simpara>
+</throws></constructor>
+<constructor id="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1frame_1a95e4c9029962bed059b6aa07d0ab86ac" specifiers="explicit" cv="noexcept"><template>
+          <template-type-parameter name="T"/>
+        </template><parameter name="function_addr"><paramtype>T *</paramtype></parameter><purpose>Constructs frame that references function_addr and could later generate information about that function using platform specific features. </purpose><description><para><emphasis role="bold">Complexity:</emphasis> O(1).</para><para><emphasis role="bold">Async-Handler-Safety</emphasis>: Safe. 
+</para></description><throws><simpara><classname>Nothing.</classname> </simpara>
+</throws></constructor>
+<method id="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1frame_1a21fef6e3c07698966003f0e0b5af369e" name="name" cv="const"><type>std::string</type><description><para>
+<emphasis role="bold">Complexity:</emphasis> unknown (lots of platform specific work).</para><para><emphasis role="bold">Async-Handler-Safety</emphasis>: Unsafe. 
+</para></description><returns><para>Name of the frame (function name in a human readable form).</para>
+</returns><throws><simpara><classname>std::bad_alloc</classname> if not enough memory to construct resulting string. </simpara>
+</throws></method>
+<method id="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1frame_1aa9aaed474e30a706d042e655d5d6d125" name="address" cv="const noexcept"><type>constexpr native_frame_ptr_t</type><description><para>
+<emphasis role="bold">Complexity:</emphasis> O(1).</para><para><emphasis role="bold">Async-Handler-Safety</emphasis>: Safe. 
+</para></description><returns><para>Address of the frame function.</para>
+</returns><throws><simpara><classname>Nothing.</classname> </simpara>
+</throws></method>
+<method id="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1frame_1a2f26bc7571bbd6deceb98889f0318099" name="source_file" cv="const"><type>std::string</type><description><para>
+
+<emphasis role="bold">Complexity:</emphasis> unknown (lots of platform specific work).</para><para><emphasis role="bold">Async-Handler-Safety</emphasis>: Unsafe. </para></description><returns><para>Path to the source file, were the function of the frame is defined. Returns empty string if this-&gt;<link linkend="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1frame_1a2069114ec158d46d480f0ebf5ca03a05">source_line()</link> == 0. </para>
+</returns><throws><simpara><classname>std::bad_alloc</classname> if not enough memory to construct resulting string.</simpara>
+</throws></method>
+<method id="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1frame_1a2069114ec158d46d480f0ebf5ca03a05" name="source_line" cv="const"><type>std::size_t</type><description><para>
+
+<emphasis role="bold">Complexity:</emphasis> unknown (lots of platform specific work).</para><para><emphasis role="bold">Async-Handler-Safety</emphasis>: Unsafe. </para></description><returns><para>Code line in the source file, were the function of the frame is defined. </para>
+</returns><throws><simpara><classname>std::bad_alloc</classname> if not enough memory to construct string for internal needs.</simpara>
+</throws></method>
+<method id="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1frame_1ad4633be3f27976afadf189e0dcf11b2e" name="operator bool" cv="const noexcept" specifiers="explicit"><type>constexpr</type><purpose>Checks that frame is not references NULL address. </purpose><description><para>
+<emphasis role="bold">Complexity:</emphasis> O(1)</para><para><emphasis role="bold">Async-Handler-Safety</emphasis>: Safe. </para></description><returns><para><computeroutput>true</computeroutput> if <computeroutput>this-&gt;<link linkend="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1frame_1aa9aaed474e30a706d042e655d5d6d125">address()</link> != 0</computeroutput></para>
+</returns></method>
+<method id="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1frame_1a5e0c86276fba050c6556296d915ffe29" name="empty" cv="const noexcept"><type>constexpr bool</type><purpose>Checks that frame references NULL address. </purpose><description><para>
+<emphasis role="bold">Complexity:</emphasis> O(1)</para><para><emphasis role="bold">Async-Handler-Safety</emphasis>: Safe. </para></description><returns><para><computeroutput>true</computeroutput> if <computeroutput>this-&gt;<link linkend="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1frame_1aa9aaed474e30a706d042e655d5d6d125">address()</link> == 0</computeroutput></para>
+</returns></method>
+</method-group>
+</class>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.stacktrace.reference.frame_8hpp" name="boost/stacktrace/frame.hpp">
+<namespace name="boost">
+<namespace name="stacktrace">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<function id="doxygen.stacktrace.reference.frame_8hpp_1a5ae56f88be14e7719fa2a6df0db27693" name="operator&lt;"><type>constexpr bool</type><parameter name="lhs"><paramtype>const <classname>frame</classname> &amp;</paramtype></parameter><parameter name="rhs"><paramtype>const <classname>frame</classname> &amp;</paramtype></parameter><purpose>Comparison operators that provide platform dependant ordering and have O(1) complexity; are Async-Handler-Safe. </purpose></function>
+<function id="doxygen.stacktrace.reference.frame_8hpp_1abea382cc186d28eb951d6d4de4c64e51" name="operator&gt;"><type>constexpr bool</type><parameter name="lhs"><paramtype>const <classname>frame</classname> &amp;</paramtype></parameter><parameter name="rhs"><paramtype>const <classname>frame</classname> &amp;</paramtype></parameter></function>
+<function id="doxygen.stacktrace.reference.frame_8hpp_1afe8fc4f9cdc20693b14f6ad1da9f8e82" name="operator&lt;="><type>constexpr bool</type><parameter name="lhs"><paramtype>const <classname>frame</classname> &amp;</paramtype></parameter><parameter name="rhs"><paramtype>const <classname>frame</classname> &amp;</paramtype></parameter></function>
+<function id="doxygen.stacktrace.reference.frame_8hpp_1ac93d67fd1823b1405c0783da7de82aba" name="operator&gt;="><type>constexpr bool</type><parameter name="lhs"><paramtype>const <classname>frame</classname> &amp;</paramtype></parameter><parameter name="rhs"><paramtype>const <classname>frame</classname> &amp;</paramtype></parameter></function>
+<function id="doxygen.stacktrace.reference.frame_8hpp_1ae968bf8c07c5084557153b07897d053d" name="operator=="><type>constexpr bool</type><parameter name="lhs"><paramtype>const <classname>frame</classname> &amp;</paramtype></parameter><parameter name="rhs"><paramtype>const <classname>frame</classname> &amp;</paramtype></parameter></function>
+<function id="doxygen.stacktrace.reference.frame_8hpp_1a1c5ee5a9cdecb0a4c2d333e4473bb0a2" name="operator!="><type>constexpr bool</type><parameter name="lhs"><paramtype>const <classname>frame</classname> &amp;</paramtype></parameter><parameter name="rhs"><paramtype>const <classname>frame</classname> &amp;</paramtype></parameter></function>
+<function id="doxygen.stacktrace.reference.frame_8hpp_1a91bd2b8adc00b1ed9b6141c862e7f5b8" name="hash_value"><type>std::size_t</type><parameter name="f"><paramtype>const <classname>frame</classname> &amp;</paramtype></parameter><purpose>Fast hashing support, O(1) complexity; Async-Handler-Safe. </purpose></function>
+<function id="doxygen.stacktrace.reference.frame_8hpp_1aadb56fcff5699d8c18cabcf6caa39a94" name="to_string"><type>std::string</type><parameter name="f"><paramtype>const <classname>frame</classname> &amp;</paramtype></parameter><purpose>Outputs <link linkend="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1frame">stacktrace::frame</link> in a human readable format to string; unsafe to use in async handlers. </purpose></function>
+<function id="doxygen.stacktrace.reference.frame_8hpp_1aadac8e2b217608f86731fa4f7a16b647" name="operator&lt;&lt;"><type>std::basic_ostream&lt; CharT, TraitsT &gt; &amp;</type><template>
+          <template-type-parameter name="CharT"/>
+          <template-type-parameter name="TraitsT"/>
+        </template><parameter name="os"><paramtype>std::basic_ostream&lt; CharT, TraitsT &gt; &amp;</paramtype></parameter><parameter name="f"><paramtype>const <classname>frame</classname> &amp;</paramtype></parameter><purpose>Outputs <link linkend="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1frame">stacktrace::frame</link> in a human readable format to output stream; unsafe to use in async handlers. </purpose></function>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.stacktrace.reference.safe__dump__to_8hpp" name="boost/stacktrace/safe_dump_to.hpp">
+<para> <link linkend="stacktrace.theoretical_async_signal_safety"> Theoretically async signal safe  </link> low-level functions for dumping call stacks. Dumps are binary serialized arrays of <computeroutput>void*</computeroutput>, so you could read them by using 'od -tx8 -An stacktrace_dump_failename' Linux command or using <link linkend="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a7742caa14dda9c9ff4ef0bd2099e3998">boost::stacktrace::stacktrace::from_dump</link> functions. </para><namespace name="boost">
+<namespace name="stacktrace">
+
+
+
+
+
+
+
+
+
+<function id="doxygen.stacktrace.reference.safe__dump__to_8hpp_1af4866d1abb95a1fdf00567c035eef3c6" name="safe_dump_to"><type>std::size_t</type><parameter name="memory"><paramtype>void *</paramtype><description><para>Preallocated buffer to store current function call sequence into.</para></description></parameter><parameter name="size"><paramtype>std::size_t</paramtype><description><para>Size of the preallocated buffer. </para></description></parameter><purpose>Stores current function call sequence into the memory. </purpose><description><para><emphasis role="bold">Complexity:</emphasis> O(N) where N is call sequence length, O(1) if BOOST_STACKTRACE_USE_NOOP is defined.</para><para><emphasis role="bold">Async-Handler-Safety</emphasis>:  <link linkend="stacktrace.theoretical_async_signal_safety"> Theoretically async signal safe  </link>.</para><para>
+
+</para></description><returns><para>Stored call sequence depth including terminating zero frame. To get the actually consumed bytes multiply this value by the sizeof(boost::stacktrace::frame::native_frame_ptr_t)</para>
+</returns></function>
+<function id="doxygen.stacktrace.reference.safe__dump__to_8hpp_1af12d2d1b3b98905899576d88ee0b10af" name="safe_dump_to"><type>std::size_t</type><parameter name="skip"><paramtype>std::size_t</paramtype><description><para>How many top calls to skip and do not store.</para></description></parameter><parameter name="memory"><paramtype>void *</paramtype><description><para>Preallocated buffer to store current function call sequence into.</para></description></parameter><parameter name="size"><paramtype>std::size_t</paramtype><description><para>Size of the preallocated buffer. </para></description></parameter><purpose>Stores current function call sequence into the memory. </purpose><description><para><emphasis role="bold">Complexity:</emphasis> O(N) where N is call sequence length, O(1) if BOOST_STACKTRACE_USE_NOOP is defined.</para><para><emphasis role="bold">Async-Handler-Safety</emphasis>:  <link linkend="stacktrace.theoretical_async_signal_safety"> Theoretically async signal safe  </link>.</para><para>
+
+</para></description><returns><para>Stored call sequence depth including terminating zero frame. To get the actually consumed bytes multiply this value by the sizeof(boost::stacktrace::frame::native_frame_ptr_t)</para>
+</returns></function>
+<function id="doxygen.stacktrace.reference.safe__dump__to_8hpp_1a20b1bb52d21652299f7021e9ab80d29d" name="safe_dump_to"><type>std::size_t</type><parameter name="file"><paramtype>const char *</paramtype><description><para>File to store current function call sequence. </para></description></parameter><purpose>Opens a file and rewrites its content with current function call sequence if such operations are async signal safe. </purpose><description><para><emphasis role="bold">Complexity:</emphasis> O(N) where N is call sequence length, O(1) if BOOST_STACKTRACE_USE_NOOP is defined.</para><para><emphasis role="bold">Async-Handler-Safety</emphasis>:  <link linkend="stacktrace.theoretical_async_signal_safety"> Theoretically async signal safe  </link>.</para><para>
+
+</para></description><returns><para>Stored call sequence depth including terminating zero frame.</para>
+</returns></function>
+<function id="doxygen.stacktrace.reference.safe__dump__to_8hpp_1a1a7bb0494e8ca70ec8fa985690a0767b" name="safe_dump_to"><type>std::size_t</type><parameter name="skip"><paramtype>std::size_t</paramtype><description><para>How many top calls to skip and do not store.</para></description></parameter><parameter name="max_depth"><paramtype>std::size_t</paramtype><description><para>Max call sequence depth to collect.</para></description></parameter><parameter name="file"><paramtype>const char *</paramtype><description><para>File to store current function call sequence. </para></description></parameter><purpose>Opens a file and rewrites its content with current function call sequence if such operations are async signal safe. </purpose><description><para><emphasis role="bold">Complexity:</emphasis> O(N) where N is call sequence length, O(1) if BOOST_STACKTRACE_USE_NOOP is defined.</para><para><emphasis role="bold">Async-Handler-Safety</emphasis>:  <link linkend="stacktrace.theoretical_async_signal_safety"> Theoretically async signal safe  </link>.</para><para>
+
+</para></description><returns><para>Stored call sequence depth including terminating zero frame.</para>
+</returns></function>
+<function id="doxygen.stacktrace.reference.safe__dump__to_8hpp_1aa71737fdd452f5f88936aa59fed7cdac" name="safe_dump_to"><type>std::size_t</type><parameter name="fd"><paramtype>platform_specific_descriptor</paramtype></parameter><purpose>Writes into the provided file descriptor the current function call sequence if such operation is async signal safe. </purpose><description><para><emphasis role="bold">Complexity:</emphasis> O(N) where N is call sequence length, O(1) if BOOST_STACKTRACE_USE_NOOP is defined.</para><para><emphasis role="bold">Async-Handler-Safety</emphasis>:  <link linkend="stacktrace.theoretical_async_signal_safety"> Theoretically async signal safe  </link>.</para><para>
+
+</para></description><returns><para>Stored call sequence depth including terminating zero frame.</para>
+</returns></function>
+<function id="doxygen.stacktrace.reference.safe__dump__to_8hpp_1a65c0b9bfd6742944223812e28c3bf88f" name="safe_dump_to"><type>std::size_t</type><parameter name="skip"><paramtype>std::size_t</paramtype><description><para>How many top calls to skip and do not store.</para></description></parameter><parameter name="max_depth"><paramtype>std::size_t</paramtype><description><para>Max call sequence depth to collect.</para></description></parameter><parameter name="fd"><paramtype>platform_specific_descriptor</paramtype></parameter><purpose>Writes into the provided file descriptor the current function call sequence if such operation is async signal safe. </purpose><description><para><emphasis role="bold">Complexity:</emphasis> O(N) where N is call sequence length, O(1) if BOOST_STACKTRACE_USE_NOOP is defined.</para><para><emphasis role="bold">Async-Handler-Safety</emphasis>:  <link linkend="stacktrace.theoretical_async_signal_safety"> Theoretically async signal safe  </link>.</para><para>
+
+</para></description><returns><para>Stored call sequence depth including terminating zero frame.</para>
+</returns></function>
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.stacktrace.reference.stacktrace__fwd_8hpp" name="boost/stacktrace/stacktrace_fwd.hpp">
+<para>This header contains only forward declarations of <link linkend="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1frame">boost::stacktrace::frame</link>, <link linkend="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace">boost::stacktrace::basic_stacktrace</link>, boost::stacktrace::stacktrace and does not include any other Boost headers. </para></header>
+<header id="doxygen.stacktrace.reference.this__thread_8hpp" name="boost/stacktrace/this_thread.hpp">
+<namespace name="boost">
+<namespace name="stacktrace">
+<namespace name="this_thread">
+<function id="doxygen.stacktrace.reference.this__thread_8hpp_1a28f45650f7976bcec284b37db1c2a8d4" name="set_capture_stacktraces_at_throw"><type>void</type><parameter name="enable"><paramtype>bool</paramtype><default>true</default></parameter><purpose>Invoking the function with the enable parameter equal to <computeroutput>true</computeroutput> enables capturing of stacktraces by the current thread of execution at exception object construction if the <computeroutput>boost_stacktrace_from_exception</computeroutput> library is linked to the current binary; disables otherwise. </purpose><description><para>Implements <ulink url="https://wg21.link/p2370r1">https://wg21.link/p2370r1</ulink> </para></description></function>
+<function id="doxygen.stacktrace.reference.this__thread_8hpp_1acfac5403233b4a9e211a933c88b791a1" name="get_capture_stacktraces_at_throw"><type>bool</type><description><para>
+Returns true if set_capture_stacktraces_at_throw(false) was not called and the <computeroutput>boost_stacktrace_from_exception</computeroutput> is linked to the current binary.</para><para>Implements <ulink url="https://wg21.link/p2370r1">https://wg21.link/p2370r1</ulink> </para></description><returns><para>whether the capturing of stacktraces by the current thread of execution is enabled and <link linkend="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a71bcf932556bab79458280f2ecc73c1b">boost::stacktrace::basic_stacktrace::from_current_exception</link> may return a non empty stacktrace.</para>
+</returns></function>
+</namespace>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+</library-reference>

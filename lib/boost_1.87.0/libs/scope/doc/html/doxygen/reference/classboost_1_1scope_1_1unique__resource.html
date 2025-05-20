@@ -1,0 +1,470 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template unique_resource</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.Scope">
+<link rel="up" href="../../reference.html#doxygen.reference.unique__resource_8hpp" title="Header &lt;boost/scope/unique_resource.hpp&gt;">
+<link rel="prev" href="structboost_1_1scope_1_1unallocated__resource.html" title="Struct template unallocated_resource">
+<link rel="next" href="unique__resource_8hpp_1a970dcf160d71b25082989f9bc8e5bff3.html" title="Global default_resource">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr><td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td></tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="structboost_1_1scope_1_1unallocated__resource.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../reference.html#doxygen.reference.unique__resource_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="unique__resource_8hpp_1a970dcf160d71b25082989f9bc8e5bff3.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.reference.classboost_1_1scope_1_1unique__resource"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template unique_resource</span></h2>
+<p>boost::scope::unique_resource — RAII wrapper for automatically reclaiming arbitrary resources. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../reference.html#doxygen.reference.unique__resource_8hpp" title="Header &lt;boost/scope/unique_resource.hpp&gt;">boost/scope/unique_resource.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Resource<span class="special">,</span> <span class="keyword">typename</span> Deleter<span class="special">,</span> <span class="keyword">typename</span> Traits <span class="special">=</span> <span class="keyword">void</span><span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1scope_1_1unique__resource.html" title="Class template unique_resource">unique_resource</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">Resource</span> <a name="doxygen.reference.classboost_1_1scope_1_1unique__resource_1aece91de9570c00090d1e04522236a96b"></a><span class="identifier">resource_type</span><span class="special">;</span>  <span class="comment">// Resource type. </span>
+  <span class="keyword">typedef</span> <span class="identifier">Deleter</span>  <a name="doxygen.reference.classboost_1_1scope_1_1unique__resource_1a0f021b62a0162dd6080d0460139a8785"></a><span class="identifier">deleter_type</span><span class="special">;</span>   <span class="comment">// Deleter type. </span>
+  <span class="keyword">typedef</span> <span class="identifier">Traits</span>   <a name="doxygen.reference.classboost_1_1scope_1_1unique__resource_1a7762fa62b377a4fe9013a86afeb00b99"></a><span class="identifier">traits_type</span><span class="special">;</span>    <span class="comment">// Resource traits. </span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1scope_1_1unique__resource.html#id18-bb">public member functions</a></span>
+  <a class="link" href="classboost_1_1scope_1_1unique__resource.html#doxygen.reference.classboost_1_1scope_1_1unique__resource_1a399d5a11543c898f52254b8b30305f06"><span class="identifier">unique_resource</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">(</span><span class="special">...</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> D<span class="special">&gt;</span> <a class="link" href="classboost_1_1scope_1_1unique__resource.html#doxygen.reference.classboost_1_1scope_1_1unique__resource_1ac09d9731459096ae7f73c45f6410ef38"><span class="identifier">unique_resource</span></a><span class="special">(</span><span class="identifier">default_resource_t</span><span class="special">,</span> <span class="identifier">D</span> <span class="special">&amp;&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">(</span><span class="special">...</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> R<span class="special">&gt;</span> <span class="keyword">explicit</span> <a class="link" href="classboost_1_1scope_1_1unique__resource.html#doxygen.reference.classboost_1_1scope_1_1unique__resource_1a26204cdc4d828579edf28a81e04dd1ea"><span class="identifier">unique_resource</span></a><span class="special">(</span><span class="identifier">R</span> <span class="special">&amp;&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">(</span><span class="special">...</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> R<span class="special">,</span> <span class="keyword">typename</span> D<span class="special">&gt;</span> <a class="link" href="classboost_1_1scope_1_1unique__resource.html#doxygen.reference.classboost_1_1scope_1_1unique__resource_1a6f761d62c30b05c62cab58329bc66455"><span class="identifier">unique_resource</span></a><span class="special">(</span><span class="identifier">R</span> <span class="special">&amp;&amp;</span><span class="special">,</span> <span class="identifier">D</span> <span class="special">&amp;&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">(</span><span class="special">...</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1scope_1_1unique__resource.html#doxygen.reference.classboost_1_1scope_1_1unique__resource_1a2685273772192d7effa6c72aad791d08"><span class="identifier">unique_resource</span></a><span class="special">(</span><a class="link" href="classboost_1_1scope_1_1unique__resource.html" title="Class template unique_resource">unique_resource</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">delete</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1scope_1_1unique__resource.html" title="Class template unique_resource">unique_resource</a> <span class="special">&amp;</span> <a class="link" href="classboost_1_1scope_1_1unique__resource.html#doxygen.reference.classboost_1_1scope_1_1unique__resource_1a565a9e7dc64d0bb41bdc508ac2f14716"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><a class="link" href="classboost_1_1scope_1_1unique__resource.html" title="Class template unique_resource">unique_resource</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">delete</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1scope_1_1unique__resource.html#doxygen.reference.classboost_1_1scope_1_1unique__resource_1a73018eb2f3623297dbc0c126b1bb481c"><span class="identifier">unique_resource</span></a><span class="special">(</span><a class="link" href="classboost_1_1scope_1_1unique__resource.html" title="Class template unique_resource">unique_resource</a> <span class="special">&amp;&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">(</span><span class="special">...</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1scope_1_1unique__resource.html" title="Class template unique_resource">unique_resource</a> <span class="special">&amp;</span> <a class="link" href="classboost_1_1scope_1_1unique__resource.html#doxygen.reference.classboost_1_1scope_1_1unique__resource_1a8e9fd530d971fe34148625ef10e4be9f"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><a class="link" href="classboost_1_1scope_1_1unique__resource.html" title="Class template unique_resource">unique_resource</a> <span class="special">&amp;&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">(</span><span class="special">...</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1scope_1_1unique__resource.html#doxygen.reference.classboost_1_1scope_1_1unique__resource_1abffa1cf26af00c2f075c280917c6a7d8"><span class="special">~</span><span class="identifier">unique_resource</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">(</span><span class="special">...</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1scope_1_1unique__resource.html#doxygen.reference.classboost_1_1scope_1_1unique__resource_1a420e60e9788bfa3b52aa3aab72ea3a5e"><span class="keyword">operator</span> <span class="keyword">bool</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1scope_1_1unique__resource.html#doxygen.reference.classboost_1_1scope_1_1unique__resource_1ab50d2dd49c85000fa75833f9df2556e3"><span class="identifier">allocated</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">resource_type</span> <span class="keyword">const</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1scope_1_1unique__resource.html#doxygen.reference.classboost_1_1scope_1_1unique__resource_1afe9d14f203660128e2ad7965b18c9960"><span class="identifier">get</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">deleter_type</span> <span class="keyword">const</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1scope_1_1unique__resource.html#doxygen.reference.classboost_1_1scope_1_1unique__resource_1a3f1447c8224d72150b25814e6550ea3c"><span class="identifier">get_deleter</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1scope_1_1unique__resource.html#doxygen.reference.classboost_1_1scope_1_1unique__resource_1a4fd0fa43d212f9effc3366b8bce40fb5"><span class="identifier">release</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1scope_1_1unique__resource.html#doxygen.reference.classboost_1_1scope_1_1unique__resource_1aa6910e2f06b7acd5f110ff4002f490bd"><span class="identifier">reset</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">(</span><span class="special">...</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> R<span class="special">&gt;</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1scope_1_1unique__resource.html#doxygen.reference.classboost_1_1scope_1_1unique__resource_1a3e47d63e4f240ba0f5da933482b0495f"><span class="identifier">reset</span></a><span class="special">(</span><span class="identifier">R</span> <span class="special">&amp;&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">(</span><span class="special">...</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">resource_type</span> <span class="keyword">const</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1scope_1_1unique__resource.html#doxygen.reference.classboost_1_1scope_1_1unique__resource_1aa4a0ef824a4fc424757374f7600170d2"><span class="keyword">operator</span><span class="special">-&gt;</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">auto</span> <a class="link" href="classboost_1_1scope_1_1unique__resource.html#doxygen.reference.classboost_1_1scope_1_1unique__resource_1a9b7292c0085155ef5b3f0ff33cf79848"><span class="keyword">operator</span><span class="special">*</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">(</span><span class="special">...</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1scope_1_1unique__resource.html#doxygen.reference.classboost_1_1scope_1_1unique__resource_1a390ff95ed46ac302cadde81b9b157aad"><span class="identifier">swap</span></a><span class="special">(</span><a class="link" href="classboost_1_1scope_1_1unique__resource.html" title="Class template unique_resource">unique_resource</a> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">(</span><span class="special">...</span><span class="special">)</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1scope_1_1unique__resource.html#id19-bb">friend functions</a></span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1scope_1_1unique__resource.html#doxygen.reference.classboost_1_1scope_1_1unique__resource_1a98787099f36787dc31b14a9fcc8d3498"><span class="identifier">swap</span></a><span class="special">(</span><a class="link" href="classboost_1_1scope_1_1unique__resource.html" title="Class template unique_resource">unique_resource</a> <span class="special">&amp;</span><span class="special">,</span> <a class="link" href="classboost_1_1scope_1_1unique__resource.html" title="Class template unique_resource">unique_resource</a> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">(</span><span class="special">...</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id11170"></a><h2>Description</h2>
+<p>A <code class="computeroutput"><a class="link" href="classboost_1_1scope_1_1unique__resource.html" title="Class template unique_resource">unique_resource</a></code> object exclusively owns wrapped resource and invokes the deleter function object on it on destruction. The wrapped resource can have any type that is:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p>Move-constructible, where the move constructor is marked as <code class="computeroutput">noexcept</code>, or </p></li>
+<li class="listitem"><p>Copy-constructible, or </p></li>
+<li class="listitem"><p>An lvalue reference to an object type.</p></li>
+</ul></div>
+<p>
+The deleter must be a function object type that is callable on an lvalue of the resource type. The deleter must be copy-constructible.</p>
+<p>An optional resource traits template parameter may be specified. Resource traits can be used to optimize <code class="computeroutput"><a class="link" href="classboost_1_1scope_1_1unique__resource.html" title="Class template unique_resource">unique_resource</a></code> implementation when the following conditions are met:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p>There is at least one value of the resource type that is considered unallocated (that is, no allocated resource shall be equal to one of the unallocated resource values). The unallocated resource values need not be deallocated using the deleter. </p></li>
+<li class="listitem"><p>One of the unallocated resource values can be considered the default. Constructing the default resource value and assigning it to a resource object (whether allocated or not) shall not throw exceptions. </p></li>
+<li class="listitem"><p>Resource objects can be tested for being unallocated. Such a test shall not throw exceptions.</p></li>
+</ul></div>
+<p>
+If specified, the resource traits must be a class type that has the following public static members:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p><code class="computeroutput">R make_default() noexcept</code> - must return the default resource value such that <code class="computeroutput">std::is_constructible&lt; Resource, R &gt;::value &amp;&amp; std::is_nothrow_assignable&lt; Resource&amp;, R &gt;::value</code> is <code class="computeroutput">true</code>. </p></li>
+<li class="listitem"><p><code class="computeroutput">bool is_allocated(Resource const&amp; res) noexcept</code> - must return <code class="computeroutput">true</code> if <code class="computeroutput">res</code> is not one of the unallocated resource values and <code class="computeroutput">false</code> otherwise.</p></li>
+</ul></div>
+<p>
+Note that <code class="computeroutput">is_allocated(make_default())</code> must always return <code class="computeroutput">false</code>.</p>
+<p>When resource traits satisfying the above requirements are specified, <code class="computeroutput"><a class="link" href="classboost_1_1scope_1_1unique__resource.html" title="Class template unique_resource">unique_resource</a></code> will be able to avoid storing additional indication of whether the owned resource object needs to be deallocated with the deleter on destruction. It will use the default resource value to initialize the owned resource object when <code class="computeroutput"><a class="link" href="classboost_1_1scope_1_1unique__resource.html" title="Class template unique_resource">unique_resource</a></code> is not in the allocated state. Additionally, it will be possible to construct <code class="computeroutput"><a class="link" href="classboost_1_1scope_1_1unique__resource.html" title="Class template unique_resource">unique_resource</a></code> with unallocated resource values, which will create <code class="computeroutput"><a class="link" href="classboost_1_1scope_1_1unique__resource.html" title="Class template unique_resource">unique_resource</a></code> objects in unallocated state (the deleter will not be called on unallocated resource values).</p>
+<p>
+</p>
+<div class="refsect2">
+<a name="id11220"></a><h3>Template Parameters</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">typename</span> Resource</pre>
+<p>Resource type. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">typename</span> Deleter</pre>
+<p>Resource deleter function object type. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">typename</span> Traits <span class="special">=</span> <span class="keyword">void</span></pre>
+<p>Optional resource traits type. </p>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id11243"></a><h3>
+<a name="id18-bb"></a><code class="computeroutput">unique_resource</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.reference.classboost_1_1scope_1_1unique__resource_1a399d5a11543c898f52254b8b30305f06"></a><span class="identifier">unique_resource</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">(</span><span class="special">...</span><span class="special">)</span><span class="special">;</span></pre>Constructs an unallocated unique resource guard. <p><span class="bold"><strong>Requires:</strong></span> Default <code class="computeroutput">Resource</code> value can be constructed. <code class="computeroutput">Deleter</code> is default-constructible and is not a pointer to function.</p>
+<p><span class="bold"><strong>Effects:</strong></span> Initializes the <code class="computeroutput">Resource</code> object with the default resource value. Default-constructs the <code class="computeroutput">Deleter</code> object.</p>
+<p><span class="bold"><strong>Throws:</strong></span> Nothing, unless construction of <code class="computeroutput">Resource</code> or <code class="computeroutput">Deleter</code> throws.</p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Postconditions:</span></p></td>
+<td><p><code class="computeroutput">this-&gt;<a class="link" href="classboost_1_1scope_1_1unique__resource.html#doxygen.reference.classboost_1_1scope_1_1unique__resource_1ab50d2dd49c85000fa75833f9df2556e3">allocated()</a> == false</code> </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> D<span class="special">&gt;</span> 
+  <a name="doxygen.reference.classboost_1_1scope_1_1unique__resource_1ac09d9731459096ae7f73c45f6410ef38"></a><span class="identifier">unique_resource</span><span class="special">(</span><span class="identifier">default_resource_t</span> res<span class="special">,</span> <span class="identifier">D</span> <span class="special">&amp;&amp;</span> del<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">(</span><span class="special">...</span><span class="special">)</span><span class="special">;</span></pre>Constructs an unallocated unique resource guard with the given deleter. <p><span class="bold"><strong>Requires:</strong></span> Default <code class="computeroutput">Resource</code> value can be constructed and <code class="computeroutput">Deleter</code> is constructible from <span class="emphasis"><em>del</em></span>.</p>
+<p><span class="bold"><strong>Effects:</strong></span> Initializes the <code class="computeroutput">Resource</code> value with the default resource value. If <code class="computeroutput">Deleter</code> is nothrow constructible from <code class="computeroutput">D&amp;&amp;</code> then constructs <code class="computeroutput">Deleter</code> from <code class="computeroutput">std::forward&lt; D &gt;(del)</code>, otherwise constructs from <code class="computeroutput">del</code>.</p>
+<p><span class="bold"><strong>Throws:</strong></span> Nothing, unless construction of <code class="computeroutput">Resource</code> or <code class="computeroutput">Deleter</code> throws.</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">res</code></span></p></td>
+<td><p>A tag argument indicating default resource value. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">del</code></span></p></td>
+<td><p>Resource deleter function object.</p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Postconditions:</span></p></td>
+<td><p><code class="computeroutput">this-&gt;<a class="link" href="classboost_1_1scope_1_1unique__resource.html#doxygen.reference.classboost_1_1scope_1_1unique__resource_1ab50d2dd49c85000fa75833f9df2556e3">allocated()</a> == false</code> </p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> R<span class="special">&gt;</span> <span class="keyword">explicit</span> <a name="doxygen.reference.classboost_1_1scope_1_1unique__resource_1a26204cdc4d828579edf28a81e04dd1ea"></a><span class="identifier">unique_resource</span><span class="special">(</span><span class="identifier">R</span> <span class="special">&amp;&amp;</span> res<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">(</span><span class="special">...</span><span class="special">)</span><span class="special">;</span></pre>Constructs a unique resource guard with the given resource and a default-constructed deleter. <p><span class="bold"><strong>Requires:</strong></span> <code class="computeroutput">Resource</code> is constructible from <span class="emphasis"><em>res</em></span>. <code class="computeroutput">Deleter</code> is default-constructible and is not a pointer to function.</p>
+<p><span class="bold"><strong>Effects:</strong></span> Constructs the unique resource object as if by calling <code class="computeroutput"><a class="link" href="classboost_1_1scope_1_1unique__resource.html" title="Class template unique_resource">unique_resource</a>(std::forward&lt; R &gt;(res), Deleter())</code>.</p>
+<p><span class="bold"><strong>Throws:</strong></span> Nothing, unless construction of <code class="computeroutput">Resource</code> or <code class="computeroutput">Deleter</code> throws.</p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">res</code></span></p></td>
+<td><p>Resource object. </p></td>
+</tr></tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> R<span class="special">,</span> <span class="keyword">typename</span> D<span class="special">&gt;</span> 
+  <a name="doxygen.reference.classboost_1_1scope_1_1unique__resource_1a6f761d62c30b05c62cab58329bc66455"></a><span class="identifier">unique_resource</span><span class="special">(</span><span class="identifier">R</span> <span class="special">&amp;&amp;</span> res<span class="special">,</span> <span class="identifier">D</span> <span class="special">&amp;&amp;</span> del<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">(</span><span class="special">...</span><span class="special">)</span><span class="special">;</span></pre>Constructs a unique resource guard with the given resource and deleter. <p><span class="bold"><strong>Requires:</strong></span> <code class="computeroutput">Resource</code> is constructible from <span class="emphasis"><em>res</em></span> and <code class="computeroutput">Deleter</code> is constructible from <span class="emphasis"><em>del</em></span>.</p>
+<p><span class="bold"><strong>Effects:</strong></span> If <code class="computeroutput">Resource</code> is nothrow constructible from <code class="computeroutput">R&amp;&amp;</code> then constructs <code class="computeroutput">Resource</code> from <code class="computeroutput">std::forward&lt; R &gt;(res)</code>, otherwise constructs from <code class="computeroutput">res</code>. If <code class="computeroutput">Deleter</code> is nothrow constructible from <code class="computeroutput">D&amp;&amp;</code> then constructs <code class="computeroutput">Deleter</code> from <code class="computeroutput">std::forward&lt; D &gt;(del)</code>, otherwise constructs from <code class="computeroutput">del</code>.</p>
+<p>If construction of <code class="computeroutput">Resource</code> or <code class="computeroutput">Deleter</code> throws and <span class="emphasis"><em>res</em></span> is not an unallocated resource value, invokes <span class="emphasis"><em>del</em></span> on <span class="emphasis"><em>res</em></span> (if <code class="computeroutput">Resource</code> construction failed) or the constructed <code class="computeroutput">Resource</code> object (if <code class="computeroutput">Deleter</code> construction failed).</p>
+<p><span class="bold"><strong>Throws:</strong></span> Nothing, unless construction of <code class="computeroutput">Resource</code> or <code class="computeroutput">Deleter</code> throws.</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">res</code></span></p></td>
+<td><p>Resource object. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">del</code></span></p></td>
+<td><p>Resource deleter function object.</p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Postconditions:</span></p></td>
+<td><p>If <span class="emphasis"><em>res</em></span> is an unallocated resource value then <code class="computeroutput">this-&gt;<a class="link" href="classboost_1_1scope_1_1unique__resource.html#doxygen.reference.classboost_1_1scope_1_1unique__resource_1ab50d2dd49c85000fa75833f9df2556e3">allocated()</a> == false</code>, otherwise <code class="computeroutput">this-&gt;<a class="link" href="classboost_1_1scope_1_1unique__resource.html#doxygen.reference.classboost_1_1scope_1_1unique__resource_1ab50d2dd49c85000fa75833f9df2556e3">allocated()</a> == true</code>. </p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem"><pre class="literallayout"><a name="doxygen.reference.classboost_1_1scope_1_1unique__resource_1a2685273772192d7effa6c72aad791d08"></a><span class="identifier">unique_resource</span><span class="special">(</span><a class="link" href="classboost_1_1scope_1_1unique__resource.html" title="Class template unique_resource">unique_resource</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">delete</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a class="link" href="classboost_1_1scope_1_1unique__resource.html" title="Class template unique_resource">unique_resource</a> <span class="special">&amp;</span> <a name="doxygen.reference.classboost_1_1scope_1_1unique__resource_1a565a9e7dc64d0bb41bdc508ac2f14716"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><a class="link" href="classboost_1_1scope_1_1unique__resource.html" title="Class template unique_resource">unique_resource</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">delete</span><span class="special">;</span></pre></li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.reference.classboost_1_1scope_1_1unique__resource_1a73018eb2f3623297dbc0c126b1bb481c"></a><span class="identifier">unique_resource</span><span class="special">(</span><a class="link" href="classboost_1_1scope_1_1unique__resource.html" title="Class template unique_resource">unique_resource</a> <span class="special">&amp;&amp;</span> that<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">(</span><span class="special">...</span><span class="special">)</span><span class="special">;</span></pre>Move-constructs a unique resource guard. <p><span class="bold"><strong>Requires:</strong></span> <code class="computeroutput">Resource</code> and <code class="computeroutput">Deleter</code> are move-constructible.</p>
+<p><span class="bold"><strong>Effects:</strong></span> If <code class="computeroutput">Resource</code> is nothrow move-constructible then move-constructs <code class="computeroutput">Resource</code>, otherwise copy-constructs. If <code class="computeroutput">Deleter</code> is nothrow move-constructible then move-constructs <code class="computeroutput">Deleter</code>, otherwise copy-constructs. Deactivates the moved-from unique resource object.</p>
+<p>If an exception is thrown during construction, <span class="emphasis"><em>that</em></span> is left in its original state.</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>This logic ensures that in case of exception the resource is not leaked and remains owned by the move source.</p></td></tr>
+</table></div>
+<p>
+<span class="bold"><strong>Throws:</strong></span> Nothing, unless construction of <code class="computeroutput">Resource</code> or <code class="computeroutput">Deleter</code> throws.</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">that</code></span></p></td>
+<td><p>Move source.</p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Postconditions:</span></p></td>
+<td><p>Let <code class="computeroutput">allocated</code> be equal to <code class="computeroutput">that.allocated()</code> prior to the operation. Then <code class="computeroutput">this-&gt;<a class="link" href="classboost_1_1scope_1_1unique__resource.html#doxygen.reference.classboost_1_1scope_1_1unique__resource_1ab50d2dd49c85000fa75833f9df2556e3">allocated()</a> == allocated</code> and <code class="computeroutput">that.allocated() == false</code>. </p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a class="link" href="classboost_1_1scope_1_1unique__resource.html" title="Class template unique_resource">unique_resource</a> <span class="special">&amp;</span> <a name="doxygen.reference.classboost_1_1scope_1_1unique__resource_1a8e9fd530d971fe34148625ef10e4be9f"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><a class="link" href="classboost_1_1scope_1_1unique__resource.html" title="Class template unique_resource">unique_resource</a> <span class="special">&amp;&amp;</span> that<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">(</span><span class="special">...</span><span class="special">)</span><span class="special">;</span></pre>Move-assigns a unique resource guard. <p><span class="bold"><strong>Requires:</strong></span> <code class="computeroutput">Resource</code> and <code class="computeroutput">Deleter</code> are move-assignable.</p>
+<p><span class="bold"><strong>Effects:</strong></span> Calls <code class="computeroutput">this-&gt;<a class="link" href="classboost_1_1scope_1_1unique__resource.html#doxygen.reference.classboost_1_1scope_1_1unique__resource_1aa6910e2f06b7acd5f110ff4002f490bd">reset()</a></code>. Then, if <code class="computeroutput">Deleter</code> is nothrow move-assignable, move-assigns the <code class="computeroutput">Deleter</code> object first and the <code class="computeroutput">Resource</code> object next. Otherwise, move-assigns the objects in reverse order. Lastly, deactivates the moved-from unique resource object.</p>
+<p>If an exception is thrown, <span class="emphasis"><em>that</em></span> is left in its original state.</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>The different orders of assignment ensure that in case of exception the resource is not leaked and remains owned by the move source.</p></td></tr>
+</table></div>
+<p>
+<span class="bold"><strong>Throws:</strong></span> Nothing, unless assignment of <code class="computeroutput">Resource</code> or <code class="computeroutput">Deleter</code> throws.</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">that</code></span></p></td>
+<td><p>Move source.</p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Postconditions:</span></p></td>
+<td><p>Let <code class="computeroutput">allocated</code> be equal to <code class="computeroutput">that.allocated()</code> prior to the operation. Then <code class="computeroutput">this-&gt;<a class="link" href="classboost_1_1scope_1_1unique__resource.html#doxygen.reference.classboost_1_1scope_1_1unique__resource_1ab50d2dd49c85000fa75833f9df2556e3">allocated()</a> == allocated</code> and <code class="computeroutput">that.allocated() == false</code>. </p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.reference.classboost_1_1scope_1_1unique__resource_1abffa1cf26af00c2f075c280917c6a7d8"></a><span class="special">~</span><span class="identifier">unique_resource</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">(</span><span class="special">...</span><span class="special">)</span><span class="special">;</span></pre>If the resource is allocated, calls the deleter function on it. Destroys the resource and the deleter. <p><span class="bold"><strong>Throws:</strong></span> Nothing, unless invoking the deleter throws. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.reference.classboost_1_1scope_1_1unique__resource_1a420e60e9788bfa3b52aa3aab72ea3a5e"></a><span class="keyword">operator</span> <span class="keyword">bool</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Returns <code class="computeroutput">true</code> if the resource is allocated and to be reclaimed by the deleter, otherwise <code class="computeroutput">false</code>. <div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>This method does not test the value of the resource.</p></td></tr>
+</table></div>
+<p>
+<span class="bold"><strong>Throws:</strong></span> Nothing. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.reference.classboost_1_1scope_1_1unique__resource_1ab50d2dd49c85000fa75833f9df2556e3"></a><span class="identifier">allocated</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Returns <code class="computeroutput">true</code> if the resource is allocated and to be reclaimed by the deleter, otherwise <code class="computeroutput">false</code>. <p><span class="bold"><strong>Throws:</strong></span> Nothing. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">resource_type</span> <span class="keyword">const</span> <span class="special">&amp;</span> <a name="doxygen.reference.classboost_1_1scope_1_1unique__resource_1afe9d14f203660128e2ad7965b18c9960"></a><span class="identifier">get</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Returns a reference to the resource object. <p><span class="bold"><strong>Throws:</strong></span> Nothing. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">deleter_type</span> <span class="keyword">const</span> <span class="special">&amp;</span> <a name="doxygen.reference.classboost_1_1scope_1_1unique__resource_1a3f1447c8224d72150b25814e6550ea3c"></a><span class="identifier">get_deleter</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Returns a reference to the deleter object. <p><span class="bold"><strong>Throws:</strong></span> Nothing. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.reference.classboost_1_1scope_1_1unique__resource_1a4fd0fa43d212f9effc3366b8bce40fb5"></a><span class="identifier">release</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Marks the resource as unallocated. Does not call the deleter if the resource was previously allocated. <p><span class="bold"><strong>Throws:</strong></span> Nothing.</p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Postconditions:</span></p></td>
+<td><p><code class="computeroutput">this-&gt;<a class="link" href="classboost_1_1scope_1_1unique__resource.html#doxygen.reference.classboost_1_1scope_1_1unique__resource_1ab50d2dd49c85000fa75833f9df2556e3">allocated()</a> == false</code> </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.reference.classboost_1_1scope_1_1unique__resource_1aa6910e2f06b7acd5f110ff4002f490bd"></a><span class="identifier">reset</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">(</span><span class="special">...</span><span class="special">)</span><span class="special">;</span></pre>If the resource is allocated, calls the deleter function on it and marks the resource as unallocated. <p><span class="bold"><strong>Throws:</strong></span> Nothing, unless invoking the deleter throws.</p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Postconditions:</span></p></td>
+<td><p><code class="computeroutput">this-&gt;<a class="link" href="classboost_1_1scope_1_1unique__resource.html#doxygen.reference.classboost_1_1scope_1_1unique__resource_1ab50d2dd49c85000fa75833f9df2556e3">allocated()</a> == false</code> </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> R<span class="special">&gt;</span> <span class="keyword">void</span> <a name="doxygen.reference.classboost_1_1scope_1_1unique__resource_1a3e47d63e4f240ba0f5da933482b0495f"></a><span class="identifier">reset</span><span class="special">(</span><span class="identifier">R</span> <span class="special">&amp;&amp;</span> res<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">(</span><span class="special">...</span><span class="special">)</span><span class="special">;</span></pre>Assigns a new resource object to the unique resource wrapper. <p><span class="bold"><strong>Effects:</strong></span> Calls <code class="computeroutput">this-&gt;<a class="link" href="classboost_1_1scope_1_1unique__resource.html#doxygen.reference.classboost_1_1scope_1_1unique__resource_1aa6910e2f06b7acd5f110ff4002f490bd">reset()</a></code>. Then, if <code class="computeroutput">Resource</code> is nothrow assignable from <code class="computeroutput">R&amp;&amp;</code>, assigns <code class="computeroutput">std::forward&lt; R &gt;(res)</code> to the stored resource object, otherwise assigns <code class="computeroutput">res</code>.</p>
+<p>If <span class="emphasis"><em>res</em></span> is not an unallocated resource value and an exception is thrown during the operation, invokes the stored deleter on <span class="emphasis"><em>res</em></span> before returning with the exception.</p>
+<p><span class="bold"><strong>Throws:</strong></span> Nothing, unless invoking the deleter throws.</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">res</code></span></p></td>
+<td><p>Resource object to assign.</p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Postconditions:</span></p></td>
+<td><p><code class="computeroutput">this-&gt;<a class="link" href="classboost_1_1scope_1_1unique__resource.html#doxygen.reference.classboost_1_1scope_1_1unique__resource_1ab50d2dd49c85000fa75833f9df2556e3">allocated()</a> == false</code> </p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">resource_type</span> <span class="keyword">const</span> <span class="special">&amp;</span> <a name="doxygen.reference.classboost_1_1scope_1_1unique__resource_1aa4a0ef824a4fc424757374f7600170d2"></a><span class="keyword">operator</span><span class="special">-&gt;</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Invokes indirection on the resource object. <p><span class="bold"><strong>Requires:</strong></span> <code class="computeroutput">Resource</code> is dereferenceable.</p>
+<p><span class="bold"><strong>Effects:</strong></span> Returns a reference to the resource object as if by calling <code class="computeroutput"><a class="link" href="classboost_1_1scope_1_1unique__resource.html#doxygen.reference.classboost_1_1scope_1_1unique__resource_1afe9d14f203660128e2ad7965b18c9960">get()</a></code>.</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>If <code class="computeroutput">Resource</code> is not a pointer type, the compiler will invoke its <code class="computeroutput">operator-&gt;</code>. Such call sequence will continue until a pointer is obtained.</p></td></tr>
+</table></div>
+<p>
+<span class="bold"><strong>Throws:</strong></span> Nothing. Note that any implicit subsequent calls to other <code class="computeroutput">operator-&gt;</code> functions that are caused by this call may have different throw conditions. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">auto</span> <a name="doxygen.reference.classboost_1_1scope_1_1unique__resource_1a9b7292c0085155ef5b3f0ff33cf79848"></a><span class="keyword">operator</span><span class="special">*</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">(</span><span class="special">...</span><span class="special">)</span><span class="special">;</span></pre>Dereferences the resource object. <p><span class="bold"><strong>Requires:</strong></span> <code class="computeroutput">Resource</code> is dereferenceable.</p>
+<p><span class="bold"><strong>Effects:</strong></span> Returns the result of dereferencing the resource object as if by calling <code class="computeroutput">*get()</code>.</p>
+<p><span class="bold"><strong>Throws:</strong></span> Nothing, unless dereferencing the resource object throws. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.reference.classboost_1_1scope_1_1unique__resource_1a390ff95ed46ac302cadde81b9b157aad"></a><span class="identifier">swap</span><span class="special">(</span><a class="link" href="classboost_1_1scope_1_1unique__resource.html" title="Class template unique_resource">unique_resource</a> <span class="special">&amp;</span> that<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">(</span><span class="special">...</span><span class="special">)</span><span class="special">;</span></pre>Swaps two unique resource wrappers. <p><span class="bold"><strong>Requires:</strong></span> <code class="computeroutput">Resource</code> and <code class="computeroutput">Deleter</code> are swappable. At least one of <code class="computeroutput">Resource</code> and <code class="computeroutput">Deleter</code> is nothrow swappable.</p>
+<p><span class="bold"><strong>Effects:</strong></span> Swaps the resource objects and deleter objects stored in <code class="computeroutput">*this</code> and <span class="emphasis"><em>that</em></span> as if by calling unqualified <code class="computeroutput">swap</code> in a context where <code class="computeroutput">std::swap</code> is found by overload resolution.</p>
+<p>If an exception is thrown, and the failed swap operation supports strong exception guarantee, both <code class="computeroutput">*this</code> and <span class="emphasis"><em>that</em></span> are left in their original states.</p>
+<p><span class="bold"><strong>Throws:</strong></span> Nothing, unless swapping the resource objects or deleters throw.</p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">that</code></span></p></td>
+<td><p>Unique resource wrapper to swap with. </p></td>
+</tr></tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id11862"></a><h3>
+<a name="id19-bb"></a><code class="computeroutput">unique_resource</code> friend functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.reference.classboost_1_1scope_1_1unique__resource_1a98787099f36787dc31b14a9fcc8d3498"></a><span class="identifier">swap</span><span class="special">(</span><a class="link" href="classboost_1_1scope_1_1unique__resource.html" title="Class template unique_resource">unique_resource</a> <span class="special">&amp;</span> left<span class="special">,</span> <a class="link" href="classboost_1_1scope_1_1unique__resource.html" title="Class template unique_resource">unique_resource</a> <span class="special">&amp;</span> right<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">(</span><span class="special">...</span><span class="special">)</span><span class="special">;</span></pre>Swaps two unique resource wrappers. <p><span class="bold"><strong>Effects:</strong></span> As if <code class="computeroutput">left.swap(right)</code>. </p>
+</li></ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2022-2024 Andrey Semashev<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="https://www.boost.org/LICENSE_1_0.txt" target="_top">https://www.boost.org/LICENSE_1_0.txt</a>).
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="structboost_1_1scope_1_1unallocated__resource.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../reference.html#doxygen.reference.unique__resource_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="unique__resource_8hpp_1a970dcf160d71b25082989f9bc8e5bff3.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

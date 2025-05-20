@@ -1,0 +1,824 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Extended Examples</title>
+<link rel="stylesheet" href="../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../parser.html" title="Chapter 26. Boost.Parser">
+<link rel="prev" href="tutorial.html" title="Tutorial">
+<link rel="next" href="concepts.html" title="Concepts">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../boost.png"></td>
+<td align="center"><a href="../../../index.html">Home</a></td>
+<td align="center"><a href="../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="tutorial.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../parser.html"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="concepts.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="boost_parser.extended_examples"></a><a class="link" href="extended_examples.html" title="Extended Examples">Extended Examples</a>
+</h2></div></div></div>
+<div class="toc"><dl class="toc">
+<dt><span class="section"><a href="extended_examples.html#boost_parser.extended_examples.parsing_json">Parsing
+      JSON</a></span></dt>
+<dt><span class="section"><a href="extended_examples.html#boost_parser.extended_examples.parsing_json_with_callbacks">Parsing
+      JSON With Callbacks</a></span></dt>
+</dl></div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="boost_parser.extended_examples.parsing_json"></a><a class="link" href="extended_examples.html#boost_parser.extended_examples.parsing_json" title="Parsing JSON">Parsing
+      JSON</a>
+</h3></div></div></div>
+<p>
+        This is a conforming JSON parser. It passes all the required tests in the
+        <a href="https://github.com/nst/JSONTestSuite" target="_top">JSON Test Suite</a>,
+        and all but 5 of the optional ones. Notice that the actual parsing bits are
+        only about 150 lines of code.
+      </p>
+<p>
+</p>
+<pre class="programlisting"><span class="comment">// This header includes a type called json::value that acts as a</span>
+<span class="comment">// Javascript-like polymorphic value type.</span>
+<span class="preprocessor">#include</span> <span class="string">"json.hpp"</span>
+
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">parser</span><span class="special">/</span><span class="identifier">parser</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">fstream</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">vector</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">climits</span><span class="special">&gt;</span>
+
+
+<span class="keyword">namespace</span> <span class="identifier">json</span> <span class="special">{</span>
+
+    <span class="keyword">namespace</span> <span class="identifier">bp</span> <span class="special">=</span> <span class="special">::</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">parser</span><span class="special">;</span>
+    <span class="keyword">using</span> <span class="keyword">namespace</span> <span class="identifier">bp</span><span class="special">::</span><span class="identifier">literals</span><span class="special">;</span>
+
+    <span class="comment">// The JSON spec imposes a limit on how deeply JSON data structures are</span>
+    <span class="comment">// allowed to nest.  This exception is thrown when that limit is exceeded</span>
+    <span class="comment">// during the parse.</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> <span class="identifier">Iter</span><span class="special">&gt;</span>
+    <span class="keyword">struct</span> <span class="identifier">excessive_nesting</span> <span class="special">:</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">runtime_error</span>
+    <span class="special">{</span>
+        <span class="identifier">excessive_nesting</span><span class="special">(</span><span class="identifier">Iter</span> <span class="identifier">it</span><span class="special">)</span> <span class="special">:</span>
+            <span class="identifier">runtime_error</span><span class="special">(</span><span class="string">"excessive_nesting"</span><span class="special">),</span>
+            <span class="identifier">iter</span><span class="special">(</span><span class="identifier">it</span><span class="special">)</span>
+        <span class="special">{}</span>
+        <span class="identifier">Iter</span> <span class="identifier">iter</span><span class="special">;</span>
+    <span class="special">};</span>
+
+
+    <span class="comment">// The only globals we need to parse JSON are: "How many data structures</span>
+    <span class="comment">// deep are we?", and "What is the limit of open data structures</span>
+    <span class="comment">// allowed?".</span>
+    <span class="keyword">struct</span> <span class="identifier">global_state</span>
+    <span class="special">{</span>
+        <span class="keyword">int</span> <span class="identifier">recursive_open_count</span> <span class="special">=</span> <span class="number">0</span><span class="special">;</span>
+        <span class="keyword">int</span> <span class="identifier">max_recursive_open_count</span> <span class="special">=</span> <span class="number">0</span><span class="special">;</span>
+    <span class="special">};</span>
+
+    <span class="comment">// When matching paired UTF-16 surrogates, we need to track a bit of state</span>
+    <span class="comment">// between matching the first and second UTF-16 code units: namely, the</span>
+    <span class="comment">// value of the first code unit.</span>
+    <span class="keyword">struct</span> <span class="identifier">double_escape_locals</span>
+    <span class="special">{</span>
+        <span class="keyword">int</span> <span class="identifier">first_surrogate</span> <span class="special">=</span> <span class="number">0</span><span class="special">;</span>
+    <span class="special">};</span>
+
+
+    <span class="comment">// Here are all the rules declared.  I've given them names that are</span>
+    <span class="comment">// end-user friendly, so that if there is a parse error, you get a message</span>
+    <span class="comment">// like "expected four hexadecimal digits here:", instead of "expected</span>
+    <span class="comment">// hex_4 here:".</span>
+
+    <span class="identifier">bp</span><span class="special">::</span><span class="identifier">rule</span><span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">ws</span><span class="special">&gt;</span> <span class="keyword">const</span> <span class="identifier">ws</span> <span class="special">=</span> <span class="string">"whitespace"</span><span class="special">;</span>
+
+    <span class="identifier">bp</span><span class="special">::</span><span class="identifier">rule</span><span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">string_char</span><span class="special">,</span> <span class="identifier">uint32_t</span><span class="special">&gt;</span> <span class="keyword">const</span> <span class="identifier">string_char</span> <span class="special">=</span>
+        <span class="string">"code point (code points &lt;= U+001F must be escaped)"</span><span class="special">;</span>
+    <span class="identifier">bp</span><span class="special">::</span><span class="identifier">rule</span><span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">four_hex_digits</span><span class="special">,</span> <span class="identifier">uint32_t</span><span class="special">&gt;</span> <span class="keyword">const</span> <span class="identifier">hex_4</span> <span class="special">=</span>
+        <span class="string">"four hexadecimal digits"</span><span class="special">;</span>
+    <span class="identifier">bp</span><span class="special">::</span><span class="identifier">rule</span><span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">escape_seq</span><span class="special">,</span> <span class="identifier">uint32_t</span><span class="special">&gt;</span> <span class="keyword">const</span> <span class="identifier">escape_seq</span> <span class="special">=</span>
+        <span class="string">"\\uXXXX hexadecimal escape sequence"</span><span class="special">;</span>
+    <span class="identifier">bp</span><span class="special">::</span><span class="identifier">rule</span><span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">escape_double_seq</span><span class="special">,</span> <span class="identifier">uint32_t</span><span class="special">,</span> <span class="identifier">double_escape_locals</span><span class="special">&gt;</span> <span class="keyword">const</span>
+        <span class="identifier">escape_double_seq</span> <span class="special">=</span> <span class="string">"\\uXXXX hexadecimal escape sequence"</span><span class="special">;</span>
+    <span class="identifier">bp</span><span class="special">::</span><span class="identifier">rule</span><span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">single_escaped_char</span><span class="special">,</span> <span class="identifier">uint32_t</span><span class="special">&gt;</span> <span class="keyword">const</span> <span class="identifier">single_escaped_char</span> <span class="special">=</span>
+        <span class="string">"'\"', '\\', '/', 'b', 'f', 'n', 'r', or 't'"</span><span class="special">;</span>
+
+    <span class="identifier">bp</span><span class="special">::</span><span class="identifier">rule</span><span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">null</span><span class="special">,</span> <span class="identifier">value</span><span class="special">&gt;</span> <span class="keyword">const</span> <span class="identifier">null</span> <span class="special">=</span> <span class="string">"null"</span><span class="special">;</span>
+    <span class="identifier">bp</span><span class="special">::</span><span class="identifier">rule</span><span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">string</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">&gt;</span> <span class="keyword">const</span> <span class="identifier">string</span> <span class="special">=</span> <span class="string">"string"</span><span class="special">;</span>
+    <span class="identifier">bp</span><span class="special">::</span><span class="identifier">rule</span><span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">number</span><span class="special">,</span> <span class="keyword">double</span><span class="special">&gt;</span> <span class="keyword">const</span> <span class="identifier">number</span> <span class="special">=</span> <span class="string">"number"</span><span class="special">;</span>
+    <span class="identifier">bp</span><span class="special">::</span><span class="identifier">rule</span><span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">object_element</span><span class="special">,</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">parser</span><span class="special">::</span><span class="identifier">tuple</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">,</span> <span class="identifier">value</span><span class="special">&gt;&gt;</span> <span class="keyword">const</span>
+        <span class="identifier">object_element</span> <span class="special">=</span> <span class="string">"object-element"</span><span class="special">;</span>
+    <span class="identifier">bp</span><span class="special">::</span><span class="identifier">rule</span><span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">object_tag</span><span class="special">,</span> <span class="identifier">value</span><span class="special">&gt;</span> <span class="keyword">const</span> <span class="identifier">object_p</span> <span class="special">=</span> <span class="string">"object"</span><span class="special">;</span>
+    <span class="identifier">bp</span><span class="special">::</span><span class="identifier">rule</span><span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">array_tag</span><span class="special">,</span> <span class="identifier">value</span><span class="special">&gt;</span> <span class="keyword">const</span> <span class="identifier">array_p</span> <span class="special">=</span> <span class="string">"array"</span><span class="special">;</span>
+
+    <span class="identifier">bp</span><span class="special">::</span><span class="identifier">rule</span><span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">value_tag</span><span class="special">,</span> <span class="identifier">value</span><span class="special">&gt;</span> <span class="keyword">const</span> <span class="identifier">value_p</span> <span class="special">=</span> <span class="string">"value"</span><span class="special">;</span>
+
+
+
+    <span class="comment">// JSON limits whitespace to just these four characters.</span>
+    <span class="keyword">auto</span> <span class="keyword">const</span> <span class="identifier">ws_def</span> <span class="special">=</span> <span class="char">'\x09'</span><span class="identifier">_l</span> <span class="special">|</span> <span class="char">'\x0a'</span> <span class="special">|</span> <span class="char">'\x0d'</span> <span class="special">|</span> <span class="char">'\x20'</span><span class="special">;</span>
+
+    <span class="comment">// Since our json object representation, json::value, is polymorphic, and</span>
+    <span class="comment">// since its default-constructed state represents the JSON value "null",</span>
+    <span class="comment">// we need to tell a json::value that it is an object (similar to a map)</span>
+    <span class="comment">// before we start inserting values into it.  That's why we need</span>
+    <span class="comment">// object_init.</span>
+    <span class="keyword">auto</span> <span class="identifier">object_init</span> <span class="special">=</span> <span class="special">[](</span><span class="keyword">auto</span> <span class="special">&amp;</span> <span class="identifier">ctx</span><span class="special">)</span> <span class="special">{</span>
+        <span class="keyword">auto</span> <span class="special">&amp;</span> <span class="identifier">globals</span> <span class="special">=</span> <span class="identifier">_globals</span><span class="special">(</span><span class="identifier">ctx</span><span class="special">);</span>
+        <span class="keyword">if</span> <span class="special">(</span><span class="identifier">globals</span><span class="special">.</span><span class="identifier">max_recursive_open_count</span> <span class="special">&lt;</span> <span class="special">++</span><span class="identifier">globals</span><span class="special">.</span><span class="identifier">recursive_open_count</span><span class="special">)</span>
+            <span class="keyword">throw</span> <span class="identifier">excessive_nesting</span><span class="special">(</span><span class="identifier">_where</span><span class="special">(</span><span class="identifier">ctx</span><span class="special">).</span><span class="identifier">begin</span><span class="special">());</span>
+        <span class="identifier">_val</span><span class="special">(</span><span class="identifier">ctx</span><span class="special">)</span> <span class="special">=</span> <span class="identifier">object</span><span class="special">();</span>
+    <span class="special">};</span>
+
+    <span class="comment">// We need object_insert because we can't just insert into the json::value</span>
+    <span class="comment">// itself.  The json::value does not have an insert() member, because if</span>
+    <span class="comment">// it is currently holding a number, that makes no sense.  So, for a</span>
+    <span class="comment">// json::value x, we need to call get&lt;object&gt;(x) to get the object</span>
+    <span class="comment">// interface.</span>
+    <span class="keyword">auto</span> <span class="identifier">object_insert</span> <span class="special">=</span> <span class="special">[](</span><span class="keyword">auto</span> <span class="special">&amp;</span> <span class="identifier">ctx</span><span class="special">)</span> <span class="special">{</span>
+        <span class="identifier">value</span> <span class="special">&amp;</span> <span class="identifier">v</span> <span class="special">=</span> <span class="identifier">_val</span><span class="special">(</span><span class="identifier">ctx</span><span class="special">);</span>
+        <span class="identifier">get</span><span class="special">&lt;</span><span class="identifier">object</span><span class="special">&gt;(</span><span class="identifier">v</span><span class="special">).</span><span class="identifier">insert</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">make_pair</span><span class="special">(</span>
+            <span class="identifier">std</span><span class="special">::</span><span class="identifier">move</span><span class="special">(</span><span class="identifier">_attr</span><span class="special">(</span><span class="identifier">ctx</span><span class="special">))[</span><span class="number">0</span><span class="identifier">_c</span><span class="special">],</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">move</span><span class="special">(</span><span class="identifier">_attr</span><span class="special">(</span><span class="identifier">ctx</span><span class="special">)[</span><span class="number">1</span><span class="identifier">_c</span><span class="special">])));</span>
+    <span class="special">};</span>
+
+    <span class="comment">// These are the array analogues of the object semantic actions above.</span>
+    <span class="keyword">auto</span> <span class="identifier">array_init</span> <span class="special">=</span> <span class="special">[](</span><span class="keyword">auto</span> <span class="special">&amp;</span> <span class="identifier">ctx</span><span class="special">)</span> <span class="special">{</span>
+        <span class="keyword">auto</span> <span class="special">&amp;</span> <span class="identifier">globals</span> <span class="special">=</span> <span class="identifier">_globals</span><span class="special">(</span><span class="identifier">ctx</span><span class="special">);</span>
+        <span class="keyword">if</span> <span class="special">(</span><span class="identifier">globals</span><span class="special">.</span><span class="identifier">max_recursive_open_count</span> <span class="special">&lt;</span> <span class="special">++</span><span class="identifier">globals</span><span class="special">.</span><span class="identifier">recursive_open_count</span><span class="special">)</span>
+            <span class="keyword">throw</span> <span class="identifier">excessive_nesting</span><span class="special">(</span><span class="identifier">_where</span><span class="special">(</span><span class="identifier">ctx</span><span class="special">).</span><span class="identifier">begin</span><span class="special">());</span>
+        <span class="identifier">_val</span><span class="special">(</span><span class="identifier">ctx</span><span class="special">)</span> <span class="special">=</span> <span class="identifier">array</span><span class="special">();</span>
+    <span class="special">};</span>
+    <span class="keyword">auto</span> <span class="identifier">array_append</span> <span class="special">=</span> <span class="special">[](</span><span class="keyword">auto</span> <span class="special">&amp;</span> <span class="identifier">ctx</span><span class="special">)</span> <span class="special">{</span>
+        <span class="identifier">value</span> <span class="special">&amp;</span> <span class="identifier">v</span> <span class="special">=</span> <span class="identifier">_val</span><span class="special">(</span><span class="identifier">ctx</span><span class="special">);</span>
+        <span class="identifier">get</span><span class="special">&lt;</span><span class="identifier">array</span><span class="special">&gt;(</span><span class="identifier">v</span><span class="special">).</span><span class="identifier">push_back</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">move</span><span class="special">(</span><span class="identifier">_attr</span><span class="special">(</span><span class="identifier">ctx</span><span class="special">)));</span>
+    <span class="special">};</span>
+
+    <span class="comment">// escape_double_seq is used to match pairs of UTF-16 surrogates that form</span>
+    <span class="comment">// a single code point.  So, after matching one UTF-16 code unit c, we</span>
+    <span class="comment">// only want to keep going if c is a lead/high surrogate.</span>
+    <span class="keyword">auto</span> <span class="identifier">first_hex_escape</span> <span class="special">=</span> <span class="special">[](</span><span class="keyword">auto</span> <span class="special">&amp;</span> <span class="identifier">ctx</span><span class="special">)</span> <span class="special">{</span>
+        <span class="keyword">auto</span> <span class="special">&amp;</span> <span class="identifier">locals</span> <span class="special">=</span> <span class="identifier">_locals</span><span class="special">(</span><span class="identifier">ctx</span><span class="special">);</span>
+        <span class="identifier">uint32_t</span> <span class="keyword">const</span> <span class="identifier">cu</span> <span class="special">=</span> <span class="identifier">_attr</span><span class="special">(</span><span class="identifier">ctx</span><span class="special">);</span>
+        <span class="keyword">if</span> <span class="special">(!</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">parser</span><span class="special">::</span><span class="identifier">detail</span><span class="special">::</span><span class="identifier">text</span><span class="special">::</span><span class="identifier">high_surrogate</span><span class="special">(</span><span class="identifier">cu</span><span class="special">))</span>
+            <span class="identifier">_pass</span><span class="special">(</span><span class="identifier">ctx</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">false</span><span class="special">;</span> <span class="comment">// Not a high surrogate; explicitly fail the parse.</span>
+        <span class="keyword">else</span>
+            <span class="identifier">locals</span><span class="special">.</span><span class="identifier">first_surrogate</span> <span class="special">=</span> <span class="identifier">cu</span><span class="special">;</span> <span class="comment">// Save this initial code unit for later.</span>
+    <span class="special">};</span>
+    <span class="comment">// This is also used in escape_double_seq.  When we get to this action, we</span>
+    <span class="comment">// know we've already matched a high surrogate, and so this one had better</span>
+    <span class="comment">// be a low surrogate, or we have a (local) parse failure.</span>
+    <span class="keyword">auto</span> <span class="identifier">second_hex_escape</span> <span class="special">=</span> <span class="special">[](</span><span class="keyword">auto</span> <span class="special">&amp;</span> <span class="identifier">ctx</span><span class="special">)</span> <span class="special">{</span>
+        <span class="keyword">auto</span> <span class="special">&amp;</span> <span class="identifier">locals</span> <span class="special">=</span> <span class="identifier">_locals</span><span class="special">(</span><span class="identifier">ctx</span><span class="special">);</span>
+        <span class="identifier">uint32_t</span> <span class="keyword">const</span> <span class="identifier">cu</span> <span class="special">=</span> <span class="identifier">_attr</span><span class="special">(</span><span class="identifier">ctx</span><span class="special">);</span>
+        <span class="keyword">if</span> <span class="special">(!</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">parser</span><span class="special">::</span><span class="identifier">detail</span><span class="special">::</span><span class="identifier">text</span><span class="special">::</span><span class="identifier">low_surrogate</span><span class="special">(</span><span class="identifier">cu</span><span class="special">))</span> <span class="special">{</span>
+            <span class="identifier">_pass</span><span class="special">(</span><span class="identifier">ctx</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">false</span><span class="special">;</span> <span class="comment">// Not a low surrogate; explicitly fail the parse.</span>
+        <span class="special">}</span> <span class="keyword">else</span> <span class="special">{</span>
+            <span class="comment">// Success!  Write to the rule's attribute the code point that the</span>
+            <span class="comment">// first and second code points form.</span>
+            <span class="identifier">uint32_t</span> <span class="keyword">const</span> <span class="identifier">high_surrogate_min</span> <span class="special">=</span> <span class="number">0xd800</span><span class="special">;</span>
+            <span class="identifier">uint32_t</span> <span class="keyword">const</span> <span class="identifier">low_surrogate_min</span> <span class="special">=</span> <span class="number">0xdc00</span><span class="special">;</span>
+            <span class="identifier">uint32_t</span> <span class="keyword">const</span> <span class="identifier">surrogate_offset</span> <span class="special">=</span>
+                <span class="number">0x10000</span> <span class="special">-</span> <span class="special">(</span><span class="identifier">high_surrogate_min</span> <span class="special">&lt;&lt;</span> <span class="number">10</span><span class="special">)</span> <span class="special">-</span> <span class="identifier">low_surrogate_min</span><span class="special">;</span>
+            <span class="identifier">uint32_t</span> <span class="keyword">const</span> <span class="identifier">first_cu</span> <span class="special">=</span> <span class="identifier">locals</span><span class="special">.</span><span class="identifier">first_surrogate</span><span class="special">;</span>
+            <span class="identifier">_val</span><span class="special">(</span><span class="identifier">ctx</span><span class="special">)</span> <span class="special">=</span> <span class="special">(</span><span class="identifier">first_cu</span> <span class="special">&lt;&lt;</span> <span class="number">10</span><span class="special">)</span> <span class="special">+</span> <span class="identifier">cu</span> <span class="special">+</span> <span class="identifier">surrogate_offset</span><span class="special">;</span>
+        <span class="special">}</span>
+    <span class="special">};</span>
+
+    <span class="comment">// This is the verbose form of declaration for the integer and unsigned</span>
+    <span class="comment">// integer parsers int_parser and uint_parser.  In this case, we don't</span>
+    <span class="comment">// want to use boost::parser::hex directly, since it has a variable number</span>
+    <span class="comment">// of digits.  We want to match exactly 4 digits, and this is how we</span>
+    <span class="comment">// declare a hexadecimal parser that matches exactly 4.</span>
+    <span class="identifier">bp</span><span class="special">::</span><span class="identifier">parser_interface</span><span class="special">&lt;</span><span class="identifier">bp</span><span class="special">::</span><span class="identifier">uint_parser</span><span class="special">&lt;</span><span class="identifier">uint32_t</span><span class="special">,</span> <span class="number">16</span><span class="special">,</span> <span class="number">4</span><span class="special">,</span> <span class="number">4</span><span class="special">&gt;&gt;</span> <span class="keyword">const</span> <span class="identifier">hex_4_def</span><span class="special">;</span>
+
+    <span class="comment">// We use &gt; here instead of &gt;&gt;, because once we see \u, we know that</span>
+    <span class="comment">// exactly four hex digits must follow -- no other production rule starts</span>
+    <span class="comment">// with \u.</span>
+    <span class="keyword">auto</span> <span class="keyword">const</span> <span class="identifier">escape_seq_def</span> <span class="special">=</span> <span class="string">"\\u"</span> <span class="special">&gt;</span> <span class="identifier">hex_4</span><span class="special">;</span>
+
+    <span class="comment">// This uses the actions above and the simpler rule escape_seq to find</span>
+    <span class="comment">// matched UTF-16 surrogate pairs.</span>
+    <span class="keyword">auto</span> <span class="keyword">const</span> <span class="identifier">escape_double_seq_def</span> <span class="special">=</span>
+        <span class="identifier">escape_seq</span><span class="special">[</span><span class="identifier">first_hex_escape</span><span class="special">]</span> <span class="special">&gt;&gt;</span> <span class="identifier">escape_seq</span><span class="special">[</span><span class="identifier">second_hex_escape</span><span class="special">];</span>
+
+    <span class="comment">// This symbol table recognizes each character that can appear right after</span>
+    <span class="comment">// an escaping backslash, and, if it finds one, produces the associated</span>
+    <span class="comment">// code point as its attribute.</span>
+    <span class="identifier">bp</span><span class="special">::</span><span class="identifier">symbols</span><span class="special">&lt;</span><span class="identifier">uint32_t</span><span class="special">&gt;</span> <span class="keyword">const</span> <span class="identifier">single_escaped_char_def</span> <span class="special">=</span> <span class="special">{</span>
+        <span class="special">{</span><span class="string">"\""</span><span class="special">,</span> <span class="number">0x0022u</span><span class="special">},</span>
+        <span class="special">{</span><span class="string">"\\"</span><span class="special">,</span> <span class="number">0x005cu</span><span class="special">},</span>
+        <span class="special">{</span><span class="string">"/"</span><span class="special">,</span> <span class="number">0x002fu</span><span class="special">},</span>
+        <span class="special">{</span><span class="string">"b"</span><span class="special">,</span> <span class="number">0x0008u</span><span class="special">},</span>
+        <span class="special">{</span><span class="string">"f"</span><span class="special">,</span> <span class="number">0x000cu</span><span class="special">},</span>
+        <span class="special">{</span><span class="string">"n"</span><span class="special">,</span> <span class="number">0x000au</span><span class="special">},</span>
+        <span class="special">{</span><span class="string">"r"</span><span class="special">,</span> <span class="number">0x000du</span><span class="special">},</span>
+        <span class="special">{</span><span class="string">"t"</span><span class="special">,</span> <span class="number">0x0009u</span><span class="special">}};</span>
+
+    <span class="comment">// A string may be a matched UTF-16 escaped surrogate pair, a single</span>
+    <span class="comment">// escaped UTF-16 code unit treated as a whole code point, a single</span>
+    <span class="comment">// escaped character like \f, or any other code point outside the range</span>
+    <span class="comment">// [0x0000u, 0x001fu].  Note that we had to put escape_double_seq before</span>
+    <span class="comment">// escape_seq.  Otherwise, escape_seq would eat all the escape sequences</span>
+    <span class="comment">// before escape_double_seq could try to match them.</span>
+    <span class="keyword">auto</span> <span class="keyword">const</span> <span class="identifier">string_char_def</span> <span class="special">=</span> <span class="identifier">escape_double_seq</span> <span class="special">|</span> <span class="identifier">escape_seq</span> <span class="special">|</span>
+                                 <span class="special">(</span><span class="char">'\\'</span><span class="identifier">_l</span> <span class="special">&gt;</span> <span class="identifier">single_escaped_char</span><span class="special">)</span> <span class="special">|</span>
+                                 <span class="special">(</span><span class="identifier">bp</span><span class="special">::</span><span class="identifier">cp</span> <span class="special">-</span> <span class="identifier">bp</span><span class="special">::</span><span class="identifier">char_</span><span class="special">(</span><span class="number">0x0000u</span><span class="special">,</span> <span class="number">0x001fu</span><span class="special">));</span>
+
+    <span class="comment">// If we see the special token null, treat that as a default-constructed</span>
+    <span class="comment">// json::value.  Note that we could have done this with a semantic action,</span>
+    <span class="comment">// but it is best to do everything you can without semantic actions;</span>
+    <span class="comment">// they're a lot of code.</span>
+    <span class="keyword">auto</span> <span class="keyword">const</span> <span class="identifier">null_def</span> <span class="special">=</span> <span class="string">"null"</span> <span class="special">&gt;&gt;</span> <span class="identifier">bp</span><span class="special">::</span><span class="identifier">attr</span><span class="special">(</span><span class="identifier">value</span><span class="special">());</span>
+
+    <span class="keyword">auto</span> <span class="keyword">const</span> <span class="identifier">string_def</span> <span class="special">=</span> <span class="identifier">bp</span><span class="special">::</span><span class="identifier">lexeme</span><span class="special">[</span><span class="char">'"'</span> <span class="special">&gt;&gt;</span> <span class="special">*(</span><span class="identifier">string_char</span> <span class="special">-</span> <span class="char">'"'</span><span class="special">)</span> <span class="special">&gt;</span> <span class="char">'"'</span><span class="special">];</span>
+
+    <span class="comment">// Since the JSON format for numbers is not exactly what</span>
+    <span class="comment">// boost::parser::double_ accepts (double_ accepts too much), we need to</span>
+    <span class="comment">// parse a JSON number as a sequence of characters, and then pass the</span>
+    <span class="comment">// result to double_ to actually get the numeric value.  This action does</span>
+    <span class="comment">// that.  The parser uses boost::parser::raw to produce the subrange of</span>
+    <span class="comment">// the input that covers the number as an attribute, which is used here.</span>
+    <span class="keyword">auto</span> <span class="identifier">parse_double</span> <span class="special">=</span> <span class="special">[](</span><span class="keyword">auto</span> <span class="special">&amp;</span> <span class="identifier">ctx</span><span class="special">)</span> <span class="special">{</span>
+        <span class="keyword">auto</span> <span class="keyword">const</span> <span class="identifier">cp_range</span> <span class="special">=</span> <span class="identifier">_attr</span><span class="special">(</span><span class="identifier">ctx</span><span class="special">);</span>
+        <span class="keyword">auto</span> <span class="identifier">cp_first</span> <span class="special">=</span> <span class="identifier">cp_range</span><span class="special">.</span><span class="identifier">begin</span><span class="special">();</span>
+        <span class="keyword">auto</span> <span class="keyword">const</span> <span class="identifier">cp_last</span> <span class="special">=</span> <span class="identifier">cp_range</span><span class="special">.</span><span class="identifier">end</span><span class="special">();</span>
+
+        <span class="keyword">auto</span> <span class="keyword">const</span> <span class="identifier">result</span> <span class="special">=</span> <span class="identifier">bp</span><span class="special">::</span><span class="identifier">prefix_parse</span><span class="special">(</span><span class="identifier">cp_first</span><span class="special">,</span> <span class="identifier">cp_last</span><span class="special">,</span> <span class="identifier">bp</span><span class="special">::</span><span class="identifier">double_</span><span class="special">);</span>
+        <span class="keyword">if</span> <span class="special">(</span><span class="identifier">result</span><span class="special">)</span> <span class="special">{</span>
+            <span class="identifier">_val</span><span class="special">(</span><span class="identifier">ctx</span><span class="special">)</span> <span class="special">=</span> <span class="special">*</span><span class="identifier">result</span><span class="special">;</span>
+        <span class="special">}</span> <span class="keyword">else</span> <span class="special">{</span>
+            <span class="comment">// This would be more efficient if we used</span>
+            <span class="comment">// boost::container::small_vector, or std::inplace_vector from</span>
+            <span class="comment">// C++26.</span>
+            <span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span><span class="keyword">char</span><span class="special">&gt;</span> <span class="identifier">chars</span><span class="special">(</span><span class="identifier">cp_first</span><span class="special">,</span> <span class="identifier">cp_last</span><span class="special">);</span>
+            <span class="keyword">auto</span> <span class="keyword">const</span> <span class="identifier">chars_first</span> <span class="special">=</span> <span class="special">&amp;*</span><span class="identifier">chars</span><span class="special">.</span><span class="identifier">begin</span><span class="special">();</span>
+            <span class="keyword">auto</span> <span class="identifier">chars_last</span> <span class="special">=</span> <span class="identifier">chars_first</span> <span class="special">+</span> <span class="identifier">chars</span><span class="special">.</span><span class="identifier">size</span><span class="special">();</span>
+            <span class="identifier">_val</span><span class="special">(</span><span class="identifier">ctx</span><span class="special">)</span> <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">strtod</span><span class="special">(</span><span class="identifier">chars_first</span><span class="special">,</span> <span class="special">&amp;</span><span class="identifier">chars_last</span><span class="special">);</span>
+        <span class="special">}</span>
+    <span class="special">};</span>
+
+    <span class="comment">// As indicated above, we want to match the specific formats JSON allows,</span>
+    <span class="comment">// and then re-parse the resulting matched range within the semantic</span>
+    <span class="comment">// action.</span>
+    <span class="keyword">auto</span> <span class="keyword">const</span> <span class="identifier">number_def</span> <span class="special">=</span>
+        <span class="identifier">bp</span><span class="special">::</span><span class="identifier">raw</span><span class="special">[</span><span class="identifier">bp</span><span class="special">::</span><span class="identifier">lexeme</span>
+                    <span class="special">[-</span><span class="identifier">bp</span><span class="special">::</span><span class="identifier">char_</span><span class="special">(</span><span class="char">'-'</span><span class="special">)</span> <span class="special">&gt;&gt;</span>
+                     <span class="special">(</span><span class="identifier">bp</span><span class="special">::</span><span class="identifier">char_</span><span class="special">(</span><span class="char">'1'</span><span class="special">,</span> <span class="char">'9'</span><span class="special">)</span> <span class="special">&gt;&gt;</span> <span class="special">*</span><span class="identifier">bp</span><span class="special">::</span><span class="identifier">digit</span> <span class="special">|</span> <span class="identifier">bp</span><span class="special">::</span><span class="identifier">char_</span><span class="special">(</span><span class="char">'0'</span><span class="special">))</span> <span class="special">&gt;&gt;</span>
+                     <span class="special">-(</span><span class="identifier">bp</span><span class="special">::</span><span class="identifier">char_</span><span class="special">(</span><span class="char">'.'</span><span class="special">)</span> <span class="special">&gt;&gt;</span> <span class="special">+</span><span class="identifier">bp</span><span class="special">::</span><span class="identifier">digit</span><span class="special">)</span> <span class="special">&gt;&gt;</span>
+                     <span class="special">-(</span><span class="identifier">bp</span><span class="special">::</span><span class="identifier">char_</span><span class="special">(</span><span class="string">"eE"</span><span class="special">)</span> <span class="special">&gt;&gt;</span> <span class="special">-</span><span class="identifier">bp</span><span class="special">::</span><span class="identifier">char_</span><span class="special">(</span><span class="string">"+-"</span><span class="special">)</span> <span class="special">&gt;&gt;</span> <span class="special">+</span><span class="identifier">bp</span><span class="special">::</span><span class="identifier">digit</span><span class="special">)]]</span>
+               <span class="special">[</span><span class="identifier">parse_double</span><span class="special">];</span>
+
+    <span class="comment">// Note how, in the next three parsers, we turn off backtracking by using</span>
+    <span class="comment">// &gt; instead of &gt;&gt;, once we know that there is no backtracking alternative</span>
+    <span class="comment">// that might match if we fail to match the next element.  This produces</span>
+    <span class="comment">// much better error messages than if you always use &gt;&gt;.</span>
+
+    <span class="keyword">auto</span> <span class="keyword">const</span> <span class="identifier">object_element_def</span> <span class="special">=</span> <span class="identifier">string</span> <span class="special">&gt;</span> <span class="char">':'</span> <span class="special">&gt;</span> <span class="identifier">value_p</span><span class="special">;</span>
+
+    <span class="keyword">auto</span> <span class="keyword">const</span> <span class="identifier">object_p_def</span> <span class="special">=</span> <span class="char">'{'</span><span class="identifier">_l</span><span class="special">[</span><span class="identifier">object_init</span><span class="special">]</span> <span class="special">&gt;&gt;</span>
+                              <span class="special">-(</span><span class="identifier">object_element</span><span class="special">[</span><span class="identifier">object_insert</span><span class="special">]</span> <span class="special">%</span> <span class="char">','</span><span class="special">)</span> <span class="special">&gt;</span> <span class="char">'}'</span><span class="special">;</span>
+
+    <span class="keyword">auto</span> <span class="keyword">const</span> <span class="identifier">array_p_def</span> <span class="special">=</span> <span class="char">'['</span><span class="identifier">_l</span><span class="special">[</span><span class="identifier">array_init</span><span class="special">]</span> <span class="special">&gt;&gt;</span>
+                             <span class="special">-(</span><span class="identifier">value_p</span><span class="special">[</span><span class="identifier">array_append</span><span class="special">]</span> <span class="special">%</span> <span class="char">','</span><span class="special">)</span> <span class="special">&gt;</span> <span class="char">']'</span><span class="special">;</span>
+
+    <span class="comment">// This is the top-level parser.</span>
+    <span class="keyword">auto</span> <span class="keyword">const</span> <span class="identifier">value_p_def</span> <span class="special">=</span>
+        <span class="identifier">number</span> <span class="special">|</span> <span class="identifier">bp</span><span class="special">::</span><span class="identifier">bool_</span> <span class="special">|</span> <span class="identifier">null</span> <span class="special">|</span> <span class="identifier">string</span> <span class="special">|</span> <span class="identifier">array_p</span> <span class="special">|</span> <span class="identifier">object_p</span><span class="special">;</span>
+
+    <span class="comment">// Here, we define all the rules we've declared above, which also connects</span>
+    <span class="comment">// each rule to its _def-suffixed parser.</span>
+    <span class="identifier">BOOST_PARSER_DEFINE_RULES</span><span class="special">(</span>
+        <span class="identifier">ws</span><span class="special">,</span>
+        <span class="identifier">hex_4</span><span class="special">,</span>
+        <span class="identifier">escape_seq</span><span class="special">,</span>
+        <span class="identifier">escape_double_seq</span><span class="special">,</span>
+        <span class="identifier">single_escaped_char</span><span class="special">,</span>
+        <span class="identifier">string_char</span><span class="special">,</span>
+        <span class="identifier">null</span><span class="special">,</span>
+        <span class="identifier">string</span><span class="special">,</span>
+        <span class="identifier">number</span><span class="special">,</span>
+        <span class="identifier">object_element</span><span class="special">,</span>
+        <span class="identifier">object_p</span><span class="special">,</span>
+        <span class="identifier">array_p</span><span class="special">,</span>
+        <span class="identifier">value_p</span><span class="special">);</span>
+
+    <span class="comment">// json::parse() takes a string_view as input.  It takes an optional</span>
+    <span class="comment">// callback to use for error reporting, which defaults to a no-op that</span>
+    <span class="comment">// ignores all errors.  It also takes an optional max recursion depth</span>
+    <span class="comment">// limit, which defaults to the one from the JSON spec, 512.</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">optional</span><span class="special">&lt;</span><span class="identifier">value</span><span class="special">&gt;</span> <span class="identifier">parse</span><span class="special">(</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">str</span><span class="special">,</span>
+        <span class="identifier">diagnostic_function</span> <span class="identifier">errors_callback</span> <span class="special">=</span> <span class="identifier">diagnostic_function</span><span class="special">(),</span>
+        <span class="keyword">int</span> <span class="identifier">max_recursion</span> <span class="special">=</span> <span class="number">512</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="comment">// Turn the input range into a UTF-32 range, so that we can be sure</span>
+        <span class="comment">// that we fall into the Unicode-aware parsing path inside parse()</span>
+        <span class="comment">// below.</span>
+        <span class="keyword">auto</span> <span class="keyword">const</span> <span class="identifier">range</span> <span class="special">=</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">parser</span><span class="special">::</span><span class="identifier">as_utf32</span><span class="special">(</span><span class="identifier">str</span><span class="special">);</span>
+        <span class="keyword">using</span> <span class="identifier">iter_t</span> <span class="special">=</span> <span class="keyword">decltype</span><span class="special">(</span><span class="identifier">range</span><span class="special">.</span><span class="identifier">begin</span><span class="special">());</span>
+
+        <span class="keyword">if</span> <span class="special">(</span><span class="identifier">max_recursion</span> <span class="special">&lt;=</span> <span class="number">0</span><span class="special">)</span>
+            <span class="identifier">max_recursion</span> <span class="special">=</span> <span class="identifier">INT_MAX</span><span class="special">;</span>
+
+        <span class="comment">// Initialize our globals to the current depth (0), and the max depth</span>
+        <span class="comment">// (max_recursion).</span>
+        <span class="identifier">global_state</span> <span class="identifier">globals</span><span class="special">{</span><span class="number">0</span><span class="special">,</span> <span class="identifier">max_recursion</span><span class="special">};</span>
+        <span class="identifier">bp</span><span class="special">::</span><span class="identifier">callback_error_handler</span> <span class="identifier">error_handler</span><span class="special">(</span><span class="identifier">errors_callback</span><span class="special">);</span>
+        <span class="comment">// Make a new parser that includes the globals and error handler.</span>
+        <span class="keyword">auto</span> <span class="keyword">const</span> <span class="identifier">parser</span> <span class="special">=</span> <span class="identifier">bp</span><span class="special">::</span><span class="identifier">with_error_handler</span><span class="special">(</span>
+            <span class="identifier">bp</span><span class="special">::</span><span class="identifier">with_globals</span><span class="special">(</span><span class="identifier">value_p</span><span class="special">,</span> <span class="identifier">globals</span><span class="special">),</span> <span class="identifier">error_handler</span><span class="special">);</span>
+
+        <span class="keyword">try</span> <span class="special">{</span>
+            <span class="comment">// Parse.  If no exception is thrown, due to: a failed expectation</span>
+            <span class="comment">// (such as foo &gt; bar, where foo matches the input, but then bar</span>
+            <span class="comment">// cannot); or because the nesting depth is exceeded; we simply</span>
+            <span class="comment">// return the result of the parse.  The result will contextually</span>
+            <span class="comment">// convert to false if the parse failed.  Note that the</span>
+            <span class="comment">// failed-expectation exception is caught internally, and used to</span>
+            <span class="comment">// generate an error message.</span>
+            <span class="keyword">return</span> <span class="identifier">bp</span><span class="special">::</span><span class="identifier">parse</span><span class="special">(</span><span class="identifier">range</span><span class="special">,</span> <span class="identifier">parser</span><span class="special">,</span> <span class="identifier">ws</span><span class="special">);</span>
+        <span class="special">}</span> <span class="keyword">catch</span> <span class="special">(</span><span class="identifier">excessive_nesting</span><span class="special">&lt;</span><span class="identifier">iter_t</span><span class="special">&gt;</span> <span class="keyword">const</span> <span class="special">&amp;</span> <span class="identifier">e</span><span class="special">)</span> <span class="special">{</span>
+            <span class="comment">// If we catch an excessive_nesting exception, just report it</span>
+            <span class="comment">// and return an empty/failure result.</span>
+            <span class="keyword">if</span> <span class="special">(</span><span class="identifier">errors_callback</span><span class="special">)</span> <span class="special">{</span>
+                <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="keyword">const</span> <span class="identifier">message</span> <span class="special">=</span> <span class="string">"error: Exceeded maximum number ("</span> <span class="special">+</span>
+                                            <span class="identifier">std</span><span class="special">::</span><span class="identifier">to_string</span><span class="special">(</span><span class="identifier">max_recursion</span><span class="special">)</span> <span class="special">+</span>
+                                            <span class="string">") of open arrays and/or objects"</span><span class="special">;</span>
+                <span class="identifier">std</span><span class="special">::</span><span class="identifier">stringstream</span> <span class="identifier">ss</span><span class="special">;</span>
+                <span class="identifier">bp</span><span class="special">::</span><span class="identifier">write_formatted_message</span><span class="special">(</span>
+                    <span class="identifier">ss</span><span class="special">,</span> <span class="string">""</span><span class="special">,</span> <span class="identifier">range</span><span class="special">.</span><span class="identifier">begin</span><span class="special">(),</span> <span class="identifier">e</span><span class="special">.</span><span class="identifier">iter</span><span class="special">,</span> <span class="identifier">range</span><span class="special">.</span><span class="identifier">end</span><span class="special">(),</span> <span class="identifier">message</span><span class="special">);</span>
+                <span class="identifier">errors_callback</span><span class="special">(</span><span class="identifier">ss</span><span class="special">.</span><span class="identifier">str</span><span class="special">());</span>
+            <span class="special">}</span>
+        <span class="special">}</span>
+
+        <span class="keyword">return</span> <span class="special">{};</span>
+    <span class="special">}</span>
+
+<span class="special">}</span>
+
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">file_slurp</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">ifstream</span> <span class="special">&amp;</span> <span class="identifier">ifs</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">retval</span><span class="special">;</span>
+    <span class="keyword">while</span> <span class="special">(</span><span class="identifier">ifs</span><span class="special">)</span> <span class="special">{</span>
+        <span class="keyword">char</span> <span class="keyword">const</span> <span class="identifier">c</span> <span class="special">=</span> <span class="identifier">ifs</span><span class="special">.</span><span class="identifier">get</span><span class="special">();</span>
+        <span class="identifier">retval</span> <span class="special">+=</span> <span class="identifier">c</span><span class="special">;</span>
+    <span class="special">}</span>
+    <span class="keyword">if</span> <span class="special">(!</span><span class="identifier">retval</span><span class="special">.</span><span class="identifier">empty</span><span class="special">()</span> <span class="special">&amp;&amp;</span> <span class="identifier">retval</span><span class="special">.</span><span class="identifier">back</span><span class="special">()</span> <span class="special">==</span> <span class="special">-</span><span class="number">1</span><span class="special">)</span>
+        <span class="identifier">retval</span><span class="special">.</span><span class="identifier">pop_back</span><span class="special">();</span>
+    <span class="keyword">return</span> <span class="identifier">retval</span><span class="special">;</span>
+<span class="special">}</span>
+
+<span class="keyword">int</span> <span class="identifier">main</span><span class="special">(</span><span class="keyword">int</span> <span class="identifier">argc</span><span class="special">,</span> <span class="keyword">char</span> <span class="special">*</span> <span class="identifier">argv</span><span class="special">[])</span>
+<span class="special">{</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">argc</span> <span class="special">&lt;</span> <span class="number">2</span><span class="special">)</span> <span class="special">{</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cerr</span> <span class="special">&lt;&lt;</span> <span class="string">"A filename to parse is required.\n"</span><span class="special">;</span>
+        <span class="identifier">exit</span><span class="special">(</span><span class="number">1</span><span class="special">);</span>
+    <span class="special">}</span>
+
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">ifstream</span> <span class="identifier">ifs</span><span class="special">(</span><span class="identifier">argv</span><span class="special">[</span><span class="number">1</span><span class="special">]);</span>
+    <span class="keyword">if</span> <span class="special">(!</span><span class="identifier">ifs</span><span class="special">)</span> <span class="special">{</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cerr</span> <span class="special">&lt;&lt;</span> <span class="string">"Unable to read file '"</span> <span class="special">&lt;&lt;</span> <span class="identifier">argv</span><span class="special">[</span><span class="number">1</span><span class="special">]</span> <span class="special">&lt;&lt;</span> <span class="string">"'.\n"</span><span class="special">;</span>
+        <span class="identifier">exit</span><span class="special">(</span><span class="number">1</span><span class="special">);</span>
+    <span class="special">}</span>
+
+    <span class="comment">// Read in the entire file.</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="keyword">const</span> <span class="identifier">file_contents</span> <span class="special">=</span> <span class="identifier">file_slurp</span><span class="special">(</span><span class="identifier">ifs</span><span class="special">);</span>
+    <span class="comment">// Parse the contents.  If there is an error, just stream it to cerr.</span>
+    <span class="keyword">auto</span> <span class="identifier">json</span> <span class="special">=</span> <span class="identifier">json</span><span class="special">::</span><span class="identifier">parse</span><span class="special">(</span>
+        <span class="identifier">file_contents</span><span class="special">,</span> <span class="special">[](</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="keyword">const</span> <span class="special">&amp;</span> <span class="identifier">msg</span><span class="special">)</span> <span class="special">{</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">cerr</span> <span class="special">&lt;&lt;</span> <span class="identifier">msg</span><span class="special">;</span> <span class="special">});</span>
+    <span class="keyword">if</span> <span class="special">(!</span><span class="identifier">json</span><span class="special">)</span> <span class="special">{</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cerr</span> <span class="special">&lt;&lt;</span> <span class="string">"Parse failure.\n"</span><span class="special">;</span>
+        <span class="identifier">exit</span><span class="special">(</span><span class="number">1</span><span class="special">);</span>
+    <span class="special">}</span>
+
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"Parse successful; contents:\n"</span> <span class="special">&lt;&lt;</span> <span class="special">*</span><span class="identifier">json</span> <span class="special">&lt;&lt;</span> <span class="string">"\n"</span><span class="special">;</span>
+
+    <span class="keyword">return</span> <span class="number">0</span><span class="special">;</span>
+<span class="special">}</span>
+</pre>
+<p>
+      </p>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="boost_parser.extended_examples.parsing_json_with_callbacks"></a><a class="link" href="extended_examples.html#boost_parser.extended_examples.parsing_json_with_callbacks" title="Parsing JSON With Callbacks">Parsing
+      JSON With Callbacks</a>
+</h3></div></div></div>
+<p>
+        This is just like the previous extended JSON parser example, except that
+        it drops all the code that defines a JSON value, array, object, etc. It communicates
+        events within the parse, and the value associated with each event. For instance,
+        when a string is parsed, a callback is called that indicates this, along
+        with the resulting <code class="computeroutput">std::string</code>.
+      </p>
+<p>
+</p>
+<pre class="programlisting"><span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">parser</span><span class="special">/</span><span class="identifier">parser</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">parser</span><span class="special">/</span><span class="identifier">transcode_view</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">fstream</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">vector</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">climits</span><span class="special">&gt;</span>
+
+
+<span class="keyword">namespace</span> <span class="identifier">json</span> <span class="special">{</span>
+
+    <span class="keyword">namespace</span> <span class="identifier">bp</span> <span class="special">=</span> <span class="special">::</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">parser</span><span class="special">;</span>
+    <span class="keyword">using</span> <span class="keyword">namespace</span> <span class="identifier">bp</span><span class="special">::</span><span class="identifier">literals</span><span class="special">;</span>
+
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> <span class="identifier">Iter</span><span class="special">&gt;</span>
+    <span class="keyword">struct</span> <span class="identifier">excessive_nesting</span> <span class="special">:</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">runtime_error</span>
+    <span class="special">{</span>
+        <span class="identifier">excessive_nesting</span><span class="special">(</span><span class="identifier">Iter</span> <span class="identifier">it</span><span class="special">)</span> <span class="special">:</span>
+            <span class="identifier">runtime_error</span><span class="special">(</span><span class="string">"excessive_nesting"</span><span class="special">),</span> <span class="identifier">iter</span><span class="special">(</span><span class="identifier">it</span><span class="special">)</span>
+        <span class="special">{}</span>
+        <span class="identifier">Iter</span> <span class="identifier">iter</span><span class="special">;</span>
+    <span class="special">};</span>
+
+
+    <span class="keyword">struct</span> <span class="identifier">global_state</span>
+    <span class="special">{</span>
+        <span class="keyword">int</span> <span class="identifier">recursive_open_count</span> <span class="special">=</span> <span class="number">0</span><span class="special">;</span>
+        <span class="keyword">int</span> <span class="identifier">max_recursive_open_count</span> <span class="special">=</span> <span class="number">0</span><span class="special">;</span>
+    <span class="special">};</span>
+
+    <span class="keyword">struct</span> <span class="identifier">double_escape_locals</span>
+    <span class="special">{</span>
+        <span class="keyword">int</span> <span class="identifier">first_surrogate</span> <span class="special">=</span> <span class="number">0</span><span class="special">;</span>
+    <span class="special">};</span>
+
+
+    <span class="identifier">bp</span><span class="special">::</span><span class="identifier">rule</span><span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">ws</span><span class="special">&gt;</span> <span class="keyword">const</span> <span class="identifier">ws</span> <span class="special">=</span> <span class="string">"whitespace"</span><span class="special">;</span>
+
+    <span class="identifier">bp</span><span class="special">::</span><span class="identifier">rule</span><span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">string_char</span><span class="special">,</span> <span class="identifier">uint32_t</span><span class="special">&gt;</span> <span class="keyword">const</span> <span class="identifier">string_char</span> <span class="special">=</span>
+        <span class="string">"code point (code points &lt;= U+001F must be escaped)"</span><span class="special">;</span>
+    <span class="identifier">bp</span><span class="special">::</span><span class="identifier">rule</span><span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">four_hex_digits</span><span class="special">,</span> <span class="identifier">uint32_t</span><span class="special">&gt;</span> <span class="keyword">const</span> <span class="identifier">hex_4</span> <span class="special">=</span>
+        <span class="string">"four hexadecimal digits"</span><span class="special">;</span>
+    <span class="identifier">bp</span><span class="special">::</span><span class="identifier">rule</span><span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">escape_seq</span><span class="special">,</span> <span class="identifier">uint32_t</span><span class="special">&gt;</span> <span class="keyword">const</span> <span class="identifier">escape_seq</span> <span class="special">=</span>
+        <span class="string">"\\uXXXX hexadecimal escape sequence"</span><span class="special">;</span>
+    <span class="identifier">bp</span><span class="special">::</span><span class="identifier">rule</span><span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">escape_double_seq</span><span class="special">,</span> <span class="identifier">uint32_t</span><span class="special">,</span> <span class="identifier">double_escape_locals</span><span class="special">&gt;</span> <span class="keyword">const</span>
+        <span class="identifier">escape_double_seq</span> <span class="special">=</span> <span class="string">"\\uXXXX hexadecimal escape sequence"</span><span class="special">;</span>
+    <span class="identifier">bp</span><span class="special">::</span><span class="identifier">rule</span><span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">single_escaped_char</span><span class="special">,</span> <span class="identifier">uint32_t</span><span class="special">&gt;</span> <span class="keyword">const</span> <span class="identifier">single_escaped_char</span> <span class="special">=</span>
+        <span class="string">"'\"', '\\', '/', 'b', 'f', 'n', 'r', or 't'"</span><span class="special">;</span>
+
+    <span class="identifier">bp</span><span class="special">::</span><span class="identifier">callback_rule</span><span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">null_tag</span><span class="special">&gt;</span> <span class="keyword">const</span> <span class="identifier">null</span> <span class="special">=</span> <span class="string">"null"</span><span class="special">;</span>
+
+    <span class="comment">// Since we don't create polymorphic values in this parse, we need to be</span>
+    <span class="comment">// able to report that we parsed a bool, so we need a callback rule for</span>
+    <span class="comment">// this.</span>
+    <span class="identifier">bp</span><span class="special">::</span><span class="identifier">callback_rule</span><span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">bool_tag</span><span class="special">,</span> <span class="keyword">bool</span><span class="special">&gt;</span> <span class="keyword">const</span> <span class="identifier">bool_p</span> <span class="special">=</span> <span class="string">"boolean"</span><span class="special">;</span>
+
+    <span class="identifier">bp</span><span class="special">::</span><span class="identifier">callback_rule</span><span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">string_tag</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">&gt;</span> <span class="keyword">const</span> <span class="identifier">string</span> <span class="special">=</span> <span class="string">"string"</span><span class="special">;</span>
+    <span class="identifier">bp</span><span class="special">::</span><span class="identifier">callback_rule</span><span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">number_tag</span><span class="special">,</span> <span class="keyword">double</span><span class="special">&gt;</span> <span class="keyword">const</span> <span class="identifier">number</span> <span class="special">=</span> <span class="string">"number"</span><span class="special">;</span>
+
+    <span class="comment">// object_element is broken up into the key (object_element_key) and the</span>
+    <span class="comment">// whole thing (object_element).  This was done because the value after</span>
+    <span class="comment">// the ':' may have many parts.  It may be an array, for example.  This</span>
+    <span class="comment">// implies that we need to report that we have the string part of the</span>
+    <span class="comment">// object-element, and that the rest -- the value -- is coming.</span>
+    <span class="identifier">bp</span><span class="special">::</span><span class="identifier">callback_rule</span><span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">object_element_key_tag</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">&gt;</span> <span class="keyword">const</span>
+        <span class="identifier">object_element_key</span> <span class="special">=</span> <span class="string">"string"</span><span class="special">;</span>
+    <span class="identifier">bp</span><span class="special">::</span><span class="identifier">rule</span><span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">object_element_tag</span><span class="special">&gt;</span> <span class="keyword">const</span> <span class="identifier">object_element</span> <span class="special">=</span> <span class="string">"object-element"</span><span class="special">;</span>
+
+    <span class="comment">// object gets broken up too, to enable the reporting of the beginning and</span>
+    <span class="comment">// end of the object when '{' or '}' is parsed, respectively.  The same</span>
+    <span class="comment">// thing is done for array, below.</span>
+    <span class="identifier">bp</span><span class="special">::</span><span class="identifier">callback_rule</span><span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">object_open_tag</span><span class="special">&gt;</span> <span class="keyword">const</span> <span class="identifier">object_open</span> <span class="special">=</span> <span class="string">"'{'"</span><span class="special">;</span>
+    <span class="identifier">bp</span><span class="special">::</span><span class="identifier">callback_rule</span><span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">object_close_tag</span><span class="special">&gt;</span> <span class="keyword">const</span> <span class="identifier">object_close</span> <span class="special">=</span> <span class="string">"'}'"</span><span class="special">;</span>
+    <span class="identifier">bp</span><span class="special">::</span><span class="identifier">rule</span><span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">object_tag</span><span class="special">&gt;</span> <span class="keyword">const</span> <span class="identifier">object</span> <span class="special">=</span> <span class="string">"object"</span><span class="special">;</span>
+
+    <span class="identifier">bp</span><span class="special">::</span><span class="identifier">callback_rule</span><span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">array_open_tag</span><span class="special">&gt;</span> <span class="keyword">const</span> <span class="identifier">array_open</span> <span class="special">=</span> <span class="string">"'['"</span><span class="special">;</span>
+    <span class="identifier">bp</span><span class="special">::</span><span class="identifier">callback_rule</span><span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">array_close_tag</span><span class="special">&gt;</span> <span class="keyword">const</span> <span class="identifier">array_close</span> <span class="special">=</span> <span class="string">"']'"</span><span class="special">;</span>
+    <span class="identifier">bp</span><span class="special">::</span><span class="identifier">rule</span><span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">array_tag</span><span class="special">&gt;</span> <span class="keyword">const</span> <span class="identifier">array</span> <span class="special">=</span> <span class="string">"array"</span><span class="special">;</span>
+
+    <span class="comment">// value no longer produces an attribute, and it has no callback either.</span>
+    <span class="comment">// Each individual possible kind of value (string, array, etc.) gets</span>
+    <span class="comment">// reported separately.</span>
+    <span class="identifier">bp</span><span class="special">::</span><span class="identifier">rule</span><span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">value_tag</span><span class="special">&gt;</span> <span class="keyword">const</span> <span class="identifier">value</span> <span class="special">=</span> <span class="string">"value"</span><span class="special">;</span>
+
+
+    <span class="comment">// Since we use these tag types as function parameters in the callbacks,</span>
+    <span class="comment">// they need to be complete types.</span>
+    <span class="keyword">class</span> <span class="identifier">null_tag</span> <span class="special">{};</span>
+    <span class="keyword">class</span> <span class="identifier">bool_tag</span> <span class="special">{};</span>
+    <span class="keyword">class</span> <span class="identifier">string_tag</span> <span class="special">{};</span>
+    <span class="keyword">class</span> <span class="identifier">number_tag</span> <span class="special">{};</span>
+    <span class="keyword">class</span> <span class="identifier">object_element_key_tag</span> <span class="special">{};</span>
+    <span class="keyword">class</span> <span class="identifier">object_open_tag</span> <span class="special">{};</span>
+    <span class="keyword">class</span> <span class="identifier">object_close_tag</span> <span class="special">{};</span>
+    <span class="keyword">class</span> <span class="identifier">array_open_tag</span> <span class="special">{};</span>
+    <span class="keyword">class</span> <span class="identifier">array_close_tag</span> <span class="special">{};</span>
+
+
+    <span class="keyword">auto</span> <span class="keyword">const</span> <span class="identifier">ws_def</span> <span class="special">=</span> <span class="char">'\x09'</span><span class="identifier">_l</span> <span class="special">|</span> <span class="char">'\x0a'</span> <span class="special">|</span> <span class="char">'\x0d'</span> <span class="special">|</span> <span class="char">'\x20'</span><span class="special">;</span>
+
+    <span class="keyword">auto</span> <span class="identifier">first_hex_escape</span> <span class="special">=</span> <span class="special">[](</span><span class="keyword">auto</span> <span class="special">&amp;</span> <span class="identifier">ctx</span><span class="special">)</span> <span class="special">{</span>
+        <span class="keyword">auto</span> <span class="special">&amp;</span> <span class="identifier">locals</span> <span class="special">=</span> <span class="identifier">_locals</span><span class="special">(</span><span class="identifier">ctx</span><span class="special">);</span>
+        <span class="identifier">uint32_t</span> <span class="keyword">const</span> <span class="identifier">cu</span> <span class="special">=</span> <span class="identifier">_attr</span><span class="special">(</span><span class="identifier">ctx</span><span class="special">);</span>
+        <span class="keyword">if</span> <span class="special">(!</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">parser</span><span class="special">::</span><span class="identifier">detail</span><span class="special">::</span><span class="identifier">text</span><span class="special">::</span><span class="identifier">high_surrogate</span><span class="special">(</span><span class="identifier">cu</span><span class="special">))</span>
+            <span class="identifier">_pass</span><span class="special">(</span><span class="identifier">ctx</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">false</span><span class="special">;</span>
+        <span class="keyword">else</span>
+            <span class="identifier">locals</span><span class="special">.</span><span class="identifier">first_surrogate</span> <span class="special">=</span> <span class="identifier">cu</span><span class="special">;</span>
+    <span class="special">};</span>
+    <span class="keyword">auto</span> <span class="identifier">second_hex_escape</span> <span class="special">=</span> <span class="special">[](</span><span class="keyword">auto</span> <span class="special">&amp;</span> <span class="identifier">ctx</span><span class="special">)</span> <span class="special">{</span>
+        <span class="keyword">auto</span> <span class="special">&amp;</span> <span class="identifier">locals</span> <span class="special">=</span> <span class="identifier">_locals</span><span class="special">(</span><span class="identifier">ctx</span><span class="special">);</span>
+        <span class="identifier">uint32_t</span> <span class="keyword">const</span> <span class="identifier">cu</span> <span class="special">=</span> <span class="identifier">_attr</span><span class="special">(</span><span class="identifier">ctx</span><span class="special">);</span>
+        <span class="keyword">if</span> <span class="special">(!</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">parser</span><span class="special">::</span><span class="identifier">detail</span><span class="special">::</span><span class="identifier">text</span><span class="special">::</span><span class="identifier">low_surrogate</span><span class="special">(</span><span class="identifier">cu</span><span class="special">))</span> <span class="special">{</span>
+            <span class="identifier">_pass</span><span class="special">(</span><span class="identifier">ctx</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">false</span><span class="special">;</span>
+        <span class="special">}</span> <span class="keyword">else</span> <span class="special">{</span>
+            <span class="identifier">uint32_t</span> <span class="keyword">const</span> <span class="identifier">high_surrogate_min</span> <span class="special">=</span> <span class="number">0xd800</span><span class="special">;</span>
+            <span class="identifier">uint32_t</span> <span class="keyword">const</span> <span class="identifier">low_surrogate_min</span> <span class="special">=</span> <span class="number">0xdc00</span><span class="special">;</span>
+            <span class="identifier">uint32_t</span> <span class="keyword">const</span> <span class="identifier">surrogate_offset</span> <span class="special">=</span>
+                <span class="number">0x10000</span> <span class="special">-</span> <span class="special">(</span><span class="identifier">high_surrogate_min</span> <span class="special">&lt;&lt;</span> <span class="number">10</span><span class="special">)</span> <span class="special">-</span> <span class="identifier">low_surrogate_min</span><span class="special">;</span>
+            <span class="identifier">uint32_t</span> <span class="keyword">const</span> <span class="identifier">first_cu</span> <span class="special">=</span> <span class="identifier">locals</span><span class="special">.</span><span class="identifier">first_surrogate</span><span class="special">;</span>
+            <span class="identifier">_val</span><span class="special">(</span><span class="identifier">ctx</span><span class="special">)</span> <span class="special">=</span> <span class="special">(</span><span class="identifier">first_cu</span> <span class="special">&lt;&lt;</span> <span class="number">10</span><span class="special">)</span> <span class="special">+</span> <span class="identifier">cu</span> <span class="special">+</span> <span class="identifier">surrogate_offset</span><span class="special">;</span>
+        <span class="special">}</span>
+    <span class="special">};</span>
+
+    <span class="identifier">bp</span><span class="special">::</span><span class="identifier">parser_interface</span><span class="special">&lt;</span><span class="identifier">bp</span><span class="special">::</span><span class="identifier">uint_parser</span><span class="special">&lt;</span><span class="identifier">uint32_t</span><span class="special">,</span> <span class="number">16</span><span class="special">,</span> <span class="number">4</span><span class="special">,</span> <span class="number">4</span><span class="special">&gt;&gt;</span> <span class="keyword">const</span> <span class="identifier">hex_4_def</span><span class="special">;</span>
+
+    <span class="keyword">auto</span> <span class="keyword">const</span> <span class="identifier">escape_seq_def</span> <span class="special">=</span> <span class="string">"\\u"</span> <span class="special">&gt;</span> <span class="identifier">hex_4</span><span class="special">;</span>
+
+    <span class="keyword">auto</span> <span class="keyword">const</span> <span class="identifier">escape_double_seq_def</span> <span class="special">=</span>
+        <span class="identifier">escape_seq</span><span class="special">[</span><span class="identifier">first_hex_escape</span><span class="special">]</span> <span class="special">&gt;&gt;</span> <span class="identifier">escape_seq</span><span class="special">[</span><span class="identifier">second_hex_escape</span><span class="special">];</span>
+
+    <span class="identifier">bp</span><span class="special">::</span><span class="identifier">symbols</span><span class="special">&lt;</span><span class="identifier">uint32_t</span><span class="special">&gt;</span> <span class="keyword">const</span> <span class="identifier">single_escaped_char_def</span> <span class="special">=</span> <span class="special">{</span>
+        <span class="special">{</span><span class="string">"\""</span><span class="special">,</span> <span class="number">0x0022u</span><span class="special">},</span>
+        <span class="special">{</span><span class="string">"\\"</span><span class="special">,</span> <span class="number">0x005cu</span><span class="special">},</span>
+        <span class="special">{</span><span class="string">"/"</span><span class="special">,</span> <span class="number">0x002fu</span><span class="special">},</span>
+        <span class="special">{</span><span class="string">"b"</span><span class="special">,</span> <span class="number">0x0008u</span><span class="special">},</span>
+        <span class="special">{</span><span class="string">"f"</span><span class="special">,</span> <span class="number">0x000cu</span><span class="special">},</span>
+        <span class="special">{</span><span class="string">"n"</span><span class="special">,</span> <span class="number">0x000au</span><span class="special">},</span>
+        <span class="special">{</span><span class="string">"r"</span><span class="special">,</span> <span class="number">0x000du</span><span class="special">},</span>
+        <span class="special">{</span><span class="string">"t"</span><span class="special">,</span> <span class="number">0x0009u</span><span class="special">}};</span>
+
+    <span class="keyword">auto</span> <span class="keyword">const</span> <span class="identifier">string_char_def</span> <span class="special">=</span> <span class="identifier">escape_double_seq</span> <span class="special">|</span> <span class="identifier">escape_seq</span> <span class="special">|</span>
+                                 <span class="special">(</span><span class="char">'\\'</span><span class="identifier">_l</span> <span class="special">&gt;</span> <span class="identifier">single_escaped_char</span><span class="special">)</span> <span class="special">|</span>
+                                 <span class="special">(</span><span class="identifier">bp</span><span class="special">::</span><span class="identifier">cp</span> <span class="special">-</span> <span class="identifier">bp</span><span class="special">::</span><span class="identifier">char_</span><span class="special">(</span><span class="number">0x0000u</span><span class="special">,</span> <span class="number">0x001fu</span><span class="special">));</span>
+
+    <span class="keyword">auto</span> <span class="keyword">const</span> <span class="identifier">null_def</span> <span class="special">=</span> <span class="string">"null"</span><span class="identifier">_l</span><span class="special">;</span>
+
+    <span class="keyword">auto</span> <span class="keyword">const</span> <span class="identifier">bool_p_def</span> <span class="special">=</span> <span class="identifier">bp</span><span class="special">::</span><span class="identifier">bool_</span><span class="special">;</span>
+
+    <span class="keyword">auto</span> <span class="keyword">const</span> <span class="identifier">string_def</span> <span class="special">=</span> <span class="identifier">bp</span><span class="special">::</span><span class="identifier">lexeme</span><span class="special">[</span><span class="char">'"'</span> <span class="special">&gt;&gt;</span> <span class="special">*(</span><span class="identifier">string_char</span> <span class="special">-</span> <span class="char">'"'</span><span class="special">)</span> <span class="special">&gt;</span> <span class="char">'"'</span><span class="special">];</span>
+
+    <span class="keyword">auto</span> <span class="identifier">parse_double</span> <span class="special">=</span> <span class="special">[](</span><span class="keyword">auto</span> <span class="special">&amp;</span> <span class="identifier">ctx</span><span class="special">)</span> <span class="special">{</span>
+        <span class="keyword">auto</span> <span class="keyword">const</span> <span class="identifier">cp_range</span> <span class="special">=</span> <span class="identifier">_attr</span><span class="special">(</span><span class="identifier">ctx</span><span class="special">);</span>
+        <span class="keyword">auto</span> <span class="identifier">cp_first</span> <span class="special">=</span> <span class="identifier">cp_range</span><span class="special">.</span><span class="identifier">begin</span><span class="special">();</span>
+        <span class="keyword">auto</span> <span class="keyword">const</span> <span class="identifier">cp_last</span> <span class="special">=</span> <span class="identifier">cp_range</span><span class="special">.</span><span class="identifier">end</span><span class="special">();</span>
+
+        <span class="keyword">auto</span> <span class="keyword">const</span> <span class="identifier">result</span> <span class="special">=</span> <span class="identifier">bp</span><span class="special">::</span><span class="identifier">prefix_parse</span><span class="special">(</span><span class="identifier">cp_first</span><span class="special">,</span> <span class="identifier">cp_last</span><span class="special">,</span> <span class="identifier">bp</span><span class="special">::</span><span class="identifier">double_</span><span class="special">);</span>
+        <span class="keyword">if</span> <span class="special">(</span><span class="identifier">result</span><span class="special">)</span> <span class="special">{</span>
+            <span class="identifier">_val</span><span class="special">(</span><span class="identifier">ctx</span><span class="special">)</span> <span class="special">=</span> <span class="special">*</span><span class="identifier">result</span><span class="special">;</span>
+        <span class="special">}</span> <span class="keyword">else</span> <span class="special">{</span>
+            <span class="comment">// This would be more efficient if we used</span>
+            <span class="comment">// boost::container::small_vector, or std::inplace_vector from</span>
+            <span class="comment">// C++26.</span>
+            <span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span><span class="keyword">char</span><span class="special">&gt;</span> <span class="identifier">chars</span><span class="special">(</span><span class="identifier">cp_first</span><span class="special">,</span> <span class="identifier">cp_last</span><span class="special">);</span>
+            <span class="keyword">auto</span> <span class="keyword">const</span> <span class="identifier">chars_first</span> <span class="special">=</span> <span class="special">&amp;*</span><span class="identifier">chars</span><span class="special">.</span><span class="identifier">begin</span><span class="special">();</span>
+            <span class="keyword">auto</span> <span class="identifier">chars_last</span> <span class="special">=</span> <span class="identifier">chars_first</span> <span class="special">+</span> <span class="identifier">chars</span><span class="special">.</span><span class="identifier">size</span><span class="special">();</span>
+            <span class="identifier">_val</span><span class="special">(</span><span class="identifier">ctx</span><span class="special">)</span> <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">strtod</span><span class="special">(</span><span class="identifier">chars_first</span><span class="special">,</span> <span class="special">&amp;</span><span class="identifier">chars_last</span><span class="special">);</span>
+        <span class="special">}</span>
+    <span class="special">};</span>
+
+    <span class="keyword">auto</span> <span class="keyword">const</span> <span class="identifier">number_def</span> <span class="special">=</span>
+        <span class="identifier">bp</span><span class="special">::</span><span class="identifier">raw</span><span class="special">[</span><span class="identifier">bp</span><span class="special">::</span><span class="identifier">lexeme</span>
+                    <span class="special">[-</span><span class="identifier">bp</span><span class="special">::</span><span class="identifier">char_</span><span class="special">(</span><span class="char">'-'</span><span class="special">)</span> <span class="special">&gt;&gt;</span>
+                     <span class="special">(</span><span class="identifier">bp</span><span class="special">::</span><span class="identifier">char_</span><span class="special">(</span><span class="char">'1'</span><span class="special">,</span> <span class="char">'9'</span><span class="special">)</span> <span class="special">&gt;&gt;</span> <span class="special">*</span><span class="identifier">bp</span><span class="special">::</span><span class="identifier">digit</span> <span class="special">|</span> <span class="identifier">bp</span><span class="special">::</span><span class="identifier">char_</span><span class="special">(</span><span class="char">'0'</span><span class="special">))</span> <span class="special">&gt;&gt;</span>
+                     <span class="special">-(</span><span class="identifier">bp</span><span class="special">::</span><span class="identifier">char_</span><span class="special">(</span><span class="char">'.'</span><span class="special">)</span> <span class="special">&gt;&gt;</span> <span class="special">+</span><span class="identifier">bp</span><span class="special">::</span><span class="identifier">digit</span><span class="special">)</span> <span class="special">&gt;&gt;</span>
+                     <span class="special">-(</span><span class="identifier">bp</span><span class="special">::</span><span class="identifier">char_</span><span class="special">(</span><span class="string">"eE"</span><span class="special">)</span> <span class="special">&gt;&gt;</span> <span class="special">-</span><span class="identifier">bp</span><span class="special">::</span><span class="identifier">char_</span><span class="special">(</span><span class="string">"+-"</span><span class="special">)</span> <span class="special">&gt;&gt;</span> <span class="special">+</span><span class="identifier">bp</span><span class="special">::</span><span class="identifier">digit</span><span class="special">)]]</span>
+               <span class="special">[</span><span class="identifier">parse_double</span><span class="special">];</span>
+
+    <span class="comment">// The object_element_key parser is exactly the same as the string parser.</span>
+    <span class="comment">// Note that we did *not* use string here, though; we used string_def.  If</span>
+    <span class="comment">// we had used string, its callback would have been called first, and</span>
+    <span class="comment">// worse still, since it moves its attribute, the callback for</span>
+    <span class="comment">// object_element_key would always report the empty string, because the</span>
+    <span class="comment">// string callback would have consumed it first.</span>
+    <span class="keyword">auto</span> <span class="keyword">const</span> <span class="identifier">object_element_key_def</span> <span class="special">=</span> <span class="identifier">string_def</span><span class="special">;</span>
+
+    <span class="keyword">auto</span> <span class="keyword">const</span> <span class="identifier">object_element_def</span> <span class="special">=</span> <span class="identifier">object_element_key</span> <span class="special">&gt;</span> <span class="char">':'</span> <span class="special">&gt;</span> <span class="identifier">value</span><span class="special">;</span>
+
+    <span class="comment">// This is a very straightforward way to write object_def when we know we</span>
+    <span class="comment">// don't care about attribute-generating (non-callback) parsing.  If we</span>
+    <span class="comment">// wanted to support both modes in one parser definition, we could have</span>
+    <span class="comment">// written:</span>
+    <span class="comment">//    auto const object_open_def = eps;</span>
+    <span class="comment">//    auto const object_close_def = eps;</span>
+    <span class="comment">//    auto const object_def = '{' &gt;&gt; object_open &gt;&gt;</span>
+    <span class="comment">//                             -(object_element % ',') &gt;</span>
+    <span class="comment">//                            '}' &gt;&gt; object_close;</span>
+    <span class="keyword">auto</span> <span class="keyword">const</span> <span class="identifier">object_open_def</span> <span class="special">=</span> <span class="char">'{'</span><span class="identifier">_l</span><span class="special">;</span>
+    <span class="keyword">auto</span> <span class="keyword">const</span> <span class="identifier">object_close_def</span> <span class="special">=</span> <span class="char">'}'</span><span class="identifier">_l</span><span class="special">;</span>
+    <span class="keyword">auto</span> <span class="keyword">const</span> <span class="identifier">object_def</span> <span class="special">=</span> <span class="identifier">object_open</span> <span class="special">&gt;&gt;</span>
+                            <span class="special">-(</span><span class="identifier">object_element</span> <span class="special">%</span> <span class="char">','</span><span class="special">)</span> <span class="special">&gt;</span> <span class="identifier">object_close</span><span class="special">;</span>
+
+    <span class="keyword">auto</span> <span class="keyword">const</span> <span class="identifier">array_open_def</span> <span class="special">=</span> <span class="char">'['</span><span class="identifier">_l</span><span class="special">;</span>
+    <span class="keyword">auto</span> <span class="keyword">const</span> <span class="identifier">array_close_def</span> <span class="special">=</span> <span class="char">']'</span><span class="identifier">_l</span><span class="special">;</span>
+    <span class="keyword">auto</span> <span class="keyword">const</span> <span class="identifier">array_def</span> <span class="special">=</span> <span class="identifier">array_open</span> <span class="special">&gt;&gt;</span> <span class="special">-(</span><span class="identifier">value</span> <span class="special">%</span> <span class="char">','</span><span class="special">)</span> <span class="special">&gt;</span> <span class="identifier">array_close</span><span class="special">;</span>
+
+    <span class="keyword">auto</span> <span class="keyword">const</span> <span class="identifier">value_def</span> <span class="special">=</span> <span class="identifier">number</span> <span class="special">|</span> <span class="identifier">bool_p</span> <span class="special">|</span> <span class="identifier">null</span> <span class="special">|</span> <span class="identifier">string</span> <span class="special">|</span> <span class="identifier">array</span> <span class="special">|</span> <span class="identifier">object</span><span class="special">;</span>
+
+    <span class="identifier">BOOST_PARSER_DEFINE_RULES</span><span class="special">(</span>
+        <span class="identifier">ws</span><span class="special">,</span>
+        <span class="identifier">hex_4</span><span class="special">,</span>
+        <span class="identifier">escape_seq</span><span class="special">,</span>
+        <span class="identifier">escape_double_seq</span><span class="special">,</span>
+        <span class="identifier">single_escaped_char</span><span class="special">,</span>
+        <span class="identifier">string_char</span><span class="special">,</span>
+        <span class="identifier">null</span><span class="special">,</span>
+        <span class="identifier">bool_p</span><span class="special">,</span>
+        <span class="identifier">string</span><span class="special">,</span>
+        <span class="identifier">number</span><span class="special">,</span>
+        <span class="identifier">object_element_key</span><span class="special">,</span>
+        <span class="identifier">object_element</span><span class="special">,</span>
+        <span class="identifier">object_open</span><span class="special">,</span>
+        <span class="identifier">object_close</span><span class="special">,</span>
+        <span class="identifier">object</span><span class="special">,</span>
+        <span class="identifier">array_open</span><span class="special">,</span>
+        <span class="identifier">array_close</span><span class="special">,</span>
+        <span class="identifier">array</span><span class="special">,</span>
+        <span class="identifier">value</span><span class="special">);</span>
+
+    <span class="comment">// The parse function loses its attribute from the return type; now the</span>
+    <span class="comment">// return type is just bool.</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> <span class="identifier">Callbacks</span><span class="special">&gt;</span>
+    <span class="keyword">bool</span> <span class="identifier">parse</span><span class="special">(</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">str</span><span class="special">,</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">filename</span><span class="special">,</span>
+        <span class="identifier">Callbacks</span> <span class="keyword">const</span> <span class="special">&amp;</span> <span class="identifier">callbacks</span><span class="special">,</span>
+        <span class="keyword">int</span> <span class="identifier">max_recursion</span> <span class="special">=</span> <span class="number">512</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="keyword">auto</span> <span class="keyword">const</span> <span class="identifier">range</span> <span class="special">=</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">parser</span><span class="special">::</span><span class="identifier">as_utf32</span><span class="special">(</span><span class="identifier">str</span><span class="special">);</span>
+        <span class="keyword">using</span> <span class="identifier">iter_t</span> <span class="special">=</span> <span class="keyword">decltype</span><span class="special">(</span><span class="identifier">range</span><span class="special">.</span><span class="identifier">begin</span><span class="special">());</span>
+
+        <span class="keyword">if</span> <span class="special">(</span><span class="identifier">max_recursion</span> <span class="special">&lt;=</span> <span class="number">0</span><span class="special">)</span>
+            <span class="identifier">max_recursion</span> <span class="special">=</span> <span class="identifier">INT_MAX</span><span class="special">;</span>
+
+        <span class="identifier">global_state</span> <span class="identifier">globals</span><span class="special">{</span><span class="number">0</span><span class="special">,</span> <span class="identifier">max_recursion</span><span class="special">};</span>
+        <span class="comment">// This is a different error handler from the json.cpp example, just</span>
+        <span class="comment">// to show different options.</span>
+        <span class="identifier">bp</span><span class="special">::</span><span class="identifier">stream_error_handler</span> <span class="identifier">error_handler</span><span class="special">(</span><span class="identifier">filename</span><span class="special">);</span>
+        <span class="keyword">auto</span> <span class="keyword">const</span> <span class="identifier">parser</span> <span class="special">=</span> <span class="identifier">bp</span><span class="special">::</span><span class="identifier">with_error_handler</span><span class="special">(</span>
+            <span class="identifier">bp</span><span class="special">::</span><span class="identifier">with_globals</span><span class="special">(</span><span class="identifier">value</span><span class="special">,</span> <span class="identifier">globals</span><span class="special">),</span> <span class="identifier">error_handler</span><span class="special">);</span>
+
+        <span class="keyword">try</span> <span class="special">{</span>
+            <span class="comment">// This is identical to the parse() call in json.cpp, except that</span>
+            <span class="comment">// it is callback_parse() instead, and it takes the callbacks</span>
+            <span class="comment">// parameter.</span>
+            <span class="keyword">return</span> <span class="identifier">bp</span><span class="special">::</span><span class="identifier">callback_parse</span><span class="special">(</span><span class="identifier">range</span><span class="special">,</span> <span class="identifier">parser</span><span class="special">,</span> <span class="identifier">ws</span><span class="special">,</span> <span class="identifier">callbacks</span><span class="special">);</span>
+        <span class="special">}</span> <span class="keyword">catch</span> <span class="special">(</span><span class="identifier">excessive_nesting</span><span class="special">&lt;</span><span class="identifier">iter_t</span><span class="special">&gt;</span> <span class="keyword">const</span> <span class="special">&amp;</span> <span class="identifier">e</span><span class="special">)</span> <span class="special">{</span>
+            <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="keyword">const</span> <span class="identifier">message</span> <span class="special">=</span> <span class="string">"error: Exceeded maximum number ("</span> <span class="special">+</span>
+                                        <span class="identifier">std</span><span class="special">::</span><span class="identifier">to_string</span><span class="special">(</span><span class="identifier">max_recursion</span><span class="special">)</span> <span class="special">+</span>
+                                        <span class="string">") of open arrays and/or objects"</span><span class="special">;</span>
+            <span class="identifier">bp</span><span class="special">::</span><span class="identifier">write_formatted_message</span><span class="special">(</span>
+                <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span><span class="special">,</span>
+                <span class="identifier">filename</span><span class="special">,</span>
+                <span class="identifier">range</span><span class="special">.</span><span class="identifier">begin</span><span class="special">(),</span>
+                <span class="identifier">e</span><span class="special">.</span><span class="identifier">iter</span><span class="special">,</span>
+                <span class="identifier">range</span><span class="special">.</span><span class="identifier">end</span><span class="special">(),</span>
+                <span class="identifier">message</span><span class="special">);</span>
+        <span class="special">}</span>
+
+        <span class="keyword">return</span> <span class="special">{};</span>
+    <span class="special">}</span>
+
+<span class="special">}</span>
+
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">file_slurp</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">ifstream</span> <span class="special">&amp;</span> <span class="identifier">ifs</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">retval</span><span class="special">;</span>
+    <span class="keyword">while</span> <span class="special">(</span><span class="identifier">ifs</span><span class="special">)</span> <span class="special">{</span>
+        <span class="keyword">char</span> <span class="keyword">const</span> <span class="identifier">c</span> <span class="special">=</span> <span class="identifier">ifs</span><span class="special">.</span><span class="identifier">get</span><span class="special">();</span>
+        <span class="identifier">retval</span> <span class="special">+=</span> <span class="identifier">c</span><span class="special">;</span>
+    <span class="special">}</span>
+    <span class="keyword">if</span> <span class="special">(!</span><span class="identifier">retval</span><span class="special">.</span><span class="identifier">empty</span><span class="special">()</span> <span class="special">&amp;&amp;</span> <span class="identifier">retval</span><span class="special">.</span><span class="identifier">back</span><span class="special">()</span> <span class="special">==</span> <span class="special">-</span><span class="number">1</span><span class="special">)</span>
+        <span class="identifier">retval</span><span class="special">.</span><span class="identifier">pop_back</span><span class="special">();</span>
+    <span class="keyword">return</span> <span class="identifier">retval</span><span class="special">;</span>
+<span class="special">}</span>
+
+<span class="comment">// This is our callbacks-struct.  It has a callback for each of the kinds of</span>
+<span class="comment">// callback rules in our parser.  If one were missing, you'd get a pretty</span>
+<span class="comment">// nasty template instantiation error.  Note that these are all const members;</span>
+<span class="comment">// callback_parse() takes the callbacks object by constant reference.</span>
+<span class="keyword">struct</span> <span class="identifier">json_callbacks</span>
+<span class="special">{</span>
+    <span class="keyword">void</span> <span class="keyword">operator</span><span class="special">()(</span><span class="identifier">json</span><span class="special">::</span><span class="identifier">null_tag</span><span class="special">)</span> <span class="keyword">const</span> <span class="special">{</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"JSON null value\n"</span><span class="special">;</span> <span class="special">}</span>
+    <span class="keyword">void</span> <span class="keyword">operator</span><span class="special">()(</span><span class="identifier">json</span><span class="special">::</span><span class="identifier">bool_tag</span><span class="special">,</span> <span class="keyword">bool</span> <span class="identifier">b</span><span class="special">)</span> <span class="keyword">const</span>
+    <span class="special">{</span>
+        <span class="identifier">indent</span><span class="special">();</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"JSON bool "</span> <span class="special">&lt;&lt;</span> <span class="special">(</span><span class="identifier">b</span> <span class="special">?</span> <span class="string">"true"</span> <span class="special">:</span> <span class="string">"false"</span><span class="special">)</span> <span class="special">&lt;&lt;</span> <span class="string">"\n"</span><span class="special">;</span>
+    <span class="special">}</span>
+    <span class="keyword">void</span> <span class="keyword">operator</span><span class="special">()(</span><span class="identifier">json</span><span class="special">::</span><span class="identifier">string_tag</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">s</span><span class="special">)</span> <span class="keyword">const</span>
+    <span class="special">{</span>
+        <span class="identifier">indent</span><span class="special">();</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"JSON string \""</span> <span class="special">&lt;&lt;</span> <span class="identifier">s</span> <span class="special">&lt;&lt;</span> <span class="string">"\"\n"</span><span class="special">;</span>
+    <span class="special">}</span>
+    <span class="keyword">void</span> <span class="keyword">operator</span><span class="special">()(</span><span class="identifier">json</span><span class="special">::</span><span class="identifier">number_tag</span><span class="special">,</span> <span class="keyword">double</span> <span class="identifier">d</span><span class="special">)</span> <span class="keyword">const</span>
+    <span class="special">{</span>
+        <span class="identifier">indent</span><span class="special">();</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"JSON number "</span> <span class="special">&lt;&lt;</span> <span class="identifier">d</span> <span class="special">&lt;&lt;</span> <span class="string">"\n"</span><span class="special">;</span>
+    <span class="special">}</span>
+    <span class="keyword">void</span> <span class="keyword">operator</span><span class="special">()(</span><span class="identifier">json</span><span class="special">::</span><span class="identifier">object_element_key_tag</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">key</span><span class="special">)</span> <span class="keyword">const</span>
+    <span class="special">{</span>
+        <span class="identifier">indent</span><span class="special">();</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"JSON object element with key \""</span> <span class="special">&lt;&lt;</span> <span class="identifier">key</span>
+                  <span class="special">&lt;&lt;</span> <span class="string">"\" and value...\n"</span><span class="special">;</span>
+    <span class="special">}</span>
+    <span class="keyword">void</span> <span class="keyword">operator</span><span class="special">()(</span><span class="identifier">json</span><span class="special">::</span><span class="identifier">object_open_tag</span><span class="special">)</span> <span class="keyword">const</span>
+    <span class="special">{</span>
+        <span class="identifier">indent</span><span class="special">(</span><span class="number">1</span><span class="special">);</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"Beginning of JSON object.\n"</span><span class="special">;</span>
+    <span class="special">}</span>
+    <span class="keyword">void</span> <span class="keyword">operator</span><span class="special">()(</span><span class="identifier">json</span><span class="special">::</span><span class="identifier">object_close_tag</span><span class="special">)</span> <span class="keyword">const</span>
+    <span class="special">{</span>
+        <span class="identifier">indent</span><span class="special">(-</span><span class="number">1</span><span class="special">);</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"End of JSON object.\n"</span><span class="special">;</span>
+    <span class="special">}</span>
+    <span class="keyword">void</span> <span class="keyword">operator</span><span class="special">()(</span><span class="identifier">json</span><span class="special">::</span><span class="identifier">array_open_tag</span><span class="special">)</span> <span class="keyword">const</span>
+    <span class="special">{</span>
+        <span class="identifier">indent</span><span class="special">(</span><span class="number">1</span><span class="special">);</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"Beginning of JSON array.\n"</span><span class="special">;</span>
+    <span class="special">}</span>
+    <span class="keyword">void</span> <span class="keyword">operator</span><span class="special">()(</span><span class="identifier">json</span><span class="special">::</span><span class="identifier">array_close_tag</span><span class="special">)</span> <span class="keyword">const</span>
+    <span class="special">{</span>
+        <span class="identifier">indent</span><span class="special">(-</span><span class="number">1</span><span class="special">);</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"End of JSON array.\n"</span><span class="special">;</span>
+    <span class="special">}</span>
+
+    <span class="keyword">void</span> <span class="identifier">indent</span><span class="special">(</span><span class="keyword">int</span> <span class="identifier">level_bump</span> <span class="special">=</span> <span class="number">0</span><span class="special">)</span> <span class="keyword">const</span>
+    <span class="special">{</span>
+        <span class="keyword">if</span> <span class="special">(</span><span class="identifier">level_bump</span> <span class="special">&lt;</span> <span class="number">0</span><span class="special">)</span>
+            <span class="identifier">indent_</span><span class="special">.</span><span class="identifier">resize</span><span class="special">(</span><span class="identifier">indent_</span><span class="special">.</span><span class="identifier">size</span><span class="special">()</span> <span class="special">-</span> <span class="number">2</span><span class="special">);</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="identifier">indent_</span><span class="special">;</span>
+        <span class="keyword">if</span> <span class="special">(</span><span class="number">0</span> <span class="special">&lt;</span> <span class="identifier">level_bump</span><span class="special">)</span>
+            <span class="identifier">indent_</span> <span class="special">+=</span> <span class="string">"  "</span><span class="special">;</span>
+    <span class="special">}</span>
+    <span class="keyword">mutable</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">indent_</span><span class="special">;</span>
+<span class="special">};</span>
+
+<span class="keyword">int</span> <span class="identifier">main</span><span class="special">(</span><span class="keyword">int</span> <span class="identifier">argc</span><span class="special">,</span> <span class="keyword">char</span> <span class="special">*</span> <span class="identifier">argv</span><span class="special">[])</span>
+<span class="special">{</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">argc</span> <span class="special">&lt;</span> <span class="number">2</span><span class="special">)</span> <span class="special">{</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cerr</span> <span class="special">&lt;&lt;</span> <span class="string">"A filename to parse is required.\n"</span><span class="special">;</span>
+        <span class="identifier">exit</span><span class="special">(</span><span class="number">1</span><span class="special">);</span>
+    <span class="special">}</span>
+
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">ifstream</span> <span class="identifier">ifs</span><span class="special">(</span><span class="identifier">argv</span><span class="special">[</span><span class="number">1</span><span class="special">]);</span>
+    <span class="keyword">if</span> <span class="special">(!</span><span class="identifier">ifs</span><span class="special">)</span> <span class="special">{</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cerr</span> <span class="special">&lt;&lt;</span> <span class="string">"Unable to read file '"</span> <span class="special">&lt;&lt;</span> <span class="identifier">argv</span><span class="special">[</span><span class="number">1</span><span class="special">]</span> <span class="special">&lt;&lt;</span> <span class="string">"'.\n"</span><span class="special">;</span>
+        <span class="identifier">exit</span><span class="special">(</span><span class="number">1</span><span class="special">);</span>
+    <span class="special">}</span>
+
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="keyword">const</span> <span class="identifier">file_contents</span> <span class="special">=</span> <span class="identifier">file_slurp</span><span class="special">(</span><span class="identifier">ifs</span><span class="special">);</span>
+    <span class="keyword">bool</span> <span class="identifier">success</span> <span class="special">=</span> <span class="identifier">json</span><span class="special">::</span><span class="identifier">parse</span><span class="special">(</span><span class="identifier">file_contents</span><span class="special">,</span> <span class="identifier">argv</span><span class="special">[</span><span class="number">1</span><span class="special">],</span> <span class="identifier">json_callbacks</span><span class="special">{});</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">success</span><span class="special">)</span> <span class="special">{</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"Parse successful!\n"</span><span class="special">;</span>
+    <span class="special">}</span> <span class="keyword">else</span> <span class="special">{</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cerr</span> <span class="special">&lt;&lt;</span> <span class="string">"Parse failure.\n"</span><span class="special">;</span>
+        <span class="identifier">exit</span><span class="special">(</span><span class="number">1</span><span class="special">);</span>
+    <span class="special">}</span>
+
+    <span class="keyword">return</span> <span class="number">0</span><span class="special">;</span>
+<span class="special">}</span>
+</pre>
+<p>
+      </p>
+<p>
+        Note that here, I was keeping things simple to stay close to the previous
+        parser. If you want to do callback parsing, you might want that because you're
+        limited in how much memory you can allocate, or because the JSON you're parsing
+        is really huge, and you only need to retain certain parts of it.
+      </p>
+<p>
+        If this is the case, one possible change that might be appealing would be
+        to reduce the memory allocations. The only memory allocation that the parser
+        does is the one we told it to do — it allocates <code class="computeroutput">std::strings</code>.
+        If we instead used <code class="computeroutput">boost::container::small_vector&lt;char, 1024&gt;</code>,
+        it would only ever allocate if it encountered a string larger than 1024 bytes.
+        We would also want to change the callbacks to take <code class="computeroutput">const &amp;</code>
+        parameters instead of using pass-by-value.
+      </p>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2020 T. Zachary Laine<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="tutorial.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../parser.html"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="concepts.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

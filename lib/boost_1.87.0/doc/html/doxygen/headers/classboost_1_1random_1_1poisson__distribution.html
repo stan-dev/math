@@ -1,0 +1,185 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template poisson_distribution</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../../boost_random/reference.html#doxygen.headers.poisson__distribution_8hpp" title="Header &lt;boost/random/poisson_distribution.hpp&gt;">
+<link rel="prev" href="classboost_1_1random_1_1piecewise__linear__distribution_1_1param__type.html" title="Class param_type">
+<link rel="next" href="classboost_1_1random_1_1poisson__distribution_1_1param__type.html" title="Class param_type">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1random_1_1piecewise__linear__distribution_1_1param__type.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_random/reference.html#doxygen.headers.poisson__distribution_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1random_1_1poisson__distribution_1_1param__type.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.headers.classboost_1_1random_1_1poisson__distribution"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template poisson_distribution</span></h2>
+<p>boost::random::poisson_distribution</p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../boost_random/reference.html#doxygen.headers.poisson__distribution_8hpp" title="Header &lt;boost/random/poisson_distribution.hpp&gt;">boost/random/poisson_distribution.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> IntType <span class="special">=</span> <span class="keyword">int</span><span class="special">,</span> <span class="keyword">typename</span> RealType <span class="special">=</span> <span class="keyword">double</span><span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1random_1_1poisson__distribution.html" title="Class template poisson_distribution">poisson_distribution</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">IntType</span>  <a name="doxygen.headers.classboost_1_1random_1_1poisson__distribution_1ae1c3c26f3cc95c8366b1f452c2eeb9d7"></a><span class="identifier">result_type</span><span class="special">;</span>
+  <span class="keyword">typedef</span> <span class="identifier">RealType</span> <a name="doxygen.headers.classboost_1_1random_1_1poisson__distribution_1a1b5ecb5c4c20c9d80f1d826a6f151cb8"></a><span class="identifier">input_type</span><span class="special">;</span> 
+
+  <span class="comment">// member classes/structs/unions</span>
+
+  <span class="keyword">class</span> <a class="link" href="classboost_1_1random_1_1poisson__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">{</span>
+  <span class="keyword">public</span><span class="special">:</span>
+    <span class="comment">// types</span>
+    <span class="keyword">typedef</span> <a class="link" href="classboost_1_1random_1_1poisson__distribution.html" title="Class template poisson_distribution">poisson_distribution</a> <a class="link" href="classboost_1_1random_1_1poisson__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1poisson__distribution_1_1param__type_1a59fbdfc757c9c0035193e51f6c0624a1"><span class="identifier">distribution_type</span></a><span class="special">;</span>
+
+    <span class="comment">// <a class="link" href="classboost_1_1random_1_1poisson__distribution_1_1param__type.html#id-1_3_34_5_6_34_1_1_1_3_2-bb">public member functions</a></span>
+    <span class="keyword">explicit</span> <a class="link" href="classboost_1_1random_1_1poisson__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1poisson__distribution_1_1param__type_1a328be17fdcc2d77492ea81e131025637"><span class="identifier">param_type</span></a><span class="special">(</span><span class="identifier">RealType</span> <span class="special">=</span> <span class="number">1</span><span class="special">)</span><span class="special">;</span>
+    <span class="identifier">RealType</span> <a class="link" href="classboost_1_1random_1_1poisson__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1poisson__distribution_1_1param__type_1a05b7404c92986f3b4aa475f7e57d6002"><span class="identifier">mean</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+
+    <span class="comment">// <a class="link" href="classboost_1_1random_1_1poisson__distribution_1_1param__type.html#id-1_3_34_5_6_34_1_1_1_3_3-bb">friend functions</a></span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits<span class="special">&gt;</span> 
+      <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+      <a class="link" href="classboost_1_1random_1_1poisson__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1poisson__distribution_1_1param__type_1a36d2820c7e758fa1a94fdd5d74949e54"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1poisson__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits<span class="special">&gt;</span> 
+      <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+      <a class="link" href="classboost_1_1random_1_1poisson__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1poisson__distribution_1_1param__type_1a95ac9818d02462ff9019342dd2f057c8"><span class="keyword">operator</span><span class="special">&gt;&gt;</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">,</span> <a class="link" href="classboost_1_1random_1_1poisson__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">bool</span> <a class="link" href="classboost_1_1random_1_1poisson__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1poisson__distribution_1_1param__type_1ae6f3b58e629ce7a54b5e18a4f05dbc5a"><span class="keyword">operator</span><span class="special">==</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1poisson__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1poisson__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">bool</span> <a class="link" href="classboost_1_1random_1_1poisson__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1poisson__distribution_1_1param__type_1aa559d0d98e88e84417364a89b83cf5b2"><span class="keyword">operator</span><span class="special">!=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1poisson__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1poisson__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="special">}</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1random_1_1poisson__distribution.html#id-1_3_34_5_6_34_1_1_1_6-bb">public member functions</a></span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1random_1_1poisson__distribution.html#doxygen.headers.classboost_1_1random_1_1poisson__distribution_1a487d1926795947e6f282ad6daf5b8dd6"><span class="identifier">poisson_distribution</span></a><span class="special">(</span><span class="identifier">RealType</span> <span class="special">=</span> <span class="number">1</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1random_1_1poisson__distribution.html#doxygen.headers.classboost_1_1random_1_1poisson__distribution_1a1cec8a2376e238839c0079cb2a83a187"><span class="identifier">poisson_distribution</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1poisson__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> URNG<span class="special">&gt;</span> <span class="identifier">IntType</span> <a class="link" href="classboost_1_1random_1_1poisson__distribution.html#doxygen.headers.classboost_1_1random_1_1poisson__distribution_1af66f4991bb65202e88e49a817cad2c85"><span class="keyword">operator</span><span class="special">(</span><span class="special">)</span></a><span class="special">(</span><span class="identifier">URNG</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> URNG<span class="special">&gt;</span> <span class="identifier">IntType</span> <a class="link" href="classboost_1_1random_1_1poisson__distribution.html#doxygen.headers.classboost_1_1random_1_1poisson__distribution_1a144c10747a7d86317cab89a267cec05d"><span class="keyword">operator</span><span class="special">(</span><span class="special">)</span></a><span class="special">(</span><span class="identifier">URNG</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1poisson__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">RealType</span> <a class="link" href="classboost_1_1random_1_1poisson__distribution.html#doxygen.headers.classboost_1_1random_1_1poisson__distribution_1ac2b1450600ad7cca8452050b6e499c94"><span class="identifier">mean</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">IntType</span> <a class="link" href="classboost_1_1random_1_1poisson__distribution.html#doxygen.headers.classboost_1_1random_1_1poisson__distribution_1a7d87b125c34289e99bca12e676139141"><span class="identifier">min</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">IntType</span> <a class="link" href="classboost_1_1random_1_1poisson__distribution.html#doxygen.headers.classboost_1_1random_1_1poisson__distribution_1ae80d605abdc5d6ca13cc07e99f0c394e"><span class="identifier">max</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1random_1_1poisson__distribution_1_1param__type.html" title="Class param_type">param_type</a> <a class="link" href="classboost_1_1random_1_1poisson__distribution.html#doxygen.headers.classboost_1_1random_1_1poisson__distribution_1a69ca3c31283a777b48d654f7852dcbc7"><span class="identifier">param</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1random_1_1poisson__distribution.html#doxygen.headers.classboost_1_1random_1_1poisson__distribution_1ad6b293091d197069bffcef0def9934a5"><span class="identifier">param</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1poisson__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1random_1_1poisson__distribution.html#doxygen.headers.classboost_1_1random_1_1poisson__distribution_1a8598e7d442dc88997d60cb808ca5aa11"><span class="identifier">reset</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1random_1_1poisson__distribution.html#id-1_3_34_5_6_34_1_1_1_7-bb">friend functions</a></span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits<span class="special">&gt;</span> 
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+    <a class="link" href="classboost_1_1random_1_1poisson__distribution.html#doxygen.headers.classboost_1_1random_1_1poisson__distribution_1a7ff9ca74a3bdc8253d210b04669f79f4"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">,</span> 
+               <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1poisson__distribution.html" title="Class template poisson_distribution">poisson_distribution</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits<span class="special">&gt;</span> 
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+    <a class="link" href="classboost_1_1random_1_1poisson__distribution.html#doxygen.headers.classboost_1_1random_1_1poisson__distribution_1adc098c22a36620f08cb5e1af9cb1cf4e"><span class="keyword">operator</span><span class="special">&gt;&gt;</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">,</span> <a class="link" href="classboost_1_1random_1_1poisson__distribution.html" title="Class template poisson_distribution">poisson_distribution</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1random_1_1poisson__distribution.html#doxygen.headers.classboost_1_1random_1_1poisson__distribution_1a39213acd8b23b961c97addf3eb9c5bc6"><span class="keyword">operator</span><span class="special">==</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1poisson__distribution.html" title="Class template poisson_distribution">poisson_distribution</a> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1poisson__distribution.html" title="Class template poisson_distribution">poisson_distribution</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1random_1_1poisson__distribution.html#doxygen.headers.classboost_1_1random_1_1poisson__distribution_1a5c512acc1b0c2eb9e813d0409e7c78c6"><span class="keyword">operator</span><span class="special">!=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1poisson__distribution.html" title="Class template poisson_distribution">poisson_distribution</a> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1poisson__distribution.html" title="Class template poisson_distribution">poisson_distribution</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.34.5.6.33.3.4"></a><h2>Description</h2>
+<p>An instantiation of the class template <code class="computeroutput"><a class="link" href="classboost_1_1random_1_1poisson__distribution.html" title="Class template poisson_distribution">poisson_distribution</a></code> is a model of  <a class="link" href="../../boost_random/reference.html#boost_random.reference.concepts.random_distribution" title="Random Distribution">random distribution</a> . The poisson distribution has <span class="inlinemediaobject"><img src="../../images/random//form_36.png"></span></p>
+<p>This implementation is based on the PTRD algorithm described</p>
+<p> </p>
+<div class="blockquote"><blockquote class="blockquote"><p>  "The transformed rejection method for generating Poisson random variables", Wolfgang Hormann, Insurance: Mathematics and Economics Volume 12, Issue 1, February 1993, Pages 39-45  </p></blockquote></div>
+<p>  </p>
+<div class="refsect2">
+<a name="id-1.3.34.5.6.33.3.4.5"></a><h3>
+<a name="id-1_3_34_5_6_34_1_1_1_6-bb"></a><code class="computeroutput">poisson_distribution</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.headers.classboost_1_1random_1_1poisson__distribution_1a487d1926795947e6f282ad6daf5b8dd6"></a><span class="identifier">poisson_distribution</span><span class="special">(</span><span class="identifier">RealType</span> mean <span class="special">=</span> <span class="number">1</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Constructs a <code class="computeroutput"><a class="link" href="classboost_1_1random_1_1poisson__distribution.html" title="Class template poisson_distribution">poisson_distribution</a></code> with the parameter <code class="computeroutput">mean</code>.</p>
+<p>Requires: mean &gt; 0 </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.headers.classboost_1_1random_1_1poisson__distribution_1a1cec8a2376e238839c0079cb2a83a187"></a><span class="identifier">poisson_distribution</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1poisson__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span> param<span class="special">)</span><span class="special">;</span></pre>
+<p>Construct an <code class="computeroutput"><a class="link" href="classboost_1_1random_1_1poisson__distribution.html" title="Class template poisson_distribution">poisson_distribution</a></code> object from the parameters. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> URNG<span class="special">&gt;</span> <span class="identifier">IntType</span> <a name="doxygen.headers.classboost_1_1random_1_1poisson__distribution_1af66f4991bb65202e88e49a817cad2c85"></a><span class="keyword">operator</span><span class="special">(</span><span class="special">)</span><span class="special">(</span><span class="identifier">URNG</span> <span class="special">&amp;</span> urng<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns a random variate distributed according to the poisson distribution. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> URNG<span class="special">&gt;</span> 
+  <span class="identifier">IntType</span> <a name="doxygen.headers.classboost_1_1random_1_1poisson__distribution_1a144c10747a7d86317cab89a267cec05d"></a><span class="keyword">operator</span><span class="special">(</span><span class="special">)</span><span class="special">(</span><span class="identifier">URNG</span> <span class="special">&amp;</span> urng<span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1poisson__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span> param<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns a random variate distributed according to the poisson distribution with parameters specified by param. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">RealType</span> <a name="doxygen.headers.classboost_1_1random_1_1poisson__distribution_1ac2b1450600ad7cca8452050b6e499c94"></a><span class="identifier">mean</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns the "mean" parameter of the distribution. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">IntType</span> <a name="doxygen.headers.classboost_1_1random_1_1poisson__distribution_1a7d87b125c34289e99bca12e676139141"></a><span class="identifier">min</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns the smallest value that the distribution can produce. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">IntType</span> <a name="doxygen.headers.classboost_1_1random_1_1poisson__distribution_1ae80d605abdc5d6ca13cc07e99f0c394e"></a><span class="identifier">max</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns the largest value that the distribution can produce. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a class="link" href="classboost_1_1random_1_1poisson__distribution_1_1param__type.html" title="Class param_type">param_type</a> <a name="doxygen.headers.classboost_1_1random_1_1poisson__distribution_1a69ca3c31283a777b48d654f7852dcbc7"></a><span class="identifier">param</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns the parameters of the distribution. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.headers.classboost_1_1random_1_1poisson__distribution_1ad6b293091d197069bffcef0def9934a5"></a><span class="identifier">param</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1poisson__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span> param<span class="special">)</span><span class="special">;</span></pre>
+<p>Sets parameters of the distribution. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.headers.classboost_1_1random_1_1poisson__distribution_1a8598e7d442dc88997d60cb808ca5aa11"></a><span class="identifier">reset</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Effects: Subsequent uses of the distribution do not depend on values produced by any engine prior to invoking reset. </p>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.34.5.6.33.3.4.6"></a><h3>
+<a name="id-1_3_34_5_6_34_1_1_1_7-bb"></a><code class="computeroutput">poisson_distribution</code> friend functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits<span class="special">&gt;</span> 
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+  <a name="doxygen.headers.classboost_1_1random_1_1poisson__distribution_1a7ff9ca74a3bdc8253d210b04669f79f4"></a><span class="keyword">operator</span><span class="special">&lt;&lt;</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> os<span class="special">,</span> 
+             <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1poisson__distribution.html" title="Class template poisson_distribution">poisson_distribution</a> <span class="special">&amp;</span> pd<span class="special">)</span><span class="special">;</span></pre>
+<p>Writes the parameters of the distribution to a <code class="computeroutput">std::ostream</code>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits<span class="special">&gt;</span> 
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+  <a name="doxygen.headers.classboost_1_1random_1_1poisson__distribution_1adc098c22a36620f08cb5e1af9cb1cf4e"></a><span class="keyword">operator</span><span class="special">&gt;&gt;</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> is<span class="special">,</span> 
+             <a class="link" href="classboost_1_1random_1_1poisson__distribution.html" title="Class template poisson_distribution">poisson_distribution</a> <span class="special">&amp;</span> pd<span class="special">)</span><span class="special">;</span></pre>
+<p>Reads the parameters of the distribution from a <code class="computeroutput">std::istream</code>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.headers.classboost_1_1random_1_1poisson__distribution_1a39213acd8b23b961c97addf3eb9c5bc6"></a><span class="keyword">operator</span><span class="special">==</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1poisson__distribution.html" title="Class template poisson_distribution">poisson_distribution</a> <span class="special">&amp;</span> lhs<span class="special">,</span> 
+                <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1poisson__distribution.html" title="Class template poisson_distribution">poisson_distribution</a> <span class="special">&amp;</span> rhs<span class="special">)</span><span class="special">;</span></pre>
+<p>Returns true if the two distributions will produce the same sequence of values, given equal generators. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.headers.classboost_1_1random_1_1poisson__distribution_1a5c512acc1b0c2eb9e813d0409e7c78c6"></a><span class="keyword">operator</span><span class="special">!=</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1poisson__distribution.html" title="Class template poisson_distribution">poisson_distribution</a> <span class="special">&amp;</span> lhs<span class="special">,</span> 
+                <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1poisson__distribution.html" title="Class template poisson_distribution">poisson_distribution</a> <span class="special">&amp;</span> rhs<span class="special">)</span><span class="special">;</span></pre>
+<p>Returns true if the two distributions could produce different sequences of values, given equal generators. </p>
+</li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2000-2005 Jens Maurer<br>Copyright © 2009, 2010 Steven Watanabe<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1random_1_1piecewise__linear__distribution_1_1param__type.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_random/reference.html#doxygen.headers.poisson__distribution_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1random_1_1poisson__distribution_1_1param__type.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

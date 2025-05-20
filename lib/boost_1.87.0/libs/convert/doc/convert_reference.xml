@@ -1,0 +1,515 @@
+<?xml version="1.0" standalone="yes"?>
+<library-reference id="boost_convert_c___reference"><title>Boost.Convert C++ Reference</title><header id="doxygen.boost_convert_c___reference.convert_8hpp" name="boost/convert.hpp">
+<namespace name="boost">
+<namespace name="cnv">
+<struct id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1reference" name="reference"><template>
+      <template-type-parameter name="Converter"/>
+      <template-type-parameter name="TypeOut"/>
+      <template-type-parameter name="TypeIn"/>
+    </template><typedef id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1reference_1a83d2fb1b2adf49fd09cb0437409922a5" name="this_type"><type><classname>reference</classname></type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1reference_1ae6392107217db767037e6dfd371dad79"><parameter name="cnv"><paramtype>Converter const &amp;</paramtype></parameter></constructor>
+<constructor id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1reference_1a79b7178c2b108c4fe0663b80d76332bd"><parameter name="cnv"><paramtype>Converter &amp;&amp;</paramtype></parameter></constructor>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1reference_1ab9e2676abcb2131eb9635aac5fa3d85b" name="value_or"><type><classname>this_type</classname> &amp;</type><parameter name="fallback"><paramtype>TypeOut const &amp;</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1reference_1a728e80d34191dc951fa9620712c12a22" name="operator()" cv="const"><type>TypeOut</type><parameter name="value_in"><paramtype>TypeIn const &amp;</paramtype></parameter></method>
+</method-group>
+</struct><struct-specialization id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1reference_3_01Converter_00_01TypeOut_00_01void_01_4" name="reference"><template>
+      <template-type-parameter name="Converter"/>
+      <template-type-parameter name="TypeOut"/>
+    </template><specialization><template-arg>Converter</template-arg><template-arg>TypeOut</template-arg><template-arg>void</template-arg></specialization><typedef id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1reference_3_01Converter_00_01TypeOut_00_01void_01_4_1a378888eaf115656e7d67866ecf3469ee" name="this_type"><type><classname>reference</classname></type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1reference_3_01Converter_00_01TypeOut_00_01void_01_4_1ae8e2f9dbb9fe74732c47f8168c606b6f"><parameter name="cnv"><paramtype>Converter const &amp;</paramtype></parameter></constructor>
+<constructor id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1reference_3_01Converter_00_01TypeOut_00_01void_01_4_1abaf65b6858be1c593c098d591041ed64"><parameter name="cnv"><paramtype>Converter &amp;&amp;</paramtype></parameter></constructor>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1reference_3_01Converter_00_01TypeOut_00_01void_01_4_1a8384eebc63d7c89a01686c142c9a082a" name="value_or"><type><classname>this_type</classname> &amp;</type><parameter name="fallback"><paramtype>TypeOut const &amp;</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1reference_3_01Converter_00_01TypeOut_00_01void_01_4_1afc052eb67499f668cc1886efaeb177bd" name="operator()" cv="const"><type>TypeOut</type><template>
+          <template-type-parameter name="TypeIn"/>
+        </template><parameter name="value_in"><paramtype>TypeIn const &amp;</paramtype></parameter></method>
+</method-group>
+</struct-specialization><typedef id="doxygen.boost_convert_c___reference.convert_8hpp_1ad6f98738015edf5846aa3bbe685dab60" name="char_cptr"><type>char const *</type></typedef>
+<function id="doxygen.boost_convert_c___reference.convert_8hpp_1a69930a236250df33cca405b0fe20b795" name="apply"><type><classname>reference</classname>&lt; Converter, TypeOut, TypeIn &gt;</type><template>
+          <template-type-parameter name="TypeOut"/>
+          <template-type-parameter name="TypeIn"/>
+          <template-type-parameter name="Converter"/>
+        </template><parameter name="cnv"><paramtype>Converter const &amp;</paramtype></parameter><purpose>Boost.Convert deployment interface with algorithms. </purpose><description><para>For example, <programlisting language="c++">std::array&lt;char const*, 3&gt; strs = {{ " 5", "0XF", "not an int" }};
+std::vector&lt;int&gt;           ints;
+<link linkend="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1basic__stream">boost::cnv::cstream</link>         cnv;
+
+cnv(std::hex)(std::skipws);
+
+std::transform(
+    strs.begin(),
+    strs.end(),
+    std::back_inserter(ints),
+    boost::cnv::apply&lt;int&gt;(std::cref(cnv)).value_or(-1));
+</programlisting> </para></description></function>
+<function id="doxygen.boost_convert_c___reference.convert_8hpp_1a10ce3aa8590e87fcba838173f50d7e54" name="apply"><type><classname>reference</classname>&lt; Converter, TypeOut, void &gt;</type><template>
+          <template-type-parameter name="TypeOut"/>
+          <template-type-parameter name="Converter"/>
+        </template><parameter name="cnv"><paramtype>Converter const &amp;</paramtype></parameter></function>
+</namespace>
+<data-member id="doxygen.boost_convert_c___reference.convert_8hpp_1a3da0ce7497b8828bdcef10122aa06db5" name="throw_on_failure"><type><emphasis>unspecified</emphasis></type><description><para><link linkend="doxygen.boost_convert_c___reference.convert_8hpp_1a3da0ce7497b8828bdcef10122aa06db5">boost::throw_on_failure</link> is the 'tag' object to request the exception-throwing behavior. </para></description></data-member>
+<function id="doxygen.boost_convert_c___reference.convert_8hpp_1af4b24fd41e07b42f1900230c275da40c" name="convert"><type>boost::optional&lt; TypeOut &gt;</type><template>
+          <template-type-parameter name="TypeOut"/>
+          <template-type-parameter name="TypeIn"/>
+          <template-type-parameter name="Converter"/>
+        </template><parameter name="value_in"><paramtype>TypeIn const &amp;</paramtype><description><para>Value of the TypeIn type to be converted to the TypeOut type </para></description></parameter><parameter name="converter"><paramtype>Converter const &amp;</paramtype><description><para>Converter to be used for conversion </para></description></parameter><purpose>Boost.Convert main deployment interface. </purpose><description><para>
+
+For example, <programlisting language="c++"><link linkend="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1basic__stream">boost::cnv::cstream</link> cnv;
+
+boost::optional&lt;int&gt;    i = boost::convert&lt;int&gt;("12", cnv);
+boost::optional&lt;string&gt; s = boost::convert&lt;string&gt;(123.456, cnv);
+</programlisting> </para></description><returns><para>boost::optional&lt;TypeOut&gt; result of conversion together with the indication of success or failure of the conversion request.</para>
+</returns></function>
+<function id="doxygen.boost_convert_c___reference.convert_8hpp_1abfe68a78b7e9e775f590f528e93d7d69" name="convert"><type>boost::optional&lt; TypeOut &gt;</type><template>
+          <template-type-parameter name="TypeOut"/>
+          <template-type-parameter name="TypeIn"/>
+        </template><parameter name="value_in"><paramtype>TypeIn const &amp;</paramtype></parameter><purpose>Boost.Convert deployment interface with the default converter. </purpose><description><para>For example, <programlisting language="c++">struct boost::cnv::by_default : <link linkend="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1basic__stream">boost::cnv::cstream</link> {};
+
+// boost::cnv::cstream (through boost::cnv::by_default) is deployed
+// as the default converter when no converter is provided explicitly.
+boost::optional&lt;int&gt;    i = boost::convert&lt;int&gt;("12");
+boost::optional&lt;string&gt; s = boost::convert&lt;string&gt;(123.456);
+</programlisting> </para></description></function>
+<function id="doxygen.boost_convert_c___reference.convert_8hpp_1a4cd7bc2fcf0d7576e3604fb83dc63ef5" name="convert"><type>TypeOut</type><template>
+          <template-type-parameter name="TypeOut"/>
+          <template-type-parameter name="TypeIn"/>
+          <template-type-parameter name="Converter"/>
+        </template><parameter name="value_in"><paramtype>TypeIn const &amp;</paramtype></parameter><parameter name="converter"><paramtype>Converter const &amp;</paramtype></parameter><parameter name=""><paramtype><emphasis>unspecified</emphasis></paramtype></parameter><purpose>Boost.Convert non-optional deployment interface. </purpose></function>
+<function id="doxygen.boost_convert_c___reference.convert_8hpp_1a6c19c7b2e3e8b0441eb2467fb9fc4b26" name="convert"><type>std::enable_if&lt; is_convertible&lt; Fallback, TypeOut &gt;::value, TypeOut &gt;::type</type><template>
+          <template-type-parameter name="TypeOut"/>
+          <template-type-parameter name="TypeIn"/>
+          <template-type-parameter name="Converter"/>
+          <template-type-parameter name="Fallback"/>
+        </template><parameter name="value_in"><paramtype>TypeIn const &amp;</paramtype></parameter><parameter name="converter"><paramtype>Converter const &amp;</paramtype></parameter><parameter name="fallback"><paramtype>Fallback const &amp;</paramtype></parameter></function>
+<function id="doxygen.boost_convert_c___reference.convert_8hpp_1a80aada253232785261af822613a4a0d6" name="convert"><type>std::enable_if&lt; cnv::is_fun&lt; Fallback, TypeOut &gt;::value, TypeOut &gt;::type</type><template>
+          <template-type-parameter name="TypeOut"/>
+          <template-type-parameter name="TypeIn"/>
+          <template-type-parameter name="Converter"/>
+          <template-type-parameter name="Fallback"/>
+        </template><parameter name="value_in"><paramtype>TypeIn const &amp;</paramtype></parameter><parameter name="converter"><paramtype>Converter const &amp;</paramtype></parameter><parameter name="fallback"><paramtype>Fallback</paramtype></parameter></function>
+
+</namespace>
+</header>
+<header id="doxygen.boost_convert_c___reference.base_8hpp" name="boost/convert/base.hpp">
+<namespace name="boost">
+<namespace name="cnv">
+<struct id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1cnvbase" name="cnvbase"><template>
+      <template-type-parameter name="derived_type"/>
+    </template><typedef id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1cnvbase_1a617af240c0b850f9f021fb17e332d511" name="this_type"><type><classname>cnvbase</classname></type></typedef>
+<typedef id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1cnvbase_1a3b0dce9194d46a1ac3a21467a4bbbedc" name="int_type"><type>int</type></typedef>
+<typedef id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1cnvbase_1a89b4b45a3cd10ca9998632ebab5632c1" name="uint_type"><type>unsigned int</type></typedef>
+<typedef id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1cnvbase_1aa244259e895c116c6c5c8f1f6bfe2d63" name="lint_type"><type>long int</type></typedef>
+<typedef id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1cnvbase_1a2b4e362eb5648ffc9e50ddd3e0207f3b" name="ulint_type"><type>unsigned long int</type></typedef>
+<typedef id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1cnvbase_1a1a6cf61cb0065d931a32d1990322575f" name="sint_type"><type>short int</type></typedef>
+<typedef id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1cnvbase_1ad02a49a56565e4699010e6b0898dd667" name="usint_type"><type>unsigned short int</type></typedef>
+<typedef id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1cnvbase_1ac68af055e573dbfa6af64753e612fc9a" name="llint_type"><type>long long int</type></typedef>
+<typedef id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1cnvbase_1ad374d34e87a60832755b97752d6654f4" name="ullint_type"><type>unsigned long long int</type></typedef>
+<typedef id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1cnvbase_1a8bea2f3db8e24a7da4071236569a70a8" name="flt_type"><type>float</type></typedef>
+<typedef id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1cnvbase_1a8a3c2cad7a87ad93c8aaec7215f760c7" name="dbl_type"><type>double</type></typedef>
+<typedef id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1cnvbase_1a94511a056bcf9d73a10ab018efa238f8" name="ldbl_type"><type>long double</type></typedef>
+<method-group name="public member functions">
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1cnvbase_1a62666e3468fd0335f3e363ea330fbbfd" name="operator()" cv="const"><type>void</type><template>
+          <template-type-parameter name="type_in"/>
+          <template-type-parameter name="type_out"/>
+        </template><parameter name="in"><paramtype>type_in const &amp;</paramtype></parameter><parameter name="out"><paramtype>boost::optional&lt; type_out &gt; &amp;</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1cnvbase_1a5e5698f29884c4d5ef5ff7377bc99612" name="BOOST_CNV_TO_STRING" cv="const"><type/><parameter name="v"><paramtype>int_type</paramtype></parameter><parameter name="r"><paramtype>optional&lt; string_type &gt; &amp;</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1cnvbase_1a589fab80ade7d5878c9fa56b278df61e" name="BOOST_CNV_TO_STRING" cv="const"><type/><parameter name="v"><paramtype>uint_type</paramtype></parameter><parameter name="r"><paramtype>optional&lt; string_type &gt; &amp;</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1cnvbase_1acc6f397e5545b6fdc6a78464bdf35557" name="BOOST_CNV_TO_STRING" cv="const"><type/><parameter name="v"><paramtype>lint_type</paramtype></parameter><parameter name="r"><paramtype>optional&lt; string_type &gt; &amp;</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1cnvbase_1aa0c2b6026eb9b9f3e38e49ddb4436045" name="BOOST_CNV_TO_STRING" cv="const"><type/><parameter name="v"><paramtype>llint_type</paramtype></parameter><parameter name="r"><paramtype>optional&lt; string_type &gt; &amp;</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1cnvbase_1abd6fca17bc1b7989f1d59a580bfe990f" name="BOOST_CNV_TO_STRING" cv="const"><type/><parameter name="v"><paramtype>ulint_type</paramtype></parameter><parameter name="r"><paramtype>optional&lt; string_type &gt; &amp;</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1cnvbase_1a959d7e3c32149dcebd5abe724043c643" name="BOOST_CNV_TO_STRING" cv="const"><type/><parameter name="v"><paramtype>ullint_type</paramtype></parameter><parameter name="r"><paramtype>optional&lt; string_type &gt; &amp;</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1cnvbase_1abb5ea6fd74fcbb662164fa71244a15b6" name="BOOST_CNV_TO_STRING" cv="const"><type/><parameter name="v"><paramtype>sint_type</paramtype></parameter><parameter name="r"><paramtype>optional&lt; string_type &gt; &amp;</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1cnvbase_1a7700782453eab5d101a22f7493ceec31" name="BOOST_CNV_TO_STRING" cv="const"><type/><parameter name="v"><paramtype>usint_type</paramtype></parameter><parameter name="r"><paramtype>optional&lt; string_type &gt; &amp;</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1cnvbase_1a9326a4de560d1b524c47ebabf7b900f9" name="BOOST_CNV_TO_STRING" cv="const"><type/><parameter name="v"><paramtype>flt_type</paramtype></parameter><parameter name="r"><paramtype>optional&lt; string_type &gt; &amp;</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1cnvbase_1aa230f2e87ea7fcbb305608ccf8f3beeb" name="BOOST_CNV_TO_STRING" cv="const"><type/><parameter name="v"><paramtype>dbl_type</paramtype></parameter><parameter name="r"><paramtype>optional&lt; string_type &gt; &amp;</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1cnvbase_1a7903a47b386f2431a9ffea5e8008ae8e" name="BOOST_CNV_TO_STRING" cv="const"><type/><parameter name="v"><paramtype>ldbl_type</paramtype></parameter><parameter name="r"><paramtype>optional&lt; string_type &gt; &amp;</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1cnvbase_1a51a2d43f6fd5749d943c0fcff734ab8c" name="BOOST_CNV_STRING_TO" cv="const"><type/><parameter name="s"><paramtype>string_type const &amp;</paramtype></parameter><parameter name="r"><paramtype>optional&lt; int_type &gt; &amp;</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1cnvbase_1adaf18e8b94d67480d2fd738a4e9db32d" name="BOOST_CNV_STRING_TO" cv="const"><type/><parameter name="s"><paramtype>string_type const &amp;</paramtype></parameter><parameter name="r"><paramtype>optional&lt; uint_type &gt; &amp;</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1cnvbase_1ad45778b334f8a27ad375bc1e8f2dfb59" name="BOOST_CNV_STRING_TO" cv="const"><type/><parameter name="s"><paramtype>string_type const &amp;</paramtype></parameter><parameter name="r"><paramtype>optional&lt; lint_type &gt; &amp;</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1cnvbase_1a5da9502dcebaf1220b3b9ff98a30238c" name="BOOST_CNV_STRING_TO" cv="const"><type/><parameter name="s"><paramtype>string_type const &amp;</paramtype></parameter><parameter name="r"><paramtype>optional&lt; llint_type &gt; &amp;</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1cnvbase_1a579aa154dcd0a85d5eae1d7f939f8874" name="BOOST_CNV_STRING_TO" cv="const"><type/><parameter name="s"><paramtype>string_type const &amp;</paramtype></parameter><parameter name="r"><paramtype>optional&lt; ulint_type &gt; &amp;</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1cnvbase_1a896ec5babc7416bc72035f67c9008ba3" name="BOOST_CNV_STRING_TO" cv="const"><type/><parameter name="s"><paramtype>string_type const &amp;</paramtype></parameter><parameter name="r"><paramtype>optional&lt; ullint_type &gt; &amp;</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1cnvbase_1aecc16925b32dc1fdda81a41fec74832f" name="BOOST_CNV_STRING_TO" cv="const"><type/><parameter name="s"><paramtype>string_type const &amp;</paramtype></parameter><parameter name="r"><paramtype>optional&lt; sint_type &gt; &amp;</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1cnvbase_1abb6e846ea2609f9171371ae3b78c93cb" name="BOOST_CNV_STRING_TO" cv="const"><type/><parameter name="s"><paramtype>string_type const &amp;</paramtype></parameter><parameter name="r"><paramtype>optional&lt; usint_type &gt; &amp;</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1cnvbase_1a8be7dd7fa94282aef094d802ff532cc5" name="BOOST_CNV_STRING_TO" cv="const"><type/><parameter name="s"><paramtype>string_type const &amp;</paramtype></parameter><parameter name="r"><paramtype>optional&lt; flt_type &gt; &amp;</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1cnvbase_1aa46796e281c08b4b3eee86a138b32ab9" name="BOOST_CNV_STRING_TO" cv="const"><type/><parameter name="s"><paramtype>string_type const &amp;</paramtype></parameter><parameter name="r"><paramtype>optional&lt; dbl_type &gt; &amp;</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1cnvbase_1a829d7b8ce06052931418304c4e3f0443" name="BOOST_CNV_STRING_TO" cv="const"><type/><parameter name="s"><paramtype>string_type const &amp;</paramtype></parameter><parameter name="r"><paramtype>optional&lt; ldbl_type &gt; &amp;</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1cnvbase_1a5848fb4223845dde3875e9c5dcaf0ffc" name="operator()"><type>std::enable_if&lt; boost::parameter::is_argument_pack&lt; argument_pack &gt;::value, derived_type &amp; &gt;::type</type><template>
+          <template-type-parameter name="argument_pack"/>
+        </template><parameter name="arg"><paramtype>argument_pack const &amp;</paramtype></parameter></method>
+</method-group>
+<method-group name="protected member functions">
+<constructor id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1cnvbase_1aa0cf263483997b97d6f4c54ee7c8e652" cv="= default"/>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1cnvbase_1a4ab9a4529a3f94963a68a868d1879ebe" name="str_to_" cv="const"><type>void</type><template>
+          <template-type-parameter name="string_type"/>
+          <template-type-parameter name="out_type"/>
+        </template><parameter name="str"><paramtype>string_type const &amp;</paramtype></parameter><parameter name="result_out"><paramtype>optional&lt; out_type &gt; &amp;</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1cnvbase_1a71d58272647fa86e121d9f2cd394f18a" name="to_str_" cv="const"><type>void</type><template>
+          <template-type-parameter name="in_type"/>
+          <template-type-parameter name="string_type"/>
+        </template><parameter name="value_in"><paramtype>in_type</paramtype></parameter><parameter name="result_out"><paramtype>optional&lt; string_type &gt; &amp;</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1cnvbase_1a225604c14fafc0f84c2fd56a15e34d55" name="dncast" cv="const"><type>derived_type const &amp;</type></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1cnvbase_1a9c007e72a2fbad8cad89e9eeb7583003" name="dncast"><type>derived_type &amp;</type></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1cnvbase_1ae9bf680c2e7bf69145bcbb450e4dbb82" name="set_"><type>void</type><template>
+          <template-type-parameter name="argument_pack"/>
+          <template-type-parameter name="keyword_tag"/>
+        </template><parameter name=""><paramtype>argument_pack const &amp;</paramtype></parameter><parameter name=""><paramtype>keyword_tag</paramtype></parameter><parameter name=""><paramtype>mpl::false_</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1cnvbase_1a5a115b318aaa64500169dbc011c418a0" name="BOOST_CNV_PARAM_SET"><type/><parameter name=""><paramtype>base</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1cnvbase_1a1dcfc45be0336897ebac1474d54ced9c" name="BOOST_CNV_PARAM_SET"><type/><parameter name=""><paramtype>adjust</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1cnvbase_1a8bfd1f47a84d91f92a114e2c65976eac" name="BOOST_CNV_PARAM_SET"><type/><parameter name=""><paramtype>precision</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1cnvbase_1a4c988e0c958d93ae71db9af17b731476" name="BOOST_CNV_PARAM_SET"><type/><parameter name=""><paramtype>uppercase</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1cnvbase_1ab8fc65c9f7da61cac71f3f27859e04ef" name="BOOST_CNV_PARAM_SET"><type/><parameter name=""><paramtype>skipws</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1cnvbase_1a39a321b6728dbc5ed3390f58f215b5a9" name="BOOST_CNV_PARAM_SET"><type/><parameter name=""><paramtype>width</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1cnvbase_1a24a2062d10666b867390ac6c53dfb339" name="BOOST_CNV_PARAM_SET"><type/><parameter name=""><paramtype>fill</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1cnvbase_1ae9b5f15a2113052368c9fcc0e266ad5c" name="BOOST_CNV_PARAM_SET"><type/><parameter name=""><paramtype>notation</paramtype></parameter></method>
+</method-group>
+</struct>
+
+</namespace>
+
+
+
+
+
+
+</namespace>
+<macro id="doxygen.boost_convert_c___reference.base_8hpp_1ade281d9644d1552100013991e0358e9e" name="BOOST_CNV_TO_STRING"/>
+<macro id="doxygen.boost_convert_c___reference.base_8hpp_1af5951e4d01e8deffab6bcc92b8bcf64b" name="BOOST_CNV_STRING_TO"/>
+<macro id="doxygen.boost_convert_c___reference.base_8hpp_1ad22f1b0b045464f04b30afd9291e0fcc" name="BOOST_CNV_PARAM_SET" kind="functionlike"><macro-parameter name="param_name"/></macro>
+<macro id="doxygen.boost_convert_c___reference.base_8hpp_1ad02d5e2f10c463cbe102c128983dedf3" name="BOOST_CNV_PARAM_TRY" kind="functionlike"><macro-parameter name="param_name"/></macro>
+</header>
+<header id="doxygen.boost_convert_c___reference.charconv_8hpp" name="boost/convert/charconv.hpp">
+<namespace name="boost">
+<namespace name="cnv">
+<struct id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1charconv" name="charconv"><inherit access="public">boost::cnv::cnvbase&lt; boost::cnv::charconv &gt;</inherit><purpose>std::to/from_chars-based extended converter </purpose><description><para>Good overall performance and moderate formatting facilities. </para></description><typedef id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1charconv_1a12da31b37d0141d1192d87f18b3527cb" name="this_type"><type><classname>boost::cnv::charconv</classname></type></typedef>
+<typedef id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1charconv_1a8b180d25945b71f9924442a83a5bf2a0" name="base_type"><type><classname>boost::cnv::cnvbase</classname>&lt; <classname>this_type</classname> &gt;</type></typedef>
+<method-group name="public member functions">
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1charconv_1a7b9281c7056456c8921649a38260709f" name="to_str" cv="const"><type>cnv::range&lt; char * &gt;</type><template>
+          <template-type-parameter name="in_type"/>
+        </template><parameter name="value_in"><paramtype>in_type</paramtype></parameter><parameter name="buf"><paramtype>char *</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1charconv_1a7b7045e39bf36418bba291bd7c09c5bc" name="str_to" cv="const"><type>void</type><template>
+          <template-type-parameter name="string_type"/>
+          <template-type-parameter name="out_type"/>
+        </template><parameter name="range"><paramtype>cnv::range&lt; string_type &gt;</paramtype></parameter><parameter name="result_out"><paramtype>optional&lt; out_type &gt; &amp;</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1charconv_1ad7cb42720024871df93cacc1305de363" name="chars_format" cv="const"><type>std::chars_format</type></method>
+</method-group>
+</struct>
+
+</namespace>
+
+
+
+
+
+
+</namespace>
+</header>
+<header id="doxygen.boost_convert_c___reference.lexical__cast_8hpp" name="boost/convert/lexical_cast.hpp">
+<namespace name="boost">
+<namespace name="cnv">
+<struct id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1lexical__cast" name="lexical_cast"><purpose>boost::lexical_cast-based converter </purpose><description><para>The purpose of the converter is to<itemizedlist>
+<listitem><para>Make use of the boost::lexical_cast functionality and performance that many people have become accustomed to and comfortable with;</para>
+</listitem><listitem><para>Demonstrate how existing independent conversion/transformation-related facilities might be The converter can easily replace boost::lexical_cast, adding flexibility and convenience. </para>
+</listitem></itemizedlist>
+</para></description><method-group name="public member functions">
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1lexical__cast_1a41bc224efb67ddb6bea409ab932734f9" name="operator()" cv="const"><type>void</type><template>
+          <template-type-parameter name="TypeOut"/>
+          <template-type-parameter name="TypeIn"/>
+        </template><parameter name="value_in"><paramtype>TypeIn const &amp;</paramtype></parameter><parameter name="result_out"><paramtype>boost::optional&lt; TypeOut &gt; &amp;</paramtype></parameter></method>
+</method-group>
+</struct>
+
+</namespace>
+
+
+
+
+
+
+</namespace>
+</header>
+<header id="doxygen.boost_convert_c___reference.parameters_8hpp" name="boost/convert/parameters.hpp">
+<namespace name="boost">
+<namespace name="cnv">
+<namespace name="parameter">
+</namespace>
+<enum id="doxygen.boost_convert_c___reference.parameters_8hpp_1a268dd0b6ca20bed96228a09f0a5e0a12" name="adjust"><enumvalue id="doxygen.boost_convert_c___reference.parameters_8hpp_1a268dd0b6ca20bed96228a09f0a5e0a12a811882fecd5c7618d7099ebbd39ea254" name="left"/><enumvalue id="doxygen.boost_convert_c___reference.parameters_8hpp_1a268dd0b6ca20bed96228a09f0a5e0a12a7c4f29407893c334a6cb7a87bf045c0d" name="right"/><enumvalue id="doxygen.boost_convert_c___reference.parameters_8hpp_1a268dd0b6ca20bed96228a09f0a5e0a12aadb115059e28d960fa8badfac5516667" name="center"/></enum>
+<enum id="doxygen.boost_convert_c___reference.parameters_8hpp_1a47638ae0aa74967eaf20dcff305baeea" name="base"><enumvalue id="doxygen.boost_convert_c___reference.parameters_8hpp_1a47638ae0aa74967eaf20dcff305baeeaac1111bd512b29e821b120b86446026b8" name="bin"><default>2</default></enumvalue><enumvalue id="doxygen.boost_convert_c___reference.parameters_8hpp_1a47638ae0aa74967eaf20dcff305baeeaa1cdbdf89f2d1bd3dd9e698b2b320cb86" name="oct"><default>8</default></enumvalue><enumvalue id="doxygen.boost_convert_c___reference.parameters_8hpp_1a47638ae0aa74967eaf20dcff305baeeaa1feea25ecb958229287f885aebe7c49b" name="dec"><default>10</default></enumvalue><enumvalue id="doxygen.boost_convert_c___reference.parameters_8hpp_1a47638ae0aa74967eaf20dcff305baeeaab8d1b43eae73587ba56baef574709ecb" name="hex"><default>16</default></enumvalue></enum>
+<enum id="doxygen.boost_convert_c___reference.parameters_8hpp_1a63288a140d8d4cd10fd319182c34d0a9" name="notation"><enumvalue id="doxygen.boost_convert_c___reference.parameters_8hpp_1a63288a140d8d4cd10fd319182c34d0a9acec315e3d0975e5cc2811d5d8725f149" name="fixed"/><enumvalue id="doxygen.boost_convert_c___reference.parameters_8hpp_1a63288a140d8d4cd10fd319182c34d0a9a55a95650a66b53ecbb960b53d985b964" name="scientific"/><enumvalue id="doxygen.boost_convert_c___reference.parameters_8hpp_1a63288a140d8d4cd10fd319182c34d0a9ab8d1b43eae73587ba56baef574709ecb" name="hex"/></enum>
+
+
+</namespace>
+
+
+
+
+
+
+</namespace>
+</header>
+<header id="doxygen.boost_convert_c___reference.printf_8hpp" name="boost/convert/printf.hpp">
+<namespace name="boost">
+<namespace name="cnv">
+<struct id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1printf" name="printf"><inherit access="public">boost::cnv::cnvbase&lt; boost::cnv::printf &gt;</inherit><typedef id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1printf_1aa0d7b8639c818cf8d9124f7c489a7011" name="this_type"><type><classname>boost::cnv::printf</classname></type></typedef>
+<typedef id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1printf_1a625c0a96f5e0fbbb0e12a97cdb6dca33" name="base_type"><type><classname>boost::cnv::cnvbase</classname>&lt; <classname>this_type</classname> &gt;</type></typedef>
+<method-group name="public member functions">
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1printf_1ada17a30b3156a28efed8b6005c61143b" name="to_str" cv="const"><type>cnv::range&lt; char * &gt;</type><template>
+          <template-type-parameter name="in_type"/>
+        </template><parameter name="value_in"><paramtype>in_type</paramtype></parameter><parameter name="buf"><paramtype>char *</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1printf_1a5d5b2ba5fb55ec2e59bd66babd694b2d" name="str_to" cv="const"><type>void</type><template>
+          <template-type-parameter name="string_type"/>
+          <template-type-parameter name="out_type"/>
+        </template><parameter name="range"><paramtype>cnv::range&lt; string_type &gt;</paramtype></parameter><parameter name="result_out"><paramtype>optional&lt; out_type &gt; &amp;</paramtype></parameter></method>
+</method-group>
+<method-group name="private member functions">
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1printf_1acdf05a2e1a9bfeb34e799e1db6df7683" name="pos" cv="const"><type>int</type><template>
+          <template-type-parameter name="Type"/>
+        </template></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1printf_1af6f92b4df779e892b0c963a475840042" name="printf_format" cv="const"><type>char_cptr</type><parameter name="type_pos"><paramtype>int</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1printf_1acd69fb3e270fce945c8013f5350ce93f" name="sscanf_format" cv="const"><type>char_cptr</type><parameter name="type_pos"><paramtype>int</paramtype></parameter></method>
+</method-group>
+</struct>
+
+</namespace>
+
+
+
+
+
+
+</namespace>
+</header>
+<header id="doxygen.boost_convert_c___reference.spirit_8hpp" name="boost/convert/spirit.hpp">
+<namespace name="boost">
+<namespace name="cnv">
+<struct id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1spirit" name="spirit"><inherit access="public">boost::cnv::cnvbase&lt; boost::cnv::spirit &gt;</inherit><typedef id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1spirit_1add0caedda80a3c8f9e899c652d5a739f" name="this_type"><type><classname>boost::cnv::spirit</classname></type></typedef>
+<typedef id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1spirit_1a4a0247f2145463d61e748185c5dacb83" name="base_type"><type><classname>boost::cnv::cnvbase</classname>&lt; <classname>this_type</classname> &gt;</type></typedef>
+<method-group name="public member functions">
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1spirit_1ae104bcaf0dc082f81510a30ad520ddea" name="str_to" cv="const"><type>void</type><template>
+          <template-type-parameter name="string_type"/>
+          <template-type-parameter name="out_type"/>
+        </template><parameter name="range"><paramtype>cnv::range&lt; string_type &gt;</paramtype></parameter><parameter name="result_out"><paramtype>optional&lt; out_type &gt; &amp;</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1spirit_1a5e861de9a10a152eb6224b52c6e43e2b" name="to_str" cv="const"><type>cnv::range&lt; char_type * &gt;</type><template>
+          <template-type-parameter name="in_type"/>
+          <template-type-parameter name="char_type"/>
+        </template><parameter name="value_in"><paramtype>in_type</paramtype></parameter><parameter name="beg"><paramtype>char_type *</paramtype></parameter></method>
+</method-group>
+</struct>
+
+</namespace>
+
+
+
+
+
+
+</namespace>
+</header>
+<header id="doxygen.boost_convert_c___reference.stream_8hpp" name="boost/convert/stream.hpp">
+<namespace name="boost">
+<namespace name="cnv">
+<struct id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1basic__stream" name="basic_stream"><template>
+      <template-type-parameter name="Char"/>
+    </template><struct id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1basic__stream_1_1ibuffer__type" name="ibuffer_type"><inherit access="public">buffer_type</inherit><method-group name="public member functions">
+<constructor id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1basic__stream_1_1ibuffer__type_1aa6c0c361ee4c737072da24d974bbf2c0"><parameter name="beg"><paramtype>char_type const *</paramtype></parameter><parameter name="sz"><paramtype>std::size_t</paramtype></parameter></constructor>
+</method-group>
+</struct><struct id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1basic__stream_1_1obuffer__type" name="obuffer_type"><inherit access="public">buffer_type</inherit></struct><typedef id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1basic__stream_1a1346acf32ccd245026515cbd69088473" name="char_type"><type>Char</type></typedef>
+<typedef id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1basic__stream_1a043c49d640f50f2a8008ff932fcc81d9" name="this_type"><type><classname>boost::cnv::basic_stream</classname>&lt; char_type &gt;</type></typedef>
+<typedef id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1basic__stream_1aa3a31b0ae84487599ea0c605437fccd0" name="stream_type"><type>std::basic_stringstream&lt; char_type &gt;</type></typedef>
+<typedef id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1basic__stream_1a065c90aa3da345e3a066f597ff213c74" name="istream_type"><type>std::basic_istream&lt; char_type &gt;</type></typedef>
+<typedef id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1basic__stream_1a90bc036807570a0ab78f3d439edc21c1" name="buffer_type"><type>std::basic_streambuf&lt; char_type &gt;</type></typedef>
+<typedef id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1basic__stream_1a97147fb4f5305693189bf1f6b2d94171" name="stdstr_type"><type>std::basic_string&lt; char_type &gt;</type></typedef>
+<typedef id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1basic__stream_1a507cc2fe0e1171c6b374f04f2d514816" name="manipulator_type"><type>std::ios_base &amp;(*)(std::ios_base &amp;)</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1basic__stream_1a9b8a4e779022212a1224a61bf26e2489"/>
+<constructor id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1basic__stream_1ab3d76e86642aa7b201bc0424d4f0255a"><parameter name="other"><paramtype><classname>this_type</classname> &amp;&amp;</paramtype></parameter></constructor>
+<constructor id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1basic__stream_1ae74d7688ee69a6b720ea8564dbed3722" cv="= delete"><parameter name=""><paramtype><classname>this_type</classname> const &amp;</paramtype></parameter></constructor>
+<copy-assignment id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1basic__stream_1a4cc586b1725b40b950e1e86943c98f57" cv="= delete"><type><classname>this_type</classname> &amp;</type><parameter name=""><paramtype><classname>this_type</classname> const &amp;</paramtype></parameter></copy-assignment>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1basic__stream_1a42edd693802db090193327a36c94bed8" name="BOOST_CNV_STRING_ENABLE" cv="const"><type/><parameter name="v"><paramtype>type const &amp;</paramtype></parameter><parameter name="s"><paramtype>optional&lt; string_type &gt; &amp;</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1basic__stream_1ae88bf7b795abe5f1b833c682480e2e56" name="BOOST_CNV_STRING_ENABLE" cv="const"><type/><parameter name="s"><paramtype>string_type const &amp;</paramtype></parameter><parameter name="r"><paramtype>optional&lt; type &gt; &amp;</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1basic__stream_1a160e9e3eea0d0651777b85a06494cd34" name="operator()" cv="const"><type>void</type><template>
+          <template-type-parameter name="type"/>
+        </template><parameter name="s"><paramtype>char_type const *</paramtype></parameter><parameter name="r"><paramtype>optional&lt; type &gt; &amp;</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1basic__stream_1aea7c84c93af45c8c74393217baa986d5" name="operator()" cv="const"><type>void</type><template>
+          <template-type-parameter name="type"/>
+        </template><parameter name="s"><paramtype>stdstr_type const &amp;</paramtype></parameter><parameter name="r"><paramtype>optional&lt; type &gt; &amp;</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1basic__stream_1a6cd0c96b4af9f4ab732627245b100185" name="operator()"><type>boost::disable_if&lt; boost::parameter::is_argument_pack&lt; manipulator &gt;, <classname>this_type</classname> &amp; &gt;::type</type><template>
+          <template-type-parameter name="manipulator"/>
+        </template><parameter name="m"><paramtype>manipulator</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1basic__stream_1aa802f50480502b8c6add41a8e1cc72f2" name="operator()"><type><classname>this_type</classname> &amp;</type><parameter name="m"><paramtype>manipulator_type</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1basic__stream_1a0a1fa500ee114e45ede275a1a9821b50" name="operator()"><type><classname>this_type</classname> &amp;</type><parameter name="l"><paramtype>std::locale const &amp;</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1basic__stream_1ab860e6eaa7fd0842125e4096001b036e" name="operator()"><type>std::enable_if&lt; boost::parameter::is_argument_pack&lt; argument_pack &gt;::value, <classname>this_type</classname> &amp; &gt;::type</type><template>
+          <template-type-parameter name="argument_pack"/>
+        </template><parameter name="arg"><paramtype>argument_pack const &amp;</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1basic__stream_1a3a43883141d85f6639bc26973afffe77" name="to_str" cv="const"><type>void</type><template>
+          <template-type-parameter name="string_type"/>
+          <template-type-parameter name="in_type"/>
+        </template><parameter name="value_in"><paramtype>in_type const &amp;</paramtype></parameter><parameter name="string_out"><paramtype>boost::optional&lt; string_type &gt; &amp;</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1basic__stream_1a8b48d7d61172af6e9c418f4cb66d5119" name="str_to" cv="const"><type>void</type><template>
+          <template-type-parameter name="string_type"/>
+          <template-type-parameter name="out_type"/>
+        </template><parameter name="string_in"><paramtype>boost::cnv::range&lt; string_type &gt;</paramtype></parameter><parameter name="result_out"><paramtype>boost::optional&lt; out_type &gt; &amp;</paramtype></parameter></method>
+</method-group>
+<method-group name="private member functions">
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1basic__stream_1ad7ee54a3a63218e7adcb6a5074406218" name="set_"><type>void</type><template>
+          <template-type-parameter name="argument_pack"/>
+          <template-type-parameter name="keyword_tag"/>
+        </template><parameter name=""><paramtype>argument_pack const &amp;</paramtype></parameter><parameter name=""><paramtype>keyword_tag</paramtype></parameter><parameter name=""><paramtype>mpl::false_</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1basic__stream_1abcab7ef49d641727ebdbc457b3f50fac" name="BOOST_CNV_PARAM_SET"><type/><parameter name=""><paramtype>locale</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1basic__stream_1a8496d4b55ad3172117e2cbf4b682eb5d" name="BOOST_CNV_PARAM_SET"><type/><parameter name=""><paramtype>precision</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1basic__stream_1aec185c54902fe29f32045c4949ed4349" name="BOOST_CNV_PARAM_SET"><type/><parameter name=""><paramtype>width</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1basic__stream_1a2459c667311e90ade1bd3301e924a499" name="BOOST_CNV_PARAM_SET"><type/><parameter name=""><paramtype>fill</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1basic__stream_1a3955a790ef4ae7130cf42da7a899f019" name="BOOST_CNV_PARAM_SET"><type/><parameter name=""><paramtype>uppercase</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1basic__stream_1adbc365d2970ee540241e15a1a0b7238d" name="BOOST_CNV_PARAM_SET"><type/><parameter name=""><paramtype>skipws</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1basic__stream_1a22a29a2942392e39fae08e1356ecd254" name="BOOST_CNV_PARAM_SET"><type/><parameter name=""><paramtype>adjust</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1basic__stream_1a787e76921471e192c4ab722b998ab484" name="BOOST_CNV_PARAM_SET"><type/><parameter name=""><paramtype>base</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1basic__stream_1a45f34f8f1175e8e64ed3a48dcb06179d" name="BOOST_CNV_PARAM_SET"><type/><parameter name=""><paramtype>notation</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1basic__stream_1af615ee3ad02cadaf3f206d463433c4f3" name="str_to" cv="const"><type>void</type><template>
+          <template-type-parameter name="string_type"/>
+          <template-type-parameter name="out_type"/>
+        </template><parameter name=""><paramtype>cnv::range&lt; string_type &gt;</paramtype></parameter><parameter name=""><paramtype>optional&lt; out_type &gt; &amp;</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1basic__stream_1a2c2eb8385e1235312cf4fe51cd12d541" name="to_str" cv="const"><type>void</type><template>
+          <template-type-parameter name="string_type"/>
+          <template-type-parameter name="in_type"/>
+        </template><parameter name=""><paramtype>in_type const &amp;</paramtype></parameter><parameter name=""><paramtype>optional&lt; string_type &gt; &amp;</paramtype></parameter></method>
+</method-group>
+</struct><typedef id="doxygen.boost_convert_c___reference.stream_8hpp_1ad0a8a5f2c01ddb96438519fe5670b560" name="cstream"><type><classname>boost::cnv::basic_stream</classname>&lt; char &gt;</type></typedef>
+<typedef id="doxygen.boost_convert_c___reference.stream_8hpp_1a7f1875a632342eb71d5965e66b64dbd7" name="wstream"><type><classname>boost::cnv::basic_stream</classname>&lt; wchar_t &gt;</type></typedef>
+
+
+</namespace>
+
+
+
+
+
+
+</namespace>
+<macro id="doxygen.boost_convert_c___reference.stream_8hpp_1a90e61902596575b9529d0f0f2892bffa" name="BOOST_CNV_STRING_ENABLE"/>
+<macro id="doxygen.boost_convert_c___reference.stream_8hpp_1ad22f1b0b045464f04b30afd9291e0fcc" name="BOOST_CNV_PARAM_SET" kind="functionlike"><macro-parameter name="param_name"/></macro>
+<macro id="doxygen.boost_convert_c___reference.stream_8hpp_1ad02d5e2f10c463cbe102c128983dedf3" name="BOOST_CNV_PARAM_TRY" kind="functionlike"><macro-parameter name="param_name"/></macro>
+</header>
+<header id="doxygen.boost_convert_c___reference.strtol_8hpp" name="boost/convert/strtol.hpp">
+<namespace name="boost">
+<namespace name="cnv">
+<struct id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1strtol" name="strtol"><inherit access="public">boost::cnv::cnvbase&lt; boost::cnv::strtol &gt;</inherit><purpose>std::strtol-based extended converter </purpose><description><para>The converter offers a fairly decent overall performance and moderate formatting facilities. </para></description><typedef id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1strtol_1a492048961ec93fd8ecd8e005d93d7c77" name="this_type"><type><classname>boost::cnv::strtol</classname></type></typedef>
+<typedef id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1strtol_1a3076535ee0a4a746bfcc1152aebca68a" name="base_type"><type><classname>boost::cnv::cnvbase</classname>&lt; <classname>this_type</classname> &gt;</type></typedef>
+<method-group name="private member functions">
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1strtol_1af00948b77e4474f857dc4aa60b2e8973" name="str_to" cv="const"><type>void</type><template>
+          <template-type-parameter name="string_type"/>
+        </template><parameter name="v"><paramtype>cnv::range&lt; string_type &gt;</paramtype></parameter><parameter name="r"><paramtype>optional&lt; int_type &gt; &amp;</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1strtol_1ab66f7291cf444b1e149449f432054733" name="str_to" cv="const"><type>void</type><template>
+          <template-type-parameter name="string_type"/>
+        </template><parameter name="v"><paramtype>cnv::range&lt; string_type &gt;</paramtype></parameter><parameter name="r"><paramtype>optional&lt; sint_type &gt; &amp;</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1strtol_1a92cda20bd95ac1d3b8a32f35cef879b4" name="str_to" cv="const"><type>void</type><template>
+          <template-type-parameter name="string_type"/>
+        </template><parameter name="v"><paramtype>cnv::range&lt; string_type &gt;</paramtype></parameter><parameter name="r"><paramtype>optional&lt; lint_type &gt; &amp;</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1strtol_1a94e142c6a5b47d225ddd3a9e012f3f0e" name="str_to" cv="const"><type>void</type><template>
+          <template-type-parameter name="string_type"/>
+        </template><parameter name="v"><paramtype>cnv::range&lt; string_type &gt;</paramtype></parameter><parameter name="r"><paramtype>optional&lt; llint_type &gt; &amp;</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1strtol_1a5edd331f27b461da286068f772533d1b" name="str_to" cv="const"><type>void</type><template>
+          <template-type-parameter name="string_type"/>
+        </template><parameter name="v"><paramtype>cnv::range&lt; string_type &gt;</paramtype></parameter><parameter name="r"><paramtype>optional&lt; uint_type &gt; &amp;</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1strtol_1a3709f7078c0ea95ef2169af4a01be0d5" name="str_to" cv="const"><type>void</type><template>
+          <template-type-parameter name="string_type"/>
+        </template><parameter name="v"><paramtype>cnv::range&lt; string_type &gt;</paramtype></parameter><parameter name="r"><paramtype>optional&lt; usint_type &gt; &amp;</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1strtol_1a2b5f0bbdfdb0a5b6e8048aefbd96f856" name="str_to" cv="const"><type>void</type><template>
+          <template-type-parameter name="string_type"/>
+        </template><parameter name="v"><paramtype>cnv::range&lt; string_type &gt;</paramtype></parameter><parameter name="r"><paramtype>optional&lt; ulint_type &gt; &amp;</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1strtol_1afdd7fe3361455dd427ab38b90fd529af" name="str_to" cv="const"><type>void</type><template>
+          <template-type-parameter name="string_type"/>
+        </template><parameter name="v"><paramtype>cnv::range&lt; string_type &gt;</paramtype></parameter><parameter name="r"><paramtype>optional&lt; ullint_type &gt; &amp;</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1strtol_1a7c583da6f3761f9de9d2c5309ef13bcc" name="str_to" cv="const"><type>void</type><template>
+          <template-type-parameter name="string_type"/>
+        </template><parameter name="v"><paramtype>cnv::range&lt; string_type &gt;</paramtype></parameter><parameter name="r"><paramtype>optional&lt; flt_type &gt; &amp;</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1strtol_1acf1c9d1e3d15d55c6f0dd5c9005b3797" name="str_to" cv="const"><type>void</type><template>
+          <template-type-parameter name="string_type"/>
+        </template><parameter name="v"><paramtype>cnv::range&lt; string_type &gt;</paramtype></parameter><parameter name="r"><paramtype>optional&lt; dbl_type &gt; &amp;</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1strtol_1a2d4f2813980bb5d6ed85d2e13b25035a" name="str_to" cv="const"><type>void</type><template>
+          <template-type-parameter name="string_type"/>
+        </template><parameter name="v"><paramtype>cnv::range&lt; string_type &gt;</paramtype></parameter><parameter name="r"><paramtype>optional&lt; ldbl_type &gt; &amp;</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1strtol_1abdc0eb917aa9312d44cdc0370c25ace8" name="to_str" cv="const"><type>cnv::range&lt; char_type * &gt;</type><template>
+          <template-type-parameter name="char_type"/>
+        </template><parameter name="v"><paramtype>int_type</paramtype></parameter><parameter name="buf"><paramtype>char_type *</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1strtol_1a378845876febd9ef762e3fd4b5419553" name="to_str" cv="const"><type>cnv::range&lt; char_type * &gt;</type><template>
+          <template-type-parameter name="char_type"/>
+        </template><parameter name="v"><paramtype>uint_type</paramtype></parameter><parameter name="buf"><paramtype>char_type *</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1strtol_1ad7e92c6285478493aecf66f7edafb8d7" name="to_str" cv="const"><type>cnv::range&lt; char_type * &gt;</type><template>
+          <template-type-parameter name="char_type"/>
+        </template><parameter name="v"><paramtype>lint_type</paramtype></parameter><parameter name="buf"><paramtype>char_type *</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1strtol_1a02ad17d7774c6836783519f4795d21fb" name="to_str" cv="const"><type>cnv::range&lt; char_type * &gt;</type><template>
+          <template-type-parameter name="char_type"/>
+        </template><parameter name="v"><paramtype>ulint_type</paramtype></parameter><parameter name="buf"><paramtype>char_type *</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1strtol_1a4927d66fde6b624efbb1825c112e2877" name="to_str" cv="const"><type>cnv::range&lt; char_type * &gt;</type><template>
+          <template-type-parameter name="char_type"/>
+        </template><parameter name="v"><paramtype>llint_type</paramtype></parameter><parameter name="buf"><paramtype>char_type *</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1strtol_1aca1e52e127f1b720a064c1b7516e63a0" name="to_str" cv="const"><type>cnv::range&lt; char_type * &gt;</type><template>
+          <template-type-parameter name="char_type"/>
+        </template><parameter name="v"><paramtype>ullint_type</paramtype></parameter><parameter name="buf"><paramtype>char_type *</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1strtol_1aab81e6a6975aec20e6132fc8752269ff" name="to_str" cv="const"><type>cnv::range&lt; char_type * &gt;</type><template>
+          <template-type-parameter name="char_type"/>
+        </template><parameter name="v"><paramtype>dbl_type</paramtype></parameter><parameter name="buf"><paramtype>char_type *</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1strtol_1afb8d4a9eab06878726ffbd8fb3fff392" name="i_to_str" cv="const"><type>cnv::range&lt; char_type * &gt;</type><template>
+          <template-type-parameter name="char_type"/>
+          <template-type-parameter name="in_type"/>
+        </template><parameter name=""><paramtype>in_type</paramtype></parameter><parameter name=""><paramtype>char_type *</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1strtol_1a8b771daa45c9972076845c6716bcaf56" name="str_to_i" cv="const"><type>void</type><template>
+          <template-type-parameter name="string_type"/>
+          <template-type-parameter name="out_type"/>
+        </template><parameter name=""><paramtype>cnv::range&lt; string_type &gt;</paramtype></parameter><parameter name=""><paramtype>optional&lt; out_type &gt; &amp;</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1strtol_1a9f33718f7b801c99b51a280189f9629f" name="str_to_d" cv="const"><type>void</type><template>
+          <template-type-parameter name="string_type"/>
+          <template-type-parameter name="out_type"/>
+        </template><parameter name=""><paramtype>cnv::range&lt; string_type &gt;</paramtype></parameter><parameter name=""><paramtype>optional&lt; out_type &gt; &amp;</paramtype></parameter></method>
+</method-group>
+<method-group name="private static functions">
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1strtol_1a6a53a112ca3546328016a3c341d7ae0d" name="adjust_fraction" specifiers="static"><type>double</type><parameter name=""><paramtype>double</paramtype></parameter><parameter name=""><paramtype>int</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1strtol_1ad84f4963508dec5177958b6f114e44da" name="get_char" specifiers="static"><type>int</type><parameter name="v"><paramtype>int</paramtype></parameter></method>
+</method-group>
+<method-group name="public member functions">
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1strtol_1a4977b17be1f8730e19413927320e783e" name="i_to_str" cv="const"><type>boost::cnv::range&lt; char_type * &gt;</type><template>
+          <template-type-parameter name="char_type"/>
+          <template-type-parameter name="Type"/>
+        </template><parameter name="in_value"><paramtype>Type</paramtype></parameter><parameter name="buf"><paramtype>char_type *</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1strtol_1aa4e0fac9fa8bd5abe66df0222aad2501" name="to_str" cv="const"><type>boost::cnv::range&lt; char_type * &gt;</type><template>
+          <template-type-parameter name="char_type"/>
+        </template><parameter name="value"><paramtype>double</paramtype></parameter><parameter name="buf"><paramtype>char_type *</paramtype></parameter></method>
+<method id="doxygen.boost_convert_c___reference.structboost_1_1cnv_1_1strtol_1a8245f3c480cdf6070914d01b910f65dc" name="str_to_i" cv="const"><type>void</type><template>
+          <template-type-parameter name="string_type"/>
+          <template-type-parameter name="out_type"/>
+        </template><parameter name="range"><paramtype>cnv::range&lt; string_type &gt;</paramtype></parameter><parameter name="result_out"><paramtype>boost::optional&lt; out_type &gt; &amp;</paramtype></parameter></method>
+</method-group>
+</struct>
+
+</namespace>
+
+
+
+
+
+
+</namespace>
+</header>
+<header id="doxygen.boost_convert_c___reference.make__default_8hpp" name="boost/make_default.hpp">
+<namespace name="boost">
+
+
+
+
+
+<function id="doxygen.boost_convert_c___reference.make__default_8hpp_1aa346257c4ecfade8a05b9fc245c59bca" name="make_default"><type>T</type><template>
+          <template-type-parameter name="T"/>
+        </template><description><para>A considerable number of libraries require an instance of a class provided (storage created and initialized). For example, <programlisting language="c++">Type result;
+...
+istream &gt;&gt; result;
+</programlisting> In generic code that results in the Default Constructibility requirement imposed on every type 'Type' to be used with the respective code. Inevitably, that requirement a) either excludes all the classes that for various reasons do not meet that requirement or b) imposes certain (not necessarily desirable) design/implementation onto respective classes.</para><para>Deployment of <link linkend="doxygen.boost_convert_c___reference.make__default_8hpp_1aa346257c4ecfade8a05b9fc245c59bca">boost::make_default()</link> eliminates the Default Constructibility requirement with <programlisting language="c++">Type result = boost::make_default&lt;Type&gt;();
+...
+istream &gt;&gt; result;
+</programlisting> Classes with no default constructor can now be included via a <link linkend="doxygen.boost_convert_c___reference.make__default_8hpp_1aa346257c4ecfade8a05b9fc245c59bca">boost::make_default()</link> specialization: <programlisting language="c++">namespace boost
+{
+    template&lt;&gt; inline Type make_default&lt;Type&gt;() { return Type(parameters); }
+}
+</programlisting> </para></description></function>
+</namespace>
+</header>
+</library-reference>

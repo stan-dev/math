@@ -1,0 +1,119 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>buffer_ref::prepare</title>
+<link rel="stylesheet" href="../../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../index.html" title="Chapter 1. Boost.Beast">
+<link rel="up" href="../boost__beast__buffer_ref.html" title="buffer_ref">
+<link rel="prev" href="data.html" title="buffer_ref::data">
+<link rel="next" href="commit.html" title="buffer_ref::commit">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="data.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost__beast__buffer_ref.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="commit.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h5 class="title">
+<a name="beast.ref.boost__beast__buffer_ref.prepare"></a><a class="link" href="prepare.html" title="buffer_ref::prepare">buffer_ref::prepare</a>
+</h5></div></div></div>
+<p>
+          <a class="indexterm" name="id20798"></a>
+        </p>
+<p>
+          Get a list of buffers that represents the output sequence, with the given
+          size.
+        </p>
+<h6>
+<a name="beast.ref.boost__beast__buffer_ref.prepare.h0"></a>
+          <span class="phrase"><a name="beast.ref.boost__beast__buffer_ref.prepare.synopsis"></a></span><a class="link" href="prepare.html#beast.ref.boost__beast__buffer_ref.prepare.synopsis">Synopsis</a>
+        </h6>
+<pre class="programlisting"><span class="identifier">mutable_buffers_type</span>
+<span class="identifier">prepare</span><span class="special">(</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">n</span><span class="special">);</span>
+</pre>
+<h6>
+<a name="beast.ref.boost__beast__buffer_ref.prepare.h1"></a>
+          <span class="phrase"><a name="beast.ref.boost__beast__buffer_ref.prepare.description"></a></span><a class="link" href="prepare.html#beast.ref.boost__beast__buffer_ref.prepare.description">Description</a>
+        </h6>
+<p>
+          Ensures that the output sequence can accommodate <code class="computeroutput"><span class="identifier">n</span></code>
+          bytes, resizing the vector object as necessary.
+        </p>
+<h6>
+<a name="beast.ref.boost__beast__buffer_ref.prepare.h2"></a>
+          <span class="phrase"><a name="beast.ref.boost__beast__buffer_ref.prepare.return_value"></a></span><a class="link" href="prepare.html#beast.ref.boost__beast__buffer_ref.prepare.return_value">Return
+          Value</a>
+        </h6>
+<p>
+          An object of type <code class="computeroutput"><span class="identifier">mutable_buffers_type</span></code>
+          that satisfies MutableBufferSequence requirements, representing vector
+          memory at the start of the output sequence of size <code class="computeroutput"><span class="identifier">n</span></code>.
+        </p>
+<h6>
+<a name="beast.ref.boost__beast__buffer_ref.prepare.h3"></a>
+          <span class="phrase"><a name="beast.ref.boost__beast__buffer_ref.prepare.exceptions"></a></span><a class="link" href="prepare.html#beast.ref.boost__beast__buffer_ref.prepare.exceptions">Exceptions</a>
+        </h6>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                  <p>
+                    Type
+                  </p>
+                </th>
+<th>
+                  <p>
+                    Thrown On
+                  </p>
+                </th>
+</tr></thead>
+<tbody><tr>
+<td>
+                  <p>
+                    <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">length_error</span></code>
+                  </p>
+                </td>
+<td>
+                  <p>
+                    If <a class="link" href="size.html" title="buffer_ref::size"><code class="computeroutput"><span class="identifier">size</span><span class="special">()</span></code></a>
+                    + n &gt; <a class="link" href="max_size.html" title="buffer_ref::max_size"><code class="computeroutput"><span class="identifier">max_size</span><span class="special">()</span></code></a>.
+                  </p>
+                </td>
+</tr></tbody>
+</table></div>
+<h6>
+<a name="beast.ref.boost__beast__buffer_ref.prepare.h4"></a>
+          <span class="phrase"><a name="beast.ref.boost__beast__buffer_ref.prepare.remarks"></a></span><a class="link" href="prepare.html#beast.ref.boost__beast__buffer_ref.prepare.remarks">Remarks</a>
+        </h6>
+<p>
+          The returned object is invalidated by any <code class="computeroutput"><span class="identifier">dynamic_vector_buffer</span></code>
+          or <code class="computeroutput"><span class="identifier">vector</span></code> member function
+          that modifies the input sequence or output sequence.
+        </p>
+</div>
+<div class="copyright-footer">Copyright © 2016-2019 Vinnie
+      Falco<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="data.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost__beast__buffer_ref.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="commit.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

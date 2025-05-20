@@ -1,0 +1,51 @@
+# Boost Interprocess Library Example Jamfile
+
+#  (C) Copyright Ion Gaztanaga 2006-2012.
+# Use, modification and distribution are subject to the
+# Boost Software License, Version 1.0. (See accompanying file
+# LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+# Adapted from John Maddock's TR1 Jamfile.v2
+# Copyright John Maddock 2005.
+# Use, modification and distribution are subject to the
+# Boost Software License, Version 1.0. (See accompanying file
+# LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+import testing ;
+
+# this rule enumerates through all the sources and invokes
+# the run rule for each source, the result is a list of all
+# the run rules, which we can pass on to the test_suite rule:
+
+project : requirements
+    <library>/boost/interprocess//boost_interprocess
+    <toolset>acc:<linkflags>-lrt
+    <toolset>acc-pa_risc:<linkflags>-lrt
+    <toolset>gcc,<target-os>windows:<linkflags>"-lole32 -loleaut32 -lpsapi -ladvapi32"
+    <target-os>hpux,<toolset>gcc:<linkflags>"-Wl,+as,mpas"
+    <target-os>windows,<toolset>clang:<linkflags>"-lole32 -loleaut32 -lpsapi -ladvapi32"
+    <target-os>linux:<linkflags>"-lrt"
+    #cygwin with -std=c++XX does not include POSIX
+    <target-os>cygwin:<define>XOPEN_SOURCE=600
+    <library>/boost/multi_index//boost_multi_index
+    <library>/boost/unordered//boost_unordered
+    ;
+
+rule test_all
+{
+   local all_rules = ;
+
+   for local fileb in [ glob comp*.cpp ]
+   {
+      all_rules += [ link $(fileb) ] ;
+   }
+
+   for local fileb in [ glob doc_*.cpp ]
+   {
+      all_rules += [ run $(fileb) ] ;
+   }
+
+   return $(all_rules) ;
+}
+
+test-suite interprocess_example : [ test_all r ] : <threading>multi ;

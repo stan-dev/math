@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Compiler Support</title>
+<link rel="stylesheet" href="../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../parser.html" title="Chapter 26. Boost.Parser">
+<link rel="prev" href="../boost_parser/concepts.html" title="Concepts">
+<link rel="next" href="../headers.html" title="Headers">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../boost.png"></td>
+<td align="center"><a href="../../../index.html">Home</a></td>
+<td align="center"><a href="../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../boost_parser/concepts.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../parser.html"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../headers.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="parser.compiler_support"></a><a class="link" href="compiler_support.html" title="Compiler Support">Compiler Support</a>
+</h2></div></div></div>
+<p>
+      Boost.Parser requires C++17 or later. It is known to work with these compilers:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          GCC 9 and later
+        </li>
+<li class="listitem">
+          Clang 11 and later (and XCode 10.3 and later)
+        </li>
+<li class="listitem">
+          Visual Studio 2022 and later
+        </li>
+</ul></div>
+<h4>
+<a name="parser.compiler_support.h0"></a>
+      <span class="phrase"><a name="parser.compiler_support.c__20_support"></a></span><a class="link" href="compiler_support.html#parser.compiler_support.c__20_support">C++20
+      Support</a>
+    </h4>
+<p>
+      C++20 concept-based constraints on template parameters are used if you build
+      in C++20 (or later) mode, and the compiler defines <code class="computeroutput">__cpp_lib_concepts</code>.
+      In C++17 mode, most templates are simply unconstrained. If you want to disable
+      the use of concepts entirely, you can define <code class="computeroutput">BOOST_PARSER_DISABLE_CONCEPTS</code>.
+    </p>
+</div>
+<div class="copyright-footer">Copyright © 2020 T. Zachary Laine<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../boost_parser/concepts.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../parser.html"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../headers.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

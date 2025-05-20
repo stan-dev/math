@@ -1,0 +1,252 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Tutorial 2: going async with C++20 coroutines</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="prev" href="tutorial_sync.html" title="Tutorial 1: hello world!">
+<link rel="next" href="tutorial_with_params.html" title="Tutorial 3: queries with parameters">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="tutorial_sync.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="tutorial_with_params.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="mysql.tutorial_async"></a><a class="link" href="tutorial_async.html" title="Tutorial 2: going async with C++20 coroutines">Tutorial 2: going async with C++20
+    coroutines</a>
+</h2></div></div></div>
+<p>
+      In the <a class="link" href="tutorial_sync.html" title="Tutorial 1: hello world!">previous tutorial</a> we used
+      synchronous functions. They are simple, but have a number of limitations:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          They aren't as versatile as async functions. For example, there is no way
+          to set a timeout to a sync operation.
+        </li>
+<li class="listitem">
+          They don't scale well. Since sync functions block the calling thread until
+          they complete, you need to create OS threads to achieve parallelism. This
+          doesn't scale well and leads to the inherent complexities of multi-threaded
+          programs.
+        </li>
+<li class="listitem">
+          Some classes (like <a class="link" href="ref/boost__mysql__connection_pool.html" title="connection_pool"><code class="literal">connection_pool</code></a>)
+          only offer an async interface.
+        </li>
+</ul></div>
+<p>
+      For this reason, we recommend to always use async functions. All Asio-compatible
+      libraries (including this one) allow async programming using a variety of styles.
+      In this chapter, we will explain how to use C++20 coroutines because they are
+      the simplest to use.
+    </p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+        Still not using C++20? Don't worry, you can use <a class="link" href="examples/coroutines_cpp11.html" title="Stackful coroutines (async functions in C++11)">stackful
+        coroutines</a> and <a class="link" href="examples/callbacks.html" title="Callbacks (async functions in C++11)">callbacks</a>
+        even in C++11.
+      </p></td></tr>
+</table></div>
+<h4>
+<a name="mysql.tutorial_async.h0"></a>
+      <span class="phrase"><a name="mysql.tutorial_async.what_is_a_coroutine"></a></span><a class="link" href="tutorial_async.html#mysql.tutorial_async.what_is_a_coroutine">What
+      is a coroutine?</a>
+    </h4>
+<p>
+      Roughly speaking, it's a function that can suspend and resume, keeping local
+      variables alive in the process. Suspension happens when reaching a <code class="computeroutput"><span class="identifier">co_await</span></code> expression. These usually appear
+      when the program performs an I/O operation. When an expression like this is
+      encountered, the following happens:
+    </p>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+          The coroutine initiates the I/O operation.
+        </li>
+<li class="listitem">
+          The coroutine suspends, passing control back to the <code class="computeroutput"><span class="identifier">io_context</span></code>
+          (that is, the event loop).
+        </li>
+<li class="listitem">
+          While the I/O operation is in progress, the <code class="computeroutput"><span class="identifier">io_context</span></code>
+          may run other operations, like other coroutines.
+        </li>
+<li class="listitem">
+          When the I/O operation completes, the <code class="computeroutput"><span class="identifier">io_context</span></code>
+          resumes the coroutine immediately after the <code class="computeroutput"><span class="identifier">co_await</span></code>
+          expression.
+        </li>
+</ol></div>
+<h4>
+<a name="mysql.tutorial_async.h1"></a>
+      <span class="phrase"><a name="mysql.tutorial_async.transforming_sync_code_into_coro"></a></span><a class="link" href="tutorial_async.html#mysql.tutorial_async.transforming_sync_code_into_coro">Transforming
+      sync code into coroutines</a>
+    </h4>
+<p>
+      Recall the following code from our previous tutorial:
+    </p>
+<pre class="programlisting"><span class="comment">// The hostname, username and password to use</span>
+<span class="identifier">mysql</span><span class="special">::</span><span class="identifier">connect_params</span> <span class="identifier">params</span><span class="special">;</span>
+<span class="identifier">params</span><span class="special">.</span><span class="identifier">server_address</span><span class="special">.</span><span class="identifier">emplace_host_and_port</span><span class="special">(</span><span class="identifier">hostname</span><span class="special">);</span>
+<span class="identifier">params</span><span class="special">.</span><span class="identifier">username</span> <span class="special">=</span> <span class="identifier">username</span><span class="special">;</span>
+<span class="identifier">params</span><span class="special">.</span><span class="identifier">password</span> <span class="special">=</span> <span class="identifier">password</span><span class="special">;</span>
+
+<span class="comment">// Connect to the server</span>
+<span class="identifier">conn</span><span class="special">.</span><span class="identifier">connect</span><span class="special">(</span><span class="identifier">params</span><span class="special">);</span>
+
+<span class="comment">// Issue the SQL query to the server</span>
+<span class="keyword">const</span> <span class="keyword">char</span><span class="special">*</span> <span class="identifier">sql</span> <span class="special">=</span> <span class="string">"SELECT 'Hello world!'"</span><span class="special">;</span>
+<span class="identifier">mysql</span><span class="special">::</span><span class="identifier">results</span> <span class="identifier">result</span><span class="special">;</span>
+<span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="identifier">sql</span><span class="special">,</span> <span class="identifier">result</span><span class="special">);</span>
+
+<span class="comment">// Print the first field in the first row</span>
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="identifier">result</span><span class="special">.</span><span class="identifier">rows</span><span class="special">().</span><span class="identifier">at</span><span class="special">(</span><span class="number">0</span><span class="special">).</span><span class="identifier">at</span><span class="special">(</span><span class="number">0</span><span class="special">)</span> <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;</span>
+
+<span class="comment">// Close the connection</span>
+<span class="identifier">conn</span><span class="special">.</span><span class="identifier">close</span><span class="special">();</span>
+</pre>
+<p>
+      To transform this code into a coroutine, we need to:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          Extract it to a separate function returning <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">awaitable</span><span class="special">&lt;</span><span class="keyword">void</span><span class="special">&gt;</span></code>.
+        </li>
+<li class="listitem">
+          Replace sync functions (like <a class="link" href="ref/boost__mysql__any_connection/connect.html" title="any_connection::connect"><code class="literal">any_connection::connect</code></a>)
+          by async ones (like <a class="link" href="ref/boost__mysql__any_connection/async_connect.html" title="any_connection::async_connect"><code class="literal">any_connection::async_connect</code></a>).
+        </li>
+<li class="listitem">
+          Place a <code class="computeroutput"><span class="identifier">co_await</span></code> operator
+          in front of each I/O operation.
+        </li>
+</ul></div>
+<p>
+      Doing this, we have:
+    </p>
+<pre class="programlisting"><span class="identifier">asio</span><span class="special">::</span><span class="identifier">awaitable</span><span class="special">&lt;</span><span class="keyword">void</span><span class="special">&gt;</span> <span class="identifier">coro_main</span><span class="special">(</span>
+    <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">any_connection</span><span class="special">&amp;</span> <span class="identifier">conn</span><span class="special">,</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">server_hostname</span><span class="special">,</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">username</span><span class="special">,</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">password</span>
+<span class="special">)</span>
+<span class="special">{</span>
+    <span class="comment">// The hostname, username, password and database to use.</span>
+    <span class="comment">// TLS is used by default.</span>
+    <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">connect_params</span> <span class="identifier">params</span><span class="special">;</span>
+    <span class="identifier">params</span><span class="special">.</span><span class="identifier">server_address</span><span class="special">.</span><span class="identifier">emplace_host_and_port</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">(</span><span class="identifier">server_hostname</span><span class="special">));</span>
+    <span class="identifier">params</span><span class="special">.</span><span class="identifier">username</span> <span class="special">=</span> <span class="identifier">username</span><span class="special">;</span>
+    <span class="identifier">params</span><span class="special">.</span><span class="identifier">password</span> <span class="special">=</span> <span class="identifier">password</span><span class="special">;</span>
+
+    <span class="comment">// Connect to the server</span>
+    <span class="identifier">co_await</span> <span class="identifier">conn</span><span class="special">.</span><span class="identifier">async_connect</span><span class="special">(</span><span class="identifier">params</span><span class="special">);</span>
+
+    <span class="comment">// Issue the SQL query to the server</span>
+    <span class="keyword">const</span> <span class="keyword">char</span><span class="special">*</span> <span class="identifier">sql</span> <span class="special">=</span> <span class="string">"SELECT 'Hello world!'"</span><span class="special">;</span>
+    <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">results</span> <span class="identifier">result</span><span class="special">;</span>
+    <span class="identifier">co_await</span> <span class="identifier">conn</span><span class="special">.</span><span class="identifier">async_execute</span><span class="special">(</span><span class="identifier">sql</span><span class="special">,</span> <span class="identifier">result</span><span class="special">);</span>
+
+    <span class="comment">// Print the first field in the first row</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="identifier">result</span><span class="special">.</span><span class="identifier">rows</span><span class="special">().</span><span class="identifier">at</span><span class="special">(</span><span class="number">0</span><span class="special">).</span><span class="identifier">at</span><span class="special">(</span><span class="number">0</span><span class="special">)</span> <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;</span>
+
+    <span class="comment">// Close the connection</span>
+    <span class="identifier">co_await</span> <span class="identifier">conn</span><span class="special">.</span><span class="identifier">async_close</span><span class="special">();</span>
+<span class="special">}</span>
+</pre>
+<p>
+      Note that the coroutine doesn't create or return explicitly any <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">awaitable</span><span class="special">&lt;</span><span class="keyword">void</span><span class="special">&gt;</span></code>
+      object - this is handled by the compiler. The return type actually marks the
+      function as being a coroutine. <code class="computeroutput"><span class="keyword">void</span></code>
+      here means that the coroutine doesn't return anything.
+    </p>
+<p>
+      If any of the above I/O operations fail, an exception is thrown. You can prevent
+      this by <a class="link" href="overview.html#mysql.overview.errors" title="Error handling">using <code class="computeroutput"><span class="identifier">asio</span><span class="special">::</span><span class="identifier">redirect_error</span></code></a>.
+    </p>
+<h4>
+<a name="mysql.tutorial_async.h2"></a>
+      <span class="phrase"><a name="mysql.tutorial_async.running_our_coroutine"></a></span><a class="link" href="tutorial_async.html#mysql.tutorial_async.running_our_coroutine">Running
+      our coroutine</a>
+    </h4>
+<p>
+      As in the previous tutorial, we first need to create an <code class="computeroutput"><span class="identifier">io_context</span></code>
+      and a connection:
+    </p>
+<pre class="programlisting"><span class="comment">// The execution context, required to run I/O operations.</span>
+<span class="identifier">asio</span><span class="special">::</span><span class="identifier">io_context</span> <span class="identifier">ctx</span><span class="special">;</span>
+
+<span class="comment">// Represents a connection to the MySQL server.</span>
+<span class="identifier">mysql</span><span class="special">::</span><span class="identifier">any_connection</span> <span class="identifier">conn</span><span class="special">(</span><span class="identifier">ctx</span><span class="special">);</span>
+</pre>
+<p>
+      To run a coroutine, use <a href="../../../../../doc/html/boost_asio/reference/co_spawn.html" target="_top"><code class="literal">asio::co_spawn</code></a>:
+    </p>
+<pre class="programlisting"><span class="comment">// Enqueue the coroutine for execution.</span>
+<span class="comment">// This does not wait for the coroutine to finish.</span>
+<span class="identifier">asio</span><span class="special">::</span><span class="identifier">co_spawn</span><span class="special">(</span>
+    <span class="comment">// The execution context where the coroutine will run</span>
+    <span class="identifier">ctx</span><span class="special">,</span>
+
+    <span class="comment">// The coroutine to run. This must be a function taking no arguments</span>
+    <span class="comment">// and returning an asio::awaitable&lt;T&gt;</span>
+    <span class="special">[&amp;</span><span class="identifier">conn</span><span class="special">,</span> <span class="identifier">argv</span><span class="special">]</span> <span class="special">{</span> <span class="keyword">return</span> <span class="identifier">coro_main</span><span class="special">(</span><span class="identifier">conn</span><span class="special">,</span> <span class="identifier">argv</span><span class="special">[</span><span class="number">3</span><span class="special">],</span> <span class="identifier">argv</span><span class="special">[</span><span class="number">1</span><span class="special">],</span> <span class="identifier">argv</span><span class="special">[</span><span class="number">2</span><span class="special">]);</span> <span class="special">},</span>
+
+    <span class="comment">// Callback to run when the coroutine completes.</span>
+    <span class="comment">// If any exception is thrown in the coroutine body, propagate it to terminate the program.</span>
+    <span class="special">[](</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">exception_ptr</span> <span class="identifier">ptr</span><span class="special">)</span> <span class="special">{</span>
+        <span class="keyword">if</span> <span class="special">(</span><span class="identifier">ptr</span><span class="special">)</span>
+        <span class="special">{</span>
+            <span class="identifier">std</span><span class="special">::</span><span class="identifier">rethrow_exception</span><span class="special">(</span><span class="identifier">ptr</span><span class="special">);</span>
+        <span class="special">}</span>
+    <span class="special">}</span>
+<span class="special">);</span>
+</pre>
+<p>
+      Note that this will only schedule the coroutine. To actually run it, we need
+      to call <code class="computeroutput"><span class="identifier">io_context</span><span class="special">::</span><span class="identifier">run</span></code>. This will block the calling thread until
+      all the scheduled coroutines and I/O operations complete:
+    </p>
+<pre class="programlisting"><span class="comment">// Calling run will actually execute the coroutine until completion</span>
+<span class="identifier">ctx</span><span class="special">.</span><span class="identifier">run</span><span class="special">();</span>
+</pre>
+<h4>
+<a name="mysql.tutorial_async.h3"></a>
+      <span class="phrase"><a name="mysql.tutorial_async.next_steps"></a></span><a class="link" href="tutorial_async.html#mysql.tutorial_async.next_steps">Next
+      steps</a>
+    </h4>
+<p>
+      Full program listing for this tutorial is <a class="link" href="examples/tutorial_async.html" title="Tutorial 2 listing: going async with C++20 coroutines">here</a>.
+    </p>
+<p>
+      You can now proceed to <a class="link" href="tutorial_with_params.html" title="Tutorial 3: queries with parameters">the next
+      tutorial</a>.
+    </p>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="tutorial_sync.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="tutorial_with_params.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

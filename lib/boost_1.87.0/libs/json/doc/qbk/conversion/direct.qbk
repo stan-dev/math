@@ -1,0 +1,45 @@
+[/
+    Copyright (c) 2023 Dmitry Arkhipov (grisumbras@yandex.ru)
+
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+    Official repository: https://github.com/boostorg/json
+]
+
+[/-----------------------------------------------------------------------------]
+
+
+[section Direct parsing]
+
+For large inputs parsing into the library's containers followed by conversion
+via __value_to__ (or vice versa __value_from__ followed by serialization from
+a __value__) might be prohibitively expensive. For these cases the library
+provides components that allow parsing directly into and serializing directly
+from user-provided objects.
+
+The drawback of this approach is that fully custom type representations are
+not supported, only the library-provided conversions are. Also all objects that
+should be populated by parsing have to be default constructible types. This
+includes not only the top-level object, but e.g. elements of containers,
+members of described `struct`s, and alternatives of variants.
+
+That being said, if your types are default-constructible and you don't need
+the customisability allowed by __value_to__ and __value_from__, then you can
+get a significant performance boost with direct parsing.
+
+Direct parsing is performed by the __parse_into__ family of functions. The
+library provides overloads that take either __string_view__ or `std::istream`,
+and can report errors either via throwing exceptions or setting an error code.
+
+[doc_parse_into_1]
+
+If you need to combine incremental parsing with direct parsing, you can resort
+to __parser_for__. `parser_for<T>` is an instantiation of __basic_parser__ that
+parses into an object of type `T`, and is what __parse_into__ uses under
+the hood.
+
+Direct serialization doesn't require any special components and works with the
+refular __serializer__ and __serialize__.
+
+[endsect]

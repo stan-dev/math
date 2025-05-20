@@ -1,0 +1,63 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Header &lt;boost/numeric/odeint/iterator/adaptive_time_iterator.hpp&gt;</title>
+<link rel="stylesheet" href="../../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.Numeric.Odeint">
+<link rel="up" href="../../odeint_reference.html" title="odeint Reference">
+<link rel="prev" href="adaptive__iterator_8hpp_1a829dc5213903c2ce21091ee09bbe3e18.html" title="Function template make_adaptive_range">
+<link rel="next" href="classboost_1_1numeric_1_1odeint_1_1adaptive__time__iterator.html" title="Class template adaptive_time_iterator">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../logo.jpg"></td>
+<td align="center"><a href="../../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="adaptive__iterator_8hpp_1a829dc5213903c2ce21091ee09bbe3e18.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../odeint_reference.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1numeric_1_1odeint_1_1adaptive__time__iterator.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.odeint_reference.adaptive__time__iterator_8hpp"></a>Header &lt;<a href="../../../../../../../boost/numeric/odeint/iterator/adaptive_time_iterator.hpp" target="_top">boost/numeric/odeint/iterator/adaptive_time_iterator.hpp</a>&gt;</h3></div></div></div>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">numeric</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">odeint</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Stepper<span class="special">,</span> <span class="keyword">typename</span> System<span class="special">,</span> <span class="keyword">typename</span> State<span class="special">&gt;</span> 
+        <span class="keyword">class</span> <a class="link" href="classboost_1_1numeric_1_1odeint_1_1adaptive__time__iterator.html" title="Class template adaptive_time_iterator">adaptive_time_iterator</a><span class="special">;</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Stepper<span class="special">,</span> <span class="keyword">typename</span> System<span class="special">,</span> <span class="keyword">typename</span> State<span class="special">&gt;</span> 
+        <a class="link" href="classboost_1_1numeric_1_1odeint_1_1adaptive__time__iterator.html" title="Class template adaptive_time_iterator">adaptive_time_iterator</a><span class="special">&lt;</span> <span class="identifier">Stepper</span><span class="special">,</span> <span class="identifier">System</span><span class="special">,</span> <span class="identifier">State</span> <span class="special">&gt;</span> 
+        <a class="link" href="adaptive__time__iterator_8hpp_1a7db4223a072412374929e4e72950e7c9.html" title="Function template make_adaptive_time_iterator_begin"><span class="identifier">make_adaptive_time_iterator_begin</span></a><span class="special">(</span><span class="identifier">Stepper</span><span class="special">,</span> <span class="identifier">System</span><span class="special">,</span> <span class="identifier">State</span> <span class="special">&amp;</span><span class="special">,</span> 
+                                          <span class="keyword">typename</span> <span class="identifier">traits</span><span class="special">::</span><span class="identifier">time_type</span><span class="special">&lt;</span> <span class="identifier">Stepper</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span><span class="special">,</span> 
+                                          <span class="keyword">typename</span> <span class="identifier">traits</span><span class="special">::</span><span class="identifier">time_type</span><span class="special">&lt;</span> <span class="identifier">Stepper</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span><span class="special">,</span> 
+                                          <span class="keyword">typename</span> <span class="identifier">traits</span><span class="special">::</span><span class="identifier">time_type</span><span class="special">&lt;</span> <span class="identifier">Stepper</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span><span class="special">)</span><span class="special">;</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Stepper<span class="special">,</span> <span class="keyword">typename</span> System<span class="special">,</span> <span class="keyword">typename</span> State<span class="special">&gt;</span> 
+        <a class="link" href="classboost_1_1numeric_1_1odeint_1_1adaptive__time__iterator.html" title="Class template adaptive_time_iterator">adaptive_time_iterator</a><span class="special">&lt;</span> <span class="identifier">Stepper</span><span class="special">,</span> <span class="identifier">System</span><span class="special">,</span> <span class="identifier">State</span> <span class="special">&gt;</span> 
+        <a class="link" href="adaptive__time__iterator_8hpp_1a68a19f9dc271d5046d1b4997d25748d3.html" title="Function template make_adaptive_time_iterator_end"><span class="identifier">make_adaptive_time_iterator_end</span></a><span class="special">(</span><span class="identifier">Stepper</span><span class="special">,</span> <span class="identifier">System</span><span class="special">,</span> <span class="identifier">State</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Stepper<span class="special">,</span> <span class="keyword">typename</span> System<span class="special">,</span> <span class="keyword">typename</span> State<span class="special">&gt;</span> 
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">pair</span><span class="special">&lt;</span> <a class="link" href="classboost_1_1numeric_1_1odeint_1_1adaptive__time__iterator.html" title="Class template adaptive_time_iterator">adaptive_time_iterator</a><span class="special">&lt;</span> <span class="identifier">Stepper</span><span class="special">,</span> <span class="identifier">System</span><span class="special">,</span> <span class="identifier">State</span> <span class="special">&gt;</span><span class="special">,</span> <a class="link" href="classboost_1_1numeric_1_1odeint_1_1adaptive__time__iterator.html" title="Class template adaptive_time_iterator">adaptive_time_iterator</a><span class="special">&lt;</span> <span class="identifier">Stepper</span><span class="special">,</span> <span class="identifier">System</span><span class="special">,</span> <span class="identifier">State</span> <span class="special">&gt;</span> <span class="special">&gt;</span> 
+        <a class="link" href="adaptive__time__iterator_8hpp_1a2b29c744ad5d0d8443b0d1ce28a3737b.html" title="Function template make_adaptive_time_range"><span class="identifier">make_adaptive_time_range</span></a><span class="special">(</span><span class="identifier">Stepper</span><span class="special">,</span> <span class="identifier">System</span><span class="special">,</span> <span class="identifier">State</span> <span class="special">&amp;</span><span class="special">,</span> 
+                                 <span class="keyword">typename</span> <span class="identifier">traits</span><span class="special">::</span><span class="identifier">time_type</span><span class="special">&lt;</span> <span class="identifier">Stepper</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span><span class="special">,</span> 
+                                 <span class="keyword">typename</span> <span class="identifier">traits</span><span class="special">::</span><span class="identifier">time_type</span><span class="special">&lt;</span> <span class="identifier">Stepper</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span><span class="special">,</span> 
+                                 <span class="keyword">typename</span> <span class="identifier">traits</span><span class="special">::</span><span class="identifier">time_type</span><span class="special">&lt;</span> <span class="identifier">Stepper</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span><span class="special">)</span><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="copyright-footer">Copyright © 2009-2015 Karsten Ahnert and Mario Mulansky<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="adaptive__iterator_8hpp_1a829dc5213903c2ce21091ee09bbe3e18.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../odeint_reference.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1numeric_1_1odeint_1_1adaptive__time__iterator.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

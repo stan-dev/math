@@ -1,0 +1,69 @@
+# Copyright René Ferdinand Rivera Morell 2023-2024
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at
+# http://www.boost.org/LICENSE_1_0.txt)
+
+require-b2 5.2 ;
+
+import os ;
+
+constant boost_dependencies :
+    /boost/assert//boost_assert
+    /boost/config//boost_config
+    /boost/core//boost_core
+    /boost/detail//boost_detail
+    /boost/function//boost_function
+    /boost/integer//boost_integer
+    /boost/iterator//boost_iterator
+    /boost/mpl//boost_mpl
+    /boost/numeric_conversion//boost_numeric_conversion
+    /boost/preprocessor//boost_preprocessor
+    /boost/random//boost_random
+    /boost/range//boost_range
+    /boost/regex//boost_regex
+    /boost/smart_ptr//boost_smart_ptr
+    /boost/static_assert//boost_static_assert
+    /boost/throw_exception//boost_throw_exception
+    /boost/type_traits//boost_type_traits
+    /boost/utility//boost_utility ;
+
+project /boost/iostreams
+    : common-requirements
+        <include>include
+    ;
+
+local compression-libs-to-install ;
+for local v in NO_COMPRESSION NO_ZLIB NO_BZIP2
+{
+    $(v) = [ modules.peek : $(v) ] ;
+}
+if $(NO_COMPRESSION) != 1 && $(NO_ZLIB) != 1
+{
+    constant has_zlib : true ;
+    if [ os.environ ZLIB_SOURCE ]
+    {
+        constant install_zlib : true ;
+        explicit [ alias boost_zlib : build//boost_zlib ] ;
+        compression-libs-to-install += boost_zlib ;
+    }
+}
+if $(NO_COMPRESSION) != 1 && $(NO_BZIP2) != 1
+{
+    constant has_bzip2 : true ;
+    if [ os.environ BZIP2_SOURCE ]
+    {
+        constant install_bzip2 : true ;
+        explicit [ alias boost_bzip2 : build//boost_bzip2 ] ;
+        compression-libs-to-install += boost_bzip2 ;
+    }
+}
+
+explicit
+    [ alias boost_iostreams : build//boost_iostreams ]
+    [ alias all : boost_iostreams example test ]
+    ;
+
+call-if : boost-library iostreams
+    : install boost_iostreams $(compression-libs-to-install)
+    ;
+

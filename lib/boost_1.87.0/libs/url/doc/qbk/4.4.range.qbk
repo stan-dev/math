@@ -1,0 +1,144 @@
+[/
+    Copyright (c) 2022 Vinnie Falco (vinnie.falco@gmail.com)
+
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+    Official repository: https://github.com/boostorg/url
+]
+
+[section Ranges]
+
+[c++]
+
+Thus far the rules we have examined have one thing in common; the
+values they produce are fixed in size and known at compile-time.
+However, grammars can specify the repetition of elements. For
+example consider the following grammar (loosely adapted from
+[@https://datatracker.ietf.org/doc/html/rfc7230#section-4.1.1 rfc7230]):
+
+```
+chunk-ext      = *( ";" token )
+```
+
+The star operator in BNF notation means a repetition. In this case,
+zero or more of the expression in parenthesis. This production can
+be expressed using the function __range_rule__, which returns a
+rule allowing for a prescribed number of repetitions of a specified
+rule. The following rule matches the grammar for ['chunk-ext]
+defined above:
+
+[code_grammar_4_1]
+
+This rule produces a __range__, a ['ForwardRange] whose value type is
+the same as the value type of the rule passed to the function. In this
+case, the type is __string_view__ because the tuple has one unsquelched
+element, the __token_rule__. The range can be iterated to produce results,
+without allocating memory for each element. The following code:
+
+[code_grammar_4_2]
+
+produces this output:
+
+```
+johndoe
+janedoe
+end
+```
+
+Sometimes a repetition is not so easily expressed using a single rule.
+Take for example the following grammar for a comma delimited list of
+tokens, which must contain at least one element:
+
+```
+token-list    = token *( "," token )
+```
+
+We can express this using the overload of __range_rule__ which accepts
+two parameters: the rule to use when performing the first match, and
+the rule to use for performing every subsequent match. Both overloads
+of the function have additional, optional parameters for specifying
+the minimum number of repetitions, or both the minimum and maximum
+number of repetitions. Since our list may not be empty, the following
+rule perfectly captures the ['token-list] grammar:
+
+[code_grammar_4_3]
+
+The following code:
+
+[code_grammar_4_4]
+
+produces this output:
+
+```
+johndoe
+janedoe
+end
+```
+
+In the next section we discuss the available rules
+which are specific to __rfc3986__.
+
+[heading More]
+
+These are the rules and compound rules provided by the
+library. For more details please see the corresponding
+reference sections.
+
+[table Grammar Symbols [
+    [Name]
+    [Description]
+][
+    [__dec_octet_rule__]
+    [
+    Match an integer from 0 and 255.
+    ]
+][
+    [__delim_rule__]
+    [
+    Match a character literal.
+    ]
+][
+    [__literal_rule__]
+    [
+    Match a character string exactly.
+    ]
+][
+    [__not_empty_rule__]
+    [
+    Make a matching empty string into an error instead.
+    ]
+][
+    [__optional_rule__]
+    [
+    Ignore a rule if parsing fails, leaving
+    the input pointer unchanged.
+    ]
+][
+    [__range_rule__]
+    [
+    Match a repeating number of elements.
+    ]
+][
+    [__token_rule__]
+    [
+    Match a string of characters from a character set.
+    ]
+][
+    [__tuple_rule__]
+    [
+    Match a sequence of specified rules, in order.
+    ]
+][
+    [__unsigned_rule__]
+    [
+    Match an unsigned integer in decimal form.
+    ]
+][
+    [__variant_rule__]
+    [
+    Match one of a set of alternatives specified by rules.
+    ]
+]]
+
+[endsect]

@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template simple_format</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../../date_time/doxy.html#doxygen.date_time_reference.date__format__simple_8hpp" title="Header &lt;boost/date_time/date_format_simple.hpp&gt;">
+<link rel="prev" href="classboost_1_1date__time_1_1date__input__facet.html" title="Class template date_input_facet">
+<link rel="next" href="classboost_1_1date__time_1_1simple__format_3_01wchar__t_01_4.html" title="Class simple_format&lt;wchar_t&gt;">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1date__time_1_1date__input__facet.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../date_time/doxy.html#doxygen.date_time_reference.date__format__simple_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1date__time_1_1simple__format_3_01wchar__t_01_4.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.date_time_reference.classboost_1_1date__time_1_1simple__format"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template simple_format</span></h2>
+<p>boost::date_time::simple_format — Class to provide simple basic formatting rules. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../date_time/doxy.html#doxygen.date_time_reference.date__format__simple_8hpp" title="Header &lt;boost/date_time/date_format_simple.hpp&gt;">boost/date_time/date_format_simple.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> charT<span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1date__time_1_1simple__format.html" title="Class template simple_format">simple_format</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1date__time_1_1simple__format.html#id-1_3_12_15_3_13_1_1_1_3-bb">public static functions</a></span>
+  <span class="keyword">static</span> <span class="keyword">const</span> <span class="identifier">charT</span> <span class="special">*</span> <a class="link" href="classboost_1_1date__time_1_1simple__format.html#doxygen.date_time_reference.classboost_1_1date__time_1_1simple__format_1a702b6c2736361b2257fcb89b03cae491"><span class="identifier">not_a_date</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">const</span> <span class="identifier">charT</span> <span class="special">*</span> <a class="link" href="classboost_1_1date__time_1_1simple__format.html#doxygen.date_time_reference.classboost_1_1date__time_1_1simple__format_1a59dfd3aeac2ba196b74fc9cc8bfa3c2b"><span class="identifier">pos_infinity</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">const</span> <span class="identifier">charT</span> <span class="special">*</span> <a class="link" href="classboost_1_1date__time_1_1simple__format.html#doxygen.date_time_reference.classboost_1_1date__time_1_1simple__format_1adc5b3efcf1445bb1c266638af54639bf"><span class="identifier">neg_infinity</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="identifier">month_format_spec</span> <a class="link" href="classboost_1_1date__time_1_1simple__format.html#doxygen.date_time_reference.classboost_1_1date__time_1_1simple__format_1a2c2aac9ea9d70b677dbba6516c3b4e67"><span class="identifier">month_format</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="identifier">ymd_order_spec</span> <a class="link" href="classboost_1_1date__time_1_1simple__format.html#doxygen.date_time_reference.classboost_1_1date__time_1_1simple__format_1ae67d79c3df41e84bb371c4ae694243a4"><span class="identifier">date_order</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">bool</span> <a class="link" href="classboost_1_1date__time_1_1simple__format.html#doxygen.date_time_reference.classboost_1_1date__time_1_1simple__format_1ab0c16fdf80f154127126a3fd7415aaa8"><span class="identifier">has_date_sep_chars</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="identifier">charT</span> <a class="link" href="classboost_1_1date__time_1_1simple__format.html#doxygen.date_time_reference.classboost_1_1date__time_1_1simple__format_1a5f0890ef1103602bdaa98fe46e06577e"><span class="identifier">year_sep_char</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="identifier">charT</span> <a class="link" href="classboost_1_1date__time_1_1simple__format.html#doxygen.date_time_reference.classboost_1_1date__time_1_1simple__format_1abc49f0b52c1f20e7a7022187e8b1fa3f"><span class="identifier">month_sep_char</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="identifier">charT</span> <a class="link" href="classboost_1_1date__time_1_1simple__format.html#doxygen.date_time_reference.classboost_1_1date__time_1_1simple__format_1a4a54b1f024e5a9bcfe9407eac181296f"><span class="identifier">day_sep_char</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="identifier">charT</span> <a class="link" href="classboost_1_1date__time_1_1simple__format.html#doxygen.date_time_reference.classboost_1_1date__time_1_1simple__format_1aede7374199daf68588ae9c911e036ef3"><span class="identifier">hour_sep_char</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="identifier">charT</span> <a class="link" href="classboost_1_1date__time_1_1simple__format.html#doxygen.date_time_reference.classboost_1_1date__time_1_1simple__format_1ab9bceb2116e8927cacfbbea4ba2ea486"><span class="identifier">minute_sep_char</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="identifier">charT</span> <a class="link" href="classboost_1_1date__time_1_1simple__format.html#doxygen.date_time_reference.classboost_1_1date__time_1_1simple__format_1a5712146dd2a333f57752b683720ac9ee"><span class="identifier">second_sep_char</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.12.15.3.13.3.4"></a><h2>Description</h2>
+<div class="refsect2">
+<a name="id-1.3.12.15.3.13.3.4.2"></a><h3>
+<a name="id-1_3_12_15_3_13_1_1_1_3-bb"></a><code class="computeroutput">simple_format</code> public static functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="keyword">const</span> <span class="identifier">charT</span> <span class="special">*</span> <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1simple__format_1a702b6c2736361b2257fcb89b03cae491"></a><span class="identifier">not_a_date</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>String used printed is date is invalid. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="keyword">const</span> <span class="identifier">charT</span> <span class="special">*</span> <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1simple__format_1a59dfd3aeac2ba196b74fc9cc8bfa3c2b"></a><span class="identifier">pos_infinity</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>String used to for positive infinity value. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="keyword">const</span> <span class="identifier">charT</span> <span class="special">*</span> <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1simple__format_1adc5b3efcf1445bb1c266638af54639bf"></a><span class="identifier">neg_infinity</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>String used to for positive infinity value. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="identifier">month_format_spec</span> <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1simple__format_1a2c2aac9ea9d70b677dbba6516c3b4e67"></a><span class="identifier">month_format</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>Describe month format. </li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">static</span> <span class="identifier">ymd_order_spec</span> <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1simple__format_1ae67d79c3df41e84bb371c4ae694243a4"></a><span class="identifier">date_order</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="keyword">bool</span> <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1simple__format_1ab0c16fdf80f154127126a3fd7415aaa8"></a><span class="identifier">has_date_sep_chars</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>This format uses '-' to separate date elements. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="identifier">charT</span> <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1simple__format_1a5f0890ef1103602bdaa98fe46e06577e"></a><span class="identifier">year_sep_char</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>Char to sep? </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="identifier">charT</span> <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1simple__format_1abc49f0b52c1f20e7a7022187e8b1fa3f"></a><span class="identifier">month_sep_char</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>char between year-month </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="identifier">charT</span> <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1simple__format_1a4a54b1f024e5a9bcfe9407eac181296f"></a><span class="identifier">day_sep_char</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>Char to separate month-day. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="identifier">charT</span> <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1simple__format_1aede7374199daf68588ae9c911e036ef3"></a><span class="identifier">hour_sep_char</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>char between date-hours </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="identifier">charT</span> <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1simple__format_1ab9bceb2116e8927cacfbbea4ba2ea486"></a><span class="identifier">minute_sep_char</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>char between hour and minute </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="identifier">charT</span> <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1simple__format_1a5712146dd2a333f57752b683720ac9ee"></a><span class="identifier">second_sep_char</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>char for second </li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.12.15.3.13.3.4.3"></a><h3>Specializations</h3>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><a class="link" href="classboost_1_1date__time_1_1simple__format_3_01wchar__t_01_4.html" title="Class simple_format&lt;wchar_t&gt;">Class simple_format&lt;wchar_t&gt;</a></p></li></ul></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2001-2005 CrystalClear Software, Inc<p>Subject to the Boost Software License, Version 1.0. (See accompanying file
+    <code class="filename">LICENSE_1_0.txt</code> or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)</p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1date__time_1_1date__input__facet.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../date_time/doxy.html#doxygen.date_time_reference.date__format__simple_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1date__time_1_1simple__format_3_01wchar__t_01_4.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

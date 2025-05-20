@@ -1,0 +1,145 @@
+﻿[#hash_quality]
+= Hash Quality
+
+:idprefix: hash_quality_
+
+In order to work properly, hash tables require that the supplied hash function
+be of __good quality__, roughly meaning that it uses its `std::size_t` output
+space as uniformly as possible, much like a random number generator would do
+—except, of course, that the value of a hash function is not random but strictly determined
+by its input argument.
+
+Closed-addressing containers in Boost.Unordered are fairly robust against
+hash functions with less-than-ideal quality, but open-addressing and concurrent
+containers are much more sensitive to this factor, and their performance can
+degrade dramatically if the hash function is not appropriate. In general, if
+you're using functions provided by or generated with link:../../../container_hash/index.html[Boost.Hash^],
+the quality will be adequate, but you have to be careful when using alternative
+hash algorithms.
+
+The rest of this section applies only to open-addressing and concurrent containers.
+
+== Hash Post-mixing and the Avalanching Property
+
+Even if your supplied hash function does not conform to the uniform behavior
+required by open addressing, chances are that
+the performance of Boost.Unordered containers will be acceptable, because the library
+executes an internal __post-mixing__ step that improves the statistical
+properties of the calculated hash values. This comes with an extra computational
+cost; if you'd like to opt out of post-mixing, annotate your hash function as
+follows:
+
+[source,c++]
+----
+struct my_string_hash_function
+{
+  using is_avalanching = std::true_type; // instruct Boost.Unordered to not use post-mixing
+
+  std::size_t operator()(const std::string& x) const
+  {
+    ...
+  }
+};
+----
+
+By setting the
+xref:#hash_traits_hash_is_avalanching[hash_is_avalanching] trait, we inform Boost.Unordered
+that `my_string_hash_function` is of sufficient quality to be used directly without
+any post-mixing safety net. This comes at the risk of degraded performance in the
+cases where the hash function is not as well-behaved as we've declared.
+
+== Container Statistics
+
+If we globally define the macro `BOOST_UNORDERED_ENABLE_STATS`, open-addressing and
+concurrent containers will calculate some internal statistics directly correlated to the
+quality of the hash function:
+
+[source,c++]
+----
+#define BOOST_UNORDERED_ENABLE_STATS
+#include <boost/unordered/unordered_map.hpp>
+
+...
+
+int main()
+{
+  boost::unordered_flat_map<std::string, int, my_string_hash> m;
+  ... // use m
+
+  auto stats = m.get_stats();
+  ... // inspect stats
+}
+----
+
+The `stats` object provides the following information:
+
+[source,subs=+quotes]
+----
+stats 
+     .insertion                                     // *Insertion operations*
+               .count                               // Number of operations
+               .probe_length                        // Probe length per operation
+                            .average
+                            .variance
+                            .deviation
+	 .successful_lookup                             // *Lookup operations (element found)*
+                       .count                       // Number of operations
+                       .probe_length                // Probe length per operation
+                                    .average
+                                    .variance
+                                    .deviation
+                       .num_comparisons             // Elements compared per operation
+			                           .average
+                                       .variance
+                                       .deviation
+	 .unsuccessful_lookup                           // *Lookup operations (element not found)*
+                         .count                     // Number of operations
+                         .probe_length              // Probe length per operation
+                                      .average
+                                      .variance
+                                      .deviation
+                         .num_comparisons           // Elements compared per operation
+			                             .average
+                                         .variance
+                                         .deviation 
+----
+
+Statistics for three internal operations are maintained: insertions (without considering
+the previous lookup to determine that the key is not present yet), successful lookups,
+and unsuccessful lookups (including those issued internally when inserting elements).
+_Probe length_ is  the number of
+xref:#structures_open_addressing_containers[bucket groups] accessed per operation.
+If the hash function behaves properly:
+
+* Average probe lengths should be close to 1.0.
+* The average number of comparisons per successful lookup should be close to 1.0 (that is,
+just the element found is checked).
+* The average number of comparisons per unsuccessful lookup should be close to 0.0. 
+
+An link:../../benchmark/string_stats.cpp[example^] is provided that displays container
+statistics for `boost::hash<std::string>`, an implementation of the
+https://en.wikipedia.org/wiki/Fowler%E2%80%93Noll%E2%80%93Vo_hash_function#FNV-1a_hash[FNV-1a hash^]
+and two ill-behaved custom hash functions that have been incorrectly marked as avalanching:
+
+[listing]
+----
+                   boost::unordered_flat_map:   319 ms
+                                   insertion: probe length 1.08771
+                           successful lookup: probe length 1.06206, num comparisons 1.02121
+                         unsuccessful lookup: probe length 1.12301, num comparisons 0.0388251
+
+           boost::unordered_flat_map, FNV-1a:   301 ms
+                                   insertion: probe length 1.09567
+                           successful lookup: probe length 1.06202, num comparisons 1.0227
+                         unsuccessful lookup: probe length 1.12195, num comparisons 0.040527
+
+boost::unordered_flat_map, slightly_bad_hash:   654 ms
+                                   insertion: probe length 1.03443
+                           successful lookup: probe length 1.04137, num comparisons 6.22152
+                         unsuccessful lookup: probe length 1.29334, num comparisons 11.0335
+
+         boost::unordered_flat_map, bad_hash: 12216 ms
+                                   insertion: probe length 699.218
+                           successful lookup: probe length 590.183, num comparisons 43.4886
+                         unsuccessful lookup: probe length 1361.65, num comparisons 75.238
+----

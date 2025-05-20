@@ -1,0 +1,568 @@
+<?xml version="1.0" standalone="yes"?>
+<library-reference id="cgs_system_reference"><title>CGS System Reference</title><header id="doxygen.cgs_system_reference.cgs_8hpp" name="boost/units/systems/cgs.hpp">
+<para>Includes all the cgs unit headers </para></header>
+<header id="doxygen.cgs_system_reference.acceleration_8hpp" name="boost/units/systems/cgs/acceleration.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="cgs">
+<typedef id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1abe14e6f9b8ab985ef4c88e31750fb6ba" name="acceleration"><type>unit&lt; acceleration_dimension, cgs::system &gt;</type></typedef>
+<data-member id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1a3ce6384bc04589d775a2968cd324a110" name="gal" specifiers="static"><type>const acceleration</type></data-member>
+<data-member id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1a6b6e4890777a6c9cabfbdd04dafe6fa3" name="gals" specifiers="static"><type>const acceleration</type></data-member>
+</namespace>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.cgs_system_reference.area_8hpp" name="boost/units/systems/cgs/area.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="cgs">
+<typedef id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1a3dfe911e58298ab1f36bac8572cf1661" name="area"><type>unit&lt; area_dimension, cgs::system &gt;</type></typedef>
+<data-member id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1a4192e06da3b5816a5cef3ca8883acb43" name="square_centimeter" specifiers="static"><type>const area</type></data-member>
+<data-member id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1a18b82a9ed425dff636b6c7cd0e9c5d36" name="square_centimeters" specifiers="static"><type>const area</type></data-member>
+<data-member id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1a801eac2bf0d40dbff94dbafe039ed7f1" name="square_centimetre" specifiers="static"><type>const area</type></data-member>
+<data-member id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1aa2e1ec906e3ef6bf4705c17a72b730ac" name="square_centimetres" specifiers="static"><type>const area</type></data-member>
+</namespace>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.cgs_system_reference.base_8hpp" name="boost/units/systems/cgs/base.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="cgs">
+<typedef id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1af7559eeceed6f6beca32d854094c6e85" name="system"><purpose>placeholder class defining cgs unit system </purpose><type>make_system&lt; centimeter_base_unit, gram_base_unit, boost::units::si::second_base_unit, biot_base_unit &gt;::type</type></typedef>
+<typedef id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1a5a08ddeeec7ffa89adb41386f33b5dfb" name="dimensionless"><purpose>various unit typedefs for convenience </purpose><type>unit&lt; dimensionless_type, system &gt;</type></typedef>
+</namespace>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.cgs_system_reference.current_8hpp" name="boost/units/systems/cgs/current.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="cgs">
+<typedef id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1aee58d0edbfb66d7b1f0c0dfb5e337297" name="current"><type>unit&lt; current_dimension, cgs::system &gt;</type></typedef>
+<data-member id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1ab627469cc56c4095a702bfd9bc3930cd" name="biot" specifiers="static"><type>const current</type></data-member>
+<data-member id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1ab26f6c03da9438d2ff9c7fdabc900811" name="biots" specifiers="static"><type>const current</type></data-member>
+</namespace>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.cgs_system_reference.dimensionless_8hpp" name="boost/units/systems/cgs/dimensionless.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="cgs">
+<data-member id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1acacec00a35ac48b9f13a9e0d1e25aafd" name="cgs_dimensionless" specifiers="static"><type>const dimensionless</type></data-member>
+</namespace>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.cgs_system_reference.dynamic__viscosity_8hpp" name="boost/units/systems/cgs/dynamic_viscosity.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="cgs">
+<typedef id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1acbf1bc53089cb6fcc5aaf0994e83ec67" name="dynamic_viscosity"><type>unit&lt; dynamic_viscosity_dimension, cgs::system &gt;</type></typedef>
+<data-member id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1a6e274c6f0530271c90c240ec5bac806d" name="poise" specifiers="static"><type>const dynamic_viscosity</type></data-member>
+</namespace>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.cgs_system_reference.energy_8hpp" name="boost/units/systems/cgs/energy.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="cgs">
+<typedef id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1a6f5ad7e0c55e1ca815b63d7b7c2db970" name="energy"><type>unit&lt; energy_dimension, cgs::system &gt;</type></typedef>
+<data-member id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1a78d2ae2b8a146f80fbfb90d18c844749" name="erg" specifiers="static"><type>const energy</type></data-member>
+<data-member id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1a1ff0ab50829ca06b8504bae6b3db7c84" name="ergs" specifiers="static"><type>const energy</type></data-member>
+</namespace>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.cgs_system_reference.force_8hpp" name="boost/units/systems/cgs/force.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="cgs">
+<typedef id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1a56fd9df27f224a238bce9712658640ab" name="force"><type>unit&lt; force_dimension, cgs::system &gt;</type></typedef>
+<data-member id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1aed51dd85b2fbdaadb89043703da38bad" name="dyne" specifiers="static"><type>const force</type></data-member>
+<data-member id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1a32c90263e7338c5d49ade3df63a1de91" name="dynes" specifiers="static"><type>const force</type></data-member>
+</namespace>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.cgs_system_reference.frequency_8hpp" name="boost/units/systems/cgs/frequency.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="cgs">
+<typedef id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1a2b3cd4f0d962db82526e7f0a40d2c607" name="frequency"><type>unit&lt; frequency_dimension, cgs::system &gt;</type></typedef>
+</namespace>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.cgs_system_reference.io_8hpp" name="boost/units/systems/cgs/io.hpp">
+<namespace name="boost">
+<namespace name="units">
+<function id="doxygen.cgs_system_reference.namespaceboost_1_1units_1a2614ce6161e4927a102cc5ad7c68a2cd" name="name_string"><type>std::string</type><parameter name=""><paramtype>const reduce_unit&lt; cgs::acceleration &gt;::type &amp;</paramtype></parameter></function>
+<function id="doxygen.cgs_system_reference.namespaceboost_1_1units_1a01968ef8cb0ce61f9d72f502f1a7a8d9" name="symbol_string"><type>std::string</type><parameter name=""><paramtype>const reduce_unit&lt; cgs::acceleration &gt;::type &amp;</paramtype></parameter></function>
+<function id="doxygen.cgs_system_reference.namespaceboost_1_1units_1ae5bbb6f782ac0800d4ebe2b574441ab8" name="name_string"><type>std::string</type><parameter name=""><paramtype>const reduce_unit&lt; cgs::current &gt;::type &amp;</paramtype></parameter></function>
+<function id="doxygen.cgs_system_reference.namespaceboost_1_1units_1a08355963c75a788c9780e94801f19e78" name="symbol_string"><type>std::string</type><parameter name=""><paramtype>const reduce_unit&lt; cgs::current &gt;::type &amp;</paramtype></parameter></function>
+<function id="doxygen.cgs_system_reference.namespaceboost_1_1units_1a0db8b9c902a5832ac8bf00cca36d5811" name="name_string"><type>std::string</type><parameter name=""><paramtype>const reduce_unit&lt; cgs::dynamic_viscosity &gt;::type &amp;</paramtype></parameter></function>
+<function id="doxygen.cgs_system_reference.namespaceboost_1_1units_1afdc9184e3b0aa2ac2f4207a637496964" name="symbol_string"><type>std::string</type><parameter name=""><paramtype>const reduce_unit&lt; cgs::dynamic_viscosity &gt;::type &amp;</paramtype></parameter></function>
+<function id="doxygen.cgs_system_reference.namespaceboost_1_1units_1a20f746b2b296b09c5144619d8b1b2509" name="name_string"><type>std::string</type><parameter name=""><paramtype>const reduce_unit&lt; cgs::energy &gt;::type &amp;</paramtype></parameter></function>
+<function id="doxygen.cgs_system_reference.namespaceboost_1_1units_1a3662e7405831e1932f1925a13fffcf27" name="symbol_string"><type>std::string</type><parameter name=""><paramtype>const reduce_unit&lt; cgs::energy &gt;::type &amp;</paramtype></parameter></function>
+<function id="doxygen.cgs_system_reference.namespaceboost_1_1units_1ad6116d31adde9ac95b720240bd9f9202" name="name_string"><type>std::string</type><parameter name=""><paramtype>const reduce_unit&lt; cgs::force &gt;::type &amp;</paramtype></parameter></function>
+<function id="doxygen.cgs_system_reference.namespaceboost_1_1units_1ab1d0043d3855b06b06edce3097dfd896" name="symbol_string"><type>std::string</type><parameter name=""><paramtype>const reduce_unit&lt; cgs::force &gt;::type &amp;</paramtype></parameter></function>
+<function id="doxygen.cgs_system_reference.namespaceboost_1_1units_1aaa29e7e76d6116a6be8a774622006555" name="name_string"><type>std::string</type><parameter name=""><paramtype>const reduce_unit&lt; cgs::kinematic_viscosity &gt;::type &amp;</paramtype></parameter></function>
+<function id="doxygen.cgs_system_reference.namespaceboost_1_1units_1aaed80503bca2cbbbd6919786b456beb7" name="symbol_string"><type>std::string</type><parameter name=""><paramtype>const reduce_unit&lt; cgs::kinematic_viscosity &gt;::type &amp;</paramtype></parameter></function>
+<function id="doxygen.cgs_system_reference.namespaceboost_1_1units_1af545872428d5bf82fbcd6d04a8de2f3a" name="name_string"><type>std::string</type><parameter name=""><paramtype>const reduce_unit&lt; cgs::pressure &gt;::type &amp;</paramtype></parameter></function>
+<function id="doxygen.cgs_system_reference.namespaceboost_1_1units_1acf95dca2c21aded32deaa317288a03dc" name="symbol_string"><type>std::string</type><parameter name=""><paramtype>const reduce_unit&lt; cgs::pressure &gt;::type &amp;</paramtype></parameter></function>
+<function id="doxygen.cgs_system_reference.namespaceboost_1_1units_1aa2bbb655bf7c88969aa45dbf08d50783" name="name_string"><type>std::string</type><parameter name=""><paramtype>const reduce_unit&lt; cgs::wavenumber &gt;::type &amp;</paramtype></parameter></function>
+<function id="doxygen.cgs_system_reference.namespaceboost_1_1units_1aac511e039d53725643d508279e72501e" name="symbol_string"><type>std::string</type><parameter name=""><paramtype>const reduce_unit&lt; cgs::wavenumber &gt;::type &amp;</paramtype></parameter></function>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.cgs_system_reference.kinematic__viscosity_8hpp" name="boost/units/systems/cgs/kinematic_viscosity.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="cgs">
+<typedef id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1a0730058fa7a1fc4f9c600f31ecb82b9f" name="kinematic_viscosity"><type>unit&lt; kinematic_viscosity_dimension, cgs::system &gt;</type></typedef>
+<data-member id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1afc9850ecb63236f9af828be433d176da" name="stoke" specifiers="static"><type>const kinematic_viscosity</type></data-member>
+<data-member id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1a04a77d68e4226c3962285672a1882257" name="stokes" specifiers="static"><type>const kinematic_viscosity</type></data-member>
+</namespace>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.cgs_system_reference.length_8hpp" name="boost/units/systems/cgs/length.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="cgs">
+<typedef id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1a1aa50a9884e2c117a7580e3b8907e7e9" name="length"><type>unit&lt; length_dimension, cgs::system &gt;</type></typedef>
+<data-member id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1aa743fea735b3fc094d497d46df52b2e2" name="centimeter" specifiers="static"><type>const length</type></data-member>
+<data-member id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1ac9395b8640cd26123a74ca989dac9c89" name="centimeters" specifiers="static"><type>const length</type></data-member>
+<data-member id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1af88ef9c0781904657a7e6bb7d696a95b" name="centimetre" specifiers="static"><type>const length</type></data-member>
+<data-member id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1accdf3df119e165cffcb24fea727d1003" name="centimetres" specifiers="static"><type>const length</type></data-member>
+</namespace>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.cgs_system_reference.mass_8hpp" name="boost/units/systems/cgs/mass.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="cgs">
+<typedef id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1aee23c3d7a92a91aa8c40e0672526a692" name="mass"><type>unit&lt; mass_dimension, cgs::system &gt;</type></typedef>
+<data-member id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1aa75ae77125ccd1aad9447205fde4e1b8" name="gram" specifiers="static"><type>const mass</type></data-member>
+<data-member id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1a726d78dd172b3f4cfc9f6b121bde07c7" name="grams" specifiers="static"><type>const mass</type></data-member>
+<data-member id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1a27860313a45948c61e6d9c260c0260e3" name="gramme" specifiers="static"><type>const mass</type></data-member>
+<data-member id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1ad6aee7d9fb85d832fe16b9073f49786c" name="grammes" specifiers="static"><type>const mass</type></data-member>
+</namespace>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.cgs_system_reference.mass__density_8hpp" name="boost/units/systems/cgs/mass_density.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="cgs">
+<typedef id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1a09c43899dabfe9ef86fbe9f420ed1630" name="mass_density"><type>unit&lt; mass_density_dimension, cgs::system &gt;</type></typedef>
+</namespace>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.cgs_system_reference.momentum_8hpp" name="boost/units/systems/cgs/momentum.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="cgs">
+<typedef id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1adf56e0afce36a46bb4bfadb019008ddf" name="momentum"><type>unit&lt; momentum_dimension, cgs::system &gt;</type></typedef>
+</namespace>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.cgs_system_reference.power_8hpp" name="boost/units/systems/cgs/power.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="cgs">
+<typedef id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1a87b02da559d003695f573d362b670e7c" name="power"><type>unit&lt; power_dimension, cgs::system &gt;</type></typedef>
+</namespace>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.cgs_system_reference.pressure_8hpp" name="boost/units/systems/cgs/pressure.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="cgs">
+<typedef id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1a3f34b54f886ccc4893cd9adae3fa4614" name="pressure"><type>unit&lt; pressure_dimension, cgs::system &gt;</type></typedef>
+<data-member id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1ad00c1f4c550e4e9643424888e32e22e7" name="barye" specifiers="static"><type>const pressure</type></data-member>
+<data-member id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1acd6cc3e821fcbfa9863591987cf000b1" name="baryes" specifiers="static"><type>const pressure</type></data-member>
+</namespace>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.cgs_system_reference.time_8hpp" name="boost/units/systems/cgs/time.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="cgs">
+<typedef id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1ad1fe3e528e77ac9a95aa1bd1e8e91d6f" name="time"><type>unit&lt; time_dimension, cgs::system &gt;</type></typedef>
+<data-member id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1acfe6afe1a7bc56906f0495cb08104fad" name="second" specifiers="static"><type>const time</type></data-member>
+<data-member id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1ac785194d67f1b340a77d0e896ff55d4f" name="seconds" specifiers="static"><type>const time</type></data-member>
+</namespace>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.cgs_system_reference.velocity_8hpp" name="boost/units/systems/cgs/velocity.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="cgs">
+<typedef id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1aaca775d0a44d6f54c9499b54e1b8bd8e" name="velocity"><type>unit&lt; velocity_dimension, cgs::system &gt;</type></typedef>
+<data-member id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1abd8c7b6d6d674426f656179cd5937aca" name="centimeter_per_second" specifiers="static"><type>const velocity</type></data-member>
+<data-member id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1a30d509f2f205b92286089522561c87a2" name="centimeters_per_second" specifiers="static"><type>const velocity</type></data-member>
+<data-member id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1acf3eaaec6563e48dd15d2feefc3e7278" name="centimetre_per_second" specifiers="static"><type>const velocity</type></data-member>
+<data-member id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1ab29baa83251cc80f90e74e9fe9bb0cd4" name="centimetres_per_second" specifiers="static"><type>const velocity</type></data-member>
+</namespace>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.cgs_system_reference.volume_8hpp" name="boost/units/systems/cgs/volume.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="cgs">
+<typedef id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1aa1db64612847314ceec14b64d03a5c23" name="volume"><type>unit&lt; volume_dimension, cgs::system &gt;</type></typedef>
+<data-member id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1aee1538050ba34b12799f0cf3aaca2b8c" name="cubic_centimeter" specifiers="static"><type>const volume</type></data-member>
+<data-member id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1ad96b66b5abb1c6408f21abfc4afa6537" name="cubic_centimeters" specifiers="static"><type>const volume</type></data-member>
+<data-member id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1a82776bb4ab62038e834a0f619d1464a1" name="cubic_centimetre" specifiers="static"><type>const volume</type></data-member>
+<data-member id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1a4af71e3a284b011d31b026521f1cacb8" name="cubic_centimetres" specifiers="static"><type>const volume</type></data-member>
+</namespace>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.cgs_system_reference.wavenumber_8hpp" name="boost/units/systems/cgs/wavenumber.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="cgs">
+<typedef id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1a76cee41de61a78088d07ca43c81e9ccb" name="wavenumber"><type>unit&lt; wavenumber_dimension, cgs::system &gt;</type></typedef>
+<data-member id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1a77b49149b385b59accf44f74f51e8472" name="kayser" specifiers="static"><type>const wavenumber</type></data-member>
+<data-member id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1ac01c380b949eb5a6b61d653a35d1d878" name="kaysers" specifiers="static"><type>const wavenumber</type></data-member>
+<data-member id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1a9863fdaa1e9a0dd5435956b7d23d43e5" name="reciprocal_centimeter" specifiers="static"><type>const wavenumber</type></data-member>
+<data-member id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1a6f96936ad0b5d2c8f8420aab006bae5d" name="reciprocal_centimeters" specifiers="static"><type>const wavenumber</type></data-member>
+<data-member id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1ac6155f8ab3fc4aae43a38ba3f6a0bc19" name="reciprocal_centimetre" specifiers="static"><type>const wavenumber</type></data-member>
+<data-member id="doxygen.cgs_system_reference.namespaceboost_1_1units_1_1cgs_1a70160dc331ad2dbbecc7a272081b6150" name="reciprocal_centimetres" specifiers="static"><type>const wavenumber</type></data-member>
+</namespace>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+</library-reference>

@@ -1,0 +1,20 @@
+# Copyright 2023-2024 René Ferdinand Rivera Morell
+# Copyright 2024 Peter Dimov
+# Distributed under the Boost Software License, Version 1.0.
+# https://www.boost.org/LICENSE_1_0.txt
+
+require-b2 5.2 ;
+
+constant boost_dependencies :
+    /boost/mp11//boost_mp11
+    ;
+
+project /boost/describe ;
+
+explicit
+    [ alias boost_describe : : : : <include>include <library>$(boost_dependencies) ]
+    [ alias all : boost_describe test ]
+    ;
+
+call-if : boost-library describe
+    ;

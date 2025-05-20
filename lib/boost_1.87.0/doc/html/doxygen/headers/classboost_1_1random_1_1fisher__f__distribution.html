@@ -1,0 +1,192 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template fisher_f_distribution</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../../boost_random/reference.html#doxygen.headers.fisher__f__distribution_8hpp" title="Header &lt;boost/random/fisher_f_distribution.hpp&gt;">
+<link rel="prev" href="faure_8hpp_1a6c7dfe86dd067eba2cc01d281e6c230d.html" title="Type definition faure">
+<link rel="next" href="classboost_1_1random_1_1fisher__f__distribution_1_1param__type.html" title="Class param_type">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="faure_8hpp_1a6c7dfe86dd067eba2cc01d281e6c230d.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_random/reference.html#doxygen.headers.fisher__f__distribution_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1random_1_1fisher__f__distribution_1_1param__type.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.headers.classboost_1_1random_1_1fisher__f__distribution"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template fisher_f_distribution</span></h2>
+<p>boost::random::fisher_f_distribution</p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../boost_random/reference.html#doxygen.headers.fisher__f__distribution_8hpp" title="Header &lt;boost/random/fisher_f_distribution.hpp&gt;">boost/random/fisher_f_distribution.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> RealType <span class="special">=</span> <span class="keyword">double</span><span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1random_1_1fisher__f__distribution.html" title="Class template fisher_f_distribution">fisher_f_distribution</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">RealType</span> <a name="doxygen.headers.classboost_1_1random_1_1fisher__f__distribution_1a9d562e888813521c3ca74b6f96254dae"></a><span class="identifier">result_type</span><span class="special">;</span>
+  <span class="keyword">typedef</span> <span class="identifier">RealType</span> <a name="doxygen.headers.classboost_1_1random_1_1fisher__f__distribution_1ade2df3b0177735368f6d57c748cbeba5"></a><span class="identifier">input_type</span><span class="special">;</span> 
+
+  <span class="comment">// member classes/structs/unions</span>
+
+  <span class="keyword">class</span> <a class="link" href="classboost_1_1random_1_1fisher__f__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">{</span>
+  <span class="keyword">public</span><span class="special">:</span>
+    <span class="comment">// types</span>
+    <span class="keyword">typedef</span> <a class="link" href="classboost_1_1random_1_1fisher__f__distribution.html" title="Class template fisher_f_distribution">fisher_f_distribution</a> <a class="link" href="classboost_1_1random_1_1fisher__f__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1fisher__f__distribution_1_1param__type_1a9326599a2c9686024d68f10d1132e0f0"><span class="identifier">distribution_type</span></a><span class="special">;</span>
+
+    <span class="comment">// <a class="link" href="classboost_1_1random_1_1fisher__f__distribution_1_1param__type.html#id-1_3_34_5_6_14_1_1_1_3_2-bb">public member functions</a></span>
+    <span class="keyword">explicit</span> <a class="link" href="classboost_1_1random_1_1fisher__f__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1fisher__f__distribution_1_1param__type_1a008e13ceae1664aefa8d7208300eeb22"><span class="identifier">param_type</span></a><span class="special">(</span><span class="identifier">RealType</span> <span class="special">=</span> <span class="number">1</span><span class="special">.</span><span class="number">0</span><span class="special">,</span> <span class="identifier">RealType</span> <span class="special">=</span> <span class="number">1</span><span class="special">.</span><span class="number">0</span><span class="special">)</span><span class="special">;</span>
+    <span class="identifier">RealType</span> <a class="link" href="classboost_1_1random_1_1fisher__f__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1fisher__f__distribution_1_1param__type_1aa3422ca445e3c85af08762c5b1c1ed81"><span class="identifier">m</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+    <span class="identifier">RealType</span> <a class="link" href="classboost_1_1random_1_1fisher__f__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1fisher__f__distribution_1_1param__type_1abe2a20b07a19b3de09b209860039b597"><span class="identifier">n</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+
+    <span class="comment">// <a class="link" href="classboost_1_1random_1_1fisher__f__distribution_1_1param__type.html#id-1_3_34_5_6_14_1_1_1_3_3-bb">friend functions</a></span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits<span class="special">&gt;</span> 
+      <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+      <a class="link" href="classboost_1_1random_1_1fisher__f__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1fisher__f__distribution_1_1param__type_1a36d2820c7e758fa1a94fdd5d74949e54"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1fisher__f__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits<span class="special">&gt;</span> 
+      <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+      <a class="link" href="classboost_1_1random_1_1fisher__f__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1fisher__f__distribution_1_1param__type_1aa94ff75dd5871ee80a6fc0a095c75bd0"><span class="keyword">operator</span><span class="special">&gt;&gt;</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1fisher__f__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">bool</span> <a class="link" href="classboost_1_1random_1_1fisher__f__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1fisher__f__distribution_1_1param__type_1ae6f3b58e629ce7a54b5e18a4f05dbc5a"><span class="keyword">operator</span><span class="special">==</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1fisher__f__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1fisher__f__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">bool</span> <a class="link" href="classboost_1_1random_1_1fisher__f__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1fisher__f__distribution_1_1param__type_1aa559d0d98e88e84417364a89b83cf5b2"><span class="keyword">operator</span><span class="special">!=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1fisher__f__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1fisher__f__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="special">}</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1random_1_1fisher__f__distribution.html#id-1_3_34_5_6_14_1_1_1_6-bb">public member functions</a></span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1random_1_1fisher__f__distribution.html#doxygen.headers.classboost_1_1random_1_1fisher__f__distribution_1abf8601c005dce8ca3a9b8ec5e0602ba3"><span class="identifier">fisher_f_distribution</span></a><span class="special">(</span><span class="identifier">RealType</span> <span class="special">=</span> <span class="number">1</span><span class="special">.</span><span class="number">0</span><span class="special">,</span> <span class="identifier">RealType</span> <span class="special">=</span> <span class="number">1</span><span class="special">.</span><span class="number">0</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1random_1_1fisher__f__distribution.html#doxygen.headers.classboost_1_1random_1_1fisher__f__distribution_1a437166568650a31a07a5308efcc44062"><span class="identifier">fisher_f_distribution</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1fisher__f__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> URNG<span class="special">&gt;</span> <span class="identifier">RealType</span> <a class="link" href="classboost_1_1random_1_1fisher__f__distribution.html#doxygen.headers.classboost_1_1random_1_1fisher__f__distribution_1ac8dd6302fe0668f737e5d4547dd54d7b"><span class="keyword">operator</span><span class="special">(</span><span class="special">)</span></a><span class="special">(</span><span class="identifier">URNG</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> URNG<span class="special">&gt;</span> 
+    <span class="identifier">RealType</span> <a class="link" href="classboost_1_1random_1_1fisher__f__distribution.html#doxygen.headers.classboost_1_1random_1_1fisher__f__distribution_1a928acd7099613e963dce5d68e5795ad4"><span class="keyword">operator</span><span class="special">(</span><span class="special">)</span></a><span class="special">(</span><span class="identifier">URNG</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1fisher__f__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">RealType</span> <a class="link" href="classboost_1_1random_1_1fisher__f__distribution.html#doxygen.headers.classboost_1_1random_1_1fisher__f__distribution_1a884ec5bb5cc653fe1f6a0355b51ac92a"><span class="identifier">m</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">RealType</span> <a class="link" href="classboost_1_1random_1_1fisher__f__distribution.html#doxygen.headers.classboost_1_1random_1_1fisher__f__distribution_1a6d399beceb48b2904219e663ddb6dca8"><span class="identifier">n</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">RealType</span> <a class="link" href="classboost_1_1random_1_1fisher__f__distribution.html#doxygen.headers.classboost_1_1random_1_1fisher__f__distribution_1ae46a9af3be1cc3b661bac5909955cd41"><span class="identifier">min</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">RealType</span> <a class="link" href="classboost_1_1random_1_1fisher__f__distribution.html#doxygen.headers.classboost_1_1random_1_1fisher__f__distribution_1a1c2f1cc88913e2199d42ca2ab9b9b17b"><span class="identifier">max</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1random_1_1fisher__f__distribution_1_1param__type.html" title="Class param_type">param_type</a> <a class="link" href="classboost_1_1random_1_1fisher__f__distribution.html#doxygen.headers.classboost_1_1random_1_1fisher__f__distribution_1a061c1741021082ac7026f555c5c299c0"><span class="identifier">param</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1random_1_1fisher__f__distribution.html#doxygen.headers.classboost_1_1random_1_1fisher__f__distribution_1a7ecfd2f8cff809a3d0c7fc7709256870"><span class="identifier">param</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1fisher__f__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1random_1_1fisher__f__distribution.html#doxygen.headers.classboost_1_1random_1_1fisher__f__distribution_1addf94e87b77f32bff44777bf2402e0e0"><span class="identifier">reset</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1random_1_1fisher__f__distribution.html#id-1_3_34_5_6_14_1_1_1_7-bb">friend functions</a></span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits<span class="special">&gt;</span> 
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+    <a class="link" href="classboost_1_1random_1_1fisher__f__distribution.html#doxygen.headers.classboost_1_1random_1_1fisher__f__distribution_1a2c0c4e69fe4127f561108eadfc91180b"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">,</span> 
+               <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1fisher__f__distribution.html" title="Class template fisher_f_distribution">fisher_f_distribution</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits<span class="special">&gt;</span> 
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+    <a class="link" href="classboost_1_1random_1_1fisher__f__distribution.html#doxygen.headers.classboost_1_1random_1_1fisher__f__distribution_1a52a37335f574089887bcb8ed45067cf1"><span class="keyword">operator</span><span class="special">&gt;&gt;</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">,</span> 
+               <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1fisher__f__distribution.html" title="Class template fisher_f_distribution">fisher_f_distribution</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1random_1_1fisher__f__distribution.html#doxygen.headers.classboost_1_1random_1_1fisher__f__distribution_1a53cd298b5ed0f4cca8a7fb4d64ae004c"><span class="keyword">operator</span><span class="special">==</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1fisher__f__distribution.html" title="Class template fisher_f_distribution">fisher_f_distribution</a> <span class="special">&amp;</span><span class="special">,</span> 
+                  <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1fisher__f__distribution.html" title="Class template fisher_f_distribution">fisher_f_distribution</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1random_1_1fisher__f__distribution.html#doxygen.headers.classboost_1_1random_1_1fisher__f__distribution_1ad8697bbc995d54c66cc50dea6704270f"><span class="keyword">operator</span><span class="special">!=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1fisher__f__distribution.html" title="Class template fisher_f_distribution">fisher_f_distribution</a> <span class="special">&amp;</span><span class="special">,</span> 
+                  <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1fisher__f__distribution.html" title="Class template fisher_f_distribution">fisher_f_distribution</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.34.5.6.13.3.4"></a><h2>Description</h2>
+<p>The Fisher F distribution is a real valued distribution with two parameters m and n.</p>
+<p>It has <span class="inlinemediaobject"><img src="../../images/random//form_12.png"></span>. </p>
+<div class="refsect2">
+<a name="id-1.3.34.5.6.13.3.4.4"></a><h3>
+<a name="id-1_3_34_5_6_14_1_1_1_6-bb"></a><code class="computeroutput">fisher_f_distribution</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.headers.classboost_1_1random_1_1fisher__f__distribution_1abf8601c005dce8ca3a9b8ec5e0602ba3"></a><span class="identifier">fisher_f_distribution</span><span class="special">(</span><span class="identifier">RealType</span> m <span class="special">=</span> <span class="number">1</span><span class="special">.</span><span class="number">0</span><span class="special">,</span> <span class="identifier">RealType</span> n <span class="special">=</span> <span class="number">1</span><span class="special">.</span><span class="number">0</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Constructs a <code class="computeroutput"><a class="link" href="classboost_1_1random_1_1fisher__f__distribution.html" title="Class template fisher_f_distribution">fisher_f_distribution</a></code> from its "m" and "n" parameters.</p>
+<p>Requires: m &gt; 0 and n &gt; 0 </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.headers.classboost_1_1random_1_1fisher__f__distribution_1a437166568650a31a07a5308efcc44062"></a><span class="identifier">fisher_f_distribution</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1fisher__f__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span> param<span class="special">)</span><span class="special">;</span></pre>
+<p>Constructs an <code class="computeroutput"><a class="link" href="classboost_1_1random_1_1fisher__f__distribution.html" title="Class template fisher_f_distribution">fisher_f_distribution</a></code> from its parameters. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> URNG<span class="special">&gt;</span> <span class="identifier">RealType</span> <a name="doxygen.headers.classboost_1_1random_1_1fisher__f__distribution_1ac8dd6302fe0668f737e5d4547dd54d7b"></a><span class="keyword">operator</span><span class="special">(</span><span class="special">)</span><span class="special">(</span><span class="identifier">URNG</span> <span class="special">&amp;</span> urng<span class="special">)</span><span class="special">;</span></pre>
+<p>Returns a random variate distributed according to the F distribution. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> URNG<span class="special">&gt;</span> 
+  <span class="identifier">RealType</span> <a name="doxygen.headers.classboost_1_1random_1_1fisher__f__distribution_1a928acd7099613e963dce5d68e5795ad4"></a><span class="keyword">operator</span><span class="special">(</span><span class="special">)</span><span class="special">(</span><span class="identifier">URNG</span> <span class="special">&amp;</span> urng<span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1fisher__f__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span> param<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns a random variate distributed according to the F distribution with parameters specified by <code class="computeroutput">param</code>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">RealType</span> <a name="doxygen.headers.classboost_1_1random_1_1fisher__f__distribution_1a884ec5bb5cc653fe1f6a0355b51ac92a"></a><span class="identifier">m</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns the "m" parameter of the distribution. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">RealType</span> <a name="doxygen.headers.classboost_1_1random_1_1fisher__f__distribution_1a6d399beceb48b2904219e663ddb6dca8"></a><span class="identifier">n</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns the "n" parameter of the distribution. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">RealType</span> <a name="doxygen.headers.classboost_1_1random_1_1fisher__f__distribution_1ae46a9af3be1cc3b661bac5909955cd41"></a><span class="identifier">min</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns the smallest value that the distribution can produce. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">RealType</span> <a name="doxygen.headers.classboost_1_1random_1_1fisher__f__distribution_1a1c2f1cc88913e2199d42ca2ab9b9b17b"></a><span class="identifier">max</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns the largest value that the distribution can produce. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a class="link" href="classboost_1_1random_1_1fisher__f__distribution_1_1param__type.html" title="Class param_type">param_type</a> <a name="doxygen.headers.classboost_1_1random_1_1fisher__f__distribution_1a061c1741021082ac7026f555c5c299c0"></a><span class="identifier">param</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns the parameters of the distribution. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.headers.classboost_1_1random_1_1fisher__f__distribution_1a7ecfd2f8cff809a3d0c7fc7709256870"></a><span class="identifier">param</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1fisher__f__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span> param<span class="special">)</span><span class="special">;</span></pre>
+<p>Sets the parameters of the distribution. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.headers.classboost_1_1random_1_1fisher__f__distribution_1addf94e87b77f32bff44777bf2402e0e0"></a><span class="identifier">reset</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Effects: Subsequent uses of the distribution do not depend on values produced by any engine prior to invoking reset. </p>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.34.5.6.13.3.4.5"></a><h3>
+<a name="id-1_3_34_5_6_14_1_1_1_7-bb"></a><code class="computeroutput">fisher_f_distribution</code> friend functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits<span class="special">&gt;</span> 
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+  <a name="doxygen.headers.classboost_1_1random_1_1fisher__f__distribution_1a2c0c4e69fe4127f561108eadfc91180b"></a><span class="keyword">operator</span><span class="special">&lt;&lt;</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> os<span class="special">,</span> 
+             <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1fisher__f__distribution.html" title="Class template fisher_f_distribution">fisher_f_distribution</a> <span class="special">&amp;</span> fd<span class="special">)</span><span class="special">;</span></pre>
+<p>Writes an <code class="computeroutput"><a class="link" href="classboost_1_1random_1_1fisher__f__distribution.html" title="Class template fisher_f_distribution">fisher_f_distribution</a></code> to a <code class="computeroutput">std::ostream</code>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits<span class="special">&gt;</span> 
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+  <a name="doxygen.headers.classboost_1_1random_1_1fisher__f__distribution_1a52a37335f574089887bcb8ed45067cf1"></a><span class="keyword">operator</span><span class="special">&gt;&gt;</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> is<span class="special">,</span> 
+             <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1fisher__f__distribution.html" title="Class template fisher_f_distribution">fisher_f_distribution</a> <span class="special">&amp;</span> fd<span class="special">)</span><span class="special">;</span></pre>
+<p>Reads an <code class="computeroutput"><a class="link" href="classboost_1_1random_1_1fisher__f__distribution.html" title="Class template fisher_f_distribution">fisher_f_distribution</a></code> from a <code class="computeroutput">std::istream</code>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.headers.classboost_1_1random_1_1fisher__f__distribution_1a53cd298b5ed0f4cca8a7fb4d64ae004c"></a><span class="keyword">operator</span><span class="special">==</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1fisher__f__distribution.html" title="Class template fisher_f_distribution">fisher_f_distribution</a> <span class="special">&amp;</span> lhs<span class="special">,</span> 
+                <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1fisher__f__distribution.html" title="Class template fisher_f_distribution">fisher_f_distribution</a> <span class="special">&amp;</span> rhs<span class="special">)</span><span class="special">;</span></pre>
+<p>Returns true if the two instances of <code class="computeroutput"><a class="link" href="classboost_1_1random_1_1fisher__f__distribution.html" title="Class template fisher_f_distribution">fisher_f_distribution</a></code> will return identical sequences of values given equal generators. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.headers.classboost_1_1random_1_1fisher__f__distribution_1ad8697bbc995d54c66cc50dea6704270f"></a><span class="keyword">operator</span><span class="special">!=</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1fisher__f__distribution.html" title="Class template fisher_f_distribution">fisher_f_distribution</a> <span class="special">&amp;</span> lhs<span class="special">,</span> 
+                <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1fisher__f__distribution.html" title="Class template fisher_f_distribution">fisher_f_distribution</a> <span class="special">&amp;</span> rhs<span class="special">)</span><span class="special">;</span></pre>
+<p>Returns true if the two instances of <code class="computeroutput"><a class="link" href="classboost_1_1random_1_1fisher__f__distribution.html" title="Class template fisher_f_distribution">fisher_f_distribution</a></code> will return different sequences of values given equal generators. </p>
+</li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2000-2005 Jens Maurer<br>Copyright © 2009, 2010 Steven Watanabe<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="faure_8hpp_1a6c7dfe86dd067eba2cc01d281e6c230d.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_random/reference.html#doxygen.headers.fisher__f__distribution_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1random_1_1fisher__f__distribution_1_1param__type.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

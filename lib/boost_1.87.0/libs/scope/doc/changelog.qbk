@@ -1,0 +1,45 @@
+[/
+ / Copyright 2023-2024 Andrey Semashev
+ /
+ / Distributed under the Boost Software License, Version 1.0.
+ / (See accompanying file LICENSE_1_0.txt or copy at
+ / https://www.boost.org/LICENSE_1_0.txt)
+ /
+ / This document is a part of Boost.Scope library documentation.
+ /]
+
+[section:changelog Changelog]
+
+[heading Boost 1.85]
+
+The library has been accepted into Boost. Updates according to Boost [@https://lists.boost.org/Archives/boost/2024/01/255717.php
+review] comments and conditions:
+
+* Renamed `scope_final` to `defer_guard` and `BOOST_SCOPE_FINAL` to `BOOST_SCOPE_DEFER`. Thanks to Peter Dimov for the
+  [@https://lists.boost.org/Archives/boost/2023/12/255501.php suggestion] during the review. The name "defer" is being
+  used in other programming languages (Go, Swift and even [@https://www.open-std.org/jtc1/sc22/wg14/www/docs/n2895.htm proposed]
+  for inclusion in C) for the functionality similar to `scope_final`.
+* Removed `release` member from the scope guard types. This method was equivalent to `set_active(false)` and existed
+  for compatibility with the C++ Extensions for Library Fundamentals TS. Boost review conclusion indicated that conformance
+  with the TS is not a worthy goal.
+* In `unique_resource`, added `explicit operator bool` as a way to test if the resource in an allocated state, similar
+  to the `allocated` method. This was suggested by Dmitry Arkhipov before the review. Note that the operator does not
+  test the resource value, which is similar to `std::optional`.
+* Added [link scope.unique_resource.simplified_resource_traits `unallocated_resource`] class template for simplifying
+  declaration of resource traits for `unique_resource`. The idea of a more compact `unique_resource` declaration was
+  presented by Janko Dedic in his [@https://lists.boost.org/Archives/boost/2023/11/255424.php review].
+* Added documentation sections describing differences between Boost.Scope and Library Fundamentals TS (see
+  [link scope.scope_guards.comparison_with_library_fundamentals_ts here] and
+  [link scope.unique_resource.comparison_with_library_fundamentals_ts here]).
+* [link scope.unique_resource `unique_resource`] move constructor was modified to preserve the original state of the
+  source argument in case of exception. This deviates from the TS behavior, which specifies to invoke the deleter on
+  the move-constructed resource, but it means the move constructor now maintains strong exception guarantee.
+* Enforced compile-time correctness checks for [link scope.unique_resource `unique_resource`] resource traits specified
+  by user. Improved description of requirements for the resource traits.
+* Many documentation improvements.
+
+[heading 0.1]
+
+Initial release for Boost review.
+
+[endsect]

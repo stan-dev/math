@@ -1,0 +1,25 @@
+# Copyright 2023-2024 René Ferdinand Rivera Morell
+# Copyright 2024 Peter Dimov
+# Distributed under the Boost Software License, Version 1.0.
+# https://www.boost.org/LICENSE_1_0.txt
+
+require-b2 5.2 ;
+
+constant boost_dependencies :
+    /boost/config//boost_config
+    /boost/core//boost_core
+    /boost/detail//boost_detail
+    /boost/mpl//boost_mpl
+    /boost/preprocessor//boost_preprocessor
+    /boost/type_traits//boost_type_traits
+    ;
+
+project /boost/function_types ;
+
+explicit
+    [ alias boost_function_types : : : : <include>include <library>$(boost_dependencies) ]
+    [ alias all : boost_function_types example test ]
+    ;
+
+call-if : boost-library function_types
+    ;

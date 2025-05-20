@@ -1,0 +1,48 @@
+[/
+    Boost.Optional
+
+    Copyright (c) 2015 - 2024 Andrzej Krzemieński
+
+    Distributed under the Boost Software License, Version 1.0.
+    (See accompanying file LICENSE_1_0.txt or copy at
+    http://www.boost.org/LICENSE_1_0.txt)
+]
+
+
+[section:std_comp Comparison with `std::optional`]
+
+[table
+  []
+  [ [[*`boost::optional`]] [[*`std::optional`]] [] ]
+  [ [`optional<int> o = none;`] [`optional<int> o = nullopt;`] [Different name for no-value tag.] ]
+  [ [`optional<X> o {in_place_init, a, b};`] [`optional<int> o {in_place, a, b};`] [Different name for in-place initialization tag.] ]
+  [ [] [`optional<vector<int>> o {in_place, {1, 2, 3}};`
+
+  `o.emplace({4, 5, 6});`] [No in-place initialization with initializer-list in `boost`.] ]
+  [ [`optional<X> o {in_place_init_if, cond, a, b};`] [] [No syntax for conditional in-place initialization in `std`.] ]
+  [ [`optional<X> o {cond, x};`] [] [No syntax for conditional initialization from `T` in `std`.] ]
+  [ [`optional<T> o {U{}};`
+
+  `optional<T> o {optional<U>{}};`] [`optional<T> o = U{};`
+
+  `optional<T> o = optional<U>{}`] [Constructors form `U` and `optional<U>` are explicit in `boost` and implicit in `std`.] ]
+  [ [] [`optional o = 1;`] [No clever deduction of of `optional`'s template parameters in initialization in `boost`. ]]
+  [ [`optional<X const&> o;`] [] [No optional references in `std`.] ]
+  [ [] [`constexpr optional<int> o;`] [No `constexpr` interface in `boost`.] ]
+  [ [`o.map(&f);`
+
+  `o.flat_map(&of);` ] [`o.transform(&f);`
+
+  `o.and_then(&of);`] [Different names and signatures for monadic interface functions. `boost` takes callbacks by value, `std` by universal reference.] ]
+  [ [] [`o.or_else(&of);`] [No `or_else` function in `boost`.] ]
+  [ [`o.value_or_eval(&f);`] [] [No `value_or_eval` function in `std`.] ]
+  [ [] [`optional<T>{} == U{}`;
+
+  `optional<T>{} == optional<U>{}`] [No comparisons with `U` or `optional<U>` in `boost`.] ]
+  [ [`make_optional(cond, v);`] [] [No `make_optional` with condition in `std`.] ]
+  [ [] [`make_optional<T>(a, b);`] [No `make_optional` with specified `T` in `boost`.] ]
+  [ [`std::cout << optional<int>{};`] [] [No printing to IOStreams in `std`.]]
+]
+
+
+[endsect][/ std_comp]

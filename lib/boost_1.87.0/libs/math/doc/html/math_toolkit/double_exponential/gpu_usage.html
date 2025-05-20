@@ -1,0 +1,66 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>GPU Usage</title>
+<link rel="stylesheet" href="../../math.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Math Toolkit 4.2.1">
+<link rel="up" href="../double_exponential.html" title="Double-exponential quadrature">
+<link rel="prev" href="de_caveats.html" title="Caveats">
+<link rel="next" href="de_refes.html" title="References">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="de_caveats.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../double_exponential.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="de_refes.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="math_toolkit.double_exponential.gpu_usage"></a><a class="link" href="gpu_usage.html" title="GPU Usage">GPU Usage</a>
+</h3></div></div></div>
+<pre class="programlisting">    <span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">math</span><span class="special">/</span><span class="identifier">quadrature</span><span class="special">/</span><span class="identifier">exp_sinh</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+
+    <span class="keyword">namespace</span> <span class="identifier">boost</span><span class="special">{</span> <span class="keyword">namespace</span> <span class="identifier">math</span><span class="special">{</span> <span class="keyword">namespace</span> <span class="identifier">quadrature</span> <span class="special">{</span>
+
+    <span class="keyword">template</span> <span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">F</span><span class="special">,</span> <span class="keyword">class</span> <span class="identifier">Real</span><span class="special">,</span> <span class="keyword">class</span> <span class="identifier">Policy</span> <span class="special">=</span> <span class="identifier">policies</span><span class="special">::</span><span class="identifier">policy</span><span class="special">&lt;&gt;</span> <span class="special">&gt;</span>
+    <span class="identifier">__device__</span> <span class="keyword">auto</span> <span class="identifier">exp_sinh_integrate</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">F</span><span class="special">&amp;</span> <span class="identifier">f</span><span class="special">,</span> <span class="identifier">Real</span> <span class="identifier">a</span><span class="special">,</span> <span class="identifier">Real</span> <span class="identifier">b</span><span class="special">,</span> <span class="identifier">Real</span> <span class="identifier">tolerance</span><span class="special">,</span> <span class="identifier">Real</span><span class="special">*</span> <span class="identifier">error</span><span class="special">,</span> <span class="identifier">Real</span><span class="special">*</span> <span class="identifier">L1</span><span class="special">,</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">math</span><span class="special">::</span><span class="identifier">size_t</span><span class="special">*</span> <span class="identifier">levels</span><span class="special">)</span>
+
+    <span class="keyword">template</span> <span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">F</span><span class="special">,</span> <span class="keyword">class</span> <span class="identifier">Real</span><span class="special">,</span> <span class="keyword">class</span> <span class="identifier">Policy</span> <span class="special">=</span> <span class="identifier">policies</span><span class="special">::</span><span class="identifier">policy</span><span class="special">&lt;&gt;</span> <span class="special">&gt;</span>
+    <span class="identifier">__device__</span> <span class="keyword">auto</span> <span class="identifier">exp_sinh_integrate</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">F</span><span class="special">&amp;</span> <span class="identifier">f</span><span class="special">,</span> <span class="identifier">Real</span> <span class="identifier">tolerance</span><span class="special">,</span> <span class="identifier">Real</span><span class="special">*</span> <span class="identifier">error</span><span class="special">,</span> <span class="identifier">Real</span><span class="special">*</span> <span class="identifier">L1</span><span class="special">,</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">math</span><span class="special">::</span><span class="identifier">size_t</span><span class="special">*</span> <span class="identifier">levels</span><span class="special">)</span>
+
+<span class="special">}}}</span>
+</pre>
+<p>
+        Quadrature is additionally able to run on CUDA (NVCC and NVRTC) platforms.
+        The major difference is outlined in the above function signatures. When used
+        on device these are free standing functions instead of using OOP like on
+        the host. The tables of abscissas and weights are stored in shared read only
+        memory on the device instead of being initialized when the class is constructed.
+        An example use case would be in the finite elements method computing a stiffness
+        matrix since it would consist of many different functions.
+      </p>
+</div>
+<div class="copyright-footer">Copyright © 2006-2021 Nikhar Agrawal, Anton Bikineev, Matthew Borland,
+      Paul A. Bristow, Marco Guazzone, Christopher Kormanyos, Hubert Holin, Bruno
+      Lalande, John Maddock, Evan Miller, Jeremy Murphy, Matthew Pulver, Johan Råde,
+      Gautam Sewani, Benjamin Sobotta, Nicholas Thompson, Thijs van den Berg, Daryle
+      Walker and Xiaogang Zhang<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="de_caveats.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../double_exponential.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="de_refes.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

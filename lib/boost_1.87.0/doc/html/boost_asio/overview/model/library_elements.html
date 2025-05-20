@@ -1,0 +1,193 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Supporting Library Elements</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../boost_asio.html" title="Boost.Asio">
+<link rel="up" href="../model.html" title="Asynchronous Model">
+<link rel="prev" href="completion_tokens.html" title="Completion Tokens">
+<link rel="next" href="higher_levels.html" title="Higher Level Abstractions">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="completion_tokens.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../model.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../boost_asio.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="higher_levels.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="boost_asio.overview.model.library_elements"></a><a class="link" href="library_elements.html" title="Supporting Library Elements">Supporting
+        Library Elements</a>
+</h4></div></div></div>
+<p>
+          The Boost.Asio asynchronous model is enabled by the library elements listed
+          in the table below.
+        </p>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                  <p>
+                    Library Element
+                  </p>
+                </th>
+<th>
+                  <p>
+                    Description
+                  </p>
+                </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                  <p>
+                    <code class="computeroutput"><span class="identifier">completion_signature</span></code>
+                    concept
+                  </p>
+                </td>
+<td>
+                  <p>
+                    Defines valid completion signature forms.
+                  </p>
+                </td>
+</tr>
+<tr>
+<td>
+                  <p>
+                    <code class="computeroutput"><span class="identifier">completion_handler_for</span></code>
+                    concept
+                  </p>
+                </td>
+<td>
+                  <p>
+                    Determines whether a completion handler is callable with a given
+                    set of completion signatures.
+                  </p>
+                </td>
+</tr>
+<tr>
+<td>
+                  <p>
+                    <a class="link" href="../../reference/async_result.html" title="async_result">async_result</a>
+                    trait
+                  </p>
+                </td>
+<td>
+                  <p>
+                    Converts a completion signature and completion token into a concrete
+                    completion handler, and launches the operation.
+                  </p>
+                </td>
+</tr>
+<tr>
+<td>
+                  <p>
+                    <a class="link" href="../../reference/async_initiate.html" title="async_initiate">async_initiate</a>
+                    function
+                  </p>
+                </td>
+<td>
+                  <p>
+                    Helper function to simplify use of the <code class="computeroutput"><span class="identifier">async_result</span></code>
+                    trait.
+                  </p>
+                </td>
+</tr>
+<tr>
+<td>
+                  <p>
+                    <code class="computeroutput"><span class="identifier">completion_token_for</span></code>
+                    concept
+                  </p>
+                </td>
+<td>
+                  <p>
+                    Determines whether a completion token produces a completion handler
+                    for a given set of completion signatures.
+                  </p>
+                </td>
+</tr>
+<tr>
+<td>
+                  <p>
+                    <a class="link" href="../../reference/associator.html" title="associator">associator</a>
+                    trait
+                  </p>
+                </td>
+<td>
+                  <p>
+                    Automatically propagates all associators through layers of abstraction.
+                  </p>
+                </td>
+</tr>
+<tr>
+<td>
+                  <p>
+                    <a class="link" href="../../reference/associated_executor.html" title="associated_executor">associated_executor</a>
+                    trait, <code class="computeroutput"><span class="identifier">associated_executor_t</span></code>
+                    type alias, and <a class="link" href="../../reference/get_associated_executor.html" title="get_associated_executor">get_associated_executor</a>
+                    function
+                  </p>
+                </td>
+<td>
+                  <p>
+                    Defines an asynchronous agent’s associated executor.
+                  </p>
+                </td>
+</tr>
+<tr>
+<td>
+                  <p>
+                    <a class="link" href="../../reference/associated_allocator.html" title="associated_allocator">associated_allocator</a>
+                    trait, <code class="computeroutput"><span class="identifier">associated_allocator_t</span></code>
+                    type alias, and <a class="link" href="../../reference/get_associated_allocator.html" title="get_associated_allocator">get_associated_allocator</a>
+                    function
+                  </p>
+                </td>
+<td>
+                  <p>
+                    Defines an asynchronous agent’s associated allocator.
+                  </p>
+                </td>
+</tr>
+<tr>
+<td>
+                  <p>
+                    <a class="link" href="../../reference/associated_cancellation_slot.html" title="associated_cancellation_slot">associated_cancellation_slot</a>
+                    trait, <code class="computeroutput"><span class="identifier">associated_cancellation_slot_t</span></code>
+                    type alias, and <a class="link" href="../../reference/get_associated_cancellation_slot.html" title="get_associated_cancellation_slot">get_associated_cancellation_slot</a>
+                    function
+                  </p>
+                </td>
+<td>
+                  <p>
+                    Defines an asynchronous agent’s associated cancellation slot.
+                  </p>
+                </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="copyright-footer">Copyright © 2003-2024 Christopher M. Kohlhoff<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="completion_tokens.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../model.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../boost_asio.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="higher_levels.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

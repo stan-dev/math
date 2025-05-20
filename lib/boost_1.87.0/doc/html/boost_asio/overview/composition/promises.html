@@ -1,0 +1,139 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Promises</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../boost_asio.html" title="Boost.Asio">
+<link rel="up" href="../composition.html" title="Composition and Completion Tokens">
+<link rel="prev" href="deferred.html" title="Deferred Operations">
+<link rel="next" href="parallel_group.html" title="Co-ordinating Parallel Operations">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="deferred.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../composition.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../boost_asio.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="parallel_group.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="boost_asio.overview.composition.promises"></a><a class="link" href="promises.html" title="Promises">Promises</a>
+</h4></div></div></div>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+            This is an experimental feature.
+          </p></td></tr>
+</table></div>
+<p>
+          The <a class="link" href="../../reference/experimental__promise.html" title="experimental::promise"><code class="computeroutput"><span class="identifier">experimental</span><span class="special">::</span><span class="identifier">promise</span></code></a> type and <a class="link" href="../../reference/experimental__use_promise.html" title="experimental::use_promise"><code class="computeroutput"><span class="identifier">experimental</span><span class="special">::</span><span class="identifier">use_promise</span></code></a> completion token allow
+          eager execution and synchronisation of asynchronous operations. For example:
+        </p>
+<pre class="programlisting"><span class="keyword">auto</span> <span class="identifier">promise</span> <span class="special">=</span> <span class="identifier">async_read</span><span class="special">(</span>
+    <span class="identifier">stream</span><span class="special">,</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">buffer</span><span class="special">(</span><span class="identifier">my_buffer</span><span class="special">),</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">experimental</span><span class="special">::</span><span class="identifier">use_promise</span><span class="special">);</span>
+
+<span class="special">...</span> <span class="keyword">do</span> <span class="identifier">other</span> <span class="identifier">stuff</span> <span class="keyword">while</span> <span class="identifier">the</span> <span class="identifier">read</span> <span class="identifier">is</span> <span class="identifier">going</span> <span class="identifier">on</span> <span class="special">...</span>
+
+<span class="identifier">promise</span><span class="special">.</span><span class="identifier">async_wait</span><span class="special">(</span> <span class="comment">// completion the operation</span>
+    <span class="special">[](</span><span class="identifier">error_code</span> <span class="identifier">ec</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">bytes_read</span><span class="special">)</span>
+    <span class="special">{</span>
+      <span class="special">...</span>
+    <span class="special">});</span>
+</pre>
+<p>
+          Promises can be safely disregarded if the result is no longer required.
+          Different operations can be combined to either wait for all to complete
+          or for one to complete (and cancel the rest). For example, to wait for
+          one to complete:
+        </p>
+<pre class="programlisting"><span class="keyword">auto</span> <span class="identifier">timeout_promise</span> <span class="special">=</span>
+  <span class="identifier">timer</span><span class="special">.</span><span class="identifier">async_wait</span><span class="special">(</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">experimental</span><span class="special">::</span><span class="identifier">use_promise</span><span class="special">);</span>
+
+<span class="keyword">auto</span> <span class="identifier">read_promise</span> <span class="special">=</span> <span class="identifier">async_read</span><span class="special">(</span>
+    <span class="identifier">stream</span><span class="special">,</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">buffer</span><span class="special">(</span><span class="identifier">my_buffer</span><span class="special">),</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">experimental</span><span class="special">::</span><span class="identifier">use_promise</span><span class="special">);</span>
+
+<span class="keyword">auto</span> <span class="identifier">promise</span> <span class="special">=</span>
+  <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">experimental</span><span class="special">::</span><span class="identifier">make_parallel_group</span><span class="special">(</span>
+    <span class="identifier">timeout_promise</span><span class="special">.</span><span class="identifier">async_wait</span><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">deferred</span><span class="special">),</span>
+    <span class="identifier">read_promise</span><span class="special">.</span><span class="identifier">async_wait</span><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">deferred</span><span class="special">)</span>
+  <span class="special">).</span><span class="identifier">async_wait</span><span class="special">(</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">experimental</span><span class="special">::</span><span class="identifier">wait_for_one</span><span class="special">(),</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">experimental</span><span class="special">::</span><span class="identifier">use_promise</span><span class="special">);</span>
+
+<span class="identifier">promise</span><span class="special">.</span><span class="identifier">async_wait</span><span class="special">(</span>
+    <span class="special">[](</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">array</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span><span class="special">,</span> <span class="number">2</span><span class="special">&gt;</span> <span class="identifier">order</span><span class="special">,</span>
+       <span class="identifier">error_code</span> <span class="identifier">timer_ec</span><span class="special">,</span>
+       <span class="identifier">error_code</span> <span class="identifier">read_ec</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">read_size</span><span class="special">)</span>
+    <span class="special">{</span>
+      <span class="keyword">if</span> <span class="special">(</span><span class="identifier">order</span><span class="special">[</span><span class="number">0</span><span class="special">]</span> <span class="special">==</span> <span class="number">0</span><span class="special">)</span>
+      <span class="special">{</span>
+        <span class="comment">// timed out</span>
+      <span class="special">}</span>
+      <span class="keyword">else</span>
+      <span class="special">{</span>
+        <span class="comment">// completed in time</span>
+      <span class="special">}</span>
+    <span class="special">});</span>
+</pre>
+<p>
+          or to wait for all to complete:
+        </p>
+<pre class="programlisting"><span class="keyword">auto</span> <span class="identifier">write_promise</span> <span class="special">=</span> <span class="identifier">async_write</span><span class="special">(</span>
+    <span class="identifier">stream</span><span class="special">,</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">buffer</span><span class="special">(</span><span class="identifier">my_write_buffer</span><span class="special">),</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">experimental</span><span class="special">::</span><span class="identifier">use_promise</span><span class="special">);</span>
+
+<span class="keyword">auto</span> <span class="identifier">read_promise</span> <span class="special">=</span> <span class="identifier">async_read</span><span class="special">(</span>
+    <span class="identifier">stream</span><span class="special">,</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">buffer</span><span class="special">(</span><span class="identifier">my_buffer</span><span class="special">),</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">experimental</span><span class="special">::</span><span class="identifier">use_promise</span><span class="special">);</span>
+
+<span class="keyword">auto</span> <span class="identifier">promise</span> <span class="special">=</span>
+  <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">experimental</span><span class="special">::</span><span class="identifier">make_parallel_group</span><span class="special">(</span>
+    <span class="identifier">timeout_promise</span><span class="special">.</span><span class="identifier">async_wait</span><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">deferred</span><span class="special">),</span>
+    <span class="identifier">read_promise</span><span class="special">.</span><span class="identifier">async_wait</span><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">deferred</span><span class="special">)</span>
+  <span class="special">).</span><span class="identifier">async_wait</span><span class="special">(</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">experimental</span><span class="special">::</span><span class="identifier">wait_for_all</span><span class="special">(),</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">experimental</span><span class="special">::</span><span class="identifier">use_promise</span><span class="special">);</span>
+
+<span class="identifier">promise</span><span class="special">.</span><span class="identifier">async_wait</span><span class="special">(</span>
+    <span class="special">[](</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">array</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span><span class="special">,</span> <span class="number">2</span><span class="special">&gt;</span> <span class="identifier">order</span><span class="special">,</span>
+       <span class="identifier">error_code</span> <span class="identifier">timer_ec</span><span class="special">,</span>
+       <span class="identifier">error_code</span> <span class="identifier">read_ec</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">read_size</span><span class="special">)</span>
+    <span class="special">{</span>
+      <span class="comment">// ...</span>
+    <span class="special">});</span>
+</pre>
+<h6>
+<a name="boost_asio.overview.composition.promises.h0"></a>
+          <span class="phrase"><a name="boost_asio.overview.composition.promises.see_also"></a></span><a class="link" href="promises.html#boost_asio.overview.composition.promises.see_also">See
+          Also</a>
+        </h6>
+<p>
+          <a class="link" href="../../reference/experimental__promise.html" title="experimental::promise">promise</a>,
+          <a class="link" href="../../reference/experimental__use_promise.html" title="experimental::use_promise">use_promise</a>.
+        </p>
+</div>
+<div class="copyright-footer">Copyright © 2003-2024 Christopher M. Kohlhoff<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="deferred.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../composition.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../boost_asio.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="parallel_group.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

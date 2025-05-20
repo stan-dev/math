@@ -1,0 +1,21 @@
+[/
+    Copyright (c) 2019-2024 Ruben Perez Hidalgo (rubenperez038 at gmail dot com)
+   
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+]
+
+[section:boost__mysql__SocketStream SocketStream concept]
+
+`SocketStream` should meet the [reflink Stream] requirements.
+Additionally, it should have a `lowest_layer_type` member type,
+and a `lowest_layer` member function, returning a `lowest_layer_type&`,
+following Asio's layered stream model. Additionally,
+`lowest_layer_type` should inherit from an instantiation of 
+[asioreflink basic_stream_socket basic_stream_socket].
+
+The types `boost::asio::basic_stream_socket<Protocol, Executor>` and
+`boost::asio::ssl::stream<boost::asio::basic_stream_socket<Protocol, Executor>>`
+meet these requirements.
+
+[endsect]

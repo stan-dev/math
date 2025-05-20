@@ -1,0 +1,787 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template basic_ptree</title>
+<link rel="stylesheet" href="../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../property_tree/reference.html#doxygen.ptree_8hpp" title="Header &lt;boost/property_tree/ptree.hpp&gt;">
+<link rel="prev" href="namespaceboost_1_1property__tree_1_1json__parser_1a49f6a7c920e5ac943603a5f10ccf3a32.html" title="Function template write_json">
+<link rel="next" href="structboost_1_1property__tree_1_1path__of.html" title="Struct template path_of">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../boost.png"></td>
+<td align="center"><a href="../../../index.html">Home</a></td>
+<td align="center"><a href="../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="namespaceboost_1_1property__tree_1_1json__parser_1a49f6a7c920e5ac943603a5f10ccf3a32.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../property_tree/reference.html#doxygen.ptree_8hpp"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="structboost_1_1property__tree_1_1path__of.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.classboost_1_1property__tree_1_1basic__ptree"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template basic_ptree</span></h2>
+<p>boost::property_tree::basic_ptree</p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../property_tree/reference.html#doxygen.ptree_8hpp" title="Header &lt;boost/property_tree/ptree.hpp&gt;">boost/property_tree/ptree.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Key<span class="special">,</span> <span class="keyword">typename</span> Data<span class="special">,</span> <span class="keyword">typename</span> KeyCompare<span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html" title="Class template basic_ptree">basic_ptree</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptreetypes">types</a></span>
+  <span class="keyword">typedef</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html" title="Class template basic_ptree">basic_ptree</a><span class="special">&lt;</span> <span class="identifier">Key</span><span class="special">,</span> <span class="identifier">Data</span><span class="special">,</span> <span class="identifier">KeyCompare</span> <span class="special">&gt;</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a48b6e6ddd60a49a5b6b9f49cb590b721"><span class="identifier">self_type</span></a><span class="special">;</span>  
+  <span class="keyword">typedef</span> <span class="identifier">Key</span>                                  <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a31bf07528ac3e936c80138209901c37d"></a><span class="identifier">key_type</span><span class="special">;</span>   
+  <span class="keyword">typedef</span> <span class="identifier">Data</span>                                 <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a7111255820d11446840c438332d0e81c"></a><span class="identifier">data_type</span><span class="special">;</span>  
+  <span class="keyword">typedef</span> <span class="identifier">KeyCompare</span>                           <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a2188aeb9bbfcfb5b82547e5f517fbb0c"></a><span class="identifier">key_compare</span><span class="special">;</span>
+  <span class="keyword">typedef</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">pair</span><span class="special">&lt;</span> <span class="keyword">const</span> <span class="identifier">Key</span><span class="special">,</span> <span class="identifier">self_type</span> <span class="special">&gt;</span>    <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a12a2eca5c2e1f10eed5d2bc9692184ab"></a><span class="identifier">value_type</span><span class="special">;</span> 
+  <span class="keyword">typedef</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span>                          <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a9630565764bbc2488c51758ce1ead5ef"></a><span class="identifier">size_type</span><span class="special">;</span>  
+  <span class="keyword">typedef</span> <a class="link" href="structboost_1_1property__tree_1_1path__of.html" title="Struct template path_of">path_of</a><span class="special">&lt;</span> <span class="identifier">Key</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span>                 <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1acc7631e33aa1715ef84b9d867483122c"></a><span class="identifier">path_type</span><span class="special">;</span>  
+
+  <span class="comment">// <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#id-1_3_32_10_6_1_1_1_10-bb">public member functions</a></span>
+  <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a24a1cbd98ac15c6986a4fff7be2282d7"><span class="identifier">basic_ptree</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a44ef4e187cd5c78b28cb9e65f8f860cd"><span class="identifier">basic_ptree</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">data_type</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1af735c1b46da5089ae7e2db89a086ae71"><span class="identifier">basic_ptree</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">self_type</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a6739376ed89b084313a593825c2d42dc"><span class="special">~</span><span class="identifier">basic_ptree</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">self_type</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a56ccf57a34241b0cc89dc3f01091ec01"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">self_type</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a2aad746fdfbbd095ad30c4245d9d3811"><span class="identifier">swap</span></a><span class="special">(</span><span class="identifier">self_type</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">size_type</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a27dc331f1ac8d21cd9c177b11ed13956"><span class="identifier">size</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">size_type</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a85ecf9964703138f7b5763113710e3fb"><span class="identifier">max_size</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a8be352d970c17b5c712214c04eb91c3a"><span class="identifier">empty</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">iterator</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a0ec697ab6ed408f31109b261ef224459"><span class="identifier">begin</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">const_iterator</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1adb7f6b5c35f805d4889a510041d7cde0"><span class="identifier">begin</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">iterator</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1ac939aba3c530dc640433d915fdadb068"><span class="identifier">end</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">const_iterator</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1af1e9e6d2dcf62865a4d7d4cfa323eaf8"><span class="identifier">end</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">reverse_iterator</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a6bd79207611a18336111a746a06239c7"><span class="identifier">rbegin</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">const_reverse_iterator</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1ad2f79f4b5582c70abb94a1f0306b1640"><span class="identifier">rbegin</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">reverse_iterator</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1ac98e8fbea046f97ca641d9a7160aa9f2"><span class="identifier">rend</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">const_reverse_iterator</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a9c7fb87f7b3f4c9d6129c4bf1a6729c2"><span class="identifier">rend</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">value_type</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a7d6f785cff8fbb9c0e1806884caf1ba1"><span class="identifier">front</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">const</span> <span class="identifier">value_type</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1ad84d411bca35e31a109076622ef46b1a"><span class="identifier">front</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">value_type</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a44939c7587b88f87abbb4bebbf3bf389"><span class="identifier">back</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">const</span> <span class="identifier">value_type</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1acddcf929a2da4468e81000373c3b7a4a"><span class="identifier">back</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">iterator</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1ab1f32d903e64ec84111c4ac46eb949d3"><span class="identifier">insert</span></a><span class="special">(</span><span class="identifier">iterator</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">value_type</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> It<span class="special">&gt;</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1afe887b8ba660de2702fe11f5c37c9eda"><span class="identifier">insert</span></a><span class="special">(</span><span class="identifier">iterator</span><span class="special">,</span> <span class="identifier">It</span><span class="special">,</span> <span class="identifier">It</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">iterator</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a4db9bc7731e85e54cc02e1930d9f5576"><span class="identifier">erase</span></a><span class="special">(</span><span class="identifier">iterator</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">iterator</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a42eef638059d125c407ee9f6174b306d"><span class="identifier">erase</span></a><span class="special">(</span><span class="identifier">iterator</span><span class="special">,</span> <span class="identifier">iterator</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">iterator</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a72bf6dde301828877175cdfd7c73a851"><span class="identifier">push_front</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">value_type</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">iterator</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a286d96ceddecf0270c1779b9f6bfb7fe"><span class="identifier">push_back</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">value_type</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1ac7775c435cd76d5b66b6b9d7c5daddae"><span class="identifier">pop_front</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a6231308090ff500434d62a681cfcd78a"><span class="identifier">pop_back</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1adf23f8a3823d423144eaa02536ef7bba"><span class="identifier">reverse</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Compare<span class="special">&gt;</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1aef345bf5755acc5f69b58efb5e57d150"><span class="identifier">sort</span></a><span class="special">(</span><span class="identifier">Compare</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1ab7b9dc30affd05bad56e2d55d4769bfb"><span class="identifier">sort</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a9d67bc3963504a467111a2cd8b9d4714"><span class="keyword">operator</span><span class="special">==</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">self_type</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a5f3561bbaf681b93ab67257248b89e09"><span class="keyword">operator</span><span class="special">!=</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">self_type</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">assoc_iterator</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a3764c1fab771b2209e59311dcee34cfc"><span class="identifier">ordered_begin</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">const_assoc_iterator</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a7bd911a8908362f6572eb91cfc2508d8"><span class="identifier">ordered_begin</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">assoc_iterator</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a0fed170f656c30addf4b2a0ad9456e83"><span class="identifier">not_found</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">const_assoc_iterator</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1acf8d78043900d77fced7fcb401596341"><span class="identifier">not_found</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">assoc_iterator</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1ac4306a61333101a4e5b50b03d0e2d645"><span class="identifier">find</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">key_type</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">const_assoc_iterator</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a78b7975c530010ad1306ed0e9a413734"><span class="identifier">find</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">key_type</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">pair</span><span class="special">&lt;</span> <span class="identifier">assoc_iterator</span><span class="special">,</span> <span class="identifier">assoc_iterator</span> <span class="special">&gt;</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1ac01421835e00cba89dfa7c3b543231eb"><span class="identifier">equal_range</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">key_type</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">pair</span><span class="special">&lt;</span> <span class="identifier">const_assoc_iterator</span><span class="special">,</span> <span class="identifier">const_assoc_iterator</span> <span class="special">&gt;</span> 
+  <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1ad7f8f3d793fecd712c0dbe61b9622fb0"><span class="identifier">equal_range</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">key_type</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">size_type</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a899e7323ed1ea8a5b2f8f7b5067572c1"><span class="identifier">count</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">key_type</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">size_type</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1aba76850e5befb56996d668d2d8f2a345"><span class="identifier">erase</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">key_type</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">iterator</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1ad3d3f3cc331215bee0642ac60c89bd33"><span class="identifier">to_iterator</span></a><span class="special">(</span><span class="identifier">assoc_iterator</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">const_iterator</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a3e729e0ae9372334b19d35f45087fed8"><span class="identifier">to_iterator</span></a><span class="special">(</span><span class="identifier">const_assoc_iterator</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">data_type</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a909b71a6c517872a216dacb0f19791ba"><span class="identifier">data</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">const</span> <span class="identifier">data_type</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a904e76a4a78c79c4b54cb2ef4355a333"><span class="identifier">data</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a08de3c0b8c439b49eb506d58a1bd02df"><span class="identifier">clear</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">self_type</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1af85fdd27eb88311cbc028566ac46f806"><span class="identifier">get_child</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">path_type</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">const</span> <span class="identifier">self_type</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1ad29ad90d49b59cf7bd2dbdc18fab0846"><span class="identifier">get_child</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">path_type</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">self_type</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1ae63ab3f42b1066d9b87203f07ab9d75f"><span class="identifier">get_child</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">path_type</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">self_type</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">const</span> <span class="identifier">self_type</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a884adffecb61015f770d9830e495f5a8"><span class="identifier">get_child</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">path_type</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">self_type</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a4661e85935204139bdf9299713ab3b97"><span class="identifier">get_child</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">path_type</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">self_type</span> <span class="special">&amp;&amp;</span><span class="special">)</span> <span class="keyword">const</span> <span class="special">=</span> <span class="keyword">delete</span><span class="special">;</span>
+  <span class="identifier">optional</span><span class="special">&lt;</span> <span class="identifier">self_type</span> <span class="special">&amp;</span> <span class="special">&gt;</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a7042acab0709c228bca2955c84f0ee68"><span class="identifier">get_child_optional</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">path_type</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">optional</span><span class="special">&lt;</span> <span class="keyword">const</span> <span class="identifier">self_type</span> <span class="special">&amp;</span> <span class="special">&gt;</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a5647c909c16d427a6bfa6d57160ab377"><span class="identifier">get_child_optional</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">path_type</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">self_type</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1aa1e246433737edeb1559da4338d11be0"><span class="identifier">put_child</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">path_type</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">self_type</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">self_type</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1adff558d0b0ad638c511030a5b4d81bb6"><span class="identifier">add_child</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">path_type</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">self_type</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Type<span class="special">,</span> <span class="keyword">typename</span> Translator<span class="special">&gt;</span> 
+    <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a2be8e39d3b23f68f6e338c0d020dbc5b"><span class="identifier">get_value</span></a><span class="special">(</span><span class="identifier">Translator</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Type<span class="special">&gt;</span> <span class="identifier">Type</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1aaf012b466ea9238fafc6f9a0ca4e3fc6"><span class="identifier">get_value</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Type<span class="special">,</span> <span class="keyword">typename</span> Translator<span class="special">&gt;</span> 
+    <span class="identifier">Type</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1aa8708c8593aa50fc29054bf7e66b3721"><span class="identifier">get_value</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">Type</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">Translator</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Ch<span class="special">,</span> <span class="keyword">typename</span> Translator<span class="special">&gt;</span> 
+    <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1aa549a759e86cf4d015da7d939f964a7c"><span class="identifier">get_value</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">Ch</span> <span class="special">*</span><span class="special">,</span> <span class="identifier">Translator</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Type<span class="special">&gt;</span> <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1ae6f6ef87e55ef13e80a1fdd607edef7c"><span class="identifier">get_value</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">Type</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Ch<span class="special">&gt;</span> <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1accf9e4c78ef92e3ae9e6115a06357c64"><span class="identifier">get_value</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">Ch</span> <span class="special">*</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Type<span class="special">,</span> <span class="keyword">typename</span> Translator<span class="special">&gt;</span> 
+    <span class="identifier">optional</span><span class="special">&lt;</span> <span class="identifier">Type</span> <span class="special">&gt;</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a19dbd9979ae83c75e1dab73a24ec9027"><span class="identifier">get_value_optional</span></a><span class="special">(</span><span class="identifier">Translator</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Type<span class="special">&gt;</span> <span class="identifier">optional</span><span class="special">&lt;</span> <span class="identifier">Type</span> <span class="special">&gt;</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a1809fe8feb2fc50445e638881c3145c8"><span class="identifier">get_value_optional</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Type<span class="special">,</span> <span class="keyword">typename</span> Translator<span class="special">&gt;</span> 
+    <span class="keyword">void</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a06067eeada01a32051088a92f266181f"><span class="identifier">put_value</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">Type</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">Translator</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Type<span class="special">&gt;</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1afb49cf9a1715a1398bea934ca3df2863"><span class="identifier">put_value</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">Type</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Type<span class="special">,</span> <span class="keyword">typename</span> Translator<span class="special">&gt;</span> 
+    <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a96d2c472acb55007b36e93131ecee67e"><span class="identifier">get</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">path_type</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">Translator</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Type<span class="special">&gt;</span> <span class="identifier">Type</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1ac5015f7e008d2de5436f2823b02adaf4"><span class="identifier">get</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">path_type</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Type<span class="special">,</span> <span class="keyword">typename</span> Translator<span class="special">&gt;</span> 
+    <span class="identifier">Type</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1aef3ce95985eb796c29c681fec0296d80"><span class="identifier">get</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">path_type</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">Type</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">Translator</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Ch<span class="special">,</span> <span class="keyword">typename</span> Translator<span class="special">&gt;</span> 
+    <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a4d1f02cc07b2231445ca2ada39bc2086"><span class="identifier">get</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">path_type</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">Ch</span> <span class="special">*</span><span class="special">,</span> <span class="identifier">Translator</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Type<span class="special">&gt;</span> 
+    <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1ac9b8a578b8f94ea13cf2aafd03b4bcd5"><span class="identifier">get</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">path_type</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">Type</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Ch<span class="special">&gt;</span> <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1acaa69aa960a3dd991c3eb26e0f470be2"><span class="identifier">get</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">path_type</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">Ch</span> <span class="special">*</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Type<span class="special">,</span> <span class="keyword">typename</span> Translator<span class="special">&gt;</span> 
+    <span class="identifier">optional</span><span class="special">&lt;</span> <span class="identifier">Type</span> <span class="special">&gt;</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a6aa25be019cf4eac81730d55623422e2"><span class="identifier">get_optional</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">path_type</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">Translator</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Type<span class="special">&gt;</span> 
+    <span class="identifier">optional</span><span class="special">&lt;</span> <span class="identifier">Type</span> <span class="special">&gt;</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a88ed3f9fb2fe35c23dcb0f334c72b8dd"><span class="identifier">get_optional</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">path_type</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Type<span class="special">,</span> <span class="keyword">typename</span> Translator<span class="special">&gt;</span> 
+    <span class="identifier">self_type</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a26c9f5391a75e4f7941898a8f930a78c"><span class="identifier">put</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">path_type</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">Type</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">Translator</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Type<span class="special">&gt;</span> <span class="identifier">self_type</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a816590393435630d01564ab88c52ff72"><span class="identifier">put</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">path_type</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">Type</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Type<span class="special">,</span> <span class="keyword">typename</span> Translator<span class="special">&gt;</span> 
+    <span class="identifier">self_type</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1ad80ba2daa72416713da418e2bb05db0b"><span class="identifier">add</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">path_type</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">Type</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">Translator</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Type<span class="special">&gt;</span> <span class="identifier">self_type</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a840e25945d8fae99685de3f4b3b9d954"><span class="identifier">add</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">path_type</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">Type</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#id-1_3_32_10_6_1_1_1_11-bb">private member functions</a></span>
+  <span class="identifier">self_type</span> <span class="special">*</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1aa780d4faf27dcef946a0da51f0f9b09c"><span class="identifier">walk_path</span></a><span class="special">(</span><span class="identifier">path_type</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">self_type</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a5a7c44be671abe36043261e18353e94c"><span class="identifier">force_path</span></a><span class="special">(</span><span class="identifier">path_type</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.32.10.7.3.4"></a><h2>Description</h2>
+<p>Property tree main structure. A property tree is a hierarchical data structure which has one element of type <code class="computeroutput">Data</code> in each node, as well as an ordered sequence of sub-nodes, which are additionally identified by a non-unique key of type <code class="computeroutput">Key</code>.</p>
+<p>Key equivalency is defined by <code class="computeroutput">KeyCompare</code>, a predicate defining a strict weak ordering.</p>
+<p>Property tree defines a Container-like interface to the (key-node) pairs of its direct sub-nodes. The iterators are bidirectional. The sequence of nodes is held in insertion order, not key order. </p>
+<div class="refsect2">
+<a name="id-1.3.32.10.7.3.4.5"></a><h3>
+<a name="doxygen.classboost_1_1property__tree_1_1basic__ptreetypes"></a><code class="computeroutput">basic_ptree</code> 
+        public
+       types</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem">
+<p>
+<span class="keyword">typedef</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html" title="Class template basic_ptree">basic_ptree</a><span class="special">&lt;</span> <span class="identifier">Key</span><span class="special">,</span> <span class="identifier">Data</span><span class="special">,</span> <span class="identifier">KeyCompare</span> <span class="special">&gt;</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a48b6e6ddd60a49a5b6b9f49cb590b721"></a><span class="identifier">self_type</span><span class="special">;</span></p>
+<p>Simpler way to refer to this <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html" title="Class template basic_ptree">basic_ptree</a>&lt;C,K,P,A&gt; type. Note that this is private, and made public only for doxygen. </p>
+</li></ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.32.10.7.3.4.6"></a><h3>
+<a name="id-1_3_32_10_6_1_1_1_10-bb"></a><code class="computeroutput">basic_ptree</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a24a1cbd98ac15c6986a4fff7be2282d7"></a><span class="identifier">basic_ptree</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Creates a node with no children and default-constructed data. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a44ef4e187cd5c78b28cb9e65f8f860cd"></a><span class="identifier">basic_ptree</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">data_type</span> <span class="special">&amp;</span> data<span class="special">)</span><span class="special">;</span></pre>
+<p>Creates a node with no children and a copy of the given data. </p>
+</li>
+<li class="listitem"><pre class="literallayout"><a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1af735c1b46da5089ae7e2db89a086ae71"></a><span class="identifier">basic_ptree</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">self_type</span> <span class="special">&amp;</span> rhs<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a6739376ed89b084313a593825c2d42dc"></a><span class="special">~</span><span class="identifier">basic_ptree</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">self_type</span> <span class="special">&amp;</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a56ccf57a34241b0cc89dc3f01091ec01"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">self_type</span> <span class="special">&amp;</span> rhs<span class="special">)</span><span class="special">;</span></pre>
+<p>Basic guarantee only. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a2aad746fdfbbd095ad30c4245d9d3811"></a><span class="identifier">swap</span><span class="special">(</span><span class="identifier">self_type</span> <span class="special">&amp;</span> rhs<span class="special">)</span><span class="special">;</span></pre>
+<p>Swap with other tree. Only constant-time and nothrow if the data type's swap is. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">size_type</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a27dc331f1ac8d21cd9c177b11ed13956"></a><span class="identifier">size</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>The number of direct children of this node. </p>
+</li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">size_type</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a85ecf9964703138f7b5763113710e3fb"></a><span class="identifier">max_size</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a8be352d970c17b5c712214c04eb91c3a"></a><span class="identifier">empty</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Whether there are any direct children. </p>
+</li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">iterator</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a0ec697ab6ed408f31109b261ef224459"></a><span class="identifier">begin</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">const_iterator</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1adb7f6b5c35f805d4889a510041d7cde0"></a><span class="identifier">begin</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">iterator</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1ac939aba3c530dc640433d915fdadb068"></a><span class="identifier">end</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">const_iterator</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1af1e9e6d2dcf62865a4d7d4cfa323eaf8"></a><span class="identifier">end</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">reverse_iterator</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a6bd79207611a18336111a746a06239c7"></a><span class="identifier">rbegin</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">const_reverse_iterator</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1ad2f79f4b5582c70abb94a1f0306b1640"></a><span class="identifier">rbegin</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">reverse_iterator</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1ac98e8fbea046f97ca641d9a7160aa9f2"></a><span class="identifier">rend</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">const_reverse_iterator</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a9c7fb87f7b3f4c9d6129c4bf1a6729c2"></a><span class="identifier">rend</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">value_type</span> <span class="special">&amp;</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a7d6f785cff8fbb9c0e1806884caf1ba1"></a><span class="identifier">front</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">const</span> <span class="identifier">value_type</span> <span class="special">&amp;</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1ad84d411bca35e31a109076622ef46b1a"></a><span class="identifier">front</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">value_type</span> <span class="special">&amp;</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a44939c7587b88f87abbb4bebbf3bf389"></a><span class="identifier">back</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">const</span> <span class="identifier">value_type</span> <span class="special">&amp;</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1acddcf929a2da4468e81000373c3b7a4a"></a><span class="identifier">back</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">iterator</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1ab1f32d903e64ec84111c4ac46eb949d3"></a><span class="identifier">insert</span><span class="special">(</span><span class="identifier">iterator</span> where<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">value_type</span> <span class="special">&amp;</span> value<span class="special">)</span><span class="special">;</span></pre>
+<p>Insert a copy of the given tree with its key just before the given position in this node. This operation invalidates no iterators. 
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>An iterator to the newly created child. </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> It<span class="special">&gt;</span> <span class="keyword">void</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1afe887b8ba660de2702fe11f5c37c9eda"></a><span class="identifier">insert</span><span class="special">(</span><span class="identifier">iterator</span> where<span class="special">,</span> <span class="identifier">It</span> first<span class="special">,</span> <span class="identifier">It</span> last<span class="special">)</span><span class="special">;</span></pre>
+<p>Range insert. Equivalent to: </p>
+<pre class="programlisting"><span class="keyword">for</span><span class="special">(</span><span class="special">;</span> <span class="identifier">first</span> <span class="special">!=</span> <span class="identifier">last</span><span class="special">;</span> <span class="special">++</span><span class="identifier">first</span><span class="special">)</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1ab1f32d903e64ec84111c4ac46eb949d3"><span class="identifier">insert</span></a><span class="special">(</span><span class="identifier">where</span><span class="special">,</span> <span class="special">*</span><span class="identifier">first</span><span class="special">)</span><span class="special">;</span>
+</pre>
+<p> </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">iterator</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a4db9bc7731e85e54cc02e1930d9f5576"></a><span class="identifier">erase</span><span class="special">(</span><span class="identifier">iterator</span> where<span class="special">)</span><span class="special">;</span></pre>
+<p>Erase the child pointed at by the iterator. This operation invalidates the given iterator, as well as its equivalent assoc_iterator. 
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>A valid iterator pointing to the element after the erased. </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">iterator</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a42eef638059d125c407ee9f6174b306d"></a><span class="identifier">erase</span><span class="special">(</span><span class="identifier">iterator</span> first<span class="special">,</span> <span class="identifier">iterator</span> last<span class="special">)</span><span class="special">;</span></pre>
+<p>Range erase. Equivalent to: </p>
+<pre class="programlisting"><span class="keyword">while</span><span class="special">(</span><span class="identifier">first</span> <span class="special">!=</span> <span class="identifier">last</span><span class="special">;</span><span class="special">)</span> <span class="identifier">first</span> <span class="special">=</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a4db9bc7731e85e54cc02e1930d9f5576"><span class="identifier">erase</span></a><span class="special">(</span><span class="identifier">first</span><span class="special">)</span><span class="special">;</span>
+</pre>
+<p> </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">iterator</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a72bf6dde301828877175cdfd7c73a851"></a><span class="identifier">push_front</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">value_type</span> <span class="special">&amp;</span> value<span class="special">)</span><span class="special">;</span></pre>
+<p>Equivalent to insert(begin(), value). </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">iterator</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a286d96ceddecf0270c1779b9f6bfb7fe"></a><span class="identifier">push_back</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">value_type</span> <span class="special">&amp;</span> value<span class="special">)</span><span class="special">;</span></pre>
+<p>Equivalent to insert(end(), value). </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1ac7775c435cd76d5b66b6b9d7c5daddae"></a><span class="identifier">pop_front</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Equivalent to erase(begin()). </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a6231308090ff500434d62a681cfcd78a"></a><span class="identifier">pop_back</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Equivalent to erase(boost::prior(end())). </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1adf23f8a3823d423144eaa02536ef7bba"></a><span class="identifier">reverse</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Reverses the order of direct children in the property tree. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Compare<span class="special">&gt;</span> <span class="keyword">void</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1aef345bf5755acc5f69b58efb5e57d150"></a><span class="identifier">sort</span><span class="special">(</span><span class="identifier">Compare</span> comp<span class="special">)</span><span class="special">;</span></pre>
+<p>Sorts the direct children of this node according to the predicate. The predicate is passed the whole pair of key and child. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1ab7b9dc30affd05bad56e2d55d4769bfb"></a><span class="identifier">sort</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Sorts the direct children of this node according to key order. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a9d67bc3963504a467111a2cd8b9d4714"></a><span class="keyword">operator</span><span class="special">==</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">self_type</span> <span class="special">&amp;</span> rhs<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Two property trees are the same if they have the same data, the keys and order of their children are the same, and the children compare equal, recursively. </p>
+</li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a5f3561bbaf681b93ab67257248b89e09"></a><span class="keyword">operator</span><span class="special">!=</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">self_type</span> <span class="special">&amp;</span> rhs<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">assoc_iterator</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a3764c1fab771b2209e59311dcee34cfc"></a><span class="identifier">ordered_begin</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Returns an iterator to the first child, in key order. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_assoc_iterator</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a7bd911a8908362f6572eb91cfc2508d8"></a><span class="identifier">ordered_begin</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns an iterator to the first child, in key order. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">assoc_iterator</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a0fed170f656c30addf4b2a0ad9456e83"></a><span class="identifier">not_found</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Returns the not-found iterator. Equivalent to <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1ac939aba3c530dc640433d915fdadb068">end()</a> in a real associative container. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_assoc_iterator</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1acf8d78043900d77fced7fcb401596341"></a><span class="identifier">not_found</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns the not-found iterator. Equivalent to <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1ac939aba3c530dc640433d915fdadb068">end()</a> in a real associative container. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">assoc_iterator</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1ac4306a61333101a4e5b50b03d0e2d645"></a><span class="identifier">find</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">key_type</span> <span class="special">&amp;</span> key<span class="special">)</span><span class="special">;</span></pre>
+<p>Find a child with the given key, or <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a0fed170f656c30addf4b2a0ad9456e83">not_found()</a> if there is none. There is no guarantee about which child is returned if multiple have the same key. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_assoc_iterator</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a78b7975c530010ad1306ed0e9a413734"></a><span class="identifier">find</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">key_type</span> <span class="special">&amp;</span> key<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Find a child with the given key, or <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a0fed170f656c30addf4b2a0ad9456e83">not_found()</a> if there is none. There is no guarantee about which child is returned if multiple have the same key. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">std</span><span class="special">::</span><span class="identifier">pair</span><span class="special">&lt;</span> <span class="identifier">assoc_iterator</span><span class="special">,</span> <span class="identifier">assoc_iterator</span> <span class="special">&gt;</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1ac01421835e00cba89dfa7c3b543231eb"></a><span class="identifier">equal_range</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">key_type</span> <span class="special">&amp;</span> key<span class="special">)</span><span class="special">;</span></pre>
+<p>Find the range of children that have the given key. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">std</span><span class="special">::</span><span class="identifier">pair</span><span class="special">&lt;</span> <span class="identifier">const_assoc_iterator</span><span class="special">,</span> <span class="identifier">const_assoc_iterator</span> <span class="special">&gt;</span> 
+<a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1ad7f8f3d793fecd712c0dbe61b9622fb0"></a><span class="identifier">equal_range</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">key_type</span> <span class="special">&amp;</span> key<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Find the range of children that have the given key. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">size_type</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a899e7323ed1ea8a5b2f8f7b5067572c1"></a><span class="identifier">count</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">key_type</span> <span class="special">&amp;</span> key<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Count the number of direct children with the given key. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">size_type</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1aba76850e5befb56996d668d2d8f2a345"></a><span class="identifier">erase</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">key_type</span> <span class="special">&amp;</span> key<span class="special">)</span><span class="special">;</span></pre>
+<p>Erase all direct children with the given key and return the count. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">iterator</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1ad3d3f3cc331215bee0642ac60c89bd33"></a><span class="identifier">to_iterator</span><span class="special">(</span><span class="identifier">assoc_iterator</span> it<span class="special">)</span><span class="special">;</span></pre>
+<p>Get the iterator that points to the same element as the argument. </p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>A valid assoc_iterator range (a, b) does not imply that (to_iterator(a), to_iterator(b)) is a valid range. </p></td></tr>
+</table></div>
+<p>
+</p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_iterator</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a3e729e0ae9372334b19d35f45087fed8"></a><span class="identifier">to_iterator</span><span class="special">(</span><span class="identifier">const_assoc_iterator</span> it<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Get the iterator that points to the same element as the argument. </p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>A valid const_assoc_iterator range (a, b) does not imply that (to_iterator(a), to_iterator(b)) is a valid range. </p></td></tr>
+</table></div>
+<p>
+</p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">data_type</span> <span class="special">&amp;</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a909b71a6c517872a216dacb0f19791ba"></a><span class="identifier">data</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Reference to the actual data in this node. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">const</span> <span class="identifier">data_type</span> <span class="special">&amp;</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a904e76a4a78c79c4b54cb2ef4355a333"></a><span class="identifier">data</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Reference to the actual data in this node. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a08de3c0b8c439b49eb506d58a1bd02df"></a><span class="identifier">clear</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Clear this tree completely, of both data and children. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">self_type</span> <span class="special">&amp;</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1af85fdd27eb88311cbc028566ac46f806"></a><span class="identifier">get_child</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">path_type</span> <span class="special">&amp;</span> path<span class="special">)</span><span class="special">;</span></pre>
+<p>Get the child at the given path, or throw <code class="computeroutput"><a class="link" href="classboost_1_1property__tree_1_1ptree__bad__path.html" title="Class ptree_bad_path">ptree_bad_path</a></code>. </p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top">
+<p>Depending on the path, the result at each level may not be completely deterministic, i.e. if the same key appears multiple times, which child is chosen is not specified. This can lead to the path not being resolved even though there is a descendant with this path. Example: </p>
+<pre class="programlisting"><span class="identifier">a</span> <span class="special">-&gt;</span> <span class="identifier">b</span> <span class="special">-&gt;</span> <span class="identifier">c</span>
+  <span class="special">-&gt;</span> <span class="identifier">b</span>
+</pre>
+<p> The path "a.b.c" will succeed if the resolution of "b" chooses the first such node, but fail if it chooses the second. </p>
+</td></tr>
+</table></div>
+<p>
+</p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">const</span> <span class="identifier">self_type</span> <span class="special">&amp;</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1ad29ad90d49b59cf7bd2dbdc18fab0846"></a><span class="identifier">get_child</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">path_type</span> <span class="special">&amp;</span> path<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Get the child at the given path, or throw <code class="computeroutput"><a class="link" href="classboost_1_1property__tree_1_1ptree__bad__path.html" title="Class ptree_bad_path">ptree_bad_path</a></code>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">self_type</span> <span class="special">&amp;</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1ae63ab3f42b1066d9b87203f07ab9d75f"></a><span class="identifier">get_child</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">path_type</span> <span class="special">&amp;</span> path<span class="special">,</span> <span class="identifier">self_type</span> <span class="special">&amp;</span> default_value<span class="special">)</span><span class="special">;</span></pre>
+<p>Get the child at the given path, or return <code class="computeroutput">default_value</code>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">const</span> <span class="identifier">self_type</span> <span class="special">&amp;</span> 
+<a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a884adffecb61015f770d9830e495f5a8"></a><span class="identifier">get_child</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">path_type</span> <span class="special">&amp;</span> path<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">self_type</span> <span class="special">&amp;</span> default_value<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Get the child at the given path, or return <code class="computeroutput">default_value</code>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a4661e85935204139bdf9299713ab3b97"></a><span class="identifier">get_child</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">path_type</span> <span class="special">&amp;</span> path<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">self_type</span> <span class="special">&amp;&amp;</span> default_value<span class="special">)</span> <span class="keyword">const</span> <span class="special">=</span> <span class="keyword">delete</span><span class="special">;</span></pre>
+<p>Prevents calls to get_child with temporary default values </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">optional</span><span class="special">&lt;</span> <span class="identifier">self_type</span> <span class="special">&amp;</span> <span class="special">&gt;</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a7042acab0709c228bca2955c84f0ee68"></a><span class="identifier">get_child_optional</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">path_type</span> <span class="special">&amp;</span> path<span class="special">)</span><span class="special">;</span></pre>
+<p>Get the child at the given path, or return boost::null. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">optional</span><span class="special">&lt;</span> <span class="keyword">const</span> <span class="identifier">self_type</span> <span class="special">&amp;</span> <span class="special">&gt;</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a5647c909c16d427a6bfa6d57160ab377"></a><span class="identifier">get_child_optional</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">path_type</span> <span class="special">&amp;</span> path<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Get the child at the given path, or return boost::null. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">self_type</span> <span class="special">&amp;</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1aa1e246433737edeb1559da4338d11be0"></a><span class="identifier">put_child</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">path_type</span> <span class="special">&amp;</span> path<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">self_type</span> <span class="special">&amp;</span> value<span class="special">)</span><span class="special">;</span></pre>
+<p>Set the node at the given path to the given value. Create any missing parents. If the node at the path already exists, replace it. 
+</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>Because of the way paths work, it is not generally guaranteed that a node newly created can be accessed using the same path. </p></td></tr>
+</table></div>
+<p>
+</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>If the path could refer to multiple nodes, it is unspecified which one gets replaced. </p></td></tr>
+</table></div>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>A reference to the inserted subtree. </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">self_type</span> <span class="special">&amp;</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1adff558d0b0ad638c511030a5b4d81bb6"></a><span class="identifier">add_child</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">path_type</span> <span class="special">&amp;</span> path<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">self_type</span> <span class="special">&amp;</span> value<span class="special">)</span><span class="special">;</span></pre>
+<p>Add the node at the given path. Create any missing parents. If there already is a node at the path, add another one with the same key. 
+
+</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>Because of the way paths work, it is not generally guaranteed that a node newly created can be accessed using the same path. </p></td></tr>
+</table></div>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">path</code></span></p></td>
+<td><p>Path to the child. The last fragment must not have an index. </p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>A reference to the inserted subtree. </p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Type<span class="special">,</span> <span class="keyword">typename</span> Translator<span class="special">&gt;</span> 
+  <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a2be8e39d3b23f68f6e338c0d020dbc5b"></a><span class="identifier">get_value</span><span class="special">(</span><span class="identifier">Translator</span> tr<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Take the value of this node and attempt to translate it to a <code class="computeroutput">Type</code> object using the supplied translator. 
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Throws:</span></p></td>
+<td>
+<a class="link" href="classboost_1_1property__tree_1_1ptree__bad__data.html" title="Class ptree_bad_data">ptree_bad_data</a> if the conversion fails. </td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Type<span class="special">&gt;</span> <span class="identifier">Type</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1aaf012b466ea9238fafc6f9a0ca4e3fc6"></a><span class="identifier">get_value</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Take the value of this node and attempt to translate it to a <code class="computeroutput">Type</code> object using the default translator. 
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Throws:</span></p></td>
+<td>
+<a class="link" href="classboost_1_1property__tree_1_1ptree__bad__data.html" title="Class ptree_bad_data">ptree_bad_data</a> if the conversion fails. </td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Type<span class="special">,</span> <span class="keyword">typename</span> Translator<span class="special">&gt;</span> 
+  <span class="identifier">Type</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1aa8708c8593aa50fc29054bf7e66b3721"></a><span class="identifier">get_value</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">Type</span> <span class="special">&amp;</span> default_value<span class="special">,</span> <span class="identifier">Translator</span> tr<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Take the value of this node and attempt to translate it to a <code class="computeroutput">Type</code> object using the supplied translator. Return <code class="computeroutput">default_value</code> if this fails. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Ch<span class="special">,</span> <span class="keyword">typename</span> Translator<span class="special">&gt;</span> 
+  <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1aa549a759e86cf4d015da7d939f964a7c"></a><span class="identifier">get_value</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">Ch</span> <span class="special">*</span> default_value<span class="special">,</span> <span class="identifier">Translator</span> tr<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Make get_value do the right thing for string literals. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Type<span class="special">&gt;</span> 
+  <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1ae6f6ef87e55ef13e80a1fdd607edef7c"></a><span class="identifier">get_value</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">Type</span> <span class="special">&amp;</span> default_value<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Take the value of this node and attempt to translate it to a <code class="computeroutput">Type</code> object using the default translator. Return <code class="computeroutput">default_value</code> if this fails. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Ch<span class="special">&gt;</span> <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1accf9e4c78ef92e3ae9e6115a06357c64"></a><span class="identifier">get_value</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">Ch</span> <span class="special">*</span> default_value<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Make get_value do the right thing for string literals. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Type<span class="special">,</span> <span class="keyword">typename</span> Translator<span class="special">&gt;</span> 
+  <span class="identifier">optional</span><span class="special">&lt;</span> <span class="identifier">Type</span> <span class="special">&gt;</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a19dbd9979ae83c75e1dab73a24ec9027"></a><span class="identifier">get_value_optional</span><span class="special">(</span><span class="identifier">Translator</span> tr<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Take the value of this node and attempt to translate it to a <code class="computeroutput">Type</code> object using the supplied translator. Return boost::null if this fails. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Type<span class="special">&gt;</span> <span class="identifier">optional</span><span class="special">&lt;</span> <span class="identifier">Type</span> <span class="special">&gt;</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a1809fe8feb2fc50445e638881c3145c8"></a><span class="identifier">get_value_optional</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Take the value of this node and attempt to translate it to a <code class="computeroutput">Type</code> object using the default translator. Return boost::null if this fails. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Type<span class="special">,</span> <span class="keyword">typename</span> Translator<span class="special">&gt;</span> 
+  <span class="keyword">void</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a06067eeada01a32051088a92f266181f"></a><span class="identifier">put_value</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">Type</span> <span class="special">&amp;</span> value<span class="special">,</span> <span class="identifier">Translator</span> tr<span class="special">)</span><span class="special">;</span></pre>
+<p>Replace the value at this node with the given value, translated to the tree's data type using the supplied translator. 
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Throws:</span></p></td>
+<td>
+<a class="link" href="classboost_1_1property__tree_1_1ptree__bad__data.html" title="Class ptree_bad_data">ptree_bad_data</a> if the conversion fails. </td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Type<span class="special">&gt;</span> <span class="keyword">void</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1afb49cf9a1715a1398bea934ca3df2863"></a><span class="identifier">put_value</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">Type</span> <span class="special">&amp;</span> value<span class="special">)</span><span class="special">;</span></pre>
+<p>Replace the value at this node with the given value, translated to the tree's data type using the default translator. 
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Throws:</span></p></td>
+<td>
+<a class="link" href="classboost_1_1property__tree_1_1ptree__bad__data.html" title="Class ptree_bad_data">ptree_bad_data</a> if the conversion fails. </td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Type<span class="special">,</span> <span class="keyword">typename</span> Translator<span class="special">&gt;</span> 
+  <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a96d2c472acb55007b36e93131ecee67e"></a><span class="identifier">get</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">path_type</span> <span class="special">&amp;</span> path<span class="special">,</span> <span class="identifier">Translator</span> tr<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Shorthand for get_child(path).get_value(tr). </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Type<span class="special">&gt;</span> <span class="identifier">Type</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1ac5015f7e008d2de5436f2823b02adaf4"></a><span class="identifier">get</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">path_type</span> <span class="special">&amp;</span> path<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Shorthand for get_child(path).get_value&lt;Type&gt;(). </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Type<span class="special">,</span> <span class="keyword">typename</span> Translator<span class="special">&gt;</span> 
+  <span class="identifier">Type</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1aef3ce95985eb796c29c681fec0296d80"></a><span class="identifier">get</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">path_type</span> <span class="special">&amp;</span> path<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">Type</span> <span class="special">&amp;</span> default_value<span class="special">,</span> <span class="identifier">Translator</span> tr<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Shorthand for get_child(path, empty_ptree()) .get_value(default_value, tr). That is, return the translated value if possible, and the default value if the node doesn't exist or conversion fails. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Ch<span class="special">,</span> <span class="keyword">typename</span> Translator<span class="special">&gt;</span> 
+  <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a4d1f02cc07b2231445ca2ada39bc2086"></a><span class="identifier">get</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">path_type</span> <span class="special">&amp;</span> path<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">Ch</span> <span class="special">*</span> default_value<span class="special">,</span> 
+                  <span class="identifier">Translator</span> tr<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Make get do the right thing for string literals. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Type<span class="special">&gt;</span> 
+  <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1ac9b8a578b8f94ea13cf2aafd03b4bcd5"></a><span class="identifier">get</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">path_type</span> <span class="special">&amp;</span> path<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">Type</span> <span class="special">&amp;</span> default_value<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Shorthand for get_child(path, empty_ptree()) .get_value(default_value). That is, return the translated value if possible, and the default value if the node doesn't exist or conversion fails. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Ch<span class="special">&gt;</span> 
+  <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1acaa69aa960a3dd991c3eb26e0f470be2"></a><span class="identifier">get</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">path_type</span> <span class="special">&amp;</span> path<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">Ch</span> <span class="special">*</span> default_value<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Make get do the right thing for string literals. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Type<span class="special">,</span> <span class="keyword">typename</span> Translator<span class="special">&gt;</span> 
+  <span class="identifier">optional</span><span class="special">&lt;</span> <span class="identifier">Type</span> <span class="special">&gt;</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a6aa25be019cf4eac81730d55623422e2"></a><span class="identifier">get_optional</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">path_type</span> <span class="special">&amp;</span> path<span class="special">,</span> <span class="identifier">Translator</span> tr<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Shorthand for: </p>
+<pre class="programlisting"><span class="keyword">if</span><span class="special">(</span><span class="identifier">optional</span>\<span class="special">&lt;</span><a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a48b6e6ddd60a49a5b6b9f49cb590b721"><span class="identifier">self_type</span></a><span class="special">&amp;</span>\<span class="special">&gt;</span> <span class="identifier">node</span> <span class="special">=</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a7042acab0709c228bca2955c84f0ee68"><span class="identifier">get_child_optional</span></a><span class="special">(</span><a class="link" href="namespaceboost_1_1property__tree_1a380cc50c70518eba170b10630e3c4755.html" title="Type definition path"><span class="identifier">path</span></a><span class="special">)</span><span class="special">)</span>
+  <span class="keyword">return</span> <span class="identifier">node</span><span class="special">-&gt;</span><span class="identifier">get_value_optional</span><span class="special">(</span><span class="identifier">tr</span><span class="special">)</span><span class="special">;</span>
+<span class="keyword">return</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">null</span><span class="special">;</span>
+</pre>
+<p> That is, return the value if it exists and can be converted, or nil. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Type<span class="special">&gt;</span> 
+  <span class="identifier">optional</span><span class="special">&lt;</span> <span class="identifier">Type</span> <span class="special">&gt;</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a88ed3f9fb2fe35c23dcb0f334c72b8dd"></a><span class="identifier">get_optional</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">path_type</span> <span class="special">&amp;</span> path<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Shorthand for: </p>
+<pre class="programlisting"><span class="keyword">if</span><span class="special">(</span><span class="identifier">optional</span>\<span class="special">&lt;</span><span class="keyword">const</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a48b6e6ddd60a49a5b6b9f49cb590b721"><span class="identifier">self_type</span></a><span class="special">&amp;</span>\<span class="special">&gt;</span> <span class="identifier">node</span> <span class="special">=</span> <a class="link" href="classboost_1_1property__tree_1_1basic__ptree.html#doxygen.classboost_1_1property__tree_1_1basic__ptree_1a7042acab0709c228bca2955c84f0ee68"><span class="identifier">get_child_optional</span></a><span class="special">(</span><a class="link" href="namespaceboost_1_1property__tree_1a380cc50c70518eba170b10630e3c4755.html" title="Type definition path"><span class="identifier">path</span></a><span class="special">)</span><span class="special">)</span>
+  <span class="keyword">return</span> <span class="identifier">node</span><span class="special">-&gt;</span><span class="identifier">get_value_optional</span><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+<span class="keyword">return</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">null</span><span class="special">;</span>
+</pre>
+<p> That is, return the value if it exists and can be converted, or nil. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Type<span class="special">,</span> <span class="keyword">typename</span> Translator<span class="special">&gt;</span> 
+  <span class="identifier">self_type</span> <span class="special">&amp;</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a26c9f5391a75e4f7941898a8f930a78c"></a><span class="identifier">put</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">path_type</span> <span class="special">&amp;</span> path<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">Type</span> <span class="special">&amp;</span> value<span class="special">,</span> <span class="identifier">Translator</span> tr<span class="special">)</span><span class="special">;</span></pre>
+<p>Set the value of the node at the given path to the supplied value, translated to the tree's data type. If the node doesn't exist, it is created, including all its missing parents. 
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>The node that had its value changed. </p></td>
+</tr>
+<tr>
+<td><p><span class="term">Throws:</span></p></td>
+<td>
+<a class="link" href="classboost_1_1property__tree_1_1ptree__bad__data.html" title="Class ptree_bad_data">ptree_bad_data</a> if the conversion fails. </td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Type<span class="special">&gt;</span> 
+  <span class="identifier">self_type</span> <span class="special">&amp;</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a816590393435630d01564ab88c52ff72"></a><span class="identifier">put</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">path_type</span> <span class="special">&amp;</span> path<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">Type</span> <span class="special">&amp;</span> value<span class="special">)</span><span class="special">;</span></pre>
+<p>Set the value of the node at the given path to the supplied value, translated to the tree's data type. If the node doesn't exist, it is created, including all its missing parents. 
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>The node that had its value changed. </p></td>
+</tr>
+<tr>
+<td><p><span class="term">Throws:</span></p></td>
+<td>
+<a class="link" href="classboost_1_1property__tree_1_1ptree__bad__data.html" title="Class ptree_bad_data">ptree_bad_data</a> if the conversion fails. </td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Type<span class="special">,</span> <span class="keyword">typename</span> Translator<span class="special">&gt;</span> 
+  <span class="identifier">self_type</span> <span class="special">&amp;</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1ad80ba2daa72416713da418e2bb05db0b"></a><span class="identifier">add</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">path_type</span> <span class="special">&amp;</span> path<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">Type</span> <span class="special">&amp;</span> value<span class="special">,</span> <span class="identifier">Translator</span> tr<span class="special">)</span><span class="special">;</span></pre>
+<p>If the node identified by the path does not exist, create it, including all its missing parents. If the node already exists, add a sibling with the same key. Set the newly created node's value to the given paremeter, translated with the supplied translator. 
+
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">path</code></span></p></td>
+<td><p>Path to the child. The last fragment must not have an index. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">value</code></span></p></td>
+<td><p>The value to add. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">tr</code></span></p></td>
+<td><p>The translator to use. </p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>The node that was added. </p></td>
+</tr>
+<tr>
+<td><p><span class="term">Throws:</span></p></td>
+<td>
+<a class="link" href="classboost_1_1property__tree_1_1ptree__bad__data.html" title="Class ptree_bad_data">ptree_bad_data</a> if the conversion fails. </td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Type<span class="special">&gt;</span> 
+  <span class="identifier">self_type</span> <span class="special">&amp;</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a840e25945d8fae99685de3f4b3b9d954"></a><span class="identifier">add</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">path_type</span> <span class="special">&amp;</span> path<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">Type</span> <span class="special">&amp;</span> value<span class="special">)</span><span class="special">;</span></pre>
+<p>If the node identified by the path does not exist, create it, including all its missing parents. If the node already exists, add a sibling with the same key. Set the newly created node's value to the given paremeter, translated with the supplied translator. 
+
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">path</code></span></p></td>
+<td><p>Path to the child. The last fragment must not have an index. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">value</code></span></p></td>
+<td><p>The value to add. </p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>The node that was added. </p></td>
+</tr>
+<tr>
+<td><p><span class="term">Throws:</span></p></td>
+<td>
+<a class="link" href="classboost_1_1property__tree_1_1ptree__bad__data.html" title="Class ptree_bad_data">ptree_bad_data</a> if the conversion fails. </td>
+</tr>
+</tbody>
+</table></div>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.32.10.7.3.4.7"></a><h3>
+<a name="id-1_3_32_10_6_1_1_1_11-bb"></a><code class="computeroutput">basic_ptree</code> private member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem"><pre class="literallayout"><span class="identifier">self_type</span> <span class="special">*</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1aa780d4faf27dcef946a0da51f0f9b09c"></a><span class="identifier">walk_path</span><span class="special">(</span><span class="identifier">path_type</span> <span class="special">&amp;</span> p<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">self_type</span> <span class="special">&amp;</span> <a name="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a5a7c44be671abe36043261e18353e94c"></a><span class="identifier">force_path</span><span class="special">(</span><span class="identifier">path_type</span> <span class="special">&amp;</span> p<span class="special">)</span><span class="special">;</span></pre></li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2008-2010 Marcin Kalicinski<br>Copyright © 2010-2013 Sebastian
+      Redl<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="namespaceboost_1_1property__tree_1_1json__parser_1a49f6a7c920e5ac943603a5f10ccf3a32.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../property_tree/reference.html#doxygen.ptree_8hpp"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="structboost_1_1property__tree_1_1path__of.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

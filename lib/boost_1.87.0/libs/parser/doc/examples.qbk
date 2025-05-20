@@ -1,0 +1,44 @@
+[/
+ / Distributed under the Boost Software License, Version 1.0. (See accompanying
+ / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+ /]
+
+[section Extended Examples]
+
+[section Parsing JSON]
+
+This is a conforming JSON parser.  It passes all the required tests in the
+[@https://github.com/nst/JSONTestSuite JSON Test Suite], and all but 5 of the
+optional ones.  Notice that the actual parsing bits are only about 150 lines
+of code.
+
+[extended_json_example]
+
+[endsect]
+
+[section Parsing JSON With Callbacks]
+
+This is just like the previous extended JSON parser example, except that it
+drops all the code that defines a JSON value, array, object, etc.  It
+communicates events within the parse, and the value associated with each
+event.  For instance, when a string is parsed, a callback is called that
+indicates this, along with the resulting `std::string`.
+
+[extended_callback_parsing_json_example]
+
+Note that here, I was keeping things simple to stay close to the previous
+parser.  If you want to do callback parsing, you might want that because
+you're limited in how much memory you can allocate, or because the JSON you're
+parsing is really huge, and you only need to retain certain parts of it.
+
+If this is the case, one possible change that might be appealing would be to
+reduce the memory allocations.  The only memory allocation that the parser
+does is the one we told it to do _emdash_ it allocates `std::strings`.  If we
+instead used `boost::container::small_vector<char, 1024>`, it would only ever
+allocate if it encountered a string larger than 1024 bytes.  We would also
+want to change the callbacks to take `const &` parameters instead of using
+pass-by-value.
+
+[endsect]
+
+[endsect]

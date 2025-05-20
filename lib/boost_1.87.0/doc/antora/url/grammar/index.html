@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+        <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Customization :: Boost Libraries Documentation</title>
+  <link rel="canonical" href="https://antora.cppalliance.org/master/lib/doc/url/grammar/index.html">
+    <link rel="prev" href="../urls/formatting.html">
+    <link rel="next" href="rules.html">
+  <meta name="generator" content="Antora 3.1.9">
+    <link rel="stylesheet" href="../../_/css/boostlook.css">
+    <link rel="stylesheet" href="../../_/css/site.css">
+    <link rel="stylesheet" href="../../_/css/vendor/tabs.css">
+    <script>var uiRootPath = '../../_'</script>
+  </head>
+  <body class="article toc2 toc-left">
+    <div class="boostlook">
+  <div id="header">
+    <div id="toc" class="nav-container toc2" data-component="url" data-version="">
+  <aside class="nav">
+    <button class="nav-close"></button>
+    <div class="panels">
+      <div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+      <h3 class="title"><a href="../index.html">Boost.URL</a></h3>
+      <ul class="nav-list">
+        <ul class="nav-list">
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../quicklook.html">Quick Look</a>
+        </li>
+              <li class="" data-depth="1">
+            <a class="nav-link" href="../urls/index.html">URLs</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/parsing.html">Parsing</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/containers.html">Containers</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/segments.html">Segments</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/params.html">Params</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/normalization.html">Normalization</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/stringtoken.html">String Token</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/percent-encoding.html">Percent Encoding</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/formatting.html">Formatting</a>
+        </li>
+        </ul>
+        <li class=" is-current-page" data-depth="1">
+            <a class="nav-link" href="index.html">Customization</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="rules.html">Parse Rules</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="charset.html">Character Sets</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="combinators.html">Compound Rules</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="range.html">Ranges</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="rfc3986.html">RFC 3986</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Examples</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/qrcode.html">QR Code</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/finicky.html">Finicky</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/mailto.html">mailto URLs</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/magnet-link.html">Magnet Link</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/file-router.html">File Router</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/router.html">Router</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/sanitize.html">Sanitizing URLs</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../reference.html">Reference</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <span class="nav-text">Concepts</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="3">
+            <a class="nav-link" href="../concepts/CharSet.html">CharSet</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="../concepts/Rule.html">Rule</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="../concepts/StringToken.html">StringToken</a>
+        </li>
+        </ul>
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../HelpCard.html">Help Card</a>
+        </li>
+        </ul>
+  </ul>
+  </ul>
+  </nav>
+</div>
+    </div>
+  </aside>
+</div>
+</div>
+  <div id="content">
+    <article class="doc max-width-reset">
+  <div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li>
+      <a href="../index.html" aria-label="Home: Boost.URL">
+        <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 -960 960 960" fill="#000000" aria-hidden="true"><path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z"/></svg>
+      </a>
+    </li>
+    <li><a href="index.html">Customization</a></li>
+  </ul>
+</nav>
+<div class="spirit-nav">
+    <a accesskey="p" href="../urls/formatting.html"><span class="material-symbols-outlined" title="Previous: Formatting">arrow_back</span></a>
+    <a accesskey="p" href="rules.html"><span class="material-symbols-outlined" title="Next: Parse Rules">arrow_forward</span></a>
+</div>
+</div>
+    <h1 class="page">Customization</h1>
+  <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>For a wide range of applications the library&#8217;s container interfaces
+are sufficient for URLs using the generic syntax or the well known
+schemes. There are however more complex cases where it is desired
+to go beyond what the library offers:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Create new custom containers for other schemes</p>
+</li>
+<li>
+<p>Incorporate the parsing of URLs in an enclosing grammar</p>
+</li>
+<li>
+<p>Parse <a href="https://tools.ietf.org/html/rfc3986" target="blank_">rfc3986</a> elements in non-URL contexts
+(<code><a href="../reference/boost/urls/authority_view.html" class="xref page">authority_view</a></code> is an example of this).</p>
+</li>
+<li>
+<p>Define new ABNF rules used to parse non-URL strings</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>To enable these use-cases, the library provides a suite of general
+facilities for processing low-ASCII character strings, and makes
+public the interface to useful rules found in rfc3986. The design
+goals of these facilities are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>No use of <code><a href="https://en.cppreference.com/w/cpp/locale/locale" target="_blank" rel="noopener">std::locale</a></code> or <code><a href="https://en.cppreference.com/w/cpp/string/char_traits" target="_blank" rel="noopener">std::char_traits</a></code></p>
+</li>
+<li>
+<p>No exotic character types, just low-ASCII <code><a href="https://en.cppreference.com/w/cpp/language/types#Character_types" target="_blank" rel="noopener">char</a></code></p>
+</li>
+<li>
+<p>No memory allocation (or bounded allocation)</p>
+</li>
+<li>
+<p>Flexible composition with non-terminal rules</p>
+</li>
+<li>
+<p>Optimized for the grammars commonly found in RFCs</p>
+</li>
+<li>
+<p>Easily extended by downstream consumers</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The general facilities are nested in the fully qualified namespace
+<code><a href="../reference/boost/urls/grammar.html" class="xref page">boost::urls::grammar</a></code>, while the headers for rfc3986-specific parsing
+algorithms are located in the <code>&lt;boost/url/rfc/&gt;</code> include directory.
+This section explains the design and use of the general facilities
+to define and parse new grammars.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_syntax_notation"><a class="anchor" href="#_syntax_notation"></a>Syntax Notation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The documentation and reference for this library use the
+Augmented Backus-Naur Form
+(<a href="https://datatracker.ietf.org/doc/html/rfc2234" target="blank_">ABNF</a>)
+notation throughout to specify grammar rules. An
+understanding of this notation is necessary to achieve
+best results for learning how to use the custom parsing
+features.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Code samples and identifiers in this customization
+section are written as if the following declarations
+are in effect:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include &lt;boost/url/grammar.hpp&gt;
+
+using namespace ::boost::urls::grammar;</code></pre>
+</div>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+  <div class="edit-this-page">
+      <a href="https://github.com/boostorg/url/edit/develop/doc/modules/ROOT/pages/grammar/index.adoc">Edit this Page</a>
+      </div>
+      <nav class="pagination">
+        <span class="prev"><a href="../urls/formatting.html">Formatting</a></span>
+        <span class="next"><a href="rules.html">Parse Rules</a></span>
+    </nav>
+</article>
+</div>
+  <div id="footer">
+  <script id="site-script" src="../../_/js/site.js" data-ui-root-path="../../_"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+<script async src="../../_/js/vendor/tabs.js" data-sync-storage-key="preferred-tab"></script>
+</div>
+</div>
+  </body>
+</html>

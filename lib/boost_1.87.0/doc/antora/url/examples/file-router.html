@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+        <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>File Router :: Boost Libraries Documentation</title>
+  <link rel="canonical" href="https://antora.cppalliance.org/master/lib/doc/url/examples/file-router.html">
+    <link rel="prev" href="magnet-link.html">
+    <link rel="next" href="router.html">
+  <meta name="generator" content="Antora 3.1.9">
+    <link rel="stylesheet" href="../../_/css/boostlook.css">
+    <link rel="stylesheet" href="../../_/css/site.css">
+    <link rel="stylesheet" href="../../_/css/vendor/tabs.css">
+    <script>var uiRootPath = '../../_'</script>
+  </head>
+  <body class="article toc2 toc-left">
+    <div class="boostlook">
+  <div id="header">
+    <div id="toc" class="nav-container toc2" data-component="url" data-version="">
+  <aside class="nav">
+    <button class="nav-close"></button>
+    <div class="panels">
+      <div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+      <h3 class="title"><a href="../index.html">Boost.URL</a></h3>
+      <ul class="nav-list">
+        <ul class="nav-list">
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../quicklook.html">Quick Look</a>
+        </li>
+              <li class="" data-depth="1">
+            <a class="nav-link" href="../urls/index.html">URLs</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/parsing.html">Parsing</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/containers.html">Containers</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/segments.html">Segments</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/params.html">Params</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/normalization.html">Normalization</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/stringtoken.html">String Token</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/percent-encoding.html">Percent Encoding</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/formatting.html">Formatting</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../grammar/index.html">Customization</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/rules.html">Parse Rules</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/charset.html">Character Sets</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/combinators.html">Compound Rules</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/range.html">Ranges</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/rfc3986.html">RFC 3986</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Examples</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="qrcode.html">QR Code</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="finicky.html">Finicky</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="mailto.html">mailto URLs</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="magnet-link.html">Magnet Link</a>
+        </li>
+              <li class=" is-current-page" data-depth="2">
+            <a class="nav-link" href="file-router.html">File Router</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="router.html">Router</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="sanitize.html">Sanitizing URLs</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../reference.html">Reference</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <span class="nav-text">Concepts</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="3">
+            <a class="nav-link" href="../concepts/CharSet.html">CharSet</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="../concepts/Rule.html">Rule</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="../concepts/StringToken.html">StringToken</a>
+        </li>
+        </ul>
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../HelpCard.html">Help Card</a>
+        </li>
+        </ul>
+  </ul>
+  </ul>
+  </nav>
+</div>
+    </div>
+  </aside>
+</div>
+</div>
+  <div id="content">
+    <article class="doc max-width-reset">
+  <div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li>
+      <a href="../index.html" aria-label="Home: Boost.URL">
+        <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 -960 960 960" fill="#000000" aria-hidden="true"><path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z"/></svg>
+      </a>
+    </li>
+    <li>Examples</li>
+    <li><a href="file-router.html">File Router</a></li>
+  </ul>
+</nav>
+<div class="spirit-nav">
+    <a accesskey="p" href="magnet-link.html"><span class="material-symbols-outlined" title="Previous: Magnet Link">arrow_back</span></a>
+    <a accesskey="p" href="router.html"><span class="material-symbols-outlined" title="Next: Router">arrow_forward</span></a>
+</div>
+</div>
+    <h1 class="page">File Router</h1>
+  <div class="paragraph">
+<p>This example defines a router that associates URL paths to a directory in the filesystem.
+If the specified route matches and the file exists, the example prints its contents to standard output.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">/*
+    This example defines a route for a URL path.
+    If the specified route matches and the file
+    exists, the example prints its contents to
+    standard output.
+*/
+
+
+
+#include &lt;boost/url/error.hpp&gt;
+#include &lt;boost/url/parse.hpp&gt;
+#include &lt;boost/url/segments_encoded_ref.hpp&gt;
+#include &lt;boost/url/segments_encoded_view.hpp&gt;
+#include &lt;boost/url/string_view.hpp&gt;
+#include &lt;boost/url/url.hpp&gt;
+#include &lt;boost/url/url_view.hpp&gt;
+#include &lt;boost/url/static_url.hpp&gt;
+#include &lt;boost/filesystem/fstream.hpp&gt;
+#include &lt;boost/filesystem/operations.hpp&gt;
+#include &lt;boost/filesystem/path.hpp&gt;
+#include &lt;iostream&gt;
+
+namespace urls = boost::urls;
+namespace fs = boost::filesystem;
+namespace core = boost::core;
+using string_view = boost::core::string_view;
+
+/** Check if a target matches a prefix
+
+    This function checks if the first segments
+    of the target match the corresponding prefix
+    segments.
+
+    @param target Target segments
+    @param prefix Prefix segments
+    @return True if target matches prefix
+ */
+bool match_prefix(
+    urls::segments_view target,
+    urls::segments_view prefix)
+{
+    // Trivially reject target that cannot
+    // contain the prefix
+    if (target.size() &lt; prefix.size())
+        return false;
+
+    // Match the prefix segments
+    auto it0 = target.begin();
+    auto end0 = target.end();
+    auto it1 = prefix.begin();
+    auto end1 = prefix.end();
+    while (
+        it0 != end0 &amp;&amp;
+        it1 != end1 &amp;&amp;
+        *it0 == *it1)
+    {
+        ++it0;
+        ++it1;
+    }
+    return it1 == end1;
+}
+
+/** A static route representing files in a directory
+
+    A route is a URL logical prefix representing
+    static files in the specified root directory.
+
+    The `match` function returns the corresponding
+    file for a given URL path.
+ */
+class route
+{
+public:
+    /// Constructor
+    route(core::string_view prefix, fs::path root)
+        : prefix_(urls::parse_uri_reference(prefix).value())
+        , root_(std::move(root))
+    {}
+
+    /// Constructor
+    route(urls::url prefix, fs::path root)
+        : prefix_(std::move(prefix))
+        , root_(std::move(root))
+    {}
+
+    /** Match target URL path with a file
+
+        This function attempts to match the target
+        URL path with the route prefix.
+
+        If the prefix matches, the target is
+        considered to represent a file in the root
+        directory. When that happens, the target
+        prefix is consumed and other segments are
+        appended to the root path.
+
+        The complete file path represented by the
+        target is returned as the output parameter
+        `result`.
+
+        @param target Target URL path
+        @param result An out-parameter holding the resulting path
+        @return `true` if target matches the directory
+     */
+    bool match(
+        urls::url_view target,
+        fs::path&amp; result)
+    {
+        if (match_prefix(
+                target.segments(),
+                static_cast&lt;urls::url_view&gt;(prefix_).segments()))
+        {
+            result = root_;
+            auto segs = target.segments();
+            auto it = segs.begin();
+            auto end = segs.end();
+            std::advance(it, prefix_.segments().size());
+            while (it != end)
+            {
+                auto seg = *it;
+                result.append(seg.begin(), seg.end());
+                ++it;
+            }
+            return true;
+        }
+        return false;
+    }
+
+private:
+    urls::url prefix_;
+    fs::path root_;
+};
+
+int
+main(int argc, char **argv)
+{
+    namespace urls = boost::urls;
+    namespace fs   = boost::filesystem;
+
+    // Check command line arguments.
+    if (argc != 4)
+    {
+        fs::path exec = argv[0];
+        exec = exec.filename();
+        std::cerr
+            &lt;&lt; "Usage: " &lt;&lt; exec
+            &lt;&lt; " &lt;target&gt; &lt;prefix&gt; &lt;doc_root&gt;\n"
+               "target: path to make a request\n"
+               "prefix: url prefix\n"
+               "doc_root: dir to look for files\n";
+        return EXIT_FAILURE;
+    }
+
+    try {
+        urls::url target =
+            urls::parse_uri_reference(argv[1]).value();
+        target.normalize_path();
+
+        std::string prefix = argv[2];
+        fs::path root = argv[2];
+
+        if (!fs::is_directory(root))
+        {
+            std::cerr
+                &lt;&lt; "Error: " &lt;&lt; root
+                &lt;&lt; " is not a directory\n";
+            return EXIT_FAILURE;
+        }
+
+        // Create route
+        route r(prefix, root);
+
+        // Check if target matches a file
+        fs::path result;
+        if (r.match(target, result))
+        {
+            fs::ifstream f(result);
+            std::string l;
+            while (std::getline(f, l))
+                std::cout &lt;&lt; l &lt;&lt; '\n';
+            f.close();
+        }
+        else
+        {
+            std::cout
+                &lt;&lt; "No " &lt;&lt; target &lt;&lt; " in prefix "
+                &lt;&lt; prefix &lt;&lt; std::endl;
+        }
+        return EXIT_SUCCESS;
+    }
+    catch (std::exception &amp;e)
+    {
+        std::cerr &lt;&lt; e.what() &lt;&lt; "\n";
+        return EXIT_FAILURE;
+    }
+}</code></pre>
+</div>
+</div>
+  <div class="edit-this-page">
+      <a href="https://github.com/boostorg/url/edit/develop/doc/modules/ROOT/pages/examples/file-router.adoc">Edit this Page</a>
+      </div>
+      <nav class="pagination">
+        <span class="prev"><a href="magnet-link.html">Magnet Link</a></span>
+        <span class="next"><a href="router.html">Router</a></span>
+    </nav>
+</article>
+</div>
+  <div id="footer">
+  <script id="site-script" src="../../_/js/site.js" data-ui-root-path="../../_"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+<script async src="../../_/js/vendor/tabs.js" data-sync-storage-key="preferred-tab"></script>
+</div>
+</div>
+  </body>
+</html>

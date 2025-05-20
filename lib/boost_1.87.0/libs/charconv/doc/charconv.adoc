@@ -1,0 +1,33 @@
+////
+Copyright 2022 Peter Dimov
+Copyright 2023-2024 Matt Borland
+Distributed under the Boost Software License, Version 1.0.
+https://www.boost.org/LICENSE_1_0.txt
+////
+
+= CharConv: An Implementation of <charconv> in {cpp}11
+Matt Borland
+:toc: left
+:toclevels: 4
+:idprefix:
+:listing-caption: Code Example
+:docinfo: private-footer
+:source-highlighter: rouge
+:source-language: c++
+
+:leveloffset: +1
+
+include::charconv/overview.adoc[]
+include::charconv/build.adoc[]
+include::charconv/basic_usage.adoc[]
+include::charconv/api_reference.adoc[]
+include::charconv/from_chars.adoc[]
+include::charconv/to_chars.adoc[]
+include::charconv/chars_format.adoc[]
+include::charconv/limits.adoc[]
+include::charconv/benchmarks.adoc[]
+include::charconv/sources.adoc[]
+include::charconv/acknowledgments.adoc[]
+include::charconv/copyright.adoc[]
+
+:leveloffset: -1

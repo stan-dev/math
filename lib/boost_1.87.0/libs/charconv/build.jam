@@ -1,0 +1,26 @@
+# Copyright René Ferdinand Rivera Morell 2024
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at
+# http://www.boost.org/LICENSE_1_0.txt)
+
+require-b2 5.2 ;
+
+constant boost_dependencies :
+    /boost/assert//boost_assert
+    /boost/config//boost_config
+    /boost/core//boost_core ;
+
+project /boost/charconv
+    : common-requirements
+        <include>include
+    ;
+
+explicit
+    [ alias boost_charconv : build//boost_charconv ]
+    [ alias all : boost_charconv test ]
+    ;
+
+call-if : boost-library charconv
+    : install boost_charconv
+    ;
+

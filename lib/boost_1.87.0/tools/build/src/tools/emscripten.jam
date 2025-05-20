@@ -1,0 +1,160 @@
+# Copyright Nikita Kniazev
+# Copyright Rene Rivera 2016
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE.txt
+# or copy at https://www.bfgroup.xyz/b2/LICENSE.txt)
+
+import feature ;
+import os ;
+import toolset ;
+import common ;
+import type ;
+import version ;
+
+feature.extend toolset : emscripten ;
+
+feature.feature embind : off on : propagated ;
+feature.feature closure : off on full : propagated ;
+feature.feature link-optimization : off on full : propagated ;
+feature.subfeature debug-symbols : source-map : on : optional propagated ;
+feature.subfeature exception-handling : demangle-support : on : optional propagated ;
+feature.subfeature exception-handling : method : js : optional propagated link-incompatible ;
+
+if [ MATCH (--debug-configuration) : [ modules.peek : ARGV ] ]
+{
+    local rule .debug-configuration ( messages * )
+    {
+        ECHO "notice: [emscripten-cfg]" $(messages) ;
+    }
+}
+else
+{
+    local rule .debug-configuration ( messages * ) { }
+}
+
+rule init ( version ? : command * : options * )
+{
+    # On Windows 'emcc' calls emcc.bat but B2 will trip in CreateProcess if we
+    # let it call emcc because it does not work like a shell.
+    # We could make it call emcc.bat, but because gcc toolset quotes the command
+    # it will trip on cmd.exe bug, see https://github.com/bfgroup/b2/issues/309
+    if ! $(command) && [ os.name ] = NT {
+        command = [ common.get-absolute-tool-path emcc ] ;
+        if $(command) {
+            local python = [ os.environ EMSDK_PYTHON ] ;
+            python ?= py ;
+            command = $(python) $(command)\\emcc.py ;
+        }
+    }
+
+    command = [ common.get-invocation-command emscripten
+        : emcc
+        : $(command) ] ;
+
+    # Determine the version
+    local command-string = [ common.make-command-string $(command) ] ;
+    version = [ MATCH "([0-9.]+)" : [ SHELL "$(command-string) --version" ] ] ;
+
+    local condition = [ common.check-init-parameters emscripten
+        : version $(version) ] ;
+    local conditions = [ feature.split $(condition) ] ;
+
+    common.handle-options emscripten : $(condition) : $(command) : $(options) ;
+    .debug-configuration $(condition) ":: emcc ::" $(command) ;
+
+    local ar = [ feature.get-values <archiver> : $(options) ] ;
+    ar ?= $(command[1--2]) $(command[-1]:B=emar) ;
+    ar = [ common.get-invocation-command emscripten : emar : $(ar) ] ;
+    toolset.flags emscripten.archive .AR $(condition) : $(ar) ;
+    .debug-configuration $(condition) ":: archiver ::" $(ar) ;
+
+    local ProgramFiles ;
+    if [ os.name ] = NT {
+        ProgramFiles = [ os.environ "ProgramFiles" ] [ os.environ "ProgramFiles(x86)" ] ;
+    }
+    local nodejs = [ feature.get-values <nodejs> : $(options) ] ;
+    nodejs = [ common.get-invocation-command-nodefault emscripten : node : $(nodejs) : "$(ProgramFiles)\\nodejs" ] ;
+    if $(nodejs) {
+        local command-string = [ common.make-command-string $(nodejs) ] ;
+        local node-version = [ MATCH "v([0-9]+)" : [ SHELL "$(command-string) --version" ] ] ;
+        .debug-configuration $(condition) ":: nodejs version is" $(node-version:J=.) ;
+        if [ version.version-less $(node-version:E=0) : 16 ] {
+            toolset.add-defaults $(conditions:J=,)\:<exception-handling-method>js ;
+        }
+        local result = [ SHELL "$(command-string) --version --experimental-wasm-threads" : exit-status no-output ] ;
+        if $(result[2]) = 0 {
+            nodejs += --experimental-wasm-threads ;
+        }
+    }
+    nodejs ?= nodejs ;
+    import testing ;
+    toolset.flags testing LAUNCHER $(condition) : \"$(nodejs)\" : unchecked ;
+    .debug-configuration $(condition) ":: nodejs ::" $(nodejs) ;
+
+    version = [ SPLIT_BY_CHARACTERS $(version:E=0) : . ] ;
+    # The version number is a hard guess, I could not find when -pthread or -fwasm-exceptions were actually added
+    if [ version.version-less $(version[1]) : 2 ] {
+        toolset.add-requirements $(conditions:J=,)\:<exception-handling-method>js ;
+    }
+    # Workaround https://github.com/emscripten-core/emscripten/issues/19471
+    if [ version.version-less $(version) : 3 1 41 ] {
+        toolset.flags emscripten.compile OPTIONS $(condition)/<threading>multi : -sUSE_PTHREADS ;
+    }
+    if ! [ version.version-less $(version[1]) : 3 ] {
+        # bring back unsupported in v2 flags
+        toolset.flags emscripten.link FINDLIBS-ST-PFX $(condition)/<runtime-link>shared : -Wl,-Bstatic ;
+        toolset.flags emscripten.link FINDLIBS-SA-PFX $(condition)/<runtime-link>shared : -Wl,-Bdynamic ;
+    }
+}
+
+import clang-linux ;
+toolset.inherit-generators emscripten : clang-linux ;
+toolset.inherit-rules emscripten : clang-linux ;
+toolset.inherit-flags emscripten : clang-linux : :
+    # emscripten barks on them being unsupported
+    RPATH_LINK
+    RPATH_OPTION
+    SONAME_OPTION
+    # supported only in v3, we reenable them conditionally in init
+    FINDLIBS-ST-PFX
+    FINDLIBS-SA-PFX
+  ;
+
+toolset.add-defaults <toolset>emscripten:<target-os>none ;
+# dynamic linking is experemental and buggy
+toolset.add-defaults <toolset>emscripten:<link>static ;
+
+# Emscripten can produce different kinds of .js and .wasm outputs:
+# -o .wasm produces a standalone .wasm executable.
+# -o .js produces a .wasm executable that uses emscripten runtime and a .js launcher.
+# -o .js -sSTANDALONE_WASM produces a standalone .wasm executable and a .js launcher.
+type.set-generated-target-suffix EXE : <toolset>emscripten : js ;
+
+toolset.flags emscripten.compile.c++ OPTIONS <exception-handling>on/<exception-handling-method>js : -fexceptions ;
+toolset.flags emscripten.link        OPTIONS <exception-handling>on/<exception-handling-method>js : -fexceptions ;
+toolset.flags emscripten.compile.c++ OPTIONS <exception-handling>on/<exception-handling-method> : -fwasm-exceptions ;
+toolset.flags emscripten.link        OPTIONS <exception-handling>on/<exception-handling-method> : -fwasm-exceptions ;
+
+# Emscripten support for shared libraries is incomplete, linker embeds direct
+# dependencies into executable itself but do not embed transitive dependencies.
+# We probably could workaround that in a custom linking generator which will add
+# transitive dependencies via --preload-file/--embed-file, but it is a lot of work
+# for a niche feature which should be fixed in the linker instead.
+# There is -sNODERAWFS but LD_LIBRARY_PATH seems to only work for explicit dlopen.
+import testing ;
+# TODO: This is brittle and ugly, but currently there is no other way to specify flags for produced types by linker
+local EXE_PRODUCING_TARGET_TYPES = EXE RUN_OUTPUT RUN RUN_FAIL UNIT_TEST ;
+toolset.flags emscripten.link OPTIONS <link>shared/<main-target-type>$(EXE_PRODUCING_TARGET_TYPES) : -sMAIN_MODULE ;
+toolset.flags emscripten.link SHARED_OPTION : -sSIDE_MODULE ;
+
+toolset.flags emscripten.compile OPTIONS <profiling>on : --profiling-funcs ;
+
+toolset.flags emscripten.link OPTIONS <exception-handling>on/<exception-handling-demangle-support>on : -sDEMANGLE_SUPPORT ;
+toolset.flags emscripten.link OPTIONS <debug-symbols>on/<debug-symbols-source-map>on : -gsource-map ;
+
+toolset.flags emscripten.link OPTIONS <embind>on : --bind ;
+toolset.flags emscripten.link OPTIONS <closure>on : --closure 1 ;
+toolset.flags emscripten.link OPTIONS <closure>full : --closure 2 ;
+# things for old fastcomp backend which was removed in 2.0.0 (08/10/2020)
+toolset.flags emscripten.link OPTIONS <link-optimization>on : --llvm-lto 1 ;
+toolset.flags emscripten.link OPTIONS <link-optimization>full : --llvm-lto 3 ;

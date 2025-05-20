@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class validation_error</title>
+<link rel="stylesheet" href="../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../program_options/reference.html#doxygen.errors_8hpp" title="Header &lt;boost/program_options/errors.hpp&gt;">
+<link rel="prev" href="classboost_1_1program__options_1_1unknown__option.html" title="Class unknown_option">
+<link rel="next" href="classboost_1_1program__options_1_1basic__option.html" title="Class template basic_option">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../boost.png"></td>
+<td align="center"><a href="../../../index.html">Home</a></td>
+<td align="center"><a href="../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1program__options_1_1unknown__option.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../program_options/reference.html#doxygen.errors_8hpp"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1program__options_1_1basic__option.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.classboost_1_1program__options_1_1validation__error"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class validation_error</span></h2>
+<p>boost::program_options::validation_error</p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../program_options/reference.html#doxygen.errors_8hpp" title="Header &lt;boost/program_options/errors.hpp&gt;">boost/program_options/errors.hpp</a>&gt;
+
+</span>
+<span class="keyword">class</span> <a class="link" href="classboost_1_1program__options_1_1validation__error.html" title="Class validation_error">validation_error</a> <span class="special">:</span>
+  <span class="keyword">public</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">program_options</span><span class="special">::</span><span class="identifier">error_with_option_name</span>
+<span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+
+  <span class="keyword">enum</span> <a name="doxygen.classboost_1_1program__options_1_1validation__error_1ae31028f1c5d061e9849b1c8df823a32c"></a>kind_t <span class="special">{</span> <a name="doxygen.classboost_1_1program__options_1_1validation__error_1ae31028f1c5d061e9849b1c8df823a32ca6e81cf31c89f1a7c014178276843fd1f"></a>multiple_values_not_allowed = 30, <a name="doxygen.classboost_1_1program__options_1_1validation__error_1ae31028f1c5d061e9849b1c8df823a32ca4d9cc2759007155f3004f2dc749216ce"></a>at_least_one_value_required, 
+                <a name="doxygen.classboost_1_1program__options_1_1validation__error_1ae31028f1c5d061e9849b1c8df823a32cab68e8af0b830d30a91a9a1355c7fa01d"></a>invalid_bool_value, <a name="doxygen.classboost_1_1program__options_1_1validation__error_1ae31028f1c5d061e9849b1c8df823a32cabf1d095a4635e1a4a17955f3bc0f90fd"></a>invalid_option_value, <a name="doxygen.classboost_1_1program__options_1_1validation__error_1ae31028f1c5d061e9849b1c8df823a32caaec1cd22b8cbf09e2a638a27712d61f2"></a>invalid_option <span class="special">}</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1program__options_1_1validation__error.html#id-1_3_31_9_5_1_1_17_4-bb">public member functions</a></span>
+  <a class="link" href="classboost_1_1program__options_1_1validation__error.html#doxygen.classboost_1_1program__options_1_1validation__error_1ab26e28876da6bff7d1e1b169d4a90827"><span class="identifier">validation_error</span></a><span class="special">(</span><span class="identifier">kind_t</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="special">&amp;</span> <span class="special">=</span> <span class="string">""</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="special">&amp;</span> <span class="special">=</span> <span class="string">""</span><span class="special">,</span> 
+                   <span class="keyword">int</span> <span class="special">=</span> <span class="number">0</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">kind_t</span> <a class="link" href="classboost_1_1program__options_1_1validation__error.html#doxygen.classboost_1_1program__options_1_1validation__error_1a3786ea4cecd3a4b61fdb4069e4ae9a6c"><span class="identifier">kind</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1program__options_1_1validation__error.html#id-1_3_31_9_5_1_1_17_5-bb">protected member functions</a></span>
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <a class="link" href="classboost_1_1program__options_1_1validation__error.html#doxygen.classboost_1_1program__options_1_1validation__error_1afcae3f0dccff3215a8ea4be9b3523349"><span class="identifier">get_template</span></a><span class="special">(</span><span class="identifier">kind_t</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.31.9.6.19.4"></a><h2>Description</h2>
+<p>Class thrown when value of option is incorrect. </p>
+<div class="refsect2">
+<a name="id-1.3.31.9.6.19.4.3"></a><h3>
+<a name="id-1_3_31_9_5_1_1_17_4-bb"></a><code class="computeroutput">validation_error</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem"><pre class="literallayout"><a name="doxygen.classboost_1_1program__options_1_1validation__error_1ab26e28876da6bff7d1e1b169d4a90827"></a><span class="identifier">validation_error</span><span class="special">(</span><span class="identifier">kind_t</span> kind<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="special">&amp;</span> option_name <span class="special">=</span> <span class="string">""</span><span class="special">,</span> 
+                 <span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="special">&amp;</span> original_token <span class="special">=</span> <span class="string">""</span><span class="special">,</span> 
+                 <span class="keyword">int</span> option_style <span class="special">=</span> <span class="number">0</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">kind_t</span> <a name="doxygen.classboost_1_1program__options_1_1validation__error_1a3786ea4cecd3a4b61fdb4069e4ae9a6c"></a><span class="identifier">kind</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.31.9.6.19.4.4"></a><h3>
+<a name="id-1_3_31_9_5_1_1_17_5-bb"></a><code class="computeroutput">validation_error</code> protected member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem">
+<pre class="literallayout"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <a name="doxygen.classboost_1_1program__options_1_1validation__error_1afcae3f0dccff3215a8ea4be9b3523349"></a><span class="identifier">get_template</span><span class="special">(</span><span class="identifier">kind_t</span> kind<span class="special">)</span><span class="special">;</span></pre>
+<p>Used to convert kind_t to a related error text </p>
+</li></ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2002-2004 Vladimir Prus<p>Distributed under the Boost Software License, Version 1.0.
+      (See accompanying file <code class="filename">LICENSE_1_0.txt</code> or copy at 
+      <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1program__options_1_1unknown__option.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../program_options/reference.html#doxygen.errors_8hpp"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1program__options_1_1basic__option.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

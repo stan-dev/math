@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+        <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Percent Encoding :: Boost Libraries Documentation</title>
+  <link rel="canonical" href="https://antora.cppalliance.org/master/lib/doc/url/urls/percent-encoding.html">
+    <link rel="prev" href="stringtoken.html">
+    <link rel="next" href="formatting.html">
+  <meta name="generator" content="Antora 3.1.9">
+    <link rel="stylesheet" href="../../_/css/boostlook.css">
+    <link rel="stylesheet" href="../../_/css/site.css">
+    <link rel="stylesheet" href="../../_/css/vendor/tabs.css">
+    <script>var uiRootPath = '../../_'</script>
+  </head>
+  <body class="article toc2 toc-left">
+    <div class="boostlook">
+  <div id="header">
+    <div id="toc" class="nav-container toc2" data-component="url" data-version="">
+  <aside class="nav">
+    <button class="nav-close"></button>
+    <div class="panels">
+      <div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+      <h3 class="title"><a href="../index.html">Boost.URL</a></h3>
+      <ul class="nav-list">
+        <ul class="nav-list">
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../quicklook.html">Quick Look</a>
+        </li>
+              <li class="" data-depth="1">
+            <a class="nav-link" href="index.html">URLs</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="parsing.html">Parsing</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="containers.html">Containers</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="segments.html">Segments</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="params.html">Params</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="normalization.html">Normalization</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="stringtoken.html">String Token</a>
+        </li>
+              <li class=" is-current-page" data-depth="2">
+            <a class="nav-link" href="percent-encoding.html">Percent Encoding</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="formatting.html">Formatting</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../grammar/index.html">Customization</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/rules.html">Parse Rules</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/charset.html">Character Sets</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/combinators.html">Compound Rules</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/range.html">Ranges</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/rfc3986.html">RFC 3986</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Examples</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/qrcode.html">QR Code</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/finicky.html">Finicky</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/mailto.html">mailto URLs</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/magnet-link.html">Magnet Link</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/file-router.html">File Router</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/router.html">Router</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/sanitize.html">Sanitizing URLs</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../reference.html">Reference</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <span class="nav-text">Concepts</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="3">
+            <a class="nav-link" href="../concepts/CharSet.html">CharSet</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="../concepts/Rule.html">Rule</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="../concepts/StringToken.html">StringToken</a>
+        </li>
+        </ul>
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../HelpCard.html">Help Card</a>
+        </li>
+        </ul>
+  </ul>
+  </ul>
+  </nav>
+</div>
+    </div>
+  </aside>
+</div>
+</div>
+  <div id="content">
+    <article class="doc max-width-reset">
+  <div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li>
+      <a href="../index.html" aria-label="Home: Boost.URL">
+        <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 -960 960 960" fill="#000000" aria-hidden="true"><path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z"/></svg>
+      </a>
+    </li>
+    <li><a href="index.html">URLs</a></li>
+    <li><a href="percent-encoding.html">Percent Encoding</a></li>
+  </ul>
+</nav>
+<div class="spirit-nav">
+    <a accesskey="p" href="stringtoken.html"><span class="material-symbols-outlined" title="Previous: String Token">arrow_back</span></a>
+    <a accesskey="p" href="index.html"><span class="material-symbols-outlined" title="Up: URLs">arrow_upward</span></a>
+    <a accesskey="p" href="formatting.html"><span class="material-symbols-outlined" title="Next: Formatting">arrow_forward</span></a>
+</div>
+</div>
+    <h1 class="page">Percent Encoding</h1>
+  <div class="sect1">
+<h2 id="_encoding"><a class="anchor" href="#_encoding"></a>Encoding</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code><a href="../reference/boost/urls/encode.html" class="xref page">encode</a></code> can be used to percent-encode strings with the specified <em>CharSet</em>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">std::string s = encode("hello world!", unreserved_chars);
+assert(s == "hello%20world%21");</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A few parameters, such as encoding spaces as plus (<code>+</code>), can be adjusted with <code><a href="../reference/boost/urls/encoding_opts.html" class="xref page">encoding_opts</a></code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">encoding_opts opt;
+opt.space_as_plus = true;
+std::string s = encode("msg=hello world", pchars, opt);
+assert(s == "msg=hello+world");</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The result type of the function can also be specified via a <em>StringToken</em>
+so that strings can be reused or appended.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">std::string s;
+encode("hello ", pchars, {}, string_token::assign_to(s));
+encode("world", pchars, {}, string_token::append_to(s));
+assert(s == "hello%20world");</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We can also use <code><a href="../reference/boost/urls/encoded_size.html" class="xref page">encoded_size</a></code> to determine the required size before attempting to encode:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">boost::core::string_view e = "hello world";
+std::string s;
+s.reserve(encoded_size(e, pchars));
+encode(e, pchars, {}, string_token::assign_to(s));
+assert(s == "hello%20world");</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In other scenarios, strings can also be directly encoded into buffers:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">boost::core::string_view e = "hello world";
+std::string s;
+s.resize(encoded_size(e, pchars));
+encode(&amp;s[0], s.size(), e, pchars);
+assert(s == "hello%20world");</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_validating"><a class="anchor" href="#_validating"></a>Validating</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The class <code><a href="../reference/boost/urls/pct_string_view.html" class="xref page">pct_string_view</a></code> represents a reference percent-encoded strings:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">pct_string_view sv = "hello%20world";
+assert(sv == "hello%20world");</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code><a href="../reference/boost/urls/pct_string_view.html" class="xref page">pct_string_view</a></code> is analogous to <code><a href="https://www.boost.org/doc/libs/master/libs/core/doc/html/" target="_blank" rel="noopener">string_view</a></code>, with the main difference that the percent-encoding of the underlying buffer is always validated.
+Attempting to directly construct a <code><a href="../reference/boost/urls/pct_string_view.html" class="xref page">pct_string_view</a></code> from an invalid string throws an exception.</p>
+</div>
+<div class="paragraph">
+<p>To simply validate a string without recurring to exceptions, a <code><a href="https://www.boost.org/doc/libs/master/libs/system/doc/html/system.html#ref_resultt_e" target="_blank" rel="noopener">result</a></code>
+can be returned with the
+<code><a href="../reference/boost/urls/make_pct_string_view.html" class="xref page">make_pct_string_view</a></code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">boost::system::result&lt;pct_string_view&gt; rs =
+    make_pct_string_view("hello%20world");
+assert(rs.has_value());
+pct_string_view sv = rs.value();
+assert(sv == "hello%20world");</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This means <code><a href="../reference/boost/urls/make_pct_string_view.html" class="xref page">make_pct_string_view</a></code>
+can also be used to validate strings and keep that information for future use.
+The modifying functions in classes such as <code><a href="../reference/boost/urls/url.html" class="xref page">url</a></code> expect instances of
+<code><a href="../reference/boost/urls/pct_string_view.html" class="xref page">pct_string_view</a></code> that have already been validated.
+This completely removes the responsibility of revalidating this information or throwing exceptions from these functions:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">pct_string_view s = "path/to/file";
+url u;
+u.set_encoded_path(s);
+assert(u.buffer() == "path/to/file");</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When exceptions are acceptable, a common pattern is to let a literal string or other type convertible to <code><a href="https://www.boost.org/doc/libs/master/libs/core/doc/html/" target="_blank" rel="noopener">string_view</a></code> be implicitly converted to
+<code><a href="../reference/boost/urls/pct_string_view.html" class="xref page">pct_string_view</a></code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">url u;
+u.set_encoded_path("path/to/file");
+assert(u.buffer() == "path/to/file");</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If the input is invalid, note that an exception is thrown while the
+<code><a href="../reference/boost/urls/pct_string_view.html" class="xref page">pct_string_view</a></code> is implicitly constructed and not from the modifying function.</p>
+</div>
+<div class="paragraph">
+<p>Reusing the validation guarantee is particularly useful when the
+<code><a href="../reference/boost/urls/pct_string_view.html" class="xref page">pct_string_view</a></code> comes from another source where the data is also ensured to be validated:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">url_view uv("path/to/file");
+url u;
+u.set_encoded_path(uv.encoded_path());
+assert(u.buffer() == "path/to/file");</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In the example above,
+<code><a href="../reference/boost/urls/url_base.html" class="xref page">set_encoded_path</a></code>
+does not to revalidate any information from
+<code>encoded_path</code>
+because these references are passed as <code><a href="../reference/boost/urls/pct_string_view.html" class="xref page">pct_string_view</a></code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_decode"><a class="anchor" href="#_decode"></a>Decode</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The class <code><a href="../reference/boost/urls/pct_string_view.html" class="xref page">pct_string_view</a></code> represents a reference percent-encoded strings.
+<code><a href="../reference/boost/urls/decode_view.html" class="xref page">decode_view</a></code> is analogous to <code><a href="../reference/boost/urls/pct_string_view.html" class="xref page">pct_string_view</a></code>, with the main difference that the underlying buffer always dereferences to decoded characters.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">pct_string_view es("hello%20world");
+assert(es == "hello%20world");
+
+decode_view dv("hello%20world");
+assert(dv == "hello world");</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A <code><a href="../reference/boost/urls/decode_view.html" class="xref page">decode_view</a></code> can also be created from a <code><a href="../reference/boost/urls/pct_string_view.html" class="xref page">pct_string_view</a></code> with the
+<code><a href="../reference/boost/urls/pct_string_view/operator_star.html" class="xref page">operator*</a></code>.
+The also gives us an opportunity to validate external strings:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">boost::system::result&lt;pct_string_view&gt; rs =
+    make_pct_string_view("hello%20world");
+assert(rs.has_value());
+pct_string_view s = rs.value();
+decode_view dv = *s;
+assert(dv == "hello world");</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This is particularly useful when the decoded string need to be accessed for comparisons with no necessity to explicitly decoding the string into a buffer:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">url_view u =
+    parse_relative_ref("user/john%20doe/profile%20photo.jpg").value();
+std::vector&lt;std::string&gt; route =
+    {"user", "john doe", "profile photo.jpg"};
+auto segs = u.encoded_segments();
+auto it0 = segs.begin();
+auto end0 = segs.end();
+auto it1 = route.begin();
+auto end1 = route.end();
+while (
+    it0 != end0 &amp;&amp;
+    it1 != end1)
+{
+    pct_string_view seg0 = *it0;
+    decode_view dseg0 = *seg0;
+    boost::core::string_view seg1 = *it1;
+    if (dseg0 == seg1)
+    {
+        ++it0;
+        ++it1;
+    }
+    else
+    {
+        break;
+    }
+}
+bool route_match = it0 == end0 &amp;&amp; it1 == end1;
+assert(route_match);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The member function
+<code><a href="../reference/boost/urls/pct_string_view/decode.html" class="xref page">pct_string_view::decode</a></code>
+can be used to decode the data into a buffer.
+Like the free-function
+<code><a href="../reference/boost/urls/encode.html" class="xref page">encode</a></code>, decoding options and the string token can be customized.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">pct_string_view s = "user/john%20doe/profile%20photo.jpg";
+std::string buf;
+buf.resize(s.decoded_size());
+s.decode({}, string_token::assign_to(buf));
+assert(buf == "user/john doe/profile photo.jpg");</code></pre>
+</div>
+</div>
+</div>
+</div>
+  <div class="edit-this-page">
+      <a href="https://github.com/boostorg/url/edit/develop/doc/modules/ROOT/pages/urls/percent-encoding.adoc">Edit this Page</a>
+      </div>
+      <nav class="pagination">
+        <span class="prev"><a href="stringtoken.html">String Token</a></span>
+        <span class="next"><a href="formatting.html">Formatting</a></span>
+    </nav>
+</article>
+</div>
+  <div id="footer">
+  <script id="site-script" src="../../_/js/site.js" data-ui-root-path="../../_"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+<script async src="../../_/js/vendor/tabs.js" data-sync-storage-key="preferred-tab"></script>
+</div>
+</div>
+  </body>
+</html>

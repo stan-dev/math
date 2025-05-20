@@ -1,0 +1,124 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template binomial_proportion_interval</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="Chapter 1. Boost.Histogram">
+<link rel="up" href="../histogram/reference.html#doxygen.binomial__proportion__interval_8hpp" title="Header &lt;boost/histogram/utility/binomial_proportion_interval.hpp&gt;">
+<link rel="prev" href="classboost_1_1histogram_1_1axis_1_1variant.html" title="Class template variant">
+<link rel="next" href="classboost_1_1histogram_1_1utility_1_1confidence__level.html" title="Class confidence_level">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1histogram_1_1axis_1_1variant.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../histogram/reference.html#doxygen.binomial__proportion__interval_8hpp"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1histogram_1_1utility_1_1confidence__level.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.classboost_1_1histogram_1_1utility_1_1binomial__proportion__interval"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template binomial_proportion_interval</span></h2>
+<p>boost::histogram::utility::binomial_proportion_interval — Common base class for interval calculators. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../histogram/reference.html#doxygen.binomial__proportion__interval_8hpp" title="Header &lt;boost/histogram/utility/binomial_proportion_interval.hpp&gt;">boost/histogram/utility/binomial_proportion_interval.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ValueType<span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1histogram_1_1utility_1_1binomial__proportion__interval.html" title="Class template binomial_proportion_interval">binomial_proportion_interval</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">ValueType</span>                           <a name="doxygen.classboost_1_1histogram_1_1utility_1_1binomial__proportion__interval_1af44c8d8da8445eb32e8e2536b3b7c587"></a><span class="identifier">value_type</span><span class="special">;</span>   
+  <span class="keyword">typedef</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">pair</span><span class="special">&lt;</span> <span class="identifier">value_type</span><span class="special">,</span> <span class="identifier">value_type</span> <span class="special">&gt;</span> <a name="doxygen.classboost_1_1histogram_1_1utility_1_1binomial__proportion__interval_1ad1eeb7cb99c0d93024dec83f4e5e2196"></a><span class="identifier">interval_type</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1histogram_1_1utility_1_1binomial__proportion__interval.html#id73-bb">public member functions</a></span>
+  <span class="keyword">virtual</span> <span class="identifier">interval_type</span> <a class="link" href="classboost_1_1histogram_1_1utility_1_1binomial__proportion__interval.html#doxygen.classboost_1_1histogram_1_1utility_1_1binomial__proportion__interval_1a338445e4cf84e5e9ae9383cf6da36ab4"><span class="keyword">operator</span><span class="special">(</span><span class="special">)</span></a><span class="special">(</span><span class="identifier">value_type</span><span class="special">,</span> <span class="identifier">value_type</span><span class="special">)</span> <span class="keyword">const</span> <span class="special">=</span> <span class="number">0</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> 
+    <span class="identifier">interval_type</span> 
+    <a class="link" href="classboost_1_1histogram_1_1utility_1_1binomial__proportion__interval.html#doxygen.classboost_1_1histogram_1_1utility_1_1binomial__proportion__interval_1a073f3e8f8f32cfe280e70f3a5c260e34"><span class="keyword">operator</span><span class="special">(</span><span class="special">)</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1histogram_1_1accumulators_1_1fraction.html" title="Class template fraction">accumulators::fraction</a><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id32538"></a><h2>Description</h2>
+<div class="refsect2">
+<a name="id32540"></a><h3>
+<a name="id73-bb"></a><code class="computeroutput">binomial_proportion_interval</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">virtual</span> <span class="identifier">interval_type</span> 
+<a name="doxygen.classboost_1_1histogram_1_1utility_1_1binomial__proportion__interval_1a338445e4cf84e5e9ae9383cf6da36ab4"></a><span class="keyword">operator</span><span class="special">(</span><span class="special">)</span><span class="special">(</span><span class="identifier">value_type</span> successes<span class="special">,</span> <span class="identifier">value_type</span> failures<span class="special">)</span> <span class="keyword">const</span> <span class="special">=</span> <span class="number">0</span><span class="special">;</span></pre>Compute interval for given number of successes and failures. <p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">successes</code></span></p></td>
+<td><p>Number of successful trials. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">failures</code></span></p></td>
+<td><p>Number of failed trials. </p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> 
+  <span class="identifier">interval_type</span> 
+  <a name="doxygen.classboost_1_1histogram_1_1utility_1_1binomial__proportion__interval_1a073f3e8f8f32cfe280e70f3a5c260e34"></a><span class="keyword">operator</span><span class="special">(</span><span class="special">)</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1histogram_1_1accumulators_1_1fraction.html" title="Class template fraction">accumulators::fraction</a><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&amp;</span> fraction<span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Compute interval for a fraction accumulator. <p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">fraction</code></span></p></td>
+<td><p>Fraction accumulator. </p></td>
+</tr></tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2016-2019 Hans
+      Dembinski<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1histogram_1_1axis_1_1variant.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../histogram/reference.html#doxygen.binomial__proportion__interval_8hpp"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1histogram_1_1utility_1_1confidence__level.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

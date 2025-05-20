@@ -1,0 +1,702 @@
+<?xml version="1.0" standalone="yes"?>
+<library-reference><header id="doxygen.exceptions_8hpp" name="boost/property_tree/exceptions.hpp">
+<namespace name="boost">
+<namespace name="property_tree">
+<class id="doxygen.classboost_1_1property__tree_1_1ptree__bad__data" name="ptree_bad_data"><inherit access="public">boost::property_tree::ptree_error</inherit><purpose>Error indicating that translation from given value to the property tree data_type (or vice versa) failed. Derives from <link linkend="doxygen.classboost_1_1property__tree_1_1ptree__error">ptree_error</link>. </purpose><method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1property__tree_1_1ptree__bad__data_1acad4d16a395d64c86f052eadeedefb0b"><template>
+          <template-type-parameter name="T"/>
+        </template><parameter name="what"><paramtype>const std::string &amp;</paramtype><description><para>The message to associate with this error. </para></description></parameter><parameter name="data"><paramtype>const T &amp;</paramtype><description><para>The value associated with this error that was the source of the translation failure. </para></description></parameter><purpose>Instantiate a <link linkend="doxygen.classboost_1_1property__tree_1_1ptree__bad__data">ptree_bad_data</link> instance with the given message and data. </purpose><description><para>
+</para></description></constructor>
+<method id="doxygen.classboost_1_1property__tree_1_1ptree__bad__data_1aa8c0dc69c0c016f66059c4dd3d728d74" name="data" cv="const"><type>T</type><template>
+          <template-type-parameter name="T"/>
+        </template><purpose>Retrieve the data associated with this error. This is the source value that failed to be translated. You need to explicitly specify its type. </purpose></method>
+</method-group>
+</class><class id="doxygen.classboost_1_1property__tree_1_1ptree__bad__path" name="ptree_bad_path"><inherit access="public">boost::property_tree::ptree_error</inherit><purpose>Error indicating that specified path does not exist. Derives from <link linkend="doxygen.classboost_1_1property__tree_1_1ptree__error">ptree_error</link>. </purpose><method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1property__tree_1_1ptree__bad__path_1a5292adbccc36ea4520faa0d9cb3282c3"><template>
+          <template-type-parameter name="T"/>
+        </template><parameter name="what"><paramtype>const std::string &amp;</paramtype><description><para>The message to associate with this error. </para></description></parameter><parameter name="path"><paramtype>const T &amp;</paramtype><description><para>The path that could not be found in the <link linkend="doxygen.namespaceboost_1_1property__tree">property_tree</link>. </para></description></parameter><purpose>Instantiate a <link linkend="doxygen.classboost_1_1property__tree_1_1ptree__bad__path">ptree_bad_path</link> with the given message and path data. </purpose><description><para>
+</para></description></constructor>
+<method id="doxygen.classboost_1_1property__tree_1_1ptree__bad__path_1a95b6db40c7932a72348f72dbc91de38d" name="path" cv="const"><type>T</type><template>
+          <template-type-parameter name="T"/>
+        </template><purpose>Retrieve the invalid path. You need to explicitly specify the type of path. </purpose></method>
+</method-group>
+</class><class id="doxygen.classboost_1_1property__tree_1_1ptree__error" name="ptree_error"><inherit access="public">std::runtime_error</inherit><purpose>Base class for all property tree errors. Derives from <computeroutput>std::runtime_error</computeroutput>. Call member function <computeroutput>what</computeroutput> to get human readable message associated with the error. </purpose><method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1property__tree_1_1ptree__error_1aa8d0871f010f25f19ffd70add1efdeda"><parameter name="what"><paramtype>const std::string &amp;</paramtype><description><para>The message to associate with this error. </para></description></parameter><purpose>Instantiate a <link linkend="doxygen.classboost_1_1property__tree_1_1ptree__error">ptree_error</link> instance with the given message. </purpose><description><para>
+</para></description></constructor>
+</method-group>
+</class>
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.id__translator_8hpp" name="boost/property_tree/id_translator.hpp">
+<namespace name="boost">
+<namespace name="property_tree">
+<struct id="doxygen.structboost_1_1property__tree_1_1id__translator" name="id_translator"><template>
+      <template-type-parameter name="T"/>
+    </template><purpose>Simple implementation of the Translator concept. It does no translation. </purpose><typedef id="doxygen.structboost_1_1property__tree_1_1id__translator_1aed4b308ff06cb3b7aeadfc54c71d50eb" name="internal_type"><type>T</type></typedef>
+<typedef id="doxygen.structboost_1_1property__tree_1_1id__translator_1a77731235441742909ca0b7878466c645" name="external_type"><type>T</type></typedef>
+<method-group name="public member functions">
+<method id="doxygen.structboost_1_1property__tree_1_1id__translator_1ac239e1a5ad79ac552ce0ce9b72704526" name="get_value"><type>boost::optional&lt; T &gt;</type><parameter name="v"><paramtype>const T &amp;</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1property__tree_1_1id__translator_1a0fe4e4bd463767295136285f3b90e2ba" name="put_value"><type>boost::optional&lt; T &gt;</type><parameter name="v"><paramtype>const T &amp;</paramtype></parameter></method>
+</method-group>
+</struct><struct-specialization id="doxygen.structboost_1_1property__tree_1_1translator__between_3_01std_1_1basic__string_3_01Ch_00_01Traitsa8d210e8da9a0816c27d947abf315e28" name="translator_between"><template>
+      <template-type-parameter name="Ch"/>
+      <template-type-parameter name="Traits"/>
+      <template-type-parameter name="Alloc"/>
+    </template><specialization><template-arg>std::basic_string&lt; Ch</template-arg><template-arg>Traits</template-arg><template-arg>Alloc &gt;</template-arg><template-arg>std::basic_string&lt; Ch</template-arg><template-arg>Traits</template-arg><template-arg>Alloc &gt;</template-arg></specialization><typedef id="doxygen.structboost_1_1property__tree_1_1translator__between_3_01std_1_1basic__string_3_01Ch_00_01Traitsa8d210e8da9a0816c27d947abf315e28_1a36774198347faa1e233b54fa29cd662f" name="type"><type><classname>id_translator</classname>&lt; std::basic_string&lt; Ch, Traits, Alloc &gt; &gt;</type></typedef>
+</struct-specialization><struct-specialization id="doxygen.structboost_1_1property__tree_1_1translator__between_3_01T_00_01T_01_4" name="translator_between"><template>
+      <template-type-parameter name="T"/>
+    </template><specialization><template-arg>T</template-arg><template-arg>T</template-arg></specialization><typedef id="doxygen.structboost_1_1property__tree_1_1translator__between_3_01T_00_01T_01_4_1af0f1e79995ffa387a009677a2afa7f4c" name="type"><type><classname>id_translator</classname>&lt; T &gt;</type></typedef>
+</struct-specialization>
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.info__parser_8hpp" name="boost/property_tree/info_parser.hpp">
+<namespace name="boost">
+<namespace name="property_tree">
+<namespace name="info_parser">
+<function id="doxygen.namespaceboost_1_1property__tree_1_1info__parser_1a0de3e48b87516349349821c3263ca1af" name="read_info"><type>void</type><template>
+          <template-type-parameter name="Ptree"/>
+          <template-type-parameter name="Ch"/>
+        </template><parameter name="stream"><paramtype>std::basic_istream&lt; Ch &gt; &amp;</paramtype></parameter><parameter name="pt"><paramtype>Ptree &amp;</paramtype></parameter><description><para>Read INFO from a the given stream and translate it to a property tree. <note><para>Replaces the existing contents. Strong exception guarantee. </para>
+</note>
+
+</para></description><throws><simpara><classname>info_parser_error</classname> If the stream cannot be read, doesn't contain valid INFO, or a conversion fails. </simpara>
+</throws></function>
+<function id="doxygen.namespaceboost_1_1property__tree_1_1info__parser_1a364db4a3fbab607f0aef227fc45ff587" name="read_info"><type>void</type><template>
+          <template-type-parameter name="Ptree"/>
+          <template-type-parameter name="Ch"/>
+        </template><parameter name="stream"><paramtype>std::basic_istream&lt; Ch &gt; &amp;</paramtype></parameter><parameter name="pt"><paramtype>Ptree &amp;</paramtype></parameter><parameter name="default_ptree"><paramtype>const Ptree &amp;</paramtype><description><para>If parsing fails, pt is set to a copy of this tree. </para></description></parameter><description><para>Read INFO from a the given stream and translate it to a property tree. <note><para>Replaces the existing contents. Strong exception guarantee. </para>
+</note>
+
+</para></description></function>
+<function id="doxygen.namespaceboost_1_1property__tree_1_1info__parser_1ac2d1ba47253cbd6f233ace7adc147701" name="read_info"><type>void</type><template>
+          <template-type-parameter name="Ptree"/>
+        </template><parameter name="filename"><paramtype>const std::string &amp;</paramtype></parameter><parameter name="pt"><paramtype>Ptree &amp;</paramtype></parameter><parameter name="loc"><paramtype>const std::locale &amp;</paramtype><default>std::locale()</default></parameter><description><para>Read INFO from a the given file and translate it to a property tree. The tree's key type must be a string type, i.e. it must have a nested value_type typedef that is a valid parameter for basic_ifstream. <note><para>Replaces the existing contents. Strong exception guarantee. </para>
+</note>
+
+</para></description><throws><simpara><classname>info_parser_error</classname> If the file cannot be read, doesn't contain valid INFO, or a conversion fails. </simpara>
+</throws></function>
+<function id="doxygen.namespaceboost_1_1property__tree_1_1info__parser_1a99350a81f0e9f4feb7fe150cb0cb13c9" name="read_info"><type>void</type><template>
+          <template-type-parameter name="Ptree"/>
+        </template><parameter name="filename"><paramtype>const std::string &amp;</paramtype></parameter><parameter name="pt"><paramtype>Ptree &amp;</paramtype></parameter><parameter name="default_ptree"><paramtype>const Ptree &amp;</paramtype><description><para>If parsing fails, pt is set to a copy of this tree. </para></description></parameter><parameter name="loc"><paramtype>const std::locale &amp;</paramtype><default>std::locale()</default></parameter><description><para>Read INFO from a the given file and translate it to a property tree. The tree's key type must be a string type, i.e. it must have a nested value_type typedef that is a valid parameter for basic_ifstream. <note><para>Replaces the existing contents. Strong exception guarantee. </para>
+</note>
+
+</para></description></function>
+<function id="doxygen.namespaceboost_1_1property__tree_1_1info__parser_1a0e233c1f65066443a970aa49d0b81619" name="write_info"><type>void</type><template>
+          <template-type-parameter name="Ptree"/>
+          <template-type-parameter name="Ch"/>
+        </template><parameter name="stream"><paramtype>std::basic_ostream&lt; Ch &gt; &amp;</paramtype></parameter><parameter name="pt"><paramtype>const Ptree &amp;</paramtype></parameter><parameter name="settings"><paramtype>const info_writer_settings&lt; Ch &gt; &amp;</paramtype><default>info_writer_settings&lt; Ch &gt;()</default><description><para>The settings to use when writing the INFO data. </para></description></parameter><description><para>Writes a tree to the stream in INFO format. 
+
+</para></description><throws><simpara><classname>info_parser_error</classname> If the stream cannot be written to, or a conversion fails. </simpara>
+</throws></function>
+<function id="doxygen.namespaceboost_1_1property__tree_1_1info__parser_1a42999339f15011ae980a4b8691885177" name="write_info"><type>void</type><template>
+          <template-type-parameter name="Ptree"/>
+        </template><parameter name="filename"><paramtype>const std::string &amp;</paramtype></parameter><parameter name="pt"><paramtype>const Ptree &amp;</paramtype></parameter><parameter name="loc"><paramtype>const std::locale &amp;</paramtype><default>std::locale()</default></parameter><parameter name="settings"><paramtype>const info_writer_settings&lt; typename Ptree::key_type::value_type &gt; &amp;</paramtype><default>info_writer_make_settings&lt; typename Ptree::key_type::value_type &gt;()</default><description><para>The settings to use when writing the INFO data. </para></description></parameter><description><para>Writes a tree to the file in INFO format. The tree's key type must be a string type, i.e. it must have a nested value_type typedef that is a valid parameter for basic_ofstream. 
+
+</para></description><throws><simpara><classname>info_parser_error</classname> If the file cannot be written to, or a conversion fails. </simpara>
+</throws></function>
+</namespace>
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.ini__parser_8hpp" name="boost/property_tree/ini_parser.hpp">
+<namespace name="boost">
+<namespace name="property_tree">
+<namespace name="ini_parser">
+<class id="doxygen.classboost_1_1property__tree_1_1ini__parser_1_1ini__parser__error" name="ini_parser_error"><inherit access="public">file_parser_error</inherit><description><para>Indicates an error parsing INI formatted data. </para></description><method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1property__tree_1_1ini__parser_1_1ini__parser__error_1a776f5b5bf66e8692d9260e8776d4dd4f"><parameter name="message"><paramtype>const std::string &amp;</paramtype><description><para>Message describing the parser error. </para></description></parameter><parameter name="filename"><paramtype>const std::string &amp;</paramtype><description><para>The name of the file being parsed containing the error. </para></description></parameter><parameter name="line"><paramtype>unsigned long</paramtype><description><para>The line in the given file where an error was encountered. </para></description></parameter><description><para>Construct an <computeroutput><link linkend="doxygen.classboost_1_1property__tree_1_1ini__parser_1_1ini__parser__error">ini_parser_error</link></computeroutput> 
+</para></description></constructor>
+</method-group>
+</class><function id="doxygen.namespaceboost_1_1property__tree_1_1ini__parser_1a1aa10a4303e17c7cf725258f53029fb5" name="validate_flags"><type>bool</type><parameter name="flags"><paramtype>int</paramtype><description><para>value to check for validity as flags to <link linkend="doxygen.namespaceboost_1_1property__tree_1_1ini__parser">ini_parser</link>. </para></description></parameter><description><para>Determines whether the <computeroutput>flags</computeroutput> are valid for use with the <link linkend="doxygen.namespaceboost_1_1property__tree_1_1ini__parser">ini_parser</link>. 
+
+</para></description><returns><para>true if the flags are valid, false otherwise. </para>
+</returns></function>
+<function id="doxygen.namespaceboost_1_1property__tree_1_1ini__parser_1a78b26e34c05452fc1f7ad878e64664e3" name="read_ini"><type>void</type><template>
+          <template-type-parameter name="Ptree"/>
+        </template><parameter name="stream"><paramtype>std::basic_istream&lt; typename Ptree::key_type::value_type &gt; &amp;</paramtype><description><para>Stream from which to read in the property tree. </para></description></parameter><parameter name="pt"><paramtype>Ptree &amp;</paramtype><description><para>The property tree to populate. </para></description></parameter><description><para>Read INI from a the given stream and translate it to a property tree. <note><para>Clears existing contents of property tree. In case of error the property tree is not modified. </para>
+</note>
+
+
+</para></description><throws><simpara><classname>ini_parser_error</classname> If a format violation is found. </simpara>
+</throws></function>
+<function id="doxygen.namespaceboost_1_1property__tree_1_1ini__parser_1aa179366a9436d790377c965af0aa1069" name="read_ini"><type>void</type><template>
+          <template-type-parameter name="Ptree"/>
+        </template><parameter name="filename"><paramtype>const std::string &amp;</paramtype><description><para>Name of file from which to read in the property tree. </para></description></parameter><parameter name="pt"><paramtype>Ptree &amp;</paramtype><description><para>The property tree to populate. </para></description></parameter><parameter name="loc"><paramtype>const std::locale &amp;</paramtype><default>std::locale()</default><description><para>The locale to use when reading in the file contents. </para></description></parameter><description><para>Read INI from a the given file and translate it to a property tree. <note><para>Clears existing contents of property tree. In case of error the property tree unmodified. </para>
+</note>
+
+
+</para></description><throws><simpara><classname>ini_parser_error</classname> In case of error deserializing the property tree. </simpara>
+</throws></function>
+<function id="doxygen.namespaceboost_1_1property__tree_1_1ini__parser_1a15da59c500e012afa99014e4f343f3a2" name="write_ini"><type>void</type><template>
+          <template-type-parameter name="Ptree"/>
+        </template><parameter name="stream"><paramtype>std::basic_ostream&lt; typename Ptree::key_type::value_type &gt; &amp;</paramtype><description><para>The stream to which to write the INI representation of the property tree. </para></description></parameter><parameter name="pt"><paramtype>const Ptree &amp;</paramtype><description><para>The property tree to tranlsate to INI and output. </para></description></parameter><parameter name="flags"><paramtype>int</paramtype><default>0</default><description><para>The flags to use when writing the INI file. No flags are currently supported. </para></description></parameter><description><para>Translates the property tree to INI and writes it the given output stream. 
+
+
+
+
+
+</para></description><requires><para><emphasis>pt</emphasis> cannot have data in its root. </para>
+</requires><requires><para><emphasis>pt</emphasis> cannot have keys both data and children. </para>
+</requires><requires><para><emphasis>pt</emphasis> cannot be deeper than two levels. </para>
+</requires><requires><para>There cannot be duplicate keys on any given level of <emphasis>pt</emphasis>. </para>
+</requires><throws><simpara><classname>ini_parser_error</classname> In case of error translating the property tree to INI or writing to the output stream. </simpara>
+</throws></function>
+<function id="doxygen.namespaceboost_1_1property__tree_1_1ini__parser_1abb48285eaea606a1a7e2e5df2e040955" name="write_ini"><type>void</type><template>
+          <template-type-parameter name="Ptree"/>
+        </template><parameter name="filename"><paramtype>const std::string &amp;</paramtype><description><para>The name of the file to which to write the INI representation of the property tree. </para></description></parameter><parameter name="pt"><paramtype>const Ptree &amp;</paramtype><description><para>The property tree to tranlsate to INI and output. </para></description></parameter><parameter name="flags"><paramtype>int</paramtype><default>0</default><description><para>The flags to use when writing the INI file. The following flags are supported: <itemizedlist>
+<listitem><para><computeroutput>skip_ini_validity_check</computeroutput> – Skip check if ptree is a valid ini. The validity check covers the preconditions but takes <computeroutput>O(n log n)</computeroutput> time. </para>
+</listitem>
+</itemizedlist>
+</para></description></parameter><parameter name="loc"><paramtype>const std::locale &amp;</paramtype><default>std::locale()</default><description><para>The locale to use when writing the file. </para></description></parameter><description><para>Translates the property tree to INI and writes it the given file. 
+
+
+
+
+
+</para></description><requires><para><emphasis>pt</emphasis> cannot have data in its root. </para>
+</requires><requires><para><emphasis>pt</emphasis> cannot have keys both data and children. </para>
+</requires><requires><para><emphasis>pt</emphasis> cannot be deeper than two levels. </para>
+</requires><requires><para>There cannot be duplicate keys on any given level of <emphasis>pt</emphasis>. </para>
+</requires><throws><simpara><classname>info_parser_error</classname> In case of error translating the property tree to INI or writing to the file. </simpara>
+</throws></function>
+</namespace>
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.json__parser_8hpp" name="boost/property_tree/json_parser.hpp">
+<namespace name="boost">
+<namespace name="property_tree">
+<namespace name="json_parser">
+<function id="doxygen.namespaceboost_1_1property__tree_1_1json__parser_1a7aed126d35d2893e51c49399ba33c51e" name="read_json"><type>void</type><template>
+          <template-type-parameter name="Ptree"/>
+        </template><parameter name="stream"><paramtype>std::basic_istream&lt; typename Ptree::key_type::value_type &gt; &amp;</paramtype><description><para>Stream from which to read in the property tree. </para></description></parameter><parameter name="pt"><paramtype>Ptree &amp;</paramtype><description><para>The property tree to populate. </para></description></parameter><description><para>Read JSON from a the given stream and translate it to a property tree. <note><para>Clears existing contents of property tree. In case of error the property tree unmodified. </para>
+</note>
+<note><para>Items of JSON arrays are translated into ptree keys with empty names. Members of objects are translated into named keys. </para>
+</note>
+<note><para>JSON data can be a string, a numeric value, or one of literals "null", "true" and "false". During parse, any of the above is copied verbatim into ptree data string. </para>
+</note>
+
+
+</para></description><throws><simpara><classname>json_parser_error</classname> In case of error deserializing the property tree. </simpara>
+</throws></function>
+<function id="doxygen.namespaceboost_1_1property__tree_1_1json__parser_1aa8344dc0b7987cba89b0630195d7a34d" name="read_json"><type>void</type><template>
+          <template-type-parameter name="Ptree"/>
+        </template><parameter name="filename"><paramtype>const std::string &amp;</paramtype><description><para>Name of file from which to read in the property tree. </para></description></parameter><parameter name="pt"><paramtype>Ptree &amp;</paramtype><description><para>The property tree to populate. </para></description></parameter><parameter name="loc"><paramtype>const std::locale &amp;</paramtype><default>std::locale()</default><description><para>The locale to use when reading in the file contents. </para></description></parameter><description><para>Read JSON from a the given file and translate it to a property tree. <note><para>Clears existing contents of property tree. In case of error the property tree unmodified. </para>
+</note>
+<note><para>Items of JSON arrays are translated into ptree keys with empty names. Members of objects are translated into named keys. </para>
+</note>
+<note><para>JSON data can be a string, a numeric value, or one of literals "null", "true" and "false". During parse, any of the above is copied verbatim into ptree data string. </para>
+</note>
+
+
+</para></description><throws><simpara><classname>json_parser_error</classname> In case of error deserializing the property tree. </simpara>
+</throws></function>
+<function id="doxygen.namespaceboost_1_1property__tree_1_1json__parser_1ad290247428581132003df8706e3ef9d0" name="write_json"><type>void</type><template>
+          <template-type-parameter name="Ptree"/>
+        </template><parameter name="stream"><paramtype>std::basic_ostream&lt; typename Ptree::key_type::value_type &gt; &amp;</paramtype><description><para>The stream to which to write the JSON representation of the property tree. </para></description></parameter><parameter name="pt"><paramtype>const Ptree &amp;</paramtype><description><para>The property tree to tranlsate to JSON and output. </para></description></parameter><parameter name="pretty"><paramtype>bool</paramtype><default>true</default><description><para>Whether to pretty-print. Defaults to true for backward compatibility. </para></description></parameter><description><para>Translates the property tree to JSON and writes it the given output stream. <note><para>Any property tree key containing only unnamed subkeys will be rendered as JSON arrays. </para>
+</note>
+
+
+
+</para></description><requires><para><emphasis>pt</emphasis> cannot contain keys that have both subkeys and non-empty data. </para>
+</requires><throws><simpara><classname>json_parser_error</classname> In case of error translating the property tree to JSON or writing to the output stream. </simpara>
+</throws></function>
+<function id="doxygen.namespaceboost_1_1property__tree_1_1json__parser_1a49f6a7c920e5ac943603a5f10ccf3a32" name="write_json"><type>void</type><template>
+          <template-type-parameter name="Ptree"/>
+        </template><parameter name="filename"><paramtype>const std::string &amp;</paramtype><description><para>The name of the file to which to write the JSON representation of the property tree. </para></description></parameter><parameter name="pt"><paramtype>const Ptree &amp;</paramtype><description><para>The property tree to translate to JSON and output. </para></description></parameter><parameter name="loc"><paramtype>const std::locale &amp;</paramtype><default>std::locale()</default><description><para>The locale to use when writing out to the output file. </para></description></parameter><parameter name="pretty"><paramtype>bool</paramtype><default>true</default><description><para>Whether to pretty-print. Defaults to true and last place for backward compatibility. </para></description></parameter><description><para>Translates the property tree to JSON and writes it the given file. <note><para>Any property tree key containing only unnamed subkeys will be rendered as JSON arrays. </para>
+</note>
+
+
+
+</para></description><requires><para><emphasis>pt</emphasis> cannot contain keys that have both subkeys and non-empty data. </para>
+</requires><throws><simpara><classname>json_parser_error</classname> In case of error translating the property tree to JSON or writing to the file. </simpara>
+</throws></function>
+</namespace>
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.ptree_8hpp" name="boost/property_tree/ptree.hpp">
+<namespace name="boost">
+<namespace name="property_tree">
+<class id="doxygen.classboost_1_1property__tree_1_1basic__ptree" name="basic_ptree"><template>
+      <template-type-parameter name="Key"/>
+      <template-type-parameter name="Data"/>
+      <template-type-parameter name="KeyCompare"/>
+    </template><description><para>Property tree main structure. A property tree is a hierarchical data structure which has one element of type <computeroutput>Data</computeroutput> in each node, as well as an ordered sequence of sub-nodes, which are additionally identified by a non-unique key of type <computeroutput>Key</computeroutput>.</para><para>Key equivalency is defined by <computeroutput>KeyCompare</computeroutput>, a predicate defining a strict weak ordering.</para><para>Property tree defines a Container-like interface to the (key-node) pairs of its direct sub-nodes. The iterators are bidirectional. The sequence of nodes is held in insertion order, not key order. </para></description><typedef id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a48b6e6ddd60a49a5b6b9f49cb590b721" name="self_type"><description><para>Simpler way to refer to this <link linkend="doxygen.classboost_1_1property__tree_1_1basic__ptree">basic_ptree</link>&lt;C,K,P,A&gt; type. Note that this is private, and made public only for doxygen. </para></description><type><classname>basic_ptree</classname>&lt; Key, Data, KeyCompare &gt;</type></typedef>
+<typedef id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a31bf07528ac3e936c80138209901c37d" name="key_type"><type>Key</type></typedef>
+<typedef id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a7111255820d11446840c438332d0e81c" name="data_type"><type>Data</type></typedef>
+<typedef id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a2188aeb9bbfcfb5b82547e5f517fbb0c" name="key_compare"><type>KeyCompare</type></typedef>
+<typedef id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a12a2eca5c2e1f10eed5d2bc9692184ab" name="value_type"><type>std::pair&lt; const Key, self_type &gt;</type></typedef>
+<typedef id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a9630565764bbc2488c51758ce1ead5ef" name="size_type"><type>std::size_t</type></typedef>
+<typedef id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1acc7631e33aa1715ef84b9d867483122c" name="path_type"><type><classname>path_of</classname>&lt; Key &gt;::type</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a24a1cbd98ac15c6986a4fff7be2282d7"><description><para>Creates a node with no children and default-constructed data. </para></description></constructor>
+<constructor id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a44ef4e187cd5c78b28cb9e65f8f860cd" specifiers="explicit"><parameter name="data"><paramtype>const data_type &amp;</paramtype></parameter><description><para>Creates a node with no children and a copy of the given data. </para></description></constructor>
+<constructor id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1af735c1b46da5089ae7e2db89a086ae71"><parameter name="rhs"><paramtype>const self_type &amp;</paramtype></parameter></constructor>
+<destructor id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a6739376ed89b084313a593825c2d42dc"/>
+<copy-assignment id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a56ccf57a34241b0cc89dc3f01091ec01"><type>self_type &amp;</type><parameter name="rhs"><paramtype>const self_type &amp;</paramtype></parameter><description><para>Basic guarantee only. </para></description></copy-assignment>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a2aad746fdfbbd095ad30c4245d9d3811" name="swap"><type>void</type><parameter name="rhs"><paramtype>self_type &amp;</paramtype></parameter><description><para>Swap with other tree. Only constant-time and nothrow if the data type's swap is. </para></description></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a27dc331f1ac8d21cd9c177b11ed13956" name="size" cv="const"><type>size_type</type><description><para>The number of direct children of this node. </para></description></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a85ecf9964703138f7b5763113710e3fb" name="max_size" cv="const"><type>size_type</type></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a8be352d970c17b5c712214c04eb91c3a" name="empty" cv="const"><type>bool</type><description><para>Whether there are any direct children. </para></description></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a0ec697ab6ed408f31109b261ef224459" name="begin"><type>iterator</type></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1adb7f6b5c35f805d4889a510041d7cde0" name="begin" cv="const"><type>const_iterator</type></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1ac939aba3c530dc640433d915fdadb068" name="end"><type>iterator</type></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1af1e9e6d2dcf62865a4d7d4cfa323eaf8" name="end" cv="const"><type>const_iterator</type></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a6bd79207611a18336111a746a06239c7" name="rbegin"><type>reverse_iterator</type></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1ad2f79f4b5582c70abb94a1f0306b1640" name="rbegin" cv="const"><type>const_reverse_iterator</type></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1ac98e8fbea046f97ca641d9a7160aa9f2" name="rend"><type>reverse_iterator</type></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a9c7fb87f7b3f4c9d6129c4bf1a6729c2" name="rend" cv="const"><type>const_reverse_iterator</type></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a7d6f785cff8fbb9c0e1806884caf1ba1" name="front"><type>value_type &amp;</type></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1ad84d411bca35e31a109076622ef46b1a" name="front" cv="const"><type>const value_type &amp;</type></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a44939c7587b88f87abbb4bebbf3bf389" name="back"><type>value_type &amp;</type></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1acddcf929a2da4468e81000373c3b7a4a" name="back" cv="const"><type>const value_type &amp;</type></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1ab1f32d903e64ec84111c4ac46eb949d3" name="insert"><type>iterator</type><parameter name="where"><paramtype>iterator</paramtype></parameter><parameter name="value"><paramtype>const value_type &amp;</paramtype></parameter><description><para>Insert a copy of the given tree with its key just before the given position in this node. This operation invalidates no iterators. 
+</para></description><returns><para>An iterator to the newly created child. </para>
+</returns></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1afe887b8ba660de2702fe11f5c37c9eda" name="insert"><type>void</type><template>
+          <template-type-parameter name="It"/>
+        </template><parameter name="where"><paramtype>iterator</paramtype></parameter><parameter name="first"><paramtype>It</paramtype></parameter><parameter name="last"><paramtype>It</paramtype></parameter><description><para>Range insert. Equivalent to: <programlisting language="c++">for(; first != last; ++first) <link linkend="doxygen.classboost_1_1property__tree_1_1basic__ptree_1ab1f32d903e64ec84111c4ac46eb949d3">insert</link>(where, *first);
+</programlisting> </para></description></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a4db9bc7731e85e54cc02e1930d9f5576" name="erase"><type>iterator</type><parameter name="where"><paramtype>iterator</paramtype></parameter><description><para>Erase the child pointed at by the iterator. This operation invalidates the given iterator, as well as its equivalent assoc_iterator. 
+</para></description><returns><para>A valid iterator pointing to the element after the erased. </para>
+</returns></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a42eef638059d125c407ee9f6174b306d" name="erase"><type>iterator</type><parameter name="first"><paramtype>iterator</paramtype></parameter><parameter name="last"><paramtype>iterator</paramtype></parameter><description><para>Range erase. Equivalent to: <programlisting language="c++">while(first != last;) first = <link linkend="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a4db9bc7731e85e54cc02e1930d9f5576">erase</link>(first);
+</programlisting> </para></description></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a72bf6dde301828877175cdfd7c73a851" name="push_front"><type>iterator</type><parameter name="value"><paramtype>const value_type &amp;</paramtype></parameter><description><para>Equivalent to insert(begin(), value). </para></description></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a286d96ceddecf0270c1779b9f6bfb7fe" name="push_back"><type>iterator</type><parameter name="value"><paramtype>const value_type &amp;</paramtype></parameter><description><para>Equivalent to insert(end(), value). </para></description></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1ac7775c435cd76d5b66b6b9d7c5daddae" name="pop_front"><type>void</type><description><para>Equivalent to erase(begin()). </para></description></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a6231308090ff500434d62a681cfcd78a" name="pop_back"><type>void</type><description><para>Equivalent to erase(boost::prior(end())). </para></description></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1adf23f8a3823d423144eaa02536ef7bba" name="reverse"><type>void</type><description><para>Reverses the order of direct children in the property tree. </para></description></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1aef345bf5755acc5f69b58efb5e57d150" name="sort"><type>void</type><template>
+          <template-type-parameter name="Compare"/>
+        </template><parameter name="comp"><paramtype>Compare</paramtype></parameter><description><para>Sorts the direct children of this node according to the predicate. The predicate is passed the whole pair of key and child. </para></description></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1ab7b9dc30affd05bad56e2d55d4769bfb" name="sort"><type>void</type><description><para>Sorts the direct children of this node according to key order. </para></description></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a9d67bc3963504a467111a2cd8b9d4714" name="operator==" cv="const"><type>bool</type><parameter name="rhs"><paramtype>const self_type &amp;</paramtype></parameter><description><para>Two property trees are the same if they have the same data, the keys and order of their children are the same, and the children compare equal, recursively. </para></description></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a5f3561bbaf681b93ab67257248b89e09" name="operator!=" cv="const"><type>bool</type><parameter name="rhs"><paramtype>const self_type &amp;</paramtype></parameter></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a3764c1fab771b2209e59311dcee34cfc" name="ordered_begin"><type>assoc_iterator</type><description><para>Returns an iterator to the first child, in key order. </para></description></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a7bd911a8908362f6572eb91cfc2508d8" name="ordered_begin" cv="const"><type>const_assoc_iterator</type><description><para>Returns an iterator to the first child, in key order. </para></description></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a0fed170f656c30addf4b2a0ad9456e83" name="not_found"><type>assoc_iterator</type><description><para>Returns the not-found iterator. Equivalent to <link linkend="doxygen.classboost_1_1property__tree_1_1basic__ptree_1ac939aba3c530dc640433d915fdadb068">end()</link> in a real associative container. </para></description></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1acf8d78043900d77fced7fcb401596341" name="not_found" cv="const"><type>const_assoc_iterator</type><description><para>Returns the not-found iterator. Equivalent to <link linkend="doxygen.classboost_1_1property__tree_1_1basic__ptree_1ac939aba3c530dc640433d915fdadb068">end()</link> in a real associative container. </para></description></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1ac4306a61333101a4e5b50b03d0e2d645" name="find"><type>assoc_iterator</type><parameter name="key"><paramtype>const key_type &amp;</paramtype></parameter><description><para>Find a child with the given key, or <link linkend="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a0fed170f656c30addf4b2a0ad9456e83">not_found()</link> if there is none. There is no guarantee about which child is returned if multiple have the same key. </para></description></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a78b7975c530010ad1306ed0e9a413734" name="find" cv="const"><type>const_assoc_iterator</type><parameter name="key"><paramtype>const key_type &amp;</paramtype></parameter><description><para>Find a child with the given key, or <link linkend="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a0fed170f656c30addf4b2a0ad9456e83">not_found()</link> if there is none. There is no guarantee about which child is returned if multiple have the same key. </para></description></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1ac01421835e00cba89dfa7c3b543231eb" name="equal_range"><type>std::pair&lt; assoc_iterator, assoc_iterator &gt;</type><parameter name="key"><paramtype>const key_type &amp;</paramtype></parameter><description><para>Find the range of children that have the given key. </para></description></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1ad7f8f3d793fecd712c0dbe61b9622fb0" name="equal_range" cv="const"><type>std::pair&lt; const_assoc_iterator, const_assoc_iterator &gt;</type><parameter name="key"><paramtype>const key_type &amp;</paramtype></parameter><description><para>Find the range of children that have the given key. </para></description></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a899e7323ed1ea8a5b2f8f7b5067572c1" name="count" cv="const"><type>size_type</type><parameter name="key"><paramtype>const key_type &amp;</paramtype></parameter><description><para>Count the number of direct children with the given key. </para></description></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1aba76850e5befb56996d668d2d8f2a345" name="erase"><type>size_type</type><parameter name="key"><paramtype>const key_type &amp;</paramtype></parameter><description><para>Erase all direct children with the given key and return the count. </para></description></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1ad3d3f3cc331215bee0642ac60c89bd33" name="to_iterator"><type>iterator</type><parameter name="it"><paramtype>assoc_iterator</paramtype></parameter><description><para>Get the iterator that points to the same element as the argument. <note><para>A valid assoc_iterator range (a, b) does not imply that (to_iterator(a), to_iterator(b)) is a valid range. </para>
+</note>
+</para></description></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a3e729e0ae9372334b19d35f45087fed8" name="to_iterator" cv="const"><type>const_iterator</type><parameter name="it"><paramtype>const_assoc_iterator</paramtype></parameter><description><para>Get the iterator that points to the same element as the argument. <note><para>A valid const_assoc_iterator range (a, b) does not imply that (to_iterator(a), to_iterator(b)) is a valid range. </para>
+</note>
+</para></description></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a909b71a6c517872a216dacb0f19791ba" name="data"><type>data_type &amp;</type><description><para>Reference to the actual data in this node. </para></description></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a904e76a4a78c79c4b54cb2ef4355a333" name="data" cv="const"><type>const data_type &amp;</type><description><para>Reference to the actual data in this node. </para></description></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a08de3c0b8c439b49eb506d58a1bd02df" name="clear"><type>void</type><description><para>Clear this tree completely, of both data and children. </para></description></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1af85fdd27eb88311cbc028566ac46f806" name="get_child"><type>self_type &amp;</type><parameter name="path"><paramtype>const path_type &amp;</paramtype></parameter><description><para>Get the child at the given path, or throw <computeroutput><link linkend="doxygen.classboost_1_1property__tree_1_1ptree__bad__path">ptree_bad_path</link></computeroutput>. <note><para>Depending on the path, the result at each level may not be completely deterministic, i.e. if the same key appears multiple times, which child is chosen is not specified. This can lead to the path not being resolved even though there is a descendant with this path. Example: <programlisting language="c++">a -&gt; b -&gt; c
+  -&gt; b
+</programlisting> The path "a.b.c" will succeed if the resolution of "b" chooses the first such node, but fail if it chooses the second. </para>
+</note>
+</para></description></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1ad29ad90d49b59cf7bd2dbdc18fab0846" name="get_child" cv="const"><type>const self_type &amp;</type><parameter name="path"><paramtype>const path_type &amp;</paramtype></parameter><description><para>Get the child at the given path, or throw <computeroutput><link linkend="doxygen.classboost_1_1property__tree_1_1ptree__bad__path">ptree_bad_path</link></computeroutput>. </para></description></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1ae63ab3f42b1066d9b87203f07ab9d75f" name="get_child"><type>self_type &amp;</type><parameter name="path"><paramtype>const path_type &amp;</paramtype></parameter><parameter name="default_value"><paramtype>self_type &amp;</paramtype></parameter><description><para>Get the child at the given path, or return <computeroutput>default_value</computeroutput>. </para></description></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a884adffecb61015f770d9830e495f5a8" name="get_child" cv="const"><type>const self_type &amp;</type><parameter name="path"><paramtype>const path_type &amp;</paramtype></parameter><parameter name="default_value"><paramtype>const self_type &amp;</paramtype></parameter><description><para>Get the child at the given path, or return <computeroutput>default_value</computeroutput>. </para></description></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a4661e85935204139bdf9299713ab3b97" name="get_child" cv="const = delete"><type>void</type><parameter name="path"><paramtype>const path_type &amp;</paramtype></parameter><parameter name="default_value"><paramtype>const self_type &amp;&amp;</paramtype></parameter><description><para>Prevents calls to get_child with temporary default values </para></description></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a7042acab0709c228bca2955c84f0ee68" name="get_child_optional"><type>optional&lt; self_type &amp; &gt;</type><parameter name="path"><paramtype>const path_type &amp;</paramtype></parameter><description><para>Get the child at the given path, or return boost::null. </para></description></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a5647c909c16d427a6bfa6d57160ab377" name="get_child_optional" cv="const"><type>optional&lt; const self_type &amp; &gt;</type><parameter name="path"><paramtype>const path_type &amp;</paramtype></parameter><description><para>Get the child at the given path, or return boost::null. </para></description></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1aa1e246433737edeb1559da4338d11be0" name="put_child"><type>self_type &amp;</type><parameter name="path"><paramtype>const path_type &amp;</paramtype></parameter><parameter name="value"><paramtype>const self_type &amp;</paramtype></parameter><description><para>Set the node at the given path to the given value. Create any missing parents. If the node at the path already exists, replace it. 
+<note><para>Because of the way paths work, it is not generally guaranteed that a node newly created can be accessed using the same path. </para>
+</note>
+<note><para>If the path could refer to multiple nodes, it is unspecified which one gets replaced. </para>
+</note>
+</para></description><returns><para>A reference to the inserted subtree. </para>
+</returns></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1adff558d0b0ad638c511030a5b4d81bb6" name="add_child"><type>self_type &amp;</type><parameter name="path"><paramtype>const path_type &amp;</paramtype><description><para>Path to the child. The last fragment must not have an index. </para></description></parameter><parameter name="value"><paramtype>const self_type &amp;</paramtype></parameter><description><para>Add the node at the given path. Create any missing parents. If there already is a node at the path, add another one with the same key. 
+
+<note><para>Because of the way paths work, it is not generally guaranteed that a node newly created can be accessed using the same path. </para>
+</note>
+</para></description><returns><para>A reference to the inserted subtree. </para>
+</returns></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a2be8e39d3b23f68f6e338c0d020dbc5b" name="get_value" cv="const"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="Type"/>
+          <template-type-parameter name="Translator"/>
+        </template><parameter name="tr"><paramtype>Translator</paramtype></parameter><description><para>Take the value of this node and attempt to translate it to a <computeroutput>Type</computeroutput> object using the supplied translator. 
+</para></description><throws><simpara><classname>ptree_bad_data</classname> if the conversion fails. </simpara>
+</throws></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1aaf012b466ea9238fafc6f9a0ca4e3fc6" name="get_value" cv="const"><type>Type</type><template>
+          <template-type-parameter name="Type"/>
+        </template><description><para>Take the value of this node and attempt to translate it to a <computeroutput>Type</computeroutput> object using the default translator. 
+</para></description><throws><simpara><classname>ptree_bad_data</classname> if the conversion fails. </simpara>
+</throws></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1aa8708c8593aa50fc29054bf7e66b3721" name="get_value" cv="const"><type>Type</type><template>
+          <template-type-parameter name="Type"/>
+          <template-type-parameter name="Translator"/>
+        </template><parameter name="default_value"><paramtype>const Type &amp;</paramtype></parameter><parameter name="tr"><paramtype>Translator</paramtype></parameter><description><para>Take the value of this node and attempt to translate it to a <computeroutput>Type</computeroutput> object using the supplied translator. Return <computeroutput>default_value</computeroutput> if this fails. </para></description></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1aa549a759e86cf4d015da7d939f964a7c" name="get_value" cv="const"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="Ch"/>
+          <template-type-parameter name="Translator"/>
+        </template><parameter name="default_value"><paramtype>const Ch *</paramtype></parameter><parameter name="tr"><paramtype>Translator</paramtype></parameter><description><para>Make get_value do the right thing for string literals. </para></description></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1ae6f6ef87e55ef13e80a1fdd607edef7c" name="get_value" cv="const"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="Type"/>
+        </template><parameter name="default_value"><paramtype>const Type &amp;</paramtype></parameter><description><para>Take the value of this node and attempt to translate it to a <computeroutput>Type</computeroutput> object using the default translator. Return <computeroutput>default_value</computeroutput> if this fails. </para></description></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1accf9e4c78ef92e3ae9e6115a06357c64" name="get_value" cv="const"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="Ch"/>
+        </template><parameter name="default_value"><paramtype>const Ch *</paramtype></parameter><description><para>Make get_value do the right thing for string literals. </para></description></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a19dbd9979ae83c75e1dab73a24ec9027" name="get_value_optional" cv="const"><type>optional&lt; Type &gt;</type><template>
+          <template-type-parameter name="Type"/>
+          <template-type-parameter name="Translator"/>
+        </template><parameter name="tr"><paramtype>Translator</paramtype></parameter><description><para>Take the value of this node and attempt to translate it to a <computeroutput>Type</computeroutput> object using the supplied translator. Return boost::null if this fails. </para></description></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a1809fe8feb2fc50445e638881c3145c8" name="get_value_optional" cv="const"><type>optional&lt; Type &gt;</type><template>
+          <template-type-parameter name="Type"/>
+        </template><description><para>Take the value of this node and attempt to translate it to a <computeroutput>Type</computeroutput> object using the default translator. Return boost::null if this fails. </para></description></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a06067eeada01a32051088a92f266181f" name="put_value"><type>void</type><template>
+          <template-type-parameter name="Type"/>
+          <template-type-parameter name="Translator"/>
+        </template><parameter name="value"><paramtype>const Type &amp;</paramtype></parameter><parameter name="tr"><paramtype>Translator</paramtype></parameter><description><para>Replace the value at this node with the given value, translated to the tree's data type using the supplied translator. 
+</para></description><throws><simpara><classname>ptree_bad_data</classname> if the conversion fails. </simpara>
+</throws></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1afb49cf9a1715a1398bea934ca3df2863" name="put_value"><type>void</type><template>
+          <template-type-parameter name="Type"/>
+        </template><parameter name="value"><paramtype>const Type &amp;</paramtype></parameter><description><para>Replace the value at this node with the given value, translated to the tree's data type using the default translator. 
+</para></description><throws><simpara><classname>ptree_bad_data</classname> if the conversion fails. </simpara>
+</throws></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a96d2c472acb55007b36e93131ecee67e" name="get" cv="const"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="Type"/>
+          <template-type-parameter name="Translator"/>
+        </template><parameter name="path"><paramtype>const path_type &amp;</paramtype></parameter><parameter name="tr"><paramtype>Translator</paramtype></parameter><description><para>Shorthand for get_child(path).get_value(tr). </para></description></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1ac5015f7e008d2de5436f2823b02adaf4" name="get" cv="const"><type>Type</type><template>
+          <template-type-parameter name="Type"/>
+        </template><parameter name="path"><paramtype>const path_type &amp;</paramtype></parameter><description><para>Shorthand for get_child(path).get_value&lt;Type&gt;(). </para></description></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1aef3ce95985eb796c29c681fec0296d80" name="get" cv="const"><type>Type</type><template>
+          <template-type-parameter name="Type"/>
+          <template-type-parameter name="Translator"/>
+        </template><parameter name="path"><paramtype>const path_type &amp;</paramtype></parameter><parameter name="default_value"><paramtype>const Type &amp;</paramtype></parameter><parameter name="tr"><paramtype>Translator</paramtype></parameter><description><para>Shorthand for get_child(path, empty_ptree()) .get_value(default_value, tr). That is, return the translated value if possible, and the default value if the node doesn't exist or conversion fails. </para></description></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a4d1f02cc07b2231445ca2ada39bc2086" name="get" cv="const"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="Ch"/>
+          <template-type-parameter name="Translator"/>
+        </template><parameter name="path"><paramtype>const path_type &amp;</paramtype></parameter><parameter name="default_value"><paramtype>const Ch *</paramtype></parameter><parameter name="tr"><paramtype>Translator</paramtype></parameter><description><para>Make get do the right thing for string literals. </para></description></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1ac9b8a578b8f94ea13cf2aafd03b4bcd5" name="get" cv="const"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="Type"/>
+        </template><parameter name="path"><paramtype>const path_type &amp;</paramtype></parameter><parameter name="default_value"><paramtype>const Type &amp;</paramtype></parameter><description><para>Shorthand for get_child(path, empty_ptree()) .get_value(default_value). That is, return the translated value if possible, and the default value if the node doesn't exist or conversion fails. </para></description></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1acaa69aa960a3dd991c3eb26e0f470be2" name="get" cv="const"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="Ch"/>
+        </template><parameter name="path"><paramtype>const path_type &amp;</paramtype></parameter><parameter name="default_value"><paramtype>const Ch *</paramtype></parameter><description><para>Make get do the right thing for string literals. </para></description></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a6aa25be019cf4eac81730d55623422e2" name="get_optional" cv="const"><type>optional&lt; Type &gt;</type><template>
+          <template-type-parameter name="Type"/>
+          <template-type-parameter name="Translator"/>
+        </template><parameter name="path"><paramtype>const path_type &amp;</paramtype></parameter><parameter name="tr"><paramtype>Translator</paramtype></parameter><description><para>Shorthand for: <programlisting language="c++">if(optional\&lt;<link linkend="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a48b6e6ddd60a49a5b6b9f49cb590b721">self_type</link>&amp;\&gt; node = <link linkend="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a7042acab0709c228bca2955c84f0ee68">get_child_optional</link>(<link linkend="doxygen.namespaceboost_1_1property__tree_1a380cc50c70518eba170b10630e3c4755">path</link>))
+  return node-&gt;get_value_optional(tr);
+return boost::null;
+</programlisting> That is, return the value if it exists and can be converted, or nil. </para></description></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a88ed3f9fb2fe35c23dcb0f334c72b8dd" name="get_optional" cv="const"><type>optional&lt; Type &gt;</type><template>
+          <template-type-parameter name="Type"/>
+        </template><parameter name="path"><paramtype>const path_type &amp;</paramtype></parameter><description><para>Shorthand for: <programlisting language="c++">if(optional\&lt;const <link linkend="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a48b6e6ddd60a49a5b6b9f49cb590b721">self_type</link>&amp;\&gt; node = <link linkend="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a7042acab0709c228bca2955c84f0ee68">get_child_optional</link>(<link linkend="doxygen.namespaceboost_1_1property__tree_1a380cc50c70518eba170b10630e3c4755">path</link>))
+  return node-&gt;get_value_optional();
+return boost::null;
+</programlisting> That is, return the value if it exists and can be converted, or nil. </para></description></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a26c9f5391a75e4f7941898a8f930a78c" name="put"><type>self_type &amp;</type><template>
+          <template-type-parameter name="Type"/>
+          <template-type-parameter name="Translator"/>
+        </template><parameter name="path"><paramtype>const path_type &amp;</paramtype></parameter><parameter name="value"><paramtype>const Type &amp;</paramtype></parameter><parameter name="tr"><paramtype>Translator</paramtype></parameter><description><para>Set the value of the node at the given path to the supplied value, translated to the tree's data type. If the node doesn't exist, it is created, including all its missing parents. 
+
+</para></description><returns><para>The node that had its value changed. </para>
+</returns><throws><simpara><classname>ptree_bad_data</classname> if the conversion fails. </simpara>
+</throws></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a816590393435630d01564ab88c52ff72" name="put"><type>self_type &amp;</type><template>
+          <template-type-parameter name="Type"/>
+        </template><parameter name="path"><paramtype>const path_type &amp;</paramtype></parameter><parameter name="value"><paramtype>const Type &amp;</paramtype></parameter><description><para>Set the value of the node at the given path to the supplied value, translated to the tree's data type. If the node doesn't exist, it is created, including all its missing parents. 
+
+</para></description><returns><para>The node that had its value changed. </para>
+</returns><throws><simpara><classname>ptree_bad_data</classname> if the conversion fails. </simpara>
+</throws></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1ad80ba2daa72416713da418e2bb05db0b" name="add"><type>self_type &amp;</type><template>
+          <template-type-parameter name="Type"/>
+          <template-type-parameter name="Translator"/>
+        </template><parameter name="path"><paramtype>const path_type &amp;</paramtype><description><para>Path to the child. The last fragment must not have an index. </para></description></parameter><parameter name="value"><paramtype>const Type &amp;</paramtype><description><para>The value to add. </para></description></parameter><parameter name="tr"><paramtype>Translator</paramtype><description><para>The translator to use. </para></description></parameter><description><para>If the node identified by the path does not exist, create it, including all its missing parents. If the node already exists, add a sibling with the same key. Set the newly created node's value to the given paremeter, translated with the supplied translator. 
+
+
+</para></description><returns><para>The node that was added. </para>
+</returns><throws><simpara><classname>ptree_bad_data</classname> if the conversion fails. </simpara>
+</throws></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a840e25945d8fae99685de3f4b3b9d954" name="add"><type>self_type &amp;</type><template>
+          <template-type-parameter name="Type"/>
+        </template><parameter name="path"><paramtype>const path_type &amp;</paramtype><description><para>Path to the child. The last fragment must not have an index. </para></description></parameter><parameter name="value"><paramtype>const Type &amp;</paramtype><description><para>The value to add. </para></description></parameter><description><para>If the node identified by the path does not exist, create it, including all its missing parents. If the node already exists, add a sibling with the same key. Set the newly created node's value to the given paremeter, translated with the supplied translator. 
+
+
+</para></description><returns><para>The node that was added. </para>
+</returns><throws><simpara><classname>ptree_bad_data</classname> if the conversion fails. </simpara>
+</throws></method>
+</method-group>
+<method-group name="private member functions">
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1aa780d4faf27dcef946a0da51f0f9b09c" name="walk_path" cv="const"><type>self_type *</type><parameter name="p"><paramtype>path_type &amp;</paramtype></parameter></method>
+<method id="doxygen.classboost_1_1property__tree_1_1basic__ptree_1a5a7c44be671abe36043261e18353e94c" name="force_path"><type>self_type &amp;</type><parameter name="p"><paramtype>path_type &amp;</paramtype></parameter></method>
+</method-group>
+</class>
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.ptree__fwd_8hpp" name="boost/property_tree/ptree_fwd.hpp">
+<namespace name="boost">
+<namespace name="property_tree">
+<struct id="doxygen.structboost_1_1property__tree_1_1path__of" name="path_of"><template>
+      <template-type-parameter name="Key"/>
+    </template><purpose>If you want to use a custom key type, specialize this struct for it and give it a 'type' typedef that specifies your path type. The path type must conform to the Path concept described in the documentation. This is already specialized for std::basic_string. </purpose></struct><struct id="doxygen.structboost_1_1property__tree_1_1translator__between" name="translator_between"><template>
+      <template-type-parameter name="Internal"/>
+      <template-type-parameter name="External"/>
+    </template><purpose>Specialize this struct to specify a default translator between the data in a tree whose data_type is Internal, and the external data_type specified in a get_value, get, put_value or put operation. This is already specialized for Internal being std::basic_string. </purpose></struct><typedef id="doxygen.namespaceboost_1_1property__tree_1a380cc50c70518eba170b10630e3c4755" name="path"><description><para>Implements a path using a std::string as the key. </para></description><type><classname>string_path</classname>&lt; std::string, <classname>id_translator</classname>&lt; std::string &gt; &gt;</type></typedef>
+<typedef id="doxygen.namespaceboost_1_1property__tree_1a7d9711ff8ada3a8267795b0f3f349300" name="ptree"><description><para>A property tree with std::string for key and data, and default comparison. </para></description><type><classname>basic_ptree</classname>&lt; std::string, std::string &gt;</type></typedef>
+<typedef id="doxygen.namespaceboost_1_1property__tree_1a9b073d380021a1d6da09d5d285b5729f" name="iptree"><description><para>A property tree with std::string for key and data, and case-insensitive comparison. </para></description><type><emphasis>unspecified</emphasis></type></typedef>
+<typedef id="doxygen.namespaceboost_1_1property__tree_1ab20a769deada9d19f29bb52f2eb92c28" name="wpath"><description><para>Implements a path using a std::wstring as the key. </para></description><type><classname>string_path</classname>&lt; std::wstring, <classname>id_translator</classname>&lt; std::wstring &gt; &gt;</type></typedef>
+<typedef id="doxygen.namespaceboost_1_1property__tree_1a09b8c07378acbc98d7d3125238ae6c40" name="wptree"><description><para>A property tree with std::wstring for key and data, and default comparison. <note><para>The type only exists if the platform supports <computeroutput>wchar_t</computeroutput>. </para>
+</note>
+</para></description><type><classname>basic_ptree</classname>&lt; std::wstring, std::wstring &gt;</type></typedef>
+<typedef id="doxygen.namespaceboost_1_1property__tree_1aae85c61a5aea4c74ebc11817862145f2" name="wiptree"><description><para>A property tree with std::wstring for key and data, and case-insensitive comparison. <note><para>The type only exists if the platform supports <computeroutput>wchar_t</computeroutput>. </para>
+</note>
+</para></description><type><emphasis>unspecified</emphasis></type></typedef>
+
+
+
+<function id="doxygen.namespaceboost_1_1property__tree_1a9576e3059c508b623473caa32edd6fe0" name="swap"><type>void</type><template>
+          <template-type-parameter name="K"/>
+          <template-type-parameter name="D"/>
+          <template-type-parameter name="C"/>
+        </template><parameter name="pt1"><paramtype><classname>basic_ptree</classname>&lt; K, D, C &gt; &amp;</paramtype></parameter><parameter name="pt2"><paramtype><classname>basic_ptree</classname>&lt; K, D, C &gt; &amp;</paramtype></parameter><description><para>Swap two property tree instances. </para></description></function>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.ptree__serialization_8hpp" name="boost/property_tree/ptree_serialization.hpp">
+<namespace name="boost">
+<namespace name="property_tree">
+<function id="doxygen.namespaceboost_1_1property__tree_1a2221a84cef609cf55fcf8188ef733936" name="save"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+          <template-type-parameter name="K"/>
+          <template-type-parameter name="D"/>
+          <template-type-parameter name="C"/>
+        </template><parameter name="ar"><paramtype>Archive &amp;</paramtype><description><para>The archive to which to save the serialized property tree. This archive should conform to the concept laid out by the Boost.Serialization library. </para></description></parameter><parameter name="t"><paramtype>const <classname>basic_ptree</classname>&lt; K, D, C &gt; &amp;</paramtype><description><para>The property tree to serialize. </para></description></parameter><parameter name=""><paramtype>const unsigned int</paramtype></parameter><description><para>Serialize the property tree to the given archive. <note><para>In addition to serializing to regular archives, this supports serializing to archives requiring name-value pairs, e.g. XML archives. However, the output format in the XML archive is not guaranteed to be the same as that when using the Boost.PropertyTree library's <computeroutput><link linkend="doxygen.namespaceboost_1_1property__tree_1_1xml__parser_1a7c3d30649da93a5a422b040701014cb3">boost::property_tree::xml_parser::write_xml</link></computeroutput>. </para>
+</note>
+
+
+</para></description><postconditions><para><computeroutput>ar</computeroutput> will contain the serialized form of <computeroutput>t</computeroutput>. </para>
+</postconditions></function>
+<function id="doxygen.namespaceboost_1_1property__tree_1a51009734a064bda94751be0512e5a20e" name="load"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+          <template-type-parameter name="K"/>
+          <template-type-parameter name="D"/>
+          <template-type-parameter name="C"/>
+        </template><parameter name="ar"><paramtype>Archive &amp;</paramtype><description><para>The archive from which to load the serialized property tree. This archive should conform to the concept laid out by the Boost.Serialization library. </para></description></parameter><parameter name="t"><paramtype><classname>basic_ptree</classname>&lt; K, D, C &gt; &amp;</paramtype><description><para>The property tree to de-serialize. </para></description></parameter><parameter name=""><paramtype>const unsigned int</paramtype></parameter><description><para>De-serialize the property tree to the given archive. <note><para>In addition to de-serializing from regular archives, this supports loading from archives requiring name-value pairs, e.g. XML archives. The format should be that used by <link linkend="doxygen.namespaceboost_1_1property__tree_1a2221a84cef609cf55fcf8188ef733936">boost::property_tree::save</link>. </para>
+</note>
+
+
+</para></description><postconditions><para><computeroutput>t</computeroutput> will contain the de-serialized data from <computeroutput>ar</computeroutput>. </para>
+</postconditions></function>
+<function id="doxygen.namespaceboost_1_1property__tree_1a4f555708a0106e2537f3bccce6074e45" name="serialize"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+          <template-type-parameter name="K"/>
+          <template-type-parameter name="D"/>
+          <template-type-parameter name="C"/>
+        </template><parameter name="ar"><paramtype>Archive &amp;</paramtype><description><para>The archive from which to load or save the serialized property tree. The type of this archive will determine whether saving or loading is performed. </para></description></parameter><parameter name="t"><paramtype><classname>basic_ptree</classname>&lt; K, D, C &gt; &amp;</paramtype><description><para>The property tree to load or save. </para></description></parameter><parameter name="file_version"><paramtype>const unsigned int</paramtype><description><para>file_version for the archive. </para></description></parameter><description><para>Load or store the property tree using the given archive. 
+</para></description></function>
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.stream__translator_8hpp" name="boost/property_tree/stream_translator.hpp">
+<namespace name="boost">
+<namespace name="property_tree">
+<struct id="doxygen.structboost_1_1property__tree_1_1customize__stream" name="customize_stream"><template>
+      <template-type-parameter name="Ch"/>
+      <template-type-parameter name="Traits"/>
+      <template-type-parameter name="E"/>
+      <template-type-parameter name="Enabler"><default>void</default></template-type-parameter>
+    </template><method-group name="public static functions">
+<method id="doxygen.structboost_1_1property__tree_1_1customize__stream_1ad8f34c788e84edfc86a73d1898e1bb7b" name="insert" specifiers="static"><type>void</type><parameter name="s"><paramtype>std::basic_ostream&lt; Ch, Traits &gt; &amp;</paramtype></parameter><parameter name="e"><paramtype>const E &amp;</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1property__tree_1_1customize__stream_1a9fc40af0e1549864d420d3666f866e14" name="extract" specifiers="static"><type>void</type><parameter name="s"><paramtype>std::basic_istream&lt; Ch, Traits &gt; &amp;</paramtype></parameter><parameter name="e"><paramtype>E &amp;</paramtype></parameter></method>
+</method-group>
+</struct><struct-specialization id="doxygen.structboost_1_1property__tree_1_1customize__stream_3_01Ch_00_01Traits_00_01bool_00_01void_01_4" name="customize_stream"><template>
+      <template-type-parameter name="Ch"/>
+      <template-type-parameter name="Traits"/>
+    </template><specialization><template-arg>Ch</template-arg><template-arg>Traits</template-arg><template-arg>bool</template-arg><template-arg>void</template-arg></specialization><method-group name="public static functions">
+<method id="doxygen.structboost_1_1property__tree_1_1customize__stream_3_01Ch_00_01Traits_00_01bool_00_01void_01_4_1a4badbf28967e95a574d847ae60b66b26" name="insert" specifiers="static"><type>void</type><parameter name="s"><paramtype>std::basic_ostream&lt; Ch, Traits &gt; &amp;</paramtype></parameter><parameter name="e"><paramtype>bool</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1property__tree_1_1customize__stream_3_01Ch_00_01Traits_00_01bool_00_01void_01_4_1a9a23783351e8d8b2189a3bfd6dda4b3c" name="extract" specifiers="static"><type>void</type><parameter name="s"><paramtype>std::basic_istream&lt; Ch, Traits &gt; &amp;</paramtype></parameter><parameter name="e"><paramtype>bool &amp;</paramtype></parameter></method>
+</method-group>
+</struct-specialization><struct-specialization id="doxygen.structboost_1_1property__tree_1_1customize__stream_3_01Ch_00_01Traits_00_01Ch_00_01void_01_4" name="customize_stream"><template>
+      <template-type-parameter name="Ch"/>
+      <template-type-parameter name="Traits"/>
+    </template><specialization><template-arg>Ch</template-arg><template-arg>Traits</template-arg><template-arg>Ch</template-arg><template-arg>void</template-arg></specialization><method-group name="public static functions">
+<method id="doxygen.structboost_1_1property__tree_1_1customize__stream_3_01Ch_00_01Traits_00_01Ch_00_01void_01_4_1a56d267703b0a4da1b4ad49cd35abc718" name="insert" specifiers="static"><type>void</type><parameter name="s"><paramtype>std::basic_ostream&lt; Ch, Traits &gt; &amp;</paramtype></parameter><parameter name="e"><paramtype>Ch</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1property__tree_1_1customize__stream_3_01Ch_00_01Traits_00_01Ch_00_01void_01_4_1aa91bf5305aeee322d30edba3fe60cc49" name="extract" specifiers="static"><type>void</type><parameter name="s"><paramtype>std::basic_istream&lt; Ch, Traits &gt; &amp;</paramtype></parameter><parameter name="e"><paramtype>Ch &amp;</paramtype></parameter></method>
+</method-group>
+</struct-specialization><struct-specialization id="doxygen.structboost_1_1property__tree_1_1customize__stream_3_01Ch_00_01Traits_00_01F_00_01typename_01booefa782db2b0ee460a4ada9e63b940204" name="customize_stream"><template>
+      <template-type-parameter name="Ch"/>
+      <template-type-parameter name="Traits"/>
+      <template-type-parameter name="F"/>
+    </template><specialization><template-arg>Ch</template-arg><template-arg>Traits</template-arg><template-arg>F</template-arg><template-arg>typename boost::enable_if&lt; detail::is_inexact&lt; F &gt; &gt;::type</template-arg></specialization><method-group name="public static functions">
+<method id="doxygen.structboost_1_1property__tree_1_1customize__stream_3_01Ch_00_01Traits_00_01F_00_01typename_01booefa782db2b0ee460a4ada9e63b940204_1ad199f22d85a97206e750decb6bac9328" name="insert" specifiers="static"><type>void</type><parameter name="s"><paramtype>std::basic_ostream&lt; Ch, Traits &gt; &amp;</paramtype></parameter><parameter name="e"><paramtype>const F &amp;</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1property__tree_1_1customize__stream_3_01Ch_00_01Traits_00_01F_00_01typename_01booefa782db2b0ee460a4ada9e63b940204_1ae444a24eb748d068a411cfd46f06e545" name="extract" specifiers="static"><type>void</type><parameter name="s"><paramtype>std::basic_istream&lt; Ch, Traits &gt; &amp;</paramtype></parameter><parameter name="e"><paramtype>F &amp;</paramtype></parameter></method>
+</method-group>
+</struct-specialization><struct-specialization id="doxygen.structboost_1_1property__tree_1_1customize__stream_3_01Ch_00_01Traits_00_01signed_01char_00_01void_01_4" name="customize_stream"><template>
+      <template-type-parameter name="Ch"/>
+      <template-type-parameter name="Traits"/>
+    </template><specialization><template-arg>Ch</template-arg><template-arg>Traits</template-arg><template-arg>signed char</template-arg><template-arg>void</template-arg></specialization><method-group name="public static functions">
+<method id="doxygen.structboost_1_1property__tree_1_1customize__stream_3_01Ch_00_01Traits_00_01signed_01char_00_01void_01_4_1a5e28a8a8e35e99ac904250bb6a58c301" name="insert" specifiers="static"><type>void</type><parameter name="s"><paramtype>std::basic_ostream&lt; Ch, Traits &gt; &amp;</paramtype></parameter><parameter name="e"><paramtype>signed char</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1property__tree_1_1customize__stream_3_01Ch_00_01Traits_00_01signed_01char_00_01void_01_4_1a708be2f6d2e2265bcd0402a4493504ea" name="extract" specifiers="static"><type>void</type><parameter name="s"><paramtype>std::basic_istream&lt; Ch, Traits &gt; &amp;</paramtype></parameter><parameter name="e"><paramtype>signed char &amp;</paramtype></parameter></method>
+</method-group>
+</struct-specialization><struct-specialization id="doxygen.structboost_1_1property__tree_1_1customize__stream_3_01Ch_00_01Traits_00_01unsigned_01char_00_01void_01_4" name="customize_stream"><template>
+      <template-type-parameter name="Ch"/>
+      <template-type-parameter name="Traits"/>
+    </template><specialization><template-arg>Ch</template-arg><template-arg>Traits</template-arg><template-arg>unsigned char</template-arg><template-arg>void</template-arg></specialization><method-group name="public static functions">
+<method id="doxygen.structboost_1_1property__tree_1_1customize__stream_3_01Ch_00_01Traits_00_01unsigned_01char_00_01void_01_4_1a204a1063b46eaee9aa2b06fd528cce78" name="insert" specifiers="static"><type>void</type><parameter name="s"><paramtype>std::basic_ostream&lt; Ch, Traits &gt; &amp;</paramtype></parameter><parameter name="e"><paramtype>unsigned char</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1property__tree_1_1customize__stream_3_01Ch_00_01Traits_00_01unsigned_01char_00_01void_01_4_1aadcd423089ecfb444ba64beecb80c7f5" name="extract" specifiers="static"><type>void</type><parameter name="s"><paramtype>std::basic_istream&lt; Ch, Traits &gt; &amp;</paramtype></parameter><parameter name="e"><paramtype>unsigned char &amp;</paramtype></parameter></method>
+</method-group>
+</struct-specialization><class id="doxygen.classboost_1_1property__tree_1_1stream__translator" name="stream_translator"><template>
+      <template-type-parameter name="Ch"/>
+      <template-type-parameter name="Traits"/>
+      <template-type-parameter name="Alloc"/>
+      <template-type-parameter name="E"/>
+    </template><purpose>Implementation of Translator that uses the stream overloads. </purpose><typedef id="doxygen.classboost_1_1property__tree_1_1stream__translator_1ace68817df8a31d0d571120770d3f9de6" name="internal_type"><type>std::basic_string&lt; Ch, Traits, Alloc &gt;</type></typedef>
+<typedef id="doxygen.classboost_1_1property__tree_1_1stream__translator_1a31b13b6a7e3ef0588b81219942725696" name="external_type"><type>E</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1property__tree_1_1stream__translator_1aad5faa02833afcb3d493e2a8a9c2378f" specifiers="explicit"><parameter name="loc"><paramtype>std::locale</paramtype><default>std::locale()</default></parameter></constructor>
+<method id="doxygen.classboost_1_1property__tree_1_1stream__translator_1a86518dc9671347101cc962997c366e6a" name="get_value"><type>boost::optional&lt; E &gt;</type><parameter name="v"><paramtype>const internal_type &amp;</paramtype></parameter></method>
+<method id="doxygen.classboost_1_1property__tree_1_1stream__translator_1ac4065c1a6764c3594f34ebde1b96cf59" name="put_value"><type>boost::optional&lt; internal_type &gt;</type><parameter name="v"><paramtype>const E &amp;</paramtype></parameter></method>
+</method-group>
+</class><struct-specialization id="doxygen.structboost_1_1property__tree_1_1translator__between_3_01std_1_1basic__string_3_01Ch_00_01Traits_00_01Alloc_01_4_00_01E_01_4" name="translator_between"><template>
+      <template-type-parameter name="Ch"/>
+      <template-type-parameter name="Traits"/>
+      <template-type-parameter name="Alloc"/>
+      <template-type-parameter name="E"/>
+    </template><specialization><template-arg>std::basic_string&lt; Ch</template-arg><template-arg>Traits</template-arg><template-arg>Alloc &gt;</template-arg><template-arg>E</template-arg></specialization><typedef id="doxygen.structboost_1_1property__tree_1_1translator__between_3_01std_1_1basic__string_3_01Ch_00_01Traits_00_01Alloc_01_4_00_01E_01_4_1af8bc2a1e2da38194ae3fb86650824de3" name="type"><type><classname>stream_translator</classname>&lt; Ch, Traits, Alloc, E &gt;</type></typedef>
+</struct-specialization>
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.string__path_8hpp" name="boost/property_tree/string_path.hpp">
+<namespace name="boost">
+<namespace name="property_tree">
+<struct-specialization id="doxygen.structboost_1_1property__tree_1_1path__of_3_01std_1_1basic__string_3_01Ch_00_01Traits_00_01Alloc_01_4_01_4" name="path_of"><template>
+      <template-type-parameter name="Ch"/>
+      <template-type-parameter name="Traits"/>
+      <template-type-parameter name="Alloc"/>
+    </template><specialization><template-arg>std::basic_string&lt; Ch</template-arg><template-arg>Traits</template-arg><template-arg>Alloc &gt;</template-arg></specialization><typedef id="doxygen.structboost_1_1property__tree_1_1path__of_3_01std_1_1basic__string_3_01Ch_00_01Traits_00_01Alloc_01_4_01_4_1aa5f23669d5039120cb2189a8b322d4f4" name="_string"><type>std::basic_string&lt; Ch, Traits, Alloc &gt;</type></typedef>
+<typedef id="doxygen.structboost_1_1property__tree_1_1path__of_3_01std_1_1basic__string_3_01Ch_00_01Traits_00_01Alloc_01_4_01_4_1a14272c337e7d54b5de58a60f5debf8eb" name="type"><type><classname>string_path</classname>&lt; _string, <classname>id_translator</classname>&lt; _string &gt; &gt;</type></typedef>
+</struct-specialization><class id="doxygen.classboost_1_1property__tree_1_1string__path" name="string_path"><template>
+      <template-type-parameter name="String"><purpose><para>Any Sequence. If the sequence does not support random- access iteration, concatenation of paths assumes that insertions at the end preserve iterator validity. </para></purpose></template-type-parameter>
+      <template-type-parameter name="Translator"><purpose><para>A translator with internal_type == String. </para></purpose></template-type-parameter>
+    </template><purpose>Default path class. A path is a sequence of values. Groups of values are separated by the separator value, which defaults to '.' cast to the sequence's value type. The group of values is then passed to the translator to get a key. </purpose><description><para>If instantiated with std::string and <link linkend="doxygen.structboost_1_1property__tree_1_1id__translator">id_translator</link>&lt;std::string&gt;, it accepts paths of the form "one.two.three.four".</para><para>
+</para></description><typedef id="doxygen.classboost_1_1property__tree_1_1string__path_1a223b0a71a1e81066b340a917adb576ed" name="key_type"><type>Translator::external_type</type></typedef>
+<typedef id="doxygen.classboost_1_1property__tree_1_1string__path_1aebff039fb8ad3c68316e62e96f08bbab" name="char_type"><type>String::value_type</type></typedef>
+<method-group name="private member functions">
+<method id="doxygen.classboost_1_1property__tree_1_1string__path_1acc4091a7d9b018650ce157a3c5483519" name="BOOST_STATIC_ASSERT"><type/><parameter name=""><paramtype>(is_same&lt; String, typename Translator::internal_type &gt;::value)</paramtype></parameter></method>
+<method id="doxygen.classboost_1_1property__tree_1_1string__path_1ac1d51fd090c60547d47cea08f5bf51b3" name="cstart" cv="const"><type>s_c_iter</type></method>
+</method-group>
+<method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1property__tree_1_1string__path_1a6b845668fbd604b86514f9ba63bd2338" specifiers="explicit"><parameter name="separator"><paramtype>char_type</paramtype><default>char_type('.')</default></parameter><purpose>Create an empty path. </purpose></constructor>
+<constructor id="doxygen.classboost_1_1property__tree_1_1string__path_1aae77325ec936ed41e0bd74b7aa7511e0"><parameter name="value"><paramtype>const String &amp;</paramtype><description><para>A sequence, possibly with separators, that describes the path, e.g. "one.two.three". </para></description></parameter><parameter name="separator"><paramtype>char_type</paramtype><default>char_type('.')</default><description><para>The separator used in parsing. Defaults to '.'. </para></description></parameter><parameter name="tr"><paramtype>Translator</paramtype><default>Translator()</default><description><para>The translator used by this path to convert the individual parts to keys. </para></description></parameter><purpose>Create a path by parsing the given string. </purpose><description><para>
+</para></description></constructor>
+<constructor id="doxygen.classboost_1_1property__tree_1_1string__path_1ac3646a383c988bb9d00ca77c36fdc67e"><parameter name="value"><paramtype>const char_type *</paramtype><description><para>A zero-terminated array of values. Only use if zero- termination makes sense for your type, and your sequence supports construction from it. Intended for string literals. </para></description></parameter><parameter name="separator"><paramtype>char_type</paramtype><default>char_type('.')</default><description><para>The separator used in parsing. Defaults to '.'. </para></description></parameter><parameter name="tr"><paramtype>Translator</paramtype><default>Translator()</default><description><para>The translator used by this path to convert the individual parts to keys. </para></description></parameter><purpose>Create a path by parsing the given string. </purpose><description><para>
+</para></description></constructor>
+<constructor id="doxygen.classboost_1_1property__tree_1_1string__path_1a01bebe59fa568c16fdc27ee40d0f1a4d"><parameter name="o"><paramtype>const <classname>string_path</classname> &amp;</paramtype></parameter></constructor>
+<copy-assignment id="doxygen.classboost_1_1property__tree_1_1string__path_1a409862fffc9a355f9d00d9b0ce8d3872"><type><classname>string_path</classname> &amp;</type><parameter name="o"><paramtype>const <classname>string_path</classname> &amp;</paramtype></parameter></copy-assignment>
+<method id="doxygen.classboost_1_1property__tree_1_1string__path_1a98d71bd7ac1eecafe7188cfc603a0c6e" name="reduce"><type>key_type</type><purpose>Take a single element off the path at the front and return it. </purpose></method>
+<method id="doxygen.classboost_1_1property__tree_1_1string__path_1a358a867a556566b97b76ac246d4a4757" name="empty" cv="const"><type>bool</type><purpose>Test if the path is empty. </purpose></method>
+<method id="doxygen.classboost_1_1property__tree_1_1string__path_1a0f321739f95269ec8595e121dd7254a9" name="single" cv="const"><type>bool</type><purpose>Test if the path contains a single element, i.e. no separators. </purpose></method>
+<method id="doxygen.classboost_1_1property__tree_1_1string__path_1ad8f2f3038bab9cb601c77043f72b802c" name="separator" cv="const"><type>char_type</type><purpose>Get the separator used by this path. </purpose></method>
+<method id="doxygen.classboost_1_1property__tree_1_1string__path_1adf25fa0218b792ed2979d85f1be4bd7b" name="dump" cv="const"><type>std::string</type></method>
+<method id="doxygen.classboost_1_1property__tree_1_1string__path_1a662415989dc1562489e85f83a196ce67" name="operator/="><type><classname>string_path</classname> &amp;</type><parameter name="o"><paramtype>const <classname>string_path</classname> &amp;</paramtype></parameter><purpose>Append a second path to this one. </purpose><description><para>
+</para></description><requires><para>o's separator is the same as this one's, or o has no separators </para>
+</requires></method>
+</method-group>
+<method-group name="friend functions">
+<method id="doxygen.classboost_1_1property__tree_1_1string__path_1a93de61d9af214e2ebb729df7e1722643" name="operator/"><type><classname>string_path</classname></type><parameter name="p1"><paramtype><classname>string_path</classname></paramtype></parameter><parameter name="p2"><paramtype>const <classname>string_path</classname> &amp;</paramtype></parameter><purpose>Concatenates two path components. </purpose></method>
+</method-group>
+</class>
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.xml__parser_8hpp" name="boost/property_tree/xml_parser.hpp">
+<namespace name="boost">
+<namespace name="property_tree">
+<namespace name="xml_parser">
+<function id="doxygen.namespaceboost_1_1property__tree_1_1xml__parser_1a0cc61a54b809d25345844344c97a978d" name="read_xml"><type>void</type><template>
+          <template-type-parameter name="Ptree"/>
+        </template><parameter name="stream"><paramtype>std::basic_istream&lt; typename Ptree::key_type::value_type &gt; &amp;</paramtype><description><para>Stream from which to read in the property tree. </para></description></parameter><parameter name="pt"><paramtype>Ptree &amp;</paramtype><description><para>The property tree to populate. </para></description></parameter><parameter name="flags"><paramtype>int</paramtype><default>0</default><description><para>Flags controlling the behaviour of the parser. The following flags are supported: <itemizedlist>
+<listitem><para><computeroutput>no_concat_text</computeroutput> – Prevents concatenation of text nodes into datastring of property tree. Puts them in separate <computeroutput>&lt;xmltext&gt;</computeroutput> strings instead. </para>
+</listitem>
+<listitem><para><computeroutput>no_comments</computeroutput> – Skip XML comments. </para>
+</listitem>
+<listitem><para><computeroutput>trim_whitespace</computeroutput> – Trim leading and trailing whitespace from text, and collapse sequences of whitespace. </para>
+</listitem>
+</itemizedlist>
+</para></description></parameter><description><para>Reads XML from an input stream and translates it to property tree. <note><para>Clears existing contents of property tree. In case of error the property tree unmodified. </para>
+</note>
+<note><para>XML attributes are placed under keys named <computeroutput>&lt;xmlattr&gt;</computeroutput>. </para>
+</note>
+
+
+</para></description><throws><simpara><classname>xml_parser_error</classname> In case of error deserializing the property tree. </simpara>
+</throws></function>
+<function id="doxygen.namespaceboost_1_1property__tree_1_1xml__parser_1a0fa74c64a6dcf3f3710b67c72739496c" name="read_xml"><type>void</type><template>
+          <template-type-parameter name="Ptree"/>
+        </template><parameter name="filename"><paramtype>const std::string &amp;</paramtype><description><para>The file from which to read in the property tree. </para></description></parameter><parameter name="pt"><paramtype>Ptree &amp;</paramtype><description><para>The property tree to populate. </para></description></parameter><parameter name="flags"><paramtype>int</paramtype><default>0</default><description><para>Flags controlling the bahviour of the parser. The following flags are supported: <itemizedlist>
+<listitem><para><computeroutput>no_concat_text</computeroutput> – Prevents concatenation of text nodes into datastring of property tree. Puts them in separate <computeroutput>&lt;xmltext&gt;</computeroutput> strings instead. </para>
+</listitem>
+<listitem><para><computeroutput>no_comments</computeroutput> – Skip XML comments. </para>
+</listitem>
+</itemizedlist>
+</para></description></parameter><parameter name="loc"><paramtype>const std::locale &amp;</paramtype><default>std::locale()</default><description><para>The locale to use when reading in the file contents. </para></description></parameter><description><para>Reads XML from a file using the given locale and translates it to property tree. <note><para>Clears existing contents of property tree. In case of error the property tree unmodified. </para>
+</note>
+<note><para>XML attributes are placed under keys named <computeroutput>&lt;xmlattr&gt;</computeroutput>. </para>
+</note>
+
+
+</para></description><throws><simpara><classname>xml_parser_error</classname> In case of error deserializing the property tree. </simpara>
+</throws></function>
+<function id="doxygen.namespaceboost_1_1property__tree_1_1xml__parser_1a7c3d30649da93a5a422b040701014cb3" name="write_xml"><type>void</type><template>
+          <template-type-parameter name="Ptree"/>
+        </template><parameter name="stream"><paramtype>std::basic_ostream&lt; typename Ptree::key_type::value_type &gt; &amp;</paramtype><description><para>The stream to which to write the XML representation of the property tree. </para></description></parameter><parameter name="pt"><paramtype>const Ptree &amp;</paramtype><description><para>The property tree to tranlsate to XML and output. </para></description></parameter><parameter name="settings"><paramtype>const xml_writer_settings&lt; typename Ptree::key_type &gt; &amp;</paramtype><default>xml_writer_settings&lt; typename Ptree::key_type &gt;()</default><description><para>The settings to use when writing out the property tree as XML. </para></description></parameter><description><para>Translates the property tree to XML and writes it the given output stream. 
+
+</para></description><throws><simpara><classname>xml_parser_error</classname> In case of error translating the property tree to XML or writing to the output stream. </simpara>
+</throws></function>
+<function id="doxygen.namespaceboost_1_1property__tree_1_1xml__parser_1a97d3d5235ef9b235d70110bac7e4f497" name="write_xml"><type>void</type><template>
+          <template-type-parameter name="Ptree"/>
+        </template><parameter name="filename"><paramtype>const std::string &amp;</paramtype><description><para>The file to which to write the XML representation of the property tree. </para></description></parameter><parameter name="pt"><paramtype>const Ptree &amp;</paramtype><description><para>The property tree to tranlsate to XML and output. </para></description></parameter><parameter name="loc"><paramtype>const std::locale &amp;</paramtype><default>std::locale()</default><description><para>The locale to use when writing the output to file. </para></description></parameter><parameter name="settings"><paramtype>const xml_writer_settings&lt; typename Ptree::key_type &gt; &amp;</paramtype><default>xml_writer_settings&lt; typename Ptree::key_type &gt;()</default><description><para>The settings to use when writing out the property tree as XML. </para></description></parameter><description><para>Translates the property tree to XML and writes it the given file. 
+
+</para></description><throws><simpara><classname>xml_parser_error</classname> In case of error translating the property tree to XML or writing to the output stream. </simpara>
+</throws></function>
+</namespace>
+
+
+
+
+</namespace>
+</namespace>
+</header>
+</library-reference>

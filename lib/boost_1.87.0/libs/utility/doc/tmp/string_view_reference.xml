@@ -1,0 +1,250 @@
+<?xml version="1.0" standalone="yes"?>
+<library-reference id="string_view.reference"><title>Reference</title><header id="doxygen.string_view.reference.string__view_8hpp" name="boost/utility/string_view.hpp">
+<namespace name="boost">
+<class id="doxygen.string_view.reference.classboost_1_1basic__string__view" name="basic_string_view"><template>
+      <template-type-parameter name="charT"/>
+      <template-type-parameter name="traits"/>
+    </template><typedef id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a9965d6de97803ba11f028b8e06edb89c" name="traits_type"><type>traits</type></typedef>
+<typedef id="doxygen.string_view.reference.classboost_1_1basic__string__view_1aa918de804a970547ba26aefeb1495a3a" name="value_type"><type>charT</type></typedef>
+<typedef id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a43312c986df2b210d10063f44e7508e5" name="pointer"><type>charT *</type></typedef>
+<typedef id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a9a80558d8d18ec46d10b2058aed33645" name="const_pointer"><type>const charT *</type></typedef>
+<typedef id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a0d0a8d6c5086dda0479e65274b4e2066" name="reference"><type>charT &amp;</type></typedef>
+<typedef id="doxygen.string_view.reference.classboost_1_1basic__string__view_1acc29addb2c5d2a5f7f4dbdcfcc1be446" name="const_reference"><type>const charT &amp;</type></typedef>
+<typedef id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a626f831a4c479afdfbc3b04978af1c3a" name="const_iterator"><type>const_pointer</type></typedef>
+<typedef id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a3a2ea936437c4e647da59075ce708b06" name="iterator"><type>const_iterator</type></typedef>
+<typedef id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a74eab496a528c7c5329c94b9c013ba7d" name="const_reverse_iterator"><type>std::reverse_iterator&lt; const_iterator &gt;</type></typedef>
+<typedef id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a88072a4565eeea640da05be1ce644013" name="reverse_iterator"><type>const_reverse_iterator</type></typedef>
+<typedef id="doxygen.string_view.reference.classboost_1_1basic__string__view_1aed5c8967f825f7f2dd07a7a0d0b9224f" name="size_type"><type>std::size_t</type></typedef>
+<typedef id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a4f46944d868bedc3404f6d740b9f9689" name="difference_type"><type>std::ptrdiff_t</type></typedef>
+<data-member id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a4ea09d2b66d96a34de864a79996006fa" name="npos" specifiers="static"><type>constexpr size_type</type></data-member>
+<method-group name="public member functions">
+<constructor id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a17e0dad1393bd266a6b6b5dcd891dc5d" cv="noexcept"/>
+<constructor id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a31bcadd34b449d48fbcfba8d9f5598dd"><parameter name="rhs"><paramtype>const <classname>basic_string_view</classname> &amp;</paramtype></parameter></constructor>
+<copy-assignment id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a73108433f38983770e065b92e001cbea"><type><classname>basic_string_view</classname> &amp;</type><parameter name="rhs"><paramtype>const <classname>basic_string_view</classname> &amp;</paramtype></parameter></copy-assignment>
+<constructor id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a22c2b756e7132479cd5dca9e768ac22f" cv="noexcept"><template>
+          <template-type-parameter name="Allocator"/>
+        </template><parameter name="str"><paramtype>const std::basic_string&lt; charT, traits, Allocator &gt; &amp;</paramtype></parameter></constructor>
+<constructor id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a0b4cc2d133e0e9d3908e05cdb89dc815"><parameter name="str"><paramtype>const charT *</paramtype></parameter></constructor>
+<constructor id="doxygen.string_view.reference.classboost_1_1basic__string__view_1abaf976de793fd77d19dbba00b2ac7968"><parameter name="str"><paramtype>const charT *</paramtype></parameter><parameter name="len"><paramtype>size_type</paramtype></parameter></constructor>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1aab6613ecb93640b446726937b3e79683" name="begin" cv="const noexcept"><type>constexpr const_iterator</type></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a5b4e146999eec2cde59cf0e362bda7dd" name="cbegin" cv="const noexcept"><type>constexpr const_iterator</type></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1ad70916044682659017c014dd2d7f6886" name="end" cv="const noexcept"><type>constexpr const_iterator</type></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1ae63ad9de583733ccab2d7609056f3fc7" name="cend" cv="const noexcept"><type>constexpr const_iterator</type></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1aae31568f49b5a6f131029e4e8680c030" name="rbegin" cv="const noexcept"><type>const_reverse_iterator</type></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a8840e0d38125197d27586c56a832d294" name="crbegin" cv="const noexcept"><type>const_reverse_iterator</type></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a43350b54642905fb51862b8767452ea1" name="rend" cv="const noexcept"><type>const_reverse_iterator</type></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a1833fe64637bec8685faf6164933790f" name="crend" cv="const noexcept"><type>const_reverse_iterator</type></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a2962dfbd0cabf05c5a7a81c1cbaf15d0" name="size" cv="const noexcept"><type>constexpr size_type</type></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1ad89880a1dd69ce2a818a2bceaf0d0b48" name="length" cv="const noexcept"><type>constexpr size_type</type></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a3735d73f71cf9a6b6e6d2b4f09d01afc" name="max_size" cv="const noexcept"><type>constexpr size_type</type></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a88cdb3f2305489a2171b231f174856b5" name="empty" cv="const noexcept"><type>constexpr bool</type></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1af4337483c50fc4678c85d114dc620baa" name="operator[]" cv="const noexcept"><type>constexpr const_reference</type><parameter name="pos"><paramtype>size_type</paramtype></parameter></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1aa1f75d842f02d22a36ad2dd56ffca796" name="at" cv="const"><type>constexpr const_reference</type><parameter name="pos"><paramtype>size_type</paramtype></parameter></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a66815326d88262f586675cb283dd6aa4" name="front" cv="const"><type>constexpr const_reference</type></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a30d5ee6159a283d9abb205640c96720c" name="back" cv="const"><type>constexpr const_reference</type></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a423615f6f92e1353dbe8f8582b29dde8" name="data" cv="const noexcept"><type>constexpr const_pointer</type></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1aa35b7c98d6b910f7448ae7927304882a" name="clear" cv="noexcept"><type>void</type></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a6685b8e8aec7a915e41ce42ee02565bc" name="remove_prefix"><type>constexpr void</type><parameter name="n"><paramtype>size_type</paramtype></parameter></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a993f8435b020828145c9ad6238c990a0" name="remove_suffix"><type>constexpr void</type><parameter name="n"><paramtype>size_type</paramtype></parameter></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a3336f6ce991cc7b8df5131cd0a2c1743" name="swap" cv="noexcept"><type>constexpr void</type><parameter name="s"><paramtype><classname>basic_string_view</classname> &amp;</paramtype></parameter></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1af2c87019c4b8bbe6e54f2e880758a0c3" name="conversion-operator" cv="const" specifiers="explicit"><type>std::basic_string&lt; charT, traits, Allocator &gt;</type><template>
+          <template-type-parameter name="Allocator"/>
+        </template></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a388654140243a0015cffd66e0efc822a" name="to_string" cv="const"><type>std::basic_string&lt; charT, traits, Allocator &gt;</type><template>
+          <template-type-parameter name="Allocator"><default>std::allocator&lt;charT&gt;</default></template-type-parameter>
+        </template><parameter name="a"><paramtype>const Allocator &amp;</paramtype><default>Allocator()</default></parameter></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a41f8e304c27af9e19823c2ae021801e6" name="copy" cv="const"><type>size_type</type><parameter name="s"><paramtype>charT *</paramtype></parameter><parameter name="n"><paramtype>size_type</paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype><default>0</default></parameter></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a575019917cbe6b1c477dfd639109b47c" name="substr" cv="const"><type>constexpr <classname>basic_string_view</classname></type></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1ad4e0b142a4ee99f37faf6dad53e7a8ca" name="substr" cv="const"><type>constexpr <classname>basic_string_view</classname></type><parameter name="pos"><paramtype>size_type</paramtype></parameter><parameter name="n"><paramtype>size_type</paramtype><default>npos</default></parameter></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1aa48306a056c9dc1ea05edc93165a5e88" name="compare" cv="const noexcept"><type>constexpr int</type><parameter name="x"><paramtype><classname>basic_string_view</classname></paramtype></parameter></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1adc838164e7258c313f1e9256db37c3fa" name="compare" cv="const"><type>constexpr int</type><parameter name="pos1"><paramtype>size_type</paramtype></parameter><parameter name="n1"><paramtype>size_type</paramtype></parameter><parameter name="x"><paramtype><classname>basic_string_view</classname></paramtype></parameter></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a9dda910241353d210df3bd16498989d6" name="compare" cv="const"><type>constexpr int</type><parameter name="pos1"><paramtype>size_type</paramtype></parameter><parameter name="n1"><paramtype>size_type</paramtype></parameter><parameter name="x"><paramtype><classname>basic_string_view</classname></paramtype></parameter><parameter name="pos2"><paramtype>size_type</paramtype></parameter><parameter name="n2"><paramtype>size_type</paramtype></parameter></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1abd2a4afd9bf17faf7ad9a2ea6cd6f4a5" name="compare" cv="const"><type>constexpr int</type><parameter name="x"><paramtype>const charT *</paramtype></parameter></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1ad7085b2b98b9bc39f8660a91972b3ea6" name="compare" cv="const"><type>constexpr int</type><parameter name="pos1"><paramtype>size_type</paramtype></parameter><parameter name="n1"><paramtype>size_type</paramtype></parameter><parameter name="x"><paramtype>const charT *</paramtype></parameter></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a0e39c6efc65d72cae651ea43dabccfa4" name="compare" cv="const"><type>constexpr int</type><parameter name="pos1"><paramtype>size_type</paramtype></parameter><parameter name="n1"><paramtype>size_type</paramtype></parameter><parameter name="x"><paramtype>const charT *</paramtype></parameter><parameter name="n2"><paramtype>size_type</paramtype></parameter></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a66af7a34a4fdf8a4afb55328c127dc36" name="starts_with" cv="const noexcept"><type>constexpr bool</type><parameter name="c"><paramtype>charT</paramtype></parameter></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a682851511882516988a744c349a1fa54" name="starts_with" cv="const noexcept"><type>constexpr bool</type><parameter name="x"><paramtype><classname>basic_string_view</classname></paramtype></parameter></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1ab175a070b64bccfdc6ad6eec696e40e1" name="ends_with" cv="const noexcept"><type>constexpr bool</type><parameter name="c"><paramtype>charT</paramtype></parameter></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a546acb4c8df15e45addcfbdf72c0c4be" name="ends_with" cv="const noexcept"><type>constexpr bool</type><parameter name="x"><paramtype><classname>basic_string_view</classname></paramtype></parameter></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a0649ec85a27636277a3dc50e5f88123c" name="contains" cv="const noexcept"><type>constexpr bool</type><parameter name="s"><paramtype><classname>basic_string_view</classname></paramtype></parameter></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1aa80b24e5382b74f233ed30868abc3790" name="contains" cv="const noexcept"><type>constexpr bool</type><parameter name="c"><paramtype>charT</paramtype></parameter></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a8adf368d4d1b07ca26864e7288c07c49" name="contains" cv="const noexcept"><type>constexpr bool</type><parameter name="s"><paramtype>const charT *</paramtype></parameter></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a684be9b5a1f61d060905c2517d9033b8" name="find" cv="const noexcept"><type>constexpr size_type</type><parameter name="s"><paramtype><classname>basic_string_view</classname></paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype><default>0</default></parameter></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a257fba9abeb8cc8edd64f41df9800a0b" name="find" cv="const noexcept"><type>constexpr size_type</type><parameter name="c"><paramtype>charT</paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype><default>0</default></parameter></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a3ef848c38aa15cff1b836f540ff6b668" name="find" cv="const noexcept"><type>constexpr size_type</type><parameter name="s"><paramtype>const charT *</paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype></parameter><parameter name="n"><paramtype>size_type</paramtype></parameter></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a43a0b6aa4fe40af598f315764845a171" name="find" cv="const noexcept"><type>constexpr size_type</type><parameter name="s"><paramtype>const charT *</paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype><default>0</default></parameter></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a04c4b199e6dc39e5fb00c0d51f73c9f9" name="rfind" cv="const noexcept"><type>constexpr size_type</type><parameter name="s"><paramtype><classname>basic_string_view</classname></paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype><default>npos</default></parameter></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a0be0a2c714c5472431705cc2f2ced4a1" name="rfind" cv="const noexcept"><type>constexpr size_type</type><parameter name="c"><paramtype>charT</paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype><default>npos</default></parameter></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a6f546d36ff47c934f5b179f6e0388986" name="rfind" cv="const noexcept"><type>constexpr size_type</type><parameter name="s"><paramtype>const charT *</paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype></parameter><parameter name="n"><paramtype>size_type</paramtype></parameter></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a6bf568813f0f94455d0d930513f7ff53" name="rfind" cv="const noexcept"><type>constexpr size_type</type><parameter name="s"><paramtype>const charT *</paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype><default>npos</default></parameter></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a12695382e2e367f2e37c96b32e0bff50" name="find_first_of" cv="const noexcept"><type>constexpr size_type</type><parameter name="s"><paramtype><classname>basic_string_view</classname></paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype><default>0</default></parameter></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a16a35986b441416f4d29393a64bab569" name="find_first_of" cv="const noexcept"><type>constexpr size_type</type><parameter name="c"><paramtype>charT</paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype><default>0</default></parameter></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a9c216fbc5790790e4aeb1fb1c089effb" name="find_first_of" cv="const noexcept"><type>constexpr size_type</type><parameter name="s"><paramtype>const charT *</paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype></parameter><parameter name="n"><paramtype>size_type</paramtype></parameter></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a3ff112ca4f962b80ab005b6394e0141c" name="find_first_of" cv="const noexcept"><type>constexpr size_type</type><parameter name="s"><paramtype>const charT *</paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype><default>0</default></parameter></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a296e58c0b00c674dff580c0ecd1df30c" name="find_last_of" cv="const noexcept"><type>constexpr size_type</type><parameter name="s"><paramtype><classname>basic_string_view</classname></paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype><default>npos</default></parameter></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a2d9259c5aa03a72585f0e2f441780d68" name="find_last_of" cv="const noexcept"><type>constexpr size_type</type><parameter name="c"><paramtype>charT</paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype><default>npos</default></parameter></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a771608c81bff248979deb1d47be35c67" name="find_last_of" cv="const noexcept"><type>constexpr size_type</type><parameter name="s"><paramtype>const charT *</paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype></parameter><parameter name="n"><paramtype>size_type</paramtype></parameter></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a9b794abb709a9adea8dd9b3c172d5a63" name="find_last_of" cv="const noexcept"><type>constexpr size_type</type><parameter name="s"><paramtype>const charT *</paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype><default>npos</default></parameter></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1acc732571c2a8577537a0b89a3ef1c3ce" name="find_first_not_of" cv="const noexcept"><type>constexpr size_type</type><parameter name="s"><paramtype><classname>basic_string_view</classname></paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype><default>0</default></parameter></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a35417a59e5d42bf5d8c5d5bbe053ca1b" name="find_first_not_of" cv="const noexcept"><type>constexpr size_type</type><parameter name="c"><paramtype>charT</paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype><default>0</default></parameter></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a9df062595aac89d4c9917d863342226e" name="find_first_not_of" cv="const noexcept"><type>constexpr size_type</type><parameter name="s"><paramtype>const charT *</paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype></parameter><parameter name="n"><paramtype>size_type</paramtype></parameter></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a5f7bd2bfd9c7446bc7609a42e553f1db" name="find_first_not_of" cv="const noexcept"><type>constexpr size_type</type><parameter name="s"><paramtype>const charT *</paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype><default>0</default></parameter></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1aa07c66df758db0b85211a8d7e2b8fb83" name="find_last_not_of" cv="const noexcept"><type>constexpr size_type</type><parameter name="s"><paramtype><classname>basic_string_view</classname></paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype><default>npos</default></parameter></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1ae4ceb91a4d0170c3af880f37f3fa1a68" name="find_last_not_of" cv="const noexcept"><type>constexpr size_type</type><parameter name="c"><paramtype>charT</paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype><default>npos</default></parameter></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a69292d446805897bf7aa6694fd937ce0" name="find_last_not_of" cv="const noexcept"><type>constexpr size_type</type><parameter name="s"><paramtype>const charT *</paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype></parameter><parameter name="n"><paramtype>size_type</paramtype></parameter></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a51725ba1d8e44fbb52ad6141ffba98f5" name="find_last_not_of" cv="const noexcept"><type>constexpr size_type</type><parameter name="s"><paramtype>const charT *</paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype><default>npos</default></parameter></method>
+</method-group>
+<method-group name="private member functions">
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1aaa26175465251d6f6462556c1aa0b0d1" name="reverse_distance" cv="const noexcept"><type>size_type</type><template>
+          <template-type-parameter name="r_iter"/>
+        </template><parameter name="first"><paramtype>r_iter</paramtype></parameter><parameter name="last"><paramtype>r_iter</paramtype></parameter></method>
+<method id="doxygen.string_view.reference.classboost_1_1basic__string__view_1a5f9f0adc00e6e47839e1c9f3b062ef75" name="find_not_of" cv="const noexcept"><type>Iterator</type><template>
+          <template-type-parameter name="Iterator"/>
+        </template><parameter name="first"><paramtype>Iterator</paramtype></parameter><parameter name="last"><paramtype>Iterator</paramtype></parameter><parameter name="s"><paramtype><classname>basic_string_view</classname></paramtype></parameter></method>
+</method-group>
+</class><function id="doxygen.string_view.reference.string__view_8hpp_1abfdb8aff620da7a3dcfa6a52d3fda975" name="operator=="><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="x"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter><parameter name="y"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter></function>
+<function id="doxygen.string_view.reference.string__view_8hpp_1a1236714fa14f39b7545b81cb85f59b71" name="operator!="><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="x"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter><parameter name="y"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter></function>
+<function id="doxygen.string_view.reference.string__view_8hpp_1a6c3b2067b82494b39e99317b3d2eb8b5" name="operator&lt;"><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="x"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter><parameter name="y"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter></function>
+<function id="doxygen.string_view.reference.string__view_8hpp_1abca5b09a38e6d35c2e8a798178c1d79b" name="operator&gt;"><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="x"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter><parameter name="y"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter></function>
+<function id="doxygen.string_view.reference.string__view_8hpp_1aa67d03b6a196030c3f442e32dd5e3a83" name="operator&lt;="><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="x"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter><parameter name="y"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter></function>
+<function id="doxygen.string_view.reference.string__view_8hpp_1a68e926e35a11bfe6dc334a7c2cb773b2" name="operator&gt;="><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="x"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter><parameter name="y"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter></function>
+<function id="doxygen.string_view.reference.string__view_8hpp_1ab96b4e6d0e3519c9ffc40190157f0d18" name="operator=="><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+          <template-type-parameter name="Allocator"/>
+        </template><parameter name="x"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter><parameter name="y"><paramtype>const std::basic_string&lt; charT, traits, Allocator &gt; &amp;</paramtype></parameter></function>
+<function id="doxygen.string_view.reference.string__view_8hpp_1a4ccb91fe7568fd08985bf0f56c3770c4" name="operator=="><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+          <template-type-parameter name="Allocator"/>
+        </template><parameter name="x"><paramtype>const std::basic_string&lt; charT, traits, Allocator &gt; &amp;</paramtype></parameter><parameter name="y"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter></function>
+<function id="doxygen.string_view.reference.string__view_8hpp_1a2f0e36bd2aabcab38c10c939aee49c42" name="operator=="><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="x"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter><parameter name="y"><paramtype>const charT *</paramtype></parameter></function>
+<function id="doxygen.string_view.reference.string__view_8hpp_1a0a4168c38d2b82a19542d2aaf5d8803a" name="operator=="><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="x"><paramtype>const charT *</paramtype></parameter><parameter name="y"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter></function>
+<function id="doxygen.string_view.reference.string__view_8hpp_1abe0ee2aab78a4655d8956f30805d147d" name="operator!="><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+          <template-type-parameter name="Allocator"/>
+        </template><parameter name="x"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter><parameter name="y"><paramtype>const std::basic_string&lt; charT, traits, Allocator &gt; &amp;</paramtype></parameter></function>
+<function id="doxygen.string_view.reference.string__view_8hpp_1a99921c7468e4c0a37eff7499fd95264d" name="operator!="><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+          <template-type-parameter name="Allocator"/>
+        </template><parameter name="x"><paramtype>const std::basic_string&lt; charT, traits, Allocator &gt; &amp;</paramtype></parameter><parameter name="y"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter></function>
+<function id="doxygen.string_view.reference.string__view_8hpp_1aa2d7882a3ebf5c6f0daf2709182dd796" name="operator!="><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="x"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter><parameter name="y"><paramtype>const charT *</paramtype></parameter></function>
+<function id="doxygen.string_view.reference.string__view_8hpp_1a2a39121f3cdce27e8e52a3ad9a13fa84" name="operator!="><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="x"><paramtype>const charT *</paramtype></parameter><parameter name="y"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter></function>
+<function id="doxygen.string_view.reference.string__view_8hpp_1ac9693641e300fcdd54d79032e7a4a02e" name="operator&lt;"><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+          <template-type-parameter name="Allocator"/>
+        </template><parameter name="x"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter><parameter name="y"><paramtype>const std::basic_string&lt; charT, traits, Allocator &gt; &amp;</paramtype></parameter></function>
+<function id="doxygen.string_view.reference.string__view_8hpp_1a8d6cc19259ed8ac076304eee735dff29" name="operator&lt;"><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+          <template-type-parameter name="Allocator"/>
+        </template><parameter name="x"><paramtype>const std::basic_string&lt; charT, traits, Allocator &gt; &amp;</paramtype></parameter><parameter name="y"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter></function>
+<function id="doxygen.string_view.reference.string__view_8hpp_1a9737df6a8c45ff4c29832b79eee3993b" name="operator&lt;"><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="x"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter><parameter name="y"><paramtype>const charT *</paramtype></parameter></function>
+<function id="doxygen.string_view.reference.string__view_8hpp_1a4635dd9f388a0116b6965e6bc086d7ad" name="operator&lt;"><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="x"><paramtype>const charT *</paramtype></parameter><parameter name="y"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter></function>
+<function id="doxygen.string_view.reference.string__view_8hpp_1a152d635d6bba4e48f6824c4fe75e83ef" name="operator&gt;"><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+          <template-type-parameter name="Allocator"/>
+        </template><parameter name="x"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter><parameter name="y"><paramtype>const std::basic_string&lt; charT, traits, Allocator &gt; &amp;</paramtype></parameter></function>
+<function id="doxygen.string_view.reference.string__view_8hpp_1a7ec73a5dc8bb16094d60dca5b81a7380" name="operator&gt;"><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+          <template-type-parameter name="Allocator"/>
+        </template><parameter name="x"><paramtype>const std::basic_string&lt; charT, traits, Allocator &gt; &amp;</paramtype></parameter><parameter name="y"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter></function>
+<function id="doxygen.string_view.reference.string__view_8hpp_1aa03666bbcaadccd7ef768097e9f6880f" name="operator&gt;"><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="x"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter><parameter name="y"><paramtype>const charT *</paramtype></parameter></function>
+<function id="doxygen.string_view.reference.string__view_8hpp_1a1e68bb0ccba9187d40fdaff510c3bd0d" name="operator&gt;"><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="x"><paramtype>const charT *</paramtype></parameter><parameter name="y"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter></function>
+<function id="doxygen.string_view.reference.string__view_8hpp_1a94e4181511ef19f75c12cf41f504353e" name="operator&lt;="><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+          <template-type-parameter name="Allocator"/>
+        </template><parameter name="x"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter><parameter name="y"><paramtype>const std::basic_string&lt; charT, traits, Allocator &gt; &amp;</paramtype></parameter></function>
+<function id="doxygen.string_view.reference.string__view_8hpp_1adc914aec8913c8c5ef35a8a81d7d84e9" name="operator&lt;="><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+          <template-type-parameter name="Allocator"/>
+        </template><parameter name="x"><paramtype>const std::basic_string&lt; charT, traits, Allocator &gt; &amp;</paramtype></parameter><parameter name="y"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter></function>
+<function id="doxygen.string_view.reference.string__view_8hpp_1ad1d5d647b6ca4ff62838de1569db7537" name="operator&lt;="><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="x"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter><parameter name="y"><paramtype>const charT *</paramtype></parameter></function>
+<function id="doxygen.string_view.reference.string__view_8hpp_1a4e5bbe4c0760f6b07d87745f01782667" name="operator&lt;="><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="x"><paramtype>const charT *</paramtype></parameter><parameter name="y"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter></function>
+<function id="doxygen.string_view.reference.string__view_8hpp_1a5bb7441b50802f2d055fafe028b24eb1" name="operator&gt;="><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+          <template-type-parameter name="Allocator"/>
+        </template><parameter name="x"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter><parameter name="y"><paramtype>const std::basic_string&lt; charT, traits, Allocator &gt; &amp;</paramtype></parameter></function>
+<function id="doxygen.string_view.reference.string__view_8hpp_1a50160547ae8f8de0b1509c4986246527" name="operator&gt;="><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+          <template-type-parameter name="Allocator"/>
+        </template><parameter name="x"><paramtype>const std::basic_string&lt; charT, traits, Allocator &gt; &amp;</paramtype></parameter><parameter name="y"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter></function>
+<function id="doxygen.string_view.reference.string__view_8hpp_1a74dfd984286328503cba85c220589e1e" name="operator&gt;="><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="x"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter><parameter name="y"><paramtype>const charT *</paramtype></parameter></function>
+<function id="doxygen.string_view.reference.string__view_8hpp_1a3371389b510866d22b2193e2de3141a0" name="operator&gt;="><type>constexpr bool</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="x"><paramtype>const charT *</paramtype></parameter><parameter name="y"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter></function>
+<function id="doxygen.string_view.reference.string__view_8hpp_1a027c0010c7913c30b080bd3e3a069430" name="operator&lt;&lt;"><type>std::basic_ostream&lt; charT, traits &gt; &amp;</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="os"><paramtype>std::basic_ostream&lt; charT, traits &gt; &amp;</paramtype></parameter><parameter name="str"><paramtype>const <classname>basic_string_view</classname>&lt; charT, traits &gt; &amp;</paramtype></parameter></function>
+<function id="doxygen.string_view.reference.string__view_8hpp_1a114b42bb9adae06f1fc6acafbaabedc4" name="hash_range"><type>std::size_t</type><template>
+          <template-type-parameter name="It"/>
+        </template><parameter name=""><paramtype>It</paramtype></parameter><parameter name=""><paramtype>It</paramtype></parameter></function>
+<function id="doxygen.string_view.reference.string__view_8hpp_1ab1defa0f145a8790044f6f8d7a844091" name="hash_value"><type>std::size_t</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="s"><paramtype><classname>basic_string_view</classname>&lt; charT, traits &gt;</paramtype></parameter></function>
+</namespace>
+</header>
+</library-reference>

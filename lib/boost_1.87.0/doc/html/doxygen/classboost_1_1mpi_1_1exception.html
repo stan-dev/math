@@ -1,0 +1,115 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class exception</title>
+<link rel="stylesheet" href="../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../mpi/reference.html#doxygen.exception_8hpp" title="Header &lt;boost/mpi/exception.hpp&gt;">
+<link rel="prev" href="classboost_1_1mpi_1_1environment.html" title="Class environment">
+<link rel="next" href="exception_8hpp_1ac32cd3769deb5a2910c6ef9bc6b7f841.html" title="Macro BOOST_MPI_CHECK_RESULT">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../boost.png"></td>
+<td align="center"><a href="../../../index.html">Home</a></td>
+<td align="center"><a href="../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1mpi_1_1environment.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../mpi/reference.html#doxygen.exception_8hpp"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="exception_8hpp_1ac32cd3769deb5a2910c6ef9bc6b7f841.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.classboost_1_1mpi_1_1exception"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class exception</span></h2>
+<p>boost::mpi::exception — Catch-all exception class for MPI errors. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../mpi/reference.html#doxygen.exception_8hpp" title="Header &lt;boost/mpi/exception.hpp&gt;">boost/mpi/exception.hpp</a>&gt;
+
+</span>
+<span class="keyword">class</span> <a class="link" href="classboost_1_1mpi_1_1exception.html" title="Class exception">exception</a> <span class="special">:</span> <span class="keyword">public</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">exception</span> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1mpi_1_1exception.html#id-1_3_25_7_11_2_1_1_4-bb">public member functions</a></span>
+  <a class="link" href="classboost_1_1mpi_1_1exception.html#doxygen.classboost_1_1mpi_1_1exception_1ad812f68795d70cbb9ac1cc5770fb8d72"><span class="identifier">exception</span></a><span class="special">(</span><span class="keyword">const</span> <span class="keyword">char</span> <span class="special">*</span><span class="special">,</span> <span class="keyword">int</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">virtual</span> <a class="link" href="classboost_1_1mpi_1_1exception.html#doxygen.classboost_1_1mpi_1_1exception_1acf7bb0b957cb5e335c662b4dbea89928"><span class="special">~</span><span class="identifier">exception</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">virtual</span> <span class="keyword">const</span> <span class="keyword">char</span> <span class="special">*</span> <a class="link" href="classboost_1_1mpi_1_1exception.html#doxygen.classboost_1_1mpi_1_1exception_1aa8f31309c130f244a45e56a18ac394c3"><span class="identifier">what</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">const</span> <span class="keyword">char</span> <span class="special">*</span> <a class="link" href="classboost_1_1mpi_1_1exception.html#doxygen.classboost_1_1mpi_1_1exception_1a267f1971772947a82ab9f50e330dc63a"><span class="identifier">routine</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">int</span> <a class="link" href="classboost_1_1mpi_1_1exception.html#doxygen.classboost_1_1mpi_1_1exception_1adfd7a374e0199bcc1e27289cdd077e72"><span class="identifier">result_code</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">int</span> <a class="link" href="classboost_1_1mpi_1_1exception.html#doxygen.classboost_1_1mpi_1_1exception_1a30e81c42e62e8a1281e8adabcae528e1"><span class="identifier">error_class</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.25.7.12.5.4"></a><h2>Description</h2>
+<p>Instances of this class will be thrown when an MPI error occurs. MPI failures that trigger these exceptions may or may not be recoverable, depending on the underlying MPI implementation. Consult the documentation for your MPI implementation to determine the effect of MPI errors. </p>
+<div class="refsect2">
+<a name="id-1.3.25.7.12.5.4.3"></a><h3>
+<a name="id-1_3_25_7_11_2_1_1_4-bb"></a><code class="computeroutput">exception</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.classboost_1_1mpi_1_1exception_1ad812f68795d70cbb9ac1cc5770fb8d72"></a><span class="identifier">exception</span><span class="special">(</span><span class="keyword">const</span> <span class="keyword">char</span> <span class="special">*</span> routine<span class="special">,</span> <span class="keyword">int</span> result_code<span class="special">)</span><span class="special">;</span></pre>
+<p>Build a new <code class="computeroutput">exception</code> exception.</p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">routine</code></span></p></td>
+<td><p>The MPI routine in which the error occurred. This should be a pointer to a string constant: it will not be copied.</p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">result_code</code></span></p></td>
+<td><p>The result code returned from the MPI routine that aborted with an error. </p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">virtual</span> <a name="doxygen.classboost_1_1mpi_1_1exception_1acf7bb0b957cb5e335c662b4dbea89928"></a><span class="special">~</span><span class="identifier">exception</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">virtual</span> <span class="keyword">const</span> <span class="keyword">char</span> <span class="special">*</span> <a name="doxygen.classboost_1_1mpi_1_1exception_1aa8f31309c130f244a45e56a18ac394c3"></a><span class="identifier">what</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>A description of the error that occurred. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">const</span> <span class="keyword">char</span> <span class="special">*</span> <a name="doxygen.classboost_1_1mpi_1_1exception_1a267f1971772947a82ab9f50e330dc63a"></a><span class="identifier">routine</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Retrieve the name of the MPI routine that reported the error. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">int</span> <a name="doxygen.classboost_1_1mpi_1_1exception_1adfd7a374e0199bcc1e27289cdd077e72"></a><span class="identifier">result_code</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Retrieve the result code returned from the MPI routine that reported the error. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">int</span> <a name="doxygen.classboost_1_1mpi_1_1exception_1a30e81c42e62e8a1281e8adabcae528e1"></a><span class="identifier">error_class</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Returns the MPI error class associated with the error that triggered this exception. </li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2005-2007 Douglas Gregor,
+      Matthias Troyer, Trustees of Indiana University<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at &lt;ulink url="http://www.boost.org/LICENSE_1_0.txt"&gt;
+        http://www.boost.org/LICENSE_1_0.txt &lt;/ulink&gt;)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1mpi_1_1environment.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../mpi/reference.html#doxygen.exception_8hpp"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="exception_8hpp_1ac32cd3769deb5a2910c6ef9bc6b7f841.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

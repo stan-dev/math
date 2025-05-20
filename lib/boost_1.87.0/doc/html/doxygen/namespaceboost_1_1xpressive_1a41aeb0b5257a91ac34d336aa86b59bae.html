@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Global set</title>
+<link rel="stylesheet" href="../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../xpressive/reference.html#doxygen.regex__primitives_8hpp" title="Header &lt;boost/xpressive/regex_primitives.hpp&gt;">
+<link rel="prev" href="namespaceboost_1_1xpressive_1a14b961aeefc46c936116aaeaf7b54cc2.html" title="Global self">
+<link rel="next" href="namespaceboost_1_1xpressive_1a13c6bb573901cb7e82386a4616ab4dd2.html" title="Global s0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../boost.png"></td>
+<td align="center"><a href="../../../index.html">Home</a></td>
+<td align="center"><a href="../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="namespaceboost_1_1xpressive_1a14b961aeefc46c936116aaeaf7b54cc2.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../xpressive/reference.html#doxygen.regex__primitives_8hpp"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="namespaceboost_1_1xpressive_1a13c6bb573901cb7e82386a4616ab4dd2.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.namespaceboost_1_1xpressive_1a41aeb0b5257a91ac34d336aa86b59bae"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Global set</span></h2>
+<p>boost::xpressive::set — Used to create character sets. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../xpressive/reference.html#doxygen.regex__primitives_8hpp" title="Header &lt;boost/xpressive/regex_primitives.hpp&gt;">boost/xpressive/regex_primitives.hpp</a>&gt;
+
+</span><span class="emphasis"><em><span class="identifier">unspecified</span></em></span> set<span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.46.5.10.33.4"></a><h2>Description</h2>
+<p>There are two ways to create character sets with the 'set' identifier. The easiest is to create a comma-separated list of the characters in the set, as in (set= 'a','b','c'). This set will match 'a', 'b', or 'c'. The other way is to define the set as an argument to the set subscript operator. For instance, set[ 'a' | range('b','c') | digit ] will match an 'a', 'b', 'c' or a digit character.</p>
+<p>To complement a set, apply the '~' operator. For instance, ~(set= 'a','b','c') will match any character that is not an 'a', 'b', or 'c'.</p>
+<p>Sets can be composed of other, possibly complemented, sets. For instance, set[ ~digit | ~(set= 'a','b','c') ]. </p>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2007 Eric Niebler<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="namespaceboost_1_1xpressive_1a14b961aeefc46c936116aaeaf7b54cc2.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../xpressive/reference.html#doxygen.regex__primitives_8hpp"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="namespaceboost_1_1xpressive_1a13c6bb573901cb7e82386a4616ab4dd2.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

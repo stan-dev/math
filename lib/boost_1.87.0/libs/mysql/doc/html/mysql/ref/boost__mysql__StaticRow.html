@@ -1,0 +1,105 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>StaticRow concept</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../../pt01.html" title="Part Two: Reference. ">
+<link rel="prev" href="boost__mysql__SocketStream.html" title="SocketStream concept">
+<link rel="next" href="boost__mysql__Stream.html" title="Stream concept">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="boost__mysql__SocketStream.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../pt01.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="boost__mysql__Stream.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="mysql.ref.boost__mysql__StaticRow"></a><a class="link" href="boost__mysql__StaticRow.html" title="StaticRow concept">StaticRow concept</a>
+</h4></div></div></div>
+<p>
+        A <code class="computeroutput"><span class="identifier">StaticRow</span></code> is a C++ type
+        that can be used to model a row within the static interface (i.e. can be
+        passed as template parameter to <a class="link" href="boost__mysql__static_results.html" title="static_results"><code class="literal">static_results</code></a>
+        and <a class="link" href="boost__mysql__static_execution_state.html" title="static_execution_state"><code class="literal">static_execution_state</code></a>).
+      </p>
+<p>
+        Formally, a type <code class="computeroutput"><span class="identifier">T</span></code> is a
+        <code class="computeroutput"><span class="identifier">StaticRow</span></code> if either of the
+        following is true:
+      </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+            It is a non-const <code class="computeroutput"><span class="keyword">struct</span></code>
+            annotated with Boost.Describe data (i.e., having <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">describe</span><span class="special">::</span><span class="identifier">has_describe_members</span><span class="special">&lt;</span><span class="identifier">T</span><span class="special">&gt;::</span><span class="identifier">value</span>
+            <span class="special">==</span> <span class="keyword">true</span></code>),
+            and all the described members fulfill the <code class="computeroutput"><span class="identifier">ReadableField</span></code>
+            exposition-only concept.
+          </li>
+<li class="listitem">
+            It is a non-const <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">tuple</span></code>
+            instantiation, and all of its types fulfill the <code class="computeroutput"><span class="identifier">ReadableField</span></code>
+            exposition-only concept.
+          </li>
+<li class="listitem">
+            It is an instantiation of the <a class="link" href="boost__mysql__pfr_by_name.html" title="pfr_by_name"><code class="literal">pfr_by_name</code></a>
+            or <a class="link" href="boost__mysql__pfr_by_position.html" title="pfr_by_position"><code class="literal">pfr_by_position</code></a>
+            marker types using a type <code class="computeroutput"><span class="identifier">Underlying</span></code>
+            that satisfies the following:
+            <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; ">
+<li class="listitem">
+                  Is reflectable using Boost.PFR. For C++17 and later, this means
+                  satisfying <a href="../../../../../../doc/html/boost_pfr/limitations_and_configuration.html" target="_top"><code class="computeroutput"><span class="identifier">SimpleAggregate</span></code></a>. For
+                  C++14, stricter requirements apply - see <a href="../../../../../../doc/html/boost_pfr/limitations_and_configuration.html" target="_top">the
+                  Boost.PFR docs</a> for more info.
+                </li>
+<li class="listitem">
+                  Is a non-const object type (i.e. not a <code class="computeroutput"><span class="keyword">union</span></code>
+                  or built-in type).
+                </li>
+<li class="listitem">
+                  All of its fields (as given by <code class="computeroutput"><span class="identifier">pfr</span><span class="special">::</span><span class="identifier">structure_to_tuple</span></code>)
+                  satisfy <code class="computeroutput"><span class="identifier">ReadableField</span></code>.
+                </li>
+</ul></div>
+          </li>
+</ul></div>
+<p>
+        Note that row types with no fields (like empty Describe structs and empty
+        tuples) are valid <code class="computeroutput"><span class="identifier">StaticRow</span></code>s.
+      </p>
+<p>
+        A <code class="computeroutput"><span class="identifier">ReadableField</span></code> is C++ type
+        that can be used to model a single value in a database row. A type <code class="computeroutput"><span class="identifier">F</span></code> is a <code class="computeroutput"><span class="identifier">ReadableField</span></code>
+        if it is any of the types listed <a class="link" href="../static_interface.html#mysql.static_interface.readable_field_reference">in
+        this table</a>. The set of readable field types is currently fixed and
+        can't be extended by the user. If this is something you have interest in,
+        <a href="https://github.com/boostorg/mysql/issues/new" target="_top">please file an
+        issue</a> with your use case to the repo.
+      </p>
+<p>
+        The set of allowable types may be extended in future releases, both for fields
+        and for rows.
+      </p>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="boost__mysql__SocketStream.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../pt01.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="boost__mysql__Stream.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

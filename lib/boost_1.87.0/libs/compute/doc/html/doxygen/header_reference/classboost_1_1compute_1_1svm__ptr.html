@@ -1,0 +1,89 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template svm_ptr</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.Compute">
+<link rel="up" href="../../boost_compute/reference.html#doxygen.header_reference.svm__ptr_8hpp" title="Header &lt;boost/compute/memory/svm_ptr.hpp&gt;">
+<link rel="prev" href="classboost_1_1compute_1_1local__buffer.html" title="Class template local_buffer">
+<link rel="next" href="classboost_1_1compute_1_1bernoulli__distribution.html" title="Class template bernoulli_distribution">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1compute_1_1local__buffer.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_compute/reference.html#doxygen.header_reference.svm__ptr_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1compute_1_1bernoulli__distribution.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.header_reference.classboost_1_1compute_1_1svm__ptr"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template svm_ptr</span></h2>
+<p>boost::compute::svm_ptr</p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../boost_compute/reference.html#doxygen.header_reference.svm__ptr_8hpp" title="Header &lt;boost/compute/memory/svm_ptr.hpp&gt;">boost/compute/memory/svm_ptr.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1compute_1_1svm__ptr.html" title="Class template svm_ptr">svm_ptr</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">T</span>                               <a name="doxygen.header_reference.classboost_1_1compute_1_1svm__ptr_1a1d38ca55e96c7739fc163e4fa3e02bff"></a><span class="identifier">value_type</span><span class="special">;</span>       
+  <span class="keyword">typedef</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">ptrdiff_t</span>                  <a name="doxygen.header_reference.classboost_1_1compute_1_1svm__ptr_1a52beb7ada6967afa1d305090dc7e0540"></a><span class="identifier">difference_type</span><span class="special">;</span>  
+  <span class="keyword">typedef</span> <span class="identifier">T</span> <span class="special">*</span>                             <a name="doxygen.header_reference.classboost_1_1compute_1_1svm__ptr_1a6a937b0a4ef83e2b1404d48dc8d99b3b"></a><span class="identifier">pointer</span><span class="special">;</span>          
+  <span class="keyword">typedef</span> <span class="identifier">T</span> <span class="special">&amp;</span>                             <a name="doxygen.header_reference.classboost_1_1compute_1_1svm__ptr_1adbd26781028e964e083cc7c2fe523bc2"></a><span class="identifier">reference</span><span class="special">;</span>        
+  <span class="keyword">typedef</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">random_access_iterator_tag</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1svm__ptr_1a04c594dc3b03252b81491b0c634bd1c5"></a><span class="identifier">iterator_category</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1compute_1_1svm__ptr.html#id72-bb">public member functions</a></span>
+  <a class="link" href="classboost_1_1compute_1_1svm__ptr.html#doxygen.header_reference.classboost_1_1compute_1_1svm__ptr_1aec9cb7e01e4718997f31fcc431f773fb"><span class="identifier">svm_ptr</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1compute_1_1svm__ptr.html#doxygen.header_reference.classboost_1_1compute_1_1svm__ptr_1a9781e7e844515e9c7d63826a8812e214"><span class="identifier">svm_ptr</span></a><span class="special">(</span><span class="keyword">void</span> <span class="special">*</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">context</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1compute_1_1svm__ptr.html#doxygen.header_reference.classboost_1_1compute_1_1svm__ptr_1a55dd3b8acd7ed8a15c4943c41db5181e"><span class="identifier">svm_ptr</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">svm_ptr</span><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">svm_ptr</span><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1compute_1_1svm__ptr.html#doxygen.header_reference.classboost_1_1compute_1_1svm__ptr_1aa84b378a2a901283cc1b8c68eac921f6"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">svm_ptr</span><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1compute_1_1svm__ptr.html#doxygen.header_reference.classboost_1_1compute_1_1svm__ptr_1a23ca2f89735a7310ec5d7c626f3643f7"><span class="special">~</span><span class="identifier">svm_ptr</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <span class="special">*</span> <a class="link" href="classboost_1_1compute_1_1svm__ptr.html#doxygen.header_reference.classboost_1_1compute_1_1svm__ptr_1a2d1f859e05c39dfb5a45ca59e49dfdb4"><span class="identifier">get</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">svm_ptr</span><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <a class="link" href="classboost_1_1compute_1_1svm__ptr.html#doxygen.header_reference.classboost_1_1compute_1_1svm__ptr_1ab89c9b3bba08215721f8c824e0aa3fda"><span class="keyword">operator</span><span class="special">+</span></a><span class="special">(</span><span class="identifier">difference_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">difference_type</span> <a class="link" href="classboost_1_1compute_1_1svm__ptr.html#doxygen.header_reference.classboost_1_1compute_1_1svm__ptr_1a9893dc8e56412fb4d7cf52d4b3222204"><span class="keyword">operator</span><span class="special">-</span></a><span class="special">(</span><span class="identifier">svm_ptr</span><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">const</span> <span class="identifier">context</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1compute_1_1svm__ptr.html#doxygen.header_reference.classboost_1_1compute_1_1svm__ptr_1a13681e6b24e0060f3a502b518637335e"><span class="identifier">get_context</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1compute_1_1svm__ptr.html#doxygen.header_reference.classboost_1_1compute_1_1svm__ptr_1ad9c1b7c9f61ab6cb4aa0bf47440a8968"><span class="keyword">operator</span><span class="special">==</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">svm_ptr</span><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1compute_1_1svm__ptr.html#doxygen.header_reference.classboost_1_1compute_1_1svm__ptr_1acb894289797cd4ee1caff4d029a3615a"><span class="keyword">operator</span><span class="special">!=</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">svm_ptr</span><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id35401"></a><h2>Description</h2>
+<div class="refsect2">
+<a name="id35403"></a><h3>
+<a name="id72-bb"></a><code class="computeroutput">svm_ptr</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem"><pre class="literallayout"><a name="doxygen.header_reference.classboost_1_1compute_1_1svm__ptr_1aec9cb7e01e4718997f31fcc431f773fb"></a><span class="identifier">svm_ptr</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a name="doxygen.header_reference.classboost_1_1compute_1_1svm__ptr_1a9781e7e844515e9c7d63826a8812e214"></a><span class="identifier">svm_ptr</span><span class="special">(</span><span class="keyword">void</span> <span class="special">*</span> ptr<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">context</span> <span class="special">&amp;</span> context<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a name="doxygen.header_reference.classboost_1_1compute_1_1svm__ptr_1a55dd3b8acd7ed8a15c4943c41db5181e"></a><span class="identifier">svm_ptr</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">svm_ptr</span><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&amp;</span> other<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">svm_ptr</span><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&amp;</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1svm__ptr_1aa84b378a2a901283cc1b8c68eac921f6"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">svm_ptr</span><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&amp;</span> other<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a name="doxygen.header_reference.classboost_1_1compute_1_1svm__ptr_1a23ca2f89735a7310ec5d7c626f3643f7"></a><span class="special">~</span><span class="identifier">svm_ptr</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">void</span> <span class="special">*</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1svm__ptr_1a2d1f859e05c39dfb5a45ca59e49dfdb4"></a><span class="identifier">get</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">svm_ptr</span><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1svm__ptr_1ab89c9b3bba08215721f8c824e0aa3fda"></a><span class="keyword">operator</span><span class="special">+</span><span class="special">(</span><span class="identifier">difference_type</span> n<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">difference_type</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1svm__ptr_1a9893dc8e56412fb4d7cf52d4b3222204"></a><span class="keyword">operator</span><span class="special">-</span><span class="special">(</span><span class="identifier">svm_ptr</span><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> other<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">const</span> <span class="identifier">context</span> <span class="special">&amp;</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1svm__ptr_1a13681e6b24e0060f3a502b518637335e"></a><span class="identifier">get_context</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1svm__ptr_1ad9c1b7c9f61ab6cb4aa0bf47440a8968"></a><span class="keyword">operator</span><span class="special">==</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">svm_ptr</span><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&amp;</span> other<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1svm__ptr_1acb894289797cd4ee1caff4d029a3615a"></a><span class="keyword">operator</span><span class="special">!=</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">svm_ptr</span><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&amp;</span> other<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2013, 2014 Kyle Lutz<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1compute_1_1local__buffer.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_compute/reference.html#doxygen.header_reference.svm__ptr_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1compute_1_1bernoulli__distribution.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

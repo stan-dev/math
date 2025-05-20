@@ -1,0 +1,73 @@
+////
+Copyright 2024 Matt Borland
+Distributed under the Boost Software License, Version 1.0.
+https://www.boost.org/LICENSE_1_0.txt
+////
+
+= Limits
+:idprefix: limits_
+
+== Limits overview
+
+The contents of `<boost/charconv/limits.hpp>` are designed to help the user optimize the size of the buffer required for `to_chars`.
+
+== Definitions
+[#limits_definitions_]
+
+[source, c++]
+----
+namespace boost { namespace charconv {
+
+template <typename T>
+constexpr int limits<T>::max_chars10;
+
+template <typename T>
+constexpr int limits<T>::max_chars;
+
+}} // Namespace boost::charconv
+----
+
+=== max_chars10
+
+The minimum size of the buffer that needs to be
+passed to `to_chars` to guarantee successful conversion for all values of type T, when either no base is passed, or base 10 is passed.
+
+=== max_chars
+
+The minimum size of the buffer that needs to be  passed to `to_chars` to guarantee successful conversion for all values of type T, for any value of base.
+
+== Examples
+
+The following two examples are for `max_chars10` to optimize the buffer size with `to_chars` for an integral type and a floating-point type respectively.
+
+[source, c++]
+----
+char buffer [boost::charconv::limits<std::int32_t>::max_chars10;
+auto r = boost::charconv::to_chars(buffer, buffer + sizeof(buffer), std::numeric_limits<std::int32_t>::max());
+
+assert(r.ec == std::errc());
+assert(r); // Same as above but less verbose. Added in C++26.
+assert(!strcmp(buffer, "2147483647")); // strcmp returns 0 on match
+----
+
+[source, c++]
+----
+char buffer [boost::charconv::limits<float>::max_chars10;
+auto r = boost::charconv::to_chars(buffer, buffer + sizeof(buffer), std::numeric_limits<float>::max());
+
+assert(r.ec == std::errc());
+assert(r); // Same as above but less verbose. Added in C++26.
+assert(!strcmp(buffer, "3.40282347e+38")); // strcmp returns 0 on match
+----
+
+The following example is a usage of `max_chars` when used to serialize an integer in binary (base = 2).
+
+[source, c++]
+----
+char buffer [boost::charconv::limits<std::uint16_t>::max_chars;
+auto r = boost::charconv::to_chars(buffer, buffer + sizeof(buffer), std::numeric_limits<std::uint16_t>::max(), 2);
+
+assert(r.ec == std::errc());
+assert(r); // Same as above but less verbose. Added in C++26.
+assert(!strcmp(buffer, "1111111111111111")); // strcmp returns 0 on match
+----

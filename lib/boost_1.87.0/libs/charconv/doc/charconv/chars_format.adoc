@@ -1,0 +1,61 @@
+////
+Copyright 2023 Matt Borland
+Distributed under the Boost Software License, Version 1.0.
+https://www.boost.org/LICENSE_1_0.txt
+////
+
+= chars_format
+:idprefix: chars_format_
+
+== chars_format overview
+
+`boost::charconv::chars_format` is an `enum class` used to define the format of floating point types with `from_chars` and `to_chars`.
+
+== Definition
+[#chars_format_defintion_]
+
+[source, c++]
+----
+namespace boost { namespace charconv {
+
+enum class chars_format : unsigned
+{
+    scientific = 1 << 0,
+    fixed = 1 << 1,
+    hex = 1 << 2,
+    general = fixed | scientific
+};
+
+}} // Namespace boost::charconv
+----
+
+== Formats
+
+=== Scientific Format
+Scientific format will be of the form `1.3e+03`.
+The integer part will be between 0 and 9 inclusive. The fraction and exponent will always appear.
+The exponent will always have a minimum of 2 digits.
+
+=== Fixed Format
+Fixed format will be of the form `2.30` or `3090`. An exponent will not appear with this format.
+If the precision of `to_chars` exceeds that of the type (e.g. `std::numeric_limits<double>::chars10`), 0s will be appended to the end of the significant digits.
+
+=== Hex Format
+Hex format will be of the form `1.0cp+05`. The integer part will always be 0 or 1.
+The exponent will be with a p instead of an e as used with base 10 formats, because e is a valid hex value.
+*Note: Every binary floating-point number has a unique representation as a hexfloat, but not every hexfloat has a unique representation as a binary floating-point number.*
+This is due to the fact that the number of bits in the significand of an IEEE754 binary32 and binary64 are not divisible by 4.
+
+==== Hexfloat Use Cases
+For those unfamiliar with hexfloats, they are valuable in specific instances:
+
+* Precision control: Hexfloats can offer finer control over the precision of floating-point values.
+In hexadecimal notation, each digit represents four bits (one hexit), allowing you to directly manipulate the precision of the number by specifying a certain number of hexadecimal digits.
+This can be useful when you need to precisely control the level of accuracy required for your calculations.
+
+* Bit-level representation: Hexfloats provide a direct representation of the underlying bits of a floating-point number.
+Each hexadecimal digit corresponds to a specific group of bits, making it easier to visualize and understand the internal structure of the floating-point value.
+This can be helpful for debugging or analyzing floating-point arithmetic operations (e.g. Computing https://en.wikipedia.org/wiki/Unit_in_the_last_place[ULP] distances).
+
+=== General
+General format will be the shortest representation of a number in either fixed or general format (e.g. `1234` instead of `1.234e+03`.

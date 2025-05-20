@@ -1,0 +1,16 @@
+////
+Copyright 2024 Peter Dimov
+Distributed under the Boost Software License, Version 1.0.
+https://www.boost.org/LICENSE_1_0.txt
+////
+
+include::bind_back.adoc[]
+include::bind_front.adoc[]
+include::function_ref.adoc[]
+include::integer_sequence.adoc[]
+include::invoke.adoc[]
+include::latch.adoc[]
+include::mem_fn.adoc[]
+include::shared_lock.adoc[]
+include::to_array.adoc[]
+include::type_traits.adoc[]

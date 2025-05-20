@@ -1,0 +1,156 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Header &lt;boost/test/results_reporter.hpp&gt;</title>
+<link rel="stylesheet" href="../boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="Boost.Test">
+<link rel="up" href="../boost_test/reference.html" title="Reference">
+<link rel="prev" href="a01008.html" title="Class test_results">
+<link rel="next" href="a01004.html" title="Class format">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="a01008.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost_test/reference.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="a01004.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.a00752"></a>Header &lt;<a href="../../../../../boost/test/results_reporter.hpp" target="_top">boost/test/results_reporter.hpp</a>&gt;</h4></div></div></div>
+<p>defines testing result reporter interfaces </p>
+<p>This file defines interfaces that are responsible for results reporting. Interface is presented in a form of free standing function implemented in namespace result_reporter </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">unit_test</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">results_reporter</span> <span class="special">{</span>
+      <span class="keyword">class</span> <a class="link" href="a01004.html" title="Class format">format</a><span class="special">;</span>
+
+      <span class="comment">// <a class="link" href="a00752.html#id75-bb">report configuration</a></span>
+      <span class="keyword">void</span> <a class="link" href="a00752.html#doxygen.a00865_1a81631af7b80d7f2436e92fac294c9be1"><span class="identifier">set_level</span></a><span class="special">(</span><span class="identifier">report_level</span><span class="special">)</span><span class="special">;</span>
+      <span class="keyword">void</span> <a class="link" href="a00752.html#doxygen.a00865_1ad1320e7814adabf4a074af0976cf25a9"><span class="identifier">set_stream</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">ostream</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+      <span class="keyword">void</span> <a class="link" href="a00752.html#doxygen.a00865_1a57cc3450c28bc17f0f696984d5116396"><span class="identifier">set_format</span></a><span class="special">(</span><span class="identifier">output_format</span><span class="special">)</span><span class="special">;</span>
+      <span class="keyword">void</span> <a class="link" href="a00752.html#doxygen.a00865_1a0aef835152cb81c4d6d9101b8f36b6a1"><span class="identifier">set_format</span></a><span class="special">(</span><a class="link" href="a01004.html" title="Class format">results_reporter::format</a> <span class="special">*</span><span class="special">)</span><span class="special">;</span>
+      <span class="identifier">std</span><span class="special">::</span><span class="identifier">ostream</span> <span class="special">&amp;</span> <a class="link" href="a00752.html#doxygen.a00865_1a227f587bbb2f43d38eec0c670a4db9ef"><span class="identifier">get_stream</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+      <span class="keyword">void</span> <a name="doxygen.a00865_1a784edc82e7b61b7da889863768a062ed"></a><span class="identifier">make_report</span><span class="special">(</span><span class="identifier">report_level</span> l <span class="special">=</span> <span class="identifier">INV_REPORT_LEVEL</span><span class="special">,</span> 
+                       <span class="identifier">test_unit_id</span> <span class="special">=</span> <span class="identifier">INV_TEST_UNIT_ID</span><span class="special">)</span><span class="special">;</span>
+      <span class="keyword">void</span> <a name="doxygen.a00865_1a43fa008a506e4f6df312b050069cfa09"></a><span class="identifier">confirmation_report</span><span class="special">(</span><span class="identifier">test_unit_id</span> id <span class="special">=</span> <span class="identifier">INV_TEST_UNIT_ID</span><span class="special">)</span><span class="special">;</span>
+      <span class="keyword">void</span> <a name="doxygen.a00865_1a74883544bc983aa3b2231a0a2851df93"></a><span class="identifier">short_report</span><span class="special">(</span><span class="identifier">test_unit_id</span> id <span class="special">=</span> <span class="identifier">INV_TEST_UNIT_ID</span><span class="special">)</span><span class="special">;</span>
+      <span class="keyword">void</span> <a name="doxygen.a00865_1ad54a11701d354ebb00f2df6d5405fac9"></a><span class="identifier">detailed_report</span><span class="special">(</span><span class="identifier">test_unit_id</span> id <span class="special">=</span> <span class="identifier">INV_TEST_UNIT_ID</span><span class="special">)</span><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+<div class="refsect2">
+<a name="id57027"></a><h3>
+<a name="id75-bb"></a><code class="computeroutput"></code> report configuration</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.a00865_1a81631af7b80d7f2436e92fac294c9be1"></a><span class="identifier">set_level</span><span class="special">(</span><span class="identifier">report_level</span> l<span class="special">)</span><span class="special">;</span></pre>Sets reporting level. <p>There are only four possible levels for results report:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p>confirmation report (boost::unit_test::CONFIRMATION_REPORT). This report level only produces short confirmation message about test module pass/fail status</p></li>
+<li class="listitem"><p>short report (boost::unit_test::SHORT_REPORT). This report level produces short summary report for failed/passed assertions and test units.</p></li>
+<li class="listitem"><p>detailed report (boost::unit_test::DETAILED_REPORT). This report level produces detailed report per test unit for passed/failed assertions and uncaught exceptions</p></li>
+<li class="listitem"><p>no report (boost::unit_test::NO_REPORT). This report level produces no results report. This is used for test modules running as part of some kind of continues integration framework 
+</p></li>
+</ul></div>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">l</code></span></p></td>
+<td><p>report level </p></td>
+</tr></tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.a00865_1ad1320e7814adabf4a074af0976cf25a9"></a><span class="identifier">set_stream</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">ostream</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span></pre>Sets output stream for results reporting. <p>By default std::cerr is used. Use this function to set a different stream. The framework refers to the stream by reference, so you need to make sure the stream object lifetime exceeds the testing main scope. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.a00865_1a57cc3450c28bc17f0f696984d5116396"></a><span class="identifier">set_format</span><span class="special">(</span><span class="identifier">output_format</span> of<span class="special">)</span><span class="special">;</span></pre>Sets one of the predefined formats. <p>The framework implements two results report formats:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p>plain human readable format (boost::unit_test::OF_CLF)</p></li>
+<li class="listitem"><p>XML format (boost::unit_test::OF_XML) 
+</p></li>
+</ul></div>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">of</code></span></p></td>
+<td><p>one of the presefined enumeration values for output formats </p></td>
+</tr></tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.a00865_1a0aef835152cb81c4d6d9101b8f36b6a1"></a><span class="identifier">set_format</span><span class="special">(</span><a class="link" href="a01004.html" title="Class format">results_reporter::format</a> <span class="special">*</span> f<span class="special">)</span><span class="special">;</span></pre>Sets custom report formatter. <p>The framework takes ownership of the pointer passed as an argument. So this should be a pointer to a heap allocated object 
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">f</code></span></p></td>
+<td><p>pointer to heap allocated instance of custom report formatter class </p></td>
+</tr></tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">std</span><span class="special">::</span><span class="identifier">ostream</span> <span class="special">&amp;</span> <a name="doxygen.a00865_1a227f587bbb2f43d38eec0c670a4db9ef"></a><span class="identifier">get_stream</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>Access to configured results reporter stream. <p>Use this stream to report additional information abut test module execution </p>
+</li>
+</ol></div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2001-2022 Boost.Test contributors<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="a01008.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost_test/reference.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="a01004.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

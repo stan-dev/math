@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Type style_t</title>
+<link rel="stylesheet" href="../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../program_options/reference.html#doxygen.cmdline_8hpp" title="Header &lt;boost/program_options/cmdline.hpp&gt;">
+<link rel="prev" href="../program_options/reference.html" title="Reference">
+<link rel="next" href="config_8hpp_1a12308eaa86267f0a6a47a2cef6add938.html" title="Macro BOOST_PROGRAM_OPTIONS_DECL">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../boost.png"></td>
+<td align="center"><a href="../../../index.html">Home</a></td>
+<td align="center"><a href="../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../program_options/reference.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../program_options/reference.html#doxygen.cmdline_8hpp"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="config_8hpp_1a12308eaa86267f0a6a47a2cef6add938.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5ce"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Type style_t</span></h2>
+<p>boost::program_options::command_line_style::style_t</p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../program_options/reference.html#doxygen.cmdline_8hpp" title="Header &lt;boost/program_options/cmdline.hpp&gt;">boost/program_options/cmdline.hpp</a>&gt;
+
+</span>
+<span class="keyword">enum</span> <span class="identifier">style_t</span> <span class="special">{</span> <a class="link" href="cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5ce.html#doxygen.cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5cea91b853dd54cbb1eca6a486366ac5fca7">allow_long</a> = 1, <a class="link" href="cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5ce.html#doxygen.cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5cea97f9c5f6c367f0006bfe2542f93eac03">allow_short</a> = allow_long &lt;&lt; 1, 
+               <a class="link" href="cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5ce.html#doxygen.cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5ceabb3a1f374cda31d753bc0b722026d909">allow_dash_for_short</a> = allow_short &lt;&lt; 1, 
+               <a class="link" href="cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5ce.html#doxygen.cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5cea2f9f632fd7be886437bf2a47592705fe">allow_slash_for_short</a> = allow_dash_for_short &lt;&lt; 1, 
+               <a class="link" href="cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5ce.html#doxygen.cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5ceae8dd74788b4a4e43a795198cb86924ab">long_allow_adjacent</a> = allow_slash_for_short &lt;&lt; 1, 
+               <a class="link" href="cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5ce.html#doxygen.cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5cea12f65baad2ecce5db83c02b556c59b7c">long_allow_next</a> = long_allow_adjacent &lt;&lt; 1, 
+               <a class="link" href="cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5ce.html#doxygen.cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5ceaee08988adb6dd512711edd71b2b27aba">short_allow_adjacent</a> = long_allow_next &lt;&lt; 1, 
+               <a class="link" href="cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5ce.html#doxygen.cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5cea70a1a81c2ca72e6e3cc636ef480531ba">short_allow_next</a> = short_allow_adjacent &lt;&lt; 1, 
+               <a class="link" href="cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5ce.html#doxygen.cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5cea825fa290ecb2e31659c715c7380151cc">allow_sticky</a> = short_allow_next &lt;&lt; 1, 
+               <a class="link" href="cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5ce.html#doxygen.cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5cea6ad9a69ab0c05a1c99a9770b1620cf77">allow_guessing</a> = allow_sticky &lt;&lt; 1, 
+               <a class="link" href="cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5ce.html#doxygen.cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5cea6526f81c71f411f2228a8660c4e5c3d6">long_case_insensitive</a> = allow_guessing &lt;&lt; 1, 
+               <a class="link" href="cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5ce.html#doxygen.cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5ceaad6f4d6c849adc31af8f0a1adf38f097">short_case_insensitive</a> = long_case_insensitive &lt;&lt; 1, 
+               <a class="link" href="cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5ce.html#doxygen.cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5cea214d20efcbf976e71ee53f8b931ce611">case_insensitive</a> = (long_case_insensitive | short_case_insensitive), 
+               <a class="link" href="cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5ce.html#doxygen.cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5cea938804c75835e1c48290d460ab61542a">allow_long_disguise</a> = short_case_insensitive &lt;&lt; 1, 
+               <a class="link" href="cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5ce.html#doxygen.cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5cea22af3b4f750e5143d4893669953f41ea">unix_style</a> = (allow_short | short_allow_adjacent | short_allow_next | allow_long | long_allow_adjacent | long_allow_next | allow_sticky | allow_guessing | allow_dash_for_short), 
+               <a class="link" href="cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5ce.html#doxygen.cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5cea3d64419a4c093d5e64cb6bf4946b5d86">default_style</a> = unix_style <span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.31.9.2.3.4"></a><h2>Description</h2>
+<p>Various possible styles of options.</p>
+<p>There are "long" options, which start with "--" and "short", which start with either "-" or "/". Both kinds can be allowed or disallowed, see allow_long and allow_short. The allowed character for short options is also configurable.</p>
+<p>Option's value can be specified in the same token as name ("--foo=bar"), or in the next token.</p>
+<p>It's possible to introduce long options by the same character as short options, see allow_long_disguise.</p>
+<p>Finally, guessing (specifying only prefix of option) and case insensitive processing are supported. </p>
+<div class="variablelist"><dl class="variablelist compact">
+<dt><span class="term"><code class="computeroutput">allow_long</code><a name="doxygen.cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5cea91b853dd54cbb1eca6a486366ac5fca7"></a></span></dt>
+<dd>Allow "--long_name" style. </dd>
+<dt><span class="term"><code class="computeroutput">allow_short</code><a name="doxygen.cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5cea97f9c5f6c367f0006bfe2542f93eac03"></a></span></dt>
+<dd>Allow "-&lt;single character" style. </dd>
+<dt><span class="term"><code class="computeroutput">allow_dash_for_short</code><a name="doxygen.cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5ceabb3a1f374cda31d753bc0b722026d909"></a></span></dt>
+<dd>Allow "-" in short options. </dd>
+<dt><span class="term"><code class="computeroutput">allow_slash_for_short</code><a name="doxygen.cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5cea2f9f632fd7be886437bf2a47592705fe"></a></span></dt>
+<dd>Allow "/" in short options. </dd>
+<dt><span class="term"><code class="computeroutput">long_allow_adjacent</code><a name="doxygen.cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5ceae8dd74788b4a4e43a795198cb86924ab"></a></span></dt>
+<dd><p>Allow option parameter in the same token for long option, like in         --foo=10 </p></dd>
+<dt><span class="term"><code class="computeroutput">long_allow_next</code><a name="doxygen.cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5cea12f65baad2ecce5db83c02b556c59b7c"></a></span></dt>
+<dd><p>Allow option parameter in the next token for long options. </p></dd>
+<dt><span class="term"><code class="computeroutput">short_allow_adjacent</code><a name="doxygen.cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5ceaee08988adb6dd512711edd71b2b27aba"></a></span></dt>
+<dd><p>Allow option parameter in the same token for short options. </p></dd>
+<dt><span class="term"><code class="computeroutput">short_allow_next</code><a name="doxygen.cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5cea70a1a81c2ca72e6e3cc636ef480531ba"></a></span></dt>
+<dd><p>Allow option parameter in the next token for short options. </p></dd>
+<dt><span class="term"><code class="computeroutput">allow_sticky</code><a name="doxygen.cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5cea825fa290ecb2e31659c715c7380151cc"></a></span></dt>
+<dd><p>Allow to merge several short options together, so that "-s -k" become "-sk". All of the options but last should accept no parameter. For example, if "-s" accept a parameter, then "k" will be taken as parameter, not another short option. Dos-style short options cannot be sticky. </p></dd>
+<dt><span class="term"><code class="computeroutput">allow_guessing</code><a name="doxygen.cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5cea6ad9a69ab0c05a1c99a9770b1620cf77"></a></span></dt>
+<dd><p>Allow abbreviated spellings for long options, if they unambiguously identify long option. No long option name should be prefix of other long option name if guessing is in effect. </p></dd>
+<dt><span class="term"><code class="computeroutput">long_case_insensitive</code><a name="doxygen.cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5cea6526f81c71f411f2228a8660c4e5c3d6"></a></span></dt>
+<dd><p>Ignore the difference in case for long options. </p></dd>
+<dt><span class="term"><code class="computeroutput">short_case_insensitive</code><a name="doxygen.cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5ceaad6f4d6c849adc31af8f0a1adf38f097"></a></span></dt>
+<dd><p>Ignore the difference in case for short options. </p></dd>
+<dt><span class="term"><code class="computeroutput">case_insensitive</code><a name="doxygen.cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5cea214d20efcbf976e71ee53f8b931ce611"></a></span></dt>
+<dd><p>Ignore the difference in case for all options. </p></dd>
+<dt><span class="term"><code class="computeroutput">allow_long_disguise</code><a name="doxygen.cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5cea938804c75835e1c48290d460ab61542a"></a></span></dt>
+<dd><p>Allow long options with single option starting character, e.g <code class="computeroutput">-foo=10</code> </p></dd>
+<dt><span class="term"><code class="computeroutput">unix_style</code><a name="doxygen.cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5cea22af3b4f750e5143d4893669953f41ea"></a></span></dt>
+<dd><p>The more-or-less traditional unix style. </p></dd>
+<dt><span class="term"><code class="computeroutput">default_style</code><a name="doxygen.cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5cea3d64419a4c093d5e64cb6bf4946b5d86"></a></span></dt>
+<dd><p>The default style. </p></dd>
+</dl></div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2002-2004 Vladimir Prus<p>Distributed under the Boost Software License, Version 1.0.
+      (See accompanying file <code class="filename">LICENSE_1_0.txt</code> or copy at 
+      <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../program_options/reference.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../program_options/reference.html#doxygen.cmdline_8hpp"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="config_8hpp_1a12308eaa86267f0a6a47a2cef6add938.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

@@ -1,0 +1,61 @@
+[#nil_generator]
+== <boost/uuid/nil_generator.hpp>
+
+:idprefix: nil_generator_
+
+=== Synopsis
+
+[source,c++]
+----
+namespace boost {
+namespace uuids {
+
+struct nil_generator
+{
+    using result_type = uuid;
+    uuid operator()() const noexcept;
+};
+
+uuid nil_uuid() noexcept;
+
+}} // namespace boost::uuids
+----
+
+=== nil_generator
+
+The `nil_generator` class always generates a nil `uuid`.
+
+```
+uuid operator()() const noexcept;
+```
+
+Returns: :: A nil UUID.
+
+Example: ::
++
+```
+using namespace boost::uuid;
+
+nil_generator gen;
+uuid u = gen();
+
+assert( u.is_nil() );
+```
+
+=== nil_uuid
+
+```
+uuid nil_uuid() noexcept;
+```
+
+Returns: :: A nil UUID.
+
+Example: ::
++
+```
+using namespace boost::uuid;
+
+uuid u = nil_uuid();
+
+assert( u.is_nil() );
+```

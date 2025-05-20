@@ -1,0 +1,37 @@
+# (C) Copyright John Maddock 2006.
+# Copyright René Ferdinand Rivera Morell 2024
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or http://www.boost.org/LICENSE_1_0.txt)
+
+require-b2 5.2 ;
+
+import option ;
+import path ;
+
+local DIST_DIR = [ option.get distdir ] ;
+DIST_DIR ?= [ option.get build-dir ] ;
+DIST_DIR ?= [ path.join $(BOOST_ROOT) dist ] ;
+DIST_DIR ?= dist ;
+DIST_DIR = [ path.root [ path.make $(DIST_DIR) ] [ path.pwd ] ] ;
+
+project /boost/bcp ;
+
+explicit
+    [ exe bcp
+        :
+        add_dependent_lib.cpp add_path.cpp bcp_imp.cpp copy_path.cpp file_types.cpp
+        fileview.cpp main.cpp path_operations.cpp scan_cvs_path.cpp
+        licence_info.cpp scan_licence.cpp output_licence_info.cpp
+        /boost/filesystem//boost_filesystem
+        /boost/regex//boost_regex
+        :
+        : release ]
+    [ install dist-bin
+        : bcp/<link>static
+        : <install-type>EXE <location>$(DIST_DIR)/bin
+        : release ]
+    [ alias all : bcp test dist-bin ]
+    ;
+
+# Install distribution files/execs by default.
+alias dist : dist-bin ;

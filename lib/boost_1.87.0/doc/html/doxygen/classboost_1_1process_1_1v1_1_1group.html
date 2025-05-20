@@ -1,0 +1,221 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class group</title>
+<link rel="stylesheet" href="../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../process.html#doxygen.group_8hpp" title="Header &lt;boost/process/v1/group.hpp&gt;">
+<link rel="prev" href="namespaceboost_1_1process_1_1v1_1_1extend_1aee5420b5227afd80edda9f5fac9334fc.html" title="Function template get_io_context">
+<link rel="next" href="handles_8hpp_1aaad14b9e46a74f35bd06ee0e55f48b4d.html" title="Global limit_handles">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../boost.png"></td>
+<td align="center"><a href="../../../index.html">Home</a></td>
+<td align="center"><a href="../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="namespaceboost_1_1process_1_1v1_1_1extend_1aee5420b5227afd80edda9f5fac9334fc.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../process.html#doxygen.group_8hpp"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="handles_8hpp_1aaad14b9e46a74f35bd06ee0e55f48b4d.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.classboost_1_1process_1_1v1_1_1group"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class group</span></h2>
+<p>boost::process::v1::group</p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../mpi/reference.html#doxygen.group_8hpp" title="Header &lt;boost/mpi/group.hpp&gt;">boost/process/v1/group.hpp</a>&gt;
+
+</span>
+<span class="keyword">class</span> <a class="link" href="classboost_1_1process_1_1v1_1_1group.html" title="Class group">group</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="emphasis"><em><span class="identifier">unspecified</span></em></span>            <a name="doxygen.classboost_1_1process_1_1v1_1_1group_1aef13c4a0e56a3f91f2bb830715ac149d"></a><span class="identifier">group_handle</span><span class="special">;</span>   
+  <span class="keyword">typedef</span> <span class="identifier">group_handle</span><span class="special">::</span><span class="identifier">handle_t</span> <a name="doxygen.classboost_1_1process_1_1v1_1_1group_1afafbff02c82541a046c95f98d89a4f91"></a><span class="identifier">native_handle_t</span><span class="special">;</span>  <span class="comment">// Native representation of the handle. </span>
+
+  <span class="comment">// <a class="link" href="boost_interprocess_header_reference/classboost_1_1interprocess_1_1private__adaptive__pool.html#id15-bb">public member functions</a></span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1process_1_1v1_1_1group.html#doxygen.classboost_1_1process_1_1v1_1_1group_1aae7a00541d2229c61038407172700529"><span class="identifier">group</span></a><span class="special">(</span><span class="identifier">group_handle</span> <span class="special">&amp;&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1process_1_1v1_1_1group.html#doxygen.classboost_1_1process_1_1v1_1_1group_1ac5aa051739b5a5225a582ff80f981452"><span class="identifier">group</span></a><span class="special">(</span><span class="identifier">native_handle_t</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1process_1_1v1_1_1group.html#doxygen.classboost_1_1process_1_1v1_1_1group_1a20710dea5ec7f205d0723bde23c465cf"><span class="identifier">group</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1process_1_1v1_1_1group.html" title="Class group">group</a> <span class="special">&amp;</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">delete</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1process_1_1v1_1_1group.html#doxygen.classboost_1_1process_1_1v1_1_1group_1a23ce57379b4c855e038b63f2d1a1993b"><span class="identifier">group</span></a><span class="special">(</span><a class="link" href="classboost_1_1process_1_1v1_1_1group.html" title="Class group">group</a> <span class="special">&amp;&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1process_1_1v1_1_1group.html#doxygen.classboost_1_1process_1_1v1_1_1group_1ae8a6043294f806b52bb350626016f8ba"><span class="identifier">group</span></a><span class="special">(</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">default</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1process_1_1v1_1_1group.html" title="Class group">group</a> <span class="special">&amp;</span> <a class="link" href="classboost_1_1process_1_1v1_1_1group.html#doxygen.classboost_1_1process_1_1v1_1_1group_1a0b94e530e4090f4767e342e4b4692711"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1process_1_1v1_1_1group.html" title="Class group">group</a> <span class="special">&amp;</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">delete</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1process_1_1v1_1_1group.html" title="Class group">group</a> <span class="special">&amp;</span> <a class="link" href="classboost_1_1process_1_1v1_1_1group.html#doxygen.classboost_1_1process_1_1v1_1_1group_1af5e69e28a48210454f1af1fd7eda364d"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><a class="link" href="classboost_1_1process_1_1v1_1_1group.html" title="Class group">group</a> <span class="special">&amp;&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1process_1_1v1_1_1group.html#doxygen.classboost_1_1process_1_1v1_1_1group_1a3fadb6c1d90694c9e11352c0c72eca93"><span class="identifier">detach</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1process_1_1v1_1_1group.html#doxygen.classboost_1_1process_1_1v1_1_1group_1a7be4a61c93ff60ef75e9654d85812fbb"><span class="identifier">join</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1process_1_1v1_1_1group.html#doxygen.classboost_1_1process_1_1v1_1_1group_1a2cdc978445dcbcee995533cc0fdca6d0"><span class="identifier">joinable</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1process_1_1v1_1_1group.html#doxygen.classboost_1_1process_1_1v1_1_1group_1a79abe38f2906942300264c0de5b3f6eb"><span class="special">~</span><span class="identifier">group</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">native_handle_t</span> <a class="link" href="classboost_1_1process_1_1v1_1_1group.html#doxygen.classboost_1_1process_1_1v1_1_1group_1a860100e2aec31af76226a5aa3a6a391c"><span class="identifier">native_handle</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1process_1_1v1_1_1group.html#doxygen.classboost_1_1process_1_1v1_1_1group_1ad6de58c684db3d18df8400d4e17fdcd3"><span class="identifier">wait</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1process_1_1v1_1_1group.html#doxygen.classboost_1_1process_1_1v1_1_1group_1a10812af9ca8e6dc4648a53f4d73aae8f"><span class="identifier">wait</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">error_code</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Rep<span class="special">,</span> <span class="keyword">typename</span> Period<span class="special">&gt;</span> 
+    <span class="keyword">bool</span> <a class="link" href="classboost_1_1process_1_1v1_1_1group.html#doxygen.classboost_1_1process_1_1v1_1_1group_1a8be0c6337b1f09a7fa472df4678636a9"><span class="identifier">wait_for</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">chrono</span><span class="special">::</span><span class="identifier">duration</span><span class="special">&lt;</span> <span class="identifier">Rep</span><span class="special">,</span> <span class="identifier">Period</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Rep<span class="special">,</span> <span class="keyword">typename</span> Period<span class="special">&gt;</span> 
+    <span class="keyword">bool</span> <a class="link" href="classboost_1_1process_1_1v1_1_1group.html#doxygen.classboost_1_1process_1_1v1_1_1group_1a7cbd1b2a046bc98481df9b3bd5fbd771"><span class="identifier">wait_for</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">chrono</span><span class="special">::</span><span class="identifier">duration</span><span class="special">&lt;</span> <span class="identifier">Rep</span><span class="special">,</span> <span class="identifier">Period</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">,</span> 
+                  <span class="identifier">std</span><span class="special">::</span><span class="identifier">error_code</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Clock<span class="special">,</span> <span class="keyword">typename</span> Duration<span class="special">&gt;</span> 
+    <span class="keyword">bool</span> <a class="link" href="classboost_1_1process_1_1v1_1_1group.html#doxygen.classboost_1_1process_1_1v1_1_1group_1ac92611dea26883bb925207fda253c8b1"><span class="identifier">wait_until</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">chrono</span><span class="special">::</span><span class="identifier">time_point</span><span class="special">&lt;</span> <span class="identifier">Clock</span><span class="special">,</span> <span class="identifier">Duration</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Clock<span class="special">,</span> <span class="keyword">typename</span> Duration<span class="special">&gt;</span> 
+    <span class="keyword">bool</span> <a class="link" href="classboost_1_1process_1_1v1_1_1group.html#doxygen.classboost_1_1process_1_1v1_1_1group_1af036e638f5fa8923be2164280e766d43"><span class="identifier">wait_until</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">chrono</span><span class="special">::</span><span class="identifier">time_point</span><span class="special">&lt;</span> <span class="identifier">Clock</span><span class="special">,</span> <span class="identifier">Duration</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">,</span> 
+                    <span class="identifier">std</span><span class="special">::</span><span class="identifier">error_code</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1process_1_1v1_1_1group.html#doxygen.classboost_1_1process_1_1v1_1_1group_1a2e4031de78386271e766e44d737104f6"><span class="identifier">valid</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1process_1_1v1_1_1group.html#doxygen.classboost_1_1process_1_1v1_1_1group_1a1339beaa6c97ac55af7a0dccc00d8b75"><span class="keyword">operator</span> <span class="keyword">bool</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1process_1_1v1_1_1group.html#doxygen.classboost_1_1process_1_1v1_1_1group_1a03cade832865eab81052cb819e6a7485"><span class="identifier">terminate</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1process_1_1v1_1_1group.html#doxygen.classboost_1_1process_1_1v1_1_1group_1a039a42799c99e2b0b53dcc69adb1fca0"><span class="identifier">terminate</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">error_code</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1process_1_1v1_1_1group.html#doxygen.classboost_1_1process_1_1v1_1_1group_1a387179f8c8cc076e688bab5de6c20679"><span class="identifier">add</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1process_1_1v1_1_1child.html" title="Class child">child</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1process_1_1v1_1_1group.html#doxygen.classboost_1_1process_1_1v1_1_1group_1ac40e2a9212f88644d69e8eafc9a9dff0"><span class="identifier">add</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1process_1_1v1_1_1child.html" title="Class child">child</a> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">error_code</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1process_1_1v1_1_1group.html#doxygen.classboost_1_1process_1_1v1_1_1group_1a0408f21aefcf3f35da120dcee952fd97"><span class="identifier">has</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1process_1_1v1_1_1child.html" title="Class child">child</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1process_1_1v1_1_1group.html#doxygen.classboost_1_1process_1_1v1_1_1group_1ac2b7c703f717704cd8a5938f63077adc"><span class="identifier">has</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1process_1_1v1_1_1child.html" title="Class child">child</a> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">error_code</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.30.4.8.15.3.4"></a><h2>Description</h2>
+<p>Represents a process group.</p>
+<p>Groups are movable but non-copyable. The destructor automatically closes handles to the group process.</p>
+<p>The group will have the same interface as std::thread.</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>If the destructor is called without a previous detach or wait, the group will be terminated.</p></td></tr>
+</table></div>
+<p>
+</p>
+<div class="important"><table border="0" summary="Important">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="../../../doc/src/images/important.png"></td>
+<th align="left">Important</th>
+</tr>
+<tr><td align="left" valign="top"><p>If a default-constructed group is used before being used in a process launch, the behaviour is undefined.</p></td></tr>
+</table></div>
+<p>
+</p>
+<div class="important"><table border="0" summary="Important">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="../../../doc/src/images/important.png"></td>
+<th align="left">Important</th>
+</tr>
+<tr><td align="left" valign="top"><p>Waiting for groups is currently broken on windows and will most likely result in a dead-lock. </p></td></tr>
+</table></div>
+<p>
+</p>
+<div class="refsect2">
+<a name="id-1.3.30.4.8.15.3.4.6"></a><h3>
+<a name="id15-bb"></a><code class="computeroutput">group</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem"><pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.classboost_1_1process_1_1v1_1_1group_1aae7a00541d2229c61038407172700529"></a><span class="identifier">group</span><span class="special">(</span><span class="identifier">group_handle</span> <span class="special">&amp;&amp;</span> ch<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.classboost_1_1process_1_1v1_1_1group_1ac5aa051739b5a5225a582ff80f981452"></a><span class="identifier">group</span><span class="special">(</span><span class="identifier">native_handle_t</span> <span class="special">&amp;</span> handle<span class="special">)</span><span class="special">;</span></pre>Construct the group from a native_handle. </li>
+<li class="listitem"><pre class="literallayout"><a name="doxygen.classboost_1_1process_1_1v1_1_1group_1a20710dea5ec7f205d0723bde23c465cf"></a><span class="identifier">group</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1process_1_1v1_1_1group.html" title="Class group">group</a> <span class="special">&amp;</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">delete</span><span class="special">;</span></pre></li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.classboost_1_1process_1_1v1_1_1group_1a23ce57379b4c855e038b63f2d1a1993b"></a><span class="identifier">group</span><span class="special">(</span><a class="link" href="classboost_1_1process_1_1v1_1_1group.html" title="Class group">group</a> <span class="special">&amp;&amp;</span> lhs<span class="special">)</span><span class="special">;</span></pre>Move constructor. </li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.classboost_1_1process_1_1v1_1_1group_1ae8a6043294f806b52bb350626016f8ba"></a><span class="identifier">group</span><span class="special">(</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">default</span><span class="special">;</span></pre>Default constructor. </li>
+<li class="listitem"><pre class="literallayout"><a class="link" href="classboost_1_1process_1_1v1_1_1group.html" title="Class group">group</a> <span class="special">&amp;</span> <a name="doxygen.classboost_1_1process_1_1v1_1_1group_1a0b94e530e4090f4767e342e4b4692711"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1process_1_1v1_1_1group.html" title="Class group">group</a> <span class="special">&amp;</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">delete</span><span class="special">;</span></pre></li>
+<li class="listitem">
+<pre class="literallayout"><a class="link" href="classboost_1_1process_1_1v1_1_1group.html" title="Class group">group</a> <span class="special">&amp;</span> <a name="doxygen.classboost_1_1process_1_1v1_1_1group_1af5e69e28a48210454f1af1fd7eda364d"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><a class="link" href="classboost_1_1process_1_1v1_1_1group.html" title="Class group">group</a> <span class="special">&amp;&amp;</span> lhs<span class="special">)</span><span class="special">;</span></pre>Move assign. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.classboost_1_1process_1_1v1_1_1group_1a3fadb6c1d90694c9e11352c0c72eca93"></a><span class="identifier">detach</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>Detach the group. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.classboost_1_1process_1_1v1_1_1group_1a7be4a61c93ff60ef75e9654d85812fbb"></a><span class="identifier">join</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Join the child. This just calls wait, but that way the naming is similar to std::thread </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.classboost_1_1process_1_1v1_1_1group_1a2cdc978445dcbcee995533cc0fdca6d0"></a><span class="identifier">joinable</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Check if the child is joinable. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.classboost_1_1process_1_1v1_1_1group_1a79abe38f2906942300264c0de5b3f6eb"></a><span class="special">~</span><span class="identifier">group</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Destructor</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>If the destructor is called without a previous detach or wait, the group will be terminated. </p></td></tr>
+</table></div>
+<p>
+</p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">native_handle_t</span> <a name="doxygen.classboost_1_1process_1_1v1_1_1group_1a860100e2aec31af76226a5aa3a6a391c"></a><span class="identifier">native_handle</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Obtain the native handle of the group. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.classboost_1_1process_1_1v1_1_1group_1ad6de58c684db3d18df8400d4e17fdcd3"></a><span class="identifier">wait</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>Wait for the process group to exit. <p>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. </p>
+</li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.classboost_1_1process_1_1v1_1_1group_1a10812af9ca8e6dc4648a53f4d73aae8f"></a><span class="identifier">wait</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">error_code</span> <span class="special">&amp;</span> ec<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Rep<span class="special">,</span> <span class="keyword">typename</span> Period<span class="special">&gt;</span> 
+  <span class="keyword">bool</span> <a name="doxygen.classboost_1_1process_1_1v1_1_1group_1a8be0c6337b1f09a7fa472df4678636a9"></a><span class="identifier">wait_for</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">chrono</span><span class="special">::</span><span class="identifier">duration</span><span class="special">&lt;</span> <span class="identifier">Rep</span><span class="special">,</span> <span class="identifier">Period</span> <span class="special">&gt;</span> <span class="special">&amp;</span> rel_time<span class="special">)</span><span class="special">;</span></pre>
+<p>Wait for the process group to exit for period of time. 
+This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>True if all child processes exited while waiting.</p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Rep<span class="special">,</span> <span class="keyword">typename</span> Period<span class="special">&gt;</span> 
+  <span class="keyword">bool</span> <a name="doxygen.classboost_1_1process_1_1v1_1_1group_1a7cbd1b2a046bc98481df9b3bd5fbd771"></a><span class="identifier">wait_for</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">chrono</span><span class="special">::</span><span class="identifier">duration</span><span class="special">&lt;</span> <span class="identifier">Rep</span><span class="special">,</span> <span class="identifier">Period</span> <span class="special">&gt;</span> <span class="special">&amp;</span> rel_time<span class="special">,</span> 
+                <span class="identifier">std</span><span class="special">::</span><span class="identifier">error_code</span> <span class="special">&amp;</span> ec<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Clock<span class="special">,</span> <span class="keyword">typename</span> Duration<span class="special">&gt;</span> 
+  <span class="keyword">bool</span> <a name="doxygen.classboost_1_1process_1_1v1_1_1group_1ac92611dea26883bb925207fda253c8b1"></a><span class="identifier">wait_until</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">chrono</span><span class="special">::</span><span class="identifier">time_point</span><span class="special">&lt;</span> <span class="identifier">Clock</span><span class="special">,</span> <span class="identifier">Duration</span> <span class="special">&gt;</span> <span class="special">&amp;</span> timeout_time<span class="special">)</span><span class="special">;</span></pre>
+<p>Wait for the process group to exit until a point in time. 
+This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>True if all child processes exited while waiting.</p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Clock<span class="special">,</span> <span class="keyword">typename</span> Duration<span class="special">&gt;</span> 
+  <span class="keyword">bool</span> <a name="doxygen.classboost_1_1process_1_1v1_1_1group_1af036e638f5fa8923be2164280e766d43"></a><span class="identifier">wait_until</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">chrono</span><span class="special">::</span><span class="identifier">time_point</span><span class="special">&lt;</span> <span class="identifier">Clock</span><span class="special">,</span> <span class="identifier">Duration</span> <span class="special">&gt;</span> <span class="special">&amp;</span> timeout_time<span class="special">,</span> 
+                  <span class="identifier">std</span><span class="special">::</span><span class="identifier">error_code</span> <span class="special">&amp;</span> ec<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.classboost_1_1process_1_1v1_1_1group_1a2e4031de78386271e766e44d737104f6"></a><span class="identifier">valid</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Check if the group has a valid handle. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.classboost_1_1process_1_1v1_1_1group_1a1339beaa6c97ac55af7a0dccc00d8b75"></a><span class="keyword">operator</span> <span class="keyword">bool</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Convenience to call valid. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.classboost_1_1process_1_1v1_1_1group_1a03cade832865eab81052cb819e6a7485"></a><span class="identifier">terminate</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>Terminate the process group, i.e. all processes in the group. <p>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. </p>
+</li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.classboost_1_1process_1_1v1_1_1group_1a039a42799c99e2b0b53dcc69adb1fca0"></a><span class="identifier">terminate</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">error_code</span> <span class="special">&amp;</span> ec<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.classboost_1_1process_1_1v1_1_1group_1a387179f8c8cc076e688bab5de6c20679"></a><span class="identifier">add</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1process_1_1v1_1_1child.html" title="Class child">child</a> <span class="special">&amp;</span> c<span class="special">)</span><span class="special">;</span></pre>Assign a child process to the group. </li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.classboost_1_1process_1_1v1_1_1group_1ac40e2a9212f88644d69e8eafc9a9dff0"></a><span class="identifier">add</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1process_1_1v1_1_1child.html" title="Class child">child</a> <span class="special">&amp;</span> c<span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">error_code</span> <span class="special">&amp;</span> ec<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.classboost_1_1process_1_1v1_1_1group_1a0408f21aefcf3f35da120dcee952fd97"></a><span class="identifier">has</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1process_1_1v1_1_1child.html" title="Class child">child</a> <span class="special">&amp;</span> c<span class="special">)</span><span class="special">;</span></pre>Check if the child process is in the group. <p>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. </p>
+</li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.classboost_1_1process_1_1v1_1_1group_1ac2b7c703f717704cd8a5938f63077adc"></a><span class="identifier">has</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1process_1_1v1_1_1child.html" title="Class child">child</a> <span class="special">&amp;</span> c<span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">error_code</span> <span class="special">&amp;</span> ec<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2006-2012 Julio M. Merino Vidal, Ilya Sokolov,
+      Felipe Tanus, Jeff Flinn, Boris Schaeling<br>Copyright © 2016 Klemens D. Morgenstern<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="namespaceboost_1_1process_1_1v1_1_1extend_1aee5420b5227afd80edda9f5fac9334fc.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../process.html#doxygen.group_8hpp"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="handles_8hpp_1aaad14b9e46a74f35bd06ee0e55f48b4d.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

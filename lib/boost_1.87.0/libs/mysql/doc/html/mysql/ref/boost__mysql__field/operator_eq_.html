@@ -1,0 +1,268 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>field::operator=</title>
+<link rel="stylesheet" href="../../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../boost__mysql__field.html" title="field">
+<link rel="prev" href="field/overload31.html" title="field::field (31 of 31 overloads)">
+<link rel="next" href="operator_eq_/overload1.html" title="field::operator= (1 of 30 overloads)">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="field/overload31.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost__mysql__field.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="operator_eq_/overload1.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h5 class="title">
+<a name="mysql.ref.boost__mysql__field.operator_eq_"></a><a class="link" href="operator_eq_.html" title="field::operator=">field::operator=</a>
+</h5></div></div></div>
+<p>
+          <a class="indexterm" name="id68450"></a>
+Copy assignment.
+        </p>
+<pre class="programlisting"><a class="link" href="../boost__mysql__field.html" title="field"><code class="literal">field</code></a><span class="special">&amp;</span>
+<a class="link" href="operator_eq_/overload1.html" title="field::operator= (1 of 30 overloads)">operator=</a><span class="special">(</span>
+    <span class="keyword">const</span> <a class="link" href="../boost__mysql__field.html" title="field"><code class="literal">field</code></a><span class="special">&amp;);</span>
+  <span class="emphasis"><em>» <a class="link" href="operator_eq_/overload1.html" title="field::operator= (1 of 30 overloads)"><code class="computeroutput"><span class="identifier">more</span><span class="special">...</span></code></a></em></span>
+</pre>
+<p>
+          Move assignment.
+        </p>
+<pre class="programlisting"><a class="link" href="../boost__mysql__field.html" title="field"><code class="literal">field</code></a><span class="special">&amp;</span>
+<a class="link" href="operator_eq_/overload2.html" title="field::operator= (2 of 30 overloads)">operator=</a><span class="special">(</span>
+    <a class="link" href="../boost__mysql__field.html" title="field"><code class="literal">field</code></a><span class="special">&amp;&amp;</span> <span class="identifier">other</span><span class="special">);</span>
+  <span class="emphasis"><em>» <a class="link" href="operator_eq_/overload2.html" title="field::operator= (2 of 30 overloads)"><code class="computeroutput"><span class="identifier">more</span><span class="special">...</span></code></a></em></span>
+</pre>
+<p>
+          Replaces <code class="computeroutput"><span class="special">*</span><span class="keyword">this</span></code>
+          with a <code class="computeroutput"><span class="identifier">NULL</span></code>, changing the
+          kind to <code class="computeroutput"><span class="identifier">null</span></code> and destroying
+          any previous contents.
+        </p>
+<pre class="programlisting"><a class="link" href="../boost__mysql__field.html" title="field"><code class="literal">field</code></a><span class="special">&amp;</span>
+<a class="link" href="operator_eq_/overload3.html" title="field::operator= (3 of 30 overloads)">operator=</a><span class="special">(</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">nullptr_t</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="emphasis"><em>» <a class="link" href="operator_eq_/overload3.html" title="field::operator= (3 of 30 overloads)"><code class="computeroutput"><span class="identifier">more</span><span class="special">...</span></code></a></em></span>
+</pre>
+<p>
+          Replaces <code class="computeroutput"><span class="special">*</span><span class="keyword">this</span></code>
+          with <code class="computeroutput"><span class="identifier">v</span></code>, changing the kind
+          to <code class="computeroutput"><span class="identifier">int64</span></code> and destroying
+          any previous contents.
+        </p>
+<pre class="programlisting"><a class="link" href="../boost__mysql__field.html" title="field"><code class="literal">field</code></a><span class="special">&amp;</span>
+<a class="link" href="operator_eq_/overload4.html" title="field::operator= (4 of 30 overloads)">operator=</a><span class="special">(</span>
+    <span class="keyword">signed</span> <span class="keyword">char</span> <span class="identifier">v</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="emphasis"><em>» <a class="link" href="operator_eq_/overload4.html" title="field::operator= (4 of 30 overloads)"><code class="computeroutput"><span class="identifier">more</span><span class="special">...</span></code></a></em></span>
+
+<a class="link" href="../boost__mysql__field.html" title="field"><code class="literal">field</code></a><span class="special">&amp;</span>
+<a class="link" href="operator_eq_/overload5.html" title="field::operator= (5 of 30 overloads)">operator=</a><span class="special">(</span>
+    <span class="keyword">short</span> <span class="identifier">v</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="emphasis"><em>» <a class="link" href="operator_eq_/overload5.html" title="field::operator= (5 of 30 overloads)"><code class="computeroutput"><span class="identifier">more</span><span class="special">...</span></code></a></em></span>
+
+<a class="link" href="../boost__mysql__field.html" title="field"><code class="literal">field</code></a><span class="special">&amp;</span>
+<a class="link" href="operator_eq_/overload6.html" title="field::operator= (6 of 30 overloads)">operator=</a><span class="special">(</span>
+    <span class="keyword">int</span> <span class="identifier">v</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="emphasis"><em>» <a class="link" href="operator_eq_/overload6.html" title="field::operator= (6 of 30 overloads)"><code class="computeroutput"><span class="identifier">more</span><span class="special">...</span></code></a></em></span>
+
+<a class="link" href="../boost__mysql__field.html" title="field"><code class="literal">field</code></a><span class="special">&amp;</span>
+<a class="link" href="operator_eq_/overload7.html" title="field::operator= (7 of 30 overloads)">operator=</a><span class="special">(</span>
+    <span class="keyword">long</span> <span class="identifier">v</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="emphasis"><em>» <a class="link" href="operator_eq_/overload7.html" title="field::operator= (7 of 30 overloads)"><code class="computeroutput"><span class="identifier">more</span><span class="special">...</span></code></a></em></span>
+
+<a class="link" href="../boost__mysql__field.html" title="field"><code class="literal">field</code></a><span class="special">&amp;</span>
+<a class="link" href="operator_eq_/overload8.html" title="field::operator= (8 of 30 overloads)">operator=</a><span class="special">(</span>
+    <span class="keyword">long</span> <span class="keyword">long</span> <span class="identifier">v</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="emphasis"><em>» <a class="link" href="operator_eq_/overload8.html" title="field::operator= (8 of 30 overloads)"><code class="computeroutput"><span class="identifier">more</span><span class="special">...</span></code></a></em></span>
+</pre>
+<p>
+          Replaces <code class="computeroutput"><span class="special">*</span><span class="keyword">this</span></code>
+          with <code class="computeroutput"><span class="identifier">v</span></code>, changing the kind
+          to <code class="computeroutput"><span class="identifier">uint64</span></code> and destroying
+          any previous contents.
+        </p>
+<pre class="programlisting"><a class="link" href="../boost__mysql__field.html" title="field"><code class="literal">field</code></a><span class="special">&amp;</span>
+<a class="link" href="operator_eq_/overload9.html" title="field::operator= (9 of 30 overloads)">operator=</a><span class="special">(</span>
+    <span class="keyword">unsigned</span> <span class="keyword">char</span> <span class="identifier">v</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="emphasis"><em>» <a class="link" href="operator_eq_/overload9.html" title="field::operator= (9 of 30 overloads)"><code class="computeroutput"><span class="identifier">more</span><span class="special">...</span></code></a></em></span>
+
+<a class="link" href="../boost__mysql__field.html" title="field"><code class="literal">field</code></a><span class="special">&amp;</span>
+<a class="link" href="operator_eq_/overload10.html" title="field::operator= (10 of 30 overloads)">operator=</a><span class="special">(</span>
+    <span class="keyword">unsigned</span> <span class="keyword">short</span> <span class="identifier">v</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="emphasis"><em>» <a class="link" href="operator_eq_/overload10.html" title="field::operator= (10 of 30 overloads)"><code class="computeroutput"><span class="identifier">more</span><span class="special">...</span></code></a></em></span>
+
+<a class="link" href="../boost__mysql__field.html" title="field"><code class="literal">field</code></a><span class="special">&amp;</span>
+<a class="link" href="operator_eq_/overload11.html" title="field::operator= (11 of 30 overloads)">operator=</a><span class="special">(</span>
+    <span class="keyword">unsigned</span> <span class="keyword">int</span> <span class="identifier">v</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="emphasis"><em>» <a class="link" href="operator_eq_/overload11.html" title="field::operator= (11 of 30 overloads)"><code class="computeroutput"><span class="identifier">more</span><span class="special">...</span></code></a></em></span>
+
+<a class="link" href="../boost__mysql__field.html" title="field"><code class="literal">field</code></a><span class="special">&amp;</span>
+<a class="link" href="operator_eq_/overload12.html" title="field::operator= (12 of 30 overloads)">operator=</a><span class="special">(</span>
+    <span class="keyword">unsigned</span> <span class="keyword">long</span> <span class="identifier">v</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="emphasis"><em>» <a class="link" href="operator_eq_/overload12.html" title="field::operator= (12 of 30 overloads)"><code class="computeroutput"><span class="identifier">more</span><span class="special">...</span></code></a></em></span>
+
+<a class="link" href="../boost__mysql__field.html" title="field"><code class="literal">field</code></a><span class="special">&amp;</span>
+<a class="link" href="operator_eq_/overload13.html" title="field::operator= (13 of 30 overloads)">operator=</a><span class="special">(</span>
+    <span class="keyword">unsigned</span> <span class="keyword">long</span> <span class="keyword">long</span> <span class="identifier">v</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="emphasis"><em>» <a class="link" href="operator_eq_/overload13.html" title="field::operator= (13 of 30 overloads)"><code class="computeroutput"><span class="identifier">more</span><span class="special">...</span></code></a></em></span>
+</pre>
+<p>
+          Assignments from character types would incorrectly assign an integer, so
+          they are not allowed.
+        </p>
+<pre class="programlisting"><a class="link" href="../boost__mysql__field.html" title="field"><code class="literal">field</code></a><span class="special">&amp;</span>
+<a class="link" href="operator_eq_/overload14.html" title="field::operator= (14 of 30 overloads)">operator=</a><span class="special">(</span>
+    <span class="keyword">char</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">delete</span><span class="special">;</span>
+  <span class="emphasis"><em>» <a class="link" href="operator_eq_/overload14.html" title="field::operator= (14 of 30 overloads)"><code class="computeroutput"><span class="identifier">more</span><span class="special">...</span></code></a></em></span>
+
+<a class="link" href="../boost__mysql__field.html" title="field"><code class="literal">field</code></a><span class="special">&amp;</span>
+<a class="link" href="operator_eq_/overload15.html" title="field::operator= (15 of 30 overloads)">operator=</a><span class="special">(</span>
+    <span class="keyword">wchar_t</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">delete</span><span class="special">;</span>
+  <span class="emphasis"><em>» <a class="link" href="operator_eq_/overload15.html" title="field::operator= (15 of 30 overloads)"><code class="computeroutput"><span class="identifier">more</span><span class="special">...</span></code></a></em></span>
+
+<a class="link" href="../boost__mysql__field.html" title="field"><code class="literal">field</code></a><span class="special">&amp;</span>
+<a class="link" href="operator_eq_/overload16.html" title="field::operator= (16 of 30 overloads)">operator=</a><span class="special">(</span>
+    <span class="keyword">char16_t</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">delete</span><span class="special">;</span>
+  <span class="emphasis"><em>» <a class="link" href="operator_eq_/overload16.html" title="field::operator= (16 of 30 overloads)"><code class="computeroutput"><span class="identifier">more</span><span class="special">...</span></code></a></em></span>
+
+<a class="link" href="../boost__mysql__field.html" title="field"><code class="literal">field</code></a><span class="special">&amp;</span>
+<a class="link" href="operator_eq_/overload17.html" title="field::operator= (17 of 30 overloads)">operator=</a><span class="special">(</span>
+    <span class="keyword">char32_t</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">delete</span><span class="special">;</span>
+  <span class="emphasis"><em>» <a class="link" href="operator_eq_/overload17.html" title="field::operator= (17 of 30 overloads)"><code class="computeroutput"><span class="identifier">more</span><span class="special">...</span></code></a></em></span>
+
+<a class="link" href="../boost__mysql__field.html" title="field"><code class="literal">field</code></a><span class="special">&amp;</span>
+<a class="link" href="operator_eq_/overload18.html" title="field::operator= (18 of 30 overloads)">operator=</a><span class="special">(</span>
+    <span class="identifier">char8_t</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">delete</span><span class="special">;</span>
+  <span class="emphasis"><em>» <a class="link" href="operator_eq_/overload18.html" title="field::operator= (18 of 30 overloads)"><code class="computeroutput"><span class="identifier">more</span><span class="special">...</span></code></a></em></span>
+</pre>
+<p>
+          Replaces <code class="computeroutput"><span class="special">*</span><span class="keyword">this</span></code>
+          with <code class="computeroutput"><span class="identifier">v</span></code>, changing the kind
+          to <code class="computeroutput"><span class="identifier">string</span></code> and destroying
+          any previous contents.
+        </p>
+<pre class="programlisting"><a class="link" href="../boost__mysql__field.html" title="field"><code class="literal">field</code></a><span class="special">&amp;</span>
+<a class="link" href="operator_eq_/overload19.html" title="field::operator= (19 of 30 overloads)">operator=</a><span class="special">(</span>
+    <span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">&amp;</span> <span class="identifier">v</span><span class="special">);</span>
+  <span class="emphasis"><em>» <a class="link" href="operator_eq_/overload19.html" title="field::operator= (19 of 30 overloads)"><code class="computeroutput"><span class="identifier">more</span><span class="special">...</span></code></a></em></span>
+
+<a class="link" href="../boost__mysql__field.html" title="field"><code class="literal">field</code></a><span class="special">&amp;</span>
+<a class="link" href="operator_eq_/overload20.html" title="field::operator= (20 of 30 overloads)">operator=</a><span class="special">(</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">&amp;&amp;</span> <span class="identifier">v</span><span class="special">);</span>
+  <span class="emphasis"><em>» <a class="link" href="operator_eq_/overload20.html" title="field::operator= (20 of 30 overloads)"><code class="computeroutput"><span class="identifier">more</span><span class="special">...</span></code></a></em></span>
+
+<a class="link" href="../boost__mysql__field.html" title="field"><code class="literal">field</code></a><span class="special">&amp;</span>
+<a class="link" href="operator_eq_/overload21.html" title="field::operator= (21 of 30 overloads)">operator=</a><span class="special">(</span>
+    <span class="keyword">const</span> <span class="keyword">char</span><span class="special">*</span> <span class="identifier">v</span><span class="special">);</span>
+  <span class="emphasis"><em>» <a class="link" href="operator_eq_/overload21.html" title="field::operator= (21 of 30 overloads)"><code class="computeroutput"><span class="identifier">more</span><span class="special">...</span></code></a></em></span>
+
+<a class="link" href="../boost__mysql__field.html" title="field"><code class="literal">field</code></a><span class="special">&amp;</span>
+<a class="link" href="operator_eq_/overload22.html" title="field::operator= (22 of 30 overloads)">operator=</a><span class="special">(</span>
+    <a class="link" href="../boost__mysql__string_view.html" title="string_view"><code class="literal">string_view</code></a> <span class="identifier">v</span><span class="special">);</span>
+  <span class="emphasis"><em>» <a class="link" href="operator_eq_/overload22.html" title="field::operator= (22 of 30 overloads)"><code class="computeroutput"><span class="identifier">more</span><span class="special">...</span></code></a></em></span>
+
+<a class="link" href="../boost__mysql__field.html" title="field"><code class="literal">field</code></a><span class="special">&amp;</span>
+<a class="link" href="operator_eq_/overload23.html" title="field::operator= (23 of 30 overloads)">operator=</a><span class="special">(</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">v</span><span class="special">);</span>
+  <span class="emphasis"><em>» <a class="link" href="operator_eq_/overload23.html" title="field::operator= (23 of 30 overloads)"><code class="computeroutput"><span class="identifier">more</span><span class="special">...</span></code></a></em></span>
+</pre>
+<p>
+          Replaces <code class="computeroutput"><span class="special">*</span><span class="keyword">this</span></code>
+          with <code class="computeroutput"><span class="identifier">v</span></code>, changing the kind
+          to <code class="computeroutput"><span class="identifier">blob</span></code> and destroying
+          any previous contents.
+        </p>
+<pre class="programlisting"><a class="link" href="../boost__mysql__field.html" title="field"><code class="literal">field</code></a><span class="special">&amp;</span>
+<a class="link" href="operator_eq_/overload24.html" title="field::operator= (24 of 30 overloads)">operator=</a><span class="special">(</span>
+    <a class="link" href="../boost__mysql__blob.html" title="blob"><code class="literal">blob</code></a> <span class="identifier">v</span><span class="special">);</span>
+  <span class="emphasis"><em>» <a class="link" href="operator_eq_/overload24.html" title="field::operator= (24 of 30 overloads)"><code class="computeroutput"><span class="identifier">more</span><span class="special">...</span></code></a></em></span>
+</pre>
+<p>
+          Replaces <code class="computeroutput"><span class="special">*</span><span class="keyword">this</span></code>
+          with <code class="computeroutput"><span class="identifier">v</span></code>, changing the kind
+          to <code class="computeroutput"><span class="identifier">float_</span></code> and destroying
+          any previous contents.
+        </p>
+<pre class="programlisting"><a class="link" href="../boost__mysql__field.html" title="field"><code class="literal">field</code></a><span class="special">&amp;</span>
+<a class="link" href="operator_eq_/overload25.html" title="field::operator= (25 of 30 overloads)">operator=</a><span class="special">(</span>
+    <span class="keyword">float</span> <span class="identifier">v</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="emphasis"><em>» <a class="link" href="operator_eq_/overload25.html" title="field::operator= (25 of 30 overloads)"><code class="computeroutput"><span class="identifier">more</span><span class="special">...</span></code></a></em></span>
+</pre>
+<p>
+          Replaces <code class="computeroutput"><span class="special">*</span><span class="keyword">this</span></code>
+          with <code class="computeroutput"><span class="identifier">v</span></code>, changing the kind
+          to <code class="computeroutput"><span class="keyword">double</span></code> and destroying any
+          previous contents.
+        </p>
+<pre class="programlisting"><a class="link" href="../boost__mysql__field.html" title="field"><code class="literal">field</code></a><span class="special">&amp;</span>
+<a class="link" href="operator_eq_/overload26.html" title="field::operator= (26 of 30 overloads)">operator=</a><span class="special">(</span>
+    <span class="keyword">double</span> <span class="identifier">v</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="emphasis"><em>» <a class="link" href="operator_eq_/overload26.html" title="field::operator= (26 of 30 overloads)"><code class="computeroutput"><span class="identifier">more</span><span class="special">...</span></code></a></em></span>
+</pre>
+<p>
+          Replaces <code class="computeroutput"><span class="special">*</span><span class="keyword">this</span></code>
+          with <code class="computeroutput"><span class="identifier">v</span></code>, changing the kind
+          to <code class="computeroutput"><span class="identifier">date</span></code> and destroying
+          any previous contents.
+        </p>
+<pre class="programlisting"><a class="link" href="../boost__mysql__field.html" title="field"><code class="literal">field</code></a><span class="special">&amp;</span>
+<a class="link" href="operator_eq_/overload27.html" title="field::operator= (27 of 30 overloads)">operator=</a><span class="special">(</span>
+    <span class="keyword">const</span> <a class="link" href="../boost__mysql__date.html" title="date"><code class="literal">date</code></a><span class="special">&amp;</span> <span class="identifier">v</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="emphasis"><em>» <a class="link" href="operator_eq_/overload27.html" title="field::operator= (27 of 30 overloads)"><code class="computeroutput"><span class="identifier">more</span><span class="special">...</span></code></a></em></span>
+</pre>
+<p>
+          Replaces <code class="computeroutput"><span class="special">*</span><span class="keyword">this</span></code>
+          with <code class="computeroutput"><span class="identifier">v</span></code>, changing the kind
+          to <code class="computeroutput"><span class="identifier">datetime</span></code> and destroying
+          any previous contents.
+        </p>
+<pre class="programlisting"><a class="link" href="../boost__mysql__field.html" title="field"><code class="literal">field</code></a><span class="special">&amp;</span>
+<a class="link" href="operator_eq_/overload28.html" title="field::operator= (28 of 30 overloads)">operator=</a><span class="special">(</span>
+    <span class="keyword">const</span> <a class="link" href="../boost__mysql__datetime.html" title="datetime"><code class="literal">datetime</code></a><span class="special">&amp;</span> <span class="identifier">v</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="emphasis"><em>» <a class="link" href="operator_eq_/overload28.html" title="field::operator= (28 of 30 overloads)"><code class="computeroutput"><span class="identifier">more</span><span class="special">...</span></code></a></em></span>
+</pre>
+<p>
+          Replaces <code class="computeroutput"><span class="special">*</span><span class="keyword">this</span></code>
+          with <code class="computeroutput"><span class="identifier">v</span></code>, changing the kind
+          to <code class="computeroutput"><span class="identifier">time</span></code> and destroying
+          any previous contents.
+        </p>
+<pre class="programlisting"><a class="link" href="../boost__mysql__field.html" title="field"><code class="literal">field</code></a><span class="special">&amp;</span>
+<a class="link" href="operator_eq_/overload29.html" title="field::operator= (29 of 30 overloads)">operator=</a><span class="special">(</span>
+    <span class="keyword">const</span> <a class="link" href="../boost__mysql__time.html" title="time"><code class="literal">time</code></a><span class="special">&amp;</span> <span class="identifier">v</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="emphasis"><em>» <a class="link" href="operator_eq_/overload29.html" title="field::operator= (29 of 30 overloads)"><code class="computeroutput"><span class="identifier">more</span><span class="special">...</span></code></a></em></span>
+</pre>
+<p>
+          Replaces <code class="computeroutput"><span class="special">*</span><span class="keyword">this</span></code>
+          with <code class="computeroutput"><span class="identifier">v</span></code>, changing the kind
+          to <code class="computeroutput"><span class="identifier">v</span><span class="special">.</span><span class="identifier">kind</span><span class="special">()</span></code>
+          and destroying any previous contents.
+        </p>
+<pre class="programlisting"><a class="link" href="../boost__mysql__field.html" title="field"><code class="literal">field</code></a><span class="special">&amp;</span>
+<a class="link" href="operator_eq_/overload30.html" title="field::operator= (30 of 30 overloads)">operator=</a><span class="special">(</span>
+    <span class="keyword">const</span> <a class="link" href="../boost__mysql__field_view.html" title="field_view"><code class="literal">field_view</code></a><span class="special">&amp;</span> <span class="identifier">v</span><span class="special">);</span>
+  <span class="emphasis"><em>» <a class="link" href="operator_eq_/overload30.html" title="field::operator= (30 of 30 overloads)"><code class="computeroutput"><span class="identifier">more</span><span class="special">...</span></code></a></em></span>
+</pre>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="field/overload31.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost__mysql__field.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="operator_eq_/overload1.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

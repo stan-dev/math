@@ -1,0 +1,50 @@
+#
+# Copyright (c) 2019-2024 Ruben Perez Hidalgo (rubenperez038 at gmail dot com)
+#
+# Distributed under the Boost Software License, Version 1.0. (See accompanying
+# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+#
+
+import os ;
+
+# The hostname to use for tests
+local hostname = [ os.environ BOOST_MYSQL_SERVER_HOST ] ;
+if $(hostname) = ""
+{
+    hostname = "127.0.0.1" ;
+}
+
+local tests = 
+    connection_pool
+    connection_pool_two_contexts
+    connection_pool_coroutines
+    connection_pool_external_strand
+    connection_pool_cancel
+    connection_pool_cancel_get_connection
+;
+
+for test in $(tests)
+{
+    # TSAN seems to raise a false positive with libc++ shared_ptr/weak_ptr, used in this test
+    local libcpp_exclusion ;
+    if $(test) = "connection_pool_cancel_get_connection" {
+        libcpp_exclusion = <stdlib>libc++:<build>no ;
+    }
+
+    # In OSX, tsan reports a race condition in Asio's kqueue reactor. Ignore this for now.
+    # Net TS executors use std::atomic_thread_fence, unsupported by TSAN, which yields false positives.
+    # gcc-5 seems to emit incorrect tsan instrumentation code for static initializations
+    # (see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=68338)
+    run
+            /boost/mysql/test//boost_mysql_compiled
+            $(test).cpp
+        : requirements
+            <testing.arg>$(hostname)
+            <target-os>darwin:<build>no
+            <boost.mysql.use-ts-executor>on:<build>no
+            <toolset>gcc-5:<build>no
+            $(libcpp_exclusion)
+            <thread-sanitizer>norecover
+        : target-name $(test)
+    ;
+}

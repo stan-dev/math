@@ -1,0 +1,48 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Function template channel_severity_filter</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.Log v2">
+<link rel="up" href="../../expressions.html#doxygen.expressions.channel__severity__filter_8hpp" title="Header &lt;boost/log/expressions/predicates/channel_severity_filter.hpp&gt;">
+<link rel="prev" href="channel__severity__filter_8hpp_1a8d75d0afe4b8bcaebdb62d4af20dae5e.html" title="Function template channel_severity_filter">
+<link rel="next" href="channel__severity__filter_8hpp_1ad182381b2d23839a1b82193480b42610.html" title="Function template channel_severity_filter">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr><td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td></tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="channel__severity__filter_8hpp_1a8d75d0afe4b8bcaebdb62d4af20dae5e.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../expressions.html#doxygen.expressions.channel__severity__filter_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="channel__severity__filter_8hpp_1ad182381b2d23839a1b82193480b42610.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.expressions.channel__severity__filter_8hpp_1a47d77c1091a5a915c5847b1bac7fc193"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Function template channel_severity_filter</span></h2>
+<p>boost::log::expressions::channel_severity_filter — This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../expressions.html#doxygen.expressions.channel__severity__filter_8hpp" title="Header &lt;boost/log/expressions/predicates/channel_severity_filter.hpp&gt;">boost/log/expressions/predicates/channel_severity_filter.hpp</a>&gt;
+
+</span>
+<span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ChannelT<span class="special">,</span> <span class="keyword">typename</span> SeverityDescriptorT<span class="special">,</span> 
+         <span class="keyword">template</span><span class="special">&lt;</span> <span class="keyword">typename</span> <span class="special">&gt;</span> <span class="keyword">class</span> ActorT<span class="special">,</span> <span class="keyword">typename</span> SeverityCompareT<span class="special">,</span> 
+         <span class="keyword">typename</span> ChannelOrderT<span class="special">&gt;</span> 
+  <span class="identifier">channel_severity_filter_actor</span><span class="special">&lt;</span> <span class="identifier">ChannelT</span><span class="special">,</span> <span class="keyword">typename</span> <span class="identifier">SeverityDescriptorT</span><span class="special">::</span><span class="identifier">value_type</span><span class="special">,</span> <span class="identifier">fallback_to_none</span><span class="special">,</span> <span class="identifier">fallback_to_none</span><span class="special">,</span> <span class="identifier">ChannelOrderT</span><span class="special">,</span> <span class="identifier">SeverityCompareT</span><span class="special">,</span> <span class="identifier">use_std_allocator</span><span class="special">,</span> <span class="identifier">ActorT</span> <span class="special">&gt;</span> 
+  <span class="identifier">channel_severity_filter</span><span class="special">(</span><span class="identifier">attribute_name</span> <span class="keyword">const</span> <span class="special">&amp;</span> channel_name<span class="special">,</span> 
+                          <a class="link" href="structboost_1_1log_1_1expressions_1_1attribute__keyword.html" title="Struct template attribute_keyword">attribute_keyword</a><span class="special">&lt;</span> <span class="identifier">SeverityDescriptorT</span><span class="special">,</span> <span class="identifier">ActorT</span> <span class="special">&gt;</span> <span class="keyword">const</span> <span class="special">&amp;</span> severity_keyword<span class="special">,</span> 
+                          <span class="identifier">SeverityCompareT</span> <span class="keyword">const</span> <span class="special">&amp;</span> severity_compare<span class="special">,</span> 
+                          <span class="identifier">ChannelOrderT</span> <span class="keyword">const</span> <span class="special">&amp;</span> channel_order<span class="special">)</span><span class="special">;</span></pre></div>
+</div>
+<div class="copyright-footer">Copyright © 2007-2024 Andrey Semashev<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>).
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="channel__severity__filter_8hpp_1a8d75d0afe4b8bcaebdb62d4af20dae5e.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../expressions.html#doxygen.expressions.channel__severity__filter_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="channel__severity__filter_8hpp_1ad182381b2d23839a1b82193480b42610.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

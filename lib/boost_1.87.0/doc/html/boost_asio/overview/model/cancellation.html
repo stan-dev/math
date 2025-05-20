@@ -1,0 +1,71 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Cancellation</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../boost_asio.html" title="Boost.Asio">
+<link rel="up" href="../model.html" title="Asynchronous Model">
+<link rel="prev" href="allocators.html" title="Allocators">
+<link rel="next" href="completion_tokens.html" title="Completion Tokens">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="allocators.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../model.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../boost_asio.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="completion_tokens.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="boost_asio.overview.model.cancellation"></a><a class="link" href="cancellation.html" title="Cancellation">Cancellation</a>
+</h4></div></div></div>
+<p>
+          In Boost.Asio, many objects, such as sockets and timers, support object-wide
+          cancellation of outstanding asynchronous operations via their close or
+          cancel member functions. However, certain asynchronous operations also
+          support individual, targeted cancellation. This per-operation cancellation
+          is enabled by specifying that every asynchronous agent has an associated
+          <span class="emphasis"><em>cancellation slot</em></span>.
+        </p>
+<p>
+          To support cancellation, an asynchronous operation installs a cancellation
+          handler into the agent's slot. The cancellation handler is a function object
+          that will be invoked when a cancellation signal is emitted by the user
+          into the slot. Since a cancellation slot is associated with a single agent,
+          the slot holds at most one handler at a time, and installing a new handler
+          will overwrite any previously installed handler. Thus, the same slot is
+          reused for subsequent asynchronous operations within the agent.
+        </p>
+<p>
+          Cancellation is particularly useful when an asynchronous operation contains
+          multiple child agents. For example, one child agent may be complete and
+          the other is then cancelled, as its side effects are no longer required.
+        </p>
+<h6>
+<a name="boost_asio.overview.model.cancellation.h0"></a>
+          <span class="phrase"><a name="boost_asio.overview.model.cancellation.see_also"></a></span><a class="link" href="cancellation.html#boost_asio.overview.model.cancellation.see_also">See
+          Also</a>
+        </h6>
+<p>
+          <a class="link" href="../core/cancellation.html" title="Per-Operation Cancellation">Per-Operation Cancellation</a>.
+        </p>
+</div>
+<div class="copyright-footer">Copyright © 2003-2024 Christopher M. Kohlhoff<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="allocators.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../model.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../boost_asio.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="completion_tokens.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

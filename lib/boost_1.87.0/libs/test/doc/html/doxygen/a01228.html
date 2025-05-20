@@ -1,0 +1,73 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template xrange_t</title>
+<link rel="stylesheet" href="../boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="Boost.Test">
+<link rel="up" href="a00821.html" title="Header &lt;boost/test/data/monomorphic/generators/xrange.hpp&gt;">
+<link rel="prev" href="a00821.html" title="Header &lt;boost/test/data/monomorphic/generators/xrange.hpp&gt;">
+<link rel="next" href="a00867_1ab271da61d6a5d7eb4d0ff601c6cbecb9.html" title="Function template xrange">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="a00821.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="a00821.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="a00867_1ab271da61d6a5d7eb4d0ff601c6cbecb9.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.a01228"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template xrange_t</span></h2>
+<p>boost::unit_test::data::monomorphic::xrange_t — Generator for the range sequences. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="a00821.html" title="Header &lt;boost/test/data/monomorphic/generators/xrange.hpp&gt;">boost/test/data/monomorphic/generators/xrange.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> SampleType<span class="special">,</span> <span class="keyword">typename</span> StepType <span class="special">=</span> <span class="identifier">SampleType</span><span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="a01228.html" title="Class template xrange_t">xrange_t</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">SampleType</span> <a name="doxygen.a01228_1ac1f1f799e55ba314dc4c8cb405d25037"></a><span class="identifier">sample</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="a01228.html#id8-bb">public member functions</a></span>
+  <a class="link" href="a01228.html#doxygen.a01228_1a189ed7ba27d670de4b5ffe777da37f6b"><span class="identifier">xrange_t</span></a><span class="special">(</span><span class="identifier">SampleType</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">StepType</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <a class="link" href="a01096.html" title="Class size_t">data::size_t</a><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="a01096.html" title="Class size_t">data::size_t</a> <a class="link" href="a01228.html#doxygen.a01228_1adff4b22227d0ed8ea3217af51ca355a0"><span class="identifier">capacity</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">SampleType</span> <a class="link" href="a01228.html#doxygen.a01228_1abce4e0a43405c5a1b11b0e9d04533ced"><span class="identifier">next</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="a01228.html#doxygen.a01228_1a4542656bb1cfeaca6f473122050078cb"><span class="identifier">reset</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id46669"></a><h2>Description</h2>
+<p>This class implements the generator concept (see <a class="link" href="a01144.html" title="Class template generated_by">boost::unit_test::data::monomorphic::generated_by</a>) for implementing a range like sequence of numbers. </p>
+<div class="refsect2">
+<a name="id46673"></a><h3>
+<a name="id8-bb"></a><code class="computeroutput">xrange_t</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem"><pre class="literallayout"><a name="doxygen.a01228_1a189ed7ba27d670de4b5ffe777da37f6b"></a><span class="identifier">xrange_t</span><span class="special">(</span><span class="identifier">SampleType</span> <span class="keyword">const</span> <span class="special">&amp;</span> begin_<span class="special">,</span> <span class="identifier">StepType</span> <span class="keyword">const</span> <span class="special">&amp;</span> step_<span class="special">,</span> 
+         <a class="link" href="a01096.html" title="Class size_t">data::size_t</a> size_<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a class="link" href="a01096.html" title="Class size_t">data::size_t</a> <a name="doxygen.a01228_1adff4b22227d0ed8ea3217af51ca355a0"></a><span class="identifier">capacity</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">SampleType</span> <a name="doxygen.a01228_1abce4e0a43405c5a1b11b0e9d04533ced"></a><span class="identifier">next</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.a01228_1a4542656bb1cfeaca6f473122050078cb"></a><span class="identifier">reset</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre></li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2001-2022 Boost.Test contributors<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="a00821.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="a00821.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="a00867_1ab271da61d6a5d7eb4d0ff601c6cbecb9.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

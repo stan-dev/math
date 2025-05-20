@@ -1,0 +1,249 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>memory_resource</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="Chapter 1. Boost.Core">
+<link rel="up" href="../index.html" title="Chapter 1. Boost.Core">
+<link rel="prev" href="max_align.html" title="max_align">
+<link rel="next" href="no_exceptions_support.html" title="no_exceptions_support">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="max_align.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="no_exceptions_support.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="core.memory_resource"></a><a class="link" href="memory_resource.html" title="memory_resource">memory_resource</a>
+</h2></div></div></div>
+<div class="toc"><dl class="toc"><dt><span class="section"><a href="memory_resource.html#core.memory_resource.header_boost_core_memory_resourc">Header
+      &lt;boost/core/memory_resource.hpp&gt;</a></span></dt></dl></div>
+<div class="simplesect">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id11504"></a>Authors</h3></div></div></div>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+          Peter Dimov
+        </li></ul></div>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="core.memory_resource.header_boost_core_memory_resourc"></a><a class="link" href="memory_resource.html#core.memory_resource.header_boost_core_memory_resourc" title="Header &lt;boost/core/memory_resource.hpp&gt;">Header
+      &lt;boost/core/memory_resource.hpp&gt;</a>
+</h3></div></div></div>
+<p>
+        The header <code class="computeroutput"><span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">core</span><span class="special">/</span><span class="identifier">memory_resource</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span></code>
+        defines the class <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">core</span><span class="special">::</span><span class="identifier">memory_resource</span></code>, a portable equivalent
+        of <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">pmr</span><span class="special">::</span><span class="identifier">memory_resource</span></code>
+        from C++17.
+      </p>
+<p>
+        This is not a complete implementation of the standard <code class="computeroutput"><span class="special">&lt;</span><span class="identifier">memory_resource</span><span class="special">&gt;</span></code>
+        header; for such, one should use Boost.Container. The abstract base class
+        is only provided by Core so that Boost libraries that provide and take advantage
+        of PMR facilities such as concrete implementations of memory resources, or
+        implementations of <code class="computeroutput"><span class="identifier">polymorphic_allocator</span></code>,
+        can interoperate.
+      </p>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="core.memory_resource.header_boost_core_memory_resourc.synopsis"></a><a class="link" href="memory_resource.html#core.memory_resource.header_boost_core_memory_resourc.synopsis" title="Synopsis">Synopsis</a>
+</h4></div></div></div>
+<pre class="programlisting"><span class="keyword">namespace</span> <span class="identifier">boost</span>
+<span class="special">{</span>
+<span class="keyword">namespace</span> <span class="identifier">core</span>
+<span class="special">{</span>
+
+<span class="keyword">class</span> <span class="identifier">memory_resource</span>
+<span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+
+    <span class="keyword">virtual</span> <span class="special">~</span><span class="identifier">memory_resource</span><span class="special">()</span> <span class="special">=</span> <span class="keyword">default</span><span class="special">;</span>
+
+    <span class="special">[[</span><span class="identifier">nodiscard</span><span class="special">]]</span> <span class="keyword">void</span><span class="special">*</span> <span class="identifier">allocate</span><span class="special">(</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">bytes</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">alignment</span> <span class="special">=</span> <span class="identifier">max_align</span> <span class="special">);</span>
+    <span class="keyword">void</span> <span class="identifier">deallocate</span><span class="special">(</span> <span class="keyword">void</span><span class="special">*</span> <span class="identifier">p</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">bytes</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">alignment</span> <span class="special">=</span> <span class="identifier">max_align</span> <span class="special">);</span>
+
+    <span class="keyword">bool</span> <span class="identifier">is_equal</span><span class="special">(</span> <span class="identifier">memory_resource</span> <span class="keyword">const</span> <span class="special">&amp;</span> <span class="identifier">other</span> <span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+
+<span class="keyword">private</span><span class="special">:</span>
+
+    <span class="keyword">virtual</span> <span class="keyword">void</span><span class="special">*</span> <span class="identifier">do_allocate</span><span class="special">(</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">bytes</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">alignment</span> <span class="special">)</span> <span class="special">=</span> <span class="number">0</span><span class="special">;</span>
+    <span class="keyword">virtual</span> <span class="keyword">void</span> <span class="identifier">do_deallocate</span><span class="special">(</span> <span class="keyword">void</span><span class="special">*</span> <span class="identifier">p</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">bytes</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">alignment</span> <span class="special">)</span> <span class="special">=</span> <span class="number">0</span><span class="special">;</span>
+
+    <span class="keyword">virtual</span> <span class="keyword">bool</span> <span class="identifier">do_is_equal</span><span class="special">(</span> <span class="identifier">memory_resource</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">other</span> <span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span> <span class="special">=</span> <span class="number">0</span><span class="special">;</span>
+<span class="special">};</span>
+
+<span class="keyword">inline</span> <span class="keyword">bool</span> <span class="keyword">operator</span><span class="special">==(</span> <span class="identifier">memory_resource</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">a</span><span class="special">,</span> <span class="identifier">memory_resource</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">b</span> <span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+<span class="keyword">inline</span> <span class="keyword">bool</span> <span class="keyword">operator</span><span class="special">!=(</span> <span class="identifier">memory_resource</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">a</span><span class="special">,</span> <span class="identifier">memory_resource</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">b</span> <span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+
+<span class="special">}</span> <span class="comment">// namespace core</span>
+<span class="special">}</span> <span class="comment">// namespace boost</span>
+</pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="core.memory_resource.header_boost_core_memory_resourc.allocate"></a><a class="link" href="memory_resource.html#core.memory_resource.header_boost_core_memory_resourc.allocate" title="allocate"><code class="computeroutput"><span class="identifier">allocate</span></code></a>
+</h4></div></div></div>
+<p>
+          <code class="computeroutput"><span class="special">[[</span><span class="identifier">nodiscard</span><span class="special">]]</span> <span class="keyword">void</span><span class="special">*</span> <span class="identifier">allocate</span><span class="special">(</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">bytes</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">alignment</span>
+          <span class="special">=</span> <span class="identifier">max_align</span>
+          <span class="special">);</span></code>
+        </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+              <span class="bold"><strong>Returns:</strong></span> <code class="computeroutput"><span class="identifier">do_allocate</span><span class="special">(</span> <span class="identifier">bytes</span><span class="special">,</span> <span class="identifier">alignment</span>
+              <span class="special">)</span></code>.
+            </li>
+<li class="listitem">
+              <span class="bold"><strong>Remarks:</strong></span> Implicitly creates objects
+              in the returned region of storage.
+            </li>
+</ul></div>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="core.memory_resource.header_boost_core_memory_resourc.deallocate"></a><a class="link" href="memory_resource.html#core.memory_resource.header_boost_core_memory_resourc.deallocate" title="deallocate"><code class="computeroutput"><span class="identifier">deallocate</span></code></a>
+</h4></div></div></div>
+<p>
+          <code class="computeroutput"><span class="keyword">void</span> <span class="identifier">deallocate</span><span class="special">(</span> <span class="keyword">void</span><span class="special">*</span>
+          <span class="identifier">p</span><span class="special">,</span>
+          <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">bytes</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">alignment</span> <span class="special">=</span>
+          <span class="identifier">max_align</span> <span class="special">);</span></code>
+        </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+              <span class="bold"><strong>Effects:</strong></span> <code class="computeroutput"><span class="identifier">do_deallocate</span><span class="special">(</span> <span class="identifier">bytes</span><span class="special">,</span> <span class="identifier">alignment</span>
+              <span class="special">)</span></code>.
+            </li></ul></div>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="core.memory_resource.header_boost_core_memory_resourc.is_equal"></a><a class="link" href="memory_resource.html#core.memory_resource.header_boost_core_memory_resourc.is_equal" title="is_equal"><code class="computeroutput"><span class="identifier">is_equal</span></code></a>
+</h4></div></div></div>
+<p>
+          <code class="computeroutput"><span class="keyword">bool</span> <span class="identifier">is_equal</span><span class="special">(</span> <span class="identifier">memory_resource</span>
+          <span class="keyword">const</span><span class="special">&amp;</span>
+          <span class="identifier">other</span> <span class="special">)</span>
+          <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></code>
+        </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+              <span class="bold"><strong>Returns:</strong></span> <code class="computeroutput"><span class="identifier">do_is_equal</span><span class="special">(</span> <span class="identifier">other</span>
+              <span class="special">)</span></code>.
+            </li></ul></div>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="core.memory_resource.header_boost_core_memory_resourc.do_allocate"></a><a class="link" href="memory_resource.html#core.memory_resource.header_boost_core_memory_resourc.do_allocate" title="do_allocate"><code class="computeroutput"><span class="identifier">do_allocate</span></code></a>
+</h4></div></div></div>
+<p>
+          <code class="computeroutput"><span class="keyword">void</span><span class="special">*</span>
+          <span class="identifier">do_allocate</span><span class="special">(</span>
+          <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">bytes</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">alignment</span> <span class="special">)</span>
+          <span class="special">=</span> <span class="number">0</span><span class="special">;</span></code>
+        </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+              <span class="bold"><strong>Remarks:</strong></span> A derived class should implement
+              this member function to return a pointer to allocated storage of size
+              at least <code class="computeroutput"><span class="identifier">bytes</span></code> and
+              alignment at least <code class="computeroutput"><span class="identifier">alignment</span></code>.
+            </li>
+<li class="listitem">
+              <span class="bold"><strong>Throws:</strong></span> An appropriate exception (by
+              convention <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">bad_alloc</span></code> or derived) when storage
+              with the specified size and alignment could not be obtained.
+            </li>
+</ul></div>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="core.memory_resource.header_boost_core_memory_resourc.do_deallocate"></a><a class="link" href="memory_resource.html#core.memory_resource.header_boost_core_memory_resourc.do_deallocate" title="do_deallocate"><code class="computeroutput"><span class="identifier">do_deallocate</span></code></a>
+</h4></div></div></div>
+<p>
+          <code class="computeroutput"><span class="keyword">void</span> <span class="identifier">do_deallocate</span><span class="special">(</span> <span class="keyword">void</span><span class="special">*</span>
+          <span class="identifier">p</span><span class="special">,</span>
+          <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">bytes</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">alignment</span> <span class="special">)</span>
+          <span class="special">=</span> <span class="number">0</span><span class="special">;</span></code>
+        </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+              <span class="bold"><strong>Remarks:</strong></span> A derived class should implement
+              this member function to deallocate a region of storage previously allocated
+              by <code class="computeroutput"><span class="identifier">do_allocate</span></code>.
+            </li>
+<li class="listitem">
+              <span class="bold"><strong>Throws:</strong></span> Nothing.
+            </li>
+</ul></div>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="core.memory_resource.header_boost_core_memory_resourc.do_is_equal"></a><a class="link" href="memory_resource.html#core.memory_resource.header_boost_core_memory_resourc.do_is_equal" title="do_is_equal"><code class="computeroutput"><span class="identifier">do_is_equal</span></code></a>
+</h4></div></div></div>
+<p>
+          <code class="computeroutput"><span class="keyword">bool</span> <span class="identifier">do_is_equal</span><span class="special">(</span> <span class="identifier">memory_resource</span>
+          <span class="keyword">const</span><span class="special">&amp;</span>
+          <span class="identifier">other</span> <span class="special">)</span>
+          <span class="keyword">const</span> <span class="keyword">noexcept</span>
+          <span class="special">=</span> <span class="number">0</span><span class="special">;</span></code>
+        </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+              <span class="bold"><strong>Remarks:</strong></span> A derived class shall implement
+              this function to return <code class="computeroutput"><span class="keyword">true</span></code>
+              if memory allocated from <code class="computeroutput"><span class="special">*</span><span class="keyword">this</span></code> can be deallocated from <code class="computeroutput"><span class="identifier">other</span></code> and vice-versa, otherwise
+              <code class="computeroutput"><span class="keyword">false</span></code>.
+            </li></ul></div>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="core.memory_resource.header_boost_core_memory_resourc.operator"></a><a class="link" href="memory_resource.html#core.memory_resource.header_boost_core_memory_resourc.operator" title="operator=="><code class="computeroutput"><span class="keyword">operator</span><span class="special">==</span></code></a>
+</h4></div></div></div>
+<p>
+          <code class="computeroutput"><span class="keyword">bool</span> <span class="keyword">operator</span><span class="special">==(</span> <span class="identifier">memory_resource</span>
+          <span class="keyword">const</span><span class="special">&amp;</span>
+          <span class="identifier">a</span><span class="special">,</span>
+          <span class="identifier">memory_resource</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">b</span> <span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></code>
+        </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+              <span class="bold"><strong>Returns:</strong></span> <code class="computeroutput"><span class="special">&amp;</span><span class="identifier">a</span> <span class="special">==</span> <span class="special">&amp;</span><span class="identifier">b</span>
+              <span class="special">||</span> <span class="identifier">a</span><span class="special">.</span><span class="identifier">is_equal</span><span class="special">(</span> <span class="identifier">b</span> <span class="special">)</span></code>.
+            </li></ul></div>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="core.memory_resource.header_boost_core_memory_resourc.operator0"></a><a class="link" href="memory_resource.html#core.memory_resource.header_boost_core_memory_resourc.operator0" title="operator!="><code class="computeroutput"><span class="keyword">operator</span><span class="special">!=</span></code></a>
+</h4></div></div></div>
+<p>
+          <code class="computeroutput"><span class="keyword">bool</span> <span class="keyword">operator</span><span class="special">!=(</span> <span class="identifier">memory_resource</span>
+          <span class="keyword">const</span><span class="special">&amp;</span>
+          <span class="identifier">a</span><span class="special">,</span>
+          <span class="identifier">memory_resource</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">b</span> <span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></code>
+        </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+              <span class="bold"><strong>Returns:</strong></span> <code class="computeroutput"><span class="special">!(</span>
+              <span class="identifier">a</span> <span class="special">==</span>
+              <span class="identifier">b</span> <span class="special">)</span></code>.
+            </li></ul></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2014 Peter Dimov<br>Copyright © 2014 Glen Fernandes<br>Copyright © 2014 Andrey Semashev<p>
+        Distributed under the <a href="http://boost.org/LICENSE_1_0.txt" target="_top">Boost
+        Software License, Version 1.0</a>.
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="max_align.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="no_exceptions_support.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

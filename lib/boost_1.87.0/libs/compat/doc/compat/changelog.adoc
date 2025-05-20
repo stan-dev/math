@@ -1,0 +1,23 @@
+////
+Copyright 2023 Peter Dimov
+Distributed under the Boost Software License, Version 1.0.
+https://www.boost.org/LICENSE_1_0.txt
+////
+
+[#changelog]
+# Revision History
+:idprefix: changelog_
+
+## Changes in 1.87.0
+
+* Added `to_array.hpp` (contributed by Ruben Perez Hidalgo.)
+
+## Changes in 1.86.0
+
+* Added `bind_front.hpp`, `bind_back.hpp`, `invoke.hpp`, `mem_fn.hpp`, `integer_sequence.hpp` and `type_traits.hpp`.
+* Added `function_ref.hpp`.
+
+## Changes in 1.83.0
+
+* Added `latch.hpp`, an implementation of `std::latch` (contributed by Christian Mazakas.)
+* Added `shared_lock.hpp`, a (partial) implementation of `std::shared_lock` (contributed by Christian Mazakas.)

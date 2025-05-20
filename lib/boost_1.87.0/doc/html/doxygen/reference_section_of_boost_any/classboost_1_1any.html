@@ -1,0 +1,313 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class any</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../../reference_section_of_boost_any.html#doxygen.reference_section_of_boost_any.any_8hpp" title="Header &lt;boost/any.hpp&gt;">
+<link rel="prev" href="../../reference_section_of_boost_any.html" title="Reference Section of Boost.Any">
+<link rel="next" href="any_8hpp_1a49e1c5ea658fcab51c562b5ff38e5dc2.html" title="Function swap">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../../reference_section_of_boost_any.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../reference_section_of_boost_any.html#doxygen.reference_section_of_boost_any.any_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="any_8hpp_1a49e1c5ea658fcab51c562b5ff38e5dc2.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.reference_section_of_boost_any.classboost_1_1any"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class any</span></h2>
+<p>boost::any — A class whose instances can hold instances of any type that satisfies  <a class="link" href="../../any/ValueType.html" title="ValueType requirements"> ValueType </a> requirements. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../reference_section_of_boost_any.html#doxygen.reference_section_of_boost_any.any_8hpp" title="Header &lt;boost/any.hpp&gt;">boost/any.hpp</a>&gt;
+
+</span>
+<span class="keyword">class</span> <a class="link" href="classboost_1_1any.html" title="Class any">any</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1any.html#id1-bb">public member functions</a></span>
+  <a class="link" href="classboost_1_1any.html#doxygen.reference_section_of_boost_any.classboost_1_1any_1aac7d34e8c95c48070a960440a9085ed2"><span class="identifier">any</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ValueType<span class="special">&gt;</span> <a class="link" href="classboost_1_1any.html#doxygen.reference_section_of_boost_any.classboost_1_1any_1ad1cb35a05185a0ac1b71de301658c5ff"><span class="identifier">any</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">ValueType</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1any.html#doxygen.reference_section_of_boost_any.classboost_1_1any_1a3eff7994742de9a99960a10992f7dbc3"><span class="identifier">any</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1any.html" title="Class any">any</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1any.html#doxygen.reference_section_of_boost_any.classboost_1_1any_1aab82476343b92cd1fd02086f44d57631"><span class="identifier">any</span></a><span class="special">(</span><a class="link" href="classboost_1_1any.html" title="Class any">any</a> <span class="special">&amp;&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ValueType<span class="special">&gt;</span> 
+    <a class="link" href="classboost_1_1any.html#doxygen.reference_section_of_boost_any.classboost_1_1any_1a176fd4bac5d4e931bba3968bfe0b10c8"><span class="identifier">any</span></a><span class="special">(</span><span class="identifier">ValueType</span> <span class="special">&amp;&amp;</span><span class="special">,</span> 
+        <span class="keyword">typename</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">enable_if</span><span class="special">&lt;</span><span class="special">!</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">is_same</span><span class="special">&lt;</span> <a class="link" href="classboost_1_1any.html" title="Class any">any</a> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">ValueType</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">value</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> <span class="special">*</span> <span class="special">=</span> <span class="number">0</span><span class="special">,</span> 
+        <span class="keyword">typename</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">enable_if</span><span class="special">&lt;</span><span class="special">!</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">is_const</span><span class="special">&lt;</span> <span class="identifier">ValueType</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">value</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> <span class="special">*</span> <span class="special">=</span> <span class="number">0</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1any.html#doxygen.reference_section_of_boost_any.classboost_1_1any_1a7e09d1a2ecbe664d7847b4769fd32163"><span class="special">~</span><span class="identifier">any</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1any.html" title="Class any">any</a> <span class="special">&amp;</span> <a class="link" href="classboost_1_1any.html#doxygen.reference_section_of_boost_any.classboost_1_1any_1a7752ec2af46e063f38256eb5fea1ed3d"><span class="identifier">swap</span></a><span class="special">(</span><a class="link" href="classboost_1_1any.html" title="Class any">any</a> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1any.html" title="Class any">any</a> <span class="special">&amp;</span> <a class="link" href="classboost_1_1any.html#doxygen.reference_section_of_boost_any.classboost_1_1any_1a9281c3d5a2b85c04d610e43d63e70533"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1any.html" title="Class any">any</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1any.html" title="Class any">any</a> <span class="special">&amp;</span> <a class="link" href="classboost_1_1any.html#doxygen.reference_section_of_boost_any.classboost_1_1any_1a83396326d8023172ea419cc83e1bc200"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><a class="link" href="classboost_1_1any.html" title="Class any">any</a> <span class="special">&amp;&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ValueType<span class="special">&gt;</span> <a class="link" href="classboost_1_1any.html" title="Class any">any</a> <span class="special">&amp;</span> <a class="link" href="classboost_1_1any.html#doxygen.reference_section_of_boost_any.classboost_1_1any_1aa7b5270f908ecb789c5a2eecee6d9944"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><span class="identifier">ValueType</span> <span class="special">&amp;&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1any.html#doxygen.reference_section_of_boost_any.classboost_1_1any_1a91230d85a79ffc6133085926cbab90c0"><span class="identifier">empty</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1any.html#doxygen.reference_section_of_boost_any.classboost_1_1any_1ab201e994715ebc9c490377e8738632f7"><span class="identifier">clear</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">const</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">typeindex</span><span class="special">::</span><span class="identifier">type_info</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1any.html#doxygen.reference_section_of_boost_any.classboost_1_1any_1a91dd2293ee3922aad6aa5165a9610b76"><span class="identifier">type</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.5.6.2.4.4"></a><h2>Description</h2>
+<div class="refsect2">
+<a name="id-1.3.5.6.2.4.4.2"></a><h3>
+<a name="id1-bb"></a><code class="computeroutput">any</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.reference_section_of_boost_any.classboost_1_1any_1aac7d34e8c95c48070a960440a9085ed2"></a><span class="identifier">any</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Postconditions:</span></p></td>
+<td><p>this-&gt;<a class="link" href="classboost_1_1any.html#doxygen.reference_section_of_boost_any.classboost_1_1any_1a91230d85a79ffc6133085926cbab90c0">empty()</a> is true. </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ValueType<span class="special">&gt;</span> <a name="doxygen.reference_section_of_boost_any.classboost_1_1any_1ad1cb35a05185a0ac1b71de301658c5ff"></a><span class="identifier">any</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">ValueType</span> <span class="special">&amp;</span> value<span class="special">)</span><span class="special">;</span></pre>
+<p>Makes a copy of <code class="computeroutput">value</code>, so that the initial content of the new instance is equivalent in both type and value to <code class="computeroutput">value</code>.</p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Throws:</span></p></td>
+<td>std::bad_alloc or any exceptions arising from the copy constructor of the contained type. </td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.reference_section_of_boost_any.classboost_1_1any_1a3eff7994742de9a99960a10992f7dbc3"></a><span class="identifier">any</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1any.html" title="Class any">any</a> <span class="special">&amp;</span> other<span class="special">)</span><span class="special">;</span></pre>
+<p>Copy constructor that copies content of <code class="computeroutput">other</code> into new instance, so that any content is equivalent in both type and value to the content of <code class="computeroutput">other</code>, or empty if <code class="computeroutput">other</code> is empty.</p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Throws:</span></p></td>
+<td>May fail with a <code class="computeroutput">std::bad_alloc</code> exception or any exceptions arising from the copy constructor of the contained type. </td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.reference_section_of_boost_any.classboost_1_1any_1aab82476343b92cd1fd02086f44d57631"></a><span class="identifier">any</span><span class="special">(</span><a class="link" href="classboost_1_1any.html" title="Class any">any</a> <span class="special">&amp;&amp;</span> other<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>Move constructor that moves content of <code class="computeroutput">other</code> into new instance and leaves <code class="computeroutput">other</code> empty.</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Postconditions:</span></p></td>
+<td><p>other-&gt;<a class="link" href="classboost_1_1any.html#doxygen.reference_section_of_boost_any.classboost_1_1any_1a91230d85a79ffc6133085926cbab90c0">empty()</a> is true </p></td>
+</tr>
+<tr>
+<td><p><span class="term">Throws:</span></p></td>
+<td>Nothing. </td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ValueType<span class="special">&gt;</span> 
+  <a name="doxygen.reference_section_of_boost_any.classboost_1_1any_1a176fd4bac5d4e931bba3968bfe0b10c8"></a><span class="identifier">any</span><span class="special">(</span><span class="identifier">ValueType</span> <span class="special">&amp;&amp;</span> value<span class="special">,</span> 
+      <span class="keyword">typename</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">enable_if</span><span class="special">&lt;</span><span class="special">!</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">is_same</span><span class="special">&lt;</span> <a class="link" href="classboost_1_1any.html" title="Class any">any</a> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">ValueType</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">value</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> <span class="special">*</span> <span class="special">=</span> <span class="number">0</span><span class="special">,</span> 
+      <span class="keyword">typename</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">enable_if</span><span class="special">&lt;</span><span class="special">!</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">is_const</span><span class="special">&lt;</span> <span class="identifier">ValueType</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">value</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> <span class="special">*</span> <span class="special">=</span> <span class="number">0</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Forwards <code class="computeroutput">value</code>, so that the initial content of the new instance is equivalent in both type and value to <code class="computeroutput">value</code> before the forward.</p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Throws:</span></p></td>
+<td>std::bad_alloc or any exceptions arising from the move or copy constructor of the contained type. </td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.reference_section_of_boost_any.classboost_1_1any_1a7e09d1a2ecbe664d7847b4769fd32163"></a><span class="special">~</span><span class="identifier">any</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>Releases any and all resources used in management of instance.</p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Throws:</span></p></td>
+<td>Nothing. </td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a class="link" href="classboost_1_1any.html" title="Class any">any</a> <span class="special">&amp;</span> <a name="doxygen.reference_section_of_boost_any.classboost_1_1any_1a7752ec2af46e063f38256eb5fea1ed3d"></a><span class="identifier">swap</span><span class="special">(</span><a class="link" href="classboost_1_1any.html" title="Class any">any</a> <span class="special">&amp;</span> rhs<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>Exchange of the contents of <code class="computeroutput">*this</code> and <code class="computeroutput">rhs</code>.</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p><code class="computeroutput">*this</code> </p></td>
+</tr>
+<tr>
+<td><p><span class="term">Throws:</span></p></td>
+<td>Nothing. </td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a class="link" href="classboost_1_1any.html" title="Class any">any</a> <span class="special">&amp;</span> <a name="doxygen.reference_section_of_boost_any.classboost_1_1any_1a9281c3d5a2b85c04d610e43d63e70533"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1any.html" title="Class any">any</a> <span class="special">&amp;</span> rhs<span class="special">)</span><span class="special">;</span></pre>
+<p>Copies content of <code class="computeroutput">rhs</code> into current instance, discarding previous content, so that the new content is equivalent in both type and value to the content of <code class="computeroutput">rhs</code>, or empty if <code class="computeroutput">rhs.empty()</code>.</p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Throws:</span></p></td>
+<td>std::bad_alloc or any exceptions arising from the copy constructor of the contained type. Assignment satisfies the strong guarantee of exception safety. </td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a class="link" href="classboost_1_1any.html" title="Class any">any</a> <span class="special">&amp;</span> <a name="doxygen.reference_section_of_boost_any.classboost_1_1any_1a83396326d8023172ea419cc83e1bc200"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><a class="link" href="classboost_1_1any.html" title="Class any">any</a> <span class="special">&amp;&amp;</span> rhs<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>Moves content of <code class="computeroutput">rhs</code> into current instance, discarding previous content, so that the new content is equivalent in both type and value to the content of <code class="computeroutput">rhs</code> before move, or empty if <code class="computeroutput">rhs.empty()</code>.</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Postconditions:</span></p></td>
+<td><p><code class="computeroutput">rhs-&gt;<a class="link" href="classboost_1_1any.html#doxygen.reference_section_of_boost_any.classboost_1_1any_1a91230d85a79ffc6133085926cbab90c0">empty()</a></code> is true </p></td>
+</tr>
+<tr>
+<td><p><span class="term">Throws:</span></p></td>
+<td>Nothing. </td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ValueType<span class="special">&gt;</span> <a class="link" href="classboost_1_1any.html" title="Class any">any</a> <span class="special">&amp;</span> <a name="doxygen.reference_section_of_boost_any.classboost_1_1any_1aa7b5270f908ecb789c5a2eecee6d9944"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><span class="identifier">ValueType</span> <span class="special">&amp;&amp;</span> rhs<span class="special">)</span><span class="special">;</span></pre>
+<p>Forwards <code class="computeroutput">rhs</code>, discarding previous content, so that the new content of is equivalent in both type and value to <code class="computeroutput">rhs</code> before forward.</p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Throws:</span></p></td>
+<td>std::bad_alloc or any exceptions arising from the move or copy constructor of the contained type. Assignment satisfies the strong guarantee of exception safety. </td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.reference_section_of_boost_any.classboost_1_1any_1a91230d85a79ffc6133085926cbab90c0"></a><span class="identifier">empty</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p><code class="computeroutput">true</code> if instance is empty, otherwise <code class="computeroutput">false</code>. </p></td>
+</tr>
+<tr>
+<td><p><span class="term">Throws:</span></p></td>
+<td>Nothing. </td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.reference_section_of_boost_any.classboost_1_1any_1ab201e994715ebc9c490377e8738632f7"></a><span class="identifier">clear</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Postconditions:</span></p></td>
+<td><p>this-&gt;<a class="link" href="classboost_1_1any.html#doxygen.reference_section_of_boost_any.classboost_1_1any_1a91230d85a79ffc6133085926cbab90c0">empty()</a> is true </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">const</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">typeindex</span><span class="special">::</span><span class="identifier">type_info</span> <span class="special">&amp;</span> <a name="doxygen.reference_section_of_boost_any.classboost_1_1any_1a91dd2293ee3922aad6aa5165a9610b76"></a><span class="identifier">type</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>
+Useful for querying against types known either at compile time or only at runtime. </p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>the <code class="computeroutput">typeid</code> of the contained value if instance is non-empty, otherwise <code class="computeroutput">typeid(void)</code>.</p></td>
+</tr></tbody>
+</table></div>
+</li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2001 Kevlin Henney<br>Copyright © 2013-2024 Antony Polukhin<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../../reference_section_of_boost_any.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../reference_section_of_boost_any.html#doxygen.reference_section_of_boost_any.any_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="any_8hpp_1a49e1c5ea658fcab51c562b5ff38e5dc2.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

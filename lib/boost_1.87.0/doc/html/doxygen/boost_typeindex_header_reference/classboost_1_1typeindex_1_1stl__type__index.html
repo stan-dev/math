@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class stl_type_index</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../../boost_typeindex_header_reference.html#doxygen.boost_typeindex_header_reference.stl__type__index_8hpp" title="Header &lt;boost/type_index/stl_type_index.hpp&gt;">
+<link rel="prev" href="std__shared__ptr__cast_8hpp_1a8746ae3acba511243cdf31abe0508483.html" title="Function template runtime_pointer_cast">
+<link rel="next" href="classboost_1_1typeindex_1_1type__index__facade.html" title="Class template type_index_facade">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="std__shared__ptr__cast_8hpp_1a8746ae3acba511243cdf31abe0508483.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_typeindex_header_reference.html#doxygen.boost_typeindex_header_reference.stl__type__index_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1typeindex_1_1type__index__facade.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1stl__type__index"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class stl_type_index</span></h2>
+<p>boost::typeindex::stl_type_index</p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../boost_typeindex_header_reference.html#doxygen.boost_typeindex_header_reference.stl__type__index_8hpp" title="Header &lt;boost/type_index/stl_type_index.hpp&gt;">boost/type_index/stl_type_index.hpp</a>&gt;
+
+</span>
+<span class="keyword">class</span> <a class="link" href="classboost_1_1typeindex_1_1stl__type__index.html" title="Class stl_type_index">stl_type_index</a> <span class="special">:</span> <span class="keyword">public</span> boost::typeindex::type_index_facade&lt; stl_type_index, std::type_info &gt;
+<span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">type_info</span> <a name="doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1stl__type__index_1a6b3add2acd8fa75dab3a38a6b9e30f64"></a><span class="identifier">type_info_t</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1typeindex_1_1stl__type__index.html#id-1_3_42_8_10_4_1_1_4-bb">public member functions</a></span>
+  <a class="link" href="classboost_1_1typeindex_1_1stl__type__index.html#doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1stl__type__index_1af869e634b2d7b494e3ecdeac6ff93dc1"><span class="identifier">stl_type_index</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1typeindex_1_1stl__type__index.html#doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1stl__type__index_1a293b41e75648e6c5d6f9a9953e41b530"><span class="identifier">stl_type_index</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">type_info_t</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">const</span> <span class="identifier">type_info_t</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1typeindex_1_1stl__type__index.html#doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1stl__type__index_1a8bd1cfb93cb1206aae2f124c8ab9bcf8"><span class="identifier">type_info</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">const</span> <span class="keyword">char</span> <span class="special">*</span> <a class="link" href="classboost_1_1typeindex_1_1stl__type__index.html#doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1stl__type__index_1a083ee4e0bba81db6df03ba76ac028119"><span class="identifier">raw_name</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">const</span> <span class="keyword">char</span> <span class="special">*</span> <a class="link" href="classboost_1_1typeindex_1_1stl__type__index.html#doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1stl__type__index_1a527a81e9cc9e514b3c7c3e4d5c3191c1"><span class="identifier">name</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <a class="link" href="classboost_1_1typeindex_1_1stl__type__index.html#doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1stl__type__index_1aa422b799f3e506df955244ec9e87b5e4"><span class="identifier">pretty_name</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <a class="link" href="classboost_1_1typeindex_1_1stl__type__index.html#doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1stl__type__index_1af091fb747fb1639ebf017246dd3d73c0"><span class="identifier">hash_code</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1typeindex_1_1stl__type__index.html#doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1stl__type__index_1a9996ec904bcf1fd1c5eb39e548efd6b4"><span class="identifier">equal</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1typeindex_1_1stl__type__index.html" title="Class stl_type_index">stl_type_index</a> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1typeindex_1_1stl__type__index.html#doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1stl__type__index_1a3d098afdf960171b89755d465855d9ab"><span class="identifier">before</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1typeindex_1_1stl__type__index.html" title="Class stl_type_index">stl_type_index</a> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1typeindex_1_1stl__type__index.html#id-1_3_42_8_10_4_1_1_5-bb">public static functions</a></span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> <span class="keyword">static</span> <a class="link" href="classboost_1_1typeindex_1_1stl__type__index.html" title="Class stl_type_index">stl_type_index</a> <a class="link" href="classboost_1_1typeindex_1_1stl__type__index.html#doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1stl__type__index_1a373f58c5a9a5d8e5f72b6290c469d1b2"><span class="identifier">type_id</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> <span class="keyword">static</span> <a class="link" href="classboost_1_1typeindex_1_1stl__type__index.html" title="Class stl_type_index">stl_type_index</a> <a class="link" href="classboost_1_1typeindex_1_1stl__type__index.html#doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1stl__type__index_1a44e8dad6d3301118cdc973090a104652"><span class="identifier">type_id_with_cvr</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> 
+    <span class="keyword">static</span> <a class="link" href="classboost_1_1typeindex_1_1stl__type__index.html" title="Class stl_type_index">stl_type_index</a> <a class="link" href="classboost_1_1typeindex_1_1stl__type__index.html#doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1stl__type__index_1a765fb08b9e78ced399b5741be665400f"><span class="identifier">type_id_runtime</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">T</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.42.8.10.6.4"></a><h2>Description</h2>
+<p>This class is a wrapper around std::type_info, that workarounds issues and provides much more rich interface. <span class="bold"><strong>For</strong></span> <span class="bold"><strong>description</strong></span> <span class="bold"><strong>of</strong></span> <span class="bold"><strong>functions</strong></span> <span class="bold"><strong>see</strong></span> <a class="link" href="classboost_1_1typeindex_1_1type__index__facade.html" title="Class template type_index_facade">type_index_facade</a>.</p>
+<p>This class requires typeid() to work. For cases when RTTI is disabled see <a class="link" href="classboost_1_1typeindex_1_1ctti__type__index.html" title="Class ctti_type_index">ctti_type_index</a>. </p>
+<div class="refsect2">
+<a name="id-1.3.42.8.10.6.4.4"></a><h3>
+<a name="id-1_3_42_8_10_4_1_1_4-bb"></a><code class="computeroutput">stl_type_index</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem"><pre class="literallayout"><a name="doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1stl__type__index_1af869e634b2d7b494e3ecdeac6ff93dc1"></a><span class="identifier">stl_type_index</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a name="doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1stl__type__index_1a293b41e75648e6c5d6f9a9953e41b530"></a><span class="identifier">stl_type_index</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">type_info_t</span> <span class="special">&amp;</span> data<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">const</span> <span class="identifier">type_info_t</span> <span class="special">&amp;</span> <a name="doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1stl__type__index_1a8bd1cfb93cb1206aae2f124c8ab9bcf8"></a><span class="identifier">type_info</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">const</span> <span class="keyword">char</span> <span class="special">*</span> <a name="doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1stl__type__index_1a083ee4e0bba81db6df03ba76ac028119"></a><span class="identifier">raw_name</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">const</span> <span class="keyword">char</span> <span class="special">*</span> <a name="doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1stl__type__index_1a527a81e9cc9e514b3c7c3e4d5c3191c1"></a><span class="identifier">name</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <a name="doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1stl__type__index_1aa422b799f3e506df955244ec9e87b5e4"></a><span class="identifier">pretty_name</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <a name="doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1stl__type__index_1af091fb747fb1639ebf017246dd3d73c0"></a><span class="identifier">hash_code</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1stl__type__index_1a9996ec904bcf1fd1c5eb39e548efd6b4"></a><span class="identifier">equal</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1typeindex_1_1stl__type__index.html" title="Class stl_type_index">stl_type_index</a> <span class="special">&amp;</span> rhs<span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1stl__type__index_1a3d098afdf960171b89755d465855d9ab"></a><span class="identifier">before</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1typeindex_1_1stl__type__index.html" title="Class stl_type_index">stl_type_index</a> <span class="special">&amp;</span> rhs<span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.42.8.10.6.4.5"></a><h3>
+<a name="id-1_3_42_8_10_4_1_1_5-bb"></a><code class="computeroutput">stl_type_index</code> public static functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem"><pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> <span class="keyword">static</span> <a class="link" href="classboost_1_1typeindex_1_1stl__type__index.html" title="Class stl_type_index">stl_type_index</a> <a name="doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1stl__type__index_1a373f58c5a9a5d8e5f72b6290c469d1b2"></a><span class="identifier">type_id</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> <span class="keyword">static</span> <a class="link" href="classboost_1_1typeindex_1_1stl__type__index.html" title="Class stl_type_index">stl_type_index</a> <a name="doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1stl__type__index_1a44e8dad6d3301118cdc973090a104652"></a><span class="identifier">type_id_with_cvr</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> 
+  <span class="keyword">static</span> <a class="link" href="classboost_1_1typeindex_1_1stl__type__index.html" title="Class stl_type_index">stl_type_index</a> <a name="doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1stl__type__index_1a765fb08b9e78ced399b5741be665400f"></a><span class="identifier">type_id_runtime</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">T</span> <span class="special">&amp;</span> value<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2012-2024 Antony Polukhin<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="std__shared__ptr__cast_8hpp_1a8746ae3acba511243cdf31abe0508483.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_typeindex_header_reference.html#doxygen.boost_typeindex_header_reference.stl__type__index_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1typeindex_1_1type__index__facade.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

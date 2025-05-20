@@ -1,0 +1,822 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Quick Reference</title>
+<link rel="stylesheet" href="../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../string_algo.html" title="Chapter 2. Boost String Algorithms Library">
+<link rel="prev" href="usage.html" title="Usage">
+<link rel="next" href="design.html" title="Design Topics">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../boost.png"></td>
+<td align="center"><a href="../../../index.html">Home</a></td>
+<td align="center"><a href="../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="usage.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../string_algo.html"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="design.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="string_algo.quickref"></a>Quick Reference</h2></div></div></div>
+<div class="toc"><dl class="toc">
+<dt><span class="section"><a href="quickref.html#id-1.3.3.6.2">Algorithms</a></span></dt>
+<dt><span class="section"><a href="quickref.html#id-1.3.3.6.3">Finders and Formatters</a></span></dt>
+<dt><span class="section"><a href="quickref.html#id-1.3.3.6.4">Iterators</a></span></dt>
+<dt><span class="section"><a href="quickref.html#id-1.3.3.6.5">Classification</a></span></dt>
+</dl></div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id-1.3.3.6.2"></a>Algorithms</h3></div></div></div>
+<div class="table">
+<a name="id-1.3.3.6.2.2"></a><p class="title"><b>Table 2.1. Case Conversion</b></p>
+<div class="table-contents"><table class="table" summary="Case Conversion">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th align="left">Algorithm name</th>
+<th align="left">Description</th>
+<th align="left">Functions</th>
+</tr></thead>
+<tbody>
+<tr>
+<td align="left"><code class="computeroutput">to_upper</code></td>
+<td align="left">Convert a string to upper case</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/case__conv_8hpp_1a946a14e9fec12e2e0b066b453891b79d.html" title="Function to_upper_copy">to_upper_copy()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/case__conv_8hpp_1a6763566233c47511a755e2d2203f914d.html" title="Function template to_upper">to_upper()</a></code>
+                        </td>
+</tr>
+<tr>
+<td align="left"><code class="computeroutput">to_lower</code></td>
+<td align="left">Convert a string to lower case</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/case__conv_8hpp_1ae3086accacda1953066d12f645f403fc.html" title="Function to_lower_copy">to_lower_copy()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/case__conv_8hpp_1a1a318a47f9b4482c28552a62d0297a27.html" title="Function template to_lower">to_lower()</a></code>
+                        </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break"><div class="table">
+<a name="id-1.3.3.6.2.3"></a><p class="title"><b>Table 2.2. Trimming</b></p>
+<div class="table-contents"><table class="table" summary="Trimming">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th align="left">Algorithm name</th>
+<th align="left">Description</th>
+<th align="left">Functions</th>
+</tr></thead>
+<tbody>
+<tr>
+<td align="left"><code class="computeroutput">trim_left</code></td>
+<td align="left">Remove leading spaces from a string</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/trim_8hpp_1aad94e1494537960ac33cef299f88c3a5.html" title="Function trim_left_copy_if">trim_left_copy_if()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/trim_8hpp_1a439753f43b1c4df234de500b6d5adb0d.html" title="Function template trim_left_if">trim_left_if()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/trim_8hpp_1a31e4f04d85034293dbde7369487f9799.html" title="Function template trim_left_copy">trim_left_copy()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/trim_8hpp_1a4f44d7580f087f131d01c19aa0b746c3.html" title="Function template trim_left">trim_left()</a></code>
+                        </td>
+</tr>
+<tr>
+<td align="left"><code class="computeroutput">trim_right</code></td>
+<td align="left">Remove trailing spaces from a string</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/trim_8hpp_1ac9b83ac6a5cce5ff6a8159211dc6f5f0.html" title="Function trim_right_copy_if">trim_right_copy_if()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/trim_8hpp_1abd39df73ed1116220a6858257b18296a.html" title="Function template trim_right_if">trim_right_if()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/trim_8hpp_1ac75b845dcccc021af36c92ae61d5b938.html" title="Function template trim_right_copy">trim_right_copy()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/trim_8hpp_1afa8579eae167a324d0b723c68f0b8ac6.html" title="Function template trim_right">trim_right()</a></code>
+                        </td>
+</tr>
+<tr>
+<td align="left"><code class="computeroutput">trim</code></td>
+<td align="left">Remove leading and trailing spaces from a string</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/trim_8hpp_1a444fd830c7491572c1cda997f4787b6e.html" title="Function trim_copy_if">trim_copy_if()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/trim_8hpp_1a73061b5aae50eccb0835397cfbc2f0af.html" title="Function template trim_if">trim_if()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/trim_8hpp_1a82eb2d0b868f6199468518ecde1f9f97.html" title="Function template trim_copy">trim_copy()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/trim_8hpp_1a43176b48fed44bc161b5ed635bea9cbe.html" title="Function template trim">trim()</a></code>
+                        </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break"><div class="table">
+<a name="id-1.3.3.6.2.4"></a><p class="title"><b>Table 2.3. Predicates</b></p>
+<div class="table-contents"><table class="table" summary="Predicates">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th align="left">Algorithm name</th>
+<th align="left">Description</th>
+<th align="left">Functions</th>
+</tr></thead>
+<tbody>
+<tr>
+<td align="left"><code class="computeroutput">starts_with</code></td>
+<td align="left">Check if a string is a prefix of the other one</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/predicate_8hpp_1a8bd43e694e6202b357abee9deffe9ade.html" title="Function starts_with">starts_with()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/predicate_8hpp_1a754936c071b73fd2fbf90696a95c2bf7.html" title="Function template istarts_with">istarts_with()</a></code>
+                        </td>
+</tr>
+<tr>
+<td align="left"><code class="computeroutput">ends_with</code></td>
+<td align="left">Check if a string is a suffix of the other one</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/predicate_8hpp_1a29350a2b35157e9f7d474815244540d7.html" title="Function ends_with">ends_with()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/predicate_8hpp_1a123041d82b0b20788aa5fbd13c892e2d.html" title="Function template iends_with">iends_with()</a></code>
+                        </td>
+</tr>
+<tr>
+<td align="left"><code class="computeroutput">contains</code></td>
+<td align="left">Check if a string is contained of the other one</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/predicate_8hpp_1aea40974228db77cc0189545b6db42623.html" title="Function contains">contains()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/predicate_8hpp_1a1d00c06a5c29059549ab2b603829688a.html" title="Function template icontains">icontains()</a></code>
+                        </td>
+</tr>
+<tr>
+<td align="left"><code class="computeroutput">equals</code></td>
+<td align="left">Check if two strings are equal</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/predicate_8hpp_1ae725b4746b62fd5a852813902fbe76e5.html" title="Function equals">equals()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/predicate_8hpp_1aa4ed65a727f35ef0bb27bec3eecfe177.html" title="Function template iequals">iequals()</a></code>
+                        </td>
+</tr>
+<tr>
+<td align="left"><code class="computeroutput">lexicographical_compare</code></td>
+<td align="left">Check if a string is lexicographically less then another one</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/predicate_8hpp_1ae0d5eded5f0480ead2fc9b454ebdc5af.html" title="Function lexicographical_compare">lexicographical_compare()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/predicate_8hpp_1ac56ef3671cb8f7eaca746ebaf80c182b.html" title="Function template ilexicographical_compare">ilexicographical_compare()</a></code>
+                        </td>
+</tr>
+<tr>
+<td align="left"><code class="computeroutput">all</code></td>
+<td align="left">Check if all elements of a string satisfy the given predicate</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/predicate_8hpp_1a02b634f662d43fcbc5fbe52fa29e1886.html" title="Function template all">all()</a></code>
+                        </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break"><div class="table">
+<a name="id-1.3.3.6.2.5"></a><p class="title"><b>Table 2.4. Find algorithms</b></p>
+<div class="table-contents"><table class="table" summary="Find algorithms">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th align="left">Algorithm name</th>
+<th align="left">Description</th>
+<th align="left">Functions</th>
+</tr></thead>
+<tbody>
+<tr>
+<td align="left">find_first</td>
+<td align="left">Find the first occurrence of a string in the input</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/find_8hpp_1aa58dddb10512dbbc87144e8cc5c6e994.html" title="Function template find_first">find_first()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/find_8hpp_1a12eb858264c4f0c606a87da962efdbde.html" title="Function template ifind_first">ifind_first()</a></code>
+                        </td>
+</tr>
+<tr>
+<td align="left">find_last</td>
+<td align="left">Find the last occurrence of a string in the input</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/find_8hpp_1a2b8cac68a6cb6479f2dfc824d87c3a9b.html" title="Function template find_last">find_last()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/find_8hpp_1a4d59fc92dd6d35b4cf78e241b1e6f981.html" title="Function template ifind_last">ifind_last()</a></code>
+                        </td>
+</tr>
+<tr>
+<td align="left">find_nth</td>
+<td align="left">Find the nth (zero-indexed) occurrence of a string in the input</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/find_8hpp_1ad53052a622f02dfc28cbe592c16dd271.html" title="Function template find_nth">find_nth()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/find_8hpp_1a7c8790ffc3a01fe00fc0ce805d37dcb1.html" title="Function template ifind_nth">ifind_nth()</a></code>
+                        </td>
+</tr>
+<tr>
+<td align="left">find_head</td>
+<td align="left">Retrieve the head of a string</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/find_8hpp_1a35c7b10fbb679c31e3648fe8b7c5c908.html" title="Function template find_head">find_head()</a></code>
+                        </td>
+</tr>
+<tr>
+<td align="left">find_tail</td>
+<td align="left">Retrieve the tail of a string</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/find_8hpp_1ac56d3cc0f05d85b59023c0dac0267e0e.html" title="Function template find_tail">find_tail()</a></code>
+                        </td>
+</tr>
+<tr>
+<td align="left">find_token</td>
+<td align="left">Find first matching token in the string</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/find_8hpp_1a324c1aee913042dce1e8a0603c307007.html" title="Function template find_token">find_token()</a></code>
+                        </td>
+</tr>
+<tr>
+<td align="left">find_regex</td>
+<td align="left">Use the regular expression to search the string</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/regex_8hpp_1a82c9969fd2f4db3d86ca1c0b1d13f172.html" title="Function template find_regex">find_regex()</a></code>
+                        </td>
+</tr>
+<tr>
+<td align="left">find</td>
+<td align="left">Generic find algorithm</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/find_8hpp_1ac702a2e662a4e50a6ce50ec4582ee02d.html" title="Function template find">find()</a></code>
+                        </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break"><div class="table">
+<a name="id-1.3.3.6.2.6"></a><p class="title"><b>Table 2.5. Erase/Replace</b></p>
+<div class="table-contents"><table class="table" summary="Erase/Replace">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th align="left">Algorithm name</th>
+<th align="left">Description</th>
+<th align="left">Functions</th>
+</tr></thead>
+<tbody>
+<tr>
+<td align="left">replace/erase_first</td>
+<td align="left">Replace/Erase the first occurrence of a string in the input</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/replace_8hpp_1a1e8bf05f74de4164e5d8c0d7b919cbe9.html" title="Function template replace_first">replace_first()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/replace_8hpp_1a56a35f1ff2dde5a6728890865127b4c2.html" title="Function replace_first_copy">replace_first_copy()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/replace_8hpp_1a4906ddf3718aef141e329894b98135c8.html" title="Function template ireplace_first">ireplace_first()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/replace_8hpp_1a5e04d1e178847f8eba2d5f30ff5dc68f.html" title="Function ireplace_first_copy">ireplace_first_copy()</a></code>
+                            <br>                      
+                            <code class="computeroutput"><a class="link" href="../doxygen/erase_8hpp_1ad0064d43449a96a886cd5c20a50548aa.html" title="Function template erase_first">erase_first()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/erase_8hpp_1aa4398759e1423da5662bff6e81dfa2ca.html" title="Function erase_first_copy">erase_first_copy()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/erase_8hpp_1a64d385ac39d0840e1a316b30134b9359.html" title="Function template ierase_first">ierase_first()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/erase_8hpp_1ae14bad65133350b2fb14e3dad8d03231.html" title="Function ierase_first_copy">ierase_first_copy()</a></code>
+                        </td>
+</tr>
+<tr>
+<td align="left">replace/erase_last</td>
+<td align="left">Replace/Erase the last occurrence of a string in the input</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/replace_8hpp_1af04bab1e5163fa71de7cba59a378f9a3.html" title="Function template replace_last">replace_last()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/replace_8hpp_1affc804ec226a5509d83bf6f4905aee96.html" title="Function replace_last_copy">replace_last_copy()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/replace_8hpp_1ab770edced0c781a40ca51bfdd0917f96.html" title="Function template ireplace_last">ireplace_last()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/replace_8hpp_1a4150f5d6d2118d0692e02fbcc033728d.html" title="Function ireplace_last_copy">ireplace_last_copy()</a></code>
+                            <br>                      
+                            <code class="computeroutput"><a class="link" href="../doxygen/erase_8hpp_1a201760c7eac760128e125b0fe4b1ee78.html" title="Function template erase_last">erase_last()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/erase_8hpp_1aef97a708e4a8646665540e57eb99ef4f.html" title="Function erase_last_copy">erase_last_copy()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/erase_8hpp_1ae42b20bb849f8c6b5870dc08d71f5da2.html" title="Function template ierase_last">ierase_last()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/erase_8hpp_1a588907ddbad35447e870ff9853b44721.html" title="Function ierase_last_copy">ierase_last_copy()</a></code>
+                        </td>
+</tr>
+<tr>
+<td align="left">replace/erase_nth</td>
+<td align="left">Replace/Erase the nth (zero-indexed) occurrence of a string in the input</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/replace_8hpp_1ad21dc210dabce948a4b049d274ef12de.html" title="Function template replace_nth">replace_nth()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/replace_8hpp_1ac7f0d8b21edf789e57a6adf75a359b0f.html" title="Function replace_nth_copy">replace_nth_copy()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/replace_8hpp_1a96f4bbcbeccb20ae2225bcf2ab44680b.html" title="Function template ireplace_nth">ireplace_nth()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/replace_8hpp_1a17483bc5f2fcdb609ed1a4560f794230.html" title="Function ireplace_nth_copy">ireplace_nth_copy()</a></code>
+                            <br>                      
+                            <code class="computeroutput"><a class="link" href="../doxygen/erase_8hpp_1a016238cf2ecba7f816a0e8e3072d4606.html" title="Function template erase_nth">erase_nth()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/erase_8hpp_1a37b3dcff63053b07ceaa7c65c30a071e.html" title="Function erase_nth_copy">erase_nth_copy()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/erase_8hpp_1a64370c2c3a6ce9000c2b8048ffc77f43.html" title="Function template ierase_nth">ierase_nth()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/erase_8hpp_1a52458074259c1681f9a11b90cb4feb88.html" title="Function ierase_nth_copy">ierase_nth_copy()</a></code>
+                        </td>
+</tr>
+<tr>
+<td align="left">replace/erase_all</td>
+<td align="left">Replace/Erase the all occurrences of a string in the input</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/replace_8hpp_1a575fad69199b22609797adca04da4342.html" title="Function template replace_all">replace_all()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/replace_8hpp_1ac23c93fd8691191eef1c749598128a1b.html" title="Function replace_all_copy">replace_all_copy()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/replace_8hpp_1a55aba99ecb4faab348211f4f039d1708.html" title="Function template ireplace_all">ireplace_all()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/replace_8hpp_1a210874d37d6c35e1448c2e994f3138ad.html" title="Function ireplace_all_copy">ireplace_all_copy()</a></code>
+                            <br>                      
+                            <code class="computeroutput"><a class="link" href="../doxygen/erase_8hpp_1ab63d697f1811c5db5b54c23062054695.html" title="Function template erase_all">erase_all()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/erase_8hpp_1ae79d0f1f475716d2da5b9e831bc58f58.html" title="Function erase_all_copy">erase_all_copy()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/erase_8hpp_1a9a349857437d22b7486b2a1a71a15811.html" title="Function template ierase_all">ierase_all()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/erase_8hpp_1a51db5d8a340d98822809fce44db290c8.html" title="Function ierase_all_copy">ierase_all_copy()</a></code>
+                        </td>
+</tr>
+<tr>
+<td align="left">replace/erase_head</td>
+<td align="left">Replace/Erase the head of the input</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/replace_8hpp_1a01b03d337bc0bd9492f9771e3c79e16a.html" title="Function template replace_head">replace_head()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/replace_8hpp_1a7fc6e62bf20751619b05add8b369c4de.html" title="Function replace_head_copy">replace_head_copy()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/erase_8hpp_1a46c32f75030315ba30c68c50b3241d06.html" title="Function template erase_head">erase_head()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/erase_8hpp_1a406d930f2bf3f33a9b882f242bdbbfa7.html" title="Function erase_head_copy">erase_head_copy()</a></code>
+                            <br>
+                        </td>
+</tr>
+<tr>
+<td align="left">replace/erase_tail</td>
+<td align="left">Replace/Erase the tail of the input</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/replace_8hpp_1a4b2e6ceba9cc192a6ecc773cf90dbf9c.html" title="Function template replace_tail">replace_tail()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/replace_8hpp_1a9992deb5bb7c13edb95635d0e76ac357.html" title="Function replace_tail_copy">replace_tail_copy()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/erase_8hpp_1aa74dc32aaa1f568ec9aad6ede247944a.html" title="Function template erase_tail">erase_tail()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/erase_8hpp_1a6d47787ebcaab40aca8475b11df20e89.html" title="Function erase_tail_copy">erase_tail_copy()</a></code>
+                            <br>
+                        </td>
+</tr>
+<tr>
+<td align="left">replace/erase_regex</td>
+<td align="left">Replace/Erase a substring matching the given regular expression</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/regex_8hpp_1aadf696fe72490f2b9ea4c643bec43d5e.html" title="Function template replace_regex">replace_regex()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/regex_8hpp_1ace0d3d671f9418310913494f6adad2a6.html" title="Function replace_regex_copy">replace_regex_copy()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/regex_8hpp_1a90ec8598fd6faa3cb2dab696c2c94953.html" title="Function template erase_regex">erase_regex()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/regex_8hpp_1a10dc0953feebc8b04edfae56428ec838.html" title="Function erase_regex_copy">erase_regex_copy()</a></code>
+                            <br>
+                        </td>
+</tr>
+<tr>
+<td align="left">replace/erase_regex_all</td>
+<td align="left">Replace/Erase all substrings matching the given regular expression</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/regex_8hpp_1acf62229c407f4e266b4106b5d7d0eade.html" title="Function template replace_all_regex">replace_all_regex()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/regex_8hpp_1aa39e4421dae7439060040d307f3061e0.html" title="Function replace_all_regex_copy">replace_all_regex_copy()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/regex_8hpp_1aef4af737e6fc4d53346ac3284d0815d4.html" title="Function template erase_all_regex">erase_all_regex()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/regex_8hpp_1a81ab52b8218cfeb49fe6248c5062e171.html" title="Function erase_all_regex_copy">erase_all_regex_copy()</a></code>
+                            <br>
+                        </td>
+</tr>
+<tr>
+<td align="left">find_format</td>
+<td align="left">Generic replace algorithm</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/find__format_8hpp_1af7c28074e6a21acae105753837d011b6.html" title="Function template find_format">find_format()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/find__format_8hpp_1a0b73fc3574e36e89aeda7cd37f2667f4.html" title="Function find_format_copy">find_format_copy()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/find__format_8hpp_1a2894f2edcb77cc49d4f6e4f5652fb0e7.html" title="Function template find_format_all">find_format_all()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/find__format_8hpp_1a57a12a80b27a7a6b6a9980dde81f006c.html" title="Function find_format_all_copy">find_format_all_copy()()</a></code>
+                        </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break"><div class="table">
+<a name="id-1.3.3.6.2.7"></a><p class="title"><b>Table 2.6. Split</b></p>
+<div class="table-contents"><table class="table" summary="Split">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th align="left">Algorithm name</th>
+<th align="left">Description</th>
+<th align="left">Functions</th>
+</tr></thead>
+<tbody>
+<tr>
+<td align="left">find_all</td>
+<td align="left">Find/Extract all matching substrings in the input</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/split_8hpp_1ac0d7acd87c9598620574a998e9e906a2.html" title="Function template find_all">find_all()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/split_8hpp_1a251024fe0d086b96b4c3c41724bd5ec2.html" title="Function template ifind_all">ifind_all()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/regex_8hpp_1a40595d16f499680ed7f6e02a09b6ea37.html" title="Function template find_all_regex">find_all_regex()</a></code>
+                        </td>
+</tr>
+<tr>
+<td align="left">split</td>
+<td align="left">Split input into parts</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/split_8hpp_1a58d960629ea9e004c6adaa39c65f3f28.html" title="Function template split">split()</a></code>
+                            <br>
+                            <code class="computeroutput"><a class="link" href="../doxygen/regex_8hpp_1af61c52315b321aec34c299ee007fc2b9.html" title="Function template split_regex">split_regex()</a></code>
+                        </td>
+</tr>
+<tr>
+<td align="left">iter_find</td>
+<td align="left">Iteratively apply the finder to the input to find all matching substrings</td>
+<td align="left">
+							<code class="computeroutput"><a class="link" href="../doxygen/iter__find_8hpp_1af6f7c9598a8c623463cd665a00d3c863.html" title="Function template iter_find">iter_find()</a></code>
+						</td>
+</tr>
+<tr>
+<td align="left">iter_split</td>
+<td align="left">Use the finder to find matching substrings in the input and use them as separators to split the input into parts</td>
+<td align="left">
+							<code class="computeroutput"><a class="link" href="../doxygen/iter__find_8hpp_1a25d79f421ed79acc1febb3a3181aac85.html" title="Function template iter_split">iter_split()</a></code>
+						</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break"><div class="table">
+<a name="id-1.3.3.6.2.8"></a><p class="title"><b>Table 2.7. Join</b></p>
+<div class="table-contents"><table class="table" summary="Join">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th align="left">Algorithm name</th>
+<th align="left">Description</th>
+<th align="left">Functions</th>
+</tr></thead>
+<tbody>
+<tr>
+<td align="left">join</td>
+<td align="left">Join all elements in a container into a single string</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/join_8hpp_1a12a3877e92ad09f3fd2d4f45f5283163.html" title="Function template join">join</a></code>
+                        </td>
+</tr>
+<tr>
+<td align="left">join_if</td>
+<td align="left">Join all elements in a container that satisfies the condition into a single string</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/join_8hpp_1ac82ecd35ba7c23cdd00b08b531dd3190.html" title="Function template join_if">join_if()</a></code>
+                        </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break">
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id-1.3.3.6.3"></a>Finders and Formatters</h3></div></div></div>
+<div class="table">
+<a name="id-1.3.3.6.3.2"></a><p class="title"><b>Table 2.8. Finders</b></p>
+<div class="table-contents"><table class="table" summary="Finders">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th align="left">Finder</th>
+<th align="left">Description</th>
+<th align="left">Generators</th>
+</tr></thead>
+<tbody>
+<tr>
+<td align="left">first_finder</td>
+<td align="left">Search for the first match of the string in an input</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/finder_8hpp_1a680845e57c64b5ec9b47f7c0b9b5275c.html" title="Function first_finder">first_finder()</a></code>
+                        </td>
+</tr>
+<tr>
+<td align="left">last_finder</td>
+<td align="left">Search for the last match of the string in an input</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/finder_8hpp_1a4075601342c153e7fd855fc7a5129dce.html" title="Function last_finder">last_finder()</a></code>
+                        </td>
+</tr>
+<tr>
+<td align="left">nth_finder</td>
+<td align="left">Search for the nth (zero-indexed) match of the string in an input</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/finder_8hpp_1a5d42219dc192942817a4e2140d1ce46c.html" title="Function nth_finder">nth_finder()</a></code>
+                        </td>
+</tr>
+<tr>
+<td align="left">head_finder</td>
+<td align="left">Retrieve the head of an input</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/finder_8hpp_1ae19d4dac8f032c47c970c04f40db5878.html" title="Function head_finder">head_finder()</a></code>
+                        </td>
+</tr>
+<tr>
+<td align="left">tail_finder</td>
+<td align="left">Retrieve the tail of an input</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/finder_8hpp_1ab33bd6b0de0b73c80bdf1443338daee6.html" title="Function tail_finder">tail_finder()</a></code>
+                        </td>
+</tr>
+<tr>
+<td align="left">token_finder</td>
+<td align="left">Search for a matching token in an input</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/finder_8hpp_1a28adfd08ec7e089f0bfc001a6723e3f2.html" title="Function template token_finder">token_finder()</a></code>
+                        </td>
+</tr>
+<tr>
+<td align="left">range_finder</td>
+<td align="left">Do no search, always returns the given range</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/finder_8hpp_1a95b4353517f1d6a285239612c394df23.html" title="Function range_finder">range_finder()</a></code>
+                        </td>
+</tr>
+<tr>
+<td align="left">regex_finder</td>
+<td align="left">Search for a substring matching the given regex</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/regex__find__format_8hpp_1a8f7b39bc82f9e25ddd6564835a7956d9.html" title="Function template regex_finder">regex_finder()</a></code>
+                        </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break"><div class="table">
+<a name="id-1.3.3.6.3.3"></a><p class="title"><b>Table 2.9. Formatters</b></p>
+<div class="table-contents"><table class="table" summary="Formatters">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th align="left">Formatter</th>
+<th align="left">Description</th>
+<th align="left">Generators</th>
+</tr></thead>
+<tbody>
+<tr>
+<td align="left">const_formatter</td>
+<td align="left">Constant formatter. Always return the specified string</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/formatter_8hpp_1a47aa548b48e2b85b96b1f33eaca82b8e.html" title="Function template const_formatter">const_formatter()</a></code>
+                        </td>
+</tr>
+<tr>
+<td align="left">identity_formatter</td>
+<td align="left">Identity formatter. Return unmodified input input</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/formatter_8hpp_1ad5607af3bc0928b09553c12dd4485122.html" title="Function template identity_formatter">identity_formatter()</a></code>
+                        </td>
+</tr>
+<tr>
+<td align="left">empty_formatter</td>
+<td align="left">Null formatter. Always return an empty string</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/formatter_8hpp_1aeddf2aac576e0ffecd541d8d5c1c322c.html" title="Function template empty_formatter">empty_formatter()</a></code>
+                        </td>
+</tr>
+<tr>
+<td align="left">regex_formatter</td>
+<td align="left">Regex formatter. Format regex match using the specification in the format string</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/regex__find__format_8hpp_1ac09c90c02744d1797934f448e6290c5d.html" title="Function template regex_formatter">regex_formatter()</a></code>
+                        </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break">
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id-1.3.3.6.4"></a>Iterators</h3></div></div></div>
+<div class="table">
+<a name="id-1.3.3.6.4.2"></a><p class="title"><b>Table 2.10. Find Iterators</b></p>
+<div class="table-contents"><table class="table" summary="Find Iterators">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th align="left">Iterator name</th>
+<th align="left">Description</th>
+<th align="left">Iterator class</th>
+</tr></thead>
+<tbody>
+<tr>
+<td align="left">find_iterator</td>
+<td align="left">Iterates through matching substrings in the input</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/classboost_1_1algorithm_1_1find__iterator.html" title="Class template find_iterator">find_iterator</a></code>
+                        </td>
+</tr>
+<tr>
+<td align="left">split_iterator</td>
+<td align="left">Iterates through gaps between matching substrings in the input</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/classboost_1_1algorithm_1_1split__iterator.html" title="Class template split_iterator">split_iterator</a></code>
+                        </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break">
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id-1.3.3.6.5"></a>Classification</h3></div></div></div>
+<div class="table">
+<a name="id-1.3.3.6.5.2"></a><p class="title"><b>Table 2.11. Predicates</b></p>
+<div class="table-contents"><table class="table" summary="Predicates">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th align="left">Predicate name</th>
+<th align="left">Description</th>
+<th align="left">Generator</th>
+</tr></thead>
+<tbody>
+<tr>
+<td align="left">is_classified</td>
+<td align="left">Generic <code class="computeroutput">ctype</code> mask based classification</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/classification_8hpp_1a279049312f2502ade6483fb641bfac99.html" title="Function is_classified">is_classified()</a></code>
+                        </td>
+</tr>
+<tr>
+<td align="left">is_space</td>
+<td align="left">Recognize spaces</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/classification_8hpp_1a27c93b15da176a054314b87fc8f0b0d9.html" title="Function is_space">is_space()</a></code>
+                        </td>
+</tr>
+<tr>
+<td align="left">is_alnum</td>
+<td align="left">Recognize alphanumeric characters</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/classification_8hpp_1a688afb7e00182847f935526f2baedb88.html" title="Function is_alnum">is_alnum()</a></code>
+                        </td>
+</tr>
+<tr>
+<td align="left">is_alpha</td>
+<td align="left">Recognize letters</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/classification_8hpp_1a5f0d802b0e5276f86a1f90125cb3acfe.html" title="Function is_alpha">is_alpha()</a></code>
+                        </td>
+</tr>
+<tr>
+<td align="left">is_cntrl</td>
+<td align="left">Recognize control characters</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/classification_8hpp_1a8a310420f9c0757a2a0944663df8ee46.html" title="Function is_cntrl">is_cntrl()</a></code>
+                        </td>
+</tr>
+<tr>
+<td align="left">is_digit</td>
+<td align="left">Recognize decimal digits</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/classification_8hpp_1ac34dbdf3b64bd3c43111c9feb30d32cb.html" title="Function is_digit">is_digit()</a></code>
+                        </td>
+</tr>
+<tr>
+<td align="left">is_graph</td>
+<td align="left">Recognize graphical characters</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/classification_8hpp_1a7169f4a3321ec20badc15dd012735291.html" title="Function is_graph">is_graph()</a></code>
+                        </td>
+</tr>
+<tr>
+<td align="left">is_lower</td>
+<td align="left">Recognize lower case characters</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/classification_8hpp_1a5b7f26421a530340e5815b05e67d955f.html" title="Function is_lower">is_lower()</a></code>
+                        </td>
+</tr>
+<tr>
+<td align="left">is_print</td>
+<td align="left">Recognize printable characters</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/classification_8hpp_1a91c7c3c5b40405c9920b9c5179520049.html" title="Function is_print">is_print()</a></code>
+                        </td>
+</tr>
+<tr>
+<td align="left">is_punct</td>
+<td align="left">Recognize punctuation characters</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/classification_8hpp_1a0156a7d132b50d14dd637092525c440e.html" title="Function is_punct">is_punct()</a></code>
+                        </td>
+</tr>
+<tr>
+<td align="left">is_upper</td>
+<td align="left">Recognize uppercase characters</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/classification_8hpp_1aa034034f6b2599ceeaa407b98ea9787c.html" title="Function is_upper">is_upper()</a></code>
+                        </td>
+</tr>
+<tr>
+<td align="left">is_xdigit</td>
+<td align="left">Recognize hexadecimal digits</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/classification_8hpp_1a3ddcabe4a2f789fb1b2fdf9a7903edc2.html" title="Function is_xdigit">is_xdigit()</a></code>
+                        </td>
+</tr>
+<tr>
+<td align="left">is_any_of</td>
+<td align="left">Recognize any of a sequence of characters</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/classification_8hpp_1a70baa227e1c881e4283ce2ca6b938311.html" title="Function template is_any_of">is_any_of()</a></code>
+                        </td>
+</tr>
+<tr>
+<td align="left">is_from_range</td>
+<td align="left">Recognize characters inside a min..max range</td>
+<td align="left">
+                            <code class="computeroutput"><a class="link" href="../doxygen/classification_8hpp_1acf5fa9c30cab12668335c35e4e960480.html" title="Function template is_from_range">is_from_range()</a></code>
+                        </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break">
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2002-2004 Pavol Droba<p>Use, modification and distribution is subject to the Boost
+                Software License, Version 1.0. (See accompanying file
+                <code class="filename">LICENSE_1_0.txt</code> or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+            </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="usage.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../string_algo.html"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="design.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

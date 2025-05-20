@@ -1,0 +1,141 @@
+[/
+    Copyright (c) 2019-2024 Ruben Perez Hidalgo (rubenperez038 at gmail dot com)
+   
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+]
+
+[section:error_handling Error handling and available overloads]
+
+This section describes the different error handling strategies
+you may use with this library, as well as the different overloads
+available for each function involving network transfers.
+
+This library uses Boost.System error codes and exceptions,
+like Asio and Beast. Some server-reported errors may include additional
+diagnostics information. For example, if you issue a query 
+and one of the referenced fields does not exist, the server will return
+an error message indicating which was the offending field. This library
+makes these diagnostics available through the following classes and
+functions:
+
+[variablelist
+    [
+        [[reflink diagnostics]]
+        [
+            An object containing this extra diagnostic information
+            about an error. [refmem diagnostics server_message] contains the server-generated error
+            string, if any.
+        ]
+    ]
+    [
+        [[reflink error_with_diagnostics]]
+        [
+            An exception that inherits from `boost::system::system_error`
+            that contains a `diagnostics` object.
+        ]
+    ]
+    [
+        [[reflink with_diagnostics]]
+        [A completion token that embeds diagnostics in exceptions thrown by async functions.]
+    ]
+    [
+        [[reflink is_fatal_error]]
+        [Checks whether an `error_code` is [link mysql.error_handling.fatal fatal] and thus requires re-establishing the connection.]
+    ]
+]
+
+Every piece of functionality involving network transfers is offered in four versions:
+
+* [*Synchronous with exceptions]. When they fail, they throw an [reflink error_with_diagnostics] exception.
+* [*Synchronous with [reflink error_code] and [reflink diagnostics]]. These functions output an `error_code` and a `diagnostics`
+  object by lvalue reference to report failures.
+* [*Asynchronous, without `diagnostics`]. When they fail, they call the completion handler with a non-empty `error_code`.
+* [*Asynchronous, with `diagnostics`]. They have a `diagnostics&` parameter before the `CompletionToken`.
+  When they fail, they set the `diagnostics` parameter to any server-provided
+  diagnostic information, if available, and then call the completion handler with a non-empty `error_code`.
+
+[heading Types of errors]
+
+This library defines the following types of errors:
+
+[table
+    [
+        [Type of error]
+        [Values contained in...]
+        [Error category]
+        [Description]
+    ]
+    [
+        [Client errors]
+        [[reflink client_errc] enum]
+        [[reflink get_client_category]]
+        [Failures detected by Boost.MySQL, like corrupt messages.]
+    ]
+    [
+        [Common server errors]
+        [[reflink common_server_errc] enum]
+        [[reflink get_common_server_category]]
+        [
+            Errors reported by the server, common to both MySQL and MariaDB.
+            No new codes will be added here, since the two DBs are currently developed independently.
+        ]
+    ]
+    [
+        [MySQL-specific server errors]
+        [Integer codes in [br][include_file boost/mysql/mysql_server_errc.hpp]]
+        [[reflink get_mysql_server_category]]
+        [
+            Errors reported by the server, specific to MySQL. New codes will be added in the future.
+        ]
+    ]
+    [
+        [MariaDB-specific server errors]
+        [Integer codes in [br][include_file boost/mysql/mariadb_server_errc.hpp]]
+        [[reflink get_mariadb_server_category]]
+        [
+            Errors reported by the server, specific to MariaDB. New codes will be added in the future.
+        ]
+    ]
+]
+
+Note that new codes are added frequently, so server-specific codes
+are represented as integers, instead of enums.
+
+[heading:fatal Fatal vs. non-fatal errors]
+
+When an operation on a established connection (like a query execution)
+results in an error, two situations may happen:
+
+* The connection object is left in a well-known state. You can safely use the object
+  to run further operations without problems. For instance, if a query fails with
+  `common_server_errc::er_no_such_table` because you misspelled a table name,
+  it is safe to run other queries after the failed one. Such errors are called [*non-fatal].
+* The connection object is left un an unknown state. Further operations will fail with
+  unpredictable results. You should close and re-establish the connection.
+  These are [*fatal] errors, and include protocol and network errors.
+
+You can use [reflink is_fatal_error] to distinguish between fatal and non-fatal error codes.
+
+[heading Security notes on diagnostics]
+
+The error message given by [refmem diagnostics server_message] [*may contain user-provided input,
+and should be treated as untrusted]. For certain errors, the MySQL server will include the offending
+field names and values, which may contain arbitrary input. Please use with caution.
+
+This message may contain non-ASCII characters. It's encoded using the connection's character set.
+
+[heading:system_result Using boost::system::result]
+
+Some functions, like [refmem basic_format_context get], use
+[@boost:/libs/system/doc/html/system.html#ref_boostsystemresult_hpp `boost::system::result<T>`]
+to communicate errors. `result<T>` contains either a value (an instance of `T`), or an [reflink error_code],
+if the operation failed. `result<T>` is similar to `std::expected`, but only requires C++11.
+
+Given a `result<T>` object `r`, you can get its contained value calling `r.value()`.
+If `r` contained an error, a `boost::system::result` exception with the contained
+error code is thrown. `r.has_value()`, `r.has_error()` and `r.error()` can be
+used to inspect the object.
+
+
+[endsect]

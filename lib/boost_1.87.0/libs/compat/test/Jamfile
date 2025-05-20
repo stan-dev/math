@@ -1,0 +1,117 @@
+#  Boost.Compat Test Jamfile
+#  Copyright 2015-2023 Peter Dimov
+#  Distributed under the Boost Software License, Version 1.0.
+#  https://www.boost.org/LICENSE_1_0.txt
+
+import testing ;
+import-search /boost/config/checks ;
+import config : requires ;
+
+project
+  : default-build
+
+    <warnings>extra
+
+  : requirements
+
+    [ requires cxx11_variadic_templates cxx11_template_aliases cxx11_decltype cxx11_constexpr ]
+
+    <threading>multi
+
+    <toolset>msvc:<warnings-as-errors>on
+    <toolset>gcc:<warnings-as-errors>on
+    <toolset>clang:<warnings-as-errors>on
+
+    <library>/boost/core//boost_core
+    <library>/boost/mp11//boost_mp11
+
+    # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81601
+    # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=91146
+    # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=92397
+    <toolset>gcc,<undefined-sanitizer>norecover:<cxxflags>"-Wno-array-bounds"
+    <toolset>gcc,<address-sanitizer>norecover:<cxxflags>"-Wno-array-bounds"
+  ;
+
+run quick.cpp ;
+
+run latch_test.cpp ;
+
+run shared_lock_test.cpp ;
+run shared_lock_test.cpp : : : <exception-handling>off : shared_lock_test_nx ;
+
+run invoke_fn_test.cpp ;
+run invoke_obj_test.cpp ;
+run invoke_mfn_test.cpp ;
+run invoke_md_test.cpp ;
+
+run mem_fn_mfn_test.cpp ;
+run mem_fn_md_test.cpp ;
+
+run invoke_fn_noexcept_test.cpp ;
+run invoke_obj_noexcept_test.cpp ;
+run invoke_mfn_noexcept_test.cpp ;
+run invoke_md_noexcept_test.cpp ;
+
+compile invoke_fn_constexpr_test.cpp ;
+compile invoke_obj_constexpr_test.cpp ;
+compile invoke_mfn_constexpr_test.cpp
+  : <toolset>gcc-4.8:<build>no <toolset>gcc-4.9:<build>no ;
+compile invoke_md_constexpr_test.cpp
+  : <toolset>gcc-4.8:<build>no <toolset>gcc-4.9:<build>no ;
+
+run invoke_result_test.cpp ;
+run is_invocable_test.cpp ;
+run is_nothrow_invocable_test.cpp ;
+
+run bind_front_fn_test.cpp ;
+run bind_front_obj_test.cpp ;
+run bind_front_mfn_test.cpp ;
+run bind_front_md_test.cpp ;
+
+compile bind_front_fn_constexpr_test.cpp ;
+compile bind_front_obj_constexpr_test.cpp ;
+compile bind_front_mfn_constexpr_test.cpp ;
+compile bind_front_md_constexpr_test.cpp ;
+
+run integer_sequence_test.cpp ;
+
+run bind_back_fn_test.cpp ;
+run bind_back_obj_test.cpp ;
+run bind_back_mfn_test.cpp ;
+run bind_back_md_test.cpp ;
+
+compile bind_back_fn_constexpr_test.cpp ;
+compile bind_back_obj_constexpr_test.cpp ;
+compile bind_back_mfn_constexpr_test.cpp ;
+compile bind_back_md_constexpr_test.cpp ;
+
+run invoke_r_fn_test.cpp ;
+run invoke_r_obj_test.cpp ;
+run invoke_r_mfn_test.cpp ;
+run invoke_r_md_test.cpp ;
+
+run invoke_r_fn_noexcept_test.cpp ;
+run invoke_r_obj_noexcept_test.cpp ;
+run invoke_r_mfn_noexcept_test.cpp ;
+run invoke_r_md_noexcept_test.cpp ;
+
+compile invoke_r_fn_constexpr_test.cpp ;
+compile invoke_r_obj_constexpr_test.cpp ;
+compile invoke_r_mfn_constexpr_test.cpp
+  : <toolset>gcc-4.8:<build>no <toolset>gcc-4.9:<build>no ;
+compile invoke_r_md_constexpr_test.cpp
+  : <toolset>gcc-4.8:<build>no <toolset>gcc-4.9:<build>no ;
+
+run is_invocable_r_test.cpp ;
+run is_nothrow_invocable_r_test.cpp ;
+
+run function_ref_fn_test.cpp ;
+run function_ref_obj_test.cpp ;
+run function_ref_mfn_test.cpp ;
+
+run function_ref_fn_noexcept_test.cpp ;
+run function_ref_mfn_noexcept_test.cpp ;
+run function_ref_obj_noexcept_test.cpp ;
+
+run to_array_lvalue_test.cpp ;
+run to_array_rvalue_test.cpp ;

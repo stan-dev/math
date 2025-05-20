@@ -1,0 +1,80 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class unbounded_fifo_queue</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.Log v2">
+<link rel="up" href="../../sinks.html#doxygen.sinks.unbounded__fifo__queue_8hpp" title="Header &lt;boost/log/sinks/unbounded_fifo_queue.hpp&gt;">
+<link rel="prev" href="classboost_1_1log_1_1sinks_1_1basic__text__ostream__backend.html" title="Class template basic_text_ostream_backend">
+<link rel="next" href="classboost_1_1log_1_1sinks_1_1unbounded__ordering__queue.html" title="Class template unbounded_ordering_queue">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr><td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td></tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1log_1_1sinks_1_1basic__text__ostream__backend.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../sinks.html#doxygen.sinks.unbounded__fifo__queue_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1log_1_1sinks_1_1unbounded__ordering__queue.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.sinks.classboost_1_1log_1_1sinks_1_1unbounded__fifo__queue"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class unbounded_fifo_queue</span></h2>
+<p>boost::log::sinks::unbounded_fifo_queue — Unbounded FIFO log record queueing strategy. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../sinks.html#doxygen.sinks.unbounded__fifo__queue_8hpp" title="Header &lt;boost/log/sinks/unbounded_fifo_queue.hpp&gt;">boost/log/sinks/unbounded_fifo_queue.hpp</a>&gt;
+
+</span>
+<span class="keyword">class</span> <a class="link" href="classboost_1_1log_1_1sinks_1_1unbounded__fifo__queue.html" title="Class unbounded_fifo_queue">unbounded_fifo_queue</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1log_1_1sinks_1_1unbounded__fifo__queue.html#id174-bb">protected member functions</a></span>
+  <a class="link" href="classboost_1_1log_1_1sinks_1_1unbounded__fifo__queue.html#doxygen.sinks.classboost_1_1log_1_1sinks_1_1unbounded__fifo__queue_1aca06e2b801f5adbe14c592cf03ceb03b"><span class="identifier">unbounded_fifo_queue</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ArgsT<span class="special">&gt;</span> <span class="keyword">explicit</span> <a class="link" href="classboost_1_1log_1_1sinks_1_1unbounded__fifo__queue.html#doxygen.sinks.classboost_1_1log_1_1sinks_1_1unbounded__fifo__queue_1a7056d63596b807375901385ddb9662cb"><span class="identifier">unbounded_fifo_queue</span></a><span class="special">(</span><span class="identifier">ArgsT</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1log_1_1sinks_1_1unbounded__fifo__queue.html#doxygen.sinks.classboost_1_1log_1_1sinks_1_1unbounded__fifo__queue_1a9a54e38b1cff223d6056578594b83d4e"><span class="identifier">enqueue</span></a><span class="special">(</span><span class="identifier">record_view</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1log_1_1sinks_1_1unbounded__fifo__queue.html#doxygen.sinks.classboost_1_1log_1_1sinks_1_1unbounded__fifo__queue_1a6549b2faf18b29ba14531089640737d2"><span class="identifier">try_enqueue</span></a><span class="special">(</span><span class="identifier">record_view</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1log_1_1sinks_1_1unbounded__fifo__queue.html#doxygen.sinks.classboost_1_1log_1_1sinks_1_1unbounded__fifo__queue_1a543857c8b4ea961c73b73f9e746c953b"><span class="identifier">try_dequeue_ready</span></a><span class="special">(</span><span class="identifier">record_view</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1log_1_1sinks_1_1unbounded__fifo__queue.html#doxygen.sinks.classboost_1_1log_1_1sinks_1_1unbounded__fifo__queue_1a1f8c5e0a28aa8356f926527a87aa2790"><span class="identifier">try_dequeue</span></a><span class="special">(</span><span class="identifier">record_view</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1log_1_1sinks_1_1unbounded__fifo__queue.html#doxygen.sinks.classboost_1_1log_1_1sinks_1_1unbounded__fifo__queue_1a95984a3c5898a67b03d9907c587367ba"><span class="identifier">dequeue_ready</span></a><span class="special">(</span><span class="identifier">record_view</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1log_1_1sinks_1_1unbounded__fifo__queue.html#doxygen.sinks.classboost_1_1log_1_1sinks_1_1unbounded__fifo__queue_1a16d547e5c303d94a0f9a56bdf57c3b4e"><span class="identifier">interrupt_dequeue</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id74453"></a><h2>Description</h2>
+<p>The <code class="computeroutput"><a class="link" href="classboost_1_1log_1_1sinks_1_1unbounded__fifo__queue.html" title="Class unbounded_fifo_queue">unbounded_fifo_queue</a></code> class is intended to be used with the <code class="computeroutput"><a class="link" href="classboost_1_1log_1_1sinks_1_1asynchronous__sink.html" title="Class template asynchronous_sink">asynchronous_sink</a></code> frontend as a log record queueing strategy.</p>
+<p>This strategy implements the simplest logic of log record buffering between threads: the queue has no limits and imposes no ordering over the queued elements aside from the order in which they are enqueued. Because of this the queue provides decent performance and scalability, however if sink backends can't consume log records fast enough the queue may grow uncontrollably. When this is an issue, it is recommended to use one of the bounded strategies. </p>
+<div class="refsect2">
+<a name="id74461"></a><h3>
+<a name="id174-bb"></a><code class="computeroutput">unbounded_fifo_queue</code> protected member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.sinks.classboost_1_1log_1_1sinks_1_1unbounded__fifo__queue_1aca06e2b801f5adbe14c592cf03ceb03b"></a><span class="identifier">unbounded_fifo_queue</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>Default constructor. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ArgsT<span class="special">&gt;</span> <span class="keyword">explicit</span> <a name="doxygen.sinks.classboost_1_1log_1_1sinks_1_1unbounded__fifo__queue_1a7056d63596b807375901385ddb9662cb"></a><span class="identifier">unbounded_fifo_queue</span><span class="special">(</span><span class="identifier">ArgsT</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span></pre>Initializing constructor. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.sinks.classboost_1_1log_1_1sinks_1_1unbounded__fifo__queue_1a9a54e38b1cff223d6056578594b83d4e"></a><span class="identifier">enqueue</span><span class="special">(</span><span class="identifier">record_view</span> <span class="keyword">const</span> <span class="special">&amp;</span> rec<span class="special">)</span><span class="special">;</span></pre>Enqueues log record to the queue. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.sinks.classboost_1_1log_1_1sinks_1_1unbounded__fifo__queue_1a6549b2faf18b29ba14531089640737d2"></a><span class="identifier">try_enqueue</span><span class="special">(</span><span class="identifier">record_view</span> <span class="keyword">const</span> <span class="special">&amp;</span> rec<span class="special">)</span><span class="special">;</span></pre>Attempts to enqueue log record to the queue. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.sinks.classboost_1_1log_1_1sinks_1_1unbounded__fifo__queue_1a543857c8b4ea961c73b73f9e746c953b"></a><span class="identifier">try_dequeue_ready</span><span class="special">(</span><span class="identifier">record_view</span> <span class="special">&amp;</span> rec<span class="special">)</span><span class="special">;</span></pre>Attempts to dequeue a log record ready for processing from the queue, does not block if the queue is empty. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.sinks.classboost_1_1log_1_1sinks_1_1unbounded__fifo__queue_1a1f8c5e0a28aa8356f926527a87aa2790"></a><span class="identifier">try_dequeue</span><span class="special">(</span><span class="identifier">record_view</span> <span class="special">&amp;</span> rec<span class="special">)</span><span class="special">;</span></pre>Attempts to dequeue log record from the queue, does not block if the queue is empty. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.sinks.classboost_1_1log_1_1sinks_1_1unbounded__fifo__queue_1a95984a3c5898a67b03d9907c587367ba"></a><span class="identifier">dequeue_ready</span><span class="special">(</span><span class="identifier">record_view</span> <span class="special">&amp;</span> rec<span class="special">)</span><span class="special">;</span></pre>Dequeues log record from the queue, blocks if the queue is empty. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.sinks.classboost_1_1log_1_1sinks_1_1unbounded__fifo__queue_1a16d547e5c303d94a0f9a56bdf57c3b4e"></a><span class="identifier">interrupt_dequeue</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>Wakes a thread possibly blocked in the <code class="computeroutput">dequeue</code> method. </li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2007-2024 Andrey Semashev<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>).
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1log_1_1sinks_1_1basic__text__ostream__backend.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../sinks.html#doxygen.sinks.unbounded__fifo__queue_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1log_1_1sinks_1_1unbounded__ordering__queue.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

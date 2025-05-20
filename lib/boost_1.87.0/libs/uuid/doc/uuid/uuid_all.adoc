@@ -1,0 +1,15 @@
+[#uuid_all]
+== <boost/uuid.hpp>
+
+:idprefix: uuid_all_
+
+This convenience header makes the entire library available.
+
+=== Synopsis
+
+[source,c++]
+----
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_io.hpp>
+#include <boost/uuid/uuid_generators.hpp>
+----

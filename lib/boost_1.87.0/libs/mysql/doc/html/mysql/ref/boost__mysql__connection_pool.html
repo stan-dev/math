@@ -1,0 +1,321 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>connection_pool</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../../pt01.html" title="Part Two: Reference. ">
+<link rel="prev" href="boost__mysql__connection/async_quit/overload2.html" title="connection::async_quit (2 of 2 overloads)">
+<link rel="next" href="boost__mysql__connection_pool/executor_type.html" title="connection_pool::executor_type">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="boost__mysql__connection/async_quit/overload2.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../pt01.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="boost__mysql__connection_pool/executor_type.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="mysql.ref.boost__mysql__connection_pool"></a><a class="link" href="boost__mysql__connection_pool.html" title="connection_pool">connection_pool</a>
+</h4></div></div></div>
+<p>
+        A pool of connections of variable size.
+      </p>
+<h5>
+<a name="mysql.ref.boost__mysql__connection_pool.h0"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__connection_pool.synopsis"></a></span><a class="link" href="boost__mysql__connection_pool.html#mysql.ref.boost__mysql__connection_pool.synopsis">Synopsis</a>
+      </h5>
+<p>
+        Defined in header <code class="literal">&lt;<a href="https://github.com/boostorg/mysql/blob/master/include/boost/mysql/connection_pool.hpp" target="_top">boost/mysql/connection_pool.hpp</a>&gt;</code>
+      </p>
+<pre class="programlisting"><span class="keyword">class</span> <span class="identifier">connection_pool</span><span class="special">;</span>
+</pre>
+<h5>
+<a name="mysql.ref.boost__mysql__connection_pool.h1"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__connection_pool.types"></a></span><a class="link" href="boost__mysql__connection_pool.html#mysql.ref.boost__mysql__connection_pool.types">Types</a>
+      </h5>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Name
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody><tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__connection_pool/executor_type.html" title="connection_pool::executor_type">executor_type</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  The executor type associated to this object.
+                </p>
+              </td>
+</tr></tbody>
+</table></div>
+<h5>
+<a name="mysql.ref.boost__mysql__connection_pool.h2"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__connection_pool.member_functions"></a></span><a class="link" href="boost__mysql__connection_pool.html#mysql.ref.boost__mysql__connection_pool.member_functions">Member
+        Functions</a>
+      </h5>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Name
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__connection_pool/async_get_connection.html" title="connection_pool::async_get_connection">async_get_connection</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Retrieves a connection from the pool.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__connection_pool/async_run.html" title="connection_pool::async_run">async_run</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Runs the pool task in charge of managing connections.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__connection_pool/cancel.html" title="connection_pool::cancel">cancel</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Stops any current outstanding operation and marks the pool as cancelled.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__connection_pool/connection_pool.html" title="connection_pool::connection_pool">connection_pool</a> <span class="silver">[constructor]</span></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Constructs a connection pool. <br><span class="silver">—</span><br>Move-constructor.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__connection_pool/get_executor.html" title="connection_pool::get_executor">get_executor</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Retrieves the executor associated to this object.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__connection_pool/operator_eq_.html" title="connection_pool::operator=">operator=</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Move assignment.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__connection_pool/valid.html" title="connection_pool::valid">valid</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns whether the object is in a moved-from state.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__connection_pool/_dtor_connection_pool.html" title="connection_pool::~connection_pool">~connection_pool</a> <span class="silver">[destructor]</span></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Destructor.
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+<h5>
+<a name="mysql.ref.boost__mysql__connection_pool.h3"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__connection_pool.description"></a></span><a class="link" href="boost__mysql__connection_pool.html#mysql.ref.boost__mysql__connection_pool.description">Description</a>
+      </h5>
+<p>
+        A connection pool creates and manages <a class="link" href="boost__mysql__any_connection.html" title="any_connection"><code class="computeroutput"><span class="identifier">any_connection</span></code></a> objects. Using a
+        pool allows to reuse sessions, avoiding part of the overhead associated to
+        session establishment. It also features built-in error handling and reconnection.
+        See the discussion and examples for more details on when to use this class.
+      </p>
+<p>
+        Connections are retrieved by <a class="link" href="boost__mysql__connection_pool/async_get_connection.html" title="connection_pool::async_get_connection"><code class="computeroutput"><span class="identifier">async_get_connection</span></code></a>, which yields
+        a <a class="link" href="boost__mysql__pooled_connection.html" title="pooled_connection"><code class="computeroutput"><span class="identifier">pooled_connection</span></code></a> object. They are
+        returned to the pool when the <code class="computeroutput"><span class="identifier">pooled_connection</span></code>
+        is destroyed, or by calling <a class="link" href="boost__mysql__pooled_connection/return_without_reset.html" title="pooled_connection::return_without_reset"><code class="computeroutput"><span class="identifier">pooled_connection</span><span class="special">::</span><span class="identifier">return_without_reset</span></code></a>.
+      </p>
+<p>
+        A pool needs to be run before it can return any connection. Use <a class="link" href="boost__mysql__connection_pool/async_run.html" title="connection_pool::async_run"><code class="computeroutput"><span class="identifier">async_run</span></code></a> for this. Pools can only
+        be run once.
+      </p>
+<p>
+        Connections are created, connected and managed internally by the pool, following
+        a well-defined state model. Please refer to the discussion for details.
+      </p>
+<p>
+        Due to oddities in Boost.Asio's universal async model, this class only exposes
+        async functions. You can use <code class="computeroutput"><span class="identifier">asio</span><span class="special">::</span><span class="identifier">use_future</span></code>
+        to transform them into sync functions (please read the discussion for details).
+      </p>
+<p>
+        This is a move-only type.
+      </p>
+<h5>
+<a name="mysql.ref.boost__mysql__connection_pool.h4"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__connection_pool.default_completion_tokens"></a></span><a class="link" href="boost__mysql__connection_pool.html#mysql.ref.boost__mysql__connection_pool.default_completion_tokens">Default
+        completion tokens</a>
+      </h5>
+<p>
+        The default completion token for all async operations in this class is <code class="computeroutput"><span class="identifier">with_diagnostics</span><span class="special">(</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">deferred</span><span class="special">)</span></code>,
+        which allows you to use <code class="computeroutput"><span class="identifier">co_await</span></code>
+        and have the expected exceptions thrown on error.
+      </p>
+<h5>
+<a name="mysql.ref.boost__mysql__connection_pool.h5"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__connection_pool.thread_safety"></a></span><a class="link" href="boost__mysql__connection_pool.html#mysql.ref.boost__mysql__connection_pool.thread_safety">Thread-safety</a>
+      </h5>
+<p>
+        Pools are composed of an internal state object, plus a handle to such state.
+        Each component has different thread-safety rules.
+      </p>
+<p>
+        Regarding <span class="bold"><strong>internal state</strong></span>, connection pools
+        are <span class="bold"><strong>not thread-safe by default</strong></span>, but can
+        be made safe by constructing them with <a class="link" href="boost__mysql__pool_params/thread_safe.html" title="pool_params::thread_safe"><code class="computeroutput"><span class="identifier">pool_params</span><span class="special">::</span><span class="identifier">thread_safe</span></code></a> set to <code class="computeroutput"><span class="keyword">true</span></code>. Internal state is also mutated by some
+        functions outside <code class="computeroutput"><span class="identifier">connection_pool</span></code>,
+        like returning connections.
+      </p>
+<p>
+        The following actions imply a pool state mutation, and are protected by a
+        strand when thread-safety is enabled:
+      </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+            Calling <a class="link" href="boost__mysql__connection_pool/async_run.html" title="connection_pool::async_run"><code class="computeroutput"><span class="identifier">connection_pool</span><span class="special">::</span><span class="identifier">async_run</span></code></a>.
+          </li>
+<li class="listitem">
+            Calling <a class="link" href="boost__mysql__connection_pool/async_get_connection.html" title="connection_pool::async_get_connection"><code class="computeroutput"><span class="identifier">connection_pool</span><span class="special">::</span><span class="identifier">async_get_connection</span></code></a>.
+          </li>
+<li class="listitem">
+            Cancelling <a class="link" href="boost__mysql__connection_pool/async_get_connection.html" title="connection_pool::async_get_connection"><code class="computeroutput"><span class="identifier">async_get_connection</span></code></a> by emitting
+            a cancellation signal.
+          </li>
+<li class="listitem">
+            Returning a connection by destroying a <a class="link" href="boost__mysql__pooled_connection.html" title="pooled_connection"><code class="computeroutput"><span class="identifier">pooled_connection</span></code></a> or calling
+            <a class="link" href="boost__mysql__pooled_connection/return_without_reset.html" title="pooled_connection::return_without_reset"><code class="computeroutput"><span class="identifier">pooled_connection</span><span class="special">::</span><span class="identifier">return_without_reset</span></code></a>.
+          </li>
+<li class="listitem">
+            Cancelling the pool by calling <a class="link" href="boost__mysql__connection_pool/cancel.html" title="connection_pool::cancel"><code class="computeroutput"><span class="identifier">connection_pool</span><span class="special">::</span><span class="identifier">cancel</span></code></a>, emitting a cancellation
+            signal for <a class="link" href="boost__mysql__connection_pool/async_run.html" title="connection_pool::async_run"><code class="computeroutput"><span class="identifier">async_run</span></code></a>, or destroying the
+            <code class="computeroutput"><span class="identifier">connection_pool</span></code> object.
+          </li>
+</ul></div>
+<p>
+        The <span class="bold"><strong>handle to the pool state</strong></span> is <span class="bold"><strong>never thread-safe</strong></span>, even for pools with thread-safety
+        enabled. Functions like assignments modify the handle, and cause race conditions
+        if called concurrently with other functions. Other objects, like <a class="link" href="boost__mysql__pooled_connection.html" title="pooled_connection"><code class="computeroutput"><span class="identifier">pooled_connection</span></code></a>, have their own
+        state handle, and thus interact only with the pool state.
+      </p>
+<p>
+        In summary:
+      </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+            Distinct objects: safe.
+          </li>
+<li class="listitem">
+            Shared objects: unsafe. Setting <a class="link" href="boost__mysql__pool_params/thread_safe.html" title="pool_params::thread_safe"><code class="computeroutput"><span class="identifier">pool_params</span><span class="special">::</span><span class="identifier">thread_safe</span></code></a> to <code class="computeroutput"><span class="keyword">true</span></code> makes some functions safe.
+          </li>
+</ul></div>
+<h5>
+<a name="mysql.ref.boost__mysql__connection_pool.h6"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__connection_pool.object_lifetimes"></a></span><a class="link" href="boost__mysql__connection_pool.html#mysql.ref.boost__mysql__connection_pool.object_lifetimes">Object
+        lifetimes</a>
+      </h5>
+<p>
+        Connection pool objects create an internal state object that is referenced
+        by other objects and operations (like <a class="link" href="boost__mysql__pooled_connection.html" title="pooled_connection"><code class="computeroutput"><span class="identifier">pooled_connection</span></code></a>). This object
+        will be kept alive using shared ownership semantics even after the <code class="computeroutput"><span class="identifier">connection_pool</span></code> object is destroyed. This
+        results in intuitive lifetime rules.
+      </p>
+<p>
+        Convenience header <code class="literal">&lt;<a href="https://github.com/boostorg/mysql/blob/master/include/boost/mysql.hpp" target="_top">boost/mysql.hpp</a>&gt;</code>
+      </p>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="boost__mysql__connection/async_quit/overload2.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../pt01.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="boost__mysql__connection_pool/executor_type.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

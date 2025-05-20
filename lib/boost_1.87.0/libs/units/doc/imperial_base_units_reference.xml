@@ -1,0 +1,276 @@
+<?xml version="1.0" standalone="yes"?>
+<library-reference id="imperial_base_units_reference"><title>Imperial Base Units Reference</title><header id="doxygen.imperial_base_units_reference.drachm_8hpp" name="boost/units/base_units/imperial/drachm.hpp">
+<namespace name="boost">
+<namespace name="units">
+<struct-specialization id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01imperial_1_1drachm__base__unit_01_4" name="base_unit_info"><template>
+    </template><specialization><template-arg>imperial::drachm_base_unit</template-arg></specialization><method-group name="public static functions">
+<method id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01imperial_1_1drachm__base__unit_01_4_1af9883110ffaa63f1ecdae99467299ffa" name="name" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+<method id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01imperial_1_1drachm__base__unit_01_4_1a5ea6bcb1e29b75e9a9c96a1af18cc526" name="symbol" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+</method-group>
+</struct-specialization><namespace name="imperial">
+<typedef id="doxygen.imperial_base_units_reference.namespaceboost_1_1units_1_1imperial_1a35c2ba4b141b97b035a1f3e3f9d5567a" name="drachm_base_unit"><type>scaled_base_unit&lt; <classname>pound_base_unit</classname>, scale&lt; 16, static_rational&lt;-2 &gt; &gt; &gt;</type></typedef>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.imperial_base_units_reference.fluid__ounce_8hpp" name="boost/units/base_units/imperial/fluid_ounce.hpp">
+<namespace name="boost">
+<namespace name="units">
+<struct-specialization id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01imperial_1_1fluid__ounce__base__unit_01_4" name="base_unit_info"><template>
+    </template><specialization><template-arg>imperial::fluid_ounce_base_unit</template-arg></specialization><method-group name="public static functions">
+<method id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01imperial_1_1fluid__ounce__base__unit_01_4_1ac980561207346bf93ed7b64a1f861963" name="name" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+<method id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01imperial_1_1fluid__ounce__base__unit_01_4_1a0089ac51d7b450b0adc7097925ba3d27" name="symbol" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+</method-group>
+</struct-specialization><namespace name="imperial">
+<typedef id="doxygen.imperial_base_units_reference.namespaceboost_1_1units_1_1imperial_1adafc93a0aff765b439047c3abc6868ae" name="fluid_ounce_base_unit"><type>scaled_base_unit&lt; <classname>pint_base_unit</classname>, scale&lt; 20, static_rational&lt;-1 &gt; &gt; &gt;</type></typedef>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.imperial_base_units_reference.foot_8hpp" name="boost/units/base_units/imperial/foot.hpp">
+<namespace name="boost">
+<namespace name="units">
+<struct-specialization id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01imperial_1_1foot__base__unit_01_4" name="base_unit_info"><template>
+    </template><specialization><template-arg>imperial::foot_base_unit</template-arg></specialization><method-group name="public static functions">
+<method id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01imperial_1_1foot__base__unit_01_4_1a25873e94f1942143dc6b7d1e8b28e0f7" name="name" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+<method id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01imperial_1_1foot__base__unit_01_4_1abc8057f92afcb77d9ba4bde33e94c6bd" name="symbol" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+</method-group>
+</struct-specialization><namespace name="imperial">
+<typedef id="doxygen.imperial_base_units_reference.namespaceboost_1_1units_1_1imperial_1a94a9b5e4e12bfd2df56f5679c3c213ab" name="foot_base_unit"><type>scaled_base_unit&lt; <classname>yard_base_unit</classname>, scale&lt; 3, static_rational&lt;-1 &gt; &gt; &gt;</type></typedef>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.imperial_base_units_reference.furlong_8hpp" name="boost/units/base_units/imperial/furlong.hpp">
+<namespace name="boost">
+<namespace name="units">
+<struct-specialization id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01imperial_1_1furlong__base__unit_01_4" name="base_unit_info"><template>
+    </template><specialization><template-arg>imperial::furlong_base_unit</template-arg></specialization><method-group name="public static functions">
+<method id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01imperial_1_1furlong__base__unit_01_4_1a64214bec4de1479b345cf066b9994a2c" name="name" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+<method id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01imperial_1_1furlong__base__unit_01_4_1a45aeba0b416cca6742d22a081b7bb9d4" name="symbol" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+</method-group>
+</struct-specialization><namespace name="imperial">
+<typedef id="doxygen.imperial_base_units_reference.namespaceboost_1_1units_1_1imperial_1a0a18a3bec6517b5245459564f8f6a28c" name="furlong_base_unit"><type>scaled_base_unit&lt; <classname>yard_base_unit</classname>, scale&lt; 220, static_rational&lt; 1 &gt; &gt; &gt;</type></typedef>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.imperial_base_units_reference.gallon_8hpp" name="boost/units/base_units/imperial/gallon.hpp">
+<namespace name="boost">
+<namespace name="units">
+<struct-specialization id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01imperial_1_1gallon__base__unit_01_4" name="base_unit_info"><template>
+    </template><specialization><template-arg>imperial::gallon_base_unit</template-arg></specialization><method-group name="public static functions">
+<method id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01imperial_1_1gallon__base__unit_01_4_1ae1d2450406e24b9804450ea3b80acd3c" name="name" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+<method id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01imperial_1_1gallon__base__unit_01_4_1ac5ca34c70efe4596cc53829b36e8dddf" name="symbol" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+</method-group>
+</struct-specialization><namespace name="imperial">
+<typedef id="doxygen.imperial_base_units_reference.namespaceboost_1_1units_1_1imperial_1ae7ae607a7193b501341cf9dfe9ba9da6" name="gallon_base_unit"><type>scaled_base_unit&lt; <classname>pint_base_unit</classname>, scale&lt; 8, static_rational&lt; 1 &gt; &gt; &gt;</type></typedef>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.imperial_base_units_reference.gill_8hpp" name="boost/units/base_units/imperial/gill.hpp">
+<namespace name="boost">
+<namespace name="units">
+<struct-specialization id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01imperial_1_1gill__base__unit_01_4" name="base_unit_info"><template>
+    </template><specialization><template-arg>imperial::gill_base_unit</template-arg></specialization><method-group name="public static functions">
+<method id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01imperial_1_1gill__base__unit_01_4_1aab1d2eb770a7288c5a90e22a2fdca640" name="name" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+<method id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01imperial_1_1gill__base__unit_01_4_1abb359718114634fc6bf8da9ab7aaaea0" name="symbol" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+</method-group>
+</struct-specialization><namespace name="imperial">
+<typedef id="doxygen.imperial_base_units_reference.namespaceboost_1_1units_1_1imperial_1a0942e02801400bc2b3c4adcf30d701db" name="gill_base_unit"><type>scaled_base_unit&lt; <classname>pint_base_unit</classname>, scale&lt; 4, static_rational&lt;-1 &gt; &gt; &gt;</type></typedef>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.imperial_base_units_reference.grain_8hpp" name="boost/units/base_units/imperial/grain.hpp">
+<namespace name="boost">
+<namespace name="units">
+<struct-specialization id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01imperial_1_1grain__base__unit_01_4" name="base_unit_info"><template>
+    </template><specialization><template-arg>imperial::grain_base_unit</template-arg></specialization><method-group name="public static functions">
+<method id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01imperial_1_1grain__base__unit_01_4_1a2eb6e8c70c92c45ae2eed360fa8bcdbd" name="name" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+<method id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01imperial_1_1grain__base__unit_01_4_1a09d25ebafefb4daceb2d4c7c1136f087" name="symbol" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+</method-group>
+</struct-specialization><namespace name="imperial">
+<typedef id="doxygen.imperial_base_units_reference.namespaceboost_1_1units_1_1imperial_1a047897864d35f22bf1e6dcdb8542bff4" name="grain_base_unit"><type>scaled_base_unit&lt; <classname>pound_base_unit</classname>, scale&lt; 7000, static_rational&lt;-1 &gt; &gt; &gt;</type></typedef>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.imperial_base_units_reference.hundredweight_8hpp" name="boost/units/base_units/imperial/hundredweight.hpp">
+<namespace name="boost">
+<namespace name="units">
+<struct-specialization id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01imperial_1_1hundredweight__base__unit_01_4" name="base_unit_info"><template>
+    </template><specialization><template-arg>imperial::hundredweight_base_unit</template-arg></specialization><method-group name="public static functions">
+<method id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01imperial_1_1hundredweight__base__unit_01_4_1aea698a546de0c3e93f175eeee878e9e3" name="name" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+<method id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01imperial_1_1hundredweight__base__unit_01_4_1a8683e98166ed7b6ae80e2202a4e516ba" name="symbol" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+</method-group>
+</struct-specialization><namespace name="imperial">
+<typedef id="doxygen.imperial_base_units_reference.namespaceboost_1_1units_1_1imperial_1a865806a08f07f3c0f43f315f873c1526" name="hundredweight_base_unit"><type>scaled_base_unit&lt; <classname>pound_base_unit</classname>, scale&lt; 112, static_rational&lt; 1 &gt; &gt; &gt;</type></typedef>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.imperial_base_units_reference.inch_8hpp" name="boost/units/base_units/imperial/inch.hpp">
+<namespace name="boost">
+<namespace name="units">
+<struct-specialization id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01imperial_1_1inch__base__unit_01_4" name="base_unit_info"><template>
+    </template><specialization><template-arg>imperial::inch_base_unit</template-arg></specialization><method-group name="public static functions">
+<method id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01imperial_1_1inch__base__unit_01_4_1a557a1988141b0dcbb9cb0760e2be3285" name="name" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+<method id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01imperial_1_1inch__base__unit_01_4_1a3268ba889c6d2fa03e4c71c77d319d53" name="symbol" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+</method-group>
+</struct-specialization><namespace name="imperial">
+<typedef id="doxygen.imperial_base_units_reference.namespaceboost_1_1units_1_1imperial_1af31848641da8ec3abafe325cea7cf07e" name="inch_base_unit"><type>scaled_base_unit&lt; <classname>yard_base_unit</classname>, scale&lt; 36, static_rational&lt;-1 &gt; &gt; &gt;</type></typedef>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.imperial_base_units_reference.league_8hpp" name="boost/units/base_units/imperial/league.hpp">
+<namespace name="boost">
+<namespace name="units">
+<struct-specialization id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01imperial_1_1league__base__unit_01_4" name="base_unit_info"><template>
+    </template><specialization><template-arg>imperial::league_base_unit</template-arg></specialization><method-group name="public static functions">
+<method id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01imperial_1_1league__base__unit_01_4_1aac345c7c0debcf401afae32dbb6ba095" name="name" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+<method id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01imperial_1_1league__base__unit_01_4_1a5822719c2ca12b453f2021718102defc" name="symbol" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+</method-group>
+</struct-specialization><namespace name="imperial">
+<typedef id="doxygen.imperial_base_units_reference.namespaceboost_1_1units_1_1imperial_1a3e17b31d873c211c942bf60fd84b4a00" name="league_base_unit"><type>scaled_base_unit&lt; <classname>yard_base_unit</classname>, scale&lt; 5280, static_rational&lt; 1 &gt; &gt; &gt;</type></typedef>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.imperial_base_units_reference.mile_8hpp" name="boost/units/base_units/imperial/mile.hpp">
+<namespace name="boost">
+<namespace name="units">
+<struct-specialization id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01imperial_1_1mile__base__unit_01_4" name="base_unit_info"><template>
+    </template><specialization><template-arg>imperial::mile_base_unit</template-arg></specialization><method-group name="public static functions">
+<method id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01imperial_1_1mile__base__unit_01_4_1aaa6bb3116af1da71b0728b65aea7d200" name="name" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+<method id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01imperial_1_1mile__base__unit_01_4_1ae31575019f43e4c93db0facbe88d8e54" name="symbol" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+</method-group>
+</struct-specialization><namespace name="imperial">
+<typedef id="doxygen.imperial_base_units_reference.namespaceboost_1_1units_1_1imperial_1a261b6ca42e751357af3b8356368078af" name="mile_base_unit"><type>scaled_base_unit&lt; <classname>yard_base_unit</classname>, scale&lt; 1760, static_rational&lt; 1 &gt; &gt; &gt;</type></typedef>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.imperial_base_units_reference.ounce_8hpp" name="boost/units/base_units/imperial/ounce.hpp">
+<namespace name="boost">
+<namespace name="units">
+<struct-specialization id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01imperial_1_1ounce__base__unit_01_4" name="base_unit_info"><template>
+    </template><specialization><template-arg>imperial::ounce_base_unit</template-arg></specialization><method-group name="public static functions">
+<method id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01imperial_1_1ounce__base__unit_01_4_1a36194d9108a8b4c7214d96eeb80ae644" name="name" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+<method id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01imperial_1_1ounce__base__unit_01_4_1a7151f7c990a86ff9a2483c88ab6fa349" name="symbol" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+</method-group>
+</struct-specialization><namespace name="imperial">
+<typedef id="doxygen.imperial_base_units_reference.namespaceboost_1_1units_1_1imperial_1a27d12009d00cd3cb02253261def57c11" name="ounce_base_unit"><type>scaled_base_unit&lt; <classname>pound_base_unit</classname>, scale&lt; 2, static_rational&lt;-4 &gt; &gt; &gt;</type></typedef>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.imperial_base_units_reference.pint_8hpp" name="boost/units/base_units/imperial/pint.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="imperial">
+<struct id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1imperial_1_1pint__base__unit" name="pint_base_unit"><inherit access="public">boost::units::base_unit&lt; pint_base_unit, si::volume ::dimension_type, -303 &gt;</inherit><method-group name="public static functions">
+<method id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1imperial_1_1pint__base__unit_1a115b947c7bb5f75a920ab6e4dc9dd982" name="name" specifiers="static"><type>const char *</type></method>
+<method id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1imperial_1_1pint__base__unit_1ab23c11641d058f86fe3bc54dc21a1356" name="symbol" specifiers="static"><type>const char *</type></method>
+</method-group>
+</struct></namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.imperial_base_units_reference.pound_8hpp" name="boost/units/base_units/imperial/pound.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="imperial">
+<struct id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1imperial_1_1pound__base__unit" name="pound_base_unit"><inherit access="public">boost::units::base_unit&lt; pound_base_unit, cgs::gram_base_unit ::dimension_type, -302 &gt;</inherit><method-group name="public static functions">
+<method id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1imperial_1_1pound__base__unit_1abe3cc56790105dd0eaa987dda6cb5809" name="name" specifiers="static"><type>const char *</type></method>
+<method id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1imperial_1_1pound__base__unit_1aa1d7e608ea4991b096a4aaf8ce5f6e0b" name="symbol" specifiers="static"><type>const char *</type></method>
+</method-group>
+</struct></namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.imperial_base_units_reference.quart_8hpp" name="boost/units/base_units/imperial/quart.hpp">
+<namespace name="boost">
+<namespace name="units">
+<struct-specialization id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01imperial_1_1quart__base__unit_01_4" name="base_unit_info"><template>
+    </template><specialization><template-arg>imperial::quart_base_unit</template-arg></specialization><method-group name="public static functions">
+<method id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01imperial_1_1quart__base__unit_01_4_1aecd90cf1bd90e8af0eceb4572c12cd39" name="name" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+<method id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01imperial_1_1quart__base__unit_01_4_1a0601018b13ad3226b08f99e9d40c733f" name="symbol" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+</method-group>
+</struct-specialization><namespace name="imperial">
+<typedef id="doxygen.imperial_base_units_reference.namespaceboost_1_1units_1_1imperial_1a83eb1cf6ad5608374e9925e1be34e451" name="quart_base_unit"><type>scaled_base_unit&lt; <classname>pint_base_unit</classname>, scale&lt; 2, static_rational&lt; 1 &gt; &gt; &gt;</type></typedef>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.imperial_base_units_reference.quarter_8hpp" name="boost/units/base_units/imperial/quarter.hpp">
+<namespace name="boost">
+<namespace name="units">
+<struct-specialization id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01imperial_1_1quarter__base__unit_01_4" name="base_unit_info"><template>
+    </template><specialization><template-arg>imperial::quarter_base_unit</template-arg></specialization><method-group name="public static functions">
+<method id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01imperial_1_1quarter__base__unit_01_4_1ac2357efd8254570cb70041463eeeebe1" name="name" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+<method id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01imperial_1_1quarter__base__unit_01_4_1a5901d0bd41cc4c4448da9c94490f1d03" name="symbol" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+</method-group>
+</struct-specialization><namespace name="imperial">
+<typedef id="doxygen.imperial_base_units_reference.namespaceboost_1_1units_1_1imperial_1a4477f9ffe669ad2eb4f6e94c453025b3" name="quarter_base_unit"><type>scaled_base_unit&lt; <classname>pound_base_unit</classname>, scale&lt; 28, static_rational&lt; 1 &gt; &gt; &gt;</type></typedef>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.imperial_base_units_reference.stone_8hpp" name="boost/units/base_units/imperial/stone.hpp">
+<namespace name="boost">
+<namespace name="units">
+<struct-specialization id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01imperial_1_1stone__base__unit_01_4" name="base_unit_info"><template>
+    </template><specialization><template-arg>imperial::stone_base_unit</template-arg></specialization><method-group name="public static functions">
+<method id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01imperial_1_1stone__base__unit_01_4_1add034533170db4852ee948463761c84d" name="name" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+<method id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01imperial_1_1stone__base__unit_01_4_1a041be61117bfe173f02b451bb1c90542" name="symbol" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+</method-group>
+</struct-specialization><namespace name="imperial">
+<typedef id="doxygen.imperial_base_units_reference.namespaceboost_1_1units_1_1imperial_1a8e25f1890ff66f14a7dc5b43c127298f" name="stone_base_unit"><type>scaled_base_unit&lt; <classname>pound_base_unit</classname>, scale&lt; 14, static_rational&lt; 1 &gt; &gt; &gt;</type></typedef>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.imperial_base_units_reference.thou_8hpp" name="boost/units/base_units/imperial/thou.hpp">
+<namespace name="boost">
+<namespace name="units">
+<struct-specialization id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01imperial_1_1thou__base__unit_01_4" name="base_unit_info"><template>
+    </template><specialization><template-arg>imperial::thou_base_unit</template-arg></specialization><method-group name="public static functions">
+<method id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01imperial_1_1thou__base__unit_01_4_1a992fd0e28b1c7893635e6c3924b287dc" name="name" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+<method id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01imperial_1_1thou__base__unit_01_4_1a8d024d948e35dc5fe56a06f59b427a10" name="symbol" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+</method-group>
+</struct-specialization><namespace name="imperial">
+<typedef id="doxygen.imperial_base_units_reference.namespaceboost_1_1units_1_1imperial_1ac0473cd76da1fdd522722a2b0db51e4f" name="thou_base_unit"><type>scaled_base_unit&lt; <classname>yard_base_unit</classname>, scale&lt; 36000, static_rational&lt;-1 &gt; &gt; &gt;</type></typedef>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.imperial_base_units_reference.ton_8hpp" name="boost/units/base_units/imperial/ton.hpp">
+<namespace name="boost">
+<namespace name="units">
+<struct-specialization id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01imperial_1_1ton__base__unit_01_4" name="base_unit_info"><template>
+    </template><specialization><template-arg>imperial::ton_base_unit</template-arg></specialization><method-group name="public static functions">
+<method id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01imperial_1_1ton__base__unit_01_4_1aa087e003ba6a064469938fdf73481e0e" name="name" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+<method id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01imperial_1_1ton__base__unit_01_4_1ae9c53cbaa918010eac5a79c762f24bf1" name="symbol" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+</method-group>
+</struct-specialization><namespace name="imperial">
+<typedef id="doxygen.imperial_base_units_reference.namespaceboost_1_1units_1_1imperial_1a8745c9cdb23e286fd686537037e7902a" name="ton_base_unit"><type>scaled_base_unit&lt; <classname>pound_base_unit</classname>, scale&lt; 2240, static_rational&lt; 1 &gt; &gt; &gt;</type></typedef>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.imperial_base_units_reference.yard_8hpp" name="boost/units/base_units/imperial/yard.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="imperial">
+<struct id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1imperial_1_1yard__base__unit" name="yard_base_unit"><inherit access="public">boost::units::base_unit&lt; yard_base_unit, si::meter_base_unit ::dimension_type, -301 &gt;</inherit><method-group name="public static functions">
+<method id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1imperial_1_1yard__base__unit_1a0ce96c6fde08f9f51a398a85db708d31" name="name" specifiers="static"><type>const char *</type></method>
+<method id="doxygen.imperial_base_units_reference.structboost_1_1units_1_1imperial_1_1yard__base__unit_1aecc95637af624472d4b7f146bb969187" name="symbol" specifiers="static"><type>const char *</type></method>
+</method-group>
+</struct></namespace>
+</namespace>
+</namespace>
+</header>
+</library-reference>

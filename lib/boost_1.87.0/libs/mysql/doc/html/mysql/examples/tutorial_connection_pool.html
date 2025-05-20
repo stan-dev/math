@@ -1,0 +1,305 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Tutorial 6 listing: connection pools</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../examples.html" title="Examples">
+<link rel="prev" href="tutorial_updates_transactions.html" title="Tutorial 5 listing: UPDATEs, transactions and multi-queries">
+<link rel="next" href="tutorial_error_handling.html" title="Tutorial 7 listing: error handling">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="tutorial_updates_transactions.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../examples.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="tutorial_error_handling.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="mysql.examples.tutorial_connection_pool"></a><a class="link" href="tutorial_connection_pool.html" title="Tutorial 6 listing: connection pools">Tutorial 6 listing:
+      connection pools</a>
+</h3></div></div></div>
+<p>
+        This example assumes you have gone through the <a class="link" href="../examples.html#mysql.examples.setup">setup</a>.
+      </p>
+<pre class="programlisting"><span class="comment">/**
+ * This example demonstrates how to use connection_pool
+ * to implement a server for a simple custom TCP-based protocol.
+ * It also demonstrates how to set timeouts with asio::cancel_after.
+ *
+ * The protocol can be used to retrieve the full name of an
+ * employee, given their ID. It works as follows:
+ *   - The client connects.
+ *   - The client sends the employee ID, as a big-endian 64-bit signed int.
+ *   - The server responds with a string containing the employee full name.
+ *   - The connection is closed.
+ *
+ * This tutorial doesn't include proper error handling.
+ * We will build it in the next one.
+ *
+ * It uses Boost.Pfr for reflection, which requires C++20.
+ * You can backport it to C++14 if you need by using Boost.Describe.
+ * It uses C++20 coroutines. If you need, you can backport
+ * it to C++11 by using callbacks, asio::yield_context
+ * or sync functions instead of coroutines.
+ *
+ * This example uses the 'boost_mysql_examples' database, which you
+ * can get by running db_setup.sql.
+ */</span>
+
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">mysql</span><span class="special">/</span><span class="identifier">connection_pool</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">mysql</span><span class="special">/</span><span class="identifier">error_with_diagnostics</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">mysql</span><span class="special">/</span><span class="identifier">pfr</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">mysql</span><span class="special">/</span><span class="identifier">pool_params</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">mysql</span><span class="special">/</span><span class="identifier">static_results</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">mysql</span><span class="special">/</span><span class="identifier">with_params</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">asio</span><span class="special">/</span><span class="identifier">awaitable</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">asio</span><span class="special">/</span><span class="identifier">buffer</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">asio</span><span class="special">/</span><span class="identifier">cancel_after</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">asio</span><span class="special">/</span><span class="identifier">co_spawn</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">asio</span><span class="special">/</span><span class="identifier">detached</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">asio</span><span class="special">/</span><span class="identifier">io_context</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">asio</span><span class="special">/</span><span class="identifier">ip</span><span class="special">/</span><span class="identifier">tcp</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">asio</span><span class="special">/</span><span class="identifier">read</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">asio</span><span class="special">/</span><span class="identifier">signal_set</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">asio</span><span class="special">/</span><span class="identifier">this_coro</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">asio</span><span class="special">/</span><span class="identifier">write</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">endian</span><span class="special">/</span><span class="identifier">conversion</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">system</span><span class="special">/</span><span class="identifier">error_code</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">chrono</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">cstdint</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">exception</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">iostream</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">string</span><span class="special">&gt;</span>
+
+<span class="keyword">namespace</span> <span class="identifier">mysql</span> <span class="special">=</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">mysql</span><span class="special">;</span>
+<span class="keyword">namespace</span> <span class="identifier">asio</span> <span class="special">=</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">;</span>
+
+<span class="comment">// Should contain a member for each field of interest present in our query</span>
+<span class="keyword">struct</span> <span class="identifier">employee</span>
+<span class="special">{</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">first_name</span><span class="special">;</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">last_name</span><span class="special">;</span>
+<span class="special">};</span>
+
+<span class="comment">// Encapsulates the database access logic.</span>
+<span class="comment">// Given an employee_id, retrieves the employee details to be sent to the client.</span>
+<span class="identifier">asio</span><span class="special">::</span><span class="identifier">awaitable</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">&gt;</span> <span class="identifier">get_employee_details</span><span class="special">(</span><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">connection_pool</span><span class="special">&amp;</span> <span class="identifier">pool</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">int64_t</span> <span class="identifier">employee_id</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="comment">// Get a connection from the pool.</span>
+    <span class="comment">// This will wait until a healthy connection is ready to be used.</span>
+    <span class="comment">// pooled_connection grants us exclusive access to the connection until</span>
+    <span class="comment">// the object is destroyed.</span>
+    <span class="comment">// Fail the operation if no connection becomes available in the next 20 seconds.</span>
+    <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">pooled_connection</span> <span class="identifier">conn</span> <span class="special">=</span> <span class="identifier">co_await</span> <span class="identifier">pool</span><span class="special">.</span><span class="identifier">async_get_connection</span><span class="special">(</span>
+        <span class="identifier">asio</span><span class="special">::</span><span class="identifier">cancel_after</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">chrono</span><span class="special">::</span><span class="identifier">seconds</span><span class="special">(</span><span class="number">1</span><span class="special">))</span>
+    <span class="special">);</span>
+
+    <span class="comment">// Use the connection normally to query the database.</span>
+    <span class="comment">// operator-&gt; returns a reference to an any_connection,</span>
+    <span class="comment">// so we can apply all what we learnt in previous tutorials</span>
+    <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">static_results</span><span class="special">&lt;</span><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">pfr_by_name</span><span class="special">&lt;</span><span class="identifier">employee</span><span class="special">&gt;&gt;</span> <span class="identifier">result</span><span class="special">;</span>
+    <span class="identifier">co_await</span> <span class="identifier">conn</span><span class="special">-&gt;</span><span class="identifier">async_execute</span><span class="special">(</span>
+        <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">with_params</span><span class="special">(</span><span class="string">"SELECT first_name, last_name FROM employee WHERE id = {}"</span><span class="special">,</span> <span class="identifier">employee_id</span><span class="special">),</span>
+        <span class="identifier">result</span>
+    <span class="special">);</span>
+
+    <span class="comment">// Compose the message to be sent back to the client</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">result</span><span class="special">.</span><span class="identifier">rows</span><span class="special">().</span><span class="identifier">empty</span><span class="special">())</span>
+    <span class="special">{</span>
+        <span class="identifier">co_return</span> <span class="string">"NOT_FOUND"</span><span class="special">;</span>
+    <span class="special">}</span>
+    <span class="keyword">else</span>
+    <span class="special">{</span>
+        <span class="keyword">const</span> <span class="keyword">auto</span><span class="special">&amp;</span> <span class="identifier">emp</span> <span class="special">=</span> <span class="identifier">result</span><span class="special">.</span><span class="identifier">rows</span><span class="special">()[</span><span class="number">0</span><span class="special">];</span>
+        <span class="identifier">co_return</span> <span class="identifier">emp</span><span class="special">.</span><span class="identifier">first_name</span> <span class="special">+</span> <span class="char">' '</span> <span class="special">+</span> <span class="identifier">emp</span><span class="special">.</span><span class="identifier">last_name</span><span class="special">;</span>
+    <span class="special">}</span>
+
+    <span class="comment">// When the pooled_connection is destroyed, the connection is returned</span>
+    <span class="comment">// to the pool, so it can be re-used.</span>
+<span class="special">}</span>
+
+<span class="identifier">asio</span><span class="special">::</span><span class="identifier">awaitable</span><span class="special">&lt;</span><span class="keyword">void</span><span class="special">&gt;</span> <span class="identifier">handle_session</span><span class="special">(</span><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">connection_pool</span><span class="special">&amp;</span> <span class="identifier">pool</span><span class="special">,</span> <span class="identifier">asio</span><span class="special">::</span><span class="identifier">ip</span><span class="special">::</span><span class="identifier">tcp</span><span class="special">::</span><span class="identifier">socket</span> <span class="identifier">client_socket</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="comment">// Read the request from the client.</span>
+    <span class="comment">// async_read ensures that the 8-byte buffer is filled, handling partial reads.</span>
+    <span class="keyword">unsigned</span> <span class="keyword">char</span> <span class="identifier">message</span><span class="special">[</span><span class="number">8</span><span class="special">]{};</span>
+    <span class="identifier">co_await</span> <span class="identifier">asio</span><span class="special">::</span><span class="identifier">async_read</span><span class="special">(</span><span class="identifier">client_socket</span><span class="special">,</span> <span class="identifier">asio</span><span class="special">::</span><span class="identifier">buffer</span><span class="special">(</span><span class="identifier">message</span><span class="special">));</span>
+
+    <span class="comment">// Parse the 64-bit big-endian int into a native int64_t</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">int64_t</span> <span class="identifier">employee_id</span> <span class="special">=</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">endian</span><span class="special">::</span><span class="identifier">load_big_s64</span><span class="special">(</span><span class="identifier">message</span><span class="special">);</span>
+
+    <span class="comment">// Invoke the database handling logic</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">response</span> <span class="special">=</span> <span class="identifier">co_await</span> <span class="identifier">get_employee_details</span><span class="special">(</span><span class="identifier">pool</span><span class="special">,</span> <span class="identifier">employee_id</span><span class="special">);</span>
+
+    <span class="comment">// Write the response back to the client.</span>
+    <span class="comment">// async_write ensures that the entire message is written, handling partial writes</span>
+    <span class="identifier">co_await</span> <span class="identifier">asio</span><span class="special">::</span><span class="identifier">async_write</span><span class="special">(</span><span class="identifier">client_socket</span><span class="special">,</span> <span class="identifier">asio</span><span class="special">::</span><span class="identifier">buffer</span><span class="special">(</span><span class="identifier">response</span><span class="special">));</span>
+
+    <span class="comment">// The socket's destructor will close the client connection</span>
+<span class="special">}</span>
+
+<span class="identifier">asio</span><span class="special">::</span><span class="identifier">awaitable</span><span class="special">&lt;</span><span class="keyword">void</span><span class="special">&gt;</span> <span class="identifier">listener</span><span class="special">(</span><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">connection_pool</span><span class="special">&amp;</span> <span class="identifier">pool</span><span class="special">,</span> <span class="keyword">unsigned</span> <span class="keyword">short</span> <span class="identifier">port</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="comment">// An object that accepts incoming TCP connections.</span>
+    <span class="identifier">asio</span><span class="special">::</span><span class="identifier">ip</span><span class="special">::</span><span class="identifier">tcp</span><span class="special">::</span><span class="identifier">acceptor</span> <span class="identifier">acc</span><span class="special">(</span><span class="identifier">co_await</span> <span class="identifier">asio</span><span class="special">::</span><span class="identifier">this_coro</span><span class="special">::</span><span class="identifier">executor</span><span class="special">);</span>
+
+    <span class="comment">// The endpoint where the server will listen.</span>
+    <span class="identifier">asio</span><span class="special">::</span><span class="identifier">ip</span><span class="special">::</span><span class="identifier">tcp</span><span class="special">::</span><span class="identifier">endpoint</span> <span class="identifier">listening_endpoint</span><span class="special">(</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">ip</span><span class="special">::</span><span class="identifier">make_address</span><span class="special">(</span><span class="string">"0.0.0.0"</span><span class="special">),</span> <span class="identifier">port</span><span class="special">);</span>
+
+    <span class="comment">// Open the acceptor</span>
+    <span class="identifier">acc</span><span class="special">.</span><span class="identifier">open</span><span class="special">(</span><span class="identifier">listening_endpoint</span><span class="special">.</span><span class="identifier">protocol</span><span class="special">());</span>
+
+    <span class="comment">// Allow reusing the local address, so we can restart our server</span>
+    <span class="comment">// without encountering errors in bind</span>
+    <span class="identifier">acc</span><span class="special">.</span><span class="identifier">set_option</span><span class="special">(</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">socket_base</span><span class="special">::</span><span class="identifier">reuse_address</span><span class="special">(</span><span class="keyword">true</span><span class="special">));</span>
+
+    <span class="comment">// Bind to the local address</span>
+    <span class="identifier">acc</span><span class="special">.</span><span class="identifier">bind</span><span class="special">(</span><span class="identifier">listening_endpoint</span><span class="special">);</span>
+
+    <span class="comment">// Start listening for connections</span>
+    <span class="identifier">acc</span><span class="special">.</span><span class="identifier">listen</span><span class="special">();</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"Server listening at "</span> <span class="special">&lt;&lt;</span> <span class="identifier">acc</span><span class="special">.</span><span class="identifier">local_endpoint</span><span class="special">()</span> <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;</span>
+
+    <span class="comment">// Start the accept loop</span>
+    <span class="keyword">while</span> <span class="special">(</span><span class="keyword">true</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="comment">// Accept a new connection</span>
+        <span class="keyword">auto</span> <span class="identifier">sock</span> <span class="special">=</span> <span class="identifier">co_await</span> <span class="identifier">acc</span><span class="special">.</span><span class="identifier">async_accept</span><span class="special">();</span>
+
+        <span class="comment">// Function implementing our session logic.</span>
+        <span class="comment">// Take ownership of the socket.</span>
+        <span class="comment">// Having this as a named variable workarounds a gcc bug</span>
+        <span class="comment">// (https://gcc.gnu.org/bugzilla/show_bug.cgi?id=107288)</span>
+        <span class="keyword">auto</span> <span class="identifier">session_logic</span> <span class="special">=</span> <span class="special">[&amp;</span><span class="identifier">pool</span><span class="special">,</span> <span class="identifier">s</span> <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">move</span><span class="special">(</span><span class="identifier">sock</span><span class="special">)]()</span> <span class="keyword">mutable</span> <span class="special">{</span>
+            <span class="keyword">return</span> <span class="identifier">handle_session</span><span class="special">(</span><span class="identifier">pool</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">move</span><span class="special">(</span><span class="identifier">s</span><span class="special">));</span>
+        <span class="special">};</span>
+
+        <span class="comment">// Launch a coroutine that runs our session logic.</span>
+        <span class="comment">// We don't co_await this coroutine so we can listen</span>
+        <span class="comment">// to new connections while the session is running.</span>
+        <span class="identifier">asio</span><span class="special">::</span><span class="identifier">co_spawn</span><span class="special">(</span>
+            <span class="comment">// Use the same executor as the current coroutine</span>
+            <span class="identifier">co_await</span> <span class="identifier">asio</span><span class="special">::</span><span class="identifier">this_coro</span><span class="special">::</span><span class="identifier">executor</span><span class="special">,</span>
+
+            <span class="comment">// Session logic</span>
+            <span class="identifier">std</span><span class="special">::</span><span class="identifier">move</span><span class="special">(</span><span class="identifier">session_logic</span><span class="special">),</span>
+
+            <span class="comment">// Propagate exceptions thrown in handle_session</span>
+            <span class="special">[](</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">exception_ptr</span> <span class="identifier">ex</span><span class="special">)</span> <span class="special">{</span>
+                <span class="keyword">if</span> <span class="special">(</span><span class="identifier">ex</span><span class="special">)</span>
+                    <span class="identifier">std</span><span class="special">::</span><span class="identifier">rethrow_exception</span><span class="special">(</span><span class="identifier">ex</span><span class="special">);</span>
+            <span class="special">}</span>
+        <span class="special">);</span>
+    <span class="special">}</span>
+<span class="special">}</span>
+
+<span class="keyword">void</span> <span class="identifier">main_impl</span><span class="special">(</span><span class="keyword">int</span> <span class="identifier">argc</span><span class="special">,</span> <span class="keyword">char</span><span class="special">**</span> <span class="identifier">argv</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">argc</span> <span class="special">!=</span> <span class="number">5</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cerr</span> <span class="special">&lt;&lt;</span> <span class="string">"Usage: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">argv</span><span class="special">[</span><span class="number">0</span><span class="special">]</span> <span class="special">&lt;&lt;</span> <span class="string">" &lt;username&gt; &lt;password&gt; &lt;server-hostname&gt; &lt;listener-port&gt;\n"</span><span class="special">;</span>
+        <span class="identifier">exit</span><span class="special">(</span><span class="number">1</span><span class="special">);</span>
+    <span class="special">}</span>
+
+    <span class="keyword">const</span> <span class="keyword">char</span><span class="special">*</span> <span class="identifier">username</span> <span class="special">=</span> <span class="identifier">argv</span><span class="special">[</span><span class="number">1</span><span class="special">];</span>
+    <span class="keyword">const</span> <span class="keyword">char</span><span class="special">*</span> <span class="identifier">password</span> <span class="special">=</span> <span class="identifier">argv</span><span class="special">[</span><span class="number">2</span><span class="special">];</span>
+    <span class="keyword">const</span> <span class="keyword">char</span><span class="special">*</span> <span class="identifier">server_hostname</span> <span class="special">=</span> <span class="identifier">argv</span><span class="special">[</span><span class="number">3</span><span class="special">];</span>
+    <span class="keyword">auto</span> <span class="identifier">listener_port</span> <span class="special">=</span> <span class="keyword">static_cast</span><span class="special">&lt;</span><span class="keyword">unsigned</span> <span class="keyword">short</span><span class="special">&gt;(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">stoi</span><span class="special">(</span><span class="identifier">argv</span><span class="special">[</span><span class="number">4</span><span class="special">]));</span>
+
+    <span class="comment">// Create an I/O context, required by all I/O objects</span>
+    <span class="identifier">asio</span><span class="special">::</span><span class="identifier">io_context</span> <span class="identifier">ctx</span><span class="special">;</span>
+
+    <span class="comment">// pool_params contains configuration for the pool.</span>
+    <span class="comment">// You must specify enough information to establish a connection,</span>
+    <span class="comment">// including the server address and credentials.</span>
+    <span class="comment">// You can configure a lot of other things, like pool limits</span>
+    <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">pool_params</span> <span class="identifier">params</span><span class="special">;</span>
+    <span class="identifier">params</span><span class="special">.</span><span class="identifier">server_address</span><span class="special">.</span><span class="identifier">emplace_host_and_port</span><span class="special">(</span><span class="identifier">server_hostname</span><span class="special">);</span>
+    <span class="identifier">params</span><span class="special">.</span><span class="identifier">username</span> <span class="special">=</span> <span class="identifier">username</span><span class="special">;</span>
+    <span class="identifier">params</span><span class="special">.</span><span class="identifier">password</span> <span class="special">=</span> <span class="identifier">password</span><span class="special">;</span>
+    <span class="identifier">params</span><span class="special">.</span><span class="identifier">database</span> <span class="special">=</span> <span class="string">"boost_mysql_examples"</span><span class="special">;</span>
+
+    <span class="comment">// Construct the pool.</span>
+    <span class="comment">// ctx will be used to create the connections and other I/O objects</span>
+    <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">connection_pool</span> <span class="identifier">pool</span><span class="special">(</span><span class="identifier">ctx</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">move</span><span class="special">(</span><span class="identifier">params</span><span class="special">));</span>
+
+    <span class="comment">// You need to call async_run on the pool before doing anything useful with it.</span>
+    <span class="comment">// async_run creates connections and keeps them healthy. It must be called</span>
+    <span class="comment">// only once per pool.</span>
+    <span class="comment">// The detached completion token means that we don't want to be notified when</span>
+    <span class="comment">// the operation ends. It's similar to a no-op callback.</span>
+    <span class="identifier">pool</span><span class="special">.</span><span class="identifier">async_run</span><span class="special">(</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">detached</span><span class="special">);</span>
+
+    <span class="comment">// signal_set is an I/O object that allows waiting for signals</span>
+    <span class="identifier">asio</span><span class="special">::</span><span class="identifier">signal_set</span> <span class="identifier">signals</span><span class="special">(</span><span class="identifier">ctx</span><span class="special">,</span> <span class="identifier">SIGINT</span><span class="special">,</span> <span class="identifier">SIGTERM</span><span class="special">);</span>
+
+    <span class="comment">// Wait for signals</span>
+    <span class="identifier">signals</span><span class="special">.</span><span class="identifier">async_wait</span><span class="special">([&amp;](</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">system</span><span class="special">::</span><span class="identifier">error_code</span><span class="special">,</span> <span class="keyword">int</span><span class="special">)</span> <span class="special">{</span>
+        <span class="comment">// Stop the execution context. This will cause io_context::run to return</span>
+        <span class="identifier">ctx</span><span class="special">.</span><span class="identifier">stop</span><span class="special">();</span>
+    <span class="special">});</span>
+
+    <span class="comment">// Launch our listener</span>
+    <span class="identifier">asio</span><span class="special">::</span><span class="identifier">co_spawn</span><span class="special">(</span>
+        <span class="identifier">ctx</span><span class="special">,</span>
+        <span class="special">[&amp;</span><span class="identifier">pool</span><span class="special">,</span> <span class="identifier">listener_port</span><span class="special">]</span> <span class="special">{</span> <span class="keyword">return</span> <span class="identifier">listener</span><span class="special">(</span><span class="identifier">pool</span><span class="special">,</span> <span class="identifier">listener_port</span><span class="special">);</span> <span class="special">},</span>
+        <span class="comment">// If any exception is thrown in the coroutine body, rethrow it.</span>
+        <span class="special">[](</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">exception_ptr</span> <span class="identifier">ptr</span><span class="special">)</span> <span class="special">{</span>
+            <span class="keyword">if</span> <span class="special">(</span><span class="identifier">ptr</span><span class="special">)</span>
+            <span class="special">{</span>
+                <span class="identifier">std</span><span class="special">::</span><span class="identifier">rethrow_exception</span><span class="special">(</span><span class="identifier">ptr</span><span class="special">);</span>
+            <span class="special">}</span>
+        <span class="special">}</span>
+    <span class="special">);</span>
+
+    <span class="comment">// Calling run will actually execute the coroutine until completion</span>
+    <span class="identifier">ctx</span><span class="special">.</span><span class="identifier">run</span><span class="special">();</span>
+<span class="special">}</span>
+
+<span class="keyword">int</span> <span class="identifier">main</span><span class="special">(</span><span class="keyword">int</span> <span class="identifier">argc</span><span class="special">,</span> <span class="keyword">char</span><span class="special">**</span> <span class="identifier">argv</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="keyword">try</span>
+    <span class="special">{</span>
+        <span class="identifier">main_impl</span><span class="special">(</span><span class="identifier">argc</span><span class="special">,</span> <span class="identifier">argv</span><span class="special">);</span>
+    <span class="special">}</span>
+    <span class="keyword">catch</span> <span class="special">(</span><span class="keyword">const</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">error_with_diagnostics</span><span class="special">&amp;</span> <span class="identifier">err</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="comment">// Some errors include additional diagnostics, like server-provided error messages.</span>
+        <span class="comment">// Security note: diagnostics::server_message may contain user-supplied values (e.g. the</span>
+        <span class="comment">// field value that caused the error) and is encoded using to the connection's character set</span>
+        <span class="comment">// (UTF-8 by default). Treat is as untrusted input.</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cerr</span> <span class="special">&lt;&lt;</span> <span class="string">"Error: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">err</span><span class="special">.</span><span class="identifier">what</span><span class="special">()</span> <span class="special">&lt;&lt;</span> <span class="string">", error code: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">err</span><span class="special">.</span><span class="identifier">code</span><span class="special">()</span> <span class="special">&lt;&lt;</span> <span class="char">'\n'</span>
+                  <span class="special">&lt;&lt;</span> <span class="string">"Server diagnostics: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">err</span><span class="special">.</span><span class="identifier">get_diagnostics</span><span class="special">().</span><span class="identifier">server_message</span><span class="special">()</span> <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;</span>
+        <span class="keyword">return</span> <span class="number">1</span><span class="special">;</span>
+    <span class="special">}</span>
+    <span class="keyword">catch</span> <span class="special">(</span><span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">exception</span><span class="special">&amp;</span> <span class="identifier">err</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cerr</span> <span class="special">&lt;&lt;</span> <span class="string">"Error: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">err</span><span class="special">.</span><span class="identifier">what</span><span class="special">()</span> <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;</span>
+        <span class="keyword">return</span> <span class="number">1</span><span class="special">;</span>
+    <span class="special">}</span>
+<span class="special">}</span>
+</pre>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="tutorial_updates_transactions.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../examples.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="tutorial_error_handling.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

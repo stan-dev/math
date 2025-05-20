@@ -1,0 +1,560 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template controlled_runge_kutta&lt;ErrorStepper, ErrorChecker, StepAdjuster, Resizer, explicit_error_stepper_fsal_tag&gt;</title>
+<link rel="stylesheet" href="../../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.Numeric.Odeint">
+<link rel="up" href="controlled__runge__kutta_8hpp.html" title="Header &lt;boost/numeric/odeint/stepper/controlled_runge_kutta.hpp&gt;">
+<link rel="prev" href="classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta.html" title="Class template controlled_runge_kutta">
+<link rel="next" href="classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_check592db9567ffc54f6c26dc0342435fa76.html" title="Class template controlled_runge_kutta&lt;ErrorStepper, ErrorChecker, StepAdjuster, Resizer, explicit_error_stepper_tag&gt;">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../logo.jpg"></td>
+<td align="center"><a href="../../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="controlled__runge__kutta_8hpp.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_check592db9567ffc54f6c26dc0342435fa76.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template controlled_runge_kutta&lt;ErrorStepper, ErrorChecker, StepAdjuster, Resizer, explicit_error_stepper_fsal_tag&gt;</span></h2>
+<p>boost::numeric::odeint::controlled_runge_kutta&lt;ErrorStepper, ErrorChecker, StepAdjuster, Resizer, explicit_error_stepper_fsal_tag&gt; — Implements step size control for Runge-Kutta FSAL steppers with error estimation. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="controlled__runge__kutta_8hpp.html" title="Header &lt;boost/numeric/odeint/stepper/controlled_runge_kutta.hpp&gt;">boost/numeric/odeint/stepper/controlled_runge_kutta.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ErrorStepper<span class="special">,</span> <span class="keyword">typename</span> ErrorChecker<span class="special">,</span> <span class="keyword">typename</span> StepAdjuster<span class="special">,</span> 
+         <span class="keyword">typename</span> Resizer<span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205.html" title="Class template controlled_runge_kutta&lt;ErrorStepper, ErrorChecker, StepAdjuster, Resizer, explicit_error_stepper_fsal_tag&gt;">controlled_runge_kutta</a><span class="special">&lt;</span><span class="identifier">ErrorStepper</span><span class="special">,</span> <span class="identifier">ErrorChecker</span><span class="special">,</span> <span class="identifier">StepAdjuster</span><span class="special">,</span> <span class="identifier">Resizer</span><span class="special">,</span> <span class="identifier">explicit_error_stepper_fsal_tag</span><span class="special">&gt;</span> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">ErrorStepper</span>                         <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205_1a16a91628d39c4f767b841b50fb9d3f37"></a><span class="identifier">stepper_type</span><span class="special">;</span>      
+  <span class="keyword">typedef</span> <span class="identifier">stepper_type</span><span class="special">::</span><span class="identifier">state_type</span>             <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205_1ad43bba96d76b1ebd7e1e29dd9fe660f7"></a><span class="identifier">state_type</span><span class="special">;</span>        
+  <span class="keyword">typedef</span> <span class="identifier">stepper_type</span><span class="special">::</span><span class="identifier">value_type</span>             <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205_1a5a074d6cd614c053c078e86b257b54c3"></a><span class="identifier">value_type</span><span class="special">;</span>        
+  <span class="keyword">typedef</span> <span class="identifier">stepper_type</span><span class="special">::</span><span class="identifier">deriv_type</span>             <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205_1a719a721459693f91b13431908913bc18"></a><span class="identifier">deriv_type</span><span class="special">;</span>        
+  <span class="keyword">typedef</span> <span class="identifier">stepper_type</span><span class="special">::</span><span class="identifier">time_type</span>              <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205_1a076ca95fb7faa5c91b8d8ec07eafe0e8"></a><span class="identifier">time_type</span><span class="special">;</span>         
+  <span class="keyword">typedef</span> <span class="identifier">stepper_type</span><span class="special">::</span><span class="identifier">algebra_type</span>           <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205_1aa127aee2242b1b6e6bcb8314a15e7d7a"></a><span class="identifier">algebra_type</span><span class="special">;</span>      
+  <span class="keyword">typedef</span> <span class="identifier">stepper_type</span><span class="special">::</span><span class="identifier">operations_type</span>        <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205_1aa64fd5f5ba0edf984e631e750d100dfe"></a><span class="identifier">operations_type</span><span class="special">;</span>   
+  <span class="keyword">typedef</span> <span class="identifier">Resizer</span>                              <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205_1a93fde01dd13a114534f331e4aa16d7ae"></a><span class="identifier">resizer_type</span><span class="special">;</span>      
+  <span class="keyword">typedef</span> <span class="identifier">ErrorChecker</span>                         <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205_1aaf417681bcdd498a6d627575270593b7"></a><span class="identifier">error_checker_type</span><span class="special">;</span>
+  <span class="keyword">typedef</span> <span class="identifier">StepAdjuster</span>                         <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205_1a4acb55d0b83c5efc9c662f1099e46e8f"></a><span class="identifier">step_adjuster_type</span><span class="special">;</span>
+  <span class="keyword">typedef</span> <span class="identifier">explicit_controlled_stepper_fsal_tag</span> <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205_1a76083635b7cee7e00584bd059758f0ed"></a><span class="identifier">stepper_category</span><span class="special">;</span>  
+
+  <span class="comment">// <a class="link" href="classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205.html#id89-bb">public member functions</a></span>
+  <a class="link" href="classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205_1aa4914ae7ceed0174c69b0dd656db9794"><span class="identifier">controlled_runge_kutta</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">error_checker_type</span> <span class="special">&amp;</span> <span class="special">=</span> <span class="identifier">error_checker_type</span><span class="special">(</span><span class="special">)</span><span class="special">,</span> 
+                         <span class="keyword">const</span> <span class="identifier">step_adjuster_type</span> <span class="special">&amp;</span> <span class="special">=</span> <span class="identifier">step_adjuster_type</span><span class="special">(</span><span class="special">)</span><span class="special">,</span> 
+                         <span class="keyword">const</span> <span class="identifier">stepper_type</span> <span class="special">&amp;</span> <span class="special">=</span> <span class="identifier">stepper_type</span><span class="special">(</span><span class="special">)</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> System<span class="special">,</span> <span class="keyword">typename</span> StateInOut<span class="special">&gt;</span> 
+    <span class="identifier">controlled_step_result</span> 
+    <a class="link" href="classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205_1a0f0326adddbfa72f45c3842ef5b34e9f"><span class="identifier">try_step</span></a><span class="special">(</span><span class="identifier">System</span><span class="special">,</span> <span class="identifier">StateInOut</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">time_type</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">time_type</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> System<span class="special">,</span> <span class="keyword">typename</span> StateInOut<span class="special">&gt;</span> 
+    <span class="identifier">controlled_step_result</span> 
+    <a class="link" href="classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205_1abc5c8caf0a2c16b816c4c3a4cc00f984"><span class="identifier">try_step</span></a><span class="special">(</span><span class="identifier">System</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">StateInOut</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">time_type</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">time_type</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> System<span class="special">,</span> <span class="keyword">typename</span> StateIn<span class="special">,</span> <span class="keyword">typename</span> StateOut<span class="special">&gt;</span> 
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">disable_if</span><span class="special">&lt;</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">is_same</span><span class="special">&lt;</span> <span class="identifier">StateIn</span><span class="special">,</span> <span class="identifier">time_type</span> <span class="special">&gt;</span><span class="special">,</span> <span class="identifier">controlled_step_result</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> 
+    <a class="link" href="classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205_1ae33261792f0111258ab92090dd601be5"><span class="identifier">try_step</span></a><span class="special">(</span><span class="identifier">System</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">StateIn</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">time_type</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">StateOut</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">time_type</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> System<span class="special">,</span> <span class="keyword">typename</span> StateInOut<span class="special">,</span> <span class="keyword">typename</span> DerivInOut<span class="special">&gt;</span> 
+    <span class="identifier">controlled_step_result</span> 
+    <a class="link" href="classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205_1a0afbc5e77f1e9d97dc510546c0045048"><span class="identifier">try_step</span></a><span class="special">(</span><span class="identifier">System</span><span class="special">,</span> <span class="identifier">StateInOut</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">DerivInOut</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">time_type</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">time_type</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> System<span class="special">,</span> <span class="keyword">typename</span> StateIn<span class="special">,</span> <span class="keyword">typename</span> DerivIn<span class="special">,</span> 
+           <span class="keyword">typename</span> StateOut<span class="special">,</span> <span class="keyword">typename</span> DerivOut<span class="special">&gt;</span> 
+    <span class="identifier">controlled_step_result</span> 
+    <a class="link" href="classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205_1a30ab904f8305681bd60d4055da2c8961"><span class="identifier">try_step</span></a><span class="special">(</span><span class="identifier">System</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">StateIn</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">DerivIn</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">time_type</span> <span class="special">&amp;</span><span class="special">,</span> 
+             <span class="identifier">StateOut</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">DerivOut</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">time_type</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205_1aeaca0defd69e47183657507b74c3a882"><span class="identifier">reset</span></a><span class="special">(</span><span class="keyword">void</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> DerivIn<span class="special">&gt;</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205_1a45fb1ef565277e284088d07016463d42"><span class="identifier">initialize</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">DerivIn</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> System<span class="special">,</span> <span class="keyword">typename</span> StateIn<span class="special">&gt;</span> 
+    <span class="keyword">void</span> <a class="link" href="classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205_1a81b641bcad0f0cafc4ce0b5bd5be5834"><span class="identifier">initialize</span></a><span class="special">(</span><span class="identifier">System</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">StateIn</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">time_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205_1adeafedcde37d0206cb5c695468a47d4f"><span class="identifier">is_initialized</span></a><span class="special">(</span><span class="keyword">void</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> StateType<span class="special">&gt;</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205_1a6a559b5f09f44461ee23b413870c552c"><span class="identifier">adjust_size</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">StateType</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">stepper_type</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205_1a172085cfd9a2a89dc9f9d19d424e703d"><span class="identifier">stepper</span></a><span class="special">(</span><span class="keyword">void</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">const</span> <span class="identifier">stepper_type</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205_1a2948501aa0c9f27a0153a502f0b75e26"><span class="identifier">stepper</span></a><span class="special">(</span><span class="keyword">void</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205.html#id90-bb">private member functions</a></span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> StateIn<span class="special">&gt;</span> <span class="keyword">bool</span> <a class="link" href="classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205_1a3fff4ea358f84ae900d38905fe00b2a5"><span class="identifier">resize_m_xerr_impl</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">StateIn</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> StateIn<span class="special">&gt;</span> <span class="keyword">bool</span> <a class="link" href="classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205_1a12967905757ce2e2aa1d7728c8c08ed7"><span class="identifier">resize_m_dxdt_impl</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">StateIn</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> StateIn<span class="special">&gt;</span> <span class="keyword">bool</span> <a class="link" href="classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205_1a0a1c168dd793602ce02efc9c60f90273"><span class="identifier">resize_m_dxdt_new_impl</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">StateIn</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> StateIn<span class="special">&gt;</span> <span class="keyword">bool</span> <a class="link" href="classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205_1a0af0c4ad14f2c2828b950c90404aaaeb"><span class="identifier">resize_m_xnew_impl</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">StateIn</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> System<span class="special">,</span> <span class="keyword">typename</span> StateInOut<span class="special">&gt;</span> 
+    <span class="identifier">controlled_step_result</span> 
+    <a class="link" href="classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205_1a7454ab15b449a61fce380dfde03df7a9"><span class="identifier">try_step_v1</span></a><span class="special">(</span><span class="identifier">System</span><span class="special">,</span> <span class="identifier">StateInOut</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">time_type</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">time_type</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id39366"></a><h2>Description</h2>
+<p>This class implements the step size control for FSAL Runge-Kutta steppers with error estimation.</p>
+<p>
+</p>
+<div class="refsect2">
+<a name="id39370"></a><h3>Template Parameters</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">typename</span> ErrorStepper</pre>
+<p>The stepper type with error estimation, has to fulfill the ErrorStepper concept. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">typename</span> ErrorChecker</pre>
+<p>The error checker </p>
+</li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">typename</span> StepAdjuster</pre></li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">typename</span> Resizer</pre>
+<p>The resizer policy type. </p>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id39395"></a><h3>
+<a name="id89-bb"></a><code class="computeroutput">controlled_runge_kutta</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205_1aa4914ae7ceed0174c69b0dd656db9794"></a><span class="identifier">controlled_runge_kutta</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">error_checker_type</span> <span class="special">&amp;</span> error_checker <span class="special">=</span> <span class="identifier">error_checker_type</span><span class="special">(</span><span class="special">)</span><span class="special">,</span> 
+                       <span class="keyword">const</span> <span class="identifier">step_adjuster_type</span> <span class="special">&amp;</span> step_adjuster <span class="special">=</span> <span class="identifier">step_adjuster_type</span><span class="special">(</span><span class="special">)</span><span class="special">,</span> 
+                       <span class="keyword">const</span> <span class="identifier">stepper_type</span> <span class="special">&amp;</span> stepper <span class="special">=</span> <span class="identifier">stepper_type</span><span class="special">(</span><span class="special">)</span><span class="special">)</span><span class="special">;</span></pre>Constructs the controlled Runge-Kutta stepper. <p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">error_checker</code></span></p></td>
+<td><p>An instance of the error checker. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">stepper</code></span></p></td>
+<td><p>An instance of the underlying stepper. </p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> System<span class="special">,</span> <span class="keyword">typename</span> StateInOut<span class="special">&gt;</span> 
+  <span class="identifier">controlled_step_result</span> 
+  <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205_1a0f0326adddbfa72f45c3842ef5b34e9f"></a><span class="identifier">try_step</span><span class="special">(</span><span class="identifier">System</span> system<span class="special">,</span> <span class="identifier">StateInOut</span> <span class="special">&amp;</span> x<span class="special">,</span> <span class="identifier">time_type</span> <span class="special">&amp;</span> t<span class="special">,</span> <span class="identifier">time_type</span> <span class="special">&amp;</span> dt<span class="special">)</span><span class="special">;</span></pre>Tries to perform one step. <p>This method tries to do one step with step size dt. If the error estimate is to large, the step is rejected and the method returns fail and the step size dt is reduced. If the error estimate is acceptably small, the step is performed, success is returned and dt might be increased to make the steps as large as possible. This method also updates t if a step is performed.</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">system</code></span></p></td>
+<td><p>The system function to solve, hence the r.h.s. of the ODE. It must fulfill the Simple System concept. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">x</code></span></p></td>
+<td><p>The state of the ODE which should be solved. Overwritten if the step is successful. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">t</code></span></p></td>
+<td><p>The value of the time. Updated if the step is successful. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">dt</code></span></p></td>
+<td><p>The step size. Updated. </p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>success if the step was accepted, fail otherwise. </p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> System<span class="special">,</span> <span class="keyword">typename</span> StateInOut<span class="special">&gt;</span> 
+  <span class="identifier">controlled_step_result</span> 
+  <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205_1abc5c8caf0a2c16b816c4c3a4cc00f984"></a><span class="identifier">try_step</span><span class="special">(</span><span class="identifier">System</span> system<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">StateInOut</span> <span class="special">&amp;</span> x<span class="special">,</span> <span class="identifier">time_type</span> <span class="special">&amp;</span> t<span class="special">,</span> <span class="identifier">time_type</span> <span class="special">&amp;</span> dt<span class="special">)</span><span class="special">;</span></pre>Tries to perform one step. Solves the forwarding problem and allows for using boost range as state_type. <p>This method tries to do one step with step size dt. If the error estimate is to large, the step is rejected and the method returns fail and the step size dt is reduced. If the error estimate is acceptably small, the step is performed, success is returned and dt might be increased to make the steps as large as possible. This method also updates t if a step is performed.</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">system</code></span></p></td>
+<td><p>The system function to solve, hence the r.h.s. of the ODE. It must fulfill the Simple System concept. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">x</code></span></p></td>
+<td><p>The state of the ODE which should be solved. Overwritten if the step is successful. Can be a boost range. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">t</code></span></p></td>
+<td><p>The value of the time. Updated if the step is successful. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">dt</code></span></p></td>
+<td><p>The step size. Updated. </p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>success if the step was accepted, fail otherwise. </p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> System<span class="special">,</span> <span class="keyword">typename</span> StateIn<span class="special">,</span> <span class="keyword">typename</span> StateOut<span class="special">&gt;</span> 
+  <span class="identifier">boost</span><span class="special">::</span><span class="identifier">disable_if</span><span class="special">&lt;</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">is_same</span><span class="special">&lt;</span> <span class="identifier">StateIn</span><span class="special">,</span> <span class="identifier">time_type</span> <span class="special">&gt;</span><span class="special">,</span> <span class="identifier">controlled_step_result</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> 
+  <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205_1ae33261792f0111258ab92090dd601be5"></a><span class="identifier">try_step</span><span class="special">(</span><span class="identifier">System</span> system<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">StateIn</span> <span class="special">&amp;</span> in<span class="special">,</span> <span class="identifier">time_type</span> <span class="special">&amp;</span> t<span class="special">,</span> <span class="identifier">StateOut</span> <span class="special">&amp;</span> out<span class="special">,</span> 
+           <span class="identifier">time_type</span> <span class="special">&amp;</span> dt<span class="special">)</span><span class="special">;</span></pre>Tries to perform one step. <div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../../../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>This method is disabled if state_type=time_type to avoid ambiguity.</p></td></tr>
+</table></div>
+<p>
+This method tries to do one step with step size dt. If the error estimate is to large, the step is rejected and the method returns fail and the step size dt is reduced. If the error estimate is acceptably small, the step is performed, success is returned and dt might be increased to make the steps as large as possible. This method also updates t if a step is performed.</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">system</code></span></p></td>
+<td><p>The system function to solve, hence the r.h.s. of the ODE. It must fulfill the Simple System concept. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">in</code></span></p></td>
+<td><p>The state of the ODE which should be solved. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">t</code></span></p></td>
+<td><p>The value of the time. Updated if the step is successful. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">out</code></span></p></td>
+<td><p>Used to store the result of the step. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">dt</code></span></p></td>
+<td><p>The step size. Updated. </p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>success if the step was accepted, fail otherwise. </p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> System<span class="special">,</span> <span class="keyword">typename</span> StateInOut<span class="special">,</span> <span class="keyword">typename</span> DerivInOut<span class="special">&gt;</span> 
+  <span class="identifier">controlled_step_result</span> 
+  <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205_1a0afbc5e77f1e9d97dc510546c0045048"></a><span class="identifier">try_step</span><span class="special">(</span><span class="identifier">System</span> system<span class="special">,</span> <span class="identifier">StateInOut</span> <span class="special">&amp;</span> x<span class="special">,</span> <span class="identifier">DerivInOut</span> <span class="special">&amp;</span> dxdt<span class="special">,</span> <span class="identifier">time_type</span> <span class="special">&amp;</span> t<span class="special">,</span> 
+           <span class="identifier">time_type</span> <span class="special">&amp;</span> dt<span class="special">)</span><span class="special">;</span></pre>Tries to perform one step. <p>This method tries to do one step with step size dt. If the error estimate is to large, the step is rejected and the method returns fail and the step size dt is reduced. If the error estimate is acceptably small, the step is performed, success is returned and dt might be increased to make the steps as large as possible. This method also updates t if a step is performed.</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">system</code></span></p></td>
+<td><p>The system function to solve, hence the r.h.s. of the ODE. It must fulfill the Simple System concept. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">x</code></span></p></td>
+<td><p>The state of the ODE which should be solved. Overwritten if the step is successful. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">dxdt</code></span></p></td>
+<td><p>The derivative of state. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">t</code></span></p></td>
+<td><p>The value of the time. Updated if the step is successful. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">dt</code></span></p></td>
+<td><p>The step size. Updated. </p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>success if the step was accepted, fail otherwise. </p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> System<span class="special">,</span> <span class="keyword">typename</span> StateIn<span class="special">,</span> <span class="keyword">typename</span> DerivIn<span class="special">,</span> 
+         <span class="keyword">typename</span> StateOut<span class="special">,</span> <span class="keyword">typename</span> DerivOut<span class="special">&gt;</span> 
+  <span class="identifier">controlled_step_result</span> 
+  <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205_1a30ab904f8305681bd60d4055da2c8961"></a><span class="identifier">try_step</span><span class="special">(</span><span class="identifier">System</span> system<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">StateIn</span> <span class="special">&amp;</span> in<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">DerivIn</span> <span class="special">&amp;</span> dxdt_in<span class="special">,</span> 
+           <span class="identifier">time_type</span> <span class="special">&amp;</span> t<span class="special">,</span> <span class="identifier">StateOut</span> <span class="special">&amp;</span> out<span class="special">,</span> <span class="identifier">DerivOut</span> <span class="special">&amp;</span> dxdt_out<span class="special">,</span> 
+           <span class="identifier">time_type</span> <span class="special">&amp;</span> dt<span class="special">)</span><span class="special">;</span></pre>Tries to perform one step. <p>This method tries to do one step with step size dt. If the error estimate is to large, the step is rejected and the method returns fail and the step size dt is reduced. If the error estimate is acceptably small, the step is performed, success is returned and dt might be increased to make the steps as large as possible. This method also updates t if a step is performed.</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">system</code></span></p></td>
+<td><p>The system function to solve, hence the r.h.s. of the ODE. It must fulfill the Simple System concept. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">in</code></span></p></td>
+<td><p>The state of the ODE which should be solved. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">t</code></span></p></td>
+<td><p>The value of the time. Updated if the step is successful. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">out</code></span></p></td>
+<td><p>Used to store the result of the step. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">dt</code></span></p></td>
+<td><p>The step size. Updated. </p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>success if the step was accepted, fail otherwise. </p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205_1aeaca0defd69e47183657507b74c3a882"></a><span class="identifier">reset</span><span class="special">(</span><span class="keyword">void</span><span class="special">)</span><span class="special">;</span></pre>Resets the internal state of the underlying FSAL stepper. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> DerivIn<span class="special">&gt;</span> <span class="keyword">void</span> <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205_1a45fb1ef565277e284088d07016463d42"></a><span class="identifier">initialize</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">DerivIn</span> <span class="special">&amp;</span> deriv<span class="special">)</span><span class="special">;</span></pre>Initializes the internal state storing an internal copy of the derivative. <p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">deriv</code></span></p></td>
+<td><p>The initial derivative of the ODE. </p></td>
+</tr></tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> System<span class="special">,</span> <span class="keyword">typename</span> StateIn<span class="special">&gt;</span> 
+  <span class="keyword">void</span> <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205_1a81b641bcad0f0cafc4ce0b5bd5be5834"></a><span class="identifier">initialize</span><span class="special">(</span><span class="identifier">System</span> system<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">StateIn</span> <span class="special">&amp;</span> x<span class="special">,</span> <span class="identifier">time_type</span> t<span class="special">)</span><span class="special">;</span></pre>Initializes the internal state storing an internal copy of the derivative. <p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">system</code></span></p></td>
+<td><p>The system function to solve, hence the r.h.s. of the ODE. It must fulfill the Simple System concept. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">x</code></span></p></td>
+<td><p>The initial state of the ODE which should be solved. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">t</code></span></p></td>
+<td><p>The initial time. </p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205_1adeafedcde37d0206cb5c695468a47d4f"></a><span class="identifier">is_initialized</span><span class="special">(</span><span class="keyword">void</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Returns true if the stepper has been initialized, false otherwise. <p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>true, if the stepper has been initialized, false otherwise. </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> StateType<span class="special">&gt;</span> <span class="keyword">void</span> <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205_1a6a559b5f09f44461ee23b413870c552c"></a><span class="identifier">adjust_size</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">StateType</span> <span class="special">&amp;</span> x<span class="special">)</span><span class="special">;</span></pre>Adjust the size of all temporaries in the stepper manually. <p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">x</code></span></p></td>
+<td><p>A state from which the size of the temporaries to be resized is deduced. </p></td>
+</tr></tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">stepper_type</span> <span class="special">&amp;</span> <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205_1a172085cfd9a2a89dc9f9d19d424e703d"></a><span class="identifier">stepper</span><span class="special">(</span><span class="keyword">void</span><span class="special">)</span><span class="special">;</span></pre>Returns the instance of the underlying stepper. <p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>The instance of the underlying stepper. </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">const</span> <span class="identifier">stepper_type</span> <span class="special">&amp;</span> <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205_1a2948501aa0c9f27a0153a502f0b75e26"></a><span class="identifier">stepper</span><span class="special">(</span><span class="keyword">void</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Returns the instance of the underlying stepper. <p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>The instance of the underlying stepper. </p></td>
+</tr></tbody>
+</table></div>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id39949"></a><h3>
+<a name="id90-bb"></a><code class="computeroutput">controlled_runge_kutta</code> private member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem"><pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> StateIn<span class="special">&gt;</span> <span class="keyword">bool</span> <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205_1a3fff4ea358f84ae900d38905fe00b2a5"></a><span class="identifier">resize_m_xerr_impl</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">StateIn</span> <span class="special">&amp;</span> x<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> StateIn<span class="special">&gt;</span> <span class="keyword">bool</span> <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205_1a12967905757ce2e2aa1d7728c8c08ed7"></a><span class="identifier">resize_m_dxdt_impl</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">StateIn</span> <span class="special">&amp;</span> x<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> StateIn<span class="special">&gt;</span> <span class="keyword">bool</span> <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205_1a0a1c168dd793602ce02efc9c60f90273"></a><span class="identifier">resize_m_dxdt_new_impl</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">StateIn</span> <span class="special">&amp;</span> x<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> StateIn<span class="special">&gt;</span> <span class="keyword">bool</span> <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205_1a0af0c4ad14f2c2828b950c90404aaaeb"></a><span class="identifier">resize_m_xnew_impl</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">StateIn</span> <span class="special">&amp;</span> x<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> System<span class="special">,</span> <span class="keyword">typename</span> StateInOut<span class="special">&gt;</span> 
+  <span class="identifier">controlled_step_result</span> 
+  <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_checkefe86d846b91906257e891a676d38205_1a7454ab15b449a61fce380dfde03df7a9"></a><span class="identifier">try_step_v1</span><span class="special">(</span><span class="identifier">System</span> system<span class="special">,</span> <span class="identifier">StateInOut</span> <span class="special">&amp;</span> x<span class="special">,</span> <span class="identifier">time_type</span> <span class="special">&amp;</span> t<span class="special">,</span> <span class="identifier">time_type</span> <span class="special">&amp;</span> dt<span class="special">)</span><span class="special">;</span></pre></li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2009-2015 Karsten Ahnert and Mario Mulansky<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="controlled__runge__kutta_8hpp.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1numeric_1_1odeint_1_1controlled__runge__kutta_3_01_error_stepper_00_01_error_check592db9567ffc54f6c26dc0342435fa76.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

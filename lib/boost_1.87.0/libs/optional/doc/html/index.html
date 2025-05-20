@@ -1,0 +1,103 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Boost.Optional</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="index.html" title="Boost.Optional">
+<link rel="next" href="boost_optional/quick_overview.html" title="Quick Overview">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav"><a accesskey="n" href="boost_optional/quick_overview.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a></div>
+<div class="chapter">
+<div class="titlepage"><div>
+<div><h2 class="title">
+<a name="optional"></a>Boost.Optional</h2></div>
+<div><div class="author"><h3 class="author">
+<span class="firstname">Fernando Luis</span> <span class="surname">Cacciola Carballal</span>
+</h3></div></div>
+<div><p class="copyright">Copyright © 2003-2007 Fernando Luis Cacciola Carballal</p></div>
+<div><p class="copyright">Copyright © 2014-2024 Andrzej Krzemieński</p></div>
+<div><div class="legalnotice">
+<a name="optional.legal"></a><p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div></div>
+</div></div>
+<div class="toc">
+<p><b>Table of Contents</b></p>
+<dl class="toc">
+<dt><span class="section"><a href="index.html#optional.introduction">Introduction</a></span></dt>
+<dt><span class="section"><a href="boost_optional/quick_overview.html">Quick Overview</a></span></dt>
+<dt><span class="section"><a href="optional/design.html">Design Overview and Rationale</a></span></dt>
+<dt><span class="section"><a href="optional/reference.html">Reference</a></span></dt>
+<dt><span class="section"><a href="optional/advice.html">Advice</a></span></dt>
+<dt><span class="section"><a href="boost_optional/dependencies_and_portability.html">Dependencies
+    and Portability</a></span></dt>
+<dt><span class="section"><a href="boost_optional/std_comp.html">Comparison with <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">optional</span></code></a></span></dt>
+<dt><span class="section"><a href="boost_optional/relnotes.html">Release Notes</a></span></dt>
+<dt><span class="section"><a href="boost_optional/acknowledgements.html">Acknowledgements</a></span></dt>
+</dl>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="optional.introduction"></a><a class="link" href="index.html#optional.introduction" title="Introduction">Introduction</a>
+</h2></div></div></div>
+<p>
+      Class template <code class="computeroutput"><span class="identifier">optional</span></code> is
+      a wrapper for representing 'optional' (or 'nullable') objects who may not (yet)
+      contain a valid value. Optional objects offer full value semantics; they are
+      good for passing by value and usage inside STL containers. This is a header-only
+      C++11 library.
+    </p>
+<h4>
+<a name="optional.introduction.h0"></a>
+      <span class="phrase"><a name="optional.introduction.problem"></a></span><a class="link" href="index.html#optional.introduction.problem">Problem</a>
+    </h4>
+<p>
+      Suppose we want to read a parameter from a config file which represents some
+      integral value, let's call it <code class="computeroutput"><span class="string">"MaxValue"</span></code>.
+      It is possible that this parameter is not specified; such situation is no error.
+      It is valid to not specify the parameter and in that case the program is supposed
+      to behave slightly differently. Also, suppose that any possible value of type
+      <code class="computeroutput"><span class="keyword">int</span></code> is a valid value for <code class="computeroutput"><span class="string">"MaxValue"</span></code>, so we cannot just use
+      <code class="computeroutput"><span class="special">-</span><span class="number">1</span></code>
+      to represent the absence of the parameter in the config file.
+    </p>
+<h4>
+<a name="optional.introduction.h1"></a>
+      <span class="phrase"><a name="optional.introduction.solution"></a></span><a class="link" href="index.html#optional.introduction.solution">Solution</a>
+    </h4>
+<p>
+      This is how you solve it with <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">optional</span></code>:
+    </p>
+<pre class="programlisting"><span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">optional</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+
+<span class="identifier">boost</span><span class="special">::</span><span class="identifier">optional</span><span class="special">&lt;</span><span class="keyword">int</span><span class="special">&gt;</span> <span class="identifier">getConfigParam</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">name</span><span class="special">);</span>  <span class="comment">// return either an int or a `not-an-int`</span>
+
+<span class="keyword">int</span> <span class="identifier">main</span><span class="special">()</span>
+<span class="special">{</span>
+  <span class="keyword">if</span> <span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">optional</span><span class="special">&lt;</span><span class="keyword">int</span><span class="special">&gt;</span> <span class="identifier">oi</span> <span class="special">=</span> <span class="identifier">getConfigParam</span><span class="special">(</span><span class="string">"MaxValue"</span><span class="special">))</span> <span class="comment">// did I get a real int?</span>
+    <span class="identifier">runWithMax</span><span class="special">(*</span><span class="identifier">oi</span><span class="special">);</span>                                        <span class="comment">// use my int</span>
+  <span class="keyword">else</span>
+    <span class="identifier">runWithNoMax</span><span class="special">();</span>
+<span class="special">}</span>
+</pre>
+</div>
+</div>
+<div class="copyright-footer"></div>
+<hr>
+<div class="spirit-nav"><a accesskey="n" href="boost_optional/quick_overview.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a></div>
+</body>
+</html>

@@ -1,0 +1,107 @@
+[/
+    Copyright (c) 2021 Vinnie Falco (vinnie.falco@gmail.com)
+
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+    Official repository: https://github.com/boostorg/url
+]
+
+[section:charset CharSet]
+
+A ['CharSet] is a unary predicate which is invocable with
+this equivalent signature:
+
+```
+bool( char ch ) const noexcept;
+```
+
+The predicate returns `true` if `ch` is a member of the
+set, or `false` otherwise.
+
+[heading Related Identifiers]
+
+[link url.ref.boost__urls__grammar__is_charset `is_charset`],
+[link url.ref.boost__urls__grammar__find_if `find_if`],
+[link url.ref.boost__urls__grammar__find_if_not `find_if_not`].
+
+[heading Requirements]
+
+In this table:
+
+* `T` is a type meeting the requirements of ['CharSet]
+* `t` is a `const` value of type `T`
+* `c` is a value of type `char`
+* `first`, `last` are values of type `char const*`
+
+[table Valid expressions
+[[Expression] [Type] [Semantics, Pre/Post-conditions]]
+[
+    [`t(c)`]
+    [`bool`]
+    [
+        This function returns `true` if `c` is a member of
+        the character set, otherwise it returns `false`.
+    ]
+][
+    [
+    ```
+    t.find_if(first,last)
+    ```
+    ]
+    [`char const*`]
+    [
+        This optional member function examines the valid
+        range of characters in `[first, last)` and returns
+        a pointer to the first occurrence of a character 
+        which is in the set, or returns `last` if no such
+        character.
+
+        The implementation of
+        [link url.ref.boost__urls__grammar__find_if `find_if`]
+        calls this function if provided by the character
+        set, allowing optimized or otherwise performant
+        implementations to be developed. If this member
+        function is not provided, a default implementation
+        is used which calls `operator()`.
+    ]
+][
+    [
+    ```
+    t.find_if_not(first,last)
+    ```
+    ]
+    [`char const*`]
+    [
+        This optional member function examines the valid
+        range of characters in `[first, last)` and returns
+        a pointer to the first occurrence of a character 
+        which is not in the set, or returns `last` if no
+        such character.
+
+        The implementation of
+        [link url.ref.boost__urls__grammar__find_if_not `find_if_not`]
+        calls this function if provided by the character
+        set, allowing optimized or otherwise performant
+        implementations to be developed. If this member
+        function is not provided, a default implementation
+        is used which calls `operator()`.
+    ]
+]]
+
+[heading Exemplar]
+
+For best results, it is suggested that all constructors and
+member functions for character sets be marked `constexpr`.
+
+[code_charset_1]
+
+[heading Models]
+
+* [link url.ref.boost__urls__grammar__alnum_chars `alnum_chars`]
+* [link url.ref.boost__urls__grammar__alpha_chars `alpha_chars`]
+* [link url.ref.boost__urls__grammar__digit_chars `digit_chars`]
+* [link url.ref.boost__urls__grammar__hexdig_chars `hexdig_chars`]
+* [link url.ref.boost__urls__grammar__lut_chars `lut_chars`]
+
+[endsect]

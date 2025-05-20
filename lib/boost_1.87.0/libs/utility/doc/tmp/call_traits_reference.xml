@@ -1,0 +1,34 @@
+<?xml version="1.0" standalone="yes"?>
+<library-reference id="call_traits.reference"><title>Reference</title><header id="doxygen.call_traits.reference.call__traits_8hpp" name="boost/call_traits.hpp">
+</header>
+<header id="doxygen.call_traits.reference.detail_2call__traits_8hpp" name="boost/detail/call_traits.hpp">
+<namespace name="boost">
+<struct id="doxygen.call_traits.reference.structboost_1_1call__traits" name="call_traits"><template>
+      <template-type-parameter name="T"/>
+    </template><typedef id="doxygen.call_traits.reference.structboost_1_1call__traits_1a813e589fdc1570a3c52f74079c3f4c0c" name="value_type"><type>T</type></typedef>
+<typedef id="doxygen.call_traits.reference.structboost_1_1call__traits_1aed4a38a18f5e3c68ba280e74d15bfac2" name="reference"><type>T &amp;</type></typedef>
+<typedef id="doxygen.call_traits.reference.structboost_1_1call__traits_1a69705d6110391d7a12e0058256393c6a" name="const_reference"><type>const T &amp;</type></typedef>
+<typedef id="doxygen.call_traits.reference.structboost_1_1call__traits_1aadec31d89def64527f15482fe133c75e" name="param_type"><type><emphasis>unspecified</emphasis></type></typedef>
+</struct><struct-specialization id="doxygen.call_traits.reference.structboost_1_1call__traits_3_01const_01T_0fN_0e_4" name="call_traits"><template>
+      <template-type-parameter name="T"/>
+      <template-nontype-parameter name="N"><type>std::size_t</type></template-nontype-parameter>
+    </template><specialization><template-arg>const T[N]</template-arg></specialization><typedef id="doxygen.call_traits.reference.structboost_1_1call__traits_3_01const_01T_0fN_0e_4_1ae32ec53b666acd3df8e577a09a8d2b45" name="value_type"><type>const T *</type></typedef>
+<typedef id="doxygen.call_traits.reference.structboost_1_1call__traits_3_01const_01T_0fN_0e_4_1acdd293ee8af89e5e012928dd3ae22632" name="reference"><type>array_type &amp;</type></typedef>
+<typedef id="doxygen.call_traits.reference.structboost_1_1call__traits_3_01const_01T_0fN_0e_4_1a64ab92c739d8012a4cadd3a0741c634e" name="const_reference"><type>const array_type &amp;</type></typedef>
+<typedef id="doxygen.call_traits.reference.structboost_1_1call__traits_3_01const_01T_0fN_0e_4_1a56584980852432ecfd2c71d83d266d58" name="param_type"><type>const T *const</type></typedef>
+</struct-specialization><struct-specialization id="doxygen.call_traits.reference.structboost_1_1call__traits_3_01T_01_6_01_4" name="call_traits"><template>
+      <template-type-parameter name="T"/>
+    </template><specialization><template-arg>T &amp;</template-arg></specialization><typedef id="doxygen.call_traits.reference.structboost_1_1call__traits_3_01T_01_6_01_4_1a6535230072baa19c699a051950075cf5" name="value_type"><type>T &amp;</type></typedef>
+<typedef id="doxygen.call_traits.reference.structboost_1_1call__traits_3_01T_01_6_01_4_1acf6e5c15bed8b4d8d506aadaee08a4c7" name="reference"><type>T &amp;</type></typedef>
+<typedef id="doxygen.call_traits.reference.structboost_1_1call__traits_3_01T_01_6_01_4_1a5ae18eb5bcc2ca16652c61108aba6f49" name="const_reference"><type>const T &amp;</type></typedef>
+<typedef id="doxygen.call_traits.reference.structboost_1_1call__traits_3_01T_01_6_01_4_1a9038e8d26b34d91405cd01de19434245" name="param_type"><type>T &amp;</type></typedef>
+</struct-specialization><struct-specialization id="doxygen.call_traits.reference.structboost_1_1call__traits_3_01T_0fN_0e_4" name="call_traits"><template>
+      <template-type-parameter name="T"/>
+      <template-nontype-parameter name="N"><type>std::size_t</type></template-nontype-parameter>
+    </template><specialization><template-arg>T[N]</template-arg></specialization><typedef id="doxygen.call_traits.reference.structboost_1_1call__traits_3_01T_0fN_0e_4_1af8aae87b16c15e471803a4a755af001b" name="value_type"><type>const T *</type></typedef>
+<typedef id="doxygen.call_traits.reference.structboost_1_1call__traits_3_01T_0fN_0e_4_1a5f7939d5a1e088e97f308c9c2170fc6f" name="reference"><type>array_type &amp;</type></typedef>
+<typedef id="doxygen.call_traits.reference.structboost_1_1call__traits_3_01T_0fN_0e_4_1aa2800626d4f73e4ba30191819f15b795" name="const_reference"><type>const array_type &amp;</type></typedef>
+<typedef id="doxygen.call_traits.reference.structboost_1_1call__traits_3_01T_0fN_0e_4_1a928302ff98f59761e0026c8020a6e1bd" name="param_type"><type>const T *const</type></typedef>
+</struct-specialization></namespace>
+</header>
+</library-reference>

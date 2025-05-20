@@ -1,0 +1,98 @@
+= Documentation boost.cobalt
+Klemens Morgenstern <klemens.morgenstern@gmx.net>
+Version 0.1, 29.01.2023
+:source-highlighter: rouge
+:toc: left
+:toclevels: 4
+:icons: font
+:idprefix:
+:docinfo: private-footer
+:source-highlighter: rouge
+:source-language: c++
+:example-caption: Example
+
+:imagesdir: ./images
+
+:leveloffset: +1
+
+include::overview.adoc[]
+include::motivation.adoc[]
+
+= Coroutine Primer
+
+include::primer/async.adoc[]
+include::primer/coroutines.adoc[]
+include::primer/awaitables.adoc[]
+include::primer/event-loops.adoc[]
+
+= Tour
+
+include::tour/entry.adoc[]
+include::tour/promise.adoc[]
+include::tour/task.adoc[]
+include::tour/generator.adoc[]
+include::tour/join.adoc[]
+include::tour/race.adoc[]
+
+= Tutorial
+
+include::tutorial/delay.adoc[]
+include::tutorial/echo_server.adoc[]
+include::tutorial/ticker.adoc[]
+include::tutorial/delay_op.adoc[]
+include::tutorial/push_generator.adoc[]
+include::tutorial/advanced.adoc[]
+
+
+= Design
+
+include::design/concepts.adoc[]
+include::design/thread_local.adoc[]
+include::design/promise.adoc[]
+include::design/race.adoc[]
+include::design/associators.adoc[]
+include::design/thread.adoc[]
+
+= Reference
+
+include::reference/main.adoc[]
+include::reference/promise.adoc[]
+include::reference/generators.adoc[]
+include::reference/task.adoc[]
+include::reference/detached.adoc[]
+include::reference/op.adoc[]
+include::reference/concepts.adoc[]
+include::reference/this_coro.adoc[]
+include::reference/this_thread.adoc[]
+include::reference/channel.adoc[]
+include::reference/with.adoc[]
+include::reference/race.adoc[]
+include::reference/gather.adoc[]
+include::reference/join.adoc[]
+include::reference/wait_group.adoc[]
+include::reference/spawn.adoc[]
+include::reference/run.adoc[]
+include::reference/thread.adoc[]
+include::reference/result.adoc[]
+include::reference/async_for.adoc[]
+include::reference/error.adoc[]
+include::reference/config.adoc[]
+include::reference/leaf.adoc[]
+
+include::reference/experimental/context.adoc[]
+
+
+= In-Depth
+
+include::background/custom_executors.adoc[]
+include::background/stackless.adoc[]
+include::background/lazy_eager.adoc[]
+
+include::benchmarks.adoc[]
+
+include::compiler.adoc[]
+
+include::acknowledgements.adoc[]
+
+
+:leveloffset: -1

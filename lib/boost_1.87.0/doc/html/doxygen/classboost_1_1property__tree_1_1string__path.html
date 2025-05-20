@@ -1,0 +1,211 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template string_path</title>
+<link rel="stylesheet" href="../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../property_tree/reference.html#doxygen.string__path_8hpp" title="Header &lt;boost/property_tree/string_path.hpp&gt;">
+<link rel="prev" href="structboost_1_1property__tree_1_1path__of_3_01std_1_1basic__string_3_01Ch_00_01Traits_00_01Alloc_01_4_01_4.html" title="Struct template path_of&lt;std::basic_string&lt; Ch, Traits, Alloc &gt;&gt;">
+<link rel="next" href="namespaceboost_1_1property__tree_1_1xml__parser_1a0cc61a54b809d25345844344c97a978d.html" title="Function template read_xml">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../boost.png"></td>
+<td align="center"><a href="../../../index.html">Home</a></td>
+<td align="center"><a href="../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="structboost_1_1property__tree_1_1path__of_3_01std_1_1basic__string_3_01Ch_00_01Traits_00_01Alloc_01_4_01_4.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../property_tree/reference.html#doxygen.string__path_8hpp"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="namespaceboost_1_1property__tree_1_1xml__parser_1a0cc61a54b809d25345844344c97a978d.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.classboost_1_1property__tree_1_1string__path"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template string_path</span></h2>
+<p>boost::property_tree::string_path — Default path class. A path is a sequence of values. Groups of values are separated by the separator value, which defaults to '.' cast to the sequence's value type. The group of values is then passed to the translator to get a key. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../property_tree/reference.html#doxygen.string__path_8hpp" title="Header &lt;boost/property_tree/string_path.hpp&gt;">boost/property_tree/string_path.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> String<span class="special">,</span> <span class="keyword">typename</span> Translator<span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1property__tree_1_1string__path.html" title="Class template string_path">string_path</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">Translator</span><span class="special">::</span><span class="identifier">external_type</span> <a name="doxygen.classboost_1_1property__tree_1_1string__path_1a223b0a71a1e81066b340a917adb576ed"></a><span class="identifier">key_type</span><span class="special">;</span> 
+  <span class="keyword">typedef</span> <span class="identifier">String</span><span class="special">::</span><span class="identifier">value_type</span>        <a name="doxygen.classboost_1_1property__tree_1_1string__path_1aebff039fb8ad3c68316e62e96f08bbab"></a><span class="identifier">char_type</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1property__tree_1_1string__path.html#id-1_3_32_10_10_1_1_2_6-bb">private member functions</a></span>
+   <a class="link" href="classboost_1_1property__tree_1_1string__path.html#doxygen.classboost_1_1property__tree_1_1string__path_1acc4091a7d9b018650ce157a3c5483519"><span class="identifier">BOOST_STATIC_ASSERT</span></a><span class="special">(</span><span class="special">(</span><span class="identifier">is_same</span><span class="special">&lt;</span> <span class="identifier">String</span><span class="special">,</span> <span class="keyword">typename</span> <span class="identifier">Translator</span><span class="special">::</span><span class="identifier">internal_type</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">value</span><span class="special">)</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">s_c_iter</span> <a class="link" href="classboost_1_1property__tree_1_1string__path.html#doxygen.classboost_1_1property__tree_1_1string__path_1ac1d51fd090c60547d47cea08f5bf51b3"><span class="identifier">cstart</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1property__tree_1_1string__path.html#id-1_3_32_10_10_1_1_2_7-bb">public member functions</a></span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1property__tree_1_1string__path.html#doxygen.classboost_1_1property__tree_1_1string__path_1a6b845668fbd604b86514f9ba63bd2338"><span class="identifier">string_path</span></a><span class="special">(</span><span class="identifier">char_type</span> <span class="special">=</span> <span class="identifier">char_type</span><span class="special">(</span><span class="char">'.'</span><span class="special">)</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1property__tree_1_1string__path.html#doxygen.classboost_1_1property__tree_1_1string__path_1aae77325ec936ed41e0bd74b7aa7511e0"><span class="identifier">string_path</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">String</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">char_type</span> <span class="special">=</span> <span class="identifier">char_type</span><span class="special">(</span><span class="char">'.'</span><span class="special">)</span><span class="special">,</span> 
+              <span class="identifier">Translator</span> <span class="special">=</span> <span class="identifier">Translator</span><span class="special">(</span><span class="special">)</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1property__tree_1_1string__path.html#doxygen.classboost_1_1property__tree_1_1string__path_1ac3646a383c988bb9d00ca77c36fdc67e"><span class="identifier">string_path</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">char_type</span> <span class="special">*</span><span class="special">,</span> <span class="identifier">char_type</span> <span class="special">=</span> <span class="identifier">char_type</span><span class="special">(</span><span class="char">'.'</span><span class="special">)</span><span class="special">,</span> 
+              <span class="identifier">Translator</span> <span class="special">=</span> <span class="identifier">Translator</span><span class="special">(</span><span class="special">)</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1property__tree_1_1string__path.html#doxygen.classboost_1_1property__tree_1_1string__path_1a01bebe59fa568c16fdc27ee40d0f1a4d"><span class="identifier">string_path</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1property__tree_1_1string__path.html" title="Class template string_path">string_path</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1property__tree_1_1string__path.html" title="Class template string_path">string_path</a> <span class="special">&amp;</span> <a class="link" href="classboost_1_1property__tree_1_1string__path.html#doxygen.classboost_1_1property__tree_1_1string__path_1a409862fffc9a355f9d00d9b0ce8d3872"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1property__tree_1_1string__path.html" title="Class template string_path">string_path</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">key_type</span> <a class="link" href="classboost_1_1property__tree_1_1string__path.html#doxygen.classboost_1_1property__tree_1_1string__path_1a98d71bd7ac1eecafe7188cfc603a0c6e"><span class="identifier">reduce</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1property__tree_1_1string__path.html#doxygen.classboost_1_1property__tree_1_1string__path_1a358a867a556566b97b76ac246d4a4757"><span class="identifier">empty</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1property__tree_1_1string__path.html#doxygen.classboost_1_1property__tree_1_1string__path_1a0f321739f95269ec8595e121dd7254a9"><span class="identifier">single</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">char_type</span> <a class="link" href="classboost_1_1property__tree_1_1string__path.html#doxygen.classboost_1_1property__tree_1_1string__path_1ad8f2f3038bab9cb601c77043f72b802c"><span class="identifier">separator</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <a class="link" href="classboost_1_1property__tree_1_1string__path.html#doxygen.classboost_1_1property__tree_1_1string__path_1adf25fa0218b792ed2979d85f1be4bd7b"><span class="identifier">dump</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1property__tree_1_1string__path.html" title="Class template string_path">string_path</a> <span class="special">&amp;</span> <a class="link" href="classboost_1_1property__tree_1_1string__path.html#doxygen.classboost_1_1property__tree_1_1string__path_1a662415989dc1562489e85f83a196ce67"><span class="keyword">operator</span><span class="special">/=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1property__tree_1_1string__path.html" title="Class template string_path">string_path</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1property__tree_1_1string__path.html#id-1_3_32_10_10_1_1_2_8-bb">friend functions</a></span>
+  <a class="link" href="classboost_1_1property__tree_1_1string__path.html" title="Class template string_path">string_path</a> <a class="link" href="classboost_1_1property__tree_1_1string__path.html#doxygen.classboost_1_1property__tree_1_1string__path_1a93de61d9af214e2ebb729df7e1722643"><span class="keyword">operator</span><span class="special">/</span></a><span class="special">(</span><a class="link" href="classboost_1_1property__tree_1_1string__path.html" title="Class template string_path">string_path</a><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1property__tree_1_1string__path.html" title="Class template string_path">string_path</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.32.10.11.4.4"></a><h2>Description</h2>
+<p>If instantiated with std::string and <a class="link" href="structboost_1_1property__tree_1_1id__translator.html" title="Struct template id_translator">id_translator</a>&lt;std::string&gt;, it accepts paths of the form "one.two.three.four".</p>
+<p>
+</p>
+<div class="refsect2">
+<a name="id-1.3.32.10.11.4.4.4"></a><h3>Template Parameters</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">typename</span> String</pre>
+<p>Any Sequence. If the sequence does not support random- access iteration, concatenation of paths assumes that insertions at the end preserve iterator validity. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">typename</span> Translator</pre>
+<p>A translator with internal_type == String. </p>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.32.10.11.4.4.5"></a><h3>
+<a name="id-1_3_32_10_10_1_1_2_6-bb"></a><code class="computeroutput">string_path</code> private member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem"><pre class="literallayout"> <a name="doxygen.classboost_1_1property__tree_1_1string__path_1acc4091a7d9b018650ce157a3c5483519"></a><span class="identifier">BOOST_STATIC_ASSERT</span><span class="special">(</span><span class="special">(</span><span class="identifier">is_same</span><span class="special">&lt;</span> <span class="identifier">String</span><span class="special">,</span> <span class="keyword">typename</span> <span class="identifier">Translator</span><span class="special">::</span><span class="identifier">internal_type</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">value</span><span class="special">)</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">s_c_iter</span> <a name="doxygen.classboost_1_1property__tree_1_1string__path_1ac1d51fd090c60547d47cea08f5bf51b3"></a><span class="identifier">cstart</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.32.10.11.4.4.6"></a><h3>
+<a name="id-1_3_32_10_10_1_1_2_7-bb"></a><code class="computeroutput">string_path</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.classboost_1_1property__tree_1_1string__path_1a6b845668fbd604b86514f9ba63bd2338"></a><span class="identifier">string_path</span><span class="special">(</span><span class="identifier">char_type</span> separator <span class="special">=</span> <span class="identifier">char_type</span><span class="special">(</span><span class="char">'.'</span><span class="special">)</span><span class="special">)</span><span class="special">;</span></pre>Create an empty path. </li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.classboost_1_1property__tree_1_1string__path_1aae77325ec936ed41e0bd74b7aa7511e0"></a><span class="identifier">string_path</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">String</span> <span class="special">&amp;</span> value<span class="special">,</span> <span class="identifier">char_type</span> separator <span class="special">=</span> <span class="identifier">char_type</span><span class="special">(</span><span class="char">'.'</span><span class="special">)</span><span class="special">,</span> 
+            <span class="identifier">Translator</span> tr <span class="special">=</span> <span class="identifier">Translator</span><span class="special">(</span><span class="special">)</span><span class="special">)</span><span class="special">;</span></pre>Create a path by parsing the given string. <p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">value</code></span></p></td>
+<td><p>A sequence, possibly with separators, that describes the path, e.g. "one.two.three". </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">separator</code></span></p></td>
+<td><p>The separator used in parsing. Defaults to '.'. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">tr</code></span></p></td>
+<td><p>The translator used by this path to convert the individual parts to keys. </p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.classboost_1_1property__tree_1_1string__path_1ac3646a383c988bb9d00ca77c36fdc67e"></a><span class="identifier">string_path</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">char_type</span> <span class="special">*</span> value<span class="special">,</span> <span class="identifier">char_type</span> separator <span class="special">=</span> <span class="identifier">char_type</span><span class="special">(</span><span class="char">'.'</span><span class="special">)</span><span class="special">,</span> 
+            <span class="identifier">Translator</span> tr <span class="special">=</span> <span class="identifier">Translator</span><span class="special">(</span><span class="special">)</span><span class="special">)</span><span class="special">;</span></pre>Create a path by parsing the given string. <p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">value</code></span></p></td>
+<td><p>A zero-terminated array of values. Only use if zero- termination makes sense for your type, and your sequence supports construction from it. Intended for string literals. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">separator</code></span></p></td>
+<td><p>The separator used in parsing. Defaults to '.'. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">tr</code></span></p></td>
+<td><p>The translator used by this path to convert the individual parts to keys. </p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem"><pre class="literallayout"><a name="doxygen.classboost_1_1property__tree_1_1string__path_1a01bebe59fa568c16fdc27ee40d0f1a4d"></a><span class="identifier">string_path</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1property__tree_1_1string__path.html" title="Class template string_path">string_path</a> <span class="special">&amp;</span> o<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a class="link" href="classboost_1_1property__tree_1_1string__path.html" title="Class template string_path">string_path</a> <span class="special">&amp;</span> <a name="doxygen.classboost_1_1property__tree_1_1string__path_1a409862fffc9a355f9d00d9b0ce8d3872"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1property__tree_1_1string__path.html" title="Class template string_path">string_path</a> <span class="special">&amp;</span> o<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">key_type</span> <a name="doxygen.classboost_1_1property__tree_1_1string__path_1a98d71bd7ac1eecafe7188cfc603a0c6e"></a><span class="identifier">reduce</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>Take a single element off the path at the front and return it. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.classboost_1_1property__tree_1_1string__path_1a358a867a556566b97b76ac246d4a4757"></a><span class="identifier">empty</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Test if the path is empty. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.classboost_1_1property__tree_1_1string__path_1a0f321739f95269ec8595e121dd7254a9"></a><span class="identifier">single</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Test if the path contains a single element, i.e. no separators. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">char_type</span> <a name="doxygen.classboost_1_1property__tree_1_1string__path_1ad8f2f3038bab9cb601c77043f72b802c"></a><span class="identifier">separator</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Get the separator used by this path. </li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <a name="doxygen.classboost_1_1property__tree_1_1string__path_1adf25fa0218b792ed2979d85f1be4bd7b"></a><span class="identifier">dump</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem">
+<pre class="literallayout"><a class="link" href="classboost_1_1property__tree_1_1string__path.html" title="Class template string_path">string_path</a> <span class="special">&amp;</span> <a name="doxygen.classboost_1_1property__tree_1_1string__path_1a662415989dc1562489e85f83a196ce67"></a><span class="keyword">operator</span><span class="special">/=</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1property__tree_1_1string__path.html" title="Class template string_path">string_path</a> <span class="special">&amp;</span> o<span class="special">)</span><span class="special">;</span></pre>Append a second path to this one. <p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td><p>o's separator is the same as this one's, or o has no separators </p></td>
+</tr></tbody>
+</table></div>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.32.10.11.4.4.7"></a><h3>
+<a name="id-1_3_32_10_10_1_1_2_8-bb"></a><code class="computeroutput">string_path</code> friend functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem">
+<pre class="literallayout"><a class="link" href="classboost_1_1property__tree_1_1string__path.html" title="Class template string_path">string_path</a> <a name="doxygen.classboost_1_1property__tree_1_1string__path_1a93de61d9af214e2ebb729df7e1722643"></a><span class="keyword">operator</span><span class="special">/</span><span class="special">(</span><a class="link" href="classboost_1_1property__tree_1_1string__path.html" title="Class template string_path">string_path</a> p1<span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1property__tree_1_1string__path.html" title="Class template string_path">string_path</a> <span class="special">&amp;</span> p2<span class="special">)</span><span class="special">;</span></pre>Concatenates two path components. </li></ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2008-2010 Marcin Kalicinski<br>Copyright © 2010-2013 Sebastian
+      Redl<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="structboost_1_1property__tree_1_1path__of_3_01std_1_1basic__string_3_01Ch_00_01Traits_00_01Alloc_01_4_01_4.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../property_tree/reference.html#doxygen.string__path_8hpp"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="namespaceboost_1_1property__tree_1_1xml__parser_1a0cc61a54b809d25345844344c97a978d.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

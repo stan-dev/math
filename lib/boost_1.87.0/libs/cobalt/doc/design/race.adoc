@@ -1,0 +1,93 @@
+[#design:race]
+== Race
+
+The most important synchronization mechanism is the `race` function.
+
+It awaits multiple <<awaitable,awaitable>>s in a pseudo-random order
+and will return the result of the first one completion, before disregarding the rest.
+
+That is, it initiates the `co_await` in a pseudo-random order and stops once one
+awaitable is found to be ready or completed immediately.
+
+[source,cpp]
+----
+cobalt::generator<int> gen1();
+cobalt::generator<double> gen2();
+
+cobalt::promise<void> p()
+{
+  auto g1 = gen1();
+  auto g2 = gen2();
+  while (!co_await cobalt::this_coro::cancelled)
+  {
+    switch(auto v = co_await race(g1, g2); v.index())
+    {
+    case 0:
+      printf("Got int %d\n", get<0>(v));
+      break;
+    case 1:
+      printf("Got double %f\n", get<1>(v));
+      break;
+    }
+  }
+}
+----
+
+The `race` must however internally wait for all awaitable to complete
+once it initiates to `co_await`.
+Therefore, once the first <<awaitable, awaitable>> completes,
+it tries to <<interrupt_await, interrupt>> the rest, and if that fails cancels them.
+
+`race` is the preferred way to trigger cancellations, e.g.:
+
+[source,cpp]
+----
+cobalt::promise<void> timeout();
+cobalt::promise<void> work();
+
+race(timeout(), work());
+----
+
+[#design:interrupt_await]
+== interrupt_await
+
+If it naively cancelled it would however lose data.
+Thus, the concept of  `interrupt_await` is introduced,
+which tells the awaitable (that supports it)
+to immediately resume the awaiter and return or throw an ignored value.
+
+.Example of an interruptible awaitable
+[source,cpp]
+----
+struct awaitable
+{
+   bool await_ready() const;
+
+   template<typename Promise>
+   std::coroutine_handle<void> await_suspend(std::coroutine_handle<Promise> h);
+
+   T await_resume();
+
+   void interrupt_await() &;
+};
+----
+
+If the `interrupt_await` doesn't result in immediate resumption (of `h`),
+`race` will send a cancel signal.
+
+`race` applies these with the correct reference qualification:
+
+[source,cpp]
+----
+auto g = gen1();
+race(g, gen2());
+----
+
+The above will call a `interrupt_await() &` function for `g1` and `interrupt_await() &&` for `g2` if available.
+
+NOTE: Generally speaking, the coroutines in `cobalt` support lvalue interruption, i.e. `interrupt_await() &`.
+<<channel,channel>> operations are unqualified, i.e. work in both cases.
+
+<<join,join>> and <<gather, gather>> will forward interruptions,
+i.e. this will only interrupt `g1` and `g2` if `gen2()` completes first:
+

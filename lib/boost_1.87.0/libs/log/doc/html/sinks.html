@@ -1,0 +1,630 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Sinks</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="index.html" title="Chapter 1. Boost.Log v2">
+<link rel="up" href="log/reference.html" title="Reference">
+<link rel="prev" href="doxygen/logging_sources/threading__models_8hpp_1a7c62c95768b702db92402925f26b6cba.html" title="Function template swap">
+<link rel="next" href="doxygen/sinks/classboost_1_1log_1_1sinks_1_1asynchronous__sink.html" title="Class template asynchronous_sink">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr><td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td></tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="doxygen/logging_sources/threading__models_8hpp_1a7c62c95768b702db92402925f26b6cba.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="log/reference.html"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="doxygen/sinks/classboost_1_1log_1_1sinks_1_1asynchronous__sink.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="sinks"></a>Sinks</h3></div></div></div>
+<div class="toc"><dl class="toc">
+<dt><span class="section"><a href="sinks.html#doxygen.sinks.async__frontend_8hpp">Header &lt;boost/log/sinks/async_frontend.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="sinks.html#doxygen.sinks.attribute__mapping_8hpp">Header &lt;boost/log/sinks/attribute_mapping.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="sinks.html#doxygen.sinks.auto__newline__mode_8hpp">Header &lt;boost/log/sinks/auto_newline_mode.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="sinks.html#doxygen.sinks.basic__sink__backend_8hpp">Header &lt;boost/log/sinks/basic_sink_backend.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="sinks.html#doxygen.sinks.basic__sink__frontend_8hpp">Header &lt;boost/log/sinks/basic_sink_frontend.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="sinks.html#doxygen.sinks.block__on__overflow_8hpp">Header &lt;boost/log/sinks/block_on_overflow.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="sinks.html#doxygen.sinks.bounded__fifo__queue_8hpp">Header &lt;boost/log/sinks/bounded_fifo_queue.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="sinks.html#doxygen.sinks.bounded__ordering__queue_8hpp">Header &lt;boost/log/sinks/bounded_ordering_queue.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="sinks.html#doxygen.sinks.debug__output__backend_8hpp">Header &lt;boost/log/sinks/debug_output_backend.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="sinks.html#doxygen.sinks.drop__on__overflow_8hpp">Header &lt;boost/log/sinks/drop_on_overflow.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="sinks.html#doxygen.sinks.event__log__backend_8hpp">Header &lt;boost/log/sinks/event_log_backend.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="sinks.html#doxygen.sinks.event__log__constants_8hpp">Header &lt;boost/log/sinks/event_log_constants.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="sinks.html#doxygen.sinks.frontend__requirements_8hpp">Header &lt;boost/log/sinks/frontend_requirements.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="sinks.html#doxygen.sinks.sink_8hpp">Header &lt;boost/log/sinks/sink.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="sinks.html#doxygen.sinks.sync__frontend_8hpp">Header &lt;boost/log/sinks/sync_frontend.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="sinks.html#doxygen.sinks.syslog__backend_8hpp">Header &lt;boost/log/sinks/syslog_backend.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="sinks.html#doxygen.sinks.syslog__constants_8hpp">Header &lt;boost/log/sinks/syslog_constants.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="sinks.html#doxygen.sinks.text__file__backend_8hpp">Header &lt;boost/log/sinks/text_file_backend.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="sinks.html#doxygen.sinks.text__ipc__message__queue__backend_8hpp">Header &lt;boost/log/sinks/text_ipc_message_queue_backend.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="sinks.html#doxygen.sinks.text__multifile__backend_8hpp">Header &lt;boost/log/sinks/text_multifile_backend.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="sinks.html#doxygen.sinks.text__ostream__backend_8hpp">Header &lt;boost/log/sinks/text_ostream_backend.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="sinks.html#doxygen.sinks.unbounded__fifo__queue_8hpp">Header &lt;boost/log/sinks/unbounded_fifo_queue.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="sinks.html#doxygen.sinks.unbounded__ordering__queue_8hpp">Header &lt;boost/log/sinks/unbounded_ordering_queue.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="sinks.html#doxygen.sinks.unlocked__frontend_8hpp">Header &lt;boost/log/sinks/unlocked_frontend.hpp&gt;</a></span></dt>
+</dl></div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.sinks.async__frontend_8hpp"></a>Header &lt;<a href="../../../../boost/log/sinks/async_frontend.hpp" target="_top">boost/log/sinks/async_frontend.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>14.07.2009</p>
+<p>
+
+The header contains implementation of asynchronous sink frontend. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">sinks</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> SinkBackendT<span class="special">,</span> 
+               <span class="keyword">typename</span> QueueingStrategyT <span class="special">=</span> <span class="identifier">unbounded_fifo_queue</span><span class="special">&gt;</span> 
+        <span class="keyword">class</span> <a class="link" href="doxygen/sinks/classboost_1_1log_1_1sinks_1_1asynchronous__sink.html" title="Class template asynchronous_sink">asynchronous_sink</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.sinks.attribute__mapping_8hpp"></a>Header &lt;<a href="../../../../boost/log/sinks/attribute_mapping.hpp" target="_top">boost/log/sinks/attribute_mapping.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>07.11.2008</p>
+<p>
+
+The header contains facilities that are used in different sinks to map attribute values used throughout the application to values used with the specific native logging API. These tools are mostly needed to map application severity levels on native levels, required by OS-specific sink backends. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">sinks</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> MappedT<span class="special">,</span> <span class="keyword">typename</span> AttributeValueT <span class="special">=</span> <span class="keyword">int</span><span class="special">&gt;</span> 
+        <span class="keyword">class</span> <a class="link" href="doxygen/sinks/classboost_1_1log_1_1sinks_1_1basic__custom__mapping.html" title="Class template basic_custom_mapping">basic_custom_mapping</a><span class="special">;</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> MappedT<span class="special">,</span> <span class="keyword">typename</span> AttributeValueT <span class="special">=</span> <span class="keyword">int</span><span class="special">&gt;</span> 
+        <span class="keyword">class</span> <a class="link" href="doxygen/sinks/classboost_1_1log_1_1sinks_1_1basic__direct__mapping.html" title="Class template basic_direct_mapping">basic_direct_mapping</a><span class="special">;</span>
+
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> MappedT<span class="special">&gt;</span> <span class="keyword">struct</span> <a class="link" href="doxygen/sinks/structboost_1_1log_1_1sinks_1_1basic__mapping.html" title="Struct template basic_mapping">basic_mapping</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.sinks.auto__newline__mode_8hpp"></a>Header &lt;<a href="../../../../boost/log/sinks/auto_newline_mode.hpp" target="_top">boost/log/sinks/auto_newline_mode.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>23.06.2019</p>
+<p>
+
+The header contains definition of auto-newline modes. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">sinks</span> <span class="special">{</span>
+
+      <span class="comment">// The enum lists automatic trailing newline modes. </span>
+      <span class="keyword">enum</span> <a name="doxygen.sinks.auto__newline__mode_8hpp_1a32ab4e8646a4496f00cc981ffe0ad67a"></a>auto_newline_mode <span class="special">{</span> <a name="doxygen.sinks.auto__newline__mode_8hpp_1a32ab4e8646a4496f00cc981ffe0ad67aa9af3c6e06dff329495f5790f8aa1cd93"></a>disabled_auto_newline, <a name="doxygen.sinks.auto__newline__mode_8hpp_1a32ab4e8646a4496f00cc981ffe0ad67aa17dacbdf23a2b246ae233ca740b42c2e"></a>always_insert, 
+                               <a name="doxygen.sinks.auto__newline__mode_8hpp_1a32ab4e8646a4496f00cc981ffe0ad67aabfae5153f2ddc8e28d875854c03bc5d4"></a>insert_if_missing <span class="special">}</span><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.sinks.basic__sink__backend_8hpp"></a>Header &lt;<a href="../../../../boost/log/sinks/basic_sink_backend.hpp" target="_top">boost/log/sinks/basic_sink_backend.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>04.11.2007</p>
+<p>
+
+The header contains implementation of base classes for sink backends. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">sinks</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> 
+               <span class="keyword">typename</span> FrontendRequirementsT <span class="special">=</span> <span class="identifier">synchronized_feeding</span><span class="special">&gt;</span> 
+        <span class="keyword">struct</span> <a class="link" href="doxygen/sinks/structboost_1_1log_1_1sinks_1_1basic__formatted__sink__backend.html" title="Struct template basic_formatted_sink_backend">basic_formatted_sink_backend</a><span class="special">;</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> FrontendRequirementsT<span class="special">&gt;</span> <span class="keyword">struct</span> <a class="link" href="doxygen/sinks/structboost_1_1log_1_1sinks_1_1basic__sink__backend.html" title="Struct template basic_sink_backend">basic_sink_backend</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.sinks.basic__sink__frontend_8hpp"></a>Header &lt;<a href="../../../../boost/log/sinks/basic_sink_frontend.hpp" target="_top">boost/log/sinks/basic_sink_frontend.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>14.07.2009</p>
+<p>
+
+The header contains implementation of a base class for sink frontends. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">sinks</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="doxygen/sinks/classboost_1_1log_1_1sinks_1_1basic__formatting__sink__frontend.html" title="Class template basic_formatting_sink_frontend">basic_formatting_sink_frontend</a><span class="special">;</span>
+      <span class="keyword">class</span> <a class="link" href="doxygen/sinks/classboost_1_1log_1_1sinks_1_1basic__sink__frontend.html" title="Class basic_sink_frontend">basic_sink_frontend</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.sinks.block__on__overflow_8hpp"></a>Header &lt;<a href="../../../../boost/log/sinks/block_on_overflow.hpp" target="_top">boost/log/sinks/block_on_overflow.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>04.01.2012</p>
+<p>
+
+The header contains implementation of <code class="computeroutput">block_on_overflow</code> strategy for handling queue overflows in bounded queues for the asynchronous sink frontend. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">sinks</span> <span class="special">{</span>
+      <span class="keyword">class</span> <a class="link" href="doxygen/sinks/classboost_1_1log_1_1sinks_1_1block__on__overflow.html" title="Class block_on_overflow">block_on_overflow</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.sinks.bounded__fifo__queue_8hpp"></a>Header &lt;<a href="../../../../boost/log/sinks/bounded_fifo_queue.hpp" target="_top">boost/log/sinks/bounded_fifo_queue.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>04.01.2012</p>
+<p>
+
+The header contains implementation of bounded FIFO queueing strategy for the asynchronous sink frontend. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">sinks</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> MaxQueueSizeV<span class="special">,</span> <span class="keyword">typename</span> OverflowStrategyT<span class="special">&gt;</span> 
+        <span class="keyword">class</span> <a class="link" href="doxygen/sinks/classboost_1_1log_1_1sinks_1_1bounded__fifo__queue.html" title="Class template bounded_fifo_queue">bounded_fifo_queue</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.sinks.bounded__ordering__queue_8hpp"></a>Header &lt;<a href="../../../../boost/log/sinks/bounded_ordering_queue.hpp" target="_top">boost/log/sinks/bounded_ordering_queue.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>06.01.2012</p>
+<p>
+
+The header contains implementation of bounded ordering queueing strategy for the asynchronous sink frontend. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">sinks</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> OrderT<span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> MaxQueueSizeV<span class="special">,</span> 
+               <span class="keyword">typename</span> OverflowStrategyT<span class="special">&gt;</span> 
+        <span class="keyword">class</span> <a class="link" href="doxygen/sinks/classboost_1_1log_1_1sinks_1_1bounded__ordering__queue.html" title="Class template bounded_ordering_queue">bounded_ordering_queue</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.sinks.debug__output__backend_8hpp"></a>Header &lt;<a href="../../../../boost/log/sinks/debug_output_backend.hpp" target="_top">boost/log/sinks/debug_output_backend.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>07.11.2008</p>
+<p>
+
+The header contains a logging sink backend that outputs log records to the debugger. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">sinks</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="doxygen/sinks/classboost_1_1log_1_1sinks_1_1basic__debug__output__backend.html" title="Class template basic_debug_output_backend">basic_debug_output_backend</a><span class="special">;</span>
+
+      <span class="keyword">typedef</span> <a class="link" href="doxygen/sinks/classboost_1_1log_1_1sinks_1_1basic__debug__output__backend.html" title="Class template basic_debug_output_backend">basic_debug_output_backend</a><span class="special">&lt;</span> <span class="keyword">char</span> <span class="special">&gt;</span> <a name="doxygen.sinks.debug__output__backend_8hpp_1af7c4620b4ceb72b1b0b725665b8d330d"></a><span class="identifier">debug_output_backend</span><span class="special">;</span>  <span class="comment">// Convenience typedef for narrow-character logging. </span>
+      <span class="keyword">typedef</span> <a class="link" href="doxygen/sinks/classboost_1_1log_1_1sinks_1_1basic__debug__output__backend.html" title="Class template basic_debug_output_backend">basic_debug_output_backend</a><span class="special">&lt;</span> <span class="keyword">wchar_t</span> <span class="special">&gt;</span> <a name="doxygen.sinks.debug__output__backend_8hpp_1a2a7a8bff62edd4b6f529552f947e0bad"></a><span class="identifier">wdebug_output_backend</span><span class="special">;</span>  <span class="comment">// Convenience typedef for wide-character logging. </span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.sinks.drop__on__overflow_8hpp"></a>Header &lt;<a href="../../../../boost/log/sinks/drop_on_overflow.hpp" target="_top">boost/log/sinks/drop_on_overflow.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>04.01.2012</p>
+<p>
+
+The header contains implementation of <code class="computeroutput">drop_on_overflow</code> strategy for handling queue overflows in bounded queues for the asynchronous sink frontend. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">sinks</span> <span class="special">{</span>
+      <span class="keyword">class</span> <a class="link" href="doxygen/sinks/classboost_1_1log_1_1sinks_1_1drop__on__overflow.html" title="Class drop_on_overflow">drop_on_overflow</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.sinks.event__log__backend_8hpp"></a>Header &lt;<a href="../../../../boost/log/sinks/event_log_backend.hpp" target="_top">boost/log/sinks/event_log_backend.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>07.11.2008</p>
+<p>
+
+The header contains a logging sink backend that uses Windows NT event log API for signaling application events. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">sinks</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="doxygen/sinks/classboost_1_1log_1_1sinks_1_1basic__event__log__backend.html" title="Class template basic_event_log_backend">basic_event_log_backend</a><span class="special">;</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="doxygen/sinks/classboost_1_1log_1_1sinks_1_1basic__simple__event__log__backend.html" title="Class template basic_simple_event_log_backend">basic_simple_event_log_backend</a><span class="special">;</span>
+
+      <span class="keyword">typedef</span> <a class="link" href="doxygen/sinks/classboost_1_1log_1_1sinks_1_1basic__simple__event__log__backend.html" title="Class template basic_simple_event_log_backend">basic_simple_event_log_backend</a><span class="special">&lt;</span> <span class="keyword">char</span> <span class="special">&gt;</span> <a name="doxygen.sinks.event__log__backend_8hpp_1a1b40dd970e2b42e9338be1598a370ade"></a><span class="identifier">simple_event_log_backend</span><span class="special">;</span>  <span class="comment">// Convenience typedef for narrow-character logging. </span>
+      <span class="keyword">typedef</span> <a class="link" href="doxygen/sinks/classboost_1_1log_1_1sinks_1_1basic__event__log__backend.html" title="Class template basic_event_log_backend">basic_event_log_backend</a><span class="special">&lt;</span> <span class="keyword">char</span> <span class="special">&gt;</span> <a name="doxygen.sinks.event__log__backend_8hpp_1ae24231be4ed52501accd3fd65e8119b9"></a><span class="identifier">event_log_backend</span><span class="special">;</span>  <span class="comment">// Convenience typedef for narrow-character logging. </span>
+      <span class="keyword">typedef</span> <a class="link" href="doxygen/sinks/classboost_1_1log_1_1sinks_1_1basic__simple__event__log__backend.html" title="Class template basic_simple_event_log_backend">basic_simple_event_log_backend</a><span class="special">&lt;</span> <span class="keyword">wchar_t</span> <span class="special">&gt;</span> <a name="doxygen.sinks.event__log__backend_8hpp_1a39326af7df82b07aa32abb8b176de960"></a><span class="identifier">wsimple_event_log_backend</span><span class="special">;</span>  <span class="comment">// Convenience typedef for wide-character logging. </span>
+      <span class="keyword">typedef</span> <a class="link" href="doxygen/sinks/classboost_1_1log_1_1sinks_1_1basic__event__log__backend.html" title="Class template basic_event_log_backend">basic_event_log_backend</a><span class="special">&lt;</span> <span class="keyword">wchar_t</span> <span class="special">&gt;</span> <a name="doxygen.sinks.event__log__backend_8hpp_1a466d33fb07b0568ccc1ee6c825f1cf7f"></a><span class="identifier">wevent_log_backend</span><span class="special">;</span>  <span class="comment">// Convenience typedef for wide-character logging. </span>
+      <span class="keyword">namespace</span> <span class="identifier">event_log</span> <span class="special">{</span>
+        <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="doxygen/sinks/classboost_1_1log_1_1sinks_1_1event__log_1_1basic__event__composer.html" title="Class template basic_event_composer">basic_event_composer</a><span class="special">;</span>
+        <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> AttributeValueT <span class="special">=</span> <span class="keyword">int</span><span class="special">&gt;</span> 
+          <span class="keyword">class</span> <a class="link" href="doxygen/sinks/classboost_1_1log_1_1sinks_1_1event__log_1_1custom__event__category__mapping.html" title="Class template custom_event_category_mapping">custom_event_category_mapping</a><span class="special">;</span>
+        <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> AttributeValueT <span class="special">=</span> <span class="keyword">int</span><span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="doxygen/sinks/classboost_1_1log_1_1sinks_1_1event__log_1_1custom__event__id__mapping.html" title="Class template custom_event_id_mapping">custom_event_id_mapping</a><span class="special">;</span>
+        <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> AttributeValueT <span class="special">=</span> <span class="keyword">int</span><span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="doxygen/sinks/classboost_1_1log_1_1sinks_1_1event__log_1_1custom__event__type__mapping.html" title="Class template custom_event_type_mapping">custom_event_type_mapping</a><span class="special">;</span>
+        <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> AttributeValueT <span class="special">=</span> <span class="keyword">int</span><span class="special">&gt;</span> 
+          <span class="keyword">class</span> <a class="link" href="doxygen/sinks/classboost_1_1log_1_1sinks_1_1event__log_1_1direct__event__category__mapping.html" title="Class template direct_event_category_mapping">direct_event_category_mapping</a><span class="special">;</span>
+        <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> AttributeValueT <span class="special">=</span> <span class="keyword">int</span><span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="doxygen/sinks/classboost_1_1log_1_1sinks_1_1event__log_1_1direct__event__id__mapping.html" title="Class template direct_event_id_mapping">direct_event_id_mapping</a><span class="special">;</span>
+        <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> AttributeValueT <span class="special">=</span> <span class="keyword">int</span><span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="doxygen/sinks/classboost_1_1log_1_1sinks_1_1event__log_1_1direct__event__type__mapping.html" title="Class template direct_event_type_mapping">direct_event_type_mapping</a><span class="special">;</span>
+
+        <span class="comment">// Event log source registration modes. </span>
+        <span class="keyword">enum</span> <a name="doxygen.sinks.event__log__backend_8hpp_1ab16ac99c8d27acdb8e803871defc5720"></a>registration_mode <span class="special">{</span> <a name="doxygen.sinks.event__log__backend_8hpp_1ab16ac99c8d27acdb8e803871defc5720ac2a0de66f834ea27d9de53c642bb54fa"></a>never, <a name="doxygen.sinks.event__log__backend_8hpp_1ab16ac99c8d27acdb8e803871defc5720ac1da97b98bb4120ae61789e1de7a6cb9"></a>on_demand, <a name="doxygen.sinks.event__log__backend_8hpp_1ab16ac99c8d27acdb8e803871defc5720a5bb156e1693a425de50a618be56bd0fc"></a>forced <span class="special">}</span><span class="special">;</span>
+
+        <span class="keyword">typedef</span> <a class="link" href="doxygen/sinks/classboost_1_1log_1_1sinks_1_1event__log_1_1basic__event__composer.html" title="Class template basic_event_composer">basic_event_composer</a><span class="special">&lt;</span> <span class="keyword">char</span> <span class="special">&gt;</span> <a name="doxygen.sinks.event__log__backend_8hpp_1a5b7c3b024b9c92a40d05f19e8cab973d"></a><span class="identifier">event_composer</span><span class="special">;</span>  <span class="comment">// Convenience typedef for narrow-character logging. </span>
+        <span class="keyword">typedef</span> <a class="link" href="doxygen/sinks/classboost_1_1log_1_1sinks_1_1event__log_1_1basic__event__composer.html" title="Class template basic_event_composer">basic_event_composer</a><span class="special">&lt;</span> <span class="keyword">wchar_t</span> <span class="special">&gt;</span> <a name="doxygen.sinks.event__log__backend_8hpp_1a5469296bcee9c5ecd877d18c70822123"></a><span class="identifier">wevent_composer</span><span class="special">;</span>  <span class="comment">// Convenience typedef for wide-character logging. </span>
+      <span class="special">}</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.sinks.event__log__constants_8hpp"></a>Header &lt;<a href="../../../../boost/log/sinks/event_log_constants.hpp" target="_top">boost/log/sinks/event_log_constants.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>07.11.2008</p>
+<p>
+
+The header contains definition of constants related to Windows NT Event Log API. The constants can be used in other places without the event log backend. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">sinks</span> <span class="special">{</span>
+      <span class="keyword">namespace</span> <span class="identifier">event_log</span> <span class="special">{</span>
+
+        <span class="comment">// Windows event types. </span>
+        <span class="keyword">enum</span> <a name="doxygen.sinks.event__log__constants_8hpp_1a430b444c74dd3fd1472a31714ec5f1ce"></a>event_type <span class="special">{</span> <a name="doxygen.sinks.event__log__constants_8hpp_1a430b444c74dd3fd1472a31714ec5f1ceab8916948582bbb4902d6ad269064f7ef"></a>success = 0, <a name="doxygen.sinks.event__log__constants_8hpp_1a430b444c74dd3fd1472a31714ec5f1ceaa4abb266e72efba828327b605b2ab0f4"></a>info = 4, <a name="doxygen.sinks.event__log__constants_8hpp_1a430b444c74dd3fd1472a31714ec5f1cea8de9aef05fc85e519a0cfce33573f492"></a>warning = 2, <a name="doxygen.sinks.event__log__constants_8hpp_1a430b444c74dd3fd1472a31714ec5f1cead606e435413ea0944dd00d49e901e4ed"></a>error = 1 <span class="special">}</span><span class="special">;</span>
+
+        <span class="keyword">typedef</span> <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a name="doxygen.sinks.event__log__constants_8hpp_1a5388ea1851a0f54d0272612fd41c6e73"></a><span class="identifier">event_id</span><span class="special">;</span>  <span class="comment">// A tagged integral type that represents event identifier for the Windows API. </span>
+        <span class="keyword">typedef</span> <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a name="doxygen.sinks.event__log__constants_8hpp_1a1c5573041d1ff5abbae9916185c579b7"></a><span class="identifier">event_category</span><span class="special">;</span>  <span class="comment">// A tagged integral type that represents event category for the Windows API. </span>
+        <span class="identifier">event_id</span> <a class="link" href="doxygen/sinks/event__log__constants_8hpp_1a81a690679e255816289332e8a4aa8e38.html" title="Function make_event_id"><span class="identifier">make_event_id</span></a><span class="special">(</span><span class="keyword">unsigned</span> <span class="keyword">int</span><span class="special">)</span><span class="special">;</span>
+        <span class="identifier">event_category</span> <a class="link" href="doxygen/sinks/event__log__constants_8hpp_1a947c86b7dce895f5a604433cd74c7457.html" title="Function make_event_category"><span class="identifier">make_event_category</span></a><span class="special">(</span><span class="keyword">unsigned</span> <span class="keyword">short</span><span class="special">)</span><span class="special">;</span>
+        <span class="identifier">event_type</span> <a class="link" href="doxygen/sinks/event__log__constants_8hpp_1a5beae19544f1df8ed90c7db89b351653.html" title="Function make_event_type"><span class="identifier">make_event_type</span></a><span class="special">(</span><span class="keyword">unsigned</span> <span class="keyword">short</span><span class="special">)</span><span class="special">;</span>
+      <span class="special">}</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.sinks.frontend__requirements_8hpp"></a>Header &lt;<a href="../../../../boost/log/sinks/frontend_requirements.hpp" target="_top">boost/log/sinks/frontend_requirements.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>22.04.2007</p>
+<p>
+
+The header contains definition of requirement tags that sink backend may declare with regard to frontends. These requirements ensure that a backend will not be used with an incompatible frontend. </p>
+<pre class="synopsis">
+
+<a class="link" href="doxygen/sinks/frontend__requirements_8hpp_1adc4dfee65bec6d1237dbd0574ebef75b.html" title="Macro BOOST_LOG_COMBINE_REQUIREMENTS_LIMIT">BOOST_LOG_COMBINE_REQUIREMENTS_LIMIT</a></pre>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">sinks</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span><span class="special">...</span> RequirementsT<span class="special">&gt;</span> <span class="keyword">struct</span> <a class="link" href="doxygen/sinks/structboost_1_1log_1_1sinks_1_1combine__requirements.html" title="Struct template combine_requirements">combine_requirements</a><span class="special">;</span>
+      <span class="keyword">struct</span> <a class="link" href="doxygen/sinks/structboost_1_1log_1_1sinks_1_1concurrent__feeding.html" title="Struct concurrent_feeding">concurrent_feeding</a><span class="special">;</span>
+      <span class="keyword">struct</span> <a class="link" href="doxygen/sinks/structboost_1_1log_1_1sinks_1_1flushing.html" title="Struct flushing">flushing</a><span class="special">;</span>
+      <span class="keyword">struct</span> <a class="link" href="doxygen/sinks/structboost_1_1log_1_1sinks_1_1formatted__records.html" title="Struct formatted_records">formatted_records</a><span class="special">;</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> TestedT<span class="special">,</span> <span class="keyword">typename</span> RequiredT<span class="special">&gt;</span> <span class="keyword">struct</span> <a class="link" href="doxygen/sinks/structboost_1_1log_1_1sinks_1_1has__requirement.html" title="Struct template has_requirement">has_requirement</a><span class="special">;</span>
+      <span class="keyword">struct</span> <a class="link" href="doxygen/sinks/structboost_1_1log_1_1sinks_1_1synchronized__feeding.html" title="Struct synchronized_feeding">synchronized_feeding</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.sinks.sink_8hpp"></a>Header &lt;<a href="../../../../boost/log/sinks/sink.hpp" target="_top">boost/log/sinks/sink.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>22.04.2007</p>
+<p>
+
+The header contains an interface declaration for all sinks. This interface is used by the logging core to feed log records to sinks. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">sinks</span> <span class="special">{</span>
+      <span class="keyword">class</span> <a class="link" href="doxygen/sinks/classboost_1_1log_1_1sinks_1_1sink.html" title="Class sink">sink</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.sinks.sync__frontend_8hpp"></a>Header &lt;<a href="../../../../boost/log/sinks/sync_frontend.hpp" target="_top">boost/log/sinks/sync_frontend.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>14.07.2009</p>
+<p>
+
+The header contains implementation of synchronous sink frontend. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">sinks</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> SinkBackendT<span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="doxygen/sinks/classboost_1_1log_1_1sinks_1_1synchronous__sink.html" title="Class template synchronous_sink">synchronous_sink</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.sinks.syslog__backend_8hpp"></a>Header &lt;<a href="../../../../boost/log/sinks/syslog_backend.hpp" target="_top">boost/log/sinks/syslog_backend.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>08.01.2008</p>
+<p>
+
+The header contains implementation of a Syslog sink backend along with its setup facilities. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">sinks</span> <span class="special">{</span>
+      <span class="keyword">class</span> <a class="link" href="doxygen/sinks/classboost_1_1log_1_1sinks_1_1syslog__backend.html" title="Class syslog_backend">syslog_backend</a><span class="special">;</span>
+
+      <span class="comment">// Supported IP protocol versions. </span>
+      <span class="keyword">enum</span> <a name="doxygen.sinks.syslog__backend_8hpp_1a5fe3ade3ee10b02a11ce0b3cb2caf13d"></a>ip_versions <span class="special">{</span> <a name="doxygen.sinks.syslog__backend_8hpp_1a5fe3ade3ee10b02a11ce0b3cb2caf13da80d0d0a762bdcc2c824db5446254dcbe"></a>v4, <a name="doxygen.sinks.syslog__backend_8hpp_1a5fe3ade3ee10b02a11ce0b3cb2caf13daab7db506bdc8ad12513ed0f249b5e3dc"></a>v6 <span class="special">}</span><span class="special">;</span>
+      <span class="keyword">namespace</span> <span class="identifier">syslog</span> <span class="special">{</span>
+        <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> AttributeValueT <span class="special">=</span> <span class="keyword">int</span><span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="doxygen/sinks/classboost_1_1log_1_1sinks_1_1syslog_1_1custom__severity__mapping.html" title="Class template custom_severity_mapping">custom_severity_mapping</a><span class="special">;</span>
+        <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> AttributeValueT <span class="special">=</span> <span class="keyword">int</span><span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="doxygen/sinks/classboost_1_1log_1_1sinks_1_1syslog_1_1direct__severity__mapping.html" title="Class template direct_severity_mapping">direct_severity_mapping</a><span class="special">;</span>
+
+        <span class="comment">// The enumeration defined the possible implementation types for the syslog backend. </span>
+        <span class="keyword">enum</span> <a name="doxygen.sinks.syslog__backend_8hpp_1a56348fdbec2d3916336e14814c934da6"></a>impl_types <span class="special">{</span> <a name="doxygen.sinks.syslog__backend_8hpp_1a56348fdbec2d3916336e14814c934da6a68b9b7d7ecabc154b06307bb01caa288"></a>native = 0, <a name="doxygen.sinks.syslog__backend_8hpp_1a56348fdbec2d3916336e14814c934da6ae631e8282c5ff71544a01e25814b8fda"></a>udp_socket_based = 1 <span class="special">}</span><span class="special">;</span>
+      <span class="special">}</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.sinks.syslog__constants_8hpp"></a>Header &lt;<a href="../../../../boost/log/sinks/syslog_constants.hpp" target="_top">boost/log/sinks/syslog_constants.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>08.01.2008</p>
+<p>
+
+The header contains definition of constants related to Syslog API. The constants can be used in other places without the Syslog backend. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">sinks</span> <span class="special">{</span>
+      <span class="keyword">namespace</span> <span class="identifier">syslog</span> <span class="special">{</span>
+
+        <span class="comment">// Syslog record levels. </span>
+        <span class="keyword">enum</span> <a name="doxygen.sinks.syslog__constants_8hpp_1afde8e18a788ccc92fc61cab298bca7e3"></a>level <span class="special">{</span> <a name="doxygen.sinks.syslog__constants_8hpp_1afde8e18a788ccc92fc61cab298bca7e3ac9edc1ee12932b24002c207707b062c1"></a>emergency = 0, <a name="doxygen.sinks.syslog__constants_8hpp_1afde8e18a788ccc92fc61cab298bca7e3adb24f4ef34c1115e9fb2a696d98a51de"></a>alert = 1, <a name="doxygen.sinks.syslog__constants_8hpp_1afde8e18a788ccc92fc61cab298bca7e3a5fe0ea375791d13455a34f3d40dc9c7d"></a>critical = 2, <a name="doxygen.sinks.syslog__constants_8hpp_1afde8e18a788ccc92fc61cab298bca7e3ad606e435413ea0944dd00d49e901e4ed"></a>error = 3, 
+                     <a name="doxygen.sinks.syslog__constants_8hpp_1afde8e18a788ccc92fc61cab298bca7e3a8de9aef05fc85e519a0cfce33573f492"></a>warning = 4, <a name="doxygen.sinks.syslog__constants_8hpp_1afde8e18a788ccc92fc61cab298bca7e3a1947748888b7be287264b77a59951f5d"></a>notice = 5, <a name="doxygen.sinks.syslog__constants_8hpp_1afde8e18a788ccc92fc61cab298bca7e3aa4abb266e72efba828327b605b2ab0f4"></a>info = 6, <a name="doxygen.sinks.syslog__constants_8hpp_1afde8e18a788ccc92fc61cab298bca7e3a5be0fd270d9cbf6a0b7445db855089da"></a>debug = 7 <span class="special">}</span><span class="special">;</span>
+
+        <span class="comment">// Syslog facility codes. </span>
+        <span class="keyword">enum</span> <a name="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034"></a>facility <span class="special">{</span> <a name="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034adb0339d028e596254368234e5ab09f9d"></a>kernel = 0 * 8, <a name="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034a04981b8c09a50ccfb1d92fc11b81c36a"></a>user = 1 * 8, <a name="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034ae7060a3ca5e4637bfcb304db44012101"></a>mail = 2 * 8, 
+                        <a name="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034a700c216dcac48ce0f2e0459ad2a88e22"></a>daemon = 3 * 8, <a name="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034a82ee35f30a15d068fb0f4d031d0a4b76"></a>security0 = 4 * 8, <a name="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034a2d00b28f05e37b0f13dd2ab25fb47f91"></a>syslogd = 5 * 8, 
+                        <a name="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034acf69e726657f4d37a69cd39c30919fc2"></a>printer = 6 * 8, <a name="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034ad300be7d4f777da5d44f24467ac44418"></a>news = 7 * 8, <a name="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034ace54a7d2a66edc2f3acec4f985b97fab"></a>uucp = 8 * 8, 
+                        <a name="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034a2a10bd87a964d330a9cad5a4f5d865f6"></a>clock0 = 9 * 8, <a name="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034a9d280237279d67dccb975bfb9df4f1d4"></a>security1 = 10 * 8, <a name="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034aecc43cd323ac65407c44744a943837bf"></a>ftp = 11 * 8, 
+                        <a name="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034a9e427ab9f4fdbd9f9d097d75c6e3e9b2"></a>ntp = 12 * 8, <a name="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034a9faf6cb1da110c8705bc8b263c286550"></a>log_audit = 13 * 8, <a name="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034a63803aa40aac08f9a82d3c07495ea941"></a>log_alert = 14 * 8, 
+                        <a name="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034a1da825a89fef0ac39868a14d3a9a1ff2"></a>clock1 = 15 * 8, <a name="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034a7fd41526445913c071c50b71252d328b"></a>local0 = 16 * 8, <a name="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034a5d0b7986f2059a3c756785a85c33c44e"></a>local1 = 17 * 8, 
+                        <a name="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034ae1d7bf272b9fa17aa15e7e08702b3ff3"></a>local2 = 18 * 8, <a name="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034a7cc6527b33d416722b689fd44f204c20"></a>local3 = 19 * 8, <a name="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034ac3389441a1325a01cbb5e14834d7c15b"></a>local4 = 20 * 8, 
+                        <a name="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034af70d33a930539558d4b115897d1b774c"></a>local5 = 21 * 8, <a name="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034a2c18bf27ec0af909f18d2f13d40e3020"></a>local6 = 22 * 8, <a name="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034a57d200597c422f245da175cda0bf0e61"></a>local7 = 23 * 8 <span class="special">}</span><span class="special">;</span>
+        <span class="identifier">level</span> <a class="link" href="doxygen/sinks/syslog__constants_8hpp_1ad65c5f7c25098d73ccb02f7aef25185f.html" title="Function make_level"><span class="identifier">make_level</span></a><span class="special">(</span><span class="keyword">int</span><span class="special">)</span><span class="special">;</span>
+        <span class="identifier">facility</span> <a class="link" href="doxygen/sinks/syslog__constants_8hpp_1ae9e8363fc49057bb90f93aeaec1f9bc7.html" title="Function make_facility"><span class="identifier">make_facility</span></a><span class="special">(</span><span class="keyword">int</span><span class="special">)</span><span class="special">;</span>
+      <span class="special">}</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.sinks.text__file__backend_8hpp"></a>Header &lt;<a href="../../../../boost/log/sinks/text_file_backend.hpp" target="_top">boost/log/sinks/text_file_backend.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>09.06.2009</p>
+<p>
+
+The header contains implementation of a text file sink backend. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">sinks</span> <span class="special">{</span>
+      <span class="keyword">class</span> <a class="link" href="doxygen/sinks/classboost_1_1log_1_1sinks_1_1text__file__backend.html" title="Class text_file_backend">text_file_backend</a><span class="special">;</span>
+      <span class="keyword">namespace</span> <span class="identifier">file</span> <span class="special">{</span>
+        <span class="keyword">struct</span> <a class="link" href="doxygen/sinks/structboost_1_1log_1_1sinks_1_1file_1_1collector.html" title="Struct collector">collector</a><span class="special">;</span>
+
+        <span class="keyword">class</span> <a class="link" href="doxygen/sinks/classboost_1_1log_1_1sinks_1_1file_1_1rotation__at__time__interval.html" title="Class rotation_at_time_interval">rotation_at_time_interval</a><span class="special">;</span>
+        <span class="keyword">class</span> <a class="link" href="doxygen/sinks/classboost_1_1log_1_1sinks_1_1file_1_1rotation__at__time__point.html" title="Class rotation_at_time_point">rotation_at_time_point</a><span class="special">;</span>
+
+        <span class="keyword">struct</span> <a class="link" href="doxygen/sinks/structboost_1_1log_1_1sinks_1_1file_1_1scan__result.html" title="Struct scan_result">scan_result</a><span class="special">;</span>
+
+        <span class="comment">// The enumeration of the stored files scan methods. </span>
+        <span class="keyword">enum</span> <a name="doxygen.sinks.text__file__backend_8hpp_1a1d74a9445bfea95e8e411e69a9d44447"></a>scan_method <span class="special">{</span> <a name="doxygen.sinks.text__file__backend_8hpp_1a1d74a9445bfea95e8e411e69a9d44447a60c7e6d4c4b7001a9c756ffce330d76f"></a>no_scan, <a name="doxygen.sinks.text__file__backend_8hpp_1a1d74a9445bfea95e8e411e69a9d44447a5726bab04736da589f7a5a88e417052e"></a>scan_matching, <a name="doxygen.sinks.text__file__backend_8hpp_1a1d74a9445bfea95e8e411e69a9d44447a9b941d8796bf0e8b6002aaa0614c7c6c"></a>scan_all <span class="special">}</span><span class="special">;</span>
+        <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span><span class="special">...</span> ArgsT<span class="special">&gt;</span> 
+          <span class="identifier">shared_ptr</span><span class="special">&lt;</span> <a class="link" href="doxygen/sinks/structboost_1_1log_1_1sinks_1_1file_1_1collector.html" title="Struct collector">collector</a> <span class="special">&gt;</span> <a class="link" href="doxygen/sinks/text__file__backend_8hpp_1a8306dfeac463a29f2ef0c54f711c87ac.html" title="Function template make_collector"><span class="identifier">make_collector</span></a><span class="special">(</span><span class="identifier">ArgsT</span><span class="special">...</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+      <span class="special">}</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.sinks.text__ipc__message__queue__backend_8hpp"></a>Header &lt;<a href="../../../../boost/log/sinks/text_ipc_message_queue_backend.hpp" target="_top">boost/log/sinks/text_ipc_message_queue_backend.hpp</a>&gt;</h4></div></div></div>
+<p>Lingxi Li </p>
+<p>
+
+</p>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>14.10.2015</p>
+<p>
+
+The header contains implementation of a text interprocess message queue sink backend along with implementation of a supporting interprocess message queue. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">sinks</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> QueueT<span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="doxygen/sinks/classboost_1_1log_1_1sinks_1_1text__ipc__message__queue__backend.html" title="Class template text_ipc_message_queue_backend">text_ipc_message_queue_backend</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.sinks.text__multifile__backend_8hpp"></a>Header &lt;<a href="../../../../boost/log/sinks/text_multifile_backend.hpp" target="_top">boost/log/sinks/text_multifile_backend.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>09.06.2009</p>
+<p>
+
+The header contains implementation of a text multi-file sink backend. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">sinks</span> <span class="special">{</span>
+      <span class="keyword">class</span> <a class="link" href="doxygen/sinks/classboost_1_1log_1_1sinks_1_1text__multifile__backend.html" title="Class text_multifile_backend">text_multifile_backend</a><span class="special">;</span>
+      <span class="keyword">namespace</span> <span class="identifier">file</span> <span class="special">{</span>
+        <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> FormatterT<span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="doxygen/sinks/classboost_1_1log_1_1sinks_1_1file_1_1file__name__composer__adapter.html" title="Class template file_name_composer_adapter">file_name_composer_adapter</a><span class="special">;</span>
+        <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> FormatterT<span class="special">&gt;</span> 
+          <a class="link" href="doxygen/sinks/classboost_1_1log_1_1sinks_1_1file_1_1file__name__composer__adapter.html" title="Class template file_name_composer_adapter">file_name_composer_adapter</a><span class="special">&lt;</span> <span class="identifier">FormatterT</span> <span class="special">&gt;</span> 
+          <a class="link" href="doxygen/sinks/text__multifile__backend_8hpp_1a8fcaaa7c7c62e8ecb982e552d0e55851.html" title="Function template as_file_name_composer"><span class="identifier">as_file_name_composer</span></a><span class="special">(</span><span class="identifier">FormatterT</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> 
+                                <span class="identifier">std</span><span class="special">::</span><span class="identifier">locale</span> <span class="keyword">const</span> <span class="special">&amp;</span> <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">locale</span><span class="special">(</span><span class="special">)</span><span class="special">)</span><span class="special">;</span>
+      <span class="special">}</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.sinks.text__ostream__backend_8hpp"></a>Header &lt;<a href="../../../../boost/log/sinks/text_ostream_backend.hpp" target="_top">boost/log/sinks/text_ostream_backend.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>22.04.2007</p>
+<p>
+
+The header contains implementation of a text output stream sink backend. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">sinks</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="doxygen/sinks/classboost_1_1log_1_1sinks_1_1basic__text__ostream__backend.html" title="Class template basic_text_ostream_backend">basic_text_ostream_backend</a><span class="special">;</span>
+
+      <span class="keyword">typedef</span> <a class="link" href="doxygen/sinks/classboost_1_1log_1_1sinks_1_1basic__text__ostream__backend.html" title="Class template basic_text_ostream_backend">basic_text_ostream_backend</a><span class="special">&lt;</span> <span class="keyword">char</span> <span class="special">&gt;</span> <a name="doxygen.sinks.text__ostream__backend_8hpp_1a7111bc8422e2d83f04c5b56e9733945b"></a><span class="identifier">text_ostream_backend</span><span class="special">;</span>  <span class="comment">// Convenience typedef for narrow-character logging. </span>
+      <span class="keyword">typedef</span> <a class="link" href="doxygen/sinks/classboost_1_1log_1_1sinks_1_1basic__text__ostream__backend.html" title="Class template basic_text_ostream_backend">basic_text_ostream_backend</a><span class="special">&lt;</span> <span class="keyword">wchar_t</span> <span class="special">&gt;</span> <a name="doxygen.sinks.text__ostream__backend_8hpp_1adb74bde67a68f65f9455067161d3a2f8"></a><span class="identifier">wtext_ostream_backend</span><span class="special">;</span>  <span class="comment">// Convenience typedef for wide-character logging. </span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.sinks.unbounded__fifo__queue_8hpp"></a>Header &lt;<a href="../../../../boost/log/sinks/unbounded_fifo_queue.hpp" target="_top">boost/log/sinks/unbounded_fifo_queue.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>24.07.2011</p>
+<p>
+
+The header contains implementation of unbounded FIFO queueing strategy for the asynchronous sink frontend. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">sinks</span> <span class="special">{</span>
+      <span class="keyword">class</span> <a class="link" href="doxygen/sinks/classboost_1_1log_1_1sinks_1_1unbounded__fifo__queue.html" title="Class unbounded_fifo_queue">unbounded_fifo_queue</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.sinks.unbounded__ordering__queue_8hpp"></a>Header &lt;<a href="../../../../boost/log/sinks/unbounded_ordering_queue.hpp" target="_top">boost/log/sinks/unbounded_ordering_queue.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>24.07.2011</p>
+<p>
+
+The header contains implementation of unbounded ordering record queueing strategy for the asynchronous sink frontend. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">sinks</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> OrderT<span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="doxygen/sinks/classboost_1_1log_1_1sinks_1_1unbounded__ordering__queue.html" title="Class template unbounded_ordering_queue">unbounded_ordering_queue</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.sinks.unlocked__frontend_8hpp"></a>Header &lt;<a href="../../../../boost/log/sinks/unlocked_frontend.hpp" target="_top">boost/log/sinks/unlocked_frontend.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>14.07.2009</p>
+<p>
+
+The header contains declaration of an unlocked sink frontend. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">sinks</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> SinkBackendT<span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="doxygen/sinks/classboost_1_1log_1_1sinks_1_1unlocked__sink.html" title="Class template unlocked_sink">unlocked_sink</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2007-2024 Andrey Semashev<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>).
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="doxygen/logging_sources/threading__models_8hpp_1a7c62c95768b702db92402925f26b6cba.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="log/reference.html"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="doxygen/sinks/classboost_1_1log_1_1sinks_1_1asynchronous__sink.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

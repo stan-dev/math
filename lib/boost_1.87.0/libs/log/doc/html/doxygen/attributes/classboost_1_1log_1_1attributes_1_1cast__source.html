@@ -1,0 +1,77 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class cast_source</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.Log v2">
+<link rel="up" href="../../attributes.html#doxygen.attributes.attribute__cast_8hpp" title="Header &lt;boost/log/attributes/attribute_cast.hpp&gt;">
+<link rel="prev" href="attribute_8hpp_1a880347f1d54a8aea75a0e2bebe8a3cbc.html" title="Function swap">
+<link rel="next" href="attribute__cast_8hpp_1a5a80d3aced95644715e22060f0576e52.html" title="Function template attribute_cast">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr><td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td></tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="attribute_8hpp_1a880347f1d54a8aea75a0e2bebe8a3cbc.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../attributes.html#doxygen.attributes.attribute__cast_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="attribute__cast_8hpp_1a5a80d3aced95644715e22060f0576e52.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.attributes.classboost_1_1log_1_1attributes_1_1cast__source"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class cast_source</span></h2>
+<p>boost::log::attributes::cast_source</p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../attributes.html#doxygen.attributes.attribute__cast_8hpp" title="Header &lt;boost/log/attributes/attribute_cast.hpp&gt;">boost/log/attributes/attribute_cast.hpp</a>&gt;
+
+</span>
+<span class="keyword">class</span> <a class="link" href="classboost_1_1log_1_1attributes_1_1cast__source.html" title="Class cast_source">cast_source</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1log_1_1attributes_1_1cast__source.html#id25-bb">public member functions</a></span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1log_1_1attributes_1_1cast__source.html#doxygen.attributes.classboost_1_1log_1_1attributes_1_1cast__source_1af740d3e11b351b4c3818a21ef3d75fb2"><span class="identifier">cast_source</span></a><span class="special">(</span><a class="link" href="structboost_1_1log_1_1attribute_1_1impl.html" title="Struct impl">attribute::impl</a> <span class="special">*</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> <span class="identifier">T</span> <span class="special">*</span> <a class="link" href="classboost_1_1log_1_1attributes_1_1cast__source.html#doxygen.attributes.classboost_1_1log_1_1attributes_1_1cast__source_1a7444aed7c812f3728c4dc32b7a00d8b3"><span class="identifier">as</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id29513"></a><h2>Description</h2>
+<p>The class holds a reference to the attribute factory implementation being casted </p>
+<div class="refsect2">
+<a name="id29516"></a><h3>
+<a name="id25-bb"></a><code class="computeroutput">cast_source</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.attributes.classboost_1_1log_1_1attributes_1_1cast__source_1af740d3e11b351b4c3818a21ef3d75fb2"></a><span class="identifier">cast_source</span><span class="special">(</span><a class="link" href="structboost_1_1log_1_1attribute_1_1impl.html" title="Struct impl">attribute::impl</a> <span class="special">*</span> p<span class="special">)</span><span class="special">;</span></pre>
+<p>Initializing constructor. Creates a source that refers to the specified factory implementation. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> <span class="identifier">T</span> <span class="special">*</span> <a name="doxygen.attributes.classboost_1_1log_1_1attributes_1_1cast__source_1a7444aed7c812f3728c4dc32b7a00d8b3"></a><span class="identifier">as</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>The function attempts to cast the aggregated pointer to the implementation to the specified type.</p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>The converted pointer or <code class="computeroutput">NULL</code>, if the conversion fails. </p></td>
+</tr></tbody>
+</table></div>
+</li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2007-2024 Andrey Semashev<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>).
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="attribute_8hpp_1a880347f1d54a8aea75a0e2bebe8a3cbc.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../attributes.html#doxygen.attributes.attribute__cast_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="attribute__cast_8hpp_1a5a80d3aced95644715e22060f0576e52.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

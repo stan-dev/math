@@ -1,0 +1,597 @@
+[/
+ / Distributed under the Boost Software License, Version 1.0. (See accompanying
+ / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+ /]
+
+[template table_parsers_and_their_semantics
+This table lists all the _Parser_ parsers.  For the callable parsers, a
+separate entry exists for each possible arity of arguments.  For a parser `p`,
+if there is no entry for `p` without arguments, `p` is a function, and cannot
+itself be used as a parser; it must be called.  In the table below:
+
+* each entry is a global object usable directly in your parsers, unless
+  otherwise noted;
+
+* "code point" is used to refer to the elements of the input range, which
+  assumes that the parse is being done in the Unicode-aware code path (if the
+  parse is being done in the non-Unicode code path, read "code point" as
+  "`char`");
+
+* _RES_ is a notional macro that expands to the resolution of parse argument
+  or evaluation of a parse predicate (see _parsers_uses_);
+
+* "`_RES_np_(pred) == true`" is a shorthand notation for "`_RES_np_(pred)` is
+  contextually convertible to `bool` and `true`"; likewise for `false`;
+
+* `c` is a character of type `char`, `char8_t`, or `char32_t`;
+
+* `str` is a string literal of type `char const[]`, `char8_t const []`, or
+  `char32_t const []`;
+
+* `pred` is a parse predicate;
+
+* `arg0`, `arg1`, `arg2`, ... are parse arguments;
+
+* `a` is a semantic action;
+
+* `r` is an object whose type models `parsable_range`;
+
+* `p`, `p1`, `p2`, ... are parsers; and
+
+* `escapes` is a _symbols_t_ object, where `T` is `char` or `char32_t`.
+
+[note The definition of `parsable_range` is:
+
+[parsable_range_concept]
+
+]
+
+[note Some of the parsers in this table consume no input.  All parsers consume
+the input they match unless otherwise stated in the table below.]
+
+[table Parsers and Their Semantics
+    [[Parser] [Semantics] [Attribute Type] [Notes]]
+
+    [[ _e_ ]
+      [ Matches /epsilon/, the empty string.  Always matches, and consumes no input. ]
+      [ None. ]
+      [ Matching _e_ an unlimited number of times creates an infinite loop, which is undefined behavior in C++.  _Parser_ will assert in debug mode when it encounters `*_e_`, `+_e_`, etc (this applies to unconditional _e_ only). ]]
+
+    [[ `_e_(pred)` ]
+     [ Fails to match the input if `_RES_np_(pred) == false`.  Otherwise, the semantics are those of _e_. ]
+     [ None. ]
+     []]
+
+    [[ _ws_ ]
+     [ Matches a single whitespace code point (see note), according to the Unicode White_Space property. ]
+     [ None. ]
+     [ For more info, see the [@https://www.unicode.org/Public/UCD/latest/ucd/PropList.txt Unicode properties].  _ws_ may consume one code point or two.  It only consumes two code points when it matches `"\r\n"`. ]]
+
+    [[ _eol_ ]
+     [ Matches a single newline (see note), following the "hard" line breaks in the Unicode line breaking algorithm. ]
+     [ None. ]
+     [ For more info, see the [@https://unicode.org/reports/tr14 Unicode Line Breaking Algorithm].  _eol_ may consume one code point or two.  It only consumes two code points when it matches `"\r\n"`. ]]
+
+    [[ _eoi_ ]
+     [ Matches only at the end of input, and consumes no input. ]
+     [ None. ]
+     []]
+
+    [[ _attr_np_`(arg0)` ]
+     [ Always matches, and consumes no input.  Generates the attribute `_RES_np_(arg0)`. ]
+     [ `decltype(_RES_np_(arg0))`. ]
+     [ An important use case for `_attr_` is to provide a default attribute value as a trailing alternative.  For instance, an *optional* comma-delmited list is: `int_ % ',' | attr(std::vector<int>)`.  Without the "`| attr(...)`", at least one `int_` match would be required. ]]
+
+    [[ _ch_ ]
+     [ Matches any single code point. ]
+     [ The code point type in Unicode parsing, or `char` in non-Unicode parsing.  See _attr_gen_. ]
+     []]
+
+    [[ `_ch_(arg0)` ]
+     [ Matches exactly the code point `_RES_np_(arg0)`. ]
+     [ The code point type in Unicode parsing, or `char` in non-Unicode parsing.  See _attr_gen_. ]
+     []]
+
+    [[ `_ch_(arg0, arg1)` ]
+     [ Matches the next code point `n` in the input, if `_RES_np_(arg0) <= n && n <= _RES_np_(arg1)`. ]
+     [ The code point type in Unicode parsing, or `char` in non-Unicode parsing.  See _attr_gen_. ]
+     []]
+
+    [[ `_ch_(r)` ]
+     [ Matches the next code point `n` in the input, if `n` is one of the code points in `r`. ]
+     [ The code point type in Unicode parsing, or `char` in non-Unicode parsing.  See _attr_gen_. ]
+     [ `r` is taken to be in a UTF encoding.  The exact UTF used depends on `r`'s element type.  If you do not pass UTF encoded ranges for `r`, the behavior of _ch_ is undefined.  Note that ASCII is a subset of UTF-8, so ASCII is fine.  EBCDIC is not.  `r` is not copied; a reference to it is taken.  The lifetime of `_ch_(r)` must be within the lifetime of `r`.  This overload of _ch_ does *not* take parse arguments. ]]
+
+    [[ _cp_ ]
+     [ Matches a single code point. ]
+     [ `char32_t` ]
+     [ Similar to _ch_, but with a fixed `char32_t` attribute type; _cp_ has all the same call operator overloads as _ch_, though they are not repeated here, for brevity. ]]
+
+    [[ _cu_ ]
+     [ Matches a single code point. ]
+     [ `char` ]
+     [ Similar to _ch_, but with a fixed `char` attribute type; _cu_ has all the same call operator overloads as _ch_, though they are not repeated here, for brevity.  Even though the name "`cu`" suggests that this parser match at the code unit level, it does not.  The name refers to the attribute type generated, much like the names _i_ versus _ui_. ]]
+
+    [[ `_blank_` ]
+     [ Equivalent to `_ws_ - _eol_`. ]
+     [ The code point type in Unicode parsing, or `char` in non-Unicode parsing.  See the entry for _ch_. ]
+     []]
+
+    [[ `_control_` ]
+     [ Matches a single control-character code point. ]
+     [ The code point type in Unicode parsing, or `char` in non-Unicode parsing.  See the entry for _ch_. ]
+     []]
+
+    [[ `_digit_` ]
+     [ Matches a single decimal digit code point. ]
+     [ The code point type in Unicode parsing, or `char` in non-Unicode parsing.  See the entry for _ch_. ]
+     []]
+
+    [[ `_punct_` ]
+     [ Matches a single punctuation code point. ]
+     [ The code point type in Unicode parsing, or `char` in non-Unicode parsing.  See the entry for _ch_. ]
+     []]
+
+    [[ `_hex_digit_` ]
+     [ Matches a single hexidecimal digit code point. ]
+     [ The code point type in Unicode parsing, or `char` in non-Unicode parsing.  See the entry for _ch_. ]
+     []]
+
+    [[ `_lower_` ]
+     [ Matches a single lower-case code point. ]
+     [ The code point type in Unicode parsing, or `char` in non-Unicode parsing.  See the entry for _ch_. ]
+     []]
+
+    [[ `_upper_` ]
+     [ Matches a single upper-case code point. ]
+     [ The code point type in Unicode parsing, or `char` in non-Unicode parsing.  See the entry for _ch_. ]
+     []]
+
+    [[ _lit_np_`(c)`]
+     [ Matches exactly the given code point `c`. ]
+     [ None. ]
+     [_lit_ does *not* take parse arguments. ]]
+
+    [[ `c_l` ]
+     [ Matches exactly the given code point `c`. ]
+     [ None. ]
+     [ This is a _udl_ that represents `_lit_np_(c)`, for example `'F'_l`. ]]
+
+    [[ _lit_np_`(r)`]
+     [ Matches exactly the given string `r`. ]
+     [ None. ]
+     [ _lit_ does *not* take parse arguments. ]]
+
+    [[ `str_l` ]
+     [ Matches exactly the given string `str`. ]
+     [ None. ]
+     [ This is a _udl_ that represents `_lit_np_(s)`, for example `"a string"_l`. ]]
+
+    [[ `_str_np_(r)`]
+     [ Matches exactly `r`, and generates the match as an attribute. ]
+     [ _std_str_ ]
+     [ _str_ does *not* take parse arguments. ]]
+
+    [[ `str_p`]
+     [ Matches exactly `str`, and generates the match as an attribute. ]
+     [ _std_str_ ]
+     [ This is a _udl_ that represents `_str_np_(s)`, for example `"a string"_p`. ]]
+
+    [[ _b_ ]
+     [ Matches `"true"` or `"false"`. ]
+     [ `bool` ]
+     []]
+
+    [[ _bin_ ]
+     [ Matches a binary unsigned integral value. ]
+     [ `unsigned int` ]
+     [ For example, _bin_ would match `"101"`, and generate an attribute of `5u`. ]]
+
+    [[ `_bin_(arg0)` ]
+     [ Matches exactly the binary unsigned integral value `_RES_np_(arg0)`. ]
+     [ `unsigned int` ]
+     []]
+
+    [[ _oct_ ]
+     [ Matches an octal unsigned integral value. ]
+     [ `unsigned int` ]
+     [ For example, _oct_ would match `"31"`, and generate an attribute of `25u`. ]]
+
+    [[ `_oct_(arg0)` ]
+     [ Matches exactly the octal unsigned integral value `_RES_np_(arg0)`. ]
+     [ `unsigned int` ]
+     []]
+
+    [[ _hex_ ]
+     [ Matches a hexadecimal unsigned integral value. ]
+     [ `unsigned int` ]
+     [ For example, _hex_ would match `"ff"`, and generate an attribute of `255u`. ]]
+
+    [[ `_hex_(arg0)` ]
+     [ Matches exactly the hexadecimal unsigned integral value `_RES_np_(arg0)`. ]
+     [ `unsigned int` ]
+     []]
+
+    [[ _us_ ]
+     [ Matches an unsigned integral value. ]
+     [ `unsigned short` ]
+     []]
+
+    [[ `_us_(arg0)` ]
+     [ Matches exactly the unsigned integral value `_RES_np_(arg0)`. ]
+     [ `unsigned short` ]
+     []]
+
+    [[ _ui_ ]
+     [ Matches an unsigned integral value. ]
+     [ `unsigned int` ]
+     []]
+
+    [[ `_ui_(arg0)` ]
+     [ Matches exactly the unsigned integral value `_RES_np_(arg0)`. ]
+     [ `unsigned int` ]
+     []]
+
+    [[ _ul_ ]
+     [ Matches an unsigned integral value. ]
+     [ `unsigned long` ]
+     []]
+
+    [[ `_ul_(arg0)` ]
+     [ Matches exactly the unsigned integral value `_RES_np_(arg0)`. ]
+     [ `unsigned long` ]
+     []]
+
+    [[ _ull_ ]
+     [ Matches an unsigned integral value. ]
+     [ `unsigned long long` ]
+     []]
+
+    [[ `_ull_(arg0)` ]
+     [ Matches exactly the unsigned integral value `_RES_np_(arg0)`. ]
+     [ `unsigned long long` ]
+     []]
+
+    [[ _s_ ]
+     [ Matches a signed integral value. ]
+     [ `short` ]
+     []]
+
+    [[ `_s_(arg0)` ]
+     [ Matches exactly the signed integral value `_RES_np_(arg0)`. ]
+     [ `short` ]
+     []]
+
+    [[ _i_ ]
+     [ Matches a signed integral value. ]
+     [ `int` ]
+     []]
+
+    [[ `_i_(arg0)` ]
+     [ Matches exactly the signed integral value `_RES_np_(arg0)`. ]
+     [ `int` ]
+     []]
+
+    [[ _l_ ]
+     [ Matches a signed integral value. ]
+     [ `long` ]
+     []]
+
+    [[ `_l_(arg0)` ]
+     [ Matches exactly the signed integral value `_RES_np_(arg0)`. ]
+     [ `long` ]
+     []]
+
+    [[ _ll_ ]
+     [ Matches a signed integral value. ]
+     [ `long long` ]
+     []]
+
+    [[ `_ll_(arg0)` ]
+     [ Matches exactly the signed integral value `_RES_np_(arg0)`. ]
+     [ `long long` ]
+     []]
+
+    [[ _f_ ]
+     [ Matches a floating-point number.  _f_ uses parsing implementation details from _Spirit_.  The specifics of what formats are accepted can be found in their _spirit_reals_.  Note that only the default `RealPolicies` is supported by _f_. ]
+     [ `float` ]
+     []]
+
+    [[ _d_ ]
+     [ Matches a floating-point number.  _d_ uses parsing implementation details from _Spirit_.  The specifics of what formats are accepted can be found in their _spirit_reals_.  Note that only the default `RealPolicies` is supported by _d_. ]
+     [ `double` ]
+     []]
+
+    [[ `_rpt_np_(arg0)[p]` ]
+     [ Matches iff `p` matches exactly `_RES_np_(arg0)` times. ]
+     [ `std::string` if `_ATTR_np_(p)` is `char` or `char32_t`, otherwise `std::vector<_ATTR_np_(p)>` ]
+     [ The special value _inf_ may be used; it indicates unlimited repetition.  `decltype(_RES_np_(arg0))` must be implicitly convertible to `int64_t`.  Matching _e_ an unlimited number of times creates an infinite loop, which is undefined behavior in C++.  _Parser_ will assert in debug mode when it encounters `_rpt_np_(_inf_)[_e_]` (this applies to unconditional _e_ only). ]]
+
+    [[ `_rpt_np_(arg0, arg1)[p]` ]
+     [ Matches iff `p` matches between `_RES_np_(arg0)` and `_RES_np_(arg1)` times, inclusively. ]
+     [ `std::string` if `_ATTR_np_(p)` is `char` or `char32_t`, otherwise `std::vector<_ATTR_np_(p)>` ]
+     [ The special value _inf_ may be used for the upper bound; it indicates unlimited repetition.  `decltype(_RES_np_(arg0))` and `decltype(_RES_np_(arg1))` each must be implicitly convertible to `int64_t`.  Matching _e_ an unlimited number of times creates an infinite loop, which is undefined behavior in C++.  _Parser_ will assert in debug mode when it encounters `_rpt_np_(n, _inf_)[_e_]` (this applies to unconditional _e_ only). ]]
+
+    [[ `_if_np_(pred)[p]` ]
+     [ Equivalent to `_e_(pred) >> p`. ]
+     [ `std::optional<_ATTR_np_(p)>` ]
+     [ It is an error to write `_if_np_(pred)`.  That is, it is an error to omit the conditionally matched parser `p`. ]]
+
+    [[ `_sw_np_(arg0)(arg1, p1)(arg2, p2) ...` ]
+     [ Equivalent to `p1` when `_RES_np_(arg0) == _RES_np_(arg1)`, `p2` when `_RES_np_(arg0) == _RES_np_(arg2)`, etc.  If there is such no `argN`, the behavior of _sw_ is undefined. ]
+     [ `std::variant<_ATTR_np_(p1), _ATTR_np_(p2), ...>` ]
+     [ It is an error to write `_sw_np_(arg0)`.  That is, it is an error to omit the conditionally matched parsers `p1`, `p2`, .... ]]
+
+    [[ _symbols_t_ ]
+     [ _symbols_ is an associative container of key, value pairs.  Each key is a _std_str_ and each value has type `T`.  In the Unicode parsing path, the strings are considered to be UTF-8 encoded; in the non-Unicode path, no encoding is assumed.  _symbols_ Matches the longest prefix `pre` of the input that is equal to one of the keys `k`.  If the length `len` of `pre` is zero, and there is no zero-length key, it does not match the input.  If `len` is positive, the generated attribute is the value associated with `k`.]
+     [ `T` ]
+     [ Unlike the other entries in this table, _symbols_ is a type, not an object. ]]
+
+    [[ _quot_str_ ]
+     [ Matches `'"'`, followed by zero or more characters, followed by `'"'`. ]
+     [ _std_str_ ]
+     [ The result does not include the quotes.  A quote within the string can be written by escaping it with a backslash.  A backslash within the string can be written by writing two consecutive backslashes.  Any other use of a backslash will fail the parse.  Skipping is disabled while parsing the entire string, as if using _lexeme_. ]]
+
+    [[ `_quot_str_(c)` ]
+     [ Matches `c`, followed by zero or more characters, followed by `c`. ]
+     [ _std_str_ ]
+     [ The result does not include the `c` quotes.  A `c` within the string can be written by escaping it with a backslash.  A backslash within the string can be written by writing two consecutive backslashes.  Any other use of a backslash will fail the parse.  Skipping is disabled while parsing the entire string, as if using _lexeme_. ]]
+
+    [[ `_quot_str_(r)` ]
+     [ Matches some character `Q` in `r`, followed by zero or more characters, followed by `Q`. ]
+     [ _std_str_ ]
+     [ The result does not include the `Q` quotes.  A `Q` within the string can be written by escaping it with a backslash.  A backslash within the string can be written by writing two consecutive backslashes.  Any other use of a backslash will fail the parse.  Skipping is disabled while parsing the entire string, as if using _lexeme_. ]]
+
+    [[ `_quot_str_(c, symbols)` ]
+     [ Matches `c`, followed by zero or more characters, followed by `c`. ]
+     [ _std_str_ ]
+     [ The result does not include the `c` quotes.  A `c` within the string can be written by escaping it with a backslash.  A backslash within the string can be written by writing two consecutive backslashes.  A backslash followed by a successful match using `symbols` will be interpreted as the corresponding value produced by `symbols`.  Any other use of a backslash will fail the parse.  Skipping is disabled while parsing the entire string, as if using _lexeme_. ]]
+
+    [[ `_quot_str_(r, symbols)` ]
+     [ Matches some character `Q` in `r`, followed by zero or more characters, followed by `Q`. ]
+     [ _std_str_ ]
+     [ The result does not include the `Q` quotes.  A `Q` within the string can be written by escaping it with a backslash.  A backslash within the string can be written by writing two consecutive backslashes.  A backslash followed by a successful match using `symbols` will be interpreted as the corresponding value produced by `symbols`.  Any other use of a backslash will fail the parse.  Skipping is disabled while parsing the entire string, as if using _lexeme_. ]]
+]
+
+[important All the character parsers, like _ch_, _cp_ and _cu_ produce either
+`char` or `char32_t` attributes.  So when you see "`std::string` if
+`_ATTR_np_(p)` is `char` or `char32_t`, otherwise `std::vector<_ATTR_np_(p)>`"
+in the table above, that effectively means that every sequences of character
+attributes get turned into a `std::string`.  The only time this does not
+happen is when you introduce your own rules with attributes using another
+character type (or use _attr_ to do so).]
+]
+
+[template table_combining_operations
+Here are all the operator overloaded for parsers.  In the tables below:
+
+* `c` is a character of type `char` or `char32_t`;
+
+* `a` is a semantic action;
+
+* `r` is an object whose type models `parsable_range` (see _concepts_);
+  and
+
+* `p`, `p1`, `p2`, ... are parsers.
+
+[note Some of the expressions in this table consume no input.  All parsers
+consume the input they match unless otherwise stated in the table below.]
+
+[table Combining Operations and Their Semantics
+    [[Expression] [Semantics] [Attribute Type] [Notes]]
+
+    [[`!p`] [ Matches iff `p` does not match; consumes no input. ] [None.] []]
+    [[`&p`] [ Matches iff `p` matches; consumes no input. ] [None.] []]
+    [[`*p`] [ Parses using `p` repeatedly until `p` no longer matches; always matches. ] [`std::string` if `_ATTR_np_(p)` is `char` or `char32_t`, otherwise `std::vector<_ATTR_np_(p)>`] [ Matching _e_ an unlimited number of times creates an infinite loop, which is undefined behavior in C++.  _Parser_ will assert in debug mode when it encounters `*_e_` (this applies to unconditional _e_ only). ]]
+    [[`+p`] [ Parses using `p` repeatedly until `p` no longer matches; matches iff `p` matches at least once. ] [`std::string` if `_ATTR_np_(p)` is `char` or `char32_t`, otherwise `std::vector<_ATTR_np_(p)>`] [ Matching _e_ an unlimited number of times creates an infinite loop, which is undefined behavior in C++.  _Parser_ will assert in debug mode when it encounters `+_e_` (this applies to unconditional _e_ only). ]]
+    [[`-p`] [ Equivalent to `p | _e_`. ] [`std::optional<_ATTR_np_(p)>`] []]
+    [[`p1 >> p2`] [ Matches iff `p1` matches and then `p2` matches. ] [`_bp_tup_<_ATTR_np_(p1), _ATTR_np_(p2)>` (See note.)] [ `>>` is associative; `p1 >> p2 >> p3`, `(p1 >> p2) >> p3`, and `p1 >> (p2 >> p3)` are all equivalent.  This attribute type only applies to the case where `p1` and `p2` both generate attributes; see _attr_gen_ for the full rules. ]]
+    [[`p >> c`] [ Equivalent to `p >> lit(c)`. ] [`_ATTR_np_(p)`] []]
+    [[`p >> r`] [ Equivalent to `p >> lit(r)`. ] [`_ATTR_np_(p)`] []]
+    [[`p1 > p2`] [ Matches iff `p1` matches and then `p2` matches.  No back-tracking is allowed after `p1` matches; if `p1` matches but then `p2` does not, the top-level parse fails. ] [`_bp_tup_<_ATTR_np_(p1), _ATTR_np_(p2)>` (See note.)] [ `>` is associative; `p1 > p2 > p3`, `(p1 > p2) > p3`, and `p1 > (p2 > p3)` are all equivalent.  This attribute type only applies to the case where `p1` and `p2` both generate attributes; see _attr_gen_ for the full rules. ]]
+    [[`p > c`] [ Equivalent to `p > lit(c)`. ] [`_ATTR_np_(p)`] []]
+    [[`p > r`] [ Equivalent to `p > lit(r)`. ] [`_ATTR_np_(p)`] []]
+    [[`p1 | p2`] [ Matches iff either `p1` matches or `p2` matches. ] [`std::variant<_ATTR_np_(p1), _ATTR_np_(p2)>` (See note.)] [ `|` is associative; `p1 | p2 | p3`, `(p1 | p2) | p3`, and `p1 | (p2 | p3)` are all equivalent.  This attribute type only applies to the case where `p1` and `p2` both generate attributes, and where the attribute types are different; see _attr_gen_ for the full rules. ]]
+    [[`p | c`] [ Equivalent to `p | lit(c)`. ] [`_ATTR_np_(p)`] []]
+    [[`p | r`] [ Equivalent to `p | lit(r)`. ] [`_ATTR_np_(p)`] []]
+    [[`p1 || p2`] [ Matches iff `p1` matches and `p2` matches, regardless of the order they match in. ] [`_bp_tup_<_ATTR_np_(p1), _ATTR_np_(p2)>`] [ `||` is associative; `p1 || p2 || p3`, `(p1 || p2) || p3`, and `p1 || (p2 || p3)` are all equivalent.  It is an error to include a _e_ (conditional or non-conditional) in an `operator||` expression.  Though the parsers are matched in any order, the attribute elements are always in the order written in the `operator||` expression. ]]
+    [[`p1 - p2`] [ Equivalent to `!p2 >> p1`. ] [`_ATTR_np_(p1)`] []]
+    [[`p - c`] [ Equivalent to `p - lit(c)`. ] [`_ATTR_np_(p)`] []]
+    [[`p - r`] [ Equivalent to `p - lit(r)`. ] [`_ATTR_np_(p)`] []]
+    [[`p1 % p2`] [ Equivalent to `p1 >> *(p2 >> p1)`. ] [`std::string` if `_ATTR_np_(p)` is `char` or `char32_t`, otherwise `std::vector<_ATTR_np_(p1)>`] []]
+    [[`p % c`] [ Equivalent to `p % lit(c)`. ] [`std::string` if `_ATTR_np_(p)` is `char` or `char32_t`, otherwise `std::vector<_ATTR_np_(p)>`] []]
+    [[`p % r`] [ Equivalent to `p % lit(r)`. ] [`std::string` if `_ATTR_np_(p)` is `char` or `char32_t`, otherwise `std::vector<_ATTR_np_(p)>`] []]
+    [[`p[a]`] [ Matches iff `p` matches.  If `p` matches, the semantic action `a` is executed. ] [None.] []]
+]
+
+[important All the character parsers, like _ch_, _cp_ and _cu_ produce either
+`char` or `char32_t` attributes.  So when you see "`std::string` if
+`_ATTR_np_(p)` is `char` or `char32_t`, otherwise `std::vector<_ATTR_np_(p)>`"
+in the table above, that effectively means that every sequences of character
+attributes get turned into a `std::string`.  The only time this does not
+happen is when you introduce your own rules with attributes using another
+character type (or use _attr_ to do so).]
+
+There are a couple of special rules not captured in the table above:
+
+First, the zero-or-more and one-or-more repetitions (`operator*()` and
+`operator+()`, respectively) may collapse when combined.  For any parser `p`,
+`+(+p)` collapses to `+p`; `**p`, `*+p`, and `+*p` each collapse to just `*p`.
+
+Second, using _e_ in an alternative parser as any alternative *except* the
+last one is a common source of errors; _Parser_ disallows it.  This is true
+because, for any parser `p`, `_e_ | p` is equivalent to _e_, since _e_ always
+matches.  This is not true for _e_ parameterized with a condition.  For any
+condition `cond`, `_e_(cond)` is allowed to appear anywhere within an
+alternative parser.
+]
+
+[template table_attribute_generation
+
+This table summarizes the attributes generated for all _Parser_ parsers.  In
+the table below:
+
+* _RES_ is a notional macro that expands to the resolution of parse argument
+or evaluation of a parse predicate (see _parsers_uses_); and
+
+* `x` and `y` represent arbitrary objects.
+
+[table Parsers and Their Attributes
+    [[Parser]              [Attribute Type]              [Notes]]
+
+    [[ _e_ ]               [ None. ]                     []]
+    [[ _eol_ ]             [ None. ]                     []]
+    [[ _eoi_ ]             [ None. ]                     []]
+    [[ `_attr_np_(x)` ]    [ `decltype(_RES_np_(x))` ][]]
+    [[ _ch_ ]              [ The code point type in Unicode parsing, or `char` in non-Unicode parsing; see below. ]
+     [Includes all the `_p` _udls_ that take a single character, and all character class parsers like `control` and `lower`.]]
+    [[ _cp_ ]              [ `char32_t` ]                []]
+    [[ _cu_ ]              [ `char` ]                    []]
+    [[ `_lit_np_(x)`]      [ None. ]
+     [Includes all the `_l` _udls_.]]
+    [[ `_str_np_(x)`]      [ _std_str_ ]
+     [Includes all the `_p` _udls_ that take a string.]]
+    [[ _b_ ]               [ `bool` ]                    []]
+
+    [[ _bin_ ]             [ `unsigned int` ]            []]
+    [[ _oct_ ]             [ `unsigned int` ]            []]
+    [[ _hex_ ]             [ `unsigned int` ]            []]
+    [[ _us_ ]              [ `unsigned short` ]          []]
+    [[ _ui_ ]              [ `unsigned int` ]            []]
+    [[ _ul_ ]              [ `unsigned long` ]           []]
+    [[ _ull_ ]             [ `unsigned long long` ]      []]
+
+    [[ _s_ ]               [ `short` ]                   []]
+    [[ _i_ ]               [ `int` ]                     []]
+    [[ _l_ ]               [ `long` ]                    []]
+    [[ _ll_ ]              [ `long long` ]               []]
+    [[ _f_ ]               [ `float` ]                   []]
+    [[ _d_ ]               [ `double` ]                  []]
+
+    [[ _symbols_t_ ]       [ `T` ]                       []]
+]
+
+_ch_ is a bit odd, since its attribute type is polymorphic.  When you use _ch_
+to parse text in the non-Unicode code path (i.e. a string of `char`), the
+attribute is `char`.  When you use the exact same _ch_ to parse in the
+Unicode-aware code path, all matching is code point based, and so the
+attribute type is the type used to represent code points, `char32_t`.  All
+parsing of UTF-8 falls under this case.
+
+Here, we're parsing plain `char`s, meaning that the parsing is in the
+non-Unicode code path, the attribute of _ch_ is `char`:
+
+    auto result = parse("some text", boost::parser::char_);
+    static_assert(std::is_same_v<decltype(result), std::optional<char>>));
+
+When you parse UTF-8, the matching is done on a code point basis, so the
+attribute type is `char32_t`:
+
+    auto result = parse("some text" | boost::parser::as_utf8, boost::parser::char_);
+    static_assert(std::is_same_v<decltype(result), std::optional<char32_t>>));
+
+The good news is that usually you don't parse characters individually.  When
+you parse with _ch_, you usually parse repetition of then, which will produce
+a _std_str_, regardless of whether you're in Unicode parsing mode or not.  If
+you do need to parse individual characters, and want to lock down their
+attribute type, you can use _cp_ and/or _cu_ to enforce a non-polymorphic
+attribute type.
+]
+
+[template table_attribute_combinations
+Combining operations of course affect the generation of attributes.  In the
+tables below:
+
+* `m` and `n` are parse arguments that resolve to integral values;
+
+* `pred` is a parse predicate;
+
+* `arg0`, `arg1`, `arg2`, ... are parse arguments;
+
+* `a` is a semantic action; and
+
+* `p`, `p1`, `p2`, ... are parsers that generate attributes.
+
+[table Combining Operations and Their Attributes
+    [[Parser]                           [Attribute Type]]
+
+    [[`!p`]                             [None.]]
+    [[`&p`]                             [None.]]
+
+    [[`*p`]                             [`std::string` if `_ATTR_np_(p)` is `char` or `char32_t`, otherwise `std::vector<_ATTR_np_(p)>`]]
+    [[`+p`]                             [`std::string` if `_ATTR_np_(p)` is `char` or `char32_t`, otherwise `std::vector<_ATTR_np_(p)>`]]
+    [[`+*p`]                            [`std::string` if `_ATTR_np_(p)` is `char` or `char32_t`, otherwise `std::vector<_ATTR_np_(p)>`]]
+    [[`*+p`]                            [`std::string` if `_ATTR_np_(p)` is `char` or `char32_t`, otherwise `std::vector<_ATTR_np_(p)>`]]
+    [[`-p`]                             [`std::optional<_ATTR_np_(p)>`]]
+
+    [[`p1 >> p2`]                       [`_bp_tup_<_ATTR_np_(p1), _ATTR_np_(p2)>`]]
+    [[`p1 > p2`]                        [`_bp_tup_<_ATTR_np_(p1), _ATTR_np_(p2)>`]]
+    [[`p1 >> p2 >> p3`]                 [`_bp_tup_<_ATTR_np_(p1), _ATTR_np_(p2), _ATTR_np_(p3)>`]]
+    [[`p1 > p2 >> p3`]                  [`_bp_tup_<_ATTR_np_(p1), _ATTR_np_(p2), _ATTR_np_(p3)>`]]
+    [[`p1 >> p2 > p3`]                  [`_bp_tup_<_ATTR_np_(p1), _ATTR_np_(p2), _ATTR_np_(p3)>`]]
+    [[`p1 > p2 > p3`]                   [`_bp_tup_<_ATTR_np_(p1), _ATTR_np_(p2), _ATTR_np_(p3)>`]]
+
+    [[`p1 | p2`]                        [`std::variant<_ATTR_np_(p1), _ATTR_np_(p2)>`]]
+    [[`p1 | p2 | p3`]                   [`std::variant<_ATTR_np_(p1), _ATTR_np_(p2), _ATTR_np_(p3)>`]]
+
+    [[`p1 || p2`]                       [`_bp_tup_<_ATTR_np_(p1), _ATTR_np_(p2)>`]]
+    [[`p1 || p2 || p3`]                 [`_bp_tup_<_ATTR_np_(p1), _ATTR_np_(p2), _ATTR_np_(p3)>`]]
+
+    [[`p1 % p2`]                        [`std::string` if `_ATTR_np_(p)` is `char` or `char32_t`, otherwise `std::vector<_ATTR_np_(p1)>`]]
+
+    [[`p[a]`]                           [None.]]
+
+    [[`_rpt_np_(arg0)[p]`]              [`std::string` if `_ATTR_np_(p)` is `char` or `char32_t`, otherwise `std::vector<_ATTR_np_(p)>`]]
+    [[`_rpt_np_(arg0, arg1)[p]`]        [`std::string` if `_ATTR_np_(p)` is `char` or `char32_t`, otherwise `std::vector<_ATTR_np_(p)>`]]
+    [[`_if_np_(pred)[p]`]               [`std::optional<_ATTR_np_(p)>`]]
+    [[`_sw_np_(arg0)(arg1, p1)(arg2, p2)...`]
+     [`std::variant<_ATTR_np_(p1), _ATTR_np_(p2), ...>`]]
+]
+
+[important All the character parsers, like _ch_, _cp_ and _cu_ produce either
+`char` or `char32_t` attributes.  So when you see "`std::string` if
+`_ATTR_np_(p)` is `char` or `char32_t`, otherwise `std::vector<_ATTR_np_(p)>`"
+in the table above, that effectively means that every sequences of character
+attributes get turned into a `std::string`.  The only time this does not
+happen is when you introduce your own rules with attributes using another
+character type (or use _attr_ to do so).]
+
+[important In case you did not notice it above, adding a semantic action to a
+parser erases the parser's attribute.  The attribute is still available inside
+the semantic action as `_attr(ctx)`.]
+]
+
+[template table_seq_or_attribute_combinations
+In the table: `a` is a semantic action; and `p`, `p1`, `p2`, ... are parsers
+that generate attributes.  Note that only `>>` is used here; `>` has the exact
+same attribute generation rules.
+
+[table Sequence and Alternative Combining Operations and Their Attributes
+    [[Expression]                    [Attribute Type]]
+
+    [[`_e_ >> _e_`]                  [None.]]
+    [[`p >> _e_`]                    [`_ATTR_np_(p)`]]
+    [[`_e_ >> p`]                    [`_ATTR_np_(p)`]]
+
+    [[`_cu_ >> _str_np_("str")`]     [_std_str_]]
+    [[`_str_np_("str") >> _cu_`]     [_std_str_]]
+    [[`*_cu_ >> _str_np_("str")`]    [`_bp_tup_<std::string, std::string>`]]
+    [[`_str_np_("str") >> *_cu_`]    [`_bp_tup_<std::string, std::string>`]]
+
+    [[`p >> p`]                      [`_bp_tup_<_ATTR_np_(p), _ATTR_np_(p)>`]]
+    [[`*p >> p`]                     [`std::string` if `_ATTR_np_(p)` is `char` or `char32_t`, otherwise `std::vector<_ATTR_np_(p)>`]]
+    [[`p >> *p`]                     [`std::string` if `_ATTR_np_(p)` is `char` or `char32_t`, otherwise `std::vector<_ATTR_np_(p)>`]]
+    [[`*p >> -p`]                    [`std::string` if `_ATTR_np_(p)` is `char` or `char32_t`, otherwise `std::vector<_ATTR_np_(p)>`]]
+    [[`-p >> *p`]                    [`std::string` if `_ATTR_np_(p)` is `char` or `char32_t`, otherwise `std::vector<_ATTR_np_(p)>`]]
+
+    [[`_str_np_("str") >> -_cu_`]    [_std_str_]]
+    [[`-_cu_ >> _str_np_("str")`]    [_std_str_]]
+
+    [[`!p1 | p2[a]`]                 [None.]]
+    [[`p | p`]                       [`_ATTR_np_(p)`]]
+    [[`p1 | p2`]                     [`std::variant<_ATTR_np_(p1), _ATTR_np_(p2)>`]]
+    [[`p | `_e_]                     [`std::optional<_ATTR_np_(p)>`]]
+    [[`p1 | p2 | _e_`]               [`std::optional<std::variant<_ATTR_np_(p1), _ATTR_np_(p2)>>`]]
+    [[`p1 | p2[a] | p3`]             [`std::optional<std::variant<_ATTR_np_(p1), _ATTR_np_(p3)>>`]]
+]
+]

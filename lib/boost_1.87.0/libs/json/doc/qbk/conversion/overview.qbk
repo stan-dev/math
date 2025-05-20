@@ -1,0 +1,29 @@
+[/
+    Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+    Copyright (c) 2020 Krystian Stasiowski (sdkrystian@gmail.com)
+    Copyright (c) 2021 Dmitry Arkhipov (grisumbras@gmail.com)
+
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+    Official repository: https://github.com/boostorg/json
+]
+
+[/-----------------------------------------------------------------------------]
+
+[section:conversion Value Conversion]
+
+While the __value__ container makes it easy to create ad-hoc structures,
+often it is necessary to convert between JSON and user-defined types or types
+from the standard library.
+
+[include basics.qbk]
+[include custom.qbk]
+[include nothrow.qbk]
+[include alloc.qbk]
+[include context.qbk]
+[include forward.qbk]
+[include direct.qbk]
+[include guidelines.qbk]
+
+[endsect]

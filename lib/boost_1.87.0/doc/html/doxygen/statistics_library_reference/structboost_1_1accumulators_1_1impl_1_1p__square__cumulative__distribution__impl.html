@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Struct template p_square_cumulative_distribution_impl</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../../accumulators/reference.html#doxygen.statistics_library_reference.p__square__cumul__dist_8hpp" title="Header &lt;boost/accumulators/statistics/p_square_cumul_dist.hpp&gt;">
+<link rel="prev" href="namespaceboost_1_1accumulators_1_1extract_1a441a2d1d840376508719e65bad12a553.html" title="Global p_square_cumulative_distribution">
+<link rel="next" href="structboost_1_1accumulators_1_1tag_1_1p__square__cumulative__distribution.html" title="Struct p_square_cumulative_distribution">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="namespaceboost_1_1accumulators_1_1extract_1a441a2d1d840376508719e65bad12a553.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../accumulators/reference.html#doxygen.statistics_library_reference.p__square__cumul__dist_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="structboost_1_1accumulators_1_1tag_1_1p__square__cumulative__distribution.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.statistics_library_reference.structboost_1_1accumulators_1_1impl_1_1p__square__cumulative__distribution__impl"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Struct template p_square_cumulative_distribution_impl</span></h2>
+<p>boost::accumulators::impl::p_square_cumulative_distribution_impl — Histogram calculation of the cumulative distribution with the <span class="inlinemediaobject"><img src="../../images/accumulators//form_33.png"></span> algorithm. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../accumulators/reference.html#doxygen.statistics_library_reference.p__square__cumul__dist_8hpp" title="Header &lt;boost/accumulators/statistics/p_square_cumul_dist.hpp&gt;">boost/accumulators/statistics/p_square_cumul_dist.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Sample<span class="special">&gt;</span> 
+<span class="keyword">struct</span> <a class="link" href="structboost_1_1accumulators_1_1impl_1_1p__square__cumulative__distribution__impl.html" title="Struct template p_square_cumulative_distribution_impl">p_square_cumulative_distribution_impl</a> <span class="special">:</span> <span class="keyword">public</span> <span class="identifier">accumulator_base</span> <span class="special">{</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">numeric</span><span class="special">::</span><span class="identifier">functional</span><span class="special">::</span><span class="identifier">fdiv</span><span class="special">&lt;</span> <span class="identifier">Sample</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">result_type</span> <a name="doxygen.statistics_library_reference.structboost_1_1accumulators_1_1impl_1_1p__square__cumulative__distribution__impl_1aca3c4f1788f5e1e410625561023fa8fe"></a><span class="identifier">float_type</span><span class="special">;</span>    
+  <span class="keyword">typedef</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span> <span class="identifier">float_type</span> <span class="special">&gt;</span>                                     <a name="doxygen.statistics_library_reference.structboost_1_1accumulators_1_1impl_1_1p__square__cumulative__distribution__impl_1af0d7cc957d58a955bf1cf2c365cc6a08"></a><span class="identifier">array_type</span><span class="special">;</span>    
+  <span class="keyword">typedef</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">pair</span><span class="special">&lt;</span> <span class="identifier">float_type</span><span class="special">,</span> <span class="identifier">float_type</span> <span class="special">&gt;</span> <span class="special">&gt;</span>            <a name="doxygen.statistics_library_reference.structboost_1_1accumulators_1_1impl_1_1p__square__cumulative__distribution__impl_1af979b89963eb43f1650ff9541c199f37"></a><span class="identifier">histogram_type</span><span class="special">;</span>
+  <span class="keyword">typedef</span> <span class="identifier">iterator_range</span><span class="special">&lt;</span> <span class="keyword">typename</span> <span class="identifier">histogram_type</span><span class="special">::</span><span class="identifier">iterator</span> <span class="special">&gt;</span>           <a name="doxygen.statistics_library_reference.structboost_1_1accumulators_1_1impl_1_1p__square__cumulative__distribution__impl_1a5f70a4dbbd723840f45c61de99886f9d"></a><span class="identifier">result_type</span><span class="special">;</span>   
+
+  <span class="comment">// <a class="link" href="structboost_1_1accumulators_1_1impl_1_1p__square__cumulative__distribution__impl.html#id-1_3_2_6_3_16_1_1_4_1_9-bb">public member functions</a></span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Args<span class="special">&gt;</span> <a class="link" href="structboost_1_1accumulators_1_1impl_1_1p__square__cumulative__distribution__impl.html#doxygen.statistics_library_reference.structboost_1_1accumulators_1_1impl_1_1p__square__cumulative__distribution__impl_1a5d60d53405a5136a3048b45f75ad7c23"><span class="identifier">p_square_cumulative_distribution_impl</span></a><span class="special">(</span><span class="identifier">Args</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Args<span class="special">&gt;</span> <span class="keyword">void</span> <a class="link" href="structboost_1_1accumulators_1_1impl_1_1p__square__cumulative__distribution__impl.html#doxygen.statistics_library_reference.structboost_1_1accumulators_1_1impl_1_1p__square__cumulative__distribution__impl_1ac982ece146a9f24740e8ae21b48be628"><span class="keyword">operator</span><span class="special">(</span><span class="special">)</span></a><span class="special">(</span><span class="identifier">Args</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Args<span class="special">&gt;</span> <span class="identifier">result_type</span> <a class="link" href="structboost_1_1accumulators_1_1impl_1_1p__square__cumulative__distribution__impl.html#doxygen.statistics_library_reference.structboost_1_1accumulators_1_1impl_1_1p__square__cumulative__distribution__impl_1a4966ab077387fd3522c96f696d72313c"><span class="identifier">result</span></a><span class="special">(</span><span class="identifier">Args</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Archive<span class="special">&gt;</span> <span class="keyword">void</span> <a class="link" href="structboost_1_1accumulators_1_1impl_1_1p__square__cumulative__distribution__impl.html#doxygen.statistics_library_reference.structboost_1_1accumulators_1_1impl_1_1p__square__cumulative__distribution__impl_1ae20fdb3989c627837d6474876635feb8"><span class="identifier">serialize</span></a><span class="special">(</span><span class="identifier">Archive</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <span class="keyword">unsigned</span> <span class="keyword">int</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.2.6.3.16.4.4"></a><h2>Description</h2>
+<p>A histogram of the sample cumulative distribution is computed dynamically without storing samples based on the <span class="inlinemediaobject"><img src="../../images/accumulators//form_37.png"></span> algorithm. The returned histogram has a specifiable amount (num_cells) equiprobable (and not equal-sized) cells.</p>
+<p>For further details, see</p>
+<p>R. Jain and I. Chlamtac, The P^2 algorithm for dynamic calculation of quantiles and histograms without storing observations, Communications of the ACM, Volume 28 (October), Number 10, 1985, p. 1076-1085.</p>
+<p>
+</p>
+<div class="refsect2">
+<a name="id-1.3.2.6.3.16.4.4.6"></a><h3>
+<a name="id-1_3_2_6_3_16_1_1_4_1_9-bb"></a><code class="computeroutput">p_square_cumulative_distribution_impl</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem"><pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Args<span class="special">&gt;</span> 
+  <a name="doxygen.statistics_library_reference.structboost_1_1accumulators_1_1impl_1_1p__square__cumulative__distribution__impl_1a5d60d53405a5136a3048b45f75ad7c23"></a><span class="identifier">p_square_cumulative_distribution_impl</span><span class="special">(</span><span class="identifier">Args</span> <span class="keyword">const</span> <span class="special">&amp;</span> args<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Args<span class="special">&gt;</span> <span class="keyword">void</span> <a name="doxygen.statistics_library_reference.structboost_1_1accumulators_1_1impl_1_1p__square__cumulative__distribution__impl_1ac982ece146a9f24740e8ae21b48be628"></a><span class="keyword">operator</span><span class="special">(</span><span class="special">)</span><span class="special">(</span><span class="identifier">Args</span> <span class="keyword">const</span> <span class="special">&amp;</span> args<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Args<span class="special">&gt;</span> <span class="identifier">result_type</span> <a name="doxygen.statistics_library_reference.structboost_1_1accumulators_1_1impl_1_1p__square__cumulative__distribution__impl_1a4966ab077387fd3522c96f696d72313c"></a><span class="identifier">result</span><span class="special">(</span><span class="identifier">Args</span> <span class="keyword">const</span> <span class="special">&amp;</span> args<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Archive<span class="special">&gt;</span> 
+  <span class="keyword">void</span> <a name="doxygen.statistics_library_reference.structboost_1_1accumulators_1_1impl_1_1p__square__cumulative__distribution__impl_1ae20fdb3989c627837d6474876635feb8"></a><span class="identifier">serialize</span><span class="special">(</span><span class="identifier">Archive</span> <span class="special">&amp;</span> ar<span class="special">,</span> <span class="keyword">const</span> <span class="keyword">unsigned</span> <span class="keyword">int</span> file_version<span class="special">)</span><span class="special">;</span></pre></li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2005, 2006 Eric Niebler<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="namespaceboost_1_1accumulators_1_1extract_1a441a2d1d840376508719e65bad12a553.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../accumulators/reference.html#doxygen.statistics_library_reference.p__square__cumul__dist_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="structboost_1_1accumulators_1_1tag_1_1p__square__cumulative__distribution.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

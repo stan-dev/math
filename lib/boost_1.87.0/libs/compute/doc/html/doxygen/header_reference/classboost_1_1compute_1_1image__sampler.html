@@ -1,0 +1,113 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class image_sampler</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.Compute">
+<link rel="up" href="../../boost_compute/reference.html#doxygen.header_reference.image__sampler_8hpp" title="Header &lt;boost/compute/image/image_sampler.hpp&gt;">
+<link rel="prev" href="classboost_1_1compute_1_1image__object.html" title="Class image_object">
+<link rel="next" href="acquire_8hpp_1a4094d4a9e8725247122439272fcb0b97.html" title="Function opengl_enqueue_acquire_gl_objects">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1compute_1_1image__object.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_compute/reference.html#doxygen.header_reference.image__sampler_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="acquire_8hpp_1a4094d4a9e8725247122439272fcb0b97.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.header_reference.classboost_1_1compute_1_1image__sampler"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class image_sampler</span></h2>
+<p>boost::compute::image_sampler — An OpenCL image sampler object. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../boost_compute/reference.html#doxygen.header_reference.image__sampler_8hpp" title="Header &lt;boost/compute/image/image_sampler.hpp&gt;">boost/compute/image/image_sampler.hpp</a>&gt;
+
+</span>
+<span class="keyword">class</span> <a class="link" href="classboost_1_1compute_1_1image__sampler.html" title="Class image_sampler">image_sampler</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+
+  <span class="keyword">enum</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1image__sampler_1a2e18d0663197c9b4615e4c159e52cf21"></a>addressing_mode <span class="special">{</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1image__sampler_1a2e18d0663197c9b4615e4c159e52cf21a23abed236c239c32d3df5297fe1a11a4"></a>none = CL_ADDRESS_NONE, 
+                         <a name="doxygen.header_reference.classboost_1_1compute_1_1image__sampler_1a2e18d0663197c9b4615e4c159e52cf21a668743f6a298eadfbc3274ed6d55f8fb"></a>clamp_to_edge = CL_ADDRESS_CLAMP_TO_EDGE, 
+                         <a name="doxygen.header_reference.classboost_1_1compute_1_1image__sampler_1a2e18d0663197c9b4615e4c159e52cf21a88a25f2bc2d61b0dd4f1106a17f722f7"></a>clamp = CL_ADDRESS_CLAMP, <a name="doxygen.header_reference.classboost_1_1compute_1_1image__sampler_1a2e18d0663197c9b4615e4c159e52cf21a306574f1971388006ff9d522ae389b14"></a>repeat = CL_ADDRESS_REPEAT <span class="special">}</span><span class="special">;</span>
+
+  <span class="keyword">enum</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1image__sampler_1a2694f99e062531b4864cde3fdcef936d"></a>filter_mode <span class="special">{</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1image__sampler_1a2694f99e062531b4864cde3fdcef936da2cabf2e6f99e4e1533b8b968034c1165"></a>nearest = CL_FILTER_NEAREST, <a name="doxygen.header_reference.classboost_1_1compute_1_1image__sampler_1a2694f99e062531b4864cde3fdcef936daebd1d564050ad7e9bb037088f4229992"></a>linear = CL_FILTER_LINEAR <span class="special">}</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1compute_1_1image__sampler.html#id50-bb">public member functions</a></span>
+  <a class="link" href="classboost_1_1compute_1_1image__sampler.html#doxygen.header_reference.classboost_1_1compute_1_1image__sampler_1ab1d93a1a9054f4df52161b0affd7c6fc"><span class="identifier">image_sampler</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1compute_1_1image__sampler.html#doxygen.header_reference.classboost_1_1compute_1_1image__sampler_1a58ebc819918c9a10dd2a49ab25fff01a"><span class="identifier">image_sampler</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">context</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">bool</span><span class="special">,</span> <span class="identifier">cl_addressing_mode</span><span class="special">,</span> <span class="identifier">cl_filter_mode</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1compute_1_1image__sampler.html#doxygen.header_reference.classboost_1_1compute_1_1image__sampler_1a1c3800d60bd749b8c63e49b4f6ada467"><span class="identifier">image_sampler</span></a><span class="special">(</span><span class="identifier">cl_sampler</span><span class="special">,</span> <span class="keyword">bool</span> <span class="special">=</span> <span class="keyword">true</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1compute_1_1image__sampler.html#doxygen.header_reference.classboost_1_1compute_1_1image__sampler_1a04df5db8b42c4b987a7c79299f9d53cb"><span class="identifier">image_sampler</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1image__sampler.html" title="Class image_sampler">image_sampler</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1compute_1_1image__sampler.html" title="Class image_sampler">image_sampler</a> <span class="special">&amp;</span> <a class="link" href="classboost_1_1compute_1_1image__sampler.html#doxygen.header_reference.classboost_1_1compute_1_1image__sampler_1aa062cdf63c1100efd4c488115e9f4eb0"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1image__sampler.html" title="Class image_sampler">image_sampler</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1compute_1_1image__sampler.html#doxygen.header_reference.classboost_1_1compute_1_1image__sampler_1a90e98f8989b147dc498cfde37c1ecf69"><span class="identifier">image_sampler</span></a><span class="special">(</span><a class="link" href="classboost_1_1compute_1_1image__sampler.html" title="Class image_sampler">image_sampler</a> <span class="special">&amp;&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1compute_1_1image__sampler.html" title="Class image_sampler">image_sampler</a> <span class="special">&amp;</span> <a class="link" href="classboost_1_1compute_1_1image__sampler.html#doxygen.header_reference.classboost_1_1compute_1_1image__sampler_1a5495cf9784a1f915a23c93dfa6b4a4d6"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><a class="link" href="classboost_1_1compute_1_1image__sampler.html" title="Class image_sampler">image_sampler</a> <span class="special">&amp;&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1compute_1_1image__sampler.html#doxygen.header_reference.classboost_1_1compute_1_1image__sampler_1aeb2a88cbfb12bc924139518d00253279"><span class="special">~</span><span class="identifier">image_sampler</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">cl_sampler</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1compute_1_1image__sampler.html#doxygen.header_reference.classboost_1_1compute_1_1image__sampler_1ac91effbe0ba319d13d2429cb4d64d883"><span class="identifier">get</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">context</span> <a class="link" href="classboost_1_1compute_1_1image__sampler.html#doxygen.header_reference.classboost_1_1compute_1_1image__sampler_1a7ef428249a6c7ba8df7b0dd99ab7af8a"><span class="identifier">get_context</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> <span class="identifier">T</span> <a class="link" href="classboost_1_1compute_1_1image__sampler.html#doxygen.header_reference.classboost_1_1compute_1_1image__sampler_1ad6e46a4d23c065d84e2d2fda33cc5345"><span class="identifier">get_info</span></a><span class="special">(</span><span class="identifier">cl_sampler_info</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">int</span> Enum<span class="special">&gt;</span> <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a class="link" href="classboost_1_1compute_1_1image__sampler.html#doxygen.header_reference.classboost_1_1compute_1_1image__sampler_1ac94b65fb5d10b9f0dbc3b950ee15e822"><span class="identifier">get_info</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1compute_1_1image__sampler.html#doxygen.header_reference.classboost_1_1compute_1_1image__sampler_1a02e5e79febee2e7231e0802ce4f9f921"><span class="keyword">operator</span><span class="special">==</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1image__sampler.html" title="Class image_sampler">image_sampler</a> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1compute_1_1image__sampler.html#doxygen.header_reference.classboost_1_1compute_1_1image__sampler_1aca64ccbadb4cdb2ba004bea32b581686"><span class="keyword">operator</span><span class="special">!=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1image__sampler.html" title="Class image_sampler">image_sampler</a> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1compute_1_1image__sampler.html#doxygen.header_reference.classboost_1_1compute_1_1image__sampler_1af4eb9cfdd89f4ac5916b2d3269015fd1"><span class="keyword">operator</span> <span class="identifier">cl_sampler</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id29589"></a><h2>Description</h2>
+<p><b>See Also: </b><a class="link" href="classboost_1_1compute_1_1image2d.html" title="Class image2d">image2d</a>, <a class="link" href="classboost_1_1compute_1_1image__format.html" title="Class image_format">image_format</a> </p>
+<p>
+</p>
+<div class="refsect2">
+<a name="id29597"></a><h3>
+<a name="id50-bb"></a><code class="computeroutput">image_sampler</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem"><pre class="literallayout"><a name="doxygen.header_reference.classboost_1_1compute_1_1image__sampler_1ab1d93a1a9054f4df52161b0affd7c6fc"></a><span class="identifier">image_sampler</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a name="doxygen.header_reference.classboost_1_1compute_1_1image__sampler_1a58ebc819918c9a10dd2a49ab25fff01a"></a><span class="identifier">image_sampler</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">context</span> <span class="special">&amp;</span> context<span class="special">,</span> <span class="keyword">bool</span> normalized_coords<span class="special">,</span> 
+              <span class="identifier">cl_addressing_mode</span> addressing_mode<span class="special">,</span> <span class="identifier">cl_filter_mode</span> filter_mode<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1image__sampler_1a1c3800d60bd749b8c63e49b4f6ada467"></a><span class="identifier">image_sampler</span><span class="special">(</span><span class="identifier">cl_sampler</span> sampler<span class="special">,</span> <span class="keyword">bool</span> retain <span class="special">=</span> <span class="keyword">true</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.header_reference.classboost_1_1compute_1_1image__sampler_1a04df5db8b42c4b987a7c79299f9d53cb"></a><span class="identifier">image_sampler</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1image__sampler.html" title="Class image_sampler">image_sampler</a> <span class="special">&amp;</span> other<span class="special">)</span><span class="special">;</span></pre>Creates a new image sampler object as a copy of <code class="computeroutput">other</code>. </li>
+<li class="listitem">
+<pre class="literallayout"><a class="link" href="classboost_1_1compute_1_1image__sampler.html" title="Class image_sampler">image_sampler</a> <span class="special">&amp;</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1image__sampler_1aa062cdf63c1100efd4c488115e9f4eb0"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1image__sampler.html" title="Class image_sampler">image_sampler</a> <span class="special">&amp;</span> other<span class="special">)</span><span class="special">;</span></pre>Copies the image sampler object from <code class="computeroutput">other</code> to <code class="computeroutput">*this</code>. </li>
+<li class="listitem"><pre class="literallayout"><a name="doxygen.header_reference.classboost_1_1compute_1_1image__sampler_1a90e98f8989b147dc498cfde37c1ecf69"></a><span class="identifier">image_sampler</span><span class="special">(</span><a class="link" href="classboost_1_1compute_1_1image__sampler.html" title="Class image_sampler">image_sampler</a> <span class="special">&amp;&amp;</span> other<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a class="link" href="classboost_1_1compute_1_1image__sampler.html" title="Class image_sampler">image_sampler</a> <span class="special">&amp;</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1image__sampler_1a5495cf9784a1f915a23c93dfa6b4a4d6"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><a class="link" href="classboost_1_1compute_1_1image__sampler.html" title="Class image_sampler">image_sampler</a> <span class="special">&amp;&amp;</span> other<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.header_reference.classboost_1_1compute_1_1image__sampler_1aeb2a88cbfb12bc924139518d00253279"></a><span class="special">~</span><span class="identifier">image_sampler</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>Destroys the image sampler object. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">cl_sampler</span> <span class="special">&amp;</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1image__sampler_1ac91effbe0ba319d13d2429cb4d64d883"></a><span class="identifier">get</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Returns the underlying <code class="computeroutput">cl_sampler</code> object. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">context</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1image__sampler_1a7ef428249a6c7ba8df7b0dd99ab7af8a"></a><span class="identifier">get_context</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Returns the context for the image sampler object. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> <span class="identifier">T</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1image__sampler_1ad6e46a4d23c065d84e2d2fda33cc5345"></a><span class="identifier">get_info</span><span class="special">(</span><span class="identifier">cl_sampler_info</span> info<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns information about the sampler.</p>
+<p>See the documentation for </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">int</span> Enum<span class="special">&gt;</span> <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a name="doxygen.header_reference.classboost_1_1compute_1_1image__sampler_1ac94b65fb5d10b9f0dbc3b950ee15e822"></a><span class="identifier">get_info</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1image__sampler_1a02e5e79febee2e7231e0802ce4f9f921"></a><span class="keyword">operator</span><span class="special">==</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1image__sampler.html" title="Class image_sampler">image_sampler</a> <span class="special">&amp;</span> other<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Returns <code class="computeroutput">true</code> if the sampler is the same at <code class="computeroutput">other</code>. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1image__sampler_1aca64ccbadb4cdb2ba004bea32b581686"></a><span class="keyword">operator</span><span class="special">!=</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1image__sampler.html" title="Class image_sampler">image_sampler</a> <span class="special">&amp;</span> other<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Returns <code class="computeroutput">true</code> if the sampler is different from <code class="computeroutput">other</code>. </li>
+<li class="listitem"><pre class="literallayout"><a name="doxygen.header_reference.classboost_1_1compute_1_1image__sampler_1af4eb9cfdd89f4ac5916b2d3269015fd1"></a><span class="keyword">operator</span> <span class="identifier">cl_sampler</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2013, 2014 Kyle Lutz<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1compute_1_1image__object.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_compute/reference.html#doxygen.header_reference.image__sampler_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="acquire_8hpp_1a4094d4a9e8725247122439272fcb0b97.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

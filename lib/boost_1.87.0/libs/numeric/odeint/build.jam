@@ -1,0 +1,40 @@
+# Copyright René Ferdinand Rivera Morell 2024
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at
+# http://www.boost.org/LICENSE_1_0.txt)
+
+require-b2 5.2 ;
+
+constant boost_dependencies :
+    /boost/assert//boost_assert
+    /boost/compute//boost_compute
+    /boost/config//boost_config
+    /boost/core//boost_core
+    /boost/fusion//boost_fusion
+    /boost/iterator//boost_iterator
+    /boost/math//boost_math_tr1
+    /boost/mpi//boost_mpi
+    /boost/mpl//boost_mpl
+    /boost/multi_array//boost_multi_array
+    /boost/ublas//boost_ublas
+    /boost/preprocessor//boost_preprocessor
+    /boost/range//boost_range
+    /boost/static_assert//boost_static_assert
+    /boost/throw_exception//boost_throw_exception
+    /boost/type_traits//boost_type_traits
+    /boost/units//boost_units
+    /boost/utility//boost_utility ;
+
+project /boost/odeint
+    : common-requirements
+        <include>include
+    ;
+
+explicit
+    [ alias boost_odeint : : : : <library>$(boost_dependencies) ]
+    [ alias all : boost_odeint examples performance test ]
+    ;
+
+call-if : boost-library odeint
+    ;
+

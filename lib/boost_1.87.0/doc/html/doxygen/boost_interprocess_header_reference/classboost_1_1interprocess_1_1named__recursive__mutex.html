@@ -1,0 +1,164 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class named_recursive_mutex</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../../interprocess/indexes_reference.html#doxygen.boost_interprocess_header_reference.named__recursive__mutex_8hpp" title="Header &lt;boost/interprocess/sync/named_recursive_mutex.hpp&gt;">
+<link rel="prev" href="classboost_1_1interprocess_1_1named__mutex.html" title="Class named_mutex">
+<link rel="next" href="classboost_1_1interprocess_1_1named__semaphore.html" title="Class named_semaphore">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1interprocess_1_1named__mutex.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../interprocess/indexes_reference.html#doxygen.boost_interprocess_header_reference.named__recursive__mutex_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1interprocess_1_1named__semaphore.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1named__recursive__mutex"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class named_recursive_mutex</span></h2>
+<p>boost::interprocess::named_recursive_mutex</p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../interprocess/indexes_reference.html#doxygen.boost_interprocess_header_reference.named__recursive__mutex_8hpp" title="Header &lt;boost/interprocess/sync/named_recursive_mutex.hpp&gt;">boost/interprocess/sync/named_recursive_mutex.hpp</a>&gt;
+
+</span>
+<span class="keyword">class</span> <a class="link" href="classboost_1_1interprocess_1_1named__recursive__mutex.html" title="Class named_recursive_mutex">named_recursive_mutex</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+
+  <span class="comment">// <a class="link" href="../boost_container_header_reference/classboost_1_1container_1_1pmr_1_1unsynchronized__pool__resource.html#id92-bb">public member functions</a></span>
+  <a class="link" href="classboost_1_1interprocess_1_1named__recursive__mutex.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1named__recursive__mutex_1a66e7ab70c7426afc4c7f05d17dc4320c"><span class="identifier">named_recursive_mutex</span></a><span class="special">(</span><a class="link" href="structboost_1_1interprocess_1_1create__only__t.html" title="Struct create_only_t">create_only_t</a><span class="special">,</span> <span class="keyword">const</span> <span class="keyword">char</span> <span class="special">*</span><span class="special">,</span> 
+                        <span class="keyword">const</span> <a class="link" href="classboost_1_1interprocess_1_1permissions.html" title="Class permissions">permissions</a> <span class="special">&amp;</span> <span class="special">=</span> <span class="identifier">permissions</span><span class="special">(</span><span class="special">)</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1interprocess_1_1named__recursive__mutex.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1named__recursive__mutex_1ac8e32a0c34a881d9aaa242db702b3fed"><span class="identifier">named_recursive_mutex</span></a><span class="special">(</span><a class="link" href="structboost_1_1interprocess_1_1open__or__create__t.html" title="Struct open_or_create_t">open_or_create_t</a><span class="special">,</span> <span class="keyword">const</span> <span class="keyword">char</span> <span class="special">*</span><span class="special">,</span> 
+                        <span class="keyword">const</span> <a class="link" href="classboost_1_1interprocess_1_1permissions.html" title="Class permissions">permissions</a> <span class="special">&amp;</span> <span class="special">=</span> <span class="identifier">permissions</span><span class="special">(</span><span class="special">)</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1interprocess_1_1named__recursive__mutex.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1named__recursive__mutex_1aba421883a6ae14ff071d93339a13bafb"><span class="identifier">named_recursive_mutex</span></a><span class="special">(</span><a class="link" href="structboost_1_1interprocess_1_1open__only__t.html" title="Struct open_only_t">open_only_t</a><span class="special">,</span> <span class="keyword">const</span> <span class="keyword">char</span> <span class="special">*</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1interprocess_1_1named__recursive__mutex.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1named__recursive__mutex_1ac2b9c5ae42a455691d0b647870b43800"><span class="identifier">named_recursive_mutex</span></a><span class="special">(</span><a class="link" href="structboost_1_1interprocess_1_1create__only__t.html" title="Struct create_only_t">create_only_t</a><span class="special">,</span> <span class="keyword">const</span> <span class="keyword">wchar_t</span> <span class="special">*</span><span class="special">,</span> 
+                        <span class="keyword">const</span> <a class="link" href="classboost_1_1interprocess_1_1permissions.html" title="Class permissions">permissions</a> <span class="special">&amp;</span> <span class="special">=</span> <span class="identifier">permissions</span><span class="special">(</span><span class="special">)</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1interprocess_1_1named__recursive__mutex.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1named__recursive__mutex_1ae8db381634a59ec27a91511a428a3678"><span class="identifier">named_recursive_mutex</span></a><span class="special">(</span><a class="link" href="structboost_1_1interprocess_1_1open__or__create__t.html" title="Struct open_or_create_t">open_or_create_t</a><span class="special">,</span> <span class="keyword">const</span> <span class="keyword">wchar_t</span> <span class="special">*</span><span class="special">,</span> 
+                        <span class="keyword">const</span> <a class="link" href="classboost_1_1interprocess_1_1permissions.html" title="Class permissions">permissions</a> <span class="special">&amp;</span> <span class="special">=</span> <span class="identifier">permissions</span><span class="special">(</span><span class="special">)</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1interprocess_1_1named__recursive__mutex.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1named__recursive__mutex_1a8f5bfd209b8062e14110704da180a904"><span class="identifier">named_recursive_mutex</span></a><span class="special">(</span><a class="link" href="structboost_1_1interprocess_1_1open__only__t.html" title="Struct open_only_t">open_only_t</a><span class="special">,</span> <span class="keyword">const</span> <span class="keyword">wchar_t</span> <span class="special">*</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1interprocess_1_1named__recursive__mutex.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1named__recursive__mutex_1aeeec7a142ea97d2914d7808334d8fb76"><span class="special">~</span><span class="identifier">named_recursive_mutex</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1interprocess_1_1named__recursive__mutex.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1named__recursive__mutex_1ac7424e86aa3f5165c2ba3df1b0ae2f8a"><span class="identifier">unlock</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1interprocess_1_1named__recursive__mutex.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1named__recursive__mutex_1a79b70c1895c45051368d46a6dd03acdd"><span class="identifier">lock</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1interprocess_1_1named__recursive__mutex.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1named__recursive__mutex_1a1fe7193005a31a15705f2a9b58f8b90c"><span class="identifier">try_lock</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> TimePoint<span class="special">&gt;</span> <span class="keyword">bool</span> <a class="link" href="classboost_1_1interprocess_1_1named__recursive__mutex.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1named__recursive__mutex_1ae4e22f6b4dcb41536cb893e88245f838"><span class="identifier">timed_lock</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">TimePoint</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> TimePoint<span class="special">&gt;</span> <span class="keyword">bool</span> <a class="link" href="classboost_1_1interprocess_1_1named__recursive__mutex.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1named__recursive__mutex_1a6d10bf2295754c2a0cfce803a27b6c5e"><span class="identifier">try_lock_until</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">TimePoint</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Duration<span class="special">&gt;</span> <span class="keyword">bool</span> <a class="link" href="classboost_1_1interprocess_1_1named__recursive__mutex.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1named__recursive__mutex_1a2c053159d3b04c2007a459ea3a2c0af7"><span class="identifier">try_lock_for</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">Duration</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="../boost_container_header_reference/classboost_1_1container_1_1scoped__allocator__adaptor.html#id93-bb">public static functions</a></span>
+  <span class="keyword">static</span> <span class="keyword">bool</span> <a class="link" href="classboost_1_1interprocess_1_1named__recursive__mutex.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1named__recursive__mutex_1a7715fdfa43e01f507d85e749ce1b30cf"><span class="identifier">remove</span></a><span class="special">(</span><span class="keyword">const</span> <span class="keyword">char</span> <span class="special">*</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">bool</span> <a class="link" href="classboost_1_1interprocess_1_1named__recursive__mutex.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1named__recursive__mutex_1a61f09623a51f0dc07661e343fc8e5afd"><span class="identifier">remove</span></a><span class="special">(</span><span class="keyword">const</span> <span class="keyword">wchar_t</span> <span class="special">*</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.17.19.3.70.4.4"></a><h2>Description</h2>
+<p>A recursive mutex with a global name, so it can be found from different processes. This mutex can't be placed in shared memory, and each process should have it's own <a class="link" href="classboost_1_1interprocess_1_1named__recursive__mutex.html" title="Class named_recursive_mutex">named_recursive_mutex</a>. </p>
+<div class="refsect2">
+<a name="id-1.3.17.19.3.70.4.4.3"></a><h3>
+<a name="id92-bb"></a><code class="computeroutput">named_recursive_mutex</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1named__recursive__mutex_1a66e7ab70c7426afc4c7f05d17dc4320c"></a><span class="identifier">named_recursive_mutex</span><span class="special">(</span><a class="link" href="structboost_1_1interprocess_1_1create__only__t.html" title="Struct create_only_t">create_only_t</a><span class="special">,</span> <span class="keyword">const</span> <span class="keyword">char</span> <span class="special">*</span> name<span class="special">,</span> 
+                      <span class="keyword">const</span> <a class="link" href="classboost_1_1interprocess_1_1permissions.html" title="Class permissions">permissions</a> <span class="special">&amp;</span> perm <span class="special">=</span> <span class="identifier">permissions</span><span class="special">(</span><span class="special">)</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Creates a global recursive_mutex with a name. If the recursive_mutex can't be created throws <a class="link" href="classboost_1_1interprocess_1_1interprocess__exception.html" title="Class interprocess_exception">interprocess_exception</a> </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1named__recursive__mutex_1ac8e32a0c34a881d9aaa242db702b3fed"></a><span class="identifier">named_recursive_mutex</span><span class="special">(</span><a class="link" href="structboost_1_1interprocess_1_1open__or__create__t.html" title="Struct open_or_create_t">open_or_create_t</a><span class="special">,</span> <span class="keyword">const</span> <span class="keyword">char</span> <span class="special">*</span> name<span class="special">,</span> 
+                      <span class="keyword">const</span> <a class="link" href="classboost_1_1interprocess_1_1permissions.html" title="Class permissions">permissions</a> <span class="special">&amp;</span> perm <span class="special">=</span> <span class="identifier">permissions</span><span class="special">(</span><span class="special">)</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Opens or creates a global recursive_mutex with a name. If the recursive_mutex is created, this call is equivalent to named_recursive_mutex(create_only_t, ... ) If the recursive_mutex is already created, this call is equivalent named_recursive_mutex(open_only_t, ... ) Does not throw </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1named__recursive__mutex_1aba421883a6ae14ff071d93339a13bafb"></a><span class="identifier">named_recursive_mutex</span><span class="special">(</span><a class="link" href="structboost_1_1interprocess_1_1open__only__t.html" title="Struct open_only_t">open_only_t</a><span class="special">,</span> <span class="keyword">const</span> <span class="keyword">char</span> <span class="special">*</span> name<span class="special">)</span><span class="special">;</span></pre>
+<p>Opens a global recursive_mutex with a name if that recursive_mutex is previously created. If it is not previously created this function throws <a class="link" href="classboost_1_1interprocess_1_1interprocess__exception.html" title="Class interprocess_exception">interprocess_exception</a>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1named__recursive__mutex_1ac2b9c5ae42a455691d0b647870b43800"></a><span class="identifier">named_recursive_mutex</span><span class="special">(</span><a class="link" href="structboost_1_1interprocess_1_1create__only__t.html" title="Struct create_only_t">create_only_t</a><span class="special">,</span> <span class="keyword">const</span> <span class="keyword">wchar_t</span> <span class="special">*</span> name<span class="special">,</span> 
+                      <span class="keyword">const</span> <a class="link" href="classboost_1_1interprocess_1_1permissions.html" title="Class permissions">permissions</a> <span class="special">&amp;</span> perm <span class="special">=</span> <span class="identifier">permissions</span><span class="special">(</span><span class="special">)</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Creates a global recursive_mutex with a name. If the recursive_mutex can't be created throws <a class="link" href="classboost_1_1interprocess_1_1interprocess__exception.html" title="Class interprocess_exception">interprocess_exception</a></p>
+<p>Note: This function is only available on operating systems with native wchar_t APIs (e.g. Windows). </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1named__recursive__mutex_1ae8db381634a59ec27a91511a428a3678"></a><span class="identifier">named_recursive_mutex</span><span class="special">(</span><a class="link" href="structboost_1_1interprocess_1_1open__or__create__t.html" title="Struct open_or_create_t">open_or_create_t</a><span class="special">,</span> <span class="keyword">const</span> <span class="keyword">wchar_t</span> <span class="special">*</span> name<span class="special">,</span> 
+                      <span class="keyword">const</span> <a class="link" href="classboost_1_1interprocess_1_1permissions.html" title="Class permissions">permissions</a> <span class="special">&amp;</span> perm <span class="special">=</span> <span class="identifier">permissions</span><span class="special">(</span><span class="special">)</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Opens or creates a global recursive_mutex with a name. If the recursive_mutex is created, this call is equivalent to named_recursive_mutex(create_only_t, ... ) If the recursive_mutex is already created, this call is equivalent named_recursive_mutex(open_only_t, ... ) Does not throw</p>
+<p>Note: This function is only available on operating systems with native wchar_t APIs (e.g. Windows). </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1named__recursive__mutex_1a8f5bfd209b8062e14110704da180a904"></a><span class="identifier">named_recursive_mutex</span><span class="special">(</span><a class="link" href="structboost_1_1interprocess_1_1open__only__t.html" title="Struct open_only_t">open_only_t</a><span class="special">,</span> <span class="keyword">const</span> <span class="keyword">wchar_t</span> <span class="special">*</span> name<span class="special">)</span><span class="special">;</span></pre>
+<p>Opens a global recursive_mutex with a name if that recursive_mutex is previously created. If it is not previously created this function throws <a class="link" href="classboost_1_1interprocess_1_1interprocess__exception.html" title="Class interprocess_exception">interprocess_exception</a>.</p>
+<p>Note: This function is only available on operating systems with native wchar_t APIs (e.g. Windows). </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1named__recursive__mutex_1aeeec7a142ea97d2914d7808334d8fb76"></a><span class="special">~</span><span class="identifier">named_recursive_mutex</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Destroys *this and indicates that the calling process is finished using the resource. The destructor function will deallocate any system resources allocated by the system for use by this process for this resource. The resource can still be opened again calling the open constructor overload. To erase the resource from the system use <a class="link" href="classboost_1_1interprocess_1_1named__recursive__mutex.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1named__recursive__mutex_1a7715fdfa43e01f507d85e749ce1b30cf">remove()</a>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1named__recursive__mutex_1ac7424e86aa3f5165c2ba3df1b0ae2f8a"></a><span class="identifier">unlock</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Unlocks a previously locked <a class="link" href="classboost_1_1interprocess_1_1named__recursive__mutex.html" title="Class named_recursive_mutex">named_recursive_mutex</a>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1named__recursive__mutex_1a79b70c1895c45051368d46a6dd03acdd"></a><span class="identifier">lock</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Locks <a class="link" href="classboost_1_1interprocess_1_1named__recursive__mutex.html" title="Class named_recursive_mutex">named_recursive_mutex</a>, sleeps when <a class="link" href="classboost_1_1interprocess_1_1named__recursive__mutex.html" title="Class named_recursive_mutex">named_recursive_mutex</a> is already locked. Throws <a class="link" href="classboost_1_1interprocess_1_1interprocess__exception.html" title="Class interprocess_exception">interprocess_exception</a> if a severe error is found.</p>
+<p>Note: A program shall not deadlock if the thread that has ownership calls this function. <br>
+ </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1named__recursive__mutex_1a1fe7193005a31a15705f2a9b58f8b90c"></a><span class="identifier">try_lock</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Tries to lock the <a class="link" href="classboost_1_1interprocess_1_1named__recursive__mutex.html" title="Class named_recursive_mutex">named_recursive_mutex</a>, returns false when <a class="link" href="classboost_1_1interprocess_1_1named__recursive__mutex.html" title="Class named_recursive_mutex">named_recursive_mutex</a> is already locked, returns true when success. Throws <a class="link" href="classboost_1_1interprocess_1_1interprocess__exception.html" title="Class interprocess_exception">interprocess_exception</a> if a severe error is found.</p>
+<p>Note: A program shall not deadlock if the thread that has ownership calls this function. <br>
+ </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> TimePoint<span class="special">&gt;</span> <span class="keyword">bool</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1named__recursive__mutex_1ae4e22f6b4dcb41536cb893e88245f838"></a><span class="identifier">timed_lock</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">TimePoint</span> <span class="special">&amp;</span> abs_time<span class="special">)</span><span class="special">;</span></pre>
+<p>Tries to lock the <a class="link" href="classboost_1_1interprocess_1_1named__recursive__mutex.html" title="Class named_recursive_mutex">named_recursive_mutex</a> until time abs_time, Returns false when timeout expires, returns true when locks. Throws <a class="link" href="classboost_1_1interprocess_1_1interprocess__exception.html" title="Class interprocess_exception">interprocess_exception</a> if a severe error is found</p>
+<p>Note: A program shall not deadlock if the thread that has ownership calls this function. <br>
+ </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> TimePoint<span class="special">&gt;</span> <span class="keyword">bool</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1named__recursive__mutex_1a6d10bf2295754c2a0cfce803a27b6c5e"></a><span class="identifier">try_lock_until</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">TimePoint</span> <span class="special">&amp;</span> abs_time<span class="special">)</span><span class="special">;</span></pre>
+<p>Same as <code class="computeroutput">timed_lock</code>, but this function is modeled after the standard library interface. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Duration<span class="special">&gt;</span> <span class="keyword">bool</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1named__recursive__mutex_1a2c053159d3b04c2007a459ea3a2c0af7"></a><span class="identifier">try_lock_for</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">Duration</span> <span class="special">&amp;</span> dur<span class="special">)</span><span class="special">;</span></pre>
+<p>Same as <code class="computeroutput">timed_lock</code>, but this function is modeled after the standard library interface. </p>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.17.19.3.70.4.4.4"></a><h3>
+<a name="id93-bb"></a><code class="computeroutput">named_recursive_mutex</code> public static functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="keyword">bool</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1named__recursive__mutex_1a7715fdfa43e01f507d85e749ce1b30cf"></a><span class="identifier">remove</span><span class="special">(</span><span class="keyword">const</span> <span class="keyword">char</span> <span class="special">*</span> name<span class="special">)</span><span class="special">;</span></pre>
+<p>Erases a named recursive mutex from the system </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="keyword">bool</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1named__recursive__mutex_1a61f09623a51f0dc07661e343fc8e5afd"></a><span class="identifier">remove</span><span class="special">(</span><span class="keyword">const</span> <span class="keyword">wchar_t</span> <span class="special">*</span> name<span class="special">)</span><span class="special">;</span></pre>
+<p>Erases a named recursive mutex from the system</p>
+<p>Note: This function is only available on operating systems with native wchar_t APIs (e.g. Windows). </p>
+</li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2005-2024 Ion Gaztanaga<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1interprocess_1_1named__mutex.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../interprocess/indexes_reference.html#doxygen.boost_interprocess_header_reference.named__recursive__mutex_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1interprocess_1_1named__semaphore.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

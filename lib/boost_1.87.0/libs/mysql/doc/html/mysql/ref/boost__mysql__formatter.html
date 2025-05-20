@@ -1,0 +1,135 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>formatter</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../../pt01.html" title="Part Two: Reference. ">
+<link rel="prev" href="boost__mysql__formattable_ref/formattable_ref.html" title="formattable_ref::formattable_ref">
+<link rel="next" href="boost__mysql__formatter_lt__format_sequence_lt__Range_comma__FormatFn__gt___gt_.html" title="formatter&lt; format_sequence&lt; Range, FormatFn &gt; &gt;">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="boost__mysql__formattable_ref/formattable_ref.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../pt01.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="boost__mysql__formatter_lt__format_sequence_lt__Range_comma__FormatFn__gt___gt_.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="mysql.ref.boost__mysql__formatter"></a><a class="link" href="boost__mysql__formatter.html" title="formatter">formatter</a>
+</h4></div></div></div>
+<p>
+        An extension point to customize SQL formatting.
+      </p>
+<h5>
+<a name="mysql.ref.boost__mysql__formatter.h0"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__formatter.synopsis"></a></span><a class="link" href="boost__mysql__formatter.html#mysql.ref.boost__mysql__formatter.synopsis">Synopsis</a>
+      </h5>
+<p>
+        Defined in header <code class="literal">&lt;<a href="https://github.com/boostorg/mysql/blob/master/include/boost/mysql/format_sql.hpp" target="_top">boost/mysql/format_sql.hpp</a>&gt;</code>
+      </p>
+<pre class="programlisting"><span class="keyword">template</span><span class="special">&lt;</span>
+    <span class="keyword">class</span> <span class="identifier">T</span><span class="special">&gt;</span>
+<span class="keyword">struct</span> <span class="identifier">formatter</span><span class="special">;</span>
+</pre>
+<h5>
+<a name="mysql.ref.boost__mysql__formatter.h1"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__formatter.description"></a></span><a class="link" href="boost__mysql__formatter.html#mysql.ref.boost__mysql__formatter.description">Description</a>
+      </h5>
+<p>
+        This type can be specialized for custom types to make them formattable. This
+        makes them satisfy the <code class="computeroutput"><span class="identifier">Formattable</span></code>
+        concept, and thus usable in <a class="link" href="boost__mysql__format_sql.html" title="format_sql"><code class="computeroutput"><span class="identifier">format_sql</span></code></a> and similar functions.
+      </p>
+<p>
+        A <code class="computeroutput"><span class="identifier">formatter</span></code> specialization
+        for a type <code class="computeroutput"><span class="identifier">T</span></code> should have
+        the following form:
+      </p>
+<pre class="programlisting"><span class="keyword">template</span> <span class="special">&lt;&gt;</span>
+<span class="keyword">struct</span> <span class="identifier">formatter</span><span class="special">&lt;</span><span class="identifier">T</span><span class="special">&gt;</span>
+<span class="special">{</span>
+    <span class="keyword">const</span> <span class="keyword">char</span><span class="special">*</span> <span class="identifier">parse</span><span class="special">(</span><span class="keyword">const</span> <span class="keyword">char</span><span class="special">*</span> <span class="identifier">begin</span><span class="special">,</span> <span class="keyword">const</span> <span class="keyword">char</span><span class="special">*</span> <span class="identifier">end</span><span class="special">);</span> <span class="comment">// parse format specs</span>
+    <span class="keyword">void</span> <span class="identifier">format</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">T</span><span class="special">&amp;</span> <span class="identifier">value</span><span class="special">,</span> <span class="identifier">format_context_base</span><span class="special">&amp;</span> <span class="identifier">ctx</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span> <span class="comment">// perform the actual formatting</span>
+<span class="special">};</span>
+</pre>
+<p>
+        When a value with a custom formatter is formatted (using <a class="link" href="boost__mysql__format_sql.html" title="format_sql"><code class="computeroutput"><span class="identifier">format_sql</span></code></a> or a similar function),
+        the library performs the following actions:
+      </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+            An instance of <code class="computeroutput"><span class="identifier">formatter</span><span class="special">&lt;</span><span class="identifier">T</span><span class="special">&gt;</span></code> is default-constructed, where <code class="computeroutput"><span class="identifier">T</span></code> is the type of the value being formatted
+            after removing const and references.
+          </li>
+<li class="listitem">
+            The <code class="computeroutput"><span class="identifier">parse</span></code> function is
+            invoked on the constructed instance, with <code class="computeroutput"><span class="special">[</span><span class="identifier">begin</span><span class="special">,</span> <span class="identifier">end</span><span class="special">)</span></code>
+            pointing to the format specifier that the current replacement field has.
+            If <code class="computeroutput"><span class="identifier">parse</span></code> finds specifiers
+            it understands, it should remember them, usually setting some flag in
+            the <code class="computeroutput"><span class="identifier">formatter</span></code> instance.
+            <code class="computeroutput"><span class="identifier">parse</span></code> must return an
+            iterator to the first unparsed character in the range (or the <code class="computeroutput"><span class="identifier">end</span></code> iterator, if everything was parsed).
+            Some examples of what would get passed to <code class="computeroutput"><span class="identifier">parse</span></code>:
+            <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; ">
+<li class="listitem">
+                  In <code class="computeroutput"><span class="string">"SELECT {}"</span></code>,
+                  the range would be empty.
+                </li>
+<li class="listitem">
+                  In <code class="computeroutput"><span class="string">"SELECT {:abc}"</span></code>,
+                  the range would be <code class="computeroutput"><span class="string">"abc"</span></code>.
+                </li>
+<li class="listitem">
+                  In <code class="computeroutput"><span class="string">"SELECT {0:i}"</span></code>,
+                  the range would be <code class="computeroutput"><span class="string">"i"</span></code>.
+                </li>
+</ul></div>
+          </li>
+<li class="listitem">
+            If <code class="computeroutput"><span class="identifier">parse</span></code> didn't manage
+            to parse all the passed specifiers (i.e. if it returned an iterator different
+            to the passed's end), a <a class="link" href="boost__mysql__client_errc.html" title="client_errc"><code class="computeroutput"><span class="identifier">client_errc</span><span class="special">::</span><span class="identifier">format_string_invalid_specifier</span></code></a>
+            is emitted and the format operation finishes.
+          </li>
+<li class="listitem">
+            Otherwise, <code class="computeroutput"><span class="identifier">format</span></code> is
+            invoked on the formatter instance, passing the value to be formatted
+            and the <a class="link" href="boost__mysql__format_context_base.html" title="format_context_base"><code class="computeroutput"><span class="identifier">format_context_base</span></code></a> where format
+            operation is running. This function should perform the actual formatting,
+            usually calling <a class="link" href="boost__mysql__format_sql_to.html" title="format_sql_to"><code class="computeroutput"><span class="identifier">format_sql_to</span></code></a> on the passed
+            context.
+          </li>
+</ul></div>
+<p>
+        Don't specialize <code class="computeroutput"><span class="identifier">formatter</span></code>
+        for built-in types, like <code class="computeroutput"><span class="keyword">int</span></code>,
+        <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code> or optionals (formally, any type
+        satisfying <code class="computeroutput"><span class="identifier">WritableField</span></code>),
+        as the specializations will be ignored.
+      </p>
+<p>
+        Convenience header <code class="literal">&lt;<a href="https://github.com/boostorg/mysql/blob/master/include/boost/mysql.hpp" target="_top">boost/mysql.hpp</a>&gt;</code>
+      </p>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="boost__mysql__formattable_ref/formattable_ref.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../pt01.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="boost__mysql__formatter_lt__format_sequence_lt__Range_comma__FormatFn__gt___gt_.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

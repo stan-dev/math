@@ -1,0 +1,107 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template normal_distribution</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.Compute">
+<link rel="up" href="../../boost_compute/reference.html#doxygen.header_reference.normal__distribution_8hpp" title="Header &lt;boost/compute/random/normal_distribution.hpp&gt;">
+<link rel="prev" href="classboost_1_1compute_1_1mersenne__twister__engine.html" title="Class template mersenne_twister_engine">
+<link rel="next" href="classboost_1_1compute_1_1threefry__engine.html" title="Class template threefry_engine">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1compute_1_1mersenne__twister__engine.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_compute/reference.html#doxygen.header_reference.normal__distribution_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1compute_1_1threefry__engine.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.header_reference.classboost_1_1compute_1_1normal__distribution"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template normal_distribution</span></h2>
+<p>boost::compute::normal_distribution — Produces random, normally-distributed floating-point numbers. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../boost_compute/reference.html#doxygen.header_reference.normal__distribution_8hpp" title="Header &lt;boost/compute/random/normal_distribution.hpp&gt;">boost/compute/random/normal_distribution.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> RealType <span class="special">=</span> <span class="keyword">float</span><span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1compute_1_1normal__distribution.html" title="Class template normal_distribution">normal_distribution</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">RealType</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1normal__distribution_1ac727aa72992a37aafc777d472b56e956"></a><span class="identifier">result_type</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1compute_1_1normal__distribution.html#id79-bb">public member functions</a></span>
+  <a class="link" href="classboost_1_1compute_1_1normal__distribution.html#doxygen.header_reference.classboost_1_1compute_1_1normal__distribution_1acd147377f22af409a34ba163b7b12870"><span class="identifier">normal_distribution</span></a><span class="special">(</span><span class="identifier">RealType</span> <span class="special">=</span> <span class="number">0</span><span class="special">.</span><span class="identifier">f</span><span class="special">,</span> <span class="identifier">RealType</span> <span class="special">=</span> <span class="number">1</span><span class="special">.</span><span class="identifier">f</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1compute_1_1normal__distribution.html#doxygen.header_reference.classboost_1_1compute_1_1normal__distribution_1a567290fb1e11bb73b8ecd45dab3eeab9"><span class="special">~</span><span class="identifier">normal_distribution</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">result_type</span> <a class="link" href="classboost_1_1compute_1_1normal__distribution.html#doxygen.header_reference.classboost_1_1compute_1_1normal__distribution_1a1935b19d53b891b9db5382d51429063d"><span class="identifier">mean</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">result_type</span> <a class="link" href="classboost_1_1compute_1_1normal__distribution.html#doxygen.header_reference.classboost_1_1compute_1_1normal__distribution_1a6f0751eb9119f5521a63b8206d31ec74"><span class="identifier">stddev</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">result_type</span> <span class="identifier">min</span> <a class="link" href="classboost_1_1compute_1_1normal__distribution.html#doxygen.header_reference.classboost_1_1compute_1_1normal__distribution_1a3dc3acda51837c37be2fe0579c107f2a"><span class="identifier">BOOST_PREVENT_MACRO_SUBSTITUTION</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">result_type</span> <span class="identifier">max</span> <a class="link" href="classboost_1_1compute_1_1normal__distribution.html#doxygen.header_reference.classboost_1_1compute_1_1normal__distribution_1aeb7cd330b90d723a9eeb91835f7a7b67"><span class="identifier">BOOST_PREVENT_MACRO_SUBSTITUTION</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> OutputIterator<span class="special">,</span> <span class="keyword">typename</span> Generator<span class="special">&gt;</span> 
+    <span class="keyword">void</span> <a class="link" href="classboost_1_1compute_1_1normal__distribution.html#doxygen.header_reference.classboost_1_1compute_1_1normal__distribution_1a1fdf22b943d4316a970a214ebd8694d1"><span class="identifier">generate</span></a><span class="special">(</span><span class="identifier">OutputIterator</span><span class="special">,</span> <span class="identifier">OutputIterator</span><span class="special">,</span> <span class="identifier">Generator</span> <span class="special">&amp;</span><span class="special">,</span> 
+                  <span class="identifier">command_queue</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1compute_1_1normal__distribution.html#id80-bb">private member functions</a></span>
+   <a class="link" href="classboost_1_1compute_1_1normal__distribution.html#doxygen.header_reference.classboost_1_1compute_1_1normal__distribution_1a9969fcfb6c0da51436a346f0e3a6ca06"><span class="identifier">BOOST_STATIC_ASSERT_MSG</span></a><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">is_floating_point</span><span class="special">&lt;</span> <span class="identifier">RealType</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">value</span><span class="special">,</span> 
+                           <span class="string">"Template argument must be a floating point type"</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id36909"></a><h2>Description</h2>
+<p>The following example shows how to setup a normal distribution to produce random <code class="computeroutput">float</code> values centered at <code class="computeroutput">5</code>:</p>
+<pre class="programlisting"></pre>
+<p><b>See Also: </b>default_random_engine, <a class="link" href="classboost_1_1compute_1_1uniform__real__distribution.html" title="Class template uniform_real_distribution">uniform_real_distribution</a> </p>
+<p>
+</p>
+<div class="refsect2">
+<a name="id36921"></a><h3>
+<a name="id79-bb"></a><code class="computeroutput">normal_distribution</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.header_reference.classboost_1_1compute_1_1normal__distribution_1acd147377f22af409a34ba163b7b12870"></a><span class="identifier">normal_distribution</span><span class="special">(</span><span class="identifier">RealType</span> mean <span class="special">=</span> <span class="number">0</span><span class="special">.</span><span class="identifier">f</span><span class="special">,</span> <span class="identifier">RealType</span> stddev <span class="special">=</span> <span class="number">1</span><span class="special">.</span><span class="identifier">f</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Creates a new normal distribution producing numbers with the given <code class="computeroutput">mean</code> and <code class="computeroutput">stddev</code>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.header_reference.classboost_1_1compute_1_1normal__distribution_1a567290fb1e11bb73b8ecd45dab3eeab9"></a><span class="special">~</span><span class="identifier">normal_distribution</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>Destroys the normal distribution object. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">result_type</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1normal__distribution_1a1935b19d53b891b9db5382d51429063d"></a><span class="identifier">mean</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Returns the mean value of the distribution. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">result_type</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1normal__distribution_1a6f0751eb9119f5521a63b8206d31ec74"></a><span class="identifier">stddev</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Returns the standard-deviation of the distribution. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">result_type</span> <span class="identifier">min</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1normal__distribution_1a3dc3acda51837c37be2fe0579c107f2a"></a><span class="identifier">BOOST_PREVENT_MACRO_SUBSTITUTION</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Returns the minimum value of the distribution. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">result_type</span> <span class="identifier">max</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1normal__distribution_1aeb7cd330b90d723a9eeb91835f7a7b67"></a><span class="identifier">BOOST_PREVENT_MACRO_SUBSTITUTION</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Returns the maximum value of the distribution. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> OutputIterator<span class="special">,</span> <span class="keyword">typename</span> Generator<span class="special">&gt;</span> 
+  <span class="keyword">void</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1normal__distribution_1a1fdf22b943d4316a970a214ebd8694d1"></a><span class="identifier">generate</span><span class="special">(</span><span class="identifier">OutputIterator</span> first<span class="special">,</span> <span class="identifier">OutputIterator</span> last<span class="special">,</span> 
+                <span class="identifier">Generator</span> <span class="special">&amp;</span> generator<span class="special">,</span> <span class="identifier">command_queue</span> <span class="special">&amp;</span> queue<span class="special">)</span><span class="special">;</span></pre>
+<p>Generates normally-distributed floating-point numbers and stores them to the range [<code class="computeroutput">first</code>, <code class="computeroutput">last</code>). </p>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id37026"></a><h3>
+<a name="id80-bb"></a><code class="computeroutput">normal_distribution</code> private member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><pre class="literallayout"> <a name="doxygen.header_reference.classboost_1_1compute_1_1normal__distribution_1a9969fcfb6c0da51436a346f0e3a6ca06"></a><span class="identifier">BOOST_STATIC_ASSERT_MSG</span><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">is_floating_point</span><span class="special">&lt;</span> <span class="identifier">RealType</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">value</span><span class="special">,</span> 
+                         <span class="string">"Template argument must be a floating point type"</span><span class="special">)</span><span class="special">;</span></pre></li></ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2013, 2014 Kyle Lutz<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1compute_1_1mersenne__twister__engine.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_compute/reference.html#doxygen.header_reference.normal__distribution_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1compute_1_1threefry__engine.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

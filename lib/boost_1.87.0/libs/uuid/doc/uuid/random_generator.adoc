@@ -1,0 +1,86 @@
+[#random_generator]
+== <boost/uuid/{zwsp}random_generator.hpp>
+
+:idprefix: random_generator_
+
+=== Synopsis
+
+[source,c++]
+[subs=+quotes]
+----
+#include <boost/uuid/basic_random_generator.hpp>
+
+namespace boost {
+namespace uuids {
+
+// recommended for all uses
+
+class random_generator
+{
+private:
+
+    // exposition only
+    _unspecified-csprng-type_ g_;
+
+public:
+
+    using result_type = uuid;
+
+    random_generator();
+
+    result_type operator()();
+};
+
+// only provided for backward compatibility
+
+using random_generator_mt19937 = basic_random_generator<std::mt19937>;
+using random_generator_pure = basic_random_generator<std::random_device>;
+
+}} // namespace boost::uuids
+----
+
+=== random_generator
+
+The class `random_generator` generates UUIDs using a cryptographically strong random number generator, seeded with entropy from `std::random_device`.
+It's the recommended way to generate version 4 random-based UUIDs.
+
+```
+random_generator();
+```
+
+Effects: :: Initializes `g_`, an instance of a cryptographically strong
+  random number generator, using entropy obtained from `std::random_device`.
+
+```
+result_type operator()();
+```
+
+Effects: :: Generates and returns a version 4 UUID using random numbers
+  obtained from `g_`.
+
+Example: ::
++
+```
+using namespace boost::uuids;
+
+random_generator gen;
+
+uuid u1 = gen();
+std::cout << u1 << std::endl;
+
+uuid u2 = gen();
+std::cout << u2 << std::endl;
+
+assert( u1 != u2 );
+```
+
+=== random_generator_mt19937
+
+`random_generator_mt19937` is an alias for `basic_random_generator<std::mt19937>` and is only
+provided for backward compatibility.
+
+=== random_generator_pure
+
+`random_generator_pure` is an alias for `basic_random_generator<std::random_device>` and is only
+provided for backward compatibility.
+

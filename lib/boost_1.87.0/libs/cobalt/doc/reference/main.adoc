@@ -1,0 +1,69 @@
+[#main]
+== cobalt/main.hpp
+
+The easiest way to get started with an cobalt application is to use the `co_main` function with the following signature:
+
+[source,cpp]
+----
+cobalt::main co_main(int argc, char *argv[]);
+----
+
+Declaring `co_main` will add a `main` function that performs all the necessary steps to run a coroutine on an event loop.
+This allows us to write very simple asynchronous programs.
+
+[source,cpp]
+----
+cobalt::main co_main(int argc, char *argv[])
+{
+  auto exec = co_await cobalt::this_coro::executor;             // <1>
+  asio::steady_timer tim{exec, std::chrono::milliseconds(50)}; // <2>
+  co_await tim.async_wait(cobalt::use_op);                      // <3>
+  co_return 0;
+}
+----
+<1> get the executor `main` running on
+<2> Use it with an asio object
+<3> `co_await` an cobalt operation
+
+The main promise will create an `asio::signal_set` and uses it for cancellation.
+`SIGINT` becomes total , while `SIGTERM` becomes terminal cancellation.
+
+NOTE: The cancellation will not be forwarded to detached coroutines.
+The user will need to take care to end then on cancellation,
+since the program otherwise doesn't allow graceful termination.
+
+=== Executor
+[#main-executor]
+
+It will also create an `asio::io_context` to run on, which you can get through the `this_coro::executor`.
+It will be assigned to the `cobalt::this_thread::get_executor()` .
+
+=== Memory Resource
+[#main-allocator]
+
+It also creates a memory resource that will be used as a default for internal memory allocations.
+It will be assigned to the `thread_local` to the  `cobalt::this_thread::get_default_resource()`.
+
+[#main-promise]
+=== Promise
+
+Every coroutine has an internal state, called `promise` (not to be confused with the `cobalt::promise`).
+Depending on the coroutine properties different things can be `co_await`-ed, like we used in the example above.
+
+They are implemented through inheritance, and shared among different promise types
+
+The main promise has the following properties.
+
+ - <<promise_cancellation_base>>
+ - <<promise_throw_if_cancelled_base>>
+ - <<enable_awaitables>>
+ - <<enable_await_allocator>>
+ - <<enable_await_executor>>
+
+
+=== Specification
+
+. declaring `co_main` will implicitly declare a `main` function
+. `main` is only present when `co_main` is defined.
+. `SIGINT` and `SIGTERM` will cause cancellation of the internal task.
+

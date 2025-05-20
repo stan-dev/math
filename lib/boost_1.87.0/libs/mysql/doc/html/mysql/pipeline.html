@@ -1,0 +1,433 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>(Experimental) Pipelines</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="prev" href="templated_connection.html" title="The legacy connection class">
+<link rel="next" href="examples.html" title="Examples">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="templated_connection.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="examples.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="mysql.pipeline"></a><a class="link" href="pipeline.html" title="(Experimental) Pipelines">(Experimental) Pipelines</a>
+</h2></div></div></div>
+<p>
+      Functions like <a class="link" href="ref/boost__mysql__any_connection/execute.html" title="any_connection::execute"><code class="literal">execute</code></a>,
+      <a class="link" href="ref/boost__mysql__any_connection/prepare_statement.html" title="any_connection::prepare_statement"><code class="literal">prepare_statement</code></a>
+      and their async counterparts are half-duplex: they write a single request to
+      the server and wait for its response. In contrast, pipelines can increase efficiency
+      by coalescing several requests into a single message, saving round-trips to
+      the server.
+    </p>
+<div class="warning"><table border="0" summary="Warning">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Warning]" src="../../../../../doc/src/images/warning.png"></td>
+<th align="left">Warning</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+        The MySQL client/server protocol doesn't have explicit support for pipelines.
+        <span class="bold"><strong>From the server's point of view, a pipeline is just
+        a sequence of unrelated requests</strong></span>. The server will try to execute
+        all stages in each pipeline, regardless of the result of previous stages.
+        Pipelines are considered an <span class="bold"><strong>advanced feature</strong></span>.
+        Please read <a class="link" href="pipeline.html#mysql.pipeline.pitfalls">the pitfalls section</a>
+        for more info.
+      </p></td></tr>
+</table></div>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+        This feature is experimental. Its API may change in subsequent releases.
+      </p></td></tr>
+</table></div>
+<h4>
+<a name="mysql.pipeline.h0"></a>
+      <span class="phrase"><a name="mysql.pipeline.use_cases"></a></span><a class="link" href="pipeline.html#mysql.pipeline.use_cases">Use
+      cases</a>
+    </h4>
+<p>
+      You should use pipelines for lightweight operations, dominated by round-trip
+      time. Typical examples include:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          Running connection setup code, involving operations like <a class="link" href="ref/boost__mysql__any_connection/reset_connection.html" title="any_connection::reset_connection"><code class="literal">reset_connection</code></a>,
+          <a class="link" href="ref/boost__mysql__any_connection/set_character_set.html" title="any_connection::set_character_set"><code class="literal">set_character_set</code></a>
+          or preparing statements. <a class="link" href="ref/boost__mysql__connection_pool.html" title="connection_pool"><code class="literal">connection_pool</code></a>
+          uses pipelines to clean up connections for re-use.
+        </li>
+<li class="listitem">
+          Preparing several statements, in batch.
+        </li>
+<li class="listitem">
+          Executing and closing a statement in a single round-trip.
+        </li>
+</ul></div>
+<p>
+      You should <span class="bold"><strong>avoid</strong></span> pipelines for the following
+      cases:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          When you can achieve the same functionality using semicolon-separated queries
+          (thus using <a class="link" href="multi_resultset.html#mysql.multi_resultset.multi_queries">multi-queries</a>
+          and <a class="link" href="sql_formatting.html" title="Text queries and client-side SQL formatting">client-side SQL formatting</a>).
+          Multi-queries will stop after the first error, which is usually what you
+          want. See <a class="link" href="pipeline.html#mysql.pipeline.pitfalls">this section</a> for
+          more info.
+        </li>
+<li class="listitem">
+          When running heavyweight queries, where the gains in round-trip time are
+          not significant.
+        </li>
+<li class="listitem">
+          When there are dependencies between stages in the pipeline. Lack of protocol
+          support makes this use case impossible.
+        </li>
+</ul></div>
+<p>
+      If you're not sure, don't use this feature.
+    </p>
+<h4>
+<a name="mysql.pipeline.h1"></a>
+      <span class="phrase"><a name="mysql.pipeline.pipeline_requests_and_responses"></a></span><a class="link" href="pipeline.html#mysql.pipeline.pipeline_requests_and_responses">Pipeline
+      requests and responses</a>
+    </h4>
+<p>
+      To run a pipeline, create a <a class="link" href="ref/boost__mysql__pipeline_request.html" title="pipeline_request"><code class="literal">pipeline_request</code></a>
+      object describing what should the pipeline do:
+    </p>
+<pre class="programlisting"><span class="comment">// Create a pipeline request and add three stages to it.</span>
+<span class="comment">// When run, this pipeline will set the connection's character set to utf8mb4</span>
+<span class="comment">// and prepare two statements.</span>
+<span class="identifier">pipeline_request</span> <span class="identifier">req</span><span class="special">;</span>
+<span class="identifier">req</span><span class="special">.</span><span class="identifier">add_set_character_set</span><span class="special">(</span><span class="identifier">utf8mb4_charset</span><span class="special">)</span>
+    <span class="special">.</span><span class="identifier">add_prepare_statement</span><span class="special">(</span><span class="string">"INSERT INTO audit_log (t, msg) VALUES (?, ?)"</span><span class="special">)</span>
+    <span class="special">.</span><span class="identifier">add_prepare_statement</span><span class="special">(</span><span class="string">"INSERT INTO employee (company_id, first_name, last_name) VALUES (?, ?, ?)"</span><span class="special">);</span>
+</pre>
+<p>
+      We're using <a class="link" href="ref/boost__mysql__pipeline_request/add_execute.html" title="pipeline_request::add_execute"><code class="literal">add_execute</code></a>
+      and <a class="link" href="ref/boost__mysql__pipeline_request/add_prepare_statement.html" title="pipeline_request::add_prepare_statement"><code class="literal">add_prepare_statement</code></a>
+      to add stages to our pipeline. You can find all available stage types in the
+      <a class="link" href="pipeline.html#mysql.pipeline.reference">reference section</a>.
+    </p>
+<p>
+      To actually run the pipeline, create a response object and call <a class="link" href="ref/boost__mysql__any_connection/run_pipeline.html" title="any_connection::run_pipeline"><code class="literal">any_connection::run_pipeline</code></a>
+      or <a class="link" href="ref/boost__mysql__any_connection/async_run_pipeline.html" title="any_connection::async_run_pipeline"><code class="literal">async_run_pipeline</code></a>:
+    </p>
+<pre class="programlisting"><span class="comment">// Run the pipeline request req, and store responses into res</span>
+<span class="comment">// stage_response is a variant-like type that can store the response</span>
+<span class="comment">// of any stage type (including results and statements).</span>
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span><span class="identifier">stage_response</span><span class="special">&gt;</span> <span class="identifier">res</span><span class="special">;</span>
+<span class="identifier">conn</span><span class="special">.</span><span class="identifier">run_pipeline</span><span class="special">(</span><span class="identifier">req</span><span class="special">,</span> <span class="identifier">res</span><span class="special">);</span>
+</pre>
+<p>
+      Finally, you can access the statements using <a class="link" href="ref/boost__mysql__stage_response/as_statement.html" title="stage_response::as_statement"><code class="literal">stage_response::as_statement</code></a>:
+    </p>
+<pre class="programlisting"><span class="comment">// The 2nd and 3rd stages were statement preparation requests,</span>
+<span class="comment">// so res[1] and res[2] contain statement objects</span>
+<span class="identifier">statement</span> <span class="identifier">stmt1</span> <span class="special">=</span> <span class="identifier">res</span><span class="special">[</span><span class="number">1</span><span class="special">].</span><span class="identifier">as_statement</span><span class="special">();</span>
+<span class="identifier">statement</span> <span class="identifier">stmt2</span> <span class="special">=</span> <span class="identifier">res</span><span class="special">[</span><span class="number">2</span><span class="special">].</span><span class="identifier">as_statement</span><span class="special">();</span>
+</pre>
+<p>
+      If your pipeline contains an execution stage, it will generate a <code class="computeroutput"><span class="identifier">results</span></code> object that can be accessed using
+      <a class="link" href="ref/boost__mysql__stage_response/as_results.html" title="stage_response::as_results"><code class="literal">stage_response::as_results</code></a>.
+    </p>
+<h4>
+<a name="mysql.pipeline.h2"></a>
+      <span class="phrase"><a name="mysql.pipeline.error"></a></span><a class="link" href="pipeline.html#mysql.pipeline.error">Error
+      handling</a>
+    </h4>
+<p>
+      If any of the pipeline stages result in an error, the entire <a class="link" href="ref/boost__mysql__any_connection/run_pipeline.html" title="any_connection::run_pipeline"><code class="literal">run_pipeline</code></a>
+      operation is considered failed. This means that <span class="bold"><strong>if <code class="computeroutput"><span class="identifier">run_pipipeline</span></code> completed successfully, all
+      stages succeeded</strong></span>. Recall that <span class="bold"><strong>all stages are
+      always run, regardless of the outcome of previous stages</strong></span>.
+    </p>
+<p>
+      If <code class="computeroutput"><span class="identifier">run_pipipeline</span></code> fails, you
+      can check which stages succeeded and failed by inspecting responses. <a class="link" href="ref/boost__mysql__stage_response/error.html" title="stage_response::error"><code class="literal">stage_response::error</code></a>
+      and <a class="link" href="ref/boost__mysql__stage_response/diag.html" title="stage_response::diag"><code class="literal">stage_response::diag</code></a>
+      will return error information about failed steps. For instance:
+    </p>
+<pre class="programlisting"><span class="comment">// The second step in the pipeline will fail, the other ones will succeeded</span>
+<span class="identifier">pipeline_request</span> <span class="identifier">req</span><span class="special">;</span>
+<span class="identifier">req</span><span class="special">.</span><span class="identifier">add_set_character_set</span><span class="special">(</span><span class="identifier">utf8mb4_charset</span><span class="special">)</span>
+    <span class="special">.</span><span class="identifier">add_prepare_statement</span><span class="special">(</span><span class="string">"INSERT INTO bad_table (t, msg) VALUES (?, ?)"</span><span class="special">)</span>  <span class="comment">// will fail</span>
+    <span class="special">.</span><span class="identifier">add_prepare_statement</span><span class="special">(</span><span class="string">"INSERT INTO employee (company_id, first_name, last_name) VALUES (?, ?, ?)"</span><span class="special">);</span>
+
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span><span class="identifier">stage_response</span><span class="special">&gt;</span> <span class="identifier">res</span><span class="special">;</span>
+<span class="identifier">error_code</span> <span class="identifier">ec</span><span class="special">;</span>
+<span class="identifier">diagnostics</span> <span class="identifier">diag</span><span class="special">;</span>
+
+<span class="identifier">conn</span><span class="special">.</span><span class="identifier">run_pipeline</span><span class="special">(</span><span class="identifier">req</span><span class="special">,</span> <span class="identifier">res</span><span class="special">,</span> <span class="identifier">ec</span><span class="special">,</span> <span class="identifier">diag</span><span class="special">);</span>
+
+<span class="comment">// The overall operation failed</span>
+<span class="identifier">BOOST_TEST</span><span class="special">(</span><span class="identifier">ec</span> <span class="special">==</span> <span class="identifier">common_server_errc</span><span class="special">::</span><span class="identifier">er_no_such_table</span><span class="special">);</span>
+
+<span class="comment">// You can check which stages failed using .error()</span>
+<span class="identifier">BOOST_TEST</span><span class="special">(</span><span class="identifier">res</span><span class="special">[</span><span class="number">0</span><span class="special">].</span><span class="identifier">error</span><span class="special">()</span> <span class="special">==</span> <span class="identifier">error_code</span><span class="special">());</span>
+<span class="identifier">BOOST_TEST</span><span class="special">(</span><span class="identifier">res</span><span class="special">[</span><span class="number">1</span><span class="special">].</span><span class="identifier">error</span><span class="special">()</span> <span class="special">==</span> <span class="identifier">common_server_errc</span><span class="special">::</span><span class="identifier">er_no_such_table</span><span class="special">);</span>
+<span class="identifier">BOOST_TEST</span><span class="special">(</span><span class="identifier">res</span><span class="special">[</span><span class="number">2</span><span class="special">].</span><span class="identifier">error</span><span class="special">()</span> <span class="special">==</span> <span class="identifier">error_code</span><span class="special">());</span>
+</pre>
+<h4>
+<a name="mysql.pipeline.h3"></a>
+      <span class="phrase"><a name="mysql.pipeline.pitfalls"></a></span><a class="link" href="pipeline.html#mysql.pipeline.pitfalls">Potential
+      pitfalls</a>
+    </h4>
+<p>
+      All requests in the pipeline are always run, regardless of the outcome of previous
+      requests. As a result, some pipelines can behave non-intuitively:
+    </p>
+<pre class="programlisting"><span class="comment">// This doesn't behave correctly - DO NOT DO THIS</span>
+<span class="comment">// The first INSERT will fail due to a failed foreign key check (there is no such company),</span>
+<span class="comment">// but COMMIT will still be run, thus leaving us with an inconsistent data model</span>
+<span class="identifier">pipeline_request</span> <span class="identifier">req</span><span class="special">;</span>
+
+<span class="identifier">req</span><span class="special">.</span><span class="identifier">add_execute</span><span class="special">(</span><span class="string">"START TRANSACTION"</span><span class="special">)</span>
+    <span class="special">.</span><span class="identifier">add_execute</span><span class="special">(</span>
+        <span class="string">"INSERT INTO employee (first_name, last_name, company_id) VALUES ('John', 'Doe', 'bad')"</span>
+    <span class="special">)</span>
+    <span class="special">.</span><span class="identifier">add_execute</span><span class="special">(</span><span class="string">"INSERT INTO logs VALUES ('Inserted 1 employee')"</span><span class="special">)</span>
+    <span class="special">.</span><span class="identifier">add_execute</span><span class="special">(</span><span class="string">"COMMIT"</span><span class="special">);</span>
+</pre>
+<p>
+      Pipelines aren't the best fit here. Instead, you can express the same logic
+      using semicolon-separated queries:
+    </p>
+<pre class="programlisting"><span class="keyword">const</span> <span class="keyword">char</span><span class="special">*</span> <span class="identifier">sql</span> <span class="special">=</span>
+    <span class="string">"START TRANSACTION;"</span>
+    <span class="string">"INSERT INTO employee (first_name, last_name, company_id) VALUES ('John', 'Doe', 'bad');"</span>
+    <span class="string">"INSERT INTO logs VALUES ('Inserted 1 employee');"</span>
+    <span class="string">"COMMIT"</span><span class="special">;</span>
+
+<span class="comment">// After the first INSERT fails, nothing else will be run. This is what we want.</span>
+<span class="comment">// Note that you need to enable multi queries when connecting to be able to run this.</span>
+<span class="identifier">results</span> <span class="identifier">r</span><span class="special">;</span>
+<span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="identifier">sql</span><span class="special">,</span> <span class="identifier">r</span><span class="special">);</span>
+</pre>
+<p>
+      Pipeline stages are run sequentially by the server. If any of the stages involves
+      a heavyweight query, the server won't process subsequent stages until the query
+      completes.
+    </p>
+<h4>
+<a name="mysql.pipeline.h4"></a>
+      <span class="phrase"><a name="mysql.pipeline.reference"></a></span><a class="link" href="pipeline.html#mysql.pipeline.reference">Pipeline
+      stage reference</a>
+    </h4>
+<p>
+      In the table below, the following variables are assumed:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          <code class="computeroutput"><span class="identifier">req</span></code> is a <a class="link" href="ref/boost__mysql__pipeline_request.html" title="pipeline_request"><code class="literal">pipeline_request</code></a>.
+        </li>
+<li class="listitem">
+          <code class="computeroutput"><span class="identifier">stmt</span></code> is a valid <a class="link" href="ref/boost__mysql__statement.html" title="statement"><code class="literal">statement</code></a>.
+        </li>
+<li class="listitem">
+          <code class="computeroutput"><span class="identifier">result</span></code> is a <a class="link" href="ref/boost__mysql__results.html" title="results"><code class="literal">results</code></a>
+          object.
+        </li>
+<li class="listitem">
+          <code class="computeroutput"><span class="identifier">conn</span></code> is an <a class="link" href="ref/boost__mysql__any_connection.html" title="any_connection"><code class="literal">any_connection</code></a>
+          object.
+        </li>
+</ul></div>
+<div class="informaltable">
+<a name="mysql.pipeline.reference0"></a><table class="table">
+<colgroup>
+<col>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+              <p>
+                Stage type
+              </p>
+            </th>
+<th>
+              <p>
+                Example
+              </p>
+            </th>
+<th>
+              <p>
+                When run, equivalent to...
+              </p>
+            </th>
+<th>
+              <p>
+                Response type
+              </p>
+            </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+              <p>
+                <span class="bold"><strong>Execute</strong></span>: behaves like <a class="link" href="ref/boost__mysql__any_connection/execute.html" title="any_connection::execute"><code class="literal">any_connection::execute</code></a><br>
+                <br> <a class="link" href="ref/boost__mysql__pipeline_request/add_execute.html" title="pipeline_request::add_execute"><code class="literal">pipeline_request::add_execute</code></a><br>
+                <a class="link" href="ref/boost__mysql__pipeline_request/add_execute_range.html" title="pipeline_request::add_execute_range"><code class="literal">pipeline_request::add_execute_range</code></a>
+              </p>
+            </td>
+<td>
+<pre class="table-programlisting"><span class="comment">// Text query</span>
+<span class="identifier">req</span><span class="special">.</span><span class="identifier">add_execute</span><span class="special">(</span><span class="string">"SELECT 1"</span><span class="special">);</span>
+
+<span class="comment">// Prepared statement, with number of parameters known at compile time</span>
+<span class="identifier">req</span><span class="special">.</span><span class="identifier">add_execute</span><span class="special">(</span><span class="identifier">stmt</span><span class="special">,</span> <span class="string">"John"</span><span class="special">,</span> <span class="string">"Doe"</span><span class="special">,</span> <span class="number">42</span><span class="special">);</span>
+
+<span class="comment">// Prepared statement, with number of parameters unknown at compile time</span>
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span><span class="identifier">field_view</span><span class="special">&gt;</span> <span class="identifier">params</span><span class="special">{</span>
+    <span class="comment">/* ... */</span>
+<span class="special">};</span>
+<span class="identifier">req</span><span class="special">.</span><span class="identifier">add_execute_range</span><span class="special">(</span><span class="identifier">stmt</span><span class="special">,</span> <span class="identifier">params</span><span class="special">);</span>
+</pre>
+            </td>
+<td>
+<pre class="table-programlisting"><span class="comment">// Text query</span>
+<span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="string">"SELECT 1"</span><span class="special">,</span> <span class="identifier">result</span><span class="special">);</span>
+
+<span class="comment">// Prepared statement, with number of parameters known at compile time</span>
+<span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="identifier">stmt</span><span class="special">.</span><span class="identifier">bind</span><span class="special">(</span><span class="string">"John"</span><span class="special">,</span> <span class="string">"Doe"</span><span class="special">,</span> <span class="number">42</span><span class="special">),</span> <span class="identifier">result</span><span class="special">);</span>
+
+<span class="comment">// Prepared statement, with number of parameters unknown at compile time</span>
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span><span class="identifier">field_view</span><span class="special">&gt;</span> <span class="identifier">params</span><span class="special">{</span>
+    <span class="comment">/* ... */</span>
+<span class="special">};</span>
+<span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="identifier">stmt</span><span class="special">.</span><span class="identifier">bind</span><span class="special">(</span><span class="identifier">params</span><span class="special">.</span><span class="identifier">begin</span><span class="special">(),</span> <span class="identifier">params</span><span class="special">.</span><span class="identifier">end</span><span class="special">()),</span> <span class="identifier">result</span><span class="special">);</span>
+</pre>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__results.html" title="results"><code class="literal">results</code></a>
+                or an error
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <span class="bold"><strong>Prepare statement</strong></span>: behaves like
+                <a class="link" href="ref/boost__mysql__any_connection/prepare_statement.html" title="any_connection::prepare_statement"><code class="literal">any_connection::prepare_statement</code></a><br>
+                <br> <a class="link" href="ref/boost__mysql__pipeline_request/add_prepare_statement.html" title="pipeline_request::add_prepare_statement"><code class="literal">pipeline_request::add_prepare_statement</code></a>
+              </p>
+            </td>
+<td>
+<pre class="table-programlisting"><span class="identifier">req</span><span class="special">.</span><span class="identifier">add_prepare_statement</span><span class="special">(</span><span class="string">"SELECT * FROM employee WHERE id = ?"</span><span class="special">);</span>
+</pre>
+            </td>
+<td>
+<pre class="table-programlisting"><span class="identifier">statement</span> <span class="identifier">stmt</span> <span class="special">=</span> <span class="identifier">conn</span><span class="special">.</span><span class="identifier">prepare_statement</span><span class="special">(</span><span class="string">"SELECT * FROM employee WHERE id = ?"</span><span class="special">);</span>
+</pre>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__statement.html" title="statement"><code class="literal">statement</code></a>
+                or an error
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <span class="bold"><strong>Close statement</strong></span>: behaves like <a class="link" href="ref/boost__mysql__any_connection/close_statement.html" title="any_connection::close_statement"><code class="literal">any_connection::close_statement</code></a><br>
+                <br> <a class="link" href="ref/boost__mysql__pipeline_request/add_close_statement.html" title="pipeline_request::add_close_statement"><code class="literal">pipeline_request::add_close_statement</code></a>
+              </p>
+            </td>
+<td>
+<pre class="table-programlisting"><span class="identifier">req</span><span class="special">.</span><span class="identifier">add_close_statement</span><span class="special">(</span><span class="identifier">stmt</span><span class="special">);</span>
+</pre>
+            </td>
+<td>
+<pre class="table-programlisting"><span class="identifier">conn</span><span class="special">.</span><span class="identifier">close_statement</span><span class="special">(</span><span class="identifier">stmt</span><span class="special">);</span>
+</pre>
+            </td>
+<td>
+              <p>
+                Possibly empty error
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <span class="bold"><strong>Reset connection</strong></span>: behaves like
+                <a class="link" href="ref/boost__mysql__any_connection/reset_connection.html" title="any_connection::reset_connection"><code class="literal">any_connection::reset_connection</code></a><br>
+                <br> <a class="link" href="ref/boost__mysql__pipeline_request/add_reset_connection.html" title="pipeline_request::add_reset_connection"><code class="literal">pipeline_request::add_reset_connection</code></a>
+              </p>
+            </td>
+<td>
+<pre class="table-programlisting"><span class="identifier">req</span><span class="special">.</span><span class="identifier">add_reset_connection</span><span class="special">();</span>
+</pre>
+            </td>
+<td>
+<pre class="table-programlisting"><span class="identifier">conn</span><span class="special">.</span><span class="identifier">reset_connection</span><span class="special">();</span>
+</pre>
+            </td>
+<td>
+              <p>
+                Possibly empty error
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <span class="bold"><strong>Set character set</strong></span>: behaves like
+                <a class="link" href="ref/boost__mysql__any_connection/set_character_set.html" title="any_connection::set_character_set"><code class="literal">any_connection::set_character_set</code></a><br>
+                <br> <a class="link" href="ref/boost__mysql__pipeline_request/add_set_character_set.html" title="pipeline_request::add_set_character_set"><code class="literal">pipeline_request::add_set_character_set</code></a>
+              </p>
+            </td>
+<td>
+<pre class="table-programlisting"><span class="identifier">req</span><span class="special">.</span><span class="identifier">add_set_character_set</span><span class="special">(</span><span class="identifier">utf8mb4_charset</span><span class="special">);</span>
+</pre>
+            </td>
+<td>
+<pre class="table-programlisting"><span class="identifier">conn</span><span class="special">.</span><span class="identifier">set_character_set</span><span class="special">(</span><span class="identifier">utf8mb4_charset</span><span class="special">);</span>
+</pre>
+            </td>
+<td>
+              <p>
+                Possibly empty error
+              </p>
+            </td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="templated_connection.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="examples.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

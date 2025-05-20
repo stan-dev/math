@@ -1,0 +1,66 @@
+<?xml version="1.0" standalone="yes"?>
+<library-reference id="information_base_units_reference"><title>Information Base Units Reference</title><header id="doxygen.information_base_units_reference.bit_8hpp" name="boost/units/base_units/information/bit.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="information">
+<struct id="doxygen.information_base_units_reference.structboost_1_1units_1_1information_1_1bit__base__unit" name="bit_base_unit"><inherit access="public">base_unit&lt; bit_base_unit, information_dimension, -700 &gt;</inherit><method-group name="public static functions">
+<method id="doxygen.information_base_units_reference.structboost_1_1units_1_1information_1_1bit__base__unit_1a55cd5eb3adec2d9e0efedb3cf5123886" name="name" specifiers="static"><type>std::string</type></method>
+<method id="doxygen.information_base_units_reference.structboost_1_1units_1_1information_1_1bit__base__unit_1a4024df3f9923734ef61fcbecb0108edc" name="symbol" specifiers="static"><type>std::string</type></method>
+</method-group>
+</struct></namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.information_base_units_reference.byte_8hpp" name="boost/units/base_units/information/byte.hpp">
+<namespace name="boost">
+<namespace name="units">
+<struct-specialization id="doxygen.information_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01information_1_1byte__base__unit_01_4" name="base_unit_info"><template>
+    </template><specialization><template-arg>information::byte_base_unit</template-arg></specialization><method-group name="public static functions">
+<method id="doxygen.information_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01information_1_1byte__base__unit_01_4_1aa7381cc310c1de092ac473b975a36b03" name="name" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+<method id="doxygen.information_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01information_1_1byte__base__unit_01_4_1a8d26953905af8523d8cb2d784a81c827" name="symbol" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+</method-group>
+</struct-specialization><namespace name="information">
+<typedef id="doxygen.information_base_units_reference.namespaceboost_1_1units_1_1information_1a4e4d3df46cc7a8049c4245e307bb3e32" name="byte_base_unit"><type>scaled_base_unit&lt; <classname>boost::units::information::bit_base_unit</classname>, scale&lt; 2, static_rational&lt; 3 &gt; &gt; &gt;</type></typedef>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.information_base_units_reference.hartley_8hpp" name="boost/units/base_units/information/hartley.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="information">
+<struct id="doxygen.information_base_units_reference.structboost_1_1units_1_1information_1_1hartley__base__unit" name="hartley_base_unit"><inherit access="public">boost::units::base_unit&lt; hartley_base_unit, boost::units::information::bit_base_unit ::dimension_type, -703 &gt;</inherit><method-group name="public static functions">
+<method id="doxygen.information_base_units_reference.structboost_1_1units_1_1information_1_1hartley__base__unit_1af49c7f22a44a2452d2e65721a2880120" name="name" specifiers="static"><type>const char *</type></method>
+<method id="doxygen.information_base_units_reference.structboost_1_1units_1_1information_1_1hartley__base__unit_1aec5daf622b5c8fa5713984f4b28939b4" name="symbol" specifiers="static"><type>const char *</type></method>
+</method-group>
+</struct></namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.information_base_units_reference.nat_8hpp" name="boost/units/base_units/information/nat.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="information">
+<struct id="doxygen.information_base_units_reference.structboost_1_1units_1_1information_1_1nat__base__unit" name="nat_base_unit"><inherit access="public">boost::units::base_unit&lt; nat_base_unit, boost::units::information::bit_base_unit ::dimension_type, -702 &gt;</inherit><method-group name="public static functions">
+<method id="doxygen.information_base_units_reference.structboost_1_1units_1_1information_1_1nat__base__unit_1a67a90b9ef4cb4a58b78a3e7d0ccd3fe7" name="name" specifiers="static"><type>const char *</type></method>
+<method id="doxygen.information_base_units_reference.structboost_1_1units_1_1information_1_1nat__base__unit_1a123a7f443ec4d0eefb5f11877532a814" name="symbol" specifiers="static"><type>const char *</type></method>
+</method-group>
+</struct></namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.information_base_units_reference.shannon_8hpp" name="boost/units/base_units/information/shannon.hpp">
+<namespace name="boost">
+<namespace name="units">
+<struct-specialization id="doxygen.information_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01information_1_1shannon__base__unit_01_4" name="base_unit_info"><template>
+    </template><specialization><template-arg>information::shannon_base_unit</template-arg></specialization><method-group name="public static functions">
+<method id="doxygen.information_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01information_1_1shannon__base__unit_01_4_1a772fa8a6a4bf3cb7c52f712d16a31c56" name="name" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+<method id="doxygen.information_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01information_1_1shannon__base__unit_01_4_1a5475a39a72747a3ab2226241d20b305d" name="symbol" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+</method-group>
+</struct-specialization><namespace name="information">
+<typedef id="doxygen.information_base_units_reference.namespaceboost_1_1units_1_1information_1a4b2af21ff60a5ddf1fa7184ae81efe49" name="shannon_base_unit"><type>scaled_base_unit&lt; <classname>boost::units::information::bit_base_unit</classname>, scale&lt; 1, static_rational&lt; 1 &gt; &gt; &gt;</type></typedef>
+</namespace>
+</namespace>
+</namespace>
+</header>
+</library-reference>

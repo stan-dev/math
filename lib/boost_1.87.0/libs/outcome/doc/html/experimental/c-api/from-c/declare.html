@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Declare a Result - Boost.Outcome documentation</title>
+<link rel="stylesheet" href="../../../css/boost.css" type="text/css">
+<meta name="generator" content="Hugo 0.52 with Boostdoc theme">
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+
+<link rel="icon" href="../../../images/favicon.ico" type="image/ico"/>
+<body><div class="spirit-nav">
+<a accesskey="p" href="../../../experimental/c-api/from-c/system_code.html"><img src="../../../images/prev.png" alt="Prev"></a>
+    <a accesskey="u" href="../../../experimental/c-api/from-c.html"><img src="../../../images/up.png" alt="Up"></a>
+    <a accesskey="h" href="../../../index.html"><img src="../../../images/home.png" alt="Home"></a><a accesskey="n" href="../../../experimental/c-api/from-c/use.html"><img src="../../../images/next.png" alt="Next"></a></div><div id="content">
+  <div class="titlepage"><div><div><h1 style="clear: both">Declare a Result</h1></div></div></div>
+  <div class="code-snippet"><div class="highlight"><pre class="chroma"><code class="language-c++" data-lang="c++"><span class="c1">// Declare to C a Result with a happy value of intptr_t
+</span><span class="c1"></span><span class="n">BOOST_OUTCOME_C_DECLARE_RESULT_SYSTEM</span><span class="p">(</span><span class="n">result_int</span><span class="p">,</span> <span class="n">intptr_t</span><span class="p">)</span>
+
+<span class="c1">// Save oneself typing out BOOST_OUTCOME_C_RESULT_SYSTEM(result_int) all the time
+</span><span class="c1"></span><span class="k">typedef</span> <span class="n">BOOST_OUTCOME_C_RESULT_SYSTEM</span><span class="p">(</span><span class="n">result_int</span><span class="p">)</span> <span class="n">result</span><span class="p">;</span>
+
+<span class="c1">// Our custom C enum
+</span><span class="c1"></span><span class="k">enum</span> <span class="n">c_enum</span>
+<span class="p">{</span>
+  <span class="n">c_enum_not_found</span><span class="p">,</span>
+  <span class="n">c_enum_bad_argument</span>
+<span class="p">};</span>
+
+<span class="c1">// Make a custom status code domain for this C enum
+</span><span class="c1"></span><span class="n">BOOST_OUTCOME_C_DECLARE_RESULT_SYSTEM_FROM_ENUM</span><span class="p">(</span><span class="n">result_int</span><span class="p">,</span>                                <span class="c1">// The C Result type declared above
+</span><span class="c1"></span>                                    <span class="n">c_enum</span><span class="p">,</span>                                    <span class="c1">// The C enum we wish to wrap
+</span><span class="c1"></span>                                    <span class="s">&#34;{74ceb994-7622-3a21-07f0-b016aa705585}&#34;</span><span class="p">,</span>  <span class="c1">// Unique UUID for this domain
+</span><span class="c1"></span>                                    <span class="c1">// Mappings of C enum values to textual description and semantic equivalances to generic codes
+</span><span class="c1"></span>                                    <span class="p">{</span><span class="n">c_enum</span><span class="o">::</span><span class="n">c_enum_not_found</span><span class="p">,</span> <span class="s">&#34;item not found&#34;</span><span class="p">,</span> <span class="p">{</span><span class="n">errc</span><span class="o">::</span><span class="n">no_such_file_or_directory</span><span class="p">}},</span>
+                                    <span class="p">{</span><span class="n">c_enum</span><span class="o">::</span><span class="n">c_enum_bad_argument</span><span class="p">,</span> <span class="s">&#34;invoked wrong&#34;</span><span class="p">,</span> <span class="p">{</span><span class="n">errc</span><span class="o">::</span><span class="n">invalid_argument</span><span class="p">}})</span>
+
+<span class="c1">// Make helper macros
+</span><span class="c1"></span><span class="cp">#define SUCCESS(v) BOOST_OUTCOME_C_MAKE_RESULT_SYSTEM_SUCCESS(result_int, (v))
+</span><span class="cp">#define FAILURE(v) BOOST_OUTCOME_C_MAKE_RESULT_SYSTEM_FROM_ENUM(result_int, c_enum, (v))
+</span><span class="cp"></span></code></pre></div><a href="https://github.com/boostorg/outcome/tree/master/doc/src/snippets/c_api2.cpp#L39" class="code-snippet-url" target="_blank">View this code on Github</a></div>
+
+
+<p>The key to making C programming easy is to alias the long complex things
+into short easy thing. Obviously <code>SUCCESS(expr)</code> and <code>FAILURE(expr)</code> is too
+generic, but for the purposes of this documentation it makes thing easier.</p>
+
+
+        </div><p><small>Last revised: July 16, 2024 at 21:33:35 &#43;0100</small></p>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../../../experimental/c-api/from-c/system_code.html"><img src="../../../images/prev.png" alt="Prev"></a>
+    <a accesskey="u" href="../../../experimental/c-api/from-c.html"><img src="../../../images/up.png" alt="Up"></a>
+    <a accesskey="h" href="../../../index.html"><img src="../../../images/home.png" alt="Home"></a><a accesskey="n" href="../../../experimental/c-api/from-c/use.html"><img src="../../../images/next.png" alt="Next"></a></div></body>
+</html>

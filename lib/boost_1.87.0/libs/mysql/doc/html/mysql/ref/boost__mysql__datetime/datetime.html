@@ -1,0 +1,79 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>datetime::datetime</title>
+<link rel="stylesheet" href="../../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../boost__mysql__datetime.html" title="datetime">
+<link rel="prev" href="local_time_point.html" title="datetime::local_time_point">
+<link rel="next" href="datetime/overload1.html" title="datetime::datetime (1 of 4 overloads)">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="local_time_point.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost__mysql__datetime.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="datetime/overload1.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h5 class="title">
+<a name="mysql.ref.boost__mysql__datetime.datetime"></a><a class="link" href="datetime.html" title="datetime::datetime">datetime::datetime</a>
+</h5></div></div></div>
+<p>
+          <a class="indexterm" name="id64408"></a>
+Constructs a zero datetime.
+        </p>
+<pre class="programlisting"><span class="keyword">constexpr</span>
+<a class="link" href="datetime/overload1.html" title="datetime::datetime (1 of 4 overloads)">datetime</a><span class="special">()</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="emphasis"><em>» <a class="link" href="datetime/overload1.html" title="datetime::datetime (1 of 4 overloads)"><code class="computeroutput"><span class="identifier">more</span><span class="special">...</span></code></a></em></span>
+</pre>
+<p>
+          Constructs a datetime from its individual components.
+        </p>
+<pre class="programlisting"><span class="keyword">constexpr</span>
+<a class="link" href="datetime/overload2.html" title="datetime::datetime (2 of 4 overloads)">datetime</a><span class="special">(</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">uint16_t</span> <span class="identifier">year</span><span class="special">,</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">uint8_t</span> <span class="identifier">month</span><span class="special">,</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">uint8_t</span> <span class="identifier">day</span><span class="special">,</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">uint8_t</span> <span class="identifier">hour</span> <span class="special">=</span> <span class="number">0</span><span class="special">,</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">uint8_t</span> <span class="identifier">minute</span> <span class="special">=</span> <span class="number">0</span><span class="special">,</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">uint8_t</span> <span class="identifier">second</span> <span class="special">=</span> <span class="number">0</span><span class="special">,</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">uint32_t</span> <span class="identifier">microsecond</span> <span class="special">=</span> <span class="number">0</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="emphasis"><em>» <a class="link" href="datetime/overload2.html" title="datetime::datetime (2 of 4 overloads)"><code class="computeroutput"><span class="identifier">more</span><span class="special">...</span></code></a></em></span>
+</pre>
+<p>
+          Constructs a datetime from a <code class="computeroutput"><span class="identifier">time_point</span></code>.
+        </p>
+<pre class="programlisting"><span class="keyword">explicit</span> <span class="keyword">constexpr</span>
+<a class="link" href="datetime/overload3.html" title="datetime::datetime (3 of 4 overloads)">datetime</a><span class="special">(</span>
+    <a class="link" href="time_point.html" title="datetime::time_point"><code class="literal">datetime::time_point</code></a> <span class="identifier">tp</span><span class="special">);</span>
+  <span class="emphasis"><em>» <a class="link" href="datetime/overload3.html" title="datetime::datetime (3 of 4 overloads)"><code class="computeroutput"><span class="identifier">more</span><span class="special">...</span></code></a></em></span>
+</pre>
+<p>
+          Constructs a datetime from a <code class="computeroutput"><span class="identifier">local_time_point</span></code>.
+        </p>
+<pre class="programlisting"><span class="keyword">explicit</span> <span class="keyword">constexpr</span>
+<a class="link" href="datetime/overload4.html" title="datetime::datetime (4 of 4 overloads)">datetime</a><span class="special">(</span>
+    <a class="link" href="local_time_point.html" title="datetime::local_time_point"><code class="literal">datetime::local_time_point</code></a> <span class="identifier">tp</span><span class="special">);</span>
+  <span class="emphasis"><em>» <a class="link" href="datetime/overload4.html" title="datetime::datetime (4 of 4 overloads)"><code class="computeroutput"><span class="identifier">more</span><span class="special">...</span></code></a></em></span>
+</pre>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="local_time_point.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost__mysql__datetime.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="datetime/overload1.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

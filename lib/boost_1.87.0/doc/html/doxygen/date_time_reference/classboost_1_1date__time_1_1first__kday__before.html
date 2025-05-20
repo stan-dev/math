@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template first_kday_before</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../../date_time/doxy.html#doxygen.date_time_reference.date__generators_8hpp" title="Header &lt;boost/date_time/date_generators.hpp&gt;">
+<link rel="prev" href="classboost_1_1date__time_1_1first__kday__after.html" title="Class template first_kday_after">
+<link rel="next" href="classboost_1_1date__time_1_1first__kday__of__month.html" title="Class template first_kday_of_month">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1date__time_1_1first__kday__after.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../date_time/doxy.html#doxygen.date_time_reference.date__generators_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1date__time_1_1first__kday__of__month.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.date_time_reference.classboost_1_1date__time_1_1first__kday__before"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template first_kday_before</span></h2>
+<p>boost::date_time::first_kday_before — Calculate something like "First Sunday before Jan 1,2002. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../date_time/doxy.html#doxygen.date_time_reference.date__generators_8hpp" title="Header &lt;boost/date_time/date_generators.hpp&gt;">boost/date_time/date_generators.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> date_type<span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1date__time_1_1first__kday__before.html" title="Class template first_kday_before">first_kday_before</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">date_type</span><span class="special">::</span><span class="identifier">calendar_type</span>        <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1first__kday__before_1ab430cc11822065bcfd2d3d851e0847f3"></a><span class="identifier">calendar_type</span><span class="special">;</span>   
+  <span class="keyword">typedef</span> <span class="identifier">calendar_type</span><span class="special">::</span><span class="identifier">day_of_week_type</span> <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1first__kday__before_1afb75df8ab8d230847f1c484be7b77fc8"></a><span class="identifier">day_of_week_type</span><span class="special">;</span>
+  <span class="keyword">typedef</span> <span class="identifier">date_type</span><span class="special">::</span><span class="identifier">duration_type</span>        <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1first__kday__before_1a204442b6c3fde591d175b80e087222c8"></a><span class="identifier">duration_type</span><span class="special">;</span>   
+
+  <span class="comment">// <a class="link" href="classboost_1_1date__time_1_1first__kday__before.html#id-1_3_12_15_3_19_2_1_2_7-bb">public member functions</a></span>
+  <a class="link" href="classboost_1_1date__time_1_1first__kday__before.html#doxygen.date_time_reference.classboost_1_1date__time_1_1first__kday__before_1a70371c225c4d265a0e155eb5596608a5"><span class="identifier">first_kday_before</span></a><span class="special">(</span><span class="identifier">day_of_week_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">date_type</span> <a class="link" href="classboost_1_1date__time_1_1first__kday__before.html#doxygen.date_time_reference.classboost_1_1date__time_1_1first__kday__before_1a7f805b90fd55c33ff03be4298eefa4d2"><span class="identifier">get_date</span></a><span class="special">(</span><span class="identifier">date_type</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">day_of_week_type</span> <a class="link" href="classboost_1_1date__time_1_1first__kday__before.html#doxygen.date_time_reference.classboost_1_1date__time_1_1first__kday__before_1ab5eff1eba4dba9fa511bf0e716641fea"><span class="identifier">day_of_week</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.12.15.3.19.5.4"></a><h2>Description</h2>
+<p>Date generator that takes a date and finds kday after </p>
+<pre class="programlisting"><span class="keyword">typedef</span> <a class="link" href="classboost_1_1date__time_1_1first__kday__before.html" title="Class template first_kday_before"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">date_time</span><span class="special">::</span><span class="identifier">first_kday_before</span><span class="special">&lt;</span><span class="identifier">date</span><span class="special">&gt;</span></a> <span class="identifier">firstkdaybefore</span><span class="special">;</span>
+<span class="identifier">firstkdaybefore</span> <span class="identifier">fkbf</span><span class="special">(</span><span class="identifier">Monday</span><span class="special">)</span><span class="special">;</span>
+<span class="identifier">fkbf</span><span class="special">.</span><span class="identifier">get_date</span><span class="special">(</span><span class="identifier">date</span><span class="special">(</span><span class="number">2002</span><span class="special">,</span><span class="identifier">Feb</span><span class="special">,</span><span class="number">1</span><span class="special">)</span><span class="special">)</span><span class="special">;</span>
+</pre>
+<p> </p>
+<div class="refsect2">
+<a name="id-1.3.12.15.3.19.5.4.3"></a><h3>
+<a name="id-1_3_12_15_3_19_2_1_2_7-bb"></a><code class="computeroutput">first_kday_before</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem"><pre class="literallayout"><a name="doxygen.date_time_reference.classboost_1_1date__time_1_1first__kday__before_1a70371c225c4d265a0e155eb5596608a5"></a><span class="identifier">first_kday_before</span><span class="special">(</span><span class="identifier">day_of_week_type</span> dow<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">date_type</span> <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1first__kday__before_1a7f805b90fd55c33ff03be4298eefa4d2"></a><span class="identifier">get_date</span><span class="special">(</span><span class="identifier">date_type</span> start_day<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Return next kday given. </li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">day_of_week_type</span> <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1first__kday__before_1ab5eff1eba4dba9fa511bf0e716641fea"></a><span class="identifier">day_of_week</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2001-2005 CrystalClear Software, Inc<p>Subject to the Boost Software License, Version 1.0. (See accompanying file
+    <code class="filename">LICENSE_1_0.txt</code> or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)</p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1date__time_1_1first__kday__after.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../date_time/doxy.html#doxygen.date_time_reference.date__generators_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1date__time_1_1first__kday__of__month.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

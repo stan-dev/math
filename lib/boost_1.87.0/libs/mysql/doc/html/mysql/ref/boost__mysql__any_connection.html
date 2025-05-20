@@ -1,0 +1,598 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>any_connection</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../../pt01.html" title="Part Two: Reference. ">
+<link rel="prev" href="boost__mysql__any_address/operator__not__eq_.html" title="any_address::operator!=">
+<link rel="next" href="boost__mysql__any_connection/executor_type.html" title="any_connection::executor_type">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="boost__mysql__any_address/operator__not__eq_.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../pt01.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="boost__mysql__any_connection/executor_type.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="mysql.ref.boost__mysql__any_connection"></a><a class="link" href="boost__mysql__any_connection.html" title="any_connection">any_connection</a>
+</h4></div></div></div>
+<p>
+        A connection to a MySQL server.
+      </p>
+<h5>
+<a name="mysql.ref.boost__mysql__any_connection.h0"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__any_connection.synopsis"></a></span><a class="link" href="boost__mysql__any_connection.html#mysql.ref.boost__mysql__any_connection.synopsis">Synopsis</a>
+      </h5>
+<p>
+        Defined in header <code class="literal">&lt;<a href="https://github.com/boostorg/mysql/blob/master/include/boost/mysql/any_connection.hpp" target="_top">boost/mysql/any_connection.hpp</a>&gt;</code>
+      </p>
+<pre class="programlisting"><span class="keyword">class</span> <span class="identifier">any_connection</span><span class="special">;</span>
+</pre>
+<h5>
+<a name="mysql.ref.boost__mysql__any_connection.h1"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__any_connection.types"></a></span><a class="link" href="boost__mysql__any_connection.html#mysql.ref.boost__mysql__any_connection.types">Types</a>
+      </h5>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Name
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody><tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__any_connection/executor_type.html" title="any_connection::executor_type">executor_type</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  The executor type associated to this object.
+                </p>
+              </td>
+</tr></tbody>
+</table></div>
+<h5>
+<a name="mysql.ref.boost__mysql__any_connection.h2"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__any_connection.member_functions"></a></span><a class="link" href="boost__mysql__any_connection.html#mysql.ref.boost__mysql__any_connection.member_functions">Member
+        Functions</a>
+      </h5>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Name
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__any_connection/any_connection.html" title="any_connection::any_connection">any_connection</a> <span class="silver">[constructor]</span></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Constructs a connection object from an executor and an optional
+                  set of parameters. <br><span class="silver">—</span><br>Constructs
+                  a connection object from an execution context and an optional set
+                  of parameters. <br><span class="silver">—</span><br>Move constructor.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__any_connection/async_close.html" title="any_connection::async_close">async_close</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Cleanly closes the connection to the server.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__any_connection/async_close_statement.html" title="any_connection::async_close_statement">async_close_statement</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Closes a statement, deallocating it from the server.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__any_connection/async_connect.html" title="any_connection::async_connect">async_connect</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Establishes a connection to a MySQL server.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__any_connection/async_execute.html" title="any_connection::async_execute">async_execute</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Executes a text query or prepared statement.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__any_connection/async_ping.html" title="any_connection::async_ping">async_ping</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Checks whether the server is alive.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__any_connection/async_prepare_statement.html" title="any_connection::async_prepare_statement">async_prepare_statement</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Prepares a statement server-side.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__any_connection/async_read_resultset_head.html" title="any_connection::async_read_resultset_head">async_read_resultset_head</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Reads metadata for subsequent resultsets in a multi-resultset operation.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__any_connection/async_read_some_rows.html" title="any_connection::async_read_some_rows">async_read_some_rows</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Reads a batch of rows.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__any_connection/async_reset_connection.html" title="any_connection::async_reset_connection">async_reset_connection</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Resets server-side session state, like variables and prepared statements.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__any_connection/async_run_pipeline.html" title="any_connection::async_run_pipeline">async_run_pipeline</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Runs a set of pipelined requests.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__any_connection/async_set_character_set.html" title="any_connection::async_set_character_set">async_set_character_set</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Sets the connection's character set, as per SET NAMES.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__any_connection/async_start_execution.html" title="any_connection::async_start_execution">async_start_execution</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Starts a SQL execution as a multi-function operation.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__any_connection/backslash_escapes.html" title="any_connection::backslash_escapes">backslash_escapes</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns whether backslashes are being treated as escape sequences.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__any_connection/close.html" title="any_connection::close">close</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Cleanly closes the connection to the server.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__any_connection/close_statement.html" title="any_connection::close_statement">close_statement</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Closes a statement, deallocating it from the server.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__any_connection/connect.html" title="any_connection::connect">connect</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Establishes a connection to a MySQL server.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__any_connection/current_character_set.html" title="any_connection::current_character_set">current_character_set</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns the character set used by this connection.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__any_connection/execute.html" title="any_connection::execute">execute</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Executes a text query or prepared statement.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__any_connection/format_opts.html" title="any_connection::format_opts">format_opts</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns format options suitable to format SQL according to the
+                  current connection configuation.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__any_connection/get_executor.html" title="any_connection::get_executor">get_executor</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Retrieves the executor associated to this object.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__any_connection/meta_mode.html" title="any_connection::meta_mode">meta_mode</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns the current metadata mode that this connection is using.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__any_connection/operator_eq_.html" title="any_connection::operator=">operator=</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Move assignment.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__any_connection/ping.html" title="any_connection::ping">ping</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Checks whether the server is alive.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__any_connection/prepare_statement.html" title="any_connection::prepare_statement">prepare_statement</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Prepares a statement server-side.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__any_connection/read_resultset_head.html" title="any_connection::read_resultset_head">read_resultset_head</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Reads metadata for subsequent resultsets in a multi-resultset operation.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__any_connection/read_some_rows.html" title="any_connection::read_some_rows">read_some_rows</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Reads a batch of rows.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__any_connection/reset_connection.html" title="any_connection::reset_connection">reset_connection</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Resets server-side session state, like variables and prepared statements.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__any_connection/run_pipeline.html" title="any_connection::run_pipeline">run_pipeline</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Runs a set of pipelined requests.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__any_connection/set_character_set.html" title="any_connection::set_character_set">set_character_set</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Sets the connection's character set, as per SET NAMES.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__any_connection/set_meta_mode.html" title="any_connection::set_meta_mode">set_meta_mode</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Sets the metadata mode.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__any_connection/start_execution.html" title="any_connection::start_execution">start_execution</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Starts a SQL execution as a multi-function operation.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__any_connection/uses_ssl.html" title="any_connection::uses_ssl">uses_ssl</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns whether the connection negotiated the use of SSL or not.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__any_connection/_dtor_any_connection.html" title="any_connection::~any_connection">~any_connection</a> <span class="silver">[destructor]</span></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Destructor.
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+<h5>
+<a name="mysql.ref.boost__mysql__any_connection.h3"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__any_connection.description"></a></span><a class="link" href="boost__mysql__any_connection.html#mysql.ref.boost__mysql__any_connection.description">Description</a>
+      </h5>
+<p>
+        Represents a connection to a MySQL server. This is the main I/O object that
+        this library implements. It's logically comprised of session state and an
+        internal stream (usually a socket). The stream is not directly accessible.
+        It's constructed using the executor passed to the constructor.
+      </p>
+<p>
+        This class supports establishing connections with servers using TCP, TCP
+        over TLS and UNIX sockets.
+      </p>
+<p>
+        The class is named <code class="computeroutput"><span class="identifier">any_connection</span></code>
+        because it's not templated on a <code class="computeroutput"><span class="identifier">Stream</span></code>
+        type, as opposed to <a class="link" href="boost__mysql__connection.html" title="connection"><code class="computeroutput"><span class="identifier">connection</span></code></a>. New code should prefer
+        using <code class="computeroutput"><span class="identifier">any_connection</span></code> whenever
+        possible.
+      </p>
+<p>
+        Compared to <a class="link" href="boost__mysql__connection.html" title="connection"><code class="computeroutput"><span class="identifier">connection</span></code></a>, this class:
+      </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+            Is type-erased. The type of the connection doesn't depend on the transport
+            being used.
+          </li>
+<li class="listitem">
+            Is easier to connect, as <a class="link" href="boost__mysql__any_connection/connect.html" title="any_connection::connect"><code class="computeroutput"><span class="identifier">connect</span></code></a> and <a class="link" href="boost__mysql__any_connection/async_connect.html" title="any_connection::async_connect"><code class="computeroutput"><span class="identifier">async_connect</span></code></a> handle hostname
+            resolution.
+          </li>
+<li class="listitem">
+            Can always be re-connected after being used or encountering an error.
+          </li>
+<li class="listitem">
+            Always uses <code class="computeroutput"><span class="identifier">asio</span><span class="special">::</span><span class="identifier">any_io_executor</span></code>.
+          </li>
+<li class="listitem">
+            Has the same level of performance.
+          </li>
+</ul></div>
+<p>
+        This is a move-only type.
+      </p>
+<h5>
+<a name="mysql.ref.boost__mysql__any_connection.h4"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__any_connection.default_completion_tokens"></a></span><a class="link" href="boost__mysql__any_connection.html#mysql.ref.boost__mysql__any_connection.default_completion_tokens">Default
+        completion tokens</a>
+      </h5>
+<p>
+        The default completion token for all async operations in this class is <code class="computeroutput"><span class="identifier">with_diagnostics</span><span class="special">(</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">deferred</span><span class="special">)</span></code>,
+        which allows you to use <code class="computeroutput"><span class="identifier">co_await</span></code>
+        and have the expected exceptions thrown on error.
+      </p>
+<h5>
+<a name="mysql.ref.boost__mysql__any_connection.h5"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__any_connection.thread_safety"></a></span><a class="link" href="boost__mysql__any_connection.html#mysql.ref.boost__mysql__any_connection.thread_safety">Thread safety</a>
+      </h5>
+<p>
+        Distinct objects: safe.
+      </p>
+<p>
+        Shared objects: unsafe.
+      </p>
+<p>
+        This class is <span class="bold"><strong>not thread-safe</strong></span>: for a single
+        object, if you call its member functions concurrently from separate threads,
+        you will get a race condition.
+      </p>
+<p>
+        Convenience header <code class="literal">&lt;<a href="https://github.com/boostorg/mysql/blob/master/include/boost/mysql.hpp" target="_top">boost/mysql.hpp</a>&gt;</code>
+      </p>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="boost__mysql__any_address/operator__not__eq_.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../pt01.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="boost__mysql__any_connection/executor_type.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

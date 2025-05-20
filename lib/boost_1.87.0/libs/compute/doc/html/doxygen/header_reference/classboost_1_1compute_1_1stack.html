@@ -1,0 +1,83 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template stack</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.Compute">
+<link rel="up" href="../../boost_compute/reference.html#doxygen.header_reference.stack_8hpp" title="Header &lt;boost/compute/container/stack.hpp&gt;">
+<link rel="prev" href="classboost_1_1compute_1_1mapped__view.html" title="Class template mapped_view">
+<link rel="next" href="classboost_1_1compute_1_1valarray.html" title="Class template valarray">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1compute_1_1mapped__view.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_compute/reference.html#doxygen.header_reference.stack_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1compute_1_1valarray.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.header_reference.classboost_1_1compute_1_1stack"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template stack</span></h2>
+<p>boost::compute::stack</p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../boost_compute/reference.html#doxygen.header_reference.stack_8hpp" title="Header &lt;boost/compute/container/stack.hpp&gt;">boost/compute/container/stack.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1compute_1_1stack.html" title="Class template stack">stack</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <a class="link" href="classboost_1_1compute_1_1vector.html" title="Class template vector">vector</a><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span>                <a name="doxygen.header_reference.classboost_1_1compute_1_1stack_1ab927105069b6f700d321321c8072d4a1"></a><span class="identifier">container_type</span><span class="special">;</span>
+  <span class="keyword">typedef</span> <span class="identifier">container_type</span><span class="special">::</span><span class="identifier">size_type</span>  <a name="doxygen.header_reference.classboost_1_1compute_1_1stack_1a21fd2e9ee754349c0da41c74140c7d0c"></a><span class="identifier">size_type</span><span class="special">;</span>     
+  <span class="keyword">typedef</span> <span class="identifier">container_type</span><span class="special">::</span><span class="identifier">value_type</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1stack_1a503179e626675275d3c58e64ec47e291"></a><span class="identifier">value_type</span><span class="special">;</span>    
+
+  <span class="comment">// <a class="link" href="classboost_1_1compute_1_1stack.html#id13-bb">public member functions</a></span>
+  <a class="link" href="classboost_1_1compute_1_1stack.html#doxygen.header_reference.classboost_1_1compute_1_1stack_1ab948902fa53e8fe28649c9044bef3db0"><span class="identifier">stack</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1compute_1_1stack.html#doxygen.header_reference.classboost_1_1compute_1_1stack_1aed1dc90be78d1f62cb640142f9394ae0"><span class="identifier">stack</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">stack</span><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">stack</span><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1compute_1_1stack.html#doxygen.header_reference.classboost_1_1compute_1_1stack_1a6ebe3e5806f509c34d9893fd38db20c6"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">stack</span><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1compute_1_1stack.html#doxygen.header_reference.classboost_1_1compute_1_1stack_1a94faa54b43819cb861080ba675c220e9"><span class="special">~</span><span class="identifier">stack</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1compute_1_1stack.html#doxygen.header_reference.classboost_1_1compute_1_1stack_1aaefe7e653f5db1d87054d0ae462dfa8e"><span class="identifier">empty</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">size_type</span> <a class="link" href="classboost_1_1compute_1_1stack.html#doxygen.header_reference.classboost_1_1compute_1_1stack_1aa6be5ef530243e4fe3d1d185b6c80613"><span class="identifier">size</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">value_type</span> <a class="link" href="classboost_1_1compute_1_1stack.html#doxygen.header_reference.classboost_1_1compute_1_1stack_1abe6d23a234530146d5f43fc2ac527d9f"><span class="identifier">top</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1compute_1_1stack.html#doxygen.header_reference.classboost_1_1compute_1_1stack_1ac957c5e9b167e5feabab83c65336fa3e"><span class="identifier">push</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">T</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1compute_1_1stack.html#doxygen.header_reference.classboost_1_1compute_1_1stack_1a04b5f77accf79d453ff9b0cbdaf7f35e"><span class="identifier">pop</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id21013"></a><h2>Description</h2>
+<div class="refsect2">
+<a name="id21015"></a><h3>
+<a name="id13-bb"></a><code class="computeroutput">stack</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem"><pre class="literallayout"><a name="doxygen.header_reference.classboost_1_1compute_1_1stack_1ab948902fa53e8fe28649c9044bef3db0"></a><span class="identifier">stack</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a name="doxygen.header_reference.classboost_1_1compute_1_1stack_1aed1dc90be78d1f62cb640142f9394ae0"></a><span class="identifier">stack</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">stack</span><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&amp;</span> other<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">stack</span><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&amp;</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1stack_1a6ebe3e5806f509c34d9893fd38db20c6"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">stack</span><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&amp;</span> other<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a name="doxygen.header_reference.classboost_1_1compute_1_1stack_1a94faa54b43819cb861080ba675c220e9"></a><span class="special">~</span><span class="identifier">stack</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1stack_1aaefe7e653f5db1d87054d0ae462dfa8e"></a><span class="identifier">empty</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">size_type</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1stack_1aa6be5ef530243e4fe3d1d185b6c80613"></a><span class="identifier">size</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">value_type</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1stack_1abe6d23a234530146d5f43fc2ac527d9f"></a><span class="identifier">top</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1stack_1ac957c5e9b167e5feabab83c65336fa3e"></a><span class="identifier">push</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">T</span> <span class="special">&amp;</span> value<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1stack_1a04b5f77accf79d453ff9b0cbdaf7f35e"></a><span class="identifier">pop</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre></li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2013, 2014 Kyle Lutz<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1compute_1_1mapped__view.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_compute/reference.html#doxygen.header_reference.stack_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1compute_1_1valarray.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

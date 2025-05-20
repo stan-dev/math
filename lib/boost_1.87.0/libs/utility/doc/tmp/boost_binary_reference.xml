@@ -1,0 +1,15 @@
+<?xml version="1.0" standalone="yes"?>
+<library-reference id="boost_binary.reference"><title>Reference</title><header id="doxygen.boost_binary.reference.binary_8hpp" name="boost/utility/binary.hpp">
+<macro id="doxygen.boost_binary.reference.binary_8hpp_1a4837dcdfb5bd5519a092ad0b7897bdc7" name="BOOST_BINARY" kind="functionlike"><macro-parameter name="bit_groupings"/></macro>
+<macro id="doxygen.boost_binary.reference.binary_8hpp_1a801ccd566e27297498b6560fb4f03b3f" name="BOOST_BINARY_U" kind="functionlike"><macro-parameter name="bit_groupings"/></macro>
+<macro id="doxygen.boost_binary.reference.binary_8hpp_1ae2e37acca4555473f7cd5c72b6385242" name="BOOST_BINARY_L" kind="functionlike"><macro-parameter name="bit_groupings"/></macro>
+<macro id="doxygen.boost_binary.reference.binary_8hpp_1aa8256879656cc2384b8bf57183653800" name="BOOST_BINARY_UL" kind="functionlike"><macro-parameter name="bit_groupings"/></macro>
+<macro id="doxygen.boost_binary.reference.binary_8hpp_1a31ca0e8d3969c5d2288fa120b539870b" name="BOOST_BINARY_LU" kind="functionlike"><macro-parameter name="bit_groupings"/></macro>
+<macro id="doxygen.boost_binary.reference.binary_8hpp_1a6f49f9192323de564eeef664d684c9c6" name="BOOST_BINARY_LL" kind="functionlike"><macro-parameter name="bit_groupings"/></macro>
+<macro id="doxygen.boost_binary.reference.binary_8hpp_1a93cf83642bc6a1cbb1258ba1831ff06f" name="BOOST_BINARY_ULL" kind="functionlike"><macro-parameter name="bit_groupings"/></macro>
+<macro id="doxygen.boost_binary.reference.binary_8hpp_1ac236c3c58ab7bac8ce418eedf8986321" name="BOOST_BINARY_LLU" kind="functionlike"><macro-parameter name="bit_groupings"/></macro>
+<macro id="doxygen.boost_binary.reference.binary_8hpp_1ac63f1dd1a0b1cb2609e99427396d0c19" name="BOOST_SUFFIXED_BINARY_LITERAL" kind="functionlike"><macro-parameter name="bit_groupings"/><macro-parameter name="suffix"/></macro>
+<macro id="doxygen.boost_binary.reference.binary_8hpp_1a1256e661144c435bb43cacb26c853a3e" name="BOOST_SUFFIXED_BINARY_LITERAL_D" kind="functionlike"><macro-parameter name="d"/><macro-parameter name="bit_groupings"/><macro-parameter name="suffix"/></macro>
+<macro id="doxygen.boost_binary.reference.binary_8hpp_1aa41e66fb18da12ecae94477506e8ed20" name="BOOST_BINARY_LITERAL_D" kind="functionlike"><macro-parameter name="d"/><macro-parameter name="bit_groupings"/></macro>
+</header>
+</library-reference>

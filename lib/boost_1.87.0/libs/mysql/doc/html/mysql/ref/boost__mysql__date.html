@@ -1,0 +1,363 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>date</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../../pt01.html" title="Part Two: Reference. ">
+<link rel="prev" href="boost__mysql__constant_string_view/get.html" title="constant_string_view::get">
+<link rel="next" href="boost__mysql__date/time_point.html" title="date::time_point">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="boost__mysql__constant_string_view/get.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../pt01.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="boost__mysql__date/time_point.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="mysql.ref.boost__mysql__date"></a><a class="link" href="boost__mysql__date.html" title="date">date</a>
+</h4></div></div></div>
+<p>
+        Type representing MySQL <code class="computeroutput"><span class="identifier">DATE</span></code>
+        data type.
+      </p>
+<h5>
+<a name="mysql.ref.boost__mysql__date.h0"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__date.synopsis"></a></span><a class="link" href="boost__mysql__date.html#mysql.ref.boost__mysql__date.synopsis">Synopsis</a>
+      </h5>
+<p>
+        Defined in header <code class="literal">&lt;<a href="https://github.com/boostorg/mysql/blob/master/include/boost/mysql/date.hpp" target="_top">boost/mysql/date.hpp</a>&gt;</code>
+      </p>
+<pre class="programlisting"><span class="keyword">class</span> <span class="identifier">date</span><span class="special">;</span>
+</pre>
+<h5>
+<a name="mysql.ref.boost__mysql__date.h1"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__date.types"></a></span><a class="link" href="boost__mysql__date.html#mysql.ref.boost__mysql__date.types">Types</a>
+      </h5>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Name
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody><tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__date/time_point.html" title="date::time_point">time_point</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  A <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">chrono</span><span class="special">::</span><span class="identifier">time_point</span></code> that can represent
+                  any valid <code class="computeroutput"><span class="identifier">date</span></code>.
+                </p>
+              </td>
+</tr></tbody>
+</table></div>
+<h5>
+<a name="mysql.ref.boost__mysql__date.h2"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__date.member_functions"></a></span><a class="link" href="boost__mysql__date.html#mysql.ref.boost__mysql__date.member_functions">Member
+        Functions</a>
+      </h5>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Name
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__date/as_local_time_point.html" title="date::as_local_time_point">as_local_time_point</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Converts <code class="computeroutput"><span class="special">*</span><span class="keyword">this</span></code>
+                  into a local time point (checked access).
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__date/as_time_point.html" title="date::as_time_point">as_time_point</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Converts <code class="computeroutput"><span class="special">*</span><span class="keyword">this</span></code>
+                  into a <code class="computeroutput"><span class="identifier">time_point</span></code>
+                  (checked access).
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__date/date.html" title="date::date">date</a> <span class="silver">[constructor]</span></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Constructs a zero date. <br><span class="silver">—</span><br>Constructs
+                  a date from its year, month and date components. <br><span class="silver">—</span><br>Constructs
+                  a date from a <code class="computeroutput"><span class="identifier">time_point</span></code>.
+                  <br><span class="silver">—</span><br>Constructs a date from a
+                  local time point.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__date/day.html" title="date::day">day</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Retrieves the day component (1-based).
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__date/get_local_time_point.html" title="date::get_local_time_point">get_local_time_point</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Converts <code class="computeroutput"><span class="special">*</span><span class="keyword">this</span></code>
+                  into a local time point (unchecked access).
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__date/get_time_point.html" title="date::get_time_point">get_time_point</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Converts <code class="computeroutput"><span class="special">*</span><span class="keyword">this</span></code>
+                  into a <code class="computeroutput"><span class="identifier">time_point</span></code>
+                  (unchecked access).
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__date/month.html" title="date::month">month</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Retrieves the month component (1-based).
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__date/operator__not__eq_.html" title="date::operator!=">operator!=</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Tests for inequality.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__date/operator_eq__eq_.html" title="date::operator==">operator==</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Tests for equality.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__date/valid.html" title="date::valid">valid</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns <code class="computeroutput"><span class="keyword">true</span></code> if <code class="computeroutput"><span class="special">*</span><span class="keyword">this</span></code>
+                  represents a valid <code class="computeroutput"><span class="identifier">time_point</span></code>.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__date/year.html" title="date::year">year</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Retrieves the year component.
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+<h5>
+<a name="mysql.ref.boost__mysql__date.h3"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__date.static_member_functions"></a></span><a class="link" href="boost__mysql__date.html#mysql.ref.boost__mysql__date.static_member_functions">Static Member
+        Functions</a>
+      </h5>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Name
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody><tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__date/now.html" title="date::now">now</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns the current system time as a date object.
+                </p>
+              </td>
+</tr></tbody>
+</table></div>
+<h5>
+<a name="mysql.ref.boost__mysql__date.h4"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__date.related_non_member_functions"></a></span><a class="link" href="boost__mysql__date.html#mysql.ref.boost__mysql__date.related_non_member_functions">Related
+        Non-member Functions</a>
+      </h5>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Name
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody><tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__date/operator_lt__lt__fe.html" title="date::operator&lt;&lt;">operator&lt;&lt;</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Streams a date.
+                </p>
+              </td>
+</tr></tbody>
+</table></div>
+<h5>
+<a name="mysql.ref.boost__mysql__date.h5"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__date.description"></a></span><a class="link" href="boost__mysql__date.html#mysql.ref.boost__mysql__date.description">Description</a>
+      </h5>
+<p>
+        Represents a Gregorian date broken by its year, month and day components,
+        without a time zone.
+      </p>
+<p>
+        This type is close to the protocol and should not be used as a vocabulary
+        type. Instead, cast it to a <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">chrono</span><span class="special">::</span><span class="identifier">time_point</span></code>
+        by calling <a class="link" href="boost__mysql__date/as_time_point.html" title="date::as_time_point"><code class="computeroutput"><span class="identifier">as_time_point</span></code></a>, <a class="link" href="boost__mysql__date/get_time_point.html" title="date::get_time_point"><code class="computeroutput"><span class="identifier">get_time_point</span></code></a>, <a class="link" href="boost__mysql__date/as_local_time_point.html" title="date::as_local_time_point"><code class="computeroutput"><span class="identifier">as_local_time_point</span></code></a> or <a class="link" href="boost__mysql__date/get_local_time_point.html" title="date::get_local_time_point"><code class="computeroutput"><span class="identifier">get_local_time_point</span></code></a>.
+      </p>
+<p>
+        Dates retrieved from MySQL don't include any time zone information. Determining
+        the time zone is left to the application. Thus, any time point obtained from
+        this class should be interpreted as a local time in an unspecified time zone,
+        like <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">chrono</span><span class="special">::</span><span class="identifier">local_time</span></code>. For compatibility with older
+        compilers, <a class="link" href="boost__mysql__date/as_time_point.html" title="date::as_time_point"><code class="computeroutput"><span class="identifier">as_time_point</span></code></a> and <a class="link" href="boost__mysql__date/get_time_point.html" title="date::get_time_point"><code class="computeroutput"><span class="identifier">get_time_point</span></code></a> return <code class="computeroutput"><span class="identifier">system_clock</span></code> time points. These should
+        be interpreted as local times rather than UTC. Prefer using <a class="link" href="boost__mysql__date/as_local_time_point.html" title="date::as_local_time_point"><code class="computeroutput"><span class="identifier">as_local_time_point</span></code></a> or <a class="link" href="boost__mysql__date/get_local_time_point.html" title="date::get_local_time_point"><code class="computeroutput"><span class="identifier">get_local_time_point</span></code></a> if your compiler
+        supports them, as they provide more accurate semantics.
+      </p>
+<p>
+        As opposed to <code class="computeroutput"><span class="identifier">time_point</span></code>,
+        this type allows representing MySQL invalid and zero dates. These values
+        are allowed by MySQL but don't represent real dates.
+      </p>
+<p>
+        Note: using <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">chrono</span></code> time zone functionality under MSVC
+        may cause memory leaks to be reported. See <a href="https://github.com/microsoft/STL/issues/2047" target="_top">this
+        issue</a> for an explanation and <a href="https://github.com/microsoft/STL/issues/2504" target="_top">this
+        other issue</a> for a workaround.
+      </p>
+<p>
+        Convenience header <code class="literal">&lt;<a href="https://github.com/boostorg/mysql/blob/master/include/boost/mysql.hpp" target="_top">boost/mysql.hpp</a>&gt;</code>
+      </p>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="boost__mysql__constant_string_view/get.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../pt01.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="boost__mysql__date/time_point.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

@@ -1,0 +1,199 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template triangle_distribution</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../../boost_random/reference.html#doxygen.headers.triangle__distribution_8hpp" title="Header &lt;boost/random/triangle_distribution.hpp&gt;">
+<link rel="prev" href="structboost_1_1random_1_1traits_1_1make__unsigned__or__unbounded.html" title="Struct template make_unsigned_or_unbounded">
+<link rel="next" href="classboost_1_1random_1_1triangle__distribution_1_1param__type.html" title="Class param_type">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="structboost_1_1random_1_1traits_1_1make__unsigned__or__unbounded.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_random/reference.html#doxygen.headers.triangle__distribution_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1random_1_1triangle__distribution_1_1param__type.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.headers.classboost_1_1random_1_1triangle__distribution"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template triangle_distribution</span></h2>
+<p>boost::random::triangle_distribution</p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../boost_random/reference.html#doxygen.headers.triangle__distribution_8hpp" title="Header &lt;boost/random/triangle_distribution.hpp&gt;">boost/random/triangle_distribution.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> RealType <span class="special">=</span> <span class="keyword">double</span><span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1random_1_1triangle__distribution.html" title="Class template triangle_distribution">triangle_distribution</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">RealType</span> <a name="doxygen.headers.classboost_1_1random_1_1triangle__distribution_1ac19aa9cf4d4b1efb65e3a3ce55c9dd2e"></a><span class="identifier">input_type</span><span class="special">;</span> 
+  <span class="keyword">typedef</span> <span class="identifier">RealType</span> <a name="doxygen.headers.classboost_1_1random_1_1triangle__distribution_1afda1c54b24671bbdc64f23c371c0d5f7"></a><span class="identifier">result_type</span><span class="special">;</span>
+
+  <span class="comment">// member classes/structs/unions</span>
+
+  <span class="keyword">class</span> <a class="link" href="classboost_1_1random_1_1triangle__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">{</span>
+  <span class="keyword">public</span><span class="special">:</span>
+    <span class="comment">// types</span>
+    <span class="keyword">typedef</span> <a class="link" href="classboost_1_1random_1_1triangle__distribution.html" title="Class template triangle_distribution">triangle_distribution</a> <a class="link" href="classboost_1_1random_1_1triangle__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1triangle__distribution_1_1param__type_1ae9ccb31b93f5c04ddb41821736e0118f"><span class="identifier">distribution_type</span></a><span class="special">;</span>
+
+    <span class="comment">// <a class="link" href="classboost_1_1random_1_1triangle__distribution_1_1param__type.html#id-1_3_34_5_6_45_1_1_1_3_2-bb">public member functions</a></span>
+    <span class="keyword">explicit</span> <a class="link" href="classboost_1_1random_1_1triangle__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1triangle__distribution_1_1param__type_1a25f2f6d552a5bf1395a29487833f159e"><span class="identifier">param_type</span></a><span class="special">(</span><span class="identifier">RealType</span> <span class="special">=</span> <span class="number">0</span><span class="special">.</span><span class="number">0</span><span class="special">,</span> <span class="identifier">RealType</span> <span class="special">=</span> <span class="number">0</span><span class="special">.</span><span class="number">5</span><span class="special">,</span> <span class="identifier">RealType</span> <span class="special">=</span> <span class="number">1</span><span class="special">.</span><span class="number">0</span><span class="special">)</span><span class="special">;</span>
+    <span class="identifier">RealType</span> <a class="link" href="classboost_1_1random_1_1triangle__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1triangle__distribution_1_1param__type_1a1096a916d945eb038b74d05914f66b22"><span class="identifier">a</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+    <span class="identifier">RealType</span> <a class="link" href="classboost_1_1random_1_1triangle__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1triangle__distribution_1_1param__type_1aa43aec8dc7aa448f6b0fa6d425dbb328"><span class="identifier">b</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+    <span class="identifier">RealType</span> <a class="link" href="classboost_1_1random_1_1triangle__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1triangle__distribution_1_1param__type_1ac50c0042780b94ca5a2d5cd2361174ae"><span class="identifier">c</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+
+    <span class="comment">// <a class="link" href="classboost_1_1random_1_1triangle__distribution_1_1param__type.html#id-1_3_34_5_6_45_1_1_1_3_3-bb">friend functions</a></span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits<span class="special">&gt;</span> 
+      <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+      <a class="link" href="classboost_1_1random_1_1triangle__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1triangle__distribution_1_1param__type_1a36d2820c7e758fa1a94fdd5d74949e54"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1triangle__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits<span class="special">&gt;</span> 
+      <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+      <a class="link" href="classboost_1_1random_1_1triangle__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1triangle__distribution_1_1param__type_1aa94ff75dd5871ee80a6fc0a095c75bd0"><span class="keyword">operator</span><span class="special">&gt;&gt;</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1triangle__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">bool</span> <a class="link" href="classboost_1_1random_1_1triangle__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1triangle__distribution_1_1param__type_1ae6f3b58e629ce7a54b5e18a4f05dbc5a"><span class="keyword">operator</span><span class="special">==</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1triangle__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1triangle__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">bool</span> <a class="link" href="classboost_1_1random_1_1triangle__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1triangle__distribution_1_1param__type_1aa559d0d98e88e84417364a89b83cf5b2"><span class="keyword">operator</span><span class="special">!=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1triangle__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1triangle__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="special">}</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1random_1_1triangle__distribution.html#id-1_3_34_5_6_45_1_1_1_6-bb">public member functions</a></span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1random_1_1triangle__distribution.html#doxygen.headers.classboost_1_1random_1_1triangle__distribution_1aeca2cec785c7525aae38043e0379f1e1"><span class="identifier">triangle_distribution</span></a><span class="special">(</span><span class="identifier">RealType</span> <span class="special">=</span> <span class="number">0</span><span class="special">.</span><span class="number">0</span><span class="special">,</span> <span class="identifier">RealType</span> <span class="special">=</span> <span class="number">0</span><span class="special">.</span><span class="number">5</span><span class="special">,</span> 
+                                 <span class="identifier">RealType</span> <span class="special">=</span> <span class="number">1</span><span class="special">.</span><span class="number">0</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1random_1_1triangle__distribution.html#doxygen.headers.classboost_1_1random_1_1triangle__distribution_1aa1e7384d4762382e38c5d76f96a56444"><span class="identifier">triangle_distribution</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1triangle__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">result_type</span> <a class="link" href="classboost_1_1random_1_1triangle__distribution.html#doxygen.headers.classboost_1_1random_1_1triangle__distribution_1a10d95f4d325885d17516e9b296eaa30d"><span class="identifier">a</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">result_type</span> <a class="link" href="classboost_1_1random_1_1triangle__distribution.html#doxygen.headers.classboost_1_1random_1_1triangle__distribution_1a521228030b1be91ee9a69abc2020c126"><span class="identifier">b</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">result_type</span> <a class="link" href="classboost_1_1random_1_1triangle__distribution.html#doxygen.headers.classboost_1_1random_1_1triangle__distribution_1adec7e3cfd781903a396b69c181ee8454"><span class="identifier">c</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">RealType</span> <a class="link" href="classboost_1_1random_1_1triangle__distribution.html#doxygen.headers.classboost_1_1random_1_1triangle__distribution_1a8d6522e99006b1153159c5aa9fd3bdc3"><span class="identifier">min</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">RealType</span> <a class="link" href="classboost_1_1random_1_1triangle__distribution.html#doxygen.headers.classboost_1_1random_1_1triangle__distribution_1a7dbd8d81a26fa504f64936fc779c2409"><span class="identifier">max</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1random_1_1triangle__distribution_1_1param__type.html" title="Class param_type">param_type</a> <a class="link" href="classboost_1_1random_1_1triangle__distribution.html#doxygen.headers.classboost_1_1random_1_1triangle__distribution_1a81743023519a6d78bfde3ffe7a2a62cc"><span class="identifier">param</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1random_1_1triangle__distribution.html#doxygen.headers.classboost_1_1random_1_1triangle__distribution_1ad9b5814ed04a62fefdd577bbf8e9e504"><span class="identifier">param</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1triangle__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1random_1_1triangle__distribution.html#doxygen.headers.classboost_1_1random_1_1triangle__distribution_1af057581d3de7577e124c08498fae94cd"><span class="identifier">reset</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Engine<span class="special">&gt;</span> <span class="identifier">result_type</span> <a class="link" href="classboost_1_1random_1_1triangle__distribution.html#doxygen.headers.classboost_1_1random_1_1triangle__distribution_1a9383862e3b518fff0ac9b4bcbe5f9a55"><span class="keyword">operator</span><span class="special">(</span><span class="special">)</span></a><span class="special">(</span><span class="identifier">Engine</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Engine<span class="special">&gt;</span> 
+    <span class="identifier">result_type</span> <a class="link" href="classboost_1_1random_1_1triangle__distribution.html#doxygen.headers.classboost_1_1random_1_1triangle__distribution_1a8c00c8cd98a4e53151ceb0593d809693"><span class="keyword">operator</span><span class="special">(</span><span class="special">)</span></a><span class="special">(</span><span class="identifier">Engine</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1triangle__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1random_1_1triangle__distribution.html#id-1_3_34_5_6_45_1_1_1_7-bb">friend functions</a></span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits<span class="special">&gt;</span> 
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+    <a class="link" href="classboost_1_1random_1_1triangle__distribution.html#doxygen.headers.classboost_1_1random_1_1triangle__distribution_1a50cbcf16f4b4c21684273d3aa01d61c0"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">,</span> 
+               <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1triangle__distribution.html" title="Class template triangle_distribution">triangle_distribution</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits<span class="special">&gt;</span> 
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+    <a class="link" href="classboost_1_1random_1_1triangle__distribution.html#doxygen.headers.classboost_1_1random_1_1triangle__distribution_1a99c9c75f9de141a88871cd578966d187"><span class="keyword">operator</span><span class="special">&gt;&gt;</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">,</span> 
+               <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1triangle__distribution.html" title="Class template triangle_distribution">triangle_distribution</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1random_1_1triangle__distribution.html#doxygen.headers.classboost_1_1random_1_1triangle__distribution_1a14d0d0e1853e1c6835d484daee7f375c"><span class="keyword">operator</span><span class="special">==</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1triangle__distribution.html" title="Class template triangle_distribution">triangle_distribution</a> <span class="special">&amp;</span><span class="special">,</span> 
+                  <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1triangle__distribution.html" title="Class template triangle_distribution">triangle_distribution</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1random_1_1triangle__distribution.html#doxygen.headers.classboost_1_1random_1_1triangle__distribution_1a4fbaeb2fa429d375600790be3f9c442f"><span class="keyword">operator</span><span class="special">!=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1triangle__distribution.html" title="Class template triangle_distribution">triangle_distribution</a> <span class="special">&amp;</span><span class="special">,</span> 
+                  <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1triangle__distribution.html" title="Class template triangle_distribution">triangle_distribution</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.34.5.6.44.3.4"></a><h2>Description</h2>
+<p>Instantiations of <code class="computeroutput"><a class="link" href="classboost_1_1random_1_1triangle__distribution.html" title="Class template triangle_distribution">triangle_distribution</a></code> model a  <a class="link" href="../../boost_random/reference.html#boost_random.reference.concepts.random_distribution" title="Random Distribution">random distribution</a> . A <code class="computeroutput"><a class="link" href="classboost_1_1random_1_1triangle__distribution.html" title="Class template triangle_distribution">triangle_distribution</a></code> has three parameters, <code class="computeroutput">a</code>, <code class="computeroutput">b</code>, and <code class="computeroutput">c</code>, which are the smallest, the most probable and the largest values of the distribution respectively. </p>
+<div class="refsect2">
+<a name="id-1.3.34.5.6.44.3.4.3"></a><h3>
+<a name="id-1_3_34_5_6_45_1_1_1_6-bb"></a><code class="computeroutput">triangle_distribution</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.headers.classboost_1_1random_1_1triangle__distribution_1aeca2cec785c7525aae38043e0379f1e1"></a><span class="identifier">triangle_distribution</span><span class="special">(</span><span class="identifier">RealType</span> a <span class="special">=</span> <span class="number">0</span><span class="special">.</span><span class="number">0</span><span class="special">,</span> <span class="identifier">RealType</span> b <span class="special">=</span> <span class="number">0</span><span class="special">.</span><span class="number">5</span><span class="special">,</span> 
+                               <span class="identifier">RealType</span> c <span class="special">=</span> <span class="number">1</span><span class="special">.</span><span class="number">0</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Constructs a <code class="computeroutput"><a class="link" href="classboost_1_1random_1_1triangle__distribution.html" title="Class template triangle_distribution">triangle_distribution</a></code> with the parameters <code class="computeroutput">a</code>, <code class="computeroutput">b</code>, and <code class="computeroutput">c</code>.</p>
+<p>Preconditions: a &lt;= b &lt;= c. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.headers.classboost_1_1random_1_1triangle__distribution_1aa1e7384d4762382e38c5d76f96a56444"></a><span class="identifier">triangle_distribution</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1triangle__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span> param<span class="special">)</span><span class="special">;</span></pre>
+<p>Constructs a <code class="computeroutput"><a class="link" href="classboost_1_1random_1_1triangle__distribution.html" title="Class template triangle_distribution">triangle_distribution</a></code> from its parameters. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">result_type</span> <a name="doxygen.headers.classboost_1_1random_1_1triangle__distribution_1a10d95f4d325885d17516e9b296eaa30d"></a><span class="identifier">a</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns the <code class="computeroutput">a</code> parameter of the distribution </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">result_type</span> <a name="doxygen.headers.classboost_1_1random_1_1triangle__distribution_1a521228030b1be91ee9a69abc2020c126"></a><span class="identifier">b</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns the <code class="computeroutput">b</code> parameter of the distribution </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">result_type</span> <a name="doxygen.headers.classboost_1_1random_1_1triangle__distribution_1adec7e3cfd781903a396b69c181ee8454"></a><span class="identifier">c</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns the <code class="computeroutput">c</code> parameter of the distribution </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">RealType</span> <a name="doxygen.headers.classboost_1_1random_1_1triangle__distribution_1a8d6522e99006b1153159c5aa9fd3bdc3"></a><span class="identifier">min</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns the smallest value that the distribution can produce. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">RealType</span> <a name="doxygen.headers.classboost_1_1random_1_1triangle__distribution_1a7dbd8d81a26fa504f64936fc779c2409"></a><span class="identifier">max</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns the largest value that the distribution can produce. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a class="link" href="classboost_1_1random_1_1triangle__distribution_1_1param__type.html" title="Class param_type">param_type</a> <a name="doxygen.headers.classboost_1_1random_1_1triangle__distribution_1a81743023519a6d78bfde3ffe7a2a62cc"></a><span class="identifier">param</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns the parameters of the distribution. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.headers.classboost_1_1random_1_1triangle__distribution_1ad9b5814ed04a62fefdd577bbf8e9e504"></a><span class="identifier">param</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1triangle__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span> param<span class="special">)</span><span class="special">;</span></pre>
+<p>Sets the parameters of the distribution. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.headers.classboost_1_1random_1_1triangle__distribution_1af057581d3de7577e124c08498fae94cd"></a><span class="identifier">reset</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Effects: Subsequent uses of the distribution do not depend on values produced by any engine prior to invoking reset. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Engine<span class="special">&gt;</span> <span class="identifier">result_type</span> <a name="doxygen.headers.classboost_1_1random_1_1triangle__distribution_1a9383862e3b518fff0ac9b4bcbe5f9a55"></a><span class="keyword">operator</span><span class="special">(</span><span class="special">)</span><span class="special">(</span><span class="identifier">Engine</span> <span class="special">&amp;</span> eng<span class="special">)</span><span class="special">;</span></pre>
+<p>Returns a random variate distributed according to the triangle distribution. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Engine<span class="special">&gt;</span> 
+  <span class="identifier">result_type</span> <a name="doxygen.headers.classboost_1_1random_1_1triangle__distribution_1a8c00c8cd98a4e53151ceb0593d809693"></a><span class="keyword">operator</span><span class="special">(</span><span class="special">)</span><span class="special">(</span><span class="identifier">Engine</span> <span class="special">&amp;</span> eng<span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1triangle__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span> param<span class="special">)</span><span class="special">;</span></pre>
+<p>Returns a random variate distributed according to the triangle distribution with parameters specified by param. </p>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.34.5.6.44.3.4.4"></a><h3>
+<a name="id-1_3_34_5_6_45_1_1_1_7-bb"></a><code class="computeroutput">triangle_distribution</code> friend functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits<span class="special">&gt;</span> 
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+  <a name="doxygen.headers.classboost_1_1random_1_1triangle__distribution_1a50cbcf16f4b4c21684273d3aa01d61c0"></a><span class="keyword">operator</span><span class="special">&lt;&lt;</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> os<span class="special">,</span> 
+             <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1triangle__distribution.html" title="Class template triangle_distribution">triangle_distribution</a> <span class="special">&amp;</span> td<span class="special">)</span><span class="special">;</span></pre>
+<p>Writes the distribution to a <code class="computeroutput">std::ostream</code>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits<span class="special">&gt;</span> 
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+  <a name="doxygen.headers.classboost_1_1random_1_1triangle__distribution_1a99c9c75f9de141a88871cd578966d187"></a><span class="keyword">operator</span><span class="special">&gt;&gt;</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> is<span class="special">,</span> 
+             <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1triangle__distribution.html" title="Class template triangle_distribution">triangle_distribution</a> <span class="special">&amp;</span> td<span class="special">)</span><span class="special">;</span></pre>
+<p>Reads the distribution from a <code class="computeroutput">std::istream</code>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.headers.classboost_1_1random_1_1triangle__distribution_1a14d0d0e1853e1c6835d484daee7f375c"></a><span class="keyword">operator</span><span class="special">==</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1triangle__distribution.html" title="Class template triangle_distribution">triangle_distribution</a> <span class="special">&amp;</span> lhs<span class="special">,</span> 
+                <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1triangle__distribution.html" title="Class template triangle_distribution">triangle_distribution</a> <span class="special">&amp;</span> rhs<span class="special">)</span><span class="special">;</span></pre>
+<p>Returns true if the two distributions will produce identical sequences of values given equal generators. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.headers.classboost_1_1random_1_1triangle__distribution_1a4fbaeb2fa429d375600790be3f9c442f"></a><span class="keyword">operator</span><span class="special">!=</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1triangle__distribution.html" title="Class template triangle_distribution">triangle_distribution</a> <span class="special">&amp;</span> lhs<span class="special">,</span> 
+                <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1triangle__distribution.html" title="Class template triangle_distribution">triangle_distribution</a> <span class="special">&amp;</span> rhs<span class="special">)</span><span class="special">;</span></pre>
+<p>Returns true if the two distributions may produce different sequences of values given equal generators. </p>
+</li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2000-2005 Jens Maurer<br>Copyright © 2009, 2010 Steven Watanabe<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="structboost_1_1random_1_1traits_1_1make__unsigned__or__unbounded.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_random/reference.html#doxygen.headers.triangle__distribution_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1random_1_1triangle__distribution_1_1param__type.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

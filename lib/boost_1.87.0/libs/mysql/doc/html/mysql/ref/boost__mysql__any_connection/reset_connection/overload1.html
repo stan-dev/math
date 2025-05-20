@@ -1,0 +1,114 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>any_connection::reset_connection (1 of 2 overloads)</title>
+<link rel="stylesheet" href="../../../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../reset_connection.html" title="any_connection::reset_connection">
+<link rel="prev" href="../reset_connection.html" title="any_connection::reset_connection">
+<link rel="next" href="overload2.html" title="any_connection::reset_connection (2 of 2 overloads)">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../reset_connection.html"><img src="../../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../reset_connection.html"><img src="../../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../../index.html"><img src="../../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="overload2.html"><img src="../../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h6 class="title">
+<a name="mysql.ref.boost__mysql__any_connection.reset_connection.overload1"></a><a class="link" href="overload1.html" title="any_connection::reset_connection (1 of 2 overloads)">any_connection::reset_connection
+          (1 of 2 overloads)</a>
+</h6></div></div></div>
+<p>
+            Resets server-side session state, like variables and prepared statements.
+          </p>
+<h6>
+<a name="mysql.ref.boost__mysql__any_connection.reset_connection.overload1.h0"></a>
+            <span class="phrase"><a name="mysql.ref.boost__mysql__any_connection.reset_connection.overload1.synopsis"></a></span><a class="link" href="overload1.html#mysql.ref.boost__mysql__any_connection.reset_connection.overload1.synopsis">Synopsis</a>
+          </h6>
+<pre class="programlisting"><span class="keyword">void</span>
+<span class="identifier">reset_connection</span><span class="special">(</span>
+    <a class="link" href="../../boost__mysql__error_code.html" title="error_code"><code class="literal">error_code</code></a><span class="special">&amp;</span> <span class="identifier">err</span><span class="special">,</span>
+    <a class="link" href="../../boost__mysql__diagnostics.html" title="diagnostics"><code class="literal">diagnostics</code></a><span class="special">&amp;</span> <span class="identifier">diag</span><span class="special">);</span>
+</pre>
+<h6>
+<a name="mysql.ref.boost__mysql__any_connection.reset_connection.overload1.h1"></a>
+            <span class="phrase"><a name="mysql.ref.boost__mysql__any_connection.reset_connection.overload1.description"></a></span><a class="link" href="overload1.html#mysql.ref.boost__mysql__any_connection.reset_connection.overload1.description">Description</a>
+          </h6>
+<p>
+            Resets all server-side state for the current session:
+          </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+                Rolls back any active transactions and resets autocommit mode.
+              </li>
+<li class="listitem">
+                Releases all table locks.
+              </li>
+<li class="listitem">
+                Drops all temporary tables.
+              </li>
+<li class="listitem">
+                Resets all session system variables to their default values (including
+                the ones set by <code class="computeroutput"><span class="identifier">SET</span> <span class="identifier">NAMES</span></code>) and clears all user-defined
+                variables.
+              </li>
+<li class="listitem">
+                Closes all prepared statements.
+              </li>
+</ul></div>
+<p>
+            A full reference on the affected session state can be found <a href="https://dev.mysql.com/doc/c-api/8.0/en/mysql-reset-connection.html" target="_top">here</a>.
+          </p>
+<p>
+            This function will not reset the current physical connection and won't
+            cause re-authentication. It is faster than closing and re-opening a connection.
+          </p>
+<p>
+            The connection must be connected and authenticated before calling this
+            function. This function involves communication with the server, and thus
+            may fail.
+          </p>
+<h6>
+<a name="mysql.ref.boost__mysql__any_connection.reset_connection.overload1.h2"></a>
+            <span class="phrase"><a name="mysql.ref.boost__mysql__any_connection.reset_connection.overload1.warning_on_character_sets"></a></span><a class="link" href="overload1.html#mysql.ref.boost__mysql__any_connection.reset_connection.overload1.warning_on_character_sets">Warning
+            on character sets</a>
+          </h6>
+<p>
+            This function will restore the connection's character set and collation
+            <span class="bold"><strong>to the server's default</strong></span>, and not to
+            the one specified during connection establishment. Some servers have
+            <code class="computeroutput"><span class="identifier">latin1</span></code> as their default
+            character set, which is not usually what you want. Since there is no
+            way to know this character set, <a class="link" href="../current_character_set.html" title="any_connection::current_character_set"><code class="computeroutput"><span class="identifier">current_character_set</span></code></a> will return
+            <code class="computeroutput"><span class="keyword">nullptr</span></code> after the operation
+            succeeds. We recommend always using <a class="link" href="../set_character_set.html" title="any_connection::set_character_set"><code class="computeroutput"><span class="identifier">set_character_set</span></code></a> or <a class="link" href="../async_set_character_set.html" title="any_connection::async_set_character_set"><code class="computeroutput"><span class="identifier">async_set_character_set</span></code></a> after
+            calling this function.
+          </p>
+<p>
+            You can find the character set that your server will use after the reset
+            by running:
+          </p>
+<pre class="programlisting"><span class="string">"SELECT @@global.character_set_client, @@global.character_set_results;"</span>
+</pre>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../reset_connection.html"><img src="../../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../reset_connection.html"><img src="../../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../../index.html"><img src="../../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="overload2.html"><img src="../../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

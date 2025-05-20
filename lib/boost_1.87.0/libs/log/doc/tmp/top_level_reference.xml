@@ -1,0 +1,145 @@
+<?xml version="1.0" standalone="yes"?>
+<library-reference id="top_level_headers"><title>Top level headers</title><header id="doxygen.top_level_headers.attributes_8hpp" name="boost/log/attributes.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>13.07.2009</para>
+
+This header includes other Boost.Log headers with all attributes. </para></header>
+<header id="doxygen.top_level_headers.common_8hpp" name="boost/log/common.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>14.03.2009</para>
+
+This header includes other Boost.Log headers that are commonly used in logging applications. Note that the header does not include any headers required to setup the library, as usually they aren't needed in more than one translation unit of the application. </para></header>
+<header id="doxygen.top_level_headers.core_8hpp" name="boost/log/core.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>19.04.2007</para>
+
+This header includes Boost.Log headers related to the logging core. </para></header>
+<header id="doxygen.top_level_headers.exceptions_8hpp" name="boost/log/exceptions.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>31.10.2009</para>
+
+The header contains exception classes declarations. </para><namespace name="boost">
+<namespace name="log">
+<class id="doxygen.top_level_headers.classboost_1_1log_1_1bad__alloc" name="bad_alloc"><inherit access="public">bad_alloc</inherit><purpose>Base class for memory allocation errors. </purpose><description><para>Exceptions derived from this class indicate problems with memory allocation. </para></description><method-group name="public member functions">
+<constructor id="doxygen.top_level_headers.classboost_1_1log_1_1bad__alloc_1a1b7ba945e2d79d6d9385723eaa6def55" specifiers="explicit"><parameter name="descr"><paramtype>const char *</paramtype></parameter><description><para>Initializing constructor. Creates an exception with the specified error message. </para></description></constructor>
+<constructor id="doxygen.top_level_headers.classboost_1_1log_1_1bad__alloc_1a34a3e8b47e2fdb1122adf62c4e0bc0b7" specifiers="explicit"><parameter name="descr"><paramtype>std::string const &amp;</paramtype></parameter><description><para>Initializing constructor. Creates an exception with the specified error message. </para></description></constructor>
+<destructor id="doxygen.top_level_headers.classboost_1_1log_1_1bad__alloc_1accf6afa1bb5bc7288a04eddee791340b"><description><para>Destructor </para></description></destructor>
+<method id="doxygen.top_level_headers.classboost_1_1log_1_1bad__alloc_1a98b56162968587d6408cc03d93ad0f8d" name="what" cv="const"><type>const char *</type><description><para>Error message accessor. </para></description></method>
+</method-group>
+</class><class id="doxygen.top_level_headers.classboost_1_1log_1_1capacity__limit__reached" name="capacity_limit_reached"><inherit access="public">bad_alloc</inherit><purpose>The exception is used to indicate reaching a storage capacity limit. </purpose><method-group name="public member functions">
+<constructor id="doxygen.top_level_headers.classboost_1_1log_1_1capacity__limit__reached_1a88d871b01ccec31cdd2be249acf68b0e" specifiers="explicit"><parameter name="descr"><paramtype>const char *</paramtype></parameter><description><para>Initializing constructor. Creates an exception with the specified error message. </para></description></constructor>
+<constructor id="doxygen.top_level_headers.classboost_1_1log_1_1capacity__limit__reached_1adb33c32c95aa7893bbe41a917fc954ed" specifiers="explicit"><parameter name="descr"><paramtype>std::string const &amp;</paramtype></parameter><description><para>Initializing constructor. Creates an exception with the specified error message. </para></description></constructor>
+<destructor id="doxygen.top_level_headers.classboost_1_1log_1_1capacity__limit__reached_1af37c0de335ca9e54041d75094447e5f8"><description><para>Destructor </para></description></destructor>
+</method-group>
+</class><class id="doxygen.top_level_headers.classboost_1_1log_1_1conversion__error" name="conversion_error"><inherit access="public">runtime_error</inherit><purpose>Exception class that is used to indicate conversion errors. </purpose><method-group name="public member functions">
+<constructor id="doxygen.top_level_headers.classboost_1_1log_1_1conversion__error_1a30d153581ee1faed093941c666122031"><description><para>Default constructor. Creates an exception with the default error message. </para></description></constructor>
+<constructor id="doxygen.top_level_headers.classboost_1_1log_1_1conversion__error_1ae1e2a5c6fbade8a395e6dd9fca11d111" specifiers="explicit"><parameter name="descr"><paramtype>std::string const &amp;</paramtype></parameter><description><para>Initializing constructor. Creates an exception with the specified error message. </para></description></constructor>
+<destructor id="doxygen.top_level_headers.classboost_1_1log_1_1conversion__error_1a88e6415d33f0323592ea53c831bd818d"><description><para>Destructor </para></description></destructor>
+</method-group>
+</class><class id="doxygen.top_level_headers.classboost_1_1log_1_1invalid__type" name="invalid_type"><inherit access="public">runtime_error</inherit><purpose>Exception class that is used to indicate errors of incorrect type of an object. </purpose><method-group name="public member functions">
+<constructor id="doxygen.top_level_headers.classboost_1_1log_1_1invalid__type_1a8f662b6c4a39cb89d8de8736784bda04"><description><para>Default constructor. Creates an exception with the default error message. </para></description></constructor>
+<constructor id="doxygen.top_level_headers.classboost_1_1log_1_1invalid__type_1a5bf29473473a6a25ea164cdd2c00ef76" specifiers="explicit"><parameter name="descr"><paramtype>std::string const &amp;</paramtype></parameter><description><para>Initializing constructor. Creates an exception with the specified error message. </para></description></constructor>
+<destructor id="doxygen.top_level_headers.classboost_1_1log_1_1invalid__type_1a0becd4095277ceb044af2b2cb853ce74"><description><para>Destructor </para></description></destructor>
+</method-group>
+</class><class id="doxygen.top_level_headers.classboost_1_1log_1_1invalid__value" name="invalid_value"><inherit access="public">runtime_error</inherit><purpose>Exception class that is used to indicate errors of incorrect value of an object. </purpose><method-group name="public member functions">
+<constructor id="doxygen.top_level_headers.classboost_1_1log_1_1invalid__value_1af432eabc21f8c7ad06755409e76e244d"><description><para>Default constructor. Creates an exception with the default error message. </para></description></constructor>
+<constructor id="doxygen.top_level_headers.classboost_1_1log_1_1invalid__value_1a76d92d58205bb05cff172fed9e0963bf" specifiers="explicit"><parameter name="descr"><paramtype>std::string const &amp;</paramtype></parameter><description><para>Initializing constructor. Creates an exception with the specified error message. </para></description></constructor>
+<destructor id="doxygen.top_level_headers.classboost_1_1log_1_1invalid__value_1ac2e207134b3e054df3b1d761e5e9ac01"><description><para>Destructor </para></description></destructor>
+</method-group>
+</class><class id="doxygen.top_level_headers.classboost_1_1log_1_1limitation__error" name="limitation_error"><inherit access="public">logic_error</inherit><purpose>Exception class that is used to indicate library limitation. </purpose><method-group name="public member functions">
+<constructor id="doxygen.top_level_headers.classboost_1_1log_1_1limitation__error_1a6ffadfddef701e384a27edc5ba122aff"><description><para>Default constructor. Creates an exception with the default error message. </para></description></constructor>
+<constructor id="doxygen.top_level_headers.classboost_1_1log_1_1limitation__error_1a150ea36d4a5db6eefabbf3d0cb6ec70a" specifiers="explicit"><parameter name="descr"><paramtype>std::string const &amp;</paramtype></parameter><description><para>Initializing constructor. Creates an exception with the specified error message. </para></description></constructor>
+<destructor id="doxygen.top_level_headers.classboost_1_1log_1_1limitation__error_1aa05ebf1a323d50e95340a47c302aa028"><description><para>Destructor </para></description></destructor>
+</method-group>
+</class><class id="doxygen.top_level_headers.classboost_1_1log_1_1logic__error" name="logic_error"><inherit access="public">logic_error</inherit><purpose>Base class for logic exceptions from the logging library. </purpose><description><para>Exceptions derived from this class usually indicate errors on the user's side, such as incorrect library usage. </para></description><method-group name="public member functions">
+<constructor id="doxygen.top_level_headers.classboost_1_1log_1_1logic__error_1aba356f736f505f17303ba3a2bdee858f" specifiers="explicit"><parameter name="descr"><paramtype>std::string const &amp;</paramtype></parameter><description><para>Initializing constructor. Creates an exception with the specified error message. </para></description></constructor>
+<destructor id="doxygen.top_level_headers.classboost_1_1log_1_1logic__error_1a461946273c3721caff7891f02d14c04a"><description><para>Destructor </para></description></destructor>
+</method-group>
+</class><class id="doxygen.top_level_headers.classboost_1_1log_1_1missing__value" name="missing_value"><inherit access="public">runtime_error</inherit><purpose>Exception class that is used to indicate errors of missing values. </purpose><method-group name="public member functions">
+<constructor id="doxygen.top_level_headers.classboost_1_1log_1_1missing__value_1a274c4650dc2ea7420685452b206d2c81"><description><para>Default constructor. Creates an exception with the default error message. </para></description></constructor>
+<constructor id="doxygen.top_level_headers.classboost_1_1log_1_1missing__value_1a11778519be653d3bf39e8e6c408db523" specifiers="explicit"><parameter name="descr"><paramtype>std::string const &amp;</paramtype></parameter><description><para>Initializing constructor. Creates an exception with the specified error message. </para></description></constructor>
+<destructor id="doxygen.top_level_headers.classboost_1_1log_1_1missing__value_1a7a0ff10702e7b2b52f9824609153a44f"><description><para>Destructor </para></description></destructor>
+</method-group>
+</class><class id="doxygen.top_level_headers.classboost_1_1log_1_1odr__violation" name="odr_violation"><inherit access="public">logic_error</inherit><purpose>Exception class that is used to indicate ODR violation. </purpose><method-group name="public member functions">
+<constructor id="doxygen.top_level_headers.classboost_1_1log_1_1odr__violation_1aa03941fcefc3ba485ab7cccf5ead14f3"><description><para>Default constructor. Creates an exception with the default error message. </para></description></constructor>
+<constructor id="doxygen.top_level_headers.classboost_1_1log_1_1odr__violation_1a6e73bc5532bf3883a7c5e5ef1aab4d01" specifiers="explicit"><parameter name="descr"><paramtype>std::string const &amp;</paramtype></parameter><description><para>Initializing constructor. Creates an exception with the specified error message. </para></description></constructor>
+<destructor id="doxygen.top_level_headers.classboost_1_1log_1_1odr__violation_1a5a37c2425dd796f5e7c75a16bf08dacc"><description><para>Destructor </para></description></destructor>
+</method-group>
+</class><class id="doxygen.top_level_headers.classboost_1_1log_1_1parse__error" name="parse_error"><inherit access="public">runtime_error</inherit><purpose>Exception class that is used to indicate parsing errors. </purpose><method-group name="public member functions">
+<constructor id="doxygen.top_level_headers.classboost_1_1log_1_1parse__error_1aea7b53f1270ef77deb965a4fe6eb6a04"><description><para>Default constructor. Creates an exception with the default error message. </para></description></constructor>
+<constructor id="doxygen.top_level_headers.classboost_1_1log_1_1parse__error_1ad232748d7528349971aa15f825f1c4e6" specifiers="explicit"><parameter name="descr"><paramtype>std::string const &amp;</paramtype></parameter><description><para>Initializing constructor. Creates an exception with the specified error message. </para></description></constructor>
+<destructor id="doxygen.top_level_headers.classboost_1_1log_1_1parse__error_1a08994928bc0d7d32a9f073827ce2b0d6"><description><para>Destructor </para></description></destructor>
+</method-group>
+</class><class id="doxygen.top_level_headers.classboost_1_1log_1_1runtime__error" name="runtime_error"><inherit access="public">runtime_error</inherit><purpose>Base class for runtime exceptions from the logging library. </purpose><description><para>Exceptions derived from this class indicate a problem that may not directly be caused by the user's code that interacts with the library, such as errors caused by input data. </para></description><method-group name="public member functions">
+<constructor id="doxygen.top_level_headers.classboost_1_1log_1_1runtime__error_1acf484b02c282b9618ec41488458d2306" specifiers="explicit"><parameter name="descr"><paramtype>std::string const &amp;</paramtype></parameter><description><para>Initializing constructor. Creates an exception with the specified error message. </para></description></constructor>
+<destructor id="doxygen.top_level_headers.classboost_1_1log_1_1runtime__error_1a4ee5388bb1e757fc0e467d94dba61678"><description><para>Destructor </para></description></destructor>
+</method-group>
+</class><class id="doxygen.top_level_headers.classboost_1_1log_1_1setup__error" name="setup_error"><inherit access="public">logic_error</inherit><purpose>Exception class that is used to indicate invalid library setup. </purpose><method-group name="public member functions">
+<constructor id="doxygen.top_level_headers.classboost_1_1log_1_1setup__error_1a9d33c13c6f2f12d9f50d380fef95c04a"><description><para>Default constructor. Creates an exception with the default error message. </para></description></constructor>
+<constructor id="doxygen.top_level_headers.classboost_1_1log_1_1setup__error_1ab351b8a1e497ecfb9a9d593fdd3e7e13" specifiers="explicit"><parameter name="descr"><paramtype>std::string const &amp;</paramtype></parameter><description><para>Initializing constructor. Creates an exception with the specified error message. </para></description></constructor>
+<destructor id="doxygen.top_level_headers.classboost_1_1log_1_1setup__error_1a1b49638ab5404ad9c688eb4c99059003"><description><para>Destructor </para></description></destructor>
+</method-group>
+</class><class id="doxygen.top_level_headers.classboost_1_1log_1_1system__error" name="system_error"><inherit access="public">system_error</inherit><purpose>Exception class that is used to indicate underlying OS API errors. </purpose><method-group name="public member functions">
+<constructor id="doxygen.top_level_headers.classboost_1_1log_1_1system__error_1a6fdae3f0384b79be5c40778f0448aa89"><parameter name="code"><paramtype>boost::system::error_code</paramtype></parameter><parameter name="descr"><paramtype>std::string const &amp;</paramtype></parameter><description><para>Initializing constructor. Creates an exception with the specified error message. </para></description></constructor>
+<destructor id="doxygen.top_level_headers.classboost_1_1log_1_1system__error_1a5a1fa1e7000acdd9c2007da7cd3a5597"><description><para>Destructor </para></description></destructor>
+</method-group>
+</class><class id="doxygen.top_level_headers.classboost_1_1log_1_1unexpected__call" name="unexpected_call"><inherit access="public">logic_error</inherit><purpose>Exception class that is used to indicate invalid call sequence. </purpose><method-group name="public member functions">
+<constructor id="doxygen.top_level_headers.classboost_1_1log_1_1unexpected__call_1a31f36bcad7716b065e47a56ed626e9a9"><description><para>Default constructor. Creates an exception with the default error message. </para></description></constructor>
+<constructor id="doxygen.top_level_headers.classboost_1_1log_1_1unexpected__call_1a16012491bb358b9e219af81e5379c0fa" specifiers="explicit"><parameter name="descr"><paramtype>std::string const &amp;</paramtype></parameter><description><para>Initializing constructor. Creates an exception with the specified error message. </para></description></constructor>
+<destructor id="doxygen.top_level_headers.classboost_1_1log_1_1unexpected__call_1a9b34efaf00defffad3a0d7049caea4c5"><description><para>Destructor </para></description></destructor>
+</method-group>
+</class></namespace>
+</namespace>
+</header>
+<header id="doxygen.top_level_headers.expressions_8hpp" name="boost/log/expressions.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>10.11.2012</para>
+
+This header includes other Boost.Log headers with all template expression tools. </para></header>
+<header id="doxygen.top_level_headers.sinks_8hpp" name="boost/log/sinks.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>13.07.2009</para>
+
+This header includes other Boost.Log headers with all sinks. </para></header>
+<header id="doxygen.top_level_headers.trivial_8hpp" name="boost/log/trivial.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>07.11.2009</para>
+
+This header defines tools for trivial logging support </para><namespace name="boost">
+<namespace name="log">
+<namespace name="trivial">
+<struct id="doxygen.top_level_headers.structboost_1_1log_1_1trivial_1_1logger" name="logger"><purpose>Trivial logger tag. </purpose><description><para>This tag can be used to acquire the logger that is used with trivial logging macros. This may be useful when the logger is used with other macros which require a logger. </para></description><typedef id="doxygen.top_level_headers.structboost_1_1log_1_1trivial_1_1logger_1a41881182b53cedd8a5c71c6641126998" name="logger_type"><purpose>Logger type. </purpose><type>trivial::logger_type</type></typedef>
+<method-group name="public static functions">
+<method id="doxygen.top_level_headers.structboost_1_1log_1_1trivial_1_1logger_1a3b1c4c5970ba7d606d09ba87a4fa7bfc" name="get" specifiers="static"><type>logger_type &amp;</type><description><para>Returns a reference to the trivial logger instance </para></description></method>
+</method-group>
+</struct><enum id="doxygen.top_level_headers.trivial_8hpp_1a44fe714b53f91f01aab7d314d83d723d" name="severity_level"><enumvalue id="doxygen.top_level_headers.trivial_8hpp_1a44fe714b53f91f01aab7d314d83d723da36a3b17acbfb35380a47b3d88c9b8942" name="trace"/><enumvalue id="doxygen.top_level_headers.trivial_8hpp_1a44fe714b53f91f01aab7d314d83d723da5be0fd270d9cbf6a0b7445db855089da" name="debug"/><enumvalue id="doxygen.top_level_headers.trivial_8hpp_1a44fe714b53f91f01aab7d314d83d723daa4abb266e72efba828327b605b2ab0f4" name="info"/><enumvalue id="doxygen.top_level_headers.trivial_8hpp_1a44fe714b53f91f01aab7d314d83d723da8de9aef05fc85e519a0cfce33573f492" name="warning"/><enumvalue id="doxygen.top_level_headers.trivial_8hpp_1a44fe714b53f91f01aab7d314d83d723dad606e435413ea0944dd00d49e901e4ed" name="error"/><enumvalue id="doxygen.top_level_headers.trivial_8hpp_1a44fe714b53f91f01aab7d314d83d723da8ce9ca6f2c2ee2f80260f4ae4158e45f" name="fatal"/><purpose>Trivial severity levels. </purpose></enum>
+<typedef id="doxygen.top_level_headers.trivial_8hpp_1a55940fa463a9316335e26fd46f5db7f4" name="logger_type"><purpose>Trivial logger type. </purpose><type>sources::severity_logger_mt&lt; severity_level &gt;</type></typedef>
+<function id="doxygen.top_level_headers.trivial_8hpp_1ace836dd93c97be03634450477ac05903" name="to_string"><type>const CharT *</type><template>
+          <template-type-parameter name="CharT"/>
+        </template><parameter name="lvl"><paramtype>severity_level</paramtype></parameter><purpose>Returns stringized enumeration value or <computeroutput>NULL</computeroutput>, if the value is not valid. </purpose></function>
+<function id="doxygen.top_level_headers.trivial_8hpp_1abe1ae5c0e45e8195e376f730485456f3" name="to_string"><type>const char *</type><parameter name="lvl"><paramtype>severity_level</paramtype></parameter><purpose>Returns stringized enumeration value or <computeroutput>NULL</computeroutput>, if the value is not valid. </purpose></function>
+<function id="doxygen.top_level_headers.trivial_8hpp_1acc84c9303916c49ac77075edf80a360d" name="from_string"><type>bool</type><template>
+          <template-type-parameter name="CharT"/>
+        </template><parameter name="str"><paramtype>const CharT *</paramtype></parameter><parameter name="len"><paramtype>std::size_t</paramtype></parameter><parameter name="lvl"><paramtype>severity_level &amp;</paramtype></parameter><purpose>Parses enumeration value from string and returns <computeroutput>true</computeroutput> on success and <computeroutput>false</computeroutput> otherwise. </purpose></function>
+<function id="doxygen.top_level_headers.trivial_8hpp_1a97d0b94d301f3d5a2000bf8371557c89" name="operator&lt;&lt;"><type>std::basic_ostream&lt; CharT, TraitsT &gt; &amp;</type><template>
+          <template-type-parameter name="CharT"/>
+          <template-type-parameter name="TraitsT"/>
+        </template><parameter name="strm"><paramtype>std::basic_ostream&lt; CharT, TraitsT &gt; &amp;</paramtype></parameter><parameter name="lvl"><paramtype>severity_level</paramtype></parameter><purpose>Outputs stringized representation of the severity level to the stream. </purpose></function>
+<function id="doxygen.top_level_headers.trivial_8hpp_1a70917c6f06e738edba029b9b59f97e68" name="operator&gt;&gt;"><type>std::basic_istream&lt; CharT, TraitsT &gt; &amp;</type><template>
+          <template-type-parameter name="CharT"/>
+          <template-type-parameter name="TraitsT"/>
+        </template><parameter name="strm"><paramtype>std::basic_istream&lt; CharT, TraitsT &gt; &amp;</paramtype></parameter><parameter name="lvl"><paramtype>severity_level &amp;</paramtype></parameter><purpose>Reads stringized representation of the severity level from the stream. </purpose></function>
+</namespace>
+</namespace>
+</namespace>
+<macro id="doxygen.top_level_headers.trivial_8hpp_1a79af06966f66457560ae2c4f051cae21" name="BOOST_LOG_TRIVIAL" kind="functionlike"><macro-parameter name="lvl"/><description><para>The macro is used to initiate logging. The <computeroutput>lvl</computeroutput> argument of the macro specifies one of the following severity levels: <computeroutput>trace</computeroutput>, <computeroutput>debug</computeroutput>, <computeroutput>info</computeroutput>, <computeroutput>warning</computeroutput>, <computeroutput>error</computeroutput> or <computeroutput>fatal</computeroutput> (see <computeroutput>severity_level</computeroutput> enum). Following the macro, there may be a streaming expression that composes the record message string. For example:</para><para><programlisting language="c++">BOOST_LOG_TRIVIAL(info) &lt;&lt; "Hello, world!";
+</programlisting> </para></description></macro>
+</header>
+</library-reference>

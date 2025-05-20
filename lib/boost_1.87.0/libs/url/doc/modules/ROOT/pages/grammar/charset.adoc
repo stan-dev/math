@@ -1,0 +1,184 @@
+//
+// Copyright (c) 2023 Alan de Freitas (alandefreitas@gmail.com)
+//
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt)
+//
+// Official repository: https://github.com/boostorg/url
+//
+
+= Character Sets
+
+A __character set__ represents a subset of low-ASCII characters, used as a building block for constructing rules.
+The library models them as callable predicates invocable with this equivalent signature:
+
+[source,cpp]
+----
+/// Return true if ch is in the set
+bool( char ch ) const noexcept;
+----
+
+The __CharSet__ concept describes the requirements on syntax and semantics for these types.
+Here we declare a character set type that includes the horizontal and vertical whitespace characters:
+
+[source,cpp]
+----
+struct ws_chars_t
+{
+    constexpr bool operator()( char c ) const noexcept
+    {
+        return c == '\t' || c == ' ' || c == '\r' || c == '\n';
+    }
+};
+----
+
+The type trait cpp:grammar::is_charset[is_charset] determines if a type meets the requirements:
+
+[source,cpp]
+----
+static_assert( is_charset< ws_chars_t >::value, "CharSet requirements not met" );
+----
+
+Character sets are always passed as values.
+As with rules, we declare an instance of the type for notational convenience.
+The cpp:constexpr[] designation is used to make it a zero-cost abstraction:
+
+[source,cpp]
+----
+constexpr ws_chars_t ws_chars{};
+----
+
+For best results, ensure that user-defined character set types are cpp:constexpr[] constructible.
+
+The functions cpp:grammar::find_if[find_if] and cpp:grammar::find_if_not[find_if_not] are used to search a string for the first matching or the first non-matching character from a set.
+The example below skips any leading whitespace and then returns everything from the first non-whitespace character to the last non-whitespace character:
+
+[source,cpp]
+----
+core::string_view get_token( core::string_view s ) noexcept
+{
+    auto it0 = s.data();
+    auto const end = it0 + s.size();
+
+    // find the first non-whitespace character
+    it0 = find_if_not( it0, end, ws_chars );
+
+    if( it0 == end )
+    {
+        // all whitespace or empty string
+        return {};
+    }
+
+    // find the next whitespace character
+    auto it1 = find_if( it0, end, ws_chars );
+
+    // [it0, it1) is the part we want
+    return core::string_view( it0, it1 - it0 );
+}
+----
+
+The function can now be called thusly:
+
+[source,cpp]
+----
+include::example$unit/doc_grammar.cpp[tag=code_grammar_2_6,indent=0]
+----
+
+The library provides these often-used character sets:
+
+[cols="a,a"]
+|===
+// Headers
+|Value|Description
+
+// Row 1, Column 1
+|cpp:grammar::alnum_chars[alnum_chars]
+// Row 1, Column 2
+|Contains the uppercase and lowercase letters, and digits.
+
+// Row 2, Column 1
+|cpp:grammar::alpha_chars[alpha_chars]
+// Row 2, Column 2
+|Contains the uppercase and lowercase letters.
+
+// Row 3, Column 1
+|cpp:grammar::digit_chars[digit_chars]
+// Row 3, Column 2
+|Contains the decimal digit characters.
+
+// Row 4, Column 1
+|cpp:grammar::hexdig_chars[hexdig_chars]
+// Row 4, Column 2
+|Contains the uppercase and lowercase hexadecimal
+digit characters.
+
+// Row 5, Column 1
+|cpp:grammar::vchars[vchars]
+// Row 5, Column 2
+|Contains the visible characters (i.e. non whitespace).
+
+|===
+
+Some of the character sets in the library have implementations optimized for the particular character set or optimized in general, often in ways that take advantage of opportunities not available to standard library facilities.
+For example, custom code enhancements using Streaming SIMD Extensions 2 (https://en.wikipedia.org/wiki/SSE2[SSE2,window=blank_]), available on all x86 and x64 architectures.
+
+== The lut_chars Type
+
+The cpp:grammar::lut_chars[lut_chars] type satisfies the __CharSet__
+requirements and offers an optimized cpp:constexpr[]
+implementation which provides enhanced performance and notational convenience for specifying character sets.
+Compile-time instances can be constructed from strings:
+
+[source,cpp]
+----
+include::example$unit/doc_grammar.cpp[tag=code_grammar_2_7,indent=0]
+----
+
+We can use cpp:operator+[] and cpp:operator-[] notation to add and remove elements from the set at compile time.
+For example, sometimes the character 'y' sounds like a vowel:
+
+[source,cpp]
+----
+include::example$unit/doc_grammar.cpp[tag=code_grammar_2_8,indent=0]
+----
+
+The type is named after its implementation, which is a lookup table ("lut") of packed bits.
+This allows for a variety of construction methods and flexible composition.
+Here we create the set of visible characters using a lambda:
+
+[source,cpp]
+----
+struct is_visible
+{
+    constexpr bool operator()( char ch ) const noexcept
+    {
+        return ch >= 33 && ch <= 126;
+    }
+};
+constexpr lut_chars visible_chars( is_visible{} ); // (since C++11)
+----
+
+Alternatively:
+
+[source,cpp]
+----
+constexpr lut_chars visible_chars(
+    [](char ch) { return ch >= 33 && ch <= 126; } ); // (since C++17)
+----
+
+Differences can be calculated with cpp:operator-[]:
+
+[source,cpp]
+----
+include::example$unit/doc_grammar.cpp[tag=code_grammar_2_11,indent=0]
+----
+
+We can also remove individual characters:
+
+[source,cpp]
+----
+include::example$unit/doc_grammar.cpp[tag=code_grammar_2_12,indent=0]
+----
+
+
+

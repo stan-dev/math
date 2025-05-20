@@ -1,0 +1,57 @@
+[/
+ / Copyright 2023 Andrey Semashev
+ /
+ / Distributed under the Boost Software License, Version 1.0.
+ / (See accompanying file LICENSE_1_0.txt or copy at
+ / https://www.boost.org/LICENSE_1_0.txt)
+ /
+ / This document is a part of Boost.Scope library documentation.
+ /
+ / This document was automatically generated, DO NOT EDIT!
+ /]
+
+[template boost_scope_defer_hpp[][headerref boost/scope/defer.hpp]]
+
+[template class_scope_defer_guard[][classref boost::scope::defer_guard defer_guard]]
+
+[template boost_scope_error_code_checker_hpp[][headerref boost/scope/error_code_checker.hpp]]
+
+[template class_scope_error_code_checker[][classref boost::scope::error_code_checker error_code_checker]]
+
+[template boost_scope_exception_checker_hpp[][headerref boost/scope/exception_checker.hpp]]
+
+[template class_scope_exception_checker[][classref boost::scope::exception_checker exception_checker]]
+
+[template boost_scope_fd_deleter_hpp[][headerref boost/scope/fd_deleter.hpp]]
+
+[template class_scope_fd_deleter[][classref boost::scope::fd_deleter fd_deleter]]
+
+[template boost_scope_fd_resource_traits_hpp[][headerref boost/scope/fd_resource_traits.hpp]]
+
+[template class_scope_fd_resource_traits[][classref boost::scope::fd_resource_traits fd_resource_traits]]
+
+[template boost_scope_scope_exit_hpp[][headerref boost/scope/scope_exit.hpp]]
+
+[template class_scope_always_true[][classref boost::scope::always_true always_true]]
+
+[template class_scope_scope_exit[][classref boost::scope::scope_exit scope_exit]]
+
+[template boost_scope_scope_fail_hpp[][headerref boost/scope/scope_fail.hpp]]
+
+[template class_scope_scope_fail[][classref boost::scope::scope_fail scope_fail]]
+
+[template boost_scope_scope_success_hpp[][headerref boost/scope/scope_success.hpp]]
+
+[template class_scope_scope_success[][classref boost::scope::scope_success scope_success]]
+
+[template boost_scope_unique_fd_hpp[][headerref boost/scope/unique_fd.hpp]]
+
+[template boost_scope_unique_resource_hpp[][headerref boost/scope/unique_resource.hpp]]
+
+[template class_scope_default_resource_t[][classref boost::scope::default_resource_t default_resource_t]]
+
+[template class_scope_unallocated_resource[][classref boost::scope::unallocated_resource unallocated_resource]]
+
+[template class_scope_unique_resource[][classref boost::scope::unique_resource unique_resource]]
+
+[template boost_scope_unique_resource_fwd_hpp[][headerref boost/scope/unique_resource_fwd.hpp]]

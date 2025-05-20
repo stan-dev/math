@@ -1,0 +1,1883 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Chapter 29. Boost.Process</title>
+<link rel="stylesheet" href="../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="libraries.html" title="Part I. The Boost C++ Libraries (BoostBook Subset)">
+<link rel="prev" href="poly_collection/acknowledgments.html" title="Acknowledgments">
+<link rel="next" href="doxygen/args_8hpp_1ae6e9268c3e85949b8a29f5e47c8a4a7f.html" title="Global args">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../boost.png"></td>
+<td align="center"><a href="../../index.html">Home</a></td>
+<td align="center"><a href="../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="poly_collection/acknowledgments.html"><img src="../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="libraries.html"><img src="../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="index.html"><img src="../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="doxygen/args_8hpp_1ae6e9268c3e85949b8a29f5e47c8a4a7f.html"><img src="../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="chapter">
+<div class="titlepage"><div>
+<div><h2 class="title">
+<a name="process"></a>Chapter 29. Boost.Process</h2></div>
+<div><div class="author"><h3 class="author">
+<span class="firstname">Klemens David</span> <span class="surname">Morgenstern</span>
+</h3></div></div>
+<div><p class="copyright">Copyright © 2006-2012 Julio M. Merino Vidal, Ilya Sokolov,
+      Felipe Tanus, Jeff Flinn, Boris Schaeling</p></div>
+<div><p class="copyright">Copyright © 2016 Klemens D. Morgenstern</p></div>
+<div><div class="legalnotice">
+<a name="process.legal"></a><p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+      </p>
+</div></div>
+</div></div>
+<div class="toc">
+<p><b>Table of Contents</b></p>
+<dl class="toc">
+<dt><span class="section"><a href="process.html#boost_process.v1">Process V1</a></span></dt>
+<dd><dl>
+<dt><span class="section"><a href="process.html#boost_process.v1.introduction">Introduction</a></span></dt>
+<dt><span class="section"><a href="process.html#boost_process.v1.concepts">Concepts</a></span></dt>
+<dt><span class="section"><a href="process.html#boost_process.v1.tutorial">Tutorial</a></span></dt>
+<dt><span class="section"><a href="process.html#boost_process.v1.design">Design Rationale</a></span></dt>
+<dt><span class="section"><a href="process.html#boost_process.v1.extend">Extensions</a></span></dt>
+<dt><span class="section"><a href="process.html#boost_process.v1.faq">Frequently Asked Questions</a></span></dt>
+<dt><span class="section"><a href="process.html#process.reference">Reference</a></span></dt>
+</dl></dd>
+<dt><span class="section"><a href="boost_process/v2.html">Process V2</a></span></dt>
+<dd><dl>
+<dt><span class="section"><a href="boost_process/v2.html#boost_process.v2.introduction">Introduction</a></span></dt>
+<dt><span class="section"><a href="boost_process/v2.html#boost_process.v2.quickstart">Quickstart</a></span></dt>
+<dt><span class="section"><a href="boost_process/v2.html#boost_process.v2.launchers">Launcher</a></span></dt>
+<dt><span class="section"><a href="boost_process/v2.html#boost_process.v2.start_dir">process_start_dir</a></span></dt>
+<dt><span class="section"><a href="boost_process/v2.html#boost_process.v2.stdio">stdio</a></span></dt>
+<dt><span class="section"><a href="boost_process/v2.html#boost_process.v2.env">Environment</a></span></dt>
+<dt><span class="section"><a href="boost_process/v2.html#process.reference">Reference</a></span></dt>
+</dl></dd>
+<dt><span class="section"><a href="boost_process/acknowledgements.html">Acknowledgements</a></span></dt>
+</dl>
+</div>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+      Process v1 will be deprecated in the next release (1.88). Use v2 for new projects.
+    </p></td></tr>
+</table></div>
+<div class="section">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="boost_process.v1"></a><a class="link" href="process.html#boost_process.v1" title="Process V1">Process V1</a>
+</h2></div></div></div>
+<div class="toc"><dl class="toc">
+<dt><span class="section"><a href="process.html#boost_process.v1.introduction">Introduction</a></span></dt>
+<dt><span class="section"><a href="process.html#boost_process.v1.concepts">Concepts</a></span></dt>
+<dt><span class="section"><a href="process.html#boost_process.v1.tutorial">Tutorial</a></span></dt>
+<dt><span class="section"><a href="process.html#boost_process.v1.design">Design Rationale</a></span></dt>
+<dt><span class="section"><a href="process.html#boost_process.v1.extend">Extensions</a></span></dt>
+<dt><span class="section"><a href="process.html#boost_process.v1.faq">Frequently Asked Questions</a></span></dt>
+<dt><span class="section"><a href="process.html#process.reference">Reference</a></span></dt>
+</dl></div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="boost_process.v1.introduction"></a><a class="link" href="process.html#boost_process.v1.introduction" title="Introduction">Introduction</a>
+</h3></div></div></div>
+<p>
+        Boost.Process is a library to manage system processes. It can be used to:
+      </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+            create child processes
+          </li>
+<li class="listitem">
+            setup streams for child processes
+          </li>
+<li class="listitem">
+            communicate with child processes through streams (synchronously or asynchronously)
+          </li>
+<li class="listitem">
+            wait for processes to exit (synchronously or asynchronously)
+          </li>
+<li class="listitem">
+            terminate processes
+          </li>
+</ul></div>
+<p>
+        Here's a simple example of how to start a program with Boost.Process:
+      </p>
+<p>
+</p>
+<pre class="programlisting"><span class="preprocessor">#include</span> <span class="special">&lt;</span><code class="computeroutput">boost/process.hpp</code><span class="special">&gt;</span>
+
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">string</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">iostream</span><span class="special">&gt;</span>
+
+<span class="keyword">using</span> <span class="keyword">namespace</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">process</span><span class="special">;</span>
+
+<span class="keyword">int</span> <span class="identifier">main</span><span class="special">()</span>
+<span class="special">{</span>
+    <code class="computeroutput"><a class="link" href="process.html#doxygen.pipe_8hpp_1a1aa6e4027b6d9be54fd3f4300fc1605a">ipstream</a></code> <span class="identifier">pipe_stream</span><span class="special">;</span>
+    <code class="computeroutput">child</code> <span class="identifier">c</span><span class="special">(</span><span class="string">"gcc --version"</span><span class="special">,</span> <code class="computeroutput"><a class="link" href="doxygen/io_8hpp_1a08f2612fd4816c30079d5cfd3152e3b9.html" title="Global std_out">std_out</a></code> <span class="special">&gt;</span> <span class="identifier">pipe_stream</span><span class="special">);</span>
+
+    <a href="http://en.cppreference.com/w/cpp/string/basic_string" target="_top">std::string</a> <span class="identifier">line</span><span class="special">;</span>
+
+    <span class="keyword">while</span> <span class="special">(</span><span class="identifier">pipe_stream</span> <span class="special">&amp;&amp;</span> <a href="http://en.cppreference.com/w/cpp/string/basic_string/getline" target="_top">std::getline</a><span class="special">(</span><span class="identifier">pipe_stream</span><span class="special">,</span> <span class="identifier">line</span><span class="special">)</span> <span class="special">&amp;&amp;</span> <span class="special">!</span><span class="identifier">line</span><span class="special">.</span><span class="identifier">empty</span><span class="special">())</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cerr</span> <span class="special">&lt;&lt;</span> <span class="identifier">line</span> <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;</span>
+
+    <span class="identifier">c</span><span class="special">.</span><span class="identifier">wait</span><span class="special">();</span>
+<span class="special">}</span>
+</pre>
+<p>
+      </p>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="boost_process.v1.concepts"></a><a class="link" href="process.html#boost_process.v1.concepts" title="Concepts">Concepts</a>
+</h3></div></div></div>
+<div class="toc"><dl class="toc">
+<dt><span class="section"><a href="process.html#boost_process.v1.concepts.pipes">Pipes</a></span></dt>
+<dt><span class="section"><a href="process.html#boost_process.v1.concepts.process">Processes</a></span></dt>
+<dt><span class="section"><a href="process.html#boost_process.v1.concepts.env">Environment</a></span></dt>
+</dl></div>
+<p>
+        In this section, some of the underlying concepts of the operating system
+        used in this library, will be explained. In the following chapters we will
+        presume knowledge of that. Though please note, that this is a short summary
+        and not conclusive of everything that can be done.
+      </p>
+<p>
+        The goal of this library is to implement a portable wrapper, so that we will
+        explain mostly what windows and posix have in common.
+      </p>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="boost_process.v1.concepts.pipes"></a><a class="link" href="process.html#boost_process.v1.concepts.pipes" title="Pipes">Pipes</a>
+</h4></div></div></div>
+<div class="toc"><dl class="toc">
+<dt><span class="section"><a href="process.html#boost_process.v1.concepts.pipes.anonymous">Anonymous
+          Pipes</a></span></dt>
+<dt><span class="section"><a href="process.html#boost_process.v1.concepts.pipes.named">Named Pipes</a></span></dt>
+</dl></div>
+<p>
+          Pipes are a facility for communication between different threads, processes
+          and in some cases machines, the operating system provides.
+        </p>
+<p>
+          The typical feature of a pipe is, that it is one channel, to which two
+          handles are given, one for reading (source), one for writing (sink). In
+          that it is different than other facilities (like sockets) and provides
+          another way to manage the connectivity: if one side of the pipe is closed
+          (i.e. the pipe is broken), the other is notified.
+        </p>
+<p>
+          Pipes are typically used for interprocess communication. The main reason
+          is, that pipes can be directly assigned to the process stdio, i.e. stderr,
+          stdin and stdout. Additionally, half of the pipe can be inherited to the
+          child process and closed in the father process. This will cause the pipe
+          to be broken when the child process exits.
+        </p>
+<p>
+          Though please note, that if the same thread reads and writes to a pipe,
+          it will only talk to itself.
+        </p>
+<div class="section">
+<div class="titlepage"><div><div><h5 class="title">
+<a name="boost_process.v1.concepts.pipes.anonymous"></a><a class="link" href="process.html#boost_process.v1.concepts.pipes.anonymous" title="Anonymous Pipes">Anonymous
+          Pipes</a>
+</h5></div></div></div>
+<p>
+            The most common pipes are anonymous. Since they have no name, a handle
+            to them can only be obtained from duplicating either handle.
+          </p>
+<p>
+            In this library the following functions are used for the creation of
+            unnamed pipes:
+          </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+                <a href="http://pubs.opengroup.org/onlinepubs/7908799/xsh/pipe.html" target="_top">posix</a>
+              </li>
+<li class="listitem">
+                <a href="https://msdn.microsoft.com/de-de/library/windows/desktop/aa365152.aspx" target="_top">windows</a>
+              </li>
+</ul></div>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h5 class="title">
+<a name="boost_process.v1.concepts.pipes.named"></a><a class="link" href="process.html#boost_process.v1.concepts.pipes.named" title="Named Pipes">Named Pipes</a>
+</h5></div></div></div>
+<p>
+            As the name suggests, named pipes have a string identifier. This means
+            that a handle to them can be obtained with the identifier, too.
+          </p>
+<p>
+            The implementation on posix uses <a href="http://pubs.opengroup.org/onlinepubs/009695399/functions/mkfifo.html" target="_top">fifos</a>,
+            which means, that the named pipe behaves like a file.
+          </p>
+<p>
+            Windows does provide a facility called <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365150(v=vs.85).aspx" target="_top">named
+            pipes</a>, which also have file-like names, but are in a different
+            scope than the actual file system.
+          </p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+              The main reason named pipes are part of this library, is because they
+              need to be internally used for asynchronous communication on windows.
+            </p></td></tr>
+</table></div>
+</div>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="boost_process.v1.concepts.process"></a><a class="link" href="process.html#boost_process.v1.concepts.process" title="Processes">Processes</a>
+</h4></div></div></div>
+<div class="toc"><dl class="toc">
+<dt><span class="section"><a href="process.html#boost_process.v1.concepts.process.exit_code">Exit
+          code</a></span></dt>
+<dt><span class="section"><a href="process.html#boost_process.v1.concepts.process.termination">Termination</a></span></dt>
+</dl></div>
+<p>
+          A process is an independently executable entity, which is different from
+          a thread, in that it has its own resources. Those include memory and hardware
+          resources.
+        </p>
+<p>
+          Every process is identified by a unique number<a href="#ftn.boost_process.v1.concepts.process.f0" class="footnote" name="boost_process.v1.concepts.process.f0"><sup class="footnote">[27]</sup></a>, called the process identification digit, <code class="computeroutput"><span class="identifier">pid</span></code>.
+        </p>
+<div class="section">
+<div class="titlepage"><div><div><h5 class="title">
+<a name="boost_process.v1.concepts.process.exit_code"></a><a class="link" href="process.html#boost_process.v1.concepts.process.exit_code" title="Exit code">Exit
+          code</a>
+</h5></div></div></div>
+<p>
+            A process will return an integer value indicating whether it was successful.
+            On posix there are more codes associated with that, but not so on windows.
+            Therefore there is no such encoding currently in the library. However
+            an exit code of zero means the process was successful, while one different
+            than zero indicates an error.
+          </p>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h5 class="title">
+<a name="boost_process.v1.concepts.process.termination"></a><a class="link" href="process.html#boost_process.v1.concepts.process.termination" title="Termination">Termination</a>
+</h5></div></div></div>
+<p>
+            Processes can also be forced to exit. There are two ways to do this,
+            signal the process to do so and wait, and just terminate the process
+            without conditions.
+          </p>
+<p>
+            Usually the first approach is to signal an exit request, but windows
+            - unlike posix - does not provide a consistent way to do this. Hence
+            this is not part of the library and only the hard terminate is.
+          </p>
+</div>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="boost_process.v1.concepts.env"></a><a class="link" href="process.html#boost_process.v1.concepts.env" title="Environment">Environment</a>
+</h4></div></div></div>
+<p>
+          The environment is a map of variables local to every process. The most
+          significant one for this library is the <code class="computeroutput"><span class="identifier">PATH</span></code>
+          variable, which contains a list of paths, that ought to be searched for
+          executables. A shell will do this automatically, while this library provides
+          a function for that.
+        </p>
+</div>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="boost_process.v1.tutorial"></a><a class="link" href="process.html#boost_process.v1.tutorial" title="Tutorial">Tutorial</a>
+</h3></div></div></div>
+<div class="toc"><dl class="toc">
+<dt><span class="section"><a href="process.html#boost_process.v1.tutorial.starting_a_process">Starting
+        a process</a></span></dt>
+<dt><span class="section"><a href="process.html#boost_process.v1.tutorial.launch_mode">Launch functions</a></span></dt>
+<dt><span class="section"><a href="process.html#boost_process.v1.tutorial.error_handling">Error</a></span></dt>
+<dt><span class="section"><a href="process.html#boost_process.v1.tutorial.io">Synchronous I/O</a></span></dt>
+<dt><span class="section"><a href="process.html#boost_process.v1.tutorial.async_io">Asynchronous I/O</a></span></dt>
+<dt><span class="section"><a href="process.html#boost_process.v1.tutorial.group">Groups</a></span></dt>
+<dt><span class="section"><a href="process.html#boost_process.v1.tutorial.env">Environment</a></span></dt>
+</dl></div>
+<p>
+        In this section we will go step by step through the different features of
+        boost.process. For a full description see the <a class="link" href="process.html#process.reference" title="Reference">reference</a>
+        and the <a class="link" href="">concepts</a> sections.
+      </p>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="boost_process.v1.tutorial.starting_a_process"></a><a class="link" href="process.html#boost_process.v1.tutorial.starting_a_process" title="Starting a process">Starting
+        a process</a>
+</h4></div></div></div>
+<p>
+          We want to start a process, so let's start with a simple process. We will
+          invoke the gcc compiler to compile a simple program.
+        </p>
+<p>
+          With the standard library this looks like this.
+        </p>
+<p>
+</p>
+<pre class="programlisting"><span class="keyword">int</span> <span class="identifier">result</span> <span class="special">=</span> <a href="http://en.cppreference.com/w/cpp/utility/program/system" target="_top">std::system</a><span class="special">(</span><span class="string">"g++ main.cpp"</span><span class="special">);</span>
+</pre>
+<p>
+        </p>
+<p>
+          Which we can write exactly like this in boost.process.
+        </p>
+<p>
+</p>
+<pre class="programlisting"><span class="keyword">namespace</span> <span class="identifier">bp</span> <span class="special">=</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">process</span><span class="special">;</span> <span class="comment">//we will assume this for all further examples</span>
+<span class="keyword">int</span> <span class="identifier">result</span> <span class="special">=</span> <code class="computeroutput"><a class="link" href="doxygen/system_8hpp_1afdcac75b20df3e60ae2ad316a352138f.html" title="Function template system">bp::system</a></code><span class="special">(</span><span class="string">"g++ main.cpp"</span><span class="special">);</span>
+</pre>
+<p>
+        </p>
+<p>
+          If a single string is given (or the explicit form <code class="computeroutput">bp::cmd</code>),
+          it will be interpreted as a command line. That will cause the execution
+          function to search the <code class="computeroutput"><span class="identifier">PATH</span></code>
+          variable to find the executable. The alternative is the <code class="computeroutput"><span class="identifier">exe</span><span class="special">-</span><span class="identifier">args</span></code>
+          style, where the first string will be interpreted as a filename (including
+          the path), and the rest as arguments passed to said function.
+        </p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+            For more details on the <code class="computeroutput"><span class="identifier">cmd</span></code>/<code class="computeroutput"><span class="identifier">exe</span><span class="special">-</span><span class="identifier">args</span></code> style look <a class="link" href="">here</a>.
+          </p></td></tr>
+</table></div>
+<p>
+          So as a first step, we'll use the <code class="computeroutput"><span class="identifier">exe</span><span class="special">-</span><span class="identifier">args</span></code>
+          style.
+        </p>
+<p>
+</p>
+<pre class="programlisting"><span class="keyword">int</span> <span class="identifier">result</span> <span class="special">=</span> <code class="computeroutput"><a class="link" href="doxygen/system_8hpp_1afdcac75b20df3e60ae2ad316a352138f.html" title="Function template system">bp::system</a></code><span class="special">(</span><span class="string">"/usr/bin/g++"</span><span class="special">,</span> <span class="string">"main.cpp"</span><span class="special">);</span>
+</pre>
+<p>
+        </p>
+<p>
+          With that syntax we still have "g++" hard-coded, so let's assume
+          we get the string from an external source as <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">process</span><span class="special">::</span><span class="identifier">v1</span><span class="special">::</span><span class="identifier">filesystem</span><span class="special">::</span><span class="identifier">path</span></code>,
+          we can do this too.
+        </p>
+<p>
+</p>
+<pre class="programlisting"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">process</span><span class="special">::</span><span class="identifier">v1</span><span class="special">::</span><span class="identifier">filesystem</span><span class="special">::</span><span class="identifier">path</span> <span class="identifier">p</span> <span class="special">=</span> <span class="string">"/usr/bin/g++"</span><span class="special">;</span> <span class="comment">//or get it from somewhere else.</span>
+<span class="keyword">int</span> <span class="identifier">result</span> <span class="special">=</span> <code class="computeroutput"><a class="link" href="doxygen/system_8hpp_1afdcac75b20df3e60ae2ad316a352138f.html" title="Function template system">bp::system</a></code><span class="special">(</span><span class="identifier">p</span><span class="special">,</span> <span class="string">"main.cpp"</span><span class="special">);</span>
+</pre>
+<p>
+        </p>
+<p>
+          Now we might want to find the <code class="computeroutput"><span class="identifier">g</span><span class="special">++</span></code> executable in the <code class="computeroutput"><span class="identifier">PATH</span></code>-variable,
+          as the <code class="computeroutput"><span class="identifier">cmd</span></code> syntax would
+          do. <code class="computeroutput"><span class="identifier">Boost</span><span class="special">.</span><span class="identifier">process</span></code> provides a function to this end:
+          <code class="computeroutput"><a class="link" href="doxygen/search__path_8hpp_1a89767c1834c03e52b4521b0898124bf9.html" title="Function search_path">bp::search_path</a></code>.
+        </p>
+<p>
+</p>
+<pre class="programlisting"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">process</span><span class="special">::</span><span class="identifier">v1</span><span class="special">::</span><span class="identifier">filesystem</span><span class="special">::</span><span class="identifier">path</span> <span class="identifier">p</span> <span class="special">=</span> <code class="computeroutput"><a class="link" href="doxygen/search__path_8hpp_1a89767c1834c03e52b4521b0898124bf9.html" title="Function search_path">bp::search_path</a></code><span class="special">(</span><span class="string">"g++"</span><span class="special">);</span> <span class="comment">//or get it from somewhere else.</span>
+<span class="keyword">int</span> <span class="identifier">result</span> <span class="special">=</span> <code class="computeroutput"><a class="link" href="doxygen/system_8hpp_1afdcac75b20df3e60ae2ad316a352138f.html" title="Function template system">bp::system</a></code><span class="special">(</span><span class="identifier">p</span><span class="special">,</span> <span class="string">"main.cpp"</span><span class="special">);</span>
+</pre>
+<p>
+        </p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+            <code class="computeroutput"><a class="link" href="doxygen/search__path_8hpp_1a89767c1834c03e52b4521b0898124bf9.html" title="Function search_path">search_path</a></code>
+            will search for any executable with that name. This also includes to
+            add a file suffix on windows, such as <code class="computeroutput"><span class="special">.</span><span class="identifier">exe</span></code> or <code class="computeroutput"><span class="special">.</span><span class="identifier">bat</span></code>.
+          </p></td></tr>
+</table></div>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="boost_process.v1.tutorial.launch_mode"></a><a class="link" href="process.html#boost_process.v1.tutorial.launch_mode" title="Launch functions">Launch functions</a>
+</h4></div></div></div>
+<p>
+          Given that our example used the <code class="computeroutput"><a class="link" href="doxygen/system_8hpp_1afdcac75b20df3e60ae2ad316a352138f.html" title="Function template system">system</a></code>
+          function, our program will wait until the child process is completed. This
+          may be unwanted, especially since compiling can take a while.
+        </p>
+<p>
+          In order to avoid that, boost.process provides several ways to launch a
+          process. Besides the already mentioned <code class="computeroutput"><a class="link" href="doxygen/system_8hpp_1afdcac75b20df3e60ae2ad316a352138f.html" title="Function template system">system</a></code>
+          function and its asynchronous version <code class="computeroutput"><a class="link" href="doxygen/async__system_8hpp_1acfccfa877439b0bd412faf9517471336.html" title="Function template async_system">async_system</a></code>,
+          we can also use the <code class="computeroutput"><a class="link" href="doxygen/spawn_8hpp_1a464ec8d37cd8d3ee643346bc935961e3.html" title="Function template spawn">spawn</a></code>
+          function or the <code class="computeroutput"><a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1child.html" title="Class child">child</a></code>
+          class.
+        </p>
+<p>
+          The <code class="computeroutput"><a class="link" href="doxygen/spawn_8hpp_1a464ec8d37cd8d3ee643346bc935961e3.html" title="Function template spawn">spawn</a></code>
+          function launches a process and immediately detaches it, so no handle will
+          be returned and the process will be ignored. This is not what we need for
+          compiling, but maybe we want to entertain the user, while compiling:
+        </p>
+<p>
+</p>
+<pre class="programlisting"><code class="computeroutput"><a class="link" href="doxygen/spawn_8hpp_1a464ec8d37cd8d3ee643346bc935961e3.html" title="Function template spawn">bp::spawn</a></code><span class="special">(</span><code class="computeroutput"><a class="link" href="doxygen/search__path_8hpp_1a89767c1834c03e52b4521b0898124bf9.html" title="Function search_path">bp::search_path</a></code><span class="special">(</span><span class="string">"chrome"</span><span class="special">),</span> <a href="www.boost.org" target="_top">"www.boost.org"</a><span class="special">);</span>
+</pre>
+<p>
+        </p>
+<p>
+          Now for the more sensible approach for compiling: a non-blocking execution.
+          To implement that, we directly call the constructor of <code class="computeroutput"><a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1child.html" title="Class child">child</a></code>.
+        </p>
+<p>
+</p>
+<pre class="programlisting"><code class="computeroutput"><a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1child.html" title="Class child">bp::child</a></code> <span class="identifier">c</span><span class="special">(</span><code class="computeroutput"><a class="link" href="doxygen/search__path_8hpp_1a89767c1834c03e52b4521b0898124bf9.html" title="Function search_path">bp::search_path</a></code><span class="special">(</span><span class="string">"g++"</span><span class="special">),</span> <span class="string">"main.cpp"</span><span class="special">);</span>
+
+<span class="keyword">while</span> <span class="special">(</span><span class="identifier">c</span><span class="special">.</span><code class="computeroutput"><a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1child.html#doxygen.classboost_1_1process_1_1v1_1_1child_1ad94c269b0c84251eeb952751039d5882">running</a></code><span class="special">())</span>
+    <span class="identifier">do_some_stuff</span><span class="special">();</span>
+
+<span class="identifier">c</span><span class="special">.</span><code class="computeroutput"><a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1child.html#doxygen.classboost_1_1process_1_1v1_1_1child_1ab575ed3fd5dc3b7854d7b215715f7193">wait</a></code><span class="special">();</span> <span class="comment">//wait for the process to exit   </span>
+<span class="keyword">int</span> <span class="identifier">result</span> <span class="special">=</span> <span class="identifier">c</span><span class="special">.</span><code class="computeroutput"><a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1child.html#doxygen.classboost_1_1process_1_1v1_1_1child_1aafe53113c893683092d685f5cb81d66f">exit_code</a></code><span class="special">();</span>
+</pre>
+<p>
+        </p>
+<p>
+          So we launch the process, by calling the child constructor. Then we check
+          and do other things while the process is running and afterwards get the
+          exit code. The call to <code class="computeroutput"><a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1child.html#doxygen.classboost_1_1process_1_1v1_1_1child_1ab575ed3fd5dc3b7854d7b215715f7193">wait</a></code>
+          is necessary, to obtain it and tell the operating system, that no one is
+          waiting for the process anymore.
+        </p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+            You can also wait for a time span or until a time point with <code class="computeroutput"><a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1child.html#doxygen.classboost_1_1process_1_1v1_1_1child_1a78cdcc683aa084c413f757414a2184af">wait_for</a></code> and
+            <code class="computeroutput"><a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1child.html#doxygen.classboost_1_1process_1_1v1_1_1child_1a7834eb93966a560faa640fdeb3a7ae00">wait_until</a></code>.
+          </p></td></tr>
+</table></div>
+<div class="warning"><table border="0" summary="Warning">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Warning]" src="../../doc/src/images/warning.png"></td>
+<th align="left">Warning</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+            If you don't call wait on a child object, it will be terminated on destruction.
+            This can be avoided by calling <code class="computeroutput"><a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1child.html#doxygen.classboost_1_1process_1_1v1_1_1child_1a536b07da2e92574ffe2d54028e4c5e18">detach</a></code>
+            beforehand
+          </p></td></tr>
+</table></div>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="boost_process.v1.tutorial.error_handling"></a><a class="link" href="process.html#boost_process.v1.tutorial.error_handling" title="Error">Error</a>
+</h4></div></div></div>
+<p>
+          Until now, we have assumed that everything works out, but it is not impossible,
+          that "g++" is not present. That will cause the launch of the
+          process to fail. The default behaviour of all functions is to throw a
+          <a href="http://en.cppreference.com/w/cpp/error/system_error" target="_top">std::system_error</a>
+          on failure. As with many other functions in this library, passing an <a href="http://en.cppreference.com/w/cpp/error/error_code" target="_top">std::error_code</a>
+          will change the behaviour, so that instead of throwing an exception, the
+          error will be assigned to the error code.
+        </p>
+<p>
+</p>
+<pre class="programlisting"><span class="identifier">std</span><span class="special">::</span><span class="identifier">error_code</span> <span class="identifier">ec</span><span class="special">;</span>
+<code class="computeroutput"><a class="link" href="doxygen/system_8hpp_1afdcac75b20df3e60ae2ad316a352138f.html" title="Function template system">bp::system</a></code><span class="special">(</span><span class="string">"g++ main.cpp"</span><span class="special">,</span> <span class="identifier">ec</span><span class="special">);</span>
+</pre>
+<p>
+        </p>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="boost_process.v1.tutorial.io"></a><a class="link" href="process.html#boost_process.v1.tutorial.io" title="Synchronous I/O">Synchronous I/O</a>
+</h4></div></div></div>
+<p>
+          In the examples given above, we have only started a program, but did not
+          consider the output. The default depends on the system, but usually this
+          will just write it to the same output as the launching process. If this
+          shall be guaranteed, the streams can be explicitly forwarded like this.
+        </p>
+<p>
+</p>
+<pre class="programlisting"><code class="computeroutput"><a class="link" href="doxygen/system_8hpp_1afdcac75b20df3e60ae2ad316a352138f.html" title="Function template system">bp::system</a></code><span class="special">(</span><span class="string">"g++ main.cpp"</span><span class="special">,</span> <code class="computeroutput"><a class="link" href="doxygen/io_8hpp_1a08f2612fd4816c30079d5cfd3152e3b9.html" title="Global std_out">bp::std_out</a></code> <span class="special">&gt;</span> <span class="identifier">stdout</span><span class="special">,</span> <code class="computeroutput"><a class="link" href="doxygen/io_8hpp_1afb492f538744cdf9f1267e56189736a4.html" title="Global std_err">bp::std_err</a></code> <span class="special">&gt;</span> <span class="identifier">stderr</span><span class="special">,</span> <code class="computeroutput"><a class="link" href="doxygen/io_8hpp_1a7cbecdde6810cc19e95fa8e7401a4947.html" title="Global std_in">bp::std_in</a></code> <span class="special">&lt;</span> <span class="identifier">stdin</span><span class="special">);</span>
+</pre>
+<p>
+        </p>
+<p>
+          Now for the first example, we might want to just ignore the output, which
+          can be done by redirecting it to the null-device. This can be achieved
+          this way:
+        </p>
+<p>
+</p>
+<pre class="programlisting"><code class="computeroutput"><a class="link" href="doxygen/system_8hpp_1afdcac75b20df3e60ae2ad316a352138f.html" title="Function template system">bp::system</a></code><span class="special">(</span><span class="string">"g++ main.cpp"</span><span class="special">,</span> <code class="computeroutput"><a class="link" href="doxygen/io_8hpp_1a08f2612fd4816c30079d5cfd3152e3b9.html" title="Global std_out">bp::std_out</a></code> <span class="special">&gt;</span> <code class="computeroutput"><a class="link" href="doxygen/io_8hpp_1a113303b525c4e721e732555bc8fe2e2e.html" title="Global null">bp::null</a></code><span class="special">);</span>
+</pre>
+<p>
+        </p>
+<p>
+          Alternatively we can also easily redirect the output to a file:
+        </p>
+<p>
+</p>
+<pre class="programlisting"><code class="computeroutput"><a class="link" href="doxygen/system_8hpp_1afdcac75b20df3e60ae2ad316a352138f.html" title="Function template system">bp::system</a></code><span class="special">(</span><span class="string">"g++ main.cpp"</span><span class="special">,</span> <code class="computeroutput"><a class="link" href="doxygen/io_8hpp_1a08f2612fd4816c30079d5cfd3152e3b9.html" title="Global std_out">bp::std_out</a></code> <span class="special">&gt;</span> <span class="string">"gcc_out.log"</span><span class="special">);</span>
+</pre>
+<p>
+        </p>
+<p>
+          Now, let's take a more visual example for reading data. <a href="http://pubs.opengroup.org/onlinepubs/009696699/utilities/nm.html" target="_top">nm</a>
+          is a tool on posix, which reads the outline, i.e. a list of all entry points,
+          of a binary. Every entry point will be put into a single line, and we will
+          use a pipe to read it. At the end an empty line is appended, which we use
+          as the indication to stop reading. Boost.process provides the pipestream
+          (<code class="computeroutput"><a class="link" href="process.html#doxygen.pipe_8hpp_1a1aa6e4027b6d9be54fd3f4300fc1605a">ipstream</a></code>, <code class="computeroutput"><a class="link" href="process.html#doxygen.pipe_8hpp_1a1e99a585a8965f4ddb3044f026f8cd55">opstream</a></code>, <code class="computeroutput"><a class="link" href="process.html#doxygen.pipe_8hpp_1a4d1b4d556622118ffef11dffaa6df6cd">pstream</a></code>)
+          to wrap around the <code class="computeroutput"><a class="link" href="process.html#doxygen.pipe_8hpp_1a75fdd05d043b47c0f6216841bd47c850">pipe</a></code>
+          and provide an implementation of the <a href="http://en.cppreference.com/w/cpp/io/basic_istream" target="_top">std::istream</a>,
+          <a href="http://en.cppreference.com/w/cpp/io/basic_ostream" target="_top">std::ostream</a>
+          and <a href="http://en.cppreference.com/w/cpp/io/basic_iostream" target="_top">std::iostream</a>
+          interface.
+        </p>
+<p>
+</p>
+<pre class="programlisting"><a href="http://en.cppreference.com/w/cpp/container/vector" target="_top">std::vector</a><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">&gt;</span> <span class="identifier">read_outline</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="special">&amp;</span> <span class="identifier">file</span><span class="special">)</span>
+<span class="special">{</span>
+    <code class="computeroutput"><a class="link" href="process.html#doxygen.pipe_8hpp_1a1aa6e4027b6d9be54fd3f4300fc1605a">bp::ipstream</a></code> <span class="identifier">is</span><span class="special">;</span> <span class="comment">//reading pipe-stream</span>
+    <code class="computeroutput"><a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1child.html" title="Class child">bp::child</a></code> <span class="identifier">c</span><span class="special">(</span><code class="computeroutput"><a class="link" href="doxygen/search__path_8hpp_1a89767c1834c03e52b4521b0898124bf9.html" title="Function search_path">bp::search_path</a></code><span class="special">(</span><span class="string">"nm"</span><span class="special">),</span> <span class="identifier">file</span><span class="special">,</span> <code class="computeroutput"><a class="link" href="doxygen/io_8hpp_1a08f2612fd4816c30079d5cfd3152e3b9.html" title="Global std_out">bp::std_out</a></code> <span class="special">&gt;</span> <span class="identifier">is</span><span class="special">);</span>
+
+    <a href="http://en.cppreference.com/w/cpp/container/vector" target="_top">std::vector</a><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">&gt;</span> <span class="identifier">data</span><span class="special">;</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">line</span><span class="special">;</span>
+
+    <span class="keyword">while</span> <span class="special">(</span><span class="identifier">c</span><span class="special">.</span><code class="computeroutput"><a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1child.html#doxygen.classboost_1_1process_1_1v1_1_1child_1ad94c269b0c84251eeb952751039d5882">running</a></code><span class="special">()</span> <span class="special">&amp;&amp;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">getline</span><span class="special">(</span><span class="identifier">is</span><span class="special">,</span> <span class="identifier">line</span><span class="special">)</span> <span class="special">&amp;&amp;</span> <span class="special">!</span><span class="identifier">line</span><span class="special">.</span><span class="identifier">empty</span><span class="special">())</span>
+        <span class="identifier">data</span><span class="special">.</span><span class="identifier">push_back</span><span class="special">(</span><span class="identifier">line</span><span class="special">);</span>
+
+    <span class="identifier">c</span><span class="special">.</span><code class="computeroutput"><a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1child.html#doxygen.classboost_1_1process_1_1v1_1_1child_1ab575ed3fd5dc3b7854d7b215715f7193">wait</a></code><span class="special">();</span>
+
+    <span class="keyword">return</span> <span class="identifier">data</span><span class="special">;</span>
+<span class="special">}</span>
+</pre>
+<p>
+        </p>
+<p>
+          What this does is redirect the <code class="computeroutput"><span class="identifier">stdout</span></code>
+          of the process into a pipe and we read this synchronously.
+        </p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+            You can do the same thing with <code class="computeroutput"><a class="link" href="doxygen/io_8hpp_1afb492f538744cdf9f1267e56189736a4.html" title="Global std_err">std_err</a></code>.
+          </p></td></tr>
+</table></div>
+<p>
+          Now we get the name from <code class="computeroutput"><span class="identifier">nm</span></code>
+          and we might want to demangle it, so we use input and output. <code class="computeroutput"><span class="identifier">nm</span></code> has a demangle option, but for the
+          sake of the example, we'll use <a href="https://sourceware.org/binutils/docs/binutils/c_002b_002bfilt.html" target="_top">c++filt</a>
+          for this.
+        </p>
+<p>
+</p>
+<pre class="programlisting"><code class="computeroutput"><a class="link" href="process.html#doxygen.pipe_8hpp_1a1e99a585a8965f4ddb3044f026f8cd55">bp::opstream</a></code> <span class="identifier">in</span><span class="special">;</span>
+<code class="computeroutput"><a class="link" href="process.html#doxygen.pipe_8hpp_1a1aa6e4027b6d9be54fd3f4300fc1605a">bp::ipstream</a></code> <span class="identifier">out</span><span class="special">;</span>
+
+<code class="computeroutput"><a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1child.html" title="Class child">bp::child</a></code> <span class="identifier">c</span><span class="special">(</span><span class="string">"c++filt"</span><span class="special">,</span> <span class="identifier">std_out</span> <span class="special">&gt;</span> <span class="identifier">out</span><span class="special">,</span> <span class="identifier">std_in</span> <span class="special">&lt;</span> <span class="identifier">in</span><span class="special">);</span>
+
+<span class="identifier">in</span> <span class="special">&lt;&lt;</span> <span class="string">"_ZN5boost7process8tutorialE"</span> <span class="special">&lt;&lt;</span> <span class="identifier">endl</span><span class="special">;</span>
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">value</span><span class="special">;</span>
+<span class="identifier">out</span> <span class="special">&gt;&gt;</span> <span class="identifier">value</span><span class="special">;</span>
+
+<span class="identifier">c</span><span class="special">.</span><code class="computeroutput"><a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1child.html#doxygen.classboost_1_1process_1_1v1_1_1child_1a3b136f8540e25731c155193fea12bd2d">terminate</a></code><span class="special">();</span>
+</pre>
+<p>
+        </p>
+<p>
+          Now you might want to forward output from one process to another processes
+          input.
+        </p>
+<p>
+</p>
+<pre class="programlisting"><a href="http://en.cppreference.com/w/cpp/container/vector" target="_top">std::vector</a><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">&gt;</span> <span class="identifier">read_demangled_outline</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="special">&amp;</span> <span class="identifier">file</span><span class="special">)</span>
+<span class="special">{</span>
+    <code class="computeroutput"><a class="link" href="process.html#doxygen.pipe_8hpp_1a75fdd05d043b47c0f6216841bd47c850">bp::pipe</a></code> <span class="identifier">p</span><span class="special">;</span>
+    <code class="computeroutput"><a class="link" href="process.html#doxygen.pipe_8hpp_1a1aa6e4027b6d9be54fd3f4300fc1605a">bp::ipstream</a></code> <span class="identifier">is</span><span class="special">;</span>
+
+    <a href="http://en.cppreference.com/w/cpp/container/vector" target="_top">std::vector</a><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">&gt;</span> <span class="identifier">outline</span><span class="special">;</span>
+
+    <span class="comment">//we just use the same pipe, so the output of nm is directly passed as input to c++filt</span>
+    <code class="computeroutput"><a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1child.html" title="Class child">bp::child</a></code> <span class="identifier">nm</span><span class="special">(</span><code class="computeroutput"><a class="link" href="doxygen/search__path_8hpp_1a89767c1834c03e52b4521b0898124bf9.html" title="Function search_path">bp::search_path</a></code><span class="special">(</span><span class="string">"nm"</span><span class="special">),</span> <span class="identifier">file</span><span class="special">,</span>  <code class="computeroutput"><a class="link" href="doxygen/io_8hpp_1a08f2612fd4816c30079d5cfd3152e3b9.html" title="Global std_out">bp::std_out</a></code> <span class="special">&gt;</span> <span class="identifier">p</span><span class="special">);</span>
+    <code class="computeroutput"><a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1child.html" title="Class child">bp::child</a></code> <span class="identifier">filt</span><span class="special">(</span><code class="computeroutput"><a class="link" href="doxygen/search__path_8hpp_1a89767c1834c03e52b4521b0898124bf9.html" title="Function search_path">bp::search_path</a></code><span class="special">(</span><span class="string">"c++filt"</span><span class="special">),</span> <code class="computeroutput"><a class="link" href="doxygen/io_8hpp_1a7cbecdde6810cc19e95fa8e7401a4947.html" title="Global std_in">bp::std_in</a></code> <span class="special">&lt;</span> <span class="identifier">p</span><span class="special">,</span> <code class="computeroutput"><a class="link" href="doxygen/io_8hpp_1a08f2612fd4816c30079d5cfd3152e3b9.html" title="Global std_out">bp::std_out</a></code> <span class="special">&gt;</span> <span class="identifier">is</span><span class="special">);</span>
+
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">line</span><span class="special">;</span>
+    <span class="keyword">while</span> <span class="special">(</span><span class="identifier">filt</span><span class="special">.</span><span class="identifier">running</span><span class="special">()</span> <span class="special">&amp;&amp;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">getline</span><span class="special">(</span><span class="identifier">is</span><span class="special">,</span> <span class="identifier">line</span><span class="special">))</span> <span class="comment">//when nm finished the pipe closes and c++filt exits</span>
+        <span class="identifier">outline</span><span class="special">.</span><span class="identifier">push_back</span><span class="special">(</span><span class="identifier">line</span><span class="special">);</span>
+
+    <span class="identifier">nm</span><span class="special">.</span><code class="computeroutput"><a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1child.html#doxygen.classboost_1_1process_1_1v1_1_1child_1ab575ed3fd5dc3b7854d7b215715f7193">wait</a></code><span class="special">();</span>
+    <span class="identifier">filt</span><span class="special">.</span><span class="identifier">wait</span><span class="special">();</span>
+<span class="special">}</span>
+</pre>
+<p>
+        </p>
+<p>
+          This forwards the data from <code class="computeroutput"><span class="identifier">nm</span></code>
+          to <code class="computeroutput"><span class="identifier">c</span><span class="special">++</span><span class="identifier">filt</span></code> without your process needing to
+          do anything.
+        </p>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="boost_process.v1.tutorial.async_io"></a><a class="link" href="process.html#boost_process.v1.tutorial.async_io" title="Asynchronous I/O">Asynchronous I/O</a>
+</h4></div></div></div>
+<p>
+          Boost.process allows the usage of boost.asio to implement asynchronous
+          I/O. If you are familiar with <a href="http://www.boost.org/doc/libs/release/libs/asio/" target="_top">boost.asio</a>
+          (which we highly recommend), you can use <code class="computeroutput"><a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1async__pipe.html" title="Class async_pipe">async_pipe</a></code>
+          which is implemented as an I/O-Object and can be used like <code class="computeroutput"><a class="link" href="process.html#doxygen.pipe_8hpp_1a75fdd05d043b47c0f6216841bd47c850">pipe</a></code>
+          as shown above.
+        </p>
+<p>
+          Now we get back to our compiling example. For <code class="computeroutput"><span class="identifier">nm</span></code>
+          we might analyze the output line by line, but the compiler output will
+          just be put into one large buffer.
+        </p>
+<p>
+          With <a href="http://www.boost.org/doc/libs/release/libs/asio/" target="_top">boost.asio</a>
+          this is what it looks like.
+        </p>
+<p>
+</p>
+<pre class="programlisting"><a href="http://www.boost.org/doc/libs/release/doc/html/boost_asio/reference/io_service.html" target="_top">boost::asio::io_service</a> <span class="identifier">ios</span><span class="special">;</span>
+<a href="http://en.cppreference.com/w/cpp/container/vector" target="_top">std::vector</a><span class="special">&lt;</span><span class="keyword">char</span><span class="special">&gt;</span> <span class="identifier">buf</span><span class="special">(</span><span class="number">4096</span><span class="special">);</span>
+
+<code class="computeroutput"><a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1async__pipe.html" title="Class async_pipe">bp::async_pipe</a></code> <span class="identifier">ap</span><span class="special">(</span><span class="identifier">ios</span><span class="special">);</span>
+
+<code class="computeroutput"><a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1child.html" title="Class child">bp::child</a></code> <span class="identifier">c</span><span class="special">(</span><code class="computeroutput"><a class="link" href="doxygen/search__path_8hpp_1a89767c1834c03e52b4521b0898124bf9.html" title="Function search_path">bp::search_path</a></code><span class="special">(</span><span class="string">"g++"</span><span class="special">),</span> <span class="string">"main.cpp"</span><span class="special">,</span> <code class="computeroutput"><a class="link" href="doxygen/io_8hpp_1a08f2612fd4816c30079d5cfd3152e3b9.html" title="Global std_out">bp::std_out</a></code> <span class="special">&gt;</span> <span class="identifier">ap</span><span class="special">);</span>
+
+<a href="http://www.boost.org/doc/libs/release/doc/html/boost_asio/reference/async_read.html" target="_top">boost::asio::async_read</a><span class="special">(</span><span class="identifier">ap</span><span class="special">,</span> <a href="http://www.boost.org/doc/libs/release/doc/html/boost_asio/reference/buffer.html" target="_top">boost::asio::buffer</a><span class="special">(</span><span class="identifier">buf</span><span class="special">),</span>
+                <span class="special">[](</span><span class="keyword">const</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">system</span><span class="special">::</span><span class="identifier">error_code</span> <span class="special">&amp;</span><span class="identifier">ec</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">size</span><span class="special">){});</span>
+
+<span class="identifier">ios</span><span class="special">.</span><span class="identifier">run</span><span class="special">();</span>
+<span class="keyword">int</span> <span class="identifier">result</span> <span class="special">=</span> <span class="identifier">c</span><span class="special">.</span><span class="identifier">exit_code</span><span class="special">();</span>
+</pre>
+<p>
+        </p>
+<p>
+          To make it easier, boost.process provides a simpler interface for that,
+          so that the buffer can be passed directly, provided we also pass a reference
+          to an <a href="http://www.boost.org/doc/libs/release/doc/html/boost_asio/reference/io_service.html" target="_top">boost::asio::io_service</a>.
+        </p>
+<p>
+</p>
+<pre class="programlisting"><a href="http://www.boost.org/doc/libs/release/doc/html/boost_asio/reference/io_service.html" target="_top">boost::asio::io_service</a> <span class="identifier">ios</span><span class="special">;</span>
+<a href="http://en.cppreference.com/w/cpp/container/vector" target="_top">std::vector</a><span class="special">&lt;</span><span class="keyword">char</span><span class="special">&gt;</span> <span class="identifier">buf</span><span class="special">(</span><span class="number">4096</span><span class="special">);</span>
+
+<code class="computeroutput"><a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1child.html" title="Class child">bp::child</a></code> <span class="identifier">c</span><span class="special">(</span><code class="computeroutput"><a class="link" href="doxygen/search__path_8hpp_1a89767c1834c03e52b4521b0898124bf9.html" title="Function search_path">bp::search_path</a></code><span class="special">(</span><span class="string">"g++"</span><span class="special">),</span> <span class="string">"main.cpp"</span><span class="special">,</span> <code class="computeroutput"><a class="link" href="doxygen/io_8hpp_1a08f2612fd4816c30079d5cfd3152e3b9.html" title="Global std_out">bp::std_out</a></code> <span class="special">&gt;</span> <a href="http://www.boost.org/doc/libs/release/doc/html/boost_asio/reference/buffer.html" target="_top">boost::asio::buffer</a><span class="special">(</span><span class="identifier">buf</span><span class="special">),</span> <span class="identifier">ios</span><span class="special">);</span>
+
+<span class="identifier">ios</span><span class="special">.</span><span class="identifier">run</span><span class="special">();</span>
+<span class="keyword">int</span> <span class="identifier">result</span> <span class="special">=</span> <span class="identifier">c</span><span class="special">.</span><span class="identifier">exit_code</span><span class="special">();</span>
+</pre>
+<p>
+        </p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+            Passing an instance of <a href="http://www.boost.org/doc/libs/release/doc/html/boost_asio/reference/io_service.html" target="_top">boost::asio::io_service</a>
+            to the launching function automatically cause it to wait asynchronously
+            for the exit, so no call of <code class="computeroutput"><a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1child.html#doxygen.classboost_1_1process_1_1v1_1_1child_1ab575ed3fd5dc3b7854d7b215715f7193">wait</a></code>
+            is needed.
+          </p></td></tr>
+</table></div>
+<p>
+          To make it even easier, you can use <a href="http://en.cppreference.com/w/cpp/thread/future" target="_top">std::future</a>
+          for asynchronous operations (you will still need to pass a reference to
+          a <a href="http://www.boost.org/doc/libs/release/doc/html/boost_asio/reference/io_service.html" target="_top">boost::asio::io_service</a>)
+          to the launching function, unless you use <code class="computeroutput"><a class="link" href="doxygen/system_8hpp_1afdcac75b20df3e60ae2ad316a352138f.html" title="Function template system">bp::system</a></code>
+          or <code class="computeroutput"><a class="link" href="doxygen/async__system_8hpp_1acfccfa877439b0bd412faf9517471336.html" title="Function template async_system">bp::async_system</a></code>.
+        </p>
+<p>
+          Now we will revisit our first example and read the compiler output asynchronously:
+        </p>
+<p>
+</p>
+<pre class="programlisting"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><a href="http://www.boost.org/doc/libs/release/doc/html/boost_asio/reference/io_service.html" target="_top">boost::asio::io_service</a> <span class="identifier">ios</span><span class="special">;</span>
+
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">future</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">&gt;</span> <span class="identifier">data</span><span class="special">;</span>
+
+<span class="identifier">child</span> <span class="identifier">c</span><span class="special">(</span><span class="string">"g++"</span><span class="special">,</span> <span class="string">"main.cpp"</span><span class="special">,</span> <span class="comment">//set the input</span>
+        <code class="computeroutput"><a class="link" href="doxygen/io_8hpp_1a7cbecdde6810cc19e95fa8e7401a4947.html" title="Global std_in">bp::std_in</a></code><span class="special">.</span><span class="identifier">close</span><span class="special">(),</span>
+        <code class="computeroutput"><a class="link" href="doxygen/io_8hpp_1a08f2612fd4816c30079d5cfd3152e3b9.html" title="Global std_out">bp::std_out</a></code> <span class="special">&gt;</span> <code class="computeroutput"><a class="link" href="doxygen/io_8hpp_1a113303b525c4e721e732555bc8fe2e2e.html" title="Global null">bp::null</a></code><span class="special">,</span> <span class="comment">//so it can be written without anything</span>
+        <code class="computeroutput"><a class="link" href="doxygen/io_8hpp_1afb492f538744cdf9f1267e56189736a4.html" title="Global std_err">bp::std_err</a></code> <span class="special">&gt;</span> <span class="identifier">data</span><span class="special">,</span>
+        <span class="identifier">ios</span><span class="special">);</span>
+
+
+<span class="identifier">ios</span><span class="special">.</span><span class="identifier">run</span><span class="special">();</span> <span class="comment">//this will actually block until the compiler is finished</span>
+
+<span class="keyword">auto</span> <span class="identifier">err</span> <span class="special">=</span>  <span class="identifier">data</span><span class="special">.</span><span class="identifier">get</span><span class="special">();</span>
+</pre>
+<p>
+        </p>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="boost_process.v1.tutorial.group"></a><a class="link" href="process.html#boost_process.v1.tutorial.group" title="Groups">Groups</a>
+</h4></div></div></div>
+<p>
+          When launching several processes, they can be grouped together. This will
+          also apply for a child process, that launches other processes, if they
+          do not modify the group membership. E.g. if you call <code class="computeroutput"><span class="identifier">make</span></code>
+          which launches other processes and call terminate on it, it will not terminate
+          all the child processes of the child unless you use a group.
+        </p>
+<p>
+          The two main reasons to use groups are:
+        </p>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+              Being able to terminate child processes of the child process
+            </li>
+<li class="listitem">
+              Grouping several processes into one, just so they can be terminated
+              at once
+            </li>
+</ol></div>
+<p>
+          If we have a program like <code class="computeroutput"><span class="identifier">make</span></code>,
+          which does launch its own child processes, a call of <code class="computeroutput"><a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1child.html#doxygen.classboost_1_1process_1_1v1_1_1child_1a3b136f8540e25731c155193fea12bd2d">terminate</a></code>
+          might not suffice. I.e. if we have a makefile launching <code class="computeroutput"><span class="identifier">gcc</span></code>
+          and use the following code, the <code class="computeroutput"><span class="identifier">gcc</span></code>
+          process will still run afterwards:
+        </p>
+<p>
+</p>
+<pre class="programlisting"><code class="computeroutput"><a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1child.html" title="Class child">bp::child</a></code> <span class="identifier">c</span><span class="special">(</span><span class="string">"make"</span><span class="special">);</span>
+<span class="keyword">if</span> <span class="special">(!</span><span class="identifier">c</span><span class="special">.</span><code class="computeroutput"><a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1child.html#doxygen.classboost_1_1process_1_1v1_1_1child_1a78cdcc683aa084c413f757414a2184af">wait_for</a></code><span class="special">(</span><a href="http://en.cppreference.com/w/cpp/chrono/duration" target="_top">std::chrono::seconds</a><span class="special">(</span><span class="number">10</span><span class="special">)))</span> <span class="comment">//give it 10 seconds</span>
+    <span class="identifier">c</span><span class="special">.</span><code class="computeroutput"><a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1child.html#doxygen.classboost_1_1process_1_1v1_1_1child_1a3b136f8540e25731c155193fea12bd2d">terminate</a></code><span class="special">();</span> <span class="comment">//then terminate</span>
+</pre>
+<p>
+        </p>
+<p>
+          So in order to also terminate <code class="computeroutput"><span class="identifier">gcc</span></code>
+          we can use a group.
+        </p>
+<p>
+</p>
+<pre class="programlisting"><code class="computeroutput"><a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1group.html" title="Class group">bp::group</a></code> <span class="identifier">g</span><span class="special">;</span>
+<code class="computeroutput"><a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1child.html" title="Class child">bp::child</a></code> <span class="identifier">c</span><span class="special">(</span><span class="string">"make"</span><span class="special">,</span> <span class="identifier">g</span><span class="special">);</span>
+<span class="keyword">if</span> <span class="special">(!</span><span class="identifier">g</span><span class="special">.</span><code class="computeroutput"><a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1group.html#doxygen.classboost_1_1process_1_1v1_1_1group_1a8be0c6337b1f09a7fa472df4678636a9">wait_for</a></code><span class="special">(</span><a href="http://en.cppreference.com/w/cpp/chrono/duration" target="_top">std::chrono::seconds</a><span class="special">(</span><span class="number">10</span><span class="special">)))</span>
+    <span class="identifier">g</span><span class="special">.</span><code class="computeroutput"><a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1group.html#doxygen.classboost_1_1process_1_1v1_1_1group_1a03cade832865eab81052cb819e6a7485">terminate</a></code><span class="special">();</span>
+
+<span class="identifier">c</span><span class="special">.</span><code class="computeroutput"><a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1child.html#doxygen.classboost_1_1process_1_1v1_1_1child_1ab575ed3fd5dc3b7854d7b215715f7193">wait</a></code><span class="special">();</span> <span class="comment">//to avoid a zombie process &amp; get the exit code</span>
+</pre>
+<p>
+        </p>
+<p>
+          Now given the example, we still call <code class="computeroutput"><a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1child.html#doxygen.classboost_1_1process_1_1v1_1_1child_1ab575ed3fd5dc3b7854d7b215715f7193">wait</a></code>
+          to avoid a zombie process. An easier solution for that might be to use
+          <code class="computeroutput"><a class="link" href="doxygen/spawn_8hpp_1a464ec8d37cd8d3ee643346bc935961e3.html" title="Function template spawn">spawn</a></code>.
+        </p>
+<p>
+          To put two processes into one group, the following code suffices. Spawn
+          already launches a detached process (i.e. without a child-handle), but
+          they can be grouped, to that in the case of a problem, RAII is still a
+          given.
+        </p>
+<p>
+</p>
+<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">f</span><span class="special">()</span>
+<span class="special">{</span>
+    <code class="computeroutput"><a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1group.html" title="Class group">bp::group</a></code> <span class="identifier">g</span><span class="special">;</span>
+    <code class="computeroutput"><a class="link" href="doxygen/spawn_8hpp_1a464ec8d37cd8d3ee643346bc935961e3.html" title="Function template spawn">bp::spawn</a></code><span class="special">(</span><span class="string">"foo"</span><span class="special">,</span> <span class="identifier">g</span><span class="special">);</span>
+    <code class="computeroutput"><a class="link" href="doxygen/spawn_8hpp_1a464ec8d37cd8d3ee643346bc935961e3.html" title="Function template spawn">bp::spawn</a></code><span class="special">(</span><span class="string">"bar"</span><span class="special">,</span> <span class="identifier">g</span><span class="special">);</span>
+
+    <span class="identifier">do_something</span><span class="special">();</span>
+
+    <span class="identifier">g</span><span class="special">.</span><code class="computeroutput"><a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1group.html#doxygen.classboost_1_1process_1_1v1_1_1group_1ad6de58c684db3d18df8400d4e17fdcd3">wait</a></code><span class="special">();</span>
+<span class="special">};</span>
+</pre>
+<p>
+        </p>
+<p>
+          In the example, it will wait for both processes at the end of the function
+          unless an exception occurs. I.e. if an exception is thrown, the group will
+          be terminated.
+        </p>
+<p>
+          Please see the <code class="computeroutput">boost/process/group.hpp</code>
+          for more information.
+        </p>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="boost_process.v1.tutorial.env"></a><a class="link" href="process.html#boost_process.v1.tutorial.env" title="Environment">Environment</a>
+</h4></div></div></div>
+<p>
+          This library provides access to the environment of the current process
+          and allows setting it for the child process.
+        </p>
+<p>
+</p>
+<pre class="programlisting"><span class="comment">//get a handle to the current environment</span>
+<span class="keyword">auto</span> <span class="identifier">env</span> <span class="special">=</span> <code class="computeroutput"><a class="link" href="process.html#doxygen.namespaceboost_1_1this__process_1ae593bfc822ee52a2991528ed24a8e729">boost::this_process::environment</a></code><span class="special">();</span>
+<span class="comment">//add a variable to the current environment</span>
+<span class="identifier">env</span><span class="special">[</span><span class="string">"VALUE_1"</span><span class="special">]</span> <span class="special">=</span> <span class="string">"foo"</span><span class="special">;</span>
+
+<span class="comment">//copy it into an environment separate to the one of this process</span>
+<code class="computeroutput"><a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1basic__environment.html" title="Class template basic_environment">bp::environment</a></code> <span class="identifier">env_</span> <span class="special">=</span> <span class="identifier">env</span><span class="special">;</span>
+<span class="comment">//append two values to a variable in the new env</span>
+<span class="identifier">env_</span><span class="special">[</span><span class="string">"VALUE_2"</span><span class="special">]</span> <span class="special">+=</span> <span class="special">{</span><span class="string">"bar1"</span><span class="special">,</span> <span class="string">"bar2"</span><span class="special">};</span>
+
+<span class="comment">//launch a process with `env_`</span>
+<code class="computeroutput"><a class="link" href="doxygen/system_8hpp_1afdcac75b20df3e60ae2ad316a352138f.html" title="Function template system">bp::system</a></code><span class="special">(</span><span class="string">"stuff"</span><span class="special">,</span> <span class="identifier">env_</span><span class="special">);</span>
+</pre>
+<p>
+        </p>
+<p>
+          A more convenient way to modify the environment for the child is the <code class="computeroutput"><a class="link" href="doxygen/env_8hpp_1ab419cb076d2ab62ac6c22c40732ed15a.html" title="Global env">env</a></code> property, which can be used
+          in the example as following:
+        </p>
+<p>
+</p>
+<pre class="programlisting"><code class="computeroutput"><a class="link" href="doxygen/system_8hpp_1afdcac75b20df3e60ae2ad316a352138f.html" title="Function template system">bp::system</a></code><span class="special">(</span><span class="string">"stuff"</span><span class="special">,</span> <code class="computeroutput"><a class="link" href="doxygen/env_8hpp_1ab419cb076d2ab62ac6c22c40732ed15a.html" title="Global env">bp::env</a></code><span class="special">[</span><span class="string">"VALUE_1"</span><span class="special">]=</span><span class="string">"foo"</span><span class="special">,</span> <code class="computeroutput"><a class="link" href="doxygen/env_8hpp_1ab419cb076d2ab62ac6c22c40732ed15a.html" title="Global env">bp::env</a></code><span class="special">[</span><span class="string">"VALUE_2"</span><span class="special">]+={</span><span class="string">"bar1"</span><span class="special">,</span> <span class="string">"bar2"</span><span class="special">});</span>
+</pre>
+<p>
+        </p>
+<p>
+          Please see the <code class="computeroutput">boost/process/environment.hpp</code>
+          for more information.
+        </p>
+</div>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="boost_process.v1.design"></a><a class="link" href="process.html#boost_process.v1.design" title="Design Rationale">Design Rationale</a>
+</h3></div></div></div>
+<div class="toc"><dl class="toc">
+<dt><span class="section"><a href="process.html#boost_process.v1.design.scope">Scope</a></span></dt>
+<dt><span class="section"><a href="process.html#boost_process.v1.design.interface_style">Interface
+        Style</a></span></dt>
+<dt><span class="section"><a href="process.html#boost_process.v1.design.arg_cmd_style">Arguments/Command
+        Style</a></span></dt>
+<dt><span class="section"><a href="process.html#boost_process.v1.design.plat_ext">Extensions</a></span></dt>
+</dl></div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="boost_process.v1.design.scope"></a><a class="link" href="process.html#boost_process.v1.design.scope" title="Scope">Scope</a>
+</h4></div></div></div>
+<p>
+          This library is meant to give a wrapper around the different OS-specific
+          methods to launch processes. Its aim is to provide all functionality that
+          is available on those systems and allow the user to do all related things,
+          which require using the OS APIs.
+        </p>
+<p>
+          <span class="bold"><strong>This library does not try to provide a full library
+          for everything process related.</strong></span> In many discussions the proposal
+          was made to build boost.process into a DSEL <a href="#ftn.boost_process.v1.design.scope.f0" class="footnote" name="boost_process.v1.design.scope.f0"><sup class="footnote">[28]</sup></a> of some sort. This is not the goal, it rather provides the
+          facilities to build such a DSEL-library on top of it. Therefore the library
+          also does <span class="bold"><strong>not</strong></span> force any particular use
+          (such as only asynchronous communication) on its user. It rather could
+          be integrated with such a library.
+        </p>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="boost_process.v1.design.interface_style"></a><a class="link" href="process.html#boost_process.v1.design.interface_style" title="Interface Style">Interface
+        Style</a>
+</h4></div></div></div>
+<p>
+          Boost.Process does use a very particular style when constructing a process.
+          This is because a process holds many properties, which are not members
+          of the actual child class. Those properties are in many cases not accessible
+          by the father process, for example when using environments. Here the child
+          process can modify its own environment, but there is no way for the father
+          process to know. That means, that a child process has properties that cannot
+          be accessed in C++.
+        </p>
+<p>
+          This now leads to the two styles supported and mixed by this library. Overloading
+          and properties. Consider that you may want to launch a process passing
+          a number of arguments. This is supported in both styles, and would look
+          like this:
+        </p>
+<p>
+</p>
+<pre class="programlisting"><span class="identifier">system</span><span class="special">(</span><span class="string">"gcc"</span><span class="special">,</span> <span class="string">"--version"</span><span class="special">);</span> <span class="comment">//overloading</span>
+<span class="identifier">system</span><span class="special">(</span><span class="string">"gcc"</span><span class="special">,</span> <span class="identifier">args</span><span class="special">={</span><span class="string">"--version"</span><span class="special">});</span> <span class="comment">//property style.</span>
+</pre>
+<p>
+        </p>
+<p>
+          Both styles can also be mixed in some cases.
+        </p>
+<p>
+</p>
+<pre class="programlisting"><span class="identifier">system</span><span class="special">(</span><span class="string">"gcc"</span><span class="special">,</span> <span class="string">"-c"</span><span class="special">,</span> <span class="identifier">args</span><span class="special">+={</span><span class="string">"main.cpp"</span><span class="special">});</span>
+</pre>
+<p>
+        </p>
+<p>
+          In the following section the available styles will be described. Note that
+          the overload style is implemented via type traits, so the types will be
+          listed.
+        </p>
+<div class="caution"><table border="0" summary="Caution">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Caution]" src="../../doc/src/images/caution.png"></td>
+<th align="left">Caution</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+            There is no guarantee in which order the arguments will be applied! There
+            is however a guarantee for arguments belonging together, i.e. the string
+            argument and the args property will be evaluated in the order given.
+          </p></td></tr>
+</table></div>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="boost_process.v1.design.arg_cmd_style"></a><a class="link" href="process.html#boost_process.v1.design.arg_cmd_style" title="Arguments/Command Style">Arguments/Command
+        Style</a>
+</h4></div></div></div>
+<p>
+          When passing arguments to the process, two styles are provided, the cmd-style
+          and the exe-/args-style.
+        </p>
+<p>
+          The cmd style will interpret the string as a sequence of the exe and arguments
+          and parse them as such, while the exe-/args-style will interpret each string
+          as an argument.
+        </p>
+<div class="table">
+<a name="boost_process.v1.design.arg_cmd_style.id"></a><p class="title"><b>Table 29.1. Cmd vs Exe/Args</b></p>
+<div class="table-contents"><table class="table" summary="Cmd vs Exe/Args">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                  <p>
+                    String
+                  </p>
+                </th>
+<th>
+                  <p>
+                    Cmd
+                  </p>
+                </th>
+<th>
+                  <p>
+                    Exe/Args
+                  </p>
+                </th>
+</tr></thead>
+<tbody><tr>
+<td>
+                  <p>
+                    "gcc --version"
+                  </p>
+                </td>
+<td>
+                  <p>
+                    {"gcc", "--version"}
+                  </p>
+                </td>
+<td>
+                  <p>
+                    {"\"gcc --version\""}
+                  </p>
+                </td>
+</tr></tbody>
+</table></div>
+</div>
+<br class="table-break"><p>
+          When using the overloading variant, a single string will result in a cmd
+          interpretation, several strings will yield a exe-args interpretation. Both
+          versions can be set explicitly:
+        </p>
+<p>
+</p>
+<pre class="programlisting"><span class="identifier">system</span><span class="special">(</span><span class="string">"grep -c false /etc/passwd"</span><span class="special">);</span> <span class="comment">//cmd style</span>
+<span class="identifier">system</span><span class="special">(</span><span class="string">"grep"</span><span class="special">,</span> <span class="string">"-c"</span><span class="special">,</span> <span class="string">"false"</span><span class="special">,</span> <span class="string">"/etc/passwd"</span><span class="special">);</span> <span class="comment">//exe-/args-</span>
+
+<span class="identifier">system</span><span class="special">(</span><span class="identifier">cmd</span><span class="special">=</span><span class="string">"grep -c false /etc/passwd"</span><span class="special">);</span> <span class="comment">//cmd style</span>
+<span class="identifier">system</span><span class="special">(</span><span class="identifier">exe</span><span class="special">=</span><span class="string">"grep"</span><span class="special">,</span> <span class="identifier">args</span><span class="special">={</span><span class="string">"-c"</span><span class="special">,</span> <span class="string">"false"</span><span class="special">,</span> <span class="string">"/etc/passwd"</span><span class="special">});</span> <span class="comment">//exe-/args-</span>
+</pre>
+<p>
+        </p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+            If a '"' sign is used in the argument style, it will be passed as
+            part of the argument. If the same effect is wanted with the cmd syntax,
+            it ought to be escaped, i.e. '\"'.
+          </p></td></tr>
+</table></div>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+            The <code class="computeroutput"><span class="identifier">PATH</span></code> variable will
+            automatically be searched in the command style, but the one of the launching
+            process, not the one passed to the child process.
+          </p></td></tr>
+</table></div>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="boost_process.v1.design.plat_ext"></a><a class="link" href="process.html#boost_process.v1.design.plat_ext" title="Extensions">Extensions</a>
+</h4></div></div></div>
+<p>
+          The simplest form to extend functionality is to provide another handler,
+          which will be called on the respective events on process launching. The
+          names are:
+        </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+              <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">process</span><span class="special">::</span><span class="identifier">v1</span><span class="special">::</span><span class="identifier">on_setup</span></code>
+            </li>
+<li class="listitem">
+              <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">process</span><span class="special">::</span><span class="identifier">v1</span><span class="special">::</span><span class="identifier">on_error</span></code>
+            </li>
+<li class="listitem">
+              <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">process</span><span class="special">::</span><span class="identifier">v1</span><span class="special">::</span><span class="identifier">on_success</span></code>
+            </li>
+</ul></div>
+<p>
+          As an example:
+        </p>
+<p>
+</p>
+<pre class="programlisting"><span class="identifier">child</span> <span class="identifier">c</span><span class="special">(</span><span class="string">"ls"</span><span class="special">,</span> <span class="identifier">on_setup</span><span class="special">([](){</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"On Setup"</span> <span class="special">&lt;&lt;</span> <span class="identifier">endl</span><span class="special">;}));</span>
+</pre>
+<p>
+        </p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+            On posix all those callbacks will be handled by this process, not the
+            created one. This is different for the posix extensions, which can be
+            executed on the forked process.
+          </p></td></tr>
+</table></div>
+</div>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="boost_process.v1.extend"></a><a class="link" href="process.html#boost_process.v1.extend" title="Extensions">Extensions</a>
+</h3></div></div></div>
+<div class="toc"><dl class="toc">
+<dt><span class="section"><a href="process.html#boost_process.v1.extend.structure">Structure</a></span></dt>
+<dt><span class="section"><a href="process.html#boost_process.v1.extend.simple">Simple extensions</a></span></dt>
+<dt><span class="section"><a href="process.html#boost_process.v1.extend.handler">Handler Types</a></span></dt>
+<dt><span class="section"><a href="process.html#boost_process.v1.extend.async">Asynchronous Functionality</a></span></dt>
+<dt><span class="section"><a href="process.html#boost_process.v1.extend.error">Error handling</a></span></dt>
+<dt><span class="section"><a href="process.html#boost_process.v1.extend.exec_over">Executor Overloading</a></span></dt>
+</dl></div>
+<p>
+        To extend the library, the header <code class="computeroutput">boost/process/extend.hpp</code>
+        is provided.
+      </p>
+<p>
+        It only provides the explicit style for custom properties, but no implicit
+        style.
+      </p>
+<p>
+        What this means is, that a custom initializer can be implemented, a reference
+        which can be passed to one of the launching functions. If a class inherits
+        <code class="computeroutput"><a class="link" href="doxygen/structboost_1_1process_1_1v1_1_1extend_1_1handler.html" title="Struct handler">boost::process::v1::extend::handler</a></code>
+        it will be regarded as an initializer and thus directly put into the sequence
+        the executor gets passed.
+      </p>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="boost_process.v1.extend.structure"></a><a class="link" href="process.html#boost_process.v1.extend.structure" title="Structure">Structure</a>
+</h4></div></div></div>
+<p>
+          The executor calls different handlers of the initializers during the process
+          launch. The basic structure consists of three functions, as given below:
+        </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+              <code class="computeroutput"><a class="link" href="doxygen/namespaceboost_1_1process_1_1v1_1_1extend_1ad1d51d2fe45ed4158cca4c05ba138fa4.html" title="Global on_setup">on_setup</a></code>
+            </li>
+<li class="listitem">
+              <code class="computeroutput"><a class="link" href="doxygen/namespaceboost_1_1process_1_1v1_1_1extend_1ad5c184ff263d5c16d523d29ebb0c922b.html" title="Global on_error">on_error</a></code>
+            </li>
+<li class="listitem">
+              <code class="computeroutput"><a class="link" href="doxygen/namespaceboost_1_1process_1_1v1_1_1extend_1a3baed3d5fb7168dd876ad7f1e0781855.html" title="Global on_success">on_success</a></code>
+            </li>
+</ul></div>
+<p>
+          <img src="boost_process/windows_exec.svg">
+        </p>
+<p>
+          Additionally posix provides three more handlers, listed below:
+        </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+              <code class="computeroutput"><a class="link" href="doxygen/namespaceboost_1_1process_1_1v1_1_1extend_1a75d0cd21ea9ef4ee95c2ac703d5d84bb.html" title="Global on_fork_error">on_fork_error</a></code>
+            </li>
+<li class="listitem">
+              <code class="computeroutput"><a class="link" href="doxygen/namespaceboost_1_1process_1_1v1_1_1extend_1a955c086334c3a150ac001075705adb8b.html" title="Global on_exec_setup">on_exec_setup</a></code>
+            </li>
+<li class="listitem">
+              <code class="computeroutput"><a class="link" href="doxygen/namespaceboost_1_1process_1_1v1_1_1extend_1a179c0ff55b0413894194009fd34b9fa6.html" title="Global on_exec_error">on_exec_error</a></code>
+            </li>
+</ul></div>
+<p>
+          For more information see the reference of <code class="computeroutput"><a class="link" href="doxygen/structboost_1_1process_1_1v1_1_1extend_1_1posix__executor.html" title="Struct template posix_executor">posix_executor</a></code>.
+        </p>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="boost_process.v1.extend.simple"></a><a class="link" href="process.html#boost_process.v1.extend.simple" title="Simple extensions">Simple extensions</a>
+</h4></div></div></div>
+<p>
+          The simplest extension just takes a single handler, which can be done in
+          a functional style. So let's start with a simple hello-world example, while
+          we use a C++14 generic lambda.
+        </p>
+<p>
+</p>
+<pre class="programlisting"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">process</span><span class="special">;</span>
+<span class="keyword">namespace</span> <span class="identifier">ex</span> <span class="special">=</span> <span class="identifier">bp</span><span class="special">::</span><span class="identifier">extend</span><span class="special">;</span>
+
+<code class="computeroutput"><a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1child.html" title="Class child">child</a></code> <span class="identifier">c</span><span class="special">(</span><span class="string">"foo"</span><span class="special">,</span> <code class="computeroutput"><a class="link" href="doxygen/namespaceboost_1_1process_1_1v1_1_1extend_1a3baed3d5fb7168dd876ad7f1e0781855.html" title="Global on_success">ex::on_success</a></code><span class="special">=[](</span><span class="keyword">auto</span> <span class="special">&amp;</span> <span class="identifier">exec</span><span class="special">)</span> <span class="special">{</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"hello world"</span> <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;});</span>
+</pre>
+<p>
+        </p>
+<p>
+          Considering that lambdas can also capture values, data can easily be shared
+          between handlers.
+        </p>
+<p>
+          To see which members the executor has, refer to <code class="computeroutput"><a class="link" href="doxygen/structboost_1_1process_1_1v1_1_1extend_1_1windows__executor.html" title="Struct template windows_executor">windows_executor</a></code>
+          and <code class="computeroutput"><a class="link" href="doxygen/structboost_1_1process_1_1v1_1_1extend_1_1posix__executor.html" title="Struct template posix_executor">posix_executor</a></code>.
+        </p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+            Combined with <code class="computeroutput"><a class="link" href="doxygen/async_8hpp_1a10a930fbf57b0e02309086eea24a76dd.html" title="Global on_exit">on_exit</a></code>
+            this can also handle the process exit.
+          </p></td></tr>
+</table></div>
+<div class="caution"><table border="0" summary="Caution">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Caution]" src="../../doc/src/images/caution.png"></td>
+<th align="left">Caution</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+            The posix handler symbols are not defined on windows.
+          </p></td></tr>
+</table></div>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="boost_process.v1.extend.handler"></a><a class="link" href="process.html#boost_process.v1.extend.handler" title="Handler Types">Handler Types</a>
+</h4></div></div></div>
+<p>
+          Since the previous example is in a functional style, it is not very reusable.
+          To solve that problem, the <code class="computeroutput"><a class="link" href="doxygen/structboost_1_1process_1_1v1_1_1extend_1_1handler.html" title="Struct handler">handler</a></code>
+          has an alias in the <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">process</span><span class="special">::</span><span class="identifier">v1</span><span class="special">::</span><span class="identifier">extend</span></code>
+          namespace, to be inherited. So let's implement the hello world example
+          in a class.
+        </p>
+<p>
+</p>
+<pre class="programlisting"><span class="keyword">struct</span> <span class="identifier">hello_world</span> <span class="special">:</span> <code class="computeroutput"><a class="link" href="doxygen/structboost_1_1process_1_1v1_1_1extend_1_1handler.html" title="Struct handler">handler</a></code>
+<span class="special">{</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> <span class="identifier">Executor</span><span class="special">&gt;</span>
+    <span class="keyword">void</span> <code class="computeroutput"><a class="link" href="doxygen/namespaceboost_1_1process_1_1v1_1_1extend_1a3baed3d5fb7168dd876ad7f1e0781855.html" title="Global on_success">ex::on_success</a></code><span class="special">(</span><span class="identifier">Executor</span> <span class="special">&amp;</span> <span class="identifier">exec</span><span class="special">)</span> <span class="keyword">const</span>
+    <span class="special">{</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"hello world"</span> <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;</span>
+    <span class="special">}</span>
+<span class="special">};</span>
+
+<span class="comment">//in our function</span>
+<code class="computeroutput"><a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1child.html" title="Class child">child</a></code> <span class="identifier">c</span><span class="special">(</span><span class="string">"foo"</span><span class="special">,</span> <span class="identifier">hello_world</span><span class="special">());</span>
+</pre>
+<p>
+        </p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+            The implementation is done via overloading, not overriding.
+          </p></td></tr>
+</table></div>
+<p>
+          Every handler not implemented defaults to <code class="computeroutput"><a class="link" href="doxygen/structboost_1_1process_1_1v1_1_1extend_1_1handler.html" title="Struct handler">handler</a></code>,
+          where an empty handler is defined for each event.
+        </p>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="boost_process.v1.extend.async"></a><a class="link" href="process.html#boost_process.v1.extend.async" title="Asynchronous Functionality">Asynchronous Functionality</a>
+</h4></div></div></div>
+<p>
+          Since <code class="computeroutput"><span class="identifier">boost</span><span class="special">.</span><span class="identifier">process</span></code> provides an interface for <a href="http://www.boost.org/doc/libs/release/libs/asio/" target="_top">boost.asio</a>,
+          this functionality is also available for extensions. If the class needs
+          the <a href="http://www.boost.org/doc/libs/release/doc/html/boost_asio/reference/io_context.html" target="_top">boost::asio::io_context</a>
+          for some reason, the following code will do that.
+        </p>
+<p>
+</p>
+<pre class="programlisting"><span class="keyword">struct</span> <span class="identifier">async_foo</span> <span class="special">:</span> <code class="computeroutput"><a class="link" href="doxygen/structboost_1_1process_1_1v1_1_1extend_1_1handler.html" title="Struct handler">handler</a></code><span class="special">,</span> <code class="computeroutput"><a class="link" href="doxygen/structboost_1_1process_1_1v1_1_1extend_1_1require__io__context.html" title="Struct require_io_context">ex::require_io_context</a></code>
+<span class="special">{</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> <span class="identifier">Executor</span><span class="special">&gt;</span>
+    <span class="keyword">void</span> <span class="identifier">on_setup</span><span class="special">(</span><span class="identifier">Executor</span> <span class="special">&amp;</span> <span class="identifier">exec</span><span class="special">)</span>
+    <span class="special">{</span>
+        <a href="http://www.boost.org/doc/libs/release/doc/html/boost_asio/reference/io_context.html" target="_top">boost::asio::io_context</a> <span class="special">&amp;</span> <span class="identifier">ios</span> <span class="special">=</span> <code class="computeroutput"><a class="link" href="doxygen/namespaceboost_1_1process_1_1v1_1_1extend_1aee5420b5227afd80edda9f5fac9334fc.html" title="Function template get_io_context">ex::get_io_context</a></code><span class="special">(</span><span class="identifier">exec</span><span class="special">.</span><span class="identifier">seq</span><span class="special">);</span> <span class="comment">//gives us a reference and a compiler error if not present.</span>
+        <span class="comment">//do something with ios</span>
+    <span class="special">}</span>
+<span class="special">};</span>
+</pre>
+<p>
+        </p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+            Inheriting <code class="computeroutput">require_io_context</code>
+            is necessary, so <code class="computeroutput"><a class="link" href="doxygen/system_8hpp_1afdcac75b20df3e60ae2ad316a352138f.html" title="Function template system">system</a></code>
+            provides one.
+          </p></td></tr>
+</table></div>
+<p>
+          Additionally the handler can provide a function that is invoked when the
+          child process exits. This is done through <code class="computeroutput"><a class="link" href="doxygen/structboost_1_1process_1_1v1_1_1extend_1_1async__handler.html" title="Struct async_handler">ex::async_handler</a></code>.
+        </p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+            <code class="computeroutput">async_handler</code>
+            implies <code class="computeroutput">require_io_context</code>
+            .
+          </p></td></tr>
+</table></div>
+<p>
+</p>
+<pre class="programlisting"><span class="keyword">struct</span> <span class="identifier">async_bar</span> <span class="special">:</span> <span class="identifier">__handler</span><span class="special">,</span> <code class="computeroutput"><a class="link" href="doxygen/structboost_1_1process_1_1v1_1_1extend_1_1async__handler.html" title="Struct async_handler">ex::async_handler</a></code>
+<span class="special">{</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> <span class="identifier">Executor</span><span class="special">&gt;</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">function</span><span class="special">&lt;</span><span class="keyword">void</span><span class="special">(</span><span class="keyword">int</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">error_code</span><span class="special">&amp;)&gt;</span> <span class="identifier">on_exit_handler</span><span class="special">(</span><span class="identifier">Executor</span> <span class="special">&amp;</span> <span class="identifier">exec</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="keyword">auto</span> <span class="identifier">handler_</span> <span class="special">=</span> <span class="keyword">this</span><span class="special">-&gt;</span><span class="identifier">handler</span><span class="special">;</span>
+        <span class="keyword">return</span> <span class="special">[</span><span class="identifier">handler_</span><span class="special">](</span><span class="keyword">int</span> <span class="identifier">exit_code</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">error_code</span> <span class="special">&amp;</span> <span class="identifier">ec</span><span class="special">)</span>
+               <span class="special">{</span>
+                   <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"hello world, I exited with "</span> <span class="special">&lt;&lt;</span> <span class="identifier">exit_code</span> <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;</span>
+               <span class="special">};</span>
+
+    <span class="special">}</span>
+<span class="special">};</span>
+</pre>
+<p>
+        </p>
+<div class="caution"><table border="0" summary="Caution">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Caution]" src="../../doc/src/images/caution.png"></td>
+<th align="left">Caution</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+            <code class="computeroutput"><span class="identifier">on_exit_handler</span></code> does
+            not default and is always required when <code class="computeroutput"><a class="link" href="doxygen/structboost_1_1process_1_1v1_1_1extend_1_1async__handler.html" title="Struct async_handler">async_handler</a></code>
+            is inherited.
+          </p></td></tr>
+</table></div>
+<div class="caution"><table border="0" summary="Caution">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Caution]" src="../../doc/src/images/caution.png"></td>
+<th align="left">Caution</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+            <code class="computeroutput"><span class="identifier">on_exit_handler</span></code> uses
+            <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">signal_set</span></code> to listen for SIGCHLD on
+            posix. The application must not also register a signal handler for SIGCHLD
+            using functions such as <code class="computeroutput"><span class="identifier">signal</span><span class="special">()</span></code> or <code class="computeroutput"><span class="identifier">sigaction</span><span class="special">()</span></code> (but using <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">signal_set</span></code>
+            is fine).
+          </p></td></tr>
+</table></div>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="boost_process.v1.extend.error"></a><a class="link" href="process.html#boost_process.v1.extend.error" title="Error handling">Error handling</a>
+</h4></div></div></div>
+<p>
+          If an error occurs in the initializers it shall be told to the executor
+          and not handled directly. This is because the behaviour can be changed
+          through arguments passed to the launching function. Hence the executor
+          has the function <code class="computeroutput"><span class="identifier">set_error</span></code>,
+          which takes an <a href="http://en.cppreference.com/w/cpp/error/error_code" target="_top">std::error_code</a>
+          and a string. Depending on the configuration of the executor, this may
+          either throw, set an internal <code class="computeroutput"><span class="identifier">error_code</span></code>,
+          or do nothing.
+        </p>
+<p>
+          So let's take a simple example, where we set a randomly chosen <code class="computeroutput"><span class="identifier">error_code</span></code>.
+        </p>
+<p>
+</p>
+<pre class="programlisting"><span class="keyword">auto</span> <span class="identifier">set_error</span> <span class="special">=</span> <span class="special">[](</span><span class="keyword">auto</span> <span class="special">&amp;</span> <span class="identifier">exec</span><span class="special">)</span>
+        <span class="special">{</span>
+            <span class="identifier">std</span><span class="special">::</span><span class="identifier">error_code</span> <span class="identifier">ec</span><span class="special">{</span><span class="number">42</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">system_category</span><span class="special">()};</span>
+            <span class="identifier">exec</span><span class="special">.</span><span class="identifier">set_error</span><span class="special">(</span><span class="identifier">ec</span><span class="special">,</span> <span class="string">"a fake error"</span><span class="special">);</span>
+
+        <span class="special">};</span>
+<code class="computeroutput"><a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1child.html" title="Class child">child</a></code> <span class="identifier">c</span><span class="special">(</span><span class="string">"foo"</span><span class="special">,</span> <span class="identifier">on_setup</span><span class="special">=</span><span class="identifier">set_error</span><span class="special">);</span>
+</pre>
+<p>
+        </p>
+<p>
+          Since we do not specify the error-handling mode in this example, this will
+          throw <code class="computeroutput"><a class="link" href="doxygen/structboost_1_1process_1_1v1_1_1process__error.html" title="Struct process_error">process_error</a></code>.
+        </p>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="boost_process.v1.extend.exec_over"></a><a class="link" href="process.html#boost_process.v1.extend.exec_over" title="Executor Overloading">Executor Overloading</a>
+</h4></div></div></div>
+<p>
+          Now that we have a custom initializer, let's consider how we can handle
+          differences between different executors. The distinction is between posix
+          and windows and <code class="computeroutput"><span class="keyword">char</span></code> and
+          <code class="computeroutput"><span class="keyword">wchar_t</span></code> on windows. One solution
+          is to use the <a href="http://www.boost.org/doc/libs/master/boost/system/api_config.hpp" target="_top">BOOST_WINDOWS_API
+          and BOOST_POSIX_API</a> macros, which are automatically available as
+          soon as any process-header is included.
+        </p>
+<p>
+          Another variant are the type aliases <code class="computeroutput"><a class="link" href="doxygen/structboost_1_1process_1_1v1_1_1extend_1_1posix__executor.html" title="Struct template posix_executor">ex::posix_executor</a></code>
+          and <code class="computeroutput"><a class="link" href="doxygen/structboost_1_1process_1_1v1_1_1extend_1_1windows__executor.html" title="Struct template windows_executor">ex::windows_executor</a></code>,
+          where the executor, not on the current system is a forward-declaration.
+          This works fine, because the function will never get invoked. So let's
+          implement another example, which prints the executable name <code class="computeroutput"><a class="link" href="doxygen/namespaceboost_1_1process_1_1v1_1_1extend_1a3baed3d5fb7168dd876ad7f1e0781855.html" title="Global on_success">ex::on_success</a></code>.
+        </p>
+<p>
+</p>
+<pre class="programlisting"><span class="keyword">struct</span> <span class="identifier">hello_exe</span> <span class="special">:</span> <code class="computeroutput"><a class="link" href="doxygen/structboost_1_1process_1_1v1_1_1extend_1_1handler.html" title="Struct handler">handler</a></code>
+<span class="special">{</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> <span class="identifier">Sequence</span><span class="special">&gt;</span>
+    <span class="keyword">void</span> <code class="computeroutput"><a class="link" href="doxygen/namespaceboost_1_1process_1_1v1_1_1extend_1a3baed3d5fb7168dd876ad7f1e0781855.html" title="Global on_success">ex::on_success</a></code><span class="special">(</span><code class="computeroutput"><a class="link" href="doxygen/structboost_1_1process_1_1v1_1_1extend_1_1posix__executor.html" title="Struct template posix_executor">ex::posix_executor</a></code><span class="special">&lt;</span><span class="identifier">Sequence</span><span class="special">&gt;</span> <span class="special">&amp;</span> <span class="identifier">exec</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"posix-exe: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">exec</span><span class="special">.</span><span class="identifier">exe</span> <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;</span>
+    <span class="special">}</span>
+
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> <span class="identifier">Sequence</span><span class="special">&gt;</span>
+    <span class="keyword">void</span> <code class="computeroutput"><a class="link" href="doxygen/namespaceboost_1_1process_1_1v1_1_1extend_1a3baed3d5fb7168dd876ad7f1e0781855.html" title="Global on_success">ex::on_success</a></code><span class="special">(</span><code class="computeroutput"><a class="link" href="doxygen/structboost_1_1process_1_1v1_1_1extend_1_1windows__executor.html" title="Struct template windows_executor">ex::windows_executor</a></code><span class="special">&lt;</span><span class="keyword">char</span><span class="special">,</span> <span class="identifier">Sequence</span><span class="special">&gt;</span> <span class="special">&amp;</span> <span class="identifier">exec</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="comment">//note: exe might be a nullptr on windows.</span>
+        <span class="keyword">if</span> <span class="special">(</span><span class="identifier">exec</span><span class="special">.</span><span class="identifier">exe</span> <span class="special">!=</span> <span class="keyword">nullptr</span><span class="special">)</span>
+            <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"windows-exe: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">exec</span><span class="special">.</span><span class="identifier">exe</span> <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;</span>
+        <span class="keyword">else</span>
+            <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"windows didn't use exe"</span> <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;</span>
+    <span class="special">}</span>
+
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> <span class="identifier">Sequence</span><span class="special">&gt;</span>
+    <span class="keyword">void</span> <code class="computeroutput"><a class="link" href="doxygen/namespaceboost_1_1process_1_1v1_1_1extend_1a3baed3d5fb7168dd876ad7f1e0781855.html" title="Global on_success">ex::on_success</a></code><span class="special">(</span><code class="computeroutput"><a class="link" href="doxygen/structboost_1_1process_1_1v1_1_1extend_1_1windows__executor.html" title="Struct template windows_executor">ex::windows_executor</a></code><span class="special">&lt;</span><span class="keyword">wchar_t</span><span class="special">,</span> <span class="identifier">Sequence</span><span class="special">&gt;</span> <span class="special">&amp;</span> <span class="identifier">exec</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="comment">//note: exe might be a nullptr on windows.</span>
+        <span class="keyword">if</span> <span class="special">(</span><span class="identifier">exec</span><span class="special">.</span><span class="identifier">exe</span> <span class="special">!=</span> <span class="keyword">nullptr</span><span class="special">)</span>
+            <span class="identifier">std</span><span class="special">::</span><span class="identifier">wcout</span> <span class="special">&lt;&lt;</span> <span class="identifier">L</span><span class="string">"windows-exe: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">exec</span><span class="special">.</span><span class="identifier">exe</span> <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;</span>
+        <span class="keyword">else</span>
+            <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"windows didn't use exe"</span> <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;</span>
+    <span class="special">}</span>
+
+<span class="special">};</span>
+</pre>
+<p>
+        </p>
+<p>
+          So given our example, the definitions with the non-native executor are
+          still a template so that they will not be evaluated if not used. Hence
+          this provides a way to implement system-specific code without using the
+          preprocessor.
+        </p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+            If you only write a partial implementation, e.g. only for <code class="computeroutput"><a class="link" href="doxygen/structboost_1_1process_1_1v1_1_1extend_1_1posix__executor.html" title="Struct template posix_executor">ex::posix_executor</a></code>,
+            the other variants will default to <code class="computeroutput"><a class="link" href="doxygen/structboost_1_1process_1_1v1_1_1extend_1_1handler.html" title="Struct handler">handler</a></code>
+          </p></td></tr>
+</table></div>
+<p>
+          .
+        </p>
+</div>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="boost_process.v1.faq"></a><a class="link" href="process.html#boost_process.v1.faq" title="Frequently Asked Questions">Frequently Asked Questions</a>
+</h3></div></div></div>
+<div class="toc"><dl class="toc">
+<dt><span class="section"><a href="process.html#boost_process.v1.faq.dead_lock">Why does this produce
+        a deadlock?</a></span></dt>
+<dt><span class="section"><a href="process.html#boost_process.v1.faq.closep">Why does the pipe not
+        close?</a></span></dt>
+<dt><span class="section"><a href="process.html#boost_process.v1.faq.wchar_t">When will the codecvt
+        be used?</a></span></dt>
+</dl></div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="boost_process.v1.faq.dead_lock"></a><a class="link" href="process.html#boost_process.v1.faq.dead_lock" title="Why does this produce a deadlock?">Why does this produce
+        a deadlock?</a>
+</h4></div></div></div>
+<p>
+          Now let's revisit our c++filt example and we will put in an obvious mistake.
+          This might however be not as obvious for more complex applications.
+        </p>
+<p>
+</p>
+<pre class="programlisting"><span class="identifier">vector</span><span class="special">&lt;</span><span class="identifier">string</span><span class="special">&gt;</span> <span class="identifier">demangle</span><span class="special">(</span><span class="identifier">vector</span><span class="special">&lt;</span><span class="identifier">string</span><span class="special">&gt;</span> <span class="identifier">in</span><span class="special">)</span>
+<span class="special">{</span>
+
+    <span class="identifier">ipstream</span> <span class="identifier">is</span><span class="special">;</span>
+    <span class="identifier">opstream</span> <span class="identifier">os</span><span class="special">;</span>
+    <span class="identifier">child</span> <span class="identifier">c</span><span class="special">(</span><span class="string">"c++filt"</span><span class="special">,</span> <span class="identifier">std_out</span> <span class="special">&gt;</span> <span class="identifier">is</span><span class="special">,</span> <span class="identifier">std_in</span> <span class="special">&lt;</span> <span class="identifier">os</span><span class="special">);</span>
+
+    <span class="identifier">vector</span><span class="special">&lt;</span><span class="identifier">string</span><span class="special">&gt;</span> <span class="identifier">data</span><span class="special">;</span>
+    <span class="keyword">for</span> <span class="special">(</span><span class="keyword">auto</span> <span class="special">&amp;</span> <span class="identifier">elem</span> <span class="special">:</span> <span class="identifier">data</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="identifier">string</span> <span class="identifier">line</span><span class="special">;</span>
+        <span class="identifier">getline</span><span class="special">(</span><span class="identifier">is</span><span class="special">,</span> <span class="identifier">line</span><span class="special">);</span>
+        <span class="identifier">os</span> <span class="special">&lt;&lt;</span> <span class="identifier">elem</span><span class="special">;</span>
+    <span class="special">}</span>
+<span class="special">}</span>
+</pre>
+<p>
+          We switched the read and write operation up, so that's causing a dead-lock.
+          This locks immediately. This is because <code class="computeroutput"><span class="identifier">c</span><span class="special">++</span><span class="identifier">filt</span></code>
+          expects input, before outputting any data. The launching process on the
+          other hand waits for its output.
+        </p>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="boost_process.v1.faq.closep"></a><a class="link" href="process.html#boost_process.v1.faq.closep" title="Why does the pipe not close?">Why does the pipe not
+        close?</a>
+</h4></div></div></div>
+<p>
+          Now for another example, which might look correct, let's consider you want
+          to use <code class="computeroutput"><span class="identifier">ls</span></code> to read the current
+          directory.
+        </p>
+<p>
+</p>
+<pre class="programlisting"><span class="identifier">ipstream</span> <span class="identifier">is</span><span class="special">;</span>
+<span class="identifier">child</span> <span class="identifier">c</span><span class="special">(</span><span class="string">"ls"</span><span class="special">,</span> <span class="identifier">std_out</span> <span class="special">&gt;</span> <span class="identifier">is</span><span class="special">);</span>
+
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">file</span><span class="special">;</span>
+<span class="keyword">while</span> <span class="special">(</span><span class="identifier">is</span> <span class="special">&gt;&gt;</span> <span class="identifier">file</span><span class="special">)</span>
+    <span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"File: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">file</span> <span class="special">&lt;&lt;</span> <span class="identifier">endl</span><span class="special">;</span>
+</pre>
+<p>
+        </p>
+<p>
+          This will also deadlock, because the pipe does not close when the subprocess
+          exits. So the <code class="computeroutput"><span class="identifier">ipstream</span></code>
+          will still look for data even though the process has ended.
+        </p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+            It is not possible to use automatic pipe-closing in this library, because
+            a pipe might be a file-handle (as for async pipes on windows).
+          </p></td></tr>
+</table></div>
+<p>
+          But, since pipes are buffered, you might get incomplete data if you do
+          this:
+        </p>
+<p>
+</p>
+<pre class="programlisting"><span class="identifier">ipstream</span> <span class="identifier">is</span><span class="special">;</span>
+<span class="identifier">child</span> <span class="identifier">c</span><span class="special">(</span><span class="string">"ls"</span><span class="special">,</span> <span class="identifier">std_out</span> <span class="special">&gt;</span> <span class="identifier">is</span><span class="special">);</span>
+
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">file</span><span class="special">;</span>
+<span class="keyword">while</span> <span class="special">(</span><span class="identifier">c</span><span class="special">.</span><span class="identifier">running</span><span class="special">())</span>
+<span class="special">{</span>
+    <span class="identifier">is</span> <span class="special">&gt;&gt;</span> <span class="identifier">file</span><span class="special">;</span>
+    <span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"File: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">file</span> <span class="special">&lt;&lt;</span> <span class="identifier">endl</span><span class="special">;</span>
+<span class="special">}</span>
+</pre>
+<p>
+        </p>
+<p>
+          It is therefore highly recommended that you use the asynchronous API if
+          you are not absolutely sure how the output will look.
+        </p>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="boost_process.v1.faq.wchar_t"></a><a class="link" href="process.html#boost_process.v1.faq.wchar_t" title="When will the codecvt be used?">When will the codecvt
+        be used?</a>
+</h4></div></div></div>
+<p>
+          Since windows does not use UTF-8 it is sometimes unavoidable to use the
+          <code class="computeroutput"><span class="keyword">wchar_t</span></code> version of the WinApi.
+          To keep this library consistent it provides <code class="computeroutput"><span class="keyword">wchar_t</span></code>
+          support on posix also.
+        </p>
+<p>
+          Since the posix api is purely <code class="computeroutput"><span class="keyword">char</span></code>
+          every <code class="computeroutput"><span class="keyword">wchar_t</span></code> based type will
+          be converted into <code class="computeroutput"><span class="keyword">char</span></code>.
+        </p>
+<p>
+          Windows on the other hand is more selective; the default is to use <code class="computeroutput"><span class="keyword">char</span></code>, but if any parameter requires <code class="computeroutput"><span class="keyword">wchar_t</span></code>, everything will be converted to
+          <code class="computeroutput"><span class="keyword">wchar_t</span></code>. This also includes
+          <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">filesystem</span><span class="special">::</span><span class="identifier">path</span></code>. Additionally, if the system does
+          not provide the <code class="computeroutput"><span class="keyword">char</span></code> api (as
+          is the case with Windows CE) everything will also be converted.
+        </p>
+</div>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="process.reference"></a>Reference</h3></div></div></div>
+<div class="toc"><dl class="toc">
+<dt><span class="section"><a href="process.html#doxygen.args_8hpp">Header &lt;boost/process/v1/args.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="process.html#doxygen.async_8hpp">Header &lt;boost/process/v1/async.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="process.html#doxygen.async__pipe_8hpp">Header &lt;boost/process/v1/async_pipe.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="process.html#doxygen.async__system_8hpp">Header &lt;boost/process/v1/async_system.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="process.html#doxygen.child_8hpp">Header &lt;boost/process/v1/child.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="process.html#doxygen.cmd_8hpp">Header &lt;boost/process/v1/cmd.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="process.html#doxygen.env_8hpp">Header &lt;boost/process/v1/env.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="process.html#doxygen.environment_8hpp">Header &lt;boost/process/v1/environment.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="process.html#doxygen.error_8hpp">Header &lt;boost/process/v1/error.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="process.html#doxygen.exception_8hpp">Header &lt;boost/process/v1/exception.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="process.html#doxygen.exe_8hpp">Header &lt;boost/process/v1/exe.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="process.html#doxygen.extend_8hpp">Header &lt;boost/process/v1/extend.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="process.html#doxygen.filesystem_8hpp">Header &lt;boost/process/v1/filesystem.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="process.html#doxygen.group_8hpp">Header &lt;boost/process/v1/group.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="process.html#doxygen.handles_8hpp">Header &lt;boost/process/v1/handles.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="process.html#doxygen.io_8hpp">Header &lt;boost/process/v1/io.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="process.html#doxygen.locale_8hpp">Header &lt;boost/process/v1/locale.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="process.html#doxygen.pipe_8hpp">Header &lt;boost/process/v1/pipe.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="process.html#doxygen.posix_8hpp">Header &lt;boost/process/v1/posix.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="process.html#doxygen.search__path_8hpp">Header &lt;boost/process/v1/search_path.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="process.html#doxygen.shell_8hpp">Header &lt;boost/process/v1/shell.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="process.html#doxygen.spawn_8hpp">Header &lt;boost/process/v1/spawn.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="process.html#doxygen.start__dir_8hpp">Header &lt;boost/process/v1/start_dir.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="process.html#doxygen.system_8hpp">Header &lt;boost/process/v1/system.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="process.html#doxygen.windows_8hpp">Header &lt;boost/process/v1/windows.hpp&gt;</a></span></dt>
+</dl></div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.args_8hpp"></a>Header &lt;<a href="../../../../boost/process/v1/args.hpp" target="_top">boost/process/v1/args.hpp</a>&gt;</h4></div></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.async_8hpp"></a>Header &lt;<a href="../../../../boost/process/v1/async.hpp" target="_top">boost/process/v1/async.hpp</a>&gt;</h4></div></div></div></div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.async__pipe_8hpp"></a>Header &lt;<a href="../../../../boost/process/v1/async_pipe.hpp" target="_top">boost/process/v1/async_pipe.hpp</a>&gt;</h4></div></div></div>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">process</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">v1</span> <span class="special">{</span>
+      <span class="keyword">class</span> <a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1async__pipe.html" title="Class async_pipe">async_pipe</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.async__system_8hpp"></a>Header &lt;<a href="../../../../boost/process/v1/async_system.hpp" target="_top">boost/process/v1/async_system.hpp</a>&gt;</h4></div></div></div>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">process</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">v1</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ExitHandler<span class="special">,</span> <span class="keyword">typename</span> <span class="special">...</span> Args<span class="special">&gt;</span> 
+        <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a class="link" href="doxygen/async__system_8hpp_1acfccfa877439b0bd412faf9517471336.html" title="Function template async_system"><span class="identifier">async_system</span></a><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">io_context</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">ExitHandler</span> <span class="special">&amp;&amp;</span><span class="special">,</span> 
+                                 <span class="identifier">Args</span> <span class="special">&amp;&amp;</span><span class="special">...</span><span class="special">)</span><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.child_8hpp"></a>Header &lt;<a href="../../../../boost/process/v1/child.hpp" target="_top">boost/process/v1/child.hpp</a>&gt;</h4></div></div></div>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">process</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">v1</span> <span class="special">{</span>
+      <span class="keyword">class</span> <a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1child.html" title="Class child">child</a><span class="special">;</span>
+
+      <span class="keyword">typedef</span> <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a name="doxygen.child_8hpp_1a97584c096f531e5d3774e07eba7255cd"></a><span class="identifier">pid_t</span><span class="special">;</span>  <span class="comment">// Typedef for the type of an pid_t. </span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.cmd_8hpp"></a>Header &lt;<a href="../../../../boost/process/v1/cmd.hpp" target="_top">boost/process/v1/cmd.hpp</a>&gt;</h4></div></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.env_8hpp"></a>Header &lt;<a href="../../../../boost/process/v1/env.hpp" target="_top">boost/process/v1/env.hpp</a>&gt;</h4></div></div></div></div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.environment_8hpp"></a>Header &lt;<a href="../../../../boost/process/v1/environment.hpp" target="_top">boost/process/v1/environment.hpp</a>&gt;</h4></div></div></div>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">process</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">v1</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Char<span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1basic__environment.html" title="Class template basic_environment">basic_environment</a><span class="special">;</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Char<span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1basic__native__environment.html" title="Class template basic_native_environment">basic_native_environment</a><span class="special">;</span>
+
+      <span class="keyword">typedef</span> <a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1basic__native__environment.html" title="Class template basic_native_environment">basic_native_environment</a><span class="special">&lt;</span> <span class="keyword">char</span> <span class="special">&gt;</span> <a name="doxygen.environment_8hpp_1a1bd676e28c0eeeffb45a51c8289ca70c"></a><span class="identifier">native_environment</span><span class="special">;</span>  <span class="comment">// Definition of the environment for the current process. </span>
+      <span class="keyword">typedef</span> <a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1basic__native__environment.html" title="Class template basic_native_environment">basic_native_environment</a><span class="special">&lt;</span> <span class="keyword">wchar_t</span> <span class="special">&gt;</span> <a name="doxygen.environment_8hpp_1aef727fb8e094f6977c32305e6877a523"></a><span class="identifier">wnative_environment</span><span class="special">;</span>  <span class="comment">// Definition of the environment for the current process. </span>
+      <span class="keyword">typedef</span> <a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1basic__environment.html" title="Class template basic_environment">basic_environment</a><span class="special">&lt;</span> <span class="keyword">char</span> <span class="special">&gt;</span> <a name="doxygen.environment_8hpp_1abd8e0bf10f202d7dff3b1607cb16e007"></a><span class="identifier">environment</span><span class="special">;</span>  <span class="comment">// Type definition to hold a seperate environment. </span>
+      <span class="keyword">typedef</span> <a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1basic__environment.html" title="Class template basic_environment">basic_environment</a><span class="special">&lt;</span> <span class="keyword">wchar_t</span> <span class="special">&gt;</span> <a name="doxygen.environment_8hpp_1a36704384dc93d201450a7d168ae45c47"></a><span class="identifier">wenvironment</span><span class="special">;</span>  <span class="comment">// Type definition to hold a seperate environment. </span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+  <span class="keyword">namespace</span> <span class="identifier">this_process</span> <span class="special">{</span>
+
+    <span class="comment">// Get the process id of the current process. </span>
+    <span class="keyword">int</span> <a name="doxygen.namespaceboost_1_1this__process_1a1931974d9e834e5ddf0cbf26f812b472"></a><span class="identifier">get_id</span><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+
+    <span class="comment">// Get the native handle of the current process. </span>
+    <span class="identifier">native_handle_type</span> <a name="doxygen.namespaceboost_1_1this__process_1a26afe9e3a4cc02bfad925aed5ca1af34"></a><span class="identifier">native_handle</span><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+
+    <span class="comment">// Get the enviroment of the current process. </span>
+    <span class="identifier">native_environment</span> <a name="doxygen.namespaceboost_1_1this__process_1ae593bfc822ee52a2991528ed24a8e729"></a><span class="identifier">environment</span><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+
+    <span class="comment">// Get the enviroment of the current process. </span>
+    <span class="identifier">wnative_environment</span> <a name="doxygen.namespaceboost_1_1this__process_1a9280554d753227f1b93cd446875bded7"></a><span class="identifier">wenvironment</span><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+
+    <span class="comment">// Get the path environment variable of the current process runs. </span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">process</span><span class="special">::</span><span class="identifier">v1</span><span class="special">::</span><span class="identifier">filesystem</span><span class="special">::</span><span class="identifier">path</span> <span class="special">&gt;</span> <a name="doxygen.namespaceboost_1_1this__process_1a23aa4f2398036efc8c9c4f3f7782cf79"></a><span class="identifier">path</span><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.error_8hpp"></a>Header &lt;<a href="../../../../boost/process/v1/error.hpp" target="_top">boost/process/v1/error.hpp</a>&gt;</h4></div></div></div></div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.exception_8hpp"></a>Header &lt;<a href="../../../../boost/process/v1/exception.hpp" target="_top">boost/process/v1/exception.hpp</a>&gt;</h4></div></div></div>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">process</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">v1</span> <span class="special">{</span>
+      <span class="keyword">struct</span> <a class="link" href="doxygen/structboost_1_1process_1_1v1_1_1process__error.html" title="Struct process_error">process_error</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.exe_8hpp"></a>Header &lt;<a href="../../../../boost/process/v1/exe.hpp" target="_top">boost/process/v1/exe.hpp</a>&gt;</h4></div></div></div></div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.extend_8hpp"></a>Header &lt;<a href="../../../../boost/process/v1/extend.hpp" target="_top">boost/process/v1/extend.hpp</a>&gt;</h4></div></div></div>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">process</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">v1</span> <span class="special">{</span>
+      <span class="keyword">namespace</span> <span class="identifier">extend</span> <span class="special">{</span>
+        <span class="keyword">struct</span> <a class="link" href="doxygen/structboost_1_1process_1_1v1_1_1extend_1_1async__handler.html" title="Struct async_handler">async_handler</a><span class="special">;</span>
+        <span class="keyword">struct</span> <a class="link" href="doxygen/structboost_1_1process_1_1v1_1_1extend_1_1handler.html" title="Struct handler">handler</a><span class="special">;</span>
+        <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Sequence<span class="special">&gt;</span> <span class="keyword">struct</span> <a class="link" href="doxygen/structboost_1_1process_1_1v1_1_1extend_1_1posix__executor.html" title="Struct template posix_executor">posix_executor</a><span class="special">;</span>
+        <span class="keyword">struct</span> <a class="link" href="doxygen/structboost_1_1process_1_1v1_1_1extend_1_1require__io__context.html" title="Struct require_io_context">require_io_context</a><span class="special">;</span>
+        <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Char<span class="special">,</span> <span class="keyword">typename</span> Sequence<span class="special">&gt;</span> <span class="keyword">struct</span> <a class="link" href="doxygen/structboost_1_1process_1_1v1_1_1extend_1_1windows__executor.html" title="Struct template windows_executor">windows_executor</a><span class="special">;</span>
+
+        <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a class="link" href="doxygen/namespaceboost_1_1process_1_1v1_1_1extend_1ad1d51d2fe45ed4158cca4c05ba138fa4.html" title="Global on_setup">on_setup</a><span class="special">;</span>        <span class="comment">// This handler is invoked before the process in launched, to setup parameters. The required signature is <code class="computeroutput">void(Exec &amp;)</code>, where <code class="computeroutput">Exec</code> is a template parameter. </span>
+        <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a class="link" href="doxygen/namespaceboost_1_1process_1_1v1_1_1extend_1ad5c184ff263d5c16d523d29ebb0c922b.html" title="Global on_error">on_error</a><span class="special">;</span>        <span class="comment">// This handler is invoked if an error occurred. The required signature is <code class="computeroutput">void(auto &amp; exec, const std::error_code&amp;)</code>, where <code class="computeroutput">Exec</code> is a template parameter. </span>
+        <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a class="link" href="doxygen/namespaceboost_1_1process_1_1v1_1_1extend_1a3baed3d5fb7168dd876ad7f1e0781855.html" title="Global on_success">on_success</a><span class="special">;</span>        <span class="comment">// This handler is invoked if launching the process has succeeded. The required signature is <code class="computeroutput">void(auto &amp; exec)</code>, where <code class="computeroutput">Exec</code> is a template parameter. </span>
+        <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a class="link" href="doxygen/namespaceboost_1_1process_1_1v1_1_1extend_1a75d0cd21ea9ef4ee95c2ac703d5d84bb.html" title="Global on_fork_error">on_fork_error</a><span class="special">;</span>        <span class="comment">// This handler is invoked if the fork failed. The required signature is <code class="computeroutput">void(auto &amp; exec)</code>, where <code class="computeroutput">Exec</code> is a template parameter. </span>
+        <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a class="link" href="doxygen/namespaceboost_1_1process_1_1v1_1_1extend_1a955c086334c3a150ac001075705adb8b.html" title="Global on_exec_setup">on_exec_setup</a><span class="special">;</span>        <span class="comment">// This handler is invoked if the fork succeeded. The required signature is <code class="computeroutput">void(Exec &amp;)</code>, where <code class="computeroutput">Exec</code> is a template parameter. </span>
+        <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a class="link" href="doxygen/namespaceboost_1_1process_1_1v1_1_1extend_1a179c0ff55b0413894194009fd34b9fa6.html" title="Global on_exec_error">on_exec_error</a><span class="special">;</span>        <span class="comment">// This handler is invoked if the exec call errored. The required signature is <code class="computeroutput">void(auto &amp; exec)</code>, where <code class="computeroutput">Exec</code> is a template parameter. </span>
+
+        <span class="comment">// Helper function to get the last error code system-independent. </span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">error_code</span> <a name="doxygen.namespaceboost_1_1process_1_1v1_1_1extend_1a901b28c3c2ac641a9741d94c9bfd0602"></a><span class="identifier">get_last_error</span><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+        <span class="keyword">void</span> <a class="link" href="doxygen/namespaceboost_1_1process_1_1v1_1_1extend_1ac8d57368aed022137982d80943d53f9b.html" title="Function throw_last_error"><span class="identifier">throw_last_error</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+        <span class="keyword">void</span> <a name="doxygen.namespaceboost_1_1process_1_1v1_1_1extend_1ac6047cb1838802f1ee6cd6ea31fe1348"></a><span class="identifier">throw_last_error</span><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+        <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Sequence<span class="special">&gt;</span> 
+          <span class="identifier">asio</span><span class="special">::</span><span class="identifier">io_context</span> <span class="special">&amp;</span> <a class="link" href="doxygen/namespaceboost_1_1process_1_1v1_1_1extend_1aee5420b5227afd80edda9f5fac9334fc.html" title="Function template get_io_context"><span class="identifier">get_io_context</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">Sequence</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+      <span class="special">}</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.filesystem_8hpp"></a>Header &lt;<a href="../../../../boost/process/v1/filesystem.hpp" target="_top">boost/process/v1/filesystem.hpp</a>&gt;</h4></div></div></div></div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.group_8hpp"></a>Header &lt;<a href="../../../../boost/process/v1/group.hpp" target="_top">boost/process/v1/group.hpp</a>&gt;</h4></div></div></div>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">process</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">v1</span> <span class="special">{</span>
+      <span class="keyword">class</span> <a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1group.html" title="Class group">group</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.handles_8hpp"></a>Header &lt;<a href="../../../../boost/process/v1/handles.hpp" target="_top">boost/process/v1/handles.hpp</a>&gt;</h4></div></div></div>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">process</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">v1</span> <span class="special">{</span>
+      <span class="keyword">static</span> <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a class="link" href="doxygen/handles_8hpp_1aaad14b9e46a74f35bd06ee0e55f48b4d.html" title="Global limit_handles">limit_handles</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+  <span class="keyword">namespace</span> <span class="identifier">this_process</span> <span class="special">{</span>
+    <span class="keyword">typedef</span> <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a class="link" href="doxygen/namespaceboost_1_1this__process_1a41b7a3301f878c98f23c786851b3d2e6.html" title="Type definition native_handle_type"><span class="identifier">native_handle_type</span></a><span class="special">;</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span> <span class="identifier">native_handle_type</span> <span class="special">&gt;</span> <a class="link" href="doxygen/namespaceboost_1_1this__process_1a43f3c4cac96a84a181683f94e9043197.html" title="Function get_handles"><span class="identifier">get_handles</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span> <span class="identifier">native_handle_type</span> <span class="special">&gt;</span> <a name="doxygen.namespaceboost_1_1this__process_1aedc119b235a7b6742075975466fc1693"></a><span class="identifier">get_handles</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">error_code</span> <span class="special">&amp;</span> ec<span class="special">)</span><span class="special">;</span>
+    <span class="keyword">bool</span> <a class="link" href="doxygen/namespaceboost_1_1this__process_1af2002e5319ebe40bec389be19a96e810.html" title="Function is_stream_handle"><span class="identifier">is_stream_handle</span></a><span class="special">(</span><span class="identifier">native_handle_type</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">bool</span> <a name="doxygen.namespaceboost_1_1this__process_1a923be756b98505f10469b0a98d3f53a1"></a><span class="identifier">is_stream_handle</span><span class="special">(</span><span class="identifier">native_handle_type</span> handle<span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">error_code</span> <span class="special">&amp;</span> ec<span class="special">)</span><span class="special">;</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.io_8hpp"></a>Header &lt;<a href="../../../../boost/process/v1/io.hpp" target="_top">boost/process/v1/io.hpp</a>&gt;</h4></div></div></div></div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.locale_8hpp"></a>Header &lt;<a href="../../../../boost/process/v1/locale.hpp" target="_top">boost/process/v1/locale.hpp</a>&gt;</h4></div></div></div>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">process</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">v1</span> <span class="special">{</span>
+      <span class="keyword">typedef</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">codecvt</span><span class="special">&lt;</span> <span class="keyword">wchar_t</span><span class="special">,</span> <span class="keyword">char</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">mbstate_t</span> <span class="special">&gt;</span> <a name="doxygen.locale_8hpp_1afe063db9374f268e9852dfc9e742827b"></a><span class="identifier">codecvt_type</span><span class="special">;</span>  <span class="comment">// The internally used type for code conversion. </span>
+
+      <span class="comment">// Internally used error cateory for code conversion. </span>
+      <span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">error_category</span> <span class="special">&amp;</span> <a name="doxygen.locale_8hpp_1a77c8e12f71d9347902f78b8cfe2af17e"></a><span class="identifier">codecvt_category</span><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+
+      <span class="comment">// Get a reference to the currently used code converter. </span>
+      <span class="keyword">const</span> <span class="identifier">codecvt_type</span> <span class="special">&amp;</span> <a name="doxygen.locale_8hpp_1a7f4e75610db003186bdf7bfbc0f3fb03"></a><span class="identifier">codecvt</span><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+
+      <span class="comment">// Set the locale of the library. </span>
+      <span class="identifier">std</span><span class="special">::</span><span class="identifier">locale</span> <a name="doxygen.locale_8hpp_1a1597403b65b97480897cf68a6419751f"></a><span class="identifier">imbue</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">locale</span> <span class="special">&amp;</span> loc<span class="special">)</span><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.pipe_8hpp"></a>Header &lt;<a href="../../../../boost/process/v1/pipe.hpp" target="_top">boost/process/v1/pipe.hpp</a>&gt;</h4></div></div></div>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">process</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">v1</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">char_traits</span><span class="special">&lt;</span><span class="identifier">CharT</span><span class="special">&gt;</span> <span class="special">&gt;</span> 
+        <span class="keyword">class</span> <a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1basic__ipstream.html" title="Class template basic_ipstream">basic_ipstream</a><span class="special">;</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">char_traits</span><span class="special">&lt;</span><span class="identifier">CharT</span><span class="special">&gt;</span> <span class="special">&gt;</span> 
+        <span class="keyword">class</span> <a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1basic__opstream.html" title="Class template basic_opstream">basic_opstream</a><span class="special">;</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">char_traits</span><span class="special">&lt;</span><span class="identifier">CharT</span><span class="special">&gt;</span> <span class="special">&gt;</span> 
+        <span class="keyword">class</span> <a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1basic__pipe.html" title="Class template basic_pipe">basic_pipe</a><span class="special">;</span>
+
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">char_traits</span><span class="special">&lt;</span><span class="identifier">CharT</span><span class="special">&gt;</span> <span class="special">&gt;</span> 
+        <span class="keyword">struct</span> <a class="link" href="doxygen/structboost_1_1process_1_1v1_1_1basic__pipebuf.html" title="Struct template basic_pipebuf">basic_pipebuf</a><span class="special">;</span>
+
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">char_traits</span><span class="special">&lt;</span><span class="identifier">CharT</span><span class="special">&gt;</span> <span class="special">&gt;</span> 
+        <span class="keyword">class</span> <a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1basic__pstream.html" title="Class template basic_pstream">basic_pstream</a><span class="special">;</span>
+
+      <span class="keyword">typedef</span> <a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1basic__pipe.html" title="Class template basic_pipe">basic_pipe</a><span class="special">&lt;</span> <span class="keyword">char</span> <span class="special">&gt;</span> <a name="doxygen.pipe_8hpp_1a75fdd05d043b47c0f6216841bd47c850"></a><span class="identifier">pipe</span><span class="special">;</span>
+      <span class="keyword">typedef</span> <a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1basic__pipe.html" title="Class template basic_pipe">basic_pipe</a><span class="special">&lt;</span> <span class="keyword">wchar_t</span> <span class="special">&gt;</span> <a name="doxygen.pipe_8hpp_1ac426baa40abca92c9bd3db3a5b8f7463"></a><span class="identifier">wpipe</span><span class="special">;</span>
+      <span class="keyword">typedef</span> <a class="link" href="doxygen/structboost_1_1process_1_1v1_1_1basic__pipebuf.html" title="Struct template basic_pipebuf">basic_pipebuf</a><span class="special">&lt;</span> <span class="keyword">char</span> <span class="special">&gt;</span> <a name="doxygen.pipe_8hpp_1a707334d7e3bae1b767ebaebc9edd5610"></a><span class="identifier">pipebuf</span><span class="special">;</span>
+      <span class="keyword">typedef</span> <a class="link" href="doxygen/structboost_1_1process_1_1v1_1_1basic__pipebuf.html" title="Struct template basic_pipebuf">basic_pipebuf</a><span class="special">&lt;</span> <span class="keyword">wchar_t</span> <span class="special">&gt;</span> <a name="doxygen.pipe_8hpp_1aa3d7208315bb8b2229df73edbdb7cf39"></a><span class="identifier">wpipebuf</span><span class="special">;</span>
+      <span class="keyword">typedef</span> <a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1basic__ipstream.html" title="Class template basic_ipstream">basic_ipstream</a><span class="special">&lt;</span> <span class="keyword">char</span> <span class="special">&gt;</span> <a name="doxygen.pipe_8hpp_1a1aa6e4027b6d9be54fd3f4300fc1605a"></a><span class="identifier">ipstream</span><span class="special">;</span>
+      <span class="keyword">typedef</span> <a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1basic__ipstream.html" title="Class template basic_ipstream">basic_ipstream</a><span class="special">&lt;</span> <span class="keyword">wchar_t</span> <span class="special">&gt;</span> <a name="doxygen.pipe_8hpp_1a664b5e3e76746758b4cefcd915dedb17"></a><span class="identifier">wipstream</span><span class="special">;</span>
+      <span class="keyword">typedef</span> <a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1basic__opstream.html" title="Class template basic_opstream">basic_opstream</a><span class="special">&lt;</span> <span class="keyword">char</span> <span class="special">&gt;</span> <a name="doxygen.pipe_8hpp_1a1e99a585a8965f4ddb3044f026f8cd55"></a><span class="identifier">opstream</span><span class="special">;</span>
+      <span class="keyword">typedef</span> <a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1basic__opstream.html" title="Class template basic_opstream">basic_opstream</a><span class="special">&lt;</span> <span class="keyword">wchar_t</span> <span class="special">&gt;</span> <a name="doxygen.pipe_8hpp_1a98edb931d1af2cb48f506c1c34b85359"></a><span class="identifier">wopstream</span><span class="special">;</span>
+      <span class="keyword">typedef</span> <a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1basic__pstream.html" title="Class template basic_pstream">basic_pstream</a><span class="special">&lt;</span> <span class="keyword">char</span> <span class="special">&gt;</span> <a name="doxygen.pipe_8hpp_1a4d1b4d556622118ffef11dffaa6df6cd"></a><span class="identifier">pstream</span><span class="special">;</span>
+      <span class="keyword">typedef</span> <a class="link" href="doxygen/classboost_1_1process_1_1v1_1_1basic__pstream.html" title="Class template basic_pstream">basic_pstream</a><span class="special">&lt;</span> <span class="keyword">wchar_t</span> <span class="special">&gt;</span> <a name="doxygen.pipe_8hpp_1ac43ba23bf45870014295ccc7dde31656"></a><span class="identifier">wpstream</span><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.posix_8hpp"></a>Header &lt;<a href="../../../../boost/process/v1/posix.hpp" target="_top">boost/process/v1/posix.hpp</a>&gt;</h4></div></div></div></div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.search__path_8hpp"></a>Header &lt;<a href="../../../../boost/process/v1/search_path.hpp" target="_top">boost/process/v1/search_path.hpp</a>&gt;</h4></div></div></div>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">process</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">v1</span> <span class="special">{</span>
+      <span class="identifier">boost</span><span class="special">::</span><span class="identifier">process</span><span class="special">::</span><span class="identifier">v1</span><span class="special">::</span><span class="identifier">filesystem</span><span class="special">::</span><span class="identifier">path</span> 
+      <a class="link" href="doxygen/search__path_8hpp_1a89767c1834c03e52b4521b0898124bf9.html" title="Function search_path"><span class="identifier">search_path</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">process</span><span class="special">::</span><span class="identifier">v1</span><span class="special">::</span><span class="identifier">filesystem</span><span class="special">::</span><span class="identifier">path</span> <span class="special">&amp;</span><span class="special">,</span> 
+                  <span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">process</span><span class="special">::</span><span class="identifier">v1</span><span class="special">::</span><span class="identifier">filesystem</span><span class="special">::</span><span class="identifier">path</span> <span class="special">&gt;</span> <span class="special">=</span> <span class="special">::</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">this_process</span><span class="special">::</span><span class="identifier">path</span><span class="special">(</span><span class="special">)</span><span class="special">)</span><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.shell_8hpp"></a>Header &lt;<a href="../../../../boost/process/v1/shell.hpp" target="_top">boost/process/v1/shell.hpp</a>&gt;</h4></div></div></div></div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.spawn_8hpp"></a>Header &lt;<a href="../../../../boost/process/v1/spawn.hpp" target="_top">boost/process/v1/spawn.hpp</a>&gt;</h4></div></div></div>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">process</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">v1</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> <span class="special">...</span> Args<span class="special">&gt;</span> <span class="keyword">void</span> <a class="link" href="doxygen/spawn_8hpp_1a464ec8d37cd8d3ee643346bc935961e3.html" title="Function template spawn"><span class="identifier">spawn</span></a><span class="special">(</span><span class="identifier">Args</span> <span class="special">&amp;&amp;</span><span class="special">...</span><span class="special">)</span><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.start__dir_8hpp"></a>Header &lt;<a href="../../../../boost/process/v1/start_dir.hpp" target="_top">boost/process/v1/start_dir.hpp</a>&gt;</h4></div></div></div></div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.system_8hpp"></a>Header &lt;<a href="../../../../boost/process/v1/system.hpp" target="_top">boost/process/v1/system.hpp</a>&gt;</h4></div></div></div>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">process</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">v1</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> <span class="special">...</span> Args<span class="special">&gt;</span> <span class="keyword">int</span> <a class="link" href="doxygen/system_8hpp_1afdcac75b20df3e60ae2ad316a352138f.html" title="Function template system"><span class="identifier">system</span></a><span class="special">(</span><span class="identifier">Args</span> <span class="special">&amp;&amp;</span><span class="special">...</span><span class="special">)</span><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.windows_8hpp"></a>Header &lt;<a href="../../../../boost/process/v1/windows.hpp" target="_top">boost/process/v1/windows.hpp</a>&gt;</h4></div></div></div></div>
+</div>
+</div>
+<div class="footnotes">
+<br><hr style="width:100; text-align:left;margin-left: 0">
+<div id="ftn.boost_process.v1.concepts.process.f0" class="footnote"><p><a href="#boost_process.v1.concepts.process.f0" class="para"><sup class="para">[27] </sup></a>
+            it is unique as long as the process is active
+          </p></div>
+<div id="ftn.boost_process.v1.design.scope.f0" class="footnote"><p><a href="#boost_process.v1.design.scope.f0" class="para"><sup class="para">[28] </sup></a>
+            Domain Specific Embedded Language
+          </p></div>
+</div>
+</div>
+<div class="copyright-footer"></div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="poly_collection/acknowledgments.html"><img src="../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="libraries.html"><img src="../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="index.html"><img src="../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="doxygen/args_8hpp_1ae6e9268c3e85949b8a29f5e47c8a4a7f.html"><img src="../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

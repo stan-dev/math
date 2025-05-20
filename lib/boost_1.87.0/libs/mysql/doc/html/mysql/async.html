@@ -1,0 +1,211 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Going async</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="prev" href="connection_pool.html" title="Connection pools">
+<link rel="next" href="error_handling.html" title="Error handling and available overloads">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="connection_pool.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="error_handling.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="mysql.async"></a><a class="link" href="async.html" title="Going async">Going async</a>
+</h2></div></div></div>
+<p>
+      Following <a href="../../../../../libs/asio/index.html" target="_top">Boost.Asio</a>'s convention,
+      all network operations have asynchronous versions with the same name prefixed
+      by <code class="computeroutput"><span class="identifier">async_</span></code>. The last parameter
+      to async operations is a <a href="../../../../../doc/html/boost_asio/reference/asynchronous_operations.html#boost_asio.reference.asynchronous_operations.completion_tokens_and_handlers" target="_top"><span class="emphasis"><em>CompletionToken</em></span></a>,
+      which dictates how the asynchronous operation will be managed and the function's
+      return type. These <code class="computeroutput"><span class="identifier">async_</span></code> functions
+      are called async initiating functions.
+    </p>
+<p>
+      Every async initiating function has an associated handler type, which dictates
+      how the asynchronous operation communicates its result back to the caller.
+      This handler type always has one of the two following forms:
+    </p>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+          <code class="computeroutput"><span class="keyword">void</span><span class="special">(</span><span class="identifier">error_code</span><span class="special">)</span></code>.
+          Used in operations that do not have a proper result, e.g. <a class="link" href="ref/boost__mysql__connection/async_connect.html" title="connection::async_connect"><code class="literal">connection::async_connect</code></a>.
+        </li>
+<li class="listitem">
+          <code class="computeroutput"><span class="keyword">void</span><span class="special">(</span><span class="identifier">error_code</span><span class="special">,</span>
+          <span class="identifier">T</span><span class="special">)</span></code>.
+          Used in operations that have a result, e.g. <a class="link" href="ref/boost__mysql__connection/async_prepare_statement.html" title="connection::async_prepare_statement"><code class="literal">connection::async_prepare_statement</code></a>
+          (in this case, <code class="computeroutput"><span class="identifier">T</span></code> is <code class="computeroutput"><span class="identifier">statement</span></code>).
+        </li>
+</ol></div>
+<p>
+      All asynchronous functions are overloaded to accept an optional <a class="link" href="ref/boost__mysql__diagnostics.html" title="diagnostics"><code class="literal">diagnostics</code></a>
+      output parameter. It is populated with any server-provided error information
+      before calling the completion handler.
+    </p>
+<h4>
+<a name="mysql.async.h0"></a>
+      <span class="phrase"><a name="mysql.async.single_outstanding_operation_per"></a></span><a class="link" href="async.html#mysql.async.single_outstanding_operation_per">Single
+      outstanding operation per connection</a>
+    </h4>
+<p>
+      As mentioned in <a class="link" href="overview.html#mysql.overview.async" title="Single outstanding async operation per connection">this section</a>, only
+      a single async operation per connection can be outstanding at a given point
+      in time. If you need to perform queries in parallel, open more connections
+      to the server.
+    </p>
+<h4>
+<a name="mysql.async.h1"></a>
+      <span class="phrase"><a name="mysql.async.completion_tokens"></a></span><a class="link" href="async.html#mysql.async.completion_tokens">Completion
+      tokens</a>
+    </h4>
+<p>
+      Any completion token you may use with Boost.Asio can also be used with this
+      library. Here are some of the most common:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+<p class="simpara">
+          <span class="bold"><strong>C++20 coroutines</strong></span>, using <a href="../../../../../doc/html/boost_asio/reference/co_spawn.html" target="_top"><code class="literal">asio::co_spawn</code></a>
+          and <a href="../../../../../doc/html/boost_asio/reference/deferred.html" target="_top"><code class="literal">asio::deferred</code></a>.
+          Passing <code class="computeroutput"><span class="identifier">deferred</span></code> to an
+          initiation function returns an object that can be <code class="computeroutput"><span class="identifier">co_await</span></code>'ed.
+          You can combine deferred with <a class="link" href="async.html#mysql.async.with_diagnostics">with_diagnostics</a>
+          to get better error reporting.
+        </p>
+<p class="simpara">
+          See <span class="bold"><strong><a class="link" href="tutorial_async.html" title="Tutorial 2: going async with C++20 coroutines">the async
+          tutorial</a></strong></span> for details.
+        </p>
+</li>
+<li class="listitem">
+<p class="simpara">
+          <span class="bold"><strong>Stackful coroutines</strong></span>, which you can use
+          to get coroutine-like functionality in C++11. Access this functionality
+          using <a href="../../../../../doc/html/boost_asio/reference/spawn.html" target="_top"><code class="literal">asio::spawn</code></a>
+          and <a href="../../../../../doc/html/boost_asio/reference/yield_context.html" target="_top"><code class="literal">asio::yield_context</code></a>,
+          possibly in conjunction with <a class="link" href="async.html#mysql.async.with_diagnostics">with_diagnostics</a>.
+          You need to link against <a href="../../../../../libs/context/index.html" target="_top">Boost.Context</a>
+          to use these coroutines.
+        </p>
+<p class="simpara">
+          See <span class="bold"><strong><a class="link" href="examples/coroutines_cpp11.html" title="Stackful coroutines (async functions in C++11)">this
+          example</a></strong></span> for details.
+        </p>
+</li>
+<li class="listitem">
+<p class="simpara">
+          <span class="bold"><strong>Callbacks</strong></span>. You can pass in a callable
+          (function pointer or function object) with the same signature as the handler
+          signature specified for the operation. The callable will be called when
+          the operation completes. The initiating function will return <code class="computeroutput"><span class="keyword">void</span></code>.
+        </p>
+<p class="simpara">
+          <a class="link" href="examples/callbacks.html" title="Callbacks (async functions in C++11)">This example</a> demonstrates
+          how to use async functions with callbacks.
+        </p>
+</li>
+<li class="listitem">
+<p class="simpara">
+          <span class="bold"><strong>Futures</strong></span>. In this case, you pass in the
+          constant <a href="../../../../../doc/html/boost_asio/reference/use_future.html" target="_top"><code class="literal">asio::use_future</code></a>
+          as completion token. The initiating function will return one of the following:
+          <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; ">
+<li class="listitem">
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">future</span><span class="special">&lt;</span><span class="keyword">void</span><span class="special">&gt;</span></code>,
+                if the completion handler has the form given by 1).
+              </li>
+<li class="listitem">
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">future</span><span class="special">&lt;</span><span class="identifier">T</span><span class="special">&gt;</span></code>,
+                if the completion handler has the form given by 2).
+              </li>
+</ul></div>
+        </p>
+<p class="simpara">
+          You can wait for the future by calling <code class="computeroutput"><span class="identifier">future</span><span class="special">::</span><span class="identifier">get</span></code>.
+          If an error occurs, <code class="computeroutput"><span class="identifier">future</span><span class="special">::</span><span class="identifier">get</span></code>
+          will throw an exception. Note that the exception is thrown by Asio itself,
+          and will always be of type <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">system</span><span class="special">::</span><span class="identifier">system_error</span></code>,
+          even if diagnostics were available.
+        </p>
+</li>
+<li class="listitem">
+          Any other type that satisfies the <a href="../../../../../doc/html/boost_asio/reference/asynchronous_operations.html#boost_asio.reference.asynchronous_operations.completion_tokens_and_handlers" target="_top"><span class="emphasis"><em>CompletionToken</em></span></a>
+          type requirements. We have listed the most common ones here, but you can
+          craft your own and use it with this library's async operations.
+        </li>
+</ul></div>
+<h4>
+<a name="mysql.async.h2"></a>
+      <span class="phrase"><a name="mysql.async.with_diagnostics"></a></span><a class="link" href="async.html#mysql.async.with_diagnostics">The
+      with_diagnostics completion token</a>
+    </h4>
+<p>
+      <a class="link" href="ref/boost__mysql__with_diagnostics.html" title="with_diagnostics"><code class="literal">with_diagnostics</code></a>
+      is a completion token adapter that you can use with async operations when using
+      exceptions. <code class="computeroutput"><span class="identifier">with_diagnostics</span></code>
+      makes your operations throw <a class="link" href="ref/boost__mysql__error_with_diagnostics.html" title="error_with_diagnostics"><code class="literal">error_with_diagnostics</code></a>,
+      like sync functions do. For example:
+    </p>
+<p>
+      [async_with_diagnostics_cpp20] [async_with_diagnostics_cpp11]
+    </p>
+<p>
+      <code class="computeroutput"><span class="identifier">with_diagnostics</span></code> only makes
+      sense when using exceptions. When using error codes, you can keep using <code class="computeroutput"><span class="identifier">asio</span><span class="special">::</span><span class="identifier">as_tuple</span></code>
+      and <code class="computeroutput"><span class="identifier">asio</span><span class="special">::</span><span class="identifier">redirect_error</span></code> normally.
+    </p>
+<h4>
+<a name="mysql.async.h3"></a>
+      <span class="phrase"><a name="mysql.async.cancellations_and_timeouts"></a></span><a class="link" href="async.html#mysql.async.cancellations_and_timeouts">Cancellations
+      and timeouts</a>
+    </h4>
+<p>
+      All async operations in this library support <a href="../../../../../doc/html/boost_asio/overview/core/cancellation.html" target="_top">per-operation
+      cancellation</a>. All operations support only the <code class="computeroutput"><span class="identifier">terminal</span></code>
+      <a href="../../../../../doc/html/boost_asio/reference/cancellation_type.html" target="_top"><code class="literal">asio::cancellation_type</code></a>.
+      This means that, if an async operation is cancelled, the <a class="link" href="ref/boost__mysql__connection.html" title="connection"><code class="literal">connection</code></a>
+      object is left in an unspecified state, after which you should close or destroy
+      the connection. In particular, it is <span class="bold"><strong>not</strong></span> safe
+      to retry the cancelled operation.
+    </p>
+<p>
+      Supporting cancellation allows you to implement timeouts without explicit support
+      from the library. <a class="link" href="tutorial_error_handling.html" title="Tutorial 7: Error handling">This tutorial</a>
+      covers the subject in depth.
+    </p>
+<p>
+      Note that cancellation happens at the Boost.Asio level, and not at the MySQL
+      operation level. This means that, when cancelling an operation, the current
+      network read or write will be cancelled. The operation may have already reached
+      the server and be executed. As stated above, after an operation is cancelled,
+      the connection is left in an unspecified state, and you should close or destroy
+      it.
+    </p>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="connection_pool.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="error_handling.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

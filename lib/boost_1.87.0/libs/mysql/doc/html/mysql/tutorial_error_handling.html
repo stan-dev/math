@@ -1,0 +1,588 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Tutorial 7: Error handling</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="prev" href="tutorial_connection_pool.html" title="Tutorial 6: Connection pools">
+<link rel="next" href="overview.html" title="Overview">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="tutorial_connection_pool.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="overview.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="mysql.tutorial_error_handling"></a><a class="link" href="tutorial_error_handling.html" title="Tutorial 7: Error handling">Tutorial 7: Error handling</a>
+</h2></div></div></div>
+<p>
+      The <a class="link" href="tutorial_connection_pool.html" title="Tutorial 6: Connection pools">previous tutorial</a>
+      did not include any error handling. When an error is encountered while talking
+      to the DB or the client, an exception is thrown and the program terminates.
+      This is undesirable in server programs like the one we're writing.
+    </p>
+<p>
+      To add error handling, we can just add try/catch blocks to prevent exception
+      propagation. However, many code bases discourage the use of exceptions for
+      non-exceptional circumstances, like I/O errors. In this tutorial, we will learn
+      how to manage I/O errors without exceptions by using <a href="../../../../../doc/html/boost_asio/reference/as_tuple.html" target="_top"><code class="literal">asio::as_tuple</code></a>
+      and error codes.
+    </p>
+<h4>
+<a name="mysql.tutorial_error_handling.h0"></a>
+      <span class="phrase"><a name="mysql.tutorial_error_handling.error_handling_strategy"></a></span><a class="link" href="tutorial_error_handling.html#mysql.tutorial_error_handling.error_handling_strategy">Error
+      handling strategy</a>
+    </h4>
+<p>
+      There are two kind of I/O errors that our program can encounter:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          Reading and writing to the client may fail. This can happen if the client
+          program is faulty or a network error happens. In this case, we should log
+          the problem and close the connection.
+        </li>
+<li class="listitem">
+          Talking to the database may fail. This can happen if <a class="link" href="ref/boost__mysql__connection_pool/async_get_connection.html" title="connection_pool::async_get_connection"><code class="literal">async_get_connection</code></a>
+          is cancelled because of a timeout. In this case, we will return a special
+          string (<code class="computeroutput"><span class="string">"ERROR"</span></code>)
+          to the client, signalling that we can't fulfill the request, and log the
+          problem.
+        </li>
+</ul></div>
+<p>
+      Additionally, we will modify how we use <code class="computeroutput"><span class="identifier">asio</span><span class="special">::</span><span class="identifier">cancel_after</span></code>
+      to make the system more reliable.
+    </p>
+<h4>
+<a name="mysql.tutorial_error_handling.h1"></a>
+      <span class="phrase"><a name="mysql.tutorial_error_handling.completion_tokens"></a></span><a class="link" href="tutorial_error_handling.html#mysql.tutorial_error_handling.completion_tokens">Completion
+      tokens</a>
+    </h4>
+<p>
+      Before proceeding, we need to understand what a completion token is. The concepts
+      in this section are not specific to Boost.MySQL, but apply to Asio and all
+      Asio-compatible libraries. Since Asio docs can be terse, we explain them here
+      to facilitate the reader.
+    </p>
+<p>
+      All asynchronous operations accept an optional, last parameter specifying what
+      to do when the operation completes. This last parameter is the operation's
+      <a href="../../../../../doc/html/boost_asio/reference/asynchronous_operations.html#boost_asio.reference.asynchronous_operations.completion_tokens_and_handlers" target="_top">completion
+      token</a>.
+    </p>
+<p>
+      Callbacks are valid completion tokens. Taking <a class="link" href="ref/boost__mysql__connection_pool/async_get_connection.html" title="connection_pool::async_get_connection"><code class="literal">async_get_connection</code></a>
+      as example, the following is valid:
+    </p>
+<pre class="programlisting"><span class="comment">// Function to call when async_get_connection completes</span>
+<span class="keyword">auto</span> <span class="identifier">on_available_connection</span> <span class="special">=</span> <span class="special">[](</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">system</span><span class="special">::</span><span class="identifier">error_code</span> <span class="identifier">ec</span><span class="special">,</span> <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">pooled_connection</span> <span class="identifier">conn</span><span class="special">)</span> <span class="special">{</span>
+    <span class="comment">// Do something useful with the connection</span>
+<span class="special">};</span>
+
+<span class="comment">// Start the operation. on_available_connection will be called when the operation</span>
+<span class="comment">// completes. on_available_connection is the completion token.</span>
+<span class="comment">// When a callback is passed, async_get_connection returns void,</span>
+<span class="comment">// so we can't use co_await with it.</span>
+<span class="identifier">pool</span><span class="special">.</span><span class="identifier">async_get_connection</span><span class="special">(</span><span class="identifier">on_available_connection</span><span class="special">);</span>
+</pre>
+<p>
+      We have already been using this when creating coroutines. <code class="computeroutput"><span class="identifier">asio</span><span class="special">::</span><span class="identifier">co_spawn</span></code>
+      is also an async operation, and the callback we pass as its last parameter
+      is the completion token.
+    </p>
+<p>
+      You might consider using callbacks if your compiler doesn't support coroutines,
+      or just by personal preference. <a class="link" href="examples/callbacks.html" title="Callbacks (async functions in C++11)">This
+      example</a> demonstrates how to use them.
+    </p>
+<p>
+      If you don't specify a completion token, the operation's <span class="bold"><strong>default
+      completion token</strong></span> will be used. This is usually <code class="computeroutput"><span class="identifier">asio</span><span class="special">::</span><span class="identifier">deferred</span></code>
+      or <code class="computeroutput"><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">with_diagnostics</span><span class="special">(</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">deferred</span><span class="special">)</span></code> <a href="#ftn.mysql.tutorial_error_handling.f0" class="footnote" name="mysql.tutorial_error_handling.f0"><sup class="footnote">[1]</sup></a>. These tokens transform asynchronous operations into awaitables,
+      so we can use them in C++20 coroutines.
+    </p>
+<p>
+      The default completion token for <a class="link" href="ref/boost__mysql__connection_pool/async_get_connection.html" title="connection_pool::async_get_connection"><code class="literal">async_get_connection</code></a>
+      is <code class="computeroutput"><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">with_diagnostics</span><span class="special">(</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">deferred</span><span class="special">)</span></code>. This means that the following two are equivalent:
+    </p>
+<pre class="programlisting"><span class="comment">// These two lines are equivalent.</span>
+<span class="comment">// Both of them can be read as "I want to use C++20 coroutines as my completion style"</span>
+<span class="keyword">auto</span> <span class="identifier">conn1</span> <span class="special">=</span> <span class="identifier">co_await</span> <span class="identifier">pool</span><span class="special">.</span><span class="identifier">async_get_connection</span><span class="special">();</span>
+<span class="keyword">auto</span> <span class="identifier">conn2</span> <span class="special">=</span> <span class="identifier">co_await</span> <span class="identifier">pool</span><span class="special">.</span><span class="identifier">async_get_connection</span><span class="special">(</span><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">with_diagnostics</span><span class="special">(</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">deferred</span><span class="special">));</span>
+</pre>
+<p>
+      Completion tokens are generic: once you learn how to use one, you can use it
+      with any Asio-compliant async operation. This includes all functions in Boost.Asio,
+      Boost.MySQL, Boost.Beast and Boost.Redis. We say that operations in these libraries
+      are compliant with Asio's universal async model. Writing these is hard, but
+      they're easy to use!
+    </p>
+<h4>
+<a name="mysql.tutorial_error_handling.h2"></a>
+      <span class="phrase"><a name="mysql.tutorial_error_handling.adapter_completion_tokens"></a></span><a class="link" href="tutorial_error_handling.html#mysql.tutorial_error_handling.adapter_completion_tokens">Adapter completion
+      tokens</a>
+    </h4>
+<p>
+      Some tokens don't fully specify what to do when the operation completes, but
+      rather modify some aspect of how the operation executes. They wrap (or adapt)
+      other completion tokens. The underlying token determines what to do when the
+      operation completes.
+    </p>
+<p>
+      <a href="../../../../../doc/html/boost_asio/reference/cancel_after.html" target="_top"><code class="literal">asio::cancel_after</code></a>
+      is an adapter token. It modifies how an operation executes by setting a timeout,
+      but it doesn't specify what to do on completion.
+    </p>
+<p>
+      Adapter tokens can be passed an optional completion token as the last argument.
+      If the token is omitted, the default one will be used. Continuing with our
+      example:
+    </p>
+<pre class="programlisting"><span class="comment">// Enable the use of the "s" suffix for std::chrono::seconds</span>
+<span class="keyword">using</span> <span class="keyword">namespace</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">chrono_literals</span><span class="special">;</span>
+
+<span class="comment">// The following two lines are equivalent.</span>
+<span class="comment">// Both get a connection, waiting no more than 20s before cancelling the operation.</span>
+<span class="comment">// If no token is passed to cancel_after, the default one will be used,</span>
+<span class="comment">// which transforms the operation into an awaitable.</span>
+<span class="comment">// asio::cancel_after(20s) is usually termed "partial completion token"</span>
+<span class="keyword">auto</span> <span class="identifier">conn1</span> <span class="special">=</span> <span class="identifier">co_await</span> <span class="identifier">pool</span><span class="special">.</span><span class="identifier">async_get_connection</span><span class="special">(</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">cancel_after</span><span class="special">(</span><span class="number">20</span><span class="identifier">s</span><span class="special">));</span>
+<span class="keyword">auto</span> <span class="identifier">conn2</span> <span class="special">=</span> <span class="identifier">co_await</span> <span class="identifier">pool</span><span class="special">.</span><span class="identifier">async_get_connection</span><span class="special">(</span>
+    <span class="identifier">asio</span><span class="special">::</span><span class="identifier">cancel_after</span><span class="special">(</span><span class="number">20</span><span class="identifier">s</span><span class="special">,</span> <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">with_diagnostics</span><span class="special">(</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">deferred</span><span class="special">))</span>
+<span class="special">);</span>
+</pre>
+<h4>
+<a name="mysql.tutorial_error_handling.h3"></a>
+      <span class="phrase"><a name="mysql.tutorial_error_handling.handler_signature_and_exceptions"></a></span><a class="link" href="tutorial_error_handling.html#mysql.tutorial_error_handling.handler_signature_and_exceptions">Handler
+      signature and exceptions</a>
+    </h4>
+<p>
+      Each async operation has an associated handler signature. We can find these
+      signatures in the documentation for each operation. The handler signature is
+      the prototype that a callback function passed as completion token would need
+      to have to be compatible with the operation.
+    </p>
+<p>
+      The handler signature for <a class="link" href="ref/boost__mysql__connection_pool/async_get_connection.html" title="connection_pool::async_get_connection"><code class="literal">async_get_connection</code></a>
+      is <code class="computeroutput"><span class="keyword">void</span><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">system</span><span class="special">::</span><span class="identifier">error_code</span><span class="special">,</span> <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">pooled_connection</span><span class="special">)</span></code>.
+    </p>
+<p>
+      However, when we invoke <code class="computeroutput"><span class="identifier">co_await</span></code>
+      on the awaitable returned by <code class="computeroutput"><span class="identifier">async_get_connection</span></code>,
+      we don't get any <code class="computeroutput"><span class="identifier">error_code</span></code>.
+      This is because <code class="computeroutput"><span class="identifier">co_await</span></code> inspects
+      the handler signature at compile-time, looking for an <code class="computeroutput"><span class="identifier">error_code</span></code>
+      as first parameter. If it finds it, <code class="computeroutput"><span class="identifier">co_await</span></code>
+      will remove it from the argument list, returning only the <code class="computeroutput"><span class="identifier">pooled_connection</span></code>.
+      At runtime, the error code is checked. If the code indicates a failure, an
+      exception is thrown.
+    </p>
+<p>
+      This mechanism is important to understand how <code class="computeroutput"><span class="identifier">as_tuple</span></code>
+      works.
+    </p>
+<h4>
+<a name="mysql.tutorial_error_handling.h4"></a>
+      <span class="phrase"><a name="mysql.tutorial_error_handling.asio_as_tuple"></a></span><a class="link" href="tutorial_error_handling.html#mysql.tutorial_error_handling.asio_as_tuple">asio::as_tuple</a>
+    </h4>
+<p>
+      <a href="../../../../../doc/html/boost_asio/reference/as_tuple.html" target="_top"><code class="literal">asio::as_tuple</code></a>
+      is another adapter completion token that can be used to prevent exceptions.
+      It modifies the operation's handler signature, packing all arguments into a
+      <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">tuple</span></code>. This inhibits the automatic error
+      code checks explained in the previous section, thus preventing exceptions on
+      I/O failure. Continuing with our example:
+    </p>
+<pre class="programlisting"><span class="comment">// Passing asio::as_tuple transforms the operation's handler signature:</span>
+<span class="comment">//    Original:    void(error_code, mysql::pooled_connection)</span>
+<span class="comment">//    Transformed: void(std::tuple&lt;error_code, mysql::pooled_connection&gt;)</span>
+<span class="comment">// The transformed signature no longer has an error_code as first parameter,</span>
+<span class="comment">// so no automatic error code to exception transformation happens.</span>
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">tuple</span><span class="special">&lt;</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">system</span><span class="special">::</span><span class="identifier">error_code</span><span class="special">,</span> <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">pooled_connection</span><span class="special">&gt;</span>
+    <span class="identifier">res</span> <span class="special">=</span> <span class="identifier">co_await</span> <span class="identifier">pool</span><span class="special">.</span><span class="identifier">async_get_connection</span><span class="special">(</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">as_tuple</span><span class="special">);</span>
+</pre>
+<p>
+      In practice, it's usually better to use structured bindings:
+    </p>
+<pre class="programlisting"><span class="comment">// ec is an error_code, conn is the mysql::pooled_connection.</span>
+<span class="comment">// If the operation fails, ec will be non-empty.</span>
+<span class="keyword">auto</span> <span class="special">[</span><span class="identifier">ec</span><span class="special">,</span> <span class="identifier">conn</span><span class="special">]</span> <span class="special">=</span> <span class="identifier">co_await</span> <span class="identifier">pool</span><span class="special">.</span><span class="identifier">async_get_connection</span><span class="special">(</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">as_tuple</span><span class="special">);</span>
+</pre>
+<p>
+      All the properties of adapter completion tokens apply:
+    </p>
+<pre class="programlisting"><span class="comment">// The following two lines are equivalent.</span>
+<span class="comment">// Both of them produce an awaitable that produces a tuple when awaited.</span>
+<span class="keyword">auto</span> <span class="special">[</span><span class="identifier">ec1</span><span class="special">,</span> <span class="identifier">conn1</span><span class="special">]</span> <span class="special">=</span> <span class="identifier">co_await</span> <span class="identifier">pool</span><span class="special">.</span><span class="identifier">async_get_connection</span><span class="special">(</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">as_tuple</span><span class="special">);</span>
+<span class="keyword">auto</span> <span class="special">[</span><span class="identifier">ec2</span><span class="special">,</span> <span class="identifier">conn2</span><span class="special">]</span> <span class="special">=</span> <span class="identifier">co_await</span> <span class="identifier">pool</span><span class="special">.</span><span class="identifier">async_get_connection</span><span class="special">(</span>
+    <span class="identifier">asio</span><span class="special">::</span><span class="identifier">as_tuple</span><span class="special">(</span><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">with_diagnostics</span><span class="special">(</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">deferred</span><span class="special">))</span>
+<span class="special">);</span>
+</pre>
+<p>
+      Adapter tokens can be combined. To apply a timeout to the operation while avoiding
+      exceptions, you can use:
+    </p>
+<pre class="programlisting"><span class="comment">// ec is an error_code, conn is the mysql::pooled_connection</span>
+<span class="comment">// Apply a timeout and don't throw on error</span>
+<span class="keyword">auto</span> <span class="special">[</span><span class="identifier">ec</span><span class="special">,</span> <span class="identifier">conn</span><span class="special">]</span> <span class="special">=</span> <span class="identifier">co_await</span> <span class="identifier">pool</span><span class="special">.</span><span class="identifier">async_get_connection</span><span class="special">(</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">cancel_after</span><span class="special">(</span><span class="number">20</span><span class="identifier">s</span><span class="special">,</span> <span class="identifier">asio</span><span class="special">::</span><span class="identifier">as_tuple</span><span class="special">));</span>
+</pre>
+<h4>
+<a name="mysql.tutorial_error_handling.h5"></a>
+      <span class="phrase"><a name="mysql.tutorial_error_handling.using_asio_as_tuple_for_database"></a></span><a class="link" href="tutorial_error_handling.html#mysql.tutorial_error_handling.using_asio_as_tuple_for_database">Using
+      asio::as_tuple for database code</a>
+    </h4>
+<p>
+      Let's apply <a href="../../../../../doc/html/boost_asio/reference/as_tuple.html" target="_top"><code class="literal">asio::as_tuple</code></a>
+      to our database logic. We will remove timeouts for now - we will add them back
+      later.
+    </p>
+<pre class="programlisting"><span class="identifier">asio</span><span class="special">::</span><span class="identifier">awaitable</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">&gt;</span> <span class="identifier">get_employee_details</span><span class="special">(</span><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">connection_pool</span><span class="special">&amp;</span> <span class="identifier">pool</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">int64_t</span> <span class="identifier">employee_id</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="comment">// Get a connection from the pool.</span>
+    <span class="comment">// This will wait until a healthy connection is ready to be used.</span>
+    <span class="comment">// ec is an error code, conn is a pooled_connection</span>
+    <span class="keyword">auto</span> <span class="special">[</span><span class="identifier">ec</span><span class="special">,</span> <span class="identifier">conn</span><span class="special">]</span> <span class="special">=</span> <span class="identifier">co_await</span> <span class="identifier">pool</span><span class="special">.</span><span class="identifier">async_get_connection</span><span class="special">(</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">as_tuple</span><span class="special">);</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">ec</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="comment">// A connection couldn't be obtained.</span>
+        <span class="comment">// This may be because a timeout happened.</span>
+        <span class="identifier">log_error</span><span class="special">(</span><span class="string">"Error in async_get_connection"</span><span class="special">,</span> <span class="identifier">ec</span><span class="special">);</span>
+        <span class="identifier">co_return</span> <span class="string">"ERROR"</span><span class="special">;</span>
+    <span class="special">}</span>
+
+    <span class="comment">// Use the connection normally to query the database.</span>
+    <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">static_results</span><span class="special">&lt;</span><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">pfr_by_name</span><span class="special">&lt;</span><span class="identifier">employee</span><span class="special">&gt;&gt;</span> <span class="identifier">result</span><span class="special">;</span>
+    <span class="keyword">auto</span> <span class="special">[</span><span class="identifier">ec2</span><span class="special">]</span> <span class="special">=</span> <span class="identifier">co_await</span> <span class="identifier">conn</span><span class="special">-&gt;</span><span class="identifier">async_execute</span><span class="special">(</span>
+        <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">with_params</span><span class="special">(</span><span class="string">"SELECT first_name, last_name FROM employee WHERE id = {}"</span><span class="special">,</span> <span class="identifier">employee_id</span><span class="special">),</span>
+        <span class="identifier">result</span><span class="special">,</span>
+        <span class="identifier">asio</span><span class="special">::</span><span class="identifier">as_tuple</span>
+    <span class="special">);</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">ec2</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="identifier">log_error</span><span class="special">(</span><span class="string">"Error running query"</span><span class="special">,</span> <span class="identifier">ec</span><span class="special">);</span>
+        <span class="identifier">co_return</span> <span class="string">"ERROR"</span><span class="special">;</span>
+    <span class="special">}</span>
+
+    <span class="comment">// Handle the result as we did in the previous tutorial</span>
+<span class="special">}</span>
+</pre>
+<h4>
+<a name="mysql.tutorial_error_handling.h6"></a>
+      <span class="phrase"><a name="mysql.tutorial_error_handling.diagnostics_objects"></a></span><a class="link" href="tutorial_error_handling.html#mysql.tutorial_error_handling.diagnostics_objects">Diagnostics
+      objects</a>
+    </h4>
+<p>
+      While what we wrote works, it can be improved. When a database operation fails,
+      the server may supply an error string with information about what went wrong.
+      Boost.MySQL may also generate such strings in certain cases. We get this automatically
+      when using exceptions. Thanks to <a class="link" href="ref/boost__mysql__with_diagnostics.html" title="with_diagnostics"><code class="literal">with_diagnostics</code></a>
+      and default completion tokens, the library throws <a class="link" href="ref/boost__mysql__error_with_diagnostics.html" title="error_with_diagnostics"><code class="literal">error_with_diagnostics</code></a>
+      objects, which inherit from <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">system</span><span class="special">::</span><span class="identifier">system_error</span></code>
+      and have a <a class="link" href="ref/boost__mysql__error_with_diagnostics/get_diagnostics.html" title="error_with_diagnostics::get_diagnostics"><code class="literal">get_diagnostics</code></a>
+      member.
+    </p>
+<p>
+      When using error codes, we need to handle diagnostics manually. All functions
+      in Boost.MySQL are overloaded to accept a <a class="link" href="ref/boost__mysql__diagnostics.html" title="diagnostics"><code class="literal">diagnostics</code></a>
+      output parameter. It will be populated with extra information in case of error.
+    </p>
+<p>
+      Let's update our code to use diagnostics:
+    </p>
+<pre class="programlisting"><span class="identifier">asio</span><span class="special">::</span><span class="identifier">awaitable</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">&gt;</span> <span class="identifier">get_employee_details</span><span class="special">(</span><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">connection_pool</span><span class="special">&amp;</span> <span class="identifier">pool</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">int64_t</span> <span class="identifier">employee_id</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="comment">// Will be populated with error information in case of error</span>
+    <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">diagnostics</span> <span class="identifier">diag</span><span class="special">;</span>
+
+    <span class="comment">// Get a connection from the pool.</span>
+    <span class="comment">// This will wait until a healthy connection is ready to be used.</span>
+    <span class="comment">// ec is an error_code, conn is the mysql::pooled_connection</span>
+    <span class="keyword">auto</span> <span class="special">[</span><span class="identifier">ec</span><span class="special">,</span> <span class="identifier">conn</span><span class="special">]</span> <span class="special">=</span> <span class="identifier">co_await</span> <span class="identifier">pool</span><span class="special">.</span><span class="identifier">async_get_connection</span><span class="special">(</span><span class="identifier">diag</span><span class="special">,</span> <span class="identifier">asio</span><span class="special">::</span><span class="identifier">as_tuple</span><span class="special">);</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">ec</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="comment">// A connection couldn't be obtained.</span>
+        <span class="comment">// This may be because a timeout happened.</span>
+        <span class="identifier">log_error</span><span class="special">(</span><span class="string">"Error in async_get_connection"</span><span class="special">,</span> <span class="identifier">ec</span><span class="special">,</span> <span class="identifier">diag</span><span class="special">);</span>
+        <span class="identifier">co_return</span> <span class="string">"ERROR"</span><span class="special">;</span>
+    <span class="special">}</span>
+
+    <span class="comment">// Use the connection normally to query the database.</span>
+    <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">static_results</span><span class="special">&lt;</span><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">pfr_by_name</span><span class="special">&lt;</span><span class="identifier">employee</span><span class="special">&gt;&gt;</span> <span class="identifier">result</span><span class="special">;</span>
+    <span class="keyword">auto</span> <span class="special">[</span><span class="identifier">ec2</span><span class="special">]</span> <span class="special">=</span> <span class="identifier">co_await</span> <span class="identifier">conn</span><span class="special">-&gt;</span><span class="identifier">async_execute</span><span class="special">(</span>
+        <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">with_params</span><span class="special">(</span><span class="string">"SELECT first_name, last_name FROM employee WHERE id = {}"</span><span class="special">,</span> <span class="identifier">employee_id</span><span class="special">),</span>
+        <span class="identifier">result</span><span class="special">,</span>
+        <span class="identifier">diag</span><span class="special">,</span>
+        <span class="identifier">asio</span><span class="special">::</span><span class="identifier">as_tuple</span>
+    <span class="special">);</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">ec2</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="identifier">log_error</span><span class="special">(</span><span class="string">"Error running query"</span><span class="special">,</span> <span class="identifier">ec2</span><span class="special">,</span> <span class="identifier">diag</span><span class="special">);</span>
+        <span class="identifier">co_return</span> <span class="string">"ERROR"</span><span class="special">;</span>
+    <span class="special">}</span>
+
+    <span class="comment">// Compose the message to be sent back to the client</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">result</span><span class="special">.</span><span class="identifier">rows</span><span class="special">().</span><span class="identifier">empty</span><span class="special">())</span>
+    <span class="special">{</span>
+        <span class="identifier">co_return</span> <span class="string">"NOT_FOUND"</span><span class="special">;</span>
+    <span class="special">}</span>
+    <span class="keyword">else</span>
+    <span class="special">{</span>
+        <span class="keyword">const</span> <span class="keyword">auto</span><span class="special">&amp;</span> <span class="identifier">emp</span> <span class="special">=</span> <span class="identifier">result</span><span class="special">.</span><span class="identifier">rows</span><span class="special">()[</span><span class="number">0</span><span class="special">];</span>
+        <span class="identifier">co_return</span> <span class="identifier">emp</span><span class="special">.</span><span class="identifier">first_name</span> <span class="special">+</span> <span class="char">' '</span> <span class="special">+</span> <span class="identifier">emp</span><span class="special">.</span><span class="identifier">last_name</span><span class="special">;</span>
+    <span class="special">}</span>
+
+    <span class="comment">// When the pooled_connection is destroyed, the connection is returned</span>
+    <span class="comment">// to the pool, so it can be re-used.</span>
+<span class="special">}</span>
+</pre>
+<p>
+      We also need to write the function to log errors:
+    </p>
+<pre class="programlisting"><span class="comment">// Log an error to std::cerr</span>
+<span class="keyword">void</span> <span class="identifier">log_error</span><span class="special">(</span><span class="keyword">const</span> <span class="keyword">char</span><span class="special">*</span> <span class="identifier">header</span><span class="special">,</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">system</span><span class="special">::</span><span class="identifier">error_code</span> <span class="identifier">ec</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">diagnostics</span><span class="special">&amp;</span> <span class="identifier">diag</span> <span class="special">=</span> <span class="special">{})</span>
+<span class="special">{</span>
+    <span class="comment">// Inserting the error code only prints the number and category. Add the message, too.</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">cerr</span> <span class="special">&lt;&lt;</span> <span class="identifier">header</span> <span class="special">&lt;&lt;</span> <span class="string">": "</span> <span class="special">&lt;&lt;</span> <span class="identifier">ec</span> <span class="special">&lt;&lt;</span> <span class="string">" "</span> <span class="special">&lt;&lt;</span> <span class="identifier">ec</span><span class="special">.</span><span class="identifier">message</span><span class="special">();</span>
+
+    <span class="comment">// client_message() contains client-side generated messages that don't</span>
+    <span class="comment">// contain user-input. This is usually embedded in exceptions.</span>
+    <span class="comment">// When working with error codes, we need to log it explicitly</span>
+    <span class="keyword">if</span> <span class="special">(!</span><span class="identifier">diag</span><span class="special">.</span><span class="identifier">client_message</span><span class="special">().</span><span class="identifier">empty</span><span class="special">())</span>
+    <span class="special">{</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cerr</span> <span class="special">&lt;&lt;</span> <span class="string">": "</span> <span class="special">&lt;&lt;</span> <span class="identifier">diag</span><span class="special">.</span><span class="identifier">client_message</span><span class="special">();</span>
+    <span class="special">}</span>
+
+    <span class="comment">// server_message() contains server-side messages, and thus may</span>
+    <span class="comment">// contain user-supplied input. Printing it is safe.</span>
+    <span class="keyword">if</span> <span class="special">(!</span><span class="identifier">diag</span><span class="special">.</span><span class="identifier">server_message</span><span class="special">().</span><span class="identifier">empty</span><span class="special">())</span>
+    <span class="special">{</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cerr</span> <span class="special">&lt;&lt;</span> <span class="string">": "</span> <span class="special">&lt;&lt;</span> <span class="identifier">diag</span><span class="special">.</span><span class="identifier">server_message</span><span class="special">();</span>
+    <span class="special">}</span>
+
+    <span class="comment">// Done</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">cerr</span> <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;</span>
+<span class="special">}</span>
+</pre>
+<p>
+      <a class="link" href="ref/boost__mysql__diagnostics/client_message.html" title="diagnostics::client_message"><code class="literal">diagnostics::client_message</code></a>
+      and <a class="link" href="ref/boost__mysql__diagnostics/server_message.html" title="diagnostics::server_message"><code class="literal">diagnostics::server_message</code></a>
+      differ in their origin. Client messages never contain user-supplied input,
+      and can always be used safely. Server messages may contain user input, and
+      should be treated with more caution (logging them is fine).
+    </p>
+<h4>
+<a name="mysql.tutorial_error_handling.h7"></a>
+      <span class="phrase"><a name="mysql.tutorial_error_handling.using_asio_as_tuple_with_client_"></a></span><a class="link" href="tutorial_error_handling.html#mysql.tutorial_error_handling.using_asio_as_tuple_with_client_">Using
+      asio::as_tuple with client reads and writes</a>
+    </h4>
+<p>
+      Since <code class="computeroutput"><span class="identifier">asio</span><span class="special">::</span><span class="identifier">read</span></code> and <code class="computeroutput"><span class="identifier">asio</span><span class="special">::</span><span class="identifier">write</span></code> are
+      compliant async operations, we can use <a href="../../../../../doc/html/boost_asio/reference/as_tuple.html" target="_top"><code class="literal">asio::as_tuple</code></a>
+      with them, too:
+    </p>
+<pre class="programlisting"><span class="identifier">asio</span><span class="special">::</span><span class="identifier">awaitable</span><span class="special">&lt;</span><span class="keyword">void</span><span class="special">&gt;</span> <span class="identifier">handle_session</span><span class="special">(</span><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">connection_pool</span><span class="special">&amp;</span> <span class="identifier">pool</span><span class="special">,</span> <span class="identifier">asio</span><span class="special">::</span><span class="identifier">ip</span><span class="special">::</span><span class="identifier">tcp</span><span class="special">::</span><span class="identifier">socket</span> <span class="identifier">client_socket</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="comment">// Read the request from the client.</span>
+    <span class="keyword">unsigned</span> <span class="keyword">char</span> <span class="identifier">message</span><span class="special">[</span><span class="number">8</span><span class="special">]{};</span>
+    <span class="keyword">auto</span> <span class="special">[</span><span class="identifier">ec1</span><span class="special">,</span> <span class="identifier">bytes_read</span><span class="special">]</span> <span class="special">=</span> <span class="identifier">co_await</span> <span class="identifier">asio</span><span class="special">::</span><span class="identifier">async_read</span><span class="special">(</span><span class="identifier">client_socket</span><span class="special">,</span> <span class="identifier">asio</span><span class="special">::</span><span class="identifier">buffer</span><span class="special">(</span><span class="identifier">message</span><span class="special">),</span> <span class="identifier">asio</span><span class="special">::</span><span class="identifier">as_tuple</span><span class="special">);</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">ec1</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="identifier">log_error</span><span class="special">(</span><span class="string">"Error reading from the socket"</span><span class="special">,</span> <span class="identifier">ec1</span><span class="special">);</span>
+        <span class="identifier">co_return</span><span class="special">;</span>
+    <span class="special">}</span>
+
+    <span class="comment">// Process the request as before (omitted)</span>
+
+    <span class="comment">// Write the response back to the client.</span>
+    <span class="keyword">auto</span> <span class="special">[</span><span class="identifier">ec2</span><span class="special">,</span> <span class="identifier">bytes_written</span><span class="special">]</span> <span class="special">=</span> <span class="identifier">co_await</span> <span class="identifier">asio</span><span class="special">::</span><span class="identifier">async_write</span><span class="special">(</span>
+        <span class="identifier">client_socket</span><span class="special">,</span>
+        <span class="identifier">asio</span><span class="special">::</span><span class="identifier">buffer</span><span class="special">(</span><span class="identifier">response</span><span class="special">),</span>
+        <span class="identifier">asio</span><span class="special">::</span><span class="identifier">as_tuple</span>
+    <span class="special">);</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">ec2</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="identifier">log_error</span><span class="special">(</span><span class="string">"Error writing to the socket"</span><span class="special">,</span> <span class="identifier">ec2</span><span class="special">);</span>
+        <span class="identifier">co_return</span><span class="special">;</span>
+    <span class="special">}</span>
+<span class="special">}</span>
+</pre>
+<h4>
+<a name="mysql.tutorial_error_handling.h8"></a>
+      <span class="phrase"><a name="mysql.tutorial_error_handling.timeouts"></a></span><a class="link" href="tutorial_error_handling.html#mysql.tutorial_error_handling.timeouts">Timeouts</a>
+    </h4>
+<p>
+      Our session handler has three logical steps:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          Read a request from the client.
+        </li>
+<li class="listitem">
+          Access the database.
+        </li>
+<li class="listitem">
+          Write the response to the client.
+        </li>
+</ul></div>
+<p>
+      Each of these steps may take long to complete. We will set a separate timeout
+      to each one.
+    </p>
+<p>
+      Client reads and writes are the easiest ones to handle - we just need to combine
+      <code class="computeroutput"><span class="identifier">as_tuple</span></code> and <code class="computeroutput"><span class="identifier">cancel_after</span></code>:
+    </p>
+<pre class="programlisting"><span class="comment">// Read the request from the client.</span>
+<span class="comment">// async_read ensures that the 8-byte buffer is filled, handling partial reads.</span>
+<span class="comment">// Error the read if it hasn't completed after 30 seconds.</span>
+<span class="keyword">unsigned</span> <span class="keyword">char</span> <span class="identifier">message</span><span class="special">[</span><span class="number">8</span><span class="special">]{};</span>
+<span class="keyword">auto</span> <span class="special">[</span><span class="identifier">ec1</span><span class="special">,</span> <span class="identifier">bytes_read</span><span class="special">]</span> <span class="special">=</span> <span class="identifier">co_await</span> <span class="identifier">asio</span><span class="special">::</span><span class="identifier">async_read</span><span class="special">(</span>
+    <span class="identifier">client_socket</span><span class="special">,</span>
+    <span class="identifier">asio</span><span class="special">::</span><span class="identifier">buffer</span><span class="special">(</span><span class="identifier">message</span><span class="special">),</span>
+    <span class="identifier">asio</span><span class="special">::</span><span class="identifier">cancel_after</span><span class="special">(</span><span class="number">30</span><span class="identifier">s</span><span class="special">,</span> <span class="identifier">asio</span><span class="special">::</span><span class="identifier">as_tuple</span><span class="special">)</span>
+<span class="special">);</span>
+<span class="keyword">if</span> <span class="special">(</span><span class="identifier">ec1</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="comment">// An error or a timeout happened.</span>
+    <span class="identifier">log_error</span><span class="special">(</span><span class="string">"Error reading from the socket"</span><span class="special">,</span> <span class="identifier">ec1</span><span class="special">);</span>
+    <span class="identifier">co_return</span><span class="special">;</span>
+<span class="special">}</span>
+</pre>
+<p>
+      The database logic is more involved. Ideally, we would like to set a timeout
+      to the overall database access operation, rather than to individual steps.
+      However, a <code class="computeroutput"><span class="identifier">co_await</span></code> expression
+      isn't an async operation, and can't be passed a completion token. We can fix
+      this by replacing plain <code class="computeroutput"><span class="identifier">co_await</span></code>
+      by <code class="computeroutput"><span class="identifier">asio</span><span class="special">::</span><span class="identifier">co_spawn</span></code>, which accepts a completion token:
+    </p>
+<pre class="programlisting"><span class="comment">// Invoke the database handling logic.</span>
+<span class="comment">// Apply an overall timeout of 20 seconds to the entire coroutine.</span>
+<span class="comment">// Using asio::co_spawn allows us to pass a completion token, like asio::cancel_after.</span>
+<span class="comment">// As other async operations, co_spawn's default completion token allows</span>
+<span class="comment">// us to use co_await on its return value.</span>
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">response</span> <span class="special">=</span> <span class="identifier">co_await</span> <span class="identifier">asio</span><span class="special">::</span><span class="identifier">co_spawn</span><span class="special">(</span>
+    <span class="comment">// Run the child coroutine using the same executor as this coroutine</span>
+    <span class="identifier">co_await</span> <span class="identifier">asio</span><span class="special">::</span><span class="identifier">this_coro</span><span class="special">::</span><span class="identifier">executor</span><span class="special">,</span>
+
+    <span class="comment">// The coroutine should run our database logic</span>
+    <span class="special">[&amp;</span><span class="identifier">pool</span><span class="special">,</span> <span class="identifier">employee_id</span><span class="special">]</span> <span class="special">{</span> <span class="keyword">return</span> <span class="identifier">get_employee_details</span><span class="special">(</span><span class="identifier">pool</span><span class="special">,</span> <span class="identifier">employee_id</span><span class="special">);</span> <span class="special">},</span>
+
+    <span class="comment">// Apply a timeout, and return an object that can be co_awaited.</span>
+    <span class="comment">// We don't use as_tuple here because we're already handling I/O errors</span>
+    <span class="comment">// inside get_employee_details. If an unexpected exception happens, propagate it.</span>
+    <span class="identifier">asio</span><span class="special">::</span><span class="identifier">cancel_after</span><span class="special">(</span><span class="number">20</span><span class="identifier">s</span><span class="special">)</span>
+<span class="special">);</span>
+</pre>
+<p>
+      With these modifications, the session handler becomes:
+    </p>
+<pre class="programlisting"><span class="identifier">asio</span><span class="special">::</span><span class="identifier">awaitable</span><span class="special">&lt;</span><span class="keyword">void</span><span class="special">&gt;</span> <span class="identifier">handle_session</span><span class="special">(</span><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">connection_pool</span><span class="special">&amp;</span> <span class="identifier">pool</span><span class="special">,</span> <span class="identifier">asio</span><span class="special">::</span><span class="identifier">ip</span><span class="special">::</span><span class="identifier">tcp</span><span class="special">::</span><span class="identifier">socket</span> <span class="identifier">client_socket</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="comment">// Enable the use of the "s" suffix for std::chrono::seconds</span>
+    <span class="keyword">using</span> <span class="keyword">namespace</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">chrono_literals</span><span class="special">;</span>
+
+    <span class="comment">// Read the request from the client.</span>
+    <span class="comment">// async_read ensures that the 8-byte buffer is filled, handling partial reads.</span>
+    <span class="comment">// Error the read if it hasn't completed after 30 seconds.</span>
+    <span class="keyword">unsigned</span> <span class="keyword">char</span> <span class="identifier">message</span><span class="special">[</span><span class="number">8</span><span class="special">]{};</span>
+    <span class="keyword">auto</span> <span class="special">[</span><span class="identifier">ec1</span><span class="special">,</span> <span class="identifier">bytes_read</span><span class="special">]</span> <span class="special">=</span> <span class="identifier">co_await</span> <span class="identifier">asio</span><span class="special">::</span><span class="identifier">async_read</span><span class="special">(</span>
+        <span class="identifier">client_socket</span><span class="special">,</span>
+        <span class="identifier">asio</span><span class="special">::</span><span class="identifier">buffer</span><span class="special">(</span><span class="identifier">message</span><span class="special">),</span>
+        <span class="identifier">asio</span><span class="special">::</span><span class="identifier">cancel_after</span><span class="special">(</span><span class="number">30</span><span class="identifier">s</span><span class="special">,</span> <span class="identifier">asio</span><span class="special">::</span><span class="identifier">as_tuple</span><span class="special">)</span>
+    <span class="special">);</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">ec1</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="comment">// An error or a timeout happened.</span>
+        <span class="identifier">log_error</span><span class="special">(</span><span class="string">"Error reading from the socket"</span><span class="special">,</span> <span class="identifier">ec1</span><span class="special">);</span>
+        <span class="identifier">co_return</span><span class="special">;</span>
+    <span class="special">}</span>
+
+    <span class="comment">// Parse the 64-bit big-endian int into a native int64_t</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">int64_t</span> <span class="identifier">employee_id</span> <span class="special">=</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">endian</span><span class="special">::</span><span class="identifier">load_big_s64</span><span class="special">(</span><span class="identifier">message</span><span class="special">);</span>
+
+    <span class="comment">// Invoke the database handling logic.</span>
+    <span class="comment">// Apply an overall timeout of 20 seconds to the entire coroutine.</span>
+    <span class="comment">// Using asio::co_spawn allows us to pass a completion token, like asio::cancel_after.</span>
+    <span class="comment">// As other async operations, co_spawn's default completion token allows</span>
+    <span class="comment">// us to use co_await on its return value.</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">response</span> <span class="special">=</span> <span class="identifier">co_await</span> <span class="identifier">asio</span><span class="special">::</span><span class="identifier">co_spawn</span><span class="special">(</span>
+        <span class="comment">// Run the child coroutine using the same executor as this coroutine</span>
+        <span class="identifier">co_await</span> <span class="identifier">asio</span><span class="special">::</span><span class="identifier">this_coro</span><span class="special">::</span><span class="identifier">executor</span><span class="special">,</span>
+
+        <span class="comment">// The coroutine should run our database logic</span>
+        <span class="special">[&amp;</span><span class="identifier">pool</span><span class="special">,</span> <span class="identifier">employee_id</span><span class="special">]</span> <span class="special">{</span> <span class="keyword">return</span> <span class="identifier">get_employee_details</span><span class="special">(</span><span class="identifier">pool</span><span class="special">,</span> <span class="identifier">employee_id</span><span class="special">);</span> <span class="special">},</span>
+
+        <span class="comment">// Apply a timeout, and return an object that can be co_awaited.</span>
+        <span class="comment">// We don't use as_tuple here because we're already handling I/O errors</span>
+        <span class="comment">// inside get_employee_details. If an unexpected exception happens, propagate it.</span>
+        <span class="identifier">asio</span><span class="special">::</span><span class="identifier">cancel_after</span><span class="special">(</span><span class="number">20</span><span class="identifier">s</span><span class="special">)</span>
+    <span class="special">);</span>
+
+    <span class="comment">// Write the response back to the client.</span>
+    <span class="comment">// async_write ensures that the entire message is written, handling partial writes.</span>
+    <span class="comment">// Set a timeout to the write operation, too.</span>
+    <span class="keyword">auto</span> <span class="special">[</span><span class="identifier">ec2</span><span class="special">,</span> <span class="identifier">bytes_written</span><span class="special">]</span> <span class="special">=</span> <span class="identifier">co_await</span> <span class="identifier">asio</span><span class="special">::</span><span class="identifier">async_write</span><span class="special">(</span>
+        <span class="identifier">client_socket</span><span class="special">,</span>
+        <span class="identifier">asio</span><span class="special">::</span><span class="identifier">buffer</span><span class="special">(</span><span class="identifier">response</span><span class="special">),</span>
+        <span class="identifier">asio</span><span class="special">::</span><span class="identifier">cancel_after</span><span class="special">(</span><span class="number">30</span><span class="identifier">s</span><span class="special">,</span> <span class="identifier">asio</span><span class="special">::</span><span class="identifier">as_tuple</span><span class="special">)</span>
+    <span class="special">);</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">ec2</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="identifier">log_error</span><span class="special">(</span><span class="string">"Error writing to the socket"</span><span class="special">,</span> <span class="identifier">ec2</span><span class="special">);</span>
+        <span class="identifier">co_return</span><span class="special">;</span>
+    <span class="special">}</span>
+
+    <span class="comment">// The socket's destructor will close the client connection</span>
+<span class="special">}</span>
+</pre>
+<p>
+      With these modifications, our server is ready!
+    </p>
+<h4>
+<a name="mysql.tutorial_error_handling.h9"></a>
+      <span class="phrase"><a name="mysql.tutorial_error_handling.wrapping_up"></a></span><a class="link" href="tutorial_error_handling.html#mysql.tutorial_error_handling.wrapping_up">Wrapping
+      up</a>
+    </h4>
+<p>
+      Full program listing for this tutorial is <a class="link" href="examples/tutorial_error_handling.html" title="Tutorial 7 listing: error handling">here</a>.
+    </p>
+<p>
+      This concludes our tutorial series. You can now look at the <a class="link" href="overview.html" title="Overview">overview
+      section</a> to learn more about the library features, or to the <a class="link" href="examples.html" title="Examples">example
+      section</a> if you prefer to learn by doing.
+    </p>
+<div class="footnotes">
+<br><hr style="width:100; text-align:left;margin-left: 0">
+<div id="ftn.mysql.tutorial_error_handling.f0" class="footnote"><p><a href="#mysql.tutorial_error_handling.f0" class="para"><sup class="para">[1] </sup></a>
+        <a class="link" href="ref/boost__mysql__with_diagnostics.html" title="with_diagnostics"><code class="literal">with_diagnostics</code></a>
+        is an adapter completion token that enhances thrown exceptions with a diagnostic
+        string supplied by the server. <code class="computeroutput"><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">with_diagnostics</span><span class="special">(</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">deferred</span><span class="special">)</span></code>
+        is otherwise equivalent to <code class="computeroutput"><span class="identifier">asio</span><span class="special">::</span><span class="identifier">deferred</span></code>.
+      </p></div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="tutorial_connection_pool.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="overview.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

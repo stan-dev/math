@@ -1,0 +1,318 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Error handling and available overloads</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="prev" href="async.html" title="Going async">
+<link rel="next" href="sql_formatting_advanced.html" title="Advanced client-side SQL query formatting">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="async.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="sql_formatting_advanced.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="mysql.error_handling"></a><a class="link" href="error_handling.html" title="Error handling and available overloads">Error handling and available overloads</a>
+</h2></div></div></div>
+<p>
+      This section describes the different error handling strategies you may use
+      with this library, as well as the different overloads available for each function
+      involving network transfers.
+    </p>
+<p>
+      This library uses Boost.System error codes and exceptions, like Asio and Beast.
+      Some server-reported errors may include additional diagnostics information.
+      For example, if you issue a query and one of the referenced fields does not
+      exist, the server will return an error message indicating which was the offending
+      field. This library makes these diagnostics available through the following
+      classes and functions:
+    </p>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl class="variablelist">
+<dt><span class="term"><a class="link" href="ref/boost__mysql__diagnostics.html" title="diagnostics"><code class="literal">diagnostics</code></a></span></dt>
+<dd><p>
+            An object containing this extra diagnostic information about an error.
+            <a class="link" href="ref/boost__mysql__diagnostics/server_message.html" title="diagnostics::server_message"><code class="literal">diagnostics::server_message</code></a>
+            contains the server-generated error string, if any.
+          </p></dd>
+<dt><span class="term"><a class="link" href="ref/boost__mysql__error_with_diagnostics.html" title="error_with_diagnostics"><code class="literal">error_with_diagnostics</code></a></span></dt>
+<dd><p>
+            An exception that inherits from <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">system</span><span class="special">::</span><span class="identifier">system_error</span></code>
+            that contains a <code class="computeroutput"><span class="identifier">diagnostics</span></code>
+            object.
+          </p></dd>
+<dt><span class="term"><a class="link" href="ref/boost__mysql__with_diagnostics.html" title="with_diagnostics"><code class="literal">with_diagnostics</code></a></span></dt>
+<dd><p>
+            A completion token that embeds diagnostics in exceptions thrown by async
+            functions.
+          </p></dd>
+<dt><span class="term"><a class="link" href="ref/boost__mysql__is_fatal_error.html" title="is_fatal_error"><code class="literal">is_fatal_error</code></a></span></dt>
+<dd><p>
+            Checks whether an <code class="computeroutput"><span class="identifier">error_code</span></code>
+            is <a class="link" href="error_handling.html#mysql.error_handling.fatal">fatal</a> and thus requires
+            re-establishing the connection.
+          </p></dd>
+</dl>
+</div>
+<p>
+      Every piece of functionality involving network transfers is offered in four
+      versions:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          <span class="bold"><strong>Synchronous with exceptions</strong></span>. When they
+          fail, they throw an <a class="link" href="ref/boost__mysql__error_with_diagnostics.html" title="error_with_diagnostics"><code class="literal">error_with_diagnostics</code></a>
+          exception.
+        </li>
+<li class="listitem">
+          <span class="bold"><strong>Synchronous with <a class="link" href="ref/boost__mysql__error_code.html" title="error_code"><code class="literal">error_code</code></a>
+          and <a class="link" href="ref/boost__mysql__diagnostics.html" title="diagnostics"><code class="literal">diagnostics</code></a></strong></span>.
+          These functions output an <code class="computeroutput"><span class="identifier">error_code</span></code>
+          and a <code class="computeroutput"><span class="identifier">diagnostics</span></code> object
+          by lvalue reference to report failures.
+        </li>
+<li class="listitem">
+          <span class="bold"><strong>Asynchronous, without <code class="computeroutput"><span class="identifier">diagnostics</span></code></strong></span>.
+          When they fail, they call the completion handler with a non-empty <code class="computeroutput"><span class="identifier">error_code</span></code>.
+        </li>
+<li class="listitem">
+          <span class="bold"><strong>Asynchronous, with <code class="computeroutput"><span class="identifier">diagnostics</span></code></strong></span>.
+          They have a <code class="computeroutput"><span class="identifier">diagnostics</span><span class="special">&amp;</span></code> parameter before the <code class="computeroutput"><span class="identifier">CompletionToken</span></code>. When they fail, they
+          set the <code class="computeroutput"><span class="identifier">diagnostics</span></code> parameter
+          to any server-provided diagnostic information, if available, and then call
+          the completion handler with a non-empty <code class="computeroutput"><span class="identifier">error_code</span></code>.
+        </li>
+</ul></div>
+<h4>
+<a name="mysql.error_handling.h0"></a>
+      <span class="phrase"><a name="mysql.error_handling.types_of_errors"></a></span><a class="link" href="error_handling.html#mysql.error_handling.types_of_errors">Types
+      of errors</a>
+    </h4>
+<p>
+      This library defines the following types of errors:
+    </p>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+              <p>
+                Type of error
+              </p>
+            </th>
+<th>
+              <p>
+                Values contained in...
+              </p>
+            </th>
+<th>
+              <p>
+                Error category
+              </p>
+            </th>
+<th>
+              <p>
+                Description
+              </p>
+            </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+              <p>
+                Client errors
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__client_errc.html" title="client_errc"><code class="literal">client_errc</code></a>
+                enum
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__get_client_category.html" title="get_client_category"><code class="literal">get_client_category</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                Failures detected by Boost.MySQL, like corrupt messages.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                Common server errors
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__common_server_errc.html" title="common_server_errc"><code class="literal">common_server_errc</code></a>
+                enum
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__get_common_server_category.html" title="get_common_server_category"><code class="literal">get_common_server_category</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                Errors reported by the server, common to both MySQL and MariaDB.
+                No new codes will be added here, since the two DBs are currently
+                developed independently.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                MySQL-specific server errors
+              </p>
+            </td>
+<td>
+              <p>
+                Integer codes in <br> <code class="literal">&lt;<a href="https://github.com/boostorg/mysql/blob/master/include/boost/mysql/mysql_server_errc.hpp" target="_top">boost/mysql/mysql_server_errc.hpp</a>&gt;</code>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__get_mysql_server_category.html" title="get_mysql_server_category"><code class="literal">get_mysql_server_category</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                Errors reported by the server, specific to MySQL. New codes will
+                be added in the future.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                MariaDB-specific server errors
+              </p>
+            </td>
+<td>
+              <p>
+                Integer codes in <br> <code class="literal">&lt;<a href="https://github.com/boostorg/mysql/blob/master/include/boost/mysql/mariadb_server_errc.hpp" target="_top">boost/mysql/mariadb_server_errc.hpp</a>&gt;</code>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__get_mariadb_server_category.html" title="get_mariadb_server_category"><code class="literal">get_mariadb_server_category</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                Errors reported by the server, specific to MariaDB. New codes will
+                be added in the future.
+              </p>
+            </td>
+</tr>
+</tbody>
+</table></div>
+<p>
+      Note that new codes are added frequently, so server-specific codes are represented
+      as integers, instead of enums.
+    </p>
+<h4>
+<a name="mysql.error_handling.h1"></a>
+      <span class="phrase"><a name="mysql.error_handling.fatal"></a></span><a class="link" href="error_handling.html#mysql.error_handling.fatal">Fatal
+      vs. non-fatal errors</a>
+    </h4>
+<p>
+      When an operation on a established connection (like a query execution) results
+      in an error, two situations may happen:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          The connection object is left in a well-known state. You can safely use
+          the object to run further operations without problems. For instance, if
+          a query fails with <code class="computeroutput"><span class="identifier">common_server_errc</span><span class="special">::</span><span class="identifier">er_no_such_table</span></code>
+          because you misspelled a table name, it is safe to run other queries after
+          the failed one. Such errors are called <span class="bold"><strong>non-fatal</strong></span>.
+        </li>
+<li class="listitem">
+          The connection object is left un an unknown state. Further operations will
+          fail with unpredictable results. You should close and re-establish the
+          connection. These are <span class="bold"><strong>fatal</strong></span> errors, and
+          include protocol and network errors.
+        </li>
+</ul></div>
+<p>
+      You can use <a class="link" href="ref/boost__mysql__is_fatal_error.html" title="is_fatal_error"><code class="literal">is_fatal_error</code></a>
+      to distinguish between fatal and non-fatal error codes.
+    </p>
+<h4>
+<a name="mysql.error_handling.h2"></a>
+      <span class="phrase"><a name="mysql.error_handling.security_notes_on_diagnostics"></a></span><a class="link" href="error_handling.html#mysql.error_handling.security_notes_on_diagnostics">Security
+      notes on diagnostics</a>
+    </h4>
+<p>
+      The error message given by <a class="link" href="ref/boost__mysql__diagnostics/server_message.html" title="diagnostics::server_message"><code class="literal">diagnostics::server_message</code></a>
+      <span class="bold"><strong>may contain user-provided input, and should be treated
+      as untrusted</strong></span>. For certain errors, the MySQL server will include
+      the offending field names and values, which may contain arbitrary input. Please
+      use with caution.
+    </p>
+<p>
+      This message may contain non-ASCII characters. It's encoded using the connection's
+      character set.
+    </p>
+<h4>
+<a name="mysql.error_handling.h3"></a>
+      <span class="phrase"><a name="mysql.error_handling.system_result"></a></span><a class="link" href="error_handling.html#mysql.error_handling.system_result">Using
+      boost::system::result</a>
+    </h4>
+<p>
+      Some functions, like <a class="link" href="ref/boost__mysql__basic_format_context/get.html" title="basic_format_context::get"><code class="literal">basic_format_context::get</code></a>,
+      use <a href="../../../../../libs/system/doc/html/system.html#ref_boostsystemresult_hpp" target="_top"><code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">system</span><span class="special">::</span><span class="identifier">result</span><span class="special">&lt;</span><span class="identifier">T</span><span class="special">&gt;</span></code></a>
+      to communicate errors. <code class="computeroutput"><span class="identifier">result</span><span class="special">&lt;</span><span class="identifier">T</span><span class="special">&gt;</span></code>
+      contains either a value (an instance of <code class="computeroutput"><span class="identifier">T</span></code>),
+      or an <a class="link" href="ref/boost__mysql__error_code.html" title="error_code"><code class="literal">error_code</code></a>,
+      if the operation failed. <code class="computeroutput"><span class="identifier">result</span><span class="special">&lt;</span><span class="identifier">T</span><span class="special">&gt;</span></code>
+      is similar to <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">expected</span></code>, but only requires C++11.
+    </p>
+<p>
+      Given a <code class="computeroutput"><span class="identifier">result</span><span class="special">&lt;</span><span class="identifier">T</span><span class="special">&gt;</span></code> object
+      <code class="computeroutput"><span class="identifier">r</span></code>, you can get its contained
+      value calling <code class="computeroutput"><span class="identifier">r</span><span class="special">.</span><span class="identifier">value</span><span class="special">()</span></code>.
+      If <code class="computeroutput"><span class="identifier">r</span></code> contained an error, a
+      <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">system</span><span class="special">::</span><span class="identifier">result</span></code> exception with the contained error
+      code is thrown. <code class="computeroutput"><span class="identifier">r</span><span class="special">.</span><span class="identifier">has_value</span><span class="special">()</span></code>,
+      <code class="computeroutput"><span class="identifier">r</span><span class="special">.</span><span class="identifier">has_error</span><span class="special">()</span></code>
+      and <code class="computeroutput"><span class="identifier">r</span><span class="special">.</span><span class="identifier">error</span><span class="special">()</span></code> can
+      be used to inspect the object.
+    </p>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="async.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="sql_formatting_advanced.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

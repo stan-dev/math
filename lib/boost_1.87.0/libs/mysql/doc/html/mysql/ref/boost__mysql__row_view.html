@@ -1,0 +1,396 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>row_view</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../../pt01.html" title="Part Two: Reference. ">
+<link rel="prev" href="boost__mysql__row/operator__not__eq__fe/overload3.html" title="row::operator!= (3 of 3 overloads)">
+<link rel="next" href="boost__mysql__row_view/iterator.html" title="row_view::iterator">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="boost__mysql__row/operator__not__eq__fe/overload3.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../pt01.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="boost__mysql__row_view/iterator.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="mysql.ref.boost__mysql__row_view"></a><a class="link" href="boost__mysql__row_view.html" title="row_view">row_view</a>
+</h4></div></div></div>
+<p>
+        A non-owning read-only reference to a sequence of fields.
+      </p>
+<h5>
+<a name="mysql.ref.boost__mysql__row_view.h0"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__row_view.synopsis"></a></span><a class="link" href="boost__mysql__row_view.html#mysql.ref.boost__mysql__row_view.synopsis">Synopsis</a>
+      </h5>
+<p>
+        Defined in header <code class="literal">&lt;<a href="https://github.com/boostorg/mysql/blob/master/include/boost/mysql/row_view.hpp" target="_top">boost/mysql/row_view.hpp</a>&gt;</code>
+      </p>
+<pre class="programlisting"><span class="keyword">class</span> <span class="identifier">row_view</span><span class="special">;</span>
+</pre>
+<h5>
+<a name="mysql.ref.boost__mysql__row_view.h1"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__row_view.types"></a></span><a class="link" href="boost__mysql__row_view.html#mysql.ref.boost__mysql__row_view.types">Types</a>
+      </h5>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Name
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__row_view/const_iterator.html" title="row_view::const_iterator">const_iterator</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  A random access iterator to an element.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__row_view/const_reference.html" title="row_view::const_reference">const_reference</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  The reference type.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__row_view/difference_type.html" title="row_view::difference_type">difference_type</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  A signed integer type used to represent differences.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__row_view/iterator.html" title="row_view::iterator">iterator</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  A random access iterator to an element.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__row_view/reference.html" title="row_view::reference">reference</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  The reference type.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__row_view/size_type.html" title="row_view::size_type">size_type</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  An unsigned integer type to represent sizes.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__row_view/value_type.html" title="row_view::value_type">value_type</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  A type that can hold elements in this collection with value semantics.
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+<h5>
+<a name="mysql.ref.boost__mysql__row_view.h2"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__row_view.member_functions"></a></span><a class="link" href="boost__mysql__row_view.html#mysql.ref.boost__mysql__row_view.member_functions">Member
+        Functions</a>
+      </h5>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Name
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__row_view/as_vector.html" title="row_view::as_vector">as_vector</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Converts the row into a <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span></code>
+                  of <a class="link" href="boost__mysql__field.html" title="field"><code class="computeroutput"><span class="identifier">field</span></code></a>'s.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__row_view/at.html" title="row_view::at">at</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns the i-th element in the row or throws an exception.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__row_view/back.html" title="row_view::back">back</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns the last element in the row.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__row_view/begin.html" title="row_view::begin">begin</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns an iterator to the first field in the row.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__row_view/empty.html" title="row_view::empty">empty</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns true if there are no fields in the row (i.e. <code class="computeroutput"><span class="keyword">this</span><span class="special">-&gt;</span><span class="identifier">size</span><span class="special">()</span>
+                  <span class="special">==</span> <span class="number">0</span></code>).
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__row_view/end.html" title="row_view::end">end</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns an iterator to one-past-the-last field in the row.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__row_view/front.html" title="row_view::front">front</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns the first element in the row.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__row_view/operator__lb__rb_.html" title="row_view::operator[]">operator[]</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns the i-th element in the row (unchecked access).
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__row_view/row_view.html" title="row_view::row_view">row_view</a> <span class="silver">[constructor]</span></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Constructs an empty (but valid) view.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__row_view/size.html" title="row_view::size">size</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns the number of fields in the row.
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+<h5>
+<a name="mysql.ref.boost__mysql__row_view.h3"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__row_view.related_non_member_functions"></a></span><a class="link" href="boost__mysql__row_view.html#mysql.ref.boost__mysql__row_view.related_non_member_functions">Related
+        Non-member Functions</a>
+      </h5>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Name
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__row_view/operator__not__eq__fe.html" title="row_view::operator!=">operator!=</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Inequality operator.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__row_view/operator_eq__eq__fe.html" title="row_view::operator==">operator==</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Equality operator.
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+<h5>
+<a name="mysql.ref.boost__mysql__row_view.h4"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__row_view.description"></a></span><a class="link" href="boost__mysql__row_view.html#mysql.ref.boost__mysql__row_view.description">Description</a>
+      </h5>
+<p>
+        A <code class="computeroutput"><span class="identifier">row_view</span></code> points to memory
+        owned by an external entity (like <code class="computeroutput"><span class="identifier">string_view</span></code>
+        does). The validity of a <code class="computeroutput"><span class="identifier">row_view</span></code>
+        depends on how it was obtained:
+      </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+            If it was constructed from a <a class="link" href="boost__mysql__row.html" title="row"><code class="computeroutput"><span class="identifier">row</span></code></a> object (by calling <a class="link" href="boost__mysql__row/operator_row_view.html" title="row::operator row_view"><code class="computeroutput"><span class="identifier">row</span><span class="special">::</span><span class="keyword">operator</span> <span class="identifier">row_view</span><span class="special">()</span></code></a>), the view acts as a reference
+            to the row's allocated memory, and is valid as long as references to
+            that row elements are valid.
+          </li>
+<li class="listitem">
+            If it was obtained by indexing a <a class="link" href="boost__mysql__rows.html" title="rows"><code class="computeroutput"><span class="identifier">rows</span></code></a> object, the same applies.
+          </li>
+<li class="listitem">
+            If it was obtained by indexing a <a class="link" href="boost__mysql__rows_view.html" title="rows_view"><code class="computeroutput"><span class="identifier">rows_view</span></code></a> object, it's valid
+            as long as the <code class="computeroutput"><span class="identifier">rows_view</span></code>
+            is valid.
+          </li>
+</ul></div>
+<p>
+        Calling any member function on an invalid view results in undefined behavior.
+      </p>
+<p>
+        When indexed (by using iterators, <a class="link" href="boost__mysql__row_view/at.html" title="row_view::at"><code class="computeroutput"><span class="identifier">row_view</span><span class="special">::</span><span class="identifier">at</span></code></a> or <a class="link" href="boost__mysql__row_view/operator__lb__rb_.html" title="row_view::operator[]"><code class="computeroutput"><span class="identifier">row_view</span><span class="special">::</span><span class="keyword">operator</span><span class="special">[]</span></code></a>),
+        it returns <a class="link" href="boost__mysql__field_view.html" title="field_view"><code class="computeroutput"><span class="identifier">field_view</span></code></a> elements that are valid
+        as long as the underlying storage that <code class="computeroutput"><span class="special">*</span><span class="keyword">this</span></code> points to is valid. Destroying a <code class="computeroutput"><span class="identifier">row_view</span></code> doesn't invalidate <code class="computeroutput"><span class="identifier">field_view</span></code>s obtained from it.
+      </p>
+<p>
+        Instances of this class are usually created by the library, not by the user.
+      </p>
+<p>
+        Convenience header <code class="literal">&lt;<a href="https://github.com/boostorg/mysql/blob/master/include/boost/mysql.hpp" target="_top">boost/mysql.hpp</a>&gt;</code>
+      </p>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="boost__mysql__row/operator__not__eq__fe/overload3.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../pt01.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="boost__mysql__row_view/iterator.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

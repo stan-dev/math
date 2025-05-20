@@ -1,0 +1,28 @@
+[/
+    Copyright (c) 2019-2024 Ruben Perez Hidalgo (rubenperez038 at gmail dot com)
+   
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+]
+
+[section:boost__mysql__ExecutionRequest ExecutionRequest concept]
+
+An execution request represents a SQL statement to be executed by the
+server, plus any required parameters. It may model
+a plain text query, a client-side formatted query with parameters,
+or a prepared statement handle with parameters.
+
+Formally, a type `T` is a `ExecutionRequest` if it fulfills any of the following:
+
+* It is convertible to [reflink string_view]. In this case, the execution request
+  contains a text query to be run by the server.
+* An instantiation of the [reflink bound_statement_tuple] class, or a (possibly cv-qualified)
+  reference to it.
+* An instantiation of the [reflink bound_statement_iterator_range] class, or a (possibly cv-qualified)
+  reference to it.
+* An instantiation of the [reflink with_params_t] class, or a (possibly cv-qualified)
+  reference to it.
+
+This definition may be extended in future versions, but the above types will still satisfy `ExecutionRequest`.
+
+[endsect]

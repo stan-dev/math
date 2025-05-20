@@ -1,0 +1,168 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template basic_custom_mapping</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.Log v2">
+<link rel="up" href="../../sinks.html#doxygen.sinks.attribute__mapping_8hpp" title="Header &lt;boost/log/sinks/attribute_mapping.hpp&gt;">
+<link rel="prev" href="classboost_1_1log_1_1sinks_1_1asynchronous__sink_1_1scoped__flag.html" title="Class scoped_flag">
+<link rel="next" href="classboost_1_1log_1_1sinks_1_1basic__direct__mapping.html" title="Class template basic_direct_mapping">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr><td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td></tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1log_1_1sinks_1_1asynchronous__sink_1_1scoped__flag.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../sinks.html#doxygen.sinks.attribute__mapping_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1log_1_1sinks_1_1basic__direct__mapping.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__custom__mapping"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template basic_custom_mapping</span></h2>
+<p>boost::log::sinks::basic_custom_mapping — Customizable mapping. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../sinks.html#doxygen.sinks.attribute__mapping_8hpp" title="Header &lt;boost/log/sinks/attribute_mapping.hpp&gt;">boost/log/sinks/attribute_mapping.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> MappedT<span class="special">,</span> <span class="keyword">typename</span> AttributeValueT <span class="special">=</span> <span class="keyword">int</span><span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1log_1_1sinks_1_1basic__custom__mapping.html" title="Class template basic_custom_mapping">basic_custom_mapping</a> <span class="special">:</span>
+  <span class="keyword">public</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">log</span><span class="special">::</span><span class="identifier">sinks</span><span class="special">::</span><span class="identifier">basic_mapping</span><span class="special">&lt;</span> <span class="identifier">MappedT</span> <span class="special">&gt;</span>
+<span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">AttributeValueT</span>        <a name="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__custom__mapping_1afa682848c046a9d682a065b61d2357cf"></a><span class="identifier">attribute_value_type</span><span class="special">;</span>  <span class="comment">// Attribute contained value type. </span>
+  <span class="keyword">typedef</span> <span class="identifier">base_type</span><span class="special">::</span><span class="identifier">mapped_type</span> <a name="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__custom__mapping_1a81a7013b71ac3d6ec36b1dc002da0112"></a><span class="identifier">mapped_type</span><span class="special">;</span>           <span class="comment">// Mapped value type. </span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1log_1_1sinks_1_1basic__custom__mapping.html#id134-bb">public member functions</a></span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1log_1_1sinks_1_1basic__custom__mapping.html#doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__custom__mapping_1ab7eaa771b4d20029b9a32050bfc21001"><span class="identifier">basic_custom_mapping</span></a><span class="special">(</span><span class="identifier">attribute_name</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">mapped_type</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">mapped_type</span> <a class="link" href="classboost_1_1log_1_1sinks_1_1basic__custom__mapping.html#doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__custom__mapping_1abb85424d99310bef6e469325c6324528"><span class="keyword">operator</span><span class="special">(</span><span class="special">)</span></a><span class="special">(</span><span class="identifier">record_view</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">implementation_defined</span> <a class="link" href="classboost_1_1log_1_1sinks_1_1basic__custom__mapping.html#doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__custom__mapping_1ab6dca60129fb3c8e58c6c1a6d2dab940"><span class="keyword">operator</span><span class="special">[</span><span class="special">]</span></a><span class="special">(</span><span class="identifier">attribute_value_type</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id65803"></a><h2>Description</h2>
+<p>The class allows to setup a custom mapping between an attribute and native values. The mapping should be initialized similarly to the standard <code class="computeroutput">map</code> container, by using indexing operator and assignment.</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>Unlike many other components of the library, exact type of the attribute value must be specified in the template parameter <code class="computeroutput">AttributeValueT</code>. Type sequences are not supported. </p></td></tr>
+</table></div>
+<p>
+</p>
+<div class="refsect2">
+<a name="id65811"></a><h3>
+<a name="id134-bb"></a><code class="computeroutput">basic_custom_mapping</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__custom__mapping_1ab7eaa771b4d20029b9a32050bfc21001"></a><span class="identifier">basic_custom_mapping</span><span class="special">(</span><span class="identifier">attribute_name</span> <span class="keyword">const</span> <span class="special">&amp;</span> name<span class="special">,</span> 
+                              <span class="identifier">mapped_type</span> <span class="keyword">const</span> <span class="special">&amp;</span> default_value<span class="special">)</span><span class="special">;</span></pre>
+<p>Constructor</p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">name</code></span></p></td>
+<td><p>Attribute name </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">default_value</code></span></p></td>
+<td><p>The default native value that is returned if the conversion cannot be performed </p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">mapped_type</span> <a name="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__custom__mapping_1abb85424d99310bef6e469325c6324528"></a><span class="keyword">operator</span><span class="special">(</span><span class="special">)</span><span class="special">(</span><span class="identifier">record_view</span> <span class="keyword">const</span> <span class="special">&amp;</span> rec<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Extraction operator. Extracts the attribute value and attempts to map it onto the native value.</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">rec</code></span></p></td>
+<td><p>A log record to extract value from </p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>A mapped value, if mapping was successful, or the default value if mapping did not succeed. </p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">implementation_defined</span> <a name="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__custom__mapping_1ab6dca60129fb3c8e58c6c1a6d2dab940"></a><span class="keyword">operator</span><span class="special">[</span><span class="special">]</span><span class="special">(</span><span class="identifier">attribute_value_type</span> <span class="keyword">const</span> <span class="special">&amp;</span> key<span class="special">)</span><span class="special">;</span></pre>
+<p>Insertion operator</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">key</code></span></p></td>
+<td><p>Attribute value to be mapped </p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>An object of unspecified type that allows to insert a new mapping through assignment. The <span class="emphasis"><em>key</em></span> argument becomes the key attribute value, and the assigned value becomes the mapped native value. </p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2007-2024 Andrey Semashev<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>).
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1log_1_1sinks_1_1asynchronous__sink_1_1scoped__flag.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../sinks.html#doxygen.sinks.attribute__mapping_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1log_1_1sinks_1_1basic__direct__mapping.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

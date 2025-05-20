@@ -1,0 +1,59 @@
+# Boost.Flyweight examples Jamfile
+#
+# Copyright 2006-2024 Joaquín M López Muñoz.
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at
+# http://www.boost.org/LICENSE_1_0.txt)
+#
+# See http://www.boost.org/libs/flyweight for library home page.
+
+project
+    : requirements
+      <library>/boost/flyweight//boost_flyweight
+      <target-os>linux:<threading>multi
+    ;
+
+exe basic
+    : basic.cpp
+    ;
+
+exe composite
+    : composite.cpp
+      /boost/tokenizer//boost_tokenizer
+      /boost/variant//boost_variant
+    ;
+
+exe custom_factory
+    : custom_factory.cpp
+      /boost/tokenizer//boost_tokenizer
+    ;
+
+exe fibonacci
+    : fibonacci.cpp
+    ;
+
+exe html
+    : html.cpp
+    ;
+
+exe key_value
+    : key_value.cpp
+      /boost/array//boost_array
+    ;
+
+exe parallel
+    : parallel.cpp
+    : <include>$(BOOST_ROOT)
+    ;
+
+exe perf
+    : perf.cpp
+      /boost/tokenizer//boost_tokenizer
+    :
+    : <variant>release
+    ;
+
+exe serialization
+    : serialization.cpp
+      /boost/serialization//boost_serialization/<link>static
+    ;

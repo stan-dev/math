@@ -1,0 +1,44 @@
+[#changes]
+= Revision History
+
+:idprefix: changes_
+
+== Changes in Boost 1.87.0
+
+* Restored the ability to construct a `constexpr uuid` that was inadvertently lost in 1.86.
+
+== Changes in Boost 1.86.0 (**major update**)
+
+* {cpp}03 is no longer supported, a {cpp}11 compiler is required.
+  This includes GCC 4.8 or later, MSVC 14.0 or later, and MinGW-w64.
+* Removed direct dependencies on Core, Io, Move, NumericConversion, StaticAssert, TTI, Random, ContainerHash.
+  The library now only has five Boost dependencies in total (as opposed to 39 in Boost 1.85.)
+* Moved `std::hash` support from `uuid_hash.hpp` to `uuid.hpp`.
+* Moved serialization support from `uuid_serialize.hpp` to `uuid.hpp`.
+* Improved the quality and speed of `hash_value`.
+* Added `operator\<\=>`.
+* The generic (non-SIMD) implementations of `is_nil`, `operator==`, `operator<`, `swap`, and `operator\<\=>` now use `__uint128_t` operations when that type is available, and `uint64_t` operations otherwise.
+* Added convenience header `<boost/uuid.hpp>`.
+* Removed platform-specific entropy providers; the implementation now uses `std::random_device` as the source of entropy.
+* `basic_random_generator` has been moved to its own header, `boost/uuid/basic_random_generator.hpp`.
+* `basic_random_generator` has been changed to hold the underlying generator by value, to avoid dynamic allocation and restore copyability.
+* `random_generator_pure` is now an alias for `basic_random_generator<std::random_device>` and its use is discouraged.
+* `random_generator_mt19937` is now an alias for `basic_random_generator<std::mt19937>` and its use is discouraged.
+* `random_generator` now uses a cryptographically strong pseudorandom number generator (ChaCha20/12), seeded with entropy from `std::random_device`.
+  It's the recommended way to generate version 4 UUIDs.
+* Since `basic_name_generator` had only two valid instantiations, both of which are already provided (`name_generator_md5` and `name_generator_sha1`),
+  it was made a private implementation detail and is no longer part of the public interface.
+* While `name_generator` and `name_generator_latest` are still provided for compatibility, their use is no longer encouraged.
+* The name generators now accept Unicode strings; these are converted to UTF-8 before hashing.
+* The definitions of the well-known RFC 4122 namespaces have been moved to their own header, `boost/uuid/namespaces.hpp`.
+* Added `time_generator_v1`, a generator that produces version 1 time-based UUIDs.
+* Added `time_generator_v6`, a generator that produces version 6 time-based UUIDs.
+* Added `time_generator_v7`, a generator that produces version 7 time-based UUIDs.
+* Added `uuid_clock`, a `<chrono>`-compatible clock with an epoch and a resolution as specified in RFC 4122.
+* Accessors for the timestamp, the time point, the clock sequence, and the node identifier have been added to `uuid`.
+* Improved the `what()` strings of the `std::runtime_error` exceptions thrown by `string_generator`.
+* Added overloads of `to_chars` taking `Ch* first, Ch* last` and `Ch(&)[N]`.
+* The default constructor of `uuid` now produces a nil UUID instead of an uninitialized one.
+* `u.data()`, where `u` is of type `uuid`, now returns a pointer to the first `uint8_t` of the representation (same as `u.begin()`.)
+  For backward compatibility, `data` is a function object with `operator()`, rather than a member function, which allows most existing uses of `data` as a public member to remain valid, if no longer encouraged.
+* `uuid` now has the same alignment as `std::uint64_t`. It was previously unaligned (had alignment of 1, same as `std::uint8_t`.) To restore the 1.85 behavior, define the macro `BOOST_UUID_DISABLE_ALIGNMENT`.

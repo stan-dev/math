@@ -1,0 +1,401 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template basic_stacktrace</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../../../stacktrace/reference.html#doxygen.stacktrace.reference.stacktrace_2stacktrace_8hpp" title="Header &lt;boost/stacktrace/stacktrace.hpp&gt;">
+<link rel="prev" href="../../../stacktrace/reference.html" title="Reference">
+<link rel="next" href="stacktrace_2stacktrace_8hpp_1a9378c7e3bda8c41cdc588c52d6cc1b08.html" title="Function template operator&lt;">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../../../stacktrace/reference.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../../stacktrace/reference.html#doxygen.stacktrace.reference.stacktrace_2stacktrace_8hpp"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="stacktrace_2stacktrace_8hpp_1a9378c7e3bda8c41cdc588c52d6cc1b08.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template basic_stacktrace</span></h2>
+<p>boost::stacktrace::basic_stacktrace</p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../../stacktrace/reference.html#doxygen.stacktrace.reference.stacktrace_2stacktrace_8hpp" title="Header &lt;boost/stacktrace/stacktrace.hpp&gt;">boost/stacktrace/stacktrace.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Allocator<span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1stacktrace_1_1basic__stacktrace.html" title="Class template basic_stacktrace">basic_stacktrace</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span> <a class="link" href="classboost_1_1stacktrace_1_1frame.html" title="Class frame">boost::stacktrace::frame</a><span class="special">,</span> <span class="identifier">Allocator</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">value_type</span>             <a name="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1ae23058f79f7a891161d50d9907582f18"></a><span class="identifier">value_type</span><span class="special">;</span>            
+  <span class="keyword">typedef</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span> <a class="link" href="classboost_1_1stacktrace_1_1frame.html" title="Class frame">boost::stacktrace::frame</a><span class="special">,</span> <span class="identifier">Allocator</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">allocator_type</span>         <a name="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a3747049f2463e00641a12ad311951db9"></a><span class="identifier">allocator_type</span><span class="special">;</span>        
+  <span class="keyword">typedef</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span> <a class="link" href="classboost_1_1stacktrace_1_1frame.html" title="Class frame">boost::stacktrace::frame</a><span class="special">,</span> <span class="identifier">Allocator</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">const_pointer</span>          <a name="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a9f0331a11e55f34de2af61391ba16e49"></a><span class="identifier">pointer</span><span class="special">;</span>               
+  <span class="keyword">typedef</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span> <a class="link" href="classboost_1_1stacktrace_1_1frame.html" title="Class frame">boost::stacktrace::frame</a><span class="special">,</span> <span class="identifier">Allocator</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">const_pointer</span>          <a name="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a6478a0196d84f5a17f64696fc7c23e52"></a><span class="identifier">const_pointer</span><span class="special">;</span>         
+  <span class="keyword">typedef</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span> <a class="link" href="classboost_1_1stacktrace_1_1frame.html" title="Class frame">boost::stacktrace::frame</a><span class="special">,</span> <span class="identifier">Allocator</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">const_reference</span>        <a name="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a049139e5cd508c4d3fce263236765fc8"></a><span class="identifier">reference</span><span class="special">;</span>             
+  <span class="keyword">typedef</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span> <a class="link" href="classboost_1_1stacktrace_1_1frame.html" title="Class frame">boost::stacktrace::frame</a><span class="special">,</span> <span class="identifier">Allocator</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">const_reference</span>        <a name="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a411a6e519ba5ac3dc5263063aca498f1"></a><span class="identifier">const_reference</span><span class="special">;</span>       
+  <span class="keyword">typedef</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span> <a class="link" href="classboost_1_1stacktrace_1_1frame.html" title="Class frame">boost::stacktrace::frame</a><span class="special">,</span> <span class="identifier">Allocator</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">size_type</span>              <a name="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a295374c085f94a6c54432639a6ffc14b"></a><span class="identifier">size_type</span><span class="special">;</span>             
+  <span class="keyword">typedef</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span> <a class="link" href="classboost_1_1stacktrace_1_1frame.html" title="Class frame">boost::stacktrace::frame</a><span class="special">,</span> <span class="identifier">Allocator</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">difference_type</span>        <a name="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a6de37351e91e70f106f6531f55edd5a1"></a><span class="identifier">difference_type</span><span class="special">;</span>       
+  <span class="keyword">typedef</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span> <a class="link" href="classboost_1_1stacktrace_1_1frame.html" title="Class frame">boost::stacktrace::frame</a><span class="special">,</span> <span class="identifier">Allocator</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">const_iterator</span>         <a name="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a850a60be2f212198e33adc7fbf4c5590"></a><span class="identifier">iterator</span><span class="special">;</span>              
+  <span class="keyword">typedef</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span> <a class="link" href="classboost_1_1stacktrace_1_1frame.html" title="Class frame">boost::stacktrace::frame</a><span class="special">,</span> <span class="identifier">Allocator</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">const_iterator</span>         <a name="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1aa1e7f2d952b48f2fca270ea0e5a2fd81"></a><span class="identifier">const_iterator</span><span class="special">;</span>        
+  <span class="keyword">typedef</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span> <a class="link" href="classboost_1_1stacktrace_1_1frame.html" title="Class frame">boost::stacktrace::frame</a><span class="special">,</span> <span class="identifier">Allocator</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">const_reverse_iterator</span> <a name="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a5dc8bc0d1d3c60033f9da9a95bac7c5c"></a><span class="identifier">reverse_iterator</span><span class="special">;</span>      
+  <span class="keyword">typedef</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span> <a class="link" href="classboost_1_1stacktrace_1_1frame.html" title="Class frame">boost::stacktrace::frame</a><span class="special">,</span> <span class="identifier">Allocator</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">const_reverse_iterator</span> <a name="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1abaf826788b07d764c5667b9162105713"></a><span class="identifier">const_reverse_iterator</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1stacktrace_1_1basic__stacktrace.html#id-1_3_37_8_3_1_1_1_15-bb">public member functions</a></span>
+  <a class="link" href="classboost_1_1stacktrace_1_1basic__stacktrace.html#doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a98b1c2383b231cc483e646de724a2960"><span class="identifier">basic_stacktrace</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1stacktrace_1_1basic__stacktrace.html#doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a64ae3e9d253ee3c9c92af0792fb27a61"><span class="identifier">basic_stacktrace</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">allocator_type</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1stacktrace_1_1basic__stacktrace.html#doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1ac187f121b741cd55674a1ab25ff03b58"><span class="identifier">basic_stacktrace</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span><span class="special">,</span> 
+                   <span class="keyword">const</span> <span class="identifier">allocator_type</span> <span class="special">&amp;</span> <span class="special">=</span> <span class="identifier">allocator_type</span><span class="special">(</span><span class="special">)</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1stacktrace_1_1basic__stacktrace.html#doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a24a471b44b65939ab6569c03fa108e43"><span class="identifier">basic_stacktrace</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1stacktrace_1_1basic__stacktrace.html" title="Class template basic_stacktrace">basic_stacktrace</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1stacktrace_1_1basic__stacktrace.html" title="Class template basic_stacktrace">basic_stacktrace</a> <span class="special">&amp;</span> <a class="link" href="classboost_1_1stacktrace_1_1basic__stacktrace.html#doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a0f3d9ae607e524417c190dd912860b6a"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1stacktrace_1_1basic__stacktrace.html" title="Class template basic_stacktrace">basic_stacktrace</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1stacktrace_1_1basic__stacktrace.html#doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a2d92ca742de0874e5aa27f475607e681"><span class="special">~</span><span class="identifier">basic_stacktrace</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1stacktrace_1_1basic__stacktrace.html#doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a5123272da7ae597cf1ea4a9033e2558e"><span class="identifier">basic_stacktrace</span></a><span class="special">(</span><a class="link" href="classboost_1_1stacktrace_1_1basic__stacktrace.html" title="Class template basic_stacktrace">basic_stacktrace</a> <span class="special">&amp;&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1stacktrace_1_1basic__stacktrace.html" title="Class template basic_stacktrace">basic_stacktrace</a> <span class="special">&amp;</span> 
+  <a class="link" href="classboost_1_1stacktrace_1_1basic__stacktrace.html#doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a3250f68919ab52c559c7fd49c656ef06"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><a class="link" href="classboost_1_1stacktrace_1_1basic__stacktrace.html" title="Class template basic_stacktrace">basic_stacktrace</a> <span class="special">&amp;&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">(</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">is_nothrow_move_assignable</span><span class="special">&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">stacktrace</span><span class="special">::</span><span class="identifier">frame</span><span class="special">,</span> <span class="identifier">Allocator</span> <span class="special">&gt;</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">value</span><span class="special">)</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">size_type</span> <a class="link" href="classboost_1_1stacktrace_1_1basic__stacktrace.html#doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1aa95e51db8401bc8787e96d1b03638717"><span class="identifier">size</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">const_reference</span> <a class="link" href="classboost_1_1stacktrace_1_1basic__stacktrace.html#doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1abb700f29ced409c1ed196b7e2ed6e955"><span class="keyword">operator</span><span class="special">[</span><span class="special">]</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">const_iterator</span> <a class="link" href="classboost_1_1stacktrace_1_1basic__stacktrace.html#doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1ac1743c382dee9618939e3e2c24b20e53"><span class="identifier">begin</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">const_iterator</span> <a class="link" href="classboost_1_1stacktrace_1_1basic__stacktrace.html#doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1af42b28b5990e60267307e02189c29c14"><span class="identifier">cbegin</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">const_iterator</span> <a class="link" href="classboost_1_1stacktrace_1_1basic__stacktrace.html#doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a1e6a5962de0fffeb7cb392aa4a10f588"><span class="identifier">end</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">const_iterator</span> <a class="link" href="classboost_1_1stacktrace_1_1basic__stacktrace.html#doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a61fea3743f976176a8ff665970fb66cc"><span class="identifier">cend</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">const_reverse_iterator</span> <a class="link" href="classboost_1_1stacktrace_1_1basic__stacktrace.html#doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a033387d3aae00d2d0ebd438e5d0e4a43"><span class="identifier">rbegin</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">const_reverse_iterator</span> <a class="link" href="classboost_1_1stacktrace_1_1basic__stacktrace.html#doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a7a3472b431fdfb5c3946355345898ade"><span class="identifier">crbegin</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">const_reverse_iterator</span> <a class="link" href="classboost_1_1stacktrace_1_1basic__stacktrace.html#doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1ada8b185dc80c5503358e36a153c1f829"><span class="identifier">rend</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">const_reverse_iterator</span> <a class="link" href="classboost_1_1stacktrace_1_1basic__stacktrace.html#doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1afdfee76757dcd622c2a89d5113b594eb"><span class="identifier">crend</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">explicit</span> <span class="keyword">constexpr</span> <a class="link" href="classboost_1_1stacktrace_1_1basic__stacktrace.html#doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1ab9b1adc3e8883ccb82f1eb70e811d3ce"><span class="keyword">operator</span> <span class="keyword">bool</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1stacktrace_1_1basic__stacktrace.html#doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1ac52e0881188b757128613e0b50bcc679"><span class="identifier">empty</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span> <a class="link" href="classboost_1_1stacktrace_1_1frame.html" title="Class frame">boost::stacktrace::frame</a><span class="special">,</span> <span class="identifier">Allocator</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+  <a class="link" href="classboost_1_1stacktrace_1_1basic__stacktrace.html#doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1ae9abc1bda832d843cd8aa0661a818aae"><span class="identifier">as_vector</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1stacktrace_1_1basic__stacktrace.html#id-1_3_37_8_3_1_1_1_16-bb">public static functions</a></span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Char<span class="special">,</span> <span class="keyword">typename</span> Trait<span class="special">&gt;</span> 
+    <span class="keyword">static</span> <a class="link" href="classboost_1_1stacktrace_1_1basic__stacktrace.html" title="Class template basic_stacktrace">basic_stacktrace</a> 
+    <a class="link" href="classboost_1_1stacktrace_1_1basic__stacktrace.html#doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a7742caa14dda9c9ff4ef0bd2099e3998"><span class="identifier">from_dump</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">Char</span><span class="special">,</span> <span class="identifier">Trait</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">,</span> 
+              <span class="keyword">const</span> <span class="identifier">allocator_type</span> <span class="special">&amp;</span> <span class="special">=</span> <span class="identifier">allocator_type</span><span class="special">(</span><span class="special">)</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">static</span> <a class="link" href="classboost_1_1stacktrace_1_1basic__stacktrace.html" title="Class template basic_stacktrace">basic_stacktrace</a> 
+  <a class="link" href="classboost_1_1stacktrace_1_1basic__stacktrace.html#doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a0451016888794ddfa8d286d7c01f5a4e"><span class="identifier">from_dump</span></a><span class="special">(</span><span class="keyword">const</span> <span class="keyword">void</span> <span class="special">*</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span><span class="special">,</span> 
+            <span class="keyword">const</span> <span class="identifier">allocator_type</span> <span class="special">&amp;</span> <span class="special">=</span> <span class="identifier">allocator_type</span><span class="special">(</span><span class="special">)</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">static</span> <a class="link" href="classboost_1_1stacktrace_1_1basic__stacktrace.html" title="Class template basic_stacktrace">basic_stacktrace</a><span class="special">&lt;</span> <span class="identifier">Allocator</span> <span class="special">&gt;</span> 
+  <a class="link" href="classboost_1_1stacktrace_1_1basic__stacktrace.html#doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a71bcf932556bab79458280f2ecc73c1b"><span class="identifier">from_current_exception</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">allocator_type</span> <span class="special">&amp;</span> <span class="special">=</span> <span class="identifier">allocator_type</span><span class="special">(</span><span class="special">)</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.37.8.2.3.4"></a><h2>Description</h2>
+<p>Class that on construction copies minimal information about call stack into its internals and provides access to that information. 
+</p>
+<div class="refsect2">
+<a name="id-1.3.37.8.2.3.4.3"></a><h3>Template Parameters</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem">
+<pre class="literallayout"><span class="keyword">typename</span> Allocator</pre>
+<p>Allocator to use during stack capture. </p>
+</li></ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.37.8.2.3.4.4"></a><h3>
+<a name="id-1_3_37_8_3_1_1_1_15-bb"></a><code class="computeroutput">basic_stacktrace</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a98b1c2383b231cc483e646de724a2960"></a><span class="identifier">basic_stacktrace</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Stores the current function call sequence inside *this without any decoding or any other heavy platform specific operations. <p><span class="bold"><strong>Complexity:</strong></span> O(N) where N is call sequence length, O(1) if BOOST_STACKTRACE_USE_NOOP is defined.</p>
+<p><span class="bold"><strong>Async-Handler-Safety</strong></span>:  <a class="link" href="../../../stacktrace/theoretical_async_signal_safety.html" title="Theoretical async signal safety"> Theoretically async signal safe  </a> if Allocator construction, copying, Allocator::allocate and Allocator::deallocate are async signal safe. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a64ae3e9d253ee3c9c92af0792fb27a61"></a><span class="identifier">basic_stacktrace</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">allocator_type</span> <span class="special">&amp;</span> a<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Stores the current function call sequence inside *this without any decoding or any other heavy platform specific operations. <p><span class="bold"><strong>Complexity:</strong></span> O(N) where N is call sequence length, O(1) if BOOST_STACKTRACE_USE_NOOP is defined.</p>
+<p><span class="bold"><strong>Async-Handler-Safety</strong></span>:  <a class="link" href="../../../stacktrace/theoretical_async_signal_safety.html" title="Theoretical async signal safety"> Theoretically async signal safe  </a> if Allocator construction, copying, Allocator::allocate and Allocator::deallocate are async signal safe.</p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">a</code></span></p></td>
+<td><p>Allocator that would be passed to underlying storage. </p></td>
+</tr></tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1ac187f121b741cd55674a1ab25ff03b58"></a><span class="identifier">basic_stacktrace</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> skip<span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> max_depth<span class="special">,</span> 
+                 <span class="keyword">const</span> <span class="identifier">allocator_type</span> <span class="special">&amp;</span> a <span class="special">=</span> <span class="identifier">allocator_type</span><span class="special">(</span><span class="special">)</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Stores [skip, skip + max_depth) of the current function call sequence inside *this without any decoding or any other heavy platform specific operations. <p><span class="bold"><strong>Complexity:</strong></span> O(N) where N is call sequence length, O(1) if BOOST_STACKTRACE_USE_NOOP is defined.</p>
+<p><span class="bold"><strong>Async-Handler-Safety</strong></span>:  <a class="link" href="../../../stacktrace/theoretical_async_signal_safety.html" title="Theoretical async signal safety"> Theoretically async signal safe  </a> if Allocator construction, copying, Allocator::allocate and Allocator::deallocate are async signal safe.</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">skip</code></span></p></td>
+<td><p>How many top calls to skip and do not store in *this.</p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">max_depth</code></span></p></td>
+<td><p>Max call sequence depth to collect.</p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">a</code></span></p></td>
+<td><p>Allocator that would be passed to underlying storage.</p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Throws:</span></p></td>
+<td>Nothing. Note that default construction of allocator may throw, however it is performed outside the constructor and exception in <code class="computeroutput">allocator_type()</code> would not result in calling <code class="computeroutput">std::terminate</code>. </td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a24a471b44b65939ab6569c03fa108e43"></a><span class="identifier">basic_stacktrace</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1stacktrace_1_1basic__stacktrace.html" title="Class template basic_stacktrace">basic_stacktrace</a> <span class="special">&amp;</span> st<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Complexity:</strong></span> O(st.size())</p>
+<p><span class="bold"><strong>Async-Handler-Safety</strong></span>:  <a class="link" href="../../../stacktrace/theoretical_async_signal_safety.html" title="Theoretical async signal safety"> Theoretically async signal safe  </a> if Allocator construction, copying, Allocator::allocate and Allocator::deallocate are async signal safe. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a class="link" href="classboost_1_1stacktrace_1_1basic__stacktrace.html" title="Class template basic_stacktrace">basic_stacktrace</a> <span class="special">&amp;</span> <a name="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a0f3d9ae607e524417c190dd912860b6a"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1stacktrace_1_1basic__stacktrace.html" title="Class template basic_stacktrace">basic_stacktrace</a> <span class="special">&amp;</span> st<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Complexity:</strong></span> O(st.size())</p>
+<p><span class="bold"><strong>Async-Handler-Safety</strong></span>:  <a class="link" href="../../../stacktrace/theoretical_async_signal_safety.html" title="Theoretical async signal safety"> Theoretically async signal safe  </a> if Allocator construction, copying, Allocator::allocate and Allocator::deallocate are async signal safe. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a2d92ca742de0874e5aa27f475607e681"></a><span class="special">~</span><span class="identifier">basic_stacktrace</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Complexity:</strong></span> O(1)</p>
+<p><span class="bold"><strong>Async-Handler-Safety</strong></span>:  <a class="link" href="../../../stacktrace/theoretical_async_signal_safety.html" title="Theoretical async signal safety"> Theoretically async signal safe  </a> if Allocator::deallocate is async signal safe. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a5123272da7ae597cf1ea4a9033e2558e"></a><span class="identifier">basic_stacktrace</span><span class="special">(</span><a class="link" href="classboost_1_1stacktrace_1_1basic__stacktrace.html" title="Class template basic_stacktrace">basic_stacktrace</a> <span class="special">&amp;&amp;</span> st<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Complexity:</strong></span> O(1)</p>
+<p><span class="bold"><strong>Async-Handler-Safety</strong></span>:  <a class="link" href="../../../stacktrace/theoretical_async_signal_safety.html" title="Theoretical async signal safety"> Theoretically async signal safe  </a> if Allocator construction and copying are async signal safe. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a class="link" href="classboost_1_1stacktrace_1_1basic__stacktrace.html" title="Class template basic_stacktrace">basic_stacktrace</a> <span class="special">&amp;</span> 
+<a name="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a3250f68919ab52c559c7fd49c656ef06"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><a class="link" href="classboost_1_1stacktrace_1_1basic__stacktrace.html" title="Class template basic_stacktrace">basic_stacktrace</a> <span class="special">&amp;&amp;</span> st<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">(</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">is_nothrow_move_assignable</span><span class="special">&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">stacktrace</span><span class="special">::</span><span class="identifier">frame</span><span class="special">,</span> <span class="identifier">Allocator</span> <span class="special">&gt;</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">value</span><span class="special">)</span><span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Complexity:</strong></span> O(st.size())</p>
+<p><span class="bold"><strong>Async-Handler-Safety</strong></span>:  <a class="link" href="../../../stacktrace/theoretical_async_signal_safety.html" title="Theoretical async signal safety"> Theoretically async signal safe  </a> if Allocator construction and copying are async signal safe. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">size_type</span> <a name="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1aa95e51db8401bc8787e96d1b03638717"></a><span class="identifier">size</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>
+<span class="bold"><strong>Complexity:</strong></span> O(1)</p>
+<p><span class="bold"><strong>Async-Handler-Safety</strong></span>:  <a class="link" href="../../../stacktrace/theoretical_async_signal_safety.html" title="Theoretical async signal safety"> Theoretically async signal safe  </a>. </p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>Number of function names stored inside the class.</p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_reference</span> <a name="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1abb700f29ced409c1ed196b7e2ed6e955"></a><span class="keyword">operator</span><span class="special">[</span><span class="special">]</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> frame_no<span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>
+
+<span class="bold"><strong>Complexity:</strong></span> O(1).</p>
+<p><span class="bold"><strong>Async-Handler-Safety</strong></span>:  <a class="link" href="../../../stacktrace/theoretical_async_signal_safety.html" title="Theoretical async signal safety"> Theoretically async signal safe  </a>. </p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">frame_no</code></span></p></td>
+<td><p>Zero based index of frame to return. 0 is the function index where stacktrace was constructed and index close to this-&gt;<a class="link" href="classboost_1_1stacktrace_1_1basic__stacktrace.html#doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1aa95e51db8401bc8787e96d1b03638717">size()</a> contains function <code class="computeroutput">main()</code>. </p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>frame that references the actual frame info, stored inside *this.</p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_iterator</span> <a name="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1ac1743c382dee9618939e3e2c24b20e53"></a><span class="identifier">begin</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Complexity:</strong></span> O(1)</p>
+<p><span class="bold"><strong>Async-Handler-Safety</strong></span>:  <a class="link" href="../../../stacktrace/theoretical_async_signal_safety.html" title="Theoretical async signal safety"> Theoretically async signal safe  </a>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_iterator</span> <a name="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1af42b28b5990e60267307e02189c29c14"></a><span class="identifier">cbegin</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Complexity:</strong></span> O(1)</p>
+<p><span class="bold"><strong>Async-Handler-Safety</strong></span>:  <a class="link" href="../../../stacktrace/theoretical_async_signal_safety.html" title="Theoretical async signal safety"> Theoretically async signal safe  </a>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_iterator</span> <a name="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a1e6a5962de0fffeb7cb392aa4a10f588"></a><span class="identifier">end</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Complexity:</strong></span> O(1)</p>
+<p><span class="bold"><strong>Async-Handler-Safety</strong></span>:  <a class="link" href="../../../stacktrace/theoretical_async_signal_safety.html" title="Theoretical async signal safety"> Theoretically async signal safe  </a>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_iterator</span> <a name="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a61fea3743f976176a8ff665970fb66cc"></a><span class="identifier">cend</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Complexity:</strong></span> O(1)</p>
+<p><span class="bold"><strong>Async-Handler-Safety</strong></span>:  <a class="link" href="../../../stacktrace/theoretical_async_signal_safety.html" title="Theoretical async signal safety"> Theoretically async signal safe  </a>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_reverse_iterator</span> <a name="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a033387d3aae00d2d0ebd438e5d0e4a43"></a><span class="identifier">rbegin</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Complexity:</strong></span> O(1)</p>
+<p><span class="bold"><strong>Async-Handler-Safety</strong></span>:  <a class="link" href="../../../stacktrace/theoretical_async_signal_safety.html" title="Theoretical async signal safety"> Theoretically async signal safe  </a>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_reverse_iterator</span> <a name="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a7a3472b431fdfb5c3946355345898ade"></a><span class="identifier">crbegin</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Complexity:</strong></span> O(1)</p>
+<p><span class="bold"><strong>Async-Handler-Safety</strong></span>:  <a class="link" href="../../../stacktrace/theoretical_async_signal_safety.html" title="Theoretical async signal safety"> Theoretically async signal safe  </a>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_reverse_iterator</span> <a name="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1ada8b185dc80c5503358e36a153c1f829"></a><span class="identifier">rend</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Complexity:</strong></span> O(1)</p>
+<p><span class="bold"><strong>Async-Handler-Safety</strong></span>:  <a class="link" href="../../../stacktrace/theoretical_async_signal_safety.html" title="Theoretical async signal safety"> Theoretically async signal safe  </a>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_reverse_iterator</span> <a name="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1afdfee76757dcd622c2a89d5113b594eb"></a><span class="identifier">crend</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Complexity:</strong></span> O(1)</p>
+<p><span class="bold"><strong>Async-Handler-Safety</strong></span>:  <a class="link" href="../../../stacktrace/theoretical_async_signal_safety.html" title="Theoretical async signal safety"> Theoretically async signal safe  </a>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <span class="keyword">constexpr</span> <a name="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1ab9b1adc3e8883ccb82f1eb70e811d3ce"></a><span class="keyword">operator</span> <span class="keyword">bool</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Allows to check that stack trace capturing was successful. <p>
+<span class="bold"><strong>Complexity:</strong></span> O(1)</p>
+<p><span class="bold"><strong>Async-Handler-Safety</strong></span>:  <a class="link" href="../../../stacktrace/theoretical_async_signal_safety.html" title="Theoretical async signal safety"> Theoretically async signal safe  </a>. </p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p><code class="computeroutput">true</code> if <code class="computeroutput">this-&gt;<a class="link" href="classboost_1_1stacktrace_1_1basic__stacktrace.html#doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1aa95e51db8401bc8787e96d1b03638717">size()</a> != 0</code></p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1ac52e0881188b757128613e0b50bcc679"></a><span class="identifier">empty</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Allows to check that stack trace failed. <p>
+<span class="bold"><strong>Complexity:</strong></span> O(1)</p>
+<p><span class="bold"><strong>Async-Handler-Safety</strong></span>:  <a class="link" href="../../../stacktrace/theoretical_async_signal_safety.html" title="Theoretical async signal safety"> Theoretically async signal safe  </a>. </p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p><code class="computeroutput">true</code> if <code class="computeroutput">this-&gt;<a class="link" href="classboost_1_1stacktrace_1_1basic__stacktrace.html#doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1aa95e51db8401bc8787e96d1b03638717">size()</a> == 0</code></p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span> <a class="link" href="classboost_1_1stacktrace_1_1frame.html" title="Class frame">boost::stacktrace::frame</a><span class="special">,</span> <span class="identifier">Allocator</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+<a name="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1ae9abc1bda832d843cd8aa0661a818aae"></a><span class="identifier">as_vector</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.37.8.2.3.4.5"></a><h3>
+<a name="id-1_3_37_8_3_1_1_1_16-bb"></a><code class="computeroutput">basic_stacktrace</code> public static functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Char<span class="special">,</span> <span class="keyword">typename</span> Trait<span class="special">&gt;</span> 
+  <span class="keyword">static</span> <a class="link" href="classboost_1_1stacktrace_1_1basic__stacktrace.html" title="Class template basic_stacktrace">basic_stacktrace</a> 
+  <a name="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a7742caa14dda9c9ff4ef0bd2099e3998"></a><span class="identifier">from_dump</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">Char</span><span class="special">,</span> <span class="identifier">Trait</span> <span class="special">&gt;</span> <span class="special">&amp;</span> in<span class="special">,</span> 
+            <span class="keyword">const</span> <span class="identifier">allocator_type</span> <span class="special">&amp;</span> a <span class="special">=</span> <span class="identifier">allocator_type</span><span class="special">(</span><span class="special">)</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Constructs stacktrace from basic_istreamable that references the dumped stacktrace. Terminating zero frame is discarded.</p>
+<p><span class="bold"><strong>Complexity:</strong></span> O(N) </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <a class="link" href="classboost_1_1stacktrace_1_1basic__stacktrace.html" title="Class template basic_stacktrace">basic_stacktrace</a> 
+<a name="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a0451016888794ddfa8d286d7c01f5a4e"></a><span class="identifier">from_dump</span><span class="special">(</span><span class="keyword">const</span> <span class="keyword">void</span> <span class="special">*</span> begin<span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> buffer_size_in_bytes<span class="special">,</span> 
+          <span class="keyword">const</span> <span class="identifier">allocator_type</span> <span class="special">&amp;</span> a <span class="special">=</span> <span class="identifier">allocator_type</span><span class="special">(</span><span class="special">)</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Constructs stacktrace from raw memory dump. Terminating zero frame is discarded.</p>
+<p>
+<span class="bold"><strong>Complexity:</strong></span> O(size) in worst case </p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">begin</code></span></p></td>
+<td><p>Beginning of the memory where the stacktrace was saved using the <a class="link" href="safe__dump__to_8hpp_1af4866d1abb95a1fdf00567c035eef3c6.html" title="Function safe_dump_to">boost::stacktrace::safe_dump_to</a></p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">buffer_size_in_bytes</code></span></p></td>
+<td><p>Size of the memory. Usually the same value that was passed to the <a class="link" href="safe__dump__to_8hpp_1af4866d1abb95a1fdf00567c035eef3c6.html" title="Function safe_dump_to">boost::stacktrace::safe_dump_to</a></p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <a class="link" href="classboost_1_1stacktrace_1_1basic__stacktrace.html" title="Class template basic_stacktrace">basic_stacktrace</a><span class="special">&lt;</span> <span class="identifier">Allocator</span> <span class="special">&gt;</span> 
+<a name="doxygen.stacktrace.reference.classboost_1_1stacktrace_1_1basic__stacktrace_1a71bcf932556bab79458280f2ecc73c1b"></a><span class="identifier">from_current_exception</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">allocator_type</span> <span class="special">&amp;</span> alloc <span class="special">=</span> <span class="identifier">allocator_type</span><span class="special">(</span><span class="special">)</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>Returns a <a class="link" href="classboost_1_1stacktrace_1_1basic__stacktrace.html" title="Class template basic_stacktrace">basic_stacktrace</a> object containing a stacktrace captured at the point where the currently handled exception was thrown by its initial throw-expression (i.e. not a rethrow), or an empty <a class="link" href="classboost_1_1stacktrace_1_1basic__stacktrace.html" title="Class template basic_stacktrace">basic_stacktrace</a> object if:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p>the <code class="computeroutput">boost_stacktrace_from_exception</code> library is not linked to the current binary, or</p></li>
+<li class="listitem"><p>the initialization of stacktrace failed, or</p></li>
+<li class="listitem"><p>stacktrace captures are not enabled for the throwing thread, or</p></li>
+<li class="listitem"><p>no exception is being handled, or</p></li>
+<li class="listitem"><p>due to implementation-defined reasons.</p></li>
+</ul></div>
+<p>
+</p>
+<p><code class="computeroutput">alloc</code> is passed to the constructor of the stacktrace object. Rethrowing an exception using a throw-expression with no operand does not alter the captured stacktrace.</p>
+<p>Implements <a href="https://wg21.link/p2370r1" target="_top">https://wg21.link/p2370r1</a> </p>
+</li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2016-2024 Antony
+      Polukhin<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../../../stacktrace/reference.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../../stacktrace/reference.html#doxygen.stacktrace.reference.stacktrace_2stacktrace_8hpp"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="stacktrace_2stacktrace_8hpp_1a9378c7e3bda8c41cdc588c52d6cc1b08.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

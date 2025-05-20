@@ -1,0 +1,231 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class request</title>
+<link rel="stylesheet" href="../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../mpi/reference.html#doxygen.request_8hpp" title="Header &lt;boost/mpi/request.hpp&gt;">
+<link rel="prev" href="python_8hpp_1a29b180e61af719ee793cab8e7ded2004.html" title="Function template register_skeleton_and_content">
+<link rel="next" href="classboost_1_1mpi_1_1request_1_1handler.html" title="Class handler">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../boost.png"></td>
+<td align="center"><a href="../../../index.html">Home</a></td>
+<td align="center"><a href="../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="python_8hpp_1a29b180e61af719ee793cab8e7ded2004.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../mpi/reference.html#doxygen.request_8hpp"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1mpi_1_1request_1_1handler.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.classboost_1_1mpi_1_1request"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class request</span></h2>
+<p>boost::mpi::request — A request for a non-blocking send or receive. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../mpi/reference.html#doxygen.request_8hpp" title="Header &lt;boost/mpi/request.hpp&gt;">boost/mpi/request.hpp</a>&gt;
+
+</span>
+<span class="keyword">class</span> <a class="link" href="classboost_1_1mpi_1_1request.html" title="Class request">request</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// member classes/structs/unions</span>
+
+  <span class="keyword">class</span> <a class="link" href="classboost_1_1mpi_1_1request_1_1handler.html" title="Class handler">handler</a> <span class="special">{</span>
+  <span class="keyword">public</span><span class="special">:</span>
+
+    <span class="comment">// <a class="link" href="classboost_1_1mpi_1_1request_1_1handler.html#id-1_3_25_7_21_2_1_1_3_1-bb">public member functions</a></span>
+    <span class="keyword">virtual</span> <a class="link" href="classboost_1_1mpi_1_1request_1_1handler.html#doxygen.classboost_1_1mpi_1_1request_1_1handler_1a3c20acd2a6f09a611d3d5acd51e599e4"><span class="special">~</span><span class="identifier">handler</span></a><span class="special">(</span><span class="special">)</span> <span class="special">=</span> <span class="number">0</span><span class="special">;</span>
+    <span class="keyword">virtual</span> <a class="link" href="classboost_1_1mpi_1_1status.html" title="Class status">status</a> <a class="link" href="classboost_1_1mpi_1_1request_1_1handler.html#doxygen.classboost_1_1mpi_1_1request_1_1handler_1ab0c5808f788a05e22dc82afb010deb62"><span class="identifier">wait</span></a><span class="special">(</span><span class="special">)</span> <span class="special">=</span> <span class="number">0</span><span class="special">;</span>
+    <span class="keyword">virtual</span> <span class="identifier">optional</span><span class="special">&lt;</span> <a class="link" href="classboost_1_1mpi_1_1status.html" title="Class status">status</a> <span class="special">&gt;</span> <a class="link" href="classboost_1_1mpi_1_1request_1_1handler.html#doxygen.classboost_1_1mpi_1_1request_1_1handler_1a3679ef6142ad9abda88f1af129ae7d43"><span class="identifier">test</span></a><span class="special">(</span><span class="special">)</span> <span class="special">=</span> <span class="number">0</span><span class="special">;</span>
+    <span class="keyword">virtual</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1mpi_1_1request_1_1handler.html#doxygen.classboost_1_1mpi_1_1request_1_1handler_1a0c3233814438506861c4479c75c52f3d"><span class="identifier">cancel</span></a><span class="special">(</span><span class="special">)</span> <span class="special">=</span> <span class="number">0</span><span class="special">;</span>
+    <span class="keyword">virtual</span> <span class="keyword">bool</span> <a class="link" href="classboost_1_1mpi_1_1request_1_1handler.html#doxygen.classboost_1_1mpi_1_1request_1_1handler_1aaeaad11439ac73862fed97e77e9c0386"><span class="identifier">active</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="special">=</span> <span class="number">0</span><span class="special">;</span>
+    <span class="keyword">virtual</span> <span class="identifier">optional</span><span class="special">&lt;</span> <span class="identifier">MPI_Request</span> <span class="special">&amp;</span> <span class="special">&gt;</span> <a class="link" href="classboost_1_1mpi_1_1request_1_1handler.html#doxygen.classboost_1_1mpi_1_1request_1_1handler_1a07d9a1bc172eaac5b996c5f111d51a2a"><span class="identifier">trivial</span></a><span class="special">(</span><span class="special">)</span> <span class="special">=</span> <span class="number">0</span><span class="special">;</span>
+  <span class="special">}</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">,</span> <span class="keyword">typename</span> A<span class="special">&gt;</span> 
+  <span class="keyword">class</span> <a class="link" href="classboost_1_1mpi_1_1request_1_1legacy__dynamic__primitive__array__handler.html" title="Class template legacy_dynamic_primitive_array_handler">legacy_dynamic_primitive_array_handler</a> <span class="special">{</span>
+  <span class="special">}</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> 
+  <span class="keyword">class</span> <a class="link" href="classboost_1_1mpi_1_1request_1_1legacy__serialized__array__handler.html" title="Class template legacy_serialized_array_handler">legacy_serialized_array_handler</a> <span class="special">{</span>
+  <span class="special">}</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> 
+  <span class="keyword">class</span> <a class="link" href="classboost_1_1mpi_1_1request_1_1legacy__serialized__handler.html" title="Class template legacy_serialized_handler">legacy_serialized_handler</a> <span class="special">{</span>
+  <span class="special">}</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1mpi_1_1request.html#id-1_3_25_7_21_2_1_1_7-bb">public member functions</a></span>
+  <a class="link" href="classboost_1_1mpi_1_1request.html#doxygen.classboost_1_1mpi_1_1request_1a03f4c4371e1ba4f19806316e778f3044"><span class="identifier">request</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1mpi_1_1status.html" title="Class status">status</a> <a class="link" href="classboost_1_1mpi_1_1request.html#doxygen.classboost_1_1mpi_1_1request_1a5d71dbb0297d4cbae9a3acb5a4cefbe0"><span class="identifier">wait</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">optional</span><span class="special">&lt;</span> <a class="link" href="classboost_1_1mpi_1_1status.html" title="Class status">status</a> <span class="special">&gt;</span> <a class="link" href="classboost_1_1mpi_1_1request.html#doxygen.classboost_1_1mpi_1_1request_1a2d67a09ffe38e25b7fdd3d218aefdbd2"><span class="identifier">test</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1mpi_1_1request.html#doxygen.classboost_1_1mpi_1_1request_1aca0c1dd22135e1b9d9c9557c6cdfe91d"><span class="identifier">cancel</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">optional</span><span class="special">&lt;</span> <span class="identifier">MPI_Request</span> <span class="special">&amp;</span> <span class="special">&gt;</span> <a class="link" href="classboost_1_1mpi_1_1request.html#doxygen.classboost_1_1mpi_1_1request_1af6516e839ede26dbe429940025056448"><span class="identifier">trivial</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1mpi_1_1request.html#doxygen.classboost_1_1mpi_1_1request_1a8642b2ae13c5f1e30743d058ec8b62b9"><span class="identifier">active</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1mpi_1_1request.html#doxygen.classboost_1_1mpi_1_1request_1a8b00aab5be63de4e56f486663ed85b17"><span class="identifier">preserve</span></a><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">shared_ptr</span><span class="special">&lt;</span> <span class="keyword">void</span> <span class="special">&gt;</span><span class="special">)</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1mpi_1_1request.html#id-1_3_25_7_21_2_1_1_8-bb">public static functions</a></span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> 
+    <span class="keyword">static</span> <a class="link" href="classboost_1_1mpi_1_1request.html" title="Class request">request</a> 
+    <a class="link" href="classboost_1_1mpi_1_1request.html#doxygen.classboost_1_1mpi_1_1request_1a8f735bf1da5115e1ec5c6af427fbb91e"><span class="identifier">make_trivial_send</span></a><span class="special">(</span><a class="link" href="classboost_1_1mpi_1_1communicator.html" title="Class communicator">communicator</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">int</span><span class="special">,</span> <span class="keyword">int</span><span class="special">,</span> <span class="identifier">T</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> 
+    <span class="keyword">static</span> <a class="link" href="classboost_1_1mpi_1_1request.html" title="Class request">request</a> 
+    <a class="link" href="classboost_1_1mpi_1_1request.html#doxygen.classboost_1_1mpi_1_1request_1a3435d583b40b1eda9f5ecb9305c968b4"><span class="identifier">make_trivial_send</span></a><span class="special">(</span><a class="link" href="classboost_1_1mpi_1_1communicator.html" title="Class communicator">communicator</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">int</span><span class="special">,</span> <span class="keyword">int</span><span class="special">,</span> <span class="identifier">T</span> <span class="keyword">const</span> <span class="special">*</span><span class="special">,</span> <span class="keyword">int</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">static</span> <a class="link" href="classboost_1_1mpi_1_1request.html" title="Class request">request</a> 
+  <a class="link" href="classboost_1_1mpi_1_1request.html#doxygen.classboost_1_1mpi_1_1request_1a1f2942ed3afbe463206833361ac75de2"><span class="identifier">make_packed_send</span></a><span class="special">(</span><a class="link" href="classboost_1_1mpi_1_1communicator.html" title="Class communicator">communicator</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">int</span><span class="special">,</span> <span class="keyword">int</span><span class="special">,</span> <span class="keyword">void</span> <span class="keyword">const</span> <span class="special">*</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">static</span> <a class="link" href="classboost_1_1mpi_1_1request.html" title="Class request">request</a> 
+  <a class="link" href="classboost_1_1mpi_1_1request.html#doxygen.classboost_1_1mpi_1_1request_1a19fa91f0276c3a4b520ff4c1a885d3b9"><span class="identifier">make_bottom_send</span></a><span class="special">(</span><a class="link" href="classboost_1_1mpi_1_1communicator.html" title="Class communicator">communicator</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">int</span><span class="special">,</span> <span class="keyword">int</span><span class="special">,</span> <span class="identifier">MPI_Datatype</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">static</span> <a class="link" href="classboost_1_1mpi_1_1request.html" title="Class request">request</a> <a class="link" href="classboost_1_1mpi_1_1request.html#doxygen.classboost_1_1mpi_1_1request_1a95d385d8e9c19e63eb5f4c8e038627d6"><span class="identifier">make_empty_send</span></a><span class="special">(</span><a class="link" href="classboost_1_1mpi_1_1communicator.html" title="Class communicator">communicator</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">int</span><span class="special">,</span> <span class="keyword">int</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> 
+    <span class="keyword">static</span> <a class="link" href="classboost_1_1mpi_1_1request.html" title="Class request">request</a> <a class="link" href="classboost_1_1mpi_1_1request.html#doxygen.classboost_1_1mpi_1_1request_1ab6596c3386777061cc051edd43d7cdfb"><span class="identifier">make_trivial_recv</span></a><span class="special">(</span><a class="link" href="classboost_1_1mpi_1_1communicator.html" title="Class communicator">communicator</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">int</span><span class="special">,</span> <span class="keyword">int</span><span class="special">,</span> <span class="identifier">T</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> 
+    <span class="keyword">static</span> <a class="link" href="classboost_1_1mpi_1_1request.html" title="Class request">request</a> <a class="link" href="classboost_1_1mpi_1_1request.html#doxygen.classboost_1_1mpi_1_1request_1aca9989fd22f0b7225e973dc91f86f08d"><span class="identifier">make_trivial_recv</span></a><span class="special">(</span><a class="link" href="classboost_1_1mpi_1_1communicator.html" title="Class communicator">communicator</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">int</span><span class="special">,</span> <span class="keyword">int</span><span class="special">,</span> <span class="identifier">T</span> <span class="special">*</span><span class="special">,</span> <span class="keyword">int</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">static</span> <a class="link" href="classboost_1_1mpi_1_1request.html" title="Class request">request</a> 
+  <a class="link" href="classboost_1_1mpi_1_1request.html#doxygen.classboost_1_1mpi_1_1request_1ac185e5cdd0661ff0704a26711019f45e"><span class="identifier">make_bottom_recv</span></a><span class="special">(</span><a class="link" href="classboost_1_1mpi_1_1communicator.html" title="Class communicator">communicator</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">int</span><span class="special">,</span> <span class="keyword">int</span><span class="special">,</span> <span class="identifier">MPI_Datatype</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">static</span> <a class="link" href="classboost_1_1mpi_1_1request.html" title="Class request">request</a> <a class="link" href="classboost_1_1mpi_1_1request.html#doxygen.classboost_1_1mpi_1_1request_1a42d5ed474fb7fa2b1c486ba9f35678a4"><span class="identifier">make_empty_recv</span></a><span class="special">(</span><a class="link" href="classboost_1_1mpi_1_1communicator.html" title="Class communicator">communicator</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">int</span><span class="special">,</span> <span class="keyword">int</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">static</span> <a class="link" href="classboost_1_1mpi_1_1request.html" title="Class request">request</a> <a class="link" href="classboost_1_1mpi_1_1request.html#doxygen.classboost_1_1mpi_1_1request_1ac92a30273c0cee4b9a77875c53cbad2c"><span class="identifier">make_dynamic</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> 
+    <span class="keyword">static</span> <a class="link" href="classboost_1_1mpi_1_1request.html" title="Class request">request</a> <a class="link" href="classboost_1_1mpi_1_1request.html#doxygen.classboost_1_1mpi_1_1request_1afc018d98fee731b84779e2988209be94"><span class="identifier">make_serialized</span></a><span class="special">(</span><a class="link" href="classboost_1_1mpi_1_1communicator.html" title="Class communicator">communicator</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">int</span><span class="special">,</span> <span class="keyword">int</span><span class="special">,</span> <span class="identifier">T</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> 
+    <span class="keyword">static</span> <a class="link" href="classboost_1_1mpi_1_1request.html" title="Class request">request</a> 
+    <a class="link" href="classboost_1_1mpi_1_1request.html#doxygen.classboost_1_1mpi_1_1request_1a3e3bc34172e478ab2c1685e74f8194a4"><span class="identifier">make_serialized_array</span></a><span class="special">(</span><a class="link" href="classboost_1_1mpi_1_1communicator.html" title="Class communicator">communicator</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">int</span><span class="special">,</span> <span class="keyword">int</span><span class="special">,</span> <span class="identifier">T</span> <span class="special">*</span><span class="special">,</span> <span class="keyword">int</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">,</span> <span class="keyword">typename</span> A<span class="special">&gt;</span> 
+    <span class="keyword">static</span> <a class="link" href="classboost_1_1mpi_1_1request.html" title="Class request">request</a> 
+    <a class="link" href="classboost_1_1mpi_1_1request.html#doxygen.classboost_1_1mpi_1_1request_1ae249373cf3b6bf093f71a1de93f3075a"><span class="identifier">make_dynamic_primitive_array_recv</span></a><span class="special">(</span><a class="link" href="classboost_1_1mpi_1_1communicator.html" title="Class communicator">communicator</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">int</span><span class="special">,</span> <span class="keyword">int</span><span class="special">,</span> 
+                                      <span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span> <span class="identifier">T</span><span class="special">,</span> <span class="identifier">A</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">,</span> <span class="keyword">typename</span> A<span class="special">&gt;</span> 
+    <span class="keyword">static</span> <a class="link" href="classboost_1_1mpi_1_1request.html" title="Class request">request</a> 
+    <a class="link" href="classboost_1_1mpi_1_1request.html#doxygen.classboost_1_1mpi_1_1request_1ab0195280e33cf5f86622388ea74439a3"><span class="identifier">make_dynamic_primitive_array_send</span></a><span class="special">(</span><a class="link" href="classboost_1_1mpi_1_1communicator.html" title="Class communicator">communicator</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">int</span><span class="special">,</span> <span class="keyword">int</span><span class="special">,</span> 
+                                      <span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span> <span class="identifier">T</span><span class="special">,</span> <span class="identifier">A</span> <span class="special">&gt;</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1mpi_1_1request.html#id-1_3_25_7_21_2_1_1_9-bb">private member functions</a></span>
+  <a class="link" href="classboost_1_1mpi_1_1request.html#doxygen.classboost_1_1mpi_1_1request_1aba0b34e654b65bedcfef773b40854a5b"><span class="identifier">request</span></a><span class="special">(</span><a class="link" href="classboost_1_1mpi_1_1request_1_1handler.html" title="Class handler">handler</a> <span class="special">*</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.25.7.22.4.4"></a><h2>Description</h2>
+<p>This structure contains information about a non-blocking send or receive and will be returned from <code class="computeroutput">isend</code> or <code class="computeroutput">irecv</code>, respectively. </p>
+<div class="refsect2">
+<a name="id-1.3.25.7.22.4.4.3"></a><h3>
+<a name="id-1_3_25_7_21_2_1_1_7-bb"></a><code class="computeroutput">request</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.classboost_1_1mpi_1_1request_1a03f4c4371e1ba4f19806316e778f3044"></a><span class="identifier">request</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Constructs a NULL request. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a class="link" href="classboost_1_1mpi_1_1status.html" title="Class status">status</a> <a name="doxygen.classboost_1_1mpi_1_1request_1a5d71dbb0297d4cbae9a3acb5a4cefbe0"></a><span class="identifier">wait</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Wait until the communication associated with this request has completed, then return a <code class="computeroutput">status</code> object describing the communication. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">optional</span><span class="special">&lt;</span> <a class="link" href="classboost_1_1mpi_1_1status.html" title="Class status">status</a> <span class="special">&gt;</span> <a name="doxygen.classboost_1_1mpi_1_1request_1a2d67a09ffe38e25b7fdd3d218aefdbd2"></a><span class="identifier">test</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Determine whether the communication associated with this request has completed successfully. If so, returns the <code class="computeroutput">status</code> object describing the communication. Otherwise, returns an empty <code class="computeroutput">optional&lt;&gt;</code> to indicate that the communication has not completed yet. Note that once <code class="computeroutput"><a class="link" href="classboost_1_1mpi_1_1request.html#doxygen.classboost_1_1mpi_1_1request_1a2d67a09ffe38e25b7fdd3d218aefdbd2">test()</a></code> returns a <code class="computeroutput">status</code> object, the request has completed and <code class="computeroutput"><a class="link" href="classboost_1_1mpi_1_1request.html#doxygen.classboost_1_1mpi_1_1request_1a5d71dbb0297d4cbae9a3acb5a4cefbe0">wait()</a></code> should not be called. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.classboost_1_1mpi_1_1request_1aca0c1dd22135e1b9d9c9557c6cdfe91d"></a><span class="identifier">cancel</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Cancel a pending communication, assuming it has not already been completed. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">optional</span><span class="special">&lt;</span> <span class="identifier">MPI_Request</span> <span class="special">&amp;</span> <span class="special">&gt;</span> <a name="doxygen.classboost_1_1mpi_1_1request_1af6516e839ede26dbe429940025056448"></a><span class="identifier">trivial</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>The trivial MPI requet implenting this request, provided it's trivial. Probably irrelevant to most users. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.classboost_1_1mpi_1_1request_1a8642b2ae13c5f1e30743d058ec8b62b9"></a><span class="identifier">active</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Is this request potentialy pending ? </p>
+</li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.classboost_1_1mpi_1_1request_1a8b00aab5be63de4e56f486663ed85b17"></a><span class="identifier">preserve</span><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">shared_ptr</span><span class="special">&lt;</span> <span class="keyword">void</span> <span class="special">&gt;</span> d<span class="special">)</span><span class="special">;</span></pre></li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.25.7.22.4.4.4"></a><h3>
+<a name="id-1_3_25_7_21_2_1_1_8-bb"></a><code class="computeroutput">request</code> public static functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> 
+  <span class="keyword">static</span> <a class="link" href="classboost_1_1mpi_1_1request.html" title="Class request">request</a> 
+  <a name="doxygen.classboost_1_1mpi_1_1request_1a8f735bf1da5115e1ec5c6af427fbb91e"></a><span class="identifier">make_trivial_send</span><span class="special">(</span><a class="link" href="classboost_1_1mpi_1_1communicator.html" title="Class communicator">communicator</a> <span class="keyword">const</span> <span class="special">&amp;</span> comm<span class="special">,</span> <span class="keyword">int</span> dest<span class="special">,</span> <span class="keyword">int</span> tag<span class="special">,</span> 
+                    <span class="identifier">T</span> <span class="keyword">const</span> <span class="special">&amp;</span> value<span class="special">)</span><span class="special">;</span></pre>
+<p>Send a known number of primitive objects in one MPI request. </p>
+</li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> 
+  <span class="keyword">static</span> <a class="link" href="classboost_1_1mpi_1_1request.html" title="Class request">request</a> 
+  <a name="doxygen.classboost_1_1mpi_1_1request_1a3435d583b40b1eda9f5ecb9305c968b4"></a><span class="identifier">make_trivial_send</span><span class="special">(</span><a class="link" href="classboost_1_1mpi_1_1communicator.html" title="Class communicator">communicator</a> <span class="keyword">const</span> <span class="special">&amp;</span> comm<span class="special">,</span> <span class="keyword">int</span> dest<span class="special">,</span> <span class="keyword">int</span> tag<span class="special">,</span> 
+                    <span class="identifier">T</span> <span class="keyword">const</span> <span class="special">*</span> values<span class="special">,</span> <span class="keyword">int</span> n<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">static</span> <a class="link" href="classboost_1_1mpi_1_1request.html" title="Class request">request</a> 
+<a name="doxygen.classboost_1_1mpi_1_1request_1a1f2942ed3afbe463206833361ac75de2"></a><span class="identifier">make_packed_send</span><span class="special">(</span><a class="link" href="classboost_1_1mpi_1_1communicator.html" title="Class communicator">communicator</a> <span class="keyword">const</span> <span class="special">&amp;</span> comm<span class="special">,</span> <span class="keyword">int</span> dest<span class="special">,</span> <span class="keyword">int</span> tag<span class="special">,</span> 
+                 <span class="keyword">void</span> <span class="keyword">const</span> <span class="special">*</span> values<span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> n<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">static</span> <a class="link" href="classboost_1_1mpi_1_1request.html" title="Class request">request</a> 
+<a name="doxygen.classboost_1_1mpi_1_1request_1a19fa91f0276c3a4b520ff4c1a885d3b9"></a><span class="identifier">make_bottom_send</span><span class="special">(</span><a class="link" href="classboost_1_1mpi_1_1communicator.html" title="Class communicator">communicator</a> <span class="keyword">const</span> <span class="special">&amp;</span> comm<span class="special">,</span> <span class="keyword">int</span> dest<span class="special">,</span> <span class="keyword">int</span> tag<span class="special">,</span> 
+                 <span class="identifier">MPI_Datatype</span> tp<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">static</span> <a class="link" href="classboost_1_1mpi_1_1request.html" title="Class request">request</a> <a name="doxygen.classboost_1_1mpi_1_1request_1a95d385d8e9c19e63eb5f4c8e038627d6"></a><span class="identifier">make_empty_send</span><span class="special">(</span><a class="link" href="classboost_1_1mpi_1_1communicator.html" title="Class communicator">communicator</a> <span class="keyword">const</span> <span class="special">&amp;</span> comm<span class="special">,</span> <span class="keyword">int</span> dest<span class="special">,</span> <span class="keyword">int</span> tag<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> 
+  <span class="keyword">static</span> <a class="link" href="classboost_1_1mpi_1_1request.html" title="Class request">request</a> 
+  <a name="doxygen.classboost_1_1mpi_1_1request_1ab6596c3386777061cc051edd43d7cdfb"></a><span class="identifier">make_trivial_recv</span><span class="special">(</span><a class="link" href="classboost_1_1mpi_1_1communicator.html" title="Class communicator">communicator</a> <span class="keyword">const</span> <span class="special">&amp;</span> comm<span class="special">,</span> <span class="keyword">int</span> dest<span class="special">,</span> <span class="keyword">int</span> tag<span class="special">,</span> <span class="identifier">T</span> <span class="special">&amp;</span> value<span class="special">)</span><span class="special">;</span></pre>
+<p>Receive a known number of primitive objects in one MPI request. </p>
+</li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> 
+  <span class="keyword">static</span> <a class="link" href="classboost_1_1mpi_1_1request.html" title="Class request">request</a> 
+  <a name="doxygen.classboost_1_1mpi_1_1request_1aca9989fd22f0b7225e973dc91f86f08d"></a><span class="identifier">make_trivial_recv</span><span class="special">(</span><a class="link" href="classboost_1_1mpi_1_1communicator.html" title="Class communicator">communicator</a> <span class="keyword">const</span> <span class="special">&amp;</span> comm<span class="special">,</span> <span class="keyword">int</span> dest<span class="special">,</span> <span class="keyword">int</span> tag<span class="special">,</span> <span class="identifier">T</span> <span class="special">*</span> values<span class="special">,</span> 
+                    <span class="keyword">int</span> n<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">static</span> <a class="link" href="classboost_1_1mpi_1_1request.html" title="Class request">request</a> 
+<a name="doxygen.classboost_1_1mpi_1_1request_1ac185e5cdd0661ff0704a26711019f45e"></a><span class="identifier">make_bottom_recv</span><span class="special">(</span><a class="link" href="classboost_1_1mpi_1_1communicator.html" title="Class communicator">communicator</a> <span class="keyword">const</span> <span class="special">&amp;</span> comm<span class="special">,</span> <span class="keyword">int</span> dest<span class="special">,</span> <span class="keyword">int</span> tag<span class="special">,</span> 
+                 <span class="identifier">MPI_Datatype</span> tp<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">static</span> <a class="link" href="classboost_1_1mpi_1_1request.html" title="Class request">request</a> <a name="doxygen.classboost_1_1mpi_1_1request_1a42d5ed474fb7fa2b1c486ba9f35678a4"></a><span class="identifier">make_empty_recv</span><span class="special">(</span><a class="link" href="classboost_1_1mpi_1_1communicator.html" title="Class communicator">communicator</a> <span class="keyword">const</span> <span class="special">&amp;</span> comm<span class="special">,</span> <span class="keyword">int</span> dest<span class="special">,</span> <span class="keyword">int</span> tag<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <a class="link" href="classboost_1_1mpi_1_1request.html" title="Class request">request</a> <a name="doxygen.classboost_1_1mpi_1_1request_1ac92a30273c0cee4b9a77875c53cbad2c"></a><span class="identifier">make_dynamic</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Construct request for simple data of unknown size. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> 
+  <span class="keyword">static</span> <a class="link" href="classboost_1_1mpi_1_1request.html" title="Class request">request</a> 
+  <a name="doxygen.classboost_1_1mpi_1_1request_1afc018d98fee731b84779e2988209be94"></a><span class="identifier">make_serialized</span><span class="special">(</span><a class="link" href="classboost_1_1mpi_1_1communicator.html" title="Class communicator">communicator</a> <span class="keyword">const</span> <span class="special">&amp;</span> comm<span class="special">,</span> <span class="keyword">int</span> source<span class="special">,</span> <span class="keyword">int</span> tag<span class="special">,</span> <span class="identifier">T</span> <span class="special">&amp;</span> value<span class="special">)</span><span class="special">;</span></pre>
+<p>Constructs request for serialized data. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> 
+  <span class="keyword">static</span> <a class="link" href="classboost_1_1mpi_1_1request.html" title="Class request">request</a> 
+  <a name="doxygen.classboost_1_1mpi_1_1request_1a3e3bc34172e478ab2c1685e74f8194a4"></a><span class="identifier">make_serialized_array</span><span class="special">(</span><a class="link" href="classboost_1_1mpi_1_1communicator.html" title="Class communicator">communicator</a> <span class="keyword">const</span> <span class="special">&amp;</span> comm<span class="special">,</span> <span class="keyword">int</span> source<span class="special">,</span> <span class="keyword">int</span> tag<span class="special">,</span> 
+                        <span class="identifier">T</span> <span class="special">*</span> values<span class="special">,</span> <span class="keyword">int</span> n<span class="special">)</span><span class="special">;</span></pre>
+<p>Constructs request for array of complex data. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">,</span> <span class="keyword">typename</span> A<span class="special">&gt;</span> 
+  <span class="keyword">static</span> <a class="link" href="classboost_1_1mpi_1_1request.html" title="Class request">request</a> 
+  <a name="doxygen.classboost_1_1mpi_1_1request_1ae249373cf3b6bf093f71a1de93f3075a"></a><span class="identifier">make_dynamic_primitive_array_recv</span><span class="special">(</span><a class="link" href="classboost_1_1mpi_1_1communicator.html" title="Class communicator">communicator</a> <span class="keyword">const</span> <span class="special">&amp;</span> comm<span class="special">,</span> <span class="keyword">int</span> source<span class="special">,</span> 
+                                    <span class="keyword">int</span> tag<span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span> <span class="identifier">T</span><span class="special">,</span> <span class="identifier">A</span> <span class="special">&gt;</span> <span class="special">&amp;</span> values<span class="special">)</span><span class="special">;</span></pre>
+<p>Request to recv array of primitive data. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">,</span> <span class="keyword">typename</span> A<span class="special">&gt;</span> 
+  <span class="keyword">static</span> <a class="link" href="classboost_1_1mpi_1_1request.html" title="Class request">request</a> 
+  <a name="doxygen.classboost_1_1mpi_1_1request_1ab0195280e33cf5f86622388ea74439a3"></a><span class="identifier">make_dynamic_primitive_array_send</span><span class="special">(</span><a class="link" href="classboost_1_1mpi_1_1communicator.html" title="Class communicator">communicator</a> <span class="keyword">const</span> <span class="special">&amp;</span> comm<span class="special">,</span> <span class="keyword">int</span> source<span class="special">,</span> 
+                                    <span class="keyword">int</span> tag<span class="special">,</span> 
+                                    <span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span> <span class="identifier">T</span><span class="special">,</span> <span class="identifier">A</span> <span class="special">&gt;</span> <span class="keyword">const</span> <span class="special">&amp;</span> values<span class="special">)</span><span class="special">;</span></pre>
+<p>Request to send array of primitive data. </p>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.25.7.22.4.4.5"></a><h3>
+<a name="id-1_3_25_7_21_2_1_1_9-bb"></a><code class="computeroutput">request</code> private member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><pre class="literallayout"><a name="doxygen.classboost_1_1mpi_1_1request_1aba0b34e654b65bedcfef773b40854a5b"></a><span class="identifier">request</span><span class="special">(</span><a class="link" href="classboost_1_1mpi_1_1request_1_1handler.html" title="Class handler">handler</a> <span class="special">*</span> h<span class="special">)</span><span class="special">;</span></pre></li></ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2005-2007 Douglas Gregor,
+      Matthias Troyer, Trustees of Indiana University<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at &lt;ulink url="http://www.boost.org/LICENSE_1_0.txt"&gt;
+        http://www.boost.org/LICENSE_1_0.txt &lt;/ulink&gt;)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="python_8hpp_1a29b180e61af719ee793cab8e7ded2004.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../mpi/reference.html#doxygen.request_8hpp"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1mpi_1_1request_1_1handler.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

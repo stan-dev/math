@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+        <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>boost::urls :: Boost Libraries Documentation</title>
+  <link rel="canonical" href="https://antora.cppalliance.org/master/lib/doc/url/reference/boost/urls.html">
+  <meta name="generator" content="Antora 3.1.9">
+    <link rel="stylesheet" href="../../../_/css/boostlook.css">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <link rel="stylesheet" href="../../../_/css/vendor/tabs.css">
+    <script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article toc2 toc-left">
+    <div class="boostlook">
+  <div id="header">
+    <div id="toc" class="nav-container toc2" data-component="url" data-version="">
+  <aside class="nav">
+    <button class="nav-close"></button>
+    <div class="panels">
+      <div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+      <h3 class="title"><a href="../../index.html">Boost.URL</a></h3>
+      <ul class="nav-list">
+        <ul class="nav-list">
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../../quicklook.html">Quick Look</a>
+        </li>
+              <li class="" data-depth="1">
+            <a class="nav-link" href="../../urls/index.html">URLs</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../../urls/parsing.html">Parsing</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../../urls/containers.html">Containers</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../../urls/segments.html">Segments</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../../urls/params.html">Params</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../../urls/normalization.html">Normalization</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../../urls/stringtoken.html">String Token</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../../urls/percent-encoding.html">Percent Encoding</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../../urls/formatting.html">Formatting</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../../grammar/index.html">Customization</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../../grammar/rules.html">Parse Rules</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../../grammar/charset.html">Character Sets</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../../grammar/combinators.html">Compound Rules</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../../grammar/range.html">Ranges</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../../grammar/rfc3986.html">RFC 3986</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Examples</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../../examples/qrcode.html">QR Code</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../../examples/finicky.html">Finicky</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../../examples/mailto.html">mailto URLs</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../../examples/magnet-link.html">Magnet Link</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../../examples/file-router.html">File Router</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../../examples/router.html">Router</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../../examples/sanitize.html">Sanitizing URLs</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../../reference.html">Reference</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <span class="nav-text">Concepts</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="3">
+            <a class="nav-link" href="../../concepts/CharSet.html">CharSet</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="../../concepts/Rule.html">Rule</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="../../concepts/StringToken.html">StringToken</a>
+        </li>
+        </ul>
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../../HelpCard.html">Help Card</a>
+        </li>
+        </ul>
+  </ul>
+  </ul>
+  </nav>
+</div>
+    </div>
+  </aside>
+</div>
+</div>
+  <div id="content">
+    <article class="doc max-width-reset">
+  <div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li>
+      <a href="../../index.html" aria-label="Home: Boost.URL">
+        <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 -960 960 960" fill="#000000" aria-hidden="true"><path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z"/></svg>
+      </a>
+    </li>
+    <li><a href="urls.html"><a href="../boost.html">boost</a>::urls</a></li>
+  </ul>
+</nav>
+<div class="spirit-nav">
+</div>
+</div>
+    <h1 class="page"><a href="../boost.html">boost</a>::urls</h1>
+  <div class="sect1">
+<h2 id="_namespaces"><a class="anchor" href="#_namespaces"></a>Namespaces</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/error_types.html" class="xref page"><code>error_types</code></a></p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/grammar.html" class="xref page"><code>grammar</code></a></p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/implementation_defined.html" class="xref page"><code>implementation_defined</code></a></p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/see_below.html" class="xref page"><code>see_below</code></a></p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/string_token.html" class="xref page"><code>string_token</code></a></p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_types"><a class="anchor" href="#_types"></a>Types</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/authority_view.html" class="xref page"><code>authority_view</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A non-owning reference to a valid authority</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/decode_view.html" class="xref page"><code>decode_view</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A reference to a valid, percent-encoded string</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/encoding_opts.html" class="xref page"><code>encoding_opts</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Percent-encoding options</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/ignore_case_param.html" class="xref page"><code>ignore_case_param</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">An optional parameter to determine case-sensitivity</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/ipv4_address.html" class="xref page"><code>ipv4_address</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">An IP version 4 style address.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/ipv6_address.html" class="xref page"><code>ipv6_address</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">An IP version 6 style address.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/no_value_t.html" class="xref page"><code>no_value_t</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The type of no_value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/optional.html" class="xref page"><code>optional</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The type of optional used by the library</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/param.html" class="xref page"><code>param</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A query parameter</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/param_pct_view.html" class="xref page"><code>param_pct_view</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A query parameter</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/param_view.html" class="xref page"><code>param_view</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A query parameter</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/params_base.html" class="xref page"><code>params_base</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Common functionality for containers</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/params_encoded_base.html" class="xref page"><code>params_encoded_base</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Common functionality for containers</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/params_encoded_ref.html" class="xref page"><code>params_encoded_ref</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A view representing query parameters in a URL</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/params_encoded_view.html" class="xref page"><code>params_encoded_view</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A view representing query parameters in a URL</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/params_ref.html" class="xref page"><code>params_ref</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A view representing query parameters in a URL</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/params_view.html" class="xref page"><code>params_view</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A view representing query parameters in a URL</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/pct_string_view.html" class="xref page"><code>pct_string_view</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A reference to a valid percent-encoded string</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/segments_base.html" class="xref page"><code>segments_base</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Common functionality for containers</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/segments_encoded_base.html" class="xref page"><code>segments_encoded_base</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Common functionality for containers</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/segments_encoded_ref.html" class="xref page"><code>segments_encoded_ref</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A view representing path segments in a URL</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/segments_encoded_view.html" class="xref page"><code>segments_encoded_view</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A view representing path segments in a URL</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/segments_ref.html" class="xref page"><code>segments_ref</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A view representing path segments in a URL</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/segments_view.html" class="xref page"><code>segments_view</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A view representing path segments in a URL</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/static_url.html" class="xref page"><code>static_url</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A modifiable container for a URL.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/static_url_base.html" class="xref page"><code>static_url_base</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Common implementation for all static URLs</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/string_view.html" class="xref page"><code>string_view</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The type of string_view used by the library</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/url.html" class="xref page"><code>url</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A modifiable container for a URL.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/url_base.html" class="xref page"><code>url_base</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Common functionality for containers</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/url_view.html" class="xref page"><code>url_view</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A non-owning reference to a valid URL</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/url_view_base.html" class="xref page"><code>url_view_base</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Common functionality for containers</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/variant.html" class="xref page"><code>variant</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The type of variant used by the library</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_enums"><a class="anchor" href="#_enums"></a>Enums</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/error.html" class="xref page"><code>error</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Error codes returned the library</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/host_type.html" class="xref page"><code>host_type</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Identifies the type of host in a URL.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/scheme.html" class="xref page"><code>scheme</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Identifies a known URL scheme</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_functions"><a class="anchor" href="#_functions"></a>Functions</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/arg.html" class="xref page"><code>arg</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Designate a named argument for a replacement field</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/default_port.html" class="xref page"><code>default_port</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return the default port for a known scheme</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/encode.html" class="xref page"><code>encode</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Apply percent-encoding to a string</p>
+<p class="tableblock">Return a percent-encoded string</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/encoded_size.html" class="xref page"><code>encoded_size</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return the buffer size needed for percent-encoding</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/format.html" class="xref page"><code>format</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Format arguments into a URL</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/format_to.html" class="xref page"><code>format_to</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Format arguments into a URL</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/make_pct_string_view.html" class="xref page"><code>make_pct_string_view</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return a valid percent-encoded string</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/operator_not_eq.html" class="xref page"><code>operator!=</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Compare two decode views for inequality</p>
+<p class="tableblock">Return the result of comparing two URLs</p>
+<p class="tableblock">Return the result of comparing two authorities
+The authorities are compared component
+by component as if they were first
+normalized.</p>
+<p class="tableblock">Return true if two addresses are not equal</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/operator_lt.html" class="xref page"><code>operator&lt;</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Compare two decode views for less than</p>
+<p class="tableblock">Return the result of comparing two URLs</p>
+<p class="tableblock">Return the result of comparing two authorities
+The authorities are compared component
+by component as if they were first
+normalized.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/operator_lshift.html" class="xref page"><code>operator&lt;&lt;</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Format the address to an output stream</p>
+<p class="tableblock">Format the address to an output stream.</p>
+<p class="tableblock">Format the encoded authority to the output stream</p>
+<p class="tableblock">Format the string with percent-decoding applied to the output stream</p>
+<p class="tableblock">Format the url to the output stream</p>
+<p class="tableblock">Format to an output stream</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/operator_le.html" class="xref page"><code>operator&#8656;</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Compare two decode views for less than or equal</p>
+<p class="tableblock">Return the result of comparing two URLs</p>
+<p class="tableblock">Return the result of comparing two authorities
+The authorities are compared component
+by component as if they were first
+normalized.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/operator_eq.html" class="xref page"><code>operator==</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Compare two decode views for equality</p>
+<p class="tableblock">Return the result of comparing two URLs</p>
+<p class="tableblock">Return the result of comparing two authorities
+The authorities are compared component
+by component as if they were first
+normalized.</p>
+<p class="tableblock">Return true if two addresses are equal</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/operator_gt.html" class="xref page"><code>operator&gt;</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Compare two decode views for greater than</p>
+<p class="tableblock">Return the result of comparing two URLs</p>
+<p class="tableblock">Return the result of comparing two authorities
+The authorities are compared component
+by component as if they were first
+normalized.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/operator_ge.html" class="xref page"><code>operator&gt;=</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Compare two decode views for greater than or equal</p>
+<p class="tableblock">Return the result of comparing two URLs</p>
+<p class="tableblock">Return the result of comparing two authorities
+The authorities are compared component
+by component as if they were first
+normalized.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/parse_absolute_uri.html" class="xref page"><code>parse_absolute_uri</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return a reference to a parsed URL string</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/parse_authority.html" class="xref page"><code>parse_authority</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Parse an authority</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/parse_ipv4_address.html" class="xref page"><code>parse_ipv4_address</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return an IPv4 address from an IP address string in dotted decimal form</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/parse_ipv6_address.html" class="xref page"><code>parse_ipv6_address</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Parse a string containing an IPv6 address.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/parse_origin_form.html" class="xref page"><code>parse_origin_form</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return a reference to a parsed URL string</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/parse_path.html" class="xref page"><code>parse_path</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Parse a string and return an encoded segment view</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/parse_query.html" class="xref page"><code>parse_query</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Parse a string and return an encoded params view</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/parse_relative_ref.html" class="xref page"><code>parse_relative_ref</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return a reference to a parsed URL string</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/parse_uri.html" class="xref page"><code>parse_uri</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return a reference to a parsed URL string</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/parse_uri_reference.html" class="xref page"><code>parse_uri_reference</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return a reference to a parsed URL string</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/pct_encoded_rule.html" class="xref page"><code>pct_encoded_rule</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Rule for a string with percent-encoded escapes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/resolve.html" class="xref page"><code>resolve</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Resolve a URL reference against a base URL</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/string_to_scheme.html" class="xref page"><code>string_to_scheme</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return the known scheme for a non-normalized string, if known</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/swap.html" class="xref page"><code>swap</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Swap</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/to_string.html" class="xref page"><code>to_string</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return the normalized string for a known scheme</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_variables"><a class="anchor" href="#_variables"></a>Variables</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/absolute_uri_rule.html" class="xref page"><code>absolute_uri_rule</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Rule for absolute-URI</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/authority_rule.html" class="xref page"><code>authority_rule</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Rule for authority</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/gen_delim_chars.html" class="xref page"><code>gen_delim_chars</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The gen-delims character set</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/ignore_case.html" class="xref page"><code>ignore_case</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Ignore case when comparing</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/ipv4_address_rule.html" class="xref page"><code>ipv4_address_rule</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Rule for an IP version 4 style address</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/ipv6_address_rule.html" class="xref page"><code>ipv6_address_rule</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Rule for An IP version 6 style address</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/no_value.html" class="xref page"><code>no_value</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Constant indicating no value in a param</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/origin_form_rule.html" class="xref page"><code>origin_form_rule</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Rule for origin-form</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/pchars.html" class="xref page"><code>pchars</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The path character set</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/query_rule.html" class="xref page"><code>query_rule</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Rule for query</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/relative_ref_rule.html" class="xref page"><code>relative_ref_rule</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Rule for relative-ref</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/reserved_chars.html" class="xref page"><code>reserved_chars</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The reserved character set</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/sub_delim_chars.html" class="xref page"><code>sub_delim_chars</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The sub-delims character set</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/unreserved_chars.html" class="xref page"><code>unreserved_chars</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The unreserved character set</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/uri_reference_rule.html" class="xref page"><code>uri_reference_rule</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Rule for URI-reference</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/uri_rule.html" class="xref page"><code>uri_rule</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Rule for URI</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_using_directives"><a class="anchor" href="#_using_directives"></a>Using Directives</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="urls/error_types.html" class="xref page"><code>error_types</code></a></p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><span class="small">Created with <a href="https://www.mrdocs.com">MrDocs</a></span></p>
+</div>
+</div>
+</div>
+  <div class="edit-this-page">
+  </div>
+  </article>
+</div>
+  <div id="footer">
+  <script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script async src="../../../_/js/vendor/tabs.js" data-sync-storage-key="preferred-tab"></script>
+</div>
+</div>
+  </body>
+</html>

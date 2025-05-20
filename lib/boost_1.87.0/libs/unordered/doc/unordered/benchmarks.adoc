@@ -1,0 +1,726 @@
+[#benchmarks]
+:idprefix: benchmarks_
+:imagesdir: ../diagrams
+
+= Benchmarks
+
+== boost::unordered_[multi]set
+
+All benchmarks were created using `unordered_set<unsigned int>` (non-duplicate) and `unordered_multiset<unsigned int>` (duplicate). The source code can be https://github.com/boostorg/boost_unordered_benchmarks/tree/boost_unordered_set[found here^].
+
+The insertion benchmarks insert `n` random values, where `n` is between 10,000 and 3 million. For the duplicated benchmarks, the same random values are repeated an average of 5 times.
+
+The erasure benchmarks erase all `n` elements randomly until the container is empty. Erasure by key uses `erase(const key_type&)` to remove entire groups of equivalent elements in each operation.
+
+The successful lookup benchmarks are done by looking up all `n` values, in their original insertion order.
+
+The unsuccessful lookup benchmarks use `n` randomly generated integers but using a different seed value.
+
+=== GCC 12 + libstdc++-v3, x64
+
+==== Insertion
+
+[caption=]
+[cols="3*^.^a", frame=all, grid=all]
+|===
+
+|image::benchmarks-set/gcc/running insertion.xlsx.practice.png[width=250,link=../diagrams/benchmarks-set/gcc/running insertion.xlsx.practice.png,window=_blank]
+|image::benchmarks-set/gcc/running%20insertion.xlsx.practice non-unique.png[width=250,link=../diagrams/benchmarks-set/gcc/running%20insertion.xlsx.practice non-unique.png,window=_blank]
+|image::benchmarks-set/gcc/running%20insertion.xlsx.practice non-unique 5.png[width=250,link=../diagrams/benchmarks-set/gcc/running%20insertion.xlsx.practice non-unique 5.png,window=_blank]
+
+h|non-duplicate elements 
+h|duplicate elements 
+h|duplicate elements, +
+max load factor 5
+|===
+
+[caption=]
+[cols="3*^.^a", frame=all, grid=all]
+|===
+
+|image::benchmarks-set/gcc/running%20insertion.xlsx.practice norehash.png[width=250,link=../diagrams/benchmarks-set/gcc/running%20insertion.xlsx.practice norehash.png,window=_blank]
+|image::benchmarks-set/gcc/running%20insertion.xlsx.practice norehash non-unique.png[width=250,link=../diagrams/benchmarks-set/gcc/running%20insertion.xlsx.practice norehash non-unique.png,window=_blank]
+|image::benchmarks-set/gcc/running%20insertion.xlsx.practice norehash non-unique 5.png[width=250,link=../diagrams/benchmarks-set/gcc/running%20insertion.xlsx.practice norehash non-unique 5.png,window=_blank]
+
+h|non-duplicate elements, +
+prior `reserve`
+h|duplicate elements, +
+prior `reserve` 
+h|duplicate elements, +
+max load factor 5, +
+prior `reserve`
+
+|===
+
+==== Erasure
+
+[caption=]
+[cols="3*^.^a", frame=all, grid=all]
+|===
+
+|image::benchmarks-set/gcc/scattered%20erasure.xlsx.practice.png[width=250,link=../diagrams/benchmarks-set/gcc/scattered%20erasure.xlsx.practice.png,window=_blank]
+|image::benchmarks-set/gcc/scattered%20erasure.xlsx.practice non-unique.png[width=250,link=../diagrams/benchmarks-set/gcc/scattered%20erasure.xlsx.practice non-unique.png,window=_blank]
+|image::benchmarks-set/gcc/scattered%20erasure.xlsx.practice non-unique 5.png[width=250,link=../diagrams/benchmarks-set/gcc/scattered%20erasure.xlsx.practice non-unique 5.png,window=_blank]
+
+h|non-duplicate elements 
+h|duplicate elements 
+h|duplicate elements, +
+max load factor 5
+
+|
+|image::benchmarks-set/gcc/scattered%20erasure%20by%20key.xlsx.practice non-unique.png[width=250,link=../diagrams/benchmarks-set/gcc/scattered%20erasure%20by%20key.xlsx.practice non-unique.png,window=_blank]
+|image::benchmarks-set/gcc/scattered%20erasure%20by%20key.xlsx.practice non-unique 5.png[width=250,link=../diagrams/benchmarks-set/gcc/scattered%20erasure%20by%20key.xlsx.practice non-unique 5.png,window=_blank]
+
+|
+h|by key, duplicate elements 
+h|by key, duplicate elements, +
+max load factor 5
+
+|===
+
+==== Successful Lookup
+
+[caption=]
+[cols="3*^.^a", frame=all, grid=all]
+|===
+
+|image::benchmarks-set/gcc/scattered%20successful%20looukp.xlsx.practice.png[width=250,window=_blank,link=../diagrams/benchmarks-set/gcc/scattered%20successful%20looukp.xlsx.practice.png]
+|image::benchmarks-set/gcc/scattered%20successful%20looukp.xlsx.practice non-unique.png[width=250,window=_blank,link=../diagrams/benchmarks-set/gcc/scattered%20successful%20looukp.xlsx.practice non-unique.png]
+|image::benchmarks-set/gcc/scattered%20successful%20looukp.xlsx.practice non-unique 5.png[width=250,window=_blank,link=../diagrams/benchmarks-set/gcc/scattered%20successful%20looukp.xlsx.practice non-unique 5.png]
+
+h|non-duplicate elements
+h|duplicate elements
+h|duplicate elements, +
+max load factor 5
+
+|===
+
+==== Unsuccessful lookup
+
+[caption=]
+[cols="3*^.^a", frame=all, grid=all]
+|===
+
+|image::benchmarks-set/gcc/scattered%20unsuccessful%20looukp.xlsx.practice.png[width=250,window=_blank,link=../diagrams/benchmarks-set/gcc/scattered%20unsuccessful%20looukp.xlsx.practice.png]
+|image::benchmarks-set/gcc/scattered%20unsuccessful%20looukp.xlsx.practice non-unique.png[width=250,window=_blank,link=../diagrams/benchmarks-set/gcc/scattered%20unsuccessful%20looukp.xlsx.practice non-unique.png]
+|image::benchmarks-set/gcc/scattered%20unsuccessful%20looukp.xlsx.practice non-unique 5.png[width=250,window=_blank,link=../diagrams/benchmarks-set/gcc/scattered%20unsuccessful%20looukp.xlsx.practice non-unique 5.png]
+
+h|non-duplicate elements
+h|duplicate elements
+h|duplicate elements, +
+max load factor 5
+
+|===
+
+=== Clang 15 + libc++, x64
+
+==== Insertion
+
+[caption=]
+[cols="3*^.^a", frame=all, grid=all]
+|===
+
+|image::benchmarks-set/clang_libcpp/running%20insertion.xlsx.practice.png[width=250, window=_blank,link=../diagrams/benchmarks-set/clang_libcpp/running%20insertion.xlsx.practice.png]
+|image::benchmarks-set/clang_libcpp/running%20insertion.xlsx.practice non-unique.png[width=250, window=_blank,link=../diagrams/benchmarks-set/clang_libcpp/running%20insertion.xlsx.practice non-unique.png]
+|image::benchmarks-set/clang_libcpp/running%20insertion.xlsx.practice non-unique 5.png[width=250, window=_blank,link=../diagrams/benchmarks-set/clang_libcpp/running%20insertion.xlsx.practice non-unique 5.png]
+
+h|non-duplicate elements
+h|duplicate elements
+h|duplicate elements, +
+max load factor 5
+
+|===
+
+[caption=]
+[cols="3*^.^a", frame=all, grid=all]
+|===
+
+|image::benchmarks-set/clang_libcpp/running%20insertion.xlsx.practice norehash.png[width=250,window=_blank,link=../diagrams/benchmarks-set/clang_libcpp/running%20insertion.xlsx.practice norehash.png]
+|image::benchmarks-set/clang_libcpp/running%20insertion.xlsx.practice norehash non-unique.png[width=250,window=_blank,link=../diagrams/benchmarks-set/clang_libcpp/running%20insertion.xlsx.practice norehash non-unique.png]
+|image::benchmarks-set/clang_libcpp/running%20insertion.xlsx.practice norehash non-unique 5.png[width=250,window=_blank,link=../diagrams/benchmarks-set/clang_libcpp/running%20insertion.xlsx.practice norehash non-unique 5.png]
+
+h|non-duplicate elements, +
+prior `reserve`
+h|duplicate elements, +
+prior `reserve`
+h|duplicate elements, +
+max load factor 5, +
+prior `reserve`
+
+|===
+
+==== Erasure
+
+[caption=]
+[cols="3*^.^a", frame=all, grid=all]
+|===
+
+|image::benchmarks-set/clang_libcpp/scattered%20erasure.xlsx.practice.png[width=250,window=_blank,link=../diagrams/benchmarks-set/clang_libcpp/scattered%20erasure.xlsx.practice.png]
+|image::benchmarks-set/clang_libcpp/scattered%20erasure.xlsx.practice non-unique.png[width=250,window=_blank,link=../diagrams/benchmarks-set/clang_libcpp/scattered%20erasure.xlsx.practice non-unique.png]
+|image::benchmarks-set/clang_libcpp/scattered%20erasure.xlsx.practice non-unique 5.png[width=250,window=_blank,link=../diagrams/benchmarks-set/clang_libcpp/scattered%20erasure.xlsx.practice non-unique 5.png]
+
+h|non-duplicate elements
+h|duplicate elements
+h|duplicate elements, +
+max load factor 5
+
+|
+|image::benchmarks-set/clang_libcpp/scattered%20erasure%20by%20key.xlsx.practice non-unique.png[width=250,link=../diagrams/benchmarks-set/clang_libcpp/scattered%20erasure%20by%20key.xlsx.practice non-unique.png,window=_blank]
+|image::benchmarks-set/clang_libcpp/scattered%20erasure%20by%20key.xlsx.practice non-unique 5.png[width=250,link=../diagrams/benchmarks-set/clang_libcpp/scattered%20erasure%20by%20key.xlsx.practice non-unique 5.png,window=_blank]
+
+|
+h|by key, duplicate elements 
+h|by key, duplicate elements, +
+max load factor 5
+
+|===
+
+==== Successful lookup
+
+[caption=]
+[cols="3*^.^a", frame=all, grid=all]
+|===
+
+|image::benchmarks-set/clang_libcpp/scattered%20successful%20looukp.xlsx.practice.png[width=250,window=_blank,link=../diagrams/benchmarks-set/clang_libcpp/scattered%20successful%20looukp.xlsx.practice.png]
+|image::benchmarks-set/clang_libcpp/scattered%20successful%20looukp.xlsx.practice non-unique.png[width=250,window=_blank,link=../diagrams/benchmarks-set/clang_libcpp/scattered%20successful%20looukp.xlsx.practice non-unique.png]
+|image::benchmarks-set/clang_libcpp/scattered%20successful%20looukp.xlsx.practice non-unique 5.png[width=250,window=_blank,link=../diagrams/benchmarks-set/clang_libcpp/scattered%20successful%20looukp.xlsx.practice non-unique 5.png]
+
+h|non-duplicate elements
+h|duplicate elements
+h|duplicate elements, +
+max load factor 5
+
+|===
+
+==== Unsuccessful lookup
+
+[caption=]
+[cols="3*^.^a", frame=all, grid=all]
+|===
+
+|image::benchmarks-set/clang_libcpp/scattered%20unsuccessful%20looukp.xlsx.practice.png[width=250,window=_blank,link=../diagrams/benchmarks-set/clang_libcpp/scattered%20unsuccessful%20looukp.xlsx.practice.png]
+|image::benchmarks-set/clang_libcpp/scattered%20unsuccessful%20looukp.xlsx.practice non-unique.png[width=250,window=_blank,link=../diagrams/benchmarks-set/clang_libcpp/scattered%20unsuccessful%20looukp.xlsx.practice non-unique.png]
+|image::benchmarks-set/clang_libcpp/scattered%20unsuccessful%20looukp.xlsx.practice non-unique 5.png[width=250,window=_blank,link=../diagrams/benchmarks-set/clang_libcpp/scattered%20unsuccessful%20looukp.xlsx.practice non-unique 5.png]
+
+h|non-duplicate elements
+h|duplicate elements
+h|duplicate elements, +
+max load factor 5
+
+|===
+
+=== Visual Studio 2022 + Dinkumware, x64
+
+==== Insertion
+
+[caption=]
+[cols="3*^.^a", frame=all, grid=all]
+|===
+
+|image::benchmarks-set/vs/running%20insertion.xlsx.practice.png[width=250,window=_blank,link=../diagrams/benchmarks-set/vs/running%20insertion.xlsx.practice.png]
+|image::benchmarks-set/vs/running%20insertion.xlsx.practice non-unique.png[width=250,window=_blank,link=../diagrams/benchmarks-set/vs/running%20insertion.xlsx.practice non-unique.png]
+|image::benchmarks-set/vs/running%20insertion.xlsx.practice non-unique 5.png[width=250,window=_blank,link=../diagrams/benchmarks-set/vs/running%20insertion.xlsx.practice non-unique 5.png]
+
+h|non-duplicate elements
+h|duplicate elements
+h|duplicate elements, +
+max load factor 5
+
+|===
+
+[caption=]
+[cols="3*^.^a", frame=all, grid=all]
+|===
+
+|image::benchmarks-set/vs/running%20insertion.xlsx.practice norehash.png[width=250,window=_blank,link=../diagrams/benchmarks-set/vs/running%20insertion.xlsx.practice norehash.png]
+|image::benchmarks-set/vs/running%20insertion.xlsx.practice norehash non-unique.png[width=250,window=_blank,link=../diagrams/benchmarks-set/vs/running%20insertion.xlsx.practice norehash non-unique.png]
+|image::benchmarks-set/vs/running%20insertion.xlsx.practice norehash non-unique 5.png[width=250,window=_blank,link=../diagrams/benchmarks-set/vs/running%20insertion.xlsx.practice norehash non-unique 5.png]
+
+h|non-duplicate elements, +
+prior `reserve`
+h|duplicate elements, +
+prior `reserve`
+h|duplicate elements, +
+max load factor 5, +
+prior `reserve`
+
+|===
+
+==== Erasure
+
+[caption=]
+[cols="3*^.^a", frame=all, grid=all]
+|===
+
+|image::benchmarks-set/vs/scattered%20erasure.xlsx.practice.png[width=250,window=_blank,link=../diagrams/benchmarks-set/vs/scattered%20erasure.xlsx.practice.png]
+|image::benchmarks-set/vs/scattered%20erasure.xlsx.practice non-unique.png[width=250,window=_blank,link=../diagrams/benchmarks-set/vs/scattered%20erasure.xlsx.practice non-unique.png]
+|image::benchmarks-set/vs/scattered%20erasure.xlsx.practice non-unique 5.png[width=250,window=_blank,link=../diagrams/benchmarks-set/vs/scattered%20erasure.xlsx.practice non-unique 5.png]
+
+h|non-duplicate elements
+h|duplicate elements
+h|duplicate elements, +
+max load factor 5
+
+|
+|image::benchmarks-set/vs/scattered%20erasure%20by%20key.xlsx.practice non-unique.png[width=250,link=../diagrams/benchmarks-set/vs/scattered%20erasure%20by%20key.xlsx.practice non-unique.png,window=_blank]
+|image::benchmarks-set/vs/scattered%20erasure%20by%20key.xlsx.practice non-unique 5.png[width=250,link=../diagrams/benchmarks-set/vs/scattered%20erasure%20by%20key.xlsx.practice non-unique 5.png,window=_blank]
+
+|
+h|by key, duplicate elements 
+h|by key, duplicate elements, +
+max load factor 5
+
+|===
+
+==== Successful lookup
+
+[caption=]
+[cols="3*^.^a", frame=all, grid=all]
+|===
+
+|image::benchmarks-set/vs/scattered%20successful%20looukp.xlsx.practice.png[width=250,window=_blank,link=../diagrams/benchmarks-set/vs/scattered%20successful%20looukp.xlsx.practice.png]
+|image::benchmarks-set/vs/scattered%20successful%20looukp.xlsx.practice non-unique.png[width=250,window=_blank,link=../diagrams/benchmarks-set/vs/scattered%20successful%20looukp.xlsx.practice non-unique.png]
+|image::benchmarks-set/vs/scattered%20successful%20looukp.xlsx.practice non-unique 5.png[width=250,window=_blank,link=../diagrams/benchmarks-set/vs/scattered%20successful%20looukp.xlsx.practice non-unique 5.png]
+
+h|non-duplicate elements
+h|duplicate elements
+h|duplicate elements, +
+max load factor 5
+
+|===
+
+==== Unsuccessful lookup
+
+[caption=]
+[cols="3*^.^a", frame=all, grid=all]
+|===
+
+|image::benchmarks-set/vs/scattered%20unsuccessful%20looukp.xlsx.practice.png[width=250,window=_blank,link=../diagrams/benchmarks-set/vs/scattered%20unsuccessful%20looukp.xlsx.practice.png]
+|image::benchmarks-set/vs/scattered%20unsuccessful%20looukp.xlsx.practice non-unique.png[width=250,window=_blank,link=../diagrams/benchmarks-set/vs/scattered%20unsuccessful%20looukp.xlsx.practice non-unique.png]
+|image::benchmarks-set/vs/scattered%20unsuccessful%20looukp.xlsx.practice non-unique 5.png[width=250,window=_blank,link=../diagrams/benchmarks-set/vs/scattered%20unsuccessful%20looukp.xlsx.practice non-unique 5.png]
+
+h|non-duplicate elements
+h|duplicate elements
+h|duplicate elements, +
+max load factor 5
+
+|===
+
+== boost::unordered_(flat|node)_map
+
+All benchmarks were created using:
+
+* `https://abseil.io/docs/cpp/guides/container[absl::flat_hash_map^]<uint64_t, uint64_t>`
+* `boost::unordered_map<uint64_t, uint64_t>`
+* `boost::unordered_flat_map<uint64_t, uint64_t>`
+* `boost::unordered_node_map<uint64_t, uint64_t>`
+
+The source code can be https://github.com/boostorg/boost_unordered_benchmarks/tree/boost_unordered_flat_map[found here^].
+
+The insertion benchmarks insert `n` random values, where `n` is between 10,000 and 10 million.
+
+The erasure benchmarks erase traverse the `n` elements and erase those with odd key (50% on average).
+
+The successful lookup benchmarks are done by looking up all `n` values, in their original insertion order.
+
+The unsuccessful lookup benchmarks use `n` randomly generated integers but using a different seed value.
+
+
+=== GCC 12, x64
+
+
+[caption=]
+[cols="4*^.^a", frame=all, grid=all]
+|===
+
+|image::benchmarks-flat_map/gcc-x64/Running%20insertion.xlsx.plot.png[width=250,window=_blank,link=../diagrams/benchmarks-flat_map/gcc-x64/Running%20insertion.xlsx.plot.png]
+|image::benchmarks-flat_map/gcc-x64/Running%20erasure.xlsx.plot.png[width=250,window=_blank,link=../diagrams/benchmarks-flat_map/gcc-x64/Running%20erasure.xlsx.plot.png]
+|image::benchmarks-flat_map/gcc-x64/Scattered%20successful%20looukp.xlsx.plot.png[width=250,window=_blank,link=../diagrams/benchmarks-flat_map/gcc-x64/Scattered%20successful%20looukp.xlsx.plot.png]
+|image::benchmarks-flat_map/gcc-x64/Scattered%20unsuccessful%20looukp.xlsx.plot.png[width=250,window=_blank,link=../diagrams/benchmarks-flat_map/gcc-x64/Scattered%20unsuccessful%20looukp.xlsx.plot.png]
+
+h|running insertion
+h|running erasure
+h|successful lookup
+h|unsuccessful lookup
+
+|===
+
+=== Clang 15, x64
+
+
+[caption=]
+[cols="4*^.^a", frame=all, grid=all]
+|===
+
+|image::benchmarks-flat_map/clang-x64/Running%20insertion.xlsx.plot.png[width=250,window=_blank,link=../diagrams/benchmarks-flat_map/clang-x64/Running%20insertion.xlsx.plot.png]
+|image::benchmarks-flat_map/clang-x64/Running%20erasure.xlsx.plot.png[width=250,window=_blank,link=../diagrams/benchmarks-flat_map/clang-x64/Running%20erasure.xlsx.plot.png]
+|image::benchmarks-flat_map/clang-x64/Scattered%20successful%20looukp.xlsx.plot.png[width=250,window=_blank,link=../diagrams/benchmarks-flat_map/clang-x64/Scattered%20successful%20looukp.xlsx.plot.png]
+|image::benchmarks-flat_map/clang-x64/Scattered%20unsuccessful%20looukp.xlsx.plot.png[width=250,window=_blank,link=../diagrams/benchmarks-flat_map/clang-x64/Scattered%20unsuccessful%20looukp.xlsx.plot.png]
+
+h|running insertion
+h|running erasure
+h|successful lookup
+h|unsuccessful lookup
+
+|===
+
+=== Visual Studio 2022, x64
+
+
+[caption=]
+[cols="4*^.^a", frame=all, grid=all]
+|===
+
+|image::benchmarks-flat_map/vs-x64/Running%20insertion.xlsx.plot.png[width=250,window=_blank,link=../diagrams/benchmarks-flat_map/vs-x64/Running%20insertion.xlsx.plot.png]
+|image::benchmarks-flat_map/vs-x64/Running%20erasure.xlsx.plot.png[width=250,window=_blank,link=../diagrams/benchmarks-flat_map/vs-x64/Running%20erasure.xlsx.plot.png]
+|image::benchmarks-flat_map/vs-x64/Scattered%20successful%20looukp.xlsx.plot.png[width=250,window=_blank,link=../diagrams/benchmarks-flat_map/vs-x64/Scattered%20successful%20looukp.xlsx.plot.png]
+|image::benchmarks-flat_map/vs-x64/Scattered%20unsuccessful%20looukp.xlsx.plot.png[width=250,window=_blank,link=../diagrams/benchmarks-flat_map/vs-x64/Scattered%20unsuccessful%20looukp.xlsx.plot.png]
+
+h|running insertion
+h|running erasure
+h|successful lookup
+h|unsuccessful lookup
+
+|===
+
+=== Clang 12, ARM64
+
+
+[caption=]
+[cols="4*^.^a", frame=all, grid=all]
+|===
+
+|image::benchmarks-flat_map/clang-arm64/Running%20insertion.xlsx.plot.png[width=250,window=_blank,link=../diagrams/benchmarks-flat_map/clang-arm64/Running%20insertion.xlsx.plot.png]
+|image::benchmarks-flat_map/clang-arm64/Running%20erasure.xlsx.plot.png[width=250,window=_blank,link=../diagrams/benchmarks-flat_map/clang-arm64/Running%20erasure.xlsx.plot.png]
+|image::benchmarks-flat_map/clang-arm64/Scattered%20successful%20looukp.xlsx.plot.png[width=250,window=_blank,link=../diagrams/benchmarks-flat_map/clang-arm64/Scattered%20successful%20looukp.xlsx.plot.png]
+|image::benchmarks-flat_map/clang-arm64/Scattered%20unsuccessful%20looukp.xlsx.plot.png[width=250,window=_blank,link=../diagrams/benchmarks-flat_map/clang-arm64/Scattered%20unsuccessful%20looukp.xlsx.plot.png]
+
+h|running insertion
+h|running erasure
+h|successful lookup
+h|unsuccessful lookup
+
+|===
+
+=== GCC 12, x86
+
+
+[caption=]
+[cols="4*^.^a", frame=all, grid=all]
+|===
+
+|image::benchmarks-flat_map/gcc-x86/Running%20insertion.xlsx.plot.png[width=250,window=_blank,link=../diagrams/benchmarks-flat_map/gcc-x86/Running%20insertion.xlsx.plot.png]
+|image::benchmarks-flat_map/gcc-x86/Running%20erasure.xlsx.plot.png[width=250,window=_blank,link=../diagrams/benchmarks-flat_map/gcc-x86/Running%20erasure.xlsx.plot.png]
+|image::benchmarks-flat_map/gcc-x86/Scattered%20successful%20looukp.xlsx.plot.png[width=250,window=_blank,link=../diagrams/benchmarks-flat_map/gcc-x86/Scattered%20successful%20looukp.xlsx.plot.png]
+|image::benchmarks-flat_map/gcc-x86/Scattered%20unsuccessful%20looukp.xlsx.plot.png[width=250,window=_blank,link=../diagrams/benchmarks-flat_map/gcc-x86/Scattered%20unsuccessful%20looukp.xlsx.plot.png]
+
+h|running insertion
+h|running erasure
+h|successful lookup
+h|unsuccessful lookup
+
+|===
+
+=== Clang 15, x86
+
+
+[caption=]
+[cols="4*^.^a", frame=all, grid=all]
+|===
+
+|image::benchmarks-flat_map/clang-x86/Running%20insertion.xlsx.plot.png[width=250,window=_blank,link=../diagrams/benchmarks-flat_map/clang-x86/Running%20insertion.xlsx.plot.png]
+|image::benchmarks-flat_map/clang-x86/Running%20erasure.xlsx.plot.png[width=250,window=_blank,link=../diagrams/benchmarks-flat_map/clang-x86/Running%20erasure.xlsx.plot.png]
+|image::benchmarks-flat_map/clang-x86/Scattered%20successful%20looukp.xlsx.plot.png[width=250,window=_blank,link=../diagrams/benchmarks-flat_map/clang-x86/Scattered%20successful%20looukp.xlsx.plot.png]
+|image::benchmarks-flat_map/clang-x86/Scattered%20unsuccessful%20looukp.xlsx.plot.png[width=250,window=_blank,link=../diagrams/benchmarks-flat_map/clang-x86/Scattered%20unsuccessful%20looukp.xlsx.plot.png]
+
+h|running insertion
+h|running erasure
+h|successful lookup
+h|unsuccessful lookup
+
+|===
+
+=== Visual Studio 2022, x86
+
+
+[caption=]
+[cols="4*^.^a", frame=all, grid=all]
+|===
+
+|image::benchmarks-flat_map/vs-x86/Running%20insertion.xlsx.plot.png[width=250,window=_blank,link=../diagrams/benchmarks-flat_map/vs-x86/Running%20insertion.xlsx.plot.png]
+|image::benchmarks-flat_map/vs-x86/Running%20erasure.xlsx.plot.png[width=250,window=_blank,link=../diagrams/benchmarks-flat_map/vs-x86/Running%20erasure.xlsx.plot.png]
+|image::benchmarks-flat_map/vs-x86/Scattered%20successful%20looukp.xlsx.plot.png[width=250,window=_blank,link=../diagrams/benchmarks-flat_map/vs-x86/Scattered%20successful%20looukp.xlsx.plot.png]
+|image::benchmarks-flat_map/vs-x86/Scattered%20unsuccessful%20looukp.xlsx.plot.png[width=250,window=_blank,link=../diagrams/benchmarks-flat_map/vs-x86/Scattered%20unsuccessful%20looukp.xlsx.plot.png]
+
+h|running insertion
+h|running erasure
+h|successful lookup
+h|unsuccessful lookup
+
+|===
+
+== boost::concurrent_(flat|node)_map
+
+All benchmarks were created using:
+
+* `https://spec.oneapi.io/versions/latest/elements/oneTBB/source/containers/concurrent_hash_map_cls.html[oneapi::tbb::concurrent_hash_map^]<int, int>`
+* `https://github.com/greg7mdp/gtl/blob/main/docs/phmap.md[gtl::parallel_flat_hash_map^]<int, int>` with 64 submaps
+* `boost::concurrent_flat_map<int, int>`
+* `boost::concurrent_node_map<int, int>`
+
+The source code can be https://github.com/boostorg/boost_unordered_benchmarks/tree/boost_concurrent_flat_map[found here^].
+
+The benchmarks exercise a number of threads _T_ (between 1 and 16) concurrently performing operations
+randomly chosen among **update**, **successful lookup** and **unsuccessful lookup**. The keys used in the
+operations follow a https://en.wikipedia.org/wiki/Zipf%27s_law#Formal_definition[Zipf distribution^]
+with different _skew_ parameters: the higher the skew, the more concentrated are the keys in the lower values
+of the covered range.
+
+`boost::concurrent_flat_map` and `boost::concurrent_node_map` are exercised using both regular and xref:#concurrent_bulk_visitation[bulk visitation]:
+in the latter case, lookup keys are buffered in a local array and then processed at
+once each time the buffer reaches xref:#concurrent_flat_map_constants[`bulk_visit_size`].
+
+=== GCC 12, x64
+
+
+[caption=]
+[cols="3*^.^a", frame=all, grid=all]
+|===
+
+|image::benchmarks-concurrent_map/gcc-x64/Parallel%20workload.xlsx.500k%2C%200.01.png[width=250,window=_blank,link=../diagrams/benchmarks-concurrent_map/gcc-x64/Parallel%20workload.xlsx.500k%2C%200.01.png]
+|image::benchmarks-concurrent_map/gcc-x64/Parallel%20workload.xlsx.500k%2C%200.5.png[width=250,window=_blank,link=../diagrams/benchmarks-concurrent_map/gcc-x64/Parallel%20workload.xlsx.500k%2C%200.5.png]
+|image::benchmarks-concurrent_map/gcc-x64/Parallel%20workload.xlsx.500k%2C%200.99.png[width=250,window=_blank,link=../diagrams/benchmarks-concurrent_map/gcc-x64/Parallel%20workload.xlsx.500k%2C%200.99.png]
+
+h|500k updates, 4.5M lookups +
+skew=0.01
+h|500k updates, 4.5M lookups +
+skew=0.5
+h|500k updates, 4.5M lookups +
+skew=0.99
+|===
+
+[caption=]
+[cols="3*^.^a", frame=all, grid=all]
+|===
+
+|image::benchmarks-concurrent_map/gcc-x64/Parallel%20workload.xlsx.5M%2C%200.01.png[width=250,window=_blank,link=../diagrams/benchmarks-concurrent_map/gcc-x64/Parallel%20workload.xlsx.5M%2C%200.01.png]
+|image::benchmarks-concurrent_map/gcc-x64/Parallel%20workload.xlsx.5M%2C%200.5.png[width=250,window=_blank,link=../diagrams/benchmarks-concurrent_map/gcc-x64/Parallel%20workload.xlsx.5M%2C%200.5.png]
+|image::benchmarks-concurrent_map/gcc-x64/Parallel%20workload.xlsx.5M%2C%200.99.png[width=250,window=_blank,link=../diagrams/benchmarks-concurrent_map/gcc-x64/Parallel%20workload.xlsx.5M%2C%200.99.png]
+
+h|5M updates, 45M lookups +
+skew=0.01
+h|5M updates, 45M lookups +
+skew=0.5
+h|5M updates, 45M lookups +
+skew=0.99
+|===
+
+=== Clang 15, x64
+
+
+[caption=]
+[cols="3*^.^a", frame=all, grid=all]
+|===
+
+|image::benchmarks-concurrent_map/clang-x64/Parallel%20workload.xlsx.500k%2C%200.01.png[width=250,window=_blank,link=../diagrams/benchmarks-concurrent_map/clang-x64/Parallel%20workload.xlsx.500k%2C%200.01.png]
+|image::benchmarks-concurrent_map/clang-x64/Parallel%20workload.xlsx.500k%2C%200.5.png[width=250,window=_blank,link=../diagrams/benchmarks-concurrent_map/clang-x64/Parallel%20workload.xlsx.500k%2C%200.5.png]
+|image::benchmarks-concurrent_map/clang-x64/Parallel%20workload.xlsx.500k%2C%200.99.png[width=250,window=_blank,link=../diagrams/benchmarks-concurrent_map/clang-x64/Parallel%20workload.xlsx.500k%2C%200.99.png]
+
+h|500k updates, 4.5M lookups +
+skew=0.01
+h|500k updates, 4.5M lookups +
+skew=0.5
+h|500k updates, 4.5M lookups +
+skew=0.99
+|===
+
+[caption=]
+[cols="3*^.^a", frame=all, grid=all]
+|===
+
+|image::benchmarks-concurrent_map/clang-x64/Parallel%20workload.xlsx.5M%2C%200.01.png[width=250,window=_blank,link=../diagrams/benchmarks-concurrent_map/clang-x64/Parallel%20workload.xlsx.5M%2C%200.01.png]
+|image::benchmarks-concurrent_map/clang-x64/Parallel%20workload.xlsx.5M%2C%200.5.png[width=250,window=_blank,link=../diagrams/benchmarks-concurrent_map/clang-x64/Parallel%20workload.xlsx.5M%2C%200.5.png]
+|image::benchmarks-concurrent_map/clang-x64/Parallel%20workload.xlsx.5M%2C%200.99.png[width=250,window=_blank,link=../diagrams/benchmarks-concurrent_map/clang-x64/Parallel%20workload.xlsx.5M%2C%200.99.png]
+
+h|5M updates, 45M lookups +
+skew=0.01
+h|5M updates, 45M lookups +
+skew=0.5
+h|5M updates, 45M lookups +
+skew=0.99
+|===
+
+=== Visual Studio 2022, x64
+
+
+[caption=]
+[cols="3*^.^a", frame=all, grid=all]
+|===
+
+|image::benchmarks-concurrent_map/vs-x64/Parallel%20workload.xlsx.500k%2C%200.01.png[width=250,window=_blank,link=../diagrams/benchmarks-concurrent_map/vs-x64/Parallel%20workload.xlsx.500k%2C%200.01.png]
+|image::benchmarks-concurrent_map/vs-x64/Parallel%20workload.xlsx.500k%2C%200.5.png[width=250,window=_blank,link=../diagrams/benchmarks-concurrent_map/vs-x64/Parallel%20workload.xlsx.500k%2C%200.5.png]
+|image::benchmarks-concurrent_map/vs-x64/Parallel%20workload.xlsx.500k%2C%200.99.png[width=250,window=_blank,link=../diagrams/benchmarks-concurrent_map/vs-x64/Parallel%20workload.xlsx.500k%2C%200.99.png]
+
+h|500k updates, 4.5M lookups +
+skew=0.01
+h|500k updates, 4.5M lookups +
+skew=0.5
+h|500k updates, 4.5M lookups +
+skew=0.99
+|===
+
+[caption=]
+[cols="3*^.^a", frame=all, grid=all]
+|===
+
+|image::benchmarks-concurrent_map/vs-x64/Parallel%20workload.xlsx.5M%2C%200.01.png[width=250,window=_blank,link=../diagrams/benchmarks-concurrent_map/vs-x64/Parallel%20workload.xlsx.5M%2C%200.01.png]
+|image::benchmarks-concurrent_map/vs-x64/Parallel%20workload.xlsx.5M%2C%200.5.png[width=250,window=_blank,link=../diagrams/benchmarks-concurrent_map/vs-x64/Parallel%20workload.xlsx.5M%2C%200.5.png]
+|image::benchmarks-concurrent_map/vs-x64/Parallel%20workload.xlsx.5M%2C%200.99.png[width=250,window=_blank,link=../diagrams/benchmarks-concurrent_map/vs-x64/Parallel%20workload.xlsx.5M%2C%200.99.png]
+
+h|5M updates, 45M lookups +
+skew=0.01
+h|5M updates, 45M lookups +
+skew=0.5
+h|5M updates, 45M lookups +
+skew=0.99
+|===
+
+=== Clang 12, ARM64
+
+
+[caption=]
+[cols="3*^.^a", frame=all, grid=all]
+|===
+
+|image::benchmarks-concurrent_map/clang-arm64/Parallel%20workload.xlsx.500k%2C%200.01.png[width=250,window=_blank,link=../diagrams/benchmarks-concurrent_map/clang-arm64/Parallel%20workload.xlsx.500k%2C%200.01.png]
+|image::benchmarks-concurrent_map/clang-arm64/Parallel%20workload.xlsx.500k%2C%200.5.png[width=250,window=_blank,link=../diagrams/benchmarks-concurrent_map/clang-arm64/Parallel%20workload.xlsx.500k%2C%200.5.png]
+|image::benchmarks-concurrent_map/clang-arm64/Parallel%20workload.xlsx.500k%2C%200.99.png[width=250,window=_blank,link=../diagrams/benchmarks-concurrent_map/clang-arm64/Parallel%20workload.xlsx.500k%2C%200.99.png]
+
+h|500k updates, 4.5M lookups +
+skew=0.01
+h|500k updates, 4.5M lookups +
+skew=0.5
+h|500k updates, 4.5M lookups +
+skew=0.99
+|===
+
+[caption=]
+[cols="3*^.^a", frame=all, grid=all]
+|===
+
+|image::benchmarks-concurrent_map/clang-arm64/Parallel%20workload.xlsx.5M%2C%200.01.png[width=250,window=_blank,link=../diagrams/benchmarks-concurrent_map/clang-arm64/Parallel%20workload.xlsx.5M%2C%200.01.png]
+|image::benchmarks-concurrent_map/clang-arm64/Parallel%20workload.xlsx.5M%2C%200.5.png[width=250,window=_blank,link=../diagrams/benchmarks-concurrent_map/clang-arm64/Parallel%20workload.xlsx.5M%2C%200.5.png]
+|image::benchmarks-concurrent_map/clang-arm64/Parallel%20workload.xlsx.5M%2C%200.99.png[width=250,window=_blank,link=../diagrams/benchmarks-concurrent_map/clang-arm64/Parallel%20workload.xlsx.5M%2C%200.99.png]
+
+h|5M updates, 45M lookups +
+skew=0.01
+h|5M updates, 45M lookups +
+skew=0.5
+h|5M updates, 45M lookups +
+skew=0.99
+|===
+
+=== GCC 12, x86
+
+
+[caption=]
+[cols="3*^.^a", frame=all, grid=all]
+|===
+
+|image::benchmarks-concurrent_map/gcc-x86/Parallel%20workload.xlsx.500k%2C%200.01.png[width=250,window=_blank,link=../diagrams/benchmarks-concurrent_map/gcc-x86/Parallel%20workload.xlsx.500k%2C%200.01.png]
+|image::benchmarks-concurrent_map/gcc-x86/Parallel%20workload.xlsx.500k%2C%200.5.png[width=250,window=_blank,link=../diagrams/benchmarks-concurrent_map/gcc-x86/Parallel%20workload.xlsx.500k%2C%200.5.png]
+|image::benchmarks-concurrent_map/gcc-x86/Parallel%20workload.xlsx.500k%2C%200.99.png[width=250,window=_blank,link=../diagrams/benchmarks-concurrent_map/gcc-x86/Parallel%20workload.xlsx.500k%2C%200.99.png]
+
+h|500k updates, 4.5M lookups +
+skew=0.01
+h|500k updates, 4.5M lookups +
+skew=0.5
+h|500k updates, 4.5M lookups +
+skew=0.99
+|===
+
+[caption=]
+[cols="3*^.^a", frame=all, grid=all]
+|===
+
+|image::benchmarks-concurrent_map/gcc-x86/Parallel%20workload.xlsx.5M%2C%200.01.png[width=250,window=_blank,link=../diagrams/benchmarks-concurrent_map/gcc-x86/Parallel%20workload.xlsx.5M%2C%200.01.png]
+|image::benchmarks-concurrent_map/gcc-x86/Parallel%20workload.xlsx.5M%2C%200.5.png[width=250,window=_blank,link=../diagrams/benchmarks-concurrent_map/gcc-x86/Parallel%20workload.xlsx.5M%2C%200.5.png]
+|image::benchmarks-concurrent_map/gcc-x86/Parallel%20workload.xlsx.5M%2C%200.99.png[width=250,window=_blank,link=../diagrams/benchmarks-concurrent_map/gcc-x86/Parallel%20workload.xlsx.5M%2C%200.99.png]
+
+h|5M updates, 45M lookups +
+skew=0.01
+h|5M updates, 45M lookups +
+skew=0.5
+h|5M updates, 45M lookups +
+skew=0.99
+|===
+
+=== Clang 15, x86
+
+
+[caption=]
+[cols="3*^.^a", frame=all, grid=all]
+|===
+
+|image::benchmarks-concurrent_map/clang-x86/Parallel%20workload.xlsx.500k%2C%200.01.png[width=250,window=_blank,link=../diagrams/benchmarks-concurrent_map/clang-x86/Parallel%20workload.xlsx.500k%2C%200.01.png]
+|image::benchmarks-concurrent_map/clang-x86/Parallel%20workload.xlsx.500k%2C%200.5.png[width=250,window=_blank,link=../diagrams/benchmarks-concurrent_map/clang-x86/Parallel%20workload.xlsx.500k%2C%200.5.png]
+|image::benchmarks-concurrent_map/clang-x86/Parallel%20workload.xlsx.500k%2C%200.99.png[width=250,window=_blank,link=../diagrams/benchmarks-concurrent_map/clang-x86/Parallel%20workload.xlsx.500k%2C%200.99.png]
+
+h|500k updates, 4.5M lookups +
+skew=0.01
+h|500k updates, 4.5M lookups +
+skew=0.5
+h|500k updates, 4.5M lookups +
+skew=0.99
+|===
+
+[caption=]
+[cols="3*^.^a", frame=all, grid=all]
+|===
+
+|image::benchmarks-concurrent_map/clang-x86/Parallel%20workload.xlsx.5M%2C%200.01.png[width=250,window=_blank,link=../diagrams/benchmarks-concurrent_map/clang-x86/Parallel%20workload.xlsx.5M%2C%200.01.png]
+|image::benchmarks-concurrent_map/clang-x86/Parallel%20workload.xlsx.5M%2C%200.5.png[width=250,window=_blank,link=../diagrams/benchmarks-concurrent_map/clang-x86/Parallel%20workload.xlsx.5M%2C%200.5.png]
+|image::benchmarks-concurrent_map/clang-x86/Parallel%20workload.xlsx.5M%2C%200.99.png[width=250,window=_blank,link=../diagrams/benchmarks-concurrent_map/clang-x86/Parallel%20workload.xlsx.5M%2C%200.99.png]
+
+h|5M updates, 45M lookups +
+skew=0.01
+h|5M updates, 45M lookups +
+skew=0.5
+h|5M updates, 45M lookups +
+skew=0.99
+|===
+
+=== Visual Studio 2022, x86
+
+
+[caption=]
+[cols="3*^.^a", frame=all, grid=all]
+|===
+
+|image::benchmarks-concurrent_map/vs-x86/Parallel%20workload.xlsx.500k%2C%200.01.png[width=250,window=_blank,link=../diagrams/benchmarks-concurrent_map/vs-x86/Parallel%20workload.xlsx.500k%2C%200.01.png]
+|image::benchmarks-concurrent_map/vs-x86/Parallel%20workload.xlsx.500k%2C%200.5.png[width=250,window=_blank,link=../diagrams/benchmarks-concurrent_map/vs-x86/Parallel%20workload.xlsx.500k%2C%200.5.png]
+|image::benchmarks-concurrent_map/vs-x86/Parallel%20workload.xlsx.500k%2C%200.99.png[width=250,window=_blank,link=../diagrams/benchmarks-concurrent_map/vs-x86/Parallel%20workload.xlsx.500k%2C%200.99.png]
+
+h|500k updates, 4.5M lookups +
+skew=0.01
+h|500k updates, 4.5M lookups +
+skew=0.5
+h|500k updates, 4.5M lookups +
+skew=0.99
+|===
+
+[caption=]
+[cols="3*^.^a", frame=all, grid=all]
+|===
+
+|image::benchmarks-concurrent_map/vs-x86/Parallel%20workload.xlsx.5M%2C%200.01.png[width=250,window=_blank,link=../diagrams/benchmarks-concurrent_map/vs-x86/Parallel%20workload.xlsx.5M%2C%200.01.png]
+|image::benchmarks-concurrent_map/vs-x86/Parallel%20workload.xlsx.5M%2C%200.5.png[width=250,window=_blank,link=../diagrams/benchmarks-concurrent_map/vs-x86/Parallel%20workload.xlsx.5M%2C%200.5.png]
+|image::benchmarks-concurrent_map/vs-x86/Parallel%20workload.xlsx.5M%2C%200.99.png[width=250,window=_blank,link=../diagrams/benchmarks-concurrent_map/vs-x86/Parallel%20workload.xlsx.5M%2C%200.99.png]
+
+h|5M updates, 45M lookups +
+skew=0.01
+h|5M updates, 45M lookups +
+skew=0.5
+h|5M updates, 45M lookups +
+skew=0.99
+|===

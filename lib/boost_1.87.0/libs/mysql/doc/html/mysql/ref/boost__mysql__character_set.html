@@ -1,0 +1,114 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>character_set</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../../pt01.html" title="Part Two: Reference. ">
+<link rel="prev" href="boost__mysql__buffer_params/default_initial_read_size.html" title="buffer_params::default_initial_read_size">
+<link rel="next" href="boost__mysql__character_set/name.html" title="character_set::name">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="boost__mysql__buffer_params/default_initial_read_size.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../pt01.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="boost__mysql__character_set/name.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="mysql.ref.boost__mysql__character_set"></a><a class="link" href="boost__mysql__character_set.html" title="character_set">character_set</a>
+</h4></div></div></div>
+<p>
+        Represents a MySQL character set.
+      </p>
+<h5>
+<a name="mysql.ref.boost__mysql__character_set.h0"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__character_set.synopsis"></a></span><a class="link" href="boost__mysql__character_set.html#mysql.ref.boost__mysql__character_set.synopsis">Synopsis</a>
+      </h5>
+<p>
+        Defined in header <code class="literal">&lt;<a href="https://github.com/boostorg/mysql/blob/master/include/boost/mysql/character_set.hpp" target="_top">boost/mysql/character_set.hpp</a>&gt;</code>
+      </p>
+<pre class="programlisting"><span class="keyword">struct</span> <span class="identifier">character_set</span><span class="special">;</span>
+</pre>
+<h5>
+<a name="mysql.ref.boost__mysql__character_set.h1"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__character_set.data_members"></a></span><a class="link" href="boost__mysql__character_set.html#mysql.ref.boost__mysql__character_set.data_members">Data
+        Members</a>
+      </h5>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Name
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__character_set/name.html" title="character_set::name">name</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  The character set name, as a NULL-terminated string.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__character_set/next_char.html" title="character_set::next_char">next_char</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Obtains the size of the first character of a string.
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+<h5>
+<a name="mysql.ref.boost__mysql__character_set.h2"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__character_set.description"></a></span><a class="link" href="boost__mysql__character_set.html#mysql.ref.boost__mysql__character_set.description">Description</a>
+      </h5>
+<p>
+        By default, you should always use <a class="link" href="boost__mysql__utf8mb4_charset.html" title="utf8mb4_charset"><code class="computeroutput"><span class="identifier">utf8mb4_charset</span></code></a>, unless there is
+        a strong reason not to. This struct allows you to extend this library with
+        character sets that are not supported out of the box.
+      </p>
+<p>
+        Convenience header <code class="literal">&lt;<a href="https://github.com/boostorg/mysql/blob/master/include/boost/mysql.hpp" target="_top">boost/mysql.hpp</a>&gt;</code>
+      </p>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="boost__mysql__buffer_params/default_initial_read_size.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../pt01.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="boost__mysql__character_set/name.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

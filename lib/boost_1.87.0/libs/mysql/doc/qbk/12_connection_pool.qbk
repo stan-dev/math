@@ -1,0 +1,254 @@
+[/
+    Copyright (c) 2019-2024 Ruben Perez Hidalgo (rubenperez038 at gmail dot com)
+   
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+]
+
+[section:connection_pool Connection pools]
+[nochunk]
+
+Connection pooling is a technique where several long-lived connections
+are re-used for independent logical operations. When compared to
+establishing individual connections, it has the following benefits:
+
+* It provides better performance. Please consult [link mysql.connection_pool.benchmarks our benchmarks]
+  for more info.
+* It simplifies connection management. The connection pool will establish sessions,
+  perform retries and apply timeouts out of the box.
+
+This is how you can create a pool of connections:
+
+[connection_pool_create]
+
+[reflink connection_pool] is an I/O object that manages connections.
+It can be constructed from an executor or execution context (like all I/O objects)
+and a [reflink pool_params] object.
+
+[refmem connection_pool async_run] must be called exactly once per pool.
+This function takes care of actually keeping connections healthy.
+
+We're now ready to obtain connections using [refmem connection_pool async_get_connection].
+We will use C++20 coroutines to make async code simpler:
+
+[connection_pool_get_connection]
+
+By default, [refmem connection_pool async_run] will run forever. When
+your application exits, you will want to stop it using [refmem connection_pool cancel].
+This is typical in signal handlers, to guarantee a clean shutdown.
+
+Note that pooling works only with [reflink any_connection].
+
+[note
+    `connection_pool` exposes async functions only. This has to do
+    with efficiency and oddities in Boost.Asio executor model.
+    If you need a sync API, please visit [link mysql.connection_pool.sync this section].
+]
+
+
+
+[heading Pool size]
+
+Pools start with a fixed initial size, and will be dynamically resized up
+to an upper limit if required. You can configure these sizes using
+[refmem pool_params initial_size] and [refmem pool_params max_size].
+
+The resizing algorithm works like this:
+
+* When the pool is created, [refmem pool_params initial_size] number of connections are created and
+  connected (by default, `initial_size` is 1).
+* If a connection is requested, but all available connections are in use, a
+  new one is created, until `max_size` is reached. 
+* If a connection is requested, and there are `max_size` connections in use,
+  [refmem connection_pool async_get_connection] waits for a connection to become available.
+* Once created, connections never get deallocated.
+
+By default, [refmem pool_params max_size] is 151, which is
+MySQL's default value for the [mysqllink server-system-variables.html#sysvar_max_connections `max_connections`]
+system variable, controlling the maximum number of concurrent connections allowed by the server.
+
+[note
+    Before increasing [refmem pool_params max_size], make sure to also increase
+    the value of `max_connections` in the server. Otherwise, your connections
+    will be rejected by the connection limit.
+]
+
+This is how you configure pool sizes:
+
+[connection_pool_configure_size]
+
+
+[heading Applying a timeout to async_get_connection]
+
+By default, [refmem connection_pool async_get_connection] waits until a connection is available.
+This means that, if the server is unavailable, `async_get_connection` may wait forever.
+
+For this reason, you may consider setting a timeout to `async_get_connection`.
+You can do this using [asioreflink cancel_after cancel_after], which uses Asio's
+per-operation cancellation mechanism:
+
+[connection_pool_apply_timeout]
+
+You might consider setting the timeout at a higher level, instead. For instance,
+if you're handling an HTTP request, you can use `cancel_after` to set a timeout
+to the entire request. The [link mysql.examples.connection_pool connection pool example]
+takes this approach.
+
+
+[heading Session state]
+
+MySQL connections hold state. You change session state when you prepare statements,
+create temporary tables, start transactions, or set session variables. When using
+pooled connections, session state can be problematic: if not reset properly,
+state from a previous operation may affect subsequent ones.
+
+After you return a connection to the pool, the equivalent of
+[refmem any_connection async_reset_connection] and [refmemunq any_connection async_set_character_set]
+are used to wipe session state before
+the connection can be obtained again. This will deallocate
+prepared statements, rollback uncommitted transactions, clear variables and restore the connection's
+character set to `utf8mb4`.
+In particular, you don't need to call [refmem any_connection async_close_statement]
+to deallocate statements.
+
+Resetting a connection is cheap but entails a cost (a roundtrip to the server).
+If you've used a connection and you know that you didn't mutate session state,
+you can use [refmem pooled_connection return_without_reset] to skip resetting.
+For instance:
+
+[connection_pool_return_without_reset]
+
+Connection reset happens in the background, after the connection has been
+returned, so it does not affect latency. If you're not sure if an operation
+affects state or not, assume it does.
+
+
+[heading Character set]
+
+Pooled connections always use `utf8mb4` as its character set. When connections
+are reset, the equivalent of [refmem any_connection async_set_character_set] is used
+to restore the character set to `utf8mb4` (recall that raw [refmemunq any_connection async_reset_connection]
+will wipe character set data).
+
+Pooled connections always know the character set they're using.
+This means that [refmem any_connection format_opts] and [refmemunq any_connection current_character_set]
+always succeed.
+
+We recommend to always stick to `utf8mb4`. If you really need to use any other character set,
+use [refmemunq any_connection async_set_character_set] on your connection after it's been retrieved
+from the pool.
+
+
+[heading Connection lifecycle]
+
+The behavior already explained can be summarized using a state model like the following:
+
+[$mysql/images/pooled_connection_lifecycle.svg [align center]]
+
+In short:
+
+* When a connection is created, it goes into the `pending_connect` state.
+* Connection establishment is attempted. If it succeeds, the connection becomes `idle`.
+  Otherwise, it stays `pending_connect`, and another attempt will be performed
+  after [refmem pool_params retry_interval] has ellapsed.
+* `idle` connections can be retrieved by [refmem connection_pool async_get_connection],
+  and they become `in_use`.
+* If a connection is returned by [refmem pooled_connection return_without_reset],
+  it becomes `idle` again.
+* If a connection is returned by [reflink pooled_connection]'s destructor, it becomes
+  `pending_reset`.
+* [refmem any_connection async_reset_connection] is applied to `pending_reset` connections.
+  On success, they become `idle` again. Otherwise, they become `pending_connect` and will
+  be reconnected.
+* If a connection stays `idle` for [refmem pool_params ping_interval], it becomes `pending_ping`.
+  At this point, the connection is probed. If it's alive, it will return to being `idle`.
+  Otherwise, it becomes `pending_connect` to be reconnected. Pings can be disabled by
+  setting [refmem pool_params ping_interval] to zero.
+
+
+[heading Thread-safety]
+
+By default, [reflink connection_pool] is [*not thread-safe], but it can
+be easily made thread-safe by setting [refmem pool_params thread_safe]:
+
+[connection_pool_thread_safe]
+
+Thread-safe connection pools create internally a [asioreflink strand strand],
+Asio's method to enable concurrency without explicit locking.
+Enabling thread-safety will ensure that all intermediate handlers run through
+the created strand, avoiding data races at the cost of some performance.
+
+[note
+  Thread-safety only protects the pool. Individual connections are [*not] thread-safe.
+  Assignments aren't thread-safe, either. See [reflink connection_pool] docs for more info.
+]
+
+Thread-safety extends to per-operation cancellation, too.
+Cancelling an operation on a thread-safe pool is safe.
+
+
+[heading Transport types and TLS]
+
+You can use the same set of transports as when working with [reflink any_connection]:
+plaintext TCP, TLS over TCP or UNIX sockets. You can configure them using [refmem pool_params server_address]
+and [refmem pool_params ssl]. By default, TLS over TCP will be used if the server supports it,
+falling back to plaintext TCP if it does not.
+
+You can use [refmem pool_params ssl_ctx] to configure TLS options for
+connections created by the pool. If no context is provided, one will be created for you internally.
+
+
+
+[heading:sync Implementing sync functions]
+
+`connection_pool` is internally implemented in terms of `any_connection` async functions because:
+
+* When managing hundrends of connections, it's much more efficient to use
+  async functions and a limited number of threads, than a thread per connection.
+* Sync functions don't allow setting timeouts.
+
+You can build a sync connection pool on top of `connection_pool` using code like this:
+
+[connection_pool_sync]
+
+
+
+[heading:benchmarks Benchmarks]
+
+A throughput benchmark has been conducted to assess the performance gain provided by
+`connection_pool`. Benchmark code is under `bench/connection_pool.cpp`. The test
+goes as follows:
+
+* The test consists of N = 10000 logically independent sessions. In an application
+  like a webserver, this would map to handling N HTTP requests.
+* Every logical session prepares a `SELECT` statement and executes it.
+  The statement matches a single row by primary key and retrieves a single, short string field
+  (a lightweight query).
+* `num_parallel` = 100 async agents are run in parallel. This means that, at any given
+  point in time, no more than 100 parallel connections to MySQL are made.
+* The test measures the time ellapsed between launching the first async agent
+  and receiving the response for the last query (`ellapsed_time`).
+* The test is repeated 10 times for each different configuration, and results are averaged.
+  This time is used to measure the throughput, in "connections/s" (as given by `N/ellapsed_time`).
+* Connection pool scenarios use `pooled_connection::~pooled_connection`, which causes a connection
+  reset to be issued. Raw connection scenarios use [refmem any_connection async_connect] and
+  [refmem any_connection async_close] for every session. All tests are single-threaded.
+* The server runs MySQL v8.0.33 in a Docker container, in the same machine as the benchmarks.
+* Benchmarks have been compiled using clang-18 using CMake's Release build type and C++20.
+  They've been run in a Ubuntu 22.04 machine with an 8 core i7-10510U and 32GB of RAM.
+
+[$mysql/images/connection_pool_bench.svg]
+
+We can see that pooling significantly increases throughput.
+This is specially true when communication with the server is expensive
+(as is the case when using TLS over TCP). The performance gain is likely
+to increase over high-latency networks, and to decrease for heavyweight queries,
+since the connection establishment has less overall weight.
+
+[tip
+  When using TLS or running small and frequent queries,
+  pooling can help you.
+]
+
+
+[endsect]

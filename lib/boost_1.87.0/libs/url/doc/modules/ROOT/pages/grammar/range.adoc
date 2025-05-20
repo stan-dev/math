@@ -1,0 +1,151 @@
+//
+// Copyright (c) 2023 Alan de Freitas (alandefreitas@gmail.com)
+//
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt)
+//
+// Official repository: https://github.com/boostorg/url
+//
+
+= Ranges
+
+Thus far the rules we have examined have one thing in common; the values they produce are fixed in size and known at compile-time.
+However, grammars can specify the repetition of elements.
+For example consider the following grammar (loosely adapted from
+https://datatracker.ietf.org/doc/html/rfc7230#section-4.1.1[rfc7230,window=blank_]):
+
+[source,cpp]
+----
+chunk-ext      = *( ";" token )
+----
+
+The star operator in BNF notation means a repetition.
+In this case, zero or more of the expression in parenthesis.
+This production can be expressed using the function cpp:range_rule[], which returns a rule allowing for a prescribed number of repetitions of a specified rule.
+The following rule matches the grammar for __chunk-ext__
+defined above:
+
+[source,cpp]
+----
+include::example$unit/doc_grammar.cpp[tag=code_grammar_4_1,indent=0]
+----
+
+This rule produces a cpp:range[], a __ForwardRange__ whose value type is the same as the value type of the rule passed to the function.
+In this case, the type is cpp:string_view[] because the tuple has one unsquelched element, the cpp:token_rule[].
+The range can be iterated to produce results, without allocating memory for each element.
+The following code:
+
+[source,cpp]
+----
+include::example$unit/doc_grammar.cpp[tag=code_grammar_4_2,indent=0]
+----
+
+produces this output:
+
+[source,cpp]
+----
+johndoe
+janedoe
+end
+----
+
+Sometimes a repetition is not so easily expressed using a single rule.
+Take for example the following grammar for a comma delimited list of tokens, which must contain at least one element:
+
+[source,cpp]
+----
+token-list    = token *( "," token )
+----
+
+We can express this using the overload of cpp:range_rule[] which accepts two parameters: the rule to use when performing the first match, and the rule to use for performing every subsequent match.
+Both overloads of the function have additional, optional parameters for specifying the minimum number of repetitions, or both the minimum and maximum number of repetitions.
+Since our list may not be empty, the following rule perfectly captures the __token-list__ grammar:
+
+[source,cpp]
+----
+include::example$unit/doc_grammar.cpp[tag=code_grammar_4_3,indent=0]
+----
+
+The following code:
+
+[source,cpp]
+----
+include::example$unit/doc_grammar.cpp[tag=code_grammar_4_4,indent=0]
+----
+
+produces this output:
+
+[source,cpp]
+----
+johndoe
+janedoe
+end
+----
+
+In the next section we discuss the available rules which are specific to https://tools.ietf.org/html/rfc3986[rfc3986,window=blank_].
+
+== More
+
+These are the rules and compound rules provided by the library.
+For more details please see the corresponding reference sections.
+
+[cols="1,2"]
+|===
+// Headers
+|Name|Description
+
+// Row 1, Column 1
+|cpp:dec_octet_rule[]
+// Row 1, Column 2
+|Match an integer from 0 and 255.
+
+// Row 2, Column 1
+|cpp:delim_rule[]
+// Row 2, Column 2
+|Match a character literal.
+
+// Row 3, Column 1
+|cpp:literal_rule[]
+// Row 3, Column 2
+|Match a character string exactly.
+
+// Row 4, Column 1
+|cpp:not_empty_rule[]
+// Row 4, Column 2
+|Make a matching empty string into an error instead.
+
+// Row 5, Column 1
+|cpp:optional_rule[]
+// Row 5, Column 2
+|Ignore a rule if parsing fails, leaving
+the input pointer unchanged.
+
+// Row 6, Column 1
+|cpp:range_rule[]
+// Row 6, Column 2
+|Match a repeating number of elements.
+
+// Row 7, Column 1
+|cpp:token_rule[]
+// Row 7, Column 2
+|Match a string of characters from a character set.
+
+// Row 8, Column 1
+|cpp:tuple_rule[]
+// Row 8, Column 2
+|Match a sequence of specified rules, in order.
+
+// Row 9, Column 1
+|cpp:unsigned_rule[]
+// Row 9, Column 2
+|Match an unsigned integer in decimal form.
+
+// Row 10, Column 1
+|cpp:variant_rule[]
+// Row 10, Column 2
+|Match one of a set of alternatives specified by rules.
+
+|===
+
+
+

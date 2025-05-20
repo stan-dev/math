@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+        <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>boost::urls::grammar :: Boost Libraries Documentation</title>
+  <link rel="canonical" href="https://antora.cppalliance.org/master/lib/doc/url/reference/boost/urls/grammar.html">
+  <meta name="generator" content="Antora 3.1.9">
+    <link rel="stylesheet" href="../../../../_/css/boostlook.css">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+    <link rel="stylesheet" href="../../../../_/css/vendor/tabs.css">
+    <script>var uiRootPath = '../../../../_'</script>
+  </head>
+  <body class="article toc2 toc-left">
+    <div class="boostlook">
+  <div id="header">
+    <div id="toc" class="nav-container toc2" data-component="url" data-version="">
+  <aside class="nav">
+    <button class="nav-close"></button>
+    <div class="panels">
+      <div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+      <h3 class="title"><a href="../../../index.html">Boost.URL</a></h3>
+      <ul class="nav-list">
+        <ul class="nav-list">
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../../../quicklook.html">Quick Look</a>
+        </li>
+              <li class="" data-depth="1">
+            <a class="nav-link" href="../../../urls/index.html">URLs</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../../../urls/parsing.html">Parsing</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../../../urls/containers.html">Containers</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../../../urls/segments.html">Segments</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../../../urls/params.html">Params</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../../../urls/normalization.html">Normalization</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../../../urls/stringtoken.html">String Token</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../../../urls/percent-encoding.html">Percent Encoding</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../../../urls/formatting.html">Formatting</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../../../grammar/index.html">Customization</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../../../grammar/rules.html">Parse Rules</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../../../grammar/charset.html">Character Sets</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../../../grammar/combinators.html">Compound Rules</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../../../grammar/range.html">Ranges</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../../../grammar/rfc3986.html">RFC 3986</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Examples</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../../../examples/qrcode.html">QR Code</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../../../examples/finicky.html">Finicky</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../../../examples/mailto.html">mailto URLs</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../../../examples/magnet-link.html">Magnet Link</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../../../examples/file-router.html">File Router</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../../../examples/router.html">Router</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../../../examples/sanitize.html">Sanitizing URLs</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../../../reference.html">Reference</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <span class="nav-text">Concepts</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="3">
+            <a class="nav-link" href="../../../concepts/CharSet.html">CharSet</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="../../../concepts/Rule.html">Rule</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="../../../concepts/StringToken.html">StringToken</a>
+        </li>
+        </ul>
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../../../HelpCard.html">Help Card</a>
+        </li>
+        </ul>
+  </ul>
+  </ul>
+  </nav>
+</div>
+    </div>
+  </aside>
+</div>
+</div>
+  <div id="content">
+    <article class="doc max-width-reset">
+  <div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li>
+      <a href="../../../index.html" aria-label="Home: Boost.URL">
+        <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 -960 960 960" fill="#000000" aria-hidden="true"><path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z"/></svg>
+      </a>
+    </li>
+    <li><a href="grammar.html"><a href="../../boost.html">boost</a>::<a href="../../boost/urls.html">urls</a>::grammar</a></li>
+  </ul>
+</nav>
+<div class="spirit-nav">
+</div>
+</div>
+    <h1 class="page"><a href="../../boost.html">boost</a>::<a href="../../boost/urls.html">urls</a>::grammar</h1>
+  <div class="sect1">
+<h2 id="_namespaces"><a class="anchor" href="#_namespaces"></a>Namespaces</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/implementation_defined.html" class="xref page"><code>implementation_defined</code></a></p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/see_below.html" class="xref page"><code>see_below</code></a></p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_types"><a class="anchor" href="#_types"></a>Types</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/aligned_storage.html" class="xref page"><code>aligned_storage</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Provides an aligned storage buffer aligned for T</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/ci_equal.html" class="xref page"><code>ci_equal</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A case-insensitive equals predicate for strings</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/ci_hash.html" class="xref page"><code>ci_hash</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A case-insensitive hash function object for strings</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/ci_less.html" class="xref page"><code>ci_less</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A case-insensitive less predicate for strings</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/is_charset.html" class="xref page"><code>is_charset</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Alias for <code>std::true_type</code> if T satisfies
+<em>CharSet</em>
+.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/is_rule.html" class="xref page"><code>is_rule</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Determine if T meets the requirements of Rule</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/literal_rule.html" class="xref page"><code>literal_rule</code></a></p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/lut_chars.html" class="xref page"><code>lut_chars</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A set of characters</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/range.html" class="xref page"><code>range</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A forward range of parsed elements</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/recycled.html" class="xref page"><code>recycled</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A thread-safe collection of instances of T</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/recycled_ptr.html" class="xref page"><code>recycled_ptr</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A pointer to a shared instance of T</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/string_view_base.html" class="xref page"><code>string_view_base</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Common functionality for string views</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/unsigned_rule.html" class="xref page"><code>unsigned_rule</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Match an unsigned decimal</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_enums"><a class="anchor" href="#_enums"></a>Enums</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/condition.html" class="xref page"><code>condition</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Error conditions for errors received from rules</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/error.html" class="xref page"><code>error</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Error codes returned when using rules</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_functions"><a class="anchor" href="#_functions"></a>Functions</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/ci_compare.html" class="xref page"><code>ci_compare</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return the case-insensitive comparison of s0 and s1</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/ci_digest.html" class="xref page"><code>ci_digest</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return the case-insensitive digest of a string</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/ci_is_equal.html" class="xref page"><code>ci_is_equal</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return true if s0 equals s1 using case-insensitive comparison</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/ci_is_less.html" class="xref page"><code>ci_is_less</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return true if s0 is less than s1 using case-insensitive comparison</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/delim_rule.html" class="xref page"><code>delim_rule</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Match a character literal</p>
+<p class="tableblock">Match a single character from a character set</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/find_if.html" class="xref page"><code>find_if</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Find the first character in the string that is in the set.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/find_if_not.html" class="xref page"><code>find_if_not</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Find the first character in the string that is not in CharSet</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/hexdig_value.html" class="xref page"><code>hexdig_value</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return the decimal value of a hex character</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/not_empty_rule.html" class="xref page"><code>not_empty_rule</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Match another rule, if the result is not empty</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/operator_not_eq.html" class="xref page"><code>operator!=</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Compare two string views for inequality</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/operator_plus.html" class="xref page"><code>operator+</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return the union of two character sets.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/operator_minus.html" class="xref page"><code>operator-</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return a new character set by subtracting</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/operator_lt.html" class="xref page"><code>operator&lt;</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Compare two string views for less than</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/operator_lshift.html" class="xref page"><code>operator&lt;&lt;</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Format a string to an output stream</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/operator_le.html" class="xref page"><code>operator&#8656;</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Compare two string views for less than or equal</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/operator_eq.html" class="xref page"><code>operator==</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Compare two string views for equality</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/operator_gt.html" class="xref page"><code>operator&gt;</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Compare two string views for greater than</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/operator_ge.html" class="xref page"><code>operator&gt;=</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Compare two string views for greater than or equal</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/optional_rule.html" class="xref page"><code>optional_rule</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Match a rule, or the empty string</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/parse.html" class="xref page"><code>parse</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Parse a character buffer using a rule</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/range_rule.html" class="xref page"><code>range_rule</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Match a repeating number of elements</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/ref.html" class="xref page"><code>ref</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return a reference to a character set</p>
+<p class="tableblock">Return a reference to a rule</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/squelch.html" class="xref page"><code>squelch</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Squelch the value of a rule</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/to_lower.html" class="xref page"><code>to_lower</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return c converted to lowercase</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/to_upper.html" class="xref page"><code>to_upper</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return c converted to uppercase</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/token_rule.html" class="xref page"><code>token_rule</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Match a non-empty string of characters from a set</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/tuple_rule.html" class="xref page"><code>tuple_rule</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Match a series of rules in order</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/variant_rule.html" class="xref page"><code>variant_rule</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Match one of a set of rules</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_variables"><a class="anchor" href="#_variables"></a>Variables</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/all_chars.html" class="xref page"><code>all_chars</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The set of all characters</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/alnum_chars.html" class="xref page"><code>alnum_chars</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The set of letters and digits</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/alpha_chars.html" class="xref page"><code>alpha_chars</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The set of all letters</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/dec_octet_rule.html" class="xref page"><code>dec_octet_rule</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Match a decimal octet</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/digit_chars.html" class="xref page"><code>digit_chars</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The set of decimal digits</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/hexdig_chars.html" class="xref page"><code>hexdig_chars</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The set of hexadecimal digits</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="grammar/vchars.html" class="xref page"><code>vchars</code></a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The set of visible characters</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><span class="small">Created with <a href="https://www.mrdocs.com">MrDocs</a></span></p>
+</div>
+</div>
+</div>
+  <div class="edit-this-page">
+  </div>
+  </article>
+</div>
+  <div id="footer">
+  <script id="site-script" src="../../../../_/js/site.js" data-ui-root-path="../../../../_"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+<script async src="../../../../_/js/vendor/tabs.js" data-sync-storage-key="preferred-tab"></script>
+</div>
+</div>
+  </body>
+</html>

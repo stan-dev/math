@@ -1,0 +1,10 @@
+@PACKAGE_INIT@
+
+set(BOOST_URL_STANDALONE @BOOST_URL_STANDALONE@)
+
+if(NOT BOOST_URL_STANDALONE)
+    include(CMakeFindDependencyMacro)
+    find_dependency(Boost REQUIRED COMPONENTS system)
+endif()
+
+include("${CMAKE_CURRENT_LIST_DIR}/boost_url-targets.cmake")

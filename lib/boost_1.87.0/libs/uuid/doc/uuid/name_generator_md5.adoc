@@ -1,0 +1,69 @@
+[#name_generator_md5]
+== <boost/uuid/{zwsp}name_generator_md5.hpp>
+
+:idprefix: name_generator_md5_
+
+=== Synopsis
+
+[source,c++]
+----
+#include <boost/uuid/namespaces.hpp>
+
+namespace boost {
+namespace uuids {
+
+class name_generator_md5
+{
+public:
+
+    using result_type = uuid;
+
+    explicit name_generator_md5( uuid const& namespace_uuid ) noexcept;
+
+    template<class Ch> uuid operator()( Ch const* name ) const noexcept;
+
+    template<class Ch, class Traits, class Alloc>
+      uuid operator()( std::basic_string<Ch, Traits, Alloc> const& name ) const noexcept;
+
+    uuid operator()( void const* buffer, std::size_t byte_count ) const noexcept;
+};
+
+}} // namespace boost::uuids
+----
+
+=== name_generator_md5
+
+The class `name_generator_md5` generates name-based version 3 UUIDs, using MD5 as the hashing algorithm.
+
+Its interface and its operation are the same as those of `name_generator_sha1`, with the only difference being that it uses MD5 instead of SHA1.
+
+There is no reason to use `name_generator_md5` except for compatibility. `name_generator_sha1` should be preferred in almost all cases.
+
+Example: ::
++
+```
+using namespace boost::uuids;
+
+name_generator_md5 gen( ns::dns() );
+
+uuid u1 = gen( "boost.org" );
+
+std::cout << "\"boost.org\" UUID in DNS namespace, MD5 version: " << u1 << std::endl;
+
+// Output:
+//   "boost.org" UUID in DNS namespace, MD5 version: 888eca9c-e655-31a2-a46b-a2a821f6b150
+
+uuid u2 = gen( L"boost.org" );
+
+std::cout << "L\"boost.org\" UUID in DNS namespace, MD5 version: " << u2 << std::endl;
+
+// Output:
+//   L"boost.org" UUID in DNS namespace, MD5 version: 48149232-8cda-361b-b355-0bdb71d2cab3
+
+uuid u3 = gen( u"boost.org" );
+
+std::cout << "u\"boost.org\" UUID in DNS namespace, MD5 version: " << u3 << std::endl;
+
+// Output:
+//   u"boost.org" UUID in DNS namespace, MD5 version: 888eca9c-e655-31a2-a46b-a2a821f6b150
+```

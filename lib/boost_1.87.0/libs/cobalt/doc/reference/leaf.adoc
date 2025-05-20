@@ -1,0 +1,26 @@
+[#leaf]
+== cobalt/leaf.hpp
+
+Async provides integration with boost.leaf.
+It provides functions similar to leaf that take an <<awaitable, awaitables>>
+instead of a function object and return an <<awaitable, awaitable>>.
+
+
+[source,cpp]
+----
+template<awaitable TryAwaitable, typename ... H >
+auto try_catch(TryAwaitable && try_coro, H && ... h );
+
+template<awaitable TryAwaitable, typename ... H >
+auto try_handle_all(TryAwaitable && try_coro, H && ... h );
+
+template<awaitable TryAwaitable, typename ... H >
+auto try_handle_some(TryAwaitable && try_coro, H && ... h );
+----
+
+See the leaf documentation for details.
+
+- https://www.boost.org/doc/libs/master/libs/leaf/doc/html/index.html#try_catch[try_catch]
+- https://www.boost.org/doc/libs/master/libs/leaf/doc/html/index.html#try_handle_all[try_handle_all]
+- https://www.boost.org/doc/libs/master/libs/leaf/doc/html/index.html#try_handle_some[try_handle_some]
+

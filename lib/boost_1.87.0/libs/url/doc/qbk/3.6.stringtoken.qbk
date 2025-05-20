@@ -1,0 +1,57 @@
+[/
+    Copyright (c) 2022 Vinnie Falco (vinnie.falco@gmail.com)
+
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+    Official repository: https://github.com/boostorg/url
+]
+
+[section String Token]
+
+Functions which perform percent-decoding return values using
+__std_string__ when called without special arguments. This is
+the best default for ergonomics, and a good enough default for
+performance considering that many decoded strings fit in
+the small buffer available to most standard implementations.
+
+[snippet_string_token_1]
+
+Some use-cases may desire more control over how these
+algorithms acquire and store data in strings, for example:
+
+* Returning a string using a non-default allocator
+* Reusing the storage of an existing string
+* Appending to existing strings
+
+The library provides a special customization mechanism called
+__StringToken__ to control how algorithms which require an output
+buffer acquire their storage.
+
+The __StringToken__ __assign_to__ can be used to assign
+the decoded value to an existing string:
+
+[snippet_string_token_2]
+
+The __StringToken__ __append_to__ can be used to append
+the decoded value to an existing string:
+
+[snippet_string_token_3]
+
+The __StringToken__ __preserve_size__ can be used to
+return a __string_view__ instead of a __std_string__.
+The underlying storage for the __string_view__ is
+provided to the token.
+
+[snippet_string_token_4]
+
+When no customization is provided, the default behavior
+is to use the default __return_string__ token which
+returns a __std_string__.
+
+The trait __is_token__ can be used to determine if a type
+is a __StringToken__:
+
+[snippet_string_token_5]
+
+[endsect]

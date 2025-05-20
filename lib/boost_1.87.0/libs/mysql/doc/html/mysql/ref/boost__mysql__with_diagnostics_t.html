@@ -1,0 +1,146 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>with_diagnostics_t</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../../pt01.html" title="Part Two: Reference. ">
+<link rel="prev" href="boost__mysql__unix_ssl_connection.html" title="unix_ssl_connection">
+<link rel="next" href="boost__mysql__with_diagnostics_t/with_diagnostics_t.html" title="with_diagnostics_t::with_diagnostics_t">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="boost__mysql__unix_ssl_connection.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../pt01.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="boost__mysql__with_diagnostics_t/with_diagnostics_t.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="mysql.ref.boost__mysql__with_diagnostics_t"></a><a class="link" href="boost__mysql__with_diagnostics_t.html" title="with_diagnostics_t">with_diagnostics_t</a>
+</h4></div></div></div>
+<p>
+        A completion token adapter used to include server diagnostics in exceptions.
+      </p>
+<h5>
+<a name="mysql.ref.boost__mysql__with_diagnostics_t.h0"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__with_diagnostics_t.synopsis"></a></span><a class="link" href="boost__mysql__with_diagnostics_t.html#mysql.ref.boost__mysql__with_diagnostics_t.synopsis">Synopsis</a>
+      </h5>
+<p>
+        Defined in header <code class="literal">&lt;<a href="https://github.com/boostorg/mysql/blob/master/include/boost/mysql/with_diagnostics.hpp" target="_top">boost/mysql/with_diagnostics.hpp</a>&gt;</code>
+      </p>
+<pre class="programlisting"><span class="keyword">template</span><span class="special">&lt;</span>
+    <span class="keyword">class</span> <a href="../../../../../../doc/html/boost_asio/reference/asynchronous_operations.html#boost_asio.reference.asynchronous_operations.completion_tokens_and_handlers" target="_top"><span class="emphasis"><em>CompletionToken</em></span></a><span class="special">&gt;</span>
+<span class="keyword">class</span> <span class="identifier">with_diagnostics_t</span><span class="special">;</span>
+</pre>
+<h5>
+<a name="mysql.ref.boost__mysql__with_diagnostics_t.h1"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__with_diagnostics_t.member_functions"></a></span><a class="link" href="boost__mysql__with_diagnostics_t.html#mysql.ref.boost__mysql__with_diagnostics_t.member_functions">Member
+        Functions</a>
+      </h5>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Name
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody><tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__with_diagnostics_t/with_diagnostics_t.html" title="with_diagnostics_t::with_diagnostics_t">with_diagnostics_t</a> <span class="silver">[constructor]</span></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Default constructor. <br><span class="silver">—</span><br>Constructor.
+                </p>
+              </td>
+</tr></tbody>
+</table></div>
+<h5>
+<a name="mysql.ref.boost__mysql__with_diagnostics_t.h2"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__with_diagnostics_t.description"></a></span><a class="link" href="boost__mysql__with_diagnostics_t.html#mysql.ref.boost__mysql__with_diagnostics_t.description">Description</a>
+      </h5>
+<p>
+        When passed to an async initiating function, transforms its handler signature
+        from <code class="computeroutput"><span class="keyword">void</span><span class="special">(</span><span class="identifier">error_code</span><span class="special">,</span> <span class="identifier">T</span><span class="special">...)</span></code> to
+        <code class="computeroutput"><span class="keyword">void</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">exception_ptr</span><span class="special">,</span> <span class="identifier">T</span><span class="special">...)</span></code>.
+        Uses knowledge of Boost.MySQL internals to grab any <a class="link" href="boost__mysql__diagnostics.html" title="diagnostics"><code class="computeroutput"><span class="identifier">diagnostics</span></code></a> that the operation may
+        produce to create a <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">exception_ptr</span></code> pointing to an <a class="link" href="boost__mysql__error_with_diagnostics.html" title="error_with_diagnostics"><code class="computeroutput"><span class="identifier">error_with_diagnostics</span></code></a> object. On
+        success, the generated <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">exception_ptr</span></code>
+        will be <code class="computeroutput"><span class="keyword">nullptr</span></code>.
+      </p>
+<p>
+        Using <code class="computeroutput"><span class="identifier">with_diagnostics</span></code> to
+        wrap tokens that throw exceptions (like <code class="computeroutput"><span class="identifier">deferred</span></code>
+        + <code class="computeroutput"><span class="identifier">co_await</span></code> or <code class="computeroutput"><span class="identifier">yield_context</span></code>) enhances the thrown exceptions
+        with diagnostics information, matching the ones thrown by sync functions.
+        If you don't use this token, Asio will use <code class="computeroutput"><span class="identifier">system_error</span></code>
+        exceptions, containing less info.
+      </p>
+<p>
+        This token can only be used with operations involving Boost.MySQL, as it
+        relies on its internals.
+      </p>
+<p>
+        Like <code class="computeroutput"><span class="identifier">asio</span><span class="special">::</span><span class="identifier">as_tuple</span></code>, this class wraps another completion
+        token. For instance, <code class="computeroutput"><span class="identifier">with_diagnostics</span><span class="special">(</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">deferred</span><span class="special">)</span></code>
+        will generate a deferred operation with an adapted signature, which will
+        throw <code class="computeroutput"><span class="identifier">error_with_diagnostics</span></code>
+        when <code class="computeroutput"><span class="identifier">co_await</span></code>'ed.
+      </p>
+<p>
+        If this token is applied to a function with a handler signature that does
+        not match <code class="computeroutput"><span class="keyword">void</span><span class="special">(</span><span class="identifier">error_code</span><span class="special">,</span> <span class="identifier">T</span><span class="special">...)</span></code>,
+        the token acts as a pass-through: it does not modify the signature, and calls
+        the underlying token's initiation directly. This has the following implications:
+      </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+            <code class="computeroutput"><span class="identifier">asio</span><span class="special">::</span><span class="identifier">as_tuple</span><span class="special">(</span><span class="identifier">with_diagnostics</span><span class="special">(</span><span class="identifier">X</span><span class="special">))</span></code>
+            is equivalent to <code class="computeroutput"><span class="identifier">asio</span><span class="special">::</span><span class="identifier">as_tuple</span><span class="special">(</span><span class="identifier">X</span><span class="special">)</span></code>.
+          </li>
+<li class="listitem">
+            <code class="computeroutput"><span class="identifier">asio</span><span class="special">::</span><span class="identifier">redirect_error</span><span class="special">(</span><span class="identifier">with_diagnostics</span><span class="special">(</span><span class="identifier">X</span><span class="special">))</span></code>
+            is equivalent to <code class="computeroutput"><span class="identifier">asio</span><span class="special">::</span><span class="identifier">redirect_error</span><span class="special">(</span><span class="identifier">X</span><span class="special">)</span></code>.
+          </li>
+<li class="listitem">
+            Tokens like <code class="computeroutput"><span class="identifier">asio</span><span class="special">::</span><span class="identifier">as_tuple</span></code> and <code class="computeroutput"><span class="identifier">asio</span><span class="special">::</span><span class="identifier">redirect_error</span></code>
+            can be used as partial tokens when <code class="computeroutput"><span class="identifier">with_diagnostics</span></code>
+            is the default completion token, as is the case for <a class="link" href="boost__mysql__any_connection.html" title="any_connection"><code class="computeroutput"><span class="identifier">any_connection</span></code></a>.
+          </li>
+</ul></div>
+<p>
+        Convenience header <code class="literal">&lt;<a href="https://github.com/boostorg/mysql/blob/master/include/boost/mysql.hpp" target="_top">boost/mysql.hpp</a>&gt;</code>
+      </p>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="boost__mysql__unix_ssl_connection.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../pt01.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="boost__mysql__with_diagnostics_t/with_diagnostics_t.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

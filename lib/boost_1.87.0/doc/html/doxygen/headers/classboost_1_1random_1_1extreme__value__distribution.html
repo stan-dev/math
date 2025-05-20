@@ -1,0 +1,192 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template extreme_value_distribution</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../../boost_random/reference.html#doxygen.headers.extreme__value__distribution_8hpp" title="Header &lt;boost/random/extreme_value_distribution.hpp&gt;">
+<link rel="prev" href="classboost_1_1random_1_1exponential__distribution_1_1param__type.html" title="Class param_type">
+<link rel="next" href="classboost_1_1random_1_1extreme__value__distribution_1_1param__type.html" title="Class param_type">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1random_1_1exponential__distribution_1_1param__type.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_random/reference.html#doxygen.headers.extreme__value__distribution_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1random_1_1extreme__value__distribution_1_1param__type.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.headers.classboost_1_1random_1_1extreme__value__distribution"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template extreme_value_distribution</span></h2>
+<p>boost::random::extreme_value_distribution</p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../boost_random/reference.html#doxygen.headers.extreme__value__distribution_8hpp" title="Header &lt;boost/random/extreme_value_distribution.hpp&gt;">boost/random/extreme_value_distribution.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> RealType <span class="special">=</span> <span class="keyword">double</span><span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1random_1_1extreme__value__distribution.html" title="Class template extreme_value_distribution">extreme_value_distribution</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">RealType</span> <a name="doxygen.headers.classboost_1_1random_1_1extreme__value__distribution_1a65d3879925985b9720355ba01c3ad6d5"></a><span class="identifier">result_type</span><span class="special">;</span>
+  <span class="keyword">typedef</span> <span class="identifier">RealType</span> <a name="doxygen.headers.classboost_1_1random_1_1extreme__value__distribution_1a86b1f1a930c4cfc56c410d43c36185ed"></a><span class="identifier">input_type</span><span class="special">;</span> 
+
+  <span class="comment">// member classes/structs/unions</span>
+
+  <span class="keyword">class</span> <a class="link" href="classboost_1_1random_1_1extreme__value__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">{</span>
+  <span class="keyword">public</span><span class="special">:</span>
+    <span class="comment">// types</span>
+    <span class="keyword">typedef</span> <a class="link" href="classboost_1_1random_1_1extreme__value__distribution.html" title="Class template extreme_value_distribution">extreme_value_distribution</a> <a class="link" href="classboost_1_1random_1_1extreme__value__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1extreme__value__distribution_1_1param__type_1ad5ed2a999e13cd244ae1df7d7625c553"><span class="identifier">distribution_type</span></a><span class="special">;</span>
+
+    <span class="comment">// <a class="link" href="classboost_1_1random_1_1extreme__value__distribution_1_1param__type.html#id-1_3_34_5_6_12_1_1_1_3_2-bb">public member functions</a></span>
+    <span class="keyword">explicit</span> <a class="link" href="classboost_1_1random_1_1extreme__value__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1extreme__value__distribution_1_1param__type_1ac73738ec8dcad786c74c070741d5b0fc"><span class="identifier">param_type</span></a><span class="special">(</span><span class="identifier">RealType</span> <span class="special">=</span> <span class="number">1</span><span class="special">.</span><span class="number">0</span><span class="special">,</span> <span class="identifier">RealType</span> <span class="special">=</span> <span class="number">1</span><span class="special">.</span><span class="number">0</span><span class="special">)</span><span class="special">;</span>
+    <span class="identifier">RealType</span> <a class="link" href="classboost_1_1random_1_1extreme__value__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1extreme__value__distribution_1_1param__type_1a0a09b57f62efe949f7dc9c374ffcc6bb"><span class="identifier">a</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+    <span class="identifier">RealType</span> <a class="link" href="classboost_1_1random_1_1extreme__value__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1extreme__value__distribution_1_1param__type_1af1ef0e5d807a5565e94eaf9fc5fc16c1"><span class="identifier">b</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+
+    <span class="comment">// <a class="link" href="classboost_1_1random_1_1extreme__value__distribution_1_1param__type.html#id-1_3_34_5_6_12_1_1_1_3_3-bb">friend functions</a></span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits<span class="special">&gt;</span> 
+      <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+      <a class="link" href="classboost_1_1random_1_1extreme__value__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1extreme__value__distribution_1_1param__type_1a36d2820c7e758fa1a94fdd5d74949e54"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1extreme__value__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits<span class="special">&gt;</span> 
+      <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+      <a class="link" href="classboost_1_1random_1_1extreme__value__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1extreme__value__distribution_1_1param__type_1aa94ff75dd5871ee80a6fc0a095c75bd0"><span class="keyword">operator</span><span class="special">&gt;&gt;</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1extreme__value__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">bool</span> <a class="link" href="classboost_1_1random_1_1extreme__value__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1extreme__value__distribution_1_1param__type_1ae6f3b58e629ce7a54b5e18a4f05dbc5a"><span class="keyword">operator</span><span class="special">==</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1extreme__value__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1extreme__value__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">bool</span> <a class="link" href="classboost_1_1random_1_1extreme__value__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1extreme__value__distribution_1_1param__type_1aa559d0d98e88e84417364a89b83cf5b2"><span class="keyword">operator</span><span class="special">!=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1extreme__value__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1extreme__value__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="special">}</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1random_1_1extreme__value__distribution.html#id-1_3_34_5_6_12_1_1_1_6-bb">public member functions</a></span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1random_1_1extreme__value__distribution.html#doxygen.headers.classboost_1_1random_1_1extreme__value__distribution_1a374b869e7136aa15d0c32b775dc9b1fc"><span class="identifier">extreme_value_distribution</span></a><span class="special">(</span><span class="identifier">RealType</span> <span class="special">=</span> <span class="number">1</span><span class="special">.</span><span class="number">0</span><span class="special">,</span> <span class="identifier">RealType</span> <span class="special">=</span> <span class="number">1</span><span class="special">.</span><span class="number">0</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1random_1_1extreme__value__distribution.html#doxygen.headers.classboost_1_1random_1_1extreme__value__distribution_1a2601188191cae1d0a84d68d57a01b83d"><span class="identifier">extreme_value_distribution</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1extreme__value__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> URNG<span class="special">&gt;</span> <span class="identifier">RealType</span> <a class="link" href="classboost_1_1random_1_1extreme__value__distribution.html#doxygen.headers.classboost_1_1random_1_1extreme__value__distribution_1a86b038156c8d468c1a7273d81e9d4ce7"><span class="keyword">operator</span><span class="special">(</span><span class="special">)</span></a><span class="special">(</span><span class="identifier">URNG</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> URNG<span class="special">&gt;</span> 
+    <span class="identifier">RealType</span> <a class="link" href="classboost_1_1random_1_1extreme__value__distribution.html#doxygen.headers.classboost_1_1random_1_1extreme__value__distribution_1a3ea0bc5065a02abaedceae21c3cdc0d2"><span class="keyword">operator</span><span class="special">(</span><span class="special">)</span></a><span class="special">(</span><span class="identifier">URNG</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1extreme__value__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">RealType</span> <a class="link" href="classboost_1_1random_1_1extreme__value__distribution.html#doxygen.headers.classboost_1_1random_1_1extreme__value__distribution_1a39eebebc556547eb4316902b55094907"><span class="identifier">a</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">RealType</span> <a class="link" href="classboost_1_1random_1_1extreme__value__distribution.html#doxygen.headers.classboost_1_1random_1_1extreme__value__distribution_1a45d059e5f329dd9e9b4d6939660c7ad0"><span class="identifier">b</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">RealType</span> <a class="link" href="classboost_1_1random_1_1extreme__value__distribution.html#doxygen.headers.classboost_1_1random_1_1extreme__value__distribution_1a3c58e60fe84479f0b3983401aa76a643"><span class="identifier">min</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">RealType</span> <a class="link" href="classboost_1_1random_1_1extreme__value__distribution.html#doxygen.headers.classboost_1_1random_1_1extreme__value__distribution_1af7b74c230e6a6d9ff7c946132b354fab"><span class="identifier">max</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1random_1_1extreme__value__distribution_1_1param__type.html" title="Class param_type">param_type</a> <a class="link" href="classboost_1_1random_1_1extreme__value__distribution.html#doxygen.headers.classboost_1_1random_1_1extreme__value__distribution_1a9e367068d9a9d9d25f3fadcf76b05993"><span class="identifier">param</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1random_1_1extreme__value__distribution.html#doxygen.headers.classboost_1_1random_1_1extreme__value__distribution_1a8d56d6479ac0b7a851177e0508671381"><span class="identifier">param</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1extreme__value__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1random_1_1extreme__value__distribution.html#doxygen.headers.classboost_1_1random_1_1extreme__value__distribution_1a143f0a5a7b83e9b8db699ba4e00b1741"><span class="identifier">reset</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1random_1_1extreme__value__distribution.html#id-1_3_34_5_6_12_1_1_1_7-bb">friend functions</a></span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits<span class="special">&gt;</span> 
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+    <a class="link" href="classboost_1_1random_1_1extreme__value__distribution.html#doxygen.headers.classboost_1_1random_1_1extreme__value__distribution_1a096653e4e130582c5477b0e0931058b8"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">,</span> 
+               <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1extreme__value__distribution.html" title="Class template extreme_value_distribution">extreme_value_distribution</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits<span class="special">&gt;</span> 
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+    <a class="link" href="classboost_1_1random_1_1extreme__value__distribution.html#doxygen.headers.classboost_1_1random_1_1extreme__value__distribution_1aa7368efd2f7eca240ec4c1828ab0440f"><span class="keyword">operator</span><span class="special">&gt;&gt;</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">,</span> 
+               <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1extreme__value__distribution.html" title="Class template extreme_value_distribution">extreme_value_distribution</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1random_1_1extreme__value__distribution.html#doxygen.headers.classboost_1_1random_1_1extreme__value__distribution_1acab28ed2aa0277f4c559bfb5c77ccf44"><span class="keyword">operator</span><span class="special">==</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1extreme__value__distribution.html" title="Class template extreme_value_distribution">extreme_value_distribution</a> <span class="special">&amp;</span><span class="special">,</span> 
+                  <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1extreme__value__distribution.html" title="Class template extreme_value_distribution">extreme_value_distribution</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1random_1_1extreme__value__distribution.html#doxygen.headers.classboost_1_1random_1_1extreme__value__distribution_1ad0c6c3411afc68efc7ddd4a79f3cb7ce"><span class="keyword">operator</span><span class="special">!=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1extreme__value__distribution.html" title="Class template extreme_value_distribution">extreme_value_distribution</a> <span class="special">&amp;</span><span class="special">,</span> 
+                  <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1extreme__value__distribution.html" title="Class template extreme_value_distribution">extreme_value_distribution</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.34.5.6.11.3.4"></a><h2>Description</h2>
+<p>The extreme value distribution is a real valued distribution with two parameters a and b.</p>
+<p>It has <span class="inlinemediaobject"><img src="../../images/random//form_11.png"></span>. </p>
+<div class="refsect2">
+<a name="id-1.3.34.5.6.11.3.4.4"></a><h3>
+<a name="id-1_3_34_5_6_12_1_1_1_6-bb"></a><code class="computeroutput">extreme_value_distribution</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.headers.classboost_1_1random_1_1extreme__value__distribution_1a374b869e7136aa15d0c32b775dc9b1fc"></a><span class="identifier">extreme_value_distribution</span><span class="special">(</span><span class="identifier">RealType</span> a <span class="special">=</span> <span class="number">1</span><span class="special">.</span><span class="number">0</span><span class="special">,</span> <span class="identifier">RealType</span> b <span class="special">=</span> <span class="number">1</span><span class="special">.</span><span class="number">0</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Constructs an <code class="computeroutput"><a class="link" href="classboost_1_1random_1_1extreme__value__distribution.html" title="Class template extreme_value_distribution">extreme_value_distribution</a></code> from its "a" and "b" parameters.</p>
+<p>Requires: b &gt; 0 </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.headers.classboost_1_1random_1_1extreme__value__distribution_1a2601188191cae1d0a84d68d57a01b83d"></a><span class="identifier">extreme_value_distribution</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1extreme__value__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span> param<span class="special">)</span><span class="special">;</span></pre>
+<p>Constructs an <code class="computeroutput"><a class="link" href="classboost_1_1random_1_1extreme__value__distribution.html" title="Class template extreme_value_distribution">extreme_value_distribution</a></code> from its parameters. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> URNG<span class="special">&gt;</span> <span class="identifier">RealType</span> <a name="doxygen.headers.classboost_1_1random_1_1extreme__value__distribution_1a86b038156c8d468c1a7273d81e9d4ce7"></a><span class="keyword">operator</span><span class="special">(</span><span class="special">)</span><span class="special">(</span><span class="identifier">URNG</span> <span class="special">&amp;</span> urng<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns a random variate distributed according to the <code class="computeroutput"><a class="link" href="classboost_1_1random_1_1extreme__value__distribution.html" title="Class template extreme_value_distribution">extreme_value_distribution</a></code>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> URNG<span class="special">&gt;</span> 
+  <span class="identifier">RealType</span> <a name="doxygen.headers.classboost_1_1random_1_1extreme__value__distribution_1a3ea0bc5065a02abaedceae21c3cdc0d2"></a><span class="keyword">operator</span><span class="special">(</span><span class="special">)</span><span class="special">(</span><span class="identifier">URNG</span> <span class="special">&amp;</span> urng<span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1extreme__value__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span> param<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns a random variate distributed accordint to the extreme value distribution with parameters specified by <code class="computeroutput">param</code>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">RealType</span> <a name="doxygen.headers.classboost_1_1random_1_1extreme__value__distribution_1a39eebebc556547eb4316902b55094907"></a><span class="identifier">a</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns the "a" parameter of the distribution. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">RealType</span> <a name="doxygen.headers.classboost_1_1random_1_1extreme__value__distribution_1a45d059e5f329dd9e9b4d6939660c7ad0"></a><span class="identifier">b</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns the "b" parameter of the distribution. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">RealType</span> <a name="doxygen.headers.classboost_1_1random_1_1extreme__value__distribution_1a3c58e60fe84479f0b3983401aa76a643"></a><span class="identifier">min</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns the smallest value that the distribution can produce. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">RealType</span> <a name="doxygen.headers.classboost_1_1random_1_1extreme__value__distribution_1af7b74c230e6a6d9ff7c946132b354fab"></a><span class="identifier">max</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns the largest value that the distribution can produce. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a class="link" href="classboost_1_1random_1_1extreme__value__distribution_1_1param__type.html" title="Class param_type">param_type</a> <a name="doxygen.headers.classboost_1_1random_1_1extreme__value__distribution_1a9e367068d9a9d9d25f3fadcf76b05993"></a><span class="identifier">param</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns the parameters of the distribution. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.headers.classboost_1_1random_1_1extreme__value__distribution_1a8d56d6479ac0b7a851177e0508671381"></a><span class="identifier">param</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1extreme__value__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span> param<span class="special">)</span><span class="special">;</span></pre>
+<p>Sets the parameters of the distribution. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.headers.classboost_1_1random_1_1extreme__value__distribution_1a143f0a5a7b83e9b8db699ba4e00b1741"></a><span class="identifier">reset</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Effects: Subsequent uses of the distribution do not depend on values produced by any engine prior to invoking reset. </p>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.34.5.6.11.3.4.5"></a><h3>
+<a name="id-1_3_34_5_6_12_1_1_1_7-bb"></a><code class="computeroutput">extreme_value_distribution</code> friend functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits<span class="special">&gt;</span> 
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+  <a name="doxygen.headers.classboost_1_1random_1_1extreme__value__distribution_1a096653e4e130582c5477b0e0931058b8"></a><span class="keyword">operator</span><span class="special">&lt;&lt;</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> os<span class="special">,</span> 
+             <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1extreme__value__distribution.html" title="Class template extreme_value_distribution">extreme_value_distribution</a> <span class="special">&amp;</span> wd<span class="special">)</span><span class="special">;</span></pre>
+<p>Writes an <code class="computeroutput"><a class="link" href="classboost_1_1random_1_1extreme__value__distribution.html" title="Class template extreme_value_distribution">extreme_value_distribution</a></code> to a <code class="computeroutput">std::ostream</code>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits<span class="special">&gt;</span> 
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+  <a name="doxygen.headers.classboost_1_1random_1_1extreme__value__distribution_1aa7368efd2f7eca240ec4c1828ab0440f"></a><span class="keyword">operator</span><span class="special">&gt;&gt;</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> is<span class="special">,</span> 
+             <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1extreme__value__distribution.html" title="Class template extreme_value_distribution">extreme_value_distribution</a> <span class="special">&amp;</span> wd<span class="special">)</span><span class="special">;</span></pre>
+<p>Reads an <code class="computeroutput"><a class="link" href="classboost_1_1random_1_1extreme__value__distribution.html" title="Class template extreme_value_distribution">extreme_value_distribution</a></code> from a <code class="computeroutput">std::istream</code>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.headers.classboost_1_1random_1_1extreme__value__distribution_1acab28ed2aa0277f4c559bfb5c77ccf44"></a><span class="keyword">operator</span><span class="special">==</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1extreme__value__distribution.html" title="Class template extreme_value_distribution">extreme_value_distribution</a> <span class="special">&amp;</span> lhs<span class="special">,</span> 
+                <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1extreme__value__distribution.html" title="Class template extreme_value_distribution">extreme_value_distribution</a> <span class="special">&amp;</span> rhs<span class="special">)</span><span class="special">;</span></pre>
+<p>Returns true if the two instances of <code class="computeroutput"><a class="link" href="classboost_1_1random_1_1extreme__value__distribution.html" title="Class template extreme_value_distribution">extreme_value_distribution</a></code> will return identical sequences of values given equal generators. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.headers.classboost_1_1random_1_1extreme__value__distribution_1ad0c6c3411afc68efc7ddd4a79f3cb7ce"></a><span class="keyword">operator</span><span class="special">!=</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1extreme__value__distribution.html" title="Class template extreme_value_distribution">extreme_value_distribution</a> <span class="special">&amp;</span> lhs<span class="special">,</span> 
+                <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1extreme__value__distribution.html" title="Class template extreme_value_distribution">extreme_value_distribution</a> <span class="special">&amp;</span> rhs<span class="special">)</span><span class="special">;</span></pre>
+<p>Returns true if the two instances of <code class="computeroutput"><a class="link" href="classboost_1_1random_1_1extreme__value__distribution.html" title="Class template extreme_value_distribution">extreme_value_distribution</a></code> will return different sequences of values given equal generators. </p>
+</li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2000-2005 Jens Maurer<br>Copyright © 2009, 2010 Steven Watanabe<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1random_1_1exponential__distribution_1_1param__type.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_random/reference.html#doxygen.headers.extreme__value__distribution_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1random_1_1extreme__value__distribution_1_1param__type.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

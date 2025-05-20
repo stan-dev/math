@@ -1,0 +1,20 @@
+[/
+    Copyright (c) 2019-2024 Ruben Perez Hidalgo (rubenperez038 at gmail dot com)
+   
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+]
+
+[section:boost__mysql__WritableFieldTuple WritableField and WritableFieldTuple concepts]
+
+A type is a `WritableField` if it can be used to represent a statement parameter
+value to be sent to the server. A type `T` satisfies `WritableField` if it is
+[link mysql.prepared_statements.writable_field_reference any of the types listed in this table].
+More types may be added in future releases.
+
+A type `T` is a `WritableFieldTuple` if it's a `std::tuple` specialization,
+or a reference to one, and all element types fulfill
+`WritableField`, or are (possibly cv-qualified) references to `WritableField` types.
+Empty tuples satisfy `WritableFieldTuple`.
+
+[endsect]

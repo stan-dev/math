@@ -1,0 +1,94 @@
+<?xml version="1.0" standalone="yes"?>
+<library-reference id="astronomical_base_units_reference"><title>Astronomical Base Units Reference</title><header id="doxygen.astronomical_base_units_reference.astronomical__unit_8hpp" name="boost/units/base_units/astronomical/astronomical_unit.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="astronomical">
+<struct id="doxygen.astronomical_base_units_reference.structboost_1_1units_1_1astronomical_1_1astronomical__unit__base__unit" name="astronomical_unit_base_unit"><inherit access="public">boost::units::base_unit&lt; astronomical_unit_base_unit, boost::units::si::meter_base_unit ::dimension_type, -207 &gt;</inherit><method-group name="public static functions">
+<method id="doxygen.astronomical_base_units_reference.structboost_1_1units_1_1astronomical_1_1astronomical__unit__base__unit_1a06d2547c25f0c55e12889a9ec7cef9cc" name="name" specifiers="static"><type>const char *</type></method>
+<method id="doxygen.astronomical_base_units_reference.structboost_1_1units_1_1astronomical_1_1astronomical__unit__base__unit_1a3433ad7856b3e13ef158aeaa312d0c65" name="symbol" specifiers="static"><type>const char *</type></method>
+</method-group>
+</struct></namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.astronomical_base_units_reference.light__day_8hpp" name="boost/units/base_units/astronomical/light_day.hpp">
+<namespace name="boost">
+<namespace name="units">
+<struct-specialization id="doxygen.astronomical_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01astronomical_1_1light__day__base__unit_01_4" name="base_unit_info"><template>
+    </template><specialization><template-arg>astronomical::light_day_base_unit</template-arg></specialization><method-group name="public static functions">
+<method id="doxygen.astronomical_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01astronomical_1_1light__day__base__unit_01_4_1a0001317452819358848f1ab49b967114" name="name" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+<method id="doxygen.astronomical_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01astronomical_1_1light__day__base__unit_01_4_1aecd2546e6d4c46bb3161ae90cb80550b" name="symbol" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+</method-group>
+</struct-specialization><namespace name="astronomical">
+<typedef id="doxygen.astronomical_base_units_reference.namespaceboost_1_1units_1_1astronomical_1aa846078b64e07e1ff663b485811f6a4f" name="light_day_base_unit"><type>scaled_base_unit&lt; <classname>boost::units::astronomical::light_second_base_unit</classname>, scale&lt; 86400, static_rational&lt; 1 &gt; &gt; &gt;</type></typedef>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.astronomical_base_units_reference.light__hour_8hpp" name="boost/units/base_units/astronomical/light_hour.hpp">
+<namespace name="boost">
+<namespace name="units">
+<struct-specialization id="doxygen.astronomical_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01astronomical_1_1light__hour__base__unit_01_4" name="base_unit_info"><template>
+    </template><specialization><template-arg>astronomical::light_hour_base_unit</template-arg></specialization><method-group name="public static functions">
+<method id="doxygen.astronomical_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01astronomical_1_1light__hour__base__unit_01_4_1a40a8b4537b59b49a1d1d4438ed291409" name="name" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+<method id="doxygen.astronomical_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01astronomical_1_1light__hour__base__unit_01_4_1a46b6044d4fc581fc7280c65e9ef3cdb5" name="symbol" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+</method-group>
+</struct-specialization><namespace name="astronomical">
+<typedef id="doxygen.astronomical_base_units_reference.namespaceboost_1_1units_1_1astronomical_1ac8c22e050e6455d104752db6957c0843" name="light_hour_base_unit"><type>scaled_base_unit&lt; <classname>boost::units::astronomical::light_second_base_unit</classname>, scale&lt; 3600, static_rational&lt; 1 &gt; &gt; &gt;</type></typedef>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.astronomical_base_units_reference.light__minute_8hpp" name="boost/units/base_units/astronomical/light_minute.hpp">
+<namespace name="boost">
+<namespace name="units">
+<struct-specialization id="doxygen.astronomical_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01astronomical_1_1light__minute__base__unit_01_4" name="base_unit_info"><template>
+    </template><specialization><template-arg>astronomical::light_minute_base_unit</template-arg></specialization><method-group name="public static functions">
+<method id="doxygen.astronomical_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01astronomical_1_1light__minute__base__unit_01_4_1aa7898018aa533a508102722e732814eb" name="name" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+<method id="doxygen.astronomical_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01astronomical_1_1light__minute__base__unit_01_4_1a0c1c57ee713941551b15ae141eae4de8" name="symbol" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+</method-group>
+</struct-specialization><namespace name="astronomical">
+<typedef id="doxygen.astronomical_base_units_reference.namespaceboost_1_1units_1_1astronomical_1acf572eb5faa791c35f4994b12aa85026" name="light_minute_base_unit"><type>scaled_base_unit&lt; <classname>boost::units::astronomical::light_second_base_unit</classname>, scale&lt; 60, static_rational&lt; 1 &gt; &gt; &gt;</type></typedef>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.astronomical_base_units_reference.light__second_8hpp" name="boost/units/base_units/astronomical/light_second.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="astronomical">
+<struct id="doxygen.astronomical_base_units_reference.structboost_1_1units_1_1astronomical_1_1light__second__base__unit" name="light_second_base_unit"><inherit access="public">boost::units::base_unit&lt; light_second_base_unit, boost::units::si::meter_base_unit ::dimension_type, -201 &gt;</inherit><method-group name="public static functions">
+<method id="doxygen.astronomical_base_units_reference.structboost_1_1units_1_1astronomical_1_1light__second__base__unit_1afeea73e3ab5649d584449fbe38310bd9" name="name" specifiers="static"><type>const char *</type></method>
+<method id="doxygen.astronomical_base_units_reference.structboost_1_1units_1_1astronomical_1_1light__second__base__unit_1a266fca98cd750986f60c08296806ffb9" name="symbol" specifiers="static"><type>const char *</type></method>
+</method-group>
+</struct></namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.astronomical_base_units_reference.light__year_8hpp" name="boost/units/base_units/astronomical/light_year.hpp">
+<namespace name="boost">
+<namespace name="units">
+<struct-specialization id="doxygen.astronomical_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01astronomical_1_1light__year__base__unit_01_4" name="base_unit_info"><template>
+    </template><specialization><template-arg>astronomical::light_year_base_unit</template-arg></specialization><method-group name="public static functions">
+<method id="doxygen.astronomical_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01astronomical_1_1light__year__base__unit_01_4_1a84999ae23920d6ce5c0d0c0a1e7d6358" name="name" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+<method id="doxygen.astronomical_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01astronomical_1_1light__year__base__unit_01_4_1ae89fbaa303279c77892e3f50d093c9a1" name="symbol" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+</method-group>
+</struct-specialization><namespace name="astronomical">
+<typedef id="doxygen.astronomical_base_units_reference.namespaceboost_1_1units_1_1astronomical_1a6a5243ca2e2bbbd0909975bbb6be5393" name="light_year_base_unit"><type>scaled_base_unit&lt; <classname>boost::units::astronomical::light_second_base_unit</classname>, scale&lt; 31557600, static_rational&lt; 1 &gt; &gt; &gt;</type></typedef>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.astronomical_base_units_reference.parsec_8hpp" name="boost/units/base_units/astronomical/parsec.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="astronomical">
+<struct id="doxygen.astronomical_base_units_reference.structboost_1_1units_1_1astronomical_1_1parsec__base__unit" name="parsec_base_unit"><inherit access="public">boost::units::base_unit&lt; parsec_base_unit, boost::units::si::meter_base_unit ::dimension_type, -206 &gt;</inherit><method-group name="public static functions">
+<method id="doxygen.astronomical_base_units_reference.structboost_1_1units_1_1astronomical_1_1parsec__base__unit_1a88fc3d9aa069b14b670dd3c4a293682a" name="name" specifiers="static"><type>const char *</type></method>
+<method id="doxygen.astronomical_base_units_reference.structboost_1_1units_1_1astronomical_1_1parsec__base__unit_1a6f0da08fdf84a2bae33da50a918c960d" name="symbol" specifiers="static"><type>const char *</type></method>
+</method-group>
+</struct></namespace>
+</namespace>
+</namespace>
+</header>
+</library-reference>

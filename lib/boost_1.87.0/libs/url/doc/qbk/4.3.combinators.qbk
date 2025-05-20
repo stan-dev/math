@@ -1,0 +1,112 @@
+[/
+    Copyright (c) 2022 Vinnie Falco (vinnie.falco@gmail.com)
+
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+    Official repository: https://github.com/boostorg/url
+]
+
+[section Compound Rules]
+
+The rules shown so far have defined
+[@https://en.wikipedia.org/wiki/Terminal_and_nonterminal_symbols ['terminal symbols]],
+representing indivisible units of grammar. To parse more
+complex things, a
+[@https://en.wikipedia.org/wiki/Parser_combinator ['parser combinator]]
+(or ['compound rule]) is a rule which accepts as parameters one
+or more rules and combines them to form a higher order algorithm.
+In this section we introduce the compound rules provided by the
+library, and how they may be used to express more complex grammars.
+
+
+
+[heading Tuple Rule]
+
+Consider the following grammar:
+
+```
+version = "v" dec-octet "." dec-octet
+```
+
+We can express this using __tuple_rule__, which matches one
+or more specified rules in sequence. The folllowing defines
+a sequence using some character literals and two decimal octets,
+which is a fancy way of saying a number between 0 and 255:
+
+[code_grammar_3_1]
+
+This rule has a value type of `std::tuple`, whose types correspond
+to the value type of each rule specified upon construction. The decimal
+octets are represented by the __dec_octet_rule__ which stores its
+result in an `unsigned char`:
+
+[code_grammar_3_2]
+
+To extract elements from `std::tuple` the function __std_get__
+must be used. In this case, we don't care to know the value for
+the matching character literals. The __tuple_rule__ discards match
+results whose value type is `void`. We can use the __squelch__
+compound rule to convert a matching value type to `void`, and
+reformulate our rule:
+
+[code_grammar_3_3]
+
+When all but one of the value types is `void`, the `std::tuple` is
+elided and the remaining value type is promoted to the result of
+the match:
+
+[code_grammar_3_4]
+
+
+
+[heading Optional Rule]
+
+BNF elements in brackets denote optional components. These are
+expressed using __optional_rule__, whose value type is an
+__optional__. For example, we can adapt the port rule from
+above to be an optional component:
+
+[code_grammar_3_5]
+
+In this example we build up a rule to represent an
+endpoint as an IPv4 address with an optional port:
+
+[code_grammar_3_6]
+
+This can be simplified; the library provides __ipv4_address_rule__
+whose result type is __ipv4_address__, offering more utility
+than representing the address simply as a collection of four numbers:
+
+[code_grammar_3_7]
+
+
+
+[heading Variant Rule]
+
+BNF elements separated by unquoted slashes represent a set
+of alternatives from which one element may match. We represent
+them using __variant_rule__, whose value type is a __variant__.
+Consider the following HTTP production rule which comes from
+[@https://datatracker.ietf.org/doc/html/rfc7230#section-5.3" rfc7230]:
+
+```
+request-target = origin-form
+                / absolute-form
+                / authority-form
+                / asterisk-form
+```
+
+The ['request-target] can be exactly one of these things. Here we
+define the rule, using __origin_form_rule__, __absolute_uri_rule__,
+and __authority_rule__ which come with the library, and obtain
+a result from parsing a string:
+
+[code_grammar_3_8]
+
+In the next section we discuss facilities to parse a
+repeating number of elements.
+
+
+
+[endsect]

@@ -1,0 +1,22 @@
+<?xml version="1.0" standalone="yes"?>
+<library-reference id="base_from_member.reference"><title>Reference</title><header id="doxygen.base_from_member.reference.base__from__member_8hpp" name="boost/utility/base_from_member.hpp">
+<namespace name="boost">
+<class id="doxygen.base_from_member.reference.classboost_1_1base__from__member" name="base_from_member"><template>
+      <template-type-parameter name="MemberType"/>
+      <template-nontype-parameter name="UniqueID"><type>int</type><default>0</default></template-nontype-parameter>
+    </template><method-group name="protected member functions">
+<constructor id="doxygen.base_from_member.reference.classboost_1_1base__from__member_1abe153535f5425a5a3bc75a6cad7a3e52" specifiers="explicit" cv="noexcept(BOOST_NOEXCEPT_EXPR(::new((void *) 0) MemberType(static_cast&lt; T &amp;&amp; &gt;(x)...)))"><template>
+          <template-nontype-parameter name="T"><type>typename ...</type></template-nontype-parameter>
+          <template-type-parameter name="EnableIf"><default><emphasis>unspecified</emphasis></default></template-type-parameter>
+        </template><parameter name="x"><paramtype>T &amp;&amp;...</paramtype></parameter></constructor>
+</method-group>
+</class><class-specialization id="doxygen.base_from_member.reference.classboost_1_1base__from__member_3_01MemberType_01_6_00_01UniqueID_01_4" name="base_from_member"><template>
+      <template-type-parameter name="MemberType"/>
+      <template-nontype-parameter name="UniqueID"><type>int</type></template-nontype-parameter>
+    </template><specialization><template-arg>MemberType &amp;</template-arg><template-arg>UniqueID</template-arg></specialization><method-group name="protected member functions">
+<constructor id="doxygen.base_from_member.reference.classboost_1_1base__from__member_3_01MemberType_01_6_00_01UniqueID_01_4_1a8c4ba5dec9e2160abc1c156563053a1b" specifiers="explicit" cv="noexcept"><parameter name="x"><paramtype>MemberType &amp;</paramtype></parameter></constructor>
+</method-group>
+</class-specialization></namespace>
+<macro id="doxygen.base_from_member.reference.base__from__member_8hpp_1a35a37670e12da8f6499dbcf25295047f" name="BOOST_BASE_FROM_MEMBER_MAX_ARITY"/>
+</header>
+</library-reference>

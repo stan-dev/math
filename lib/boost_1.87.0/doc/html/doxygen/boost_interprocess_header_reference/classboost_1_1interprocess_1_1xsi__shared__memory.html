@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class xsi_shared_memory</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../../interprocess/indexes_reference.html#doxygen.boost_interprocess_header_reference.xsi__shared__memory_8hpp" title="Header &lt;boost/interprocess/xsi_shared_memory.hpp&gt;">
+<link rel="prev" href="classboost_1_1interprocess_1_1xsi__key.html" title="Class xsi_key">
+<link rel="next" href="../../intrusive.html" title="Chapter 17. Boost.Intrusive">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1interprocess_1_1xsi__key.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../interprocess/indexes_reference.html#doxygen.boost_interprocess_header_reference.xsi__shared__memory_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../../intrusive.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1xsi__shared__memory"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class xsi_shared_memory</span></h2>
+<p>boost::interprocess::xsi_shared_memory</p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../interprocess/indexes_reference.html#doxygen.boost_interprocess_header_reference.xsi__shared__memory_8hpp" title="Header &lt;boost/interprocess/xsi_shared_memory.hpp&gt;">boost/interprocess/xsi_shared_memory.hpp</a>&gt;
+
+</span>
+<span class="keyword">class</span> <a class="link" href="classboost_1_1interprocess_1_1xsi__shared__memory.html" title="Class xsi_shared_memory">xsi_shared_memory</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+
+  <span class="comment">// <a class="link" href="../boost_container_header_reference/classboost_1_1container_1_1slist.html#id108-bb">public member functions</a></span>
+  <a class="link" href="classboost_1_1interprocess_1_1xsi__shared__memory.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1xsi__shared__memory_1aee4894f6322796d9049c6686bbc91b0f"><span class="identifier">xsi_shared_memory</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1interprocess_1_1xsi__shared__memory.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1xsi__shared__memory_1a020afdc8c65a57122a229b40b8563527"><span class="identifier">xsi_shared_memory</span></a><span class="special">(</span><a class="link" href="structboost_1_1interprocess_1_1open__only__t.html" title="Struct open_only_t">open_only_t</a><span class="special">,</span> <span class="keyword">int</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1interprocess_1_1xsi__shared__memory.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1xsi__shared__memory_1a6eb8685a5d5306dff3893403afaa5dbf"><span class="identifier">xsi_shared_memory</span></a><span class="special">(</span><a class="link" href="structboost_1_1interprocess_1_1create__only__t.html" title="Struct create_only_t">create_only_t</a><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1interprocess_1_1xsi__key.html" title="Class xsi_key">xsi_key</a> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span><span class="special">,</span> 
+                    <span class="keyword">const</span> <a class="link" href="classboost_1_1interprocess_1_1permissions.html" title="Class permissions">permissions</a> <span class="special">&amp;</span> <span class="special">=</span> <span class="identifier">permissions</span><span class="special">(</span><span class="special">)</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1interprocess_1_1xsi__shared__memory.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1xsi__shared__memory_1a946a5952b97aceb9227d53752ceccf08"><span class="identifier">xsi_shared_memory</span></a><span class="special">(</span><a class="link" href="structboost_1_1interprocess_1_1open__or__create__t.html" title="Struct open_or_create_t">open_or_create_t</a><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1interprocess_1_1xsi__key.html" title="Class xsi_key">xsi_key</a> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span><span class="special">,</span> 
+                    <span class="keyword">const</span> <a class="link" href="classboost_1_1interprocess_1_1permissions.html" title="Class permissions">permissions</a> <span class="special">&amp;</span> <span class="special">=</span> <span class="identifier">permissions</span><span class="special">(</span><span class="special">)</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1interprocess_1_1xsi__shared__memory.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1xsi__shared__memory_1a5bf77927a0691290f8bc50f81115a32a"><span class="identifier">xsi_shared_memory</span></a><span class="special">(</span><a class="link" href="structboost_1_1interprocess_1_1open__only__t.html" title="Struct open_only_t">open_only_t</a><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1interprocess_1_1xsi__key.html" title="Class xsi_key">xsi_key</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1interprocess_1_1xsi__shared__memory.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1xsi__shared__memory_1a8b08ecc9581ea0c5ae012d4830e4d4ea"><span class="identifier">xsi_shared_memory</span></a><span class="special">(</span><a class="link" href="classboost_1_1interprocess_1_1xsi__shared__memory.html" title="Class xsi_shared_memory">xsi_shared_memory</a> <span class="special">&amp;&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1interprocess_1_1xsi__shared__memory.html" title="Class xsi_shared_memory">xsi_shared_memory</a> <span class="special">&amp;</span> <a class="link" href="classboost_1_1interprocess_1_1xsi__shared__memory.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1xsi__shared__memory_1abf4ba6b7a4161f7ce3e5e04eb64d6239"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><a class="link" href="classboost_1_1interprocess_1_1xsi__shared__memory.html" title="Class xsi_shared_memory">xsi_shared_memory</a> <span class="special">&amp;&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1interprocess_1_1xsi__shared__memory.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1xsi__shared__memory_1ad547f60f533940c34be33e189a226b84"><span class="identifier">swap</span></a><span class="special">(</span><a class="link" href="classboost_1_1interprocess_1_1xsi__shared__memory.html" title="Class xsi_shared_memory">xsi_shared_memory</a> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1interprocess_1_1xsi__shared__memory.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1xsi__shared__memory_1a44eec5d743e111f5576045a469070994"><span class="special">~</span><span class="identifier">xsi_shared_memory</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">int</span> <a class="link" href="classboost_1_1interprocess_1_1xsi__shared__memory.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1xsi__shared__memory_1ab7dcc911007de5d64280f9487399d707"><span class="identifier">get_shmid</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">mapping_handle_t</span> <a class="link" href="classboost_1_1interprocess_1_1xsi__shared__memory.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1xsi__shared__memory_1a6acec4a840218c0486c7a369bb575fa0"><span class="identifier">get_mapping_handle</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1interprocess_1_1xsi__shared__memory.html#id109-bb">public static functions</a></span>
+  <span class="keyword">static</span> <span class="keyword">bool</span> <a class="link" href="classboost_1_1interprocess_1_1xsi__shared__memory.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1xsi__shared__memory_1ae0cb9dd154d601a5b4324260aacf52f7"><span class="identifier">remove</span></a><span class="special">(</span><span class="keyword">int</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.17.19.3.81.4.4"></a><h2>Description</h2>
+<p>A class that wraps XSI (System V) shared memory. Unlike <a class="link" href="classboost_1_1interprocess_1_1shared__memory__object.html" title="Class shared_memory_object">shared_memory_object</a>, <a class="link" href="classboost_1_1interprocess_1_1xsi__shared__memory.html" title="Class xsi_shared_memory">xsi_shared_memory</a> needs a valid <a class="link" href="classboost_1_1interprocess_1_1xsi__key.html" title="Class xsi_key">xsi_key</a> to identify a shared memory object.</p>
+<p>Warning: XSI shared memory and interprocess portable shared memory (<a class="link" href="classboost_1_1interprocess_1_1shared__memory__object.html" title="Class shared_memory_object">boost::interprocess::shared_memory_object</a>) can't communicate between them. </p>
+<div class="refsect2">
+<a name="id-1.3.17.19.3.81.4.4.4"></a><h3>
+<a name="id108-bb"></a><code class="computeroutput">xsi_shared_memory</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1xsi__shared__memory_1aee4894f6322796d9049c6686bbc91b0f"></a><span class="identifier">xsi_shared_memory</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>Default constructor. Represents an empty <a class="link" href="classboost_1_1interprocess_1_1xsi__shared__memory.html" title="Class xsi_shared_memory">xsi_shared_memory</a>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1xsi__shared__memory_1a020afdc8c65a57122a229b40b8563527"></a><span class="identifier">xsi_shared_memory</span><span class="special">(</span><a class="link" href="structboost_1_1interprocess_1_1open__only__t.html" title="Struct open_only_t">open_only_t</a><span class="special">,</span> <span class="keyword">int</span> shmid<span class="special">)</span><span class="special">;</span></pre>
+<p>Initializes *this with a shmid previously obtained (possibly from another process) This lower-level initializer allows shared memory mapping without having a key. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1xsi__shared__memory_1a6eb8685a5d5306dff3893403afaa5dbf"></a><span class="identifier">xsi_shared_memory</span><span class="special">(</span><a class="link" href="structboost_1_1interprocess_1_1create__only__t.html" title="Struct create_only_t">create_only_t</a><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1interprocess_1_1xsi__key.html" title="Class xsi_key">xsi_key</a> <span class="special">&amp;</span> key<span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> size<span class="special">,</span> 
+                  <span class="keyword">const</span> <a class="link" href="classboost_1_1interprocess_1_1permissions.html" title="Class permissions">permissions</a> <span class="special">&amp;</span> perm <span class="special">=</span> <span class="identifier">permissions</span><span class="special">(</span><span class="special">)</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Creates a new XSI shared memory from 'key', with size "size" and permissions "perm". If the shared memory previously exists, throws an error. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1xsi__shared__memory_1a946a5952b97aceb9227d53752ceccf08"></a><span class="identifier">xsi_shared_memory</span><span class="special">(</span><a class="link" href="structboost_1_1interprocess_1_1open__or__create__t.html" title="Struct open_or_create_t">open_or_create_t</a><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1interprocess_1_1xsi__key.html" title="Class xsi_key">xsi_key</a> <span class="special">&amp;</span> key<span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> size<span class="special">,</span> 
+                  <span class="keyword">const</span> <a class="link" href="classboost_1_1interprocess_1_1permissions.html" title="Class permissions">permissions</a> <span class="special">&amp;</span> perm <span class="special">=</span> <span class="identifier">permissions</span><span class="special">(</span><span class="special">)</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Opens an existing shared memory with identifier 'key' or creates a new XSI shared memory from identifier 'key', with size "size" and permissions "perm". </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1xsi__shared__memory_1a5bf77927a0691290f8bc50f81115a32a"></a><span class="identifier">xsi_shared_memory</span><span class="special">(</span><a class="link" href="structboost_1_1interprocess_1_1open__only__t.html" title="Struct open_only_t">open_only_t</a><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1interprocess_1_1xsi__key.html" title="Class xsi_key">xsi_key</a> <span class="special">&amp;</span> key<span class="special">)</span><span class="special">;</span></pre>
+<p>Tries to open a XSI shared memory with identifier 'key' If the shared memory does not previously exist, it throws an error. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1xsi__shared__memory_1a8b08ecc9581ea0c5ae012d4830e4d4ea"></a><span class="identifier">xsi_shared_memory</span><span class="special">(</span><a class="link" href="classboost_1_1interprocess_1_1xsi__shared__memory.html" title="Class xsi_shared_memory">xsi_shared_memory</a> <span class="special">&amp;&amp;</span> moved<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>Moves the ownership of "moved"'s shared memory object to *this. After the call, "moved" does not represent any shared memory object. Does not throw </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a class="link" href="classboost_1_1interprocess_1_1xsi__shared__memory.html" title="Class xsi_shared_memory">xsi_shared_memory</a> <span class="special">&amp;</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1xsi__shared__memory_1abf4ba6b7a4161f7ce3e5e04eb64d6239"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><a class="link" href="classboost_1_1interprocess_1_1xsi__shared__memory.html" title="Class xsi_shared_memory">xsi_shared_memory</a> <span class="special">&amp;&amp;</span> moved<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>Moves the ownership of "moved"'s shared memory to *this. After the call, "moved" does not represent any shared memory. Does not throw </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1xsi__shared__memory_1ad547f60f533940c34be33e189a226b84"></a><span class="identifier">swap</span><span class="special">(</span><a class="link" href="classboost_1_1interprocess_1_1xsi__shared__memory.html" title="Class xsi_shared_memory">xsi_shared_memory</a> <span class="special">&amp;</span> other<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Swaps two xsi_shared_memorys. Does not throw. </li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1xsi__shared__memory_1a44eec5d743e111f5576045a469070994"></a><span class="special">~</span><span class="identifier">xsi_shared_memory</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Destroys *this. The shared memory won't be destroyed, just this connection to it. Use <a class="link" href="classboost_1_1interprocess_1_1xsi__shared__memory.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1xsi__shared__memory_1ae0cb9dd154d601a5b4324260aacf52f7">remove()</a> to destroy the shared memory. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">int</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1xsi__shared__memory_1ab7dcc911007de5d64280f9487399d707"></a><span class="identifier">get_shmid</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>Returns the shared memory ID that identifies the shared memory </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">mapping_handle_t</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1xsi__shared__memory_1a6acec4a840218c0486c7a369bb575fa0"></a><span class="identifier">get_mapping_handle</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>Returns the mapping handle. Never throws </p>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.17.19.3.81.4.4.5"></a><h3>
+<a name="id109-bb"></a><code class="computeroutput">xsi_shared_memory</code> public static functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="keyword">bool</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1xsi__shared__memory_1ae0cb9dd154d601a5b4324260aacf52f7"></a><span class="identifier">remove</span><span class="special">(</span><span class="keyword">int</span> shmid<span class="special">)</span><span class="special">;</span></pre>
+<p>Erases the XSI shared memory object identified by shmid from the system. Returns false on error. Never throws </p>
+</li></ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2005-2024 Ion Gaztanaga<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1interprocess_1_1xsi__key.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../interprocess/indexes_reference.html#doxygen.boost_interprocess_header_reference.xsi__shared__memory_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../../intrusive.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

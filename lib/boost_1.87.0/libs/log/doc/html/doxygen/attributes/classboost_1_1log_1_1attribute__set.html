@@ -1,0 +1,698 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class attribute_set</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.Log v2">
+<link rel="up" href="../../attributes.html#doxygen.attributes.attribute__set_8hpp" title="Header &lt;boost/log/attributes/attribute_set.hpp&gt;">
+<link rel="prev" href="attribute__name_8hpp_1a0a61745b0a92fb8cf8ed7a4548787e65.html" title="Function template operator&lt;&lt;">
+<link rel="next" href="attribute__set_8hpp_1abaf76d38e79800220a1c3bbe9beb8daf.html" title="Function swap">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr><td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td></tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="attribute__name_8hpp_1a0a61745b0a92fb8cf8ed7a4548787e65.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../attributes.html#doxygen.attributes.attribute__set_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="attribute__set_8hpp_1abaf76d38e79800220a1c3bbe9beb8daf.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.attributes.classboost_1_1log_1_1attribute__set"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class attribute_set</span></h2>
+<p>boost::log::attribute_set — An attribute set class. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../attributes.html#doxygen.attributes.attribute__set_8hpp" title="Header &lt;boost/log/attributes/attribute_set.hpp&gt;">boost/log/attributes/attribute_set.hpp</a>&gt;
+
+</span>
+<span class="keyword">class</span> <a class="link" href="classboost_1_1log_1_1attribute__set.html" title="Class attribute_set">attribute_set</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// <a class="link" href="classboost_1_1log_1_1attribute__set.html#doxygen.attributes.classboost_1_1log_1_1attribute__settypes">types</a></span>
+  <span class="keyword">typedef</span> <a class="link" href="classboost_1_1log_1_1attribute__name.html" title="Class attribute_name">attribute_name</a>                           <a name="doxygen.attributes.classboost_1_1log_1_1attribute__set_1aed6250532122212333d669fbceb9f78c"></a><span class="identifier">key_type</span><span class="special">;</span>         <span class="comment">// Key type. </span>
+  <span class="keyword">typedef</span> <a class="link" href="classboost_1_1log_1_1attribute.html" title="Class attribute">attribute</a>                                <a name="doxygen.attributes.classboost_1_1log_1_1attribute__set_1a7d913ee1e7d14ea8979e9cd3fea1bfed"></a><span class="identifier">mapped_type</span><span class="special">;</span>      <span class="comment">// Mapped attribute type. </span>
+  <span class="keyword">typedef</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">pair</span><span class="special">&lt;</span> <span class="keyword">const</span> <span class="identifier">key_type</span><span class="special">,</span> <span class="identifier">mapped_type</span> <span class="special">&gt;</span> <a name="doxygen.attributes.classboost_1_1log_1_1attribute__set_1a8e6f2e585437164ccbd2cb132bb9c6f1"></a><span class="identifier">value_type</span><span class="special">;</span>       <span class="comment">// Value type. </span>
+  <span class="keyword">typedef</span> <span class="identifier">value_type</span> <span class="special">&amp;</span>                             <a name="doxygen.attributes.classboost_1_1log_1_1attribute__set_1abe8933d436779a43cb5c1896ff5f2918"></a><span class="identifier">reference</span><span class="special">;</span>        <span class="comment">// Reference type. </span>
+  <span class="keyword">typedef</span> <span class="identifier">value_type</span> <span class="keyword">const</span> <span class="special">&amp;</span>                       <a name="doxygen.attributes.classboost_1_1log_1_1attribute__set_1a6e5dd840ebfcc997e984193eab900a21"></a><span class="identifier">const_reference</span><span class="special">;</span>  <span class="comment">// Const reference type. </span>
+  <span class="keyword">typedef</span> <span class="identifier">value_type</span> <span class="special">*</span>                             <a name="doxygen.attributes.classboost_1_1log_1_1attribute__set_1ad25b518036b886d8f35a3c059301d007"></a><span class="identifier">pointer</span><span class="special">;</span>          <span class="comment">// Pointer type. </span>
+  <span class="keyword">typedef</span> <span class="identifier">value_type</span> <span class="keyword">const</span> <span class="special">*</span>                       <a name="doxygen.attributes.classboost_1_1log_1_1attribute__set_1a22f97bc8b9e266eff61cab07ef38eabd"></a><span class="identifier">const_pointer</span><span class="special">;</span>    <span class="comment">// Const pointer type. </span>
+  <span class="keyword">typedef</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span>                              <a name="doxygen.attributes.classboost_1_1log_1_1attribute__set_1a89a6dcafb6130e3e1bcd6d1285e0dd6f"></a><span class="identifier">size_type</span><span class="special">;</span>        <span class="comment">// Size type. </span>
+  <span class="keyword">typedef</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">ptrdiff_t</span>                           <a name="doxygen.attributes.classboost_1_1log_1_1attribute__set_1ad319fc54a93a2c7058c70e40428ed2e2"></a><span class="identifier">difference_type</span><span class="special">;</span>  <span class="comment">// Difference type. </span>
+  <span class="keyword">typedef</span> <span class="identifier">implementation_defined</span>                   <a class="link" href="classboost_1_1log_1_1attribute__set.html#doxygen.attributes.classboost_1_1log_1_1attribute__set_1a6d133a0cae9dc8d5a2b273beac71bd28"><span class="identifier">iterator</span></a><span class="special">;</span>       
+  <span class="keyword">typedef</span> <span class="identifier">implementation_defined</span>                   <a class="link" href="classboost_1_1log_1_1attribute__set.html#doxygen.attributes.classboost_1_1log_1_1attribute__set_1afcd462d4527430ed756449660b2a8f84"><span class="identifier">const_iterator</span></a><span class="special">;</span> 
+
+  <span class="comment">// <a class="link" href="classboost_1_1log_1_1attribute__set.html#id27-bb">public member functions</a></span>
+  <a class="link" href="classboost_1_1log_1_1attribute__set.html#doxygen.attributes.classboost_1_1log_1_1attribute__set_1a38150e9fdfefe4c8a4aeb2f836813163"><span class="identifier">attribute_set</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1log_1_1attribute__set.html#doxygen.attributes.classboost_1_1log_1_1attribute__set_1ad615dc2bcdd697ea7ae69c7f8a8f0fa7"><span class="identifier">attribute_set</span></a><span class="special">(</span><a class="link" href="classboost_1_1log_1_1attribute__set.html" title="Class attribute_set">attribute_set</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1log_1_1attribute__set.html#doxygen.attributes.classboost_1_1log_1_1attribute__set_1a1c7a3df16f8e31e216ee114e9870aea2"><span class="identifier">attribute_set</span></a><span class="special">(</span><a class="link" href="classboost_1_1log_1_1attribute__set.html" title="Class attribute_set">attribute_set</a> <span class="special">&amp;&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1log_1_1attribute__set.html#doxygen.attributes.classboost_1_1log_1_1attribute__set_1a65cbf8cb2c6652a5f38e93f7b3cfb6b0"><span class="special">~</span><span class="identifier">attribute_set</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1log_1_1attribute__set.html" title="Class attribute_set">attribute_set</a> <span class="special">&amp;</span> <a class="link" href="classboost_1_1log_1_1attribute__set.html#doxygen.attributes.classboost_1_1log_1_1attribute__set_1ab9f7b9039842b4e48b30983f0bd877ec"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><a class="link" href="classboost_1_1log_1_1attribute__set.html" title="Class attribute_set">attribute_set</a><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1log_1_1attribute__set.html#doxygen.attributes.classboost_1_1log_1_1attribute__set_1ad8098261c54742dc28bb3ca9cc1e4d19"><span class="identifier">swap</span></a><span class="special">(</span><a class="link" href="classboost_1_1log_1_1attribute__set.html" title="Class attribute_set">attribute_set</a> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">iterator</span> <a class="link" href="classboost_1_1log_1_1attribute__set.html#doxygen.attributes.classboost_1_1log_1_1attribute__set_1a979556eb331ec35eb33472a90a160f99"><span class="identifier">begin</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">iterator</span> <a class="link" href="classboost_1_1log_1_1attribute__set.html#doxygen.attributes.classboost_1_1log_1_1attribute__set_1afc5380afa64b233d0df01a147616974b"><span class="identifier">end</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">const_iterator</span> <a class="link" href="classboost_1_1log_1_1attribute__set.html#doxygen.attributes.classboost_1_1log_1_1attribute__set_1a1ca1fc2c9fc3e169d5d0decfd1e54221"><span class="identifier">begin</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">const_iterator</span> <a class="link" href="classboost_1_1log_1_1attribute__set.html#doxygen.attributes.classboost_1_1log_1_1attribute__set_1a5b9b57293fae9b18b26349ac0b3fdcd3"><span class="identifier">end</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">size_type</span> <a class="link" href="classboost_1_1log_1_1attribute__set.html#doxygen.attributes.classboost_1_1log_1_1attribute__set_1a0801762a3fe36fe32dca5f16e515478d"><span class="identifier">size</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1log_1_1attribute__set.html#doxygen.attributes.classboost_1_1log_1_1attribute__set_1a3f6fc5de06a318920d84f3c3742db07f"><span class="identifier">empty</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">iterator</span> <a class="link" href="classboost_1_1log_1_1attribute__set.html#doxygen.attributes.classboost_1_1log_1_1attribute__set_1ac41f9cce8d0828bf0d165cc0d748f6e4"><span class="identifier">find</span></a><span class="special">(</span><span class="identifier">key_type</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">const_iterator</span> <a class="link" href="classboost_1_1log_1_1attribute__set.html#doxygen.attributes.classboost_1_1log_1_1attribute__set_1a7267a99bad3cc7ab5d86a368179e87db"><span class="identifier">find</span></a><span class="special">(</span><span class="identifier">key_type</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">size_type</span> <a class="link" href="classboost_1_1log_1_1attribute__set.html#doxygen.attributes.classboost_1_1log_1_1attribute__set_1a3e35015fea7824f5384d92e14efdcd95"><span class="identifier">count</span></a><span class="special">(</span><span class="identifier">key_type</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a class="link" href="classboost_1_1log_1_1attribute__set.html#doxygen.attributes.classboost_1_1log_1_1attribute__set_1a5d78631ee531cb9756cc5c24ca57cf40"><span class="keyword">operator</span><span class="special">[</span><span class="special">]</span></a><span class="special">(</span><span class="identifier">key_type</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">mapped_type</span> <a class="link" href="classboost_1_1log_1_1attribute__set.html#doxygen.attributes.classboost_1_1log_1_1attribute__set_1aefd738ce956124c7d5616e9465f15cc9"><span class="keyword">operator</span><span class="special">[</span><span class="special">]</span></a><span class="special">(</span><span class="identifier">key_type</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">pair</span><span class="special">&lt;</span> <span class="identifier">iterator</span><span class="special">,</span> <span class="keyword">bool</span> <span class="special">&gt;</span> <a class="link" href="classboost_1_1log_1_1attribute__set.html#doxygen.attributes.classboost_1_1log_1_1attribute__set_1ac40b2e844af89723fd8d8d61f8635eaa"><span class="identifier">insert</span></a><span class="special">(</span><span class="identifier">key_type</span><span class="special">,</span> <span class="identifier">mapped_type</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">pair</span><span class="special">&lt;</span> <span class="identifier">iterator</span><span class="special">,</span> <span class="keyword">bool</span> <span class="special">&gt;</span> <a class="link" href="classboost_1_1log_1_1attribute__set.html#doxygen.attributes.classboost_1_1log_1_1attribute__set_1a6818357d6559b3f6c2341c138cd2e0ce"><span class="identifier">insert</span></a><span class="special">(</span><span class="identifier">const_reference</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> FwdIteratorT<span class="special">&gt;</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1log_1_1attribute__set.html#doxygen.attributes.classboost_1_1log_1_1attribute__set_1ae134e123cdc3e11873fd1c18bbc4dd30"><span class="identifier">insert</span></a><span class="special">(</span><span class="identifier">FwdIteratorT</span><span class="special">,</span> <span class="identifier">FwdIteratorT</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> FwdIteratorT<span class="special">,</span> <span class="keyword">typename</span> OutputIteratorT<span class="special">&gt;</span> 
+    <span class="keyword">void</span> <a class="link" href="classboost_1_1log_1_1attribute__set.html#doxygen.attributes.classboost_1_1log_1_1attribute__set_1afa0fb921dbc8c82481e7bed38dd77133"><span class="identifier">insert</span></a><span class="special">(</span><span class="identifier">FwdIteratorT</span><span class="special">,</span> <span class="identifier">FwdIteratorT</span><span class="special">,</span> <span class="identifier">OutputIteratorT</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">size_type</span> <a class="link" href="classboost_1_1log_1_1attribute__set.html#doxygen.attributes.classboost_1_1log_1_1attribute__set_1a13ade6e5c96822a75085a42f2e1388c3"><span class="identifier">erase</span></a><span class="special">(</span><span class="identifier">key_type</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1log_1_1attribute__set.html#doxygen.attributes.classboost_1_1log_1_1attribute__set_1a9e0e4ddafcd3e5691f83655bef36d2b4"><span class="identifier">erase</span></a><span class="special">(</span><span class="identifier">iterator</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1log_1_1attribute__set.html#doxygen.attributes.classboost_1_1log_1_1attribute__set_1ae35b2c2df7ade62de7f58d64f6442807"><span class="identifier">erase</span></a><span class="special">(</span><span class="identifier">iterator</span><span class="special">,</span> <span class="identifier">iterator</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1log_1_1attribute__set.html#doxygen.attributes.classboost_1_1log_1_1attribute__set_1a03bfacfaaba9195e4498375659f43531"><span class="identifier">clear</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id30513"></a><h2>Description</h2>
+<p>An attribute set is an associative container with attribute name as a key and pointer to the attribute as a mapped value. The container allows storing only one element for each distinct key value. In most regards attribute set container provides interface similar to <code class="computeroutput">std::unordered_map</code>. However, there are differences in <code class="computeroutput">operator</code>[] semantics and a number of optimizations with regard to iteration. Besides, attribute names are stored as a read-only <code class="computeroutput"><a class="link" href="classboost_1_1log_1_1attribute__name.html" title="Class attribute_name">attribute_name</a></code>'s instead of <code class="computeroutput">std::string</code>, which saves memory and CPU time. </p>
+<div class="refsect2">
+<a name="id30521"></a><h3>
+<a name="doxygen.attributes.classboost_1_1log_1_1attribute__settypes"></a><code class="computeroutput">attribute_set</code> 
+        public
+       types</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<p>
+<span class="keyword">typedef</span> <span class="identifier">implementation_defined</span> <a name="doxygen.attributes.classboost_1_1log_1_1attribute__set_1a6d133a0cae9dc8d5a2b273beac71bd28"></a><span class="identifier">iterator</span><span class="special">;</span></p>
+<p>Iterator type. The iterator complies to the bidirectional iterator requirements. </p>
+</li>
+<li class="listitem">
+<p>
+<span class="keyword">typedef</span> <span class="identifier">implementation_defined</span> <a name="doxygen.attributes.classboost_1_1log_1_1attribute__set_1afcd462d4527430ed756449660b2a8f84"></a><span class="identifier">const_iterator</span><span class="special">;</span></p>
+<p>Constant iterator type. The iterator complies to the bidirectional iterator requirements with read-only capabilities. </p>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id30542"></a><h3>
+<a name="id27-bb"></a><code class="computeroutput">attribute_set</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.attributes.classboost_1_1log_1_1attribute__set_1a38150e9fdfefe4c8a4aeb2f836813163"></a><span class="identifier">attribute_set</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Default constructor.</p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Postconditions:</span></p></td>
+<td><p><code class="computeroutput"><a class="link" href="classboost_1_1log_1_1attribute__set.html#doxygen.attributes.classboost_1_1log_1_1attribute__set_1a3f6fc5de06a318920d84f3c3742db07f">empty()</a> == true</code> </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.attributes.classboost_1_1log_1_1attribute__set_1ad615dc2bcdd697ea7ae69c7f8a8f0fa7"></a><span class="identifier">attribute_set</span><span class="special">(</span><a class="link" href="classboost_1_1log_1_1attribute__set.html" title="Class attribute_set">attribute_set</a> <span class="keyword">const</span> <span class="special">&amp;</span> that<span class="special">)</span><span class="special">;</span></pre>
+<p>Copy constructor.</p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Postconditions:</span></p></td>
+<td><p><code class="computeroutput"><a class="link" href="classboost_1_1log_1_1attribute__set.html#doxygen.attributes.classboost_1_1log_1_1attribute__set_1a0801762a3fe36fe32dca5f16e515478d">size()</a> == that.size() &amp;&amp; std::equal(<a class="link" href="classboost_1_1log_1_1attribute__set.html#doxygen.attributes.classboost_1_1log_1_1attribute__set_1a979556eb331ec35eb33472a90a160f99">begin()</a>, <a class="link" href="classboost_1_1log_1_1attribute__set.html#doxygen.attributes.classboost_1_1log_1_1attribute__set_1afc5380afa64b233d0df01a147616974b">end()</a>, that.begin()) == true</code> </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.attributes.classboost_1_1log_1_1attribute__set_1a1c7a3df16f8e31e216ee114e9870aea2"></a><span class="identifier">attribute_set</span><span class="special">(</span><a class="link" href="classboost_1_1log_1_1attribute__set.html" title="Class attribute_set">attribute_set</a> <span class="special">&amp;&amp;</span> that<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>Move constructor </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.attributes.classboost_1_1log_1_1attribute__set_1a65cbf8cb2c6652a5f38e93f7b3cfb6b0"></a><span class="special">~</span><span class="identifier">attribute_set</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>Destructor. All stored references to attributes are released. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a class="link" href="classboost_1_1log_1_1attribute__set.html" title="Class attribute_set">attribute_set</a> <span class="special">&amp;</span> <a name="doxygen.attributes.classboost_1_1log_1_1attribute__set_1ab9f7b9039842b4e48b30983f0bd877ec"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><a class="link" href="classboost_1_1log_1_1attribute__set.html" title="Class attribute_set">attribute_set</a> that<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>Copy assignment operator.</p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Postconditions:</span></p></td>
+<td><p><code class="computeroutput"><a class="link" href="classboost_1_1log_1_1attribute__set.html#doxygen.attributes.classboost_1_1log_1_1attribute__set_1a0801762a3fe36fe32dca5f16e515478d">size()</a> == that.size() &amp;&amp; std::equal(<a class="link" href="classboost_1_1log_1_1attribute__set.html#doxygen.attributes.classboost_1_1log_1_1attribute__set_1a979556eb331ec35eb33472a90a160f99">begin()</a>, <a class="link" href="classboost_1_1log_1_1attribute__set.html#doxygen.attributes.classboost_1_1log_1_1attribute__set_1afc5380afa64b233d0df01a147616974b">end()</a>, that.begin()) == true</code> </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.attributes.classboost_1_1log_1_1attribute__set_1ad8098261c54742dc28bb3ca9cc1e4d19"></a><span class="identifier">swap</span><span class="special">(</span><a class="link" href="classboost_1_1log_1_1attribute__set.html" title="Class attribute_set">attribute_set</a> <span class="special">&amp;</span> that<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>Swaps two instances of the container.</p>
+<p><span class="bold"><strong>Throws:</strong></span> Nothing. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">iterator</span> <a name="doxygen.attributes.classboost_1_1log_1_1attribute__set_1a979556eb331ec35eb33472a90a160f99"></a><span class="identifier">begin</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>Iterator to the first element of the container. </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">iterator</span> <a name="doxygen.attributes.classboost_1_1log_1_1attribute__set_1afc5380afa64b233d0df01a147616974b"></a><span class="identifier">end</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>Iterator to the after-the-last element of the container. </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_iterator</span> <a name="doxygen.attributes.classboost_1_1log_1_1attribute__set_1a1ca1fc2c9fc3e169d5d0decfd1e54221"></a><span class="identifier">begin</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>Constant iterator to the first element of the container. </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_iterator</span> <a name="doxygen.attributes.classboost_1_1log_1_1attribute__set_1a5b9b57293fae9b18b26349ac0b3fdcd3"></a><span class="identifier">end</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>Constant iterator to the after-the-last element of the container. </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">size_type</span> <a name="doxygen.attributes.classboost_1_1log_1_1attribute__set_1a0801762a3fe36fe32dca5f16e515478d"></a><span class="identifier">size</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>Number of elements in the container. </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.attributes.classboost_1_1log_1_1attribute__set_1a3f6fc5de06a318920d84f3c3742db07f"></a><span class="identifier">empty</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>true if there are no elements in the container, false otherwise. </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">iterator</span> <a name="doxygen.attributes.classboost_1_1log_1_1attribute__set_1ac41f9cce8d0828bf0d165cc0d748f6e4"></a><span class="identifier">find</span><span class="special">(</span><span class="identifier">key_type</span> key<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>The method finds the attribute by name.</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">key</code></span></p></td>
+<td><p>Attribute name. </p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>Iterator to the found element or <a class="link" href="classboost_1_1log_1_1attribute__set.html#doxygen.attributes.classboost_1_1log_1_1attribute__set_1afc5380afa64b233d0df01a147616974b">end()</a> if the attribute with such name is not found. </p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_iterator</span> <a name="doxygen.attributes.classboost_1_1log_1_1attribute__set_1a7267a99bad3cc7ab5d86a368179e87db"></a><span class="identifier">find</span><span class="special">(</span><span class="identifier">key_type</span> key<span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>The method finds the attribute by name.</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">key</code></span></p></td>
+<td><p>Attribute name. </p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>Iterator to the found element or <code class="computeroutput"><a class="link" href="classboost_1_1log_1_1attribute__set.html#doxygen.attributes.classboost_1_1log_1_1attribute__set_1afc5380afa64b233d0df01a147616974b">end()</a></code> if the attribute with such name is not found. </p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">size_type</span> <a name="doxygen.attributes.classboost_1_1log_1_1attribute__set_1a3e35015fea7824f5384d92e14efdcd95"></a><span class="identifier">count</span><span class="special">(</span><span class="identifier">key_type</span> key<span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>The method counts the number of the attribute occurrences in the container. Since there can be only one attribute with a particular key, the method always return 0 or 1.</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">key</code></span></p></td>
+<td><p>Attribute name. </p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>The number of times the attribute is found in the container. </p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a name="doxygen.attributes.classboost_1_1log_1_1attribute__set_1a5d78631ee531cb9756cc5c24ca57cf40"></a><span class="keyword">operator</span><span class="special">[</span><span class="special">]</span><span class="special">(</span><span class="identifier">key_type</span> key<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>Combined lookup/insertion operator. The operator semantics depends on the further usage of the returned reference. </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p>If the reference is used as an assignment target, the assignment expression is equivalent to element insertion, where the element is composed of the second argument of the <code class="computeroutput">operator</code>[] as a key and the second argument of assignment as a mapped value. </p></li>
+<li class="listitem"><p>If the returned reference is used in context where a conversion to the mapped type is required, the result of the conversion is equivalent to the mapped value found with the second argument of the <code class="computeroutput">operator</code>[] as a key, if such an element exists in the container, or a default-constructed mapped value, if an element does not exist in the container.</p></li>
+</ul></div>
+<p>
+
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">key</code></span></p></td>
+<td><p>Attribute name. </p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>A smart reference object of unspecified type. </p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">mapped_type</span> <a name="doxygen.attributes.classboost_1_1log_1_1attribute__set_1aefd738ce956124c7d5616e9465f15cc9"></a><span class="keyword">operator</span><span class="special">[</span><span class="special">]</span><span class="special">(</span><span class="identifier">key_type</span> key<span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>Lookup operator</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">key</code></span></p></td>
+<td><p>Attribute name. </p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>If an element with the corresponding attribute name is found in the container, its mapped value is returned. Otherwise a default-constructed mapped value is returned. </p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">std</span><span class="special">::</span><span class="identifier">pair</span><span class="special">&lt;</span> <span class="identifier">iterator</span><span class="special">,</span> <span class="keyword">bool</span> <span class="special">&gt;</span> <a name="doxygen.attributes.classboost_1_1log_1_1attribute__set_1ac40b2e844af89723fd8d8d61f8635eaa"></a><span class="identifier">insert</span><span class="special">(</span><span class="identifier">key_type</span> key<span class="special">,</span> <span class="identifier">mapped_type</span> <span class="keyword">const</span> <span class="special">&amp;</span> data<span class="special">)</span><span class="special">;</span></pre>
+<p>Insertion method</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">key</code></span></p></td>
+<td><p>Attribute name. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">data</code></span></p></td>
+<td><p>Pointer to the attribute. Must not be NULL. </p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>A pair of values. If second is true, the insertion succeeded and the first component points to the inserted element. Otherwise the first component points to the element that prevents insertion. </p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">std</span><span class="special">::</span><span class="identifier">pair</span><span class="special">&lt;</span> <span class="identifier">iterator</span><span class="special">,</span> <span class="keyword">bool</span> <span class="special">&gt;</span> <a name="doxygen.attributes.classboost_1_1log_1_1attribute__set_1a6818357d6559b3f6c2341c138cd2e0ce"></a><span class="identifier">insert</span><span class="special">(</span><span class="identifier">const_reference</span> value<span class="special">)</span><span class="special">;</span></pre>
+<p>Insertion method</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">value</code></span></p></td>
+<td><p>An element to be inserted. </p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>A pair of values. If second is true, the insertion succeeded and the first component points to the inserted element. Otherwise the first component points to the element that prevents insertion. </p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> FwdIteratorT<span class="special">&gt;</span> 
+  <span class="keyword">void</span> <a name="doxygen.attributes.classboost_1_1log_1_1attribute__set_1ae134e123cdc3e11873fd1c18bbc4dd30"></a><span class="identifier">insert</span><span class="special">(</span><span class="identifier">FwdIteratorT</span> begin<span class="special">,</span> <span class="identifier">FwdIteratorT</span> end<span class="special">)</span><span class="special">;</span></pre>
+<p>Mass insertion method.</p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">begin</code></span></p></td>
+<td><p>A forward iterator that points to the first element to be inserted. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">end</code></span></p></td>
+<td><p>A forward iterator that points to the after-the-last element to be inserted. </p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> FwdIteratorT<span class="special">,</span> <span class="keyword">typename</span> OutputIteratorT<span class="special">&gt;</span> 
+  <span class="keyword">void</span> <a name="doxygen.attributes.classboost_1_1log_1_1attribute__set_1afa0fb921dbc8c82481e7bed38dd77133"></a><span class="identifier">insert</span><span class="special">(</span><span class="identifier">FwdIteratorT</span> begin<span class="special">,</span> <span class="identifier">FwdIteratorT</span> end<span class="special">,</span> <span class="identifier">OutputIteratorT</span> out<span class="special">)</span><span class="special">;</span></pre>
+<p>Mass insertion method with ability to acquire iterators to the inserted elements.</p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">begin</code></span></p></td>
+<td><p>A forward iterator that points to the first element to be inserted. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">end</code></span></p></td>
+<td><p>A forward iterator that points to the after-the-last element to be inserted. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">out</code></span></p></td>
+<td><p>An output iterator that receives results of insertion of the elements </p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">size_type</span> <a name="doxygen.attributes.classboost_1_1log_1_1attribute__set_1a13ade6e5c96822a75085a42f2e1388c3"></a><span class="identifier">erase</span><span class="special">(</span><span class="identifier">key_type</span> key<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>The method erases all attributes with the specified name</p>
+<p>
+
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">key</code></span></p></td>
+<td><p>Attribute name. </p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Postconditions:</span></p></td>
+<td><p>All iterators to the erased elements become invalid. </p></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>Tne number of erased elements </p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.attributes.classboost_1_1log_1_1attribute__set_1a9e0e4ddafcd3e5691f83655bef36d2b4"></a><span class="identifier">erase</span><span class="special">(</span><span class="identifier">iterator</span> it<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>The method erases the specified attribute</p>
+<p>
+
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">it</code></span></p></td>
+<td><p>A valid iterator to the element to be erased. </p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Postconditions:</span></p></td>
+<td><p>All iterators to the erased element become invalid. </p></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>Tne number of erased elements </p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.attributes.classboost_1_1log_1_1attribute__set_1ae35b2c2df7ade62de7f58d64f6442807"></a><span class="identifier">erase</span><span class="special">(</span><span class="identifier">iterator</span> begin<span class="special">,</span> <span class="identifier">iterator</span> end<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>The method erases all attributes within the specified range</p>
+<p>
+
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">begin</code></span></p></td>
+<td><p>An iterator that points to the first element to be erased. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">end</code></span></p></td>
+<td><p>An iterator that points to the after-the-last element to be erased. </p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td><p><span class="emphasis"><em>end</em></span> is reachable from <span class="emphasis"><em>begin</em></span> with a finite number of increments. </p></td>
+</tr>
+<tr>
+<td><p><span class="term">Postconditions:</span></p></td>
+<td><p>All iterators to the erased elements become invalid. </p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.attributes.classboost_1_1log_1_1attribute__set_1a03bfacfaaba9195e4498375659f43531"></a><span class="identifier">clear</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>The method removes all elements from the container</p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Postconditions:</span></p></td>
+<td><p><code class="computeroutput"><a class="link" href="classboost_1_1log_1_1attribute__set.html#doxygen.attributes.classboost_1_1log_1_1attribute__set_1a3f6fc5de06a318920d84f3c3742db07f">empty()</a> == true</code> </p></td>
+</tr></tbody>
+</table></div>
+</li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2007-2024 Andrey Semashev<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>).
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="attribute__name_8hpp_1a0a61745b0a92fb8cf8ed7a4548787e65.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../attributes.html#doxygen.attributes.attribute__set_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="attribute__set_8hpp_1abaf76d38e79800220a1c3bbe9beb8daf.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

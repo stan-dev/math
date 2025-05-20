@@ -1,0 +1,1131 @@
+<?xml version="1.0" standalone="yes"?>
+<library-reference id="sinks"><title>Sinks</title><header id="doxygen.sinks.async__frontend_8hpp" name="boost/log/sinks/async_frontend.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>14.07.2009</para>
+
+The header contains implementation of asynchronous sink frontend. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="sinks">
+<class id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1asynchronous__sink" name="asynchronous_sink"><template>
+      <template-type-parameter name="SinkBackendT"/>
+      <template-type-parameter name="QueueingStrategyT"><default>unbounded_fifo_queue</default></template-type-parameter>
+    </template><inherit access="public">basic_sink_frontend</inherit><inherit access="public">unbounded_fifo_queue</inherit><purpose>Asynchronous logging sink frontend. </purpose><description><para>The frontend starts a separate thread on construction. All logging records are passed to the backend in this dedicated thread.</para><para>The user can prevent spawning the internal thread by specifying <computeroutput>start_thread</computeroutput> parameter with the value of <computeroutput>false</computeroutput> on construction. In this case log records will be buffered in the internal queue until the user calls <computeroutput>run</computeroutput>, <computeroutput>feed_records</computeroutput> or <computeroutput>flush</computeroutput> in his own thread. Log record queueing strategy is specified in the <computeroutput>QueueingStrategyT</computeroutput> template parameter. </para></description><class id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1asynchronous__sink_1_1run__func" name="run_func"><purpose>Function object to run the log record feeding thread. </purpose><typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1asynchronous__sink_1_1run__func_1a9362b0e17335e9c13246f970c962d645" name="result_type"><type>void</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1asynchronous__sink_1_1run__func_1af61ee7015e92a1f1040973d1e4a2f85a" specifiers="explicit" cv="noexcept"><parameter name="self"><paramtype><classname>asynchronous_sink</classname> *</paramtype></parameter></constructor>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1asynchronous__sink_1_1run__func_1a1e14c6cd3702ba19fecfe52c496e382e" name="operator()" cv="const"><type>result_type</type></method>
+</method-group>
+</class><class id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1asynchronous__sink_1_1scoped__feeding__operation" name="scoped_feeding_operation"><purpose>A scope guard that implements active operation management. </purpose><method-group name="public member functions">
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1asynchronous__sink_1_1scoped__feeding__operation_1a0fee042f7f3b368e524f912a7369d29b" specifiers="explicit"><parameter name="self"><paramtype><classname>asynchronous_sink</classname> &amp;</paramtype></parameter><purpose>Initializing constructor. </purpose></constructor>
+<destructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1asynchronous__sink_1_1scoped__feeding__operation_1a8e7bff5c39cbaa20b63cbbc3b7b82eb1"><purpose>Destructor. </purpose></destructor>
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1asynchronous__sink_1_1scoped__feeding__operation_1ad3f9f392dc59abe9afdb60105db500e2" cv="= delete"><parameter name=""><paramtype>scoped_feeding_operation const &amp;</paramtype></parameter></constructor>
+<copy-assignment id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1asynchronous__sink_1_1scoped__feeding__operation_1a4ea54b46ad43c9398ebdba59626ff49c" cv="= delete"><type>scoped_feeding_operation &amp;</type><parameter name=""><paramtype>scoped_feeding_operation const &amp;</paramtype></parameter></copy-assignment>
+</method-group>
+</class><class id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1asynchronous__sink_1_1scoped__flag" name="scoped_flag"><purpose>A scope guard that resets a flag on destructor. </purpose><method-group name="public member functions">
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1asynchronous__sink_1_1scoped__flag_1a7afe086b81b9f1f13a05fc4eaf1fddb4" specifiers="explicit"><parameter name="mut"><paramtype>frontend_mutex_type &amp;</paramtype></parameter><parameter name="cond"><paramtype>std::condition_variable_any &amp;</paramtype></parameter><parameter name="f"><paramtype>boost::atomic&lt; bool &gt; &amp;</paramtype></parameter></constructor>
+<destructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1asynchronous__sink_1_1scoped__flag_1a8cfa47c2a030e2db61e5d7f2f2657533"/>
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1asynchronous__sink_1_1scoped__flag_1a997f172cdb9a459959980f6daca52b6f" cv="= delete"><parameter name=""><paramtype>scoped_flag const &amp;</paramtype></parameter></constructor>
+<copy-assignment id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1asynchronous__sink_1_1scoped__flag_1a88fbcddf6d8749cd0e1535939a3ac931" cv="= delete"><type>scoped_flag &amp;</type><parameter name=""><paramtype>scoped_flag const &amp;</paramtype></parameter></copy-assignment>
+</method-group>
+</class><typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1asynchronous__sink_1a798f29dfded9d6f26d58668e46e61230" name="sink_backend_type"><purpose>Sink implementation type. </purpose><type>SinkBackendT</type></typedef>
+<typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1asynchronous__sink_1af240d8277a1e51bd6c3edce8f2a6e2d9" name="locked_backend_ptr"><purpose>A pointer type that locks the backend until it's destroyed. </purpose><type>implementation_defined</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1asynchronous__sink_1a7bb08a5dbcd648d85a7a86530d1a2f46" specifiers="explicit"><parameter name="start_thread"><paramtype>bool</paramtype><default>true</default><description><para>If <computeroutput>true</computeroutput>, the frontend creates a thread to feed log records to the backend. Otherwise no thread is started and it is assumed that the user will call <computeroutput>run</computeroutput>, <computeroutput>feed_records</computeroutput> or <computeroutput>flush</computeroutput> himself. </para></description></parameter><description><para>Default constructor. Constructs the sink backend instance. Requires the backend to be default-constructible.</para><para>
+</para></description></constructor>
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1asynchronous__sink_1a9ed80098102a6f8aa95026a9dc3b31fd" specifiers="explicit"><parameter name="backend"><paramtype>shared_ptr&lt; sink_backend_type &gt; const &amp;</paramtype><description><para>Pointer to the backend instance. </para></description></parameter><parameter name="start_thread"><paramtype>bool</paramtype><default>true</default><description><para>If <computeroutput>true</computeroutput>, the frontend creates a thread to feed log records to the backend. Otherwise no thread is started and it is assumed that the user will call <computeroutput>run</computeroutput>, <computeroutput>feed_records</computeroutput> or <computeroutput>flush</computeroutput> himself.</para></description></parameter><description><para>Constructor attaches user-constructed backend instance</para><para>
+
+</para></description><requires><para><emphasis>backend</emphasis> is not <computeroutput>NULL</computeroutput>. </para>
+</requires></constructor>
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1asynchronous__sink_1a360690f7343f6a04f656ca23039abd4c" specifiers="explicit"><template>
+          <template-nontype-parameter name="Args"><type>typename...</type></template-nontype-parameter>
+        </template><parameter name="args"><paramtype>Args &amp;&amp;...</paramtype></parameter><description><para>Constructor that passes arbitrary named parameters to the interprocess sink backend constructor. Refer to the backend documentation for the list of supported parameters.</para><para>The frontend uses the following named parameters:</para><para><itemizedlist>
+<listitem><para>start_thread - If <computeroutput>true</computeroutput>, the frontend creates a thread to feed log records to the backend. Otherwise no thread is started and it is assumed that the user will call <computeroutput>run</computeroutput>, <computeroutput>feed_records</computeroutput> or <computeroutput>flush</computeroutput> himself. </para>
+</listitem>
+</itemizedlist>
+</para></description></constructor>
+<destructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1asynchronous__sink_1a6de5b2f0fc92ac687e5f4f1da56a3a41" cv="noexcept"><description><para>Destructor. Implicitly stops the dedicated feeding thread, if one is running. </para></description></destructor>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1asynchronous__sink_1aba31dc7d1fb1b8f1887e56e758d86179" name="locked_backend"><type>locked_backend_ptr</type><description><para>Locking accessor to the attached backend </para></description></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1asynchronous__sink_1a63d669c70929573ad62788f05b517066" name="consume" specifiers="virtual"><type>void</type><parameter name="rec"><paramtype>record_view const &amp;</paramtype></parameter><description><para>Enqueues the log record to the backend </para></description></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1asynchronous__sink_1a808dea4797503243eac39dc3ce240d85" name="try_consume" specifiers="virtual"><type>bool</type><parameter name="rec"><paramtype>record_view const &amp;</paramtype></parameter><description><para>The method attempts to pass logging record to the backend </para></description></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1asynchronous__sink_1a13a43e6d814de94978c515cb084873b1" name="run"><type>void</type><description><para>The method starts record feeding loop and effectively blocks until either of this happens:</para><para><itemizedlist>
+<listitem><para>the thread is interrupted due to a call to <computeroutput>stop</computeroutput> </para>
+</listitem>
+<listitem><para>an exception is thrown while processing a log record in the backend, and the exception is not terminated by the exception handler, if one is installed</para>
+</listitem>
+</itemizedlist>
+
+</para></description><requires><para>The sink frontend must be constructed without spawning a dedicated thread </para>
+</requires></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1asynchronous__sink_1a8c528baf37154d347366083f0f816846" name="stop"><type>void</type><description><para>The method softly interrupts record feeding loop. This method must be called when <computeroutput>run</computeroutput>, <computeroutput>feed_records</computeroutput> or <computeroutput>flush</computeroutput> method execution has to be interrupted. Unlike regular thread interruption, calling <computeroutput>stop</computeroutput> will not interrupt the record processing in the middle. Instead, the sink frontend will attempt to finish its business with the record in progress and return afterwards. This method can be called either if the sink was created with an internal dedicated thread, or if the feeding loop was initiated by user.</para><para>If no record feeding operation is in progress, calling <computeroutput>stop</computeroutput> marks the sink frontend so that the next feeding operation stops immediately.</para><para><note><para>Returning from this method does not guarantee that there are no records left buffered in the sink frontend. It is possible that log records keep coming during and after this method is called. At some point of execution of this method log records stop being processed, and all records that come after this point are put into the queue. These records will be processed upon further calls to <computeroutput>run</computeroutput> or <computeroutput>feed_records</computeroutput>.</para>
+</note>
+<note><para>If the record feeding loop is being run in a user's thread (i.e. <computeroutput>start_thread</computeroutput> was specified as <computeroutput>false</computeroutput> on frontend construction), this method does not guarantee that upon return the thread has returned from the record feeding loop or that it won't enter it in the future. The method only ensures that the record feeding thread will eventually return from the feeding loop. It is user's responsibility to synchronize with the user's record feeding thread. </para>
+</note>
+</para></description></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1asynchronous__sink_1a8173d909e1d0b10371e7e38fee995ae3" name="feed_records"><type>void</type><description><para>The method feeds log records that may have been buffered to the backend and returns</para><para>
+</para></description><requires><para>The sink frontend must be constructed without spawning a dedicated thread </para>
+</requires></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1asynchronous__sink_1add738545179bee255a31a63038bd150f" name="flush" specifiers="virtual"><type>void</type><description><para>The method feeds all log records that may have been buffered to the backend and returns. Unlike <computeroutput>feed_records</computeroutput>, in case of ordering queueing the method also feeds records that were enqueued during the ordering window, attempting to drain the queue completely. </para></description></method>
+</method-group>
+</class></namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.sinks.attribute__mapping_8hpp" name="boost/log/sinks/attribute_mapping.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>07.11.2008</para>
+
+The header contains facilities that are used in different sinks to map attribute values used throughout the application to values used with the specific native logging API. These tools are mostly needed to map application severity levels on native levels, required by OS-specific sink backends. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="sinks">
+<class id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__custom__mapping" name="basic_custom_mapping"><template>
+      <template-type-parameter name="MappedT"/>
+      <template-type-parameter name="AttributeValueT"><default>int</default></template-type-parameter>
+    </template><inherit access="public">boost::log::sinks::basic_mapping&lt; MappedT &gt;</inherit><purpose>Customizable mapping. </purpose><description><para>The class allows to setup a custom mapping between an attribute and native values. The mapping should be initialized similarly to the standard <computeroutput>map</computeroutput> container, by using indexing operator and assignment.</para><para><note><para>Unlike many other components of the library, exact type of the attribute value must be specified in the template parameter <computeroutput>AttributeValueT</computeroutput>. Type sequences are not supported. </para>
+</note>
+</para></description><typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__custom__mapping_1afa682848c046a9d682a065b61d2357cf" name="attribute_value_type"><purpose>Attribute contained value type. </purpose><type>AttributeValueT</type></typedef>
+<typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__custom__mapping_1a81a7013b71ac3d6ec36b1dc002da0112" name="mapped_type"><purpose>Mapped value type. </purpose><type>base_type::mapped_type</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__custom__mapping_1ab7eaa771b4d20029b9a32050bfc21001" specifiers="explicit"><parameter name="name"><paramtype>attribute_name const &amp;</paramtype><description><para>Attribute name </para></description></parameter><parameter name="default_value"><paramtype>mapped_type const &amp;</paramtype><description><para>The default native value that is returned if the conversion cannot be performed </para></description></parameter><description><para>Constructor</para><para>
+</para></description></constructor>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__custom__mapping_1abb85424d99310bef6e469325c6324528" name="operator()" cv="const"><type>mapped_type</type><parameter name="rec"><paramtype>record_view const &amp;</paramtype><description><para>A log record to extract value from </para></description></parameter><description><para>Extraction operator. Extracts the attribute value and attempts to map it onto the native value.</para><para>
+
+</para></description><returns><para>A mapped value, if mapping was successful, or the default value if mapping did not succeed. </para>
+</returns></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__custom__mapping_1ab6dca60129fb3c8e58c6c1a6d2dab940" name="operator[]"><type>implementation_defined</type><parameter name="key"><paramtype>attribute_value_type const &amp;</paramtype><description><para>Attribute value to be mapped </para></description></parameter><description><para>Insertion operator</para><para>
+
+</para></description><returns><para>An object of unspecified type that allows to insert a new mapping through assignment. The <emphasis>key</emphasis> argument becomes the key attribute value, and the assigned value becomes the mapped native value. </para>
+</returns></method>
+</method-group>
+</class><class id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__direct__mapping" name="basic_direct_mapping"><template>
+      <template-type-parameter name="MappedT"/>
+      <template-type-parameter name="AttributeValueT"><default>int</default></template-type-parameter>
+    </template><inherit access="public">boost::log::sinks::basic_mapping&lt; MappedT &gt;</inherit><purpose>Straightforward mapping. </purpose><description><para>This type of mapping assumes that attribute with a particular name always provides values that map directly onto the native values. The mapping simply returns the extracted attribute value converted to the native value. </para></description><typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__direct__mapping_1afa682848c046a9d682a065b61d2357cf" name="attribute_value_type"><purpose>Attribute contained value type. </purpose><type>AttributeValueT</type></typedef>
+<typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__direct__mapping_1a81a7013b71ac3d6ec36b1dc002da0112" name="mapped_type"><purpose>Mapped value type. </purpose><type>base_type::mapped_type</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__direct__mapping_1afb839cc625e761bebe8982bd8beaa564" specifiers="explicit"><parameter name="name"><paramtype>attribute_name const &amp;</paramtype><description><para>Attribute name </para></description></parameter><parameter name="default_value"><paramtype>mapped_type const &amp;</paramtype><description><para>The default native value that is returned if the attribute value is not found </para></description></parameter><description><para>Constructor</para><para>
+</para></description></constructor>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__direct__mapping_1abb85424d99310bef6e469325c6324528" name="operator()" cv="const"><type>mapped_type</type><parameter name="rec"><paramtype>record_view const &amp;</paramtype><description><para>A log record to extract value from </para></description></parameter><description><para>Extraction operator</para><para>
+
+</para></description><returns><para>An extracted attribute value </para>
+</returns></method>
+</method-group>
+</class><struct id="doxygen.sinks.structboost_1_1log_1_1sinks_1_1basic__mapping" name="basic_mapping"><template>
+      <template-type-parameter name="MappedT"/>
+    </template><purpose>Base class for attribute mapping function objects. </purpose><typedef id="doxygen.sinks.structboost_1_1log_1_1sinks_1_1basic__mapping_1ad293f2e551f79174ddc7260201e9add9" name="mapped_type"><purpose>Mapped value type. </purpose><type>MappedT</type></typedef>
+<typedef id="doxygen.sinks.structboost_1_1log_1_1sinks_1_1basic__mapping_1a4c3cb8314708e7daf804cdd49216b1e3" name="result_type"><purpose>Result type. </purpose><type>mapped_type</type></typedef>
+</struct></namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.sinks.auto__newline__mode_8hpp" name="boost/log/sinks/auto_newline_mode.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>23.06.2019</para>
+
+The header contains definition of auto-newline modes. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="sinks">
+<enum id="doxygen.sinks.auto__newline__mode_8hpp_1a32ab4e8646a4496f00cc981ffe0ad67a" name="auto_newline_mode"><enumvalue id="doxygen.sinks.auto__newline__mode_8hpp_1a32ab4e8646a4496f00cc981ffe0ad67aa9af3c6e06dff329495f5790f8aa1cd93" name="disabled_auto_newline"><purpose>Do not insert automatic trailing newline characters. </purpose></enumvalue><enumvalue id="doxygen.sinks.auto__newline__mode_8hpp_1a32ab4e8646a4496f00cc981ffe0ad67aa17dacbdf23a2b246ae233ca740b42c2e" name="always_insert"><purpose>Always insert automatic trailing newline characters. </purpose></enumvalue><enumvalue id="doxygen.sinks.auto__newline__mode_8hpp_1a32ab4e8646a4496f00cc981ffe0ad67aabfae5153f2ddc8e28d875854c03bc5d4" name="insert_if_missing"><purpose>Insert automatic trailing newline characters, if not present already. </purpose></enumvalue><purpose>The enum lists automatic trailing newline modes. </purpose></enum>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.sinks.basic__sink__backend_8hpp" name="boost/log/sinks/basic_sink_backend.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>04.11.2007</para>
+
+The header contains implementation of base classes for sink backends. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="sinks">
+<struct id="doxygen.sinks.structboost_1_1log_1_1sinks_1_1basic__formatted__sink__backend" name="basic_formatted_sink_backend"><template>
+      <template-type-parameter name="CharT"/>
+      <template-type-parameter name="FrontendRequirementsT"><default>synchronized_feeding</default></template-type-parameter>
+    </template><inherit access="public">boost::log::sinks::basic_sink_backend&lt; combine_requirements&lt; synchronized_feeding, formatted_records &gt;::type &gt;</inherit><purpose>A base class for a logging sink backend with message formatting support. </purpose><description><para>The <computeroutput><link linkend="doxygen.sinks.structboost_1_1log_1_1sinks_1_1basic__formatted__sink__backend">basic_formatted_sink_backend</link></computeroutput> class template indicates to the frontend that the backend requires logging record formatting.</para><para>The class allows to request encoding conversion in case if the sink backend requires the formatted string in some particular encoding (e.g. if underlying API supports only narrow or wide characters). In order to perform conversion one should specify the desired final character type in the <computeroutput>TargetCharT</computeroutput> template parameter. </para></description><typedef id="doxygen.sinks.structboost_1_1log_1_1sinks_1_1basic__formatted__sink__backend_1ac300472e15c13f0e7c25cec82c665240" name="char_type"><purpose>Character type. </purpose><type>CharT</type></typedef>
+<typedef id="doxygen.sinks.structboost_1_1log_1_1sinks_1_1basic__formatted__sink__backend_1a881bde00510e3840918efc9a3058056c" name="string_type"><purpose>Formatted string type. </purpose><type>std::basic_string&lt; char_type &gt;</type></typedef>
+<typedef id="doxygen.sinks.structboost_1_1log_1_1sinks_1_1basic__formatted__sink__backend_1ae5bf60bcb69bc7d98563a2c61ce2c1c0" name="frontend_requirements"><purpose>Frontend requirements. </purpose><type>base_type::frontend_requirements</type></typedef>
+</struct><struct id="doxygen.sinks.structboost_1_1log_1_1sinks_1_1basic__sink__backend" name="basic_sink_backend"><template>
+      <template-type-parameter name="FrontendRequirementsT"/>
+    </template><purpose>Base class for a logging sink backend. </purpose><description><para>The <computeroutput><link linkend="doxygen.sinks.structboost_1_1log_1_1sinks_1_1basic__sink__backend">basic_sink_backend</link></computeroutput> class template defines a number of types that all sink backends are required to define. All sink backends have to derive from the class. </para></description><typedef id="doxygen.sinks.structboost_1_1log_1_1sinks_1_1basic__sink__backend_1a3db2e7ae0ccb5d1af0529a9ebb7e77b5" name="frontend_requirements"><purpose>Frontend requirements tag. </purpose><type>FrontendRequirementsT</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.sinks.structboost_1_1log_1_1sinks_1_1basic__sink__backend_1a0694365bf5b15ec6c3fd117921ab94a3" cv="= default"/>
+<constructor id="doxygen.sinks.structboost_1_1log_1_1sinks_1_1basic__sink__backend_1a691fe315c51cad34fcfc560e98d0f1f3" cv="= delete"><parameter name=""><paramtype><classname>basic_sink_backend</classname> const &amp;</paramtype></parameter></constructor>
+<copy-assignment id="doxygen.sinks.structboost_1_1log_1_1sinks_1_1basic__sink__backend_1a85410a377b7baf56dabc3525f7125e3a" cv="= delete"><type><classname>basic_sink_backend</classname> &amp;</type><parameter name=""><paramtype><classname>basic_sink_backend</classname> const &amp;</paramtype></parameter></copy-assignment>
+</method-group>
+</struct></namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.sinks.basic__sink__frontend_8hpp" name="boost/log/sinks/basic_sink_frontend.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>14.07.2009</para>
+
+The header contains implementation of a base class for sink frontends. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="sinks">
+<class id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__formatting__sink__frontend" name="basic_formatting_sink_frontend"><template>
+      <template-type-parameter name="CharT"/>
+    </template><inherit access="public">basic_sink_frontend</inherit><purpose>A base class for a logging sink frontend with formatting support. </purpose><struct id="doxygen.sinks.structboost_1_1log_1_1sinks_1_1basic__formatting__sink__frontend_1_1formatting__context" name="formatting_context"><class id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__formatting__sink__frontend_1_1formatting__context_1_1cleanup__guard" name="cleanup_guard"><method-group name="public member functions">
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__formatting__sink__frontend_1_1formatting__context_1_1cleanup__guard_1a6be85beb7788b98fb2268d432826c96a" specifiers="explicit" cv="noexcept"><parameter name="ctx"><paramtype>formatting_context &amp;</paramtype></parameter></constructor>
+<destructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__formatting__sink__frontend_1_1formatting__context_1_1cleanup__guard_1adb2016e777518be5728c2912ab765a23"/>
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__formatting__sink__frontend_1_1formatting__context_1_1cleanup__guard_1a390b0ab7f020744f16616ebd47ef2757" cv="= delete"><parameter name=""><paramtype>cleanup_guard const &amp;</paramtype></parameter></constructor>
+<copy-assignment id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__formatting__sink__frontend_1_1formatting__context_1_1cleanup__guard_1adf17fd456ce08229cf53e4ff6f399f0e" cv="= delete"><type>cleanup_guard &amp;</type><parameter name=""><paramtype>cleanup_guard const &amp;</paramtype></parameter></copy-assignment>
+</method-group>
+</class><data-member id="doxygen.sinks.structboost_1_1log_1_1sinks_1_1basic__formatting__sink__frontend_1_1formatting__context_1ac38fbad884d18d02db322e5c5abf1637" name="m_Version"><type>const unsigned int</type><purpose>Object version. </purpose></data-member>
+<data-member id="doxygen.sinks.structboost_1_1log_1_1sinks_1_1basic__formatting__sink__frontend_1_1formatting__context_1aff0c028233d852f210573eee25c5e070" name="m_FormattedRecord"><type>string_type</type><purpose>Formatted log record storage. </purpose></data-member>
+<data-member id="doxygen.sinks.structboost_1_1log_1_1sinks_1_1basic__formatting__sink__frontend_1_1formatting__context_1ade8ea2f952d38345403ef82227668c2e" name="m_FormattingStream"><type>stream_type</type><purpose>Formatting stream. </purpose></data-member>
+<data-member id="doxygen.sinks.structboost_1_1log_1_1sinks_1_1basic__formatting__sink__frontend_1_1formatting__context_1a6d4ae47aaad7a4c1572bf09b2d87556f" name="m_Formatter"><type>formatter_type</type><purpose>Formatter functor. </purpose></data-member>
+<method-group name="public member functions">
+<constructor id="doxygen.sinks.structboost_1_1log_1_1sinks_1_1basic__formatting__sink__frontend_1_1formatting__context_1a131a036c7794639243fa01e5958b5ca5"/>
+<constructor id="doxygen.sinks.structboost_1_1log_1_1sinks_1_1basic__formatting__sink__frontend_1_1formatting__context_1a4ccd9d3494675a7f961d54146e3d6a2f"><parameter name="version"><paramtype>unsigned int</paramtype></parameter><parameter name="loc"><paramtype>std::locale const &amp;</paramtype></parameter><parameter name="formatter"><paramtype>formatter_type const &amp;</paramtype></parameter></constructor>
+</method-group>
+</struct><typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__formatting__sink__frontend_1ac300472e15c13f0e7c25cec82c665240" name="char_type"><purpose>Character type. </purpose><type>CharT</type></typedef>
+<typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__formatting__sink__frontend_1a881bde00510e3840918efc9a3058056c" name="string_type"><purpose>Formatted string type. </purpose><type>std::basic_string&lt; char_type &gt;</type></typedef>
+<typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__formatting__sink__frontend_1a02264e9c1d59126a6921765993f30d16" name="formatter_type"><purpose>Formatter function object type. </purpose><type>basic_formatter&lt; char_type &gt;</type></typedef>
+<typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__formatting__sink__frontend_1af8ef01365ab56e282d3a6dd1b2d1e508" name="stream_type"><purpose>Output stream type. </purpose><type>formatter_type::stream_type</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__formatting__sink__frontend_1a58ceff335a05a24ff8ece4162e6970d9" specifiers="explicit"><parameter name="cross_thread"><paramtype>bool</paramtype><description><para>The flag indicates whether the sink passes log records between different threads </para></description></parameter><purpose>Initializing constructor. </purpose><description><para>
+</para></description></constructor>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__formatting__sink__frontend_1aed222f332c486595db5ca23b6df4195b" name="set_formatter"><type>void</type><template>
+          <template-type-parameter name="FunT"/>
+        </template><parameter name="formatter"><paramtype>FunT const &amp;</paramtype></parameter><description><para>The method sets sink-specific formatter function object </para></description></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__formatting__sink__frontend_1a636d9b3ae970b2a197cbc1771423ebe3" name="reset_formatter"><type>void</type><description><para>The method resets the formatter </para></description></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__formatting__sink__frontend_1af7e628427bf12626b97f1eec12b2250d" name="getloc" cv="const"><type>std::locale</type><description><para>The method returns the current locale used for formatting </para></description></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__formatting__sink__frontend_1aecdc5bc58ab4992c96ffad8d252b11c7" name="imbue"><type>void</type><parameter name="loc"><paramtype>std::locale const &amp;</paramtype></parameter><description><para>The method sets the locale used for formatting </para></description></method>
+</method-group>
+<method-group name="protected member functions">
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__formatting__sink__frontend_1ad2b692b0a24d018240f1a0807242b270" name="formatter"><type>formatter_type &amp;</type><purpose>Returns reference to the formatter. </purpose></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__formatting__sink__frontend_1a3fddd221b2c7e80c089b0a92feb6deb5" name="feed_record"><type>void</type><template>
+          <template-type-parameter name="BackendMutexT"/>
+          <template-type-parameter name="BackendT"/>
+        </template><parameter name="rec"><paramtype>record_view const &amp;</paramtype></parameter><parameter name="backend_mutex"><paramtype>BackendMutexT &amp;</paramtype></parameter><parameter name="backend"><paramtype>BackendT &amp;</paramtype></parameter><purpose>Feeds log record to the backend. </purpose></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__formatting__sink__frontend_1ab263717e623558bf3176dd9344afbfb4" name="try_feed_record"><type>bool</type><template>
+          <template-type-parameter name="BackendMutexT"/>
+          <template-type-parameter name="BackendT"/>
+        </template><parameter name="rec"><paramtype>record_view const &amp;</paramtype></parameter><parameter name="backend_mutex"><paramtype>BackendMutexT &amp;</paramtype></parameter><parameter name="backend"><paramtype>BackendT &amp;</paramtype></parameter><purpose>Attempts to feeds log record to the backend, does not block if <emphasis>backend_mutex</emphasis> is locked. </purpose></method>
+</method-group>
+</class><class id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__sink__frontend" name="basic_sink_frontend"><inherit access="public">sink</inherit><purpose>A base class for a logging sink frontend. </purpose><typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__sink__frontend_1a911e424255ac7f75b3a5ff3d1bbd4463" name="exception_handler_type"><purpose>An exception handler type. </purpose><type>base_type::exception_handler_type</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__sink__frontend_1a6602cd9933d40f37d8bce2038034d241" specifiers="explicit"><parameter name="cross_thread"><paramtype>bool</paramtype><description><para>The flag indicates whether the sink passes log records between different threads </para></description></parameter><purpose>Initializing constructor. </purpose><description><para>
+</para></description></constructor>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__sink__frontend_1a8601a7b6b910c19b899c27a9789aa8d3" name="set_filter"><type>void</type><template>
+          <template-type-parameter name="FunT"/>
+        </template><parameter name="filter"><paramtype>FunT const &amp;</paramtype></parameter><description><para>The method sets sink-specific filter functional object </para></description></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__sink__frontend_1a8e76f8a1de2a950c90946a4c88b40b03" name="reset_filter"><type>void</type><description><para>The method resets the filter </para></description></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__sink__frontend_1a8924c0d1245eca6a7385720a199cb022" name="set_exception_handler"><type>void</type><template>
+          <template-type-parameter name="FunT"/>
+        </template><parameter name="handler"><paramtype>FunT const &amp;</paramtype></parameter><description><para>The method sets an exception handler function </para></description></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__sink__frontend_1ae95d31ab8ca99bdc79523b6aa3f96a62" name="reset_exception_handler"><type>void</type><description><para>The method resets the exception handler function </para></description></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__sink__frontend_1a369e66a1661858704f39f0ad701355a4" name="will_consume" specifiers="virtual"><type>bool</type><parameter name="attrs"><paramtype>attribute_value_set const &amp;</paramtype><description><para>A set of attribute values of a logging record </para></description></parameter><description><para>The method returns <computeroutput>true</computeroutput> if no filter is set or the attribute values pass the filter</para><para>
+</para></description></method>
+</method-group>
+<method-group name="protected member functions">
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__sink__frontend_1a51dfa73f247eed1785754f194c3af421" name="frontend_mutex" cv="const"><type>mutex_type &amp;</type><purpose>Returns reference to the frontend mutex. </purpose></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__sink__frontend_1afb7d422888a6ec47ab48d814f85b11c4" name="exception_handler"><type>exception_handler_type &amp;</type><purpose>Returns reference to the exception handler. </purpose></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__sink__frontend_1a2428098eb300916d6d251cbf3cdd6202" name="exception_handler" cv="const"><type>exception_handler_type const &amp;</type><purpose>Returns reference to the exception handler. </purpose></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__sink__frontend_1a3fddd221b2c7e80c089b0a92feb6deb5" name="feed_record"><type>void</type><template>
+          <template-type-parameter name="BackendMutexT"/>
+          <template-type-parameter name="BackendT"/>
+        </template><parameter name="rec"><paramtype>record_view const &amp;</paramtype></parameter><parameter name="backend_mutex"><paramtype>BackendMutexT &amp;</paramtype></parameter><parameter name="backend"><paramtype>BackendT &amp;</paramtype></parameter><purpose>Feeds log record to the backend. </purpose></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__sink__frontend_1ab263717e623558bf3176dd9344afbfb4" name="try_feed_record"><type>bool</type><template>
+          <template-type-parameter name="BackendMutexT"/>
+          <template-type-parameter name="BackendT"/>
+        </template><parameter name="rec"><paramtype>record_view const &amp;</paramtype></parameter><parameter name="backend_mutex"><paramtype>BackendMutexT &amp;</paramtype></parameter><parameter name="backend"><paramtype>BackendT &amp;</paramtype></parameter><purpose>Attempts to feeds log record to the backend, does not block if <emphasis>backend_mutex</emphasis> is locked. </purpose></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__sink__frontend_1a5936b5abb58558b7fdbbccf6203335c1" name="flush_backend"><type>void</type><template>
+          <template-type-parameter name="BackendMutexT"/>
+          <template-type-parameter name="BackendT"/>
+        </template><parameter name="backend_mutex"><paramtype>BackendMutexT &amp;</paramtype></parameter><parameter name="backend"><paramtype>BackendT &amp;</paramtype></parameter><purpose>Flushes record buffers in the backend, if one supports it. </purpose></method>
+</method-group>
+<method-group name="private member functions">
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__sink__frontend_1a1e8de39d7319ac637acb6e92e9000500" name="flush_backend_impl"><type>void</type><template>
+          <template-type-parameter name="BackendMutexT"/>
+          <template-type-parameter name="BackendT"/>
+        </template><parameter name="backend_mutex"><paramtype>BackendMutexT &amp;</paramtype></parameter><parameter name="backend"><paramtype>BackendT &amp;</paramtype></parameter><parameter name=""><paramtype>boost::true_type</paramtype></parameter><purpose>Flushes record buffers in the backend (the actual implementation) </purpose></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__sink__frontend_1a64b0ac293913faeba4e9e43dffbae93d" name="flush_backend_impl"><type>void</type><template>
+          <template-type-parameter name="BackendMutexT"/>
+          <template-type-parameter name="BackendT"/>
+        </template><parameter name=""><paramtype>BackendMutexT &amp;</paramtype></parameter><parameter name=""><paramtype>BackendT &amp;</paramtype></parameter><parameter name=""><paramtype>boost::false_type</paramtype></parameter><purpose>Flushes record buffers in the backend (stub for backends that don't support flushing) </purpose></method>
+</method-group>
+</class></namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.sinks.block__on__overflow_8hpp" name="boost/log/sinks/block_on_overflow.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>04.01.2012</para>
+
+The header contains implementation of <computeroutput>block_on_overflow</computeroutput> strategy for handling queue overflows in bounded queues for the asynchronous sink frontend. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="sinks">
+<class id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1block__on__overflow" name="block_on_overflow"><purpose>Blocking strategy for handling log record queue overflows. </purpose><description><para>This strategy will cause enqueueing threads to block when the log record queue overflows. The blocked threads will be woken as soon as there appears free space in the queue, in the same order they attempted to enqueue records. </para></description></class></namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.sinks.bounded__fifo__queue_8hpp" name="boost/log/sinks/bounded_fifo_queue.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>04.01.2012</para>
+
+The header contains implementation of bounded FIFO queueing strategy for the asynchronous sink frontend. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="sinks">
+<class id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1bounded__fifo__queue" name="bounded_fifo_queue"><template>
+      <template-nontype-parameter name="MaxQueueSizeV"><type>std::size_t</type></template-nontype-parameter>
+      <template-type-parameter name="OverflowStrategyT"/>
+    </template><inherit access="private">OverflowStrategyT</inherit><purpose>Bounded FIFO log record queueing strategy. </purpose><description><para>The <computeroutput><link linkend="doxygen.sinks.classboost_1_1log_1_1sinks_1_1bounded__fifo__queue">bounded_fifo_queue</link></computeroutput> class is intended to be used with the <computeroutput><link linkend="doxygen.sinks.classboost_1_1log_1_1sinks_1_1asynchronous__sink">asynchronous_sink</link></computeroutput> frontend as a log record queueing strategy.</para><para>This strategy describes log record queueing logic. The queue has a limited capacity, upon reaching which the enqueue operation will invoke the overflow handling strategy specified in the <computeroutput>OverflowStrategyT</computeroutput> template parameter to handle the situation. The library provides overflow handling strategies for most common cases: <computeroutput><link linkend="doxygen.sinks.classboost_1_1log_1_1sinks_1_1drop__on__overflow">drop_on_overflow</link></computeroutput> will silently discard the log record, and <computeroutput><link linkend="doxygen.sinks.classboost_1_1log_1_1sinks_1_1block__on__overflow">block_on_overflow</link></computeroutput> will put the enqueueing thread to wait until there is space in the queue.</para><para>The log record queue imposes no ordering over the queued elements aside from the order in which they are enqueued. </para></description><method-group name="protected member functions">
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1bounded__fifo__queue_1afa85a9e0e0ccfafd64c5d20b955c14e5"><purpose>Default constructor. </purpose></constructor>
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1bounded__fifo__queue_1a86864c6804c0747529816d968f6d3e73" specifiers="explicit"><template>
+          <template-type-parameter name="ArgsT"/>
+        </template><parameter name=""><paramtype>ArgsT const &amp;</paramtype></parameter><purpose>Initializing constructor. </purpose></constructor>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1bounded__fifo__queue_1a9a54e38b1cff223d6056578594b83d4e" name="enqueue"><type>void</type><parameter name="rec"><paramtype>record_view const &amp;</paramtype></parameter><purpose>Enqueues log record to the queue. </purpose></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1bounded__fifo__queue_1a6549b2faf18b29ba14531089640737d2" name="try_enqueue"><type>bool</type><parameter name="rec"><paramtype>record_view const &amp;</paramtype></parameter><purpose>Attempts to enqueue log record to the queue. </purpose></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1bounded__fifo__queue_1a543857c8b4ea961c73b73f9e746c953b" name="try_dequeue_ready"><type>bool</type><parameter name="rec"><paramtype>record_view &amp;</paramtype></parameter><purpose>Attempts to dequeue a log record ready for processing from the queue, does not block if the queue is empty. </purpose></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1bounded__fifo__queue_1a1f8c5e0a28aa8356f926527a87aa2790" name="try_dequeue"><type>bool</type><parameter name="rec"><paramtype>record_view &amp;</paramtype></parameter><purpose>Attempts to dequeue log record from the queue, does not block if the queue is empty. </purpose></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1bounded__fifo__queue_1a95984a3c5898a67b03d9907c587367ba" name="dequeue_ready"><type>bool</type><parameter name="rec"><paramtype>record_view &amp;</paramtype></parameter><purpose>Dequeues log record from the queue, blocks if the queue is empty. </purpose></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1bounded__fifo__queue_1a16d547e5c303d94a0f9a56bdf57c3b4e" name="interrupt_dequeue"><type>void</type><purpose>Wakes a thread possibly blocked in the <computeroutput>dequeue</computeroutput> method. </purpose></method>
+</method-group>
+</class></namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.sinks.bounded__ordering__queue_8hpp" name="boost/log/sinks/bounded_ordering_queue.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>06.01.2012</para>
+
+The header contains implementation of bounded ordering queueing strategy for the asynchronous sink frontend. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="sinks">
+<class id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1bounded__ordering__queue" name="bounded_ordering_queue"><template>
+      <template-type-parameter name="OrderT"/>
+      <template-nontype-parameter name="MaxQueueSizeV"><type>std::size_t</type></template-nontype-parameter>
+      <template-type-parameter name="OverflowStrategyT"/>
+    </template><inherit access="private">OverflowStrategyT</inherit><purpose>Bounded ordering log record queueing strategy. </purpose><description><para>The <computeroutput><link linkend="doxygen.sinks.classboost_1_1log_1_1sinks_1_1bounded__ordering__queue">bounded_ordering_queue</link></computeroutput> class is intended to be used with the <computeroutput><link linkend="doxygen.sinks.classboost_1_1log_1_1sinks_1_1asynchronous__sink">asynchronous_sink</link></computeroutput> frontend as a log record queueing strategy.</para><para>This strategy provides the following properties to the record queueing mechanism:</para><para><itemizedlist>
+<listitem><para>The queue has limited capacity specified by the <computeroutput>MaxQueueSizeV</computeroutput> template parameter. </para>
+</listitem>
+<listitem><para>Upon reaching the size limit, the queue invokes the overflow handling strategy specified in the <computeroutput>OverflowStrategyT</computeroutput> template parameter to handle the situation. The library provides overflow handling strategies for most common cases: <computeroutput><link linkend="doxygen.sinks.classboost_1_1log_1_1sinks_1_1drop__on__overflow">drop_on_overflow</link></computeroutput> will silently discard the log record, and <computeroutput><link linkend="doxygen.sinks.classboost_1_1log_1_1sinks_1_1block__on__overflow">block_on_overflow</link></computeroutput> will put the enqueueing thread to wait until there is space in the queue. </para>
+</listitem>
+<listitem><para>The queue has a fixed latency window. This means that each log record put into the queue will normally not be dequeued for a certain period of time. </para>
+</listitem>
+<listitem><para>The queue performs stable record ordering within the latency window. The ordering predicate can be specified in the <computeroutput>OrderT</computeroutput> template parameter. </para>
+</listitem>
+</itemizedlist>
+</para></description><method-group name="public member functions">
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1bounded__ordering__queue_1a60f374fd5c40691abc225f7cc1af9399" name="get_ordering_window" cv="const"><type>std::chrono::steady_clock::duration</type><description><para>Returns ordering window size specified during initialization </para></description></method>
+</method-group>
+<method-group name="public static functions">
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1bounded__ordering__queue_1ad09f8d853115298952f4be3c25fbc32f" name="get_default_ordering_window" cv="noexcept" specifiers="static"><type>constexpr std::chrono::steady_clock::duration</type><description><para>Returns default ordering window size. The default window size is specific to the operating system thread scheduling mechanism. </para></description></method>
+</method-group>
+<method-group name="protected member functions">
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1bounded__ordering__queue_1abb5e3a7dc910c85a7e2813301ba992f1" specifiers="explicit"><template>
+          <template-type-parameter name="ArgsT"/>
+        </template><parameter name="args"><paramtype>ArgsT const &amp;</paramtype></parameter><purpose>Initializing constructor. </purpose></constructor>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1bounded__ordering__queue_1a9a54e38b1cff223d6056578594b83d4e" name="enqueue"><type>void</type><parameter name="rec"><paramtype>record_view const &amp;</paramtype></parameter><purpose>Enqueues log record to the queue. </purpose></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1bounded__ordering__queue_1a6549b2faf18b29ba14531089640737d2" name="try_enqueue"><type>bool</type><parameter name="rec"><paramtype>record_view const &amp;</paramtype></parameter><purpose>Attempts to enqueue log record to the queue. </purpose></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1bounded__ordering__queue_1a543857c8b4ea961c73b73f9e746c953b" name="try_dequeue_ready"><type>bool</type><parameter name="rec"><paramtype>record_view &amp;</paramtype></parameter><purpose>Attempts to dequeue a log record ready for processing from the queue, does not block if the queue is empty. </purpose></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1bounded__ordering__queue_1a1f8c5e0a28aa8356f926527a87aa2790" name="try_dequeue"><type>bool</type><parameter name="rec"><paramtype>record_view &amp;</paramtype></parameter><purpose>Attempts to dequeue log record from the queue, does not block if the queue is empty. </purpose></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1bounded__ordering__queue_1a95984a3c5898a67b03d9907c587367ba" name="dequeue_ready"><type>bool</type><parameter name="rec"><paramtype>record_view &amp;</paramtype></parameter><purpose>Dequeues log record from the queue, blocks if the queue is empty. </purpose></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1bounded__ordering__queue_1a16d547e5c303d94a0f9a56bdf57c3b4e" name="interrupt_dequeue"><type>void</type><purpose>Wakes a thread possibly blocked in the <computeroutput>dequeue</computeroutput> method. </purpose></method>
+</method-group>
+</class></namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.sinks.debug__output__backend_8hpp" name="boost/log/sinks/debug_output_backend.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>07.11.2008</para>
+
+The header contains a logging sink backend that outputs log records to the debugger. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="sinks">
+<class id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__debug__output__backend" name="basic_debug_output_backend"><template>
+      <template-type-parameter name="CharT"/>
+    </template><inherit access="public">basic_formatted_sink_backend&lt; CharT, concurrent_feeding &gt;</inherit><purpose>An implementation of a logging sink backend that outputs to the debugger. </purpose><description><para>The sink uses Windows API in order to write log records as debug messages, if the application process is run under debugger. The sink backend also provides a specific filter that allows to check whether the debugger is available and thus elide unnecessary formatting. </para></description><typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__debug__output__backend_1af20a9965bfb788c1b76d2e9d180542c1" name="char_type"><purpose>Character type. </purpose><type>base_type::char_type</type></typedef>
+<typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__debug__output__backend_1a7085e94a35a28ab5acb94c624d563983" name="string_type"><purpose>String type to be used as a message text holder. </purpose><type>base_type::string_type</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__debug__output__backend_1a3191413baebd998695c40498cc298289"><description><para>Constructor. Initializes the sink backend. </para></description></constructor>
+<destructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__debug__output__backend_1ab20735d70e04c9967f2d656c34100846"><description><para>Destructor </para></description></destructor>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__debug__output__backend_1a16b43d6995295050650f5237b3f8adbf" name="consume"><type>void</type><parameter name="rec"><paramtype>record_view const &amp;</paramtype></parameter><parameter name="formatted_message"><paramtype>string_type const &amp;</paramtype></parameter><description><para>The method passes the formatted message to debugger </para></description></method>
+</method-group>
+</class><typedef id="doxygen.sinks.debug__output__backend_8hpp_1af7c4620b4ceb72b1b0b725665b8d330d" name="debug_output_backend"><purpose>Convenience typedef for narrow-character logging. </purpose><type><classname>basic_debug_output_backend</classname>&lt; char &gt;</type></typedef>
+<typedef id="doxygen.sinks.debug__output__backend_8hpp_1a2a7a8bff62edd4b6f529552f947e0bad" name="wdebug_output_backend"><purpose>Convenience typedef for wide-character logging. </purpose><type><classname>basic_debug_output_backend</classname>&lt; wchar_t &gt;</type></typedef>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.sinks.drop__on__overflow_8hpp" name="boost/log/sinks/drop_on_overflow.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>04.01.2012</para>
+
+The header contains implementation of <computeroutput>drop_on_overflow</computeroutput> strategy for handling queue overflows in bounded queues for the asynchronous sink frontend. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="sinks">
+<class id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1drop__on__overflow" name="drop_on_overflow"><purpose>Log record dropping strategy. </purpose><description><para>This strategy will cause log records to be discarded in case of queue overflow in bounded asynchronous sinks. It should not be used if losing log records is not acceptable. </para></description></class></namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.sinks.event__log__backend_8hpp" name="boost/log/sinks/event_log_backend.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>07.11.2008</para>
+
+The header contains a logging sink backend that uses Windows NT event log API for signaling application events. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="sinks">
+<class id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__event__log__backend" name="basic_event_log_backend"><template>
+      <template-type-parameter name="CharT"/>
+    </template><inherit access="public">basic_sink_backend&lt; synchronized_feeding &gt;</inherit><purpose>An implementation of a logging sink backend that emits events into Windows NT event log. </purpose><description><para>The sink uses Windows NT 5 (Windows 2000) and later event log API to emit events to an event log. The sink acts as an event source. Unlike <computeroutput><link linkend="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__simple__event__log__backend">basic_simple_event_log_backend</link></computeroutput>, this sink backend allows users to specify the custom event message file and supports mapping attribute values onto several insertion strings. Although it requires considerably more scaffolding than the simple backend, this allows to support localizable event descriptions.</para><para>Besides the file name of the module with event resources, the backend provides the following customizations: <itemizedlist>
+<listitem><para>Remote server UNC address, log name and source name. These parameters have similar meaning to <computeroutput><link linkend="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__simple__event__log__backend">basic_simple_event_log_backend</link></computeroutput>. </para>
+</listitem>
+<listitem><para>Event type and category mappings. These are function object that allow to map attribute values to the according event parameters. One can use mappings in the <computeroutput>event_log</computeroutput> namespace. </para>
+</listitem>
+<listitem><para>Event composer. This function object extracts event identifier and formats string insertions, that will be used by the API to compose the final event message text. </para>
+</listitem>
+</itemizedlist>
+</para></description><typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__event__log__backend_1ac300472e15c13f0e7c25cec82c665240" name="char_type"><purpose>Character type. </purpose><type>CharT</type></typedef>
+<typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__event__log__backend_1a881bde00510e3840918efc9a3058056c" name="string_type"><purpose>String type. </purpose><type>std::basic_string&lt; char_type &gt;</type></typedef>
+<typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__event__log__backend_1a9fe90f97c3a0a552b2065258f9cc7cc1" name="insertion_list"><purpose>Type of the composed insertions list. </purpose><type>std::vector&lt; string_type &gt;</type></typedef>
+<typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__event__log__backend_1a137fb02cabffe848878638a50bcd2d0a" name="event_type_mapper_type"><purpose>Mapper type for the event type. </purpose><type><emphasis>unspecified</emphasis></type></typedef>
+<typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__event__log__backend_1a80a03eb7e333f15f5bcb5e1dbceef164" name="event_category_mapper_type"><purpose>Mapper type for the event category. </purpose><type><emphasis>unspecified</emphasis></type></typedef>
+<typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__event__log__backend_1af8eb100588846b65110ed3243f575818" name="event_composer_type"><purpose>Event composer type. </purpose><type><emphasis>unspecified</emphasis></type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__event__log__backend_1a2dbb9b450498110de732f2ede2984e0d" specifiers="explicit"><template>
+          <template-type-parameter name="T"/>
+        </template><parameter name="message_file_name"><paramtype>std::basic_string&lt; T &gt; const &amp;</paramtype></parameter><description><para>Constructor. Registers event source with name based on the application executable file name in the Application log. If such a registration is already present, it is not overridden. </para></description></constructor>
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__event__log__backend_1a017f96aede21964873952c6d4d49804e" specifiers="explicit"><parameter name="message_file_name"><paramtype>filesystem::path const &amp;</paramtype></parameter><description><para>Constructor. Registers event source with name based on the application executable file name in the Application log. If such a registration is already present, it is not overridden. </para></description></constructor>
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__event__log__backend_1a451d3546588773e4eb07c394aae7b7af" specifiers="explicit"><template>
+          <template-nontype-parameter name="ArgsT"><type>typename...</type></template-nontype-parameter>
+        </template><parameter name="args"><paramtype>ArgsT... const &amp;</paramtype><description><para>A set of named parameters. </para></description></parameter><description><para>Constructor. Registers event log source with the specified parameters. The following named parameters are supported:</para><para><itemizedlist>
+<listitem><para><computeroutput>message_file</computeroutput> - Specifies the file name that contains resources that describe events and categories. This parameter is mandatory unless <computeroutput>registration</computeroutput> is <computeroutput>never</computeroutput>. </para>
+</listitem>
+<listitem><para><computeroutput>target</computeroutput> - Specifies an UNC path to the remote server to which log records should be sent to. The local machine will be used to process log records, if not specified. </para>
+</listitem>
+<listitem><para><computeroutput>log_name</computeroutput> - Specifies the log in which the source should be registered. The result of <computeroutput>get_default_log_name</computeroutput> is used, if the parameter is not specified. </para>
+</listitem>
+<listitem><para><computeroutput>log_source</computeroutput> - Specifies the source name. The result of <computeroutput>get_default_source_name</computeroutput> is used, if the parameter is not specified. </para>
+</listitem>
+<listitem><para><computeroutput>registration</computeroutput> - Specifies the event source registration mode in the Windows registry. Can have values of the <computeroutput>registration_mode</computeroutput> enum. Default value: <computeroutput>on_demand</computeroutput>.</para>
+</listitem>
+</itemizedlist>
+
+</para></description></constructor>
+<destructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__event__log__backend_1af10106f357d123a39f833cc55f44b455"><description><para>Destructor. Unregisters event source. The log source description is not removed from the Windows registry. </para></description></destructor>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__event__log__backend_1a9ca429601b27dec1ab6883df593ed09f" name="consume"><type>void</type><parameter name="rec"><paramtype>record_view const &amp;</paramtype><description><para>Log record to consume </para></description></parameter><description><para>The method creates an event in the event log</para><para>
+</para></description></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__event__log__backend_1ac8f54a01360973a8e4ebff1fbd981cff" name="set_event_type_mapper"><type>void</type><parameter name="mapper"><paramtype>event_type_mapper_type const &amp;</paramtype></parameter><description><para>The method installs the function object that maps application severity levels to WinAPI event types </para></description></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__event__log__backend_1ad863d40ab625cd848640670408f1fff1" name="set_event_category_mapper"><type>void</type><parameter name="mapper"><paramtype>event_category_mapper_type const &amp;</paramtype></parameter><description><para>The method installs the function object that extracts event category from attribute values </para></description></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__event__log__backend_1a24356868719c2a357ba278a61542c33d" name="set_event_composer"><type>void</type><parameter name="composer"><paramtype>event_composer_type const &amp;</paramtype></parameter><description><para>The method installs the function object that extracts event identifier from the attributes and creates insertion strings that will replace placeholders in the event message. </para></description></method>
+</method-group>
+<method-group name="public static functions">
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__event__log__backend_1acc7ec5afe739a45d26f4946fcc8e6397" name="get_default_log_name" specifiers="static"><type>string_type</type><description><para>
+</para></description><returns><para>Default log name: Application </para>
+</returns></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__event__log__backend_1ac08e9d3ff804d0324f5f4f727d24999d" name="get_default_source_name" specifiers="static"><type>string_type</type><description><para>
+</para></description><returns><para>Default log source name that is based on the application executable file name and the sink name </para>
+</returns></method>
+</method-group>
+</class><class id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__simple__event__log__backend" name="basic_simple_event_log_backend"><template>
+      <template-type-parameter name="CharT"/>
+    </template><inherit access="public">basic_formatted_sink_backend&lt; CharT, concurrent_feeding &gt;</inherit><purpose>An implementation of a simple logging sink backend that emits events into Windows NT event log. </purpose><description><para>The sink uses Windows NT 5 (Windows 2000) and later event log API to emit events to an event log. The sink acts as an event source in terms of the API, it implements all needed resources and source registration in the Windows registry that is needed for the event delivery.</para><para>The backend performs message text formatting. The composed text is then passed as the first and only string parameter of the event. The resource embedded into the backend describes the event so that the parameter is inserted into the event description text, thus making it visible in the event log.</para><para>The backend allows to customize mapping of application severity levels to the native Windows event types. This allows to write portable code even if OS-specific sinks, such as this one, are used.</para><para><note><para>Since the backend registers itself into Windows registry as the resource file that contains event description, it is important to keep the library binary in a stable place of the filesystem. Otherwise Windows might not be able to load event resources from the library and display events correctly.</para>
+</note>
+<note><para>It is known that Windows is not able to find event resources in the application executable, which is linked against the static build of the library. Users are advised to use dynamic builds of the library to solve this problem. </para>
+</note>
+</para></description><typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__simple__event__log__backend_1af20a9965bfb788c1b76d2e9d180542c1" name="char_type"><purpose>Character type. </purpose><type>base_type::char_type</type></typedef>
+<typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__simple__event__log__backend_1a7085e94a35a28ab5acb94c624d563983" name="string_type"><purpose>String type to be used as a message text holder. </purpose><type>base_type::string_type</type></typedef>
+<typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__simple__event__log__backend_1a137fb02cabffe848878638a50bcd2d0a" name="event_type_mapper_type"><purpose>Mapper type for the event type. </purpose><type><emphasis>unspecified</emphasis></type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__simple__event__log__backend_1a1fa8ccc13f92617e85264f8ed3388c30"><description><para>Default constructor. Registers event source with name based on the application executable file name in the Application log. If such a registration is already present, it is not overridden. </para></description></constructor>
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__simple__event__log__backend_1ad4f8b1c09094458b18dd630f58d0d5a4" specifiers="explicit"><template>
+          <template-nontype-parameter name="ArgsT"><type>typename...</type></template-nontype-parameter>
+        </template><parameter name="args"><paramtype>ArgsT... const &amp;</paramtype><description><para>A set of named parameters. </para></description></parameter><description><para>Constructor. Registers event log source with the specified parameters. The following named parameters are supported:</para><para><itemizedlist>
+<listitem><para><computeroutput>target</computeroutput> - Specifies an UNC path to the remote server which log records should be sent to. The local machine will be used to process log records, if not specified. </para>
+</listitem>
+<listitem><para><computeroutput>log_name</computeroutput> - Specifies the log in which the source should be registered. The result of <computeroutput>get_default_log_name</computeroutput> is used, if the parameter is not specified. </para>
+</listitem>
+<listitem><para><computeroutput>log_source</computeroutput> - Specifies the source name. The result of <computeroutput>get_default_source_name</computeroutput> is used, if the parameter is not specified. </para>
+</listitem>
+<listitem><para><computeroutput>registration</computeroutput> - Specifies the event source registration mode in the Windows registry. Can have values of the <computeroutput>registration_mode</computeroutput> enum. Default value: <computeroutput>on_demand</computeroutput>.</para>
+</listitem>
+</itemizedlist>
+
+</para></description></constructor>
+<destructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__simple__event__log__backend_1a71f6c6f2ced8e30cf8f496b33c6c3414"><description><para>Destructor. Unregisters event source. The log source description is not removed from the Windows registry. </para></description></destructor>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__simple__event__log__backend_1ac8f54a01360973a8e4ebff1fbd981cff" name="set_event_type_mapper"><type>void</type><parameter name="mapper"><paramtype>event_type_mapper_type const &amp;</paramtype></parameter><description><para>The method installs the function object that maps application severity levels to WinAPI event types </para></description></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__simple__event__log__backend_1a16b43d6995295050650f5237b3f8adbf" name="consume"><type>void</type><parameter name="rec"><paramtype>record_view const &amp;</paramtype></parameter><parameter name="formatted_message"><paramtype>string_type const &amp;</paramtype></parameter><description><para>The method puts the formatted message to the event log </para></description></method>
+</method-group>
+<method-group name="public static functions">
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__simple__event__log__backend_1acc7ec5afe739a45d26f4946fcc8e6397" name="get_default_log_name" specifiers="static"><type>string_type</type><description><para>
+</para></description><returns><para>Default log name: Application </para>
+</returns></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__simple__event__log__backend_1ac08e9d3ff804d0324f5f4f727d24999d" name="get_default_source_name" specifiers="static"><type>string_type</type><description><para>
+</para></description><returns><para>Default log source name that is based on the application executable file name and the sink name </para>
+</returns></method>
+</method-group>
+</class><namespace name="event_log">
+<class id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1event__log_1_1basic__event__composer" name="basic_event_composer"><template>
+      <template-type-parameter name="CharT"/>
+    </template><purpose>An event composer. </purpose><description><para>This class is a function object that extracts event identifier from the attribute values set and formats insertion strings for the particular event. Each insertion string is formatted with a distinct formatter, which can be created just like regular sinks formatters.</para><para>Before using, the composer must be initialized with the following information: <itemizedlist>
+<listitem><para>Event identifier extraction logic. One can use <computeroutput>basic_direct_event_id_mapping</computeroutput> or <computeroutput>basic_custom_event_id_mapping</computeroutput> classes in order to create such extractor and pass it to the composer constructor. </para>
+</listitem>
+<listitem><para>Event identifiers and insertion string formatters. The composer provides the following syntax to provide this information:</para>
+</listitem>
+</itemizedlist>
+<programlisting language="c++"><link linkend="doxygen.sinks.event__log__backend_8hpp_1a5b7c3b024b9c92a40d05f19e8cab973d">event_composer</link> comp;
+comp[MY_EVENT_ID1] % formatter1 % ... % formatterN;
+comp[MY_EVENT_ID2] % formatter1 % ... % formatterN;
+...
+</programlisting></para><para>The event identifiers in square brackets are provided by the message compiler generated header (the actual names are specified in the .mc file). The formatters represent the insertion strings that will be used to replace placeholders in event messages, thus the number and the order of the formatters must correspond to the message definition. </para></description><typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1event__log_1_1basic__event__composer_1ac300472e15c13f0e7c25cec82c665240" name="char_type"><purpose>Character type. </purpose><type>CharT</type></typedef>
+<typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1event__log_1_1basic__event__composer_1a881bde00510e3840918efc9a3058056c" name="string_type"><purpose>String type to be used as a message text holder. </purpose><type>std::basic_string&lt; char_type &gt;</type></typedef>
+<typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1event__log_1_1basic__event__composer_1adb8e8d1a4028701290bc13fc4c20ac4c" name="event_id_mapper_type"><purpose>Event identifier mapper type. </purpose><type><emphasis>unspecified</emphasis></type></typedef>
+<typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1event__log_1_1basic__event__composer_1a02264e9c1d59126a6921765993f30d16" name="formatter_type"><purpose>Type of an insertion composer (a formatter) </purpose><type>basic_formatter&lt; char_type &gt;</type></typedef>
+<typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1event__log_1_1basic__event__composer_1a9fe90f97c3a0a552b2065258f9cc7cc1" name="insertion_list"><purpose>Type of the composed insertions list. </purpose><type>std::vector&lt; string_type &gt;</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1event__log_1_1basic__event__composer_1a4ed2cab928b8cd050e7233c929e2509e" specifiers="explicit"><parameter name="id_mapper"><paramtype>event_id_mapper_type const &amp;</paramtype><description><para>An event identifier mapping function that will be used to extract event ID from attribute values </para></description></parameter><description><para>Default constructor. Creates an empty map of events.</para><para>
+</para></description></constructor>
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1event__log_1_1basic__event__composer_1ae8559c94d128cbc348ff4ea53323ed26"><parameter name="that"><paramtype><classname>basic_event_composer</classname> const &amp;</paramtype></parameter><description><para>Copy constructor. Performs a deep copy of the object. </para></description></constructor>
+<destructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1event__log_1_1basic__event__composer_1aaea5d8f2575045ef430c044112ad3788"><description><para>Destructor </para></description></destructor>
+<copy-assignment id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1event__log_1_1basic__event__composer_1a57474de4126b322a6cf54ef329c6b39f"><type><classname>basic_event_composer</classname> &amp;</type><parameter name="that"><paramtype><classname>basic_event_composer</classname></paramtype></parameter><description><para>Assignment. Provides strong exception guarantee. </para></description></copy-assignment>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1event__log_1_1basic__event__composer_1a765be843bb5e1b6eb064c2507257dd62" name="swap"><type>void</type><parameter name="that"><paramtype><classname>basic_event_composer</classname> &amp;</paramtype></parameter><description><para>Swaps <computeroutput>*this</computeroutput> and <computeroutput>that</computeroutput> objects. </para></description></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1event__log_1_1basic__event__composer_1a409ae5176c53367771ba33cc5192e35b" name="operator[]"><type>event_map_reference</type><parameter name="id"><paramtype>event_id</paramtype><description><para>Event identifier. </para></description></parameter><description><para>Initiates creation of a new event description. The result of the operator can be used to add formatters for insertion strings construction. The returned reference type is implementation detail.</para><para>
+</para></description></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1event__log_1_1basic__event__composer_1a7507e58ece79897e1047f9637ce8b12f" name="operator[]"><type>event_map_reference</type><parameter name="id"><paramtype>int</paramtype><description><para>Event identifier. </para></description></parameter><description><para>Initiates creation of a new event description. The result of the operator can be used to add formatters for insertion strings construction. The returned reference type is implementation detail.</para><para>
+</para></description></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1event__log_1_1basic__event__composer_1afcc62b5ef641d79969c4f2332187f169" name="operator()" cv="const"><type>event_id</type><parameter name="rec"><paramtype>record_view const &amp;</paramtype><description><para>Log record view </para></description></parameter><parameter name="insertions"><paramtype>insertion_list &amp;</paramtype><description><para>A sequence of formatted insertion strings </para></description></parameter><description><para>Event composition operator. Extracts an event identifier from the attribute values by calling event ID mapper. Then runs all formatters that were registered for the event with the extracted ID. The results of formatting are returned in the <emphasis>insertions</emphasis> parameter.</para><para>
+
+</para></description><returns><para>An event identifier that was extracted from <computeroutput>attributes</computeroutput> </para>
+</returns></method>
+</method-group>
+</class><class id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1event__log_1_1custom__event__category__mapping" name="custom_event_category_mapping"><template>
+      <template-type-parameter name="AttributeValueT"><default>int</default></template-type-parameter>
+    </template><inherit access="public">boost::log::sinks::basic_custom_mapping&lt; event_category, int &gt;</inherit><purpose>Customizable event category mapping. </purpose><description><para>The class allows to setup a custom mapping between an attribute and event categories. The mapping should be initialized similarly to the standard <computeroutput>map</computeroutput> container, by using indexing operator and assignment. </para></description><method-group name="public member functions">
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1event__log_1_1custom__event__category__mapping_1afd231dd1f560ab0b7012213432a08c4f" specifiers="explicit"><parameter name="name"><paramtype>attribute_name const &amp;</paramtype><description><para>Attribute name </para></description></parameter><description><para>Constructor</para><para>
+</para></description></constructor>
+</method-group>
+</class><class id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1event__log_1_1custom__event__id__mapping" name="custom_event_id_mapping"><template>
+      <template-type-parameter name="AttributeValueT"><default>int</default></template-type-parameter>
+    </template><inherit access="public">boost::log::sinks::basic_custom_mapping&lt; event_id, int &gt;</inherit><purpose>Customizable event ID mapping. </purpose><description><para>The class allows to setup a custom mapping between an attribute and event identifiers. The mapping should be initialized similarly to the standard <computeroutput>map</computeroutput> container, by using indexing operator and assignment. </para></description><method-group name="public member functions">
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1event__log_1_1custom__event__id__mapping_1a1e3aad9422c39b75e44c702e70cb0490" specifiers="explicit"><parameter name="name"><paramtype>attribute_name const &amp;</paramtype><description><para>Attribute name </para></description></parameter><description><para>Constructor</para><para>
+</para></description></constructor>
+</method-group>
+</class><class id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1event__log_1_1custom__event__type__mapping" name="custom_event_type_mapping"><template>
+      <template-type-parameter name="AttributeValueT"><default>int</default></template-type-parameter>
+    </template><inherit access="public">boost::log::sinks::basic_custom_mapping&lt; event_type, int &gt;</inherit><purpose>Customizable event type mapping. </purpose><description><para>The class allows to setup a custom mapping between an attribute and native event types. The mapping should be initialized similarly to the standard <computeroutput>map</computeroutput> container, by using indexing operator and assignment. </para></description><method-group name="public member functions">
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1event__log_1_1custom__event__type__mapping_1abb81d6e03e5e8d1a4984516431c1db10" specifiers="explicit"><parameter name="name"><paramtype>attribute_name const &amp;</paramtype><description><para>Attribute name </para></description></parameter><description><para>Constructor</para><para>
+</para></description></constructor>
+</method-group>
+</class><class id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1event__log_1_1direct__event__category__mapping" name="direct_event_category_mapping"><template>
+      <template-type-parameter name="AttributeValueT"><default>int</default></template-type-parameter>
+    </template><inherit access="public">boost::log::sinks::basic_direct_mapping&lt; event_category, int &gt;</inherit><purpose>Straightforward event category mapping. </purpose><description><para>This type of mapping assumes that attribute with a particular name always provides values that map directly onto the event categories. The mapping simply returns the extracted attribute value converted to the event category. </para></description><method-group name="public member functions">
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1event__log_1_1direct__event__category__mapping_1a7ca068b9e35eeceda01ec6f5597164e8" specifiers="explicit"><parameter name="name"><paramtype>attribute_name const &amp;</paramtype><description><para>Attribute name </para></description></parameter><description><para>Constructor</para><para>
+</para></description></constructor>
+</method-group>
+</class><class id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1event__log_1_1direct__event__id__mapping" name="direct_event_id_mapping"><template>
+      <template-type-parameter name="AttributeValueT"><default>int</default></template-type-parameter>
+    </template><inherit access="public">boost::log::sinks::basic_direct_mapping&lt; event_id, int &gt;</inherit><purpose>Straightforward event ID mapping. </purpose><description><para>This type of mapping assumes that attribute with a particular name always provides values that map directly onto the event identifiers. The mapping simply returns the extracted attribute value converted to the event ID. </para></description><method-group name="public member functions">
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1event__log_1_1direct__event__id__mapping_1a726c839f66ff92c4bebb264509c09acc" specifiers="explicit"><parameter name="name"><paramtype>attribute_name const &amp;</paramtype><description><para>Attribute name </para></description></parameter><description><para>Constructor</para><para>
+</para></description></constructor>
+</method-group>
+</class><class id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1event__log_1_1direct__event__type__mapping" name="direct_event_type_mapping"><template>
+      <template-type-parameter name="AttributeValueT"><default>int</default></template-type-parameter>
+    </template><inherit access="public">boost::log::sinks::basic_direct_mapping&lt; event_type, int &gt;</inherit><purpose>Straightforward event type mapping. </purpose><description><para>This type of mapping assumes that attribute with a particular name always provides values that map directly onto the native event types. The mapping simply returns the extracted attribute value converted to the native event type. </para></description><method-group name="public member functions">
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1event__log_1_1direct__event__type__mapping_1a83b924d0d48a928b9d7b7297f44cb684" specifiers="explicit"><parameter name="name"><paramtype>attribute_name const &amp;</paramtype><description><para>Attribute name </para></description></parameter><description><para>Constructor</para><para>
+</para></description></constructor>
+</method-group>
+</class><enum id="doxygen.sinks.event__log__backend_8hpp_1ab16ac99c8d27acdb8e803871defc5720" name="registration_mode"><enumvalue id="doxygen.sinks.event__log__backend_8hpp_1ab16ac99c8d27acdb8e803871defc5720ac2a0de66f834ea27d9de53c642bb54fa" name="never"><purpose>Never register event source, even if it's not registered. </purpose></enumvalue><enumvalue id="doxygen.sinks.event__log__backend_8hpp_1ab16ac99c8d27acdb8e803871defc5720ac1da97b98bb4120ae61789e1de7a6cb9" name="on_demand"><purpose>Register if the source is not registered yet. </purpose></enumvalue><enumvalue id="doxygen.sinks.event__log__backend_8hpp_1ab16ac99c8d27acdb8e803871defc5720a5bb156e1693a425de50a618be56bd0fc" name="forced"><purpose>Register always, event if the source is already registered. </purpose></enumvalue><purpose>Event log source registration modes. </purpose></enum>
+<typedef id="doxygen.sinks.event__log__backend_8hpp_1a5b7c3b024b9c92a40d05f19e8cab973d" name="event_composer"><purpose>Convenience typedef for narrow-character logging. </purpose><type><classname>basic_event_composer</classname>&lt; char &gt;</type></typedef>
+<typedef id="doxygen.sinks.event__log__backend_8hpp_1a5469296bcee9c5ecd877d18c70822123" name="wevent_composer"><purpose>Convenience typedef for wide-character logging. </purpose><type><classname>basic_event_composer</classname>&lt; wchar_t &gt;</type></typedef>
+
+
+
+</namespace>
+<typedef id="doxygen.sinks.event__log__backend_8hpp_1a1b40dd970e2b42e9338be1598a370ade" name="simple_event_log_backend"><purpose>Convenience typedef for narrow-character logging. </purpose><type><classname>basic_simple_event_log_backend</classname>&lt; char &gt;</type></typedef>
+<typedef id="doxygen.sinks.event__log__backend_8hpp_1ae24231be4ed52501accd3fd65e8119b9" name="event_log_backend"><purpose>Convenience typedef for narrow-character logging. </purpose><type><classname>basic_event_log_backend</classname>&lt; char &gt;</type></typedef>
+<typedef id="doxygen.sinks.event__log__backend_8hpp_1a39326af7df82b07aa32abb8b176de960" name="wsimple_event_log_backend"><purpose>Convenience typedef for wide-character logging. </purpose><type><classname>basic_simple_event_log_backend</classname>&lt; wchar_t &gt;</type></typedef>
+<typedef id="doxygen.sinks.event__log__backend_8hpp_1a466d33fb07b0568ccc1ee6c825f1cf7f" name="wevent_log_backend"><purpose>Convenience typedef for wide-character logging. </purpose><type><classname>basic_event_log_backend</classname>&lt; wchar_t &gt;</type></typedef>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.sinks.event__log__constants_8hpp" name="boost/log/sinks/event_log_constants.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>07.11.2008</para>
+
+The header contains definition of constants related to Windows NT Event Log API. The constants can be used in other places without the event log backend. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="sinks">
+<namespace name="event_log">
+<enum id="doxygen.sinks.event__log__constants_8hpp_1a430b444c74dd3fd1472a31714ec5f1ce" name="event_type"><enumvalue id="doxygen.sinks.event__log__constants_8hpp_1a430b444c74dd3fd1472a31714ec5f1ceab8916948582bbb4902d6ad269064f7ef" name="success"><default>0</default><purpose>Equivalent to EVENTLOG_SUCCESS. </purpose></enumvalue><enumvalue id="doxygen.sinks.event__log__constants_8hpp_1a430b444c74dd3fd1472a31714ec5f1ceaa4abb266e72efba828327b605b2ab0f4" name="info"><default>4</default><purpose>Equivalent to EVENTLOG_INFORMATION_TYPE. </purpose></enumvalue><enumvalue id="doxygen.sinks.event__log__constants_8hpp_1a430b444c74dd3fd1472a31714ec5f1cea8de9aef05fc85e519a0cfce33573f492" name="warning"><default>2</default><purpose>Equivalent to EVENTLOG_WARNING_TYPE. </purpose></enumvalue><enumvalue id="doxygen.sinks.event__log__constants_8hpp_1a430b444c74dd3fd1472a31714ec5f1cead606e435413ea0944dd00d49e901e4ed" name="error"><default>1</default><purpose>Equivalent to EVENTLOG_ERROR_TYPE. </purpose></enumvalue><purpose>Windows event types. </purpose></enum>
+<typedef id="doxygen.sinks.event__log__constants_8hpp_1a5388ea1851a0f54d0272612fd41c6e73" name="event_id"><purpose>A tagged integral type that represents event identifier for the Windows API. </purpose><type><emphasis>unspecified</emphasis></type></typedef>
+<typedef id="doxygen.sinks.event__log__constants_8hpp_1a1c5573041d1ff5abbae9916185c579b7" name="event_category"><purpose>A tagged integral type that represents event category for the Windows API. </purpose><type><emphasis>unspecified</emphasis></type></typedef>
+<function id="doxygen.sinks.event__log__constants_8hpp_1a81a690679e255816289332e8a4aa8e38" name="make_event_id"><type>event_id</type><parameter name="id"><paramtype>unsigned int</paramtype></parameter><description><para>The function constructs event identifier from an integer </para></description></function>
+<function id="doxygen.sinks.event__log__constants_8hpp_1a947c86b7dce895f5a604433cd74c7457" name="make_event_category"><type>event_category</type><parameter name="cat"><paramtype>unsigned short</paramtype></parameter><description><para>The function constructs event category from an integer </para></description></function>
+<function id="doxygen.sinks.event__log__constants_8hpp_1a5beae19544f1df8ed90c7db89b351653" name="make_event_type"><type>event_type</type><parameter name="lev"><paramtype>unsigned short</paramtype></parameter><description><para>The function constructs log record level from an integer </para></description></function>
+</namespace>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.sinks.frontend__requirements_8hpp" name="boost/log/sinks/frontend_requirements.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>22.04.2007</para>
+
+The header contains definition of requirement tags that sink backend may declare with regard to frontends. These requirements ensure that a backend will not be used with an incompatible frontend. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="sinks">
+<struct id="doxygen.sinks.structboost_1_1log_1_1sinks_1_1combine__requirements" name="combine_requirements"><template>
+      <template-nontype-parameter name="RequirementsT"><type>typename...</type></template-nontype-parameter>
+    </template><description><para>The metafunction combines multiple requirement tags into one type. The resulting type will satisfy all specified requirements (i.e. <computeroutput><link linkend="doxygen.sinks.structboost_1_1log_1_1sinks_1_1has__requirement">has_requirement</link></computeroutput> metafunction will return positive result). </para></description></struct><struct id="doxygen.sinks.structboost_1_1log_1_1sinks_1_1concurrent__feeding" name="concurrent_feeding"><inherit access="public">synchronized_feeding</inherit><description><para>The sink backend ensures all needed synchronization, it is capable to handle multithreaded calls </para></description></struct><struct id="doxygen.sinks.structboost_1_1log_1_1sinks_1_1flushing" name="flushing"><description><para>The sink backend supports flushing </para></description></struct><struct id="doxygen.sinks.structboost_1_1log_1_1sinks_1_1formatted__records" name="formatted_records"><description><para>The sink backend requires the frontend to perform log record formatting before feeding </para></description></struct><struct id="doxygen.sinks.structboost_1_1log_1_1sinks_1_1has__requirement" name="has_requirement"><template>
+      <template-type-parameter name="TestedT"/>
+      <template-type-parameter name="RequiredT"/>
+    </template><inherit access="public">is_base_of&lt; RequiredT, TestedT &gt;</inherit><description><para>A helper metafunction to check if a requirement is satisfied. The <computeroutput>TestedT</computeroutput> template argument should be the type combining one or several requirements and <computeroutput>RequiredT</computeroutput> is the requirement to test against. The metafunction will yield a positive result if <computeroutput>TestedT</computeroutput> supports <computeroutput>RequiredT</computeroutput>. </para></description></struct><struct id="doxygen.sinks.structboost_1_1log_1_1sinks_1_1synchronized__feeding" name="synchronized_feeding"><description><para>The sink backend expects pre-synchronized calls, all needed synchronization is implemented in the frontend (IOW, only one thread is feeding records to the backend concurrently, but it is possible for several threads to write sequentially). Note that if a frontend supports synchronized record feeding, it will also report capable of concurrent record feeding. </para></description></struct></namespace>
+</namespace>
+</namespace>
+<macro id="doxygen.sinks.frontend__requirements_8hpp_1adc4dfee65bec6d1237dbd0574ebef75b" name="BOOST_LOG_COMBINE_REQUIREMENTS_LIMIT"><purpose>The macro specifies the maximum number of requirements that can be combined with the <computeroutput>combine_requirements</computeroutput> metafunction. </purpose></macro>
+</header>
+<header id="doxygen.sinks.sink_8hpp" name="boost/log/sinks/sink.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>22.04.2007</para>
+
+The header contains an interface declaration for all sinks. This interface is used by the logging core to feed log records to sinks. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="sinks">
+<class id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1sink" name="sink"><purpose>A base class for a logging sink frontend. </purpose><typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1sink_1a32af3fdd05a92ab2837c3095539f9583" name="exception_handler_type"><purpose>An exception handler type. </purpose><type><emphasis>unspecified</emphasis></type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1sink_1adbc6a2adb9529a1b78bfbfbf4295938a" specifiers="explicit"><parameter name="cross_thread"><paramtype>bool</paramtype></parameter><description><para>Default constructor </para></description></constructor>
+<destructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1sink_1ac237f1a935b29c802f1a4fe28034bfc7" specifiers="virtual"><description><para>Virtual destructor </para></description></destructor>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1sink_1ae5761e0d0a778bb64b67d865fa9f9817" name="will_consume" cv="= 0" specifiers="virtual"><type>bool</type><parameter name="attributes"><paramtype>attribute_value_set const &amp;</paramtype><description><para>A set of attribute values of a logging record </para></description></parameter><description><para>The method returns <computeroutput>true</computeroutput> if no filter is set or the attribute values pass the filter</para><para>
+</para></description></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1sink_1a7b7682ceba0347d7601196ef53db0f28" name="consume" cv="= 0" specifiers="virtual"><type>void</type><parameter name="rec"><paramtype>record_view const &amp;</paramtype><description><para>Logging record to consume </para></description></parameter><description><para>The method puts logging record to the sink</para><para>
+</para></description></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1sink_1a9f6f654454833f7fa468a3ac803df80b" name="try_consume" specifiers="virtual"><type>bool</type><parameter name="rec"><paramtype>record_view const &amp;</paramtype><description><para>Logging record to consume </para></description></parameter><description><para>The method attempts to put logging record to the sink. The method may be used by the core in order to determine the most efficient order of sinks to feed records to in case of heavy contention. Sink implementations may implement try/backoff logic in order to improve overall logging throughput.</para><para>
+
+</para></description><returns><para><computeroutput>true</computeroutput>, if the record was consumed, <computeroutput>false</computeroutput>, if not. </para>
+</returns></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1sink_1a50ab71f4bc571f6e246b20db4b3dd131" name="flush" cv="= 0" specifiers="virtual"><type>void</type><description><para>The method performs flushing of any internal buffers that may hold log records. The method may take considerable time to complete and may block both the calling thread and threads attempting to put new records into the sink while this call is in progress. </para></description></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1sink_1a9abdb00a763609be6b8c6ffd00fe4b84" name="is_cross_thread" cv="const noexcept"><type>bool</type><description><para>The method indicates that the sink passes log records between different threads. This information is needed by the logging core to detach log records from all thread-specific resources before passing it to the sink. </para></description></method>
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1sink_1a7bfcd029cfad8d8601e4160933787181" cv="= delete"><parameter name=""><paramtype><classname>sink</classname> const &amp;</paramtype></parameter></constructor>
+<copy-assignment id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1sink_1afd8ff781302e01d5d9507f14a662b723" cv="= delete"><type><classname>sink</classname> &amp;</type><parameter name=""><paramtype><classname>sink</classname> const &amp;</paramtype></parameter></copy-assignment>
+</method-group>
+</class></namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.sinks.sync__frontend_8hpp" name="boost/log/sinks/sync_frontend.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>14.07.2009</para>
+
+The header contains implementation of synchronous sink frontend. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="sinks">
+<class id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1synchronous__sink" name="synchronous_sink"><template>
+      <template-type-parameter name="SinkBackendT"/>
+    </template><inherit access="public">basic_sink_frontend</inherit><purpose>Synchronous logging sink frontend. </purpose><description><para>The sink frontend serializes threads before passing logging records to the backend </para></description><typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1synchronous__sink_1a798f29dfded9d6f26d58668e46e61230" name="sink_backend_type"><purpose>Sink implementation type. </purpose><type>SinkBackendT</type></typedef>
+<typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1synchronous__sink_1af240d8277a1e51bd6c3edce8f2a6e2d9" name="locked_backend_ptr"><purpose>A pointer type that locks the backend until it's destroyed. </purpose><type>implementation_defined</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1synchronous__sink_1a538de3da70c33fdf153b656601253f23"><description><para>Default constructor. Constructs the sink backend instance. Requires the backend to be default-constructible. </para></description></constructor>
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1synchronous__sink_1a3b5b24f76c50fc09996cdb767ae21970" specifiers="explicit"><parameter name="backend"><paramtype>shared_ptr&lt; sink_backend_type &gt; const &amp;</paramtype><description><para>Pointer to the backend instance</para></description></parameter><description><para>Constructor attaches user-constructed backend instance</para><para>
+
+</para></description><requires><para><emphasis>backend</emphasis> is not <computeroutput>NULL</computeroutput>. </para>
+</requires></constructor>
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1synchronous__sink_1abb9d2c8d57b6b2bd0f97ed78eb6e31ab" specifiers="explicit"><template>
+          <template-nontype-parameter name="Args"><type>typename...</type></template-nontype-parameter>
+        </template><parameter name="args"><paramtype>Args &amp;&amp;...</paramtype></parameter><description><para>Constructor that passes arbitrary named parameters to the interprocess sink backend constructor. Refer to the backend documentation for the list of supported parameters. </para></description></constructor>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1synchronous__sink_1aba31dc7d1fb1b8f1887e56e758d86179" name="locked_backend"><type>locked_backend_ptr</type><description><para>Locking accessor to the attached backend </para></description></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1synchronous__sink_1a63d669c70929573ad62788f05b517066" name="consume" specifiers="virtual"><type>void</type><parameter name="rec"><paramtype>record_view const &amp;</paramtype></parameter><description><para>Passes the log record to the backend </para></description></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1synchronous__sink_1a808dea4797503243eac39dc3ce240d85" name="try_consume" specifiers="virtual"><type>bool</type><parameter name="rec"><paramtype>record_view const &amp;</paramtype></parameter><description><para>The method attempts to pass logging record to the backend </para></description></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1synchronous__sink_1add738545179bee255a31a63038bd150f" name="flush" specifiers="virtual"><type>void</type><description><para>The method performs flushing of any internal buffers that may hold log records. The method may take considerable time to complete and may block both the calling thread and threads attempting to put new records into the sink while this call is in progress. </para></description></method>
+</method-group>
+</class></namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.sinks.syslog__backend_8hpp" name="boost/log/sinks/syslog_backend.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>08.01.2008</para>
+
+The header contains implementation of a Syslog sink backend along with its setup facilities. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="sinks">
+<class id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1syslog__backend" name="syslog_backend"><inherit access="public">basic_formatted_sink_backend&lt; char &gt;</inherit><purpose>An implementation of a syslog sink backend. </purpose><description><para>The backend provides support for the syslog protocol, defined in RFC3164. The backend sends log records to a remote host via UDP. The host name can be specified by calling the <computeroutput>set_target_address</computeroutput> method. By default log records will be sent to localhost:514. The local address can be specified as well, by calling the <computeroutput>set_local_address</computeroutput> method. By default syslog packets will be sent from any local address available.</para><para>It is safe to create several sink backends with the same local addresses - the backends within the process will share the same socket. The same applies to different processes that use the syslog backends to send records from the same socket. However, it is not guaranteed to work if some third party facility is using the socket.</para><para>On systems with native syslog implementation it may be preferable to utilize the POSIX syslog API instead of direct socket management in order to bypass possible security limitations that may be in action. To do so one has to pass the <computeroutput>use_impl = native</computeroutput> to the backend constructor. Note, however, that in that case you will only have one chance to specify syslog facility and process identification string - on the first native syslog backend construction. Other native syslog backends will ignore these parameters. Obviously, the <computeroutput>set_local_address</computeroutput> and <computeroutput>set_target_address</computeroutput> methods have no effect for native backends. Using <computeroutput>use_impl = native</computeroutput> on platforms with no native support for POSIX syslog API will have no effect. </para></description><typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1syslog__backend_1af20a9965bfb788c1b76d2e9d180542c1" name="char_type"><purpose>Character type. </purpose><type>base_type::char_type</type></typedef>
+<typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1syslog__backend_1a7085e94a35a28ab5acb94c624d563983" name="string_type"><purpose>String type that is used to pass message test. </purpose><type>base_type::string_type</type></typedef>
+<typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1syslog__backend_1ad6097ed195875b797840d2ce9bfe1ce2" name="severity_mapper_type"><purpose>Syslog severity level mapper type. </purpose><type><emphasis>unspecified</emphasis></type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1syslog__backend_1a4b607135ae18307432c782a750c487fc"><description><para>Constructor. Creates a UDP socket-based backend with <computeroutput><link linkend="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034a04981b8c09a50ccfb1d92fc11b81c36a">syslog::user</link></computeroutput> facility code. IPv4 protocol will be used. </para></description></constructor>
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1syslog__backend_1ad2808290d5d32c8f899af08c1d46712e" specifiers="explicit"><template>
+          <template-nontype-parameter name="ArgsT"><type>typename...</type></template-nontype-parameter>
+        </template><parameter name="args"><paramtype>ArgsT... const &amp;</paramtype></parameter><description><para>Constructor. Creates a sink backend with the specified named parameters. The following named parameters are supported:</para><para><itemizedlist>
+<listitem><para><computeroutput>facility</computeroutput> - Specifies the facility code. If not specified, <computeroutput><link linkend="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034a04981b8c09a50ccfb1d92fc11b81c36a">syslog::user</link></computeroutput> will be used. </para>
+</listitem>
+<listitem><para><computeroutput>use_impl</computeroutput> - Specifies the backend implementation. Can be one of: </para>
+</listitem>
+<listitem><para><computeroutput>native</computeroutput> - Use the native syslog API, if available. If no native API is available, it is equivalent to <computeroutput>udp_socket_based</computeroutput>. </para>
+</listitem>
+<listitem><para><computeroutput>udp_socket_based</computeroutput> - Use the UDP socket-based implementation, conforming to RFC3164 protocol specification. This is the default. </para>
+</listitem>
+<listitem><para><computeroutput>ip_version</computeroutput> - Specifies IP protocol version to use, in case if socket-based implementation is used. Can be either <computeroutput>v4</computeroutput> (the default one) or <computeroutput>v6</computeroutput>. </para>
+</listitem>
+<listitem><para><computeroutput>ident</computeroutput> - Process identification string. This parameter is only supported by native syslog implementation. </para>
+</listitem>
+</itemizedlist>
+</para></description></constructor>
+<destructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1syslog__backend_1a3b974d6372f418d67597bf0e289a0a01"><description><para>Destructor </para></description></destructor>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1syslog__backend_1aa3567dc21e713d1554e59abd28e3c81f" name="set_severity_mapper"><type>void</type><parameter name="mapper"><paramtype>severity_mapper_type const &amp;</paramtype></parameter><description><para>The method installs the function object that maps application severity levels to syslog levels </para></description></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1syslog__backend_1adb2e9125d7f95c520b7fa3f2d9654386" name="set_local_address"><type>void</type><parameter name="addr"><paramtype>std::string const &amp;</paramtype><description><para>The local address </para></description></parameter><parameter name="port"><paramtype>unsigned short</paramtype><default>514</default><description><para>The local port number </para></description></parameter><description><para>The method sets the local host name which log records will be sent from. The host name is resolved to obtain the final IP address.</para><para><note><para>Does not have effect if the backend was constructed to use native syslog API</para>
+</note>
+
+</para></description></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1syslog__backend_1a0a6a700b7f36578bbbd96916cf50f81e" name="set_local_address"><type>void</type><parameter name="addr"><paramtype>boost::asio::ip::address const &amp;</paramtype><description><para>The local address </para></description></parameter><parameter name="port"><paramtype>unsigned short</paramtype><default>514</default><description><para>The local port number </para></description></parameter><description><para>The method sets the local address which log records will be sent from.</para><para><note><para>Does not have effect if the backend was constructed to use native syslog API</para>
+</note>
+
+</para></description></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1syslog__backend_1a8a67226dc969adec607c335cbb330a3a" name="set_target_address"><type>void</type><parameter name="addr"><paramtype>std::string const &amp;</paramtype><description><para>The remote host address </para></description></parameter><parameter name="port"><paramtype>unsigned short</paramtype><default>514</default><description><para>The port number on the remote host </para></description></parameter><description><para>The method sets the remote host name where log records will be sent to. The host name is resolved to obtain the final IP address.</para><para><note><para>Does not have effect if the backend was constructed to use native syslog API</para>
+</note>
+
+</para></description></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1syslog__backend_1a317b4abba86ffa2049f2820c0602e950" name="set_target_address"><type>void</type><parameter name="addr"><paramtype>boost::asio::ip::address const &amp;</paramtype><description><para>The remote host address </para></description></parameter><parameter name="port"><paramtype>unsigned short</paramtype><default>514</default><description><para>The port number on the remote host </para></description></parameter><description><para>The method sets the address of the remote host where log records will be sent to.</para><para><note><para>Does not have effect if the backend was constructed to use native syslog API</para>
+</note>
+
+</para></description></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1syslog__backend_1a16b43d6995295050650f5237b3f8adbf" name="consume"><type>void</type><parameter name="rec"><paramtype>record_view const &amp;</paramtype></parameter><parameter name="formatted_message"><paramtype>string_type const &amp;</paramtype></parameter><description><para>The method passes the formatted message to the syslog API or sends to a syslog server </para></description></method>
+</method-group>
+</class><namespace name="syslog">
+<class id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1syslog_1_1custom__severity__mapping" name="custom_severity_mapping"><template>
+      <template-type-parameter name="AttributeValueT"><default>int</default></template-type-parameter>
+    </template><inherit access="public">boost::log::sinks::basic_custom_mapping&lt; level, int &gt;</inherit><purpose>Customizable severity level mapping. </purpose><description><para>The class allows to setup a custom mapping between an attribute and Syslog severity levels. The mapping should be initialized similarly to the standard <computeroutput>map</computeroutput> container, by using indexing operator and assignment. </para></description><method-group name="public member functions">
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1syslog_1_1custom__severity__mapping_1aaf1af8cdcb23e71f7eee52ecd4498afb" specifiers="explicit"><parameter name="name"><paramtype>attribute_name const &amp;</paramtype><description><para>Attribute name </para></description></parameter><description><para>Constructor</para><para>
+</para></description></constructor>
+</method-group>
+</class><class id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1syslog_1_1direct__severity__mapping" name="direct_severity_mapping"><template>
+      <template-type-parameter name="AttributeValueT"><default>int</default></template-type-parameter>
+    </template><inherit access="public">boost::log::sinks::basic_direct_mapping&lt; level, int &gt;</inherit><purpose>Straightforward severity level mapping. </purpose><description><para>This type of mapping assumes that attribute with a particular name always provides values that map directly onto the Syslog levels. The mapping simply returns the extracted attribute value converted to the Syslog severity level. </para></description><method-group name="public member functions">
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1syslog_1_1direct__severity__mapping_1a992f4d05567bdc5da07af9233a8ca3ce" specifiers="explicit"><parameter name="name"><paramtype>attribute_name const &amp;</paramtype><description><para>Attribute name </para></description></parameter><description><para>Constructor</para><para>
+</para></description></constructor>
+</method-group>
+</class><enum id="doxygen.sinks.syslog__backend_8hpp_1a56348fdbec2d3916336e14814c934da6" name="impl_types"><enumvalue id="doxygen.sinks.syslog__backend_8hpp_1a56348fdbec2d3916336e14814c934da6a68b9b7d7ecabc154b06307bb01caa288" name="native"><default>0</default><purpose>Use native syslog API. </purpose></enumvalue><enumvalue id="doxygen.sinks.syslog__backend_8hpp_1a56348fdbec2d3916336e14814c934da6ae631e8282c5ff71544a01e25814b8fda" name="udp_socket_based"><default>1</default><purpose>Use UDP sockets, according to RFC3164. </purpose></enumvalue><purpose>The enumeration defined the possible implementation types for the syslog backend. </purpose></enum>
+
+
+</namespace>
+<enum id="doxygen.sinks.syslog__backend_8hpp_1a5fe3ade3ee10b02a11ce0b3cb2caf13d" name="ip_versions"><enumvalue id="doxygen.sinks.syslog__backend_8hpp_1a5fe3ade3ee10b02a11ce0b3cb2caf13da80d0d0a762bdcc2c824db5446254dcbe" name="v4"/><enumvalue id="doxygen.sinks.syslog__backend_8hpp_1a5fe3ade3ee10b02a11ce0b3cb2caf13daab7db506bdc8ad12513ed0f249b5e3dc" name="v6"/><purpose>Supported IP protocol versions. </purpose></enum>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.sinks.syslog__constants_8hpp" name="boost/log/sinks/syslog_constants.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>08.01.2008</para>
+
+The header contains definition of constants related to Syslog API. The constants can be used in other places without the Syslog backend. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="sinks">
+<namespace name="syslog">
+<enum id="doxygen.sinks.syslog__constants_8hpp_1afde8e18a788ccc92fc61cab298bca7e3" name="level"><enumvalue id="doxygen.sinks.syslog__constants_8hpp_1afde8e18a788ccc92fc61cab298bca7e3ac9edc1ee12932b24002c207707b062c1" name="emergency"><default>0</default><purpose>Equivalent to LOG_EMERG in syslog API. </purpose></enumvalue><enumvalue id="doxygen.sinks.syslog__constants_8hpp_1afde8e18a788ccc92fc61cab298bca7e3adb24f4ef34c1115e9fb2a696d98a51de" name="alert"><default>1</default><purpose>Equivalent to LOG_ALERT in syslog API. </purpose></enumvalue><enumvalue id="doxygen.sinks.syslog__constants_8hpp_1afde8e18a788ccc92fc61cab298bca7e3a5fe0ea375791d13455a34f3d40dc9c7d" name="critical"><default>2</default><purpose>Equivalent to LOG_CRIT in syslog API. </purpose></enumvalue><enumvalue id="doxygen.sinks.syslog__constants_8hpp_1afde8e18a788ccc92fc61cab298bca7e3ad606e435413ea0944dd00d49e901e4ed" name="error"><default>3</default><purpose>Equivalent to LOG_ERROR in syslog API. </purpose></enumvalue><enumvalue id="doxygen.sinks.syslog__constants_8hpp_1afde8e18a788ccc92fc61cab298bca7e3a8de9aef05fc85e519a0cfce33573f492" name="warning"><default>4</default><purpose>Equivalent to LOG_WARNING in syslog API. </purpose></enumvalue><enumvalue id="doxygen.sinks.syslog__constants_8hpp_1afde8e18a788ccc92fc61cab298bca7e3a1947748888b7be287264b77a59951f5d" name="notice"><default>5</default><purpose>Equivalent to LOG_NOTICE in syslog API. </purpose></enumvalue><enumvalue id="doxygen.sinks.syslog__constants_8hpp_1afde8e18a788ccc92fc61cab298bca7e3aa4abb266e72efba828327b605b2ab0f4" name="info"><default>6</default><purpose>Equivalent to LOG_INFO in syslog API. </purpose></enumvalue><enumvalue id="doxygen.sinks.syslog__constants_8hpp_1afde8e18a788ccc92fc61cab298bca7e3a5be0fd270d9cbf6a0b7445db855089da" name="debug"><default>7</default><purpose>Equivalent to LOG_DEBUG in syslog API. </purpose></enumvalue><purpose>Syslog record levels. </purpose></enum>
+<enum id="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034" name="facility"><enumvalue id="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034adb0339d028e596254368234e5ab09f9d" name="kernel"><default>0 * 8</default><purpose>Kernel messages. </purpose></enumvalue><enumvalue id="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034a04981b8c09a50ccfb1d92fc11b81c36a" name="user"><default>1 * 8</default><purpose>User-level messages. Equivalent to LOG_USER in syslog API. </purpose></enumvalue><enumvalue id="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034ae7060a3ca5e4637bfcb304db44012101" name="mail"><default>2 * 8</default><purpose>Mail system messages. Equivalent to LOG_MAIL in syslog API. </purpose></enumvalue><enumvalue id="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034a700c216dcac48ce0f2e0459ad2a88e22" name="daemon"><default>3 * 8</default><purpose>System daemons. Equivalent to LOG_DAEMON in syslog API. </purpose></enumvalue><enumvalue id="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034a82ee35f30a15d068fb0f4d031d0a4b76" name="security0"><default>4 * 8</default><purpose>Security/authorization messages. </purpose></enumvalue><enumvalue id="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034a2d00b28f05e37b0f13dd2ab25fb47f91" name="syslogd"><default>5 * 8</default><purpose>Messages from the syslogd daemon. Equivalent to LOG_SYSLOG in syslog API. </purpose></enumvalue><enumvalue id="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034acf69e726657f4d37a69cd39c30919fc2" name="printer"><default>6 * 8</default><purpose>Line printer subsystem. Equivalent to LOG_LPR in syslog API. </purpose></enumvalue><enumvalue id="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034ad300be7d4f777da5d44f24467ac44418" name="news"><default>7 * 8</default><purpose>Network news subsystem. Equivalent to LOG_NEWS in syslog API. </purpose></enumvalue><enumvalue id="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034ace54a7d2a66edc2f3acec4f985b97fab" name="uucp"><default>8 * 8</default><purpose>Messages from UUCP subsystem. Equivalent to LOG_UUCP in syslog API. </purpose></enumvalue><enumvalue id="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034a2a10bd87a964d330a9cad5a4f5d865f6" name="clock0"><default>9 * 8</default><purpose>Messages from the clock daemon. </purpose></enumvalue><enumvalue id="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034a9d280237279d67dccb975bfb9df4f1d4" name="security1"><default>10 * 8</default><purpose>Security/authorization messages. </purpose></enumvalue><enumvalue id="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034aecc43cd323ac65407c44744a943837bf" name="ftp"><default>11 * 8</default><purpose>Messages from FTP daemon. </purpose></enumvalue><enumvalue id="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034a9e427ab9f4fdbd9f9d097d75c6e3e9b2" name="ntp"><default>12 * 8</default><purpose>Messages from NTP daemon. </purpose></enumvalue><enumvalue id="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034a9faf6cb1da110c8705bc8b263c286550" name="log_audit"><default>13 * 8</default><purpose>Security/authorization messages. </purpose></enumvalue><enumvalue id="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034a63803aa40aac08f9a82d3c07495ea941" name="log_alert"><default>14 * 8</default><purpose>Security/authorization messages. </purpose></enumvalue><enumvalue id="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034a1da825a89fef0ac39868a14d3a9a1ff2" name="clock1"><default>15 * 8</default><purpose>Messages from the clock daemon. </purpose></enumvalue><enumvalue id="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034a7fd41526445913c071c50b71252d328b" name="local0"><default>16 * 8</default><purpose>For local use. Equivalent to LOG_LOCAL0 in syslog API. </purpose></enumvalue><enumvalue id="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034a5d0b7986f2059a3c756785a85c33c44e" name="local1"><default>17 * 8</default><purpose>For local use. Equivalent to LOG_LOCAL1 in syslog API. </purpose></enumvalue><enumvalue id="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034ae1d7bf272b9fa17aa15e7e08702b3ff3" name="local2"><default>18 * 8</default><purpose>For local use. Equivalent to LOG_LOCAL2 in syslog API. </purpose></enumvalue><enumvalue id="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034a7cc6527b33d416722b689fd44f204c20" name="local3"><default>19 * 8</default><purpose>For local use. Equivalent to LOG_LOCAL3 in syslog API. </purpose></enumvalue><enumvalue id="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034ac3389441a1325a01cbb5e14834d7c15b" name="local4"><default>20 * 8</default><purpose>For local use. Equivalent to LOG_LOCAL4 in syslog API. </purpose></enumvalue><enumvalue id="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034af70d33a930539558d4b115897d1b774c" name="local5"><default>21 * 8</default><purpose>For local use. Equivalent to LOG_LOCAL5 in syslog API. </purpose></enumvalue><enumvalue id="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034a2c18bf27ec0af909f18d2f13d40e3020" name="local6"><default>22 * 8</default><purpose>For local use. Equivalent to LOG_LOCAL6 in syslog API. </purpose></enumvalue><enumvalue id="doxygen.sinks.syslog__constants_8hpp_1af697ee8ae2cdfc9f5279f569c2859034a57d200597c422f245da175cda0bf0e61" name="local7"><default>23 * 8</default><purpose>For local use. Equivalent to LOG_LOCAL7 in syslog API. </purpose></enumvalue><purpose>Syslog facility codes. </purpose></enum>
+<function id="doxygen.sinks.syslog__constants_8hpp_1ad65c5f7c25098d73ccb02f7aef25185f" name="make_level"><type>level</type><parameter name="lev"><paramtype>int</paramtype></parameter><description><para>The function constructs log record level from an integer </para></description></function>
+<function id="doxygen.sinks.syslog__constants_8hpp_1ae9e8363fc49057bb90f93aeaec1f9bc7" name="make_facility"><type>facility</type><parameter name="fac"><paramtype>int</paramtype></parameter><description><para>The function constructs log source facility from an integer </para></description></function>
+</namespace>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.sinks.text__file__backend_8hpp" name="boost/log/sinks/text_file_backend.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>09.06.2009</para>
+
+The header contains implementation of a text file sink backend. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="sinks">
+<class id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1text__file__backend" name="text_file_backend"><inherit access="public">basic_formatted_sink_backend&lt; char, combine_requirements&lt; synchronized_feeding, flushing &gt;::type &gt;</inherit><purpose>An implementation of a text file logging sink backend. </purpose><description><para>The sink backend puts formatted log records to a text file. The sink supports file rotation and advanced file control, such as size and file count restriction. </para></description><typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1text__file__backend_1af20a9965bfb788c1b76d2e9d180542c1" name="char_type"><purpose>Character type. </purpose><type>base_type::char_type</type></typedef>
+<typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1text__file__backend_1a7085e94a35a28ab5acb94c624d563983" name="string_type"><purpose>String type to be used as a message text holder. </purpose><type>base_type::string_type</type></typedef>
+<typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1text__file__backend_1a3e4bb2e0bef42bcf2817780dc9bb37fd" name="stream_type"><purpose>Stream type. </purpose><type>std::basic_ostream&lt; char_type &gt;</type></typedef>
+<typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1text__file__backend_1a60a94c824ab5038ba6824e409d343e52" name="open_handler_type"><purpose>File open handler. </purpose><type><emphasis>unspecified</emphasis></type></typedef>
+<typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1text__file__backend_1a484d73cfda2833d23e0cf7845bbc4b7a" name="close_handler_type"><purpose>File close handler. </purpose><type><emphasis>unspecified</emphasis></type></typedef>
+<typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1text__file__backend_1a28b731b1e54e09d43d04ce6320d7adc2" name="time_based_rotation_predicate"><purpose>Predicate that defines the time-based condition for file rotation. </purpose><type><emphasis>unspecified</emphasis></type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1text__file__backend_1a3624264fe83cf282172689f43e38905a"><description><para>Default constructor. The constructed sink backend uses default values of all the parameters. </para></description></constructor>
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1text__file__backend_1aa0421ba13fa5e0c5842f05e9072d91aa" specifiers="explicit"><template>
+          <template-nontype-parameter name="ArgsT"><type>typename...</type></template-nontype-parameter>
+        </template><parameter name="args"><paramtype>ArgsT... const &amp;</paramtype></parameter><description><para>Constructor. Creates a sink backend with the specified named parameters. The following named parameters are supported:</para><para><itemizedlist>
+<listitem><para><computeroutput>file_name</computeroutput> - Specifies the active file name pattern where logs are actually written to. The pattern may contain directory and file name portions, but only the file name may contain placeholders. The backend supports Boost.DateTime placeholders for injecting current time and date into the file name. Also, an additional N placeholder is supported, it will be replaced with an integral increasing file counter. The placeholder may also contain width specification in the printf-compatible form (e.g. %5N). The printed file counter will always be zero-filled. If <computeroutput>file_name</computeroutput> is not specified, pattern "%5N.log" will be used. </para>
+</listitem>
+<listitem><para><computeroutput>target_file_name</computeroutput> - Specifies the target file name pattern to use to rename the log file on rotation, before passing it to the file collector. The pattern may contain the same placeholders as the <computeroutput>file_name</computeroutput> parameter. By default, no renaming is done, i.e. the written log file keeps its name according to <computeroutput>file_name</computeroutput>. </para>
+</listitem>
+<listitem><para><computeroutput>open_mode</computeroutput> - File open mode. The mode should be presented in form of mask compatible to <computeroutput>std::ios_base::openmode</computeroutput>. If not specified, <computeroutput>trunc | out</computeroutput> will be used. </para>
+</listitem>
+<listitem><para><computeroutput>rotation_size</computeroutput> - Specifies the approximate size, in characters written, of the temporary file upon which the file is passed to the file collector. Note the size does not count any possible character conversions that may take place during writing to the file. If not specified, the file won't be rotated upon reaching any size. </para>
+</listitem>
+<listitem><para><computeroutput>time_based_rotation</computeroutput> - Specifies the predicate for time-based file rotation. No time-based file rotations will be performed, if not specified. </para>
+</listitem>
+<listitem><para><computeroutput>enable_final_rotation</computeroutput> - Specifies a flag, whether or not perform log file rotation on sink backend destruction. By default, is <computeroutput>true</computeroutput>. </para>
+</listitem>
+<listitem><para><computeroutput>auto_flush</computeroutput> - Specifies a flag, whether or not to automatically flush the file after each written log record. By default, is <computeroutput>false</computeroutput>. </para>
+</listitem>
+<listitem><para><computeroutput>auto_newline_mode</computeroutput> - Specifies automatic trailing newline insertion mode. Must be a value of the <computeroutput>auto_newline_mode</computeroutput> enum. By default, is <computeroutput><link linkend="doxygen.sinks.auto__newline__mode_8hpp_1a32ab4e8646a4496f00cc981ffe0ad67aabfae5153f2ddc8e28d875854c03bc5d4">auto_newline_mode::insert_if_missing</link></computeroutput>.</para>
+</listitem>
+</itemizedlist>
+<note><para>Read the caution note regarding file name pattern in the <computeroutput><link linkend="doxygen.sinks.structboost_1_1log_1_1sinks_1_1file_1_1collector_1a5dd0cebc024f917937f9b19faab9cb68">sinks::file::collector::scan_for_files</link></computeroutput> documentation. </para>
+</note>
+</para></description></constructor>
+<destructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1text__file__backend_1ad68c9f75c290950da128921281a0a82c"><description><para>Destructor </para></description></destructor>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1text__file__backend_1a4a0035625a370b4e9a3bb4a481f3de94" name="set_file_name_pattern"><type>void</type><template>
+          <template-type-parameter name="PathT"/>
+        </template><parameter name="pattern"><paramtype>PathT const &amp;</paramtype><description><para>The name pattern for the file being written. </para></description></parameter><description><para>The method sets the active file name wildcard for the files being written. The wildcard supports date and time injection into the file name.</para><para>
+</para></description></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1text__file__backend_1a5334bb4b53b57c01a31c105941a72ec3" name="set_target_file_name_pattern"><type>void</type><template>
+          <template-type-parameter name="PathT"/>
+        </template><parameter name="pattern"><paramtype>PathT const &amp;</paramtype><description><para>The name pattern for the file being rotated. </para></description></parameter><description><para>The method sets the target file name wildcard for the files being rotated. The wildcard supports date and time injection into the file name.</para><para>This pattern will be used when the log file is being rotated, to rename the just written log file (which has the name according to the pattern in the <computeroutput>file_name</computeroutput> constructor parameter or set by a call to <computeroutput>set_file_name_pattern</computeroutput>), just before passing the file to the file collector.</para><para>
+</para></description></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1text__file__backend_1a45d7dcd5d1511521548eba450ef38b43" name="set_open_mode"><type>void</type><parameter name="mode"><paramtype>std::ios_base::openmode</paramtype><description><para>File open mode </para></description></parameter><description><para>The method sets the file open mode</para><para>
+</para></description></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1text__file__backend_1afb892e22dee9634935fb8a58c5a7f9c7" name="set_file_collector"><type>void</type><parameter name="collector"><paramtype>shared_ptr&lt; <classname>file::collector</classname> &gt; const &amp;</paramtype><description><para>The file collector function object </para></description></parameter><description><para>The method sets the log file collector function. The function is called on file rotation and is being passed the written file name.</para><para>
+</para></description></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1text__file__backend_1a682b9f9ca630d4e576408f5dcdc55841" name="set_open_handler"><type>void</type><parameter name="handler"><paramtype>open_handler_type const &amp;</paramtype><description><para>The file open handler function object </para></description></parameter><description><para>The method sets file opening handler. The handler will be called every time the backend opens a new temporary file. The handler may write a header to the opened file in order to maintain file validity.</para><para>
+</para></description></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1text__file__backend_1a40d8ffe34ce5534deff3803e92ba850a" name="set_close_handler"><type>void</type><parameter name="handler"><paramtype>close_handler_type const &amp;</paramtype><description><para>The file close handler function object </para></description></parameter><description><para>The method sets file closing handler. The handler will be called every time the backend closes a temporary file. The handler may write a footer to the opened file in order to maintain file validity.</para><para>
+</para></description></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1text__file__backend_1a9a48d9504e35e5e5786918283649bf4d" name="set_rotation_size"><type>void</type><parameter name="size"><paramtype>uintmax_t</paramtype><description><para>The maximum file size, in characters. </para></description></parameter><description><para>The method sets maximum file size. When the size is reached, file rotation is performed.</para><para><note><para>The size does not count any possible character translations that may happen in the underlying API. This may result in greater actual sizes of the written files.</para>
+</note>
+
+</para></description></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1text__file__backend_1ac842637d850e4d1924218f300c883de8" name="set_time_based_rotation"><type>void</type><parameter name="predicate"><paramtype>time_based_rotation_predicate const &amp;</paramtype><description><para>The predicate that defines the time-based condition for file rotation. If empty, no time-based rotation will take place. </para></description></parameter><description><para>The method sets the predicate that defines the time-based condition for file rotation.</para><para><note><para>The rotation always occurs on writing a log record, so the rotation is not strictly bound to the specified condition.</para>
+</note>
+
+</para></description></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1text__file__backend_1aa9fd63978878ef58089f4678f5590862" name="enable_final_rotation"><type>void</type><parameter name="enable"><paramtype>bool</paramtype><description><para>The flag indicates whether the final rotation should be performed. </para></description></parameter><description><para>The method allows to enable or disable log file rotation on sink destruction.</para><para>By default the sink backend will rotate the log file, if it's been written to, on destruction.</para><para>
+</para></description></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1text__file__backend_1a6cb9f3c94da03b54958ac12ec7f328af" name="auto_flush"><type>void</type><parameter name="enable"><paramtype>bool</paramtype><default>true</default><description><para>The flag indicates whether the automatic buffer flush should be performed. </para></description></parameter><description><para>Sets the flag to automatically flush write buffers of the file being written after each log record.</para><para>
+</para></description></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1text__file__backend_1af79f470a9332176a5ee6189f34e6489b" name="set_auto_newline_mode"><type>void</type><parameter name="mode"><paramtype>auto_newline_mode</paramtype><description><para>The trailing newline insertion mode. </para></description></parameter><description><para>Selects whether a trailing newline should be automatically inserted after every log record. See <computeroutput>auto_newline_mode</computeroutput> description for the possible modes of operation.</para><para>
+</para></description></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1text__file__backend_1afbe8c42b6820ac03a3935424dd825454" name="get_current_file_name" cv="const"><type>filesystem::path</type><description><para>
+</para></description><returns><para>The name of the currently open log file. If no file is open, returns an empty path. </para>
+</returns></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1text__file__backend_1ada7817ca5be141a33186cca9996fe859" name="scan_for_files"><type>uintmax_t</type><parameter name="method"><paramtype>file::scan_method</paramtype><default>file::scan_matching</default><description><para>File scanning method </para></description></parameter><parameter name="update_counter"><paramtype>bool</paramtype><default>true</default><description><para>If <computeroutput>true</computeroutput> and <emphasis>method</emphasis> is <computeroutput>scan_matching</computeroutput>, the method attempts to update the internal file counter according to the found files. The counter is unaffected otherwise. </para></description></parameter><description><para>Performs scanning of the target directory for log files that may have been left from previous runs of the application. The found files are considered by the file collector as if they were rotated.</para><para>The file scan can be performed in two ways: either all files in the target directory will be considered as log files, or only those files that satisfy the target file name pattern. See documentation on <computeroutput><link linkend="doxygen.sinks.structboost_1_1log_1_1sinks_1_1file_1_1collector_1a5dd0cebc024f917937f9b19faab9cb68">sinks::file::collector::scan_for_files</link></computeroutput> for more information.</para><para>
+
+
+<note><para>The method essentially delegates to the same-named function of the file collector. </para>
+</note>
+</para></description><requires><para>File collector and the proper file name pattern have already been set.</para>
+</requires><returns><para>The number of files found.</para>
+</returns></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1text__file__backend_1a16b43d6995295050650f5237b3f8adbf" name="consume"><type>void</type><parameter name="rec"><paramtype>record_view const &amp;</paramtype></parameter><parameter name="formatted_message"><paramtype>string_type const &amp;</paramtype></parameter><description><para>The method writes the message to the sink </para></description></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1text__file__backend_1adac116554b543b7c4228c018a85882f5" name="flush"><type>void</type><description><para>The method flushes the currently open log file </para></description></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1text__file__backend_1a2fcd1d9a72c0feabf54fbfe7ec222bbc" name="rotate_file"><type>void</type><description><para>The method rotates the file </para></description></method>
+</method-group>
+</class><namespace name="file">
+<struct id="doxygen.sinks.structboost_1_1log_1_1sinks_1_1file_1_1collector" name="collector"><purpose>Base class for file collectors. </purpose><description><para>All file collectors, supported by file sink backends, should inherit this class. </para></description><method-group name="public member functions">
+<constructor id="doxygen.sinks.structboost_1_1log_1_1sinks_1_1file_1_1collector_1ac0476335435e0361ad0c8231a958c64e" cv="= default"><description><para>Default constructor </para></description></constructor>
+<destructor id="doxygen.sinks.structboost_1_1log_1_1sinks_1_1file_1_1collector_1adceaef35e51f9d908438fbc850aa7502" cv="= default" specifiers="virtual"><description><para>Virtual destructor </para></description></destructor>
+<method id="doxygen.sinks.structboost_1_1log_1_1sinks_1_1file_1_1collector_1a0f6d6ac08cff4d4ccb441bd76e506845" name="store_file" cv="= 0" specifiers="virtual"><type>void</type><parameter name="src_path"><paramtype>filesystem::path const &amp;</paramtype><description><para>The name of the file to be stored </para></description></parameter><description><para>The function stores the specified file in the storage. May lead to an older file deletion and a long file moving.</para><para>
+</para></description></method>
+<method id="doxygen.sinks.structboost_1_1log_1_1sinks_1_1file_1_1collector_1a58dac2c18cf91ecef8ff95524baf2948" name="is_in_storage" cv="const = 0" specifiers="virtual"><type>bool</type><parameter name="src_path"><paramtype>filesystem::path const &amp;</paramtype><description><para>The path to be checked </para></description></parameter><description><para>The function checks if the specified path refers to an existing file in the storage.</para><para>
+</para></description></method>
+<method id="doxygen.sinks.structboost_1_1log_1_1sinks_1_1file_1_1collector_1a5dd0cebc024f917937f9b19faab9cb68" name="scan_for_files" cv="= 0" specifiers="virtual"><type><classname>scan_result</classname></type><parameter name="method"><paramtype>scan_method</paramtype><description><para>The method of scanning. If <computeroutput>no_scan</computeroutput> is specified, the call has no effect. </para></description></parameter><parameter name="pattern"><paramtype>filesystem::path const &amp;</paramtype><default>filesystem::path()</default><description><para>The file name pattern if <emphasis>method</emphasis> is <computeroutput>scan_matching</computeroutput>. Otherwise the parameter is not used. </para></description></parameter><description><para>Scans the target directory for the files that have already been stored. The found files are added to the collector in order to be tracked and erased, if needed.</para><para>The function may scan the directory in two ways: it will either consider every file in the directory a log file, or will only consider files with names that match the specified pattern. The pattern may contain the following placeholders:</para><para><itemizedlist>
+<listitem><para>y, Y, m, d - date components, in Boost.DateTime meaning. </para>
+</listitem>
+<listitem><para>H, M, S, f - time components, in Boost.DateTime meaning. </para>
+</listitem>
+<listitem><para>N - numeric file counter. May also contain width specification in printf-compatible form (e.g. %5N). The resulting number will always be zero-filled. </para>
+</listitem>
+<listitem><para>%% - a percent sign</para>
+</listitem>
+</itemizedlist>
+All other placeholders are not supported.</para><para>
+
+<note><para>In case if <emphasis>method</emphasis> is <computeroutput>scan_matching</computeroutput> the effect of this function is highly dependent on the <emphasis>pattern</emphasis> definition. It is recommended to choose patterns with easily distinguished placeholders (i.e. having delimiters between them). Otherwise either some files can be mistakenly found or not found, which in turn may lead to deletion of an unintended file. </para>
+</note>
+</para></description><returns><para>The result of filesystem scanning. The last file counter is only populated if <emphasis>method</emphasis> is <computeroutput>scan_matching</computeroutput>, the <emphasis>pattern</emphasis> contains N placeholder, and at least one file matching the pattern is found.</para>
+</returns></method>
+<constructor id="doxygen.sinks.structboost_1_1log_1_1sinks_1_1file_1_1collector_1ade57ca1a7e9a0a19cec1ed1ee801c351" cv="= delete"><parameter name=""><paramtype><classname>collector</classname> const &amp;</paramtype></parameter></constructor>
+<copy-assignment id="doxygen.sinks.structboost_1_1log_1_1sinks_1_1file_1_1collector_1acfd2f0d47df0afa8f6fae116890d73b1" cv="= delete"><type><classname>collector</classname> &amp;</type><parameter name=""><paramtype><classname>collector</classname> const &amp;</paramtype></parameter></copy-assignment>
+</method-group>
+</struct><class id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1file_1_1rotation__at__time__interval" name="rotation_at_time_interval"><description><para>The class represents the time interval of log file rotation. The log file will be rotated after the specified time interval has passed. </para></description><typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1file_1_1rotation__at__time__interval_1a686b9d94028b8d69200c6e0f7698d90f" name="result_type"><type>bool</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1file_1_1rotation__at__time__interval_1a58047329612d031b97cccbc6645e0fb9" specifiers="explicit"><parameter name="interval"><paramtype>posix_time::time_duration const &amp;</paramtype><description><para>The interval of the rotation, should be no less than 1 second </para></description></parameter><description><para>Creates a rotation time interval of the specified duration</para><para>
+</para></description></constructor>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1file_1_1rotation__at__time__interval_1ac07d93c2c80e51349f3dec89a2e45c84" name="operator()" cv="const"><type>bool</type><description><para>Checks if it's time to rotate the file </para></description></method>
+</method-group>
+</class><class id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1file_1_1rotation__at__time__point" name="rotation_at_time_point"><description><para>The class represents the time point of log file rotation. One can specify one of three types of time point based rotation:</para><para><itemizedlist>
+<listitem><para>rotation takes place every day, at the specified time </para>
+</listitem>
+<listitem><para>rotation takes place on the specified day of every week, at the specified time </para>
+</listitem>
+<listitem><para>rotation takes place on the specified day of every month, at the specified time</para>
+</listitem>
+</itemizedlist>
+The time points are considered to be local time. </para></description><typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1file_1_1rotation__at__time__point_1a686b9d94028b8d69200c6e0f7698d90f" name="result_type"><type>bool</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1file_1_1rotation__at__time__point_1af79b215a738aea3ab001c742314d3949" specifiers="explicit"><parameter name="hour"><paramtype>unsigned char</paramtype><description><para>The rotation hour, should be within 0 and 23 </para></description></parameter><parameter name="minute"><paramtype>unsigned char</paramtype><description><para>The rotation minute, should be within 0 and 59 </para></description></parameter><parameter name="second"><paramtype>unsigned char</paramtype><description><para>The rotation second, should be within 0 and 59 </para></description></parameter><description><para>Creates a rotation time point of every day at the specified time</para><para>
+</para></description></constructor>
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1file_1_1rotation__at__time__point_1aa50a037dbf493f686ee4e79c45275dbf" specifiers="explicit"><parameter name="wday"><paramtype>date_time::weekdays</paramtype><description><para>The weekday of the rotation </para></description></parameter><parameter name="hour"><paramtype>unsigned char</paramtype><default>0</default><description><para>The rotation hour, should be within 0 and 23 </para></description></parameter><parameter name="minute"><paramtype>unsigned char</paramtype><default>0</default><description><para>The rotation minute, should be within 0 and 59 </para></description></parameter><parameter name="second"><paramtype>unsigned char</paramtype><default>0</default><description><para>The rotation second, should be within 0 and 59 </para></description></parameter><description><para>Creates a rotation time point of each specified weekday at the specified time</para><para>
+</para></description></constructor>
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1file_1_1rotation__at__time__point_1a3ca035418e7308f585e8d0b7b0bdfbe5" specifiers="explicit"><parameter name="mday"><paramtype>gregorian::greg_day</paramtype><description><para>The monthday of the rotation, should be within 1 and 31 </para></description></parameter><parameter name="hour"><paramtype>unsigned char</paramtype><default>0</default><description><para>The rotation hour, should be within 0 and 23 </para></description></parameter><parameter name="minute"><paramtype>unsigned char</paramtype><default>0</default><description><para>The rotation minute, should be within 0 and 59 </para></description></parameter><parameter name="second"><paramtype>unsigned char</paramtype><default>0</default><description><para>The rotation second, should be within 0 and 59 </para></description></parameter><description><para>Creates a rotation time point of each specified day of month at the specified time</para><para>
+</para></description></constructor>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1file_1_1rotation__at__time__point_1ac07d93c2c80e51349f3dec89a2e45c84" name="operator()" cv="const"><type>bool</type><description><para>Checks if it's time to rotate the file </para></description></method>
+</method-group>
+</class><struct id="doxygen.sinks.structboost_1_1log_1_1sinks_1_1file_1_1scan__result" name="scan_result"><purpose>The structure contains filesystem scanning results. </purpose><data-member id="doxygen.sinks.structboost_1_1log_1_1sinks_1_1file_1_1scan__result_1a1f6026b4067c437c67a70d0161dd8f5d" name="found_count"><type>uintmax_t</type><purpose>The number of found files. </purpose></data-member>
+<data-member id="doxygen.sinks.structboost_1_1log_1_1sinks_1_1file_1_1scan__result_1ab6e9a5afbdccd3e7a1aef3c879940009" name="last_file_counter"><type>boost::optional&lt; unsigned int &gt;</type><purpose>If populated, the largest file counter that was used in the found file names. </purpose></data-member>
+<method-group name="public member functions">
+<constructor id="doxygen.sinks.structboost_1_1log_1_1sinks_1_1file_1_1scan__result_1affec79ea74676e998eb8f7bb2bd1ae6d" cv="noexcept"/>
+</method-group>
+</struct><enum id="doxygen.sinks.text__file__backend_8hpp_1a1d74a9445bfea95e8e411e69a9d44447" name="scan_method"><enumvalue id="doxygen.sinks.text__file__backend_8hpp_1a1d74a9445bfea95e8e411e69a9d44447a60c7e6d4c4b7001a9c756ffce330d76f" name="no_scan"><purpose>Don't scan for stored files. </purpose></enumvalue><enumvalue id="doxygen.sinks.text__file__backend_8hpp_1a1d74a9445bfea95e8e411e69a9d44447a5726bab04736da589f7a5a88e417052e" name="scan_matching"><purpose>Scan for files with names matching the specified mask. </purpose></enumvalue><enumvalue id="doxygen.sinks.text__file__backend_8hpp_1a1d74a9445bfea95e8e411e69a9d44447a9b941d8796bf0e8b6002aaa0614c7c6c" name="scan_all"><purpose>Scan for all files in the directory. </purpose></enumvalue><purpose>The enumeration of the stored files scan methods. </purpose></enum>
+
+<function id="doxygen.sinks.text__file__backend_8hpp_1a8306dfeac463a29f2ef0c54f711c87ac" name="make_collector"><type>shared_ptr&lt; <classname>collector</classname> &gt;</type><template>
+          <template-nontype-parameter name="ArgsT"><type>typename...</type></template-nontype-parameter>
+        </template><parameter name="args"><paramtype>ArgsT... const &amp;</paramtype></parameter><description><para>The function creates a file collector for the specified target directory. Each target directory is managed by a single file collector, so if this function is called several times for the same directory, it will return a reference to the same file collector. It is safe to use the same collector in different sinks, even in a multithreaded application.</para><para>One can specify certain restrictions for the stored files, such as maximum total size or minimum free space left in the target directory. If any of the specified restrictions is not met, the oldest stored file is deleted. If the same collector is requested more than once with different restrictions, the collector will act according to the most strict combination of all specified restrictions.</para><para>The following named parameters are supported:</para><para><itemizedlist>
+<listitem><para><computeroutput>target</computeroutput> - Specifies the target directory for the files being stored in. This parameter is mandatory. </para>
+</listitem>
+<listitem><para><computeroutput>max_size</computeroutput> - Specifies the maximum total size, in bytes, of stored files that the collector will try not to exceed. If the size exceeds this threshold the oldest file(s) is deleted to free space. Note that the threshold may be exceeded if the size of individual files exceed the <computeroutput>max_size</computeroutput> value. The threshold is not maintained, if not specified. </para>
+</listitem>
+<listitem><para><computeroutput>min_free_space</computeroutput> - Specifies the minimum free space, in bytes, in the target directory that the collector tries to maintain. If the threshold is exceeded, the oldest file(s) is deleted to free space. The threshold is not maintained, if not specified. </para>
+</listitem>
+<listitem><para><computeroutput>max_files</computeroutput> - Specifies the maximum number of log files stored. If the number of files exceeds this threshold, the oldest file(s) is deleted to free space. The threshhold is not maintained if not specified.</para>
+</listitem>
+</itemizedlist>
+
+</para></description><returns><para>The file collector. </para>
+</returns></function>
+</namespace>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.sinks.text__ipc__message__queue__backend_8hpp" name="boost/log/sinks/text_ipc_message_queue_backend.hpp">
+<para><para>Lingxi Li </para>
+
+<para>Andrey Semashev </para>
+
+<para>14.10.2015</para>
+
+The header contains implementation of a text interprocess message queue sink backend along with implementation of a supporting interprocess message queue. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="sinks">
+<class id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1text__ipc__message__queue__backend" name="text_ipc_message_queue_backend"><template>
+      <template-type-parameter name="QueueT"/>
+    </template><inherit access="public">basic_formatted_sink_backend&lt; char, concurrent_feeding &gt;</inherit><purpose>An implementation of a text interprocess message queue sink backend and a supporting interprocess message queue. </purpose><description><para>The sink backend sends formatted log messages to an interprocess message queue which can be extracted by a viewer process. Methods of this class are not thread-safe, unless otherwise specified. </para></description><typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1text__ipc__message__queue__backend_1af20a9965bfb788c1b76d2e9d180542c1" name="char_type"><purpose>Character type. </purpose><type>base_type::char_type</type></typedef>
+<typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1text__ipc__message__queue__backend_1a7085e94a35a28ab5acb94c624d563983" name="string_type"><purpose>String type to be used as a message text holder. </purpose><type>base_type::string_type</type></typedef>
+<typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1text__ipc__message__queue__backend_1a0517e1ec3c0132f87fb6ea75ee5aa658" name="queue_type"><purpose>Interprocess message queue type. </purpose><type>QueueT</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1text__ipc__message__queue__backend_1a3c482dfe88f8fea5ab18fdcfb10dc40a" cv="noexcept"><description><para>Default constructor. The method constructs the backend using the default-constructed interprocess message queue. The queue may need additional setup in order to be able to send messages. </para></description></constructor>
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1text__ipc__message__queue__backend_1a604f7bc59f1cfcf85d2650e3715d9cf3" specifiers="explicit" cv="noexcept"><parameter name="queue"><paramtype>queue_type &amp;&amp;</paramtype></parameter><description><para>Initializing constructor. The method constructs the backend using the provided interprocess message queue. The constructor moves from the provided queue. </para></description></constructor>
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1text__ipc__message__queue__backend_1a8f9b4ac6af613446dceea5b7b6f135de" specifiers="explicit"><template>
+          <template-nontype-parameter name="Args"><type>typename...</type></template-nontype-parameter>
+        </template><parameter name="args"><paramtype>Args &amp;&amp;...</paramtype></parameter><description><para>Constructor that passes arbitrary named parameters to the interprocess queue constructor. Refer to the queue documentation for the list of supported parameters. </para></description></constructor>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1text__ipc__message__queue__backend_1a712c8e829c942680a3fb4ec3fb335857" name="message_queue" cv="noexcept"><type>queue_type &amp;</type><description><para>The method returns a reference to the managed <computeroutput>queue_type</computeroutput> object.</para><para>
+</para></description><returns><para>A reference to the managed <computeroutput>queue_type</computeroutput> object. </para>
+</returns></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1text__ipc__message__queue__backend_1a2007c37c3dac685b367b1d6c6af0b4af" name="message_queue" cv="const noexcept"><type>queue_type const &amp;</type><description><para>The method returns a constant reference to the managed <computeroutput>queue_type</computeroutput> object.</para><para>
+</para></description><returns><para>A constant reference to the managed <computeroutput>queue_type</computeroutput> object. </para>
+</returns></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1text__ipc__message__queue__backend_1a7c9a4b086ca31f15d16f4004a0c12858" name="is_open" cv="const noexcept"><type>bool</type><description><para>Tests whether the object is associated with any message queue. Only when the backend has an associated message queue, will any message be sent.</para><para>
+</para></description><returns><para><computeroutput>true</computeroutput> if the object is associated with a message queue, and <computeroutput>false</computeroutput> otherwise. </para>
+</returns></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1text__ipc__message__queue__backend_1ad68f8a2d11f4e68b9445dc2c2579733a" name="consume"><type>void</type><parameter name=""><paramtype>record_view const &amp;</paramtype></parameter><parameter name="formatted_message"><paramtype>string_type const &amp;</paramtype></parameter><description><para>The method writes the message to the backend. Concurrent calls to this method are allowed. Therefore, the backend may be used with unlocked frontend. <computeroutput>stop_local()</computeroutput> can be used to have a blocked <computeroutput><link linkend="doxygen.sinks.classboost_1_1log_1_1sinks_1_1text__ipc__message__queue__backend_1ad68f8a2d11f4e68b9445dc2c2579733a">consume()</link></computeroutput> call return and prevent future calls to <computeroutput><link linkend="doxygen.sinks.classboost_1_1log_1_1sinks_1_1text__ipc__message__queue__backend_1ad68f8a2d11f4e68b9445dc2c2579733a">consume()</link></computeroutput> from blocking. </para></description></method>
+</method-group>
+</class></namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.sinks.text__multifile__backend_8hpp" name="boost/log/sinks/text_multifile_backend.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>09.06.2009</para>
+
+The header contains implementation of a text multi-file sink backend. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="sinks">
+<class id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1text__multifile__backend" name="text_multifile_backend"><inherit access="public">basic_formatted_sink_backend&lt; char &gt;</inherit><purpose>An implementation of a text multiple files logging sink backend. </purpose><description><para>The sink backend puts formatted log records to one of the text files. The particular file is chosen upon each record's attribute values, which allows to distribute records into individual files or to group records related to some entity or process in a separate file. </para></description><typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1text__multifile__backend_1af20a9965bfb788c1b76d2e9d180542c1" name="char_type"><purpose>Character type. </purpose><type>base_type::char_type</type></typedef>
+<typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1text__multifile__backend_1a7085e94a35a28ab5acb94c624d563983" name="string_type"><purpose>String type to be used as a message text holder. </purpose><type>base_type::string_type</type></typedef>
+<typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1text__multifile__backend_1a7438e1908815085857919f0252259d6f" name="file_name_composer_type"><purpose>File name composer functor type. </purpose><type><emphasis>unspecified</emphasis></type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1text__multifile__backend_1ad87fa724dc78fb861b92b238c067a369"><description><para>Default constructor. The constructed sink backend has no file name composer and thus will not write any files. All other parameters are set to their defaults. </para></description></constructor>
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1text__multifile__backend_1a9887b33b684c22b89f37205f6bc01f62" specifiers="explicit"><template>
+          <template-nontype-parameter name="ArgsT"><type>typename...</type></template-nontype-parameter>
+        </template><parameter name="args"><paramtype>ArgsT... const &amp;</paramtype></parameter><description><para>Constructor. Creates a sink backend with the specified named parameters. The following named parameters are supported:</para><para><itemizedlist>
+<listitem><para><computeroutput>auto_newline_mode</computeroutput> - Specifies automatic trailing newline insertion mode. Must be a value of the <computeroutput>auto_newline_mode</computeroutput> enum. By default, is <computeroutput><link linkend="doxygen.sinks.auto__newline__mode_8hpp_1a32ab4e8646a4496f00cc981ffe0ad67aabfae5153f2ddc8e28d875854c03bc5d4">auto_newline_mode::insert_if_missing</link></computeroutput>. </para>
+</listitem>
+</itemizedlist>
+</para></description></constructor>
+<destructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1text__multifile__backend_1a35f46bc6222695c8a169dd97d5507c44"><description><para>Destructor </para></description></destructor>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1text__multifile__backend_1a11d1e423f8e6c5dc2a9bd943467c94d9" name="set_file_name_composer"><type>void</type><template>
+          <template-type-parameter name="ComposerT"/>
+        </template><parameter name="composer"><paramtype>ComposerT const &amp;</paramtype><description><para>File name composer functor </para></description></parameter><description><para>The method sets file name composer functional object. Log record formatters are accepted, too.</para><para>
+</para></description></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1text__multifile__backend_1af79f470a9332176a5ee6189f34e6489b" name="set_auto_newline_mode"><type>void</type><parameter name="mode"><paramtype>auto_newline_mode</paramtype><description><para>The trailing newline insertion mode. </para></description></parameter><description><para>Selects whether a trailing newline should be automatically inserted after every log record. See <computeroutput>auto_newline_mode</computeroutput> description for the possible modes of operation.</para><para>
+</para></description></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1text__multifile__backend_1a16b43d6995295050650f5237b3f8adbf" name="consume"><type>void</type><parameter name="rec"><paramtype>record_view const &amp;</paramtype></parameter><parameter name="formatted_message"><paramtype>string_type const &amp;</paramtype></parameter><description><para>The method writes the message to the sink </para></description></method>
+</method-group>
+</class><namespace name="file">
+<class id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1file_1_1file__name__composer__adapter" name="file_name_composer_adapter"><template>
+      <template-type-parameter name="FormatterT"/>
+    </template><description><para>An adapter class that allows to use regular formatters as file name generators. </para></description><typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1file_1_1file__name__composer__adapter_1a8ec6d9686d2ef8aebbab25e88b0825b0" name="result_type"><purpose>Functor result type. </purpose><type>filesystem::path</type></typedef>
+<typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1file_1_1file__name__composer__adapter_1aed6f5a89002e57d7d8b8b460f7768b23" name="native_char_type"><purpose>File name character type. </purpose><type>result_type::string_type::value_type</type></typedef>
+<typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1file_1_1file__name__composer__adapter_1a32fbd6f908f6290501fd6f28331ab45b" name="formatter_type"><purpose>The adopted formatter type. </purpose><type>FormatterT</type></typedef>
+<typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1file_1_1file__name__composer__adapter_1a31eda2b154a17f15cf5a02b9d933d74f" name="stream_type"><purpose>Formatting stream type. </purpose><type>basic_formatting_ostream&lt; native_char_type &gt;</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1file_1_1file__name__composer__adapter_1a829ee65959b8b25845cf7410ff09a365" specifiers="explicit"><parameter name="formatter"><paramtype>formatter_type const &amp;</paramtype></parameter><parameter name="loc"><paramtype>std::locale const &amp;</paramtype><default>std::locale()</default></parameter><description><para>Initializing constructor </para></description></constructor>
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1file_1_1file__name__composer__adapter_1a655dbeab73849a26097467791bb0c79d"><parameter name="that"><paramtype><classname>file_name_composer_adapter</classname> const &amp;</paramtype></parameter><description><para>Copy constructor </para></description></constructor>
+<copy-assignment id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1file_1_1file__name__composer__adapter_1ac66380bde2ee3f3792e92de09c65a1d0"><type><classname>file_name_composer_adapter</classname> &amp;</type><parameter name="that"><paramtype><classname>file_name_composer_adapter</classname> const &amp;</paramtype></parameter><description><para>Assignment </para></description></copy-assignment>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1file_1_1file__name__composer__adapter_1a3aab1a2126baadaa15d382011fd7e205" name="operator()" cv="const"><type>result_type</type><parameter name="rec"><paramtype>record_view const &amp;</paramtype></parameter><description><para>The operator generates a file name based on the log record </para></description></method>
+</method-group>
+</class><function id="doxygen.sinks.text__multifile__backend_8hpp_1a8fcaaa7c7c62e8ecb982e552d0e55851" name="as_file_name_composer"><type><classname>file_name_composer_adapter</classname>&lt; FormatterT &gt;</type><template>
+          <template-type-parameter name="FormatterT"/>
+        </template><parameter name="fmt"><paramtype>FormatterT const &amp;</paramtype><description><para>The formatter function object to adopt </para></description></parameter><parameter name="loc"><paramtype>std::locale const &amp;</paramtype><default>std::locale()</default><description><para>The locale to use to character code conversion and formatting </para></description></parameter><description><para>The function adopts a log record formatter into a file name generator</para><para>
+</para></description></function>
+
+</namespace>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.sinks.text__ostream__backend_8hpp" name="boost/log/sinks/text_ostream_backend.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>22.04.2007</para>
+
+The header contains implementation of a text output stream sink backend. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="sinks">
+<class id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__text__ostream__backend" name="basic_text_ostream_backend"><template>
+      <template-type-parameter name="CharT"/>
+    </template><inherit access="public">basic_formatted_sink_backend&lt; CharT, combine_requirements&lt; synchronized_feeding, flushing &gt;::type &gt;</inherit><purpose>An implementation of a text output stream logging sink backend. </purpose><description><para>The sink backend puts formatted log records to one or more text streams. </para></description><typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__text__ostream__backend_1af20a9965bfb788c1b76d2e9d180542c1" name="char_type"><purpose>Character type. </purpose><type>base_type::char_type</type></typedef>
+<typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__text__ostream__backend_1a7085e94a35a28ab5acb94c624d563983" name="string_type"><purpose>String type to be used as a message text holder. </purpose><type>base_type::string_type</type></typedef>
+<typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__text__ostream__backend_1a3e4bb2e0bef42bcf2817780dc9bb37fd" name="stream_type"><purpose>Output stream type. </purpose><type>std::basic_ostream&lt; char_type &gt;</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__text__ostream__backend_1ad86dbeae6413e4153b9148cfd7a4cb30"><description><para>Constructor. No streams attached to the constructed backend, auto flush feature disabled. </para></description></constructor>
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__text__ostream__backend_1afb190f4d4bc938889fd86ac0b3e6b7ac" specifiers="explicit"><template>
+          <template-nontype-parameter name="ArgsT"><type>typename...</type></template-nontype-parameter>
+        </template><parameter name="args"><paramtype>ArgsT... const &amp;</paramtype></parameter><description><para>Constructor. Creates a sink backend with the specified named parameters. The following named parameters are supported:</para><para><itemizedlist>
+<listitem><para><computeroutput>auto_flush</computeroutput> - Specifies a flag, whether or not to automatically flush the attached streams after each written log record. By default, is <computeroutput>false</computeroutput>. </para>
+</listitem>
+<listitem><para><computeroutput>auto_newline_mode</computeroutput> - Specifies automatic trailing newline insertion mode. Must be a value of the <computeroutput>auto_newline_mode</computeroutput> enum. By default, is <computeroutput><link linkend="doxygen.sinks.auto__newline__mode_8hpp_1a32ab4e8646a4496f00cc981ffe0ad67aabfae5153f2ddc8e28d875854c03bc5d4">auto_newline_mode::insert_if_missing</link></computeroutput>. </para>
+</listitem>
+</itemizedlist>
+</para></description></constructor>
+<destructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__text__ostream__backend_1a1810c39ef6dcc9ebdc87f878b1bbc861"><description><para>Destructor </para></description></destructor>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__text__ostream__backend_1a98eefa3f734a59eacec3c233fbabaa7b" name="add_stream"><type>void</type><parameter name="strm"><paramtype>shared_ptr&lt; stream_type &gt; const &amp;</paramtype><description><para>Pointer to the stream. Must not be NULL. </para></description></parameter><description><para>The method adds a new stream to the sink.</para><para>
+</para></description></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__text__ostream__backend_1a6469f1e51631578d605e794b2d75e12e" name="remove_stream"><type>void</type><parameter name="strm"><paramtype>shared_ptr&lt; stream_type &gt; const &amp;</paramtype><description><para>Pointer to the stream. Must not be NULL. </para></description></parameter><description><para>The method removes a stream from the sink. If the stream is not attached to the sink, the method has no effect.</para><para>
+</para></description></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__text__ostream__backend_1a6cb9f3c94da03b54958ac12ec7f328af" name="auto_flush"><type>void</type><parameter name="enable"><paramtype>bool</paramtype><default>true</default><description><para>The flag indicates whether the automatic buffer flush should be performed. </para></description></parameter><description><para>Sets the flag to automatically flush buffers of all attached streams after each log record.</para><para>
+</para></description></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__text__ostream__backend_1af79f470a9332176a5ee6189f34e6489b" name="set_auto_newline_mode"><type>void</type><parameter name="mode"><paramtype>auto_newline_mode</paramtype><description><para>The trailing newline insertion mode. </para></description></parameter><description><para>Selects whether a trailing newline should be automatically inserted after every log record. See <computeroutput>auto_newline_mode</computeroutput> description for the possible modes of operation.</para><para>
+</para></description></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__text__ostream__backend_1a16b43d6995295050650f5237b3f8adbf" name="consume"><type>void</type><parameter name="rec"><paramtype>record_view const &amp;</paramtype></parameter><parameter name="formatted_message"><paramtype>string_type const &amp;</paramtype></parameter><description><para>The method writes the message to the sink. </para></description></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1basic__text__ostream__backend_1adac116554b543b7c4228c018a85882f5" name="flush"><type>void</type><description><para>The method flushes all attached streams. </para></description></method>
+</method-group>
+</class><typedef id="doxygen.sinks.text__ostream__backend_8hpp_1a7111bc8422e2d83f04c5b56e9733945b" name="text_ostream_backend"><purpose>Convenience typedef for narrow-character logging. </purpose><type><classname>basic_text_ostream_backend</classname>&lt; char &gt;</type></typedef>
+<typedef id="doxygen.sinks.text__ostream__backend_8hpp_1adb74bde67a68f65f9455067161d3a2f8" name="wtext_ostream_backend"><purpose>Convenience typedef for wide-character logging. </purpose><type><classname>basic_text_ostream_backend</classname>&lt; wchar_t &gt;</type></typedef>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.sinks.unbounded__fifo__queue_8hpp" name="boost/log/sinks/unbounded_fifo_queue.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>24.07.2011</para>
+
+The header contains implementation of unbounded FIFO queueing strategy for the asynchronous sink frontend. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="sinks">
+<class id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1unbounded__fifo__queue" name="unbounded_fifo_queue"><purpose>Unbounded FIFO log record queueing strategy. </purpose><description><para>The <computeroutput><link linkend="doxygen.sinks.classboost_1_1log_1_1sinks_1_1unbounded__fifo__queue">unbounded_fifo_queue</link></computeroutput> class is intended to be used with the <computeroutput><link linkend="doxygen.sinks.classboost_1_1log_1_1sinks_1_1asynchronous__sink">asynchronous_sink</link></computeroutput> frontend as a log record queueing strategy.</para><para>This strategy implements the simplest logic of log record buffering between threads: the queue has no limits and imposes no ordering over the queued elements aside from the order in which they are enqueued. Because of this the queue provides decent performance and scalability, however if sink backends can't consume log records fast enough the queue may grow uncontrollably. When this is an issue, it is recommended to use one of the bounded strategies. </para></description><method-group name="protected member functions">
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1unbounded__fifo__queue_1aca06e2b801f5adbe14c592cf03ceb03b"><purpose>Default constructor. </purpose></constructor>
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1unbounded__fifo__queue_1a7056d63596b807375901385ddb9662cb" specifiers="explicit"><template>
+          <template-type-parameter name="ArgsT"/>
+        </template><parameter name=""><paramtype>ArgsT const &amp;</paramtype></parameter><purpose>Initializing constructor. </purpose></constructor>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1unbounded__fifo__queue_1a9a54e38b1cff223d6056578594b83d4e" name="enqueue"><type>void</type><parameter name="rec"><paramtype>record_view const &amp;</paramtype></parameter><purpose>Enqueues log record to the queue. </purpose></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1unbounded__fifo__queue_1a6549b2faf18b29ba14531089640737d2" name="try_enqueue"><type>bool</type><parameter name="rec"><paramtype>record_view const &amp;</paramtype></parameter><purpose>Attempts to enqueue log record to the queue. </purpose></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1unbounded__fifo__queue_1a543857c8b4ea961c73b73f9e746c953b" name="try_dequeue_ready"><type>bool</type><parameter name="rec"><paramtype>record_view &amp;</paramtype></parameter><purpose>Attempts to dequeue a log record ready for processing from the queue, does not block if the queue is empty. </purpose></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1unbounded__fifo__queue_1a1f8c5e0a28aa8356f926527a87aa2790" name="try_dequeue"><type>bool</type><parameter name="rec"><paramtype>record_view &amp;</paramtype></parameter><purpose>Attempts to dequeue log record from the queue, does not block if the queue is empty. </purpose></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1unbounded__fifo__queue_1a95984a3c5898a67b03d9907c587367ba" name="dequeue_ready"><type>bool</type><parameter name="rec"><paramtype>record_view &amp;</paramtype></parameter><purpose>Dequeues log record from the queue, blocks if the queue is empty. </purpose></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1unbounded__fifo__queue_1a16d547e5c303d94a0f9a56bdf57c3b4e" name="interrupt_dequeue"><type>void</type><purpose>Wakes a thread possibly blocked in the <computeroutput>dequeue</computeroutput> method. </purpose></method>
+</method-group>
+</class></namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.sinks.unbounded__ordering__queue_8hpp" name="boost/log/sinks/unbounded_ordering_queue.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>24.07.2011</para>
+
+The header contains implementation of unbounded ordering record queueing strategy for the asynchronous sink frontend. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="sinks">
+<class id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1unbounded__ordering__queue" name="unbounded_ordering_queue"><template>
+      <template-type-parameter name="OrderT"/>
+    </template><purpose>Unbounded ordering log record queueing strategy. </purpose><description><para>The <computeroutput><link linkend="doxygen.sinks.classboost_1_1log_1_1sinks_1_1unbounded__ordering__queue">unbounded_ordering_queue</link></computeroutput> class is intended to be used with the <computeroutput><link linkend="doxygen.sinks.classboost_1_1log_1_1sinks_1_1asynchronous__sink">asynchronous_sink</link></computeroutput> frontend as a log record queueing strategy.</para><para>This strategy provides the following properties to the record queueing mechanism:</para><para><itemizedlist>
+<listitem><para>The queue has no size limits. </para>
+</listitem>
+<listitem><para>The queue has a fixed latency window. This means that each log record put into the queue will normally not be dequeued for a certain period of time. </para>
+</listitem>
+<listitem><para>The queue performs stable record ordering within the latency window. The ordering predicate can be specified in the <computeroutput>OrderT</computeroutput> template parameter.</para>
+</listitem>
+</itemizedlist>
+Since this queue has no size limits, it may grow uncontrollably if sink backends dequeue log records not fast enough. When this is an issue, it is recommended to use one of the bounded strategies. </para></description><method-group name="public member functions">
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1unbounded__ordering__queue_1a60f374fd5c40691abc225f7cc1af9399" name="get_ordering_window" cv="const"><type>std::chrono::steady_clock::duration</type><description><para>Returns ordering window size specified during initialization </para></description></method>
+</method-group>
+<method-group name="public static functions">
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1unbounded__ordering__queue_1ad09f8d853115298952f4be3c25fbc32f" name="get_default_ordering_window" cv="noexcept" specifiers="static"><type>constexpr std::chrono::steady_clock::duration</type><description><para>Returns default ordering window size. The default window size is specific to the operating system thread scheduling mechanism. </para></description></method>
+</method-group>
+<method-group name="protected member functions">
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1unbounded__ordering__queue_1a6b70ffdc75c32319c71fd511fb12a875" specifiers="explicit"><template>
+          <template-type-parameter name="ArgsT"/>
+        </template><parameter name="args"><paramtype>ArgsT const &amp;</paramtype></parameter><purpose>Initializing constructor. </purpose></constructor>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1unbounded__ordering__queue_1a9a54e38b1cff223d6056578594b83d4e" name="enqueue"><type>void</type><parameter name="rec"><paramtype>record_view const &amp;</paramtype></parameter><purpose>Enqueues log record to the queue. </purpose></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1unbounded__ordering__queue_1a6549b2faf18b29ba14531089640737d2" name="try_enqueue"><type>bool</type><parameter name="rec"><paramtype>record_view const &amp;</paramtype></parameter><purpose>Attempts to enqueue log record to the queue. </purpose></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1unbounded__ordering__queue_1a543857c8b4ea961c73b73f9e746c953b" name="try_dequeue_ready"><type>bool</type><parameter name="rec"><paramtype>record_view &amp;</paramtype></parameter><purpose>Attempts to dequeue a log record ready for processing from the queue, does not block if no log records are ready to be processed. </purpose></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1unbounded__ordering__queue_1a1f8c5e0a28aa8356f926527a87aa2790" name="try_dequeue"><type>bool</type><parameter name="rec"><paramtype>record_view &amp;</paramtype></parameter><purpose>Attempts to dequeue log record from the queue, does not block. </purpose></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1unbounded__ordering__queue_1a95984a3c5898a67b03d9907c587367ba" name="dequeue_ready"><type>bool</type><parameter name="rec"><paramtype>record_view &amp;</paramtype></parameter><purpose>Dequeues log record from the queue, blocks if no log records are ready to be processed. </purpose></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1unbounded__ordering__queue_1a16d547e5c303d94a0f9a56bdf57c3b4e" name="interrupt_dequeue"><type>void</type><purpose>Wakes a thread possibly blocked in the <computeroutput>dequeue</computeroutput> method. </purpose></method>
+</method-group>
+<method-group name="private member functions">
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1unbounded__ordering__queue_1a9531568f418ea37884c5a8078db279f1" name="enqueue_unlocked"><type>void</type><parameter name="rec"><paramtype>record_view const &amp;</paramtype></parameter><purpose>Enqueues a log record. </purpose></method>
+</method-group>
+</class></namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.sinks.unlocked__frontend_8hpp" name="boost/log/sinks/unlocked_frontend.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>14.07.2009</para>
+
+The header contains declaration of an unlocked sink frontend. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="sinks">
+<class id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1unlocked__sink" name="unlocked_sink"><template>
+      <template-type-parameter name="SinkBackendT"/>
+    </template><inherit access="public">basic_sink_frontend</inherit><purpose>Non-blocking logging sink frontend. </purpose><description><para>The sink frontend does not perform thread synchronization and simply passes logging records to the sink backend. </para></description><typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1unlocked__sink_1a798f29dfded9d6f26d58668e46e61230" name="sink_backend_type"><purpose>Sink implementation type. </purpose><type>SinkBackendT</type></typedef>
+<typedef id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1unlocked__sink_1a892b4cb624570aade39ed87e7947ff28" name="locked_backend_ptr"><purpose>Type of pointer to the backend. </purpose><type>shared_ptr&lt; sink_backend_type &gt;</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1unlocked__sink_1a2b36c7d5b543fa32c18ac9d23d8f45a6"><description><para>Default constructor. Constructs the sink backend instance. Requires the backend to be default-constructible. </para></description></constructor>
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1unlocked__sink_1a8e8812c2291606cdbc8d07e4db5136d6" specifiers="explicit"><parameter name="backend"><paramtype>shared_ptr&lt; sink_backend_type &gt; const &amp;</paramtype><description><para>Pointer to the backend instance</para></description></parameter><description><para>Constructor attaches user-constructed backend instance</para><para>
+
+</para></description><requires><para><emphasis>backend</emphasis> is not <computeroutput>NULL</computeroutput>. </para>
+</requires></constructor>
+<constructor id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1unlocked__sink_1a7a61cbed0903d9774e96749e19945228" specifiers="explicit"><template>
+          <template-nontype-parameter name="Args"><type>typename...</type></template-nontype-parameter>
+        </template><parameter name="args"><paramtype>Args &amp;&amp;...</paramtype></parameter><description><para>Constructor that passes arbitrary named parameters to the interprocess sink backend constructor. Refer to the backend documentation for the list of supported parameters. </para></description></constructor>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1unlocked__sink_1aba31dc7d1fb1b8f1887e56e758d86179" name="locked_backend"><type>locked_backend_ptr</type><description><para>Locking accessor to the attached backend.</para><para><note><para>Does not do any actual locking, provided only for interface consistency with other frontends. </para>
+</note>
+</para></description></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1unlocked__sink_1a9ca429601b27dec1ab6883df593ed09f" name="consume" specifiers="virtual"><type>void</type><parameter name="rec"><paramtype>record_view const &amp;</paramtype></parameter><description><para>Passes the log record to the backend </para></description></method>
+<method id="doxygen.sinks.classboost_1_1log_1_1sinks_1_1unlocked__sink_1adac116554b543b7c4228c018a85882f5" name="flush" specifiers="virtual"><type>void</type><description><para>The method performs flushing of any internal buffers that may hold log records. The method may take considerable time to complete and may block both the calling thread and threads attempting to put new records into the sink while this call is in progress. </para></description></method>
+</method-group>
+</class></namespace>
+</namespace>
+</namespace>
+</header>
+</library-reference>

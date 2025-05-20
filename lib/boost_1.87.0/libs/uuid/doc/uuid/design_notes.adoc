@@ -1,0 +1,8 @@
+[#design_notes]
+== Design Notes
+
+:idprefix: design_notes_
+
+The document http://www.itu.int/ITU-T/studygroups/com17/oid/X.667-E.pdf was used to design and implement the `uuid` struct.
+
+All functions are re-entrant. Classes are as thread-safe as an int. That is an instance cannot be shared between threads without proper synchronization.

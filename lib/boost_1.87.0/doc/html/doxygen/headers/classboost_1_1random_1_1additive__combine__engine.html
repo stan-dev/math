@@ -1,0 +1,218 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template additive_combine_engine</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../../boost_random/reference.html#doxygen.headers.additive__combine_8hpp" title="Header &lt;boost/random/additive_combine.hpp&gt;">
+<link rel="prev" href="../../boost_random/reference.html" title="Reference">
+<link rel="next" href="additive__combine_8hpp_1a6f294100a1fb0e43f16f7522f18d7460.html" title="Type definition ecuyer1988">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../../boost_random/reference.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_random/reference.html#doxygen.headers.additive__combine_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="additive__combine_8hpp_1a6f294100a1fb0e43f16f7522f18d7460.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.headers.classboost_1_1random_1_1additive__combine__engine"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template additive_combine_engine</span></h2>
+<p>boost::random::additive_combine_engine</p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../boost_random/reference.html#doxygen.headers.additive__combine_8hpp" title="Header &lt;boost/random/additive_combine.hpp&gt;">boost/random/additive_combine.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> MLCG1<span class="special">,</span> <span class="keyword">typename</span> MLCG2<span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1random_1_1additive__combine__engine.html" title="Class template additive_combine_engine">additive_combine_engine</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">MLCG1</span>              <a name="doxygen.headers.classboost_1_1random_1_1additive__combine__engine_1a4628ca5b4d589985ebc9a449fa0683be"></a><span class="identifier">first_base</span><span class="special">;</span> 
+  <span class="keyword">typedef</span> <span class="identifier">MLCG2</span>              <a name="doxygen.headers.classboost_1_1random_1_1additive__combine__engine_1ac7a9a0f9d973c5d978a8e21d77092c7c"></a><span class="identifier">second_base</span><span class="special">;</span>
+  <span class="keyword">typedef</span> <span class="identifier">MLCG1</span><span class="special">::</span><span class="identifier">result_type</span> <a name="doxygen.headers.classboost_1_1random_1_1additive__combine__engine_1a378a93dfb17cebc4517fce10c92d8ea9"></a><span class="identifier">result_type</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1random_1_1additive__combine__engine.html#id-1_3_34_5_6_3_1_1_1_7-bb">public static functions</a></span>
+  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="identifier">result_type</span> <a class="link" href="classboost_1_1random_1_1additive__combine__engine.html#doxygen.headers.classboost_1_1random_1_1additive__combine__engine_1a57e7814a0be74a71933c291530cbb181"><span class="identifier">min</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="identifier">result_type</span> <a class="link" href="classboost_1_1random_1_1additive__combine__engine.html#doxygen.headers.classboost_1_1random_1_1additive__combine__engine_1aba1d628c937b524db5dc54e7e177a217"><span class="identifier">max</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1random_1_1additive__combine__engine.html#id-1_3_34_5_6_3_1_1_1_8-bb">public member functions</a></span>
+  <a class="link" href="classboost_1_1random_1_1additive__combine__engine.html#doxygen.headers.classboost_1_1random_1_1additive__combine__engine_1a389d2401d9a2ba2512748137bdd94362"><span class="identifier">additive_combine_engine</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1random_1_1additive__combine__engine.html#doxygen.headers.classboost_1_1random_1_1additive__combine__engine_1a5084938f07de0676afef58a826a67e71"><span class="identifier">additive_combine_engine</span></a><span class="special">(</span><span class="identifier">result_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> SeedSeq<span class="special">&gt;</span> <span class="keyword">explicit</span> <a class="link" href="classboost_1_1random_1_1additive__combine__engine.html#doxygen.headers.classboost_1_1random_1_1additive__combine__engine_1ae8f7e94166f0becd9821a96bf8c7944c"><span class="identifier">additive_combine_engine</span></a><span class="special">(</span><span class="identifier">SeedSeq</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1random_1_1additive__combine__engine.html#doxygen.headers.classboost_1_1random_1_1additive__combine__engine_1ab72dd0c3b61ef9c220c3deef9d627b61"><span class="identifier">additive_combine_engine</span></a><span class="special">(</span><span class="keyword">typename</span> <span class="identifier">MLCG1</span><span class="special">::</span><span class="identifier">result_type</span><span class="special">,</span> 
+                          <span class="keyword">typename</span> <span class="identifier">MLCG2</span><span class="special">::</span><span class="identifier">result_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> It<span class="special">&gt;</span> <a class="link" href="classboost_1_1random_1_1additive__combine__engine.html#doxygen.headers.classboost_1_1random_1_1additive__combine__engine_1ad232f29600741cbd38b5d4f7cc33ae69"><span class="identifier">additive_combine_engine</span></a><span class="special">(</span><span class="identifier">It</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">It</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1random_1_1additive__combine__engine.html#doxygen.headers.classboost_1_1random_1_1additive__combine__engine_1a2c340ca313792aefb09f29b081b4eab4"><span class="identifier">seed</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1random_1_1additive__combine__engine.html#doxygen.headers.classboost_1_1random_1_1additive__combine__engine_1ac8c3b2a146d77e2780b0d77cc4bcdfcf"><span class="identifier">seed</span></a><span class="special">(</span><span class="identifier">result_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> SeedSeq<span class="special">&gt;</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1random_1_1additive__combine__engine.html#doxygen.headers.classboost_1_1random_1_1additive__combine__engine_1a68fcf5c66bb642d0fdde63ad337d1173"><span class="identifier">seed</span></a><span class="special">(</span><span class="identifier">SeedSeq</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1random_1_1additive__combine__engine.html#doxygen.headers.classboost_1_1random_1_1additive__combine__engine_1a2cc214000e2bfab9ea3b732f8fb60d89"><span class="identifier">seed</span></a><span class="special">(</span><span class="keyword">typename</span> <span class="identifier">MLCG1</span><span class="special">::</span><span class="identifier">result_type</span><span class="special">,</span> <span class="keyword">typename</span> <span class="identifier">MLCG2</span><span class="special">::</span><span class="identifier">result_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> It<span class="special">&gt;</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1random_1_1additive__combine__engine.html#doxygen.headers.classboost_1_1random_1_1additive__combine__engine_1aa02db9680529fd42e461353383761ee2"><span class="identifier">seed</span></a><span class="special">(</span><span class="identifier">It</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">It</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">result_type</span> <a class="link" href="classboost_1_1random_1_1additive__combine__engine.html#doxygen.headers.classboost_1_1random_1_1additive__combine__engine_1a6aade889d9da821ac8b29e20b4b9d11e"><span class="keyword">operator</span><span class="special">(</span><span class="special">)</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Iter<span class="special">&gt;</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1random_1_1additive__combine__engine.html#doxygen.headers.classboost_1_1random_1_1additive__combine__engine_1a11d283769455b3db64fb19f79a48a483"><span class="identifier">generate</span></a><span class="special">(</span><span class="identifier">Iter</span><span class="special">,</span> <span class="identifier">Iter</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1random_1_1additive__combine__engine.html#doxygen.headers.classboost_1_1random_1_1additive__combine__engine_1a28c5063cc2b87b9a0c045767adbfebe4"><span class="identifier">discard</span></a><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">uintmax_t</span><span class="special">)</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1random_1_1additive__combine__engine.html#id-1_3_34_5_6_3_1_1_1_9-bb">friend functions</a></span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits<span class="special">&gt;</span> 
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+    <a class="link" href="classboost_1_1random_1_1additive__combine__engine.html#doxygen.headers.classboost_1_1random_1_1additive__combine__engine_1adc4b1822659d232f3fba9e8ca841f596"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">,</span> 
+               <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1additive__combine__engine.html" title="Class template additive_combine_engine">additive_combine_engine</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits<span class="special">&gt;</span> 
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+    <a class="link" href="classboost_1_1random_1_1additive__combine__engine.html#doxygen.headers.classboost_1_1random_1_1additive__combine__engine_1adb902f754f6646d10d702655abd79700"><span class="keyword">operator</span><span class="special">&gt;&gt;</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">,</span> 
+               <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1additive__combine__engine.html" title="Class template additive_combine_engine">additive_combine_engine</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1random_1_1additive__combine__engine.html#doxygen.headers.classboost_1_1random_1_1additive__combine__engine_1ac7a733fe4f991e73c14f31d6115e736a"><span class="keyword">operator</span><span class="special">==</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1additive__combine__engine.html" title="Class template additive_combine_engine">additive_combine_engine</a> <span class="special">&amp;</span><span class="special">,</span> 
+                  <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1additive__combine__engine.html" title="Class template additive_combine_engine">additive_combine_engine</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1random_1_1additive__combine__engine.html#doxygen.headers.classboost_1_1random_1_1additive__combine__engine_1a7ec3a0b311675afbd93e84d63e5bce84"><span class="keyword">operator</span><span class="special">!=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1additive__combine__engine.html" title="Class template additive_combine_engine">additive_combine_engine</a> <span class="special">&amp;</span><span class="special">,</span> 
+                  <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1additive__combine__engine.html" title="Class template additive_combine_engine">additive_combine_engine</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+
+  <span class="comment">// public data members</span>
+  <span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">bool</span> <span class="identifier">has_fixed_range</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.34.5.6.2.3.4"></a><h2>Description</h2>
+<p>An instantiation of class template <code class="computeroutput"><a class="link" href="classboost_1_1random_1_1additive__combine__engine.html" title="Class template additive_combine_engine">additive_combine_engine</a></code> models a  <a class="link" href="../../boost_random/reference.html#boost_random.reference.concepts.pseudo_random_number_generator" title="Pseudo-Random Number Generator">pseudo-random number generator</a> . It combines two multiplicative  <a class="link" href="classboost_1_1random_1_1linear__congruential__engine.html" title="Class template linear_congruential_engine">linear_congruential_engine</a> number generators, i.e. those with <code class="computeroutput">c</code> = 0. It is described in</p>
+<p> </p>
+<div class="blockquote"><blockquote class="blockquote"><p>  "Efficient and Portable Combined Random Number Generators", Pierre L'Ecuyer, Communications of the ACM, Vol. 31, No. 6, June 1988, pp. 742-749, 774  </p></blockquote></div>
+<p> </p>
+<p>The template parameters MLCG1 and MLCG2 shall denote two different  <a class="link" href="classboost_1_1random_1_1linear__congruential__engine.html" title="Class template linear_congruential_engine">linear_congruential_engine</a> number generators, each with c = 0. Each invocation returns a random number X(n) := (MLCG1(n) - MLCG2(n)) mod (m1 - 1), where m1 denotes the modulus of MLCG1. </p>
+<div class="refsect2">
+<a name="id-1.3.34.5.6.2.3.4.5"></a><h3>
+<a name="id-1_3_34_5_6_3_1_1_1_7-bb"></a><code class="computeroutput">additive_combine_engine</code> public static functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="identifier">result_type</span> <a name="doxygen.headers.classboost_1_1random_1_1additive__combine__engine_1a57e7814a0be74a71933c291530cbb181"></a><span class="identifier">min</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Returns the smallest value that the generator can produce </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="identifier">result_type</span> <a name="doxygen.headers.classboost_1_1random_1_1additive__combine__engine_1aba1d628c937b524db5dc54e7e177a217"></a><span class="identifier">max</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Returns the largest value that the generator can produce </p>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.34.5.6.2.3.4.6"></a><h3>
+<a name="id-1_3_34_5_6_3_1_1_1_8-bb"></a><code class="computeroutput">additive_combine_engine</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.headers.classboost_1_1random_1_1additive__combine__engine_1a389d2401d9a2ba2512748137bdd94362"></a><span class="identifier">additive_combine_engine</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Constructs an <code class="computeroutput"><a class="link" href="classboost_1_1random_1_1additive__combine__engine.html" title="Class template additive_combine_engine">additive_combine_engine</a></code> using the default constructors of the two base generators. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.headers.classboost_1_1random_1_1additive__combine__engine_1a5084938f07de0676afef58a826a67e71"></a><span class="identifier">additive_combine_engine</span><span class="special">(</span><span class="identifier">result_type</span> seed<span class="special">)</span><span class="special">;</span></pre>
+<p>Constructs an <code class="computeroutput"><a class="link" href="classboost_1_1random_1_1additive__combine__engine.html" title="Class template additive_combine_engine">additive_combine_engine</a></code>, using seed as the constructor argument for both base generators. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> SeedSeq<span class="special">&gt;</span> <span class="keyword">explicit</span> <a name="doxygen.headers.classboost_1_1random_1_1additive__combine__engine_1ae8f7e94166f0becd9821a96bf8c7944c"></a><span class="identifier">additive_combine_engine</span><span class="special">(</span><span class="identifier">SeedSeq</span> <span class="special">&amp;</span> seq<span class="special">)</span><span class="special">;</span></pre>
+<p>Constructs an <code class="computeroutput"><a class="link" href="classboost_1_1random_1_1additive__combine__engine.html" title="Class template additive_combine_engine">additive_combine_engine</a></code>, using seq as the constructor argument for both base generators.</p>
+<p> </p>
+<div class="warning"><table border="0" summary="Warning">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Warning]" src="../../../../doc/src/images/warning.png"></td>
+<th align="left">Warning</th>
+</tr>
+<tr><td align="left" valign="top"><p>  The semantics of this function are liable to change. A <code class="computeroutput"><a class="link" href="classboost_1_1random_1_1seed__seq.html" title="Class seed_seq">seed_seq</a></code> is designed to generate all the seeds in one shot, but this seeds the two base engines independantly and probably ends up giving the same sequence to both.  </p></td></tr>
+</table></div>
+<p>  </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.headers.classboost_1_1random_1_1additive__combine__engine_1ab72dd0c3b61ef9c220c3deef9d627b61"></a><span class="identifier">additive_combine_engine</span><span class="special">(</span><span class="keyword">typename</span> <span class="identifier">MLCG1</span><span class="special">::</span><span class="identifier">result_type</span> seed1<span class="special">,</span> 
+                        <span class="keyword">typename</span> <span class="identifier">MLCG2</span><span class="special">::</span><span class="identifier">result_type</span> seed2<span class="special">)</span><span class="special">;</span></pre>
+<p>Constructs an <code class="computeroutput"><a class="link" href="classboost_1_1random_1_1additive__combine__engine.html" title="Class template additive_combine_engine">additive_combine_engine</a></code>, using <code class="computeroutput">seed1</code> and <code class="computeroutput">seed2</code> as the constructor argument to the first and second base generators, respectively. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> It<span class="special">&gt;</span> <a name="doxygen.headers.classboost_1_1random_1_1additive__combine__engine_1ad232f29600741cbd38b5d4f7cc33ae69"></a><span class="identifier">additive_combine_engine</span><span class="special">(</span><span class="identifier">It</span> <span class="special">&amp;</span> first<span class="special">,</span> <span class="identifier">It</span> last<span class="special">)</span><span class="special">;</span></pre>
+<p>Contructs an <code class="computeroutput"><a class="link" href="classboost_1_1random_1_1additive__combine__engine.html" title="Class template additive_combine_engine">additive_combine_engine</a></code> with values from the range defined by the input iterators first and last. first will be modified to point to the element after the last one used.</p>
+<p>Throws: <code class="computeroutput">std::invalid_argument</code> if the input range is too small.</p>
+<p>Exception Safety: Basic </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.headers.classboost_1_1random_1_1additive__combine__engine_1a2c340ca313792aefb09f29b081b4eab4"></a><span class="identifier">seed</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Seeds an <code class="computeroutput"><a class="link" href="classboost_1_1random_1_1additive__combine__engine.html" title="Class template additive_combine_engine">additive_combine_engine</a></code> using the default seeds of the two base generators. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.headers.classboost_1_1random_1_1additive__combine__engine_1ac8c3b2a146d77e2780b0d77cc4bcdfcf"></a><span class="identifier">seed</span><span class="special">(</span><span class="identifier">result_type</span> seed<span class="special">)</span><span class="special">;</span></pre>
+<p>Seeds an <code class="computeroutput"><a class="link" href="classboost_1_1random_1_1additive__combine__engine.html" title="Class template additive_combine_engine">additive_combine_engine</a></code>, using <code class="computeroutput">seed</code> as the seed for both base generators. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> SeedSeq<span class="special">&gt;</span> <span class="keyword">void</span> <a name="doxygen.headers.classboost_1_1random_1_1additive__combine__engine_1a68fcf5c66bb642d0fdde63ad337d1173"></a><span class="identifier">seed</span><span class="special">(</span><span class="identifier">SeedSeq</span> <span class="special">&amp;</span> seq<span class="special">)</span><span class="special">;</span></pre>
+<p>Seeds an <code class="computeroutput"><a class="link" href="classboost_1_1random_1_1additive__combine__engine.html" title="Class template additive_combine_engine">additive_combine_engine</a></code>, using <code class="computeroutput">seq</code> to seed both base generators.</p>
+<p>See the warning on the corresponding constructor. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.headers.classboost_1_1random_1_1additive__combine__engine_1a2cc214000e2bfab9ea3b732f8fb60d89"></a><span class="identifier">seed</span><span class="special">(</span><span class="keyword">typename</span> <span class="identifier">MLCG1</span><span class="special">::</span><span class="identifier">result_type</span> seed1<span class="special">,</span> 
+          <span class="keyword">typename</span> <span class="identifier">MLCG2</span><span class="special">::</span><span class="identifier">result_type</span> seed2<span class="special">)</span><span class="special">;</span></pre>
+<p>Seeds an <code class="computeroutput">additive_combine</code> generator, using <code class="computeroutput">seed1</code> and <code class="computeroutput">seed2</code> as the seeds to the first and second base generators, respectively. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> It<span class="special">&gt;</span> <span class="keyword">void</span> <a name="doxygen.headers.classboost_1_1random_1_1additive__combine__engine_1aa02db9680529fd42e461353383761ee2"></a><span class="identifier">seed</span><span class="special">(</span><span class="identifier">It</span> <span class="special">&amp;</span> first<span class="special">,</span> <span class="identifier">It</span> last<span class="special">)</span><span class="special">;</span></pre>
+<p>Seeds an <code class="computeroutput"><a class="link" href="classboost_1_1random_1_1additive__combine__engine.html" title="Class template additive_combine_engine">additive_combine_engine</a></code> with values from the range defined by the input iterators first and last. first will be modified to point to the element after the last one used.</p>
+<p>Throws: <code class="computeroutput">std::invalid_argument</code> if the input range is too small.</p>
+<p>Exception Safety: Basic </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">result_type</span> <a name="doxygen.headers.classboost_1_1random_1_1additive__combine__engine_1a6aade889d9da821ac8b29e20b4b9d11e"></a><span class="keyword">operator</span><span class="special">(</span><span class="special">)</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Returns the next value of the generator. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Iter<span class="special">&gt;</span> <span class="keyword">void</span> <a name="doxygen.headers.classboost_1_1random_1_1additive__combine__engine_1a11d283769455b3db64fb19f79a48a483"></a><span class="identifier">generate</span><span class="special">(</span><span class="identifier">Iter</span> first<span class="special">,</span> <span class="identifier">Iter</span> last<span class="special">)</span><span class="special">;</span></pre>
+<p>Fills a range with random values </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.headers.classboost_1_1random_1_1additive__combine__engine_1a28c5063cc2b87b9a0c045767adbfebe4"></a><span class="identifier">discard</span><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">uintmax_t</span> z<span class="special">)</span><span class="special">;</span></pre>
+<p>Advances the state of the generator by <code class="computeroutput">z</code>. </p>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.34.5.6.2.3.4.7"></a><h3>
+<a name="id-1_3_34_5_6_3_1_1_1_9-bb"></a><code class="computeroutput">additive_combine_engine</code> friend functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits<span class="special">&gt;</span> 
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+  <a name="doxygen.headers.classboost_1_1random_1_1additive__combine__engine_1adc4b1822659d232f3fba9e8ca841f596"></a><span class="keyword">operator</span><span class="special">&lt;&lt;</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> os<span class="special">,</span> 
+             <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1additive__combine__engine.html" title="Class template additive_combine_engine">additive_combine_engine</a> <span class="special">&amp;</span> r<span class="special">)</span><span class="special">;</span></pre>
+<p>Writes the state of an <code class="computeroutput"><a class="link" href="classboost_1_1random_1_1additive__combine__engine.html" title="Class template additive_combine_engine">additive_combine_engine</a></code> to a <code class="computeroutput">std::ostream</code>. The textual representation of an <code class="computeroutput"><a class="link" href="classboost_1_1random_1_1additive__combine__engine.html" title="Class template additive_combine_engine">additive_combine_engine</a></code> is the textual representation of the first base generator followed by the textual representation of the second base generator. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits<span class="special">&gt;</span> 
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+  <a name="doxygen.headers.classboost_1_1random_1_1additive__combine__engine_1adb902f754f6646d10d702655abd79700"></a><span class="keyword">operator</span><span class="special">&gt;&gt;</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> is<span class="special">,</span> 
+             <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1additive__combine__engine.html" title="Class template additive_combine_engine">additive_combine_engine</a> <span class="special">&amp;</span> r<span class="special">)</span><span class="special">;</span></pre>
+<p>Reads the state of an <code class="computeroutput"><a class="link" href="classboost_1_1random_1_1additive__combine__engine.html" title="Class template additive_combine_engine">additive_combine_engine</a></code> from a <code class="computeroutput">std::istream</code>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.headers.classboost_1_1random_1_1additive__combine__engine_1ac7a733fe4f991e73c14f31d6115e736a"></a><span class="keyword">operator</span><span class="special">==</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1additive__combine__engine.html" title="Class template additive_combine_engine">additive_combine_engine</a> <span class="special">&amp;</span> x<span class="special">,</span> 
+                <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1additive__combine__engine.html" title="Class template additive_combine_engine">additive_combine_engine</a> <span class="special">&amp;</span> y<span class="special">)</span><span class="special">;</span></pre>
+<p>Returns: true iff the two <code class="computeroutput">additive_combine_engines</code> will produce the same sequence of values. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.headers.classboost_1_1random_1_1additive__combine__engine_1a7ec3a0b311675afbd93e84d63e5bce84"></a><span class="keyword">operator</span><span class="special">!=</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1additive__combine__engine.html" title="Class template additive_combine_engine">additive_combine_engine</a> <span class="special">&amp;</span> lhs<span class="special">,</span> 
+                <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1additive__combine__engine.html" title="Class template additive_combine_engine">additive_combine_engine</a> <span class="special">&amp;</span> rhs<span class="special">)</span><span class="special">;</span></pre>
+<p>Returns: true iff the two <code class="computeroutput">additive_combine_engines</code> will produce different sequences of values. </p>
+</li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2000-2005 Jens Maurer<br>Copyright © 2009, 2010 Steven Watanabe<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../../boost_random/reference.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_random/reference.html#doxygen.headers.additive__combine_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="additive__combine_8hpp_1a6f294100a1fb0e43f16f7522f18d7460.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

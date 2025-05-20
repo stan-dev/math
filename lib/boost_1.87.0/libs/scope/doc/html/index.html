@@ -1,0 +1,406 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Chapter 1. Boost.Scope</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="index.html" title="Chapter 1. Boost.Scope">
+<link rel="next" href="scope/install_compat.html" title="Installation and compatibility">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr><td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td></tr></table>
+<hr>
+<div class="spirit-nav"><a accesskey="n" href="scope/install_compat.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a></div>
+<div class="chapter">
+<div class="titlepage"><div>
+<div><h2 class="title">
+<a name="scope"></a>Chapter 1. Boost.Scope</h2></div>
+<div><div class="author"><h3 class="author">
+<span class="firstname">Andrey</span> <span class="surname">Semashev</span>
+</h3></div></div>
+<div><p class="copyright">Copyright © 2022-2024 Andrey Semashev</p></div>
+<div><div class="legalnotice">
+<a name="scope.legal"></a><p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="https://www.boost.org/LICENSE_1_0.txt" target="_top">https://www.boost.org/LICENSE_1_0.txt</a>).
+      </p>
+</div></div>
+</div></div>
+<div class="toc">
+<p><b>Table of Contents</b></p>
+<dl class="toc">
+<dt><span class="section"><a href="index.html#scope.intro">Introduction</a></span></dt>
+<dt><span class="section"><a href="scope/install_compat.html">Installation and compatibility</a></span></dt>
+<dt><span class="section"><a href="scope/scope_guards.html">Scope guards</a></span></dt>
+<dd><dl>
+<dt><span class="section"><a href="scope/scope_guards.html#scope.scope_guards.conditional">Conditional scope guards:
+      <code class="computeroutput"><span class="identifier">scope_exit</span></code>, <code class="computeroutput"><span class="identifier">scope_success</span></code>
+      and <code class="computeroutput"><span class="identifier">scope_fail</span></code></a></span></dt>
+<dt><span class="section"><a href="scope/scope_guards.html#scope.scope_guards.condition_functions">Scope guard condition
+      functions</a></span></dt>
+<dt><span class="section"><a href="scope/scope_guards.html#scope.scope_guards.unconditional">Unconditional scope
+      guard: <code class="computeroutput"><span class="identifier">defer_guard</span></code></a></span></dt>
+<dt><span class="section"><a href="scope/scope_guards.html#scope.scope_guards.capture_by_reference_caveats">Caveats
+      of capturing by reference</a></span></dt>
+<dt><span class="section"><a href="scope/scope_guards.html#scope.scope_guards.runtime_defined">Setting up scope
+      exit actions at run time</a></span></dt>
+<dt><span class="section"><a href="scope/scope_guards.html#scope.scope_guards.comparison_with_boost_scope_exit">Comparison
+      with Boost.ScopeExit library</a></span></dt>
+<dt><span class="section"><a href="scope/scope_guards.html#scope.scope_guards.comparison_with_library_fundamentals_ts">Comparison
+      with scope guards defined in C++ Extensions for Library Fundamentals</a></span></dt>
+</dl></dd>
+<dt><span class="section"><a href="scope/unique_resource.html">Unique resource wrapper</a></span></dt>
+<dd><dl>
+<dt><span class="section"><a href="scope/unique_resource.html#scope.unique_resource.resource_traits">Resource traits</a></span></dt>
+<dt><span class="section"><a href="scope/unique_resource.html#scope.unique_resource.simplified_resource_traits">Simplified
+      resource traits</a></span></dt>
+<dt><span class="section"><a href="scope/unique_resource.html#scope.unique_resource.comparison_with_library_fundamentals_ts">Comparison
+      with <code class="computeroutput"><span class="identifier">unique_resource</span></code> defined
+      in C++ Extensions for Library Fundamentals</a></span></dt>
+</dl></dd>
+<dt><span class="section"><a href="reference.html">Reference</a></span></dt>
+<dd><dl>
+<dt><span class="section"><a href="reference.html#doxygen.reference.defer_8hpp">Header &lt;boost/scope/defer.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="reference.html#doxygen.reference.error__code__checker_8hpp">Header &lt;boost/scope/error_code_checker.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="reference.html#doxygen.reference.exception__checker_8hpp">Header &lt;boost/scope/exception_checker.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="reference.html#doxygen.reference.fd__deleter_8hpp">Header &lt;boost/scope/fd_deleter.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="reference.html#doxygen.reference.fd__resource__traits_8hpp">Header &lt;boost/scope/fd_resource_traits.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="reference.html#doxygen.reference.scope__exit_8hpp">Header &lt;boost/scope/scope_exit.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="reference.html#doxygen.reference.scope__fail_8hpp">Header &lt;boost/scope/scope_fail.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="reference.html#doxygen.reference.scope__success_8hpp">Header &lt;boost/scope/scope_success.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="reference.html#doxygen.reference.unique__fd_8hpp">Header &lt;boost/scope/unique_fd.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="reference.html#doxygen.reference.unique__resource_8hpp">Header &lt;boost/scope/unique_resource.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="reference.html#doxygen.reference.unique__resource__fwd_8hpp">Header &lt;boost/scope/unique_resource_fwd.hpp&gt;</a></span></dt>
+</dl></dd>
+<dt><span class="section"><a href="scope/changelog.html">Changelog</a></span></dt>
+</dl>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="scope.intro"></a><a class="link" href="index.html#scope.intro" title="Introduction">Introduction</a>
+</h2></div></div></div>
+<p>
+      The Boost.Scope library is a collection of utilities helping with code execution
+      upon leaving a scope and automatic resource management. The library contains
+      components that are similar to those specified in the <a href="https://cplusplus.github.io/fundamentals-ts/v3.html" target="_top">C++
+      Extensions for Library Fundamentals, Version 3</a> technical specification
+      (or TS, for short), in the <a href="https://cplusplus.github.io/fundamentals-ts/v3.html#scope.syn" target="_top"><code class="computeroutput"><span class="special">&lt;</span><span class="identifier">experimental</span><span class="special">/</span><span class="identifier">scope</span><span class="special">&gt;</span></code></a>
+      standard library header, originally defined in <a href="https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p0052r10.pdf" target="_top">P0052R10</a>.
+      The library also contains extensions to the TS that improve usability and efficiency
+      of the components.
+    </p>
+<p>
+      The components provided by the library can be divided into two categories:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          A set of scope guards that allow executing arbitrary code when the scope
+          guard is destroyed,
+        </li>
+<li class="listitem">
+          A generic resource wrapper that automatically frees the owned resource
+          upon destruction.
+        </li>
+</ul></div>
+<p>
+      The library defines its components in namespace <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">scope</span></code>.
+      For brevity, the namespace qualification may be omitted in this documentation;
+      readers should assume that unqualified names like <code class="computeroutput"><span class="identifier">scope_exit</span></code>
+      or <code class="computeroutput"><span class="identifier">unique_resource</span></code> are defined
+      in <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">scope</span></code>.
+    </p>
+<p>
+      Scope guards allow the user to execute a piece of code (an action) upon leaving
+      the scope where the scope guard is declared. Depending on the scope guard,
+      the action can be executed unconditionally, upon leaving the scope normally
+      or due to an exception, or even according to a user-specified condition. This
+      can be useful in a variety of use cases, some of which are illustrated below.
+    </p>
+<div class="table">
+<a name="scope.intro.syntax_overview_of_boost_scope_s"></a><p class="title"><b>Table 1.1. Syntax overview of Boost.Scope scope guards</b></p>
+<div class="table-contents"><table class="table" summary="Syntax overview of Boost.Scope scope guards">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+              <p>
+                C++11
+              </p>
+            </th>
+<th>
+              <p>
+                C++17
+              </p>
+            </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+<pre class="programlisting"><span class="keyword">class</span> <span class="identifier">adder</span>
+<span class="special">{</span>
+    <span class="keyword">int</span> <span class="identifier">x</span><span class="special">,</span> <span class="identifier">y</span><span class="special">;</span>
+
+<span class="keyword">public</span><span class="special">:</span>
+    <span class="comment">// Computes a sum of integers</span>
+    <span class="keyword">int</span> <span class="identifier">compute</span><span class="special">()</span>
+    <span class="special">{</span>
+        <span class="comment">// Reset variables on return or exception</span>
+        <span class="keyword">auto</span> <span class="identifier">cleanup</span> <span class="special">=</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">scope</span><span class="special">::</span><span class="identifier">make_scope_exit</span><span class="special">([</span><span class="keyword">this</span><span class="special">]</span>
+        <span class="special">{</span>
+            <span class="identifier">x</span> <span class="special">=</span> <span class="number">0</span><span class="special">;</span>
+            <span class="identifier">y</span> <span class="special">=</span> <span class="number">0</span><span class="special">;</span>
+        <span class="special">});</span>
+
+        <span class="keyword">long</span> <span class="keyword">long</span> <span class="keyword">int</span> <span class="identifier">sum</span> <span class="special">=</span> <span class="keyword">static_cast</span><span class="special">&lt;</span> <span class="keyword">long</span> <span class="keyword">long</span> <span class="keyword">int</span> <span class="special">&gt;(</span><span class="identifier">x</span><span class="special">)</span> <span class="special">+</span>
+            <span class="keyword">static_cast</span><span class="special">&lt;</span> <span class="keyword">long</span> <span class="keyword">long</span> <span class="keyword">int</span> <span class="special">&gt;(</span><span class="identifier">y</span><span class="special">);</span>
+        <span class="keyword">if</span> <span class="special">(</span><span class="identifier">sum</span> <span class="special">&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">numeric_limits</span><span class="special">&lt;</span> <span class="keyword">int</span> <span class="special">&gt;::</span><span class="identifier">min</span><span class="special">()</span> <span class="special">||</span>
+            <span class="identifier">sum</span> <span class="special">&gt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">numeric_limits</span><span class="special">&lt;</span> <span class="keyword">int</span> <span class="special">&gt;::</span><span class="identifier">max</span><span class="special">())</span>
+        <span class="special">{</span>
+            <span class="keyword">throw</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">overflow_error</span><span class="special">(</span><span class="string">"Integer overflow"</span><span class="special">);</span>
+        <span class="special">}</span>
+
+        <span class="keyword">return</span> <span class="keyword">static_cast</span><span class="special">&lt;</span> <span class="keyword">int</span> <span class="special">&gt;(</span><span class="identifier">sum</span><span class="special">);</span>
+    <span class="special">}</span>
+<span class="special">};</span>
+</pre>
+            </td>
+<td>
+<pre class="programlisting"><span class="keyword">class</span> <span class="identifier">adder</span>
+<span class="special">{</span>
+    <span class="keyword">int</span> <span class="identifier">x</span><span class="special">,</span> <span class="identifier">y</span><span class="special">;</span>
+
+<span class="keyword">public</span><span class="special">:</span>
+    <span class="comment">// Computes a sum of integers</span>
+    <span class="keyword">int</span> <span class="identifier">compute</span><span class="special">()</span>
+    <span class="special">{</span>
+        <span class="comment">// Reset variables on return or exception.</span>
+        <span class="comment">// Anonymous scope guard.</span>
+        <span class="identifier">BOOST_SCOPE_DEFER</span> <span class="special">[</span><span class="keyword">this</span><span class="special">]</span>
+        <span class="special">{</span>
+            <span class="identifier">x</span> <span class="special">=</span> <span class="number">0</span><span class="special">;</span>
+            <span class="identifier">y</span> <span class="special">=</span> <span class="number">0</span><span class="special">;</span>
+        <span class="special">};</span>
+
+        <span class="keyword">long</span> <span class="keyword">long</span> <span class="keyword">int</span> <span class="identifier">sum</span> <span class="special">=</span> <span class="keyword">static_cast</span><span class="special">&lt;</span> <span class="keyword">long</span> <span class="keyword">long</span> <span class="keyword">int</span> <span class="special">&gt;(</span><span class="identifier">x</span><span class="special">)</span> <span class="special">+</span>
+            <span class="keyword">static_cast</span><span class="special">&lt;</span> <span class="keyword">long</span> <span class="keyword">long</span> <span class="keyword">int</span> <span class="special">&gt;(</span><span class="identifier">y</span><span class="special">);</span>
+        <span class="keyword">if</span> <span class="special">(</span><span class="identifier">sum</span> <span class="special">&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">numeric_limits</span><span class="special">&lt;</span> <span class="keyword">int</span> <span class="special">&gt;::</span><span class="identifier">min</span><span class="special">()</span> <span class="special">||</span>
+            <span class="identifier">sum</span> <span class="special">&gt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">numeric_limits</span><span class="special">&lt;</span> <span class="keyword">int</span> <span class="special">&gt;::</span><span class="identifier">max</span><span class="special">())</span>
+        <span class="special">{</span>
+            <span class="keyword">throw</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">overflow_error</span><span class="special">(</span><span class="string">"Integer overflow"</span><span class="special">);</span>
+        <span class="special">}</span>
+
+        <span class="keyword">return</span> <span class="keyword">static_cast</span><span class="special">&lt;</span> <span class="keyword">int</span> <span class="special">&gt;(</span><span class="identifier">sum</span><span class="special">);</span>
+    <span class="special">}</span>
+<span class="special">};</span>
+</pre>
+            </td>
+</tr>
+<tr>
+<td>
+<pre class="programlisting"><span class="keyword">template</span><span class="special">&lt;</span> <span class="keyword">typename</span> <span class="identifier">Object</span> <span class="special">&gt;</span>
+<span class="keyword">class</span> <span class="identifier">collection</span>
+<span class="special">{</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">set</span><span class="special">&lt;</span> <span class="identifier">Object</span> <span class="special">&gt;</span> <span class="identifier">objects</span><span class="special">;</span>
+
+<span class="keyword">public</span><span class="special">:</span>
+    <span class="comment">// Adds a new object to the collection</span>
+    <span class="identifier">Object</span><span class="special">&amp;</span> <span class="identifier">add_object</span><span class="special">()</span>
+    <span class="special">{</span>
+        <span class="keyword">auto</span> <span class="identifier">it</span> <span class="special">=</span> <span class="identifier">objects</span><span class="special">.</span><span class="identifier">emplace</span><span class="special">();</span>
+
+        <span class="comment">// Revert object insertion on exception</span>
+        <span class="keyword">auto</span> <span class="identifier">cleanup</span> <span class="special">=</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">scope</span><span class="special">::</span><span class="identifier">make_scope_fail</span><span class="special">([</span><span class="keyword">this</span><span class="special">,</span> <span class="identifier">it</span><span class="special">]</span>
+        <span class="special">{</span>
+            <span class="identifier">objects</span><span class="special">.</span><span class="identifier">erase</span><span class="special">(</span><span class="identifier">it</span><span class="special">);</span>
+        <span class="special">});</span>
+
+        <span class="comment">// Throws on error</span>
+        <span class="identifier">it</span><span class="special">-&gt;</span><span class="identifier">on_added</span><span class="special">(*</span><span class="keyword">this</span><span class="special">);</span>
+
+        <span class="keyword">return</span> <span class="special">*</span><span class="identifier">it</span><span class="special">;</span>
+    <span class="special">}</span>
+<span class="special">};</span>
+</pre>
+            </td>
+<td>
+<pre class="programlisting"><span class="keyword">template</span><span class="special">&lt;</span> <span class="keyword">typename</span> <span class="identifier">Object</span> <span class="special">&gt;</span>
+<span class="keyword">class</span> <span class="identifier">collection</span>
+<span class="special">{</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">set</span><span class="special">&lt;</span> <span class="identifier">Object</span> <span class="special">&gt;</span> <span class="identifier">objects</span><span class="special">;</span>
+
+<span class="keyword">public</span><span class="special">:</span>
+    <span class="comment">// Adds a new object to the collection</span>
+    <span class="identifier">Object</span><span class="special">&amp;</span> <span class="identifier">add_object</span><span class="special">()</span>
+    <span class="special">{</span>
+        <span class="keyword">auto</span> <span class="identifier">it</span> <span class="special">=</span> <span class="identifier">objects</span><span class="special">.</span><span class="identifier">emplace</span><span class="special">();</span>
+
+        <span class="comment">// Revert object insertion on exception</span>
+        <span class="identifier">boost</span><span class="special">::</span><span class="identifier">scope</span><span class="special">::</span><span class="identifier">scope_fail</span> <span class="identifier">cleanup</span><span class="special">{[</span><span class="keyword">this</span><span class="special">,</span> <span class="identifier">it</span><span class="special">]</span>
+        <span class="special">{</span>
+            <span class="identifier">objects</span><span class="special">.</span><span class="identifier">erase</span><span class="special">(</span><span class="identifier">it</span><span class="special">);</span>
+        <span class="special">}};</span>
+
+        <span class="comment">// Throws on error</span>
+        <span class="identifier">it</span><span class="special">-&gt;</span><span class="identifier">on_added</span><span class="special">(*</span><span class="keyword">this</span><span class="special">);</span>
+
+        <span class="keyword">return</span> <span class="special">*</span><span class="identifier">it</span><span class="special">;</span>
+    <span class="special">}</span>
+<span class="special">};</span>
+</pre>
+            </td>
+</tr>
+<tr>
+<td>
+<pre class="programlisting"><span class="comment">// Writes a list of strings to the file, in CSV format</span>
+<span class="keyword">bool</span> <span class="identifier">save_as_csv</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="special">&gt;</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">strings</span><span class="special">,</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">filename</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">ofstream</span> <span class="identifier">file</span><span class="special">(</span><span class="identifier">filename</span><span class="special">.</span><span class="identifier">c_str</span><span class="special">(),</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">ios_base</span><span class="special">::</span><span class="identifier">out</span> <span class="special">|</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">ios_base</span><span class="special">::</span><span class="identifier">trunc</span><span class="special">);</span>
+    <span class="keyword">if</span> <span class="special">(!</span><span class="identifier">file</span><span class="special">.</span><span class="identifier">is_open</span><span class="special">())</span>
+        <span class="keyword">return</span> <span class="keyword">false</span><span class="special">;</span>
+
+    <span class="comment">// Set a scope guard to remove the partially written file</span>
+    <span class="comment">// in case of error - exception or not</span>
+    <span class="keyword">auto</span> <span class="identifier">remove_guard</span> <span class="special">=</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">scope</span><span class="special">::</span><span class="identifier">make_scope_exit</span><span class="special">([&amp;</span><span class="identifier">file</span><span class="special">,</span> <span class="special">&amp;</span><span class="identifier">filename</span><span class="special">]</span>
+    <span class="special">{</span>
+        <span class="identifier">file</span><span class="special">.</span><span class="identifier">close</span><span class="special">();</span> <span class="comment">// close the file to allow remove() to succeed on Windows</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">remove</span><span class="special">(</span><span class="identifier">filename</span><span class="special">.</span><span class="identifier">c_str</span><span class="special">());</span>
+    <span class="special">});</span>
+
+    <span class="keyword">bool</span> <span class="identifier">first</span> <span class="special">=</span> <span class="keyword">true</span><span class="special">;</span>
+    <span class="keyword">for</span> <span class="special">(</span><span class="keyword">auto</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">str</span> <span class="special">:</span> <span class="identifier">strings</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="keyword">if</span> <span class="special">(!</span><span class="identifier">first</span><span class="special">)</span>
+            <span class="identifier">file</span> <span class="special">&lt;&lt;</span> <span class="char">','</span><span class="special">;</span>
+        <span class="keyword">else</span>
+            <span class="identifier">first</span> <span class="special">=</span> <span class="keyword">false</span><span class="special">;</span>
+
+        <span class="identifier">file</span> <span class="special">&lt;&lt;</span> <span class="char">'"'</span> <span class="special">&lt;&lt;</span> <span class="identifier">str</span> <span class="special">&lt;&lt;</span> <span class="char">'"'</span><span class="special">;</span>
+
+        <span class="keyword">if</span> <span class="special">(</span><span class="identifier">file</span><span class="special">.</span><span class="identifier">fail</span><span class="special">())</span>
+            <span class="keyword">return</span> <span class="keyword">false</span><span class="special">;</span>
+    <span class="special">}</span>
+
+    <span class="identifier">file</span> <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">file</span><span class="special">.</span><span class="identifier">fail</span><span class="special">())</span>
+        <span class="keyword">return</span> <span class="keyword">false</span><span class="special">;</span>
+
+    <span class="comment">// Commit the operation</span>
+    <span class="identifier">remove_guard</span><span class="special">.</span><span class="identifier">set_active</span><span class="special">(</span><span class="keyword">false</span><span class="special">);</span>
+
+    <span class="keyword">return</span> <span class="keyword">true</span><span class="special">;</span>
+<span class="special">}</span>
+</pre>
+            </td>
+<td>
+<pre class="programlisting"><span class="comment">// Writes a list of strings to the file, in CSV format</span>
+<span class="keyword">bool</span> <span class="identifier">save_as_csv</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="special">&gt;</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">strings</span><span class="special">,</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">filename</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">ofstream</span> <span class="identifier">file</span><span class="special">(</span><span class="identifier">filename</span><span class="special">.</span><span class="identifier">c_str</span><span class="special">(),</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">ios_base</span><span class="special">::</span><span class="identifier">out</span> <span class="special">|</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">ios_base</span><span class="special">::</span><span class="identifier">trunc</span><span class="special">);</span>
+    <span class="keyword">if</span> <span class="special">(!</span><span class="identifier">file</span><span class="special">.</span><span class="identifier">is_open</span><span class="special">())</span>
+        <span class="keyword">return</span> <span class="keyword">false</span><span class="special">;</span>
+
+    <span class="comment">// Set a scope guard to remove the partially written file</span>
+    <span class="comment">// in case of error - exception or not</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">scope</span><span class="special">::</span><span class="identifier">scope_exit</span> <span class="identifier">remove_guard</span><span class="special">{[&amp;</span><span class="identifier">file</span><span class="special">,</span> <span class="special">&amp;</span><span class="identifier">filename</span><span class="special">]</span>
+    <span class="special">{</span>
+        <span class="identifier">file</span><span class="special">.</span><span class="identifier">close</span><span class="special">();</span> <span class="comment">// close the file to allow remove() to succeed on Windows</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">remove</span><span class="special">(</span><span class="identifier">filename</span><span class="special">.</span><span class="identifier">c_str</span><span class="special">());</span>
+    <span class="special">}};</span>
+
+    <span class="keyword">bool</span> <span class="identifier">first</span> <span class="special">=</span> <span class="keyword">true</span><span class="special">;</span>
+    <span class="keyword">for</span> <span class="special">(</span><span class="keyword">auto</span> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">str</span> <span class="special">:</span> <span class="identifier">strings</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="keyword">if</span> <span class="special">(!</span><span class="identifier">first</span><span class="special">)</span>
+            <span class="identifier">file</span> <span class="special">&lt;&lt;</span> <span class="char">','</span><span class="special">;</span>
+        <span class="keyword">else</span>
+            <span class="identifier">first</span> <span class="special">=</span> <span class="keyword">false</span><span class="special">;</span>
+
+        <span class="identifier">file</span> <span class="special">&lt;&lt;</span> <span class="char">'"'</span> <span class="special">&lt;&lt;</span> <span class="identifier">str</span> <span class="special">&lt;&lt;</span> <span class="char">'"'</span><span class="special">;</span>
+
+        <span class="keyword">if</span> <span class="special">(</span><span class="identifier">file</span><span class="special">.</span><span class="identifier">fail</span><span class="special">())</span>
+            <span class="keyword">return</span> <span class="keyword">false</span><span class="special">;</span>
+    <span class="special">}</span>
+
+    <span class="identifier">file</span> <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">file</span><span class="special">.</span><span class="identifier">fail</span><span class="special">())</span>
+        <span class="keyword">return</span> <span class="keyword">false</span><span class="special">;</span>
+
+    <span class="comment">// Commit the operation</span>
+    <span class="identifier">remove_guard</span><span class="special">.</span><span class="identifier">set_active</span><span class="special">(</span><span class="keyword">false</span><span class="special">);</span>
+
+    <span class="keyword">return</span> <span class="keyword">true</span><span class="special">;</span>
+<span class="special">}</span>
+</pre>
+            </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break"><p>
+      There is some overlap between scope guards provided by this library and <a href="https://www.boost.org/doc/libs/release/libs/scope_exit/doc/html/index.html" target="_top">Boost.ScopeExit</a>.
+      Compared to <a href="https://www.boost.org/doc/libs/release/libs/scope_exit/doc/html/index.html" target="_top">Boost.ScopeExit</a>,
+      Boost.Scope offers simpler syntax (especially with C++17 capable compilers)
+      and new features for specific use cases. Detailed comparison between scope
+      guards provided by Boost.Scope and <a href="https://www.boost.org/doc/libs/release/libs/scope_exit/doc/html/index.html" target="_top">Boost.ScopeExit</a>
+      is given in a <a class="link" href="scope/scope_guards.html#scope.scope_guards.comparison_with_boost_scope_exit" title="Comparison with Boost.ScopeExit library">separate
+      section</a>.
+    </p>
+<p>
+      Unique resource wrapper provided by Boost.Scope is a generalization of smart
+      pointers like <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">unique_ptr</span></code> and <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">scoped_ptr</span></code>
+      from <a href="https://www.boost.org/doc/libs/release/libs/smart_ptr/doc/html/smart_ptr.html" target="_top">Boost.SmartPtr</a>.
+      While smart pointers are suitable for managing resources represented by pointers
+      (e.g. objects in dynamically allocated memory), unique resource wrapper can
+      be used with many more kinds of resource types, such as integers (e.g. POSIX
+      file descriptors) and user-defined types.
+    </p>
+<pre class="programlisting"><span class="comment">// Fills the buffer with random bytes from system RNG. Returns 0 on success, otherwise an error code.</span>
+<span class="keyword">int</span> <span class="identifier">get_random_bytes</span><span class="special">(</span><span class="keyword">unsigned</span> <span class="keyword">char</span><span class="special">*</span> <span class="identifier">bytes</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">size</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="comment">// Open RNG device and wrap the returned POSIX file descriptor in unique_resource.</span>
+    <span class="comment">// This wrapper will automatically close the file descriptor upon destruction by invoking fd_deleter on it.</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">scope</span><span class="special">::</span><span class="identifier">unique_resource</span><span class="special">&lt;</span> <span class="keyword">int</span><span class="special">,</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">scope</span><span class="special">::</span><span class="identifier">fd_deleter</span><span class="special">,</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">scope</span><span class="special">::</span><span class="identifier">fd_resource_traits</span> <span class="special">&gt;</span> <span class="identifier">fd</span><span class="special">(</span><span class="identifier">open</span><span class="special">(</span><span class="string">"/dev/urandom"</span><span class="special">,</span> <span class="identifier">O_RDONLY</span><span class="special">));</span>
+
+    <span class="comment">// fd_resource_traits allows the unique_resource to recognize when open() returns a valid file descriptor</span>
+    <span class="comment">// and when it fails and returns -1. In the latter case, the constructed unique_resource is unallocated,</span>
+    <span class="comment">// which we test below.</span>
+    <span class="keyword">if</span> <span class="special">(!</span><span class="identifier">fd</span><span class="special">)</span>
+        <span class="keyword">return</span> <span class="identifier">errno</span><span class="special">;</span>
+
+    <span class="comment">// Read random bytes until the buffer is filled or an error occurs</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">read_size</span> <span class="special">=</span> <span class="number">0u</span><span class="special">;</span>
+    <span class="keyword">while</span> <span class="special">(</span><span class="identifier">read_size</span> <span class="special">&lt;</span> <span class="identifier">size</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="identifier">ssize_t</span> <span class="identifier">res</span> <span class="special">=</span> <span class="identifier">read</span><span class="special">(</span><span class="identifier">fd</span><span class="special">.</span><span class="identifier">get</span><span class="special">(),</span> <span class="identifier">bytes</span> <span class="special">+</span> <span class="identifier">read_size</span><span class="special">,</span> <span class="identifier">size</span> <span class="special">-</span> <span class="identifier">read_size</span><span class="special">);</span>
+        <span class="keyword">if</span> <span class="special">(</span><span class="identifier">res</span> <span class="special">&lt;</span> <span class="number">0</span><span class="special">)</span>
+        <span class="special">{</span>
+            <span class="keyword">int</span> <span class="identifier">err</span> <span class="special">=</span> <span class="identifier">errno</span><span class="special">;</span>
+            <span class="keyword">if</span> <span class="special">(</span><span class="identifier">err</span> <span class="special">==</span> <span class="identifier">EINTR</span><span class="special">)</span>
+                <span class="keyword">continue</span><span class="special">;</span>
+
+            <span class="keyword">return</span> <span class="identifier">err</span><span class="special">;</span>
+        <span class="special">}</span>
+
+        <span class="keyword">if</span> <span class="special">(</span><span class="identifier">res</span> <span class="special">==</span> <span class="number">0</span><span class="special">)</span>
+            <span class="keyword">return</span> <span class="identifier">ENODATA</span><span class="special">;</span>
+
+        <span class="identifier">read_size</span> <span class="special">+=</span> <span class="identifier">res</span><span class="special">;</span>
+    <span class="special">}</span>
+
+    <span class="keyword">return</span> <span class="number">0</span><span class="special">;</span>
+<span class="special">}</span>
+</pre>
+</div>
+</div>
+<div class="copyright-footer"></div>
+<hr>
+<div class="spirit-nav"><a accesskey="n" href="scope/install_compat.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a></div>
+</body>
+</html>

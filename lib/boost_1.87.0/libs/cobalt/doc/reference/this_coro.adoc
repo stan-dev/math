@@ -1,0 +1,115 @@
+[#this_coro]
+== cobalt/this_coro.hpp
+
+The `this_coro` namespace provides utilities to access the internal state of a coroutine promise.
+
+Pseudo-awaitables:
+
+[source,cpp,subs="+quotes"]
+----
+include::../../include/boost/cobalt/this_coro.hpp[tag=outline]
+----
+
+
+[#allocator]
+[#enable_await_allocator]
+=== Await Allocator
+
+The allocator of a coroutine supporting `enable_await_allocator` can be obtained the following way:
+
+[source,cpp]
+----
+co_await cobalt::this_coro::allocator;
+----
+
+In order to enable this for your own coroutine you can inherit `enable_await_allocator` with the CRTP pattern:
+
+[source,cpp]
+----
+struct my_promise : cobalt::enable_await_allocator<my_promise>
+{
+  using allocator_type = __your_allocator_type__;
+  allocator_type get_allocator();
+};
+----
+
+NOTE: If available the allocator gets used by <<use_op>>
+
+[#executor]
+[#enable_await_executor]
+=== Await Executor
+
+The allocator of a coroutine supporting `enable_await_executor` can be obtained the following way:
+
+[source,cpp]
+----
+co_await cobalt::this_coro::executor;
+----
+
+In order to enable this for your own coroutine you can inherit `enable_await_executor` with the CRTP pattern:
+
+[source,cpp]
+----
+struct my_promise : cobalt::enable_await_executor<my_promise>
+{
+  using executor_type = __your_executor_type__;
+  executor_type get_executor();
+};
+----
+
+NOTE: If available the executor gets used by <<use_op>>
+
+[#enable_await_deferred]
+=== Await deferred
+
+Your coroutine promises can inherit `enable_await_deferred` so that
+a single signature `asio::deferred` in a `co_await` expression.
+
+Since `asio::deferred` is now the default completion token,
+this allows below code without specifying any completion token or other specialization.
+
+[source,cpp]
+----
+asio::steady_timer t{co_await cobalt::this_coro::executor};
+co_await t.async_wait();
+----
+
+
+[#promise_memory_resource_base]
+=== Memory resource base
+
+The `promise_memory_resource_base` base of a promise will provide a `get_allocator` in the promise taken from
+either the default resource or one passed following a `std::allocator_arg` argument.
+Likewise, it will add `operator new` overloads so the coroutine uses the same memory resource for its frame allocation.
+
+[#promise_throw_if_cancelled_base]
+=== Throw if cancelled
+
+The `promise_throw_if_cancelled_base` provides the basic options to allow operation to enable a coroutines
+to turn throw an exception when another actual <<awaitable, awaitable>> is awaited.
+
+[source,cpp]
+----
+co_await cobalt::this_coro::throw_if_cancelled;
+----
+
+[#promise_cancellation_base]
+=== Cancellation state
+
+The `promise_cancellation_base` provides the basic options to allow operation to enable a coroutines
+to have a cancellation_state that is resettable by
+https://www.boost.org/doc/libs/master/doc/html/boost_asio/reference/this_coro__reset_cancellation_state.html[`reset_cancellation_state`]
+
+[source,cpp]
+----
+co_await cobalt::this_coro::reset_cancellation_state();
+----
+
+For convenience there is also a short-cut to check the current cancellation status:
+
+[source,cpp]
+----
+asio::cancellation_type ct = (co_await cobalt::this_coro::cancellation_state).cancelled();
+asio::cancellation_type ct = co_await cobalt::this_coro::cancelled; // same as above
+----
+

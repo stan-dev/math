@@ -1,0 +1,152 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>format_sql_to (2 of 2 overloads)</title>
+<link rel="stylesheet" href="../../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../boost__mysql__format_sql_to.html" title="format_sql_to">
+<link rel="prev" href="overload1.html" title="format_sql_to (1 of 2 overloads)">
+<link rel="next" href="../boost__mysql__get_client_category.html" title="get_client_category">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="overload1.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost__mysql__format_sql_to.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../boost__mysql__get_client_category.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h5 class="title">
+<a name="mysql.ref.boost__mysql__format_sql_to.overload2"></a><a class="link" href="overload2.html" title="format_sql_to (2 of 2 overloads)">format_sql_to
+        (2 of 2 overloads)</a>
+</h5></div></div></div>
+<p>
+          Composes a SQL query client-side appending it to a format context.
+        </p>
+<h6>
+<a name="mysql.ref.boost__mysql__format_sql_to.overload2.h0"></a>
+          <span class="phrase"><a name="mysql.ref.boost__mysql__format_sql_to.overload2.synopsis"></a></span><a class="link" href="overload2.html#mysql.ref.boost__mysql__format_sql_to.overload2.synopsis">Synopsis</a>
+        </h6>
+<p>
+          Defined in header <code class="literal">&lt;<a href="https://github.com/boostorg/mysql/blob/master/include/boost/mysql/format_sql.hpp" target="_top">boost/mysql/format_sql.hpp</a>&gt;</code>
+        </p>
+<pre class="programlisting"><span class="keyword">void</span>
+<span class="identifier">format_sql_to</span><span class="special">(</span>
+    <a class="link" href="../boost__mysql__format_context_base.html" title="format_context_base"><code class="literal">format_context_base</code></a><span class="special">&amp;</span> <span class="identifier">ctx</span><span class="special">,</span>
+    <a class="link" href="../boost__mysql__constant_string_view.html" title="constant_string_view"><code class="literal">constant_string_view</code></a> <span class="identifier">format_str</span><span class="special">,</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">initializer_list</span><span class="special">&lt;</span> <a class="link" href="../boost__mysql__format_arg.html" title="format_arg"><code class="literal">format_arg</code></a> <span class="special">&gt;</span> <span class="identifier">args</span><span class="special">);</span>
+</pre>
+<h6>
+<a name="mysql.ref.boost__mysql__format_sql_to.overload2.h1"></a>
+          <span class="phrase"><a name="mysql.ref.boost__mysql__format_sql_to.overload2.description"></a></span><a class="link" href="overload2.html#mysql.ref.boost__mysql__format_sql_to.overload2.description">Description</a>
+        </h6>
+<p>
+          Parses <code class="computeroutput"><span class="identifier">format_str</span></code> as a
+          format string, substituting replacement fields (like <code class="computeroutput"><span class="special">{}</span></code>,
+          <code class="computeroutput"><span class="special">{</span><span class="number">1</span><span class="special">}</span></code> or <code class="computeroutput"><span class="special">{</span><span class="identifier">name</span><span class="special">}</span></code>)
+          by formatted arguments, extracted from <code class="computeroutput"><span class="identifier">args</span></code>.
+        </p>
+<p>
+          Formatting is performed as if <a class="link" href="../boost__mysql__format_context_base/append_raw.html" title="format_context_base::append_raw"><code class="computeroutput"><span class="identifier">format_context_base</span><span class="special">::</span><span class="identifier">append_raw</span></code></a> and <a class="link" href="../boost__mysql__format_context_base/append_value.html" title="format_context_base::append_value"><code class="computeroutput"><span class="identifier">format_context_base</span><span class="special">::</span><span class="identifier">append_value</span></code></a> were called on <code class="computeroutput"><span class="identifier">ctx</span></code>, effectively appending characters
+          to its output string.
+        </p>
+<p>
+          Compared to <a class="link" href="../boost__mysql__format_sql.html" title="format_sql"><code class="computeroutput"><span class="identifier">format_sql</span></code></a>, this function is more
+          flexible, allowing the following use cases:
+        </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+              Appending characters to an existing context. Can be used to concatenate
+              the output of successive format operations efficiently.
+            </li>
+<li class="listitem">
+              Using string types different to <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code>
+              (works with any <a class="link" href="../boost__mysql__basic_format_context.html" title="basic_format_context"><code class="computeroutput"><span class="identifier">basic_format_context</span></code></a>).
+            </li>
+<li class="listitem">
+              Avoiding exceptions (see <a class="link" href="../boost__mysql__basic_format_context/get.html" title="basic_format_context::get"><code class="computeroutput"><span class="identifier">basic_format_context</span><span class="special">::</span><span class="identifier">get</span></code></a>).
+            </li>
+</ul></div>
+<h6>
+<a name="mysql.ref.boost__mysql__format_sql_to.overload2.h2"></a>
+          <span class="phrase"><a name="mysql.ref.boost__mysql__format_sql_to.overload2.exception_safety"></a></span><a class="link" href="overload2.html#mysql.ref.boost__mysql__format_sql_to.overload2.exception_safety">Exception
+          safety</a>
+        </h6>
+<p>
+          Basic guarantee. Memory allocations may throw.
+        </p>
+<h6>
+<a name="mysql.ref.boost__mysql__format_sql_to.overload2.h3"></a>
+          <span class="phrase"><a name="mysql.ref.boost__mysql__format_sql_to.overload2.errors"></a></span><a class="link" href="overload2.html#mysql.ref.boost__mysql__format_sql_to.overload2.errors">Errors</a>
+        </h6>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+              <a class="link" href="../boost__mysql__client_errc.html" title="client_errc"><code class="computeroutput"><span class="identifier">client_errc</span><span class="special">::</span><span class="identifier">invalid_encoding</span></code></a>
+              if <code class="computeroutput"><span class="identifier">args</span></code> contains a
+              string with byte sequences that can't be decoded with the current character
+              set.
+            </li>
+<li class="listitem">
+              <a class="link" href="../boost__mysql__client_errc.html" title="client_errc"><code class="computeroutput"><span class="identifier">client_errc</span><span class="special">::</span><span class="identifier">unformattable_value</span></code></a>
+              if <code class="computeroutput"><span class="identifier">args</span></code> contains a
+              floating-point value that is NaN or infinity.
+            </li>
+<li class="listitem">
+              <a class="link" href="../boost__mysql__client_errc.html" title="client_errc"><code class="computeroutput"><span class="identifier">client_errc</span><span class="special">::</span><span class="identifier">format_string_invalid_specifier</span></code></a>
+              if a replacement field includes a specifier not supported by the type
+              being formatted.
+            </li>
+<li class="listitem">
+              Any other error generated by user-defined <a class="link" href="../boost__mysql__formatter.html" title="formatter"><code class="computeroutput"><span class="identifier">formatter</span></code></a> specializations.
+            </li>
+<li class="listitem">
+              <a class="link" href="../boost__mysql__client_errc.html" title="client_errc"><code class="computeroutput"><span class="identifier">client_errc</span><span class="special">::</span><span class="identifier">format_string_invalid_syntax</span></code></a>
+              if <code class="computeroutput"><span class="identifier">format_str</span></code> can't
+              be parsed as a format string.
+            </li>
+<li class="listitem">
+              <a class="link" href="../boost__mysql__client_errc.html" title="client_errc"><code class="computeroutput"><span class="identifier">client_errc</span><span class="special">::</span><span class="identifier">format_string_invalid_encoding</span></code></a>
+              if <code class="computeroutput"><span class="identifier">format_str</span></code> contains
+              byte byte sequences that can't be decoded with the current character
+              set.
+            </li>
+<li class="listitem">
+              <a class="link" href="../boost__mysql__client_errc.html" title="client_errc"><code class="computeroutput"><span class="identifier">client_errc</span><span class="special">::</span><span class="identifier">format_string_manual_auto_mix</span></code></a>
+              if <code class="computeroutput"><span class="identifier">format_str</span></code> contains
+              a mix of automatic (<code class="computeroutput"><span class="special">{}</span></code>)
+              and manual indexed (<code class="computeroutput"><span class="special">{</span><span class="number">1</span><span class="special">}</span></code>) replacement
+              fields.
+            </li>
+<li class="listitem">
+              <a class="link" href="../boost__mysql__client_errc.html" title="client_errc"><code class="computeroutput"><span class="identifier">client_errc</span><span class="special">::</span><span class="identifier">format_arg_not_found</span></code></a>
+              if an argument referenced by <code class="computeroutput"><span class="identifier">format_str</span></code>
+              isn't present in <code class="computeroutput"><span class="identifier">args</span></code>
+              (there aren't enough arguments or a named argument is not found).
+            </li>
+</ul></div>
+<p>
+          This overload allows using named arguments.
+        </p>
+<p>
+          Convenience header <code class="literal">&lt;<a href="https://github.com/boostorg/mysql/blob/master/include/boost/mysql.hpp" target="_top">boost/mysql.hpp</a>&gt;</code>
+        </p>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="overload1.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost__mysql__format_sql_to.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../boost__mysql__get_client_category.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

@@ -1,0 +1,133 @@
+= Benchmarks
+
+__Run on 11th Gen Intel(R) Core(TM) i7-1185G7 @ 3.00GHz__
+
+== Posting to an executor
+
+The benchmark is running the following code, with cobalt's task, `asio::awaitable` and `asio`'s
+stackful coroutine (boost.context) based.
+
+[source,cpp]
+----
+cobalt::task<void> atest()
+{
+  for (std::size_t i = 0u; i < n; i++)
+    co_await asio::post(cobalt::use_op);
+}
+----
+
+.results for 50M times in ms
+[cols="1,1,1"]
+|===
+| |gcc 12 |clang 16
+
+|cobalt     | 2472 | 2098
+|awaitable | 2432 | 2253
+|stackful  | 3655 | 3725
+|===
+
+== Running noop coroutine in parallel
+
+This benchmark uses an `asio::experimental::channel` that has a size of zero,
+to read & write in parallel to it. It uses <<gather, gather>> with cobalt
+and an `awaitable_operator` in the `asio::awaitable`.
+
+[source,cpp]
+----
+cobalt::task<void> atest()
+{
+  asio::experimental::channel<void(system::error_code)> chan{co_await cobalt::this_coro::executor, 0u};
+  for (std::size_t i = 0u; i < n; i++)
+    co_await cobalt::gather(
+              chan.async_send(system::error_code{}, cobalt::use_task),
+              chan.async_receive(cobalt::use_task));
+}
+
+asio::awaitable<void> awtest()
+{
+  asio::experimental::channel<void(system::error_code)> chan{co_await cobalt::this_coro::executor, 0u};
+  using boost::asio::experimental::awaitable_operators::operator&&;
+  for (std::size_t i = 0u; i < n; i++)
+    co_await (
+        chan.async_send(system::error_code{}, asio::use_awaitable)
+        &&
+        chan.async_receive(asio::use_awaitable));
+}
+----
+
+
+.results for 3M times in ms
+[cols="1,1,1"]
+|===
+| |gcc 12 |clang 16
+
+|cobalt    | 1563 | 1468
+|awaitable | 2800 | 2805
+|===
+
+== Immediate
+
+This benchmark utilizes the immediate completion, by using a channel
+with a size of 1, so that every operation is immediate.
+
+[source,cpp]
+----
+cobalt::task<void> atest()
+{
+  asio::experimental::channel<void(system::error_code)> chan{co_await cobalt::this_coro::executor, 1u};
+  for (std::size_t i = 0u; i < n; i++)
+  {
+    co_await chan.async_send(system::error_code{}, cobalt::use_op);
+    co_await chan.async_receive(cobalt::use_op);
+  }
+}
+----
+
+
+.result for 10M times in ms
+[cols="1,1,1"]
+|===
+| |gcc 12 |clang 16
+
+|cobalt    | 1810 | 1864
+|awaitable | 3109 | 4110
+|stackful  | 3922 | 4705
+
+|===
+
+== Channels
+
+In this benchmark asio::experimental::channel and cobalt::channel get compared.
+
+This is similar to the parallel test, but uses the `cobalt::channel` instead.
+
+.result of running the test 3M times in ms
+[cols="1,1,1"]
+|===
+| |gcc |clang
+
+|cobalt    | 500 | 350
+|awaitable | 790 | 770
+|stackful  | 867 | 907
+
+|===
+
+== Operation Allocations
+
+This benchmark compares the different possible solutions for the associated allocator of asynchronous operations
+
+.result of running the test 2M times in ms
+[cols="1,1,1"]
+|===
+| |gcc |clang
+
+|std::allocator    | 1136 | 1139
+|cobalt::monotonic | 1149 | 1270
+|pmr::monotonic    | 1164 | 1173
+|cobalt::sbo       | 1021 | 1060
+
+The latter method is used internally by cobalt.
+
+|===
+
+

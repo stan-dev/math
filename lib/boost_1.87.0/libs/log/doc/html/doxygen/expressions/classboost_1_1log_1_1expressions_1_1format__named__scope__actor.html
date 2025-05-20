@@ -1,0 +1,115 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template format_named_scope_actor</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.Log v2">
+<link rel="up" href="../../expressions.html#doxygen.expressions.named__scope_8hpp" title="Header &lt;boost/log/expressions/formatters/named_scope.hpp&gt;">
+<link rel="prev" href="max__size__decorator_8hpp_1a52396e206a3c866e7628a1ee782226ca.html" title="Function template max_size_decor">
+<link rel="next" href="classboost_1_1log_1_1expressions_1_1format__named__scope__terminal.html" title="Class template format_named_scope_terminal">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr><td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td></tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="max__size__decorator_8hpp_1a52396e206a3c866e7628a1ee782226ca.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../expressions.html#doxygen.expressions.named__scope_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1log_1_1expressions_1_1format__named__scope__terminal.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__named__scope__actor"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template format_named_scope_actor</span></h2>
+<p>boost::log::expressions::format_named_scope_actor</p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../expressions.html#doxygen.expressions.named__scope_8hpp" title="Header &lt;boost/log/expressions/formatters/named_scope.hpp&gt;">boost/log/expressions/formatters/named_scope.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> FallbackPolicyT<span class="special">,</span> <span class="keyword">typename</span> CharT<span class="special">,</span> 
+         <span class="keyword">template</span><span class="special">&lt;</span> <span class="keyword">typename</span> <span class="special">&gt;</span> <span class="keyword">class</span> ActorT <span class="special">=</span> <span class="identifier">phoenix</span><span class="special">::</span><span class="identifier">actor</span><span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1log_1_1expressions_1_1format__named__scope__actor.html" title="Class template format_named_scope_actor">format_named_scope_actor</a> <span class="special">:</span> <span class="keyword">public</span> phoenix::actor&lt; format_named_scope_terminal&lt; FallbackPolicyT, CharT &gt; &gt;
+<span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">CharT</span>                                                     <a name="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__named__scope__actor_1ac300472e15c13f0e7c25cec82c665240"></a><span class="identifier">char_type</span><span class="special">;</span>                <span class="comment">// Character type. </span>
+  <span class="keyword">typedef</span> <span class="identifier">FallbackPolicyT</span>                                           <a name="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__named__scope__actor_1a2e440739dc9c4b7d52309f8634dea29c"></a><span class="identifier">fallback_policy</span><span class="special">;</span>          <span class="comment">// Fallback policy. </span>
+  <span class="keyword">typedef</span> <a class="link" href="classboost_1_1log_1_1expressions_1_1format__named__scope__terminal.html" title="Class template format_named_scope_terminal">format_named_scope_terminal</a><span class="special">&lt;</span> <span class="identifier">fallback_policy</span><span class="special">,</span> <span class="identifier">char_type</span> <span class="special">&gt;</span> <a name="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__named__scope__actor_1a9c6c6a6fe4fb259586ad60b8f8962322"></a><span class="identifier">terminal_type</span><span class="special">;</span>            <span class="comment">// Base terminal type. </span>
+  <span class="keyword">typedef</span> <span class="identifier">terminal_type</span><span class="special">::</span><span class="identifier">value_type</span>                                 <a name="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__named__scope__actor_1a518fb13207dd1a724cb46f50f4576711"></a><span class="identifier">value_type</span><span class="special">;</span>               <span class="comment">// Attribute value type. </span>
+  <span class="keyword">typedef</span> <span class="identifier">terminal_type</span><span class="special">::</span><span class="identifier">formatter_function_type</span>                    <a name="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__named__scope__actor_1a4a7670862bd30da2fcc8e0d801abb385"></a><span class="identifier">formatter_function_type</span><span class="special">;</span>  <span class="comment">// Formatter function. </span>
+  <span class="keyword">typedef</span> <span class="identifier">ActorT</span><span class="special">&lt;</span> <span class="identifier">terminal_type</span> <span class="special">&gt;</span>                                   <a name="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__named__scope__actor_1a32cf16ea7a6a30ea993ec54ac949c46d"></a><span class="identifier">base_type</span><span class="special">;</span>                <span class="comment">// Base actor type. </span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1log_1_1expressions_1_1format__named__scope__actor.html#id80-bb">public member functions</a></span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1log_1_1expressions_1_1format__named__scope__actor.html#doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__named__scope__actor_1ad5b4065532ca341c49fc9249cc5e8462"><span class="identifier">format_named_scope_actor</span></a><span class="special">(</span><span class="identifier">base_type</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">attribute_name</span> <a class="link" href="classboost_1_1log_1_1expressions_1_1format__named__scope__actor.html#doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__named__scope__actor_1ab4930a89e24e98e354a4803de84f0dc5"><span class="identifier">get_name</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">fallback_policy</span> <span class="keyword">const</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1log_1_1expressions_1_1format__named__scope__actor.html#doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__named__scope__actor_1a54e65b79177918fcf47f5a5a9ae2a7b1"><span class="identifier">get_fallback_policy</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">formatter_function_type</span> <span class="keyword">const</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1log_1_1expressions_1_1format__named__scope__actor.html#doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__named__scope__actor_1a2b09d159d86580648d353388d4b1e11e"><span class="identifier">get_formatter_function</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id48278"></a><h2>Description</h2>
+<p>Named scope formatter actor. </p>
+<div class="refsect2">
+<a name="id48281"></a><h3>
+<a name="id80-bb"></a><code class="computeroutput">format_named_scope_actor</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__named__scope__actor_1ad5b4065532ca341c49fc9249cc5e8462"></a><span class="identifier">format_named_scope_actor</span><span class="special">(</span><span class="identifier">base_type</span> <span class="keyword">const</span> <span class="special">&amp;</span> act<span class="special">)</span><span class="special">;</span></pre>Initializing constructor. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">attribute_name</span> <a name="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__named__scope__actor_1ab4930a89e24e98e354a4803de84f0dc5"></a><span class="identifier">get_name</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>The attribute name </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">fallback_policy</span> <span class="keyword">const</span> <span class="special">&amp;</span> <a name="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__named__scope__actor_1a54e65b79177918fcf47f5a5a9ae2a7b1"></a><span class="identifier">get_fallback_policy</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>Fallback policy </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">formatter_function_type</span> <span class="keyword">const</span> <span class="special">&amp;</span> <a name="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__named__scope__actor_1a2b09d159d86580648d353388d4b1e11e"></a><span class="identifier">get_formatter_function</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>Formatter function </p></td>
+</tr></tbody>
+</table></div>
+</li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2007-2024 Andrey Semashev<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>).
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="max__size__decorator_8hpp_1a52396e206a3c866e7628a1ee782226ca.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../expressions.html#doxygen.expressions.named__scope_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1log_1_1expressions_1_1format__named__scope__terminal.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

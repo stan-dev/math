@@ -1,0 +1,77 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>any_address::unix_socket_path</title>
+<link rel="stylesheet" href="../../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../boost__mysql__any_address.html" title="any_address">
+<link rel="prev" href="port.html" title="any_address::port">
+<link rel="next" href="emplace_host_and_port.html" title="any_address::emplace_host_and_port">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="port.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost__mysql__any_address.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="emplace_host_and_port.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h5 class="title">
+<a name="mysql.ref.boost__mysql__any_address.unix_socket_path"></a><a class="link" href="unix_socket_path.html" title="any_address::unix_socket_path">any_address::unix_socket_path</a>
+</h5></div></div></div>
+<p>
+          <a class="indexterm" name="id40124"></a>
+Retrieves the UNIX socket path that this object
+          contains.
+        </p>
+<h6>
+<a name="mysql.ref.boost__mysql__any_address.unix_socket_path.h0"></a>
+          <span class="phrase"><a name="mysql.ref.boost__mysql__any_address.unix_socket_path.synopsis"></a></span><a class="link" href="unix_socket_path.html#mysql.ref.boost__mysql__any_address.unix_socket_path.synopsis">Synopsis</a>
+        </h6>
+<pre class="programlisting"><a class="link" href="../boost__mysql__string_view.html" title="string_view"><code class="literal">string_view</code></a>
+<span class="identifier">unix_socket_path</span><span class="special">()</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+</pre>
+<h6>
+<a name="mysql.ref.boost__mysql__any_address.unix_socket_path.h1"></a>
+          <span class="phrase"><a name="mysql.ref.boost__mysql__any_address.unix_socket_path.preconditions"></a></span><a class="link" href="unix_socket_path.html#mysql.ref.boost__mysql__any_address.unix_socket_path.preconditions">Preconditions</a>
+        </h6>
+<p>
+          <code class="computeroutput"><span class="keyword">this</span><span class="special">-&gt;</span><span class="identifier">type</span><span class="special">()</span> <span class="special">==</span> <span class="identifier">address_type</span><span class="special">::</span><span class="identifier">unix_path</span></code>
+        </p>
+<h6>
+<a name="mysql.ref.boost__mysql__any_address.unix_socket_path.h2"></a>
+          <span class="phrase"><a name="mysql.ref.boost__mysql__any_address.unix_socket_path.object_lifetimes"></a></span><a class="link" href="unix_socket_path.html#mysql.ref.boost__mysql__any_address.unix_socket_path.object_lifetimes">Object
+          lifetimes</a>
+        </h6>
+<p>
+          The returned view points into <code class="computeroutput"><span class="special">*</span><span class="keyword">this</span></code>, and is valid as long as <code class="computeroutput"><span class="special">*</span><span class="keyword">this</span></code> is
+          alive and hasn't been assigned to or moved from.
+        </p>
+<h6>
+<a name="mysql.ref.boost__mysql__any_address.unix_socket_path.h3"></a>
+          <span class="phrase"><a name="mysql.ref.boost__mysql__any_address.unix_socket_path.exception_safety"></a></span><a class="link" href="unix_socket_path.html#mysql.ref.boost__mysql__any_address.unix_socket_path.exception_safety">Exception
+          safety</a>
+        </h6>
+<p>
+          No-throw guarantee.
+        </p>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="port.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost__mysql__any_address.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="emplace_host_and_port.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

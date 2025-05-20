@@ -1,0 +1,134 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>connection_pool::connection_pool (1 of 3 overloads)</title>
+<link rel="stylesheet" href="../../../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../connection_pool.html" title="connection_pool::connection_pool">
+<link rel="prev" href="../connection_pool.html" title="connection_pool::connection_pool">
+<link rel="next" href="overload2.html" title="connection_pool::connection_pool (2 of 3 overloads)">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../connection_pool.html"><img src="../../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../connection_pool.html"><img src="../../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../../index.html"><img src="../../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="overload2.html"><img src="../../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h6 class="title">
+<a name="mysql.ref.boost__mysql__connection_pool.connection_pool.overload1"></a><a class="link" href="overload1.html" title="connection_pool::connection_pool (1 of 3 overloads)">connection_pool::connection_pool
+          (1 of 3 overloads)</a>
+</h6></div></div></div>
+<p>
+            Constructs a connection pool.
+          </p>
+<h6>
+<a name="mysql.ref.boost__mysql__connection_pool.connection_pool.overload1.h0"></a>
+            <span class="phrase"><a name="mysql.ref.boost__mysql__connection_pool.connection_pool.overload1.synopsis"></a></span><a class="link" href="overload1.html#mysql.ref.boost__mysql__connection_pool.connection_pool.overload1.synopsis">Synopsis</a>
+          </h6>
+<pre class="programlisting"><span class="identifier">connection_pool</span><span class="special">(</span>
+    <span class="identifier">asio</span><span class="special">::</span><span class="identifier">any_io_executor</span> <span class="identifier">ex</span><span class="special">,</span>
+    <a class="link" href="../../boost__mysql__pool_params.html" title="pool_params"><code class="literal">pool_params</code></a> <span class="identifier">params</span><span class="special">);</span>
+</pre>
+<h6>
+<a name="mysql.ref.boost__mysql__connection_pool.connection_pool.overload1.h1"></a>
+            <span class="phrase"><a name="mysql.ref.boost__mysql__connection_pool.connection_pool.overload1.description"></a></span><a class="link" href="overload1.html#mysql.ref.boost__mysql__connection_pool.connection_pool.overload1.description">Description</a>
+          </h6>
+<p>
+            The pool is created in a "not-running" state. Call <a class="link" href="../async_run.html" title="connection_pool::async_run"><code class="computeroutput"><span class="identifier">async_run</span></code></a> to transition to the
+            "running" state.
+          </p>
+<p>
+            The constructed pool is always valid (<code class="computeroutput"><span class="keyword">this</span><span class="special">-&gt;</span><span class="identifier">valid</span><span class="special">()</span> <span class="special">==</span> <span class="keyword">true</span></code>).
+          </p>
+<h6>
+<a name="mysql.ref.boost__mysql__connection_pool.connection_pool.overload1.h2"></a>
+            <span class="phrase"><a name="mysql.ref.boost__mysql__connection_pool.connection_pool.overload1.executor"></a></span><a class="link" href="overload1.html#mysql.ref.boost__mysql__connection_pool.connection_pool.overload1.executor">Executor</a>
+          </h6>
+<p>
+            The passed executor becomes the pool executor, available through <a class="link" href="../get_executor.html" title="connection_pool::get_executor"><code class="computeroutput"><span class="identifier">get_executor</span></code></a>. <code class="computeroutput"><span class="identifier">ex</span></code> is used as follows:
+          </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+                If <code class="computeroutput"><span class="identifier">params</span><span class="special">.</span><span class="identifier">thread_safe</span> <span class="special">==</span>
+                <span class="keyword">true</span></code>, <code class="computeroutput"><span class="identifier">ex</span></code>
+                is used to build a strand. The strand is used to build internal I/O
+                objects, like timers.
+              </li>
+<li class="listitem">
+                If <code class="computeroutput"><span class="identifier">params</span><span class="special">.</span><span class="identifier">thread_safe</span> <span class="special">==</span>
+                <span class="keyword">false</span></code>, <code class="computeroutput"><span class="identifier">ex</span></code>
+                is used directly to build internal I/O objects.
+              </li>
+<li class="listitem">
+                If <code class="computeroutput"><span class="identifier">params</span><span class="special">.</span><span class="identifier">connection_executor</span></code> is empty,
+                <code class="computeroutput"><span class="identifier">ex</span></code> is used to build
+                individual connections, regardless of the chosen thread-safety mode.
+                Otherwise, <code class="computeroutput"><span class="identifier">params</span><span class="special">.</span><span class="identifier">connection_executor</span></code>
+                is used.
+              </li>
+</ul></div>
+<h6>
+<a name="mysql.ref.boost__mysql__connection_pool.connection_pool.overload1.h3"></a>
+            <span class="phrase"><a name="mysql.ref.boost__mysql__connection_pool.connection_pool.overload1.exception_safety"></a></span><a class="link" href="overload1.html#mysql.ref.boost__mysql__connection_pool.connection_pool.overload1.exception_safety">Exception
+            safety</a>
+          </h6>
+<p>
+            Strong guarantee. Exceptions may be thrown by memory allocations.
+          </p>
+<h6>
+<a name="mysql.ref.boost__mysql__connection_pool.connection_pool.overload1.h4"></a>
+            <span class="phrase"><a name="mysql.ref.boost__mysql__connection_pool.connection_pool.overload1.exceptions"></a></span><a class="link" href="overload1.html#mysql.ref.boost__mysql__connection_pool.connection_pool.overload1.exceptions">Exceptions</a>
+          </h6>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                    <p>
+                      Type
+                    </p>
+                  </th>
+<th>
+                    <p>
+                      Thrown On
+                    </p>
+                  </th>
+</tr></thead>
+<tbody><tr>
+<td>
+                    <p>
+                      <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">invalid_argument</span></code>
+                    </p>
+                  </td>
+<td>
+                    <p>
+                      If <code class="computeroutput"><span class="identifier">params</span></code> contains
+                      values that violate the rules described in <a class="link" href="../../boost__mysql__pool_params.html" title="pool_params"><code class="computeroutput"><span class="identifier">pool_params</span></code></a>.
+                    </p>
+                  </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../connection_pool.html"><img src="../../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../connection_pool.html"><img src="../../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../../index.html"><img src="../../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="overload2.html"><img src="../../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

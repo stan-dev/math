@@ -1,0 +1,194 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class assertion_failure</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.Contract 1.0.0">
+<link rel="up" href="../../reference.html#doxygen.reference.exception_8hpp" title="Header &lt;boost/contract/core/exception.hpp&gt;">
+<link rel="prev" href="classboost_1_1contract_1_1constructor__precondition.html" title="Class template constructor_precondition">
+<link rel="next" href="classboost_1_1contract_1_1bad__virtual__result__cast.html" title="Class bad_virtual_result_cast">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1contract_1_1constructor__precondition.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../reference.html#doxygen.reference.exception_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1contract_1_1bad__virtual__result__cast.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.reference.classboost_1_1contract_1_1assertion__failure"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class assertion_failure</span></h2>
+<p>boost::contract::assertion_failure — Exception typically used to report a contract assertion failure. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../reference.html#doxygen.reference.exception_8hpp" title="Header &lt;boost/contract/core/exception.hpp&gt;">boost/contract/core/exception.hpp</a>&gt;
+
+</span>
+<span class="keyword">class</span> <a class="link" href="classboost_1_1contract_1_1assertion__failure.html" title="Class assertion_failure">assertion_failure</a> <span class="special">:</span>
+  <span class="keyword">public</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">exception</span>, <span class="keyword">public</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">contract</span><span class="special">::</span><span class="identifier">exception</span>
+<span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1contract_1_1assertion__failure.html#id16-bb">public member functions</a></span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1contract_1_1assertion__failure.html#doxygen.reference.classboost_1_1contract_1_1assertion__failure_1acc37a1bfe50b266bda7bb48c9a2af9e1"><span class="identifier">assertion_failure</span></a><span class="special">(</span><span class="keyword">char</span> <span class="keyword">const</span> <span class="special">*</span> <span class="special">=</span> <span class="string">""</span><span class="special">,</span> <span class="keyword">unsigned</span> <span class="keyword">long</span> <span class="special">=</span> <span class="number">0</span><span class="special">,</span> 
+                             <span class="keyword">char</span> <span class="keyword">const</span> <span class="special">*</span> <span class="special">=</span> <span class="string">""</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1contract_1_1assertion__failure.html#doxygen.reference.classboost_1_1contract_1_1assertion__failure_1a672317c3b9e208816448ba891ea3fe9d"><span class="identifier">assertion_failure</span></a><span class="special">(</span><span class="keyword">char</span> <span class="keyword">const</span> <span class="special">*</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">virtual</span> <a class="link" href="classboost_1_1contract_1_1assertion__failure.html#doxygen.reference.classboost_1_1contract_1_1assertion__failure_1aa3ac0f0a2665af98a6e785a4ab42a623"><span class="special">~</span><span class="identifier">assertion_failure</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">virtual</span> <span class="keyword">char</span> <span class="keyword">const</span> <span class="special">*</span> <a class="link" href="classboost_1_1contract_1_1assertion__failure.html#doxygen.reference.classboost_1_1contract_1_1assertion__failure_1a5f64f670ab78cd13b92a88e78fbb29a5"><span class="identifier">what</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">char</span> <span class="keyword">const</span> <span class="special">*</span> <a class="link" href="classboost_1_1contract_1_1assertion__failure.html#doxygen.reference.classboost_1_1contract_1_1assertion__failure_1a5e55e5787fdeadb2c35a9271cc0664dd"><span class="identifier">file</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">unsigned</span> <span class="keyword">long</span> <a class="link" href="classboost_1_1contract_1_1assertion__failure.html#doxygen.reference.classboost_1_1contract_1_1assertion__failure_1a544a4f43d6da1c05dc43472b5e8e85a7"><span class="identifier">line</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">char</span> <span class="keyword">const</span> <span class="special">*</span> <a class="link" href="classboost_1_1contract_1_1assertion__failure.html#doxygen.reference.classboost_1_1contract_1_1assertion__failure_1a902258b9948bac535d77d63b961297a6"><span class="identifier">code</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id39785"></a><h2>Description</h2>
+<p>This exception is thrown by code expanded by  <code class="computeroutput"><a class="link" href="assert_8hpp_1ae303d6f9ab0475779997ce49048c1f82.html" title="Macro BOOST_CONTRACT_ASSERT">BOOST_CONTRACT_ASSERT</a></code> (but it can also be thrown by user code programmed manually without that macro). This exception is typically used to report contract assertion failures because it contains detailed information about the file name, line number, and source code of the asserted condition (so it can be used by this library to provide detailed error messages when handling contract assertion failures).</p>
+<p>However, any other exception can be used to report a contract assertion failure (including user-defined exceptions). This library will call the appropriate contract failure handler function ( <code class="computeroutput"><a class="link" href="exception_8hpp_1a878bccce08e2b7a9ade57827982533a3.html" title="Function precondition_failure">boost::contract::precondition_failure</a></code>, etc.) when this or any other exception is thrown while checking contracts (by default, these failure handler functions print an error message to <code class="computeroutput">std::cerr</code> and terminate the program, but they can be customized to take any other action).</p>
+<p><b>See Also: </b> <a class="link" href="../../boost_contract/advanced.html#boost_contract.advanced.throw_on_failures__and__noexcept__" title="Throw on Failures (and noexcept)"> Throw on Failure</a>,  <a class="link" href="../../boost_contract/extras.html#boost_contract.extras.no_macros__and_no_variadic_macros_" title="No Macros (and No Variadic Macros)"> No Macros</a> </p>
+<p>
+</p>
+<div class="refsect2">
+<a name="id39800"></a><h3>
+<a name="id16-bb"></a><code class="computeroutput">assertion_failure</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.reference.classboost_1_1contract_1_1assertion__failure_1acc37a1bfe50b266bda7bb48c9a2af9e1"></a><span class="identifier">assertion_failure</span><span class="special">(</span><span class="keyword">char</span> <span class="keyword">const</span> <span class="special">*</span> file <span class="special">=</span> <span class="string">""</span><span class="special">,</span> <span class="keyword">unsigned</span> <span class="keyword">long</span> line <span class="special">=</span> <span class="number">0</span><span class="special">,</span> 
+                           <span class="keyword">char</span> <span class="keyword">const</span> <span class="special">*</span> code <span class="special">=</span> <span class="string">""</span><span class="special">)</span><span class="special">;</span></pre>Construct this object with file name, line number, and source code text of an assertion condition (all optional). <p>This constructor can also be used to specify no information (default constructor), or to specify only file name and line number but not source code text (because of the parameter default values).</p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">file</code></span></p></td>
+<td><p>Name of the file containing the assertion (usually set using <code class="computeroutput"><span class="bold"><strong>FILE</strong></span></code>). </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">line</code></span></p></td>
+<td><p>Number of the line containing the assertion (usually set using <code class="computeroutput"><span class="bold"><strong>LINE</strong></span></code>). </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">code</code></span></p></td>
+<td><p>Text listing the source code of the assertion condition. </p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.reference.classboost_1_1contract_1_1assertion__failure_1a672317c3b9e208816448ba891ea3fe9d"></a><span class="identifier">assertion_failure</span><span class="special">(</span><span class="keyword">char</span> <span class="keyword">const</span> <span class="special">*</span> code<span class="special">)</span><span class="special">;</span></pre>Construct this object only with the source code text of the assertion condition. <p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">code</code></span></p></td>
+<td><p>Text listing the source code of the assertion condition. </p></td>
+</tr></tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">virtual</span> <a name="doxygen.reference.classboost_1_1contract_1_1assertion__failure_1aa3ac0f0a2665af98a6e785a4ab42a623"></a><span class="special">~</span><span class="identifier">assertion_failure</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>Destruct this object. <p><span class="bold"><strong>Throws:</strong></span> This is declared <code class="computeroutput">noexcept</code> (or <code class="computeroutput">throw()</code> before C++11). </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">virtual</span> <span class="keyword">char</span> <span class="keyword">const</span> <span class="special">*</span> <a name="doxygen.reference.classboost_1_1contract_1_1assertion__failure_1a5f64f670ab78cd13b92a88e78fbb29a5"></a><span class="identifier">what</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>String describing the failed assertion. <p><span class="bold"><strong>Throws:</strong></span> This is declared <code class="computeroutput">noexcept</code> (or <code class="computeroutput">throw()</code> before C++11).</p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>A string formatted similarly to the following: <code class="computeroutput">assertion "`code()`" failed: file "`file()`", line `line()`</code> (where `` indicate execution quotes). File, line, and code will be omitted from this string if they were not specified when constructing this object. </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">char</span> <span class="keyword">const</span> <span class="special">*</span> <a name="doxygen.reference.classboost_1_1contract_1_1assertion__failure_1a5e55e5787fdeadb2c35a9271cc0664dd"></a><span class="identifier">file</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Name of the file containing the assertion. <p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>File name as specified at construction (or <code class="computeroutput">""</code> if no file was specified). </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">unsigned</span> <span class="keyword">long</span> <a name="doxygen.reference.classboost_1_1contract_1_1assertion__failure_1a544a4f43d6da1c05dc43472b5e8e85a7"></a><span class="identifier">line</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Number of the line containing the assertion. <p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>Line number as specified at construction (or <code class="computeroutput">0</code> if no line number was specified). </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">char</span> <span class="keyword">const</span> <span class="special">*</span> <a name="doxygen.reference.classboost_1_1contract_1_1assertion__failure_1a902258b9948bac535d77d63b961297a6"></a><span class="identifier">code</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Text listing the source code of the assertion condition. <p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>Assertion condition source code as specified at construction (or <code class="computeroutput">""</code> if no source code text was specified). </p></td>
+</tr></tbody>
+</table></div>
+</li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2008-2019 Lorenzo Caminiti<p>
+        Distributed under the Boost Software License, Version 1.0 (see accompanying
+        file LICENSE_1_0.txt or a copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1contract_1_1constructor__precondition.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../reference.html#doxygen.reference.exception_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1contract_1_1bad__virtual__result__cast.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

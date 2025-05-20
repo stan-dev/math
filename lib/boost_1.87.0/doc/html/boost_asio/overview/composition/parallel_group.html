@@ -1,0 +1,110 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Co-ordinating Parallel Operations</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../boost_asio.html" title="Boost.Asio">
+<link rel="up" href="../composition.html" title="Composition and Completion Tokens">
+<link rel="prev" href="promises.html" title="Promises">
+<link rel="next" href="compose.html" title="Compositions as Asynchronous Operations">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="promises.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../composition.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../boost_asio.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="compose.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="boost_asio.overview.composition.parallel_group"></a><a class="link" href="parallel_group.html" title="Co-ordinating Parallel Operations">Co-ordinating
+        Parallel Operations</a>
+</h4></div></div></div>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+            This is an experimental feature.
+          </p></td></tr>
+</table></div>
+<p>
+          The <a class="link" href="../../reference/experimental__make_parallel_group.html" title="experimental::make_parallel_group"><code class="computeroutput"><span class="identifier">experimental</span><span class="special">::</span><span class="identifier">make_parallel_group</span></code></a> function may
+          be used to launch work that is performed in parallel, and wait for one
+          or all of the operations to complete. A <code class="computeroutput"><span class="identifier">parallel_group</span></code>
+          implements automatic cancellation of incomplete operations. For example:
+        </p>
+<pre class="programlisting"><span class="identifier">experimental</span><span class="special">::</span><span class="identifier">make_parallel_group</span><span class="special">(</span>
+    <span class="special">[&amp;](</span><span class="keyword">auto</span> <span class="identifier">token</span><span class="special">)</span>
+    <span class="special">{</span>
+      <span class="keyword">return</span> <span class="identifier">stream</span><span class="special">.</span><span class="identifier">async_read_some</span><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">buffer</span><span class="special">(</span><span class="identifier">data</span><span class="special">),</span> <span class="identifier">token</span><span class="special">);</span>
+    <span class="special">},</span>
+    <span class="special">[&amp;](</span><span class="keyword">auto</span> <span class="identifier">token</span><span class="special">)</span>
+    <span class="special">{</span>
+      <span class="keyword">return</span> <span class="identifier">timer</span><span class="special">.</span><span class="identifier">async_wait</span><span class="special">(</span><span class="identifier">token</span><span class="special">);</span>
+    <span class="special">}</span>
+  <span class="special">).</span><span class="identifier">async_wait</span><span class="special">(</span>
+    <span class="identifier">experimental</span><span class="special">::</span><span class="identifier">wait_for_one</span><span class="special">(),</span>
+    <span class="special">[](</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">array</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span><span class="special">,</span> <span class="number">2</span><span class="special">&gt;</span> <span class="identifier">completion_order</span><span class="special">,</span>
+        <span class="identifier">boost</span><span class="special">::</span><span class="identifier">system</span><span class="special">::</span><span class="identifier">error_code</span> <span class="identifier">ec1</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">n1</span><span class="special">,</span>
+        <span class="identifier">boost</span><span class="special">::</span><span class="identifier">system</span><span class="special">::</span><span class="identifier">error_code</span> <span class="identifier">ec2</span>
+    <span class="special">)</span>
+    <span class="special">{</span>
+      <span class="comment">// ...</span>
+    <span class="special">}</span>
+  <span class="special">);</span>
+</pre>
+<p>
+          The conditions for completion of the group may be specified using one of
+          the four provided function objects <a class="link" href="../../reference/experimental__wait_for_all.html" title="experimental::wait_for_all"><code class="computeroutput"><span class="identifier">wait_for_all</span></code></a>, <a class="link" href="../../reference/experimental__wait_for_one.html" title="experimental::wait_for_one"><code class="computeroutput"><span class="identifier">wait_for_one</span></code></a>, <a class="link" href="../../reference/experimental__wait_for_one_success.html" title="experimental::wait_for_one_success"><code class="computeroutput"><span class="identifier">wait_for_one_success</span></code></a>, <a class="link" href="../../reference/experimental__wait_for_one_error.html" title="experimental::wait_for_one_error"><code class="computeroutput"><span class="identifier">wait_for_one_error</span></code></a>, or with a
+          custom function.
+        </p>
+<p>
+          The <code class="computeroutput"><span class="identifier">parallel_group</span></code> facility
+          can also be combined with <a class="link" href="../../reference/deferred.html" title="deferred"><code class="computeroutput"><span class="identifier">deferred</span></code></a> as follows:
+        </p>
+<pre class="programlisting"><span class="identifier">experimental</span><span class="special">::</span><span class="identifier">make_parallel_group</span><span class="special">(</span>
+    <span class="identifier">stream</span><span class="special">.</span><span class="identifier">async_read_some</span><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">buffer</span><span class="special">(</span><span class="identifier">data</span><span class="special">),</span> <span class="identifier">deferred</span><span class="special">),</span>
+    <span class="identifier">timer</span><span class="special">.</span><span class="identifier">async_wait</span><span class="special">(</span><span class="identifier">experimental</span><span class="special">::</span><span class="identifier">deferred</span><span class="special">)</span>
+  <span class="special">).</span><span class="identifier">async_wait</span><span class="special">(</span>
+    <span class="comment">// ...</span>
+  <span class="special">);</span>
+</pre>
+<p>
+          Note: for maximum flexibility, <code class="computeroutput"><span class="identifier">parallel_group</span></code>
+          does not propagate the executor automatically to the operations within
+          the group.
+        </p>
+<h6>
+<a name="boost_asio.overview.composition.parallel_group.h0"></a>
+          <span class="phrase"><a name="boost_asio.overview.composition.parallel_group.see_also"></a></span><a class="link" href="parallel_group.html#boost_asio.overview.composition.parallel_group.see_also">See Also</a>
+        </h6>
+<p>
+          <a class="link" href="../../reference/experimental__make_parallel_group.html" title="experimental::make_parallel_group">experimental::make_parallel_group</a>,
+          <a class="link" href="../../reference/experimental__parallel_group.html" title="experimental::parallel_group">experimental::parallel_group</a>,
+          <a class="link" href="../../examples/cpp11_examples.html#boost_asio.examples.cpp11_examples.parallel_groups">Parallel
+          Groups examples (C++11)</a>, <a class="link" href="../../examples/cpp14_examples.html#boost_asio.examples.cpp14_examples.parallel_groups">Parallel
+          Groups examples (C++14)</a>.
+        </p>
+</div>
+<div class="copyright-footer">Copyright © 2003-2024 Christopher M. Kohlhoff<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="promises.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../composition.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../boost_asio.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="compose.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

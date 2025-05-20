@@ -1,0 +1,27 @@
+[#asio::awaitable]
+== `asio::awaitable`
+
+The `asio::awaitable` class is a very useful coroutine utility
+that works in multithreaded environments.
+
+Due to some implementation details it is incompatible with any other `awaitable` type.
+Thus, it is not possibly to `co_await` an `asio::awaitable` from any of the coroutine types
+in this library, nor is it possible to `co_await` any of those types from within an
+`asio::awaitable`. They can however interact through `asio::co_spawn` or <<spawn>>.
+
+The way `asio::awaitable` blocks `co_await`-ing is by strict `await_transform` in its promises.
+It prohibits being awaited by a strict definition of `await_suspend`:
+
+[source,cpp]
+----
+template<typename T, typename Executor>
+struct awaitable
+{
+  // ...
+  template <class U>
+  void await_suspend(
+      std::coroutine_handle<detail::awaitable_frame<U, Executor>> h);
+  // ...
+
+};
+----

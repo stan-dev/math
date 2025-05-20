@@ -1,0 +1,106 @@
+[#stackless]
+== Stackless
+
+C++20 coroutines are stackless, meaning they don't have their own stack.
+
+A stack in C++ describes the callstack, i.e. all the function frames stacked.
+A function frame is the memory a function needs to operate, i.e. a slice of memory
+to store its variables and information such as the return address.
+
+NOTE: The size of a function frame is known at compile time, but not outside the compile unit containing its definition.
+
+[source, cpp]
+----
+
+int bar() {return 0;} // the deepest point of the stack
+int foo() {return bar();}
+
+int main()
+{
+    return foo();
+}
+----
+
+The call stack in the above example is:
+
+[source]
+----
+main()
+  foo()
+    bar()
+----
+
+ifdef::generate-diagram[]
+[mermaid, target=stackless1]
+----
+sequenceDiagram
+    main->>+foo: call
+    foo->>+bar: call
+    bar->>-foo: return
+    foo->>-main: return
+----
+endif::[]
+
+ifndef::generate-diagram[]
+image::stackless1.png[]
+endif::[]
+
+Coroutines can be implemented a stackful, which means that it allocates a fixes chunk of memory and stacks function frames similar to a thread.
+C++20 coroutines are stackless, i.e. they only allocate their own frame and use the callers stack on resumption. Using our previous example:
+
+[source,cpp]
+----
+fictional_eager_coro_type<int> example()
+{
+    co_yield 0;
+    co_yield 1;
+}
+
+void nested_resume(fictional_eager_coro_type<int>& f)
+{
+    f.resume();
+}
+
+int main()
+{
+    auto f = example();
+    nested_resume(f);
+    f.reenter();
+    return 0;
+}
+----
+
+This will yield a call stack similar to this:
+
+[source]
+----
+main()
+  f$example()
+  nested_resume()
+    f$example()
+  f$example()
+----
+
+
+ifdef::generate-diagram[]
+[mermaid, target=stackless2]
+----
+sequenceDiagram
+    participant main
+    participant nested_resume
+    main->>+example: create & call
+    example-->>main: co_yield
+    main->>+nested_resume: call
+    nested_resume-->>example: resume
+    example-->>nested_resume: co_yield
+    nested_resume->>-main: return
+    main-->>example: resume
+    example->>-main: co_return
+----
+endif::[]
+
+ifndef::generate-diagram[]
+image::stackless2.png[]
+endif::[]
+
+The same applies if a coroutine gets moved accross threads.

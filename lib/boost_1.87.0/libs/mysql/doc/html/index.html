@@ -1,0 +1,181 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Chapter 1. Boost.MySQL</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="index.html" title="Chapter 1. Boost.MySQL">
+<link rel="next" href="mysql/intro.html" title="Introduction">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav"><a accesskey="n" href="mysql/intro.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a></div>
+<div class="chapter">
+<div class="titlepage"><div>
+<div><h2 class="title">
+<a name="mysql"></a>Chapter 1. Boost.MySQL</h2></div>
+<div><div class="author"><h3 class="author">
+<span class="firstname">Ruben</span> <span class="surname">Perez</span>
+</h3></div></div>
+<div><p class="copyright">Copyright © 2019-2024 Ruben Perez</p></div>
+<div><div class="legalnotice">
+<a name="mysql.legal"></a><p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div></div>
+</div></div>
+<div class="toc">
+<p><b>Table of Contents</b></p>
+<dl class="toc">
+<dt><span class="section"><a href="mysql/intro.html">Introduction</a></span></dt>
+<dt><span class="section"><a href="mysql/integrating.html">Integrating Boost.MySQL into your project</a></span></dt>
+<dd><dl>
+<dt><span class="section"><a href="mysql/integrating.html#mysql.integrating.header_only">Header-only mode</a></span></dt>
+<dt><span class="section"><a href="mysql/integrating.html#mysql.integrating.separate_compilation">Separate compilation
+      mode</a></span></dt>
+</dl></dd>
+<dt><span class="section"><a href="mysql/tutorial_sync.html">Tutorial 1: hello world!</a></span></dt>
+<dt><span class="section"><a href="mysql/tutorial_async.html">Tutorial 2: going async with C++20
+    coroutines</a></span></dt>
+<dt><span class="section"><a href="mysql/tutorial_with_params.html">Tutorial 3: queries with parameters</a></span></dt>
+<dt><span class="section"><a href="mysql/tutorial_static_interface.html">Tutorial 4: the static
+    interface</a></span></dt>
+<dt><span class="section"><a href="mysql/tutorial_updates_transactions.html">Tutorial 5: UPDATEs,
+    transactions and semicolon-separated queries</a></span></dt>
+<dt><span class="section"><a href="mysql/tutorial_connection_pool.html">Tutorial 6: Connection
+    pools</a></span></dt>
+<dt><span class="section"><a href="mysql/tutorial_error_handling.html">Tutorial 7: Error handling</a></span></dt>
+<dt><span class="section"><a href="mysql/overview.html">Overview</a></span></dt>
+<dd><dl>
+<dt><span class="section"><a href="mysql/overview.html#mysql.overview.connection_establishment">Connection establishment</a></span></dt>
+<dt><span class="section"><a href="mysql/overview.html#mysql.overview.running_queries">Running queries</a></span></dt>
+<dt><span class="section"><a href="mysql/overview.html#mysql.overview.the_dynamic_and_the_static_inter">The
+      dynamic and the static interfaces</a></span></dt>
+<dt><span class="section"><a href="mysql/overview.html#mysql.overview.running_insert_update_and_delete">Running
+      INSERT, UPDATE and DELETE statements</a></span></dt>
+<dt><span class="section"><a href="mysql/overview.html#mysql.overview.async">Single outstanding async operation
+      per connection</a></span></dt>
+<dt><span class="section"><a href="mysql/overview.html#mysql.overview.errors">Error handling</a></span></dt>
+<dt><span class="section"><a href="mysql/overview.html#mysql.overview.multi_function_operations">Multi-function
+      operations</a></span></dt>
+<dt><span class="section"><a href="mysql/overview.html#mysql.overview.connection_pools">Connection pools</a></span></dt>
+</dl></dd>
+<dt><span class="section"><a href="mysql/connection_establishment.html">Connection establishment
+    and termination</a></span></dt>
+<dd><dl>
+<dt><span class="section"><a href="mysql/connection_establishment.html#mysql.connection_establishment.authentication">Authentication</a></span></dt>
+<dt><span class="section"><a href="mysql/connection_establishment.html#mysql.connection_establishment.connect_with_database">Connect
+      with database</a></span></dt>
+<dt><span class="section"><a href="mysql/connection_establishment.html#mysql.connection_establishment.tls">TLS support</a></span></dt>
+<dt><span class="section"><a href="mysql/connection_establishment.html#mysql.connection_establishment.unix">UNIX sockets</a></span></dt>
+<dt><span class="section"><a href="mysql/connection_establishment.html#mysql.connection_establishment.changing_the_network_buffer_size">Changing
+      the network buffer size limit</a></span></dt>
+<dt><span class="section"><a href="mysql/connection_establishment.html#mysql.connection_establishment.enabling_multi_queries">Enabling
+      multi-queries</a></span></dt>
+<dt><span class="section"><a href="mysql/connection_establishment.html#mysql.connection_establishment.closing_a_connection">Closing
+      a connection</a></span></dt>
+<dt><span class="section"><a href="mysql/connection_establishment.html#mysql.connection_establishment.reconnection_and_long_lived_conn">Reconnection
+      and long-lived connections</a></span></dt>
+</dl></dd>
+<dt><span class="section"><a href="mysql/sql_formatting.html">Text queries and client-side SQL
+    formatting</a></span></dt>
+<dd><dl>
+<dt><span class="section"><a href="mysql/sql_formatting.html#mysql.sql_formatting.using_with_params_for_simple_que">Using
+      with_params for simple queries</a></span></dt>
+<dt><span class="section"><a href="mysql/sql_formatting.html#mysql.sql_formatting.errors">Common errors and how to
+      fix them</a></span></dt>
+<dt><span class="section"><a href="mysql/sql_formatting.html#mysql.sql_formatting.comparison">Prepared statements
+      vs. client-side SQL formatting</a></span></dt>
+</dl></dd>
+<dt><span class="section"><a href="mysql/prepared_statements.html">Prepared statements</a></span></dt>
+<dt><span class="section"><a href="mysql/dynamic_interface.html">The dynamic interface</a></span></dt>
+<dt><span class="section"><a href="mysql/static_interface.html">The static interface</a></span></dt>
+<dt><span class="section"><a href="mysql/multi_resultset.html">Multi-resultset: stored procedures
+    and multi-queries</a></span></dt>
+<dt><span class="section"><a href="mysql/multi_function.html">Multi-function operations</a></span></dt>
+<dt><span class="section"><a href="mysql/connection_pool.html">Connection pools</a></span></dt>
+<dt><span class="section"><a href="mysql/async.html">Going async</a></span></dt>
+<dt><span class="section"><a href="mysql/error_handling.html">Error handling and available overloads</a></span></dt>
+<dt><span class="section"><a href="mysql/sql_formatting_advanced.html">Advanced client-side SQL
+    query formatting</a></span></dt>
+<dd><dl>
+<dt><span class="section"><a href="mysql/sql_formatting_advanced.html#mysql.sql_formatting_advanced.expand">Formatting queries
+      without executing them</a></span></dt>
+<dt><span class="section"><a href="mysql/sql_formatting_advanced.html#mysql.sql_formatting_advanced.ranges">Formatting ranges
+      with sequence</a></span></dt>
+<dt><span class="section"><a href="mysql/sql_formatting_advanced.html#mysql.sql_formatting_advanced.format_specifiers">Format
+      specifiers</a></span></dt>
+<dt><span class="section"><a href="mysql/sql_formatting_advanced.html#mysql.sql_formatting_advanced.extending_format_sql">Extending
+      format_sql</a></span></dt>
+<dt><span class="section"><a href="mysql/sql_formatting_advanced.html#mysql.sql_formatting_advanced.reference">Types with built-in
+      support for SQL formatting</a></span></dt>
+</dl></dd>
+<dt><span class="section"><a href="mysql/meta.html">Metadata</a></span></dt>
+<dt><span class="section"><a href="mysql/charsets.html">Character sets and collations</a></span></dt>
+<dt><span class="section"><a href="mysql/time_types.html">Time types: date, datetime and time</a></span></dt>
+<dt><span class="section"><a href="mysql/templated_connection.html">The legacy connection class</a></span></dt>
+<dt><span class="section"><a href="mysql/pipeline.html">(Experimental) Pipelines</a></span></dt>
+<dt><span class="section"><a href="mysql/examples.html">Examples</a></span></dt>
+<dd><dl>
+<dt><span class="section"><a href="mysql/examples/tutorial_sync.html">Tutorial 1 listing: hello
+      world!</a></span></dt>
+<dt><span class="section"><a href="mysql/examples/tutorial_async.html">Tutorial 2 listing: going
+      async with C++20 coroutines</a></span></dt>
+<dt><span class="section"><a href="mysql/examples/tutorial_with_params.html">Tutorial 3 listing:
+      queries with parameters</a></span></dt>
+<dt><span class="section"><a href="mysql/examples/tutorial_static_interface.html">Tutorial 4
+      listing: the static interface</a></span></dt>
+<dt><span class="section"><a href="mysql/examples/tutorial_updates_transactions.html">Tutorial
+      5 listing: UPDATEs, transactions and multi-queries</a></span></dt>
+<dt><span class="section"><a href="mysql/examples/tutorial_connection_pool.html">Tutorial 6 listing:
+      connection pools</a></span></dt>
+<dt><span class="section"><a href="mysql/examples/tutorial_error_handling.html">Tutorial 7 listing:
+      error handling</a></span></dt>
+<dt><span class="section"><a href="mysql/examples/inserts.html">INSERTs, last_insert_id() and
+      NULL values</a></span></dt>
+<dt><span class="section"><a href="mysql/examples/deletes.html">DELETEs and affected_rows()</a></span></dt>
+<dt><span class="section"><a href="mysql/examples/prepared_statements.html">Prepared statements</a></span></dt>
+<dt><span class="section"><a href="mysql/examples/disable_tls.html">Disabling TLS for a connection</a></span></dt>
+<dt><span class="section"><a href="mysql/examples/tls_certificate_verification.html">Setting
+      TLS options: enabling TLS certificate verification</a></span></dt>
+<dt><span class="section"><a href="mysql/examples/metadata.html">Metadata</a></span></dt>
+<dt><span class="section"><a href="mysql/examples/multi_function.html">Reading rows in batches
+      with multi-function operations</a></span></dt>
+<dt><span class="section"><a href="mysql/examples/callbacks.html">Callbacks (async functions
+      in C++11)</a></span></dt>
+<dt><span class="section"><a href="mysql/examples/coroutines_cpp11.html">Stackful coroutines
+      (async functions in C++11)</a></span></dt>
+<dt><span class="section"><a href="mysql/examples/unix_socket.html">UNIX sockets</a></span></dt>
+<dt><span class="section"><a href="mysql/examples/batch_inserts.html">Batch inserts using client-side
+      query formatting</a></span></dt>
+<dt><span class="section"><a href="mysql/examples/batch_inserts_generic.html">Generic batch inserts
+      with Boost.Describe</a></span></dt>
+<dt><span class="section"><a href="mysql/examples/dynamic_filters.html">Queries with dynamic
+      filters</a></span></dt>
+<dt><span class="section"><a href="mysql/examples/patch_updates.html">Dynamic UPDATE queries
+      with PATCH-like semantics</a></span></dt>
+<dt><span class="section"><a href="mysql/examples/source_script.html">Sourcing a .sql file using
+      multi-queries</a></span></dt>
+<dt><span class="section"><a href="mysql/examples/pipeline.html">(Experimental) Pipelines</a></span></dt>
+<dt><span class="section"><a href="mysql/examples/connection_pool.html">A REST API server that
+      uses connection pooling</a></span></dt>
+</dl></dd>
+<dt><span class="section"><a href="mysql/ref.html">Reference</a></span></dt>
+</dl>
+</div>
+</div>
+<div class="copyright-footer"></div>
+<hr>
+<div class="spirit-nav"><a accesskey="n" href="mysql/intro.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a></div>
+</body>
+</html>

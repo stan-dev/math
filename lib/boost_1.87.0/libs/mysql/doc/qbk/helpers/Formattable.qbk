@@ -1,0 +1,31 @@
+[/
+    Copyright (c) 2019-2024 Ruben Perez Hidalgo (rubenperez038 at gmail dot com)
+   
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+]
+
+[section:boost__mysql__Formattable Formattable concept]
+
+A type `T` is `Formattable` if it can be passed as a format argument to SQL formatting
+functions, like [reflink format_sql].
+
+Formally, let `T` be any type, and `U` the result of stripping cv-qualifiers and references from `T`.
+`T` satisfies `Formattable` if any of the following are true:
+
+* `U` satisfies [reflink2 WritableFieldTuple WritableField]. This includes scalar types and optionals.
+* The class [reflink formatter] has been specialized for `U`.
+* `T` is a formattable range, or a reference to one. Formally, given a variable `t` of type `T` (that might be a reference),
+  `T` is a formattable range if:
+    * `std::begin(t)` and `std::end(t)` return an iterator/sentinel pair that can be compared for (in)equality.
+    * The type `std::decay_t<decltype(*std::begin(t))>` is a [reflink2 WritableFieldTuple WritableField]
+      or has a specialized formatter. In other words, the range's element type must be either an elemental
+      type or have a custom formatted defined, but must not be a range.
+    * `U` does not satisfy [reflink2 WritableFieldTuple WritableField] (i.e. `vector<unsigned char>` is
+        formatted as a blob, not as a sequence).
+* `U` is [reflink formattable_ref].
+
+For a reference table on built-in formattable types, see
+[link mysql.sql_formatting_advanced.reference this section].
+
+[endsect]

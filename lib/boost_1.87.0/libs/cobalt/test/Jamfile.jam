@@ -1,0 +1,37 @@
+# Copyright (c) 2022 Klemens D. Morgenstern
+#
+# Distributed under the Boost Software License, Version 1.0. (See accompanying
+# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+
+import os ;
+import-search /boost/cobalt ;
+import boost-cobalt ;
+
+
+project : requirements
+  <define>BOOST_ASIO_NO_DEPRECATED
+  <toolset>msvc:<define>_SCL_SECURE_NO_WARNINGS
+  <toolset>msvc:<define>_CRT_SECURE_NO_DEPRECATE
+  <toolset>msvc:<cxxflags>/bigobj
+  <target-os>windows:<define>WIN32_LEAN_AND_MEAN
+  <target-os>linux:<linkflags>-lpthread
+  <toolset>clang-15:<boost.cobalt.pmr>boost-container
+  <toolset>clang-14:<boost.cobalt.pmr>boost-container
+;
+
+import testing ;
+
+lib test_impl : test_main.cpp /boost/cobalt//boost_cobalt /boost/test//boost_unit_test_framework :
+        <link>static
+        ;
+
+run main.cpp         /boost/cobalt//boost_cobalt  ;
+run main_compile.cpp /boost/cobalt//boost_cobalt util.cpp concepts.cpp ;
+
+for local src in [ glob *.cpp : main.cpp main_compile.cpp test_main.cpp concepts.cpp util.cpp ]
+{
+   run $(src) test_impl ;
+}
+
+run experimental/context.cpp experimental/composition.cpp test_impl //boost/context ;

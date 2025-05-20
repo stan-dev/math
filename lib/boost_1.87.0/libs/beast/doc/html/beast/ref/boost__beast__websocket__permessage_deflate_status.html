@@ -1,0 +1,127 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>websocket::permessage_deflate_status</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.Beast">
+<link rel="up" href="../ref.html" title="This Page Intentionally Left Blank 2/2">
+<link rel="prev" href="boost__beast__websocket__permessage_deflate/msg_size_threshold.html" title="websocket::permessage_deflate::msg_size_threshold">
+<link rel="next" href="boost__beast__websocket__permessage_deflate_status/active.html" title="websocket::permessage_deflate_status::active">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="boost__beast__websocket__permessage_deflate/msg_size_threshold.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../ref.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="boost__beast__websocket__permessage_deflate_status/active.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="beast.ref.boost__beast__websocket__permessage_deflate_status"></a><a class="link" href="boost__beast__websocket__permessage_deflate_status.html" title="websocket::permessage_deflate_status">websocket::permessage_deflate_status</a>
+</h4></div></div></div>
+<p>
+        permessage-deflate extension status.
+      </p>
+<h5>
+<a name="beast.ref.boost__beast__websocket__permessage_deflate_status.h0"></a>
+        <span class="phrase"><a name="beast.ref.boost__beast__websocket__permessage_deflate_status.synopsis"></a></span><a class="link" href="boost__beast__websocket__permessage_deflate_status.html#beast.ref.boost__beast__websocket__permessage_deflate_status.synopsis">Synopsis</a>
+      </h5>
+<p>
+        Defined in header <code class="literal">&lt;<a href="../../../../../../boost/beast/websocket/stream.hpp" target="_top">boost/beast/websocket/stream.hpp</a>&gt;</code>
+      </p>
+<pre class="programlisting"><span class="keyword">struct</span> <span class="identifier">permessage_deflate_status</span>
+</pre>
+<h5>
+<a name="beast.ref.boost__beast__websocket__permessage_deflate_status.h1"></a>
+        <span class="phrase"><a name="beast.ref.boost__beast__websocket__permessage_deflate_status.data_members"></a></span><a class="link" href="boost__beast__websocket__permessage_deflate_status.html#beast.ref.boost__beast__websocket__permessage_deflate_status.data_members">Data
+        Members</a>
+      </h5>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Name
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__beast__websocket__permessage_deflate_status/active.html" title="websocket::permessage_deflate_status::active">active</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  <code class="computeroutput"><span class="keyword">true</span></code> if the permessage-deflate
+                  extension is active
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__beast__websocket__permessage_deflate_status/client_window_bits.html" title="websocket::permessage_deflate_status::client_window_bits">client_window_bits</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  The number of window bits used by the client.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__beast__websocket__permessage_deflate_status/server_window_bits.html" title="websocket::permessage_deflate_status::server_window_bits">server_window_bits</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  The number of window bits used by the server.
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+<h5>
+<a name="beast.ref.boost__beast__websocket__permessage_deflate_status.h2"></a>
+        <span class="phrase"><a name="beast.ref.boost__beast__websocket__permessage_deflate_status.description"></a></span><a class="link" href="boost__beast__websocket__permessage_deflate_status.html#beast.ref.boost__beast__websocket__permessage_deflate_status.description">Description</a>
+      </h5>
+<p>
+        These settings indicate the status of the permessage-deflate extension, showing
+        if it is active and the window bits in use.
+      </p>
+<p>
+        Objects of this type are used with <a class="link" href="boost__beast__websocket__stream/get_status.html" title="websocket::stream::get_status"><code class="computeroutput"><span class="identifier">beast</span><span class="special">::</span><span class="identifier">websocket</span><span class="special">::</span><span class="identifier">stream</span><span class="special">::</span><span class="identifier">get_status</span></code></a>.
+      </p>
+</div>
+<div class="copyright-footer">Copyright © 2016-2019 Vinnie
+      Falco<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="boost__beast__websocket__permessage_deflate/msg_size_threshold.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../ref.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="boost__beast__websocket__permessage_deflate_status/active.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

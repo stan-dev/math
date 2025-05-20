@@ -1,0 +1,84 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template local_buffer</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.Compute">
+<link rel="up" href="../../boost_compute/reference.html#doxygen.header_reference.local__buffer_8hpp" title="Header &lt;boost/compute/memory/local_buffer.hpp&gt;">
+<link rel="prev" href="zip__iterator_8hpp_1a61f6a47653b05278c49d586e6aa3c352.html" title="Function template make_zip_iterator">
+<link rel="next" href="classboost_1_1compute_1_1svm__ptr.html" title="Class template svm_ptr">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="zip__iterator_8hpp_1a61f6a47653b05278c49d586e6aa3c352.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_compute/reference.html#doxygen.header_reference.local__buffer_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1compute_1_1svm__ptr.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.header_reference.classboost_1_1compute_1_1local__buffer"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template local_buffer</span></h2>
+<p>boost::compute::local_buffer — Represents a local memory buffer on the device. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../boost_compute/reference.html#doxygen.header_reference.local__buffer_8hpp" title="Header &lt;boost/compute/memory/local_buffer.hpp&gt;">boost/compute/memory/local_buffer.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1compute_1_1local__buffer.html" title="Class template local_buffer">local_buffer</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1compute_1_1local__buffer.html#id71-bb">public member functions</a></span>
+  <a class="link" href="classboost_1_1compute_1_1local__buffer.html#doxygen.header_reference.classboost_1_1compute_1_1local__buffer_1abfd551a184c9a229f80f432fff414cb6"><span class="identifier">local_buffer</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">size_t</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1compute_1_1local__buffer.html#doxygen.header_reference.classboost_1_1compute_1_1local__buffer_1adf61fafa764e986e2885921bdafc62cf"><span class="identifier">local_buffer</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1local__buffer.html" title="Class template local_buffer">local_buffer</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1compute_1_1local__buffer.html" title="Class template local_buffer">local_buffer</a> <span class="special">&amp;</span> <a class="link" href="classboost_1_1compute_1_1local__buffer.html#doxygen.header_reference.classboost_1_1compute_1_1local__buffer_1ac3058deda035efb546695ce381b26e52"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1local__buffer.html" title="Class template local_buffer">local_buffer</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1compute_1_1local__buffer.html#doxygen.header_reference.classboost_1_1compute_1_1local__buffer_1a00ed6949e52bdba31fb423dd59e7af81"><span class="special">~</span><span class="identifier">local_buffer</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">size_t</span> <a class="link" href="classboost_1_1compute_1_1local__buffer.html#doxygen.header_reference.classboost_1_1compute_1_1local__buffer_1ae83055317d5d4f2f72e77d76ade51d12"><span class="identifier">size</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id35121"></a><h2>Description</h2>
+<p>The <a class="link" href="classboost_1_1compute_1_1local__buffer.html" title="Class template local_buffer">local_buffer</a> class represents a block of local memory on a compute device.</p>
+<p>This class is most commonly used to set local memory arguments for compute kernels: </p>
+<pre class="programlisting"><span class="comment">// set argument to a local buffer with storage for 32 float's</span>
+<span class="identifier">kernel</span><span class="special">.</span><span class="identifier">set_arg</span><span class="special">(</span><span class="number">0</span><span class="special">,</span> <span class="identifier">local_buffer</span><span class="special">&lt;</span><span class="keyword">float</span><span class="special">&gt;</span><span class="special">(</span><span class="number">32</span><span class="special">)</span><span class="special">)</span><span class="special">;</span>
+</pre>
+<p><b>See Also: </b>buffer, kernel </p>
+<p>
+</p>
+<div class="refsect2">
+<a name="id35147"></a><h3>
+<a name="id71-bb"></a><code class="computeroutput">local_buffer</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.header_reference.classboost_1_1compute_1_1local__buffer_1abfd551a184c9a229f80f432fff414cb6"></a><span class="identifier">local_buffer</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">size_t</span> size<span class="special">)</span><span class="special">;</span></pre>Creates a local buffer object for <code class="computeroutput">size</code> elements. </li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.header_reference.classboost_1_1compute_1_1local__buffer_1adf61fafa764e986e2885921bdafc62cf"></a><span class="identifier">local_buffer</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1local__buffer.html" title="Class template local_buffer">local_buffer</a> <span class="special">&amp;</span> other<span class="special">)</span><span class="special">;</span></pre>Creates a local buffer object as a copy of <code class="computeroutput">other</code>. </li>
+<li class="listitem">
+<pre class="literallayout"><a class="link" href="classboost_1_1compute_1_1local__buffer.html" title="Class template local_buffer">local_buffer</a> <span class="special">&amp;</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1local__buffer_1ac3058deda035efb546695ce381b26e52"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1local__buffer.html" title="Class template local_buffer">local_buffer</a> <span class="special">&amp;</span> other<span class="special">)</span><span class="special">;</span></pre>Copies <code class="computeroutput">other</code> to <code class="computeroutput">*this</code>. </li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.header_reference.classboost_1_1compute_1_1local__buffer_1a00ed6949e52bdba31fb423dd59e7af81"></a><span class="special">~</span><span class="identifier">local_buffer</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>Destroys the local memory object. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">size_t</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1local__buffer_1ae83055317d5d4f2f72e77d76ade51d12"></a><span class="identifier">size</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Returns the number of elements in the local buffer. </li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2013, 2014 Kyle Lutz<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="zip__iterator_8hpp_1a61f6a47653b05278c49d586e6aa3c352.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_compute/reference.html#doxygen.header_reference.local__buffer_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1compute_1_1svm__ptr.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

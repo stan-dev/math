@@ -1,0 +1,309 @@
+[/
+ / Distributed under the Boost Software License, Version 1.0. (See accompanying
+ / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+ /]
+
+[section Introduction]
+
+_Parser_ is a _comb_ library.  That is, it consists of a set of low-level
+primitive parsers, and operations that can be used to combine those parsers
+into more complicated parsers.
+
+There are primitive parsers that parse /epsilon/ (the empty string), `char`s,
+`int`s, `float`s, etc.
+
+There are operations which combine parsers to create new parsers.  For
+instance, the _kl_ operation takes an existing parser `p` and creates a new
+parser that matches zero or more occurrences of whatever `p` matches.  Both
+callable objects and operator overloads are used for the combining operations.
+For instance, `operator*()` is used for _kl_, and you can also write
+`repeat(n)[p]` to create a parser for exactly `n` repetitions of `p`.
+
+_Parser_ also tries to accommodate the multiple ways that people often want to
+get a parse result out of their parsing code.  Some parsing may best be done
+by returning an object that represents the result of the parse.  Other parsing
+may best be done by filling in a preexisting data structure.  Yet other
+parsing may best be done by parsing small sections of a large document, and
+reporting the results of subparsers as they are finished, via callbacks.
+_Parser_ accommodates all these ways of working, and even makes it possible to
+do callback-based or non-callback-based parsing without rewriting any code
+(except by changing the top-level call from _p_ to _cbp_).
+
+All of _Parser_'s public interfaces are sentinel- and range-friendly, just like
+the interfaces in `std::ranges`.
+
+_Parser_ is Unicode-aware through and through.  When you parse ranges of
+`char`, _Parser_ does not assume any particular encoding _emdash_ not Unicode
+or any other encoding.  Parsing of inputs *other than* plain `char`s assumes
+that the input is Unicode.  In the Unicode-aware code paths, all parsing is
+done by matching code points.  This means that you can feed UTF-8 strings into
+_Parser_, both as input and within your parser, and the right sort of matching
+occurs.  For instance, if your parser is trying to match repetitions of the
+`char` `'\xcc'` (which is a lead byte from a UTF-8 sequence, and so is
+malformed UTF-8 if not followed by an appropriate UTF-8 code unit), it will
+*not* match the start of `"\xcc\x80"` (UTF-8 for the code point U+0300).
+_Parser_ knows that the matching must be whole-code-point, and so it
+interprets the `char` `'\xcc'` as the code point U+00CC.
+
+Error reporting is important to get right, and it is important to make errors
+easy to understand, especially for end-users.  _Parser_ produces runtime parse
+error messages that are very similar to the diagnostics that you get when
+compiling with GCC and Clang (it even supports warnings that don't fail the
+parse).  The exact token associated with a diagnostic can be reported to the
+user, with the containing line quoted, and with a marker pointing right at the
+token.  _Parser_ takes care of this for you; your parser does not need to
+include any special code to make this happen.  Of course, you can also replace
+the error handler entirely, if it doesn't fit your needs.
+
+Debugging complex parsers can be a real nightmare.  _Parser_ makes it trivial
+to get a trace of your entire parse, with easy-to-read (and very verbose)
+indications of where each part of the trace is within the parse, the state of
+values produced by the parse, etc.  Again, you don't need to write any code to
+make this happen _emdash_ you just pass a parameter to _p_.
+
+Dependencies are still a nightmare in C++, so _Parser_ can be used as a purely
+standalone library, independent of Boost.
+
+[endsect]
+
+[section Configuration and Optional Features]
+
+_Parser_ can be used entirely on its own.  If Boost is available, extra
+functionality provided by Boost is also available.
+
+By default, _Parser_ is usable entirely on its own.  The only explicit opt-in
+use of Boost is the use of Boost.Hana.  If you turn on the use of Hana, the
+tuple type used throughout _Parser_ will be `boost::hana::tuple` instead of
+`std::tuple`.  To enable this, simply define `BOOST_PARSER_USE_HANA_TUPLE`.
+The Boost.Hana tuple is much nicer, because it has an `operator[]`, and a
+whole lot of very useful algorithms; you will see this operator used
+throughout the tutorial and examples.  I encourage you to use the Hana tuple,
+but I realize that it is an often-unfamiliar replacement for `std::tuple`,
+which is a C++ vocabulary template, and so that is the default.
+
+[important _Parser_ defines a template alias _bp_tup_ that aliases to _bh_tup_
+by default, and _std_tup_ when `BOOST_PARSER_DISABLE_HANA_TUPLE` is defined.
+You can future-proof your code slightly by using _bp_tup_, so that the code is
+well-formed, whether or not `BOOST_PARSER_DISABLE_HANA_TUPLE` is defined.  For
+the same reason, _Parser_ also provides a generic _bp_get_ that works with
+both kinds of tuple (since _std_tup_ has no `operator[]` and _bh_tup_ does not
+work with `std::get`).]
+
+The presence of Boost headers is detected using `__has_include()`.  When it is
+present, all the typical Boost conventions are used; otherwise, non-Boost
+alternatives are used.  This applies to the use of `BOOST_ASSERT` versus
+`assert`, and printing typenames with Boost.TypeIndex versus with
+`std::typeinfo`.
+
+[note If you want to disable the use of the C macro `assert`, you define
+`BOOST_DISABLE_ASSERTS`.  This is true whether `BOOST_ASSERT` is available or
+not. ]
+
+[important _Parser_ uses inline namespaces around definitions of all functions
+and types that use the optional Boost features; the name of the inline
+namespace varies depending on whether the Boost implementation is used.  So if
+Boost.TypeIndex is available to one translation unit, but another TU must use
+`std::typeinfo`, there are no ODR violations.  The exception to this is the
+use of `BOOST_ASSERT`/`assert`; assert macros are inherently ODR traps. ]
+
+_Parser_ automatically treats aggregate `struct`s as if they were tuples in
+many cases.  There is some metaprogramming logic that makes this work, and
+this logic has a hard limit on the size of a `struct` that it can operate on.
+There is a configuration macro _AGGR_SIZE_ that you can adjust if the default
+value is too small.  Note that turning this value up significantly can
+significantly increase compile times.  Also, MSVC seems to have a hard time
+with large values; I successfully set this value to `50` on MSVC, but `100`
+broke the MSVC build entirely.
+
+_Parser_ uses `std::optional` and `std::variant` internally.  There is no way
+to change this.  However, when _Parser_ generates values as a result of the
+parse (see _attr_gen_), it can place them into other implementations of
+optional and/or variant, if you tell it to do so.  You tell it which templates
+are usable as an optional or variant by specializing the associated variable
+template.  For instance, here is how you would tell _Parser_ that
+`boost::optional` is an optional-type:
+
+    template<typename T>
+    constexpr bool boost::parser::enable_optional<boost::optional<T>> = true;
+
+Here's how you would do the same thing for `boost::variant2::variant`:
+
+    template<typename... Ts>
+    constexpr bool boost::parser::enable_variant<boost::variant2::variant<Ts...>> = true;
+
+The requirements on a template used as an optional are pretty simple, since
+_Parser_ does almost nothing but assign to them.  For a type `O` to be a
+usable optional, you must be able to assign to `O`, and `O` must have an
+`operator*` that returns the stored value, or a (possibly cv-qualified)
+reference to the stored value.
+
+For variants, the requirement is even simpler; the variant type only needs to
+be assignable.
+
+[note The only thing affected by `enable_variant` is printing.  If your
+variant template can be printed with just `std::cout << v` (where `v` is a
+variant, obviously), then you don't need to define `enable_variant` for your
+variant template.]
+
+_Parser_ uses `std::ranges::subrange` extensively.  However, there is no C++17
+equivalent.  So, there is a `boost::parser::subrange` for C++17 builds.  To
+switch between these transparently in the code, while keeping CTAD
+operational, _Parser_ defines _SUBRNG_.  This is the name of the template, so
+if you use it in your own code you would use it like `_SUBRNG_<I>` to
+instantiate it.
+
+_Parser_ allows you to debug your parsers by passing `trace::on` to _p_.
+Sometimes, your run environment does not include a terminal.  If you're
+running _Parser_ code in the Visual Studio debugger, you can see this trace
+output in the Visual Studio debugger output panel rather than in a terminal by
+defining `BOOST_PARSER_TRACE_TO_VS_OUTPUT`.
+
+[endsect]
+
+[section This Library's Relationship to Boost.Spirit]
+
+[note If you are familiar with Spirit 2 and/or Spirit X3, you may be
+interested in this section.  If you are not, and you have not read the
+tutorial for _Parser_ yet, very little of this will make sense.]
+
+_Spirit_ is a library that is already in Boost, and it has been around for a
+long time.
+
+However, it does not suit user needs in some ways.
+
+* Spirit 2 suffers from very long compile times.
+
+* Spirit 2 has error reporting that requires a lot of user intervention to
+  work.
+
+* Spirit 2 requires user intervention, including a (long) recompile, to enable
+  parse tracing.
+
+* Spirit X3 has rules that do not compose well _emdash_ the attributes
+  produced by a rule can change depending on the context in which you use the
+  rule.
+
+* Spirit X3 is missing many of the convenient interfaces to parsers that
+  Spirit 2 had.  For instance, you cannot add parameters to a parser (see
+  description of _locals_ in _more_about_rules_).
+
+* All versions of Spirit have Unicode support, but it is quite difficult to
+  get working.
+
+I wanted a library that does not suffer from any of the above limitations.  It
+should be noted that while Spirit X3 only has a couple of flaws in the list
+above, the one related to rules is a deal-breaker.  The ability to write
+rules, test them in isolation, and then re-use them throughout a complex
+parser is essential.
+
+Though no version of _Spirit_ (Spirit 2 or Spirit X3) suffers from all those
+limitations, there also does not exist any one version that avoids all of
+them.  _Parser_ does so.  However, there are a lot of great ideas in _Spirit_
+that have been retained in _Parser_.  Both libraries:
+
+* use the same operator overloads to combine parsers;
+
+* use approximately the same set of directives to influence the parse
+  (e.g. `lexeme[]`);
+
+* are built around a flexible parse context object that has state added to and
+  removed from it during the parse (again, comparing to Spirit X3).
+
+[heading The Spirit X3 rule problem]
+
+Some readers have wanted a concrete example of my claim that Spirit X3's rules
+do not compose well.  Consider this program.
+
+    #include <boost/spirit/home/x3.hpp>
+
+    #include <iostream>
+    #include <set>
+    #include <string>
+    #include <vector>
+
+
+    namespace x3 = boost::spirit::x3;
+    using ints_type = x3::rule<class ints, std::vector<int>>;
+    BOOST_SPIRIT_DECLARE(ints_type);
+
+    x3::rule<class ints, std::vector<int>> ints = "ints";
+    constexpr auto ints_def = x3::int_ % ',';
+    BOOST_SPIRIT_DEFINE(ints);
+
+    #define FIXED_ATTRIBUTE 0
+
+
+    int main()
+    {
+        std::string input = "43, 42";
+        auto first = input.begin();
+        auto const last = input.end();
+    #if FIXED_ATTRIBUTE
+        std::vector<int> result;
+    #else
+        std::set<int> result;
+    #endif
+        bool success = x3::phrase_parse(first, last, ints, x3::space, result);
+        if (success) {
+            // We want this to print "43 42\n".
+            for (auto x : result) {
+                std::cout << x << ' ';
+            }
+            std::cout << "\n";
+        }
+
+        return 0;
+    }
+
+Defining `FIXED_ATTRIBUTE` to be `1` leads to a well-formed program that
+prints `"42 43\n"` instead of the desired result.  The problem here is that if
+you feed an attribute out-param to `x3::phrase_parse()`, you get the
+loose-match semantics that Spirit X3 and _Parser_ both do.  This is a problem,
+because the user explicitly asserted that the type of the `ints` rule's
+attribute should be `std::vector<int>`.  In my opinion, this code should be
+ill-formed with `FIXED_ATTRIBUTE == 1`.  To make it well-formed again, the
+user could use `ints_def` directly, since it does not specify an attribute
+type.
+
+When the user explicitly states that a type is some fixed `T`, a library
+should not ignore that.  As a user of X3, I was bitten by this in such a way
+that I considered X3 to be a nonviable option for my uses.  I ran into a
+problem that resulted from X3's ignoring one or more of my rules' attributes
+so that it made the parse produce the wrong result, and I could see no way to
+fix it.
+
+When a library provides wider use cases via genericity, we generally consider
+this a good thing.  If it is too loose in its semantics, we generally say that
+it is type-unsafe.  Using _rs_ to nail down type flexibility is one way
+_Parser_ tries to enable genericity where it is desired, and let the user turn
+it off where it is not.
+
+[endsect]
+
+[section Cheat Sheet]
+
+Here are all the tables containing the various _Parser_ parsers, examples,
+etc., all in one place.  These are repeated elsewhere in different sections of
+the tutorial.
+
+[heading The parsers]
+
+[table_parsers_and_their_semantics]
+
+[heading Operators defined on parsers]
+
+[table_combining_operations]
+
+[heading Attribute generation for certain parsers]
+
+[table_attribute_generation]
+
+[heading Attributes for operations on parsers]
+
+[table_attribute_combinations]
+
+[heading More attributes for operations on parsers]
+
+[table_seq_or_attribute_combinations]
+
+[endsect]

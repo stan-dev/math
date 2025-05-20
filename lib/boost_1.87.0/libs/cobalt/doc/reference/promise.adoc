@@ -1,0 +1,86 @@
+[#promise]
+== cobalt/promise.hpp
+
+A promise is an eager coroutine that can `co_await` and `co_return` values. That is, it cannot use `co_yield`.
+
+[source,cpp]
+----
+cobalt::promise<void> delay(std::chrono::milliseconds ms)
+{
+  asio::steady_timer tim{co_await cobalt::this_coro::executor, ms};
+  co_await tim.async_wait(cobalt::use_op);
+}
+
+cobalt::main co_main(int argc, char *argv[])
+{
+  co_await delay(std::chrono::milliseconds(50));
+  co_return 0;
+}
+----
+
+Promises are by default attached.
+This means, that a cancellation is sent when the `promise` handles goes out of scope.
+
+A promise can be detached by calling `detach` or by using the prefix `+` operator.
+This is a runtime alternative to using <<detached, detached>>.
+A detached promise will not send a cancellation on destruction.
+
+[source,cpp]
+----
+cobalt::promise<void> my_task();
+
+cobalt::main co_main(int argc, char *argv[])
+{
+  +my_task(); // <1>
+  co_await delay(std::chrono::milliseconds(50));
+  co_return 0;
+}
+----
+<1> By using `+` the task gets detached. Without it, the compiler would generate a `nodiscard` warning.
+
+=== Executor
+[#promise-executor]
+
+The executor is taken from the `thread_local` <<this_thread, get_executor>> function, unless a `asio::executor_arg` is used
+in any position followed by the executor argument.
+
+[source, cpp]
+----
+cobalt::promise<int> my_gen(asio::executor_arg_t, asio::io_context::executor_type exec_to_use);
+----
+
+=== Memory Resource
+[#promise-allocator]
+
+The memory resource is taken from the `thread_local` <<this_thread, get_default_resource>> function,
+unless a `std::allocator_arg` is used in any position followed by a `polymorphic_allocator` argument.
+
+[source, cpp]
+----
+cobalt::promise<int> my_gen(std::allocator_arg_t, pmr::polymorphic_allocator<void> alloc);
+----
+
+[#promise-outline]
+=== Outline
+
+
+[source,cpp]
+----
+include::../../include/boost/cobalt/promise.hpp[tag=outline]
+----
+<1> Supports <<interrupt_await>>
+<2> This allows to create promise running in parallel with a simple `+my_task()` expression.
+<3> This allows code like `while (p) co_await p;`
+
+[#promise-promise]
+=== Promise
+
+The coroutine promise (`promise::promise_type`) has the following properties.
+
+- <<promise_memory_resource_base>>
+- <<promise_cancellation_base>>
+- <<promise_throw_if_cancelled_base>>
+- <<enable_awaitables>>
+- <<enable_await_allocator>>
+- <<enable_await_executor>>
+- <<enable_await_deferred>>

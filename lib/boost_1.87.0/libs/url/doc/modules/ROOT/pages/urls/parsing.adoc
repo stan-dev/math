@@ -1,0 +1,161 @@
+//
+// Copyright (c) 2023 Alan de Freitas (alandefreitas@gmail.com)
+//
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt)
+//
+// Official repository: https://github.com/boostorg/url
+//
+
+
+= Parsing
+
+Algorithms which parse URLs return a view which references the underlying character buffer without taking ownership, avoiding memory allocations and copies.
+The following example parses a string literal containing a
+https://datatracker.ietf.org/doc/html/rfc3986#section-3[__URI__,window=blank_]:
+
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=code_urls_parsing_1,indent=0]
+----
+
+The function returns a cpp:result[] which holds a cpp:url_view[]
+if the string is a valid URL.
+Otherwise it holds an cpp:error_code[].
+It is impossible to construct a cpp:url_view[] which refers to an invalid URL.
+
+[WARNING]
+====
+The caller is responsible for ensuring that the lifetime of the character buffer extends until it is no longer referenced by the view.
+These are the same semantics as that of cpp:std::string_view[].
+====
+
+For convenience, a URL view can be constructed directly from the character buffer in a cpp:string_view[].
+In this case, it parses the string according to the
+https://datatracker.ietf.org/doc/html/rfc3986#section-4.1[__URI-reference__,window=blank_]
+grammar, throwing an exception upon failure.
+The following two statements are equivalent:
+
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=code_urls_parsing_2,indent=0]
+----
+
+In this library, free functions which parse things are named with the word "parse" followed by the name of the grammar used to match the string.
+There are several varieties of URLs, and depending on the use-case a particular grammar may be needed.
+In the target of an HTTP GET request for example, the scheme and fragment are omitted.
+This corresponds to the
+https://datatracker.ietf.org/doc/html/rfc7230#section-5.3.1[__origin-form__,window=blank_]
+production rule described in https://tools.ietf.org/html/rfc7230[rfc7230,window=blank_].
+The function
+cpp:parse_origin_form[]
+is suited for this purpose.
+All the URL parsing functions are listed here:
+
+[cols="a,a,a,a"]
+|===
+// Headers
+|Function|Grammar|Example|Notes
+
+// Row 1, Column 1
+|cpp:parse_absolute_uri[]
+// Row 1, Column 2
+|https://datatracker.ietf.org/doc/html/rfc3986#section-4.3[__absolute-URI__,window=blank_]
+// Row 1, Column 3
+|cpp:pass:[http://www.boost.org/index.html?field=value][]
+// Row 1, Column 4
+|No fragment
+
+// Row 2, Column 1
+|cpp:parse_origin_form[]
+// Row 2, Column 2
+|https://datatracker.ietf.org/doc/html/rfc7230#section-5.3.1[__origin-form__,window=blank_]
+// Row 2, Column 3
+|cpp:pass:[/index.html?field=value][]
+// Row 2, Column 4
+|Used in HTTP
+
+// Row 3, Column 1
+|cpp:parse_relative_ref[]
+// Row 3, Column 2
+|https://datatracker.ietf.org/doc/html/rfc3986#section-4.2[__relative-ref__,window=blank_]
+// Row 3, Column 3
+|cpp:pass:[//www.boost.org/index.html?field=value#downloads][]
+// Row 3, Column 4
+|
+
+// Row 4, Column 1
+|cpp:parse_uri[]
+// Row 4, Column 2
+|https://datatracker.ietf.org/doc/html/rfc3986#section-3[__URI__,window=blank_]
+// Row 4, Column 3
+|cpp:pass:[http://www.boost.org/index.html?field=value#downloads][]
+// Row 4, Column 4
+|
+
+// Row 5, Column 1
+|cpp:parse_uri_reference[]
+// Row 5, Column 2
+|https://datatracker.ietf.org/doc/html/rfc3986#section-4.1[__URI-reference__,window=blank_]
+// Row 5, Column 3
+|cpp:pass:[http://www.boost.org/index.html][]
+// Row 5, Column 4
+|Any __URI__ or __relative-ref__
+
+|===
+
+The URL is stored in its serialized form.
+Therefore, it can always be easily output, sent, or embedded as part of a protocol:
+
+// snippet_parsing_url_1bb
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=snippet_parsing_url_1bb,indent=0]
+----
+
+A cpp:url[] is an allocating container which owns its character buffer.
+Upon construction from cpp:url_view[], it allocates dynamic storage to hold a copy of the string.
+
+// snippet_parsing_url_1bc
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=snippet_parsing_url_1bc,indent=0]
+----
+
+A cpp:static_url[] is a container which owns its character buffer for a URL whose maximum size is known.
+Upon construction from
+cpp:url_view[], it does not perform any dynamic memory allocations.
+
+// snippet_parsing_url_1bd
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=snippet_parsing_url_1bd,indent=0]
+----
+
+== Result Type
+
+These functions have a return type which uses the cpp:result[] alias template.
+This class allows the parsing algorithms to report errors without referring to exceptions.
+
+The functions `result::operator bool()` and cpp:result::operator*[]
+can be used to check if the result contains an error.
+
+// snippet_parsing_url_1
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=snippet_parsing_url_1,indent=0]
+----
+
+Since `result::operator bool()` is already checking if cpp:result[] contains an error, cpp:result::operator*[] provides an unchecked alternative to get a value from cpp:result[].
+In contexts where it is acceptable to throw errors,
+cpp:result::value[] can be used directly.
+
+// snippet_parsing_url_1b
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=snippet_parsing_url_1b,indent=0]
+----
+
+Check the reference for cpp:result[] for a synopsis of the type.
+
+

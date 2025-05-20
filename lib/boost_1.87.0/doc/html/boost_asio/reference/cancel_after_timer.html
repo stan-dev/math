@@ -1,0 +1,165 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>cancel_after_timer</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../boost_asio.html" title="Boost.Asio">
+<link rel="up" href="../reference.html" title="Reference">
+<link rel="prev" href="cancel_after_t/token_.html" title="cancel_after_t::token_">
+<link rel="next" href="cancel_after_timer/cancel_after_timer.html" title="cancel_after_timer::cancel_after_timer">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="cancel_after_t/token_.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../reference.html"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../boost_asio.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="cancel_after_timer/cancel_after_timer.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="boost_asio.reference.cancel_after_timer"></a><a class="link" href="cancel_after_timer.html" title="cancel_after_timer">cancel_after_timer</a>
+</h3></div></div></div>
+<p>
+        <a class="indexterm" name="boost_asio.indexterm.cancel_after_timer"></a>
+      </p>
+<p>
+        A <a class="link" href="../overview/model/completion_tokens.html" title="Completion Tokens">completion
+        token</a> adapter that cancels an operation after a timeout.
+      </p>
+<pre class="programlisting"><span class="keyword">template</span><span class="special">&lt;</span>
+    <span class="keyword">typename</span> <span class="identifier">CompletionToken</span><span class="special">,</span>
+    <span class="keyword">typename</span> <span class="identifier">Clock</span><span class="special">,</span>
+    <span class="keyword">typename</span> <a class="link" href="WaitTraits.html" title="Wait traits requirements">WaitTraits</a> <span class="special">=</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">wait_traits</span><span class="special">&lt;</span><span class="identifier">Clock</span><span class="special">&gt;,</span>
+    <span class="keyword">typename</span> <a class="link" href="Executor1.html" title="Executor requirements">Executor</a> <span class="special">=</span> <span class="identifier">any_io_executor</span><span class="special">&gt;</span>
+<span class="keyword">class</span> <span class="identifier">cancel_after_timer</span>
+</pre>
+<h5>
+<a name="boost_asio.reference.cancel_after_timer.h0"></a>
+        <span class="phrase"><a name="boost_asio.reference.cancel_after_timer.member_functions"></a></span><a class="link" href="cancel_after_timer.html#boost_asio.reference.cancel_after_timer.member_functions">Member
+        Functions</a>
+      </h5>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Name
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody><tr>
+<td>
+                <p>
+                  <a class="link" href="cancel_after_timer/cancel_after_timer.html" title="cancel_after_timer::cancel_after_timer"><span class="bold"><strong>cancel_after_timer</strong></span></a> <span class="silver">[constructor]</span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Constructor.
+                </p>
+              </td>
+</tr></tbody>
+</table></div>
+<h5>
+<a name="boost_asio.reference.cancel_after_timer.h1"></a>
+        <span class="phrase"><a name="boost_asio.reference.cancel_after_timer.data_members"></a></span><a class="link" href="cancel_after_timer.html#boost_asio.reference.cancel_after_timer.data_members">Data Members</a>
+      </h5>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Name
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="cancel_after_timer/cancel_type_.html" title="cancel_after_timer::cancel_type_"><span class="bold"><strong>cancel_type_</strong></span></a>
+                </p>
+              </td>
+<td>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="cancel_after_timer/timeout_.html" title="cancel_after_timer::timeout_"><span class="bold"><strong>timeout_</strong></span></a>
+                </p>
+              </td>
+<td>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="cancel_after_timer/timer_.html" title="cancel_after_timer::timer_"><span class="bold"><strong>timer_</strong></span></a>
+                </p>
+              </td>
+<td>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="cancel_after_timer/token_.html" title="cancel_after_timer::token_"><span class="bold"><strong>token_</strong></span></a>
+                </p>
+              </td>
+<td>
+              </td>
+</tr>
+</tbody>
+</table></div>
+<p>
+        The <a class="link" href="cancel_after_timer.html" title="cancel_after_timer"><code class="computeroutput"><span class="identifier">cancel_after_timer</span></code></a> class is used
+        to indicate that an asynchronous operation should be cancelled if not complete
+        before the specified duration has elapsed.
+      </p>
+<h5>
+<a name="boost_asio.reference.cancel_after_timer.h2"></a>
+        <span class="phrase"><a name="boost_asio.reference.cancel_after_timer.requirements"></a></span><a class="link" href="cancel_after_timer.html#boost_asio.reference.cancel_after_timer.requirements">Requirements</a>
+      </h5>
+<p>
+        <span class="emphasis"><em>Header: </em></span><code class="literal">boost/asio/cancel_after.hpp</code>
+      </p>
+<p>
+        <span class="emphasis"><em>Convenience header: </em></span><code class="literal">boost/asio.hpp</code>
+      </p>
+</div>
+<div class="copyright-footer">Copyright © 2003-2024 Christopher M. Kohlhoff<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="cancel_after_t/token_.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../reference.html"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../boost_asio.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="cancel_after_timer/cancel_after_timer.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

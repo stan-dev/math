@@ -1,0 +1,406 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class async_pipe</title>
+<link rel="stylesheet" href="../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../process.html#doxygen.async__pipe_8hpp" title="Header &lt;boost/process/v1/async_pipe.hpp&gt;">
+<link rel="prev" href="async_8hpp_1a10a930fbf57b0e02309086eea24a76dd.html" title="Global on_exit">
+<link rel="next" href="async__system_8hpp_1acfccfa877439b0bd412faf9517471336.html" title="Function template async_system">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../boost.png"></td>
+<td align="center"><a href="../../../index.html">Home</a></td>
+<td align="center"><a href="../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="async_8hpp_1a10a930fbf57b0e02309086eea24a76dd.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../process.html#doxygen.async__pipe_8hpp"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="async__system_8hpp_1acfccfa877439b0bd412faf9517471336.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.classboost_1_1process_1_1v1_1_1async__pipe"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class async_pipe</span></h2>
+<p>boost::process::v1::async_pipe</p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../process.html#doxygen.async__pipe_8hpp" title="Header &lt;boost/process/v1/async_pipe.hpp&gt;">boost/process/v1/async_pipe.hpp</a>&gt;
+
+</span>
+<span class="keyword">class</span> <a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html" title="Class async_pipe">async_pipe</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// <a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html#doxygen.classboost_1_1process_1_1v1_1_1async__pipetypes">types</a></span>
+  <span class="keyword">typedef</span> <span class="identifier">platform_specific</span>          <a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html#doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1a940dcdf13fae2972ab341c85fd231ad1"><span class="identifier">native_handle_type</span></a><span class="special">;</span>
+  <span class="keyword">typedef</span> <span class="identifier">platform_specific</span>          <a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html#doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1a12249258ce8a2351c7a9c6ab5c48581f"><span class="identifier">handle_type</span></a><span class="special">;</span>       
+  <span class="keyword">typedef</span> <span class="identifier">handle_type</span><span class="special">::</span><span class="identifier">executor_type</span> <a name="doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1aa918ca972dc8a8a9d4a7bb63a5fd608c"></a><span class="identifier">executor_type</span><span class="special">;</span>     
+
+  <span class="comment">// <a class="link" href="reference_section_of_boost_any/classboost_1_1any.html#id1-bb">public member functions</a></span>
+  <a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html#doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1afb98e4118a811ed7a038a0523f1759a0"><span class="identifier">async_pipe</span></a><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">io_context</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html#doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1a79fe882481e5cc0c8b7b3bcb6718e4fb"><span class="identifier">async_pipe</span></a><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">io_context</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">io_context</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html#doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1a6d83de27ecbccef04906dd867e3b9579"><span class="identifier">async_pipe</span></a><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">io_context</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html#doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1a0893592459781b598cef61390bba0433"><span class="identifier">async_pipe</span></a><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">io_context</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">io_context</span> <span class="special">&amp;</span><span class="special">,</span> 
+             <span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html#doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1a4c38740d6ec1f553e48b1e8fe3fbfcef"><span class="identifier">async_pipe</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html" title="Class async_pipe">async_pipe</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html#doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1aa76d0afac22466c531bc176a33719d0e"><span class="identifier">async_pipe</span></a><span class="special">(</span><a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html" title="Class async_pipe">async_pipe</a> <span class="special">&amp;&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">char_traits</span><span class="special">&lt;</span><span class="identifier">CharT</span><span class="special">&gt;</span> <span class="special">&gt;</span> 
+    <span class="keyword">explicit</span> <a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html#doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1aba915cc393708e41de13f1e2fb56aebd"><span class="identifier">async_pipe</span></a><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">io_context</span> <span class="special">&amp;</span><span class="special">,</span> 
+                        <span class="keyword">const</span> <a class="link" href="classboost_1_1process_1_1v1_1_1basic__pipe.html" title="Class template basic_pipe">basic_pipe</a><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">char_traits</span><span class="special">&lt;</span><span class="identifier">CharT</span><span class="special">&gt;</span> <span class="special">&gt;</span> 
+    <span class="keyword">explicit</span> <a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html#doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1a8d8596f2b926518a33ef69a79a021bc5"><span class="identifier">async_pipe</span></a><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">io_context</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">io_context</span> <span class="special">&amp;</span><span class="special">,</span> 
+                        <span class="keyword">const</span> <a class="link" href="classboost_1_1process_1_1v1_1_1basic__pipe.html" title="Class template basic_pipe">basic_pipe</a><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">char_traits</span><span class="special">&lt;</span><span class="identifier">CharT</span><span class="special">&gt;</span> <span class="special">&gt;</span> 
+    <a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html" title="Class async_pipe">async_pipe</a> <span class="special">&amp;</span> <a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html#doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1adb8a60cf48d0785c997cd4b8a50f7f69"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1process_1_1v1_1_1basic__pipe.html" title="Class template basic_pipe">basic_pipe</a><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html" title="Class async_pipe">async_pipe</a> <span class="special">&amp;</span> <a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html#doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1a4e93706fd12594d4679c5256df896059"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html" title="Class async_pipe">async_pipe</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html" title="Class async_pipe">async_pipe</a> <span class="special">&amp;</span> <a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html#doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1a01421ec25c553b84e01a7ed54a7a4a85"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html" title="Class async_pipe">async_pipe</a> <span class="special">&amp;&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html#doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1af920bb17813af8e9180ee59aa44de1e5"><span class="special">~</span><span class="identifier">async_pipe</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">char_traits</span><span class="special">&lt;</span><span class="identifier">CharT</span><span class="special">&gt;</span> <span class="special">&gt;</span> 
+    <span class="keyword">explicit</span> <a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html#doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1af6c01dc0a7b3975fd27f18610a066222"><span class="keyword">operator</span> <span class="identifier">basic_pipe</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html#doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1a0ad76ba30fadfee5985e1c41ae7a84ef"><span class="identifier">cancel</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html#doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1adec1bf9d82e180b99060f9e2f70df53f"><span class="identifier">close</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html#doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1a61f26bd5fccbe34e288db39e2a5e1896"><span class="identifier">close</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">error_code</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html#doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1af39d644a79d537df5f7742a915e9b739"><span class="identifier">is_open</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html#doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1a30e83402c1112129af0ee91b1b807a91"><span class="identifier">async_close</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> MutableBufferSequence<span class="special">&gt;</span> 
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html#doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1a55d48c2c37be801838e7a7f5803250c4"><span class="identifier">read_some</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">MutableBufferSequence</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> MutableBufferSequence<span class="special">&gt;</span> 
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html#doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1a2b7b12ea106038021151fbd64e8df225"><span class="identifier">write_some</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">MutableBufferSequence</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">native_handle</span> <a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html#doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1a7a4d445a02d819db4fd6f996c62da304"><span class="identifier">native_source</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">native_handle</span> <a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html#doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1ab6d1d539ebda6e68bcc817736d497c78"><span class="identifier">native_sink</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> MutableBufferSequence<span class="special">,</span> <span class="keyword">typename</span> ReadHandler<span class="special">&gt;</span> 
+    <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html#doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1a7c8ee5f8719aafc2d985463b1e9d6d87"><span class="identifier">async_read_some</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">MutableBufferSequence</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">ReadHandler</span> <span class="special">&amp;&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ConstBufferSequence<span class="special">,</span> <span class="keyword">typename</span> WriteHandler<span class="special">&gt;</span> 
+    <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html#doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1a6d85a7f1a29c84dec4acfb11cbcac44f"><span class="identifier">async_write_some</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">ConstBufferSequence</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">WriteHandler</span> <span class="special">&amp;&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">const</span> <span class="identifier">handle_type</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html#doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1a3c8f25e1750b628f10aea1bdd8a8e271"><span class="identifier">sink</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">const</span> <span class="identifier">handle_type</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html#doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1ade7fd346365afdfbde8306d06c87638c"><span class="identifier">source</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">handle_type</span> <span class="special">&amp;&amp;</span> <a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html#doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1ab2c917f2b7aeec6d4a33c71182fd9fc0"><span class="identifier">sink</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">handle_type</span> <span class="special">&amp;&amp;</span> <a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html#doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1a95c2502944a719d8ad02ad40ce1bdeb2"><span class="identifier">source</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">handle_type</span> <a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html#doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1ab7703fd9ab2ab3d59f2c1b2eabc3adaf"><span class="identifier">source</span></a><span class="special">(</span><span class="special">::</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">io_context</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">handle_type</span> <a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html#doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1ae715cb827132c241c989d551fae8a74b"><span class="identifier">sink</span></a><span class="special">(</span><span class="special">::</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">io_context</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">handle_type</span> <a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html#doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1a87e1e1bf20bef6e18441b4adeb0225e2"><span class="identifier">source</span></a><span class="special">(</span><span class="special">::</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">io_context</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">handle_type</span> <a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html#doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1aede75c50f150bed40ce863148fc47f31"><span class="identifier">sink</span></a><span class="special">(</span><span class="special">::</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">io_context</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.30.4.8.4.3.4"></a><h2>Description</h2>
+<p>Class implementing an asnychronous I/O-Object for use with boost.asio. It is based on the corresponding I/O Object, that is either boost::asio::windows::stream_handle or boost::asio::posix::stream_descriptor.</p>
+<p>It can be used directly with boost::asio::async_read or async_write.</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>The object is copyable, but that does invoke a handle duplicate. </p></td></tr>
+</table></div>
+<p>
+</p>
+<div class="refsect2">
+<a name="id-1.3.30.4.8.4.3.4.5"></a><h3>
+<a name="doxygen.classboost_1_1process_1_1v1_1_1async__pipetypes"></a><code class="computeroutput">async_pipe</code> 
+        public
+       types</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<p>
+<span class="keyword">typedef</span> <span class="identifier">platform_specific</span> <a name="doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1a940dcdf13fae2972ab341c85fd231ad1"></a><span class="identifier">native_handle_type</span><span class="special">;</span></p>
+<p>Typedef for the native handle representation. </p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>This is the handle on the system, not the boost.asio class. </p></td></tr>
+</table></div>
+<p>
+</p>
+</li>
+<li class="listitem">
+<p>
+<span class="keyword">typedef</span> <span class="identifier">platform_specific</span> <a name="doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1a12249258ce8a2351c7a9c6ab5c48581f"></a><span class="identifier">handle_type</span><span class="special">;</span></p>
+<p>Typedef for the handle representation of boost.asio. </p>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.30.4.8.4.3.4.6"></a><h3>
+<a name="id1-bb"></a><code class="computeroutput">async_pipe</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1afb98e4118a811ed7a038a0523f1759a0"></a><span class="identifier">async_pipe</span><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">io_context</span> <span class="special">&amp;</span> ios<span class="special">)</span><span class="special">;</span></pre>
+<p>Construct a new <a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html" title="Class async_pipe">async_pipe</a>, does automatically open the pipe. Initializes source and sink with the same io_context. </p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>Windows creates a named pipe here, where the name is automatically generated. </p></td></tr>
+</table></div>
+<p>
+</p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1a79fe882481e5cc0c8b7b3bcb6718e4fb"></a><span class="identifier">async_pipe</span><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">io_context</span> <span class="special">&amp;</span> ios_source<span class="special">,</span> 
+           <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">io_context</span> <span class="special">&amp;</span> ios_sink<span class="special">)</span><span class="special">;</span></pre>
+<p>Construct a new <a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html" title="Class async_pipe">async_pipe</a>, does automatically open the pipe. </p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>Windows creates a named pipe here, where the name is automatically generated. </p></td></tr>
+</table></div>
+<p>
+</p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1a6d83de27ecbccef04906dd867e3b9579"></a><span class="identifier">async_pipe</span><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">io_context</span> <span class="special">&amp;</span> ios<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="special">&amp;</span> name<span class="special">)</span><span class="special">;</span></pre>
+<p>Construct a new <a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html" title="Class async_pipe">async_pipe</a>, does automatically open. Initializes source and sink with the same io_context.</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>Windows restricts possible names. </p></td></tr>
+</table></div>
+<p>
+</p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1a0893592459781b598cef61390bba0433"></a><span class="identifier">async_pipe</span><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">io_context</span> <span class="special">&amp;</span> ios_source<span class="special">,</span> 
+           <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">io_context</span> <span class="special">&amp;</span> ios_sink<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="special">&amp;</span> name<span class="special">)</span><span class="special">;</span></pre>
+<p>Construct a new <a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html" title="Class async_pipe">async_pipe</a>, does automatically open.</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>Windows restricts possible names. </p></td></tr>
+</table></div>
+<p>
+</p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1a4c38740d6ec1f553e48b1e8fe3fbfcef"></a><span class="identifier">async_pipe</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html" title="Class async_pipe">async_pipe</a> <span class="special">&amp;</span> lhs<span class="special">)</span><span class="special">;</span></pre>
+<p>Copy-Constructor of the async pipe. </p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>Windows requires a named pipe for this, if a the wrong type is used an exception is thrown. </p></td></tr>
+</table></div>
+<p>
+</p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1aa76d0afac22466c531bc176a33719d0e"></a><span class="identifier">async_pipe</span><span class="special">(</span><a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html" title="Class async_pipe">async_pipe</a> <span class="special">&amp;&amp;</span> lhs<span class="special">)</span><span class="special">;</span></pre>
+<p>Move-Constructor of the async pipe. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">char_traits</span><span class="special">&lt;</span><span class="identifier">CharT</span><span class="special">&gt;</span> <span class="special">&gt;</span> 
+  <span class="keyword">explicit</span> <a name="doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1aba915cc393708e41de13f1e2fb56aebd"></a><span class="identifier">async_pipe</span><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">io_context</span> <span class="special">&amp;</span> ios<span class="special">,</span> 
+                      <span class="keyword">const</span> <a class="link" href="classboost_1_1process_1_1v1_1_1basic__pipe.html" title="Class template basic_pipe">basic_pipe</a><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> p<span class="special">)</span><span class="special">;</span></pre>
+<p>Construct the async-pipe from a pipe. </p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>Windows requires a named pipe for this, if a the wrong type is used an exception is thrown. </p></td></tr>
+</table></div>
+<p>
+</p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">char_traits</span><span class="special">&lt;</span><span class="identifier">CharT</span><span class="special">&gt;</span> <span class="special">&gt;</span> 
+  <span class="keyword">explicit</span> <a name="doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1a8d8596f2b926518a33ef69a79a021bc5"></a><span class="identifier">async_pipe</span><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">io_context</span> <span class="special">&amp;</span> ios_source<span class="special">,</span> 
+                      <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">io_context</span> <span class="special">&amp;</span> ios_sink<span class="special">,</span> 
+                      <span class="keyword">const</span> <a class="link" href="classboost_1_1process_1_1v1_1_1basic__pipe.html" title="Class template basic_pipe">basic_pipe</a><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> p<span class="special">)</span><span class="special">;</span></pre>
+<p>Construct the async-pipe from a pipe, with two different io_context objects. </p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>Windows requires a named pipe for this, if a the wrong type is used an exception is thrown. </p></td></tr>
+</table></div>
+<p>
+</p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">char_traits</span><span class="special">&lt;</span><span class="identifier">CharT</span><span class="special">&gt;</span> <span class="special">&gt;</span> 
+  <a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html" title="Class async_pipe">async_pipe</a> <span class="special">&amp;</span> <a name="doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1adb8a60cf48d0785c997cd4b8a50f7f69"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1process_1_1v1_1_1basic__pipe.html" title="Class template basic_pipe">basic_pipe</a><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> p<span class="special">)</span><span class="special">;</span></pre>
+<p>Assign a <a class="link" href="classboost_1_1process_1_1v1_1_1basic__pipe.html" title="Class template basic_pipe">basic_pipe</a>. </p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>Windows requires a named pipe for this, if a the wrong type is used an exception is thrown. </p></td></tr>
+</table></div>
+<p>
+</p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html" title="Class async_pipe">async_pipe</a> <span class="special">&amp;</span> <a name="doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1a4e93706fd12594d4679c5256df896059"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html" title="Class async_pipe">async_pipe</a> <span class="special">&amp;</span> lhs<span class="special">)</span><span class="special">;</span></pre>
+<p>Copy Assign a pipe. </p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>Duplicates the handles. </p></td></tr>
+</table></div>
+<p>
+</p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html" title="Class async_pipe">async_pipe</a> <span class="special">&amp;</span> <a name="doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1a01421ec25c553b84e01a7ed54a7a4a85"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><a class="link" href="classboost_1_1process_1_1v1_1_1async__pipe.html" title="Class async_pipe">async_pipe</a> <span class="special">&amp;&amp;</span> lhs<span class="special">)</span><span class="special">;</span></pre>
+<p>Move assign a pipe </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1af920bb17813af8e9180ee59aa44de1e5"></a><span class="special">~</span><span class="identifier">async_pipe</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Destructor. Closes the pipe handles. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">char_traits</span><span class="special">&lt;</span><span class="identifier">CharT</span><span class="special">&gt;</span> <span class="special">&gt;</span> 
+  <span class="keyword">explicit</span> <a name="doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1af6c01dc0a7b3975fd27f18610a066222"></a><span class="keyword">operator</span> <span class="identifier">basic_pipe</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Explicit cast to <a class="link" href="classboost_1_1process_1_1v1_1_1basic__pipe.html" title="Class template basic_pipe">basic_pipe</a>. <br>
+ </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1a0ad76ba30fadfee5985e1c41ae7a84ef"></a><span class="identifier">cancel</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Cancel the current asynchronous operations. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1adec1bf9d82e180b99060f9e2f70df53f"></a><span class="identifier">close</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Close the pipe handles. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1a61f26bd5fccbe34e288db39e2a5e1896"></a><span class="identifier">close</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">error_code</span> <span class="special">&amp;</span> ec<span class="special">)</span><span class="special">;</span></pre>
+<p>Close the pipe handles. While passing an error_code </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1af39d644a79d537df5f7742a915e9b739"></a><span class="identifier">is_open</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Check if the pipes are open. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1a30e83402c1112129af0ee91b1b807a91"></a><span class="identifier">async_close</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Async close, i.e. close after current operation is completed.</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>There is no guarantee that this will indeed read the entire pipe-buffer </p></td></tr>
+</table></div>
+<p>
+</p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> MutableBufferSequence<span class="special">&gt;</span> 
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <a name="doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1a55d48c2c37be801838e7a7f5803250c4"></a><span class="identifier">read_some</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">MutableBufferSequence</span> <span class="special">&amp;</span> buffers<span class="special">)</span><span class="special">;</span></pre>
+<p>Read some data from the handle.</p>
+<p>See the boost.asio documentation for more details. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> MutableBufferSequence<span class="special">&gt;</span> 
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <a name="doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1a2b7b12ea106038021151fbd64e8df225"></a><span class="identifier">write_some</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">MutableBufferSequence</span> <span class="special">&amp;</span> buffers<span class="special">)</span><span class="special">;</span></pre>
+<p>Write some data to the handle.</p>
+<p>See the boost.asio documentation for more details. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">native_handle</span> <a name="doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1a7a4d445a02d819db4fd6f996c62da304"></a><span class="identifier">native_source</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Get the native handle of the source. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">native_handle</span> <a name="doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1ab6d1d539ebda6e68bcc817736d497c78"></a><span class="identifier">native_sink</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Get the native handle of the sink. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> MutableBufferSequence<span class="special">,</span> <span class="keyword">typename</span> ReadHandler<span class="special">&gt;</span> 
+  <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a name="doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1a7c8ee5f8719aafc2d985463b1e9d6d87"></a><span class="identifier">async_read_some</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">MutableBufferSequence</span> <span class="special">&amp;</span> buffers<span class="special">,</span> 
+                              <span class="identifier">ReadHandler</span> <span class="special">&amp;&amp;</span> handler<span class="special">)</span><span class="special">;</span></pre>
+<p>Start an asynchronous read.</p>
+<p>See the <a href="http://www.boost.org/doc/libs/1_60_0/doc/html/boost_asio/reference/AsyncReadStream.html" target="_top">boost.asio documentation</a> for more details. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ConstBufferSequence<span class="special">,</span> <span class="keyword">typename</span> WriteHandler<span class="special">&gt;</span> 
+  <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a name="doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1a6d85a7f1a29c84dec4acfb11cbcac44f"></a><span class="identifier">async_write_some</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">ConstBufferSequence</span> <span class="special">&amp;</span> buffers<span class="special">,</span> 
+                               <span class="identifier">WriteHandler</span> <span class="special">&amp;&amp;</span> handler<span class="special">)</span><span class="special">;</span></pre>
+<p>Start an asynchronous write.</p>
+<p>See the <a href="http://www.boost.org/doc/libs/1_60_0/doc/html/boost_asio/reference/AsyncWriteStream.html" target="_top">boost.asio documentation</a> for more details. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">const</span> <span class="identifier">handle_type</span> <span class="special">&amp;</span> <a name="doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1a3c8f25e1750b628f10aea1bdd8a8e271"></a><span class="identifier">sink</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Get the asio handle of the pipe sink. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">const</span> <span class="identifier">handle_type</span> <span class="special">&amp;</span> <a name="doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1ade7fd346365afdfbde8306d06c87638c"></a><span class="identifier">source</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Get the asio handle of the pipe source. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">handle_type</span> <span class="special">&amp;&amp;</span> <a name="doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1ab2c917f2b7aeec6d4a33c71182fd9fc0"></a><span class="identifier">sink</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>Get the asio handle of the pipe sink. Qualified as rvalue. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">handle_type</span> <span class="special">&amp;&amp;</span> <a name="doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1a95c2502944a719d8ad02ad40ce1bdeb2"></a><span class="identifier">source</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>Get the asio handle of the pipe source. Qualified as rvalue. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">handle_type</span> <a name="doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1ab7703fd9ab2ab3d59f2c1b2eabc3adaf"></a><span class="identifier">source</span><span class="special">(</span><span class="special">::</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">io_context</span> <span class="special">&amp;</span> ios<span class="special">)</span><span class="special">;</span></pre>Move the source out of this class and change the io_context. Qualified as rvalue. <div class="important"><table border="0" summary="Important">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="../../../doc/src/images/important.png"></td>
+<th align="left">Important</th>
+</tr>
+<tr><td align="left" valign="top"><p>Will always move. </p></td></tr>
+</table></div>
+<p>
+</p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">handle_type</span> <a name="doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1ae715cb827132c241c989d551fae8a74b"></a><span class="identifier">sink</span><span class="special">(</span><span class="special">::</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">io_context</span> <span class="special">&amp;</span> ios<span class="special">)</span><span class="special">;</span></pre>Move the sink out of this class and change the io_context. Qualified as rvalue. <div class="important"><table border="0" summary="Important">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="../../../doc/src/images/important.png"></td>
+<th align="left">Important</th>
+</tr>
+<tr><td align="left" valign="top"><p>Will always move </p></td></tr>
+</table></div>
+<p>
+</p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">handle_type</span> <a name="doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1a87e1e1bf20bef6e18441b4adeb0225e2"></a><span class="identifier">source</span><span class="special">(</span><span class="special">::</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">io_context</span> <span class="special">&amp;</span> ios<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Copy the source out of this class and change the io_context. <div class="important"><table border="0" summary="Important">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="../../../doc/src/images/important.png"></td>
+<th align="left">Important</th>
+</tr>
+<tr><td align="left" valign="top"><p>Will always copy. </p></td></tr>
+</table></div>
+<p>
+</p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">handle_type</span> <a name="doxygen.classboost_1_1process_1_1v1_1_1async__pipe_1aede75c50f150bed40ce863148fc47f31"></a><span class="identifier">sink</span><span class="special">(</span><span class="special">::</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">io_context</span> <span class="special">&amp;</span> ios<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Copy the sink out of this class and change the io_context. <div class="important"><table border="0" summary="Important">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="../../../doc/src/images/important.png"></td>
+<th align="left">Important</th>
+</tr>
+<tr><td align="left" valign="top"><p>Will always copy </p></td></tr>
+</table></div>
+<p>
+</p>
+</li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2006-2012 Julio M. Merino Vidal, Ilya Sokolov,
+      Felipe Tanus, Jeff Flinn, Boris Schaeling<br>Copyright © 2016 Klemens D. Morgenstern<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="async_8hpp_1a10a930fbf57b0e02309086eea24a76dd.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../process.html#doxygen.async__pipe_8hpp"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="async__system_8hpp_1acfccfa877439b0bd412faf9517471336.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

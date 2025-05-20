@@ -1,0 +1,804 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>The legacy connection class</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="prev" href="time_types.html" title="Time types: date, datetime and time">
+<link rel="next" href="pipeline.html" title="(Experimental) Pipelines">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="time_types.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="pipeline.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="mysql.templated_connection"></a><a class="link" href="templated_connection.html" title="The legacy connection class">The legacy connection class</a>
+</h2></div></div></div>
+<p>
+      You may encounter code using <a class="link" href="ref/boost__mysql__connection.html" title="connection"><code class="literal">connection</code></a>
+      or its aliases, <a class="link" href="ref/boost__mysql__tcp_connection.html" title="tcp_connection"><code class="literal">tcp_connection</code></a>,
+      <a class="link" href="ref/boost__mysql__tcp_ssl_connection.html" title="tcp_ssl_connection"><code class="literal">tcp_ssl_connection</code></a>,
+      <a class="link" href="ref/boost__mysql__unix_connection.html" title="unix_connection"><code class="literal">unix_connection</code></a>.
+      This was the main way to create client connections until Boost 1.87, when
+      <a class="link" href="ref/boost__mysql__any_connection.html" title="any_connection"><code class="literal">any_connection</code></a>
+      became stable.
+    </p>
+<p>
+      <code class="computeroutput"><span class="identifier">connection</span></code> is not deprecated,
+      but we don't recommend using it in new code. <a class="link" href="ref/boost__mysql__any_connection.html" title="any_connection"><code class="literal">any_connection</code></a>
+      is simpler to use and provides the same level of efficiency.
+    </p>
+<h4>
+<a name="mysql.templated_connection.h0"></a>
+      <span class="phrase"><a name="mysql.templated_connection.streams_and_type_aliases"></a></span><a class="link" href="templated_connection.html#mysql.templated_connection.streams_and_type_aliases">Streams
+      and type aliases</a>
+    </h4>
+<p>
+      <a class="link" href="ref/boost__mysql__connection.html" title="connection"><code class="literal">connection</code></a>
+      is templated on the <a class="link" href="ref/boost__mysql__Stream.html" title="Stream concept"><code class="literal">Stream</code></a>
+      class, which implements the transport layer to read and write wire bytes.
+    </p>
+<p>
+      The library provides helper type aliases for the most common cases:
+    </p>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+              <p>
+                Transport
+              </p>
+            </th>
+<th>
+              <p>
+                Stream type
+              </p>
+            </th>
+<th>
+              <p>
+                Type alias
+              </p>
+            </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+              <p>
+                SSL over TCP
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">ssl</span><span class="special">::</span><span class="identifier">stream</span><span class="special">&lt;</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">ip</span><span class="special">::</span><span class="identifier">tcp</span><span class="special">::</span><span class="identifier">socket</span><span class="special">&gt;</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__tcp_ssl_connection.html" title="tcp_ssl_connection"><code class="literal">tcp_ssl_connection</code></a>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                Plaintext TCP
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">ip</span><span class="special">::</span><span class="identifier">tcp</span><span class="special">::</span><span class="identifier">socket</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__tcp_connection.html" title="tcp_connection"><code class="literal">tcp_connection</code></a>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                UNIX sockets
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">local</span><span class="special">::</span><span class="identifier">stream_protocol</span><span class="special">::</span><span class="identifier">socket</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__unix_connection.html" title="unix_connection"><code class="literal">unix_connection</code></a>
+              </p>
+              <p>
+                Only available if <code class="computeroutput"><span class="identifier">BOOST_ASIO_HAS_LOCAL_SOCKETS</span></code>
+                is defined.
+              </p>
+            </td>
+</tr>
+</tbody>
+</table></div>
+<p>
+      In contrast, <a class="link" href="ref/boost__mysql__any_connection.html" title="any_connection"><code class="literal">any_connection</code></a>
+      is not templated. The same three transports above can be used with <code class="computeroutput"><span class="identifier">any_connection</span></code>.
+    </p>
+<h4>
+<a name="mysql.templated_connection.h1"></a>
+      <span class="phrase"><a name="mysql.templated_connection.constructing_a_connection"></a></span><a class="link" href="templated_connection.html#mysql.templated_connection.constructing_a_connection">Constructing
+      a connection</a>
+    </h4>
+<p>
+      <code class="computeroutput"><span class="identifier">connection</span></code>'s constructor takes
+      the same arguments as the underlying <code class="computeroutput"><span class="identifier">Stream</span></code>
+      constructor. For a <a class="link" href="ref/boost__mysql__tcp_ssl_connection.html" title="tcp_ssl_connection"><code class="literal">tcp_ssl_connection</code></a>,
+      we need to pass an execution context and a <a href="../../../../../doc/html/boost_asio/reference/ssl__context.html" target="_top"><code class="literal">asio::ssl::context</code></a>:
+    </p>
+<pre class="programlisting"><span class="comment">// The execution context, required for all I/O operations</span>
+<span class="identifier">asio</span><span class="special">::</span><span class="identifier">io_context</span> <span class="identifier">ctx</span><span class="special">;</span>
+
+<span class="comment">// The SSL context, required for connections that use TLS.</span>
+<span class="identifier">asio</span><span class="special">::</span><span class="identifier">ssl</span><span class="special">::</span><span class="identifier">context</span> <span class="identifier">ssl_ctx</span><span class="special">(</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">ssl</span><span class="special">::</span><span class="identifier">context</span><span class="special">::</span><span class="identifier">tlsv12_client</span><span class="special">);</span>
+
+<span class="comment">// Construct the connection. The arguments are forwarded</span>
+<span class="comment">// to the stream type (asio::ssl::stream&lt;asio::ip::tcp::socket&gt;).</span>
+<span class="identifier">mysql</span><span class="special">::</span><span class="identifier">tcp_ssl_connection</span> <span class="identifier">conn</span><span class="special">(</span><span class="identifier">ctx</span><span class="special">,</span> <span class="identifier">ssl_ctx</span><span class="special">);</span>
+</pre>
+<h4>
+<a name="mysql.templated_connection.h2"></a>
+      <span class="phrase"><a name="mysql.templated_connection.connection_establishment"></a></span><a class="link" href="templated_connection.html#mysql.templated_connection.connection_establishment">Connection
+      establishment</a>
+    </h4>
+<p>
+      Use <a class="link" href="ref/boost__mysql__connection/connect.html" title="connection::connect"><code class="literal">connection::connect</code></a>
+      or <a class="link" href="ref/boost__mysql__connection/async_connect.html" title="connection::async_connect"><code class="literal">connection::async_connect</code></a>
+      to perform connection establishment. This function takes two parameters:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          An endpoint to connect to. The endpoint type depends on the stream type.
+          For TCP connections, it's an <a href="../../../../../doc/html/boost_asio/reference/ip__tcp/endpoint.html" target="_top"><code class="literal">asio::asio::ip::tcp::endpoint</code></a>,
+          which holds an IP address and a port. For UNIX sockets, it'd be an <a href="../../../../../doc/html/boost_asio/reference/local__stream_protocol/endpoint.html" target="_top"><code class="literal">asio::asio::local::stream_protocol::endpoint</code></a>,
+          holding a UNIX path.
+        </li>
+<li class="listitem">
+          A <a class="link" href="ref/boost__mysql__handshake_params.html" title="handshake_params"><code class="literal">handshake_params</code></a>
+          instance, containing all the parameters required to perform the MySQL handshake.
+        </li>
+</ul></div>
+<p>
+      If you're using TCP, you must perform hostname resolution yourself. For example:
+    </p>
+<pre class="programlisting"><span class="comment">// Resolve the hostname to get a collection of endpoints.</span>
+<span class="comment">// default_port_string is MySQL's default port, 3306</span>
+<span class="comment">// Hostname resolution may yield more than one host</span>
+<span class="identifier">asio</span><span class="special">::</span><span class="identifier">ip</span><span class="special">::</span><span class="identifier">tcp</span><span class="special">::</span><span class="identifier">resolver</span> <span class="identifier">resolver</span><span class="special">(</span><span class="identifier">ctx</span><span class="special">);</span>
+<span class="keyword">auto</span> <span class="identifier">endpoints</span> <span class="special">=</span> <span class="identifier">resolver</span><span class="special">.</span><span class="identifier">resolve</span><span class="special">(</span><span class="identifier">server_hostname</span><span class="special">,</span> <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">default_port_string</span><span class="special">);</span>
+
+<span class="comment">// Parameters specifying how to perform the MySQL handshake operation.</span>
+<span class="comment">// Similar to connect_params, but doesn't contain the server address and is non-owning</span>
+<span class="identifier">mysql</span><span class="special">::</span><span class="identifier">handshake_params</span> <span class="identifier">params</span><span class="special">(</span>
+    <span class="identifier">mysql_username</span><span class="special">,</span>
+    <span class="identifier">mysql_password</span><span class="special">,</span>
+    <span class="string">"boost_mysql_examples"</span>  <span class="comment">// database to use</span>
+<span class="special">);</span>
+
+<span class="comment">// Connect to the server using the first endpoint returned by the resolver</span>
+<span class="identifier">conn</span><span class="special">.</span><span class="identifier">connect</span><span class="special">(*</span><span class="identifier">endpoints</span><span class="special">.</span><span class="identifier">begin</span><span class="special">(),</span> <span class="identifier">params</span><span class="special">);</span>
+</pre>
+<p>
+      As opposed to <code class="computeroutput"><span class="identifier">connect_params</span></code>,
+      <a class="link" href="ref/boost__mysql__handshake_params.html" title="handshake_params"><code class="literal">handshake_params</code></a>
+      does not own the strings it contains (like the username and the password).
+      It's your responsibility to keep them alive until the connect operation completes.
+    </p>
+<p>
+      All functionality in <a class="link" href="ref/boost__mysql__handshake_params.html" title="handshake_params"><code class="literal">handshake_params</code></a>
+      has an equivalent in <a class="link" href="ref/boost__mysql__connect_params.html" title="connect_params"><code class="literal">connect_params</code></a>.
+      See the <a class="link" href="templated_connection.html#mysql.templated_connection.reference">reference table</a>
+      for more info.
+    </p>
+<h4>
+<a name="mysql.templated_connection.h3"></a>
+      <span class="phrase"><a name="mysql.templated_connection.using_a_connection"></a></span><a class="link" href="templated_connection.html#mysql.templated_connection.using_a_connection">Using
+      a connection</a>
+    </h4>
+<p>
+      Once connected, <a class="link" href="ref/boost__mysql__connection.html" title="connection"><code class="literal">connection</code></a>
+      and <a class="link" href="ref/boost__mysql__any_connection.html" title="any_connection"><code class="literal">any_connection</code></a>
+      can be used almost equivalently:
+    </p>
+<pre class="programlisting"><span class="comment">// Issue a query, as you would with any_connection</span>
+<span class="identifier">mysql</span><span class="special">::</span><span class="identifier">results</span> <span class="identifier">result</span><span class="special">;</span>
+<span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="string">"SELECT 1"</span><span class="special">,</span> <span class="identifier">result</span><span class="special">);</span>
+</pre>
+<p>
+      Some differences:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          Some newer APIs, like <a class="link" href="ref/boost__mysql__any_connection/async_set_character_set.html" title="any_connection::async_set_character_set"><code class="literal">async_set_character_set</code></a>
+          and <a class="link" href="ref/boost__mysql__any_connection/async_run_pipeline.html" title="any_connection::async_run_pipeline"><code class="literal">async_run_pipeline</code></a>,
+          are not present in <a class="link" href="ref/boost__mysql__connection.html" title="connection"><code class="literal">connection</code></a>.
+        </li>
+<li class="listitem">
+          By default, <code class="computeroutput"><span class="identifier">connection</span></code>'s
+          completion token is <code class="computeroutput"><span class="identifier">asio</span><span class="special">::</span><span class="identifier">deferred</span></code>
+          instead of <code class="computeroutput"><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">with_diagnostics</span><span class="special">(</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">deferred</span><span class="special">)</span></code>.
+          When using coroutines with exceptions, you need to pass <code class="computeroutput"><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">with_diagnostics</span></code>
+          explicitly if you want exceptions with extra info.
+        </li>
+</ul></div>
+<h4>
+<a name="mysql.templated_connection.h4"></a>
+      <span class="phrase"><a name="mysql.templated_connection.terminating_a_connection"></a></span><a class="link" href="templated_connection.html#mysql.templated_connection.terminating_a_connection">Terminating
+      a connection</a>
+    </h4>
+<p>
+      As with <code class="computeroutput"><span class="identifier">any_connection</span></code>, use
+      <a class="link" href="ref/boost__mysql__connection/close.html" title="connection::close"><code class="literal">connection::close</code></a>
+      or <a class="link" href="ref/boost__mysql__connection/async_close.html" title="connection::async_close"><code class="literal">async_close</code></a>:
+    </p>
+<h4>
+<a name="mysql.templated_connection.h5"></a>
+      <span class="phrase"><a name="mysql.templated_connection.tls_support"></a></span><a class="link" href="templated_connection.html#mysql.templated_connection.tls_support">TLS
+      support</a>
+    </h4>
+<p>
+      To use TLS, you must use a <a class="link" href="ref/boost__mysql__connection.html" title="connection"><code class="literal">connection</code></a>
+      with a <a class="link" href="ref/boost__mysql__Stream.html" title="Stream concept"><code class="literal">Stream</code></a>
+      that supports TLS. A <span class="emphasis"><em>TLS-enabled stream</em></span> must inherit from
+      <a href="../../../../../doc/html/boost_asio/reference/ssl__stream_base.html" target="_top"><code class="literal">asio::ssl::stream_base</code></a>.
+      The most common is <a href="../../../../../doc/html/boost_asio/reference/ssl__stream.html" target="_top"><code class="literal">asio::ssl::stream</code></a>
+      (used by <a class="link" href="ref/boost__mysql__tcp_ssl_connection.html" title="tcp_ssl_connection"><code class="literal">tcp_ssl_connection</code></a>).
+    </p>
+<p>
+      When using a stream type that does not support TLS, like <a class="link" href="ref/boost__mysql__tcp_connection.html" title="tcp_connection"><code class="literal">tcp_connection</code></a>
+      or <a class="link" href="ref/boost__mysql__unix_connection.html" title="unix_connection"><code class="literal">unix_connection</code></a>,
+      <a class="link" href="ref/boost__mysql__handshake_params/ssl.html" title="handshake_params::ssl"><code class="literal">handshake_params::ssl</code></a>
+      is ignored.
+    </p>
+<h4>
+<a name="mysql.templated_connection.h6"></a>
+      <span class="phrase"><a name="mysql.templated_connection.unix_sockets"></a></span><a class="link" href="templated_connection.html#mysql.templated_connection.unix_sockets">UNIX
+      sockets</a>
+    </h4>
+<p>
+      To use UNIX sockets, use <a class="link" href="ref/boost__mysql__unix_connection.html" title="unix_connection"><code class="literal">unix_connection</code></a>:
+    </p>
+<pre class="programlisting"><span class="comment">// The execution context, required for all I/O operations</span>
+<span class="identifier">asio</span><span class="special">::</span><span class="identifier">io_context</span> <span class="identifier">ctx</span><span class="special">;</span>
+
+<span class="comment">// A UNIX connection requires only an execution context</span>
+<span class="identifier">mysql</span><span class="special">::</span><span class="identifier">unix_connection</span> <span class="identifier">conn</span><span class="special">(</span><span class="identifier">ctx</span><span class="special">);</span>
+
+<span class="comment">// The socket path where the server is listening</span>
+<span class="identifier">asio</span><span class="special">::</span><span class="identifier">local</span><span class="special">::</span><span class="identifier">stream_protocol</span><span class="special">::</span><span class="identifier">endpoint</span> <span class="identifier">ep</span><span class="special">(</span><span class="string">"/var/run/mysqld/mysqld.sock"</span><span class="special">);</span>
+
+<span class="comment">// MySQL handshake parameters, as in the TCP case.</span>
+<span class="identifier">mysql</span><span class="special">::</span><span class="identifier">handshake_params</span> <span class="identifier">params</span><span class="special">(</span>
+    <span class="identifier">mysql_username</span><span class="special">,</span>
+    <span class="identifier">mysql_password</span><span class="special">,</span>
+    <span class="string">"boost_mysql_examples"</span>  <span class="comment">// database to use</span>
+<span class="special">);</span>
+
+<span class="comment">// Connect to the server</span>
+<span class="identifier">conn</span><span class="special">.</span><span class="identifier">connect</span><span class="special">(</span><span class="identifier">ep</span><span class="special">,</span> <span class="identifier">params</span><span class="special">);</span>
+
+<span class="comment">// Use the connection normally</span>
+</pre>
+<h4>
+<a name="mysql.templated_connection.h7"></a>
+      <span class="phrase"><a name="mysql.templated_connection.handshake_and_quit"></a></span><a class="link" href="templated_connection.html#mysql.templated_connection.handshake_and_quit">Handshake
+      and quit</a>
+    </h4>
+<p>
+      In addition to <a class="link" href="ref/boost__mysql__connection/connect.html" title="connection::connect"><code class="literal">connect</code></a>
+      and <a class="link" href="ref/boost__mysql__connection/close.html" title="connection::close"><code class="literal">close</code></a>,
+      <code class="computeroutput"><span class="identifier">connection</span></code> exposes two additional
+      I/O operations:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          <a class="link" href="ref/boost__mysql__connection/handshake.html" title="connection::handshake"><code class="literal">connection::handshake</code></a>
+          is like <code class="computeroutput"><span class="identifier">connect</span></code>, but doesn't
+          connect the underlying <code class="computeroutput"><span class="identifier">Stream</span></code>.
+        </li>
+<li class="listitem">
+          <a class="link" href="ref/boost__mysql__connection/quit.html" title="connection::quit"><code class="literal">connection::quit</code></a>
+          is like <code class="computeroutput"><span class="identifier">close</span></code>, but doesn't
+          close the underlying <code class="computeroutput"><span class="identifier">Stream</span></code>.
+        </li>
+</ul></div>
+<p>
+      You can use them like this:
+    </p>
+<pre class="programlisting"><span class="comment">// The execution context, required for all I/O operations</span>
+<span class="identifier">asio</span><span class="special">::</span><span class="identifier">io_context</span> <span class="identifier">ctx</span><span class="special">;</span>
+
+<span class="comment">// The SSL context, required for connections that use TLS.</span>
+<span class="identifier">asio</span><span class="special">::</span><span class="identifier">ssl</span><span class="special">::</span><span class="identifier">context</span> <span class="identifier">ssl_ctx</span><span class="special">(</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">ssl</span><span class="special">::</span><span class="identifier">context</span><span class="special">::</span><span class="identifier">tlsv12_client</span><span class="special">);</span>
+
+<span class="comment">// We're using TLS over TCP</span>
+<span class="identifier">mysql</span><span class="special">::</span><span class="identifier">tcp_ssl_connection</span> <span class="identifier">conn</span><span class="special">(</span><span class="identifier">ctx</span><span class="special">,</span> <span class="identifier">ssl_ctx</span><span class="special">);</span>
+
+<span class="comment">// Resolve the server hostname into endpoints</span>
+<span class="identifier">asio</span><span class="special">::</span><span class="identifier">ip</span><span class="special">::</span><span class="identifier">tcp</span><span class="special">::</span><span class="identifier">resolver</span> <span class="identifier">resolver</span><span class="special">(</span><span class="identifier">ctx</span><span class="special">);</span>
+<span class="keyword">auto</span> <span class="identifier">endpoints</span> <span class="special">=</span> <span class="identifier">resolver</span><span class="special">.</span><span class="identifier">resolve</span><span class="special">(</span><span class="identifier">server_hostname</span><span class="special">,</span> <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">default_port_string</span><span class="special">);</span>
+
+<span class="comment">// Connect the underlying stream manually.</span>
+<span class="comment">// asio::connect tries every endpoint in the passed sequence</span>
+<span class="comment">// until one succeeds. any_connection uses this internally.</span>
+<span class="comment">// lowest_layer obtains the underlying socket from the ssl::stream</span>
+<span class="identifier">asio</span><span class="special">::</span><span class="identifier">connect</span><span class="special">(</span><span class="identifier">conn</span><span class="special">.</span><span class="identifier">stream</span><span class="special">().</span><span class="identifier">lowest_layer</span><span class="special">(),</span> <span class="identifier">endpoints</span><span class="special">);</span>
+
+<span class="comment">// Perform MySQL session establishment.</span>
+<span class="comment">// This will also perform the TLS handshake, if required.</span>
+<span class="identifier">mysql</span><span class="special">::</span><span class="identifier">handshake_params</span> <span class="identifier">params</span><span class="special">(</span>
+    <span class="identifier">mysql_username</span><span class="special">,</span>
+    <span class="identifier">mysql_password</span><span class="special">,</span>
+    <span class="string">"boost_mysql_examples"</span>  <span class="comment">// database to use</span>
+<span class="special">);</span>
+<span class="identifier">conn</span><span class="special">.</span><span class="identifier">handshake</span><span class="special">(</span><span class="identifier">params</span><span class="special">);</span>
+
+<span class="comment">// Use the connection normally</span>
+<span class="identifier">mysql</span><span class="special">::</span><span class="identifier">results</span> <span class="identifier">result</span><span class="special">;</span>
+<span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="string">"SELECT 1"</span><span class="special">,</span> <span class="identifier">result</span><span class="special">);</span>
+
+<span class="comment">// Terminate the connection. This also performs the TLS shutdown.</span>
+<span class="identifier">conn</span><span class="special">.</span><span class="identifier">quit</span><span class="special">();</span>
+
+<span class="comment">// Close the underlying stream.</span>
+<span class="comment">// The connection's destructor also closes the socket,</span>
+<span class="comment">// but doing it explicitly will throw in case of error.</span>
+<span class="identifier">conn</span><span class="special">.</span><span class="identifier">stream</span><span class="special">().</span><span class="identifier">lowest_layer</span><span class="special">().</span><span class="identifier">close</span><span class="special">();</span>
+</pre>
+<p>
+      These functions can be useful in the following cases:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          When you want to perform stream connection establishment yourself. For
+          example, when you want to use the range <code class="computeroutput"><span class="identifier">asio</span><span class="special">::</span><span class="identifier">connect</span></code>
+          overloads, as in the example above.
+        </li>
+<li class="listitem">
+          When using an exotic <code class="computeroutput"><span class="identifier">Stream</span></code>
+          type. <code class="computeroutput"><span class="identifier">connect</span></code> and <code class="computeroutput"><span class="identifier">close</span></code> can only be used if the <code class="computeroutput"><span class="identifier">Stream</span></code> type satisfies <a class="link" href="ref/boost__mysql__SocketStream.html" title="SocketStream concept"><code class="literal">SocketStream</code></a>
+          - that is, when its lowest layer type is a socket. This holds for all the
+          stream types in the table above, but is not the case for <a href="../../../../../doc/html/boost_asio/reference/windows__stream_handle.html" target="_top"><code class="literal">asio::windows::stream_handle</code></a>.
+        </li>
+</ul></div>
+<h4>
+<a name="mysql.templated_connection.h8"></a>
+      <span class="phrase"><a name="mysql.templated_connection.reconnection"></a></span><a class="link" href="templated_connection.html#mysql.templated_connection.reconnection">Reconnection</a>
+    </h4>
+<p>
+      The reconnection capabilities of <code class="computeroutput"><span class="identifier">connection</span></code>
+      are more limited than those of <code class="computeroutput"><span class="identifier">any_connection</span></code>.
+      Concretely, when using TLS-capable streams, a <code class="computeroutput"><span class="identifier">connection</span></code>
+      can't be re-used after it's closed or encounters a fatal error. This is because
+      <a href="../../../../../doc/html/boost_asio/reference/ssl__stream.html" target="_top"><code class="literal">asio::ssl::stream</code></a>
+      can't be re-used. This limitation is not present in <a class="link" href="ref/boost__mysql__any_connection.html" title="any_connection"><code class="literal">any_connection</code></a>.
+    </p>
+<p>
+      If you are using <a class="link" href="ref/boost__mysql__tcp_connection.html" title="tcp_connection"><code class="literal">tcp_connection</code></a>
+      or <a class="link" href="ref/boost__mysql__unix_connection.html" title="unix_connection"><code class="literal">unix_connection</code></a>,
+      or any other stream supporting reconnection, and you want to re-use a connection:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          Call <a class="link" href="ref/boost__mysql__connection/close.html" title="connection::close"><code class="literal">connection::close</code></a>,
+          or manually close the underlying stream, even if you encountered a fatal
+          error.
+        </li>
+<li class="listitem">
+          Call <a class="link" href="ref/boost__mysql__connection/connect.html" title="connection::connect"><code class="literal">connection::connect</code></a>
+          normally, even if the close operation failed.
+        </li>
+<li class="listitem">
+          If your <a class="link" href="ref/boost__mysql__connection/connect.html" title="connection::connect"><code class="literal">connection::connect</code></a>
+          operation failed, you can try opening it again by simply calling <a class="link" href="ref/boost__mysql__connection/connect.html" title="connection::connect"><code class="literal">connection::connect</code></a>
+          again.
+        </li>
+</ul></div>
+<p>
+      If your <code class="computeroutput"><span class="identifier">Stream</span></code> type doesn't
+      fulfill the <a class="link" href="ref/boost__mysql__SocketStream.html" title="SocketStream concept"><code class="literal">SocketStream</code></a>
+      concept, you need to use <a class="link" href="ref/boost__mysql__connection/handshake.html" title="connection::handshake"><code class="literal">handshake</code></a>
+      and <a class="link" href="ref/boost__mysql__connection/quit.html" title="connection::quit"><code class="literal">quit</code></a>
+      instead of <code class="computeroutput"><span class="identifier">connect</span></code> and <code class="computeroutput"><span class="identifier">close</span></code>, and perform transport connection establishment
+      yourself.
+    </p>
+<p>
+      As with <code class="computeroutput"><span class="identifier">any_connection</span></code>, <code class="computeroutput"><span class="identifier">connection</span></code> doesn't perform any built-in retry
+      strategy.
+    </p>
+<h4>
+<a name="mysql.templated_connection.h9"></a>
+      <span class="phrase"><a name="mysql.templated_connection.migrating_to_any_connection"></a></span><a class="link" href="templated_connection.html#mysql.templated_connection.migrating_to_any_connection">Migrating
+      to any_connection</a>
+    </h4>
+<p>
+      We recommend migrating code using templated connections to <code class="computeroutput"><span class="identifier">any_connection</span></code>.
+      In most cases, you only need to change connection establishment code to use
+      <a class="link" href="ref/boost__mysql__connect_params.html" title="connect_params"><code class="literal">connect_params</code></a>
+      instead of <a class="link" href="ref/boost__mysql__handshake_params.html" title="handshake_params"><code class="literal">handshake_params</code></a>.
+    </p>
+<p>
+      The following table summarizes all the differences between the two connection
+      types, and provides migration paths for each feature you may use:
+    </p>
+<div class="informaltable">
+<a name="mysql.templated_connection.reference"></a><table class="table">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+              <p>
+                Feature
+              </p>
+            </th>
+<th>
+              <p>
+                any_connection
+              </p>
+            </th>
+<th>
+              <p>
+                connection
+              </p>
+            </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+              <p>
+                Hostname resolution
+              </p>
+            </td>
+<td>
+              <p>
+                Performed by <a class="link" href="ref/boost__mysql__any_connection/async_connect.html" title="any_connection::async_connect"><code class="literal">any_connection::async_connect</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                Needs to be performed manually
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                Credentials
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__connect_params/username.html" title="connect_params::username"><code class="literal">connect_params::username</code></a>,
+                <a class="link" href="ref/boost__mysql__connect_params/password.html" title="connect_params::password"><code class="literal">connect_params::password</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__handshake_params/username.html" title="handshake_params::username"><code class="literal">handshake_params::username</code></a>,
+                <a class="link" href="ref/boost__mysql__handshake_params/password.html" title="handshake_params::password"><code class="literal">handshake_params::password</code></a>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                Database to use
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__connect_params/database.html" title="connect_params::database"><code class="literal">connect_params::database</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__handshake_params/database.html" title="handshake_params::database"><code class="literal">handshake_params::database</code></a>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                Setting TLS options
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__any_connection_params/ssl_context.html" title="any_connection_params::ssl_context"><code class="literal">any_connection_params::ssl_context</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                Pass a <a href="../../../../../doc/html/boost_asio/reference/ssl__context.html" target="_top"><code class="literal">asio::ssl::context</code></a>
+                to <a class="link" href="ref/boost__mysql__tcp_ssl_connection.html" title="tcp_ssl_connection"><code class="literal">tcp_ssl_connection</code></a>'s
+                constructor.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                TLS negotiation
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__connect_params/ssl.html" title="connect_params::ssl"><code class="literal">connect_params::ssl</code></a>.
+                Ignored for if using UNIX sockets. Defaults to <code class="computeroutput"><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">ssl_mode</span><span class="special">::</span><span class="identifier">enable</span></code>.
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__handshake_params/ssl.html" title="handshake_params::ssl"><code class="literal">handshake_params::ssl</code></a>.
+                Ignored if <code class="computeroutput"><span class="identifier">Stream</span></code>
+                is not TLS-enabled. Defaults to <code class="computeroutput"><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">ssl_mode</span><span class="special">::</span><span class="identifier">require</span></code>.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                Connection collation
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__connect_params/connection_collation.html" title="connect_params::connection_collation"><code class="literal">connect_params::connection_collation</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__handshake_params/connection_collation.html" title="handshake_params::connection_collation"><code class="literal">handshake_params::connection_collation</code></a>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                Enabling multi-queries
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__connect_params/multi_queries.html" title="connect_params::multi_queries"><code class="literal">connect_params::multi_queries</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__handshake_params/multi_queries.html" title="handshake_params::multi_queries"><code class="literal">handshake_params::multi_queries</code></a>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                UNIX sockets
+              </p>
+            </td>
+<td>
+              <p>
+                Use a UNIX socket path in <a class="link" href="ref/boost__mysql__connect_params/server_address.html" title="connect_params::server_address"><code class="literal">connect_params::server_address</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                Use <a class="link" href="ref/boost__mysql__unix_connection.html" title="unix_connection"><code class="literal">unix_connection</code></a>
+                and pass a UNIX endpoint to <a class="link" href="ref/boost__mysql__connection/connect.html" title="connection::connect"><code class="literal">connection::connect</code></a>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                Windows named pipes
+              </p>
+            </td>
+<td>
+              <p>
+                Not available yet
+              </p>
+            </td>
+<td>
+              <p>
+                Use <a href="../../../../../doc/html/boost_asio/reference/windows__stream_handle.html" target="_top"><code class="literal">asio::windows::stream_handle</code></a>
+                as stream type
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                Changing the initial size of the internal network buffer
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__any_connection_params/initial_buffer_size.html" title="any_connection_params::initial_buffer_size"><code class="literal">any_connection_params::initial_buffer_size</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                Pass a <a class="link" href="ref/boost__mysql__buffer_params.html" title="buffer_params"><code class="literal">buffer_params</code></a>
+                instance to connection's constructor
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                Changing the network buffer size limit
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__any_connection_params/max_buffer_size.html" title="any_connection_params::max_buffer_size"><code class="literal">any_connection_params::max_buffer_size</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                Not available: no limit on the network buffer size
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                Access the underlying stream
+              </p>
+            </td>
+<td>
+              <p>
+                Unavailable
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__connection/stream.html" title="connection::stream"><code class="literal">connection::stream</code></a>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                Raw handshake and quit
+              </p>
+            </td>
+<td>
+              <p>
+                Unavailable
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__connection/handshake.html" title="connection::handshake"><code class="literal">connection::handshake</code></a>,
+                <a class="link" href="ref/boost__mysql__connection/quit.html" title="connection::quit"><code class="literal">connection::quit</code></a>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                Reconnection
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__any_connection/async_connect.html" title="any_connection::async_connect"><code class="literal">any_connection::async_connect</code></a>
+                can always be used
+              </p>
+            </td>
+<td>
+              <p>
+                Requires closing the current connection first. Unavailable for <a class="link" href="ref/boost__mysql__tcp_ssl_connection.html" title="tcp_ssl_connection"><code class="literal">tcp_ssl_connection</code></a>.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                Changing the connection's character set
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__any_connection/async_set_character_set.html" title="any_connection::async_set_character_set"><code class="literal">any_connection::async_set_character_set</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                Unavailable
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                Running pipelines
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__any_connection/async_run_pipeline.html" title="any_connection::async_run_pipeline"><code class="literal">any_connection::async_run_pipeline</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                Unavailable
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                Including diagnostics in coroutine exceptions
+              </p>
+            </td>
+<td>
+              <p>
+                Enabled by default
+              </p>
+            </td>
+<td>
+<pre class="table-programlisting"><span class="identifier">co_await</span> <span class="identifier">conn</span><span class="special">.</span><span class="identifier">async_execute</span><span class="special">(</span><span class="string">"SELECT 1"</span><span class="special">,</span> <span class="identifier">result</span><span class="special">,</span> <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">with_diagnostics</span><span class="special">(</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">deferred</span><span class="special">));</span>
+</pre>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                Connection pooling
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__connection_pool.html" title="connection_pool"><code class="literal">connection_pool</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                Unavailable
+              </p>
+            </td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="time_types.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="pipeline.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

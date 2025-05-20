@@ -1,0 +1,40 @@
+= GDB pretty printers
+
+Create or modify your `.gdbinit` file to contain the following:
+
+[source,python]
+----
+python
+import sys
+sys.path.insert(0, '/path/to/boost/url/extra/gdb') <1>
+from boost_url_printers import register_boost_url_printers <2>
+register_boost_url_printers() <3>
+end
+----
+
+<1> Make GDB see the directory with the printers
+<2> Import the function that registers the printers with GDB
+<3> Effectively register the printers
+
+Note that this pattern does not register the printers unless the user explicitly asks for it by calling the `register_boost_url_printers` function.
+This helps the scripts separate these concerns.
+
+The pretty printers will display all components of the URL, including the encoded and decoded versions of the host, path, query, and fragment.
+
+This can save users time trying to figure out why a string parsed successfully but the result of the `encoded_X` member function is not what they are expecting.
+
+NOTE: The printers require Python 3
+
+== Development mode
+
+Developers can also register the printers with the `dev` option set to `True`:
+
+[source,python]
+----
+register_boost_url_printers(dev=True)
+----
+
+In this mode, the fields will represent the internal offsets for all parts of the URLs in the underlying data structure and represent the substrings at each of these offsets.
+
+
+

@@ -1,0 +1,185 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template bernoulli_distribution</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../../boost_random/reference.html#doxygen.headers.bernoulli__distribution_8hpp" title="Header &lt;boost/random/bernoulli_distribution.hpp&gt;">
+<link rel="prev" href="additive__combine_8hpp_1a6f294100a1fb0e43f16f7522f18d7460.html" title="Type definition ecuyer1988">
+<link rel="next" href="classboost_1_1random_1_1bernoulli__distribution_1_1param__type.html" title="Class param_type">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="additive__combine_8hpp_1a6f294100a1fb0e43f16f7522f18d7460.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_random/reference.html#doxygen.headers.bernoulli__distribution_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1random_1_1bernoulli__distribution_1_1param__type.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.headers.classboost_1_1random_1_1bernoulli__distribution"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template bernoulli_distribution</span></h2>
+<p>boost::random::bernoulli_distribution</p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../boost_random/reference.html#doxygen.headers.bernoulli__distribution_8hpp" title="Header &lt;boost/random/bernoulli_distribution.hpp&gt;">boost/random/bernoulli_distribution.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> RealType <span class="special">=</span> <span class="keyword">double</span><span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1random_1_1bernoulli__distribution.html" title="Class template bernoulli_distribution">bernoulli_distribution</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="keyword">int</span>  <a name="doxygen.headers.classboost_1_1random_1_1bernoulli__distribution_1a08e402a1563e2558b39096859c3e3e13"></a><span class="identifier">input_type</span><span class="special">;</span> 
+  <span class="keyword">typedef</span> <span class="keyword">bool</span> <a name="doxygen.headers.classboost_1_1random_1_1bernoulli__distribution_1a4785d5e740f08c58f9d7f9ff3275c015"></a><span class="identifier">result_type</span><span class="special">;</span>
+
+  <span class="comment">// member classes/structs/unions</span>
+
+  <span class="keyword">class</span> <a class="link" href="classboost_1_1random_1_1bernoulli__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">{</span>
+  <span class="keyword">public</span><span class="special">:</span>
+    <span class="comment">// types</span>
+    <span class="keyword">typedef</span> <a class="link" href="classboost_1_1random_1_1bernoulli__distribution.html" title="Class template bernoulli_distribution">bernoulli_distribution</a> <a class="link" href="classboost_1_1random_1_1bernoulli__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1bernoulli__distribution_1_1param__type_1ac7e0c636cd43621dc11a03eafd501a1a"><span class="identifier">distribution_type</span></a><span class="special">;</span>
+
+    <span class="comment">// <a class="link" href="classboost_1_1random_1_1bernoulli__distribution_1_1param__type.html#id-1_3_34_5_6_4_1_1_1_3_2-bb">public member functions</a></span>
+    <span class="keyword">explicit</span> <a class="link" href="classboost_1_1random_1_1bernoulli__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1bernoulli__distribution_1_1param__type_1a0d6e68a216f12cafb217cf49d2adf378"><span class="identifier">param_type</span></a><span class="special">(</span><span class="identifier">RealType</span> <span class="special">=</span> <span class="number">0</span><span class="special">.</span><span class="number">5</span><span class="special">)</span><span class="special">;</span>
+    <span class="identifier">RealType</span> <a class="link" href="classboost_1_1random_1_1bernoulli__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1bernoulli__distribution_1_1param__type_1a496329cb191cccc076215f451f855c80"><span class="identifier">p</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+
+    <span class="comment">// <a class="link" href="classboost_1_1random_1_1bernoulli__distribution_1_1param__type.html#id-1_3_34_5_6_4_1_1_1_3_3-bb">friend functions</a></span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits<span class="special">&gt;</span> 
+      <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+      <a class="link" href="classboost_1_1random_1_1bernoulli__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1bernoulli__distribution_1_1param__type_1a36d2820c7e758fa1a94fdd5d74949e54"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1bernoulli__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits<span class="special">&gt;</span> 
+      <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+      <a class="link" href="classboost_1_1random_1_1bernoulli__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1bernoulli__distribution_1_1param__type_1aa94ff75dd5871ee80a6fc0a095c75bd0"><span class="keyword">operator</span><span class="special">&gt;&gt;</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1bernoulli__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">bool</span> <a class="link" href="classboost_1_1random_1_1bernoulli__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1bernoulli__distribution_1_1param__type_1ae6f3b58e629ce7a54b5e18a4f05dbc5a"><span class="keyword">operator</span><span class="special">==</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1bernoulli__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1bernoulli__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">bool</span> <a class="link" href="classboost_1_1random_1_1bernoulli__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1bernoulli__distribution_1_1param__type_1aa559d0d98e88e84417364a89b83cf5b2"><span class="keyword">operator</span><span class="special">!=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1bernoulli__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1bernoulli__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="special">}</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1random_1_1bernoulli__distribution.html#id-1_3_34_5_6_4_1_1_1_6-bb">public member functions</a></span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1random_1_1bernoulli__distribution.html#doxygen.headers.classboost_1_1random_1_1bernoulli__distribution_1a84426917a29eb6fe58c311a595dd4120"><span class="identifier">bernoulli_distribution</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">RealType</span> <span class="special">&amp;</span> <span class="special">=</span> <span class="number">0</span><span class="special">.</span><span class="number">5</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1random_1_1bernoulli__distribution.html#doxygen.headers.classboost_1_1random_1_1bernoulli__distribution_1a4fa44b463b65cac80dc18f725c6a1bc8"><span class="identifier">bernoulli_distribution</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1bernoulli__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">RealType</span> <a class="link" href="classboost_1_1random_1_1bernoulli__distribution.html#doxygen.headers.classboost_1_1random_1_1bernoulli__distribution_1a8937049c795937e91d57434e1418a052"><span class="identifier">p</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1random_1_1bernoulli__distribution.html#doxygen.headers.classboost_1_1random_1_1bernoulli__distribution_1ad976476329fecddf9922a87c145729cd"><span class="identifier">min</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1random_1_1bernoulli__distribution.html#doxygen.headers.classboost_1_1random_1_1bernoulli__distribution_1af109c8d36a10ac462078b82821c2f744"><span class="identifier">max</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1random_1_1bernoulli__distribution_1_1param__type.html" title="Class param_type">param_type</a> <a class="link" href="classboost_1_1random_1_1bernoulli__distribution.html#doxygen.headers.classboost_1_1random_1_1bernoulli__distribution_1ac8fd9d427cd648f6edfe7b7f2eed68c6"><span class="identifier">param</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1random_1_1bernoulli__distribution.html#doxygen.headers.classboost_1_1random_1_1bernoulli__distribution_1a8b2e13113faa9f2e03153b24079a791b"><span class="identifier">param</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1bernoulli__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1random_1_1bernoulli__distribution.html#doxygen.headers.classboost_1_1random_1_1bernoulli__distribution_1adf025df559bf1f956438759a0e52efb9"><span class="identifier">reset</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Engine<span class="special">&gt;</span> <span class="keyword">bool</span> <a class="link" href="classboost_1_1random_1_1bernoulli__distribution.html#doxygen.headers.classboost_1_1random_1_1bernoulli__distribution_1ab68ba632854932d72ad577106fdc3552"><span class="keyword">operator</span><span class="special">(</span><span class="special">)</span></a><span class="special">(</span><span class="identifier">Engine</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Engine<span class="special">&gt;</span> 
+    <span class="keyword">bool</span> <a class="link" href="classboost_1_1random_1_1bernoulli__distribution.html#doxygen.headers.classboost_1_1random_1_1bernoulli__distribution_1a74850580a35ebb30a74ec9ed9de4d1f2"><span class="keyword">operator</span><span class="special">(</span><span class="special">)</span></a><span class="special">(</span><span class="identifier">Engine</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1bernoulli__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1random_1_1bernoulli__distribution.html#id-1_3_34_5_6_4_1_1_1_7-bb">friend functions</a></span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits<span class="special">&gt;</span> 
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+    <a class="link" href="classboost_1_1random_1_1bernoulli__distribution.html#doxygen.headers.classboost_1_1random_1_1bernoulli__distribution_1adc6880e5749abca0e807286a9fa651ed"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">,</span> 
+               <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1bernoulli__distribution.html" title="Class template bernoulli_distribution">bernoulli_distribution</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits<span class="special">&gt;</span> 
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+    <a class="link" href="classboost_1_1random_1_1bernoulli__distribution.html#doxygen.headers.classboost_1_1random_1_1bernoulli__distribution_1a3786f7c5b736ccb32ced0271c62c337f"><span class="keyword">operator</span><span class="special">&gt;&gt;</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">,</span> 
+               <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1bernoulli__distribution.html" title="Class template bernoulli_distribution">bernoulli_distribution</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1random_1_1bernoulli__distribution.html#doxygen.headers.classboost_1_1random_1_1bernoulli__distribution_1a5c133c802ca909f38d20480f6146e607"><span class="keyword">operator</span><span class="special">==</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1bernoulli__distribution.html" title="Class template bernoulli_distribution">bernoulli_distribution</a> <span class="special">&amp;</span><span class="special">,</span> 
+                  <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1bernoulli__distribution.html" title="Class template bernoulli_distribution">bernoulli_distribution</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1random_1_1bernoulli__distribution.html#doxygen.headers.classboost_1_1random_1_1bernoulli__distribution_1ac609c64570bb6332acba95d194d743e6"><span class="keyword">operator</span><span class="special">!=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1bernoulli__distribution.html" title="Class template bernoulli_distribution">bernoulli_distribution</a> <span class="special">&amp;</span><span class="special">,</span> 
+                  <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1bernoulli__distribution.html" title="Class template bernoulli_distribution">bernoulli_distribution</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.34.5.6.3.3.4"></a><h2>Description</h2>
+<p>Instantiations of class template  <a class="link" href="classboost_1_1random_1_1bernoulli__distribution.html" title="Class template bernoulli_distribution">bernoulli_distribution</a>  model a  <a class="link" href="../../boost_random/reference.html#boost_random.reference.concepts.random_distribution" title="Random Distribution">random distribution</a> . Such a random distribution produces bool values distributed with probabilities P(true) = p and P(false) = 1-p. p is the parameter of the distribution. </p>
+<div class="refsect2">
+<a name="id-1.3.34.5.6.3.3.4.3"></a><h3>
+<a name="id-1_3_34_5_6_4_1_1_1_6-bb"></a><code class="computeroutput">bernoulli_distribution</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.headers.classboost_1_1random_1_1bernoulli__distribution_1a84426917a29eb6fe58c311a595dd4120"></a><span class="identifier">bernoulli_distribution</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">RealType</span> <span class="special">&amp;</span> p <span class="special">=</span> <span class="number">0</span><span class="special">.</span><span class="number">5</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Constructs a  <code class="computeroutput"><a class="link" href="classboost_1_1random_1_1bernoulli__distribution.html" title="Class template bernoulli_distribution">bernoulli_distribution</a></code>  object. p is the parameter of the distribution.</p>
+<p>Requires: 0 &lt;= p &lt;= 1 </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.headers.classboost_1_1random_1_1bernoulli__distribution_1a4fa44b463b65cac80dc18f725c6a1bc8"></a><span class="identifier">bernoulli_distribution</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1bernoulli__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span> param<span class="special">)</span><span class="special">;</span></pre>
+<p>Constructs  <code class="computeroutput"><a class="link" href="classboost_1_1random_1_1bernoulli__distribution.html" title="Class template bernoulli_distribution">bernoulli_distribution</a></code>  from its parameters </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">RealType</span> <a name="doxygen.headers.classboost_1_1random_1_1bernoulli__distribution_1a8937049c795937e91d57434e1418a052"></a><span class="identifier">p</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns: The "p" parameter of the distribution. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.headers.classboost_1_1random_1_1bernoulli__distribution_1ad976476329fecddf9922a87c145729cd"></a><span class="identifier">min</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns the smallest value that the distribution can produce. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.headers.classboost_1_1random_1_1bernoulli__distribution_1af109c8d36a10ac462078b82821c2f744"></a><span class="identifier">max</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns the largest value that the distribution can produce. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a class="link" href="classboost_1_1random_1_1bernoulli__distribution_1_1param__type.html" title="Class param_type">param_type</a> <a name="doxygen.headers.classboost_1_1random_1_1bernoulli__distribution_1ac8fd9d427cd648f6edfe7b7f2eed68c6"></a><span class="identifier">param</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns the parameters of the distribution. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.headers.classboost_1_1random_1_1bernoulli__distribution_1a8b2e13113faa9f2e03153b24079a791b"></a><span class="identifier">param</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1bernoulli__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span> param<span class="special">)</span><span class="special">;</span></pre>
+<p>Sets the parameters of the distribution. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.headers.classboost_1_1random_1_1bernoulli__distribution_1adf025df559bf1f956438759a0e52efb9"></a><span class="identifier">reset</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Effects: Subsequent uses of the distribution do not depend on values produced by any engine prior to invoking reset. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Engine<span class="special">&gt;</span> <span class="keyword">bool</span> <a name="doxygen.headers.classboost_1_1random_1_1bernoulli__distribution_1ab68ba632854932d72ad577106fdc3552"></a><span class="keyword">operator</span><span class="special">(</span><span class="special">)</span><span class="special">(</span><span class="identifier">Engine</span> <span class="special">&amp;</span> eng<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns: a random variate distributed according to the  <code class="computeroutput"><a class="link" href="classboost_1_1random_1_1bernoulli__distribution.html" title="Class template bernoulli_distribution">bernoulli_distribution</a></code> . </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Engine<span class="special">&gt;</span> 
+  <span class="keyword">bool</span> <a name="doxygen.headers.classboost_1_1random_1_1bernoulli__distribution_1a74850580a35ebb30a74ec9ed9de4d1f2"></a><span class="keyword">operator</span><span class="special">(</span><span class="special">)</span><span class="special">(</span><span class="identifier">Engine</span> <span class="special">&amp;</span> eng<span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1bernoulli__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span> param<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns: a random variate distributed according to the  <code class="computeroutput"><a class="link" href="classboost_1_1random_1_1bernoulli__distribution.html" title="Class template bernoulli_distribution">bernoulli_distribution</a></code>  with parameters specified by param. </p>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.34.5.6.3.3.4.4"></a><h3>
+<a name="id-1_3_34_5_6_4_1_1_1_7-bb"></a><code class="computeroutput">bernoulli_distribution</code> friend functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits<span class="special">&gt;</span> 
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+  <a name="doxygen.headers.classboost_1_1random_1_1bernoulli__distribution_1adc6880e5749abca0e807286a9fa651ed"></a><span class="keyword">operator</span><span class="special">&lt;&lt;</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> os<span class="special">,</span> 
+             <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1bernoulli__distribution.html" title="Class template bernoulli_distribution">bernoulli_distribution</a> <span class="special">&amp;</span> bd<span class="special">)</span><span class="special">;</span></pre>
+<p>Writes the parameters of the distribution to a <code class="computeroutput">std::ostream</code>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits<span class="special">&gt;</span> 
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+  <a name="doxygen.headers.classboost_1_1random_1_1bernoulli__distribution_1a3786f7c5b736ccb32ced0271c62c337f"></a><span class="keyword">operator</span><span class="special">&gt;&gt;</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> is<span class="special">,</span> 
+             <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1bernoulli__distribution.html" title="Class template bernoulli_distribution">bernoulli_distribution</a> <span class="special">&amp;</span> bd<span class="special">)</span><span class="special">;</span></pre>
+<p>Reads the parameters of the distribution from a <code class="computeroutput">std::istream</code>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.headers.classboost_1_1random_1_1bernoulli__distribution_1a5c133c802ca909f38d20480f6146e607"></a><span class="keyword">operator</span><span class="special">==</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1bernoulli__distribution.html" title="Class template bernoulli_distribution">bernoulli_distribution</a> <span class="special">&amp;</span> lhs<span class="special">,</span> 
+                <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1bernoulli__distribution.html" title="Class template bernoulli_distribution">bernoulli_distribution</a> <span class="special">&amp;</span> rhs<span class="special">)</span><span class="special">;</span></pre>
+<p>Returns true iff the two distributions will produce identical sequences of values given equal generators. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.headers.classboost_1_1random_1_1bernoulli__distribution_1ac609c64570bb6332acba95d194d743e6"></a><span class="keyword">operator</span><span class="special">!=</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1bernoulli__distribution.html" title="Class template bernoulli_distribution">bernoulli_distribution</a> <span class="special">&amp;</span> lhs<span class="special">,</span> 
+                <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1bernoulli__distribution.html" title="Class template bernoulli_distribution">bernoulli_distribution</a> <span class="special">&amp;</span> rhs<span class="special">)</span><span class="special">;</span></pre>
+<p>Returns true iff the two distributions will produce different sequences of values given equal generators. </p>
+</li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2000-2005 Jens Maurer<br>Copyright © 2009, 2010 Steven Watanabe<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="additive__combine_8hpp_1a6f294100a1fb0e43f16f7522f18d7460.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_random/reference.html#doxygen.headers.bernoulli__distribution_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1random_1_1bernoulli__distribution_1_1param__type.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

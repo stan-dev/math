@@ -1,0 +1,204 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>basic_yield_context::cancellation_slot_type</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../boost_asio.html" title="Boost.Asio">
+<link rel="up" href="../basic_yield_context.html" title="basic_yield_context">
+<link rel="prev" href="basic_yield_context.html" title="basic_yield_context::basic_yield_context">
+<link rel="next" href="cancelled.html" title="basic_yield_context::cancelled">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="basic_yield_context.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../basic_yield_context.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../boost_asio.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="cancelled.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="boost_asio.reference.basic_yield_context.cancellation_slot_type"></a><a class="link" href="cancellation_slot_type.html" title="basic_yield_context::cancellation_slot_type">basic_yield_context::cancellation_slot_type</a>
+</h4></div></div></div>
+<p>
+          <a class="indexterm" name="boost_asio.indexterm.basic_yield_context.cancellation_slot_type"></a> 
+The
+          cancellation slot type associated with the yield context.
+        </p>
+<pre class="programlisting"><span class="keyword">typedef</span> <span class="identifier">cancellation_slot</span> <span class="identifier">cancellation_slot_type</span><span class="special">;</span>
+</pre>
+<h6>
+<a name="boost_asio.reference.basic_yield_context.cancellation_slot_type.h0"></a>
+          <span class="phrase"><a name="boost_asio.reference.basic_yield_context.cancellation_slot_type.member_functions"></a></span><a class="link" href="cancellation_slot_type.html#boost_asio.reference.basic_yield_context.cancellation_slot_type.member_functions">Member
+          Functions</a>
+        </h6>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                  <p>
+                    Name
+                  </p>
+                </th>
+<th>
+                  <p>
+                    Description
+                  </p>
+                </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                  <p>
+                    <a class="link" href="../cancellation_slot/assign.html" title="cancellation_slot::assign"><span class="bold"><strong>assign</strong></span></a>
+                  </p>
+                </td>
+<td>
+                  <p>
+                    Installs a handler into the slot.
+                  </p>
+                </td>
+</tr>
+<tr>
+<td>
+                  <p>
+                    <a class="link" href="../cancellation_slot/cancellation_slot.html" title="cancellation_slot::cancellation_slot"><span class="bold"><strong>cancellation_slot</strong></span></a> <span class="silver">[constructor]</span>
+                  </p>
+                </td>
+<td>
+                  <p>
+                    Creates a slot that is not connected to any cancellation signal.
+                  </p>
+                </td>
+</tr>
+<tr>
+<td>
+                  <p>
+                    <a class="link" href="../cancellation_slot/clear.html" title="cancellation_slot::clear"><span class="bold"><strong>clear</strong></span></a>
+                  </p>
+                </td>
+<td>
+                  <p>
+                    Clears the slot.
+                  </p>
+                </td>
+</tr>
+<tr>
+<td>
+                  <p>
+                    <a class="link" href="../cancellation_slot/emplace.html" title="cancellation_slot::emplace"><span class="bold"><strong>emplace</strong></span></a>
+                  </p>
+                </td>
+<td>
+                  <p>
+                    Installs a handler into the slot, constructing the new object
+                    directly.
+                  </p>
+                </td>
+</tr>
+<tr>
+<td>
+                  <p>
+                    <a class="link" href="../cancellation_slot/has_handler.html" title="cancellation_slot::has_handler"><span class="bold"><strong>has_handler</strong></span></a>
+                  </p>
+                </td>
+<td>
+                  <p>
+                    Returns whether the slot is connected and has an installed handler.
+                  </p>
+                </td>
+</tr>
+<tr>
+<td>
+                  <p>
+                    <a class="link" href="../cancellation_slot/is_connected.html" title="cancellation_slot::is_connected"><span class="bold"><strong>is_connected</strong></span></a>
+                  </p>
+                </td>
+<td>
+                  <p>
+                    Returns whether the slot is connected to a signal.
+                  </p>
+                </td>
+</tr>
+</tbody>
+</table></div>
+<h6>
+<a name="boost_asio.reference.basic_yield_context.cancellation_slot_type.h1"></a>
+          <span class="phrase"><a name="boost_asio.reference.basic_yield_context.cancellation_slot_type.friends"></a></span><a class="link" href="cancellation_slot_type.html#boost_asio.reference.basic_yield_context.cancellation_slot_type.friends">Friends</a>
+        </h6>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                  <p>
+                    Name
+                  </p>
+                </th>
+<th>
+                  <p>
+                    Description
+                  </p>
+                </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                  <p>
+                    <a class="link" href="../cancellation_slot/operator_not__eq_.html" title="cancellation_slot::operator!="><span class="bold"><strong>operator!=</strong></span></a>
+                  </p>
+                </td>
+<td>
+                  <p>
+                    Compare two slots for inequality.
+                  </p>
+                </td>
+</tr>
+<tr>
+<td>
+                  <p>
+                    <a class="link" href="../cancellation_slot/operator_eq__eq_.html" title="cancellation_slot::operator=="><span class="bold"><strong>operator==</strong></span></a>
+                  </p>
+                </td>
+<td>
+                  <p>
+                    Compare two slots for equality.
+                  </p>
+                </td>
+</tr>
+</tbody>
+</table></div>
+<h6>
+<a name="boost_asio.reference.basic_yield_context.cancellation_slot_type.h2"></a>
+          <span class="phrase"><a name="boost_asio.reference.basic_yield_context.cancellation_slot_type.requirements"></a></span><a class="link" href="cancellation_slot_type.html#boost_asio.reference.basic_yield_context.cancellation_slot_type.requirements">Requirements</a>
+        </h6>
+<p>
+          <span class="emphasis"><em>Header: </em></span><code class="literal">boost/asio/spawn.hpp</code>
+        </p>
+<p>
+          <span class="emphasis"><em>Convenience header: </em></span>None
+        </p>
+</div>
+<div class="copyright-footer">Copyright © 2003-2024 Christopher M. Kohlhoff<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="basic_yield_context.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../basic_yield_context.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../boost_asio.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="cancelled.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

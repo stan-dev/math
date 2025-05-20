@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Struct template delimited_seq_parser</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../../headers.html#doxygen.headers.parser_8hpp" title="Header &lt;boost/parser/parser.hpp&gt;">
+<link rel="prev" href="structboost_1_1parser_1_1attribute.html" title="Struct template attribute">
+<link rel="next" href="structboost_1_1parser_1_1directive.html" title="Struct template directive">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="structboost_1_1parser_1_1attribute.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../headers.html#doxygen.headers.parser_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="structboost_1_1parser_1_1directive.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.headers.structboost_1_1parser_1_1delimited__seq__parser"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Struct template delimited_seq_parser</span></h2>
+<p>boost::parser::delimited_seq_parser</p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../headers.html#doxygen.headers.parser_8hpp" title="Header &lt;boost/parser/parser.hpp&gt;">boost/parser/parser.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Parser<span class="special">,</span> <span class="keyword">typename</span> DelimiterParser<span class="special">&gt;</span> 
+<span class="keyword">struct</span> <a class="link" href="structboost_1_1parser_1_1delimited__seq__parser.html" title="Struct template delimited_seq_parser">delimited_seq_parser</a> <span class="special">:</span>
+  <span class="keyword">public</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">parser</span><span class="special">::</span><span class="identifier">repeat_parser</span><span class="special">&lt;</span> <span class="identifier">Parser</span><span class="special">,</span> <span class="identifier">DelimiterParser</span> <span class="special">&gt;</span>
+<span class="special">{</span>
+
+  <span class="comment">// <a class="link" href="structboost_1_1parser_1_1delimited__seq__parser.html#id-1_3_27_11_5_1_1_2_4-bb">public member functions</a></span>
+  <a class="link" href="structboost_1_1parser_1_1delimited__seq__parser.html#doxygen.headers.structboost_1_1parser_1_1delimited__seq__parser_1a8a0e3ee59992c1d987badc4169c0043e"><span class="identifier">delimited_seq_parser</span></a><span class="special">(</span><span class="identifier">Parser</span><span class="special">,</span> <span class="identifier">DelimiterParser</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.27.11.5.17.4"></a><h2>Description</h2>
+<p>Repeats the application of another parser <code class="computeroutput">p</code> of type <code class="computeroutput">Parser</code>, <code class="computeroutput">[1, Inf)</code> times, applying a parser <code class="computeroutput">d</code> of type <code class="computeroutput">DelimiterParser</code> in between each pair of applications of <code class="computeroutput">p</code>. The parse succeeds iff <code class="computeroutput">p</code> succeeds at least once, and <code class="computeroutput">d</code> succeeds each time it is applied. The attribute produced is a sequence of the type of attribute produced by <code class="computeroutput">Parser</code>. </p>
+<div class="refsect2">
+<a name="id-1.3.27.11.5.17.4.3"></a><h3>
+<a name="id-1_3_27_11_5_1_1_2_4-bb"></a><code class="computeroutput">delimited_seq_parser</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><pre class="literallayout"><a name="doxygen.headers.structboost_1_1parser_1_1delimited__seq__parser_1a8a0e3ee59992c1d987badc4169c0043e"></a><span class="identifier">delimited_seq_parser</span><span class="special">(</span><span class="identifier">Parser</span> parser<span class="special">,</span> <span class="identifier">DelimiterParser</span> delimiter_parser<span class="special">)</span><span class="special">;</span></pre></li></ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2020 T. Zachary Laine<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="structboost_1_1parser_1_1attribute.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../headers.html#doxygen.headers.parser_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="structboost_1_1parser_1_1directive.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

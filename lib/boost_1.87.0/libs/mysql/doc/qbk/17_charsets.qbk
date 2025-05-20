@@ -1,0 +1,292 @@
+[/
+    Copyright (c) 2019-2024 Ruben Perez Hidalgo (rubenperez038 at gmail dot com)
+   
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+]
+
+
+[section:charsets Character sets and collations]
+[nochunk]
+
+According to [mysqllink charset.html MySQL docs], a [*character set] is
+['a set of symbols and their respective encodings].
+`utf8mb4`, `utf16` and `ascii` are character sets supported by MySQL.
+A [*collation] is a set of rules to compare characters, and is associated
+to a single character set. For example, `utf8mb4_spanish_ci` compares
+`utf8mb4` characters in a case-insensitive way.
+
+
+
+
+[heading The connection character set and collation]
+
+Every client session has an associated character set and collation.
+The [*connection's character set determines the encoding for character strings
+sent to and retrieved from the server].
+This includes SQL query strings, string fields and column names in metadata.
+The connection's collation is used for string literal comparison.
+The connection's character set and collation can be changed dynamically
+using SQL.
+
+By default, Boost.MySQL connections use `utf8mb4_general_ci`,
+thus [*using UTF-8 for all strings]. We recommend using this default,
+as MySQL character sets are easy to get wrong.
+
+The connection's character set is not linked to the character set
+specified for databases, tables and columns.
+Consider the following declaration:
+
+```
+CREATE TABLE test_table(
+    col1 TEXT CHARACTER SET utf16 COLLATE utf16_spanish_ci
+);
+```
+
+Data stored in `col1` will be encoded using UTF-16 and use
+`utf16_spanish_ci` for comparisons. However, when sent to
+the client, [*it will be converted to the connection's character set].
+
+[note
+    `utf8mb4` is how MySQL calls regular UTF-8. Confusingly,
+    MySQL has a character set named `utf8` which is not UTF-8 compliant.
+]
+
+
+
+
+
+[heading Connection character set effects]
+
+The connection's character set is crucial because it affects
+the encoding of most string fields. The following is a summary
+of what's affected:
+
+* SQL query strings passed to [refmemunq any_connection async_execute] and
+  [refmemunq any_connection async_prepare_statement] must be sent using
+  the connection's character set. Otherwise, server-side parsing errors may happen.
+* SQL templates and string values passed to [reflink with_params]
+  and [reflink format_sql] must be encoded using the connection's character set.
+  Otherwise, values will be rejected by Boost.MySQL when composing the query.
+  Connections [link mysql.charsets.tracking track the character set in use] to detect these errors.
+  If you bypass character set tracking (e.g. by using `SET NAMES` instead of
+  [refmemunq any_connection async_set_character_set]), you may run into vulnerabilities.
+* Statement string parameters passed to [refmem statement bind] should use the connection's character set.
+  Otherwise, MySQL may reject the values.
+* String values in rows and metadata retrieved from the server use the connection's character set.
+* Server-supplied diagnostic messages ([refmem diagnostics server_message]) also
+  use the connection's character set.
+
+To sum up, to properly use a connection, it's crucial to know
+the character set it's using.
+
+
+
+
+
+[heading Character set recommendations]
+
+The following sections provide a deep explanation on how character
+sets work in MySQL. If you don't have the time to read them,
+stick to the following advice:
+
+* [*Always use the default UTF-8]. Character sets in MySQL are complex and full of caveats.
+  If you need to use a different encoding in your application, convert your data to/from UTF-8
+  when interacting with the server. The default [reflink connect_params] ensure that UTF-8 is
+  used, without the need to run any SQL.
+* [*Don't execute SET NAMES] statements or change the `character_set_client` and 
+  `character_set_results` session variables using `async_execute`.
+  This breaks character set tracking, which can lead to vulnerabilities.
+* Don't use [refmemunq any_connection async_reset_connection] unless you know what you're doing.
+  If you need to reuse connections, use [reflink connection_pool], instead.
+* Connections obtained from a [reflink connection_pool] always use `utf8mb4`.
+  When connections are returned to the pool, their character set is reset to `utf8mb4`.
+
+
+
+
+[heading:tracking Character set tracking]
+
+There is a number of actions that can change the connection's character set:
+
+* When connecting with [refmemunq any_connection async_connect],
+  a numeric collation ID is supplied to the server.
+  You can change it using [refmem connect_params connection_collation].
+  The [include_file boost/mysql/mysql_collations.hpp] and 
+  [include_file boost/mysql/mariadb_collations.hpp] headers contain
+  available collation IDs.
+  If the server recognizes the passed collation, the connection's character set
+  will be the one associated to the collation. If it doesn't, the connection
+  [*will silently fall back to the server's default character set] (usually `latin1`, which is not Unicode).
+  This can happen when trying to use a newer collation, like `utf8mb4_0900_ai_ci`,
+  with an old MySQL 5.7 server. By default, Boost.MySQL uses
+  `utf8mb4_general_ci`, supported by all servers.
+* Using [refmemunq any_connection async_reset_connection] resets
+  the connection's character set [*to the server's default character set].
+* Using [refmemunq any_connection async_set_character_set] executes
+  a `SET NAMES` statement to set the connection's character set.
+  Executing a pipeline with a set character set stage has the same results.
+* Manually executing a `SET NAMES`, `SET CHARACTER SET` or modifying
+  the `character_set_client` and `character_set_results` change the
+  connection's character set. [*Don't do this], as it will confuse
+  character set tracking.
+
+[reflink any_connection] attempts to track the connection's current character set
+because it's required to securely perform client-side SQL formatting.
+This info is available using [refmem any_connection current_character_set],
+which returns a [reflink character_set] object.
+The current character set is also used by
+`async_execute` when a [reflink with_params_t] object is passed,
+and by [refmem any_connection format_opts].
+
+The MySQL protocol has limited support for character set tracking, so this task
+requires some help from the user. Some situations can make the current character set
+to be unknown. If this happens, executing a [reflink with_params_t] fails with
+`client_errc::unknown_character_set`. [refmem any_connection current_character_set]
+and [refmem any_connection format_opts] also return this error.
+
+Following the above points, this is how tracking works:
+
+* Before connection establishment, the current character set is always unknown.
+* After [refmemunq any_connection async_connect] succeeds,
+  conservative heuristics are used to determine the current character set.
+  If the passed [refmem connect_params connection_collation] is known to be
+  accepted by all supported servers, its associated character set becomes the
+  current one. If the library is not sure, the current character set is left unknown
+  (this is the safe choice to avoid vulnerabilities).
+  Note that leaving [refmemunq connect_params connection_collation] to its default value
+  always sets the current character set to [reflink utf8mb4_charset].
+* A successful [refmemunq any_connection async_set_character_set]
+  sets the current character set to the passed one.
+  The same applies for a successful set character set pipeline stage.
+* Calling [refmemunq any_connection async_reset_connection]
+  makes the current character set unknown.
+
+[warning
+    [*Do not execute `SET NAMES`], `SET CHARACTER SET` or any other SQL statement
+    that modifies `character_set_client` using `async_execute`. This will make character set
+    information stored in the client invalid.
+]
+
+
+
+
+[heading:custom Adding support for a character set]
+
+Built-in support is provided for `utf8mb4` ([reflink utf8mb4_charset])
+and `ascii` ([reflink ascii_charset]). We strongly encourage you to always use `utf8mb4`.
+Note that MySQL doesn't support setting the connection's character set
+to UTF-16 or UTF-32.
+
+If you really need to use a different character set, you can implement them by
+creating [reflink character_set] objects. You can then pass them to functions
+like [refmemunq any_connection set_character_set] like the built-in ones.
+
+[note
+    This is an advanced technique. Don't use it unless you know what you are doing.
+]
+
+The structure has the following members:
+
+* [refmem character_set name] must match the name you would use in `SET NAMES`.
+* [refmem character_set next_char] is used to iterate the string. It must return
+  the length in bytes of the first code point in the string, or 0 if the code point is invalid.
+
+For example, this is how you could implement the `utf8mb4` character set. For brevity, only
+a small part of the implementation is shown - have a look at the definition of [reflink utf8mb4_charset]
+for a full implementation.
+
+[charsets_next_char]
+
+
+
+
+
+[heading character_set_results and character_set_client]
+
+Setting the connection's character set during connection establishment
+or using [refmemunq any_connection async_set_character_set] has the ultimate
+effect of changing some session variables. This section lists them as
+a reference. We [*strongly encourage you not to modify them manually],
+as this will confuse character set tracking.
+
+* [mysqllink server-system-variables.html#sysvar_character_set_client character_set_client]
+  determines the encoding that SQL statements sent to the server should have. This includes
+  the SQL strings passed to [refmemunq any_connection async_execute] and
+  [refmemunq any_connection async_prepare_statement], and
+  string parameters passed to [refmem statement bind].
+  Not all character sets are permissible in `character_set_client`.
+  For example, UTF-16 and UTF-32 based character sets won't be accepted.
+* [mysqllink server-system-variables.html#sysvar_character_set_results character_set_results]
+  determines the encoding that the server will use to send any kind of result, including
+  string fields retrieved by [refmem connection execute], metadata
+  like [refmem metadata column_name] and error messages.
+  Note that [refmem metadata column_collation] reflects the character set and collation the server
+  has converted the column to before sending it to the client. In the above example, `metadata::column_collation`
+  will be the default collation for UTF16, rather than `latin1_swedish_ci`.
+
+
+The table below summarizes the encoding used by each piece of functionality in this library:
+
+[table:string_encoding
+    [
+        [Functionality]
+        [Encoding given by...]
+    ]
+    [
+        [
+            SQL query strings passed to [refmemunq any_connection async_execute]
+            and [refmemunq any_connection async_prepare_statement]
+        ]
+        [`character_set_client`]
+    ]
+    [
+        [
+            Strings used with [reflink with_params] and [reflink format_sql]
+        ]
+        [`character_set_client`]
+    ]
+    [
+        [String values passed as parameters to [refmem statement bind]]
+        [`character_set_client`]
+    ]
+    [
+        [
+            String fields in rows retrieved from the server
+        ]
+        [`character_set_results`]
+    ]
+    [
+        [
+            Metadata strings:[br][br]
+            [refmem metadata database][br]
+            [refmem metadata table][br]
+            [refmem metadata original_table][br]
+            [refmem metadata column_name][br]
+            [refmem metadata original_column_name]
+        ]
+        [`character_set_results`]
+    ]
+    [
+        [Server-generated error messages: [refmem diagnostics server_message]]
+        [`character_set_results`]
+    ]
+    [
+        [
+            Informational messages:[br][br]
+            [refmem results info][br]
+            [refmem execution_state info]
+        ]
+        [
+            ASCII. These can only contain ASCII characters and are always ASCII encoded. More info in
+            [@https://dev.mysql.com/doc/c-api/8.0/en/mysql-info.html this section].
+        ]
+    ]
+]
+
+
+
+
+
+
+[endsect]

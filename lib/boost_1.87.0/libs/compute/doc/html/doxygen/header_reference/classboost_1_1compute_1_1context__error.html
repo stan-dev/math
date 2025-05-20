@@ -1,0 +1,87 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class context_error</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.Compute">
+<link rel="up" href="../../boost_compute/reference.html#doxygen.header_reference.context__error_8hpp" title="Header &lt;boost/compute/exception/context_error.hpp&gt;">
+<link rel="prev" href="classboost_1_1compute_1_1vector.html" title="Class template vector">
+<link rel="next" href="classboost_1_1compute_1_1no__device__found.html" title="Class no_device_found">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1compute_1_1vector.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_compute/reference.html#doxygen.header_reference.context__error_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1compute_1_1no__device__found.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.header_reference.classboost_1_1compute_1_1context__error"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class context_error</span></h2>
+<p>boost::compute::context_error — A run-time OpenCL context error. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../boost_compute/reference.html#doxygen.header_reference.context__error_8hpp" title="Header &lt;boost/compute/exception/context_error.hpp&gt;">boost/compute/exception/context_error.hpp</a>&gt;
+
+</span>
+<span class="keyword">class</span> <a class="link" href="classboost_1_1compute_1_1context__error.html" title="Class context_error">context_error</a> <span class="special">:</span> <span class="keyword">public</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">exception</span> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1compute_1_1context__error.html#id17-bb">public member functions</a></span>
+  <a class="link" href="classboost_1_1compute_1_1context__error.html#doxygen.header_reference.classboost_1_1compute_1_1context__error_1a0d954641c9582cfd65100ad78afd709a"><span class="identifier">context_error</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">context</span> <span class="special">*</span><span class="special">,</span> <span class="keyword">const</span> <span class="keyword">char</span> <span class="special">*</span><span class="special">,</span> <span class="keyword">const</span> <span class="keyword">void</span> <span class="special">*</span><span class="special">,</span> <span class="identifier">size_t</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1compute_1_1context__error.html#doxygen.header_reference.classboost_1_1compute_1_1context__error_1ad564118530d7f2b88d4dbeec14805cf3"><span class="special">~</span><span class="identifier">context_error</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">const</span> <span class="keyword">char</span> <span class="special">*</span> <a class="link" href="classboost_1_1compute_1_1context__error.html#doxygen.header_reference.classboost_1_1compute_1_1context__error_1af018dd38991827c5d2e81d050ae07be1"><span class="identifier">what</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">const</span> <span class="identifier">context</span> <span class="special">*</span> <a class="link" href="classboost_1_1compute_1_1context__error.html#doxygen.header_reference.classboost_1_1compute_1_1context__error_1aa1eb0b495aa03fa7c88868aadfcce294"><span class="identifier">get_context_ptr</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">const</span> <span class="keyword">void</span> <span class="special">*</span> <a class="link" href="classboost_1_1compute_1_1context__error.html#doxygen.header_reference.classboost_1_1compute_1_1context__error_1a6bc7920f5927a7abdb108901838b4021"><span class="identifier">get_private_info_ptr</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">size_t</span> <a class="link" href="classboost_1_1compute_1_1context__error.html#doxygen.header_reference.classboost_1_1compute_1_1context__error_1a1cc6d9628c3950a20dfdf1bda60eeb84"><span class="identifier">get_private_info_size</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id24807"></a><h2>Description</h2>
+<p>The <a class="link" href="classboost_1_1compute_1_1context__error.html" title="Class context_error">context_error</a> exception is thrown when the OpenCL context encounters an error condition. Boost.Compute is notified of these error conditions by registering an error handler when creating context objects (via the <code class="computeroutput">pfn_notify</code> argument to the <code class="computeroutput">clCreateContext()</code> function).</p>
+<p>This exception is different than the <a class="link" href="classboost_1_1compute_1_1opencl__error.html" title="Class opencl_error">opencl_error</a> exception which is thrown as a result of error caused when calling a single OpenCL API function.</p>
+<p><b>See Also: </b><a class="link" href="classboost_1_1compute_1_1opencl__error.html" title="Class opencl_error">opencl_error</a> </p>
+<p>
+</p>
+<div class="refsect2">
+<a name="id24820"></a><h3>
+<a name="id17-bb"></a><code class="computeroutput">context_error</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.header_reference.classboost_1_1compute_1_1context__error_1a0d954641c9582cfd65100ad78afd709a"></a><span class="identifier">context_error</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">context</span> <span class="special">*</span> context<span class="special">,</span> <span class="keyword">const</span> <span class="keyword">char</span> <span class="special">*</span> errinfo<span class="special">,</span> 
+              <span class="keyword">const</span> <span class="keyword">void</span> <span class="special">*</span> private_info<span class="special">,</span> <span class="identifier">size_t</span> private_info_size<span class="special">)</span><span class="special">;</span></pre>Creates a new context error exception object. </li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.header_reference.classboost_1_1compute_1_1context__error_1ad564118530d7f2b88d4dbeec14805cf3"></a><span class="special">~</span><span class="identifier">context_error</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>Destroys the context error object. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">const</span> <span class="keyword">char</span> <span class="special">*</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1context__error_1af018dd38991827c5d2e81d050ae07be1"></a><span class="identifier">what</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Returns a string with a description of the error. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">const</span> <span class="identifier">context</span> <span class="special">*</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1context__error_1aa1eb0b495aa03fa7c88868aadfcce294"></a><span class="identifier">get_context_ptr</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns a pointer to the context object which generated the error notification. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">const</span> <span class="keyword">void</span> <span class="special">*</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1context__error_1a6bc7920f5927a7abdb108901838b4021"></a><span class="identifier">get_private_info_ptr</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Returns a pointer to the private info memory block. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">size_t</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1context__error_1a1cc6d9628c3950a20dfdf1bda60eeb84"></a><span class="identifier">get_private_info_size</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Returns the size of the private info memory block. </li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2013, 2014 Kyle Lutz<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1compute_1_1vector.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_compute/reference.html#doxygen.header_reference.context__error_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1compute_1_1no__device__found.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

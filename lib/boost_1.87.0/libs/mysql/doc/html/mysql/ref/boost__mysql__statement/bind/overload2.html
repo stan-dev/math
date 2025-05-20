@@ -1,0 +1,88 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>statement::bind (2 of 3 overloads)</title>
+<link rel="stylesheet" href="../../../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../bind.html" title="statement::bind">
+<link rel="prev" href="overload1.html" title="statement::bind (1 of 3 overloads)">
+<link rel="next" href="overload3.html" title="statement::bind (3 of 3 overloads)">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="overload1.html"><img src="../../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../bind.html"><img src="../../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../../index.html"><img src="../../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="overload3.html"><img src="../../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h6 class="title">
+<a name="mysql.ref.boost__mysql__statement.bind.overload2"></a><a class="link" href="overload2.html" title="statement::bind (2 of 3 overloads)">statement::bind
+          (2 of 3 overloads)</a>
+</h6></div></div></div>
+<p>
+            Binds parameters to a statement.
+          </p>
+<h6>
+<a name="mysql.ref.boost__mysql__statement.bind.overload2.h0"></a>
+            <span class="phrase"><a name="mysql.ref.boost__mysql__statement.bind.overload2.synopsis"></a></span><a class="link" href="overload2.html#mysql.ref.boost__mysql__statement.bind.overload2.synopsis">Synopsis</a>
+          </h6>
+<pre class="programlisting"><span class="keyword">template</span><span class="special">&lt;</span>
+    <span class="keyword">class</span> <a class="link" href="../../boost__mysql__WritableFieldTuple.html" title="WritableField and WritableFieldTuple concepts"><code class="literal"><span class="emphasis"><em>WritableFieldTuple</em></span></code></a><span class="special">,</span>
+    <span class="keyword">typename</span> <span class="identifier">EnableIf</span> <span class="special">=</span> <span class="keyword">typename</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">enable_if</span><span class="special">&lt;</span><span class="identifier">detail</span><span class="special">::</span><span class="identifier">is_writable_field_tuple</span><span class="special">&lt;</span><span class="identifier">WritableFieldTuple</span><span class="special">&gt;::</span><span class="identifier">value</span><span class="special">&gt;::</span><span class="identifier">type</span><span class="special">&gt;</span>
+<a class="link" href="../../boost__mysql__bound_statement_tuple.html" title="bound_statement_tuple"><code class="literal">bound_statement_tuple</code></a><span class="special">&lt;</span> <span class="keyword">typename</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">decay</span><span class="special">&lt;</span> <span class="identifier">WritableFieldTuple</span> <span class="special">&gt;::</span><span class="identifier">type</span> <span class="special">&gt;</span>
+<span class="identifier">bind</span><span class="special">(</span>
+    <span class="identifier">WritableFieldTuple</span><span class="special">&amp;&amp;</span> <span class="identifier">params</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+</pre>
+<h6>
+<a name="mysql.ref.boost__mysql__statement.bind.overload2.h1"></a>
+            <span class="phrase"><a name="mysql.ref.boost__mysql__statement.bind.overload2.description"></a></span><a class="link" href="overload2.html#mysql.ref.boost__mysql__statement.bind.overload2.description">Description</a>
+          </h6>
+<p>
+            Creates an object that packages <code class="computeroutput"><span class="special">*</span><span class="keyword">this</span></code> and the statement actual parameters
+            <code class="computeroutput"><span class="identifier">params</span></code>. This object can
+            be passed to <a class="link" href="../../boost__mysql__connection/execute.html" title="connection::execute"><code class="computeroutput"><span class="identifier">connection</span><span class="special">::</span><span class="identifier">execute</span></code></a>, <a class="link" href="../../boost__mysql__connection/start_execution.html" title="connection::start_execution"><code class="computeroutput"><span class="identifier">connection</span><span class="special">::</span><span class="identifier">start_execution</span></code></a> or their async
+            counterparts.
+          </p>
+<p>
+            The <code class="computeroutput"><span class="identifier">params</span></code> tuple is decay-copied
+            into the returned object.
+          </p>
+<p>
+            This function doesn't involve communication with the server.
+          </p>
+<h6>
+<a name="mysql.ref.boost__mysql__statement.bind.overload2.h2"></a>
+            <span class="phrase"><a name="mysql.ref.boost__mysql__statement.bind.overload2.preconditions"></a></span><a class="link" href="overload2.html#mysql.ref.boost__mysql__statement.bind.overload2.preconditions">Preconditions</a>
+          </h6>
+<p>
+            <code class="computeroutput"><span class="keyword">this</span><span class="special">-&gt;</span><span class="identifier">valid</span><span class="special">()</span> <span class="special">==</span> <span class="keyword">true</span></code>
+          </p>
+<h6>
+<a name="mysql.ref.boost__mysql__statement.bind.overload2.h3"></a>
+            <span class="phrase"><a name="mysql.ref.boost__mysql__statement.bind.overload2.exception_safety"></a></span><a class="link" href="overload2.html#mysql.ref.boost__mysql__statement.bind.overload2.exception_safety">Exception
+            safety</a>
+          </h6>
+<p>
+            Strong guarantee. Only throws if the decay-copy of the tuple throws.
+          </p>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="overload1.html"><img src="../../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../bind.html"><img src="../../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../../index.html"><img src="../../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="overload3.html"><img src="../../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

@@ -1,0 +1,38 @@
+#
+# Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+#
+# Distributed under the Boost Software License, Version 1.0. (See accompanying
+# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+#
+# Official repository: https://github.com/vinniefalco/url
+#
+
+project
+  : default-build
+
+    <warnings>extra
+
+  : requirements
+
+    # Extra errors that are disabled by default
+    <toolset>msvc:<cxxflags>"/we4265"
+
+    # Warnings in dependencies
+    <toolset>gcc:<cxxflags>"-Wno-unused-but-set-variable"
+    <toolset>gcc:<cxxflags>"-Wno-maybe-uninitialized"
+    <toolset>clang:<cxxflags>"-Wno-unused-but-set-variable"
+    <toolset>clang:<cxxflags>"-Wno-unused-parameter"
+    <toolset>gcc,<target-os>windows:<cxxflags>"-Wno-error=array-bounds"
+    <toolset>clang:<cxxflags>"-Wno-unknown-warning-option"
+    <toolset>clang-13:<cxxflags>"-Wno-unused-but-set-variable"
+    <toolset>clang-14:<cxxflags>"-Wno-unused-but-set-variable"
+    <toolset>clang-15:<cxxflags>"-Wno-unused-but-set-variable"
+
+    # Different typeinfos confuse ubsan
+    <undefined-sanitizer>norecover:<link>static
+    <undefined-sanitizer>norecover:<visibility>global
+    ;
+
+build-project extra ;
+build-project limits ;
+build-project unit ;

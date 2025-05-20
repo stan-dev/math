@@ -1,0 +1,5 @@
+import feature ;
+
+feature.feature bench.file : : free dependency ;
+feature.feature bench.launcher : : free incidental optional ;
+feature.feature bench.option : : free incidental ;

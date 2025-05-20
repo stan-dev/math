@@ -1,0 +1,128 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Yield Primitives</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="Chapter 1. Boost.Core">
+<link rel="up" href="../index.html" title="Chapter 1. Boost.Core">
+<link rel="prev" href="verbose_terminate_handler.html" title="verbose_terminate_handler">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="verbose_terminate_handler.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="core.yield_primitives"></a><a class="link" href="yield_primitives.html" title="Yield Primitives">Yield Primitives</a>
+</h2></div></div></div>
+<div class="toc"><dl class="toc"><dt><span class="section"><a href="yield_primitives.html#core.yield_primitives.header_boost_core_yield_primitiv">Header
+      &lt;boost/core/yield_primitives.hpp&gt;</a></span></dt></dl></div>
+<div class="simplesect">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id19556"></a>Authors</h3></div></div></div>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+          Peter Dimov
+        </li></ul></div>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="core.yield_primitives.header_boost_core_yield_primitiv"></a><a class="link" href="yield_primitives.html#core.yield_primitives.header_boost_core_yield_primitiv" title="Header &lt;boost/core/yield_primitives.hpp&gt;">Header
+      &lt;boost/core/yield_primitives.hpp&gt;</a>
+</h3></div></div></div>
+<p>
+        The header <code class="computeroutput"><span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">core</span><span class="special">/</span><span class="identifier">yield_primitives</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span></code>
+        implements a collection of primitives that allow the current thread to yield
+        the CPU in various ways.
+      </p>
+<p>
+        Very low level, specialized functionality, generally only useful for implementing
+        spinlocks. Normal synchronization primitives should almost always be preferable
+        in application code.
+      </p>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="core.yield_primitives.header_boost_core_yield_primitiv.synopsis"></a><a class="link" href="yield_primitives.html#core.yield_primitives.header_boost_core_yield_primitiv.synopsis" title="Synopsis">Synopsis</a>
+</h4></div></div></div>
+<pre class="programlisting"><span class="keyword">namespace</span> <span class="identifier">boost</span>
+<span class="special">{</span>
+<span class="keyword">namespace</span> <span class="identifier">core</span>
+<span class="special">{</span>
+
+<span class="keyword">void</span> <span class="identifier">sp_thread_pause</span><span class="special">()</span> <span class="keyword">noexcept</span><span class="special">;</span>
+<span class="keyword">void</span> <span class="identifier">sp_thread_yield</span><span class="special">()</span> <span class="keyword">noexcept</span><span class="special">;</span>
+<span class="keyword">void</span> <span class="identifier">sp_thread_sleep</span><span class="special">()</span> <span class="keyword">noexcept</span><span class="special">;</span>
+
+<span class="special">}</span> <span class="comment">// namespace core</span>
+<span class="special">}</span> <span class="comment">// namespace boost</span>
+</pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="core.yield_primitives.header_boost_core_yield_primitiv.sp_thread_pause"></a><a class="link" href="yield_primitives.html#core.yield_primitives.header_boost_core_yield_primitiv.sp_thread_pause" title="sp_thread_pause">sp_thread_pause</a>
+</h4></div></div></div>
+<p>
+          <code class="computeroutput"><span class="keyword">void</span> <span class="identifier">sp_thread_pause</span><span class="special">()</span> <span class="keyword">noexcept</span><span class="special">;</span></code>
+        </p>
+<p>
+          Emits a PAUSE instruction (on x86) or a YIELD instruction (on ARM).
+        </p>
+<p>
+          A portable equivalent of the GCC builtin function <code class="computeroutput"><span class="identifier">__builtin_ia32_pause</span></code>.
+        </p>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="core.yield_primitives.header_boost_core_yield_primitiv.sp_thread_yield"></a><a class="link" href="yield_primitives.html#core.yield_primitives.header_boost_core_yield_primitiv.sp_thread_yield" title="sp_thread_yield">sp_thread_yield</a>
+</h4></div></div></div>
+<p>
+          <code class="computeroutput"><span class="keyword">void</span> <span class="identifier">sp_thread_yield</span><span class="special">()</span> <span class="keyword">noexcept</span><span class="special">;</span></code>
+        </p>
+<p>
+          Informs the scheduler that the current thread wishes to relinquish the
+          rest of its timeslice.
+        </p>
+<p>
+          A portable equivalent of POSIX <code class="computeroutput"><span class="identifier">sched_yield</span></code>.
+        </p>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="core.yield_primitives.header_boost_core_yield_primitiv.sp_thread_sleep"></a><a class="link" href="yield_primitives.html#core.yield_primitives.header_boost_core_yield_primitiv.sp_thread_sleep" title="sp_thread_sleep">sp_thread_sleep</a>
+</h4></div></div></div>
+<p>
+          <code class="computeroutput"><span class="keyword">void</span> <span class="identifier">sp_thread_sleep</span><span class="special">()</span> <span class="keyword">noexcept</span><span class="special">;</span></code>
+        </p>
+<p>
+          Sleeps for a short period, as if by calling POSIX <code class="computeroutput"><span class="identifier">nanosleep</span></code>
+          with a small, implementation-dependent, interval (usually one microsecond).
+        </p>
+<p>
+          A more forcing yield primitive than <code class="computeroutput"><span class="identifier">sp_thread_yield</span></code>,
+          because it's generally not ignored even if all other waiting threads are
+          of lower priority.
+        </p>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2014 Peter Dimov<br>Copyright © 2014 Glen Fernandes<br>Copyright © 2014 Andrey Semashev<p>
+        Distributed under the <a href="http://boost.org/LICENSE_1_0.txt" target="_top">Boost
+        Software License, Version 1.0</a>.
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="verbose_terminate_handler.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a>
+</div>
+</body>
+</html>

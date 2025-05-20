@@ -1,0 +1,15 @@
+{
+  "devDependencies": {
+    "@antora/cli": "3.1.3",
+    "@antora/site-generator": "3.1.3",
+    "antora": "3.1.3"
+  },
+  "dependencies": {
+    "@cppalliance/antora-cpp-reference-extension": "^0.0.5",
+    "@cppalliance/antora-cpp-tagfiles-extension": "^0.0.4",
+    "@cppalliance/asciidoctor-boost-links": "^0.0.2",
+    "@antora/expand-path-helper": "^2.0.0",
+    "@antora/lunr-extension": "^1.0.0-alpha.8",
+    "@asciidoctor/tabs": "^1.0.0-beta.3"
+  }
+}

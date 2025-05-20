@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+        <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>boost::urls::grammar::range_rule :: Boost Libraries Documentation</title>
+  <link rel="canonical" href="https://antora.cppalliance.org/master/lib/doc/url/reference/boost/urls/grammar/range_rule-02.html">
+  <meta name="generator" content="Antora 3.1.9">
+    <link rel="stylesheet" href="../../../../../_/css/boostlook.css">
+    <link rel="stylesheet" href="../../../../../_/css/site.css">
+    <link rel="stylesheet" href="../../../../../_/css/vendor/tabs.css">
+    <script>var uiRootPath = '../../../../../_'</script>
+  </head>
+  <body class="article toc2 toc-left">
+    <div class="boostlook">
+  <div id="header">
+    <div id="toc" class="nav-container toc2" data-component="url" data-version="">
+  <aside class="nav">
+    <button class="nav-close"></button>
+    <div class="panels">
+      <div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+      <h3 class="title"><a href="../../../../index.html">Boost.URL</a></h3>
+      <ul class="nav-list">
+        <ul class="nav-list">
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../../../../quicklook.html">Quick Look</a>
+        </li>
+              <li class="" data-depth="1">
+            <a class="nav-link" href="../../../../urls/index.html">URLs</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../../../../urls/parsing.html">Parsing</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../../../../urls/containers.html">Containers</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../../../../urls/segments.html">Segments</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../../../../urls/params.html">Params</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../../../../urls/normalization.html">Normalization</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../../../../urls/stringtoken.html">String Token</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../../../../urls/percent-encoding.html">Percent Encoding</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../../../../urls/formatting.html">Formatting</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../../../../grammar/index.html">Customization</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../../../../grammar/rules.html">Parse Rules</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../../../../grammar/charset.html">Character Sets</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../../../../grammar/combinators.html">Compound Rules</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../../../../grammar/range.html">Ranges</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../../../../grammar/rfc3986.html">RFC 3986</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Examples</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../../../../examples/qrcode.html">QR Code</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../../../../examples/finicky.html">Finicky</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../../../../examples/mailto.html">mailto URLs</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../../../../examples/magnet-link.html">Magnet Link</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../../../../examples/file-router.html">File Router</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../../../../examples/router.html">Router</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../../../../examples/sanitize.html">Sanitizing URLs</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../../../../reference.html">Reference</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <span class="nav-text">Concepts</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="3">
+            <a class="nav-link" href="../../../../concepts/CharSet.html">CharSet</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="../../../../concepts/Rule.html">Rule</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="../../../../concepts/StringToken.html">StringToken</a>
+        </li>
+        </ul>
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../../../../HelpCard.html">Help Card</a>
+        </li>
+        </ul>
+  </ul>
+  </ul>
+  </nav>
+</div>
+    </div>
+  </aside>
+</div>
+</div>
+  <div id="content">
+    <article class="doc max-width-reset">
+  <div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li>
+      <a href="../../../../index.html" aria-label="Home: Boost.URL">
+        <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 -960 960 960" fill="#000000" aria-hidden="true"><path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z"/></svg>
+      </a>
+    </li>
+    <li><a href="range_rule-02.html"><a href="../../../boost.html">boost</a>::<a href="../../../boost/urls.html">urls</a>::<a href="../../../boost/urls/grammar.html">grammar</a>::range_rule</a></li>
+  </ul>
+</nav>
+<div class="spirit-nav">
+</div>
+</div>
+    <h1 class="page"><a href="../../../boost.html">boost</a>::<a href="../../../boost/urls.html">urls</a>::<a href="../../../boost/urls/grammar.html">grammar</a>::range_rule</h1>
+  <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Match a repeating number of elements</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_synopsis"><a class="anchor" href="#_synopsis"></a>Synopsis</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Declared in <code>&lt;<a href="https://www.github.com/boostorg/url/blob/develop/include/boost/url/grammar/range_rule.hpp#L672">boost/url/grammar/range_rule.hpp</a>&gt;</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template&lt;
+    class Rule1,
+    class Rule2&gt;
+constexpr
+    _implementation-defined_
+range_rule(
+    Rule1 const&amp; first,
+    Rule2 const&amp; next,
+    std::size_t N = 0,
+    std::size_t M = std::size_t(-1)) noexcept;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_description"><a class="anchor" href="#_description"></a>Description</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Two rules are used for match. The rule
+<code>first</code> is used for matching the first
+element, while the <code>next</code> rule is used
+to match every subsequent element.</p>
+</div>
+<div class="paragraph">
+<p>Normally when the rule returns an error,
+the range ends and the input is rewound to
+one past the last character that matched
+successfully. However, if the rule returns
+the special value
+<a href="error/end_of_range.html" class="xref page">error::end_of_range</a>
+, the
+input is not rewound. This allows for rules
+which consume input without producing
+elements in the range. For example, to
+relax the grammar for a comma-delimited
+list by allowing extra commas in between
+elements.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">using value_type = range&lt; typename Rule::value_type &gt;;</code></pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_rules_are_used_with_the_function"><a class="anchor" href="#_rules_are_used_with_the_function"></a>Rules are used with the function</h3>
+<div class="paragraph">
+<p><a href="parse-02.html" class="xref page">parse</a>
+.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">// range    = [ token ] *( "," token )
+
+system::result&lt; range&lt; core::string_view &gt; &gt; rv = parse( "whiskey,tango,foxtrot",
+    range_rule(
+        token_rule( alpha_chars ),          // first
+        tuple_rule(                      // next
+            squelch( delim_rule(',') ),
+            token_rule( alpha_chars ) ) ) );</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">range       = &lt;1&gt;*&lt;1&gt;first
+            / first &lt;N-1&gt;*&lt;M-1&gt;next</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://datatracker.ietf.org/doc/html/rfc5234#section-3.6">3.6.  Variable Repetition (rfc5234)</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_parameters"><a class="anchor" href="#_parameters"></a>Parameters</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>first</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">
+The rule to use for matching
+the first element. If this rule returns
+an error, the range is empty.
+</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>next</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">
+The rule to use for matching
+each subsequent element. The range extends
+until this rule returns an error.
+</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>N</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">
+The minimum number of elements for
+the range to be valid. If omitted, this
+defaults to zero.
+</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>M</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">
+The maximum number of elements for
+the range to be valid. If omitted, this
+defaults to unlimited.
+</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_see_also"><a class="anchor" href="#_see_also"></a>See Also</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><a href="alpha_chars.html" class="xref page">alpha_chars</a>
+,
+<a href="delim_rule-0a.html" class="xref page">delim_rule</a>
+,
+<a href="error/end_of_range.html" class="xref page">error::end_of_range</a>
+,
+<a href="parse-02.html" class="xref page">parse</a>
+,
+<a href="range.html" class="xref page">range</a>
+,
+<a href="tuple_rule.html" class="xref page">tuple_rule</a>
+,
+<a href="squelch.html" class="xref page">squelch</a>
+.</p>
+</div>
+<div class="paragraph">
+<p><span class="small">Created with <a href="https://www.mrdocs.com">MrDocs</a></span></p>
+</div>
+</div>
+</div>
+  <div class="edit-this-page">
+  </div>
+  </article>
+</div>
+  <div id="footer">
+  <script id="site-script" src="../../../../../_/js/site.js" data-ui-root-path="../../../../../_"></script>
+<script async src="../../../../../_/js/vendor/highlight.js"></script>
+<script async src="../../../../../_/js/vendor/tabs.js" data-sync-storage-key="preferred-tab"></script>
+</div>
+</div>
+  </body>
+</html>

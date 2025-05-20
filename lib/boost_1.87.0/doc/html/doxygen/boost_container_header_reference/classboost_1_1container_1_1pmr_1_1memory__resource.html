@@ -1,0 +1,133 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class memory_resource</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../../boost_container_header_reference.html#doxygen.boost_container_header_reference.memory__resource_8hpp" title="Header &lt;boost/container/pmr/memory_resource.hpp&gt;">
+<link rel="prev" href="global__resource_8hpp_1a1ba7d94c2f76162dee51635f93f0a47b.html" title="Function get_default_resource">
+<link rel="next" href="classboost_1_1container_1_1pmr_1_1monotonic__buffer__resource.html" title="Class monotonic_buffer_resource">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="global__resource_8hpp_1a1ba7d94c2f76162dee51635f93f0a47b.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_container_header_reference.html#doxygen.boost_container_header_reference.memory__resource_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1container_1_1pmr_1_1monotonic__buffer__resource.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1pmr_1_1memory__resource"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class memory_resource</span></h2>
+<p>boost::container::pmr::memory_resource</p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../boost_container_header_reference.html#doxygen.boost_container_header_reference.memory__resource_8hpp" title="Header &lt;boost/container/pmr/memory_resource.hpp&gt;">boost/container/pmr/memory_resource.hpp</a>&gt;
+
+</span>
+<span class="keyword">class</span> <a class="link" href="classboost_1_1container_1_1pmr_1_1memory__resource.html" title="Class memory_resource">memory_resource</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1container_1_1pmr_1_1memory__resource.html#id78-bb">public member functions</a></span>
+  <span class="keyword">virtual</span> <a class="link" href="classboost_1_1container_1_1pmr_1_1memory__resource.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1pmr_1_1memory__resource_1a264a017013e7abfad94eeaf970404b09"><span class="special">~</span><span class="identifier">memory_resource</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <span class="special">*</span> <a class="link" href="classboost_1_1container_1_1pmr_1_1memory__resource.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1pmr_1_1memory__resource_1a1de478d2989e3864278786faa3266696"><span class="identifier">allocate</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="special">=</span> <span class="identifier">max_align</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1container_1_1pmr_1_1memory__resource.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1pmr_1_1memory__resource_1aa74f44777d3da7f278ae7a013607c524"><span class="identifier">deallocate</span></a><span class="special">(</span><span class="keyword">void</span> <span class="special">*</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="special">=</span> <span class="identifier">max_align</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1container_1_1pmr_1_1memory__resource.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1pmr_1_1memory__resource_1a5916e39e224e95f2047ffac4f60ec942"><span class="identifier">is_equal</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1pmr_1_1memory__resource.html" title="Class memory_resource">memory_resource</a> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1container_1_1pmr_1_1memory__resource.html#id79-bb">friend functions</a></span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1container_1_1pmr_1_1memory__resource.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1pmr_1_1memory__resource_1a915f8e3a5ab81bdeb41a3566f0a937bf"><span class="keyword">operator</span><span class="special">==</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1pmr_1_1memory__resource.html" title="Class memory_resource">memory_resource</a> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1pmr_1_1memory__resource.html" title="Class memory_resource">memory_resource</a> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1container_1_1pmr_1_1memory__resource.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1pmr_1_1memory__resource_1a438b9568cdcef03a9c280a15f0bf76bd"><span class="keyword">operator</span><span class="special">!=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1pmr_1_1memory__resource.html" title="Class memory_resource">memory_resource</a> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1pmr_1_1memory__resource.html" title="Class memory_resource">memory_resource</a> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1container_1_1pmr_1_1memory__resource.html#id80-bb">protected member functions</a></span>
+  <span class="keyword">virtual</span> <span class="keyword">void</span> <span class="special">*</span> <a class="link" href="classboost_1_1container_1_1pmr_1_1memory__resource.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1pmr_1_1memory__resource_1ac43d8d65b194cc89bf281bf14be73782"><span class="identifier">do_allocate</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span><span class="special">)</span> <span class="special">=</span> <span class="number">0</span><span class="special">;</span>
+  <span class="keyword">virtual</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1container_1_1pmr_1_1memory__resource.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1pmr_1_1memory__resource_1a0fd1098bbe6e2e98ad8497d099f8a60f"><span class="identifier">do_deallocate</span></a><span class="special">(</span><span class="keyword">void</span> <span class="special">*</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span><span class="special">)</span> <span class="special">=</span> <span class="number">0</span><span class="special">;</span>
+  <span class="keyword">virtual</span> <span class="keyword">bool</span> <a class="link" href="classboost_1_1container_1_1pmr_1_1memory__resource.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1pmr_1_1memory__resource_1a45becc36316abe4d5ff35788150a6aa3"><span class="identifier">do_is_equal</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1pmr_1_1memory__resource.html" title="Class memory_resource">memory_resource</a> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span> <span class="special">=</span> <span class="number">0</span><span class="special">;</span>
+
+  <span class="comment">// public data members</span>
+  <span class="identifier">BOOST_STATIC_CONSTEXPR</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">max_align</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.9.14.23.3.4"></a><h2>Description</h2>
+<p>The <a class="link" href="classboost_1_1container_1_1pmr_1_1memory__resource.html" title="Class memory_resource">memory_resource</a> class is an abstract interface to an unbounded set of classes encapsulating memory resources. </p>
+<div class="refsect2">
+<a name="id-1.3.9.14.23.3.4.3"></a><h3>
+<a name="id78-bb"></a><code class="computeroutput">memory_resource</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">virtual</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1pmr_1_1memory__resource_1a264a017013e7abfad94eeaf970404b09"></a><span class="special">~</span><span class="identifier">memory_resource</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Destroys this <a class="link" href="classboost_1_1container_1_1pmr_1_1memory__resource.html" title="Class memory_resource">memory_resource</a>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <span class="special">*</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1pmr_1_1memory__resource_1a1de478d2989e3864278786faa3266696"></a><span class="identifier">allocate</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> bytes<span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> alignment <span class="special">=</span> <span class="identifier">max_align</span><span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Equivalent to <code class="computeroutput">return do_allocate(bytes, alignment);</code> </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1pmr_1_1memory__resource_1aa74f44777d3da7f278ae7a013607c524"></a><span class="identifier">deallocate</span><span class="special">(</span><span class="keyword">void</span> <span class="special">*</span> p<span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> bytes<span class="special">,</span> 
+                <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> alignment <span class="special">=</span> <span class="identifier">max_align</span><span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Equivalent to <code class="computeroutput">return do_deallocate(bytes, alignment);</code> </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1pmr_1_1memory__resource_1a5916e39e224e95f2047ffac4f60ec942"></a><span class="identifier">is_equal</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1pmr_1_1memory__resource.html" title="Class memory_resource">memory_resource</a> <span class="special">&amp;</span> other<span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Equivalent to <code class="computeroutput">return do_is_equal(other);</code> </p>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.9.14.23.3.4.4"></a><h3>
+<a name="id79-bb"></a><code class="computeroutput">memory_resource</code> friend functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1pmr_1_1memory__resource_1a915f8e3a5ab81bdeb41a3566f0a937bf"></a><span class="keyword">operator</span><span class="special">==</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1pmr_1_1memory__resource.html" title="Class memory_resource">memory_resource</a> <span class="special">&amp;</span> a<span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1pmr_1_1memory__resource.html" title="Class memory_resource">memory_resource</a> <span class="special">&amp;</span> b<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Returns</strong></span>: <code class="computeroutput">&amp;a == &amp;b || a.is_equal(b)</code>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1pmr_1_1memory__resource_1a438b9568cdcef03a9c280a15f0bf76bd"></a><span class="keyword">operator</span><span class="special">!=</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1pmr_1_1memory__resource.html" title="Class memory_resource">memory_resource</a> <span class="special">&amp;</span> a<span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1pmr_1_1memory__resource.html" title="Class memory_resource">memory_resource</a> <span class="special">&amp;</span> b<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Returns</strong></span>: !(a == b). </p>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.9.14.23.3.4.5"></a><h3>
+<a name="id80-bb"></a><code class="computeroutput">memory_resource</code> protected member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="special">*</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1pmr_1_1memory__resource_1ac43d8d65b194cc89bf281bf14be73782"></a><span class="identifier">do_allocate</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> bytes<span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> alignment<span class="special">)</span> <span class="special">=</span> <span class="number">0</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: Alignment shall be a power of two.</p>
+<p><span class="bold"><strong>Returns</strong></span>: A derived class shall implement this function to return a pointer to allocated storage with a size of at least bytes. The returned storage is aligned to the specified alignment, if such alignment is supported; otherwise it is aligned to max_align.</p>
+<p><span class="bold"><strong>Throws</strong></span>: A derived class implementation shall throw an appropriate exception if it is unable to allocate memory with the requested size and alignment. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">virtual</span> <span class="keyword">void</span> 
+<a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1pmr_1_1memory__resource_1a0fd1098bbe6e2e98ad8497d099f8a60f"></a><span class="identifier">do_deallocate</span><span class="special">(</span><span class="keyword">void</span> <span class="special">*</span> p<span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> bytes<span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> alignment<span class="special">)</span> <span class="special">=</span> <span class="number">0</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: p shall have been returned from a prior call to <code class="computeroutput">allocate(bytes, alignment)</code> on a memory resource equal to *this, and the storage at p shall not yet have been deallocated.</p>
+<p><span class="bold"><strong>Effects</strong></span>: A derived class shall implement this function to dispose of allocated storage.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">virtual</span> <span class="keyword">bool</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1pmr_1_1memory__resource_1a45becc36316abe4d5ff35788150a6aa3"></a><span class="identifier">do_is_equal</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1pmr_1_1memory__resource.html" title="Class memory_resource">memory_resource</a> <span class="special">&amp;</span> other<span class="special">)</span> <span class="keyword">const</span> <span class="special">=</span> <span class="number">0</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Returns</strong></span>: A derived class shall implement this function to return true if memory allocated from this can be deallocated from other and vice-versa; otherwise it shall return false. <span class="emphasis"><em>[Note: The most-derived type of other might not match the type of this. For a derived class, D, a typical implementation of this function will compute <code class="computeroutput">dynamic_cast&lt;const D*&gt;(&amp;other)</code> and go no further (i.e., return false) if it returns nullptr. - end note]</em></span>. </p>
+</li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2009-2018 Ion Gaztanaga<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="global__resource_8hpp_1a1ba7d94c2f76162dee51635f93f0a47b.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_container_header_reference.html#doxygen.boost_container_header_reference.memory__resource_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1container_1_1pmr_1_1monotonic__buffer__resource.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

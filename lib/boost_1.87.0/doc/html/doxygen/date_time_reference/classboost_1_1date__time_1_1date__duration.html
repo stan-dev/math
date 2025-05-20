@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template date_duration</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../../date_time/doxy.html#doxygen.date_time_reference.date__duration_8hpp" title="Header &lt;boost/date_time/date_duration.hpp&gt;">
+<link rel="prev" href="classboost_1_1date__time_1_1day__clock.html" title="Class template day_clock">
+<link rel="next" href="structboost_1_1date__time_1_1duration__traits__adapted.html" title="Struct duration_traits_adapted">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1date__time_1_1day__clock.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../date_time/doxy.html#doxygen.date_time_reference.date__duration_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="structboost_1_1date__time_1_1duration__traits__adapted.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.date_time_reference.classboost_1_1date__time_1_1date__duration"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template date_duration</span></h2>
+<p>boost::date_time::date_duration — Duration type with date level resolution. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../date_time/doxy.html#doxygen.date_time_reference.date__duration_8hpp" title="Header &lt;boost/date_time/date_duration.hpp&gt;">boost/date_time/date_duration.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> duration_rep_traits<span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1date__time_1_1date__duration.html" title="Class template date_duration">date_duration</a> <span class="special">:</span> <span class="keyword">private</span> boost::less_than_comparable1&lt; date_duration&lt; duration_rep_traits &gt;, boost::equality_comparable1&lt; date_duration&lt; duration_rep_traits &gt;, boost::addable1&lt; date_duration&lt; duration_rep_traits &gt;, boost::subtractable1&lt; date_duration&lt; duration_rep_traits &gt;, boost::dividable2&lt; date_duration&lt; duration_rep_traits &gt;, int &gt; &gt; &gt; &gt; &gt;
+<span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">duration_rep_traits</span><span class="special">::</span><span class="identifier">int_type</span>  <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1date__duration_1a1ea713f819801cf694990419635d0b0c"></a><span class="identifier">duration_rep_type</span><span class="special">;</span>
+  <span class="keyword">typedef</span> <span class="identifier">duration_rep_traits</span><span class="special">::</span><span class="identifier">impl_type</span> <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1date__duration_1a027a6e275f38ebd62e3c0500f9e86e1a"></a><span class="identifier">duration_rep</span><span class="special">;</span>     
+
+  <span class="comment">// <a class="link" href="classboost_1_1date__time_1_1date__duration.html#id-1_3_12_15_3_10_1_1_1_6-bb">public member functions</a></span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1date__time_1_1date__duration.html#doxygen.date_time_reference.classboost_1_1date__time_1_1date__duration_1a7f8ae85e398f1167ce6cb3d969b932e1"><span class="identifier">date_duration</span></a><span class="special">(</span><span class="identifier">duration_rep</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1date__time_1_1date__duration.html#doxygen.date_time_reference.classboost_1_1date__time_1_1date__duration_1a66da9568a6b0a82939cd61aabcc93db0"><span class="identifier">date_duration</span></a><span class="special">(</span><span class="identifier">special_values</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">BOOST_CXX14_CONSTEXPR</span> <span class="identifier">duration_rep</span> <a class="link" href="classboost_1_1date__time_1_1date__duration.html#doxygen.date_time_reference.classboost_1_1date__time_1_1date__duration_1afa9c7923c0ff093781dfb74bc934c743"><span class="identifier">get_rep</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">BOOST_CXX14_CONSTEXPR</span> <span class="identifier">special_values</span> <a class="link" href="classboost_1_1date__time_1_1date__duration.html#doxygen.date_time_reference.classboost_1_1date__time_1_1date__duration_1a461987995c5ae4c015d9a48797c5bfa9"><span class="identifier">as_special</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">BOOST_CXX14_CONSTEXPR</span> <span class="keyword">bool</span> <a class="link" href="classboost_1_1date__time_1_1date__duration.html#doxygen.date_time_reference.classboost_1_1date__time_1_1date__duration_1a6b9bd9b8800482103309c5ca5a7a5f4d"><span class="identifier">is_special</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">BOOST_CXX14_CONSTEXPR</span> <span class="identifier">duration_rep_type</span> <a class="link" href="classboost_1_1date__time_1_1date__duration.html#doxygen.date_time_reference.classboost_1_1date__time_1_1date__duration_1ac061514b936dddca335e52fd5394bb2e"><span class="identifier">days</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">BOOST_CXX14_CONSTEXPR</span> <span class="keyword">bool</span> <a class="link" href="classboost_1_1date__time_1_1date__duration.html#doxygen.date_time_reference.classboost_1_1date__time_1_1date__duration_1a776d6f1c9a88cada0ce70e9264741cff"><span class="keyword">operator</span><span class="special">==</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1date__time_1_1date__duration.html" title="Class template date_duration">date_duration</a> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">BOOST_CXX14_CONSTEXPR</span> <span class="keyword">bool</span> <a class="link" href="classboost_1_1date__time_1_1date__duration.html#doxygen.date_time_reference.classboost_1_1date__time_1_1date__duration_1a96cbc6852fde8b8c5ba90d45e8c3be5b"><span class="keyword">operator</span><span class="special">&lt;</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1date__time_1_1date__duration.html" title="Class template date_duration">date_duration</a> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">BOOST_CXX14_CONSTEXPR</span> <a class="link" href="classboost_1_1date__time_1_1date__duration.html" title="Class template date_duration">date_duration</a> <span class="special">&amp;</span> <a class="link" href="classboost_1_1date__time_1_1date__duration.html#doxygen.date_time_reference.classboost_1_1date__time_1_1date__duration_1ab016c7f16c5d2b4c81f0a69fb9d3ee7e"><span class="keyword">operator</span><span class="special">-=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1date__time_1_1date__duration.html" title="Class template date_duration">date_duration</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">BOOST_CXX14_CONSTEXPR</span> <a class="link" href="classboost_1_1date__time_1_1date__duration.html" title="Class template date_duration">date_duration</a> <span class="special">&amp;</span> <a class="link" href="classboost_1_1date__time_1_1date__duration.html#doxygen.date_time_reference.classboost_1_1date__time_1_1date__duration_1ace328c06954de7ff29e6ddd155f8445f"><span class="keyword">operator</span><span class="special">+=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1date__time_1_1date__duration.html" title="Class template date_duration">date_duration</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">BOOST_CXX14_CONSTEXPR</span> <a class="link" href="classboost_1_1date__time_1_1date__duration.html" title="Class template date_duration">date_duration</a> <a class="link" href="classboost_1_1date__time_1_1date__duration.html#doxygen.date_time_reference.classboost_1_1date__time_1_1date__duration_1a1bc2071af001d125f5ff75036aa77e49"><span class="keyword">operator</span><span class="special">-</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">BOOST_CXX14_CONSTEXPR</span> <a class="link" href="classboost_1_1date__time_1_1date__duration.html" title="Class template date_duration">date_duration</a> <span class="special">&amp;</span> <a class="link" href="classboost_1_1date__time_1_1date__duration.html#doxygen.date_time_reference.classboost_1_1date__time_1_1date__duration_1adf8d78775cd7a379b9bf370d7a2e70bc"><span class="keyword">operator</span><span class="special">/=</span></a><span class="special">(</span><span class="keyword">int</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">BOOST_CXX14_CONSTEXPR</span> <span class="keyword">bool</span> <a class="link" href="classboost_1_1date__time_1_1date__duration.html#doxygen.date_time_reference.classboost_1_1date__time_1_1date__duration_1afb2065c62da55fd0f5c22e965f1d43ef"><span class="identifier">is_negative</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1date__time_1_1date__duration.html#id-1_3_12_15_3_10_1_1_1_7-bb">public static functions</a></span>
+  <span class="keyword">static</span> <span class="identifier">BOOST_CXX14_CONSTEXPR</span> <a class="link" href="classboost_1_1date__time_1_1date__duration.html" title="Class template date_duration">date_duration</a> <a class="link" href="classboost_1_1date__time_1_1date__duration.html#doxygen.date_time_reference.classboost_1_1date__time_1_1date__duration_1a72ea194dcbd9910564ccc0d413a85644"><span class="identifier">unit</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.12.15.3.10.3.4"></a><h2>Description</h2>
+<div class="refsect2">
+<a name="id-1.3.12.15.3.10.3.4.2"></a><h3>
+<a name="id-1_3_12_15_3_10_1_1_1_6-bb"></a><code class="computeroutput">date_duration</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1date__duration_1a7f8ae85e398f1167ce6cb3d969b932e1"></a><span class="identifier">date_duration</span><span class="special">(</span><span class="identifier">duration_rep</span> day_count<span class="special">)</span><span class="special">;</span></pre>Construct from a day count. </li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.date_time_reference.classboost_1_1date__time_1_1date__duration_1a66da9568a6b0a82939cd61aabcc93db0"></a><span class="identifier">date_duration</span><span class="special">(</span><span class="identifier">special_values</span> sv<span class="special">)</span><span class="special">;</span></pre>
+<p>construct from special_values - only works when instantiated with <a class="link" href="structboost_1_1date__time_1_1duration__traits__adapted.html" title="Struct duration_traits_adapted">duration_traits_adapted</a> </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">BOOST_CXX14_CONSTEXPR</span> <span class="identifier">duration_rep</span> <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1date__duration_1afa9c7923c0ff093781dfb74bc934c743"></a><span class="identifier">get_rep</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>returns days_ as it's instantiated type - used for streaming </li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">BOOST_CXX14_CONSTEXPR</span> <span class="identifier">special_values</span> <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1date__duration_1a461987995c5ae4c015d9a48797c5bfa9"></a><span class="identifier">as_special</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">BOOST_CXX14_CONSTEXPR</span> <span class="keyword">bool</span> <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1date__duration_1a6b9bd9b8800482103309c5ca5a7a5f4d"></a><span class="identifier">is_special</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">BOOST_CXX14_CONSTEXPR</span> <span class="identifier">duration_rep_type</span> <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1date__duration_1ac061514b936dddca335e52fd5394bb2e"></a><span class="identifier">days</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>returns days as value, not object. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">BOOST_CXX14_CONSTEXPR</span> <span class="keyword">bool</span> <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1date__duration_1a776d6f1c9a88cada0ce70e9264741cff"></a><span class="keyword">operator</span><span class="special">==</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1date__time_1_1date__duration.html" title="Class template date_duration">date_duration</a> <span class="special">&amp;</span> rhs<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Equality. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">BOOST_CXX14_CONSTEXPR</span> <span class="keyword">bool</span> <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1date__duration_1a96cbc6852fde8b8c5ba90d45e8c3be5b"></a><span class="keyword">operator</span><span class="special">&lt;</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1date__time_1_1date__duration.html" title="Class template date_duration">date_duration</a> <span class="special">&amp;</span> rhs<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Less. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">BOOST_CXX14_CONSTEXPR</span> <a class="link" href="classboost_1_1date__time_1_1date__duration.html" title="Class template date_duration">date_duration</a> <span class="special">&amp;</span> <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1date__duration_1ab016c7f16c5d2b4c81f0a69fb9d3ee7e"></a><span class="keyword">operator</span><span class="special">-=</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1date__time_1_1date__duration.html" title="Class template date_duration">date_duration</a> <span class="special">&amp;</span> rhs<span class="special">)</span><span class="special">;</span></pre>Subtract another duration – result is signed. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">BOOST_CXX14_CONSTEXPR</span> <a class="link" href="classboost_1_1date__time_1_1date__duration.html" title="Class template date_duration">date_duration</a> <span class="special">&amp;</span> <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1date__duration_1ace328c06954de7ff29e6ddd155f8445f"></a><span class="keyword">operator</span><span class="special">+=</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1date__time_1_1date__duration.html" title="Class template date_duration">date_duration</a> <span class="special">&amp;</span> rhs<span class="special">)</span><span class="special">;</span></pre>Add a duration – result is signed. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">BOOST_CXX14_CONSTEXPR</span> <a class="link" href="classboost_1_1date__time_1_1date__duration.html" title="Class template date_duration">date_duration</a> <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1date__duration_1a1bc2071af001d125f5ff75036aa77e49"></a><span class="keyword">operator</span><span class="special">-</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>unary- Allows for dd = -date_duration(2); -&gt; dd == -2 </li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">BOOST_CXX14_CONSTEXPR</span> <a class="link" href="classboost_1_1date__time_1_1date__duration.html" title="Class template date_duration">date_duration</a> <span class="special">&amp;</span> <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1date__duration_1adf8d78775cd7a379b9bf370d7a2e70bc"></a><span class="keyword">operator</span><span class="special">/=</span><span class="special">(</span><span class="keyword">int</span> divisor<span class="special">)</span><span class="special">;</span></pre>Division operations on a duration with an integer. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">BOOST_CXX14_CONSTEXPR</span> <span class="keyword">bool</span> <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1date__duration_1afb2065c62da55fd0f5c22e965f1d43ef"></a><span class="identifier">is_negative</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>return sign information </li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.12.15.3.10.3.4.3"></a><h3>
+<a name="id-1_3_12_15_3_10_1_1_1_7-bb"></a><code class="computeroutput">date_duration</code> public static functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="identifier">BOOST_CXX14_CONSTEXPR</span> <a class="link" href="classboost_1_1date__time_1_1date__duration.html" title="Class template date_duration">date_duration</a> <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1date__duration_1a72ea194dcbd9910564ccc0d413a85644"></a><span class="identifier">unit</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>Returns the smallest duration – used by to calculate 'end'. </li></ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2001-2005 CrystalClear Software, Inc<p>Subject to the Boost Software License, Version 1.0. (See accompanying file
+    <code class="filename">LICENSE_1_0.txt</code> or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)</p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1date__time_1_1day__clock.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../date_time/doxy.html#doxygen.date_time_reference.date__duration_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="structboost_1_1date__time_1_1duration__traits__adapted.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

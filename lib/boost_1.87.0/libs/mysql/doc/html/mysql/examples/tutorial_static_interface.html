@@ -1,0 +1,200 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Tutorial 4 listing: the static interface</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../examples.html" title="Examples">
+<link rel="prev" href="tutorial_with_params.html" title="Tutorial 3 listing: queries with parameters">
+<link rel="next" href="tutorial_updates_transactions.html" title="Tutorial 5 listing: UPDATEs, transactions and multi-queries">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="tutorial_with_params.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../examples.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="tutorial_updates_transactions.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="mysql.examples.tutorial_static_interface"></a><a class="link" href="tutorial_static_interface.html" title="Tutorial 4 listing: the static interface">Tutorial 4
+      listing: the static interface</a>
+</h3></div></div></div>
+<p>
+        This example assumes you have gone through the <a class="link" href="../examples.html#mysql.examples.setup">setup</a>.
+      </p>
+<pre class="programlisting"><span class="comment">/**
+ * This example shows how to use the static interface to parse
+ * the results of a query into a C++ struct.
+ * Like the previous tutorial, given an employee ID,
+ * it prints their full name.
+ *
+ * It uses Boost.Pfr for reflection, which requires C++20.
+ * You can backport it to C++14 if you need by using Boost.Describe.
+ *
+ * This example uses the 'boost_mysql_examples' database, which you
+ * can get by running db_setup.sql.
+ */</span>
+
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">mysql</span><span class="special">/</span><span class="identifier">any_connection</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">mysql</span><span class="special">/</span><span class="identifier">error_with_diagnostics</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">mysql</span><span class="special">/</span><span class="identifier">pfr</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">mysql</span><span class="special">/</span><span class="identifier">static_results</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">mysql</span><span class="special">/</span><span class="identifier">with_params</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">asio</span><span class="special">/</span><span class="identifier">awaitable</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">asio</span><span class="special">/</span><span class="identifier">co_spawn</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">asio</span><span class="special">/</span><span class="identifier">io_context</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">asio</span><span class="special">/</span><span class="identifier">this_coro</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">cstdint</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">exception</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">iostream</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">string</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">string_view</span><span class="special">&gt;</span>
+
+<span class="keyword">namespace</span> <span class="identifier">mysql</span> <span class="special">=</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">mysql</span><span class="special">;</span>
+<span class="keyword">namespace</span> <span class="identifier">asio</span> <span class="special">=</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">;</span>
+
+<span class="keyword">void</span> <span class="identifier">print_employee</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">first_name</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">last_name</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"Employee's name is: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">first_name</span> <span class="special">&lt;&lt;</span> <span class="char">' '</span> <span class="special">&lt;&lt;</span> <span class="identifier">last_name</span> <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;</span>
+<span class="special">}</span>
+
+<span class="comment">// Should contain a member for each field of interest present in our query.</span>
+<span class="comment">// Declaration order doesn't need to match field order in the query.</span>
+<span class="comment">// Field names should match the ones in our query</span>
+<span class="keyword">struct</span> <span class="identifier">employee</span>
+<span class="special">{</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">first_name</span><span class="special">;</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">last_name</span><span class="special">;</span>
+<span class="special">};</span>
+
+<span class="identifier">asio</span><span class="special">::</span><span class="identifier">awaitable</span><span class="special">&lt;</span><span class="keyword">void</span><span class="special">&gt;</span> <span class="identifier">coro_main</span><span class="special">(</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">server_hostname</span><span class="special">,</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">username</span><span class="special">,</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">password</span><span class="special">,</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">int64_t</span> <span class="identifier">employee_id</span>
+<span class="special">)</span>
+<span class="special">{</span>
+    <span class="comment">// Represents a connection to the MySQL server.</span>
+    <span class="comment">// The connection will use the same executor as the coroutine</span>
+    <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">any_connection</span> <span class="identifier">conn</span><span class="special">(</span><span class="identifier">co_await</span> <span class="identifier">asio</span><span class="special">::</span><span class="identifier">this_coro</span><span class="special">::</span><span class="identifier">executor</span><span class="special">);</span>
+
+    <span class="comment">// The hostname, username, password and database to use.</span>
+    <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">connect_params</span> <span class="identifier">params</span><span class="special">;</span>
+    <span class="identifier">params</span><span class="special">.</span><span class="identifier">server_address</span><span class="special">.</span><span class="identifier">emplace_host_and_port</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">(</span><span class="identifier">server_hostname</span><span class="special">));</span>
+    <span class="identifier">params</span><span class="special">.</span><span class="identifier">username</span> <span class="special">=</span> <span class="identifier">username</span><span class="special">;</span>
+    <span class="identifier">params</span><span class="special">.</span><span class="identifier">password</span> <span class="special">=</span> <span class="identifier">password</span><span class="special">;</span>
+    <span class="identifier">params</span><span class="special">.</span><span class="identifier">database</span> <span class="special">=</span> <span class="string">"boost_mysql_examples"</span><span class="special">;</span>
+
+    <span class="comment">// Connect to the server</span>
+    <span class="identifier">co_await</span> <span class="identifier">conn</span><span class="special">.</span><span class="identifier">async_connect</span><span class="special">(</span><span class="identifier">params</span><span class="special">);</span>
+
+    <span class="comment">// Using static_results will parse the result of our query</span>
+    <span class="comment">// into instances of the employee type. Fields will be matched</span>
+    <span class="comment">// by name, instead of by position.</span>
+    <span class="comment">// pfr_by_name tells the library to use Boost.Pfr for reflection,</span>
+    <span class="comment">// and to match fields by name.</span>
+    <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">static_results</span><span class="special">&lt;</span><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">pfr_by_name</span><span class="special">&lt;</span><span class="identifier">employee</span><span class="special">&gt;&gt;</span> <span class="identifier">result</span><span class="special">;</span>
+
+    <span class="comment">// Execute the query with the given parameters, performing the required</span>
+    <span class="comment">// escaping to prevent SQL injection.</span>
+    <span class="identifier">co_await</span> <span class="identifier">conn</span><span class="special">.</span><span class="identifier">async_execute</span><span class="special">(</span>
+        <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">with_params</span><span class="special">(</span><span class="string">"SELECT first_name, last_name FROM employee WHERE id = {}"</span><span class="special">,</span> <span class="identifier">employee_id</span><span class="special">),</span>
+        <span class="identifier">result</span>
+    <span class="special">);</span>
+
+    <span class="comment">// Did we find an employee with that ID?</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">result</span><span class="special">.</span><span class="identifier">rows</span><span class="special">().</span><span class="identifier">empty</span><span class="special">())</span>
+    <span class="special">{</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"Employee not found"</span> <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;</span>
+    <span class="special">}</span>
+    <span class="keyword">else</span>
+    <span class="special">{</span>
+        <span class="comment">// Print the retrieved details</span>
+        <span class="keyword">const</span> <span class="identifier">employee</span><span class="special">&amp;</span> <span class="identifier">emp</span> <span class="special">=</span> <span class="identifier">result</span><span class="special">.</span><span class="identifier">rows</span><span class="special">()[</span><span class="number">0</span><span class="special">];</span>
+        <span class="identifier">print_employee</span><span class="special">(</span><span class="identifier">emp</span><span class="special">.</span><span class="identifier">first_name</span><span class="special">,</span> <span class="identifier">emp</span><span class="special">.</span><span class="identifier">last_name</span><span class="special">);</span>
+    <span class="special">}</span>
+
+    <span class="comment">// Close the connection</span>
+    <span class="identifier">co_await</span> <span class="identifier">conn</span><span class="special">.</span><span class="identifier">async_close</span><span class="special">();</span>
+<span class="special">}</span>
+
+<span class="keyword">void</span> <span class="identifier">main_impl</span><span class="special">(</span><span class="keyword">int</span> <span class="identifier">argc</span><span class="special">,</span> <span class="keyword">char</span><span class="special">**</span> <span class="identifier">argv</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">argc</span> <span class="special">!=</span> <span class="number">5</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cerr</span> <span class="special">&lt;&lt;</span> <span class="string">"Usage: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">argv</span><span class="special">[</span><span class="number">0</span><span class="special">]</span> <span class="special">&lt;&lt;</span> <span class="string">" &lt;username&gt; &lt;password&gt; &lt;server-hostname&gt; &lt;employee-id&gt;\n"</span><span class="special">;</span>
+        <span class="identifier">exit</span><span class="special">(</span><span class="number">1</span><span class="special">);</span>
+    <span class="special">}</span>
+
+    <span class="comment">// The execution context, required to run I/O operations.</span>
+    <span class="identifier">asio</span><span class="special">::</span><span class="identifier">io_context</span> <span class="identifier">ctx</span><span class="special">;</span>
+
+    <span class="comment">// Enqueue the coroutine for execution.</span>
+    <span class="identifier">asio</span><span class="special">::</span><span class="identifier">co_spawn</span><span class="special">(</span>
+        <span class="comment">// The execution context where the coroutine will run</span>
+        <span class="identifier">ctx</span><span class="special">,</span>
+
+        <span class="comment">// The coroutine to run. This must be a function taking no arguments</span>
+        <span class="comment">// and returning an asio::awaitable&lt;T&gt;</span>
+        <span class="special">[</span><span class="identifier">argv</span><span class="special">]</span> <span class="special">{</span> <span class="keyword">return</span> <span class="identifier">coro_main</span><span class="special">(</span><span class="identifier">argv</span><span class="special">[</span><span class="number">3</span><span class="special">],</span> <span class="identifier">argv</span><span class="special">[</span><span class="number">1</span><span class="special">],</span> <span class="identifier">argv</span><span class="special">[</span><span class="number">2</span><span class="special">],</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">stoi</span><span class="special">(</span><span class="identifier">argv</span><span class="special">[</span><span class="number">4</span><span class="special">]));</span> <span class="special">},</span>
+
+        <span class="comment">// Callback to run when the coroutine completes.</span>
+        <span class="comment">// If any exception is thrown in the coroutine body, propagate it to terminate the program.</span>
+        <span class="special">[](</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">exception_ptr</span> <span class="identifier">ptr</span><span class="special">)</span> <span class="special">{</span>
+            <span class="keyword">if</span> <span class="special">(</span><span class="identifier">ptr</span><span class="special">)</span>
+            <span class="special">{</span>
+                <span class="identifier">std</span><span class="special">::</span><span class="identifier">rethrow_exception</span><span class="special">(</span><span class="identifier">ptr</span><span class="special">);</span>
+            <span class="special">}</span>
+        <span class="special">}</span>
+    <span class="special">);</span>
+
+    <span class="comment">// Calling run will actually execute the coroutine until completion</span>
+    <span class="identifier">ctx</span><span class="special">.</span><span class="identifier">run</span><span class="special">();</span>
+<span class="special">}</span>
+
+<span class="keyword">int</span> <span class="identifier">main</span><span class="special">(</span><span class="keyword">int</span> <span class="identifier">argc</span><span class="special">,</span> <span class="keyword">char</span><span class="special">**</span> <span class="identifier">argv</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="keyword">try</span>
+    <span class="special">{</span>
+        <span class="identifier">main_impl</span><span class="special">(</span><span class="identifier">argc</span><span class="special">,</span> <span class="identifier">argv</span><span class="special">);</span>
+    <span class="special">}</span>
+    <span class="keyword">catch</span> <span class="special">(</span><span class="keyword">const</span> <span class="identifier">mysql</span><span class="special">::</span><span class="identifier">error_with_diagnostics</span><span class="special">&amp;</span> <span class="identifier">err</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="comment">// Some errors include additional diagnostics, like server-provided error messages.</span>
+        <span class="comment">// Security note: diagnostics::server_message may contain user-supplied values (e.g. the</span>
+        <span class="comment">// field value that caused the error) and is encoded using to the connection's character set</span>
+        <span class="comment">// (UTF-8 by default). Treat is as untrusted input.</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cerr</span> <span class="special">&lt;&lt;</span> <span class="string">"Error: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">err</span><span class="special">.</span><span class="identifier">what</span><span class="special">()</span> <span class="special">&lt;&lt;</span> <span class="char">'\n'</span>
+                  <span class="special">&lt;&lt;</span> <span class="string">"Server diagnostics: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">err</span><span class="special">.</span><span class="identifier">get_diagnostics</span><span class="special">().</span><span class="identifier">server_message</span><span class="special">()</span> <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;</span>
+        <span class="keyword">return</span> <span class="number">1</span><span class="special">;</span>
+    <span class="special">}</span>
+    <span class="keyword">catch</span> <span class="special">(</span><span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">exception</span><span class="special">&amp;</span> <span class="identifier">err</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cerr</span> <span class="special">&lt;&lt;</span> <span class="string">"Error: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">err</span><span class="special">.</span><span class="identifier">what</span><span class="special">()</span> <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;</span>
+        <span class="keyword">return</span> <span class="number">1</span><span class="special">;</span>
+    <span class="special">}</span>
+<span class="special">}</span>
+</pre>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="tutorial_with_params.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../examples.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="tutorial_updates_transactions.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>
