@@ -17,6 +17,30 @@ namespace stan {
 namespace math {
 
 /**
+ * Return the natural logarithm of the arithmetic argument.
+ *
+ * @tparam V `Arithmetic` argument
+ * @param[in] x argument
+ * @return natural logarithm of the argument
+ */
+template <typename T, require_arithmetic_t<T>* = nullptr>
+inline auto log(const T x) {
+  return std::log(x);
+}
+
+/**
+ * Return the natural logarithm of the complex argument.
+ *
+ * @tparam V `complex<Arithmetic>` argument
+ * @param[in] x argument
+ * @return natural logarithm of the argument
+ */
+template <typename T, require_complex_t<T>* = nullptr>
+inline auto log(const T x) {
+  return std::log(x);
+}
+
+/**
  * Structure to wrap `log()` so that it can be vectorized.
  */
 struct log_fun {
@@ -29,7 +53,6 @@ struct log_fun {
    */
   template <typename T>
   static inline auto fun(const T& x) {
-    using std::log;
     return log(x);
   }
 };
@@ -43,11 +66,7 @@ struct log_fun {
  * @param[in] x container
  * @return Elementwise application of natural log to the argument.
  */
-template <
-    typename Container,
-    require_not_container_st<std::is_arithmetic, Container>* = nullptr,
-    require_not_var_matrix_t<Container>* = nullptr,
-    require_not_nonscalar_prim_or_rev_kernel_expression_t<Container>* = nullptr>
+template <typename Container, require_ad_container_t<Container>* = nullptr>
 inline auto log(const Container& x) {
   return apply_scalar_unary<log_fun, Container>::apply(x);
 }
@@ -61,7 +80,7 @@ inline auto log(const Container& x) {
  * @return Natural log of each variable in the container.
  */
 template <typename Container,
-          require_container_st<std::is_arithmetic, Container>* = nullptr>
+          require_container_bt<std::is_arithmetic, Container>* = nullptr>
 inline auto log(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [](const auto& v) { return v.array().log(); });

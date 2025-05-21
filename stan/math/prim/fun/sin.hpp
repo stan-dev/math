@@ -14,6 +14,30 @@ namespace stan {
 namespace math {
 
 /**
+ * Return the sine of the complex argument.
+ *
+ * @tparam V `Arithmetic` argument
+ * @param[in] x argument
+ * @return sine of the argument
+ */
+template <typename T, require_arithmetic_t<T>* = nullptr>
+inline auto sin(const T x) {
+  return std::sin(x);
+}
+
+/**
+ * Return the sine of the complex argument.
+ *
+ * @tparam V `complex<Arithmetic>` argument
+ * @param[in] x argument
+ * @return sine of the argument
+ */
+template <typename T, require_complex_bt<std::is_arithmetic, T>* = nullptr>
+inline auto sin(const T x) {
+  return std::sin(x);
+}
+
+/**
  * Structure to wrap sin() so it can be vectorized.
  *
  * @tparam T type of argument
@@ -23,7 +47,6 @@ namespace math {
 struct sin_fun {
   template <typename T>
   static inline auto fun(const T& x) {
-    using std::sin;
     return sin(x);
   }
 };
@@ -35,10 +58,7 @@ struct sin_fun {
  * @param x angles in radians
  * @return Sine of each value in x.
  */
-template <
-    typename T, require_not_container_st<std::is_arithmetic, T>* = nullptr,
-    require_not_var_matrix_t<T>* = nullptr,
-    require_all_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr>
+template <typename T, require_ad_container_t<T>* = nullptr>
 inline auto sin(const T& x) {
   return apply_scalar_unary<sin_fun, T>::apply(x);
 }
@@ -52,7 +72,7 @@ inline auto sin(const T& x) {
  * @return Sine of each value in x.
  */
 template <typename Container,
-          require_container_st<std::is_arithmetic, Container>* = nullptr>
+          require_container_bt<std::is_arithmetic, Container>* = nullptr>
 inline auto sin(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [&](const auto& v) { return v.array().sin(); });
@@ -68,6 +88,7 @@ namespace internal {
  */
 template <typename V>
 inline std::complex<V> complex_sin(const std::complex<V>& z) {
+  using namespace stan::math;
   return neg_i_times(sinh(i_times(z)));
 }
 }  // namespace internal

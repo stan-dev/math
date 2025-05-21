@@ -13,6 +13,30 @@ namespace stan {
 namespace math {
 
 /**
+ * Return the hyperbolic cosine of the arithmetic argument.
+ *
+ * @tparam V An arithmetic type
+ * @param[in] x argument
+ * @return hyperbolic cosine of the argument
+ */
+template <typename T, require_arithmetic_t<T>* = nullptr>
+inline auto cosh(const T x) {
+  return std::cosh(x);
+}
+
+/**
+ * Return the hyperbolic cosine of the complex argument.
+ *
+ * @tparam V `complex<Arithmetic>` type of argument
+ * @param[in] x argument
+ * @return hyperbolic cosine of the argument
+ */
+template <typename T, require_complex_bt<std::is_arithmetic, T>* = nullptr>
+inline auto cosh(const T x) {
+  return std::cosh(x);
+}
+
+/**
  * Structure to wrap `cosh()` so it can be vectorized.
  *
  * @tparam T type of argument
@@ -22,7 +46,6 @@ namespace math {
 struct cosh_fun {
   template <typename T>
   static inline auto fun(const T& x) {
-    using std::cosh;
     return cosh(x);
   }
 };
@@ -35,11 +58,7 @@ struct cosh_fun {
  * @param x angles in radians
  * @return Hyberbolic cosine of x.
  */
-template <typename Container,
-          require_not_container_st<std::is_arithmetic, Container>* = nullptr,
-          require_not_var_matrix_t<Container>* = nullptr,
-          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
-              Container>* = nullptr>
+template <typename Container, require_ad_container_t<Container>* = nullptr>
 inline auto cosh(const Container& x) {
   return apply_scalar_unary<cosh_fun, Container>::apply(x);
 }
@@ -53,7 +72,7 @@ inline auto cosh(const Container& x) {
  * @return Hyberbolic cosine of x.
  */
 template <typename Container,
-          require_container_st<std::is_arithmetic, Container>* = nullptr>
+          require_container_bt<std::is_arithmetic, Container>* = nullptr>
 inline auto cosh(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [](const auto& v) { return v.array().cosh(); });

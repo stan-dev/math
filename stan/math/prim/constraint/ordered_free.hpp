@@ -49,7 +49,7 @@ plain_type_t<EigVec> ordered_free(const EigVec& y) {
  * @param x The standard vector to untransform.
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
-auto ordered_free(const T& x) {
+inline auto ordered_free(const T& x) {
   return apply_vector_unary<T>::apply(x,
                                       [](auto&& v) { return ordered_free(v); });
 }

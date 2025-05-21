@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/atan.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
@@ -36,8 +37,6 @@ template <typename T_y, typename T_loc, typename T_scale,
 return_type_t<T_y, T_loc, T_scale> cauchy_lcdf(const T_y& y, const T_loc& mu,
                                                const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
-  using std::atan;
-  using std::log;
   using T_y_ref = ref_type_t<T_y>;
   using T_mu_ref = ref_type_t<T_loc>;
   using T_sigma_ref = ref_type_t<T_scale>;

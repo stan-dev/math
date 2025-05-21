@@ -5,6 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
+#include <stan/math/prim/fun/inv_sqrt.hpp>
 #include <stan/math/prim/fun/sqrt.hpp>
 #include <stan/math/prim/functor/apply_vector_unary.hpp>
 #include <cmath>
@@ -47,29 +48,74 @@ inline plain_type_t<Vec> sum_to_zero_free(const Vec& z) {
     return y;
   }
 
-  y.coeffRef(N - 1) = -z_ref(N) * sqrt(N * (N + 1)) / N;
+  y.coeffRef(N - 1) = -z_ref.coeff(N) * sqrt(N * (N + 1)) / N;
 
   value_type_t<Vec> sum_w(0);
 
   for (int i = N - 2; i >= 0; --i) {
     double n = static_cast<double>(i + 1);
-    auto w = y(i + 1) / sqrt((n + 1) * (n + 2));
+    auto w = y.coeff(i + 1) / sqrt((n + 1) * (n + 2));
     sum_w += w;
-    y.coeffRef(i) = (sum_w - z_ref(i + 1)) * sqrt(n * (n + 1)) / n;
+    y.coeffRef(i) = (sum_w - z_ref.coeff(i + 1)) * sqrt(n * (n + 1)) / n;
   }
 
   return y;
 }
 
 /**
- * Overload of `sum_to_zero_free()` to untransform each Eigen vector
+ * Return an unconstrained matrix.
+ *
+ * @tparam Mat a column vector type
+ * @param z Matrix of size (N, M)
+ * @return Free matrix of length (N - 1, M - 1)
+ * @throw std::domain_error if z does not sum to zero
+ */
+template <typename Mat, require_eigen_matrix_dynamic_t<Mat>* = nullptr>
+inline plain_type_t<Mat> sum_to_zero_free(const Mat& z) {
+  const auto& z_ref = to_ref(z);
+  check_sum_to_zero("stan::math::sum_to_zero_free", "sum_to_zero variable",
+                    z_ref);
+
+  const auto N = z_ref.rows() - 1;
+  const auto M = z_ref.cols() - 1;
+
+  plain_type_t<Mat> x = Eigen::MatrixXd::Zero(N, M);
+  if (unlikely(N == 0 || M == 0)) {
+    return x;
+  }
+
+  Eigen::Matrix<value_type_t<Mat>, -1, 1> beta = Eigen::VectorXd::Zero(N);
+
+  for (int j = M - 1; j >= 0; --j) {
+    value_type_t<Mat> ax_previous(0);
+
+    double a_j = inv_sqrt((j + 1.0) * (j + 2.0));
+    double b_j = (j + 1.0) * a_j;
+
+    for (int i = N - 1; i >= 0; --i) {
+      double a_i = inv_sqrt((i + 1.0) * (i + 2.0));
+      double b_i = (i + 1.0) * a_i;
+
+      auto alpha_plus_beta = z_ref.coeff(i, j) + beta.coeff(i);
+
+      x.coeffRef(i, j) = (alpha_plus_beta + b_j * ax_previous) / (b_j * b_i);
+      beta.coeffRef(i) += a_j * (b_i * x.coeff(i, j) - ax_previous);
+      ax_previous += a_i * x.coeff(i, j);
+    }
+  }
+
+  return x;
+}
+
+/**
+ * Overload of `sum_to_zero_free()` to untransform each Eigen type
  * in a standard vector.
  * @tparam T A standard vector with with a `value_type` which inherits from
- *  `Eigen::MatrixBase` with compile time rows or columns equal to 1.
+ *  `Eigen::MatrixBase`
  * @param z The standard vector to untransform.
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
-auto sum_to_zero_free(const T& z) {
+inline auto sum_to_zero_free(const T& z) {
   return apply_vector_unary<T>::apply(
       z, [](auto&& v) { return sum_to_zero_free(v); });
 }

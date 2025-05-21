@@ -19,6 +19,30 @@ namespace stan {
 namespace math {
 
 /**
+ * Return the arc cosine of the arithmetic argument.
+ *
+ * @tparam V An `Arithmetic` argument
+ * @param[in] x argument
+ * @return arc cosine of the argument
+ */
+template <typename T, require_arithmetic_t<T>* = nullptr>
+inline auto acos(const T x) {
+  return std::acos(x);
+}
+
+/**
+ * Return the arc cosine of the complex argument.
+ *
+ * @tparam V `complex<Arithmetic>` argument
+ * @param[in] x argument
+ * @return arc cosine of the argument
+ */
+template <typename T, require_complex_bt<std::is_arithmetic, T>* = nullptr>
+inline auto acos(const T x) {
+  return std::acos(x);
+}
+
+/**
  * Structure to wrap `acos()` so it can be vectorized.
  *
  * @tparam T type of variable
@@ -28,7 +52,6 @@ namespace math {
 struct acos_fun {
   template <typename T>
   static inline auto fun(const T& x) {
-    using std::acos;
     return acos(x);
   }
 };
@@ -41,11 +64,7 @@ struct acos_fun {
  * @param x argument
  * @return Arc cosine of each variable in the container, in radians.
  */
-template <typename Container,
-          require_not_container_st<std::is_arithmetic, Container>* = nullptr,
-          require_not_var_matrix_t<Container>* = nullptr,
-          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
-              Container>* = nullptr>
+template <typename Container, require_ad_container_t<Container>* = nullptr>
 inline auto acos(const Container& x) {
   return apply_scalar_unary<acos_fun, Container>::apply(x);
 }
@@ -59,7 +78,7 @@ inline auto acos(const Container& x) {
  * @return Arc cosine of each variable in the container, in radians.
  */
 template <typename Container,
-          require_container_st<std::is_arithmetic, Container>* = nullptr>
+          require_container_bt<std::is_arithmetic, Container>* = nullptr>
 inline auto acos(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [](const auto& v) { return v.array().acos(); });

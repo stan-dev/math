@@ -3,9 +3,8 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
-#include <stan/math/prim/fun/log_mix.hpp>
-#include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/rev/functor/partials_propagator.hpp>
+#include <stan/math/prim/fun/log_mix.hpp>
 #include <cmath>
 
 namespace stan {

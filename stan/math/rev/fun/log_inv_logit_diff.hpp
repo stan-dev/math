@@ -3,10 +3,10 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/fun/expm1.hpp>
+#include <stan/math/rev/fun/inv_logit.hpp>
+#include <stan/math/rev/fun/inv.hpp>
 #include <stan/math/prim/fun/log_inv_logit_diff.hpp>
-#include <stan/math/prim/fun/inv_logit.hpp>
-#include <stan/math/prim/fun/inv.hpp>
-#include <stan/math/prim/fun/expm1.hpp>
 
 namespace stan {
 namespace math {

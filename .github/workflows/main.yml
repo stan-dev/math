@@ -1,4 +1,5 @@
-name: Windows Rtools44
+# Note that the workflows below use Powershell (pwsh) as they were originally written for Windows runners.
+name: Rtools & ARM64 CI
 
 on:
   pull_request:
@@ -20,38 +21,54 @@ concurrency:
 
 jobs:
   prim-rev:
-    name: prim and rev tests
-    runs-on: windows-latest
+    name: ${{ matrix.config.label }} tests (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-11-arm, windows-latest, ubuntu-24.04-arm]
+        config: [
+          { label: misc, tests: 'test/unit/*_test.cpp test/unit/math/*_test.cpp test/unit/math/memory' },
+          { label: prim, tests: 'test/unit/math/prim' },
+          { label: rev, tests: 'test/unit/math/rev' },
+          { label: fwd, tests: 'test/unit/math/fwd' },
+          { label: 'non-fun mix', tests: 'test/unit/math/mix/core test/unit/math/mix/meta test/unit/math/mix/*_test.cpp' }
+        ]
 
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-python@v5
       with:
         python-version: '3.x'
-    - uses: r-lib/actions/setup-r@v2
-      with:
-        r-version: 'release'
-        rtools-version: '44'
 
-    - name: Set path for Rtools44
+    - name: Download and Install Rtools45
       if: runner.os == 'Windows'
-      run: echo "C:/rtools44/usr/bin;C:/rtools44/x86_64-w64-mingw32.static.posix/bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
-
-#    - name: Build Math libs
-#      shell: powershell
-#      run: |
-#        make -f make/standalone math-libs -j4
-    - name: Add TBB to PATH
-      shell: powershell
-      run: echo "D:/a/math/math/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
-    - name: Run prim and rev unit tests
-      shell: powershell
       run: |
-        cmake -S . -B build -DCMAKE_BUILD_TYPE=RELEASE
-        cd build
-        make -j4 test_unit_math_prim_rev_test
-        cd test
-        ctest -R "unit_math_prim_rev"
+        $ARCH = if ('${{ matrix.os }}' -eq 'windows-11-arm') { 'aarch64' } else { 'x86_64' }
+        $RTOOLS = if ('${{ matrix.os }}' -eq 'windows-11-arm') { "rtools45-$ARCH" } else { 'rtools45' }
+
+        # Installation will hang if the toolchain is already installed
+        if (-Not $(Test-Path -Path "C:/$RTOOLS")) {
+          Invoke-WebRequest `
+              -Uri https://github.com/r-hub/rtools45/releases/download/latest/$RTOOLS.exe `
+              -OutFile "$RTOOLS.exe"
+          Start-Process -FilePath "$RTOOLS.exe" -ArgumentList "/INSTALL /VERYSILENT /SUPPRESSMSGBOXES" -Wait
+        }
+
+        echo "C:/$RTOOLS/usr/bin;C:/$RTOOLS/$ARCH-w64-mingw32.static.posix/bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
+        echo "$(pwd)/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
+
+    - name: Build Math libs
+      shell: pwsh
+      run: |
+        Add-Content make\local "CPPFLAGS=-w -Wno-psabi -Wno-misleading-indentation`n"
+        Add-Content make\local "STAN_THREADS=true`n"
+        make -f make/standalone math-libs -j2
+
+    - name: Run ${{ matrix.config.label }} unit tests
+      shell: pwsh
+      run: |
+        python runTests.py -j4 ${{ matrix.config.tests }}
 
     - name: Upload gtest_output xml
       uses: actions/upload-artifact@v4
@@ -60,90 +77,61 @@ jobs:
         name: gtest_outputs_xml
         path: '**/*_test.xml'
 
-  fwd-non-fun-mix:
-    name: fwd tests and non-fun mix tests
-    runs-on: windows-latest
+  mix-fun:
+    name: mix fun and prob tests ${{ matrix.group }} (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-11-arm, windows-latest, ubuntu-24.04-arm]
+        group: [1, 2, 3, 4, 5]
 
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-python@v5
       with:
         python-version: '3.x'
-    - uses: r-lib/actions/setup-r@v2
-      with:
-        r-version: 'release'
-        rtools-version: '44'
 
-    - name: Set path for Rtools44
+    - name: Download and Install Rtools45
       if: runner.os == 'Windows'
-      run: echo "C:/rtools44/usr/bin;C:/rtools44/x86_64-w64-mingw32.static.posix/bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
+      run: |
+        $ARCH = if ('${{ matrix.os }}' -eq 'windows-11-arm') { 'aarch64' } else { 'x86_64' }
+        $RTOOLS = if ('${{ matrix.os }}' -eq 'windows-11-arm') { "rtools45-$ARCH" } else { 'rtools45' }
+
+        # Installation will hang if the toolchain is already installed
+        if (-Not $(Test-Path -Path "C:/$RTOOLS")) {
+          Invoke-WebRequest `
+              -Uri https://github.com/r-hub/rtools45/releases/download/latest/$RTOOLS.exe `
+              -OutFile "$RTOOLS.exe"
+          Start-Process -FilePath "$RTOOLS.exe" -ArgumentList "/INSTALL /VERYSILENT /SUPPRESSMSGBOXES" -Wait
+        }
+
+        echo "C:/$RTOOLS/usr/bin;C:/$RTOOLS/$ARCH-w64-mingw32.static.posix/bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
+        echo "$(pwd)/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
 
     - name: Build Math libs
-      shell: powershell
+      shell: pwsh
       run: |
-        make -f make/standalone math-libs -j4
-    - name: Add TBB to PATH
-      shell: powershell
-      run: echo "D:/a/math/math/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
-    - name: Disable running fwd/mix tests
-      shell: powershell
-      run: echo "CXXFLAGS+= -DSTAN_MATH_TESTS_REV_ONLY" | Out-File -Append -FilePath make/local -Encoding utf8
-    - name: Run fwd unit tests and all the mix tests except those in mix/fun
-      shell: powershell
-      run: |
-        cmake -S . -B build -DCMAKE_BUILD_TYPE=RELEASE
-        cd build
-        make -j4 test_unit_math_fwd_nonfun_mix_subtests
-        cd test
-        ctest -R "unit_math_fwd_nonfun_mix"
+        Add-Content make\local "CPPFLAGS=-w -Wno-psabi -Wno-misleading-indentation`n"
+        Add-Content make\local "STAN_THREADS=true`n"
+        make -f make/standalone math-libs -j2
 
-    - name: Upload gtest_output xml
-      uses: actions/upload-artifact@v4
-      if: failure()
-      with:
-        name: gtest_outputs_xml
-        path: '**/*_test.xml'
-
-  mix-fun-1:
-    name: mix/fun tests 1
-    runs-on: windows-latest
-
-    steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-python@v5
-      with:
-        python-version: '3.x'
-    - uses: r-lib/actions/setup-r@v2
-      with:
-        r-version: 'release'
-        rtools-version: '44'
-
-    - name: Set path for Rtools44
-      if: runner.os == 'Windows'
-      run: echo "C:/rtools44/usr/bin;C:/rtools44/x86_64-w64-mingw32.static.posix/bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
-
-    - name: Build Math libs
-      shell: powershell
-      run: |
-        make -f make/standalone math-libs -j4
-    - name: Add TBB to PATH
-      shell: powershell
-      run: echo "D:/a/math/math/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
     - name: Run mix/fun unit tests
-      shell: powershell
+      shell: pwsh
       run: |
-        cmake -S . -B build -DCMAKE_BUILD_TYPE=RELEASE
-        cd build
-        make -j4 test_unit_math_mix_fun_subtests
-        cd test
-        ctest -L "unit_math_mix_fun"
+        $MixFunProbTests = Get-ChildItem -Path test\unit\math\mix\fun\*, test\unit\math\mix\prob\* -Include *.cpp | Resolve-Path -Relative
+        $NumberTests = $MixFunProbTests.Length
+        $FifthNumberTests = [math]::Floor($NumberTests / 5)
 
-    - name: Upload gtest_output xml
-      uses: actions/upload-artifact@v4
-      if: failure()
-      with:
-        name: gtest_outputs_xml
-        path: '**/*_test.xml'
+        $MixFunProbTestsArray = @( `
+          $MixFunProbTests[0..($FifthNumberTests - 1)], `
+          $MixFunProbTests[$FifthNumberTests..(2 * $FifthNumberTests - 1)], `
+          $MixFunProbTests[(2 * $FifthNumberTests)..(3 * $FifthNumberTests - 1)], `
+          $MixFunProbTests[(3 * $FifthNumberTests)..(4 * $FifthNumberTests - 1)], `
+          $MixFunProbTests[(4 * $FifthNumberTests)..($NumberTests - 1)] `
+        )
+
+        python runTests.py -j2 $MixFunProbTestsArray[(${{ matrix.group }} - 1)]
 
     - name: Upload gtest_output xml
       uses: actions/upload-artifact@v4

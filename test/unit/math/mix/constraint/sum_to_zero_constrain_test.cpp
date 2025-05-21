@@ -56,3 +56,24 @@ TEST(MathMixMatFun, sum_to_zeroTransform) {
   v5 << 1, -3, 2, 0, -1;
   sum_to_zero_constrain_test::expect_sum_to_zero_transform(v5);
 }
+
+TEST(MathMixMatFun, sum_to_zero_matrixTransform) {
+  Eigen::MatrixXd m0_0(0, 0);
+  sum_to_zero_constrain_test::expect_sum_to_zero_transform(m0_0);
+
+  Eigen::MatrixXd m1_1(1, 1);
+  m1_1 << 1;
+  sum_to_zero_constrain_test::expect_sum_to_zero_transform(m1_1);
+
+  Eigen::MatrixXd m2_2(2, 2);
+  m2_2 << 1, 2, -3, 4;
+  sum_to_zero_constrain_test::expect_sum_to_zero_transform(m2_2);
+
+  Eigen::MatrixXd m3_4(3, 4);
+  m3_4 << 1, 2, -3, 4, 5, 6, -7, 8, 9, -10, 11, -12;
+
+  sum_to_zero_constrain_test::expect_sum_to_zero_transform(m3_4);
+
+  Eigen::MatrixXd m4_3 = m3_4.transpose();
+  sum_to_zero_constrain_test::expect_sum_to_zero_transform(m4_3);
+}

@@ -110,6 +110,7 @@
 #include <stan/math/prim/meta/is_var_or_arithmetic.hpp>
 #include <stan/math/prim/meta/is_vector.hpp>
 #include <stan/math/prim/meta/is_vector_like.hpp>
+#include <stan/math/prim/meta/is_real.hpp>
 #include <stan/math/prim/meta/is_stan_scalar.hpp>
 #include <stan/math/prim/meta/is_stan_scalar_or_eigen.hpp>
 #include <stan/math/prim/meta/modify_eigen_options.hpp>

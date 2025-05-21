@@ -1,4 +1,3 @@
-#include <stan/math/prim.hpp>
 #include <test/unit/math/test_ad.hpp>
 #include <complex>
 #include <vector>

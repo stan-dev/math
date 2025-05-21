@@ -3,7 +3,7 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/prim/fun/expm1.hpp>
+#include <stan/math/rev/fun/expm1.hpp>
 #include <stan/math/prim/fun/log1m_exp.hpp>
 
 namespace stan {

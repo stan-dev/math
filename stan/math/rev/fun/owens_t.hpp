@@ -3,11 +3,11 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/fun/erf.hpp>
+#include <stan/math/rev/fun/square.hpp>
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/erf.hpp>
 #include <stan/math/prim/fun/eval.hpp>
 #include <stan/math/prim/fun/owens_t.hpp>
-#include <stan/math/prim/fun/square.hpp>
 #include <cmath>
 
 namespace stan {

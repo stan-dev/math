@@ -2,6 +2,18 @@
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
+TEST(prob_transform, simplex_0) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  double lp = 0;
+  Matrix<double, Dynamic, 1> x(0);
+  auto y = stan::math::simplex_constrain<false>(x, lp);
+  EXPECT_EQ(1, y.size());
+  EXPECT_FLOAT_EQ(1.0, y[0]);
+  auto xrt = stan::math::simplex_free(y);
+  EXPECT_EQ(0, xrt.size());
+}
+
 TEST(prob_transform, simplex_rt0) {
   using Eigen::Dynamic;
   using Eigen::Matrix;

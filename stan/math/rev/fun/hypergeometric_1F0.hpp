@@ -1,12 +1,12 @@
 #ifndef STAN_MATH_REV_FUN_HYPERGEOMETRIC_1F0_HPP
 #define STAN_MATH_REV_FUN_HYPERGEOMETRIC_1F0_HPP
 
+#include <stan/math/rev/core.hpp>
+#include <stan/math/rev/fun/log1m.hpp>
+#include <stan/math/rev/fun/inv.hpp>
+#include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/hypergeometric_1F0.hpp>
-#include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/fun/log1m.hpp>
-#include <stan/math/prim/fun/inv.hpp>
-#include <stan/math/rev/core.hpp>
 
 namespace stan {
 namespace math {
@@ -31,10 +31,10 @@ namespace math {
 template <typename Ta, typename Tz,
           require_all_stan_scalar_t<Ta, Tz>* = nullptr,
           require_any_var_t<Ta, Tz>* = nullptr>
-var hypergeometric_1f0(const Ta& a, const Tz& z) {
+var hypergeometric_1F0(const Ta& a, const Tz& z) {
   double a_val = value_of(a);
   double z_val = value_of(z);
-  double rtn = hypergeometric_1f0(a_val, z_val);
+  double rtn = hypergeometric_1F0(a_val, z_val);
   return make_callback_var(rtn, [rtn, a, z, a_val, z_val](auto& vi) mutable {
     if (!is_constant_all<Ta>::value) {
       forward_as<var>(a).adj() += vi.adj() * -rtn * log1m(z_val);

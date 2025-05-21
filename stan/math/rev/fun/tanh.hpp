@@ -1,11 +1,11 @@
 #ifndef STAN_MATH_REV_FUN_TANH_HPP
 #define STAN_MATH_REV_FUN_TANH_HPP
 
-#include <stan/math/prim/fun/tanh.hpp>
-#include <stan/math/prim/fun/cosh.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/fun/cosh.hpp>
 #include <stan/math/rev/fun/exp.hpp>
+#include <stan/math/prim/fun/tanh.hpp>
 #include <cmath>
 #include <complex>
 

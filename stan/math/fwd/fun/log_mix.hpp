@@ -3,7 +3,8 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/fwd/fun/exp.hpp>
+#include <stan/math/fwd/fun/value_of.hpp>
 #include <stan/math/prim/fun/log_mix.hpp>
 #include <cmath>
 #include <type_traits>
@@ -28,7 +29,6 @@ template <typename T_theta, typename T_lambda1, typename T_lambda2, int N>
 inline void log_mix_partial_helper(
     const T_theta& theta, const T_lambda1& lambda1, const T_lambda2& lambda2,
     promote_args_t<T_theta, T_lambda1, T_lambda2> (&partials_array)[N]) {
-  using std::exp;
   using partial_return_type = promote_args_t<T_theta, T_lambda1, T_lambda2>;
   auto lam2_m_lam1 = lambda2 - lambda1;
   auto exp_lam2_m_lam1 = exp(lam2_m_lam1);

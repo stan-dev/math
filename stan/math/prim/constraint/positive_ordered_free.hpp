@@ -25,7 +25,7 @@ namespace math {
  *   ordered scalars.
  */
 template <typename EigVec, require_eigen_col_vector_t<EigVec>* = nullptr>
-auto positive_ordered_free(const EigVec& y) {
+inline auto positive_ordered_free(const EigVec& y) {
   using std::log;
   const auto& y_ref = to_ref(y);
   check_positive_ordered("stan::math::positive_ordered_free",
@@ -49,7 +49,7 @@ auto positive_ordered_free(const EigVec& y) {
  * @param x The standard vector to untransform.
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
-auto positive_ordered_free(const T& x) {
+inline auto positive_ordered_free(const T& x) {
   return apply_vector_unary<T>::apply(
       x, [](auto&& v) { return positive_ordered_free(v); });
 }

@@ -86,7 +86,7 @@ cov_matrix_constrain_lkj(const T& x, size_t k, return_type_t<T>& lp) {
 template <bool Jacobian, typename T, require_not_std_vector_t<T>* = nullptr>
 inline auto cov_matrix_constrain_lkj(const T& x, size_t k,
                                      return_type_t<T>& lp) {
-  if (Jacobian) {
+  if constexpr (Jacobian) {
     return cov_matrix_constrain_lkj(x, k, lp);
   } else {
     return cov_matrix_constrain_lkj(x, k);

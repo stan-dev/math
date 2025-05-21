@@ -14,7 +14,7 @@ namespace math {
  * @param[in] z argument
  * @return squared magnitude of the argument
  */
-template <typename V>
+template <typename V, require_arithmetic_t<V>* = nullptr>
 inline V norm(const std::complex<V>& z) {
   return std::norm(z);
 }

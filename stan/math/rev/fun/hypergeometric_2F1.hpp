@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_REV_FUN_HYPERGEOMETRIC_2F1_HPP
 #define STAN_MATH_REV_FUN_HYPERGEOMETRIC_2F1_HPP
 
-#include <stan/math/prim/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/prim/fun/hypergeometric_2F1.hpp>
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/fun/grad_2F1.hpp>
+#include <stan/math/prim/fun/hypergeometric_2F1.hpp>
 
 namespace stan {
 namespace math {
@@ -29,7 +29,7 @@ namespace math {
 template <typename Ta1, typename Ta2, typename Tb, typename Tz,
           require_all_stan_scalar_t<Ta1, Ta2, Tb, Tz>* = nullptr,
           require_any_var_t<Ta1, Ta2, Tb, Tz>* = nullptr>
-inline return_type_t<Ta1, Ta1, Tb, Tz> hypergeometric_2F1(const Ta1& a1,
+inline return_type_t<Ta1, Ta2, Tb, Tz> hypergeometric_2F1(const Ta1& a1,
                                                           const Ta2& a2,
                                                           const Tb& b,
                                                           const Tz& z) {

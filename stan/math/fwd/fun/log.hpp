@@ -3,6 +3,9 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
+#include <stan/math/fwd/fun/sqrt.hpp>
+#include <stan/math/fwd/fun/norm.hpp>
+#include <stan/math/fwd/fun/arg.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <cmath>
@@ -13,7 +16,6 @@ namespace math {
 
 template <typename T>
 inline fvar<T> log(const fvar<T>& x) {
-  using std::log;
   if (x.val_ < 0.0) {
     return fvar<T>(NOT_A_NUMBER, NOT_A_NUMBER);
   } else {

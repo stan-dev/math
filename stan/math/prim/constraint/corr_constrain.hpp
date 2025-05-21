@@ -66,7 +66,7 @@ inline auto corr_constrain(const T_x& x, T_lp& lp) {
  */
 template <bool Jacobian, typename T_x, typename T_lp>
 inline auto corr_constrain(const T_x& x, T_lp& lp) {
-  if (Jacobian) {
+  if constexpr (Jacobian) {
     return corr_constrain(x, lp);
   } else {
     return corr_constrain(x);

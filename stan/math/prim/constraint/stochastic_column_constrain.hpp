@@ -3,10 +3,6 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/fun/inv_logit.hpp>
-#include <stan/math/prim/fun/log.hpp>
-#include <stan/math/prim/fun/log1p_exp.hpp>
-#include <stan/math/prim/fun/logit.hpp>
 #include <stan/math/prim/constraint/simplex_constrain.hpp>
 #include <cmath>
 
@@ -16,7 +12,8 @@ namespace math {
 /**
  * Return a column stochastic matrix.
  *
- * The transform is based on a centered stick-breaking process.
+ * The transform is defined using the inverse of the
+ * isometric log ratio (ILR) transform
  *
  * @tparam Mat type of the Matrix
  * @param y Free Matrix input of dimensionality (K - 1, M)
@@ -39,18 +36,21 @@ inline plain_type_t<Mat> stochastic_column_constrain(const Mat& y) {
  * and increment the specified log probability reference with
  * the log absolute Jacobian determinant of the transform.
  *
- * The simplex transform is defined through a centered
- * stick-breaking process.
+ * The simplex transform is defined using the inverse of the
+ * isometric log ratio (ILR) transform
  *
  * @tparam Mat type of the Matrix
+ * @tparam Lp A scalar type for the lp argument. The scalar type of Mat should
+ * be convertable to this.
  * @param y Free Matrix input of dimensionality (K - 1, M)
  * @param lp Log probability reference to increment.
  * @return Matrix with stochastic columns of dimensionality (K, M)
  */
-template <typename Mat, require_eigen_matrix_dynamic_t<Mat>* = nullptr,
-          require_not_st_var<Mat>* = nullptr>
-inline plain_type_t<Mat> stochastic_column_constrain(const Mat& y,
-                                                     value_type_t<Mat>& lp) {
+template <typename Mat, typename Lp,
+          require_eigen_matrix_dynamic_t<Mat>* = nullptr,
+          require_not_st_var<Mat>* = nullptr,
+          require_convertible_t<value_type_t<Mat>, Lp>* = nullptr>
+inline plain_type_t<Mat> stochastic_column_constrain(const Mat& y, Lp& lp) {
   auto&& y_ref = to_ref(y);
   const Eigen::Index M = y_ref.cols();
   plain_type_t<Mat> ret(y_ref.rows() + 1, M);
@@ -58,6 +58,43 @@ inline plain_type_t<Mat> stochastic_column_constrain(const Mat& y,
     ret.col(i) = simplex_constrain(y_ref.col(i), lp);
   }
   return ret;
+}
+/**
+ * Return a vector of column stochastic matrices.
+ * This overload handles looping over the elements of a standard vector.
+ *
+ * @tparam T A standard vector with inner type inheriting from
+ * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
+ * `Eigen::DenseBase` with compile time dynamic rows and dynamic columns
+ * @param[in] y free vector
+ * @return Standard vector containing matrices with simplex columns of
+ * dimensionality (K, M).
+ */
+template <typename T, require_std_vector_t<T>* = nullptr>
+inline auto stochastic_column_constrain(const T& y) {
+  return apply_vector_unary<T>::apply(
+      y, [](auto&& v) { return stochastic_column_constrain(v); });
+}
+
+/**
+ * Return a vector of column stochastic matrices.
+ * This overload handles looping over the elements of a standard vector.
+ *
+ * @tparam T A standard vector with inner type inheriting from
+ * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
+ * `Eigen::DenseBase` with compile time dynamic rows and dynamic columns
+ * @tparam Lp Scalar type for the lp argument. The scalar type of T should be
+ * convertable to this.
+ * @param[in] y free vector
+ * @param[in, out] lp log density accumulator
+ * @return Standard vector containing matrices with simplex columns of
+ * dimensionality (K, M).
+ */
+template <typename T, typename Lp, require_std_vector_t<T>* = nullptr,
+          require_convertible_t<return_type_t<T>, Lp>* = nullptr>
+inline auto stochastic_column_constrain(const T& y, Lp& lp) {
+  return apply_vector_unary<T>::apply(
+      y, [&lp](auto&& v) { return stochastic_column_constrain(v, lp); });
 }
 
 /**
@@ -69,43 +106,23 @@ inline plain_type_t<Mat> stochastic_column_constrain(const Mat& y,
  *
  * @tparam Jacobian if `true`, increment log density accumulator with log
  * absolute Jacobian determinant of constraining transform
- * @tparam Mat type of the Matrix
+ * @tparam Mat A type inheriting from `Eigen::DenseBase` or a `var_value` with
+ *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
+ *  and dynamic columns, or a standard vector thereof
+ * @tparam Lp A scalar type for the lp argument. The scalar type of Mat should
+ * be convertable to this.
  * @param y Free Matrix input of dimensionality (K - 1, M).
  * @param[in, out] lp log density accumulator
  * @return Matrix with simplex columns of dimensionality (K, M).
  */
-template <bool Jacobian, typename Mat, require_not_std_vector_t<Mat>* = nullptr>
-inline plain_type_t<Mat> stochastic_column_constrain(const Mat& y,
-                                                     return_type_t<Mat>& lp) {
-  if (Jacobian) {
+template <bool Jacobian, typename Mat, typename Lp,
+          require_convertible_t<return_type_t<Mat>, Lp>* = nullptr>
+inline plain_type_t<Mat> stochastic_column_constrain(const Mat& y, Lp& lp) {
+  if constexpr (Jacobian) {
     return stochastic_column_constrain(y, lp);
   } else {
     return stochastic_column_constrain(y);
   }
-}
-
-/**
- * Return a vector of column stochastic matrices. If the
- * `Jacobian` parameter is `true`, the log density accumulator is incremented
- * with the log absolute Jacobian determinant of the transform.  All of the
- * transforms are specified with their Jacobians in the *Stan Reference Manual*
- * chapter Constraint Transforms.
- *
- * @tparam Jacobian if `true`, increment log density accumulator with log
- * absolute Jacobian determinant of constraining transform
- * @tparam T A standard vector with inner type inheriting from
- * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
- * `Eigen::DenseBase` with compile time dynamic rows and dynamic columns
- * @param[in] y free vector
- * @param[in, out] lp log density accumulator
- * @return Standard vector containing matrices with simplex columns of
- * dimensionality (K, M).
- */
-template <bool Jacobian, typename T, require_std_vector_t<T>* = nullptr>
-inline auto stochastic_column_constrain(const T& y, return_type_t<T>& lp) {
-  return apply_vector_unary<T>::apply(y, [&lp](auto&& v) {
-    return stochastic_column_constrain<Jacobian>(v, lp);
-  });
 }
 
 }  // namespace math

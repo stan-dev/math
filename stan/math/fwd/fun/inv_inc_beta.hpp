@@ -3,15 +3,18 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/prim/fun/inv_inc_beta.hpp>
-#include <stan/math/prim/fun/inc_beta.hpp>
-#include <stan/math/prim/fun/exp.hpp>
-#include <stan/math/prim/fun/log.hpp>
-#include <stan/math/prim/fun/log_diff_exp.hpp>
-#include <stan/math/prim/fun/lbeta.hpp>
-#include <stan/math/prim/fun/lgamma.hpp>
-#include <stan/math/prim/fun/digamma.hpp>
+#include <stan/math/fwd/fun/digamma.hpp>
+#include <stan/math/fwd/fun/exp.hpp>
+#include <stan/math/fwd/fun/fabs.hpp>
+#include <stan/math/fwd/fun/inc_beta.hpp>
+#include <stan/math/fwd/fun/lbeta.hpp>
+#include <stan/math/fwd/fun/lgamma.hpp>
+#include <stan/math/fwd/fun/log.hpp>
+#include <stan/math/fwd/fun/log1m.hpp>
+#include <stan/math/fwd/fun/log_diff_exp.hpp>
+#include <stan/math/fwd/fun/sum.hpp>
 #include <stan/math/prim/fun/hypergeometric_3F2.hpp>
+#include <stan/math/prim/fun/inv_inc_beta.hpp>
 
 namespace stan {
 namespace math {

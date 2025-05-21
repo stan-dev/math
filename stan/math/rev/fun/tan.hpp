@@ -1,13 +1,13 @@
 #ifndef STAN_MATH_REV_FUN_TAN_HPP
 #define STAN_MATH_REV_FUN_TAN_HPP
 
-#include <stan/math/prim/fun/isinf.hpp>
-#include <stan/math/prim/fun/tan.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/is_inf.hpp>
 #include <stan/math/rev/fun/sinh.hpp>
 #include <stan/math/rev/fun/tanh.hpp>
+#include <stan/math/prim/fun/isinf.hpp>
+#include <stan/math/prim/fun/tan.hpp>
 #include <cmath>
 #include <complex>
 

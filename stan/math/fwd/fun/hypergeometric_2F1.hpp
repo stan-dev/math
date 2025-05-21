@@ -3,8 +3,9 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/prim/fun/hypergeometric_2F1.hpp>
+#include <stan/math/fwd/fun/value_of.hpp>
 #include <stan/math/prim/fun/grad_2F1.hpp>
+#include <stan/math/prim/fun/hypergeometric_2F1.hpp>
 
 namespace stan {
 namespace math {
@@ -29,11 +30,11 @@ namespace math {
 template <typename Ta1, typename Ta2, typename Tb, typename Tz,
           require_all_stan_scalar_t<Ta1, Ta2, Tb, Tz>* = nullptr,
           require_any_fvar_t<Ta1, Ta2, Tb, Tz>* = nullptr>
-inline return_type_t<Ta1, Ta1, Tb, Tz> hypergeometric_2F1(const Ta1& a1,
+inline return_type_t<Ta1, Ta2, Tb, Tz> hypergeometric_2F1(const Ta1& a1,
                                                           const Ta2& a2,
                                                           const Tb& b,
                                                           const Tz& z) {
-  using fvar_t = return_type_t<Ta1, Ta1, Tb, Tz>;
+  using fvar_t = return_type_t<Ta1, Ta2, Tb, Tz>;
 
   auto a1_val = value_of(a1);
   auto a2_val = value_of(a2);

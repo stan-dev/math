@@ -24,17 +24,17 @@ namespace math {
  *
  * This base template function takes (and returns) scalars.
  *
+ * @tparam F Type of functor to apply.
  * @tparam T1 Type of first argument to which functor is applied.
  * @tparam T2 Type of second argument to which functor is applied.
- * @tparam F Type of functor to apply.
+ * @param f functor to apply to inputs.
  * @param x First input to which operation is applied.
  * @param y Second input to which operation is applied.
- * @param f functor to apply to inputs.
  * @return Scalar with result of applying functor to input.
  */
-template <typename T1, typename T2, typename F,
+template <typename F, typename T1, typename T2,
           require_all_stan_scalar_t<T1, T2>* = nullptr>
-inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
+inline auto apply_scalar_binary(const F& f, const T1& x, const T2& y) {
   return f(x, y);
 }
 
@@ -43,17 +43,17 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
  * is used for more efficient indexing of both row- and column-major inputs
  * without separate loops.
  *
+ * @tparam F Type of functor to apply.
  * @tparam T1 Type of first argument to which functor is applied.
  * @tparam T2 Type of second argument to which functor is applied.
- * @tparam F Type of functor to apply.
+ * @param f functor to apply to Eigen input.
  * @param x First Eigen input to which operation is applied.
  * @param y Second Eigen input to which operation is applied.
- * @param f functor to apply to Eigen input.
  * @return Eigen object with result of applying functor to inputs.
  */
-template <typename T1, typename T2, typename F,
+template <typename F, typename T1, typename T2,
           require_all_eigen_t<T1, T2>* = nullptr>
-inline auto apply_scalar_binary(T1&& x, T2&& y, F&& f) {
+inline auto apply_scalar_binary(F&& f, T1&& x, T2&& y) {
   check_matching_dims("Binary function", "x", x, "y", y);
   return make_holder(
       [](auto& f_inner, auto& x_inner, auto& y_inner) {
@@ -66,18 +66,18 @@ inline auto apply_scalar_binary(T1&& x, T2&& y, F&& f) {
  * Specialization for use with one Eigen vector (row or column) and
  * a one-dimensional std::vector of integer types
  *
+ * @tparam F Type of functor to apply.
  * @tparam T1 Type of first argument to which functor is applied.
  * @tparam T2 Type of second argument to which functor is applied.
- * @tparam F Type of functor to apply.
+ * @param f functor to apply to inputs.
  * @param x Eigen input to which operation is applied.
  * @param y Integer std::vector input to which operation is applied.
- * @param f functor to apply to inputs.
  * @return Eigen object with result of applying functor to inputs.
  */
-template <typename T1, typename T2, typename F,
+template <typename F, typename T1, typename T2,
           require_eigen_vector_vt<is_stan_scalar, T1>* = nullptr,
           require_std_vector_vt<std::is_integral, T2>* = nullptr>
-inline auto apply_scalar_binary(T1&& x, T2&& y, F&& f) {
+inline auto apply_scalar_binary(F&& f, T1&& x, T2&& y) {
   check_matching_sizes("Binary function", "x", x, "y", y);
   return make_holder(
       [](auto& f_inner, auto& x_inner, auto& y_inner) {
@@ -93,18 +93,18 @@ inline auto apply_scalar_binary(T1&& x, T2&& y, F&& f) {
  * Specialization for use with a one-dimensional std::vector of integer types
  * and one Eigen vector (row or column).
  *
+ * @tparam F Type of functor to apply.
  * @tparam T1 Type of first argument to which functor is applied.
  * @tparam T2 Type of second argument to which functor is applied.
- * @tparam F Type of functor to apply.
+ * @param f functor to apply to inputs.
  * @param x Integer std::vector input to which operation is applied.
  * @param y Eigen input to which operation is applied.
- * @param f functor to apply to inputs.
  * @return Eigen object with result of applying functor to inputs.
  */
-template <typename T1, typename T2, typename F,
+template <typename F, typename T1, typename T2,
           require_std_vector_vt<std::is_integral, T1>* = nullptr,
           require_eigen_vector_vt<is_stan_scalar, T2>* = nullptr>
-inline auto apply_scalar_binary(T1&& x, T2&& y, F&& f) {
+inline auto apply_scalar_binary(F&& f, T1&& x, T2&& y) {
   check_matching_sizes("Binary function", "x", x, "y", y);
   return make_holder(
       [](auto& f_inner, auto& x_inner, auto& y_inner) {
@@ -120,19 +120,19 @@ inline auto apply_scalar_binary(T1&& x, T2&& y, F&& f) {
  * Specialization for use with one Eigen matrix and
  * a two-dimensional std::vector of integer types
  *
+ * @tparam F Type of functor to apply.
  * @tparam T1 Type of first argument to which functor is applied.
  * @tparam T2 Type of second argument to which functor is applied.
- * @tparam F Type of functor to apply.
+ * @param f functor to apply to inputs.
  * @param x Eigen matrix input to which operation is applied.
  * @param y Nested integer std::vector input to which operation is applied.
- * @param f functor to apply to inputs.
  * @return Eigen object with result of applying functor to inputs.
  */
-template <typename T1, typename T2, typename F,
+template <typename F, typename T1, typename T2,
           require_eigen_matrix_dynamic_vt<is_stan_scalar, T1>* = nullptr,
           require_std_vector_vt<is_std_vector, T2>* = nullptr,
           require_std_vector_st<std::is_integral, T2>* = nullptr>
-inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
+inline auto apply_scalar_binary(const F& f, const T1& x, const T2& y) {
   if (num_elements(x) != num_elements(y)) {
     std::ostringstream msg;
     msg << "Inputs to vectorized binary function must match in"
@@ -143,8 +143,8 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
   Eigen::Matrix<return_st, Eigen::Dynamic, Eigen::Dynamic> result(x.rows(),
                                                                   x.cols());
   for (size_t i = 0; i < y.size(); ++i) {
-    result.row(i) = apply_scalar_binary(x.row(i).transpose(),
-                                        as_column_vector_or_scalar(y[i]), f);
+    result.row(i) = apply_scalar_binary(f, x.row(i).transpose(),
+                                        as_column_vector_or_scalar(y[i]));
   }
   return result;
 }
@@ -153,19 +153,19 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
  * Specialization for use with a two-dimensional std::vector of integer types
  * and one Eigen matrix.
  *
+ * @tparam F Type of functor to apply.
  * @tparam T1 Type of first argument to which functor is applied.
  * @tparam T2 Type of second argument to which functor is applied.
- * @tparam F Type of functor to apply.
+ * @param f functor to apply to inputs.
  * @param x Nested integer std::vector input to which operation is applied.
  * @param y Eigen matrix input to which operation is applied.
- * @param f functor to apply to inputs.
  * @return Eigen object with result of applying functor to inputs.
  */
-template <typename T1, typename T2, typename F,
+template <typename F, typename T1, typename T2,
           require_std_vector_vt<is_std_vector, T1>* = nullptr,
           require_std_vector_st<std::is_integral, T1>* = nullptr,
           require_eigen_matrix_dynamic_vt<is_stan_scalar, T2>* = nullptr>
-inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
+inline auto apply_scalar_binary(const F& f, const T1& x, const T2& y) {
   if (num_elements(x) != num_elements(y)) {
     std::ostringstream msg;
     msg << "Inputs to vectorized binary function must match in"
@@ -176,8 +176,8 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
   Eigen::Matrix<return_st, Eigen::Dynamic, Eigen::Dynamic> result(y.rows(),
                                                                   y.cols());
   for (size_t i = 0; i < x.size(); ++i) {
-    result.row(i) = apply_scalar_binary(as_column_vector_or_scalar(x[i]),
-                                        y.row(i).transpose(), f);
+    result.row(i) = apply_scalar_binary(f, as_column_vector_or_scalar(x[i]),
+                                        y.row(i).transpose());
   }
   return result;
 }
@@ -189,17 +189,17 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
  * for the scalar to be captured and applied to each element in the Eigen
  * object.
  *
+ * @tparam F Type of functor to apply.
  * @tparam T1 Type of Eigen object to which functor is applied.
  * @tparam T2 Type of scalar to which functor is applied.
- * @tparam F Type of functor to apply.
+ * @param f functor to apply to Eigen and scalar inputs.
  * @param x Eigen input to which operation is applied.
  * @param y Scalar input to which operation is applied.
- * @param f functor to apply to Eigen and scalar inputs.
  * @return Eigen object with result of applying functor to inputs.
  */
-template <typename T1, typename T2, typename F, require_eigen_t<T1>* = nullptr,
+template <typename F, typename T1, typename T2, require_eigen_t<T1>* = nullptr,
           require_stan_scalar_t<T2>* = nullptr>
-inline auto apply_scalar_binary(T1&& x, T2&& y, F&& f) {
+inline auto apply_scalar_binary(F&& f, T1&& x, T2&& y) {
   return make_holder(
       [](auto& f_inner, auto& x_inner, auto& y_inner) {
         return x_inner.unaryExpr(
@@ -215,17 +215,17 @@ inline auto apply_scalar_binary(T1&& x, T2&& y, F&& f) {
  * allows for the scalar to be captured and applied to each element in the
  * Eigen object.
  *
+ * @tparam F Type of functor to apply.
  * @tparam T1 Type of scalar to which functor is applied.
  * @tparam T2 Type of Eigen object to which functor is applied.
- * @tparam F Type of functor to apply.
+ * @param f functor to apply to Eigen and scalar inputs.
  * @param x Scalar input to which operation is applied.
  * @param y Eigen input to which operation is applied.
- * @param f functor to apply to Eigen and scalar inputs.
  * @return Eigen object with result of applying functor to inputs.
  */
-template <typename T1, typename T2, typename F,
+template <typename F, typename T1, typename T2,
           require_stan_scalar_t<T1>* = nullptr, require_eigen_t<T2>* = nullptr>
-inline auto apply_scalar_binary(T1&& x, T2&& y, F&& f) {
+inline auto apply_scalar_binary(F&& f, T1&& x, T2&& y) {
   return make_holder(
       [](auto& f_inner, auto& x_inner, auto& y_inner) {
         return y_inner.unaryExpr(
@@ -243,17 +243,17 @@ inline auto apply_scalar_binary(T1&& x, T2&& y, F&& f) {
  * return scalar types differ (e.g., functions implicitly promoting
  * integers).
  *
+ * @tparam F Type of functor to apply.
  * @tparam T1 Type of first std::vector to which functor is applied.
  * @tparam T2 Type of second std::vector to which functor is applied.
- * @tparam F Type of functor to apply.
+ * @param f functor to apply to std::vector inputs.
  * @param x First std::vector input to which operation is applied.
  * @param y Second std::vector input to which operation is applied.
- * @param f functor to apply to std::vector inputs.
  * @return std::vector with result of applying functor to inputs.
  */
-template <typename T1, typename T2, typename F,
+template <typename F, typename T1, typename T2,
           require_all_std_vector_vt<is_stan_scalar, T1, T2>* = nullptr>
-inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
+inline auto apply_scalar_binary(const F& f, const T1& x, const T2& y) {
   check_matching_sizes("Binary function", "x", x, "y", y);
   decltype(auto) x_vec = as_column_vector_or_scalar(x);
   decltype(auto) y_vec = as_column_vector_or_scalar(y);
@@ -274,18 +274,18 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
  * return scalar types differ (e.g., functions implicitly promoting
  * integers).
  *
+ * @tparam F Type of functor to apply.
  * @tparam T1 Type of std::vector to which functor is applied.
  * @tparam T2 Type of scalar to which functor is applied.
- * @tparam F Type of functor to apply.
+ * @param f functor to apply to std::vector and scalar inputs.
  * @param x std::vector input to which operation is applied.
  * @param y Scalar input to which operation is applied.
- * @param f functor to apply to std::vector and scalar inputs.
  * @return std::vector with result of applying functor to inputs.
  */
-template <typename T1, typename T2, typename F,
+template <typename F, typename T1, typename T2,
           require_std_vector_vt<is_stan_scalar, T1>* = nullptr,
           require_stan_scalar_t<T2>* = nullptr>
-inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
+inline auto apply_scalar_binary(const F& f, const T1& x, const T2& y) {
   decltype(auto) x_vec = as_column_vector_or_scalar(x);
   using T_return = std::decay_t<decltype(f(x[0], y))>;
   std::vector<T_return> result(x.size());
@@ -304,18 +304,18 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
  * return scalar types differ (e.g., functions implicitly promoting
  * integers).
  *
+ * @tparam F Type of functor to apply.
  * @tparam T1 Type of scalar to which functor is applied.
  * @tparam T2 Type of std::vector to which functor is applied.
- * @tparam F Type of functor to apply.
+ * @param f functor to apply to std::vector and scalar inputs.
  * @param x Scalar input to which operation is applied.
  * @param y std::vector input to which operation is applied.
- * @param f functor to apply to std::vector and scalar inputs.
  * @return std::vector with result of applying functor to inputs.
  */
-template <typename T1, typename T2, typename F,
+template <typename F, typename T1, typename T2,
           require_stan_scalar_t<T1>* = nullptr,
           require_std_vector_vt<is_stan_scalar, T2>* = nullptr>
-inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
+inline auto apply_scalar_binary(const F& f, const T1& x, const T2& y) {
   decltype(auto) y_vec = as_column_vector_or_scalar(y);
   using T_return = std::decay_t<decltype(f(x, y[0]))>;
   std::vector<T_return> result(y.size());
@@ -330,24 +330,24 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
  * return scalar types differ (e.g., functions implicitly promoting
  * integers).
  *
+ * @tparam F Type of functor to apply.
  * @tparam T1 Type of first std::vector to which functor is applied.
  * @tparam T2 Type of second std::vector to which functor is applied.
- * @tparam F Type of functor to apply.
+ * @param f functor to apply to std::vector inputs.
  * @param x First std::vector input to which operation is applied.
  * @param y Second std::vector input to which operation is applied.
- * @param f functor to apply to std::vector inputs.
  * @return std::vector with result of applying functor to inputs.
  */
 template <
-    typename T1, typename T2, typename F,
+    typename F, typename T1, typename T2,
     require_all_std_vector_vt<is_container_or_var_matrix, T1, T2>* = nullptr>
-inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
+inline auto apply_scalar_binary(const F& f, const T1& x, const T2& y) {
   check_matching_sizes("Binary function", "x", x, "y", y);
-  using T_return = plain_type_t<decltype(apply_scalar_binary(x[0], y[0], f))>;
+  using T_return = plain_type_t<decltype(apply_scalar_binary(f, x[0], y[0]))>;
   size_t y_size = y.size();
   std::vector<T_return> result(y_size);
   for (size_t i = 0; i < y_size; ++i) {
-    result[i] = apply_scalar_binary(x[i], y[i], f);
+    result[i] = apply_scalar_binary(f, x[i], y[i]);
   }
   return result;
 }
@@ -358,23 +358,23 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
  * where the input and return scalar types differ (e.g., functions implicitly
  * promoting integers).
  *
+ * @tparam F Type of functor to apply.
  * @tparam T1 Type of std::vector to which functor is applied.
  * @tparam T2 Type of scalar to which functor is applied.
- * @tparam F Type of functor to apply.
+ * @param f functor to apply to inputs.
  * @param x std::vector input to which operation is applied.
  * @param y Scalar input to which operation is applied.
- * @param f functor to apply to inputs.
  * @return std::vector with result of applying functor to inputs.
  */
-template <typename T1, typename T2, typename F,
+template <typename F, typename T1, typename T2,
           require_std_vector_vt<is_container_or_var_matrix, T1>* = nullptr,
           require_stan_scalar_t<T2>* = nullptr>
-inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
-  using T_return = plain_type_t<decltype(apply_scalar_binary(x[0], y, f))>;
+inline auto apply_scalar_binary(const F& f, const T1& x, const T2& y) {
+  using T_return = plain_type_t<decltype(apply_scalar_binary(f, x[0], y))>;
   size_t x_size = x.size();
   std::vector<T_return> result(x_size);
   for (size_t i = 0; i < x_size; ++i) {
-    result[i] = apply_scalar_binary(x[i], y, f);
+    result[i] = apply_scalar_binary(f, x[i], y);
   }
   return result;
 }
@@ -385,23 +385,23 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
  * where the input and return scalar types differ (e.g., functions implicitly
  * promoting integers).
  *
+ * @tparam F Type of functor to apply.
  * @tparam T1 Type of scalar to which functor is applied.
  * @tparam T2 Type of std::vector to which functor is applied.
- * @tparam F Type of functor to apply.
+ * @param f functor to apply to inputs.
  * @param x Scalar input to which operation is applied.
  * @param y std::vector input to which operation is applied.
- * @param f functor to apply to inputs.
  * @return std::vector with result of applying functor to inputs.
  */
-template <typename T1, typename T2, typename F,
+template <typename F, typename T1, typename T2,
           require_stan_scalar_t<T1>* = nullptr,
           require_std_vector_vt<is_container_or_var_matrix, T2>* = nullptr>
-inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
-  using T_return = plain_type_t<decltype(apply_scalar_binary(x, y[0], f))>;
+inline auto apply_scalar_binary(const F& f, const T1& x, const T2& y) {
+  using T_return = plain_type_t<decltype(apply_scalar_binary(f, x, y[0]))>;
   size_t y_size = y.size();
   std::vector<T_return> result(y_size);
   for (size_t i = 0; i < y_size; ++i) {
-    result[i] = apply_scalar_binary(x, y[i], f);
+    result[i] = apply_scalar_binary(f, x, y[i]);
   }
   return result;
 }

@@ -2,11 +2,10 @@
 #define STAN_MATH_REV_FUN_FFT_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/fun/typedefs.hpp>
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/prim/fun/fft.hpp>
+#include <stan/math/prim/fun/typedefs.hpp>
 #include <stan/math/prim/fun/to_complex.hpp>
-#include <Eigen/Dense>
+#include <stan/math/prim/fun/fft.hpp>
 #include <complex>
 #include <type_traits>
 #include <vector>

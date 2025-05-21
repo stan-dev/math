@@ -116,7 +116,6 @@
 #include <stan/math/prim/fun/gp_periodic_cov.hpp>
 #include <stan/math/prim/fun/grad_2F1.hpp>
 #include <stan/math/prim/fun/grad_F32.hpp>
-#include <stan/math/prim/fun/grad_inc_beta.hpp>
 #include <stan/math/prim/fun/grad_pFq.hpp>
 #include <stan/math/prim/fun/grad_reg_inc_beta.hpp>
 #include <stan/math/prim/fun/grad_reg_inc_gamma.hpp>

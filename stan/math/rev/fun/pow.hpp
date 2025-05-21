@@ -1,6 +1,17 @@
 #ifndef STAN_MATH_REV_FUN_POW_HPP
 #define STAN_MATH_REV_FUN_POW_HPP
 
+#include <stan/math/rev/meta.hpp>
+#include <stan/math/rev/core.hpp>
+#include <stan/math/rev/fun/exp.hpp>
+#include <stan/math/rev/fun/inv.hpp>
+#include <stan/math/rev/fun/inv_sqrt.hpp>
+#include <stan/math/rev/fun/inv_square.hpp>
+#include <stan/math/rev/fun/is_nan.hpp>
+#include <stan/math/rev/fun/log.hpp>
+#include <stan/math/rev/fun/sqrt.hpp>
+#include <stan/math/rev/fun/square.hpp>
+#include <stan/math/rev/fun/value_of_rec.hpp>
 #include <stan/math/prim/core.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
@@ -10,16 +21,7 @@
 #include <stan/math/prim/fun/isnan.hpp>
 #include <stan/math/prim/fun/is_nan.hpp>
 #include <stan/math/prim/fun/pow.hpp>
-#include <stan/math/rev/meta.hpp>
-#include <stan/math/rev/core.hpp>
-#include <stan/math/rev/fun/inv.hpp>
-#include <stan/math/rev/fun/inv_sqrt.hpp>
-#include <stan/math/rev/fun/inv_square.hpp>
-#include <stan/math/rev/fun/is_nan.hpp>
-#include <stan/math/rev/fun/log.hpp>
-#include <stan/math/rev/fun/sqrt.hpp>
-#include <stan/math/rev/fun/square.hpp>
-#include <stan/math/rev/fun/value_of_rec.hpp>
+
 #include <cmath>
 #include <complex>
 #include <type_traits>
@@ -287,7 +289,7 @@ template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr,
           require_any_var_t<base_type_t<T1>, base_type_t<T2>>* = nullptr>
 inline auto pow(const T1& a, const T2& b) {
   return apply_scalar_binary(
-      a, b, [](const auto& c, const auto& d) { return stan::math::pow(c, d); });
+      [](const auto& c, const auto& d) { return stan::math::pow(c, d); }, a, b);
 }
 
 }  // namespace math

@@ -67,7 +67,7 @@ inline double gamma_q(double x, double a) { return boost::math::gamma_q(x, a); }
 template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr>
 inline auto gamma_q(const T1& a, const T2& b) {
   return apply_scalar_binary(
-      a, b, [&](const auto& c, const auto& d) { return gamma_q(c, d); });
+      [](const auto& c, const auto& d) { return gamma_q(c, d); }, a, b);
 }
 
 }  // namespace math

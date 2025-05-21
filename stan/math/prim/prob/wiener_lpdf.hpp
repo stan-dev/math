@@ -35,11 +35,13 @@
 #include <stan/math/prim/fun/ceil.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/exp.hpp>
+#include <stan/math/prim/fun/floor.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/square.hpp>
+#include <stan/math/prim/fun/sqrt.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <algorithm>
 #include <cmath>
@@ -83,12 +85,6 @@ return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta> wiener_lpdf(
   using T_tau_ref = ref_type_t<T_tau>;
   using T_beta_ref = ref_type_t<T_beta>;
   using T_delta_ref = ref_type_t<T_delta>;
-  using std::ceil;
-  using std::exp;
-  using std::floor;
-  using std::log;
-  using std::sin;
-  using std::sqrt;
   static constexpr const char* function = "wiener_lpdf";
   check_consistent_sizes(function, "Random variable", y, "Boundary separation",
                          alpha, "A-priori bias", beta, "Nondecision time", tau,

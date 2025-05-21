@@ -17,8 +17,7 @@ namespace math {
  * @tparam Mat type of the Matrix
  * @param y Columnwise stochastic matrix input of dimensionality (N, K)
  */
-template <typename Mat, require_eigen_matrix_dynamic_t<Mat>* = nullptr,
-          require_not_st_var<Mat>* = nullptr>
+template <typename Mat, require_eigen_matrix_dynamic_t<Mat>* = nullptr>
 inline plain_type_t<Mat> stochastic_column_free(const Mat& y) {
   auto&& y_ref = to_ref(y);
   const Eigen::Index M = y_ref.cols();

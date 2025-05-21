@@ -1,15 +1,18 @@
 #ifndef STAN_MATH_REV_FUN_GP_PERIODIC_COV_HPP
 #define STAN_MATH_REV_FUN_GP_PERIODIC_COV_HPP
 
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/rev/fun/adjoint_of.hpp>
+#include <stan/math/rev/fun/exp.hpp>
+#include <stan/math/rev/fun/sin.hpp>
+#include <stan/math/rev/fun/square.hpp>
+#include <stan/math/rev/fun/squared_distance.hpp>
+#include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/square.hpp>
-#include <stan/math/prim/fun/squared_distance.hpp>
+#include <stan/math/prim/fun/gp_exp_quad_cov.hpp>
 #include <cmath>
 #include <type_traits>
 #include <vector>
@@ -41,8 +44,6 @@ template <typename T_x, typename T_sigma, require_st_arithmetic<T_x>* = nullptr,
           require_stan_scalar_t<T_sigma>* = nullptr>
 inline Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> gp_periodic_cov(
     const std::vector<T_x>& x, const T_sigma sigma, const var l, const var p) {
-  using std::exp;
-  using std::sin;
   const char* fun = "gp_periodic_cov";
   check_positive(fun, "signal standard deviation", sigma);
   check_positive(fun, "length-scale", l);

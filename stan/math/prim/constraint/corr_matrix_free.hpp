@@ -60,7 +60,7 @@ Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> corr_matrix_free(const T& y) {
  * @param x The standard vector to untransform.
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
-auto corr_matrix_free(const T& x) {
+inline auto corr_matrix_free(const T& x) {
   return apply_vector_unary<T>::apply(
       x, [](auto&& v) { return corr_matrix_free(v); });
 }
