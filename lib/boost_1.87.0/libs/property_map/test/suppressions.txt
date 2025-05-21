@@ -1,2 +1,0 @@
-leak:dynamic_properties_test
-leak:dynamic_properties_no_rtti_test

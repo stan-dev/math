@@ -1,6 +1,0 @@
-{
-   "type": "module",
-   "dependencies": {
-      "redis": "^4.2.0"
-   }
-}

@@ -1,7 +1,0 @@
-comment:
-  layout: "diff"
-  behavior: default
-  branches:
-    - master
-    - develop
-  require_changes: true
