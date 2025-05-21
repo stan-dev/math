@@ -222,7 +222,6 @@ inline auto compute_s2(F&& f, Theta&& theta, AMat&& A,
       v(j) = 1;
     }
     w.setZero();
-    // TODO(Steve): Zip into Eigen indexing
     for (int j = 0; j < n_blocks; ++j) {
       for (int k = 0; k < hessian_block_size; ++k) {
         w(k + j * hessian_block_size)

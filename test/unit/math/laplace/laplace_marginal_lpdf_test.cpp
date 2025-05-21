@@ -194,7 +194,7 @@ struct poisson_log_exposure_likelihood {
         delta_int, stan::math::add(theta, stan::math::log(ye)));
   }
 };
-/*
+
 TEST_F(laplace_disease_map_test, laplace_marginal) {
   using stan::math::laplace_marginal;
   using stan::math::laplace_marginal_poisson_log_lpmf;
@@ -480,7 +480,16 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
       std::pair(laplace_issue{3, 400, 4}, LaplaceFailures::IterExceeded),
       std::pair(laplace_issue{3, 500, 4}, LaplaceFailures::IterExceeded)};
 
-
+  /**
+   * Note: This test is designed to check the error behavior
+   *  of the laplace_marginal_tol function. We do not force
+   *  a function to fail because some of these errors can be machine
+   *  specific. So for cases we know there can be a test failure for a
+   *  machine we call the function in a try block. if it *does* fail,
+   *  we expect it to be the associated error found in the known_issues array.
+   *  If we have not seen this parameter combination fail before, we run the
+   *  standard AD testing procedure.
+   */
   for (int solver_num = 1; solver_num < 4; solver_num++) {
     for (int max_steps_line_search = 0; max_steps_line_search <= 20;
          max_steps_line_search += 10) {
@@ -602,4 +611,3 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle2) {
       },
       theta0);
 }
-*/

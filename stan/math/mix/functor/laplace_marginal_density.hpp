@@ -82,7 +82,6 @@ struct laplace_density_estimates {
         K_root(std::move(K_root_)) {}
 };
 
-// TODO(Steve): Try to doing cholesky decomposition of the sparse matrix
 /**
  * Returns the principal square root of a block diagonal matrix.
  */
@@ -137,6 +136,80 @@ inline void block_matrix_sqrt(WRootMat& W_root,
     }
   }
 }
+
+template <typename WRootMat>
+inline void block_matrix_chol_L(WRootMat& W_root,
+                              const Eigen::SparseMatrix<double>& W,
+                              const Eigen::Index block_size) {
+  int n_block = W.cols() / block_size;
+  Eigen::MatrixXd local_block(block_size, block_size);
+  Eigen::MatrixXd local_block_sqrt(block_size, block_size);
+  Eigen::MatrixXd sqrt_t_mat = Eigen::MatrixXd::Zero(block_size, block_size);
+  // No block operation available for sparse matrices, so we have to loop
+  // See https://eigen.tuxfamily.org/dox/group__TutorialSparse.html#title7
+  for (int i = 0; i < n_block; i++) {
+    sqrt_t_mat.setZero();
+    local_block
+        = W.block(i * block_size, i * block_size, block_size, block_size);
+    if (Eigen::isnan(local_block.array()).any()) {
+      throw std::domain_error(
+          std::string("Error in block_matrix_sqrt: "
+                      "NaNs detected in block diagonal starting at (")
+          + std::to_string(i) + ", " + std::to_string(i) + ")");
+    }
+    try {
+      // Compute square root of T
+      Eigen::LLT<Eigen::Ref<Eigen::MatrixXd>> llt(local_block);
+      if (llt.info() != Eigen::Success) {
+            throw std::runtime_error("Cholesky failed on block " + std::to_string(i));
+      }
+      const auto Lb = llt.matrixL();
+      for (int k = 0; k < block_size; k++) {
+        for (int j = k; j < block_size; j++) {
+          W_root.coeffRef(i * block_size + j, i * block_size + k)
+              = Lb(j, k);
+        }
+      }
+    } catch (const std::exception& e) {
+      // As a backup do the schur decomposition for this block diagonal
+      local_block
+          = W.block(i * block_size, i * block_size, block_size, block_size);
+      // Issue here, sqrt is done over T of the complex schur
+      Eigen::RealSchur<Eigen::MatrixXd> schurOfA(local_block);
+      // Compute Schur decomposition of arg
+      const auto& t_mat = schurOfA.matrixT();
+      const auto& u_mat = schurOfA.matrixU();
+      // Check if diagonal of schur is not positive
+      if ((t_mat.diagonal().array() < 0).any()) {
+        throw std::domain_error(
+            std::string("Error in block_matrix_sqrt: "
+                        "values less than 0 detected in block diagonal's schur "
+                        "decomposition starting at (")
+            + std::to_string(i) + ", " + std::to_string(i) + ")");
+      }
+      try {
+        // Compute square root of T
+        Eigen::matrix_sqrt_quasi_triangular(t_mat, sqrt_t_mat);
+        // Compute square root of arg
+        local_block_sqrt.noalias() = u_mat * sqrt_t_mat * u_mat.adjoint();
+      } catch (const std::exception& e) {
+        throw std::domain_error(
+            "Error in block_matrix_sqrt: "
+            "The matrix is not positive definite");
+      }
+      for (int k = 0; k < block_size; k++) {
+        for (int j = 0; j < block_size; j++) {
+          W_root.coeffRef(i * block_size + j, i * block_size + k)
+              = local_block_sqrt(j, k);
+        }
+      }
+      throw std::domain_error(
+          "Error in block_matrix_sqrt: "
+          "The matrix is not positive definite");
+    }
+  }
+}
+
 
 /**
  * @brief Performs a simple line search
@@ -297,7 +370,6 @@ inline STAN_COLD_PATH void throw_nan(NameStr&& name_str, ParamStr&& param_str,
  * log marginal density. The user controls the tolerance (i.e.
  * threshold under which change is deemed small enough) and
  * maximum number of steps.
- * TODO(Charles): add more robust convergence criterion.
  *
  * A description of this algorithm can be found in:
  *  - (2023) Margossian, "General Adjoint-Differentiated Laplace approximation",
@@ -421,17 +493,6 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
             W_r.coeffRef(i) = std::sqrt(W.coeff(i, i));
           }
         }
-//        Eigen::SparseMatrix<double> W_r = W.cwiseSqrt();
-        // TODO(Charles): Need better way to handle negative diagonals
-        /*
-        if (W_is_spd) {
-          W_r = W.cwiseSqrt();
-        } else {
-          W_r = block_matrix_sqrt(W, options.hessian_block_size);
-        }
-        */
-        // TODO(Steve): Memory can be made once out of the loop
-        // This is our main cost
         B.noalias() = MatrixXd::Identity(theta_size, theta_size)
                       + W_r.asDiagonal() * covariance
                             * W_r.asDiagonal();
@@ -504,7 +565,7 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
                 "definite");
           }
         }
-        block_matrix_sqrt(W_r, W, options.hessian_block_size);
+        block_matrix_chol_L(W_r, W, options.hessian_block_size);
         B.noalias() = MatrixXd::Identity(theta_size, theta_size)
                       + W_r * (covariance * W_r);
         Eigen::LLT<Eigen::Ref<Eigen::MatrixXd>> llt_B(B);
@@ -567,7 +628,6 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
       // Simple Newton step
       theta.noalias() = covariance * a;
       objective_old = objective_new;
-      // TODO(Charles) Throw if theta is not finite?
       if (unlikely((Eigen::isinf(theta.array()) || Eigen::isnan(theta.array()))
                        .any())) {
         throw_nan("laplace_marginal_density", "theta", theta);
@@ -621,7 +681,6 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
                       + laplace_likelihood::log_likelihood(
                           ll_fun, value_of(theta), ll_args_vals, msgs);
 
-      // TODO(Charles): How do we handle NA values in theta?
       if (options.max_steps_line_search > 0) {
         line_search(objective_new, a, theta, a_prev, ll_fun, ll_args_vals,
                     covariance, options.max_steps_line_search, objective_old,
@@ -919,7 +978,7 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
   {
     nested_rev_autodiff nested;
     // Solver 1, 2
-    arena_t<Eigen::MatrixXd> R;
+    arena_t<Eigen::MatrixXd> R(theta_0.size(), theta_0.size());
     // Solver 3
     arena_t<Eigen::MatrixXd> LU_solve_covariance;
     // Solver 1, 2, 3
@@ -949,6 +1008,7 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
         },
         partial_parm, ll_args_filter);
     if (options.solver == 1) {
+      if (options.hessian_block_size == 1) {
       // TODO(Steve): Solve without casting from sparse to dense
       Eigen::MatrixXd tmp
           = md_est.L.template triangularView<Eigen::Lower>().solve(
@@ -957,7 +1017,7 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
       arena_t<Eigen::MatrixXd> C
           = md_est.L.template triangularView<Eigen::Lower>().solve(
               md_est.W_r * md_est.covariance);
-      if (!ll_args_contain_var && options.hessian_block_size == 1) {
+      if constexpr (!ll_args_contain_var) {
         s2.deep_copy(
             (0.5
              * (md_est.covariance.diagonal() - (C.transpose() * C).diagonal())
@@ -971,6 +1031,23 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
         s2.deep_copy(s2_tmp);
         copy_compute_s2(partial_parm, ll_args_filter);
         set_zero_adjoint(ll_args_filter);
+      }
+
+      } else {
+      Eigen::MatrixXd tmp
+          = md_est.L.template triangularView<Eigen::Lower>().solve(
+              md_est.W_r.toDense());
+      R = tmp.transpose() * tmp;
+      arena_t<Eigen::MatrixXd> C
+          = md_est.L.template triangularView<Eigen::Lower>().solve(
+              md_est.W_r * md_est.covariance);
+      arena_t<Eigen::MatrixXd> A = md_est.covariance - C.transpose() * C;
+      auto s2_tmp = laplace_likelihood::compute_s2(ll_fun, md_est.theta, A,
+                                                    options.hessian_block_size,
+                                                    ll_args_copy, msgs);
+      s2.deep_copy(s2_tmp);
+      copy_compute_s2(partial_parm, ll_args_filter);
+      set_zero_adjoint(ll_args_filter);
       }
     } else if (options.solver == 2) {
       R = md_est.W_r

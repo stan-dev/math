@@ -43,8 +43,7 @@ namespace math {
 template <typename YeVec, typename ThetaVec, typename CovarFun,
           typename CovarArgs, typename RNG,
           require_eigen_t<ThetaVec>* = nullptr>
-inline auto  // CHECK -- right return type
-laplace_latent_tol_poisson_2_log_rng(
+inline auto laplace_latent_tol_poisson_2_log_rng(
     const std::vector<int>& y, const std::vector<int>& y_index, const YeVec& ye,
     ThetaVec&& theta_0, CovarFun&& covariance_function, CovarArgs&& covar_args,
     const double tolerance, const int64_t max_num_steps,
@@ -89,8 +88,7 @@ laplace_latent_tol_poisson_2_log_rng(
 template <typename YeVec, typename ThetaVec, typename CovarFun,
           typename CovarArgs, typename RNG,
           require_eigen_t<ThetaVec>* = nullptr>
-inline auto  // TODO(Steve): Allow scalar or std vector return
-laplace_latent_poisson_2_log_rng(const std::vector<int>& y,
+inline auto laplace_latent_poisson_2_log_rng(const std::vector<int>& y,
                                  const std::vector<int>& y_index,
                                  const YeVec& ye, ThetaVec&& theta_0,
                                  CovarFun&& covariance_function,
