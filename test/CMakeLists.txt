@@ -38,8 +38,8 @@ target_precompile_headers(dae_test PRIVATE
 
 target_link_libraries(dae_test
   gtest_main benchmark::benchmark TBB::tbb
-  Eigen3::Eigen sundials_kinsol sundials_cvodes sundials_ida
-  sundials_idas sundials_nvecserial Boost::math Boost::numeric_odeint Boost::lexical_cast Boost::optional)
+  Eigen3::Eigen sundials_kinsol_static sundials_cvodes_static
+  sundials_idas_static sundials_nvecserial_static Boost::math Boost::numeric_odeint Boost::lexical_cast Boost::optional)
 if (STAN_OPENCL)
   target_link_libraries(dae_test OpenCL::OpenCL)
   target_include_directories(dae_test PRIVATE ${CLCPP_SOURCE_DIR}/include)
@@ -103,8 +103,8 @@ function(add_gtest_grouped_test test_directory folder_test_name target_pch)
           target_precompile_headers(${SUB_TEST_TARGET_NAME} REUSE_FROM ${target_pch})
           target_link_libraries(${SUB_TEST_TARGET_NAME}
             gtest_main benchmark::benchmark TBB::tbb
-            Eigen3::Eigen sundials_kinsol sundials_cvodes sundials_ida
-            sundials_idas sundials_nvecserial Boost::math Boost::numeric_odeint Boost::lexical_cast Boost::optional)
+            Eigen3::Eigen sundials_kinsol_static sundials_cvodes_static
+            sundials_idas_static sundials_nvecserial_static Boost::math Boost::numeric_odeint Boost::lexical_cast Boost::optional)
           if (STAN_OPENCL)
             target_link_libraries(${SUB_TEST_TARGET_NAME} OpenCL::OpenCL)
             target_include_directories(${SUB_TEST_TARGET_NAME} PRIVATE ${CLCPP_SOURCE_DIR}/include)
@@ -131,8 +131,8 @@ function(add_gtest_grouped_test test_directory folder_test_name target_pch)
         target_precompile_headers(${TEST_TARGET_NAME} REUSE_FROM ${target_pch})
         target_link_libraries(${TEST_TARGET_NAME}
           gtest_main benchmark::benchmark TBB::tbb
-          Eigen3::Eigen sundials_kinsol sundials_cvodes sundials_ida
-          sundials_idas sundials_nvecserial Boost::math Boost::numeric_odeint Boost::lexical_cast Boost::optional)
+          Eigen3::Eigen sundials_kinsol_static sundials_cvodes_static
+          sundials_idas_static sundials_nvecserial_static Boost::math Boost::numeric_odeint Boost::lexical_cast Boost::optional)
         if (STAN_OPENCL)
           target_link_libraries(${TEST_TARGET_NAME} OpenCL::OpenCL)
           target_include_directories(${TEST_TARGET_NAME} PRIVATE ${CLCPP_SOURCE_DIR}/include)
@@ -159,8 +159,8 @@ function(add_gtest_grouped_test test_directory folder_test_name target_pch)
     target_precompile_headers(${folder_test_name}_test REUSE_FROM ${target_pch})
     target_link_libraries(${folder_test_name}_test
           gtest_main benchmark::benchmark TBB::tbb
-          Eigen3::Eigen sundials_kinsol sundials_cvodes sundials_ida
-          sundials_idas sundials_nvecserial Boost::math Boost::numeric_odeint Boost::lexical_cast Boost::optional)
+          Eigen3::Eigen sundials_kinsol_static sundials_cvodes_static
+          sundials_idas_static sundials_nvecserial_static Boost::math Boost::numeric_odeint Boost::lexical_cast Boost::optional)
     if (STAN_OPENCL)
       target_link_libraries(${folder_test_name}_test OpenCL::OpenCL)
       target_include_directories(${folder_test_name}_test PRIVATE ${CLCPP_SOURCE_DIR}/include)
@@ -219,8 +219,8 @@ target_precompile_headers(dae_header_pch PRIVATE
 
 target_link_libraries(dae_header_pch
   gtest_main benchmark::benchmark TBB::tbb
-  Eigen3::Eigen sundials_kinsol sundials_cvodes sundials_ida
-  sundials_idas sundials_nvecserial Boost::math Boost::numeric_odeint Boost::lexical_cast Boost::optional)
+  Eigen3::Eigen sundials_kinsol_static sundials_cvodes_static
+  sundials_idas_static sundials_nvecserial_static Boost::math Boost::numeric_odeint Boost::lexical_cast Boost::optional)
 if (STAN_OPENCL)
   target_link_libraries(dae_header_pch OpenCL::OpenCL)
   target_include_directories(dae_header_pch PRIVATE ${CLCPP_SOURCE_DIR}/include)
@@ -262,8 +262,8 @@ foreach(HEADER ${HEADER_FILES})
   target_precompile_headers(${SUB_TEST_TARGET_NAME} REUSE_FROM dae_header_pch)
   target_link_libraries(${SUB_TEST_TARGET_NAME}
     gtest_main benchmark::benchmark TBB::tbb
-    Eigen3::Eigen sundials_kinsol sundials_cvodes sundials_ida
-    sundials_idas sundials_nvecserial Boost::math Boost::numeric_odeint Boost::lexical_cast Boost::optional)
+    Eigen3::Eigen sundials_kinsol_static sundials_cvodes_static
+    sundials_idas_static sundials_nvecserial_static Boost::math Boost::numeric_odeint Boost::lexical_cast Boost::optional)
   if (STAN_OPENCL)
     target_link_libraries(${SUB_TEST_TARGET_NAME} OpenCL::OpenCL)
     target_include_directories(${SUB_TEST_TARGET_NAME} PRIVATE ${CLCPP_SOURCE_DIR}/include)
