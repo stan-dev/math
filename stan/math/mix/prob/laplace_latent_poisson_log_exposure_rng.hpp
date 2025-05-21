@@ -88,12 +88,10 @@ inline auto laplace_latent_tol_poisson_2_log_rng(
 template <typename YeVec, typename ThetaVec, typename CovarFun,
           typename CovarArgs, typename RNG,
           require_eigen_t<ThetaVec>* = nullptr>
-inline auto laplace_latent_poisson_2_log_rng(const std::vector<int>& y,
-                                 const std::vector<int>& y_index,
-                                 const YeVec& ye, ThetaVec&& theta_0,
-                                 CovarFun&& covariance_function,
-                                 CovarArgs&& covar_args, RNG& rng,
-                                 std::ostream* msgs) {
+inline auto laplace_latent_poisson_2_log_rng(
+    const std::vector<int>& y, const std::vector<int>& y_index, const YeVec& ye,
+    ThetaVec&& theta_0, CovarFun&& covariance_function, CovarArgs&& covar_args,
+    RNG& rng, std::ostream* msgs) {
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_base_rng(poisson_log_exposure_likelihood{},
                           std::forward_as_tuple(y, y_index, ye),
