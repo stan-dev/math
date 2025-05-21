@@ -409,7 +409,7 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
       for (Eigen::Index i = 0; i <= options.max_num_steps; i++) {
         auto [theta_grad, W] = laplace_likelihood::diff(
             ll_fun, theta, options.hessian_block_size, ll_args, msgs);
-
+        Eigen::VectorXd W_r(W.rows());
         // Compute matrix square-root of W. If all elements of W are positive,
         // do an element wise square-root. Else try a matrix square-root
         for (Eigen::Index i = 0; i < W.rows(); i++) {
@@ -417,9 +417,11 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
             throw std::domain_error(
                 "laplace_marginal_density: Hessian matrix is not positive "
                 "definite");
+          } else {
+            W_r.coeffRef(i) = std::sqrt(W.coeff(i, i));
           }
         }
-        Eigen::SparseMatrix<double> W_r = W.cwiseSqrt();
+//        Eigen::SparseMatrix<double> W_r = W.cwiseSqrt();
         // TODO(Charles): Need better way to handle negative diagonals
         /*
         if (W_is_spd) {
@@ -431,16 +433,16 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
         // TODO(Steve): Memory can be made once out of the loop
         // This is our main cost
         B.noalias() = MatrixXd::Identity(theta_size, theta_size)
-                      + W_r.diagonal().asDiagonal() * covariance
-                            * W_r.diagonal().asDiagonal();
+                      + W_r.asDiagonal() * covariance
+                            * W_r.asDiagonal();
         Eigen::LLT<Eigen::Ref<Eigen::MatrixXd>> llt_B(B);
         auto L = llt_B.matrixL();
         auto LT = llt_B.matrixU();
         b.noalias() = W.diagonal().cwiseProduct(theta) + theta_grad;
         a.noalias() = b
-                      - W_r
+                      - W_r.asDiagonal()
                             * LT.solve(L.solve(
-                                W_r.diagonal().cwiseProduct(covariance * b)));
+                                W_r.cwiseProduct(covariance * b)));
         // Simple Newton step
         theta.noalias() = covariance * a;
         objective_old = objective_new;
@@ -461,11 +463,13 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
         if (abs(objective_new - objective_old) < options.tolerance) {
           const double B_log_determinant
               = 2.0 * llt_B.matrixLLT().diagonal().array().log().sum();
+          // Overwrite W instead of making a new sparse matrix
+          W.diagonal() = W_r;
           return laplace_density_estimates{
               objective_new - 0.5 * B_log_determinant,
               std::move(covariance),
               std::move(theta),
-              std::move(W_r),
+              std::move(W),
               std::move(Eigen::MatrixXd(L)),
               std::move(a),
               std::move(theta_grad),
