@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/multiply_log.hpp>
 #include <stan/math/prim/functor/apply_scalar_binary.hpp>
 #include <cmath>
 
@@ -21,33 +22,20 @@ namespace math {
  * @param b second argument
  * @return the first argument times the log of the second argument
  */
-template <typename T1, typename T2, require_all_arithmetic_t<T1, T2>* = nullptr>
-inline return_type_t<T1, T2> lmultiply(const T1 a, const T2 b) {
-  using std::log;
-  if (a == 0 && b == 0) {
-    return 0;
+template <typename T1, typename T2>
+inline auto lmultiply(T1&& a, T2&& b) {
+  if constexpr (is_kernel_expression<T1>::value
+                || is_kernel_expression<T2>::value) {
+    return multiply_log(std::forward<T1>(a), std::forward<T2>(b));
+  } else {
+    return make_holder(
+        [](auto&& a, auto&& b) {
+          return multiply_log(std::forward<decltype(a)>(a),
+                              std::forward<decltype(b)>(b));
+        },
+        std::forward<T1>(a), std::forward<T2>(b));
   }
-  return a * log(b);
 }
-
-/**
- * Return the result of applying `lmultiply` to the arguments
- * elementwise, with broadcasting if one of the arguments is a scalar.
- * At least one of the arguments must be a container.
- *
- * @tparam T1 type of the first argument
- * @tparam T2 type of the second argument
- * @param a first argument
- * @param b second argument
- * @return result of applying `lmultiply` to the arguments
- */
-template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr,
-          require_all_not_var_matrix_t<T1, T2>* = nullptr>
-inline auto lmultiply(const T1& a, const T2& b) {
-  return apply_scalar_binary(
-      [](const auto& c, const auto& d) { return lmultiply(c, d); }, a, b);
-}
-
 }  // namespace math
 }  // namespace stan
 

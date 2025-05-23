@@ -47,12 +47,10 @@ namespace math {
 template <typename T_a, typename T_b,
           require_all_arithmetic_t<T_a, T_b>* = nullptr>
 inline return_type_t<T_a, T_b> multiply_log(const T_a a, const T_b b) {
-  using std::log;
-  if (b == 0.0 && a == 0.0) {
+  if (a == 0.0 && b == 0.0) {
     return 0.0;
   }
-
-  return a * log(b);
+  return a * std::log(b);
 }
 
 /**
@@ -66,7 +64,7 @@ inline return_type_t<T_a, T_b> multiply_log(const T_a a, const T_b b) {
  * @return multiply_log function applied to the two inputs.
  */
 template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr,
-          require_all_not_var_matrix_t<T1, T2>* = nullptr>
+          require_all_not_rev_matrix_t<T1, T2>* = nullptr>
 inline auto multiply_log(const T1& a, const T2& b) {
   return apply_scalar_binary(
       [](const auto& c, const auto& d) { return multiply_log(c, d); }, a, b);

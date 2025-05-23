@@ -10,6 +10,16 @@
 
 namespace stan {
 namespace math {
+namespace internalcl {
+template <bool Cond, typename T>
+inline decltype(auto) conditional_sum(T&& x) {
+  if constexpr (Cond) {
+    return sum(std::forward<T>(x));
+  } else {
+    return std::forward<T>(x);
+  }
+}
+}  // namespace internalcl
 
 /**
  * Returns the elementwise `multiply_log()` of the input.
@@ -32,10 +42,26 @@ inline var_value<matrix_cl<double>> multiply_log(T_a&& a, T_b&& b) {
   return make_callback_var(
       multiply_log(value_of(a_arena), value_of(b_arena)),
       [a_arena, b_arena](const vari_value<matrix_cl<double>>& res) mutable {
-        adjoint_results(a_arena, b_arena) += expressions(
-            elt_multiply(res.adj(), log(value_of(b_arena))),
-            elt_multiply(res.adj(),
-                         elt_divide(value_of(a_arena), value_of(b_arena))));
+        constexpr bool is_scalar_a = !is_matrix_v<T_a>;
+        constexpr bool is_scalar_b = !is_matrix_v<T_b>;
+        using internalcl::conditional_sum;
+        auto is_zero = value_of(a_arena) == 0.0 && value_of(b_arena) == 0.0;
+        if constexpr (is_var<T_a>::value && is_var<T_b>::value) {
+          a_arena.adj() += conditional_sum<is_scalar_a>(select(
+              is_zero, 0.0, elt_multiply(res.adj(), log(value_of(b_arena)))));
+          b_arena.adj() += conditional_sum<is_scalar_b>(select(
+              is_zero, 0.0,
+              elt_multiply(res.adj(),
+                           elt_divide(value_of(a_arena), value_of(b_arena)))));
+        } else if constexpr (is_var<T_a>::value) {
+          a_arena.adj() += conditional_sum<is_scalar_a>(select(
+              is_zero, 0.0, elt_multiply(res.adj(), log(value_of(b_arena)))));
+        } else if constexpr (is_var<T_b>::value) {
+          b_arena.adj() += conditional_sum<is_scalar_b>(select(
+              is_zero, 0.0,
+              elt_multiply(res.adj(),
+                           elt_divide(value_of(a_arena), value_of(b_arena)))));
+        }
       });
 }
 
