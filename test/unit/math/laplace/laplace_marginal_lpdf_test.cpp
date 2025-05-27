@@ -156,7 +156,9 @@ TEST(laplace, poisson_log_phi_dim_2_array_tuple) {
       [&](int solver_num, int hessian_block_size, int max_steps_line_search,
           auto&& theta_0) {
         auto f_ll = [&](auto&& alpha_rho, auto&& eta1, auto&& eta2) {
-          std::vector<std::tuple<std::decay_t<decltype(eta1)>, std::decay_t<decltype(eta2)>>> eta_tuple;
+          std::vector<std::tuple<std::decay_t<decltype(eta1)>,
+                                 std::decay_t<decltype(eta2)>>>
+              eta_tuple;
           eta_tuple.push_back(std::make_tuple(eta1, eta2));
           using alpha_scalar = stan::scalar_type_t<decltype(alpha_rho)>;
           std::vector<std::tuple<alpha_scalar, alpha_scalar>> alpha_tuple;
@@ -165,9 +167,8 @@ TEST(laplace, poisson_log_phi_dim_2_array_tuple) {
               poisson_log_likelihood_array_tuple{},
               std::forward_as_tuple(sums, eta_tuple), theta_0,
               stan::math::test::squared_kernel_functor{},
-              std::forward_as_tuple(x, alpha_tuple),
-              tolerance, max_num_steps, hessian_block_size, solver_num,
-              max_steps_line_search, nullptr);
+              std::forward_as_tuple(x, alpha_tuple), tolerance, max_num_steps,
+              hessian_block_size, solver_num, max_steps_line_search, nullptr);
         };
         auto test1 = 1.0;
         auto test2 = 1.0;

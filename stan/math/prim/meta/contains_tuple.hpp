@@ -14,7 +14,7 @@ template <typename T, typename... VecArgs>
 struct contains_tuple_impl<std::vector<T, VecArgs...>> {
   static constexpr bool value = contains_tuple_impl<T>::value;
 };
-}
+}  // namespace internal
 
 /**
  * Check if the type is a tuple or contains a tuple
@@ -22,7 +22,8 @@ struct contains_tuple_impl<std::vector<T, VecArgs...>> {
  */
 template <typename T>
 struct contains_tuple {
-  static constexpr bool value = internal::contains_tuple_impl<std::decay_t<T>>::value;
+  static constexpr bool value
+      = internal::contains_tuple_impl<std::decay_t<T>>::value;
 };
 template <typename T>
 inline constexpr bool contains_tuple_v = contains_tuple<std::decay_t<T>>::value;
@@ -31,7 +32,8 @@ inline constexpr bool contains_tuple_v = contains_tuple<std::decay_t<T>>::value;
  * Check if the type is a std::vector containing a tuple
  */
 template <typename T>
-inline constexpr bool is_std_vector_containing_tuple_v = is_std_vector_v<std::decay_t<T>> && contains_tuple_v<std::decay_t<T>>;
+inline constexpr bool is_std_vector_containing_tuple_v
+    = is_std_vector_v<std::decay_t<T>>&& contains_tuple_v<std::decay_t<T>>;
 
 namespace internal {
 template <template <typename...> class Filter, typename T>
@@ -41,10 +43,10 @@ struct inspect_tuple {
 
 template <template <typename...> class Filter, typename... Types>
 struct inspect_tuple<Filter, std::tuple<Types...>> {
-  static constexpr bool value = Filter<std::tuple<Types...>>::value ||
-    (inspect_tuple<Filter, Types>::value || ...);
+  static constexpr bool value = Filter<std::tuple<Types...>>::value
+                                || (inspect_tuple<Filter, Types>::value || ...);
 };
-}
+}  // namespace internal
 
 /**
  * Check if a tuple or type contains a tuple that passes the filter.
@@ -54,8 +56,8 @@ struct inspect_tuple<Filter, std::tuple<Types...>> {
  * @tparam T type to check
  */
 template <template <typename...> class Filter, typename T>
-inline constexpr bool inspect_tuple_v =
-    internal::inspect_tuple<Filter, std::decay_t<T>>::value;
-}
+inline constexpr bool inspect_tuple_v
+    = internal::inspect_tuple<Filter, std::decay_t<T>>::value;
+}  // namespace stan
 
 #endif

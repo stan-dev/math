@@ -61,11 +61,13 @@ inline auto conditional_copy_and_promote(Args&&... args) {
               },
               std::forward<decltype(arg)>(arg));
         } else if constexpr (is_std_vector_v<decltype(arg)>) {
-          std::vector<decltype(conditional_copy_and_promote<Filter, PromotedType,
-                                                 CopyType>(arg[0]))> ret;
+          std::vector<decltype(conditional_copy_and_promote<
+                               Filter, PromotedType, CopyType>(arg[0]))>
+              ret;
           for (std::size_t i = 0; i < arg.size(); ++i) {
-            ret.push_back(conditional_copy_and_promote<Filter, PromotedType,
-                                                       CopyType>(arg[i]));
+            ret.push_back(
+                conditional_copy_and_promote<Filter, PromotedType, CopyType>(
+                    arg[i]));
           }
           return ret;
         } else {

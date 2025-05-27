@@ -16,8 +16,8 @@ namespace internal {
  * Filter a tuple and apply a functor to each element that passes the filter.
  * @note The `Filter` will only check `T` and if `T` is a tuple, it will
  * recursively check each element of the tuple. But it will not inspect into
- * `std::vector` elements automatically. If you want to inspect the inner element
- * of an `std::vector` your type trait must do that itself.
+ * `std::vector` elements automatically. If you want to inspect the inner
+ * element of an `std::vector` your type trait must do that itself.
  * @tparam Filter a struct that accepts one template parameter and has a static
  *  constexpr bool member named value that is true if the type should be
  *  included in the output tuple.
@@ -33,23 +33,25 @@ namespace internal {
  * @return a tuple with the functor applied to each element which passed the
  * filter.
  */
-template <template <typename...> class Filter, bool InVector = false, bool InTuple = false,
-  typename F, typename T>
+template <template <typename...> class Filter, bool InVector = false,
+          bool InTuple = false, typename F, typename T>
 inline constexpr decltype(auto) filter_map(F&& f, T&& x) {
   if constexpr (inspect_tuple_v<Filter, T>) {
     if constexpr (is_tuple_v<T>) {
-      auto ret = stan::math::apply([&f](auto&&... args) {
-        return stan::math::tuple_concat(
-          filter_map<Filter, false, true>(f, std::forward<decltype(args)>(args))...
-        );
-      }, std::forward<T>(x));
+      auto ret = stan::math::apply(
+          [&f](auto&&... args) {
+            return stan::math::tuple_concat(filter_map<Filter, false, true>(
+                f, std::forward<decltype(args)>(args))...);
+          },
+          std::forward<T>(x));
       /* If we are in at this stage, we want tuple_concat to return a tuple here
        * So we return a tuple(tuple()) so that tuple_cat concats
        * the first layer of tuple.
-       * For example, if our input is a tuple(double, tuple(double, vec<double>))
-       * with an identity filter we want tuple_concat to return a
+       * For example, if our input is a tuple(double, tuple(double,
+       * vec<double>)) with an identity filter we want tuple_concat to return a
        * tuple(double, tuple(double, vec<double>)).
-       * Without the double tuple we would get back a tuple(double, double, vec<double>).
+       * Without the double tuple we would get back a tuple(double, double,
+       * vec<double>).
        */
       if constexpr (InTuple) {
         return partially_forward_as_tuple(std::move(ret));
@@ -77,27 +79,29 @@ inline constexpr decltype(auto) filter_map(F&& f, T&& x) {
         if constexpr (InVector) {
           return std::forward<F>(f)(std::forward<T>(x));
         } else {
-          return partially_forward_as_tuple(std::forward<F>(f)(std::forward<T>(x)));
+          return partially_forward_as_tuple(
+              std::forward<F>(f)(std::forward<T>(x)));
         }
       }
     } else {
       if constexpr (InVector) {
         return std::forward<F>(f)(std::forward<T>(x));
       } else {
-        return partially_forward_as_tuple(std::forward<F>(f)(std::forward<T>(x)));
+        return partially_forward_as_tuple(
+            std::forward<F>(f)(std::forward<T>(x)));
       }
     }
   } else {
     return std::make_tuple();
   }
 }
-}
+}  // namespace internal
 /**
  * Filter a tuple and apply a functor to each element that passes the filter.
  * @note The `Filter` will only check `T` and if `T` is a tuple, it will
  * recursively check each element of the tuple. But it will not inspect into
- * `std::vector` elements automatically. If you want to inspect the inner element
- * of an `std::vector` your type trait must do that itself.
+ * `std::vector` elements automatically. If you want to inspect the inner
+ * element of an `std::vector` your type trait must do that itself.
  * @tparam Filter a struct that accepts one template parameter and has a static
  *  constexpr bool member named value that is true if the type should be
  *  included in the output tuple.
@@ -108,11 +112,10 @@ inline constexpr decltype(auto) filter_map(F&& f, T&& x) {
  * @return a tuple with the functor applied to each element which passed the
  * filter.
  */
-template <template <typename...> class Filter,
-  typename F, typename T, require_tuple_t<T>* = nullptr>
+template <template <typename...> class Filter, typename F, typename T,
+          require_tuple_t<T>* = nullptr>
 inline constexpr decltype(auto) filter_map(F&& f, T&& x) {
-  return internal::filter_map<Filter>(
-      std::forward<F>(f), std::forward<T>(x));
+  return internal::filter_map<Filter>(std::forward<F>(f), std::forward<T>(x));
 }
 }  // namespace math
 }  // namespace stan

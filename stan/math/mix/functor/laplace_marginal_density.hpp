@@ -295,7 +295,10 @@ inline void set_zero_adjoint(Output&& output) {
           } else if constexpr (is_stan_scalar_v<output_i_t>) {
             output_i.adj() = 0;
           } else {
-            static_assert(1, "INTERNAL ERROR:(laplace_marginal_lpdf) set_zero_adjoints was not able to deduce the actiopns needed for the given type.");
+            static_assert(
+                1,
+                "INTERNAL ERROR:(laplace_marginal_lpdf) set_zero_adjoints was "
+                "not able to deduce the actiopns needed for the given type.");
           }
         },
         std::forward<Output>(output));
@@ -328,7 +331,10 @@ inline void collect_adjoints(Output& output, Input1&& precalc) {
             precalc_i.adj() = 0;
           }
         } else {
-          static_assert(1, "INTERNAL ERROR:(laplace_marginal_lpdf) collect_adjoints was not able to deduce the actiopns needed for the given type.");
+          static_assert(
+              1,
+              "INTERNAL ERROR:(laplace_marginal_lpdf) collect_adjoints was not "
+              "able to deduce the actiopns needed for the given type.");
         }
       },
       std::forward<Output>(output), std::forward<Input1>(precalc));
@@ -765,10 +771,12 @@ template <typename Output, typename Input1>
 inline void collect_adjoints(Output&& output, const vari* ret,
                              Input1&& precalc) {
   if constexpr (is_tuple_v<Output>) {
-    static_assert(1,"INTERNAL ERROR:(laplace_marginal_lpdf)"
+    static_assert(1,
+                  "INTERNAL ERROR:(laplace_marginal_lpdf)"
                   "Accumulate Adjoints called on a tuple, but tuples cannot be "
                   "on the reverse mode stack!"
-                  "This is an internal error, please report it to the stan github as an issue.");
+                  "This is an internal error, please report it to the stan "
+                  "github as an issue.");
   } else if constexpr (is_std_vector_v<Output>) {
     if constexpr (!is_var_v<value_type_t<Output>>) {
       const auto output_size = output.size();
@@ -806,7 +814,10 @@ inline void collect_adjoints(Output&& output, Input1&& precalc) {
         } else if constexpr (is_stan_scalar_v<output_i_t>) {
           output_i += precalc_i;
         } else {
-          static_assert(1, "INTERNAL ERROR:(laplace_marginal_lpdf) collect_adjoints was not able to deduce the actiopns needed for the given type.");
+          static_assert(
+              1,
+              "INTERNAL ERROR:(laplace_marginal_lpdf) collect_adjoints was not "
+              "able to deduce the actiopns needed for the given type.");
         }
       },
       std::forward<Output>(output), std::forward<Input1>(precalc));
@@ -832,7 +843,10 @@ inline void copy_compute_s2(Output&& output, Input1&& precalc) {
         } else if constexpr (is_stan_scalar_v<output_i_t>) {
           output_i += (0.5 * precalc_i.adj());
         } else {
-          static_assert(1, "INTERNAL ERROR:(laplace_marginal_lpdf) copy_compute_s2 was not able to deduce the actiopns needed for the given type.");
+          static_assert(
+              1,
+              "INTERNAL ERROR:(laplace_marginal_lpdf) copy_compute_s2 was not "
+              "able to deduce the actiopns needed for the given type.");
         }
       },
       std::forward<Output>(output), std::forward<Input1>(precalc));
@@ -886,10 +900,11 @@ inline void print_adjoint(Output&& output) {
   } else if constexpr (is_stan_scalar_v<Output>) {
     std::cout << "adj: " << output.adj() << std::endl;
   } else {
-          static_assert(1, "INTERNAL ERROR:(laplace_marginal_lpdf) print_adjoint was not able to deduce the actiopns needed for the given type.");
+    static_assert(1,
+                  "INTERNAL ERROR:(laplace_marginal_lpdf) print_adjoint was "
+                  "not able to deduce the actiopns needed for the given type.");
   }
 }
-
 
 template <typename Arg, typename Precalc>
 inline void laplace_tuple_collect_adjoints(var ret, Arg&& arg,

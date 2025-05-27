@@ -134,7 +134,8 @@ struct squared_kernel_functor {
   Eigen::Matrix<return_type_t<T1, T2, T3>, Eigen::Dynamic, Eigen::Dynamic>
   operator()(const T1& x, const std::vector<std::tuple<T2, T3>>& arg1,
              std::ostream* msgs = nullptr) const {
-    return stan::math::gp_exp_quad_cov(x, std::get<0>(arg1[0]), std::get<1>(arg1[0]))
+    return stan::math::gp_exp_quad_cov(x, std::get<0>(arg1[0]),
+                                       std::get<1>(arg1[0]))
            + 1e-9 * Eigen::MatrixXd::Identity(x.size(), x.size());
   }
 };

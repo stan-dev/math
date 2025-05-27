@@ -9,12 +9,14 @@
 namespace {
 template <typename T>
 struct is_any_fp_scalar_impl {
-  static constexpr bool value = std::is_floating_point_v<stan::scalar_type_t<T>>;
+  static constexpr bool value
+      = std::is_floating_point_v<stan::scalar_type_t<T>>;
 };
 
 template <typename... Types>
 struct is_any_fp_scalar_impl<std::tuple<Types...>> {
-  static constexpr bool value = (is_any_fp_scalar_impl<std::decay_t<Types>>::value || ...);
+  static constexpr bool value
+      = (is_any_fp_scalar_impl<std::decay_t<Types>>::value || ...);
 };
 template <typename T, typename... VecArgs>
 struct is_any_fp_scalar_impl<std::vector<T, VecArgs...>> {
@@ -90,7 +92,6 @@ TEST(MathFunctions, filter_map_inner_tuple_rvalue) {
                 "tuple<1><1> should not be a reference!");
   static_assert(!stan::test::is_ref_element_v<2, decltype(args)>,
                 "2nd should not be a reference!");
-
 }
 
 TEST(MathFunctions, filter_map_inner_tuple_mix_value_type) {
@@ -136,43 +137,47 @@ TEST(MathFunctions, filter_map_inner_tuple_mix_value_type) {
                 "6th should not be a reference!");
   static_assert(is_same_tuple_element_v<6, args_t, double>,
                 "6th should be a double!");
-
 }
-
-
 
 TEST(MathFunctions, filter_map_array_tuple) {
   using stan::test::is_same_tuple_element_v;
-  std::vector<std::tuple<double, int>> vec{
-      {1.0, 2}, {4.0, 5}, {7.0, 8}};
+  std::vector<std::tuple<double, int>> vec{{1.0, 2}, {4.0, 5}, {7.0, 8}};
   std::tuple<decltype(vec), decltype(vec)> test_tup{vec, vec};
   auto args = stan::math::filter_map<is_any_fp_scalar>(
-    [](auto&& arg) -> decltype(auto) { return std::forward<decltype(arg)>(arg); },
-    test_tup);
+      [](auto&& arg) -> decltype(auto) {
+        return std::forward<decltype(arg)>(arg);
+      },
+      test_tup);
   static_assert(std::tuple_size_v<decltype(args)> == 2,
                 "tuple size should be 2!");
-  static_assert(is_same_tuple_element_v<0, decltype(args), std::vector<std::tuple<double&>>>,
+  static_assert(is_same_tuple_element_v<0, decltype(args),
+                                        std::vector<std::tuple<double&>>>,
                 "0th should be a vector of tuples!");
-  static_assert(is_same_tuple_element_v<1, decltype(args), std::vector<std::tuple<double&>>>,
+  static_assert(is_same_tuple_element_v<1, decltype(args),
+                                        std::vector<std::tuple<double&>>>,
                 "0th should be a vector of tuples!");
 }
 
 TEST(MathFunctions, filter_map_array_array_tuple) {
   using stan::test::is_same_tuple_element_v;
-  std::vector<std::tuple<double, int>> vec{
-      {1.0, 2}, {4.0, 5}, {7.0, 8}};
+  std::vector<std::tuple<double, int>> vec{{1.0, 2}, {4.0, 5}, {7.0, 8}};
   std::tuple<decltype(vec), decltype(vec)> test_tup{vec, vec};
   std::vector<decltype(test_tup)> test_vec_tup_vec;
   test_vec_tup_vec.push_back(test_tup);
   test_vec_tup_vec.push_back(test_tup);
   auto args = stan::math::filter_map<is_any_fp_scalar>(
-    [](auto&& arg) -> decltype(auto) { return std::forward<decltype(arg)>(arg); },
-    // tuple(vector<tuple(vector<tuple(double, int)), vector<tuple(double, int))> * 2)
-    std::make_tuple(test_vec_tup_vec));
+      [](auto&& arg) -> decltype(auto) {
+        return std::forward<decltype(arg)>(arg);
+      },
+      // tuple(vector<tuple(vector<tuple(double, int)), vector<tuple(double,
+      // int))> * 2)
+      std::make_tuple(test_vec_tup_vec));
   static_assert(std::tuple_size_v<decltype(args)> == 1,
                 "tuple size should be 1!");
   auto&& inner_arg = std::get<0>(std::get<0>(args)[0])[0];
-  static_assert(std::is_same_v<std::decay_t<decltype(inner_arg)>, std::tuple<double&>> , "No!");
+  static_assert(
+      std::is_same_v<std::decay_t<decltype(inner_arg)>, std::tuple<double&>>,
+      "No!");
 }
 
 }  // namespace

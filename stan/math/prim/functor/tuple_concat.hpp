@@ -43,10 +43,7 @@ inline auto constexpr tuple_concat_impl(Tuple1&& x, Tuple2&& y, Tuple3&& z,
  * @tparam Tuple Tuple type.
  * @param x Tuple.
  */
-inline constexpr auto tuple_concat() noexcept {
-  return std::make_tuple();
-}
-
+inline constexpr auto tuple_concat() noexcept { return std::make_tuple(); }
 
 /**
  * Base case to pass a tuple forward.
