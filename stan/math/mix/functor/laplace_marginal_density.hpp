@@ -139,8 +139,8 @@ inline void block_matrix_sqrt(WRootMat& W_root,
 
 template <typename WRootMat>
 inline void block_matrix_chol_L(WRootMat& W_root,
-                              const Eigen::SparseMatrix<double>& W,
-                              const Eigen::Index block_size) {
+                                const Eigen::SparseMatrix<double>& W,
+                                const Eigen::Index block_size) {
   int n_block = W.cols() / block_size;
   Eigen::MatrixXd local_block(block_size, block_size);
   Eigen::MatrixXd local_block_sqrt(block_size, block_size);
@@ -161,13 +161,13 @@ inline void block_matrix_chol_L(WRootMat& W_root,
       // Compute square root of T
       Eigen::LLT<Eigen::Ref<Eigen::MatrixXd>> llt(local_block);
       if (llt.info() != Eigen::Success) {
-            throw std::runtime_error("Cholesky failed on block " + std::to_string(i));
+        throw std::runtime_error("Cholesky failed on block "
+                                 + std::to_string(i));
       }
       const auto Lb = llt.matrixL();
       for (int k = 0; k < block_size; k++) {
         for (int j = k; j < block_size; j++) {
-          W_root.coeffRef(i * block_size + j, i * block_size + k)
-              = Lb(j, k);
+          W_root.coeffRef(i * block_size + j, i * block_size + k) = Lb(j, k);
         }
       }
     } catch (const std::exception& e) {
@@ -209,7 +209,6 @@ inline void block_matrix_chol_L(WRootMat& W_root,
     }
   }
 }
-
 
 /**
  * @brief Performs a simple line search
@@ -492,16 +491,15 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
           }
         }
         B.noalias() = MatrixXd::Identity(theta_size, theta_size)
-                      + W_r.asDiagonal() * covariance
-                            * W_r.asDiagonal();
+                      + W_r.asDiagonal() * covariance * W_r.asDiagonal();
         Eigen::LLT<Eigen::Ref<Eigen::MatrixXd>> llt_B(B);
         auto L = llt_B.matrixL();
         auto LT = llt_B.matrixU();
         b.noalias() = W.diagonal().cwiseProduct(theta) + theta_grad;
-        a.noalias() = b
-                      - W_r.asDiagonal()
-                            * LT.solve(L.solve(
-                                W_r.cwiseProduct(covariance * b)));
+        a.noalias()
+            = b
+              - W_r.asDiagonal()
+                    * LT.solve(L.solve(W_r.cwiseProduct(covariance * b)));
         // Simple Newton step
         theta.noalias() = covariance * a;
         objective_old = objective_new;
@@ -1005,21 +1003,38 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
         partial_parm, ll_args_filter);
     if (options.solver == 1) {
       if (options.hessian_block_size == 1) {
-      // TODO(Steve): Solve without casting from sparse to dense
-      Eigen::MatrixXd tmp
-          = md_est.L.template triangularView<Eigen::Lower>().solve(
-              md_est.W_r.toDense());
-      R = tmp.transpose() * tmp;
-      arena_t<Eigen::MatrixXd> C
-          = md_est.L.template triangularView<Eigen::Lower>().solve(
-              md_est.W_r * md_est.covariance);
-      if constexpr (!ll_args_contain_var) {
-        s2.deep_copy(
-            (0.5
-             * (md_est.covariance.diagonal() - (C.transpose() * C).diagonal())
-                   .cwiseProduct(laplace_likelihood::third_diff(
-                       ll_fun, md_est.theta, value_of(ll_args_copy), msgs))));
+        // TODO(Steve): Solve without casting from sparse to dense
+        Eigen::MatrixXd tmp
+            = md_est.L.template triangularView<Eigen::Lower>().solve(
+                md_est.W_r.toDense());
+        R = tmp.transpose() * tmp;
+        arena_t<Eigen::MatrixXd> C
+            = md_est.L.template triangularView<Eigen::Lower>().solve(
+                md_est.W_r * md_est.covariance);
+        if constexpr (!ll_args_contain_var) {
+          s2.deep_copy(
+              (0.5
+               * (md_est.covariance.diagonal() - (C.transpose() * C).diagonal())
+                     .cwiseProduct(laplace_likelihood::third_diff(
+                         ll_fun, md_est.theta, value_of(ll_args_copy), msgs))));
+        } else {
+          arena_t<Eigen::MatrixXd> A = md_est.covariance - C.transpose() * C;
+          auto s2_tmp = laplace_likelihood::compute_s2(
+              ll_fun, md_est.theta, A, options.hessian_block_size, ll_args_copy,
+              msgs);
+          s2.deep_copy(s2_tmp);
+          copy_compute_s2(partial_parm, ll_args_filter);
+          set_zero_adjoint(ll_args_filter);
+        }
+
       } else {
+        Eigen::MatrixXd tmp
+            = md_est.L.template triangularView<Eigen::Lower>().solve(
+                md_est.W_r.toDense());
+        R = tmp.transpose() * tmp;
+        arena_t<Eigen::MatrixXd> C
+            = md_est.L.template triangularView<Eigen::Lower>().solve(
+                md_est.W_r * md_est.covariance);
         arena_t<Eigen::MatrixXd> A = md_est.covariance - C.transpose() * C;
         auto s2_tmp = laplace_likelihood::compute_s2(ll_fun, md_est.theta, A,
                                                      options.hessian_block_size,
@@ -1027,23 +1042,6 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
         s2.deep_copy(s2_tmp);
         copy_compute_s2(partial_parm, ll_args_filter);
         set_zero_adjoint(ll_args_filter);
-      }
-
-      } else {
-      Eigen::MatrixXd tmp
-          = md_est.L.template triangularView<Eigen::Lower>().solve(
-              md_est.W_r.toDense());
-      R = tmp.transpose() * tmp;
-      arena_t<Eigen::MatrixXd> C
-          = md_est.L.template triangularView<Eigen::Lower>().solve(
-              md_est.W_r * md_est.covariance);
-      arena_t<Eigen::MatrixXd> A = md_est.covariance - C.transpose() * C;
-      auto s2_tmp = laplace_likelihood::compute_s2(ll_fun, md_est.theta, A,
-                                                    options.hessian_block_size,
-                                                    ll_args_copy, msgs);
-      s2.deep_copy(s2_tmp);
-      copy_compute_s2(partial_parm, ll_args_filter);
-      set_zero_adjoint(ll_args_filter);
       }
     } else if (options.solver == 2) {
       R = md_est.W_r
