@@ -41,7 +41,6 @@ inline constexpr bool is_filter_fun_nothrow_v
 }  // namespace internal
 
 /*
- * // TODO(Steve): This should be something like `map_if` or `transform_if`
  * Subset a tuple by a compile time filter on the types and return a
  * tuple with an unary functor applied to each element where the filter was
  * true:
