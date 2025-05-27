@@ -53,7 +53,7 @@ template <typename T, typename = void>
 struct arena_tuple_impl {};
 
 template <typename T>
-struct arena_tuple_impl<T, stan::math::require_not_tuple_t<T>> {
+struct arena_tuple_impl<T, stan::require_not_tuple_t<T>> {
   using type = typename internal::arena_type_impl<std::decay_t<T>>::type;
 };
 

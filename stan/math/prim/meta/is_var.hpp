@@ -33,6 +33,14 @@ struct is_any_var_scalar_impl<std::tuple<Types...>> {
       = (is_any_var_scalar_impl<scalar_type_t<std::decay_t<Types>>>::value
          || ...);
 };
+
+template <typename... Types, typename... VecArgs>
+struct is_any_var_scalar_impl<std::vector<std::tuple<Types...>, VecArgs...>> {
+  static constexpr bool value
+      = (is_any_var_scalar_impl<scalar_type_t<std::decay_t<Types>>>::value
+         || ...);
+};
+
 }  // namespace internal
 
 template <typename... Types>

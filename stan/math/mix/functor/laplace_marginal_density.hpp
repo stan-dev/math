@@ -296,9 +296,7 @@ inline void set_zero_adjoint(Output&& output) {
           } else if constexpr (is_stan_scalar_v<output_i_t>) {
             output_i.adj() = 0;
           } else {
-            static_assert(1,
-                          "set_zero_adjoint missed!!! This is an internal "
-                          "error please report an issue on the Stan github");
+            static_assert(1, "INTERNAL ERROR:(laplace_marginal_lpdf) set_zero_adjoints was not able to deduce the actiopns needed for the given type.");
           }
         },
         std::forward<Output>(output));
@@ -331,7 +329,7 @@ inline void collect_adjoints(Output& output, Input1&& precalc) {
             precalc_i.adj() = 0;
           }
         } else {
-          static_assert(1, "We missed!!!");
+          static_assert(1, "INTERNAL ERROR:(laplace_marginal_lpdf) collect_adjoints was not able to deduce the actiopns needed for the given type.");
         }
       },
       std::forward<Output>(output), std::forward<Input1>(precalc));
@@ -769,9 +767,10 @@ template <typename Output, typename Input1>
 inline void collect_adjoints(Output&& output, const vari* ret,
                              Input1&& precalc) {
   if constexpr (is_tuple_v<Output>) {
-    static_assert(1,
+    static_assert(1,"INTERNAL ERROR:(laplace_marginal_lpdf)"
                   "Accumulate Adjoints called on a tuple, but tuples cannot be "
-                  "on the reverse mode stack!");
+                  "on the reverse mode stack!"
+                  "This is an internal error, please report it to the stan github as an issue.");
   } else if constexpr (is_std_vector_v<Output>) {
     if constexpr (!is_var_v<value_type_t<Output>>) {
       const auto output_size = output.size();
@@ -809,10 +808,7 @@ inline void collect_adjoints(Output&& output, Input1&& precalc) {
         } else if constexpr (is_stan_scalar_v<output_i_t>) {
           output_i += precalc_i;
         } else {
-          static_assert(1,
-                        "collect_adjoints was given an unexpected type! This "
-                        "is an internal bug. Please file an issue on Stan's "
-                        "github repository.");
+          static_assert(1, "INTERNAL ERROR:(laplace_marginal_lpdf) collect_adjoints was not able to deduce the actiopns needed for the given type.");
         }
       },
       std::forward<Output>(output), std::forward<Input1>(precalc));
@@ -838,16 +834,11 @@ inline void copy_compute_s2(Output&& output, Input1&& precalc) {
         } else if constexpr (is_stan_scalar_v<output_i_t>) {
           output_i += (0.5 * precalc_i.adj());
         } else {
-          static_assert(1, "We missed!!!");
+          static_assert(1, "INTERNAL ERROR:(laplace_marginal_lpdf) copy_compute_s2 was not able to deduce the actiopns needed for the given type.");
         }
       },
       std::forward<Output>(output), std::forward<Input1>(precalc));
 }
-
-template <typename T>
-static constexpr bool is_dbl_nothrow_constructible_v
-    = std::is_nothrow_constructible<
-        promote_scalar_t<double, std::decay_t<T>>>::value;
 
 template <typename Output>
 inline constexpr auto make_zero(Output&& output) {
@@ -857,7 +848,7 @@ inline constexpr auto make_zero(Output&& output) {
   } else if constexpr (is_std_vector_v<Output>) {
     if constexpr (!is_var_v<value_type_t<Output>>) {
       const auto output_size = output.size();
-      arena_t<promote_scalar_t<double, Output>> ret;
+      arena_t<std::vector<decltype(make_zero(output[0]))>> ret;
       ret.reserve(output_size);
       for (Eigen::Index i = 0; i < output_size; ++i) {
         ret.push_back(make_zero(output[i]));
@@ -897,9 +888,10 @@ inline void print_adjoint(Output&& output) {
   } else if constexpr (is_stan_scalar_v<Output>) {
     std::cout << "adj: " << output.adj() << std::endl;
   } else {
-    static_assert(1, "print missed!!!");
+          static_assert(1, "INTERNAL ERROR:(laplace_marginal_lpdf) print_adjoint was not able to deduce the actiopns needed for the given type.");
   }
 }
+
 
 template <typename Arg, typename Precalc>
 inline void laplace_tuple_collect_adjoints(var ret, Arg&& arg,
@@ -912,6 +904,10 @@ inline void laplace_tuple_collect_adjoints(var ret, Arg&& arg,
               std::forward<decltype(inner_precalc)>(inner_precalc));
         },
         std::forward<Arg>(arg), std::forward<Precalc>(precalc));
+  } else if constexpr (is_std_vector_containing_tuple_v<Arg>) {
+    for (std::size_t i = 0; i < arg.size(); ++i) {
+      laplace_tuple_collect_adjoints(ret, arg[i], precalc[i]);
+    }
   } else {
     reverse_pass_callback(
         [vi = ret.vi_, arg_arena = to_arena(std::forward<Arg>(arg)),
@@ -1108,13 +1104,7 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
               return std::forward<decltype(arg)>(arg);
             },
             covar_args_copy);
-        //      std::cout << "\ncovar args: " << std::endl;
-        //      print_adjoint(covar_args_filter);
         collect_adjoints(covar_args_adj, covar_args_filter);
-        //      std::cout << "\n______________\n";
-        //      std::cout << "covar args adj: " << std::endl;
-        //      print_adjoint(covar_args_adj);
-        //      std::cout << "\n==============\n";
       }();
     }
     if constexpr (ll_args_contain_var) {
@@ -1133,13 +1123,13 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
   }
   var ret(lmd);
   if constexpr (is_any_var_scalar_v<CovarTupleArgs>) {
-    auto covar_args_arena = stan::math::filter_map<is_any_var_scalar>(
-        [](auto&& arg) { return to_arena(arg); }, covar_args_refs);
-    laplace_tuple_collect_adjoints(ret, covar_args_arena, covar_args_adj);
+    auto covar_args_filter = stan::math::filter_map<is_any_var_scalar>(
+        [](auto&& arg) -> decltype(auto) { return arg; }, covar_args_refs);
+    laplace_tuple_collect_adjoints(ret, covar_args_filter, covar_args_adj);
   }
   if constexpr (ll_args_contain_var) {
     auto ll_args_filter = stan::math::filter_map<is_any_var_scalar>(
-        [](auto&& arg) { return to_arena(arg); }, ll_args_refs);
+        [](auto&& arg) -> decltype(auto) { return arg; }, ll_args_refs);
     laplace_tuple_collect_adjoints(ret, ll_args_filter, partial_parm);
   }
   return ret;

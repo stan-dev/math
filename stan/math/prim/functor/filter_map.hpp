@@ -11,79 +11,109 @@
 
 namespace stan {
 namespace math {
-
-template <template <typename...> class Filter, typename F>
-inline constexpr auto filter_map(F&& f) noexcept {
-  return std::tuple<>{};
-}
+namespace internal {
 /**
  * Filter a tuple and apply a functor to each element that passes the filter.
+ * @note The `Filter` will only check `T` and if `T` is a tuple, it will
+ * recursively check each element of the tuple. But it will not inspect into
+ * `std::vector` elements automatically. If you want to inspect the inner element
+ * of an `std::vector` your type trait must do that itself.
  * @tparam Filter a struct that accepts one template parameter and has a static
  *  constexpr bool member named value that is true if the type should be
  *  included in the output tuple.
- * @tparam Index Index of the current element in the tuple.
+ * @tparam InVector For internal use. If true then we assume we are inside of a
+ *  `std::vector` and the return type should not be wrapped in a tuple.
+ * @tparam InTuple For internal use. If true then we assume we are inside of a
+ *  tuple and any subtuples should be double wrapped so that tuple_concat
+ *  produces a tuple for this element.
  * @tparam F Type of functor
- * @tparam Tuple A tuple
+ * @tparam T Any type
  * @param f functor callable
- * @param tup tuple of arguments
+ * @param x Any type
  * @return a tuple with the functor applied to each element which passed the
  * filter.
  */
-template <template <typename...> class Filter, std::size_t Index = 0,
-          typename F, typename Tuple, require_tuple_t<Tuple>* = nullptr>
-inline constexpr auto filter_map(F&& f, Tuple&& tup) {
-  if constexpr (Index == (std::tuple_size<std::decay_t<Tuple>>::value)) {
-    return std::make_tuple();
-  } else {
-    constexpr bool apply_filter_b
-        = Filter<std::decay_t<decltype(std::get<Index>(tup))>>::value;
-    if constexpr (apply_filter_b) {
-      if constexpr (stan::math::is_tuple_v<
-                        std::tuple_element_t<Index, std::decay_t<Tuple>>>) {
-        // This will look like tuple(tuple(tuple(1, 2)), tuple(3, 4)) ->
-        // tuple(tuple(1, 2), 3, 4)
-        return tuple_concat(std::make_tuple(filter_map<Filter>(
-                                f, std::get<Index>(std::forward<Tuple>(tup)))),
-                            filter_map<Filter, Index + 1>(
-                                std::forward<F>(f), std::forward<Tuple>(tup)));
+template <template <typename...> class Filter, bool InVector = false, bool InTuple = false,
+  typename F, typename T>
+inline constexpr decltype(auto) filter_map(F&& f, T&& x) {
+  if constexpr (inspect_tuple_v<Filter, T>) {
+    if constexpr (is_tuple_v<T>) {
+      auto ret = stan::math::apply([&f](auto&&... args) {
+        return stan::math::tuple_concat(
+          filter_map<Filter, false, true>(f, std::forward<decltype(args)>(args))...
+        );
+      }, std::forward<T>(x));
+      /* If we are in at this stage, we want tuple_concat to return a tuple here
+       * So we return a tuple(tuple()) so that tuple_cat concats
+       * the first layer of tuple.
+       * For example, if our input is a tuple(double, tuple(double, vec<double>))
+       * with an identity filter we want tuple_concat to return a
+       * tuple(double, tuple(double, vec<double>)).
+       * Without the double tuple we would get back a tuple(double, double, vec<double>).
+       */
+      if constexpr (InTuple) {
+        return partially_forward_as_tuple(std::move(ret));
       } else {
-        return tuple_concat(partially_forward_as_tuple(
-                                f(std::get<Index>(std::forward<Tuple>(tup)))),
-                            filter_map<Filter, Index + 1>(
-                                std::forward<F>(f), std::forward<Tuple>(tup)));
+        return ret;
+      }
+    } else if constexpr (is_std_vector_v<T>) {
+      if constexpr (contains_tuple<T>::value) {
+        using value_type = value_type_t<T>;
+        /* 3 cases
+         * 1. value_type is a scalar or Eigen matrix
+         * 2. value_type is a tuple
+         * 3. value_type is a std::vector which can hold either (1) or (2)
+         */
+        std::vector<decltype(filter_map<Filter, true>(f, x[0]))> ret;
+        for (size_t i = 0; i < x.size(); ++i) {
+          ret.push_back(filter_map<Filter, true>(f, x[i]));
+        }
+        if constexpr (InVector) {
+          return ret;
+        } else {
+          return std::make_tuple(std::move(ret));
+        }
+      } else {
+        if constexpr (InVector) {
+          return std::forward<F>(f)(std::forward<T>(x));
+        } else {
+          return partially_forward_as_tuple(std::forward<F>(f)(std::forward<T>(x)));
+        }
       }
     } else {
-      return filter_map<Filter, Index + 1>(std::forward<F>(f),
-                                           std::forward<Tuple>(tup));
-    }
-  }
-}
-
-template <template <typename...> class Filter, typename F, typename T1,
-          typename... Types, require_not_tuple_t<T1>* = nullptr>
-inline constexpr auto filter_map(F&& f, T1&& x, Types&&... xs) {
-  constexpr bool apply_filter_b = Filter<std::decay_t<T1>>::value;
-  if constexpr (apply_filter_b) {
-    if (sizeof...(Types) == 0) {
-      return partially_forward_as_tuple(
-          std::forward<F>(f)(std::forward<T1>(x)));
-    }
-    if constexpr (stan::math::is_tuple_v<T1>) {
-      // This will look like tuple(tuple(tuple(1, 2)), tuple(3, 4)) ->
-      // tuple(tuple(1, 2), 3, 4)
-      return tuple_concat(
-          std::make_tuple(filter_map<Filter>(f, std::forward<T1>(x))),
-          filter_map<Filter>(std::forward<F>(f), std::forward<Types>(xs)...));
-    } else {
-      return tuple_concat(
-          partially_forward_as_tuple(f(std::forward<T1>(x))),
-          filter_map<Filter>(std::forward<F>(f), std::forward<Types>(xs)...));
+      if constexpr (InVector) {
+        return std::forward<F>(f)(std::forward<T>(x));
+      } else {
+        return partially_forward_as_tuple(std::forward<F>(f)(std::forward<T>(x)));
+      }
     }
   } else {
-    return filter_map<Filter>(std::forward<F>(f), std::forward<Types>(xs)...);
+    return std::make_tuple();
   }
 }
-
+}
+/**
+ * Filter a tuple and apply a functor to each element that passes the filter.
+ * @note The `Filter` will only check `T` and if `T` is a tuple, it will
+ * recursively check each element of the tuple. But it will not inspect into
+ * `std::vector` elements automatically. If you want to inspect the inner element
+ * of an `std::vector` your type trait must do that itself.
+ * @tparam Filter a struct that accepts one template parameter and has a static
+ *  constexpr bool member named value that is true if the type should be
+ *  included in the output tuple.
+ * @tparam F Type of functor
+ * @tparam T A tuple
+ * @param f functor callable
+ * @param x tuple of arguments
+ * @return a tuple with the functor applied to each element which passed the
+ * filter.
+ */
+template <template <typename...> class Filter,
+  typename F, typename T, require_tuple_t<T>* = nullptr>
+inline constexpr decltype(auto) filter_map(F&& f, T&& x) {
+  return internal::filter_map<Filter>(
+      std::forward<F>(f), std::forward<T>(x));
+}
 }  // namespace math
 }  // namespace stan
 

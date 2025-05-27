@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_MIX_FUNCTOR_LAPLACE_LIKELIHOOD_HPP
 #define STAN_MATH_MIX_FUNCTOR_LAPLACE_LIKELIHOOD_HPP
 
-// #include <stan/math/mix/laplace/hessian_times_vector.hpp>
 #include <stan/math/mix/functor/hessian_block_diag.hpp>
 #include <stan/math/prim/functor.hpp>
 #include <stan/math/prim/fun.hpp>
@@ -61,6 +60,14 @@ inline auto conditional_copy_and_promote(Args&&... args) {
                         std::forward<decltype(inner_args)>(inner_args))...);
               },
               std::forward<decltype(arg)>(arg));
+        } else if constexpr (is_std_vector_v<decltype(arg)>) {
+          std::vector<decltype(conditional_copy_and_promote<Filter, PromotedType,
+                                                 CopyType>(arg[0]))> ret;
+          for (std::size_t i = 0; i < arg.size(); ++i) {
+            ret.push_back(conditional_copy_and_promote<Filter, PromotedType,
+                                                       CopyType>(arg[i]));
+          }
+          return ret;
         } else {
           if constexpr (CopyType == COPY_TYPE::DEEP) {
             return stan::math::eval(promote_scalar<PromotedType>(

@@ -39,7 +39,17 @@ inline auto constexpr tuple_concat_impl(Tuple1&& x, Tuple2&& y, Tuple3&& z,
 }  // namespace internal
 
 /**
- * Base case to pass a tupel forward.
+ * Base case to pass a tuple forward.
+ * @tparam Tuple Tuple type.
+ * @param x Tuple.
+ */
+inline constexpr auto tuple_concat() noexcept {
+  return std::make_tuple();
+}
+
+
+/**
+ * Base case to pass a tuple forward.
  * @tparam Tuple Tuple type.
  * @param x Tuple.
  */

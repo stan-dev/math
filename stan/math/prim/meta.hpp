@@ -72,6 +72,7 @@
 #include <stan/math/prim/meta/append_return_type.hpp>
 #include <stan/math/prim/meta/base_type.hpp>
 #include <stan/math/prim/meta/contains_std_vector.hpp>
+#include <stan/math/prim/meta/contains_tuple.hpp>
 #include <stan/math/prim/meta/error_index.hpp>
 #include <stan/math/prim/meta/forward_as.hpp>
 #include <stan/math/prim/meta/holder.hpp>
