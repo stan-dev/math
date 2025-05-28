@@ -47,7 +47,7 @@ template <typename... Types>
 using require_all_not_tuple_t
     = require_all_not_t<is_tuple<std::decay_t<Types>>...>;
 /*! @} */
-}
+}  // namespace math
 
 }  // namespace stan
 
