@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/functor/apply.hpp>
 #include <vector>
 #include <tuple>
 #include <type_traits>
@@ -12,11 +13,12 @@ namespace math {
 
 template <typename PromotionScalars, typename UnPromotedTypes>
 inline constexpr auto promote_scalar(UnPromotedTypes&& x) {
-  if constexpr (std::is_same_v<PromotionScalars,
-                               scalar_type_t<UnPromotedTypes>>) {
+  using unpromoted_scalar_t = scalar_type_t<UnPromotedTypes>;
+  constexpr bool both_tuples = is_tuple_v<PromotionScalars> && 
+    is_tuple_v<UnPromotedTypes>;
+  if constexpr (std::is_same_v<PromotionScalars,unpromoted_scalar_t>) {
     return std::forward<UnPromotedTypes>(x);
-  } else if constexpr (is_tuple_v<
-                           PromotionScalars> && is_tuple_v<UnPromotedTypes>) {
+  } else if constexpr (both_tuples) {
     return index_apply<std::tuple_size<std::decay_t<UnPromotedTypes>>::value>(
         [&x](auto... Is) {
           return std::make_tuple(

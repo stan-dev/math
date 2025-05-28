@@ -60,7 +60,6 @@ inline constexpr decltype(auto) filter_map(F&& f, T&& x) {
       }
     } else if constexpr (is_std_vector_v<T>) {
       if constexpr (contains_tuple<T>::value) {
-        using value_type = value_type_t<T>;
         /* 3 cases
          * 1. value_type is a scalar or Eigen matrix
          * 2. value_type is a tuple
