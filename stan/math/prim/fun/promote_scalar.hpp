@@ -14,9 +14,9 @@ namespace math {
 template <typename PromotionScalars, typename UnPromotedTypes>
 inline constexpr auto promote_scalar(UnPromotedTypes&& x) {
   using unpromoted_scalar_t = scalar_type_t<UnPromotedTypes>;
-  constexpr bool both_tuples = is_tuple_v<PromotionScalars> && 
-    is_tuple_v<UnPromotedTypes>;
-  if constexpr (std::is_same_v<PromotionScalars,unpromoted_scalar_t>) {
+  constexpr bool both_tuples
+      = is_tuple_v<PromotionScalars> && is_tuple_v<UnPromotedTypes>;
+  if constexpr (std::is_same_v<PromotionScalars, unpromoted_scalar_t>) {
     return std::forward<UnPromotedTypes>(x);
   } else if constexpr (both_tuples) {
     return index_apply<std::tuple_size<std::decay_t<UnPromotedTypes>>::value>(
