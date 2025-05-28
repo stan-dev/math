@@ -48,7 +48,6 @@ struct laplace_options {
 
 namespace internal {
 
-
 template <typename Covar, typename ThetaVec, typename WR, typename L_t,
           typename A_vec, typename ThetaGrad, typename LU_t, typename KRoot>
 struct laplace_density_estimates {
@@ -341,7 +340,7 @@ inline void collect_adjoints(Output& output, Input&& input) {
           Eigen::Map<Eigen::Matrix<double, -1, 1>> output_map(output_i.data(),
                                                               output_i.size());
           Eigen::Map<Eigen::Matrix<var, -1, 1>> input_map(input_i.data(),
-                                                            input_i.size());
+                                                          input_i.size());
           output_map.array() += input_map.adj().array();
           if constexpr (ZeroInput) {
             input_map.adj().setZero();
@@ -737,7 +736,7 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
       std::string("You chose a solver (") + std::to_string(options.solver)
       + ") that is not valid. Please choose either 1, 2, or 3.");
 }
-}
+}  // namespace internal
 /**
  * For a latent Gaussian model with global parameters phi, latent
  * variables theta, and observations y, this function computes
@@ -803,8 +802,8 @@ inline void collect_adjoints(Output&& output, Input&& input) {
         if constexpr (is_std_vector_v<output_i_t>) {
           Eigen::Map<Eigen::Matrix<double, -1, 1>> output_map(output_i.data(),
                                                               output_i.size());
-          Eigen::Map<Eigen::Matrix<double, -1, 1>> input_map(
-              input_i.data(), input_i.size());
+          Eigen::Map<Eigen::Matrix<double, -1, 1>> input_map(input_i.data(),
+                                                             input_i.size());
           output_map.array() += input_map.array();
         } else if constexpr (is_eigen_v<output_i_t>) {
           output_i.array() += input_i.array();
@@ -835,7 +834,7 @@ inline void constexpr copy_compute_s2(const std::tuple<>& output,
  * @param input The input from which the adjoints will be collected
  */
 template <bool ZeroInput = false, typename Output, typename Input,
-          require_t<is_all_arithmetic_scalar<Output>> * = nullptr,
+          require_t<is_all_arithmetic_scalar<Output>>* = nullptr,
           require_t<is_any_var_scalar<Input>>* = nullptr>
 inline void copy_compute_s2(Output&& output, Input&& input) {
   return iter_tuple_n(
@@ -845,7 +844,7 @@ inline void copy_compute_s2(Output&& output, Input&& input) {
           Eigen::Map<Eigen::Matrix<double, -1, 1>> output_map(output_i.data(),
                                                               output_i.size());
           Eigen::Map<Eigen::Matrix<var, -1, 1>> input_map(input_i.data(),
-                                                            input_i.size());
+                                                          input_i.size());
           output_map.array() += 0.5 * input_map.adj().array();
           if constexpr (ZeroInput) {
             input_map.adj().setZero();
@@ -895,7 +894,7 @@ inline constexpr auto make_zeroed_arena(Input&& input) {
   } else if constexpr (is_eigen_v<Input>) {
     return arena_t<promote_scalar_t<double, Input>>(
         plain_type_t<promote_scalar_t<double, Input>>::Zero(input.rows(),
-                                                             input.cols()));
+                                                            input.cols()));
   } else if constexpr (is_var<Input>::value) {
     return static_cast<double>(0.0);
   }
@@ -941,8 +940,7 @@ inline void print_adjoint(Output&& output) {
  * @param input The input from which the adjoints will be collected
  */
 template <typename Output, typename Input>
-inline void collect_adjoints(Output&& output, const vari* ret,
-                             Input&& input) {
+inline void collect_adjoints(Output&& output, const vari* ret, Input&& input) {
   if constexpr (is_tuple_v<Output>) {
     static_assert(1,
                   "INTERNAL ERROR:(laplace_marginal_lpdf)"
@@ -959,8 +957,8 @@ inline void collect_adjoints(Output&& output, const vari* ret,
     } else {
       Eigen::Map<Eigen::Matrix<var, -1, 1>> output_map(output.data(),
                                                        output.size());
-      Eigen::Map<const Eigen::Matrix<double, -1, 1>> input_map(
-          input.data(), input.size());
+      Eigen::Map<const Eigen::Matrix<double, -1, 1>> input_map(input.data(),
+                                                               input.size());
       output_map.array().adj() += ret->adj_ * input_map.array();
     }
   } else if constexpr (is_eigen_v<Output>) {
@@ -982,7 +980,7 @@ inline void collect_adjoints(Output&& output, const vari* ret,
  */
 template <typename Output, typename Input>
 inline void reverse_pass_collect_adjoints(var ret, Output&& output,
-                                           Input&& input) {
+                                          Input&& input) {
   if constexpr (is_tuple_v<Output>) {
     stan::math::for_each(
         [ret](auto&& inner_arg, auto&& inner_input) mutable {
@@ -1003,7 +1001,7 @@ inline void reverse_pass_collect_adjoints(var ret, Output&& output,
         });
   }
 }
-}
+}  // namespace internal
 /**
  * For a latent Gaussian model with global parameters phi, latent
  * variables theta, and observations y, this function computes
@@ -1023,7 +1021,7 @@ inline void reverse_pass_collect_adjoints(var ret, Output&& output,
  * where `InnerLLTupleArgs` are the elements of `LLTupleArgs`
  * @tparam LLTupleArgs A tuple whose elements follow the types required for
  * `LLFun`
-* \laplace_common_template_args
+ * \laplace_common_template_args
  * @param[in] ll_fun A log likelihood functor
  * @param[in] ll_args Tuple containing parameters for `LLFun`
  * \laplace_common_args
@@ -1056,7 +1054,8 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
     // Solver 3
     arena_t<Eigen::MatrixXd> LU_solve_covariance;
     // Solver 1, 2, 3
-    arena_t<promote_scalar_t<double, std::decay_t<ThetaVec>>> s2(theta_0.size());
+    arena_t<promote_scalar_t<double, std::decay_t<ThetaVec>>> s2(
+        theta_0.size());
     // Make one hard copy here
     using laplace_likelihood::internal::conditional_copy_and_promote;
     using laplace_likelihood::internal::COPY_TYPE;
@@ -1197,7 +1196,8 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
   if constexpr (is_any_var_scalar_v<CovarArgs>) {
     auto covar_args_filter = stan::math::filter_map<is_any_var_scalar>(
         [](auto&& arg) -> decltype(auto) { return arg; }, covar_args_refs);
-    internal::reverse_pass_collect_adjoints(ret, covar_args_filter, covar_args_adj);
+    internal::reverse_pass_collect_adjoints(ret, covar_args_filter,
+                                            covar_args_adj);
   }
   if constexpr (ll_args_contain_var) {
     auto ll_args_filter = stan::math::filter_map<is_any_var_scalar>(

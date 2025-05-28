@@ -61,14 +61,11 @@ inline Eigen::VectorXd laplace_latent_tol_bernoulli_logit_rng(
  * \msg_arg
  */
 template <typename CovarFun, typename ThetaVec, typename CovarArgs,
-          typename RNG,
-          require_eigen_t<ThetaVec>* = nullptr>
-inline Eigen::VectorXd laplace_latent_bernoulli_logit_rng(const std::vector<int>& y,
-                                   const std::vector<int>& n_samples,
-                                   ThetaVec&& theta_0,
-                                   CovarFun&& covariance_function,
-                                   CovarArgs&& covar_args, RNG& rng,
-                                   std::ostream* msgs) {
+          typename RNG, require_eigen_t<ThetaVec>* = nullptr>
+inline Eigen::VectorXd laplace_latent_bernoulli_logit_rng(
+    const std::vector<int>& y, const std::vector<int>& n_samples,
+    ThetaVec&& theta_0, CovarFun&& covariance_function, CovarArgs&& covar_args,
+    RNG& rng, std::ostream* msgs) {
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_base_rng(bernoulli_logit_likelihood{},
                           std::forward_as_tuple(to_vector(y), n_samples),
