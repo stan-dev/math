@@ -7,7 +7,7 @@ namespace stan {
 namespace internal {
 template <typename T>
 struct contains_tuple_impl {
-  static constexpr bool value = stan::is_tuple_v<T>;
+  static constexpr bool value = stan::math::is_tuple_v<T>;
 };
 
 template <typename T, typename... VecArgs>

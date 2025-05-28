@@ -6,6 +6,7 @@
 #include <type_traits>
 
 namespace stan {
+namespace math {
 namespace internal {
 
 template <typename... Types>
@@ -20,7 +21,6 @@ struct is_tuple : internal::is_tuple_impl<std::decay_t<T>> {};
 
 template <typename T>
 constexpr bool is_tuple_v = is_tuple<T>::value;
-
 /*! \ingroup require_std */
 /*! \defgroup tuple_types tuple  */
 /*! \addtogroup tuple_types */
@@ -47,6 +47,7 @@ template <typename... Types>
 using require_all_not_tuple_t
     = require_all_not_t<is_tuple<std::decay_t<Types>>...>;
 /*! @} */
+}
 
 }  // namespace stan
 

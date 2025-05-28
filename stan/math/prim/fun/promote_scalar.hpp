@@ -2,8 +2,8 @@
 #define STAN_MATH_PRIM_FUN_PROMOTE_SCALAR_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/functor/apply.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <vector>
 #include <tuple>
 #include <type_traits>
