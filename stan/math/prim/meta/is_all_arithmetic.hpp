@@ -17,8 +17,10 @@ struct is_all_arithmetic_scalar_impl
 
 template <typename... Types>
 struct is_all_arithmetic_scalar_impl<std::tuple<Types...>>
-    : std::conjunction<is_all_arithmetic_scalar_impl<
-          scalar_type_t<std::decay_t<Types>>>...> {};
+    : std::conjunction<is_all_arithmetic_scalar_impl<std::decay_t<Types>>...> {};
+template <typename T, typename... VecArgs>
+struct is_all_arithmetic_scalar_impl<std::vector<T, VecArgs...>>
+    : std::conjunction<is_all_arithmetic_scalar_impl<std::decay_t<T>>> {};
 }  // namespace internal
 
 template <typename... Types>
@@ -28,7 +30,7 @@ struct is_all_arithmetic_scalar
 
 template <typename... Types>
 inline constexpr bool is_all_arithmetic_scalar_v
-    = is_all_arithmetic_scalar<Types...>::value;
+    = is_all_arithmetic_scalar<std::decay_t<Types>...>::value;
 
 }  // namespace stan
 

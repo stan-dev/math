@@ -21,44 +21,15 @@ namespace math {
  * parameterization of the Negative Binomial.
  *
  * @tparam Eta A type for the overdispersion parameter.
- * @tparam ThetaVec A type inheriting from `Eigen::EigenBase` with dynamic
- * sized rows and 1 column.
- * @tparam CovarFun A functor with an
- *  `operator()(CovarArgsElements..., {TrainTupleElements...|
- PredTupleElements...})`
- *  method. The `operator()` method should accept as arguments the
- *  inner elements of `CovarArgs`. The return type of the `operator()` method
- *  should be a type inheriting from `Eigen::EigenBase` with dynamic sized
- *  rows and columns.
- * @tparam CovarArgs A tuple of types to passed as the first arguments of
- * `CovarFun::operator()`
+ * \laplace_common_template_args
  * @tparam RNG A valid boost rng type
- * @param y Observed counts.
- * @param y_index Index indicating which group each observation belongs to.
- * @param eta Overdisperison parameter.
- * @param theta_0 Initial guess for the Newton solver.
- * @param covariance_function Function that returns prior covariance matrix.
- * @param covar_args arguments for the covariance function.
- * @param train_tuple additional arguments for the covariance function,
- *                    e.g. covariates which correspond to observed data.
- * @param pred_tuple additional arguments for the covariance function,
- *                   e.g. covariates for out-of-sample data.
- * @param tolerance tolerated norm of the gradient when finding the mode of
-                    p(theta|y,phi) for the Laplace approximation.
- * @param max_num_steps maximum number of steps before the Newton solver
- *                      breaks and returns an error.
- * @param hessian_block_size the size of the block for a block-diagonal
- *              Hessian of the log likelihood, i.e second derivative of
- *              log p(y|theta,phi) wrt theta.
- * @param solver Type of Newton solver. Each corresponds to a distinct choice
- *               of B matrix (i.e. application SWM formula):
- *               1. computes square-root of negative Hessian.
- *               2. computes square-root of covariance matrix.
- *               3. computes no square-root and uses LU decomposition.
- * @param max_steps_line_search Number of steps after which the algorithm
- *                        gives up on doing a linesearch. If 0, no linesearch.
- * @param rng seed for rng.
- * @param msgs message stream for the covariance and likelihood function.
+ * @param[in] y Observed counts.
+ * @param[in] y_index Index indicating which group each observation belongs to.
+ * @param[in] eta Overdisperison parameter.
+ * \laplace_common_args
+ * \laplace_options
+ * \rng_arg
+ * \msg_arg
  */
 template <typename Eta, typename ThetaVec, typename CovarFun,
           typename CovarArgs, typename RNG,
@@ -92,29 +63,14 @@ inline Eigen::VectorXd laplace_latent_tol_neg_binomial_2_log_rng(
  * parameterization of the Negative Binomial.
  *
  * @tparam Eta A type for the overdispersion parameter.
- * @tparam ThetaVec A type inheriting from `Eigen::EigenBase` with dynamic
- * sized rows and 1 column.
- * @tparam CovarFun A functor with an
- *  `operator()(CovarArgsElements...)` method. The `operator()` method should
- * accept as arguments the inner elements of `CovarArgs`, followed by either the
- * inner elements of `TrainTuple` or `PredTuple`. The return type of the
- * `operator()` method should be a type inheriting from `Eigen::EigenBase` with
- * dynamic sized rows and columns.
- * @tparam CovarArgs A tuple of types to passed as the first arguments of
- * `CovarFun::operator()`
+ * \laplace_common_template_args
  * @tparam RNG A valid boost rng type
- * @param y Observed counts.
- * @param y_index Index indicating which group each observation belongs to.
- * @param eta Overdisperison parameter.
- * @param theta_0 Initial guess for the Newton solver.
- * @param covariance_function Function that returns prior covariance matrix.
- * @param covar_args arguments for the covariance function.
- * @param train_tuple additional arguments for the covariance function,
- *                    e.g. covariates which correspond to observed data.
- * @param pred_tuple additional arguments for the covariance function,
- *                   e.g. covariates for out-of-sample data.
- * @param rng seed for rng.
- * @param msgs message stream for the covariance and likelihood function.
+ * @param[in] y Observed counts.
+ * @param[in] y_index Index indicating which group each observation belongs to.
+ * @param[in] eta Overdisperison parameter.
+ * \laplace_common_args
+ * \rng_arg
+ * \msg_arg
  */
 template <typename Eta, typename ThetaVec, typename CovarFun,
           typename CovarArgs, typename RNG,

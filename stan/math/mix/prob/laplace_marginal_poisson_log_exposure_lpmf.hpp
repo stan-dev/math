@@ -58,31 +58,16 @@ struct poisson_log_exposure_likelihood {
  * with a Laplace approximation. See the laplace_marginal function
  * for more details.
  *
- * @tparam CovarFun The type of the initial guess, theta_0.
- * @tparam YeVec The type for the global parameter, phi.
- * @tparam ThetaVec The type of the initial guess, theta_0.
- * @tparam Args The type of variadic arguments for the covariance function.
+ * @tparam propto boolean ignored
+ * @tparam YeVec A type inheriting from `Eigen::EigenBase` with dynamic
+ * sized rows and 1 column.
+ * \laplace_common_template_args
  * @param[in] y total counts per group. Second sufficient statistics.
  * @param[in] y_index group to which each observation belongs.
  * @param[in] ye the exposure for each group.
- * @param[in] theta_0 the initial guess for the Laplace approximation.
- * @param[in] covariance_function a function which returns the prior covariance.
- * @param[in] covar_args arguments for the covariance function.
- * @param tolerance Tolerated gradient norm for Newton solver.
- * @param max_num_steps maximum number of steps before the Newton solver
- *                      breaks and returns an error.
- * @param hessian_block_size the size of the block for a block-diagonal
- *              Hessian of the log likelihood, i.e second derivative of
- *              log p(y|theta,phi) wrt theta.
- * @param solver Type of Newton solver. Each corresponds to a distinct choice
- *               of B matrix (i.e. application SWM formula):
- *               1. computes square-root of negative Hessian.
- *               2. computes square-root of covariance matrix.
- *               3. computes no square-root and uses LU decomposition.
- * @param max_steps_line_search Number of steps after which the algorithm
- *                        gives up on doing a linesearch. If 0, no linesearch.
- * @param[in] max_steps_line_search
- * @param[in, out] msgs
+ * \laplace_common_args
+ * \laplace_options
+ * \msg_arg
  */
 template <bool propto = false, typename YeVec, typename ThetaVec,
           typename CovarFun, typename CovarArgs,
@@ -108,17 +93,14 @@ inline auto laplace_marginal_tol_poisson_2_log_lpmf(
  * with a Laplace approximation. See the laplace_marginal function
  * for more details.
  *
- * @tparam CovarFun The type of the initial guess, theta_0.
+ * @tparam propto boolean ignored
  * @tparam YeVec The type for the global parameter, phi.
- * @tparam ThetaVec The type of the initial guess, theta_0.
- * @tparam Args
+ * \laplace_common_template_args
  * @param[in] y total counts per group. Second sufficient statistics.
  * @param[in] y_index group to which each observation belongs.
  * @param[in] ye the exposure for each group.
- * @param[in] theta_0 the initial guess for the Laplace approximation.
- * @param[in] covariance_function a function which returns the prior covariance.
- * @param[in] covar_args arguments for the covariance function.
- * @param[in, out] msgs
+ * \laplace_common_args
+ * \msg_arg
  */
 template <bool propto = false, typename YeVec, typename ThetaVec,
           typename CovarFun, typename CovarArgs,

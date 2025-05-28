@@ -52,35 +52,12 @@ struct poisson_log_likelihood {
  * for more details.
  *
  * @tparam propto ignored
- * @tparam ThetaVec A type inheriting from `Eigen::EigenBase` with dynamic
- * sized rows and 1 column.
- * @tparam CovarFun A functor with an
- *  `operator()(CovarArgsElements...)` method. The `operator()` method should
- * accept as arguments the inner elements of `CovarArgs`. The return type of the
- * `operator()` method should be a type inheriting from `Eigen::EigenBase` with
- * dynamic sized rows and columns.
- * @tparam CovarArgs A tuple of types to passed as the first arguments of
- * `CovarFun::operator()`
+ * \laplace_common_template_args
  * @param[in] y observed counts
  * @param[in] y_index group to which each observation belongs
- * @param[in] theta_0 the initial guess for the Laplace approximation.
- * @param covariance_function Function that returns covariance function.
- * @param covar_args arguments for the covariance function.
- * @param tolerance Tolerated gradient norm for Newton solver.
- * @param max_num_steps maximum number of steps before the Newton solver
- *                      breaks and returns an error.
- * @param hessian_block_size the size of the block for a block-diagonal
- *              Hessian of the log likelihood, i.e second derivative of
- *              log p(y|theta,phi) wrt theta.
- * @param solver Type of Newton solver. Each corresponds to a distinct choice
- *               of B matrix (i.e. application SWM formula):
- *               1. computes square-root of negative Hessian.
- *               2. computes square-root of covariance matrix.
- *               3. computes no square-root and uses LU decomposition.
- * @param max_steps_line_search Number of steps after which the algorithm
- *                        gives up on doing a linesearch. If 0, no linesearch.
- * @param[in] max_steps_line_search
- * @param msgs message stream for the covariance and likelihood function.
+ * \laplace_common_args
+ * \laplace_options
+ * \msg_arg
  */
 template <bool propto = false, typename ThetaVec, typename CovarFun,
           typename CovarArgs, require_all_eigen_vector_t<ThetaVec>* = nullptr>
@@ -105,21 +82,11 @@ inline auto laplace_marginal_tol_poisson_log_lpmf(
  * for more details.
  *
  * @tparam propto ignored
- * @tparam ThetaVec A type inheriting from `Eigen::EigenBase` with dynamic
- * sized rows and 1 column.
- * @tparam CovarFun A functor with an
- *  `operator()(CovarArgsElements...)` method. The `operator()` method should
- * accept as arguments the inner elements of `CovarArgs`. The return type of the
- * `operator()` method should be a type inheriting from `Eigen::EigenBase` with
- * dynamic sized rows and columns.
- * @tparam CovarArgs A tuple of types to passed as the first arguments of
- * `CovarFun::operator()`
+ * \laplace_common_template_args
  * @param[in] y observed counts
  * @param[in] y_index group to which each observation belongs
- * @param[in] theta_0 the initial guess for the Laplace approximation.
- * @param covariance_function Function that returns covariance function.
- * @param covar_args arguments for the covariance function.
- * @param msgs message stream for the covariance and likelihood function.
+ * \laplace_common_args
+ * \msg_arg
  */
 template <bool propto = false, typename ThetaVec, typename CovarFun,
           typename CovarArgs, require_eigen_vector_t<ThetaVec>* = nullptr>

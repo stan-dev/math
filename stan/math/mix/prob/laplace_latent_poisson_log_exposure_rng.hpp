@@ -15,30 +15,17 @@ namespace math {
  * with a Laplace approximation. See the laplace_marginal function
  * for more details.
  *
- * @tparam ThetaVec A type inheriting from `Eigen::EigenBase` with dynamic
- * sized rows and 1 column.
- * @tparam CovarFun A functor with an
- *  `operator()(CovarArgsElements...)` method. The `operator()` method should
- * accept as arguments the inner elements of `CovarArgs`. The return type of the
- * `operator()` method should be a type inheriting from `Eigen::EigenBase` with
- * dynamic sized rows and columns.
- * @tparam CovarArgs A tuple of types to passed as the first arguments of
- * `CovarFun::operator()`
+ * @tparam YeVec A type inheriting from `Eigen::EigenBase` with dynamic
+ *  sized rows and 1 column.
+ * \laplace_common_template_args
  * @tparam RNG A valid boost rng type
- * @param y
- * @param y_index
- * @param ye
- * @param theta_0
- * @param covariance_function
- * @param covar_args
- * @param tolerance
- * @param max_num_steps
- * @param hessian_block_size
- * @param solver
- * @param max_steps_line_search
- * @param rng
- * @param msgs
- *
+ * @param[in] y total counts per group. Second sufficient statistics.
+ * @param[in] y_index group to which each observation belongs.
+ * @param[in] ye the exposure for each group.
+ * \laplace_common_args
+ * \laplace_options
+ * \rng_arg
+ * \msg_arg
  */
 template <typename YeVec, typename ThetaVec, typename CovarFun,
           typename CovarArgs, typename RNG,
@@ -65,25 +52,16 @@ inline auto laplace_latent_tol_poisson_2_log_rng(
  * with a Laplace approximation. See the laplace_marginal function
  * for more details.
  *
- * @tparam ThetaVec A type inheriting from `Eigen::EigenBase` with dynamic
- * sized rows and 1 column.
- * @tparam CovarFun A functor with an
- *  `operator()(CovarArgsElements...)` method. The `operator()` method should
- * accept as arguments the inner elements of `CovarArgs`. The return type of the
- * `operator()` method should be a type inheriting from `Eigen::EigenBase` with
- * dynamic sized rows and columns.
- * @tparam CovarArgs A tuple of types to passed as the first arguments of
- * `CovarFun::operator()`
+ * @tparam YeVec A type inheriting from `Eigen::EigenBase` with dynamic
+ *  sized rows and 1 column.
+ * \laplace_common_template_args
  * @tparam RNG A valid boost rng type
- * @param y
- * @param y_index
- * @param ye
- * @param theta_0
- * @param covariance_function
- * @param covar_args
- * @param rng
- * @param msgs
- *
+ * @param[in] y total counts per group. Second sufficient statistics.
+ * @param[in] y_index group to which each observation belongs.
+ * @param[in] ye the exposure for each group.
+ * \laplace_common_args
+ * \rng_arg
+ * \msg_arg
  */
 template <typename YeVec, typename ThetaVec, typename CovarFun,
           typename CovarArgs, typename RNG,

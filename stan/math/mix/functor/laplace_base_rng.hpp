@@ -22,27 +22,14 @@ namespace math {
  * To sample the "original" theta's, set pred_tuple = train_tuple.
  * @tparam LLFunc Type of likelihood function.
  * @tparam LLArgs Tuple of arguments types of likelihood function.
- * @tparam ThetaVec A type inheriting from `Eigen::EigenBase` with dynamic
- * sized rows and 1 column.
- * @tparam CovarFun A functor with an
- *  `operator()(CovarArgsElements..., {TrainTupleElements...|
- PredTupleElements...})`
- *  method. The `operator()` method should accept as arguments the
- *  inner elements of `CovarArgs`. The return type of the `operator()` method
- *  should be a type inheriting from `Eigen::EigenBase` with dynamic sized
- *  rows and columns.
+ * \laplace_common_template_args
  * @tparam RNG A valid boost rng type
- * @tparam CovarArgs A tuple of types to passed as the first arguments of
- `CovarFun::operator()`
  * @param ll_fun Likelihood function.
  * @param ll_args Arguments for likelihood function.
- * @param theta_0 Initial guess for finding the mode of the conditional
-                  pi(theta_pred | y, phi, x_pred).
- * @param covariance_function Covariance function.
- * @param covar_args Observed/training covariates for covariance function.
+ * \laplace_common_args
  * @param options Control parameter for optimizer underlying Laplace approx.
- * @param rng Rng number.
- * @param msgs Stream for function prints.
+ * \rng_arg
+ * \msg_arg
  */
 template <
     typename LLFunc, typename LLArgs, typename ThetaVec, typename CovarFun,
@@ -54,7 +41,7 @@ inline Eigen::VectorXd laplace_base_rng(LLFunc&& ll_fun, LLArgs&& ll_args,
                                         CovarArgs&& covar_args,
                                         const laplace_options& options,
                                         RNG& rng, std::ostream* msgs) {
-  auto md_est = laplace_marginal_density_est(
+  auto md_est = internal::laplace_marginal_density_est(
       ll_fun, std::forward<LLArgs>(ll_args), std::forward<ThetaVec>(theta_0),
       std::forward<CovarFun>(covariance_function),
       to_ref(std::forward<CovarArgs>(covar_args)), options, msgs);

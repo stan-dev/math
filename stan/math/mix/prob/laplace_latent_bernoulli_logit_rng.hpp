@@ -17,40 +17,18 @@ namespace math {
  * return a multivariate normal random variate sampled
  * from the gaussian approximation of p(theta | y, phi),
  * where the likelihood is a Bernoulli with logit link.
- * @tparam ThetaVec A type inheriting from `Eigen::EigenBase` with dynamic
- * sized rows and 1 column.
- * @tparam CovarFun A functor with an
- *  `operator()(CovarArgsElements...)` method. The `operator()` method should
- * accept as arguments the inner elements of `CovarArgs`. The return type of the
- * `operator()` method should be a type inheriting from `Eigen::EigenBase` with
- * dynamic sized rows and columns.
- * @tparam CovarArgs A tuple of types to passed as the first arguments of
- * `CovarFun::operator()`
+ * \laplace_common_template_args
  * @tparam RNG A valid boost rng type
- * @param y Vector Vector of total number of trials with a positive outcome.
- * @param n_samples Vector of number of trials.
- * @param theta_0 Initial guess for mode of Laplace approximation.
- * @param covariance_function Covariance function.
- * @param covar_args Observed/training covariates for covariance function.
- * @param tolerance Tolerared change in objective function for Laplace approx.
- * @param max_num_steps Max number of iterations of Newton solver for Laplace
- *                      approx.
- * @param hessian_block_size Size of blocks for Hessian of log likelihood w.r.t
- *                           latent Gaussian variables.
- * @param solver Type of Newton solver. Each corresponds to a distinct choice
- *               of B matrix (i.e. application SWM formula):
- *               1. computes square-root of negative Hessian.
- *               2. computes square-root of covariance matrix.
- *               3. computes no square-root and uses LU decomposition.
- * @param max_steps_line_search Number of steps after which the algorithm gives
- *                              up on doing a linesearch. If 0, no linesearch.
- * @param rng Rng number.
- * @param msgs Streaming message for covariance functions.
+ * @param[in] y Vector Vector of total number of trials with a positive outcome.
+ * @param[in] n_samples Vector of number of trials.
+ * \laplace_common_args
+ * \laplace_options
+ * \rng_arg
+ * \msg_arg
  */
 template <typename ThetaVec, typename CovarFun, typename CovarArgs,
           typename RNG, require_eigen_t<ThetaVec>* = nullptr>
-inline Eigen::VectorXd  // CHECK -- right return type
-laplace_latent_tol_bernoulli_logit_rng(
+inline Eigen::VectorXd laplace_latent_tol_bernoulli_logit_rng(
     const std::vector<int>& y, const std::vector<int>& n_samples,
     ThetaVec&& theta_0, CovarFun&& covariance_function, CovarArgs&& covar_args,
     const double tolerance, const int64_t max_num_steps,
@@ -74,43 +52,18 @@ laplace_latent_tol_bernoulli_logit_rng(
  * return a multivariate normal random variate sampled
  * from the gaussian approximation of p(theta | y, phi),
  * where the likelihood is a Bernoulli with logit link.
- * @tparam ThetaVec A type inheriting from `Eigen::EigenBase` with dynamic
- * sized rows and 1 column.
- * @tparam CovarFun A functor with an
- *  `operator()(CovarArgsElements..., {TrainTupleElements...|
- PredTupleElements...})`
- *  method. The `operator()` method should accept as arguments the
- *  inner elements of `CovarArgs`. The return type of the `operator()` method
- *  should be a type inheriting from `Eigen::EigenBase` with dynamic sized
- *  rows and columns.
- * @tparam CovarArgs A tuple of types to passed as the first arguments of
- `CovarFun::operator()`
+ * \laplace_common_template_args
  * @tparam RNG A valid boost rng type
- * @param y Vector Vector of total number of trials with a positive outcome.
- * @param n_samples Vector of number of trials.
- * @param theta_0 Initial guess for mode of Laplace approximation.
- * @param covariance_function Covariance function.
- * @param covar_args Observed/training covariates for covariance function.
- * @param tolerance Tolerared change in objective function for Laplace approx.
- * @param max_num_steps Max number of iterations of Newton solver for Laplace
- *                      approx.
- * @param hessian_block_size Size of blocks for Hessian of log likelihood w.r.t
- *                           latent Gaussian variables.
- * @param solver Type of Newton solver. Each corresponds to a distinct choice
-                 of B matrix (i.e. application SWM formula):
- *               1. computes square-root of negative Hessian.
- *               2. computes square-root of covariance matrix.
- *               3. computes no square-root and uses LU decomposition.
- * @param max_steps_line_search Number of steps after which the algorithm gives
- *                              up on doing a linesearch. If 0, no linesearch.
- * @param rng Rng number.
- * @param msgs Streaming message for covariance and likelihood functions.
+ * @param[in] y Vector Vector of total number of trials with a positive outcome.
+ * @param[in] n_samples Vector of number of trials.
+ * \laplace_common_args
+ * \rng_arg
+ * \msg_arg
  */
 template <typename CovarFun, typename ThetaVec, typename CovarArgs,
           typename RNG,
           require_eigen_t<ThetaVec>* = nullptr>
-inline Eigen::VectorXd  // CHECK -- right return type
-laplace_latent_bernoulli_logit_rng(const std::vector<int>& y,
+inline Eigen::VectorXd laplace_latent_bernoulli_logit_rng(const std::vector<int>& y,
                                    const std::vector<int>& n_samples,
                                    ThetaVec&& theta_0,
                                    CovarFun&& covariance_function,

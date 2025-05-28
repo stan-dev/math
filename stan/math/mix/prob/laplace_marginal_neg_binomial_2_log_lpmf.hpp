@@ -53,39 +53,14 @@ struct neg_binomial_2_log_likelihood {
  * See the laplace_marginal function for more details.
  *
  * @tparam Eta The type of parameter arguments for the likelihood function.
- * @tparam ThetaVec A type inheriting from `Eigen::EigenBase` with dynamic
- * sized rows and 1 column.
- * @tparam CovarFun A functor with an
- *  `operator()(CovarArgsElements...)` method. The `operator()` method should
- * accept as arguments the inner elements of `CovarArgs`. The return type of the
- * `operator()` method should be a type inheriting from `Eigen::EigenBase` with
- * dynamic sized rows and columns.
- * @tparam CovarArgs A tuple of types to passed as the first arguments of
- * `CovarFun::operator()`
+ * \laplace_common_template_args
  * @param[in] y observed counts.
  * @param[in] y_index group to which each observation belongs. Each group
  *            is parameterized by one element of theta.
  * @param[in] eta non-marginalized model parameters for the likelihood.
- * @param[in] theta_0 the initial guess for the Laplace approximation.
- * @param[in] covariance_function a function which returns the prior covariance.
- * @param[in] covar_args arguments for the covariance function.
- * @param[in] tolerance controls the convergence criterion when finding
- *            the mode in the Laplace approximation.
- * @param[in] max_num_steps maximum number of steps before the Newton solver
- *            breaks and returns an error.
- * @param[in] hessian_block_size the size of the block for a block-diagonal
- *              Hessian of the log likelihood. If 0, the Hessian is stored
- *              inside a vector. If the Hessian is dense, this should be the
- *              size of the Hessian.
- * @param[in] solver Type of Newton solver. Each corresponds to a distinct
- *               choice of B matrix (i.e. application SWM formula):
- *               1. computes square-root of negative Hessian.
- *               2. computes square-root of covariance matrix.
- *               3. computes no square-root and uses LU decomposition.
- * @param[in] max_steps_line_search Number of steps after which the algorithm
- *                          gives up on doing a linesearch. If 0, no linesearch.
- * @param[in,out] msgs message stream for the covariance and likelihood
- * function.
+ * \laplace_common_args
+ * \laplace_options
+ * \msg_arg
  */
 template <bool propto = false, typename Eta, typename ThetaVec,
           typename CovarFun, typename CovarArgs,
@@ -112,25 +87,13 @@ inline auto laplace_marginal_tol_neg_binomial_2_log_lpmf(
  * See the laplace_marginal function for more details.
  *
  * @tparam Eta The type of parameter arguments for the likelihood function.
- * @tparam ThetaVec A type inheriting from `Eigen::EigenBase` with dynamic
- * sized rows and 1 column.
- * @tparam CovarFun A functor with an
- *  `operator()(CovarArgsElements...)` method. The `operator()` method should
- * accept as arguments the inner elements of `CovarArgs`. The return type of the
- * `operator()` method should be a type inheriting from `Eigen::EigenBase` with
- * dynamic sized rows and columns.
- * @tparam CovarArgs A tuple of types to passed as the first arguments of
- * `CovarFun::operator()`
+ * \laplace_common_template_args
  * @param[in] y observed counts.
  * @param[in] y_index group to which each observation belongs. Each group
  *            is parameterized by one element of theta.
- * @param[in] sums Total number of counts per group.
  * @param[in] eta Parameter argument for likelihood function.
- * @param[in] theta_0 the initial guess for the Laplace approximation.
- * @param[in] covariance_function a function which returns the prior covariance.
- * @param[in] covar_args arguments for the covariance function.
- * @param[in, out] msgs  message stream for the covariance and likelihood
- * function.
+ * \laplace_common_args
+ * \msg_arg
  */
 template <bool propto = false, typename Eta, typename ThetaVec,
           typename CovarFun, typename CovarArgs>
@@ -173,39 +136,14 @@ struct neg_binomial_2_log_likelihood_summary {
  * See the laplace_marginal function for more details.
  *
  * @tparam Eta The type of parameter arguments for the likelihood function.
- * @tparam ThetaVec A type inheriting from `Eigen::EigenBase` with dynamic
- * sized rows and 1 column.
- * @tparam CovarFun A functor with an
- *  `operator()(CovarArgsElements...)` method. The `operator()` method should
- * accept as arguments the inner elements of `CovarArgs`. The return type of the
- * `operator()` method should be a type inheriting from `Eigen::EigenBase` with
- * dynamic sized rows and columns.
- * @tparam CovarArgs A tuple of types to passed as the first arguments of
- * `CovarFun::operator()`
+ * \laplace_common_template_args
  * @param[in] y observations.
  * @param[in] n_per_group number of samples per group
  * @param[in] counts_per_group total counts per group
  * @param[in] eta non-marginalized model parameters for the likelihood.
- * @param[in] theta_0 the initial guess for the Laplace approximation.
- * @param[in] covariance_function a function which returns the prior covariance.
- * @param[in] covar_args arguments for the covariance function.
- * @param[in] tolerance controls the convergence criterion when finding
- *            the mode in the Laplace approximation.
- * @param[in] max_num_steps maximum number of steps before the Newton solver
- *            breaks and returns an error.
- * @param[in] hessian_block_size the size of the block for a block-diagonal
- *              Hessian of the log likelihood. If 0, the Hessian is stored
- *              inside a vector. If the Hessian is dense, this should be the
- *              size of the Hessian.
- * @param[in] solver Type of Newton solver. Each corresponds to a distinct
- *               choice of B matrix (i.e. application SWM formula):
- *               1. computes square-root of negative Hessian.
- *               2. computes square-root of covariance matrix.
- *               3. computes no square-root and uses LU decomposition.
- * @param[in] max_steps_line_search Number of steps after which the algorithm
- *                          gives up on doing a linesearch. If 0, no linesearch.
- * @param[in, out] msgs message stream for the covariance and likelihood
- * function.
+ * \laplace_common_args
+ * \laplace_options
+ * \msg_arg
  */
 template <bool propto = false, typename Eta, typename ThetaVec,
           typename CovarFun, typename CovarArgs,
@@ -234,24 +172,13 @@ inline auto laplace_marginal_tol_neg_binomial_2_log_summary_lpmf(
  * See the laplace_marginal function for more details.
  *
  * @tparam Eta The type of parameter arguments for the likelihood function.
- * @tparam ThetaVec A type inheriting from `Eigen::EigenBase` with dynamic
- * sized rows and 1 column.
- * @tparam CovarFun A functor with an
- *  `operator()(CovarArgsElements...)` method. The `operator()` method should
- * accept as arguments the inner elements of `CovarArgs`. The return type of the
- * `operator()` method should be a type inheriting from `Eigen::EigenBase` with
- * dynamic sized rows and columns.
- * @tparam CovarArgs A tuple of types to passed as the first arguments of
- * `CovarFun::operator()`
+ * \laplace_common_template_args
  * @param[in] y observations.
  * @param[in] n_per_group number of samples per group
  * @param[in] counts_per_group total counts per group
  * @param[in] eta non-marginalized model parameters for the likelihood.
- * @param[in] theta_0 the initial guess for the Laplace approximation.
- * @param[in] covariance_function a function which returns the prior covariance.
- * @param[in] covar_args arguments for the covariance function.
- * @param[in, out] msgs message stream for the covariance and likelihood
- * function.
+ * \laplace_common_args
+ * \msg_arg
  */
 template <bool propto = false, typename Eta, typename ThetaVec,
           typename CovarFun, typename CovarArgs,
