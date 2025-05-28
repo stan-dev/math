@@ -30,7 +30,7 @@ inline double get_val(T&& x) {
  */
 template <typename F, typename... Types>
 inline void recursive_for_each(F&& f, Types&&... args) {
-  if constexpr (std::conjunction_v<stan::math::is_tuple<Types>...>) {
+  if constexpr (std::conjunction_v<stan::is_tuple<Types>...>) {
     stan::math::for_each(
         [&f](auto&&... args_i) { recursive_for_each(f, args_i...); }, args...);
   } else {
