@@ -29,8 +29,7 @@ template <typename T, require_tuple_t<T>* = nullptr>
 inline auto to_ref(T&& a) {
   return apply(
       [](auto&&... args) {
-        return make_holder_tuple(
-            to_ref(std::forward<decltype(args)>(args))...);
+        return make_holder_tuple(to_ref(std::forward<decltype(args)>(args))...);
       },
       std::forward<T>(a));
 }

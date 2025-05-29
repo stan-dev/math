@@ -873,9 +873,10 @@ inline void copy_compute_s2(Output&& output, Input&& input) {
 template <typename T>
 inline constexpr decltype(auto) filter_var_scalar_types(T&& t) {
   return stan::math::filter_map<is_any_var_scalar>(
-    [](auto&& arg) -> decltype(auto) {
-      return std::forward<decltype(arg)>(arg);
-    }, std::forward<T>(t));
+      [](auto&& arg) -> decltype(auto) {
+        return std::forward<decltype(arg)>(arg);
+      },
+      std::forward<T>(t));
 }
 /**
  * Creates an arena type from the input with initialized with zeros
@@ -1144,7 +1145,8 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
           K_var.adj().array() += vi.adj() * K_adj_arena.array();
         });
         grad(Z.vi_);
-        auto covar_args_filter = internal::filter_var_scalar_types(covar_args_copy);
+        auto covar_args_filter
+            = internal::filter_var_scalar_types(covar_args_copy);
         internal::collect_adjoints(covar_args_adj, covar_args_filter);
       }();
     }

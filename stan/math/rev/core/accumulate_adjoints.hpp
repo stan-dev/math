@@ -140,7 +140,6 @@ inline double* accumulate_adjoints(double* dest, Arith&& x, Pargs&&... args) {
   return accumulate_adjoints(dest, std::forward<Pargs>(args)...);
 }
 
-
 }  // namespace math
 }  // namespace stan
 

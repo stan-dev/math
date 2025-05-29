@@ -6,8 +6,8 @@ using Eigen::Matrix;
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
-using stan::math::hessian_block_diag;
 using stan::math::hessian;
+using stan::math::hessian_block_diag;
 
 namespace hessian_block_diag_test {
 
@@ -24,9 +24,7 @@ struct fun2 {
   template <typename T>
   inline T operator()(const Matrix<T, Dynamic, 1>& x) const {
     using std::sin;
-    return x(0) * x(0) * x(1)
-           + 3.0 * x(1) * x(1)
-           + 5.0 * x(0) * x(1)
+    return x(0) * x(0) * x(1) + 3.0 * x(1) * x(1) + 5.0 * x(0) * x(1)
            + sin(x(0));
   }
 };

@@ -33,7 +33,7 @@ struct deduce_cvr {
 
 template <typename T>
 using deduce_cvr_t = typename deduce_cvr<T>::type;
-}
+}  // namespace internal
 /**
  * Holds ownership of rvalues and forwards lvalues into a tuple.
  *
@@ -46,12 +46,12 @@ using deduce_cvr_t = typename deduce_cvr<T>::type;
  * This behavior ensures that temporaries are stored by value in the tuple while
  * lvalues are preserved as references. It is similar in intent to the `Holder`
  * class in behavior, but for tuples instead of Eigen types.
- * It is the opposite of `std::forward_as_tuple`, with the difference in handling rvalues.
- * `std::forward_as_tuple` does not extend object lifetimes, so when an rvalue
- * is passed to `std::forward_as_tuple`, the resulting tuple element will be a
- * reference to a temporary that is destroyed at the end of the statement. This
- * function ensures that rvalues are stored by value in the tuple, extending
- * their lifetimes.
+ * It is the opposite of `std::forward_as_tuple`, with the difference in
+ * handling rvalues. `std::forward_as_tuple` does not extend object lifetimes,
+ * so when an rvalue is passed to `std::forward_as_tuple`, the resulting tuple
+ * element will be a reference to a temporary that is destroyed at the end of
+ * the statement. This function ensures that rvalues are stored by value in the
+ * tuple, extending their lifetimes.
  *
  * @tparam Types Parameter pack representing the types of the arguments.
  * @param args The arguments to forward into the tuple.
@@ -67,7 +67,8 @@ inline constexpr auto make_holder_tuple(Types&&... args) {
   if constexpr (sizeof...(Types) == 0) {
     return std::tuple<>{};
   } else {
-    return std::tuple<internal::deduce_cvr_t<Types&&>...>{std::forward<Types>(args)...};
+    return std::tuple<internal::deduce_cvr_t<Types&&>...>{
+        std::forward<Types>(args)...};
   }
 }
 }  // namespace math

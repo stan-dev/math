@@ -35,7 +35,6 @@ template <typename T>
 inline constexpr bool is_std_vector_containing_tuple_v
     = is_std_vector_v<std::decay_t<T>>&& contains_tuple_v<std::decay_t<T>>;
 
-
 }  // namespace stan
 
 #endif

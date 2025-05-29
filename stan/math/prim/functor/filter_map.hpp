@@ -12,7 +12,6 @@
 namespace stan {
 namespace math {
 
-
 namespace internal {
 
 template <template <typename...> class Filter, typename T>
@@ -28,8 +27,9 @@ struct inspect_tuple<Filter, std::tuple<Types...>> {
 
 template <template <typename...> class Filter, typename T, typename... VecArgs>
 struct inspect_tuple<Filter, std::vector<T, VecArgs...>> {
-  static constexpr bool value = Filter<std::vector<T, VecArgs...>>::value
-                                || inspect_tuple<Filter, std::decay_t<T>>::value;
+  static constexpr bool value
+      = Filter<std::vector<T, VecArgs...>>::value
+        || inspect_tuple<Filter, std::decay_t<T>>::value;
 };
 
 /**
@@ -40,7 +40,8 @@ struct inspect_tuple<Filter, std::vector<T, VecArgs...>> {
  * @tparam T type to check
  */
 template <template <typename...> class Filter, typename T>
-inline constexpr bool inspect_tuple_v = internal::inspect_tuple<Filter, std::decay_t<T>>::value;
+inline constexpr bool inspect_tuple_v
+    = internal::inspect_tuple<Filter, std::decay_t<T>>::value;
 
 /**
  * Filter a tuple and apply a functor to each element that passes the filter.
@@ -49,8 +50,9 @@ inline constexpr bool inspect_tuple_v = internal::inspect_tuple<Filter, std::dec
  * Note that this function automatically inspects into tuples and
  * `std::vector<T>::value_type`'s. The `filter_map` will recursively apply
  * itself to inner containers as long as it sees a tuple in type type.
- *  So for instance if your type is a `tuple<vector<tuple<vector<vector<double>>>>`
- *  your functor `f` must support operationg on `vector<vector<double>>` types.
+ *  So for instance if your type is a
+ * `tuple<vector<tuple<vector<vector<double>>>>` your functor `f` must support
+ * operationg on `vector<vector<double>>` types.
  * @tparam Filter a struct that accepts one template parameter and has a static
  *  constexpr bool member named value that is true if the type should be
  *  included in the output tuple.
@@ -93,11 +95,11 @@ inline constexpr decltype(auto) filter_map(F&& f, T&& x) {
         return ret;
       }
     } else if constexpr (is_std_vector_v<T>) {
-     /* 3 cases for vectors
-      * 1. value_type is a tuple
-      * 2. value_type is a scalar or Eigen matrix
-      * 3. value_type is a std::vector which can hold either (1) or (2)
-      */
+      /* 3 cases for vectors
+       * 1. value_type is a tuple
+       * 2. value_type is a scalar or Eigen matrix
+       * 3. value_type is a std::vector which can hold either (1) or (2)
+       */
       if constexpr (contains_tuple<T>::value) {
         std::vector<decltype(filter_map<Filter, true>(f, x[0]))> ret;
         for (size_t i = 0; i < x.size(); ++i) {
@@ -116,16 +118,14 @@ inline constexpr decltype(auto) filter_map(F&& f, T&& x) {
         if constexpr (InVector) {
           return std::forward<F>(f)(std::forward<T>(x));
         } else {
-          return make_holder_tuple(
-              std::forward<F>(f)(std::forward<T>(x)));
+          return make_holder_tuple(std::forward<F>(f)(std::forward<T>(x)));
         }
       }
     } else {
       if constexpr (InVector) {
         return std::forward<F>(f)(std::forward<T>(x));
       } else {
-        return make_holder_tuple(
-            std::forward<F>(f)(std::forward<T>(x)));
+        return make_holder_tuple(std::forward<F>(f)(std::forward<T>(x)));
       }
     }
   } else {

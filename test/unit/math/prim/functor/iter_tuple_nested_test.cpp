@@ -10,19 +10,16 @@ namespace {
 
 TEST(MathFunctions, iter_tuple_nested_empty) {
   auto x = 1;
-  stan::math::iter_tuple_nested(
-      [&x](auto&& args) { return x++; }, std::make_tuple());
+  stan::math::iter_tuple_nested([&x](auto&& args) { return x++; },
+                                std::make_tuple());
   // This should never call the lambda, so x should not change.
   EXPECT_EQ(x, 1);
 }
 
 TEST(MathFunctions, iter_tuple_nested_basic) {
   auto output = std::make_tuple(1, 2, 3);
-  stan::math::iter_tuple_nested(
-      [](auto&& arg1, auto&& arg2) {
-        arg1 += arg2;
-      },
-      output, std::make_tuple(1, 2, 3));
+  stan::math::iter_tuple_nested([](auto&& arg1, auto&& arg2) { arg1 += arg2; },
+                                output, std::make_tuple(1, 2, 3));
   EXPECT_EQ(std::get<0>(output), 2);
   EXPECT_EQ(std::get<1>(output), 4);
   EXPECT_EQ(std::get<2>(output), 6);
@@ -35,8 +32,7 @@ TEST(MathFunctions, iter_tuple_nested_deep_tuple) {
   auto output = std::make_tuple(1, inner_t{inner_val, inner_val}, 3);
   auto input = output;
   stan::math::iter_tuple_nested(
-      [](auto&& arg1, auto&& arg2) { return arg1 += arg2; },
-      output, input);
+      [](auto&& arg1, auto&& arg2) { return arg1 += arg2; }, output, input);
   EXPECT_EQ(std::get<0>(output), 2);
 
   auto&& inner_output = std::get<0>(std::get<1>(output));
@@ -57,6 +53,5 @@ TEST(MathFunctions, iter_tuple_nested_deep_tuple) {
 
   EXPECT_EQ(std::get<2>(output), 6);
 }
-
 
 }  // namespace
