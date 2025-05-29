@@ -33,7 +33,7 @@ template <typename YeVec, typename ThetaVec, typename CovarFun,
 inline auto laplace_latent_tol_poisson_2_log_rng(
     const std::vector<int>& y, const std::vector<int>& y_index, const YeVec& ye,
     ThetaVec&& theta_0, CovarFun&& covariance_function, CovarArgs&& covar_args,
-    const double tolerance, const int64_t max_num_steps,
+    const double tolerance, const int max_num_steps,
     const int hessian_block_size, const int solver,
     const int max_steps_line_search, RNG& rng, std::ostream* msgs) {
   laplace_options ops{hessian_block_size, solver, max_steps_line_search,

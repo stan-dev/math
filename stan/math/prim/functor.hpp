@@ -16,7 +16,7 @@
 #include <stan/math/prim/functor/integrate_1d_adapter.hpp>
 #include <stan/math/prim/functor/integrate_ode_rk45.hpp>
 #include <stan/math/prim/functor/integrate_ode_std_vector_interface_adapter.hpp>
-#include <stan/math/prim/functor/iter_tuple_n.hpp>
+#include <stan/math/prim/functor/iter_tuple_nested.hpp>
 #include <stan/math/prim/functor/ode_ckrk.hpp>
 #include <stan/math/prim/functor/ode_rk45.hpp>
 #include <stan/math/prim/functor/ode_store_sensitivities.hpp>
@@ -29,7 +29,7 @@
 #include <stan/math/prim/functor/mpi_command.hpp>
 #include <stan/math/prim/functor/mpi_distributed_apply.hpp>
 #include <stan/math/prim/functor/operands_and_partials.hpp>
-#include <stan/math/prim/functor/partially_forward_as_tuple.hpp>
+#include <stan/math/prim/functor/make_holder_tuple.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
 #include <stan/math/prim/functor/reduce_sum.hpp>
 #include <stan/math/prim/functor/reduce_sum_static.hpp>

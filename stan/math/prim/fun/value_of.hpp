@@ -4,7 +4,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/functor/apply.hpp>
-#include <stan/math/prim/functor/partially_forward_as_tuple.hpp>
+#include <stan/math/prim/functor/make_holder_tuple.hpp>
 #include <cstddef>
 #include <vector>
 
@@ -26,10 +26,22 @@ inline auto value_of(const T& x);
  **/
 template <typename T, require_st_arithmetic<T>* = nullptr>
 inline decltype(auto) value_of(T&& x) {
-  if constexpr (std::is_rvalue_reference_v<T&&>) {
-    return std::decay_t<T>(std::forward<T>(x));
+  if constexpr (is_eigen_v<T>) {
+    if constexpr (is_plain_type<T>::value || is_holder_v<T>) {
+      if constexpr (std::is_rvalue_reference_v<T&&>) {
+        return std::decay_t<T>(std::forward<T>(x));
+      } else {
+        return x;
+      }
+    } else {
+      return make_holder([](auto&& m) { return m; }, std::forward<T>(x));
+    }
   } else {
-    return std::forward<T>(x);
+    if constexpr (std::is_rvalue_reference_v<T&&>) {
+      return std::decay_t<T>(std::forward<T>(x));
+    } else {
+      return std::forward<T>(x);
+    }
   }
 }
 
@@ -129,7 +141,7 @@ template <typename Tuple, require_tuple_t<Tuple>*>
 inline auto value_of(Tuple&& tup) {
   return stan::math::apply(
       [](auto&&... args) {
-        return partially_forward_as_tuple(
+        return make_holder_tuple(
             value_of(std::forward<decltype(args)>(args))...);
       },
       std::forward<Tuple>(tup));

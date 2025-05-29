@@ -75,7 +75,7 @@ template <bool propto = false, typename YeVec, typename ThetaVec,
 inline auto laplace_marginal_tol_poisson_2_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& y_index, const YeVec& ye,
     const ThetaVec& theta_0, CovarFun&& covariance_function,
-    CovarArgs&& covar_args, double tolerance, int64_t max_num_steps,
+    CovarArgs&& covar_args, double tolerance, int max_num_steps,
     const int hessian_block_size, const int solver,
     const int max_steps_line_search, std::ostream* msgs) {
   laplace_options ops{hessian_block_size, solver, max_steps_line_search,

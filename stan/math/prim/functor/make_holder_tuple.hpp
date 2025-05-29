@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_FUNCTOR_PARTIALLY_FORWARD_AS_TUPLE_HPP
-#define STAN_MATH_PRIM_FUNCTOR_PARTIALLY_FORWARD_AS_TUPLE_HPP
+#ifndef STAN_MATH_PRIM_FUNCTOR_MAKE_HOLDER_TUPLE_HPP
+#define STAN_MATH_PRIM_FUNCTOR_MAKE_HOLDER_TUPLE_HPP
 
 #include <stan/math/prim/functor/apply.hpp>
 #include <stan/math/prim/meta.hpp>
@@ -9,6 +9,7 @@
 
 namespace stan {
 namespace math {
+namespace internal {
 
 /**
  * @brief Helper template to deduce the correct type for tuple elements.
@@ -30,20 +31,11 @@ struct deduce_cvr {
       = std::conditional_t<std::is_rvalue_reference_v<T>, std::decay_t<T>, T&&>;
 };
 
-namespace internal {
-template <typename T>
-static constexpr bool nothrow_constructible_v
-    = std::is_nothrow_constructible_v<std::decay_t<T>, T&&>;
-template <typename... Types>
-static constexpr bool is_partial_forward_nothrow_constructible
-    = ((std::is_lvalue_reference_v<
-            Types&&> || nothrow_constructible_v<Types&&>)&&...);
-}  // namespace internal
-
 template <typename T>
 using deduce_cvr_t = typename deduce_cvr<T>::type;
+}
 /**
- * @brief Partially forwards arguments into a tuple.
+ * Holds ownership of rvalues and forwards lvalues into a tuple.
  *
  * Constructs a tuple from the provided arguments such that:
  * - If an argument is an xvalue (an rvalue), the tuple element will be a
@@ -52,8 +44,9 @@ using deduce_cvr_t = typename deduce_cvr<T>::type;
  * maintain its reference type.
  *
  * This behavior ensures that temporaries are stored by value in the tuple while
- * lvalues are preserved as references. It is similar in intent to
- * `std::forward_as_tuple`, with the difference in handling rvalues.
+ * lvalues are preserved as references. It is similar in intent to the `Holder`
+ * class in behavior, but for tuples instead of Eigen types.
+ * It is the opposite of `std::forward_as_tuple`, with the difference in handling rvalues.
  * `std::forward_as_tuple` does not extend object lifetimes, so when an rvalue
  * is passed to `std::forward_as_tuple`, the resulting tuple element will be a
  * reference to a temporary that is destroyed at the end of the statement. This
@@ -70,11 +63,11 @@ using deduce_cvr_t = typename deduce_cvr<T>::type;
  * type whose move constructor is nothrow
  */
 template <typename... Types>
-inline constexpr auto partially_forward_as_tuple(Types&&... args) {
+inline constexpr auto make_holder_tuple(Types&&... args) {
   if constexpr (sizeof...(Types) == 0) {
     return std::tuple<>{};
   } else {
-    return std::tuple<deduce_cvr_t<Types&&>...>{std::forward<Types>(args)...};
+    return std::tuple<internal::deduce_cvr_t<Types&&>...>{std::forward<Types>(args)...};
   }
 }
 }  // namespace math

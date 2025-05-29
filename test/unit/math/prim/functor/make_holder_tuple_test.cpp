@@ -13,7 +13,7 @@ TEST(MathMatrix, partial_forward_as_tuples_rvalues) {
   Eigen::MatrixXd a = Eigen::MatrixXd::Random(3, 3);
   const Eigen::MatrixXd a_const = Eigen::MatrixXd::Random(3, 3);
   auto a_expr = Eigen::MatrixXd::Random(3, 3);
-  auto x_fwd_tuple = stan::math::partially_forward_as_tuple(
+  auto x_fwd_tuple = stan::math::make_holder_tuple(
       a * a, a, a.array() * 3, Eigen::MatrixXd::Random(3, 3), a_const,
       a_const * a_const, a_expr, a_expr * a_expr);
   using x_ref_t = decltype(x_fwd_tuple);

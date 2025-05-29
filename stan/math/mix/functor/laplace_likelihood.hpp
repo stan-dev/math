@@ -31,6 +31,10 @@ inline auto log_likelihood(F&& f, Theta&& theta, Stream* msgs, Args&&... args) {
                             std::forward<Args>(args)..., msgs);
 }
 
+/**
+ * Decide if object should be deep or shallow copied when
+ * using @ref conditional_copy_and_promote .
+ */
 enum class COPY_TYPE { SHALLOW = 0, DEEP = 1 };
 
 /**
@@ -54,7 +58,7 @@ inline auto conditional_copy_and_promote(Args&&... args) {
         if constexpr (is_tuple_v<decltype(arg)>) {
           return stan::math::apply(
               [](auto&&... inner_args) {
-                return partially_forward_as_tuple(
+                return make_holder_tuple(
                     conditional_copy_and_promote<Filter, PromotedType,
                                                  CopyType>(
                         std::forward<decltype(inner_args)>(inner_args))...);
@@ -289,12 +293,12 @@ inline auto diff_eta_implicit(F&& f, V_t&& v, Theta&& theta, Stream* msgs,
   }
   auto shallow_copy_args
       = shallow_copy_vargs<fvar<var>>(std::forward_as_tuple(args...));
-  fvar<var> f_fvar = stan::math::apply(
+  fvar<var> f_sum = stan::math::apply(
       [](auto&& f, auto&& theta_fvar, auto&& msgs, auto&&... inner_args) {
         return f(theta_fvar, inner_args..., msgs);
       },
       shallow_copy_args, f, theta_fvar, msgs);
-  grad(f_fvar.d_.vi_);
+  grad(f_sum.d_.vi_);
 }
 
 }  // namespace internal

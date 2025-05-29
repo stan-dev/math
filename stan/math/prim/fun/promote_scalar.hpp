@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/functor/apply.hpp>
+#include <test/unit/pretty_print_types.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <vector>
 #include <tuple>
@@ -44,7 +45,7 @@ inline constexpr auto promote_scalar(UnPromotedTypes&& x) {
   } else if constexpr (is_stan_scalar_v<UnPromotedTypes>) {
     return PromotionScalars(std::forward<UnPromotedTypes>(x));
   } else {
-    static_assert(1, "Missed type in promote_scalar!");
+    static_assert(sizeof(UnPromotedTypes*) == 0, "Missed type in promote_scalar!");
   }
 }
 

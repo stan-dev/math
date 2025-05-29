@@ -7,13 +7,16 @@
 
 namespace stan {
 template <typename T>
-using has_arithmetic_scalar_type = std::is_arithmetic<scalar_type_t<T>>;
+using is_arithmetic = std::is_arithmetic<scalar_type_t<T>>;
+
+template <typename T>
+inline constexpr bool is_arithmetic_v = is_arithmetic<std::decay_t<T>>::value;
 
 namespace internal {
 
 template <typename... Types>
 struct is_all_arithmetic_scalar_impl
-    : std::conjunction<has_arithmetic_scalar_type<std::decay_t<Types>>...> {};
+    : std::conjunction<is_arithmetic<std::decay_t<Types>>...> {};
 
 template <typename... Types>
 struct is_all_arithmetic_scalar_impl<std::tuple<Types...>>

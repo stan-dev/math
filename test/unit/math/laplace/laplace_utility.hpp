@@ -225,6 +225,37 @@ Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic> laplace_covariance(
   return K;
 }
 
+/**
+ * Helper function for printing out adjoints
+ */
+template <typename Output, require_t<is_any_var_scalar<Output>>* = nullptr>
+inline void print_adjoint(Output&& output) {
+  if constexpr (is_tuple_v<Output>) {
+    std::cout << "tuple adj\n";
+    return stan::math::for_each(
+        [](auto&& output_i) { return print_adjoint(output_i); }, output);
+  } else if constexpr (is_std_vector_v<Output>) {
+    if constexpr (is_var_v<value_type_t<Output>>) {
+      Eigen::Map<const Eigen::Matrix<var, -1, -1>> map_x(output.data(),
+                                                         output.size());
+      std::cout << "eigen adj: \n" << map_x.adj() << std::endl;
+    } else {
+      std::cout << "stdvec adjoint\n";
+      for (int i = 0; i < output.size(); ++i) {
+        print_adjoint(output[i]);
+      }
+    }
+  } else if constexpr (is_eigen_v<Output>) {
+    std::cout << "adj: \n" << output.adj() << std::endl;
+  } else if constexpr (is_stan_scalar_v<Output>) {
+    std::cout << "adj: " << output.adj() << std::endl;
+  } else {
+    static_assert(sizeof(Output*) == 0,
+                  "INTERNAL ERROR:(laplace_marginal_lpdf) print_adjoint was "
+                  "not able to deduce the actiopns needed for the given type.");
+  }
+}
+
 }  // namespace test
 }  // namespace math
 }  // namespace stan

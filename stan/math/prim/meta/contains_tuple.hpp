@@ -35,29 +35,7 @@ template <typename T>
 inline constexpr bool is_std_vector_containing_tuple_v
     = is_std_vector_v<std::decay_t<T>>&& contains_tuple_v<std::decay_t<T>>;
 
-namespace internal {
-template <template <typename...> class Filter, typename T>
-struct inspect_tuple {
-  static constexpr bool value = Filter<T>::value;
-};
 
-template <template <typename...> class Filter, typename... Types>
-struct inspect_tuple<Filter, std::tuple<Types...>> {
-  static constexpr bool value = Filter<std::tuple<Types...>>::value
-                                || (inspect_tuple<Filter, Types>::value || ...);
-};
-}  // namespace internal
-
-/**
- * Check if a tuple or type contains a tuple that passes the filter.
- * @tparam Filter a struct that accepts one template parameter and has a static
- *  constexpr bool member named value that is true if the type should be
- *  included in the output tuple.
- * @tparam T type to check
- */
-template <template <typename...> class Filter, typename T>
-inline constexpr bool inspect_tuple_v
-    = internal::inspect_tuple<Filter, std::decay_t<T>>::value;
 }  // namespace stan
 
 #endif

@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_FUN_TO_REF_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/functor/partially_forward_as_tuple.hpp>
+#include <stan/math/prim/functor/make_holder_tuple.hpp>
 
 namespace stan {
 namespace math {
@@ -29,7 +29,7 @@ template <typename T, require_tuple_t<T>* = nullptr>
 inline auto to_ref(T&& a) {
   return apply(
       [](auto&&... args) {
-        return partially_forward_as_tuple(
+        return make_holder_tuple(
             to_ref(std::forward<decltype(args)>(args))...);
       },
       std::forward<T>(a));

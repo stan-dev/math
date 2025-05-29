@@ -20,23 +20,23 @@ namespace stan::math {
  * only create side effects.
  */
 template <typename F, typename... Types>
-inline auto iter_tuple_n(F&& f, Types&&... args) {
+inline auto iter_tuple_nested(F&& f, Types&&... args) {
   constexpr bool is_vec_container
       = (is_std_vector_v<Types> && ...)
         && (!is_stan_scalar<value_type_t<Types>>::value && ...);
   if constexpr ((is_tuple_v<Types> && ...)) {
     stan::math::for_each(
         [&f](auto&&... args_i) {
-          iter_tuple_n(f, std::forward<decltype(args_i)>(args_i)...);
+          iter_tuple_nested(f, std::forward<decltype(args_i)>(args_i)...);
         },
         std::forward<Types>(args)...);
   } else if constexpr (is_vec_container) {
     const auto vec_size = max_size(args...);
     for (Eigen::Index i = 0; i < vec_size; ++i) {
-      iter_tuple_n(f, args[i]...);
+      iter_tuple_nested(f, args[i]...);
     }
   } else {
-    return f(std::forward<Types>(args)...);
+    f(std::forward<Types>(args)...);
   }
 }
 

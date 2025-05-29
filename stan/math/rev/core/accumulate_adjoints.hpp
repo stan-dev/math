@@ -140,21 +140,6 @@ inline double* accumulate_adjoints(double* dest, Arith&& x, Pargs&&... args) {
   return accumulate_adjoints(dest, std::forward<Pargs>(args)...);
 }
 
-/**
- * End accumulate_adjoints recursion and return pointer
- *
- * @param dest Pointer
- */
-inline double* accumulate_adjoints(double* dest) { return dest; }
-
-template <typename Tuple, require_tuple_t<Tuple>* = nullptr>
-inline double* accumulate_adjoints(double* dest, Tuple&& tup) {
-  return apply(
-      [dest](auto&&... args) {
-        return accumulate_adjoints(dest, std::forward<decltype(args)>(args)...);
-      },
-      std::forward<Tuple>(tup));
-}
 
 }  // namespace math
 }  // namespace stan

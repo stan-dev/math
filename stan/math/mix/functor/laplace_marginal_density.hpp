@@ -2,6 +2,7 @@
 #define STAN_MATH_MIX_FUNCTOR_LAPLACE_MARGINAL_DENSITY_HPP
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/mix/functor/laplace_likelihood.hpp>
+#include <test/unit/pretty_print_types.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun.hpp>
@@ -9,8 +10,8 @@
 #include <stan/math/rev/functor.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/quad_form_diag.hpp>
-#include <stan/math/prim/functor/iter_tuple_n.hpp>
-
+#include <stan/math/prim/functor/iter_tuple_nested.hpp>
+#include <unsupported/Eigen/MatrixFunctions>
 #include <cmath>
 
 /**
@@ -43,7 +44,7 @@ struct laplace_options {
    */
   double tolerance{1e-6};
   /* Maximum number of steps*/
-  int64_t max_num_steps{100};
+  int max_num_steps{100};
 };
 
 namespace internal {
@@ -297,7 +298,7 @@ inline void set_zero_adjoint(Output&& output) {
   if constexpr (is_all_arithmetic_scalar_v<Output>) {
     return;
   } else {
-    return iter_tuple_n(
+    return iter_tuple_nested(
         [](auto&& output_i) {
           using output_i_t = std::decay_t<decltype(output_i)>;
           if constexpr (is_all_arithmetic_scalar_v<output_i_t>) {
@@ -312,9 +313,9 @@ inline void set_zero_adjoint(Output&& output) {
             output_i.adj() = 0;
           } else {
             static_assert(
-                1,
+                sizeof(Output*) == 0,
                 "INTERNAL ERROR:(laplace_marginal_lpdf) set_zero_adjoints was "
-                "not able to deduce the actiopns needed for the given type.");
+                "not able to deduce the actions needed for the given type.");
           }
         },
         std::forward<Output>(output));
@@ -333,7 +334,7 @@ template <bool ZeroInput = false, typename Output, typename Input,
           require_t<is_all_arithmetic_scalar<Output>>* = nullptr,
           require_t<is_all_var_scalar<Input>>* = nullptr>
 inline void collect_adjoints(Output& output, Input&& input) {
-  return iter_tuple_n(
+  return iter_tuple_nested(
       [](auto&& output_i, auto&& input_i) {
         using output_i_t = std::decay_t<decltype(output_i)>;
         if constexpr (is_std_vector_v<output_i_t>) {
@@ -357,7 +358,7 @@ inline void collect_adjoints(Output& output, Input&& input) {
           }
         } else {
           static_assert(
-              1,
+              sizeof(Output*) == 0,
               "INTERNAL ERROR:(laplace_marginal_lpdf) collect_adjoints was not "
               "able to deduce the actiopns needed for the given type.");
         }
@@ -557,7 +558,7 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
               std::move(covariance),
               std::move(theta),
               std::move(W),
-              std::move(Eigen::MatrixXd(L)),
+              Eigen::MatrixXd(L),
               std::move(a),
               std::move(theta_grad),
               Eigen::PartialPivLU<Eigen::MatrixXd>{},
@@ -624,7 +625,7 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
               std::move(covariance),
               std::move(theta),
               std::move(W_r),
-              std::move(Eigen::MatrixXd(L)),
+              Eigen::MatrixXd(L),
               std::move(a),
               std::move(theta_grad),
               Eigen::PartialPivLU<Eigen::MatrixXd>{},
@@ -796,7 +797,7 @@ template <typename Output, typename Input,
           require_t<is_all_arithmetic_scalar<Output>>* = nullptr,
           require_t<is_all_arithmetic_scalar<Input>>* = nullptr>
 inline void collect_adjoints(Output&& output, Input&& input) {
-  return iter_tuple_n(
+  return iter_tuple_nested(
       [](auto&& output_i, auto&& input_i) {
         using output_i_t = std::decay_t<decltype(output_i)>;
         if constexpr (is_std_vector_v<output_i_t>) {
@@ -811,7 +812,7 @@ inline void collect_adjoints(Output&& output, Input&& input) {
           output_i += input_i;
         } else {
           static_assert(
-              1,
+              sizeof(Output*) == 0,
               "INTERNAL ERROR:(laplace_marginal_lpdf) collect_adjoints was not "
               "able to deduce the actiopns needed for the given type.");
         }
@@ -837,7 +838,7 @@ template <bool ZeroInput = false, typename Output, typename Input,
           require_t<is_all_arithmetic_scalar<Output>>* = nullptr,
           require_t<is_any_var_scalar<Input>>* = nullptr>
 inline void copy_compute_s2(Output&& output, Input&& input) {
-  return iter_tuple_n(
+  return iter_tuple_nested(
       [](auto&& output_i, auto&& input_i) {
         using output_i_t = std::decay_t<decltype(output_i)>;
         if constexpr (is_std_vector_v<output_i_t>) {
@@ -861,7 +862,7 @@ inline void copy_compute_s2(Output&& output, Input&& input) {
           }
         } else {
           static_assert(
-              1,
+              sizeof(Output*) == 0,
               "INTERNAL ERROR:(laplace_marginal_lpdf) copy_compute_s2 was not "
               "able to deduce the actiopns needed for the given type.");
         }
@@ -869,6 +870,13 @@ inline void copy_compute_s2(Output&& output, Input&& input) {
       std::forward<Output>(output), std::forward<Input>(input));
 }
 
+template <typename T>
+inline constexpr decltype(auto) filter_var_scalar_types(T&& t) {
+  return stan::math::filter_map<is_any_var_scalar>(
+    [](auto&& arg) -> decltype(auto) {
+      return std::forward<decltype(arg)>(arg);
+    }, std::forward<T>(t));
+}
 /**
  * Creates an arena type from the input with initialized with zeros
  * @tparam Input Possibly a tuple, std::vector, Eigen type, or scalar
@@ -901,37 +909,6 @@ inline constexpr auto make_zeroed_arena(Input&& input) {
 }
 
 /**
- * Helper function for printing out adjoints
- */
-template <typename Output, require_t<is_any_var_scalar<Output>>* = nullptr>
-inline void print_adjoint(Output&& output) {
-  if constexpr (is_tuple_v<Output>) {
-    std::cout << "tuple adj\n";
-    return stan::math::for_each(
-        [](auto&& output_i) { return print_adjoint(output_i); }, output);
-  } else if constexpr (is_std_vector_v<Output>) {
-    if constexpr (is_var_v<value_type_t<Output>>) {
-      Eigen::Map<const Eigen::Matrix<var, -1, -1>> map_x(output.data(),
-                                                         output.size());
-      std::cout << "eigen adj: \n" << map_x.adj() << std::endl;
-    } else {
-      std::cout << "stdvec adjoint\n";
-      for (int i = 0; i < output.size(); ++i) {
-        print_adjoint(output[i]);
-      }
-    }
-  } else if constexpr (is_eigen_v<Output>) {
-    std::cout << "adj: \n" << output.adj() << std::endl;
-  } else if constexpr (is_stan_scalar_v<Output>) {
-    std::cout << "adj: " << output.adj() << std::endl;
-  } else {
-    static_assert(1,
-                  "INTERNAL ERROR:(laplace_marginal_lpdf) print_adjoint was "
-                  "not able to deduce the actiopns needed for the given type.");
-  }
-}
-
-/**
  * Used in reverse pass to collect adjoints to the output
  * @tparam Output A tuple or type where all scalar types are `var` types
  * @tparam Input A tuple or type where all scalar types are `arithmetic` types
@@ -942,7 +919,7 @@ inline void print_adjoint(Output&& output) {
 template <typename Output, typename Input>
 inline void collect_adjoints(Output&& output, const vari* ret, Input&& input) {
   if constexpr (is_tuple_v<Output>) {
-    static_assert(1,
+    static_assert(!is_tuple_v<Output>,
                   "INTERNAL ERROR:(laplace_marginal_lpdf)"
                   "Accumulate Adjoints called on a tuple, but tuples cannot be "
                   "on the reverse mode stack!"
@@ -1067,11 +1044,7 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
         ll_fun, ll_args_copy, value_of(theta_0), covariance_function,
         value_of(covar_args_refs), options, msgs);
     // Return references to var types
-    auto ll_args_filter = stan::math::filter_map<is_any_var_scalar>(
-        [](auto&& arg) -> decltype(auto) {
-          return std::forward<decltype(arg)>(arg);
-        },
-        ll_args_copy);
+    auto ll_args_filter = internal::filter_var_scalar_types(ll_args_copy);
     stan::math::for_each(
         [](auto&& output_i, auto&& ll_arg_i) {
           if (is_any_var_scalar_v<decltype(ll_arg_i)>) {
@@ -1171,11 +1144,7 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
           K_var.adj().array() += vi.adj() * K_adj_arena.array();
         });
         grad(Z.vi_);
-        auto covar_args_filter = stan::math::filter_map<is_any_var_scalar>(
-            [](auto&& arg) -> decltype(auto) {
-              return std::forward<decltype(arg)>(arg);
-            },
-            covar_args_copy);
+        auto covar_args_filter = internal::filter_var_scalar_types(covar_args_copy);
         internal::collect_adjoints(covar_args_adj, covar_args_filter);
       }();
     }
@@ -1194,14 +1163,12 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
   }
   var ret(lmd);
   if constexpr (is_any_var_scalar_v<CovarArgs>) {
-    auto covar_args_filter = stan::math::filter_map<is_any_var_scalar>(
-        [](auto&& arg) -> decltype(auto) { return arg; }, covar_args_refs);
+    auto covar_args_filter = internal::filter_var_scalar_types(covar_args_refs);
     internal::reverse_pass_collect_adjoints(ret, covar_args_filter,
                                             covar_args_adj);
   }
   if constexpr (ll_args_contain_var) {
-    auto ll_args_filter = stan::math::filter_map<is_any_var_scalar>(
-        [](auto&& arg) -> decltype(auto) { return arg; }, ll_args_refs);
+    auto ll_args_filter = internal::filter_var_scalar_types(ll_args_refs);
     internal::reverse_pass_collect_adjoints(ret, ll_args_filter, partial_parm);
   }
   return ret;

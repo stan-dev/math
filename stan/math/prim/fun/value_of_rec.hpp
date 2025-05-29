@@ -4,7 +4,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/functor/apply.hpp>
-#include <stan/math/prim/functor/partially_forward_as_tuple.hpp>
+#include <stan/math/prim/functor/make_holder_tuple.hpp>
 #include <complex>
 #include <cstddef>
 #include <vector>
@@ -157,7 +157,7 @@ template <typename Tuple, require_tuple_t<Tuple>*>
 inline auto value_of_rec(Tuple&& tup) {
   return stan::math::apply(
       [](auto&&... args) {
-        return partially_forward_as_tuple(
+        return make_holder_tuple(
             value_of_rec(std::forward<decltype(args)>(args))...);
       },
       std::forward<Tuple>(tup));
