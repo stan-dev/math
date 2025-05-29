@@ -18,7 +18,7 @@ inline double get_val(T&& x) {
   } else if constexpr (stan::is_stan_scalar_v<T>) {
     return x;
   } else {
-    static_assert(1, "This function only accepts scalar types!");
+    static_assert(sizeof(T*) == 0, "This function only accepts scalar types!");
   }
 }
 /**
