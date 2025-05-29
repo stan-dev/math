@@ -33,6 +33,7 @@ template <typename Arith, require_arithmetic_t<scalar_type_t<Arith>>* = nullptr,
           typename... Pargs>
 inline size_t count_vars_impl(size_t count, Arith& x, Pargs&&... args);
 
+inline size_t count_vars_impl(size_t count);
 /**
  * Count the number of vars in x (a std::vector of vars),
  *  add it to the running total,

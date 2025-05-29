@@ -20,7 +20,7 @@ namespace stan::math {
  * only create side effects.
  */
 template <typename F, typename... Types>
-inline auto iter_tuple_nested(F&& f, Types&&... args) {
+inline void iter_tuple_nested(F&& f, Types&&... args) {
   constexpr bool is_vec_container
       = (is_std_vector_v<Types> && ...)
         && (!is_stan_scalar<value_type_t<Types>>::value && ...);

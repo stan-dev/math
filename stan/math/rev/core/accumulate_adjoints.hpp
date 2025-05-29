@@ -140,6 +140,13 @@ inline double* accumulate_adjoints(double* dest, Arith&& x, Pargs&&... args) {
   return accumulate_adjoints(dest, std::forward<Pargs>(args)...);
 }
 
+/**
+ * End accumulate_adjoints recursion and return pointer
+ *
+ * @param dest Pointer
+ */
+inline double* accumulate_adjoints(double* dest) { return dest; }
+
 }  // namespace math
 }  // namespace stan
 
