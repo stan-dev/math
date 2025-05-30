@@ -191,9 +191,7 @@ TEST(MathFunctions, value_of_return_type_short_circuit_matrix_xd) {
 
 TEST(MathFunctions, value_of_return_type_short_circuit_expression) {
   const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> a(5, 4);
-
   const auto& expr = 3 * a;
-
   EXPECT_TRUE((std::is_same<decltype(stan::math::value_of(expr)),
                             decltype(expr)>::value));
 }
@@ -206,3 +204,4 @@ TEST(MathFunctions, value_of_return_type_short_circuit_static_sized_matrix) {
   EXPECT_TRUE((std::is_same<decltype(stan::math::value_of(b)),
                             const Eigen::Matrix<double, 5, 4>&>::value));
 }
+

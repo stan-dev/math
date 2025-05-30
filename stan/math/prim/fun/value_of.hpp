@@ -34,7 +34,9 @@ inline decltype(auto) value_of(T&& x) {
         return x;
       }
     } else {
-      return make_holder([](auto&& m) { return m; }, std::forward<T>(x));
+      return make_holder([](auto&& m) -> decltype(auto) {
+        return std::forward<decltype(m)>(m);
+      }, std::forward<T>(x));
     }
   } else {
     if constexpr (std::is_rvalue_reference_v<T&&>) {

@@ -1,9 +1,9 @@
-#ifndef STAN_MATH_MIX_PROB_LAPLACE_LATENT_POISSON_LOG_EXPOSURE_RNG_HPP
-#define STAN_MATH_MIX_PROB_LAPLACE_LATENT_POISSON_LOG_EXPOSURE_RNG_HPP
+#ifndef STAN_MATH_MIX_PROB_LAPLACE_LATENT_POISSON_LOG_2_RNG_HPP
+#define STAN_MATH_MIX_PROB_LAPLACE_LATENT_POISSON_LOG_2_RNG_HPP
 
 #include <stan/math/mix/functor/laplace_base_rng.hpp>
 #include <stan/math/mix/functor/laplace_likelihood.hpp>
-#include <stan/math/mix/prob/laplace_marginal_poisson_log_exposure_lpmf.hpp>
+#include <stan/math/mix/prob/laplace_marginal_poisson_log_2_lpmf.hpp>
 
 namespace stan {
 namespace math {
@@ -38,7 +38,7 @@ inline auto laplace_latent_tol_poisson_2_log_rng(
     const int max_steps_line_search, RNG& rng, std::ostream* msgs) {
   laplace_options ops{hessian_block_size, solver, max_steps_line_search,
                       tolerance, max_num_steps};
-  return laplace_base_rng(poisson_log_exposure_likelihood{},
+  return laplace_base_rng(poisson_log_2_likelihood{},
                           std::forward_as_tuple(y, y_index, ye),
                           std::forward<ThetaVec>(theta_0),
                           std::forward<CovarFun>(covariance_function),
@@ -71,7 +71,7 @@ inline auto laplace_latent_poisson_2_log_rng(
     ThetaVec&& theta_0, CovarFun&& covariance_function, CovarArgs&& covar_args,
     RNG& rng, std::ostream* msgs) {
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
-  return laplace_base_rng(poisson_log_exposure_likelihood{},
+  return laplace_base_rng(poisson_log_2_likelihood{},
                           std::forward_as_tuple(y, y_index, ye),
                           std::forward<ThetaVec>(theta_0),
                           std::forward<CovarFun>(covariance_function),

@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_MIX_PROB_LAPLACE_MARGINAL_POISSON_LOG_EXPOSURE_LPMF_HPP
-#define STAN_MATH_MIX_PROB_LAPLACE_MARGINAL_POISSON_LOG_EXPOSURE_LPMF_HPP
+#ifndef STAN_MATH_MIX_PROB_LAPLACE_MARGINAL_POISSON_LOG_2_LPMF_HPP
+#define STAN_MATH_MIX_PROB_LAPLACE_MARGINAL_POISSON_LOG_2_LPMF_HPP
 
 #include <stan/math/mix/functor/laplace_marginal_density.hpp>
 #include <stan/math/mix/functor/laplace_likelihood.hpp>
@@ -18,7 +18,7 @@
 namespace stan {
 namespace math {
 
-struct poisson_log_exposure_likelihood {
+struct poisson_log_2_likelihood {
   /**
    * Returns the lpmf for a Poisson with a log link across
    * multiple groups. No need to compute the log normalizing constant.
@@ -81,7 +81,7 @@ inline auto laplace_marginal_tol_poisson_2_log_lpmf(
   laplace_options ops{hessian_block_size, solver, max_steps_line_search,
                       tolerance, max_num_steps};
   return laplace_marginal_density(
-      poisson_log_exposure_likelihood{}, std::forward_as_tuple(y, y_index, ye),
+      poisson_log_2_likelihood{}, std::forward_as_tuple(y, y_index, ye),
       theta_0, std::forward<CovarFun>(covariance_function),
       std::forward<CovarArgs>(covar_args), ops, msgs);
 }
@@ -111,7 +111,7 @@ inline auto laplace_marginal_poisson_2_log_lpmf(
     CovarArgs&& covar_args, std::ostream* msgs) {
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_marginal_density(
-      poisson_log_exposure_likelihood{}, std::forward_as_tuple(y, y_index, ye),
+      poisson_log_2_likelihood{}, std::forward_as_tuple(y, y_index, ye),
       theta_0, std::forward<CovarFun>(covariance_function),
       std::forward<CovarArgs>(covar_args), ops, msgs);
 }
