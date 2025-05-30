@@ -313,7 +313,7 @@ inline void set_zero_adjoint(Output&& output) {
             output_i.adj() = 0;
           } else {
             static_assert(
-                sizeof(Output*) == 0,
+                sizeof(std::decay_t<Output>*) == 0,
                 "INTERNAL ERROR:(laplace_marginal_lpdf) set_zero_adjoints was "
                 "not able to deduce the actions needed for the given type.");
           }
@@ -358,7 +358,7 @@ inline void collect_adjoints(Output& output, Input&& input) {
           }
         } else {
           static_assert(
-              sizeof(Output*) == 0,
+              sizeof(std::decay_t<Output>*) == 0,
               "INTERNAL ERROR:(laplace_marginal_lpdf) collect_adjoints was not "
               "able to deduce the actiopns needed for the given type.");
         }
@@ -812,7 +812,7 @@ inline void collect_adjoints(Output&& output, Input&& input) {
           output_i += input_i;
         } else {
           static_assert(
-              sizeof(Output*) == 0,
+              sizeof(std::decay_t<Output>*) == 0,
               "INTERNAL ERROR:(laplace_marginal_lpdf) collect_adjoints was not "
               "able to deduce the actiopns needed for the given type.");
         }
@@ -862,7 +862,7 @@ inline void copy_compute_s2(Output&& output, Input&& input) {
           }
         } else {
           static_assert(
-              sizeof(Output*) == 0,
+              sizeof(std::decay_t<Output>*) == 0,
               "INTERNAL ERROR:(laplace_marginal_lpdf) copy_compute_s2 was not "
               "able to deduce the actiopns needed for the given type.");
         }
