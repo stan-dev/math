@@ -26,26 +26,10 @@ inline auto value_of(const T& x);
  **/
 template <typename T, require_st_arithmetic<T>* = nullptr>
 inline decltype(auto) value_of(T&& x) {
-  if constexpr (is_eigen_v<T>) {
-    if constexpr (is_plain_type<T>::value || is_holder_v<T>) {
-      if constexpr (std::is_rvalue_reference_v<T&&>) {
-        return std::decay_t<T>(std::forward<T>(x));
-      } else {
-        return x;
-      }
-    } else {
-      return make_holder(
-          [](auto&& m) -> decltype(auto) {
-            return std::forward<decltype(m)>(m);
-          },
-          std::forward<T>(x));
-    }
+  if constexpr (std::is_rvalue_reference_v<T&&>) {
+    return std::decay_t<T>(std::forward<T>(x));
   } else {
-    if constexpr (std::is_rvalue_reference_v<T&&>) {
-      return std::decay_t<T>(std::forward<T>(x));
-    } else {
-      return std::forward<T>(x);
-    }
+    return std::forward<T>(x);
   }
 }
 
