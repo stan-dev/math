@@ -323,8 +323,8 @@ inline auto holder_handle_element(T&& a, T*& res) {
  * @return `holder` referencing given expression
  */
 template <typename T, std::size_t... Is, typename... Args>
-inline auto make_holder_impl_construct_object(T&& expr, std::index_sequence<Is...>,
-                                       const std::tuple<Args*...>& ptrs) {
+inline auto make_holder_impl_construct_object(
+    T&& expr, std::index_sequence<Is...>, const std::tuple<Args*...>& ptrs) {
   return holder(std::forward<T>(expr), std::get<Is>(ptrs)...);
 }
 
@@ -339,7 +339,7 @@ inline auto make_holder_impl_construct_object(T&& expr, std::index_sequence<Is..
  */
 template <typename F, std::size_t... Is, typename... Args>
 inline auto make_holder_impl(F&& func, std::index_sequence<Is...>,
-                      Args&&... args) {
+                             Args&&... args) {
   std::tuple<std::remove_reference_t<Args>*...> res;
   auto ptrs = std::tuple_cat(
       holder_handle_element(std::forward<Args>(args), std::get<Is>(res))...);
