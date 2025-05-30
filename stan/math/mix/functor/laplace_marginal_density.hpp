@@ -312,7 +312,8 @@ inline void set_zero_adjoint(Output&& output) {
           } else if constexpr (is_stan_scalar_v<output_i_t>) {
             output_i.adj() = 0;
           } else {
-            throw std::domain_error("INTERNAL ERROR:(laplace_marginal_lpdf) set_zero_adjoints was "
+            throw std::domain_error(
+                "INTERNAL ERROR:(laplace_marginal_lpdf) set_zero_adjoints was "
                 "not able to deduce the actions needed for the given type.");
           }
         },
@@ -355,8 +356,9 @@ inline void collect_adjoints(Output& output, Input&& input) {
             input_i.adj() = 0;
           }
         } else {
-            throw std::domain_error("INTERNAL ERROR:(laplace_marginal_lpdf) set_zero_adjoints was "
-                "not able to deduce the actions needed for the given type.");
+          throw std::domain_error(
+              "INTERNAL ERROR:(laplace_marginal_lpdf) set_zero_adjoints was "
+              "not able to deduce the actions needed for the given type.");
         }
       },
       std::forward<Output>(output), std::forward<Input>(input));
@@ -807,9 +809,9 @@ inline void collect_adjoints(Output&& output, Input&& input) {
         } else if constexpr (is_stan_scalar_v<output_i_t>) {
           output_i += input_i;
         } else {
-            throw std::domain_error("INTERNAL ERROR:(laplace_marginal_lpdf) set_zero_adjoints was "
-                "not able to deduce the actions needed for the given type.");
-
+          throw std::domain_error(
+              "INTERNAL ERROR:(laplace_marginal_lpdf) set_zero_adjoints was "
+              "not able to deduce the actions needed for the given type.");
         }
       },
       std::forward<Output>(output), std::forward<Input>(input));
@@ -856,8 +858,9 @@ inline void copy_compute_s2(Output&& output, Input&& input) {
             input_i.adj() = 0;
           }
         } else {
-            throw std::domain_error("INTERNAL ERROR:(laplace_marginal_lpdf) set_zero_adjoints was "
-                "not able to deduce the actions needed for the given type.");
+          throw std::domain_error(
+              "INTERNAL ERROR:(laplace_marginal_lpdf) set_zero_adjoints was "
+              "not able to deduce the actions needed for the given type.");
         }
       },
       std::forward<Output>(output), std::forward<Input>(input));
@@ -913,11 +916,12 @@ inline constexpr auto make_zeroed_arena(Input&& input) {
 template <typename Output, typename Input>
 inline void collect_adjoints(Output&& output, const vari* ret, Input&& input) {
   if constexpr (is_tuple_v<Output>) {
-                throw std::domain_error("INTERNAL ERROR:(laplace_marginal_lpdf)"
-                  "Accumulate Adjoints called on a tuple, but tuples cannot be "
-                  "on the reverse mode stack!"
-                  "This is an internal error, please report it to the stan "
-                  "github as an issue.");
+    throw std::domain_error(
+        "INTERNAL ERROR:(laplace_marginal_lpdf)"
+        "Accumulate Adjoints called on a tuple, but tuples cannot be "
+        "on the reverse mode stack!"
+        "This is an internal error, please report it to the stan "
+        "github as an issue.");
   } else if constexpr (is_std_vector_v<Output>) {
     if constexpr (!is_var_v<value_type_t<Output>>) {
       const auto output_size = output.size();

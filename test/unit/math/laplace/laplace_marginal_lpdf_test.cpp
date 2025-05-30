@@ -42,7 +42,8 @@ struct poisson_log_likelihood_tuple {
 struct poisson_log_likelihood_tuple_expanded {
   template <typename Theta, typename Eta, typename Eta1, typename Eta2>
   auto operator()(const Theta& theta, const std::vector<int>& delta_int,
-                  Eta&& eta, Eta1&& eta1, Eta2&& eta2, std::ostream* pstream) const {
+                  Eta&& eta, Eta1&& eta1, Eta2&& eta2,
+                  std::ostream* pstream) const {
     return stan::math::poisson_log_lpmf(delta_int, theta) + std::get<0>(eta)
            + std::get<1>(eta) + stan::math::sum(eta1) + stan::math::sum(eta2);
   }
@@ -92,8 +93,7 @@ TEST(laplace, poisson_log_phi_dim_2_tuple_extended) {
               poisson_log_likelihood_tuple_expanded{},
               std::forward_as_tuple(sums, eta1_tuple, eta2, eta3), theta_0,
               stan::math::test::squared_kernel_functor{},
-              std::forward_as_tuple(
-                  x, std::make_tuple(phi_dbl(0), phi_dbl(1))),
+              std::forward_as_tuple(x, std::make_tuple(phi_dbl(0), phi_dbl(1))),
               tolerance, max_num_steps, hessian_block_size, solver_num,
               max_steps_line_search, nullptr);
         };
