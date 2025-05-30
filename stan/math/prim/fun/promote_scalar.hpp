@@ -45,8 +45,8 @@ inline constexpr auto promote_scalar(UnPromotedTypes&& x) {
   } else if constexpr (is_stan_scalar_v<UnPromotedTypes>) {
     return PromotionScalars(std::forward<UnPromotedTypes>(x));
   } else {
-    static_assert(sizeof(std::decay_t<UnPromotedTypes>*) == 0,
-                  "Missed type in promote_scalar!");
+    throw std::domain_error("promote_scalar: "
+                            "Unrecognized type for promotion");
   }
 }
 
