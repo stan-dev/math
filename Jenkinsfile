@@ -340,7 +340,7 @@ pipeline {
                         sh "echo CXXFLAGS += -march=native -mtune=native >> make/local"
                         sh "echo O=3 >> make/local"
                         script {
-                            if (!(params.optimizeUnitTests || isBranch('develop') || isBranch('master'))) {
+                            if (params.optimizeUnitTests || isBranch('develop') || isBranch('master')) {
                                 sh "echo CXXFLAGS += -fsanitize=address >> make/local"
                             }
                             runTests("test/unit/math/laplace/*_test.cpp", false)
