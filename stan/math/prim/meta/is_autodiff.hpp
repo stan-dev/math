@@ -19,6 +19,9 @@ struct is_autodiff
     : bool_constant<math::disjunction<is_var<std::decay_t<T>>,
                                       is_fvar<std::decay_t<T>>>::value> {};
 
+template <typename T>
+inline constexpr bool is_autodiff_v = is_autodiff<T>::value;
+
 /*! \ingroup require_stan_scalar_real */
 /*! \defgroup autodiff_types autodiff  */
 /*! \addtogroup autodiff_types */

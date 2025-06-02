@@ -23,7 +23,7 @@ auto f3(T&& a) {
 
 template <typename T>
 auto f4(T&& a) {
-  return stan::math::make_holder([](auto& mat) { return mat.array(); },
+  return stan::math::make_holder([](auto&& mat) { return mat.array(); },
                                  std::forward<T>(a));
 }
 }  // namespace holder_test

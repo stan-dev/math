@@ -322,6 +322,32 @@ pipeline {
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
+                stage('Laplace Unit Tests') {
+                    agent {
+                        docker {
+                            image 'stanorg/ci:gpu-cpp17'
+                            label 'linux'
+                            args '--cap-add SYS_PTRACE'
+                        }
+                    }
+                    when {
+                        expression {
+                            !skipRemainingStages
+                        }
+                    }
+                    steps {
+                        unstash 'MathSetup'
+                        sh "echo CXXFLAGS += -march=native -mtune=native >> make/local"
+                        sh "echo O=3 >> make/local"
+                        script {
+                            if (params.optimizeUnitTests || isBranch('develop') || isBranch('master')) {
+                                sh "echo CXXFLAGS += -fsanitize=address >> make/local"
+                            }
+                            runTests("test/unit/math/laplace/*_test.cpp", false)
+                        }
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
                 stage('OpenCL GPU tests') {
                     agent {
                         docker {

@@ -35,6 +35,8 @@ benchmarks/*.csv
 *.o-*
 *.exe
 *.a
+# mac debug folders
+*.dSYM/
 
 # Intel template building blocks (TBB)
 lib/tbb

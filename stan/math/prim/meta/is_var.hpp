@@ -13,6 +13,71 @@ namespace stan {
 template <typename T, typename = void>
 struct is_var : std::false_type {};
 
+template <typename T>
+using has_var_scalar_type = is_var<scalar_type_t<T>>;
+
+template <typename T>
+inline constexpr bool is_var_v = is_var<T>::value;
+
+namespace internal {
+
+template <typename... Types>
+struct is_any_var_scalar_impl {
+  static constexpr bool value
+      = (has_var_scalar_type<std::decay_t<Types>>::value || ...);
+};
+
+template <typename... Types>
+struct is_any_var_scalar_impl<std::tuple<Types...>> {
+  static constexpr bool value
+      = (is_any_var_scalar_impl<std::decay_t<Types>>::value || ...);
+};
+
+template <typename T, typename... VecArgs>
+struct is_any_var_scalar_impl<std::vector<T, VecArgs...>> {
+  static constexpr bool value = is_any_var_scalar_impl<std::decay_t<T>>::value;
+};
+
+}  // namespace internal
+
+template <typename... Types>
+struct is_any_var_scalar
+    : std::disjunction<
+          internal::is_any_var_scalar_impl<std::decay_t<Types>>...> {};
+
+template <typename... Types>
+constexpr bool is_any_var_scalar_v
+    = is_any_var_scalar<std::decay_t<Types>...>::value;
+
+namespace internal {
+template <typename... Types>
+struct is_all_var_scalar_impl {
+  static constexpr bool value
+      = (has_var_scalar_type<std::decay_t<Types>>::value && ...);
+};
+template <typename... Types>
+struct is_all_var_scalar_impl<std::tuple<Types...>> {
+  static constexpr bool value
+      = (is_all_var_scalar_impl<std::decay_t<Types>>::value && ...);
+};
+
+template <typename... Types, typename... VecArgs>
+struct is_all_var_scalar_impl<std::vector<std::tuple<Types...>, VecArgs...>> {
+  static constexpr bool value
+      = (is_all_var_scalar_impl<std::decay_t<Types>>::value && ...);
+};
+
+}  // namespace internal
+
+template <typename... Types>
+struct is_all_var_scalar
+    : std::disjunction<
+          internal::is_all_var_scalar_impl<std::decay_t<Types>>...> {};
+
+template <typename... Types>
+constexpr bool is_all_var_scalar_v
+    = is_all_var_scalar<std::decay_t<Types>...>::value;
+
 /*! \ingroup require_stan_scalar_real */
 /*! \defgroup var_types var  */
 /*! \addtogroup var_types */

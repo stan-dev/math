@@ -7,7 +7,6 @@
 #include <memory>
 #include <type_traits>
 #include <utility>
-
 /**
  * \defgroup eigen_expressions Eigen expressions
  */
@@ -102,6 +101,19 @@ struct traits<stan::math::Holder<ArgType, Ptrs...>> {
 }  // namespace Eigen
 
 namespace stan {
+namespace internal {
+template <typename T>
+struct is_holder : std::false_type {};
+template <typename ArgType, typename... Ptrs>
+struct is_holder<stan::math::Holder<ArgType, Ptrs...>> : std::true_type {};
+}  // namespace internal
+
+template <typename T>
+struct is_holder : internal::is_holder<std::decay_t<T>> {};
+
+template <typename T>
+inline constexpr bool is_holder_v = is_holder<T>::value;
+
 namespace math {
 
 /**
@@ -237,13 +249,17 @@ namespace math {
  */
 template <typename T, typename... Ptrs,
           std::enable_if_t<sizeof...(Ptrs) >= 1>* = nullptr>
-Holder<T, Ptrs...> holder(T&& arg, Ptrs*... pointers) {
+inline Holder<T, Ptrs...> holder(T&& arg, Ptrs*... pointers) {
   return Holder<T, Ptrs...>(std::forward<T>(arg), pointers...);
 }
 // trivial case with no pointers constructs no holder object
 template <typename T>
-T holder(T&& arg) {
-  return std::forward<T>(arg);
+inline decltype(auto) holder(T&& arg) {
+  if constexpr (std::is_rvalue_reference<T&&>::value) {
+    return std::decay_t<T>(std::forward<T>(arg));
+  } else {
+    return std::forward<T>(arg);
+  }
 }
 
 namespace internal {
@@ -258,14 +274,14 @@ namespace internal {
  * @return tuple of pointers allocated on heap (empty).
  */
 template <typename T>
-auto holder_handle_element(T& a, T*& res) {
+inline auto holder_handle_element(T& a, T*& res) {
   res = &a;
   return std::make_tuple();
 }
 template <typename T,
           std::enable_if_t<!(Eigen::internal::traits<std::decay_t<T>>::Flags
                              & Eigen::NestByRefBit)>* = nullptr>
-auto holder_handle_element(T&& a, std::remove_reference_t<T>*& res) {
+inline auto holder_handle_element(T&& a, std::remove_reference_t<T>*& res) {
   res = &a;
   return std::make_tuple();
 }
@@ -284,13 +300,13 @@ template <typename T, require_t<std::is_rvalue_reference<T&&>>* = nullptr,
           std::enable_if_t<
               static_cast<bool>(Eigen::internal::traits<std::decay_t<T>>::Flags&
                                     Eigen::NestByRefBit)>* = nullptr>
-auto holder_handle_element(T&& a, T*& res) {
+inline auto holder_handle_element(T&& a, T*& res) {
   res = new T(std::move(a));
   return std::make_tuple(res);
 }
 template <typename T, require_t<std::is_rvalue_reference<T&&>>* = nullptr,
           require_not_eigen_t<T>* = nullptr>
-auto holder_handle_element(T&& a, T*& res) {
+inline auto holder_handle_element(T&& a, T*& res) {
   res = new T(std::move(a));
   return std::make_tuple(res);
 }
@@ -307,8 +323,8 @@ auto holder_handle_element(T&& a, T*& res) {
  * @return `holder` referencing given expression
  */
 template <typename T, std::size_t... Is, typename... Args>
-auto make_holder_impl_construct_object(T&& expr, std::index_sequence<Is...>,
-                                       const std::tuple<Args*...>& ptrs) {
+inline auto make_holder_impl_construct_object(
+    T&& expr, std::index_sequence<Is...>, const std::tuple<Args*...>& ptrs) {
   return holder(std::forward<T>(expr), std::get<Is>(ptrs)...);
 }
 
@@ -322,13 +338,13 @@ auto make_holder_impl_construct_object(T&& expr, std::index_sequence<Is...>,
  * @return `holder` referencing expression constructed by given functor
  */
 template <typename F, std::size_t... Is, typename... Args>
-auto make_holder_impl(const F& func, std::index_sequence<Is...>,
-                      Args&&... args) {
+inline auto make_holder_impl(F&& func, std::index_sequence<Is...>,
+                             Args&&... args) {
   std::tuple<std::remove_reference_t<Args>*...> res;
   auto ptrs = std::tuple_cat(
       holder_handle_element(std::forward<Args>(args), std::get<Is>(res))...);
   return make_holder_impl_construct_object(
-      func(*std::get<Is>(res)...),
+      std::forward<F>(func)(*std::get<Is>(res)...),
       std::make_index_sequence<std::tuple_size<decltype(ptrs)>::value>(), ptrs);
 }
 
@@ -346,11 +362,11 @@ auto make_holder_impl(const F& func, std::index_sequence<Is...>,
  * @param args arguments for the functor
  * @return `holder` referencing expression constructed by given functor
  */
-template <typename F, typename... Args,
-          require_not_plain_type_t<
-              decltype(std::declval<F>()(std::declval<Args&>()...))>* = nullptr>
-auto make_holder(const F& func, Args&&... args) {
-  return internal::make_holder_impl(func,
+template <
+    typename F, typename... Args,
+    require_not_plain_type_t<std::invoke_result_t<F, Args&&...>>* = nullptr>
+inline auto make_holder(F&& func, Args&&... args) {
+  return internal::make_holder_impl(std::forward<F>(func),
                                     std::make_index_sequence<sizeof...(Args)>(),
                                     std::forward<Args>(args)...);
 }
@@ -366,10 +382,9 @@ auto make_holder(const F& func, Args&&... args) {
  * @return `holder` referencing expression constructed by given functor
  */
 template <typename F, typename... Args,
-          require_plain_type_t<
-              decltype(std::declval<F>()(std::declval<Args&>()...))>* = nullptr>
-auto make_holder(const F& func, Args&&... args) {
-  return func(std::forward<Args>(args)...);
+          require_plain_type_t<std::invoke_result_t<F, Args&&...>>* = nullptr>
+inline auto make_holder(F&& func, Args&&... args) {
+  return std::forward<F>(func)(std::forward<Args>(args)...);
 }
 
 }  // namespace math
