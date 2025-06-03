@@ -1,0 +1,900 @@
+<?xml version="1.0" standalone="yes"?>
+<library-reference id="posix_time_reference"><title>Posix Time Reference</title><header id="doxygen.posix_time_reference.conversion_8hpp" name="boost/date_time/posix_time/conversion.hpp">
+<namespace name="boost">
+<namespace name="posix_time">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<function id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1a5374cbac02130d3e6a70099988f8dade" name="from_time_t"><type><classname>ptime</classname></type><parameter name="t"><paramtype>std::time_t</paramtype></parameter><purpose>Function that converts a time_t into a ptime. </purpose></function>
+<function id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1a9c87f35f99c12b30a04fae026b69b683" name="to_time_t"><type>std::time_t</type><parameter name="pt"><paramtype><classname>ptime</classname></paramtype></parameter><purpose>Function that converts a ptime into a time_t. </purpose></function>
+<function id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1a5bf06fdde7874889dbea26868b738c01" name="to_tm"><type>std::tm</type><parameter name="t"><paramtype>const <classname>boost::posix_time::ptime</classname> &amp;</paramtype></parameter><purpose>Convert a time to a tm structure truncating any fractional seconds. </purpose></function>
+<function id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1a8f5c45c0b8b858294f71dd9751dd9de6" name="to_tm"><type>std::tm</type><parameter name="td"><paramtype>const <classname>boost::posix_time::time_duration</classname> &amp;</paramtype></parameter><purpose>Convert a <link linkend="doxygen.posix_time_reference.classboost_1_1posix__time_1_1time__duration">time_duration</link> to a tm structure truncating any fractional seconds and zeroing fields for date components. </purpose></function>
+<function id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1aeba6653d63e2e44abdd7e8c0649df0ff" name="ptime_from_tm"><type><classname>ptime</classname></type><parameter name="timetm"><paramtype>const std::tm &amp;</paramtype></parameter><purpose>Convert a tm struct to a ptime ignoring is_dst flag. </purpose></function>
+<function id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1a2fa4e3cdd9a755565b7f884049701975" name="from_ftime"><type>TimeT</type><template>
+          <template-type-parameter name="TimeT"/>
+          <template-type-parameter name="FileTimeT"/>
+        </template><parameter name="ft"><paramtype>const FileTimeT &amp;</paramtype></parameter><purpose>Function to create a time object from an initialized FILETIME struct. </purpose><description><para>Function to create a time object from an initialized FILETIME struct. A FILETIME struct holds 100-nanosecond units (0.0000001). When built with microsecond resolution the FILETIME's sub second value will be truncated. Nanosecond resolution has no truncation.</para><para><note><para>FILETIME is part of the Win32 API, so it is not portable to non-windows platforms.</para>
+</note>
+<note><para>The function is templated on the FILETIME type, so that it can be used with both native FILETIME and the ad-hoc boost::detail::winapi::FILETIME_ type. </para>
+</note>
+</para></description></function>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.posix_time_reference.date__duration__operators_8hpp" name="boost/date_time/posix_time/date_duration_operators.hpp">
+<para>Operators for ptime and optional gregorian types. Operators use snap-to-end-of-month behavior. Further details on this behavior can be found in reference for date_time/date_duration_types.hpp and documentation for month and year iterators. </para><namespace name="boost">
+<namespace name="posix_time">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<function id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1af03a275ea12238ea0a15f2b6f68b8176" name="operator+"><type>BOOST_CXX14_CONSTEXPR <classname>ptime</classname></type><parameter name="t"><paramtype>const <classname>ptime</classname> &amp;</paramtype></parameter><parameter name="m"><paramtype>const boost::gregorian::months &amp;</paramtype></parameter><description><para>Adds a months object and a ptime. Result will be same day-of-month as ptime unless original day was the last day of month. see date_time::months_duration for more details </para></description></function>
+<function id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1a14918562720dc81ab24597d47655acad" name="operator+="><type>BOOST_CXX14_CONSTEXPR <classname>ptime</classname></type><parameter name="t"><paramtype><classname>ptime</classname> &amp;</paramtype></parameter><parameter name="m"><paramtype>const boost::gregorian::months &amp;</paramtype></parameter><description><para>Adds a months object to a ptime. Result will be same day-of-month as ptime unless original day was the last day of month. see date_time::months_duration for more details </para></description></function>
+<function id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1a44c900bde80c138c7a1161c39fa2a4da" name="operator-"><type>BOOST_CXX14_CONSTEXPR <classname>ptime</classname></type><parameter name="t"><paramtype>const <classname>ptime</classname> &amp;</paramtype></parameter><parameter name="m"><paramtype>const boost::gregorian::months &amp;</paramtype></parameter><description><para>Subtracts a months object and a ptime. Result will be same day-of-month as ptime unless original day was the last day of month. see date_time::months_duration for more details </para></description></function>
+<function id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1aecc451d199cb2f88df557bb8716fd831" name="operator-="><type>BOOST_CXX14_CONSTEXPR <classname>ptime</classname></type><parameter name="t"><paramtype><classname>ptime</classname> &amp;</paramtype></parameter><parameter name="m"><paramtype>const boost::gregorian::months &amp;</paramtype></parameter><description><para>Subtracts a months object from a ptime. Result will be same day-of-month as ptime unless original day was the last day of month. see date_time::months_duration for more details </para></description></function>
+<function id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1ac5ee0c2fac6a41c454d5d9db0850a349" name="operator+"><type>BOOST_CXX14_CONSTEXPR <classname>ptime</classname></type><parameter name="t"><paramtype>const <classname>ptime</classname> &amp;</paramtype></parameter><parameter name="y"><paramtype>const boost::gregorian::years &amp;</paramtype></parameter><description><para>Adds a years object and a ptime. Result will be same month and day-of-month as ptime unless original day was the last day of month. see date_time::years_duration for more details </para></description></function>
+<function id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1ae0972f966b04c970d8dc53d7dd3b7db4" name="operator+="><type>BOOST_CXX14_CONSTEXPR <classname>ptime</classname></type><parameter name="t"><paramtype><classname>ptime</classname> &amp;</paramtype></parameter><parameter name="y"><paramtype>const boost::gregorian::years &amp;</paramtype></parameter><description><para>Adds a years object to a ptime. Result will be same month and day-of-month as ptime unless original day was the last day of month. see date_time::years_duration for more details </para></description></function>
+<function id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1a1e29f9cf938420183a483887e6fde674" name="operator-"><type>BOOST_CXX14_CONSTEXPR <classname>ptime</classname></type><parameter name="t"><paramtype>const <classname>ptime</classname> &amp;</paramtype></parameter><parameter name="y"><paramtype>const boost::gregorian::years &amp;</paramtype></parameter><description><para>Subtracts a years object and a ptime. Result will be same month and day-of-month as ptime unless original day was the last day of month. see date_time::years_duration for more details </para></description></function>
+<function id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1a3b168b0775585fd807f67e74ac8c2b0e" name="operator-="><type>BOOST_CXX14_CONSTEXPR <classname>ptime</classname></type><parameter name="t"><paramtype><classname>ptime</classname> &amp;</paramtype></parameter><parameter name="y"><paramtype>const boost::gregorian::years &amp;</paramtype></parameter><description><para>Subtracts a years object from a ptime. Result will be same month and day-of-month as ptime unless original day was the last day of month. see date_time::years_duration for more details </para></description></function>
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.posix_time_reference.posix__time_8hpp" name="boost/date_time/posix_time/posix_time.hpp">
+<para>Global header file to get all of posix time types </para></header>
+<header id="doxygen.posix_time_reference.posix__time__config_8hpp" name="boost/date_time/posix_time/posix_time_config.hpp">
+<namespace name="boost">
+<namespace name="posix_time">
+<class id="doxygen.posix_time_reference.classboost_1_1posix__time_1_1millisec__posix__time__system__config" name="millisec_posix_time_system_config"><typedef id="doxygen.posix_time_reference.classboost_1_1posix__time_1_1millisec__posix__time__system__config_1a8db5a0d28d12ce76cb0f7e68353927c9" name="time_rep_type"><type>boost::int64_t</type></typedef>
+<typedef id="doxygen.posix_time_reference.classboost_1_1posix__time_1_1millisec__posix__time__system__config_1a3a7a98afad88b99adf3218abf4cd363f" name="date_type"><type>gregorian::date</type></typedef>
+<typedef id="doxygen.posix_time_reference.classboost_1_1posix__time_1_1millisec__posix__time__system__config_1a6c5f87aa1df89068bd981e5f70b9100d" name="date_duration_type"><type>gregorian::date_duration</type></typedef>
+<typedef id="doxygen.posix_time_reference.classboost_1_1posix__time_1_1millisec__posix__time__system__config_1aa49087a18160712fb3430f4d2b5cfc5f" name="time_duration_type"><type><classname>time_duration</classname></type></typedef>
+<typedef id="doxygen.posix_time_reference.classboost_1_1posix__time_1_1millisec__posix__time__system__config_1a33a1ca4fd36ad107a1d6a8785779b896" name="int_type"><type>time_res_traits::tick_type</type></typedef>
+<typedef id="doxygen.posix_time_reference.classboost_1_1posix__time_1_1millisec__posix__time__system__config_1a08a4b1695efafcc2bd5ed97dad2dc617" name="impl_type"><type>time_res_traits::impl_type</type></typedef>
+<typedef id="doxygen.posix_time_reference.classboost_1_1posix__time_1_1millisec__posix__time__system__config_1a5c0f1c14cf3a090401f6cdf584fa1b43" name="resolution_traits"><type>time_res_traits</type></typedef>
+<method-group name="public member functions">
+<method id="doxygen.posix_time_reference.classboost_1_1posix__time_1_1millisec__posix__time__system__config_1a25afbefed99179d0602faaf38cc8a2ce" name="BOOST_STATIC_CONSTANT"><type/><parameter name=""><paramtype>boost::int64_t</paramtype></parameter><parameter name=""><paramtype>tick_per_second</paramtype><default>1000000</default></parameter></method>
+</method-group>
+</class><class id="doxygen.posix_time_reference.classboost_1_1posix__time_1_1posix__time__system__config" name="posix_time_system_config"><typedef id="doxygen.posix_time_reference.classboost_1_1posix__time_1_1posix__time__system__config_1a902ca7d8785dc3f657ec42abf99ab218" name="time_rep_type"><type><classname>simple_time_rep</classname></type></typedef>
+<typedef id="doxygen.posix_time_reference.classboost_1_1posix__time_1_1posix__time__system__config_1a848c22c07b6e555974909f3aa0da5423" name="date_type"><type>gregorian::date</type></typedef>
+<typedef id="doxygen.posix_time_reference.classboost_1_1posix__time_1_1posix__time__system__config_1a649103e5ae17cbf51bcd0fb95a00a090" name="date_duration_type"><type>gregorian::date_duration</type></typedef>
+<typedef id="doxygen.posix_time_reference.classboost_1_1posix__time_1_1posix__time__system__config_1aa5a75e6fd8d97092b56182567818e7ef" name="time_duration_type"><type><classname>time_duration</classname></type></typedef>
+<typedef id="doxygen.posix_time_reference.classboost_1_1posix__time_1_1posix__time__system__config_1ad42f6ca89587c372a879ca86ba070cc5" name="int_type"><type>time_res_traits::tick_type</type></typedef>
+<typedef id="doxygen.posix_time_reference.classboost_1_1posix__time_1_1posix__time__system__config_1a6287b0de3e255a97986ba10af8c573b9" name="resolution_traits"><type>time_res_traits</type></typedef>
+<method-group name="public member functions">
+<method id="doxygen.posix_time_reference.classboost_1_1posix__time_1_1posix__time__system__config_1aef5cbee1179eb2201d2f4388dc6968a9" name="BOOST_STATIC_CONSTANT"><type/><parameter name=""><paramtype>boost::int64_t</paramtype></parameter><parameter name=""><paramtype>tick_per_second</paramtype><default>1000000000</default></parameter></method>
+</method-group>
+</class><struct id="doxygen.posix_time_reference.structboost_1_1posix__time_1_1simple__time__rep" name="simple_time_rep"><purpose>Simple implementation for the time rep. </purpose><typedef id="doxygen.posix_time_reference.structboost_1_1posix__time_1_1simple__time__rep_1ae049598e0d5482025c457f901b5047a5" name="date_type"><type>gregorian::date</type></typedef>
+<typedef id="doxygen.posix_time_reference.structboost_1_1posix__time_1_1simple__time__rep_1af68bfc52e7f92db37077bd8bcdb13880" name="time_duration_type"><type><classname>time_duration</classname></type></typedef>
+<data-member id="doxygen.posix_time_reference.structboost_1_1posix__time_1_1simple__time__rep_1a64e683ebd8be829697bc9a489f08cbd2" name="day"><type>date_type</type></data-member>
+<data-member id="doxygen.posix_time_reference.structboost_1_1posix__time_1_1simple__time__rep_1a911c88cbec84ed26eb3fbb1817c6b07f" name="time_of_day"><type><classname>time_duration_type</classname></type></data-member>
+<method-group name="public member functions">
+<constructor id="doxygen.posix_time_reference.structboost_1_1posix__time_1_1simple__time__rep_1a7356f8cd9f8c70dd1735c8d434ad93b4"><parameter name="d"><paramtype>date_type</paramtype></parameter><parameter name="tod"><paramtype><classname>time_duration_type</classname></paramtype></parameter></constructor>
+<method id="doxygen.posix_time_reference.structboost_1_1posix__time_1_1simple__time__rep_1ad9a8c454157bbf829d2b0442d1b1847d" name="is_special" cv="const"><type>BOOST_CXX14_CONSTEXPR bool</type></method>
+<method id="doxygen.posix_time_reference.structboost_1_1posix__time_1_1simple__time__rep_1aeca55db5efe0d7ba14c276e17344aa42" name="is_pos_infinity" cv="const"><type>BOOST_CXX14_CONSTEXPR bool</type></method>
+<method id="doxygen.posix_time_reference.structboost_1_1posix__time_1_1simple__time__rep_1aef76858888192bec678141550cc372c3" name="is_neg_infinity" cv="const"><type>BOOST_CXX14_CONSTEXPR bool</type></method>
+<method id="doxygen.posix_time_reference.structboost_1_1posix__time_1_1simple__time__rep_1ad9b78fb30c1c5c2b37297a8453f090b2" name="is_not_a_date_time" cv="const"><type>BOOST_CXX14_CONSTEXPR bool</type></method>
+</method-group>
+</struct><class id="doxygen.posix_time_reference.classboost_1_1posix__time_1_1time__duration" name="time_duration"><inherit access="public">date_time::time_duration&lt; time_duration, time_res_traits &gt;</inherit><purpose>Base time duration type. </purpose><typedef id="doxygen.posix_time_reference.classboost_1_1posix__time_1_1time__duration_1a3039040bbd8342c1926c9d1b328da3b2" name="rep_type"><type>time_res_traits</type></typedef>
+<typedef id="doxygen.posix_time_reference.classboost_1_1posix__time_1_1time__duration_1a19555623de214d54b469c0496a08636d" name="day_type"><type>time_res_traits::day_type</type></typedef>
+<typedef id="doxygen.posix_time_reference.classboost_1_1posix__time_1_1time__duration_1a76e9da81741da01dcf531f3c1f4d606b" name="hour_type"><type>time_res_traits::hour_type</type></typedef>
+<typedef id="doxygen.posix_time_reference.classboost_1_1posix__time_1_1time__duration_1a191c621ea0293d4bce6e37e0a0237e8c" name="min_type"><type>time_res_traits::min_type</type></typedef>
+<typedef id="doxygen.posix_time_reference.classboost_1_1posix__time_1_1time__duration_1a1001b1f2437d8c1d774f5b610c93186f" name="sec_type"><type>time_res_traits::sec_type</type></typedef>
+<typedef id="doxygen.posix_time_reference.classboost_1_1posix__time_1_1time__duration_1aefc09d42cd6ec0dd1cb6d3a9c044248e" name="fractional_seconds_type"><type>time_res_traits::fractional_seconds_type</type></typedef>
+<typedef id="doxygen.posix_time_reference.classboost_1_1posix__time_1_1time__duration_1ac75c214acd23e32ae82d950bbabfb0bb" name="tick_type"><type>time_res_traits::tick_type</type></typedef>
+<typedef id="doxygen.posix_time_reference.classboost_1_1posix__time_1_1time__duration_1ac8ede1b0ae0ff5fd5d72dd007a44dc0a" name="impl_type"><type>time_res_traits::impl_type</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.posix_time_reference.classboost_1_1posix__time_1_1time__duration_1abb95239e46d14b32093974038a2ad7c5"><parameter name="hour"><paramtype>hour_type</paramtype></parameter><parameter name="min"><paramtype>min_type</paramtype></parameter><parameter name="sec"><paramtype>sec_type</paramtype></parameter><parameter name="fs"><paramtype>fractional_seconds_type</paramtype><default>0</default></parameter></constructor>
+<constructor id="doxygen.posix_time_reference.classboost_1_1posix__time_1_1time__duration_1a594b5823bf62ccde1c9cdf3db2a72b2e"/>
+<constructor id="doxygen.posix_time_reference.classboost_1_1posix__time_1_1time__duration_1a68fcc85b0f42471020c7936b290c547a"><parameter name="sv"><paramtype>boost::date_time::special_values</paramtype></parameter><purpose>Construct from special_values. </purpose></constructor>
+</method-group>
+<method-group name="protected member functions">
+<constructor id="doxygen.posix_time_reference.classboost_1_1posix__time_1_1time__duration_1a50a89490b2b57eee9fa020732805e269" specifiers="explicit"><parameter name="tick_count"><paramtype>impl_type</paramtype></parameter></constructor>
+</method-group>
+</class><typedef id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1a27a476e462914722e1507ab2dc62aa7a" name="time_res_traits"><type>date_time::time_resolution_traits&lt; boost::date_time::time_resolution_traits_adapted64_impl, boost::date_time::nano, 1000000000, 9 &gt;</type></typedef>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.posix_time_reference.posix__time__duration_8hpp" name="boost/date_time/posix_time/posix_time_duration.hpp">
+<namespace name="boost">
+<namespace name="posix_time">
+<class id="doxygen.posix_time_reference.classboost_1_1posix__time_1_1hours" name="hours"><inherit access="public">boost::posix_time::time_duration</inherit><description><para>Allows expression of durations as an hour count The argument must be an integral type </para></description><method-group name="public member functions">
+<constructor id="doxygen.posix_time_reference.classboost_1_1posix__time_1_1hours_1a974514ddebc471299ead6c1e0c5de57c" specifiers="explicit"><template>
+          <template-type-parameter name="T"/>
+        </template><parameter name="h"><paramtype>T const &amp;</paramtype></parameter><parameter name=""><paramtype>typename boost::enable_if&lt; boost::is_integral&lt; T &gt;, void &gt;::type *</paramtype><default>BOOST_DATE_TIME_NULLPTR</default></parameter></constructor>
+</method-group>
+</class><class id="doxygen.posix_time_reference.classboost_1_1posix__time_1_1minutes" name="minutes"><inherit access="public">boost::posix_time::time_duration</inherit><description><para>Allows expression of durations as a minute count The argument must be an integral type </para></description><method-group name="public member functions">
+<constructor id="doxygen.posix_time_reference.classboost_1_1posix__time_1_1minutes_1a7a9aa74af229216dd95d1848136b4071" specifiers="explicit"><template>
+          <template-type-parameter name="T"/>
+        </template><parameter name="m"><paramtype>T const &amp;</paramtype></parameter><parameter name=""><paramtype>typename boost::enable_if&lt; boost::is_integral&lt; T &gt;, void &gt;::type *</paramtype><default>BOOST_DATE_TIME_NULLPTR</default></parameter></constructor>
+</method-group>
+</class><class id="doxygen.posix_time_reference.classboost_1_1posix__time_1_1seconds" name="seconds"><inherit access="public">boost::posix_time::time_duration</inherit><description><para>Allows expression of durations as a seconds count The argument must be an integral type </para></description><method-group name="public member functions">
+<constructor id="doxygen.posix_time_reference.classboost_1_1posix__time_1_1seconds_1a2569370f01036b3b0be16cd4a44bcf8c" specifiers="explicit"><template>
+          <template-type-parameter name="T"/>
+        </template><parameter name="s"><paramtype>T const &amp;</paramtype></parameter><parameter name=""><paramtype>typename boost::enable_if&lt; boost::is_integral&lt; T &gt;, void &gt;::type *</paramtype><default>BOOST_DATE_TIME_NULLPTR</default></parameter></constructor>
+</method-group>
+</class><typedef id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1a4f9538be2485e5b1cb73bd046469b757" name="millisec"><purpose>Allows expression of durations as milli seconds. </purpose><type>date_time::subsecond_duration&lt; <classname>time_duration</classname>, 1000 &gt;</type></typedef>
+<typedef id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1a9449f06f5e377bc419899a764a71c823" name="milliseconds"><type>date_time::subsecond_duration&lt; <classname>time_duration</classname>, 1000 &gt;</type></typedef>
+<typedef id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1a1ed1a1752866f0fb71320ce2cffcd5cc" name="microsec"><purpose>Allows expression of durations as micro seconds. </purpose><type>date_time::subsecond_duration&lt; <classname>time_duration</classname>, 1000000 &gt;</type></typedef>
+<typedef id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1a538cbd951f005fdeb2375d1b4788b0ab" name="microseconds"><type>date_time::subsecond_duration&lt; <classname>time_duration</classname>, 1000000 &gt;</type></typedef>
+<typedef id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1ad2520407ded88fa6fdbb94743787592c" name="nanosec"><purpose>Allows expression of durations as nano seconds. </purpose><type>date_time::subsecond_duration&lt; <classname>time_duration</classname>, 1000000000 &gt;</type></typedef>
+<typedef id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1adfa90cc8b1bfbd3b6aec6b31423f8aa2" name="nanoseconds"><type>date_time::subsecond_duration&lt; <classname>time_duration</classname>, 1000000000 &gt;</type></typedef>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.posix_time_reference.posix__time__io_8hpp" name="boost/date_time/posix_time/posix_time_io.hpp">
+<namespace name="boost">
+<namespace name="posix_time">
+<typedef id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1a4b717c11e28393450e7a06e6bd39faac" name="wtime_facet"><purpose>wptime_facet is depricated and will be phased out. use wtime_facet instead </purpose><description><para>ptime_facet is depricated and will be phased out. use time_facet instead wptime_input_facet is depricated and will be phased out. use wtime_input_facet instead ptime_input_facet is depricated and will be phased out. use time_input_facet instead </para></description><type>boost::date_time::time_facet&lt; <classname>ptime</classname>, wchar_t &gt;</type></typedef>
+<typedef id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1a7d30976d49b2a028596023ecc6ff7b23" name="time_facet"><type>boost::date_time::time_facet&lt; <classname>ptime</classname>, char &gt;</type></typedef>
+<typedef id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1a8aba3644171acd65bce73705e0ff8c86" name="wtime_input_facet"><type>boost::date_time::time_input_facet&lt; <classname>ptime</classname>, wchar_t &gt;</type></typedef>
+<typedef id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1ae96493ae68e7d3c0f17df17ec666ecd5" name="time_input_facet"><type>boost::date_time::time_input_facet&lt; <classname>ptime</classname>, char &gt;</type></typedef>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<function id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1a105561315b42d2ff62bb942fc1ee6746" name="operator&lt;&lt;"><type>std::basic_ostream&lt; CharT, TraitsT &gt; &amp;</type><template>
+          <template-type-parameter name="CharT"/>
+          <template-type-parameter name="TraitsT"/>
+        </template><parameter name="os"><paramtype>std::basic_ostream&lt; CharT, TraitsT &gt; &amp;</paramtype></parameter><parameter name="p"><paramtype>const <classname>ptime</classname> &amp;</paramtype></parameter></function>
+<function id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1a639c500c96a43822f0376eb98c414d18" name="operator&gt;&gt;"><type>std::basic_istream&lt; CharT, Traits &gt; &amp;</type><template>
+          <template-type-parameter name="CharT"/>
+          <template-type-parameter name="Traits"/>
+        </template><parameter name="is"><paramtype>std::basic_istream&lt; CharT, Traits &gt; &amp;</paramtype></parameter><parameter name="pt"><paramtype><classname>ptime</classname> &amp;</paramtype></parameter><purpose>input operator for ptime </purpose></function>
+<function id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1ad14493a3c97179b6bf221c75bacc7b22" name="operator&lt;&lt;"><type>std::basic_ostream&lt; CharT, TraitsT &gt; &amp;</type><template>
+          <template-type-parameter name="CharT"/>
+          <template-type-parameter name="TraitsT"/>
+        </template><parameter name="os"><paramtype>std::basic_ostream&lt; CharT, TraitsT &gt; &amp;</paramtype></parameter><parameter name="p"><paramtype>const boost::posix_time::time_period &amp;</paramtype></parameter></function>
+<function id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1a5acdc36ca1f49955166a33c8362ea1b0" name="operator&gt;&gt;"><type>std::basic_istream&lt; CharT, Traits &gt; &amp;</type><template>
+          <template-type-parameter name="CharT"/>
+          <template-type-parameter name="Traits"/>
+        </template><parameter name="is"><paramtype>std::basic_istream&lt; CharT, Traits &gt; &amp;</paramtype></parameter><parameter name="tp"><paramtype>time_period &amp;</paramtype></parameter><purpose>input operator for time_period </purpose></function>
+<function id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1aec0399a1ebeeb6df0d22d1d1f9be3f98" name="operator&lt;&lt;"><type>std::basic_ostream&lt; CharT, Traits &gt; &amp;</type><template>
+          <template-type-parameter name="CharT"/>
+          <template-type-parameter name="Traits"/>
+        </template><parameter name="os"><paramtype>std::basic_ostream&lt; CharT, Traits &gt; &amp;</paramtype></parameter><parameter name="td"><paramtype>const <classname>time_duration</classname> &amp;</paramtype></parameter><purpose>ostream operator for <link linkend="doxygen.posix_time_reference.classboost_1_1posix__time_1_1time__duration">posix_time::time_duration</link> </purpose></function>
+<function id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1a8c6bf15f6382cb6effbe7350537f674c" name="operator&gt;&gt;"><type>std::basic_istream&lt; CharT, Traits &gt; &amp;</type><template>
+          <template-type-parameter name="CharT"/>
+          <template-type-parameter name="Traits"/>
+        </template><parameter name="is"><paramtype>std::basic_istream&lt; CharT, Traits &gt; &amp;</paramtype></parameter><parameter name="td"><paramtype><classname>time_duration</classname> &amp;</paramtype></parameter><purpose>input operator for <link linkend="doxygen.posix_time_reference.classboost_1_1posix__time_1_1time__duration">time_duration</link> </purpose></function>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.posix_time_reference.posix__time__legacy__io_8hpp" name="boost/date_time/posix_time/posix_time_legacy_io.hpp">
+<namespace name="boost">
+<namespace name="posix_time">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<function id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1aa76ce8d997a588ce4166514f39a4fa0c" name="operator&lt;&lt;"><type>std::basic_ostream&lt; charT, traits &gt; &amp;</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="os"><paramtype>std::basic_ostream&lt; charT, traits &gt; &amp;</paramtype></parameter><parameter name="td"><paramtype>const <classname>time_duration</classname> &amp;</paramtype></parameter><purpose>ostream operator for <link linkend="doxygen.posix_time_reference.classboost_1_1posix__time_1_1time__duration">posix_time::time_duration</link> </purpose></function>
+<function id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1a2549fa6c3f54ab2ecdec5b751818a8bb" name="operator&lt;&lt;"><type>std::basic_ostream&lt; charT, traits &gt; &amp;</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="os"><paramtype>std::basic_ostream&lt; charT, traits &gt; &amp;</paramtype></parameter><parameter name="t"><paramtype>const <classname>ptime</classname> &amp;</paramtype></parameter><purpose>ostream operator for <link linkend="doxygen.posix_time_reference.classboost_1_1posix__time_1_1ptime">posix_time::ptime</link> </purpose></function>
+<function id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1a3ff32b3352bf86a4358ad9a2c802828a" name="operator&lt;&lt;"><type>std::basic_ostream&lt; charT, traits &gt; &amp;</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="os"><paramtype>std::basic_ostream&lt; charT, traits &gt; &amp;</paramtype></parameter><parameter name="tp"><paramtype>const time_period &amp;</paramtype></parameter><purpose>ostream operator for <link linkend="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1a3bb8271d8f99187831107c00eefc2092">posix_time::time_period</link> </purpose></function>
+<function id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1ae45bb24e27a5fe5192d68b14327a304a" name="operator&gt;&gt;"><type>std::basic_istream&lt; charT &gt; &amp;</type><template>
+          <template-type-parameter name="charT"/>
+        </template><parameter name="is"><paramtype>std::basic_istream&lt; charT &gt; &amp;</paramtype></parameter><parameter name="td"><paramtype><classname>time_duration</classname> &amp;</paramtype></parameter></function>
+<function id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1a370875a4128fc7f46e06d94f7e3feb92" name="operator&gt;&gt;"><type>std::basic_istream&lt; charT &gt; &amp;</type><template>
+          <template-type-parameter name="charT"/>
+        </template><parameter name="is"><paramtype>std::basic_istream&lt; charT &gt; &amp;</paramtype></parameter><parameter name="pt"><paramtype><classname>ptime</classname> &amp;</paramtype></parameter></function>
+<function id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1a90f5faa401912bab091752d84836ed13" name="operator&gt;&gt;"><type>std::basic_istream&lt; charT &gt; &amp;</type><template>
+          <template-type-parameter name="charT"/>
+        </template><parameter name="is"><paramtype>std::basic_istream&lt; charT &gt; &amp;</paramtype></parameter><parameter name="tp"><paramtype>time_period &amp;</paramtype></parameter><description><para>operator&gt;&gt; for time_period. time_period must be in "[date time_duration/date time_duration]" format. </para></description></function>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.posix_time_reference.posix__time__system_8hpp" name="boost/date_time/posix_time/posix_time_system.hpp">
+<namespace name="boost">
+<namespace name="posix_time">
+<typedef id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1a0075616fc511ee5a005b4f8e5d6cf94f" name="posix_time_system"><type>date_time::split_timedate_system&lt; <classname>posix_time_system_config</classname>, 1000000000 &gt;</type></typedef>
+<typedef id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1a1b410d94c8af465a11d3c51a9f1fedcf" name="int64_time_rep"><type>date_time::counted_time_rep&lt; <classname>millisec_posix_time_system_config</classname> &gt;</type></typedef>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.posix_time_reference.posix__time__types_8hpp" name="boost/date_time/posix_time/posix_time_types.hpp">
+<namespace name="boost">
+<namespace name="posix_time">
+<typedef id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1a17680d0421986e42f339910e9647e527" name="time_iterator"><purpose>Iterator over a defined time duration. </purpose><type>date_time::time_itr&lt; <classname>ptime</classname> &gt;</type></typedef>
+<typedef id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1af7041828aa1af141c08179e816ea2e4b" name="second_clock"><purpose>A time clock that has a resolution of one second. </purpose><type>date_time::second_clock&lt; <classname>ptime</classname> &gt;</type></typedef>
+<typedef id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1ac228eb15b260e4dcde37763e6b592f87" name="microsec_clock"><purpose>A time clock that has a resolution of one microsecond. </purpose><type>date_time::microsec_clock&lt; <classname>ptime</classname> &gt;</type></typedef>
+<typedef id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1a1863db3e424c2c03030aa2e6aa7f27ff" name="no_dst"><purpose>Define a dst null dst rule for the <link linkend="doxygen.posix_time_reference.namespaceboost_1_1posix__time">posix_time</link> system. </purpose><type>date_time::null_dst_rules&lt; ptime::date_type, <classname>time_duration</classname> &gt;</type></typedef>
+<typedef id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1a971d33f2b251a3b41109955d1289613a" name="us_dst"><purpose>Define US dst rule calculator for the <link linkend="doxygen.posix_time_reference.namespaceboost_1_1posix__time">posix_time</link> system. </purpose><type>date_time::us_dst_rules&lt; ptime::date_type, <classname>time_duration</classname> &gt;</type></typedef>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.posix_time_reference.ptime_8hpp" name="boost/date_time/posix_time/ptime.hpp">
+<namespace name="boost">
+<namespace name="posix_time">
+<class id="doxygen.posix_time_reference.classboost_1_1posix__time_1_1ptime" name="ptime"><inherit access="public">date_time::base_time&lt; ptime, posix_time_system &gt;</inherit><purpose>Time type with no timezone or other adjustments. </purpose><typedef id="doxygen.posix_time_reference.classboost_1_1posix__time_1_1ptime_1a0da18a5909501e2f9df7ea3fee1dd159" name="time_system_type"><type>posix_time_system</type></typedef>
+<typedef id="doxygen.posix_time_reference.classboost_1_1posix__time_1_1ptime_1aa59e3b783851914dc4d854e53219ab93" name="time_rep_type"><type>time_system_type::time_rep_type</type></typedef>
+<typedef id="doxygen.posix_time_reference.classboost_1_1posix__time_1_1ptime_1a31c5e2f3ad6530d9b67f8b8784ea3056" name="time_duration_type"><type>time_system_type::time_duration_type</type></typedef>
+<typedef id="doxygen.posix_time_reference.classboost_1_1posix__time_1_1ptime_1ab77e9fc4a6e2b28fe5d0f5b2ca6b7cde" name="time_type"><type><classname>ptime</classname></type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.posix_time_reference.classboost_1_1posix__time_1_1ptime_1a53763c6628509e0581d11ca5c6d5078e"><parameter name="d"><paramtype>gregorian::date</paramtype></parameter><parameter name="td"><paramtype>time_duration_type</paramtype></parameter><purpose>Construct with date and offset in day. </purpose></constructor>
+<constructor id="doxygen.posix_time_reference.classboost_1_1posix__time_1_1ptime_1a45cf1782496578a2c078e94bbe7dd2a7" specifiers="explicit"><parameter name="d"><paramtype>gregorian::date</paramtype></parameter><purpose>Construct a time at start of the given day (midnight) </purpose></constructor>
+<constructor id="doxygen.posix_time_reference.classboost_1_1posix__time_1_1ptime_1ad6387a5db612182be011db52f22e872d"><parameter name="rhs"><paramtype>const time_rep_type &amp;</paramtype></parameter><purpose>Copy from time_rep. </purpose></constructor>
+<constructor id="doxygen.posix_time_reference.classboost_1_1posix__time_1_1ptime_1a90328b7ae716cf8e0f3dd9df83d89ca7"><parameter name="sv"><paramtype>const special_values</paramtype></parameter><purpose>Construct from special value. </purpose></constructor>
+<constructor id="doxygen.posix_time_reference.classboost_1_1posix__time_1_1ptime_1a25b87ee4ffc072bf21eb26e9280dabde"/>
+</method-group>
+</class>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<function id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1ad8f968a74b050b64368a7ccd86b13723" name="operator=="><type>BOOST_CXX14_CONSTEXPR bool</type><parameter name="lhs"><paramtype>const <classname>ptime</classname> &amp;</paramtype></parameter><parameter name="rhs"><paramtype>const <classname>ptime</classname> &amp;</paramtype></parameter></function>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.posix_time_reference.time__formatters_8hpp" name="boost/date_time/posix_time/time_formatters.hpp">
+<namespace name="boost">
+<namespace name="posix_time">
+
+
+
+
+
+
+
+
+
+
+<function id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1ac4431aed9d33b7b8b1a27a5eb6174983" name="to_simple_string_type"><type>std::basic_string&lt; charT &gt;</type><template>
+          <template-type-parameter name="charT"/>
+        </template><parameter name="td"><paramtype><classname>time_duration</classname></paramtype></parameter></function>
+<function id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1abbde78230e2711b4a68dea88a1f65463" name="to_iso_string_type"><type>std::basic_string&lt; charT &gt;</type><template>
+          <template-type-parameter name="charT"/>
+        </template><parameter name="td"><paramtype><classname>time_duration</classname></paramtype></parameter></function>
+<function id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1a167012bb099ea4832dea78c0118cf588" name="to_simple_string_type"><type>std::basic_string&lt; charT &gt;</type><template>
+          <template-type-parameter name="charT"/>
+        </template><parameter name="t"><paramtype><classname>ptime</classname></paramtype></parameter><purpose>Time to simple format CCYY-mmm-dd hh:mm:ss.fffffff. </purpose></function>
+<function id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1a6314508018b7ca7cf2d0dd3b9c364641" name="to_simple_string_type"><type>std::basic_string&lt; charT &gt;</type><template>
+          <template-type-parameter name="charT"/>
+        </template><parameter name="tp"><paramtype>time_period</paramtype></parameter></function>
+<function id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1a899b81e3103e8f05f2d51c3b605dec4c" name="to_iso_string_type"><type>std::basic_string&lt; charT &gt;</type><template>
+          <template-type-parameter name="charT"/>
+        </template><parameter name="t"><paramtype><classname>ptime</classname></paramtype></parameter></function>
+<function id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1a19193919e6f4bf4b9c0490b34ff3ec60" name="to_iso_extended_string_type"><type>std::basic_string&lt; charT &gt;</type><template>
+          <template-type-parameter name="charT"/>
+        </template><parameter name="t"><paramtype><classname>ptime</classname></paramtype></parameter></function>
+<function id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1a789ea7643276ad34a400a24b08438f00" name="to_simple_wstring"><type>std::wstring</type><parameter name="td"><paramtype><classname>time_duration</classname></paramtype></parameter><purpose>Time duration to wstring -hh::mm::ss.fffffff. Example: 10:09:03.0123456. </purpose></function>
+<function id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1a8258ac01c9669642e06228dc8a60498c" name="to_iso_wstring"><type>std::wstring</type><parameter name="td"><paramtype><classname>time_duration</classname></paramtype></parameter><purpose>Time duration in ISO 8601 format -hhmmss.fffffff. Example: 10:09:03.0123456. </purpose></function>
+<function id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1a24372050b648d383c9c5db012d43647e" name="to_simple_wstring"><type>std::wstring</type><parameter name="t"><paramtype><classname>ptime</classname></paramtype></parameter></function>
+<function id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1ab5166d17dbe1f10e5153f0b87117abdb" name="to_simple_wstring"><type>std::wstring</type><parameter name="tp"><paramtype>time_period</paramtype></parameter><purpose>Convert to wstring of form [YYYY-mmm-DD HH:MM::SS.ffffff/YYYY-mmm-DD HH:MM::SS.fffffff]. </purpose></function>
+<function id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1a933b5a9862a83d22e40ac6c635338f20" name="to_iso_wstring"><type>std::wstring</type><parameter name="t"><paramtype><classname>ptime</classname></paramtype></parameter><purpose>Convert ISO 8601 short form YYYYMMDDTHHMMSS where T is the date-time separator. </purpose></function>
+<function id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1aa82728bfc8eca8e2d9a0d53636bd3223" name="to_iso_extended_wstring"><type>std::wstring</type><parameter name="t"><paramtype><classname>ptime</classname></paramtype></parameter><purpose>Convert to form YYYY-MM-DDTHH:MM:SS where T is the date-time separator. </purpose></function>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.posix_time_reference.time__formatters__limited_8hpp" name="boost/date_time/posix_time/time_formatters_limited.hpp">
+<namespace name="boost">
+<namespace name="posix_time">
+
+
+
+
+<function id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1a055a3c3cc84b8fab46fe1eaed91a316e" name="to_simple_string"><type>std::string</type><parameter name="td"><paramtype><classname>time_duration</classname></paramtype></parameter><purpose>Time duration to string -hh::mm::ss.fffffff. Example: 10:09:03.0123456. </purpose></function>
+<function id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1a554181fb3930e2810c205b8ec204ce2b" name="to_iso_string"><type>std::string</type><parameter name="td"><paramtype><classname>time_duration</classname></paramtype></parameter><purpose>Time duration in ISO 8601 format -hhmmss.fffffff. Example: 10:09:03.0123456. </purpose></function>
+<function id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1aa7431e653aba38ba9ee5c5c8d983231a" name="to_simple_string"><type>std::string</type><parameter name="t"><paramtype><classname>ptime</classname></paramtype></parameter><purpose>Time to simple format CCYY-mmm-dd hh:mm:ss.fffffff. </purpose></function>
+<function id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1a5d7c0850c26c4dd115aeff06eff5a8db" name="to_simple_string"><type>std::string</type><parameter name="tp"><paramtype>time_period</paramtype></parameter><purpose>Convert to string of form [YYYY-mmm-DD HH:MM::SS.ffffff/YYYY-mmm-DD HH:MM::SS.fffffff]. </purpose></function>
+<function id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1a56b4c112358e537e62599bd40bcd818c" name="to_iso_string"><type>std::string</type><parameter name="t"><paramtype><classname>ptime</classname></paramtype></parameter><purpose>Convert ISO 8601 short form YYYYMMDDTHHMMSS where T is the date-time separator. </purpose></function>
+<function id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1af7360629b94e7c3b9a4a7f9a80ae558f" name="to_iso_extended_string"><type>std::string</type><parameter name="t"><paramtype><classname>ptime</classname></paramtype></parameter><purpose>Convert to form YYYY-MM-DDTHH:MM:SS where T is the date-time separator. </purpose></function>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.posix_time_reference.time__parsers_8hpp" name="boost/date_time/posix_time/time_parsers.hpp">
+<namespace name="boost">
+<namespace name="posix_time">
+<function id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1a78f1aba3274ffdc28e50709bb198b929" name="duration_from_string"><type><classname>time_duration</classname></type><parameter name="s"><paramtype>const std::string &amp;</paramtype></parameter><purpose>Creates a <link linkend="doxygen.posix_time_reference.classboost_1_1posix__time_1_1time__duration">time_duration</link> object from a delimited string. </purpose><description><para>Expected format for string is "[-]h[h][:mm][:ss][.fff]". A negative duration will be created if the first character in string is a '-', all other '-' will be treated as delimiters. Accepted delimiters are "-:,.". </para></description></function>
+<function id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1a68da42df2e0680fa5c947a131b94e0fe" name="time_from_string"><type><classname>ptime</classname></type><parameter name="s"><paramtype>const std::string &amp;</paramtype></parameter></function>
+<function id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1a4df6dd32c4a175cdf16c7967eb622aa3" name="from_iso_string"><type><classname>ptime</classname></type><parameter name="s"><paramtype>const std::string &amp;</paramtype></parameter></function>
+<function id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1a5872bb70d114c6d42ad063eb03fe851d" name="from_iso_extended_string"><type><classname>ptime</classname></type><parameter name="s"><paramtype>const std::string &amp;</paramtype></parameter></function>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.posix_time_reference.time__period_8hpp" name="boost/date_time/posix_time/time_period.hpp">
+<namespace name="boost">
+<namespace name="posix_time">
+<typedef id="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1a3bb8271d8f99187831107c00eefc2092" name="time_period"><purpose>Time period type. </purpose><type>date_time::period&lt; <classname>ptime</classname>, <classname>time_duration</classname> &gt;</type></typedef>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.posix_time_reference.time__serialize_8hpp" name="boost/date_time/posix_time/time_serialize.hpp">
+<namespace name="boost">
+<namespace name="serialization">
+<struct id="doxygen.posix_time_reference.structboost_1_1serialization_1_1version" name="version"><template>
+      <template-type-parameter name="T"/>
+    </template></struct><struct-specialization id="doxygen.posix_time_reference.structboost_1_1serialization_1_1version_3_01boost_1_1posix__time_1_1time__duration_01_4" name="version"><template>
+    </template><specialization><template-arg>boost::posix_time::time_duration</template-arg></specialization><inherit access="public">integral_constant&lt; int, BOOST_DATE_TIME_POSIX_TIME_DURATION_VERSION &gt;</inherit></struct-specialization><function id="doxygen.posix_time_reference.time__serialize_8hpp_1a3042b46f44a7ac09bec04d879d1d40f2" name="BOOST_DATE_TIME_SPLIT_FREE"><type/><parameter name=""><paramtype><classname>boost::posix_time::ptime</classname></paramtype></parameter><description><para>time_duration objects are broken down into 4 parts for serialization: types are hour_type, min_type, sec_type, and fractional_seconds_type as defined in the time_duration class </para></description></function>
+<function id="doxygen.posix_time_reference.time__serialize_8hpp_1ac4b4ff94bf494f01d2b48e14454c815e" name="save"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+        </template><parameter name="ar"><paramtype>Archive &amp;</paramtype></parameter><parameter name="td"><paramtype>const <classname>posix_time::time_duration</classname> &amp;</paramtype></parameter><parameter name="version"><paramtype>unsigned int</paramtype></parameter></function>
+<function id="doxygen.posix_time_reference.time__serialize_8hpp_1a71926b96988e4d3de555c10a6c098887" name="load_td"><type>void</type><template>
+          <template-type-parameter name="TimeResTraitsSize"/>
+          <template-type-parameter name="Archive"/>
+        </template><parameter name="ar"><paramtype>Archive &amp;</paramtype></parameter><parameter name="td"><paramtype><classname>posix_time::time_duration</classname> &amp;</paramtype></parameter><purpose>Function to load <link linkend="doxygen.posix_time_reference.classboost_1_1posix__time_1_1time__duration">posix_time::time_duration</link> objects using serialization lib. </purpose><description><para>time_duration objects are broken down into 4 parts for serialization: types are hour_type, min_type, sec_type, and fractional_seconds_type as defined in the time_duration class </para></description></function>
+<function id="doxygen.posix_time_reference.time__serialize_8hpp_1a925e1a2c64fbee504232c119b5c81bb6" name="load"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+        </template><parameter name="ar"><paramtype>Archive &amp;</paramtype></parameter><parameter name="td"><paramtype><classname>posix_time::time_duration</classname> &amp;</paramtype></parameter><parameter name="version"><paramtype>unsigned int</paramtype></parameter></function>
+<function id="doxygen.posix_time_reference.time__serialize_8hpp_1ae91c6c071adec1715918f00863120fcd" name="save"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+        </template><parameter name="ar"><paramtype>Archive &amp;</paramtype></parameter><parameter name="pt"><paramtype>const <classname>posix_time::ptime</classname> &amp;</paramtype></parameter><parameter name=""><paramtype>unsigned int</paramtype></parameter><purpose>Function to save <link linkend="doxygen.posix_time_reference.classboost_1_1posix__time_1_1ptime">posix_time::ptime</link> objects using serialization lib. </purpose><description><para>ptime objects are broken down into 2 parts for serialization: a date object and a time_duration onject </para></description></function>
+<function id="doxygen.posix_time_reference.time__serialize_8hpp_1a62095934b13f3ae0d4d2f469f0128c2b" name="load"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+        </template><parameter name="ar"><paramtype>Archive &amp;</paramtype></parameter><parameter name="pt"><paramtype><classname>posix_time::ptime</classname> &amp;</paramtype></parameter><parameter name=""><paramtype>unsigned int</paramtype></parameter><purpose>Function to load <link linkend="doxygen.posix_time_reference.classboost_1_1posix__time_1_1ptime">posix_time::ptime</link> objects using serialization lib. </purpose><description><para>ptime objects are broken down into 2 parts for serialization: a date object and a time_duration onject </para></description></function>
+<function id="doxygen.posix_time_reference.time__serialize_8hpp_1a6ebf655bf717043e5a113d5a0bf19259" name="load_construct_data"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+        </template><parameter name=""><paramtype>Archive &amp;</paramtype></parameter><parameter name="pt"><paramtype><classname>posix_time::ptime</classname> *</paramtype></parameter><parameter name=""><paramtype>const unsigned int</paramtype></parameter><purpose>override needed b/c no default constructor </purpose></function>
+<function id="doxygen.posix_time_reference.time__serialize_8hpp_1ac6428ab40364190b5aec8b288e830d10" name="save"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+        </template><parameter name="ar"><paramtype>Archive &amp;</paramtype></parameter><parameter name="tp"><paramtype>const posix_time::time_period &amp;</paramtype></parameter><parameter name=""><paramtype>unsigned int</paramtype></parameter><purpose>Function to save <link linkend="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1a3bb8271d8f99187831107c00eefc2092">posix_time::time_period</link> objects using serialization lib. </purpose><description><para>time_period objects are broken down into 2 parts for serialization: a begining ptime object and an ending ptime object </para></description></function>
+<function id="doxygen.posix_time_reference.time__serialize_8hpp_1aeb559c6b60f8cece551724633a43a554" name="load"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+        </template><parameter name="ar"><paramtype>Archive &amp;</paramtype></parameter><parameter name="tp"><paramtype>boost::posix_time::time_period &amp;</paramtype></parameter><parameter name=""><paramtype>unsigned int</paramtype></parameter><purpose>Function to load <link linkend="doxygen.posix_time_reference.namespaceboost_1_1posix__time_1a3bb8271d8f99187831107c00eefc2092">posix_time::time_period</link> objects using serialization lib. </purpose><description><para>time_period objects are broken down into 2 parts for serialization: a begining ptime object and an ending ptime object </para></description></function>
+<function id="doxygen.posix_time_reference.time__serialize_8hpp_1a0ffe9c6757d09401722c281c71001c8f" name="load_construct_data"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+        </template><parameter name=""><paramtype>Archive &amp;</paramtype></parameter><parameter name="tp"><paramtype>boost::posix_time::time_period *</paramtype></parameter><parameter name=""><paramtype>const unsigned int</paramtype></parameter><purpose>override needed b/c no default constructor </purpose></function>
+</namespace>
+</namespace>
+</header>
+</library-reference>

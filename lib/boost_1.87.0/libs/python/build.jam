@@ -1,0 +1,41 @@
+# Copyright René Ferdinand Rivera Morell 2024
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at
+# http://www.boost.org/LICENSE_1_0.txt)
+
+require-b2 5.2 ;
+
+constant boost_dependencies :
+    /boost/align//boost_align
+    /boost/bind//boost_bind
+    /boost/config//boost_config
+    /boost/conversion//boost_conversion
+    /boost/core//boost_core
+    /boost/detail//boost_detail
+    /boost/foreach//boost_foreach
+    /boost/function//boost_function
+    /boost/iterator//boost_iterator
+    /boost/lexical_cast//boost_lexical_cast
+    /boost/mpl//boost_mpl
+    /boost/numeric_conversion//boost_numeric_conversion
+    /boost/preprocessor//boost_preprocessor
+    /boost/static_assert//boost_static_assert
+    /boost/tuple//boost_tuple
+    /boost/type_traits//boost_type_traits
+    /boost/utility//boost_utility ;
+
+project /boost/python
+    : common-requirements
+        <include>include
+    ;
+
+explicit
+    [ alias boost_python : build//boost_python ]
+    [ alias boost_numpy : build//boost_numpy ]
+    [ alias all : boost_python boost_numpy test ]
+    ;
+
+call-if : boost-library python
+    : install boost_python boost_numpy
+    ;
+

@@ -1,0 +1,33 @@
+# Copyright René Ferdinand Rivera Morell 2023-2024
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at
+# http://www.boost.org/LICENSE_1_0.txt)
+
+require-b2 5.2 ;
+
+constant boost_dependencies :
+    /boost/assert//boost_assert
+    /boost/config//boost_config
+    /boost/context//boost_context
+    /boost/core//boost_core
+    /boost/exception//boost_exception
+    /boost/move//boost_move
+    /boost/system//boost_system
+    /boost/throw_exception//boost_throw_exception
+    /boost/type_traits//boost_type_traits
+    /boost/utility//boost_utility ;
+
+project /boost/coroutine
+    : common-requirements
+        <include>include
+    ;
+
+explicit
+    [ alias boost_coroutine : build//boost_coroutine ]
+    [ alias all : boost_coroutine test ]
+    ;
+
+call-if : boost-library coroutine
+    : install boost_coroutine
+    ;
+

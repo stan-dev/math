@@ -1,0 +1,36 @@
+# Copyright René Ferdinand Rivera Morell 2023-2024
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at
+# http://www.boost.org/LICENSE_1_0.txt)
+
+require-b2 5.2 ;
+
+constant boost_dependencies :
+    /boost/array//boost_array
+    /boost/assert//boost_assert
+    /boost/config//boost_config
+    /boost/core//boost_core
+    /boost/dynamic_bitset//boost_dynamic_bitset
+    /boost/integer//boost_integer
+    /boost/io//boost_io
+    /boost/range//boost_range
+    /boost/static_assert//boost_static_assert
+    /boost/system//boost_system
+    /boost/throw_exception//boost_throw_exception
+    /boost/type_traits//boost_type_traits
+    /boost/utility//boost_utility ;
+
+project /boost/random
+    : common-requirements
+        <include>include
+    ;
+
+explicit
+    [ alias boost_random : build//boost_random ]
+    [ alias all : boost_random example extra test ]
+    ;
+
+call-if : boost-library random
+    : install boost_random
+    ;
+

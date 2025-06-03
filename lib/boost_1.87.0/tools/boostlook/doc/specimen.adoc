@@ -1,0 +1,996 @@
+////
+Copyright 2022 Peter Dimov
+Copyright 2023-2024 Matt Borland
+Distributed under the Boost Software License, Version 1.0.
+https://www.boost.org/LICENSE_1_0.txt
+////
+
+= CharConv: An Implementation of <charconv> in {cpp}11
+Matt Borland
+:toc: left
+:toclevels: 4
+:idprefix:
+:listing-caption: Code Example
+:docinfo: private-footer
+:source-highlighter: rouge
+:source-language: c++
+
+:leveloffset: +1
+
+////
+Copyright 2022 Peter Dimov
+Copyright 2023 Matt Borland
+Distributed under the Boost Software License, Version 1.0.
+https://www.boost.org/LICENSE_1_0.txt
+////
+
+[#overview]
+= Overview
+:idprefix: overview_
+
+== Description
+
+Boost.Charconv converts character buffers to numbers, and numbers to character buffers.
+It is a small library of two overloaded functions to do the heavy lifting, plus several supporting enums, structures, templates, and constants, with a particular focus on performance and consistency
+across the supported development environments.
+
+Why should I be interested in this Library? Charconv is locale-independent, non-allocating^1^, non-throwing and only requires a minimum of C++ 11.
+It provides functionality similar to that found in `std::printf` or `std::strtod` with <<benchmark_results_, substantial performance increases>>.
+This library can also be used in place of the standard library `<charconv>` if unavailable with your toolchain.
+Currently only https://en.cppreference.com/w/cpp/compiler_support/17.html[GCC 11+ and MSVC 19.24+] support both integer and floating-point conversions in their implementation of `<charconv>`. +
+If you are using either of those compilers, Boost.Charconv is at least as performant as `<charconv>`, and can be up to several times faster.
+See: <<Benchmarks>>
+
+^1^ The one edge case where allocation may occur is you are parsing a string to an 80 or 128-bit `long double` or `__float128`, and the string is over 1024 bytes long.
+
+== Supported Compilers / OS
+
+Boost.Charconv is tested on Ubuntu, macOS, and Windows with the following compilers:
+
+* GCC 5 or later
+* Clang 3.8 or later
+* Visual Studio 2015 (14.0) or later
+
+Tested on https://github.com/boostorg/charconv/actions[GitHub Actions] and https://drone.cpp.al/boostorg/charconv[Drone].
+
+////
+Copyright 2023 Matt Borland
+Distributed under the Boost Software License, Version 1.0.
+https://www.boost.org/LICENSE_1_0.txt
+////
+
+= Getting Started
+:idprefix: build_
+
+== B2
+
+Run the following commands to clone the latest versions of Boost and Charconv, prepare the Boost.Build system for use, and build the libraries with C++11 as the default standard:
+[source, bash]
+----
+git clone https://github.com/boostorg/boost
+cd boost
+git submodule update --init
+cd ..
+./bootstrap
+./b2 cxxstd=11
+----
+
+To install the development environment, run:
+
+[source, bash]
+----
+sudo ./b2 install cxxstd=11
+----
+
+The value of cxxstd must be at least 11. https://www.boost.org/doc/libs/1_84_0/tools/build/doc/html/index.html[See the b2 documentation] under `cxxstd` for all valid values.
+
+== `__float128` and `std::float128_t` Support
+
+If using B2 or CMake the build system will automatically define `BOOST_CHARCONV_HAS_QUADMATH` and link against it if the build system can successfully run a small test case.
+If you are using another build system and you want support for these types you will have to define `BOOST_CHARCONV_HAS_QUADMATH`, and link against https://gcc.gnu.org/onlinedocs/libquadmath/[libquadmath].
+
+IMPORTANT: libquadmath is only available on supported platforms (e.g. Linux with x86, x86_64, PPC64, and IA64).
+
+== Dependencies
+
+This library depends on: Boost.Assert, Boost.Config, Boost.Core, and optionally libquadmath (see above).
+
+////
+Copyright 2024 Matt Borland
+Distributed under the Boost Software License, Version 1.0.
+https://www.boost.org/LICENSE_1_0.txt
+////
+
+[#basic_usage]
+= Basic Usage Examples
+:idprefix: basic_usage_
+
+== Usage Examples
+[source, c++]
+----
+#include <boost/charconv.hpp>
+
+const char* buffer = "42";
+int v = 0;
+boost::charconv::from_chars_result r = boost::charconv::from_chars(buffer, buffer + std::strlen(buffer), v);
+assert(r.ec == std::errc());
+assert(v == 42);
+
+char buffer[64];
+int v = 123456;
+boost::charconv::to_chars_result r = boost::charconv::to_chars(buffer, buffer + sizeof(buffer), v);
+assert(r.ec == std::errc());
+assert(!strncmp(buffer, "123456", 6)); // Strncmp returns 0 on match
+
+----
+
+////
+Copyright 2023 Matt Borland
+Distributed under the Boost Software License, Version 1.0.
+https://www.boost.org/LICENSE_1_0.txt
+////
+
+[#api_reference]
+= API Reference
+:idprefix: api_ref_
+
+== Functions
+
+- <<from_chars_definitions_, `boost::charconv::from_chars`>>
+- <<from_chars_definitions_, `boost::charconv::from_chars_erange`>>
+- <<to_chars_definitions_, `boost::charconv::to_chars`>>
+
+== Structures
+
+- <<from_chars_definitions_, `boost::charconv::from_chars_result`>>
+- <<to_chars_definitions_, `boost::charconv::to_chars_result`>>
+
+== Enums
+
+- <<chars_format_defintion_,`boost::charconv::chars_format`>>
+
+== Constants
+
+- <<limits_definitions_, `boost::charconv::limits::digits`>>
+- <<limits_definitions_, `boost::charconv::limits::digits10`>>
+
+== Macros
+
+- <<integral_usage_notes_, `BOOST_CHARCONV_CONSTEXPR`>>
+- <<run_benchmarks_, `BOOST_CHARCONV_RUN_BENCHMARKS`>>
+
+////
+Copyright 2023 - 2024 Matt Borland
+Distributed under the Boost Software License, Version 1.0.
+https://www.boost.org/LICENSE_1_0.txt
+////
+
+= from_chars
+:idprefix: from_chars_
+
+== from_chars overview
+
+`from_chars` is a set of functions that parse a string from `[first, last)` in an attempt to convert the string into `value` according to the `chars_format` specified (if applicable).
+The parsing of number is locale-independent (e.g. equivalent to the "C" locale).
+The result of `from_chars` is `from_chars_result` which on success returns `ptr == last` and `ec == std::errc()`, and on failure returns `ptr` equal to the last valid character parsed or `last` on underflow/overflow, and `ec == std::errc::invalid_argument` or `std::errc::result_out_of_range` respectively. `from_chars` does not require the character sequence to be null terminated.
+
+== Definitions
+[#from_chars_definitions_]
+
+[source, c++]
+----
+namespace boost { namespace charconv {
+
+struct from_chars_result
+{
+    const char* ptr;
+    std::errc ec;
+
+    friend constexpr bool operator==(const from_chars_result& lhs, const from_chars_result& rhs) noexcept = default;
+    constexpr explicit operator bool() const noexcept { return ec == std::errc{}; }
+}
+
+template <typename Integral>
+BOOST_CXX14_CONSTEXPR from_chars_result from_chars(const char* first, const char* last, Integral& value, int base = 10) noexcept;
+
+template <typename Integral>
+BOOST_CXX14_CONSTEXPR from_chars_result from_chars(boost::core::string_view sv, Integral& value, int base = 10) noexcept;
+
+BOOST_CXX14_CONSTEXPR from_chars_result from_chars<bool>(const char* first, const char* last, bool& value, int base) = delete;
+
+template <typename Real>
+from_chars_result from_chars(const char* first, const char* last, Real& value, chars_format fmt = chars_format::general) noexcept;
+
+template <typename Real>
+from_chars_result from_chars(boost::core::string_view sv, Real& value, chars_format fmt = chars_format::general) noexcept;
+
+// See note below Usage notes for from_chars for floating point types
+
+template <typename Real>
+from_chars_result from_chars_erange(const char* first, const char* last, Real& value, chars_format fmt = chars_format::general) noexcept;
+
+template <typename Real>
+from_chars_result from_chars_erange(boost::core::string_view sv, Real& value, chars_format fmt = chars_format::general) noexcept;
+
+}} // Namespace boost::charconv
+----
+
+== from_chars parameters
+* `first`, `last` - pointers to a valid range to parse
+* `sv` - string view of a valid range to parse.
+Compatible with boost::core::string_view, std::string, and std::string_view
+* `value` - where the output is stored upon successful parsing
+* `base` (integer only) - the integer base to use. Must be between 2 and 36 inclusive
+* `fmt` (floating point only) - The format of the buffer. See <<chars_format overview>> for description.
+
+== from_chars_result
+* `ptr` - On return from `from_chars` it is a pointer to the first character not matching the pattern, or pointer to `last` if all characters are successfully parsed.
+* `ec` - https://en.cppreference.com/w/cpp/error/errc[the error code]. Values returned by `from_chars` are:
+
+|===
+|Return Value | Description
+| `std::errc()` | Successful Parsing
+| `std::errc::invalid_argument` | 1) Parsing a negative into an unsigned type
+
+2) Leading `+` sign
+
+3) Leading space
+
+4) Incompatible formatting (e.g. exponent on `chars_format::fixed`, or p as exponent on value that is not `chars_format::hex`) See <<chars_format overview>>
+
+| `std::errc::result_out_of_range` | 1) Overflow
+
+2) Underflow
+|===
+
+* `operator==` - compares the values of ptr and ec for equality
+
+== Usage Notes
+
+=== Usage notes for from_chars for integral types
+* All built-in integral types are allowed except bool which is deleted
+* These functions have been tested to support `\__int128` and `unsigned __int128`
+* from_chars for integral types is constexpr when compiled using `-std=c++14` or newer
+** One known exception is GCC 5 which does not support constexpr comparison of `const char*`.
+* A valid string must only contain the characters for numbers. Leading spaces are not ignored, and will return `std::errc::invalid_argument`.
+
+=== Usage notes for from_chars for floating point types
+* On `std::errc::result_out_of_range` we return ±0 for small values (e.g. 1.0e-99999) or ±HUGE_VAL for large values (e.g. 1.0e+99999) to match the handling of `std::strtod`.
+This is a divergence from the standard which states we should return the `value` argument unmodified.
+
+** `from_chars` has an open issue with LWG here: https://cplusplus.github.io/LWG/lwg-active.html#3081.
+The standard for <charconv> does not distinguish between underflow and overflow like strtod does.
+Let's say you are writing a JSON library, and you replace `std::strtod` with `boost::charconv::from_chars` for performance reasons.
+Charconv returns std::errc::result_out_of_range on some conversion.
+You would then have to parse the string again yourself to figure out which of the four possible reasons you got `std::errc::result_out_of_range`.
+Charconv can give you that information by using `boost::charconv::from_chars_erange` instead of `boost::charconv::from_chars` throughout the code base.
+By implementing the resolution to the LWG issue that matches the established strtod behavior I think we are providing the correct behavior without waiting on the committee's decision.
+
+* These functions have been tested to support all built-in floating-point types and those from C++23's `<stdfloat>`
+** Long doubles can be 64, 80, or 128-bit, but must be IEEE 754 compliant. An example of a non-compliant, and therefore unsupported, format is `__ibm128`.
+** Use of `__float128` or `std::float128_t` requires compiling with `-std=gnu++xx` and linking GCC's `libquadmath`.
+This is done automatically when building with CMake.
+
+== Examples
+
+=== Basic usage
+==== Integral
+[source, c++]
+----
+const char* buffer = "42";
+int v = 0;
+from_chars_result r = boost::charconv::from_chars(buffer, buffer + std::strlen(buffer), v);
+assert(r.ec == std::errc());
+assert(r); // Same as above but less verbose. Added in C++26.
+assert(v == 42);
+
+std::string str_buffer (buffer);
+boost::core::string_view sv(str_buffer);
+int v2;
+auto r2 = boost::charconv::from_chars(sv, v2);
+assert(r);
+assert(v2 == v);
+----
+
+==== Floating Point
+[source, c++]
+----
+const char* buffer = "1.2345"
+double v = 0;
+auto r = boost::charconv::from_chars(buffer, buffer + std::strlen(buffer), v);
+assert(r.ec == std::errc());
+assert(r); // Same as above but less verbose. Added in C++26.
+assert(v == 1.2345);
+
+std::string str_buffer(buffer);
+double v2;
+auto r2 = boost::charconv::from_chars(buffer, v2);
+assert(r2);
+assert(v == v2);
+----
+
+=== Hexadecimal
+==== Integral
+[source, c++]
+----
+const char* buffer = "2a";
+unsigned v = 0;
+auto r = boost::charconv::from_chars(buffer, buffer + std::strlen(buffer), v, 16);
+assert(r.ec == std::errc());
+assert(r); // Same as above but less verbose. Added in C++26.
+assert(v == 42);
+----
+==== Floating Point
+[source, c++]
+----
+const char* buffer = "1.3a2bp-10";
+double v = 0;
+auto r = boost::charconv::from_chars(buffer, buffer + std::strlen(buffer), v, boost::charconv::chars_format::hex);
+assert(r.ec == std::errc());
+assert(r); // Same as above but less verbose. Added in C++26.
+assert(v == 8.0427e-18);
+----
+
+=== std::errc::invalid_argument
+
+The below is invalid because a negative value is being parsed into an unsigned integer.
+
+[source, c++]
+----
+const char* buffer = "-123";
+unsigned v = 0;
+auto r = boost::charconv::from_chars(buffer, buffer + std::strlen(buffer), v);
+assert(r.ec == std::errc::invalid_argument);
+assert(!r); // Same as above but less verbose. Added in C++26.
+----
+
+The below is invalid because a fixed format floating-point value can not have an exponent.
+
+[source, c++]
+----
+const char* buffer = "-1.573e-3";
+double v = 0;
+auto r = boost::charconv::from_chars(buffer, buffer + std::strlen(buffer), v, boost::charconv::chars_format::fixed);
+assert(r.ec == std::errc::invalid_argument);
+assert(!r); // Same as above but less verbose. Added in C++26.
+----
+Note: In the event of `std::errc::invalid_argument`, v is not modified by `from_chars`
+
+=== std::errc::result_out_of_range
+[source, c++]
+----
+const char* buffer = "1234";
+unsigned char v = 0;
+auto r = boost::charconv::from_chars(buffer, buffer + std::strlen(buffer), v);
+assert(r.ec == std::errc::result_out_of_range);
+assert(!r); // Same as above but less verbose. Added in C++26.
+assert(v == 0)
+----
+Note: In the event of `std::errc::result_out_of_range`, v is not modified by `from_chars`
+
+////
+Copyright 2023-2024 Matt Borland
+Distributed under the Boost Software License, Version 1.0.
+https://www.boost.org/LICENSE_1_0.txt
+////
+
+= to_chars
+:idprefix: to_chars_
+
+== to_chars overview
+
+`to_chars` is a set of functions that attempts to convert `value` into a character buffer specified by `[first, last)`.
+The result of `to_chars` is `to_chars_result` which on success returns `ptr` equal to one-past-the-end of the characters written and `ec == std::errc()` and on failure returns `std::errc::value_too_large` and `ptr == last`.
+`to_chars` does not null-terminate the returned characters.
+
+== Definitions
+[#to_chars_definitions_]
+
+[source, c++]
+----
+namespace boost { namespace charconv {
+
+struct to_chars_result
+{
+    char* ptr;
+    std::errc ec;
+
+    friend constexpr bool operator==(const to_chars_result& lhs, const to_chars_result& rhs) noexcept; = default;
+    constexpr explicit operator bool() const noexcept { return ec == std::errc{}; }
+};
+
+template <typename Integral>
+BOOST_CHARCONV_CONSTEXPR to_chars_result to_chars(char* first, char* last, Integral value, int base = 10) noexcept;
+
+template <typename Integral>
+BOOST_CHARCONV_CONSTEXPR to_chars_result to_chars<bool>(char* first, char* last, Integral value, int base) noexcept = delete;
+
+template <typename Real>
+to_chars_result to_chars(char* first, char* last, Real value, chars_format fmt = chars_format::general, int precision) noexcept;
+
+}} // Namespace boost::charconv
+----
+
+== to_chars parameters
+* `first, last` - pointers to the beginning and end of the character buffer
+* `value` - the value to be parsed into the buffer
+* `base` (integer only) - the integer base to use. Must be between 2 and 36 inclusive
+* `fmt` (float only) - the floating point format to use.
+See <<chars_format overview>> for description.
+* `precision` (float only) - the number of decimal places required
+
+== to_chars_result
+* `ptr` - On return from `to_chars` points to one-past-the-end of the characters written on success or `last` on failure
+* `ec` - https://en.cppreference.com/w/cpp/error/errc[the error code]. Values returned by `to_chars` are:
+|===
+|Return Value | Description
+|`std::errc()` | Successful Parsing
+| `std::errc::value_too_large` | 1) Overflow
+
+2) Underflow
+|===
+
+* `operator==` - compares the value of ptr and ec for equality
+
+== Usage Notes
+
+=== Usage notes for to_chars for integral types
+[#integral_usage_notes_]
+* All built-in integral types are allowed except bool which is deleted
+* from_chars for integral type is constexpr (BOOST_CHARCONV_CONSTEXPR is defined) when:
+** compiled using `-std=c++14` or newer 
+** using a compiler with `\__builtin_ is_constant_evaluated`
+* These functions have been tested to support `\__int128` and `unsigned __int128`
+
+=== Usage notes for to_chars for floating point types
+* The following will be returned when handling different values of `NaN`
+** `qNaN` returns "nan"
+** `-qNaN` returns "-nan(ind)"
+** `sNaN` returns "nan(snan)"
+** `-sNaN` returns "-nan(snan)"
+* These functions have been tested to support all built-in floating-point types and those from C++23's `<stdfloat>`
+** Long doubles can be 64, 80, or 128-bit, but must be IEEE 754 compliant. An example of a non-compliant, and therefore unsupported, format is `ibm128`.
+** Use of `__float128` or `std::float128_t` requires compiling with `-std=gnu++xx` and linking GCC's `libquadmath`.
+This is done automatically when building with CMake.
+
+== Examples
+
+=== Basic Usage
+==== Integral
+[source, c++]
+----
+char buffer[64] {};
+int v = 42;
+to_chars_result r = boost::charconv::to_chars(buffer, buffer + sizeof(buffer) - 1, v);
+assert(r.ec == std::errc());
+assert(!strcmp(buffer, "42")); // strcmp returns 0 on match
+----
+==== Floating Point
+[source, c++]
+----
+char buffer[64] {};
+double v = 1e300;
+to_chars_result r = boost::charconv::to_chars(buffer, buffer + sizeof(buffer) - 1, v);
+assert(r.ec == std::errc());
+assert(r); // Same as above but less verbose. Added in C++26.
+assert(!strcmp(buffer, "1e+300"));
+----
+
+=== Hexadecimal
+==== Integral
+[source, c++]
+----
+char buffer[64] {};
+int v = 42;
+to_chars_result r = boost::charconv::to_chars(buffer, buffer + sizeof(buffer) - 1, v, 16);
+assert(r.ec == std::errc());
+assert(r); // Same as above but less verbose. Added in C++26.
+assert(!strcmp(buffer, "2a")); // strcmp returns 0 on match
+----
+==== Floating Point
+[source, c++]
+----
+char buffer_u[64] {};
+double u = -1.08260383390082950e+20;
+
+char buffer_v[64] {};
+double v = -1.08260383390082946e+20;
+
+to_chars(buffer_u, buffer_u + sizeof(buffer_u) - 1, u, chars_format::hex);
+to_chars(buffer_v, buffer_v + sizeof(buffer_v) - 1, v, chars_format::hex);
+
+std::cout << "U: " << buffer_u << "\nV: " << buffer_v << std::endl;
+
+// U: -1.779a8946bb5fap+66
+// V: -1.779a8946bb5f9p+66
+//
+// With hexfloats we can see the ULP distance between U and V is a - 9 == 1.
+
+----
+
+=== std::errc::value_too_large
+==== Integral
+[source, c++]
+----
+char buffer[3] {};
+int v = -1234;
+to_chars_result r = boost::charconv::to_chars(buffer, buffer + sizeof(buffer) - 1, v, 16);
+assert(r.ec == std::errc::value_too_large);
+assert(!r); // Same as above but less verbose. Added in C++26.
+----
+==== Floating Point
+[source, c++]
+----
+char buffer[3] {};
+double v = 1.2345;
+auto r = boost::charconv::to_chars(buffer, buffer + sizeof(buffer) - 1, v);
+assert(r.ec == std::errc::value_too_large);
+assert(!r); // Same as above but less verbose. Added in C++26.
+----
+
+In the event of `std::errc::value_too_large`, to_chars_result.ptr is equal to `last`
+
+////
+Copyright 2023 Matt Borland
+Distributed under the Boost Software License, Version 1.0.
+https://www.boost.org/LICENSE_1_0.txt
+////
+
+= chars_format
+:idprefix: chars_format_
+
+== chars_format overview
+
+`boost::charconv::chars_format` is an `enum class` used to define the format of floating point types with `from_chars` and `to_chars`.
+
+== Definition
+[#chars_format_defintion_]
+
+[source, c++]
+----
+namespace boost { namespace charconv {
+
+enum class chars_format : unsigned
+{
+    scientific = 1 << 0,
+    fixed = 1 << 1,
+    hex = 1 << 2,
+    general = fixed | scientific
+};
+
+}} // Namespace boost::charconv
+----
+
+== Formats
+
+=== Scientific Format
+Scientific format will be of the form `1.3e+03`.
+The integer part will be between 0 and 9 inclusive. The fraction and exponent will always appear.
+The exponent will always have a minimum of 2 digits.
+
+=== Fixed Format
+Fixed format will be of the form `2.30` or `3090`. An exponent will not appear with this format.
+If the precision of `to_chars` exceeds that of the type (e.g. `std::numeric_limits<double>::chars10`), 0s will be appended to the end of the significant digits.
+
+=== Hex Format
+Hex format will be of the form `1.0cp+05`. The integer part will always be 0 or 1.
+The exponent will be with a p instead of an e as used with base 10 formats, because e is a valid hex value.
+*Note: Every binary floating-point number has a unique representation as a hexfloat, but not every hexfloat has a unique representation as a binary floating-point number.*
+This is due to the fact that the number of bits in the significand of an IEEE754 binary32 and binary64 are not divisible by 4.
+
+==== Hexfloat Use Cases
+For those unfamiliar with hexfloats, they are valuable in specific instances:
+
+* Precision control: Hexfloats can offer finer control over the precision of floating-point values.
+In hexadecimal notation, each digit represents four bits (one hexit), allowing you to directly manipulate the precision of the number by specifying a certain number of hexadecimal digits.
+This can be useful when you need to precisely control the level of accuracy required for your calculations.
+
+* Bit-level representation: Hexfloats provide a direct representation of the underlying bits of a floating-point number.
+Each hexadecimal digit corresponds to a specific group of bits, making it easier to visualize and understand the internal structure of the floating-point value.
+This can be helpful for debugging or analyzing floating-point arithmetic operations (e.g. Computing https://en.wikipedia.org/wiki/Unit_in_the_last_place[ULP] distances).
+
+=== General
+General format will be the shortest representation of a number in either fixed or general format (e.g. `1234` instead of `1.234e+03`.
+
+////
+Copyright 2024 Matt Borland
+Distributed under the Boost Software License, Version 1.0.
+https://www.boost.org/LICENSE_1_0.txt
+////
+
+= Limits
+:idprefix: limits_
+
+== Limits overview
+
+The contents of `<boost/charconv/limits.hpp>` are designed to help the user optimize the size of the buffer required for `to_chars`.
+
+== Definitions
+[#limits_definitions_]
+
+[source, c++]
+----
+namespace boost { namespace charconv {
+
+template <typename T>
+constexpr int limits<T>::max_chars10;
+
+template <typename T>
+constexpr int limits<T>::max_chars;
+
+}} // Namespace boost::charconv
+----
+
+=== max_chars10
+
+The minimum size of the buffer that needs to be
+passed to `to_chars` to guarantee successful conversion for all values of type T, when either no base is passed, or base 10 is passed.
+
+=== max_chars
+
+The minimum size of the buffer that needs to be  passed to `to_chars` to guarantee successful conversion for all values of type T, for any value of base.
+
+== Examples
+
+The following two examples are for `max_chars10` to optimize the buffer size with `to_chars` for an integral type and a floating-point type respectively.
+
+[source, c++]
+----
+char buffer [boost::charconv::limits<std::int32_t>::max_chars10;
+auto r = boost::charconv::to_chars(buffer, buffer + sizeof(buffer), std::numeric_limits<std::int32_t>::max());
+
+assert(r.ec == std::errc());
+assert(r); // Same as above but less verbose. Added in C++26.
+assert(!strcmp(buffer, "2147483647")); // strcmp returns 0 on match
+----
+
+[source, c++]
+----
+char buffer [boost::charconv::limits<float>::max_chars10;
+auto r = boost::charconv::to_chars(buffer, buffer + sizeof(buffer), std::numeric_limits<float>::max());
+
+assert(r.ec == std::errc());
+assert(r); // Same as above but less verbose. Added in C++26.
+assert(!strcmp(buffer, "3.40282347e+38")); // strcmp returns 0 on match
+----
+
+The following example is a usage of `max_chars` when used to serialize an integer in binary (base = 2).
+
+[source, c++]
+----
+char buffer [boost::charconv::limits<std::uint16_t>::max_chars;
+auto r = boost::charconv::to_chars(buffer, buffer + sizeof(buffer), std::numeric_limits<std::uint16_t>::max(), 2);
+
+assert(r.ec == std::errc());
+assert(r); // Same as above but less verbose. Added in C++26.
+assert(!strcmp(buffer, "1111111111111111")); // strcmp returns 0 on match
+----
+
+////
+Copyright 2023 Matt Borland
+Distributed under the Boost Software License, Version 1.0.
+https://www.boost.org/LICENSE_1_0.txt
+////
+
+= Benchmarks
+:idprefix: benchmarks
+
+This section describes a range of performance benchmarks that have been run comparing this library with the standard library, and how to run your own benchmarks if required.
+
+The values are relative to the performance of `std::printf` and `std::strtoX`.
+Larger numbers are more performant (e.g. 2.00 means twice as fast, and 0.50 means it takes twice as long).
+`std::printf` and `std::strtoX` are always listed first as they will be the reference value.
+
+== How to run the Benchmarks
+[#run_benchmarks_]
+
+To run the benchmarks yourself, navigate to the test folder and define `BOOST_CHARCONV_RUN_BENCHMARKS` when running the tests.
+An example on Linux with b2: `../../../b2 cxxstd=20 toolset=gcc-13 define=BOOST_CHARCONV_RUN_BENCHMARKS STL_benchmark linkflags="-lfmt" -a release` .
+
+Additionally, you will need the following:
+
+* A compiler with full `<charconv>` support:
+** GCC 11 or newer
+** MSVC 19.24 or newer
+* https://github.com/google/double-conversion[libdouble-conversion]
+* https://github.com/fmtlib/fmt[{fmt}]
+
+== Results
+[#benchmark_results_]
+
+=== x86_64 Linux
+
+Data in tables 1 - 4 were run on Ubuntu 23.04 with x86_64 architecture using GCC 13.1.0 with libstdc++.
+
+==== Floating Point
+
+.to_chars floating point with the shortest representation
+|===
+|Function|Relative Performance (float / double)
+
+|std::printf
+|1.00 / 1.00
+|Boost.lexical_cast
+|0.56 / 0.49
+|Boost.spirit.karma
+|1.70 / 2.62
+|std::to_chars
+|4.01 / 6.03
+|Boost.Charconv.to_chars
+|4.46 / 6.20
+|Google double-conversion
+|1.26 / 1.91
+|{fmt}
+|2.52 / 3.63
+|===
+
+.from_chars floating point with scientific formatting
+|===
+|Function|Relative Performance (float / double)
+
+|std::strto(f/d)
+|1.00 / 1.00
+|Boost.lexical_cast
+|0.33 / 0.42
+|Boost.spirit.qi
+|3.17 / 4.65
+|std::from_chars
+|3.23 / 5.77
+|Boost.Charconv.from_chars
+|3.28 / 5.75
+|Google double-conversion
+|1.16 / 1.30
+|===
+
+==== Integral
+
+.to_chars base 10 integers
+|===
+|Function|Relative Performance (uint32_t / uint64_t)
+
+|std::printf
+|1.00 / 1.00
+|Boost.lexical_cast
+|1.80 / 1.38
+|Boost.spirit.karma
+|2.81 / 1.62
+|std::to_chars
+|4.06 / 2.45
+|Boost.Charconv.to_chars
+|4.13 / 2.48
+|{fmt}
+|2.88 / 2.21
+|===
+
+.from_chars base 10 integers
+|===
+|Function|Relative Performance (uint32_t / uint64_t)
+
+|std::strto(ul,ull)
+|1.00 / 1.00
+|Boost.lexical_cast
+|0.53 / 0.52
+|Boost.spirit.qi
+|2.24 / 1.49
+|std::from_chars
+|1.97 / 1.68
+|Boost.Charconv.from_chars
+|2.54 / 1.78
+|===
+
+=== x86_64 Windows
+
+Data in tables 5 - 8 were run on Windows 11 with x86_64 architecture using MSVC 14.3 (V17.7.0).
+
+==== Floating Point
+
+.to_chars floating point with the shortest representation
+|===
+|Function|Relative Performance (float / double)
+
+|std::printf
+|1.00 / 1.00
+|Boost.lexical_cast
+|0.50 / 0.70
+|Boost.spirit.karma
+|2.23 / 7.58
+|std::to_chars
+|5.58 / 15.77
+|Boost.Charconv.to_chars
+|5.62 / 15.26
+|===
+
+.from_chars floating point with scientific formatting
+|===
+|Function|Relative Performance (float / double)
+
+|std::strto(f/d)
+|1.00 / 1.00
+|Boost.lexical_cast
+|0.14 / 0.20
+|Boost.spirit.qi
+|2.03 / 4.58
+|std::from_chars
+|1.01 / 1.23
+|Boost.Charconv.from_chars
+|2.06 / 5.21
+|===
+
+==== Integral
+
+.to_chars base 10 integers
+|===
+|Function|Relative Performance (uint32_t / uint64_t)
+
+|std::printf
+|1.00 / 1.00
+|Boost.lexical_cast
+|0.68 / 0.68
+|Boost.spirit.karma
+|2.75 / 1.67
+|std::to_chars
+|2.75 / 2.10
+|Boost.Charconv.to_chars
+|2.75 / 2.06
+|===
+
+.from_chars base 10 integers
+|===
+|Function|Relative Performance (uint32_t / uint64_t)
+
+|std::strto(ul,ull)
+|1.00 / 1.00
+|Boost.lexical_cast
+|0.46 / 0.39
+|Boost.spirit.qi
+|1.94 / 1.63
+|std::from_chars
+|2.43 / 2.18
+|Boost.Charconv.from_chars
+|2.68 / 2.27
+|===
+
+=== ARM MacOS
+
+Data in tables 9-12 were run on MacOS Ventura 13.5.2 with M1 Pro architecture using Homebrew GCC 13.2.0 with libstdc++.
+
+==== Floating Point
+
+.to_chars floating point with the shortest representation
+|===
+|Function|Relative Performance (float / double)
+
+|std::printf
+|1.00 / 1.00
+|Boost.lexical_cast
+|0.58 / 0.16
+|Boost.spirit.karma
+|1.39 / 1.22
+|std::to_chars
+|6.78 / 6.47
+|Boost.Charconv.to_chars
+|7.25 / 6.86
+|Google double-conversion
+|2.26 / 2.16
+|{fmt}
+|3.78 / 3.38
+|===
+
+.from_chars floating point with scientific formatting
+|===
+|Function|Relative Performance (float / double)
+
+|std::strto(f/d)
+|1.00 / 1.00
+|Boost.lexical_cast
+|0.06 / 0.06
+|Boost.spirit.qi
+|1.12 / 1.06
+|std::from_chars
+|1.32 / 1.65
+|Boost.Charconv.from_chars
+|1.28 / 1.63
+|Google double-conversion
+|0.45 / 0.32
+
+|===
+
+==== Integral
+
+.to_chars base 10 integers
+|===
+|Function|Relative Performance (uint32_t / uint64_t)
+
+|std::printf
+|1.00 / 1.00
+|Boost.lexical_cast
+|2.08 / 1.75
+|Boost.spirit.karma
+|4.17 / 2.06
+|std::to_chars
+|6.25 / 4.12
+|Boost.Charconv.to_chars
+|6.25 / 4.12
+|{fmt}
+|5.29 / 3.47
+|===
+
+.from_chars base 10 integers
+|===
+|Function|Relative Performance (uint32_t / uint64_t)
+
+|std::strto(ul,ull)
+|1.00 / 1.00
+|Boost.lexical_cast
+|0.56 / 0.54
+|Boost.spirit.qi
+|1.39 / 1.33
+|std::from_chars
+|1.92 / 1.65
+|Boost.Charconv.from_chars
+|2.27 / 1.65
+|===
+
+////
+Copyright 2023 Matt Borland
+Distributed under the Boost Software License, Version 1.0.
+https://www.boost.org/LICENSE_1_0.txt
+////
+
+[#sources]
+= Sources
+
+The following papers and blog posts serve as the basis for the algorithms used in the library:
+
+:idprefix:
+:linkattrs:
+
+- J.R. Parker https://dl.acm.org/doi/abs/10.1002/spe.4380150804[_A General Character to Integer Conversion Method_], Software: Practice and Experience 15 (8), 1985.
+
+- Junekey Jeon, https://jk-jeon.github.io/posts/2022/02/jeaiii-algorithm/[_Faster integer formatting - James Anhalt (jeaiii)’s algorithm_]
+
+- Junekey Jeon, https://github.com/jk-jeon/dragonbox/blob/master/other_files/Dragonbox.pdf[_Dragonbox: A New Floating-Point Binary-to-Decimal Conversion Algorithm_]
+
+- Junekey Jeon, https://jk-jeon.github.io/posts/2022/12/fixed-precision-formatting/[_Fixed-precision formatting of floating-point numbers_]
+
+- William D. Clinger, https://dl.acm.org/doi/pdf/10.1145/93542.93557[_How to Read Floating Point Numbers Accurately_], 1990
+
+- Daniel Lemire, https://arxiv.org/abs/2101.11408[_Number Parsing at a Gigabyte per Second_], Software: Practice and Experience 51 (8), 2021.
+
+- Noble Mushtak, Daniel Lemire, https://arxiv.org/abs/2212.06644[_Fast Number Parsing Without Fallback_], Software: Practice and Experience (to appear)
+
+- Ulf Adams, https://dl.acm.org/doi/10.1145/3360595[_Ryū revisited: printf floating point conversion_], Proceedings of the ACM on Programming Languages Volume 3, 2019
+
+////
+Copyright 2024 Matt Borland
+Distributed under the Boost Software License, Version 1.0.
+https://www.boost.org/LICENSE_1_0.txt
+////
+
+[#acknowledgments]
+= Acknowledgments
+:idprefix: ack_
+
+Special thanks to the following people (non-inclusive list):
+
+    - Peter Dimov for providing technical guidance and contributing to the library throughout development.
+    - Junekey Jeon for developing and answering my questions about his integer-formatting, Dragonbox, and Floff.
+    - Chris Kormanyos for serving as the library review manager.
+    - Stephan T. Lavavej for providing the basis for the benchmarks.
+    - All that reviewed the library and provided feedback to make it better.
+
+////
+Copyright 2022 Peter Dimov
+Distributed under the Boost Software License, Version 1.0.
+https://www.boost.org/LICENSE_1_0.txt
+////
+
+[#copyright]
+= Copyright and License
+:idprefix:
+
+This documentation is copyright 2022-2023 Peter Dimov and Matt Borland and is distributed under
+the http://www.boost.org/LICENSE_1_0.txt[Boost Software License, Version 1.0].
+
+:leveloffset: -1
+
