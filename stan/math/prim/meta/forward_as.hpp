@@ -54,12 +54,13 @@ inline T_actual&& forward_as(T_actual&& a) {  // NOLINT
  * @return nothing, this always throws
  * @throw always throws std::runtime_error
  */
-template <typename T_desired, typename T_actual,
-          require_any_not_eigen_t<T_desired, T_actual>* = nullptr,
-          typename = std::enable_if_t<
-              !std::is_same<std::decay<T_actual>, std::decay<T_desired>>::value
-              && !(std::is_arithmetic_v<std::decay_t<T_desired>>
-                   && std::is_arithmetic_v<std::decay_t<T_actual>>)>>
+template <
+    typename T_desired, typename T_actual,
+    require_any_not_eigen_t<T_desired, T_actual>* = nullptr,
+    typename = std::enable_if_t<
+        !std::is_same<std::decay<T_actual>, std::decay<T_desired>>::value
+        && !(std::is_arithmetic_v<std::decay_t<
+                 T_desired>> && std::is_arithmetic_v<std::decay_t<T_actual>>)>>
 inline T_desired forward_as(const T_actual& a) {
   throw std::runtime_error("Wrong type assumed! Please file a bug report.");
 }
@@ -79,11 +80,13 @@ inline T_desired forward_as(const T_actual& a) {
  * @param a input value
  * @return a
  */
-template <typename T_desired, typename T_actual,
-          typename = std::enable_if_t<
-              !std::is_same_v<std::decay_t<T_actual>, std::decay_t<T_desired>>
-              && std::is_arithmetic_v<std::decay_t<T_desired>>
-              && std::is_arithmetic_v<std::decay_t<T_actual>>>>
+template <
+    typename T_desired, typename T_actual,
+    typename = std::enable_if_t<
+        !std::is_same_v<
+            std::decay_t<T_actual>,
+            std::decay_t<
+                T_desired>> && std::is_arithmetic_v<std::decay_t<T_desired>> && std::is_arithmetic_v<std::decay_t<T_actual>>>>
 inline T_desired forward_as(const T_actual& a) {
   return static_cast<T_desired>(a);
 }
