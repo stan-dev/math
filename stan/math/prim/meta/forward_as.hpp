@@ -59,7 +59,10 @@ template <typename T_desired, typename T_actual,
               !std::is_same<std::decay<T_actual>, std::decay<T_desired>>::value
               && (!is_eigen<T_desired>::value || !is_eigen<T_actual>::value)>>
 inline T_desired forward_as(const T_actual& a) {
-  throw std::runtime_error("Wrong type assumed! Please file a bug report.");
+  throw std::runtime_error(
+      "Wrong type assumed! Please file a bug report. prim/meta/forward_as.hpp "
+      "line "
+      + std::to_string(__LINE__));
 }
 
 /** \ingroup type_trait
@@ -120,7 +123,10 @@ template <
             T_desired::ColsAtCompileTime,
             std::decay_t<T_actual>::ColsAtCompileTime)>* = nullptr>
 inline T_desired forward_as(const T_actual& a) {
-  throw std::runtime_error("Wrong type assumed! Please file a bug report.");
+  throw std::runtime_error(
+      "Wrong type assumed! Please file a bug report. prim/meta/forward_as.hpp "
+      "line "
+      + std::to_string(__LINE__));
 }
 
 }  // namespace math
