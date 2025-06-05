@@ -134,7 +134,10 @@ TEST(prob_transform, lub_constrain_matrix) {
   double lbd = -2.0;
 
   Eigen::VectorXd ub_bad(3);
+  ub_bad << 1.0, 2.0, 3.0;
+
   Eigen::VectorXd lb_bad(3);
+  lb_bad << -1.0, -2.0, -3.0;
 
   // matrix, real, real
   {
@@ -330,7 +333,9 @@ TEST(prob_transform, lub_constrain_stdvec_matrix) {
   double lbd = -2.0;
 
   Eigen::VectorXd ub_bad(3);
+  ub_bad << 1.0, 2.0, 3.0;
   Eigen::VectorXd lb_bad(3);
+  lb_bad << -1.0, -2.0, -3.0;
 
   std::vector<Eigen::VectorXd> x_vec{x, x};
   std::vector<Eigen::VectorXd> ub_vec{ub, ub};

@@ -37,6 +37,7 @@ TEST(prob_transform, lb_constrain_matrix) {
   double lbd = 2.0;
 
   Eigen::VectorXd lb_bad(3);
+  lb_bad << 1.0, 2.0, 3.0;
 
   // matrix, real
   {
@@ -93,6 +94,7 @@ TEST(prob_transform, lb_constrain_std_vector) {
   double lbd = 2.0;
 
   Eigen::VectorXd lb_bad(3);
+  lb_bad << 1.0, 2.0, 3.0;
 
   std::vector<Eigen::VectorXd> x_vec = {x, x};
   std::vector<Eigen::VectorXd> lb_vec = {lb, lb2};
