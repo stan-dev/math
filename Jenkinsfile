@@ -4,7 +4,6 @@ import org.stan.Utils
 
 def runTests(String testPath, boolean jumbo = false) {
     try {
-        sh "echo CXXFLAGS += -DEIGEN_INITIALIZE_MATRICES_BY_NAN >> make/local"
         sh "cat make/local"
         sh "make print-compiler-flags"
         if (jumbo && !params.disableJumbo) {
