@@ -252,7 +252,9 @@ inline void print_adjoint(Output&& output) {
   } else {
     static_assert(sizeof(Output*) == 0,
                   "INTERNAL ERROR:(laplace_marginal_lpdf) print_adjoint was "
-                  "not able to deduce the actiopns needed for the given type.");
+                  "not able to deduce the actiopns needed for the given type. "
+                  "This is an internal error, please report it: "
+                  "https://github.com/stan-dev/math/issues");
   }
 }
 
