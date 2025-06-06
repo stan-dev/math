@@ -2,7 +2,6 @@
 #define STAN_MATH_MIX_FUNCTOR_LAPLACE_MARGINAL_DENSITY_HPP
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/mix/functor/laplace_likelihood.hpp>
-#include <test/unit/pretty_print_types.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun.hpp>
