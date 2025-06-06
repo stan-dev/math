@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/functor/apply.hpp>
-#include <test/unit/pretty_print_types.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <vector>
 #include <tuple>
