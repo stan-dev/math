@@ -7,6 +7,8 @@ TEST(MathMatrixPrimMat, get_base1_lhs_failing_in_26) {
   using Eigen::Matrix;
   using stan::math::get_base1_lhs;
   Matrix<double, Dynamic, Dynamic> y(2, 3);
+  y << 1, 2, 3, 4, 5, 6;
+
   EXPECT_THROW(get_base1_lhs(y, 3, 1, "y", 2), std::exception);
   EXPECT_THROW(get_base1_lhs(y, 1, 4, "y", 2), std::exception);
   for (int i = 1; i <= 2; ++i)
