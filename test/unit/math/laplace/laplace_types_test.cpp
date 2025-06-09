@@ -41,35 +41,35 @@ struct poisson_log_likelihood_tuple_expanded {
 };
 
 struct poisson_re_log_ll {
-template <typename T0__, typename T2__,
-          stan::require_all_t<stan::is_col_vector<T0__>,
-                              stan::is_vt_not_complex<T0__>,
-                              stan::is_col_vector<T2__>,
-                              stan::is_vt_not_complex<T2__>>* = nullptr>
-stan::return_type_t<stan::base_type_t<T0__>, stan::base_type_t<T2__>>
-operator()(const T0__& theta_arg__, const std::vector<int>& y,
-                  const T2__& mu_arg__, std::ostream* pstream__) const {
-  using local_scalar_t__ = stan::return_type_t<stan::base_type_t<T0__>,
-                             stan::base_type_t<T2__>>;
-  // suppress unused var warning
-  const auto& theta = stan::math::to_ref(theta_arg__);
-  const auto& mu = stan::math::to_ref(mu_arg__);
-  static constexpr bool propto__ = true;
-  return stan::math::poisson_log_lpmf<false>(y, stan::math::add(mu, theta));
-}
+  template <
+      typename T0__, typename T2__,
+      stan::require_all_t<
+          stan::is_col_vector<T0__>, stan::is_vt_not_complex<T0__>,
+          stan::is_col_vector<T2__>, stan::is_vt_not_complex<T2__>>* = nullptr>
+  stan::return_type_t<stan::base_type_t<T0__>, stan::base_type_t<T2__>>
+  operator()(const T0__& theta_arg__, const std::vector<int>& y,
+             const T2__& mu_arg__, std::ostream* pstream__) const {
+    using local_scalar_t__
+        = stan::return_type_t<stan::base_type_t<T0__>, stan::base_type_t<T2__>>;
+    // suppress unused var warning
+    const auto& theta = stan::math::to_ref(theta_arg__);
+    const auto& mu = stan::math::to_ref(mu_arg__);
+    static constexpr bool propto__ = true;
+    return stan::math::poisson_log_lpmf<false>(y, stan::math::add(mu, theta));
+  }
 };
 
 struct cov_fun {
-template <typename T0__,
-          stan::require_all_t<stan::math::disjunction<stan::is_autodiff<T0__>,
-                                                      std::is_floating_point<
-                                                      std::decay_t<T0__>>>>* = nullptr>
-Eigen::Matrix<stan::return_type_t<T0__>,-1,-1>
-operator()(const T0__& sigma, const int& N, std::ostream* pstream__) const {
-  using local_scalar_t__ = stan::return_type_t<T0__>;
+  template <typename T0__,
+            stan::require_all_t<stan::math::disjunction<
+                stan::is_autodiff<T0__>,
+                std::is_floating_point<std::decay_t<T0__>>>>* = nullptr>
+  Eigen::Matrix<stan::return_type_t<T0__>, -1, -1> operator()(
+      const T0__& sigma, const int& N, std::ostream* pstream__) const {
+    using local_scalar_t__ = stan::return_type_t<T0__>;
     return stan::math::diag_matrix(
-             stan::math::rep_vector(stan::math::pow(sigma, 2), N));
-}
+        stan::math::rep_vector(stan::math::pow(sigma, 2), N));
+  }
 };
 
 TEST(laplace, theta_0_as_expression_issue_3196) {
@@ -80,26 +80,25 @@ TEST(laplace, theta_0_as_expression_issue_3196) {
   double sigmaz = 1.0;
   double alpha = 1.0;
   int N = 5;
-  Eigen::MatrixXd X{{{1,1,1,1,1}, {1, 1, 1, 1, 1}, {1, 1, 1, 1, 1}, {1, 1, 1, 1, 1}, {1, 1, 1, 1, 1}}};
+  Eigen::MatrixXd X{{{1, 1, 1, 1, 1},
+                     {1, 1, 1, 1, 1},
+                     {1, 1, 1, 1, 1},
+                     {1, 1, 1, 1, 1},
+                     {1, 1, 1, 1, 1}}};
   EXPECT_NO_THROW(stan::math::laplace_marginal<false>(
-                poisson_re_log_ll(),
-                std::tuple<const std::vector<int>&,
-                  Eigen::Matrix<double,-1,1>>(y,
-                  stan::math::add(stan::math::add(offset, alpha),
-                    stan::math::multiply(X, beta))),
-                stan::math::rep_vector(0.0, N), cov_fun(),
-                std::tuple<double, int>(sigmaz, N), nullptr));
+      poisson_re_log_ll(),
+      std::tuple<const std::vector<int>&, Eigen::Matrix<double, -1, 1>>(
+          y, stan::math::add(stan::math::add(offset, alpha),
+                             stan::math::multiply(X, beta))),
+      stan::math::rep_vector(0.0, N), cov_fun(),
+      std::tuple<double, int>(sigmaz, N), nullptr));
   auto arena_init = stan::math::to_arena(stan::math::rep_vector(0.0, N));
   EXPECT_NO_THROW(stan::math::laplace_marginal<false>(
-                poisson_re_log_ll(),
-                std::tuple<const std::vector<int>&,
-                  Eigen::Matrix<double,-1,1>>(y,
-                  stan::math::add(stan::math::add(offset, alpha),
-                    stan::math::multiply(X, beta))),
-                arena_init, cov_fun(),
-                std::tuple<double, int>(sigmaz, N), nullptr));
-  
-  
+      poisson_re_log_ll(),
+      std::tuple<const std::vector<int>&, Eigen::Matrix<double, -1, 1>>(
+          y, stan::math::add(stan::math::add(offset, alpha),
+                             stan::math::multiply(X, beta))),
+      arena_init, cov_fun(), std::tuple<double, int>(sigmaz, N), nullptr));
 }
 
 TEST(laplace, poisson_log_phi_dim_2_tuple_extended) {
@@ -295,4 +294,4 @@ TEST(laplace, poisson_log_phi_dim_2_array_tuple) {
       theta_0);
 }
 
-}
+}  // namespace
