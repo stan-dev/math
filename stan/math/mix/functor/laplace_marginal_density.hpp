@@ -500,7 +500,7 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
   };
   auto ll_args_vals = value_of(ll_args);
   const Eigen::Index theta_size = theta_0.size();
-  Eigen::VectorXd theta = theta_0;
+  Eigen::VectorXd theta = std::forward<ThetaVec>(theta_0);
   double objective_old = std::numeric_limits<double>::lowest();
   double objective_new = std::numeric_limits<double>::lowest() + 1;
   Eigen::VectorXd a_prev = Eigen::VectorXd::Zero(theta_size);
