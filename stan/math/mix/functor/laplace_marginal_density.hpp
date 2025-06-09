@@ -500,7 +500,7 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
   };
   auto ll_args_vals = value_of(ll_args);
   const Eigen::Index theta_size = theta_0.size();
-  std::decay_t<ThetaVec> theta = theta_0;
+  Eigen::VectorXd theta = theta_0;
   double objective_old = std::numeric_limits<double>::lowest();
   double objective_new = std::numeric_limits<double>::lowest() + 1;
   Eigen::VectorXd a_prev = Eigen::VectorXd::Zero(theta_size);
@@ -1039,7 +1039,7 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
     // Solver 3
     arena_t<Eigen::MatrixXd> LU_solve_covariance;
     // Solver 1, 2, 3
-    arena_t<promote_scalar_t<double, std::decay_t<ThetaVec>>> s2(
+    arena_t<promote_scalar_t<double, plain_type_t<std::decay_t<ThetaVec>>>> s2(
         theta_0.size());
     // Make one hard copy here
     using laplace_likelihood::internal::conditional_copy_and_promote;
