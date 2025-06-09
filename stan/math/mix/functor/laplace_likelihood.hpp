@@ -226,8 +226,6 @@ inline auto compute_s2(F&& f, Theta&& theta, AMat&& A,
   Matrix<fvar<fvar<var>>, Dynamic, 1> theta_ffvar(theta_size);
   auto shallow_copy_args
       = shallow_copy_vargs<fvar<fvar<var>>>(std::forward_as_tuple(args...));
-  // build a “row” index 0,1,2,…,total-1
-  Eigen::Index total = n_blocks * hessian_block_size;
   for (Eigen::Index i = 0; i < hessian_block_size; ++i) {
     nested_rev_autodiff nested;
     v.setZero();
