@@ -81,24 +81,24 @@ neg_binomial_2_log_glm_lpmf(const T_y_cl& y, const T_x_cl& x,
   const size_t N = x.rows();
   const size_t M = x.cols();
 
-  if (is_y_vector) {
+  if constexpr (is_y_vector) {
     check_size_match(function, "Rows of ", "x", N, "rows of ", "y",
                      math::size(y));
   }
   check_size_match(function, "Columns of ", "x", M, "size of ", "beta",
                    math::size(beta));
-  if (is_phi_vector) {
+  if constexpr (is_phi_vector) {
     check_size_match(function, "Rows of ", "x", N, "size of ", "phi",
                      math::size(phi));
   }
-  if (is_alpha_vector) {
+  if constexpr (is_alpha_vector) {
     check_size_match(function, "Rows of ", "x", N, "size of ", "alpha",
                      math::size(alpha));
   }
   if (N == 0) {
     return 0;
   }
-  if (!include_summand<propto, T_x_cl, T_alpha_cl, T_beta_cl,
+  if constexpr (!include_summand<propto, T_x_cl, T_alpha_cl, T_beta_cl,
                        T_phi_cl>::value) {
     return 0;
   }
