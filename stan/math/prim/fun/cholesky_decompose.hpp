@@ -1,9 +1,11 @@
 #ifndef STAN_MATH_PRIM_FUN_CHOLESKY_DECOMPOSE_HPP
 #define STAN_MATH_PRIM_FUN_CHOLESKY_DECOMPOSE_HPP
 
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
+
+#include <cmath>
 
 namespace stan {
 namespace math {
@@ -26,14 +28,11 @@ namespace math {
  */
 template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
           require_not_eigen_vt<is_var, EigMat>* = nullptr>
-inline Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
-                     EigMat::ColsAtCompileTime>
-cholesky_decompose(const EigMat& m) {
-  using PlainMat = plain_type_t<EigMat>;
-  PlainMat m_eval = m;
+inline plain_type_t<EigMat> cholesky_decompose(const EigMat& m) {
+  auto&& m_eval = to_ref(m);
   check_symmetric("cholesky_decompose", "m", m_eval);
   check_not_nan("cholesky_decompose", "m", m_eval);
-  Eigen::LLT<PlainMat> llt = m_eval.llt();
+  Eigen::LLT<plain_type_t<EigMat>> llt = m_eval.llt();
   check_pos_definite("cholesky_decompose", "m", llt);
   return llt.matrixL();
 }
