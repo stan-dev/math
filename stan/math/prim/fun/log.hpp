@@ -81,9 +81,9 @@ inline auto log(const Container& x) {
  */
 template <typename Container,
           require_container_bt<std::is_arithmetic, Container>* = nullptr>
-inline auto log(const Container& x) {
+inline auto log(Container&& x) {
   return apply_vector_unary<Container>::apply(
-      x, [](const auto& v) { return v.array().log(); });
+      std::forward<Container>(x), [](const auto& v) { return v.array().log(); });
 }
 
 namespace internal {

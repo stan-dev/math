@@ -1,9 +1,10 @@
 #ifndef STAN_MATH_PRIM_FUN_HOLDER_HPP
 #define STAN_MATH_PRIM_FUN_HOLDER_HPP
 
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
 #include <stan/math/prim/meta/is_plain_type.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/meta/ref_type.hpp>
 #include <memory>
 #include <type_traits>
 #include <utility>
@@ -255,10 +256,10 @@ inline Holder<T, Ptrs...> holder(T&& arg, Ptrs*... pointers) {
 // trivial case with no pointers constructs no holder object
 template <typename T>
 inline decltype(auto) holder(T&& arg) {
-  if constexpr (std::is_rvalue_reference<T&&>::value) {
+  if constexpr (std::is_rvalue_reference_v<T&&>) {
     return std::decay_t<T>(std::forward<T>(arg));
   } else {
-    return std::forward<T>(arg);
+    return arg;
   }
 }
 
