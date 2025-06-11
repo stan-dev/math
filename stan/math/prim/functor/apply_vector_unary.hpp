@@ -43,14 +43,17 @@ struct apply_vector_unary<T, require_eigen_t<T>> {
   template <typename F, typename T2 = T,
             require_t<is_eigen_matrix_base<plain_type_t<T2>>>* = nullptr>
   static inline auto apply(T2&& x, F&& f) {
-    return make_holder([](const auto& a, auto&& f) { return f(a).matrix().derived(); },
-                       std::forward<T2>(x), std::forward<F>(f));
+    return make_holder(
+        [](const auto& a, auto&& f) { return f(a).matrix().derived(); },
+        std::forward<T2>(x), std::forward<F>(f));
   }
 
   template <typename F, typename T2 = T,
             require_t<is_eigen_array<plain_type_t<T2>>>* = nullptr>
   static inline auto apply(T2&& x, F&& f) {
-    return make_holder([](const auto& a, auto&& f) { return f(a).array().derived(); }, std::forward<T2>(x), std::forward<F>(f));
+    return make_holder(
+        [](const auto& a, auto&& f) { return f(a).array().derived(); },
+        std::forward<T2>(x), std::forward<F>(f));
   }
 
   /**
