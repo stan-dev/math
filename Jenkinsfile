@@ -272,7 +272,7 @@ pipeline {
                     agent {
                         docker {
                             image 'stanorg/ci:gpu-cpp17'
-                            label 'linux'
+                            label 'linux && 8core'
                             args '--cap-add SYS_PTRACE'
                         }
                     }
@@ -506,7 +506,7 @@ pipeline {
                     }
                 }
             }
-            agent { label 'linux && docker' }
+            agent { label 'linux && docker && 8core' }
             steps {
                 script {
                     def tests = [:]
