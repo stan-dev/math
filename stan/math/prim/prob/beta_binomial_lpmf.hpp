@@ -65,7 +65,7 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
   check_positive_finite(function, "Second prior sample size parameter",
                         beta_ref);
 
-  if (!include_summand<propto, T_size1, T_size2>::value) {
+  if constexpr (!include_summand<propto, T_size1, T_size2>::value) {
     return 0.0;
   }
 
@@ -91,7 +91,7 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
   VectorBuilder<include_summand<propto>::value, T_partials_return, T_n, T_N>
       normalizing_constant(size_n_N);
   for (size_t i = 0; i < size_n_N; i++)
-    if (include_summand<propto>::value)
+    if constexpr (include_summand<propto>::value)
       normalizing_constant[i] = binomial_coefficient_log(N_vec[i], n_vec[i]);
 
   VectorBuilder<true, T_partials_return, T_size1, T_size2> lbeta_denominator(
@@ -111,7 +111,7 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
   VectorBuilder<!is_constant_all<T_size1>::value, T_partials_return, T_n,
                 T_size1>
       digamma_n_plus_alpha(max_size(n, alpha));
-  if (!is_constant_all<T_size1>::value) {
+  if constexpr (!is_constant_all<T_size1>::value) {
     for (size_t i = 0; i < max_size(n, alpha); i++) {
       digamma_n_plus_alpha[i] = digamma(n_vec.val(i) + alpha_vec.val(i));
     }
@@ -120,7 +120,7 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
   VectorBuilder<!is_constant_all<T_size1, T_size2>::value, T_partials_return,
                 T_size1, T_size2>
       digamma_alpha_plus_beta(size_alpha_beta);
-  if (!is_constant_all<T_size1, T_size2>::value) {
+  if constexpr (!is_constant_all<T_size1, T_size2>::value) {
     for (size_t i = 0; i < size_alpha_beta; i++) {
       digamma_alpha_plus_beta[i] = digamma(alpha_vec.val(i) + beta_vec.val(i));
     }
@@ -129,7 +129,7 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
   VectorBuilder<!is_constant_all<T_size1, T_size2>::value, T_partials_return,
                 T_N, T_size1, T_size2>
       digamma_diff(max_size(N, alpha, beta));
-  if (!is_constant_all<T_size1, T_size2>::value) {
+  if constexpr (!is_constant_all<T_size1, T_size2>::value) {
     for (size_t i = 0; i < max_size(N, alpha, beta); i++) {
       digamma_diff[i]
           = digamma_alpha_plus_beta[i]
@@ -140,24 +140,24 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
   VectorBuilder<!is_constant_all<T_size1>::value, T_partials_return, T_size1>
       digamma_alpha(size_alpha);
   for (size_t i = 0; i < size_alpha; i++)
-    if (!is_constant_all<T_size1>::value)
+    if constexpr (!is_constant_all<T_size1>::value)
       digamma_alpha[i] = digamma(alpha_vec.val(i));
 
   VectorBuilder<!is_constant_all<T_size2>::value, T_partials_return, T_size2>
       digamma_beta(size_beta);
   for (size_t i = 0; i < size_beta; i++)
-    if (!is_constant_all<T_size2>::value)
+    if constexpr (!is_constant_all<T_size2>::value)
       digamma_beta[i] = digamma(beta_vec.val(i));
 
   for (size_t i = 0; i < max_size_seq_view; i++) {
-    if (include_summand<propto>::value)
+    if constexpr (include_summand<propto>::value)
       logp += normalizing_constant[i];
     logp += lbeta_diff[i];
 
-    if (!is_constant_all<T_size1>::value)
+    if constexpr (!is_constant_all<T_size1>::value)
       partials<0>(ops_partials)[i]
           += digamma_n_plus_alpha[i] + digamma_diff[i] - digamma_alpha[i];
-    if (!is_constant_all<T_size2>::value)
+    if constexpr (!is_constant_all<T_size2>::value)
       partials<1>(ops_partials)[i]
           += digamma(N_vec.val(i) - n_vec.val(i) + beta_vec.val(i))
              + digamma_diff[i] - digamma_beta[i];

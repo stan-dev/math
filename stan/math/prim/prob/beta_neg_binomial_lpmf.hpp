@@ -86,7 +86,7 @@ inline return_type_t<T_r, T_alpha, T_beta> beta_neg_binomial_lpmf(
         = lbeta(n_vec[i] + r_vec.val(i), alpha_vec.val(i) + beta_vec.val(i));
     logp += lbeta_numerator + lgamma_numerator - lbeta_denominator
             - lgamma_denominator;
-    if (!is_constant_all<T_r, T_alpha, T_beta>::value) {
+    if constexpr (!is_constant_all<T_r, T_alpha, T_beta>::value) {
       T_partials_return digamma_n_r_alpha_beta = digamma(
           n_vec[i] + r_vec.val(i) + alpha_vec.val(i) + beta_vec.val(i));
 

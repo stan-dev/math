@@ -128,7 +128,7 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_inv_scale_cl> exp_mod_normal_cdf(
 
   auto ops_partials
       = make_partials_propagator(y_col, mu_col, sigma_col, lambda_col);
-  if (!is_constant_all<T_y_cl, T_loc_cl, T_scale_cl, T_inv_scale_cl>::value) {
+  if constexpr (!is_constant_all<T_y_cl, T_loc_cl, T_scale_cl, T_inv_scale_cl>::value) {
     auto mu_deriv = elt_multiply(
         static_select<is_constant_all<T_y_cl, T_loc_cl>::value>(0, mu_deriv_cl),
         cdf);
@@ -146,16 +146,16 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_inv_scale_cl> exp_mod_normal_cdf(
             calc_if<!is_constant<T_scale_cl>::value>(sigma_deriv),
             calc_if<!is_constant<T_inv_scale_cl>::value>(lambda_deriv));
 
-    if (!is_constant<T_y_cl>::value) {
+    if constexpr (!is_constant<T_y_cl>::value) {
       partials<0>(ops_partials) = std::move(y_deriv_cl);
     }
-    if (!is_constant<T_loc_cl>::value) {
+    if constexpr (!is_constant<T_loc_cl>::value) {
       partials<1>(ops_partials) = std::move(mu_deriv_cl);
     }
-    if (!is_constant<T_scale_cl>::value) {
+    if constexpr (!is_constant<T_scale_cl>::value) {
       partials<2>(ops_partials) = std::move(sigma_deriv_cl);
     }
-    if (!is_constant<T_inv_scale_cl>::value) {
+    if constexpr (!is_constant<T_inv_scale_cl>::value) {
       partials<3>(ops_partials) = std::move(lambda_deriv_cl);
     }
   }

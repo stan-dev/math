@@ -74,7 +74,7 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lpdf(const T_y& y,
   if (size_zero(y, alpha, beta)) {
     return 0.0;
   }
-  if (!include_summand<propto, T_y, T_shape, T_inv_scale>::value) {
+  if constexpr (!include_summand<propto, T_y, T_shape, T_inv_scale>::value) {
     return 0.0;
   }
 
@@ -89,29 +89,29 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lpdf(const T_y& y,
 
   size_t N = max_size(y, alpha, beta);
   T_partials_return logp(0.0);
-  if (include_summand<propto, T_shape>::value) {
+  if constexpr (include_summand<propto, T_shape>::value) {
     logp = -sum(lgamma(alpha_val)) * N / math::size(alpha);
   }
   const auto& log_y = to_ref_if<is_constant_all<T_shape>::value>(log(y_val));
-  if (include_summand<propto, T_shape, T_inv_scale>::value) {
+  if constexpr (include_summand<propto, T_shape, T_inv_scale>::value) {
     const auto& log_beta
         = to_ref_if<!is_constant_all<T_shape>::value>(log(beta_val));
     logp += sum(alpha_val * log_beta) * N / max_size(alpha, beta);
-    if (!is_constant_all<T_shape>::value) {
+    if constexpr (!is_constant_all<T_shape>::value) {
       partials<1>(ops_partials) = log_beta + log_y - digamma(alpha_val);
     }
   }
-  if (include_summand<propto, T_y, T_shape>::value) {
+  if constexpr (include_summand<propto, T_y, T_shape>::value) {
     logp += sum((alpha_val - 1.0) * log_y) * N / max_size(alpha, y);
   }
-  if (include_summand<propto, T_y, T_inv_scale>::value) {
+  if constexpr (include_summand<propto, T_y, T_inv_scale>::value) {
     logp -= sum(beta_val * y_val) * N / max_size(beta, y);
   }
 
-  if (!is_constant_all<T_y>::value) {
+  if constexpr (!is_constant_all<T_y>::value) {
     partials<0>(ops_partials) = (alpha_val - 1) / y_val - beta_val;
   }
-  if (!is_constant_all<T_inv_scale>::value) {
+  if constexpr (!is_constant_all<T_inv_scale>::value) {
     partials<2>(ops_partials) = alpha_val / beta_val - y_val;
   }
   return ops_partials.build(logp);

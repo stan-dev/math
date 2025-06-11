@@ -167,24 +167,24 @@ neg_binomial_2_log_glm_lpmf(const T_y_cl& y, const T_x_cl& x,
         = isfinite(phi_val) && phi_val > 0;
   }
 
-  if (include_summand<propto, T_phi_cl>::value && !is_phi_vector) {
+  if constexpr (include_summand<propto, T_phi_cl>::value && !is_phi_vector) {
     logp += N
             * (multiply_log(forward_as<double>(phi_val),
                             forward_as<double>(phi_val))
                - lgamma(forward_as<double>(phi_val)));
   }
-  if (include_summand<propto, T_phi_cl>::value && !is_y_vector
+  if constexpr (include_summand<propto, T_phi_cl>::value && !is_y_vector
       && !is_phi_vector) {
     logp += forward_as<double>(lgamma(y_val + phi_val)) * N;
   }
 
   auto ops_partials = make_partials_propagator(x, alpha, beta, phi);
   // Compute the necessary derivatives.
-  if (!is_constant<T_x_cl>::value) {
+  if constexpr (!is_constant<T_x_cl>::value) {
     partials<0>(ops_partials)
         = transpose(beta_val * transpose(theta_derivative_cl));
   }
-  if (!is_constant_all<T_beta_cl>::value) {
+  if constexpr (!is_constant_all<T_beta_cl>::value) {
     // transposition of a vector can be done without copying
     const matrix_cl<double> theta_derivative_transpose_cl(
         theta_derivative_cl.buffer(), 1, theta_derivative_cl.rows());
@@ -199,8 +199,8 @@ neg_binomial_2_log_glm_lpmf(const T_y_cl& y, const T_x_cl& x,
               edge3_partials_transpose_cl.write_events().back());
     }
   }
-  if (!is_constant_all<T_alpha_cl>::value) {
-    if (is_alpha_vector) {
+  if constexpr (!is_constant_all<T_alpha_cl>::value) {
+    if constexpr (is_alpha_vector) {
       partials<1>(ops_partials) = std::move(theta_derivative_cl);
     } else {
       forward_as<internal::broadcast_array<double>>(
@@ -208,8 +208,8 @@ neg_binomial_2_log_glm_lpmf(const T_y_cl& y, const T_x_cl& x,
           = sum(from_matrix_cl(theta_derivative_sum_cl));
     }
   }
-  if (!is_constant_all<T_phi_cl>::value) {
-    if (is_phi_vector) {
+  if constexpr (!is_constant_all<T_phi_cl>::value) {
+    if constexpr (is_phi_vector) {
       partials<3>(ops_partials) = std::move(phi_derivative_cl);
     } else {
       forward_as<internal::broadcast_array<double>>(

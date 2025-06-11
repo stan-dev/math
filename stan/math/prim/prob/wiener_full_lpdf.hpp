@@ -322,7 +322,7 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
                         const T_sw& sw, const T_st0& st0,
                         const double& precision_derivatives = 1e-4) {
   using ret_t = return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0>;
-  if (!include_summand<propto, T_y, T_a, T_v, T_w, T_t0, T_sv, T_sw,
+  if constexpr (!include_summand<propto, T_y, T_a, T_v, T_w, T_t0, T_sv, T_sw,
                        T_st0>::value) {
     return ret_t(0);
   }
@@ -508,10 +508,10 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
 
     // computation of derivatives and precision checks
     T_partials_return derivative;
-    if (!is_constant_all<T_y>::value) {
+    if constexpr (!is_constant_all<T_y>::value) {
       partials<0>(ops_partials)[i] = deriv_t_7;
     }
-    if (!is_constant_all<T_a>::value) {
+    if constexpr (!is_constant_all<T_a>::value) {
       partials<1>(ops_partials)[i]
           = internal::wiener7_integrate<GradientCalc::OFF, GradientCalc::OFF>(
                 [](auto&&... args) {
@@ -522,10 +522,10 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
                 relative_error_hcubature / 2)
             / density;
     }
-    if (!is_constant_all<T_t0>::value) {
+    if constexpr (!is_constant_all<T_t0>::value) {
       partials<2>(ops_partials)[i] = -deriv_t_7;
     }
-    if (!is_constant_all<T_w>::value) {
+    if constexpr (!is_constant_all<T_w>::value) {
       partials<3>(ops_partials)[i]
           = internal::wiener7_integrate<GradientCalc::OFF, GradientCalc::ON>(
                 [](auto&&... args) {
@@ -536,7 +536,7 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
                 relative_error_hcubature / 2)
             / density;
     }
-    if (!is_constant_all<T_v>::value) {
+    if constexpr (!is_constant_all<T_v>::value) {
       partials<4>(ops_partials)[i]
           = internal::wiener7_integrate<GradientCalc::OFF, GradientCalc::OFF>(
                 [](auto&&... args) {
@@ -547,7 +547,7 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
                 relative_error_hcubature / 2)
             / density;
     }
-    if (!is_constant_all<T_sv>::value) {
+    if constexpr (!is_constant_all<T_sv>::value) {
       partials<5>(ops_partials)[i]
           = internal::wiener7_integrate<GradientCalc::OFF, GradientCalc::OFF>(
                 [](auto&&... args) {
@@ -558,7 +558,7 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
                 relative_error_hcubature / 2)
             / density;
     }
-    if (!is_constant_all<T_sw>::value) {
+    if constexpr (!is_constant_all<T_sw>::value) {
       if (sw_value == 0) {
         partials<6>(ops_partials)[i] = 0;
       } else {
@@ -579,7 +579,7 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
         partials<6>(ops_partials)[i] = derivative / density - 1.0 / sw_value;
       }
     }
-    if (!is_constant_all<T_st0>::value) {
+    if constexpr (!is_constant_all<T_st0>::value) {
       T_partials_return f;
       if (st0_value == 0) {
         partials<7>(ops_partials)[i] = 0;

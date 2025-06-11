@@ -63,7 +63,7 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_cdf(
       = make_partials_propagator(y_ref, mu_ref, sigma_ref, lambda_ref);
 
   using T_y_val_scalar = scalar_type_t<decltype(y_val)>;
-  if (is_vector<T_y>::value) {
+  if constexpr (is_vector<T_y>::value) {
     if ((forward_as<Eigen::Array<T_y_val_scalar, Eigen::Dynamic, 1>>(y_val)
          == NEGATIVE_INFTY)
             .any()) {
@@ -92,18 +92,18 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_cdf(
       = to_ref(0.5 + 0.5 * erf(scaled_diff) - exp_term * erf_calc);
 
   T_partials_return cdf(1.0);
-  if (is_vector<decltype(cdf_n)>::value) {
+  if constexpr (is_vector<decltype(cdf_n)>::value) {
     cdf = forward_as<T_partials_array>(cdf_n).prod();
   } else {
     cdf = forward_as<T_partials_return>(cdf_n);
   }
 
-  if (!is_constant_all<T_y, T_loc, T_scale, T_inv_scale>::value) {
+  if constexpr (!is_constant_all<T_y, T_loc, T_scale, T_inv_scale>::value) {
     const auto& exp_term_2
         = to_ref_if<(!is_constant_all<T_y, T_loc, T_scale>::value
                      && !is_constant_all<T_inv_scale>::value)>(
             exp(-square(scaled_diff_diff)));
-    if (!is_constant_all<T_y, T_loc, T_scale>::value) {
+    if constexpr (!is_constant_all<T_y, T_loc, T_scale>::value) {
       constexpr bool need_deriv_refs = !is_constant_all<T_y, T_loc>::value
                                        && !is_constant_all<T_scale>::value;
       const auto& deriv_1
@@ -114,18 +114,18 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_cdf(
       const auto& exp_m_sq_scaled_diff = exp(-sq_scaled_diff);
       const auto& deriv_3 = to_ref_if<need_deriv_refs>(
           INV_SQRT_TWO_PI * exp_m_sq_scaled_diff * inv_sigma);
-      if (!is_constant_all<T_y, T_loc>::value) {
+      if constexpr (!is_constant_all<T_y, T_loc>::value) {
         const auto& deriv = to_ref_if<(!is_constant_all<T_loc>::value
                                        && !is_constant_all<T_y>::value)>(
             cdf * (deriv_1 - deriv_2 + deriv_3) / cdf_n);
-        if (!is_constant_all<T_y>::value) {
+        if constexpr (!is_constant_all<T_y>::value) {
           partials<0>(ops_partials) = deriv;
         }
-        if (!is_constant_all<T_loc>::value) {
+        if constexpr (!is_constant_all<T_loc>::value) {
           partials<1>(ops_partials) = -deriv;
         }
       }
-      if (!is_constant_all<T_scale>::value) {
+      if constexpr (!is_constant_all<T_scale>::value) {
         edge<2>(ops_partials).partials_
             = -cdf
               * ((deriv_1 - deriv_2) * v
@@ -133,7 +133,7 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_cdf(
               / cdf_n;
       }
     }
-    if (!is_constant_all<T_inv_scale>::value) {
+    if constexpr (!is_constant_all<T_inv_scale>::value) {
       edge<3>(ops_partials).partials_
           = cdf * exp_term
             * (INV_SQRT_TWO_PI * sigma_val * exp_term_2

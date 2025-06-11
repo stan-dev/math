@@ -90,7 +90,7 @@ return_type_t<T_prob> binomial_cdf(const T_n& n, const T_N& N,
 
     P *= Pi;
 
-    if (!is_constant_all<T_prob>::value) {
+    if constexpr (!is_constant_all<T_prob>::value) {
       const T_partials_return denom = beta(N_dbl - n_dbl, n_dbl + 1) * Pi;
       partials<0>(ops_partials)[i] -= pow(theta_dbl, n_dbl)
                                       * pow(1 - theta_dbl, N_dbl - n_dbl - 1)
@@ -98,7 +98,7 @@ return_type_t<T_prob> binomial_cdf(const T_n& n, const T_N& N,
     }
   }
 
-  if (!is_constant_all<T_prob>::value) {
+  if constexpr (!is_constant_all<T_prob>::value) {
     for (size_t i = 0; i < stan::math::size(theta); ++i) {
       partials<0>(ops_partials)[i] *= P;
     }

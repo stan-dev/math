@@ -49,7 +49,7 @@ inline var_value<matrix_cl<double>> diag_post_multiply(T1&& v1, T2&& v2) {
                                                              + v1_adj_inc),
               calc_if<!is_constant<std::decay_t<T2>>::value>(v2_adj_inc));
 
-          if (!is_constant<std::decay_t<T2>>::value) {
+          if constexpr (!is_constant<std::decay_t<T2>>::value) {
             while (tmp.rows() > 1) {
               tmp = eval(colwise_sum(tmp));
             }
@@ -66,7 +66,7 @@ inline var_value<matrix_cl<double>> diag_post_multiply(T1&& v1, T2&& v2) {
               calc_if<!is_constant<std::decay_t<T1>>::value>(v1_adj
                                                              + v1_adj_inc),
               calc_if<!is_constant<std::decay_t<T2>>::value>(v2_adj_inc));
-          if (!is_constant<std::decay_t<T2>>::value) {
+          if constexpr (!is_constant<std::decay_t<T2>>::value) {
             while (tmp.rows() > 1) {
               tmp = eval(colwise_sum(tmp));
             }

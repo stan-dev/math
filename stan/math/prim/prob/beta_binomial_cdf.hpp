@@ -116,27 +116,27 @@ return_type_t<T_size1, T_size2> beta_binomial_cdf(const T_n& n, const T_N& N,
               : digamma(alpha_dbl + beta_dbl) - digamma(mu + nu);
 
     T_partials_return dF[6];
-    if (!is_constant_all<T_size1, T_size2>::value) {
+    if constexpr (!is_constant_all<T_size1, T_size2>::value) {
       grad_F32(dF, one, mu, 1 - N_minus_n, n_dbl + 2, 1 - nu, one);
     }
-    if (!is_constant_all<T_size1>::value) {
+    if constexpr (!is_constant_all<T_size1>::value) {
       const T_partials_return g
           = -C * (digamma(mu) - digamma(alpha_dbl) + digammaDiff + dF[1] / F);
       partials<0>(ops_partials)[i] += g / Pi;
     }
-    if (!is_constant_all<T_size2>::value) {
+    if constexpr (!is_constant_all<T_size2>::value) {
       const T_partials_return g
           = -C * (digamma(nu) - digamma(beta_dbl) + digammaDiff - dF[4] / F);
       partials<1>(ops_partials)[i] += g / Pi;
     }
   }
 
-  if (!is_constant_all<T_size1>::value) {
+  if constexpr (!is_constant_all<T_size1>::value) {
     for (size_t i = 0; i < stan::math::size(alpha); ++i) {
       partials<0>(ops_partials)[i] *= P;
     }
   }
-  if (!is_constant_all<T_size2>::value) {
+  if constexpr (!is_constant_all<T_size2>::value) {
     for (size_t i = 0; i < stan::math::size(beta); ++i) {
       partials<1>(ops_partials)[i] *= P;
     }

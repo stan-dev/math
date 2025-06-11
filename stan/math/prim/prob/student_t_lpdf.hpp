@@ -87,7 +87,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lpdf(const T_y& y,
   if (size_zero(y, nu, mu, sigma)) {
     return 0.0;
   }
-  if (!include_summand<propto, T_y, T_dof, T_loc, T_scale>::value) {
+  if constexpr (!include_summand<propto, T_y, T_dof, T_loc, T_scale>::value) {
     return 0.0;
   }
 
@@ -105,37 +105,37 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lpdf(const T_y& y,
 
   size_t N = max_size(y, nu, mu, sigma);
   T_partials_return logp = -sum((half_nu + 0.5) * log1p_val);
-  if (include_summand<propto>::value) {
+  if constexpr (include_summand<propto>::value) {
     logp -= LOG_SQRT_PI * N;
   }
-  if (include_summand<propto, T_dof>::value) {
+  if constexpr (include_summand<propto, T_dof>::value) {
     logp += (sum(lgamma(half_nu + 0.5)) - sum(lgamma(half_nu))
              - 0.5 * sum(log(nu_val)))
             * N / math::size(nu);
   }
-  if (include_summand<propto, T_scale>::value) {
+  if constexpr (include_summand<propto, T_scale>::value) {
     logp -= sum(log(sigma_val)) * N / math::size(sigma);
   }
 
-  if (!is_constant_all<T_y, T_loc>::value) {
+  if constexpr (!is_constant_all<T_y, T_loc>::value) {
     const auto& square_sigma = square(sigma_val);
     auto deriv_y_mu = to_ref_if<(!is_constant_all<T_y>::value
                                  && !is_constant_all<T_loc>::value)>(
         (nu_val + 1) * (y_val - mu_val)
         / ((1 + square_y_scaled_over_nu) * square_sigma * nu_val));
-    if (!is_constant_all<T_y>::value) {
+    if constexpr (!is_constant_all<T_y>::value) {
       partials<0>(ops_partials) = -deriv_y_mu;
     }
-    if (!is_constant_all<T_loc>::value) {
+    if constexpr (!is_constant_all<T_loc>::value) {
       partials<2>(ops_partials) = std::move(deriv_y_mu);
     }
   }
-  if (!is_constant_all<T_dof, T_scale>::value) {
+  if constexpr (!is_constant_all<T_dof, T_scale>::value) {
     const auto& rep_deriv = to_ref_if<(!is_constant_all<T_dof>::value
                                        && !is_constant_all<T_scale>::value)>(
         (nu_val + 1) * square_y_scaled_over_nu / (1 + square_y_scaled_over_nu)
         - 1);
-    if (!is_constant_all<T_dof>::value) {
+    if constexpr (!is_constant_all<T_dof>::value) {
       const auto& digamma_half_nu_plus_half = digamma(half_nu + 0.5);
       const auto& digamma_half_nu = digamma(half_nu);
       edge<1>(ops_partials).partials_
@@ -143,7 +143,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lpdf(const T_y& y,
             * (digamma_half_nu_plus_half - digamma_half_nu - log1p_val
                + rep_deriv / nu_val);
     }
-    if (!is_constant_all<T_scale>::value) {
+    if constexpr (!is_constant_all<T_scale>::value) {
       partials<3>(ops_partials) = rep_deriv / sigma_val;
     }
   }

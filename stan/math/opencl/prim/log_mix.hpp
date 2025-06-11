@@ -94,9 +94,9 @@ inline auto log_mix(const T_theta_cl& theta, const T_lambda_cl& lambda) {
       colwise_sum(logp_vec_expr));
 
   auto ops_partials = make_partials_propagator(theta_col, lambda);
-  if (!is_constant_all<T_theta_cl, T_lambda_cl>::value) {
+  if constexpr (!is_constant_all<T_theta_cl, T_lambda_cl>::value) {
     auto derivs_expr = exp(lambda_val - colwise_broadcast(transpose(logp_vec)));
-    if (!is_constant<T_lambda_cl>::value) {
+    if constexpr (!is_constant<T_lambda_cl>::value) {
       auto lambda_deriv_expr = elt_multiply(derivs_expr, theta_bc);
       matrix_cl<double> derivs;
       matrix_cl<double> lambda_deriv;
@@ -105,10 +105,10 @@ inline auto log_mix(const T_theta_cl& theta, const T_lambda_cl& lambda) {
                         lambda_deriv_expr);
 
       partials<1>(ops_partials) = std::move(lambda_deriv);
-      if (!is_constant<T_theta_cl>::value) {
+      if constexpr (!is_constant<T_theta_cl>::value) {
         partials<0>(ops_partials) = rowwise_sum(derivs);
       }
-    } else if (!is_constant<T_theta_cl>::value) {
+    } else if constexpr (!is_constant<T_theta_cl>::value) {
       partials<0>(ops_partials) = rowwise_sum(derivs_expr);
     }
   }

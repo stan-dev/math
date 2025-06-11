@@ -59,7 +59,7 @@ return_type_t<T_y, T_inv_scale> exponential_cdf(const T_y& y,
   const auto& one_m_exp = to_ref_if<any_derivatives>(1 - exp_val);
 
   T_partials_return cdf(1.0);
-  if (is_vector<T_y>::value || is_vector<T_inv_scale>::value) {
+  if constexpr (is_vector<T_y>::value || is_vector<T_inv_scale>::value) {
     cdf = forward_as<T_partials_array>(one_m_exp).prod();
   } else {
     cdf = forward_as<T_partials_return>(one_m_exp);
@@ -69,10 +69,10 @@ return_type_t<T_y, T_inv_scale> exponential_cdf(const T_y& y,
     const auto& rep_deriv = to_ref_if<(
         !is_constant_all<T_y>::value && !is_constant_all<T_inv_scale>::value)>(
         exp_val / one_m_exp * cdf);
-    if (!is_constant_all<T_y>::value) {
+    if constexpr (!is_constant_all<T_y>::value) {
       partials<0>(ops_partials) = beta_val * rep_deriv;
     }
-    if (!is_constant_all<T_inv_scale>::value) {
+    if constexpr (!is_constant_all<T_inv_scale>::value) {
       partials<1>(ops_partials) = y_val * rep_deriv;
     }
   }

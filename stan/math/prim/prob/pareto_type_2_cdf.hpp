@@ -67,29 +67,29 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_cdf(
   auto ops_partials
       = make_partials_propagator(y_ref, mu_ref, lambda_ref, alpha_ref);
 
-  if (!is_constant_all<T_y, T_loc, T_scale, T_shape>::value) {
+  if constexpr (!is_constant_all<T_y, T_loc, T_scale, T_shape>::value) {
     const auto& P_div_Pn
         = to_ref_if<(!is_constant_all<T_y, T_loc, T_scale>::value
                      && !is_constant_all<T_shape>::value)>(
             P / (1.0 - p1_pow_alpha));
-    if (!is_constant_all<T_y, T_loc, T_scale>::value) {
+    if constexpr (!is_constant_all<T_y, T_loc, T_scale>::value) {
       auto grad_1_2
           = to_ref_if<!is_constant_all<T_loc>::value
                           + !is_constant_all<T_scale>::value
                           + !is_constant_all<T_y>::value
                       >= 2>(p1_pow_alpha / summed * alpha_val * P_div_Pn);
-      if (!is_constant_all<T_loc>::value) {
+      if constexpr (!is_constant_all<T_loc>::value) {
         partials<1>(ops_partials) = -grad_1_2;
       }
-      if (!is_constant_all<T_scale>::value) {
+      if constexpr (!is_constant_all<T_scale>::value) {
         edge<2>(ops_partials).partials_
             = (mu_val - y_val) / lambda_val * grad_1_2;
       }
-      if (!is_constant_all<T_y>::value) {
+      if constexpr (!is_constant_all<T_y>::value) {
         partials<0>(ops_partials) = std::move(grad_1_2);
       }
     }
-    if (!is_constant_all<T_shape>::value) {
+    if constexpr (!is_constant_all<T_shape>::value) {
       partials<3>(ops_partials) = log(temp) * p1_pow_alpha * P_div_Pn;
     }
   }

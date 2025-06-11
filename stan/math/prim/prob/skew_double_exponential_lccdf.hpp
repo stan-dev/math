@@ -112,16 +112,16 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lccdf(
       cdf_log += log1m(tau_dbl) - 2.0 * expo;
     }
 
-    if (!is_constant_all<T_y>::value) {
+    if constexpr (!is_constant_all<T_y>::value) {
       partials<0>(ops_partials)[i] += rep_deriv;
     }
-    if (!is_constant_all<T_loc>::value) {
+    if constexpr (!is_constant_all<T_loc>::value) {
       partials<1>(ops_partials)[i] -= rep_deriv;
     }
-    if (!is_constant_all<T_scale>::value) {
+    if constexpr (!is_constant_all<T_scale>::value) {
       partials<2>(ops_partials)[i] += sig_deriv;
     }
-    if (!is_constant_all<T_skewness>::value) {
+    if constexpr (!is_constant_all<T_skewness>::value) {
       partials<3>(ops_partials)[i] += skew_deriv;
     }
   }

@@ -57,7 +57,7 @@ return_type_t<T_prob> bernoulli_lccdf(const T_n& n, const T_prob& theta) {
   size_t n_size = math::size(n_arr);
   double broadcast_n = theta_size == n_size ? 1 : n_size;
 
-  if (!is_constant_all<T_prob>::value) {
+  if constexpr (!is_constant_all<T_prob>::value) {
     partials<0>(ops_partials) = inv(theta_arr) * broadcast_n;
   }
 

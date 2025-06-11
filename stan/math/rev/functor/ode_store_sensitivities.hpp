@@ -50,11 +50,11 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(
   }
 
   Eigen::VectorXd f_y_t;
-  if (is_var<T_t>::value)
+  if constexpr (is_var<T_t>::value)
     f_y_t = f(value_of(t), y, msgs, eval(value_of(args))...);
 
   Eigen::VectorXd f_y0_t0;
-  if (is_var<T_t0>::value)
+  if constexpr (is_var<T_t0>::value)
     f_y0_t0
         = f(value_of(t0), eval(value_of(y0)), msgs, eval(value_of(args))...);
 
@@ -83,7 +83,7 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(
           = coupled_state[N + N * num_y0_vars + N * k + j];
     }
 
-    if (is_var<T_t0>::value) {
+    if constexpr (is_var<T_t0>::value) {
       double dyt_dt0 = 0.0;
       for (size_t k = 0; k < num_y0_vars; ++k) {
         dyt_dt0 -= f_y0_t0.coeffRef(k) * coupled_state[N + num_y0_vars * k + j];
@@ -91,7 +91,7 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(
       jacobian.coeffRef(num_y0_vars + num_args_vars, j) = dyt_dt0;
     }
 
-    if (is_var<T_t>::value) {
+    if constexpr (is_var<T_t>::value) {
       jacobian.coeffRef(num_y0_vars + num_args_vars + num_t0_vars, j)
           = f_y_t.coeffRef(j);
     }

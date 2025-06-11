@@ -61,7 +61,7 @@ return_type_t<T_y_cl> std_normal_cdf(const T_y_cl& y) {
 
   auto ops_partials = make_partials_propagator(y_col);
 
-  if (!is_constant<T_y_cl>::value) {
+  if constexpr (!is_constant<T_y_cl>::value) {
     partials<0>(ops_partials) = y_deriv_cl * cdf;
   }
   return ops_partials.build(cdf);

@@ -60,7 +60,7 @@ return_type_t<T_prob> binomial_logit_lpmf(const T_n& n, const T_N& N,
   if (size_zero(n, N, alpha)) {
     return 0.0;
   }
-  if (!include_summand<propto, T_prob>::value) {
+  if constexpr (!include_summand<propto, T_prob>::value) {
     return 0.0;
   }
   const auto& log_inv_logit_alpha
@@ -71,13 +71,13 @@ return_type_t<T_prob> binomial_logit_lpmf(const T_n& n, const T_N& N,
   size_t maximum_size = max_size(n, N, alpha);
   T_partials_return logp = sum(n_val * log_inv_logit_alpha
                                + (N_val - n_val) * log1m_inv_logit_alpha);
-  if (include_summand<propto, T_n, T_N>::value) {
+  if constexpr (include_summand<propto, T_n, T_N>::value) {
     logp += sum(binomial_coefficient_log(N_val, n_val)) * maximum_size
             / max_size(n, N);
   }
 
   auto ops_partials = make_partials_propagator(alpha_ref);
-  if (!is_constant_all<T_prob>::value) {
+  if constexpr (!is_constant_all<T_prob>::value) {
     edge<0>(ops_partials).partials_ = n_val - N_val * exp(log_inv_logit_alpha);
   }
 

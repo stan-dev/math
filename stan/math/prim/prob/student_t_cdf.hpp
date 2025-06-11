@@ -71,7 +71,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_cdf(const T_y& y,
   VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
       digammaNuPlusHalf_vec(math::size(nu));
 
-  if (!is_constant_all<T_dof>::value) {
+  if constexpr (!is_constant_all<T_dof>::value) {
     digammaHalf = digamma(0.5);
 
     for (size_t i = 0; i < stan::math::size(nu); i++) {
@@ -107,11 +107,11 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_cdf(const T_y& y,
 
       P *= Pn;
 
-      if (!is_constant_all<T_y>::value) {
+      if constexpr (!is_constant_all<T_y>::value) {
         partials<0>(ops_partials)[n]
             += -zJacobian * d_ibeta * J * sigma_inv / Pn;
       }
-      if (!is_constant_all<T_dof>::value) {
+      if constexpr (!is_constant_all<T_dof>::value) {
         T_partials_return g1 = 0;
         T_partials_return g2 = 0;
 
@@ -123,11 +123,11 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_cdf(const T_y& y,
             += zJacobian * (d_ibeta * (r / t) * (r / t) + 0.5 * g1) / Pn;
       }
 
-      if (!is_constant_all<T_loc>::value) {
+      if constexpr (!is_constant_all<T_loc>::value) {
         partials<2>(ops_partials)[n]
             += zJacobian * d_ibeta * J * sigma_inv / Pn;
       }
-      if (!is_constant_all<T_scale>::value) {
+      if constexpr (!is_constant_all<T_scale>::value) {
         partials<3>(ops_partials)[n]
             += zJacobian * d_ibeta * J * sigma_inv * t / Pn;
       }
@@ -145,11 +145,11 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_cdf(const T_y& y,
 
       P *= Pn;
 
-      if (!is_constant_all<T_y>::value) {
+      if constexpr (!is_constant_all<T_y>::value) {
         partials<0>(ops_partials)[n]
             += zJacobian * d_ibeta * J * sigma_inv / Pn;
       }
-      if (!is_constant_all<T_dof>::value) {
+      if constexpr (!is_constant_all<T_dof>::value) {
         T_partials_return g1 = 0;
         T_partials_return g2 = 0;
 
@@ -160,33 +160,33 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_cdf(const T_y& y,
         partials<1>(ops_partials)[n]
             += zJacobian * (-d_ibeta * (r / t) * (r / t) + 0.5 * g2) / Pn;
       }
-      if (!is_constant_all<T_loc>::value) {
+      if constexpr (!is_constant_all<T_loc>::value) {
         partials<2>(ops_partials)[n]
             += -zJacobian * d_ibeta * J * sigma_inv / Pn;
       }
-      if (!is_constant_all<T_scale>::value) {
+      if constexpr (!is_constant_all<T_scale>::value) {
         partials<3>(ops_partials)[n]
             += -zJacobian * d_ibeta * J * sigma_inv * t / Pn;
       }
     }
   }
 
-  if (!is_constant_all<T_y>::value) {
+  if constexpr (!is_constant_all<T_y>::value) {
     for (size_t n = 0; n < stan::math::size(y); ++n) {
       partials<0>(ops_partials)[n] *= P;
     }
   }
-  if (!is_constant_all<T_dof>::value) {
+  if constexpr (!is_constant_all<T_dof>::value) {
     for (size_t n = 0; n < stan::math::size(nu); ++n) {
       partials<1>(ops_partials)[n] *= P;
     }
   }
-  if (!is_constant_all<T_loc>::value) {
+  if constexpr (!is_constant_all<T_loc>::value) {
     for (size_t n = 0; n < stan::math::size(mu); ++n) {
       partials<2>(ops_partials)[n] *= P;
     }
   }
-  if (!is_constant_all<T_scale>::value) {
+  if constexpr (!is_constant_all<T_scale>::value) {
     for (size_t n = 0; n < stan::math::size(sigma); ++n) {
       partials<3>(ops_partials)[n] *= P;
     }

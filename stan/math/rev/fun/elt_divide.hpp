@@ -30,7 +30,7 @@ auto elt_divide(const Mat1& m1, const Mat2& m2) {
   using inner_ret_type
       = decltype((value_of(m1).array() / value_of(m2).array()).matrix());
   using ret_type = return_var_matrix_t<inner_ret_type, Mat1, Mat2>;
-  if (!is_constant<Mat1>::value && !is_constant<Mat2>::value) {
+  if constexpr (!is_constant<Mat1>::value && !is_constant<Mat2>::value) {
     arena_t<promote_scalar_t<var, Mat1>> arena_m1 = m1;
     arena_t<promote_scalar_t<var, Mat2>> arena_m2 = m2;
     arena_t<ret_type> ret(arena_m1.val().array() / arena_m2.val().array());
@@ -45,7 +45,7 @@ auto elt_divide(const Mat1& m1, const Mat2& m2) {
       }
     });
     return ret_type(ret);
-  } else if (!is_constant<Mat1>::value) {
+  } else if constexpr (!is_constant<Mat1>::value) {
     arena_t<promote_scalar_t<var, Mat1>> arena_m1 = m1;
     arena_t<promote_scalar_t<double, Mat2>> arena_m2 = value_of(m2);
     arena_t<ret_type> ret(arena_m1.val().array() / arena_m2.array());
@@ -53,7 +53,7 @@ auto elt_divide(const Mat1& m1, const Mat2& m2) {
       arena_m1.adj().array() += ret.adj().array() / arena_m2.array();
     });
     return ret_type(ret);
-  } else if (!is_constant<Mat2>::value) {
+  } else if constexpr (!is_constant<Mat2>::value) {
     arena_t<promote_scalar_t<double, Mat1>> arena_m1 = value_of(m1);
     arena_t<promote_scalar_t<var, Mat2>> arena_m2 = m2;
     arena_t<ret_type> ret(arena_m1.array() / arena_m2.val().array());
@@ -83,7 +83,7 @@ auto elt_divide(Scal s, const Mat& m) {
 
   reverse_pass_callback([m, s, res]() mutable {
     m.adj().array() -= res.val().array() * res.adj().array() / m.val().array();
-    if (!is_constant<Scal>::value)
+    if constexpr (!is_constant<Scal>::value)
       forward_as<var>(s).adj() += (res.adj().array() / m.val().array()).sum();
   });
 

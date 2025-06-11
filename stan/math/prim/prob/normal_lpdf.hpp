@@ -65,7 +65,7 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(T_y&& y, T_loc&& mu,
   if (size_zero(y_ref, mu_ref, sigma_ref)) {
     return 0.0;
   }
-  if (!include_summand<propto, T_y, T_loc, T_scale>::value) {
+  if constexpr (!include_summand<propto, T_y, T_loc, T_scale>::value) {
     return 0.0;
   }
 
@@ -79,25 +79,25 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(T_y&& y, T_loc&& mu,
 
   size_t N = max_size(y_ref, mu_ref, sigma_ref);
   T_partials_return logp = -0.5 * sum(y_scaled_sq);
-  if (include_summand<propto>::value) {
+  if constexpr (include_summand<propto>::value) {
     logp += NEG_LOG_SQRT_TWO_PI * N;
   }
-  if (include_summand<propto, T_scale>::value) {
+  if constexpr (include_summand<propto, T_scale>::value) {
     logp -= sum(log(sigma_val)) * N / math::size(sigma);
   }
 
-  if (!is_constant_all<T_y, T_scale, T_loc>::value) {
+  if constexpr (!is_constant_all<T_y, T_scale, T_loc>::value) {
     auto scaled_diff = to_ref_if<!is_constant_all<T_y>::value
                                      + !is_constant_all<T_scale>::value
                                      + !is_constant_all<T_loc>::value
                                  >= 2>(inv_sigma * y_scaled);
-    if (!is_constant_all<T_y>::value) {
+    if constexpr (!is_constant_all<T_y>::value) {
       partials<0>(ops_partials) = -scaled_diff;
     }
-    if (!is_constant_all<T_scale>::value) {
+    if constexpr (!is_constant_all<T_scale>::value) {
       partials<2>(ops_partials) = inv_sigma * y_scaled_sq - inv_sigma;
     }
-    if (!is_constant_all<T_loc>::value) {
+    if constexpr (!is_constant_all<T_loc>::value) {
       partials<1>(ops_partials) = std::move(scaled_diff);
     }
   }

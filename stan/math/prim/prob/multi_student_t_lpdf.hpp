@@ -102,23 +102,23 @@ return_type_t<T_y, T_dof, T_loc, T_scale> multi_student_t_lpdf(
 
   lp_type lp(0);
 
-  if (include_summand<propto, T_dof>::value) {
+  if constexpr (include_summand<propto, T_dof>::value) {
     lp += lgamma(0.5 * (nu + num_dims)) * size_vec;
     lp -= lgamma(0.5 * nu) * size_vec;
     lp -= (0.5 * num_dims) * log(nu) * size_vec;
   }
 
-  if (include_summand<propto>::value) {
+  if constexpr (include_summand<propto>::value) {
     lp -= (0.5 * num_dims) * LOG_PI * size_vec;
   }
 
   using Eigen::Array;
 
-  if (include_summand<propto, T_scale_elem>::value) {
+  if constexpr (include_summand<propto, T_scale_elem>::value) {
     lp -= 0.5 * log_determinant_ldlt(ldlt_Sigma) * size_vec;
   }
 
-  if (include_summand<propto, T_y, T_dof, T_loc, T_scale_elem>::value) {
+  if constexpr (include_summand<propto, T_y, T_dof, T_loc, T_scale_elem>::value) {
     lp_type sum_lp_vec(0.0);
     for (size_t i = 0; i < size_vec; i++) {
       const auto& y_col = as_column_vector_or_scalar(y_vec[i]);

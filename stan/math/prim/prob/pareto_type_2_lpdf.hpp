@@ -56,7 +56,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
   check_positive_finite(function, "Scale parameter", lambda_val);
   check_positive_finite(function, "Shape parameter", alpha_val);
 
-  if (!include_summand<propto, T_y, T_loc, T_scale, T_shape>::value) {
+  if constexpr (!include_summand<propto, T_y, T_loc, T_scale, T_shape>::value) {
     return 0.0;
   }
 
@@ -65,43 +65,43 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
 
   size_t N = max_size(y, mu, lambda, alpha);
   T_partials_return logp(0.0);
-  if (include_summand<propto, T_shape>::value) {
+  if constexpr (include_summand<propto, T_shape>::value) {
     logp += sum(log(alpha_val)) * N / math::size(alpha);
   }
-  if (include_summand<propto, T_scale>::value) {
+  if constexpr (include_summand<propto, T_scale>::value) {
     logp -= sum(log(lambda_val)) * N / math::size(lambda);
   }
-  if (include_summand<propto, T_y, T_loc, T_scale, T_shape>::value) {
+  if constexpr (include_summand<propto, T_y, T_loc, T_scale, T_shape>::value) {
     logp -= sum((alpha_val + 1.0) * log1p_scaled_diff);
   }
 
   auto ops_partials
       = make_partials_propagator(y_ref, mu_ref, lambda_ref, alpha_ref);
 
-  if (!is_constant_all<T_y, T_loc, T_scale>::value) {
+  if constexpr (!is_constant_all<T_y, T_loc, T_scale>::value) {
     const auto& inv_sum = to_ref_if<(!is_constant_all<T_y, T_loc>::value
                                      && !is_constant_all<T_scale>::value)>(
         inv(lambda_val + y_val - mu_val));
     const auto& alpha_div_sum
         = to_ref_if<(!is_constant_all<T_y, T_loc>::value
                      && !is_constant_all<T_scale>::value)>(alpha_val * inv_sum);
-    if (!is_constant_all<T_y, T_loc>::value) {
+    if constexpr (!is_constant_all<T_y, T_loc>::value) {
       auto deriv_1_2 = to_ref_if<(!is_constant_all<T_y>::value
                                   && !is_constant_all<T_loc>::value)>(
           inv_sum + alpha_div_sum);
-      if (!is_constant_all<T_y>::value) {
+      if constexpr (!is_constant_all<T_y>::value) {
         partials<0>(ops_partials) = -deriv_1_2;
       }
-      if (!is_constant_all<T_loc>::value) {
+      if constexpr (!is_constant_all<T_loc>::value) {
         partials<1>(ops_partials) = std::move(deriv_1_2);
       }
     }
-    if (!is_constant_all<T_scale>::value) {
+    if constexpr (!is_constant_all<T_scale>::value) {
       edge<2>(ops_partials).partials_
           = alpha_div_sum * (y_val - mu_val) / lambda_val - inv_sum;
     }
   }
-  if (!is_constant_all<T_shape>::value) {
+  if constexpr (!is_constant_all<T_shape>::value) {
     partials<3>(ops_partials) = inv(alpha_val) - log1p_scaled_diff;
   }
 

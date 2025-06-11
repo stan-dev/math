@@ -47,7 +47,7 @@ return_type_t<T_y_cl, T_dof_cl> chi_square_lpdf(const T_y_cl& y,
   if (N == 0) {
     return 0.0;
   }
-  if (!include_summand<propto, T_y_cl, T_dof_cl>::value) {
+  if constexpr (!include_summand<propto, T_y_cl, T_dof_cl>::value) {
     return 0.0;
   }
 
@@ -92,10 +92,10 @@ return_type_t<T_y_cl, T_dof_cl> chi_square_lpdf(const T_y_cl& y,
 
   auto ops_partials = make_partials_propagator(y_col, nu_col);
 
-  if (!is_constant<T_y_cl>::value) {
+  if constexpr (!is_constant<T_y_cl>::value) {
     partials<0>(ops_partials) = std::move(y_deriv_cl);
   }
-  if (!is_constant<T_dof_cl>::value) {
+  if constexpr (!is_constant<T_dof_cl>::value) {
     partials<1>(ops_partials) = std::move(nu_deriv_cl);
   }
   return ops_partials.build(logp);

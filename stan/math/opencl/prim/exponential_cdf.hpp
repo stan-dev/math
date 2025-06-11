@@ -86,10 +86,10 @@ return_type_t<T_y_cl, T_inv_scale_cl> exponential_cdf(
 
   auto ops_partials = make_partials_propagator(y_col, beta_col);
 
-  if (!is_constant<T_y_cl>::value) {
+  if constexpr (!is_constant<T_y_cl>::value) {
     partials<0>(ops_partials) = std::move(y_deriv_cl);
   }
-  if (!is_constant<T_inv_scale_cl>::value) {
+  if constexpr (!is_constant<T_inv_scale_cl>::value) {
     partials<1>(ops_partials) = std::move(beta_deriv_cl);
   }
   return ops_partials.build(cdf);

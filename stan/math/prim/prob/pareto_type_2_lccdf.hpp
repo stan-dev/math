@@ -61,28 +61,28 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lccdf(
       log1p((y_val - mu_val) / lambda_val));
   T_partials_return P = -sum(alpha_val * log_temp);
 
-  if (!is_constant_all<T_y, T_loc, T_scale>::value) {
+  if constexpr (!is_constant_all<T_y, T_loc, T_scale>::value) {
     auto rep_deriv = to_ref_if<(!is_constant_all<T_y>::value
                                 + !is_constant_all<T_scale>::value
                                 + !is_constant_all<T_loc>::value)
                                >= 2>(alpha_val / (y_val - mu_val + lambda_val));
-    if (!is_constant_all<T_y>::value) {
+    if constexpr (!is_constant_all<T_y>::value) {
       partials<0>(ops_partials) = -rep_deriv;
     }
-    if (!is_constant_all<T_scale>::value) {
+    if constexpr (!is_constant_all<T_scale>::value) {
       edge<2>(ops_partials).partials_
           = rep_deriv * (y_val - mu_val) / lambda_val;
     }
-    if (!is_constant_all<T_loc>::value) {
+    if constexpr (!is_constant_all<T_loc>::value) {
       partials<1>(ops_partials) = std::move(rep_deriv);
     }
   }
   size_t N = max_size(y, mu, lambda, alpha);
-  if (!is_constant_all<T_shape>::value) {
-    if (is_vector<T_shape>::value) {
+  if constexpr (!is_constant_all<T_shape>::value) {
+    if constexpr (is_vector<T_shape>::value) {
       using Log_temp_scalar = partials_return_t<T_y, T_loc, T_scale>;
       using Log_temp_array = Eigen::Array<Log_temp_scalar, Eigen::Dynamic, 1>;
-      if (is_vector<T_y>::value || is_vector<T_loc>::value
+      if constexpr (is_vector<T_y>::value || is_vector<T_loc>::value
           || is_vector<T_scale>::value) {
         partials<3>(ops_partials) = -forward_as<Log_temp_array>(log_temp);
       } else {

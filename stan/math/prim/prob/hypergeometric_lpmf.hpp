@@ -43,7 +43,7 @@ double hypergeometric_lpmf(const T_n& n, const T_N& N, const T_a& a,
                   a_vec[i] + b_vec[i]);
   }
 
-  if (!include_summand<propto>::value) {
+  if constexpr (!include_summand<propto>::value) {
     return 0.0;
   }
 

@@ -54,7 +54,7 @@ return_type_t<T_n_cl, T_size1_cl, T_size2_cl> beta_binomial_lpmf(
   if (N_size == 0) {
     return 0.0;
   }
-  if (!include_summand<propto, T_size1_cl, T_size2_cl>::value) {
+  if constexpr (!include_summand<propto, T_size1_cl, T_size2_cl>::value) {
     return 0.0;
   }
 
@@ -106,10 +106,10 @@ return_type_t<T_n_cl, T_size1_cl, T_size2_cl> beta_binomial_lpmf(
   double logp = sum(from_matrix_cl(logp_cl));
 
   auto ops_partials = make_partials_propagator(alpha_col, beta_col);
-  if (!is_constant<T_size1_cl>::value) {
+  if constexpr (!is_constant<T_size1_cl>::value) {
     partials<0>(ops_partials) = std::move(alpha_deriv_cl);
   }
-  if (!is_constant<T_size2_cl>::value) {
+  if constexpr (!is_constant<T_size2_cl>::value) {
     partials<1>(ops_partials) = std::move(beta_deriv_cl);
   }
 

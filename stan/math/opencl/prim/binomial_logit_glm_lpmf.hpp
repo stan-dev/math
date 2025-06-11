@@ -51,7 +51,7 @@ return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> binomial_logit_glm_lpmf(
   if (N_instances == 0 || N_attributes == 0) {
     return 0;
   }
-  if (!include_summand<propto, T_x_cl, T_alpha_cl, T_beta_cl>::value) {
+  if constexpr (!include_summand<propto, T_x_cl, T_alpha_cl, T_beta_cl>::value) {
     return 0;
   }
 
@@ -103,11 +103,11 @@ return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> binomial_logit_glm_lpmf(
   }
 
   auto ops_partials = make_partials_propagator(x, alpha, beta);
-  if (!is_constant_all<T_x_cl>::value) {
+  if constexpr (!is_constant_all<T_x_cl>::value) {
     partials<0>(ops_partials) = transpose(beta_val * transpose(theta_deriv_cl));
   }
-  if (!is_constant_all<T_alpha_cl>::value) {
-    if (is_alpha_vector) {
+  if constexpr (!is_constant_all<T_alpha_cl>::value) {
+    if constexpr (is_alpha_vector) {
       partials<1>(ops_partials) = theta_deriv_cl;
     } else {
       forward_as<internal::broadcast_array<double>>(
@@ -115,7 +115,7 @@ return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> binomial_logit_glm_lpmf(
           = sum(from_matrix_cl(theta_deriv_sum_cl));
     }
   }
-  if (!is_constant_all<T_beta_cl>::value) {
+  if constexpr (!is_constant_all<T_beta_cl>::value) {
     // transposition of a vector can be done without copying
     const matrix_cl<double> theta_derivative_transpose_cl(
         theta_deriv_cl.buffer(), 1, theta_deriv_cl.rows());

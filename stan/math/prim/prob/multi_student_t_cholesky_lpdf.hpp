@@ -134,11 +134,11 @@ return_type_t<T_y, T_dof, T_loc, T_covar> multi_student_t_cholesky_lpdf(
 
   T_partials_return lp(0);
 
-  if (include_summand<propto>::value) {
+  if constexpr (include_summand<propto>::value) {
     lp += -0.5 * num_dims * LOG_PI * size_vec;
   }
 
-  if (include_summand<propto, T_y, T_dof, T_loc, T_covar_elem>::value) {
+  if constexpr (include_summand<propto, T_y, T_dof, T_loc, T_covar_elem>::value) {
     T_partials_return nu_val = value_of(nu_ref);
     T_partials_return inv_nu = inv(nu_val);
     T_partials_return nu_plus_dims = nu_val + num_dims;
@@ -149,13 +149,13 @@ return_type_t<T_y, T_dof, T_loc, T_covar> multi_student_t_cholesky_lpdf(
     const auto& digamma_vals = to_ref_if<!is_constant<T_dof>::value>(
         digamma(half_nu + 0.5 * num_dims) - digamma(half_nu));
 
-    if (include_summand<propto, T_dof>::value) {
+    if constexpr (include_summand<propto, T_dof>::value) {
       lp += lgamma(0.5 * nu_plus_dims) * size_vec;
       lp += -lgamma(0.5 * nu_val) * size_vec;
       lp += -(0.5 * num_dims) * log(nu_val) * size_vec;
     }
 
-    if (include_summand<propto, T_covar_elem>::value) {
+    if constexpr (include_summand<propto, T_covar_elem>::value) {
       lp += -sum(log(L_val.diagonal())) * size_vec;
     }
 
@@ -176,7 +176,7 @@ return_type_t<T_y, T_dof, T_loc, T_covar> multi_student_t_cholesky_lpdf(
 
       T_partials_return dot_half = dot_self(half);
 
-      if (!is_constant_all<T_dof>::value) {
+      if constexpr (!is_constant_all<T_dof>::value) {
         T_partials_return G = dot_product(scaled_diff, y_val_minus_mu_val);
         partials<1>(ops_partials)[i] += 0.5
                                         * (digamma_vals - log1p(G * inv_nu)
@@ -185,15 +185,15 @@ return_type_t<T_y, T_dof, T_loc, T_covar> multi_student_t_cholesky_lpdf(
 
       scaled_diff *= nu_plus_dims / (dot_half + nu_val);
 
-      if (!is_constant_all<T_y>::value) {
+      if constexpr (!is_constant_all<T_y>::value) {
         partials_vec<0>(ops_partials)[i] += -scaled_diff;
       }
 
-      if (!is_constant_all<T_loc>::value) {
+      if constexpr (!is_constant_all<T_loc>::value) {
         partials_vec<2>(ops_partials)[i] += scaled_diff;
       }
 
-      if (!is_constant_all<T_covar_elem>::value) {
+      if constexpr (!is_constant_all<T_covar_elem>::value) {
         if (i == 0) {
           L_deriv
               = (scaled_diff * half).template triangularView<Eigen::Lower>();
@@ -206,7 +206,7 @@ return_type_t<T_y, T_dof, T_loc, T_covar> multi_student_t_cholesky_lpdf(
       sum_lp_vec += log1p(dot_half * inv_nu);
     }
 
-    if (!is_constant_all<T_covar_elem>::value) {
+    if constexpr (!is_constant_all<T_covar_elem>::value) {
       L_deriv.diagonal().array() -= size_vec / L_val.diagonal().array();
       partials<3>(ops_partials) += L_deriv;
     }
@@ -294,11 +294,11 @@ return_type_t<T_y, T_dof, T_loc, T_covar> multi_student_t_cholesky_lpdf(
 
   auto ops_partials = make_partials_propagator(y_ref, nu_ref, mu_ref, L_ref);
 
-  if (include_summand<propto>::value) {
+  if constexpr (include_summand<propto>::value) {
     lp += -0.5 * size_y * LOG_PI;
   }
 
-  if (include_summand<propto, T_y, T_dof, T_loc, T_covar_elem>::value) {
+  if constexpr (include_summand<propto, T_y, T_dof, T_loc, T_covar_elem>::value) {
     T_partials_return nu_val = value_of(nu_ref);
     T_partials_return inv_nu = inv(nu_val);
     T_partials_return nu_plus_dims = nu_val + size_y;
@@ -311,7 +311,7 @@ return_type_t<T_y, T_dof, T_loc, T_covar> multi_student_t_cholesky_lpdf(
         = mdivide_right_tri<Eigen::Lower>(half, L_val).transpose();
     T_partials_return dot_half = dot_self(half);
 
-    if (!is_constant_all<T_dof>::value) {
+    if constexpr (!is_constant_all<T_dof>::value) {
       T_partials_return half_nu = 0.5 * nu_val;
       T_partials_return digamma_vals
           = digamma(half_nu + 0.5 * size_y) - digamma(half_nu);
@@ -322,26 +322,26 @@ return_type_t<T_y, T_dof, T_loc, T_covar> multi_student_t_cholesky_lpdf(
              * (digamma_vals - log1p(G * inv_nu) + (G - size_y) / (G + nu_val));
     }
 
-    if (include_summand<propto, T_dof>::value) {
+    if constexpr (include_summand<propto, T_dof>::value) {
       lp += lgamma(0.5 * (nu_val + size_y));
       lp += -lgamma(0.5 * nu_val);
       lp += -0.5 * size_y * log(nu_val);
     }
 
-    if (include_summand<propto, T_covar_elem>::value) {
+    if constexpr (include_summand<propto, T_covar_elem>::value) {
       lp += -sum(log(L_val.diagonal()));
     }
 
-    if (!is_constant_all<T_y, T_loc, T_covar_elem>::value) {
+    if constexpr (!is_constant_all<T_y, T_loc, T_covar_elem>::value) {
       T_partials_return scale_val = nu_plus_dims / (dot_half + nu_val);
 
-      if (!is_constant_all<T_y>::value) {
+      if constexpr (!is_constant_all<T_y>::value) {
         partials<0>(ops_partials) += -scaled_diff * scale_val;
       }
-      if (!is_constant_all<T_loc>::value) {
+      if constexpr (!is_constant_all<T_loc>::value) {
         partials<2>(ops_partials) += scaled_diff * scale_val;
       }
-      if (!is_constant_all<T_covar_elem>::value) {
+      if constexpr (!is_constant_all<T_covar_elem>::value) {
         matrix_partials_t L_deriv
             = (scaled_diff * half).template triangularView<Eigen::Lower>();
         L_deriv.diagonal().array() -= 1 / L_val.diagonal().array();

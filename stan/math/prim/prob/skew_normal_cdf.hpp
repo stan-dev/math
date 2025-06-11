@@ -69,14 +69,14 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_cdf(
 
   T_partials_return cdf = prod(cdf_);
 
-  if (!is_constant_all<T_y, T_loc, T_scale, T_shape>::value) {
+  if constexpr (!is_constant_all<T_y, T_loc, T_scale, T_shape>::value) {
     const auto& cdf_quot
         = to_ref_if<(!is_constant_all<T_y, T_loc, T_scale>::value
                      && !is_constant_all<T_shape>::value)>(cdf / cdf_);
     const auto& diff_square
         = to_ref_if<(!is_constant_all<T_y, T_loc, T_scale>::value
                      && !is_constant_all<T_shape>::value)>(square(diff));
-    if (!is_constant_all<T_y, T_loc, T_scale>::value) {
+    if constexpr (!is_constant_all<T_y, T_loc, T_scale>::value) {
       const auto& erf_alpha_scaled_diff = erf(alpha_val * scaled_diff);
       const auto& exp_m_scaled_diff_square = exp(-0.5 * diff_square);
       auto rep_deriv
@@ -85,17 +85,17 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_cdf(
                           + !is_constant_all<T_loc>::value
                       >= 2>((erf_alpha_scaled_diff + 1) * INV_SQRT_TWO_PI
                             * cdf_quot / sigma_val * exp_m_scaled_diff_square);
-      if (!is_constant_all<T_loc>::value) {
+      if constexpr (!is_constant_all<T_loc>::value) {
         partials<1>(ops_partials) = -rep_deriv;
       }
-      if (!is_constant_all<T_scale>::value) {
+      if constexpr (!is_constant_all<T_scale>::value) {
         partials<2>(ops_partials) = -rep_deriv * diff;
       }
-      if (!is_constant_all<T_y>::value) {
+      if constexpr (!is_constant_all<T_y>::value) {
         partials<0>(ops_partials) = std::move(rep_deriv);
       }
     }
-    if (!is_constant_all<T_shape>::value) {
+    if constexpr (!is_constant_all<T_shape>::value) {
       const auto& alpha_square = square(alpha_val);
       const auto& exp_tmp = exp(-0.5 * diff_square * (1.0 + alpha_square));
       edge<3>(ops_partials).partials_

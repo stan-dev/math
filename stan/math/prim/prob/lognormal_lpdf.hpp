@@ -50,7 +50,7 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lpdf(const T_y& y, const T_loc& mu,
   if (size_zero(y, mu, sigma)) {
     return 0;
   }
-  if (!include_summand<propto, T_y, T_loc, T_scale>::value) {
+  if constexpr (!include_summand<propto, T_y, T_loc, T_scale>::value) {
     return 0;
   }
 
@@ -72,26 +72,26 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lpdf(const T_y& y, const T_loc& mu,
   size_t N = max_size(y, mu, sigma);
   T_partials_return logp
       = N * NEG_LOG_SQRT_TWO_PI - 0.5 * sum(square(logy_m_mu) * inv_sigma_sq);
-  if (include_summand<propto, T_scale>::value) {
+  if constexpr (include_summand<propto, T_scale>::value) {
     logp -= sum(log(sigma_val)) * N / math::size(sigma);
   }
-  if (include_summand<propto, T_y>::value) {
+  if constexpr (include_summand<propto, T_y>::value) {
     logp -= sum(log_y) * N / math::size(y);
   }
 
-  if (!is_constant_all<T_y, T_loc, T_scale>::value) {
+  if constexpr (!is_constant_all<T_y, T_loc, T_scale>::value) {
     const auto& logy_m_mu_div_sigma
         = to_ref_if<!is_constant_all<T_y>::value
                         + !is_constant_all<T_loc>::value
                         + !is_constant_all<T_scale>::value
                     >= 2>(logy_m_mu * inv_sigma_sq);
-    if (!is_constant_all<T_y>::value) {
+    if constexpr (!is_constant_all<T_y>::value) {
       partials<0>(ops_partials) = -(1 + logy_m_mu_div_sigma) / y_val;
     }
-    if (!is_constant_all<T_loc>::value) {
+    if constexpr (!is_constant_all<T_loc>::value) {
       partials<1>(ops_partials) = logy_m_mu_div_sigma;
     }
-    if (!is_constant_all<T_scale>::value) {
+    if constexpr (!is_constant_all<T_scale>::value) {
       edge<2>(ops_partials).partials_
           = (logy_m_mu_div_sigma * logy_m_mu - 1) * inv_sigma;
     }

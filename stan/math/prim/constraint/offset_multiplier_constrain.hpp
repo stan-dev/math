@@ -46,12 +46,12 @@ inline auto offset_multiplier_constrain(const T& x, const M& mu,
                                         const S& sigma) {
   const auto& mu_ref = to_ref(mu);
   const auto& sigma_ref = to_ref(sigma);
-  if (is_matrix<T>::value && is_matrix<M>::value) {
+  if constexpr (is_matrix<T>::value && is_matrix<M>::value) {
     check_matching_dims("offset_multiplier_constrain", "x", x, "mu", mu);
   }
-  if (is_matrix<T>::value && is_matrix<S>::value) {
+  if constexpr (is_matrix<T>::value && is_matrix<S>::value) {
     check_matching_dims("offset_multiplier_constrain", "x", x, "sigma", sigma);
-  } else if (is_matrix<M>::value && is_matrix<S>::value) {
+  } else if constexpr (is_matrix<M>::value && is_matrix<S>::value) {
     check_matching_dims("offset_multiplier_constrain", "mu", mu, "sigma",
                         sigma);
   }
@@ -97,12 +97,12 @@ inline auto offset_multiplier_constrain(const T& x, const M& mu, const S& sigma,
                                         Lp& lp) {
   const auto& mu_ref = to_ref(mu);
   const auto& sigma_ref = to_ref(sigma);
-  if (is_matrix<T>::value && is_matrix<M>::value) {
+  if constexpr (is_matrix<T>::value && is_matrix<M>::value) {
     check_matching_dims("offset_multiplier_constrain", "x", x, "mu", mu);
   }
-  if (is_matrix<T>::value && is_matrix<S>::value) {
+  if constexpr (is_matrix<T>::value && is_matrix<S>::value) {
     check_matching_dims("offset_multiplier_constrain", "x", x, "sigma", sigma);
-  } else if (is_matrix<M>::value && is_matrix<S>::value) {
+  } else if constexpr (is_matrix<M>::value && is_matrix<S>::value) {
     check_matching_dims("offset_multiplier_constrain", "mu", mu, "sigma",
                         sigma);
   }

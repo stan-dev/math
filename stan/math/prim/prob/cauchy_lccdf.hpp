@@ -74,13 +74,13 @@ return_type_t<T_y, T_loc, T_scale> cauchy_lccdf(const T_y& y, const T_loc& mu,
 
     const T_partials_return rep_deriv
         = 1.0 / (Pn * pi() * (z * z * sigma_dbl + sigma_dbl));
-    if (!is_constant_all<T_y>::value) {
+    if constexpr (!is_constant_all<T_y>::value) {
       partials<0>(ops_partials)[n] -= rep_deriv;
     }
-    if (!is_constant_all<T_loc>::value) {
+    if constexpr (!is_constant_all<T_loc>::value) {
       partials<1>(ops_partials)[n] += rep_deriv;
     }
-    if (!is_constant_all<T_scale>::value) {
+    if constexpr (!is_constant_all<T_scale>::value) {
       partials<2>(ops_partials)[n] += rep_deriv * z;
     }
   }

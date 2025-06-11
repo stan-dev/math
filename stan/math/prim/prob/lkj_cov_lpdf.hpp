@@ -44,7 +44,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> lkj_cov_lpdf(const T_y& y,
   for (unsigned int k = 0; k < K; k++) {
     lp += lognormal_lpdf<propto>(sds(k), mu_ref(k), sigma_ref(k));
   }
-  if (stan::is_constant_all<T_shape>::value && eta == 1.0) {
+  if constexpr (stan::is_constant_all<T_shape>::value && eta == 1.0) {
     // no need to rescale y into a correlation matrix
     lp += lkj_corr_lpdf<propto>(y_ref, eta);
     return lp;
@@ -82,7 +82,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> lkj_cov_lpdf(const T_y& y,
   for (unsigned int k = 0; k < K; k++) {
     lp += lognormal_lpdf<propto>(sds(k), mu, sigma);
   }
-  if (stan::is_constant_all<T_shape>::value && eta == 1.0) {
+  if constexpr (stan::is_constant_all<T_shape>::value && eta == 1.0) {
     // no need to rescale y into a correlation matrix
     lp += lkj_corr_lpdf<propto>(y_ref, eta);
     return lp;

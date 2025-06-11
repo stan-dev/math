@@ -69,7 +69,7 @@ return_type_t<T_y, T_scale, T_shape> loglogistic_lpdf(const T_y& y,
   if (size_zero(y, alpha, beta)) {
     return 0.0;
   }
-  if (!include_summand<propto, T_y, T_scale, T_shape>::value) {
+  if constexpr (!include_summand<propto, T_y, T_scale, T_shape>::value) {
     return 0.0;
   }
 
@@ -97,25 +97,25 @@ return_type_t<T_y, T_scale, T_shape> loglogistic_lpdf(const T_y& y,
 
   T_partials_return logp = sum(beta_minus_one * log_y - 2.0 * log(log1_arg));
 
-  if (include_summand<propto, T_scale, T_shape>::value) {
+  if constexpr (include_summand<propto, T_scale, T_shape>::value) {
     logp += sum(N * (log(beta_val) - log_alpha - beta_minus_one * log_alpha)
                 / N_alpha_beta);
   }
 
-  if (!is_constant_all<T_y, T_scale, T_shape>::value) {
+  if constexpr (!is_constant_all<T_y, T_scale, T_shape>::value) {
     const auto& two_inv_log1_arg
         = to_ref_if<!is_constant_all<T_y>::value
                         + !is_constant_all<T_scale>::value
                         + !is_constant_all<T_shape>::value
                     >= 2>(2.0 * inv(log1_arg));
-    if (!is_constant_all<T_y, T_scale>::value) {
+    if constexpr (!is_constant_all<T_y, T_scale>::value) {
       const auto& y_pow_beta = to_ref_if<!is_constant_all<T_y, T_scale>::value>(
           pow(y_val, beta_val));
       const auto& inv_alpha_pow_beta
           = to_ref_if < !is_constant_all<T_y>::value
             && !is_constant_all<T_scale>::value > (pow(inv_alpha, beta_val));
 
-      if (!is_constant_all<T_y>::value) {
+      if constexpr (!is_constant_all<T_y>::value) {
         const auto& inv_y = inv(y_val);
         const auto& y_deriv = beta_minus_one * inv_y
                               - two_inv_log1_arg
@@ -123,14 +123,14 @@ return_type_t<T_y, T_scale, T_shape> loglogistic_lpdf(const T_y& y,
                                     * y_pow_beta * inv_y;
         partials<0>(ops_partials) = y_deriv;
       }
-      if (!is_constant_all<T_scale>::value) {
+      if constexpr (!is_constant_all<T_scale>::value) {
         const auto& alpha_deriv = -beta_val * inv_alpha
                                   - two_inv_log1_arg * y_pow_beta * (-beta_val)
                                         * inv_alpha_pow_beta * inv_alpha;
         partials<1>(ops_partials) = alpha_deriv;
       }
     }
-    if (!is_constant_all<T_shape>::value) {
+    if constexpr (!is_constant_all<T_shape>::value) {
       const auto& beta_deriv
           = (1.0 * inv(beta_val)) + log_y - log_alpha
             - two_inv_log1_arg * y_div_alpha_pow_beta * log(y_div_alpha);

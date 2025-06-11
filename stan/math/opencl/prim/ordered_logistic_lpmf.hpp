@@ -100,7 +100,7 @@ inline return_type_t<T_y_cl, T_loc_cl, T_cuts_cl> ordered_logistic_lpmf(
     check_cl(function, "Cuts", cuts_val, "finite") = isfinite(cuts_val);
   }
 
-  if (!include_summand<propto, T_loc_cl, T_cuts_cl>::value) {
+  if constexpr (!include_summand<propto, T_loc_cl, T_cuts_cl>::value) {
     return 0.0;
   }
 
@@ -144,10 +144,10 @@ inline return_type_t<T_y_cl, T_loc_cl, T_cuts_cl> ordered_logistic_lpmf(
   }
   auto ops_partials = make_partials_propagator(lambda, cuts);
 
-  if (!is_constant_all<T_loc_cl>::value) {
+  if constexpr (!is_constant_all<T_loc_cl>::value) {
     partials<0>(ops_partials) = lambda_derivative_cl;
   }
-  if (!is_constant_all<T_cuts_cl>::value) {
+  if constexpr (!is_constant_all<T_cuts_cl>::value) {
     if (need_broadcasting) {
       partials<1>(ops_partials) = rowwise_sum(cuts_derivative_cl);
     } else {

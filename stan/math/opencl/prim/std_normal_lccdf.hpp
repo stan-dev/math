@@ -63,7 +63,7 @@ return_type_t<T_y_cl> std_normal_lccdf(const T_y_cl& y) {
 
   auto ops_partials = make_partials_propagator(y_col);
 
-  if (!is_constant<T_y_cl>::value) {
+  if constexpr (!is_constant<T_y_cl>::value) {
     partials<0>(ops_partials) = std::move(y_deriv_cl);
   }
   return ops_partials.build(lccdf);

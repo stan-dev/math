@@ -29,7 +29,7 @@ auto diag_pre_multiply(const T1& m1, const T2& m2) {
                    m2.rows());
   using inner_ret_type = decltype(value_of(m1).asDiagonal() * value_of(m2));
   using ret_type = return_var_matrix_t<inner_ret_type, T1, T2>;
-  if (!is_constant<T1>::value && !is_constant<T2>::value) {
+  if constexpr (!is_constant<T1>::value && !is_constant<T2>::value) {
     arena_t<promote_scalar_t<var, T1>> arena_m1 = m1;
     arena_t<promote_scalar_t<var, T2>> arena_m2 = m2;
     arena_t<ret_type> ret(arena_m1.val().asDiagonal() * arena_m2.val());
@@ -38,7 +38,7 @@ auto diag_pre_multiply(const T1& m1, const T2& m2) {
       arena_m2.adj() += arena_m1.val().asDiagonal() * ret.adj();
     });
     return ret_type(ret);
-  } else if (!is_constant<T1>::value) {
+  } else if constexpr (!is_constant<T1>::value) {
     arena_t<promote_scalar_t<var, T1>> arena_m1 = m1;
     arena_t<promote_scalar_t<double, T2>> arena_m2 = value_of(m2);
     arena_t<ret_type> ret(arena_m1.val().asDiagonal() * arena_m2);
@@ -46,7 +46,7 @@ auto diag_pre_multiply(const T1& m1, const T2& m2) {
       arena_m1.adj() += arena_m2.val().cwiseProduct(ret.adj()).rowwise().sum();
     });
     return ret_type(ret);
-  } else if (!is_constant<T2>::value) {
+  } else if constexpr (!is_constant<T2>::value) {
     arena_t<promote_scalar_t<double, T1>> arena_m1 = value_of(m1);
     arena_t<promote_scalar_t<var, T2>> arena_m2 = m2;
     arena_t<ret_type> ret(arena_m1.asDiagonal() * arena_m2.val());

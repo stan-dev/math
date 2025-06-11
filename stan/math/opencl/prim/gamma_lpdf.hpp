@@ -58,7 +58,7 @@ return_type_t<T_y_cl, T_shape_cl, T_inv_scale_cl> gamma_lpdf(
   if (N == 0) {
     return 0.0;
   }
-  if (!include_summand<propto, T_y_cl, T_shape_cl, T_inv_scale_cl>::value) {
+  if constexpr (!include_summand<propto, T_y_cl, T_shape_cl, T_inv_scale_cl>::value) {
     return 0.0;
   }
 
@@ -121,13 +121,13 @@ return_type_t<T_y_cl, T_shape_cl, T_inv_scale_cl> gamma_lpdf(
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
 
   auto ops_partials = make_partials_propagator(y_col, alpha_col, beta_col);
-  if (!is_constant<T_y_cl>::value) {
+  if constexpr (!is_constant<T_y_cl>::value) {
     partials<0>(ops_partials) = std::move(y_deriv_cl);
   }
-  if (!is_constant<T_shape_cl>::value) {
+  if constexpr (!is_constant<T_shape_cl>::value) {
     partials<1>(ops_partials) = std::move(alpha_deriv_cl);
   }
-  if (!is_constant<T_inv_scale_cl>::value) {
+  if constexpr (!is_constant<T_inv_scale_cl>::value) {
     partials<2>(ops_partials) = std::move(beta_deriv_cl);
   }
 

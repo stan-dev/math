@@ -59,7 +59,7 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
   const size_t N_classes = beta.cols();
 
   static constexpr const char* function = "categorical_logit_glm_lpmf";
-  if (is_y_vector) {
+  if constexpr (is_y_vector) {
     check_size_match(function, "Rows of ", "x", N_instances, "size of ", "y",
                      math::size(y));
   }
@@ -71,7 +71,7 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
   if (N_instances == 0 || N_classes <= 1) {
     return 0;
   }
-  if (!include_summand<propto, T_x, T_alpha, T_beta>::value) {
+  if constexpr (!include_summand<propto, T_x, T_alpha, T_beta>::value) {
     return 0;
   }
 
@@ -123,8 +123,8 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
   }
 
   auto ops_partials = make_partials_propagator(x, alpha, beta);
-  if (!is_constant_all<T_x>::value) {
-    if (is_y_vector) {
+  if constexpr (!is_constant_all<T_x>::value) {
+    if constexpr (is_y_vector) {
       partials<0>(ops_partials)
           = indexing(beta_val, col_index(x.rows(), x.cols()),
                      rowwise_broadcast(forward_as<matrix_cl<int>>(y_val) - 1))
@@ -138,14 +138,14 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
                            rowwise_broadcast(inv_sum_exp_lin_cl));
     }
   }
-  if (!is_constant_all<T_alpha>::value) {
+  if constexpr (!is_constant_all<T_alpha>::value) {
     if (wgs == 1) {
       partials<1>(ops_partials) = std::move(alpha_derivative_cl);
     } else {
       partials<1>(ops_partials) = rowwise_sum(alpha_derivative_cl);
     }
   }
-  if (!is_constant_all<T_beta>::value && N_attributes != 0) {
+  if constexpr (!is_constant_all<T_beta>::value && N_attributes != 0) {
     partials<2>(ops_partials) = transpose(x_val) * neg_softmax_lin_cl;
     matrix_cl<double> temp(N_classes, local_size * N_attributes);
     try {

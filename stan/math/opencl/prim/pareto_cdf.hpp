@@ -100,19 +100,19 @@ return_type_t<T_y_cl, T_scale_cl, T_shape_cl> pareto_cdf(
   T_partials_return cdf = from_matrix_cl(cdf_cl).prod();
 
   auto ops_partials = make_partials_propagator(y_col, y_min_col, alpha_col);
-  if (!is_constant_all<T_y_cl, T_scale_cl, T_shape_cl>::value) {
+  if constexpr (!is_constant_all<T_y_cl, T_scale_cl, T_shape_cl>::value) {
     results(y_min_deriv_cl, y_deriv_cl, alpha_deriv_cl) = expressions(
         calc_if<!is_constant<T_scale_cl>::value>(y_min_deriv_cl * cdf),
         calc_if<!is_constant<T_y_cl>::value>(y_deriv_cl * cdf),
         calc_if<!is_constant<T_shape_cl>::value>(alpha_deriv_cl * cdf));
 
-    if (!is_constant<T_y_cl>::value) {
+    if constexpr (!is_constant<T_y_cl>::value) {
       partials<0>(ops_partials) = std::move(y_deriv_cl);
     }
-    if (!is_constant<T_scale_cl>::value) {
+    if constexpr (!is_constant<T_scale_cl>::value) {
       partials<1>(ops_partials) = std::move(y_min_deriv_cl);
     }
-    if (!is_constant<T_shape_cl>::value) {
+    if constexpr (!is_constant<T_shape_cl>::value) {
       partials<2>(ops_partials) = std::move(alpha_deriv_cl);
     }
   }

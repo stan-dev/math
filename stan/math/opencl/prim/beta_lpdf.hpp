@@ -120,13 +120,13 @@ return_type_t<T_y_cl, T_scale_succ_cl, T_scale_fail_cl> beta_lpdf(
 
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
 
-  if (!is_constant<T_y_cl>::value) {
+  if constexpr (!is_constant<T_y_cl>::value) {
     partials<0>(ops_partials) = std::move(y_deriv_cl);
   }
-  if (!is_constant<T_scale_succ_cl>::value) {
+  if constexpr (!is_constant<T_scale_succ_cl>::value) {
     partials<1>(ops_partials) = std::move(alpha_deriv_cl);
   }
-  if (!is_constant<T_scale_fail_cl>::value) {
+  if constexpr (!is_constant<T_scale_fail_cl>::value) {
     partials<2>(ops_partials) = std::move(beta_deriv_cl);
   }
 

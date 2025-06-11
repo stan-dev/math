@@ -75,16 +75,16 @@ return_type_t<T_y, T_shape, T_scale> weibull_lcdf(const T_y& y,
   if (any_derivs) {
     const auto& log_rep_deriv = to_ref(log_pow_n - log_diff_exp(pow_n, 0.0));
 
-    if (!is_constant_all<T_y, T_scale>::value) {
+    if constexpr (!is_constant_all<T_y, T_scale>::value) {
       const auto& log_deriv_y_sigma = to_ref(log_rep_deriv + log(alpha_val));
-      if (!is_constant_all<T_y>::value) {
+      if constexpr (!is_constant_all<T_y>::value) {
         partials<0>(ops_partials) = exp(log_deriv_y_sigma - log_y);
       }
-      if (!is_constant_all<T_scale>::value) {
+      if constexpr (!is_constant_all<T_scale>::value) {
         partials<2>(ops_partials) = -exp(log_deriv_y_sigma - log_sigma);
       }
     }
-    if (!is_constant_all<T_shape>::value) {
+    if constexpr (!is_constant_all<T_shape>::value) {
       partials<1>(ops_partials) = exp(log_rep_deriv) * log_y_div_sigma;
     }
   }

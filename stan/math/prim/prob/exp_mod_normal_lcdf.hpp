@@ -88,12 +88,12 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf(
 
   T_partials_return cdf_log = sum(log(cdf_n));
 
-  if (!is_constant_all<T_y, T_loc, T_scale, T_inv_scale>::value) {
+  if constexpr (!is_constant_all<T_y, T_loc, T_scale, T_inv_scale>::value) {
     const auto& exp_term_2
         = to_ref_if<(!is_constant_all<T_y, T_loc, T_scale>::value
                      && !is_constant_all<T_inv_scale>::value)>(
             exp(-square(scaled_diff_diff)));
-    if (!is_constant_all<T_y, T_loc, T_scale>::value) {
+    if constexpr (!is_constant_all<T_y, T_loc, T_scale>::value) {
       constexpr bool need_deriv_refs = !is_constant_all<T_y, T_loc>::value
                                        && !is_constant_all<T_scale>::value;
       const auto& deriv_1
@@ -104,25 +104,25 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf(
       const auto& exp_m_sq_scaled_diff = exp(-sq_scaled_diff);
       const auto& deriv_3 = to_ref_if<need_deriv_refs>(
           INV_SQRT_TWO_PI * exp_m_sq_scaled_diff * inv_sigma);
-      if (!is_constant_all<T_y, T_loc>::value) {
+      if constexpr (!is_constant_all<T_y, T_loc>::value) {
         const auto& deriv = to_ref_if<(!is_constant_all<T_loc>::value
                                        && !is_constant_all<T_y>::value)>(
             (deriv_1 - deriv_2 + deriv_3) / cdf_n);
-        if (!is_constant_all<T_y>::value) {
+        if constexpr (!is_constant_all<T_y>::value) {
           partials<0>(ops_partials) = deriv;
         }
-        if (!is_constant_all<T_loc>::value) {
+        if constexpr (!is_constant_all<T_loc>::value) {
           partials<1>(ops_partials) = -deriv;
         }
       }
-      if (!is_constant_all<T_scale>::value) {
+      if constexpr (!is_constant_all<T_scale>::value) {
         edge<2>(ops_partials).partials_
             = -((deriv_1 - deriv_2) * v
                 + (deriv_3 - deriv_2) * scaled_diff * SQRT_TWO)
               / cdf_n;
       }
     }
-    if (!is_constant_all<T_inv_scale>::value) {
+    if constexpr (!is_constant_all<T_inv_scale>::value) {
       edge<3>(ops_partials).partials_
           = exp_term
             * (INV_SQRT_TWO_PI * sigma_val * exp_term_2

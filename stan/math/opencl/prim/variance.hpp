@@ -27,7 +27,7 @@ inline double variance(const T& a) {
   if (a.size() == 1) {
     return 0.0;
   }
-  if (stan::internal::is_trivial_kg_expression<T>::value) {
+  if constexpr (stan::internal::is_trivial_kg_expression<T>::value) {
     return sum(square(a - mean(a))) / (a.size() - 1);
   } else {
     matrix_cl<double> a_eval;

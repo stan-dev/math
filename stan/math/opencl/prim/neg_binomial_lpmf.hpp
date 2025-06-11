@@ -51,7 +51,7 @@ inline return_type_t<T_n_cl, T_shape_cl, T_inv_scale_cl> neg_binomial_lpmf(
   if (N == 0) {
     return 0.0;
   }
-  if (!include_summand<propto, T_n_cl, T_shape_cl, T_inv_scale_cl>::value) {
+  if constexpr (!include_summand<propto, T_n_cl, T_shape_cl, T_inv_scale_cl>::value) {
     return 0.0;
   }
 
@@ -103,10 +103,10 @@ inline return_type_t<T_n_cl, T_shape_cl, T_inv_scale_cl> neg_binomial_lpmf(
 
   auto ops_partials = make_partials_propagator(alpha_col, beta_col);
 
-  if (!is_constant<T_shape_cl>::value) {
+  if constexpr (!is_constant<T_shape_cl>::value) {
     partials<0>(ops_partials) = std::move(alpha_deriv_cl);
   }
-  if (!is_constant<T_inv_scale_cl>::value) {
+  if constexpr (!is_constant<T_inv_scale_cl>::value) {
     partials<1>(ops_partials) = std::move(beta_deriv_cl);
   }
   return ops_partials.build(logp);

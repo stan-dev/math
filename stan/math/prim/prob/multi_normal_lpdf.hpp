@@ -106,11 +106,11 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
 
   T_partials_return logp(0);
 
-  if (include_summand<propto>::value) {
+  if constexpr (include_summand<propto>::value) {
     logp += NEG_LOG_SQRT_TWO_PI * size_y * size_vec;
   }
 
-  if (include_summand<propto, T_y, T_loc, T_covar_elem>::value) {
+  if constexpr (include_summand<propto, T_y, T_loc, T_covar_elem>::value) {
     vector_partials_t half(size_vec);
     vector_partials_t y_val_minus_mu_val(size_vec);
 
@@ -123,13 +123,13 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
 
       sum_lp_vec += dot_product(y_val_minus_mu_val, half);
 
-      if (!is_constant_all<T_y>::value) {
+      if constexpr (!is_constant_all<T_y>::value) {
         partials_vec<0>(ops_partials)[i] += -half;
       }
-      if (!is_constant_all<T_loc>::value) {
+      if constexpr (!is_constant_all<T_loc>::value) {
         partials_vec<1>(ops_partials)[i] += half;
       }
-      if (!is_constant<T_covar_elem>::value) {
+      if constexpr (!is_constant<T_covar_elem>::value) {
         partials_vec<2>(ops_partials)[i] += 0.5 * half * half.transpose();
       }
     }
@@ -138,8 +138,8 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
 
     // If the covariance is not autodiff, we can avoid computing a matrix
     // inverse
-    if (is_constant<T_covar_elem>::value) {
-      if (include_summand<propto>::value) {
+    if constexpr (is_constant<T_covar_elem>::value) {
+      if constexpr (include_summand<propto>::value) {
         logp += -0.5 * log_determinant_ldlt(ldlt_Sigma) * size_vec;
       }
     } else {
@@ -210,20 +210,20 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
 
   T_partials_return logp(0);
 
-  if (include_summand<propto>::value) {
+  if constexpr (include_summand<propto>::value) {
     logp += NEG_LOG_SQRT_TWO_PI * size_y;
   }
 
-  if (include_summand<propto, T_y, T_loc, T_covar_elem>::value) {
+  if constexpr (include_summand<propto, T_y, T_loc, T_covar_elem>::value) {
     vector_partials_t half(size_y);
     vector_partials_t y_val_minus_mu_val = eval(y_val - mu_val);
 
     // If the covariance is not autodiff, we can avoid computing a matrix
     // inverse
-    if (is_constant<T_covar_elem>::value) {
+    if constexpr (is_constant<T_covar_elem>::value) {
       half = mdivide_left_ldlt(ldlt_Sigma, y_val_minus_mu_val);
 
-      if (include_summand<propto>::value) {
+      if constexpr (include_summand<propto>::value) {
         logp += -0.5 * log_determinant_ldlt(ldlt_Sigma);
       }
     } else {
@@ -240,10 +240,10 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
 
     logp += -0.5 * dot_product(y_val_minus_mu_val, half);
 
-    if (!is_constant_all<T_y>::value) {
+    if constexpr (!is_constant_all<T_y>::value) {
       partials<0>(ops_partials) += -half;
     }
-    if (!is_constant_all<T_loc>::value) {
+    if constexpr (!is_constant_all<T_loc>::value) {
       partials<1>(ops_partials) += half;
     }
   }

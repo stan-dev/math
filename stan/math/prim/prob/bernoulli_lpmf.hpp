@@ -48,7 +48,7 @@ return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
   if (size_zero(n, theta)) {
     return 0.0;
   }
-  if (!include_summand<propto, T_prob>::value) {
+  if constexpr (!include_summand<propto, T_prob>::value) {
     return 0.0;
   }
 
@@ -68,12 +68,12 @@ return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
     // avoid nans when sum == N or sum == 0
     if (sum == N) {
       logp += N * log(theta_dbl);
-      if (!is_constant_all<T_prob>::value) {
+      if constexpr (!is_constant_all<T_prob>::value) {
         partials<0>(ops_partials)[0] += N / theta_dbl;
       }
     } else if (sum == 0) {
       logp += N * log1m(theta_dbl);
-      if (!is_constant_all<T_prob>::value) {
+      if constexpr (!is_constant_all<T_prob>::value) {
         partials<0>(ops_partials)[0] += N / (theta_dbl - 1);
       }
     } else {
@@ -83,7 +83,7 @@ return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
       logp += sum * log_theta;
       logp += (N - sum) * log1m_theta;
 
-      if (!is_constant_all<T_prob>::value) {
+      if constexpr (!is_constant_all<T_prob>::value) {
         partials<0>(ops_partials)[0] += sum * inv(theta_dbl);
         partials<0>(ops_partials)[0] += (N - sum) * inv(theta_dbl - 1);
       }
@@ -99,7 +99,7 @@ return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
         logp += log1m(theta_dbl);
       }
 
-      if (!is_constant_all<T_prob>::value) {
+      if constexpr (!is_constant_all<T_prob>::value) {
         if (n_int == 1) {
           partials<0>(ops_partials)[n] += inv(theta_dbl);
         } else {

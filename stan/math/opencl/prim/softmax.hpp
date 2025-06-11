@@ -26,7 +26,7 @@ inline matrix_cl<double> softmax(const T& a) {
     return a;
   }
   matrix_cl<double> theta;
-  if (stan::internal::is_trivial_kg_expression<T>::value) {
+  if constexpr (stan::internal::is_trivial_kg_expression<T>::value) {
     matrix_cl<double> a_max = max_2d(a);
     theta = exp(a - from_matrix_cl(a_max).maxCoeff());
   } else {

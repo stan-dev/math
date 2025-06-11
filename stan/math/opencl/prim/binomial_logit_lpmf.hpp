@@ -44,7 +44,7 @@ return_type_t<T_prob_cl> binomial_logit_lpmf(const T_n_cl& n, const T_N_cl N,
   if (siz == 0) {
     return 0.0;
   }
-  if (!include_summand<propto, T_prob_cl>::value) {
+  if constexpr (!include_summand<propto, T_prob_cl>::value) {
     return 0.0;
   }
 
@@ -81,7 +81,7 @@ return_type_t<T_prob_cl> binomial_logit_lpmf(const T_n_cl& n, const T_N_cl N,
 
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
   auto ops_partials = make_partials_propagator(alpha_col);
-  if (!is_constant<T_prob_cl>::value) {
+  if constexpr (!is_constant<T_prob_cl>::value) {
     partials<0>(ops_partials) = std::move(alpha_deriv_cl);
   }
 

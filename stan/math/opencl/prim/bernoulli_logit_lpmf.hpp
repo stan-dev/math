@@ -39,7 +39,7 @@ return_type_t<T_prob_cl> bernoulli_logit_lpmf(const T_n_cl& n,
   if (N == 0) {
     return 0.0;
   }
-  if (!include_summand<propto, T_prob_cl>::value) {
+  if constexpr (!include_summand<propto, T_prob_cl>::value) {
     return 0.0;
   }
 
@@ -79,7 +79,7 @@ return_type_t<T_prob_cl> bernoulli_logit_lpmf(const T_n_cl& n,
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
   auto ops_partials = make_partials_propagator(theta_col);
 
-  if (!is_constant_all<T_prob_cl>::value) {
+  if constexpr (!is_constant_all<T_prob_cl>::value) {
     partials<0>(ops_partials) = deriv_cl;
   }
 

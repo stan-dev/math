@@ -25,7 +25,7 @@ namespace stan {
 namespace math {
 
 template <typename T_n, typename T_rate>
-return_type_t<T_rate> poisson_lccdf(const T_n& n, const T_rate& lambda) {
+inline return_type_t<T_rate> poisson_lccdf(const T_n& n, const T_rate& lambda) {
   using T_partials_return = partials_return_t<T_n, T_rate>;
   using T_n_ref = ref_type_if_not_constant_t<T_n>;
   using T_lambda_ref = ref_type_if_not_constant_t<T_rate>;
@@ -56,7 +56,7 @@ return_type_t<T_rate> poisson_lccdf(const T_n& n, const T_rate& lambda) {
       log(gamma_p(n_val + 1.0, lambda_val)));
   T_partials_return P = sum(log_Pi);
 
-  if (!is_constant_all<T_rate>::value) {
+  if constexpr (!is_constant_all<T_rate>::value) {
     partials<0>(ops_partials) = exp(n_val * log(lambda_val) - lambda_val
                                     - lgamma(n_val + 1.0) - log_Pi);
   }

@@ -48,7 +48,7 @@ return_type_t<T_y_cl, T_scale_cl, T_shape_cl> pareto_lpdf(
   if (N == 0) {
     return 0.0;
   }
-  if (!include_summand<propto, T_y_cl, T_scale_cl, T_shape_cl>::value) {
+  if constexpr (!include_summand<propto, T_y_cl, T_scale_cl, T_shape_cl>::value) {
     return 0.0;
   }
 
@@ -110,13 +110,13 @@ return_type_t<T_y_cl, T_scale_cl, T_shape_cl> pareto_lpdf(
 
   auto ops_partials = make_partials_propagator(y_col, y_min_col, alpha_col);
 
-  if (!is_constant<T_y_cl>::value) {
+  if constexpr (!is_constant<T_y_cl>::value) {
     partials<0>(ops_partials) = std::move(y_deriv_cl);
   }
-  if (!is_constant<T_scale_cl>::value) {
+  if constexpr (!is_constant<T_scale_cl>::value) {
     partials<1>(ops_partials) = std::move(y_min_deriv_cl);
   }
-  if (!is_constant<T_shape_cl>::value) {
+  if constexpr (!is_constant<T_shape_cl>::value) {
     partials<2>(ops_partials) = std::move(alpha_deriv_cl);
   }
   return ops_partials.build(logp);

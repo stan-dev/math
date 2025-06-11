@@ -53,7 +53,7 @@ inline return_type_t<T_n_cl, T_location_cl, T_precision_cl> neg_binomial_2_lpmf(
   if (N == 0) {
     return 0.0;
   }
-  if (!include_summand<propto, T_n_cl, T_location_cl, T_precision_cl>::value) {
+  if constexpr (!include_summand<propto, T_n_cl, T_location_cl, T_precision_cl>::value) {
     return 0.0;
   }
 
@@ -108,10 +108,10 @@ inline return_type_t<T_n_cl, T_location_cl, T_precision_cl> neg_binomial_2_lpmf(
 
   auto ops_partials = make_partials_propagator(mu_col, phi_col);
 
-  if (!is_constant<T_location_cl>::value) {
+  if constexpr (!is_constant<T_location_cl>::value) {
     partials<0>(ops_partials) = std::move(mu_deriv_cl);
   }
-  if (!is_constant<T_precision_cl>::value) {
+  if constexpr (!is_constant<T_precision_cl>::value) {
     partials<1>(ops_partials) = std::move(phi_deriv_cl);
   }
   return ops_partials.build(logp);

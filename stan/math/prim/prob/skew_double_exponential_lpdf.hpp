@@ -61,7 +61,7 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lpdf(
   if (size_zero(y, mu, sigma, tau)) {
     return 0.0;
   }
-  if (!include_summand<propto, T_y, T_loc, T_scale, T_skewness>::value) {
+  if constexpr (!include_summand<propto, T_y, T_loc, T_scale, T_skewness>::value) {
     return 0.0;
   }
 
@@ -93,32 +93,32 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lpdf(
   size_t N = max_size(y, mu, sigma, tau);
   T_partials_return logp = -2.0 * sum(expo);
 
-  if (include_summand<propto>::value) {
+  if constexpr (include_summand<propto>::value) {
     logp += N * LOG_TWO;
   }
-  if (include_summand<propto, T_scale>::value) {
+  if constexpr (include_summand<propto, T_scale>::value) {
     logp -= sum(log(sigma_val)) * N / math::size(sigma);
   }
-  if (include_summand<propto, T_skewness>::value) {
+  if constexpr (include_summand<propto, T_skewness>::value) {
     logp += sum(log(tau_val) + log1m(tau_val)) * N / math::size(tau);
   }
 
-  if (!is_constant_all<T_y, T_loc>::value) {
+  if constexpr (!is_constant_all<T_y, T_loc>::value) {
     const auto& deriv = to_ref_if<(!is_constant_all<T_y>::value
                                    && !is_constant_all<T_loc>::value)>(
         2.0 * (diff_sign_smaller_0 + diff_sign * tau_val) * diff_sign
         * inv_sigma);
-    if (!is_constant_all<T_y>::value) {
+    if constexpr (!is_constant_all<T_y>::value) {
       partials<0>(ops_partials) = -deriv;
     }
-    if (!is_constant_all<T_loc>::value) {
+    if constexpr (!is_constant_all<T_loc>::value) {
       partials<1>(ops_partials) = deriv;
     }
   }
-  if (!is_constant_all<T_scale>::value) {
+  if constexpr (!is_constant_all<T_scale>::value) {
     partials<2>(ops_partials) = -inv_sigma + 2.0 * expo * inv_sigma;
   }
-  if (!is_constant_all<T_skewness>::value) {
+  if constexpr (!is_constant_all<T_skewness>::value) {
     edge<3>(ops_partials).partials_
         = inv(tau_val) - inv(1.0 - tau_val)
           + (-1.0 * diff_sign) * 2.0 * abs_diff_y_mu_over_sigma;

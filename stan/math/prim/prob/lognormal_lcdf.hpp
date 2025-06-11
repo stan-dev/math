@@ -65,20 +65,20 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lcdf(const T_y& y, const T_loc& mu,
   size_t N = max_size(y, mu, sigma);
   T_partials_return cdf_log = N * LOG_HALF + sum(log(erfc_calc));
 
-  if (!is_constant_all<T_y, T_loc, T_scale>::value) {
+  if constexpr (!is_constant_all<T_y, T_loc, T_scale>::value) {
     const auto& exp_m_sq_diff = exp(-scaled_diff * scaled_diff);
     const auto& rep_deriv = to_ref_if<!is_constant_all<T_y>::value
                                           + !is_constant_all<T_scale>::value
                                           + !is_constant_all<T_loc>::value
                                       >= 2>(
         -SQRT_TWO_OVER_SQRT_PI * exp_m_sq_diff / (sigma_val * erfc_calc));
-    if (!is_constant_all<T_y>::value) {
+    if constexpr (!is_constant_all<T_y>::value) {
       partials<0>(ops_partials) = -rep_deriv / y_val;
     }
-    if (!is_constant_all<T_loc>::value) {
+    if constexpr (!is_constant_all<T_loc>::value) {
       partials<1>(ops_partials) = rep_deriv;
     }
-    if (!is_constant_all<T_scale>::value) {
+    if constexpr (!is_constant_all<T_scale>::value) {
       partials<2>(ops_partials) = rep_deriv * scaled_diff * SQRT_TWO;
     }
   }

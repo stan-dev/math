@@ -22,7 +22,7 @@ return_type_t<T_prob> categorical_lpmf(int n, const T_prob& theta) {
   ref_type_t<T_prob> theta_ref = theta;
   check_simplex(function, "Probabilities parameter", value_of(theta_ref));
 
-  if (include_summand<propto, T_prob>::value) {
+  if constexpr (include_summand<propto, T_prob>::value) {
     return log(theta_ref.coeff(n - 1));
   }
   return 0.0;
@@ -38,7 +38,7 @@ return_type_t<T_prob> categorical_lpmf(const std::vector<int>& ns,
   ref_type_t<T_prob> theta_ref = theta;
   check_simplex(function, "Probabilities parameter", value_of(theta_ref));
 
-  if (!include_summand<propto, T_prob>::value) {
+  if constexpr (!include_summand<propto, T_prob>::value) {
     return 0.0;
   }
 

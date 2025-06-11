@@ -76,7 +76,7 @@ inline Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> gp_periodic_cov(
     cov.diagonal().segment(jb, j_size)
         = Eigen::VectorXd::Constant(j_size, sigma_sq);
 
-    if (!is_constant<T_sigma>::value) {
+    if constexpr (!is_constant<T_sigma>::value) {
       cov_diag.segment(jb, j_size) = cov.diagonal().segment(jb, j_size);
     }
     for (size_t ib = jb; ib < x_size; ib += block_size) {
@@ -115,7 +115,7 @@ inline Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> gp_periodic_cov(
       double dist = dists_lin.coeff(pos);
       adjp += prod_add * sin(two_pi_div_p * dist) * dist;
     }
-    if (!is_constant<T_sigma>::value) {
+    if constexpr (!is_constant<T_sigma>::value) {
       adjsigma += (cov_diag.val().array() * cov_diag.adj().array()).sum();
       adjoint_of(sigma) += adjsigma * 2 / value_of(sigma);
     }
