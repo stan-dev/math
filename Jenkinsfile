@@ -506,13 +506,13 @@ pipeline {
                     }
                 }
             }
-            agent { label 'linux && docker && 8core' }
+            agent { label 'linux && docker' }
             steps {
                 script {
                     def tests = [:]
                     for (f in changedDistributionTests.collate(24)) {
                         def names = f.join(" ")
-                        tests["Distribution Tests: ${names}"] = { node ("linux && docker") {
+                        tests["Distribution Tests: ${names}"] = { node ("linux && docker && 8core") {
                             deleteDir()
                             docker.image('stanorg/ci:gpu-cpp17').inside {
                                 catchError {
