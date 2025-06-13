@@ -42,8 +42,8 @@ struct floor_fun {
  * @return Greatest integer <= each value in x.
  */
 template <typename Container, require_ad_container_t<Container>* = nullptr>
-inline auto floor(const Container& x) {
-  return apply_scalar_unary<floor_fun, Container>::apply(x);
+inline auto floor(Container&& x) {
+  return apply_scalar_unary<floor_fun, std::decay_t<Container>>::apply(std::forward<Container>(x));
 }
 
 /**
@@ -57,9 +57,10 @@ inline auto floor(const Container& x) {
 template <typename Container,
           require_container_bt<std::is_arithmetic, Container>* = nullptr,
           require_not_var_matrix_t<Container>* = nullptr>
-inline auto floor(const Container& x) {
-  return apply_vector_unary<Container>::apply(
-      x, [](const auto& v) { return v.array().floor(); });
+inline auto floor(Container&& x) {
+  return apply_vector_unary<std::decay_t<Container>>::apply(
+      std::forward<Container>(x),
+      [](const auto& v) { return std::forward<decltype(v)>(v).array().floor(); });
 }
 
 }  // namespace math

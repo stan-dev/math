@@ -50,8 +50,8 @@ struct square_fun {
  * @return Each value in x squared.
  */
 template <typename Container, require_ad_container_t<Container>* = nullptr>
-inline auto square(const Container& x) {
-  return apply_scalar_unary<square_fun, Container>::apply(x);
+inline auto square(Container&& x) {
+  return apply_scalar_unary<square_fun, std::decay_t<Container>>::apply(std::forward<Container>(x));
 }
 
 /**
@@ -64,9 +64,10 @@ inline auto square(const Container& x) {
  */
 template <typename Container,
           require_container_bt<std::is_arithmetic, Container>* = nullptr>
-inline auto square(const Container& x) {
-  return apply_vector_unary<Container>::apply(
-      x, [](const auto& v) { return v.array().square(); });
+inline auto square(Container&& x) {
+  return apply_vector_unary<std::decay_t<Container>>::apply(
+      std::forward<Container>(x),
+      [](const auto& v) { return std::forward<decltype(v)>(v).array().square(); });
 }
 
 }  // namespace math

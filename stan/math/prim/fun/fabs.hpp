@@ -48,8 +48,8 @@ template <typename Container,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               Container>* = nullptr,
           require_not_stan_scalar_t<Container>* = nullptr>
-inline auto fabs(const Container& x) {
-  return apply_scalar_unary<fabs_fun, Container>::apply(x);
+inline auto fabs(Container&& x) {
+  return apply_scalar_unary<fabs_fun, std::decay_t<Container>>::apply(std::forward<Container>(x));
 }
 
 /**
@@ -62,9 +62,10 @@ inline auto fabs(const Container& x) {
  */
 template <typename Container,
           require_container_st<std::is_arithmetic, Container>* = nullptr>
-inline auto fabs(const Container& x) {
-  return apply_vector_unary<Container>::apply(
-      x, [](const auto& v) { return v.array().abs(); });
+inline auto fabs(Container&& x) {
+  return apply_vector_unary<std::decay_t<Container>>::apply(
+      std::forward<Container>(x),
+      [](const auto& v) { return std::forward<decltype(v)>(v).array().abs(); });
 }
 
 }  // namespace math

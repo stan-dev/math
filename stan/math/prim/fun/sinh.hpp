@@ -57,8 +57,8 @@ struct sinh_fun {
  * @return Hyperbolic sine of each variable in x.
  */
 template <typename Container, require_ad_container_t<Container>* = nullptr>
-inline auto sinh(const Container& x) {
-  return apply_scalar_unary<sinh_fun, Container>::apply(x);
+inline auto sinh(Container&& x) {
+  return apply_scalar_unary<sinh_fun, std::decay_t<Container>>::apply(std::forward<Container>(x));
 }
 
 /**
@@ -71,9 +71,10 @@ inline auto sinh(const Container& x) {
  */
 template <typename Container,
           require_container_bt<std::is_arithmetic, Container>* = nullptr>
-inline auto sinh(const Container& x) {
-  return apply_vector_unary<Container>::apply(
-      x, [](const auto& v) { return v.array().sinh(); });
+inline auto sinh(Container&& x) {
+  return apply_vector_unary<std::decay_t<Container>>::apply(
+      std::forward<Container>(x),
+      [](const auto& v) { return std::forward<decltype(v)>(v).array().sinh(); });
 }
 
 namespace internal {

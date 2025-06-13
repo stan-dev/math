@@ -78,8 +78,8 @@ struct acosh_fun {
  * @return Elementwise acosh of members of container.
  */
 template <typename T, require_ad_container_t<T>* = nullptr>
-inline auto acosh(const T& x) {
-  return apply_scalar_unary<acosh_fun, T>::apply(x);
+inline auto acosh(T&& x) {
+  return apply_scalar_unary<acosh_fun, std::decay_t<T>>::apply(std::forward<T>(x));
 }
 
 /**
@@ -94,8 +94,8 @@ inline auto acosh(const T& x) {
  */
 template <typename Container,
           require_container_bt<std::is_arithmetic, Container>* = nullptr>
-inline auto acosh(const Container& x) {
-  return apply_scalar_unary<acosh_fun, Container>::apply(x);
+inline auto acosh(Container&& x) {
+  return apply_scalar_unary<acosh_fun, std::decay_t<Container>>::apply(std::forward<Container>(x));
 }
 
 namespace internal {

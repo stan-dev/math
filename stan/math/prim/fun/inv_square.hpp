@@ -34,9 +34,12 @@ inline auto inv_square(const Container& x) {
  */
 template <typename Container,
           require_container_st<std::is_arithmetic, Container>* = nullptr>
-inline auto inv_square(const Container& x) {
-  return apply_vector_unary<Container>::apply(
-      x, [](const auto& v) { return v.array().square().inverse(); });
+inline auto inv_square(Container&& x) {
+  return apply_vector_unary<std::decay_t<Container>>::apply(
+      std::forward<Container>(x),
+      [](const auto& v) {
+        return std::forward<decltype(v)>(v).array().square().inverse();
+      });
 }
 
 }  // namespace math

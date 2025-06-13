@@ -59,8 +59,9 @@ struct sin_fun {
  * @return Sine of each value in x.
  */
 template <typename T, require_ad_container_t<T>* = nullptr>
-inline auto sin(const T& x) {
-  return apply_scalar_unary<sin_fun, T>::apply(x);
+inline auto sin(T&& x) {
+  return apply_scalar_unary<sin_fun, std::decay_t<T>>::apply(
+      std::forward<T>(x));
 }
 
 /**
@@ -73,9 +74,10 @@ inline auto sin(const T& x) {
  */
 template <typename Container,
           require_container_bt<std::is_arithmetic, Container>* = nullptr>
-inline auto sin(const Container& x) {
-  return apply_vector_unary<Container>::apply(
-      x, [&](const auto& v) { return v.array().sin(); });
+inline auto sin(Container&& x) {
+  return apply_vector_unary<std::decay_t<Container>>::apply(
+      std::forward<Container>(x),
+      [&](const auto& v) { return std::forward<decltype(v)>(v).array().sin(); });
 }
 
 namespace internal {

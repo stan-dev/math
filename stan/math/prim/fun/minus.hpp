@@ -27,9 +27,10 @@ inline auto minus(const T& x) {
  * @return Container where each element is negated.
  */
 template <typename T>
-inline auto minus(const std::vector<T>& x) {
+inline auto minus(std::vector<T>&& x) {
   return apply_vector_unary<std::vector<T>>::apply(
-      x, [](const auto& v) { return -v; });
+      std::forward<std::vector<T>>(x),
+      [](auto&& v) { return -std::forward<decltype(v)>(v); });
 }
 
 }  // namespace math

@@ -60,8 +60,9 @@ struct cos_fun {
  * @return Cosine of each value in x.
  */
 template <typename Container, require_ad_container_t<Container>* = nullptr>
-inline auto cos(const Container& x) {
-  return apply_scalar_unary<cos_fun, Container>::apply(x);
+inline auto cos(Container&& x) {
+  return apply_scalar_unary<cos_fun, std::decay_t<Container>>::apply(
+      std::forward<Container>(x));
 }
 
 /**
@@ -74,9 +75,12 @@ inline auto cos(const Container& x) {
  */
 template <typename Container,
           require_container_bt<std::is_arithmetic, Container>* = nullptr>
-inline auto cos(const Container& x) {
-  return apply_vector_unary<Container>::apply(
-      x, [&](const auto& v) { return v.array().cos(); });
+inline auto cos(Container&& x) {
+  return apply_vector_unary<std::decay_t<Container>>::apply(
+      std::forward<Container>(x),
+      [&](const auto& v) {
+        return std::forward<decltype(v)>(v).array().cos();
+      });
 }
 
 namespace internal {

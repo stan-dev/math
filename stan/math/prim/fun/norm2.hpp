@@ -31,9 +31,10 @@ inline double norm2(const T& v) {
  * @return L2 norm of v.
  */
 template <typename Container, require_std_vector_t<Container>* = nullptr>
-inline auto norm2(const Container& x) {
-  return apply_vector_unary<Container>::reduce(
-      x, [](const auto& v) { return norm2(v); });
+inline auto norm2(Container&& x) {
+  return apply_vector_unary<std::decay_t<Container>>::reduce(
+      std::forward<Container>(x),
+      [](auto&& v) { return norm2(std::forward<decltype(v)>(v)); });
 }
 
 }  // namespace math

@@ -63,8 +63,9 @@ struct asin_fun {
  * @return Arcsine of each variable in the container, in radians.
  */
 template <typename Container, require_ad_container_t<Container>* = nullptr>
-inline auto asin(const Container& x) {
-  return apply_scalar_unary<asin_fun, Container>::apply(x);
+inline auto asin(Container&& x) {
+  return apply_scalar_unary<asin_fun, std::decay_t<Container>>::apply(
+      std::forward<Container>(x));
 }
 
 /**
@@ -77,9 +78,12 @@ inline auto asin(const Container& x) {
  */
 template <typename Container,
           require_container_bt<std::is_arithmetic, Container>* = nullptr>
-inline auto asin(const Container& x) {
-  return apply_vector_unary<Container>::apply(
-      x, [](const auto& v) { return v.array().asin(); });
+inline auto asin(Container&& x) {
+  return apply_vector_unary<std::decay_t<Container>>::apply(
+      std::forward<Container>(x),
+      [](const auto& v) {
+        return std::forward<decltype(v)>(v).array().asin();
+      });
 }
 
 namespace internal {

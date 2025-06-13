@@ -87,8 +87,8 @@ struct logit_fun {
  * @return elementwise logit of container elements
  */
 template <typename Container, require_ad_container_t<Container>* = nullptr>
-inline auto logit(const Container& x) {
-  return apply_scalar_unary<logit_fun, Container>::apply(x);
+inline auto logit(Container&& x) {
+  return apply_scalar_unary<logit_fun, std::decay_t<Container>>::apply(std::forward<Container>(x));
 }
 
 /**
@@ -104,14 +104,19 @@ inline auto logit(const Container& x) {
  */
 template <typename Container,
           require_container_bt<std::is_arithmetic, Container>* = nullptr>
-inline auto logit(const Container& x) {
+inline auto logit(Container&& x) {
   return make_holder(
-      [](const auto& v_ref) {
-        return apply_vector_unary<ref_type_t<Container>>::apply(
-            v_ref,
-            [](const auto& v) { return (v.array() / (1 - v.array())).log(); });
+      [](auto&& v_ref) {
+        return apply_vector_unary<ref_type_t<std::decay_t<Container>>>::apply(
+            std::forward<decltype(v_ref)>(v_ref),
+            [](const auto& v) {
+              return (
+                         std::forward<decltype(v)>(v).array()
+                         / (1 - std::forward<decltype(v)>(v).array()))
+                  .log();
+            });
       },
-      to_ref(x));
+      to_ref(std::forward<Container>(x)));
 }
 
 }  // namespace math
