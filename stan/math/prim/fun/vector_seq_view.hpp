@@ -8,12 +8,13 @@
 namespace stan {
 namespace internal {
 template <typename T>
-using is_matrix_or_std_vector
-    = math::disjunction<is_matrix<T>, is_std_vector<T>>;
+using is_matrix_or_std_vector_or_tuple
+    = math::disjunction<is_matrix<T>, is_std_vector<T>, math::is_tuple<T>>;
 
 template <typename T>
 using is_scalar_container = math::disjunction<
     is_matrix<T>,
+    math::is_tuple<T>,
     math::conjunction<is_std_vector<T>, is_stan_scalar<value_type_t<T>>>>;
 }  // namespace internal
 
@@ -76,7 +77,7 @@ class vector_seq_view<T, require_t<internal::is_scalar_container<T>>> {
  */
 template <typename T>
 class vector_seq_view<
-    T, require_std_vector_vt<internal::is_matrix_or_std_vector, T>> {
+    T, require_std_vector_vt<internal::is_matrix_or_std_vector_or_tuple, T>> {
  public:
   explicit vector_seq_view(const T& v) noexcept : v_(v) {}
   inline auto size() const noexcept { return v_.size(); }

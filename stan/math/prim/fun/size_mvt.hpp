@@ -36,8 +36,18 @@ int64_t size_mvt(const MatrixT& /* unused */) {
   return 1;
 }
 
+template <typename TupleT, require_tuple_t<TupleT>* = nullptr>
+int64_t size_mvt(const TupleT& /* unused */) {
+  return 1;
+}
+
 template <typename MatrixT, require_matrix_t<MatrixT>* = nullptr>
 int64_t size_mvt(const std::vector<MatrixT>& x) {
+  return x.size();
+}
+
+template <typename TupleT, require_tuple_t<TupleT>* = nullptr>
+int64_t size_mvt(const std::vector<TupleT>& x) {
   return x.size();
 }
 

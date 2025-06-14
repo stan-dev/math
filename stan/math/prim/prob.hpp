@@ -111,6 +111,7 @@
 #include <stan/math/prim/prob/gamma_lcdf.hpp>
 #include <stan/math/prim/prob/gamma_lpdf.hpp>
 #include <stan/math/prim/prob/gamma_rng.hpp>
+#include <stan/math/prim/prob/gaussian_copula_cholesky_lpdf.hpp>
 #include <stan/math/prim/prob/gaussian_dlm_obs_lpdf.hpp>
 #include <stan/math/prim/prob/gaussian_dlm_obs_rng.hpp>
 #include <stan/math/prim/prob/gumbel_ccdf_log.hpp>
