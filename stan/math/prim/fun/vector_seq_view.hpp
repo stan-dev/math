@@ -13,8 +13,7 @@ using is_matrix_or_std_vector_or_tuple
 
 template <typename T>
 using is_scalar_container = math::disjunction<
-    is_matrix<T>,
-    math::is_tuple<T>,
+    is_matrix<T>, math::is_tuple<T>,
     math::conjunction<is_std_vector<T>, is_stan_scalar<value_type_t<T>>>>;
 }  // namespace internal
 

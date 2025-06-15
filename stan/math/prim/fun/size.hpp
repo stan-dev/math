@@ -34,7 +34,6 @@ inline int64_t size(const T& m) {
   return m.size();
 }
 
-
 template <typename T, require_tuple_t<T>* = nullptr>
 inline int64_t size(const T& /*t*/) {
   return std::tuple_size<std::remove_reference_t<T>>{};

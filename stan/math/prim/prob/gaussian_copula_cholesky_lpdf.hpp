@@ -17,29 +17,25 @@ namespace math {
 namespace internal {
 
 template <typename Ty_elem, typename Ttuple, std::size_t... I>
-auto apply_lcdfs_elem_impl(
-  Ty_elem&& y_elem, Ttuple&& lcdf_tuple, std::index_sequence<I...>) {
+auto apply_lcdfs_elem_impl(Ty_elem&& y_elem, Ttuple&& lcdf_tuple,
+                           std::index_sequence<I...>) {
   auto&& lcdf_func = std::get<0>(lcdf_tuple);
-  return lcdf_func(
-    std::forward<Ty_elem>(y_elem),
-    std::get<I + 1>(std::forward<Ttuple>(lcdf_tuple))...
-  );
+  return lcdf_func(std::forward<Ty_elem>(y_elem),
+                   std::get<I + 1>(std::forward<Ttuple>(lcdf_tuple))...);
 }
 
 template <typename Ty, typename Ttuple>
 auto apply_lcdfs(Ty&& y, Ttuple&& lcdf_tuple) {
   return index_apply<std::tuple_size<std::remove_reference_t<Ttuple>>{}>(
-    [&y, &lcdf_tuple](auto... Is) {
-      return std::make_tuple(
-        apply_lcdfs_elem_impl(
-          y[Is], std::get<Is>(lcdf_tuple), std::make_index_sequence<
-            std::tuple_size<std::remove_reference_t<decltype(std::get<Is>(lcdf_tuple))>>{} - 1>{}
-        )...
-      );
-    });
+      [&y, &lcdf_tuple](auto... Is) {
+        return std::make_tuple(apply_lcdfs_elem_impl(
+            y[Is], std::get<Is>(lcdf_tuple),
+            std::make_index_sequence<std::tuple_size<std::remove_reference_t<
+                                         decltype(std::get<Is>(lcdf_tuple))>>{}
+                                     - 1>{})...);
+      });
 }
-}
-
+}  // namespace internal
 
 /** \ingroup multivar_dists
  * The log of the Gaussian copula density for the given y and
@@ -67,15 +63,17 @@ auto apply_lcdfs(Ty&& y, Ttuple&& lcdf_tuple) {
  * @tparam T_chol Type of cholesky factor.
  */
 template <bool propto, typename T_y, typename T_lcdf_fun_tuple, typename T_chol>
-auto gaussian_copula_cholesky_lpdf(
-  const T_y& y, const T_lcdf_fun_tuple& lcdf_fun_tuple, const T_chol chol) {
+auto gaussian_copula_cholesky_lpdf(const T_y& y,
+                                   const T_lcdf_fun_tuple& lcdf_fun_tuple,
+                                   const T_chol chol) {
   static constexpr const char* function = "gaussian_copula_cholesky_lpdf";
 
   using T_y_ref = ref_type_t<T_y>;
   using T_chol_ref = ref_type_t<T_chol>;
   using T_lcdf_ref = ref_type_t<T_lcdf_fun_tuple>;
 
-  check_consistent_sizes_mvt(function, "y", y, "lcdf_fun_tuple", lcdf_fun_tuple);
+  check_consistent_sizes_mvt(function, "y", y, "lcdf_fun_tuple",
+                             lcdf_fun_tuple);
   const size_t size_mvt_y = size_mvt(y);
   const size_t size_mvt_lcdf_tuple = size_mvt(lcdf_fun_tuple);
   T_y_ref y_ref = y;
@@ -84,7 +82,9 @@ auto gaussian_copula_cholesky_lpdf(
 
   vector_seq_view<T_y_ref> y_vec(y_ref);
   vector_seq_view<T_lcdf_ref> lcdf_tuple_vec(lcdf_tuple_ref);
-  using T_return = return_type_t<T_y, decltype(internal::apply_lcdfs(y_vec[0], lcdf_tuple_vec[0])), T_chol>;
+  using T_return = return_type_t<
+      T_y, decltype(internal::apply_lcdfs(y_vec[0], lcdf_tuple_vec[0])),
+      T_chol>;
 
   if (size_mvt_y == 0) {
     return T_return(0);
@@ -135,14 +135,14 @@ auto gaussian_copula_cholesky_lpdf(
     const auto& func_i = lcdf_tuple_vec[i];
 
     const auto& res = internal::apply_lcdfs(y_i, func_i);
-    const auto& u = index_apply<std::tuple_size<std::remove_reference_t<decltype(res)>>{}>(
-      [&res, size_y](auto... Is) {
-        Eigen::Matrix<T_return, Eigen::Dynamic, 1> u_inner(size_y);
-        static_cast<void>(std::initializer_list<int>{
-          (u_inner[Is] = std::get<Is>(res), 0)...
+    const auto& u = index_apply<
+        std::tuple_size<std::remove_reference_t<decltype(res)>>{}>(
+        [&res, size_y](auto... Is) {
+          Eigen::Matrix<T_return, Eigen::Dynamic, 1> u_inner(size_y);
+          static_cast<void>(std::initializer_list<int>{
+              (u_inner[Is] = std::get<Is>(res), 0)...});
+          return u_inner;
         });
-        return u_inner;
-      });
     check_bounded(function, "LCDF-transformed inputs", u, NEGATIVE_INFTY, 0);
     q[i] = std_normal_log_qf(u);
     lp -= std_normal_lpdf<propto>(q[i]);
@@ -153,8 +153,9 @@ auto gaussian_copula_cholesky_lpdf(
 }
 
 template <typename T_y, typename T_lcdf_fun_tuple, typename T_chol>
-auto gaussian_copula_cholesky_lpdf(
-  const T_y& y, const T_lcdf_fun_tuple& lcdf_fun_tuple, const T_chol chol) {
+auto gaussian_copula_cholesky_lpdf(const T_y& y,
+                                   const T_lcdf_fun_tuple& lcdf_fun_tuple,
+                                   const T_chol chol) {
   return gaussian_copula_cholesky_lpdf<false>(y, lcdf_fun_tuple, chol);
 }
 }  // namespace math
