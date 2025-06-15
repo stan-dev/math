@@ -125,7 +125,7 @@ T_return gaussian_copula_cholesky_lpdf(
   for (size_t i = 1; i < size_mvt_lcdf_tuple; i++) {
     check_size_match(function,
                      "Size of one of the vectors of "
-                     "the CDF functor tuple",
+                     "the LCDF functor tuple",
                      math::size(lcdf_tuple_vec[i]),
                      "Size of the first vector of the "
                      "location variable",
@@ -133,7 +133,7 @@ T_return gaussian_copula_cholesky_lpdf(
   }
 
   check_size_match(function, "Size of random variable", size_y,
-                   "size of CDF functor tuple", size_lcdf_tuple);
+                   "size of LCDF functor tuple", size_lcdf_tuple);
   check_size_match(function, "Size of random variable", size_y,
                    "rows of covariance parameter", chol.rows());
   check_size_match(function, "Size of random variable", size_y,
@@ -149,7 +149,7 @@ T_return gaussian_copula_cholesky_lpdf(
   T_return lp(0);
   for (size_t i = 0; i < size_vec; i++) {
     const auto& u = internal::apply_lcdfs(y_vec[i], lcdf_tuple_vec[i]);
-    check_bounded(function, "CDF-transformed inputs", u, NEGATIVE_INFTY, 0);
+    check_bounded(function, "LCDF-transformed inputs", u, NEGATIVE_INFTY, 0);
     q[i] = to_vector(std_normal_log_qf(u));
     lp -= std_normal_lpdf<propto>(q[i]);
   }
