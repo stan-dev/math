@@ -4,8 +4,8 @@ TEST_F(AgradRev, ProbDistributionsGaussCopulaCholesky) {
   // Bind functors for compatibility with AD framework
   auto f = [](const auto func1, const auto func2) {
     return [=](const auto& y, const auto& args, const auto& sigma) {
-      auto lcdf_functors = std::make_tuple(std::make_tuple(func1, args[0], args[1]),
-                                           std::make_tuple(func2));
+      auto lcdf_functors = std::make_tuple(
+          std::make_tuple(func1, args[0], args[1]), std::make_tuple(func2));
       auto sigma_sym = stan::math::multiply(0.5, sigma + sigma.transpose());
       auto L = stan::math::cholesky_decompose(sigma_sym);
       return stan::math::gaussian_copula_cholesky_lpdf(y, lcdf_functors, L);
