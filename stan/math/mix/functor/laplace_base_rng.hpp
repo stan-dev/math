@@ -32,7 +32,7 @@ namespace math {
  * \msg_arg
  */
 template <
-    typename LLFunc, typename LLArgs, typename ThetaVec, typename CovarFun,
+    typename LLFunc, typename LLArgs, typename CovarFun,
     typename CovarArgs, typename RNG,
     require_t<is_all_arithmetic_scalar<CovarArgs, LLArgs>>* = nullptr>
 inline Eigen::VectorXd laplace_base_rng(LLFunc&& ll_fun, LLArgs&& ll_args,
