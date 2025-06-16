@@ -87,7 +87,7 @@ TEST_F(laplace_count_two_dim_diag_test, poisson_log_exp_likelihood) {
   for (int i = 0; i < n_sim; i++) {
     rng.seed(2025 + i);
     Eigen::MatrixXd theta_pred = laplace_latent_poisson_2_log_rng(
-        y, y_index, ye,  stan::math::test::diagonal_kernel_functor{},
+        y, y_index, ye, stan::math::test::diagonal_kernel_functor{},
         std::forward_as_tuple(phi(0), phi(1)), rng, nullptr);
 
     theta_dim0(i) = theta_pred(0);

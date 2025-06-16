@@ -1022,8 +1022,8 @@ inline void reverse_pass_collect_adjoints(var ret, Output&& output,
  * \msg_arg
  * @return the log maginal density, p(y | phi)
  */
-template <typename LLFun, typename LLTupleArgs,
-          typename CovarFun, typename CovarArgs,
+template <typename LLFun, typename LLTupleArgs, typename CovarFun,
+          typename CovarArgs,
           require_t<is_any_var_scalar<LLTupleArgs, CovarArgs>>* = nullptr>
 inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
                                      CovarFun&& covariance_function,
@@ -1056,7 +1056,7 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
     // Solver 3
     arena_t<Eigen::MatrixXd> LU_solve_covariance;
     // Solver 1, 2, 3
-    arena_t <Eigen::VectorXd> s2(md_est.theta.size());
+    arena_t<Eigen::VectorXd> s2(md_est.theta.size());
 
     // Return references to var types
     auto ll_args_filter = internal::filter_var_scalar_types(ll_args_copy);
