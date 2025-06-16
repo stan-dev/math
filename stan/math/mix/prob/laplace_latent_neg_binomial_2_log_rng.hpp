@@ -76,7 +76,7 @@ inline Eigen::VectorXd laplace_latent_neg_binomial_2_log_rng(
     const std::vector<int>& y, const std::vector<int>& y_index, Eta&& eta,
     CovarFun&& covariance_function, CovarArgs&& covar_args, RNG& rng,
     std::ostream* msgs) {
-  constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
+  const laplace_options ops{1, 1, 0, 1e-6, 100, std::nullopt};
   return laplace_base_rng(
       neg_binomial_2_log_likelihood{},
       std::forward_as_tuple(std::forward<Eta>(eta), y, y_index),

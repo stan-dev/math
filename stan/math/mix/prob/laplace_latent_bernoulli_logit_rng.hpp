@@ -64,7 +64,7 @@ inline Eigen::VectorXd laplace_latent_bernoulli_logit_rng(
     const std::vector<int>& y, const std::vector<int>& n_samples,
     CovarFun&& covariance_function, CovarArgs&& covar_args, RNG& rng,
     std::ostream* msgs) {
-  constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
+  const laplace_options ops{1, 1, 0, 1e-6, 100, std::nullopt};
   return laplace_base_rng(bernoulli_logit_likelihood{},
                           std::forward_as_tuple(to_vector(y), n_samples),
                           std::forward<CovarFun>(covariance_function),

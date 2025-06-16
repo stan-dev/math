@@ -65,7 +65,7 @@ template <bool propto = false, typename LFun, typename LArgs, typename CovarFun,
 inline auto laplace_marginal(LFun&& L_f, LArgs&& l_args,
                              CovarFun&& covariance_function,
                              CovarArgs&& covar_args, std::ostream* msgs) {
-  constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
+  const laplace_options ops{1, 1, 0, 1e-6, 100, std::nullopt};
   return laplace_marginal_density(
       std::forward<LFun>(L_f), std::forward<LArgs>(l_args),
       std::forward<CovarFun>(covariance_function),

@@ -67,7 +67,7 @@ inline auto laplace_latent_rng(LLFunc&& L_f, LLArgs&& ll_args,
                                CovarFun&& covariance_function,
                                CovarArgs&& covar_args, RNG& rng,
                                std::ostream* msgs) {
-  constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
+  const laplace_options ops{1, 1, 0, 1e-6, 100, std::nullopt};
   return laplace_base_rng(std::forward<LLFunc>(L_f),
                           std::forward<LLArgs>(ll_args),
                           std::forward<CovarFun>(covariance_function),
