@@ -4,7 +4,6 @@
 #include <test/unit/math/test_ad.hpp>
 #include <stan/math/fwd/prob/std_normal_log_qf.hpp>
 
-
 TEST_F(AgradRev, mathMixLogFun_stdNormalLogQf) {
   auto f = [](const auto& x1) { return stan::math::std_normal_log_qf(x1); };
   stan::test::expect_ad(f, -100.25);
