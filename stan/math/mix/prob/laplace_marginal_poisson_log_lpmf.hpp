@@ -52,6 +52,8 @@ struct poisson_log_likelihood {
  * for more details.
  *
  * @tparam propto ignored
+ * @tparam ThetaVec A type inheriting from `Eigen::EigenBase`
+ * with dynamic sized rows and 1 column.
  * \laplace_common_template_args
  * @param[in] y observed counts
  * @param[in] y_index group to which each observation belongs

@@ -17,6 +17,8 @@ namespace math {
  * return a sample from the Laplace approximation to p(theta|y,phi).
  * The Laplace approximation is computed using a Newton solver.
  * In this specialized function, the likelihood p(y|theta) is a
+ * @tparam ThetaVec A type inheriting from `Eigen::EigenBase`
+ * with dynamic sized rows and 1 column.
  * \laplace_common_template_args
  * @tparam RNG A valid boost rng type
  * @param[in] y Observed counts.

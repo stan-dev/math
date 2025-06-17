@@ -17,6 +17,8 @@ namespace math {
  * return a multivariate normal random variate sampled
  * from the gaussian approximation of p(theta | y, phi),
  * where the likelihood is a Bernoulli with logit link.
+ * @tparam ThetaVec A type inheriting from `Eigen::EigenBase`
+ * with dynamic sized rows and 1 column.
  * \laplace_common_template_args
  * @tparam RNG A valid boost rng type
  * @param[in] y Vector Vector of total number of trials with a positive outcome.

@@ -17,6 +17,8 @@ namespace math {
  *
  * @tparam YeVec A type inheriting from `Eigen::EigenBase` with dynamic
  *  sized rows and 1 column.
+ * @tparam ThetaVec A type inheriting from `Eigen::EigenBase`
+ * with dynamic sized rows and 1 column.
  * \laplace_common_template_args
  * @tparam RNG A valid boost rng type
  * @param[in] y total counts per group. Second sufficient statistics.

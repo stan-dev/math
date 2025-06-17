@@ -37,6 +37,8 @@ struct bernoulli_logit_likelihood {
  * for more details.
  *
  * @tparam propto boolean ignored
+ * @tparam ThetaVec A type inheriting from `Eigen::EigenBase`
+ * with dynamic sized rows and 1 column.
  * \laplace_common_template_args
  * @param[in] y total counts per group. Second sufficient statistics.
  * @param[in] n_samples number of samples per group. First sufficient

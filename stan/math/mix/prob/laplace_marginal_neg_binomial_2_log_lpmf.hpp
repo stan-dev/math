@@ -53,6 +53,8 @@ struct neg_binomial_2_log_likelihood {
  * See the laplace_marginal function for more details.
  *
  * @tparam Eta The type of parameter arguments for the likelihood function.
+ * @tparam ThetaVec A type inheriting from `Eigen::EigenBase`
+ * with dynamic sized rows and 1 column.
  * \laplace_common_template_args
  * @param[in] y observed counts.
  * @param[in] y_index group to which each observation belongs. Each group
@@ -136,6 +138,8 @@ struct neg_binomial_2_log_likelihood_summary {
  * See the laplace_marginal function for more details.
  *
  * @tparam Eta The type of parameter arguments for the likelihood function.
+ * @tparam ThetaVec A type inheriting from `Eigen::EigenBase`
+ * with dynamic sized rows and 1 column.
  * \laplace_common_template_args
  * @param[in] y observations.
  * @param[in] n_per_group number of samples per group

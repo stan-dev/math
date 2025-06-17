@@ -18,6 +18,8 @@ namespace math {
  * where the log likelihood is given by L_f.
  * @tparam LLFunc Type of likelihood function.
  * @tparam LLArgs Type of arguments of likelihood function.
+ * @tparam ThetaVec A type inheriting from `Eigen::EigenBase`
+ * with dynamic sized rows and 1 column.
  * \laplace_common_template_args
  * @tparam RNG A valid boost rng type
  * @param[in] L_f Function that returns log likelihood.

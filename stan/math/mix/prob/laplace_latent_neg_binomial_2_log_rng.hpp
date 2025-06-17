@@ -21,6 +21,8 @@ namespace math {
  * parameterization of the Negative Binomial.
  *
  * @tparam Eta A type for the overdispersion parameter.
+ * @tparam ThetaVec A type inheriting from `Eigen::EigenBase`
+ * with dynamic sized rows and 1 column.
  * \laplace_common_template_args
  * @tparam RNG A valid boost rng type
  * @param[in] y Observed counts.
