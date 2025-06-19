@@ -93,7 +93,7 @@ auto student_t_qf(const T_p& p, const T_nu& nu, const T_mu& mu,
   return result;
 }
 
-}
-}
+}  // namespace math
+}  // namespace stan
 
 #endif

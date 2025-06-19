@@ -8,7 +8,8 @@ TEST_F(AgradRev, mathMixProb_student_t_qf) {
     const auto& p_scaled = stan::math::inv_logit(p);
     const auto& nu_scaled = stan::math::exp(nu);
     const auto& sigma_scaled = stan::math::exp(sigma);
-    return stan::math::sum(stan::math::student_t_qf(p_scaled, nu_scaled, 0, sigma_scaled));
+    return stan::math::sum(
+        stan::math::student_t_qf(p_scaled, nu_scaled, 0, sigma_scaled));
   };
 
   stan::test::expect_ad(f, 0.3, 0.5, 3);

@@ -28,12 +28,9 @@ struct common_container_type_impl<T1, T2, require_container_t<T1>,
   using return_t = return_type_t<T1, T2>;
   using container_type_1 = math::promote_scalar_t<return_t, plain_type_t<T1>>;
   using container_type_2 = math::promote_scalar_t<return_t, plain_type_t<T2>>;
-  using type =
-    std::conditional_t<
-      std::is_same<container_type_1, container_type_2>::value,
-      container_type_1,
-      void
-    >;
+  using type = std::conditional_t<
+      std::is_same<container_type_1, container_type_2>::value, container_type_1,
+      void>;
 };
 
 template <typename T1, typename T2>
@@ -47,7 +44,7 @@ struct common_container_type_impl<T1, T2, require_container_t<T1>,
                                   require_stan_scalar_t<T2>> {
   using type = math::promote_scalar_t<return_type_t<T1, T2>, plain_type_t<T1>>;
 };
-}
+}  // namespace internal
 
 template <typename... Ts>
 struct common_container_type;
