@@ -10,6 +10,21 @@
 namespace stan {
 namespace math {
 
+/**
+ * The quantile function of the Student's t-distribution.
+ *
+ * @tparam T_p type of the probability parameter
+ * @tparam T_nu type of the degrees of freedom parameter
+ * @tparam T_mu type of the location parameter
+ * @tparam T_sigma type of the scale parameter
+ * @param p Probability in the range [0, 1].
+ * @param nu Degrees of freedom, must be non-negative.
+ * @param mu Location parameter.
+ * @param sigma Scale parameter, must be positive.
+ * @return Quantile function value.
+ * @throw std::domain_error if `nu` is negative or `sigma` is not positive,
+ * or if `p` is not in [0, 1].
+ */
 template <typename T_p, typename T_nu, typename T_mu, typename T_sigma,
           require_all_stan_scalar_t<T_p, T_nu, T_mu, T_sigma>* = nullptr,
           require_all_arithmetic_t<T_p, T_nu, T_mu, T_sigma>* = nullptr>
@@ -35,6 +50,22 @@ double student_t_qf(const T_p& p, const T_nu& nu, const T_mu& mu,
   return mu + p_sign * sigma * sqrt(nu) * sqrt(-1.0 + 1.0 / ibeta_arg);
 }
 
+/**
+ * A vectorized version of the Student's t quantile function that accepts
+ * std::vectors, Eigen Matrix/Array objects, or expressions, and containers of
+ * these.
+ *
+ * @tparam T_p type of the probability parameter
+ * @tparam T_nu type of the degrees of freedom parameter
+ * @tparam T_mu type of the location parameter
+ * @tparam T_sigma type of the scale parameter
+ * @tparam T_container type of the container to hold results
+ * @param p Probability in the range [0, 1].
+ * @param nu Degrees of freedom, must be non-negative.
+ * @param mu Location parameter.
+ * @param sigma Scale parameter, must be positive.
+ * @return Container with quantile function values for each input.
+ */
 template <typename T_p, typename T_nu, typename T_mu, typename T_sigma,
           typename T_container = common_container_t<T_p, T_nu, T_mu, T_sigma>,
           require_any_vector_t<T_p, T_nu, T_mu, T_sigma>* = nullptr,

@@ -55,12 +55,20 @@ struct common_container_type;
 template <typename T>
 struct common_container_type<T> {
   using type = typename internal::common_container_type_impl<
-      T, double>::type;  // Use double as a fallback for scalar types
+      T, double>::type;  // Use double for base case
 };
 
+/**
+ * Determine the common container type for a variadic list of types.
+ * If all types are scalars, then the common scalar type is returned.
+ * If all container types the same, but not necessarily the same scalar type,
+ * the common container type with the common scalar type is returned.
+ *
+ * If different container types are present, the result is `void`.
+ */
 template <typename T1, typename... Ts>
 struct common_container_type<T1, Ts...> {
-  using type =  typename internal::common_container_type_impl<
+  using type = typename internal::common_container_type_impl<
       T1, typename common_container_type<Ts...>::type>::type;
 };
 
