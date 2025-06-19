@@ -9,8 +9,8 @@
 namespace stan {
 namespace math {
 
-double student_t_qf(const double p, const double mu,
-                    const double sigma, const double nu) {
+double student_t_qf(const double p, const double nu, const double mu,
+                    const double sigma) {
   static constexpr const char* function = "student_t_qf";
   check_nonnegative(function, "Degrees of freedom parameter", nu);
   check_positive(function, "Scale parameter", sigma);
