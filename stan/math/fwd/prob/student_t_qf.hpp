@@ -55,10 +55,10 @@ FvarT student_t_qf(const T_p& p, const T_nu& nu, const T_mu& mu,
     hyper_arg_a << 0.5, half_nu, half_nu;
     Eigen::Matrix<T_partials, -1, 1> hyper_arg_b(2);
     hyper_arg_b << 1 + half_nu, 1 + half_nu;
-    const T_partials hyper_arg = hypergeometric_pFq(hyper_arg_a, hyper_arg_b,
-                                                    ibeta_arg);
-    const T_partials hyper2f1 = hypergeometric_2F1(1, (1 + nu_val) / 2,
-                                                   (2 + nu_val) / 2, ibeta_arg);
+    const T_partials hyper_arg
+        = hypergeometric_pFq(hyper_arg_a, hyper_arg_b, ibeta_arg);
+    const T_partials hyper2f1
+        = hypergeometric_2F1(1, (1 + nu_val) / 2, (2 + nu_val) / 2, ibeta_arg);
     const T_partials digamma_a1 = digamma(half_nu);
     const T_partials digamma_a2 = digamma((1 + nu_val) / 2);
 
