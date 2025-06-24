@@ -55,6 +55,12 @@ inline return_type_t<T1, T2> beta(const T1 a, const T2 b) {
   return boost::math::beta(a, b, boost_policy_t<>());
 }
 
+template <typename T1, typename T2, typename T3,
+          require_all_arithmetic_t<T1, T2, T3>* = nullptr>
+inline return_type_t<T1, T2, T3> beta(const T1 a, const T2 b, const T3 x) {
+  return boost::math::beta(a, b, x, boost_policy_t<>());
+}
+
 /**
  * Enables the vectorized application of the beta function, when
  * the first and/or second arguments are containers.
@@ -78,6 +84,14 @@ template <typename T1, typename T2,
 inline auto beta(const T1& a, const T2& b) {
   return apply_scalar_binary(
       [](const auto& c, const auto& d) { return beta(c, d); }, a, b);
+}
+
+template <typename T1, typename T2, typename T3,
+          require_any_container_t<T1, T2, T3>* = nullptr>
+inline auto beta(const T1& a, const T2& b, const T3& x) {
+  return apply_scalar_ternary(
+      [](const auto& a, const auto& b, const auto& x) { return beta(a, b, x); },
+      a, b, x);
 }
 
 }  // namespace math
