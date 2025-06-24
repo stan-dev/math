@@ -5,6 +5,7 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/digamma.hpp>
 #include <stan/math/prim/fun/beta.hpp>
+#include <stan/math/prim/fun/grad_2F1.hpp>
 
 namespace stan {
 namespace math {
@@ -69,6 +70,43 @@ inline auto beta(const T1& a, const T2& b) {
     }
   });
   return res;
+}
+
+template <typename T1, typename T2, typename T3,
+          require_all_stan_scalar_t<T1, T2, T3>* = nullptr,
+          require_any_var_t<T1, T2, T3>* = nullptr>
+inline var beta(const T1 a, const T2 b, const T3 x) {
+  double a_val = value_of(a);
+  double b_val = value_of(b);
+  double x_val = value_of(x);
+  double res_val = beta(a_val, b_val, x_val);
+  return make_callback_var(
+    res_val, [a, b, x, a_val, b_val, x_val](const auto& vi) mutable {
+      double log_x = log(x_val);
+      double log1m_x = log1m(x_val);
+
+      if constexpr (!is_constant_all<T1, T2>::value) {
+        auto grad_tuple = grad_2F1(1.0, a + b, 1.0 + a, x_val);
+        double grad_mult = exp(b_val * log1m_x + a_val * log_x - log(a_val));
+
+        if constexpr (!is_constant<T1>::value) {
+          double da_grads = std::get<1>(grad_tuple) + std::get<2>(grad_tuple);
+          double a_adj = vi.val() * (log_x - inv(a_val)) + da_grads * grad_mult;
+          a.adj() += vi.adj() * a_adj;
+        }
+
+        if constexpr (!is_constant<T2>::value) {
+          double db_grad = std::get<1>(grad_tuple);
+          double b_adj = vi.val() * log1m_x + db_grad * grad_mult;
+          b.adj() += vi.adj() * b_adj;
+        }
+      }
+
+      if constexpr (!is_constant<T3>::value) {
+        double x_adj = exp((b_val - 1.0) * log1m_x + (a_val - 1.0) * log_x);
+        x.adj() += vi.adj() * x_adj;
+      }
+    });
 }
 
 }  // namespace math
