@@ -42,9 +42,10 @@ namespace math {
    \end{cases}
    \f]
  *
- * @tparam T inner type of the fvar
- * @param x1 First value
- * @param x2 Second value
+ * @tparam Ta Type of first scalar argument
+ * @tparam Tb Type of second scalar argument
+ * @param a First value
+ * @param b Second value
  * @return Fvar with result beta function of arguments and gradients.
  */
 template <typename Ta, typename Tb,
