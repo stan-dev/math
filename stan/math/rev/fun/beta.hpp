@@ -38,12 +38,12 @@ template <typename T1, typename T2,
           require_all_not_std_vector_t<T1, T2>* = nullptr,
           require_return_type_t<is_var, T1, T2>* = nullptr>
 inline auto beta(const T1& a, const T2& b) {
-  using inner_return_t = decltype(beta(value_of(a), value_of(b)));
-  using return_t = return_var_matrix_t<inner_return_t, T1, T2>;
   arena_t<ref_type_t<T1>> arena_a = a;
   arena_t<ref_type_t<T2>> arena_b = b;
 
-  return_t res = beta(value_of(arena_a), value_of(arena_b));
+  const auto& beta_val = beta(value_of(arena_a), value_of(arena_b));
+  return_var_matrix_t<decltype(beta_val), T1, T2> res(beta_val);
+
   reverse_pass_callback([arena_a, arena_b, res]() mutable {
     auto&& a_array = as_array_or_scalar(arena_a);
     auto&& b_array = as_array_or_scalar(arena_b);
