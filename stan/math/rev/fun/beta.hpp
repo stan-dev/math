@@ -34,197 +34,41 @@ namespace math {
  * @param b var Argument
  * @return Result of beta function
  */
-inline var beta(const var& a, const var& b) {
-  double digamma_ab = digamma(a.val() + b.val());
-  double digamma_a = digamma(a.val()) - digamma_ab;
-  double digamma_b = digamma(b.val()) - digamma_ab;
-  return make_callback_var(beta(a.val(), b.val()),
-                           [a, b, digamma_a, digamma_b](auto& vi) mutable {
-                             const double adj_val = vi.adj() * vi.val();
-                             a.adj() += adj_val * digamma_a;
-                             b.adj() += adj_val * digamma_b;
-                           });
-}
+template <typename T1, typename T2,
+          require_all_not_std_vector_t<T1, T2>* = nullptr,
+          require_return_type_t<is_var, T1, T2>* = nullptr>
+inline auto beta(const T1& a, const T2& b) {
+  using inner_return_t = decltype(beta(value_of(a), value_of(b)));
+  using return_t = return_var_matrix_t<inner_return_t, T1, T2>;
+  arena_t<ref_type_t<T1>> arena_a = a;
+  arena_t<ref_type_t<T2>> arena_b = b;
 
-/**
- * Returns the beta function and gradient for first var input.
- *
-   \f[
-     \mathrm{beta}(a,b) = \left(B\left(a,b\right)\right)
-   \f]
+  return_t res = beta(value_of(arena_a), value_of(arena_b));
+  reverse_pass_callback([arena_a, arena_b, res]() mutable {
+    auto&& a_array = as_array_or_scalar(arena_a);
+    auto&& b_array = as_array_or_scalar(arena_b);
+    const auto& res_array = as_array_or_scalar(res);
+    const auto& digamma_ab = digamma(value_of(a_array) + value_of(b_array));
+    const auto& adj_val = res_array.adj() * res_array.val();
 
-   \f[
-    \frac{\partial }{\partial a} = \left(\psi^{\left(0\right)}\left(a\right)
-                                      - \psi^{\left(0\right)}
-                                      \left(a + b\right)\right)
-                                    * \mathrm{beta}(a,b)
-   \f]
- *
- * @param a var Argument
- * @param b double Argument
- * @return Result of beta function
- */
-inline var beta(const var& a, double b) {
-  auto digamma_ab = digamma(a.val()) - digamma(a.val() + b);
-  return make_callback_var(beta(a.val(), b), [a, digamma_ab](auto& vi) mutable {
-    a.adj() += vi.adj() * digamma_ab * vi.val();
+    if constexpr (!is_constant<T1>::value) {
+      const auto& a_adj = adj_val * (digamma(a_array.val()) - digamma_ab);
+      if constexpr (is_stan_scalar<T1>::value) {
+        a_array.adj() += sum(a_adj);
+      } else {
+        a_array.adj() += a_adj;
+      }
+    }
+    if constexpr (!is_constant<T2>::value) {
+      const auto& b_adj = adj_val * (digamma(b_array.val()) - digamma_ab);
+      if constexpr (is_stan_scalar<T2>::value) {
+        b_array.adj() += sum(b_adj);
+      } else {
+        b_array.adj() += b_adj;
+      }
+    }
   });
-}
-
-/**
- * Returns the beta function and gradient for second var input.
- *
-   \f[
-     \mathrm{beta}(a,b) = \left(B\left(a,b\right)\right)
-   \f]
-
-   \f[
-    \frac{\partial }{\partial b} = \left(\psi^{\left(0\right)}\left(b\right)
-                                      - \psi^{\left(0\right)}
-                                      \left(a + b\right)\right)
-                                    * \mathrm{beta}(a,b)
-   \f]
- *
- * @param a double Argument
- * @param b var Argument
- * @return Result of beta function
- */
-inline var beta(double a, const var& b) {
-  auto beta_val = beta(a, b.val());
-  auto digamma_ab = (digamma(b.val()) - digamma(a + b.val())) * beta_val;
-  return make_callback_var(beta_val, [b, digamma_ab](auto& vi) mutable {
-    b.adj() += vi.adj() * digamma_ab;
-  });
-}
-
-template <typename Mat1, typename Mat2,
-          require_any_var_matrix_t<Mat1, Mat2>* = nullptr,
-          require_all_matrix_t<Mat1, Mat2>* = nullptr>
-inline auto beta(const Mat1& a, const Mat2& b) {
-  if (!is_constant<Mat1>::value && !is_constant<Mat2>::value) {
-    arena_t<promote_scalar_t<var, Mat1>> arena_a = a;
-    arena_t<promote_scalar_t<var, Mat2>> arena_b = b;
-    auto beta_val = beta(arena_a.val(), arena_b.val());
-    auto digamma_ab
-        = to_arena(digamma(arena_a.val().array() + arena_b.val().array()));
-    return make_callback_var(
-        beta(arena_a.val(), arena_b.val()),
-        [arena_a, arena_b, digamma_ab](auto& vi) mutable {
-          const auto adj_val = (vi.adj().array() * vi.val().array()).eval();
-          arena_a.adj().array()
-              += adj_val * (digamma(arena_a.val().array()) - digamma_ab);
-          arena_b.adj().array()
-              += adj_val * (digamma(arena_b.val().array()) - digamma_ab);
-        });
-  } else if (!is_constant<Mat1>::value) {
-    arena_t<promote_scalar_t<var, Mat1>> arena_a = a;
-    arena_t<promote_scalar_t<double, Mat2>> arena_b = value_of(b);
-    auto digamma_ab
-        = to_arena(digamma(arena_a.val()).array()
-                   - digamma(arena_a.val().array() + arena_b.array()));
-    return make_callback_var(beta(arena_a.val(), arena_b),
-                             [arena_a, arena_b, digamma_ab](auto& vi) mutable {
-                               arena_a.adj().array() += vi.adj().array()
-                                                        * digamma_ab
-                                                        * vi.val().array();
-                             });
-  } else if (!is_constant<Mat2>::value) {
-    arena_t<promote_scalar_t<double, Mat1>> arena_a = value_of(a);
-    arena_t<promote_scalar_t<var, Mat2>> arena_b = b;
-    auto beta_val = beta(arena_a, arena_b.val());
-    auto digamma_ab
-        = to_arena((digamma(arena_b.val()).array()
-                    - digamma(arena_a.array() + arena_b.val().array()))
-                   * beta_val.array());
-    return make_callback_var(
-        beta_val, [arena_a, arena_b, digamma_ab](auto& vi) mutable {
-          arena_b.adj().array() += vi.adj().array() * digamma_ab.array();
-        });
-  }
-}
-
-template <typename Scalar, typename VarMat,
-          require_var_matrix_t<VarMat>* = nullptr,
-          require_stan_scalar_t<Scalar>* = nullptr>
-inline auto beta(const Scalar& a, const VarMat& b) {
-  if (!is_constant<Scalar>::value && !is_constant<VarMat>::value) {
-    var arena_a = a;
-    arena_t<promote_scalar_t<var, VarMat>> arena_b = b;
-    auto beta_val = beta(arena_a.val(), arena_b.val());
-    auto digamma_ab = to_arena(digamma(arena_a.val() + arena_b.val().array()));
-    return make_callback_var(
-        beta(arena_a.val(), arena_b.val()),
-        [arena_a, arena_b, digamma_ab](auto& vi) mutable {
-          const auto adj_val = (vi.adj().array() * vi.val().array()).eval();
-          arena_a.adj()
-              += (adj_val * (digamma(arena_a.val()) - digamma_ab)).sum();
-          arena_b.adj().array()
-              += adj_val * (digamma(arena_b.val().array()) - digamma_ab);
-        });
-  } else if (!is_constant<Scalar>::value) {
-    var arena_a = a;
-    arena_t<promote_scalar_t<double, VarMat>> arena_b = value_of(b);
-    auto digamma_ab = to_arena(digamma(arena_a.val())
-                               - digamma(arena_a.val() + arena_b.array()));
-    return make_callback_var(
-        beta(arena_a.val(), arena_b),
-        [arena_a, arena_b, digamma_ab](auto& vi) mutable {
-          arena_a.adj()
-              += (vi.adj().array() * digamma_ab * vi.val().array()).sum();
-        });
-  } else if (!is_constant<VarMat>::value) {
-    double arena_a = value_of(a);
-    arena_t<promote_scalar_t<var, VarMat>> arena_b = b;
-    auto beta_val = beta(arena_a, arena_b.val());
-    auto digamma_ab = to_arena((digamma(arena_b.val()).array()
-                                - digamma(arena_a + arena_b.val().array()))
-                               * beta_val.array());
-    return make_callback_var(beta_val, [arena_b, digamma_ab](auto& vi) mutable {
-      arena_b.adj().array() += vi.adj().array() * digamma_ab.array();
-    });
-  }
-}
-
-template <typename VarMat, typename Scalar,
-          require_var_matrix_t<VarMat>* = nullptr,
-          require_stan_scalar_t<Scalar>* = nullptr>
-inline auto beta(const VarMat& a, const Scalar& b) {
-  if (!is_constant<VarMat>::value && !is_constant<Scalar>::value) {
-    arena_t<promote_scalar_t<var, VarMat>> arena_a = a;
-    var arena_b = b;
-    auto beta_val = beta(arena_a.val(), arena_b.val());
-    auto digamma_ab = to_arena(digamma(arena_a.val().array() + arena_b.val()));
-    return make_callback_var(
-        beta(arena_a.val(), arena_b.val()),
-        [arena_a, arena_b, digamma_ab](auto& vi) mutable {
-          const auto adj_val = (vi.adj().array() * vi.val().array()).eval();
-          arena_a.adj().array()
-              += adj_val * (digamma(arena_a.val().array()) - digamma_ab);
-          arena_b.adj()
-              += (adj_val * (digamma(arena_b.val()) - digamma_ab)).sum();
-        });
-  } else if (!is_constant<VarMat>::value) {
-    arena_t<promote_scalar_t<var, VarMat>> arena_a = a;
-    double arena_b = value_of(b);
-    auto digamma_ab = to_arena(digamma(arena_a.val()).array()
-                               - digamma(arena_a.val().array() + arena_b));
-    return make_callback_var(
-        beta(arena_a.val(), arena_b), [arena_a, digamma_ab](auto& vi) mutable {
-          arena_a.adj().array()
-              += vi.adj().array() * digamma_ab * vi.val().array();
-        });
-  } else if (!is_constant<Scalar>::value) {
-    arena_t<promote_scalar_t<double, VarMat>> arena_a = value_of(a);
-    var arena_b = b;
-    auto beta_val = beta(arena_a, arena_b.val());
-    auto digamma_ab = to_arena(
-        (digamma(arena_b.val()) - digamma(arena_a.array() + arena_b.val()))
-        * beta_val.array());
-    return make_callback_var(
-        beta_val, [arena_a, arena_b, digamma_ab](auto& vi) mutable {
-          arena_b.adj() += (vi.adj().array() * digamma_ab.array()).sum();
-        });
-  }
+  return res;
 }
 
 }  // namespace math

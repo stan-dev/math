@@ -2,10 +2,9 @@
 #define STAN_MATH_PRIM_FUN_BETA_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/fun/exp.hpp>
-#include <stan/math/prim/fun/lgamma.hpp>
+#include <stan/math/prim/fun/boost_policy.hpp>
 #include <stan/math/prim/functor/apply_scalar_binary.hpp>
-#include <cmath>
+#include <boost/math/special_functions/beta.hpp>
 
 namespace stan {
 namespace math {
@@ -51,8 +50,7 @@ namespace math {
  */
 template <typename T1, typename T2, require_all_arithmetic_t<T1, T2>* = nullptr>
 inline return_type_t<T1, T2> beta(const T1 a, const T2 b) {
-  using std::exp;
-  return exp(lgamma(a) + lgamma(b) - lgamma(a + b));
+  return boost::math::beta(a, b, boost_policy_t<>());
 }
 
 /**
@@ -65,8 +63,16 @@ inline return_type_t<T1, T2> beta(const T1 a, const T2 b) {
  * @param b Second input
  * @return Beta function applied to the two inputs.
  */
-template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr,
-          require_all_not_var_matrix_t<T1, T2>* = nullptr>
+template <typename T1, typename T2,
+          require_any_container_t<T1, T2>* = nullptr,
+          require_t<
+            math::disjunction<
+              is_arithmetic<return_type_t<T1, T2>>,
+              is_fvar<return_type_t<T1, T2>>,
+              is_std_vector<T1>,
+              is_std_vector<T2>
+            >
+          >* = nullptr>
 inline auto beta(const T1& a, const T2& b) {
   return apply_scalar_binary(
       [](const auto& c, const auto& d) { return beta(c, d); }, a, b);

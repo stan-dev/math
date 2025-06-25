@@ -26,8 +26,8 @@ TEST(MathFunctions, beta_vec) {
   auto f
       = [](const auto& x1, const auto& x2) { return stan::math::beta(x1, x2); };
 
-  Eigen::VectorXd in1 = Eigen::VectorXd::Random(6);
-  Eigen::VectorXd in2 = Eigen::VectorXd::Random(6);
+  Eigen::VectorXd in1 = Eigen::VectorXd::Random(6).cwiseAbs();
+  Eigen::VectorXd in2 = Eigen::VectorXd::Random(6).cwiseAbs();
 
   stan::test::binary_scalar_tester(f, in1, in2);
 }

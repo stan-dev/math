@@ -47,27 +47,23 @@ namespace math {
  * @param x2 Second value
  * @return Fvar with result beta function of arguments and gradients.
  */
-template <typename T>
-inline fvar<T> beta(const fvar<T>& x1, const fvar<T>& x2) {
-  const T beta_ab = beta(x1.val_, x2.val_);
-  return fvar<T>(beta_ab,
-                 beta_ab
-                     * (x1.d_ * digamma(x1.val_) + x2.d_ * digamma(x2.val_)
-                        - (x1.d_ + x2.d_) * digamma(x1.val_ + x2.val_)));
-}
-
-template <typename T>
-inline fvar<T> beta(double x1, const fvar<T>& x2) {
-  const T beta_ab = beta(x1, x2.val_);
-  return fvar<T>(beta_ab,
-                 x2.d_ * (digamma(x2.val_) - digamma(x1 + x2.val_)) * beta_ab);
-}
-
-template <typename T>
-inline fvar<T> beta(const fvar<T>& x1, double x2) {
-  const T beta_ab = beta(x1.val_, x2);
-  return fvar<T>(beta_ab,
-                 x1.d_ * (digamma(x1.val_) - digamma(x1.val_ + x2)) * beta_ab);
+template <typename Ta, typename Tb,
+          typename FvarInnerT = partials_return_t<Ta, Tb>,
+          require_return_type_t<is_fvar, Ta, Tb>* = nullptr,
+          require_all_stan_scalar_t<Ta, Tb>* = nullptr>
+inline fvar<FvarInnerT> beta(const Ta& a, const Tb& b) {
+  const auto& a_val = value_of(a);
+  const auto& b_val = value_of(b);
+  const FvarInnerT beta_val = beta(a_val, b_val);
+  const FvarInnerT digamma_ab = digamma(a_val + b_val);
+  FvarInnerT beta_d(0);
+  if constexpr (!is_constant<Ta>::value) {
+    beta_d += (digamma(a_val) - digamma_ab) * beta_val * a.d_;
+  }
+  if constexpr (!is_constant<Tb>::value) {
+    beta_d += (digamma(b_val) - digamma_ab) * beta_val * b.d_;
+  }
+  return fvar<FvarInnerT>(beta_val, beta_d);
 }
 
 }  // namespace math
