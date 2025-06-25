@@ -63,16 +63,11 @@ inline return_type_t<T1, T2> beta(const T1 a, const T2 b) {
  * @param b Second input
  * @return Beta function applied to the two inputs.
  */
-template <typename T1, typename T2,
-          require_any_container_t<T1, T2>* = nullptr,
-          require_t<
-            math::disjunction<
-              is_arithmetic<return_type_t<T1, T2>>,
-              is_fvar<return_type_t<T1, T2>>,
-              is_std_vector<T1>,
-              is_std_vector<T2>
-            >
-          >* = nullptr>
+template <
+    typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr,
+    require_t<math::disjunction<
+        is_arithmetic<return_type_t<T1, T2>>, is_fvar<return_type_t<T1, T2>>,
+        is_std_vector<T1>, is_std_vector<T2>>>* = nullptr>
 inline auto beta(const T1& a, const T2& b) {
   return apply_scalar_binary(
       [](const auto& c, const auto& d) { return beta(c, d); }, a, b);
