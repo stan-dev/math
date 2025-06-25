@@ -42,7 +42,8 @@ inline auto beta(const T1& a, const T2& b) {
   arena_t<ref_type_t<T2>> arena_b = b;
 
   const auto& beta_val = beta(value_of(arena_a), value_of(arena_b));
-  return_var_matrix_t<decltype(beta_val), T1, T2> res(beta_val);
+  using return_type_t = return_var_matrix_t<decltype(beta_val), T1, T2>;
+  arena_t<return_type_t> res(beta_val);
 
   reverse_pass_callback([arena_a, arena_b, res]() mutable {
     auto&& a_array = as_array_or_scalar(arena_a);
@@ -68,7 +69,7 @@ inline auto beta(const T1& a, const T2& b) {
       }
     }
   });
-  return res;
+  return return_type_t(res);
 }
 
 }  // namespace math
