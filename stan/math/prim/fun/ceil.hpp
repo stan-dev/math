@@ -38,7 +38,7 @@ template <typename Container,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               Container>* = nullptr>
 inline auto ceil(Container&& x) {
-  return apply_scalar_unary<ceil_fun, std::decay_t<Container>>::apply(
+  return apply_scalar_unary<ceil_fun, Container>::apply(
       std::forward<Container>(x));
 }
 

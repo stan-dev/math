@@ -78,7 +78,7 @@ struct atanh_fun {
  */
 template <typename T, require_ad_container_t<T>* = nullptr>
 inline auto atanh(T&& x) {
-  return apply_scalar_unary<atanh_fun, std::decay_t<T>>::apply(
+  return apply_scalar_unary<atanh_fun, T>::apply(
       std::forward<T>(x));
 }
 
@@ -95,7 +95,7 @@ inline auto atanh(T&& x) {
 template <typename Container,
           require_container_bt<std::is_arithmetic, Container>* = nullptr>
 inline auto atanh(Container&& x) {
-  return apply_scalar_unary<atanh_fun, std::decay_t<Container>>::apply(
+  return apply_scalar_unary<atanh_fun, Container>::apply(
       std::forward<Container>(x));
 }
 

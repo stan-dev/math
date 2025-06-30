@@ -63,8 +63,7 @@ struct apply_scalar_unary<F, T, require_eigen_t<T>> {
     return make_holder(
         [](auto&& xx) {
           return std::forward<decltype(xx)>(xx).unaryExpr([](auto&& xxx) {
-            return apply_scalar_unary<F, std::decay_t<decltype(xxx)>>::apply(
-                xxx);
+            return apply_scalar_unary<F, decltype(xxx)>::apply(xxx);
           });
         },
         std::forward<TT>(x));
@@ -75,7 +74,7 @@ struct apply_scalar_unary<F, T, require_eigen_t<T>> {
    * expression template of type T.
    */
   using return_t = std::decay_t<decltype(
-      apply_scalar_unary<F, std::decay_t<T>>::apply(std::declval<T>()))>;
+      apply_scalar_unary<F, T>::apply(std::declval<T>()))>;
 };
 
 /**
@@ -101,7 +100,8 @@ struct apply_scalar_unary<F, T, require_floating_point_t<T>> {
    * @param x Argument scalar.
    * @return Result of applying F to the scalar.
    */
-  static inline auto apply(T x) { return F::fun(x); }
+  template <typename T2>
+  static inline auto apply(T2 x) { return F::fun(x); }
 };
 
 /**
@@ -121,7 +121,8 @@ struct apply_scalar_unary<F, T, require_complex_t<T>> {
    * @param x Argument scalar.
    * @return Result of applying F to the scalar.
    */
-  static inline auto apply(const std::decay_t<T>& x) { return F::fun(x); }
+  template <typename T2>
+  static inline auto apply(const T2& x) { return F::fun(x); }
   /**
    * The return type
    */
@@ -148,7 +149,8 @@ struct apply_scalar_unary<F, T, require_integral_t<T>> {
    * @param x Argument scalar.
    * @return Result of applying F to the scalar.
    */
-  static inline auto apply(T x) { return F::fun(x); }
+  template <typename T2>
+  static inline auto apply(T2 x) { return F::fun(x); }
   /**
    * The return type, double.
    */

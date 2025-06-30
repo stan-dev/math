@@ -274,9 +274,8 @@ struct baz_fun {
 };
 
 template <typename T>
-inline typename stan::math::apply_scalar_unary<baz_fun, T>::return_t baz(
-    const T& x) {
-  return stan::math::apply_scalar_unary<baz_fun, T>::apply(x);
+inline auto baz(T&& x) {
+  return stan::math::apply_scalar_unary<baz_fun, T>::apply(std::forward<T>(x));
 }
 
 TEST(testAd, integerGetsPassedVectorized) {

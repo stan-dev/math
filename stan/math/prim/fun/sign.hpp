@@ -40,7 +40,7 @@ struct sign_fun {
  */
 template <typename T, require_container_t<T>* = nullptr>
 inline auto sign(T&& x) {
-  return apply_scalar_unary<sign_fun, std::decay_t<T>>::apply(
+  return apply_scalar_unary<sign_fun, T>::apply(
       std::forward<T>(x));
 }
 

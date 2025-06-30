@@ -79,7 +79,7 @@ struct acosh_fun {
  */
 template <typename T, require_ad_container_t<T>* = nullptr>
 inline auto acosh(T&& x) {
-  return apply_scalar_unary<acosh_fun, std::decay_t<T>>::apply(
+  return apply_scalar_unary<acosh_fun, T>::apply(
       std::forward<T>(x));
 }
 
@@ -96,7 +96,7 @@ inline auto acosh(T&& x) {
 template <typename Container,
           require_container_bt<std::is_arithmetic, Container>* = nullptr>
 inline auto acosh(Container&& x) {
-  return apply_scalar_unary<acosh_fun, std::decay_t<Container>>::apply(
+  return apply_scalar_unary<acosh_fun, Container>::apply(
       std::forward<Container>(x));
 }
 

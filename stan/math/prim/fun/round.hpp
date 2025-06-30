@@ -37,7 +37,7 @@ template <typename Container,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               Container>* = nullptr>
 inline auto round(Container&& x) {
-  return apply_scalar_unary<round_fun, std::decay_t<Container>>::apply(
+  return apply_scalar_unary<round_fun, Container>::apply(
       std::forward<Container>(x));
 }
 

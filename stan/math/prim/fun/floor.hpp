@@ -43,7 +43,7 @@ struct floor_fun {
  */
 template <typename Container, require_ad_container_t<Container>* = nullptr>
 inline auto floor(Container&& x) {
-  return apply_scalar_unary<floor_fun, std::decay_t<Container>>::apply(
+  return apply_scalar_unary<floor_fun, Container>::apply(
       std::forward<Container>(x));
 }
 

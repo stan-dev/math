@@ -68,7 +68,7 @@ struct log_fun {
  */
 template <typename Container, require_ad_container_t<Container>* = nullptr>
 inline auto log(Container&& x) {
-  return apply_scalar_unary<log_fun, std::decay_t<Container>>::apply(
+  return apply_scalar_unary<log_fun, Container>::apply(
       std::forward<Container>(x));
 }
 
