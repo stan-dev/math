@@ -116,13 +116,13 @@ template <typename T_true, typename T_false,
           require_stan_scalar_t<T_true>* = nullptr,
           require_container_t<T_false>* = nullptr>
 inline ReturnT select(const bool c, const T_true y_true,
-                      const T_false y_false) {
+                      T_false&& y_false) {
   if (c) {
     return apply_scalar_binary(
         [](auto&& y_true_inner, auto&& y_false_inner) {
           return std::forward<decltype(y_true_inner)>(y_true_inner);
         },
-        std::forward<T_true>(y_true), std::forward<T_false>(y_false));
+        T_true(y_true), std::forward<T_false>(y_false));
   } else {
     return y_false;
   }
@@ -146,9 +146,9 @@ inline ReturnT select(const bool c, const T_true y_true,
 template <typename T_bool, typename T_true, typename T_false,
           require_eigen_array_vt<std::is_integral, T_bool>* = nullptr,
           require_all_stan_scalar_t<T_true, T_false>* = nullptr>
-inline auto select(const T_bool c, const T_true y_true, const T_false y_false) {
+inline auto select(T_bool&& c, const T_true y_true, const T_false y_false) {
   using ret_t = return_type_t<T_true, T_false>;
-  return c
+  return std::forward<T_bool>(c)
       .unaryExpr([y_true, y_false](bool cond) {
         return cond ? ret_t(y_true) : ret_t(y_false);
       })
@@ -170,11 +170,11 @@ inline auto select(const T_bool c, const T_true y_true, const T_false y_false) {
 template <typename T_bool, typename T_true, typename T_false,
           require_eigen_array_t<T_bool>* = nullptr,
           require_any_eigen_array_t<T_true, T_false>* = nullptr>
-inline auto select(const T_bool c, const T_true y_true, const T_false y_false) {
+inline auto select(T_bool&& c, T_true&& y_true, T_false&& y_false) {
   check_consistent_sizes("select", "boolean", c, "left hand side", y_true,
                          "right hand side", y_false);
   using ret_t = return_type_t<T_true, T_false>;
-  return c.select(y_true, y_false).template cast<ret_t>().eval();
+  return std::forward<T_bool>(c).select(std::forward<T_true>(y_true), std::forward<T_false>(y_false)).template cast<ret_t>().eval();
 }
 
 }  // namespace math

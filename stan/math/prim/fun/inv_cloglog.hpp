@@ -108,7 +108,7 @@ inline auto inv_cloglog(Container&& x) {
   return apply_vector_unary<std::decay_t<Container>>::apply(
       std::forward<Container>(x),
       [](const auto& v) {
-        return 1 - (-std::forward<decltype(v)>(v).array().exp()).exp();
+        return (1 - (-std::forward<decltype(v)>(v).array().exp()).exp());
       });
 }
 

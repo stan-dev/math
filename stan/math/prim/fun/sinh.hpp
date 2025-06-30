@@ -74,7 +74,7 @@ template <typename Container,
 inline auto sinh(Container&& x) {
   return apply_vector_unary<std::decay_t<Container>>::apply(
       std::forward<Container>(x),
-      [](const auto& v) { return std::forward<decltype(v)>(v).array().sinh(); });
+      [](auto&& v) { return std::forward<decltype(v)>(v).array().sinh(); });
 }
 
 namespace internal {

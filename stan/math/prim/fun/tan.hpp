@@ -77,7 +77,7 @@ template <typename Container,
 inline auto tan(Container&& x) {
   return apply_vector_unary<std::decay_t<Container>>::apply(
       std::forward<Container>(x),
-      [](const auto& v) {
+      [](auto&& v) {
         return std::forward<decltype(v)>(v).array().tan();
       });
 }

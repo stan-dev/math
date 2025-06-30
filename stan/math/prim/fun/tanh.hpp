@@ -76,7 +76,7 @@ template <typename Container,
 inline auto tanh(Container&& x) {
   return apply_vector_unary<std::decay_t<Container>>::apply(
       std::forward<Container>(x),
-      [](const auto& v) { return std::forward<decltype(v)>(v).array().tanh(); });
+      [](auto&& v) { return std::forward<decltype(v)>(v).array().tanh(); });
 }
 
 namespace internal {

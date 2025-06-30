@@ -25,9 +25,9 @@ namespace math {
  * @return free scalar that transforms to the specified input
  */
 template <typename T>
-inline plain_type_t<T> corr_free(const T& y) {
+inline plain_type_t<T> corr_free(T&& y) {
   check_bounded("lub_free", "Correlation variable", y, -1.0, 1.0);
-  return atanh(y);
+  return atanh(std::forward<T>(y));
 }
 
 }  // namespace math

@@ -29,7 +29,7 @@ template <typename T, typename L, require_not_std_vector_t<T>* = nullptr,
           require_stan_scalar_t<L>* = nullptr>
 inline auto lb_free(T&& y, L&& lb) {
   if (value_of_rec(lb) == NEGATIVE_INFTY) {
-    return identity_free(y, lb);
+    return identity_free(std::forward<T>(y), lb);
   } else {
     auto&& y_ref = to_ref(std::forward<T>(y));
     auto&& lb_ref = to_ref(std::forward<L>(lb));

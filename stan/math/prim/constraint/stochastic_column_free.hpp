@@ -18,8 +18,8 @@ namespace math {
  * @param y Columnwise stochastic matrix input of dimensionality (N, K)
  */
 template <typename Mat, require_eigen_matrix_dynamic_t<Mat>* = nullptr>
-inline plain_type_t<Mat> stochastic_column_free(const Mat& y) {
-  auto&& y_ref = to_ref(y);
+inline plain_type_t<Mat> stochastic_column_free(Mat&& y) {
+  auto&& y_ref = to_ref(std::forward<Mat>(y));
   const Eigen::Index M = y_ref.cols();
   plain_type_t<Mat> ret(y_ref.rows() - 1, M);
   for (Eigen::Index i = 0; i < M; ++i) {
@@ -36,9 +36,9 @@ inline plain_type_t<Mat> stochastic_column_free(const Mat& y) {
  * @param[in] y vector of columnwise stochastic matrix of size (N, K)
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
-inline auto stochastic_column_free(const T& y) {
-  return apply_vector_unary<T>::apply(
-      y, [](auto&& v) { return stochastic_column_free(v); });
+inline auto stochastic_column_free(T&& y) {
+  return apply_vector_unary<std::decay_t<T>>::apply(
+      std::forward<T>(y), [](auto&& v) { return stochastic_column_free(std::forward<decltype(v)>(v)); });
 }
 
 }  // namespace math

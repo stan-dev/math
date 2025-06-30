@@ -23,8 +23,8 @@ namespace math {
  * @return result constrained to fall in (0, 1)
  */
 template <typename T>
-inline T prob_constrain(const T& x) {
-  return inv_logit(x);
+inline auto prob_constrain(T&& x) {
+  return inv_logit(std::forward<T>(x));
 }
 
 /**
@@ -48,10 +48,10 @@ inline T prob_constrain(const T& x) {
  * @return result constrained to fall in (0, 1)
  */
 template <typename T>
-inline T prob_constrain(const T& x, T& lp) {
-  T log_inv_logit_x = log_inv_logit(x);
-  lp += log_inv_logit_x + log1m_inv_logit(x);
-  return exp(log_inv_logit_x);
+inline auto prob_constrain(T&& x, return_type_t<T>& lp) {
+  plain_type_t<T> log_inv_logit_x = log_inv_logit(x);
+  lp += log_inv_logit_x + log1m_inv_logit(std::forward<T>(x));
+  return exp(std::move(log_inv_logit_x));
 }
 
 /**
@@ -69,11 +69,11 @@ inline T prob_constrain(const T& x, T& lp) {
  * @return result constrained to fall in (0, 1)
  */
 template <bool Jacobian, typename T>
-inline auto prob_constrain(const T& x, T& lp) {
-  if (Jacobian) {
-    return prob_constrain(x, lp);
+inline auto prob_constrain(T&& x, return_type_t<T>& lp) {
+  if constexpr (Jacobian) {
+    return prob_constrain(std::forward<T>(x), lp);
   } else {
-    return prob_constrain(x);
+    return prob_constrain(std::forward<T>(x));
   }
 }
 }  // namespace math

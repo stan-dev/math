@@ -58,10 +58,13 @@ struct apply_scalar_unary<F, T, require_eigen_t<T>> {
    * @return Componentwise application of the function specified
    * by F to the specified matrix.
    */
-  static inline auto apply(const std::decay_t<T>& x) {
-    return x.unaryExpr([](auto&& x) {
-      return apply_scalar_unary<F, std::decay_t<decltype(x)>>::apply(x);
-    });
+  template <typename TT>
+  static inline auto apply(TT&& x) {
+    return make_holder([](auto&& xx) {
+      return std::forward<decltype(xx)>(xx).unaryExpr([](auto&& xxx) {
+        return apply_scalar_unary<F, std::decay_t<decltype(xxx)>>::apply(xxx);
+      });
+    }, std::forward<TT>(x));
   }
 
   /**
@@ -176,10 +179,15 @@ struct apply_scalar_unary<F, T, require_std_vector_t<T>> {
    * @return Elementwise application of F to the elements of the
    * container.
    */
-  static inline auto apply(const std::decay_t<T>& x) {
+  template <typename TT>
+  static inline auto apply(TT&& x) {
     return_t fx(x.size());
     for (size_t i = 0; i < x.size(); ++i) {
-      fx[i] = apply_scalar_unary<F, value_type_t<T>>::apply(x[i]);
+      if constexpr (std::is_rvalue_reference_v<TT&&>) {
+        fx[i] = apply_scalar_unary<F, value_type_t<TT>>::apply(std::move(x[i]));
+      } else {
+        fx[i] = apply_scalar_unary<F, value_type_t<TT>>::apply(x[i]);
+      }
     }
     return fx;
   }

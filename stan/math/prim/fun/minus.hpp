@@ -15,8 +15,14 @@ namespace math {
  * @return Negation of subtrahend.
  */
 template <typename T, require_not_std_vector_t<T>* = nullptr>
-inline auto minus(const T& x) {
-  return -x;
+inline auto minus(T&& x) {
+  if constexpr (is_eigen_v<T>) {
+    return make_holder([](auto&& xx) {
+      return -std::forward<decltype(xx)>(xx);
+    }, std::forward<T>(x));
+  } else {
+    return -x;
+  }
 }
 
 /**
@@ -26,13 +32,12 @@ inline auto minus(const T& x) {
  * @param x Container.
  * @return Container where each element is negated.
  */
-template <typename T>
-inline auto minus(std::vector<T>&& x) {
-  return apply_vector_unary<std::vector<T>>::apply(
-      std::forward<std::vector<T>>(x),
+template <typename T, require_std_vector_t<T>* = nullptr>
+inline auto minus(T&& x) {
+  return apply_vector_unary<std::decay_t<T>>::apply(
+      std::forward<T>(x),
       [](auto&& v) { return -std::forward<decltype(v)>(v); });
 }
-
 }  // namespace math
 }  // namespace stan
 

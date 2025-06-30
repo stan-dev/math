@@ -106,7 +106,7 @@ template <typename Container,
 inline auto inv_logit(Container&& x) {
   return apply_vector_unary<Container>::apply(
       std::forward<Container>(x),
-      [](const auto& v) { return v.array().logistic(); });
+      [](auto&& v) { return std::forward<decltype(v)>(v).array().logistic(); });
 }
 }  // namespace math
 }  // namespace stan

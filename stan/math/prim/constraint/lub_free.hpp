@@ -47,11 +47,11 @@ inline auto lub_free(T&& y, L&& lb, U&& ub) {
   const bool is_lb_inf = value_of(lb) == NEGATIVE_INFTY;
   const bool is_ub_inf = value_of(ub) == INFTY;
   if (unlikely(is_ub_inf && is_lb_inf)) {
-    return identity_free(y, lb, ub);
+    return identity_free(std::forward<T>(y), lb, ub);
   } else if (unlikely(is_ub_inf)) {
-    return lb_free(identity_free(y, ub), lb);
+    return lb_free(identity_free(std::forward<T>(y), ub), lb);
   } else if (unlikely(is_lb_inf)) {
-    return ub_free(identity_free(y, lb), ub);
+    return ub_free(identity_free(std::forward<T>(y), lb), ub);
   } else {
     auto&& y_ref = to_ref(std::forward<T>(y));
     check_bounded("lub_free", "Bounded variable", value_of(y_ref), value_of(lb),

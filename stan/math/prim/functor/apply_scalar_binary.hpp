@@ -203,7 +203,7 @@ inline auto apply_scalar_binary(F&& f, T1&& x, T2&& y) {
   return make_holder(
       [](auto&& f_inner, auto&& x_inner, auto&& y_inner) {
         return x_inner.unaryExpr(
-            [f_inner, y_inner](const auto& v) { return f_inner(v, y_inner); });
+            [f_inner_ = std::forward<decltype(f_inner)>(f_inner), y_inner](const auto& v) { return f_inner_(v, y_inner); });
       },
       std::forward<F>(f), std::forward<T1>(x), std::forward<T2>(y));
 }
@@ -229,7 +229,7 @@ inline auto apply_scalar_binary(F&& f, T1&& x, T2&& y) {
   return make_holder(
       [](auto&& f_inner, auto&& x_inner, auto&& y_inner) {
         return y_inner.unaryExpr(
-            [f_inner, x_inner](const auto& v) { return f_inner(x_inner, v); });
+            [f_inner_ = std::forward<decltype(f_inner)>(f_inner), x_inner](auto&& v) { return f_inner_(x_inner, std::forward<decltype(v)>(v)); });
       },
       std::forward<F>(f), std::forward<T1>(x), std::forward<T2>(y));
 }

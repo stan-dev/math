@@ -99,9 +99,9 @@ inline var log_sum_exp(const T& x) {
  * @param x matrix
  */
 template <typename T, require_std_vector_st<is_var, T>* = nullptr>
-inline auto log_sum_exp(const T& x) {
-  return apply_vector_unary<T>::reduce(
-      x, [](const auto& v) { return log_sum_exp(v); });
+inline auto log_sum_exp(T&& x) {
+  return apply_vector_unary<std::decay_t<T>>::reduce(
+      std::forward<T>(x), [](const auto& v) { return log_sum_exp(v); });
 }
 
 }  // namespace math

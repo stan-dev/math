@@ -21,7 +21,7 @@ namespace math {
 template <bool Jacobian = false, typename T, typename... Types,
           require_all_not_var_matrix_t<T, Types...>* = nullptr>
 inline auto identity_constrain(T&& x, Types&&... /* args */) {
-  return promote_scalar_t<return_type_t<T, Types...>, T>(x);
+  return promote_scalar_t<return_type_t<T, Types...>, T>(std::forward<T>(x));
 }
 
 }  // namespace math

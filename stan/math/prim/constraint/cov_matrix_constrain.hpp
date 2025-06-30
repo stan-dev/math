@@ -29,7 +29,7 @@ namespace math {
  */
 template <typename T, require_eigen_col_vector_t<T>* = nullptr>
 inline Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
-cov_matrix_constrain(const T& x, Eigen::Index K) {
+cov_matrix_constrain(T&& x, Eigen::Index K) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::exp;
@@ -37,7 +37,7 @@ cov_matrix_constrain(const T& x, Eigen::Index K) {
   Matrix<value_type_t<T>, Dynamic, Dynamic> L(K, K);
   check_size_match("cov_matrix_constrain", "x.size()", x.size(),
                    "K + (K choose 2)", (K * (K + 1)) / 2);
-  const auto& x_ref = to_ref(x);
+  auto&& x_ref = to_ref(std::forward<T>(x));
   int i = 0;
   for (Eigen::Index m = 0; m < K; ++m) {
     L.row(m).head(m) = x_ref.segment(i, m);
@@ -45,7 +45,7 @@ cov_matrix_constrain(const T& x, Eigen::Index K) {
     L.coeffRef(m, m) = exp(x_ref.coeff(i++));
     L.row(m).tail(K - m - 1).setZero();
   }
-  return multiply_lower_tri_self_transpose(L);
+  return multiply_lower_tri_self_transpose(std::move(L));
 }
 
 /**
@@ -65,7 +65,7 @@ cov_matrix_constrain(const T& x, Eigen::Index K) {
 template <typename T, typename Lp, require_eigen_col_vector_t<T>* = nullptr,
           require_convertible_t<return_type_t<T>, Lp>* = nullptr>
 inline Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
-cov_matrix_constrain(const T& x, Eigen::Index K, Lp& lp) {
+cov_matrix_constrain(T&& x, Eigen::Index K, Lp& lp) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::exp;
@@ -73,7 +73,7 @@ cov_matrix_constrain(const T& x, Eigen::Index K, Lp& lp) {
   check_size_match("cov_matrix_constrain", "x.size()", x.size(),
                    "K + (K choose 2)", (K * (K + 1)) / 2);
   Matrix<value_type_t<T>, Dynamic, Dynamic> L(K, K);
-  const auto& x_ref = to_ref(x);
+  auto&& x_ref = to_ref(std::forward<T>(x));
   int i = 0;
   for (Eigen::Index m = 0; m < K; ++m) {
     L.row(m).head(m) = x_ref.segment(i, m);
@@ -86,7 +86,7 @@ cov_matrix_constrain(const T& x, Eigen::Index K, Lp& lp) {
   for (Eigen::Index k = 0; k < K; ++k) {
     lp += (K - k + 1) * log(L.coeff(k, k));  // only +1 because index from 0
   }
-  return multiply_lower_tri_self_transpose(L);
+  return multiply_lower_tri_self_transpose(std::move(L));
 }
 
 /**
@@ -102,9 +102,9 @@ cov_matrix_constrain(const T& x, Eigen::Index K, Lp& lp) {
  * @throws std::domain_error if (x.size() != K + (K choose 2)).
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
-inline auto cov_matrix_constrain(const T& x, Eigen::Index K) {
-  return apply_vector_unary<T>::apply(
-      x, [K](auto&& v) { return cov_matrix_constrain(v, K); });
+inline auto cov_matrix_constrain(T&& x, Eigen::Index K) {
+  return apply_vector_unary<std::decay_t<T>>::apply(
+      std::forward<T>(x), [K](auto&& v) { return cov_matrix_constrain(std::forward<decltype(v)>(v), K); });
 }
 
 /**
@@ -124,9 +124,9 @@ inline auto cov_matrix_constrain(const T& x, Eigen::Index K) {
  */
 template <typename T, typename Lp, require_std_vector_t<T>* = nullptr,
           require_convertible_t<return_type_t<T>, Lp>* = nullptr>
-inline auto cov_matrix_constrain(const T& x, Eigen::Index K, Lp& lp) {
-  return apply_vector_unary<T>::apply(
-      x, [&lp, K](auto&& v) { return cov_matrix_constrain(v, K, lp); });
+inline auto cov_matrix_constrain(T&& x, Eigen::Index K, Lp& lp) {
+  return apply_vector_unary<std::decay_t<T>>::apply(
+      std::forward<T>(x), [&lp, K](auto&& v) { return cov_matrix_constrain(std::forward<decltype(v)>(v), K, lp); });
 }
 
 /**
@@ -151,11 +151,11 @@ inline auto cov_matrix_constrain(const T& x, Eigen::Index K, Lp& lp) {
  */
 template <bool Jacobian, typename T, typename Lp,
           require_convertible_t<return_type_t<T>, Lp>* = nullptr>
-inline auto cov_matrix_constrain(const T& x, Eigen::Index K, Lp& lp) {
+inline auto cov_matrix_constrain(T&& x, Eigen::Index K, Lp& lp) {
   if constexpr (Jacobian) {
-    return cov_matrix_constrain(x, K, lp);
+    return cov_matrix_constrain(std::forward<T>(x), K, lp);
   } else {
-    return cov_matrix_constrain(x, K);
+    return cov_matrix_constrain(std::forward<T>(x), K);
   }
 }
 
