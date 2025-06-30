@@ -112,11 +112,10 @@ inline auto laplace_marginal_poisson_2_log_lpmf(const std::vector<int>& y,
                                                 CovarFun&& covariance_function,
                                                 CovarArgs&& covar_args,
                                                 std::ostream* msgs) {
-  const laplace_options ops{1, 1, 0, 1e-6, 100, std::nullopt};
   return laplace_marginal_density(
       poisson_log_2_likelihood{}, std::forward_as_tuple(y, y_index, ye),
       std::forward<CovarFun>(covariance_function),
-      std::forward<CovarArgs>(covar_args), ops, msgs);
+      std::forward<CovarArgs>(covar_args), laplace_options_default{}, msgs);
 }
 
 }  // namespace math

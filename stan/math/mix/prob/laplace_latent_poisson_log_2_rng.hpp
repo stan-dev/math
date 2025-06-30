@@ -71,11 +71,10 @@ inline auto laplace_latent_poisson_2_log_rng(const std::vector<int>& y,
                                              CovarFun&& covariance_function,
                                              CovarArgs&& covar_args, RNG& rng,
                                              std::ostream* msgs) {
-  const laplace_options ops{1, 1, 0, 1e-6, 100, std::nullopt};
   return laplace_base_rng(poisson_log_2_likelihood{},
                           std::forward_as_tuple(y, y_index, ye),
                           std::forward<CovarFun>(covariance_function),
-                          std::forward<CovarArgs>(covar_args), ops, rng, msgs);
+                          std::forward<CovarArgs>(covar_args), laplace_options_default{}, rng, msgs);
 }
 
 }  // namespace math
