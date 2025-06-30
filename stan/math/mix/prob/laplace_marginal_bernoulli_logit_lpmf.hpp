@@ -55,7 +55,7 @@ inline auto laplace_marginal_tol_bernoulli_logit_lpmf(
     const ThetaVec& theta_0, double tolerance, int max_num_steps,
     const int hessian_block_size, const int solver,
     const int max_steps_line_search, std::ostream* msgs) {
-  laplace_options ops{hessian_block_size, solver,        max_steps_line_search,
+  laplace_options<Eigen::VectorXd> ops{hessian_block_size, solver,        max_steps_line_search,
                       tolerance,          max_num_steps, value_of(theta_0)};
   return laplace_marginal_density(
       bernoulli_logit_likelihood{},

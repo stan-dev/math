@@ -37,7 +37,7 @@ template <typename LLFunc, typename LLArgs, typename CovarFun,
 inline Eigen::VectorXd laplace_base_rng(LLFunc&& ll_fun, LLArgs&& ll_args,
                                         CovarFun&& covariance_function,
                                         CovarArgs&& covar_args,
-                                        const laplace_options_base<ThetaVec>& options,
+                                        const laplace_options<ThetaVec>& options,
                                         RNG& rng, std::ostream* msgs) {
   auto md_est = internal::laplace_marginal_density_est(
       ll_fun, std::forward<LLArgs>(ll_args),

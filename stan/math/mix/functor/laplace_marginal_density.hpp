@@ -27,7 +27,6 @@ namespace math {
 /**
  * Options for the laplace sampler
  */
-template <typename Theta>
 struct laplace_options_base {
   /* Size of the blocks in block diagonal hessian*/
   int hessian_block_size{1};
@@ -46,14 +45,22 @@ struct laplace_options_base {
   double tolerance{1e-6};
   /* Maximum number of steps*/
   int max_num_steps{100};
+};
+
+template <typename Theta, typename = void>
+struct laplace_options;
+
+template <typename Theta>
+struct laplace_options<Theta, require_eigen_t<Theta>> : public laplace_options_base {
 
   /* Initial value for theta. Defaults to 0s of the correct size if nullopt */
   Theta theta_0{0};
 };
 
-using laplace_options = laplace_options_base<Eigen::VectorXd>;
-using laplace_options_default = laplace_options_base<double>;
+template <typename Theta>
+struct laplace_options<Theta, require_not_eigen_t<Theta>> : public laplace_options_base {};
 
+using laplace_options_default = laplace_options<void>;
 namespace internal {
 
 template <typename Covar, typename ThetaVec, typename WR, typename L_t,
@@ -461,7 +468,7 @@ template <typename LLFun, typename LLTupleArgs, typename CovarFun,
 inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
                                          CovarFun&& covariance_function,
                                          CovarArgs&& covar_args,
-                                         const laplace_options_base<ThetaVec>& options,
+                                         const laplace_options<ThetaVec>& options,
                                          std::ostream* msgs) {
   using Eigen::MatrixXd;
   using Eigen::SparseMatrix;
@@ -793,7 +800,7 @@ template <
 inline double laplace_marginal_density(LLFun&& ll_fun, LLTupleArgs&& ll_args,
                                        CovarFun&& covariance_function,
                                        CovarArgs&& covar_args,
-                                       const laplace_options_base<ThetaVec>& options,
+                                       const laplace_options<ThetaVec>& options,
                                        std::ostream* msgs) {
   return internal::laplace_marginal_density_est(
              std::forward<LLFun>(ll_fun), std::forward<LLTupleArgs>(ll_args),
@@ -1035,7 +1042,7 @@ template <typename LLFun, typename LLTupleArgs, typename CovarFun,
 inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
                                      CovarFun&& covariance_function,
                                      CovarArgs&& covar_args,
-                                     const laplace_options_base<ThetaVec>& options,
+                                     const laplace_options<ThetaVec>& options,
                                      std::ostream* msgs) {
   auto covar_args_refs = to_ref(std::forward<CovarArgs>(covar_args));
   auto ll_args_refs = to_ref(std::forward<LLTupleArgs>(ll_args));
