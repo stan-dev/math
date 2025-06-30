@@ -16,7 +16,8 @@ namespace math {
  * @tparam F Type of function to apply.
  */
 template <typename F, typename T>
-struct apply_scalar_unary<F, T, std::enable_if_t<is_var<T>::value && is_stan_scalar<T>::value>> {
+struct apply_scalar_unary<
+    F, T, std::enable_if_t<is_var<T>::value && is_stan_scalar<T>::value>> {
   /**
    * Function return type, which is <code>var</code>.
    */

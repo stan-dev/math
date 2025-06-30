@@ -67,8 +67,7 @@ struct asinh_fun {
  */
 template <typename T, require_ad_container_t<T>* = nullptr>
 inline auto asinh(T&& x) {
-  return apply_scalar_unary<asinh_fun, T>::apply(
-      std::forward<T>(x));
+  return apply_scalar_unary<asinh_fun, T>::apply(std::forward<T>(x));
 }
 
 /**

@@ -35,8 +35,7 @@ template <
     typename T, require_not_var_matrix_t<T>* = nullptr,
     require_all_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr>
 inline auto cbrt(T&& x) {
-  return apply_scalar_unary<cbrt_fun, T>::apply(
-      std::forward<T>(x));
+  return apply_scalar_unary<cbrt_fun, T>::apply(std::forward<T>(x));
 }
 
 }  // namespace math

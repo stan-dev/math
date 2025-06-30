@@ -40,8 +40,7 @@ struct trunc_fun {
 template <typename T, require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
                           T>* = nullptr>
 inline auto trunc(T&& x) {
-  return apply_scalar_unary<trunc_fun, T>::apply(
-      std::forward<T>(x));
+  return apply_scalar_unary<trunc_fun, T>::apply(std::forward<T>(x));
 }
 
 }  // namespace math

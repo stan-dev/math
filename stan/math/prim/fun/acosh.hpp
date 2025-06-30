@@ -79,8 +79,7 @@ struct acosh_fun {
  */
 template <typename T, require_ad_container_t<T>* = nullptr>
 inline auto acosh(T&& x) {
-  return apply_scalar_unary<acosh_fun, T>::apply(
-      std::forward<T>(x));
+  return apply_scalar_unary<acosh_fun, T>::apply(std::forward<T>(x));
 }
 
 /**

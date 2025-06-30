@@ -67,7 +67,7 @@ inline auto inv_sqrt(Container&& x) {
   return apply_scalar_unary<inv_sqrt_fun, Container>::apply(
       std::forward<Container>(x));
 #else
-  return apply_vector_unary<std::decay_t<Container>>::apply(
+  return apply_vector_unary<std::decay_t<Container> >::apply(
       std::forward<Container>(x),
       [](auto&& v) { return std::forward<decltype(v)>(v).array().rsqrt(); });
 #endif

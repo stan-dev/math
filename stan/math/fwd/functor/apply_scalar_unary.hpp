@@ -32,7 +32,9 @@ struct apply_scalar_unary<F, T, require_fvar_t<T>> {
    * @return Function applied to the variable.
    */
   template <typename T2>
-  static inline auto apply(const T2& x) { return F::fun(x); }
+  static inline auto apply(const T2& x) {
+    return F::fun(x);
+  }
 };
 
 }  // namespace math
