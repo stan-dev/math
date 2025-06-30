@@ -34,11 +34,10 @@ namespace math {
 template <typename LLFunc, typename LLArgs, typename CovarFun,
           typename CovarArgs, bool InitTheta, typename RNG,
           require_t<is_all_arithmetic_scalar<CovarArgs, LLArgs>>* = nullptr>
-inline Eigen::VectorXd laplace_base_rng(LLFunc&& ll_fun, LLArgs&& ll_args,
-                                        CovarFun&& covariance_function,
-                                        CovarArgs&& covar_args,
-                                        const laplace_options<InitTheta>& options,
-                                        RNG& rng, std::ostream* msgs) {
+inline Eigen::VectorXd laplace_base_rng(
+    LLFunc&& ll_fun, LLArgs&& ll_args, CovarFun&& covariance_function,
+    CovarArgs&& covar_args, const laplace_options<InitTheta>& options, RNG& rng,
+    std::ostream* msgs) {
   auto md_est = internal::laplace_marginal_density_est(
       ll_fun, std::forward<LLArgs>(ll_args),
       std::forward<CovarFun>(covariance_function),

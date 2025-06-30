@@ -59,9 +59,8 @@ struct laplace_options<true> : public laplace_options_base {
   Eigen::VectorXd theta_0{0};
 };
 
-
 using laplace_options_default = laplace_options<false>;
-using laplace_options_user_supplied = laplace_options<true>;  
+using laplace_options_user_supplied = laplace_options<true>;
 namespace internal {
 
 template <typename Covar, typename ThetaVec, typename WR, typename L_t,
@@ -466,11 +465,10 @@ inline STAN_COLD_PATH void throw_nan(NameStr&& name_str, ParamStr&& param_str,
 template <typename LLFun, typename LLTupleArgs, typename CovarFun,
           typename CovarArgs, bool InitTheta,
           require_t<is_all_arithmetic_scalar<CovarArgs>>* = nullptr>
-inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
-                                         CovarFun&& covariance_function,
-                                         CovarArgs&& covar_args,
-                                         const laplace_options<InitTheta>& options,
-                                         std::ostream* msgs) {
+inline auto laplace_marginal_density_est(
+    LLFun&& ll_fun, LLTupleArgs&& ll_args, CovarFun&& covariance_function,
+    CovarArgs&& covar_args, const laplace_options<InitTheta>& options,
+    std::ostream* msgs) {
   using Eigen::MatrixXd;
   using Eigen::SparseMatrix;
   using Eigen::VectorXd;
@@ -527,7 +525,7 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
     } else {
       return Eigen::VectorXd::Zero(theta_size);
     }
-  }(); 
+  }();
   double objective_old = std::numeric_limits<double>::lowest();
   double objective_new = std::numeric_limits<double>::lowest() + 1;
   Eigen::VectorXd a_prev = Eigen::VectorXd::Zero(theta_size);
@@ -796,13 +794,13 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
  * @return the log maginal density, p(y | phi)
  */
 template <
-    typename LLFun, typename LLTupleArgs, typename CovarFun, typename CovarArgs, bool InitTheta,
+    typename LLFun, typename LLTupleArgs, typename CovarFun, typename CovarArgs,
+    bool InitTheta,
     require_t<is_all_arithmetic_scalar<CovarArgs, LLTupleArgs>>* = nullptr>
-inline double laplace_marginal_density(LLFun&& ll_fun, LLTupleArgs&& ll_args,
-                                       CovarFun&& covariance_function,
-                                       CovarArgs&& covar_args,
-                                       const laplace_options<InitTheta>& options,
-                                       std::ostream* msgs) {
+inline double laplace_marginal_density(
+    LLFun&& ll_fun, LLTupleArgs&& ll_args, CovarFun&& covariance_function,
+    CovarArgs&& covar_args, const laplace_options<InitTheta>& options,
+    std::ostream* msgs) {
   return internal::laplace_marginal_density_est(
              std::forward<LLFun>(ll_fun), std::forward<LLTupleArgs>(ll_args),
              std::forward<CovarFun>(covariance_function),

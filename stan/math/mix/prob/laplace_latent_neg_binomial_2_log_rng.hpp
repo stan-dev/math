@@ -42,8 +42,9 @@ inline Eigen::VectorXd laplace_latent_tol_neg_binomial_2_log_rng(
     const double tolerance, const int max_num_steps,
     const int hessian_block_size, const int solver,
     const int max_steps_line_search, RNG& rng, std::ostream* msgs) {
-  laplace_options_user_supplied ops{hessian_block_size, solver,        max_steps_line_search,
-                      tolerance,          max_num_steps, value_of(theta_0)};
+  laplace_options_user_supplied ops{hessian_block_size,    solver,
+                                    max_steps_line_search, tolerance,
+                                    max_num_steps,         value_of(theta_0)};
   return laplace_base_rng(
       neg_binomial_2_log_likelihood{},
       std::forward_as_tuple(std::forward<Eta>(eta), y, y_index),
@@ -82,7 +83,8 @@ inline Eigen::VectorXd laplace_latent_neg_binomial_2_log_rng(
       neg_binomial_2_log_likelihood{},
       std::forward_as_tuple(std::forward<Eta>(eta), y, y_index),
       std::forward<CovarFun>(covariance_function),
-      std::forward<CovarArgs>(covar_args), laplace_options_default{}, rng, msgs);
+      std::forward<CovarArgs>(covar_args), laplace_options_default{}, rng,
+      msgs);
 }
 
 }  // namespace math
