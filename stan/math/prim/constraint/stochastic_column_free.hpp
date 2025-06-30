@@ -38,7 +38,9 @@ inline plain_type_t<Mat> stochastic_column_free(Mat&& y) {
 template <typename T, require_std_vector_t<T>* = nullptr>
 inline auto stochastic_column_free(T&& y) {
   return apply_vector_unary<std::decay_t<T>>::apply(
-      std::forward<T>(y), [](auto&& v) { return stochastic_column_free(std::forward<decltype(v)>(v)); });
+      std::forward<T>(y), [](auto&& v) {
+        return stochastic_column_free(std::forward<decltype(v)>(v));
+      });
 }
 
 }  // namespace math

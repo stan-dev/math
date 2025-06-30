@@ -49,7 +49,8 @@ template <
     require_not_var_matrix_t<T>* = nullptr,
     require_not_arithmetic_t<T>* = nullptr>
 inline auto inv_erfc(T&& x) {
-  return apply_scalar_unary<inv_erfc_fun, std::decay_t<T>>::apply(std::forward<T>(x));
+  return apply_scalar_unary<inv_erfc_fun, std::decay_t<T>>::apply(
+      std::forward<T>(x));
 }
 
 }  // namespace math

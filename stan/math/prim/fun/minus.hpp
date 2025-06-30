@@ -17,9 +17,9 @@ namespace math {
 template <typename T, require_not_std_vector_t<T>* = nullptr>
 inline auto minus(T&& x) {
   if constexpr (is_eigen_v<T>) {
-    return make_holder([](auto&& xx) {
-      return -std::forward<decltype(xx)>(xx);
-    }, std::forward<T>(x));
+    return make_holder(
+        [](auto&& xx) { return -std::forward<decltype(xx)>(xx); },
+        std::forward<T>(x));
   } else {
     return -x;
   }

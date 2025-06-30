@@ -38,8 +38,7 @@ inline auto fmod(T1&& a, T2&& b) {
   return apply_scalar_binary(
       [](auto&& c, auto&& d) {
         using std::fmod;
-        return fmod(std::forward<decltype(c)>(c),
-                    std::forward<decltype(d)>(d));
+        return fmod(std::forward<decltype(c)>(c), std::forward<decltype(d)>(d));
       },
       std::forward<T1>(a), std::forward<T2>(b));
 }

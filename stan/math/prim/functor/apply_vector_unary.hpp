@@ -44,9 +44,9 @@ struct apply_vector_unary<T, require_eigen_t<T>> {
             require_t<is_eigen_matrix_base<plain_type_t<T2>>>* = nullptr>
   static inline auto apply(T2&& x, F&& f) {
     if constexpr (is_eigen_array<decltype(f(x))>::value) {
-      return make_holder([](auto&& xx) {
-        return std::forward<decltype(xx)>(xx).matrix();
-      }, make_holder(std::forward<F>(f), std::forward<T2>(x)));
+      return make_holder(
+          [](auto&& xx) { return std::forward<decltype(xx)>(xx).matrix(); },
+          make_holder(std::forward<F>(f), std::forward<T2>(x)));
     } else {
       return make_holder(std::forward<F>(f), std::forward<T2>(x));
     }
@@ -58,9 +58,9 @@ struct apply_vector_unary<T, require_eigen_t<T>> {
     if constexpr (is_eigen_array<decltype(f(x))>::value) {
       return make_holder(std::forward<F>(f), std::forward<T2>(x));
     } else {
-      return make_holder([](auto&& xx) {
-        return std::forward<decltype(xx)>(xx).array();
-      }, make_holder(std::forward<F>(f), std::forward<T2>(x)));
+      return make_holder(
+          [](auto&& xx) { return std::forward<decltype(xx)>(xx).array(); },
+          make_holder(std::forward<F>(f), std::forward<T2>(x)));
     }
   }
 
@@ -166,7 +166,8 @@ struct apply_vector_unary<T, require_std_vector_vt<is_stan_scalar, T>> {
    */
   template <typename T2, typename F>
   static inline auto reduce(T2&& x, F&& f) {
-    return apply_vector_unary<T_map>::reduce(as_column_vector_or_scalar(std::forward<T2>(x)), std::forward<F>(f));
+    return apply_vector_unary<T_map>::reduce(
+        as_column_vector_or_scalar(std::forward<T2>(x)), std::forward<F>(f));
   }
 };
 

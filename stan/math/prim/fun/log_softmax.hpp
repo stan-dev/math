@@ -46,8 +46,7 @@ inline auto log_softmax(Container&& x) {
   return make_holder(
       [](auto&& a) {
         return apply_vector_unary<ref_type_t<std::decay_t<Container>>>::apply(
-            std::forward<decltype(a)>(a),
-            [](const auto& v) {
+            std::forward<decltype(a)>(a), [](const auto& v) {
               return std::forward<decltype(v)>(v).array() - log_sum_exp(v);
             });
       },

@@ -88,7 +88,8 @@ struct logit_fun {
  */
 template <typename Container, require_ad_container_t<Container>* = nullptr>
 inline auto logit(Container&& x) {
-  return apply_scalar_unary<logit_fun, std::decay_t<Container>>::apply(std::forward<Container>(x));
+  return apply_scalar_unary<logit_fun, std::decay_t<Container>>::apply(
+      std::forward<Container>(x));
 }
 
 /**
@@ -108,11 +109,9 @@ inline auto logit(Container&& x) {
   return make_holder(
       [](auto&& v_ref) {
         return apply_vector_unary<ref_type_t<std::decay_t<Container>>>::apply(
-            std::forward<decltype(v_ref)>(v_ref),
-            [](const auto& v) {
-              return (
-                         std::forward<decltype(v)>(v).array()
-                         / (1 - std::forward<decltype(v)>(v).array()))
+            std::forward<decltype(v_ref)>(v_ref), [](const auto& v) {
+              return (std::forward<decltype(v)>(v).array()
+                      / (1 - std::forward<decltype(v)>(v).array()))
                   .log();
             });
       },

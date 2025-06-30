@@ -59,7 +59,8 @@ struct step_fun {
  */
 template <typename T, require_container_t<T>* = nullptr>
 inline auto step(T&& x) {
-  return apply_scalar_unary<step_fun, std::decay_t<T>>::apply(std::forward<T>(x));
+  return apply_scalar_unary<step_fun, std::decay_t<T>>::apply(
+      std::forward<T>(x));
 }
 
 }  // namespace math

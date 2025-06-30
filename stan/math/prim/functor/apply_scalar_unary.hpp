@@ -60,11 +60,14 @@ struct apply_scalar_unary<F, T, require_eigen_t<T>> {
    */
   template <typename TT>
   static inline auto apply(TT&& x) {
-    return make_holder([](auto&& xx) {
-      return std::forward<decltype(xx)>(xx).unaryExpr([](auto&& xxx) {
-        return apply_scalar_unary<F, std::decay_t<decltype(xxx)>>::apply(xxx);
-      });
-    }, std::forward<TT>(x));
+    return make_holder(
+        [](auto&& xx) {
+          return std::forward<decltype(xx)>(xx).unaryExpr([](auto&& xxx) {
+            return apply_scalar_unary<F, std::decay_t<decltype(xxx)>>::apply(
+                xxx);
+          });
+        },
+        std::forward<TT>(x));
   }
 
   /**

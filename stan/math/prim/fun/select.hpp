@@ -23,8 +23,7 @@ namespace math {
 template <typename T_true, typename T_false,
           typename ReturnT = return_type_t<T_true, T_false>,
           require_all_stan_scalar_t<T_true, T_false>* = nullptr>
-inline ReturnT select(const bool c, T_true&& y_true,
-                      T_false&& y_false) {
+inline ReturnT select(const bool c, T_true&& y_true, T_false&& y_false) {
   return c ? ReturnT(y_true) : ReturnT(y_false);
 }
 
@@ -80,8 +79,7 @@ template <typename T_true, typename T_false,
                                               plain_type_t<T_true>>,
           require_container_t<T_true>* = nullptr,
           require_stan_scalar_t<T_false>* = nullptr>
-inline ReturnT select(const bool c, T_true&& y_true,
-                      T_false&& y_false) {
+inline ReturnT select(const bool c, T_true&& y_true, T_false&& y_false) {
   if (c) {
     return y_true;
   } else {
@@ -115,8 +113,7 @@ template <typename T_true, typename T_false,
                                               plain_type_t<T_false>>,
           require_stan_scalar_t<T_true>* = nullptr,
           require_container_t<T_false>* = nullptr>
-inline ReturnT select(const bool c, const T_true y_true,
-                      T_false&& y_false) {
+inline ReturnT select(const bool c, const T_true y_true, T_false&& y_false) {
   if (c) {
     return apply_scalar_binary(
         [](auto&& y_true_inner, auto&& y_false_inner) {
@@ -174,7 +171,10 @@ inline auto select(T_bool&& c, T_true&& y_true, T_false&& y_false) {
   check_consistent_sizes("select", "boolean", c, "left hand side", y_true,
                          "right hand side", y_false);
   using ret_t = return_type_t<T_true, T_false>;
-  return std::forward<T_bool>(c).select(std::forward<T_true>(y_true), std::forward<T_false>(y_false)).template cast<ret_t>().eval();
+  return std::forward<T_bool>(c)
+      .select(std::forward<T_true>(y_true), std::forward<T_false>(y_false))
+      .template cast<ret_t>()
+      .eval();
 }
 
 }  // namespace math

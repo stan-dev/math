@@ -158,10 +158,13 @@ inline auto apply_scalar_ternary(F&& f, T1&& x, T2&& y, T3&& z) {
 template <typename F, typename T1, typename T2, typename T3,
           require_any_container_t<T1, T2>* = nullptr,
           require_stan_scalar_t<T3>* = nullptr>
-inline auto apply_scalar_ternary(F&& f, T1&& x, T2&& y,
-                                 T3&& z) {
+inline auto apply_scalar_ternary(F&& f, T1&& x, T2&& y, T3&& z) {
   return apply_scalar_binary(
-      [f_ = std::forward<F>(f), z](auto&& a, auto&& b) { return f_(std::forward<decltype(a)>(a), std::forward<decltype(b)>(b), z); }, std::forward<T1>(x), std::forward<T2>(y));
+      [f_ = std::forward<F>(f), z](auto&& a, auto&& b) {
+        return f_(std::forward<decltype(a)>(a), std::forward<decltype(b)>(b),
+                  z);
+      },
+      std::forward<T1>(x), std::forward<T2>(y));
 }
 
 /**
@@ -183,10 +186,12 @@ inline auto apply_scalar_ternary(F&& f, T1&& x, T2&& y,
 template <typename F, typename T1, typename T2, typename T3,
           require_all_container_t<T1, T3>* = nullptr,
           require_stan_scalar_t<T2>* = nullptr>
-inline auto apply_scalar_ternary(const F& f, T1&& x, T2&& y,
-                                 T3&& z) {
+inline auto apply_scalar_ternary(const F& f, T1&& x, T2&& y, T3&& z) {
   return apply_scalar_binary(
-      [f, y](auto&& a, auto&& c) { return f(std::forward<decltype(a)>(a), y, std::forward<decltype(c)>(c)); }, std::forward<T1>(x), std::forward<T3>(z));
+      [f, y](auto&& a, auto&& c) {
+        return f(std::forward<decltype(a)>(a), y, std::forward<decltype(c)>(c));
+      },
+      std::forward<T1>(x), std::forward<T3>(z));
 }
 
 /**
@@ -208,10 +213,12 @@ inline auto apply_scalar_ternary(const F& f, T1&& x, T2&& y,
 template <typename F, typename T1, typename T2, typename T3,
           require_container_t<T3>* = nullptr,
           require_stan_scalar_t<T1>* = nullptr>
-inline auto apply_scalar_ternary(const F& f, T1&& x, T2&& y,
-                                 T3&& z) {
+inline auto apply_scalar_ternary(const F& f, T1&& x, T2&& y, T3&& z) {
   return apply_scalar_binary(
-      [f, x](auto&& b, auto&& c) { return f(x, std::forward<decltype(b)>(b), std::forward<decltype(c)>(c)); }, std::forward<T2>(y), std::forward<T3>(z));
+      [f, x](auto&& b, auto&& c) {
+        return f(x, std::forward<decltype(b)>(b), std::forward<decltype(c)>(c));
+      },
+      std::forward<T2>(y), std::forward<T3>(z));
 }
 
 }  // namespace math

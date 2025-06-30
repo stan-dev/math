@@ -45,7 +45,9 @@ struct apply_scalar_unary<F, T, require_var_matrix_t<T>> {
    * @return Function applied to the variable.
    */
   template <typename T2>
-  static inline return_t apply(T2&& x) { return F::fun(std::forward<T2>(x)); }
+  static inline return_t apply(T2&& x) {
+    return F::fun(std::forward<T2>(x));
+  }
 };
 
 }  // namespace math

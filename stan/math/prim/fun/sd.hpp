@@ -28,14 +28,14 @@ inline auto sd(T&& m) {
 
   return apply_vector_unary<std::decay_t<T>>::reduce(
       std::forward<T>(m), [](auto&& x) {
-    check_nonzero_size("sd", "x", x);
+        check_nonzero_size("sd", "x", x);
 
-    if (x.size() == 1) {
-      return scalar_type_t<T>(0.0);
-    }
+        if (x.size() == 1) {
+          return scalar_type_t<T>(0.0);
+        }
 
-    return sqrt(variance(x));
-  });
+        return sqrt(variance(x));
+      });
 }
 
 }  // namespace math

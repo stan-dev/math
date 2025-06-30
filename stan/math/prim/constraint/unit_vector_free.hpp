@@ -38,7 +38,8 @@ inline auto unit_vector_free(EigVec&& x) {
 template <typename T, require_std_vector_t<T>* = nullptr>
 inline auto unit_vector_free(T&& x) {
   return apply_vector_unary<std::decay_t<T>>::apply(
-      std::forward<T>(x), [](auto&& v) { return unit_vector_free(std::forward<decltype(v)>(v)); });
+      std::forward<T>(x),
+      [](auto&& v) { return unit_vector_free(std::forward<decltype(v)>(v)); });
 }
 
 }  // namespace math

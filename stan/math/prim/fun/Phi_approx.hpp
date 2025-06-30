@@ -67,7 +67,8 @@ template <
     require_all_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr,
     require_not_var_matrix_t<T>* = nullptr>
 inline auto Phi_approx(T&& x) {
-  return apply_scalar_unary<Phi_approx_fun, std::decay_t<T>>::apply(std::forward<T>(x));
+  return apply_scalar_unary<Phi_approx_fun, std::decay_t<T>>::apply(
+      std::forward<T>(x));
 }
 
 }  // namespace math

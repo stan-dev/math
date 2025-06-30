@@ -89,7 +89,9 @@ cholesky_corr_constrain(const EigVec& y, int K, Lp& lp) {
 template <typename T, require_std_vector_t<T>* = nullptr>
 inline auto cholesky_corr_constrain(T&& y, int K) {
   return apply_vector_unary<std::decay_t<T>>::apply(
-      std::forward<T>(y), [K](auto&& v) { return cholesky_corr_constrain(std::forward<decltype(v)>(v), K); });
+      std::forward<T>(y), [K](auto&& v) {
+        return cholesky_corr_constrain(std::forward<decltype(v)>(v), K);
+      });
 }
 
 /**
@@ -109,7 +111,9 @@ template <typename T, typename Lp, require_std_vector_t<T>* = nullptr,
           require_convertible_t<return_type_t<T>, Lp>* = nullptr>
 inline auto cholesky_corr_constrain(T&& y, int K, Lp& lp) {
   return apply_vector_unary<std::decay_t<T>>::apply(
-      std::forward<T>(y), [&lp, K](auto&& v) { return cholesky_corr_constrain(std::forward<decltype(v)>(v), K, lp); });
+      std::forward<T>(y), [&lp, K](auto&& v) {
+        return cholesky_corr_constrain(std::forward<decltype(v)>(v), K, lp);
+      });
 }
 
 /**

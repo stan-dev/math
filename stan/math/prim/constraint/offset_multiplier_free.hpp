@@ -39,7 +39,8 @@ namespace math {
  * @throw std::domain_error if mu is not finite
  * @throw std::invalid_argument if non-scalar arguments don't match in size
  */
-template <typename T, typename M, typename S, require_all_not_std_vector_t<T, M, S>* = nullptr,
+template <typename T, typename M, typename S,
+          require_all_not_std_vector_t<T, M, S>* = nullptr,
           require_all_not_st_var<T, M, S>* = nullptr>
 inline auto offset_multiplier_free(T&& y, M&& mu, S&& sigma) {
   auto&& mu_ref = to_ref(std::forward<M>(mu));
@@ -57,16 +58,18 @@ inline auto offset_multiplier_free(T&& y, M&& mu, S&& sigma) {
   check_finite("offset_multiplier_constrain", "offset", value_of(mu_ref));
   check_positive_finite("offset_multiplier_constrain", "multiplier",
                         value_of(sigma_ref));
-  return stan::math::eval(divide(subtract(std::forward<T>(y), std::forward<M>(mu_ref)), std::forward<S>(sigma_ref)));
+  return stan::math::eval(
+      divide(subtract(std::forward<T>(y), std::forward<M>(mu_ref)),
+             std::forward<S>(sigma_ref)));
 }
 
 /**
  * Overload for array of x and non-array mu and sigma
  */
-template <typename T, typename M, typename S, require_std_vector_t<T>* = nullptr,
+template <typename T, typename M, typename S,
+          require_std_vector_t<T>* = nullptr,
           require_all_not_std_vector_t<M, S>* = nullptr>
-inline auto offset_multiplier_free(T&& x, M&& mu,
-                                   S&& sigma) {
+inline auto offset_multiplier_free(T&& x, M&& mu, S&& sigma) {
   std::vector<plain_type_t<decltype(offset_multiplier_free(x[0], mu, sigma))>>
       ret;
   ret.reserve(x.size());
@@ -81,10 +84,10 @@ inline auto offset_multiplier_free(T&& x, M&& mu,
 /**
  * Overload for array of x and sigma and non-array mu
  */
-template <typename T, typename M, typename S, require_all_std_vector_t<T, S>* = nullptr,
+template <typename T, typename M, typename S,
+          require_all_std_vector_t<T, S>* = nullptr,
           require_not_std_vector_t<M>* = nullptr>
-inline auto offset_multiplier_free(T&& x, const M& mu,
-                                   S&& sigma) {
+inline auto offset_multiplier_free(T&& x, const M& mu, S&& sigma) {
   check_matching_dims("offset_multiplier_free", "x", x, "sigma", sigma);
   std::vector<
       plain_type_t<decltype(offset_multiplier_free(x[0], mu, sigma[0]))>>
@@ -100,10 +103,10 @@ inline auto offset_multiplier_free(T&& x, const M& mu,
 /**
  * Overload for array of x and mu and non-array sigma
  */
-template <typename T, typename M, typename S, require_all_std_vector_t<T, M>* = nullptr,
+template <typename T, typename M, typename S,
+          require_all_std_vector_t<T, M>* = nullptr,
           require_not_std_vector_t<S>* = nullptr>
-inline auto offset_multiplier_free(T&& x,
-                                   M&& mu, const S& sigma) {
+inline auto offset_multiplier_free(T&& x, M&& mu, const S& sigma) {
   check_matching_dims("offset_multiplier_free", "x", x, "mu", mu);
   std::vector<
       plain_type_t<decltype(offset_multiplier_free(x[0], mu[0], sigma))>>
@@ -119,7 +122,8 @@ inline auto offset_multiplier_free(T&& x,
 /**
  * Overload for array of x, mu, and sigma
  */
-template <typename T, typename M, typename S, require_all_std_vector_t<T, M, S>* = nullptr>
+template <typename T, typename M, typename S,
+          require_all_std_vector_t<T, M, S>* = nullptr>
 inline auto offset_multiplier_free(T&& x, M&& mu, S&& sigma) {
   check_matching_dims("offset_multiplier_free", "x", x, "mu", mu);
   check_matching_dims("offset_multiplier_free", "x", x, "sigma", sigma);

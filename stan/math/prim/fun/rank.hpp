@@ -20,10 +20,11 @@ template <typename C, require_container_t<C>* = nullptr>
 inline int rank(C&& v, int s) {
   check_range("rank", "v", v.size(), s);
   --s;  // adjust for indexing by one
-  return apply_vector_unary<std::decay_t<C>>::reduce(std::forward<C>(v), [s](const auto& vec) {
-    auto&& vec_ref = to_ref(std::forward<decltype(vec)>(vec));
-    return (vec_ref.array() < vec_ref.coeff(s)).template cast<int>().sum();
-  });
+  return apply_vector_unary<std::decay_t<C>>::reduce(
+      std::forward<C>(v), [s](const auto& vec) {
+        auto&& vec_ref = to_ref(std::forward<decltype(vec)>(vec));
+        return (vec_ref.array() < vec_ref.coeff(s)).template cast<int>().sum();
+      });
 }
 
 }  // namespace math

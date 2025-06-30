@@ -81,9 +81,7 @@ template <typename Container,
 inline auto abs(Container&& x) {
   return apply_vector_unary<std::decay_t<Container>>::apply(
       std::forward<Container>(x),
-      [&](auto&& v) {
-        return std::forward<decltype(v)>(v).array().abs();
-      });
+      [&](auto&& v) { return std::forward<decltype(v)>(v).array().abs(); });
 }
 
 namespace internal {

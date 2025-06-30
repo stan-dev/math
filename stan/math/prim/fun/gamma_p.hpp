@@ -90,7 +90,8 @@ template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr>
 inline auto gamma_p(T1&& a, T2&& b) {
   return apply_scalar_binary(
       [](auto&& c, auto&& d) {
-        return gamma_p(std::forward<decltype(c)>(c), std::forward<decltype(d)>(d));
+        return gamma_p(std::forward<decltype(c)>(c),
+                       std::forward<decltype(d)>(d));
       },
       std::forward<T1>(a), std::forward<T2>(b));
 }

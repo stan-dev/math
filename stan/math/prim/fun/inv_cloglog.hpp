@@ -91,7 +91,8 @@ struct inv_cloglog_fun {
  */
 template <typename Container, require_ad_container_t<Container>* = nullptr>
 inline auto inv_cloglog(Container&& x) {
-  return apply_scalar_unary<inv_cloglog_fun, std::decay_t<Container>>::apply(std::forward<Container>(x));
+  return apply_scalar_unary<inv_cloglog_fun, std::decay_t<Container>>::apply(
+      std::forward<Container>(x));
 }
 
 /**
@@ -106,8 +107,7 @@ template <typename Container,
           require_container_bt<std::is_arithmetic, Container>* = nullptr>
 inline auto inv_cloglog(Container&& x) {
   return apply_vector_unary<std::decay_t<Container>>::apply(
-      std::forward<Container>(x),
-      [](const auto& v) {
+      std::forward<Container>(x), [](const auto& v) {
         return (1 - (-std::forward<decltype(v)>(v).array().exp()).exp());
       });
 }

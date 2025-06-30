@@ -72,7 +72,8 @@ struct to_int_fun {
 template <typename Container,
           require_std_vector_st<std::is_arithmetic, Container>* = nullptr>
 inline auto to_int(Container&& x) {
-  return apply_scalar_unary<to_int_fun, std::decay_t<Container>>::apply(std::forward<Container>(x));
+  return apply_scalar_unary<to_int_fun, std::decay_t<Container>>::apply(
+      std::forward<Container>(x));
 }
 
 }  // namespace math

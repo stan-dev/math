@@ -82,16 +82,16 @@ template <typename T, require_container_st<std::is_arithmetic, T>* = nullptr>
 inline auto log_sum_exp(T&& x) {
   return apply_vector_unary<std::decay_t<T>>::reduce(
       std::forward<T>(x), [&](auto&& v) {
-    if (v.size() == 0) {
-      return NEGATIVE_INFTY;
-    }
-    const auto& v_ref = to_ref(v);
-    const double max = v_ref.maxCoeff();
-    if (!std::isfinite(max)) {
-      return max;
-    }
-    return max + std::log((v_ref.array() - max).exp().sum());
-  });
+        if (v.size() == 0) {
+          return NEGATIVE_INFTY;
+        }
+        const auto& v_ref = to_ref(v);
+        const double max = v_ref.maxCoeff();
+        if (!std::isfinite(max)) {
+          return max;
+        }
+        return max + std::log((v_ref.array() - max).exp().sum());
+      });
 }
 
 /**

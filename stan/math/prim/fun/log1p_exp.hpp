@@ -76,7 +76,8 @@ template <typename T,
           require_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr,
           require_not_var_matrix_t<T>* = nullptr>
 inline auto log1p_exp(T&& x) {
-  return apply_scalar_unary<log1p_exp_fun, std::decay_t<T>>::apply(std::forward<T>(x));
+  return apply_scalar_unary<log1p_exp_fun, std::decay_t<T>>::apply(
+      std::forward<T>(x));
 }
 
 }  // namespace math

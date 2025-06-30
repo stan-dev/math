@@ -72,7 +72,9 @@ inline auto positive_ordered_constrain(Vec&& x, Lp& lp) {
 template <typename T, require_std_vector_t<T>* = nullptr>
 inline auto positive_ordered_constrain(T&& x) {
   return apply_vector_unary<std::decay_t<T>>::apply(
-      std::forward<T>(x), [](auto&& v) { return positive_ordered_constrain(std::forward<decltype(v)>(v)); });
+      std::forward<T>(x), [](auto&& v) {
+        return positive_ordered_constrain(std::forward<decltype(v)>(v));
+      });
 }
 
 /**
@@ -93,7 +95,9 @@ template <typename T, typename Lp, require_std_vector_t<T>* = nullptr,
           require_convertible_t<return_type_t<T>, Lp>* = nullptr>
 inline auto positive_ordered_constrain(T&& x, Lp& lp) {
   return apply_vector_unary<std::decay_t<T>>::apply(
-      std::forward<T>(x), [&lp](auto&& v) { return positive_ordered_constrain(std::forward<decltype(v)>(v), lp); });
+      std::forward<T>(x), [&lp](auto&& v) {
+        return positive_ordered_constrain(std::forward<decltype(v)>(v), lp);
+      });
 }
 
 /**

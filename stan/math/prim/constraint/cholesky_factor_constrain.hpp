@@ -103,7 +103,9 @@ cholesky_factor_constrain(const T& x, int M, int N, Lp& lp) {
 template <typename T, require_std_vector_t<T>* = nullptr>
 inline auto cholesky_factor_constrain(T&& x, int M, int N) {
   return apply_vector_unary<std::decay_t<T>>::apply(
-      std::forward<T>(x), [M, N](auto&& v) { return cholesky_factor_constrain(std::forward<decltype(v)>(v), M, N); });
+      std::forward<T>(x), [M, N](auto&& v) {
+        return cholesky_factor_constrain(std::forward<decltype(v)>(v), M, N);
+      });
 }
 
 /**
@@ -126,9 +128,11 @@ inline auto cholesky_factor_constrain(T&& x, int M, int N) {
 template <typename T, typename Lp, require_std_vector_t<T>* = nullptr,
           require_convertible_t<return_type_t<T>, Lp>* = nullptr>
 inline auto cholesky_factor_constrain(T&& x, int M, int N, Lp& lp) {
-  return apply_vector_unary<std::decay_t<T>>::apply(std::forward<T>(x), [&lp, M, N](auto&& v) {
-    return cholesky_factor_constrain(std::forward<decltype(v)>(v), M, N, lp);
-  });
+  return apply_vector_unary<std::decay_t<T>>::apply(
+      std::forward<T>(x), [&lp, M, N](auto&& v) {
+        return cholesky_factor_constrain(std::forward<decltype(v)>(v), M, N,
+                                         lp);
+      });
 }
 
 /**

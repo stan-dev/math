@@ -97,7 +97,9 @@ template <bool Jacobian, typename T, typename Lp,
           require_convertible_t<return_type_t<T>, Lp>* = nullptr>
 inline auto positive_constrain(T&& x, Lp& lp) {
   return apply_vector_unary<std::decay_t<T>>::apply(
-      std::forward<T>(x), [&lp](auto&& v) { return positive_constrain<Jacobian>(std::forward<decltype(v)>(v), lp); });
+      std::forward<T>(x), [&lp](auto&& v) {
+        return positive_constrain<Jacobian>(std::forward<decltype(v)>(v), lp);
+      });
 }
 
 }  // namespace math

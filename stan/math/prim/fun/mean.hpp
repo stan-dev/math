@@ -21,8 +21,8 @@ namespace math {
 template <typename T, require_container_t<T>* = nullptr>
 inline return_type_t<T> mean(T&& m) {
   check_nonzero_size("mean", "m", m);
-  return apply_vector_unary<std::decay_t<T>>::reduce(std::forward<T>(m),
-                                       [](const auto& a) { return a.mean(); });
+  return apply_vector_unary<std::decay_t<T>>::reduce(
+      std::forward<T>(m), [](const auto& a) { return a.mean(); });
 }
 
 }  // namespace math
