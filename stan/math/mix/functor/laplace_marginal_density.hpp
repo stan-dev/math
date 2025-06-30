@@ -47,19 +47,21 @@ struct laplace_options_base {
   int max_num_steps{100};
 };
 
-template <typename Theta, typename = void>
+template <bool HasInitTheta>
 struct laplace_options;
 
-template <typename Theta>
-struct laplace_options<Theta, require_eigen_t<Theta>> : public laplace_options_base {
+template <>
+struct laplace_options<false> : public laplace_options_base {};
+
+template <>
+struct laplace_options<true> : public laplace_options_base {
   /* Value for user supplied initial theta  */
-  Theta theta_0{0};
+  Eigen::VectorXd theta_0{0};
 };
 
-template <typename Theta>
-struct laplace_options<Theta, require_not_eigen_t<Theta>> : public laplace_options_base {};
 
-using laplace_options_default = laplace_options<void>;
+using laplace_options_default = laplace_options<false>;
+using laplace_options_user_supplied = laplace_options<true>;  
 namespace internal {
 
 template <typename Covar, typename ThetaVec, typename WR, typename L_t,
@@ -462,17 +464,17 @@ inline STAN_COLD_PATH void throw_nan(NameStr&& name_str, ParamStr&& param_str,
  *
  */
 template <typename LLFun, typename LLTupleArgs, typename CovarFun,
-          typename CovarArgs, typename ThetaVec,
+          typename CovarArgs, bool InitTheta,
           require_t<is_all_arithmetic_scalar<CovarArgs>>* = nullptr>
 inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
                                          CovarFun&& covariance_function,
                                          CovarArgs&& covar_args,
-                                         const laplace_options<ThetaVec>& options,
+                                         const laplace_options<InitTheta>& options,
                                          std::ostream* msgs) {
   using Eigen::MatrixXd;
   using Eigen::SparseMatrix;
   using Eigen::VectorXd;
-  if constexpr (is_eigen_v<ThetaVec>) {
+  if constexpr (InitTheta) {
     check_nonzero_size("laplace_marginal", "initial guess", options.theta_0);
     check_finite("laplace_marginal", "initial guess", options.theta_0);
   }
@@ -520,7 +522,7 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
   };
   auto ll_args_vals = value_of(ll_args);
   Eigen::VectorXd theta = [theta_size, &options]() {
-    if constexpr (is_eigen_v<ThetaVec>) {
+    if constexpr (InitTheta) {
       return options.theta_0;
     } else {
       return Eigen::VectorXd::Zero(theta_size);
@@ -794,12 +796,12 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
  * @return the log maginal density, p(y | phi)
  */
 template <
-    typename LLFun, typename LLTupleArgs, typename CovarFun, typename CovarArgs, typename ThetaVec,
+    typename LLFun, typename LLTupleArgs, typename CovarFun, typename CovarArgs, bool InitTheta,
     require_t<is_all_arithmetic_scalar<CovarArgs, LLTupleArgs>>* = nullptr>
 inline double laplace_marginal_density(LLFun&& ll_fun, LLTupleArgs&& ll_args,
                                        CovarFun&& covariance_function,
                                        CovarArgs&& covar_args,
-                                       const laplace_options<ThetaVec>& options,
+                                       const laplace_options<InitTheta>& options,
                                        std::ostream* msgs) {
   return internal::laplace_marginal_density_est(
              std::forward<LLFun>(ll_fun), std::forward<LLTupleArgs>(ll_args),
@@ -1036,12 +1038,12 @@ inline void reverse_pass_collect_adjoints(var ret, Output&& output,
  * @return the log maginal density, p(y | phi)
  */
 template <typename LLFun, typename LLTupleArgs, typename CovarFun,
-          typename CovarArgs, typename ThetaVec,
+          typename CovarArgs, bool InitTheta,
           require_t<is_any_var_scalar<LLTupleArgs, CovarArgs>>* = nullptr>
 inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
                                      CovarFun&& covariance_function,
                                      CovarArgs&& covar_args,
-                                     const laplace_options<ThetaVec>& options,
+                                     const laplace_options<InitTheta>& options,
                                      std::ostream* msgs) {
   auto covar_args_refs = to_ref(std::forward<CovarArgs>(covar_args));
   auto ll_args_refs = to_ref(std::forward<LLTupleArgs>(ll_args));
