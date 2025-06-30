@@ -52,7 +52,6 @@ struct laplace_options;
 
 template <typename Theta>
 struct laplace_options<Theta, require_eigen_t<Theta>> : public laplace_options_base {
-
   /* Value for user supplied initial theta  */
   Theta theta_0{0};
 };
