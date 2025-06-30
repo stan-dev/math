@@ -36,7 +36,7 @@ inline auto laplace_latent_tol_rng(
     CovarArgs&& covar_args, ThetaVec&& theta_0, const double tolerance,
     const int max_num_steps, const int hessian_block_size, const int solver,
     const int max_steps_line_search, RNG& rng, std::ostream* msgs) {
-  const laplace_options ops{hessian_block_size,    solver,
+  const laplace_options_user_supplied ops{hessian_block_size,    solver,
                             max_steps_line_search, tolerance,
                             max_num_steps,         value_of(theta_0)};
   return laplace_base_rng(std::forward<LLFunc>(L_f),
@@ -69,11 +69,10 @@ inline auto laplace_latent_rng(LLFunc&& L_f, LLArgs&& ll_args,
                                CovarFun&& covariance_function,
                                CovarArgs&& covar_args, RNG& rng,
                                std::ostream* msgs) {
-  const laplace_options ops{1, 1, 0, 1e-6, 100, std::nullopt};
   return laplace_base_rng(std::forward<LLFunc>(L_f),
                           std::forward<LLArgs>(ll_args),
                           std::forward<CovarFun>(covariance_function),
-                          std::forward<CovarArgs>(covar_args), ops, rng, msgs);
+                          std::forward<CovarArgs>(covar_args), laplace_options_default{}, rng, msgs);
 }
 
 }  // namespace math

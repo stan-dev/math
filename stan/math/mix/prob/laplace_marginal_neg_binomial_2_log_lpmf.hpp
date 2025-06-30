@@ -73,7 +73,7 @@ inline auto laplace_marginal_tol_neg_binomial_2_log_lpmf(
     const ThetaVec& theta_0, double tolerance, int max_num_steps,
     const int hessian_block_size, const int solver,
     const int max_steps_line_search, std::ostream* msgs) {
-  laplace_options ops{hessian_block_size, solver,        max_steps_line_search,
+  laplace_options_user_supplied ops{hessian_block_size, solver,        max_steps_line_search,
                       tolerance,          max_num_steps, value_of(theta_0)};
   return laplace_marginal_density(
       neg_binomial_2_log_likelihood{}, std::forward_as_tuple(eta, y, y_index),
@@ -103,11 +103,10 @@ inline auto laplace_marginal_neg_binomial_2_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& y_index, const Eta& eta,
     CovarFun&& covariance_function, CovarArgs&& covar_args,
     std::ostream* msgs) {
-  const laplace_options ops{1, 1, 0, 1e-6, 100, std::nullopt};
   return laplace_marginal_density(
       neg_binomial_2_log_likelihood{}, std::forward_as_tuple(eta, y, y_index),
       std::forward<CovarFun>(covariance_function),
-      std::forward<CovarArgs>(covar_args), ops, msgs);
+      std::forward<CovarArgs>(covar_args), laplace_options_default{}, msgs);
 }
 
 struct neg_binomial_2_log_likelihood_summary {
@@ -159,7 +158,7 @@ inline auto laplace_marginal_tol_neg_binomial_2_log_summary_lpmf(
     const ThetaVec& theta_0, double tolerance, int max_num_steps,
     const int hessian_block_size, const int solver,
     const int max_steps_line_search, std::ostream* msgs) {
-  laplace_options ops{hessian_block_size, solver,        max_steps_line_search,
+  laplace_options_user_supplied ops{hessian_block_size, solver,        max_steps_line_search,
                       tolerance,          max_num_steps, value_of(theta_0)};
   return laplace_marginal_density(
       neg_binomial_2_log_likelihood_summary{},
@@ -191,12 +190,11 @@ inline auto laplace_marginal_neg_binomial_2_log_summary_lpmf(
     const std::vector<int>& counts_per_group, const Eta& eta,
     CovarFun&& covariance_function, CovarArgs&& covar_args,
     std::ostream* msgs) {
-  const laplace_options ops{1, 1, 0, 1e-6, 100, std::nullopt};
   return laplace_marginal_density(
       neg_binomial_2_log_likelihood_summary{},
       std::forward_as_tuple(eta, y, n_per_group, counts_per_group),
       std::forward<CovarFun>(covariance_function),
-      std::forward<CovarArgs>(covar_args), ops, msgs);
+      std::forward<CovarArgs>(covar_args), laplace_options_default{}, msgs);
 }
 
 }  // namespace math
