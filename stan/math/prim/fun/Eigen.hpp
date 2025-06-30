@@ -7,7 +7,7 @@
 #endif
 #define eigen_assert(x)                               \
   if (!(x)) {                                         \
-    throw(std::domain_error("Internal Eigen Error")); \
+    throw(std::domain_error("Internal Eigen Error: Assertion '" #x "' failed in " __FILE__ )); \
   }
 #endif
 #ifdef EIGEN_MATRIXBASE_PLUGIN
