@@ -16,15 +16,7 @@ namespace math {
 template <typename T>
 inline fvar<T> std_normal_log_qf(const fvar<T>& p) {
   const T xv = std_normal_log_qf(p.val_);
-  int p_sign = 1;
-  auto p_d = p.d_;
-  if (p.d_ < 0) {
-    p_sign = -1;
-    p_d *= -1;
-  }
-  return fvar<T>(
-      xv,
-      p_sign * exp(p.val_ + log(p_d) - NEG_LOG_SQRT_TWO_PI + 0.5 * square(xv)));
+  return fvar<T>(xv, p.d_ * exp(p.val_ - std_normal_lpdf(xv)));
 }
 }  // namespace math
 }  // namespace stan

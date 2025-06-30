@@ -7,9 +7,9 @@ def runTests(String testPath, boolean jumbo = false) {
         sh "cat make/local"
         sh "make print-compiler-flags"
         if (jumbo && !params.disableJumbo) {
-            sh "python3 runTests.py -j${env.PARALLEL} ${testPath} --jumbo --debug"
+            sh "python3 runTests.py -j${PARALLEL} ${testPath} --jumbo --debug"
         } else {
-            sh "python3 runTests.py -j${env.PARALLEL} ${testPath}"
+            sh "python3 runTests.py -j${PARALLEL} ${testPath}"
         }
     }
         finally { junit 'test/**/*.xml' }
@@ -61,7 +61,6 @@ pipeline {
         OPENCL_PLATFORM_ID = 1
         OPENCL_PLATFORM_ID_CPU = 0
         OPENCL_PLATFORM_ID_GPU = 0
-        PARALLEL = 4
         GIT_AUTHOR_NAME = 'Stan Jenkins'
         GIT_AUTHOR_EMAIL = 'mc.stanislaw@gmail.com'
         GIT_COMMITTER_NAME = 'Stan Jenkins'
@@ -273,7 +272,7 @@ pipeline {
                     agent {
                         docker {
                             image 'stanorg/ci:gpu-cpp17'
-                            label 'linux'
+                            label 'linux && 8core'
                             args '--cap-add SYS_PTRACE'
                         }
                     }
@@ -513,7 +512,7 @@ pipeline {
                     def tests = [:]
                     for (f in changedDistributionTests.collate(24)) {
                         def names = f.join(" ")
-                        tests["Distribution Tests: ${names}"] = { node ("linux && docker") {
+                        tests["Distribution Tests: ${names}"] = { node ("linux && docker && 8core") {
                             deleteDir()
                             docker.image('stanorg/ci:gpu-cpp17').inside {
                                 catchError {
