@@ -31,28 +31,24 @@ namespace math {
    \end{cases}
    \f]
  *
- * @param a Specified variable.
- * @return Cube root of the variable.
- */
-inline var cbrt(const var& a) {
-  return make_callback_var(cbrt(a.val()), [a](const auto& vi) mutable {
-    a.adj() += vi.adj() / (3.0 * vi.val() * vi.val());
-  });
-}
-
-/**
  * Returns the cube root of the specified variable (C99).
- * @tparam Varmat a `var_value` with inner Eigen type
+ * @tparam Varmat a `var_value`
  * @param a Specified variable.
  * @return Cube root of the variable.
  */
-template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
-inline auto cbrt(const VarMat& a) {
-  return make_callback_var(
-      a.val().unaryExpr([](const auto x) { return cbrt(x); }),
+template <typename Var, require_var_t<Var>* = nullptr>
+inline auto cbrt(Var&& a) {
+  if constexpr (is_stan_scalar_v<Var>) {
+    return make_callback_var(cbrt(a.val()), [a](const auto& vi) mutable {
+      a.adj() += vi.adj() / (3.0 * vi.val() * vi.val());
+    });
+  } else {
+    return make_callback_var(
+      a.val().unaryExpr([](auto&& x) { return cbrt(x); }),
       [a](const auto& vi) mutable {
         a.adj().array() += vi.adj().array() / (3.0 * vi.val().array().square());
-      });
+    });
+  }
 }
 
 }  // namespace math

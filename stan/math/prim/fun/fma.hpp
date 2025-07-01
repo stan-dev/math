@@ -24,8 +24,7 @@ namespace math {
 template <typename T1, typename T2, typename T3,
           require_all_arithmetic_t<T1, T2, T3>* = nullptr>
 inline double fma(T1 x, T2 y, T3 z) {
-  using std::fma;
-  return fma(x, y, z);
+  return std::fma(x, y, z);
 }
 
 template <typename T1, typename T2, typename T3,

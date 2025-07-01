@@ -71,8 +71,8 @@ struct logit_fun {
    * @return log odds of the argument
    */
   template <typename T>
-  static inline auto fun(const T& x) {
-    return logit(x);
+  static inline auto fun(T&& x) {
+  return logit(std::forward<T>(x));
   }
 };
 

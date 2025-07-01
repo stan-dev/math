@@ -80,18 +80,17 @@ inline return_type_t<T1, T2> log_sum_exp(const T2& a, const T1& b) {
  */
 template <typename T, require_container_st<std::is_arithmetic, T>* = nullptr>
 inline auto log_sum_exp(T&& x) {
-  return apply_vector_unary<std::decay_t<T>>::reduce(
-      std::forward<T>(x), [&](auto&& v) {
-        if (v.size() == 0) {
-          return NEGATIVE_INFTY;
-        }
-        const auto& v_ref = to_ref(v);
-        const double max = v_ref.maxCoeff();
-        if (!std::isfinite(max)) {
-          return max;
-        }
-        return max + std::log((v_ref.array() - max).exp().sum());
-      });
+  return apply_vector_unary<T>::reduce(std::forward<T>(x), [](const auto& v) {
+    if (v.size() == 0) {
+      return NEGATIVE_INFTY;
+    }
+    const auto& v_ref = to_ref(v);
+    const double max = v_ref.maxCoeff();
+    if (!std::isfinite(max)) {
+      return max;
+    }
+    return max + std::log((v_ref.array() - max).exp().sum());
+  });
 }
 
 /**
@@ -105,13 +104,9 @@ inline auto log_sum_exp(T&& x) {
  * @return log_sum_exp function applied to the two inputs.
  */
 template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr>
-inline auto log_sum_exp(T1&& a, T2&& b) {
+inline auto log_sum_exp(T1&& a, const T2& b) {
   return apply_scalar_binary(
-      [](auto&& c, auto&& d) {
-        return log_sum_exp(std::forward<decltype(c)>(c),
-                           std::forward<decltype(d)>(d));
-      },
-      std::forward<T1>(a), std::forward<T2>(b));
+      [](const auto& c, const auto& d) { return log_sum_exp(c, d); }, a, b);
 }
 
 }  // namespace math

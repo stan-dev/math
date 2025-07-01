@@ -50,7 +50,8 @@ namespace math {
  * @param a Variable argument.
  * @return The unit normal cdf evaluated at the specified argument.
  */
-inline var Phi(const var& a) {
+template <typename T, require_var_t<T>* = nullptr, require_stan_scalar_t<T>* = nullptr>
+inline auto Phi(T&& a) {
   return make_callback_var(Phi(a.val()), [a](auto& vi) mutable {
     a.adj() += vi.adj() * INV_SQRT_TWO_PI * std::exp(-0.5 * a.val() * a.val());
   });

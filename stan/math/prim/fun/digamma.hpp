@@ -58,8 +58,8 @@ inline double digamma(double x) {
  */
 struct digamma_fun {
   template <typename T>
-  static inline auto fun(const T& x) {
-    return digamma(x);
+  static inline auto fun(T&& x) {
+    return digamma(std::forward<T>(x));
   }
 };
 
@@ -73,7 +73,7 @@ struct digamma_fun {
  */
 template <typename T,
           require_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr,
-          require_not_var_matrix_t<T>* = nullptr>
+          require_container_t<T>* = nullptr>
 inline auto digamma(T&& x) {
   return apply_scalar_unary<digamma_fun, T>::apply(std::forward<T>(x));
 }

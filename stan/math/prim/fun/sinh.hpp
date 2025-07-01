@@ -44,8 +44,8 @@ inline auto sinh(const T x) {
  */
 struct sinh_fun {
   template <typename T>
-  static inline auto fun(const T& x) {
-    return sinh(x);
+  static inline auto fun(T&& x) {
+  return sinh(std::forward<T>(x));
   }
 };
 

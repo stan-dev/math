@@ -51,8 +51,8 @@ inline auto acos(const T x) {
  */
 struct acos_fun {
   template <typename T>
-  static inline auto fun(const T& x) {
-    return acos(x);
+  static inline auto fun(T&& x) {
+  return acos(std::forward<T>(x));
   }
 };
 

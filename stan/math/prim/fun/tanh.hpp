@@ -46,8 +46,8 @@ inline auto tanh(const T x) {
  */
 struct tanh_fun {
   template <typename T>
-  static inline auto fun(const T& x) {
-    return tanh(x);
+  static inline auto fun(T&& x) {
+  return tanh(std::forward<T>(x));
   }
 };
 

@@ -28,27 +28,25 @@ namespace math {
  */
 template <typename T1, typename T2, require_all_eigen_t<T1, T2>* = nullptr,
           require_all_not_eigen_vt<is_fvar, T1, T2>* = nullptr>
-inline Eigen::Matrix<return_type_t<T1, T2>, T1::RowsAtCompileTime,
-                     T2::ColsAtCompileTime>
-mdivide_left_tri_low(const T1& A, const T2& b) {
+inline Eigen::Matrix<return_type_t<T1, T2>, std::decay_t<T1>::RowsAtCompileTime,
+                     std::decay_t<T2>::ColsAtCompileTime>
+mdivide_left_tri_low(T1&& A, T2&& b) {
   check_square("mdivide_left_tri_low", "A", A);
   check_multiplicable("mdivide_left_tri_low", "A", A, "b", b);
   if (A.rows() == 0) {
     return {0, b.cols()};
   }
-
-  return mdivide_left_tri<Eigen::Lower>(A, b);
+  return mdivide_left_tri<Eigen::Lower>(std::forward<T1>(A), std::forward<T2>(b));
 }
 
 template <typename T, require_eigen_t<T>* = nullptr,
           require_not_eigen_vt<is_fvar, T>* = nullptr>
-inline plain_type_t<T> mdivide_left_tri_low(const T& A) {
+inline plain_type_t<T> mdivide_left_tri_low(T&& A) {
   check_square("mdivide_left_tri_low", "A", A);
   if (A.rows() == 0) {
     return {};
   }
-
-  return mdivide_left_tri<Eigen::Lower>(A);
+  return mdivide_left_tri<Eigen::Lower>(std::forward<T>(A));
 }
 
 }  // namespace math

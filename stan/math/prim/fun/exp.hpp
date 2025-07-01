@@ -53,8 +53,8 @@ struct exp_fun {
    * @return Exponential of argument.
    */
   template <typename T>
-  static inline auto fun(const T& x) {
-    return exp(x);
+  static inline auto fun(T&& x) {
+  return exp(std::forward<T>(x));
   }
 };
 

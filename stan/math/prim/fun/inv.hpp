@@ -9,6 +9,10 @@
 namespace stan {
 namespace math {
 
+inline double inv(double x) {
+  return 1.0 / x;
+}
+
 /**
  * Structure to wrap 1.0 / x so that it can be vectorized.
  *
@@ -18,8 +22,8 @@ namespace math {
  */
 struct inv_fun {
   template <typename T>
-  static inline auto fun(const T& x) {
-    return 1.0 / x;
+  static inline auto fun(T&& x) {
+    return inv(std::forward<T>(x));
   }
 };
 
@@ -33,7 +37,8 @@ struct inv_fun {
  */
 template <
     typename T, require_not_container_st<std::is_arithmetic, T>* = nullptr,
-    require_all_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr>
+    require_all_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr,
+    require_container_t<T>* = nullptr>
 inline auto inv(T&& x) {
   return apply_scalar_unary<inv_fun, T>::apply(std::forward<T>(x));
 }

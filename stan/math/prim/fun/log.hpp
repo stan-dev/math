@@ -52,8 +52,8 @@ struct log_fun {
    * @return Natural log of x.
    */
   template <typename T>
-  static inline auto fun(const T& x) {
-    return log(x);
+  static inline auto fun(T&& x) {
+  return log(std::forward<T>(x));
   }
 };
 

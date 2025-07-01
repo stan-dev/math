@@ -52,8 +52,8 @@ inline auto asinh(const T x) {
  */
 struct asinh_fun {
   template <typename T>
-  static inline auto fun(const T& x) {
-    return asinh(x);
+  static inline auto fun(T&& x) {
+  return asinh(std::forward<T>(x));
   }
 };
 

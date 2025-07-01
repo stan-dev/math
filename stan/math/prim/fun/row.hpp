@@ -25,7 +25,7 @@ inline auto row(T&& m, size_t i) {
   check_row_index("row", "i", m, i);
   return make_holder([i](auto&& mm) {
         return std::forward<decltype(mm)>(mm).row(i - 1);
-  }, std::forward<T>(m), i);
+  }, std::forward<T>(m));
 }
 
 }  // namespace math

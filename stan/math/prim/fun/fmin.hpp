@@ -18,8 +18,7 @@ namespace math {
  */
 template <typename T1, typename T2, require_all_arithmetic_t<T1, T2>* = nullptr>
 inline double fmin(T1 x, T2 y) {
-  using std::fmin;
-  return fmin(x, y);
+  return std::fmin(x, y);
 }
 
 /**

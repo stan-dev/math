@@ -32,8 +32,10 @@ inline double dot_self(const std::vector<double>& x) {
  */
 template <typename T, require_eigen_t<T>* = nullptr,
           require_not_eigen_vt<is_var, T>* = nullptr>
-inline value_type_t<T> dot_self(const T& v) {
-  return v.squaredNorm();
+inline value_type_t<T> dot_self(T&& v) {
+  return make_holder([](auto&& v_) {
+    return v_.squaredNorm();
+  }, std::forward<T>(v));
 }
 
 }  // namespace math

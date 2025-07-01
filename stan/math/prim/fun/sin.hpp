@@ -46,8 +46,8 @@ inline auto sin(const T x) {
  */
 struct sin_fun {
   template <typename T>
-  static inline auto fun(const T& x) {
-    return sin(x);
+  static inline auto fun(T&& x) {
+  return sin(std::forward<T>(x));
   }
 };
 

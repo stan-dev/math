@@ -9,6 +9,11 @@
 namespace stan {
 namespace math {
 
+template <typename T, require_arithmetic_t<T>* = nullptr>
+inline auto inv_square(T x) {
+  return 1.0 / std::pow(x, 2);
+}
+
 /**
  * Returns `1 / square(x)`.
  *
@@ -19,9 +24,10 @@ namespace math {
 template <typename Container,
           require_not_container_st<std::is_arithmetic, Container>* = nullptr,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
-              Container>* = nullptr>
-inline auto inv_square(const Container& x) {
-  return inv(square(x));
+              Container>* = nullptr,
+              require_not_stan_scalar_t<Container>* = nullptr>
+inline auto inv_square(Container&& x) {
+  return inv(square(std::forward<Container>(x)));
 }
 
 /**

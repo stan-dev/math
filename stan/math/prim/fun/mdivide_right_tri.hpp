@@ -26,7 +26,7 @@ namespace math {
  */
 template <Eigen::UpLoType TriView, typename EigMat1, typename EigMat2,
           require_all_eigen_t<EigMat1, EigMat2>* = nullptr>
-inline auto mdivide_right_tri(const EigMat1& b, const EigMat2& A) {
+inline auto mdivide_right_tri(EigMat1&& b, EigMat2&& A) {
   check_square("mdivide_right_tri", "A", A);
   check_multiplicable("mdivide_right_tri", "b", b, "A", A);
   if (TriView != Eigen::Lower && TriView != Eigen::Upper) {
@@ -40,10 +40,10 @@ inline auto mdivide_right_tri(const EigMat1& b, const EigMat2& A) {
     return ret_type(b.rows(), 0);
   }
 
-  return ret_type(A)
+  return ret_type(std::forward<EigMat2>(A))
       .template triangularView<TriView>()
       .transpose()
-      .solve(ret_type(b).transpose())
+      .solve(ret_type(std::forward<EigMat1>(b)).transpose())
       .transpose()
       .eval();
 }

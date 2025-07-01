@@ -16,9 +16,9 @@ namespace math {
  * @param x Argument.
  * @return Cube root of argument.
  */
-template <typename T>
-inline fvar<T> cbrt(const fvar<T>& x) {
-  return fvar<T>(cbrt(x.val_), x.d_ / (3 * square(cbrt(x.val_))));
+template <typename T, require_fvar_t<T>* = nullptr>
+inline auto cbrt(T&& x) {
+  return std::decay_t<T>(cbrt(x.val_), x.d_ / (3 * square(cbrt(x.val_))));
 }
 
 }  // namespace math

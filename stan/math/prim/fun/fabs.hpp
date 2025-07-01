@@ -29,8 +29,8 @@ inline auto fabs(T x) {
  */
 struct fabs_fun {
   template <typename T>
-  static inline auto fun(const T& x) {
-    return fabs(x);
+  static inline auto fun(T&& x) {
+  return fabs(std::forward<T>(x));
   }
 };
 

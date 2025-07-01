@@ -10,6 +10,12 @@
 namespace stan {
 namespace math {
 
+template <typename T, require_arithmetic_t<T>* = nullptr>
+inline auto ceil(T x) {
+  return std::ceil(x);
+}
+
+
 /**
  * Structure to wrap `ceil()` so it can be vectorized.
  *
@@ -19,9 +25,8 @@ namespace math {
  */
 struct ceil_fun {
   template <typename T>
-  static inline auto fun(const T& x) {
-    using std::ceil;
-    return ceil(x);
+  static inline auto fun(T&& x) {
+    return ceil(std::forward<T>(x));
   }
 };
 
@@ -36,7 +41,8 @@ struct ceil_fun {
 template <typename Container,
           require_not_container_st<std::is_arithmetic, Container>* = nullptr,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
-              Container>* = nullptr>
+              Container>* = nullptr,
+              require_container_t<Container>* = nullptr>
 inline auto ceil(Container&& x) {
   return apply_scalar_unary<ceil_fun, Container>::apply(
       std::forward<Container>(x));

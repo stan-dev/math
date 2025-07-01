@@ -26,7 +26,7 @@ namespace math {
 template <Eigen::UpLoType TriView, typename T1, typename T2,
           require_all_eigen_t<T1, T2> * = nullptr,
           require_all_not_eigen_vt<is_var, T1, T2> * = nullptr>
-inline auto mdivide_left_tri(const T1 &A, const T2 &b) {
+inline auto mdivide_left_tri(T1&& A, T2&& b) {
   using T_return = return_type_t<T1, T2>;
   using ret_type = Eigen::Matrix<T_return, Eigen::Dynamic, Eigen::Dynamic>;
   check_square("mdivide_left_tri", "A", A);
@@ -34,10 +34,9 @@ inline auto mdivide_left_tri(const T1 &A, const T2 &b) {
   if (A.rows() == 0) {
     return ret_type(0, b.cols());
   }
-
-  return ret_type(A)
+  return ret_type(std::forward<T1>(A))
       .template triangularView<TriView>()
-      .solve(ret_type(b))
+      .solve(ret_type(std::forward<T2>(b)))
       .eval();
 }
 
@@ -51,7 +50,7 @@ inline auto mdivide_left_tri(const T1 &A, const T2 &b) {
  * @throws std::domain_error if A is not square
  */
 template <Eigen::UpLoType TriView, typename T, require_eigen_t<T> * = nullptr>
-inline plain_type_t<T> mdivide_left_tri(const T &A) {
+inline plain_type_t<T> mdivide_left_tri(T&& A) {
   check_square("mdivide_left_tri", "A", A);
   if (A.rows() == 0) {
     return {};

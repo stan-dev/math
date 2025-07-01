@@ -26,8 +26,8 @@ template <typename T, typename EigMat, require_eigen_t<EigMat>* = nullptr,
           require_any_not_t<std::is_arithmetic<value_type_t<T>>,
                             is_fvar<value_type_t<EigMat>>>* = nullptr>
 inline Eigen::Matrix<return_type_t<T, EigMat>, Eigen::Dynamic,
-                     EigMat::ColsAtCompileTime>
-mdivide_left_ldlt(LDLT_factor<T>& A, const EigMat& b) {
+                     std::decay_t<EigMat>::ColsAtCompileTime>
+mdivide_left_ldlt(LDLT_factor<T>& A, EigMat&& b) {
   check_multiplicable("mdivide_left_ldlt", "A", A.matrix(), "b", b);
 
   if (A.matrix().cols() == 0) {
@@ -35,8 +35,8 @@ mdivide_left_ldlt(LDLT_factor<T>& A, const EigMat& b) {
   }
 
   return A.ldlt().solve(
-      Eigen::Matrix<return_type_t<T, EigMat>, EigMat::RowsAtCompileTime,
-                    EigMat::ColsAtCompileTime>(b));
+      Eigen::Matrix<return_type_t<T, EigMat>, std::decay_t<EigMat>::RowsAtCompileTime,
+                    std::decay_t<EigMat>::ColsAtCompileTime>(std::forward<EigMat>(b)));
 }
 
 }  // namespace math

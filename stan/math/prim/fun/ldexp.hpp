@@ -19,8 +19,7 @@ namespace math {
  */
 template <typename T1, require_arithmetic_t<T1>* = nullptr>
 inline double ldexp(T1 a, int b) {
-  using std::ldexp;
-  return ldexp(a, b);
+  return std::ldexp(a, b);
 }
 
 /**

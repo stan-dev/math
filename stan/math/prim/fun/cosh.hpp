@@ -45,8 +45,8 @@ inline auto cosh(const T x) {
  */
 struct cosh_fun {
   template <typename T>
-  static inline auto fun(const T& x) {
-    return cosh(x);
+  static inline auto fun(T&& x) {
+  return cosh(std::forward<T>(x));
   }
 };
 

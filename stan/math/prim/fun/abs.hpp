@@ -49,8 +49,8 @@ inline auto abs(T x) {
  */
 struct abs_fun {
   template <typename T>
-  static inline auto fun(const T& x) {
-    return abs(x);
+  static inline auto fun(T&& x) {
+  return abs(std::forward<T>(x));
   }
 };
 

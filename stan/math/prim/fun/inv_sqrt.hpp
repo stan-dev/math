@@ -31,8 +31,8 @@ inline auto inv_sqrt(const T x) {
  */
 struct inv_sqrt_fun {
   template <typename T>
-  static inline auto fun(const T& x) {
-    return inv_sqrt(x);
+  static inline auto fun(T&& x) {
+  return inv_sqrt(std::forward<T>(x));
   }
 };
 

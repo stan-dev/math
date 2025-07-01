@@ -26,18 +26,18 @@ namespace math {
 template <typename EigMat1, typename EigMat2,
           require_all_eigen_t<EigMat1, EigMat2>* = nullptr>
 inline Eigen::Matrix<return_type_t<EigMat1, EigMat2>,
-                     EigMat1::RowsAtCompileTime, EigMat2::ColsAtCompileTime>
-mdivide_right_spd(const EigMat1& b, const EigMat2& A) {
+                     std::decay_t<EigMat1>::RowsAtCompileTime, std::decay_t<EigMat2>::ColsAtCompileTime>
+mdivide_right_spd(EigMat1&& b, EigMat2&& A) {
   static constexpr const char* function = "mdivide_right_spd";
   check_multiplicable(function, "b", b, "A", A);
-  const auto& A_ref = to_ref(A);
+  auto&& A_ref = to_ref(std::forward<EigMat2>(A));
   check_symmetric(function, "A", A_ref);
   check_not_nan(function, "A", A_ref);
   if (A.size() == 0) {
     return {b.rows(), 0};
   }
 
-  return mdivide_left_spd(A_ref, b.transpose()).transpose();
+  return mdivide_left_spd(std::forward<decltype(A_ref)>(A_ref), std::forward<EigMat1>(b).transpose()).transpose();
 }
 
 }  // namespace math

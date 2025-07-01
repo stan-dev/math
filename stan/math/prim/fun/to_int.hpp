@@ -56,8 +56,8 @@ inline int to_int(T x) {
  */
 struct to_int_fun {
   template <typename T>
-  static inline auto fun(const T& x) {
-    return to_int(x);
+  static inline auto fun(T&& x) {
+  return to_int(std::forward<T>(x));
   }
 };
 

@@ -19,12 +19,14 @@ namespace math {
  * @throw std::out_of_range if either index is out of range.
  */
 template <typename T, require_matrix_t<T>* = nullptr>
-inline auto block(const T& m, size_t i, size_t j, size_t nrows, size_t ncols) {
+inline auto block(T&& m, size_t i, size_t j, size_t nrows, size_t ncols) {
   check_row_index("block", "i", m, i);
   check_row_index("block", "i+nrows-1", m, i + nrows - 1);
   check_column_index("block", "j", m, j);
   check_column_index("block", "j+ncols-1", m, j + ncols - 1);
-  return m.block(i - 1, j - 1, nrows, ncols);
+  return make_holder([i, j, nrows, ncols](auto&& m_) {
+    return std::forward<decltype(m_)>(m_).block(i - 1, j - 1, nrows, ncols);
+  }, std::forward<T>(m));
 }
 
 }  // namespace math

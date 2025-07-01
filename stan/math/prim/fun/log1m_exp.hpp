@@ -65,8 +65,8 @@ inline double log1m_exp(double a) {
  */
 struct log1m_exp_fun {
   template <typename T>
-  static inline auto fun(const T& x) {
-    return log1m_exp(x);
+  static inline auto fun(T&& x) {
+  return log1m_exp(std::forward<T>(x));
   }
 };
 
@@ -79,7 +79,8 @@ struct log1m_exp_fun {
  */
 template <
     typename T, require_not_var_matrix_t<T>* = nullptr,
-    require_all_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr>
+    require_all_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr,
+          require_container_t<T>* = nullptr>
 inline auto log1m_exp(T&& x) {
   return apply_scalar_unary<log1m_exp_fun, T>::apply(std::forward<T>(x));
 }

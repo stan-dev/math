@@ -4,7 +4,6 @@
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/fun/trigamma.hpp>
-
 #include <stan/math/prim/fun/digamma.hpp>
 
 namespace stan {
@@ -19,9 +18,9 @@ namespace math {
  * @return derivative of the log gamma function at the specified
  * argument
  */
-template <typename T>
-inline fvar<T> digamma(const fvar<T>& x) {
-  return fvar<T>(digamma(x.val_), x.d_ * trigamma(x.val_));
+template <typename T, require_fvar_t<T>* = nullptr>
+inline auto digamma(T&& x) {
+  return std::decay_t<T>(digamma(x.val_), x.d_ * trigamma(x.val_));
 }
 
 }  // namespace math

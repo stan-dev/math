@@ -22,20 +22,20 @@ namespace math {
  */
 template <typename T1, typename T2,
           require_all_eigen_vt<std::is_arithmetic, T1, T2>* = nullptr>
-inline Eigen::Matrix<return_type_t<T1, T2>, T1::RowsAtCompileTime,
-                     T2::ColsAtCompileTime>
-mdivide_left(const T1& A, const T2& b) {
+inline Eigen::Matrix<return_type_t<T1, T2>, std::decay_t<T1>::RowsAtCompileTime,
+                     std::decay_t<T2>::ColsAtCompileTime>
+mdivide_left(T1&& A, T2&& b) {
   check_square("mdivide_left", "A", A);
   check_multiplicable("mdivide_left", "A", A, "b", b);
   if (A.size() == 0) {
     return {0, b.cols()};
   }
 
-  return Eigen::Matrix<return_type_t<T1, T2>, T1::RowsAtCompileTime,
-                       T1::ColsAtCompileTime>(A)
+  return Eigen::Matrix<return_type_t<T1, T2>, std::decay_t<T1>::RowsAtCompileTime,
+                       std::decay_t<T1>::ColsAtCompileTime>(std::forward<T1>(A))
       .lu()
-      .solve(Eigen::Matrix<return_type_t<T1, T2>, T2::RowsAtCompileTime,
-                           T2::ColsAtCompileTime>(b));
+      .solve(Eigen::Matrix<return_type_t<T1, T2>, std::decay_t<T2>::RowsAtCompileTime,
+                           std::decay_t<T2>::ColsAtCompileTime>(std::forward<T2>(b)));
 }
 
 }  // namespace math

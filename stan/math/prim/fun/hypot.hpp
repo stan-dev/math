@@ -22,8 +22,7 @@ namespace math {
  */
 template <typename T1, typename T2, require_all_arithmetic_t<T1, T2>* = nullptr>
 inline double hypot(T1 x, T2 y) {
-  using std::hypot;
-  return hypot(x, y);
+  return std::hypot(x, y);
 }
 
 /**

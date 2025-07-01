@@ -17,8 +17,8 @@ namespace math {
  * @return Number of columns.
  */
 template <typename T, require_matrix_t<T>* = nullptr>
-inline int64_t cols(const T& m) {
-  return m.cols();
+inline Eigen::Index cols(T&& m) {
+  return make_holder([](auto&& arg) { return arg.cols(); }, std::forward<T>(m));
 }
 
 }  // namespace math
