@@ -40,8 +40,7 @@ namespace math {
  * @throw std::invalid_argument if non-scalar arguments don't match in size
  */
 template <typename T, typename M, typename S,
-          require_all_not_std_vector_t<T, M, S>* = nullptr,
-          require_all_not_st_var<T, M, S>* = nullptr>
+          require_all_not_std_vector_t<T, M, S>* = nullptr>
 inline auto offset_multiplier_free(T&& y, M&& mu, S&& sigma) {
   auto&& mu_ref = to_ref(std::forward<M>(mu));
   auto&& sigma_ref = to_ref(std::forward<S>(sigma));
@@ -86,13 +85,13 @@ inline auto offset_multiplier_free(T&& x, M&& mu, S&& sigma) {
 template <typename T, typename M, typename S,
           require_all_std_vector_t<T, S>* = nullptr,
           require_not_std_vector_t<M>* = nullptr>
-inline auto offset_multiplier_free(T&& x, const M& mu, S&& sigma) {
+inline auto offset_multiplier_free(T&& x, M&& mu, S&& sigma) {
   check_matching_dims("offset_multiplier_free", "x", x, "sigma", sigma);
   std::vector<
       plain_type_t<decltype(offset_multiplier_free(x[0], mu, sigma[0]))>>
       ret;
   ret.reserve(x.size());
-  const auto& mu_ref = to_ref(mu);
+  auto&& mu_ref = to_ref(std::forward<M>(mu));
   for (size_t i = 0; i < x.size(); ++i) {
     ret.emplace_back(offset_multiplier_free(x[i], mu_ref, sigma[i]));
   }
