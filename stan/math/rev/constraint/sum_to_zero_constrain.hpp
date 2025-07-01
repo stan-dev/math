@@ -138,7 +138,6 @@ inline auto sum_to_zero_constrain(T&& x) {
   return arena_z;
 }
 
-
 }  // namespace math
 }  // namespace stan
 #endif
