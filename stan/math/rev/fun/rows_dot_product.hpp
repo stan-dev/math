@@ -32,7 +32,7 @@ template <typename Mat1, typename Mat2,
           require_any_eigen_vt<is_var, Mat1, Mat2>* = nullptr>
 inline Eigen::Matrix<var, Mat1::RowsAtCompileTime, 1> rows_dot_product(
     const Mat1& v1, const Mat2& v2) {
-  check_matching_sizes("dot_product", "v1", v1, "v2", v2);
+  check_matching_dims("rows_dot_product", "v1", v1, "v2", v2);
   Eigen::Matrix<var, Mat1::RowsAtCompileTime, 1> ret(v1.rows(), 1);
   for (size_type j = 0; j < v1.rows(); ++j) {
     ret.coeffRef(j) = dot_product(v1.row(j), v2.row(j));
@@ -61,7 +61,7 @@ template <typename Mat1, typename Mat2,
           require_all_matrix_t<Mat1, Mat2>* = nullptr,
           require_any_var_matrix_t<Mat1, Mat2>* = nullptr>
 inline auto rows_dot_product(const Mat1& v1, const Mat2& v2) {
-  check_matching_sizes("rows_dot_product", "v1", v1, "v2", v2);
+  check_matching_dims("rows_dot_product", "v1", v1, "v2", v2);
 
   using return_t = return_var_matrix_t<
       decltype((v1.val().array() * v2.val().array()).rowwise().sum().matrix()),
