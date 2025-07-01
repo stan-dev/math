@@ -29,14 +29,15 @@ template <bool propto = false, typename LFun, typename LArgs, typename CovarFun,
           typename ThetaVec, typename CovarArgs,
           require_all_eigen_vector_t<ThetaVec>* = nullptr>
 inline auto laplace_marginal_tol(
-    LFun&& L_f, LArgs&& l_args, const ThetaVec& theta_0,
-    CovarFun&& covariance_function, CovarArgs&& covar_args, double tolerance,
+    LFun&& L_f, LArgs&& l_args, CovarFun&& covariance_function,
+    CovarArgs&& covar_args, const ThetaVec& theta_0, double tolerance,
     int max_num_steps, const int hessian_block_size, const int solver,
     const int max_steps_line_search, std::ostream* msgs) {
-  laplace_options ops{hessian_block_size, solver, max_steps_line_search,
-                      tolerance, max_num_steps};
+  laplace_options_user_supplied ops{hessian_block_size,    solver,
+                                    max_steps_line_search, tolerance,
+                                    max_num_steps,         value_of(theta_0)};
   return laplace_marginal_density(
-      std::forward<LFun>(L_f), std::forward<LArgs>(l_args), theta_0,
+      std::forward<LFun>(L_f), std::forward<LArgs>(l_args),
       std::forward<CovarFun>(covariance_function),
       std::forward<CovarArgs>(covar_args), ops, msgs);
 }
@@ -59,17 +60,14 @@ inline auto laplace_marginal_tol(
  * \msg_arg
  */
 template <bool propto = false, typename LFun, typename LArgs, typename CovarFun,
-          typename ThetaVec, typename CovarArgs,
-          require_all_eigen_vector_t<ThetaVec>* = nullptr>
+          typename CovarArgs>
 inline auto laplace_marginal(LFun&& L_f, LArgs&& l_args,
-                             const ThetaVec& theta_0,
                              CovarFun&& covariance_function,
                              CovarArgs&& covar_args, std::ostream* msgs) {
-  constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_marginal_density(
-      std::forward<LFun>(L_f), std::forward<LArgs>(l_args), theta_0,
+      std::forward<LFun>(L_f), std::forward<LArgs>(l_args),
       std::forward<CovarFun>(covariance_function),
-      std::forward<CovarArgs>(covar_args), ops, msgs);
+      std::forward<CovarArgs>(covar_args), laplace_options_default{}, msgs);
 }
 
 }  // namespace math

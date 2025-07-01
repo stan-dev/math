@@ -17,6 +17,8 @@ namespace math {
  * return a sample from the Laplace approximation to p(theta|y,phi).
  * The Laplace approximation is computed using a Newton solver.
  * In this specialized function, the likelihood p(y|theta) is a
+ * @tparam ThetaVec A type inheriting from `Eigen::EigenBase`
+ * with dynamic sized rows and 1 column.
  * \laplace_common_template_args
  * @tparam RNG A valid boost rng type
  * @param[in] y Observed counts.
@@ -30,15 +32,15 @@ template <typename ThetaVec, typename CovarFun, typename CovarArgs,
           typename RNG, require_eigen_t<ThetaVec>* = nullptr>
 inline Eigen::VectorXd laplace_latent_tol_poisson_log_rng(
     const std::vector<int>& y, const std::vector<int>& y_index,
-    ThetaVec&& theta_0, CovarFun&& covariance_function, CovarArgs&& covar_args,
+    CovarFun&& covariance_function, CovarArgs&& covar_args, ThetaVec&& theta_0,
     const double tolerance, const int max_num_steps,
     const int hessian_block_size, const int solver,
     const int max_steps_line_search, RNG& rng, std::ostream* msgs) {
-  laplace_options ops{hessian_block_size, solver, max_steps_line_search,
-                      tolerance, max_num_steps};
+  laplace_options_user_supplied ops{hessian_block_size,    solver,
+                                    max_steps_line_search, tolerance,
+                                    max_num_steps,         value_of(theta_0)};
   return laplace_base_rng(poisson_log_likelihood{},
                           std::forward_as_tuple(y, y_index),
-                          std::forward<ThetaVec>(theta_0),
                           std::forward<CovarFun>(covariance_function),
                           std::forward<CovarArgs>(covar_args), ops, rng, msgs);
 }
@@ -61,17 +63,16 @@ inline Eigen::VectorXd laplace_latent_tol_poisson_log_rng(
  * \rng_arg
  * \msg_arg
  */
-template <typename ThetaVec, typename CovarFun, typename CovarArgs,
-          typename RNG, require_eigen_t<ThetaVec>* = nullptr>
+template <typename CovarFun, typename CovarArgs, typename RNG>
 inline Eigen::VectorXd laplace_latent_poisson_log_rng(
     const std::vector<int>& y, const std::vector<int>& y_index,
-    const ThetaVec& theta_0, CovarFun&& covariance_function,
-    CovarArgs&& covar_args, RNG& rng, std::ostream* msgs) {
-  constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
+    CovarFun&& covariance_function, CovarArgs&& covar_args, RNG& rng,
+    std::ostream* msgs) {
   return laplace_base_rng(poisson_log_likelihood{},
-                          std::forward_as_tuple(y, y_index), theta_0,
+                          std::forward_as_tuple(y, y_index),
                           std::forward<CovarFun>(covariance_function),
-                          std::forward<CovarArgs>(covar_args), ops, rng, msgs);
+                          std::forward<CovarArgs>(covar_args),
+                          laplace_options_default{}, rng, msgs);
 }
 
 }  // namespace math

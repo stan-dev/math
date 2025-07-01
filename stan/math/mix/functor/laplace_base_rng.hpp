@@ -31,18 +31,15 @@ namespace math {
  * \rng_arg
  * \msg_arg
  */
-template <
-    typename LLFunc, typename LLArgs, typename ThetaVec, typename CovarFun,
-    typename CovarArgs, typename RNG, require_all_eigen_t<ThetaVec>* = nullptr,
-    require_t<is_all_arithmetic_scalar<CovarArgs, LLArgs, ThetaVec>>* = nullptr>
-inline Eigen::VectorXd laplace_base_rng(LLFunc&& ll_fun, LLArgs&& ll_args,
-                                        ThetaVec&& theta_0,
-                                        CovarFun&& covariance_function,
-                                        CovarArgs&& covar_args,
-                                        const laplace_options& options,
-                                        RNG& rng, std::ostream* msgs) {
+template <typename LLFunc, typename LLArgs, typename CovarFun,
+          typename CovarArgs, bool InitTheta, typename RNG,
+          require_t<is_all_arithmetic_scalar<CovarArgs, LLArgs>>* = nullptr>
+inline Eigen::VectorXd laplace_base_rng(
+    LLFunc&& ll_fun, LLArgs&& ll_args, CovarFun&& covariance_function,
+    CovarArgs&& covar_args, const laplace_options<InitTheta>& options, RNG& rng,
+    std::ostream* msgs) {
   auto md_est = internal::laplace_marginal_density_est(
-      ll_fun, std::forward<LLArgs>(ll_args), std::forward<ThetaVec>(theta_0),
+      ll_fun, std::forward<LLArgs>(ll_args),
       std::forward<CovarFun>(covariance_function),
       to_ref(std::forward<CovarArgs>(covar_args)), options, msgs);
   // Modified R&W method

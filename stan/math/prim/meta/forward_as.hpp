@@ -62,7 +62,10 @@ template <
         && !(std::is_floating_point_v<std::decay_t<
                  T_desired>> && std::is_integral_v<std::decay_t<T_actual>>)>>
 inline T_desired forward_as(const T_actual& a) {
-  throw std::runtime_error("Wrong type assumed! Please file a bug report.");
+  throw std::runtime_error(
+      "Wrong type assumed! Please file a bug report. prim/meta/forward_as.hpp "
+      "line "
+      + std::to_string(__LINE__));
 }
 
 /** \ingroup type_trait
@@ -146,7 +149,10 @@ template <
             T_desired::ColsAtCompileTime,
             std::decay_t<T_actual>::ColsAtCompileTime)>* = nullptr>
 inline T_desired forward_as(const T_actual& a) {
-  throw std::runtime_error("Wrong type assumed! Please file a bug report.");
+  throw std::runtime_error(
+      "Wrong type assumed! Please file a bug report. prim/meta/forward_as.hpp "
+      "line "
+      + std::to_string(__LINE__));
 }
 
 }  // namespace math
