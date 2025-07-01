@@ -6,8 +6,6 @@
 
 #include <gtest/gtest.h>
 #include <iostream>
-#include <istream>
-#include <fstream>
 #include <vector>
 
 namespace {
@@ -74,13 +72,15 @@ TEST(laplace_bernoulli_logit_rng, two_dim_diag) {
   std::vector<int> sums = {1, 0};
   Eigen::VectorXd ye(2);
   ye << 1, 1;
+  Eigen::VectorXd mean(2);
+  mean << 0, 0;
   std::vector<double> d0;
   std::vector<int> di0;
   std::vector<Eigen::VectorXd> x_dummy;
   boost::random::mt19937 rng;
   rng.seed(1954);
   Eigen::MatrixXd theta_pred = laplace_latent_bernoulli_logit_rng(
-      sums, n_samples, diagonal_kernel_functor{},
+      sums, n_samples, mean, diagonal_kernel_functor{},
       std::forward_as_tuple(phi(0), phi(1)), rng, nullptr);
 
   // Compute exact mean and covariance

@@ -20,12 +20,14 @@ namespace stan {
 namespace math {
 
 struct bernoulli_logit_likelihood {
-  template <typename T_theta, typename YVec>
-  inline auto operator()(const T_theta& theta, const YVec& y,
-                         const std::vector<int>& delta_int,
+  template <typename ThetaVec, typename YVec, typename Mean>
+  inline auto operator()(const ThetaVec& theta, const YVec& y,
+                         const std::vector<int>& delta_int, const Mean& mean,
                          std::ostream* pstream) const {
-    return sum(elt_multiply(theta, y)
-               - elt_multiply(to_vector(delta_int), log(add(1.0, exp(theta)))));
+    auto theta_offset = to_ref(add(theta, mean));
+    return sum(
+        elt_multiply(theta_offset, y)
+        - elt_multiply(to_vector(delta_int), log(add(1.0, exp(theta_offset)))));
   }
 };
 
@@ -39,19 +41,22 @@ struct bernoulli_logit_likelihood {
  * @tparam propto boolean ignored
  * @tparam ThetaVec A type inheriting from `Eigen::EigenBase`
  * with dynamic sized rows and 1 column.
+ * @tparam Mean type of the mean of the latent normal distribution
  * \laplace_common_template_args
  * @param[in] y total counts per group. Second sufficient statistics.
  * @param[in] n_samples number of samples per group. First sufficient
- *            statistics.
+ * statistics.
+ * @param[in] mean the mean of the latent normal variable.
  * \laplace_common_args
  * \laplace_options
  * \msg_arg
  */
-template <bool propto = false, typename ThetaVec, typename CovarFun,
-          typename CovarArgs, require_eigen_t<ThetaVec>* = nullptr>
+template <bool propto = false, typename ThetaVec, typename Mean,
+          typename CovarFun, typename CovarArgs,
+          require_eigen_vector_t<ThetaVec>* = nullptr>
 inline auto laplace_marginal_tol_bernoulli_logit_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples,
-    CovarFun&& covariance_function, CovarArgs&& covar_args,
+    const Mean& mean, CovarFun&& covariance_function, CovarArgs&& covar_args,
     const ThetaVec& theta_0, double tolerance, int max_num_steps,
     const int hessian_block_size, const int solver,
     const int max_steps_line_search, std::ostream* msgs) {
@@ -60,7 +65,7 @@ inline auto laplace_marginal_tol_bernoulli_logit_lpmf(
                                     max_num_steps,         value_of(theta_0)};
   return laplace_marginal_density(
       bernoulli_logit_likelihood{},
-      std::forward_as_tuple(to_vector(y), n_samples),
+      std::forward_as_tuple(to_vector(y), n_samples, mean),
       std::forward<CovarFun>(covariance_function),
       std::forward<CovarArgs>(covar_args), ops, msgs);
 }
@@ -73,21 +78,24 @@ inline auto laplace_marginal_tol_bernoulli_logit_lpmf(
  * for more details.
  *
  * @tparam propto boolean ignored
+ * @tparam Mean type of the mean of the latent normal distribution
  * \laplace_common_template_args
  * @param[in] y total counts per group. Second sufficient statistics.
  * @param[in] n_samples number of samples per group. First sufficient
- *            statistics.
+ * statistics.
+ * @param[in] mean the mean of the latent normal variable.
  * \laplace_common_args
  * \msg_arg
  */
-template <bool propto = false, typename CovarFun, typename CovarArgs>
+template <bool propto = false, typename Mean, typename CovarFun,
+          typename CovarArgs>
 inline auto laplace_marginal_bernoulli_logit_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples,
-    CovarFun&& covariance_function, CovarArgs&& covar_args,
+    const Mean& mean, CovarFun&& covariance_function, CovarArgs&& covar_args,
     std::ostream* msgs) {
   return laplace_marginal_density(
       bernoulli_logit_likelihood{},
-      std::forward_as_tuple(to_vector(y), n_samples),
+      std::forward_as_tuple(to_vector(y), n_samples, mean),
       std::forward<CovarFun>(covariance_function),
       std::forward<CovarArgs>(covar_args), laplace_options_default{}, msgs);
 }

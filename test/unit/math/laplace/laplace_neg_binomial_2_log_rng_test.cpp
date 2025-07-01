@@ -7,8 +7,6 @@
 
 #include <gtest/gtest.h>
 #include <iostream>
-#include <istream>
-#include <fstream>
 #include <vector>
 
 namespace {
@@ -86,7 +84,7 @@ TEST(laplace_latent_neg_binomial_2_log_rng, count_two_dim_diag) {
   using stan::math::square;
 
   std::vector<int> y = {1, 0};
-  std::vector<int> y_index = {0, 1};
+  std::vector<int> y_index = {1, 2};
   Eigen::VectorXd theta_0{{1, 1}};
   Eigen::VectorXd phi{{3, 2}};
 
@@ -105,7 +103,7 @@ TEST(laplace_latent_neg_binomial_2_log_rng, count_two_dim_diag) {
 
   rng.seed(1954);
   Eigen::MatrixXd theta_pred = laplace_latent_neg_binomial_2_log_rng(
-      y, y_index, eta, diagonal_kernel_nb_functor{},
+      y, y_index, eta, 0, diagonal_kernel_nb_functor{},
       std::forward_as_tuple(phi(0), phi(1)), rng, nullptr);
 
   double tol = 1e-3;
@@ -118,7 +116,7 @@ TEST(laplace_latent_neg_binomial_2_log_rng, count_two_dim_diag) {
   for (int i = 0; i < n_sim; i++) {
     rng.seed(2025 + i);
     Eigen::MatrixXd theta_pred = laplace_latent_neg_binomial_2_log_rng(
-        y, y_index, eta, diagonal_kernel_nb_functor{},
+        y, y_index, eta, 0, diagonal_kernel_nb_functor{},
         std::forward_as_tuple(phi(0), phi(1)), rng, nullptr);
 
     theta_dim0(i) = theta_pred(0);
