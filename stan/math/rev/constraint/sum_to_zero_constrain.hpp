@@ -138,35 +138,6 @@ inline auto sum_to_zero_constrain(T&& x) {
   return arena_z;
 }
 
-/**
- * Return a vector with sum zero corresponding to the specified
- * free vector.
- *
- * The sum-to-zero transform is defined using a modified version of
- * the inverse of the isometric log ratio transform (ILR).
- * See:
- * Egozcue, Juan Jose; Pawlowsky-Glahn, Vera; Mateu-Figueras, Gloria;
- * Barcelo-Vidal, Carles (2003), "Isometric logratio transformations for
- * compositional data analysis", Mathematical Geology, 35 (3): 279–300,
- * doi:10.1023/A:1023818214614, S2CID 122844634
- *
- * This implementation is closer to the description of the same using "pivot
- * coordinates" in
- * Filzmoser, P., Hron, K., Templ, M. (2018). Geometrical Properties of
- * Compositional Data. In: Applied Compositional Data Analysis. Springer Series
- * in Statistics. Springer, Cham. https://doi.org/10.1007/978-3-319-96422-5_3
- *
- * This is a linear transform, with no Jacobian.
- *
- * @tparam T type of the vector or matrix
- * @param y Free vector or matrix.
- * @param lp unused
- * @return Zero-sum vector or matrix which is one larger in each dimension
- */
-template <typename T, typename Lp, is_rev_matrix<T>* = nullptr>
-inline auto sum_to_zero_constrain(T&& y, Lp& lp) {
-  return sum_to_zero_constrain(std::forward<T>(y));
-}
 
 }  // namespace math
 }  // namespace stan
