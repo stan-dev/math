@@ -53,10 +53,11 @@ TEST(laplace_marginal_beg_binomial_log_summary_lpmf, phi_dim_2) {
           auto&& theta_0) {
         auto f = [&](auto&& alpha, auto&& rho, auto&& eta) {
           return laplace_marginal_tol_neg_binomial_2_log_summary_lpmf(
-              y, n_per_group, counts_per_group, eta, theta_0,
+              y, n_per_group, counts_per_group, eta,
               stan::math::test::squared_kernel_functor{},
-              std::forward_as_tuple(x, alpha, rho), tolerance, max_num_steps,
-              hessian_block_size, solver_num, max_steps_line_search, nullptr);
+              std::forward_as_tuple(x, alpha, rho), theta_0, tolerance,
+              max_num_steps, hessian_block_size, solver_num,
+              max_steps_line_search, nullptr);
         };
         stan::test::expect_ad<true>(f, alpha_dbl, rho_dbl, eta_dbl);
       },
@@ -80,7 +81,7 @@ TEST_F(laplace_disease_map_test,
   }
 
   double marginal_density = laplace_marginal_neg_binomial_2_log_summary_lpmf(
-      y, n_per_group, counts_per_group, eta, theta_0,
+      y, n_per_group, counts_per_group, eta,
       stan::math::test::sqr_exp_kernel_functor{},
       std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1)), nullptr);
 
@@ -92,10 +93,11 @@ TEST_F(laplace_disease_map_test,
           auto&& theta_0) {
         auto f = [&](auto&& alpha, auto&& rho, auto&& eta) {
           return laplace_marginal_tol_neg_binomial_2_log_summary_lpmf(
-              y, n_per_group, counts_per_group, eta, theta_0,
+              y, n_per_group, counts_per_group, eta,
               stan::math::test::sqr_exp_kernel_functor{},
-              std::forward_as_tuple(x, alpha, rho), tolerance, max_num_steps,
-              hessian_block_size, solver_num, max_steps_line_search, nullptr);
+              std::forward_as_tuple(x, alpha, rho), theta_0, tolerance,
+              max_num_steps, hessian_block_size, solver_num,
+              max_steps_line_search, nullptr);
         };
         auto ret = f(phi_dbl[0], phi_dbl[1], eta);
       },
@@ -105,10 +107,11 @@ TEST_F(laplace_disease_map_test,
           auto&& theta_0) {
         auto f = [&](auto&& alpha, auto&& rho, auto&& eta) {
           return laplace_marginal_tol_neg_binomial_2_log_summary_lpmf(
-              y, n_per_group, counts_per_group, eta, theta_0,
+              y, n_per_group, counts_per_group, eta,
               stan::math::test::sqr_exp_kernel_functor{},
-              std::forward_as_tuple(x, alpha, rho), tolerance, max_num_steps,
-              hessian_block_size, solver_num, max_steps_line_search, nullptr);
+              std::forward_as_tuple(x, alpha, rho), theta_0, tolerance,
+              max_num_steps, hessian_block_size, solver_num,
+              max_steps_line_search, nullptr);
         };
         stan::test::expect_ad<true>(f, phi_dbl[0], phi_dbl[1], eta);
       },

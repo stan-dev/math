@@ -57,9 +57,9 @@ TEST(laplace_marginal_poisson_log_lpmf, phi_dim_2) {
       for (int solver_num = 1; solver_num < 4; solver_num++) {
         auto f = [&](auto&& alpha, auto&& rho) {
           return laplace_marginal_tol_poisson_log_lpmf(
-              y, y_index, theta_0, sq_kernel,
-              std::forward_as_tuple(x, alpha, rho), tolerance, max_num_steps,
-              hessian_block_size, solver_num, max_steps_line_search, nullptr);
+              y, y_index, sq_kernel, std::forward_as_tuple(x, alpha, rho),
+              theta_0, tolerance, max_num_steps, hessian_block_size, solver_num,
+              max_steps_line_search, nullptr);
         };
         stan::test::expect_ad<true>(tols, f, alpha_dbl, rho_dbl);
       }
@@ -75,9 +75,9 @@ TEST(laplace_marginal_poisson_log_lpmf, phi_dim_2) {
       for (int solver_num = 1; solver_num < 4; solver_num++) {
         auto f = [&](auto&& alpha, auto&& rho) {
           return laplace_marginal_tol_poisson_2_log_lpmf(
-              y, y_index, ye, theta_0, sq_kernel,
-              std::forward_as_tuple(x, alpha, rho), tolerance, max_num_steps,
-              hessian_block_size, solver_num, max_steps_line_search, nullptr);
+              y, y_index, ye, sq_kernel, std::forward_as_tuple(x, alpha, rho),
+              theta_0, tolerance, max_num_steps, hessian_block_size, solver_num,
+              max_steps_line_search, nullptr);
         };
         stan::test::expect_ad<true>(tols, f, alpha_dbl, rho_dbl);
       }
@@ -93,7 +93,7 @@ TEST_F(laplace_disease_map_test, laplace_marginal_poisson_log_lpmf) {
   using stan::math::var;
 
   double marginal_density = laplace_marginal_poisson_2_log_lpmf(
-      y, y_index, ye, theta_0, stan::math::test::sqr_exp_kernel_functor(),
+      y, y_index, ye, stan::math::test::sqr_exp_kernel_functor(),
       std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1)), nullptr);
 
   double tol = 6e-4;
@@ -109,10 +109,10 @@ TEST_F(laplace_disease_map_test, laplace_marginal_poisson_log_lpmf) {
       for (int solver_num = 1; solver_num < 4; solver_num++) {
         auto f = [&](auto&& alpha, auto&& rho) {
           return laplace_marginal_tol_poisson_2_log_lpmf(
-              y, n_samples, ye, theta_0,
-              stan::math::test::sqr_exp_kernel_functor(),
-              std::forward_as_tuple(x, alpha, rho), tolerance, max_num_steps,
-              hessian_block_size, solver_num, max_steps_line_search, nullptr);
+              y, n_samples, ye, stan::math::test::sqr_exp_kernel_functor(),
+              std::forward_as_tuple(x, alpha, rho), theta_0, tolerance,
+              max_num_steps, hessian_block_size, solver_num,
+              max_steps_line_search, nullptr);
         };
         stan::test::expect_ad<true>(f, phi_dbl[0], phi_dbl[1]);
       }

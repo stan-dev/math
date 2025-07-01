@@ -41,7 +41,7 @@ TEST(laplace_marginal_bernoulli_logit_lpmf, phi_dim500) {
   phi_dbl << 1.6, 1;
   using stan::math::test::sqr_exp_kernel_functor;
   double target = laplace_marginal_bernoulli_logit_lpmf(
-      y, n_samples, theta_0, sqr_exp_kernel_functor{},
+      y, n_samples, sqr_exp_kernel_functor{},
       std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1)), nullptr);
   // Benchmark against gpstuff.
   EXPECT_NEAR(-195.368, target, tol);
@@ -56,9 +56,10 @@ TEST(laplace_marginal_bernoulli_logit_lpmf, phi_dim500) {
           auto&& theta_0) {
         auto f = [&](auto&& alpha, auto&& rho) {
           return laplace_marginal_tol_bernoulli_logit_lpmf(
-              y, n_samples, theta_0, sqr_exp_kernel_functor{},
-              std::forward_as_tuple(x, alpha, rho), tolerance, max_num_steps,
-              hessian_block_size, solver_num, max_steps_line_search, nullptr);
+              y, n_samples, sqr_exp_kernel_functor{},
+              std::forward_as_tuple(x, alpha, rho), theta_0, tolerance,
+              max_num_steps, hessian_block_size, solver_num,
+              max_steps_line_search, nullptr);
         };
         stan::test::ad_tolerances tols;
         if (flag_test(known_issues, solver_num, max_steps_line_search,
