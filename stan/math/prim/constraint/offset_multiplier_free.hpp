@@ -59,8 +59,7 @@ inline auto offset_multiplier_free(T&& y, M&& mu, S&& sigma) {
   check_positive_finite("offset_multiplier_constrain", "multiplier",
                         value_of(sigma_ref));
   return stan::math::eval(
-      divide(subtract(std::forward<T>(y), std::forward<M>(mu_ref)),
-             std::forward<S>(sigma_ref)));
+      divide(subtract(std::forward<T>(y), mu_ref), sigma_ref));
 }
 
 /**
