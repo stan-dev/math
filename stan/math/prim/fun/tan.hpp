@@ -47,7 +47,7 @@ inline auto tan(const T x) {
 struct tan_fun {
   template <typename T>
   static inline auto fun(T&& x) {
-  return tan(std::forward<T>(x));
+    return tan(std::forward<T>(x));
   }
 };
 

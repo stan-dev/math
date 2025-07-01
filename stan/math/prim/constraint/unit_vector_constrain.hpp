@@ -30,9 +30,11 @@ inline auto unit_vector_constrain(T&& y) {
   auto&& y_ref = to_ref(std::forward<T>(y));
   value_type_t<T> SN = dot_self(y_ref);
   check_positive_finite("unit_vector_constrain", "norm", SN);
-  return make_holder([SN](auto&& y_) {
-    return std::forward<decltype(y_)>(y_).array() / sqrt(SN);
-  }, std::forward<decltype(y_ref)>(y_ref));
+  return make_holder(
+      [SN](auto&& y_) {
+        return std::forward<decltype(y_)>(y_).array() / sqrt(SN);
+      },
+      std::forward<decltype(y_ref)>(y_ref));
 }
 
 /**
@@ -55,9 +57,11 @@ inline auto unit_vector_constrain(T1&& y, T2& lp) {
   value_type_t<T1> SN = dot_self(y_ref);
   check_positive_finite("unit_vector_constrain", "norm", SN);
   lp -= 0.5 * SN;
-  return make_holder([SN](auto&& y_) {
-    return std::forward<decltype(y_)>(y_).array() / sqrt(SN);
-  }, std::forward<decltype(y_ref)>(y_ref));
+  return make_holder(
+      [SN](auto&& y_) {
+        return std::forward<decltype(y_)>(y_).array() / sqrt(SN);
+      },
+      std::forward<decltype(y_ref)>(y_ref));
 }
 /**
  * Return the unit length vector corresponding to the free vector y.
@@ -71,10 +75,9 @@ inline auto unit_vector_constrain(T1&& y, T2& lp) {
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
 inline auto unit_vector_constrain(T&& y) {
-  return apply_vector_unary<T>::apply(
-      std::forward<T>(y), [](auto&& v) {
-        return unit_vector_constrain(std::forward<decltype(v)>(v));
-      });
+  return apply_vector_unary<T>::apply(std::forward<T>(y), [](auto&& v) {
+    return unit_vector_constrain(std::forward<decltype(v)>(v));
+  });
 }
 
 /**
@@ -93,10 +96,9 @@ inline auto unit_vector_constrain(T&& y) {
 template <typename T, typename Lp, require_std_vector_t<T>* = nullptr,
           require_convertible_t<return_type_t<T>, Lp>* = nullptr>
 inline auto unit_vector_constrain(T&& y, Lp& lp) {
-  return apply_vector_unary<T>::apply(
-      std::forward<T>(y), [&lp](auto&& v) {
-        return unit_vector_constrain(std::forward<decltype(v)>(v), lp);
-      });
+  return apply_vector_unary<T>::apply(std::forward<T>(y), [&lp](auto&& v) {
+    return unit_vector_constrain(std::forward<decltype(v)>(v), lp);
+  });
 }
 
 /**

@@ -63,7 +63,7 @@ struct acosh_fun {
    */
   template <typename T>
   static inline auto fun(T&& x) {
-  return acosh(std::forward<T>(x));
+    return acosh(std::forward<T>(x));
   }
 };
 

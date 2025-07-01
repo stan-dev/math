@@ -16,7 +16,8 @@ namespace math {
  * @param[in] a argument
  * @return derivative of log gamma function at argument
  */
-template <typename T, require_var_t<T>* = nullptr, require_stan_scalar_t<T>* = nullptr>
+template <typename T, require_var_t<T>* = nullptr,
+          require_stan_scalar_t<T>* = nullptr>
 inline auto digamma(T&& a) {
   return make_callback_var(digamma(a.val()), [a](auto&& vi) {
     a.adj() += vi.adj() * trigamma(a.val());

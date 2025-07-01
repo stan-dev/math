@@ -64,7 +64,7 @@ struct log_inv_logit_fun {
    */
   template <typename T>
   static inline auto fun(T&& x) {
-  return log_inv_logit(std::forward<T>(x));
+    return log_inv_logit(std::forward<T>(x));
   }
 };
 

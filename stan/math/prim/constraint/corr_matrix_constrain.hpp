@@ -92,10 +92,9 @@ corr_matrix_constrain(T&& x, Eigen::Index k, Lp& lp) {
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
 inline auto corr_matrix_constrain(T&& y, int K) {
-  return apply_vector_unary<T>::apply(
-      std::forward<T>(y), [K](auto&& v) {
-        return corr_matrix_constrain(std::forward<decltype(v)>(v), K);
-      });
+  return apply_vector_unary<T>::apply(std::forward<T>(y), [K](auto&& v) {
+    return corr_matrix_constrain(std::forward<decltype(v)>(v), K);
+  });
 }
 
 /**
@@ -117,10 +116,9 @@ inline auto corr_matrix_constrain(T&& y, int K) {
 template <typename T, typename Lp, require_std_vector_t<T>* = nullptr,
           require_convertible_t<return_type_t<T>, Lp>* = nullptr>
 inline auto corr_matrix_constrain(T&& y, int K, Lp& lp) {
-  return apply_vector_unary<T>::apply(
-      std::forward<T>(y), [&lp, K](auto&& v) {
-        return corr_matrix_constrain(std::forward<decltype(v)>(v), K, lp);
-      });
+  return apply_vector_unary<T>::apply(std::forward<T>(y), [&lp, K](auto&& v) {
+    return corr_matrix_constrain(std::forward<decltype(v)>(v), K, lp);
+  });
 }
 
 /**

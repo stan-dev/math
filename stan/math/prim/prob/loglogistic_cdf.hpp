@@ -43,9 +43,8 @@ namespace math {
 template <typename T_y, typename T_scale, typename T_shape,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_scale, T_shape>* = nullptr>
-inline return_type_t<T_y, T_scale, T_shape> loglogistic_cdf(const T_y& y,
-                                                     const T_scale& alpha,
-                                                     const T_shape& beta) {
+inline return_type_t<T_y, T_scale, T_shape> loglogistic_cdf(
+    const T_y& y, const T_scale& alpha, const T_shape& beta) {
   using T_partials_return = partials_return_t<T_y, T_scale, T_shape>;
   using T_y_ref = ref_type_t<T_y>;
   using T_alpha_ref = ref_type_t<T_scale>;
@@ -81,21 +80,20 @@ inline return_type_t<T_y, T_scale, T_shape> loglogistic_cdf(const T_y& y,
   auto&& alpha_div_y_pow_beta
       = to_ref_if<!is_constant_all<T_y, T_scale, T_shape>::value>(
           pow(alpha_div_y, beta_val));
-  auto&& prod_all
-      = to_ref_if<!is_constant_all<T_y, T_scale, T_shape>::value>(
-          1.0 / (1.0 + alpha_div_y_pow_beta));
+  auto&& prod_all = to_ref_if<!is_constant_all<T_y, T_scale, T_shape>::value>(
+      1.0 / (1.0 + alpha_div_y_pow_beta));
 
   T_partials_return cdf = prod(prod_all);
 
   if (!is_constant_all<T_y, T_scale, T_shape>::value) {
     auto&& prod_all_sq = to_ref_if<!is_constant_all<T_y>::value
-                                            + !is_constant_all<T_scale>::value
-                                            + !is_constant_all<T_shape>::value
-                                        >= 2>(square(prod_all));
+                                       + !is_constant_all<T_scale>::value
+                                       + !is_constant_all<T_shape>::value
+                                   >= 2>(square(prod_all));
     auto&& cdf_div_elt = to_ref_if<!is_constant_all<T_y>::value
-                                            + !is_constant_all<T_scale>::value
-                                            + !is_constant_all<T_shape>::value
-                                        >= 2>(cdf / prod_all);
+                                       + !is_constant_all<T_scale>::value
+                                       + !is_constant_all<T_shape>::value
+                                   >= 2>(cdf / prod_all);
     if (!is_constant_all<T_y, T_scale>::value) {
       auto&& alpha_div_times_beta = to_ref_if<
           !is_constant_all<T_y>::value + !is_constant_all<T_scale>::value == 2>(
@@ -105,8 +103,7 @@ inline return_type_t<T_y, T_scale, T_shape> loglogistic_cdf(const T_y& y,
         partials<0>(ops_partials) = y_deriv * cdf_div_elt;
       }
       if (!is_constant_all<T_scale>::value) {
-        auto alpha_deriv
-            = -alpha_div_times_beta / alpha_val * prod_all_sq;
+        auto alpha_deriv = -alpha_div_times_beta / alpha_val * prod_all_sq;
         partials<1>(ops_partials) = alpha_deriv * cdf_div_elt;
       }
     }

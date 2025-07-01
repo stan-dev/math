@@ -45,7 +45,7 @@ struct step_fun {
    */
   template <typename T>
   static inline auto fun(T&& y) {
-  return step(std::forward<T>(y));
+    return step(std::forward<T>(y));
   }
 };
 

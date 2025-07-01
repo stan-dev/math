@@ -54,14 +54,12 @@ template <typename Vec, require_eigen_vector_t<Vec>* = nullptr>
 inline auto rep_matrix(Vec&& x, int n) {
   if constexpr (is_eigen_row_vector<Vec>::value) {
     check_nonnegative("rep_matrix", "rows", n);
-    return make_holder([n](auto&& xx) {
-      return xx.replicate(n, 1);
-    }, std::forward<Vec>(x));
+    return make_holder([n](auto&& xx) { return xx.replicate(n, 1); },
+                       std::forward<Vec>(x));
   } else {
     check_nonnegative("rep_matrix", "cols", n);
-    return make_holder([n](auto&& xx) {
-      return xx.replicate(1, n);
-    }, std::forward<Vec>(x));
+    return make_holder([n](auto&& xx) { return xx.replicate(1, n); },
+                       std::forward<Vec>(x));
   }
 }
 

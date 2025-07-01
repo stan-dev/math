@@ -24,8 +24,8 @@ namespace math {
  * match the size of A.
  */
 template <Eigen::UpLoType TriView, typename T1, typename T2,
-          require_all_eigen_t<T1, T2> * = nullptr,
-          require_all_not_eigen_vt<is_var, T1, T2> * = nullptr>
+          require_all_eigen_t<T1, T2>* = nullptr,
+          require_all_not_eigen_vt<is_var, T1, T2>* = nullptr>
 inline auto mdivide_left_tri(T1&& A, T2&& b) {
   using T_return = return_type_t<T1, T2>;
   using ret_type = Eigen::Matrix<T_return, Eigen::Dynamic, Eigen::Dynamic>;
@@ -49,7 +49,7 @@ inline auto mdivide_left_tri(T1&& A, T2&& b) {
  * @return x = A^-1 .
  * @throws std::domain_error if A is not square
  */
-template <Eigen::UpLoType TriView, typename T, require_eigen_t<T> * = nullptr>
+template <Eigen::UpLoType TriView, typename T, require_eigen_t<T>* = nullptr>
 inline plain_type_t<T> mdivide_left_tri(T&& A) {
   check_square("mdivide_left_tri", "A", A);
   if (A.rows() == 0) {

@@ -47,7 +47,7 @@ inline auto cos(const T x) {
 struct cos_fun {
   template <typename T>
   static inline auto fun(T&& x) {
-  return cos(std::forward<T>(x));
+    return cos(std::forward<T>(x));
   }
 };
 

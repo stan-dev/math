@@ -29,7 +29,7 @@ inline auto floor(const T x) {
 struct floor_fun {
   template <typename T>
   static inline auto fun(T&& x) {
-  return floor(std::forward<T>(x));
+    return floor(std::forward<T>(x));
   }
 };
 

@@ -58,7 +58,8 @@ inline auto apply_scalar_binary(F&& f, T1&& x, T2&& y) {
   return make_holder(
       [](auto&& f_inner, auto&& x_inner, auto&& y_inner) {
         return std::forward<decltype(x_inner)>(x_inner).binaryExpr(
-          std::forward<decltype(y_inner)>(y_inner), std::forward<decltype(f_inner)>(f_inner));
+            std::forward<decltype(y_inner)>(y_inner),
+            std::forward<decltype(f_inner)>(f_inner));
       },
       std::forward<F>(f), std::forward<T1>(x), std::forward<T2>(y));
 }
@@ -86,7 +87,7 @@ inline auto apply_scalar_binary(F&& f, T1&& x, T2&& y) {
                                            plain_type_t<decltype(x_inner)>>;
         Eigen::Map<const int_vec_t> y_map(y_inner.data(), y_inner.size());
         return std::forward<decltype(x_inner)>(x_inner).binaryExpr(
-          y_map, std::forward<decltype(f_inner)>(f_inner));
+            y_map, std::forward<decltype(f_inner)>(f_inner));
       },
       std::forward<F>(f), std::forward<T1>(x), std::forward<T2>(y));
 }
@@ -114,7 +115,7 @@ inline auto apply_scalar_binary(F&& f, T1&& x, T2&& y) {
                                            plain_type_t<decltype(y_inner)>>;
         Eigen::Map<const int_vec_t> x_map(x_inner.data(), x_inner.size());
         return x_map.binaryExpr(std::forward<decltype(y_inner)>(y_inner),
-          std::forward<decltype(f_inner)>(f_inner));
+                                std::forward<decltype(f_inner)>(f_inner));
       },
       std::forward<F>(f), std::forward<T1>(x), std::forward<T2>(y));
 }
@@ -297,7 +298,8 @@ inline auto apply_scalar_binary(F&& f, T1&& x, T2&& y) {
   using T_return = std::decay_t<decltype(f(x[0], y))>;
   std::vector<T_return> result(x.size());
   Eigen::Map<Eigen::Matrix<T_return, -1, 1>>(result.data(), result.size())
-      = x_vec.unaryExpr([f_ = std::forward<F>(f), y](auto&& v) { return f_(v, y); });
+      = x_vec.unaryExpr(
+          [f_ = std::forward<F>(f), y](auto&& v) { return f_(v, y); });
   return result;
 }
 
@@ -327,7 +329,8 @@ inline auto apply_scalar_binary(F&& f, T1&& x, T2&& y) {
   using T_return = std::decay_t<decltype(f(x, y[0]))>;
   std::vector<T_return> result(y.size());
   Eigen::Map<Eigen::Matrix<T_return, -1, 1>>(result.data(), result.size())
-      = y_vec.unaryExpr([f_ = std::forward<F>(f), x](auto&& v) { return f_(x, v); });
+      = y_vec.unaryExpr(
+          [f_ = std::forward<F>(f), x](auto&& v) { return f_(x, v); });
   return result;
 }
 

@@ -72,7 +72,7 @@ struct logit_fun {
    */
   template <typename T>
   static inline auto fun(T&& x) {
-  return logit(std::forward<T>(x));
+    return logit(std::forward<T>(x));
   }
 };
 

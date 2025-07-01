@@ -30,7 +30,7 @@ inline auto fabs(T x) {
 struct fabs_fun {
   template <typename T>
   static inline auto fun(T&& x) {
-  return fabs(std::forward<T>(x));
+    return fabs(std::forward<T>(x));
   }
 };
 

@@ -34,9 +34,10 @@ mdivide_left_ldlt(LDLT_factor<T>& A, EigMat&& b) {
     return {0, b.cols()};
   }
 
-  return A.ldlt().solve(
-      Eigen::Matrix<return_type_t<T, EigMat>, std::decay_t<EigMat>::RowsAtCompileTime,
-                    std::decay_t<EigMat>::ColsAtCompileTime>(std::forward<EigMat>(b)));
+  return A.ldlt().solve(Eigen::Matrix<return_type_t<T, EigMat>,
+                                      std::decay_t<EigMat>::RowsAtCompileTime,
+                                      std::decay_t<EigMat>::ColsAtCompileTime>(
+      std::forward<EigMat>(b)));
 }
 
 }  // namespace math

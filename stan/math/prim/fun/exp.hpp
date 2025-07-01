@@ -54,7 +54,7 @@ struct exp_fun {
    */
   template <typename T>
   static inline auto fun(T&& x) {
-  return exp(std::forward<T>(x));
+    return exp(std::forward<T>(x));
   }
 };
 

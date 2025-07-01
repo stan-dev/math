@@ -53,7 +53,7 @@ struct log_fun {
    */
   template <typename T>
   static inline auto fun(T&& x) {
-  return log(std::forward<T>(x));
+    return log(std::forward<T>(x));
   }
 };
 

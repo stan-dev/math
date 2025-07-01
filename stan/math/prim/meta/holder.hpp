@@ -189,34 +189,43 @@ class Holder
   }
 
   inline auto operator-() {
-    return make_holder(
-        [](const auto& arg) { return -arg; }, m_arg);
+    return make_holder([](const auto& arg) { return -arg; }, m_arg);
   }
   inline auto operator+() {
-    return make_holder(
-        [](const auto& arg) { return arg; }, m_arg);
+    return make_holder([](const auto& arg) { return arg; }, m_arg);
   }
   template <typename Other>
   inline auto operator+(Other&& other) {
     return make_holder(
-        [](const auto& arg, auto&& other_) { return arg + std::forward<decltype(other_)>(other_); }, m_arg, std::forward<Other>(other));
+        [](const auto& arg, auto&& other_) {
+          return arg + std::forward<decltype(other_)>(other_);
+        },
+        m_arg, std::forward<Other>(other));
   }
   template <typename Other>
   inline auto operator-(Other&& other) {
     return make_holder(
-        [](const auto& arg, auto&& other_) { return arg - std::forward<decltype(other_)>(other_); }, m_arg, std::forward<Other>(other));
+        [](const auto& arg, auto&& other_) {
+          return arg - std::forward<decltype(other_)>(other_);
+        },
+        m_arg, std::forward<Other>(other));
   }
   template <typename Other>
   inline auto operator*(Other&& other) {
     return make_holder(
-        [](const auto& arg, auto&& other_) { return arg * std::forward<decltype(other_)>(other_); }, m_arg, std::forward<Other>(other));
+        [](const auto& arg, auto&& other_) {
+          return arg * std::forward<decltype(other_)>(other_);
+        },
+        m_arg, std::forward<Other>(other));
   }
   template <typename Other>
   inline auto operator/(Other&& other) {
     return make_holder(
-        [](const auto& arg, auto&& other_) { return arg / std::forward<decltype(other_)>(other_); }, m_arg, std::forward<Other>(other));
+        [](const auto& arg, auto&& other_) {
+          return arg / std::forward<decltype(other_)>(other_);
+        },
+        m_arg, std::forward<Other>(other));
   }
-
 };
 
 }  // namespace math
@@ -410,9 +419,8 @@ inline auto make_holder_impl(F&& func, std::index_sequence<Is...>,
  * @param args arguments for the functor
  * @return `holder` referencing expression constructed by given functor
  */
-template <
-    typename F, typename... Args,
-    require_not_plain_type_t<std::invoke_result_t<F, Args&&...>>*>
+template <typename F, typename... Args,
+          require_not_plain_type_t<std::invoke_result_t<F, Args&&...>>*>
 inline auto make_holder(F&& func, Args&&... args) {
   return internal::make_holder_impl(std::forward<F>(func),
                                     std::make_index_sequence<sizeof...(Args)>(),

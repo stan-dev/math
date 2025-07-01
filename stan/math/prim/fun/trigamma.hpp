@@ -139,7 +139,7 @@ struct trigamma_fun {
    */
   template <typename T>
   static inline auto fun(T&& x) {
-  return trigamma(std::forward<T>(x));
+    return trigamma(std::forward<T>(x));
   }
 };
 

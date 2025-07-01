@@ -31,11 +31,14 @@ mdivide_left(T1&& A, T2&& b) {
     return {0, b.cols()};
   }
 
-  return Eigen::Matrix<return_type_t<T1, T2>, std::decay_t<T1>::RowsAtCompileTime,
+  return Eigen::Matrix<return_type_t<T1, T2>,
+                       std::decay_t<T1>::RowsAtCompileTime,
                        std::decay_t<T1>::ColsAtCompileTime>(std::forward<T1>(A))
       .lu()
-      .solve(Eigen::Matrix<return_type_t<T1, T2>, std::decay_t<T2>::RowsAtCompileTime,
-                           std::decay_t<T2>::ColsAtCompileTime>(std::forward<T2>(b)));
+      .solve(Eigen::Matrix<return_type_t<T1, T2>,
+                           std::decay_t<T2>::RowsAtCompileTime,
+                           std::decay_t<T2>::ColsAtCompileTime>(
+          std::forward<T2>(b)));
 }
 
 }  // namespace math

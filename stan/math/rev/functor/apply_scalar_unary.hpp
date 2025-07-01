@@ -30,7 +30,9 @@ struct apply_scalar_unary<
    * @return Function applied to the variable.
    */
   template <typename T2>
-  static inline auto apply(T2&& x) { return F::fun(std::forward<T2>(x)); }
+  static inline auto apply(T2&& x) {
+    return F::fun(std::forward<T2>(x));
+  }
 };
 
 template <typename F, typename T>

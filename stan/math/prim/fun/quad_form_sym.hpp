@@ -31,10 +31,12 @@ inline plain_type_t<EigMat2> quad_form_sym(EigMat1&& A, EigMat2&& B) {
   check_multiplicable("quad_form_sym", "A", A, "B", B);
   auto&& A_ref = to_ref(std::forward<EigMat1>(A));
   check_symmetric("quad_form_sym", "A", A_ref);
-  return make_holder([](auto&& a, auto&& b) {
-    auto ret = (a.transpose() * a * b).eval();
-    return 0.5 * (ret + ret.transpose());
-  }, std::forward<decltype(A_ref)>(A_ref), to_ref(std::forward<EigMat2>(B)));
+  return make_holder(
+      [](auto&& a, auto&& b) {
+        auto ret = (a.transpose() * a * b).eval();
+        return 0.5 * (ret + ret.transpose());
+      },
+      std::forward<decltype(A_ref)>(A_ref), to_ref(std::forward<EigMat2>(B)));
 }
 
 /**
@@ -57,9 +59,9 @@ inline value_type_t<EigMat> quad_form_sym(EigMat&& A, ColVec&& B) {
   check_multiplicable("quad_form_sym", "A", A, "B", B);
   auto&& A_ref = to_ref(std::forward<EigMat>(A));
   check_symmetric("quad_form_sym", "A", A_ref);
-  return make_holder([](auto&& a, auto&& b) {
-    return b.dot(a * b);
-  }, std::forward<decltype(A_ref)>(A_ref), to_ref(std::forward<ColVec>(B)));
+  return make_holder([](auto&& a, auto&& b) { return b.dot(a * b); },
+                     std::forward<decltype(A_ref)>(A_ref),
+                     to_ref(std::forward<ColVec>(B)));
 }
 
 }  // namespace math

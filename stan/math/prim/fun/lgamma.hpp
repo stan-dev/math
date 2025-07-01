@@ -101,7 +101,7 @@ inline double lgamma(int x) {
 struct lgamma_fun {
   template <typename T>
   static inline auto fun(T&& x) {
-  return lgamma(std::forward<T>(x));
+    return lgamma(std::forward<T>(x));
   }
 };
 

@@ -24,9 +24,11 @@ inline auto block(T&& m, size_t i, size_t j, size_t nrows, size_t ncols) {
   check_row_index("block", "i+nrows-1", m, i + nrows - 1);
   check_column_index("block", "j", m, j);
   check_column_index("block", "j+ncols-1", m, j + ncols - 1);
-  return make_holder([i, j, nrows, ncols](auto&& m_) {
-    return std::forward<decltype(m_)>(m_).block(i - 1, j - 1, nrows, ncols);
-  }, std::forward<T>(m));
+  return make_holder(
+      [i, j, nrows, ncols](auto&& m_) {
+        return std::forward<decltype(m_)>(m_).block(i - 1, j - 1, nrows, ncols);
+      },
+      std::forward<T>(m));
 }
 
 }  // namespace math

@@ -20,9 +20,8 @@ namespace math {
 template <typename T, require_eigen_vt<std::is_arithmetic, T>* = nullptr>
 inline value_type_t<T> determinant(T&& m) {
   check_square("determinant", "m", m);
-  return make_holder([](auto&& m_){
-    return m_.determinant();
-  }, std::forward<T>(m));
+  return make_holder([](auto&& m_) { return m_.determinant(); },
+                     std::forward<T>(m));
 }
 
 }  // namespace math

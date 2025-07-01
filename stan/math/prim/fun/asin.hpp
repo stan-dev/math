@@ -50,7 +50,7 @@ inline auto asin(const T x) {
 struct asin_fun {
   template <typename T>
   static inline auto fun(T&& x) {
-  return asin(std::forward<T>(x));
+    return asin(std::forward<T>(x));
   }
 };
 

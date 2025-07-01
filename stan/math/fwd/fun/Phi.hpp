@@ -14,7 +14,8 @@ namespace math {
 
 template <typename T, require_fvar_t<T>* = nullptr>
 inline auto Phi(T&& x) {
-  return std::decay_t<T>(Phi(x.val_), x.d_ * exp(x.val_ * x.val_ / -2.0) * INV_SQRT_TWO_PI);
+  return std::decay_t<T>(Phi(x.val_),
+                         x.d_ * exp(x.val_ * x.val_ / -2.0) * INV_SQRT_TWO_PI);
 }
 
 }  // namespace math

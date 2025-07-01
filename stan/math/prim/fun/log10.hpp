@@ -46,7 +46,7 @@ inline auto log10(const T x) {
 struct log10_fun {
   template <typename T>
   static inline auto fun(T&& x) {
-  return log10(std::forward<T>(x));
+    return log10(std::forward<T>(x));
   }
 };
 

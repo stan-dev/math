@@ -31,7 +31,7 @@ inline auto inv_erfc(const T& x) {
 struct inv_erfc_fun {
   template <typename T>
   static inline auto fun(T&& x) {
-  return inv_erfc(std::forward<T>(x));
+    return inv_erfc(std::forward<T>(x));
   }
 };
 
@@ -47,8 +47,7 @@ template <
     typename T,
     require_all_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr,
     require_not_var_matrix_t<T>* = nullptr,
-    require_not_arithmetic_t<T>* = nullptr,
-    require_container_t<T>* = nullptr>
+    require_not_arithmetic_t<T>* = nullptr, require_container_t<T>* = nullptr>
 inline auto inv_erfc(T&& x) {
   return apply_scalar_unary<inv_erfc_fun, T>::apply(std::forward<T>(x));
 }

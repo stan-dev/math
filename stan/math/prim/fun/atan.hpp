@@ -48,7 +48,7 @@ inline auto atan(const T x) {
 struct atan_fun {
   template <typename T>
   static inline auto fun(T&& x) {
-  return atan(std::forward<T>(x));
+    return atan(std::forward<T>(x));
   }
 };
 

@@ -62,7 +62,7 @@ struct atanh_fun {
    */
   template <typename T>
   static inline auto fun(T&& x) {
-  return atanh(std::forward<T>(x));
+    return atanh(std::forward<T>(x));
   }
 };
 

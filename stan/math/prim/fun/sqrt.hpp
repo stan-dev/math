@@ -45,7 +45,7 @@ inline auto sqrt(const T x) {
 struct sqrt_fun {
   template <typename T>
   static inline auto fun(T&& x) {
-  return sqrt(std::forward<T>(x));
+    return sqrt(std::forward<T>(x));
   }
 };
 

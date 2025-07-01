@@ -24,7 +24,8 @@ template <typename EigMat1, typename EigMat2,
           require_all_eigen_t<EigMat1, EigMat2>* = nullptr,
           require_all_not_vt_fvar<EigMat1, EigMat2>* = nullptr>
 inline Eigen::Matrix<return_type_t<EigMat1, EigMat2>,
-                     std::decay_t<EigMat1>::RowsAtCompileTime, std::decay_t<EigMat2>::ColsAtCompileTime>
+                     std::decay_t<EigMat1>::RowsAtCompileTime,
+                     std::decay_t<EigMat2>::ColsAtCompileTime>
 mdivide_right(EigMat1&& b, EigMat2&& A) {
   using T_return = return_type_t<EigMat1, EigMat2>;
   check_square("mdivide_right", "A", A);
@@ -33,10 +34,12 @@ mdivide_right(EigMat1&& b, EigMat2&& A) {
     return {b.rows(), 0};
   }
   return Eigen::Matrix<T_return, std::decay_t<EigMat2>::RowsAtCompileTime,
-                       std::decay_t<EigMat2>::ColsAtCompileTime>(std::forward<EigMat2>(A))
+                       std::decay_t<EigMat2>::ColsAtCompileTime>(
+             std::forward<EigMat2>(A))
       .transpose()
       .lu()
-      .solve(Eigen::Matrix<T_return, Eigen::Dynamic, Eigen::Dynamic>(std::forward<EigMat1>(b))
+      .solve(Eigen::Matrix<T_return, Eigen::Dynamic, Eigen::Dynamic>(
+                 std::forward<EigMat1>(b))
                  .transpose())
       .transpose();
 }

@@ -69,10 +69,9 @@ inline plain_type_t<Mat> stochastic_row_constrain(Mat&& y, Lp& lp) {
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
 inline auto stochastic_row_constrain(T&& y) {
-  return apply_vector_unary<T>::apply(
-      std::forward<T>(y), [](auto&& v) {
-        return stochastic_row_constrain(std::forward<decltype(v)>(v));
-      });
+  return apply_vector_unary<T>::apply(std::forward<T>(y), [](auto&& v) {
+    return stochastic_row_constrain(std::forward<decltype(v)>(v));
+  });
 }
 
 /**
@@ -91,10 +90,9 @@ inline auto stochastic_row_constrain(T&& y) {
 template <typename T, typename Lp, require_std_vector_t<T>* = nullptr,
           require_convertible_t<return_type_t<T>, Lp>* = nullptr>
 inline auto stochastic_row_constrain(T&& y, Lp& lp) {
-  return apply_vector_unary<T>::apply(
-      std::forward<T>(y), [&lp](auto&& v) {
-        return stochastic_row_constrain(std::forward<decltype(v)>(v), lp);
-      });
+  return apply_vector_unary<T>::apply(std::forward<T>(y), [&lp](auto&& v) {
+    return stochastic_row_constrain(std::forward<decltype(v)>(v), lp);
+  });
 }
 
 /**

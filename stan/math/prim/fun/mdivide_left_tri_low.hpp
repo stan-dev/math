@@ -36,7 +36,8 @@ mdivide_left_tri_low(T1&& A, T2&& b) {
   if (A.rows() == 0) {
     return {0, b.cols()};
   }
-  return mdivide_left_tri<Eigen::Lower>(std::forward<T1>(A), std::forward<T2>(b));
+  return mdivide_left_tri<Eigen::Lower>(std::forward<T1>(A),
+                                        std::forward<T2>(b));
 }
 
 template <typename T, require_eigen_t<T>* = nullptr,

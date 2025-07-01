@@ -62,7 +62,7 @@ struct log1p_fun {
    */
   template <typename T>
   static inline auto fun(T&& x) {
-  return log1p(std::forward<T>(x));
+    return log1p(std::forward<T>(x));
   }
 };
 

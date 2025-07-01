@@ -23,9 +23,8 @@ inline auto segment(Vec&& v, size_t i, size_t n) {
     check_less_or_equal("segment", "n", i + n - 1,
                         static_cast<size_t>(v.size()));
   }
-  return make_holder([i, n](auto&& v_) {
-    return v_.segment(i - 1, n);
-  }, std::forward<Vec>(v));
+  return make_holder([i, n](auto&& v_) { return v_.segment(i - 1, n); },
+                     std::forward<Vec>(v));
 }
 
 template <typename T>

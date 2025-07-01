@@ -44,10 +44,11 @@ inline auto cbrt(Var&& a) {
     });
   } else {
     return make_callback_var(
-      a.val().unaryExpr([](auto&& x) { return cbrt(x); }),
-      [a](const auto& vi) mutable {
-        a.adj().array() += vi.adj().array() / (3.0 * vi.val().array().square());
-    });
+        a.val().unaryExpr([](auto&& x) { return cbrt(x); }),
+        [a](const auto& vi) mutable {
+          a.adj().array()
+              += vi.adj().array() / (3.0 * vi.val().array().square());
+        });
   }
 }
 

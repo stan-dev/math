@@ -13,7 +13,6 @@ inline auto exp2(T x) {
   return std::exp2(x);
 }
 
-
 /**
  * Structure to wrap `exp2()` so it can be vectorized.
  */
@@ -43,8 +42,7 @@ struct exp2_fun {
 template <
     typename T,
     require_all_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr,
-    require_not_var_matrix_t<T>* = nullptr,
-    require_container_t<T>* = nullptr>
+    require_not_var_matrix_t<T>* = nullptr, require_container_t<T>* = nullptr>
 inline auto exp2(T&& x) {
   return apply_scalar_unary<exp2_fun, T>::apply(std::forward<T>(x));
 }

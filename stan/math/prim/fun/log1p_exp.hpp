@@ -61,7 +61,7 @@ inline double log1p_exp(double a) {
 struct log1p_exp_fun {
   template <typename T>
   static inline auto fun(T&& x) {
-  return log1p_exp(std::forward<T>(x));
+    return log1p_exp(std::forward<T>(x));
   }
 };
 

@@ -25,9 +25,11 @@ template <typename EigMat1, typename EigMat2,
           require_all_eigen_t<EigMat1, EigMat2>* = nullptr,
           require_all_not_vt_fvar<EigMat1, EigMat2>* = nullptr>
 inline Eigen::Matrix<return_type_t<EigMat1, EigMat2>,
-                     std::decay_t<EigMat1>::RowsAtCompileTime, std::decay_t<EigMat2>::ColsAtCompileTime>
+                     std::decay_t<EigMat1>::RowsAtCompileTime,
+                     std::decay_t<EigMat2>::ColsAtCompileTime>
 mdivide_right_tri_low(EigMat1&& b, EigMat2&& A) {
-  return mdivide_right_tri<Eigen::Lower>(std::forward<EigMat1>(b), std::forward<EigMat2>(A));
+  return mdivide_right_tri<Eigen::Lower>(std::forward<EigMat1>(b),
+                                         std::forward<EigMat2>(A));
 }
 
 }  // namespace math

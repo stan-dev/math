@@ -34,7 +34,7 @@ inline double tgamma(double x) {
 struct tgamma_fun {
   template <typename T>
   static inline auto fun(T&& x) {
-  return tgamma(std::forward<T>(x));
+    return tgamma(std::forward<T>(x));
   }
 };
 
@@ -49,8 +49,7 @@ struct tgamma_fun {
 template <
     typename T,
     require_all_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr,
-    require_not_var_matrix_t<T>* = nullptr,
-    require_container_t<T>* = nullptr>
+    require_not_var_matrix_t<T>* = nullptr, require_container_t<T>* = nullptr>
 inline auto tgamma(T&& x) {
   return apply_scalar_unary<tgamma_fun, T>::apply(std::forward<T>(x));
 }

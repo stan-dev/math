@@ -9,9 +9,7 @@
 namespace stan {
 namespace math {
 
-inline double inv(double x) {
-  return 1.0 / x;
-}
+inline double inv(double x) { return 1.0 / x; }
 
 /**
  * Structure to wrap 1.0 / x so that it can be vectorized.
