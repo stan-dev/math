@@ -5,7 +5,7 @@
 #include <stan/math/opencl/prim/sum.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err/check_vector.hpp>
-#include <stan/math/prim/err/check_matching_sizes.hpp>
+#include <stan/math/prim/err/check_matching_dims.hpp>
 
 namespace stan {
 namespace math {
@@ -25,7 +25,7 @@ namespace math {
 template <typename T_a, typename T_b,
           require_all_kernel_expressions_and_none_scalar_t<T_a, T_b>* = nullptr>
 inline auto rows_dot_product(T_a&& a, T_b&& b) {
-  check_matching_sizes("rows_dot_product", "a", a, "b", b);
+  check_matching_dims("rows_dot_product", "a", a, "b", b);
   return rowwise_sum(elt_multiply(std::forward<T_a>(a), std::forward<T_b>(b)));
 }
 
