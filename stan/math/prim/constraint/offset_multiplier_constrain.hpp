@@ -42,24 +42,24 @@ namespace math {
 template <typename T, typename M, typename S,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T, M, S>* = nullptr>
-inline auto offset_multiplier_constrain(const T& x, const M& mu,
-                                        const S& sigma) {
-  const auto& mu_ref = to_ref(mu);
-  const auto& sigma_ref = to_ref(sigma);
+inline auto offset_multiplier_constrain(T&& x, M&& mu, S&& sigma) {
+  auto&& mu_ref = to_ref(std::forward<M>(mu));
+  auto&& sigma_ref = to_ref(std::forward<S>(sigma));
   if (is_matrix<T>::value && is_matrix<M>::value) {
-    check_matching_dims("offset_multiplier_constrain", "x", x, "mu", mu);
+    check_matching_dims("offset_multiplier_constrain", "x", x, "mu", mu_ref);
   }
   if (is_matrix<T>::value && is_matrix<S>::value) {
-    check_matching_dims("offset_multiplier_constrain", "x", x, "sigma", sigma);
+    check_matching_dims("offset_multiplier_constrain", "x", x, "sigma", sigma_ref);
   } else if (is_matrix<M>::value && is_matrix<S>::value) {
-    check_matching_dims("offset_multiplier_constrain", "mu", mu, "sigma",
-                        sigma);
+    check_matching_dims("offset_multiplier_constrain", "mu", mu_ref, "sigma",
+                        sigma_ref);
   }
 
   check_finite("offset_multiplier_constrain", "offset", value_of_rec(mu_ref));
   check_positive_finite("offset_multiplier_constrain", "multiplier",
                         value_of_rec(sigma_ref));
-  return stan::math::eval(fma(sigma_ref, x, mu_ref));
+  return stan::math::eval(fma(std::forward<decltype(sigma_ref)>(sigma_ref),
+    std::forward<T>(x), std::forward<decltype(mu_ref)>(mu_ref)));
 }
 
 /**
@@ -93,10 +93,9 @@ template <typename T, typename M, typename S, typename Lp,
           require_convertible_t<return_type_t<T, M, S>, Lp>* = nullptr,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T, M, S>* = nullptr>
-inline auto offset_multiplier_constrain(const T& x, const M& mu, const S& sigma,
-                                        Lp& lp) {
-  const auto& mu_ref = to_ref(mu);
-  const auto& sigma_ref = to_ref(sigma);
+inline auto offset_multiplier_constrain(T&& x, M&& mu, S&& sigma, Lp& lp) {
+  auto&& mu_ref = to_ref(std::forward<M>(mu));
+  auto&& sigma_ref = to_ref(std::forward<S>(sigma));
   if (is_matrix<T>::value && is_matrix<M>::value) {
     check_matching_dims("offset_multiplier_constrain", "x", x, "mu", mu);
   }
@@ -115,7 +114,8 @@ inline auto offset_multiplier_constrain(const T& x, const M& mu, const S& sigma,
   } else {
     lp += sum(log(sigma_ref));
   }
-  return stan::math::eval(fma(sigma_ref, x, mu_ref));
+  return stan::math::eval(fma(std::forward<decltype(sigma_ref)>(sigma_ref),
+    std::forward<T>(x), std::forward<decltype(mu_ref)>(mu_ref)));
 }
 
 /**

@@ -34,7 +34,7 @@ namespace math {
  * canonical partial correlations.
  */
 template <typename T, require_eigen_vector_t<T>* = nullptr>
-Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic> read_corr_L(
+inline Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic> read_corr_L(
     const T& CPCs,  // on (-1, 1)
     size_t K) {
   using T_scalar = value_type_t<T>;
@@ -101,8 +101,8 @@ Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic> read_corr_L(
  */
 template <typename T, typename Lp, require_eigen_vector_t<T>* = nullptr,
           require_convertible_t<value_type_t<T>, Lp>* = nullptr>
-Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic> read_corr_L(
-    const T& CPCs, size_t K, Lp& log_prob) {
+inline Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic> read_corr_L(
+    T&& CPCs, size_t K, Lp& log_prob) {
   using T_scalar = value_type_t<T>;
   if (K == 0) {
     return {};
@@ -112,7 +112,7 @@ Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic> read_corr_L(
                                                                              1);
   }
 
-  const Eigen::Ref<const plain_type_t<T>>& CPCs_ref = CPCs;
+  auto&& CPCs_ref = to_ref(std::forward<T>(CPCs));
   size_t pos = 0;
   T_scalar acc = 0;
   // no need to abs() because this Jacobian determinant

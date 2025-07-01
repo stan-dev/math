@@ -23,13 +23,12 @@ namespace math {
  * canonical partial correlations.
  */
 template <typename T_CPCs, require_eigen_vector_t<T_CPCs>* = nullptr>
-Eigen::Matrix<value_type_t<T_CPCs>, Eigen::Dynamic, Eigen::Dynamic>
-read_corr_matrix(const T_CPCs& CPCs, size_t K) {
+inline Eigen::Matrix<value_type_t<T_CPCs>, Eigen::Dynamic, Eigen::Dynamic>
+read_corr_matrix(T_CPCs&& CPCs, size_t K) {
   if (K == 0) {
     return {};
   }
-
-  return multiply_lower_tri_self_transpose(read_corr_L(CPCs, K));
+  return multiply_lower_tri_self_transpose(read_corr_L(std::forward<T_CPCs>(CPCs), K));
 }
 
 /**
@@ -56,13 +55,12 @@ read_corr_matrix(const T_CPCs& CPCs, size_t K) {
 template <typename T_CPCs, typename Lp,
           require_eigen_vector_t<T_CPCs>* = nullptr,
           require_convertible_t<value_type_t<T_CPCs>, Lp>* = nullptr>
-Eigen::Matrix<value_type_t<T_CPCs>, Eigen::Dynamic, Eigen::Dynamic>
-read_corr_matrix(const T_CPCs& CPCs, size_t K, Lp& log_prob) {
+inline Eigen::Matrix<value_type_t<T_CPCs>, Eigen::Dynamic, Eigen::Dynamic>
+read_corr_matrix(T_CPCs&& CPCs, size_t K, Lp& log_prob) {
   if (K == 0) {
     return {};
   }
-
-  return multiply_lower_tri_self_transpose(read_corr_L(CPCs, K, log_prob));
+  return multiply_lower_tri_self_transpose(read_corr_L(std::forward<T_CPCs>(CPCs), K, log_prob));
 }
 
 }  // namespace math

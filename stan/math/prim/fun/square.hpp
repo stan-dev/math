@@ -37,8 +37,8 @@ inline double square(const T x) {
  */
 struct square_fun {
   template <typename T>
-  static inline auto fun(const T& x) {
-    return square(x);
+  static inline auto fun(T&& x) {
+    return square(std::forward<T>(x));
   }
 };
 
@@ -66,7 +66,7 @@ inline auto square(Container&& x) {
 template <typename Container,
           require_container_bt<std::is_arithmetic, Container>* = nullptr>
 inline auto square(Container&& x) {
-  return apply_vector_unary<std::decay_t<Container>>::apply(
+  return apply_vector_unary<Container>::apply(
       std::forward<Container>(x),
       [](auto&& v) { return std::forward<decltype(v)>(v).array().square(); });
 }

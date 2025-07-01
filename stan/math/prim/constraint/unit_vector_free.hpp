@@ -25,7 +25,7 @@ inline auto unit_vector_free(EigVec&& x) {
   auto&& x_ref = to_ref(std::forward<EigVec>(x));
   check_unit_vector("stan::math::unit_vector_free", "Unit vector variable",
                     x_ref);
-  return x_ref;
+  return std::forward<decltype(x_ref)>(x_ref);
 }
 
 /**
@@ -37,7 +37,7 @@ inline auto unit_vector_free(EigVec&& x) {
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
 inline auto unit_vector_free(T&& x) {
-  return apply_vector_unary<std::decay_t<T>>::apply(
+  return apply_vector_unary<T>::apply(
       std::forward<T>(x),
       [](auto&& v) { return unit_vector_free(std::forward<decltype(v)>(v)); });
 }

@@ -51,7 +51,7 @@ template <typename Container,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               Container>* = nullptr>
 inline auto inv(Container&& x) {
-  return apply_vector_unary<std::decay_t<Container>>::apply(
+  return apply_vector_unary<Container>::apply(
       std::forward<Container>(x),
       [](auto&& v) { return std::forward<decltype(v)>(v).array().inverse(); });
 }

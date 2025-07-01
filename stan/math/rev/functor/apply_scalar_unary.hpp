@@ -29,7 +29,8 @@ struct apply_scalar_unary<
    * @param x Argument variable.
    * @return Function applied to the variable.
    */
-  static inline auto apply(const var& x) { return F::fun(x); }
+  template <typename T2>
+  static inline auto apply(T2&& x) { return F::fun(std::forward<T2>(x)); }
 };
 
 template <typename F, typename T>

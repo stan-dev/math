@@ -14,7 +14,7 @@ namespace math {
 
 template <typename EigVec, require_eigen_col_vector_t<EigVec>* = nullptr>
 inline Eigen::Matrix<value_type_t<EigVec>, Eigen::Dynamic, Eigen::Dynamic>
-cholesky_corr_constrain(const EigVec& y, int K) {
+cholesky_corr_constrain(EigVec&& y, int K) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::sqrt;
@@ -22,7 +22,7 @@ cholesky_corr_constrain(const EigVec& y, int K) {
   int k_choose_2 = (K * (K - 1)) / 2;
   check_size_match("cholesky_corr_constrain", "constrain size", y.size(),
                    "k_choose_2", k_choose_2);
-  Matrix<T_scalar, Dynamic, 1> z = corr_constrain(y);
+  Matrix<T_scalar, Dynamic, 1> z = corr_constrain(std::forward<EigVec>(y));
   Matrix<T_scalar, Dynamic, Dynamic> x(K, K);
   if (K == 0) {
     return x;
@@ -47,7 +47,7 @@ template <typename EigVec, typename Lp,
           require_eigen_vector_t<EigVec>* = nullptr,
           require_convertible_t<return_type_t<EigVec>, Lp>* = nullptr>
 inline Eigen::Matrix<value_type_t<EigVec>, Eigen::Dynamic, Eigen::Dynamic>
-cholesky_corr_constrain(const EigVec& y, int K, Lp& lp) {
+cholesky_corr_constrain(EigVec&& y, int K, Lp& lp) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::sqrt;
@@ -55,7 +55,7 @@ cholesky_corr_constrain(const EigVec& y, int K, Lp& lp) {
   int k_choose_2 = (K * (K - 1)) / 2;
   check_size_match("cholesky_corr_constrain", "y.size()", y.size(),
                    "k_choose_2", k_choose_2);
-  Matrix<T_scalar, Dynamic, 1> z = corr_constrain(y, lp);
+  Matrix<T_scalar, Dynamic, 1> z = corr_constrain(std::forward<EigVec>(y), lp);
   Matrix<T_scalar, Dynamic, Dynamic> x(K, K);
   if (K == 0) {
     return x;
@@ -88,7 +88,7 @@ cholesky_corr_constrain(const EigVec& y, int K, Lp& lp) {
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
 inline auto cholesky_corr_constrain(T&& y, int K) {
-  return apply_vector_unary<std::decay_t<T>>::apply(
+  return apply_vector_unary<T>::apply(
       std::forward<T>(y), [K](auto&& v) {
         return cholesky_corr_constrain(std::forward<decltype(v)>(v), K);
       });
@@ -110,7 +110,7 @@ inline auto cholesky_corr_constrain(T&& y, int K) {
 template <typename T, typename Lp, require_std_vector_t<T>* = nullptr,
           require_convertible_t<return_type_t<T>, Lp>* = nullptr>
 inline auto cholesky_corr_constrain(T&& y, int K, Lp& lp) {
-  return apply_vector_unary<std::decay_t<T>>::apply(
+  return apply_vector_unary<T>::apply(
       std::forward<T>(y), [&lp, K](auto&& v) {
         return cholesky_corr_constrain(std::forward<decltype(v)>(v), K, lp);
       });

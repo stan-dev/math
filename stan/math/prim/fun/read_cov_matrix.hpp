@@ -30,7 +30,7 @@ read_cov_matrix(const T_CPCs& CPCs, const T_sds& sds,
                 value_type_t<T_CPCs>& log_prob) {
   Eigen::Matrix<value_type_t<T_CPCs>, Eigen::Dynamic, Eigen::Dynamic> L
       = read_cov_L(CPCs, sds, log_prob);
-  return multiply_lower_tri_self_transpose(L);
+  return multiply_lower_tri_self_transpose(std::move(L));
 }
 
 /**
@@ -53,7 +53,7 @@ read_cov_matrix(const T_CPCs& CPCs, const T_sds& sds) {
   D.diagonal() = sds;
   Eigen::Matrix<value_type_t<T_CPCs>, Eigen::Dynamic, Eigen::Dynamic> L
       = D * read_corr_L(CPCs, K);
-  return multiply_lower_tri_self_transpose(L);
+  return multiply_lower_tri_self_transpose(std::move(L));
 }
 
 }  // namespace math

@@ -52,11 +52,13 @@ template <typename EigMat, typename ColVec, require_eigen_t<EigMat>* = nullptr,
           require_eigen_col_vector_t<ColVec>* = nullptr,
           require_vt_same<EigMat, ColVec>* = nullptr,
           require_all_vt_arithmetic<EigMat, ColVec>* = nullptr>
-inline value_type_t<EigMat> quad_form(const EigMat& A, const ColVec& B) {
+inline value_type_t<EigMat> quad_form(EigMat&& A, ColVec&& B) {
   check_square("quad_form", "A", A);
   check_multiplicable("quad_form", "A", A, "B", B);
-  const auto& B_ref = to_ref(B);
-  return B_ref.dot(A * B_ref);
+  return make_holder([](auto&& b, auto&& a) {
+    auto&& b_ref = to_ref(std::forward<decltype(b)>(b));
+    return b_ref.dot(a * b_ref);
+  }, std::forward<ColVec>(B), std::forward<EigMat>(A));
 }
 
 }  // namespace math

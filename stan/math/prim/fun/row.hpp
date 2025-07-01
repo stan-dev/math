@@ -21,10 +21,11 @@ namespace math {
  * @throw std::out_of_range if i is out of range.
  */
 template <typename T, require_matrix_t<T>* = nullptr>
-inline auto row(const T& m, size_t i) {
+inline auto row(T&& m, size_t i) {
   check_row_index("row", "i", m, i);
-
-  return m.row(i - 1);
+  return make_holder([i](auto&& mm) {
+        return std::forward<decltype(mm)>(mm).row(i - 1);
+  }, std::forward<T>(m), i);
 }
 
 }  // namespace math

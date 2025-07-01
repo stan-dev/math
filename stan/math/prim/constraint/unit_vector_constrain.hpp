@@ -24,13 +24,15 @@ namespace math {
  */
 template <typename T, require_eigen_col_vector_t<T>* = nullptr,
           require_not_vt_autodiff<T>* = nullptr>
-inline plain_type_t<T> unit_vector_constrain(const T& y) {
+inline auto unit_vector_constrain(T&& y) {
   using std::sqrt;
   check_nonzero_size("unit_vector_constrain", "y", y);
-  auto&& y_ref = to_ref(y);
+  auto&& y_ref = to_ref(std::forward<T>(y));
   value_type_t<T> SN = dot_self(y_ref);
   check_positive_finite("unit_vector_constrain", "norm", SN);
-  return y_ref.array() / sqrt(SN);
+  return make_holder([SN](auto&& y_) {
+    return std::forward<decltype(y_)>(y_).array() / sqrt(SN);
+  }, std::forward<decltype(y_ref)>(y_ref));
 }
 
 /**
@@ -46,14 +48,16 @@ inline plain_type_t<T> unit_vector_constrain(const T& y) {
  */
 template <typename T1, typename T2, require_eigen_col_vector_t<T1>* = nullptr,
           require_all_not_vt_autodiff<T1, T2>* = nullptr>
-inline plain_type_t<T1> unit_vector_constrain(const T1& y, T2& lp) {
+inline auto unit_vector_constrain(T1&& y, T2& lp) {
   using std::sqrt;
   check_nonzero_size("unit_vector_constrain", "y", y);
   auto&& y_ref = to_ref(y);
   value_type_t<T1> SN = dot_self(y_ref);
   check_positive_finite("unit_vector_constrain", "norm", SN);
   lp -= 0.5 * SN;
-  return y_ref.array() / sqrt(SN);
+  return make_holder([SN](auto&& y_) {
+    return std::forward<decltype(y_)>(y_).array() / sqrt(SN);
+  }, std::forward<decltype(y_ref)>(y_ref));
 }
 /**
  * Return the unit length vector corresponding to the free vector y.
@@ -67,7 +71,7 @@ inline plain_type_t<T1> unit_vector_constrain(const T1& y, T2& lp) {
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
 inline auto unit_vector_constrain(T&& y) {
-  return apply_vector_unary<std::decay_t<T>>::apply(
+  return apply_vector_unary<T>::apply(
       std::forward<T>(y), [](auto&& v) {
         return unit_vector_constrain(std::forward<decltype(v)>(v));
       });
@@ -89,7 +93,7 @@ inline auto unit_vector_constrain(T&& y) {
 template <typename T, typename Lp, require_std_vector_t<T>* = nullptr,
           require_convertible_t<return_type_t<T>, Lp>* = nullptr>
 inline auto unit_vector_constrain(T&& y, Lp& lp) {
-  return apply_vector_unary<std::decay_t<T>>::apply(
+  return apply_vector_unary<T>::apply(
       std::forward<T>(y), [&lp](auto&& v) {
         return unit_vector_constrain(std::forward<decltype(v)>(v), lp);
       });

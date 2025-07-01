@@ -55,16 +55,17 @@ template <typename Tt, typename EigMat1, typename EigMat2,
           require_all_eigen_t<EigMat1, EigMat2>* = nullptr,
           require_any_autodiff_t<Tt, value_type_t<EigMat1>,
                                  value_type_t<EigMat2>>* = nullptr>
-inline Eigen::Matrix<return_type_t<Tt, EigMat1, EigMat2>, Eigen::Dynamic,
-                     EigMat2::ColsAtCompileTime>
-scale_matrix_exp_multiply(const Tt& t, const EigMat1& A, const EigMat2& B) {
+inline auto scale_matrix_exp_multiply(Tt&& t, EigMat1&& A, EigMat2&& B) {
   check_square("scale_matrix_exp_multiply", "input matrix", A);
   check_multiplicable("scale_matrix_exp_multiply", "A", A, "B", B);
   if (A.size() == 0) {
     return {0, B.cols()};
   }
 
-  return multiply(matrix_exp(multiply(A, t)), B);
+  return make_holder([t](auto&& A_, auto&& B_) {
+    return multiply(matrix_exp(multiply(std::forward<decltype(A_)>(A_), t)),
+      std::forward<decltype(B_)>(B_));
+  }, std::forward<EigMat1>(A), std::forward<EigMat2>(B));
 }
 
 }  // namespace math

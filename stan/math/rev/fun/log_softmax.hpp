@@ -121,7 +121,7 @@ inline auto log_softmax(const T& x) {
  */
 template <typename T, require_std_vector_st<is_var, T>* = nullptr>
 inline auto log_softmax(T&& x) {
-  return apply_vector_unary<std::decay_t<T>>::apply(
+  return apply_vector_unary<T>::apply(
       std::forward<T>(x), [](const auto& alpha) { return log_softmax(alpha); });
 }
 

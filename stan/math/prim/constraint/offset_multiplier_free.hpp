@@ -44,21 +44,23 @@ template <typename T, typename M, typename S,
 inline auto offset_multiplier_free(T&& y, M&& mu, S&& sigma) {
   auto&& mu_ref = to_ref(std::forward<M>(mu));
   auto&& sigma_ref = to_ref(std::forward<S>(sigma));
-  if (is_matrix<T>::value && is_matrix<M>::value) {
-    check_matching_dims("offset_multiplier_constrain", "y", y, "mu", mu);
+  if constexpr (is_matrix<T>::value && is_matrix<M>::value) {
+    check_matching_dims("offset_multiplier_constrain", "y", y, "mu", mu_ref);
   }
-  if (is_matrix<T>::value && is_matrix<S>::value) {
-    check_matching_dims("offset_multiplier_constrain", "y", y, "sigma", sigma);
-  } else if (is_matrix<M>::value && is_matrix<S>::value) {
-    check_matching_dims("offset_multiplier_constrain", "mu", mu, "sigma",
-                        sigma);
+  if constexpr (is_matrix<T>::value && is_matrix<S>::value) {
+    check_matching_dims("offset_multiplier_constrain", "y", y, "sigma", sigma_ref);
+  } else if constexpr (is_matrix<M>::value && is_matrix<S>::value) {
+    check_matching_dims("offset_multiplier_constrain", "mu", mu_ref, "sigma",
+                        sigma_ref);
   }
 
   check_finite("offset_multiplier_constrain", "offset", value_of(mu_ref));
   check_positive_finite("offset_multiplier_constrain", "multiplier",
                         value_of(sigma_ref));
   return stan::math::eval(
-      divide(subtract(std::forward<T>(y), mu_ref), sigma_ref));
+      divide(subtract(std::forward<T>(y),
+        std::forward<decltype(mu_ref)>(mu_ref)),
+        std::forward<decltype(sigma_ref)>(sigma_ref)));
 }
 
 /**

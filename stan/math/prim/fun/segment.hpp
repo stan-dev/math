@@ -15,7 +15,7 @@ namespace math {
  * @tparam T type of the vector
  */
 template <typename Vec, require_vector_t<Vec>* = nullptr>
-inline auto segment(const Vec& v, size_t i, size_t n) {
+inline auto segment(Vec&& v, size_t i, size_t n) {
   check_greater("segment", "n", i, 0.0);
   check_less_or_equal("segment", "n", i, static_cast<size_t>(v.size()));
   if (n != 0) {
@@ -23,7 +23,9 @@ inline auto segment(const Vec& v, size_t i, size_t n) {
     check_less_or_equal("segment", "n", i + n - 1,
                         static_cast<size_t>(v.size()));
   }
-  return v.segment(i - 1, n);
+  return make_holder([i, n](auto&& v_) {
+    return v_.segment(i - 1, n);
+  }, std::forward<Vec>(v));
 }
 
 template <typename T>

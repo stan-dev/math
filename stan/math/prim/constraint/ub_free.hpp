@@ -34,7 +34,7 @@ template <typename T, typename U, require_not_std_vector_t<T>* = nullptr,
           require_stan_scalar_t<U>* = nullptr>
 inline auto ub_free(T&& y, U&& ub) {
   if (value_of_rec(ub) == INFTY) {
-    return identity_free(y, ub);
+    return identity_free(std::forward<T>(y), std::forward<U>(ub));
   } else {
     auto&& y_ref = to_ref(std::forward<T>(y));
     auto&& ub_ref = to_ref(std::forward<U>(ub));

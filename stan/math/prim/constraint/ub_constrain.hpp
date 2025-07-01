@@ -88,9 +88,8 @@ inline auto ub_constrain(const T& x, const U& ub, Lp& lp) {
 template <typename T, typename U, require_eigen_t<T>* = nullptr,
           require_stan_scalar_t<U>* = nullptr,
           require_all_not_st_var<T, U>* = nullptr>
-inline auto ub_constrain(T&& x, const U& ub) {
-  return eval(std::forward<T>(x).unaryExpr(
-      [ub](auto&& xx) { return ub_constrain(xx, ub); }));
+inline auto ub_constrain(const T& x, const U& ub) {
+  return eval(x.unaryExpr([ub](auto&& xx) { return ub_constrain(xx, ub); }));
 }
 
 /**
@@ -109,9 +108,9 @@ template <typename T, typename U, typename Lp, require_eigen_t<T>* = nullptr,
           require_stan_scalar_t<U>* = nullptr,
           require_all_not_st_var<T, U>* = nullptr,
           require_convertible_t<return_type_t<T, U>, Lp>* = nullptr>
-inline auto ub_constrain(T&& x, const U& ub, Lp& lp) {
-  return eval(std::forward<T>(x).unaryExpr(
-      [ub, &lp](auto&& xx) { return ub_constrain(xx, ub, lp); }));
+inline auto ub_constrain(const T& x, const U& ub, Lp& lp) {
+  return eval(
+      x.unaryExpr([ub, &lp](auto&& xx) { return ub_constrain(xx, ub, lp); }));
 }
 
 /**
@@ -126,9 +125,9 @@ inline auto ub_constrain(T&& x, const U& ub, Lp& lp) {
  */
 template <typename T, typename U, require_all_eigen_t<T, U>* = nullptr,
           require_all_not_st_var<T, U>* = nullptr>
-inline auto ub_constrain(T&& x, const U& ub) {
+inline auto ub_constrain(const T& x, const U& ub) {
   check_matching_dims("ub_constrain", "x", x, "ub", ub);
-  return eval(std::forward<T>(x).binaryExpr(
+  return eval(x.binaryExpr(
       ub, [](auto&& xx, auto&& ubb) { return ub_constrain(xx, ubb); }));
 }
 
@@ -148,9 +147,9 @@ template <typename T, typename U, typename Lp,
           require_all_eigen_t<T, U>* = nullptr,
           require_all_not_st_var<T, U>* = nullptr,
           require_convertible_t<return_type_t<T, U>, Lp>* = nullptr>
-inline auto ub_constrain(T&& x, const U& ub, Lp& lp) {
+inline auto ub_constrain(const T& x, const U& ub, Lp& lp) {
   check_matching_dims("ub_constrain", "x", x, "ub", ub);
-  return eval(std::forward<T>(x).binaryExpr(
+  return eval(x.binaryExpr(
       ub, [&lp](auto&& xx, auto&& ubb) { return ub_constrain(xx, ubb, lp); }));
 }
 
@@ -262,11 +261,11 @@ inline auto ub_constrain(const std::vector<T>& x, const std::vector<U>& ub,
  */
 template <bool Jacobian, typename T, typename U, typename Lp,
           require_convertible_t<return_type_t<T, U>, Lp>* = nullptr>
-inline auto ub_constrain(T&& x, U&& ub, Lp& lp) {
+inline auto ub_constrain(const T& x, const U& ub, Lp& lp) {
   if constexpr (Jacobian) {
-    return ub_constrain(std::forward<T>(x), std::forward<U>(ub), lp);
+    return ub_constrain(x, ub, lp);
   } else {
-    return ub_constrain(std::forward<T>(x), std::forward<U>(ub));
+    return ub_constrain(x, ub);
   }
 }
 

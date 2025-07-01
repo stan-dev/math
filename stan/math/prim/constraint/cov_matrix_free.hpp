@@ -67,7 +67,7 @@ Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> cov_matrix_free(T&& y) {
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
 inline auto cov_matrix_free(T&& x) {
-  return apply_vector_unary<std::decay_t<T>>::apply(
+  return apply_vector_unary<T>::apply(
       std::forward<T>(x),
       [](auto&& v) { return cov_matrix_free(std::forward<decltype(v)>(v)); });
 }

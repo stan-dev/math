@@ -17,8 +17,10 @@ namespace math {
  * @return Number of rows.
  */
 template <typename T, require_matrix_t<T>* = nullptr>
-inline int64_t rows(const T& m) {
-  return m.rows();
+inline int64_t rows(T&& m) {
+  return make_holder(
+      [](auto&& mm) { return std::forward<decltype(mm)>(mm).rows(); },
+      std::forward<T>(m));
 }
 
 }  // namespace math

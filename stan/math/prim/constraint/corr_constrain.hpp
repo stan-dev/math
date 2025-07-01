@@ -44,7 +44,7 @@ inline plain_type_t<T> corr_constrain(T&& x) {
  */
 template <typename T_x, typename T_lp>
 inline auto corr_constrain(T_x&& x, T_lp& lp) {
-  plain_type_t<T_x> tanh_x = tanh(x);
+  plain_type_t<T_x> tanh_x = tanh(std::forward<T_x>(x));
   lp += sum(log1m(square(tanh_x)));
   return tanh_x;
 }

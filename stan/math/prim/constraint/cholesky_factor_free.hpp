@@ -23,25 +23,24 @@ namespace math {
  * @throw std::domain_error If the matrix is not a Cholesky factor.
  */
 template <typename T, require_eigen_t<T>* = nullptr>
-Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> cholesky_factor_free(
-    const T& y) {
+Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> cholesky_factor_free(T&& y) {
   using std::log;
 
-  const auto& y_ref = to_ref(y);
+  auto&& y_ref = to_ref(std::forward<T>(y));
   check_cholesky_factor("cholesky_factor_free", "y", y_ref);
-  int M = y.rows();
-  int N = y.cols();
+  const auto M = y_ref.rows();
+  const auto N = y_ref.cols();
   Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> x((N * (N + 1)) / 2
                                                       + (M - N) * N);
-  int pos = 0;
+  Eigen::Index pos = 0;
 
-  for (int m = 0; m < N; ++m) {
+  for (Eigen::Index m = 0; m < N; ++m) {
     x.segment(pos, m) = y_ref.row(m).head(m);
     pos += m;
     x.coeffRef(pos++) = log(y_ref.coeff(m, m));
   }
 
-  for (int m = N; m < M; ++m) {
+  for (Eigen::Index m = N; m < M; ++m) {
     x.segment(pos, N) = y_ref.row(m);
     pos += N;
   }
@@ -57,7 +56,7 @@ Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> cholesky_factor_free(
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
 inline auto cholesky_factor_free(T&& x) {
-  return apply_vector_unary<std::decay_t<T>>::apply(
+  return apply_vector_unary<T>::apply(
       std::forward<T>(x), [](auto&& v) {
         return cholesky_factor_free(std::forward<decltype(v)>(v));
       });

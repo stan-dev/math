@@ -50,7 +50,7 @@ inline auto positive_ordered_free(const EigVec& y) {
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
 inline auto positive_ordered_free(T&& x) {
-  return apply_vector_unary<std::decay_t<T>>::apply(
+  return apply_vector_unary<T>::apply(
       std::forward<T>(x), [](auto&& v) {
         return positive_ordered_free(std::forward<decltype(v)>(v));
       });

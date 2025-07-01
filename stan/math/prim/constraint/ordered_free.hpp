@@ -50,7 +50,7 @@ plain_type_t<EigVec> ordered_free(const EigVec& y) {
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
 inline auto ordered_free(T&& x) {
-  return apply_vector_unary<std::decay_t<T>>::apply(
+  return apply_vector_unary<T>::apply(
       std::forward<T>(x),
       [](auto&& v) { return ordered_free(std::forward<decltype(v)>(v)); });
 }

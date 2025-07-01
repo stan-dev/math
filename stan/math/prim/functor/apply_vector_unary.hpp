@@ -129,12 +129,12 @@ struct apply_vector_unary<T, require_std_vector_vt<is_stan_scalar, T>> {
    * @param f functor to apply to vector input.
    * @return std::vector with result of applying functor to input.
    */
-  template <typename F>
-  static inline auto apply(const T& x, const F& f) {
-    using T_return = value_type_t<decltype(f(as_column_vector_or_scalar(x)))>;
+  template <typename T2, typename F>
+  static inline auto apply(T2&& x, F&& f) {
+    using T_return = value_type_t<decltype(f(as_column_vector_or_scalar(std::forward<T2>(x))))>;
     std::vector<T_return> result(x.size());
     Eigen::Map<Eigen::Matrix<T_return, -1, 1>>(result.data(), result.size())
-        = f(as_column_vector_or_scalar(x)).matrix();
+        = std::forward<F>(f)(as_column_vector_or_scalar(std::forward<T2>(x))).matrix();
     return result;
   }
 

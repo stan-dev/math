@@ -17,6 +17,9 @@ template <typename Cond, typename... Conds>
 struct disjunction<Cond, Conds...>
     : std::conditional_t<Cond::value, std::true_type, disjunction<Conds...>> {};
 
+template <template <typename...> class Cond, typename... Args>
+using any_v = disjunction<Cond<Args>...>;
+
 }  // namespace math
 }  // namespace stan
 #endif

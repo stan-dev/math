@@ -27,7 +27,7 @@ namespace math {
  */
 template <typename T, require_eigen_col_vector_t<T>* = nullptr>
 inline Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
-cholesky_factor_constrain(const T& x, int M, int N) {
+cholesky_factor_constrain(T&& x, int M, int N) {
   using std::exp;
   using T_scalar = value_type_t<T>;
   check_greater_or_equal("cholesky_factor_constrain",
@@ -39,7 +39,7 @@ cholesky_factor_constrain(const T& x, int M, int N) {
   Eigen::Matrix<T_scalar, Eigen::Dynamic, Eigen::Dynamic> y(M, N);
   int pos = 0;
 
-  const auto& x_ref = to_ref(x);
+  auto&& x_ref = to_ref(std::forward<T>(x));
   for (int m = 0; m < N; ++m) {
     y.row(m).head(m) = x_ref.segment(pos, m);
     pos += m;
@@ -73,17 +73,17 @@ cholesky_factor_constrain(const T& x, int M, int N) {
 template <typename T, typename Lp, require_eigen_vector_t<T>* = nullptr,
           require_convertible_t<return_type_t<T>, Lp>* = nullptr>
 inline Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
-cholesky_factor_constrain(const T& x, int M, int N, Lp& lp) {
+cholesky_factor_constrain(T&& x, int M, int N, Lp& lp) {
   check_size_match("cholesky_factor_constrain", "x.size()", x.size(),
                    "((N * (N + 1)) / 2 + (M - N) * N)",
                    ((N * (N + 1)) / 2 + (M - N) * N));
   int pos = 0;
-  const auto& x_ref = to_ref(x);
+  auto&& x_ref = to_ref(std::forward<T>(x));
   for (int n = 0; n < N; ++n) {
     pos += n;
     lp += x_ref.coeff(pos++);
   }
-  return cholesky_factor_constrain(x_ref, M, N);
+  return cholesky_factor_constrain(std::forward<decltype(x_ref)>(x_ref), M, N);
 }
 
 /**
@@ -102,7 +102,7 @@ cholesky_factor_constrain(const T& x, int M, int N, Lp& lp) {
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
 inline auto cholesky_factor_constrain(T&& x, int M, int N) {
-  return apply_vector_unary<std::decay_t<T>>::apply(
+  return apply_vector_unary<T>::apply(
       std::forward<T>(x), [M, N](auto&& v) {
         return cholesky_factor_constrain(std::forward<decltype(v)>(v), M, N);
       });
@@ -128,7 +128,7 @@ inline auto cholesky_factor_constrain(T&& x, int M, int N) {
 template <typename T, typename Lp, require_std_vector_t<T>* = nullptr,
           require_convertible_t<return_type_t<T>, Lp>* = nullptr>
 inline auto cholesky_factor_constrain(T&& x, int M, int N, Lp& lp) {
-  return apply_vector_unary<std::decay_t<T>>::apply(
+  return apply_vector_unary<T>::apply(
       std::forward<T>(x), [&lp, M, N](auto&& v) {
         return cholesky_factor_constrain(std::forward<decltype(v)>(v), M, N,
                                          lp);

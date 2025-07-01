@@ -51,13 +51,17 @@ inline auto rep_matrix(const T& x, int m, int n) {
  * @param n Number of rows or columns.
  */
 template <typename Vec, require_eigen_vector_t<Vec>* = nullptr>
-inline auto rep_matrix(const Vec& x, int n) {
-  if (is_eigen_row_vector<Vec>::value) {
+inline auto rep_matrix(Vec&& x, int n) {
+  if constexpr (is_eigen_row_vector<Vec>::value) {
     check_nonnegative("rep_matrix", "rows", n);
-    return x.replicate(n, 1);
+    return make_holder([n](auto&& xx) {
+      return xx.replicate(n, 1);
+    }, std::forward<Vec>(x));
   } else {
     check_nonnegative("rep_matrix", "cols", n);
-    return x.replicate(1, n);
+    return make_holder([n](auto&& xx) {
+      return xx.replicate(1, n);
+    }, std::forward<Vec>(x));
   }
 }
 

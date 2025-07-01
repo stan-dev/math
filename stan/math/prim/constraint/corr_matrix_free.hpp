@@ -31,7 +31,7 @@ namespace math {
  *    factor_cov_matrix() on log scale are unconstrained.
  */
 template <typename T, require_eigen_t<T>* = nullptr>
-Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> corr_matrix_free(const T& y) {
+Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> corr_matrix_free(T&& y) {
   using Eigen::Array;
   using Eigen::Dynamic;
 
@@ -42,7 +42,7 @@ Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> corr_matrix_free(const T& y) {
   Eigen::Index k_choose_2 = (k * (k - 1)) / 2;
   Eigen::Matrix<value_type_t<T>, Dynamic, 1> x(k_choose_2);
   Array<value_type_t<T>, Dynamic, 1> sds(k);
-  bool successful = factor_cov_matrix(y, x.array(), sds);
+  bool successful = factor_cov_matrix(std::forward<T>(y), x.array(), sds);
   if (!successful) {
     throw_domain_error("corr_matrix_free", "factor_cov_matrix failed on y", y,
                        "");
@@ -61,7 +61,7 @@ Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> corr_matrix_free(const T& y) {
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
 inline auto corr_matrix_free(T&& x) {
-  return apply_vector_unary<std::decay_t<T>>::apply(
+  return apply_vector_unary<T>::apply(
       std::forward<T>(x),
       [](auto&& v) { return corr_matrix_free(std::forward<decltype(v)>(v)); });
 }

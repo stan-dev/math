@@ -17,9 +17,11 @@ namespace math {
  */
 template <typename T, require_eigen_t<T>* = nullptr,
           require_not_st_var<T>* = nullptr>
-inline Eigen::Matrix<value_type_t<T>, T::RowsAtCompileTime, 1> rows_dot_self(
-    const T& x) {
-  return x.rowwise().squaredNorm();
+inline auto rows_dot_self(
+    T&& x) {
+  return make_holder([](const auto& xx) {
+        return std::forward<decltype(xx)>(xx).rowwise().squaredNorm();
+  }, std::forward<T>(x));
 }
 
 }  // namespace math

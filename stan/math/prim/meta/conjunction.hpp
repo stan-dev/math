@@ -17,6 +17,10 @@ template <typename T, typename... Ts>
 struct conjunction<T, Ts...>
     : std::conditional_t<T::value, conjunction<Ts...>, std::false_type> {};
 
+
+template <template <typename...> class Cond, typename... Args>
+using all_v = conjunction<Cond<Args>...>;
+
 }  // namespace math
 }  // namespace stan
 #endif
