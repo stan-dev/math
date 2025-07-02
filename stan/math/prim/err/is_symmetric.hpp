@@ -21,8 +21,8 @@ namespace math {
  *    element not on the main diagonal is <code>NaN</code>
  */
 template <typename EigMat, require_eigen_matrix_dynamic_t<EigMat>* = nullptr>
-inline bool is_symmetric(const EigMat& y) {
-  const auto& y_ref = to_ref(y);
+inline bool is_symmetric(EigMat&& y) {
+  auto&& y_ref = to_ref(std::forward<EigMat>(y));
   if (!is_square(y_ref)) {
     return false;
   }
