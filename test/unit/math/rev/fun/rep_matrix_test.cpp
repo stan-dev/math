@@ -6,7 +6,7 @@
 #include <limits>
 #include <string>
 #include <vector>
-/*
+
 TEST(MathMixMatFun, repMatrixVar) {
   using stan::math::rep_matrix;
   using stan::math::sum;
@@ -66,8 +66,8 @@ TEST(MathMixMatFun, repVarMatrixVec) {
   expected_x_var_adjs << 5, 5, 5, 5, 5;
   EXPECT_MATRIX_EQ(x_var.adj(), expected_x_var_adjs);
 }
-*/
-TEST(MathMixMatFun, repVarMatrixVec) {
+
+TEST(MathMixMatFun, repVarMatrixVecTranspose) {
   using stan::math::rep_matrix;
   using stan::math::sum;
   using stan::math::var;
@@ -76,7 +76,7 @@ TEST(MathMixMatFun, repVarMatrixVec) {
   var_value<Eigen::VectorXd> x_var(Eigen::VectorXd::Ones(5));
   auto x = rep_matrix<var_matrix>(x_var.transpose(), 5);
 }
-/*
+
 TEST(MathMixMatFun, repVarMatrixRowVec) {
   using stan::math::rep_matrix;
   using stan::math::sum;
@@ -94,4 +94,4 @@ TEST(MathMixMatFun, repVarMatrixRowVec) {
   expected_x_var_adjs << 5, 5, 5, 5, 5;
   EXPECT_MATRIX_EQ(x_var.adj(), expected_x_var_adjs);
 }
-*/
+

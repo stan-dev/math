@@ -102,6 +102,35 @@ struct value_type<T,
   using type = typename Eigen::internal::traits<std::decay_t<T>>::Scalar;
 };
 
+/**
+ * Template metaprogram defining the base scalar type of
+ * values stored in an Eigen matrix.
+ *
+ * @tparam T type to check.
+ * @ingroup type_trait
+ */
+template <typename T>
+struct scalar_type<Eigen::EigenBase<T>,
+                   std::enable_if_t<is_eigen<T>::value
+                                    && !internal::has_scalar_trait<T>::value>> {
+  using type = scalar_type_t<
+      typename Eigen::internal::traits<std::decay_t<T>>::Scalar>;
+};
+
+/**
+ * Template metaprogram defining the type of values stored in an
+ * Eigen matrix, vector, or row vector.
+ *
+ * @tparam T type to check
+ * @ingroup type_trait
+ */
+template <typename T>
+struct value_type<Eigen::EigenBase<T>,
+                  std::enable_if_t<is_eigen<T>::value
+                                   && !internal::has_scalar_trait<T>::value>> {
+  using type = typename Eigen::internal::traits<std::decay_t<T>>::Scalar;
+};
+
 /*! \ingroup require_eigens_types */
 /*! \defgroup eigen_types eigen  */
 /*! \addtogroup eigen_types */

@@ -42,10 +42,8 @@ struct is_eigen_matrix_dynamic_impl<T, true>
 template <typename T>
 struct is_eigen_matrix_dynamic
     : bool_constant<internal::is_eigen_matrix_dynamic_impl<
-          plain_type_t<std::decay_t<T>>,
-          is_base_pointer_convertible<Eigen::MatrixBase,
-                                      plain_type_t<std::decay_t<T>>>::value>::
-                        value> {};
+          std::decay_t<T>,
+          is_base_pointer_convertible<Eigen::MatrixBase, T>::value>::value> {};
 
 /*! \ingroup require_eigens_types */
 /*! \defgroup eigen_matrix_dynamic_types eigen_matrix_dynamic  */
