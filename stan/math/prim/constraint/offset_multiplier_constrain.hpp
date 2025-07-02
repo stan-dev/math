@@ -42,7 +42,7 @@ namespace math {
 template <typename T, typename M, typename S,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T, M, S>* = nullptr,
-              require_all_not_std_vector_t<T, M, S>* = nullptr>
+          require_all_not_std_vector_t<T, M, S>* = nullptr>
 inline auto offset_multiplier_constrain(T&& x, M&& mu, S&& sigma) {
   auto&& mu_ref = to_ref(std::forward<M>(mu));
   auto&& sigma_ref = to_ref(std::forward<S>(sigma));
@@ -96,7 +96,7 @@ template <typename T, typename M, typename S, typename Lp,
           require_convertible_t<return_type_t<T, M, S>, Lp>* = nullptr,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T, M, S>* = nullptr,
-              require_all_not_std_vector_t<T, M, S>* = nullptr>
+          require_all_not_std_vector_t<T, M, S>* = nullptr>
 inline auto offset_multiplier_constrain(T&& x, M&& mu, S&& sigma, Lp& lp) {
   auto&& mu_ref = to_ref(std::forward<M>(mu));
   auto&& sigma_ref = to_ref(std::forward<S>(sigma));
