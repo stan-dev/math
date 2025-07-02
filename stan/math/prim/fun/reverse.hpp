@@ -40,6 +40,7 @@ inline auto reverse(T&& x) {
     // If std::vector
     std::decay_t<T> rev(x.size());
     std::reverse_copy(x.begin(), x.end(), rev.begin());
+    return rev;
   }
 }
 
