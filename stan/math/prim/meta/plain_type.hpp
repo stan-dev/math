@@ -4,7 +4,6 @@
 #include <stan/math/prim/meta/is_eigen.hpp>
 #include <stan/math/prim/meta/is_tuple.hpp>
 #include <stan/math/prim/meta/is_detected.hpp>
-#include <stan/math/prim/meta/is_var_matrix.hpp>
 #include <type_traits>
 
 namespace stan {
