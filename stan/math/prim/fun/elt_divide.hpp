@@ -24,10 +24,13 @@ template <typename Mat1, typename Mat2,
           require_all_not_st_var<Mat1, Mat2>* = nullptr>
 inline auto elt_divide(Mat1&& m1, Mat2&& m2) {
   check_matching_dims("elt_divide", "m1", m1, "m2", m2);
-  return make_holder([](auto&& m1_, auto&& m2_) {
-    return (std::forward<decltype(m1_)>(m1_).array()
-        / std::forward<decltype(m2_)>(m2_).array()).matrix();
-  }, std::forward<Mat1>(m1), std::forward<Mat2>(m2));
+  return make_holder(
+      [](auto&& m1_, auto&& m2_) {
+        return (std::forward<decltype(m1_)>(m1_).array()
+                / std::forward<decltype(m2_)>(m2_).array())
+            .matrix();
+      },
+      std::forward<Mat1>(m1), std::forward<Mat2>(m2));
 }
 
 /**
@@ -61,9 +64,11 @@ inline auto elt_divide(Mat&& m, Scal s) {
 template <typename Scal, typename Mat, require_stan_scalar_t<Scal>* = nullptr,
           require_eigen_t<Mat>* = nullptr>
 auto elt_divide(Scal s, Mat&& m) {
-  return make_holder([s](auto&& m_) {
-    return (s / std::forward<decltype(m_)>(m_).array()).matrix();
-  }, std::forward<Mat>(m));
+  return make_holder(
+      [s](auto&& m_) {
+        return (s / std::forward<decltype(m_)>(m_).array()).matrix();
+      },
+      std::forward<Mat>(m));
 }
 
 template <typename Scal1, typename Scal2,

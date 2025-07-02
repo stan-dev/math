@@ -25,9 +25,12 @@ template <typename Mat1, typename Mat2,
           require_all_not_st_var<Mat1, Mat2>* = nullptr>
 auto elt_multiply(Mat1&& m1, Mat2&& m2) {
   check_matching_dims("elt_multiply", "m1", m1, "m2", m2);
-  return make_holder([](auto&& m1_, auto&& m2_) {
-    return std::forward<decltype(m1_)>(m1_).cwiseProduct(std::forward<decltype(m2_)>(m2_));
-  }, std::forward<Mat1>(m1), std::forward<Mat2>(m2));
+  return make_holder(
+      [](auto&& m1_, auto&& m2_) {
+        return std::forward<decltype(m1_)>(m1_).cwiseProduct(
+            std::forward<decltype(m2_)>(m2_));
+      },
+      std::forward<Mat1>(m1), std::forward<Mat2>(m2));
 }
 
 /**

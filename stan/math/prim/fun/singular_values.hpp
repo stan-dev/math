@@ -24,10 +24,14 @@ inline auto singular_values(EigMat&& m) {
   if (unlikely(m.size() == 0)) {
     return Eigen::Matrix<base_type_t<EigMat>, Eigen::Dynamic, 1>(0, 1);
   }
-  return make_holder([](auto&& m_) {
-    return Eigen::JacobiSVD<Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic,
-                                          Eigen::Dynamic>>(std::forward<decltype(m_)>(m_)).singularValues();
-  }, std::forward<EigMat>(m));
+  return make_holder(
+      [](auto&& m_) {
+        return Eigen::JacobiSVD<Eigen::Matrix<value_type_t<EigMat>,
+                                              Eigen::Dynamic, Eigen::Dynamic>>(
+                   std::forward<decltype(m_)>(m_))
+            .singularValues();
+      },
+      std::forward<EigMat>(m));
 }
 
 }  // namespace math

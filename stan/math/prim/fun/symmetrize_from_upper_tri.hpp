@@ -18,9 +18,12 @@ namespace math {
 template <typename T, require_eigen_t<T>* = nullptr>
 inline auto symmetrize_from_upper_tri(T&& m) {
   check_square("symmetrize_from_upper_tri", "m", m);
-  return make_holder([](auto&& m_) {
-   return std::forward<decltype(m_)>(m_).template selfadjointView<Eigen::Upper>();
-  }, std::forward<T>(m));
+  return make_holder(
+      [](auto&& m_) {
+        return std::forward<decltype(m_)>(m_)
+            .template selfadjointView<Eigen::Upper>();
+      },
+      std::forward<T>(m));
 }
 
 }  // namespace math

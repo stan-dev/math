@@ -18,9 +18,8 @@ namespace math {
  */
 template <typename T, require_eigen_vt<std::is_arithmetic, T>* = nullptr>
 inline double norm1(T&& v) {
-  return make_holder([](auto&& v_) {
-    return v_.template lpNorm<1>();
-  }, std::forward<T>(v));
+  return make_holder([](auto&& v_) { return v_.template lpNorm<1>(); },
+                     std::forward<T>(v));
 }
 
 /**

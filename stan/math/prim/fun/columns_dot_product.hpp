@@ -27,9 +27,13 @@ template <typename Mat1, typename Mat2,
 inline auto columns_dot_product(Mat1&& v1, Mat2&& v2) {
   check_matching_dims("columns_dot_product", "v1", v1, "v2", v2);
   return make_holder(
-    [](auto&& v1_, auto&& v2_) {
-      return std::forward<decltype(v1_)>(v1_).cwiseProduct(std::forward<decltype(v2_)>(v2_)).colwise().sum();
-    }, std::forward<Mat1>(v1), std::forward<Mat2>(v2));
+      [](auto&& v1_, auto&& v2_) {
+        return std::forward<decltype(v1_)>(v1_)
+            .cwiseProduct(std::forward<decltype(v2_)>(v2_))
+            .colwise()
+            .sum();
+      },
+      std::forward<Mat1>(v1), std::forward<Mat2>(v2));
 }
 
 }  // namespace math

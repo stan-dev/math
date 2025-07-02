@@ -24,9 +24,11 @@ template <typename Ret, typename T,
 inline auto rep_matrix(T&& x, int m, int n) {
   check_nonnegative("rep_matrix", "rows", m);
   check_nonnegative("rep_matrix", "cols", n);
-  return make_holder([m, n](auto&& x_) {
-    return Ret::Constant(m, n, std::forward<decltype(x_)>(x_));
-  }, std::forward<T>(x));
+  return make_holder(
+      [m, n](auto&& x_) {
+        return Ret::Constant(m, n, std::forward<decltype(x_)>(x_));
+      },
+      std::forward<T>(x));
 }
 
 /**

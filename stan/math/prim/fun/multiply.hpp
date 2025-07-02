@@ -25,9 +25,9 @@ template <typename Mat, typename Scal, require_stan_scalar_t<Scal>* = nullptr,
           require_all_not_st_var<Scal, Mat>* = nullptr,
           require_all_not_complex_t<Scal, value_type_t<Mat>>* = nullptr>
 inline auto multiply(Mat&& m, Scal c) {
-  return make_holder([c](auto&& m_) {
-    return c * std::forward<decltype(m_)>(m_);
-  }, std::forward<Mat>(m));
+  return make_holder(
+      [c](auto&& m_) { return c * std::forward<decltype(m_)>(m_); },
+      std::forward<Mat>(m));
 }
 
 /**
@@ -46,9 +46,9 @@ template <typename Mat, typename Scal,
           require_any_complex_t<value_type_t<Mat>, Scal>* = nullptr,
           require_eigen_t<Mat>* = nullptr, require_not_eigen_t<Scal>* = nullptr>
 inline auto multiply(Mat&& m, Scal c) {
-  return make_holder([c](auto&& m_) {
-    return c * std::forward<decltype(m_)>(m_);
-  }, std::forward<Mat>(m));
+  return make_holder(
+      [c](auto&& m_) { return c * std::forward<decltype(m_)>(m_); },
+      std::forward<Mat>(m));
 }
 
 /**
@@ -67,9 +67,9 @@ template <typename Mat, typename Scal,
           require_any_complex_t<value_type_t<Mat>, Scal>* = nullptr,
           require_eigen_t<Mat>* = nullptr, require_not_eigen_t<Scal>* = nullptr>
 inline auto multiply(const Scal& c, Mat&& m) {
-  return make_holder([c](auto&& m_) {
-    return std::forward<decltype(m_)>(m_) * c;
-  }, std::forward<Mat>(m));
+  return make_holder(
+      [c](auto&& m_) { return std::forward<decltype(m_)>(m_) * c; },
+      std::forward<Mat>(m));
 }
 
 /**
@@ -87,9 +87,9 @@ template <typename Scal, typename Mat, require_stan_scalar_t<Scal>* = nullptr,
           require_all_not_st_var<Scal, Mat>* = nullptr,
           require_all_not_complex_t<Scal, value_type_t<Mat>>* = nullptr>
 inline auto multiply(Scal c, Mat&& m) {
-  return make_holder([c](auto&& m_) {
-    return  c * std::forward<decltype(m_)>(m_);
-  }, std::forward<Mat>(m));
+  return make_holder(
+      [c](auto&& m_) { return c * std::forward<decltype(m_)>(m_); },
+      std::forward<Mat>(m));
 }
 
 /**
@@ -112,10 +112,12 @@ template <typename Mat1, typename Mat2,
 inline auto multiply(Mat1&& m1, Mat2&& m2) {
   check_size_match("multiply", "Columns of m1", m1.cols(), "Rows of m2",
                    m2.rows());
-  return make_holder([](auto&& m1_, auto&& m2_) {
-    return std::forward<decltype(m1_)>(m1_) *
-           std::forward<decltype(m2_)>(m2_);
-  }, std::forward<Mat1>(m1), std::forward<Mat2>(m2));
+  return make_holder(
+      [](auto&& m1_, auto&& m2_) {
+        return std::forward<decltype(m1_)>(m1_)
+               * std::forward<decltype(m2_)>(m2_);
+      },
+      std::forward<Mat1>(m1), std::forward<Mat2>(m2));
 }
 
 /**
@@ -139,9 +141,12 @@ template <typename Mat1, typename Mat2,
 inline auto multiply(Mat1&& m1, Mat2&& m2) {
   check_size_match("multiply", "Columns of m1", m1.cols(), "Rows of m2",
                    m2.rows());
-  return make_holder([](auto&& m1_, auto&& m2_) {
-    return std::forward<decltype(m1)>(m1_).lazyProduct(std::forward<decltype(m2_)>(m2_));
-  }, std::forward<Mat1>(m1), std::forward<Mat2>(m2));
+  return make_holder(
+      [](auto&& m1_, auto&& m2_) {
+        return std::forward<decltype(m1)>(m1_).lazyProduct(
+            std::forward<decltype(m2_)>(m2_));
+      },
+      std::forward<Mat1>(m1), std::forward<Mat2>(m2));
 }
 
 /**

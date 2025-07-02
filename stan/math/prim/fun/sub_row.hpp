@@ -26,9 +26,11 @@ inline auto sub_row(T&& m, size_t i, size_t j, size_t ncols) {
   if (ncols > 0) {
     check_column_index("sub_col", "j+ncols-1", m, j + ncols - 1);
   }
-  return make_holder([i, j, ncols](auto&& m_) {
-    return std::forward<decltype(m_)>(m_).row(i - 1).segment(j - 1, ncols);
-  }, std::forward<T>(m));
+  return make_holder(
+      [i, j, ncols](auto&& m_) {
+        return std::forward<decltype(m_)>(m_).row(i - 1).segment(j - 1, ncols);
+      },
+      std::forward<T>(m));
 }
 
 }  // namespace math

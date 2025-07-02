@@ -25,9 +25,12 @@ template <typename T1, typename T2, require_eigen_t<T1>* = nullptr,
 auto diag_post_multiply(T1&& m1, T2&& m2) {
   check_size_match("diag_post_multiply", "m2.size()", m2.size(), "m1.cols()",
                    m1.cols());
-  return make_holder([](auto&& m1_, auto&& m2_) {
-    return std::forward<decltype(m1_)>(m1_) * std::forward<decltype(m2_)>(m2_).asDiagonal();
-  }, std::forward<T1>(m1), std::forward<T2>(m2));
+  return make_holder(
+      [](auto&& m1_, auto&& m2_) {
+        return std::forward<decltype(m1_)>(m1_)
+               * std::forward<decltype(m2_)>(m2_).asDiagonal();
+      },
+      std::forward<T1>(m1), std::forward<T2>(m2));
 }
 
 }  // namespace math

@@ -38,11 +38,14 @@ inline auto trace_gen_quad_form(TD&& D, TA&& A, TB&& B) {
   check_square("trace_gen_quad_form", "D", D);
   check_multiplicable("trace_gen_quad_form", "A", A, "B", B);
   check_multiplicable("trace_gen_quad_form", "B", B, "D", D);
-  return make_holder([](auto&& D_, auto&& A_, auto&& B_) {
-    auto&& B_ref = to_ref(std::forward<decltype(B_)>(B_));
-    return multiply(B_ref, std::forward<decltype(D_)>(D_).transpose()).cwiseProduct(multiply(std::forward<decltype(A_)>(A_), B_ref)).sum();
-  }, std::forward<TD>(D), std::forward<TA>(A),
-     std::forward<TB>(B));
+  return make_holder(
+      [](auto&& D_, auto&& A_, auto&& B_) {
+        auto&& B_ref = to_ref(std::forward<decltype(B_)>(B_));
+        return multiply(B_ref, std::forward<decltype(D_)>(D_).transpose())
+            .cwiseProduct(multiply(std::forward<decltype(A_)>(A_), B_ref))
+            .sum();
+      },
+      std::forward<TD>(D), std::forward<TA>(A), std::forward<TB>(B));
 }
 
 /**

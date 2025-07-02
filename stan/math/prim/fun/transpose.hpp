@@ -15,9 +15,9 @@ namespace math {
  */
 template <typename T, require_matrix_t<T>* = nullptr>
 auto inline transpose(T&& m) {
-  return make_holder([](auto&& m_) {
-    return std::forward<decltype(m_)>(m_).transpose();
-  }, std::forward<T>(m));
+  return make_holder(
+      [](auto&& m_) { return std::forward<decltype(m_)>(m_).transpose(); },
+      std::forward<T>(m));
 }
 
 }  // namespace math

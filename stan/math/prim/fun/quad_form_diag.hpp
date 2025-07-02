@@ -14,9 +14,12 @@ inline auto quad_form_diag(EigMat&& mat, EigVec&& vec) {
   check_square("quad_form_diag", "mat", mat);
   check_size_match("quad_form_diag", "rows of mat", mat.rows(), "size of vec",
                    vec.size());
-  return make_holder([](auto&& mat_, auto&& vec_) {
-        return vec_.asDiagonal() * std::forward<decltype(mat_)>(mat_) * vec_.asDiagonal();
-  }, std::forward<EigMat>(mat), std::forward<EigVec>(vec));
+  return make_holder(
+      [](auto&& mat_, auto&& vec_) {
+        return vec_.asDiagonal() * std::forward<decltype(mat_)>(mat_)
+               * vec_.asDiagonal();
+      },
+      std::forward<EigMat>(mat), std::forward<EigVec>(vec));
 }
 
 }  // namespace math
