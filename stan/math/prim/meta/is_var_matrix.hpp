@@ -17,8 +17,8 @@ namespace stan {
  */
 template <typename T>
 struct is_var_matrix
-    : bool_constant<
-          math::conjunction<is_var<T>, is_eigen<plain_type_t<value_type_t<T>>>>::value> {};
+    : bool_constant<math::conjunction<
+          is_var<T>, is_eigen<plain_type_t<value_type_t<T>>>>::value> {};
 
 /*! \ingroup require_eigens_types */
 /*! \defgroup var_matrix_types var_matrix  */
