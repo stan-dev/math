@@ -94,4 +94,3 @@ TEST(MathMixMatFun, repVarMatrixRowVec) {
   expected_x_var_adjs << 5, 5, 5, 5, 5;
   EXPECT_MATRIX_EQ(x_var.adj(), expected_x_var_adjs);
 }
-
