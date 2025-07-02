@@ -16,7 +16,8 @@ namespace math {
  */
 inline auto zeros_vector(int K) {
   check_nonnegative("zeros_vector", "size", K);
-  return Eigen::VectorXd::Zero(K);
+  return make_holder(
+      [](int k) { return Eigen::VectorXd::Zero(k); }, K);
 }
 
 }  // namespace math

@@ -21,10 +21,12 @@ namespace math {
 template <typename Ret, typename T,
           require_eigen_matrix_dynamic_vt<is_stan_scalar, Ret>* = nullptr,
           require_stan_scalar_t<T>* = nullptr>
-inline auto rep_matrix(const T& x, int m, int n) {
+inline auto rep_matrix(T&& x, int m, int n) {
   check_nonnegative("rep_matrix", "rows", m);
   check_nonnegative("rep_matrix", "cols", n);
-  return Ret::Constant(m, n, x);
+  return make_holder([m, n](auto&& x_) {
+    return Ret::Constant(m, n, std::forward<decltype(x_)>(x_));
+  }, std::forward<T>(x));
 }
 
 /**

@@ -23,9 +23,11 @@ namespace math {
 template <typename Mat1, typename Mat2,
           require_all_eigen_t<Mat1, Mat2>* = nullptr,
           require_all_not_st_var<Mat1, Mat2>* = nullptr>
-auto elt_multiply(const Mat1& m1, const Mat2& m2) {
+auto elt_multiply(Mat1&& m1, Mat2&& m2) {
   check_matching_dims("elt_multiply", "m1", m1, "m2", m2);
-  return m1.cwiseProduct(m2);
+  return make_holder([](auto&& m1_, auto&& m2_) {
+    return std::forward<decltype(m1_)>(m1_).cwiseProduct(std::forward<decltype(m2_)>(m2_));
+  }, std::forward<Mat1>(m1), std::forward<Mat2>(m2));
 }
 
 /**
@@ -59,8 +61,8 @@ auto elt_multiply(const Scalar1& a, const Scalar2& b) {
  */
 template <typename T1, typename T2, require_any_matrix_t<T1, T2>* = nullptr,
           require_any_stan_scalar_t<T1, T2>* = nullptr>
-inline auto elt_multiply(const T1& A, const T2& B) {
-  return multiply(A, B);
+inline auto elt_multiply(T1&& A, T2&& B) {
+  return multiply(std::forward<T1>(A), std::forward<T2>(B));
 }
 
 }  // namespace math

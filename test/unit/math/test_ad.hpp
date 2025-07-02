@@ -84,7 +84,7 @@ auto eval(const stan::math::fvar<T>& x) {
  */
 template <typename Derived>
 auto eval(const Eigen::EigenBase<Derived>& x) {
-  return x.derived().eval();
+  return stan::plain_type_t<Derived>(x);
 }
 
 /**

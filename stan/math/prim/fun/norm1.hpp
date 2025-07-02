@@ -17,9 +17,10 @@ namespace math {
  * @return L1 norm of v.
  */
 template <typename T, require_eigen_vt<std::is_arithmetic, T>* = nullptr>
-inline double norm1(const T& v) {
-  ref_type_t<T> v_ref = v;
-  return v_ref.template lpNorm<1>();
+inline double norm1(T&& v) {
+  return make_holder([](auto&& v_) {
+    return v_.template lpNorm<1>();
+  }, std::forward<T>(v));
 }
 
 /**

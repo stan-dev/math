@@ -22,9 +22,9 @@ namespace math {
  */
 template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
           require_not_vt_var<EigMat>* = nullptr>
-inline value_type_t<EigMat> variance(const EigMat& m) {
+inline value_type_t<EigMat> variance(EigMat&& m) {
   using value_t = value_type_t<EigMat>;
-  const auto& mat = to_ref(m);
+  auto&& mat = to_ref(std::forward<EigMat>(m));
   check_nonzero_size("variance", "m", mat);
   if (mat.size() == 1) {
     return value_t{0.0};

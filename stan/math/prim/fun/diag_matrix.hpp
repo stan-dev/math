@@ -18,8 +18,10 @@ namespace math {
  */
 template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>
 inline Eigen::Matrix<value_type_t<EigVec>, Eigen::Dynamic, Eigen::Dynamic>
-diag_matrix(const EigVec& v) {
-  return v.asDiagonal();
+diag_matrix(EigVec&& v) {
+  return make_holder([](auto&& v_) {
+    return v_.asDiagonal();
+  }, std::forward<EigVec>(v));
 }
 
 }  // namespace math

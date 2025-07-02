@@ -10,9 +10,11 @@ namespace math {
 template <typename T_ret, typename T,
           require_eigen_row_vector_t<T_ret>* = nullptr,
           require_stan_scalar_t<T>* = nullptr>
-inline auto rep_row_vector(const T& x, int n) {
+inline auto rep_row_vector(T&& x, int n) {
   check_nonnegative("rep_vector", "n", n);
-  return T_ret::Constant(n, x);
+  return make_holder([n](auto&& x_) {
+    return T_ret::Constant(n, std::forward<decltype(x_)>(x_));
+  }, std::forward<T>(x));
 }
 template <typename T, require_stan_scalar_t<T>* = nullptr>
 inline auto rep_row_vector(const T& x, int n) {

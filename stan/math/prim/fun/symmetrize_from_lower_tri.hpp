@@ -16,10 +16,11 @@ namespace math {
  * @throw std:invalid_argument if the matrix is not square.
  */
 template <typename T, require_eigen_t<T>* = nullptr>
-inline Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
-symmetrize_from_lower_tri(const T& m) {
+inline auto symmetrize_from_lower_tri(T&& m) {
   check_square("symmetrize_from_lower_tri", "m", m);
-  return m.template selfadjointView<Eigen::Lower>();
+  return make_holder([](auto&& m_) {
+   return std::forward<decltype(m_)>(m_).template selfadjointView<Eigen::Lower>();
+  }, std::forward<T>(m));
 }
 
 }  // namespace math

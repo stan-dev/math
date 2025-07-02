@@ -10,15 +10,13 @@ namespace math {
 
 template <typename EigMat, typename EigVec, require_eigen_t<EigMat>* = nullptr,
           require_eigen_vector_t<EigVec>* = nullptr>
-inline auto quad_form_diag(const EigMat& mat, const EigVec& vec) {
+inline auto quad_form_diag(EigMat&& mat, EigVec&& vec) {
   check_square("quad_form_diag", "mat", mat);
   check_size_match("quad_form_diag", "rows of mat", mat.rows(), "size of vec",
                    vec.size());
-  return make_holder(
-      [](const auto& v, const auto& x) {
-        return v.asDiagonal() * x * v.asDiagonal();
-      },
-      to_ref(vec), to_ref(mat));
+  return make_holder([](auto&& mat_, auto&& vec_) {
+        return vec_.asDiagonal() * std::forward<decltype(mat_)>(mat_) * vec_.asDiagonal();
+  }, std::forward<EigMat>(mat), std::forward<EigVec>(vec));
 }
 
 }  // namespace math

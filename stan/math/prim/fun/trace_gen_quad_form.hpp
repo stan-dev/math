@@ -33,13 +33,16 @@ template <typename TD, typename TA, typename TB,
           typename = require_all_eigen_t<TD, TA, TB>,
           typename = require_all_not_vt_var<TD, TA, TB>,
           typename = require_any_not_vt_arithmetic<TD, TA, TB>>
-inline auto trace_gen_quad_form(const TD& D, const TA& A, const TB& B) {
+inline auto trace_gen_quad_form(TD&& D, TA&& A, TB&& B) {
   check_square("trace_gen_quad_form", "A", A);
   check_square("trace_gen_quad_form", "D", D);
   check_multiplicable("trace_gen_quad_form", "A", A, "B", B);
   check_multiplicable("trace_gen_quad_form", "B", B, "D", D);
-  const auto& B_ref = to_ref(B);
-  return multiply(B_ref, D.transpose()).cwiseProduct(multiply(A, B_ref)).sum();
+  return make_holder([](auto&& D_, auto&& A_, auto&& B_) {
+    auto&& B_ref = to_ref(std::forward<decltype(B_)>(B_));
+    return multiply(B_ref, std::forward<decltype(D_)>(D_).transpose()).cwiseProduct(multiply(std::forward<decltype(A_)>(A_), B_ref)).sum();
+  }, std::forward<TD>(D), std::forward<TA>(A),
+     std::forward<TB>(B));
 }
 
 /**

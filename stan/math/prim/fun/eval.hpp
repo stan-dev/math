@@ -31,8 +31,8 @@ inline T eval(T&& arg) {
  **/
 template <typename T,
           require_not_same_t<std::decay_t<T>, plain_type_t<T>>* = nullptr>
-inline decltype(auto) eval(const T& arg) {
-  return arg.eval();
+inline auto eval(T&& arg) {
+  return plain_type_t<T>(std::forward<T>(arg));
 }
 
 }  // namespace math

@@ -32,9 +32,9 @@ namespace math {
  */
 template <typename V, require_eigen_vector_vt<is_complex, V>* = nullptr,
           require_not_var_t<base_type_t<value_type_t<V>>>* = nullptr>
-inline Eigen::Matrix<scalar_type_t<V>, -1, 1> fft(const V& x) {
+inline Eigen::Matrix<scalar_type_t<V>, -1, 1> fft(V&& x) {
   // copy because fft() requires Eigen::Matrix type
-  Eigen::Matrix<scalar_type_t<V>, -1, 1> xv = x;
+  Eigen::Matrix<scalar_type_t<V>, -1, 1> xv = std::forward<V>(x);
   if (xv.size() <= 1)
     return xv;
   Eigen::FFT<base_type_t<V>> fft;
@@ -63,9 +63,9 @@ inline Eigen::Matrix<scalar_type_t<V>, -1, 1> fft(const V& x) {
  */
 template <typename V, require_eigen_vector_vt<is_complex, V>* = nullptr,
           require_not_var_t<base_type_t<value_type_t<V>>>* = nullptr>
-inline Eigen::Matrix<scalar_type_t<V>, -1, 1> inv_fft(const V& y) {
+inline Eigen::Matrix<scalar_type_t<V>, -1, 1> inv_fft(V&& y) {
   // copy because fft() requires Eigen::Matrix type
-  Eigen::Matrix<scalar_type_t<V>, -1, 1> yv = y;
+  Eigen::Matrix<scalar_type_t<V>, -1, 1> yv = std::forward<V>(y);
   if (y.size() <= 1)
     return yv;
   Eigen::FFT<base_type_t<V>> fft;

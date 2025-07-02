@@ -18,11 +18,9 @@ namespace math {
 template <typename T, require_eigen_t<T>* = nullptr,
           require_not_st_var<T>* = nullptr>
 inline auto rows_dot_self(T&& x) {
-  return make_holder(
-      [](const auto& xx) {
-        return std::forward<decltype(xx)>(xx).rowwise().squaredNorm();
-      },
-      std::forward<T>(x));
+  return make_holder([](const auto& xx) {
+    return std::forward<decltype(xx)>(xx).rowwise().squaredNorm();
+  },std::forward<T>(x));
 }
 
 }  // namespace math

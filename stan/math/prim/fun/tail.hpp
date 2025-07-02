@@ -20,11 +20,13 @@ namespace math {
  * @throw std::out_of_range if n is out of range.
  */
 template <typename T, require_vector_t<T>* = nullptr>
-inline auto tail(const T& v, size_t n) {
+inline auto tail(T&& v, size_t n) {
   if (n != 0) {
     check_vector_index("tail", "n", v, n);
   }
-  return v.tail(n);
+  return make_holder([n](auto&& v_) {
+    return std::forward<decltype(v_)>(v_).tail(n);
+  }, std::forward<T>(v));
 }
 
 /**

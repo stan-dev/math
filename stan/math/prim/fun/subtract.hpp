@@ -40,9 +40,12 @@ inline return_type_t<ScalarA, ScalarB> subtract(const ScalarA& a,
 template <typename Mat1, typename Mat2,
           require_all_eigen_t<Mat1, Mat2>* = nullptr,
           require_all_not_st_var<Mat1, Mat2>* = nullptr>
-inline auto subtract(const Mat1& m1, const Mat2& m2) {
+inline auto subtract(Mat1&& m1, Mat2&& m2) {
   check_matching_dims("subtract", "m1", m1, "m2", m2);
-  return m1 - m2;
+  return make_holder([](auto&& m1_, auto&& m2_) {
+    return std::forward<decltype(m1_)>(m1_)
+           - std::forward<decltype(m2_)>(m2_);
+  }, std::forward<Mat1>(m1), std::forward<Mat2>(m2));
 }
 
 /**
@@ -58,8 +61,10 @@ inline auto subtract(const Mat1& m1, const Mat2& m2) {
 template <typename Scal, typename Mat, require_stan_scalar_t<Scal>* = nullptr,
           require_eigen_t<Mat>* = nullptr,
           require_all_not_st_var<Mat, Scal>* = nullptr>
-inline auto subtract(const Scal c, const Mat& m) {
-  return (c - m.array()).matrix();
+inline auto subtract(const Scal c, Mat&& m) {
+  return make_holder([c](auto&& m_) {
+    return (c - std::forward<decltype(m_)>(m_).array()).matrix();
+  }, std::forward<Mat>(m));
 }
 
 /**
@@ -75,8 +80,10 @@ inline auto subtract(const Scal c, const Mat& m) {
 template <typename Mat, typename Scal, require_eigen_t<Mat>* = nullptr,
           require_stan_scalar_t<Scal>* = nullptr,
           require_all_not_st_var<Scal, Mat>* = nullptr>
-inline auto subtract(const Mat& m, const Scal c) {
-  return (m.array() - c).matrix();
+inline auto subtract(Mat&& m, const Scal c) {
+  return make_holder([c](auto&& m_) {
+    return (std::forward<decltype(m_)>(m_).array() - c).matrix();
+  }, std::forward<Mat>(m));
 }
 
 }  // namespace math
