@@ -31,7 +31,7 @@ inline auto segment(Vec&& v, size_t i, size_t n) {
     return s;
   } else {
     return make_holder([i, n](auto&& v_) { return v_.segment(i - 1, n); },
-                      std::forward<Vec>(v));
+                       std::forward<Vec>(v));
   }
 }
 

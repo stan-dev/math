@@ -37,7 +37,6 @@ inline auto tail(T&& v, size_t n) {
   }
 }
 
-
 }  // namespace math
 }  // namespace stan
 
