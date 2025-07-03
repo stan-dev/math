@@ -1,5 +1,6 @@
 #include <stan/math/prim.hpp>
 #include <test/unit/util.hpp>
+#include <test/unit/pretty_print_types.hpp>
 #include <gtest/gtest.h>
 #include <cmath>
 #include <limits>
@@ -183,15 +184,14 @@ TEST(MathFunctions, eval_return_type_expression) {
 
   const auto& expr_a = 3 * a;
   auto expr_b = b * b;
-
   EXPECT_TRUE(
       (std::is_same<
           decltype(stan::math::eval(expr_a)),
-          const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>>::value));
+          Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>>::value));
   EXPECT_TRUE(
       (std::is_same<
           decltype(stan::math::eval(expr_b)),
-          const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>>::value));
+          Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>>::value));
 }
 
 TEST(MathFunctions, eval_return_type_short_circuit_static_sized_matrix) {

@@ -33,14 +33,14 @@ inline std::vector<T> reverse(const std::vector<T>& x) {
  */
 template <typename T, typename = require_vector_t<T>>
 inline auto reverse(T&& x) {
-  if constexpr (is_eigen_vector<T>::value) {
-    return make_holder([](auto&& xx) { return xx.reverse(); },
-                       std::forward<T>(x));
-  } else {
+  if constexpr (is_std_vector_v<T>) {
     // If std::vector
     std::decay_t<T> rev(x.size());
     std::reverse_copy(x.begin(), x.end(), rev.begin());
     return rev;
+  } else {
+    return make_holder([](auto&& xx) { return xx.reverse(); },
+                       std::forward<T>(x));
   }
 }
 

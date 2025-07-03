@@ -23,24 +23,16 @@ inline auto segment(Vec&& v, size_t i, size_t n) {
     check_less_or_equal("segment", "n", i + n - 1,
                         static_cast<size_t>(v.size()));
   }
-  return make_holder([i, n](auto&& v_) { return v_.segment(i - 1, n); },
-                     std::forward<Vec>(v));
-}
-
-template <typename T>
-std::vector<T> segment(const std::vector<T>& sv, size_t i, size_t n) {
-  check_greater("segment", "i", i, 0.0);
-  check_less_or_equal("segment", "i", i, sv.size());
-  if (n != 0) {
-    check_greater("segment", "i+n-1", i + n - 1, 0.0);
-    check_less_or_equal("segment", "i+n-1", i + n - 1,
-                        static_cast<size_t>(sv.size()));
+  if constexpr (is_std_vector_v<Vec>) {
+    std::decay_t<Vec> s;
+    for (size_t j = 0; j < n; ++j) {
+      s.push_back(v[i + j - 1]);
+    }
+    return s;
+  } else {
+    return make_holder([i, n](auto&& v_) { return v_.segment(i - 1, n); },
+                      std::forward<Vec>(v));
   }
-  std::vector<T> s;
-  for (size_t j = 0; j < n; ++j) {
-    s.push_back(sv[i + j - 1]);
-  }
-  return s;
 }
 
 }  // namespace math

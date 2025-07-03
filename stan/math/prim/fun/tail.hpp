@@ -21,32 +21,22 @@ namespace math {
  */
 template <typename T, require_vector_t<T>* = nullptr>
 inline auto tail(T&& v, size_t n) {
-  if (n != 0) {
-    check_vector_index("tail", "n", v, n);
+  if constexpr (is_std_vector_v<T>) {
+    if (n != 0) {
+      check_std_vector_index("tail", "n", v, n);
+    }
+    std::decay_t<T> s(v.end() - n, v.end());
+    return s;
+  } else {
+    if (n != 0) {
+      check_vector_index("tail", "n", v, n);
+    }
+    return make_holder(
+        [n](auto&& v_) { return std::forward<decltype(v_)>(v_).tail(n); },
+        std::forward<T>(v));
   }
-  return make_holder(
-      [n](auto&& v_) { return std::forward<decltype(v_)>(v_).tail(n); },
-      std::forward<T>(v));
 }
 
-/**
- * Return the specified number of elements as a standard vector
- * from the back of the specified standard vector.
- *
- * @tparam T type of elements in the vector
- * @param sv Standard vector.
- * @param n Size of return.
- * @return The last n elements of sv.
- * @throw std::out_of_range if n is out of range.
- */
-template <typename T>
-std::vector<T> tail(const std::vector<T>& sv, size_t n) {
-  if (n != 0) {
-    check_std_vector_index("tail", "n", sv, n);
-  }
-  std::vector<T> s(sv.end() - n, sv.end());
-  return s;
-}
 
 }  // namespace math
 }  // namespace stan
