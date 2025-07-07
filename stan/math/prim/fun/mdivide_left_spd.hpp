@@ -34,10 +34,6 @@ mdivide_left_spd(EigMat1&& A, EigMat2&& b) {
   auto&& A_ref = to_ref(std::forward<EigMat1>(A));
   check_symmetric(function, "A", A_ref);
   check_not_nan(function, "A", A_ref);
-  if (A.size() == 0) {
-    return {0, b.cols()};
-  }
-
   auto llt = Eigen::Matrix<return_type_t<EigMat1, EigMat2>,
                            std::decay_t<EigMat1>::RowsAtCompileTime,
                            std::decay_t<EigMat1>::ColsAtCompileTime>(

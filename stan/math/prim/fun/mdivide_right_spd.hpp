@@ -34,10 +34,6 @@ mdivide_right_spd(EigMat1&& b, EigMat2&& A) {
   auto&& A_ref = to_ref(std::forward<EigMat2>(A));
   check_symmetric(function, "A", A_ref);
   check_not_nan(function, "A", A_ref);
-  if (A.size() == 0) {
-    return {b.rows(), 0};
-  }
-
   return mdivide_left_spd(std::forward<decltype(A_ref)>(A_ref),
                           std::forward<EigMat1>(b).transpose())
       .transpose();
