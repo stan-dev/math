@@ -296,8 +296,6 @@ inline auto mdivide_left_spd(T1 &&A, T2 &&B) {
   } else if constexpr (!is_constant<T1>::value) {
     arena_t<promote_scalar_t<var, T1>> arena_A
         = std::forward<decltype(A_ref)>(A_ref);
-    ;
-
     check_symmetric("mdivide_left_spd", "A", arena_A.val());
     check_not_nan("mdivide_left_spd", "A", arena_A.val());
 
