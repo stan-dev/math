@@ -259,14 +259,15 @@ mdivide_left_spd(const EigMat1 &A, const EigMat2 &b) {
  */
 template <typename T1, typename T2, require_all_matrix_t<T1, T2> * = nullptr,
           require_any_var_matrix_t<T1, T2> * = nullptr>
-inline auto mdivide_left_spd(T1&& A, T2&& B) {
-  auto&& A_ref = to_ref(std::forward<T1>(A));
+inline auto mdivide_left_spd(T1 &&A, T2 &&B) {
+  auto &&A_ref = to_ref(std::forward<T1>(A));
   using ret_val_type = plain_type_t<decltype(value_of(A_ref) * value_of(B))>;
   using ret_type = var_value<ret_val_type>;
   check_multiplicable("mdivide_left_spd", "A", A_ref, "B", B);
 
   if constexpr (!is_constant<T1>::value && !is_constant<T2>::value) {
-    arena_t<promote_scalar_t<var, T1>> arena_A = std::forward<decltype(A_ref)>(A_ref);
+    arena_t<promote_scalar_t<var, T1>> arena_A
+        = std::forward<decltype(A_ref)>(A_ref);
     arena_t<promote_scalar_t<var, T2>> arena_B = std::forward<T2>(B);
 
     check_symmetric("mdivide_left_spd", "A", arena_A.val());
@@ -293,7 +294,9 @@ inline auto mdivide_left_spd(T1&& A, T2&& B) {
 
     return ret_type(res);
   } else if constexpr (!is_constant<T1>::value) {
-    arena_t<promote_scalar_t<var, T1>> arena_A = std::forward<decltype(A_ref)>(A_ref);;
+    arena_t<promote_scalar_t<var, T1>> arena_A
+        = std::forward<decltype(A_ref)>(A_ref);
+    ;
 
     check_symmetric("mdivide_left_spd", "A", arena_A.val());
     check_not_nan("mdivide_left_spd", "A", arena_A.val());
