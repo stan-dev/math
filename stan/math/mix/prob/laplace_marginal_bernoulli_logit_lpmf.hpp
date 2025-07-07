@@ -22,7 +22,7 @@ namespace math {
 struct bernoulli_logit_likelihood {
   template <typename ThetaVec, typename YVec, typename Mean>
   inline auto operator()(const ThetaVec& theta, const YVec& y,
-                         const std::vector<int>& delta_int, const Mean& mean,
+                         const std::vector<int>& delta_int, Mean&& mean,
                          std::ostream* pstream) const {
     auto theta_offset = to_ref(add(theta, mean));
     return sum(
@@ -55,8 +55,8 @@ template <bool propto = false, typename ThetaVec, typename Mean,
           typename CovarFun, typename CovarArgs,
           require_eigen_vector_t<ThetaVec>* = nullptr>
 inline auto laplace_marginal_tol_bernoulli_logit_lpmf(
-    const std::vector<int>& y, const std::vector<int>& n_samples,
-    const Mean& mean, CovarFun&& covariance_function, CovarArgs&& covar_args,
+    const std::vector<int>& y, const std::vector<int>& n_samples, Mean&& mean,
+    CovarFun&& covariance_function, CovarArgs&& covar_args,
     const ThetaVec& theta_0, double tolerance, int max_num_steps,
     const int hessian_block_size, const int solver,
     const int max_steps_line_search, std::ostream* msgs) {
@@ -65,7 +65,7 @@ inline auto laplace_marginal_tol_bernoulli_logit_lpmf(
                                     max_num_steps,         value_of(theta_0)};
   return laplace_marginal_density(
       bernoulli_logit_likelihood{},
-      std::forward_as_tuple(to_vector(y), n_samples, mean),
+      std::forward_as_tuple(to_vector(y), n_samples, std::forward<Mean>(mean)),
       std::forward<CovarFun>(covariance_function),
       std::forward<CovarArgs>(covar_args), ops, msgs);
 }
@@ -90,12 +90,12 @@ inline auto laplace_marginal_tol_bernoulli_logit_lpmf(
 template <bool propto = false, typename Mean, typename CovarFun,
           typename CovarArgs>
 inline auto laplace_marginal_bernoulli_logit_lpmf(
-    const std::vector<int>& y, const std::vector<int>& n_samples,
-    const Mean& mean, CovarFun&& covariance_function, CovarArgs&& covar_args,
+    const std::vector<int>& y, const std::vector<int>& n_samples, Mean&& mean,
+    CovarFun&& covariance_function, CovarArgs&& covar_args,
     std::ostream* msgs) {
   return laplace_marginal_density(
       bernoulli_logit_likelihood{},
-      std::forward_as_tuple(to_vector(y), n_samples, mean),
+      std::forward_as_tuple(to_vector(y), n_samples, std::forward<Mean>(mean)),
       std::forward<CovarFun>(covariance_function),
       std::forward<CovarArgs>(covar_args), laplace_options_default{}, msgs);
 }

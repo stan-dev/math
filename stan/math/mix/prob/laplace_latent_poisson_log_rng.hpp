@@ -34,18 +34,19 @@ template <typename ThetaVec, typename Mean, typename CovarFun,
           typename CovarArgs, typename RNG,
           require_eigen_vector_t<ThetaVec>* = nullptr>
 inline Eigen::VectorXd laplace_latent_tol_poisson_log_rng(
-    const std::vector<int>& y, const std::vector<int>& y_index,
-    const Mean& mean, CovarFun&& covariance_function, CovarArgs&& covar_args,
-    ThetaVec&& theta_0, const double tolerance, const int max_num_steps,
+    const std::vector<int>& y, const std::vector<int>& y_index, Mean&& mean,
+    CovarFun&& covariance_function, CovarArgs&& covar_args, ThetaVec&& theta_0,
+    const double tolerance, const int max_num_steps,
     const int hessian_block_size, const int solver,
     const int max_steps_line_search, RNG& rng, std::ostream* msgs) {
   laplace_options_user_supplied ops{hessian_block_size,    solver,
                                     max_steps_line_search, tolerance,
                                     max_num_steps,         value_of(theta_0)};
-  return laplace_base_rng(poisson_log_likelihood{},
-                          std::forward_as_tuple(y, y_index, mean),
-                          std::forward<CovarFun>(covariance_function),
-                          std::forward<CovarArgs>(covar_args), ops, rng, msgs);
+  return laplace_base_rng(
+      poisson_log_likelihood{},
+      std::forward_as_tuple(y, y_index, std::forward<Mean>(mean)),
+      std::forward<CovarFun>(covariance_function),
+      std::forward<CovarArgs>(covar_args), ops, rng, msgs);
 }
 
 /**
@@ -70,14 +71,15 @@ inline Eigen::VectorXd laplace_latent_tol_poisson_log_rng(
  */
 template <typename CovarFun, typename CovarArgs, typename RNG, typename Mean>
 inline Eigen::VectorXd laplace_latent_poisson_log_rng(
-    const std::vector<int>& y, const std::vector<int>& y_index,
-    const Mean& mean, CovarFun&& covariance_function, CovarArgs&& covar_args,
-    RNG& rng, std::ostream* msgs) {
-  return laplace_base_rng(poisson_log_likelihood{},
-                          std::forward_as_tuple(y, y_index, mean),
-                          std::forward<CovarFun>(covariance_function),
-                          std::forward<CovarArgs>(covar_args),
-                          laplace_options_default{}, rng, msgs);
+    const std::vector<int>& y, const std::vector<int>& y_index, Mean&& mean,
+    CovarFun&& covariance_function, CovarArgs&& covar_args, RNG& rng,
+    std::ostream* msgs) {
+  return laplace_base_rng(
+      poisson_log_likelihood{},
+      std::forward_as_tuple(y, y_index, std::forward<Mean>(mean)),
+      std::forward<CovarFun>(covariance_function),
+      std::forward<CovarArgs>(covar_args), laplace_options_default{}, rng,
+      msgs);
 }
 
 }  // namespace math
