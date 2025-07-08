@@ -16,11 +16,10 @@ inline auto quad_form_diag(EigMat&& mat, EigVec&& vec) {
                    vec.size());
   return make_holder(
       [](auto&& mat_, auto&& vec_) {
-        auto&& vec_ref = to_ref(vec_);
-        return vec_ref.asDiagonal() * std::forward<decltype(mat_)>(mat_)
-               * vec_ref.asDiagonal();
+        return to_ref(vec_).asDiagonal() * std::forward<decltype(mat_)>(mat_)
+               * to_ref(vec_).asDiagonal();
       },
-      std::forward<EigMat>(mat), std::forward<EigVec>(vec));
+      std::forward<EigMat>(mat), to_ref(std::forward<EigVec>(vec)));
 }
 
 }  // namespace math
