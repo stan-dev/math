@@ -16,8 +16,9 @@ inline auto quad_form_diag(EigMat&& mat, EigVec&& vec) {
                    vec.size());
   return make_holder(
       [](auto&& mat_, auto&& vec_) {
-        return vec_.asDiagonal() * std::forward<decltype(mat_)>(mat_)
-               * vec_.asDiagonal();
+        auto&& vec_ref = to_ref(vec_);
+        return vec_ref.asDiagonal() * std::forward<decltype(mat_)>(mat_)
+               * vec_ref.asDiagonal();
       },
       std::forward<EigMat>(mat), std::forward<EigVec>(vec));
 }
