@@ -4,7 +4,6 @@
 
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
-#include "Eigen/src/Core/Matrix.h"
 
 #include <gtest/gtest.h>
 
