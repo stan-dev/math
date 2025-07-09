@@ -8,8 +8,6 @@
 #include <test/unit/math/laplace/motorcycle_gp/x_vec.hpp>
 #include <gtest/gtest.h>
 #include <iostream>
-#include <istream>
-#include <fstream>
 #include <vector>
 
 struct poisson_log_likelihood2 {
@@ -35,7 +33,6 @@ TEST(laplace, poisson_log_phi_dim_2) {
   Eigen::VectorXd theta_0(dim_theta);
   theta_0 << 0, 0;
 
-  int dim_x = 2;
   std::vector<Eigen::VectorXd> x(dim_theta);
   Eigen::VectorXd x_0{{0.05100797, 0.16086164}};
   Eigen::VectorXd x_1{{-0.59823393, 0.98701425}};
@@ -176,7 +173,6 @@ TEST(laplace, bernoulli_logit_phi_dim500) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> phi_dbl(dim_phi);
   phi_dbl << 1.6, 1;
 
-  stan::math::test::sqr_exp_kernel_functor K;
   double target = laplace_marginal<false>(
       bernoulli_logit_likelihood{}, std::forward_as_tuple(y),
       stan::math::test::sqr_exp_kernel_functor{},

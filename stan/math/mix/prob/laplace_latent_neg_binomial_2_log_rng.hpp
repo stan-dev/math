@@ -23,23 +23,25 @@ namespace math {
  * @tparam Eta A type for the overdispersion parameter.
  * @tparam ThetaVec A type inheriting from `Eigen::EigenBase`
  * with dynamic sized rows and 1 column.
+ * @tparam Mean type of the mean of the latent normal distribution
  * \laplace_common_template_args
  * @tparam RNG A valid boost rng type
  * @param[in] y Observed counts.
  * @param[in] y_index Index indicating which group each observation belongs to.
  * @param[in] eta Overdisperison parameter.
+ * @param[in] mean The mean of the latent normal variable.
  * \laplace_common_args
  * \laplace_options
  * \rng_arg
  * \msg_arg
  */
-template <typename Eta, typename ThetaVec, typename CovarFun,
+template <typename Eta, typename ThetaVec, typename Mean, typename CovarFun,
           typename CovarArgs, typename RNG,
-          require_eigen_t<ThetaVec>* = nullptr>
+          require_eigen_vector_t<ThetaVec>* = nullptr>
 inline Eigen::VectorXd laplace_latent_tol_neg_binomial_2_log_rng(
     const std::vector<int>& y, const std::vector<int>& y_index, Eta&& eta,
-    CovarFun&& covariance_function, CovarArgs&& covar_args, ThetaVec&& theta_0,
-    const double tolerance, const int max_num_steps,
+    Mean&& mean, CovarFun&& covariance_function, CovarArgs&& covar_args,
+    ThetaVec&& theta_0, const double tolerance, const int max_num_steps,
     const int hessian_block_size, const int solver,
     const int max_steps_line_search, RNG& rng, std::ostream* msgs) {
   laplace_options_user_supplied ops{hessian_block_size,    solver,
@@ -47,7 +49,8 @@ inline Eigen::VectorXd laplace_latent_tol_neg_binomial_2_log_rng(
                                     max_num_steps,         value_of(theta_0)};
   return laplace_base_rng(
       neg_binomial_2_log_likelihood{},
-      std::forward_as_tuple(std::forward<Eta>(eta), y, y_index),
+      std::forward_as_tuple(std::forward<Eta>(eta), y, y_index,
+                            std::forward<Mean>(mean)),
       std::forward<CovarFun>(covariance_function),
       std::forward<CovarArgs>(covar_args), ops, rng, msgs);
 }
@@ -65,23 +68,27 @@ inline Eigen::VectorXd laplace_latent_tol_neg_binomial_2_log_rng(
  * parameterization of the Negative Binomial.
  *
  * @tparam Eta A type for the overdispersion parameter.
+ * @tparam Mean type of the mean of the latent normal distribution
  * \laplace_common_template_args
  * @tparam RNG A valid boost rng type
  * @param[in] y Observed counts.
  * @param[in] y_index Index indicating which group each observation belongs to.
  * @param[in] eta Overdisperison parameter.
+ * @param[in] mean The mean of the latent normal variable.
  * \laplace_common_args
  * \rng_arg
  * \msg_arg
  */
-template <typename Eta, typename CovarFun, typename CovarArgs, typename RNG>
+template <typename Eta, typename Mean, typename CovarFun, typename CovarArgs,
+          typename RNG>
 inline Eigen::VectorXd laplace_latent_neg_binomial_2_log_rng(
     const std::vector<int>& y, const std::vector<int>& y_index, Eta&& eta,
-    CovarFun&& covariance_function, CovarArgs&& covar_args, RNG& rng,
-    std::ostream* msgs) {
+    Mean&& mean, CovarFun&& covariance_function, CovarArgs&& covar_args,
+    RNG& rng, std::ostream* msgs) {
   return laplace_base_rng(
       neg_binomial_2_log_likelihood{},
-      std::forward_as_tuple(std::forward<Eta>(eta), y, y_index),
+      std::forward_as_tuple(std::forward<Eta>(eta), y, y_index,
+                            std::forward<Mean>(mean)),
       std::forward<CovarFun>(covariance_function),
       std::forward<CovarArgs>(covar_args), laplace_options_default{}, rng,
       msgs);

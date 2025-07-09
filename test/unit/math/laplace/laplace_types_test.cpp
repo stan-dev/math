@@ -8,8 +8,6 @@
 #include <test/unit/math/laplace/motorcycle_gp/x_vec.hpp>
 #include <gtest/gtest.h>
 #include <iostream>
-#include <istream>
-#include <fstream>
 #include <vector>
 
 namespace {
@@ -49,12 +47,8 @@ struct poisson_re_log_ll {
   stan::return_type_t<stan::base_type_t<T0__>, stan::base_type_t<T2__>>
   operator()(const T0__& theta_arg__, const std::vector<int>& y,
              const T2__& mu_arg__, std::ostream* pstream__) const {
-    using local_scalar_t__
-        = stan::return_type_t<stan::base_type_t<T0__>, stan::base_type_t<T2__>>;
-    // suppress unused var warning
     const auto& theta = stan::math::to_ref(theta_arg__);
     const auto& mu = stan::math::to_ref(mu_arg__);
-    static constexpr bool propto__ = true;
     return stan::math::poisson_log_lpmf<false>(y, stan::math::add(mu, theta));
   }
 };
@@ -66,7 +60,6 @@ struct cov_fun {
                 std::is_floating_point<std::decay_t<T0__>>>>* = nullptr>
   Eigen::Matrix<stan::return_type_t<T0__>, -1, -1> operator()(
       const T0__& sigma, const int& N, std::ostream* pstream__) const {
-    using local_scalar_t__ = stan::return_type_t<T0__>;
     return stan::math::diag_matrix(
         stan::math::rep_vector(stan::math::pow(sigma, 2), N));
   }
@@ -126,7 +119,6 @@ TEST(laplace, poisson_log_phi_dim_2_tuple_extended) {
   Eigen::VectorXd theta_0(dim_theta);
   theta_0 << 0, 0;
 
-  int dim_x = 2;
   std::vector<Eigen::VectorXd> x(dim_theta);
   Eigen::VectorXd x_0{{0.05100797, 0.16086164}};
   Eigen::VectorXd x_1{{-0.59823393, 0.98701425}};
@@ -181,7 +173,6 @@ TEST(laplace, poisson_log_phi_dim_2_tuple) {
   Eigen::VectorXd theta_0(dim_theta);
   theta_0 << 0, 0;
 
-  int dim_x = 2;
   std::vector<Eigen::VectorXd> x(dim_theta);
   Eigen::VectorXd x_0{{0.05100797, 0.16086164}};
   Eigen::VectorXd x_1{{-0.59823393, 0.98701425}};
@@ -259,7 +250,6 @@ TEST(laplace, poisson_log_phi_dim_2_array_tuple) {
   Eigen::VectorXd theta_0(dim_theta);
   theta_0 << 0, 0;
 
-  int dim_x = 2;
   std::vector<Eigen::VectorXd> x(dim_theta);
   Eigen::VectorXd x_0{{0.05100797, 0.16086164}};
   Eigen::VectorXd x_1{{-0.59823393, 0.98701425}};
