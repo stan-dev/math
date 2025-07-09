@@ -21,7 +21,7 @@ namespace math {
  * @return natural exponentiation of specified number
  */
 template <typename T, require_arithmetic_t<T>* = nullptr>
-inline auto exp(const T x) {
+inline auto exp(T&& x) {
   return std::exp(x);
 }
 
@@ -36,7 +36,7 @@ inline auto exp(const T x) {
  * branch cut details
  */
 template <typename T, require_complex_bt<std::is_arithmetic, T>* = nullptr>
-inline auto exp(const T x) {
+inline auto exp(T&& x) {
   return std::exp(x);
 }
 
@@ -53,8 +53,12 @@ struct exp_fun {
    * @return Exponential of argument.
    */
   template <typename T>
-  static inline auto fun(const T& x) {
-    return exp(x);
+  static inline auto fun(T&& x) {
+    if constexpr (std::is_arithmetic_v<std::decay_t<T>>) {
+      return std::exp(x);
+    } else {
+      return exp(std::forward<T>(x));
+    }
   }
 };
 
@@ -68,8 +72,8 @@ struct exp_fun {
  * @return Elementwise application of exponentiation to the argument.
  */
 template <typename Container, require_ad_container_t<Container>* = nullptr>
-inline auto exp(const Container& x) {
-  return apply_scalar_unary<exp_fun, Container>::apply(x);
+inline auto exp(Container&& x) {
+  return apply_scalar_unary<exp_fun, Container>::apply(std::forward<Container>(x));
 }
 
 /**
@@ -82,9 +86,9 @@ inline auto exp(const Container& x) {
  */
 template <typename Container,
           require_container_bt<std::is_arithmetic, Container>* = nullptr>
-inline auto exp(const Container& x) {
+inline auto exp(Container&& x) {
   return apply_vector_unary<Container>::apply(
-      x, [](const auto& v) { return v.array().exp(); });
+      std::forward<Container>(x), [](const auto& v) { return v.array().exp(); });
 }
 
 namespace internal {

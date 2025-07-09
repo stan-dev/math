@@ -16,9 +16,9 @@ namespace math {
  * @param x argument
  * @return inverse logit of argument
  */
-template <typename T>
-inline fvar<T> inv_logit(const fvar<T>& x) {
-  return fvar<T>(inv_logit(x.val_),
+template <typename T, require_fvar_t<T>* = nullptr>
+inline auto inv_logit(T&& x) {
+  return std::decay_t<T>(inv_logit(x.val_),
                  x.d_ * inv_logit(x.val_) * (1 - inv_logit(x.val_)));
 }
 

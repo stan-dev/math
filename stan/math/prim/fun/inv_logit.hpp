@@ -48,15 +48,13 @@ namespace math {
  * @param a Argument.
  * @return Inverse logit of argument.
  */
-inline double inv_logit(double a) {
+template <typename T, require_arithmetic_t<T>* = nullptr>
+inline double inv_logit(T&& a) {
   if (a < 0) {
     double exp_a = std::exp(a);
-    if (a < LOG_EPSILON) {
-      return exp_a;
-    }
     return exp_a / (1.0 + exp_a);
   }
-  return inv(1 + std::exp(-a));
+  return inv(1.0 + std::exp(-a));
 }
 
 /**

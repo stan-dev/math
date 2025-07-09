@@ -19,7 +19,7 @@ namespace math {
  * @return square root of the argument
  */
 template <typename T, require_arithmetic_t<T>* = nullptr>
-inline auto sqrt(const T x) {
+inline auto sqrt(T&& x) {
   return std::sqrt(x);
 }
 
@@ -31,7 +31,7 @@ inline auto sqrt(const T x) {
  * @return square root of the argument
  */
 template <typename T, require_complex_bt<std::is_arithmetic, T>* = nullptr>
-inline auto sqrt(const T x) {
+inline auto sqrt(T&& x) {
   return std::sqrt(x);
 }
 
@@ -44,8 +44,12 @@ inline auto sqrt(const T x) {
  */
 struct sqrt_fun {
   template <typename T>
-  static inline auto fun(const T& x) {
-    return sqrt(x);
+  static inline auto fun(T&& x) {
+    if constexpr (std::is_arithmetic_v<std::decay_t<T>>) {
+      return std::sqrt(x);
+    } else {
+      return sqrt(std::forward<T>(x));
+    }
   }
 };
 
@@ -57,8 +61,8 @@ struct sqrt_fun {
  * @return Square root of each value in x.
  */
 template <typename Container, require_ad_container_t<Container>* = nullptr>
-inline auto sqrt(const Container& x) {
-  return apply_scalar_unary<sqrt_fun, Container>::apply(x);
+inline auto sqrt(Container&& x) {
+  return apply_scalar_unary<sqrt_fun, Container>::apply(std::forward<Container>(x));
 }
 
 /**
@@ -72,9 +76,9 @@ inline auto sqrt(const Container& x) {
 template <typename Container,
           require_container_bt<std::is_arithmetic, Container>* = nullptr,
           require_not_var_matrix_t<Container>* = nullptr>
-inline auto sqrt(const Container& x) {
+inline auto sqrt(Container&& x) {
   return apply_vector_unary<Container>::apply(
-      x, [](const auto& v) { return v.array().sqrt(); });
+      std::forward<Container>(x), [](const auto& v) { return v.array().sqrt(); });
 }
 
 namespace internal {

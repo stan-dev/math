@@ -31,8 +31,8 @@ inline auto inv_sqrt(const T x) {
  */
 struct inv_sqrt_fun {
   template <typename T>
-  static inline auto fun(const T& x) {
-    return inv_sqrt(x);
+  static inline auto fun(T&& x) {
+    return inv_sqrt(std::forward<T>(x));
   }
 };
 
@@ -45,8 +45,8 @@ struct inv_sqrt_fun {
  * @return inverse square root of each value in x.
  */
 template <typename Container, require_ad_container_t<Container>* = nullptr>
-inline auto inv_sqrt(const Container& x) {
-  return apply_scalar_unary<inv_sqrt_fun, Container>::apply(x);
+inline auto inv_sqrt(Container&& x) {
+  return apply_scalar_unary<inv_sqrt_fun, Container>::apply(std::forward<Container>(x));
 }
 
 /**

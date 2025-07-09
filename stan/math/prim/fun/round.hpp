@@ -10,6 +10,11 @@
 namespace stan {
 namespace math {
 
+template <typename T, require_arithmetic_t<T>* = nullptr>
+inline auto round(T&& x) {
+  return std::round(x);
+}
+
 /**
  * Structure to wrap `round()` so it can be vectorized.
  *
@@ -19,9 +24,12 @@ namespace math {
  */
 struct round_fun {
   template <typename T>
-  static inline auto fun(const T& x) {
-    using std::round;
-    return round(x);
+  static inline auto fun(T&& x) {
+    if constexpr (std::is_arithmetic_v<std::decay_t<T>>) {
+      return std::round(x);
+    } else {
+      return round(std::forward<T>(x));
+    }
   }
 };
 
@@ -35,8 +43,9 @@ struct round_fun {
 template <typename Container,
           require_not_container_st<std::is_arithmetic, Container>* = nullptr,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
-              Container>* = nullptr>
-inline auto round(const Container& x) {
+              Container>* = nullptr,
+              require_container_t<Container>* = nullptr>
+inline auto round(Container&& x) {
   return apply_scalar_unary<round_fun, Container>::apply(x);
 }
 
@@ -50,7 +59,7 @@ inline auto round(const Container& x) {
  */
 template <typename Container,
           require_container_st<std::is_arithmetic, Container>* = nullptr>
-inline auto round(const Container& x) {
+inline auto round(Container&& x) {
   return apply_vector_unary<Container>::apply(
       x, [](const auto& v) { return v.array().round(); });
 }

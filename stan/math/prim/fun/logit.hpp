@@ -71,8 +71,8 @@ struct logit_fun {
    * @return log odds of the argument
    */
   template <typename T>
-  static inline auto fun(const T& x) {
-    return logit(x);
+  static inline auto fun(T&& x) {
+    return logit(std::forward<T>(x));
   }
 };
 
@@ -87,8 +87,8 @@ struct logit_fun {
  * @return elementwise logit of container elements
  */
 template <typename Container, require_ad_container_t<Container>* = nullptr>
-inline auto logit(const Container& x) {
-  return apply_scalar_unary<logit_fun, Container>::apply(x);
+inline auto logit(Container&& x) {
+  return apply_scalar_unary<logit_fun, Container>::apply(std::forward<Container>(x));
 }
 
 /**

@@ -22,7 +22,7 @@ namespace math {
  * @return arc tangent of the argument
  */
 template <typename T, require_arithmetic_t<T>* = nullptr>
-inline auto atan(const T x) {
+inline auto atan(T&& x) {
   return std::atan(x);
 }
 
@@ -34,7 +34,7 @@ inline auto atan(const T x) {
  * @return arc tangent of the argument
  */
 template <typename T, require_complex_bt<std::is_arithmetic, T>* = nullptr>
-inline auto atan(const T x) {
+inline auto atan(T&& x) {
   return std::atan(x);
 }
 
@@ -47,8 +47,12 @@ inline auto atan(const T x) {
  */
 struct atan_fun {
   template <typename T>
-  static inline auto fun(const T& x) {
-    return atan(x);
+  static inline auto fun(T&& x) {
+    if constexpr (std::is_arithmetic_v<std::decay_t<T>>) {
+      return std::atan(x);
+    } else {
+      return atan(std::forward<T>(x));
+    }
   }
 };
 
@@ -61,8 +65,8 @@ struct atan_fun {
  * @return Arctan of each value in x, in radians.
  */
 template <typename Container, require_ad_container_t<Container>* = nullptr>
-inline auto atan(const Container& x) {
-  return apply_scalar_unary<atan_fun, Container>::apply(x);
+inline auto atan(Container&& x) {
+  return apply_scalar_unary<atan_fun, Container>::apply(std::forward<Container>(x));
 }
 
 /**
@@ -75,9 +79,9 @@ inline auto atan(const Container& x) {
  */
 template <typename Container,
           require_container_bt<std::is_arithmetic, Container>* = nullptr>
-inline auto atan(const Container& x) {
+inline auto atan(Container&& x) {
   return apply_vector_unary<Container>::apply(
-      x, [](const auto& v) { return v.array().atan(); });
+      std::forward<Container>(x), [](const auto& v) { return v.array().atan(); });
 }
 
 namespace internal {

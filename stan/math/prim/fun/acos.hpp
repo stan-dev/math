@@ -26,7 +26,7 @@ namespace math {
  * @return arc cosine of the argument
  */
 template <typename T, require_arithmetic_t<T>* = nullptr>
-inline auto acos(const T x) {
+inline auto acos(T&& x) {
   return std::acos(x);
 }
 
@@ -38,7 +38,7 @@ inline auto acos(const T x) {
  * @return arc cosine of the argument
  */
 template <typename T, require_complex_bt<std::is_arithmetic, T>* = nullptr>
-inline auto acos(const T x) {
+inline auto acos(T&& x) {
   return std::acos(x);
 }
 
@@ -51,8 +51,12 @@ inline auto acos(const T x) {
  */
 struct acos_fun {
   template <typename T>
-  static inline auto fun(const T& x) {
-    return acos(x);
+  static inline auto fun(T&& x) {
+    if constexpr (std::is_arithmetic_v<std::decay_t<T>>) {
+      return std::acos(x);
+    } else {
+      return acos(std::forward<T>(x));
+    }
   }
 };
 
@@ -65,8 +69,8 @@ struct acos_fun {
  * @return Arc cosine of each variable in the container, in radians.
  */
 template <typename Container, require_ad_container_t<Container>* = nullptr>
-inline auto acos(const Container& x) {
-  return apply_scalar_unary<acos_fun, Container>::apply(x);
+inline auto acos(Container&& x) {
+  return apply_scalar_unary<acos_fun, Container>::apply(std::forward<Container>(x));
 }
 
 /**
@@ -79,9 +83,9 @@ inline auto acos(const Container& x) {
  */
 template <typename Container,
           require_container_bt<std::is_arithmetic, Container>* = nullptr>
-inline auto acos(const Container& x) {
+inline auto acos(Container&& x) {
   return apply_vector_unary<Container>::apply(
-      x, [](const auto& v) { return v.array().acos(); });
+      std::forward<Container>(x), [](const auto& v) { return v.array().acos(); });
 }
 
 namespace internal {

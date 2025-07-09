@@ -27,7 +27,7 @@ namespace math {
  * @return hyperbolic arc sine of the argument
  */
 template <typename T, require_arithmetic_t<T>* = nullptr>
-inline auto asinh(const T x) {
+inline auto asinh(T&& x) {
   return std::asinh(x);
 }
 
@@ -39,7 +39,7 @@ inline auto asinh(const T x) {
  * @return hyperbolic arc sine of the argument
  */
 template <typename T, require_complex_bt<std::is_arithmetic, T>* = nullptr>
-inline auto asinh(const T x) {
+inline auto asinh(T&& x) {
   return std::asinh(x);
 }
 
@@ -52,8 +52,12 @@ inline auto asinh(const T x) {
  */
 struct asinh_fun {
   template <typename T>
-  static inline auto fun(const T& x) {
-    return asinh(x);
+  static inline auto fun(T&& x) {
+    if constexpr (std::is_arithmetic_v<std::decay_t<T>>) {
+      return std::asinh(x);
+    } else {
+      return asinh(std::forward<T>(x));
+    }
   }
 };
 
@@ -66,8 +70,8 @@ struct asinh_fun {
  * @return Inverse hyperbolic sine of each value in the container.
  */
 template <typename T, require_ad_container_t<T>* = nullptr>
-inline auto asinh(const T& x) {
-  return apply_scalar_unary<asinh_fun, T>::apply(x);
+inline auto asinh(T&& x) {
+  return apply_scalar_unary<asinh_fun, T>::apply(std::forward<T>(x));
 }
 
 /**
@@ -80,8 +84,8 @@ inline auto asinh(const T& x) {
  */
 template <typename Container,
           require_container_bt<std::is_arithmetic, Container>* = nullptr>
-inline auto asinh(const Container& x) {
-  return apply_scalar_unary<asinh_fun, Container>::apply(x);
+inline auto asinh(Container&& x) {
+  return apply_scalar_unary<asinh_fun, Container>::apply(std::forward<Container>(x));
 }
 
 namespace internal {

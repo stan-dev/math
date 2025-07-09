@@ -138,8 +138,8 @@ struct trigamma_fun {
    * @return trigamma applied to argument.
    */
   template <typename T>
-  static inline auto fun(const T& x) {
-    return trigamma(x);
+  static inline auto fun(T&& x) {
+    return trigamma(std::forward<T>(x));
   }
 };
 
@@ -155,8 +155,8 @@ struct trigamma_fun {
  */
 template <typename T,
           require_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr>
-inline auto trigamma(const T& x) {
-  return apply_scalar_unary<trigamma_fun, T>::apply(x);
+inline auto trigamma(T&& x) {
+  return apply_scalar_unary<trigamma_fun, T>::apply(std::forward<T>(x));
 }
 
 }  // namespace math

@@ -8,6 +8,11 @@
 namespace stan {
 namespace math {
 
+template <typename T, require_arithmetic_t<T>* = nullptr>
+inline auto cbrt(T&& x) {
+  return std::cbrt(x);
+}
+
 /**
  * Structure to wrap `cbrt()` so it can be vectorized.
  *
@@ -17,9 +22,12 @@ namespace math {
  */
 struct cbrt_fun {
   template <typename T>
-  static inline auto fun(const T& x) {
-    using std::cbrt;
-    return cbrt(x);
+  static inline auto fun(T&& x) {
+    if constexpr (std::is_arithmetic_v<std::decay_t<T>>) {
+      return std::cbrt(x);
+    } else {
+      return cbrt(std::forward<T>(x));
+    }
   }
 };
 
@@ -33,8 +41,9 @@ struct cbrt_fun {
  */
 template <
     typename T, require_not_var_matrix_t<T>* = nullptr,
-    require_all_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr>
-inline auto cbrt(const T& x) {
+    require_all_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr,
+    require_container_t<T>* = nullptr>
+inline auto cbrt(T&& x) {
   return apply_scalar_unary<cbrt_fun, T>::apply(x);
 }
 

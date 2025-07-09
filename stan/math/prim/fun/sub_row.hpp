@@ -19,7 +19,8 @@ namespace math {
  */
 template <
     typename T, require_matrix_t<T>* = nullptr,
-    require_all_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr>
+    require_all_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr,
+    require_container_t<T>* = nullptr>
 inline auto sub_row(const T& m, size_t i, size_t j, size_t ncols) {
   check_row_index("sub_row", "i", m, i);
   check_column_index("sub_row", "j", m, j);
