@@ -57,13 +57,20 @@ inline return_type_t<T_alpha> yule_simon_lpmf(const T_n &n,
 
   auto ops_partials = make_partials_propagator(alpha_ref);
 
-  scalar_seq_view<T_n> n_vec(n);
+  scalar_seq_view<T_n_ref> n_vec(n_ref);
   scalar_seq_view<T_alpha_ref> alpha_vec(alpha_ref);
-  const size_t max_size_seq_view = max_size(n, alpha);
+  const size_t max_size_seq_view = max_size(n_ref, alpha_ref);
   T_partials_return logp(0.0);
+  if constexpr (include_summand<propto>::value) {
+    if constexpr (is_stan_scalar_v<T_n>) {
+      logp += lgamma(n_ref) * max_size_seq_view;
+    }
+  }
   for (size_t i = 0; i < max_size_seq_view; i++) {
     if constexpr (include_summand<propto>::value) {
-      logp += lgamma(n_vec.val(i));
+      if constexpr (!is_stan_scalar_v<T_n>) {
+        logp += lgamma(n_vec.val(i));
+      }
     }
     T_partials_return alpha_plus_one = alpha_vec.val(i) + 1.0;
     logp += log(alpha_vec.val(i)) + lgamma(alpha_plus_one)
