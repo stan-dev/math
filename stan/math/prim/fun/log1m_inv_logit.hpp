@@ -30,6 +30,7 @@ namespace math {
    \end{cases}
    \f]
  *
+ * @tparam T An arithmetic type.
  * @param uu argument
  * @return log of one minus the inverse logit of the argument
  */
