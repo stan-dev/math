@@ -80,7 +80,8 @@ inline return_type_t<T> rising_factorial(const T& x, int n) {
 template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr>
 inline auto rising_factorial(T1&& a, T2&& b) {
   return apply_scalar_binary(
-      [](auto&& c, auto&& d) { return rising_factorial(c, d); }, std::forward<T1>(a), std::forward<T2>(b));
+      [](auto&& c, auto&& d) { return rising_factorial(c, d); },
+      std::forward<T1>(a), std::forward<T2>(b));
 }
 
 }  // namespace math

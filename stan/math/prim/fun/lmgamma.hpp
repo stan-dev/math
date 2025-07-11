@@ -71,8 +71,8 @@ inline return_type_t<T> lmgamma(int k, T x) {
  */
 template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr>
 inline auto lmgamma(T1&& a, T2&& b) {
-  return apply_scalar_binary(
-      [](auto&& c, auto&& d) { return lmgamma(c, d); }, std::forward<T1>(a), std::forward<T2>(b));
+  return apply_scalar_binary([](auto&& c, auto&& d) { return lmgamma(c, d); },
+                             std::forward<T1>(a), std::forward<T2>(b));
 }
 
 }  // namespace math

@@ -57,7 +57,8 @@ inline T2 modified_bessel_second_kind(int v, const T2 z) {
 template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr>
 inline auto modified_bessel_second_kind(T1&& a, T2&& b) {
   return apply_scalar_binary(
-      [](auto&& c, auto&& d) { return modified_bessel_second_kind(c, d); }, std::forward<T1>(a), std::forward<T2>(b));
+      [](auto&& c, auto&& d) { return modified_bessel_second_kind(c, d); },
+      std::forward<T1>(a), std::forward<T2>(b));
 }
 
 }  // namespace math

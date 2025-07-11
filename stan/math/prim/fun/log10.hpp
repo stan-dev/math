@@ -63,7 +63,8 @@ struct log10_fun {
  */
 template <typename Container, require_ad_container_t<Container>* = nullptr>
 inline auto log10(Container&& x) {
-  return apply_scalar_unary<log10_fun, Container>::apply(std::forward<Container>(x));
+  return apply_scalar_unary<log10_fun, Container>::apply(
+      std::forward<Container>(x));
 }
 
 /**

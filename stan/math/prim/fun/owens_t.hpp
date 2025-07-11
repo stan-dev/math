@@ -75,8 +75,8 @@ inline double owens_t(double h, double a) {
 template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr,
           require_all_not_var_and_matrix_types<T1, T2>* = nullptr>
 inline auto owens_t(T1&& a, T2&& b) {
-  return apply_scalar_binary(
-      [](auto&& c, auto&& d) { return owens_t(c, d); }, std::forward<T1>(a), std::forward<T2>(b));
+  return apply_scalar_binary([](auto&& c, auto&& d) { return owens_t(c, d); },
+                             std::forward<T1>(a), std::forward<T2>(b));
 }
 
 }  // namespace math

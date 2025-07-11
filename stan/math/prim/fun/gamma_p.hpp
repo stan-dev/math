@@ -88,8 +88,8 @@ inline double gamma_p(double z, double a) {
  */
 template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr>
 inline auto gamma_p(T1&& a, T2&& b) {
-  return apply_scalar_binary(
-      [](auto&& c, auto&& d) { return gamma_p(c, d); }, std::forward<T1>(a), std::forward<T2>(b));
+  return apply_scalar_binary([](auto&& c, auto&& d) { return gamma_p(c, d); },
+                             std::forward<T1>(a), std::forward<T2>(b));
 }
 
 }  // namespace math

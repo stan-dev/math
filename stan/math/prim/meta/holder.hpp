@@ -150,7 +150,8 @@ class Holder
   typename Eigen::internal::ref_selector<ArgType>::non_const_type m_arg;
   std::tuple<std::unique_ptr<Ptrs>...> m_unique_ptrs;
   explicit Holder(ArgType&& arg, Ptrs*... pointers)
-      : m_arg(std::forward<ArgType>(arg)), m_unique_ptrs(std::unique_ptr<Ptrs>(pointers)...) {}
+      : m_arg(std::forward<ArgType>(arg)),
+        m_unique_ptrs(std::unique_ptr<Ptrs>(pointers)...) {}
 
   // we need to explicitely default copy and move constructors as we are
   // defining copy and move assignment operators

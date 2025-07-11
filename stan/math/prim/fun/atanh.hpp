@@ -94,7 +94,8 @@ inline auto atanh(T&& x) {
 template <typename Container,
           require_container_bt<std::is_arithmetic, Container>* = nullptr>
 inline auto atanh(Container&& x) {
-  return apply_scalar_unary<atanh_fun, Container>::apply(std::forward<Container>(x));
+  return apply_scalar_unary<atanh_fun, Container>::apply(
+      std::forward<Container>(x));
 }
 
 namespace internal {

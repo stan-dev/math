@@ -91,7 +91,8 @@ struct inv_cloglog_fun {
  */
 template <typename Container, require_ad_container_t<Container>* = nullptr>
 inline auto inv_cloglog(Container&& x) {
-  return apply_scalar_unary<inv_cloglog_fun, Container>::apply(std::forward<Container>(x));
+  return apply_scalar_unary<inv_cloglog_fun, Container>::apply(
+      std::forward<Container>(x));
 }
 
 /**
@@ -106,7 +107,8 @@ template <typename Container,
           require_container_bt<std::is_arithmetic, Container>* = nullptr>
 inline auto inv_cloglog(Container&& x) {
   return apply_vector_unary<Container>::apply(
-      std::forward<Container>(x), [](auto&& v) { return 1 - (-v.array().exp()).exp(); });
+      std::forward<Container>(x),
+      [](auto&& v) { return 1 - (-v.array().exp()).exp(); });
 }
 
 }  // namespace math

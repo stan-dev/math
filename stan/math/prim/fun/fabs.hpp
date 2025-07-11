@@ -54,7 +54,8 @@ template <typename Container,
           require_not_stan_scalar_t<Container>* = nullptr,
           require_container_t<Container>* = nullptr>
 inline auto fabs(Container&& x) {
-  return apply_scalar_unary<fabs_fun, Container>::apply(std::forward<Container>(x));
+  return apply_scalar_unary<fabs_fun, Container>::apply(
+      std::forward<Container>(x));
 }
 
 /**

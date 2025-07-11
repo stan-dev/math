@@ -95,7 +95,8 @@ inline auto acosh(T&& x) {
 template <typename Container,
           require_container_bt<std::is_arithmetic, Container>* = nullptr>
 inline auto acosh(Container&& x) {
-  return apply_scalar_unary<acosh_fun, Container>::apply(std::forward<Container>(x));
+  return apply_scalar_unary<acosh_fun, Container>::apply(
+      std::forward<Container>(x));
 }
 
 namespace internal {

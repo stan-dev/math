@@ -70,7 +70,8 @@ struct acos_fun {
  */
 template <typename Container, require_ad_container_t<Container>* = nullptr>
 inline auto acos(Container&& x) {
-  return apply_scalar_unary<acos_fun, Container>::apply(std::forward<Container>(x));
+  return apply_scalar_unary<acos_fun, Container>::apply(
+      std::forward<Container>(x));
 }
 
 /**

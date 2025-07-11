@@ -68,7 +68,8 @@ struct abs_fun {
  */
 template <typename Container, require_ad_container_t<Container>* = nullptr>
 inline auto abs(Container&& x) {
-  return apply_scalar_unary<abs_fun, Container>::apply(std::forward<Container>(x));
+  return apply_scalar_unary<abs_fun, Container>::apply(
+      std::forward<Container>(x));
 }
 
 /**
@@ -83,7 +84,8 @@ template <typename Container,
           require_container_bt<std::is_arithmetic, Container>* = nullptr>
 inline auto abs(Container&& x) {
   return apply_vector_unary<Container>::apply(
-      std::forward<Container>(x), [&](const auto& v) { return v.array().abs(); });
+      std::forward<Container>(x),
+      [&](const auto& v) { return v.array().abs(); });
 }
 
 namespace internal {

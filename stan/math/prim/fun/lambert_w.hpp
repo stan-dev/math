@@ -82,7 +82,8 @@ template <typename T, require_not_stan_scalar_t<T>* = nullptr,
           require_not_var_matrix_t<T>* = nullptr,
           require_container_t<T>* = nullptr>
 inline auto lambert_w0(T&& x) {
-  return apply_scalar_unary<internal::lambert_w0_fun, T>::apply(std::forward<T>(x));
+  return apply_scalar_unary<internal::lambert_w0_fun, T>::apply(
+      std::forward<T>(x));
 }
 
 /**
@@ -98,7 +99,8 @@ template <typename T, require_not_stan_scalar_t<T>* = nullptr,
           require_not_var_matrix_t<T>* = nullptr,
           require_container_t<T>* = nullptr>
 inline auto lambert_wm1(T&& x) {
-  return apply_scalar_unary<internal::lambert_wm1_fun, T>::apply(std::forward<T>(x));
+  return apply_scalar_unary<internal::lambert_wm1_fun, T>::apply(
+      std::forward<T>(x));
 }
 
 }  // namespace math

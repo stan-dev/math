@@ -48,9 +48,7 @@ template <typename T1, typename T2, typename T3,
           require_any_container_t<T1, T2, T3>* = nullptr>
 inline auto inv_inc_beta(T1&& a, T2&& b, T3&& c) {
   return apply_scalar_ternary(
-      [](auto&& d, auto&& e, auto&& f) {
-        return inv_inc_beta(d, e, f);
-      },
+      [](auto&& d, auto&& e, auto&& f) { return inv_inc_beta(d, e, f); },
       std::forward<T1>(a), std::forward<T2>(b), std::forward<T3>(c));
 }
 

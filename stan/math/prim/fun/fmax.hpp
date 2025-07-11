@@ -34,8 +34,8 @@ inline double fmax(T1 x, T2 y) {
  */
 template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr>
 inline auto fmax(T1&& a, T2&& b) {
-  return apply_scalar_binary(
-      [](auto&& c, auto&& d) { return fmax(c, d); }, std::forward<T1>(a), std::forward<T2>(b));
+  return apply_scalar_binary([](auto&& c, auto&& d) { return fmax(c, d); },
+                             std::forward<T1>(a), std::forward<T2>(b));
 }
 
 }  // namespace math

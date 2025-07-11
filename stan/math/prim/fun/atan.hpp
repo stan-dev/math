@@ -66,7 +66,8 @@ struct atan_fun {
  */
 template <typename Container, require_ad_container_t<Container>* = nullptr>
 inline auto atan(Container&& x) {
-  return apply_scalar_unary<atan_fun, Container>::apply(std::forward<Container>(x));
+  return apply_scalar_unary<atan_fun, Container>::apply(
+      std::forward<Container>(x));
 }
 
 /**
