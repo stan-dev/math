@@ -30,7 +30,7 @@ namespace math {
    \end{cases}
    \f]
  *
- * @param u argument
+ * @param uu argument
  * @return log of one minus the inverse logit of the argument
  */
 template <typename T, require_arithmetic_t<T>* = nullptr>
