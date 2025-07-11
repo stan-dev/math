@@ -34,13 +34,9 @@ inline double fmod(const T1& a, const T2& b) {
  * @return fmod function applied to the two inputs.
  */
 template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr>
-inline auto fmod(const T1& a, const T2& b) {
+inline auto fmod(T1&& a, T2&& b) {
   return apply_scalar_binary(
-      [](const auto& c, const auto& d) {
-        using std::fmod;
-        return fmod(c, d);
-      },
-      a, b);
+      [](auto&& c, auto&& d) { return fmod(c, d); }, std::forward<T1>(a), std::forward<T2>(b));
 }
 
 }  // namespace math
