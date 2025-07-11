@@ -79,7 +79,7 @@ template <typename Container,
           require_container_bt<std::is_arithmetic, Container>* = nullptr>
 inline auto cosh(Container&& x) {
   return apply_vector_unary<Container>::apply(
-      std::forward<Container>(x), [](const auto& v) { return v.array().cosh(); });
+      std::forward<Container>(x), [](auto&& v) { return v.array().cosh(); });
 }
 
 namespace internal {

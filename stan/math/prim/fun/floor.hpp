@@ -63,7 +63,7 @@ template <typename Container,
           require_not_var_matrix_t<Container>* = nullptr>
 inline auto floor(Container&& x) {
   return apply_vector_unary<Container>::apply(
-      std::forward<Container>(x), [](const auto& v) { return v.array().floor(); });
+      std::forward<Container>(x), [](auto&& v) { return v.array().floor(); });
 }
 
 }  // namespace math

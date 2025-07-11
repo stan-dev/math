@@ -106,7 +106,7 @@ template <typename Container,
           require_container_bt<std::is_arithmetic, Container>* = nullptr>
 inline auto inv_cloglog(Container&& x) {
   return apply_vector_unary<Container>::apply(
-      std::forward<Container>(x), [](const auto& v) { return 1 - (-v.array().exp()).exp(); });
+      std::forward<Container>(x), [](auto&& v) { return 1 - (-v.array().exp()).exp(); });
 }
 
 }  // namespace math
