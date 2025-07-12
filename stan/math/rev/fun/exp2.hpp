@@ -39,7 +39,8 @@ namespace math {
 template <typename T, require_var_t<T>* = nullptr>
 inline auto exp2(T&& a) {
   return make_callback_var(std::exp2(a.val()), [a](auto& vi) mutable {
-    as_array_or_scalar(a.adj()) += as_array_or_scalar(vi).adj() * as_array_or_scalar(vi).val() * LOG_TWO;
+    as_array_or_scalar(a.adj()) += as_array_or_scalar(vi).adj()
+                                   * as_array_or_scalar(vi).val() * LOG_TWO;
   });
 }
 
