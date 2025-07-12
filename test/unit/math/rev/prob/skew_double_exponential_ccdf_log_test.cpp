@@ -8,20 +8,21 @@
 #include <vector>
 #include <gtest/gtest.h>
 
-
 namespace {
 template <typename T1, typename T2, typename T3, typename T4>
-inline auto
-skew_de_ccdf_test(const T1& y, const T2& mu, const T3& sigma, const T4& tau) {
+inline auto skew_de_ccdf_test(const T1& y, const T2& mu, const T3& sigma,
+                              const T4& tau) {
   using stan::math::log1m;
   using stan::math::log1m_exp;
   using std::exp;
   using std::log;
 
   if (y < mu) {
-    return stan::math::log1m_exp(stan::math::log(tau) - 2.0 / sigma * (1.0 - tau) * (mu - y));
+    return stan::math::log1m_exp(stan::math::log(tau)
+                                 - 2.0 / sigma * (1.0 - tau) * (mu - y));
   } else {
-    return stan::math::log1m_exp(stan::math::log1m((1 - tau) * stan::math::exp(-2 / sigma * tau * (y - mu))));
+    return stan::math::log1m_exp(stan::math::log1m(
+        (1 - tau) * stan::math::exp(-2 / sigma * tau * (y - mu))));
   }
 }
 
@@ -71,4 +72,4 @@ TEST(RevProbDistributionsSkewedDoubleExponential,
     }
   }
 }
-}
+}  // namespace
