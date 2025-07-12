@@ -47,8 +47,8 @@ namespace math {
  * @param a Variable whose log is taken.
  * @return Natural log of variable.
  */
-template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
-inline auto log(const var_value<T>& a) {
+template <typename T, require_var_t<T>* = nullptr>
+inline auto log(T&& a) {
   return make_callback_var(log(a.val()), [a](auto& vi) mutable {
     as_array_or_scalar(a.adj())
         += as_array_or_scalar(vi.adj()) / as_array_or_scalar(a.val());
