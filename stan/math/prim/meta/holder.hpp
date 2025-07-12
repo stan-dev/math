@@ -194,38 +194,6 @@ class Holder
   inline auto operator+() {
     return make_holder([](auto&& arg) { return arg; }, m_arg);
   }
-  template <typename Other>
-  inline auto operator+(Other&& other) {
-    return make_holder(
-        [](auto&& arg, auto&& other_) {
-          return arg + std::forward<decltype(other_)>(other_);
-        },
-        m_arg, std::forward<Other>(other));
-  }
-  template <typename Other>
-  inline auto operator-(Other&& other) {
-    return make_holder(
-        [](auto&& arg, auto&& other_) {
-          return arg - std::forward<decltype(other_)>(other_);
-        },
-        m_arg, std::forward<Other>(other));
-  }
-  template <typename Other>
-  inline auto operator*(Other&& other) {
-    return make_holder(
-        [](auto&& arg, auto&& other_) {
-          return arg * std::forward<decltype(other_)>(other_);
-        },
-        m_arg, std::forward<Other>(other));
-  }
-  template <typename Other>
-  inline auto operator/(Other&& other) {
-    return make_holder(
-        [](auto&& arg, auto&& other_) {
-          return arg / std::forward<decltype(other_)>(other_);
-        },
-        m_arg, std::forward<Other>(other));
-  }
 };
 
 }  // namespace math
