@@ -73,4 +73,3 @@ TEST(RevProbDistributionsSkewedDoubleExponential,
   }
 }
 }  // namespace
-
