@@ -413,7 +413,8 @@ pipeline {
                         unstash 'MathSetup'
                         script {
                             sh "echo O=0 > make/local"
-                            sh "echo CXX=${CLANG_CXX} -Werror >> make/local"
+                            sh "echo CXX=${GCC} -Werror >> make/local"
+                            sh "echo CXXFLAGS+=-fsanitize=address >> make/local"
                             sh "python ./test/code_generator_test.py"
                             sh "python ./test/signature_parser_test.py"
                             sh "python ./test/statement_types_test.py"
