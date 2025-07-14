@@ -412,7 +412,7 @@ pipeline {
                     steps {
                         unstash 'MathSetup'
                         script {
-                            sh "echo O=0 > make/local"
+                            sh "echo O=3 > make/local"
                             sh "echo CXX=${GCC} -Werror >> make/local"
                             sh "echo CXXFLAGS+=-fsanitize=address >> make/local"
                             sh "python ./test/code_generator_test.py"
