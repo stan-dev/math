@@ -1,7 +1,7 @@
 #include <stan/math/prim.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
-
+/*
 namespace holder_test {
 template <typename T>
 auto f(T&& a) {
@@ -134,3 +134,28 @@ TEST(MathFunctions, block_of_make_holder_assign) {
   EXPECT_MATRIX_EQ(res, m2);
   EXPECT_MATRIX_EQ(m, m2);
 }
+*/
+TEST(MathFunctions, operations_on_holders) {
+  Eigen::MatrixXd m1(2, 2);
+  m1 << 1, 2, 3, 4;
+  Eigen::MatrixXd m2 = m1;
+  namespace sm = stan::math;
+  Eigen::MatrixXd X = sm::subtract(sm::subtract(sm::sin(m1), sm::cos(m2)), m2);
+// -- Alias matching your error’s T_ret_col_major
+using T_ret_col_major = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>;
+  // prepare a small matrix
+  T_ret_col_major alpha(2,2);
+  alpha << 1.0, 2.0,
+           3.0, 4.0;
+
+  // term2: a plain Eigen matrix
+  T_ret_col_major m(2,2);
+  m << std::lgamma(1.0), std::lgamma(2.0),
+       std::lgamma(3.0), std::lgamma(4.0);
+
+  // ← this line reproduces the compile-error:
+  //    invalid operands to binary expression ('Holder<…>' and 'T_ret_col_major')
+  auto result = m1 - m;
+}
+
+
