@@ -190,51 +190,53 @@ class Holder
     m_arg = std::move(other.m_arg);
     return *this;
   }
-
 };
 
-  template <typename T, require_holder_t<T>* = nullptr>
-  inline auto operator-(T&& h) {
-    return make_holder([](auto&& arg) { return -arg; }, std::forward<T>(h).m_arg);
-  }
-  template <typename T, require_holder_t<T>* = nullptr>
-  inline auto operator+(T&& h) {
-    return make_holder([](auto&& arg) { return arg; }, std::forward<T>(h).m_arg);
-  }
+template <typename T, require_holder_t<T>* = nullptr>
+inline auto operator-(T&& h) {
+  return make_holder([](auto&& arg) { return -arg; }, std::forward<T>(h).m_arg);
+}
+template <typename T, require_holder_t<T>* = nullptr>
+inline auto operator+(T&& h) {
+  return make_holder([](auto&& arg) { return arg; }, std::forward<T>(h).m_arg);
+}
 
-  template <typename T, typename Other, require_holder_t<T>* = nullptr, require_holder_t<Other>* = nullptr>
-  inline auto operator-(T&& h, Other&& other) {
-    return make_holder(
-        [](auto&& arg, auto&& other_) {
-          return arg - std::forward<decltype(other_)>(other_);
-        },
-        std::forward<T>(h).m_arg, std::forward<Other>(other));
-  }
-  template <typename T, typename Other, require_holder_t<T>* = nullptr, require_holder_t<Other>* = nullptr>
-  inline auto operator+(T&& h, Other&& other) {
-    return make_holder(
-        [](auto&& arg, auto&& other_) {
-          return arg + std::forward<decltype(other_)>(other_);
-        },
-        std::forward<T>(h).m_arg, std::forward<Other>(other));
-  }
-  template <typename T, typename Other, require_holder_t<T>* = nullptr, require_holder_t<Other>* = nullptr>
-  inline auto operator*(T&& h, Other&& other) {
-    return make_holder(
-        [](auto&& arg, auto&& other_) {
-          return arg * std::forward<decltype(other_)>(other_);
-        },
-        std::forward<T>(h).m_arg, std::forward<Other>(other));
-  }
-  template <typename T, typename Other, require_holder_t<T>* = nullptr, require_holder_t<Other>* = nullptr>
-  inline auto operator/(T&& h, Other&& other) {
-    return make_holder(
-        [](auto&& arg, auto&& other_) {
-          return arg / std::forward<decltype(other_)>(other_);
-        },
-        std::forward<T>(h).m_arg, std::forward<Other>(other));
-  }
-
+template <typename T, typename Other, require_holder_t<T>* = nullptr,
+          require_holder_t<Other>* = nullptr>
+inline auto operator-(T&& h, Other&& other) {
+  return make_holder(
+      [](auto&& arg, auto&& other_) {
+        return arg - std::forward<decltype(other_)>(other_);
+      },
+      std::forward<T>(h).m_arg, std::forward<Other>(other));
+}
+template <typename T, typename Other, require_holder_t<T>* = nullptr,
+          require_holder_t<Other>* = nullptr>
+inline auto operator+(T&& h, Other&& other) {
+  return make_holder(
+      [](auto&& arg, auto&& other_) {
+        return arg + std::forward<decltype(other_)>(other_);
+      },
+      std::forward<T>(h).m_arg, std::forward<Other>(other));
+}
+template <typename T, typename Other, require_holder_t<T>* = nullptr,
+          require_holder_t<Other>* = nullptr>
+inline auto operator*(T&& h, Other&& other) {
+  return make_holder(
+      [](auto&& arg, auto&& other_) {
+        return arg * std::forward<decltype(other_)>(other_);
+      },
+      std::forward<T>(h).m_arg, std::forward<Other>(other));
+}
+template <typename T, typename Other, require_holder_t<T>* = nullptr,
+          require_holder_t<Other>* = nullptr>
+inline auto operator/(T&& h, Other&& other) {
+  return make_holder(
+      [](auto&& arg, auto&& other_) {
+        return arg / std::forward<decltype(other_)>(other_);
+      },
+      std::forward<T>(h).m_arg, std::forward<Other>(other));
+}
 
 }  // namespace math
 }  // namespace stan
