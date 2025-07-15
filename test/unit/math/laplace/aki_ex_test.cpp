@@ -22,6 +22,7 @@ struct poisson_re_log_ll_functor__ {
                               stan::base_type_t<T2__>>;
     const auto& theta = stan::math::to_ref(theta_arg__);
     const auto& mu = stan::math::to_ref(mu_arg__);
+//    std::cout << "mu_arg__: " << mu_arg__ << std::endl;
     return stan::math::poisson_log_lpmf<false>(y_arg__, stan::math::add(stan::math::as_column_vector_or_scalar(mu), theta));
   }
 };
@@ -53,6 +54,19 @@ struct cov_fun_functor__ {
              stan::math::rep_vector(stan::math::pow(sigma, 2), N));
   }
 };
+
+TEST(BLAH, sometest) {
+  const int y{183};
+  const double mu{0.5};
+  const stan::math::var theta{0};
+  auto ret = stan::math::poisson_log_lpmf<true>(y, stan::math::add(mu, theta));
+  stan::math::grad(ret.vi_);
+  std::cout << "Result val: " << ret.val() << std::endl;
+  std::cout << "Result adj: " << ret.adj() << std::endl;
+  std::cout << "theta adj: " << theta.adj() << std::endl;
+  stan::math::recover_memory();
+}
+
 
 TEST(WriteArrayBodySimple, ExecutesBodyWithHardcodedData) {
   const int  N = 1;
@@ -90,3 +104,4 @@ TEST(WriteArrayBodySimple, ExecutesBodyWithHardcodedData) {
   EXPECT_TRUE(std::isfinite(ll_laplace)) << "Laplace result should be finite";
   EXPECT_TRUE(std::isfinite(ll_integrate_1d)) << "Integrated result should be finite";
 }
+
