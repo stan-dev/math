@@ -61,8 +61,8 @@ class AgradDistributionsChiSquare : public AgradDistributionTest {
                                                     const T3&, const T4&,
                                                     const T5&) {
     using stan::math::HALF_LOG_TWO;
-    using stan::math::multiply_log;
     using stan::math::lgamma;
+    using stan::math::multiply_log;
     return -nu * HALF_LOG_TWO - lgamma(0.5 * nu)
            + multiply_log(0.5 * nu - 1.0, y) - 0.5 * y;
   }
