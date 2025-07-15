@@ -39,7 +39,7 @@ struct laplace_options_base {
    */
   int solver{1};
   /* Maximum number of steps in line search */
-  int max_steps_line_search{0};
+  int max_steps_line_search{50};
   /* iterations end when difference in objective function is less than tolerance
    */
   double tolerance{1e-6};
@@ -532,9 +532,15 @@ inline auto laplace_marginal_density_est(
   Eigen::MatrixXd B(theta_size, theta_size);
   Eigen::VectorXd a(theta_size);
   Eigen::VectorXd b(theta_size);
+  Eigen::VectorXd a_tmp(theta_size);
+  Eigen::VectorXd theta_tmp(theta_size);
+  double init_step_size = 0.6;
+  double step_size = init_step_size;
   if (options.solver == 1) {
     if (options.hessian_block_size == 1) {
       for (Eigen::Index i = 0; i <= options.max_num_steps; i++) {
+        std::cout << "__________\nITER: " << i
+                  << " / " << options.max_num_steps << "\n";
         auto [theta_grad, W] = laplace_likelihood::diff(
             ll_fun, theta, options.hessian_block_size, ll_args, msgs);
         Eigen::VectorXd W_r(W.rows());
@@ -560,22 +566,45 @@ inline auto laplace_marginal_density_est(
               - W_r.asDiagonal()
                     * LT.solve(L.solve(W_r.cwiseProduct(covariance * b)));
         // Simple Newton step
-        theta.noalias() = covariance * a;
+        std::cout << "curr theta: \n"
+                  << theta.transpose().eval() << "\n";
+          std::cout << "W:  \n" << W << "\n";
+          std::cout << "W_r:  \n" << W_r.transpose().eval() << "\n";
+          std::cout << "theta_grad:  \n" << theta_grad.transpose().eval() << "\n";
+          std::cout << "a: \n" << a.transpose().eval() << "\n";
+          std::cout << "b: \n" << b.transpose().eval() << "\n";
         objective_old = objective_new;
-        if (unlikely(
-                (Eigen::isinf(theta.array()) || Eigen::isnan(theta.array()))
-                    .any())) {
-          throw_nan("laplace_marginal_density", "theta", theta);
+        for (; step_size > 1e-7; step_size *= 0.5) {
+          std::cout << "-------\n\tstep: " << step_size << "\n";
+          Eigen::VectorXd a_tmp = a_prev + step_size * (a - a_prev);
+          Eigen::VectorXd theta_tmp = covariance * a_tmp;
+          if (unlikely(
+                  (Eigen::isinf(theta_tmp.array()) || Eigen::isnan(theta_tmp.array()))
+                      .any())) {
+              continue;
+          }
+          objective_new = -0.5 * a_tmp.dot(theta_tmp)
+                          + laplace_likelihood::log_likelihood(
+                              ll_fun, theta_tmp, ll_args_vals, msgs);
+          std::cout << "step objective_old: " << objective_old << "\n";
+          std::cout << "step objective_new: " << objective_new << "\n";
+          std::cout << "theta_tmp: \n"
+                    << theta_tmp.transpose().eval() << "\n";
+          if (objective_new > objective_old) {
+            a = a_tmp;
+            theta.swap(theta_tmp);
+            break;
+          }
         }
-        objective_new = -0.5 * a.dot(theta)
-                        + laplace_likelihood::log_likelihood(
-                            ll_fun, theta, ll_args_vals, msgs);
+        step_size = init_step_size;
         if (options.max_steps_line_search) {
           line_search(objective_new, a, theta, a_prev, ll_fun, ll_args_vals,
                       covariance, options.max_steps_line_search, objective_old,
                       options.tolerance, msgs);
         }
         // Check for convergence
+          std::cout << "objective_old: " << objective_old << "\n";
+          std::cout << "objective_new: " << objective_new << "\n";
         if (abs(objective_new - objective_old) < options.tolerance) {
           const double B_log_determinant
               = 2.0 * llt_B.matrixLLT().diagonal().array().log().sum();
