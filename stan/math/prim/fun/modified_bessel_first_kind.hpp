@@ -65,7 +65,7 @@ inline double modified_bessel_first_kind(int v, int z) {
 template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr>
 inline auto modified_bessel_first_kind(T1&& a, T2&& b) {
   return apply_scalar_binary(
-      [](auto&& c, auto&& d) { return modified_bessel_first_kind(c, d); },
+      [](auto&& c, auto&& d) { return modified_bessel_first_kind(std::forward<decltype(c)>(c), std::forward<decltype(d)>(d)); },
       std::forward<T1>(a), std::forward<T2>(b));
 }
 

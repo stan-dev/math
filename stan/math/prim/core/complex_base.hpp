@@ -17,7 +17,6 @@ namespace math {
 template <typename ValueType>
 class complex_base {
  public:
-  auto __rep() const { return *this; }
   /**
    * Type of real and imaginary parts
    */

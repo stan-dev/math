@@ -54,7 +54,7 @@ inline return_type_t<T1, T2> log_inv_logit_diff(const T1& x, const T2& y) {
 template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr>
 inline auto log_inv_logit_diff(T1&& a, T2&& b) {
   return apply_scalar_binary(
-      [](auto&& c, auto&& d) { return log_inv_logit_diff(c, d); },
+      [](auto&& c, auto&& d) { return log_inv_logit_diff(std::forward<decltype(c)>(c), std::forward<decltype(d)>(d)); },
       std::forward<T1>(a), std::forward<T2>(b));
 }
 

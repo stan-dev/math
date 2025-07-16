@@ -41,7 +41,7 @@ template <
     require_all_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr,
     require_container_t<T>* = nullptr>
 inline auto inv(T&& x) {
-  return apply_scalar_unary<inv_fun, T>::apply(x);
+  return apply_scalar_unary<inv_fun, T>::apply(std::forward<T>(x));
 }
 
 /**
@@ -58,7 +58,7 @@ template <typename Container,
               Container>* = nullptr>
 inline auto inv(Container&& x) {
   return apply_vector_unary<Container>::apply(
-      x, [](const auto& v) { return v.array().inverse(); });
+      std::forward<Container>(x), [](const auto& v) { return v.array().inverse(); });
 }
 
 }  // namespace math

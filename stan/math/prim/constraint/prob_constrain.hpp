@@ -23,8 +23,8 @@ namespace math {
  * @return result constrained to fall in (0, 1)
  */
 template <typename T>
-inline T prob_constrain(const T& x) {
-  return inv_logit(x);
+inline auto prob_constrain(T&& x) {
+  return inv_logit(std::forward<T>(x));
 }
 
 /**
@@ -47,11 +47,11 @@ inline T prob_constrain(const T& x) {
  * @param[in, out] lp log density
  * @return result constrained to fall in (0, 1)
  */
-template <typename T>
-inline T prob_constrain(const T& x, T& lp) {
-  T log_inv_logit_x = log_inv_logit(x);
-  lp += log_inv_logit_x + log1m_inv_logit(x);
-  return exp(log_inv_logit_x);
+template <typename T, typename Lp>
+inline auto prob_constrain(T&& x, Lp& lp) {
+  std::decay_t<T> log_inv_logit_x = log_inv_logit(x);
+  lp += log_inv_logit_x + log1m_inv_logit(std::forward<T>(x));
+  return exp(std::move(log_inv_logit_x));
 }
 
 /**
@@ -68,12 +68,12 @@ inline T prob_constrain(const T& x, T& lp) {
  * @param[in, out] lp log density accumulator
  * @return result constrained to fall in (0, 1)
  */
-template <bool Jacobian, typename T>
-inline auto prob_constrain(const T& x, T& lp) {
+template <bool Jacobian, typename T, typename Lp>
+inline auto prob_constrain(T&& x, Lp& lp) {
   if (Jacobian) {
-    return prob_constrain(x, lp);
+    return prob_constrain(std::forward<T>(x), lp);
   } else {
-    return prob_constrain(x);
+    return prob_constrain(std::forward<T>(x));
   }
 }
 }  // namespace math

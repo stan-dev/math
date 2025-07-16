@@ -46,7 +46,7 @@ template <typename Container,
               Container>* = nullptr,
           require_container_t<Container>* = nullptr>
 inline auto round(Container&& x) {
-  return apply_scalar_unary<round_fun, Container>::apply(x);
+  return apply_scalar_unary<round_fun, Container>::apply(std::forward<Container>(x));
 }
 
 /**
@@ -61,7 +61,7 @@ template <typename Container,
           require_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto round(Container&& x) {
   return apply_vector_unary<Container>::apply(
-      x, [](const auto& v) { return v.array().round(); });
+      std::forward<Container>(x), [](const auto& v) { return v.array().round(); });
 }
 
 }  // namespace math

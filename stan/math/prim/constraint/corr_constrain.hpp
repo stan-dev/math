@@ -24,8 +24,8 @@ namespace math {
  * @return tanh transform
  */
 template <typename T>
-inline plain_type_t<T> corr_constrain(const T& x) {
-  return tanh(x);
+inline plain_type_t<T> corr_constrain(T&& x) {
+  return tanh(std::forward<T>(x));
 }
 
 /**
@@ -43,8 +43,8 @@ inline plain_type_t<T> corr_constrain(const T& x) {
  * @param[in,out] lp log density accumulator
  */
 template <typename T_x, typename T_lp>
-inline auto corr_constrain(const T_x& x, T_lp& lp) {
-  plain_type_t<T_x> tanh_x = tanh(x);
+inline auto corr_constrain(T_x&& x, T_lp& lp) {
+  plain_type_t<T_x> tanh_x = tanh(std::forward<T_x>(x));
   lp += sum(log1m(square(tanh_x)));
   return tanh_x;
 }
@@ -65,11 +65,11 @@ inline auto corr_constrain(const T_x& x, T_lp& lp) {
  * @param[in,out] lp log density accumulator
  */
 template <bool Jacobian, typename T_x, typename T_lp>
-inline auto corr_constrain(const T_x& x, T_lp& lp) {
+inline auto corr_constrain(T_x&& x, T_lp& lp) {
   if constexpr (Jacobian) {
-    return corr_constrain(x, lp);
+    return corr_constrain(std::forward<T_x>(x), lp);
   } else {
-    return corr_constrain(x);
+    return corr_constrain(std::forward<T_x>(x));
   }
 }
 

@@ -1,7 +1,7 @@
 #include <stan/math/prim.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
-/*
+
 namespace holder_test {
 template <typename T>
 auto f(T&& a) {
@@ -134,7 +134,7 @@ TEST(MathFunctions, block_of_make_holder_assign) {
   EXPECT_MATRIX_EQ(res, m2);
   EXPECT_MATRIX_EQ(m, m2);
 }
-*/
+
 TEST(MathFunctions, operations_on_holders) {
   Eigen::MatrixXd m1(2, 2);
   m1 << 1, 2, 3, 4;

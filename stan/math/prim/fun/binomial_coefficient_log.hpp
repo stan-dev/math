@@ -163,7 +163,7 @@ inline return_type_t<T_n, T_k> binomial_coefficient_log(const T_n n,
 template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr>
 inline auto binomial_coefficient_log(T1&& a, T2&& b) {
   return apply_scalar_binary(
-      [](auto&& c, auto&& d) { return binomial_coefficient_log(c, d); },
+      [](auto&& c, auto&& d) { return binomial_coefficient_log(std::forward<decltype(c)>(c), std::forward<decltype(d)>(d)); },
       std::forward<T1>(a), std::forward<T2>(b));
 }
 

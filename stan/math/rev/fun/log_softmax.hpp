@@ -120,9 +120,9 @@ inline auto log_softmax(const T& x) {
  * @throw std::domain_error if the input size is 0
  */
 template <typename T, require_std_vector_st<is_var, T>* = nullptr>
-inline auto log_softmax(const T& x) {
+inline auto log_softmax(T&& x) {
   return apply_vector_unary<T>::apply(
-      x, [](const auto& alpha) { return log_softmax(alpha); });
+      std::forward<T>(x), [](auto&& alpha) { return log_softmax(std::forward<decltype(alpha)>(alpha)); });
 }
 
 }  // namespace math

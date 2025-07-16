@@ -81,7 +81,7 @@ template <typename T,
           require_container_t<T>* = nullptr,
           require_not_var_matrix_t<T>* = nullptr>
 inline auto log1p(T&& x) {
-  return apply_scalar_unary<log1p_fun, T>::apply(x);
+  return apply_scalar_unary<log1p_fun, T>::apply(std::forward<T>(x));
 }
 
 }  // namespace math

@@ -255,11 +255,11 @@ inline auto lb_constrain(const std::vector<T>& x, const std::vector<L>& lb,
  */
 template <bool Jacobian, typename T, typename L, typename Lp,
           require_convertible_t<return_type_t<T, L>, Lp>* = nullptr>
-inline auto lb_constrain(const T& x, const L& lb, Lp& lp) {
+inline auto lb_constrain(T&& x, L&& lb, Lp& lp) {
   if constexpr (Jacobian) {
-    return lb_constrain(x, lb, lp);
+    return lb_constrain(std::forward<T>(x), std::forward<L>(lb), lp);
   } else {
-    return lb_constrain(x, lb);
+    return lb_constrain(std::forward<T>(x), std::forward<L>(lb));
   }
 }
 

@@ -49,9 +49,9 @@ inline auto positive_ordered_free(const EigVec& y) {
  * @param x The standard vector to untransform.
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
-inline auto positive_ordered_free(const T& x) {
+inline auto positive_ordered_free(T&& x) {
   return apply_vector_unary<T>::apply(
-      x, [](auto&& v) { return positive_ordered_free(v); });
+      std::forward<T>(x), [](auto&& v) { return positive_ordered_free(std::forward<decltype(v)>(v)); });
 }
 
 }  // namespace math

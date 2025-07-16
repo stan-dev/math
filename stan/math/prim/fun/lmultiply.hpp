@@ -44,7 +44,7 @@ inline return_type_t<T1, T2> lmultiply(const T1 a, const T2 b) {
 template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr,
           require_all_not_var_matrix_t<T1, T2>* = nullptr>
 inline auto lmultiply(T1&& a, T2&& b) {
-  return apply_scalar_binary([](auto&& c, auto&& d) { return lmultiply(c, d); },
+  return apply_scalar_binary([](auto&& c, auto&& d) { return lmultiply(std::forward<decltype(c)>(c), std::forward<decltype(d)>(d)); },
                              std::forward<T1>(a), std::forward<T2>(b));
 }
 

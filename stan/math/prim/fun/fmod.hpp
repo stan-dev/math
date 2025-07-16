@@ -35,7 +35,7 @@ inline double fmod(const T1& a, const T2& b) {
  */
 template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr>
 inline auto fmod(T1&& a, T2&& b) {
-  return apply_scalar_binary([](auto&& c, auto&& d) { return fmod(c, d); },
+  return apply_scalar_binary([](auto&& c, auto&& d) { return fmod(std::forward<decltype(c)>(c), std::forward<decltype(d)>(d)); },
                              std::forward<T1>(a), std::forward<T2>(b));
 }
 
