@@ -12,11 +12,13 @@ namespace math {
  * Returns L1 norm of a vector. For vectors that equals the
  * sum of magnitudes of its individual elements.
  *
- * @tparam Container type of the vector (must be derived from \c Eigen::MatrixBase)
+ * @tparam Container type of the vector (must be derived from \c
+ * Eigen::MatrixBase)
  * @param x Vector.
  * @return L1 norm of v.
  */
-template <typename Container, require_eigen_vt<std::is_arithmetic, T>* = nullptr>
+template <typename Container,
+          require_eigen_vt<std::is_arithmetic, T>* = nullptr>
 inline double norm1(Container&& x) {
   ref_type_t<Container> x_ref = x;
   return x_ref.template lpNorm<1>();
@@ -33,7 +35,8 @@ inline double norm1(Container&& x) {
 template <typename Container, require_std_vector_t<Container>* = nullptr>
 inline auto norm1(Container&& x) {
   return apply_vector_unary<Container>::reduce(
-      std::forward<Container>(x), [](auto&& x_) { return norm1(std::forward<decltype(x_)>(x_)); });
+      std::forward<Container>(x),
+      [](auto&& x_) { return norm1(std::forward<decltype(x_)>(x_)); });
 }
 
 }  // namespace math

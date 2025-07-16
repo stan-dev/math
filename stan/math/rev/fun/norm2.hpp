@@ -14,12 +14,13 @@ namespace math {
 /**
  * Returns the L2 norm of a vector of var.
  *
- * @tparam Container type of the vector (must have one compile-time dimension equal to
- * 1)
+ * @tparam Container type of the vector (must have one compile-time dimension
+ * equal to 1)
  * @param[in] x Vector.
  * @return L2 norm of x.
  */
-template <typename Container, require_eigen_vector_vt<is_var, Container>* = nullptr>
+template <typename Container,
+          require_eigen_vector_vt<is_var, Container>* = nullptr>
 inline var norm2(const Container& x) {
   arena_t<Container> arena_x = x;
   var res = norm2(arena_x.val());
