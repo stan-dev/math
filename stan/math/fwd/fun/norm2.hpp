@@ -14,7 +14,7 @@ namespace math {
 /**
  * Compute the L2 norm of the specified vector of values.
  *
- * @tparam T Type of input vector.
+ * @tparam Container Type of input vector.
  * @param[in] x Vector of specified values.
  * @return L2 norm of x.
  */
