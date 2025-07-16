@@ -34,6 +34,11 @@ inline var inv_square(const var& a) {
   });
 }
 
+template <typename T, require_var_matrix_t<T>* = nullptr>
+inline auto inv_square(T&& a) {
+  return inv(square(std::forward<T>(a)));
+}
+
 }  // namespace math
 }  // namespace stan
 #endif
