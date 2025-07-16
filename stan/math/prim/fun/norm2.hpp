@@ -35,7 +35,7 @@ inline double norm2(Container&& x) {
 template <typename Container, require_std_vector_t<Container>* = nullptr>
 inline auto norm2(Container&& x) {
   return apply_vector_unary<Container>::reduce(
-      std::forward<Container>(),
+      std::forward<Container>(x),
       [](auto&& x_) { return norm2(std::forward<decltype(x_)>(x_)); });
 }
 

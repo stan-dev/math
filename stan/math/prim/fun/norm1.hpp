@@ -18,7 +18,7 @@ namespace math {
  * @return L1 norm of v.
  */
 template <typename Container,
-          require_eigen_vt<std::is_arithmetic, T>* = nullptr>
+          require_eigen_vt<std::is_arithmetic, Container>* = nullptr>
 inline double norm1(Container&& x) {
   ref_type_t<Container> x_ref = x;
   return x_ref.template lpNorm<1>();
