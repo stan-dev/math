@@ -33,7 +33,7 @@ inline var norm2(const Container& x) {
 /**
  * Returns the L2 norm of a `var_value<Vector>`.
  *
- * @tparam A `var_value<>` whose inner type has one compile-time row or column.
+ * @tparam Container `var_value<>` whose inner type has one compile-time row or column.
  * @param[in] x Vector.
  * @return L2 norm of x.
  */
