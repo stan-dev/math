@@ -57,8 +57,9 @@ Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> cholesky_factor_free(
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
 inline auto cholesky_factor_free(T&& x) {
-  return apply_vector_unary<T>::apply(
-      std::forward<T>(x), [](auto&& v) { return cholesky_factor_free(std::forward<decltype(v)>(v)); });
+  return apply_vector_unary<T>::apply(std::forward<T>(x), [](auto&& v) {
+    return cholesky_factor_free(std::forward<decltype(v)>(v));
+  });
 }
 
 }  // namespace math

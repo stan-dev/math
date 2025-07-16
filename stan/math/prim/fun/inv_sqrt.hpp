@@ -64,10 +64,12 @@ inline auto inv_sqrt(Container&& x) {
 // Eigen 3.4.0 has precision issues on ARM64 with vectorised rsqrt
 // Resolved in current master branch, below can be removed on next release
 #ifdef __aarch64__
-  return apply_scalar_unary<inv_sqrt_fun, Container>::apply(std::forward<Container>(x));
+  return apply_scalar_unary<inv_sqrt_fun, Container>::apply(
+      std::forward<Container>(x));
 #else
   return apply_vector_unary<Container>::apply(
-      std::forward<Container>(x), [](const auto& v) { return v.array().rsqrt(); });
+      std::forward<Container>(x),
+      [](const auto& v) { return v.array().rsqrt(); });
 #endif
 }
 

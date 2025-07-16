@@ -75,7 +75,10 @@ template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr,
           require_any_fvar_t<base_type_t<T1>, base_type_t<T2>>* = nullptr>
 inline auto pow(T1&& a, T2&& b) {
   return apply_scalar_binary(
-      [](auto&& c, auto&& d) { return stan::math::pow(std::forward<decltype(c)>(c), std::forward<decltype(d)>(d)); },
+      [](auto&& c, auto&& d) {
+        return stan::math::pow(std::forward<decltype(c)>(c),
+                               std::forward<decltype(d)>(d));
+      },
       std::forward<T1>(a), std::forward<T2>(b));
 }
 

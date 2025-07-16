@@ -100,8 +100,9 @@ inline var log_sum_exp(const T& x) {
  */
 template <typename T, require_std_vector_st<is_var, T>* = nullptr>
 inline auto log_sum_exp(T&& x) {
-  return apply_vector_unary<T>::reduce(
-      std::forward<T>(x), [](auto&& v) { return log_sum_exp(std::forward<decltype(v)>(v)); });
+  return apply_vector_unary<T>::reduce(std::forward<T>(x), [](auto&& v) {
+    return log_sum_exp(std::forward<decltype(v)>(v));
+  });
 }
 
 }  // namespace math

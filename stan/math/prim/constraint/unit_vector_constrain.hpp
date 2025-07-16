@@ -67,8 +67,9 @@ inline plain_type_t<T1> unit_vector_constrain(const T1& y, T2& lp) {
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
 inline auto unit_vector_constrain(T&& y) {
-  return apply_vector_unary<T>::apply(
-      std::forward<T>(y), [](auto&& v) { return unit_vector_constrain(std::forward<decltype(v)>(v)); });
+  return apply_vector_unary<T>::apply(std::forward<T>(y), [](auto&& v) {
+    return unit_vector_constrain(std::forward<decltype(v)>(v));
+  });
 }
 
 /**
@@ -87,8 +88,9 @@ inline auto unit_vector_constrain(T&& y) {
 template <typename T, typename Lp, require_std_vector_t<T>* = nullptr,
           require_convertible_t<return_type_t<T>, Lp>* = nullptr>
 inline auto unit_vector_constrain(T&& y, Lp& lp) {
-  return apply_vector_unary<T>::apply(
-      std::forward<T>(y), [&lp](auto&& v) { return unit_vector_constrain(std::forward<decltype(v)>(v), lp); });
+  return apply_vector_unary<T>::apply(std::forward<T>(y), [&lp](auto&& v) {
+    return unit_vector_constrain(std::forward<decltype(v)>(v), lp);
+  });
 }
 
 /**

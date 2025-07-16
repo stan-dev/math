@@ -400,9 +400,11 @@ template <bool Jacobian, typename T, typename L, typename U, typename Lp,
           require_convertible_t<return_type_t<T, L, U>, Lp>* = nullptr>
 inline auto lub_constrain(T&& x, L&& lb, U&& ub, Lp& lp) {
   if constexpr (Jacobian) {
-    return lub_constrain(std::forward<T>(x), std::forward<L>(lb), std::forward<U>(ub), lp);
+    return lub_constrain(std::forward<T>(x), std::forward<L>(lb),
+                         std::forward<U>(ub), lp);
   } else {
-    return lub_constrain(std::forward<T>(x), std::forward<L>(lb), std::forward<U>(ub));
+    return lub_constrain(std::forward<T>(x), std::forward<L>(lb),
+                         std::forward<U>(ub));
   }
 }
 
@@ -411,7 +413,8 @@ inline auto lub_constrain(T&& x, L&& lb, U&& ub, Lp& lp) {
  */
 template <typename T, typename L, typename U>
 inline auto lub_constrain(T&& x, const std::tuple<L, U>& bounds) {
-  return lub_constrain(std::forward<T>(x), std::get<0>(bounds), std::get<1>(bounds));
+  return lub_constrain(std::forward<T>(x), std::get<0>(bounds),
+                       std::get<1>(bounds));
 }
 
 /**
@@ -420,7 +423,8 @@ inline auto lub_constrain(T&& x, const std::tuple<L, U>& bounds) {
 template <typename T, typename L, typename U, typename Lp,
           require_convertible_t<return_type_t<T, L, U>, Lp>* = nullptr>
 inline auto lub_constrain(T&& x, const std::tuple<L, U>& bounds, Lp& lp) {
-  return lub_constrain(std::forward<T>(x), std::get<0>(bounds), std::get<1>(bounds), lp);
+  return lub_constrain(std::forward<T>(x), std::get<0>(bounds),
+                       std::get<1>(bounds), lp);
 }
 
 /**
@@ -429,8 +433,8 @@ inline auto lub_constrain(T&& x, const std::tuple<L, U>& bounds, Lp& lp) {
 template <bool Jacobian, typename T, typename L, typename U, typename Lp,
           require_convertible_t<return_type_t<T, L, U>, Lp>* = nullptr>
 inline auto lub_constrain(T&& x, const std::tuple<L, U>& bounds, Lp& lp) {
-  return lub_constrain<Jacobian>(std::forward<T>(x), std::get<0>(bounds), std::get<1>(bounds),
-                                 lp);
+  return lub_constrain<Jacobian>(std::forward<T>(x), std::get<0>(bounds),
+                                 std::get<1>(bounds), lp);
 }
 
 }  // namespace math

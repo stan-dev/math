@@ -16,9 +16,7 @@ namespace math {
  */
 template <typename T, require_not_std_vector_t<T>* = nullptr>
 inline auto minus(T&& x) {
-  return make_holder([](auto&& x_) {
-    return -x_;
-  }, std::forward<T>(x));
+  return make_holder([](auto&& x_) { return -x_; }, std::forward<T>(x));
 }
 
 /**
@@ -30,8 +28,8 @@ inline auto minus(T&& x) {
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
 inline auto minus(T&& x) {
-  return apply_vector_unary<T>::apply(
-      std::forward<T>(x), [](const auto& v) { return -v; });
+  return apply_vector_unary<T>::apply(std::forward<T>(x),
+                                      [](const auto& v) { return -v; });
 }
 
 }  // namespace math

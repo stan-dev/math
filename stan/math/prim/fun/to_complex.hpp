@@ -39,7 +39,10 @@ template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr,
           require_all_st_stan_scalar<T1, T2>* = nullptr>
 inline auto to_complex(T1&& re, T2&& im) {
   return apply_scalar_binary(
-      [](auto&& c, auto&& d) { return stan::math::to_complex(std::forward<decltype(c)>(c), std::forward<decltype(d)>(d)); },
+      [](auto&& c, auto&& d) {
+        return stan::math::to_complex(std::forward<decltype(c)>(c),
+                                      std::forward<decltype(d)>(d));
+      },
       std::forward<T1>(re), std::forward<T2>(im));
 }
 

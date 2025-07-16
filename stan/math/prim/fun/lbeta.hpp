@@ -128,8 +128,12 @@ return_type_t<T1, T2> lbeta(const T1 a, const T2 b) {
  */
 template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr>
 inline auto lbeta(T1&& a, T2&& b) {
-  return apply_scalar_binary([](auto&& c, auto&& d) { return lbeta(std::forward<decltype(c)>(c), std::forward<decltype(d)>(d)); },
-                             std::forward<T1>(a), std::forward<T2>(b));
+  return apply_scalar_binary(
+      [](auto&& c, auto&& d) {
+        return lbeta(std::forward<decltype(c)>(c),
+                     std::forward<decltype(d)>(d));
+      },
+      std::forward<T1>(a), std::forward<T2>(b));
 }
 
 }  // namespace math

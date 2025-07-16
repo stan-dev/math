@@ -10,7 +10,6 @@
 #include <limits>
 #include <vector>
 
-
 template <typename T1, typename T2, typename T3, typename T4>
 inline typename boost::math::tools::promote_args<T1, T2, T3, T4>::type
 skew_de_ccdf_test(const T1& y, const T2& mu, const T3& sigma, const T4& tau) {

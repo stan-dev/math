@@ -262,7 +262,8 @@ struct evaluator<stan::math::Holder<ArgType, Ptrs...>>
   evaluator<ArgTypeNestedCleaned> m_argImpl;
 
   explicit evaluator(const XprType& xpr) : m_argImpl(xpr.m_arg) {}
-  explicit evaluator(XprType&& xpr) : m_argImpl(std::forward<XprType>(xpr).m_arg) {}
+  explicit evaluator(XprType&& xpr)
+      : m_argImpl(std::forward<XprType>(xpr).m_arg) {}
 
   // all these functions just call the same on the argument
   EIGEN_STRONG_INLINE CoeffReturnType coeff(Index row, Index col) const {

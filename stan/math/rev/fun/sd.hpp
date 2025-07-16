@@ -95,7 +95,9 @@ var sd(const T& x) {
  */
 template <typename T, require_std_vector_st<is_var, T>* = nullptr>
 auto sd(T&& m) {
-  return apply_vector_unary<T>::reduce(std::forward<T>(m), [](auto&& x) { return sd(std::forward<decltype(x)>(x)); });
+  return apply_vector_unary<T>::reduce(std::forward<T>(m), [](auto&& x) {
+    return sd(std::forward<decltype(x)>(x));
+  });
 }
 
 }  // namespace math

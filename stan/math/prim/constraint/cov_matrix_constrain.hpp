@@ -103,8 +103,9 @@ cov_matrix_constrain(const T& x, Eigen::Index K, Lp& lp) {
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
 inline auto cov_matrix_constrain(T&& x, Eigen::Index K) {
-  return apply_vector_unary<T>::apply(
-      std::forward<T>(x), [K](auto&& v) { return cov_matrix_constrain(std::forward<decltype(v)>(v), K); });
+  return apply_vector_unary<T>::apply(std::forward<T>(x), [K](auto&& v) {
+    return cov_matrix_constrain(std::forward<decltype(v)>(v), K);
+  });
 }
 
 /**
@@ -125,8 +126,9 @@ inline auto cov_matrix_constrain(T&& x, Eigen::Index K) {
 template <typename T, typename Lp, require_std_vector_t<T>* = nullptr,
           require_convertible_t<return_type_t<T>, Lp>* = nullptr>
 inline auto cov_matrix_constrain(T&& x, Eigen::Index K, Lp& lp) {
-  return apply_vector_unary<T>::apply(
-      std::forward<T>(x), [&lp, K](auto&& v) { return cov_matrix_constrain(std::forward<decltype(v)>(v), K, lp); });
+  return apply_vector_unary<T>::apply(std::forward<T>(x), [&lp, K](auto&& v) {
+    return cov_matrix_constrain(std::forward<decltype(v)>(v), K, lp);
+  });
 }
 
 /**

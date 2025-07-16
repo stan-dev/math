@@ -121,8 +121,9 @@ inline auto log_softmax(const T& x) {
  */
 template <typename T, require_std_vector_st<is_var, T>* = nullptr>
 inline auto log_softmax(T&& x) {
-  return apply_vector_unary<T>::apply(
-      std::forward<T>(x), [](auto&& alpha) { return log_softmax(std::forward<decltype(alpha)>(alpha)); });
+  return apply_vector_unary<T>::apply(std::forward<T>(x), [](auto&& alpha) {
+    return log_softmax(std::forward<decltype(alpha)>(alpha));
+  });
 }
 
 }  // namespace math

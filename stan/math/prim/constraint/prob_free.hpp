@@ -26,8 +26,8 @@ namespace math {
 template <typename T>
 inline auto prob_free(T&& y) {
   auto&& y_ref = to_ref(std::forward<T>(y));
-  check_bounded<plain_type_t<T>, double, double>("prob_free", "Probability variable", y_ref, 0,
-                                   1);
+  check_bounded<plain_type_t<T>, double, double>(
+      "prob_free", "Probability variable", y_ref, 0, 1);
   return logit(std::forward<decltype(y_ref)>(y_ref));
 }
 
