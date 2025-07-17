@@ -574,34 +574,73 @@ inline auto laplace_marginal_density_est(
           std::cout << "a: \n" << a.transpose().eval() << "\n";
           std::cout << "b: \n" << b.transpose().eval() << "\n";
         objective_old = objective_new;
-        for (; step_size > 1e-8; step_size *= 0.5) {
-          std::cout << "-------\n\tstep: " << step_size << "\n";
-          Eigen::VectorXd a_tmp = a_prev + step_size * (a - a_prev);
-          Eigen::VectorXd theta_tmp = covariance * a_tmp;
-          if (unlikely(
-                  (Eigen::isinf(theta_tmp.array()) || Eigen::isnan(theta_tmp.array()))
-                      .any())) {
-              continue;
-          }
-          objective_new = -0.5 * a_tmp.dot(theta_tmp)
-                          + laplace_likelihood::log_likelihood(
-                              ll_fun, theta_tmp, ll_args_vals, msgs);
-          std::cout << "step objective_old: " << objective_old << "\n";
-          std::cout << "step objective_new: " << objective_new << "\n";
-          std::cout << "theta_tmp: \n"
-                    << theta_tmp.transpose().eval() << "\n";
-          if (objective_new >= objective_old) {
-            a = a_tmp;
-            theta.swap(theta_tmp);
-            break;
-          }
-        }
-        step_size = init_step_size;
-        if (options.max_steps_line_search) {
-          line_search(objective_new, a, theta, a_prev, ll_fun, ll_args_vals,
-                      covariance, options.max_steps_line_search, objective_old,
-                      options.tolerance, msgs);
-        }
+/* ---------------------------------------------------------------------------
+ * Strong-Wolfe line search (maximisation variant)
+ *   phi_(a) = −½ aᵀ C a  +  log L(θ=C a)
+ *   p    = a − a_prev  (ascent direction in “a”)
+ * ------------------------------------------------------------------------- */
+constexpr double c1  = 1e-4;     // Armijo parameter (0 < c1 < c2 < 1)
+constexpr double c2  = 0.9;      // curvature parameter
+constexpr double tau = 0.5;      // back-tracking factor
+double        alpha_   = 1.0;      // initial step (can expose via options)
+
+// Ascent direction in “a”-space
+Eigen::VectorXd p = a - a_prev;
+
+// Convenience lambdas for objective and gradient ---------------------------
+auto phi = [&](const Eigen::VectorXd& a_val) -> double {
+  Eigen::VectorXd θ_val = covariance * a_val;
+  return -0.5 * a_val.dot(θ_val)
+         + laplace_likelihood::log_likelihood(
+               ll_fun, θ_val, ll_args_vals, msgs);
+};
+
+auto grad_phi = [&](const Eigen::VectorXd& a_val) -> Eigen::VectorXd {
+  Eigen::VectorXd θ_val = covariance * a_val;
+  auto [θ_grad_val, W_unused] =
+      laplace_likelihood::diff(ll_fun, θ_val,
+                               options.hessian_block_size, ll_args, msgs);
+  return -covariance * a_val + covariance * θ_grad_val;
+};
+// --------------------------------------------------------------------------
+
+double phi_0          = objective_old;            // phi_(a_prev)
+double dir_deriv0  = grad_phi(a_prev).dot(p);  // pᵀ∇phi_(a_prev)
+
+while (alpha_ > 1e-12) {
+  std::cout << "alpha_: " << alpha_ << "\n";
+  Eigen::VectorXd a_try = a_prev + alpha_ * p;
+  if (!a_try.allFinite()) {          // guard against NaNs / Infs
+    alpha_ *= tau;
+    continue;
+  }
+
+  double phi__try = phi(a_try);
+
+  /* ---------- Armijo (sufficient-increase) test ------------------------- */
+  if (phi__try >= phi_0 + c1 * alpha_ * dir_deriv0) {
+    /* ---- Curvature (strong Wolfe) test --------------------------------- */
+    double dir_deriv_try = grad_phi(a_try).dot(p);
+    if (std::abs(dir_deriv_try) <= c2 * std::abs(dir_deriv0)) {
+      /* ---- Both conditions satisfied – accept the step ----------------- */
+      a            = std::move(a_try);
+      theta        = covariance * a;
+      objective_new = phi__try;
+      break;
+    }
+  }
+  /* --------------------------------------------------------------------- */
+  alpha_ *= tau;   // back-track and try a shorter step
+}
+
+if (alpha_ <= 1e-12) {
+  throw std::domain_error(
+      "laplace_marginal_density: strong-Wolfe line search failed to find a "
+      "suitable step size");
+}
+
+/* ---------- end of line-search block ----------------------------------- */
+
         // Check for convergence
           std::cout << "objective_old: " << objective_old << "\n";
           std::cout << "objective_new: " << objective_new << "\n";
