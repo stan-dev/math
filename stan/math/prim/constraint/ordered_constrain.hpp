@@ -60,7 +60,7 @@ inline auto ordered_constrain(EigVec&& x, Lp& lp) {
   if (likely(x_ref.size() > 1)) {
     lp += sum(x_ref.tail(x.size() - 1));
   }
-  return ordered_constrain(std::forward<EigVec>(x_ref));
+  return ordered_constrain(std::forward<decltype(x_ref)>(x_ref));
 }
 
 /**
