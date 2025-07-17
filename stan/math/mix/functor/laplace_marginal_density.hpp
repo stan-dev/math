@@ -574,7 +574,7 @@ inline auto laplace_marginal_density_est(
           std::cout << "a: \n" << a.transpose().eval() << "\n";
           std::cout << "b: \n" << b.transpose().eval() << "\n";
         objective_old = objective_new;
-        for (; step_size > 1e-7; step_size *= 0.5) {
+        for (; step_size > 1e-8; step_size *= 0.5) {
           std::cout << "-------\n\tstep: " << step_size << "\n";
           Eigen::VectorXd a_tmp = a_prev + step_size * (a - a_prev);
           Eigen::VectorXd theta_tmp = covariance * a_tmp;
@@ -590,7 +590,7 @@ inline auto laplace_marginal_density_est(
           std::cout << "step objective_new: " << objective_new << "\n";
           std::cout << "theta_tmp: \n"
                     << theta_tmp.transpose().eval() << "\n";
-          if (objective_new > objective_old) {
+          if (objective_new >= objective_old) {
             a = a_tmp;
             theta.swap(theta_tmp);
             break;
