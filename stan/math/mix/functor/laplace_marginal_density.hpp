@@ -39,10 +39,10 @@ struct laplace_options_base {
    */
   int solver{1};
   /* Maximum number of steps in line search */
-  int max_steps_line_search{0};
+  int max_steps_line_search{50};
   /* iterations end when difference in objective function is less than tolerance
    */
-  double tolerance{1e-8};
+  double tolerance{1e-12};
   /* Maximum number of steps*/
   int max_num_steps{100};
 };
@@ -534,7 +534,7 @@ inline auto laplace_marginal_density_est(
   Eigen::VectorXd b(theta_size);
   Eigen::VectorXd a_tmp(theta_size);
   Eigen::VectorXd theta_tmp(theta_size);
-  double init_step_size = 1.0;
+  double init_step_size = 0.9;
   double step_size = init_step_size;
   if (options.solver == 1) {
     if (options.hessian_block_size == 1) {
