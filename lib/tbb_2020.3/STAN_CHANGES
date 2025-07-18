@@ -13,4 +13,5 @@ This file documents changes done for the stan-math project
   - build/windows.gcc.inc
     - L84 Wrapped the use of `-flifetime-dse` flag in conditional on non-WINARM64
     - L101 Wrapped the use of `-msse` in conditional on non-WINARM64
-    
+
+- Added variants to the `kind_type` enum to prevent creation of out-of-range values

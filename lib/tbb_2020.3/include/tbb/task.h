@@ -376,7 +376,10 @@ private:
 public:
     enum kind_type {
         isolated,
-        bound
+        bound,
+        kind_complete,
+        kind_detached,
+        kind_dying
     };
 
     enum traits_type {
