@@ -14,4 +14,4 @@ This file documents changes done for the stan-math project
     - L84 Wrapped the use of `-flifetime-dse` flag in conditional on non-WINARM64
     - L101 Wrapped the use of `-msse` in conditional on non-WINARM64
 
-- Add `constexpr` to lines 589-593 of `task.h` to fix a build failure in Clang 21.1
+- Added variants to the `kind_type` enum to prevent creation of out-of-range values
