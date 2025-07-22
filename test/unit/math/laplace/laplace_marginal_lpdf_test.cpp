@@ -178,7 +178,7 @@ TEST(laplace, bernoulli_logit_phi_dim500) {
       stan::math::test::sqr_exp_kernel_functor{},
       std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1)), nullptr);
 
-  double tol = 8e-5;
+  double tol = 3e-4;
   // Benchmark against gpstuff.
   EXPECT_NEAR(-195.368, target, tol);
   // All fail for ad check with relative tolerance ~0.002

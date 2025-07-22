@@ -427,16 +427,25 @@ inline STAN_COLD_PATH void throw_nan(NameStr&& name_str, ParamStr&& param_str,
   throw std::domain_error(msg);
 }
 
-/*--------------------------------------------------------------------------*/
-/* Strong‑Wolfe line‑search for MAXIMISATION                                */
-/*   ‑ Armijo (sufficient‑increase)                                         */
-/*   ‑ curvature condition                                                  */
-/*   ‑ trust‑region–like shrink if NaN/Inf appears                          */
-/*--------------------------------------------------------------------------*/
+/**
+ * Strong‑Wolfe line‑search for maximization.
+ * @tparam Obj the objective function
+ * @tparam Grad the gradient of the objective function
+ * @tparam Options the options for the line search
+ * @param a the current parameter vector
+ * @param theta the transformed parameter vector (e.g. covariance * a)
+* @param objective_new the new objective value
+* @param obj the objective function callable
+* @param grad the gradient of the objective function callable
+* @param a_prev the previous parameter vector
+* @param p the search direction (e.g. gradient)
+* @param dir_deriv0 the directional derivative at the previous step
+* @param covariance the covariance matrix used to transform `a` to `theta`
+* @param options the options for the line search
+ */
 template <class Obj, class Grad, typename Options>
-bool strong_wolfe_max(Eigen::VectorXd& a, Eigen::VectorXd& theta, 
-  double& objective_new, Obj&& obj, Grad&& grad, 
-  const Eigen::VectorXd& a_prev,
+bool wolfe_line_search(Eigen::VectorXd& theta, double& objective_new, Eigen::VectorXd& a, const Eigen::VectorXd& a_prev,
+  Obj&& obj_fun, Grad&& grad_fun,
   const Eigen::VectorXd& p, const double dir_deriv0,
   const Eigen::MatrixXd& covariance, Options& options) {
   double alpha = 1.0;                 // full Newton step
@@ -453,20 +462,20 @@ bool strong_wolfe_max(Eigen::VectorXd& a, Eigen::VectorXd& theta,
       continue;
     }
 
-    double f_try = obj(a_try);         // log‑posterior at trial step
-    std::cout << "f_try:        " << f_try << std::endl;
+    double objective_try = obj_fun(a_try, theta_try);         // log‑posterior at trial step
+    std::cout << "objective_try:        " << objective_try << std::endl;
     std::cout << "armijo cond.  " << (objective_new + options.c1 * alpha * dir_deriv0) << std::endl;
     /* ---------- Armijo (increase) condition ---------------------------- */
-    if (f_try >= objective_new + options.c1 * alpha * dir_deriv0) {
+    if (objective_try >= objective_new + options.c1 * alpha * dir_deriv0) {
       /* ---------- Curvature condition ---------------------------------- */
-      double dir_deriv_try = grad(a_try).dot(p);
+      double dir_deriv_try = grad_fun(a_try, theta_try).dot(p);
     std::cout << "dir_deriv_try: " << dir_deriv_try << std::endl;
     std::cout << "cond 2:        " << (options.c2 * std::abs(dir_deriv0)) << std::endl;
       if (std::abs(dir_deriv_try) <= options.c2 * std::abs(dir_deriv0)) {
         /* ---- Accept step --------------------------------------------- */
         a.swap(a_try);
         theta.swap(theta_try);
-        objective_new = f_try;
+        objective_new = objective_try;
         return true;
       }
     }
@@ -629,7 +638,7 @@ inline auto laplace_marginal_density_est(
                     * LT.solve(L.solve(W_r.cwiseProduct(covariance * b)));
 
         /* start line search */
-        Eigen::VectorXd p = a - a_prev;         
+        Eigen::VectorXd p = a - a_prev;
         Eigen::VectorXd grad_a_prev
             = -covariance * a_prev + covariance * theta_grad;  // ∇f(a_prev)
         double dir_deriv0 = grad_a_prev.dot(p);
@@ -637,37 +646,43 @@ inline auto laplace_marginal_density_est(
           // Newton step is uphill or invalid – fall back to steepest ascent
           p = grad_a_prev;
           dir_deriv0 = p.squaredNorm();
-          if (dir_deriv0 == 0.0)          // already at a stationary point
+          // already at a stationary point
+          if (dir_deriv0 == 0.0) {
             dir_deriv0 = 1e-12;
-        }        
-        auto obj_fun = [&](const Eigen::VectorXd& a_val) -> double {
-              Eigen::VectorXd theta_val = covariance * a_val;
-              if (!theta_val.allFinite()) return -std::numeric_limits<double>::infinity();
+          }
+        }
+        // FIXME: We should use less full scope referencing here. Hard to follow
+        auto obj_fun = [&](const Eigen::VectorXd& a_val, auto&& theta_val) -> double {
               return -0.5 * a_val.dot(theta_val)
                      + laplace_likelihood::log_likelihood(
                            ll_fun, theta_val, ll_args_vals, msgs);
             };
-        auto grad_fun = [&](const Eigen::VectorXd& a_val) -> Eigen::VectorXd {
-              Eigen::VectorXd theta_val = covariance * a_val;
-              auto [theta_grad_tmp, W_ignore]
-                  = laplace_likelihood::diff(ll_fun, theta_val,
-                                             options.hessian_block_size,
-                                             ll_args_vals, msgs);
-              return -covariance * a_val + covariance * theta_grad_tmp;
-            };
+        // For new theta, recalculate gradient wrt theta and obj fun.
+        auto grad_fun = [&](const Eigen::VectorXd& a_val, auto&& theta_val) -> Eigen::VectorXd {
+          nested_rev_autodiff nested;
+          auto theta_grad = stan::math::apply([&](auto&&... args) {
+            // Note: Have to reset adjs here with new theta
+            set_zero_adjoint(ll_args);
+            Eigen::Matrix<var, Eigen::Dynamic, 1> theta_var = theta_val;
+            var var_res = ll_fun(theta_var, args..., msgs);
+            grad(var_res.vi_);
+            return theta_var.adj().eval();
+          }, ll_args);
+          return -covariance * a_val + covariance * theta_grad;
+        };
         objective_old = objective_new;
         std::cout << std::setprecision(18) << std::endl;
-        bool ok = strong_wolfe_max(
-            a,               // in/out
-            theta,           // in/out
-            objective_new,   // in/out
+        bool ok = wolfe_line_search(
+            theta, // in/out
+            objective_new, // in/out
+            a, // in/out
+            a_prev,
             obj_fun,
-            grad_fun,   
-            a_prev, 
-            p, 
+            grad_fun,
+            p,
             dir_deriv0,
             covariance,
-            options);        
+            options);
 
         // Check for convergence
           std::cout << "objective_old: " << objective_old << "\n";
