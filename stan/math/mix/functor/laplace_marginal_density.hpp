@@ -51,12 +51,25 @@ template <bool HasInitTheta>
 struct laplace_options;
 
 template <>
-struct laplace_options<false> : public laplace_options_base {};
+struct laplace_options<false> : public laplace_options_base {
+    int max_tries{25};
+  double c1{1e-7};
+  double c2{0.9};
+  double tau{0.5};
+  double min_alpha{1e-12};
+
+};
 
 template <>
 struct laplace_options<true> : public laplace_options_base {
   /* Value for user supplied initial theta  */
   Eigen::VectorXd theta_0{0};
+  int max_tries{25};
+  double c1{1e-7};
+  double c2{0.9};
+  double tau{0.5};
+  double min_alpha{1e-12};
+
 };
 
 using laplace_options_default = laplace_options<false>;
@@ -414,6 +427,55 @@ inline STAN_COLD_PATH void throw_nan(NameStr&& name_str, ParamStr&& param_str,
   throw std::domain_error(msg);
 }
 
+/*--------------------------------------------------------------------------*/
+/* Strong‑Wolfe line‑search for MAXIMISATION                                */
+/*   ‑ Armijo (sufficient‑increase)                                         */
+/*   ‑ curvature condition                                                  */
+/*   ‑ trust‑region–like shrink if NaN/Inf appears                          */
+/*--------------------------------------------------------------------------*/
+template <class Obj, class Grad, typename Options>
+bool strong_wolfe_max(Eigen::VectorXd& a, Eigen::VectorXd& theta, 
+  double& objective_new, Obj&& obj, Grad&& grad, 
+  const Eigen::VectorXd& a_prev,
+  const Eigen::VectorXd& p, const double dir_deriv0,
+  const Eigen::MatrixXd& covariance, Options& options) {
+  double alpha = 1.0;                 // full Newton step
+  std::cout << "objective_new: " << objective_new << std::endl;
+  std::cout << "dir_deriv:     " << dir_deriv0 << std::endl;
+  for (int k = 0; k < options.max_tries && alpha >= options.min_alpha; ++k) {
+    std::cout << "k:             " << k << std::endl;
+    std::cout << "alpha:         " << alpha << std::endl;
+    Eigen::VectorXd a_try = a_prev + alpha * p;
+    Eigen::VectorXd theta_try = covariance * a_try;
+
+    if (!theta_try.allFinite()) {      // invalid => shrink and retry
+      alpha *= options.tau;
+      continue;
+    }
+
+    double f_try = obj(a_try);         // log‑posterior at trial step
+    std::cout << "f_try:        " << f_try << std::endl;
+    std::cout << "armijo cond.  " << (objective_new + options.c1 * alpha * dir_deriv0) << std::endl;
+    /* ---------- Armijo (increase) condition ---------------------------- */
+    if (f_try >= objective_new + options.c1 * alpha * dir_deriv0) {
+      /* ---------- Curvature condition ---------------------------------- */
+      double dir_deriv_try = grad(a_try).dot(p);
+    std::cout << "dir_deriv_try: " << dir_deriv_try << std::endl;
+    std::cout << "cond 2:        " << (options.c2 * std::abs(dir_deriv0)) << std::endl;
+      if (std::abs(dir_deriv_try) <= options.c2 * std::abs(dir_deriv0)) {
+        /* ---- Accept step --------------------------------------------- */
+        a.swap(a_try);
+        theta.swap(theta_try);
+        objective_new = f_try;
+        return true;
+      }
+    }
+    alpha *= options.tau;                      // back‑track
+  }
+  return false;                        // no acceptable α found
+}
+
+
 /**
  * For a latent Gaussian model with hyperparameters phi and
  * latent variables theta, and observations y, this function computes
@@ -565,86 +627,52 @@ inline auto laplace_marginal_density_est(
             = b
               - W_r.asDiagonal()
                     * LT.solve(L.solve(W_r.cwiseProduct(covariance * b)));
-        // Simple Newton step
-        std::cout << "curr theta: \n"
-                  << theta.transpose().eval() << "\n";
-          std::cout << "W:  \n" << W << "\n";
-          std::cout << "W_r:  \n" << W_r.transpose().eval() << "\n";
-          std::cout << "theta_grad:  \n" << theta_grad.transpose().eval() << "\n";
-          std::cout << "a: \n" << a.transpose().eval() << "\n";
-          std::cout << "b: \n" << b.transpose().eval() << "\n";
-        //objective_old = objective_new;
-        /* ---------------------------------------------------------------------------
-        * Strong-Wolfe line search (maximisation variant)
-        *   phi_(a) = −½ aᵀ C a  +  log L(θ=C a)
-        *   p    = a − a_prev  (ascent direction in “a”)
-        * ------------------------------------------------------------------------- */
-        constexpr double c1  = 1e-4;     // Armijo parameter (0 < c1 < c2 < 1)
-        constexpr double c2  = 0.9;      // curvature parameter
-        constexpr double tau = 0.5;      // back-tracking factor
-        double        alpha_   = 1.0;      // initial step (can expose via options)
 
-        // Ascent direction in “a”-space
-        Eigen::VectorXd p = a - a_prev;
-
-        // Convenience lambdas for objective and gradient ---------------------------
-        auto phi = [&](const Eigen::VectorXd& a_val) -> double {
-          Eigen::VectorXd θ_val = covariance * a_val;
-          return -0.5 * a_val.dot(θ_val)
-                + laplace_likelihood::log_likelihood(
-                      ll_fun, θ_val, ll_args_vals, msgs);
-        };
-
-        auto grad_phi = [&](const Eigen::VectorXd& a_val) -> Eigen::VectorXd {
-          Eigen::VectorXd θ_val = covariance * a_val;
-          auto [θ_grad_val, W_unused] =
-              laplace_likelihood::diff(ll_fun, θ_val,
-                                      options.hessian_block_size, ll_args, msgs);
-          return -covariance * a_val + covariance * θ_grad_val;
-        };
-        // --------------------------------------------------------------------------
-
-        double phi_0          = objective_old;            // phi_(a_prev)
-        double dir_deriv0  = grad_phi(a_prev).dot(p);  // pᵀ∇phi_(a_prev)
-
-        while (alpha_ > 1e-12) {
-          std::cout << "alpha_: " << alpha_ << "\n";
-          Eigen::VectorXd a_try = a_prev + alpha_ * p;
-          if (!a_try.allFinite()) {          // guard against NaNs / Infs
-            alpha_ *= tau;
-            continue;
-          }
-
-          double phi__try = phi(a_try);
-
-          /* ---------- Armijo (sufficient-increase) test ------------------------- */
-          if (phi__try >= phi_0 + c1 * alpha_ * dir_deriv0) {
-            /* ---- Curvature (strong Wolfe) test --------------------------------- */
-            double dir_deriv_try = grad_phi(a_try).dot(p);
-            if (std::abs(dir_deriv_try) <= c2 * std::abs(dir_deriv0)) {
-              /* ---- Both conditions satisfied – accept the step ----------------- */
-              a            = std::move(a_try);
-              theta        = covariance * a;
-              objective_new = phi__try;
-              break;
-            }
-          }
-          /* --------------------------------------------------------------------- */
-          alpha_ *= tau;   // back-track and try a shorter step
-        }
-
-        if (alpha_ <= 1e-12) {
-          throw std::domain_error(
-              "laplace_marginal_density: strong-Wolfe line search failed to find a "
-              "suitable step size");
-        }
-
-        /* ---------- end of line-search block ----------------------------------- */
+        /* start line search */
+        Eigen::VectorXd p = a - a_prev;         
+        Eigen::VectorXd grad_a_prev
+            = -covariance * a_prev + covariance * theta_grad;  // ∇f(a_prev)
+        double dir_deriv0 = grad_a_prev.dot(p);
+        if (dir_deriv0 <= 0.0 || !std::isfinite(dir_deriv0)) {
+          // Newton step is uphill or invalid – fall back to steepest ascent
+          p = grad_a_prev;
+          dir_deriv0 = p.squaredNorm();
+          if (dir_deriv0 == 0.0)          // already at a stationary point
+            dir_deriv0 = 1e-12;
+        }        
+        auto obj_fun = [&](const Eigen::VectorXd& a_val) -> double {
+              Eigen::VectorXd theta_val = covariance * a_val;
+              if (!theta_val.allFinite()) return -std::numeric_limits<double>::infinity();
+              return -0.5 * a_val.dot(theta_val)
+                     + laplace_likelihood::log_likelihood(
+                           ll_fun, theta_val, ll_args_vals, msgs);
+            };
+        auto grad_fun = [&](const Eigen::VectorXd& a_val) -> Eigen::VectorXd {
+              Eigen::VectorXd theta_val = covariance * a_val;
+              auto [theta_grad_tmp, W_ignore]
+                  = laplace_likelihood::diff(ll_fun, theta_val,
+                                             options.hessian_block_size,
+                                             ll_args_vals, msgs);
+              return -covariance * a_val + covariance * theta_grad_tmp;
+            };
+        objective_old = objective_new;
+        std::cout << std::setprecision(18) << std::endl;
+        bool ok = strong_wolfe_max(
+            a,               // in/out
+            theta,           // in/out
+            objective_new,   // in/out
+            obj_fun,
+            grad_fun,   
+            a_prev, 
+            p, 
+            dir_deriv0,
+            covariance,
+            options);        
 
         // Check for convergence
           std::cout << "objective_old: " << objective_old << "\n";
           std::cout << "objective_new: " << objective_new << "\n";
-        if (abs(objective_new - objective_old) < options.tolerance) {
+        if (abs(objective_new - objective_old) < options.tolerance || !ok) {
           const double B_log_determinant
               = 2.0 * llt_B.matrixLLT().diagonal().array().log().sum();
           // Overwrite W instead of making a new sparse matrix
