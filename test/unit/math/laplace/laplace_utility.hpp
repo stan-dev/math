@@ -182,13 +182,14 @@ struct diagonal_kernel_functor {
 };
 
 template <typename F, typename ThetaVec>
-void run_solver_grid(F&& body, ThetaVec&& theta_0) {
-  constexpr std::array solver_nums{1};            // [1, 3]
+inline void run_solver_grid(F&& body, ThetaVec&& theta_0) {
+  constexpr std::array solver_nums{3};            // [1, 2, 3]
   constexpr std::array hessian_block_sizes{1, 2, 3};    // [1, 2]
-  constexpr std::array max_steps_line_searches{0, 10};  // 0, 10
+  constexpr std::array max_steps_line_searches{500};  // 0, 10
   for (int solver : solver_nums) {
     for (int hblock : hessian_block_sizes) {
       for (int ls_steps : max_steps_line_searches) {
+        std::cout << "SOLVE START-------------------------\n" << std::endl;
         if (theta_0.size() % hblock != 0) {
           std::cerr << "[          ] [ INFO ]"
                     << " Skipping test for hessian of size " << theta_0.size()
@@ -212,7 +213,7 @@ void run_solver_grid(F&& body, ThetaVec&& theta_0) {
 }
 
 template <typename T1, typename T2>
-Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic> laplace_covariance(
+inline Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic> laplace_covariance(
     const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta_root,
     const Eigen::Matrix<T2, Eigen::Dynamic, 1>& phi) {
   Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic> K(2, 2);

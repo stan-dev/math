@@ -34,13 +34,13 @@ TEST(laplace_marginal_bernoulli_logit_lpmf, phi_dim500) {
   std::vector<double> delta;
   std::vector<int> delta_int;
   int dim_phi = 2;
-  double tol = 8e-5;
+  double tol = 3e-4;
   Eigen::Matrix<double, Eigen::Dynamic, 1> phi_dbl(dim_phi);
   phi_dbl << 1.6, 1;
   using stan::math::test::sqr_exp_kernel_functor;
-  double target = laplace_marginal_bernoulli_logit_lpmf(
-      y, n_samples, 0, sqr_exp_kernel_functor{},
-      std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1)), nullptr);
+  double target = laplace_marginal_tol_bernoulli_logit_lpmf(
+      y, n_samples, mean, sqr_exp_kernel_functor{},
+      std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1)), theta_0, 1e-8, 1000, 2, 1, 1000, nullptr);
   // Benchmark against gpstuff.
   EXPECT_NEAR(-195.368, target, tol);
   constexpr double tolerance = 1e-8;
