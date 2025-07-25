@@ -8,11 +8,50 @@
 namespace stan {
 namespace math {
 
+namespace internal {
+    /**
+ * Set all adjoints of the output to zero.
+ */
+template <typename Output>
+inline void set_zero_adjoint(Output&& output) {
+  if constexpr (is_all_arithmetic_scalar_v<Output>) {
+    return;
+  } else {
+    return iter_tuple_nested(
+        [](auto&& output_i) {
+          using output_i_t = std::decay_t<decltype(output_i)>;
+          if constexpr (is_all_arithmetic_scalar_v<output_i_t>) {
+            return;
+          } else if constexpr (is_std_vector<output_i_t>::value) {
+            for (Eigen::Index i = 0; i < output_i.size(); ++i) {
+              output_i[i].adj() = 0;
+            }
+          } else if constexpr (is_eigen_v<output_i_t>) {
+            output_i.adj().setZero();
+          } else if constexpr (is_stan_scalar_v<output_i_t>) {
+            output_i.adj() = 0;
+          } else {
+            static_assert(
+                sizeof(std::decay_t<output_i_t>*) == 0,
+                "INTERNAL ERROR:(laplace_marginal_lpdf) set_zero_adjoints was "
+                "not able to deduce the actions needed for the given type. "
+                "This is an internal error, please report it: "
+                "https://github.com/stan-dev/math/issues");
+          }
+        },
+        std::forward<Output>(output));
+  }
+}
+
+}
+
+
 /**
  * functions to compute the log density, first, second,
  * and third-order derivatives for a likelihoood specified by the user.
  */
 namespace laplace_likelihood {
+
 namespace internal {
 /**
  * @tparam F A functor with `opertor()(Args&&...)` returning a scalar
@@ -126,6 +165,7 @@ inline auto theta_grad(F&& f, Theta&& theta,
   using Eigen::Dynamic;
   using Eigen::Matrix;
   const Eigen::Index theta_size = theta.size();
+  stan::math::internal::set_zero_adjoint(std::forward_as_tuple(args...));
   nested_rev_autodiff nested;
   Matrix<var, Dynamic, 1> theta_var = theta;
   var f_var = f(theta_var, args..., msgs);
