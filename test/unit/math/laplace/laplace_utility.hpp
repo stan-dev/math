@@ -183,7 +183,7 @@ struct diagonal_kernel_functor {
 
 template <typename F, typename ThetaVec>
 inline void run_solver_grid(F&& body, ThetaVec&& theta_0) {
-  constexpr std::array solver_nums{3};            // [1, 2, 3]
+  constexpr std::array solver_nums{1, 2, 3};            // [1, 2, 3]
   constexpr std::array hessian_block_sizes{1, 2, 3};    // [1, 2]
   constexpr std::array max_steps_line_searches{500};  // 0, 10
   for (int solver : solver_nums) {

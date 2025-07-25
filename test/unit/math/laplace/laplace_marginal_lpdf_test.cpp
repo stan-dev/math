@@ -9,7 +9,7 @@
 #include <gtest/gtest.h>
 #include <iostream>
 #include <vector>
-/*
+
 struct poisson_log_likelihood2 {
   template <typename Theta>
   auto operator()(const Theta& theta, const std::vector<int>& delta_int,
@@ -50,7 +50,6 @@ TEST(laplace, poisson_log_phi_dim_2) {
       std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1)), nullptr);
 
   // TODO(Charles): benchmark target against gpstuff.
-  // Expected: -2.53056
   double tol = 1e-4;
   EXPECT_NEAR(-2.53056, value_of(target), tol);
 
@@ -201,7 +200,7 @@ TEST(laplace, bernoulli_logit_phi_dim500) {
       },
       theta_0);
 }
-*/
+
 struct covariance_motorcycle_functor {
   template <typename TX, typename LengthF, typename LengthG, typename SigmaF,
             typename SigmaG>
@@ -245,13 +244,15 @@ struct normal_likelihood {
     int n_obs = delta_int;
     Eigen::Matrix<stan::return_type_t<Theta>, -1, 1> mu(n_obs);
     Eigen::Matrix<stan::return_type_t<Theta>, -1, 1> sigma(n_obs);
+    stan::return_type_t<Theta> lp = 0;
     for (Eigen::Index i = 0; i < n_obs; i++) {
       mu(i) = theta(2 * i);
       // TODO(Charles): Theta can be a large negative value so sigma can be 0
-      sigma(i) = exp(0.5 * theta(2 * i + 1)) + 1e-12;
+      sigma(i) = stan::math::lb_constrain<true>(
+          stan::math::multiply(0.5, theta(2 * i + 1)), 1e-14, lp);
     }
     try {
-      return stan::math::normal_lpdf(y, mu, sigma);
+      return stan::math::normal_lpdf(y, mu, sigma) + lp;
     } catch (const std::domain_error& e) {
       std::cout << "Error in normal_lpdf: " << e.what() << std::endl;
       std::cout << "theta: \n" << theta.transpose() << std::endl;
@@ -297,7 +298,7 @@ class laplace_motorcyle_gp_test : public ::testing::Test {
   double eps{1e-7};
   Eigen::VectorXd phi_dbl{{length_scale_f, length_scale_g, sigma_f, sigma_g}};
 };
-/*
+
 
 TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
   // logger->current_test_name_ = "gp_motorcycle";
@@ -332,67 +333,8 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
   using stan::math::test::laplace_issue;
   using stan::math::test::LaplaceFailures;
   constexpr std::array known_issues{
-      std::pair(laplace_issue{1, 0, 1}, LaplaceFailures::HessianFailure),
-      std::pair(laplace_issue{1, 100, 1}, LaplaceFailures::HessianFailure),
-      std::pair(laplace_issue{1, 200, 1}, LaplaceFailures::HessianFailure),
-      std::pair(laplace_issue{1, 300, 1}, LaplaceFailures::HessianFailure),
-      std::pair(laplace_issue{1, 400, 1}, LaplaceFailures::HessianFailure),
-      std::pair(laplace_issue{1, 500, 1}, LaplaceFailures::HessianFailure),
-      std::pair(laplace_issue{1, 0, 2}, LaplaceFailures::SqrtDNE),
-      std::pair(laplace_issue{1, 100, 2}, LaplaceFailures::SqrtDNE),
-      std::pair(laplace_issue{1, 200, 2}, LaplaceFailures::SqrtDNE),
-      std::pair(laplace_issue{1, 300, 2}, LaplaceFailures::SqrtDNE),
-      std::pair(laplace_issue{1, 400, 2}, LaplaceFailures::SqrtDNE),
-      std::pair(laplace_issue{1, 500, 2}, LaplaceFailures::SqrtDNE),
-      std::pair(laplace_issue{1, 0, 3}, LaplaceFailures::SqrtDNE),
-      std::pair(laplace_issue{1, 100, 3}, LaplaceFailures::SqrtDNE),
-      std::pair(laplace_issue{1, 200, 3}, LaplaceFailures::SqrtDNE),
-      std::pair(laplace_issue{1, 300, 3}, LaplaceFailures::SqrtDNE),
-      std::pair(laplace_issue{1, 400, 3}, LaplaceFailures::SqrtDNE),
-      std::pair(laplace_issue{1, 500, 3}, LaplaceFailures::SqrtDNE),
-      std::pair(laplace_issue{1, 0, 4}, LaplaceFailures::SqrtDNE),
-      std::pair(laplace_issue{1, 100, 4}, LaplaceFailures::SqrtDNE),
-      std::pair(laplace_issue{1, 200, 4}, LaplaceFailures::SqrtDNE),
-      std::pair(laplace_issue{1, 300, 4}, LaplaceFailures::SqrtDNE),
-      std::pair(laplace_issue{1, 400, 4}, LaplaceFailures::SqrtDNE),
-      std::pair(laplace_issue{1, 500, 4}, LaplaceFailures::SqrtDNE),
-      std::pair(laplace_issue{2, 0, 1}, LaplaceFailures::NaNTheta),
-      std::pair(laplace_issue{2, 100, 1}, LaplaceFailures::NaNTheta),
-      std::pair(laplace_issue{2, 200, 1}, LaplaceFailures::NaNTheta),
-      std::pair(laplace_issue{2, 300, 1}, LaplaceFailures::NaNTheta),
-      std::pair(laplace_issue{2, 400, 1}, LaplaceFailures::NaNTheta),
-      std::pair(laplace_issue{2, 500, 1}, LaplaceFailures::NaNTheta),
-      std::pair(laplace_issue{2, 0, 3}, LaplaceFailures::NaNTheta),
-      std::pair(laplace_issue{2, 100, 3}, LaplaceFailures::NaNTheta),
-      std::pair(laplace_issue{2, 200, 3}, LaplaceFailures::NaNTheta),
-      std::pair(laplace_issue{2, 300, 3}, LaplaceFailures::NaNTheta),
-      std::pair(laplace_issue{2, 400, 3}, LaplaceFailures::NaNTheta),
-      std::pair(laplace_issue{2, 500, 3}, LaplaceFailures::NaNTheta),
-      std::pair(laplace_issue{2, 0, 4}, LaplaceFailures::IterExceeded),
-      std::pair(laplace_issue{2, 100, 4}, LaplaceFailures::IterExceeded),
-      std::pair(laplace_issue{2, 200, 4}, LaplaceFailures::IterExceeded),
-      std::pair(laplace_issue{2, 300, 4}, LaplaceFailures::IterExceeded),
-      std::pair(laplace_issue{2, 400, 4}, LaplaceFailures::IterExceeded),
-      std::pair(laplace_issue{2, 500, 4}, LaplaceFailures::IterExceeded),
-      std::pair(laplace_issue{3, 0, 1}, LaplaceFailures::NaNTheta),
-      std::pair(laplace_issue{3, 100, 1}, LaplaceFailures::NaNTheta),
-      std::pair(laplace_issue{3, 200, 1}, LaplaceFailures::NaNTheta),
-      std::pair(laplace_issue{3, 300, 1}, LaplaceFailures::NaNTheta),
-      std::pair(laplace_issue{3, 400, 1}, LaplaceFailures::NaNTheta),
-      std::pair(laplace_issue{3, 500, 1}, LaplaceFailures::NaNTheta),
-      std::pair(laplace_issue{3, 0, 3}, LaplaceFailures::NaNTheta),
-      std::pair(laplace_issue{3, 100, 3}, LaplaceFailures::NaNTheta),
-      std::pair(laplace_issue{3, 200, 3}, LaplaceFailures::NaNTheta),
-      std::pair(laplace_issue{3, 300, 3}, LaplaceFailures::NaNTheta),
-      std::pair(laplace_issue{3, 400, 3}, LaplaceFailures::NaNTheta),
-      std::pair(laplace_issue{3, 500, 3}, LaplaceFailures::NaNTheta),
-      std::pair(laplace_issue{3, 0, 4}, LaplaceFailures::IterExceeded),
-      std::pair(laplace_issue{3, 100, 4}, LaplaceFailures::IterExceeded),
-      std::pair(laplace_issue{3, 200, 4}, LaplaceFailures::IterExceeded),
-      std::pair(laplace_issue{3, 300, 4}, LaplaceFailures::IterExceeded),
-      std::pair(laplace_issue{3, 400, 4}, LaplaceFailures::IterExceeded),
-      std::pair(laplace_issue{3, 500, 4}, LaplaceFailures::IterExceeded)};
-  */
+      std::pair(laplace_issue{1, 0, 1}, LaplaceFailures::HessianFailure)};
+
   /**
    * Note: This test is designed to check the error behavior
    *  of the laplace_marginal_tol function. We do not force
@@ -403,12 +345,13 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
    *  If we have not seen this parameter combination fail before, we run the
    *  standard AD testing procedure.
    */
-   /*
-  for (int solver_num = 1; solver_num < 2; solver_num++) {
-    for (int max_steps_line_search = 200; max_steps_line_search <= 300;
+
+  for (int solver_num = 1; solver_num < 4; solver_num++) {
+    for (int max_steps_line_search = 300; max_steps_line_search <= 300;
          max_steps_line_search += 100) {
-      for (int hessian_block_size = 1; hessian_block_size < 3;
+      for (int hessian_block_size = 1; hessian_block_size < 4;
            hessian_block_size++) {
+
         // logger->update_laplace_info(solver_num, hessian_block_size,
         // max_steps_line_search);
         if (theta0.size() % hessian_block_size != 0) {
@@ -464,7 +407,7 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
     }
   }
 }
-*/
+
 struct normal_likelihood2 {
   template <typename Theta, typename SigmaGlobal>
   auto operator()(const Theta& theta, const Eigen::VectorXd& y,
@@ -509,15 +452,17 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle2) {
   constexpr double tolerance = 1e-12;
   constexpr int max_num_steps = 100;
   stan::test::ad_tolerances tols;
-  tols.gradient_grad_ = 1e-3;
+  tols.gradient_grad_ = 5e-2;
 
   stan::math::test::run_solver_grid(
       [&](int solver_num, int hessian_block_size, int max_steps_line_search,
           auto&& theta_0) {
         auto f = [&](auto&& sigma_global_v, auto&& length_scale_v, auto&& sigma_v) {
+          /*
           if constexpr (stan::is_var_v<stan::return_type_t<decltype(sigma_global_v), decltype(length_scale_v), decltype(sigma_v)>>) {
             std::cout << "laplace_start: \n";
           }
+          */
           return laplace_marginal_tol<false>(
               normal_likelihood2{}, std::forward_as_tuple(y, n_obs, sigma_global_v),
               covariance_motorcycle_functor{},

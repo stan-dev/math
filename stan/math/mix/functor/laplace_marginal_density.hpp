@@ -453,42 +453,36 @@ void print_test(const char* name, T&& x) {
 
 // ---- cubic interpolation helper (unchanged) ----------------------------
 template <typename T>
-inline T cubic_interp_max(T dir_lo,          // g′(0)
-                          T hi_bound,        // Δ = α_hi – α_lo
-                          T obj_diff,        // f(Δ) – f(0)
-                          T dir_hi,          // g′(Δ)
-                          T hi_limit)        // = hi_bound
-{
-  //                    g(x)  =  a₃ x³ + a₂ x² + a₁ x    (g(0)=0)
-  const T a3 = (-12 * obj_diff + 6 * hi_bound * (dir_lo + dir_hi))
-               / (hi_bound * hi_bound * hi_bound);
-  const T a2 = (  6 * obj_diff / (hi_bound * hi_bound)
-               - (4 * dir_lo + 2 * dir_hi) / hi_bound);
+inline T cubic_interp_max(T dir_lo,  T hi_bound,  T obj_diff,
+                          T dir_hi, T hi_limit) {
+  // g′(x) = a₃x² + a₂x + a₁  (with g(0)=0)
+  const T a3 = (-12.0 * obj_diff + 6.0 * hi_bound * (dir_lo + dir_hi))
+               / std::pow(hi_bound, 3);
+  const T a2 =  6.0 * obj_diff / (hi_bound * hi_bound)
+               - (4.0 * dir_lo + 2.0 * dir_hi) / hi_bound;
   const T a1 = dir_lo;
 
-  // g′(x) roots
-  const T disc = std::sqrt(a2 * a2 - 2 * a1 * a3);
-  const T r1   = -(a2 + disc) / a3;
-  const T r2   = -(a2 - disc) / a3;
-
+  // Degenerate or nearly-linear case → midpoint
+  if (std::abs(a3) < 1e-14) {
+    return hi_limit * T(0.5);
+  }
+  T disc2 = a2 * a2 - 2.0 * a1 * a3;
+  disc2 = (disc2 < 0) ? 0 : disc2;
+  const T disc = std::sqrt(disc2);
+  const T r1 = (-a2 + disc) / a3;
+  const T r2 = (-a2 - disc) / a3;
   auto g = [&](T x){ return ((a3/3)*x + (a2/2))*x*x + a1*x; };
-
-  // maximisation: start with left limit
-  T best_x   = 0;
-  T best_val = g(0);
-
-  // right end-point
-  T v = g(hi_limit);
-  if (v > best_val) { best_x = hi_limit; best_val = v; }
-
-  // interior stationary points, if they lie in (0,hi_limit)
-  if (r1 > 0 && r1 < hi_limit && (v = g(r1)) > best_val) {
-    best_x = r1; best_val = v;
+  T best_x = 0, best_val = g(0);
+  for (T r : {r1, r2, hi_limit}) {
+    if (r > 0 && r < hi_limit) {
+      T v = g(r);
+      if (v > best_val) {
+        best_x = r;
+        best_val = v;
+      }
+    }
   }
-  if (r2 > 0 && r2 < hi_limit && (v = g(r2)) > best_val) {
-    best_x = r2;
-  }
-  return best_x;                 // offset that maximises g on [0,hi_limit]
+  return best_x;
 }
 
 // ---- strong-Wolfe with cubic zoom --------------------------------------
@@ -504,48 +498,71 @@ inline std::pair<double,bool> wolfe_line_search(
     const Eigen::MatrixXd& covariance,
     Options&         opt,
     double           init_alpha) {
-  // direction & initial slope
   const Eigen::VectorXd p  = a - a_prev;
   const Eigen::VectorXd g0 = -covariance * a_prev + covariance * theta_grad;
   const double dir_deriv_init  = g0.dot(p);
 
-  double alpha_hi = init_alpha * 2;
+  double alpha_hi = init_alpha * (init_alpha == 1 ? 1 : 2);
   Eigen::VectorXd a_try = a_prev + alpha_hi * p;
   Eigen::VectorXd theta_try = covariance * a_try;
   double obj_hi     = obj_fun(a_try, theta_try);
   double dir_deriv_hi = grad_fun(a_try, theta_try).dot(p);
-  // TODO: set opt.min_alpha to 1e-8
-  constexpr double min_alpha = 1e-8;
-
-  // TODO: Handle case where alpha_hi is bad and we need to go lower till we get an accept
   auto check_armijo = [&](double obj_next, double obj_curr,
                           double alpha_next, double dir0, auto opt){
+/*
+  std::cout << "\tarmijo check: " << (obj_next >= obj_curr + alpha_next * dir0 * opt.c1 ? "true\n" : "false\n");
+  std::cout << "\t\tobj_next:     " << obj_next << "\n";
+  std::cout << "\t\tobj_check:    " << (obj_curr + alpha_next * dir0 * opt.c1) << "\n";
+*/
     return obj_next >= obj_curr + alpha_next * dir0 * opt.c1;
    };
   auto check_curve = [](auto dir_deriv_next, auto dir_deriv_init, auto&& opt) {
-    return std::abs(dir_deriv_next) <= std::abs(dir_deriv_init) * opt.c2
-                     || std::abs(dir_deriv_next) < 1e-10;
+/*
+  std::cout << "\tcheck_curve:         " << (std::abs(dir_deriv_next) <= std::abs(dir_deriv_init) * opt.c2 ? "true\n" : "false\n");
+  std::cout << "\t\tdir_deriv_next:    " << dir_deriv_next << "\n";
+  std::cout << "\t\tdir_deriv_init*c2: " << (dir_deriv_init * opt.c2) << "\n";
+*/
+    return std::abs(dir_deriv_next) <= std::abs(dir_deriv_init) * opt.c2;
   };
   // If current alpha fails, backtrack down till we find a point that satisfies c1
-      std::cout << "\talpha_hi: " << alpha_hi << "\n";
-      std::cout << "\tobj_hi: " << obj_hi << "\n";
-      std::cout << "\tdir_deriv_hi: " << dir_deriv_hi << "\n";
+/*
+  std::cout << "\tinit step:      " << init_alpha << "\n";
+  std::cout << "\talpha_hi:       " << alpha_hi << "\n";
+  std::cout << "\tobj_hi:         " << obj_hi << "\n";
+  std::cout << "\tobj_cur:        " << obj_cur << "\n";
+  std::cout << "\tdir_deriv_hi:   " << dir_deriv_hi << "\n";
+  std::cout << "\tdir_deriv_init: " << dir_deriv_init << "\n";
   std::cout << "first check: \n";
-  while ((!check_armijo(obj_hi, obj_cur, alpha_hi, dir_deriv_init, opt) ||
-          !check_curve(dir_deriv_hi, dir_deriv_init, opt) ||
-          !std::isfinite(obj_hi) ||
-          !theta_try.allFinite()) &&
-          alpha_hi > min_alpha) {
-    alpha_hi *= 0.5;
-    a_try = a_prev + alpha_hi * p;
-    theta_try = covariance * a_try;
-    obj_hi     = obj_fun(a_try, theta_try);
-    dir_deriv_hi = grad_fun(a_try, theta_try).dot(p);
-    std::cout << "\talpha_hi: " << alpha_hi << "\n";
-    std::cout << "\tobj_hi: " << obj_hi << "\n";
-    std::cout << "\tdir_deriv_hi: " << dir_deriv_hi << "\n";
+  */
+  while (true) {
+//    std::cout << "-------\n";
+    if ((!check_armijo(obj_hi, obj_cur, alpha_hi, dir_deriv_init, opt) ||
+            !check_curve(dir_deriv_hi, dir_deriv_init, opt) ||
+            !std::isfinite(obj_hi) ||
+            !theta_try.allFinite()) &&
+            alpha_hi > opt.min_alpha) {
+      alpha_hi *= 0.5;
+      a_try = a_prev + alpha_hi * p;
+      theta_try = covariance * a_try;
+      obj_hi     = obj_fun(a_try, theta_try);
+      dir_deriv_hi = grad_fun(a_try, theta_try).dot(p);
+ /*
+    std::cout << "\talpha_hi:      " << alpha_hi << "\n";
+    std::cout << "\tobj_hi:        " << obj_hi << "\n";
+    std::cout << "\tdir_deriv_hi:  " << dir_deriv_hi << "\n";
+*/
+    } else {
+      break;
+    }
   }
-  // we *know* alpha_hi is good at least in armijo
+  // If initial step passes we can keep going
+  if (alpha_hi == 1) {
+    a        = a_try;
+    theta    = theta_try;
+    obj_cur  = obj_hi;
+    return {alpha_hi, true};
+  }
+  // we *know* alpha_hi is good so set that to lo
   double alpha_lo = alpha_hi;
   double obj_lo     = obj_cur;
   double dir_deriv_lo = dir_deriv_init;
@@ -556,64 +573,94 @@ inline std::pair<double,bool> wolfe_line_search(
   obj_hi     = obj_fun(a_try, theta_try);
   dir_deriv_hi = grad_fun(a_try, theta_try).dot(p);
   // Expand alpha_hi until we find a “bad” point, setting alpha_lo if we find a new good point
-  std::cout << "second loop: \n";
-  while (check_armijo(obj_hi, obj_cur, alpha_hi, dir_deriv_init, opt) &&
-          check_curve(dir_deriv_hi, dir_deriv_init, opt) &&
-          std::isfinite(obj_hi) &&
-          theta_try.allFinite()) {
-      alpha_lo = alpha_hi;
-      obj_lo = obj_hi;
-      dir_deriv_lo = dir_deriv_hi;
-      alpha_hi *= 2.0;                       // probe farther out
-      a_try = a_prev + alpha_hi * p;
-      theta_try = covariance * a_try;
-      obj_hi     = obj_fun(a_try, theta_try);
-      dir_deriv_hi = grad_fun(a_try, theta_try).dot(p);
-      std::cout << "\talpha_hi: " << alpha_hi << "\n";
-      std::cout << "\tobj_hi: " << obj_hi << "\n";
-      std::cout << "\tdir_deriv_hi: " << dir_deriv_hi << "\n";
+//  std::cout << "second loop: \n";
+  while (true) {
+//    std::cout << "-------\n";
+    if (check_armijo(obj_hi, obj_cur, alpha_hi, dir_deriv_init, opt) &&
+            std::isfinite(obj_hi) &&
+            theta_try.allFinite()) {
+      if (check_curve(dir_deriv_hi, dir_deriv_init, opt)) {
+        alpha_lo = alpha_hi;
+        obj_lo = obj_hi;
+        dir_deriv_lo = dir_deriv_hi;
+      }
+        alpha_hi *= 2.0;                       // probe farther out
+        a_try = a_prev + alpha_hi * p;
+        theta_try = covariance * a_try;
+        obj_hi     = obj_fun(a_try, theta_try);
+        dir_deriv_hi = grad_fun(a_try, theta_try).dot(p);
+/*
+    std::cout << "\talpha_hi:      " << alpha_hi << "\n";
+    std::cout << "\tobj_hi:        " << obj_hi << "\n";
+    std::cout << "\tdir_deriv_hi:  " << dir_deriv_hi << "\n";
+*/
+    } else {
+      break;
+    }
   }
-
   // ---------- cubic zoom -----------------------------------------------
-  std::cout << "new alpha_hi: " << alpha_hi << "\n";
-  std::cout << "new alpha_low: " << alpha_lo << "\n";
+/*
+  std::cout << "\tnew alpha_hi:    " << alpha_hi << "\n";
+  std::cout << "\tnew alpha_low:   " << alpha_lo << "\n";
   std::cout << "begin cubic zoom: \n";
-  while (alpha_hi - alpha_lo > min_alpha) {
+*/
+  double obj_mid = obj_lo;
+  double alpha = alpha_lo;
+  while (alpha_hi - alpha_lo > opt.min_alpha) {
+//    std::cout << "-------\n";
     const double diff_alpha = alpha_hi - alpha_lo;
     double alpha_off = cubic_interp_max(dir_deriv_lo, diff_alpha,
                                         obj_hi - obj_lo, dir_deriv_hi,
                                         diff_alpha);
-    double alpha = alpha_lo + (alpha_off < min_alpha ? 0 : std::min(alpha_off, diff_alpha));
-    std::cout << "\talpha_off: " << alpha_off << "\n";
-    std::cout << "\talpha:     " << alpha << "\n";
+    alpha = alpha_lo +
+                  std::clamp(alpha_off,
+                              0.0,         // keep ≥ 10 % inside
+                              0.9 * diff_alpha);        // keep ≤ 90 % inside
     a_try = a_prev + alpha * p;
     theta_try = covariance * a_try;
-    double obj_mid   = obj_fun(a_try, theta_try);
+    obj_mid   = obj_fun(a_try, theta_try);
     double deriv_mid = grad_fun(a_try, theta_try).dot(p);
-    std::cout << "\tobj mid:   " << obj_mid << "\n";
-    std::cout << "\tderiv mid: " << deriv_mid << "\n";
     bool armijo_ok = obj_mid >= obj_cur + opt.c1 * alpha * dir_deriv_init;
-    bool curv_ok   = std::abs(deriv_mid) <= opt.c2 * std::abs(dir_deriv_init)
-                     || std::abs(dir_deriv_init) < 1e-10;
-    std::cout << "\tarmijo_ok: " << (armijo_ok ? "true" : "false") << "\n";
-    std::cout << "\tcurv_ok:   " << (curv_ok ? "true" : "false") << "\n";
-    if (armijo_ok && curv_ok) {          // success
-      a.swap(a_try);
-      theta.swap(theta_try);
-      obj_cur = obj_mid;
-      return {alpha, true};
-    } else {      // still “bad”
-      alpha_hi = alpha;
-      obj_hi = obj_mid;
-      dir_deriv_hi = deriv_mid;
+    bool curv_ok   = std::abs(deriv_mid) <= opt.c2 * std::abs(dir_deriv_init);
+/*
+  std::cout << "\talpha_off:      " << alpha_off << "\n";
+  std::cout << "\talpha:          " << alpha << "\n";
+  std::cout << "\tobj mid:        " << obj_mid << "\n";
+  std::cout << "\tderiv mid:      " << deriv_mid << "\n";
+  std::cout << "\tarmijo_ok:      " << (armijo_ok ? "true" : "false") << "\n";
+  std::cout << "\tcurv_ok:        " << (curv_ok ? "true" : "false") << "\n";
+*/
+    if (armijo_ok && curv_ok) {
+      // accept the best good step found so far (alpha_lo)
+      a        = a_try;
+      theta    = theta_try;
+      obj_cur    = obj_mid;
+      return {alpha_lo, true};                    // Wolfe not strictly met
+    } else if (!armijo_ok || obj_mid >= obj_lo) {            // case 1
+      alpha_hi      = alpha;
+      obj_hi        = obj_mid;
+      dir_deriv_hi  = deriv_mid;
+    } else {                                          // Armijo ok and f lower than at α_lo
+      if (deriv_mid * dir_deriv_lo < 0) {             // case 2 : gradient sign change
+        alpha_hi      = alpha;
+        obj_hi        = obj_mid;
+        dir_deriv_hi  = deriv_mid;
+      } else {                                        // case 3 : keep same sign
+        alpha_lo      = alpha;
+        obj_lo        = obj_mid;
+        dir_deriv_lo  = deriv_mid;
+      }
     }
+
   }
 
   // accept the best good step found so far (alpha_lo)
-  a        = a_prev + alpha_lo * p;
-  theta    = covariance * a;
-  obj_cur    = obj_lo;
-  return {alpha_lo, false};                    // Wolfe not strictly met
+  bool armijo_ok = obj_lo >= obj_cur + opt.c1 * alpha * dir_deriv_init;
+  bool curv_ok   = std::abs(dir_deriv_lo) <= opt.c2 * std::abs(dir_deriv_init);
+  a = a_try;
+  theta = theta_try;
+  obj_cur = obj_lo;
+  return {alpha, armijo_ok && curv_ok};                    // Wolfe not strictly met
 }
 
 
@@ -786,8 +833,10 @@ inline auto laplace_marginal_density_est(
   if (options.solver == 1) {
     if (options.hessian_block_size == 1) {
       for (Eigen::Index i = 0; i <= options.max_num_steps; i++) {
+/*
         std::cout << "__________\nITER: " << i
                   << " / " << options.max_num_steps << "\n";
+*/
         auto [theta_grad, W] = laplace_likelihood::diff(
             ll_fun, theta, options.hessian_block_size, ll_args, msgs);
         Eigen::VectorXd W_r(W.rows());
@@ -813,7 +862,7 @@ inline auto laplace_marginal_density_est(
               - W_r.asDiagonal()
                     * LT.solve(L.solve(W_r.cwiseProduct(covariance * b)));
         objective_old = objective_new;
-        std::cout << std::setprecision(18) << std::endl;
+//        std::cout << std::setprecision(18) << std::endl;
         bool ok = false;
         std::tie(step_size, ok) = internal::wolfe_line_search(
             theta, // in/out
@@ -825,11 +874,16 @@ inline auto laplace_marginal_density_est(
             theta_grad,
             covariance,
             options,
-            1.0);
-        // Check for convergence
-          std::cout << "objective_old: " << objective_old << "\n";
-          std::cout << "objective_new: " << objective_new << "\n";
+            step_size);
         // Check for convergence or if line search failed
+/*
+      std::cout << std::setprecision(18);
+      std::cout << "step size: " << step_size << "\n";
+      std::cout << "objective_old: " << objective_old << "\n";
+      std::cout << "objective_new: " << objective_new << "\n";
+      std::cout << "new - old:     " << (objective_new - objective_old)
+                << std::setprecision(4) << std::endl;
+*/
         if (abs(objective_new - objective_old) < options.tolerance || (!ok && objective_new == objective_old)) {
           const double B_log_determinant
               = 2.0 * llt_B.matrixLLT().diagonal().array().log().sum();
@@ -843,7 +897,7 @@ inline auto laplace_marginal_density_est(
               Eigen::MatrixXd(L),
               std::move(a),
               std::move(theta_grad),
-              Eigen::FullPivLU<Eigen::MatrixXd>{},
+              Eigen::PartialPivLU<Eigen::MatrixXd>{},
               Eigen::MatrixXd(0, 0)};
         } else {
           a_prev.swap(a);
@@ -865,6 +919,10 @@ inline auto laplace_marginal_density_est(
       }
       W_r.makeCompressed();
       for (Eigen::Index i = 0; i <= options.max_num_steps; i++) {
+/*
+        std::cout << "__________\nITER: " << i
+          << " / " << options.max_num_steps << "\n";
+*/
         auto [theta_grad, W] = laplace_likelihood::diff(
             ll_fun, theta, options.hessian_block_size, ll_args, msgs);
         for (Eigen::Index i = 0; i < W.rows(); i++) {
@@ -888,7 +946,7 @@ inline auto laplace_marginal_density_est(
         a.noalias() = b - W_r * LT.solve(L.solve(W_r * (covariance * b)));
         // Simple Newton step
         objective_old = objective_new;
-        std::cout << std::setprecision(18) << std::endl;
+//        std::cout << std::setprecision(18) << std::endl;
         bool ok = false;
         std::tie(step_size, ok) = internal::wolfe_line_search(
             theta, // in/out
@@ -900,8 +958,16 @@ inline auto laplace_marginal_density_est(
             theta_grad,
             covariance,
             options,
-             1.0);
+             step_size);
         // Check for convergence or if line search failed
+/*
+      std::cout << std::setprecision(18);
+      std::cout << "step size: " << step_size << "\n";
+      std::cout << "objective_old: " << objective_old << "\n";
+      std::cout << "objective_new: " << objective_new << "\n";
+      std::cout << "new - old:     " << (objective_new - objective_old)
+                << std::setprecision(4) << std::endl;
+*/
         if (abs(objective_new - objective_old) < options.tolerance || (!ok && objective_new == objective_old)) {
           const double B_log_determinant
               = 2.0 * llt_B.matrixLLT().diagonal().array().log().sum();
@@ -913,7 +979,7 @@ inline auto laplace_marginal_density_est(
               Eigen::MatrixXd(L),
               std::move(a),
               std::move(theta_grad),
-              Eigen::FullPivLU<Eigen::MatrixXd>{},
+              Eigen::PartialPivLU<Eigen::MatrixXd>{},
               Eigen::MatrixXd(0, 0)};
         } else {
           a_prev.swap(a);
@@ -932,6 +998,7 @@ inline auto laplace_marginal_density_est(
     std::cout << "K_root: \n" << K_root.sparseView().eval() << std::endl;
     */
     for (Eigen::Index i = 0; i <= options.max_num_steps; i++) {
+//      std::cout << "Iter: " << i << "\n";
       auto [theta_grad, W] = laplace_likelihood::diff(
           ll_fun, theta, options.hessian_block_size, ll_args, msgs);
       /*
@@ -969,8 +1036,16 @@ inline auto laplace_marginal_density_est(
           theta_grad,
           covariance,
           options,
-          1.0);
+          step_size);
       // Check for convergence or if line search failed
+/*
+            std::cout << std::setprecision(18);
+      std::cout << "step size: " << step_size << "\n";
+      std::cout << "objective_old: " << objective_old << "\n";
+      std::cout << "objective_new: " << objective_new << "\n";
+      std::cout << "new - old:     " << (objective_new - objective_old)
+                << std::setprecision(4) << std::endl;
+*/
       if (abs(objective_new - objective_old) < options.tolerance || (!ok && objective_new == objective_old)) {
         const double B_log_determinant
             = 2.0 * llt_B.matrixLLT().diagonal().array().log().sum();
@@ -982,7 +1057,7 @@ inline auto laplace_marginal_density_est(
             std::move(Eigen::MatrixXd(L)),
             std::move(a),
             std::move(theta_grad),
-            Eigen::FullPivLU<Eigen::MatrixXd>{},
+            Eigen::PartialPivLU<Eigen::MatrixXd>{},
             std::move(K_root)};
       } else {
         a_prev = a;
@@ -992,22 +1067,21 @@ inline auto laplace_marginal_density_est(
     throw_overstep(options.max_num_steps);
   } else if (options.solver == 3) {
     for (Eigen::Index i = 0; i <= options.max_num_steps; i++) {
-      std::cout << "Iter: " << i << std::endl;
+/*
+      std::cout << "__________\nITER: " << i
+          << " / " << options.max_num_steps << "\n";
+*/
       auto [theta_grad, W] = laplace_likelihood::diff(
           ll_fun, theta, options.hessian_block_size, ll_args, msgs);
-      Eigen::FullPivLU<Eigen::MatrixXd> LU(
+      Eigen::PartialPivLU<Eigen::MatrixXd> LU(
           MatrixXd::Identity(theta_size, theta_size) + covariance * W);
-      if (!LU.isInvertible()) {
-        throw std::domain_error(
-            "laplace_marginal_density: Hessian matrix is not invertible");
-      }
       // L on lower and U on upper triangular
       b.noalias() = W * theta + theta_grad;
       a.noalias() = b - W * LU.solve(covariance * b);
       objective_old = objective_new;
 //      std::cout << "LU: \n" << LU.matrixLU().eval().sparseView().eval() << std::endl;
-      print_test("b", b);
-      print_test("a", a);
+//      print_test("b", b);
+//      print_test("a", a);
       bool ok = false;
       std::tie(step_size, ok) = internal::wolfe_line_search(
           theta, // in/out
@@ -1019,13 +1093,16 @@ inline auto laplace_marginal_density_est(
           theta_grad,
           covariance,
           options,
-          1.0);
+          step_size);
       // Check for convergence or if line search failed
+/*
       std::cout << std::setprecision(18);
+      std::cout << "step size: " << step_size << "\n";
       std::cout << "objective_old: " << objective_old << "\n";
       std::cout << "objective_new: " << objective_new << "\n";
       std::cout << "new - old:     " << (objective_new - objective_old)
                 << std::setprecision(4) << std::endl;
+*/
       if (abs(objective_new - objective_old) < options.tolerance || (!ok && objective_new == objective_old)) {
         // TODO(Charles): There has to be a simple trick for this
         const double B_log_determinant = log(LU.determinant());
