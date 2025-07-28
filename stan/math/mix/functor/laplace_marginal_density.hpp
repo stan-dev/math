@@ -514,7 +514,7 @@ inline bool wolfe_line_search(Eigen::VectorXd& theta, double& obj_init,
     obj_init = obj_high;
     alpha_init = alpha_high;
     return true;
-  } else if (alpha_high < opt.line_search.min_alpha) {
+  } else if (alpha_high < (opt.line_search.min_alpha / 2)) {
     // If we are below the minimum alpha, then we accept the initial point
     return false;
   }
