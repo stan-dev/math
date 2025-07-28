@@ -21,7 +21,7 @@ namespace math {
 template <typename T, require_vector_st<is_fvar, T>* = nullptr>
 inline auto log_softmax(T&& x) {
   return apply_vector_unary<T>::apply(
-      std::forward<T>(x), [&](const auto& alpha) {
+      std::forward<T>(x), [&](auto&& alpha) {
         using T_alpha = decltype(alpha);
         using T_fvar = value_type_t<T_alpha>;
         using T_fvar_inner = typename T_fvar::Scalar;

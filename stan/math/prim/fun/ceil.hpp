@@ -65,7 +65,7 @@ template <typename Container,
 inline auto ceil(Container&& x) {
   return apply_vector_unary<Container>::apply(
       std::forward<Container>(x),
-      [](const auto& v) { return v.array().ceil(); });
+      [](auto&& v) { return v.array().ceil(); });
 }
 
 }  // namespace math

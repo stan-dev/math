@@ -22,8 +22,8 @@ namespace math {
  */
 template <typename Container,
           require_eigen_vector_vt<is_var, Container>* = nullptr>
-inline var norm1(const Container& x) {
-  arena_t<Container> arena_x = x;
+inline var norm1(Container&& x) {
+  arena_t<Container> arena_x = std::forward<Container>(x);
   var res = norm1(arena_x.val());
   reverse_pass_callback([res, arena_x]() mutable {
     arena_x.adj().array() += res.adj() * sign(arena_x.val().array());

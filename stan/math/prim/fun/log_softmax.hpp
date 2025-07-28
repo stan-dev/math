@@ -47,7 +47,7 @@ inline auto log_softmax(Container&& x) {
       [](auto&& a) {
         return apply_vector_unary<ref_type_t<Container>>::apply(
             std::forward<decltype(a)>(a),
-            [](const auto& v) { return v.array() - log_sum_exp(v); });
+            [](auto&& v) { return v.array() - log_sum_exp(v); });
       },
       to_ref(std::forward<Container>(x)));
 }

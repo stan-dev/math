@@ -85,7 +85,7 @@ inline ReturnT select(const bool c, T_true&& y_true, const T_false& y_false) {
     return y_true;
   } else {
     return apply_scalar_binary(
-        [](const auto& y_true_inner, const auto& y_false_inner) {
+        [](auto&& y_true_inner, auto&& y_false_inner) {
           return y_false_inner;
         },
         std::forward<T_true>(y_true), y_false);
@@ -117,7 +117,7 @@ template <typename T_true, typename T_false,
 inline ReturnT select(const bool c, const T_true y_true, T_false&& y_false) {
   if (c) {
     return apply_scalar_binary(
-        [](const auto& y_true_inner, const auto& y_false_inner) {
+        [](auto&& y_true_inner, auto&& y_false_inner) {
           return y_true_inner;
         },
         y_true, std::forward<T_false>(y_false));

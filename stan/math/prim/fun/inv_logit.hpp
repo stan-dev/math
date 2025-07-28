@@ -52,6 +52,9 @@ template <typename T, require_arithmetic_t<T>* = nullptr>
 inline double inv_logit(T&& a) {
   if (a < 0) {
     double exp_a = std::exp(a);
+    if (a < LOG_EPSILON) {
+      return exp_a;
+    }
     return exp_a / (1.0 + exp_a);
   }
   return inv(1.0 + std::exp(-a));
@@ -104,7 +107,7 @@ template <typename Container,
 inline auto inv_logit(Container&& x) {
   return apply_vector_unary<Container>::apply(
       std::forward<Container>(x),
-      [](const auto& v) { return v.array().logistic(); });
+      [](auto&& v) { return v.array().logistic(); });
 }
 }  // namespace math
 }  // namespace stan

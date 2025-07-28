@@ -59,7 +59,7 @@ template <typename Container,
 inline auto inv(Container&& x) {
   return apply_vector_unary<Container>::apply(
       std::forward<Container>(x),
-      [](const auto& v) { return v.array().inverse(); });
+      [](auto&& v) { return v.array().inverse(); });
 }
 
 }  // namespace math

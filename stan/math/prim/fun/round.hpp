@@ -63,7 +63,7 @@ template <typename Container,
 inline auto round(Container&& x) {
   return apply_vector_unary<Container>::apply(
       std::forward<Container>(x),
-      [](const auto& v) { return v.array().round(); });
+      [](auto&& v) { return v.array().round(); });
 }
 
 }  // namespace math

@@ -55,7 +55,7 @@ namespace math {
  */
 inline var operator-(const var& a, const var& b) {
   return make_callback_vari(a.vi_->val_ - b.vi_->val_,
-                            [avi = a.vi_, bvi = b.vi_](const auto& vi) mutable {
+                            [avi = a.vi_, bvi = b.vi_](auto&& vi) mutable {
                               avi->adj_ += vi.adj_;
                               bvi->adj_ -= vi.adj_;
                             });
@@ -81,7 +81,7 @@ inline var operator-(const var& a, Arith b) {
   }
   return make_callback_vari(
       a.vi_->val_ - b,
-      [avi = a.vi_](const auto& vi) mutable { avi->adj_ += vi.adj_; });
+      [avi = a.vi_](auto&& vi) mutable { avi->adj_ += vi.adj_; });
 }
 
 /**
@@ -101,7 +101,7 @@ template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
 inline var operator-(Arith a, const var& b) {
   return make_callback_vari(
       a - b.vi_->val_,
-      [bvi = b.vi_](const auto& vi) mutable { bvi->adj_ -= vi.adj_; });
+      [bvi = b.vi_](auto&& vi) mutable { bvi->adj_ -= vi.adj_; });
 }
 
 /**

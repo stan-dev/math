@@ -82,7 +82,7 @@ template <typename Container,
 inline auto cos(Container&& x) {
   return apply_vector_unary<Container>::apply(
       std::forward<Container>(x),
-      [&](const auto& v) { return v.array().cos(); });
+      [&](auto&& v) { return v.array().cos(); });
 }
 
 namespace internal {

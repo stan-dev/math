@@ -110,7 +110,7 @@ inline auto logit(Container&& x) {
       [](auto&& v_ref) {
         return apply_vector_unary<ref_type_t<Container>>::apply(
             std::forward<decltype(v_ref)>(v_ref),
-            [](const auto& v) { return (v.array() / (1 - v.array())).log(); });
+            [](auto&& v) { return (v.array() / (1 - v.array())).log(); });
       },
       to_ref(std::forward<Container>(x)));
 }

@@ -85,7 +85,7 @@ template <typename Container,
 inline auto abs(Container&& x) {
   return apply_vector_unary<Container>::apply(
       std::forward<Container>(x),
-      [&](const auto& v) { return v.array().abs(); });
+      [&](auto&& v) { return v.array().abs(); });
 }
 
 namespace internal {

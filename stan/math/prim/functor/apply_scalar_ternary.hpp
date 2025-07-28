@@ -96,13 +96,16 @@ template <typename F, typename T1, typename T2, typename T3,
 inline auto apply_scalar_ternary(F&& f, T1&& x, T2&& y, T3&& z) {
   check_matching_sizes("Ternary function", "x", x, "y", y);
   check_matching_sizes("Ternary function", "y", y, "z", z);
-  decltype(auto) x_vec = as_column_vector_or_scalar(x);
-  decltype(auto) y_vec = as_column_vector_or_scalar(y);
-  decltype(auto) z_vec = as_column_vector_or_scalar(z);
+  decltype(auto) x_vec = as_column_vector_or_scalar(std::forward<T1>(x));
+  decltype(auto) y_vec = as_column_vector_or_scalar(std::forward<T2>(y));
+  decltype(auto) z_vec = as_column_vector_or_scalar(std::forward<T3>(z));
   using T_return = std::decay_t<decltype(f(x[0], y[0], z[0]))>;
   std::vector<T_return> result(x.size());
   Eigen::Map<Eigen::Matrix<T_return, -1, 1>>(result.data(), result.size())
-      = apply_scalar_ternary(std::forward<F>(f), x_vec, y_vec, z_vec);
+      = apply_scalar_ternary(std::forward<F>(f), 
+          std::forward<decltype(x_vec)>(x_vec), 
+          std::forward<decltype(y_vec)>(y_vec), 
+          std::forward<decltype(z_vec)>(z_vec));
   return result;
 }
 

@@ -69,7 +69,7 @@ inline auto inv_sqrt(Container&& x) {
 #else
   return apply_vector_unary<Container>::apply(
       std::forward<Container>(x),
-      [](const auto& v) { return v.array().rsqrt(); });
+      [](auto&& v) { return v.array().rsqrt(); });
 #endif
 }
 

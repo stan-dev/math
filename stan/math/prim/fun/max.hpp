@@ -46,7 +46,7 @@ inline value_type_t<T> max(T&& m) {
     return NEGATIVE_INFTY;
   }
   return apply_vector_unary<T>::reduce(
-      std::forward<T>(m), [](const auto& x) { return x.maxCoeff(); });
+      std::forward<T>(m), [](auto&& x) { return x.maxCoeff(); });
 }
 
 }  // namespace math

@@ -44,7 +44,7 @@ template <typename T, typename S>
 inline auto positive_constrain(T&& x, S& lp) {
   auto&& x_ref = to_ref(std::forward<T>(x));
   lp += sum(x_ref);
-  return exp(std::forward<decltype(x_ref)>(x));
+  return exp(std::forward<decltype(x_ref)>(x_ref));
 }
 
 /**

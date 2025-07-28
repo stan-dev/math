@@ -29,7 +29,7 @@ inline auto minus(T&& x) {
 template <typename T, require_std_vector_t<T>* = nullptr>
 inline auto minus(T&& x) {
   return apply_vector_unary<T>::apply(std::forward<T>(x),
-                                      [](const auto& v) { return -v; });
+                                      [](auto&& v) { return -v; });
 }
 
 }  // namespace math
