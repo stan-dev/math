@@ -64,8 +64,7 @@ template <typename Container,
           require_not_var_matrix_t<Container>* = nullptr>
 inline auto ceil(Container&& x) {
   return apply_vector_unary<Container>::apply(
-      std::forward<Container>(x),
-      [](auto&& v) { return v.array().ceil(); });
+      std::forward<Container>(x), [](auto&& v) { return v.array().ceil(); });
 }
 
 }  // namespace math

@@ -47,7 +47,9 @@ template <typename T1, typename T2, typename T3,
 inline auto inc_beta(T1&& a, T2&& b, T3&& c) {
   return apply_scalar_ternary(
       [](auto&& d, auto&& e, auto&& f) {
-        return inc_beta(std::forward<decltype(d)>(d), std::forward<decltype(e)>(e), std::forward<decltype(f)>(f)); 
+        return inc_beta(std::forward<decltype(d)>(d),
+                        std::forward<decltype(e)>(e),
+                        std::forward<decltype(f)>(f));
       },
       std::forward<T1>(a), std::forward<T2>(b), std::forward<T3>(c));
 }

@@ -63,7 +63,8 @@ struct apply_scalar_unary<F, T, require_eigen_t<T>> {
     return make_holder(
         [](auto&& xx) {
           return std::forward<decltype(xx)>(xx).unaryExpr([](auto&& xxx) {
-            return apply_scalar_unary<F, decltype(xxx)>::apply(std::forward<decltype(xxx)>(xxx));
+            return apply_scalar_unary<F, decltype(xxx)>::apply(
+                std::forward<decltype(xxx)>(xxx));
           });
         },
         std::forward<TT>(x));

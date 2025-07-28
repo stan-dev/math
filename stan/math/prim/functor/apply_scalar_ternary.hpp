@@ -102,10 +102,10 @@ inline auto apply_scalar_ternary(F&& f, T1&& x, T2&& y, T3&& z) {
   using T_return = std::decay_t<decltype(f(x[0], y[0], z[0]))>;
   std::vector<T_return> result(x.size());
   Eigen::Map<Eigen::Matrix<T_return, -1, 1>>(result.data(), result.size())
-      = apply_scalar_ternary(std::forward<F>(f), 
-          std::forward<decltype(x_vec)>(x_vec), 
-          std::forward<decltype(y_vec)>(y_vec), 
-          std::forward<decltype(z_vec)>(z_vec));
+      = apply_scalar_ternary(std::forward<F>(f),
+                             std::forward<decltype(x_vec)>(x_vec),
+                             std::forward<decltype(y_vec)>(y_vec),
+                             std::forward<decltype(z_vec)>(z_vec));
   return result;
 }
 

@@ -79,8 +79,7 @@ template <typename Container,
           require_container_bt<std::is_arithmetic, Container>* = nullptr>
 inline auto sin(Container&& x) {
   return apply_vector_unary<Container>::apply(
-      std::forward<Container>(x),
-      [&](auto&& v) { return v.array().sin(); });
+      std::forward<Container>(x), [&](auto&& v) { return v.array().sin(); });
 }
 
 namespace internal {

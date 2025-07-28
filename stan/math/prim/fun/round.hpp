@@ -62,8 +62,7 @@ template <typename Container,
           require_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto round(Container&& x) {
   return apply_vector_unary<Container>::apply(
-      std::forward<Container>(x),
-      [](auto&& v) { return v.array().round(); });
+      std::forward<Container>(x), [](auto&& v) { return v.array().round(); });
 }
 
 }  // namespace math

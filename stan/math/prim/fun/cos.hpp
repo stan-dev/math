@@ -81,8 +81,7 @@ template <typename Container,
           require_container_bt<std::is_arithmetic, Container>* = nullptr>
 inline auto cos(Container&& x) {
   return apply_vector_unary<Container>::apply(
-      std::forward<Container>(x),
-      [&](auto&& v) { return v.array().cos(); });
+      std::forward<Container>(x), [&](auto&& v) { return v.array().cos(); });
 }
 
 namespace internal {

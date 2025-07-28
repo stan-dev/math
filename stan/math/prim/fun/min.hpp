@@ -44,8 +44,8 @@ inline value_type_t<T> min(T&& m) {
   } else if (m.size() == 0) {
     return INFTY;
   }
-  return apply_vector_unary<T>::reduce(
-      std::forward<T>(m), [](auto&& x) { return x.minCoeff(); });
+  return apply_vector_unary<T>::reduce(std::forward<T>(m),
+                                       [](auto&& x) { return x.minCoeff(); });
 }
 
 }  // namespace math
