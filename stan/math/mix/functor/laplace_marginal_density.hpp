@@ -24,6 +24,13 @@
 namespace stan {
 namespace math {
 
+struct laplace_line_search_options {
+  double c1{1e-6};
+  double c2{0.8};
+  double tau{0.5};
+  double min_alpha{1e-12};
+};
+
 /**
  * Options for the laplace sampler
  */
@@ -45,6 +52,7 @@ struct laplace_options_base {
   double tolerance{1e-12};
   /* Maximum number of steps*/
   int max_num_steps{100};
+  laplace_line_search_options line_search;
 };
 
 template <bool HasInitTheta>
@@ -52,22 +60,12 @@ struct laplace_options;
 
 template <>
 struct laplace_options<false> : public laplace_options_base {
-  int max_tries{100};
-  double c1{1e-6};
-  double c2{0.8};
-  double tau{0.5};
-  double min_alpha{1e-12};
 };
 
 template <>
 struct laplace_options<true> : public laplace_options_base {
   /* Value for user supplied initial theta  */
   Eigen::VectorXd theta_0{0};
-  int max_tries{100};
-  double c1{1e-6};
-  double c2{0.8};
-  double tau{0.5};
-  double min_alpha{1e-12};
 };
 
 using laplace_options_default = laplace_options<false>;
@@ -250,72 +248,6 @@ inline void block_matrix_chol_L(WRootMat& W_root,
 }
 
 /**
- * @brief Performs a simple line search
- *
- * @tparam AVec   Type of the parameter update vector (`a`), e.g.
- * Eigen::VectorXd.
- * @tparam APrev  Type of the previous parameter vector (`a_prev`), same shape
- * as AVec.
- * @tparam ThetaVec Type of the transformed vector (`theta`), e.g. Σ·a.
- * @tparam LLFun  Functor type for computing the log‐likelihood.
- * @tparam LLArgs Tuple or pack type forwarded to `ll_fun`.
- * @tparam Covar  Matrix type for the covariance Σ, e.g. Eigen::MatrixXd.
- * @tparam Msgs   Diagnostics container type for capturing warnings/errors.
- *
- * @param[in,out] objective_new On entry: objective at the full‐step `a` (must
- * satisfy objective_new < objective_old). On exit:  best objective found.
- * @param[in,out] a On entry: candidate parameter vector. On exit:  updated to
- * the step achieving the lowest objective.
- * @param[in,out] theta On entry: Σ·a for the initial candidate. On exit:  Σ·a
- * for the accepted best step.
- * @param[in,out] a_prev On entry: previous parameter vector, with objective
- * `objective_old`. On exit: rolled forward to each newly accepted step.
- * @param[in] ll_fun Callable that computes the log‐likelihood given `(theta,
- * ll_args, msgs)`.
- * @param[in] ll_args Arguments forwarded to `ll_fun` at each evaluation.
- * @param[in] covariance Covariance matrix Σ used to compute `theta = Σ·a`.
- * @param[in] max_steps_line_search Maximum number of iterations.
- * @param[in] objective_old Objective value at the initial `a_prev` (used as f₀
- * for the first pass).
- * @param[in] tolerance Minimum tolerance to accept a step
- * @param[in,out] msgs Pointer to a diagnostics container; may be used by
- * `ll_fun` to record warnings.
- */
-template <typename AVec, typename APrev, typename ThetaVec, typename LLFun,
-          typename LLArgs, typename Covar, typename Msgs>
-inline void line_search(double& objective_new, AVec& a, ThetaVec& theta,
-                        APrev& a_prev, LLFun&& ll_fun, LLArgs&& ll_args,
-                        Covar&& covariance, const int max_steps_line_search,
-                        const double objective_old, double tolerance,
-                        Msgs* msgs) {
-  Eigen::VectorXd a_tmp(a.size());
-  double objective_new_tmp = 0.0;
-  double objective_old_tmp = objective_old;
-  Eigen::VectorXd theta_tmp(covariance.rows());
-  for (int j = 0;
-       j < max_steps_line_search && (objective_new < objective_old_tmp); ++j) {
-    a_tmp.noalias() = a_prev + 0.5 * (a - a_prev);
-    theta_tmp.noalias() = covariance * a_tmp;
-    if (!theta_tmp.allFinite()) {
-      break;
-    } else {
-      objective_new_tmp = -0.5 * a_tmp.dot(theta_tmp)
-                          + laplace_likelihood::log_likelihood(
-                              ll_fun, theta_tmp, ll_args, msgs);
-      if (objective_new_tmp < objective_new) {
-        a_prev.swap(a);
-        a.swap(a_tmp);
-        theta.swap(theta_tmp);
-        objective_old_tmp = objective_new;
-        objective_new = objective_new_tmp;
-      } else {
-        break;
-      }
-    }
-  }
-}
-
-/**
  * Collect the adjoints from the input and add them to the output.
  * @tparam ZeroInput If true, the adjoints of the input will be set to zero
  * @tparam Output A tuple or type where all scalar types are `arithmetic` types
@@ -391,30 +323,6 @@ inline STAN_COLD_PATH void throw_nan(NameStr&& name_str, ParamStr&& param_str,
   throw std::domain_error(msg);
 }
 
-template <typename T>
-void print_test(const char* name, T&& x) {
-  // Print two for mu and sigma
-  std::cout << name << " mu: \n";
-  for (int i = 0; i < x.size(); i += 2) {
-    std::cout << std::setw(5) << x(i) << std::setw(4) << " ";
-    /*
-    if (i % 20 == 0 && i != 0) {
-      std::cout << "\n";
-    }
-    */
-  }
-  std::cout << "\n" << name << " sigma: \n";
-  for (int i = 0; i < x.size() - 1; i += 2) {
-    std::cout << std::setw(5) << x(i + 1) << std::setw(4) << " ";
-    /*
-    if (i % 20 == 0 && i != 0) {
-      std::cout << "\n";
-    }
-    */
-  }
-  std::cout << "\n";
-}
-
 /**
  * @brief  One–dimensional cubic interpolation helper used by the Wolfe
  *         zoom phase to pick the step length that *maximises* an
@@ -436,7 +344,7 @@ void print_test(const char* name, T&& x) {
  * upper bound itself are tested.  The point that gives the largest
  * \f$g(x)\f$ is returned.
  *
- * ### Subtle / “gotcha’’ points worth knowing
+ * **Numerical safeguards:**
  * * **Degenerate cubic → midpoint.**  If the leading coefficient
  *   \f$a_3\f$ is almost zero (`|a3| < 1 e−14`) the polynomial becomes
  *   quadratic or linear; the function falls back to the simpler and
@@ -487,10 +395,9 @@ inline auto cubic_interp_max(T dir_lo, T hi_bound, T obj_diff, T dir_high,
   for (T r : {r1, r2, hi_limit}) {
     if (r > 0 && r < hi_limit) {
       T v = g(r);
-      if (v > best_val) {
-        best_x = r;
-        best_val = v;
-      }
+      const bool v_best = v > best_val;
+      best_x = v_best ? r : best_x;
+      best_val = v_best ? v : best_val;
     }
   }
   return best_x;
@@ -499,18 +406,17 @@ inline auto cubic_interp_max(T dir_lo, T hi_bound, T obj_diff, T dir_high,
 template <typename Option>
 inline auto check_armijo(double obj_next, double obj_init, double alpha_next,
                          double dir0, Option&& opt) {
-  return obj_next >= obj_init + alpha_next * dir0 * opt.c1;
+  return obj_next >= obj_init + alpha_next * dir0 * opt.line_search.c1;
 };
 
 template <typename Option>
 inline auto check_wolfe_curve(double dir_deriv_next, double dir_deriv_init,
                               Option&& opt) {
-  return std::abs(dir_deriv_next) <= std::abs(dir_deriv_init) * opt.c2;
+  return std::abs(dir_deriv_next) <= std::abs(dir_deriv_init) * opt.line_search.c2;
 };
 
 /**
- * @brief  Strong‑Wolfe line search with cubic‑interpolation "zoom" for
- *         Laplace‐style log‑likelihood problems.
+ * @brief  Strong‑Wolfe line search with cubic‑interpolation "zoom" for Laplace‐style log‑likelihood problems.
  *
  * This routine searches along the space of the latent gaussian *a*
  * \f$a(\alpha) = a_prev + \alpha p`, `p = a − a_prev\f$,
@@ -528,55 +434,39 @@ inline auto check_wolfe_curve(double dir_deriv_next, double dir_deriv_init,
  *
  * The search proceeds in three phases
  *
- *  1. **Back‑tracking** – halve the initial \f$\alpha\f$ until both Wolfe
- *conditions pass.
- *  2. If the \f$alpha\f$ is 1 then we end the search early, as Laplace
- *     problems commonly accept a full Newton step.
- *  2. **Bracketing by doubling** – starting from that good \f$\alpha\f$, double
- *the step until Armijo fails; the last good point is the left end of the
- *bracket, the first failing point the right end.
- *  3. **Cubic zoom** – repeatedly fit a cubic through the bracket end‑
- *     points (`cubic_interp_max`), evaluate the objective/gradient at the
+ *  1. **Back‑tracking** – halve the initial \f$\alpha\f$ until both Wolfe conditions pass.
+ *  2. If the \f$alpha\f$ is 1 or goes below `min_alpha`, then we end the search early, as Laplace problems commonly accept a full Newton step.
+ *  3. **Bracketing by doubling** – starting from that good \f$\alpha\f$, double the step until Armijo fails; the last good point is the left end of the bracket, the first failing point the right end.
+ *  4. **Cubic zoom** – repeatedly fit a cubic through the bracket end‑points 
+ *     (`cubic_interp_max`), evaluate the objective/gradient at the
  *     predicted maximiser, and shrink the bracket until a Wolfe‑compliant
- *     step is found or the interval width falls below `opt.min_alpha`.
+ *     step is found or the interval width falls below `opt.line_search.min_alpha`.
  *
  * * **Gradient reuse** – the caller provides `theta_grad` computed at the
  *   starting point; inside the loop it is overwritten with fresh gradients
- *   via `laplace_likelihood::theta_grad` to avoid recomputing Hessians.
- * * **Early‑exit for \f$\alpha\f$ = 1** – Laplace problems commonly accept a
- *full Newton step; the function short‑circuits to avoid any extra work.
+ *   via `laplace_likelihood::theta_grad`.
+ * * **Early‑exit for \f$\alpha\f$ = 1 or < `min_alpha`** Laplace problems commonly accept a full Newton step. The function short‑circuits to avoid any extra work.
  *
- * @tparam F Callable type of the raw log‑likelihood (passed to
- *`laplace_likelihood::theta_grad`).
- * @tparam Obj Callable returning the scalar objective value `obj_fun(a, θ)`.
- * @tparam Grad Callable returning the gradient in *a‑space* given `(a, θ,
- *θ_grad)`.
- * @tparam LLArgs Struct or tuple holding additional arguments forwarded to
- *`ll_fun` and `theta_grad`.
- * @tparam Stream Any type that implements the stream interface used by
- *`laplace_likelihood` for diagnostic messages; may be`std::ostream`‐like or
- *`nullptr`.
- * @tparam Options Struct holding search parameters (`c1`, `c2`, `min_alpha`,
- *…).
+ * @tparam F Callable type of the raw log‑likelihood (passed to `laplace_likelihood::theta_grad`)
+ * @tparam Obj Callable returning the scalar objective value `obj_fun(a, theta)`
+ * @tparam Grad Callable returning the gradient in *a‑space* given `(a, theta, theta_grad)`
+ * @tparam LLArgs Struct or tuple holding additional arguments forwarded to `ll_fun` and `theta_grad`
+ * @tparam Stream Any type that implements the stream interface used by `laplace_likelihood` for diagnostic messages; may be `std::ostream`‐like or `nullptr`
+ * @tparam Options Struct holding search parameters (`c1`, `c2`, `min_alpha`, ...)
  *
- * @param[in,out] theta Current \f$\theta=\Sigma a\f$; overwritten with the
- *accepted value on success.
- * @param[in,out] obj_init Objective at \f$\alpha\f$ = 0 on entry; updated to
- *the objective at the accepted step on exit.
- * @param[in,out] alpha_init Step size suggestion on input; on success holds the
- *step that satisfied strong‑Wolfe.
- * @param[in,out] theta_grad Gradient of the log‑likelihood wrt θ at the
- ***current** θ.  Recomputed internally and returned at the final θ.
- * @param[in,out] a Working copy of *a*; on success contains the accepted point.
- * @param[in] a_prev Starting point (\f$\alpha\f$ = 0).
- * @param[in] ll_fun Raw log‑likelihood functor.
- * @param[in] obj_fun Objective functor to be maximised.
- * @param[in] grad_fun Functor returning ∂objective/∂a.
- * @param[in] covariance Symmetric positive‑definite Σ converting *a* ↔ θ.
- * @param[in] ll_args Extra arguments forwarded to `ll_fun` and `theta_grad`.
- * @param[in] opt Line‑search constants (`c1`, `c2`, etc.).
- * @param[in,out] msgs Optional diagnostics stream.  May be `nullptr` to
- *suppress messages.
+ * @param[in,out] theta Current \f$\theta=\Sigma a\f$; overwritten with the accepted value on success
+ * @param[in,out] obj_init Objective at \f$\alpha\f$ = 0 on entry; updated to the objective at the accepted step on exit
+ * @param[in,out] alpha_init Step size suggestion on input; on success holds the step that satisfied strong‑Wolfe
+ * @param[in,out] theta_grad Gradient of the log‑likelihood wrt theta at the **current** theta.  Recomputed internally and returned at the final theta
+ * @param[in,out] a Working copy of *a*; on success contains the accepted point
+ * @param[in] a_prev Starting point (\f$\alpha\f$ = 0)
+ * @param[in] ll_fun Raw log‑likelihood functor
+ * @param[in] obj_fun Objective functor to be maximised
+ * @param[in] grad_fun Functor returning gradint of objective with respect to `a`.
+ * @param[in] covariance Symmetric positive‑definite $\Sigma$ converting *a* to theta
+ * @param[in] ll_args Extra arguments forwarded to `ll_fun` and `theta_grad`
+ * @param[in] opt Line‑search constants (`c1`, `c2`, etc.)
+ * @param[in,out] msgs Optional diagnostics stream.  May be `nullptr` to suppress messages
  *
  * @return `true`  if a step satisfying both Wolfe conditions was found
  *         `false` if only Armijo is satisfied (strong‑Wolfe failed but a
@@ -608,7 +498,7 @@ inline bool wolfe_line_search(Eigen::VectorXd& theta, double& obj_init,
   while (!(check_armijo(obj_high, obj_init, alpha_high, dir_deriv_init, opt)
            && check_wolfe_curve(dir_deriv_high, dir_deriv_init, opt)
            && std::isfinite(obj_high) && theta_try.allFinite())
-         && alpha_high > opt.min_alpha) {
+         && alpha_high > opt.line_search.min_alpha) {
     alpha_high *= 0.5;
     a_try.noalias() = a_prev + alpha_high * p;
     theta_try.noalias() = covariance * a_try;
@@ -624,6 +514,9 @@ inline bool wolfe_line_search(Eigen::VectorXd& theta, double& obj_init,
     obj_init = obj_high;
     alpha_init = alpha_high;
     return true;
+  } else if (alpha_high < opt.line_search.min_alpha) {
+    // If we are below the minimum alpha, then we accept the initial point
+    return false;
   }
   // we *know* alpha_high is good so set that to low
   double alpha_low = alpha_high;
@@ -652,7 +545,7 @@ inline bool wolfe_line_search(Eigen::VectorXd& theta, double& obj_init,
   }
   double obj_mid = obj_low;
   double alpha_mid = alpha_low;
-  while (alpha_high - alpha_low > opt.min_alpha) {
+  while (alpha_high - alpha_low > opt.line_search.min_alpha) {
     const double diff_alpha = alpha_high - alpha_low;
     const double alpha_off
         = cubic_interp_max(dir_deriv_low, diff_alpha, obj_high - obj_low,
@@ -766,8 +659,6 @@ inline auto laplace_marginal_density_est(
   check_positive("laplace_marginal", "max_num_steps", options.max_num_steps);
   check_positive("laplace_marginal", "hessian_block_size",
                  options.hessian_block_size);
-  check_nonnegative("laplace_marginal", "max_steps_line_search",
-                    options.max_steps_line_search);
 
   Eigen::MatrixXd covariance = stan::math::apply(
       [msgs, &covariance_function](auto&&... args) {

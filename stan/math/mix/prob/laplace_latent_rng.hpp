@@ -38,7 +38,8 @@ inline auto laplace_latent_tol_rng(
     const int max_steps_line_search, RNG& rng, std::ostream* msgs) {
   const laplace_options_user_supplied ops{
       hessian_block_size, solver,        max_steps_line_search,
-      tolerance,          max_num_steps, value_of(theta_0)};
+      tolerance,          max_num_steps, laplace_line_search_options{}, 
+      value_of(theta_0)};
   return laplace_base_rng(std::forward<LLFunc>(L_f),
                           std::forward<LLArgs>(ll_args),
                           std::forward<CovarFun>(covariance_function),

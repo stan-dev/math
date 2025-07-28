@@ -41,7 +41,8 @@ inline Eigen::VectorXd laplace_latent_tol_poisson_log_rng(
     const int max_steps_line_search, RNG& rng, std::ostream* msgs) {
   laplace_options_user_supplied ops{hessian_block_size,    solver,
                                     max_steps_line_search, tolerance,
-                                    max_num_steps,         value_of(theta_0)};
+                                    max_num_steps, laplace_line_search_options{}, 
+                                    value_of(theta_0)};
   return laplace_base_rng(
       poisson_log_likelihood{},
       std::forward_as_tuple(y, y_index, std::forward<Mean>(mean)),
