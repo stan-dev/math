@@ -25,11 +25,7 @@ inline auto ceil(T&& x) {
 struct ceil_fun {
   template <typename T>
   static inline auto fun(T&& x) {
-    if constexpr (std::is_arithmetic_v<std::decay_t<T>>) {
-      return std::ceil(x);
-    } else {
-      return ceil(std::forward<T>(x));
-    }
+    return ceil(std::forward<T>(x));
   }
 };
 

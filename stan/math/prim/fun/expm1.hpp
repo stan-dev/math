@@ -23,11 +23,7 @@ inline auto expm1(T&& x) {
 struct expm1_fun {
   template <typename T>
   static inline auto fun(T&& x) {
-    if constexpr (std::is_arithmetic_v<std::decay_t<T>>) {
-      return std::expm1(x);
-    } else {
-      return expm1(std::forward<T>(x));
-    }
+    return expm1(std::forward<T>(x));
   }
 };
 

@@ -46,11 +46,7 @@ inline auto log10(T&& x) {
 struct log10_fun {
   template <typename T>
   static inline auto fun(T&& x) {
-    if constexpr (std::is_arithmetic_v<std::decay_t<T>>) {
-      return std::log10(x);
-    } else {
-      return log10(std::forward<T>(x));
-    }
+    return log10(std::forward<T>(x));
   }
 };
 

@@ -52,11 +52,7 @@ inline auto acos(T&& x) {
 struct acos_fun {
   template <typename T>
   static inline auto fun(T&& x) {
-    if constexpr (std::is_arithmetic_v<std::decay_t<T>>) {
-      return std::acos(x);
-    } else {
-      return acos(std::forward<T>(x));
-    }
+    return acos(std::forward<T>(x));
   }
 };
 

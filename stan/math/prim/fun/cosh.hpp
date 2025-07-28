@@ -46,11 +46,7 @@ inline auto cosh(T&& x) {
 struct cosh_fun {
   template <typename T>
   static inline auto fun(T&& x) {
-    if constexpr (std::is_arithmetic_v<std::decay_t<T>>) {
-      return std::cosh(x);
-    } else {
-      return cosh(std::forward<T>(x));
-    }
+    return cosh(std::forward<T>(x));
   }
 };
 

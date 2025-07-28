@@ -50,11 +50,7 @@ inline auto asin(T&& x) {
 struct asin_fun {
   template <typename T>
   static inline auto fun(T&& x) {
-    if constexpr (std::is_arithmetic_v<std::decay_t<T>>) {
-      return std::asin(x);
-    } else {
-      return asin(std::forward<T>(x));
-    }
+    return asin(std::forward<T>(x));
   }
 };
 

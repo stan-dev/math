@@ -47,11 +47,7 @@ inline auto sin(T&& x) {
 struct sin_fun {
   template <typename T>
   static inline auto fun(T&& x) {
-    if constexpr (std::is_arithmetic_v<std::decay_t<T>>) {
-      return std::sin(x);
-    } else {
-      return sin(std::forward<T>(x));
-    }
+    return sin(std::forward<T>(x));
   }
 };
 

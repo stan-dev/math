@@ -53,11 +53,7 @@ inline auto asinh(T&& x) {
 struct asinh_fun {
   template <typename T>
   static inline auto fun(T&& x) {
-    if constexpr (std::is_arithmetic_v<std::decay_t<T>>) {
-      return std::asinh(x);
-    } else {
-      return asinh(std::forward<T>(x));
-    }
+    return asinh(std::forward<T>(x));
   }
 };
 

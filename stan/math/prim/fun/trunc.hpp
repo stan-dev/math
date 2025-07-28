@@ -26,11 +26,7 @@ struct trunc_fun {
    */
   template <typename T>
   static inline auto fun(T&& x) {
-    if constexpr (std::is_arithmetic_v<std::decay_t<T>>) {
-      return std::trunc(x);
-    } else {
-      return trunc(std::forward<T>(x));
-    }
+    return trunc(std::forward<T>(x));
   }
 };
 

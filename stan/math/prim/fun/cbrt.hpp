@@ -23,11 +23,7 @@ inline auto cbrt(T&& x) {
 struct cbrt_fun {
   template <typename T>
   static inline auto fun(T&& x) {
-    if constexpr (std::is_arithmetic_v<std::decay_t<T>>) {
-      return std::cbrt(x);
-    } else {
-      return cbrt(std::forward<T>(x));
-    }
+    return cbrt(std::forward<T>(x));
   }
 };
 

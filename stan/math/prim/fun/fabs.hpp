@@ -30,11 +30,7 @@ inline auto fabs(T&& x) {
 struct fabs_fun {
   template <typename T>
   static inline auto fun(T&& x) {
-    if constexpr (std::is_arithmetic_v<std::decay_t<T>>) {
-      return std::fabs(x);
-    } else {
-      return fabs(std::forward<T>(x));
-    }
+    return fabs(std::forward<T>(x));
   }
 };
 

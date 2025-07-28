@@ -23,11 +23,7 @@ inline auto erf(T&& x) {
 struct erf_fun {
   template <typename T>
   static inline auto fun(T&& x) {
-    if constexpr (std::is_arithmetic_v<std::decay_t<T>>) {
-      return std::erf(x);
-    } else {
-      return erf(std::forward<T>(x));
-    }
+    return erf(std::forward<T>(x));
   }
 };
 

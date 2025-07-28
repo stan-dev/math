@@ -47,11 +47,7 @@ inline auto tan(T&& x) {
 struct tan_fun {
   template <typename T>
   static inline auto fun(T&& x) {
-    if constexpr (std::is_arithmetic_v<std::decay_t<T>>) {
-      return std::tan(x);
-    } else {
-      return tan(std::forward<T>(x));
-    }
+    return tan(std::forward<T>(x));
   }
 };
 

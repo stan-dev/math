@@ -47,11 +47,7 @@ inline auto tanh(T&& x) {
 struct tanh_fun {
   template <typename T>
   static inline auto fun(T&& x) {
-    if constexpr (std::is_arithmetic_v<std::decay_t<T>>) {
-      return std::tanh(x);
-    } else {
-      return tanh(std::forward<T>(x));
-    }
+    return tanh(std::forward<T>(x));
   }
 };
 

@@ -25,11 +25,7 @@ inline auto round(T&& x) {
 struct round_fun {
   template <typename T>
   static inline auto fun(T&& x) {
-    if constexpr (std::is_arithmetic_v<std::decay_t<T>>) {
-      return std::round(x);
-    } else {
-      return round(std::forward<T>(x));
-    }
+    return round(std::forward<T>(x));
   }
 };
 

@@ -48,11 +48,7 @@ inline auto atan(T&& x) {
 struct atan_fun {
   template <typename T>
   static inline auto fun(T&& x) {
-    if constexpr (std::is_arithmetic_v<std::decay_t<T>>) {
-      return std::atan(x);
-    } else {
-      return atan(std::forward<T>(x));
-    }
+    return atan(std::forward<T>(x));
   }
 };
 
