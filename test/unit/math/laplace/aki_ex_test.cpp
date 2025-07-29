@@ -14,9 +14,9 @@
 
 
 struct poisson_re_log_ll_functor {
-  template <typename T0, typename T2>
+  template <typename T0, typename T1, typename T2>
   stan::return_type_t<stan::base_type_t<T0>, stan::base_type_t<T2>>
-  operator()(const T0& theta_arg, const std::vector<int>& y_arg, const T2& mu_arg,
+  operator()(const T0& theta_arg, const T1& y_arg, const T2& mu_arg,
              std::ostream* pstream) const {
     using local_scalar_t = stan::return_type_t<stan::base_type_t<T0>,
                               stan::base_type_t<T2>>;
@@ -55,20 +55,31 @@ struct cov_fun_functor {
 };
 
 TEST(WriteArrayBodySimple, ExecutesBodyWithHardcodedData) {
-  const int  N = 1;
-  const std::vector<int>    y{183};
-  const std::vector<double> mu{0.5};
-  const double sigmaz = 2.5;
+  const std::vector<int>    y{183, 91, 171};
+  const std::vector<double> mu{0.6, -0.2, 0.6};
+  const int  N = y.size();
+  const double sigmaz = 2.0;
   const double integrate_1d_reltol = 1e-6;
   std::ostream* pstream = nullptr;
-  auto ll_laplace = stan::math::laplace_marginal(
-      poisson_re_log_ll_functor(),
-      std::tuple<const std::vector<int>&, const std::vector<double>&>(y, mu),
-      cov_fun_functor(),
-      std::tuple<double, int>(sigmaz, N),
-      pstream);
 
+  auto ll_laplace = stan::math::laplace_marginal(
+    poisson_re_log_ll_functor(),
+    std::forward_as_tuple(y, mu),
+    cov_fun_functor(),
+    std::tuple<double, int>(sigmaz, N),
+    pstream);
+  std::vector<double> ll_laplace_vec;
+  for (int i = 1; i <= N; ++i) {
+    auto ll_laplace_val = stan::math::laplace_marginal(
+      poisson_re_log_ll_functor(),
+      std::forward_as_tuple(y[i - 1], mu[i - 1]),
+      cov_fun_functor(),
+      std::tuple<double, int>(sigmaz, 1),
+      pstream);
+    ll_laplace_vec.push_back(ll_laplace_val);
+  }
   double ll_integrate_1d = 0;
+  std::vector<double> ll_integrate_1d_vec;
   for (int i = 1; i <= N; ++i) {
     double piece = stan::math::integrate_1d(
       integrand_functor(),
@@ -80,10 +91,18 @@ TEST(WriteArrayBodySimple, ExecutesBodyWithHardcodedData) {
       pstream,
       integrate_1d_reltol
     );
+    ll_integrate_1d_vec.push_back(std::log(piece));
     ll_integrate_1d += std::log(piece);
   }
   std::cout << "Laplace result: " << ll_laplace << std::endl;
   std::cout << "Integrated result: " << ll_integrate_1d << std::endl;
+  for (int i = 0; i < ll_integrate_1d_vec.size(); ++i) {
+    std::cout << "results for y,mu[" << i << "]: ("
+              << y[i] << ", " << mu[i] << "): \n"
+              << "\tlaplace:    " << ll_laplace_vec[i] << "\n"
+              << "\tintegrated: " << ll_integrate_1d_vec[i] << "\n"
+              << "\tdifference: " << ll_laplace_vec[i] - ll_integrate_1d_vec[i] << std::endl;
+  }
   // --- end inlined body ---
 
   // Assertions
