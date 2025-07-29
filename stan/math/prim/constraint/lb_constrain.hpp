@@ -34,11 +34,11 @@ namespace math {
  */
 template <typename T, typename L, require_all_stan_scalar_t<T, L>* = nullptr,
           require_all_not_st_var<T, L>* = nullptr>
-inline auto lb_constrain(const T& x, const L& lb) {
+inline auto lb_constrain(T&& x, const L& lb) {
   if (unlikely(value_of_rec(lb) == NEGATIVE_INFTY)) {
     return identity_constrain(x, lb);
   } else {
-    return add(exp(x), lb);
+    return add(exp(std::forward<T>(x)), lb);
   }
 }
 
