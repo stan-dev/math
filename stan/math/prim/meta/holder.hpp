@@ -167,6 +167,7 @@ class Holder
   Eigen::Index innerStride() const { return m_arg.innerStride(); }
   Eigen::Index outerStride() const { return m_arg.outerStride(); }
   auto* data() { return m_arg.data(); }
+  const auto* data() const { return m_arg.data(); }
 
   /**
    * Assignment operator assigns expresssions.
