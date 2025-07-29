@@ -103,7 +103,6 @@ TEST(WriteArrayBodySimple, ExecutesBodyWithHardcodedData) {
               << "\tintegrated: " << ll_integrate_1d_vec[i] << "\n"
               << "\tdifference: " << ll_laplace_vec[i] - ll_integrate_1d_vec[i] << std::endl;
   }
-  // --- end inlined body ---
 
   // Assertions
   EXPECT_NEAR(ll_laplace, ll_integrate_1d, 5e-2)

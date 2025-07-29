@@ -25,8 +25,8 @@ namespace stan {
 namespace math {
 
 struct laplace_line_search_options {
-  double c1{1e-6};
-  double c2{0.8};
+  double c1{1e-2};
+  double c2{0.9};
   double tau{0.5};
   double min_alpha{1e-12};
 };
@@ -437,7 +437,7 @@ inline auto check_wolfe_curve(double dir_deriv_next, double dir_deriv_init,
  *  1. **Back‑tracking** – halve the initial \f$\alpha\f$ until both Wolfe conditions pass.
  *  2. If the \f$alpha\f$ is 1 or goes below `min_alpha`, then we end the search early, as Laplace problems commonly accept a full Newton step.
  *  3. **Bracketing by doubling** – starting from that good \f$\alpha\f$, double the step until Armijo fails; the last good point is the left end of the bracket, the first failing point the right end.
- *  4. **Cubic zoom** – repeatedly fit a cubic through the bracket end‑points 
+ *  4. **Cubic zoom** – repeatedly fit a cubic through the bracket end‑points
  *     (`cubic_interp_max`), evaluate the objective/gradient at the
  *     predicted maximiser, and shrink the bracket until a Wolfe‑compliant
  *     step is found or the interval width falls below `opt.line_search.min_alpha`.
