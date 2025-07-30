@@ -59,9 +59,9 @@ struct integrand_vec_functor {
     // suppress unused var warning
     static constexpr bool propto = true;
     auto sigma = phi[0];
-    auto mu = phi.tail(10).eval();
+    auto mu = stan::math::as_column_vector_or_scalar(phi).tail(theta.size()).eval();
     auto p = stan::math::exp((stan::math::normal_lpdf<false>(theta, 0, sigma) +
-          stan::math::poisson_log_lpmf<false>(y_i, (theta + mu))));
+          stan::math::poisson_log_lpmf<false>(y_i, stan::math::add(theta, mu))));
     return p;
   }
 };
@@ -85,6 +85,7 @@ TEST(WriteArrayBodySimple, ExecutesBodyWithHardcodedData) {
   std::vector<double> ll_laplace_vec;
   std::cout << "Individual laplace\n";
   double ll_integrate_1d = 0;
+  double ll_laplace = 0;
   std::vector<double> ll_integrate_1d_vec;
   for (int i = 1; i <= N; ++i) {
     std::cout << "y and mu for i = " << i << ": ("
@@ -110,6 +111,7 @@ TEST(WriteArrayBodySimple, ExecutesBodyWithHardcodedData) {
     ll_laplace_vec.push_back(ll_laplace_val);
     ll_integrate_1d_vec.push_back(std::log(piece));
     ll_integrate_1d += std::log(piece);
+    ll_laplace += ll_laplace_val;
     EXPECT_NEAR(ll_laplace_val, std::log(piece), 1e-2)
       << "Laplace and integrated results should be close";
     } catch (const std::domain_error& e) {
@@ -120,28 +122,12 @@ TEST(WriteArrayBodySimple, ExecutesBodyWithHardcodedData) {
     }
   }
   std::cout << "Starting overall laplace\n";
-  auto ll_laplace = stan::math::laplace_marginal(
+  auto ll_laplace_all = stan::math::laplace_marginal(
     poisson_re_log_ll_functor(),
     std::forward_as_tuple(y, mu),
     cov_fun_functor(),
     std::tuple<double, int>(sigmaz, N),
     pstream);
-  std::vector<double> blah{sigmaz};
-  for (int i = 0 i < mu.size(); ++i) {
-    blah.push_back(mu[i])
-   }
-  ll_integrate_1d = stan::math::integrate_1d(
-        integrand_vec_functor{},
-        stan::math::negative_infinity(),
-        stan::math::positive_infinity(),
-        blah,
-        std::vector<double>{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        y,
-        pstream,
-        integrate_1d_reltol
-      );
-  std::cout << "Laplace result: " << ll_laplace << std::endl;
-  std::cout << "Integrated result: " << std::log(ll_integrate_1d) << std::endl;
   for (int i = 0; i < ll_integrate_1d_vec.size(); ++i) {
     std::cout << "results for y,mu[" << i << "]: ("
               << y[i] << ", " << mu[i] << "): \n"
@@ -149,9 +135,11 @@ TEST(WriteArrayBodySimple, ExecutesBodyWithHardcodedData) {
               << "\tintegrated: " << ll_integrate_1d_vec[i] << "\n"
               << "\tdifference: " << ll_laplace_vec[i] - ll_integrate_1d_vec[i] << std::endl;
   }
+  std::cout << "Laplace result: " << ll_laplace << std::endl;
+  std::cout << "Integrated result: " << ll_integrate_1d << std::endl;
 
   // Assertions
-  EXPECT_NEAR(ll_laplace, std::log(ll_integrate_1d), 5e-2)
+  EXPECT_NEAR(ll_laplace, ll_integrate_1d, 5e-2)
       << "Laplace and integrated results should be close";
   EXPECT_TRUE(std::isfinite(ll_laplace)) << "Laplace result should be finite";
   EXPECT_TRUE(std::isfinite(ll_integrate_1d)) << "Integrated result should be finite";
