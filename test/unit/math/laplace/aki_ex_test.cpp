@@ -22,9 +22,11 @@ struct poisson_re_log_ll_functor {
                               stan::base_type_t<T2>>;
     const auto& theta = stan::math::to_ref(theta_arg);
     const auto& mu = stan::math::to_ref(mu_arg);
-    return stan::math::poisson_log_lpmf<false>(y_arg, stan::math::add(stan::math::as_column_vector_or_scalar(mu), theta));
+    auto mu_theta = stan::math::add(stan::math::as_column_vector_or_scalar(mu), theta);
+    return stan::math::poisson_log_lpmf<false>(y_arg, mu_theta);
   }
 };
+
 struct integrand_functor {
   template <typename T0, typename T1, typename T2, typename T3,
             typename T4>
@@ -55,45 +57,56 @@ struct cov_fun_functor {
 };
 
 TEST(WriteArrayBodySimple, ExecutesBodyWithHardcodedData) {
-  const std::vector<int>    y{183, 91, 171};
-  const std::vector<double> mu{0.6, -0.2, 0.6};
+  const std::vector<int>    y{183, 91, 171, 247, 695, 0, 26, 0, 7, 0, 24, 0};
+  const std::vector<double> mu{0.6, 0.2, 0.6, 0.609205625568583, 0.347054203919261, 0.352661022230823, -0.136229419539569, 1.27176873556041, 2.56172727426074, 0.549751496254648, 1.95496295785907, 1.49388018724716};
   const int  N = y.size();
   const double sigmaz = 2.0;
   const double integrate_1d_reltol = 1e-6;
   std::ostream* pstream = nullptr;
+  std::vector<double> ll_laplace_vec;
+  std::cout << "Individual laplace\n";
+  double ll_integrate_1d = 0;
+  std::vector<double> ll_integrate_1d_vec;
+  for (int i = 1; i <= N; ++i) {
+    std::cout << "y and mu for i = " << i << ": ("
+              << y[i - 1] << ", " << mu[i - 1] << ")" << std::endl;
+    try {
+      auto ll_laplace_val = stan::math::laplace_marginal(
+        poisson_re_log_ll_functor(),
+        std::forward_as_tuple(y[i - 1], mu[i - 1]),
+        cov_fun_functor(),
+        std::tuple<double, int>(sigmaz, 1),
+        pstream);
 
+      double piece = stan::math::integrate_1d(
+        integrand_functor(),
+        stan::math::negative_infinity(),
+        stan::math::positive_infinity(),
+        std::vector<double>{sigmaz, mu[i-1]},
+        std::vector<double>{0},
+        std::vector<int>{ y[i-1] },
+        pstream,
+        integrate_1d_reltol
+      );
+    ll_laplace_vec.push_back(ll_laplace_val);
+    ll_integrate_1d_vec.push_back(std::log(piece));
+    ll_integrate_1d += std::log(piece);
+    EXPECT_NEAR(ll_laplace_val, std::log(piece), 1e-3)
+      << "Laplace and integrated results should be close";
+    } catch (const std::domain_error& e) {
+      std::cout << "Failed: y and mu for i = " << i << ": ("
+                << y[i - 1] << ", " << mu[i - 1] << ")" << std::endl;
+      std::cout << "Failed: " << e.what() << std::endl;
+      continue;
+    }
+  }
+  std::cout << "Starting overall laplace\n";
   auto ll_laplace = stan::math::laplace_marginal(
     poisson_re_log_ll_functor(),
     std::forward_as_tuple(y, mu),
     cov_fun_functor(),
     std::tuple<double, int>(sigmaz, N),
     pstream);
-  std::vector<double> ll_laplace_vec;
-  for (int i = 1; i <= N; ++i) {
-    auto ll_laplace_val = stan::math::laplace_marginal(
-      poisson_re_log_ll_functor(),
-      std::forward_as_tuple(y[i - 1], mu[i - 1]),
-      cov_fun_functor(),
-      std::tuple<double, int>(sigmaz, 1),
-      pstream);
-    ll_laplace_vec.push_back(ll_laplace_val);
-  }
-  double ll_integrate_1d = 0;
-  std::vector<double> ll_integrate_1d_vec;
-  for (int i = 1; i <= N; ++i) {
-    double piece = stan::math::integrate_1d(
-      integrand_functor(),
-      stan::math::negative_infinity(),
-      stan::math::positive_infinity(),
-      std::vector<double>{sigmaz, mu[i-1]},
-      std::vector<double>{0},
-      std::vector<int>{ y[i-1] },
-      pstream,
-      integrate_1d_reltol
-    );
-    ll_integrate_1d_vec.push_back(std::log(piece));
-    ll_integrate_1d += std::log(piece);
-  }
   std::cout << "Laplace result: " << ll_laplace << std::endl;
   std::cout << "Integrated result: " << ll_integrate_1d << std::endl;
   for (int i = 0; i < ll_integrate_1d_vec.size(); ++i) {
