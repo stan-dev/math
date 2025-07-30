@@ -13,7 +13,9 @@
 #include <unsupported/Eigen/MatrixFunctions>
 #include <cmath>
 #include <optional>
+#ifdef LAPLACE_DEBUG
 #include <iomanip>
+#endif
 /**
  * @file
  * Reference for calculations of marginal and its gradients:
@@ -406,6 +408,7 @@ inline auto cubic_interp_max(T dir_lo, T hi_bound, T obj_diff, T dir_high,
 template <typename Option>
 inline auto check_armijo(double obj_next, double obj_init, double alpha_next,
                          double dir0, Option&& opt) {
+#ifdef LAPLACE_DEBUG
   std::cout << "\n\tcheck_armijo: " << (obj_next >= obj_init + alpha_next * dir0 * opt.line_search.c1 ? "true" : "false")
             << "\n\t\tobj_next =   " << obj_next
             << "\n\t\tobj_init =   " << obj_init
@@ -414,12 +417,14 @@ inline auto check_armijo(double obj_next, double obj_init, double alpha_next,
             << "\n\t\tc1 =         " << opt.line_search.c1
             << "\n\t\tobj + alpha * dir0 * c1: " << (obj_init + alpha_next * dir0 * opt.line_search.c1)
             << std::endl;
+#endif
   return obj_next >= obj_init + alpha_next * dir0 * opt.line_search.c1;
 }
 
 template <typename Option>
 inline auto check_wolfe_curve(double dir_deriv_next, double dir_deriv_init,
                               Option&& opt) {
+#ifdef LAPLACE_DEBUG
   std::cout << "\n\tcheck_wolfe_curve: " <<
   (std::abs(dir_deriv_next) <= (opt.line_search.c2 * std::abs(dir_deriv_init)) ? "true" : "false")
             << "\n\t\tdir_deriv_next = " << dir_deriv_next
@@ -428,6 +433,7 @@ inline auto check_wolfe_curve(double dir_deriv_next, double dir_deriv_init,
             << "\n\t\tabs(deriv_next):     " << std::abs(dir_deriv_next)
             << "\n\t\tabs(deriv_init) * c2 " << (dir_deriv_init * std::abs(opt.line_search.c2))
             << std::endl;
+#endif
   return std::abs(dir_deriv_next) <= (opt.line_search.c2 * std::abs(dir_deriv_init));
 }
 
@@ -565,11 +571,13 @@ inline bool wolfe_line_search(Eigen::VectorXd& theta, double& obj_init,
   double obj_high = obj_fun(a_try, theta_try);
   double dir_deriv_high = grad_fun(a_try, theta_try, theta_grad).dot(p);
   // If current alpha fails, backtrack down till we find a good point
+#ifdef LAPLACE_DEBUG
   std::cout << "Initial alpha: " << alpha_high << std::endl;
   std::cout << "g0: \n" << g0.transpose().eval() << std::endl;
   std::cout << "theta_try: \n"
             << theta_try.transpose().eval() << std::endl;
   std::cout << "First loop: \n";
+#endif
   int loop_iter = 0;
   while (alpha_high < 2) {
     // 1. Evaluate f(α) and g(α)
@@ -578,6 +586,7 @@ inline bool wolfe_line_search(Eigen::VectorXd& theta, double& obj_init,
     theta_grad   = laplace_likelihood::theta_grad(ll_fun, theta_try, ll_args, msgs);
     obj_high     = obj_fun(a_try, theta_try);
     dir_deriv_high = grad_fun(a_try, theta_try, theta_grad).dot(p);
+#ifdef LAPLACE_DEBUG
     std::cout << "_______\nFirst While: " << loop_iter++ << "\n"
               << "\talpha_high: " << alpha_high << "\n"
               << "\tobj_high: " << obj_high << "\n"
@@ -585,7 +594,7 @@ inline bool wolfe_line_search(Eigen::VectorXd& theta, double& obj_init,
               << "\tdir_deriv_init: " << dir_deriv_init << std::endl;
     std::cout << "\ttheta_try: \n"
               << theta_try.transpose().eval() << std::endl;
-
+#endif
     const bool finite_ok = std::isfinite(obj_high) && theta_try.allFinite();
 
     // 2. Handle numerical trouble first
@@ -620,6 +629,7 @@ inline bool wolfe_line_search(Eigen::VectorXd& theta, double& obj_init,
     theta_grad   = laplace_likelihood::theta_grad(ll_fun, theta_try, ll_args, msgs);
     obj_high     = obj_fun(a_try, theta_try);
     dir_deriv_high = grad_fun(a_try, theta_try, theta_grad).dot(p);
+#ifdef LAPLACE_DEBUG
     std::cout << "_______\nEnd First While: " << "\n"
               << "\talpha_high: " << alpha_high << "\n"
               << "\tobj_high: " << obj_high << "\n"
@@ -627,6 +637,7 @@ inline bool wolfe_line_search(Eigen::VectorXd& theta, double& obj_init,
               << "\tdir_deriv_init: " << dir_deriv_init << std::endl;
     std::cout << "\ttheta_try: \n"
               << theta_try.transpose().eval() << std::endl;
+#endif
   double alpha_success = alpha_high;
   // we *know* alpha_high is good so set that to low
   double alpha_low = 0;
@@ -636,7 +647,9 @@ inline bool wolfe_line_search(Eigen::VectorXd& theta, double& obj_init,
   double obj_mid = obj_low;
   double alpha_mid = alpha_low;
 while (alpha_high - alpha_low > opt.line_search.min_alpha) {
+#ifdef LAPLACE_DEBUG
   std::cout << "_______\nCube Search: " << loop_iter++ << '\n';
+#endif
   const double diff_alpha = alpha_high - alpha_low;
 
   // --- 1. Cubic interpolation (Stan Math) -------------------------
@@ -671,6 +684,7 @@ while (alpha_high - alpha_low > opt.line_search.min_alpha) {
   obj_mid      = obj_fun(a_try, theta_try);
   theta_grad   = laplace_likelihood::theta_grad(ll_fun, theta_try, ll_args, msgs);
   const double dir_deriv_mid = grad_fun(a_try, theta_try, theta_grad).dot(p);
+#ifdef LAPLACE_DEBUG
   std::cout << "\talpha_high: " << alpha_high << "\n"
     << "\talpha_low: " << alpha_low << "\n";
   std::cout << "\talpha_mid: " << alpha_mid << "\n"
@@ -680,7 +694,7 @@ while (alpha_high - alpha_low > opt.line_search.min_alpha) {
     << "\tdir_deriv_high: " << dir_deriv_high << std::endl;
   std::cout << "\ttheta_try: \n"
             << theta_try.transpose().eval() << std::endl;
-
+#endif
   const bool armijo_ok = check_armijo(obj_mid, obj_init,
                                       alpha_mid, dir_deriv_init, opt);
   const bool curve_ok  = check_wolfe_curve(dir_deriv_mid,
@@ -711,8 +725,10 @@ while (alpha_high - alpha_low > opt.line_search.min_alpha) {
     }
   }
 }
+#ifdef LAPLACE_DEBUG
   std::cout << "Failed Wolfe search with alpha_low: " << alpha_low
             << ", alpha_high: " << alpha_high << std::endl;
+#endif
   // Could not find a step that satisfied
   // accept the best good step found so far (alpha_mid)
   a.swap(a_try);
@@ -884,13 +900,17 @@ inline auto laplace_marginal_density_est(
   if (options.solver == 1) {
     if (options.hessian_block_size == 1) {
       for (Eigen::Index i = 0; i <= options.max_num_steps; i++) {
+#ifdef LAPLACE_DEBUG
         std::cout << "\n----------------\nIter: " << i << " \n";
+#endif
         auto W = laplace_likelihood::block_hessian(
             ll_fun, theta, options.hessian_block_size, ll_args, msgs);
         Eigen::VectorXd W_r(W.rows());
         // Compute matrix square-root of W. If all elements of W are positive,
         // do an element wise square-root. Else try a matrix square-root
+#ifdef LAPLACE_DEBUG
         std::cout << "W: " << W << "\n";
+#endif
         for (Eigen::Index i = 0; i < W.rows(); i++) {
           if (W.coeff(i, i) < 0) {
             throw std::domain_error(
@@ -900,8 +920,9 @@ inline auto laplace_marginal_density_est(
             W_r.coeffRef(i) = std::sqrt(W.coeff(i, i));
           }
         }
+#ifdef LAPLACE_DEBUG
         std::cout << "W_r: " << W_r.transpose().eval() << "\n";
-
+#endif
         B.noalias() = MatrixXd::Identity(theta_size, theta_size)
                       + W_r.asDiagonal() * covariance * W_r.asDiagonal();
         Eigen::LLT<Eigen::Ref<Eigen::MatrixXd>> llt_B(B);
@@ -912,18 +933,22 @@ inline auto laplace_marginal_density_est(
             = b
               - W_r.asDiagonal()
                     * LT.solve(L.solve(W_r.cwiseProduct(covariance * b)));
+#ifdef LAPLACE_DEBUG
         std::cout << "B: " << B << "\n"
                   << "b: " << b.transpose().eval() << "\n"
                   << "a: " << a.transpose().eval() << "\n";
+#endif
         objective_old = objective_new;
         bool ok = internal::wolfe_line_search(
             theta, objective_new, step_size, theta_grad, a, a_prev, ll_fun,
             obj_fun, grad_fun, covariance, ll_args, options, msgs);
         // Check for convergence or if line search failed
+#ifdef LAPLACE_DEBUG
         std::cout << "\tobj old:   " << objective_old
                   << "\n\tobj new: " << objective_new
                   << "\n\tdiff:        " << (objective_old - objective_new)
                   << "\n\tstep size: " << step_size << "\n";
+#endif
         if (abs(objective_new - objective_old) < options.tolerance
             || (!ok && objective_new == objective_old)) {
           const double B_log_determinant
