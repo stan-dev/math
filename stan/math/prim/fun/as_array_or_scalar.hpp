@@ -67,10 +67,14 @@ inline auto as_array_or_scalar(T&& v) {
 template <typename T, require_std_vector_t<T>* = nullptr,
           require_not_std_vector_t<value_type_t<T>>* = nullptr>
 inline auto as_array_or_scalar(T&& v) {
-  using T_map
-      = Eigen::Map<const Eigen::Array<value_type_t<T>, Eigen::Dynamic, 1>>;
-  return make_holder([](auto&& x) { return T_map(x.data(), x.size()); },
-                     std::forward<T>(v));
+  using arr_t = Eigen::Array<value_type_t<T>, Eigen::Dynamic, 1>;
+  using T_map = Eigen::Map<const arr_t>;
+  if constexpr (std::is_rvalue_reference_v<T&&>) {
+    return make_holder([](auto&& x) { return T_map(x.data(), x.size()); },
+                      std::forward<T>(v));
+  } else {
+    return arr_t(T_map(v.data(), v.size()));
+  }
 }
 
 /**
