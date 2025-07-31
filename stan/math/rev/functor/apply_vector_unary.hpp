@@ -57,7 +57,7 @@ struct apply_vector_unary<T, require_var_matrix_t<T>> {
    */
   template <typename T2, typename F>
   static inline auto reduce(T2& x, F&& f) {
-    return std::forward<F>(f)(std::forward<T2>(x));
+    return make_holder(std::forward<F>(f),std::forward<T2>(x));
   }
 };
 
