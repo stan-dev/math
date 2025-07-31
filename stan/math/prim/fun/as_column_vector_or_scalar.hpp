@@ -77,7 +77,7 @@ inline auto as_column_vector_or_scalar(T&& a) {
   using T_map = Eigen::Map<optionally_const_vector>;
   if constexpr (std::is_rvalue_reference_v<T&&>) {
     return make_holder([](auto&& x) { return T_map(x.data(), x.size()); },
-                     std::forward<T>(a));
+                       std::forward<T>(a));
   } else {
     return plain_vector(T_map(a.data(), a.size()));
   }
