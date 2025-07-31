@@ -13,6 +13,7 @@
 #include <unsupported/Eigen/MatrixFunctions>
 #include <cmath>
 #include <optional>
+//#define LAPLACE_DEBUG
 #ifdef LAPLACE_DEBUG
 #include <iomanip>
 #endif
@@ -27,10 +28,12 @@ namespace stan {
 namespace math {
 
 struct laplace_line_search_options {
-  double c1{1e-6};
+  double c1{1e-4};
   double c2{0.9};
   double tau{0.5};
   double min_alpha{1e-12};
+  double abs_grad_threshold{1e-14};
+  double abs_obj_threshold{1e-14};
 };
 
 /**
@@ -490,6 +493,13 @@ Scalar CubicInterp(const Scalar &x0, const Scalar &f0, const Scalar &df0,
   return x0 + CubicInterp(df0, x1 - x0, f1 - f0, df1, loX - x0, hiX - x0);
 }
 
+enum class wolfe_return {
+  PASS,
+  ARMIJO_PASS,
+  FAIL,
+  GRAD_CONV
+};
+
 
 /**
  * @brief  Strong‑Wolfe line search with cubic‑interpolation "zoom" for Laplace‐style log‑likelihood problems.
@@ -555,7 +565,7 @@ Scalar CubicInterp(const Scalar &x0, const Scalar &f0, const Scalar &df0,
  */
 template <typename F, class Obj, class Grad, typename LLArgs, typename Stream,
           typename Options>
-inline bool wolfe_line_search(Eigen::VectorXd& theta, double& obj_init,
+inline wolfe_return wolfe_line_search(Eigen::VectorXd& theta, double& obj_init,
                               double& alpha_init, Eigen::VectorXd& theta_grad,
                               Eigen::VectorXd& a, const Eigen::VectorXd& a_prev,
                               F&& ll_fun, Obj&& obj_fun, Grad&& grad_fun,
@@ -564,7 +574,7 @@ inline bool wolfe_line_search(Eigen::VectorXd& theta, double& obj_init,
   const Eigen::VectorXd p = a - a_prev;
   const Eigen::VectorXd g0 = -covariance * a_prev + covariance * theta_grad;
   const double dir_deriv_init = g0.dot(p);
-  double alpha_high = std::clamp(alpha_init * 2, opt.line_search.min_alpha, 1.0);
+  double alpha_high = alpha_init * 2;
   Eigen::VectorXd a_try = a_prev + alpha_high * p;
   Eigen::VectorXd theta_try = covariance * a_try;
   theta_grad = laplace_likelihood::theta_grad(ll_fun, theta_try, ll_args, msgs);
@@ -579,6 +589,8 @@ inline bool wolfe_line_search(Eigen::VectorXd& theta, double& obj_init,
   std::cout << "First loop: \n";
 #endif
   int loop_iter = 0;
+  const auto grad_tol = opt.line_search.abs_grad_threshold;
+  const auto obj_tol = opt.line_search.abs_obj_threshold;
   while (alpha_high < 2) {
     // 1. Evaluate f(α) and g(α)
     a_try        = a_prev + alpha_high * p;
@@ -605,22 +617,30 @@ inline bool wolfe_line_search(Eigen::VectorXd& theta, double& obj_init,
     }
     const bool armijo_ok = check_armijo(obj_high, obj_init,
                                         alpha_high, dir_deriv_init, opt);
-    const bool curve_ok  = check_wolfe_curve(dir_deriv_high,
-                                            dir_deriv_init,   opt);
 
     // 3. Armijo test drives all decisions
     if (armijo_ok) {                       // Armijo ✓
-      if (curve_ok && alpha_high >= 1.0) {
+      const bool curve_ok  = check_wolfe_curve(dir_deriv_high, dir_deriv_init, opt);
+      if (curve_ok) {
         a.swap(a_try);
         theta.swap(theta_try);
         obj_init   = obj_high;
         alpha_init = alpha_high;
-        return true;
+        return wolfe_return::PASS;
       } else {
         alpha_high *= 2.0;
         continue;
       }
     }
+    if (std::abs(dir_deriv_high) <= grad_tol              ||     // tiny slope
+        std::abs(obj_high - obj_init) <= obj_tol) {               // tiny gain
+      a.swap(a_try);
+      theta.swap(theta_try);
+      obj_init   = obj_high;
+      alpha_init = alpha_high;
+      return wolfe_return::GRAD_CONV;      // add a code in your enum
+    }
+
 
     break;
   }
@@ -646,6 +666,7 @@ inline bool wolfe_line_search(Eigen::VectorXd& theta, double& obj_init,
   loop_iter = 0;
   double obj_mid = obj_low;
   double alpha_mid = alpha_low;
+  double dir_deriv_mid = 0;
 while (alpha_high - alpha_low > opt.line_search.min_alpha) {
 #ifdef LAPLACE_DEBUG
   std::cout << "_______\nCube Search: " << loop_iter++ << '\n';
@@ -676,14 +697,14 @@ while (alpha_high - alpha_low > opt.line_search.min_alpha) {
       alpha_mid <= alpha_low || alpha_mid >= alpha_high) {
     alpha_mid = 0.5 * (alpha_low + alpha_high);
   }
-  alpha_mid = std::clamp(alpha_mid, opt.line_search.min_alpha, alpha_high * 0.99);
+  alpha_mid = std::clamp(alpha_mid, opt.line_search.min_alpha, alpha_high * 0.9);
 
   // --- 2. Evaluate f(α_mid) and g(α_mid) ---------------------------
   a_try        = a_prev + alpha_mid * p;
   theta_try    = covariance * a_try;
   obj_mid      = obj_fun(a_try, theta_try);
   theta_grad   = laplace_likelihood::theta_grad(ll_fun, theta_try, ll_args, msgs);
-  const double dir_deriv_mid = grad_fun(a_try, theta_try, theta_grad).dot(p);
+  dir_deriv_mid = grad_fun(a_try, theta_try, theta_grad).dot(p);
 #ifdef LAPLACE_DEBUG
   std::cout << "\talpha_high: " << alpha_high << "\n"
     << "\talpha_low: " << alpha_low << "\n";
@@ -706,13 +727,14 @@ while (alpha_high - alpha_low > opt.line_search.min_alpha) {
     theta.swap(theta_try);
     obj_init   = obj_mid;
     alpha_init = alpha_mid;
-    return true;
+    return wolfe_return::PASS;
   }
 
   if (!armijo_ok || obj_mid >= obj_low) {      // Armijo✗ or f↑  → shrink high
     alpha_high     = alpha_mid;
     obj_high       = obj_mid;
     dir_deriv_high = dir_deriv_mid;
+    continue;
   } else {                                     // Armijo✓ & f↓
     if (dir_deriv_mid * dir_deriv_low < 0) {   // sign change → shrink high
       alpha_high     = alpha_mid;
@@ -723,7 +745,17 @@ while (alpha_high - alpha_low > opt.line_search.min_alpha) {
       obj_low       = obj_mid;
       dir_deriv_low = dir_deriv_mid;
     }
+    continue;
   }
+  if (std::abs(dir_deriv_mid) <= grad_tol              ||
+      std::abs(obj_mid - obj_init) <= obj_tol) {
+    a.swap(a_try);
+    theta.swap(theta_try);
+    obj_init   = obj_mid;
+    alpha_init = alpha_mid;
+    return wolfe_return::GRAD_CONV;
+  }
+
 }
 #ifdef LAPLACE_DEBUG
   std::cout << "Failed Wolfe search with alpha_low: " << alpha_low
@@ -733,14 +765,21 @@ while (alpha_high - alpha_low > opt.line_search.min_alpha) {
   // accept the best good step found so far (alpha_mid)
   a.swap(a_try);
   theta.swap(theta_try);
+  theta_grad   = laplace_likelihood::theta_grad(ll_fun, theta_try, ll_args, msgs);
   // We already calculated obj_mid and theta_grad so no need to recompute here
-  double dir_deriv_mid = grad_fun(a, theta, theta_grad).dot(p);
+  dir_deriv_mid = grad_fun(a, theta, theta_grad).dot(p);
   const bool armijo_ok
-      = check_armijo(obj_mid, obj_init, alpha_success, dir_deriv_init, opt);
+      = check_armijo(obj_mid, obj_init, alpha_mid, dir_deriv_init, opt);
   const bool curve_ok = check_wolfe_curve(dir_deriv_mid, dir_deriv_init, opt);
   obj_init = obj_mid;
   alpha_init = alpha_mid;
-  return armijo_ok && curve_ok;
+  if (armijo_ok && curve_ok) {
+    return wolfe_return::PASS;
+  } else if (armijo_ok) {
+    return wolfe_return::ARMIJO_PASS;
+  } else {
+    return wolfe_return::FAIL;
+  }
 }
 
 /**
@@ -906,10 +945,11 @@ inline auto laplace_marginal_density_est(
         auto W = laplace_likelihood::block_hessian(
             ll_fun, theta, options.hessian_block_size, ll_args, msgs);
         Eigen::VectorXd W_r(W.rows());
+        Eigen::VectorXd W_vec(W.rows());
         // Compute matrix square-root of W. If all elements of W are positive,
         // do an element wise square-root. Else try a matrix square-root
 #ifdef LAPLACE_DEBUG
-        std::cout << "W: " << W << "\n";
+//        std::cout << "W: " << W << "\n";
 #endif
         for (Eigen::Index i = 0; i < W.rows(); i++) {
           if (W.coeff(i, i) < 0) {
@@ -918,10 +958,11 @@ inline auto laplace_marginal_density_est(
                 "definite");
           } else {
             W_r.coeffRef(i) = std::sqrt(W.coeff(i, i));
+            W_vec.coeffRef(i) = -W.coeff(i, i);
           }
         }
 #ifdef LAPLACE_DEBUG
-        std::cout << "W_r: " << W_r.transpose().eval() << "\n";
+//        std::cout << "W_r: " << W_r.transpose().eval() << "\n";
 #endif
         B.noalias() = MatrixXd::Identity(theta_size, theta_size)
                       + W_r.asDiagonal() * covariance * W_r.asDiagonal();
@@ -933,13 +974,23 @@ inline auto laplace_marginal_density_est(
             = b
               - W_r.asDiagonal()
                     * LT.solve(L.solve(W_r.cwiseProduct(covariance * b)));
-#ifdef LAPLACE_DEBUG
+#ifdef LAPLACE_DEBUG2
         std::cout << "B: " << B << "\n"
                   << "b: " << b.transpose().eval() << "\n"
                   << "a: " << a.transpose().eval() << "\n";
 #endif
+      const Eigen::VectorXd p = a - a_prev;
+      const Eigen::VectorXd g0 = -covariance * a_prev + covariance * theta_grad;
+      const double g0_dir = g0.dot(p);
+      double d0_dir = p.dot(W_vec.asDiagonal() * p);  // pᵀHp
+      auto newton_step_size =
+          (d0_dir < 0.0) ? -g0_dir / d0_dir     // concave => quadratic maximiser
+                        : step_size;                 // fallback if H says ‘convex’
+      step_size = newton_step_size <= 0.2 ? step_size : newton_step_size;
+      std::cout << "Suggested Step: " <<
+        step_size << "\n";
         objective_old = objective_new;
-        bool ok = internal::wolfe_line_search(
+        auto ok = internal::wolfe_line_search(
             theta, objective_new, step_size, theta_grad, a, a_prev, ll_fun,
             obj_fun, grad_fun, covariance, ll_args, options, msgs);
         // Check for convergence or if line search failed
@@ -950,7 +1001,7 @@ inline auto laplace_marginal_density_est(
                   << "\n\tstep size: " << step_size << "\n";
 #endif
         if (abs(objective_new - objective_old) < options.tolerance
-            || (!ok && objective_new == objective_old)) {
+            || (ok != wolfe_return::PASS && objective_new == objective_old)) {
           const double B_log_determinant
               = 2.0 * llt_B.matrixLLT().diagonal().array().log().sum();
           // Overwrite W instead of making a new sparse matrix
@@ -1010,12 +1061,21 @@ inline auto laplace_marginal_density_est(
         a.noalias() = b - W_r * LT.solve(L.solve(W_r * (covariance * b)));
         // Simple Newton step
         objective_old = objective_new;
-        bool ok = internal::wolfe_line_search(
+        const Eigen::VectorXd p = a - a_prev;
+        const Eigen::VectorXd g0 = -covariance * a_prev + covariance * theta_grad;
+        const double g0_dir = g0.dot(p);
+        double d0_dir = p.dot((-W) * p);  // pᵀHp
+        auto newton_step_size =
+            (d0_dir < 0.0) ? -g0_dir / d0_dir     // concave => quadratic maximiser
+                          : step_size;                 // fallback if H says ‘convex’
+        step_size = newton_step_size <= 0.2 ? step_size : newton_step_size;
+
+        auto ok = internal::wolfe_line_search(
             theta, objective_new, step_size, theta_grad, a, a_prev, ll_fun,
             obj_fun, grad_fun, covariance, ll_args, options, msgs);
         // Check for convergence or if line search failed
         if (abs(objective_new - objective_old) < options.tolerance
-            || (!ok && objective_new == objective_old)) {
+            || (ok != wolfe_return::PASS && objective_new == objective_old)) {
           const double B_log_determinant
               = 2.0 * llt_B.matrixLLT().diagonal().array().log().sum();
           return laplace_density_estimates{
@@ -1056,12 +1116,21 @@ inline auto laplace_marginal_density_est(
           = K_root.transpose().template triangularView<Eigen::Upper>().solve(
               LT.solve(L.solve(K_root.transpose() * b)));
       objective_old = objective_new;
-      bool ok = internal::wolfe_line_search(
+      const Eigen::VectorXd p = a - a_prev;
+      const Eigen::VectorXd g0 = -covariance * a_prev + covariance * theta_grad;
+      const double g0_dir = g0.dot(p);
+      double d0_dir = p.dot((-W) * p);  // pᵀHp
+      auto newton_step_size =
+          (d0_dir < 0.0) ? -g0_dir / d0_dir     // concave => quadratic maximiser
+                        : step_size;                 // fallback if H says ‘convex’
+      step_size = newton_step_size <= 0.2 ? step_size : newton_step_size;
+
+      auto ok = internal::wolfe_line_search(
           theta, objective_new, step_size, theta_grad, a, a_prev, ll_fun,
           obj_fun, grad_fun, covariance, ll_args, options, msgs);
       // Check for convergence or if line search failed
       if (abs(objective_new - objective_old) < options.tolerance
-          || (!ok && objective_new == objective_old)) {
+          || (ok != wolfe_return::PASS && objective_new == objective_old)) {
         const double B_log_determinant
             = 2.0 * llt_B.matrixLLT().diagonal().array().log().sum();
         return laplace_density_estimates{
@@ -1082,6 +1151,7 @@ inline auto laplace_marginal_density_est(
     throw_overstep(options.max_num_steps);
   } else if (options.solver == 3) {
     for (Eigen::Index i = 0; i <= options.max_num_steps; i++) {
+      std::cout << "=======\nIter: " << i << " \n";
       auto W = laplace_likelihood::block_hessian(
           ll_fun, theta, options.hessian_block_size, ll_args, msgs);
       Eigen::PartialPivLU<Eigen::MatrixXd> LU(
@@ -1090,12 +1160,22 @@ inline auto laplace_marginal_density_est(
       b.noalias() = W * theta + theta_grad;
       a.noalias() = b - W * LU.solve(covariance * b);
       objective_old = objective_new;
-      bool ok = internal::wolfe_line_search(
+        const Eigen::VectorXd p = a - a_prev;
+        const Eigen::VectorXd g0 = -covariance * a_prev + covariance * theta_grad;
+        const double g0_dir = g0.dot(p);
+        double d0_dir = p.dot((-W) * p);  // pᵀHp
+        auto newton_step_size =
+            (d0_dir < 0.0) ? -g0_dir / d0_dir     // concave => quadratic maximiser
+                          : step_size;                 // fallback if H says ‘convex’
+      std::cout << "Prev Step Size: " << step_size << "\n";
+      std::cout << "Newt Step Size:  " << newton_step_size << "\n";
+      step_size = newton_step_size <= 0.2 ? step_size : newton_step_size;
+      auto ok = internal::wolfe_line_search(
           theta, objective_new, step_size, theta_grad, a, a_prev, ll_fun,
           obj_fun, grad_fun, covariance, ll_args, options, msgs);
       // Check for convergence or if line search failed
       if (abs(objective_new - objective_old) < options.tolerance
-          || (!ok && objective_new == objective_old)) {
+          || (ok != wolfe_return::PASS && objective_new == objective_old)) {
         // TODO(Charles): There has to be a simple trick for this
         const double B_log_determinant = log(LU.determinant());
         return laplace_density_estimates{
@@ -1111,6 +1191,7 @@ inline auto laplace_marginal_density_est(
       } else {
         a_prev = a;
         set_zero_adjoint(ll_args);
+        step_size = step_size < 1e-3 ? 1 : step_size;
       }
     }
     throw_overstep(options.max_num_steps);
