@@ -71,7 +71,7 @@ inline auto as_array_or_scalar(T&& v) {
   using T_map = Eigen::Map<const arr_t>;
   if constexpr (std::is_rvalue_reference_v<T&&>) {
     return make_holder([](auto&& x) { return T_map(x.data(), x.size()); },
-                      std::forward<T>(v));
+                       std::forward<T>(v));
   } else {
     return arr_t(T_map(v.data(), v.size()));
   }

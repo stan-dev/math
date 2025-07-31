@@ -28,4 +28,3 @@ inline auto as_value_column_vector_or_scalar(T&& a) {
 }  // namespace stan
 
 #endif
-
