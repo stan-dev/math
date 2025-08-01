@@ -277,7 +277,7 @@ class laplace_motorcyle_gp_test : public ::testing::Test {
     Eigen::VectorXd mu_hat = K_plus_I.colPivHouseholderQr().solve(y);
     // Remark: finds optimal point with or without informed initial guess.
     for (int i = 0; i < n_obs - 1; i++) {
-      theta0(2 * i) =  mu_hat(i);
+      theta0(2 * i) =  0;
       theta0(2 * i + 1) = -1.0;
     }
   }
@@ -419,6 +419,19 @@ struct normal_likelihood2 {
 };
 
 TEST_F(laplace_motorcyle_gp_test, gp_motorcycle2) {
+  {
+    using stan::math::gp_exp_quad_cov;
+    using stan::math::value_of;
+    Eigen::MatrixXd K_plus_I
+        = gp_exp_quad_cov(x, value_of(sigma_f), value_of(length_scale_f))
+          + Eigen::MatrixXd::Identity(n_obs, n_obs);
+    Eigen::VectorXd mu_hat = K_plus_I.colPivHouseholderQr().solve(y);
+    // Remark: finds optimal point with or without informed initial guess.
+    for (int i = 0; i < n_obs - 1; i++) {
+      theta0(2 * i) =  mu_hat(i);
+      theta0(2 * i + 1) = -1.0;
+    }
+  }
   using stan::math::laplace_marginal;
   using stan::math::laplace_marginal_tol;
   using stan::math::value_of;

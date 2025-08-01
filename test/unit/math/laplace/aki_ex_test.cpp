@@ -82,66 +82,73 @@ TEST(WriteArrayBodySimple, ExecutesBodyWithHardcodedData) {
   const double sigmaz = 2.0;
   const double integrate_1d_reltol = 1e-6;
   std::ostream* pstream = nullptr;
-  std::vector<double> ll_laplace_vec;
-  std::cout << "Individual laplace\n";
-  double ll_integrate_1d = 0;
-  double ll_laplace = 0;
-  std::vector<double> ll_integrate_1d_vec;
-  for (int i = 1; i <= N; ++i) {
-    std::cout << "y and mu for i = " << i << ": ("
-              << y[i - 1] << ", " << mu[i - 1] << ")" << std::endl;
-    try {
-      auto ll_laplace_val = stan::math::laplace_marginal(
-        poisson_re_log_ll_functor(),
-        std::forward_as_tuple(y[i - 1], mu[i - 1]),
-        cov_fun_functor(),
-        std::tuple<double, int>(sigmaz, 1),
-        pstream);
+    constexpr double tolerance = 1e-12;
+  constexpr int max_num_steps = 100;
+    stan::math::test::run_solver_grid(
+      [&](int solver_num, int hessian_block_size, int max_steps_line_search,
+          auto&& theta_0) {
+        std::vector<double> ll_laplace_vec;
+        std::cout << "Individual laplace\n";
+        double ll_integrate_1d = 0;
+        double ll_laplace = 0;
+        std::vector<double> ll_integrate_1d_vec;
+        for (int i = 1; i <= N; ++i) {
+          std::cout << "y and mu for i = " << i << ": ("
+                    << y[i - 1] << ", " << mu[i - 1] << ")" << std::endl;
+          try {
+            auto ll_laplace_val = stan::math::laplace_marginal_tol<false>(
+              poisson_re_log_ll_functor(),
+              std::forward_as_tuple(y[i - 1], mu[i - 1]),
+              cov_fun_functor(),
+              std::tuple<double, int>(sigmaz, 1),
+              Eigen::VectorXd::Zero(1).eval(), tolerance, max_num_steps, 1, solver_num,
+              max_steps_line_search, nullptr);
 
-      double piece = stan::math::integrate_1d(
-        integrand_functor(),
-        stan::math::negative_infinity(),
-        stan::math::positive_infinity(),
-        std::vector<double>{sigmaz, mu[i-1]},
-        std::vector<double>{0},
-        std::vector<int>{ y[i-1] },
-        pstream,
-        integrate_1d_reltol
-      );
-    ll_laplace_vec.push_back(ll_laplace_val);
-    ll_integrate_1d_vec.push_back(std::log(piece));
-    ll_integrate_1d += std::log(piece);
-    ll_laplace += ll_laplace_val;
-    EXPECT_NEAR(ll_laplace_val, std::log(piece), 1e-2)
-      << "Laplace and integrated results should be close";
-    } catch (const std::domain_error& e) {
-      std::cout << "Failed: y and mu for i = " << i << ": ("
-                << y[i - 1] << ", " << mu[i - 1] << ")" << std::endl;
-      std::cout << "Failed: " << e.what() << std::endl;
-      continue;
-    }
-  }
-  std::cout << "Starting overall laplace\n";
-  auto ll_laplace_all = stan::math::laplace_marginal(
-    poisson_re_log_ll_functor(),
-    std::forward_as_tuple(y, mu),
-    cov_fun_functor(),
-    std::tuple<double, int>(sigmaz, N),
-    pstream);
-  for (int i = 0; i < ll_integrate_1d_vec.size(); ++i) {
-    std::cout << "results for y,mu[" << i << "]: ("
-              << y[i] << ", " << mu[i] << "): \n"
-              << "\tlaplace:    " << ll_laplace_vec[i] << "\n"
-              << "\tintegrated: " << ll_integrate_1d_vec[i] << "\n"
-              << "\tdifference: " << ll_laplace_vec[i] - ll_integrate_1d_vec[i] << std::endl;
-  }
-  std::cout << "Laplace result: " << ll_laplace << std::endl;
-  std::cout << "Integrated result: " << ll_integrate_1d << std::endl;
+            double piece = stan::math::integrate_1d(
+              integrand_functor(),
+              stan::math::negative_infinity(),
+              stan::math::positive_infinity(),
+              std::vector<double>{sigmaz, mu[i-1]},
+              std::vector<double>{0},
+              std::vector<int>{ y[i-1] },
+              pstream,
+              integrate_1d_reltol
+            );
+          ll_laplace_vec.push_back(ll_laplace_val);
+          ll_integrate_1d_vec.push_back(std::log(piece));
+          ll_integrate_1d += std::log(piece);
+          ll_laplace += ll_laplace_val;
+          EXPECT_NEAR(ll_laplace_val, std::log(piece), 1e-2)
+            << "Laplace and integrated results should be close";
+          } catch (const std::domain_error& e) {
+            std::cout << "Failed: y and mu for i = " << i << ": ("
+                      << y[i - 1] << ", " << mu[i - 1] << ")" << std::endl;
+            std::cout << "Failed: " << e.what() << std::endl;
+            continue;
+          }
+        }
+        std::cout << "Starting overall laplace\n";
+        auto ll_laplace_all = stan::math::laplace_marginal_tol<false>(
+          poisson_re_log_ll_functor(),
+          std::forward_as_tuple(y, mu),
+          cov_fun_functor(),
+          std::tuple<double, int>(sigmaz, N),
+              theta_0, tolerance, max_num_steps, hessian_block_size, solver_num,
+              max_steps_line_search, nullptr);
+        for (int i = 0; i < ll_integrate_1d_vec.size(); ++i) {
+          std::cout << "results for y,mu[" << i << "]: ("
+                    << y[i] << ", " << mu[i] << "): \n"
+                    << "\tlaplace:    " << ll_laplace_vec[i] << "\n"
+                    << "\tintegrated: " << ll_integrate_1d_vec[i] << "\n"
+                    << "\tdifference: " << ll_laplace_vec[i] - ll_integrate_1d_vec[i] << std::endl;
+        }
+        std::cout << "Laplace result: " << ll_laplace << std::endl;
+        std::cout << "Integrated result: " << ll_integrate_1d << std::endl;
 
-  // Assertions
-  EXPECT_NEAR(ll_laplace, ll_integrate_1d, 5e-2)
-      << "Laplace and integrated results should be close";
-  EXPECT_TRUE(std::isfinite(ll_laplace)) << "Laplace result should be finite";
-  EXPECT_TRUE(std::isfinite(ll_integrate_1d)) << "Integrated result should be finite";
+        // Assertions
+        EXPECT_NEAR(ll_laplace, ll_integrate_1d, 5e-2)
+            << "Laplace and integrated results should be close";
+        EXPECT_TRUE(std::isfinite(ll_laplace)) << "Laplace result should be finite";
+        EXPECT_TRUE(std::isfinite(ll_integrate_1d)) << "Integrated result should be finite";
+       }, Eigen::VectorXd::Zero(N).eval());
 }
-
