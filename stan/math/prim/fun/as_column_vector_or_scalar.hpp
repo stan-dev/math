@@ -83,8 +83,9 @@ inline auto as_column_vector_or_scalar(T&& a) {
                            const plain_vector, plain_vector>;
 
   using T_map = Eigen::Map<optionally_const_vector>;
-  return make_holder([](auto&& x) { return T_map(x.data(), x.size()).array().matrix(); },
-                      std::forward<T>(a));
+  return make_holder(
+      [](auto&& x) { return T_map(x.data(), x.size()).array().matrix(); },
+      std::forward<T>(a));
 }
 
 }  // namespace math
