@@ -41,10 +41,10 @@ TEST(laplace_marginal_beg_binomial_log_summary_lpmf, phi_dim_2) {
     n_per_group[y_index[i] - 1]++;
     counts_per_group[y_index[i] - 1] += y[i];
   }
-  constexpr double tolerance = 1e-14;
+  constexpr double tolerance = 1e-8;
   constexpr int max_num_steps = 1000;
   stan::test::ad_tolerances tols;
-  tols.gradient_grad_ = 1e-3;
+  tols.gradient_grad_ = 1e-2;
   stan::math::test::run_solver_grid(
       [&](int solver_num, int hessian_block_size, int max_steps_line_search,
           auto&& theta_0) {

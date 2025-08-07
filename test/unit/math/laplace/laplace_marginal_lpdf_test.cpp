@@ -19,6 +19,7 @@ struct poisson_log_likelihood2 {
 };
 
 TEST(laplace, poisson_log_phi_dim_2) {
+  test_name_lap = "test_name_poisson_log_phi_dim_2";
   using stan::math::laplace_marginal;
   using stan::math::laplace_marginal_tol;
   using stan::math::to_vector;
@@ -82,6 +83,11 @@ TEST(laplace, poisson_log_phi_dim_2) {
       [&](int solver_num, int hessian_block_size, int max_steps_line_search,
           auto&& theta_0) {
         auto f = [&](auto&& x_v, auto&& alpha, auto&& rho) {
+          if constexpr (stan::is_var_v<decltype(x_v)> || stan::is_var_v<decltype(alpha)> || stan::is_var_v<decltype(rho)>) {
+            test_name_lap = "test_name_ad_poisson_log";
+          } else {
+            test_name_lap = "test_name_poisson_log";
+          }
           return laplace_marginal_tol<false>(
               poisson_log_likelihood2{}, std::forward_as_tuple(sums),
               stan::math::test::squared_kernel_functor{},
@@ -105,6 +111,7 @@ struct poisson_log_exposure_likelihood {
 };
 
 TEST_F(laplace_disease_map_test, laplace_marginal) {
+  test_name_lap = "test_name_disease_map";
   using stan::math::laplace_marginal;
   using stan::math::laplace_marginal_poisson_log_lpmf;
   using stan::math::laplace_marginal_tol;
@@ -127,6 +134,11 @@ TEST_F(laplace_disease_map_test, laplace_marginal) {
       [&](int solver_num, int hessian_block_size, int max_steps_line_search,
           auto&& theta_0) {
         auto f = [&](auto&& alpha, auto&& rho) {
+          if constexpr (stan::is_var_v<decltype(alpha)> || stan::is_var_v<decltype(rho)>) {
+              test_name_lap = "test_name_ad_disease_map";
+          } else {
+              test_name_lap = "test_name_disease_map";
+          }
           return laplace_marginal_tol<false>(
               poisson_log_exposure_likelihood{}, std::forward_as_tuple(ye, y),
               stan::math::test::sqr_exp_kernel_functor{},
@@ -148,6 +160,7 @@ struct bernoulli_logit_likelihood {
 };
 
 TEST(laplace, bernoulli_logit_phi_dim500) {
+    test_name_lap = "test_name_dim500";
   using stan::math::laplace_marginal;
   using stan::math::laplace_marginal_tol;
   using stan::math::to_vector;
@@ -189,6 +202,12 @@ TEST(laplace, bernoulli_logit_phi_dim500) {
       [&](int solver_num, int hessian_block_size, int max_steps_line_search,
           auto&& theta_0) {
         auto f = [&](auto&& alpha, auto&& rho) {
+          if constexpr (stan::is_var_v<decltype(alpha)> || stan::is_var_v<decltype(rho)>) {
+              test_name_lap = "test_name_ad_dim500";
+          } else {
+              test_name_lap = "test_name_dim500";
+          }
+
           return laplace_marginal_tol<false>(
               bernoulli_logit_likelihood{}, std::forward_as_tuple(y),
               stan::math::test::sqr_exp_kernel_functor{},
@@ -302,6 +321,7 @@ class laplace_motorcyle_gp_test : public ::testing::Test {
 
 
 TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
+  test_name_lap = "test_name_gp_motorcycle";
   // logger->current_test_name_ = "gp_motorcycle";
   using stan::math::laplace_marginal;
   using stan::math::laplace_marginal_tol;
@@ -353,6 +373,11 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
           continue;
         }
         auto f = [&](auto&& y_v, auto&& phi_01_v, auto&& phi_rest_v) {
+          if constexpr (stan::is_var_v<stan::return_type_t<decltype(y_v), decltype(phi_01_v), decltype(phi_rest_v)>>) {
+            test_name_lap = "test_name_ad_gp_motorcycle";
+          } else {
+            test_name_lap = "test_name_gp_motorcycle";
+          }
           return laplace_marginal_tol<false>(
               normal_likelihood{}, std::forward_as_tuple(y_v, n_obs),
               covariance_motorcycle_functor{},
@@ -419,6 +444,7 @@ struct normal_likelihood2 {
 };
 
 TEST_F(laplace_motorcyle_gp_test, gp_motorcycle2) {
+    test_name_lap = "test_name_motorcycle2";
   {
     using stan::math::gp_exp_quad_cov;
     using stan::math::value_of;
@@ -462,11 +488,11 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle2) {
       [&](int solver_num, int hessian_block_size, int max_steps_line_search,
           auto&& theta_0) {
         auto f = [&](auto&& sigma_global_v, auto&& length_scale_v, auto&& sigma_v) {
-          /*
-          if constexpr (stan::is_var_v<stan::return_type_t<decltype(sigma_global_v), decltype(length_scale_v), decltype(sigma_v)>>) {
-            std::cout << "laplace_start: \n";
+          if constexpr (stan::is_var_v<decltype(sigma_global_v)> || stan::is_var_v<decltype(length_scale_v)> || stan::is_var_v<decltype(sigma_v)>) {
+              test_name_lap = "test_name_ad_gp_motorcycle2";
+          } else {
+              test_name_lap = "test_name_gp_motorcycle2";
           }
-          */
           return laplace_marginal_tol<false>(
               normal_likelihood2{}, std::forward_as_tuple(y, n_obs, sigma_global_v),
               covariance_motorcycle_functor{},
