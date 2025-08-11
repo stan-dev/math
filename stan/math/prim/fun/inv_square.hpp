@@ -27,9 +27,9 @@ template <typename Container,
               Container>* = nullptr,
           require_container_t<Container>* = nullptr>
 inline auto inv_square(Container&& x) {
-  return make_holder([](auto&& v) { 
-    return inv(square(std::forward<decltype(v)>(v))); 
-  }, std::forward<Container>(x));
+  return make_holder(
+      [](auto&& v) { return inv(square(std::forward<decltype(v)>(v))); },
+      std::forward<Container>(x));
 }
 
 /**
