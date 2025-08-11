@@ -22,7 +22,7 @@ namespace math {
 template <typename Container, require_eigen_vt<is_fvar, Container>* = nullptr>
 inline auto norm1(Container&& x) {
   return apply_vector_unary<ref_type_t<Container>>::reduce(
-      to_ref(std::forward<Container>(x)), [&](auto&& v) {
+      to_ref(std::forward<Container>(x)), [](auto&& v) {
         using T_fvar_inner = typename value_type_t<decltype(v)>::Scalar;
         return fvar<T_fvar_inner>(norm1(v.val()),
                                   v.d().cwiseProduct(sign(v.val())).sum());

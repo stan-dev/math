@@ -49,7 +49,7 @@ inline auto prob_constrain(T&& x) {
  */
 template <typename T, typename Lp>
 inline auto prob_constrain(T&& x, Lp& lp) {
-  std::decay_t<T> log_inv_logit_x = log_inv_logit(x);
+  plain_type_t<T> log_inv_logit_x = log_inv_logit(x);
   lp += log_inv_logit_x + log1m_inv_logit(std::forward<T>(x));
   return exp(std::move(log_inv_logit_x));
 }
