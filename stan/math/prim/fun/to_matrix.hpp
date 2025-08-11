@@ -130,17 +130,21 @@ template <typename T, require_std_vector_vt<is_stan_scalar, T>* = nullptr>
 inline auto to_matrix(T&& x, int m, int n) {
   static constexpr const char* function = "to_matrix(array)";
   check_size_match(function, "rows * columns", m * n, "vector size", x.size());
-  return make_holder([m, n](auto&& x_) {
-    if constexpr (std::is_integral_v<value_type_t<decltype(x_)>>) {
-      return Eigen::Map<const Eigen::Matrix<value_type_t<decltype(x_)>, Eigen::Dynamic, Eigen::Dynamic>>(
-          &x_[0], m, n).template cast<double>();
-    } else {
-      return Eigen::Map<const Eigen::Matrix<value_type_t<decltype(x_)>, Eigen::Dynamic, Eigen::Dynamic>>(
-          &x_[0], m, n);
-    }
-  }, std::forward<T>(x));
+  return make_holder(
+      [m, n](auto&& x_) {
+        if constexpr (std::is_integral_v<value_type_t<decltype(x_)>>) {
+          return Eigen::Map<const Eigen::Matrix<
+              value_type_t<decltype(x_)>, Eigen::Dynamic, Eigen::Dynamic>>(
+                     &x_[0], m, n)
+              .template cast<double>();
+        } else {
+          return Eigen::Map<const Eigen::Matrix<
+              value_type_t<decltype(x_)>, Eigen::Dynamic, Eigen::Dynamic>>(
+              &x_[0], m, n);
+        }
+      },
+      std::forward<T>(x));
 }
-
 
 /**
  * Returns a matrix representation of the vector in column-major

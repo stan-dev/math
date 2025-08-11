@@ -85,9 +85,12 @@ inline auto apply_scalar_binary(F&& f, T1&& x, T2&& y) {
       [](auto&& f_inner, auto&& x_inner, auto&& y_inner) {
         using int_vec_t = promote_scalar_t<value_type_t<decltype(y_inner)>,
                                            plain_type_t<decltype(x_inner)>>;
-        auto y_map = make_holder([](auto&& y_inner_) {
-          return Eigen::Map<const int_vec_t>(y_inner_.data(), y_inner_.size());
-        }, std::forward<decltype(y_inner)>(y_inner));
+        auto y_map = make_holder(
+            [](auto&& y_inner_) {
+              return Eigen::Map<const int_vec_t>(y_inner_.data(),
+                                                 y_inner_.size());
+            },
+            std::forward<decltype(y_inner)>(y_inner));
         return std::forward<decltype(x_inner)>(x_inner).binaryExpr(
             y_map, std::forward<decltype(f_inner)>(f_inner));
       },
@@ -115,9 +118,12 @@ inline auto apply_scalar_binary(F&& f, T1&& x, T2&& y) {
       [](auto&& f_inner, auto&& x_inner, auto&& y_inner) {
         using int_vec_t = promote_scalar_t<value_type_t<decltype(x_inner)>,
                                            plain_type_t<decltype(y_inner)>>;
-        auto x_map = make_holder([](auto&& x_inner_) {
-          return Eigen::Map<const int_vec_t>(x_inner_.data(), x_inner_.size());
-        }, std::forward<decltype(x_inner)>(x_inner));
+        auto x_map = make_holder(
+            [](auto&& x_inner_) {
+              return Eigen::Map<const int_vec_t>(x_inner_.data(),
+                                                 x_inner_.size());
+            },
+            std::forward<decltype(x_inner)>(x_inner));
         return x_map.binaryExpr(std::forward<decltype(y_inner)>(y_inner),
                                 std::forward<decltype(f_inner)>(f_inner));
       },
