@@ -31,9 +31,12 @@ inline std::vector<T> reverse(const std::vector<T>& x) {
  * @param x vector or row vector to reverse
  * @return Vector or row vector in reversed order.
  */
-template <typename T, typename = require_vector_t<T>>
-inline auto reverse(const T& x) {
-  return x.reverse();
+template <typename T, require_vector_t<T>* = nullptr,
+  require_not_std_vector_t<T>* = nullptr>
+inline auto reverse(T&& x) {
+  return make_holder([](auto&& x_) {
+    return x_.reverse();
+  }, std::forward<T>(x));
 }
 
 }  // namespace math

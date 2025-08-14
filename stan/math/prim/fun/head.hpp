@@ -18,12 +18,17 @@ namespace math {
  * @return The first n elements of v.
  * @throw std::out_of_range if n is out of range.
  */
-template <typename T, require_vector_t<T>* = nullptr>
-inline auto head(const T& v, size_t n) {
+template <typename T, require_vector_t<T>* = nullptr,
+  require_not_std_vector_t<T>* = nullptr>
+inline auto head(T&& v, size_t n) {
   if (n != 0) {
     check_vector_index("head", "n", v, n);
   }
-  return v.head(n);
+  if constexpr (std::is_rvalue_reference_v<T&&>) {
+    return v.head(n).eval();
+  } else {
+    return v.head(n);
+  }
 }
 
 /**

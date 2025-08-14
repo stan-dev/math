@@ -21,9 +21,13 @@ namespace math {
  * @throw std::out_of_range if j is out of range.
  */
 template <typename T, require_matrix_t<T>* = nullptr>
-inline auto col(const T& m, size_t j) {
+inline auto col(T&& m, size_t j) {
   check_column_index("col", "j", m, j);
-  return m.col(j - 1);
+  if constexpr (std::is_rvalue_reference_v<T&&>) {
+    return m.col(j - 1).eval();
+  } else {
+    return m.col(j - 1);
+  }
 }
 
 }  // namespace math

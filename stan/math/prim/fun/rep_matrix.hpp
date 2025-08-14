@@ -24,7 +24,9 @@ template <typename Ret, typename T,
 inline auto rep_matrix(const T& x, int m, int n) {
   check_nonnegative("rep_matrix", "rows", m);
   check_nonnegative("rep_matrix", "cols", n);
-  return Ret::Constant(m, n, x);
+  return make_holder([](auto&& x_, auto&& m_, auto&& n_) {
+    return Ret::Constant(m_, n_, x_);
+  }, x, m, n);
 }
 
 /**
@@ -51,14 +53,16 @@ inline auto rep_matrix(const T& x, int m, int n) {
  * @param n Number of rows or columns.
  */
 template <typename Vec, require_eigen_vector_t<Vec>* = nullptr>
-inline auto rep_matrix(const Vec& x, int n) {
-  if (is_eigen_row_vector<Vec>::value) {
-    check_nonnegative("rep_matrix", "rows", n);
-    return x.replicate(n, 1);
-  } else {
-    check_nonnegative("rep_matrix", "cols", n);
-    return x.replicate(1, n);
-  }
+inline auto rep_matrix(Vec&& x, int n) {
+  return make_holder([n](auto&& x_) {
+    if (is_eigen_row_vector<Vec>::value) {
+      check_nonnegative("rep_matrix", "rows", n);
+      return x_.replicate(n, 1);
+    } else {
+      check_nonnegative("rep_matrix", "cols", n);
+      return x_.replicate(1, n);
+    }
+  }, std::forward<Vec>(x));
 }
 
 }  // namespace math

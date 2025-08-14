@@ -185,6 +185,30 @@ class CodeGenerator:
                 arg.name + "_expr" + self._get_next_name_suffix(), arg, size
             )
         )
+    def convert_to_temporary_expression(self, base_arg, expr_arg, size=None):
+        """Generate an inline Eigen expression argument (no separate variable).
+
+        Args:
+            base_arg: The base matrix-like argument (non-expression) to slice from.
+            expr_arg: The previously created ExpressionVariable corresponding to this base arg; used
+                to reuse its counter-op functor name so evaluation counting still works.
+            size: Optional size parameter (rows/cols or segment length). If None, uses base_arg.size.
+
+        Returns:
+            A CppStatement representing the inline expression that can be used as a function argument.
+        """
+        if not base_arg.is_eigen_compatible():
+            raise TypeError("convert_to_temporary_expression requires an Eigen-compatible argument")
+
+        # The expression variable carries the counter operation name we should reuse.
+        try:
+            counter_op_name = expr_arg.counter_op_name
+        except AttributeError as exc:
+            raise AttributeError("expr_arg must be an ExpressionVariable with counter_op_name") from exc
+
+        from statement_types import InlineExpressionArg
+        return self._add_statement(InlineExpressionArg(base_arg, counter_op_name, size))
+
 
     def expect_adj_eq(self, arg1, arg2):
         """
@@ -277,3 +301,51 @@ class CodeGenerator:
                 arg,
             )
         )
+
+    def build_arguments_with_temp_matrices(self, signature_parser, arg_overloads, size, base_arg_list=None):
+        """Build an argument list that reuses previously-declared non-Eigen arguments but passes
+        Eigen-compatible arguments as inline temporaries (created with `stan::test::make_*`).
+
+        Args:
+            signature_parser: SignatureParser for the function under test.
+            arg_overloads: List of overload strings for each argument.
+            size: Size parameter for Eigen-like temporaries (ignored for arrays).
+            base_arg_list: Existing list of arguments (e.g., from `build_arguments`) to reuse for
+                non-Eigen arguments and RNGs.
+
+        Returns:
+            List of CppStatement objects suitable for use in a function call.
+        """
+        if base_arg_list is None:
+            raise ValueError("base_arg_list must be provided to build_arguments_with_temp_matrices")
+
+        from sig_utils import parse_array
+        import statement_types
+
+        arg_list = []
+        for i, (overload, stan_arg) in enumerate(zip(arg_overloads, signature_parser.stan_args)):
+            number_nested_arrays, inner_type = parse_array(stan_arg)
+
+            base_arg = base_arg_list[i]
+
+            # Scalars, arrays, functors, etc. -- reuse as-is.
+            if number_nested_arrays > 0 or inner_type not in (
+                "vector",
+                "row_vector",
+                "matrix",
+                "complex_vector",
+                "complex_row_vector",
+                "complex_matrix",
+            ):
+                arg_list.append(base_arg)
+                continue
+
+            # For Eigen-compatible arguments, create an inline temporary version (no separate variable).
+            inline_temp = statement_types.InlineTempMatrixArg(base_arg)
+            arg_list.append(self._add_statement(inline_temp))
+
+        # If RNG is present, append the rng from base_arg_list.
+        if signature_parser.is_rng():
+            arg_list.append(base_arg_list[-1])
+
+        return arg_list

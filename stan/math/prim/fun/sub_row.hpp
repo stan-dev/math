@@ -20,13 +20,18 @@ namespace math {
 template <
     typename T, require_matrix_t<T>* = nullptr,
     require_all_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr>
-inline auto sub_row(const T& m, size_t i, size_t j, size_t ncols) {
+inline auto sub_row(T&& m, size_t i, size_t j, size_t ncols) {
   check_row_index("sub_row", "i", m, i);
   check_column_index("sub_row", "j", m, j);
   if (ncols > 0) {
     check_column_index("sub_col", "j+ncols-1", m, j + ncols - 1);
   }
-  return m.row(i - 1).segment(j - 1, ncols);
+  if constexpr (std::is_rvalue_reference_v<T&&>) {
+    return m.row(i - 1).segment(j - 1, ncols).eval();
+  } else {
+    return m.row(i - 1).segment(j - 1, ncols);
+  }
+
 }
 
 }  // namespace math

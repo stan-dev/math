@@ -16,8 +16,10 @@ namespace math {
  * @return Diagonal of the matrix.
  */
 template <typename T, require_matrix_t<T>* = nullptr>
-inline auto diagonal(const T& m) {
-  return m.diagonal();
+inline auto diagonal(T&& m) {
+  return make_holder([](auto&& m_) {
+    return m_.diagonal();
+  }, std::forward<T>(m));
 }
 
 }  // namespace math

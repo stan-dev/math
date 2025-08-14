@@ -1,8 +1,9 @@
 #ifndef STAN_MATH_PRIM_FUN_REP_VECTOR_HPP
 #define STAN_MATH_PRIM_FUN_REP_VECTOR_HPP
 
-#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err.hpp>
 
 namespace stan {
 namespace math {
@@ -12,7 +13,9 @@ template <typename T_ret, typename T,
           require_stan_scalar_t<T>* = nullptr>
 inline auto rep_vector(const T& x, int n) {
   check_nonnegative("rep_vector", "n", n);
-  return T_ret::Constant(n, x);
+  return make_holder([](auto&& x_, auto&& n_) {
+    return T_ret::Constant(n_, x_);
+  }, x, n);
 }
 template <typename T, require_stan_scalar_t<T>* = nullptr>
 inline auto rep_vector(const T& x, int n) {

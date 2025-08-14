@@ -1,9 +1,5 @@
+#include <stan/math/mix.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/prim.hpp>
-#include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/functor/for_each.hpp>
-#include <stan/math/rev.hpp>
-#include <stan/math/fwd.hpp>
 #include <vector>
 #include <random>
 

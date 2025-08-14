@@ -118,7 +118,26 @@ def main(functions=(), j=1):
                 for arg, arg_no_expression in zip(arg_list_no_expression, arg_list_expression):
                     cg.expect_adj_eq(arg, arg_no_expression)
 
-                cg.recover_memory()
+            if True:
+              # Code for temporary matrices and inline matrix expressions
+              # Build inline-expression version that reuses the counter functor from `convert_to_expression`
+              arg_list_expression_tmp = []
+              for base_arg, expr_arg in zip(arg_list_expression_base, arg_list_expression):
+                  if base_arg.is_eigen_compatible():
+                      arg_list_expression_tmp.append(cg.convert_to_temporary_expression(base_arg, expr_arg, size = 1))
+                  else:
+                      arg_list_expression_tmp.append(base_arg)
+
+              # Build version where Eigen arguments are inline temporaries
+              arg_list_no_expression_tmp = cg.build_arguments_with_temp_matrices(
+                  sp, sp.number_arguments() * [overload], size = 1, base_arg_list=arg_list_no_expression
+              )
+
+              result_tmp = cg.function_call_assign(cpp_function_name, *arg_list_expression_tmp)
+              result_no_expression_tmp = cg.function_call_assign(cpp_function_name, *arg_list_no_expression_tmp)
+              cg.expect_eq(result_tmp, result_no_expression_tmp)
+              if is_reverse_mode:
+                  cg.recover_memory()
 
             tests.append(
                 test_code_template.format(

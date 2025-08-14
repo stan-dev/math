@@ -14,8 +14,10 @@ namespace math {
  * @return transposed matrix
  */
 template <typename T, require_matrix_t<T>* = nullptr>
-auto inline transpose(const T& m) {
-  return m.transpose();
+inline auto transpose(T&& m) {
+  return make_holder([](auto&& m_) {
+    return m_.transpose();
+  }, std::forward<T>(m));
 }
 
 }  // namespace math

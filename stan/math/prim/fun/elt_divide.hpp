@@ -22,9 +22,11 @@ namespace math {
 template <typename Mat1, typename Mat2,
           require_all_eigen_t<Mat1, Mat2>* = nullptr,
           require_all_not_st_var<Mat1, Mat2>* = nullptr>
-auto elt_divide(const Mat1& m1, const Mat2& m2) {
+inline auto elt_divide(Mat1&& m1, Mat2&& m2) {
   check_matching_dims("elt_divide", "m1", m1, "m2", m2);
-  return (m1.array() / m2.array()).matrix();
+  return make_holder([](auto&& m1_, auto&& m2_) {
+    return (m1_.array() / m2_.array()).matrix();
+  }, std::forward<Mat1>(m1), std::forward<Mat2>(m2));
 }
 
 /**
@@ -40,8 +42,8 @@ auto elt_divide(const Mat1& m1, const Mat2& m2) {
  */
 template <typename Mat, typename Scal, require_matrix_t<Mat>* = nullptr,
           require_stan_scalar_t<Scal>* = nullptr>
-auto elt_divide(const Mat& m, Scal s) {
-  return divide(m, s);
+inline auto elt_divide(Mat&& m, Scal s) {
+  return divide(std::forward<Mat>(m), s);
 }
 
 /**
@@ -57,8 +59,10 @@ auto elt_divide(const Mat& m, Scal s) {
  */
 template <typename Scal, typename Mat, require_stan_scalar_t<Scal>* = nullptr,
           require_eigen_t<Mat>* = nullptr>
-auto elt_divide(Scal s, const Mat& m) {
-  return (s / m.array()).matrix();
+auto elt_divide(Scal s, Mat&& m) {
+  return make_holder([s](auto&& m_) {
+    return (s / m_.array()).matrix();
+  }, std::forward<Mat>(m));
 }
 
 template <typename Scal1, typename Scal2,

@@ -16,7 +16,9 @@ namespace math {
  */
 inline auto ones_vector(int K) {
   check_nonnegative("ones_vector", "size", K);
-  return Eigen::VectorXd::Constant(K, 1);
+  return make_holder([](auto K_) {
+   return Eigen::VectorXd::Constant(K_, 1);
+  }, K);
 }
 
 }  // namespace math

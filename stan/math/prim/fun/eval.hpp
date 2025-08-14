@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_PRIM_FUN_EVAL_HPP
 #define STAN_MATH_PRIM_FUN_EVAL_HPP
 
-#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
 
 namespace stan {
 namespace math {
@@ -31,8 +31,12 @@ inline T eval(T&& arg) {
  **/
 template <typename T,
           require_not_same_t<std::decay_t<T>, plain_type_t<T>>* = nullptr>
-inline decltype(auto) eval(const T& arg) {
-  return arg.eval();
+inline decltype(auto) eval(T&& arg) {
+  if constexpr (stan::internal::has_eval<T>::value) {
+    return arg.eval();
+  } else {
+    return plain_type_t<T>(std::forward<T>(arg));
+  }
 }
 
 }  // namespace math

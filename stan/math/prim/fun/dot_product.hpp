@@ -21,9 +21,11 @@ namespace math {
 template <typename Vec1, typename Vec2,
           require_all_eigen_vector_t<Vec1, Vec2> * = nullptr,
           require_not_var_t<return_type_t<Vec1, Vec2>> * = nullptr>
-inline auto dot_product(const Vec1 &v1, const Vec2 &v2) {
+inline auto dot_product(Vec1&&v1, Vec2&&v2) {
   check_matching_sizes("dot_product", "v1", v1, "v2", v2);
-  return v1.dot(v2);
+  return make_holder([](auto&& v1_, auto&& v2_) {
+    return v1_.dot(v2_);
+  }, std::forward<Vec1>(v1), std::forward<Vec2>(v2));
 }
 
 /**

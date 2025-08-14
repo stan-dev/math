@@ -24,8 +24,10 @@ template <typename Mat, typename Scal, require_stan_scalar_t<Scal>* = nullptr,
           require_eigen_t<Mat>* = nullptr,
           require_all_not_st_var<Scal, Mat>* = nullptr,
           require_all_not_complex_t<Scal, value_type_t<Mat>>* = nullptr>
-inline auto multiply(const Mat& m, Scal c) {
-  return c * m;
+inline auto multiply(Mat&& m, Scal c) {
+  return make_holder([c](auto&& m_) {
+    return c * m_;
+  }, std::forward<Mat>(m));
 }
 
 /**
@@ -43,8 +45,10 @@ inline auto multiply(const Mat& m, Scal c) {
 template <typename Mat, typename Scal,
           require_any_complex_t<value_type_t<Mat>, Scal>* = nullptr,
           require_eigen_t<Mat>* = nullptr, require_not_eigen_t<Scal>* = nullptr>
-inline auto multiply(const Mat& m, Scal c) {
-  return m * c;
+inline auto multiply(Mat&& m, Scal c) {
+  return make_holder([c](auto&& m_) {
+    return m_ * c;
+  }, std::forward<Mat>(m));
 }
 
 /**
@@ -62,8 +66,10 @@ inline auto multiply(const Mat& m, Scal c) {
 template <typename Mat, typename Scal,
           require_any_complex_t<value_type_t<Mat>, Scal>* = nullptr,
           require_eigen_t<Mat>* = nullptr, require_not_eigen_t<Scal>* = nullptr>
-inline auto multiply(const Scal& m, const Mat& c) {
-  return m * c;
+inline auto multiply(const Scal& c, Mat&& m) {
+  return make_holder([c](auto&& m_) {
+    return c * m_;
+  }, std::forward<Mat>(m));
 }
 
 /**
@@ -80,8 +86,10 @@ template <typename Scal, typename Mat, require_stan_scalar_t<Scal>* = nullptr,
           require_eigen_t<Mat>* = nullptr,
           require_all_not_st_var<Scal, Mat>* = nullptr,
           require_all_not_complex_t<Scal, value_type_t<Mat>>* = nullptr>
-inline auto multiply(Scal c, const Mat& m) {
-  return c * m;
+inline auto multiply(Scal c, Mat&& m) {
+  return make_holder([c](auto&& m_) {
+    return c * m_;
+  }, std::forward<Mat>(m));
 }
 
 /**
@@ -101,10 +109,12 @@ inline auto multiply(Scal c, const Mat& m) {
 template <typename Mat1, typename Mat2,
           require_all_eigen_vt<std::is_arithmetic, Mat1, Mat2>* = nullptr,
           require_not_eigen_row_and_col_t<Mat1, Mat2>* = nullptr>
-inline auto multiply(const Mat1& m1, const Mat2& m2) {
+inline auto multiply(Mat1&& m1, Mat2&& m2) {
   check_size_match("multiply", "Columns of m1", m1.cols(), "Rows of m2",
                    m2.rows());
-  return m1 * m2;
+  return make_holder([](auto&& m1_, auto&& m2_) {
+    return m1_ * m2_;
+  }, std::forward<Mat1>(m1), std::forward<Mat2>(m2));
 }
 
 /**
@@ -147,9 +157,9 @@ inline auto multiply(const Mat1& m1, const Mat2& m2) {
 template <typename RowVec, typename ColVec,
           require_not_var_t<return_type_t<RowVec, ColVec>>* = nullptr,
           require_eigen_row_and_col_t<RowVec, ColVec>* = nullptr>
-inline auto multiply(const RowVec& rv, const ColVec& v) {
+inline auto multiply(RowVec&& rv, ColVec&& v) {
   check_multiplicable("multiply", "rv", rv, "v", v);
-  return dot_product(rv, v);
+  return dot_product(std::forward<RowVec>(rv), std::forward<ColVec>(v));
 }
 
 /**

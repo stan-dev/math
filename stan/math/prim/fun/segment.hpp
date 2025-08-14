@@ -1,8 +1,9 @@
 #ifndef STAN_MATH_PRIM_FUN_SEGMENT_HPP
 #define STAN_MATH_PRIM_FUN_SEGMENT_HPP
 
-#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err.hpp>
 #include <vector>
 
 namespace stan {
@@ -14,8 +15,9 @@ namespace math {
  *
  * @tparam T type of the vector
  */
-template <typename Vec, require_vector_t<Vec>* = nullptr>
-inline auto segment(const Vec& v, size_t i, size_t n) {
+template <typename Vec, require_vector_t<Vec>* = nullptr,
+  require_not_std_vector_t<Vec>* = nullptr>
+inline auto segment(Vec&& v, size_t i, size_t n) {
   check_greater("segment", "n", i, 0.0);
   check_less_or_equal("segment", "n", i, static_cast<size_t>(v.size()));
   if (n != 0) {
@@ -23,7 +25,11 @@ inline auto segment(const Vec& v, size_t i, size_t n) {
     check_less_or_equal("segment", "n", i + n - 1,
                         static_cast<size_t>(v.size()));
   }
-  return v.segment(i - 1, n);
+  if constexpr (std::is_rvalue_reference_v<Vec&&>) {
+    return v.segment(i - 1, n).eval();
+  } else {
+    return v.segment(i - 1, n);
+  }
 }
 
 template <typename T>

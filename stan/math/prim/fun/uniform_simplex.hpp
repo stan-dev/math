@@ -17,7 +17,9 @@ namespace math {
  */
 inline auto uniform_simplex(int K) {
   check_positive("uniform_simplex", "size", K);
-  return Eigen::VectorXd::Constant(K, 1.0 / K);
+  return make_holder([](int K_) {
+    return Eigen::VectorXd::Constant(K_, 1.0 / K_);
+  }, K);
 }
 
 }  // namespace math

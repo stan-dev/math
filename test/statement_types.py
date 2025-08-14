@@ -487,6 +487,8 @@ class ExpressionVariable(CppStatement):
         self._is_reverse_mode = arg.is_reverse_mode()
         self._arg_stan_arg = arg.stan_arg
         self._arg_name = arg.name
+        # Name of the unary counter functor used in the expression; reused for inline expressions
+        self.counter_op_name = f"{self.name}_counter_op"
 
     def is_reverse_mode(self):
         """Return true if the base argument was reverse mode"""
@@ -504,7 +506,7 @@ class ExpressionVariable(CppStatement):
         """Generate C++"""
 
         scalar = overload_scalar[self._arg_overload]
-        counter_op_name = "{name}_counter_op".format(name=self.name)
+        counter_op_name = self.counter_op_name
         value_type = (
             "std::complex<" + scalar + ">"
             if "complex_" in self._arg_stan_arg
@@ -543,3 +545,91 @@ class ExpressionVariable(CppStatement):
             )
         else:
             raise Exception("Can't make an expression out of a " + self.arg.stan_arg)
+
+class InlineExpressionArg(CppStatement):
+    """Represents an inline Eigen expression argument (no separate variable is declared)."""
+
+    def __init__(self, base_arg, counter_op_name, size=None):
+        """Initialize inline Eigen expression.
+
+        Args:
+            base_arg: The underlying matrix-like variable (e.g., MatrixVariable/SimplexVariable).
+            counter_op_name: Name of the unary counter functor to use in `unaryExpr(...)`.
+            size: Optional dimension; if None, reuses base_arg.size.
+        """
+        # `name` is the inline expression string that will be inserted in the function call.
+        self._base = base_arg
+        self._counter_op_name = counter_op_name
+        self.size = base_arg.size if size is None else size
+
+        # Build expression string using the same rules as ExpressionVariable.cpp()
+        if base_arg.stan_arg in ("matrix", "complex_matrix"):
+            expr = f"{base_arg.name}.block(0,0,{self.size},{self.size}).unaryExpr({counter_op_name})"
+        elif base_arg.stan_arg in ("vector", "row_vector", "complex_vector", "complex_row_vector"):
+            expr = f"{base_arg.name}.segment(0,{self.size}).unaryExpr({counter_op_name})"
+        else:
+            raise Exception("Can't make an expression out of a " + base_arg.stan_arg)
+
+        self.name = expr
+        self._is_reverse_mode = base_arg.is_reverse_mode()
+
+    def is_reverse_mode(self):
+        return self._is_reverse_mode
+
+    def is_eigen_compatible(self):
+        return True
+
+    def is_expression(self):
+        return True
+
+    def cpp(self):
+        # Inline argument: no separate statement generated.
+        return ""
+
+
+class InlineTempMatrixArg(CppStatement):
+    """Represents an inline temporary matrix/vector/row_vector argument created in-place."""
+
+    def __init__(self, base_arg):
+        """Build an inline `stan::test::make_*<Type>(value, size)` call for an Eigen-like argument.
+
+        Args:
+            base_arg: An existing matrix-like argument object whose properties (type/size/value/overload)
+                      are used to construct the inline temporary.
+        """
+        from sig_utils import overload_scalar, get_cpp_type  # local import to avoid circulars
+
+        self._base = base_arg
+        scalar = overload_scalar[base_arg.overload]
+        cpp_arg_template = get_cpp_type(base_arg.stan_arg)
+        arg_type = cpp_arg_template.replace("SCALAR", scalar)
+
+        # Decide which factory function to use
+        func_name = "stan::test::make_arg"
+        # Preserve special constructors where needed
+        try:
+            from statement_types import SimplexVariable, PositiveDefiniteMatrixVariable, StochasticMatrixVariable  # self-import safe
+            if isinstance(base_arg, PositiveDefiniteMatrixVariable):
+                func_name = "stan::test::make_pos_definite_matrix"
+            elif isinstance(base_arg, (SimplexVariable, StochasticMatrixVariable)):
+                func_name = "stan::test::make_simplex"
+        except Exception:
+            # Fallback: keep `make_arg`
+            pass
+
+        value = getattr(base_arg, "value", 0.4)
+        size = getattr(base_arg, "size", 1)
+
+        # For complex values, `value` is a string like "stan::math::to_complex(0.4,0.4)"; keep as-is.
+        self.name = f"{func_name}<{arg_type}>({value}, {size})"
+        self._is_reverse_mode = base_arg.is_reverse_mode()
+
+    def is_reverse_mode(self):
+        return self._is_reverse_mode
+
+    def is_eigen_compatible(self):
+        return True
+
+    def cpp(self):
+        # Inline argument: no separate statement generated.
+        return ""
