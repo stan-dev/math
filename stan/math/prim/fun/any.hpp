@@ -55,7 +55,7 @@ inline bool any(const std::tuple<Types...>& x);
  */
 template <typename InnerT>
 inline bool any(const std::vector<InnerT>& x) {
-  return std::any_of(x.begin(), x.end(), [](const auto& i) { return any(i); });
+  return std::any_of(x.begin(), x.end(), [](auto&& i) { return any(i); });
 }
 
 /**
@@ -71,7 +71,7 @@ template <typename... Types>
 inline bool any(const std::tuple<Types...>& x) {
   bool any_true = false;
   math::for_each(
-      [&any_true](const auto& i) {
+      [&any_true](auto&& i) {
         any_true = any_true || any(i);
         return;
       },

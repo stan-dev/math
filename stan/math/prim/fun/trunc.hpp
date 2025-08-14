@@ -8,6 +8,10 @@
 namespace stan {
 namespace math {
 
+template <typename T, require_arithmetic_t<T>* = nullptr>
+inline auto trunc(T&& x) {
+  return std::trunc(x);
+}
 /**
  * Structure to wrap `trunc()` so it can be vectorized.
  */
@@ -21,9 +25,8 @@ struct trunc_fun {
    * @return truncation of the argument
    */
   template <typename T>
-  static inline auto fun(const T& x) {
-    using std::trunc;
-    return trunc(x);
+  static inline auto fun(T&& x) {
+    return trunc(std::forward<T>(x));
   }
 };
 
@@ -37,10 +40,12 @@ struct trunc_fun {
  * @param x container
  * @return elementwise trunc of container elements
  */
-template <typename T, require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
-                          T>* = nullptr>
-inline auto trunc(const T& x) {
-  return apply_scalar_unary<trunc_fun, T>::apply(x);
+template <
+    typename T,
+    require_all_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr,
+    require_container_t<T>* = nullptr>
+inline auto trunc(T&& x) {
+  return apply_scalar_unary<trunc_fun, T>::apply(std::forward<T>(x));
 }
 
 }  // namespace math

@@ -77,7 +77,7 @@ return_type_t<T_prior_size> dirichlet_multinomial_lpmf(
   }
 
   // Need to treat as double otherwise Eigen's array log truncates
-  auto ns_array = as_array_or_scalar(ns).template cast<double>();
+  auto ns_array = as_array_or_scalar(ns).template cast<double>().eval();
   partials_return_t<T_prior_size> a_sum = sum(alpha_val);
   partials_return_t<T_prior_size> lp(0.0);
   if (include_summand<propto>::value) {

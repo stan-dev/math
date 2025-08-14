@@ -55,7 +55,7 @@ inline bool all(const std::tuple<Types...>& x);
  */
 template <typename InnerT>
 inline bool all(const std::vector<InnerT>& x) {
-  return std::all_of(x.begin(), x.end(), [](const auto& i) { return all(i); });
+  return std::all_of(x.begin(), x.end(), [](auto&& i) { return all(i); });
 }
 
 /**
@@ -71,7 +71,7 @@ template <typename... Types>
 inline bool all(const std::tuple<Types...>& x) {
   bool all_true = true;
   math::for_each(
-      [&all_true](const auto& i) {
+      [&all_true](auto&& i) {
         all_true = all_true && all(i);
         return;
       },

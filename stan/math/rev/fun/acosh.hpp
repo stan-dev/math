@@ -61,7 +61,7 @@ namespace math {
  * @return Inverse hyperbolic cosine of the variable.
  */
 inline var acosh(const var& x) {
-  return make_callback_var(acosh(x.val()), [x](const auto& vi) mutable {
+  return make_callback_var(acosh(x.val()), [x](auto&& vi) mutable {
     x.adj() += vi.adj() / std::sqrt(x.val() * x.val() - 1.0);
   });
 }
@@ -78,7 +78,7 @@ template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
 inline auto acosh(const VarMat& x) {
   return make_callback_var(
       x.val().unaryExpr([](const auto x) { return acosh(x); }),
-      [x](const auto& vi) mutable {
+      [x](auto&& vi) mutable {
         x.adj().array()
             += vi.adj().array() / (x.val().array().square() - 1.0).sqrt();
       });

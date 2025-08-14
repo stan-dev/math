@@ -161,12 +161,13 @@ inline return_type_t<T_n, T_k> binomial_coefficient_log(const T_n n,
  * @return Binomial coefficient log function applied to the two inputs.
  */
 template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr>
-inline auto binomial_coefficient_log(const T1& a, const T2& b) {
+inline auto binomial_coefficient_log(T1&& a, T2&& b) {
   return apply_scalar_binary(
-      [](const auto& c, const auto& d) {
-        return binomial_coefficient_log(c, d);
+      [](auto&& c, auto&& d) {
+        return binomial_coefficient_log(std::forward<decltype(c)>(c),
+                                        std::forward<decltype(d)>(d));
       },
-      a, b);
+      std::forward<T1>(a), std::forward<T2>(b));
 }
 
 }  // namespace math

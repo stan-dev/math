@@ -115,9 +115,10 @@ inline plain_type_t<Mat> sum_to_zero_free(const Mat& z) {
  * @param z The standard vector to untransform.
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
-inline auto sum_to_zero_free(const T& z) {
-  return apply_vector_unary<T>::apply(
-      z, [](auto&& v) { return sum_to_zero_free(v); });
+inline auto sum_to_zero_free(T&& z) {
+  return apply_vector_unary<T>::apply(std::forward<T>(z), [](auto&& v) {
+    return sum_to_zero_free(std::forward<decltype(v)>(v));
+  });
 }
 
 }  // namespace math

@@ -94,8 +94,10 @@ var sd(const T& x) {
  * @throw domain error  size is not greater than zero.
  */
 template <typename T, require_std_vector_st<is_var, T>* = nullptr>
-auto sd(const T& m) {
-  return apply_vector_unary<T>::reduce(m, [](const auto& x) { return sd(x); });
+auto sd(T&& m) {
+  return apply_vector_unary<T>::reduce(std::forward<T>(m), [](auto&& x) {
+    return sd(std::forward<decltype(x)>(x));
+  });
 }
 
 }  // namespace math

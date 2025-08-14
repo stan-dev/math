@@ -1,9 +1,10 @@
 #ifndef STAN_MATH_PRIM_FUN_DIVIDE_COLUMNS_HPP
 #define STAN_MATH_PRIM_FUN_DIVIDE_COLUMNS_HPP
 
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <vector>
 
 namespace stan {
@@ -27,16 +28,13 @@ divide_columns(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
   const size_t N = x.size();
   const size_t D = x[0].size();
   check_size_match("divide_columns", "x dimension", D, "vector", vec.size());
-  Eigen::Map<const Eigen::Array<T_v, Eigen::Dynamic, 1>> v_vec(&vec[0],
-                                                               vec.size());
-
   std::vector<Eigen::Matrix<return_type_t<T_x, T_v, double>, Eigen::Dynamic, 1>>
       out(N);
   for (size_t n = 0; n < N; ++n) {
     out[n].resize(D);
     check_size_match("divide_columns", "x dimension", x[n].size(), "vector",
-                     v_vec.size());
-    out[n] = x[n].array() / v_vec.array();
+                     vec.size());
+    out[n] = x[n].array() / as_array_or_scalar(vec).array();
   }
   return out;
 }

@@ -39,14 +39,14 @@ auto max(T1 x, T2 y) {
  * scalar type in the container is integer
  */
 template <typename T, require_container_t<T>* = nullptr>
-inline value_type_t<T> max(const T& m) {
+inline value_type_t<T> max(T&& m) {
   if (std::is_integral<value_type_t<T>>::value) {
     check_nonzero_size("max", "int vector", m);
   } else if (m.size() == 0) {
     return NEGATIVE_INFTY;
   }
-  return apply_vector_unary<T>::reduce(
-      m, [](const auto& x) { return x.maxCoeff(); });
+  return apply_vector_unary<T>::reduce(std::forward<T>(m),
+                                       [](auto&& x) { return x.maxCoeff(); });
 }
 
 }  // namespace math

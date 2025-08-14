@@ -303,12 +303,13 @@ inline auto offset_multiplier_constrain(const std::vector<T>& x,
  */
 template <bool Jacobian, typename T, typename M, typename S, typename Lp,
           require_convertible_t<return_type_t<T, M, S>, Lp>* = nullptr>
-inline auto offset_multiplier_constrain(const T& x, const M& mu, const S& sigma,
-                                        Lp& lp) {
+inline auto offset_multiplier_constrain(T&& x, M&& mu, S&& sigma, Lp& lp) {
   if constexpr (Jacobian) {
-    return offset_multiplier_constrain(x, mu, sigma, lp);
+    return offset_multiplier_constrain(std::forward<T>(x), std::forward<M>(mu),
+                                       std::forward<S>(sigma), lp);
   } else {
-    return offset_multiplier_constrain(x, mu, sigma);
+    return offset_multiplier_constrain(std::forward<T>(x), std::forward<M>(mu),
+                                       std::forward<S>(sigma));
   }
 }
 

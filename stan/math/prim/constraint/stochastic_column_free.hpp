@@ -36,9 +36,10 @@ inline plain_type_t<Mat> stochastic_column_free(const Mat& y) {
  * @param[in] y vector of columnwise stochastic matrix of size (N, K)
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
-inline auto stochastic_column_free(const T& y) {
-  return apply_vector_unary<T>::apply(
-      y, [](auto&& v) { return stochastic_column_free(v); });
+inline auto stochastic_column_free(T&& y) {
+  return apply_vector_unary<T>::apply(std::forward<T>(y), [](auto&& v) {
+    return stochastic_column_free(std::forward<decltype(v)>(v));
+  });
 }
 
 }  // namespace math

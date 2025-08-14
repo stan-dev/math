@@ -53,10 +53,13 @@ inline T2 bessel_second_kind(int v, const T2 z) {
  * @return Bessel second kind function applied to the two inputs.
  */
 template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr>
-inline auto bessel_second_kind(const T1& a, const T2& b) {
+inline auto bessel_second_kind(T1&& a, T2&& b) {
   return apply_scalar_binary(
-      [](const auto& c, const auto& d) { return bessel_second_kind(c, d); }, a,
-      b);
+      [](auto&& c, auto&& d) {
+        return bessel_second_kind(std::forward<decltype(c)>(c),
+                                  std::forward<decltype(d)>(d));
+      },
+      std::forward<T1>(a), std::forward<T2>(b));
 }
 
 }  // namespace math

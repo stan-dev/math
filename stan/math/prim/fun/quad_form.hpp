@@ -31,9 +31,8 @@ template <typename EigMat1, typename EigMat2,
 inline auto quad_form(const EigMat1& A, const EigMat2& B) {
   check_square("quad_form", "A", A);
   check_multiplicable("quad_form", "A", A, "B", B);
-  return make_holder(
-      [](const auto& b, const auto& a) { return b.transpose() * a * b; },
-      to_ref(B), to_ref(A));
+  return make_holder([](auto&& b, auto&& a) { return b.transpose() * a * b; },
+                     to_ref(B), to_ref(A));
 }
 
 /**
@@ -55,7 +54,7 @@ template <typename EigMat, typename ColVec, require_eigen_t<EigMat>* = nullptr,
 inline value_type_t<EigMat> quad_form(const EigMat& A, const ColVec& B) {
   check_square("quad_form", "A", A);
   check_multiplicable("quad_form", "A", A, "B", B);
-  const auto& B_ref = to_ref(B);
+  auto&& B_ref = to_ref(B);
   return B_ref.dot(A * B_ref);
 }
 
