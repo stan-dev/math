@@ -9,8 +9,7 @@ namespace stan {
 namespace math {
 
 template <typename T1, typename T2, require_integral_t<T1>* = nullptr,
-          require_var_t<T2>* = nullptr, 
-          require_stan_scalar_t<T2>* = nullptr>
+          require_var_t<T2>* = nullptr, require_stan_scalar_t<T2>* = nullptr>
 inline var bessel_second_kind(T1&& v, T2&& a) {
   double ret_val = bessel_second_kind(v, a.val());
   auto precomp_bessel
