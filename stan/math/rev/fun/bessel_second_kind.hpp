@@ -8,7 +8,8 @@
 namespace stan {
 namespace math {
 
-template <typename T1, typename T2, require_st_integral<T1>* = nullptr, require_var_t<T2>* = nullptr>
+template <typename T1, typename T2, require_st_integral<T1>* = nullptr,
+          require_var_t<T2>* = nullptr>
 inline auto bessel_second_kind(T1&& v, T2&& a) {
   if constexpr (is_stan_scalar_v<T2>) {
     double ret_val = bessel_second_kind(v, a.val());
@@ -22,7 +23,7 @@ inline auto bessel_second_kind(T1&& v, T2&& a) {
     auto v_map = as_array_or_scalar(v);
     auto precomp_bessel
         = to_arena(v_map * ret_val / a.val().array()
-                  - bessel_second_kind(v_map + 1, a.val().array()));
+                   - bessel_second_kind(v_map + 1, a.val().array()));
     return make_callback_var(
         ret_val.matrix(), [precomp_bessel, a](const auto& vi) mutable {
           a.adj().array() += vi.adj().array() * precomp_bessel;
