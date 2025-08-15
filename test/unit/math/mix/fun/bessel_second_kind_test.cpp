@@ -25,10 +25,12 @@ TEST(mathMixScalFun, besselSecondKind_vec) {
   Eigen::VectorXd in2(2);
   in2 << 0.5, 3.4;
   stan::test::expect_ad_vectorized_binary(f, std_in1, in2);
+  stan::test::expect_ad_matvar(f, std_in1, in2);
 
   std::vector<std::vector<int>> std_std_in1{std_in1, std_in1};
   Eigen::MatrixXd mat_in2 = in2.replicate(1, 2);
   stan::test::expect_ad_vectorized_binary(f, std_std_in1, mat_in2);
+  stan::test::expect_ad_matvar(f, std_std_in1, mat_in2);
 }
 
 TEST(mathMixScalFun, besselSecondKind_matvec) {
