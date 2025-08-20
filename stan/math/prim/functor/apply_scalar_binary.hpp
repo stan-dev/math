@@ -306,7 +306,7 @@ template <typename F, typename T1, typename T2,
 inline auto apply_scalar_binary(F&& f, T1&& x, T2&& y) {
   decltype(auto) x_vec = as_column_vector_or_scalar(std::forward<T1>(x));
   using T_return = std::decay_t<decltype(f(x[0], y))>;
-  std::vector<T_return> result(x.size());
+  std::vector<T_return> result(x_vec.size());
   Eigen::Map<Eigen::Matrix<T_return, -1, 1>>(result.data(), result.size())
       = x_vec.unaryExpr(
           [f_ = std::forward<F>(f), y](auto&& v) { return f_(v, y); });
@@ -337,7 +337,7 @@ template <typename F, typename T1, typename T2,
 inline auto apply_scalar_binary(F&& f, T1&& x, T2&& y) {
   decltype(auto) y_vec = as_column_vector_or_scalar(y);
   using T_return = std::decay_t<decltype(f(x, y[0]))>;
-  std::vector<T_return> result(y.size());
+  std::vector<T_return> result(y_vec.size());
   Eigen::Map<Eigen::Matrix<T_return, -1, 1>>(result.data(), result.size())
       = y_vec.unaryExpr(
           [f_ = std::forward<F>(f), x](auto&& v) { return f_(x, v); });
