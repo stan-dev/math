@@ -16,7 +16,7 @@
 #include <ostream>
 #include <optional>
 #include <fstream>
-//#define LAPLACE_DEBUG
+// #define LAPLACE_DEBUG
 #ifdef LAPLACE_DEBUG
 #include <iomanip>
 #endif
@@ -74,8 +74,7 @@ template <bool HasInitTheta>
 struct laplace_options;
 
 template <>
-struct laplace_options<false> : public laplace_options_base {
-};
+struct laplace_options<false> : public laplace_options_base {};
 
 template <>
 struct laplace_options<true> : public laplace_options_base {
@@ -388,8 +387,8 @@ inline STAN_COLD_PATH void throw_nan(NameStr&& name_str, ParamStr&& param_str,
  *       loops.
  */
 template <typename T>
-inline auto cubic_interp_max(T dir_lo, T hi_bound, T obj_diff, T dir_high,
-                             T hi_limit) {
+inline auto cubic_interp(T dir_lo, T hi_bound, T obj_diff, T dir_high,
+                         T hi_limit) {
   // g′(x) = a₃x² + a₂x + a₁  (with g(0)=0)
   const T a3 = (-12.0 * obj_diff + 6.0 * hi_bound * (dir_lo + dir_high))
                / std::pow(hi_bound, 3);
@@ -425,75 +424,79 @@ constexpr void print(int tabs) {}
 #ifdef LAPLACE_DEBUG
 template <typename Val, typename... Types>
 void print(int tabs, const char* name, Val&& val, Types&&... args) {
-  csv_file << name << ", " << std::setprecision(13) << std::fixed << stan::math::eval(val) << "\n";
+  csv_file << name << ", " << std::setprecision(13) << std::fixed
+           << stan::math::eval(val) << "\n";
   print(tabs, std::forward<Types>(args)...);
 }
 
 template <typename Val, typename... Types>
-void print(const char* msg, int tabs, const char* name, Val&& val, Types&&... args) {
-  csv_file << name << ", " << std::setprecision(13) << std::fixed << stan::math::eval(val) << "\n";
+void print(const char* msg, int tabs, const char* name, Val&& val,
+           Types&&... args) {
+  csv_file << name << ", " << std::setprecision(13) << std::fixed
+           << stan::math::eval(val) << "\n";
   print(tabs, std::forward<Types>(args)...);
 }
 
 void print(const char* msg) {
-  //std::cout << msg << "\n";
+  // std::cout << msg << "\n";
 }
 
 template <typename Val>
 void print(const char* msg, Val&& val) {
-  csv_file << msg << ", " << std::setprecision(13) << std::fixed << stan::math::eval(val) << "\n";
+  csv_file << msg << ", " << std::setprecision(13) << std::fixed
+           << stan::math::eval(val) << "\n";
 }
-
 
 #else
 template <typename Val, typename... Types>
 constexpr void print(int tabs, const char* name, Val&& val, Types&&... args) {}
 
 template <typename Val, typename... Types>
-constexpr void print(const char* msg, int tabs, const char* name, Val&& val, Types&&... args) {}
+constexpr void print(const char* msg, int tabs, const char* name, Val&& val,
+                     Types&&... args) {}
 
 constexpr void print(const char* msg) {}
 
 template <typename Val>
 constexpr void print(const char* msg, Val&& val) {}
 #endif
-}
+}  // namespace debug
 
 template <typename Option>
 inline auto check_armijo(double obj_next, double obj_init, double alpha_next,
                          double dir0, Option&& opt) {
-  debug::print("check_armijo: ", 2,
-               "armijo:    ", (obj_next >= obj_init + alpha_next * dir0 * opt.line_search.c1 ? 1 : 0),
-               "obj_next:   ", obj_next,
-               "obj_init:   ", obj_init,
-               "alpha_next: ", alpha_next,
-               "dir0:       ", dir0,
-               "c1:         ", opt.line_search.c1,
-               "obj + alpha * dir0 * c1: ", (obj_init + alpha_next * dir0 * opt.line_search.c1)
-               );
+  debug::print(
+      "check_armijo: ", 2, "armijo:    ",
+      (obj_next >= obj_init + alpha_next * dir0 * opt.line_search.c1 ? 1 : 0),
+      "obj_next:   ", obj_next, "obj_init:   ", obj_init,
+      "alpha_next: ", alpha_next, "dir0:       ", dir0,
+      "c1:         ", opt.line_search.c1, "obj + alpha * dir0 * c1: ",
+      (obj_init + alpha_next * dir0 * opt.line_search.c1));
   return obj_next >= obj_init + alpha_next * dir0 * opt.line_search.c1;
 }
 
 template <typename Option>
 inline auto check_wolfe_curve(double dir_deriv_next, double dir_deriv_init,
                               Option&& opt) {
-  debug::print("check_wolfe_curve: ", 2,
-               "wolfe:    ", (std::abs(dir_deriv_next) <= (opt.line_search.c2 * std::abs(dir_deriv_init)) ? 1 : 0),
-               "deriv_next: ", dir_deriv_next,
-               "deriv_init: ", dir_deriv_init,
+  debug::print("check_wolfe_curve: ", 2, "wolfe:    ",
+               (std::abs(dir_deriv_next)
+                        <= (opt.line_search.c2 * std::abs(dir_deriv_init))
+                    ? 1
+                    : 0),
+               "deriv_next: ", dir_deriv_next, "deriv_init: ", dir_deriv_init,
                "c2:         ", opt.line_search.c2,
-               "abs(d_next):   ", std::abs(dir_deriv_next),
-               "abs(d_init)*c2 ", (std::abs(dir_deriv_init) * opt.line_search.c2)
-              );
-  return std::abs(dir_deriv_next) <= (opt.line_search.c2 * std::abs(dir_deriv_init));
+               "abs(d_next):   ", std::abs(dir_deriv_next), "abs(d_init)*c2 ",
+               (std::abs(dir_deriv_init) * opt.line_search.c2));
+  return std::abs(dir_deriv_next)
+         <= (opt.line_search.c2 * std::abs(dir_deriv_init));
 }
 
 template <typename Scalar>
-Scalar CubicInterp(const Scalar &df0, const Scalar &x1, const Scalar &f1,
-                   const Scalar &df1, const Scalar &loX, const Scalar &hiX) {
+Scalar cubic_interp(const Scalar& df0, const Scalar& x1, const Scalar& f1,
+                    const Scalar& df1, const Scalar& loX, const Scalar& hiX) {
   const Scalar c3((-12 * f1 + 6 * x1 * (df0 + df1)) / (x1 * x1 * x1));
   const Scalar c2(-(4 * df0 + 2 * df1) / x1 + 6 * f1 / (x1 * x1));
-  const Scalar &c1(df0);
+  const Scalar& c1(df0);
 
   const Scalar t_s = std::sqrt(c2 * c2 - 2.0 * c1 * c3);
   const Scalar s1 = -(c2 + t_s) / c3;
@@ -530,21 +533,23 @@ Scalar CubicInterp(const Scalar &df0, const Scalar &x1, const Scalar &f1,
 }
 
 template <typename Scalar>
-Scalar CubicInterp(const Scalar &x0, const Scalar &f0, const Scalar &df0,
-                   const Scalar &x1, const Scalar &f1, const Scalar &df1,
-                   const Scalar &loX, const Scalar &hiX) {
-  return x0 + CubicInterp(df0, x1 - x0, f1 - f0, df1, loX - x0, hiX - x0);
+inline Scalar cubic_interp(const Scalar& x0, const Scalar& f0,
+                           const Scalar& df0, const Scalar& x1,
+                           const Scalar& f1, const Scalar& df1,
+                           const Scalar& loX, const Scalar& hiX) {
+  return x0 + cubic_interp(df0, x1 - x0, f1 - f0, df1, loX - x0, hiX - x0);
 }
 
 enum class wolfe_return {
-  PASS,
-  ARMIJO_PASS,
-  FAIL,
-  GRAD_CONV
+  PASS,         // Success
+  ARMIJO_PASS,  // Armijo condition passed but Wolfe failed
+  FAIL,         // Armijo Wolfe conditions failed
+  GRAD_CONV     // Approximate gradient converged
 };
 
 /**
- * @brief  Strong‑Wolfe line search with cubic‑interpolation "zoom" for Laplace‐style log‑likelihood problems.
+ * @brief  Strong‑Wolfe line search with cubic‑interpolation "zoom" for
+ *Laplace‐style log‑likelihood problems.
  *
  * This routine searches along the space of the latent gaussian *a*
  * \f$a(\alpha) = a_prev + \alpha p`, `p = a − a_prev\f$,
@@ -562,225 +567,202 @@ enum class wolfe_return {
  *
  * The search proceeds in three phases
  *
- *  1. **Back‑tracking** – halve the initial \f$\alpha\f$ until both Wolfe conditions pass.
- *  2. If the \f$alpha\f$ is 1 or goes below `min_alpha`, then we end the search early, as Laplace problems commonly accept a full Newton step.
- *  3. **Bracketing by doubling** – starting from that good \f$\alpha\f$, double the step until Armijo fails; the last good point is the left end of the bracket, the first failing point the right end.
+ *  1. **Back‑tracking** – halve the initial \f$\alpha\f$ until both Wolfe
+ *conditions pass.
+ *  2. If the \f$alpha\f$ is 1 or goes below `min_alpha`, then we end the search
+ *early, as Laplace problems commonly accept a full Newton step.
+ *  3. **Bracketing by doubling** – starting from that good \f$\alpha\f$, double
+ *the step until Armijo fails; the last good point is the left end of the
+ *bracket, the first failing point the right end.
  *  4. **Cubic zoom** – repeatedly fit a cubic through the bracket end‑points
- *     (`cubic_interp_max`), evaluate the objective/gradient at the
+ *     (`cubic_interp`), evaluate the objective/gradient at the
  *     predicted maximiser, and shrink the bracket until a Wolfe‑compliant
- *     step is found or the interval width falls below `opt.line_search.min_alpha`.
+ *     step is found or the interval width falls below
+ *`opt.line_search.min_alpha`.
  *
  * * **Gradient reuse** – the caller provides `theta_grad` computed at the
  *   starting point; inside the loop it is overwritten with fresh gradients
  *   via `laplace_likelihood::theta_grad`.
- * * **Early‑exit for \f$\alpha\f$ = 1 or < `min_alpha`** Laplace problems commonly accept a full Newton step. The function short‑circuits to avoid any extra work.
+ * * **Early‑exit for \f$\alpha\f$ = 1 or < `min_alpha`** Laplace problems
+ *commonly accept a full Newton step. The function short‑circuits to avoid any
+ *extra work.
  *
- * @tparam F Callable type of the raw log‑likelihood (passed to `laplace_likelihood::theta_grad`)
+ * @tparam F Callable type of the raw log‑likelihood (passed to
+ *`laplace_likelihood::theta_grad`)
  * @tparam Obj Callable returning the scalar objective value `obj_fun(a, theta)`
- * @tparam Grad Callable returning the gradient in *a‑space* given `(a, theta, theta_grad)`
- * @tparam LLArgs Struct or tuple holding additional arguments forwarded to `ll_fun` and `theta_grad`
- * @tparam Stream Any type that implements the stream interface used by `laplace_likelihood` for diagnostic messages; may be `std::ostream`‐like or `nullptr`
- * @tparam Options Struct holding search parameters (`c1`, `c2`, `min_alpha`, ...)
+ * @tparam Grad Callable returning the gradient in *a‑space* given `(a, theta,
+ *theta_grad)`
+ * @tparam LLArgs Struct or tuple holding additional arguments forwarded to
+ *`ll_fun` and `theta_grad`
+ * @tparam Stream Any type that implements the stream interface used by
+ *`laplace_likelihood` for diagnostic messages; may be `std::ostream`‐like or
+ *`nullptr`
+ * @tparam Options Struct holding search parameters (`c1`, `c2`, `min_alpha`,
+ *...)
  *
- * @param[in,out] theta Current \f$\theta=\Sigma a\f$; overwritten with the accepted value on success
- * @param[in,out] obj_init Objective at \f$\alpha\f$ = 0 on entry; updated to the objective at the accepted step on exit
- * @param[in,out] alpha_init Step size suggestion on input; on success holds the step that satisfied strong‑Wolfe
- * @param[in,out] theta_grad Gradient of the log‑likelihood wrt theta at the **current** theta.  Recomputed internally and returned at the final theta
+ * @param[in,out] theta Current \f$\theta=\Sigma a\f$; overwritten with the
+ *accepted value on success
+ * @param[in,out] obj_init Objective at \f$\alpha\f$ = 0 on entry; updated to
+ *the objective at the accepted step on exit
+ * @param[in,out] alpha_init Step size suggestion on input; on success holds the
+ *step that satisfied strong‑Wolfe
+ * @param[in,out] theta_grad Gradient of the log‑likelihood wrt theta at the
+ ***current** theta.  Recomputed internally and returned at the final theta
  * @param[in,out] a Working copy of *a*; on success contains the accepted point
  * @param[in] a_prev Starting point (\f$\alpha\f$ = 0)
  * @param[in] ll_fun Raw log‑likelihood functor
  * @param[in] obj_fun Objective functor to be maximised
- * @param[in] grad_fun Functor returning gradint of objective with respect to `a`.
- * @param[in] covariance Symmetric positive‑definite $\Sigma$ converting *a* to theta
- * @param[in] llzfif _args Extra arguments forwarded to `ll_fun` and `theta_grad`
+ * @param[in] grad_fun Functor returning gradint of objective with respect to
+ *`a`.
+ * @param[in] covariance Symmetric positive‑definite $\Sigma$ converting *a* to
+ *theta
+ * @param[in] llzfif _args Extra arguments forwarded to `ll_fun` and
+ *`theta_grad`
  * @param[in] opt Line‑search constants (`c1`, `c2`, etc.)
- * @param[in,out] msgs Optional diagnostics stream.  May be `nullptr` to suppress messages
+ * @param[in,out] msgs Optional diagnostics stream.  May be `nullptr` to
+ *suppress messages
  *
  * @return `true`  if a step satisfying both Wolfe conditions was found
  *         `false` if only Armijo is satisfied (strong‑Wolfe failed but a
  *                “least‑bad’’ step was returned).
  *
- * @warning The helper `cubic_interp_max` assumes its first point
+ * @warning The helper `cubic_interp` assumes its first point
  *          corresponds to *g*(0)=0; do **not** alter the baseline
  *          initialisation logic or the interpolation will become
  *          inconsistent.
  */
 template <typename F, class Obj, class Grad, typename LLArgs, typename Stream,
           typename Options>
-inline wolfe_return wolfe_line_search(Eigen::VectorXd& theta, double& obj_init,
-                              double& alpha_init, Eigen::VectorXd& theta_grad,
-                              Eigen::VectorXd& a, const Eigen::VectorXd& a_prev,
-                              F&& ll_fun, Obj&& obj_fun, Grad&& grad_fun,
-                              const Eigen::MatrixXd& covariance,
-                              LLArgs&& ll_args, Options&& opt, Stream* msgs) {
+inline wolfe_return wolfe_line_search(
+    Eigen::VectorXd& theta, double& obj_init, double& alpha_init,
+    Eigen::VectorXd& theta_grad, Eigen::VectorXd& a,
+    const Eigen::VectorXd& a_prev, F&& ll_fun, Obj&& obj_fun, Grad&& grad_fun,
+    const Eigen::MatrixXd& covariance, LLArgs&& ll_args, Options&& opt,
+    Stream* msgs) {
   Eigen::VectorXd p = a - a_prev;
   const Eigen::VectorXd g0 = -covariance * a_prev + covariance * theta_grad;
   double dir_deriv_init = g0.dot(p);
   int total_updates = 0;
-  auto update_step_vals = [&p, &a_prev, &covariance,
-    &ll_fun, &ll_args, &obj_fun, &grad_fun, msgs, &total_updates](
-    auto& a_in, auto& theta_in, auto& theta_grad_in,
-    auto& obj_in, auto& dir_deriv_in, auto& alpha) {
-      total_updates++;
-      a_in        = a_prev + alpha * p;
-      theta_in    = covariance * a_in;
-      theta_grad_in   = laplace_likelihood::theta_grad(ll_fun, theta_in, ll_args, msgs);
-      obj_in     = obj_fun(a_in, theta_in);
-      dir_deriv_in = grad_fun(a_in, theta_in, theta_grad_in).dot(p);
-  };
-  double alpha_high = std::clamp(alpha_init * 2.0, opt.line_search.min_alpha, opt.line_search.max_alpha);
+  auto update_step
+      = [&p, &a_prev, &covariance, &ll_fun, &ll_args, &obj_fun, &grad_fun, msgs,
+         &total_updates](auto& a_in, auto& theta_in, auto& theta_grad_in,
+                         auto& obj_in, auto& dir_deriv_in, auto& alpha) {
+          total_updates++;
+          a_in = a_prev + alpha * p;
+          theta_in = covariance * a_in;
+          theta_grad_in
+              = laplace_likelihood::theta_grad(ll_fun, theta_in, ll_args, msgs);
+          obj_in = obj_fun(a_in, theta_in);
+          dir_deriv_in = grad_fun(a_in, theta_in, theta_grad_in).dot(p);
+        };
+  double alpha_high = std::clamp(alpha_init * 2.0, opt.line_search.min_alpha,
+                                 opt.line_search.max_alpha);
   Eigen::VectorXd a_try(a_prev.size());
   Eigen::VectorXd theta_try(a_prev.size());
   double obj_high = 0;
   double dir_deriv_high = 0;
+  // If true we have already found a good first point
   bool found_first = false;
+  update_step(a_try, theta_try, theta_grad, obj_high, dir_deriv_high,
+                    alpha_high);
   {
-    while (true) {
-      update_step_vals(a_try, theta_try, theta_grad, obj_high, dir_deriv_high, alpha_high);
-      const bool finite_ok = std::isfinite(obj_high) && theta_try.allFinite();
-      // 2. Handle numerical trouble first
-      if (!finite_ok) {                      //   f or g is NaN/Inf → shrink
-        alpha_high *= 0.5;
-        if (alpha_high < opt.line_search.min_alpha) {
-          debug::print("Exit on precheck numerical trouble", 1);
-          debug::print("total_updates", total_updates);
-          alpha_init = alpha_high;
-          return wolfe_return::FAIL;
-        }
-        continue;
+    while (!(std::isfinite(obj_high) && theta_try.allFinite())) {
+      alpha_high *= 0.5;
+      if (alpha_high < opt.line_search.min_alpha) {
+        debug::print("Exit on precheck numerical trouble", 1);
+        debug::print("total_updates", total_updates);
+        alpha_init = alpha_high;
+        return wolfe_return::FAIL;
       }
-      break;
+      update_step(a_try, theta_try, theta_grad, obj_high, dir_deriv_high,
+                       alpha_high);
     }
-    update_step_vals(a_try, theta_try, theta_grad, obj_high, dir_deriv_high, alpha_high);
-    debug::print("First precheck: ", 1,
-          "alpha_high: ", alpha_high,
-          "obj_high:   ", obj_high,
-          "deriv_high: ", dir_deriv_high,
-          "deriv_init: ", dir_deriv_init);
-//          "theta_try:  ", theta_try.transpose());
-    // before going further, check if we are at a good point either here or at alpha_high / 2
-    bool armijo_ok = check_armijo(obj_high, obj_init,
-                                        alpha_high, dir_deriv_init, opt);
-
-    // 3. Armijo test drives all decisions
-    if (armijo_ok) {                       // Armijo ✓
-      const bool curve_ok  = check_wolfe_curve(dir_deriv_high, dir_deriv_init, opt);
-      if (curve_ok) {
+    debug::print("First precheck: ", 1, "alpha_high: ", alpha_high,
+                 "obj_high:   ", obj_high, "deriv_high: ", dir_deriv_high,
+                 "deriv_init: ", dir_deriv_init);
+    if (check_armijo(obj_high, obj_init, alpha_high, dir_deriv_init, opt)) {
+      if (check_wolfe_curve(dir_deriv_high, dir_deriv_init, opt)) {
         debug::print("Exit on first precheck", 1);
         a.swap(a_try);
         theta.swap(theta_try);
-        obj_init   = obj_high;
+        obj_init = obj_high;
         alpha_init = alpha_high;
         debug::print("total_updates", total_updates);
         return wolfe_return::PASS;
-      }
-    }
-    alpha_high /= opt.line_search.scale_up;
-    update_step_vals(a_try, theta_try, theta_grad, obj_high, dir_deriv_high, alpha_high);
-    debug::print("Second precheck: ", 1,
-          "alpha_high: ", alpha_high,
-          "obj_high:   ", obj_high,
-          "deriv_high: ", dir_deriv_high,
-          "deriv_init: ", dir_deriv_init);
-//          "theta_try:  ", theta_try.transpose());
-    armijo_ok = check_armijo(obj_high, obj_init,
-                                        alpha_high, dir_deriv_init, opt);
-
-    // 3. Armijo test drives all decisions
-    if (armijo_ok) {                       // Armijo ✓
-      const bool curve_ok  = check_wolfe_curve(dir_deriv_high, dir_deriv_init, opt);
-      if (curve_ok) {
-        debug::print("Exit on second precheck", 1);
-        a.swap(a_try);
-        theta.swap(theta_try);
-        obj_init   = obj_high;
-        alpha_init = alpha_high;
-        debug::print("total_updates", total_updates);
-return wolfe_return::PASS;
       } else {
         found_first = true;
       }
     }
-
-
   }
   // If current alpha fails, backtrack down till we find a good point
-  debug::print("Begin Loop: ", 1,
-    "Initial alpha: ", alpha_high);
-//    "g0:            ", g0.transpose().eval(),
-//    "theta_try:     ", theta_try.transpose().eval());
+  debug::print("Begin Loop: ", 1, "Initial alpha: ", alpha_high);
+  //    "g0:            ", g0.transpose().eval(),
+  //    "theta_try:     ", theta_try.transpose().eval());
   int loop_iter = 0;
   const auto grad_tol = opt.line_search.abs_grad_threshold;
   const auto obj_tol = opt.line_search.abs_obj_threshold;
   while (!found_first && alpha_high < opt.line_search.max_alpha) {
     // 1. Evaluate f(α) and g(α)
-    update_step_vals(a_try, theta_try, theta_grad, obj_high, dir_deriv_high, alpha_high);
+    update_step(a_try, theta_try, theta_grad, obj_high, dir_deriv_high,
+                     alpha_high);
 
-    debug::print("First While", 1,
-          "Second Iter:       ", loop_iter++,
-          "alpha_high: ", alpha_high,
-          "obj_high:   ", obj_high,
-          "deriv_high: ", dir_deriv_high,
-          "deriv_init: ", dir_deriv_init,
-          "theta_try:  ", theta_try.transpose());
+    debug::print("First While", 1, "Second Iter:       ", loop_iter++,
+                 "alpha_high: ", alpha_high, "obj_high:   ", obj_high,
+                 "deriv_high: ", dir_deriv_high, "deriv_init: ", dir_deriv_init,
+                 "theta_try:  ", theta_try.transpose());
     const bool finite_ok = std::isfinite(obj_high) && theta_try.allFinite();
 
     // 2. Handle numerical trouble first
-    if (!finite_ok) {                      //   f or g is NaN/Inf → shrink
+    if (!finite_ok) {  //   f or g is NaN/Inf → shrink
       alpha_high *= 0.5;
-      if (alpha_high < opt.line_search.min_alpha) break;
+      if (alpha_high < opt.line_search.min_alpha)
+        break;
       continue;
     }
-    const bool armijo_ok = check_armijo(obj_high, obj_init,
-                                        alpha_high, dir_deriv_init, opt);
-
-    // 3. Armijo test drives all decisions
-    if (armijo_ok) {                       // Armijo ✓
-      const bool curve_ok  = check_wolfe_curve(dir_deriv_high, dir_deriv_init, opt);
-      if (curve_ok) {
+    if (check_armijo(obj_high, obj_init, alpha_high, dir_deriv_init, opt)) {  // Armijo ✓
+      if (check_wolfe_curve(dir_deriv_high, dir_deriv_init, opt)) {
         a.swap(a_try);
         theta.swap(theta_try);
-        obj_init   = obj_high;
+        obj_init = obj_high;
         alpha_init = alpha_high;
         debug::print("Exit on first while", 1);
         debug::print("total_updates", total_updates);
-return wolfe_return::PASS;
+        return wolfe_return::PASS;
       } else {
         alpha_high *= opt.line_search.scale_up;
         continue;
       }
     }
-    if (std::abs(dir_deriv_high) <= grad_tol ||     // tiny slope
-        std::abs(obj_high - obj_init) <= obj_tol && alpha_high < 1e-4) {               // tiny gain
-      if (std::abs(dir_deriv_high) <= grad_tol &&     // tiny slope
-        std::abs(obj_high - obj_init) <= obj_tol) {
-          debug::print("Exit on grad_tol and obj_tol", 1);
+    if (std::abs(dir_deriv_high) <= grad_tol ||  // tiny slope
+        std::abs(obj_high - obj_init) <= obj_tol
+            && alpha_high < 1e-4) {                // tiny gain
+      if (std::abs(dir_deriv_high) <= grad_tol &&  // tiny slope
+          std::abs(obj_high - obj_init) <= obj_tol) {
+        debug::print("Exit on grad_tol and obj_tol", 1);
       } else if (std::abs(dir_deriv_high) <= grad_tol) {
-          debug::print("Exit on grad_tol", 1);
+        debug::print("Exit on grad_tol", 1);
       } else if (std::abs(obj_high - obj_init) <= obj_tol) {
-          debug::print("Exit on obj_tol", 1);
+        debug::print("Exit on obj_tol", 1);
       } else {
-          debug::print("Exit on alpha failure", 1);
+        debug::print("Exit on alpha failure", 1);
       }
       a.swap(a_try);
       theta.swap(theta_try);
-      obj_init   = obj_high;
+      obj_init = obj_high;
       alpha_init = alpha_high;
       debug::print("total_updates", total_updates);
-return wolfe_return::GRAD_CONV;      // add a code in your enum
+      return wolfe_return::GRAD_CONV;  // add a code in your enum
     }
-
 
     break;
   }
-  update_step_vals(a_try, theta_try, theta_grad, obj_high, dir_deriv_high, alpha_high);
+  update_step(a_try, theta_try, theta_grad, obj_high, dir_deriv_high,
+                   alpha_high);
 
-  debug::print("_______End First While: ", 1,
-    "alpha_high: ", alpha_high,
-    "obj_high:   ", obj_high,
-    "dir_deriv_high: ", dir_deriv_high,
-    "dir_deriv_init: ", dir_deriv_init);
-//    "theta_try:  ", theta_try.transpose());
+  debug::print("_______End First While: ", 1, "alpha_high: ", alpha_high,
+               "obj_high:   ", obj_high, "dir_deriv_high: ", dir_deriv_high,
+               "dir_deriv_init: ", dir_deriv_init);
+  //    "theta_try:  ", theta_try.transpose());
   double alpha_success = alpha_high;
   // we *know* alpha_high is good so set that to low
   double alpha_low = 0;
@@ -790,119 +772,110 @@ return wolfe_return::GRAD_CONV;      // add a code in your enum
   double obj_mid = obj_low;
   double alpha_mid = alpha_low;
   double dir_deriv_mid = 0;
-while (alpha_high - alpha_low > opt.line_search.min_alpha) {
-  const double diff_alpha = alpha_high - alpha_low;
+  while (alpha_high - alpha_low > opt.line_search.min_alpha) {
+    const double diff_alpha = alpha_high - alpha_low;
 
-  alpha_mid = CubicInterp(
-      alpha_low,                     /* x0  */
-      -obj_low,                      /* f0  */
-      -dir_deriv_low,                /* df0 */
-      alpha_high,                    /* x1  */
-      -obj_high,                     /* f1  */
-      -dir_deriv_high,               /* df1 */
-      alpha_low, alpha_high);        /* bounds */
+    alpha_mid = cubic_interp(alpha_low,              /* x0  */
+                             -obj_low,               /* f0  */
+                             -dir_deriv_low,         /* df0 */
+                             alpha_high,             /* x1  */
+                             -obj_high,              /* f1  */
+                             -dir_deriv_high,        /* df1 */
+                             alpha_low, alpha_high); /* bounds */
 
-  /* Guard against pathological cases or a NaN from the cubic.
-     Fall back to bisection and keep a margin away from the ends. */
-  if (!std::isfinite(alpha_mid) ||
-      alpha_mid <= alpha_low || alpha_mid >= alpha_high) {
-    alpha_mid = 0.5 * (alpha_low + alpha_high);
-  }
-  alpha_mid = std::clamp(alpha_mid, opt.line_search.min_alpha, alpha_high * 0.9);
+    /* Guard against pathological cases or a NaN from the cubic.
+       Fall back to bisection and keep a margin away from the ends. */
+    if (!std::isfinite(alpha_mid) || alpha_mid <= alpha_low
+        || alpha_mid >= alpha_high) {
+      alpha_mid = 0.5 * (alpha_low + alpha_high);
+    }
+    alpha_mid
+        = std::clamp(alpha_mid, opt.line_search.min_alpha, alpha_high * 0.9);
 
-  // --- 2. Evaluate f(α_mid) and g(α_mid) ---------------------------
-  update_step_vals(a_try, theta_try, theta_grad, obj_mid, dir_deriv_mid, alpha_mid);
-    debug::print("Cube: ", 1,
-      "Cube Iter:           ", loop_iter++,
-      "alpha_mid:      ", alpha_mid,
-      "obj_mid:        ", obj_mid,
-      "dir_deriv_high: ", dir_deriv_mid,
-      "alpha_low:      ", alpha_low,
-      "obj_low:        ", obj_low,
-      "dir_deriv_low:  ", dir_deriv_low,
-      "alpha_high:     ", alpha_high,
-      "obj_high:       ", obj_high,
-      "dir_deriv_high: ", dir_deriv_high);
-//      "theta_try:      ", theta_try.transpose());
+    // --- 2. Evaluate f(α_mid) and g(α_mid) ---------------------------
+    update_step(a_try, theta_try, theta_grad, obj_mid, dir_deriv_mid,
+                     alpha_mid);
+    debug::print("Cube: ", 1, "Cube Iter:           ", loop_iter++,
+                 "alpha_mid:      ", alpha_mid, "obj_mid:        ", obj_mid,
+                 "dir_deriv_high: ", dir_deriv_mid,
+                 "alpha_low:      ", alpha_low, "obj_low:        ", obj_low,
+                 "dir_deriv_low:  ", dir_deriv_low,
+                 "alpha_high:     ", alpha_high, "obj_high:       ", obj_high,
+                 "dir_deriv_high: ", dir_deriv_high);
+    //      "theta_try:      ", theta_try.transpose());
     const bool finite_ok = std::isfinite(obj_mid) && theta_try.allFinite();
 
     // 2. Handle numerical trouble first
-    if (!finite_ok) {                      //   f or g is NaN/Inf → shrink
+    if (!finite_ok) {  //   f or g is NaN/Inf → shrink
       debug::print("Exit on failed finite test", 1);
-      alpha_high     = alpha_mid;
-      obj_high       = obj_mid;
+      alpha_high = alpha_mid;
+      obj_high = obj_mid;
       dir_deriv_high = dir_deriv_mid;
       continue;
     }
 
-  const bool armijo_ok = check_armijo(obj_mid, obj_init,
-                                      alpha_mid, dir_deriv_init, opt);
-  const bool curve_ok  = check_wolfe_curve(dir_deriv_mid,
-                                           dir_deriv_init,     opt);
+    const bool armijo_ok
+        = check_armijo(obj_mid, obj_init, alpha_mid, dir_deriv_init, opt);
+    const bool curve_ok = check_wolfe_curve(dir_deriv_mid, dir_deriv_init, opt);
 
-  // --- 3. Wolfe tests & bracket update ----------------------------
-  if (armijo_ok && curve_ok) {                 // (✓,✓)  accept
-    a.swap(a_try);
-    theta.swap(theta_try);
-    obj_init   = obj_mid;
-    alpha_init = alpha_mid;
-    debug::print("Exit on safe on zoom", 1);
-    debug::print("total_updates", total_updates);
-return wolfe_return::PASS;
-  }
-
-  if (!armijo_ok || obj_mid >= obj_low) {      // Armijo✗ or f↑  → shrink high
-    alpha_high     = alpha_mid;
-    obj_high       = obj_mid;
-    dir_deriv_high = dir_deriv_mid;
-    continue;
-  } else {                                     // Armijo✓ & f↓
-    if (dir_deriv_mid * dir_deriv_low < 0) {   // sign change → shrink high
-      alpha_high     = alpha_mid;
-      obj_high       = obj_mid;
-      dir_deriv_high = dir_deriv_mid;
-    } else {                                   // otherwise grow low
-      alpha_low     = alpha_mid;
-      obj_low       = obj_mid;
-      dir_deriv_low = dir_deriv_mid;
+    // --- 3. Wolfe tests & bracket update ----------------------------
+    if (armijo_ok && curve_ok) {  // (✓,✓)  accept
+      a.swap(a_try);
+      theta.swap(theta_try);
+      obj_init = obj_mid;
+      alpha_init = alpha_mid;
+      debug::print("Exit on safe on zoom", 1);
+      debug::print("total_updates", total_updates);
+      return wolfe_return::PASS;
     }
-    continue;
-  }
-  if (std::abs(dir_deriv_mid) <= grad_tol              ||
-      std::abs(obj_mid - obj_init) <= obj_tol && alpha_mid < 1e-6) {
-      if (std::abs(dir_deriv_mid) <= grad_tol &&     // tiny slope
-        std::abs(obj_mid - obj_init) <= obj_tol) {
-          debug::print("Exit on grad_tol and obj_tol", 1);
-      } else if (std::abs(dir_deriv_mid) <= grad_tol) {
-          debug::print("Exit on grad_tol", 1);
-      } else if (std::abs(obj_mid - obj_init) <= obj_tol) {
-          debug::print("Exit on obj_tol", 1);
-      } else {
-          debug::print("Exit on cube alpha failure", 1);
-      }
-    a.swap(a_try);
-    theta.swap(theta_try);
-    obj_init   = obj_mid;
-    alpha_init = alpha_mid;
-    debug::print("total_updates", total_updates);
-return wolfe_return::GRAD_CONV;
-  }
 
-}
-  debug::print("Failed zoom: ", 1,
-    "Failed zoom:", 1,
-    "alpha_low: ", alpha_low,
-    "obj_low:   ", obj_low,
-    "deriv_low: ", dir_deriv_low,
-    "alpha_high:", alpha_high,
-    "obj_high:  ", obj_high,
-    "deriv_high:", dir_deriv_high);
+    if (!armijo_ok || obj_mid >= obj_low) {  // Armijo✗ or f↑  → shrink high
+      alpha_high = alpha_mid;
+      obj_high = obj_mid;
+      dir_deriv_high = dir_deriv_mid;
+      continue;
+    } else {                                    // Armijo✓ & f↓
+      if (dir_deriv_mid * dir_deriv_low < 0) {  // sign change → shrink high
+        alpha_high = alpha_mid;
+        obj_high = obj_mid;
+        dir_deriv_high = dir_deriv_mid;
+      } else {  // otherwise grow low
+        alpha_low = alpha_mid;
+        obj_low = obj_mid;
+        dir_deriv_low = dir_deriv_mid;
+      }
+      continue;
+    }
+    if (std::abs(dir_deriv_mid) <= grad_tol
+        || std::abs(obj_mid - obj_init) <= obj_tol && alpha_mid < 1e-6) {
+      if (std::abs(dir_deriv_mid) <= grad_tol &&  // tiny slope
+          std::abs(obj_mid - obj_init) <= obj_tol) {
+        debug::print("Exit on grad_tol and obj_tol", 1);
+      } else if (std::abs(dir_deriv_mid) <= grad_tol) {
+        debug::print("Exit on grad_tol", 1);
+      } else if (std::abs(obj_mid - obj_init) <= obj_tol) {
+        debug::print("Exit on obj_tol", 1);
+      } else {
+        debug::print("Exit on cube alpha failure", 1);
+      }
+      a.swap(a_try);
+      theta.swap(theta_try);
+      obj_init = obj_mid;
+      alpha_init = alpha_mid;
+      debug::print("total_updates", total_updates);
+      return wolfe_return::GRAD_CONV;
+    }
+  }
+  debug::print("Failed zoom: ", 1, "Failed zoom:", 1, "alpha_low: ", alpha_low,
+               "obj_low:   ", obj_low, "deriv_low: ", dir_deriv_low,
+               "alpha_high:", alpha_high, "obj_high:  ", obj_high,
+               "deriv_high:", dir_deriv_high);
   // TODO: I should probably just take the largest step that armijo satisfied
   // Could not find a step that satisfied
   // accept the best good step found so far (alpha_mid)
   a.swap(a_try);
   theta.swap(theta_try);
-  theta_grad   = laplace_likelihood::theta_grad(ll_fun, theta_try, ll_args, msgs);
+  theta_grad = laplace_likelihood::theta_grad(ll_fun, theta_try, ll_args, msgs);
   // We already calculated obj_mid and theta_grad so no need to recompute here
   dir_deriv_mid = grad_fun(a, theta, theta_grad).dot(p);
   const bool armijo_ok
@@ -913,15 +886,15 @@ return wolfe_return::GRAD_CONV;
   if (armijo_ok && curve_ok) {
     debug::print("Exit on safe after zoom", 1);
     debug::print("total_updates", total_updates);
-return wolfe_return::PASS;
+    return wolfe_return::PASS;
   } else if (armijo_ok) {
     debug::print("Exit on only satisfying armijo", 1);
     debug::print("total_updates", total_updates);
-return wolfe_return::ARMIJO_PASS;
+    return wolfe_return::ARMIJO_PASS;
   } else {
     debug::print("Exit on failure", 1);
     debug::print("total_updates", total_updates);
-return wolfe_return::FAIL;
+    return wolfe_return::FAIL;
   }
 }
 
@@ -1108,43 +1081,42 @@ inline auto laplace_marginal_density_est(
             = b
               - W_r.asDiagonal()
                     * LT.solve(L.solve(W_r.cwiseProduct(covariance * b)));
-      Eigen::VectorXd p = a - a_prev;
-      const Eigen::VectorXd g0 = -covariance * a_prev + covariance * theta_grad;
-      double g0_dir = g0.dot(p);
-      const Eigen::VectorXd sp = covariance * p;
-      double d0_dir = -p.dot(sp) + sp.dot(W_vec.asDiagonal() * sp);  // <= negative in well-behaved cases
-      debug::print("newton opt step", 1,
-            "g0_dir: ", g0_dir,
-            "d0_dir: ", d0_dir);
-//            "p:      ", p.transpose().eval(),
-//            "W_vec:  ", W_vec.transpose().eval());
-      auto newton_step_size =  -g0_dir / d0_dir ;
-      debug::print("", 1,
-            "Newton step size: ", newton_step_size,
-            "prev step size:   ", step_size);
-      newton_step_size = std::clamp(newton_step_size,
-                    options.line_search.min_alpha,
-                    options.line_search.max_alpha);
-      if (!(std::isfinite(newton_step_size) || newton_step_size < 0.0)) {
-        newton_step_size = 1.0;  // fallback seed if curvature is pathological
-      }
-      if (std::isnan(newton_step_size)
-          || std::isinf(newton_step_size)) {
-      } else {
-          step_size =  (step_size * 0.8 + newton_step_size * 0.2);
-      }
-      debug::print("", 1,
-            "Blended step size: ", step_size);
-      //step_size = std::clamp(step_size, options.line_search.min_alpha, 8.0);
-      objective_old = objective_new;
-      auto ok = internal::wolfe_line_search(
-          theta, objective_new, step_size, theta_grad, a, a_prev, ll_fun,
-          obj_fun, grad_fun, covariance, ll_args, options, msgs);
+        Eigen::VectorXd p = a - a_prev;
+        const Eigen::VectorXd g0
+            = -covariance * a_prev + covariance * theta_grad;
+        double g0_dir = g0.dot(p);
+        const Eigen::VectorXd sp = covariance * p;
+        double d0_dir = -p.dot(sp)
+                        + sp.dot(W_vec.asDiagonal()
+                                 * sp);  // <= negative in well-behaved cases
+        debug::print("newton opt step", 1, "g0_dir: ", g0_dir,
+                     "d0_dir: ", d0_dir);
+        //            "p:      ", p.transpose().eval(),
+        //            "W_vec:  ", W_vec.transpose().eval());
+        auto newton_step_size = -g0_dir / d0_dir;
+        debug::print("", 1, "Newton step size: ", newton_step_size,
+                     "prev step size:   ", step_size);
+        newton_step_size
+            = std::clamp(newton_step_size, options.line_search.min_alpha,
+                         options.line_search.max_alpha);
+        if (!(std::isfinite(newton_step_size) || newton_step_size < 0.0)) {
+          newton_step_size = 1.0;  // fallback seed if curvature is pathological
+        }
+        if (std::isnan(newton_step_size) || std::isinf(newton_step_size)) {
+        } else {
+          step_size = (step_size * 0.8 + newton_step_size * 0.2);
+        }
+        debug::print("", 1, "Blended step size: ", step_size);
+        // step_size = std::clamp(step_size,
+        // options.line_search.min_alpha, 8.0);
+        objective_old = objective_new;
+        auto ok = internal::wolfe_line_search(
+            theta, objective_new, step_size, theta_grad, a, a_prev, ll_fun,
+            obj_fun, grad_fun, covariance, ll_args, options, msgs);
         // Check for convergence or if line search failed
-        debug::print("", 1,
-            "Objective old: ", objective_old,
-            "Objective new: ", objective_new,
-            "Step size:      ", step_size);
+        debug::print("", 1, "Objective old: ", objective_old,
+                     "Objective new: ", objective_new,
+                     "Step size:      ", step_size);
         if (abs(objective_new - objective_old) < options.tolerance
             || (ok != wolfe_return::PASS && objective_new == objective_old)) {
           const double B_log_determinant
@@ -1164,7 +1136,8 @@ inline auto laplace_marginal_density_est(
         } else {
           a_prev.swap(a);
           set_zero_adjoint(ll_args);
-          //step_size = step_size < options.line_search.min_alpha * 10000 ? 0.25 : step_size;
+          // step_size = step_size < options.line_search.min_alpha * 10000 ?
+          // 0.25 : step_size;
         }
       }
     } else {
@@ -1208,36 +1181,36 @@ inline auto laplace_marginal_density_est(
         // Simple Newton step
         objective_old = objective_new;
         Eigen::VectorXd p = a - a_prev;
-        const Eigen::VectorXd g0 = -covariance * a_prev + covariance * theta_grad;
+        const Eigen::VectorXd g0
+            = -covariance * a_prev + covariance * theta_grad;
         double g0_dir = g0.dot(p);
         const Eigen::VectorXd sp = covariance * p;
-        double d0_dir = -p.dot(sp) + sp.dot((-W) * sp);  // <= negative in well-behaved cases
-      auto newton_step_size =  -g0_dir / d0_dir ;
-      debug::print("", 1,
-            "Newton step size: ", newton_step_size,
-            "prev step size:   ", step_size);
-      if (!(std::isfinite(newton_step_size) || newton_step_size < 0.0)) {
-        newton_step_size = 1.0;  // fallback seed if curvature is pathological
-      }
-      newton_step_size = std::clamp(newton_step_size,
-                    options.line_search.min_alpha,
-                    options.line_search.max_alpha);
-      if (std::isnan(newton_step_size)
-          || std::isinf(newton_step_size)) {
-      } else {
-          step_size =  (step_size * 0.8 + newton_step_size * 0.2);
-      }
-      debug::print("", 1,
-            "Blended step size: ", step_size);
-        //step_size = std::clamp(step_size, options.line_search.min_alpha, 2.0);
+        double d0_dir
+            = -p.dot(sp)
+              + sp.dot((-W) * sp);  // <= negative in well-behaved cases
+        auto newton_step_size = -g0_dir / d0_dir;
+        debug::print("", 1, "Newton step size: ", newton_step_size,
+                     "prev step size:   ", step_size);
+        if (!(std::isfinite(newton_step_size) || newton_step_size < 0.0)) {
+          newton_step_size = 1.0;  // fallback seed if curvature is pathological
+        }
+        newton_step_size
+            = std::clamp(newton_step_size, options.line_search.min_alpha,
+                         options.line_search.max_alpha);
+        if (std::isnan(newton_step_size) || std::isinf(newton_step_size)) {
+        } else {
+          step_size = (step_size * 0.8 + newton_step_size * 0.2);
+        }
+        debug::print("", 1, "Blended step size: ", step_size);
+        // step_size = std::clamp(step_size,
+        // options.line_search.min_alpha, 2.0);
 
         auto ok = internal::wolfe_line_search(
             theta, objective_new, step_size, theta_grad, a, a_prev, ll_fun,
             obj_fun, grad_fun, covariance, ll_args, options, msgs);
-        debug::print("", 1,
-            "Objective old: ", objective_old,
-            "Objective new: ", objective_new,
-            "Step size:      ", step_size);
+        debug::print("", 1, "Objective old: ", objective_old,
+                     "Objective new: ", objective_new,
+                     "Step size:      ", step_size);
         // Check for convergence or if line search failed
         if (abs(objective_new - objective_old) < options.tolerance
             || (ok != wolfe_return::PASS && objective_new == objective_old)) {
@@ -1256,8 +1229,8 @@ inline auto laplace_marginal_density_est(
         } else {
           a_prev.swap(a);
           set_zero_adjoint(ll_args);
-          //step_size = step_size < options.line_search.min_alpha * 10000 ? 0.25 : step_size;
-
+          // step_size = step_size < options.line_search.min_alpha * 10000 ?
+          // 0.25 : step_size;
         }
       }
     }
@@ -1288,34 +1261,31 @@ inline auto laplace_marginal_density_est(
       const Eigen::VectorXd g0 = -covariance * a_prev + covariance * theta_grad;
       double g0_dir = g0.dot(p);
       const Eigen::VectorXd sp = covariance * p;
-      double d0_dir = -p.dot(sp) + sp.dot((-W) * sp);  // <= negative in well-behaved cases
-      auto newton_step_size =  -g0_dir / d0_dir ;
-      debug::print("", 1,
-            "Newton step size: ", newton_step_size,
-            "prev step size:   ", step_size);
+      double d0_dir = -p.dot(sp)
+                      + sp.dot((-W) * sp);  // <= negative in well-behaved cases
+      auto newton_step_size = -g0_dir / d0_dir;
+      debug::print("", 1, "Newton step size: ", newton_step_size,
+                   "prev step size:   ", step_size);
       if (!(std::isfinite(newton_step_size) || newton_step_size < 0.0)) {
         newton_step_size = 1.0;  // fallback seed if curvature is pathological
       }
 
-      newton_step_size = std::clamp(newton_step_size,
-                    options.line_search.min_alpha,
-                    options.line_search.max_alpha);
-      if (std::isnan(newton_step_size)
-          || std::isinf(newton_step_size)) {
+      newton_step_size
+          = std::clamp(newton_step_size, options.line_search.min_alpha,
+                       options.line_search.max_alpha);
+      if (std::isnan(newton_step_size) || std::isinf(newton_step_size)) {
       } else {
-          step_size =  (step_size * 0.8 + newton_step_size * 0.2);
+        step_size = (step_size * 0.8 + newton_step_size * 0.2);
       }
-      debug::print("", 1,
-            "Blended step size: ", step_size);
-      //step_size = std::clamp(step_size, options.line_search.min_alpha, 8.0);
+      debug::print("", 1, "Blended step size: ", step_size);
+      // step_size = std::clamp(step_size, options.line_search.min_alpha, 8.0);
       auto ok = internal::wolfe_line_search(
           theta, objective_new, step_size, theta_grad, a, a_prev, ll_fun,
           obj_fun, grad_fun, covariance, ll_args, options, msgs);
       // Check for convergence or if line search failed
-        debug::print("", 1,
-            "Objective old: ", objective_old,
-            "Objective new: ", objective_new,
-            "Step size:      ", step_size);
+      debug::print("", 1, "Objective old: ", objective_old,
+                   "Objective new: ", objective_new,
+                   "Step size:      ", step_size);
       if (abs(objective_new - objective_old) < options.tolerance
           || (ok != wolfe_return::PASS && objective_new == objective_old)) {
         const double B_log_determinant
@@ -1333,7 +1303,8 @@ inline auto laplace_marginal_density_est(
       } else {
         a_prev = a;
         set_zero_adjoint(ll_args);
-        //step_size = step_size < options.line_search.min_alpha * 10000 ? 0.25 : step_size;
+        // step_size = step_size < options.line_search.min_alpha * 10000 ? 0.25
+        // : step_size;
       }
     }
     throw_overstep(options.max_num_steps);
@@ -1348,37 +1319,34 @@ inline auto laplace_marginal_density_est(
       b.noalias() = W * theta + theta_grad;
       a.noalias() = b - W * LU.solve(covariance * b);
       objective_old = objective_new;
-        Eigen::VectorXd p = a - a_prev;
-        const Eigen::VectorXd g0 = -covariance * a_prev + covariance * theta_grad;
-        double g0_dir = g0.dot(p);
+      Eigen::VectorXd p = a - a_prev;
+      const Eigen::VectorXd g0 = -covariance * a_prev + covariance * theta_grad;
+      double g0_dir = g0.dot(p);
       const Eigen::VectorXd sp = covariance * p;
-      double d0_dir = -p.dot(sp) + sp.dot((-W) * sp);  // <= negative in well-behaved cases
-      auto newton_step_size =  -g0_dir / d0_dir ;
-      debug::print("", 1,
-            "Newton step size: ", newton_step_size,
-            "prev step size:   ", step_size);
+      double d0_dir = -p.dot(sp)
+                      + sp.dot((-W) * sp);  // <= negative in well-behaved cases
+      auto newton_step_size = -g0_dir / d0_dir;
+      debug::print("", 1, "Newton step size: ", newton_step_size,
+                   "prev step size:   ", step_size);
       if (!(std::isfinite(newton_step_size) || newton_step_size < 0.0)) {
         newton_step_size = 1.0;  // fallback seed if curvature is pathological
       }
-      newton_step_size = std::clamp(newton_step_size,
-                    options.line_search.min_alpha,
-                    options.line_search.max_alpha);
-      if (std::isnan(newton_step_size)
-          || std::isinf(newton_step_size)) {
+      newton_step_size
+          = std::clamp(newton_step_size, options.line_search.min_alpha,
+                       options.line_search.max_alpha);
+      if (std::isnan(newton_step_size) || std::isinf(newton_step_size)) {
       } else {
-          step_size =  (step_size * 0.8 + newton_step_size * 0.2);
+        step_size = (step_size * 0.8 + newton_step_size * 0.2);
       }
-      debug::print("", 1,
-            "Blended step size: ", step_size);
-      //step_size = std::clamp(step_size, options.line_search.min_alpha, 8.0);
+      debug::print("", 1, "Blended step size: ", step_size);
+      // step_size = std::clamp(step_size, options.line_search.min_alpha, 8.0);
 
       auto ok = internal::wolfe_line_search(
           theta, objective_new, step_size, theta_grad, a, a_prev, ll_fun,
           obj_fun, grad_fun, covariance, ll_args, options, msgs);
-        debug::print("", 1,
-            "Objective old: ", objective_old,
-            "Objective new: ", objective_new,
-            "Step size:      ", step_size);
+      debug::print("", 1, "Objective old: ", objective_old,
+                   "Objective new: ", objective_new,
+                   "Step size:      ", step_size);
       // Check for convergence or if line search failed
       if (abs(objective_new - objective_old) < options.tolerance
           || (ok != wolfe_return::PASS && objective_new == objective_old)) {
@@ -1397,7 +1365,7 @@ inline auto laplace_marginal_density_est(
       } else {
         a_prev = a;
         set_zero_adjoint(ll_args);
-        //step_size = step_size < 1e-3 ? 1 : step_size;
+        // step_size = step_size < 1e-3 ? 1 : step_size;
       }
     }
     throw_overstep(options.max_num_steps);
