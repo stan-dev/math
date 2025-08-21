@@ -337,86 +337,6 @@ inline STAN_COLD_PATH void throw_nan(NameStr&& name_str, ParamStr&& param_str,
   throw std::domain_error(msg);
 }
 
-/**
- * @brief  One–dimensional cubic interpolation helper used by the Wolfe
- *         zoom phase to pick the step length that *maximises* an
- *         auxiliary cubic model *g* on the interval \f$\,0 < x <
- * \text{hi\_limit}\f$.
- *
- * Four pieces of data are provided:
- *
- *   * the slope at the left end (`dir_lo  = g'(0)`);
- *   * the slope at the right end (`dir_high = g'(hi_bound)`);
- *   * the function value difference `obj_diff = g(hi_bound) − g(0)`; and
- *   * the abscissa of the right end (`hi_bound`).
- *
- * A cubic polynomial that matches those values is constructed analytically
- *     \f[
- *       g'(x) = a_3 x^2 + a_2 x + a_1 ,
- *     \f]
- * and its two stationary points *inside* the current bracket plus the
- * upper bound itself are tested.  The point that gives the largest
- * \f$g(x)\f$ is returned.
- *
- * **Numerical safeguards:**
- * * **Degenerate cubic → midpoint.**  If the leading coefficient
- *   \f$a_3\f$ is almost zero (`|a3| < 1 e−14`) the polynomial becomes
- *   quadratic or linear; the function falls back to the simpler and
- *   numerically safer choice `hi_limit / 2`.
- * * **Negative discriminant clamp.**  Round‑off may make the quantity
- *   under the square‑root slightly negative; it is clamped to zero so the
- *   code never feeds NaNs into `std::sqrt`.
- * * **Safety clipping.**  Only roots that lie strictly inside
- *   \f$(0,\text{hi\_limit})\f$ compete with `hi_limit` itself.  This guards
- *   against wandering outside the current Wolfe bracket.
- *
- * @tparam T A scalar type
- * @param[in] dir_lo   \f$g'(0)\f$ – directional derivative at the **left** end
- * of the current interval.
- * @param[in] hi_bound Length of the interval, \f$\text{hi\_bound}=
- * \alpha_{\text{high}} - \alpha_{\text{low}}\f$.
- * @param[in] obj_diff Difference in the *primitive* between the two anchors,
- * \f$g(\text{hi\_bound}) - g(0)\f$.
- * @param[in] dir_high \f$g'(\text{hi\_bound})\f$ – directional derivative at
- * the **right** end of the interval.
- * @param[in] hi_limit upper limit on the step that may be returned
- *
- * @return The abscissa \f$x^{*}\in(0,\text{hi\_limit})\f$ where the cubic
- *         predicts the largest ascent of *g*.  If numerical safeguards
- *         are triggered, the midpoint `hi_limit / 2` is returned.
- *       loops.
- */
-template <typename T>
-inline auto cubic_interp(T dir_lo, T hi_bound, T obj_diff, T dir_high,
-                         T hi_limit) {
-  // g′(x) = a₃x² + a₂x + a₁  (with g(0)=0)
-  const T a3 = (-12.0 * obj_diff + 6.0 * hi_bound * (dir_lo + dir_high))
-               / std::pow(hi_bound, 3);
-  const T a2 = 6.0 * obj_diff / (hi_bound * hi_bound)
-               - (4.0 * dir_lo + 2.0 * dir_high) / hi_bound;
-  const T a1 = dir_lo;
-  // Degenerate or nearly-linear case → midpoint
-  if (std::abs(a3) < 1e-14) {
-    return hi_limit * T(0.5);
-  }
-  T disc2 = a2 * a2 - 2.0 * a1 * a3;
-  disc2 = (disc2 < 0) ? 0 : disc2;
-  const T disc = std::sqrt(disc2);
-  const T r1 = (-a2 + disc) / a3;
-  const T r2 = (-a2 - disc) / a3;
-  auto g = [&](T x) { return ((a3 / 3) * x + (a2 / 2)) * x * x + a1 * x; };
-  T best_x = 0, best_val = g(0);
-  for (T r : {r1, r2, hi_limit}) {
-    if (r > 0 && r < hi_limit) {
-      T v = g(r);
-      const bool v_best = v > best_val;
-      best_x = v_best ? r : best_x;
-      best_val = v_best ? v : best_val;
-    }
-  }
-  return best_x;
-}
-
 namespace debug {
 
 constexpr void print(int tabs) {}
@@ -491,53 +411,118 @@ inline auto check_wolfe_curve(double dir_deriv_next, double dir_deriv_init,
          <= (opt.line_search.c2 * std::abs(dir_deriv_init));
 }
 
+#include <algorithm>
+#include <cmath>
+#include <concepts>
+#include <limits>
+#include <tuple>
+
+// Safeguarded cubic-or-bisection step chooser for MAXIMIZATION.
+// Given a bracket [a, b] with values and directional derivatives
+// (fa, fpa) at a and (fb, fpb) at b, returns a trial point in (a, b).
+//
+// Preconditions (recommended for a well-formed maximum bracket):
+//   a < b, fpa > 0, fpb < 0.
+// If inputs are degenerate or non-finite, falls back to the midpoint.
+//
+// The routine internally normalizes the interval to s in [0, 1], fits a
+// cubic Hermite model F(s), and selects among:
+//   - stationary points of F(s) (cubic argmax),
+//   - a secant estimate for the derivative root,
+//   - pure bisection (midpoint),
+// then clamps away from edges by `edge_guard`.
 template <typename Scalar>
-Scalar cubic_interp(const Scalar& df0, const Scalar& x1, const Scalar& f1,
-                    const Scalar& df1, const Scalar& loX, const Scalar& hiX) {
-  const Scalar c3((-12 * f1 + 6 * x1 * (df0 + df1)) / (x1 * x1 * x1));
-  const Scalar c2(-(4 * df0 + 2 * df1) / x1 + 6 * f1 / (x1 * x1));
-  const Scalar& c1(df0);
-
-  const Scalar t_s = std::sqrt(c2 * c2 - 2.0 * c1 * c3);
-  const Scalar s1 = -(c2 + t_s) / c3;
-  const Scalar s2 = -(c2 - t_s) / c3;
-
-  // Check value at lower bound
-  Scalar minF = loX * (loX * (loX * c3 / 3.0 + c2) / 2.0 + c1);
-  Scalar minX = loX;
-
-  // Check value at upper bound
-  Scalar tmpF = hiX * (hiX * (hiX * c3 / 3.0 + c2) / 2.0 + c1);
-  if (tmpF < minF) {
-    minF = tmpF;
-    minX = hiX;
+inline Scalar cubic_or_bisect_max(Scalar a, Scalar fa, Scalar fpa,
+                           Scalar b, Scalar fb, Scalar fpb) {
+  // Basic validation.
+  if (!(b > a) || !std::isfinite(fa) || !std::isfinite(fb) ||
+      !std::isfinite(fpa) || !std::isfinite(fpb)) {
+    return (a + b) / Scalar(2.0);
   }
 
-  // Check value of first root
-  if (loX < s1 && s1 < hiX) {
-    tmpF = s1 * (s1 * (s1 * c3 / 3.0 + c2) / 2.0 + c1);
-    if (tmpF < minF) {
-      minF = tmpF;
-      minX = s1;
+  const Scalar width = b - a;
+  const Scalar fpa_s = width * fpa;  // slope w.r.t. s at s=0
+  const Scalar fpb_s = width * fpb;  // slope w.r.t. s at s=1
+
+  // Cubic Hermite coefficients in s \in [0,1]:
+  // F(s) = a3*s^3 + a2*s^2 + a1*s + a0
+  // with F(0)=fa, F'(0)=fpa_s, F(1)=fb, F'(1)=fpb_s.
+  const Scalar a0 = fa;
+  const Scalar a1 = fpa_s;
+  const Scalar a2 = (Scalar(3) * (fb - fa)) - (Scalar(2) * fpa_s) - fpb_s;
+  const Scalar a3 = (Scalar(2) * (fa - fb)) + fpa_s + fpb_s;
+
+  auto eval = [&](Scalar s) -> Scalar {
+    // Horner evaluation of F(s).
+    return ((a3 * s + a2) * s + a1) * s + a0;
+  };
+
+  // Helper: push candidate s if it's inside (0,1).
+  struct Candidate { Scalar s; Scalar val; };
+  Candidate best{Scalar(0.5), eval(Scalar(0.5))};  // start with bisection
+
+  auto consider = [&](Scalar s) {
+    if (!(s > Scalar(0) && s < Scalar(1)) || !std::isfinite(s)) return;
+    const Scalar v = eval(s);
+    if (v > best.val) best = {s, v};
+  };
+
+  // 1) Stationary points of the cubic model (argmax/min candidates).
+  // F'(s) = 3*a3*s^2 + 2*a2*s + a1 = 0.
+  {
+    const Scalar A = Scalar(3) * a3;
+    const Scalar B = Scalar(2) * a2;
+    const Scalar C = a1;
+
+    const Scalar eps = std::numeric_limits<Scalar>::epsilon();
+    if (std::abs(A) <= eps * (std::abs(B) + std::abs(C))) {
+      // Degenerates to linear: B*s + C = 0.
+      if (std::abs(B) > eps * std::abs(C)) {
+        consider(-C / B);
+      }
+    } else {
+      const Scalar disc = std::fma(-Scalar(4) * A, C, B * B);  // B^2 - 4AC
+      if (disc >= 0) {
+        const Scalar r = std::sqrt(disc);
+        // q-formula for numerical stability.
+        const Scalar q = -Scalar(0.5) * (B + std::copysign(r, B));
+        const Scalar s1 = q / A;
+        const Scalar s2 = (q == Scalar(0)) ? std::numeric_limits<Scalar>::quiet_NaN()
+                                           : C / q;
+        consider(s1);
+        consider(s2);
+      }
     }
   }
-  // Check value of second root
-  if (loX < s2 && s2 < hiX) {
-    tmpF = s2 * (s2 * (s2 * c3 / 3.0 + c2) / 2.0 + c1);
-    if (tmpF < minF) {
-      minF = tmpF;
-      minX = s2;
-    }
+
+  // 2) Secant estimate for the derivative root (More–Thuente often uses
+  //    a secant/minimizer mix; we add the secant root for robustness).
+  // Derivative across s is linearly interpolated from fpa to fpb:
+  // D(s) ~ fpa + (fpb - fpa)*s; root at s = fpa / (fpa - fpb).
+  if (std::isfinite(fpa) && std::isfinite(fpb) && (fpa != fpb)) {
+    const Scalar s_secant = fpa / (fpa - fpb);
+    consider(s_secant);
   }
-  return minX;
+
+  // 3) Always consider pure bisection (already seeded as default).
+  //    No-op here.
+
+  // Edge guard: keep away from exact ends.
+  constexpr Scalar edge_guard = Scalar(1e-3);
+  constexpr Scalar lo = 0.0 * (1.0 - edge_guard) + (1.0 * edge_guard);
+  constexpr Scalar hi = Scalar(0.0) * (1.0 - (Scalar(1) - edge_guard)) + (1.0 * (Scalar(1) - edge_guard));
+  const Scalar s_star = std::clamp(best.s, lo, hi);
+  // Map back to alpha-space.
+  return a + s_star * width;
 }
 
-template <typename Scalar>
-inline Scalar cubic_interp(const Scalar& x0, const Scalar& f0,
-                           const Scalar& df0, const Scalar& x1,
-                           const Scalar& f1, const Scalar& df1,
-                           const Scalar& loX, const Scalar& hiX) {
-  return x0 + cubic_interp(df0, x1 - x0, f1 - f0, df1, loX - x0, hiX - x0);
+template <typename Eval, typename Options>
+inline auto cubic_or_bisect_max(Eval&& low, Eval&& high, Options&& opt) {
+  auto alpha = cubic_or_bisect_max(low.alpha, low.obj, low.dir, high.alpha, high.obj, high.dir);
+  alpha
+        = std::clamp(alpha, opt.line_search.min_alpha, high.alpha * 0.9);
+  return alpha;
+
 }
 
 enum class wolfe_return {
@@ -639,255 +624,260 @@ inline wolfe_return wolfe_line_search(
     const Eigen::VectorXd& a_prev, F&& ll_fun, Obj&& obj_fun, Grad&& grad_fun,
     const Eigen::MatrixXd& covariance, LLArgs&& ll_args, Options&& opt,
     Stream* msgs) {
+  struct Eval {
+    double alpha;   // alpha
+    double obj;   // obj
+    double dir;   // directional derivative
+  };
   Eigen::VectorXd p = a - a_prev;
-  const Eigen::VectorXd g0 = -covariance * a_prev + covariance * theta_grad;
-  double dir_deriv_init = g0.dot(p);
+  double dir_deriv_init = grad_fun(a_prev, theta, theta_grad).dot(p);
+  Eval low{0.0, obj_init, dir_deriv_init};
+  Eval best = low;  // keep the best Armijo-OK in case strong-Wolfe fails
+
+  auto armijo_ok = [&](const Eval& eval) -> bool {
+    return check_armijo(eval.obj, obj_init, eval.alpha, dir_deriv_init, opt);
+  };
+  auto wolfe_ok = [&](const Eval& eval) -> bool {
+    return check_wolfe_curve(eval.dir, dir_deriv_init, opt);
+  };
   int total_updates = 0;
   auto update_step
       = [&p, &a_prev, &covariance, &ll_fun, &ll_args, &obj_fun, &grad_fun, msgs,
          &total_updates](auto& a_in, auto& theta_in, auto& theta_grad_in,
-                         auto& obj_in, auto& dir_deriv_in, auto& alpha) {
+                         auto& eval_in) {
           total_updates++;
-          a_in = a_prev + alpha * p;
+          a_in = a_prev + eval_in.alpha * p;
           theta_in = covariance * a_in;
           theta_grad_in
               = laplace_likelihood::theta_grad(ll_fun, theta_in, ll_args, msgs);
-          obj_in = obj_fun(a_in, theta_in);
-          dir_deriv_in = grad_fun(a_in, theta_in, theta_grad_in).dot(p);
+          eval_in.obj = obj_fun(a_in, theta_in);
+          eval_in.dir = grad_fun(a_in, theta_in, theta_grad_in).dot(p);
         };
-  double alpha_high = std::clamp(alpha_init * 2.0, opt.line_search.min_alpha,
+  double alpha_start = std::clamp(alpha_init * 2.0, opt.line_search.min_alpha,
                                  opt.line_search.max_alpha);
   Eigen::VectorXd a_try(a_prev.size());
   Eigen::VectorXd theta_try(a_prev.size());
-  double obj_high = 0;
-  double dir_deriv_high = 0;
-  // If true we have already found a good first point
-  bool found_first = false;
-  update_step(a_try, theta_try, theta_grad, obj_high, dir_deriv_high,
-                    alpha_high);
+  Eval high{alpha_start, obj_init, dir_deriv_init};
+  update_step(a_try, theta_try, theta_grad, high);
   {
-    while (!(std::isfinite(obj_high) && theta_try.allFinite())) {
-      alpha_high *= 0.5;
-      if (alpha_high < opt.line_search.min_alpha) {
+    while (!(std::isfinite(high.obj) && theta_try.allFinite())) {
+      high.alpha *= 0.5;
+      if (high.alpha < opt.line_search.min_alpha) {
         debug::print("Exit on precheck numerical trouble", 1);
         debug::print("total_updates", total_updates);
-        alpha_init = alpha_high;
+        alpha_init = high.alpha;
         return wolfe_return::FAIL;
       }
-      update_step(a_try, theta_try, theta_grad, obj_high, dir_deriv_high,
-                       alpha_high);
+      update_step(a_try, theta_try, theta_grad, high);
     }
-    debug::print("First precheck: ", 1, "alpha_high: ", alpha_high,
-                 "obj_high:   ", obj_high, "deriv_high: ", dir_deriv_high,
+    debug::print("First precheck: ", 1, "high.alpha: ", high.alpha,
+                 "high.obj:   ", high.obj, "deriv_high: ", high.dir,
                  "deriv_init: ", dir_deriv_init);
-    if (check_armijo(obj_high, obj_init, alpha_high, dir_deriv_init, opt)) {
-      if (check_wolfe_curve(dir_deriv_high, dir_deriv_init, opt)) {
+    // Quick accept if Armijo and Wolfe conditions are satisfied
+    if (armijo_ok(high)) {
+      if (wolfe_ok(high)) {
         debug::print("Exit on first precheck", 1);
         a.swap(a_try);
         theta.swap(theta_try);
-        obj_init = obj_high;
-        alpha_init = alpha_high;
+        obj_init = high.obj;
+        alpha_init = high.alpha;
         debug::print("total_updates", total_updates);
         return wolfe_return::PASS;
       } else {
-        found_first = true;
+        if (best.obj < high.obj) {
+          best = high;
+        }
       }
     }
   }
   // If current alpha fails, backtrack down till we find a good point
-  debug::print("Begin Loop: ", 1, "Initial alpha: ", alpha_high);
+  debug::print("Begin Loop: ", 1, "Initial alpha: ", high.alpha);
   //    "g0:            ", g0.transpose().eval(),
   //    "theta_try:     ", theta_try.transpose().eval());
   int loop_iter = 0;
   const auto grad_tol = opt.line_search.abs_grad_threshold;
   const auto obj_tol = opt.line_search.abs_obj_threshold;
-  while (!found_first && alpha_high < opt.line_search.max_alpha) {
+  // If true we have already found a good first point
+  bool found_right = false;
+
+  /**
+   * For each case
+   * armijo | wolfe | sign(g) | Action
+   * -------+-------+---------+---------------------------------------------
+   * [1]  T     |   T   |         | Accept α (PASS: strong-Wolfe satisfied)
+   * [2]  T     |   F   |   > 0   | Promote left: set α_low ← α, keep best, expand α (e.g. α ← scale_up·α)
+   * [3]  T     |   F   |   < 0   | Set α_high ← α, stop expanding → zoom
+   * [4]  F     |   T   |         | Set α_high ← α, stop expanding → zoom
+   * [5]  F     |   F   |         | Set α_high ← α, stop expanding → zoom
+   **/
+  while (!found_right && high.alpha < opt.line_search.max_alpha) {
     // 1. Evaluate f(α) and g(α)
-    update_step(a_try, theta_try, theta_grad, obj_high, dir_deriv_high,
-                     alpha_high);
-
+    update_step(a_try, theta_try, theta_grad, high);
     debug::print("First While", 1, "Second Iter:       ", loop_iter++,
-                 "alpha_high: ", alpha_high, "obj_high:   ", obj_high,
-                 "deriv_high: ", dir_deriv_high, "deriv_init: ", dir_deriv_init,
+                 "high.alpha: ", high.alpha, "high.obj:   ", high.obj,
+                 "deriv_high: ", high.dir, "deriv_init: ", dir_deriv_init,
                  "theta_try:  ", theta_try.transpose());
-    const bool finite_ok = std::isfinite(obj_high) && theta_try.allFinite();
-
+    const bool finite_ok = std::isfinite(high.obj) && theta_try.allFinite();
     // 2. Handle numerical trouble first
     if (!finite_ok) {  //   f or g is NaN/Inf → shrink
-      alpha_high *= 0.5;
-      if (alpha_high < opt.line_search.min_alpha)
+      high.alpha *= 0.5;
+      if (high.alpha < opt.line_search.min_alpha) {
         break;
+      }
       continue;
     }
-    if (check_armijo(obj_high, obj_init, alpha_high, dir_deriv_init, opt)) {  // Armijo ✓
-      if (check_wolfe_curve(dir_deriv_high, dir_deriv_init, opt)) {
+    if (armijo_ok(high)) {
+      // [1]
+      if (wolfe_ok(high)) {
         a.swap(a_try);
         theta.swap(theta_try);
-        obj_init = obj_high;
-        alpha_init = alpha_high;
+        obj_init = high.obj;
+        alpha_init = high.alpha;
         debug::print("Exit on first while", 1);
         debug::print("total_updates", total_updates);
         return wolfe_return::PASS;
       } else {
-        alpha_high *= opt.line_search.scale_up;
-        continue;
+        if (best.obj < high.obj) {
+          best = high;
+        }
+        // [2]
+        if (std::signbit(high.dir)) {
+          low = high;
+          high.alpha *= opt.line_search.scale_up;
+          continue;
+        } else {
+          // [3]
+          found_right = true;
+        }
       }
     }
-    if (std::abs(dir_deriv_high) <= grad_tol ||  // tiny slope
-        std::abs(obj_high - obj_init) <= obj_tol
-            && alpha_high < 1e-4) {                // tiny gain
-      if (std::abs(dir_deriv_high) <= grad_tol &&  // tiny slope
-          std::abs(obj_high - obj_init) <= obj_tol) {
-        debug::print("Exit on grad_tol and obj_tol", 1);
-      } else if (std::abs(dir_deriv_high) <= grad_tol) {
-        debug::print("Exit on grad_tol", 1);
-      } else if (std::abs(obj_high - obj_init) <= obj_tol) {
-        debug::print("Exit on obj_tol", 1);
-      } else {
-        debug::print("Exit on alpha failure", 1);
-      }
-      a.swap(a_try);
-      theta.swap(theta_try);
-      obj_init = obj_high;
-      alpha_init = alpha_high;
-      debug::print("total_updates", total_updates);
-      return wolfe_return::GRAD_CONV;  // add a code in your enum
-    }
-
+    // [4,5]
+    found_right = true;
     break;
   }
-  update_step(a_try, theta_try, theta_grad, obj_high, dir_deriv_high,
-                   alpha_high);
+  // Check for grad convergence
+  if (std::abs(high.dir) <= grad_tol ||  // tiny slope
+    std::abs(high.obj - obj_init) <= obj_tol
+        && high.alpha < 1e-4) {                // tiny gain
+    if (std::abs(high.dir) <= grad_tol &&  // tiny slope
+        std::abs(high.obj - obj_init) <= obj_tol) {
+      debug::print("Exit on grad_tol and obj_tol", 1);
+    } else if (std::abs(high.dir) <= grad_tol) {
+      debug::print("Exit on grad_tol", 1);
+    } else if (std::abs(high.obj - obj_init) <= obj_tol) {
+      debug::print("Exit on obj_tol", 1);
+    } else {
+      debug::print("Exit on alpha failure", 1);
+    }
+    a.swap(a_try);
+    theta.swap(theta_try);
+    obj_init = high.obj;
+    alpha_init = high.alpha;
+    debug::print("total_updates", total_updates);
+    return wolfe_return::GRAD_CONV;  // add a code in your enum
+  }
 
-  debug::print("_______End First While: ", 1, "alpha_high: ", alpha_high,
-               "obj_high:   ", obj_high, "dir_deriv_high: ", dir_deriv_high,
+  update_step(a_try, theta_try, theta_grad, high);
+
+  debug::print("_______End First While: ", 1, "high.alpha: ", high.alpha,
+               "high.obj:   ", high.obj, "high.dir: ", high.dir,
                "dir_deriv_init: ", dir_deriv_init);
-  //    "theta_try:  ", theta_try.transpose());
-  double alpha_success = alpha_high;
-  // we *know* alpha_high is good so set that to low
-  double alpha_low = 0;
-  double obj_low = obj_init;
-  double dir_deriv_low = dir_deriv_init;
   loop_iter = 0;
-  double obj_mid = obj_low;
-  double alpha_mid = alpha_low;
-  double dir_deriv_mid = 0;
-  while (alpha_high - alpha_low > opt.line_search.min_alpha) {
-    const double diff_alpha = alpha_high - alpha_low;
-
-    alpha_mid = cubic_interp(alpha_low,              /* x0  */
-                             -obj_low,               /* f0  */
-                             -dir_deriv_low,         /* df0 */
-                             alpha_high,             /* x1  */
-                             -obj_high,              /* f1  */
-                             -dir_deriv_high,        /* df1 */
-                             alpha_low, alpha_high); /* bounds */
-
-    /* Guard against pathological cases or a NaN from the cubic.
-       Fall back to bisection and keep a margin away from the ends. */
-    if (!std::isfinite(alpha_mid) || alpha_mid <= alpha_low
-        || alpha_mid >= alpha_high) {
-      alpha_mid = 0.5 * (alpha_low + alpha_high);
-    }
-    alpha_mid
-        = std::clamp(alpha_mid, opt.line_search.min_alpha, alpha_high * 0.9);
-
-    // --- 2. Evaluate f(α_mid) and g(α_mid) ---------------------------
-    update_step(a_try, theta_try, theta_grad, obj_mid, dir_deriv_mid,
-                     alpha_mid);
+  Eval mid{low};
+  while (high.alpha - low.alpha > opt.line_search.min_alpha) {
+    const double diff_alpha = high.alpha - low.alpha;
+    mid.alpha = cubic_or_bisect_max(low, high, opt);
+    update_step(a_try, theta_try, theta_grad, mid);
     debug::print("Cube: ", 1, "Cube Iter:           ", loop_iter++,
-                 "alpha_mid:      ", alpha_mid, "obj_mid:        ", obj_mid,
-                 "dir_deriv_high: ", dir_deriv_mid,
-                 "alpha_low:      ", alpha_low, "obj_low:        ", obj_low,
-                 "dir_deriv_low:  ", dir_deriv_low,
-                 "alpha_high:     ", alpha_high, "obj_high:       ", obj_high,
-                 "dir_deriv_high: ", dir_deriv_high);
-    //      "theta_try:      ", theta_try.transpose());
-    const bool finite_ok = std::isfinite(obj_mid) && theta_try.allFinite();
-
-    // 2. Handle numerical trouble first
-    if (!finite_ok) {  //   f or g is NaN/Inf → shrink
+                 "mid.alpha:      ", mid.alpha, "mid.obj:        ", mid.obj,
+                 "high.dir: ", mid.dir,
+                 "low.alpha:      ", low.alpha, "low.obj:        ", low.obj,
+                 "low.dir:  ", low.dir,
+                 "high.alpha:     ", high.alpha, "high.obj:       ", high.obj,
+                 "high.dir: ", high.dir);
+    const bool finite_ok = std::isfinite(mid.obj) && theta_try.allFinite();
+    if (!finite_ok) {  
       debug::print("Exit on failed finite test", 1);
-      alpha_high = alpha_mid;
-      obj_high = obj_mid;
-      dir_deriv_high = dir_deriv_mid;
+      high = mid;
       continue;
     }
-
-    const bool armijo_ok
-        = check_armijo(obj_mid, obj_init, alpha_mid, dir_deriv_init, opt);
-    const bool curve_ok = check_wolfe_curve(dir_deriv_mid, dir_deriv_init, opt);
-
-    // --- 3. Wolfe tests & bracket update ----------------------------
-    if (armijo_ok && curve_ok) {  // (✓,✓)  accept
-      a.swap(a_try);
-      theta.swap(theta_try);
-      obj_init = obj_mid;
-      alpha_init = alpha_mid;
-      debug::print("Exit on safe on zoom", 1);
-      debug::print("total_updates", total_updates);
-      return wolfe_return::PASS;
-    }
-
-    if (!armijo_ok || obj_mid >= obj_low) {  // Armijo✗ or f↑  → shrink high
-      alpha_high = alpha_mid;
-      obj_high = obj_mid;
-      dir_deriv_high = dir_deriv_mid;
-      continue;
-    } else {                                    // Armijo✓ & f↓
-      if (dir_deriv_mid * dir_deriv_low < 0) {  // sign change → shrink high
-        alpha_high = alpha_mid;
-        obj_high = obj_mid;
-        dir_deriv_high = dir_deriv_mid;
-      } else {  // otherwise grow low
-        alpha_low = alpha_mid;
-        obj_low = obj_mid;
-        dir_deriv_low = dir_deriv_mid;
+    /**
+     * Armijo | Wolfe | mid.obj > low.obj | mid.dir * low.dir < 0 | Action
+     *  T     |   T   |                   |                       | Accept
+     *  T     |   F   |         T         |           T           | Sign change pins high = mid
+     *  T     |   F   |         T         |           F           | low = mid
+     *  T     |   F   |         F         |           F           | low = mid
+     *  T     |   F   |         F         |           F           | high = mid
+     *  F     |   F   |         F         |           F           | high = mid
+     */
+    if (armijo_ok(mid)) {
+      if (wolfe_ok(mid)) {
+        a.swap(a_try);
+        theta.swap(theta_try);
+        obj_init = mid.obj;
+        alpha_init = mid.alpha;
+        debug::print("Exit on safe on zoom", 1);
+        debug::print("total_updates", total_updates);
+        return wolfe_return::PASS;
+      } else {
+        if (best.obj < mid.obj) {
+          best = mid;
+        }
+        if (mid.obj > low.obj) {
+          // sign change
+          if (mid.dir * low.dir < 0) {
+            high = mid;
+          } else {
+            low = mid;
+          }
+        } else {
+          high = mid;
+        }
       }
-      continue;
+    } else {
+      high = mid;
     }
-    if (std::abs(dir_deriv_mid) <= grad_tol
-        || std::abs(obj_mid - obj_init) <= obj_tol && alpha_mid < 1e-6) {
-      if (std::abs(dir_deriv_mid) <= grad_tol &&  // tiny slope
-          std::abs(obj_mid - obj_init) <= obj_tol) {
+    if (std::abs(mid.dir) <= grad_tol
+        || std::abs(mid.obj - obj_init) <= obj_tol && mid.alpha < 1e-6) {
+      if (std::abs(mid.dir) <= grad_tol &&  // tiny slope
+          std::abs(mid.obj - obj_init) <= obj_tol) {
         debug::print("Exit on grad_tol and obj_tol", 1);
-      } else if (std::abs(dir_deriv_mid) <= grad_tol) {
+      } else if (std::abs(mid.dir) <= grad_tol) {
         debug::print("Exit on grad_tol", 1);
-      } else if (std::abs(obj_mid - obj_init) <= obj_tol) {
+      } else if (std::abs(mid.obj - obj_init) <= obj_tol) {
         debug::print("Exit on obj_tol", 1);
       } else {
         debug::print("Exit on cube alpha failure", 1);
       }
       a.swap(a_try);
       theta.swap(theta_try);
-      obj_init = obj_mid;
-      alpha_init = alpha_mid;
+      obj_init = mid.obj;
+      alpha_init = mid.alpha;
       debug::print("total_updates", total_updates);
       return wolfe_return::GRAD_CONV;
     }
   }
-  debug::print("Failed zoom: ", 1, "Failed zoom:", 1, "alpha_low: ", alpha_low,
-               "obj_low:   ", obj_low, "deriv_low: ", dir_deriv_low,
-               "alpha_high:", alpha_high, "obj_high:  ", obj_high,
-               "deriv_high:", dir_deriv_high);
-  // TODO: I should probably just take the largest step that armijo satisfied
-  // Could not find a step that satisfied
-  // accept the best good step found so far (alpha_mid)
+  debug::print("Failed zoom: ", 1, "Failed zoom:", 1, "low.alpha: ", low.alpha,
+               "low.obj:   ", low.obj, "deriv_low: ", low.dir,
+               "high.alpha:", high.alpha, "high.obj:  ", high.obj,
+               "deriv_high:", high.dir);
+  // On failure, use the best point we have found so far that at least satisfies armijo
+  update_step(a_try, theta_try, theta_grad, best);
   a.swap(a_try);
   theta.swap(theta_try);
   theta_grad = laplace_likelihood::theta_grad(ll_fun, theta_try, ll_args, msgs);
-  // We already calculated obj_mid and theta_grad so no need to recompute here
-  dir_deriv_mid = grad_fun(a, theta, theta_grad).dot(p);
-  const bool armijo_ok
-      = check_armijo(obj_mid, obj_init, alpha_mid, dir_deriv_init, opt);
-  const bool curve_ok = check_wolfe_curve(dir_deriv_mid, dir_deriv_init, opt);
-  obj_init = obj_mid;
-  alpha_init = alpha_mid;
-  if (armijo_ok && curve_ok) {
+  // We already calculated best.obj and theta_grad so no need to recompute here
+  best.dir = grad_fun(a, theta, theta_grad).dot(p);
+  const bool armijo_ok_mid
+      = check_armijo(best.obj, obj_init, best.alpha, dir_deriv_init, opt);
+  const bool curve_ok_mid = check_wolfe_curve(best.dir, dir_deriv_init, opt);
+  obj_init = best.obj;
+  alpha_init = best.alpha;
+  if (armijo_ok_mid && curve_ok_mid) {
     debug::print("Exit on safe after zoom", 1);
     debug::print("total_updates", total_updates);
     return wolfe_return::PASS;
-  } else if (armijo_ok) {
+  } else if (armijo_ok_mid) {
     debug::print("Exit on only satisfying armijo", 1);
     debug::print("total_updates", total_updates);
     return wolfe_return::ARMIJO_PASS;
