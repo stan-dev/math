@@ -23,7 +23,7 @@
 static std::string test_name_lap = "overwrite";
 // file for writing csv
 static std::string csv_file_name = "laplace_marginal_density3.csv";
-static std::ofstream csv_file(csv_file_name, std::ios::out);
+//static std::ofstream csv_file(csv_file_name, std::ios::out);
 
 /**
  * @file
@@ -86,13 +86,11 @@ using laplace_options_default = laplace_options<false>;
 using laplace_options_user_supplied = laplace_options<true>;
 namespace internal {
 
-template <typename Covar, typename ThetaVec, typename WR, typename L_t,
+template <typename ThetaVec, typename WR, typename L_t,
           typename A_vec, typename ThetaGrad, typename LU_t, typename KRoot>
 struct laplace_density_estimates {
   /* log marginal density */
   double lmd{std::numeric_limits<double>::infinity()};
-  /* Evaluated covariance function for the latent gaussian variable */
-  Covar covariance;
   /* ThetaVec at the mode */
   ThetaVec theta;
   /* negative hessian or sqrt of negative hessian */
@@ -107,12 +105,11 @@ struct laplace_density_estimates {
   LU_t LU;
   /* Cholesky of the covariance matrix */
   KRoot K_root;
-  laplace_density_estimates(double lmd_, Covar&& covariance_, ThetaVec&& theta_,
+  laplace_density_estimates(double lmd_, ThetaVec&& theta_,
                             WR&& W_r_, L_t&& L_, A_vec&& a_,
                             ThetaGrad&& theta_grad_, LU_t&& LU_,
                             KRoot&& K_root_)
       : lmd(lmd_),
-        covariance(std::move(covariance_)),
         theta(std::move(theta_)),
         W_r(std::move(W_r_)),
         L(std::move(L_)),
@@ -801,14 +798,14 @@ inline wolfe_return wolfe_line_search(
       high = mid;
       continue;
     }
-    /**
-     * Armijo | Wolfe | mid.obj > low.obj | mid.dir * low.dir < 0 | Action
-     *  T     |   T   |                   |                       | Accept
-     *  T     |   F   |         T         |           T           | Sign change pins high = mid
-     *  T     |   F   |         T         |           F           | low = mid
-     *  T     |   F   |         F         |           F           | low = mid
-     *  T     |   F   |         F         |           F           | high = mid
-     *  F     |   F   |         F         |           F           | high = mid
+    /** 
+     * | Armijo | Wolfe | mid.obj > low.obj | mid.dir * low.dir < 0 | Action |
+     * | T     |   T   |                   |                       | Accept |
+     * | T     |   F   |         T         |           T           | Dir Sign change pins high = mid |
+     * | T     |   F   |         T         |           F           | low = mid |
+     * | T     |   F   |         F         |           F           | low = mid |
+     * | T     |   F   |         F         |           F           | high = mid |
+     * | F     |   F   |         F         |           F           | high = mid |
      */
     if (armijo_ok(mid)) {
       if (wolfe_ok(mid)) {
@@ -936,13 +933,12 @@ inline wolfe_return wolfe_line_search(
  * 7. l_grad the log density of the likelihood, evaluated at the mode
  *
  */
-template <typename LLFun, typename LLTupleArgs, typename CovarFun,
-          typename CovarArgs, bool InitTheta,
-          require_t<is_all_arithmetic_scalar<CovarArgs>>* = nullptr>
+template <typename LLFun, typename LLTupleArgs,
+          typename CovarMat, bool InitTheta,
+          require_t<is_all_arithmetic_scalar<CovarMat>>* = nullptr>
 inline auto laplace_marginal_density_est(
-    LLFun&& ll_fun, LLTupleArgs&& ll_args, CovarFun&& covariance_function,
-    CovarArgs&& covar_args, const laplace_options<InitTheta>& options,
-    std::ostream* msgs) {
+    LLFun&& ll_fun, LLTupleArgs&& ll_args, CovarMat&& covariance, 
+    const laplace_options<InitTheta>& options, std::ostream* msgs) {
   using Eigen::MatrixXd;
   using Eigen::SparseMatrix;
   using Eigen::VectorXd;
@@ -954,12 +950,7 @@ inline auto laplace_marginal_density_est(
   check_positive("laplace_marginal", "max_num_steps", options.max_num_steps);
   check_positive("laplace_marginal", "hessian_block_size",
                  options.hessian_block_size);
-  csv_file << test_name_lap << ", " << "1" << "\n";
-  Eigen::MatrixXd covariance = stan::math::apply(
-      [msgs, &covariance_function](auto&&... args) {
-        return covariance_function(args..., msgs);
-      },
-      covar_args);
+  //// csv_file << test_name_lap << ", " << "1" << "\n";
   check_square("laplace_marginal", "covariance", covariance);
 
   const Eigen::Index theta_size = covariance.rows();
@@ -1115,7 +1106,6 @@ inline auto laplace_marginal_density_est(
           W.diagonal() = W_r;
           return laplace_density_estimates{
               objective_new - 0.5 * B_log_determinant,
-              std::move(covariance),
               std::move(theta),
               std::move(W),
               Eigen::MatrixXd(L),
@@ -1208,7 +1198,6 @@ inline auto laplace_marginal_density_est(
               = 2.0 * llt_B.matrixLLT().diagonal().array().log().sum();
           return laplace_density_estimates{
               objective_new - 0.5 * B_log_determinant,
-              std::move(covariance),
               std::move(theta),
               std::move(W_r),
               Eigen::MatrixXd(L),
@@ -1282,7 +1271,6 @@ inline auto laplace_marginal_density_est(
             = 2.0 * llt_B.matrixLLT().diagonal().array().log().sum();
         return laplace_density_estimates{
             objective_new - 0.5 * B_log_determinant,
-            std::move(covariance),
             std::move(theta),
             std::move(W),
             std::move(Eigen::MatrixXd(L)),
@@ -1344,7 +1332,6 @@ inline auto laplace_marginal_density_est(
         const double B_log_determinant = log(LU.determinant());
         return laplace_density_estimates{
             objective_new - 0.5 * B_log_determinant,
-            std::move(covariance),
             std::move(theta),
             std::move(W),
             Eigen::MatrixXd(0, 0),
@@ -1400,10 +1387,14 @@ inline double laplace_marginal_density(
     LLFun&& ll_fun, LLTupleArgs&& ll_args, CovarFun&& covariance_function,
     CovarArgs&& covar_args, const laplace_options<InitTheta>& options,
     std::ostream* msgs) {
+  Eigen::MatrixXd covariance = stan::math::apply(
+      [msgs, &covariance_function](auto&&... args) {
+        return covariance_function(std::forward<decltype(args)>(args)..., msgs);
+      },
+      std::forward<CovarArgs>(covar_args));
   return internal::laplace_marginal_density_est(
              std::forward<LLFun>(ll_fun), std::forward<LLTupleArgs>(ll_args),
-             std::forward<CovarFun>(covariance_function),
-             std::forward<CovarArgs>(covar_args), options, msgs)
+             std::move(covariance), options, msgs)
       .lmd;
 }
 
@@ -1658,15 +1649,27 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
     auto ll_args_copy
         = conditional_copy_and_promote<is_any_var_scalar, var, COPY_TYPE::DEEP>(
             ll_args_refs);
+    auto covar_args_copy
+        = conditional_copy_and_promote<is_any_var_scalar, var, COPY_TYPE::DEEP>(
+            covar_args);
 
+    auto covariance = stan::math::apply(
+            [&covariance_function, &msgs](auto&&... args) {
+              if constexpr (is_any_var_scalar_v<decltype(args)...>) {
+                return to_var_value(covariance_function(args..., msgs)); 
+              } else {
+                return covariance_function(args..., msgs);
+              }
+            },
+            covar_args_copy);
     auto md_est = internal::laplace_marginal_density_est(
-        ll_fun, ll_args_copy, covariance_function, value_of(covar_args_refs),
+        ll_fun, ll_args_copy, value_of(covariance),
         options, msgs);
 
     // Solver 1, 2
     arena_t<Eigen::MatrixXd> R(md_est.theta.size(), md_est.theta.size());
     // Solver 3
-    arena_t<Eigen::MatrixXd> LU_solve_covariance;
+    arena_t<Eigen::MatrixXd> LU_solve_covariance(covariance.rows() * (options.solver == 3), covariance.cols() * (options.solver == 3));
     // Solver 1, 2, 3
     arena_t<Eigen::VectorXd> s2(md_est.theta.size());
 
@@ -1681,22 +1684,20 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
         partial_parm, ll_args_filter);
     if (options.solver == 1) {
       if (options.hessian_block_size == 1) {
-        // TODO(Steve): Solve without casting from sparse to dense
-        Eigen::MatrixXd tmp
-            = md_est.L.template triangularView<Eigen::Lower>().solve(
-                md_est.W_r.toDense());
-        R = tmp.transpose() * tmp;
+        Eigen::MatrixXd tmp = md_est.W_r.toDense();
+        md_est.L.template triangularView<Eigen::Lower>().solveInPlace(tmp);
+        R.noalias() = tmp.transpose() * tmp;
         arena_t<Eigen::MatrixXd> C
             = md_est.L.template triangularView<Eigen::Lower>().solve(
-                md_est.W_r * md_est.covariance);
+                md_est.W_r * value_of(covariance));
         if constexpr (!ll_args_contain_var) {
           s2.deep_copy(
               (0.5
-               * (md_est.covariance.diagonal() - (C.transpose() * C).diagonal())
+               * (value_of(covariance).diagonal() - (C.transpose() * C).diagonal())
                      .cwiseProduct(laplace_likelihood::third_diff(
                          ll_fun, md_est.theta, value_of(ll_args_copy), msgs))));
         } else {
-          arena_t<Eigen::MatrixXd> A = md_est.covariance - C.transpose() * C;
+          arena_t<Eigen::MatrixXd> A = value_of(covariance) - C.transpose() * C;
           auto s2_tmp = laplace_likelihood::compute_s2(
               ll_fun, md_est.theta, A, options.hessian_block_size, ll_args_copy,
               msgs);
@@ -1705,14 +1706,13 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
         }
 
       } else {
-        Eigen::MatrixXd tmp
-            = md_est.L.template triangularView<Eigen::Lower>().solve(
-                md_est.W_r.toDense());
-        R = tmp.transpose() * tmp;
+        Eigen::MatrixXd tmp = md_est.W_r.toDense();
+        md_est.L.template triangularView<Eigen::Lower>().solveInPlace(tmp);
+        R.noalias() = tmp.transpose() * tmp;
         arena_t<Eigen::MatrixXd> C
             = md_est.L.template triangularView<Eigen::Lower>().solve(
-                md_est.W_r * md_est.covariance);
-        arena_t<Eigen::MatrixXd> A = md_est.covariance - C.transpose() * C;
+                md_est.W_r * value_of(covariance));
+        arena_t<Eigen::MatrixXd> A = value_of(covariance) - C.transpose() * C;
         auto s2_tmp = laplace_likelihood::compute_s2(ll_fun, md_est.theta, A,
                                                      options.hessian_block_size,
                                                      ll_args_copy, msgs);
@@ -1737,11 +1737,11 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
       s2.deep_copy(s2_tmp);
       internal::copy_compute_s2<true>(partial_parm, ll_args_filter);
     } else {  // options.solver with LU decomposition
-      LU_solve_covariance = md_est.LU.solve(md_est.covariance);
+      LU_solve_covariance = md_est.LU.solve(value_of(covariance));
       R = md_est.W_r - md_est.W_r * LU_solve_covariance * md_est.W_r;
       arena_t<Eigen::MatrixXd> A
-          = md_est.covariance
-            - md_est.covariance * md_est.W_r * LU_solve_covariance;
+          = value_of(covariance)
+            - value_of(covariance) * md_est.W_r * LU_solve_covariance;
       auto s2_tmp = laplace_likelihood::compute_s2(ll_fun, md_est.theta, A,
                                                    options.hessian_block_size,
                                                    ll_args_copy, msgs);
@@ -1750,37 +1750,23 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
     }
     lmd = md_est.lmd;
     if constexpr (is_any_var_scalar_v<scalar_type_t<CovarArgs>>) {
-      [&covar_args_refs, &covar_args_adj, &md_est, &R, &s2,
-       &covariance_function, &msgs]() mutable {
-        const nested_rev_autodiff nested;
-        auto covar_args_copy
-            = laplace_likelihood::internal::conditional_copy_and_promote<
-                is_any_var_scalar, var,
-                laplace_likelihood::internal::COPY_TYPE::DEEP>(covar_args_refs);
-
-        var_value<Eigen::MatrixXd> K_var = to_var_value(stan::math::apply(
-            [&covariance_function, &msgs](auto&&... args) {
-              return covariance_function(args..., msgs);
-            },
-            covar_args_copy));
         arena_t<Eigen::MatrixXd> K_adj_arena
             = 0.5 * md_est.a * md_est.a.transpose() - 0.5 * R
               + s2 * md_est.theta_grad.transpose()
-              - (R * (K_var.val() * s2)) * md_est.theta_grad.transpose();
-        var Z = make_callback_var(0.0, [K_var, K_adj_arena](auto&& vi) mutable {
-          K_var.adj().array() += vi.adj() * K_adj_arena.array();
+              - (R * (covariance.val() * s2)) * md_est.theta_grad.transpose();
+        var Z = make_callback_var(0.0, [covariance, K_adj_arena](auto&& vi) mutable {
+          covariance.adj().array() += vi.adj() * K_adj_arena.array();
         });
         grad(Z.vi_);
         auto covar_args_filter
             = internal::filter_var_scalar_types(covar_args_copy);
         internal::collect_adjoints(covar_args_adj, covar_args_filter);
-      }();
     }
     if constexpr (ll_args_contain_var) {
       arena_t<Eigen::VectorXd> v;
       if (options.solver == 1 || options.solver == 2) {
-        v = md_est.covariance * s2
-            - md_est.covariance * R * md_est.covariance * s2;
+        v = value_of(covariance) * s2
+            - value_of(covariance) * R * value_of(covariance) * s2;
       } else {
         v = LU_solve_covariance * s2;
       }
