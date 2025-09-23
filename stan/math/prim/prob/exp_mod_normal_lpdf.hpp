@@ -95,9 +95,8 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
             T_loc> + is_autodiff_v<T_scale> + is_autodiff_v<T_inv_scale> >= 2>(
         -SQRT_TWO_OVER_SQRT_PI * exp_m_sq_inner_term / erfc_calc);
     if constexpr (is_any_autodiff_v<T_y, T_loc>) {
-      const auto& deriv
-          = to_ref_if < is_autodiff_v<
-                T_y> && is_autodiff_v<T_loc> > (lambda_val + deriv_logerfc * inv_sigma);
+      const auto& deriv = to_ref_if<is_all_autodiff_v<T_y, T_loc>>(
+        lambda_val + deriv_logerfc * inv_sigma);
       if constexpr (is_autodiff_v<T_y>) {
         partials<0>(ops_partials) = -deriv;
       }

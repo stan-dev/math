@@ -95,9 +95,9 @@ return_type_t<T_prob_cl> binomial_lpmf(const T_n_cl& n, const T_N_cl N,
   matrix_cl<double> deriv_cl;
 
   constexpr bool need_sums
-      = is_autodiff_v<T_prob_cl> && is_stan_scalar<T_prob_cl>;
+      = is_autodiff_v<T_prob_cl> && is_stan_scalar_v<T_prob_cl>;
   constexpr bool need_deriv
-      = is_autodiff_v<T_prob_cl> && !is_stan_scalar<T_prob_cl>;
+      = is_autodiff_v<T_prob_cl> && !is_stan_scalar_v<T_prob_cl>;
 
   results(check_n_bounded, check_N_nonnegative, check_theta_bounded, logp_cl,
           sum_n_cl, sum_N_cl, deriv_cl)
@@ -110,7 +110,7 @@ return_type_t<T_prob_cl> binomial_lpmf(const T_n_cl& n, const T_N_cl N,
   auto ops_partials = make_partials_propagator(theta_col);
 
   if constexpr (is_autodiff_v<T_prob_cl>) {
-    if (need_sums) {
+    if constexpr (need_sums) {
       int sum_n = sum(from_matrix_cl(sum_n_cl));
       int sum_N = sum(from_matrix_cl(sum_N_cl));
       double theta_dbl = forward_as<double>(theta_val);
