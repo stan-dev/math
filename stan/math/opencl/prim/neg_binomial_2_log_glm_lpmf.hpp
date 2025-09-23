@@ -99,7 +99,7 @@ neg_binomial_2_log_glm_lpmf(const T_y_cl& y, const T_x_cl& x,
     return 0;
   }
   if constexpr (!include_summand<propto, T_x_cl, T_alpha_cl, T_beta_cl,
-                       T_phi_cl>::value) {
+                                 T_phi_cl>::value) {
     return 0;
   }
 
