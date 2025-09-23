@@ -106,7 +106,7 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
     if constexpr (is_any_autodiff_v<T_scale_succ, T_scale_fail>) {
       const auto& digamma_alpha_beta
           = to_ref_if<is_all_autodiff_v<T_scale_succ, T_scale_fail>>(
-            digamma(alpha_beta));
+              digamma(alpha_beta));
       if constexpr (is_autodiff_v<T_scale_succ>) {
         edge<1>(ops_partials).partials_
             = log_y + digamma_alpha_beta - digamma(alpha_val);

@@ -259,7 +259,7 @@ inline var trace_gen_quad_form(const Td& D, const Ta& A, const Tb& B) {
         });
 
     return res;
-  } else if constexpr (is_constant_all_v<Ta, Tb>  && is_autodiff_v<Td>) {
+  } else if constexpr (is_constant_all_v<Ta, Tb> && is_autodiff_v<Td>) {
     arena_t<promote_scalar_t<var, Td>> arena_D = D;
     arena_t<promote_scalar_t<double, Ta>> arena_A = value_of(A);
     arena_t<promote_scalar_t<double, Tb>> arena_B = value_of(B);
