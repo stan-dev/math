@@ -39,7 +39,8 @@ template <typename... T>
 using is_constant_all = math::conjunction<is_constant<T>...>;
 
 template <typename... T>
-inline constexpr bool is_constant_all_v = is_constant_all<std::decay_t<T>...>::value;
+inline constexpr bool is_constant_all_v
+    = is_constant_all<std::decay_t<T>...>::value;
 
 /** \ingroup type_trait
  * Defines a static member named value and sets it to true
