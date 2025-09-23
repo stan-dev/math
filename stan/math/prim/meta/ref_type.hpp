@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta/is_constant.hpp>
+#include <stan/math/prim/meta/is_autodiff.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
 #include <stan/math/prim/meta/is_arena_matrix.hpp>
 #include <stan/math/prim/meta/is_vector.hpp>

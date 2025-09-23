@@ -92,8 +92,10 @@ return_type_t<T_y, T_dof, T_scale> wishart_lpdf(const T_y& W, const T_dof& nu,
     lp -= 0.5 * trace(mdivide_left_ldlt(ldlt_S, W_ref));
   }
 
-  if constexpr (include_summand<propto, T_y, T_dof>::value && nu_ref != (k + 1)) {
-    lp += 0.5 * (nu_ref - k - 1.0) * log_determinant_ldlt(ldlt_W);
+  if constexpr (include_summand<propto, T_y, T_dof>::value) {
+    if (nu_ref != (k + 1)) {
+      lp += 0.5 * (nu_ref - k - 1.0) * log_determinant_ldlt(ldlt_W);
+    }
   }
   return lp;
 }

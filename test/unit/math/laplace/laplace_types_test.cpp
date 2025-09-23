@@ -56,7 +56,7 @@ struct poisson_re_log_ll {
 struct cov_fun {
   template <typename T0__,
             stan::require_all_t<stan::math::disjunction<
-                stan::is_autodiff<T0__>,
+                stan::is_autodiff_scalar<T0__>,
                 std::is_floating_point<std::decay_t<T0__>>>>* = nullptr>
   Eigen::Matrix<stan::return_type_t<T0__>, -1, -1> operator()(
       const T0__& sigma, const int& N, std::ostream* pstream__) const {
