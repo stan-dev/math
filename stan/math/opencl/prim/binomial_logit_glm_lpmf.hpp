@@ -108,7 +108,7 @@ return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> binomial_logit_glm_lpmf(
     partials<0>(ops_partials) = transpose(beta_val * transpose(theta_deriv_cl));
   }
   if constexpr (is_autodiff_v<T_alpha_cl>) {
-    if (is_alpha_vector) {
+    if constexpr (is_alpha_vector) {
       partials<1>(ops_partials) = theta_deriv_cl;
     } else {
       forward_as<internal::broadcast_array<double>>(

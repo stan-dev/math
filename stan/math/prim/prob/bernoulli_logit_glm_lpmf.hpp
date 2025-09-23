@@ -106,7 +106,7 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
       2 * as_array_or_scalar(y_val_vec) - 1);
 
   Array<T_partials_return, Dynamic, 1> ytheta(N_instances);
-  if (T_x_rows == 1) {
+  if constexpr (T_x_rows == 1) {
     T_ytheta_tmp ytheta_tmp
         = forward_as<T_xbeta_tmp>((x_val * beta_val_vec)(0, 0));
     ytheta = signs * (ytheta_tmp + as_array_or_scalar(alpha_val_vec));
@@ -141,7 +141,7 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
                           .select(signs * T_partials_return(1.0),
                                   signs * exp_m_ytheta / (exp_m_ytheta + 1)));
     if constexpr (is_autodiff_v<T_beta>) {
-      if (T_x_rows == 1) {
+      if constexpr (T_x_rows == 1) {
         edge<2>(ops_partials).partials_
             = forward_as<Matrix<T_partials_return, 1, Dynamic>>(
                 theta_derivative.sum() * x_val);
@@ -150,7 +150,7 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
       }
     }
     if constexpr (is_autodiff_v<T_x>) {
-      if (T_x_rows == 1) {
+      if constexpr (T_x_rows == 1) {
         edge<0>(ops_partials).partials_
             = forward_as<Array<T_partials_return, Dynamic, T_x_rows>>(
                 beta_val_vec * theta_derivative.sum());

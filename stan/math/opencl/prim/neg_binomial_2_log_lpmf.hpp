@@ -55,7 +55,7 @@ neg_binomial_2_log_lpmf(const T_n_cl& n, const T_log_location_cl& eta,
   if (N == 0) {
     return 0.0;
   }
-  if (!include_summand<propto, T_n_cl, T_log_location_cl,
+  if constexpr (!include_summand<propto, T_n_cl, T_log_location_cl,
                        T_precision_cl>::value) {
     return 0.0;
   }

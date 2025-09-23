@@ -62,9 +62,10 @@ return_type_t<T_y, T_shape> lkj_corr_lpdf(const T_y& y, const T_shape& eta) {
   if constexpr (include_summand<propto, T_shape>::value) {
     lp += do_lkj_constant(eta, K);
   }
-
-  if (eta == 1.0 && is_constant_all<scalar_type<T_shape>>::value) {
-    return lp;
+  if constexpr (is_constant_all<scalar_type<T_shape>>::value) {
+    if (eta == 1.0) {
+      return lp;
+    }
   }
 
   if constexpr (!include_summand<propto, T_y, T_shape>::value) {

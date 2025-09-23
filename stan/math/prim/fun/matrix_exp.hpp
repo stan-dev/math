@@ -26,7 +26,7 @@ inline plain_type_t<T> matrix_exp(const T& A_in) {
   using std::exp;
   const auto& A = A_in.eval();
   check_square("matrix_exp", "input matrix", A);
-  if (T::RowsAtCompileTime == 1 && T::ColsAtCompileTime == 1) {
+  if constexpr (T::RowsAtCompileTime == 1 && T::ColsAtCompileTime == 1) {
     plain_type_t<T> res;
     res << exp(A(0));
     return res;

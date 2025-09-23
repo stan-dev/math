@@ -65,7 +65,7 @@ return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
   const size_t N_attributes = x.cols();
   const size_t N_classes = math::size(cuts) + 1;
 
-  if (is_y_vector) {
+  if constexpr (is_y_vector) {
     check_size_match(function, "Rows of ", "x", N_instances, "rows of ", "y",
                      math::size(y));
   }

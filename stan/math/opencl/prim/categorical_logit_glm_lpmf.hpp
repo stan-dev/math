@@ -59,7 +59,7 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
   const size_t N_classes = beta.cols();
 
   static constexpr const char* function = "categorical_logit_glm_lpmf";
-  if (is_y_vector) {
+  if constexpr (is_y_vector) {
     check_size_match(function, "Rows of ", "x", N_instances, "size of ", "y",
                      math::size(y));
   }
@@ -124,7 +124,7 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
 
   auto ops_partials = make_partials_propagator(x, alpha, beta);
   if constexpr (is_autodiff_v<T_x>) {
-    if (is_y_vector) {
+    if constexpr (is_y_vector) {
       partials<0>(ops_partials)
           = indexing(beta_val, col_index(x.rows(), x.cols()),
                      rowwise_broadcast(forward_as<matrix_cl<int>>(y_val) - 1))

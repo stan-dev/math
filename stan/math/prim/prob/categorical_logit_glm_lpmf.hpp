@@ -103,12 +103,12 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
       = 1 / exp_lin.rowwise().sum();
 
   T_partials_return logp = log(inv_sum_exp_lin).sum() - lin_max.sum();
-  if (T_x_rows == 1) {
+  if constexpr (T_x_rows == 1) {
     logp *= N_instances;
   }
   scalar_seq_view<T_y_ref> y_seq(y_ref);
   for (int i = 0; i < N_instances; i++) {
-    if (T_x_rows == 1) {
+    if constexpr (T_x_rows == 1) {
       logp += lin(0, y_seq[i] - 1);
     } else {
       logp += lin(i, y_seq[i] - 1);
@@ -128,7 +128,7 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
   auto ops_partials = make_partials_propagator(x_ref, alpha_ref, beta_ref);
 
   if constexpr (is_autodiff_v<T_x>) {
-    if (T_x_rows == 1) {
+    if constexpr (T_x_rows == 1) {
       Array<T_beta_partials, 1, Dynamic> beta_y = beta_val.col(y_seq[0] - 1);
       for (int i = 1; i < N_instances; i++) {
         beta_y += beta_val.col(y_seq[i] - 1).array();
@@ -157,7 +157,7 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
     Array<T_partials_return, T_x_rows, Dynamic> neg_softmax_lin
         = exp_lin.colwise() * -inv_sum_exp_lin;
     if constexpr (is_autodiff_v<T_alpha>) {
-      if (T_x_rows == 1) {
+      if constexpr (T_x_rows == 1) {
         edge<1>(ops_partials).partials_
             = neg_softmax_lin.colwise().sum() * N_instances;
       } else {
@@ -171,12 +171,12 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
       Matrix<T_partials_return, Dynamic, Dynamic> beta_derivative
           = x_val.transpose().template cast<T_partials_return>()
             * neg_softmax_lin.matrix();
-      if (T_x_rows == 1) {
+      if constexpr (T_x_rows == 1) {
         beta_derivative *= N_instances;
       }
 
       for (int i = 0; i < N_instances; i++) {
-        if (T_x_rows == 1) {
+        if constexpr (T_x_rows == 1) {
           beta_derivative.col(y_seq[i] - 1) += x_val;
         } else {
           beta_derivative.col(y_seq[i] - 1) += x_val.row(i);

@@ -42,9 +42,11 @@ return_type_t<T_covar, T_shape> lkj_corr_cholesky_lpdf(const T_covar& L,
     for (int k = 0; k < Km1; k++) {
       values(k) = (Km1 - k - 1) * log_diagonals(k);
     }
-    if (eta == 1.0 && is_constant_all<scalar_type<T_shape>>::value) {
-      lp += sum(values);
-      return (lp);
+    if constexpr (is_constant_all<scalar_type<T_shape>>::value) {
+      if (eta == 1.0) {
+        lp += sum(values);
+        return (lp);
+      }
     }
     values += multiply(2.0 * eta - 2.0, log_diagonals);
     lp += sum(values);
