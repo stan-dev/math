@@ -77,7 +77,7 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
   check_bounded(function, "categorical outcome out of support", y_ref, 1,
                 N_classes);
 
-  if (!include_summand<propto, T_x, T_alpha, T_beta>::value) {
+  if constexpr (!include_summand<propto, T_x, T_alpha, T_beta>::value) {
     return 0;
   }
 
@@ -85,10 +85,10 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
   T_alpha_ref alpha_ref = alpha;
   T_beta_ref beta_ref = beta;
 
-  const auto& x_val = to_ref_if<!is_constant<T_beta>::value>(value_of(x_ref));
+  const auto& x_val = to_ref_if<is_autodiff_v<T_beta>>(value_of(x_ref));
   const auto& alpha_val = value_of(alpha_ref);
   const auto& beta_val
-      = to_ref_if<!is_constant<T_x>::value>(value_of(beta_ref));
+      = to_ref_if<is_autodiff_v<T_x>>(value_of(beta_ref));
 
   const auto& alpha_val_vec = as_column_vector_or_scalar(alpha_val).transpose();
 
@@ -128,7 +128,7 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
   // Compute the derivatives.
   auto ops_partials = make_partials_propagator(x_ref, alpha_ref, beta_ref);
 
-  if (!is_constant_all<T_x>::value) {
+  if constexpr (is_autodiff_v<T_x>) {
     if (T_x_rows == 1) {
       Array<T_beta_partials, 1, Dynamic> beta_y = beta_val.col(y_seq[0] - 1);
       for (int i = 1; i < N_instances; i++) {
@@ -154,10 +154,10 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
       // inv_sum_exp_lin;
     }
   }
-  if (!is_constant_all<T_alpha, T_beta>::value) {
+  if constexpr (is_any_autodiff_v<T_alpha, T_beta>) {
     Array<T_partials_return, T_x_rows, Dynamic> neg_softmax_lin
         = exp_lin.colwise() * -inv_sum_exp_lin;
-    if (!is_constant_all<T_alpha>::value) {
+    if constexpr (is_autodiff_v<T_alpha>) {
       if (T_x_rows == 1) {
         edge<1>(ops_partials).partials_
             = neg_softmax_lin.colwise().sum() * N_instances;
@@ -168,7 +168,7 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
         partials<1>(ops_partials)[y_seq[i] - 1] += 1;
       }
     }
-    if (!is_constant_all<T_beta>::value) {
+    if constexpr (is_autodiff_v<T_beta>) {
       Matrix<T_partials_return, Dynamic, Dynamic> beta_derivative
           = x_val.transpose().template cast<T_partials_return>()
             * neg_softmax_lin.matrix();

@@ -129,13 +129,13 @@ return_type_t<T_x, T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
   check_nonnegative(function, "Failures variables", y_val_vec);
   check_positive_finite(function, "Precision parameter", phi_val_vec);
 
-  if (!include_summand<propto, T_x, T_alpha, T_beta, T_precision>::value) {
+  if constexpr (!include_summand<propto, T_x, T_alpha, T_beta, T_precision>::value) {
     return 0;
   }
 
   T_x_ref x_ref = x;
 
-  const auto& x_val = to_ref_if<!is_constant<T_beta>::value>(value_of(x_ref));
+  const auto& x_val = to_ref_if<is_autodiff_v<T_beta>>(value_of(x_ref));
 
   const auto& y_arr = as_array_or_scalar(y_val_vec);
   const auto& phi_arr = as_array_or_scalar(phi_val_vec);
@@ -160,15 +160,15 @@ return_type_t<T_x, T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
 
   // Compute the log-density.
   T_partials_return logp(0);
-  if (include_summand<propto>::value) {
-    if (is_vector<T_y>::value) {
+  if constexpr (include_summand<propto>::value) {
+    if constexpr (is_vector<T_y>::value) {
       logp -= sum(lgamma(y_arr + 1.0));
     } else {
       logp -= sum(lgamma(y_arr + 1.0)) * N_instances;
     }
   }
-  if (include_summand<propto, T_precision>::value) {
-    if (is_vector<T_precision>::value) {
+  if constexpr (include_summand<propto, T_precision>::value) {
+    if constexpr (is_vector<T_precision>::value) {
       scalar_seq_view<decltype(phi_val_vec)> phi_vec(phi_val_vec);
       for (size_t n = 0; n < N_instances; ++n) {
         logp += multiply_log(phi_vec[n], phi_vec[n]) - lgamma(phi_vec[n]);
@@ -183,11 +183,11 @@ return_type_t<T_x, T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
   }
   logp -= sum(y_plus_phi * logsumexp_theta_logphi);
 
-  if (include_summand<propto, T_x, T_alpha, T_beta>::value) {
+  if constexpr (include_summand<propto, T_x, T_alpha, T_beta>::value) {
     logp += sum(y_arr * theta);
   }
-  if (include_summand<propto, T_precision>::value) {
-    if (is_vector<T_y>::value || is_vector<T_precision>::value) {
+  if constexpr (include_summand<propto, T_precision>::value) {
+    if constexpr (is_vector<T_y>::value || is_vector<T_precision>::value) {
       logp += sum(lgamma(y_plus_phi));
     } else {
       logp += sum(lgamma(y_plus_phi)) * N_instances;
@@ -197,12 +197,12 @@ return_type_t<T_x, T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
   // Compute the necessary derivatives.
   auto ops_partials
       = make_partials_propagator(x_ref, alpha_ref, beta_ref, phi_ref);
-  if (!is_constant_all<T_x, T_beta, T_alpha, T_precision>::value) {
+  if constexpr (is_any_autodiff_v<T_x, T_beta, T_alpha, T_precision>) {
     Array<T_partials_return, Dynamic, 1> theta_exp = theta.exp();
-    if (!is_constant_all<T_x, T_beta, T_alpha>::value) {
+    if constexpr (is_any_autodiff_v<T_x, T_beta, T_alpha>) {
       Matrix<T_partials_return, Dynamic, 1> theta_derivative
           = y_arr - theta_exp * y_plus_phi / (theta_exp + phi_arr);
-      if (!is_constant_all<T_beta>::value) {
+      if constexpr (is_autodiff_v<T_beta>) {
         if (T_x_rows == 1) {
           edge<2>(ops_partials).partials_
               = forward_as<Matrix<T_partials_return, 1, Dynamic>>(
@@ -212,7 +212,7 @@ return_type_t<T_x, T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
               = x_val.transpose() * theta_derivative;
         }
       }
-      if (!is_constant_all<T_x>::value) {
+      if constexpr (is_autodiff_v<T_x>) {
         if (T_x_rows == 1) {
           edge<0>(ops_partials).partials_
               = forward_as<Array<T_partials_return, Dynamic, T_x_rows>>(
@@ -222,16 +222,16 @@ return_type_t<T_x, T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
               = (beta_val_vec * theta_derivative.transpose()).transpose();
         }
       }
-      if (!is_constant_all<T_alpha>::value) {
-        if (is_vector<T_alpha>::value) {
+      if constexpr (is_autodiff_v<T_alpha>) {
+        if constexpr (is_vector<T_alpha>::value) {
           partials<1>(ops_partials) = std::move(theta_derivative);
         } else {
           partials<1>(ops_partials)[0] = sum(theta_derivative);
         }
       }
     }
-    if (!is_constant_all<T_precision>::value) {
-      if (is_vector<T_precision>::value) {
+    if constexpr (is_autodiff_v<T_precision>) {
+      if constexpr (is_vector<T_precision>::value) {
         edge<3>(ops_partials).partials_
             = 1 - y_plus_phi / (theta_exp + phi_arr) + log_phi
               - logsumexp_theta_logphi + digamma(y_plus_phi) - digamma(phi_arr);

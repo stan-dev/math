@@ -76,23 +76,23 @@ return_type_t<T_y, T_dof, T_scale> wishart_lpdf(const T_y& W, const T_dof& nu,
 
   return_type_t<T_y, T_dof, T_scale> lp(0.0);
 
-  if (include_summand<propto, T_dof>::value) {
+  if constexpr (include_summand<propto, T_dof>::value) {
     lp -= nu_ref * k * HALF_LOG_TWO;
   }
 
-  if (include_summand<propto, T_dof>::value) {
+  if constexpr (include_summand<propto, T_dof>::value) {
     lp -= lmgamma(k, 0.5 * nu_ref);
   }
 
-  if (include_summand<propto, T_dof, T_scale>::value) {
+  if constexpr (include_summand<propto, T_dof, T_scale>::value) {
     lp -= 0.5 * nu_ref * log_determinant_ldlt(ldlt_S);
   }
 
-  if (include_summand<propto, T_scale, T_y>::value) {
+  if constexpr (include_summand<propto, T_scale, T_y>::value) {
     lp -= 0.5 * trace(mdivide_left_ldlt(ldlt_S, W_ref));
   }
 
-  if (include_summand<propto, T_y, T_dof>::value && nu_ref != (k + 1)) {
+  if constexpr (include_summand<propto, T_y, T_dof>::value && nu_ref != (k + 1)) {
     lp += 0.5 * (nu_ref - k - 1.0) * log_determinant_ldlt(ldlt_W);
   }
   return lp;

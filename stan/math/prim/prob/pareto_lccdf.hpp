@@ -60,30 +60,30 @@ return_type_t<T_y, T_scale, T_shape> pareto_lccdf(const T_y& y,
     return ops_partials.build(negative_infinity());
   }
 
-  auto log_quot = to_ref_if<(!is_constant_all<T_y>::value
-                             || !is_constant_all<T_shape>::value)>(
+  auto log_quot = to_ref_if<(is_autodiff_v<T_y>
+                             || is_autodiff_v<T_shape>)>(
       log(y_min_val / y_val));
 
   T_partials_return P = sum(alpha_val * log_quot);
 
   size_t N = max_size(y, y_min, alpha);
-  if (!is_constant_all<T_y, T_scale>::value) {
+  if constexpr (is_any_autodiff_v<T_y, T_scale>) {
     const auto& alpha_div_y_min = to_ref_if<(
-        !is_constant_all<T_y>::value && !is_constant_all<T_scale>::value)>(
+        is_autodiff_v<T_y> && is_autodiff_v<T_scale>)>(
         alpha_val / y_min_val);
-    if (!is_constant_all<T_y>::value) {
+    if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials) = -alpha_div_y_min * exp(log_quot);
     }
-    if (!is_constant_all<T_scale>::value) {
+    if constexpr (is_autodiff_v<T_scale>) {
       edge<1>(ops_partials).partials_
           = alpha_div_y_min * N / max_size(y_min, alpha);
     }
   }
-  if (!is_constant_all<T_shape>::value) {
-    if (is_vector<T_shape>::value) {
+  if constexpr (is_autodiff_v<T_shape>) {
+    if constexpr (is_vector<T_shape>::value) {
       using Log_quot_scalar = partials_return_t<T_y, T_scale>;
       using Log_quot_array = Eigen::Array<Log_quot_scalar, Eigen::Dynamic, 1>;
-      if (is_vector<T_y>::value || is_vector<T_scale>::value) {
+      if constexpr (is_vector<T_y>::value || is_vector<T_scale>::value) {
         edge<2>(ops_partials).partials_
             = forward_as<Log_quot_array>(std::move(log_quot));
       } else {

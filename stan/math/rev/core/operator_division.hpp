@@ -124,7 +124,7 @@ template <typename Scalar, typename Mat, require_matrix_t<Mat>* = nullptr,
           require_all_st_var_or_arithmetic<Scalar, Mat>* = nullptr,
           require_any_st_var<Scalar, Mat>* = nullptr>
 inline auto divide(const Mat& m, Scalar c) {
-  if (!is_constant<Mat>::value && !is_constant<Scalar>::value) {
+  if constexpr (is_autodiff_v<Mat> && is_autodiff_v<Scalar>) {
     arena_t<promote_scalar_t<var, Mat>> arena_m = m;
     var arena_c = c;
     auto inv_c = (1.0 / arena_c.val());
@@ -135,7 +135,7 @@ inline auto divide(const Mat& m, Scalar c) {
       arena_m.adj().array() += inv_times_adj;
     });
     return promote_scalar_t<var, Mat>(res);
-  } else if (!is_constant<Mat>::value) {
+  } else if constexpr (is_autodiff_v<Mat>) {
     arena_t<promote_scalar_t<var, Mat>> arena_m = m;
     auto inv_c = (1.0 / value_of(c));
     arena_t<promote_scalar_t<var, Mat>> res = inv_c * arena_m.val();
@@ -168,7 +168,7 @@ template <typename Scalar, typename Mat, require_matrix_t<Mat>* = nullptr,
           require_all_st_var_or_arithmetic<Scalar, Mat>* = nullptr,
           require_any_st_var<Scalar, Mat>* = nullptr>
 inline auto divide(Scalar c, const Mat& m) {
-  if (!is_constant<Scalar>::value && !is_constant<Mat>::value) {
+  if constexpr (is_autodiff_v<Scalar> && is_autodiff_v<Mat>) {
     arena_t<promote_scalar_t<var, Mat>> arena_m = m;
     auto inv_m = to_arena(arena_m.val().array().inverse());
     var arena_c = c;
@@ -179,7 +179,7 @@ inline auto divide(Scalar c, const Mat& m) {
       arena_c.adj() += (inv_times_res).sum();
     });
     return promote_scalar_t<var, Mat>(res);
-  } else if (!is_constant<Mat>::value) {
+  } else if constexpr (is_autodiff_v<Mat>) {
     arena_t<promote_scalar_t<var, Mat>> arena_m = m;
     auto inv_m = to_arena(arena_m.val().array().inverse());
     arena_t<promote_scalar_t<var, Mat>> res = value_of(c) * inv_m;
@@ -213,7 +213,7 @@ template <typename Mat1, typename Mat2,
           require_all_matrix_st<is_var_or_arithmetic, Mat1, Mat2>* = nullptr,
           require_any_matrix_st<is_var, Mat1, Mat2>* = nullptr>
 inline auto divide(const Mat1& m1, const Mat2& m2) {
-  if (!is_constant<Mat1>::value && !is_constant<Mat2>::value) {
+  if constexpr (is_autodiff_v<Mat1> && is_autodiff_v<Mat2>) {
     arena_t<promote_scalar_t<var, Mat1>> arena_m1 = m1;
     arena_t<promote_scalar_t<var, Mat2>> arena_m2 = m2;
     auto inv_m2 = to_arena(arena_m2.val().array().inverse());
@@ -226,7 +226,7 @@ inline auto divide(const Mat1& m1, const Mat2& m2) {
       arena_m2.adj().array() -= inv_times_res * res.val().array();
     });
     return ret_type(res);
-  } else if (!is_constant<Mat2>::value) {
+  } else if constexpr (is_autodiff_v<Mat2>) {
     arena_t<promote_scalar_t<double, Mat1>> arena_m1 = value_of(m1);
     arena_t<promote_scalar_t<var, Mat2>> arena_m2 = m2;
     auto inv_m2 = to_arena(arena_m2.val().array().inverse());

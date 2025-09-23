@@ -56,7 +56,7 @@ return_type_t<T_y_cl, T_inv_scale_cl> exponential_lpdf(
   if (N == 0) {
     return 0.0;
   }
-  if (!include_summand<propto, T_y_cl, T_inv_scale_cl>::value) {
+  if constexpr (!include_summand<propto, T_y_cl, T_inv_scale_cl>::value) {
     return 0.0;
   }
 
@@ -93,15 +93,15 @@ return_type_t<T_y_cl, T_inv_scale_cl> exponential_lpdf(
           beta_deriv_cl)
       = expressions(
           y_nonnegative_expr, beta_pos_finite_expr, logp_expr,
-          calc_if<!is_constant<T_y_cl>::value>(y_deriv_expr),
-          calc_if<!is_constant<T_inv_scale_cl>::value>(beta_deriv_expr));
+          calc_if<is_autodiff_v<T_y_cl>>(y_deriv_expr),
+          calc_if<is_autodiff_v<T_inv_scale_cl>>(beta_deriv_expr));
 
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
 
-  if (!is_constant<T_y_cl>::value) {
+  if constexpr (is_autodiff_v<T_y_cl>) {
     partials<0>(ops_partials) = std::move(y_deriv_cl);
   }
-  if (!is_constant<T_inv_scale_cl>::value) {
+  if constexpr (is_autodiff_v<T_inv_scale_cl>) {
     partials<1>(ops_partials) = std::move(beta_deriv_cl);
   }
 

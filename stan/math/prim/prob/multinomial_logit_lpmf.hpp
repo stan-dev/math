@@ -35,11 +35,11 @@ return_type_t<T_prob> multinomial_logit_lpmf(const std::vector<int>& ns,
 
   decltype(auto) ns_map = as_array_or_scalar(ns);
 
-  if (include_summand<propto>::value) {
+  if constexpr (include_summand<propto>::value) {
     lp += lgamma(1 + ns_map.sum()) - lgamma(1 + ns_map).sum();
   }
 
-  if (include_summand<propto, T_prob>::value) {
+  if constexpr (include_summand<propto, T_prob>::value) {
     T_prob alpha = log_sum_exp(beta_ref);
     for (unsigned int i = 0; i < ns.size(); ++i) {
       if (ns[i] != 0) {

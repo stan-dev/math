@@ -62,11 +62,11 @@ return_type_t<T_x, T_alpha, T_beta> binomial_logit_glm_lpmf(
   using T_xbeta_tmp =
       typename std::conditional_t<T_x_rows == 1, T_xbeta_partials,
                                   Eigen::Array<T_xbeta_partials, -1, 1>>;
-  using T_n_ref = ref_type_if_t<!is_constant<T_n>::value, T_n>;
-  using T_N_ref = ref_type_if_t<!is_constant<T_N>::value, T_N>;
-  using T_x_ref = ref_type_if_t<!is_constant<T_x>::value, T_x>;
-  using T_alpha_ref = ref_type_if_t<!is_constant<T_alpha>::value, T_alpha>;
-  using T_beta_ref = ref_type_if_t<!is_constant<T_beta>::value, T_beta>;
+  using T_n_ref = ref_type_if_t<is_autodiff_v<T_n>, T_n>;
+  using T_N_ref = ref_type_if_t<is_autodiff_v<T_N>, T_N>;
+  using T_x_ref = ref_type_if_t<is_autodiff_v<T_x>, T_x>;
+  using T_alpha_ref = ref_type_if_t<is_autodiff_v<T_alpha>, T_alpha>;
+  using T_beta_ref = ref_type_if_t<is_autodiff_v<T_beta>, T_beta>;
 
   T_n_ref n_ref = n;
   T_N_ref N_ref = N;
@@ -78,7 +78,7 @@ return_type_t<T_x, T_alpha, T_beta> binomial_logit_glm_lpmf(
     return 0;
   }
 
-  if (!include_summand<propto, T_x, T_alpha, T_beta>::value) {
+  if constexpr (!include_summand<propto, T_x, T_alpha, T_beta>::value) {
     return 0;
   }
 
@@ -109,7 +109,7 @@ return_type_t<T_x, T_alpha, T_beta> binomial_logit_glm_lpmf(
     theta = (x_val * beta_val).array() + alpha_val;
   }
 
-  constexpr bool gradients_calc = !is_constant_all<T_beta, T_x, T_alpha>::value;
+  constexpr bool gradients_calc = is_any_autodiff_v<T_beta, T_x, T_alpha>;
   auto&& log_inv_logit_theta = to_ref_if<gradients_calc>(log_inv_logit(theta));
 
   T_partials_return logp = sum(n_val * log_inv_logit_theta
@@ -122,7 +122,7 @@ return_type_t<T_x, T_alpha, T_beta> binomial_logit_glm_lpmf(
     check_finite(function, "Matrix of independent variables", x);
   }
 
-  if (include_summand<propto, T_n, T_N>::value) {
+  if constexpr (include_summand<propto, T_n, T_N>::value) {
     size_t broadcast_n = max_size(N, n) == N_instances ? 1 : N_instances;
     logp += sum(binomial_coefficient_log(N_val, n_val)) * broadcast_n;
   }
@@ -132,7 +132,7 @@ return_type_t<T_x, T_alpha, T_beta> binomial_logit_glm_lpmf(
     Eigen::Matrix<T_partials_return, -1, 1> theta_derivative
         = n_val - N_val * exp(log_inv_logit_theta);
 
-    if (!is_constant_all<T_beta>::value) {
+    if constexpr (is_autodiff_v<T_beta>) {
       if (T_x_rows == 1) {
         edge<2>(ops_partials).partials_
             = forward_as<Eigen::Matrix<T_partials_return, 1, -1>>(
@@ -142,7 +142,7 @@ return_type_t<T_x, T_alpha, T_beta> binomial_logit_glm_lpmf(
       }
     }
 
-    if (!is_constant_all<T_x>::value) {
+    if constexpr (is_autodiff_v<T_x>) {
       if (T_x_rows == 1) {
         edge<0>(ops_partials).partials_
             = forward_as<Eigen::Array<T_partials_return, -1, T_x_rows>>(
@@ -152,7 +152,7 @@ return_type_t<T_x, T_alpha, T_beta> binomial_logit_glm_lpmf(
             = (beta_val * theta_derivative.transpose()).transpose();
       }
     }
-    if (!is_constant_all<T_alpha>::value) {
+    if constexpr (is_autodiff_v<T_alpha>) {
       partials<1>(ops_partials) = theta_derivative;
     }
   }

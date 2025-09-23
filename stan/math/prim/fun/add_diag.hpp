@@ -27,7 +27,7 @@ template <typename T_m, typename T_a, typename = require_eigen_t<T_m>,
 inline typename Eigen::Matrix<return_type_t<T_m, T_a>, Eigen::Dynamic,
                               Eigen::Dynamic>
 add_diag(const T_m &mat, const T_a &to_add) {
-  if (is_vector<T_a>::value) {
+  if constexpr (is_vector<T_a>::value) {
     const size_t length_diag = std::min(mat.rows(), mat.cols());
     check_consistent_size("add_diag", "number of elements of to_add", to_add,
                           length_diag);

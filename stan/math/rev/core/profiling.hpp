@@ -53,7 +53,7 @@ class profile_info {
 
   template <typename T>
   void fwd_pass_start() {
-    if (!is_constant<T>::value) {
+    if constexpr (is_autodiff_v<T>) {
       start_chain_stack_size_ = ChainableStack::instance_->var_stack_.size();
       start_nochain_stack_size_
           = ChainableStack::instance_->var_nochain_stack_.size();
@@ -64,7 +64,7 @@ class profile_info {
 
   template <typename T>
   void fwd_pass_stop() {
-    if (!is_constant<T>::value) {
+    if constexpr (is_autodiff_v<T>) {
       n_fwd_AD_passes_++;
       chain_stack_size_sum_ += (ChainableStack::instance_->var_stack_.size()
                                 - start_chain_stack_size_ - 1);
@@ -166,14 +166,14 @@ class profile {
       throw std::runtime_error(msg.str());
     }
     profile_->fwd_pass_start<T>();
-    if (!is_constant<T>::value) {
+    if constexpr (is_autodiff_v<T>) {
       reverse_pass_callback(
           [profile = this->profile_]() mutable { profile->rev_pass_stop(); });
     }
   }
   ~profile() {
     profile_->fwd_pass_stop<T>();
-    if (!is_constant<T>::value) {
+    if constexpr (is_autodiff_v<T>) {
       reverse_pass_callback(
           [profile = this->profile_]() mutable { profile->rev_pass_start(); });
     }

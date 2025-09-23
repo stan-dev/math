@@ -116,16 +116,16 @@ normal_id_glm_lpdf(const T_y_cl& y, const T_x_cl& x, const T_alpha_cl& alpha,
   const int wgs = y_scaled_sq_sum_expr.rows();
 
   constexpr bool need_mu_derivative
-      = !is_constant_all<T_x_cl, T_beta_cl>::value
-        || (!is_constant<T_alpha_cl>::value && is_alpha_vector)
-        || (!is_constant<T_y_cl>::value && is_y_vector);
+      = is_any_autodiff_v<T_x_cl, T_beta_cl>
+        || (is_autodiff_v<T_alpha_cl> && is_alpha_vector)
+        || (is_autodiff_v<T_y_cl> && is_y_vector);
   matrix_cl<double> mu_derivative_cl(need_mu_derivative ? N : 0, 1);
   constexpr bool need_mu_derivative_sum
-      = (!is_constant<T_alpha_cl>::value && !is_alpha_vector)
-        || (!is_constant<T_y_cl>::value && !is_y_vector);
+      = (is_autodiff_v<T_alpha_cl> && !is_alpha_vector)
+        || (is_autodiff_v<T_y_cl> && !is_y_vector);
   matrix_cl<double> mu_derivative_sum_cl(need_mu_derivative_sum ? wgs : 0, 1);
   matrix_cl<double> y_scaled_sq_sum_cl(wgs, 1);
-  constexpr bool need_sigma_derivative = !is_constant_all<T_sigma_cl>::value;
+  constexpr bool need_sigma_derivative = is_autodiff_v<T_sigma_cl>;
   matrix_cl<double> sigma_derivative_cl(need_sigma_derivative ? N : 0, 1);
   constexpr bool need_log_sigma_sum
       = include_summand<propto, T_sigma_cl>::value && is_sigma_vector;
@@ -145,7 +145,7 @@ normal_id_glm_lpdf(const T_y_cl& y, const T_x_cl& x, const T_alpha_cl& alpha,
   if (need_mu_derivative_sum) {
     mu_derivative_sum = sum(from_matrix_cl(mu_derivative_sum_cl));
   }
-  if (!is_constant<T_y_cl>::value) {
+  if constexpr (is_autodiff_v<T_y_cl>) {
     if (is_y_vector) {
       partials<0>(ops_partials) = -mu_derivative_cl;
     } else {
@@ -154,11 +154,11 @@ normal_id_glm_lpdf(const T_y_cl& y, const T_x_cl& x, const T_alpha_cl& alpha,
           = -mu_derivative_sum;
     }
   }
-  if (!is_constant<T_x_cl>::value) {
+  if constexpr (is_autodiff_v<T_x_cl>) {
     partials<1>(ops_partials)
         = transpose(beta_val * transpose(mu_derivative_cl));
   }
-  if (!is_constant<T_alpha_cl>::value) {
+  if constexpr (is_autodiff_v<T_alpha_cl>) {
     if (is_alpha_vector) {
       partials<2>(ops_partials) = mu_derivative_cl;
     } else {
@@ -167,7 +167,7 @@ normal_id_glm_lpdf(const T_y_cl& y, const T_x_cl& x, const T_alpha_cl& alpha,
           = mu_derivative_sum;
     }
   }
-  if (!is_constant<T_beta_cl>::value) {
+  if constexpr (is_autodiff_v<T_beta_cl>) {
     // transposition of a vector can be done without copying
     const matrix_cl<double> mu_derivative_transpose_cl(
         mu_derivative_cl.buffer(), 1, mu_derivative_cl.rows());
@@ -182,7 +182,7 @@ normal_id_glm_lpdf(const T_y_cl& y, const T_x_cl& x, const T_alpha_cl& alpha,
               edge4_partials_transpose_cl.write_events().back());
     }
   }
-  if (!is_constant<T_sigma_cl>::value) {
+  if constexpr (is_autodiff_v<T_sigma_cl>) {
     partials<4>(ops_partials) = sigma_derivative_cl;
   }
 
@@ -200,10 +200,10 @@ normal_id_glm_lpdf(const T_y_cl& y, const T_x_cl& x, const T_alpha_cl& alpha,
 
   // Compute log probability.
   T_partials_return logp(0.0);
-  if (include_summand<propto>::value) {
+  if constexpr (include_summand<propto>::value) {
     logp += NEG_LOG_SQRT_TWO_PI * N;
   }
-  if (include_summand<propto, T_sigma_cl>::value) {
+  if constexpr (include_summand<propto, T_sigma_cl>::value) {
     if (is_sigma_vector) {
       logp -= sum(from_matrix_cl(log_sigma_sum_cl));
     } else {

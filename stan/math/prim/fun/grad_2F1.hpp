@@ -271,8 +271,8 @@ template <bool ReturnSameT, typename T1, typename T2, typename T3, typename T_z,
 auto grad_2F1(const T1& a1, const T2& a2, const T3& b1, const T_z& z,
               double precision = 1e-14, int max_steps = 1e6) {
   return internal::grad_2F1_impl<
-      !is_constant<T1>::value, !is_constant<T2>::value, !is_constant<T3>::value,
-      !is_constant<T_z>::value>(value_of(a1), value_of(a2), value_of(b1),
+      is_autodiff_v<T1>, is_autodiff_v<T2>, is_autodiff_v<T3>,
+      is_autodiff_v<T_z>>(value_of(a1), value_of(a2), value_of(b1),
                                 value_of(z), precision, max_steps);
 }
 

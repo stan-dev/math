@@ -42,7 +42,7 @@ return_type_t<T_prob_cl> bernoulli_lpmf(const T_n_cl& n,
   if (N == 0) {
     return 0.0;
   }
-  if (!include_summand<propto, T_prob_cl>::value) {
+  if constexpr (!include_summand<propto, T_prob_cl>::value) {
     return 0.0;
   }
 
@@ -69,12 +69,12 @@ return_type_t<T_prob_cl> bernoulli_lpmf(const T_n_cl& n,
 
     results(logp_cl, deriv_cl, check_n_bounded, check_theta_bounded)
         = expressions(logp_expr,
-                      calc_if<!is_constant_all<T_prob_cl>::value>(deriv_expr),
+                      calc_if<is_autodiff_v<T_prob_cl>>(deriv_expr),
                       n_bounded_expr, theta_bounded_expr);
 
     logp = sum(from_matrix_cl(logp_cl));
 
-    if (!is_constant_all<T_prob_cl>::value) {
+    if constexpr (is_autodiff_v<T_prob_cl>) {
       partials<0>(ops_partials) = deriv_cl;
     }
   } else {
@@ -94,7 +94,7 @@ return_type_t<T_prob_cl> bernoulli_lpmf(const T_n_cl& n,
     } else {
       logp = n_sum * log(theta_val_scal) + (N - n_sum) * log1m(theta_val_scal);
     }
-    if (!is_constant_all<T_prob_cl>::value) {
+    if constexpr (is_autodiff_v<T_prob_cl>) {
       double& edge1_partial = forward_as<internal::broadcast_array<double>>(
           partials<0>(ops_partials))[0];
       if (n_sum == N) {

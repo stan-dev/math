@@ -79,7 +79,7 @@ return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> bernoulli_logit_glm_lpmf(
   if (N == 0) {
     return 0;
   }
-  if (!include_summand<propto, T_x_cl, T_alpha_cl, T_beta_cl>::value) {
+  if constexpr (!include_summand<propto, T_x_cl, T_alpha_cl, T_beta_cl>::value) {
     return 0;
   }
 
@@ -110,7 +110,7 @@ return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> bernoulli_logit_glm_lpmf(
   const int wgs = logp_expr.rows();
   matrix_cl<double> logp_cl(wgs, 1);
   constexpr bool need_theta_derivative
-      = !is_constant_all<T_x_cl, T_beta_cl, T_alpha_cl>::value;
+      = is_any_autodiff_v<T_x_cl, T_beta_cl, T_alpha_cl>;
   matrix_cl<double> theta_derivative_cl(need_theta_derivative ? N : 0, 1);
   constexpr bool need_theta_derivative_sum
       = need_theta_derivative && !is_alpha_vector;
@@ -135,11 +135,11 @@ return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> bernoulli_logit_glm_lpmf(
 
   auto ops_partials = make_partials_propagator(x, alpha, beta);
   // Compute the necessary derivatives.
-  if (!is_constant_all<T_x_cl>::value) {
+  if constexpr (is_autodiff_v<T_x_cl>) {
     partials<0>(ops_partials)
         = transpose(beta_val * transpose(theta_derivative_cl));
   }
-  if (!is_constant_all<T_alpha_cl>::value) {
+  if constexpr (is_autodiff_v<T_alpha_cl>) {
     if (is_alpha_vector) {
       partials<1>(ops_partials) = theta_derivative_cl;
     } else {
@@ -148,7 +148,7 @@ return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> bernoulli_logit_glm_lpmf(
           = sum(from_matrix_cl(theta_derivative_sum_cl));
     }
   }
-  if (!is_constant_all<T_beta_cl>::value) {
+  if constexpr (is_autodiff_v<T_beta_cl>) {
     // transposition of a vector can be done without copying
     const matrix_cl<double> theta_derivative_transpose_cl(
         theta_derivative_cl.buffer(), 1, theta_derivative_cl.rows());

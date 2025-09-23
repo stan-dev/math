@@ -27,9 +27,9 @@ namespace math {
  */
 template <typename Ta, typename Tb, typename Tz,
           typename FvarT = return_type_t<Ta, Tb, Tz>,
-          bool grad_a = !is_constant<Ta>::value,
-          bool grad_b = !is_constant<Tb>::value,
-          bool grad_z = !is_constant<Tz>::value,
+          bool grad_a = is_autodiff_v<Ta>,
+          bool grad_b = is_autodiff_v<Tb>,
+          bool grad_z = is_autodiff_v<Tz>,
           require_all_vector_t<Ta, Tb>* = nullptr,
           require_fvar_t<FvarT>* = nullptr>
 inline FvarT hypergeometric_pFq(Ta&& a, Tb&& b, Tz&& z) {

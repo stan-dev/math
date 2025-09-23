@@ -40,7 +40,7 @@ auto max(T1 x, T2 y) {
  */
 template <typename T, require_container_t<T>* = nullptr>
 inline value_type_t<T> max(T&& m) {
-  if (std::is_integral<value_type_t<T>>::value) {
+  if constexpr (std::is_integral<value_type_t<T>>::value) {
     check_nonzero_size("max", "int vector", m);
   } else if (m.size() == 0) {
     return NEGATIVE_INFTY;

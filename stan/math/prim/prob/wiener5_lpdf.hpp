@@ -676,7 +676,7 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
                         const double& precision_derivatives = 1e-4) {
   using T_partials_return = partials_return_t<T_y, T_a, T_t0, T_w, T_v, T_sv>;
   using ret_t = return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv>;
-  if (!include_summand<propto, T_y, T_a, T_t0, T_w, T_v, T_sv>::value) {
+  if constexpr (!include_summand<propto, T_y, T_a, T_t0, T_w, T_v, T_sv>::value) {
     return ret_t(0.0);
   }
   using T_y_ref = ref_type_t<T_y>;
@@ -790,10 +790,10 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
             sv_value, log_error_absolute);
 
     // computation of derivatives and precision checks
-    if (!is_constant_all<T_y>::value) {
+    if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials)[i] = deriv_y;
     }
-    if (!is_constant_all<T_a>::value) {
+    if constexpr (is_autodiff_v<T_a>) {
       partials<1>(ops_partials)[i]
           = internal::estimate_with_err_check<5, 0, GradientCalc::OFF,
                                               GradientCalc::ON>(
@@ -803,10 +803,10 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
               new_est_err, y_value - t0_value, a_value, v_value, w_value,
               sv_value, log_error_absolute);
     }
-    if (!is_constant_all<T_t0>::value) {
+    if constexpr (is_autodiff_v<T_t0>) {
       partials<2>(ops_partials)[i] = -deriv_y;
     }
-    if (!is_constant_all<T_w>::value) {
+    if constexpr (is_autodiff_v<T_w>) {
       partials<3>(ops_partials)[i]
           = internal::estimate_with_err_check<5, 0, GradientCalc::OFF,
                                               GradientCalc::ON>(
@@ -816,13 +816,13 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
               new_est_err, y_value - t0_value, a_value, v_value, w_value,
               sv_value, log_error_absolute);
     }
-    if (!is_constant_all<T_v>::value) {
+    if constexpr (is_autodiff_v<T_v>) {
       partials<4>(ops_partials)[i]
           = internal::wiener5_grad_v<GradientCalc::OFF>(
               y_value - t0_value, a_value, v_value, w_value, sv_value,
               log_error_absolute_val);
     }
-    if (!is_constant_all<T_sv>::value) {
+    if constexpr (is_autodiff_v<T_sv>) {
       partials<5>(ops_partials)[i]
           = internal::wiener5_grad_sv<GradientCalc::OFF>(
               y_value - t0_value, a_value, v_value, w_value, sv_value,

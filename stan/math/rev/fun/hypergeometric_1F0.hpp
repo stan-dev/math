@@ -36,10 +36,10 @@ var hypergeometric_1F0(const Ta& a, const Tz& z) {
   double z_val = value_of(z);
   double rtn = hypergeometric_1F0(a_val, z_val);
   return make_callback_var(rtn, [rtn, a, z, a_val, z_val](auto& vi) mutable {
-    if (!is_constant_all<Ta>::value) {
+    if constexpr (is_autodiff_v<Ta>) {
       forward_as<var>(a).adj() += vi.adj() * -rtn * log1m(z_val);
     }
-    if (!is_constant_all<Tz>::value) {
+    if constexpr (is_autodiff_v<Tz>) {
       forward_as<var>(z).adj() += vi.adj() * rtn * a_val * inv(1 - z_val);
     }
   });
