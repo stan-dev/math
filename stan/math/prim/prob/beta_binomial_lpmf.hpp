@@ -108,8 +108,7 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
                     - lbeta_denominator[i];
   }
 
-  VectorBuilder<is_autodiff_v<T_size1>, T_partials_return, T_n,
-                T_size1>
+  VectorBuilder<is_autodiff_v<T_size1>, T_partials_return, T_n, T_size1>
       digamma_n_plus_alpha(max_size(n, alpha));
   if constexpr (is_autodiff_v<T_size1>) {
     for (size_t i = 0; i < max_size(n, alpha); i++) {
@@ -117,8 +116,8 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
     }
   }
 
-  VectorBuilder<is_any_autodiff_v<T_size1, T_size2>, T_partials_return,
-                T_size1, T_size2>
+  VectorBuilder<is_any_autodiff_v<T_size1, T_size2>, T_partials_return, T_size1,
+                T_size2>
       digamma_alpha_plus_beta(size_alpha_beta);
   if constexpr (is_any_autodiff_v<T_size1, T_size2>) {
     for (size_t i = 0; i < size_alpha_beta; i++) {
@@ -126,8 +125,8 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
     }
   }
 
-  VectorBuilder<is_any_autodiff_v<T_size1, T_size2>, T_partials_return,
-                T_N, T_size1, T_size2>
+  VectorBuilder<is_any_autodiff_v<T_size1, T_size2>, T_partials_return, T_N,
+                T_size1, T_size2>
       digamma_diff(max_size(N, alpha, beta));
   if constexpr (is_any_autodiff_v<T_size1, T_size2>) {
     for (size_t i = 0; i < max_size(N, alpha, beta); i++) {

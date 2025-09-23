@@ -118,7 +118,8 @@ return_type_t<T_y, T_dof, T_loc, T_scale> multi_student_t_lpdf(
     lp -= 0.5 * log_determinant_ldlt(ldlt_Sigma) * size_vec;
   }
 
-  if constexpr (include_summand<propto, T_y, T_dof, T_loc, T_scale_elem>::value) {
+  if constexpr (include_summand<propto, T_y, T_dof, T_loc,
+                                T_scale_elem>::value) {
     lp_type sum_lp_vec(0.0);
     for (size_t i = 0; i < size_vec; i++) {
       const auto& y_col = as_column_vector_or_scalar(y_vec[i]);

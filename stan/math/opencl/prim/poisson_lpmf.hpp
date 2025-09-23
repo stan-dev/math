@@ -76,8 +76,7 @@ return_type_t<T_rate_cl> poisson_lpmf(const T_n_cl& n,
   results(check_n_nonnegative, check_lambda_nonnegative, return_log_zero_cl,
           logp_cl, deriv_cl)
       = expressions(n_nonnegative, lambda_nonnegative, return_log_zero,
-                    logp_expr,
-                    calc_if<is_autodiff_v<T_rate_cl>>(deriv));
+                    logp_expr, calc_if<is_autodiff_v<T_rate_cl>>(deriv));
 
   if (from_matrix_cl(return_log_zero_cl).any()) {
     return LOG_ZERO;

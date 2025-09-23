@@ -58,8 +58,7 @@ return_type_t<T_y, T_loc, T_scale> logistic_lpdf(const T_y& y, const T_loc& mu,
 
   const auto& inv_sigma
       = to_ref_if<is_any_autodiff_v<T_y, T_loc, T_scale>>(inv(sigma_val));
-  const auto& y_minus_mu
-      = to_ref_if<is_autodiff_v<T_scale>>(y_val - mu_val);
+  const auto& y_minus_mu = to_ref_if<is_autodiff_v<T_scale>>(y_val - mu_val);
   const auto& y_minus_mu_div_sigma = to_ref(y_minus_mu * inv_sigma);
 
   size_t N = max_size(y, mu, sigma);
@@ -71,9 +70,9 @@ return_type_t<T_y, T_loc, T_scale> logistic_lpdf(const T_y& y, const T_loc& mu,
 
   if constexpr (is_any_autodiff_v<T_y, T_scale>) {
     const auto& exp_y_minus_mu_div_sigma = exp(y_minus_mu_div_sigma);
-    const auto& y_deriv = to_ref_if<(is_autodiff_v<T_scale>
-                                     && is_autodiff_v<T_y>)>(
-        (2 / (1 + exp_y_minus_mu_div_sigma) - 1) * inv_sigma);
+    const auto& y_deriv
+        = to_ref_if<(is_autodiff_v<T_scale> && is_autodiff_v<T_y>)>(
+            (2 / (1 + exp_y_minus_mu_div_sigma) - 1) * inv_sigma);
     if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials) = y_deriv;
     }

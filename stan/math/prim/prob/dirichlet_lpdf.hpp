@@ -97,8 +97,7 @@ return_type_t<T_prob, T_prior_size> dirichlet_lpdf(const T_prob& theta,
               .sum();
   }
 
-  const auto& alpha_m_1
-      = to_ref_if<is_autodiff_v<T_prob>>(alpha_dbl - 1.0);
+  const auto& alpha_m_1 = to_ref_if<is_autodiff_v<T_prob>>(alpha_dbl - 1.0);
   const auto& theta_log
       = to_ref_if<is_autodiff_v<T_prior_size>>(theta_dbl.log());
 

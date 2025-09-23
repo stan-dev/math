@@ -77,8 +77,7 @@ return_type_t<T_y, T_shape, T_scale> frechet_lpdf(const T_y& y,
     logp -= sum((alpha_val + 1.0) * log_y) * N / max_size(y, alpha);
   }
   if constexpr (include_summand<propto, T_shape, T_scale>::value) {
-    const auto& log_sigma
-        = to_ref_if<is_autodiff_v<T_shape>>(log(sigma_val));
+    const auto& log_sigma = to_ref_if<is_autodiff_v<T_shape>>(log(sigma_val));
     logp += sum(alpha_val * log_sigma) * N / max_size(alpha, sigma);
     if constexpr (is_autodiff_v<T_shape>) {
       edge<1>(ops_partials).partials_

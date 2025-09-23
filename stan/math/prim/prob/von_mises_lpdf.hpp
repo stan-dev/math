@@ -68,9 +68,8 @@ return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
 
   if constexpr (is_any_autodiff_v<T_y, T_loc>) {
     const auto& sin_diff = sin(y_val - mu_val);
-    auto kappa_sin
-        = to_ref_if<(is_autodiff_v<T_y>
-                     && is_autodiff_v<T_loc>)>(kappa_val * sin_diff);
+    auto kappa_sin = to_ref_if<(is_autodiff_v<T_y> && is_autodiff_v<T_loc>)>(
+        kappa_val * sin_diff);
     if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials) = -kappa_sin;
     }

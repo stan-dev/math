@@ -62,8 +62,7 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_cdf(const T_n& n,
 
   VectorBuilder<is_autodiff_v<T_shape>, T_partials_return, T_shape>
       digamma_alpha_vec(size_alpha);
-  VectorBuilder<is_autodiff_v<T_shape>, T_partials_return, T_n,
-                T_shape>
+  VectorBuilder<is_autodiff_v<T_shape>, T_partials_return, T_n, T_shape>
       digamma_sum_vec(size_n_alpha);
 
   if constexpr (is_autodiff_v<T_shape>) {

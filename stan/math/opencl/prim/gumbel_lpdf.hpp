@@ -91,8 +91,7 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> gumbel_lpdf(
   results(check_y_not_nan, check_mu_finite, check_beta_positive, logp_cl,
           y_deriv_cl, mu_deriv_cl, beta_deriv_cl)
       = expressions(y_not_nan_expr, mu_finite_expr, beta_positive_expr,
-                    logp_expr,
-                    calc_if<is_autodiff_v<T_y_cl>>(scaled_diff_expr),
+                    logp_expr, calc_if<is_autodiff_v<T_y_cl>>(scaled_diff_expr),
                     calc_if<is_autodiff_v<T_loc_cl>>(-scaled_diff_expr),
                     calc_if<is_autodiff_v<T_scale_cl>>(beta_deriv_expr));
 

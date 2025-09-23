@@ -66,9 +66,9 @@ return_type_t<T_y, T_inv_scale> exponential_cdf(const T_y& y,
   }
 
   if constexpr (any_derivatives) {
-    const auto& rep_deriv = to_ref_if<(
-        is_autodiff_v<T_y> && is_autodiff_v<T_inv_scale>)>(
-        exp_val / one_m_exp * cdf);
+    const auto& rep_deriv
+        = to_ref_if<(is_autodiff_v<T_y> && is_autodiff_v<T_inv_scale>)>(
+            exp_val / one_m_exp * cdf);
     if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials) = beta_val * rep_deriv;
     }

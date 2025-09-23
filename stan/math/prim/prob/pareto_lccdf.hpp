@@ -60,17 +60,16 @@ return_type_t<T_y, T_scale, T_shape> pareto_lccdf(const T_y& y,
     return ops_partials.build(negative_infinity());
   }
 
-  auto log_quot = to_ref_if<(is_autodiff_v<T_y>
-                             || is_autodiff_v<T_shape>)>(
+  auto log_quot = to_ref_if<(is_autodiff_v<T_y> || is_autodiff_v<T_shape>)>(
       log(y_min_val / y_val));
 
   T_partials_return P = sum(alpha_val * log_quot);
 
   size_t N = max_size(y, y_min, alpha);
   if constexpr (is_any_autodiff_v<T_y, T_scale>) {
-    const auto& alpha_div_y_min = to_ref_if<(
-        is_autodiff_v<T_y> && is_autodiff_v<T_scale>)>(
-        alpha_val / y_min_val);
+    const auto& alpha_div_y_min
+        = to_ref_if<(is_autodiff_v<T_y> && is_autodiff_v<T_scale>)>(
+            alpha_val / y_min_val);
     if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials) = -alpha_div_y_min * exp(log_quot);
     }

@@ -96,12 +96,11 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl> pareto_type_2_cdf(
   results(check_y_nonnegative, check_lambda_positive_finite,
           check_alpha_positive_finite, check_diff_nonnegative, cdf_cl,
           mu_deriv_cl, lambda_deriv_cl, alpha_deriv_cl)
-      = expressions(
-          y_nonnegative_expr, lambda_positive_finite_expr,
-          alpha_positive_finite_expr, diff_nonnegative_expr, cdf_expr,
-          calc_if<is_any_autodiff_v<T_y_cl, T_loc_cl>>(y_deriv1),
-          calc_if<is_autodiff_v<T_scale_cl>>(lambda_deriv1),
-          calc_if<is_autodiff_v<T_shape_cl>>(alpha_deriv1));
+      = expressions(y_nonnegative_expr, lambda_positive_finite_expr,
+                    alpha_positive_finite_expr, diff_nonnegative_expr, cdf_expr,
+                    calc_if<is_any_autodiff_v<T_y_cl, T_loc_cl>>(y_deriv1),
+                    calc_if<is_autodiff_v<T_scale_cl>>(lambda_deriv1),
+                    calc_if<is_autodiff_v<T_shape_cl>>(alpha_deriv1));
 
   T_partials_return cdf = (from_matrix_cl(cdf_cl)).prod();
 

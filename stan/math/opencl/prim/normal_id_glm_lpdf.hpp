@@ -116,8 +116,8 @@ normal_id_glm_lpdf(const T_y_cl& y, const T_x_cl& x, const T_alpha_cl& alpha,
   const int wgs = y_scaled_sq_sum_expr.rows();
 
   constexpr bool need_mu_derivative
-      = is_any_autodiff_v<T_x_cl, T_beta_cl>
-        || (is_autodiff_v<T_alpha_cl> && is_alpha_vector)
+      = is_any_autodiff_v<
+            T_x_cl, T_beta_cl> || (is_autodiff_v<T_alpha_cl> && is_alpha_vector)
         || (is_autodiff_v<T_y_cl> && is_y_vector);
   matrix_cl<double> mu_derivative_cl(need_mu_derivative ? N : 0, 1);
   constexpr bool need_mu_derivative_sum

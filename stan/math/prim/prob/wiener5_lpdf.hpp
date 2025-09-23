@@ -676,7 +676,8 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
                         const double& precision_derivatives = 1e-4) {
   using T_partials_return = partials_return_t<T_y, T_a, T_t0, T_w, T_v, T_sv>;
   using ret_t = return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv>;
-  if constexpr (!include_summand<propto, T_y, T_a, T_t0, T_w, T_v, T_sv>::value) {
+  if constexpr (!include_summand<propto, T_y, T_a, T_t0, T_w, T_v,
+                                 T_sv>::value) {
     return ret_t(0.0);
   }
   using T_y_ref = ref_type_t<T_y>;

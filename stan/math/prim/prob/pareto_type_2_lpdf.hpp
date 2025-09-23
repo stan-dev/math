@@ -60,8 +60,8 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
     return 0.0;
   }
 
-  const auto& log1p_scaled_diff = to_ref_if<is_autodiff_v<T_shape>>(
-      log1p((y_val - mu_val) / lambda_val));
+  const auto& log1p_scaled_diff
+      = to_ref_if<is_autodiff_v<T_shape>>(log1p((y_val - mu_val) / lambda_val));
 
   size_t N = max_size(y, mu, lambda, alpha);
   T_partials_return logp(0.0);
@@ -79,15 +79,14 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
       = make_partials_propagator(y_ref, mu_ref, lambda_ref, alpha_ref);
 
   if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale>) {
-    const auto& inv_sum = to_ref_if<(is_any_autodiff_v<T_y, T_loc>
-                                     && is_autodiff_v<T_scale>)>(
-        inv(lambda_val + y_val - mu_val));
+    const auto& inv_sum
+        = to_ref_if<(is_any_autodiff_v<T_y, T_loc> && is_autodiff_v<T_scale>)>(
+            inv(lambda_val + y_val - mu_val));
     const auto& alpha_div_sum
-        = to_ref_if<(is_any_autodiff_v<T_y, T_loc>
-                     && is_autodiff_v<T_scale>)>(alpha_val * inv_sum);
+        = to_ref_if<(is_any_autodiff_v<T_y, T_loc> && is_autodiff_v<T_scale>)>(
+            alpha_val * inv_sum);
     if constexpr (is_any_autodiff_v<T_y, T_loc>) {
-      auto deriv_1_2 = to_ref_if<(is_autodiff_v<T_y>
-                                  && is_autodiff_v<T_loc>)>(
+      auto deriv_1_2 = to_ref_if<(is_autodiff_v<T_y> && is_autodiff_v<T_loc>)>(
           inv_sum + alpha_div_sum);
       if constexpr (is_autodiff_v<T_y>) {
         partials<0>(ops_partials) = -deriv_1_2;

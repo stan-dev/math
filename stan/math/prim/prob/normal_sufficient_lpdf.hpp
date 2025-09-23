@@ -116,10 +116,10 @@ return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
   auto ops_partials
       = make_partials_propagator(y_ref, s_squared_ref, mu_ref, sigma_ref);
   if constexpr (is_any_autodiff_v<T_y, T_loc>) {
-    auto common_derivative = to_ref_if<(is_autodiff_v<T_loc>
-                                        && is_autodiff_v<T_y>)>(
-        N / max_size(y_bar, mu, n_obs, sigma) * n_obs_val / sigma_squared
-        * diff);
+    auto common_derivative
+        = to_ref_if<(is_autodiff_v<T_loc> && is_autodiff_v<T_y>)>(
+            N / max_size(y_bar, mu, n_obs, sigma) * n_obs_val / sigma_squared
+            * diff);
     if constexpr (is_autodiff_v<T_loc>) {
       partials<2>(ops_partials) = -common_derivative;
     }

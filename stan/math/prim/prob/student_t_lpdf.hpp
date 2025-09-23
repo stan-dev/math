@@ -98,10 +98,10 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lpdf(const T_y& y,
       = to_ref_if<include_summand<propto, T_dof>::value>(0.5 * nu_val);
   const auto& square_y_scaled = square((y_val - mu_val) / sigma_val);
   const auto& square_y_scaled_over_nu
-      = to_ref_if<is_any_autodiff_v<T_y, T_dof, T_loc, T_scale>>(
-          square_y_scaled / nu_val);
-  const auto& log1p_val = to_ref_if<is_autodiff_v<T_dof>>(
-      log1p(square_y_scaled_over_nu));
+      = to_ref_if<is_any_autodiff_v<T_y, T_dof, T_loc, T_scale>>(square_y_scaled
+                                                                 / nu_val);
+  const auto& log1p_val
+      = to_ref_if<is_autodiff_v<T_dof>>(log1p(square_y_scaled_over_nu));
 
   size_t N = max_size(y, nu, mu, sigma);
   T_partials_return logp = -sum((half_nu + 0.5) * log1p_val);
@@ -119,8 +119,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lpdf(const T_y& y,
 
   if constexpr (is_any_autodiff_v<T_y, T_loc>) {
     const auto& square_sigma = square(sigma_val);
-    auto deriv_y_mu = to_ref_if<(is_autodiff_v<T_y>
-                                 && is_autodiff_v<T_loc>)>(
+    auto deriv_y_mu = to_ref_if<(is_autodiff_v<T_y> && is_autodiff_v<T_loc>)>(
         (nu_val + 1) * (y_val - mu_val)
         / ((1 + square_y_scaled_over_nu) * square_sigma * nu_val));
     if constexpr (is_autodiff_v<T_y>) {
@@ -131,10 +130,11 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lpdf(const T_y& y,
     }
   }
   if constexpr (is_any_autodiff_v<T_dof, T_scale>) {
-    const auto& rep_deriv = to_ref_if<(is_autodiff_v<T_dof>
-                                       && is_autodiff_v<T_scale>)>(
-        (nu_val + 1) * square_y_scaled_over_nu / (1 + square_y_scaled_over_nu)
-        - 1);
+    const auto& rep_deriv
+        = to_ref_if<(is_autodiff_v<T_dof> && is_autodiff_v<T_scale>)>(
+            (nu_val + 1) * square_y_scaled_over_nu
+                / (1 + square_y_scaled_over_nu)
+            - 1);
     if constexpr (is_autodiff_v<T_dof>) {
       const auto& digamma_half_nu_plus_half = digamma(half_nu + 0.5);
       const auto& digamma_half_nu = digamma(half_nu);

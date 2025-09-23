@@ -113,18 +113,18 @@ skew_double_exponential_cdf(const T_y_cl& y, const T_loc_cl& mu,
 
   results(check_y_not_nan, check_mu_finite, check_sigma_positive_finite,
           check_tau_bounded, cdf_cl, mu_deriv_cl, sigma_deriv_cl, tau_deriv_cl)
-      = expressions(
-          y_not_nan_expr, mu_finite_expr, sigma_positive_finite_expr,
-          tau_bounded_expr, cdf_expr,
-          calc_if<is_any_autodiff_v<T_y_cl, T_loc_cl>>(y_deriv1),
-          calc_if<is_autodiff_v<T_scale_cl>>(sigma_deriv1),
-          calc_if<is_autodiff_v<T_skewness_cl>>(tau_deriv1));
+      = expressions(y_not_nan_expr, mu_finite_expr, sigma_positive_finite_expr,
+                    tau_bounded_expr, cdf_expr,
+                    calc_if<is_any_autodiff_v<T_y_cl, T_loc_cl>>(y_deriv1),
+                    calc_if<is_autodiff_v<T_scale_cl>>(sigma_deriv1),
+                    calc_if<is_autodiff_v<T_skewness_cl>>(tau_deriv1));
 
   T_partials_return cdf = (from_matrix_cl(cdf_cl)).prod();
 
   auto ops_partials
       = make_partials_propagator(y_col, mu_col, sigma_col, tau_col);
-  if constexpr (is_any_autodiff_v<T_y_cl, T_loc_cl, T_scale_cl, T_skewness_cl>) {
+  if constexpr (is_any_autodiff_v<T_y_cl, T_loc_cl, T_scale_cl,
+                                  T_skewness_cl>) {
     auto y_deriv = mu_deriv_cl * cdf;
     auto mu_deriv = -y_deriv;
     auto sigma_deriv = sigma_deriv_cl * cdf;

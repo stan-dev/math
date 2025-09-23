@@ -79,8 +79,7 @@ return_type_t<T_y, T_shape, T_scale> weibull_lpdf(const T_y& y,
   const auto& log_sigma
       = to_ref_if<include_summand<propto, T_shape, T_scale>::value>(
           log(sigma_val));
-  const auto& inv_sigma
-      = to_ref_if<is_autodiff_v<T_scale>>(inv(sigma_val));
+  const auto& inv_sigma = to_ref_if<is_autodiff_v<T_scale>>(inv(sigma_val));
   const auto& y_div_sigma_pow_alpha
       = to_ref_if<is_any_autodiff_v<T_y, T_shape, T_scale>>(
           pow(y_val * inv_sigma, alpha_val));

@@ -55,8 +55,8 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lcdf(
   check_positive_finite(function, "Shape parameter", alpha_val);
   check_greater_or_equal(function, "Random variable", y_val, mu_val);
 
-  const auto& temp = to_ref_if<is_autodiff_v<T_shape>>(
-      1 + (y_val - mu_val) / lambda_val);
+  const auto& temp
+      = to_ref_if<is_autodiff_v<T_shape>>(1 + (y_val - mu_val) / lambda_val);
   const auto& p1_pow_alpha
       = to_ref_if<is_any_autodiff_v<T_y, T_loc, T_scale, T_shape>>(
           pow(temp, alpha_val));
@@ -67,15 +67,14 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lcdf(
 
   if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale, T_shape>) {
     const auto& inv_p1_pow_alpha_minus_one
-        = to_ref_if<(is_any_autodiff_v<T_y, T_loc, T_scale, T_shape>
-                     && is_autodiff_v<T_shape>)>(
+        = to_ref_if<(is_any_autodiff_v<T_y, T_loc, T_scale,
+                                       T_shape> && is_autodiff_v<T_shape>)>(
             inv(p1_pow_alpha - 1));
     if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale, T_shape>) {
-      auto grad_1_2 = to_ref_if<(is_autodiff_v<T_loc>
-                                 + is_autodiff_v<T_scale>
-                                 + is_autodiff_v<T_y>)
-                                >= 2>(alpha_val * inv_p1_pow_alpha_minus_one
-                                      / (lambda_val - mu_val + y_val));
+      auto grad_1_2 = to_ref_if<
+          (is_autodiff_v<T_loc> + is_autodiff_v<T_scale> + is_autodiff_v<T_y>)
+          >= 2>(alpha_val * inv_p1_pow_alpha_minus_one
+                / (lambda_val - mu_val + y_val));
       if constexpr (is_autodiff_v<T_loc>) {
         partials<1>(ops_partials) = -grad_1_2;
       }

@@ -81,11 +81,10 @@ return_type_t<T_y, T_loc, T_scale> gumbel_lpdf(const T_y& y, const T_loc& mu,
   }
 
   if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale>) {
-    const auto& scaled_diff
-        = to_ref_if<is_autodiff_v<T_loc>
-                        + is_autodiff_v<T_scale>
-                        + is_autodiff_v<T_y>
-                    >= 2>(inv_beta * exp_y_m_mu_over_beta - inv_beta);
+    const auto& scaled_diff = to_ref_if<
+        is_autodiff_v<
+            T_loc> + is_autodiff_v<T_scale> + is_autodiff_v<T_y> >= 2>(
+        inv_beta * exp_y_m_mu_over_beta - inv_beta);
     if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials) = scaled_diff;
     }

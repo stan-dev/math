@@ -62,10 +62,10 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lccdf(
     }
   }
 
-  VectorBuilder<is_autodiff_v<T_dof>, T_partials_return, T_dof>
-      gamma_vec(math::size(nu));
-  VectorBuilder<is_autodiff_v<T_dof>, T_partials_return, T_dof>
-      digamma_vec(math::size(nu));
+  VectorBuilder<is_autodiff_v<T_dof>, T_partials_return, T_dof> gamma_vec(
+      math::size(nu));
+  VectorBuilder<is_autodiff_v<T_dof>, T_partials_return, T_dof> digamma_vec(
+      math::size(nu));
 
   if constexpr (is_autodiff_v<T_dof>) {
     for (size_t i = 0; i < stan::math::size(nu); i++) {

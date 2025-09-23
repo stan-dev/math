@@ -81,9 +81,8 @@ return_type_t<T_y, T_scale, T_shape> loglogistic_lpdf(const T_y& y,
       = to_ref_if<is_autodiff_v<T_shape>>(y_val * inv_alpha);
   const auto& y_div_alpha_pow_beta
       = to_ref_if<is_autodiff_v<T_shape>>(pow(y_div_alpha, beta_val));
-  const auto& log1_arg
-      = to_ref_if<is_any_autodiff_v<T_y, T_scale, T_shape>>(
-          1 + y_div_alpha_pow_beta);
+  const auto& log1_arg = to_ref_if<is_any_autodiff_v<T_y, T_scale, T_shape>>(
+      1 + y_div_alpha_pow_beta);
   const auto& log_y = to_ref_if<is_autodiff_v<T_shape>>(log(y_val));
   const auto& log_alpha
       = to_ref_if<include_summand<propto, T_scale, T_shape>::value>(
@@ -103,17 +102,16 @@ return_type_t<T_y, T_scale, T_shape> loglogistic_lpdf(const T_y& y,
   }
 
   if constexpr (is_any_autodiff_v<T_y, T_scale, T_shape>) {
-    const auto& two_inv_log1_arg
-        = to_ref_if<is_autodiff_v<T_y>
-                        + is_autodiff_v<T_scale>
-                        + is_autodiff_v<T_shape>
-                    >= 2>(2.0 * inv(log1_arg));
+    const auto& two_inv_log1_arg = to_ref_if<
+        is_autodiff_v<
+            T_y> + is_autodiff_v<T_scale> + is_autodiff_v<T_shape> >= 2>(
+        2.0 * inv(log1_arg));
     if constexpr (is_any_autodiff_v<T_y, T_scale>) {
-      const auto& y_pow_beta = to_ref_if<is_any_autodiff_v<T_y, T_scale>>(
-          pow(y_val, beta_val));
+      const auto& y_pow_beta
+          = to_ref_if<is_any_autodiff_v<T_y, T_scale>>(pow(y_val, beta_val));
       const auto& inv_alpha_pow_beta
-          = to_ref_if < is_autodiff_v<T_y>
-            && is_autodiff_v<T_scale> > (pow(inv_alpha, beta_val));
+          = to_ref_if < is_autodiff_v<
+                T_y> && is_autodiff_v<T_scale> > (pow(inv_alpha, beta_val));
 
       if constexpr (is_autodiff_v<T_y>) {
         const auto& inv_y = inv(y_val);

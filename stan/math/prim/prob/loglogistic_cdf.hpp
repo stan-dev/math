@@ -81,25 +81,24 @@ return_type_t<T_y, T_scale, T_shape> loglogistic_cdf(const T_y& y,
   const auto& alpha_div_y_pow_beta
       = to_ref_if<is_any_autodiff_v<T_y, T_scale, T_shape>>(
           pow(alpha_div_y, beta_val));
-  const auto& prod_all
-      = to_ref_if<is_any_autodiff_v<T_y, T_scale, T_shape>>(
-          1 / (1 + alpha_div_y_pow_beta));
+  const auto& prod_all = to_ref_if<is_any_autodiff_v<T_y, T_scale, T_shape>>(
+      1 / (1 + alpha_div_y_pow_beta));
 
   T_partials_return cdf = prod(prod_all);
 
   if constexpr (is_any_autodiff_v<T_y, T_scale, T_shape>) {
-    const auto& prod_all_sq = to_ref_if<is_autodiff_v<T_y>
-                                            + is_autodiff_v<T_scale>
-                                            + is_autodiff_v<T_shape>
-                                        >= 2>(square(prod_all));
-    const auto& cdf_div_elt = to_ref_if<is_autodiff_v<T_y>
-                                            + is_autodiff_v<T_scale>
-                                            + is_autodiff_v<T_shape>
-                                        >= 2>(cdf / prod_all);
+    const auto& prod_all_sq = to_ref_if<
+        is_autodiff_v<
+            T_y> + is_autodiff_v<T_scale> + is_autodiff_v<T_shape> >= 2>(
+        square(prod_all));
+    const auto& cdf_div_elt = to_ref_if<
+        is_autodiff_v<
+            T_y> + is_autodiff_v<T_scale> + is_autodiff_v<T_shape> >= 2>(
+        cdf / prod_all);
     if constexpr (is_any_autodiff_v<T_y, T_scale>) {
-      const auto& alpha_div_times_beta = to_ref_if<
-          is_autodiff_v<T_y> + is_autodiff_v<T_scale> == 2>(
-          alpha_div_y_pow_beta * beta_val);
+      const auto& alpha_div_times_beta
+          = to_ref_if<is_autodiff_v<T_y> + is_autodiff_v<T_scale> == 2>(
+              alpha_div_y_pow_beta * beta_val);
       if constexpr (is_autodiff_v<T_y>) {
         const auto& y_deriv = alpha_div_times_beta / y_val * prod_all_sq;
         partials<0>(ops_partials) = y_deriv * cdf_div_elt;

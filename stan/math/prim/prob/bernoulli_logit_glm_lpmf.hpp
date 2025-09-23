@@ -99,8 +99,8 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
 
   const auto& y_val_vec = as_column_vector_or_scalar(y_val);
   const auto& alpha_val_vec = as_column_vector_or_scalar(alpha_val);
-  const auto& beta_val_vec = to_ref_if<is_autodiff_v<T_x>>(
-      as_column_vector_or_scalar(beta_val));
+  const auto& beta_val_vec
+      = to_ref_if<is_autodiff_v<T_x>>(as_column_vector_or_scalar(beta_val));
 
   auto signs = to_ref_if<is_any_autodiff_v<T_beta, T_x, T_alpha>>(
       2 * as_array_or_scalar(y_val_vec) - 1);

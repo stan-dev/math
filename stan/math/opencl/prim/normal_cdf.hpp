@@ -83,10 +83,10 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> normal_cdf(
 
   results(check_y_not_nan, check_mu_finite, check_sigma_positive, cdf_cl,
           mu_deriv_cl, sigma_deriv_cl)
-      = expressions(
-          y_not_nan_expr, mu_finite_expr, sigma_positive_expr, cdf_expr,
-          calc_if<is_any_autodiff_v<T_y_cl, T_loc_cl>>(mu_deriv_tmp),
-          calc_if<is_autodiff_v<T_scale_cl>>(sigma_deriv_tmp));
+      = expressions(y_not_nan_expr, mu_finite_expr, sigma_positive_expr,
+                    cdf_expr,
+                    calc_if<is_any_autodiff_v<T_y_cl, T_loc_cl>>(mu_deriv_tmp),
+                    calc_if<is_autodiff_v<T_scale_cl>>(sigma_deriv_tmp));
 
   T_partials_return cdf = (from_matrix_cl(cdf_cl)).prod();
 

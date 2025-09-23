@@ -89,13 +89,12 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf(
   T_partials_return cdf_log = sum(log(cdf_n));
 
   if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale, T_inv_scale>) {
-    const auto& exp_term_2
-        = to_ref_if<(is_any_autodiff_v<T_y, T_loc, T_scale>
-                     && is_autodiff_v<T_inv_scale>)>(
-            exp(-square(scaled_diff_diff)));
+    const auto& exp_term_2 = to_ref_if<(
+        is_any_autodiff_v<T_y, T_loc, T_scale> && is_autodiff_v<T_inv_scale>)>(
+        exp(-square(scaled_diff_diff)));
     if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale>) {
-      constexpr bool need_deriv_refs = is_any_autodiff_v<T_y, T_loc>
-                                       && is_autodiff_v<T_scale>;
+      constexpr bool need_deriv_refs
+          = is_any_autodiff_v<T_y, T_loc> && is_autodiff_v<T_scale>;
       const auto& deriv_1
           = to_ref_if<need_deriv_refs>(lambda_val * exp_term * erf_calc);
       const auto& deriv_2 = to_ref_if<need_deriv_refs>(
@@ -105,9 +104,9 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf(
       const auto& deriv_3 = to_ref_if<need_deriv_refs>(
           INV_SQRT_TWO_PI * exp_m_sq_scaled_diff * inv_sigma);
       if constexpr (is_any_autodiff_v<T_y, T_loc>) {
-        const auto& deriv = to_ref_if<(is_autodiff_v<T_loc>
-                                       && is_autodiff_v<T_y>)>(
-            (deriv_1 - deriv_2 + deriv_3) / cdf_n);
+        const auto& deriv
+            = to_ref_if<(is_autodiff_v<T_loc> && is_autodiff_v<T_y>)>(
+                (deriv_1 - deriv_2 + deriv_3) / cdf_n);
         if constexpr (is_autodiff_v<T_y>) {
           partials<0>(ops_partials) = deriv;
         }

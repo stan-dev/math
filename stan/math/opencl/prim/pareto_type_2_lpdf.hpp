@@ -109,8 +109,7 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl> pareto_type_2_lpdf(
           check_alpha_positive_finite, logp_cl, y_deriv_cl, mu_deriv_cl,
           lambda_deriv_cl, alpha_deriv_cl)
       = expressions(y_ge_mu, lambda_positive_finite, alpha_positive_finite,
-                    logp_expr,
-                    calc_if<is_autodiff_v<T_y_cl>>(-deriv_y_mu),
+                    logp_expr, calc_if<is_autodiff_v<T_y_cl>>(-deriv_y_mu),
                     calc_if<is_autodiff_v<T_loc_cl>>(deriv_y_mu),
                     calc_if<is_autodiff_v<T_scale_cl>>(deriv_lambda),
                     calc_if<is_autodiff_v<T_shape_cl>>(deriv_alpha));

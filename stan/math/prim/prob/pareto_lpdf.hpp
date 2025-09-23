@@ -80,8 +80,7 @@ return_type_t<T_y, T_scale, T_shape> pareto_lpdf(const T_y& y,
         = alpha_val / y_min_val * N / max_size(alpha, y_min);
   }
   if constexpr (include_summand<propto, T_scale, T_shape>::value) {
-    const auto& log_y_min
-        = to_ref_if<is_autodiff_v<T_shape>>(log(y_min_val));
+    const auto& log_y_min = to_ref_if<is_autodiff_v<T_shape>>(log(y_min_val));
     logp += sum(alpha_val * log_y_min) * N / max_size(alpha, y_min);
     if constexpr (is_autodiff_v<T_shape>) {
       partials<2>(ops_partials) = inv(alpha_val) + log_y_min - log_y;

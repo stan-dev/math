@@ -73,8 +73,7 @@ return_type_t<T_y, T_loc, T_scale> cauchy_lpdf(const T_y& y, const T_loc& mu,
 
   size_t N = max_size(y, mu, sigma);
 
-  const auto& inv_sigma
-      = to_ref_if<is_autodiff_v<T_scale>>(inv(sigma_val));
+  const auto& inv_sigma = to_ref_if<is_autodiff_v<T_scale>>(inv(sigma_val));
   const auto& y_minus_mu
       = to_ref_if<is_any_autodiff_v<T_y, T_loc, T_scale>>(y_val - mu_val);
 
@@ -92,8 +91,7 @@ return_type_t<T_y, T_loc, T_scale> cauchy_lpdf(const T_y& y, const T_loc& mu,
     const auto& y_minus_mu_squared
         = to_ref_if<is_autodiff_v<T_scale>>(square(y_minus_mu));
     if constexpr (is_any_autodiff_v<T_y, T_loc>) {
-      auto mu_deriv = to_ref_if<(is_autodiff_v<T_y>
-                                 && is_autodiff_v<T_loc>)>(
+      auto mu_deriv = to_ref_if<(is_autodiff_v<T_y> && is_autodiff_v<T_loc>)>(
           2 * y_minus_mu / (sigma_squared + y_minus_mu_squared));
       if constexpr (is_autodiff_v<T_y>) {
         if constexpr (is_vector<T_y>::value) {

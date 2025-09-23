@@ -64,10 +64,10 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_cdf(const T_y& y,
 
   T_partials_return digammaHalf = 0;
 
-  VectorBuilder<is_autodiff_v<T_dof>, T_partials_return, T_dof>
-      digamma_vec(math::size(nu));
-  VectorBuilder<is_autodiff_v<T_dof>, T_partials_return, T_dof>
-      digammaNu_vec(math::size(nu));
+  VectorBuilder<is_autodiff_v<T_dof>, T_partials_return, T_dof> digamma_vec(
+      math::size(nu));
+  VectorBuilder<is_autodiff_v<T_dof>, T_partials_return, T_dof> digammaNu_vec(
+      math::size(nu));
   VectorBuilder<is_autodiff_v<T_dof>, T_partials_return, T_dof>
       digammaNuPlusHalf_vec(math::size(nu));
 

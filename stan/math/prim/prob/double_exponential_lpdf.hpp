@@ -71,8 +71,7 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
   check_positive_finite(function, "Scale parameter", sigma_val);
 
   const auto& inv_sigma = to_ref(inv(sigma_val));
-  const auto& y_m_mu
-      = to_ref_if<is_any_autodiff_v<T_y, T_loc>>(y_val - mu_val);
+  const auto& y_m_mu = to_ref_if<is_any_autodiff_v<T_y, T_loc>>(y_val - mu_val);
   const auto& abs_diff_y_mu = fabs(y_m_mu);
   const auto& scaled_diff
       = to_ref_if<is_autodiff_v<T_scale>>(abs_diff_y_mu * inv_sigma);
@@ -89,8 +88,8 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
   if constexpr (is_any_autodiff_v<T_y, T_loc>) {
     const auto& diff_sign = sign(y_m_mu);
     const auto& rep_deriv
-        = to_ref_if<(is_autodiff_v<T_y>
-                     && is_autodiff_v<T_loc>)>(diff_sign * inv_sigma);
+        = to_ref_if<(is_autodiff_v<T_y> && is_autodiff_v<T_loc>)>(diff_sign
+                                                                  * inv_sigma);
     if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials) = -rep_deriv;
     }

@@ -87,10 +87,10 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(T_y&& y, T_loc&& mu,
   }
 
   if constexpr (is_any_autodiff_v<T_y, T_scale, T_loc>) {
-    auto scaled_diff = to_ref_if<is_autodiff_v<T_y>
-                                     + is_autodiff_v<T_scale>
-                                     + is_autodiff_v<T_loc>
-                                 >= 2>(inv_sigma * y_scaled);
+    auto scaled_diff = to_ref_if<
+        is_autodiff_v<
+            T_y> + is_autodiff_v<T_scale> + is_autodiff_v<T_loc> >= 2>(
+        inv_sigma * y_scaled);
     if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials) = -scaled_diff;
     }

@@ -45,8 +45,7 @@ inline var_value<matrix_cl<double>> diag_post_multiply(T1&& v1, T2&& v2) {
           matrix_cl<double> tmp;
           auto&& v1_adj = adjoint_of(v1_arena);
           results(v1_adj, tmp) = expressions(
-              calc_if<is_autodiff_v<std::decay_t<T1>>>(v1_adj
-                                                             + v1_adj_inc),
+              calc_if<is_autodiff_v<std::decay_t<T1>>>(v1_adj + v1_adj_inc),
               calc_if<is_autodiff_v<std::decay_t<T2>>>(v2_adj_inc));
 
           if constexpr (is_autodiff_v<std::decay_t<T2>>) {
@@ -63,8 +62,7 @@ inline var_value<matrix_cl<double>> diag_post_multiply(T1&& v1, T2&& v2) {
           matrix_cl<double> tmp;
           auto&& v1_adj = adjoint_of(v1_arena);
           results(v1_adj, tmp) = expressions(
-              calc_if<is_autodiff_v<std::decay_t<T1>>>(v1_adj
-                                                             + v1_adj_inc),
+              calc_if<is_autodiff_v<std::decay_t<T1>>>(v1_adj + v1_adj_inc),
               calc_if<is_autodiff_v<std::decay_t<T2>>>(v2_adj_inc));
           if constexpr (is_autodiff_v<std::decay_t<T2>>) {
             while (tmp.rows() > 1) {

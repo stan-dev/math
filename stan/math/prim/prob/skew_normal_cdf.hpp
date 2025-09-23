@@ -59,8 +59,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_cdf(
 
   auto diff = to_ref((y_val - mu_val) / sigma_val);
   auto scaled_diff
-      = to_ref_if<is_any_autodiff_v<T_y, T_loc, T_scale>>(diff
-                                                                / SQRT_TWO);
+      = to_ref_if<is_any_autodiff_v<T_y, T_loc, T_scale>>(diff / SQRT_TWO);
   auto erfc_m_scaled_diff = erfc(-scaled_diff);
   auto owens_t_diff_alpha = owens_t(diff, alpha_val);
   auto cdf_ = to_ref(0.5 * erfc_m_scaled_diff - 2 * owens_t_diff_alpha);
@@ -73,8 +72,8 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_cdf(
     if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale>) {
       auto erfc_m_alpha_scaled_diff = erfc(-alpha_val * scaled_diff);
       auto exp_m_scaled_diff_square = exp(-0.5 * diff_square);
-      auto rep_deriv = erfc_m_alpha_scaled_diff * INV_SQRT_TWO_PI
-                      * cdf_quot / sigma_val * std::move(exp_m_scaled_diff_square);
+      auto rep_deriv = erfc_m_alpha_scaled_diff * INV_SQRT_TWO_PI * cdf_quot
+                       / sigma_val * std::move(exp_m_scaled_diff_square);
       if constexpr (is_autodiff_v<T_y>) {
         partials<0>(ops_partials) = rep_deriv;
       }
@@ -89,7 +88,8 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_cdf(
       auto alpha_square = square(alpha_val);
       auto exp_tmp = exp(-0.5 * std::move(diff_square) * (1.0 + alpha_square));
       edge<3>(ops_partials).partials_
-          = -2.0 * std::move(exp_tmp) / ((1 + std::move(alpha_square)) * TWO_PI) * std::move(cdf_quot);
+          = -2.0 * std::move(exp_tmp) / ((1 + std::move(alpha_square)) * TWO_PI)
+            * std::move(cdf_quot);
     }
   }
   return ops_partials.build(cdf);

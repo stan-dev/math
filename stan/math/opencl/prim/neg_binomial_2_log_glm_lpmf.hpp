@@ -174,7 +174,7 @@ neg_binomial_2_log_glm_lpmf(const T_y_cl& y, const T_x_cl& x,
                - lgamma(forward_as<double>(phi_val)));
   }
   if constexpr (include_summand<propto, T_phi_cl>::value && !is_y_vector
-      && !is_phi_vector) {
+                && !is_phi_vector) {
     logp += forward_as<double>(lgamma(y_val + phi_val)) * N;
   }
 

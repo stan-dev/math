@@ -63,9 +63,9 @@ return_type_t<T_y, T_scale> rayleigh_lpdf(const T_y& y, const T_scale& sigma) {
   }
 
   if constexpr (is_any_autodiff_v<T_y, T_scale>) {
-    const auto& scaled_diff = to_ref_if<(is_autodiff_v<T_y>
-                                         && is_autodiff_v<T_scale>)>(
-        inv_sigma * y_over_sigma);
+    const auto& scaled_diff
+        = to_ref_if<(is_autodiff_v<T_y> && is_autodiff_v<T_scale>)>(
+            inv_sigma * y_over_sigma);
     if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials) = inv(y_val) - scaled_diff;
     }

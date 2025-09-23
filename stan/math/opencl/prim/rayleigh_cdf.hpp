@@ -79,9 +79,9 @@ return_type_t<T_y_cl, T_scale_cl> rayleigh_cdf(const T_y_cl& y,
   auto ops_partials = make_partials_propagator(y_col, sigma_col);
 
   if constexpr (is_any_autodiff_v<T_y_cl, T_scale_cl>) {
-    results(y_deriv_cl, sigma_deriv_cl) = expressions(
-        calc_if<is_autodiff_v<T_y_cl>>(y_deriv_cl * cdf),
-        calc_if<is_autodiff_v<T_scale_cl>>(sigma_deriv_cl * cdf));
+    results(y_deriv_cl, sigma_deriv_cl)
+        = expressions(calc_if<is_autodiff_v<T_y_cl>>(y_deriv_cl * cdf),
+                      calc_if<is_autodiff_v<T_scale_cl>>(sigma_deriv_cl * cdf));
     if constexpr (is_autodiff_v<T_y_cl>) {
       partials<0>(ops_partials) = std::move(y_deriv_cl);
     }

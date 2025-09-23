@@ -67,8 +67,7 @@ return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
 
   auto ops_partials = make_partials_propagator(alpha_ref);
 
-  const auto& exp_alpha
-      = to_ref_if<is_autodiff_v<T_log_rate>>(exp(alpha_val));
+  const auto& exp_alpha = to_ref_if<is_autodiff_v<T_log_rate>>(exp(alpha_val));
 
   T_partials_return logp = sum(n_val * alpha_val);
   if constexpr (include_summand<propto, T_log_rate>::value) {

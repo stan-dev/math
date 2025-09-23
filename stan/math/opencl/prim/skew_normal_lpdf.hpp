@@ -121,8 +121,7 @@ inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl> skew_normal_lpdf(
           check_alpha_finite, logp_cl, y_deriv_cl, mu_deriv_cl, sigma_deriv_cl,
           alpha_deriv_cl)
       = expressions(y_not_nan, mu_finite, sigma_positive, alpha_finite,
-                    logp_expr,
-                    calc_if<is_autodiff_v<T_y_cl>>(-y_loc_deriv),
+                    logp_expr, calc_if<is_autodiff_v<T_y_cl>>(-y_loc_deriv),
                     calc_if<is_autodiff_v<T_loc_cl>>(y_loc_deriv),
                     calc_if<is_autodiff_v<T_scale_cl>>(sigma_deriv),
                     calc_if<is_autodiff_v<T_shape_cl>>(alpha_deriv));

@@ -61,11 +61,9 @@ return_type_t<T_location, T_precision> neg_binomial_2_cdf(
     }
   }
 
-  VectorBuilder<is_autodiff_v<T_precision>, T_partials_return,
-                T_precision>
+  VectorBuilder<is_autodiff_v<T_precision>, T_partials_return, T_precision>
       digamma_phi_vec(size_phi);
-  VectorBuilder<is_autodiff_v<T_precision>, T_partials_return, T_n,
-                T_precision>
+  VectorBuilder<is_autodiff_v<T_precision>, T_partials_return, T_n, T_precision>
       digamma_sum_vec(size_n_phi);
 
   if constexpr (is_autodiff_v<T_precision>) {

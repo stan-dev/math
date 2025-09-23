@@ -69,7 +69,8 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
   check_positive_finite(function, "First shape parameter", alpha_val);
   check_positive_finite(function, "Second shape parameter", beta_val);
   check_bounded(function, "Random variable", value_of(y_val), 0, 1);
-  if constexpr (!include_summand<propto, T_y, T_scale_succ, T_scale_fail>::value) {
+  if constexpr (!include_summand<propto, T_y, T_scale_succ,
+                                 T_scale_fail>::value) {
     return 0;
   }
 
@@ -99,13 +100,13 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
 
   if constexpr (include_summand<propto, T_scale_succ, T_scale_fail>::value) {
     const auto& alpha_beta
-        = to_ref_if<is_any_autodiff_v<T_scale_succ, T_scale_fail>>(
-            alpha_val + beta_val);
+        = to_ref_if<is_any_autodiff_v<T_scale_succ, T_scale_fail>>(alpha_val
+                                                                   + beta_val);
     logp += sum(lgamma(alpha_beta)) * N / max_size(alpha, beta);
     if constexpr (is_any_autodiff_v<T_scale_succ, T_scale_fail>) {
       const auto& digamma_alpha_beta
-          = to_ref_if < is_autodiff_v<T_scale_succ>
-            && is_autodiff_v<T_scale_fail> > (digamma(alpha_beta));
+          = to_ref_if < is_autodiff_v<
+                T_scale_succ> && is_autodiff_v<T_scale_fail> > (digamma(alpha_beta));
       if constexpr (is_autodiff_v<T_scale_succ>) {
         edge<1>(ops_partials).partials_
             = log_y + digamma_alpha_beta - digamma(alpha_val);

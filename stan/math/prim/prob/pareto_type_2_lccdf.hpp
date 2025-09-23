@@ -57,15 +57,14 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lccdf(
   auto ops_partials
       = make_partials_propagator(y_ref, mu_ref, lambda_ref, alpha_ref);
 
-  const auto& log_temp = to_ref_if<is_autodiff_v<T_shape>>(
-      log1p((y_val - mu_val) / lambda_val));
+  const auto& log_temp
+      = to_ref_if<is_autodiff_v<T_shape>>(log1p((y_val - mu_val) / lambda_val));
   T_partials_return P = -sum(alpha_val * log_temp);
 
   if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale>) {
-    auto rep_deriv = to_ref_if<(is_autodiff_v<T_y>
-                                + is_autodiff_v<T_scale>
-                                + is_autodiff_v<T_loc>)
-                               >= 2>(alpha_val / (y_val - mu_val + lambda_val));
+    auto rep_deriv = to_ref_if<
+        (is_autodiff_v<T_y> + is_autodiff_v<T_scale> + is_autodiff_v<T_loc>)
+        >= 2>(alpha_val / (y_val - mu_val + lambda_val));
     if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials) = -rep_deriv;
     }
@@ -83,7 +82,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lccdf(
       using Log_temp_scalar = partials_return_t<T_y, T_loc, T_scale>;
       using Log_temp_array = Eigen::Array<Log_temp_scalar, Eigen::Dynamic, 1>;
       if constexpr (is_vector<T_y>::value || is_vector<T_loc>::value
-          || is_vector<T_scale>::value) {
+                    || is_vector<T_scale>::value) {
         partials<3>(ops_partials) = -forward_as<Log_temp_array>(log_temp);
       } else {
         partials<3>(ops_partials) = Log_temp_array::Constant(

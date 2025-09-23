@@ -75,8 +75,8 @@ return_type_t<T_y_cl, T_inv_scale_cl> exponential_cdf(
   T_partials_return cdf = (from_matrix_cl(cdf_cl)).prod();
 
   auto rep_deriv2 = beta_deriv_cl * cdf;
-  auto y_deriv = elt_multiply(
-      static_select<is_constant_v<T_y_cl>>(0, beta_val), rep_deriv2);
+  auto y_deriv = elt_multiply(static_select<is_constant_v<T_y_cl>>(0, beta_val),
+                              rep_deriv2);
   auto beta_deriv = elt_multiply(
       static_select<is_constant_v<T_inv_scale_cl>>(0, y_val), rep_deriv2);
 

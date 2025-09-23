@@ -57,22 +57,19 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lccdf(const T_y& y,
   }
 
   const auto& log_y = log(y_val);
-  const auto& scaled_diff
-      = to_ref_if<is_any_autodiff_v<T_y, T_loc, T_scale>>(
-          (log_y - mu_val) / (sigma_val * SQRT_TWO));
+  const auto& scaled_diff = to_ref_if<is_any_autodiff_v<T_y, T_loc, T_scale>>(
+      (log_y - mu_val) / (sigma_val * SQRT_TWO));
   const auto& erfc_calc
-      = to_ref_if<is_any_autodiff_v<T_y, T_loc, T_scale>>(
-          erfc(scaled_diff));
+      = to_ref_if<is_any_autodiff_v<T_y, T_loc, T_scale>>(erfc(scaled_diff));
 
   size_t N = max_size(y, mu, sigma);
   T_partials_return ccdf_log = N * LOG_HALF + sum(log(erfc_calc));
 
   if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale>) {
     const auto& exp_m_sq_diff = exp(-scaled_diff * scaled_diff);
-    const auto& rep_deriv = to_ref_if<is_autodiff_v<T_y>
-                                          + is_autodiff_v<T_scale>
-                                          + is_autodiff_v<T_loc>
-                                      >= 2>(
+    const auto& rep_deriv = to_ref_if<
+        is_autodiff_v<
+            T_y> + is_autodiff_v<T_scale> + is_autodiff_v<T_loc> >= 2>(
         SQRT_TWO_OVER_SQRT_PI * exp_m_sq_diff / (sigma_val * erfc_calc));
     if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials) = -rep_deriv / y_val;

@@ -57,8 +57,7 @@ return_type_t<T_y, T_low, T_high> uniform_lcdf(const T_y& y, const T_low& alpha,
   auto ops_partials = make_partials_propagator(y_ref, alpha_ref, beta_ref);
 
   const auto& b_minus_a
-      = to_ref_if<is_any_autodiff_v<T_y, T_low, T_high>>(beta_val
-                                                               - alpha_val);
+      = to_ref_if<is_any_autodiff_v<T_y, T_low, T_high>>(beta_val - alpha_val);
   const auto& y_minus_alpha
       = to_ref_if<is_any_autodiff_v<T_y, T_low>>(y_val - alpha_val);
   const auto& cdf_log_n = y_minus_alpha / b_minus_a;
@@ -66,7 +65,7 @@ return_type_t<T_y, T_low, T_high> uniform_lcdf(const T_y& y, const T_low& alpha,
 
   if constexpr (is_autodiff_v<T_y>) {
     if constexpr (!is_vector<T_y>::value && is_vector<T_high>::value
-        && !is_vector<T_low>::value) {
+                  && !is_vector<T_low>::value) {
       partials<0>(ops_partials) = math::size(beta) * inv(y_minus_alpha);
     } else {
       partials<0>(ops_partials) = inv(y_minus_alpha);
@@ -78,7 +77,7 @@ return_type_t<T_y, T_low, T_high> uniform_lcdf(const T_y& y, const T_low& alpha,
   }
   if constexpr (is_autodiff_v<T_high>) {
     if constexpr (is_vector<T_y>::value && !is_vector<T_low>::value
-        && !is_vector<T_high>::value) {
+                  && !is_vector<T_high>::value) {
       partials<2>(ops_partials) = inv(-b_minus_a) * math::size(y);
     } else {
       partials<2>(ops_partials) = inv(-b_minus_a);

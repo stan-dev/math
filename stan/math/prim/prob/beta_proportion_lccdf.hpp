@@ -76,14 +76,13 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lccdf(const T_y& y,
   size_t size_mu_kappa = max_size(mu, kappa);
   size_t N = max_size(y, mu, kappa);
 
-  VectorBuilder<is_any_autodiff_v<T_loc, T_prec>, T_partials_return,
-                T_loc, T_prec>
-      digamma_mukappa(size_mu_kappa);
-  VectorBuilder<is_any_autodiff_v<T_loc, T_prec>, T_partials_return,
-                T_loc, T_prec>
-      digamma_kappa_mukappa(size_mu_kappa);
-  VectorBuilder<is_any_autodiff_v<T_loc, T_prec>, T_partials_return,
+  VectorBuilder<is_any_autodiff_v<T_loc, T_prec>, T_partials_return, T_loc,
                 T_prec>
+      digamma_mukappa(size_mu_kappa);
+  VectorBuilder<is_any_autodiff_v<T_loc, T_prec>, T_partials_return, T_loc,
+                T_prec>
+      digamma_kappa_mukappa(size_mu_kappa);
+  VectorBuilder<is_any_autodiff_v<T_loc, T_prec>, T_partials_return, T_prec>
       digamma_kappa(size_kappa);
 
   if constexpr (is_any_autodiff_v<T_loc, T_prec>) {

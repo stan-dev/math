@@ -43,8 +43,7 @@ return_type_t<T_y, T_scale> rayleigh_lccdf(const T_y& y, const T_scale& sigma) {
 
   auto ops_partials = make_partials_propagator(y_ref, sigma_ref);
 
-  const auto& inv_sigma
-      = to_ref_if<is_autodiff_v<T_scale>>(inv(sigma_val));
+  const auto& inv_sigma = to_ref_if<is_autodiff_v<T_scale>>(inv(sigma_val));
   const auto& y_div_sigma_square
       = to_ref_if<is_autodiff_v<T_y>>(y_val * inv_sigma * inv_sigma);
   const auto& y_square_div_sigma_square

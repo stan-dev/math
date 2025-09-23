@@ -79,7 +79,8 @@ return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> poisson_log_glm_lpmf(
     return 0;
   }
 
-  if constexpr (!include_summand<propto, T_x_cl, T_alpha_cl, T_beta_cl>::value) {
+  if constexpr (!include_summand<propto, T_x_cl, T_alpha_cl,
+                                 T_beta_cl>::value) {
     return 0;
   }
 

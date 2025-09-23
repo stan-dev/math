@@ -62,19 +62,17 @@ return_type_t<T_y, T_loc, T_scale> gumbel_lcdf(const T_y& y, const T_loc& mu,
 
   auto ops_partials = make_partials_propagator(y_ref, mu_ref, beta_ref);
 
-  const auto& scaled_diff
-      = to_ref_if<is_any_autodiff_v<T_y, T_loc, T_scale>>((mu_val - y_val)
-                                                                / beta_val);
+  const auto& scaled_diff = to_ref_if<is_any_autodiff_v<T_y, T_loc, T_scale>>(
+      (mu_val - y_val) / beta_val);
   const auto& exp_scaled_diff
-      = to_ref_if<is_any_autodiff_v<T_y, T_loc, T_scale>>(
-          exp(scaled_diff));
+      = to_ref_if<is_any_autodiff_v<T_y, T_loc, T_scale>>(exp(scaled_diff));
   T_partials_return cdf_log = -sum(exp_scaled_diff);
 
   if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale>) {
-    const auto& rep_deriv = to_ref_if<is_autodiff_v<T_loc>
-                                          + is_autodiff_v<T_scale>
-                                          + is_autodiff_v<T_y>
-                                      >= 2>(exp_scaled_diff / beta_val);
+    const auto& rep_deriv = to_ref_if<
+        is_autodiff_v<
+            T_loc> + is_autodiff_v<T_scale> + is_autodiff_v<T_y> >= 2>(
+        exp_scaled_diff / beta_val);
     if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials) = rep_deriv;
     }

@@ -69,8 +69,8 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_cdf(
   }
 
   const auto& inv_sigma = to_ref(inv(sigma_val));
-  const auto& scaled_diff = to_ref_if<is_autodiff_v<T_scale>>(
-      (y_val - mu_val) * inv_sigma);
+  const auto& scaled_diff
+      = to_ref_if<is_autodiff_v<T_scale>>((y_val - mu_val) * inv_sigma);
   const auto& exp_scaled_diff = to_ref(exp(scaled_diff));
 
   T_rep_deriv rep_deriv;

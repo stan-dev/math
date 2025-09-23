@@ -116,8 +116,7 @@ exp_mod_normal_lccdf(const T_y_cl& y, const T_loc_cl& mu,
           ccdf_log_cl, y_deriv_cl, mu_deriv_cl, sigma_deriv_cl, lambda_deriv_cl)
       = expressions(y_not_nan_expr, mu_finite_expr, sigma_positive_finite_expr,
                     lambda_positive_finite_expr, any_y_neg_inf, any_y_pos_inf,
-                    ccdf_log_expr,
-                    calc_if<is_autodiff_v<T_y_cl>>(y_deriv),
+                    ccdf_log_expr, calc_if<is_autodiff_v<T_y_cl>>(y_deriv),
                     calc_if<is_autodiff_v<T_loc_cl>>(mu_deriv),
                     calc_if<is_autodiff_v<T_scale_cl>>(sigma_deriv),
                     calc_if<is_autodiff_v<T_inv_scale_cl>>(lambda_deriv));

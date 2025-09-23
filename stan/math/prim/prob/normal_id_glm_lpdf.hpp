@@ -95,7 +95,8 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   if (size_zero(y, sigma)) {
     return 0;
   }
-  if constexpr (!include_summand<propto, T_y, T_x, T_alpha, T_beta, T_scale>::value) {
+  if constexpr (!include_summand<propto, T_y, T_x, T_alpha, T_beta,
+                                 T_scale>::value) {
     return 0;
   }
 
@@ -111,8 +112,8 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
 
   const auto& y_val_vec = as_column_vector_or_scalar(y_val);
   const auto& alpha_val_vec = as_column_vector_or_scalar(alpha_val);
-  const auto& beta_val_vec = to_ref_if<is_autodiff_v<T_x>>(
-      as_column_vector_or_scalar(beta_val));
+  const auto& beta_val_vec
+      = to_ref_if<is_autodiff_v<T_x>>(as_column_vector_or_scalar(beta_val));
 
   T_scale_val inv_sigma = 1.0 / as_array_or_scalar(sigma_val_vec);
 

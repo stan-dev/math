@@ -111,13 +111,13 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_inv_scale_cl> exp_mod_normal_cdf(
   results(check_y_not_nan, check_mu_finite, check_sigma_positive_finite,
           check_lambda_positive_finite, any_y_neg_inf_cl, cdf_cl, y_deriv_cl,
           mu_deriv_cl, sigma_deriv_cl, lambda_deriv_cl)
-      = expressions(
-          y_not_nan_expr, mu_finite_expr, sigma_positive_finite_expr,
-          lambda_positive_finite_expr, any_y_neg_inf, cdf_expr,
-          calc_if<is_any_autodiff_v<T_y_cl, T_loc_cl, T_scale_cl, T_inv_scale_cl>>(cdf_n),
-          calc_if<is_any_autodiff_v<T_y_cl, T_loc_cl>>(mu_deriv1),
-          calc_if<is_autodiff_v<T_scale_cl>>(sigma_deriv1),
-          calc_if<is_autodiff_v<T_inv_scale_cl>>(lambda_deriv1));
+      = expressions(y_not_nan_expr, mu_finite_expr, sigma_positive_finite_expr,
+                    lambda_positive_finite_expr, any_y_neg_inf, cdf_expr,
+                    calc_if<is_any_autodiff_v<T_y_cl, T_loc_cl, T_scale_cl,
+                                              T_inv_scale_cl>>(cdf_n),
+                    calc_if<is_any_autodiff_v<T_y_cl, T_loc_cl>>(mu_deriv1),
+                    calc_if<is_autodiff_v<T_scale_cl>>(sigma_deriv1),
+                    calc_if<is_autodiff_v<T_inv_scale_cl>>(lambda_deriv1));
 
   if (from_matrix_cl(any_y_neg_inf_cl).maxCoeff()) {
     return 0.0;
@@ -127,7 +127,8 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_inv_scale_cl> exp_mod_normal_cdf(
 
   auto ops_partials
       = make_partials_propagator(y_col, mu_col, sigma_col, lambda_col);
-  if constexpr (is_any_autodiff_v<T_y_cl, T_loc_cl, T_scale_cl, T_inv_scale_cl>) {
+  if constexpr (is_any_autodiff_v<T_y_cl, T_loc_cl, T_scale_cl,
+                                  T_inv_scale_cl>) {
     auto mu_deriv = elt_multiply(
         static_select<is_constant_all<T_y_cl, T_loc_cl>::value>(0, mu_deriv_cl),
         cdf);
@@ -135,15 +136,13 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_inv_scale_cl> exp_mod_normal_cdf(
     auto sigma_deriv = elt_multiply(
         static_select<is_constant_v<T_scale_cl>>(0, sigma_deriv_cl), cdf);
     auto lambda_deriv = elt_multiply(
-        static_select<is_constant_v<T_inv_scale_cl>>(0, lambda_deriv_cl),
-        cdf);
+        static_select<is_constant_v<T_inv_scale_cl>>(0, lambda_deriv_cl), cdf);
 
     results(y_deriv_cl, mu_deriv_cl, sigma_deriv_cl, lambda_deriv_cl)
-        = expressions(
-            calc_if<is_autodiff_v<T_y_cl>>(y_deriv),
-            calc_if<is_autodiff_v<T_loc_cl>>(mu_deriv),
-            calc_if<is_autodiff_v<T_scale_cl>>(sigma_deriv),
-            calc_if<is_autodiff_v<T_inv_scale_cl>>(lambda_deriv));
+        = expressions(calc_if<is_autodiff_v<T_y_cl>>(y_deriv),
+                      calc_if<is_autodiff_v<T_loc_cl>>(mu_deriv),
+                      calc_if<is_autodiff_v<T_scale_cl>>(sigma_deriv),
+                      calc_if<is_autodiff_v<T_inv_scale_cl>>(lambda_deriv));
 
     if constexpr (is_autodiff_v<T_y_cl>) {
       partials<0>(ops_partials) = std::move(y_deriv_cl);

@@ -87,8 +87,7 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
 
   const auto& x_val = to_ref_if<is_autodiff_v<T_beta>>(value_of(x_ref));
   const auto& alpha_val = value_of(alpha_ref);
-  const auto& beta_val
-      = to_ref_if<is_autodiff_v<T_x>>(value_of(beta_ref));
+  const auto& beta_val = to_ref_if<is_autodiff_v<T_x>>(value_of(beta_ref));
 
   const auto& alpha_val_vec = as_column_vector_or_scalar(alpha_val).transpose();
 

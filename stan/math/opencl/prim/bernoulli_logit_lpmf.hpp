@@ -72,8 +72,7 @@ return_type_t<T_prob_cl> bernoulli_logit_lpmf(const T_n_cl& n,
   matrix_cl<double> deriv_cl;
 
   results(logp_cl, deriv_cl, check_n_bounded, check_theta_not_nan)
-      = expressions(logp_expr,
-                    calc_if<is_autodiff_v<T_prob_cl>>(deriv_expr),
+      = expressions(logp_expr, calc_if<is_autodiff_v<T_prob_cl>>(deriv_expr),
                     n_bounded_expr, theta_not_nan_expr);
 
   T_partials_return logp = sum(from_matrix_cl(logp_cl));

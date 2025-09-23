@@ -63,24 +63,22 @@ return_type_t<T_y, T_scale, T_shape> pareto_lcdf(const T_y& y,
     return ops_partials.build(0.0);
   }
 
-  const auto& log_quot
-      = to_ref_if<is_any_autodiff_v<T_y, T_scale, T_shape>>(
-          log(y_min_val / y_val));
-  const auto& exp_prod
-      = to_ref_if<is_any_autodiff_v<T_y, T_scale, T_shape>>(
-          exp(alpha_val * log_quot));
+  const auto& log_quot = to_ref_if<is_any_autodiff_v<T_y, T_scale, T_shape>>(
+      log(y_min_val / y_val));
+  const auto& exp_prod = to_ref_if<is_any_autodiff_v<T_y, T_scale, T_shape>>(
+      exp(alpha_val * log_quot));
   // TODO(Andrew) Further simplify derivatives and log1m_exp below
   T_partials_return P = sum(log1m(exp_prod));
 
   if constexpr (is_any_autodiff_v<T_y, T_scale, T_shape>) {
-    const auto& common_deriv = to_ref_if<(is_any_autodiff_v<T_y, T_scale>
-                                          && is_autodiff_v<T_shape>)>(
+    const auto& common_deriv = to_ref_if<(
+        is_any_autodiff_v<T_y, T_scale> && is_autodiff_v<T_shape>)>(
         exp_prod / (1 - exp_prod));
     if constexpr (is_any_autodiff_v<T_y, T_scale>) {
       const auto& y_min_inv = inv(y_min_val);
-      auto common_deriv2 = to_ref_if<(is_autodiff_v<T_y>
-                                      && is_autodiff_v<T_scale>)>(
-          -alpha_val * y_min_inv * common_deriv);
+      auto common_deriv2
+          = to_ref_if<(is_autodiff_v<T_y> && is_autodiff_v<T_scale>)>(
+              -alpha_val * y_min_inv * common_deriv);
       if constexpr (is_autodiff_v<T_y>) {
         partials<0>(ops_partials) = -common_deriv2 * exp(log_quot);
       }

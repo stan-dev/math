@@ -138,7 +138,8 @@ return_type_t<T_y, T_dof, T_loc, T_covar> multi_student_t_cholesky_lpdf(
     lp += -0.5 * num_dims * LOG_PI * size_vec;
   }
 
-  if constexpr (include_summand<propto, T_y, T_dof, T_loc, T_covar_elem>::value) {
+  if constexpr (include_summand<propto, T_y, T_dof, T_loc,
+                                T_covar_elem>::value) {
     T_partials_return nu_val = value_of(nu_ref);
     T_partials_return inv_nu = inv(nu_val);
     T_partials_return nu_plus_dims = nu_val + num_dims;
@@ -298,7 +299,8 @@ return_type_t<T_y, T_dof, T_loc, T_covar> multi_student_t_cholesky_lpdf(
     lp += -0.5 * size_y * LOG_PI;
   }
 
-  if constexpr (include_summand<propto, T_y, T_dof, T_loc, T_covar_elem>::value) {
+  if constexpr (include_summand<propto, T_y, T_dof, T_loc,
+                                T_covar_elem>::value) {
     T_partials_return nu_val = value_of(nu_ref);
     T_partials_return inv_nu = inv(nu_val);
     T_partials_return nu_plus_dims = nu_val + size_y;

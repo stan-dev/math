@@ -80,8 +80,7 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> cauchy_lccdf(
   results(check_y_not_nan, check_mu_finite, check_sigma_positive_finite,
           ccdf_log_cl, y_deriv_cl, mu_deriv_cl, sigma_deriv_cl)
       = expressions(y_not_nan_expr, mu_finite_expr, sigma_positive_finite_expr,
-                    ccdf_log_expr,
-                    calc_if<is_autodiff_v<T_y_cl>>(-rep_deriv),
+                    ccdf_log_expr, calc_if<is_autodiff_v<T_y_cl>>(-rep_deriv),
                     calc_if<is_autodiff_v<T_loc_cl>>(rep_deriv),
                     calc_if<is_autodiff_v<T_scale_cl>>(sigma_deriv));
 

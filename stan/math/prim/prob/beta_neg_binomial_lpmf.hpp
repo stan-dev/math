@@ -104,8 +104,7 @@ inline return_type_t<T_r, T_alpha, T_beta> beta_neg_binomial_lpmf(
                  - (digamma(alpha_vec.val(i)) - digamma_r_alpha);
         }
       }
-      if constexpr (is_autodiff_v<T_beta>
-                    || is_autodiff_v<T_alpha>) {
+      if constexpr (is_autodiff_v<T_beta> || is_autodiff_v<T_alpha>) {
         T_partials_return digamma_alpha_beta
             = digamma(alpha_vec.val(i) + beta_vec.val(i));
         if constexpr (is_autodiff_v<T_beta>) {

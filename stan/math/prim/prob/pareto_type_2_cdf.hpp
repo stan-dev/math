@@ -57,8 +57,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_cdf(
 
   const auto& summed = to_ref_if<is_any_autodiff_v<T_y, T_loc, T_scale>>(
       lambda_val + y_val - mu_val);
-  const auto& temp
-      = to_ref_if<is_autodiff_v<T_shape>>(summed / lambda_val);
+  const auto& temp = to_ref_if<is_autodiff_v<T_shape>>(summed / lambda_val);
   const auto& p1_pow_alpha
       = to_ref_if<is_any_autodiff_v<T_y, T_loc, T_scale, T_shape>>(
           pow(temp, -alpha_val));
@@ -68,16 +67,14 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_cdf(
       = make_partials_propagator(y_ref, mu_ref, lambda_ref, alpha_ref);
 
   if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale, T_shape>) {
-    const auto& P_div_Pn
-        = to_ref_if<(is_any_autodiff_v<T_y, T_loc, T_scale>
-                     && is_autodiff_v<T_shape>)>(
-            P / (1.0 - p1_pow_alpha));
+    const auto& P_div_Pn = to_ref_if<(
+        is_any_autodiff_v<T_y, T_loc, T_scale> && is_autodiff_v<T_shape>)>(
+        P / (1.0 - p1_pow_alpha));
     if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale>) {
-      auto grad_1_2
-          = to_ref_if<is_autodiff_v<T_loc>
-                          + is_autodiff_v<T_scale>
-                          + is_autodiff_v<T_y>
-                      >= 2>(p1_pow_alpha / summed * alpha_val * P_div_Pn);
+      auto grad_1_2 = to_ref_if<
+          is_autodiff_v<
+              T_loc> + is_autodiff_v<T_scale> + is_autodiff_v<T_y> >= 2>(
+          p1_pow_alpha / summed * alpha_val * P_div_Pn);
       if constexpr (is_autodiff_v<T_loc>) {
         partials<1>(ops_partials) = -grad_1_2;
       }

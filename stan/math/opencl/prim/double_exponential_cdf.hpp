@@ -75,11 +75,11 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> double_exponential_cdf(
 
   results(check_y_not_nan, check_mu_finite, check_sigma_positive_finite, cdf_cl,
           mu_deriv_cl, sigma_deriv_cl)
-      = expressions(
-          y_not_nan_expr, mu_finite_expr, sigma_positive_finite_expr, cdf_expr,
-          calc_if<is_any_autodiff_v<T_y_cl, T_loc_cl, T_scale_cl>>(
-              exp_scaled_diff),
-          calc_if<is_autodiff_v<T_scale_cl>>(scaled_diff));
+      = expressions(y_not_nan_expr, mu_finite_expr, sigma_positive_finite_expr,
+                    cdf_expr,
+                    calc_if<is_any_autodiff_v<T_y_cl, T_loc_cl, T_scale_cl>>(
+                        exp_scaled_diff),
+                    calc_if<is_autodiff_v<T_scale_cl>>(scaled_diff));
 
   T_partials_return cdf = (from_matrix_cl(cdf_cl)).prod();
 
@@ -89,9 +89,9 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> double_exponential_cdf(
     auto y_deriv = select(cond, cdf_div_sigma,
                           elt_divide(cdf_div_sigma, (2.0 * mu_deriv_cl - 1.0)));
     auto mu_deriv = -y_deriv;
-    auto sigma_deriv
-        = elt_multiply(mu_deriv, static_select<is_constant_v<T_scale_cl>>(
-                                     mu_deriv_cl, sigma_deriv_cl));
+    auto sigma_deriv = elt_multiply(
+        mu_deriv,
+        static_select<is_constant_v<T_scale_cl>>(mu_deriv_cl, sigma_deriv_cl));
 
     results(mu_deriv_cl, y_deriv_cl, sigma_deriv_cl)
         = expressions(calc_if<is_autodiff_v<T_loc_cl>>(mu_deriv),

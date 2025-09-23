@@ -98,11 +98,10 @@ inline return_type_t<T_y_cl, T_low_cl, T_high_cl> uniform_lpdf(
   results(check_y_not_nan, check_alpha_finite, check_beta_finite,
           check_diff_positive, y_out_of_bounds_cl, logp_cl, alpha_deriv_cl,
           beta_deriv_cl)
-      = expressions(
-          y_not_nan, alpha_finite, beta_finite, diff_positive, y_out_of_bounds,
-          logp_expr,
-          calc_if<is_autodiff_v<T_low_cl>>(inv_beta_minus_alpha),
-          calc_if<is_autodiff_v<T_high_cl>>(-inv_beta_minus_alpha));
+      = expressions(y_not_nan, alpha_finite, beta_finite, diff_positive,
+                    y_out_of_bounds, logp_expr,
+                    calc_if<is_autodiff_v<T_low_cl>>(inv_beta_minus_alpha),
+                    calc_if<is_autodiff_v<T_high_cl>>(-inv_beta_minus_alpha));
 
   if (from_matrix_cl(y_out_of_bounds_cl).any()) {
     return LOG_ZERO;

@@ -60,11 +60,9 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lpdf(const T_y& y, const T_loc& mu,
     return ops_partials.build(LOG_ZERO);
   }
 
-  const auto& inv_sigma
-      = to_ref_if<is_autodiff_v<T_scale>>(inv(sigma_val));
+  const auto& inv_sigma = to_ref_if<is_autodiff_v<T_scale>>(inv(sigma_val));
   const auto& inv_sigma_sq
-      = to_ref_if<is_any_autodiff_v<T_y, T_loc, T_scale>>(
-          square(inv_sigma));
+      = to_ref_if<is_any_autodiff_v<T_y, T_loc, T_scale>>(square(inv_sigma));
   const auto& log_y
       = to_ref_if<include_summand<propto, T_y>::value>(log(y_val));
   const auto& logy_m_mu = to_ref(log_y - mu_val);
@@ -80,11 +78,10 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lpdf(const T_y& y, const T_loc& mu,
   }
 
   if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale>) {
-    const auto& logy_m_mu_div_sigma
-        = to_ref_if<is_autodiff_v<T_y>
-                        + is_autodiff_v<T_loc>
-                        + is_autodiff_v<T_scale>
-                    >= 2>(logy_m_mu * inv_sigma_sq);
+    const auto& logy_m_mu_div_sigma = to_ref_if<
+        is_autodiff_v<
+            T_y> + is_autodiff_v<T_loc> + is_autodiff_v<T_scale> >= 2>(
+        logy_m_mu * inv_sigma_sq);
     if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials) = -(1 + logy_m_mu_div_sigma) / y_val;
     }

@@ -48,7 +48,8 @@ return_type_t<T_y_cl, T_scale_cl, T_shape_cl> pareto_lpdf(
   if (N == 0) {
     return 0.0;
   }
-  if constexpr (!include_summand<propto, T_y_cl, T_scale_cl, T_shape_cl>::value) {
+  if constexpr (!include_summand<propto, T_y_cl, T_scale_cl,
+                                 T_shape_cl>::value) {
     return 0.0;
   }
 

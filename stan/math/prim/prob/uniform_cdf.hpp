@@ -56,8 +56,7 @@ return_type_t<T_y, T_low, T_high> uniform_cdf(const T_y& y, const T_low& alpha,
   auto ops_partials = make_partials_propagator(y_ref, alpha_ref, beta_ref);
 
   const auto& b_minus_a
-      = to_ref_if<is_any_autodiff_v<T_y, T_low, T_high>>(beta_val
-                                                               - alpha_val);
+      = to_ref_if<is_any_autodiff_v<T_y, T_low, T_high>>(beta_val - alpha_val);
   const auto& cdf_n = to_ref_if<is_any_autodiff_v<T_y, T_low>>(
       (y_val - alpha_val) / b_minus_a);
 
@@ -65,12 +64,11 @@ return_type_t<T_y, T_low, T_high> uniform_cdf(const T_y& y, const T_low& alpha,
 
   if constexpr (is_any_autodiff_v<T_y, T_low, T_high>) {
     const auto& rep_deriv
-        = to_ref_if<(is_any_autodiff_v<T_y, T_low>
-                     && is_autodiff_v<T_high>)>(cdf / b_minus_a);
+        = to_ref_if<(is_any_autodiff_v<T_y, T_low> && is_autodiff_v<T_high>)>(
+            cdf / b_minus_a);
     if constexpr (is_any_autodiff_v<T_y, T_low>) {
-      auto deriv_y
-          = to_ref_if<(is_autodiff_v<T_low>
-                       && is_autodiff_v<T_y>)>(rep_deriv / cdf_n);
+      auto deriv_y = to_ref_if<(is_autodiff_v<T_low> && is_autodiff_v<T_y>)>(
+          rep_deriv / cdf_n);
       if constexpr (is_autodiff_v<T_low>) {
         edge<1>(ops_partials).partials_
             = (y_val - beta_val) * deriv_y / b_minus_a;
@@ -81,7 +79,7 @@ return_type_t<T_y, T_low, T_high> uniform_cdf(const T_y& y, const T_low& alpha,
     }
     if constexpr (is_autodiff_v<T_high>) {
       if constexpr (is_vector<T_y>::value && !is_vector<T_low>::value
-          && !is_vector<T_high>::value) {
+                    && !is_vector<T_high>::value) {
         edge<2>(ops_partials).partials_
             = -rep_deriv * max_size(y, alpha, beta) / max_size(alpha, beta);
       } else {

@@ -141,8 +141,7 @@ inline var trace_gen_quad_form(const Td& D, const Ta& A, const Tb& B) {
   check_multiplicable("trace_gen_quad_form", "A", A, "B", B);
   check_multiplicable("trace_gen_quad_form", "B", B, "D", D);
 
-  if constexpr (is_autodiff_v<Ta> && is_autodiff_v<Tb>
-      && is_autodiff_v<Td>) {
+  if constexpr (is_autodiff_v<Ta> && is_autodiff_v<Tb> && is_autodiff_v<Td>) {
     arena_t<promote_scalar_t<var, Td>> arena_D = D;
     arena_t<promote_scalar_t<var, Ta>> arena_A = A;
     arena_t<promote_scalar_t<var, Tb>> arena_B = B;
@@ -166,8 +165,8 @@ inline var trace_gen_quad_form(const Td& D, const Ta& A, const Tb& B) {
         });
 
     return res;
-  } else if constexpr (is_autodiff_v<Ta> && is_autodiff_v<Tb>
-             && is_constant_v<Td>) {
+  } else if constexpr (is_autodiff_v<
+                           Ta> && is_autodiff_v<Tb> && is_constant_v<Td>) {
     arena_t<promote_scalar_t<double, Td>> arena_D = value_of(D);
     arena_t<promote_scalar_t<var, Ta>> arena_A = A;
     arena_t<promote_scalar_t<var, Tb>> arena_B = B;
@@ -188,8 +187,8 @@ inline var trace_gen_quad_form(const Td& D, const Ta& A, const Tb& B) {
     });
 
     return res;
-  } else if constexpr (is_autodiff_v<Ta> && is_constant_v<Tb>
-             && is_autodiff_v<Td>) {
+  } else if constexpr (is_autodiff_v<
+                           Ta> && is_constant_v<Tb> && is_autodiff_v<Td>) {
     arena_t<promote_scalar_t<var, Td>> arena_D = D;
     arena_t<promote_scalar_t<var, Ta>> arena_A = A;
     arena_t<promote_scalar_t<double, Tb>> arena_B = value_of(B);
@@ -208,8 +207,8 @@ inline var trace_gen_quad_form(const Td& D, const Ta& A, const Tb& B) {
         });
 
     return res;
-  } else if constexpr (is_autodiff_v<Ta> && is_constant_v<Tb>
-             && is_constant_v<Td>) {
+  } else if constexpr (is_autodiff_v<
+                           Ta> && is_constant_v<Tb> && is_constant_v<Td>) {
     arena_t<promote_scalar_t<double, Td>> arena_D = value_of(D);
     arena_t<promote_scalar_t<var, Ta>> arena_A = A;
     arena_t<promote_scalar_t<double, Tb>> arena_B = value_of(B);
@@ -223,8 +222,8 @@ inline var trace_gen_quad_form(const Td& D, const Ta& A, const Tb& B) {
     });
 
     return res;
-  } else if constexpr (is_constant_v<Ta> && is_autodiff_v<Tb>
-             && is_autodiff_v<Td>) {
+  } else if constexpr (is_constant_v<
+                           Ta> && is_autodiff_v<Tb> && is_autodiff_v<Td>) {
     arena_t<promote_scalar_t<var, Td>> arena_D = D;
     arena_t<promote_scalar_t<double, Ta>> arena_A = value_of(A);
     arena_t<promote_scalar_t<var, Tb>> arena_B = B;
@@ -246,8 +245,8 @@ inline var trace_gen_quad_form(const Td& D, const Ta& A, const Tb& B) {
     });
 
     return res;
-  } else if constexpr (is_constant_v<Ta> && is_autodiff_v<Tb>
-             && is_constant_v<Td>) {
+  } else if constexpr (is_constant_v<
+                           Ta> && is_autodiff_v<Tb> && is_constant_v<Td>) {
     arena_t<promote_scalar_t<double, Td>> arena_D = value_of(D);
     arena_t<promote_scalar_t<double, Ta>> arena_A = value_of(A);
     arena_t<promote_scalar_t<var, Tb>> arena_B = B;
@@ -265,8 +264,8 @@ inline var trace_gen_quad_form(const Td& D, const Ta& A, const Tb& B) {
         });
 
     return res;
-  } else if constexpr (is_constant_v<Ta> && is_constant_v<Tb>
-             && is_autodiff_v<Td>) {
+  } else if constexpr (is_constant_v<
+                           Ta> && is_constant_v<Tb> && is_autodiff_v<Td>) {
     arena_t<promote_scalar_t<var, Td>> arena_D = D;
     arena_t<promote_scalar_t<double, Ta>> arena_A = value_of(A);
     arena_t<promote_scalar_t<double, Tb>> arena_B = value_of(B);

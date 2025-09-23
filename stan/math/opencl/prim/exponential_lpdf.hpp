@@ -91,10 +91,9 @@ return_type_t<T_y_cl, T_inv_scale_cl> exponential_lpdf(
 
   results(check_y_nonnegative, check_beta_pos_finite, logp_cl, y_deriv_cl,
           beta_deriv_cl)
-      = expressions(
-          y_nonnegative_expr, beta_pos_finite_expr, logp_expr,
-          calc_if<is_autodiff_v<T_y_cl>>(y_deriv_expr),
-          calc_if<is_autodiff_v<T_inv_scale_cl>>(beta_deriv_expr));
+      = expressions(y_nonnegative_expr, beta_pos_finite_expr, logp_expr,
+                    calc_if<is_autodiff_v<T_y_cl>>(y_deriv_expr),
+                    calc_if<is_autodiff_v<T_inv_scale_cl>>(beta_deriv_expr));
 
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
 

@@ -86,14 +86,14 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
   if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale, T_shape>) {
     const auto& sq = square(alpha_val * y_minus_mu_over_sigma * INV_SQRT_TWO);
     const auto& ex = exp(-sq - log_erfc_alpha_z);
-    auto deriv_logerf = to_ref_if<is_any_autodiff_v<T_y, T_loc>
-                                      + is_autodiff_v<T_scale>
-                                      + is_autodiff_v<T_shape>
-                                  >= 2>(SQRT_TWO_OVER_SQRT_PI * ex);
+    auto deriv_logerf = to_ref_if<
+        is_any_autodiff_v<
+            T_y, T_loc> + is_autodiff_v<T_scale> + is_autodiff_v<T_shape> >= 2>(
+        SQRT_TWO_OVER_SQRT_PI * ex);
     if constexpr (is_any_autodiff_v<T_y, T_loc>) {
-      auto deriv_y_loc = to_ref_if<(is_autodiff_v<T_y>
-                                    && is_autodiff_v<T_loc>)>(
-          (y_minus_mu_over_sigma - deriv_logerf * alpha_val) * inv_sigma);
+      auto deriv_y_loc
+          = to_ref_if<(is_autodiff_v<T_y> && is_autodiff_v<T_loc>)>(
+              (y_minus_mu_over_sigma - deriv_logerf * alpha_val) * inv_sigma);
       if constexpr (is_autodiff_v<T_y>) {
         partials<0>(ops_partials) = -deriv_y_loc;
       }

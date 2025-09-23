@@ -51,7 +51,8 @@ return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> binomial_logit_glm_lpmf(
   if (N_instances == 0 || N_attributes == 0) {
     return 0;
   }
-  if constexpr (!include_summand<propto, T_x_cl, T_alpha_cl, T_beta_cl>::value) {
+  if constexpr (!include_summand<propto, T_x_cl, T_alpha_cl,
+                                 T_beta_cl>::value) {
     return 0;
   }
 

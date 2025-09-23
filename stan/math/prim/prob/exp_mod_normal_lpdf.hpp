@@ -57,14 +57,14 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
   if (size_zero(y, mu, sigma, lambda)) {
     return 0.0;
   }
-  if constexpr (!include_summand<propto, T_y, T_loc, T_scale, T_inv_scale>::value) {
+  if constexpr (!include_summand<propto, T_y, T_loc, T_scale,
+                                 T_inv_scale>::value) {
     return 0.0;
   }
 
   const auto& inv_sigma
       = to_ref_if<is_any_autodiff_v<T_y, T_loc>>(inv(sigma_val));
-  const auto& sigma_sq
-      = to_ref_if<is_autodiff_v<T_scale>>(square(sigma_val));
+  const auto& sigma_sq = to_ref_if<is_autodiff_v<T_scale>>(square(sigma_val));
   const auto& lambda_sigma_sq = to_ref(lambda_val * sigma_sq);
   const auto& mu_minus_y = to_ref(mu_val - y_val);
   const auto& inner_term
@@ -90,13 +90,14 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
   if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale, T_inv_scale>) {
     const auto& exp_m_sq_inner_term = exp(-square(inner_term));
     const auto& deriv_logerfc = to_ref_if<
-        is_any_autodiff_v<T_y, T_loc> + is_autodiff_v<T_scale>
-            + is_autodiff_v<T_inv_scale>
-        >= 2>(-SQRT_TWO_OVER_SQRT_PI * exp_m_sq_inner_term / erfc_calc);
+        is_any_autodiff_v<
+            T_y,
+            T_loc> + is_autodiff_v<T_scale> + is_autodiff_v<T_inv_scale> >= 2>(
+        -SQRT_TWO_OVER_SQRT_PI * exp_m_sq_inner_term / erfc_calc);
     if constexpr (is_any_autodiff_v<T_y, T_loc>) {
-      const auto& deriv = to_ref_if < is_autodiff_v<T_y>
-                          && is_autodiff_v<T_loc>
-                                 > (lambda_val + deriv_logerfc * inv_sigma);
+      const auto& deriv
+          = to_ref_if < is_autodiff_v<
+                T_y> && is_autodiff_v<T_loc> > (lambda_val + deriv_logerfc * inv_sigma);
       if constexpr (is_autodiff_v<T_y>) {
         partials<0>(ops_partials) = -deriv;
       }

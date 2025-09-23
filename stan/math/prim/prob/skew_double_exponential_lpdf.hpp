@@ -61,7 +61,8 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lpdf(
   if (size_zero(y, mu, sigma, tau)) {
     return 0.0;
   }
-  if constexpr (!include_summand<propto, T_y, T_loc, T_scale, T_skewness>::value) {
+  if constexpr (!include_summand<propto, T_y, T_loc, T_scale,
+                                 T_skewness>::value) {
     return 0.0;
   }
 
@@ -78,10 +79,8 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lpdf(
   check_positive_finite(function, "Scale parameter", sigma_val);
   check_bounded(function, "Skewness parameter", tau_val, 0.0, 1.0);
 
-  const auto& inv_sigma
-      = to_ref_if<is_autodiff_v<T_scale>>(inv(sigma_val));
-  const auto& y_m_mu
-      = to_ref_if<is_any_autodiff_v<T_y, T_loc>>(y_val - mu_val);
+  const auto& inv_sigma = to_ref_if<is_autodiff_v<T_scale>>(inv(sigma_val));
+  const auto& y_m_mu = to_ref_if<is_any_autodiff_v<T_y, T_loc>>(y_val - mu_val);
   const auto& diff_sign = sign(y_m_mu);
 
   const auto& diff_sign_smaller_0 = step(-diff_sign);
@@ -104,8 +103,7 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lpdf(
   }
 
   if constexpr (is_any_autodiff_v<T_y, T_loc>) {
-    const auto& deriv = to_ref_if<(is_autodiff_v<T_y>
-                                   && is_autodiff_v<T_loc>)>(
+    const auto& deriv = to_ref_if<(is_autodiff_v<T_y> && is_autodiff_v<T_loc>)>(
         2.0 * (diff_sign_smaller_0 + diff_sign * tau_val) * diff_sign
         * inv_sigma);
     if constexpr (is_autodiff_v<T_y>) {

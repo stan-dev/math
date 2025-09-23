@@ -65,12 +65,11 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lcdf(
     }
   }
 
-  VectorBuilder<is_autodiff_v<T_shape>, T_partials_return, T_n>
-      digammaN_vec(size_n);
+  VectorBuilder<is_autodiff_v<T_shape>, T_partials_return, T_n> digammaN_vec(
+      size_n);
   VectorBuilder<is_autodiff_v<T_shape>, T_partials_return, T_shape>
       digammaAlpha_vec(size_alpha);
-  VectorBuilder<is_autodiff_v<T_shape>, T_partials_return, T_n,
-                T_shape>
+  VectorBuilder<is_autodiff_v<T_shape>, T_partials_return, T_n, T_shape>
       digammaSum_vec(size_n_alpha);
 
   if constexpr (is_autodiff_v<T_shape>) {

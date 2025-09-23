@@ -100,9 +100,8 @@ inline auto log_mix(const T_theta_cl& theta, const T_lambda_cl& lambda) {
       auto lambda_deriv_expr = elt_multiply(derivs_expr, theta_bc);
       matrix_cl<double> derivs;
       matrix_cl<double> lambda_deriv;
-      results(derivs, lambda_deriv)
-          = expressions(calc_if<is_autodiff_v<T_theta_cl>>(derivs_expr),
-                        lambda_deriv_expr);
+      results(derivs, lambda_deriv) = expressions(
+          calc_if<is_autodiff_v<T_theta_cl>>(derivs_expr), lambda_deriv_expr);
 
       partials<1>(ops_partials) = std::move(lambda_deriv);
       if constexpr (is_autodiff_v<T_theta_cl>) {

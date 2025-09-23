@@ -101,8 +101,7 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> lognormal_lpdf(
   results(check_y_nonnegative, check_mu_finite, check_sigma_pos_finite,
           any_y_zero_cl, logp_cl, y_deriv_cl, mu_deriv_cl, sigma_deriv_cl)
       = expressions(y_nonnegative, mu_finite, sigma_pos_finite, any_y_zero,
-                    logp_expr,
-                    calc_if<is_autodiff_v<T_y_cl>>(y_deriv_expr),
+                    logp_expr, calc_if<is_autodiff_v<T_y_cl>>(y_deriv_expr),
                     calc_if<is_autodiff_v<T_loc_cl>>(logy_m_mu_div_sigma),
                     calc_if<is_autodiff_v<T_scale_cl>>(sigma_deriv_expr));
 

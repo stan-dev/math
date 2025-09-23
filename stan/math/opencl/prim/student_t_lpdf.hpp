@@ -64,7 +64,8 @@ inline return_type_t<T_y_cl, T_dof_cl, T_loc_cl, T_scale_cl> student_t_lpdf(
   if (N == 0) {
     return 0.0;
   }
-  if constexpr (!include_summand<propto, T_y_cl, T_dof_cl, T_loc_cl, T_scale_cl>::value) {
+  if constexpr (!include_summand<propto, T_y_cl, T_dof_cl, T_loc_cl,
+                                 T_scale_cl>::value) {
     return 0.0;
   }
 

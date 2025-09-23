@@ -64,10 +64,10 @@ return_type_t<T_y, T_shape, T_scale> inv_gamma_lcdf(const T_y& y,
     }
   }
 
-  VectorBuilder<is_autodiff_v<T_shape>, T_partials_return, T_shape>
-      gamma_vec(math::size(alpha));
-  VectorBuilder<is_autodiff_v<T_shape>, T_partials_return, T_shape>
-      digamma_vec(math::size(alpha));
+  VectorBuilder<is_autodiff_v<T_shape>, T_partials_return, T_shape> gamma_vec(
+      math::size(alpha));
+  VectorBuilder<is_autodiff_v<T_shape>, T_partials_return, T_shape> digamma_vec(
+      math::size(alpha));
 
   if constexpr (is_autodiff_v<T_shape>) {
     for (size_t i = 0; i < stan::math::size(alpha); i++) {

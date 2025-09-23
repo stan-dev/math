@@ -36,7 +36,7 @@ namespace internal {
  * @ingroup type_trait
  */
 template <typename T, typename = void>
-struct is_autodiff : is_autodiff_scalar<scalar_type_t<std::decay_t<T>>>  {};
+struct is_autodiff : is_autodiff_scalar<scalar_type_t<std::decay_t<T>>> {};
 
 template <typename T>
 struct is_autodiff<T, require_std_vector_t<T>>
@@ -46,11 +46,10 @@ template <typename T>
 struct is_autodiff<T, require_eigen_t<T>>
     : bool_constant<is_autodiff<typename std::decay_t<T>::Scalar>::value> {};
 
-}
+}  // namespace internal
 
 template <typename T>
 inline constexpr bool is_autodiff_v = internal::is_autodiff<T>::value;
-
 
 template <typename... Types>
 inline constexpr bool is_all_autodiff_v = (is_autodiff_v<Types> && ...);
@@ -66,12 +65,14 @@ inline constexpr bool is_any_autodiff_v = (is_autodiff_v<Types> || ...);
 /*! \brief Require type satisfies @ref is_autodiff_scalar */
 /*! @tparam T the type to check */
 template <typename T>
-using require_autodiff_scalar_t = require_t<is_autodiff_scalar<std::decay_t<T>>>;
+using require_autodiff_scalar_t
+    = require_t<is_autodiff_scalar<std::decay_t<T>>>;
 
 /*! \brief Require type does not satisfy @ref is_autodiff_scalar */
 /*! @tparam T the type to check */
 template <typename T>
-using require_not_autodiff_scalar_t = require_not_t<is_autodiff_scalar<std::decay_t<T>>>;
+using require_not_autodiff_scalar_t
+    = require_not_t<is_autodiff_scalar<std::decay_t<T>>>;
 
 /*! \brief Require all of the types satisfy @ref is_autodiff_scalar */
 /*! @tparam Types The types that are checked */
@@ -91,7 +92,8 @@ template <typename... Types>
 using require_all_not_autodiff_scalar_t
     = require_all_not_t<is_autodiff_scalar<std::decay_t<Types>>...>;
 
-/*! \brief Require at least one of the types do not satisfy @ref is_autodiff_scalar */
+/*! \brief Require at least one of the types do not satisfy @ref
+ * is_autodiff_scalar */
 /*! @tparam Types The types that are checked */
 template <typename... Types>
 using require_any_not_autodiff_scalar_t
@@ -112,8 +114,8 @@ using require_not_vt_autodiff_scalar
 /*! @tparam Types The types with a valid overload of @ref value_type available
  */
 template <typename... Types>
-using require_all_not_vt_autodiff_scalar
-    = require_all_not_t<is_autodiff_scalar<value_type_t<std::decay_t<Types>>>...>;
+using require_all_not_vt_autodiff_scalar = require_all_not_t<
+    is_autodiff_scalar<value_type_t<std::decay_t<Types>>>...>;
 
 /*! \brief Require scalar type satisfies @ref is_autodiff_scalar */
 /*! @tparam T A type with a valid overload of @ref scalar_type available */

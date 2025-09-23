@@ -57,8 +57,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lccdf(
 
   const auto& diff = to_ref((y_val - mu_val) / sigma_val);
   const auto& scaled_diff
-      = to_ref_if<is_any_autodiff_v<T_y, T_scale, T_loc>>(diff
-                                                                / SQRT_TWO);
+      = to_ref_if<is_any_autodiff_v<T_y, T_scale, T_loc>>(diff / SQRT_TWO);
   const auto& erfc_m_scaled_diff = erfc(-scaled_diff);
   const auto& owens_t_diff_alpha = owens_t(diff, alpha_val);
   const auto& ccdf_log_ = to_ref_if<is_autodiff_v<T_shape>>(
@@ -67,16 +66,15 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lccdf(
   T_partials_return ccdf_log = sum(log(ccdf_log_));
 
   if constexpr (is_any_autodiff_v<T_y, T_scale, T_loc, T_shape>) {
-    const auto& diff_square
-        = to_ref_if<(is_any_autodiff_v<T_y, T_scale, T_loc>
-                     && is_autodiff_v<T_shape>)>(square(diff));
+    const auto& diff_square = to_ref_if<(
+        is_any_autodiff_v<T_y, T_scale, T_loc> && is_autodiff_v<T_shape>)>(
+        square(diff));
     if constexpr (is_any_autodiff_v<T_y, T_scale, T_loc>) {
       const auto& erf_alpha_scaled_diff = erf(alpha_val * scaled_diff);
       const auto& exp_m_scaled_diff_square = exp(-0.5 * diff_square);
-      auto rep_deriv = to_ref_if<is_autodiff_v<T_y>
-                                     + is_autodiff_v<T_scale>
-                                     + is_autodiff_v<T_loc>
-                                 >= 2>(
+      auto rep_deriv = to_ref_if<
+          is_autodiff_v<
+              T_y> + is_autodiff_v<T_scale> + is_autodiff_v<T_loc> >= 2>(
           (erf_alpha_scaled_diff + 1) * INV_SQRT_TWO_PI
           / (ccdf_log_ * sigma_val) * exp_m_scaled_diff_square);
       if constexpr (is_autodiff_v<T_y>) {

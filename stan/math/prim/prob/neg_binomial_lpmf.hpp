@@ -82,8 +82,8 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(const T_n& n,
     log1p_beta[i] = log1p(beta_dbl);
   }
 
-  VectorBuilder<is_autodiff_v<T_inv_scale>, T_partials_return,
-                T_shape, T_inv_scale>
+  VectorBuilder<is_autodiff_v<T_inv_scale>, T_partials_return, T_shape,
+                T_inv_scale>
       lambda_m_alpha_over_1p_beta(size_alpha_beta);
   if constexpr (is_autodiff_v<T_inv_scale>) {
     for (size_t i = 0; i < size_alpha_beta; ++i) {

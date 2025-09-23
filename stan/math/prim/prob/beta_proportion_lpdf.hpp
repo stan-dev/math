@@ -80,8 +80,7 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
     return 0;
   }
 
-  const auto& log_y
-      = to_ref_if<is_any_autodiff_v<T_loc, T_prec>>(log(y_val));
+  const auto& log_y = to_ref_if<is_any_autodiff_v<T_loc, T_prec>>(log(y_val));
   const auto& log1m_y
       = to_ref_if<is_any_autodiff_v<T_loc, T_prec>>(log1m(y_val));
   const auto& mukappa = to_ref(mu_val * kappa_val);
@@ -104,11 +103,11 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
   }
   if constexpr (is_any_autodiff_v<T_loc, T_prec>) {
     auto digamma_mukappa
-        = to_ref_if<(is_autodiff_v<T_loc>
-                     && is_autodiff_v<T_prec>)>(digamma(mukappa));
-    auto digamma_kappa_mukappa = to_ref_if<(
-        is_autodiff_v<T_loc> && is_autodiff_v<T_prec>)>(
-        digamma(kappa_val - mukappa));
+        = to_ref_if<(is_autodiff_v<T_loc> && is_autodiff_v<T_prec>)>(
+            digamma(mukappa));
+    auto digamma_kappa_mukappa
+        = to_ref_if<(is_autodiff_v<T_loc> && is_autodiff_v<T_prec>)>(
+            digamma(kappa_val - mukappa));
     if constexpr (is_autodiff_v<T_loc>) {
       edge<1>(ops_partials).partials_
           = kappa_val

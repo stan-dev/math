@@ -103,8 +103,7 @@ return_type_t<T_y_cl, T_loc_cl, T_prec_cl> beta_proportion_lpdf(
   results(check_y_bounded, check_mu_bounded, check_kappa_positive_finite,
           logp_cl, y_deriv_cl, mu_deriv_cl, kappa_deriv_cl)
       = expressions(y_bounded_expr, mu_bounded_expr, kappa_positive_finite,
-                    logp_expr,
-                    calc_if<is_autodiff_v<T_y_cl>>(y_deriv_expr),
+                    logp_expr, calc_if<is_autodiff_v<T_y_cl>>(y_deriv_expr),
                     calc_if<is_autodiff_v<T_loc_cl>>(mu_deriv_expr),
                     calc_if<is_autodiff_v<T_prec_cl>>(kappa_deriv_expr));
 

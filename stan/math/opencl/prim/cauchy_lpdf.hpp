@@ -95,8 +95,7 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> cauchy_lpdf(
   results(check_y_not_nan, check_mu_finite, check_sigma_positive_finite,
           logp_cl, mu_deriv_cl, y_deriv_cl, sigma_deriv_cl)
       = expressions(y_not_nan_expr, mu_finite_expr, sigma_positive_finite_expr,
-                    logp_expr,
-                    calc_if<is_autodiff_v<T_loc_cl>>(mu_deriv_expr),
+                    logp_expr, calc_if<is_autodiff_v<T_loc_cl>>(mu_deriv_expr),
                     calc_if<is_autodiff_v<T_y_cl>>(-mu_deriv_expr),
                     calc_if<is_autodiff_v<T_scale_cl>>(sigma_deriv_expr));
 

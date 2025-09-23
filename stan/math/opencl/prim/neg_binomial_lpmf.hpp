@@ -51,7 +51,8 @@ inline return_type_t<T_n_cl, T_shape_cl, T_inv_scale_cl> neg_binomial_lpmf(
   if (N == 0) {
     return 0.0;
   }
-  if constexpr (!include_summand<propto, T_n_cl, T_shape_cl, T_inv_scale_cl>::value) {
+  if constexpr (!include_summand<propto, T_n_cl, T_shape_cl,
+                                 T_inv_scale_cl>::value) {
     return 0.0;
   }
 
@@ -95,8 +96,7 @@ inline return_type_t<T_n_cl, T_shape_cl, T_inv_scale_cl> neg_binomial_lpmf(
   results(check_n_nonnegative, check_alpha_positive_finite,
           check_beta_positive_finite, logp_cl, alpha_deriv_cl, beta_deriv_cl)
       = expressions(n_nonnegative, alpha_positive_finite, beta_positive_finite,
-                    logp_expr,
-                    calc_if<is_autodiff_v<T_shape_cl>>(alpha_deriv),
+                    logp_expr, calc_if<is_autodiff_v<T_shape_cl>>(alpha_deriv),
                     calc_if<is_autodiff_v<T_inv_scale_cl>>(beta_deriv));
 
   T_partials_return logp = sum(from_matrix_cl(logp_cl));

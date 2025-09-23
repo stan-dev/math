@@ -80,17 +80,15 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> gumbel_cdf(const T_y_cl& y,
           mu_deriv_cl, beta_deriv_cl)
       = expressions(
           y_not_nan_expr, mu_finite_expr, beta_positive_expr, cdf_expr,
-          calc_if<is_any_autodiff_v<T_y_cl, T_loc_cl, T_scale_cl>>(
-              rep_deriv),
+          calc_if<is_any_autodiff_v<T_y_cl, T_loc_cl, T_scale_cl>>(rep_deriv),
           calc_if<is_autodiff_v<T_scale_cl>>(scaled_diff));
 
   T_partials_return cdf = (from_matrix_cl(cdf_cl)).prod();
 
   auto y_deriv = elt_multiply(cdf, mu_deriv_cl);
   auto mu_deriv = -y_deriv;
-  auto beta_deriv
-      = elt_multiply(static_select<is_constant_v<T_scale_cl>>(0, mu_deriv),
-                     beta_deriv_cl);
+  auto beta_deriv = elt_multiply(
+      static_select<is_constant_v<T_scale_cl>>(0, mu_deriv), beta_deriv_cl);
 
   results(y_deriv_cl, mu_deriv_cl, beta_deriv_cl)
       = expressions(calc_if<is_autodiff_v<T_y_cl>>(y_deriv),

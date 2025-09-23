@@ -114,7 +114,8 @@ inline return_type_t<T_y, T_F, T_G, T_V, T_W, T_m0, T_C0> gaussian_dlm_obs_lpdf(
     lp -= HALF_LOG_TWO_PI * r * y.cols();
   }
 
-  if constexpr (include_summand<propto, T_y, T_F, T_G, T_V, T_W, T_m0, T_C0>::value) {
+  if constexpr (include_summand<propto, T_y, T_F, T_G, T_V, T_W, T_m0,
+                                T_C0>::value) {
     Eigen::Matrix<T_lp, Eigen::Dynamic, 1> m{m0_ref};
     Eigen::Matrix<T_lp, Eigen::Dynamic, Eigen::Dynamic> C{C0_ref};
     Eigen::Matrix<T_lp, Eigen::Dynamic, 1> a(n);
@@ -239,7 +240,8 @@ inline return_type_t<T_y, T_F, T_G, T_V, T_W, T_m0, T_C0> gaussian_dlm_obs_lpdf(
     lp -= HALF_LOG_TWO_PI * r * y.cols();
   }
 
-  if constexpr (include_summand<propto, T_y, T_F, T_G, T_V, T_W, T_m0, T_C0>::value) {
+  if constexpr (include_summand<propto, T_y, T_F, T_G, T_V, T_W, T_m0,
+                                T_C0>::value) {
     T_lp f;
     T_lp Q;
     T_lp Q_inv;

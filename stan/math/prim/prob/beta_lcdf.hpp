@@ -16,7 +16,6 @@
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
 
-
 #include <cmath>
 
 namespace stan {
@@ -65,12 +64,11 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lcdf(
   const size_t N = max_size(y, alpha, beta_param);
 
   // Allocate digamma buffers only if alpha/beta contain any autodiff scalars.
-  constexpr bool need_digamma
-      = is_any_autodiff_v<T_scale_succ, T_scale_fail>;
-  VectorBuilder<need_digamma, T_partials_return, T_scale_succ>
-      digamma_alpha(size_alpha);
-  VectorBuilder<need_digamma, T_partials_return, T_scale_fail>
-      digamma_beta(size_beta);
+  constexpr bool need_digamma = is_any_autodiff_v<T_scale_succ, T_scale_fail>;
+  VectorBuilder<need_digamma, T_partials_return, T_scale_succ> digamma_alpha(
+      size_alpha);
+  VectorBuilder<need_digamma, T_partials_return, T_scale_fail> digamma_beta(
+      size_beta);
   VectorBuilder<need_digamma, T_partials_return, T_scale_succ, T_scale_fail>
       digamma_sum(size_alpha_beta);
 

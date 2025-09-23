@@ -72,8 +72,7 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_cdf(
     }
   }
 
-  VectorBuilder<is_autodiff_v<T_scale_succ>, T_partials_return,
-                T_scale_succ>
+  VectorBuilder<is_autodiff_v<T_scale_succ>, T_partials_return, T_scale_succ>
       digamma_alpha(size_alpha);
   if constexpr (is_autodiff_v<T_scale_succ>) {
     for (size_t n = 0; n < size_alpha; n++) {
@@ -81,8 +80,7 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_cdf(
     }
   }
 
-  VectorBuilder<is_autodiff_v<T_scale_fail>, T_partials_return,
-                T_scale_fail>
+  VectorBuilder<is_autodiff_v<T_scale_fail>, T_partials_return, T_scale_fail>
       digamma_beta(size_beta);
   if constexpr (is_autodiff_v<T_scale_fail>) {
     for (size_t n = 0; n < size_beta; n++) {
