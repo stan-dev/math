@@ -74,8 +74,7 @@ jobs:
       shell: pwsh
       run: |
         cmake -S . -B build -DCMAKE_BUILD_TYPE=RELEASE;
-        cd build && make -j4 ${{ matrix.config.tests }} && \
-        ctest --test-dir=./test/unit -R ${{ matrix.config.tests }} --output-on-failure
+        cd build && make -j4 ${{ matrix.config.tests }} && ctest --test-dir=./test/unit -R ${{ matrix.config.tests }} --output-on-failure
 #        python runTests.py -j4
 
     - name: Upload gtest_output xml
@@ -127,20 +126,8 @@ jobs:
     - name: Run mix/fun unit tests
       shell: pwsh
       run: |
-        $MixFunProbTests = Get-ChildItem -Path test\unit\math\mix\fun\*, test\unit\math\mix\prob\* -Include *.cpp | Resolve-Path -Relative
-        $NumberTests = $MixFunProbTests.Length
-        $FifthNumberTests = [math]::Floor($NumberTests / 5)
-
-        $MixFunProbTestsArray = @( `
-          $MixFunProbTests[0..($FifthNumberTests - 1)], `
-          $MixFunProbTests[$FifthNumberTests..(2 * $FifthNumberTests - 1)], `
-          $MixFunProbTests[(2 * $FifthNumberTests)..(3 * $FifthNumberTests - 1)], `
-          $MixFunProbTests[(3 * $FifthNumberTests)..(4 * $FifthNumberTests - 1)], `
-          $MixFunProbTests[(4 * $FifthNumberTests)..($NumberTests - 1)] `
-        )
         cmake -S . -B build -DCMAKE_BUILD_TYPE=RELEASE;
-        cd build && make -j4 unit_math_mix_fun_all_tests unit_math_mix_prob_all_tests && \
-        ctest --test-dir=./test/unit -R unit_math_mix --output-on-failure
+        cd build && make -j4 unit_math_mix_fun_all_tests unit_math_mix_prob_all_tests && ctest --test-dir=./test/unit -R unit_math_mix --output-on-failure
 
 #        python runTests.py -j2 $MixFunProbTestsArray[(${{ matrix.group }} - 1)]
 
