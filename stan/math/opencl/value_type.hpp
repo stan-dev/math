@@ -14,6 +14,11 @@ template <typename T>
 struct value_type<T, require_all_kernel_expressions_and_none_scalar_t<T>> {
   using type = typename std::decay_t<T>::Scalar;
 };
+
+template <typename T>
+struct base_type<T, require_all_kernel_expressions_and_none_scalar_t<T>> {
+  using type = typename base_type<typename std::decay_t<T>::Scalar>::type;
+};
 }  // namespace stan
 #endif
 #endif

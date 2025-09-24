@@ -1,0 +1,19 @@
+# Copyright 2023-2024 René Ferdinand Rivera Morell
+# Copyright 2024 Peter Dimov
+# Distributed under the Boost Software License, Version 1.0.
+# https://www.boost.org/LICENSE_1_0.txt
+
+require-b2 5.2 ;
+
+#constant boost_dependencies :
+#    ;
+
+project /boost/crc ;
+
+explicit
+    [ alias boost_crc : : : : <include>include <library>$(boost_dependencies) ]
+    [ alias all : boost_crc test ]
+    ;
+
+call-if : boost-library crc
+    ;

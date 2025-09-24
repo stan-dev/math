@@ -84,9 +84,8 @@ class AgradDistributionsInvGamma : public AgradDistributionTest {
     if (y <= 0)
       return stan::math::LOG_ZERO;
 
-    using boost::math::lgamma;
+    using stan::math::lgamma;
     using stan::math::multiply_log;
-
     return -lgamma(alpha) + multiply_log(alpha, beta)
            - multiply_log(alpha + 1.0, y) - beta / y;
   }

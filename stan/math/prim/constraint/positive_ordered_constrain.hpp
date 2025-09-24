@@ -53,10 +53,10 @@ inline auto positive_ordered_constrain(const EigVec& x) {
 template <typename Vec, typename Lp, require_col_vector_t<Vec>* = nullptr,
           require_convertible_t<return_type_t<Vec>, Lp>* = nullptr>
 
-inline auto positive_ordered_constrain(const Vec& x, Lp& lp) {
-  const auto& x_ref = to_ref(x);
+inline auto positive_ordered_constrain(Vec&& x, Lp& lp) {
+  auto&& x_ref = to_ref(std::forward<Vec>(x));
   lp += sum(x_ref);
-  return positive_ordered_constrain(x_ref);
+  return positive_ordered_constrain(std::forward<decltype(x_ref)>(x_ref));
 }
 
 /**
@@ -71,9 +71,10 @@ inline auto positive_ordered_constrain(const Vec& x, Lp& lp) {
  * @return Positive, increasing ordered vector
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
-inline auto positive_ordered_constrain(const T& x) {
-  return apply_vector_unary<T>::apply(
-      x, [](auto&& v) { return positive_ordered_constrain(v); });
+inline auto positive_ordered_constrain(T&& x) {
+  return apply_vector_unary<T>::apply(std::forward<T>(x), [](auto&& v) {
+    return positive_ordered_constrain(std::forward<decltype(v)>(v));
+  });
 }
 
 /**
@@ -92,9 +93,10 @@ inline auto positive_ordered_constrain(const T& x) {
  */
 template <typename T, typename Lp, require_std_vector_t<T>* = nullptr,
           require_convertible_t<return_type_t<T>, Lp>* = nullptr>
-inline auto positive_ordered_constrain(const T& x, Lp& lp) {
-  return apply_vector_unary<T>::apply(
-      x, [&lp](auto&& v) { return positive_ordered_constrain(v, lp); });
+inline auto positive_ordered_constrain(T&& x, Lp& lp) {
+  return apply_vector_unary<T>::apply(std::forward<T>(x), [&lp](auto&& v) {
+    return positive_ordered_constrain(std::forward<decltype(v)>(v), lp);
+  });
 }
 
 /**
@@ -118,11 +120,11 @@ inline auto positive_ordered_constrain(const T& x, Lp& lp) {
  */
 template <bool Jacobian, typename Vec, typename Lp,
           require_convertible_t<return_type_t<Vec>, Lp>* = nullptr>
-inline auto positive_ordered_constrain(const Vec& x, Lp& lp) {
+inline auto positive_ordered_constrain(Vec&& x, Lp& lp) {
   if constexpr (Jacobian) {
-    return positive_ordered_constrain(x, lp);
+    return positive_ordered_constrain(std::forward<Vec>(x), lp);
   } else {
-    return positive_ordered_constrain(x);
+    return positive_ordered_constrain(std::forward<Vec>(x));
   }
 }
 

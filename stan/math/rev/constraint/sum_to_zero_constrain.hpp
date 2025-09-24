@@ -163,7 +163,7 @@ inline auto sum_to_zero_constrain(T&& x) {
  * @param lp unused
  * @return Zero-sum vector or matrix which is one larger in each dimension
  */
-template <typename T, typename Lp, is_rev_matrix<T>* = nullptr>
+template <typename T, typename Lp, require_t<is_rev_matrix<T>>* = nullptr>
 inline auto sum_to_zero_constrain(T&& y, Lp& lp) {
   return sum_to_zero_constrain(std::forward<T>(y));
 }

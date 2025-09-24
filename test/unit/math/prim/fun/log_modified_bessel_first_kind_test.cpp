@@ -91,3 +91,22 @@ TEST(MathFunctions, log_modified_bessel_first_kind_vec) {
   in2 << 7.3, 0.7, 2.8;
   stan::test::binary_scalar_tester(f, in1, in2);
 }
+
+TEST(MathFunctions, log_modified_bessel_first_kind_aki_regression) {
+  // https://github.com/stan-dev/cmdstan/issues/1324#issuecomment-3206462728
+
+  using stan::math::log_modified_bessel_first_kind;
+  double rho = 0.5;
+  double alpha = 2.0;
+  int M = 20;
+
+  double a = (1 / stan::math::pow(rho, 2));
+  Eigen::Matrix<double, -1, 1> q = stan::math::exp(stan::math::add(
+      stan::math::log(alpha),
+      stan::math::multiply(
+          0.5,
+          stan::math::add(
+              (stan::math::log(2) - a),
+              stan::math::to_vector(stan::math::log_modified_bessel_first_kind(
+                  stan::math::linspaced_int_array(M, 1, M), a))))));
+}

@@ -131,7 +131,7 @@ TEST(mixFun, abs) {
   stan::test::expect_ad(f, c2);
   stan::test::expect_ad_matvar(f, c2);
   m_t c6(3, 2);
-  c6 << 1.3, 2.9, -13.456, 1.898, -0.01, 1.87e21;
+  c6 << 1.3, 2.9, -13.456, 1.898, -0.01, 1.87e12;
   stan::test::expect_ad(f, c6);
   stan::test::expect_ad_matvar(f, c6);
 

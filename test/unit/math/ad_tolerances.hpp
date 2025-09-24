@@ -47,7 +47,7 @@ struct ad_tolerances {
   relative_tolerance grad_hessian_val_;
   relative_tolerance grad_hessian_hessian_;
   relative_tolerance grad_hessian_grad_hessian_;
-  ad_tolerances()
+  constexpr ad_tolerances()
       : gradient_val_(1e-8),
         gradient_grad_(1e-4),
 

@@ -7,9 +7,9 @@ def runTests(String testPath, boolean jumbo = false) {
         sh "cat make/local"
         sh "make print-compiler-flags"
         if (jumbo && !params.disableJumbo) {
-            sh "python3 runTests.py -j${env.PARALLEL} ${testPath} --jumbo --debug"
+            sh "python3 runTests.py -j${PARALLEL} ${testPath} --jumbo --debug"
         } else {
-            sh "python3 runTests.py -j${env.PARALLEL} ${testPath}"
+            sh "python3 runTests.py -j${PARALLEL} ${testPath}"
         }
     }
         finally { junit 'test/**/*.xml' }
@@ -62,7 +62,6 @@ pipeline {
         OPENCL_PLATFORM_ID = 1
         OPENCL_PLATFORM_ID_CPU = 0
         OPENCL_PLATFORM_ID_GPU = 0
-        PARALLEL = 4
         GIT_AUTHOR_NAME = 'Stan Jenkins'
         GIT_AUTHOR_EMAIL = 'mc.stanislaw@gmail.com'
         GIT_COMMITTER_NAME = 'Stan Jenkins'
@@ -264,6 +263,65 @@ pipeline {
                             if (!(params.optimizeUnitTests || isBranch('develop') || isBranch('master'))) {
                                 sh "echo O=0 >> make/local"
                             }
+<<<<<<< HEAD
+=======
+
+                            runTests("test/unit/math/rev")
+                            runTests("test/unit/math/fwd")
+                        }
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
+                stage('Mix Unit Tests') {
+                    agent {
+                        docker {
+                            image 'stanorg/ci:gpu-cpp17'
+                            label 'linux && 8core'
+                            args '--cap-add SYS_PTRACE'
+                        }
+                    }
+                    when {
+                        expression {
+                            !skipRemainingStages
+                        }
+                    }
+                    steps {
+                        unstash 'MathSetup'
+                        sh "echo CXXFLAGS += -fsanitize=address >> make/local"
+                        script {
+                            if (!(params.optimizeUnitTests || isBranch('develop') || isBranch('master'))) {
+                                sh "echo O=1 >> make/local"
+                            }
+                            runTests("test/unit/math/mix", true)
+                        }
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
+                stage('Prim Unit Tests') {
+                    agent {
+                        docker {
+                            image 'stanorg/ci:gpu-cpp17'
+                            label 'linux'
+                            args '--cap-add SYS_PTRACE'
+                        }
+                    }
+                    when {
+                        expression {
+                            !skipRemainingStages
+                        }
+                    }
+                    steps {
+                        unstash 'MathSetup'
+                        sh "echo CXXFLAGS += -fsanitize=address >> make/local"
+                        script {
+                            if (!(params.optimizeUnitTests || isBranch('develop') || isBranch('master'))) {
+                                sh "echo O=0 >> make/local"
+                            }
+                            runTests("test/unit/*_test.cpp", false)
+                            runTests("test/unit/math/*_test.cpp", false)
+                            runTests("test/unit/math/prim", true)
+                            runTests("test/unit/math/memory", false)
+>>>>>>> origin/develop
                         }
                         sh '''
                         echo CXXFLAGS += -fsanitize=address >> make/local;
@@ -271,6 +329,32 @@ pipeline {
                         cd build && make -j${PARALLEL} test_unit_math_tests && \
                         ctest --output-on-failure --label-regex unit_math_subtest;
                         '''
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
+                stage('Laplace Unit Tests') {
+                    agent {
+                        docker {
+                            image 'stanorg/ci:gpu-cpp17'
+                            label 'linux'
+                            args '--cap-add SYS_PTRACE'
+                        }
+                    }
+                    when {
+                        expression {
+                            !skipRemainingStages
+                        }
+                    }
+                    steps {
+                        unstash 'MathSetup'
+                        sh "echo CXXFLAGS += -march=native -mtune=native >> make/local"
+                        sh "echo O=3 >> make/local"
+                        script {
+                            if (params.optimizeUnitTests || isBranch('develop') || isBranch('master')) {
+                                sh "echo CXXFLAGS += -fsanitize=address >> make/local"
+                            }
+                            runTests("test/unit/math/laplace/*_test.cpp", false)
+                        }
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
@@ -438,7 +522,7 @@ pipeline {
                     def tests = [:]
                     for (f in changedDistributionTests.collate(24)) {
                         def names = f.join(" ")
-                        tests["Distribution Tests: ${names}"] = { node ("linux && docker") {
+                        tests["Distribution Tests: ${names}"] = { node ("linux && docker && 8core") {
                             deleteDir()
                             docker.image('stanorg/ci:gpu-cmake3.30.5').inside {
                                 catchError {

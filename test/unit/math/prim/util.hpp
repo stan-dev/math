@@ -6,6 +6,77 @@
 
 namespace stan {
 namespace test {
+template <typename T>
+struct always_true {
+  static constexpr bool value = true;
+};
+template <typename T>
+struct always_false {
+  static constexpr bool value = false;
+};
+
+namespace internal {
+
+template <typename T>
+struct contains_floating_point {
+  static constexpr bool value = std::is_floating_point_v<std::decay_t<T>>;
+};
+template <typename... Types>
+struct contains_floating_point<std::tuple<Types...>> {
+  static constexpr bool value
+      = (contains_floating_point<std::decay_t<Types>>::value || ...);
+};
+
+template <typename T>
+struct contains_std_vector {
+  static constexpr bool value = stan::is_std_vector<std::decay_t<T>>::value;
+};
+
+template <typename... Types>
+struct contains_std_vector<std::tuple<Types...>> {
+  static constexpr bool value
+      = (stan::is_std_vector<std::decay_t<Types>>::value || ...);
+};
+}  // namespace internal
+template <typename... Types>
+struct contains_floating_point {
+  static constexpr bool value
+      = (internal::contains_floating_point<std::decay_t<Types>>::value || ...);
+};
+
+template <typename... Types>
+struct contains_std_vector {
+  static constexpr bool value
+      = (internal::contains_std_vector<std::decay_t<Types>>::value || ...);
+};
+
+template <Eigen::Index Idx, typename Tuple>
+static constexpr bool is_const_ref_element_v = std::is_const_v<
+    std::remove_reference_t<std::tuple_element_t<Idx, Tuple>>>&&
+    std::is_reference_v<std::tuple_element_t<Idx, Tuple>>;
+
+template <typename T>
+struct is_fp_or_std_vector
+    : std::bool_constant<
+          internal::contains_floating_point<std::decay_t<T>>::value
+          || internal::contains_std_vector<std::decay_t<T>>::value> {};
+
+template <Eigen::Index Idx, typename Tuple>
+static constexpr bool is_lvalue_ref_element_v
+    = std::is_lvalue_reference_v<std::tuple_element_t<Idx, Tuple>>;
+
+template <Eigen::Index Idx, typename Tuple>
+static constexpr bool is_ref_element_v
+    = std::is_reference_v<std::tuple_element_t<Idx, Tuple>>;
+
+template <Eigen::Index Idx, typename Tuple>
+static constexpr bool is_rvalue_element_v
+    = std::is_rvalue_reference_v<std::tuple_element_t<Idx, Tuple>>;
+
+template <Eigen::Index Idx, typename Tuple, typename T>
+static constexpr bool is_same_tuple_element_v
+    = std::is_same<std::decay_t<std::tuple_element_t<Idx, Tuple>>, T>::value;
+
 namespace unit {
 
 /**

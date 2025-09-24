@@ -116,15 +116,17 @@ git rm -rf doc/ more/ status/ tools/*/test/ --ignore-unmatch
 git rm -rf libs/*/examples libs/*/*/examples libs/*/test/ libs/*/benchmark/ libs/*/performance/ libs/*/example/ libs/*/doc/ libs/*/*/doc/ --ignore-unmatch
 # unused libraries, focusing on larger ones
 UNUSED="leaf nowide pfr json static_string stl_interfaces phoenix msm redis mysql log \
-geometry hana asio multiprecision beast qvm gil xpressive process \
-wave atomic polygon intrusive metaparse interprocess yap thread compute url test proto"
+geometry hana asio multiprecision beast qvm gil xpressive process parser charconv \
+wave atomic polygon metaparse interprocess yap thread compute url test proto"
 
 for lib in $UNUSED; do
     git rm -rf boost/$lib/ boost/$lib.hpp libs/$lib/ --ignore-unmatch
 done
 
-git rm -rf **/*.svg **/*.png **/*.jpg **/*.html **/*.htm **/*.gold **/*.json --ignore-unmatch
+git rm -rf **/*.svg **/*.png **/*.jpg **/*.html **/*.htm **/*.gold --ignore-unmatch
 git rm -rf **/*.pdf **/*.manifest **/*.css **/*.md **/*.qbk **/*.rst **/*.txt --ignore-unmatch
+git rm -rf libs/graph/build/Jamfile.v2
+
 git commit -m "upgrading to boost v${boost_version}; pruning files"
 
 cat <<EOF

@@ -31,8 +31,8 @@ inline auto inv_sqrt(const T x) {
  */
 struct inv_sqrt_fun {
   template <typename T>
-  static inline auto fun(const T& x) {
-    return inv_sqrt(x);
+  static inline auto fun(T&& x) {
+    return inv_sqrt(std::forward<T>(x));
   }
 };
 
@@ -45,8 +45,9 @@ struct inv_sqrt_fun {
  * @return inverse square root of each value in x.
  */
 template <typename Container, require_ad_container_t<Container>* = nullptr>
-inline auto inv_sqrt(const Container& x) {
-  return apply_scalar_unary<inv_sqrt_fun, Container>::apply(x);
+inline auto inv_sqrt(Container&& x) {
+  return apply_scalar_unary<inv_sqrt_fun, Container>::apply(
+      std::forward<Container>(x));
 }
 
 /**
@@ -59,14 +60,15 @@ inline auto inv_sqrt(const Container& x) {
  */
 template <typename Container, require_not_var_matrix_t<Container>* = nullptr,
           require_container_bt<std::is_arithmetic, Container>* = nullptr>
-inline auto inv_sqrt(const Container& x) {
+inline auto inv_sqrt(Container&& x) {
 // Eigen 3.4.0 has precision issues on ARM64 with vectorised rsqrt
 // Resolved in current master branch, below can be removed on next release
 #ifdef __aarch64__
-  return apply_scalar_unary<inv_sqrt_fun, Container>::apply(x);
+  return apply_scalar_unary<inv_sqrt_fun, Container>::apply(
+      std::forward<Container>(x));
 #else
   return apply_vector_unary<Container>::apply(
-      x, [](const auto& v) { return v.array().rsqrt(); });
+      std::forward<Container>(x), [](auto&& v) { return v.array().rsqrt(); });
 #endif
 }
 

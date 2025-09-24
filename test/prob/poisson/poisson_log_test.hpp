@@ -63,7 +63,7 @@ class AgradDistributionsPoisson : public AgradDistributionTest {
                                                      const T_rate& alpha,
                                                      const T2&, const T3&,
                                                      const T4&, const T5&) {
-    using boost::math::lgamma;
+    using stan::math::lgamma;
     using stan::math::LOG_ZERO;
     using stan::math::multiply_log;
     using std::exp;

@@ -1,0 +1,16 @@
+# Boost.MultiIndex performance tests Jamfile
+#
+# Copyright 2003-2006 Joaqu�n M L�pez Mu�oz.
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at
+# http://www.boost.org/LICENSE_1_0.txt)
+#
+# See http://www.boost.org/libs/multi_index for library home page.
+
+project : requirements <library>/boost/multi_index//boost_multi_index ;
+
+exe test_perf
+    : test_perf.cpp
+    : <include>$(BOOST_ROOT)
+    : release
+    ;

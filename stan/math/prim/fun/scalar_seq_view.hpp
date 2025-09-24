@@ -126,7 +126,8 @@ class scalar_seq_view<C, require_t<std::is_pointer<C>>> {
    */
   inline auto operator[](size_t i) const { return c_[i]; }
   inline auto size() const noexcept {
-    static_assert(1, "Cannot Return Size of scalar_seq_view with pointer type");
+    static_assert(sizeof(std::decay_t<C>*) == 0,
+                  "Cannot Return Size of scalar_seq_view with pointer type");
   }
   inline const auto* data() const noexcept { return &c_[0]; }
 

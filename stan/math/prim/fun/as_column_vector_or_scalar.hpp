@@ -57,12 +57,20 @@ inline T&& as_column_vector_or_scalar(T&& a) {
 template <typename T, require_eigen_row_vector_t<T>* = nullptr,
           require_not_eigen_col_vector_t<T>* = nullptr>
 inline auto as_column_vector_or_scalar(T&& a) {
-  return make_holder([](auto& x) { return x.transpose(); }, std::forward<T>(a));
+  return make_holder([](auto&& x) { return x.transpose(); },
+                     std::forward<T>(a));
 }
 
 /**
  * Converts `std::vector` to a column vector.
  *
+ * @note The math library's reverse mode assumes that `Eigen::Map`
+ *  types are allocated and owned elsewhere so we cannot just return
+ *  back a map here else the reverse mode library
+ *  may try to access into a dangling pointer. Instead we wrap
+ *  the `Eigen::Map` in a `Holder` to trick the reverse mode library
+ *  into not thinking this is a map. The `.array().matrix()` inside the
+ *  holder is so that the holder thinks it is returning an expression.
  * @tparam T `std::vector` type.
  * @param a Specified vector.
  * @return input converted to a column vector.
@@ -73,9 +81,11 @@ inline auto as_column_vector_or_scalar(T&& a) {
   using optionally_const_vector
       = std::conditional_t<std::is_const<std::remove_reference_t<T>>::value,
                            const plain_vector, plain_vector>;
+
   using T_map = Eigen::Map<optionally_const_vector>;
-  return make_holder([](auto& x) { return T_map(x.data(), x.size()); },
-                     std::forward<T>(a));
+  return make_holder(
+      [](auto&& x) { return T_map(x.data(), x.size()).array().matrix(); },
+      std::forward<T>(a));
 }
 
 }  // namespace math

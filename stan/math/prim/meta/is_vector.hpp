@@ -597,6 +597,9 @@ struct is_std_vector<
     T, std::enable_if_t<internal::is_std_vector_impl<std::decay_t<T>>::value>>
     : std::true_type {};
 
+template <typename T>
+inline constexpr bool is_std_vector_v = is_std_vector<T>::value;
+
 /** \ingroup type_trait
  * Specialization of scalar_type for vector to recursively return the inner
  * scalar type.

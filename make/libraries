@@ -8,7 +8,7 @@ endef
 # Library locations
 
 MATH ?=
-BOOST ?= $(MATH)lib/boost_1.84.0
+BOOST ?= $(MATH)lib/boost_1.87.0
 EIGEN ?= $(MATH)lib/eigen_3.4.0
 OPENCL ?= $(MATH)lib/opencl_3.0.0
 TBB ?= $(MATH)lib/tbb_2020.3
@@ -220,16 +220,18 @@ $(BOOST)/user-config.jam:
 	echo "#using mpi : /path/to/mpicxx ;" >> $(BOOST)/user-config.jam
 	echo "using mpi ;" >> $(BOOST)/user-config.jam
 
-$(BOOST)/stage/lib/libboost_serialization.so: $(BOOST)/stage/lib/libboost_mpi.so
-$(BOOST)/stage/lib/libboost_mpi.so: $(BOOST)/user-config.jam
-	@mkdir -p $(dir $@)
+
+$(BOOST)/b2:
 	cd $(BOOST); ./bootstrap.sh
+
+$(BOOST)/stage/lib/libboost_serialization.so: $(BOOST)/stage/lib/libboost_mpi.so $(BOOST)/b2
+$(BOOST)/stage/lib/libboost_mpi.so: $(BOOST)/user-config.jam $(BOOST)/b2
+	@mkdir -p $(dir $@)
 	cd $(BOOST); ./b2 --user-config=user-config.jam --layout=system --with-mpi --with-serialization -j$(BOOST_PARALLEL_JOBS) variant=release link=shared threading=multi runtime-link=shared hardcode-dll-paths=true dll-path="$(BOOST_LIBRARY_ABSOLUTE_PATH)" cxxstd=11
 
-$(BOOST)/stage/lib/libboost_serialization.dylib: $(BOOST)/stage/lib/libboost_mpi.dylib
-$(BOOST)/stage/lib/libboost_mpi.dylib: $(BOOST)/user-config.jam
+$(BOOST)/stage/lib/libboost_serialization.dylib: $(BOOST)/stage/lib/libboost_mpi.dylib $(BOOST)/b2
+$(BOOST)/stage/lib/libboost_mpi.dylib: $(BOOST)/user-config.jam $(BOOST)/b2
 	@mkdir -p $(dir $@)
-	cd $(BOOST); ./bootstrap.sh
 	cd $(BOOST); ./b2 --user-config=user-config.jam --layout=system --with-mpi --with-serialization -j$(BOOST_PARALLEL_JOBS) variant=release link=shared threading=multi runtime-link=shared hardcode-dll-paths=true dll-path="$(BOOST_LIBRARY_ABSOLUTE_PATH)" cxxstd=11
 	install_name_tool -add_rpath "$(BOOST_LIBRARY_ABSOLUTE_PATH)" "$(BOOST)/stage/lib/libboost_serialization.dylib"
 	install_name_tool -id @rpath/libboost_serialization.dylib "$(BOOST)/stage/lib/libboost_serialization.dylib"

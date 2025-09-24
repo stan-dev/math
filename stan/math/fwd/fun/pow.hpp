@@ -73,9 +73,13 @@ inline auto pow(const T1& x1, const T2& x2) {
 template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr,
           require_all_not_matrix_st<is_var, T1, T2>* = nullptr,
           require_any_fvar_t<base_type_t<T1>, base_type_t<T2>>* = nullptr>
-inline auto pow(const T1& a, const T2& b) {
+inline auto pow(T1&& a, T2&& b) {
   return apply_scalar_binary(
-      [](const auto& c, const auto& d) { return stan::math::pow(c, d); }, a, b);
+      [](auto&& c, auto&& d) {
+        return stan::math::pow(std::forward<decltype(c)>(c),
+                               std::forward<decltype(d)>(d));
+      },
+      std::forward<T1>(a), std::forward<T2>(b));
 }
 
 }  // namespace math

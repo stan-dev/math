@@ -37,6 +37,7 @@ TEST(prob_transform, ub_constrain_matrix) {
   double ubd = 2.0;
 
   Eigen::VectorXd ub_bad(3);
+  ub_bad << 1.0, 2.0, 3.0;
 
   // matrix, real
   {
@@ -94,6 +95,7 @@ TEST(prob_transform, ub_constrain_std_vector) {
   double ubd = 2.0;
 
   Eigen::VectorXd ub_bad(3);
+  ub_bad << 1.0, 2.0, 3.0;
 
   std::vector<Eigen::VectorXd> x_vec = {x, 2 * x};
   std::vector<Eigen::VectorXd> ub_vec = {ub, ub2};

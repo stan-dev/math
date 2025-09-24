@@ -1,0 +1,41 @@
+# Copyright René Ferdinand Rivera Morell 2024
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at
+# http://www.boost.org/LICENSE_1_0.txt)
+
+require-b2 5.2 ;
+
+
+import boost-cobalt ;
+
+constant boost_dependencies :
+    /boost/asio//boost_asio
+    /boost/callable_traits//boost_callable_traits
+    /boost/circular_buffer//boost_circular_buffer
+    /boost/config//boost_config
+    /boost/container//boost_container
+    /boost/context//boost_context
+    /boost/core//boost_core
+    /boost/intrusive//boost_intrusive
+    /boost/leaf//boost_leaf
+    /boost/mp11//boost_mp11
+    /boost/preprocessor//boost_preprocessor
+    /boost/smart_ptr//boost_smart_ptr
+    /boost/system//boost_system
+    /boost/throw_exception//boost_throw_exception
+    /boost/variant2//boost_variant2 ;
+
+project /boost/cobalt
+    : common-requirements
+        <include>include
+    ;
+
+explicit
+    [ alias boost_cobalt : build//boost_cobalt ]
+    [ alias all : boost_cobalt test example ]
+    ;
+
+call-if : boost-library cobalt
+        : install boost_cobalt
+    ;
+

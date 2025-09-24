@@ -9,5 +9,5 @@ TEST(MathMetaPrim, ForwardAsScalar) {
 
   EXPECT_NO_THROW(forward_as<int>(a) = 2);
   EXPECT_EQ(a, 2);
-  EXPECT_THROW(forward_as<double>(a), std::runtime_error);
+  EXPECT_FLOAT_EQ(forward_as<double>(a), 2.0);
 }

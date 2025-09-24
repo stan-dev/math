@@ -20,8 +20,8 @@ namespace math {
  * @return Input transformed to be positive.
  */
 template <typename T>
-inline auto positive_constrain(const T& x) {
-  return exp(x);
+inline auto positive_constrain(T&& x) {
+  return exp(std::forward<T>(x));
 }
 
 /**
@@ -41,9 +41,10 @@ inline auto positive_constrain(const T& x) {
  * @return positive constrained version of unconstrained value(s)
  */
 template <typename T, typename S>
-inline auto positive_constrain(const T& x, S& lp) {
-  lp += sum(x);
-  return exp(x);
+inline auto positive_constrain(T&& x, S& lp) {
+  auto&& x_ref = to_ref(std::forward<T>(x));
+  lp += sum(x_ref);
+  return exp(std::forward<decltype(x_ref)>(x_ref));
 }
 
 /**
@@ -66,11 +67,11 @@ inline auto positive_constrain(const T& x, S& lp) {
 template <bool Jacobian, typename T, typename Lp,
           require_not_std_vector_t<T>* = nullptr,
           require_convertible_t<return_type_t<T>, Lp>* = nullptr>
-inline auto positive_constrain(const T& x, Lp& lp) {
+inline auto positive_constrain(T&& x, Lp& lp) {
   if constexpr (Jacobian) {
-    return positive_constrain(x, lp);
+    return positive_constrain(std::forward<T>(x), lp);
   } else {
-    return positive_constrain(x);
+    return positive_constrain(std::forward<T>(x));
   }
 }
 
@@ -95,9 +96,10 @@ inline auto positive_constrain(const T& x, Lp& lp) {
 template <bool Jacobian, typename T, typename Lp,
           require_std_vector_t<T>* = nullptr,
           require_convertible_t<return_type_t<T>, Lp>* = nullptr>
-inline auto positive_constrain(const T& x, Lp& lp) {
-  return apply_vector_unary<T>::apply(
-      x, [&lp](auto&& v) { return positive_constrain<Jacobian>(v, lp); });
+inline auto positive_constrain(T&& x, Lp& lp) {
+  return apply_vector_unary<T>::apply(std::forward<T>(x), [&lp](auto&& v) {
+    return positive_constrain<Jacobian>(std::forward<decltype(v)>(v), lp);
+  });
 }
 
 }  // namespace math

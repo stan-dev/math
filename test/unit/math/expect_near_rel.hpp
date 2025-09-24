@@ -149,7 +149,8 @@ void expect_near_rel(const std::string& msg, EigMat1&& x1, EigMat2&& x2,
     Eigen::IOFormat CleanFmt(5, 0, ", ", "\n", "[", "]");
     FAIL() << "\nx1: \n"
            << x1.format(CleanFmt) << "\nx2: \n"
-           << x2.format(CleanFmt) << "\n";
+           << x2.format(CleanFmt)
+           << "\ndiff:" << (x1 - x2).eval().format(CleanFmt);
   }
 #endif
 }

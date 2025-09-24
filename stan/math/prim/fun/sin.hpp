@@ -21,7 +21,7 @@ namespace math {
  * @return sine of the argument
  */
 template <typename T, require_arithmetic_t<T>* = nullptr>
-inline auto sin(const T x) {
+inline auto sin(T&& x) {
   return std::sin(x);
 }
 
@@ -33,7 +33,7 @@ inline auto sin(const T x) {
  * @return sine of the argument
  */
 template <typename T, require_complex_bt<std::is_arithmetic, T>* = nullptr>
-inline auto sin(const T x) {
+inline auto sin(T&& x) {
   return std::sin(x);
 }
 
@@ -46,8 +46,8 @@ inline auto sin(const T x) {
  */
 struct sin_fun {
   template <typename T>
-  static inline auto fun(const T& x) {
-    return sin(x);
+  static inline auto fun(T&& x) {
+    return sin(std::forward<T>(x));
   }
 };
 
@@ -59,8 +59,8 @@ struct sin_fun {
  * @return Sine of each value in x.
  */
 template <typename T, require_ad_container_t<T>* = nullptr>
-inline auto sin(const T& x) {
-  return apply_scalar_unary<sin_fun, T>::apply(x);
+inline auto sin(T&& x) {
+  return apply_scalar_unary<sin_fun, T>::apply(std::forward<T>(x));
 }
 
 /**
@@ -73,9 +73,9 @@ inline auto sin(const T& x) {
  */
 template <typename Container,
           require_container_bt<std::is_arithmetic, Container>* = nullptr>
-inline auto sin(const Container& x) {
+inline auto sin(Container&& x) {
   return apply_vector_unary<Container>::apply(
-      x, [&](const auto& v) { return v.array().sin(); });
+      std::forward<Container>(x), [](auto&& v) { return v.array().sin(); });
 }
 
 namespace internal {

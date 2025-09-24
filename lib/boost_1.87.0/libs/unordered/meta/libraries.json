@@ -1,0 +1,16 @@
+{
+    "key": "unordered",
+    "name": "Unordered",
+    "authors": [
+        "Daniel James"
+    ],
+    "maintainers": [
+        "Christian Mazakas <christian.mazakas -at- gmail.com>",
+        "Joaquín M López Muñoz <joaquin.lopezmunoz -at- gmail.com>"
+    ],
+    "description": "Unordered associative containers.",
+    "category": [
+        "Containers"
+    ],
+    "cxxstd": "11"
+}

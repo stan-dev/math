@@ -22,8 +22,7 @@ template <typename T,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
 inline matrix_cl<double> log_softmax(const T& a) {
   check_nonzero_size("log_softmax (OpenCL)", "x", a);
-  return make_holder_cl([](const auto& x) { return x - log_sum_exp(x); },
-                        to_ref(a));
+  return make_holder_cl([](auto&& x) { return x - log_sum_exp(x); }, to_ref(a));
 }
 
 }  // namespace math

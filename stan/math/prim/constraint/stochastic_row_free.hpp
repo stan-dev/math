@@ -35,9 +35,10 @@ inline plain_type_t<Mat> stochastic_row_free(const Mat& y) {
  * @param[in] y vector of rowwise simplex matrices each of size (N, K)
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
-inline auto stochastic_row_free(const T& y) {
-  return apply_vector_unary<T>::apply(
-      y, [](auto&& v) { return stochastic_row_free(v); });
+inline auto stochastic_row_free(T&& y) {
+  return apply_vector_unary<T>::apply(std::forward<T>(y), [](auto&& v) {
+    return stochastic_row_free(std::forward<decltype(v)>(v));
+  });
 }
 
 }  // namespace math

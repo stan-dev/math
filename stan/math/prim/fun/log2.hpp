@@ -16,6 +16,11 @@ namespace math {
  */
 inline constexpr double log2() { return LOG_TWO; }
 
+template <typename T, require_arithmetic_t<T>* = nullptr>
+inline auto log2(T&& x) {
+  return std::log2(x);
+}
+
 /**
  * Structure to wrap `log2()` so it can be vectorized.
  */
@@ -28,9 +33,8 @@ struct log2_fun {
    * @return base two log of the argument
    */
   template <typename T>
-  static inline auto fun(const T& x) {
-    using std::log2;
-    return log2(x);
+  static inline auto fun(T&& x) {
+    return log2(std::forward<T>(x));
   }
 };
 
@@ -45,9 +49,10 @@ struct log2_fun {
  * @return elementwise log2 of container elements
  */
 template <typename T, require_not_var_matrix_t<T>* = nullptr,
-          require_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr>
-inline auto log2(const T& x) {
-  return apply_scalar_unary<log2_fun, T>::apply(x);
+          require_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr,
+          require_container_t<T>* = nullptr>
+inline auto log2(T&& x) {
+  return apply_scalar_unary<log2_fun, T>::apply(std::forward<T>(x));
 }
 
 }  // namespace math
