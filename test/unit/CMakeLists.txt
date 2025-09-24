@@ -65,6 +65,33 @@ function(set_test_labels target label)
     endif()
   endforeach()
 endfunction()
+
+
+if (STAN_MPI)
+add_executable(unit_math_mpi_tests
+${CMAKE_CURRENT_SOURCE_DIR}/math/prim/functor/mpi_cluster_test.cpp
+${CMAKE_CURRENT_SOURCE_DIR}/math/prim/functor/mpi_parallel_call_test.cpp
+${CMAKE_CURRENT_SOURCE_DIR}/math/rev/functor/map_rect_mpi_prim_test.cpp
+${CMAKE_CURRENT_SOURCE_DIR}/math/rev/functor/map_rect_mpi_test.cpp
+)
+target_include_directories(unit_math_mpi_tests PRIVATE ${CMAKE_SOURCE_DIR})
+target_compile_options(unit_math_mpi_tests PUBLIC -O1 -Wno-misleading-indentation)
+if (STAN_OPENCL)
+target_link_libraries(unit_math_mpi_tests OpenCL::OpenCL)
+target_include_directories(unit_math_mpi_tests PRIVATE ${CLCPP_SOURCE_DIR}/include)
+endif()
+target_link_libraries(unit_math_mpi_tests Boost::mpi MPI::MPI_CXX)
+
+target_link_libraries(unit_math_mpi_tests
+  gtest_main benchmark::benchmark TBB::tbb
+  Eigen3::Eigen sundials_kinsol_static sundials_cvodes_static
+  sundials_idas_static sundials_nvecserial_static
+  Boost::math Boost::numeric_odeint Boost::lexical_cast Boost::optional)
+
+endif()
+
+
+
 if (FALSE)
 add_custom_target(test_unit_math_opencl_tests)
 add_dependencies(test_unit_math_opencl_tests

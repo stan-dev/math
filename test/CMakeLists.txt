@@ -39,7 +39,8 @@ target_precompile_headers(dae_test PRIVATE
 target_link_libraries(dae_test
   gtest_main benchmark::benchmark TBB::tbb
   Eigen3::Eigen sundials_kinsol_static sundials_cvodes_static
-  sundials_idas_static sundials_nvecserial_static Boost::math Boost::numeric_odeint Boost::lexical_cast Boost::optional)
+  sundials_idas_static sundials_nvecserial_static
+  Boost::math Boost::numeric_odeint Boost::lexical_cast Boost::optional)
 if (STAN_OPENCL)
   target_link_libraries(dae_test OpenCL::OpenCL)
   target_include_directories(dae_test PRIVATE ${CLCPP_SOURCE_DIR}/include)
