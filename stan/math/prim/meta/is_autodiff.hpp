@@ -48,6 +48,14 @@ struct is_autodiff<T, require_eigen_t<T>>
 
 }  // namespace internal
 
+/**
+ * Checks if decayed @ref scalar_type_t is a var or fvar
+ * @tparam The type to check
+ * @ingroup type_trait
+ */
+template <typename T, typename = void>
+struct is_autodiff : internal::is_autodiff<T> {};
+
 template <typename T>
 inline constexpr bool is_autodiff_v = internal::is_autodiff<T>::value;
 
