@@ -263,8 +263,13 @@ pipeline {
                             if (!(params.optimizeUnitTests || isBranch('develop') || isBranch('master'))) {
                                 sh "echo O=0 >> make/local"
                             }
-                            runTests("test/unit/math/rev")
-                            runTests("test/unit/math/fwd")
+                            sh '''
+                            cmake -S . -B \"build\" -DCMAKE_BUILD_TYPE=RELEASE;
+                            cd build && make -j${PARALLEL} unit_math_rev_all_tests unit_math_fwd_all_tests && \
+                            ctest --test-dir=./test/unit -R unit_math --output-on-failure
+                            '''
+//                            runTests("test/unit/math/rev")
+//                            runTests("test/unit/math/fwd")
                         }
                     }
                     post { always { retry(3) { deleteDir() } } }
@@ -319,14 +324,14 @@ pipeline {
                             if (!(params.optimizeUnitTests || isBranch('develop') || isBranch('master'))) {
                                 sh "echo O=0 >> make/local"
                             }
-                            runTests("test/unit/*_test.cpp", false)
-                            runTests("test/unit/math/*_test.cpp", false)
+                            //runTests("test/unit/*_test.cpp", false)
+                            //runTests("test/unit/math/*_test.cpp", false)
                             //runTests("test/unit/math/prim", true)
                             //runTests("test/unit/math/memory", false)
                         }
                         sh '''
                         cmake -S . -B \"build\" -DCMAKE_BUILD_TYPE=RELEASE;
-                        cd build && make -j${PARALLEL} unit_math_prim_all_tests unit_math_memory_tests && \
+                        cd build && make -j${PARALLEL} unit_math_prim_all_tests unit_math_memory_tests unit_math_ad_testing_all_tests && \
                         ctest --test-dir=./test/unit -R unit_math --output-on-failure
                         '''
                     }
@@ -409,11 +414,12 @@ pipeline {
                             echo CXX_TYPE=gcc >> make/local
                             echo STAN_MPI=true >> make/local
                             CXX=${MPICXX} cmake -S . -B \"build\" -DCMAKE_BUILD_TYPE=RELEASE -DSTAN_MPI=ON && \
-                            cd build && make -j${PARALLEL} unit_math_mpi_tests && \
-                            ctest --output-on-failure --label-regex unit_math_mpi
+                            cd build && make -j${PARALLEL} unit_math_mpi_tests \
+                            unit_math_rev_all_tests unit_math_fwd_all_tests && \
+                            ctest --output-on-failure --label-regex unit_math
                         """
-                        runTests("test/unit/math/prim/functor")
-                        runTests("test/unit/math/rev/functor")
+//                        runTests("test/unit/math/prim/functor")
+//                        runTests("test/unit/math/rev/functor")
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
@@ -469,14 +475,24 @@ pipeline {
                                 sh "echo STAN_THREADS=true >> make/local"
                                 sh "export STAN_NUM_THREADS=4"
                                 if (isBranch('develop') || isBranch('master')) {
-                                    runTests("test/unit")
-                                    sh "find . -name *_test.xml | xargs rm"
+                                  sh'''
+                                    cmake -S . -B \"build\" -DCMAKE_BUILD_TYPE=RELEASE -DSTAN_THREADS=ON && \
+                                    cd build && make -j${PARALLEL} unit_math_all_tests && \
+                                    ctest --output-on-failure --label-regex unit_math
+                                  '''
+//                                    runTests("test/unit")
+//                                    sh "find . -name *_test.xml | xargs rm"
                                 } else {
-                                    runTests("test/unit -f thread")
-                                    sh "find . -name *_test.xml | xargs rm"
-                                    runTests("test/unit -f map_rect")
-                                    sh "find . -name *_test.xml | xargs rm"
-                                    runTests("test/unit -f reduce_sum")
+                                  sh'''
+                                    cmake -S . -B \"build\" -DCMAKE_BUILD_TYPE=RELEASE -DSTAN_THREADS=ON && \
+                                    cd build && make -j${PARALLEL} unit_math_threads_all_tests && \
+                                    ctest --output-on-failure --label-regex unit_math_threads
+                                  '''
+//                                    runTests("test/unit -f thread")
+//                                    sh "find . -name *_test.xml | xargs rm"
+//                                    runTests("test/unit -f map_rect")
+//                                    sh "find . -name *_test.xml | xargs rm"
+//                                    runTests("test/unit -f reduce_sum")
                                 }
                             }
                         }

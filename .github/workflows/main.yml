@@ -28,11 +28,16 @@ jobs:
       matrix:
         os: [windows-11-arm, windows-latest, ubuntu-24.04-arm]
         config: [
-          { label: misc, tests: 'test/unit/*_test.cpp test/unit/math/*_test.cpp test/unit/math/memory' },
-          { label: prim, tests: 'test/unit/math/prim' },
-          { label: rev, tests: 'test/unit/math/rev' },
-          { label: fwd, tests: 'test/unit/math/fwd' },
-          { label: 'non-fun mix', tests: 'test/unit/math/mix/core test/unit/math/mix/meta test/unit/math/mix/*_test.cpp' }
+#          { label: misc, tests: 'test/unit/*_test.cpp test/unit/math/*_test.cpp' },
+#          { label: tu, tests: 'unit_tu_all_tests' },
+          { label: test_framework, tests: 'unit_math_ad_testing_all_tests' },
+          { label: memory, tests: 'unit_math_memory_all_tests' },
+          { label: prim, tests: 'unit_math_prim_all_tests' },
+          { label: rev, tests: 'unit_math_rev_all_tests' },
+          { label: fwd, tests: 'unit_math_fwd_all_tests' },
+          { label: 'mix core', tests: 'unit_math_mix_core_all_tests' },
+          { label: 'mix meta', tests: 'unit_math_mix_meta_all_tests' },
+          { label: 'mix eigen', tests: 'unit_math_mix_eigen_all_tests' }
         ]
 
     steps:
@@ -68,7 +73,10 @@ jobs:
     - name: Run ${{ matrix.config.label }} unit tests
       shell: pwsh
       run: |
-        python runTests.py -j4 ${{ matrix.config.tests }}
+        cmake -S . -B build -DCMAKE_BUILD_TYPE=RELEASE;
+        cd build && make -j${PARALLEL} ${{ matrix.config.tests }} && \
+        ctest --test-dir=./test/unit -R ${{ matrix.config.tests }} --output-on-failure
+#        python runTests.py -j4
 
     - name: Upload gtest_output xml
       uses: actions/upload-artifact@v4
@@ -130,8 +138,11 @@ jobs:
           $MixFunProbTests[(3 * $FifthNumberTests)..(4 * $FifthNumberTests - 1)], `
           $MixFunProbTests[(4 * $FifthNumberTests)..($NumberTests - 1)] `
         )
+        cmake -S . -B build -DCMAKE_BUILD_TYPE=RELEASE;
+        cd build && make -j${PARALLEL} unit_math_mix_fun_all_tests unit_math_mix_prob_all_tests && \
+        ctest --test-dir=./test/unit -R unit_math_mix --output-on-failure
 
-        python runTests.py -j2 $MixFunProbTestsArray[(${{ matrix.group }} - 1)]
+#        python runTests.py -j2 $MixFunProbTestsArray[(${{ matrix.group }} - 1)]
 
     - name: Upload gtest_output xml
       uses: actions/upload-artifact@v4

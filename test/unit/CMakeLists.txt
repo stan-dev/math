@@ -29,15 +29,6 @@ target_link_libraries(unit_pch
   sundials_idas_static sundials_nvecserial_static
   Boost::math Boost::numeric_odeint Boost::lexical_cast Boost::optional)
 
-if (STAN_OPENCL)
-target_include_directories(unit_pch PRIVATE ${CLCPP_SOURCE_DIR}/include)
-target_link_libraries(unit_pch OpenCL::OpenCL)
-endif()
-if (STAN_MPI)
-  target_link_libraries(unit_pch Boost::mpi MPI::MPI_CXX)
-endif()
-
-target_compile_options(unit_pch PRIVATE -O1)
 add_gtest_grouped_test(${CMAKE_CURRENT_SOURCE_DIR}/math unit_math unit_pch)
 
 message("Adding unit_math_opencl_subtests")
@@ -91,6 +82,48 @@ target_link_libraries(unit_math_mpi_tests
 endif()
 
 
+
+if (STAN_THREADS)
+add_executable(unit_math_threads_all_tests
+${CMAKE_CURRENT_SOURCE_DIR}/math/prim/core/get_num_threads_test.cpp
+${CMAKE_CURRENT_SOURCE_DIR}/math/prim/core/init_threadpool_tbb_late_test.cpp
+${CMAKE_CURRENT_SOURCE_DIR}/math/prim/core/init_threadpool_tbb_test.cpp
+${CMAKE_CURRENT_SOURCE_DIR}/math/prim/core/set_num_threads_test.cpp
+${CMAKE_CURRENT_SOURCE_DIR}/math/prim/functor/utils_threads.hpp
+${CMAKE_CURRENT_SOURCE_DIR}/math/rev/core/profiling_threading_test.cpp
+${CMAKE_CURRENT_SOURCE_DIR}/math/rev/core/thread_stack_instance_test.cpp
+${CMAKE_CURRENT_SOURCE_DIR}/math/rev/functor/map_rect_concurrent_threads_test.cpp
+${CMAKE_CURRENT_SOURCE_DIR}/math/mix/functor/reduce_sum_part2_test.cpp
+${CMAKE_CURRENT_SOURCE_DIR}/math/mix/functor/reduce_sum_part4_test.cpp
+${CMAKE_CURRENT_SOURCE_DIR}/math/mix/functor/reduce_sum_part3_test.cpp
+${CMAKE_CURRENT_SOURCE_DIR}/math/mix/functor/reduce_sum_util.hpp
+${CMAKE_CURRENT_SOURCE_DIR}/math/mix/functor/reduce_sum_part1_test.cpp
+${CMAKE_CURRENT_SOURCE_DIR}/math/prim/functor/reduce_sum_test.cpp
+${CMAKE_CURRENT_SOURCE_DIR}/math/prim/functor/reduce_sum_util.hpp
+${CMAKE_CURRENT_SOURCE_DIR}/math/rev/functor/reduce_sum_test.cpp
+${CMAKE_CURRENT_SOURCE_DIR}/math/rev/functor/map_rect_concurrent_prim_test.cpp
+${CMAKE_CURRENT_SOURCE_DIR}/math/rev/functor/map_rect_concurrent_test.cpp
+${CMAKE_CURRENT_SOURCE_DIR}/math/rev/functor/map_rect_concurrent_threads_test.cpp
+${CMAKE_CURRENT_SOURCE_DIR}/math/rev/functor/map_rect_mpi_prim_test.cpp
+${CMAKE_CURRENT_SOURCE_DIR}/math/rev/functor/map_rect_mpi_test.cpp
+${CMAKE_CURRENT_SOURCE_DIR}/math/rev/functor/map_rect_prim_test.cpp
+  )
+target_include_directories(unit_math_threads_all_tests PRIVATE ${CMAKE_SOURCE_DIR})
+target_compile_options(unit_math_threads_all_tests PUBLIC -O1 -Wno-misleading-indentation)
+if (STAN_OPENCL)
+target_link_libraries(unit_math_threads_all_tests OpenCL::OpenCL)
+target_include_directories(unit_math_threads_all_tests PRIVATE ${CLCPP_SOURCE_DIR}/include)
+endif()
+if (STAN_MPI)
+target_link_libraries(unit_math_threads_all_tests Boost::mpi MPI::MPI_CXX)
+endif()
+
+target_link_libraries(unit_math_threads_all_tests
+  gtest_main benchmark::benchmark TBB::tbb
+  Eigen3::Eigen sundials_kinsol_static sundials_cvodes_static
+  sundials_idas_static sundials_nvecserial_static
+  Boost::math Boost::numeric_odeint Boost::lexical_cast Boost::optional)
+endif()
 
 if (FALSE)
 add_custom_target(test_unit_math_opencl_tests)
