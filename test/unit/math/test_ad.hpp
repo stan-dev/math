@@ -341,7 +341,7 @@ inline void test_grad_hessian(const ad_tolerances& tols, const F& f,
  */
 template <bool ReverseOnly = false, typename G>
 inline void expect_ad_derivatives(const ad_tolerances& tols, const G& g,
-                           const Eigen::VectorXd& x) {
+                                  const Eigen::VectorXd& x) {
   double gx = g(x);
   test_gradient(tols, g, x, gx);
   if constexpr (!ReverseOnly) {
@@ -482,7 +482,7 @@ inline void expect_all_throw(const F& f, double x1, double x2, double x3) {
  */
 template <bool ReverseOnly = false, typename F, typename G, typename... Ts>
 inline void expect_ad_helper(const ad_tolerances& tols, const F& f, const G& g,
-                      const Eigen::VectorXd& x, Ts... xs) {
+                             const Eigen::VectorXd& x, Ts... xs) {
   using stan::math::serialize;
   auto h
       = [&](const int i) { return [&g, i](const auto& v) { return g(v)[i]; }; };
@@ -578,7 +578,7 @@ inline void expect_ad_v(const ad_tolerances& tols, const F& f, int x) {
  */
 template <bool ReverseOnly = false, typename F, typename T1, typename T2>
 inline void expect_ad_vv(const ad_tolerances& tols, const F& f, const T1& x1,
-                  const T2& x2) {
+                         const T2& x2) {
   using stan::math::serialize_args;
   using stan::math::serialize_return;
   using stan::math::to_deserializer;
@@ -612,7 +612,8 @@ inline void expect_ad_vv(const ad_tolerances& tols, const F& f, const T1& x1,
 }
 
 template <bool ReverseOnly = false, typename F, typename T2>
-inline void expect_ad_vv(const ad_tolerances& tols, const F& f, int x1, const T2& x2) {
+inline void expect_ad_vv(const ad_tolerances& tols, const F& f, int x1,
+                         const T2& x2) {
   try {
     f(x1, x2);
   } catch (...) {
@@ -634,7 +635,8 @@ inline void expect_ad_vv(const ad_tolerances& tols, const F& f, int x1, const T2
 }
 
 template <bool ReverseOnly = false, typename F, typename T1>
-inline void expect_ad_vv(const ad_tolerances& tols, const F& f, const T1& x1, int x2) {
+inline void expect_ad_vv(const ad_tolerances& tols, const F& f, const T1& x1,
+                         int x2) {
   try {
     f(x1, x2);
   } catch (...) {
@@ -656,7 +658,8 @@ inline void expect_ad_vv(const ad_tolerances& tols, const F& f, const T1& x1, in
 }
 
 template <bool ReverseOnly = false, typename F>
-inline void expect_ad_vv(const ad_tolerances& tols, const F& f, int x1, int x2) {
+inline void expect_ad_vv(const ad_tolerances& tols, const F& f, int x1,
+                         int x2) {
   // this one needs throw test because it's not handled by recursion
   try {
     f(x1, x2);
@@ -697,7 +700,7 @@ inline void expect_ad_vv(const ad_tolerances& tols, const F& f, int x1, int x2) 
 template <bool ReverseOnly = false, typename F, typename T1, typename T2,
           typename T3>
 inline void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
-                   const T2& x2, const T3& x3) {
+                          const T2& x2, const T3& x3) {
   using stan::math::serialize_args;
   using stan::math::serialize_return;
   using stan::math::to_deserializer;
@@ -772,7 +775,7 @@ inline void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
 
 template <bool ReverseOnly = false, typename F, typename T3>
 inline void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, int x2,
-                   const T3& x3) {
+                          const T3& x3) {
   try {
     f(x1, x2, x3);
   } catch (...) {
@@ -800,8 +803,8 @@ inline void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, int x2,
 }
 
 template <bool ReverseOnly = false, typename F, typename T2, typename T3>
-inline void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, const T2& x2,
-                   const T3& x3) {
+inline void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1,
+                          const T2& x2, const T3& x3) {
   try {
     f(x1, x2, x3);
   } catch (...) {
@@ -824,8 +827,8 @@ inline void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, const T
 }
 
 template <bool ReverseOnly = false, typename F, typename T1, typename T3>
-inline void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1, int x2,
-                   const T3& x3) {
+inline void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
+                          int x2, const T3& x3) {
   try {
     f(x1, x2, x3);
   } catch (...) {
@@ -849,7 +852,7 @@ inline void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1, i
 
 template <bool ReverseOnly = false, typename F, typename T1, typename T2>
 inline void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
-                   const T2& x2, int x3) {
+                          const T2& x2, int x3) {
   try {
     f(x1, x2, x3);
   } catch (...) {
@@ -872,8 +875,8 @@ inline void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
 }
 
 template <bool ReverseOnly = false, typename F, typename T2>
-inline void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, const T2& x2,
-                   int x3) {
+inline void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1,
+                          const T2& x2, int x3) {
   try {
     f(x1, x2, x3);
   } catch (...) {
@@ -901,8 +904,8 @@ inline void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, const T
 }
 
 template <bool ReverseOnly = false, typename F, typename T1>
-inline void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1, int x2,
-                   int x3) {
+inline void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
+                          int x2, int x3) {
   try {
     f(x1, x2, x3);
   } catch (...) {
@@ -931,7 +934,7 @@ inline void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1, i
 
 template <bool ReverseOnly = false, typename F>
 inline void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, int x2,
-                   int x3) {
+                          int x3) {
   // test exception behavior; other exception cases tested recursively
   try {
     f(x1, x2, x3);
@@ -1203,7 +1206,7 @@ inline void expect_ad(const F& f, const T& x) {
  */
 template <bool ReverseOnly = false, typename F, typename T1, typename T2>
 inline void expect_ad(const ad_tolerances& tols, const F& f, const T1& x1,
-               const T2& x2) {
+                      const T2& x2) {
   internal::expect_ad_vv<ReverseOnly>(tols, f, x1, x2);
 }
 
@@ -1244,7 +1247,7 @@ inline void expect_ad(const F& f, const T1& x1, const T2& x2) {
 template <bool ReverseOnly = false, typename F, typename T1, typename T2,
           typename T3>
 inline void expect_ad(const ad_tolerances& tols, const F& f, const T1& x1,
-               const T2& x2, const T3& x3) {
+                      const T2& x2, const T3& x3) {
   internal::expect_ad_vvv<ReverseOnly>(tols, f, x1, x2, x3);
 }
 
@@ -1758,7 +1761,7 @@ inline void expect_ad_vectorized_binary(const F& f, const T1& x, const T2& y) {
  */
 template <typename F, typename T1, typename T2, typename T3>
 inline void expect_ad_vectorized_ternary(const F& f, const T1& x, const T2& y,
-                                  const T3& z) {
+                                         const T3& z) {
   constexpr ad_tolerances tols;
   expect_ad_vectorized_ternary(tols, f, x, y, z);
 }
