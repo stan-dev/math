@@ -85,13 +85,12 @@ jobs:
         path: '**/*_test.xml'
 
   mix-fun:
-    name: mix fun and prob tests ${{ matrix.group }} (${{ matrix.os }})
+    name: mix fun and prob tests (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: [windows-11-arm, windows-latest, ubuntu-24.04-arm]
-        group: [1, 2, 3, 4, 5]
 
     steps:
     - uses: actions/checkout@v5
@@ -114,7 +113,7 @@ jobs:
         }
 
         echo "C:/$RTOOLS/usr/bin;C:/$RTOOLS/$ARCH-w64-mingw32.static.posix/bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
-        echo "$(pwd)/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
+        echo "$(pwd)/build/gnu_14.2_cxx17_64_release" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
 
     - name: Build Math libs
       shell: pwsh
