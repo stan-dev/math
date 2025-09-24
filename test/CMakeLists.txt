@@ -59,129 +59,175 @@ define_property(TARGET PROPERTY SUB_TESTS BRIEF_DOCS "Subtests for a test target
 # @param folder_test_name The name of the test for the whole folder, will have _test appended to it
 # @param target_pch The precompiled header target to reuse
 function(add_gtest_grouped_test test_directory folder_test_name target_pch)
-  # Recursively find all directories under the specified test directory
-  file(GLOB_RECURSE ALL_CPP_FILES "${test_directory}/*.cpp")
+  # Collect all test sources (*test.cpp) once.
+  file(GLOB_RECURSE ALL_TEST_SOURCES "${test_directory}/*test.cpp")
 
-  # Get unique directories from file list
+  if (NOT ALL_TEST_SOURCES)
+    message(WARNING "No *test.cpp files found under: ${test_directory}")
+    return()
+  endif()
+
+  # Common libs for all test targets.
+  set(_COMMON_TEST_LIBS
+      gtest_main
+      benchmark::benchmark
+      TBB::tbb
+      Eigen3::Eigen
+      sundials_kinsol_static
+      sundials_cvodes_static
+      sundials_idas_static
+      sundials_nvecserial_static
+      Boost::math Boost::numeric_odeint Boost::lexical_cast Boost::optional)
+
+  # ---------------------------------------------
+  # 1) Per-file subtests and map them to folders.
+  #    We accumulate, for every directory (and its
+  #    ancestors up to test_directory), the list of
+  #    subtest executables that live under it.
+  # ---------------------------------------------
+  set(_DIR_KEYS "")  # stores the set of directory keys we’ll later materialize as *_subtests targets
+
+  foreach(src IN LISTS ALL_TEST_SOURCES)
+    # Unique name from repo-root-relative path.
+    string(REPLACE "${CMAKE_SOURCE_DIR}/" "" RELATIVE_FILE "${src}")
+    string(REPLACE "/" "_" SUB_TEST_TARGET_NAME "${RELATIVE_FILE}")
+    string(REPLACE ".cpp" "" SUB_TEST_TARGET_NAME "${SUB_TEST_TARGET_NAME}")
+
+    if (NOT TARGET ${SUB_TEST_TARGET_NAME})
+      add_executable(${SUB_TEST_TARGET_NAME} "${src}")
+      target_compile_options(${SUB_TEST_TARGET_NAME} PRIVATE -O1 -Wno-misleading-indentation)
+      target_include_directories(${SUB_TEST_TARGET_NAME} PRIVATE ${CMAKE_SOURCE_DIR})
+      if (TARGET ${target_pch})
+        target_precompile_headers(${SUB_TEST_TARGET_NAME} REUSE_FROM ${target_pch})
+      endif()
+      target_link_libraries(${SUB_TEST_TARGET_NAME} PRIVATE ${_COMMON_TEST_LIBS})
+      if (STAN_OPENCL)
+        target_link_libraries(${SUB_TEST_TARGET_NAME} PRIVATE OpenCL::OpenCL)
+        target_include_directories(${SUB_TEST_TARGET_NAME} PRIVATE ${CLCPP_SOURCE_DIR}/include)
+      endif()
+      if (STAN_MPI)
+        target_link_libraries(${SUB_TEST_TARGET_NAME} PRIVATE Boost::mpi MPI::MPI_CXX)
+      endif()
+
+      add_test(NAME ${SUB_TEST_TARGET_NAME} COMMAND ${SUB_TEST_TARGET_NAME})
+      set_property(TEST ${SUB_TEST_TARGET_NAME} PROPERTY LABELS "${folder_test_name}")
+    endif()
+
+    # Assign this subtest to every ancestor directory (recursive) up to test_directory.
+    get_filename_component(_cur_dir "${src}" DIRECTORY)
+    while (TRUE)
+      # REL_DIR == "." or "" means root (test_directory itself).
+      file(RELATIVE_PATH _rel_dir "${test_directory}" "${_cur_dir}")
+      if (_rel_dir STREQUAL "." OR _rel_dir STREQUAL "")
+        set(_key "ROOT")
+      else()
+        string(REPLACE "/" "_" _key "${_rel_dir}")
+      endif()
+
+      # Track keys and append this subtest into the list for this key.
+      list(APPEND _DIR_KEYS "${_key}")
+      set(_varname "SUBTESTS_${_key}")
+      set(${_varname} "${${_varname}};${SUB_TEST_TARGET_NAME}")
+
+      if (_cur_dir STREQUAL "${test_directory}")
+        break()
+      endif()
+      get_filename_component(_cur_dir "${_cur_dir}" DIRECTORY)
+    endwhile()
+  endforeach()
+
+  list(REMOVE_DUPLICATES _DIR_KEYS)
+
+  # ---------------------------------------------
+  # 2) Per-directory grouped executables (recursive)
+  #    and per-directory *_subtests meta targets.
+  # ---------------------------------------------
+  # Build set of unique directories we saw while scanning sources (for _all_tests).
   set(UNIQUE_DIRS "")
-  foreach(cpp_file IN LISTS ALL_CPP_FILES)
-    get_filename_component(dir_path "${cpp_file}" DIRECTORY)
-    list(APPEND UNIQUE_DIRS "${dir_path}")
+  foreach(src IN LISTS ALL_TEST_SOURCES)
+    get_filename_component(_d "${src}" DIRECTORY)
+    while (TRUE)
+      list(APPEND UNIQUE_DIRS "${_d}")
+      if (_d STREQUAL "${test_directory}")
+        break()
+      endif()
+      get_filename_component(_d "${_d}" DIRECTORY)
+    endwhile()
   endforeach()
   list(REMOVE_DUPLICATES UNIQUE_DIRS)
 
-  # List to accumulate all test files for the single target
-  set(ALL_TEST_FILES "")
-  set(ALL_TEST_TARGETS "")
-  # Create a test target for each unique directory with CPP files
+  set(ALL_GROUP_TARGETS "")
   foreach(dir IN LISTS UNIQUE_DIRS)
-    file(GLOB CPP_FILES_IN_DIR "${dir}/*test.cpp")
-    list(APPEND ALL_TEST_FILES ${CPP_FILES_IN_DIR})  # Add files to global list
-    message(STATUS "Adding test target for: ${dir}")
-    # Generate a safe test target name from the directory path
-    string(REPLACE "${CMAKE_SOURCE_DIR}/" "" RELATIVE_DIR ${dir})
-    string(REPLACE "/" "_" TEST_TARGET_NAME ${RELATIVE_DIR})
-    message(STATUS "Test target name: ${TEST_TARGET_NAME}")
-    if(TEST_TARGET_NAME STREQUAL "")
-      set(TEST_TARGET_NAME "root")
+    file(GLOB_RECURSE DIR_TESTS "${dir}/*test.cpp")
+    if (NOT DIR_TESTS)
+      continue()
     endif()
 
-    # Check if target already exists to prevent redefinition
-    if (NOT TARGET ${TEST_TARGET_NAME})
-      # Add executable and related commands only if there are source files
-      if (CPP_FILES_IN_DIR)
-        set(ALL_SUB_TEST_TARGETS "")
-        # Build subtests
-        foreach(cpp_file IN LISTS CPP_FILES_IN_DIR)
-          string(REPLACE "${CMAKE_SOURCE_DIR}/" "" RELATIVE_FILE ${cpp_file})
-          string(REPLACE "/" "_" TMP_TEST_TARGET_NAME ${RELATIVE_FILE})
-          string(REPLACE ".cpp" "" SUB_TEST_TARGET_NAME ${TMP_TEST_TARGET_NAME})
-          list(APPEND ALL_SUB_TEST_TARGETS ${SUB_TEST_TARGET_NAME})
-          add_executable(${SUB_TEST_TARGET_NAME} ${cpp_file})
-          target_compile_options(${SUB_TEST_TARGET_NAME} PUBLIC -O1 -Wno-misleading-indentation)
-          target_include_directories(${SUB_TEST_TARGET_NAME} PRIVATE ${CMAKE_SOURCE_DIR})
-          target_precompile_headers(${SUB_TEST_TARGET_NAME} REUSE_FROM ${target_pch})
-          target_link_libraries(${SUB_TEST_TARGET_NAME}
-            gtest_main benchmark::benchmark TBB::tbb
-            Eigen3::Eigen sundials_kinsol_static sundials_cvodes_static
-            sundials_idas_static sundials_nvecserial_static Boost::math Boost::numeric_odeint Boost::lexical_cast Boost::optional)
-          if (STAN_OPENCL)
-            target_link_libraries(${SUB_TEST_TARGET_NAME} OpenCL::OpenCL)
-            target_include_directories(${SUB_TEST_TARGET_NAME} PRIVATE ${CLCPP_SOURCE_DIR}/include)
-          endif()
-          if (STAN_MPI)
-            target_link_libraries(${SUB_TEST_TARGET_NAME} Boost::mpi MPI::MPI_CXX)
-          endif()
-          # Register the test with CTest
-          add_test(NAME ${SUB_TEST_TARGET_NAME} COMMAND ${SUB_TEST_TARGET_NAME})
-          set_property(TEST ${SUB_TEST_TARGET_NAME} PROPERTY LABELS ${TEST_TARGET_NAME})
-        endforeach()
-        # target for all subtests
-        add_custom_target(${TEST_TARGET_NAME}_subtests)
-        add_dependencies(${TEST_TARGET_NAME}_subtests ${ALL_SUB_TEST_TARGETS})
-        set_property(TARGET ${TEST_TARGET_NAME}_subtests PROPERTY SUBTESTS ${ALL_SUB_TEST_TARGETS})
-        print_target_properties(${TEST_TARGET_NAME}_subtests)
-        message(STATUS "${TEST_TARGET_NAME}_subtests build")
-
-        message(STATUS "${TEST_TARGET_NAME} grouped test for ${dir}")
-        add_executable(${TEST_TARGET_NAME} ${CPP_FILES_IN_DIR})
-        # Configure target properties such as include directories and linked libraries
-        target_include_directories(${TEST_TARGET_NAME} PRIVATE ${CMAKE_SOURCE_DIR})
-        target_compile_options(${TEST_TARGET_NAME} PUBLIC -O1 -Wno-misleading-indentation)
-        target_precompile_headers(${TEST_TARGET_NAME} REUSE_FROM ${target_pch})
-        target_link_libraries(${TEST_TARGET_NAME}
-          gtest_main benchmark::benchmark TBB::tbb
-          Eigen3::Eigen sundials_kinsol_static sundials_cvodes_static
-          sundials_idas_static sundials_nvecserial_static Boost::math Boost::numeric_odeint Boost::lexical_cast Boost::optional)
-        if (STAN_OPENCL)
-          target_link_libraries(${TEST_TARGET_NAME} OpenCL::OpenCL)
-          target_include_directories(${TEST_TARGET_NAME} PRIVATE ${CLCPP_SOURCE_DIR}/include)
-        endif()
-        if (STAN_MPI)
-          target_link_libraries(${TEST_TARGET_NAME} Boost::mpi MPI::MPI_CXX)
-        endif()
-#        message(STATUS "${ALL_TEST_TARGETS} ")
-          # Register the test with CTest
-        add_test(NAME ${TEST_TARGET_NAME} COMMAND ${TEST_TARGET_NAME})
-        list(APPEND ALL_TEST_TARGETS ${TEST_TARGET_NAME})
-      endif()
+    file(RELATIVE_PATH REL_DIR "${test_directory}" "${dir}")
+    if (REL_DIR STREQUAL "." OR REL_DIR STREQUAL "")
+      set(GROUP_TARGET "${folder_test_name}_all_tests")
+      set(GROUP_LABEL  "${folder_test_name}")
+      set(_key "ROOT")
     else()
-      message(WARNING "Target already exists: ${TEST_TARGET_NAME}")
+      string(REPLACE "/" "_" REL_NAME "${REL_DIR}")
+      set(GROUP_TARGET "${folder_test_name}_${REL_NAME}_all_tests")
+      set(GROUP_LABEL  "${folder_test_name};${REL_NAME}")
+      set(_key "${REL_NAME}")
+    endif()
+
+    if (NOT TARGET ${GROUP_TARGET})
+      add_executable(${GROUP_TARGET} ${DIR_TESTS})
+      target_compile_options(${GROUP_TARGET} PRIVATE -O1 -Wno-misleading-indentation)
+      target_include_directories(${GROUP_TARGET} PRIVATE ${CMAKE_SOURCE_DIR})
+      if (TARGET ${target_pch})
+        target_precompile_headers(${GROUP_TARGET} REUSE_FROM ${target_pch})
+      endif()
+      target_link_libraries(${GROUP_TARGET} PRIVATE ${_COMMON_TEST_LIBS})
+      if (STAN_OPENCL)
+        target_link_libraries(${GROUP_TARGET} PRIVATE OpenCL::OpenCL)
+        target_include_directories(${GROUP_TARGET} PRIVATE ${CLCPP_SOURCE_DIR}/include)
+      endif()
+      if (STAN_MPI)
+        target_link_libraries(${GROUP_TARGET} PRIVATE Boost::mpi MPI::MPI_CXX)
+      endif()
+
+      add_test(NAME ${GROUP_TARGET} COMMAND ${GROUP_TARGET})
+      set_property(TEST ${GROUP_TARGET} PROPERTY LABELS "${GROUP_LABEL}")
+      list(APPEND ALL_GROUP_TARGETS ${GROUP_TARGET})
+    endif()
+
+    # ---- Per-directory *_subtests meta target (recursive) ----
+    # Pull the list of subtests for this directory key and create a meta target that depends on them.
+    set(_varname "SUBTESTS_${_key}")
+    if (DEFINED ${_varname})
+      # Deduplicate the list for cleanliness.
+      list(REMOVE_DUPLICATES ${_varname})
+
+      if (_key STREQUAL "ROOT")
+        set(SUBTESTS_TARGET "${folder_test_name}_subtests")
+      else()
+        set(SUBTESTS_TARGET "${folder_test_name}_${_key}_subtests")
+      endif()
+
+      if (NOT TARGET ${SUBTESTS_TARGET})
+        add_custom_target(${SUBTESTS_TARGET})
+        add_dependencies(${SUBTESTS_TARGET} ${${_varname}})
+        # Optional: stash the list as a property for inspection.
+        set_property(TARGET ${SUBTESTS_TARGET} PROPERTY SUBTESTS ${${_varname}})
+      endif()
     endif()
   endforeach()
 
-  # Create a single target for all tests in the test_directory
-  if(ALL_TEST_FILES)
-    message(STATUS "Adding single test target for all tests ${folder_test_name}_test for ${test_directory}")
-    add_executable(${folder_test_name}_test ${ALL_TEST_FILES})
-    target_compile_options(${folder_test_name}_test PUBLIC -O1 -Wno-misleading-indentation)
-    target_include_directories(${folder_test_name}_test PRIVATE ${CMAKE_SOURCE_DIR})
-    target_precompile_headers(${folder_test_name}_test REUSE_FROM ${target_pch})
-    target_link_libraries(${folder_test_name}_test
-          gtest_main benchmark::benchmark TBB::tbb
-          Eigen3::Eigen sundials_kinsol_static sundials_cvodes_static
-          sundials_idas_static sundials_nvecserial_static Boost::math Boost::numeric_odeint Boost::lexical_cast Boost::optional)
-    if (STAN_OPENCL)
-      target_link_libraries(${folder_test_name}_test OpenCL::OpenCL)
-      target_include_directories(${folder_test_name}_test PRIVATE ${CLCPP_SOURCE_DIR}/include)
-    endif()
-    if (STAN_MPI)
-      target_link_libraries(${folder_test_name}_test Boost::mpi MPI::MPI_CXX)
-    endif()
+  # ---------------------------------------------
+  # 3) Global convenience meta targets
+  # ---------------------------------------------
+  add_custom_target(${folder_test_name}_groups)
+  add_dependencies(${folder_test_name}_groups ${ALL_GROUP_TARGETS})
 
-    # Register the combined test with CTest
-    add_test(${test_directory}_test ${SINGLE_TARGET_HPP} COMMAND ${folder_test_name}_test)
-  endif()
-  if (FALSE)
-  if (ALL_TEST_TARGETS)
-    add_custom_target(${folder_test_name}_subtests)
-    add_dependencies(${folder_test_name}_subtests ${ALL_TEST_TARGETS})
-    message(STATUS "Adding ${folder_test_name}_subtests to build")
-    message(STATUS "${ALL_TEST_TARGETS} ")
-  endif()
-  endif()
+  add_custom_target(${folder_test_name}_all)
+  add_dependencies(${folder_test_name}_all ${folder_test_name}_groups)
+
 endfunction()
-
 
 # Entry point to start the recursive addition of tests
 message(STATUS "Building tests...")
@@ -276,8 +322,8 @@ foreach(HEADER ${HEADER_FILES})
     TARGET ${SUB_TEST_TARGET_NAME}
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E echo "Testing header ${HEADER}"
-    COMMAND rm -f $<TARGET_FILE:${SUB_TEST_TARGET_NAME}>
-    COMMENT "Deleting target output for ${SUB_TEST_TARGET_NAME}"
+#    COMMAND rm -f $<TARGET_FILE:${SUB_TEST_TARGET_NAME}>
+#    COMMENT "Deleting target output for ${SUB_TEST_TARGET_NAME}"
   )
 
   add_dependencies(test-headers ${SUB_TEST_TARGET_NAME})

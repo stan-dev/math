@@ -263,9 +263,6 @@ pipeline {
                             if (!(params.optimizeUnitTests || isBranch('develop') || isBranch('master'))) {
                                 sh "echo O=0 >> make/local"
                             }
-<<<<<<< HEAD
-=======
-
                             runTests("test/unit/math/rev")
                             runTests("test/unit/math/fwd")
                         }
@@ -292,7 +289,12 @@ pipeline {
                             if (!(params.optimizeUnitTests || isBranch('develop') || isBranch('master'))) {
                                 sh "echo O=1 >> make/local"
                             }
-                            runTests("test/unit/math/mix", true)
+                            sh '''
+                            echo CXXFLAGS += -fsanitize=address >> make/local;
+                            cmake -S . -B \"build\" -DCMAKE_BUILD_TYPE=RELEASE;
+                            cd build && make -j${PARALLEL} unit_math_mix_all_tests && \
+                            ctest --test-dir=./test/unit -R unit_math_mix_all --output-on-failure
+                            '''
                         }
                     }
                     post { always { retry(3) { deleteDir() } } }
@@ -319,15 +321,13 @@ pipeline {
                             }
                             runTests("test/unit/*_test.cpp", false)
                             runTests("test/unit/math/*_test.cpp", false)
-                            runTests("test/unit/math/prim", true)
-                            runTests("test/unit/math/memory", false)
->>>>>>> origin/develop
+                            //runTests("test/unit/math/prim", true)
+                            //runTests("test/unit/math/memory", false)
                         }
                         sh '''
-                        echo CXXFLAGS += -fsanitize=address >> make/local;
                         cmake -S . -B \"build\" -DCMAKE_BUILD_TYPE=RELEASE;
-                        cd build && make -j${PARALLEL} test_unit_math_tests && \
-                        ctest --output-on-failure --label-regex unit_math_subtest;
+                        cd build && make -j${PARALLEL} unit_math_prim_all_tests unit_math_memory_tests && \
+                        ctest --test-dir=./test/unit -R unit_math --output-on-failure
                         '''
                     }
                     post { always { retry(3) { deleteDir() } } }
@@ -353,7 +353,11 @@ pipeline {
                             if (params.optimizeUnitTests || isBranch('develop') || isBranch('master')) {
                                 sh "echo CXXFLAGS += -fsanitize=address >> make/local"
                             }
-                            runTests("test/unit/math/laplace/*_test.cpp", false)
+                            sh '''
+                            cmake -S . -B \"build\" -DCMAKE_BUILD_TYPE=RELEASE;
+                            cd build && make -j${PARALLEL} unit_math_laplace_all_tests && \
+                            ctest --test-dir=./test/unit -R unit_math_laplace_all --output-on-failure
+                            '''
                         }
                     }
                     post { always { retry(3) { deleteDir() } } }
@@ -374,7 +378,8 @@ pipeline {
                             }
                             sh'''
                                 CXX=${CLANG_CXX} CC=${CLANG_CC} cmake -S . -B \"build\" -DCMAKE_BUILD_TYPE=RELEASE -DSTAN_OPENCL=ON -DSTAN_OPENCL_PLATFORM_ID=${OPENCL_PLATFORM_ID_GPU} -DSTAN_OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID_GPU} && \
-                                cd build && make -j${PARALLEL} test_unit_math_opencl_tests && ctest --output-on-failure --label-regex unit_math_opencl
+                                cd build && make -j${PARALLEL} unit_math_opencl_all_tests && \
+                                ctest --test-dir=./test/unit -R unit_math_opencl_all --output-on-failure
                             '''
                         }
                     }

@@ -25,8 +25,9 @@ endif()
 
 target_link_libraries(unit_pch
   gtest_main benchmark::benchmark TBB::tbb
-  Eigen3::Eigen sundials_kinsol sundials_cvodes sundials_ida
-  sundials_idas sundials_nvecserial Boost::math Boost::numeric_odeint Boost::lexical_cast Boost::optional)
+  Eigen3::Eigen sundials_kinsol_static sundials_cvodes_static
+  sundials_idas_static sundials_nvecserial_static
+  Boost::math Boost::numeric_odeint Boost::lexical_cast Boost::optional)
 
 if (STAN_OPENCL)
 target_include_directories(unit_pch PRIVATE ${CLCPP_SOURCE_DIR}/include)
@@ -48,23 +49,23 @@ endif()
 function(set_test_labels target label)
   get_property(SUBTESTS TARGET ${target} PROPERTY MANUALLY_ADDED_DEPENDENCIES)
   # Loop over the subtests
-  message(STATUS "{target} dependencies: ${SUBTESTS}")
+  #message(STATUS "{target} dependencies: ${SUBTESTS}")
   foreach(subtest ${SUBTESTS})
     string(FIND "${subtest}" "_test" INDEX REVERSE)
-    message("Checking: ${subtest}")
+    #message("Checking: ${subtest}")
     if(INDEX GREATER -1)
-      message("${subtest}: \n\t${label}")
+      #message("${subtest}: \n\t${label}")
       # Set the labels for tests ending with "_test"
       set_property(TEST ${subtest} PROPERTY LABELS ${label})
     else()
-      message(STATUS "RECURSE on ${subtest}")
+      #message(STATUS "RECURSE on ${subtest}")
       # Recursively call set_test_labels for other targets
       set_test_labels(${subtest} ${label})
-      message(STATUS "FINISH on ${subtest}")
+      #message(STATUS "FINISH on ${subtest}")
     endif()
   endforeach()
 endfunction()
-
+if (FALSE)
 add_custom_target(test_unit_math_opencl_tests)
 add_dependencies(test_unit_math_opencl_tests
   test_unit_math_opencl_subtests test_unit_math_opencl_device_functions_subtests
@@ -198,3 +199,5 @@ set_test_labels(test_unit_math_mpi_tests "unit_math_mpi_subtest")
 
 
 set_test_labels(test_unit_math_prim_err_subtests "unit_math_prim_err")
+
+endif()
