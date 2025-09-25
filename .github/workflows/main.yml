@@ -61,7 +61,9 @@ jobs:
         }
 
         echo "C:/$RTOOLS/usr/bin;C:/$RTOOLS/$ARCH-w64-mingw32.static.posix/bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
+        # TODO: This needs to be the same across builds or it will break too often
         echo "$(pwd)/build/gnu_14.2_cxx17_64_release" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
+        echo "$(pwd)/build/clang_19.1_cxx17_64_release" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
 
     - name: Build Math libs
       shell: pwsh
@@ -73,7 +75,7 @@ jobs:
     - name: Run ${{ matrix.config.label }} unit tests
       shell: pwsh
       run: |
-        cmake -S . -B build -DCMAKE_BUILD_TYPE=RELEASE;
+        cmake -S . -B build -DCMAKE_BUILD_TYPE=RELEASE -DSTAN_THREADS=ON;
         cd build && make -j4 ${{ matrix.config.tests }} && ctest -R ${{ matrix.config.tests }} --output-on-failure --output-junit test-results-${{ matrix.config.label }}.xml
 #        python runTests.py -j4
 
@@ -125,7 +127,7 @@ jobs:
     - name: Run mix/fun unit tests
       shell: pwsh
       run: |
-        cmake -S . -B build -DCMAKE_BUILD_TYPE=RELEASE;
+        cmake -S . -B build -DCMAKE_BUILD_TYPE=RELEASE -DSTAN_THREADS=ON;
         cd build && make -j4 unit_math_mix_fun_all_tests unit_math_mix_prob_all_tests && ctest -R unit_math_mix --output-on-failure --output-junit test-results-${{ matrix.config.label }}.xml
 
 #        python runTests.py -j2 $MixFunProbTestsArray[(${{ matrix.group }} - 1)]
