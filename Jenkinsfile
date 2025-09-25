@@ -277,7 +277,7 @@ pipeline {
                 stage('Mix Unit Tests') {
                     agent {
                         docker {
-                            image 'stanorg/ci:gpu-cpp17'
+                            image 'stanorg/ci:gpu-cmake3.30.5'
                             label 'linux && 8core'
                             args '--cap-add SYS_PTRACE'
                         }
@@ -307,7 +307,7 @@ pipeline {
                 stage('Prim Unit Tests') {
                     agent {
                         docker {
-                            image 'stanorg/ci:gpu-cpp17'
+                            image 'stanorg/ci:gpu-cmake3.30.5'
                             label 'linux'
                             args '--cap-add SYS_PTRACE'
                         }
@@ -340,7 +340,7 @@ pipeline {
                 stage('Laplace Unit Tests') {
                     agent {
                         docker {
-                            image 'stanorg/ci:gpu-cpp17'
+                            image 'stanorg/ci:gpu-cmake3.30.5'
                             label 'linux'
                             args '--cap-add SYS_PTRACE'
                         }
