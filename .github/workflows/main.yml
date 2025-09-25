@@ -116,6 +116,7 @@ jobs:
 
         echo "C:/$RTOOLS/usr/bin;C:/$RTOOLS/$ARCH-w64-mingw32.static.posix/bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
         echo "$(pwd)/build/gnu_14.2_cxx17_64_release" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
+        echo "$(pwd)/build/clang_19.1_cxx17_64_release" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
 
     - name: Build Math libs
       shell: pwsh
