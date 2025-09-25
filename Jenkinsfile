@@ -266,7 +266,7 @@ pipeline {
                             sh '''
                             cmake -S . -B \"build\" -DCMAKE_BUILD_TYPE=RELEASE;
                             cd build && make -j${PARALLEL} unit_math_rev_all_tests unit_math_fwd_all_tests && \
-                            ctest --test-dir=./test/unit -R unit_math --output-on-failure
+                            ctest -R unit_math --output-junit test-results-rev-fwd-all.xml --output-on-failure
                             '''
 //                            runTests("test/unit/math/rev")
 //                            runTests("test/unit/math/fwd")
@@ -298,7 +298,7 @@ pipeline {
                             echo CXXFLAGS += -fsanitize=address >> make/local;
                             cmake -S . -B \"build\" -DCMAKE_BUILD_TYPE=RELEASE;
                             cd build && make -j${PARALLEL} unit_math_mix_all_tests && \
-                            ctest --test-dir=./test/unit -R unit_math_mix_all --output-on-failure
+                            ctest -R unit_math_mix_all --output-junit test-results-mix-all.xml --output-on-failure
                             '''
                         }
                     }
@@ -332,7 +332,7 @@ pipeline {
                         sh '''
                         cmake -S . -B \"build\" -DCMAKE_BUILD_TYPE=RELEASE;
                         cd build && make -j${PARALLEL} unit_math_prim_all_tests unit_math_memory_tests unit_math_ad_testing_all_tests && \
-                        ctest --test-dir=./test/unit -R unit_math --output-on-failure
+                        ctest -R unit_math --output-junit test-results-prim-all.xml --output-on-failure
                         '''
                     }
                     post { always { retry(3) { deleteDir() } } }
@@ -361,7 +361,7 @@ pipeline {
                             sh '''
                             cmake -S . -B \"build\" -DCMAKE_BUILD_TYPE=RELEASE;
                             cd build && make -j${PARALLEL} unit_math_laplace_all_tests && \
-                            ctest --test-dir=./test/unit -R unit_math_laplace_all --output-on-failure
+                            ctest -R unit_math_laplace_all --output-junit test-results-laplace-all.xml --output-on-failure
                             '''
                         }
                     }
@@ -384,7 +384,7 @@ pipeline {
                             sh'''
                                 CXX=${CLANG_CXX} CC=${CLANG_CC} cmake -S . -B \"build\" -DCMAKE_BUILD_TYPE=RELEASE -DSTAN_OPENCL=ON -DSTAN_OPENCL_PLATFORM_ID=${OPENCL_PLATFORM_ID_GPU} -DSTAN_OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID_GPU} && \
                                 cd build && make -j${PARALLEL} unit_math_opencl_all_tests && \
-                                ctest --test-dir=./test/unit -R unit_math_opencl_all --output-on-failure
+                                ctest -R unit_math_opencl_all --output-junit test-results-opencl-all.xml --output-on-failure
                             '''
                         }
                     }
@@ -416,7 +416,7 @@ pipeline {
                             CXX=${MPICXX} cmake -S . -B \"build\" -DCMAKE_BUILD_TYPE=RELEASE -DSTAN_MPI=ON && \
                             cd build && make -j${PARALLEL} unit_math_mpi_tests \
                             unit_math_rev_all_tests unit_math_fwd_all_tests && \
-                            ctest --output-on-failure --label-regex unit_math
+                            ctest --output-junit test-results-rev-fwd-all.xml --output-junit test-results-mpi-all.xml --output-on-failure  --label-regex unit_math
                         """
 //                        runTests("test/unit/math/prim/functor")
 //                        runTests("test/unit/math/rev/functor")
@@ -478,7 +478,7 @@ pipeline {
                                   sh'''
                                     cmake -S . -B \"build\" -DCMAKE_BUILD_TYPE=RELEASE -DSTAN_THREADS=ON && \
                                     cd build && make -j${PARALLEL} unit_math_all_tests && \
-                                    ctest --output-on-failure --label-regex unit_math
+                                    ctest --output-junit test-results-threading.xml --output-on-failure --label-regex unit_math
                                   '''
 //                                    runTests("test/unit")
 //                                    sh "find . -name *_test.xml | xargs rm"
@@ -486,7 +486,7 @@ pipeline {
                                   sh'''
                                     cmake -S . -B \"build\" -DCMAKE_BUILD_TYPE=RELEASE -DSTAN_THREADS=ON && \
                                     cd build && make -j${PARALLEL} unit_math_threads_all_tests && \
-                                    ctest --output-on-failure --label-regex unit_math_threads
+                                    ctest --output-junit test-results-threading.xml --output-on-failure --label-regex unit_math_threads
                                   '''
 //                                    runTests("test/unit -f thread")
 //                                    sh "find . -name *_test.xml | xargs rm"
