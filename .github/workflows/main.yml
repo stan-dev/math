@@ -75,7 +75,7 @@ jobs:
     - name: Run ${{ matrix.config.label }} unit tests
       shell: pwsh
       run: |
-        cmake -S . -B build -DCMAKE_BUILD_TYPE=RELEASE -DSTAN_THREADS=ON;
+        cmake -S . -B build -DCMAKE_BUILD_TYPE=RELEASE;
         cd build && make -j4 ${{ matrix.config.tests }} && ctest -R ${{ matrix.config.tests }} --output-on-failure --output-junit test-results-${{ matrix.config.label }}.xml
 #        python runTests.py -j4
 
