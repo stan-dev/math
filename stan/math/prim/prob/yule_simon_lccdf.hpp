@@ -72,8 +72,7 @@ inline return_type_t<T_alpha> yule_simon_lccdf(const T_n& n,
     log_ccdf += lgamma(ap1) + lgamma(np1) - lgamma(nap1);
 
     if constexpr (!is_constant<T_alpha>::value) {
-      auto dlogccdf_dalpha = digamma(ap1) - digamma(nap1);
-      partials<0>(ops_partials)[i] += dlogccdf_dalpha;
+      partials<0>(ops_partials)[i] += digamma(ap1) - digamma(nap1);
     }
   }
 
