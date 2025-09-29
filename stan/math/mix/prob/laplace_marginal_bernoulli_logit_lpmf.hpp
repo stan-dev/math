@@ -8,11 +8,13 @@
 #include <stan/math/rev/fun/elt_multiply.hpp>
 #include <stan/math/rev/fun/exp.hpp>
 #include <stan/math/rev/fun/log.hpp>
+#include <stan/math/rev/fun/log1p_exp.hpp>
 #include <stan/math/rev/fun/multiply.hpp>
 #include <stan/math/rev/fun/sum.hpp>
 #include <stan/math/fwd/fun/exp.hpp>
 #include <stan/math/fwd/fun/lgamma.hpp>
 #include <stan/math/fwd/fun/log.hpp>
+#include <stan/math/fwd/fun/log1p_exp.hpp>
 #include <stan/math/fwd/fun/sum.hpp>
 #include <stan/math/prim/fun/binomial_coefficient_log.hpp>
 
@@ -27,7 +29,7 @@ struct bernoulli_logit_likelihood {
     auto theta_offset = to_ref(add(theta, mean));
     return sum(
         elt_multiply(theta_offset, y)
-        - elt_multiply(to_vector(delta_int), log(add(1.0, exp(theta_offset)))));
+        - elt_multiply(to_vector(delta_int), log1p_exp(theta_offset)));
   }
 };
 
@@ -62,7 +64,8 @@ inline auto laplace_marginal_tol_bernoulli_logit_lpmf(
     const int max_steps_line_search, std::ostream* msgs) {
   laplace_options_user_supplied ops{hessian_block_size,    solver,
                                     max_steps_line_search, tolerance,
-                                    max_num_steps,         value_of(theta_0)};
+                                    max_num_steps, laplace_line_search_options{}, 
+                                    value_of(theta_0)};
   return laplace_marginal_density(
       bernoulli_logit_likelihood{},
       std::forward_as_tuple(to_vector(y), n_samples, std::forward<Mean>(mean)),
