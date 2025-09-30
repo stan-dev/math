@@ -115,7 +115,8 @@ TEST(ProbDistributionsGamma, lcdf_derivatives_all_params) {
   // Check all gradients are finite and not NaN
   for (size_t i = 0; i < grads.size(); ++i) {
     EXPECT_FALSE(std::isnan(grads[i])) << "Gradient " << i << " is NaN";
-    EXPECT_TRUE(std::isfinite(grads[i])) << "Gradient " << i << " is not finite";
+    EXPECT_TRUE(std::isfinite(grads[i]))
+        << "Gradient " << i << " is not finite";
   }
 
   // d/dy should be positive
@@ -290,12 +291,8 @@ TEST(ProbDistributionsGamma, lcdf_various_parameter_combinations) {
   using stan::math::var;
 
   std::vector<std::tuple<double, double, double>> test_cases = {
-      {0.5, 0.5, 1.0},
-      {1.0, 1.0, 1.0},
-      {2.0, 3.0, 0.5},
-      {10.0, 2.0, 0.1},
-      {0.1, 10.0, 2.0},
-      {5.0, 5.0, 1.0},
+      {0.5, 0.5, 1.0},  {1.0, 1.0, 1.0},  {2.0, 3.0, 0.5},
+      {10.0, 2.0, 0.1}, {0.1, 10.0, 2.0}, {5.0, 5.0, 1.0},
   };
 
   for (const auto& test_case : test_cases) {
@@ -326,8 +323,8 @@ TEST(ProbDistributionsGamma, lcdf_various_parameter_combinations) {
 }
 
 TEST(ProbDistributionsGamma, lcdf_consistency_with_lccdf) {
-  using stan::math::gamma_lcdf;
   using stan::math::gamma_lccdf;
+  using stan::math::gamma_lcdf;
   using stan::math::var;
 
   // Test that lcdf and lccdf derivatives are related
@@ -388,10 +385,11 @@ TEST(ProbDistributionsGamma, lcdf_numerically_challenging_derivatives) {
 
   // Test numerically challenging cases
   std::vector<std::tuple<double, double, double>> challenging_cases = {
-      {1e-6, 1e-5, 1.0},        // Very small y and alpha
-      // {0.001, 100.0, 0.01},  // This case causes NaN - numerically too challenging
-      {1000.0, 0.5, 1e-3},      // Large y, small alpha, very small beta
-      {50.0, 50.0, 1.0},        // Matched moderate values
+      {1e-6, 1e-5, 1.0},  // Very small y and alpha
+      // {0.001, 100.0, 0.01},  // This case causes NaN - numerically too
+      // challenging
+      {1000.0, 0.5, 1e-3},  // Large y, small alpha, very small beta
+      {50.0, 50.0, 1.0},    // Matched moderate values
   };
 
   for (const auto& test_case : challenging_cases) {
@@ -437,7 +435,6 @@ TEST(ProbDistributionsGamma, lcdf_monotonic_derivative) {
     std::vector<double> grads;
     lcdf_var.grad(vars, grads);
 
-    EXPECT_GT(grads[0], 0.0)
-        << "d/dy should be positive for y=" << y_d;
+    EXPECT_GT(grads[0], 0.0) << "d/dy should be positive for y=" << y_d;
   }
 }

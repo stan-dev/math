@@ -85,10 +85,9 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(const T_y& y,
     if constexpr (is_any_autodiff_v<T_y, T_inv_scale>) {
       const T_partials_return log_y_dbl = log(y_dbl);
       const T_partials_return log_beta_dbl = log(beta_dbl);
-      const T_partials_return log_pdf = alpha_dbl * log_beta_dbl
-                                  - lgamma(alpha_dbl)
-                                  + (alpha_dbl - 1.0) * log_y_dbl
-                                  - beta_y_dbl;
+      const T_partials_return log_pdf
+          = alpha_dbl * log_beta_dbl - lgamma(alpha_dbl)
+            + (alpha_dbl - 1.0) * log_y_dbl - beta_y_dbl;
       const T_partials_return common_term = exp(log_pdf - log_Qn);
 
       if constexpr (is_autodiff_v<T_y>) {
@@ -104,9 +103,10 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(const T_y& y,
     if constexpr (is_autodiff_v<T_shape>) {
       const T_partials_return digamma_val = digamma(alpha_dbl);
       const T_partials_return gamma_val = tgamma(alpha_dbl);
-        // d/dalpha log(1-F(y)) = grad_upper_inc_gamma / (1-F(y))
-        partials<1>(ops_partials)[n]
-            += grad_reg_inc_gamma(alpha_dbl, beta_y_dbl, gamma_val, digamma_val) / Qn;
+      // d/dalpha log(1-F(y)) = grad_upper_inc_gamma / (1-F(y))
+      partials<1>(ops_partials)[n]
+          += grad_reg_inc_gamma(alpha_dbl, beta_y_dbl, gamma_val, digamma_val)
+             / Qn;
     }
   }
   return ops_partials.build(P);

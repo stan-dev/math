@@ -86,7 +86,8 @@ TEST(ProbGamma, lccdf_alpha_one) {
   using std::log;
 
   // When alpha = 1, gamma becomes exponential
-  // For exponential with rate beta: LCCDF(y) = log(1 - (1-exp(-beta*y))) = log(exp(-beta*y)) = -beta*y
+  // For exponential with rate beta: LCCDF(y) = log(1 - (1-exp(-beta*y))) =
+  // log(exp(-beta*y)) = -beta*y
   double y = 2.0;
   double alpha = 1.0;
   double beta = 3.0;
@@ -102,14 +103,14 @@ TEST(ProbGamma, lccdf_various_values) {
 
   // Test a variety of parameter combinations
   std::vector<std::tuple<double, double, double>> test_cases = {
-      {0.5, 0.5, 1.0},    // Small y, small alpha
-      {1.0, 1.0, 1.0},    // All ones
-      {2.0, 3.0, 0.5},    // Moderate values
-      {10.0, 2.0, 0.1},   // Large y, small beta
-      {0.1, 10.0, 2.0},   // Small y, large alpha
-      {5.0, 5.0, 1.0},    // Equal alpha and y
-      {0.01, 0.5, 10.0},  // Small y, large beta
-      {100.0, 100.0, 1.0} // Large matched values
+      {0.5, 0.5, 1.0},     // Small y, small alpha
+      {1.0, 1.0, 1.0},     // All ones
+      {2.0, 3.0, 0.5},     // Moderate values
+      {10.0, 2.0, 0.1},    // Large y, small beta
+      {0.1, 10.0, 2.0},    // Small y, large alpha
+      {5.0, 5.0, 1.0},     // Equal alpha and y
+      {0.01, 0.5, 10.0},   // Small y, large beta
+      {100.0, 100.0, 1.0}  // Large matched values
   };
 
   for (const auto& test_case : test_cases) {
@@ -122,8 +123,8 @@ TEST(ProbGamma, lccdf_various_values) {
     // All results should be finite and <= 0
     EXPECT_TRUE(std::isfinite(result))
         << "Failed for y=" << y << ", alpha=" << alpha << ", beta=" << beta;
-    EXPECT_LE(result, 0.0)
-        << "Failed for y=" << y << ", alpha=" << alpha << ", beta=" << beta;
+    EXPECT_LE(result, 0.0) << "Failed for y=" << y << ", alpha=" << alpha
+                           << ", beta=" << beta;
   }
 }
 
@@ -173,8 +174,8 @@ TEST(ProbGamma, lccdf_monotonic_in_y) {
 }
 
 TEST(ProbGamma, lccdf_consistency_with_cdf) {
-  using stan::math::gamma_lccdf;
   using stan::math::gamma_cdf;
+  using stan::math::gamma_lccdf;
   using std::log;
 
   // Test that lccdf(y) ≈ log(1 - cdf(y))
@@ -194,12 +195,12 @@ TEST(ProbGamma, lccdf_numerically_challenging) {
 
   // Test cases that might cause numerical issues
   std::vector<std::tuple<double, double, double>> challenging_cases = {
-      {1e-8, 1e-6, 1.0},       // Very small y and alpha
-      {1e-6, 100.0, 1e-3},     // Very small y, large alpha, small beta
-      {1000.0, 0.1, 1e-4},     // Large y, small alpha, very small beta
-      {50.0, 50.0, 1.0},       // Matched moderate values
-      {0.001, 0.001, 100.0},   // Small y and alpha, large beta
-      {1e6, 10.0, 1e-6},       // Very large y, moderate alpha, very small beta
+      {1e-8, 1e-6, 1.0},      // Very small y and alpha
+      {1e-6, 100.0, 1e-3},    // Very small y, large alpha, small beta
+      {1000.0, 0.1, 1e-4},    // Large y, small alpha, very small beta
+      {50.0, 50.0, 1.0},      // Matched moderate values
+      {0.001, 0.001, 100.0},  // Small y and alpha, large beta
+      {1e6, 10.0, 1e-6},      // Very large y, moderate alpha, very small beta
   };
 
   for (const auto& test_case : challenging_cases) {
@@ -214,8 +215,8 @@ TEST(ProbGamma, lccdf_numerically_challenging) {
         << "NaN for y=" << y << ", alpha=" << alpha << ", beta=" << beta;
 
     // Should be <= 0 (log of probability)
-    EXPECT_LE(result, 0.0)
-        << "Positive value for y=" << y << ", alpha=" << alpha << ", beta=" << beta;
+    EXPECT_LE(result, 0.0) << "Positive value for y=" << y
+                           << ", alpha=" << alpha << ", beta=" << beta;
   }
 }
 

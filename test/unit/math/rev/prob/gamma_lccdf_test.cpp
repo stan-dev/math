@@ -115,7 +115,8 @@ TEST(ProbDistributionsGamma, lccdf_derivatives_all_params) {
   // Check all gradients are finite and not NaN
   for (size_t i = 0; i < grads.size(); ++i) {
     EXPECT_FALSE(std::isnan(grads[i])) << "Gradient " << i << " is NaN";
-    EXPECT_TRUE(std::isfinite(grads[i])) << "Gradient " << i << " is not finite";
+    EXPECT_TRUE(std::isfinite(grads[i]))
+        << "Gradient " << i << " is not finite";
   }
 
   // d/dy should be negative
@@ -291,12 +292,8 @@ TEST(ProbDistributionsGamma, lccdf_various_parameter_combinations) {
   using stan::math::var;
 
   std::vector<std::tuple<double, double, double>> test_cases = {
-      {0.5, 0.5, 1.0},
-      {1.0, 1.0, 1.0},
-      {2.0, 3.0, 0.5},
-      {10.0, 2.0, 0.1},
-      {0.1, 10.0, 2.0},
-      {5.0, 5.0, 1.0},
+      {0.5, 0.5, 1.0},  {1.0, 1.0, 1.0},  {2.0, 3.0, 0.5},
+      {10.0, 2.0, 0.1}, {0.1, 10.0, 2.0}, {5.0, 5.0, 1.0},
   };
 
   for (const auto& test_case : test_cases) {
@@ -354,10 +351,10 @@ TEST(ProbDistributionsGamma, lccdf_numerically_challenging_derivatives) {
 
   // Test numerically challenging cases
   std::vector<std::tuple<double, double, double>> challenging_cases = {
-      {1e-6, 1e-5, 1.0},        // Very small y and alpha
-      {0.001, 100.0, 0.01},     // Small y, large alpha, small beta
-      {1000.0, 0.5, 1e-3},      // Large y, small alpha, very small beta
-      {50.0, 50.0, 1.0},        // Matched moderate values
+      {1e-6, 1e-5, 1.0},     // Very small y and alpha
+      {0.001, 100.0, 0.01},  // Small y, large alpha, small beta
+      {1000.0, 0.5, 1e-3},   // Large y, small alpha, very small beta
+      {50.0, 50.0, 1.0},     // Matched moderate values
   };
 
   for (const auto& test_case : challenging_cases) {
