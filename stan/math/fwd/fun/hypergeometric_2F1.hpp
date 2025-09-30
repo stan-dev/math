@@ -45,16 +45,16 @@ inline return_type_t<Ta1, Ta2, Tb, Tz> hypergeometric_2F1(const Ta1& a1,
 
   typename fvar_t::Scalar grad = 0;
 
-  if (!is_constant<Ta1>::value) {
+  if constexpr (is_autodiff_v<Ta1>) {
     grad += forward_as<fvar_t>(a1).d() * std::get<0>(grad_tuple);
   }
-  if (!is_constant<Ta2>::value) {
+  if constexpr (is_autodiff_v<Ta2>) {
     grad += forward_as<fvar_t>(a2).d() * std::get<1>(grad_tuple);
   }
-  if (!is_constant<Tb>::value) {
+  if constexpr (is_autodiff_v<Tb>) {
     grad += forward_as<fvar_t>(b).d() * std::get<2>(grad_tuple);
   }
-  if (!is_constant<Tz>::value) {
+  if constexpr (is_autodiff_v<Tz>) {
     grad += forward_as<fvar_t>(z).d() * std::get<3>(grad_tuple);
   }
 

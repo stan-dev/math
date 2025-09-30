@@ -69,7 +69,7 @@ class idas_integrator {
     CHECK_IDAS_CALL(IDASStolerances(mem, rtol_, atol_));
     CHECK_IDAS_CALL(IDASetMaxNumSteps(mem, max_num_steps_));
 
-    if (dae_type::use_fwd_sens) {
+    if constexpr (dae_type::use_fwd_sens) {
       CHECK_IDAS_CALL(IDASensEEtolerances(mem));
       CHECK_IDAS_CALL(IDAGetSensConsistentIC(mem, yys, yps));
     }
@@ -80,7 +80,7 @@ class idas_integrator {
     double t1 = t0;
     for (size_t i = 0; i < nt; ++i) {
       CHECK_IDAS_CALL(IDASolve(mem, ts[i], &t1, yy, yp, IDA_NORMAL));
-      if (dae_type::use_fwd_sens) {
+      if constexpr (dae_type::use_fwd_sens) {
         CHECK_IDAS_CALL(IDAGetSens(mem, &t1, yys));
       }
       collect(yy, yys, dae, res_yy[i]);

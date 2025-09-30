@@ -57,7 +57,7 @@ inline return_type_t<T_y> std_normal_lccdf(const T_y& y) {
 
     lccdf += LOG_HALF + log(one_m_erf);
 
-    if (!is_constant_all<T_y>::value) {
+    if constexpr (is_autodiff_v<T_y>) {
       const T_partials_return rep_deriv
           = y_dbl > 8.25
                 ? INFTY

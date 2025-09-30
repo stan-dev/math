@@ -113,7 +113,7 @@ inline return_type_t<T_n, T_k> binomial_coefficient_log(const T_n n,
     value = -lbeta(n_plus_1_mk, k_dbl + 1) - log1p(n_dbl);
   }
 
-  if (!is_constant_all<T_n, T_k>::value) {
+  if constexpr (is_any_autodiff_v<T_n, T_k>) {
     // Branching on all the edge cases.
     // In direct computation many of those would be NaN
     // But one-sided limits from within the domain exist, all of the below
@@ -123,7 +123,7 @@ inline return_type_t<T_n, T_k> binomial_coefficient_log(const T_n n,
     // se we can ignore the n == k - 1 edge case.
     T_partials_return digamma_n_plus_1_mk = digamma(n_plus_1_mk);
 
-    if (!is_constant_all<T_n>::value) {
+    if constexpr (is_autodiff_v<T_n>) {
       if (n_dbl == -1.0) {
         if (k_dbl == 0) {
           partials<0>(ops_partials)[0] = 0;
@@ -135,7 +135,7 @@ inline return_type_t<T_n, T_k> binomial_coefficient_log(const T_n n,
             = (digamma(n_plus_1) - digamma_n_plus_1_mk);
       }
     }
-    if (!is_constant_all<T_k>::value) {
+    if constexpr (is_autodiff_v<T_k>) {
       if (k_dbl == 0 && n_dbl == -1.0) {
         partials<1>(ops_partials)[0] = NEGATIVE_INFTY;
       } else if (k_dbl == -1) {

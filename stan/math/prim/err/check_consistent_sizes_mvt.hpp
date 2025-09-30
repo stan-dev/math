@@ -47,9 +47,9 @@ inline void check_consistent_sizes_mvt(const char* function, const char* name1,
                                        const T1& x1, const char* name2,
                                        const T2& x2,
                                        const Ts&... names_and_xs) {
-  if (!is_std_vector<T1>::value && is_std_vector<T2>::value) {
+  if constexpr (!is_std_vector<T1>::value && is_std_vector<T2>::value) {
     check_consistent_sizes_mvt(function, name2, x2, name1, x1, names_and_xs...);
-  } else if (!is_std_vector<T2>::value) {
+  } else if constexpr (!is_std_vector<T2>::value) {
     check_consistent_sizes_mvt(function, name1, x1, names_and_xs...);
   } else if (stan::math::size(x1) == stan::math::size(x2)) {
     check_consistent_sizes_mvt(function, name1, x1, names_and_xs...);

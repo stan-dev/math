@@ -14,7 +14,7 @@ namespace math {
  * @param[in] z complex value whose real component is extracted
  * @return real component of argument
  */
-template <typename T, require_autodiff_t<T>>
+template <typename T, require_autodiff_scalar_t<T>>
 T real(const std::complex<T>& z) {
   return z.real();
 }

@@ -65,13 +65,13 @@ return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> poisson_log_glm_lpmf(
   const size_t N = x.rows();
   const size_t M = x.cols();
 
-  if (is_y_vector) {
+  if constexpr (is_y_vector) {
     check_size_match(function, "Rows of ", "x", N, "rows of ", "y",
                      math::size(y));
   }
   check_size_match(function, "Columns of ", "x_cl", M, "size of ", "beta",
                    math::size(beta));
-  if (is_alpha_vector) {
+  if constexpr (is_alpha_vector) {
     check_size_match(function, "Rows of ", "x", N, "size of ", "alpha",
                      math::size(alpha));
   }
@@ -79,7 +79,8 @@ return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> poisson_log_glm_lpmf(
     return 0;
   }
 
-  if (!include_summand<propto, T_x_cl, T_alpha_cl, T_beta_cl>::value) {
+  if constexpr (!include_summand<propto, T_x_cl, T_alpha_cl,
+                                 T_beta_cl>::value) {
     return 0;
   }
 
@@ -124,12 +125,12 @@ return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> poisson_log_glm_lpmf(
 
   auto ops_partials = make_partials_propagator(x, alpha, beta);
   // Compute the necessary derivatives.
-  if (!is_constant_all<T_x_cl>::value) {
+  if constexpr (is_autodiff_v<T_x_cl>) {
     partials<0>(ops_partials)
         = transpose(beta_val * transpose(theta_derivative_cl));
   }
-  if (!is_constant_all<T_alpha_cl>::value) {
-    if (is_alpha_vector) {
+  if constexpr (is_autodiff_v<T_alpha_cl>) {
+    if constexpr (is_alpha_vector) {
       partials<1>(ops_partials) = theta_derivative_cl;
     } else {
       forward_as<internal::broadcast_array<double>>(
@@ -137,7 +138,7 @@ return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> poisson_log_glm_lpmf(
           = theta_derivative_sum;
     }
   }
-  if (!is_constant_all<T_beta_cl>::value) {
+  if constexpr (is_autodiff_v<T_beta_cl>) {
     // transposition of a vector can be done without copying
     const matrix_cl<double> theta_derivative_transpose_cl(
         theta_derivative_cl.buffer(), 1, theta_derivative_cl.rows());

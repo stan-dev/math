@@ -81,20 +81,20 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lcdf(const T_y& y,
 
     P += log_Pn;
 
-    if (!is_constant_all<T_y, T_inv_scale>::value) {
+    if constexpr (is_any_autodiff_v<T_y, T_inv_scale>) {
       const T_partials_return d_num
           = (-beta_y_dbl) + (alpha_dbl - 1) * (log_beta_dbl + log_y_dbl);
       const T_partials_return d_den = lgamma(alpha_dbl) + log_Pn;
       const T_partials_return d = exp(d_num - d_den);
 
-      if (!is_constant_all<T_y>::value) {
+      if constexpr (is_autodiff_v<T_y>) {
         partials<0>(ops_partials)[n] += beta_dbl * d;
       }
-      if (!is_constant_all<T_inv_scale>::value) {
+      if constexpr (is_autodiff_v<T_inv_scale>) {
         partials<2>(ops_partials)[n] += y_dbl * d;
       }
     }
-    if (!is_constant_all<T_shape>::value) {
+    if constexpr (is_autodiff_v<T_shape>) {
       partials<1>(ops_partials)[n]
           += grad_reg_lower_inc_gamma(alpha_dbl, beta_y_dbl) / Pn;
     }

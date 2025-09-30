@@ -1075,7 +1075,7 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
     auto ll_args_filter = internal::filter_var_scalar_types(ll_args_copy);
     stan::math::for_each(
         [](auto&& output_i, auto&& ll_arg_i) {
-          if (is_any_var_scalar_v<decltype(ll_arg_i)>) {
+          if constexpr (is_any_var_scalar_v<decltype(ll_arg_i)>) {
             internal::collect_adjoints<true>(output_i, ll_arg_i);
           }
         },

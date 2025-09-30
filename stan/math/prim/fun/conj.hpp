@@ -26,7 +26,7 @@ inline auto conj(const V& z) {
  * @param[in] z argument
  * @return complex conjugate of the argument
  */
-template <typename V, require_complex_bt<is_autodiff, V>* = nullptr>
+template <typename V, require_complex_bt<is_autodiff_scalar, V>* = nullptr>
 inline V conj(const V& z) {
   return {z.real(), -z.imag()};
 }

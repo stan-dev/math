@@ -86,13 +86,13 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lccdf(
       ccdf_log += LOG_HALF - scaled_diff;
     }
 
-    if (!is_constant_all<T_y>::value) {
+    if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials)[n] -= rep_deriv;
     }
-    if (!is_constant_all<T_loc>::value) {
+    if constexpr (is_autodiff_v<T_loc>) {
       partials<1>(ops_partials)[n] += rep_deriv;
     }
-    if (!is_constant_all<T_scale>::value) {
+    if constexpr (is_autodiff_v<T_scale>) {
       partials<2>(ops_partials)[n] += rep_deriv * scaled_diff;
     }
   }

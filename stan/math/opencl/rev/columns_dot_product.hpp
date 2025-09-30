@@ -36,12 +36,14 @@ inline var_value<matrix_cl<double>> columns_dot_product(T1&& v1, T2&& v2) {
 
   arena_t<T1> v1_arena;
   arena_t<T2> v2_arena;
-  if ((std::is_rvalue_reference<T1&&>::value && is_matrix_cl<T2>::value)
-      || is_var<T1>::value) {
+  if constexpr ((std::is_rvalue_reference<T1&&>::value
+                 && is_matrix_cl<T2>::value)
+                || is_var<T1>::value) {
     v1_arena = std::forward<T1>(v1);
   }
-  if ((std::is_rvalue_reference<T2&&>::value && is_matrix_cl<T2>::value)
-      || is_var<T2>::value) {
+  if constexpr ((std::is_rvalue_reference<T2&&>::value
+                 && is_matrix_cl<T2>::value)
+                || is_var<T2>::value) {
     v2_arena = std::forward<T2>(v2);
   }
 

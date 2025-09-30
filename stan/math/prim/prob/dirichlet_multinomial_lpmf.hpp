@@ -67,7 +67,7 @@ return_type_t<T_prior_size> dirichlet_multinomial_lpmf(
   const auto& alpha_val = as_value_array_or_scalar(alpha_ref);
   check_positive_finite(function, "Prior size parameter", alpha_ref);
 
-  if (!include_summand<propto, T_prior_size>::value) {
+  if constexpr (!include_summand<propto, T_prior_size>::value) {
     return 0.0;
   }
 
@@ -80,7 +80,7 @@ return_type_t<T_prior_size> dirichlet_multinomial_lpmf(
   auto ns_array = as_array_or_scalar(ns).template cast<double>().eval();
   partials_return_t<T_prior_size> a_sum = sum(alpha_val);
   partials_return_t<T_prior_size> lp(0.0);
-  if (include_summand<propto>::value) {
+  if constexpr (include_summand<propto>::value) {
     lp += log(n_sum) - (ns_array > 0).select(log(ns_array), 0.0).sum();
   }
 
@@ -88,7 +88,7 @@ return_type_t<T_prior_size> dirichlet_multinomial_lpmf(
         - (ns_array > 0).select(lbeta(alpha_val, ns_array), 0.0).sum();
 
   auto ops_partials = make_partials_propagator(alpha_ref);
-  if (!is_constant_all<T_prior_size>::value) {
+  if constexpr (is_autodiff_v<T_prior_size>) {
     partials<0>(ops_partials)
         = (ns_array > 0)
               .select(digamma(alpha_val + ns_array) - digamma(alpha_val), 0.0)

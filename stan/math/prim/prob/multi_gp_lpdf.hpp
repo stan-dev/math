@@ -62,19 +62,19 @@ return_type_t<T_y, T_covar, T_w> multi_gp_lpdf(const T_y& y,
     return lp;
   }
 
-  if (include_summand<propto>::value) {
+  if constexpr (include_summand<propto>::value) {
     lp += NEG_LOG_SQRT_TWO_PI * y.size();
   }
 
-  if (include_summand<propto, T_covar>::value) {
+  if constexpr (include_summand<propto, T_covar>::value) {
     lp -= 0.5 * log_determinant_ldlt(ldlt_Sigma) * y.rows();
   }
 
-  if (include_summand<propto, T_w>::value) {
+  if constexpr (include_summand<propto, T_w>::value) {
     lp += (0.5 * y.cols()) * sum(log(w_ref));
   }
 
-  if (include_summand<propto, T_y, T_w, T_covar>::value) {
+  if constexpr (include_summand<propto, T_y, T_w, T_covar>::value) {
     lp -= 0.5 * trace_gen_inv_quad_form_ldlt(w_ref, ldlt_Sigma, y_t_ref);
   }
 

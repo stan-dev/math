@@ -140,7 +140,7 @@ template <typename Arith, typename VarMat,
           require_st_arithmetic<Arith>* = nullptr,
           require_rev_matrix_t<VarMat>* = nullptr>
 inline auto add(VarMat&& a, const Arith& b) {
-  if (is_eigen<Arith>::value) {
+  if constexpr (is_eigen<Arith>::value) {
     check_matching_dims("add", "a", a, "b", b);
   }
   using op_ret_type

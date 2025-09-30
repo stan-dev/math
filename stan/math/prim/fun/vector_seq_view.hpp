@@ -54,7 +54,7 @@ class vector_seq_view<T, require_t<internal::is_scalar_container<T>>> {
     return m_;
   }
 
-  template <typename C = T, require_st_autodiff<C>* = nullptr>
+  template <typename C = T, require_st_autodiff_scalar<C>* = nullptr>
   inline auto val(size_t /* i */) const noexcept {
     return value_of(m_);
   }
@@ -88,7 +88,7 @@ class vector_seq_view<
     return v_[i];
   }
 
-  template <typename C = T, require_st_autodiff<C>* = nullptr>
+  template <typename C = T, require_st_autodiff_scalar<C>* = nullptr>
   inline auto val(size_t i) const {
     return value_of(v_[i]);
   }

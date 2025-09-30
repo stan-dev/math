@@ -41,12 +41,12 @@ inline var_value<matrix_cl<double>> mdivide_left_tri_low(T1&& A, T2&& b) {
       A_tri_inv * value_of(b_arena),
       [A_arena, b_arena, A_tri_inv](const vari_value<matrix_cl<double>>& res) {
         matrix_cl<double> adjB = transpose(A_tri_inv) * res.adj();
-        if (!is_constant<T1>::value) {
+        if constexpr (is_autodiff_v<T1>) {
           matrix_cl<double> adjA = adjB * transpose(res.val());
           adjA.view(matrix_cl_view::Lower);
           adjoint_of(A_arena) -= adjA;
         }
-        if (!is_constant<T2>::value) {
+        if constexpr (is_autodiff_v<T2>) {
           adjoint_of(b_arena) += adjB;
         }
       });

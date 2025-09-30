@@ -90,9 +90,9 @@ return_type_t<T_y_cl, T_low_cl, T_high_cl> uniform_lcdf(const T_y_cl& y,
           alpha_deriv_cl, beta_deriv_cl)
       = expressions(y_not_nan_expr, alpha_finite_expr, beta_finite_expr,
                     diff_positive_expr, any_y_out_of_bounds, lcdf_expr,
-                    calc_if<!is_constant<T_y_cl>::value>(y_deriv),
-                    calc_if<!is_constant<T_low_cl>::value>(low_deriv),
-                    calc_if<!is_constant<T_high_cl>::value>(high_deriv));
+                    calc_if<is_autodiff_v<T_y_cl>>(y_deriv),
+                    calc_if<is_autodiff_v<T_low_cl>>(low_deriv),
+                    calc_if<is_autodiff_v<T_high_cl>>(high_deriv));
 
   if (from_matrix_cl(any_y_out_of_bounds_cl).maxCoeff()) {
     return -INFINITY;
@@ -102,13 +102,13 @@ return_type_t<T_y_cl, T_low_cl, T_high_cl> uniform_lcdf(const T_y_cl& y,
 
   auto ops_partials = make_partials_propagator(y_col, alpha_col, beta_col);
 
-  if (!is_constant<T_y_cl>::value) {
+  if constexpr (is_autodiff_v<T_y_cl>) {
     partials<0>(ops_partials) = std::move(y_deriv_cl);
   }
-  if (!is_constant<T_low_cl>::value) {
+  if constexpr (is_autodiff_v<T_low_cl>) {
     partials<1>(ops_partials) = std::move(alpha_deriv_cl);
   }
-  if (!is_constant<T_high_cl>::value) {
+  if constexpr (is_autodiff_v<T_high_cl>) {
     partials<2>(ops_partials) = std::move(beta_deriv_cl);
   }
   return ops_partials.build(lcdf);

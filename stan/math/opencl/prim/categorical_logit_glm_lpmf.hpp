@@ -59,7 +59,7 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
   const size_t N_classes = beta.cols();
 
   static constexpr const char* function = "categorical_logit_glm_lpmf";
-  if (is_y_vector) {
+  if constexpr (is_y_vector) {
     check_size_match(function, "Rows of ", "x", N_instances, "size of ", "y",
                      math::size(y));
   }
@@ -71,7 +71,7 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
   if (N_instances == 0 || N_classes <= 1) {
     return 0;
   }
-  if (!include_summand<propto, T_x, T_alpha, T_beta>::value) {
+  if constexpr (!include_summand<propto, T_x, T_alpha, T_beta>::value) {
     return 0;
   }
 
@@ -88,8 +88,8 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
       = opencl_kernels::categorical_logit_glm.get_option("LOCAL_SIZE_");
   const int wgs = (N_instances + local_size - 1) / local_size;
 
-  bool need_alpha_derivative = !is_constant_all<T_alpha>::value;
-  bool need_beta_derivative = !is_constant_all<T_beta>::value;
+  bool need_alpha_derivative = is_autodiff_v<T_alpha>;
+  bool need_beta_derivative = is_autodiff_v<T_beta>;
 
   matrix_cl<double> logp_cl(wgs, 1);
   matrix_cl<double> exp_lin_cl(N_instances, N_classes);
@@ -123,8 +123,8 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
   }
 
   auto ops_partials = make_partials_propagator(x, alpha, beta);
-  if (!is_constant_all<T_x>::value) {
-    if (is_y_vector) {
+  if constexpr (is_autodiff_v<T_x>) {
+    if constexpr (is_y_vector) {
       partials<0>(ops_partials)
           = indexing(beta_val, col_index(x.rows(), x.cols()),
                      rowwise_broadcast(forward_as<matrix_cl<int>>(y_val) - 1))
@@ -138,23 +138,26 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
                            rowwise_broadcast(inv_sum_exp_lin_cl));
     }
   }
-  if (!is_constant_all<T_alpha>::value) {
+  if constexpr (is_autodiff_v<T_alpha>) {
     if (wgs == 1) {
       partials<1>(ops_partials) = std::move(alpha_derivative_cl);
     } else {
       partials<1>(ops_partials) = rowwise_sum(alpha_derivative_cl);
     }
   }
-  if (!is_constant_all<T_beta>::value && N_attributes != 0) {
-    partials<2>(ops_partials) = transpose(x_val) * neg_softmax_lin_cl;
-    matrix_cl<double> temp(N_classes, local_size * N_attributes);
-    try {
-      opencl_kernels::categorical_logit_glm_beta_derivative(
-          cl::NDRange(local_size * N_attributes), cl::NDRange(local_size),
-          forward_as<arena_matrix_cl<double>>(partials<2>(ops_partials)), temp,
-          y_val_cl, x_val, N_instances, N_attributes, N_classes, is_y_vector);
-    } catch (const cl::Error& e) {
-      check_opencl_error(function, e);
+  if constexpr (is_autodiff_v<T_beta>) {
+    if (N_attributes != 0) {
+      partials<2>(ops_partials) = transpose(x_val) * neg_softmax_lin_cl;
+      matrix_cl<double> temp(N_classes, local_size * N_attributes);
+      try {
+        opencl_kernels::categorical_logit_glm_beta_derivative(
+            cl::NDRange(local_size * N_attributes), cl::NDRange(local_size),
+            forward_as<arena_matrix_cl<double>>(partials<2>(ops_partials)),
+            temp, y_val_cl, x_val, N_instances, N_attributes, N_classes,
+            is_y_vector);
+      } catch (const cl::Error& e) {
+        check_opencl_error(function, e);
+      }
     }
   }
   return ops_partials.build(logp);

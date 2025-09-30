@@ -48,13 +48,13 @@ class mdivide_left_tri_vv_vari : public vari {
     using Eigen::Map;
 
     size_t pos = 0;
-    if (TriView == Eigen::Lower) {
+    if constexpr (TriView == Eigen::Lower) {
       for (size_type j = 0; j < M_; j++) {
         for (size_type i = j; i < M_; i++) {
           variRefA_[pos++] = A(i, j).vi_;
         }
       }
-    } else if (TriView == Eigen::Upper) {
+    } else if constexpr (TriView == Eigen::Upper) {
       for (size_type j = 0; j < M_; j++) {
         for (size_type i = 0; i < j + 1; i++) {
           variRefA_[pos++] = A(i, j).vi_;
@@ -86,13 +86,13 @@ class mdivide_left_tri_vv_vari : public vari {
     adjA = -adjB * Map<matrix_d>(C_, M_, N_).transpose();
 
     size_t pos = 0;
-    if (TriView == Eigen::Lower) {
+    if constexpr (TriView == Eigen::Lower) {
       for (size_type j = 0; j < adjA.cols(); j++) {
         for (size_type i = j; i < adjA.rows(); i++) {
           variRefA_[pos++]->adj_ += adjA(i, j);
         }
       }
-    } else if (TriView == Eigen::Upper) {
+    } else if constexpr (TriView == Eigen::Upper) {
       for (size_type j = 0; j < adjA.cols(); j++) {
         for (size_type i = 0; i < j + 1; i++) {
           variRefA_[pos++]->adj_ += adjA(i, j);
@@ -187,13 +187,13 @@ class mdivide_left_tri_vd_vari : public vari {
     using Eigen::Matrix;
 
     size_t pos = 0;
-    if (TriView == Eigen::Lower) {
+    if constexpr (TriView == Eigen::Lower) {
       for (size_type j = 0; j < M_; j++) {
         for (size_type i = j; i < M_; i++) {
           variRefA_[pos++] = A(i, j).vi_;
         }
       }
-    } else if (TriView == Eigen::Upper) {
+    } else if constexpr (TriView == Eigen::Upper) {
       for (size_type j = 0; j < M_; j++) {
         for (size_type i = 0; i < j + 1; i++) {
           variRefA_[pos++] = A(i, j).vi_;
@@ -226,13 +226,13 @@ class mdivide_left_tri_vd_vari : public vari {
                       * Map<Matrix<double, R1, C2>>(C_, M_, N_).transpose());
 
     size_t pos = 0;
-    if (TriView == Eigen::Lower) {
+    if constexpr (TriView == Eigen::Lower) {
       for (size_type j = 0; j < adjA.cols(); j++) {
         for (size_type i = j; i < adjA.rows(); i++) {
           variRefA_[pos++]->adj_ += adjA(i, j);
         }
       }
-    } else if (TriView == Eigen::Upper) {
+    } else if constexpr (TriView == Eigen::Upper) {
       for (size_type j = 0; j < adjA.cols(); j++) {
         for (size_type i = 0; i < j + 1; i++) {
           variRefA_[pos++]->adj_ += adjA(i, j);
@@ -354,7 +354,7 @@ inline auto mdivide_left_tri(const T1 &A, const T2 &B) {
   check_square("mdivide_left_tri", "A", A);
   check_multiplicable("mdivide_left_tri", "A", A, "B", B);
 
-  if (!is_constant<T1>::value && !is_constant<T2>::value) {
+  if constexpr (is_autodiff_v<T1> && is_autodiff_v<T2>) {
     arena_t<promote_scalar_t<var, T1>> arena_A = A;
     arena_t<promote_scalar_t<var, T2>> arena_B = B;
     auto arena_A_val = to_arena(arena_A.val());
@@ -373,7 +373,7 @@ inline auto mdivide_left_tri(const T1 &A, const T2 &B) {
     });
 
     return ret_type(res);
-  } else if (!is_constant<T1>::value) {
+  } else if constexpr (is_autodiff_v<T1>) {
     arena_t<promote_scalar_t<var, T1>> arena_A = A;
     auto arena_A_val = to_arena(arena_A.val());
 

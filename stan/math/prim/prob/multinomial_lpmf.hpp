@@ -25,7 +25,7 @@ return_type_t<T_prob> multinomial_lpmf(const std::vector<int>& ns,
 
   return_type_t<T_prob> lp(0.0);
 
-  if (include_summand<propto>::value) {
+  if constexpr (include_summand<propto>::value) {
     double sum = 1.0;
     for (int n : ns) {
       sum += n;
@@ -33,7 +33,7 @@ return_type_t<T_prob> multinomial_lpmf(const std::vector<int>& ns,
     }
     lp += lgamma(sum);
   }
-  if (include_summand<propto, T_prob>::value) {
+  if constexpr (include_summand<propto, T_prob>::value) {
     for (unsigned int i = 0; i < ns.size(); ++i) {
       lp += multiply_log(ns[i], theta_ref.coeff(i));
     }
