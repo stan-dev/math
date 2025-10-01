@@ -101,12 +101,12 @@ inline auto pow(const Scal1& base, const Scal2& exponent) {
                                const double vi_mul = vi.adj() * vi.val();
 
                                if constexpr (is_autodiff_v<Scal1>) {
-                                 forward_as<var>(base).adj()
+                                 base.adj()
                                      += vi_mul * value_of(exponent)
                                         / value_of(base);
                                }
                                if constexpr (is_autodiff_v<Scal2>) {
-                                 forward_as<var>(exponent).adj()
+                                 exponent.adj()
                                      += vi_mul * std::log(value_of(base));
                                }
                              });
@@ -154,7 +154,7 @@ inline auto pow(const Mat1& base, const Mat2& exponent) {
     const auto& ret_mul = to_ref(ret.adj().array() * ret.val().array());
     if constexpr (is_autodiff_v<Mat1>) {
       using base_var_arena_t = arena_t<promote_scalar_t<var, base_arena_t>>;
-      forward_as<base_var_arena_t>(arena_base).adj()
+      arena_base.adj()
           += (are_vals_zero)
                  .select(
                      ret_mul * value_of(arena_exponent) / value_of(arena_base),
@@ -162,7 +162,7 @@ inline auto pow(const Mat1& base, const Mat2& exponent) {
     }
     if constexpr (is_autodiff_v<Mat2>) {
       using exp_var_arena_t = arena_t<promote_scalar_t<var, exp_arena_t>>;
-      forward_as<exp_var_arena_t>(arena_exponent).adj()
+      arena_exponent.adj()
           += (are_vals_zero).select(ret_mul * value_of(arena_base).log(), 0);
     }
   });
@@ -211,14 +211,14 @@ inline auto pow(const Mat1& base, const Scal1& exponent) {
     const auto& are_vals_zero = to_ref(value_of(arena_base).array() != 0.0);
     const auto& ret_mul = to_ref(ret.adj().array() * ret.val().array());
     if constexpr (is_autodiff_v<Mat1>) {
-      forward_as<ret_type>(arena_base).adj().array()
+      arena_base.adj().array()
           += (are_vals_zero)
                  .select(ret_mul * value_of(exponent)
                              / value_of(arena_base).array(),
                          0);
     }
     if constexpr (is_autodiff_v<Scal1>) {
-      forward_as<var>(exponent).adj()
+      exponent.adj()
           += (are_vals_zero)
                  .select(ret_mul * value_of(arena_base).array().log(), 0)
                  .sum();
@@ -261,12 +261,12 @@ inline auto pow(Scal1 base, const Mat1& exponent) {
     }
     const auto& ret_mul = to_ref(ret.adj().array() * ret.val().array());
     if constexpr (is_autodiff_v<Scal1>) {
-      forward_as<var>(base).adj()
+      base.adj()
           += (ret_mul * value_of(arena_exponent).array() / value_of(base))
                  .sum();
     }
     if constexpr (is_autodiff_v<Mat1>) {
-      forward_as<ret_type>(arena_exponent).adj().array()
+      arena_exponent.adj().array()
           += ret_mul * std::log(value_of(base));
     }
   });

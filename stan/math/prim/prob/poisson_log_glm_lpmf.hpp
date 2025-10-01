@@ -107,7 +107,7 @@ return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(const T_y& y,
   Array<T_partials_return, Dynamic, 1> theta(N_instances);
   if constexpr (T_x_rows == 1) {
     T_theta_tmp theta_tmp
-        = forward_as<T_xbeta_tmp>((x_val * beta_val_vec).coeff(0, 0));
+        = (x_val * beta_val_vec).coeff(0, 0);
     theta = theta_tmp + as_array_or_scalar(alpha_val_vec);
   } else {
     theta = x_val * beta_val_vec;
@@ -135,18 +135,14 @@ return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(const T_y& y,
   // Compute the necessary derivatives.
   if constexpr (is_autodiff_v<T_beta>) {
     if constexpr (T_x_rows == 1) {
-      edge<2>(ops_partials).partials_
-          = forward_as<Matrix<T_partials_return, 1, Dynamic>>(
-              theta_derivative.sum() * x_val);
+      edge<2>(ops_partials).partials_ = theta_derivative.sum() * x_val;
     } else {
       partials<2>(ops_partials) = x_val.transpose() * theta_derivative;
     }
   }
   if constexpr (is_autodiff_v<T_x>) {
     if constexpr (T_x_rows == 1) {
-      edge<0>(ops_partials).partials_
-          = forward_as<Array<T_partials_return, Dynamic, T_x_rows>>(
-              beta_val_vec * theta_derivative.sum());
+      edge<0>(ops_partials).partials_ = beta_val_vec * theta_derivative.sum();
     } else {
       edge<0>(ops_partials).partials_
           = (beta_val_vec * theta_derivative.transpose()).transpose();

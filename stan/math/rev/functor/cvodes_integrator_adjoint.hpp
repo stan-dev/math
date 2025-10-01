@@ -526,8 +526,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
 
     // These are the dlog_density / d(initial_conditions[s]) adjoints
     if constexpr (is_var_y0_t0_) {
-      forward_as<Eigen::Matrix<var, Eigen::Dynamic, 1>>(solver_->y0_).adj()
-          += solver_->state_backward_;
+      solver_->y0_.adj() += solver_->state_backward_;
     }
 
     // These are the dlog_density / d(parameters[s]) adjoints

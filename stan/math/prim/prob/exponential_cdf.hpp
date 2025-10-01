@@ -60,9 +60,9 @@ return_type_t<T_y, T_inv_scale> exponential_cdf(const T_y& y,
 
   T_partials_return cdf(1.0);
   if constexpr (is_vector<T_y>::value || is_vector<T_inv_scale>::value) {
-    cdf = forward_as<T_partials_array>(one_m_exp).prod();
+    cdf = one_m_exp.prod();
   } else {
-    cdf = forward_as<T_partials_return>(one_m_exp);
+    cdf = one_m_exp;
   }
 
   if constexpr (any_derivatives) {

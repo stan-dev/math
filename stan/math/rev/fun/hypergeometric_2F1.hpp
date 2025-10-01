@@ -44,16 +44,16 @@ inline return_type_t<Ta1, Ta2, Tb, Tz> hypergeometric_2F1(const Ta1& a1,
         auto grad_tuple = grad_2F1(a1, a2, b, z);
 
         if constexpr (is_autodiff_v<Ta1>) {
-          forward_as<var>(a1).adj() += vi.adj() * std::get<0>(grad_tuple);
+          a1.adj() += vi.adj() * std::get<0>(grad_tuple);
         }
         if constexpr (is_autodiff_v<Ta2>) {
-          forward_as<var>(a2).adj() += vi.adj() * std::get<1>(grad_tuple);
+          a2.adj() += vi.adj() * std::get<1>(grad_tuple);
         }
         if constexpr (is_autodiff_v<Tb>) {
-          forward_as<var>(b).adj() += vi.adj() * std::get<2>(grad_tuple);
+          b.adj() += vi.adj() * std::get<2>(grad_tuple);
         }
         if constexpr (is_autodiff_v<Tz>) {
-          forward_as<var>(z).adj() += vi.adj() * std::get<3>(grad_tuple);
+          z.adj() += vi.adj() * std::get<3>(grad_tuple);
         }
       });
 }

@@ -123,7 +123,7 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   Array<T_partials_return, Dynamic, 1> y_scaled(N_instances);
   if constexpr (T_x_rows == 1) {
     T_y_scaled_tmp y_scaled_tmp
-        = forward_as<T_y_scaled_tmp>((x_val * beta_val_vec).coeff(0, 0));
+        = (x_val * beta_val_vec).coeff(0, 0);
     y_scaled = (as_array_or_scalar(y_val_vec) - y_scaled_tmp
                 - as_array_or_scalar(alpha_val_vec))
                * inv_sigma;
@@ -149,8 +149,7 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
     if constexpr (is_autodiff_v<T_x>) {
       if constexpr (T_x_rows == 1) {
         edge<1>(ops_partials).partials_
-            = forward_as<Array<T_partials_return, Dynamic, T_x_rows>>(
-                beta_val_vec * sum(mu_derivative));
+            = beta_val_vec * sum(mu_derivative);
       } else {
         edge<1>(ops_partials).partials_
             = (beta_val_vec * mu_derivative.transpose()).transpose();
@@ -159,8 +158,7 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
     if constexpr (is_autodiff_v<T_beta>) {
       if constexpr (T_x_rows == 1) {
         edge<3>(ops_partials).partials_
-            = forward_as<Matrix<T_partials_return, 1, Dynamic>>(
-                mu_derivative.sum() * x_val);
+            = mu_derivative.sum() * x_val;
       } else {
         partials<3>(ops_partials) = mu_derivative.transpose() * x_val;
       }
@@ -180,8 +178,7 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
       } else {
         y_scaled_sq_sum = sum(y_scaled * y_scaled);
         partials<4>(ops_partials)[0]
-            = (y_scaled_sq_sum - N_instances)
-              * forward_as<partials_return_t<T_sigma_ref>>(inv_sigma);
+            = (y_scaled_sq_sum - N_instances) * inv_sigma;
       }
     } else {
       y_scaled_sq_sum = sum(y_scaled * y_scaled);
@@ -207,8 +204,7 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
     if constexpr (is_vector<T_scale>::value) {
       logp -= sum(log(sigma_val_vec));
     } else {
-      logp -= N_instances
-              * log(forward_as<partials_return_t<T_sigma_ref>>(sigma_val_vec));
+      logp -= N_instances * log(sigma_val_vec);
     }
   }
   logp -= 0.5 * y_scaled_sq_sum;

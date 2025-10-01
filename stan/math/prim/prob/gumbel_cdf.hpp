@@ -74,9 +74,9 @@ return_type_t<T_y, T_loc, T_scale> gumbel_cdf(const T_y& y, const T_loc& mu,
   T_partials_return cdf(1.0);
   if constexpr (is_vector<T_y>::value || is_vector<T_loc>::value
                 || is_vector<T_scale>::value) {
-    cdf = forward_as<T_partials_array>(cdf_n).prod();
+    cdf = cdf_n.prod();
   } else {
-    cdf = forward_as<T_partials_return>(cdf_n);
+    cdf = cdf_n;
   }
 
   if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale>) {

@@ -199,15 +199,15 @@ inline auto fma_reverse_pass(T1& arena_x, T2& arena_y, T3& arena_z, T4& ret) {
     using T2_var = arena_t<plain_type_t<promote_scalar_t<var, T2>>>;
     using T3_var = arena_t<plain_type_t<promote_scalar_t<var, T3>>>;
     if constexpr (is_autodiff_v<T1>) {
-      forward_as<T1_var>(arena_x).adj().array()
+      arena_x.adj().array()
           += ret.adj().array() * value_of(arena_y).array();
     }
     if constexpr (is_autodiff_v<T2>) {
-      forward_as<T2_var>(arena_y).adj().array()
+      arena_y.adj().array()
           += ret.adj().array() * value_of(arena_x).array();
     }
     if constexpr (is_autodiff_v<T3>) {
-      forward_as<T3_var>(arena_z).adj().array() += ret.adj().array();
+      arena_z.adj().array() += ret.adj().array();
     }
   };
 }
@@ -224,15 +224,15 @@ inline auto fma_reverse_pass(T1& arena_x, T2& arena_y, T3& arena_z, T4& ret) {
     using T2_var = arena_t<promote_scalar_t<var, T2>>;
     using T3_var = arena_t<promote_scalar_t<var, T3>>;
     if constexpr (is_autodiff_v<T1>) {
-      forward_as<T1_var>(arena_x).adj()
+      arena_x.adj()
           += (ret.adj().array() * value_of(arena_y).array()).sum();
     }
     if constexpr (is_autodiff_v<T2>) {
-      forward_as<T2_var>(arena_y).adj().array()
+      arena_y.adj().array()
           += ret.adj().array() * value_of(arena_x);
     }
     if constexpr (is_autodiff_v<T3>) {
-      forward_as<T3_var>(arena_z).adj().array() += ret.adj().array();
+      arena_z.adj().array() += ret.adj().array();
     }
   };
 }
@@ -249,15 +249,15 @@ inline auto fma_reverse_pass(T1& arena_x, T2& arena_y, T3& arena_z, T4& ret) {
     using T2_var = arena_t<promote_scalar_t<var, T2>>;
     using T3_var = arena_t<promote_scalar_t<var, T3>>;
     if constexpr (is_autodiff_v<T1>) {
-      forward_as<T1_var>(arena_x).adj().array()
+      arena_x.adj().array()
           += ret.adj().array() * value_of(arena_y);
     }
     if constexpr (is_autodiff_v<T2>) {
-      forward_as<T2_var>(arena_y).adj()
+      arena_y.adj()
           += (ret.adj().array() * value_of(arena_x).array()).sum();
     }
     if constexpr (is_autodiff_v<T3>) {
-      forward_as<T3_var>(arena_z).adj().array() += ret.adj().array();
+      arena_z.adj().array() += ret.adj().array();
     }
   };
 }
@@ -274,15 +274,15 @@ inline auto fma_reverse_pass(T1& arena_x, T2& arena_y, T3& arena_z, T4& ret) {
     using T2_var = arena_t<promote_scalar_t<var, T2>>;
     using T3_var = arena_t<promote_scalar_t<var, T3>>;
     if constexpr (is_autodiff_v<T1>) {
-      forward_as<T1_var>(arena_x).adj()
+      arena_x.adj()
           += (ret.adj().array() * value_of(arena_y)).sum();
     }
     if constexpr (is_autodiff_v<T2>) {
-      forward_as<T2_var>(arena_y).adj()
+      arena_y.adj()
           += (ret.adj().array() * value_of(arena_x)).sum();
     }
     if constexpr (is_autodiff_v<T3>) {
-      forward_as<T3_var>(arena_z).adj().array() += ret.adj().array();
+      arena_z.adj().array() += ret.adj().array();
     }
   };
 }
@@ -299,15 +299,15 @@ inline auto fma_reverse_pass(T1& arena_x, T2& arena_y, T3& arena_z, T4& ret) {
     using T2_var = arena_t<promote_scalar_t<var, T2>>;
     using T3_var = arena_t<promote_scalar_t<var, T3>>;
     if constexpr (is_autodiff_v<T1>) {
-      forward_as<T1_var>(arena_x).adj().array()
+      arena_x.adj().array()
           += ret.adj().array() * value_of(arena_y).array();
     }
     if constexpr (is_autodiff_v<T2>) {
-      forward_as<T2_var>(arena_y).adj().array()
+      arena_y.adj().array()
           += ret.adj().array() * value_of(arena_x).array();
     }
     if constexpr (is_autodiff_v<T3>) {
-      forward_as<T3_var>(arena_z).adj() += ret.adj().sum();
+      arena_z.adj() += ret.adj().sum();
     }
   };
 }
@@ -324,15 +324,15 @@ inline auto fma_reverse_pass(T1& arena_x, T2& arena_y, T3& arena_z, T4& ret) {
     using T2_var = arena_t<promote_scalar_t<var, T2>>;
     using T3_var = arena_t<promote_scalar_t<var, T3>>;
     if constexpr (is_autodiff_v<T1>) {
-      forward_as<T1_var>(arena_x).adj()
+      arena_x.adj()
           += (ret.adj().array() * value_of(arena_y).array()).sum();
     }
     if constexpr (is_autodiff_v<T2>) {
-      forward_as<T2_var>(arena_y).adj().array()
+      arena_y.adj().array()
           += ret.adj().array() * value_of(arena_x);
     }
     if constexpr (is_autodiff_v<T3>) {
-      forward_as<T3_var>(arena_z).adj() += ret.adj().sum();
+      arena_z.adj() += ret.adj().sum();
     }
   };
 }
@@ -349,15 +349,15 @@ inline auto fma_reverse_pass(T1& arena_x, T2& arena_y, T3& arena_z, T4& ret) {
     using T2_var = arena_t<promote_scalar_t<var, T2>>;
     using T3_var = arena_t<promote_scalar_t<var, T3>>;
     if constexpr (is_autodiff_v<T1>) {
-      forward_as<T1_var>(arena_x).adj().array()
+      arena_x.adj().array()
           += ret.adj().array() * value_of(arena_y);
     }
     if constexpr (is_autodiff_v<T2>) {
-      forward_as<T2_var>(arena_y).adj()
+      arena_y.adj()
           += (ret.adj().array() * value_of(arena_x).array()).sum();
     }
     if constexpr (is_autodiff_v<T3>) {
-      forward_as<T3_var>(arena_z).adj() += ret.adj().sum();
+      arena_z.adj() += ret.adj().sum();
     }
   };
 }

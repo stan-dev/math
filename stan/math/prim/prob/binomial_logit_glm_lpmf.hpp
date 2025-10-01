@@ -104,7 +104,7 @@ return_type_t<T_x, T_alpha, T_beta> binomial_logit_glm_lpmf(
   auto&& x_val = value_of(x_ref);
   Eigen::Array<T_partials_return, -1, 1> theta(N_instances);
   if constexpr (T_x_rows == 1) {
-    theta = forward_as<T_xbeta_tmp>((x_val * beta_val)(0, 0)) + alpha_val;
+    theta = (x_val * beta_val)(0, 0) + alpha_val;
   } else {
     theta = (x_val * beta_val).array() + alpha_val;
   }
@@ -135,8 +135,7 @@ return_type_t<T_x, T_alpha, T_beta> binomial_logit_glm_lpmf(
     if constexpr (is_autodiff_v<T_beta>) {
       if constexpr (T_x_rows == 1) {
         edge<2>(ops_partials).partials_
-            = forward_as<Eigen::Matrix<T_partials_return, 1, -1>>(
-                theta_derivative.sum() * x_val);
+            = theta_derivative.sum() * x_val;
       } else {
         partials<2>(ops_partials) = x_val.transpose() * theta_derivative;
       }
@@ -145,8 +144,7 @@ return_type_t<T_x, T_alpha, T_beta> binomial_logit_glm_lpmf(
     if constexpr (is_autodiff_v<T_x>) {
       if constexpr (T_x_rows == 1) {
         edge<0>(ops_partials).partials_
-            = forward_as<Eigen::Array<T_partials_return, -1, T_x_rows>>(
-                beta_val * theta_derivative.sum());
+            = beta_val * theta_derivative.sum();
       } else {
         edge<0>(ops_partials).partials_
             = (beta_val * theta_derivative.transpose()).transpose();

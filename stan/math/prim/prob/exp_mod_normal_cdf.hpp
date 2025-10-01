@@ -64,13 +64,11 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_cdf(
 
   using T_y_val_scalar = scalar_type_t<decltype(y_val)>;
   if constexpr (is_vector<T_y>::value) {
-    if ((forward_as<Eigen::Array<T_y_val_scalar, Eigen::Dynamic, 1>>(y_val)
-         == NEGATIVE_INFTY)
-            .any()) {
+    if ((y_val == NEGATIVE_INFTY).any()) {
       return ops_partials.build(0.0);
     }
   } else {
-    if (forward_as<T_y_val_scalar>(y_val) == NEGATIVE_INFTY) {
+    if (y_val == NEGATIVE_INFTY) {
       return ops_partials.build(0.0);
     }
   }
@@ -93,9 +91,9 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_cdf(
 
   T_partials_return cdf(1.0);
   if constexpr (is_vector<decltype(cdf_n)>::value) {
-    cdf = forward_as<T_partials_array>(cdf_n).prod();
+    cdf = cdf_n.prod();
   } else {
-    cdf = forward_as<T_partials_return>(cdf_n);
+    cdf = cdf_n;
   }
 
   if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale, T_inv_scale>) {
