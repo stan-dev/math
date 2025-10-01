@@ -430,79 +430,77 @@ void expect_ad_matvar_impl(const ad_tolerances& tols, const F& f,
   if (!stan::math::disjunction<is_var_matrix<Types>...>::value) {
     FAIL() << "expect_ad_matvar requires at least one varmat input!"
            << std::endl;
-  }
+  } else {
 
-  if (!stan::math::disjunction<is_var<scalar_type_t<Types>>...>::value) {
+  } if constexpr (!stan::math::disjunction<is_var<scalar_type_t<Types>>...>::value) {
     FAIL() << "expect_ad_matvar requires at least one autodiff input!"
            << std::endl;
-  }
+  } else {
+    auto A_mv_tuple = std::make_tuple(make_matvar_compatible<Types>(x)...);
+    auto A_vm_tuple = std::make_tuple(make_varmat_compatible<Types>(x)...);
 
-  auto A_mv_tuple = std::make_tuple(make_matvar_compatible<Types>(x)...);
-  auto A_vm_tuple = std::make_tuple(make_varmat_compatible<Types>(x)...);
+    constexpr bool any_varmat = stan::math::apply(
+        [](const auto&... args) {
+          return stan::math::disjunction<is_var_matrix<decltype(args)>...>::value
+                || stan::math::disjunction<stan::math::conjunction<
+                    is_std_vector<decltype(args)>,
+                    is_var_matrix<value_type_t<decltype(args)>>>...>::value;
+        },
+        A_vm_tuple);
 
-  bool any_varmat = stan::math::apply(
-      [](const auto&... args) {
-        return stan::math::disjunction<is_var_matrix<decltype(args)>...>::value
-               || stan::math::disjunction<stan::math::conjunction<
-                   is_std_vector<decltype(args)>,
-                   is_var_matrix<value_type_t<decltype(args)>>>...>::value;
-      },
-      A_vm_tuple);
-
-  if (!any_varmat) {
-    SUCCEED();  // If no varmats are created, skip this test
-    return;
-  }
-
-  using T_mv_ret = plain_type_t<decltype(stan::math::apply(f, A_mv_tuple))>;
-  using T_vm_ret = plain_type_t<decltype(stan::math::apply(f, A_vm_tuple))>;
-
-  T_mv_ret A_mv_ret;
-  T_vm_ret A_vm_ret;
-
-  if (is_var_matrix<T_mv_ret>::value
-      || (is_std_vector<T_mv_ret>::value
-          && is_var_matrix<value_type_t<T_mv_ret>>::value)) {
-    FAIL() << "A function with matvar inputs should not return "
-           << type_name<T_mv_ret>() << std::endl;
-  }
-
-  if (is_eigen<T_vm_ret>::value
-      || (is_std_vector<T_vm_ret>::value
-          && is_eigen<value_type_t<T_vm_ret>>::value)) {
-    FAIL() << "A function with varmat inputs should not return "
-           << type_name<T_vm_ret>() << std::endl;
-  }
-
-  // If one throws, the other should throw as well
-  try {
-    A_mv_ret = stan::math::apply(f, A_mv_tuple);
-  } catch (...) {
-    try {
-      stan::math::apply(f, A_vm_tuple);
-      FAIL() << "`Eigen::Matrix<var, R, C>` function throws and "
-                "`var_value<Eigen::Matrix<double, R, C>>` does not";
-    } catch (...) {
-      SUCCEED();
+    if constexpr (!any_varmat) {
+      SUCCEED();  // If no varmats are created, skip this test
       return;
+    } else {
+      using T_mv_ret = plain_type_t<decltype(stan::math::apply(f, A_mv_tuple))>;
+      using T_vm_ret = plain_type_t<decltype(stan::math::apply(f, A_vm_tuple))>;
+
+      T_mv_ret A_mv_ret;
+      T_vm_ret A_vm_ret;
+
+      if (is_var_matrix<T_mv_ret>::value
+          || (is_std_vector<T_mv_ret>::value
+              && is_var_matrix<value_type_t<T_mv_ret>>::value)) {
+        FAIL() << "A function with matvar inputs should not return "
+              << type_name<T_mv_ret>() << std::endl;
+      }
+
+      if (is_eigen<T_vm_ret>::value
+          || (is_std_vector<T_vm_ret>::value
+              && is_eigen<value_type_t<T_vm_ret>>::value)) {
+        FAIL() << "A function with varmat inputs should not return "
+              << type_name<T_vm_ret>() << std::endl;
+      }
+
+      // If one throws, the other should throw as well
+      try {
+        A_mv_ret = stan::math::apply(f, A_mv_tuple);
+      } catch (...) {
+        try {
+          stan::math::apply(f, A_vm_tuple);
+          FAIL() << "`Eigen::Matrix<var, R, C>` function throws and "
+                    "`var_value<Eigen::Matrix<double, R, C>>` does not";
+        } catch (...) {
+          SUCCEED();
+          return;
+        }
+      }
+      try {
+        A_vm_ret = stan::math::apply(f, A_vm_tuple);
+      } catch (...) {
+        try {
+          stan::math::apply(f, A_mv_tuple);
+          FAIL() << "`var_value<Eigen::Matrix<double, R, C>>` function throws and "
+                    "`Eigen::Matrix<var, R, C>` does not";
+        } catch (...) {
+          SUCCEED();
+          return;
+        }
+      }
+      test_matvar_gradient(tols, A_mv_ret, A_vm_ret, A_mv_tuple, A_vm_tuple);
+      stan::math::recover_memory();
     }
   }
-  try {
-    A_vm_ret = stan::math::apply(f, A_vm_tuple);
-  } catch (...) {
-    try {
-      stan::math::apply(f, A_mv_tuple);
-      FAIL() << "`var_value<Eigen::Matrix<double, R, C>>` function throws and "
-                "`Eigen::Matrix<var, R, C>` does not";
-    } catch (...) {
-      SUCCEED();
-      return;
-    }
-  }
-
-  test_matvar_gradient(tols, A_mv_ret, A_vm_ret, A_mv_tuple, A_vm_tuple);
-
-  stan::math::recover_memory();
 }
 
 /** @name expect_ad_matvar
@@ -550,7 +548,7 @@ void expect_ad_matvar(const ad_tolerances& tols, const F& f, const EigMat& x) {
  */
 template <typename F, typename EigMat>
 void expect_ad_matvar(const F& f, const EigMat& x) {
-  ad_tolerances tols;
+  constexpr ad_tolerances tols;
 
   expect_ad_matvar(tols, f, x);
 }
