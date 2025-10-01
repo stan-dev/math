@@ -49,20 +49,19 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
     check_less("lub_constrain", "lb", lb_val, ub_val);
     auto diff = ub_val - lb_val;
     double inv_logit_x = inv_logit(value_of(x));
-    return make_callback_var(
-        diff * inv_logit_x + lb_val,
-        [x, ub, lb, diff, inv_logit_x](auto& vi) mutable {
-          if constexpr (is_autodiff_v<T>) {
-            x.adj()
-                += vi.adj() * diff * inv_logit_x * (1.0 - inv_logit_x);
-          }
-          if constexpr (is_autodiff_v<L>) {
-            lb.adj() += vi.adj() * (1.0 - inv_logit_x);
-          }
-          if constexpr (is_autodiff_v<U>) {
-            ub.adj() += vi.adj() * inv_logit_x;
-          }
-        });
+    return make_callback_var(diff * inv_logit_x + lb_val,
+                             [x, ub, lb, diff, inv_logit_x](auto& vi) mutable {
+                               if constexpr (is_autodiff_v<T>) {
+                                 x.adj() += vi.adj() * diff * inv_logit_x
+                                            * (1.0 - inv_logit_x);
+                               }
+                               if constexpr (is_autodiff_v<L>) {
+                                 lb.adj() += vi.adj() * (1.0 - inv_logit_x);
+                               }
+                               if constexpr (is_autodiff_v<U>) {
+                                 ub.adj() += vi.adj() * inv_logit_x;
+                               }
+                             });
   }
 }
 
@@ -125,22 +124,19 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
         diff * inv_logit_x + lb_val,
         [x, ub, lb, diff, lp, inv_logit_x](auto& vi) mutable {
           if constexpr (is_autodiff_v<T>) {
-            x.adj()
-                += vi.adj() * diff * inv_logit_x * (1.0 - inv_logit_x)
-                   + lp.adj() * (1.0 - 2.0 * inv_logit_x);
+            x.adj() += vi.adj() * diff * inv_logit_x * (1.0 - inv_logit_x)
+                       + lp.adj() * (1.0 - 2.0 * inv_logit_x);
           }
           if constexpr (is_autodiff_v<L> && is_autodiff_v<U>) {
             const auto one_over_diff = 1.0 / diff;
             lb.adj()
                 += vi.adj() * (1.0 - inv_logit_x) + -one_over_diff * lp.adj();
-            ub.adj()
-                += vi.adj() * inv_logit_x + one_over_diff * lp.adj();
+            ub.adj() += vi.adj() * inv_logit_x + one_over_diff * lp.adj();
           } else if constexpr (is_autodiff_v<L>) {
             lb.adj()
                 += vi.adj() * (1.0 - inv_logit_x) + (-1.0 / diff) * lp.adj();
           } else if constexpr (is_autodiff_v<U>) {
-            ub.adj()
-                += vi.adj() * inv_logit_x + (1.0 / diff) * lp.adj();
+            ub.adj() += vi.adj() * inv_logit_x + (1.0 / diff) * lp.adj();
           }
         });
   }
@@ -178,8 +174,7 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
             += ret.adj().array() * diff * inv_logit_x * (1.0 - inv_logit_x);
       }
       if constexpr (is_autodiff_v<L>) {
-        lb.adj()
-            += (ret.adj().array() * (1.0 - inv_logit_x)).sum();
+        lb.adj() += (ret.adj().array() * (1.0 - inv_logit_x)).sum();
       }
       if constexpr (is_autodiff_v<U>) {
         ub.adj() += (ret.adj().array() * inv_logit_x).sum();
@@ -227,18 +222,16 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
           if constexpr (is_autodiff_v<L> && is_autodiff_v<U>) {
             const auto lp_calc = lp.adj() * ret.size();
             const auto one_over_diff = 1.0 / diff;
-            lb.adj()
-                += (ret.adj().array() * (1.0 - inv_logit_x)).sum()
-                   + -one_over_diff * lp_calc;
+            lb.adj() += (ret.adj().array() * (1.0 - inv_logit_x)).sum()
+                        + -one_over_diff * lp_calc;
             ub.adj() += (ret.adj().array() * inv_logit_x).sum()
-                                         + one_over_diff * lp_calc;
+                        + one_over_diff * lp_calc;
           } else if constexpr (is_autodiff_v<L>) {
-            lb.adj()
-                += (ret.adj().array() * (1.0 - inv_logit_x)).sum()
-                   + -(1.0 / diff) * lp.adj() * ret.size();
+            lb.adj() += (ret.adj().array() * (1.0 - inv_logit_x)).sum()
+                        + -(1.0 / diff) * lp.adj() * ret.size();
           } else if constexpr (is_autodiff_v<U>) {
             ub.adj() += (ret.adj().array() * inv_logit_x).sum()
-                                         + (1.0 / diff) * lp.adj() * ret.size();
+                        + (1.0 / diff) * lp.adj() * ret.size();
           }
         });
     return ret_type(ret);
@@ -391,11 +384,10 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
             ret.adj().array() * diff * inv_logit_x * (1.0 - inv_logit_x));
       }
       if constexpr (is_autodiff_v<L>) {
-        lb.adj()
-            += (is_ub_inf)
-                   .select(ret.adj().array(),
-                           ret.adj().array() * (1.0 - inv_logit_x))
-                   .sum();
+        lb.adj() += (is_ub_inf)
+                        .select(ret.adj().array(),
+                                ret.adj().array() * (1.0 - inv_logit_x))
+                        .sum();
       }
       if constexpr (is_autodiff_v<U>) {
         arena_ub.adj().array()
@@ -450,12 +442,11 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
                 + lp.adj() * (1.0 - 2.0 * inv_logit_x));
       }
       if constexpr (is_autodiff_v<L>) {
-        lb.adj()
-            += (is_ub_inf)
-                   .select(ret.adj().array(),
-                           ret.adj().array() * (1.0 - inv_logit_x)
-                               + -(1.0 / diff) * lp_adj)
-                   .sum();
+        lb.adj() += (is_ub_inf)
+                        .select(ret.adj().array(),
+                                ret.adj().array() * (1.0 - inv_logit_x)
+                                    + -(1.0 / diff) * lp_adj)
+                        .sum();
       }
       if constexpr (is_autodiff_v<U>) {
         arena_ub.adj().array() += (is_ub_inf).select(
@@ -509,12 +500,10 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
             += ret.adj().array() * diff * inv_logit_x * (1.0 - inv_logit_x);
       }
       if constexpr (is_autodiff_v<L>) {
-        arena_lb.adj().array()
-            += ret.adj().array() * (1.0 - inv_logit_x);
+        arena_lb.adj().array() += ret.adj().array() * (1.0 - inv_logit_x);
       }
       if constexpr (is_autodiff_v<U>) {
-        arena_ub.adj().array()
-            += ret.adj().array() * inv_logit_x;
+        arena_ub.adj().array() += ret.adj().array() * inv_logit_x;
       }
     } else {
       if constexpr (is_autodiff_v<T>) {

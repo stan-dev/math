@@ -85,12 +85,10 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lccdf(
                     || is_vector<T_scale>::value) {
         partials<3>(ops_partials) = -log_temp;
       } else {
-        partials<3>(ops_partials) = Log_temp_array::Constant(
-            N, 1, -log_temp);
+        partials<3>(ops_partials) = Log_temp_array::Constant(N, 1, -log_temp);
       }
     } else {
-      partials<3>(ops_partials)
-          = -log_temp * N / max_size(y, mu, lambda);
+      partials<3>(ops_partials) = -log_temp * N / max_size(y, mu, lambda);
     }
   }
 

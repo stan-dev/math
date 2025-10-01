@@ -144,7 +144,8 @@ return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> bernoulli_logit_glm_lpmf(
     if constexpr (is_alpha_vector) {
       partials<1>(ops_partials) = theta_derivative_cl;
     } else {
-      partials<1>(ops_partials)[0] = sum(from_matrix_cl(theta_derivative_sum_cl));
+      partials<1>(ops_partials)[0]
+          = sum(from_matrix_cl(theta_derivative_sum_cl));
     }
   }
   if constexpr (is_autodiff_v<T_beta_cl>) {

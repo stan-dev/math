@@ -77,23 +77,18 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_cdf(
   if constexpr (is_vector<T_y>::value || is_vector<T_loc>::value) {
     using array_bool = Eigen::Array<bool, Eigen::Dynamic, 1>;
     cdf = (y_val < mu_val)
-              .select(exp_scaled_diff * 0.5,
-                      1.0 - 0.5 / exp_scaled_diff)
+              .select(exp_scaled_diff * 0.5, 1.0 - 0.5 / exp_scaled_diff)
               .prod();
-    rep_deriv =
-        (y_val < mu_val)
-            .select((cdf * inv_sigma),
-                    cdf * inv_sigma
-                                                 / (2 * exp_scaled_diff - 1));
+    rep_deriv = (y_val < mu_val)
+                    .select((cdf * inv_sigma),
+                            cdf * inv_sigma / (2 * exp_scaled_diff - 1));
   } else {
     if constexpr (is_vector<T_scale>::value) {
-      cdf = (y_val < mu_val)
-                ? (exp_scaled_diff * 0.5).prod()
-                : (1.0 - 0.5 / exp_scaled_diff).prod();
+      cdf = (y_val < mu_val) ? (exp_scaled_diff * 0.5).prod()
+                             : (1.0 - 0.5 / exp_scaled_diff).prod();
     } else {
-      cdf = (y_val < mu_val)
-                ? exp_scaled_diff * 0.5
-                : 1.0 - 0.5 / exp_scaled_diff;
+      cdf = (y_val < mu_val) ? exp_scaled_diff * 0.5
+                             : 1.0 - 0.5 / exp_scaled_diff;
     }
     if (y_val < mu_val) {
       rep_deriv = cdf * inv_sigma;

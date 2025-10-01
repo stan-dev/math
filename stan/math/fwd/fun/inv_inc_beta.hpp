@@ -80,8 +80,7 @@ inline fvar<partials_return_t<T1, T2, T3>> inv_inc_beta(const T1& a,
   }
 
   if constexpr (is_fvar<T3>::value) {
-    inv_d_ += p.d_
-              * exp(one_m_b * log1m_w + one_m_a * log_w + lbeta_ab);
+    inv_d_ += p.d_ * exp(one_m_b * log1m_w + one_m_a * log_w + lbeta_ab);
   }
 
   return fvar<T_return>(w, inv_d_);

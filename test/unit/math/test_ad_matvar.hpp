@@ -431,8 +431,9 @@ void expect_ad_matvar_impl(const ad_tolerances& tols, const F& f,
     FAIL() << "expect_ad_matvar requires at least one varmat input!"
            << std::endl;
   } else {
-
-  } if constexpr (!stan::math::disjunction<is_var<scalar_type_t<Types>>...>::value) {
+  }
+  if constexpr (!stan::math::disjunction<
+                    is_var<scalar_type_t<Types>>...>::value) {
     FAIL() << "expect_ad_matvar requires at least one autodiff input!"
            << std::endl;
   } else {
@@ -441,10 +442,11 @@ void expect_ad_matvar_impl(const ad_tolerances& tols, const F& f,
 
     constexpr bool any_varmat = stan::math::apply(
         [](const auto&... args) {
-          return stan::math::disjunction<is_var_matrix<decltype(args)>...>::value
-                || stan::math::disjunction<stan::math::conjunction<
-                    is_std_vector<decltype(args)>,
-                    is_var_matrix<value_type_t<decltype(args)>>>...>::value;
+          return stan::math::disjunction<
+                     is_var_matrix<decltype(args)>...>::value
+                 || stan::math::disjunction<stan::math::conjunction<
+                     is_std_vector<decltype(args)>,
+                     is_var_matrix<value_type_t<decltype(args)>>>...>::value;
         },
         A_vm_tuple);
 
@@ -462,14 +464,14 @@ void expect_ad_matvar_impl(const ad_tolerances& tols, const F& f,
           || (is_std_vector<T_mv_ret>::value
               && is_var_matrix<value_type_t<T_mv_ret>>::value)) {
         FAIL() << "A function with matvar inputs should not return "
-              << type_name<T_mv_ret>() << std::endl;
+               << type_name<T_mv_ret>() << std::endl;
       }
 
       if (is_eigen<T_vm_ret>::value
           || (is_std_vector<T_vm_ret>::value
               && is_eigen<value_type_t<T_vm_ret>>::value)) {
         FAIL() << "A function with varmat inputs should not return "
-              << type_name<T_vm_ret>() << std::endl;
+               << type_name<T_vm_ret>() << std::endl;
       }
 
       // If one throws, the other should throw as well
@@ -490,8 +492,9 @@ void expect_ad_matvar_impl(const ad_tolerances& tols, const F& f,
       } catch (...) {
         try {
           stan::math::apply(f, A_mv_tuple);
-          FAIL() << "`var_value<Eigen::Matrix<double, R, C>>` function throws and "
-                    "`Eigen::Matrix<var, R, C>` does not";
+          FAIL()
+              << "`var_value<Eigen::Matrix<double, R, C>>` function throws and "
+                 "`Eigen::Matrix<var, R, C>` does not";
         } catch (...) {
           SUCCEED();
           return;

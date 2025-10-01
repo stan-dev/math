@@ -134,8 +134,7 @@ return_type_t<T_x, T_alpha, T_beta> binomial_logit_glm_lpmf(
 
     if constexpr (is_autodiff_v<T_beta>) {
       if constexpr (T_x_rows == 1) {
-        edge<2>(ops_partials).partials_
-            = theta_derivative.sum() * x_val;
+        edge<2>(ops_partials).partials_ = theta_derivative.sum() * x_val;
       } else {
         partials<2>(ops_partials) = x_val.transpose() * theta_derivative;
       }
@@ -143,8 +142,7 @@ return_type_t<T_x, T_alpha, T_beta> binomial_logit_glm_lpmf(
 
     if constexpr (is_autodiff_v<T_x>) {
       if constexpr (T_x_rows == 1) {
-        edge<0>(ops_partials).partials_
-            = beta_val * theta_derivative.sum();
+        edge<0>(ops_partials).partials_ = beta_val * theta_derivative.sum();
       } else {
         edge<0>(ops_partials).partials_
             = (beta_val * theta_derivative.transpose()).transpose();

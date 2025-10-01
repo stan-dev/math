@@ -211,8 +211,7 @@ auto three_arg_bad_vals(const T1& x1, const stan::math::var_value<T3>& x3,
 
   stan::math::reverse_pass_callback([x3, ret]() mutable {
     if constexpr (stan::is_stan_scalar<T3>::value) {
-      x3.adj()
-          += stan::math::sum(ret.adj());
+      x3.adj() += stan::math::sum(ret.adj());
     } else {
       x3.adj() += ret.adj();
     }
@@ -232,8 +231,7 @@ auto three_arg_bad_vals(const stan::math::var_value<T3>& x3, const T1& x1,
 
   stan::math::reverse_pass_callback([x3, ret]() mutable {
     if constexpr (stan::is_stan_scalar<T3>::value) {
-      x3.adj()
-          += stan::math::sum(ret.adj());
+      x3.adj() += stan::math::sum(ret.adj());
     } else {
       x3.adj() += ret.adj();
     }
@@ -296,8 +294,7 @@ auto three_arg_bad_grads(const T1& x1, const T2& x2,
 
   stan::math::reverse_pass_callback([x3, ret]() mutable {
     if constexpr (stan::is_stan_scalar<T3>::value) {
-      x3.adj()
-          -= stan::math::sum(ret.adj());
+      x3.adj() -= stan::math::sum(ret.adj());
     } else {
       x3.adj() -= ret.adj();
     }
@@ -317,8 +314,7 @@ auto three_arg_bad_grads(const T1& x1, const stan::math::var_value<T3>& x3,
 
   stan::math::reverse_pass_callback([x3, ret]() mutable {
     if constexpr (stan::is_stan_scalar<T3>::value) {
-      x3.adj()
-          -= stan::math::sum(ret.adj());
+      x3.adj() -= stan::math::sum(ret.adj());
     } else {
       x3.adj() -= ret.adj();
     }
@@ -338,8 +334,7 @@ auto three_arg_bad_grads(const stan::math::var_value<T3>& x3, const T1& x1,
 
   stan::math::reverse_pass_callback([x3, ret]() mutable {
     if constexpr (stan::is_stan_scalar<T3>::value) {
-      x3.adj()
-          -= stan::math::sum(ret.adj());
+      x3.adj() -= stan::math::sum(ret.adj());
     } else {
       x3.adj() -= ret.adj();
     }

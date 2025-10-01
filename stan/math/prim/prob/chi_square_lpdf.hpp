@@ -88,7 +88,8 @@ return_type_t<T_y, T_dof> chi_square_lpdf(const T_y& y, const T_dof& nu) {
   }
   if constexpr (is_autodiff_v<T_dof>) {
     if constexpr (is_vector<T_dof>::value) {
-      partials<1>(ops_partials) = (log_y - digamma(half_nu)) * 0.5 - HALF_LOG_TWO;
+      partials<1>(ops_partials)
+          = (log_y - digamma(half_nu)) * 0.5 - HALF_LOG_TWO;
     } else {
       partials<1>(ops_partials)[0]
           = sum(log_y - digamma(half_nu)) * 0.5 - HALF_LOG_TWO * N;

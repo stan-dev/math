@@ -83,11 +83,9 @@ return_type_t<T_y, T_scale, T_shape> pareto_lccdf(const T_y& y,
       using Log_quot_scalar = partials_return_t<T_y, T_scale>;
       using Log_quot_array = Eigen::Array<Log_quot_scalar, Eigen::Dynamic, 1>;
       if constexpr (is_vector<T_y>::value || is_vector<T_scale>::value) {
-        edge<2>(ops_partials).partials_
-            = std::move(log_quot);
+        edge<2>(ops_partials).partials_ = std::move(log_quot);
       } else {
-        partials<2>(ops_partials) = Log_quot_array::Constant(
-            N, 1, log_quot);
+        partials<2>(ops_partials) = Log_quot_array::Constant(N, 1, log_quot);
       }
     } else {
       partials<2>(ops_partials) = log_quot * N / max_size(y, y_min);

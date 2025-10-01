@@ -132,8 +132,7 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
                            rowwise_broadcast(inv_sum_exp_lin_cl));
     } else {
       partials<0>(ops_partials)
-          = indexing(beta_val, col_index(x.rows(), x.cols()),
-                     y_val - 1)
+          = indexing(beta_val, col_index(x.rows(), x.cols()), y_val - 1)
             - elt_multiply(exp_lin_cl * transpose(beta_val),
                            rowwise_broadcast(inv_sum_exp_lin_cl));
     }
@@ -152,9 +151,8 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
       try {
         opencl_kernels::categorical_logit_glm_beta_derivative(
             cl::NDRange(local_size * N_attributes), cl::NDRange(local_size),
-            partials<2>(ops_partials),
-            temp, y_val_cl, x_val, N_instances, N_attributes, N_classes,
-            is_y_vector);
+            partials<2>(ops_partials), temp, y_val_cl, x_val, N_instances,
+            N_attributes, N_classes, is_y_vector);
       } catch (const cl::Error& e) {
         check_opencl_error(function, e);
       }

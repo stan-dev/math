@@ -143,8 +143,7 @@ return_type_t<T_x, T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
 
   Array<T_partials_return, Dynamic, 1> theta(N_instances);
   if constexpr (T_x_rows == 1) {
-    T_theta_tmp theta_tmp
-        = (x_val * beta_val_vec)(0, 0);
+    T_theta_tmp theta_tmp = (x_val * beta_val_vec)(0, 0);
     theta = theta_tmp + as_array_or_scalar(alpha_val_vec);
   } else {
     theta = (x_val * beta_val_vec).array();
@@ -176,10 +175,7 @@ return_type_t<T_x, T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
       }
     } else {
       using T_phi_scalar = scalar_type_t<decltype(phi_val_vec)>;
-      logp += N_instances
-              * (multiply_log(phi_val,
-                              phi_val)
-                 - lgamma(phi_val));
+      logp += N_instances * (multiply_log(phi_val, phi_val) - lgamma(phi_val));
     }
   }
   logp -= sum(y_plus_phi * logsumexp_theta_logphi);
@@ -205,8 +201,7 @@ return_type_t<T_x, T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
           = y_arr - theta_exp * y_plus_phi / (theta_exp + phi_arr);
       if constexpr (is_autodiff_v<T_beta>) {
         if constexpr (T_x_rows == 1) {
-          edge<2>(ops_partials).partials_
-              = theta_derivative.sum() * x_val;
+          edge<2>(ops_partials).partials_ = theta_derivative.sum() * x_val;
         } else {
           edge<2>(ops_partials).partials_
               = x_val.transpose() * theta_derivative;
