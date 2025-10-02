@@ -125,7 +125,7 @@ void expect_near_rel_matvar(const std::string& message,
                             const std::tuple<T1...>& x,
                             const std::tuple<T2...>& y,
                             const ad_tolerances& tols) {
-  if (!(sizeof...(T1) == sizeof...(T2))) {
+  if constexpr (!(sizeof...(T1) == sizeof...(T2))) {
     FAIL() << "The number of arguments in each tuple must match";
   }
   constexpr auto idxs = internal::make_tuple_seq(
@@ -427,12 +427,10 @@ void expect_ad_matvar_impl(const ad_tolerances& tols, const F& f,
   using stan::math::var_value;
   using stan::math::test::type_name;
 
-  if (!stan::math::disjunction<is_var_matrix<Types>...>::value) {
+  if constexpr (!stan::math::disjunction<is_var_matrix<Types>...>::value) {
     FAIL() << "expect_ad_matvar requires at least one varmat input!"
            << std::endl;
-  } else {
-  }
-  if constexpr (!stan::math::disjunction<
+  } else if constexpr (!stan::math::disjunction<
                     is_var<scalar_type_t<Types>>...>::value) {
     FAIL() << "expect_ad_matvar requires at least one autodiff input!"
            << std::endl;
@@ -460,14 +458,14 @@ void expect_ad_matvar_impl(const ad_tolerances& tols, const F& f,
       T_mv_ret A_mv_ret;
       T_vm_ret A_vm_ret;
 
-      if (is_var_matrix<T_mv_ret>::value
+      if constexpr (is_var_matrix<T_mv_ret>::value
           || (is_std_vector<T_mv_ret>::value
               && is_var_matrix<value_type_t<T_mv_ret>>::value)) {
         FAIL() << "A function with matvar inputs should not return "
                << type_name<T_mv_ret>() << std::endl;
       }
 
-      if (is_eigen<T_vm_ret>::value
+      if constexpr (is_eigen<T_vm_ret>::value
           || (is_std_vector<T_vm_ret>::value
               && is_eigen<value_type_t<T_vm_ret>>::value)) {
         FAIL() << "A function with varmat inputs should not return "

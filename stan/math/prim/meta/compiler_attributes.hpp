@@ -20,7 +20,17 @@
 #endif
 #endif
 #endif
+#ifndef STAN_DEPRECATED
+#if __has_attribute(deprecated)
+#define STAN_DEPRECATED __attribute__((deprecated))
+#else
+#define STAN_DEPRECATED
 #endif
+#endif
+
+#endif
+
+
 #ifndef STAN_COLD_PATH
 #define STAN_COLD_PATH
 #endif

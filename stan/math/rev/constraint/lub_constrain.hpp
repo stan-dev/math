@@ -169,7 +169,6 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
     arena_t<ret_type> ret = diff * inv_logit_x + lb_val;
     reverse_pass_callback([arena_x, ub, lb, ret, diff, inv_logit_x]() mutable {
       if constexpr (is_autodiff_v<T>) {
-        using T_var = arena_t<promote_scalar_t<var, T>>;
         arena_x.adj().array()
             += ret.adj().array() * diff * inv_logit_x * (1.0 - inv_logit_x);
       }
@@ -265,8 +264,6 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
         ub_val - value_of(arena_x).array().exp(), diff * inv_logit_x + lb_val);
     reverse_pass_callback([arena_x, ub, arena_lb, ret, diff, inv_logit_x,
                            is_lb_inf]() mutable {
-      using T_var = arena_t<promote_scalar_t<var, T>>;
-      using L_var = arena_t<promote_scalar_t<var, L>>;
       if constexpr (is_autodiff_v<T>) {
         arena_x.adj().array() += (is_lb_inf).select(
             ret.adj().array() * -value_of(arena_x).array().exp(),
@@ -321,8 +318,6 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
               .sum();
     reverse_pass_callback([arena_x, arena_x_val, ub, arena_lb, ret, lp, diff,
                            inv_logit_x, is_lb_inf]() mutable {
-      using T_var = arena_t<promote_scalar_t<var, T>>;
-      using L_var = arena_t<promote_scalar_t<var, L>>;
       const auto lp_adj = lp.adj();
       if constexpr (is_autodiff_v<T>) {
         const auto x_sign = arena_x_val.sign().eval();
@@ -376,8 +371,6 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
         arena_x_val.array().exp() + lb_val, diff * inv_logit_x + lb_val);
     reverse_pass_callback([arena_x, arena_x_val, arena_ub, lb, ret, is_ub_inf,
                            inv_logit_x, diff]() mutable {
-      using T_var = arena_t<promote_scalar_t<var, T>>;
-      using U_var = arena_t<promote_scalar_t<var, U>>;
       if constexpr (is_autodiff_v<T>) {
         arena_x.adj().array() += (is_ub_inf).select(
             ret.adj().array() * arena_x_val.array().exp(),
@@ -432,8 +425,6 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
         arena_x_val.array().exp() + lb_val, diff * inv_logit_x + lb_val);
     reverse_pass_callback([arena_x, arena_x_val, diff, inv_logit_x, arena_ub,
                            lb, ret, lp, is_ub_inf]() mutable {
-      using T_var = arena_t<promote_scalar_t<var, T>>;
-      using U_var = arena_t<promote_scalar_t<var, U>>;
       const auto lp_adj = lp.adj();
       if constexpr (is_autodiff_v<T>) {
         arena_x.adj().array() += (is_ub_inf).select(
@@ -489,9 +480,6 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
   reverse_pass_callback([arena_x, arena_x_val, inv_logit_x, arena_ub, arena_lb,
                          diff, ret, is_ub_inf, is_lb_inf,
                          is_lb_ub_inf]() mutable {
-    using T_var = arena_t<promote_scalar_t<var, T>>;
-    using L_var = arena_t<promote_scalar_t<var, L>>;
-    using U_var = arena_t<promote_scalar_t<var, U>>;
     // The most likely case is neither of them are infinity
     const bool is_none_inf = !(is_lb_inf.any() || is_ub_inf.any());
     if (is_none_inf) {
@@ -575,9 +563,6 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
   reverse_pass_callback([arena_x, arena_x_val, inv_logit_x, arena_ub, arena_lb,
                          diff, ret, is_ub_inf, is_lb_inf, is_lb_ub_inf,
                          lp]() mutable {
-    using T_var = arena_t<promote_scalar_t<var, T>>;
-    using L_var = arena_t<promote_scalar_t<var, L>>;
-    using U_var = arena_t<promote_scalar_t<var, U>>;
     const auto lp_adj = lp.adj();
     // The most likely case is neither of them are infinity
     const bool is_none_inf = !(is_lb_inf.any() || is_ub_inf.any());

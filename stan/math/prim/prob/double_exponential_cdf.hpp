@@ -75,7 +75,6 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_cdf(
 
   T_rep_deriv rep_deriv;
   if constexpr (is_vector<T_y>::value || is_vector<T_loc>::value) {
-    using array_bool = Eigen::Array<bool, Eigen::Dynamic, 1>;
     cdf = (y_val < mu_val)
               .select(exp_scaled_diff * 0.5, 1.0 - 0.5 / exp_scaled_diff)
               .prod();

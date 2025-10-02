@@ -57,11 +57,7 @@ return_type_t<T_x, T_alpha, T_beta> binomial_logit_glm_lpmf(
     const T_n& n, const T_N& N, const T_x& x, const T_alpha& alpha,
     const T_beta& beta) {
   constexpr int T_x_rows = T_x::RowsAtCompileTime;
-  using T_xbeta_partials = partials_return_t<T_x, T_beta>;
   using T_partials_return = partials_return_t<T_x, T_alpha, T_beta>;
-  using T_xbeta_tmp =
-      typename std::conditional_t<T_x_rows == 1, T_xbeta_partials,
-                                  Eigen::Array<T_xbeta_partials, -1, 1>>;
   using T_n_ref = ref_type_if_t<is_autodiff_v<T_n>, T_n>;
   using T_N_ref = ref_type_if_t<is_autodiff_v<T_N>, T_N>;
   using T_x_ref = ref_type_if_t<is_autodiff_v<T_x>, T_x>;
