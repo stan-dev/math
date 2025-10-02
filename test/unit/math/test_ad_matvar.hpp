@@ -426,8 +426,8 @@ void expect_ad_matvar_impl(const ad_tolerances& tols, const F& f,
   using stan::math::var;
   using stan::math::var_value;
   using stan::math::test::type_name;
-  constexpr bool has_at_least_one_var = stan::math::disjunction<
-                           is_var<scalar_type_t<Types>>...>::value;
+  constexpr bool has_at_least_one_var
+      = stan::math::disjunction<is_var<scalar_type_t<Types>>...>::value;
   if constexpr (!stan::math::disjunction<is_var_matrix<Types>...>::value) {
     FAIL() << "expect_ad_matvar requires at least one varmat input!"
            << std::endl;
