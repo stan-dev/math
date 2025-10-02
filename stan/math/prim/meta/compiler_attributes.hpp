@@ -30,7 +30,6 @@
 
 #endif
 
-
 #ifndef STAN_COLD_PATH
 #define STAN_COLD_PATH
 #endif

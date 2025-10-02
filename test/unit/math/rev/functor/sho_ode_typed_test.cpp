@@ -101,23 +101,23 @@ using harmonic_oscillator_test_types = boost::mp11::mp_product<
 TYPED_TEST_SUITE_P(harmonic_oscillator_t0_ad_test);
 TYPED_TEST_P(harmonic_oscillator_t0_ad_test, t0_ad) {
   if constexpr (std::is_same<std::tuple_element_t<0, TypeParam>,
-                   ode_rk45_functor>::value) {
+                             ode_rk45_functor>::value) {
     this->test_t0_ad(5e-6);
   }
   if constexpr (std::is_same<std::tuple_element_t<0, TypeParam>,
-                   ode_ckrk_functor>::value) {
+                             ode_ckrk_functor>::value) {
     this->test_t0_ad(5e-6);
   }
   if constexpr (std::is_same<std::tuple_element_t<0, TypeParam>,
-                   ode_adams_functor>::value) {
+                             ode_adams_functor>::value) {
     this->test_t0_ad(1e-8);
   }
   if constexpr (std::is_same<std::tuple_element_t<0, TypeParam>,
-                   ode_bdf_functor>::value) {
+                             ode_bdf_functor>::value) {
     this->test_t0_ad(1e-7);
   }
   if constexpr (std::is_same<std::tuple_element_t<0, TypeParam>,
-                   ode_adjoint_functor>::value) {
+                             ode_adjoint_functor>::value) {
     this->test_t0_ad(1e-7);
   }
 }

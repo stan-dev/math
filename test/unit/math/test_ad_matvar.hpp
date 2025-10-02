@@ -431,7 +431,7 @@ void expect_ad_matvar_impl(const ad_tolerances& tols, const F& f,
     FAIL() << "expect_ad_matvar requires at least one varmat input!"
            << std::endl;
   } else if constexpr (!stan::math::disjunction<
-                    is_var<scalar_type_t<Types>>...>::value) {
+                           is_var<scalar_type_t<Types>>...>::value) {
     FAIL() << "expect_ad_matvar requires at least one autodiff input!"
            << std::endl;
   } else {
@@ -459,15 +459,15 @@ void expect_ad_matvar_impl(const ad_tolerances& tols, const F& f,
       T_vm_ret A_vm_ret;
 
       if constexpr (is_var_matrix<T_mv_ret>::value
-          || (is_std_vector<T_mv_ret>::value
-              && is_var_matrix<value_type_t<T_mv_ret>>::value)) {
+                    || (is_std_vector<T_mv_ret>::value
+                        && is_var_matrix<value_type_t<T_mv_ret>>::value)) {
         FAIL() << "A function with matvar inputs should not return "
                << type_name<T_mv_ret>() << std::endl;
       }
 
       if constexpr (is_eigen<T_vm_ret>::value
-          || (is_std_vector<T_vm_ret>::value
-              && is_eigen<value_type_t<T_vm_ret>>::value)) {
+                    || (is_std_vector<T_vm_ret>::value
+                        && is_eigen<value_type_t<T_vm_ret>>::value)) {
         FAIL() << "A function with varmat inputs should not return "
                << type_name<T_vm_ret>() << std::endl;
       }
