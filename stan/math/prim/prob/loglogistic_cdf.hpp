@@ -43,9 +43,8 @@ namespace math {
 template <typename T_y, typename T_scale, typename T_shape,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_scale, T_shape>* = nullptr>
-inline return_type_t<T_y, T_scale, T_shape> loglogistic_cdf(const T_y& y,
-                                                     const T_scale& alpha,
-                                                     const T_shape& beta) {
+inline return_type_t<T_y, T_scale, T_shape> loglogistic_cdf(
+    const T_y& y, const T_scale& alpha, const T_shape& beta) {
   using T_partials_return = partials_return_t<T_y, T_scale, T_shape>;
   using T_y_ref = ref_type_t<T_y>;
   using T_alpha_ref = ref_type_t<T_scale>;

@@ -60,7 +60,7 @@ inline size_t fft_next_good_size(size_t N) {
  */
 template <typename T>
 inline void autocorrelation(const std::vector<T>& y, std::vector<T>& ac,
-                     Eigen::FFT<T>& fft) {
+                            Eigen::FFT<T>& fft) {
   using std::complex;
   using std::vector;
 
@@ -117,7 +117,8 @@ inline void autocorrelation(const std::vector<T>& y, std::vector<T>& ac,
  */
 template <typename T, typename DerivedA, typename DerivedB>
 inline void autocorrelation(const Eigen::MatrixBase<DerivedA>& y,
-                     Eigen::MatrixBase<DerivedB>& ac, Eigen::FFT<T>& fft) {
+                            Eigen::MatrixBase<DerivedB>& ac,
+                            Eigen::FFT<T>& fft) {
   size_t N = y.size();
   size_t M = internal::fft_next_good_size(N);
   size_t Mt2 = 2 * M;
@@ -189,7 +190,7 @@ inline void autocorrelation(const std::vector<T>& y, std::vector<T>& ac) {
  */
 template <typename T, typename DerivedA, typename DerivedB>
 inline void autocorrelation(const Eigen::MatrixBase<DerivedA>& y,
-                     Eigen::MatrixBase<DerivedB>& ac) {
+                            Eigen::MatrixBase<DerivedB>& ac) {
   Eigen::FFT<T> fft;
   autocorrelation(y, ac, fft);
 }

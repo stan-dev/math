@@ -19,7 +19,7 @@ namespace math {
  */
 template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
 inline Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
-              EigMat::ColsAtCompileTime>
+                     EigMat::ColsAtCompileTime>
 matrix_exp_pade(const EigMat& arg) {
   using MatrixType
       = Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,

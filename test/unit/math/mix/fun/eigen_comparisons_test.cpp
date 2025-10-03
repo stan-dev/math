@@ -4,8 +4,9 @@
 
 template <typename Scalar, typename ContainerT1, typename ContainerT2,
           typename Op, typename Container1Plain, typename Container2Plain>
-inline void test_comparison(Op operation, const Container1Plain& container1_plain,
-                     const Container2Plain& container2_plain) {
+inline void test_comparison(Op operation,
+                            const Container1Plain& container1_plain,
+                            const Container2Plain& container2_plain) {
   EXPECT_MATRIX_EQ(
       operation(container1_plain, container2_plain),
       operation(ContainerT1(container1_plain), ContainerT2(container2_plain)));
@@ -17,9 +18,9 @@ inline void test_comparison(Op operation, const Container1Plain& container1_plai
 
 template <typename Scalar, typename ContainerT, typename Op,
           typename ContainerPlain>
-inline void test_comparison_combinations(Op operation,
-                                  const ContainerPlain& container1_plain,
-                                  const ContainerPlain& container2_plain) {
+inline void test_comparison_combinations(
+    Op operation, const ContainerPlain& container1_plain,
+    const ContainerPlain& container2_plain) {
   test_comparison<double, ContainerT, ContainerT>(operation, container1_plain,
                                                   container2_plain);
   test_comparison<Scalar, ContainerPlain, ContainerT>(

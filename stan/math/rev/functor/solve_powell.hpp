@@ -46,9 +46,10 @@ namespace math {
 template <typename F, typename T, typename... Args,
           require_eigen_vector_t<T>* = nullptr>
 inline T& solve_powell_call_solver(const F& f, T& x, std::ostream* const msgs,
-                            const double relative_tolerance,
-                            const double function_tolerance,
-                            const int64_t max_num_steps, const Args&... args) {
+                                   const double relative_tolerance,
+                                   const double function_tolerance,
+                                   const int64_t max_num_steps,
+                                   const Args&... args) {
   // Construct the solver
   hybrj_functor_solver<F> hfs(f);
   Eigen::HybridNonLinearSolver<hybrj_functor_solver<F>> solver(hfs);
@@ -126,11 +127,11 @@ template <typename F, typename T, typename... Args,
           require_eigen_vector_t<T>* = nullptr,
           require_all_st_arithmetic<Args...>* = nullptr>
 inline Eigen::VectorXd solve_powell_tol(const F& f, const T& x,
-                                 const double relative_tolerance,
-                                 const double function_tolerance,
-                                 const int64_t max_num_steps,
-                                 std::ostream* const msgs,
-                                 const Args&... args) {
+                                        const double relative_tolerance,
+                                        const double function_tolerance,
+                                        const int64_t max_num_steps,
+                                        std::ostream* const msgs,
+                                        const Args&... args) {
   auto x_ref = eval(value_of(x));
   auto args_vals_tuple = std::make_tuple(to_ref(args)...);
 
@@ -185,8 +186,9 @@ inline Eigen::VectorXd solve_powell_tol(const F& f, const T& x,
  */
 template <typename F, typename T, typename... T_Args,
           require_eigen_vector_t<T>* = nullptr>
-inline Eigen::Matrix<stan::return_type_t<T_Args...>, Eigen::Dynamic, 1> solve_powell(
-    const F& f, const T& x, std::ostream* const msgs, const T_Args&... args) {
+inline Eigen::Matrix<stan::return_type_t<T_Args...>, Eigen::Dynamic, 1>
+solve_powell(const F& f, const T& x, std::ostream* const msgs,
+             const T_Args&... args) {
   double relative_tolerance = 1e-10;
   double function_tolerance = 1e-6;
   int64_t max_num_steps = 200;

@@ -29,7 +29,7 @@ namespace math {
 template <typename Vec, require_vector_t<Vec>* = nullptr,
           require_not_std_vector_t<Vec>* = nullptr>
 inline void check_positive_ordered(const char* function, const char* name,
-                            const Vec& y) {
+                                   const Vec& y) {
   if (y.size() == 0) {
     return;
   }
@@ -61,7 +61,7 @@ inline void check_positive_ordered(const char* function, const char* name,
  */
 template <typename StdVec, require_std_vector_t<StdVec>* = nullptr>
 inline void check_positive_ordered(const char* function, const char* name,
-                            const StdVec& y) {
+                                   const StdVec& y) {
   for (size_t i = 0; i < y.size(); ++i) {
     check_positive_ordered(function, internal::make_iter_name(name, i).c_str(),
                            y[i]);

@@ -134,14 +134,14 @@ inline void expect_eq(std::complex<T> a, std::complex<T> b, const char* msg) {
 }
 
 inline void expect_eq(std::complex<math::var> a, std::complex<math::var> b,
-               const char* msg) {
+                      const char* msg) {
   expect_eq(a.real(), b.real(), msg);
   expect_eq(a.imag(), b.imag(), msg);
 }
 
 template <typename T, require_arithmetic_t<T>* = nullptr>
-inline void expect_eq(std::complex<math::fvar<T>> a, std::complex<math::fvar<T>> b,
-               const char* msg) {
+inline void expect_eq(std::complex<math::fvar<T>> a,
+                      std::complex<math::fvar<T>> b, const char* msg) {
   expect_eq(a.real(), b.real(), msg);
   expect_eq(a.imag(), b.imag(), msg);
 }
@@ -162,7 +162,7 @@ inline void expect_eq(const T1& a, const T2& b, const char* msg) {
 
 template <typename T>
 inline void expect_eq(const std::vector<T>& a, const std::vector<T>& b,
-               const char* msg) {
+                      const char* msg) {
   EXPECT_EQ(a.size(), b.size());
   for (int i = 0; i < a.size(); i++) {
     expect_eq(a[i], b[i], msg);
@@ -176,15 +176,18 @@ inline void expect_eq(const T& t1, const T& t2, const char* msg) {
 }
 
 template <typename T, require_not_st_var<T>* = nullptr>
-inline void expect_adj_eq(const T& a, const T& b, const char* msg = "expect_ad_eq") {}
+inline void expect_adj_eq(const T& a, const T& b,
+                          const char* msg = "expect_ad_eq") {}
 
-inline void expect_adj_eq(math::var a, math::var b, const char* msg = "expect_ad_eq") {
+inline void expect_adj_eq(math::var a, math::var b,
+                          const char* msg = "expect_ad_eq") {
   EXPECT_EQ(a.adj(), b.adj()) << msg;
 }
 
 template <typename T1, typename T2, require_all_eigen_t<T1, T2>* = nullptr,
           require_vt_same<T1, T2>* = nullptr>
-inline void expect_adj_eq(const T1& a, const T2& b, const char* msg = "expect_ad_eq") {
+inline void expect_adj_eq(const T1& a, const T2& b,
+                          const char* msg = "expect_ad_eq") {
   EXPECT_EQ(a.rows(), b.rows()) << msg;
   EXPECT_EQ(a.cols(), b.cols()) << msg;
   const auto& a_ref = math::to_ref(a);
@@ -198,7 +201,7 @@ inline void expect_adj_eq(const T1& a, const T2& b, const char* msg = "expect_ad
 
 template <typename T>
 inline void expect_adj_eq(const std::vector<T>& a, const std::vector<T>& b,
-                   const char* msg = "expect_ad_eq") {
+                          const char* msg = "expect_ad_eq") {
   EXPECT_EQ(a.size(), b.size()) << msg;
   for (int i = 0; i < a.size(); i++) {
     expect_adj_eq(a[i], b[i], msg);

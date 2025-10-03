@@ -191,7 +191,7 @@ inline void check_eq(const int& z1, const int& z2) {
  */
 template <typename T1, typename T2, int R, int C>
 inline void check_eq(const Eigen::Matrix<T1, R, C>& z1,
-              const Eigen::Matrix<T2, R, C>& z2) {
+                     const Eigen::Matrix<T2, R, C>& z2) {
   EXPECT_EQ(z1.rows(), z2.rows());
   EXPECT_EQ(z1.cols(), z2.cols());
 

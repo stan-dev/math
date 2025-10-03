@@ -32,7 +32,7 @@ inline return_type_t<T_prob> categorical_logit_lpmf(int n, const T_prob& beta) {
 
 template <bool propto, typename T_prob, require_col_vector_t<T_prob>* = nullptr>
 inline return_type_t<T_prob> categorical_logit_lpmf(const std::vector<int>& ns,
-                                             const T_prob& beta) {
+                                                    const T_prob& beta) {
   static constexpr const char* function = "categorical_logit_lpmf";
 
   check_bounded(function, "categorical outcome out of support", ns, 1,

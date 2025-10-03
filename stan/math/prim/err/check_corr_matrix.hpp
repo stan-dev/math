@@ -74,7 +74,7 @@ inline void check_corr_matrix(const char* function, const char* name,
  */
 template <typename StdVec, require_std_vector_t<StdVec>* = nullptr>
 inline void check_corr_matrix(const char* function, const char* name,
-                       const StdVec& y) {
+                              const StdVec& y) {
   for (auto&& y_i : y) {
     check_corr_matrix(function, name, y_i);
   }

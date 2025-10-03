@@ -66,7 +66,7 @@ struct one_arg {
 
 template <typename F>
 inline void test_hessian_finite_diff(const std::string& msg, const F& f,
-                              Eigen::VectorXd& x) {
+                                     Eigen::VectorXd& x) {
   double fx;
   Eigen::VectorXd grad_fx;
   Eigen::MatrixXd hess_fx;

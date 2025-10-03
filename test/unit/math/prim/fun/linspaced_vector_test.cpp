@@ -4,7 +4,7 @@
 #include <limits>
 
 inline void expect_linspaced_vector(int K, double low, double high,
-                             const Eigen::VectorXd& expected) {
+                                    const Eigen::VectorXd& expected) {
   Eigen::VectorXd found = stan::math::linspaced_vector(K, low, high);
   EXPECT_MATRIX_FLOAT_EQ(expected, found);
 }

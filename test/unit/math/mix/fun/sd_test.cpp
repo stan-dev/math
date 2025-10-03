@@ -2,7 +2,7 @@
 
 template <typename T>
 inline void expect_sd(const T& m, const stan::test::ad_tolerances& tols
-                           = stan::test::ad_tolerances()) {
+                                  = stan::test::ad_tolerances()) {
   auto f = [](const auto& x) { return stan::math::sd(x); };
   Eigen::VectorXd v(m.size());
   Eigen::RowVectorXd rv(m.size());

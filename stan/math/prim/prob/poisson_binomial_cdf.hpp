@@ -34,7 +34,7 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_theta>
 inline return_type_t<T_theta> poisson_binomial_cdf(const T_y& y,
-                                            const T_theta& theta) {
+                                                   const T_theta& theta) {
   static constexpr const char* function = "poisson_binomial_cdf";
 
   auto size_theta = size_mvt(theta);
@@ -64,7 +64,7 @@ inline return_type_t<T_theta> poisson_binomial_cdf(const T_y& y,
 
 template <typename T_y, typename T_theta>
 inline return_type_t<T_theta> poisson_binomial_cdf(const T_y& y,
-                                            const T_theta& theta) {
+                                                   const T_theta& theta) {
   return poisson_binomial_cdf<false>(y, theta);
 }
 

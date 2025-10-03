@@ -6,9 +6,9 @@
 #include <vector>
 
 template <bool propto, typename T_x, typename T_alpha, typename T_beta>
-inline stan::return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_simple_lpmf(
-    const std::vector<int>& y, const T_x& x, const T_alpha& alpha,
-    const T_beta& beta) {
+inline stan::return_type_t<T_x, T_alpha, T_beta>
+categorical_logit_glm_simple_lpmf(const std::vector<int>& y, const T_x& x,
+                                  const T_alpha& alpha, const T_beta& beta) {
   using T_return = stan::return_type_t<T_x, T_beta, T_alpha>;
 
   const size_t N_instances = x.rows();

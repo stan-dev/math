@@ -37,7 +37,7 @@ template <bool propto, typename T_n, typename T_N, typename T_prob,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_n, T_N, T_prob>* = nullptr>
 inline return_type_t<T_prob> binomial_lpmf(const T_n& n, const T_N& N,
-                                    const T_prob& theta) {
+                                           const T_prob& theta) {
   using T_partials_return = partials_return_t<T_n, T_N, T_prob>;
   using T_n_ref = ref_type_t<T_n>;
   using T_N_ref = ref_type_t<T_N>;

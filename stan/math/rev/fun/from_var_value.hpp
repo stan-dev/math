@@ -17,8 +17,8 @@ namespace math {
  * @param a matrix to convert
  */
 template <typename T, require_var_matrix_t<T>* = nullptr>
-inline Eigen::Matrix<var, T::RowsAtCompileTime, T::ColsAtCompileTime> from_var_value(
-    const T& a) {
+inline Eigen::Matrix<var, T::RowsAtCompileTime, T::ColsAtCompileTime>
+from_var_value(const T& a) {
   arena_matrix<Eigen::Matrix<var, T::RowsAtCompileTime, T::ColsAtCompileTime>>
       res(a.val());
   reverse_pass_callback([res, a]() mutable { a.vi_->adj_ += res.adj(); });

@@ -56,10 +56,8 @@ template <bool propto, typename T_y, typename T_dof, typename T_loc,
           typename T_scale,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_dof, T_loc, T_scale>* = nullptr>
-inline return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lpdf(const T_y& y,
-                                                         const T_dof& nu,
-                                                         const T_loc& mu,
-                                                         const T_scale& sigma) {
+inline return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lpdf(
+    const T_y& y, const T_dof& nu, const T_loc& mu, const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_dof, T_loc, T_scale>;
   using T_y_ref = ref_type_if_not_constant_t<T_y>;
   using T_nu_ref = ref_type_if_not_constant_t<T_dof>;

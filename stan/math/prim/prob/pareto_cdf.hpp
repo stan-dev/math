@@ -21,8 +21,8 @@ template <typename T_y, typename T_scale, typename T_shape,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_scale, T_shape>* = nullptr>
 inline return_type_t<T_y, T_scale, T_shape> pareto_cdf(const T_y& y,
-                                                const T_scale& y_min,
-                                                const T_shape& alpha) {
+                                                       const T_scale& y_min,
+                                                       const T_shape& alpha) {
   using T_partials_return = partials_return_t<T_y, T_scale, T_shape>;
   using T_y_ref = ref_type_t<T_y>;
   using T_y_min_ref = ref_type_t<T_scale>;

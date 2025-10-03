@@ -31,7 +31,7 @@ namespace math {
  */
 template <typename T>
 inline void autocovariance(const std::vector<T>& y, std::vector<T>& acov,
-                    Eigen::FFT<T>& fft) {
+                           Eigen::FFT<T>& fft) {
   autocorrelation(y, acov, fft);
 
   T var = variance(y) * (y.size() - 1) / y.size();
@@ -64,7 +64,8 @@ inline void autocovariance(const std::vector<T>& y, std::vector<T>& acov,
  */
 template <typename T, typename DerivedA, typename DerivedB>
 inline void autocovariance(const Eigen::MatrixBase<DerivedA>& y,
-                    Eigen::MatrixBase<DerivedB>& acov, Eigen::FFT<T>& fft) {
+                           Eigen::MatrixBase<DerivedB>& acov,
+                           Eigen::FFT<T>& fft) {
   autocorrelation(y, acov, fft);
   acov = acov.array() * (y.array() - y.mean()).square().sum() / y.size();
 }
@@ -116,7 +117,7 @@ inline void autocovariance(const std::vector<T>& y, std::vector<T>& acov) {
  */
 template <typename T, typename DerivedA, typename DerivedB>
 inline void autocovariance(const Eigen::MatrixBase<DerivedA>& y,
-                    Eigen::MatrixBase<DerivedB>& acov) {
+                           Eigen::MatrixBase<DerivedB>& acov) {
   Eigen::FFT<T> fft;
   autocovariance(y, acov, fft);
 }

@@ -33,8 +33,8 @@ namespace math {
  */
 template <typename T>
 inline void grad_reg_inc_beta(T& g1, T& g2, const T& a, const T& b, const T& z,
-                       const T& digammaA, const T& digammaB,
-                       const T& digammaSum, const T& betaAB) {
+                              const T& digammaA, const T& digammaB,
+                              const T& digammaSum, const T& betaAB) {
   using std::exp;
 
   T c1 = log(z);

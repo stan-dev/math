@@ -82,7 +82,7 @@ namespace internal {
  */
 template <typename T, std::size_t... Is, typename... Args>
 inline auto make_holder_cl_impl_step2(T&& expr, std::index_sequence<Is...>,
-                               const std::tuple<Args*...>& ptrs) {
+                                      const std::tuple<Args*...>& ptrs) {
   return holder_cl(std::forward<T>(expr), std::get<Is>(ptrs)...);
 }
 
@@ -97,7 +97,7 @@ inline auto make_holder_cl_impl_step2(T&& expr, std::index_sequence<Is...>,
  */
 template <typename T, std::size_t... Is, typename... Args>
 inline auto make_holder_cl_impl_step1(const T& func, std::index_sequence<Is...>,
-                               Args&&... args) {
+                                      Args&&... args) {
   std::tuple<std::remove_reference_t<Args>*...> res;
   auto ptrs = std::tuple_cat(
       holder_handle_element(std::forward<Args>(args), std::get<Is>(res))...);

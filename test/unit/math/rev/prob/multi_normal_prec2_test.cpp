@@ -9,9 +9,10 @@
 #include <string>
 
 template <typename T_y, typename T_loc, typename T_scale>
-inline void expect_propto_multi_normal_prec_lpdf(T_y y1, T_loc mu1, T_scale sigma1,
-                                          T_y y2, T_loc mu2, T_scale sigma2,
-                                          std::string message = "") {
+inline void expect_propto_multi_normal_prec_lpdf(T_y y1, T_loc mu1,
+                                                 T_scale sigma1, T_y y2,
+                                                 T_loc mu2, T_scale sigma2,
+                                                 std::string message = "") {
   expect_eq_diffs(stan::math::multi_normal_prec_lpdf<false>(y1, mu1, sigma1),
                   stan::math::multi_normal_prec_lpdf<false>(y2, mu2, sigma2),
                   stan::math::multi_normal_prec_lpdf<true>(y1, mu1, sigma1),

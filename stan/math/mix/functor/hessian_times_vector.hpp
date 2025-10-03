@@ -39,9 +39,9 @@ template <typename T, typename F, typename EigVec,
           require_eigen_vector_t<EigVec>* = nullptr,
           require_stan_scalar_t<T>* = nullptr>
 inline void hessian_times_vector(const F& f,
-                          const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
-                          const EigVec& v, T& fx,
-                          Eigen::Matrix<T, Eigen::Dynamic, 1>& Hv) {
+                                 const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
+                                 const EigVec& v, T& fx,
+                                 Eigen::Matrix<T, Eigen::Dynamic, 1>& Hv) {
   using Eigen::Matrix;
   Matrix<T, Eigen::Dynamic, 1> grad;
   Matrix<T, Eigen::Dynamic, Eigen::Dynamic> H;

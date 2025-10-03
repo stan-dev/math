@@ -5,7 +5,7 @@
 #include <limits>
 
 inline stan::math::vector_d get_simplex_Phi(double lambda,
-                                     const stan::math::vector_d& c) {
+                                            const stan::math::vector_d& c) {
   using stan::math::Phi;
   int K = c.size() + 1;
   stan::math::vector_d theta(K);

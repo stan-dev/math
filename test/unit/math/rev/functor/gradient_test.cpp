@@ -391,7 +391,8 @@ TEST(RevFunctor, gradient_array_threaded_tbb) {
 }
 #endif
 
-inline stan::math::var sum_and_throw(const Matrix<stan::math::var, Dynamic, 1>& x) {
+inline stan::math::var sum_and_throw(
+    const Matrix<stan::math::var, Dynamic, 1>& x) {
   stan::math::var y = 0;
   for (int i = 0; i < x.size(); ++i)
     y += x(i);

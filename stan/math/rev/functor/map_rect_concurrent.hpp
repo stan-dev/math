@@ -20,7 +20,8 @@ namespace internal {
 
 template <int call_id, typename F, typename T_shared_param,
           typename T_job_param, require_eigen_col_vector_t<T_shared_param>*>
-inline Eigen::Matrix<return_type_t<T_shared_param, T_job_param>, Eigen::Dynamic, 1>
+inline Eigen::Matrix<return_type_t<T_shared_param, T_job_param>, Eigen::Dynamic,
+                     1>
 map_rect_concurrent(
     const T_shared_param& shared_params,
     const std::vector<Eigen::Matrix<T_job_param, Eigen::Dynamic, 1>>&

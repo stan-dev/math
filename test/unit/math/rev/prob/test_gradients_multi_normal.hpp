@@ -64,10 +64,9 @@ inline std::vector<double> finite_diffs_multi_normal(
 }
 
 template <typename F, typename T_y, typename T_mu, typename T_sigma>
-inline std::vector<double> grad_multi_normal(const F& fun,
-                                      const std::vector<T_y>& vec_y,
-                                      const std::vector<T_mu>& vec_mu,
-                                      const std::vector<T_sigma>& vec_sigma) {
+inline std::vector<double> grad_multi_normal(
+    const F& fun, const std::vector<T_y>& vec_y,
+    const std::vector<T_mu>& vec_mu, const std::vector<T_sigma>& vec_sigma) {
   stan::math::var fx = fun(vec_y, vec_mu, vec_sigma);
   std::vector<double> grad;
   std::vector<stan::math::var> vec_vars;
@@ -89,8 +88,8 @@ inline std::vector<double> grad_multi_normal(const F& fun,
 
 template <typename F, typename T_y, typename T_mu, typename T_sigma>
 inline void test_grad_multi_normal(const F& fun, const std::vector<T_y>& vec_y,
-                            const std::vector<T_mu>& vec_mu,
-                            const std::vector<T_sigma>& vec_sigma) {
+                                   const std::vector<T_mu>& vec_mu,
+                                   const std::vector<T_sigma>& vec_sigma) {
   using std::fabs;
   std::vector<double> diffs_finite
       = finite_diffs_multi_normal(fun, vec_y, vec_mu, vec_sigma);

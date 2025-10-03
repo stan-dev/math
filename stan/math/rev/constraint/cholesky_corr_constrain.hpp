@@ -89,8 +89,8 @@ inline var_value<Eigen::MatrixXd> cholesky_corr_constrain(const T& y, int K) {
  * @return Cholesky factor of correlation matrix
  */
 template <typename T, require_var_vector_t<T>* = nullptr>
-inline var_value<Eigen::MatrixXd> cholesky_corr_constrain(const T& y, int K,
-                                                   scalar_type_t<T>& lp) {
+inline var_value<Eigen::MatrixXd> cholesky_corr_constrain(
+    const T& y, int K, scalar_type_t<T>& lp) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::sqrt;

@@ -29,7 +29,7 @@ template <
     require_all_prim_or_rev_kernel_expression_t<T_n_cl, T_rate_cl>* = nullptr,
     require_any_not_stan_scalar_t<T_n_cl, T_rate_cl>* = nullptr>
 inline return_type_t<T_rate_cl> poisson_lpmf(const T_n_cl& n,
-                                      const T_rate_cl& lambda) {
+                                             const T_rate_cl& lambda) {
   static constexpr const char* function = "poisson_lpmf(OpenCL)";
   using T_partials_return = partials_return_t<T_rate_cl>;
   using std::isinf;

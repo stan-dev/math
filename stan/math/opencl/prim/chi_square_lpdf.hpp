@@ -36,7 +36,7 @@ template <
     require_all_prim_or_rev_kernel_expression_t<T_y_cl, T_dof_cl>* = nullptr,
     require_any_not_stan_scalar_t<T_y_cl, T_dof_cl>* = nullptr>
 inline return_type_t<T_y_cl, T_dof_cl> chi_square_lpdf(const T_y_cl& y,
-                                                const T_dof_cl& nu) {
+                                                       const T_dof_cl& nu) {
   static constexpr const char* function = "chi_square_lpdf(OpenCL)";
   using T_partials_return = partials_return_t<T_y_cl, T_dof_cl>;
   using std::isfinite;

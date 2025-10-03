@@ -34,7 +34,8 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_y, typename T_dof>
-inline return_type_t<T_y, T_dof> inv_chi_square_cdf(const T_y& y, const T_dof& nu) {
+inline return_type_t<T_y, T_dof> inv_chi_square_cdf(const T_y& y,
+                                                    const T_dof& nu) {
   using T_partials_return = partials_return_t<T_y, T_dof>;
   using std::exp;
   using std::pow;

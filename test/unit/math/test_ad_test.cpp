@@ -250,7 +250,8 @@ inline std::complex<double> baz(std::complex<double> x) {
   ++baz_complex;
   return x / 2.0;
 }
-inline std::complex<stan::math::var> baz(const std::complex<stan::math::var>& x) {
+inline std::complex<stan::math::var> baz(
+    const std::complex<stan::math::var>& x) {
   ++baz_complex_var;
   return x / 2.0;
 }

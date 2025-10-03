@@ -59,7 +59,7 @@ inline void check_cholesky_factor(const char* function, const char* name,
  */
 template <typename StdVec, require_std_vector_t<StdVec>* = nullptr>
 inline void check_cholesky_factor(const char* function, const char* name,
-                           const StdVec& y) {
+                                  const StdVec& y) {
   for (size_t i = 0; i < y.size(); ++i) {
     check_cholesky_factor(function, internal::make_iter_name(name, i).c_str(),
                           y[i]);

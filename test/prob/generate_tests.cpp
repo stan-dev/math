@@ -181,7 +181,7 @@ pair<string, string> read_test_name_from_file(const string& file) {
 }
 
 inline vector<vector<string> > build_argument_sequence(const string& arguments,
-                                                const int& ind) {
+                                                       const int& ind) {
   vector<string> argument_list = tokenize_arguments(arguments);
   vector<vector<string> > argument_sequence;
   for (size_t n = 0; n < argument_list.size(); n++)
@@ -244,10 +244,11 @@ int num_ints(string arguments) {
   return num;
 }
 
-inline void write_types_typedef(vector<std::ostream*>& outs, string base, size_t& N,
-                         vector<vector<string> > argument_sequence,
-                         const size_t depth, const int& index,
-                         const int& N_TESTS) {
+inline void write_types_typedef(vector<std::ostream*>& outs, string base,
+                                size_t& N,
+                                vector<vector<string> > argument_sequence,
+                                const size_t depth, const int& index,
+                                const int& N_TESTS) {
   vector<string> args = argument_sequence.front();
   argument_sequence.erase(argument_sequence.begin());
   if (argument_sequence.size() > 0) {
@@ -301,8 +302,8 @@ size_t write_types(vector<std::ostream*>& outs,
 }
 
 inline void write_test(vector<std::ostream*>& outs, const string& test_name,
-                const string& fixture_name, const size_t N, const int& index,
-                const int& N_TESTS) {
+                       const string& fixture_name, const size_t N,
+                       const int& index, const int& N_TESTS) {
   for (size_t n = 0; n < N; n++) {
     std::ostream* out = outs[int(n / N_TESTS)];
     if (index == 1)
@@ -360,8 +361,8 @@ inline void write_test(vector<std::ostream*>& outs, const string& test_name,
 }
 
 inline void write_test_cases(vector<std::ostream*>& outs, const string& file,
-                      const vector<vector<string> >& argument_sequence,
-                      const int& index, const int& N_TESTS) {
+                             const vector<vector<string> >& argument_sequence,
+                             const int& index, const int& N_TESTS) {
   pair<string, string> name = read_test_name_from_file(file);
   string test_name = name.first;
   string fixture_name = name.second;

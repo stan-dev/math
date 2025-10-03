@@ -56,8 +56,8 @@ namespace math {
 template <bool propto, typename T_prob, typename T_prior_size,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_prob, T_prior_size>* = nullptr>
-inline return_type_t<T_prob, T_prior_size> dirichlet_lpdf(const T_prob& theta,
-                                                   const T_prior_size& alpha) {
+inline return_type_t<T_prob, T_prior_size> dirichlet_lpdf(
+    const T_prob& theta, const T_prior_size& alpha) {
   using T_partials_return = partials_return_t<T_prob, T_prior_size>;
   using T_partials_array = typename Eigen::Array<T_partials_return, -1, -1>;
   using T_theta_ref = ref_type_t<T_prob>;
@@ -125,8 +125,8 @@ inline return_type_t<T_prob, T_prior_size> dirichlet_lpdf(const T_prob& theta,
 }
 
 template <typename T_prob, typename T_prior_size>
-inline return_type_t<T_prob, T_prior_size> dirichlet_lpdf(const T_prob& theta,
-                                                   const T_prior_size& alpha) {
+inline return_type_t<T_prob, T_prior_size> dirichlet_lpdf(
+    const T_prob& theta, const T_prior_size& alpha) {
   return dirichlet_lpdf<false>(theta, alpha);
 }
 

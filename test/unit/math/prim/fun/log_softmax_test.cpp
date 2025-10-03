@@ -2,7 +2,8 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-inline void test_log_softmax(const Eigen::Matrix<double, Eigen::Dynamic, 1>& theta) {
+inline void test_log_softmax(
+    const Eigen::Matrix<double, Eigen::Dynamic, 1>& theta) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::log_softmax;

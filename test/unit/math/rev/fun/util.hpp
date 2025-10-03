@@ -9,7 +9,8 @@
 // vector; Fills the matrix column-wise
 
 template <typename T, int R, int C>
-inline void fill(const std::vector<double>& contents, Eigen::Matrix<T, R, C>& M) {
+inline void fill(const std::vector<double>& contents,
+                 Eigen::Matrix<T, R, C>& M) {
   size_t ij = 0;
   for (int j = 0; j < C; ++j)
     for (int i = 0; i < R; ++i)

@@ -71,7 +71,8 @@ TEST(ToMatrixMatrix, answers) {
 }
 
 // Matrix -> Matrix (with reshape)
-inline void test_to_matrix_matrix_reshape_answers(int m1, int n1, int m2, int n2) {
+inline void test_to_matrix_matrix_reshape_answers(int m1, int n1, int m2,
+                                                  int n2) {
   using stan::math::to_matrix;
   Eigen::MatrixXd a(m1, n1);
   Eigen::MatrixXd b(m2, n2);

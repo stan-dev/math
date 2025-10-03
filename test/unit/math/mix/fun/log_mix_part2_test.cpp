@@ -3,7 +3,7 @@
 #include <vector>
 
 inline void expect_log_mix(const std::vector<double>& p,
-                    const std::vector<double>& d) {
+                           const std::vector<double>& d) {
   auto f
       = [](const auto& x, const auto& y) { return stan::math::log_mix(x, y); };
   stan::test::ad_tolerances tols;
@@ -42,7 +42,7 @@ inline std::vector<Eigen::RowVectorXd> to_row_vectors(
 }
 
 inline void expect_log_mix(const std::vector<double>& p,
-                    const std::vector<std::vector<double>>& ds) {
+                           const std::vector<std::vector<double>>& ds) {
   auto f
       = [](const auto& x, const auto& y) { return stan::math::log_mix(x, y); };
   stan::test::ad_tolerances tols;

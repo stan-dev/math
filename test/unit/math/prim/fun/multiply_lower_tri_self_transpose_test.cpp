@@ -15,7 +15,8 @@ inline stan::math::matrix_d generate_large_L_tri_mat() {
   return x;
 }
 
-inline void test_multiply_lower_tri_self_transpose(const stan::math::matrix_d& x) {
+inline void test_multiply_lower_tri_self_transpose(
+    const stan::math::matrix_d& x) {
   using stan::math::multiply_lower_tri_self_transpose;
   stan::math::matrix_d y = multiply_lower_tri_self_transpose(x);
   stan::math::matrix_d xp = x;

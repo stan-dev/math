@@ -31,7 +31,7 @@ inline return_type_t<T_prob> categorical_lpmf(int n, const T_prob& theta) {
 template <bool propto, typename T_prob,
           require_eigen_col_vector_t<T_prob>* = nullptr>
 inline return_type_t<T_prob> categorical_lpmf(const std::vector<int>& ns,
-                                       const T_prob& theta) {
+                                              const T_prob& theta) {
   static constexpr const char* function = "categorical_lpmf";
 
   check_bounded(function, "element of outcome array", ns, 1, theta.size());

@@ -11,7 +11,7 @@ namespace math {
  */
 template <typename T_y, typename T_lower, typename T_upper>
 inline double discrete_range_cdf_log(const T_y& y, const T_lower& lower,
-                              const T_upper& upper) {
+                                     const T_upper& upper) {
   return discrete_range_lcdf(y, lower, upper);
 }
 
