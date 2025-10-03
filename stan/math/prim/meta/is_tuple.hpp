@@ -64,8 +64,8 @@ inline constexpr bool is_tuple_v = math::is_tuple_v<T>;
  */
 template <typename T, std::size_t N>
 struct is_tuple_of_size
-    : std::bool_constant<is_tuple_v<T>
-                         && std::tuple_size_v<std::decay_t<T>> == N> {};
+    : std::bool_constant<
+          is_tuple_v<T> && std::tuple_size_v<std::decay_t<T>> == N> {};
 
 template <typename T, std::size_t N>
 inline constexpr bool is_tuple_of_size_v = is_tuple_of_size<T, N>::value;
