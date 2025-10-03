@@ -3,10 +3,11 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/fun/beta.hpp>
+#include <stan/math/rev/fun/digamma.hpp>
 #include <stan/math/rev/fun/pow.hpp>
-#include <stan/math/prim/fun/beta.hpp>
-#include <stan/math/prim/fun/digamma.hpp>
 #include <stan/math/prim/fun/grad_reg_inc_beta.hpp>
+#include <stan/math/prim/fun/inc_beta.hpp>
 #include <cmath>
 
 namespace stan {

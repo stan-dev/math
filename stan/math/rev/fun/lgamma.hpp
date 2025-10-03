@@ -3,7 +3,7 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/prim/fun/digamma.hpp>
+#include <stan/math/rev/fun/digamma.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 
 namespace stan {
@@ -20,8 +20,8 @@ namespace math {
  * @param a The variable.
  * @return Log gamma of the variable.
  */
-template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
-inline auto lgamma(const var_value<T>& a) {
+template <typename T, require_var_t<T>* = nullptr>
+inline auto lgamma(T&& a) {
   return make_callback_var(lgamma(a.val()), [a](auto& vi) mutable {
     as_array_or_scalar(a.adj())
         += as_array_or_scalar(vi.adj()) * as_array_or_scalar(digamma(a.val()));

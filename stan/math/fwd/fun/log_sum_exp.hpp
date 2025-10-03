@@ -1,13 +1,13 @@
 #ifndef STAN_MATH_FWD_FUN_LOG_SUM_EXP_HPP
 #define STAN_MATH_FWD_FUN_LOG_SUM_EXP_HPP
 
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/fwd/fun/inv_logit.hpp>
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/log_sum_exp.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
+#include <stan/math/prim/fun/log_sum_exp.hpp>
 #include <cmath>
 #include <vector>
 
@@ -16,7 +16,6 @@ namespace math {
 
 template <typename T>
 inline fvar<T> log_sum_exp(const fvar<T>& x1, const fvar<T>& x2) {
-  using std::exp;
   return fvar<T>(log_sum_exp(x1.val_, x2.val_),
                  x1.d_ * inv_logit(-(x2.val_ - x1.val_))
                      + x2.d_ * inv_logit(-(x1.val_ - x2.val_)));
@@ -24,7 +23,6 @@ inline fvar<T> log_sum_exp(const fvar<T>& x1, const fvar<T>& x2) {
 
 template <typename T>
 inline fvar<T> log_sum_exp(double x1, const fvar<T>& x2) {
-  using std::exp;
   if (x1 == NEGATIVE_INFTY) {
     return fvar<T>(x2.val_, x2.d_);
   }
@@ -52,9 +50,9 @@ inline fvar<T> log_sum_exp(const fvar<T>& x1, double x2) {
  * @return The log of the sum of the exponentiated vector values.
  */
 template <typename T, require_container_st<is_fvar, T>* = nullptr>
-inline auto log_sum_exp(const T& x) {
+inline auto log_sum_exp(T&& x) {
   return apply_vector_unary<ref_type_t<T>>::reduce(
-      to_ref(x), [&](const auto& v) {
+      to_ref(std::forward<T>(x)), [](auto&& v) {
         using T_fvar_inner = typename value_type_t<decltype(v)>::Scalar;
         using mat_type = Eigen::Matrix<T_fvar_inner, -1, -1>;
         mat_type vals = v.val();

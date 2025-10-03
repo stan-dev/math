@@ -1,0 +1,99 @@
+# Copyright 2012-2013 Karsten Ahnert
+# Copyright 2012-2013 Mario Mulansky
+# Copyright 2013 Pascal Germroth
+# Copyright 2023 Matt Borland
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+# bring in rules for testing
+
+import testing ;
+import-search /boost/config/checks ;
+import config : requires ;
+
+project
+    : requirements
+      <library>/boost/odeint//boost_odeint
+      <define>BOOST_ALL_NO_LIB=1
+      # use test library
+      <library>/boost/test//boost_unit_test_framework
+      <link>static
+      <toolset>clang:<cxxflags>-Wno-unused-variable
+      # <cxxflags>-D_SCL_SECURE_NO_WARNINGS
+    [ requires cxx14_decltype_auto cxx14_generic_lambdas cxx14_return_type_deduction cxx14_variable_templates cxx14_decltype_auto cxx14_generic_lambdas cxx14_return_type_deduction ]    ;
+
+test-suite "odeint"
+    :
+    [ run euler_stepper.cpp ]
+    # The following 3 tests use Boost.Multiprecision which requires C++14
+    [ run runge_kutta_concepts.cpp /boost/multiprecision//boost_multiprecision : : : <toolset>gcc-mingw:<cxxflags>-Wa,-mbig-obj <debug-symbols>off <toolset>msvc:<cxxflags>/bigobj [ requires cxx14_decltype_auto cxx14_generic_lambdas cxx14_return_type_deduction cxx14_variable_templates cxx14_constexpr ] ]
+    [ run runge_kutta_error_concepts.cpp /boost/multiprecision//boost_multiprecision : : : <toolset>gcc-mingw:<cxxflags>-Wa,-mbig-obj <debug-symbols>off <toolset>msvc:<cxxflags>/bigobj [ requires cxx14_decltype_auto cxx14_generic_lambdas cxx14_return_type_deduction cxx14_variable_templates cxx14_constexpr ] ]
+    [ run runge_kutta_controlled_concepts.cpp /boost/multiprecision//boost_multiprecision : : : <toolset>gcc-mingw:<cxxflags>-Wa,-mbig-obj <debug-symbols>off <toolset>msvc:<cxxflags>/bigobj [ requires cxx14_decltype_auto cxx14_generic_lambdas cxx14_return_type_deduction cxx14_variable_templates cxx14_constexpr ] ]
+    [ run resizing.cpp ]
+    [ run default_operations.cpp ]
+    [ run range_algebra.cpp ]
+    [ run implicit_euler.cpp ]
+# disable in clang
+    [ run fusion_algebra.cpp : : : <toolset>clang:<build>no <toolset>gcc-mingw:<cxxflags>-Wa,-mbig-obj <debug-symbols>off <toolset>msvc:<cxxflags>/bigobj ]
+    [ run stepper_with_units.cpp : : : <toolset>clang:<build>no <toolset>gcc-mingw:<cxxflags>-Wa,-mbig-obj <debug-symbols>off <toolset>msvc:<cxxflags>/bigobj ]
+    [ run stepper_copying.cpp ]
+    [ run stepper_with_ranges.cpp ]
+    [ run rosenbrock4.cpp ]
+    [ run rosenbrock4_mp.cpp /boost/multiprecision//boost_multiprecision ]
+    [ run is_pair.cpp ]
+    [ run adams_bashforth.cpp ]
+    [ run adams_moulton.cpp ]
+    [ run adams_bashforth_moulton.cpp ]
+    [ run controlled_adams_bashforth_moulton.cpp ]
+    [ run adaptive_adams_coefficients.cpp ]
+    [ run generic_stepper.cpp ]
+    [ run generic_error_stepper.cpp ]
+    [ run bulirsch_stoer.cpp ]
+    [ run integrate_times.cpp ]
+    [ run integrate_times.cpp : : : <define>ODEINT_INTEGRATE_ITERATOR : integrate_times_iterator ]
+    [ run integrate.cpp ]
+    [ run integrate.cpp : : : <define>ODEINT_INTEGRATE_ITERATOR : integrate_iterator ]
+    [ run integrate_implicit.cpp ]
+    [ run integrate_implicit.cpp : : : <define>ODEINT_INTEGRATE_ITERATOR : integrate_implicit_iterator ]
+    [ run generation.cpp ]
+    [ run trivial_state.cpp ]
+    [ run is_resizeable.cpp ]
+    [ run resize.cpp ]
+    [ run same_size.cpp ]
+    [ run split.cpp ]
+    [ run symplectic_steppers.cpp ]
+    [ run integrators_symplectic.cpp ]
+    [ run integrators_symplectic.cpp : : : <define>ODEINT_INTEGRATE_ITERATOR : integrators_symplectic_iterator ]
+    [ run velocity_verlet.cpp ]
+    [ run multi_array.cpp ]
+    [ compile algebra_dispatcher.cpp ]
+    [ run integrate_stepper_refs.cpp ]
+    [ run const_step_iterator.cpp ]
+    [ run const_step_time_iterator.cpp ]
+    [ run adaptive_iterator.cpp ]
+    [ run adaptive_time_iterator.cpp ]
+    [ run n_step_iterator.cpp ]
+    [ run n_step_time_iterator.cpp ]
+    [ run times_iterator.cpp ]
+    [ run times_time_iterator.cpp ]
+    [ run step_size_limitation.cpp ]
+    [ run integrate_overflow.cpp ]
+    [ compile unwrap_boost_reference.cpp ]
+    [ compile unwrap_reference.cpp ]
+    [ compile std_array.cpp ]
+    :
+        <testing.launcher>valgrind
+    ;
+
+# also run numeric tests
+build-project numeric ;
+
+build-project regression ;
+
+# test-suite "odeint-iterator_integrate"
+#    :
+#    [ run integrate.cpp : : : : integrate_iterator ]
+#    : <testing.launcher>valgrind
+#      <define>ODEINT_ITERATOR_INTEGRATE
+#    ;
+

@@ -61,6 +61,7 @@ TEST(MathMixMatFun, rowsDotProduct) {
   stan::test::expect_ad(f, erv2, erv3);
   stan::test::expect_ad(f, em33, em23);
   stan::test::expect_ad(f, em23, em33);
+  stan::test::expect_ad(f, em23, em32);
   stan::test::expect_ad_matvar(f, ev2, ev3);
   stan::test::expect_ad_matvar(f, erv2, erv3);
   stan::test::expect_ad_matvar(f, em33, em23);

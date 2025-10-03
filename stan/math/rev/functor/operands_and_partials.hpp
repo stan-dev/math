@@ -371,28 +371,28 @@ class operands_and_partials<Op1, Op2, Op3, Op4, Op5, Op6, Op7, Op8, var> {
                 operand7 = edge7_.operand(), partial7 = edge7_.partial(),
                 operand8 = edge8_.operand(),
                 partial8 = edge8_.partial()](const auto& vi) mutable {
-          if (!is_constant<Op1>::value) {
+          if constexpr (is_autodiff_v<Op1>) {
             internal::update_adjoints(operand1, partial1, vi);
           }
-          if (!is_constant<Op2>::value) {
+          if constexpr (is_autodiff_v<Op2>) {
             internal::update_adjoints(operand2, partial2, vi);
           }
-          if (!is_constant<Op3>::value) {
+          if constexpr (is_autodiff_v<Op3>) {
             internal::update_adjoints(operand3, partial3, vi);
           }
-          if (!is_constant<Op4>::value) {
+          if constexpr (is_autodiff_v<Op4>) {
             internal::update_adjoints(operand4, partial4, vi);
           }
-          if (!is_constant<Op5>::value) {
+          if constexpr (is_autodiff_v<Op5>) {
             internal::update_adjoints(operand5, partial5, vi);
           }
-          if (!is_constant<Op6>::value) {
+          if constexpr (is_autodiff_v<Op6>) {
             internal::update_adjoints(operand6, partial6, vi);
           }
-          if (!is_constant<Op7>::value) {
+          if constexpr (is_autodiff_v<Op7>) {
             internal::update_adjoints(operand7, partial7, vi);
           }
-          if (!is_constant<Op8>::value) {
+          if constexpr (is_autodiff_v<Op8>) {
             internal::update_adjoints(operand8, partial8, vi);
           }
         });

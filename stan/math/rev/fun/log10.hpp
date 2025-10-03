@@ -1,14 +1,13 @@
 #ifndef STAN_MATH_REV_FUN_LOG10_HPP
 #define STAN_MATH_REV_FUN_LOG10_HPP
 
-#include <stan/math/prim/core.hpp>
-#include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/log10.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/atan2.hpp>
 #include <stan/math/rev/fun/hypot.hpp>
 #include <stan/math/rev/fun/log.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/log10.hpp>
 #include <cmath>
 #include <complex>
 
@@ -45,8 +44,8 @@ namespace math {
  * @param a Variable whose log is taken.
  * @return Base 10 log of variable.
  */
-template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
-inline auto log10(const var_value<T>& a) {
+template <typename T, require_var_t<T>* = nullptr>
+inline auto log10(T&& a) {
   return make_callback_var(log10(a.val()), [a](auto& vi) mutable {
     as_array_or_scalar(a.adj()) += as_array_or_scalar(vi.adj())
                                    / (LOG_TEN * as_array_or_scalar(a.val()));

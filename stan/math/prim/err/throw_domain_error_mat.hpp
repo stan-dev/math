@@ -33,9 +33,9 @@ inline void throw_domain_error_mat(const char* function, const char* name,
                                    const T& y, size_t i, size_t j,
                                    const char* msg1, const char* msg2) {
   std::ostringstream vec_name_stream;
-  if (is_col_vector<T>::value) {
+  if constexpr (is_col_vector<T>::value) {
     vec_name_stream << name << "[" << stan::error_index::value + i << "]";
-  } else if (is_row_vector<T>::value) {
+  } else if constexpr (is_row_vector<T>::value) {
     vec_name_stream << name << "[" << stan::error_index::value + j << "]";
   } else {
     vec_name_stream << name << "[" << stan::error_index::value + i << ", "

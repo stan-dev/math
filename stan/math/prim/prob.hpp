@@ -25,9 +25,11 @@
 #include <stan/math/prim/prob/beta_lccdf.hpp>
 #include <stan/math/prim/prob/beta_lcdf.hpp>
 #include <stan/math/prim/prob/beta_lpdf.hpp>
+#include <stan/math/prim/prob/beta_neg_binomial_cdf.hpp>
 #include <stan/math/prim/prob/beta_neg_binomial_lccdf.hpp>
 #include <stan/math/prim/prob/beta_neg_binomial_lcdf.hpp>
 #include <stan/math/prim/prob/beta_neg_binomial_lpmf.hpp>
+#include <stan/math/prim/prob/beta_neg_binomial_rng.hpp>
 #include <stan/math/prim/prob/beta_proportion_ccdf_log.hpp>
 #include <stan/math/prim/prob/beta_proportion_cdf_log.hpp>
 #include <stan/math/prim/prob/beta_proportion_lccdf.hpp>
@@ -318,5 +320,5 @@
 #include <stan/math/prim/prob/wishart_cholesky_rng.hpp>
 #include <stan/math/prim/prob/wishart_lpdf.hpp>
 #include <stan/math/prim/prob/wishart_rng.hpp>
-
+#include <stan/math/prim/prob/yule_simon_lpmf.hpp>
 #endif

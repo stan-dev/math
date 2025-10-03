@@ -1,15 +1,15 @@
 #ifndef STAN_MATH_REV_FUN_LOG_SOFTMAX_HPP
 #define STAN_MATH_REV_FUN_LOG_SOFTMAX_HPP
 
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/core/typedefs.hpp>
+#include <stan/math/rev/fun/softmax.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/fun/log_softmax.hpp>
-#include <stan/math/prim/fun/softmax.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
+#include <stan/math/prim/fun/log_softmax.hpp>
 #include <cmath>
 #include <vector>
 
@@ -120,9 +120,10 @@ inline auto log_softmax(const T& x) {
  * @throw std::domain_error if the input size is 0
  */
 template <typename T, require_std_vector_st<is_var, T>* = nullptr>
-inline auto log_softmax(const T& x) {
-  return apply_vector_unary<T>::apply(
-      x, [](const auto& alpha) { return log_softmax(alpha); });
+inline auto log_softmax(T&& x) {
+  return apply_vector_unary<T>::apply(std::forward<T>(x), [](auto&& alpha) {
+    return log_softmax(std::forward<decltype(alpha)>(alpha));
+  });
 }
 
 }  // namespace math

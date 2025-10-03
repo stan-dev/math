@@ -38,11 +38,11 @@ namespace math {
  */
 template <typename T, require_eigen_col_vector_t<T>* = nullptr>
 inline Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
-corr_matrix_constrain(const T& x, Eigen::Index k) {
+corr_matrix_constrain(T&& x, Eigen::Index k) {
   Eigen::Index k_choose_2 = (k * (k - 1)) / 2;
   check_size_match("cov_matrix_constrain", "x.size()", x.size(), "k_choose_2",
                    k_choose_2);
-  return read_corr_matrix(corr_constrain(x), k);
+  return read_corr_matrix(corr_constrain(std::forward<T>(x)), k);
 }
 
 /**
@@ -61,17 +61,64 @@ corr_matrix_constrain(const T& x, Eigen::Index k) {
  *
  * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase and
  * have one compile-time dimension equal to 1)
+ * @tparam Lp A scalar type for the lp argument. The scalar type of T should be
+ * convertable to this.
  * @param x Vector of unconstrained partial correlations.
  * @param k Dimensionality of returned correlation matrix.
  * @param lp Log probability reference to increment.
  */
-template <typename T, require_eigen_col_vector_t<T>* = nullptr>
+template <typename T, typename Lp, require_eigen_col_vector_t<T>* = nullptr,
+          require_convertible_t<return_type_t<T>, Lp>* = nullptr>
 inline Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
-corr_matrix_constrain(const T& x, Eigen::Index k, return_type_t<T>& lp) {
+corr_matrix_constrain(T&& x, Eigen::Index k, Lp& lp) {
   Eigen::Index k_choose_2 = (k * (k - 1)) / 2;
   check_size_match("cov_matrix_constrain", "x.size()", x.size(), "k_choose_2",
                    k_choose_2);
-  return read_corr_matrix(corr_constrain(x, lp), k, lp);
+  return read_corr_matrix(corr_constrain(std::forward<T>(x), lp), k, lp);
+}
+
+/**
+ * Return the correlation matrix of the specified dimensionality derived from
+ * the specified vector of unconstrained values. The input vector must be of
+ * length \f${k \choose 2} = \frac{k(k-1)}{2}\f$.  The values in the input
+ * vector represent unconstrained (partial) correlations among the dimensions.
+ * This overload handles looping over the elements of a standard vector.
+ *
+ * @tparam T A standard vector with inner type inheriting from
+ * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
+ * `Eigen::DenseBase` with compile time dynamic rows and 1 column
+ * @param y Vector of unconstrained partial correlations
+ * @param K Dimensionality of returned correlation matrix
+ */
+template <typename T, require_std_vector_t<T>* = nullptr>
+inline auto corr_matrix_constrain(T&& y, int K) {
+  return apply_vector_unary<T>::apply(std::forward<T>(y), [K](auto&& v) {
+    return corr_matrix_constrain(std::forward<decltype(v)>(v), K);
+  });
+}
+
+/**
+ * Return the correlation matrix of the specified dimensionality derived from
+ * the specified vector of unconstrained values. The input vector must be of
+ * length \f${k \choose 2} = \frac{k(k-1)}{2}\f$.  The values in the input
+ * vector represent unconstrained (partial) correlations among the dimensions.
+ * This overload handles looping over the elements of a standard vector.
+ *
+ * @tparam T A standard vector with inner type inheriting from
+ * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
+ * `Eigen::DenseBase` with compile time dynamic rows and 1 column
+ * @tparam Lp Scalar type for the lp argument. The scalar type of T should be
+ * convertable to this.
+ * @param y Vector of unconstrained partial correlations
+ * @param K Dimensionality of returned correlation matrix
+ * @param[in, out] lp log density accumulator o
+ */
+template <typename T, typename Lp, require_std_vector_t<T>* = nullptr,
+          require_convertible_t<return_type_t<T>, Lp>* = nullptr>
+inline auto corr_matrix_constrain(T&& y, int K, Lp& lp) {
+  return apply_vector_unary<T>::apply(std::forward<T>(y), [&lp, K](auto&& v) {
+    return corr_matrix_constrain(std::forward<decltype(v)>(v), K, lp);
+  });
 }
 
 /**
@@ -88,45 +135,21 @@ corr_matrix_constrain(const T& x, Eigen::Index k, return_type_t<T>& lp) {
  * absolute Jacobian determinant of constraining transform
  * @tparam T A type inheriting from `Eigen::DenseBase` or a `var_value` with
  *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
- *  and 1 column
+ *  and 1 column or standard vector thereof
+ * @tparam Lp A scalar type for the lp argument. The scalar type of T should be
+ * convertable to this.
  * @param x Vector of unconstrained partial correlations
  * @param k Dimensionality of returned correlation matrix
  * @param[in,out] lp log density accumulator
  */
-template <bool Jacobian, typename T, require_not_std_vector_t<T>* = nullptr>
-inline auto corr_matrix_constrain(const T& x, Eigen::Index k,
-                                  return_type_t<T>& lp) {
-  if (Jacobian) {
-    return corr_matrix_constrain(x, k, lp);
+template <bool Jacobian, typename T, typename Lp,
+          require_convertible_t<return_type_t<T>, Lp>* = nullptr>
+inline auto corr_matrix_constrain(T&& x, Eigen::Index k, Lp& lp) {
+  if constexpr (Jacobian) {
+    return corr_matrix_constrain(std::forward<T>(x), k, lp);
   } else {
-    return corr_matrix_constrain(x, k);
+    return corr_matrix_constrain(std::forward<T>(x), k);
   }
-}
-
-/**
- * Return the correlation matrix of the specified dimensionality derived from
- * the specified vector of unconstrained values. The input vector must be of
- * length \f${k \choose 2} = \frac{k(k-1)}{2}\f$.  The values in the input
- * vector represent unconstrained (partial) correlations among the dimensions.
- * If the `Jacobian` parameter is `true`, the log density accumulator is
- * incremented with the log absolute Jacobian determinant of the transform.  All
- * of the transforms are specified with their Jacobians in the *Stan Reference
- * Manual* chapter Constraint Transforms.
- *
- * @tparam Jacobian if `true`, increment log density accumulator with log
- * absolute Jacobian determinant of constraining transform
- * @tparam T A standard vector with inner type inheriting from
- * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
- * `Eigen::DenseBase` with compile time dynamic rows and 1 column
- * @param y Vector of unconstrained partial correlations
- * @param K Dimensionality of returned correlation matrix
- * @param[in,out] lp log density accumulator
- */
-template <bool Jacobian, typename T, require_std_vector_t<T>* = nullptr>
-inline auto corr_matrix_constrain(const T& y, int K, return_type_t<T>& lp) {
-  return apply_vector_unary<T>::apply(y, [&lp, K](auto&& v) {
-    return corr_matrix_constrain<Jacobian>(v, K, lp);
-  });
 }
 
 }  // namespace math

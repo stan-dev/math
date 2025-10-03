@@ -4,6 +4,7 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/fabs.hpp>
 
 namespace stan {
 namespace math {

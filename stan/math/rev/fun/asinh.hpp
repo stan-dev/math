@@ -1,11 +1,6 @@
 #ifndef STAN_MATH_REV_FUN_ASINH_HPP
 #define STAN_MATH_REV_FUN_ASINH_HPP
 
-#include <stan/math/prim/core.hpp>
-#include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/fun/asinh.hpp>
-#include <stan/math/prim/fun/isinf.hpp>
-#include <stan/math/prim/fun/is_inf.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/fun/value_of_rec.hpp>
@@ -17,6 +12,9 @@
 #include <stan/math/rev/fun/log.hpp>
 #include <stan/math/rev/fun/polar.hpp>
 #include <stan/math/rev/fun/sqrt.hpp>
+#include <stan/math/prim/core.hpp>
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/asinh.hpp>
 #include <cmath>
 #include <complex>
 
@@ -57,7 +55,7 @@ namespace math {
  * @return Inverse hyperbolic sine of the variable.
  */
 inline var asinh(const var& x) {
-  return make_callback_var(std::asinh(x.val()), [x](const auto& vi) mutable {
+  return make_callback_var(std::asinh(x.val()), [x](auto&& vi) mutable {
     x.adj() += vi.adj() / std::sqrt(x.val() * x.val() + 1.0);
   });
 }
@@ -73,7 +71,7 @@ template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
 inline auto asinh(const VarMat& x) {
   return make_callback_var(
       x.val().unaryExpr([](const auto x) { return asinh(x); }),
-      [x](const auto& vi) mutable {
+      [x](auto&& vi) mutable {
         x.adj().array()
             += vi.adj().array() / (x.val().array().square() + 1.0).sqrt();
       });

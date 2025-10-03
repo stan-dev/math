@@ -54,12 +54,41 @@ inline T_actual&& forward_as(T_actual&& a) {  // NOLINT
  * @return nothing, this always throws
  * @throw always throws std::runtime_error
  */
+template <
+    typename T_desired, typename T_actual,
+    require_any_not_eigen_t<T_desired, T_actual>* = nullptr,
+    typename = std::enable_if_t<
+        !std::is_same<std::decay<T_actual>, std::decay<T_desired>>::value
+        && !(std::is_floating_point_v<std::decay_t<
+                 T_desired>> && std::is_integral_v<std::decay_t<T_actual>>)>>
+inline T_desired forward_as(const T_actual& a) {
+  throw std::runtime_error(
+      "Wrong type assumed! Please file a bug report. prim/meta/forward_as.hpp "
+      "line "
+      + std::to_string(__LINE__));
+}
+
+/** \ingroup type_trait
+ * Assume which type we get. If actual type is not convertible to assumed type
+ * or in case of eigen types compile time rows and columns are not the same and
+ * desired sizes are not dynamic this has return type of \c T_desired, but it
+ * only throws. This version should only be used where it is optimized away so
+ * the throw should never happen.
+ *
+ * This handles the edge case where both types are simple arithmetic types
+ * and we would like to just convert one to another.
+ *
+ * @tparam T_desired type of output we need to avoid compile time errors
+ * @tparam T_actual actual type of the argument
+ * @param a input value
+ * @return a
+ */
 template <typename T_desired, typename T_actual,
           typename = std::enable_if_t<
-              !std::is_same<std::decay<T_actual>, std::decay<T_desired>>::value
-              && (!is_eigen<T_desired>::value || !is_eigen<T_actual>::value)>>
+              std::is_floating_point_v<std::decay_t<
+                  T_desired>> && std::is_integral_v<std::decay_t<T_actual>>>>
 inline T_desired forward_as(const T_actual& a) {
-  throw std::runtime_error("Wrong type assumed! Please file a bug report.");
+  return static_cast<T_desired>(a);
 }
 
 /** \ingroup type_trait
@@ -120,7 +149,10 @@ template <
             T_desired::ColsAtCompileTime,
             std::decay_t<T_actual>::ColsAtCompileTime)>* = nullptr>
 inline T_desired forward_as(const T_actual& a) {
-  throw std::runtime_error("Wrong type assumed! Please file a bug report.");
+  throw std::runtime_error(
+      "Wrong type assumed! Please file a bug report. prim/meta/forward_as.hpp "
+      "line "
+      + std::to_string(__LINE__));
 }
 
 }  // namespace math

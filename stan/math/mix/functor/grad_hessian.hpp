@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_MIX_FUNCTOR_GRAD_HESSIAN_HPP
 #define STAN_MATH_MIX_FUNCTOR_GRAD_HESSIAN_HPP
 
-#include <stan/math/fwd/core.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/fwd/core.hpp>
 #include <stdexcept>
 #include <vector>
 
@@ -39,7 +39,7 @@ namespace math {
  * @param[out] grad_H Gradient of the Hessian of function at argument
  */
 template <typename F>
-void grad_hessian(
+inline void grad_hessian(
     const F& f, const Eigen::Matrix<double, Eigen::Dynamic, 1>& x, double& fx,
     Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& H,
     std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> >&

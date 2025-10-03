@@ -1,6 +1,17 @@
 #ifndef STAN_MATH_REV_FUN_POW_HPP
 #define STAN_MATH_REV_FUN_POW_HPP
 
+#include <stan/math/rev/meta.hpp>
+#include <stan/math/rev/core.hpp>
+#include <stan/math/rev/fun/exp.hpp>
+#include <stan/math/rev/fun/inv.hpp>
+#include <stan/math/rev/fun/inv_sqrt.hpp>
+#include <stan/math/rev/fun/inv_square.hpp>
+#include <stan/math/rev/fun/is_nan.hpp>
+#include <stan/math/rev/fun/log.hpp>
+#include <stan/math/rev/fun/sqrt.hpp>
+#include <stan/math/rev/fun/square.hpp>
+#include <stan/math/rev/fun/value_of_rec.hpp>
 #include <stan/math/prim/core.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
@@ -10,16 +21,7 @@
 #include <stan/math/prim/fun/isnan.hpp>
 #include <stan/math/prim/fun/is_nan.hpp>
 #include <stan/math/prim/fun/pow.hpp>
-#include <stan/math/rev/meta.hpp>
-#include <stan/math/rev/core.hpp>
-#include <stan/math/rev/fun/inv.hpp>
-#include <stan/math/rev/fun/inv_sqrt.hpp>
-#include <stan/math/rev/fun/inv_square.hpp>
-#include <stan/math/rev/fun/is_nan.hpp>
-#include <stan/math/rev/fun/log.hpp>
-#include <stan/math/rev/fun/sqrt.hpp>
-#include <stan/math/rev/fun/square.hpp>
-#include <stan/math/rev/fun/value_of_rec.hpp>
+
 #include <cmath>
 #include <complex>
 #include <type_traits>
@@ -76,7 +78,7 @@ inline auto pow(const Scal1& base, const Scal2& exponent) {
   if constexpr (is_complex<Scal1>::value || is_complex<Scal2>::value) {
     return internal::complex_pow(base, exponent);
   } else {
-    if constexpr (is_constant<Scal2>::value) {
+    if constexpr (is_constant_v<Scal2>) {
       if (exponent == 0.5) {
         return sqrt(base);
       } else if (exponent == 1.0) {
@@ -98,12 +100,12 @@ inline auto pow(const Scal1& base, const Scal2& exponent) {
                                }
                                const double vi_mul = vi.adj() * vi.val();
 
-                               if (!is_constant<Scal1>::value) {
+                               if constexpr (is_autodiff_v<Scal1>) {
                                  forward_as<var>(base).adj()
                                      += vi_mul * value_of(exponent)
                                         / value_of(base);
                                }
-                               if (!is_constant<Scal2>::value) {
+                               if constexpr (is_autodiff_v<Scal2>) {
                                  forward_as<var>(exponent).adj()
                                      += vi_mul * std::log(value_of(base));
                                }
@@ -150,7 +152,7 @@ inline auto pow(const Mat1& base, const Mat2& exponent) {
   reverse_pass_callback([arena_base, arena_exponent, ret]() mutable {
     const auto& are_vals_zero = to_ref(value_of(arena_base) != 0.0);
     const auto& ret_mul = to_ref(ret.adj().array() * ret.val().array());
-    if (!is_constant<Mat1>::value) {
+    if constexpr (is_autodiff_v<Mat1>) {
       using base_var_arena_t = arena_t<promote_scalar_t<var, base_arena_t>>;
       forward_as<base_var_arena_t>(arena_base).adj()
           += (are_vals_zero)
@@ -158,7 +160,7 @@ inline auto pow(const Mat1& base, const Mat2& exponent) {
                      ret_mul * value_of(arena_exponent) / value_of(arena_base),
                      0);
     }
-    if (!is_constant<Mat2>::value) {
+    if constexpr (is_autodiff_v<Mat2>) {
       using exp_var_arena_t = arena_t<promote_scalar_t<var, exp_arena_t>>;
       forward_as<exp_var_arena_t>(arena_exponent).adj()
           += (are_vals_zero).select(ret_mul * value_of(arena_base).log(), 0);
@@ -185,7 +187,7 @@ template <typename Mat1, typename Scal1,
 inline auto pow(const Mat1& base, const Scal1& exponent) {
   using ret_type = promote_scalar_t<var, plain_type_t<Mat1>>;
 
-  if (is_constant<Scal1>::value) {
+  if constexpr (is_constant_v<Scal1>) {
     if (exponent == 0.5) {
       return ret_type(sqrt(base));
     } else if (exponent == 1.0) {
@@ -208,14 +210,14 @@ inline auto pow(const Mat1& base, const Scal1& exponent) {
   reverse_pass_callback([arena_base, exponent, ret]() mutable {
     const auto& are_vals_zero = to_ref(value_of(arena_base).array() != 0.0);
     const auto& ret_mul = to_ref(ret.adj().array() * ret.val().array());
-    if (!is_constant<Mat1>::value) {
+    if constexpr (is_autodiff_v<Mat1>) {
       forward_as<ret_type>(arena_base).adj().array()
           += (are_vals_zero)
                  .select(ret_mul * value_of(exponent)
                              / value_of(arena_base).array(),
                          0);
     }
-    if (!is_constant<Scal1>::value) {
+    if constexpr (is_autodiff_v<Scal1>) {
       forward_as<var>(exponent).adj()
           += (are_vals_zero)
                  .select(ret_mul * value_of(arena_base).array().log(), 0)
@@ -258,12 +260,12 @@ inline auto pow(Scal1 base, const Mat1& exponent) {
       return;  // partials zero, avoids 0 & log(0)
     }
     const auto& ret_mul = to_ref(ret.adj().array() * ret.val().array());
-    if (!is_constant<Scal1>::value) {
+    if constexpr (is_autodiff_v<Scal1>) {
       forward_as<var>(base).adj()
           += (ret_mul * value_of(arena_exponent).array() / value_of(base))
                  .sum();
     }
-    if (!is_constant<Mat1>::value) {
+    if constexpr (is_autodiff_v<Mat1>) {
       forward_as<ret_type>(arena_exponent).adj().array()
           += ret_mul * std::log(value_of(base));
     }
@@ -285,9 +287,13 @@ inline auto pow(Scal1 base, const Mat1& exponent) {
 template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr,
           require_all_not_matrix_st<is_var, T1, T2>* = nullptr,
           require_any_var_t<base_type_t<T1>, base_type_t<T2>>* = nullptr>
-inline auto pow(const T1& a, const T2& b) {
+inline auto pow(T1&& a, T2&& b) {
   return apply_scalar_binary(
-      a, b, [](const auto& c, const auto& d) { return stan::math::pow(c, d); });
+      [](auto&& c, auto&& d) {
+        return stan::math::pow(std::forward<decltype(c)>(c),
+                               std::forward<decltype(d)>(d));
+      },
+      std::forward<T1>(a), std::forward<T2>(b));
 }
 
 }  // namespace math

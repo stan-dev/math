@@ -23,7 +23,10 @@ namespace math {
  * @param x Input to square.
  * @return Square of input.
  */
-inline double square(double x) { return std::pow(x, 2); }
+template <typename T, require_arithmetic_t<T>* = nullptr>
+inline double square(const T x) {
+  return std::pow(x, 2);
+}
 
 /**
  * Structure to wrap square() so that it can be vectorized.
@@ -34,8 +37,8 @@ inline double square(double x) { return std::pow(x, 2); }
  */
 struct square_fun {
   template <typename T>
-  static inline auto fun(const T& x) {
-    return square(x);
+  static inline auto fun(T&& x) {
+    return square(std::forward<T>(x));
   }
 };
 
@@ -46,13 +49,10 @@ struct square_fun {
  * @param x container
  * @return Each value in x squared.
  */
-template <
-    typename Container, require_not_stan_scalar_t<Container>* = nullptr,
-    require_not_container_st<std::is_arithmetic, Container>* = nullptr,
-    require_not_var_matrix_t<Container>* = nullptr,
-    require_not_nonscalar_prim_or_rev_kernel_expression_t<Container>* = nullptr>
-inline auto square(const Container& x) {
-  return apply_scalar_unary<square_fun, Container>::apply(x);
+template <typename Container, require_ad_container_t<Container>* = nullptr>
+inline auto square(Container&& x) {
+  return apply_scalar_unary<square_fun, Container>::apply(
+      std::forward<Container>(x));
 }
 
 /**
@@ -64,10 +64,10 @@ inline auto square(const Container& x) {
  * @return Each value in x squared.
  */
 template <typename Container,
-          require_container_st<std::is_arithmetic, Container>* = nullptr>
-inline auto square(const Container& x) {
+          require_container_bt<std::is_arithmetic, Container>* = nullptr>
+inline auto square(Container&& x) {
   return apply_vector_unary<Container>::apply(
-      x, [](const auto& v) { return v.array().square(); });
+      std::forward<Container>(x), [](auto&& v) { return v.array().square(); });
 }
 
 }  // namespace math

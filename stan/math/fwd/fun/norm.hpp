@@ -2,6 +2,7 @@
 #define STAN_MATH_FWD_FUN_NORM_HPP
 
 #include <stan/math/fwd/core.hpp>
+#include <stan/math/fwd/fun/square.hpp>
 #include <stan/math/prim/fun/norm.hpp>
 #include <complex>
 

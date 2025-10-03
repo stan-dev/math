@@ -3,8 +3,9 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/prim/fun/hypergeometric_2F1.hpp>
+#include <stan/math/fwd/fun/value_of.hpp>
 #include <stan/math/prim/fun/grad_2F1.hpp>
+#include <stan/math/prim/fun/hypergeometric_2F1.hpp>
 
 namespace stan {
 namespace math {
@@ -29,11 +30,11 @@ namespace math {
 template <typename Ta1, typename Ta2, typename Tb, typename Tz,
           require_all_stan_scalar_t<Ta1, Ta2, Tb, Tz>* = nullptr,
           require_any_fvar_t<Ta1, Ta2, Tb, Tz>* = nullptr>
-inline return_type_t<Ta1, Ta1, Tb, Tz> hypergeometric_2F1(const Ta1& a1,
+inline return_type_t<Ta1, Ta2, Tb, Tz> hypergeometric_2F1(const Ta1& a1,
                                                           const Ta2& a2,
                                                           const Tb& b,
                                                           const Tz& z) {
-  using fvar_t = return_type_t<Ta1, Ta1, Tb, Tz>;
+  using fvar_t = return_type_t<Ta1, Ta2, Tb, Tz>;
 
   auto a1_val = value_of(a1);
   auto a2_val = value_of(a2);
@@ -44,16 +45,16 @@ inline return_type_t<Ta1, Ta1, Tb, Tz> hypergeometric_2F1(const Ta1& a1,
 
   typename fvar_t::Scalar grad = 0;
 
-  if (!is_constant<Ta1>::value) {
+  if constexpr (is_autodiff_v<Ta1>) {
     grad += forward_as<fvar_t>(a1).d() * std::get<0>(grad_tuple);
   }
-  if (!is_constant<Ta2>::value) {
+  if constexpr (is_autodiff_v<Ta2>) {
     grad += forward_as<fvar_t>(a2).d() * std::get<1>(grad_tuple);
   }
-  if (!is_constant<Tb>::value) {
+  if constexpr (is_autodiff_v<Tb>) {
     grad += forward_as<fvar_t>(b).d() * std::get<2>(grad_tuple);
   }
-  if (!is_constant<Tz>::value) {
+  if constexpr (is_autodiff_v<Tz>) {
     grad += forward_as<fvar_t>(z).d() * std::get<3>(grad_tuple);
   }
 

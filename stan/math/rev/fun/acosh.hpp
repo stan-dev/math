@@ -1,13 +1,8 @@
 #ifndef STAN_MATH_REV_FUN_ACOSH_HPP
 #define STAN_MATH_REV_FUN_ACOSH_HPP
 
-#include <stan/math/prim/core.hpp>
-#include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/fun/acosh.hpp>
-#include <stan/math/prim/fun/isnan.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/rev/fun/value_of_rec.hpp>
 #include <stan/math/rev/fun/abs.hpp>
 #include <stan/math/rev/fun/arg.hpp>
 #include <stan/math/rev/fun/cosh.hpp>
@@ -15,6 +10,11 @@
 #include <stan/math/rev/fun/log.hpp>
 #include <stan/math/rev/fun/polar.hpp>
 #include <stan/math/rev/fun/sqrt.hpp>
+#include <stan/math/rev/fun/value_of_rec.hpp>
+#include <stan/math/prim/core.hpp>
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/isnan.hpp>
+#include <stan/math/prim/fun/acosh.hpp>
 #include <cmath>
 #include <complex>
 
@@ -61,7 +61,7 @@ namespace math {
  * @return Inverse hyperbolic cosine of the variable.
  */
 inline var acosh(const var& x) {
-  return make_callback_var(acosh(x.val()), [x](const auto& vi) mutable {
+  return make_callback_var(acosh(x.val()), [x](auto&& vi) mutable {
     x.adj() += vi.adj() / std::sqrt(x.val() * x.val() - 1.0);
   });
 }
@@ -78,7 +78,7 @@ template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
 inline auto acosh(const VarMat& x) {
   return make_callback_var(
       x.val().unaryExpr([](const auto x) { return acosh(x); }),
-      [x](const auto& vi) mutable {
+      [x](auto&& vi) mutable {
         x.adj().array()
             += vi.adj().array() / (x.val().array().square() - 1.0).sqrt();
       });

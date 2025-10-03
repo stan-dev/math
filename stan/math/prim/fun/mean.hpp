@@ -19,10 +19,10 @@ namespace math {
  * @return Sample mean of container coefficients.
  */
 template <typename T, require_container_t<T>* = nullptr>
-inline return_type_t<T> mean(const T& m) {
+inline return_type_t<T> mean(T&& m) {
   check_nonzero_size("mean", "m", m);
-  return apply_vector_unary<T>::reduce(m,
-                                       [](const auto& a) { return a.mean(); });
+  return apply_vector_unary<T>::reduce(std::forward<T>(m),
+                                       [](auto&& a) { return a.mean(); });
 }
 
 }  // namespace math

@@ -119,9 +119,9 @@ TEST(mathMixMatFun, ub_stdvec_constrain_inf) {
 // matrix[], real
 TEST(mathMixMatFun, ub_stdvec_mat_mat_constrain) {
   Eigen::MatrixXd A_inner(2, 3);
-  A_inner << 5.0, 2.0, 4.0, -2.0, 0.0, 0.005;
+  A_inner << 5.0, 2.0, 4.0, -2.0, 1.0, 2.0;
   Eigen::MatrixXd ubm_inner(2, 3);
-  ubm_inner << 7.0, 5.0, 6.0, 100.0, 0.0, 0.0005;
+  ubm_inner << 7.0, 5.0, 6.0, 100.0, 2.0, 1.0005;
   Eigen::MatrixXd ubm_inner_bad(2, 1);
   ubm_inner_bad << 7.0, 5.0;
   Eigen::MatrixXd A_inner2 = 2.0 * A_inner;

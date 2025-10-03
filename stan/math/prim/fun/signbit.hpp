@@ -17,7 +17,7 @@ namespace math {
  * @param[in] v argument
  * @return `true` if the argument is negative
  */
-template <typename ADType, require_autodiff_t<ADType>* = nullptr>
+template <typename ADType, require_autodiff_scalar_t<ADType>* = nullptr>
 inline bool signbit(ADType&& v) {
   using std::signbit;
   return signbit(v.val());

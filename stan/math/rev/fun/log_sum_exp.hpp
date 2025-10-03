@@ -1,13 +1,13 @@
 #ifndef STAN_MATH_REV_FUN_LOG_SUM_EXP_HPP
 #define STAN_MATH_REV_FUN_LOG_SUM_EXP_HPP
 
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/core/typedefs.hpp>
+#include <stan/math/rev/fun/inv_logit.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/fun/inv_logit.hpp>
 #include <stan/math/prim/fun/log_sum_exp.hpp>
 #include <cmath>
 #include <vector>
@@ -66,11 +66,10 @@ inline var log_sum_exp(double a, const var& b) {
  */
 template <typename T, require_eigen_st<is_var, T>* = nullptr,
           require_not_var_matrix_t<T>* = nullptr>
-inline var log_sum_exp(const T& v) {
-  arena_t<decltype(v)> arena_v = v;
-  arena_t<decltype(v.val())> arena_v_val = arena_v.val();
+inline var log_sum_exp(T&& v) {
+  arena_t<T> arena_v = std::forward<T>(v);
+  auto arena_v_val = to_arena(arena_v.val());
   var res = log_sum_exp(arena_v_val);
-
   reverse_pass_callback([arena_v, arena_v_val, res]() mutable {
     arena_v.adj()
         += res.adj() * (arena_v_val.array().val() - res.val()).exp().matrix();
@@ -99,9 +98,10 @@ inline var log_sum_exp(const T& x) {
  * @param x matrix
  */
 template <typename T, require_std_vector_st<is_var, T>* = nullptr>
-inline auto log_sum_exp(const T& x) {
-  return apply_vector_unary<T>::reduce(
-      x, [](const auto& v) { return log_sum_exp(v); });
+inline auto log_sum_exp(T&& x) {
+  return apply_vector_unary<T>::reduce(std::forward<T>(x), [](auto&& v) {
+    return log_sum_exp(std::forward<decltype(v)>(v));
+  });
 }
 
 }  // namespace math

@@ -67,9 +67,13 @@ inline return_type_t<T_a, T_b> multiply_log(const T_a a, const T_b b) {
  */
 template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr,
           require_all_not_var_matrix_t<T1, T2>* = nullptr>
-inline auto multiply_log(const T1& a, const T2& b) {
+inline auto multiply_log(T1&& a, T2&& b) {
   return apply_scalar_binary(
-      a, b, [&](const auto& c, const auto& d) { return multiply_log(c, d); });
+      [](auto&& c, auto&& d) {
+        return multiply_log(std::forward<decltype(c)>(c),
+                            std::forward<decltype(d)>(d));
+      },
+      std::forward<T1>(a), std::forward<T2>(b));
 }
 
 }  // namespace math

@@ -54,7 +54,7 @@ TEST(MathFunctions, fma_matrix) {
   Eigen::RowVectorXd y_rowvec(2);
   y_rowvec << 2.0, -3.0;
   Eigen::MatrixXd y_mat(2, 2);
-  x_mat << 1.0, 2.0, -1.0, 1.1;
+  y_mat << 1.0, 2.0, -1.0, 1.1;
 
   double z_scalar = 3.0;
   Eigen::VectorXd z_vec(2);
@@ -62,7 +62,7 @@ TEST(MathFunctions, fma_matrix) {
   Eigen::RowVectorXd z_rowvec(2);
   z_rowvec << -3.0, 4.0;
   Eigen::MatrixXd zm(2, 2);
-  x_mat << 3.0, 4.0, -1.0, 1.1;
+  zm << 3.0, 4.0, -1.0, 1.1;
 
   EXPECT_MATRIX_EQ(add(elt_multiply(x_scalar, y_scalar), z_vec),
                    fma(x_scalar, y_scalar, z_vec));

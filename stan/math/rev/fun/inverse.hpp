@@ -7,6 +7,7 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/inverse.hpp>
 
 namespace stan {
 namespace math {

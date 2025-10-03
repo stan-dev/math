@@ -11,7 +11,8 @@ namespace stan {
  * to detect whether a type is an Eigen matrix expression.
  */
 template <typename S>
-using is_plain_type = std::is_same<std::decay_t<S>, plain_type_t<S>>;
+using is_plain_type
+    = std::is_same<std::decay_t<S>, plain_type_t<std::decay_t<S>>>;
 
 /*! \ingroup require_eigens_types */
 /*! \defgroup plain_type_types plain_type  */

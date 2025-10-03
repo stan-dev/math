@@ -3,8 +3,8 @@
 
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/meta.hpp>
+#include <stan/math/rev/fun/square.hpp>
 #include <stan/math/prim/fun/logit.hpp>
-#include <stan/math/prim/fun/square.hpp>
 
 namespace stan {
 namespace math {
@@ -16,8 +16,8 @@ namespace math {
  * @param u The variable.
  * @return log odds of argument
  */
-template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
-inline auto logit(const var_value<T>& u) {
+template <typename T, require_var_t<T>* = nullptr>
+inline auto logit(T&& u) {
   auto denom = to_arena(1.0 / as_array_or_scalar(u.val() - square(u.val())));
   return make_callback_var(logit(u.val()), [u, denom](auto& vi) mutable {
     as_array_or_scalar(u.adj()) += as_array_or_scalar(vi.adj()) * denom;

@@ -44,10 +44,13 @@ inline T binary_log_loss(int y, const T& y_hat) {
  */
 template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr,
           require_not_var_matrix_t<T2>* = nullptr>
-inline auto binary_log_loss(const T1& a, const T2& b) {
-  return apply_scalar_binary(a, b, [&](const auto& c, const auto& d) {
-    return binary_log_loss(c, d);
-  });
+inline auto binary_log_loss(T1&& a, T2&& b) {
+  return apply_scalar_binary(
+      [](auto&& c, auto&& d) {
+        return binary_log_loss(std::forward<decltype(c)>(c),
+                               std::forward<decltype(d)>(d));
+      },
+      std::forward<T1>(a), std::forward<T2>(b));
 }
 
 }  // namespace math

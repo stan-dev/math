@@ -13,16 +13,18 @@ struct nonexisting_adjoint {
     return *this;
   }
   template <typename T>
-  nonexisting_adjoint operator+=(T) {
+  nonexisting_adjoint operator+=(T) const {
     throw std::runtime_error(
         "internal::nonexisting_adjoint::operator+= should never be called! "
-        "Please file a bug report.");
+        "Please file a bug report. rev/fun/adjoint_of.hpp line "
+        + std::to_string(__LINE__));
   }
   template <typename T>
-  nonexisting_adjoint operator-=(T) {
+  nonexisting_adjoint operator-=(T) const {
     throw std::runtime_error(
         "internal::nonexisting_adjoint::operator-= should never be called! "
-        "Please file a bug report.");
+        "Please file a bug report. rev/fun/adjoint_of.hpp line "
+        + std::to_string(__LINE__));
   }
 };
 }  // namespace internal
@@ -34,7 +36,7 @@ struct nonexisting_adjoint {
  * @return reference to `x`'s adjoint
  */
 template <typename T, require_var_t<T>* = nullptr>
-auto& adjoint_of(const T& x) {
+inline auto& adjoint_of(const T& x) noexcept {
   return x.adj();
 }
 

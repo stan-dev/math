@@ -47,8 +47,8 @@ struct Phi_approx_fun {
    * @return approximate value of Phi applied to argument
    */
   template <typename T>
-  static inline auto fun(const T& x) {
-    return Phi_approx(x);
+  static inline auto fun(T&& x) {
+    return Phi_approx(std::forward<T>(x));
   }
 };
 
@@ -65,9 +65,9 @@ struct Phi_approx_fun {
 template <
     typename T,
     require_all_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr,
-    require_not_var_matrix_t<T>* = nullptr>
-inline auto Phi_approx(const T& x) {
-  return apply_scalar_unary<Phi_approx_fun, T>::apply(x);
+    require_container_t<T>* = nullptr, require_not_var_matrix_t<T>* = nullptr>
+inline auto Phi_approx(T&& x) {
+  return apply_scalar_unary<Phi_approx_fun, T>::apply(std::forward<T>(x));
 }
 
 }  // namespace math

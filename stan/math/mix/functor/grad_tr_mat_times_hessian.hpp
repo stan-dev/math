@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_MIX_FUNCTOR_GRAD_TR_MAT_TIMES_HESSIAN_HPP
 #define STAN_MATH_MIX_FUNCTOR_GRAD_TR_MAT_TIMES_HESSIAN_HPP
 
-#include <stan/math/fwd/core.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/rev/core.hpp>
 #include <stan/math/mix/functor/gradient_dot_vector.hpp>
+#include <stan/math/rev/core.hpp>
+#include <stan/math/fwd/core.hpp>
 #include <stdexcept>
 #include <vector>
 
@@ -12,7 +12,7 @@ namespace stan {
 namespace math {
 
 template <typename F>
-void grad_tr_mat_times_hessian(
+inline void grad_tr_mat_times_hessian(
     const F& f, const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
     const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& M,
     Eigen::Matrix<double, Eigen::Dynamic, 1>& grad_tr_MH) {
@@ -26,7 +26,7 @@ void grad_tr_mat_times_hessian(
 
   Matrix<var, Dynamic, 1> x_var(x.size());
   for (int i = 0; i < x.size(); ++i) {
-    x_var(i) = x(i);
+    x_var.coeffRef(i) = x(i);
   }
 
   Matrix<fvar<var>, Dynamic, 1> x_fvar(x.size());

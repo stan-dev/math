@@ -3,10 +3,11 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
+#include <stan/math/fwd/fun/exp.hpp>
+#include <stan/math/fwd/fun/erf.hpp>
+#include <stan/math/fwd/fun/square.hpp>
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/erf.hpp>
 #include <stan/math/prim/fun/owens_t.hpp>
-#include <stan/math/prim/fun/square.hpp>
 #include <cmath>
 
 namespace stan {
@@ -23,8 +24,6 @@ namespace math {
  */
 template <typename T>
 inline fvar<T> owens_t(const fvar<T>& x1, const fvar<T>& x2) {
-  using std::exp;
-
   T neg_x1_sq_div_2 = -square(x1.val_) * 0.5;
   T one_p_x2_sq = 1.0 + square(x2.val_);
   return fvar<T>(owens_t(x1.val_, x2.val_),
@@ -45,8 +44,6 @@ inline fvar<T> owens_t(const fvar<T>& x1, const fvar<T>& x2) {
  */
 template <typename T>
 inline fvar<T> owens_t(double x1, const fvar<T>& x2) {
-  using std::exp;
-
   T neg_x1_sq_div_2 = -square(x1) * 0.5;
   T one_p_x2_sq = 1.0 + square(x2.val_);
   return fvar<T>(
@@ -64,8 +61,6 @@ inline fvar<T> owens_t(double x1, const fvar<T>& x2) {
  */
 template <typename T>
 inline fvar<T> owens_t(const fvar<T>& x1, double x2) {
-  using std::exp;
-
   T neg_x1_sq_div_2 = -square(x1.val_) * 0.5;
   return fvar<T>(owens_t(x1.val_, x2),
                  -x1.d_

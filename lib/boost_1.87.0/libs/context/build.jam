@@ -1,0 +1,39 @@
+# Copyright René Ferdinand Rivera Morell 2023-2024
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at
+# http://www.boost.org/LICENSE_1_0.txt)
+
+require-b2 5.2 ;
+
+import-search /boost/predef/tools/check ;
+
+import predef ;
+import boost-context-features ;
+
+constant boost_dependencies :
+    /boost/assert//boost_assert
+    /boost/config//boost_config
+    /boost/core//boost_core
+    /boost/mp11//boost_mp11
+    /boost/pool//boost_pool
+    /boost/predef//boost_predef
+    /boost/smart_ptr//boost_smart_ptr ;
+
+project /boost/context
+    : common-requirements
+        <include>include
+    : requirements
+        # Auto-detect toolset default address-model and architecture.
+        [ predef.address-model ]
+        [ predef.architecture ]
+    ;
+
+explicit
+    [ alias boost_context : build//boost_context ]
+    [ alias all : boost_context test ]
+    ;
+
+call-if : boost-library context
+    : install boost_context
+    ;
+

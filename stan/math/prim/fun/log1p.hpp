@@ -61,8 +61,8 @@ struct log1p_fun {
    * @return natural log of one plus the argument
    */
   template <typename T>
-  static inline auto fun(const T& x) {
-    return log1p(x);
+  static inline auto fun(T&& x) {
+    return log1p(std::forward<T>(x));
   }
 };
 
@@ -78,9 +78,10 @@ struct log1p_fun {
  */
 template <typename T,
           require_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr,
+          require_container_t<T>* = nullptr,
           require_not_var_matrix_t<T>* = nullptr>
-inline auto log1p(const T& x) {
-  return apply_scalar_unary<log1p_fun, T>::apply(x);
+inline auto log1p(T&& x) {
+  return apply_scalar_unary<log1p_fun, T>::apply(std::forward<T>(x));
 }
 
 }  // namespace math

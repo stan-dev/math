@@ -35,11 +35,11 @@ inline auto add_diag(const T_m& mat, const T_a& to_add) {
   var_value<matrix_cl<double>> res = add_diag(value_of(mat), value_of(to_add));
 
   reverse_pass_callback([mat_arena, to_add_arena, res]() mutable {
-    if (!is_constant<T_m>::value) {
+    if constexpr (is_autodiff_v<T_m>) {
       adjoint_of(mat_arena) += res.adj();
     }
-    if (!is_constant<T_a>::value) {
-      if (!is_stan_scalar<T_a>::value) {
+    if constexpr (is_autodiff_v<T_a>) {
+      if constexpr (!is_stan_scalar<T_a>::value) {
         auto& to_add_adj
             = forward_as<var_value<matrix_cl<double>>>(to_add_arena).adj();
         to_add_adj += diagonal(res.adj());

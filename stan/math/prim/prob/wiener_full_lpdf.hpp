@@ -497,25 +497,22 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
     // computation of derivatives and precision checks
     // computation of derivative for t and precision check in order to give
     // the value as deriv_t to edge1 and as -deriv_t to edge5
-    if (!is_constant_all<T_y>::value || !is_constant_all<T_t0>::value) {
-      const T_partials_return deriv_t_7
-          = internal::wiener7_integrate<GradientCalc::OFF, GradientCalc::OFF>(
-                [](auto&&... args) {
-                  return internal::wiener5_grad_t<GradientCalc::ON>(args...);
-                },
-                hcubature_err, params, dim, xmin, xmax,
-                maximal_evaluations_hcubature, absolute_error_hcubature,
-                relative_error_hcubature / 2)
-            / density;
-      if (!is_constant_all<T_y>::value) {
-        partials<0>(ops_partials)[i] = deriv_t_7;
-      }
-      if (!is_constant_all<T_t0>::value) {
-        partials<2>(ops_partials)[i] = -deriv_t_7;
-      }
-    }
+    const T_partials_return deriv_t_7
+        = internal::wiener7_integrate<GradientCalc::OFF, GradientCalc::OFF>(
+              [](auto&&... args) {
+                return internal::wiener5_grad_t<GradientCalc::ON>(args...);
+              },
+              hcubature_err, params, dim, xmin, xmax,
+              maximal_evaluations_hcubature, absolute_error_hcubature,
+              relative_error_hcubature / 2)
+          / density;
+
+    // computation of derivatives and precision checks
     T_partials_return derivative;
-    if (!is_constant_all<T_a>::value) {
+    if constexpr (is_autodiff_v<T_y>) {
+      partials<0>(ops_partials)[i] = deriv_t_7;
+    }
+    if constexpr (is_autodiff_v<T_a>) {
       partials<1>(ops_partials)[i]
           = internal::wiener7_integrate<GradientCalc::OFF, GradientCalc::OFF>(
                 [](auto&&... args) {
@@ -526,7 +523,10 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
                 relative_error_hcubature / 2)
             / density;
     }
-    if (!is_constant_all<T_w>::value) {
+    if constexpr (is_autodiff_v<T_t0>) {
+      partials<2>(ops_partials)[i] = -deriv_t_7;
+    }
+    if constexpr (is_autodiff_v<T_w>) {
       partials<3>(ops_partials)[i]
           = internal::wiener7_integrate<GradientCalc::OFF, GradientCalc::ON>(
                 [](auto&&... args) {
@@ -537,7 +537,7 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
                 relative_error_hcubature / 2)
             / density;
     }
-    if (!is_constant_all<T_v>::value) {
+    if constexpr (is_autodiff_v<T_v>) {
       partials<4>(ops_partials)[i]
           = internal::wiener7_integrate<GradientCalc::OFF, GradientCalc::OFF>(
                 [](auto&&... args) {
@@ -548,7 +548,7 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
                 relative_error_hcubature / 2)
             / density;
     }
-    if (!is_constant_all<T_sv>::value) {
+    if constexpr (is_autodiff_v<T_sv>) {
       partials<5>(ops_partials)[i]
           = internal::wiener7_integrate<GradientCalc::OFF, GradientCalc::OFF>(
                 [](auto&&... args) {
@@ -559,7 +559,7 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
                 relative_error_hcubature / 2)
             / density;
     }
-    if (!is_constant_all<T_sw>::value) {
+    if constexpr (is_autodiff_v<T_sw>) {
       if (sw_value == 0) {
         partials<6>(ops_partials)[i] = 0;
       } else {
@@ -580,7 +580,7 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
         partials<6>(ops_partials)[i] = derivative / density - 1.0 / sw_value;
       }
     }
-    if (!is_constant_all<T_st0>::value) {
+    if constexpr (is_autodiff_v<T_st0>) {
       T_partials_return f;
       if (st0_value == 0) {
         partials<7>(ops_partials)[i] = 0;

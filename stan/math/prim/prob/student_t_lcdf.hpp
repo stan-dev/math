@@ -66,14 +66,14 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lcdf(const T_y& y,
 
   T_partials_return digammaHalf = 0;
 
-  VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
-      digamma_vec(math::size(nu));
-  VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
-      digammaNu_vec(math::size(nu));
-  VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
+  VectorBuilder<is_autodiff_v<T_dof>, T_partials_return, T_dof> digamma_vec(
+      math::size(nu));
+  VectorBuilder<is_autodiff_v<T_dof>, T_partials_return, T_dof> digammaNu_vec(
+      math::size(nu));
+  VectorBuilder<is_autodiff_v<T_dof>, T_partials_return, T_dof>
       digammaNuPlusHalf_vec(math::size(nu));
 
-  if (!is_constant_all<T_dof>::value) {
+  if constexpr (is_autodiff_v<T_dof>) {
     digammaHalf = digamma(0.5);
 
     for (size_t i = 0; i < stan::math::size(nu); i++) {
@@ -109,12 +109,12 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lcdf(const T_y& y,
 
       P += log(Pn);
 
-      if (!is_constant_all<T_y>::value) {
+      if constexpr (is_autodiff_v<T_y>) {
         partials<0>(ops_partials)[n]
             += -zJacobian * d_ibeta * J * sigma_inv / Pn;
       }
 
-      if (!is_constant_all<T_dof>::value) {
+      if constexpr (is_autodiff_v<T_dof>) {
         T_partials_return g1 = 0;
         T_partials_return g2 = 0;
 
@@ -126,11 +126,11 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lcdf(const T_y& y,
             += zJacobian * (d_ibeta * (r / t) * (r / t) + 0.5 * g1) / Pn;
       }
 
-      if (!is_constant_all<T_loc>::value) {
+      if constexpr (is_autodiff_v<T_loc>) {
         partials<2>(ops_partials)[n]
             += zJacobian * d_ibeta * J * sigma_inv / Pn;
       }
-      if (!is_constant_all<T_scale>::value) {
+      if constexpr (is_autodiff_v<T_scale>) {
         partials<3>(ops_partials)[n]
             += zJacobian * d_ibeta * J * sigma_inv * t / Pn;
       }
@@ -147,12 +147,12 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lcdf(const T_y& y,
 
       P += log(Pn);
 
-      if (!is_constant_all<T_y>::value) {
+      if constexpr (is_autodiff_v<T_y>) {
         partials<0>(ops_partials)[n]
             += zJacobian * d_ibeta * J * sigma_inv / Pn;
       }
 
-      if (!is_constant_all<T_dof>::value) {
+      if constexpr (is_autodiff_v<T_dof>) {
         T_partials_return g1 = 0;
         T_partials_return g2 = 0;
 
@@ -164,11 +164,11 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lcdf(const T_y& y,
             += zJacobian * (-d_ibeta * (r / t) * (r / t) + 0.5 * g2) / Pn;
       }
 
-      if (!is_constant_all<T_loc>::value) {
+      if constexpr (is_autodiff_v<T_loc>) {
         partials<2>(ops_partials)[n]
             += -zJacobian * d_ibeta * J * sigma_inv / Pn;
       }
-      if (!is_constant_all<T_scale>::value) {
+      if constexpr (is_autodiff_v<T_scale>) {
         partials<3>(ops_partials)[n]
             += -zJacobian * d_ibeta * J * sigma_inv * t / Pn;
       }

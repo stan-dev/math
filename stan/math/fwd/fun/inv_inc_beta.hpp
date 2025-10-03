@@ -3,15 +3,18 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/prim/fun/inv_inc_beta.hpp>
-#include <stan/math/prim/fun/inc_beta.hpp>
-#include <stan/math/prim/fun/exp.hpp>
-#include <stan/math/prim/fun/log.hpp>
-#include <stan/math/prim/fun/log_diff_exp.hpp>
-#include <stan/math/prim/fun/lbeta.hpp>
-#include <stan/math/prim/fun/lgamma.hpp>
-#include <stan/math/prim/fun/digamma.hpp>
+#include <stan/math/fwd/fun/digamma.hpp>
+#include <stan/math/fwd/fun/exp.hpp>
+#include <stan/math/fwd/fun/fabs.hpp>
+#include <stan/math/fwd/fun/inc_beta.hpp>
+#include <stan/math/fwd/fun/lbeta.hpp>
+#include <stan/math/fwd/fun/lgamma.hpp>
+#include <stan/math/fwd/fun/log.hpp>
+#include <stan/math/fwd/fun/log1m.hpp>
+#include <stan/math/fwd/fun/log_diff_exp.hpp>
+#include <stan/math/fwd/fun/sum.hpp>
 #include <stan/math/prim/fun/hypergeometric_3F2.hpp>
+#include <stan/math/prim/fun/inv_inc_beta.hpp>
 
 namespace stan {
 namespace math {
@@ -52,7 +55,7 @@ inline fvar<partials_return_t<T1, T2, T3>> inv_inc_beta(const T1& a,
 
   T_return inv_d_(0);
 
-  if (is_fvar<T1>::value) {
+  if constexpr (is_fvar<T1>::value) {
     std::vector<T_return> da_a{a_val, a_val, one_m_b};
     std::vector<T_return> da_b{ap1, ap1};
     auto da1 = exp(one_m_b * log1m_w + one_m_a * log_w);
@@ -63,7 +66,7 @@ inline fvar<partials_return_t<T1, T2, T3>> inv_inc_beta(const T1& a,
     inv_d_ += forward_as<fvar<T_return>>(a).d_ * da1 * (da2 - da3);
   }
 
-  if (is_fvar<T2>::value) {
+  if constexpr (is_fvar<T2>::value) {
     std::vector<T_return> db_a{b_val, b_val, one_m_a};
     std::vector<T_return> db_b{bp1, bp1};
     auto db1 = (w - 1) * exp(-b_val * log1m_w + one_m_a * log_w);
@@ -76,7 +79,7 @@ inline fvar<partials_return_t<T1, T2, T3>> inv_inc_beta(const T1& a,
     inv_d_ += forward_as<fvar<T_return>>(b).d_ * db1 * (exp(db2) - db3);
   }
 
-  if (is_fvar<T3>::value) {
+  if constexpr (is_fvar<T3>::value) {
     inv_d_ += forward_as<fvar<T_return>>(p).d_
               * exp(one_m_b * log1m_w + one_m_a * log_w + lbeta_ab);
   }

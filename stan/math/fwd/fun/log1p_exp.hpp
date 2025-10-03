@@ -3,6 +3,7 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
+#include <stan/math/fwd/fun/inv_logit.hpp>
 #include <stan/math/prim/fun/log1p_exp.hpp>
 #include <cmath>
 
@@ -11,7 +12,6 @@ namespace math {
 
 template <typename T>
 inline fvar<T> log1p_exp(const fvar<T>& x) {
-  using std::exp;
   return fvar<T>(log1p_exp(x.val_), x.d_ * inv_logit(x.val_));
 }
 

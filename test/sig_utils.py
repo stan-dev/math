@@ -61,13 +61,10 @@ def get_cpp_type(stan_type):
 
 
 simplex = "simplex"
+stochastic = "stochastic_matrix"
 pos_definite = "positive_definite_matrix"
 scalar_return_type = "scalar_return_type"
 
-make_special_arg_values = {
-    simplex: "make_simplex",
-    pos_definite: "make_pos_definite_matrix",
-}
 
 # list of function arguments that need special scalar values.
 # None means to use the default argument value.
@@ -75,10 +72,16 @@ special_arg_values = {
     "acosh": [1.4],
     "algebra_solver": [None, None, None, None, None, None, None, 10],
     "algebra_solver_newton": [None, None, None, None, None, None, None, 10],
+    "beta_neg_binomial_rng": [1.1, 3.1, 8.1],
     "log1m_exp": [-0.6],
     "categorical_rng": [simplex, None],
     "categorical_lpmf": [None, simplex],
+    "corr_matrix_constrain": [None, 2],
+    "corr_matrix_free": [1],
+    "cov_matrix_constrain": [None, 1],
     "cholesky_decompose": [pos_definite, None],
+    "cholesky_corr_constrain": [None, 2],
+    "cholesky_factor_constrain": [None, 1,1],
     "csr_to_dense_matrix": [1, 1, None, [1], [1, 2]],
     "csr_matrix_times_vector": [1, 1, None, [1], [1, 2], None],
     "distance": [0.6, 0.4],
@@ -90,6 +93,10 @@ special_arg_values = {
     "lkj_corr_lpdf": [1, None],
     "log_diff_exp": [3, None],
     "log_inv_logit_diff": [1.2, 0.4],
+    "lb_constrain": [None, 0.1],
+    "lb_free": [0.5, 0.1],
+    "lub_constrain": [None, 0.1, 0.9],
+    "lub_free": [0.5, 0.1, 0.9],
     "mdivide_left_spd": [pos_definite, None],
     "multinomial_lpmf": [None, simplex],
     "multinomial_rng": [simplex, None, None],
@@ -115,14 +122,20 @@ special_arg_values = {
     "positive_ordered_free": [1.0],
     "ordered_constrain": [None, scalar_return_type],
     "ordered_free": [1.0],
+    "offset_multiplier_free": [10, None, None],
     "simplex_constrain": [None, scalar_return_type],
     "simplex_free": [simplex],
+    "sum_to_zero_free": [0],
     "std_normal_log_qf": [-0.1],
+    "stochastic_column_free": [stochastic],
+    "stochastic_row_free": [stochastic],
     "student_t_cdf": [0.8, None, 0.4, None],
     "student_t_cdf_log": [0.8, None, 0.4, None],
     "student_t_ccdf_log": [0.8, None, 0.4, None],
     "student_t_lccdf": [0.8, None, 0.4, None],
     "student_t_lcdf": [0.8, None, 0.4, None],
+    "ub_constrain": [None, 0.9],
+    "ub_free": [0.5, 0.9],
     "unit_vector_constrain": [None, scalar_return_type],
     "unit_vector_free": [simplex],
     "uniform_cdf": [None, 0.2, 0.9],
@@ -138,11 +151,26 @@ special_arg_values = {
 # list of functions we do not test. These are mainly functions implemented in compiler
 # (not in Stan Math).
 ignored = [
-    "lchoose", # synonym for binomial_coefficient_log
-    "lmultiply", # synonym for multiply_log
     "std_normal_qf", # synonym for inv_Phi
     "if_else",
+    "hypergeometric_3F2", # requires arguments of specific lengths
 ]
+
+# these are all slight renames compared to stan math
+renames = {
+    "lchoose": "binomial_coefficient_log",
+    "lmultiply": "multiply_log",
+    "cholesky_factor_corr_constrain": "cholesky_corr_constrain",
+    "cholesky_factor_corr_unconstrain": "cholesky_corr_free",
+    "cholesky_factor_cov_constrain": "cholesky_factor_constrain",
+    "cholesky_factor_cov_unconstrain": "cholesky_factor_free",
+    "lower_bound_constrain": "lb_constrain",
+    "lower_bound_unconstrain": "lb_free",
+    "upper_bound_constrain": "ub_constrain",
+    "upper_bound_unconstrain": "ub_free",
+    "lower_upper_bound_constrain": "lub_constrain",
+    "lower_upper_bound_unconstrain": "lub_free",
+}
 
 # list of function argument indices, for which real valued arguments are not differentiable
 # - they need to be double even in autodiff overloads
@@ -264,6 +292,14 @@ def get_signatures():
 
     return res + internal_signatures
 
+def handle_rename(function_name):
+    """
+    Replace certain function names with their stan math counterparts
+    """
+    fname = renames.get(function_name, function_name)
+    if fname.endswith("_unconstrain"):
+        fname = fname.replace("_unconstrain", "_free")
+    return fname
 
 def parse_signature(signature):
     """
@@ -280,7 +316,7 @@ def parse_signature(signature):
         for i in args
         if i.strip()
     ]
-    return return_type.strip(), function_name.strip(), args
+    return return_type.strip(), handle_rename(function_name.strip()), args
 
 
 def handle_function_list(functions_input):
@@ -294,6 +330,7 @@ def handle_function_list(functions_input):
     function_names = []
     function_signatures = []
     for f in functions_input:
+        f = f.strip()
         if ("." in f) or ("/" in f) or ("\\" in f):
             with open(f) as fh:
                 functions_input.extend(parse_signature_file(fh))

@@ -91,30 +91,29 @@ return_type_t<T_prob, T_prior_size> dirichlet_lpdf(const T_prob& theta,
 
   T_partials_return lp(0.0);
 
-  if (include_summand<propto, T_prior_size>::value) {
+  if constexpr (include_summand<propto, T_prior_size>::value) {
     lp += (lgamma(alpha_dbl.colwise().sum())
            - lgamma(alpha_dbl).colwise().sum())
               .sum();
   }
 
-  const auto& alpha_m_1
-      = to_ref_if<!is_constant_all<T_prob>::value>(alpha_dbl - 1.0);
+  const auto& alpha_m_1 = to_ref_if<is_autodiff_v<T_prob>>(alpha_dbl - 1.0);
   const auto& theta_log
-      = to_ref_if<!is_constant_all<T_prior_size>::value>(theta_dbl.log());
+      = to_ref_if<is_autodiff_v<T_prior_size>>(theta_dbl.log());
 
-  if (include_summand<propto, T_prob, T_prior_size>::value) {
+  if constexpr (include_summand<propto, T_prob, T_prior_size>::value) {
     lp += (theta_log * alpha_m_1).sum();
   }
 
   auto ops_partials = make_partials_propagator(theta_ref, alpha_ref);
-  if (!is_constant_all<T_prob>::value) {
+  if constexpr (is_autodiff_v<T_prob>) {
     for (size_t t = 0; t < t_length; t++) {
       partials_vec<0>(ops_partials)[t]
           += (alpha_m_1.col(t) / theta_dbl.col(t)).matrix();
     }
   }
 
-  if (!is_constant_all<T_prior_size>::value) {
+  if constexpr (is_autodiff_v<T_prior_size>) {
     for (size_t t = 0; t < t_length; t++) {
       partials_vec<1>(ops_partials)[t]
           += (digamma(alpha_dbl.col(t).sum()) - digamma(alpha_dbl.col(t))

@@ -4,7 +4,6 @@
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/fun/digamma.hpp>
-#include <stan/math/prim/fun/digamma.hpp>
 #include <stan/math/prim/fun/log_falling_factorial.hpp>
 
 namespace stan {

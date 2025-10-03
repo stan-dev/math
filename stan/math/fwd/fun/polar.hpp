@@ -3,6 +3,9 @@
 
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/meta.hpp>
+#include <stan/math/fwd/fun/cos.hpp>
+#include <stan/math/fwd/fun/is_inf.hpp>
+#include <stan/math/fwd/fun/sin.hpp>
 #include <stan/math/prim/fun/polar.hpp>
 #include <complex>
 #include <type_traits>

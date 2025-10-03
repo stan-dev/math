@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_MIX_FUNCTOR_HESSIAN_HPP
 #define STAN_MATH_MIX_FUNCTOR_HESSIAN_HPP
 
-#include <stan/math/fwd/core.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/fwd/core.hpp>
 #include <stdexcept>
 
 namespace stan {
@@ -39,9 +39,10 @@ namespace math {
  * @param[out] H Hessian of function at argument
  */
 template <typename F>
-void hessian(const F& f, const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
-             double& fx, Eigen::Matrix<double, Eigen::Dynamic, 1>& grad,
-             Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& H) {
+inline void hessian(const F& f,
+                    const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
+                    double& fx, Eigen::Matrix<double, Eigen::Dynamic, 1>& grad,
+                    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& H) {
   H.resize(x.size(), x.size());
   grad.resize(x.size());
 

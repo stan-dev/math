@@ -33,7 +33,7 @@ inline auto ub_constrain(const T& x, const U& ub) {
   if (unlikely(ub_val == INFTY)) {
     return identity_constrain(x, ub);
   } else {
-    if (!is_constant<T>::value && !is_constant<U>::value) {
+    if constexpr (is_autodiff_v<T> && is_autodiff_v<U>) {
       auto neg_exp_x = -std::exp(value_of(x));
       return make_callback_var(
           ub_val + neg_exp_x,
@@ -42,7 +42,7 @@ inline auto ub_constrain(const T& x, const U& ub) {
             arena_x.adj() += vi_adj * neg_exp_x;
             arena_ub.adj() += vi_adj;
           });
-    } else if (!is_constant<T>::value) {
+    } else if constexpr (is_autodiff_v<T>) {
       auto neg_exp_x = -std::exp(value_of(x));
       return make_callback_var(ub_val + neg_exp_x,
                                [arena_x = var(x), neg_exp_x](auto& vi) mutable {
@@ -82,7 +82,7 @@ template <typename T, typename U, require_all_stan_scalar_t<T, U>* = nullptr,
 inline auto ub_constrain(const T& x, const U& ub, return_type_t<T, U>& lp) {
   const auto ub_val = value_of(ub);
   const bool is_ub_inf = ub_val == INFTY;
-  if (!is_constant<T>::value && !is_constant<U>::value) {
+  if constexpr (is_autodiff_v<T> && is_autodiff_v<U>) {
     if (unlikely(is_ub_inf)) {
       return identity_constrain(x, ub);
     } else {
@@ -96,7 +96,7 @@ inline auto ub_constrain(const T& x, const U& ub, return_type_t<T, U>& lp) {
                                  arena_ub.adj() += vi_adj;
                                });
     }
-  } else if (!is_constant<T>::value) {
+  } else if constexpr (is_autodiff_v<T>) {
     if (unlikely(is_ub_inf)) {
       return identity_constrain(x, ub);
     } else {
@@ -141,7 +141,7 @@ inline auto ub_constrain(const T& x, const U& ub) {
   if (unlikely(ub_val == INFTY)) {
     return ret_type(identity_constrain(x, ub));
   } else {
-    if (!is_constant<T>::value && !is_constant<U>::value) {
+    if constexpr (is_autodiff_v<T> && is_autodiff_v<U>) {
       arena_t<promote_scalar_t<var, T>> arena_x = x;
       auto arena_neg_exp_x = to_arena(-arena_x.val().array().exp());
       arena_t<ret_type> ret = ub_val + arena_neg_exp_x;
@@ -151,7 +151,7 @@ inline auto ub_constrain(const T& x, const U& ub) {
             arena_ub.adj() += ret.adj().sum();
           });
       return ret_type(ret);
-    } else if (!is_constant<T>::value) {
+    } else if constexpr (is_autodiff_v<T>) {
       arena_t<promote_scalar_t<var, T>> arena_x = x;
       auto arena_neg_exp_x = to_arena(-arena_x.val().array().exp());
       arena_t<ret_type> ret = ub_val + arena_neg_exp_x;
@@ -190,7 +190,7 @@ inline auto ub_constrain(const T& x, const U& ub, return_type_t<T, U>& lp) {
   if (unlikely(ub_val == INFTY)) {
     return ret_type(identity_constrain(x, ub));
   } else {
-    if (!is_constant<T>::value && !is_constant<U>::value) {
+    if constexpr (is_autodiff_v<T> && is_autodiff_v<U>) {
       arena_t<promote_scalar_t<var, T>> arena_x = x;
       auto arena_neg_exp_x = to_arena(-arena_x.val().array().exp());
       arena_t<ret_type> ret = ub_val + arena_neg_exp_x;
@@ -201,7 +201,7 @@ inline auto ub_constrain(const T& x, const U& ub, return_type_t<T, U>& lp) {
         arena_ub.adj() += ret.adj().sum();
       });
       return ret_type(ret);
-    } else if (!is_constant<T>::value) {
+    } else if constexpr (is_autodiff_v<T>) {
       arena_t<promote_scalar_t<var, T>> arena_x = x;
       auto arena_neg_exp_x = to_arena(-arena_x.val().array().exp());
       arena_t<ret_type> ret = ub_val + arena_neg_exp_x;
@@ -239,7 +239,7 @@ template <typename T, typename U, require_all_matrix_t<T, U>* = nullptr,
 inline auto ub_constrain(const T& x, const U& ub) {
   check_matching_dims("ub_constrain", "x", x, "ub", ub);
   using ret_type = return_var_matrix_t<T, T, U>;
-  if (!is_constant<T>::value && !is_constant<U>::value) {
+  if constexpr (is_autodiff_v<T> && is_autodiff_v<U>) {
     arena_t<promote_scalar_t<var, T>> arena_x = x;
     arena_t<promote_scalar_t<var, U>> arena_ub = ub;
     auto ub_val = to_ref(arena_ub.val());
@@ -256,7 +256,7 @@ inline auto ub_constrain(const T& x, const U& ub) {
       arena_ub.adj().array() += (is_not_inf_ub).select(ret.adj().array(), 0.0);
     });
     return ret_type(ret);
-  } else if (!is_constant<T>::value) {
+  } else if constexpr (is_autodiff_v<T>) {
     arena_t<promote_scalar_t<var, T>> arena_x = x;
     auto ub_val = to_ref(value_of(ub));
     auto is_not_inf_ub = to_arena((ub_val.array() != INFTY));
@@ -302,7 +302,7 @@ template <typename T, typename U, require_all_matrix_t<T, U>* = nullptr,
 inline auto ub_constrain(const T& x, const U& ub, return_type_t<T, U>& lp) {
   check_matching_dims("ub_constrain", "x", x, "ub", ub);
   using ret_type = return_var_matrix_t<T, T, U>;
-  if (!is_constant<T>::value && !is_constant<U>::value) {
+  if constexpr (is_autodiff_v<T> && is_autodiff_v<U>) {
     arena_t<promote_scalar_t<var, T>> arena_x = x;
     arena_t<promote_scalar_t<var, U>> arena_ub = ub;
     auto ub_val = to_ref(arena_ub.val());
@@ -321,7 +321,7 @@ inline auto ub_constrain(const T& x, const U& ub, return_type_t<T, U>& lp) {
       arena_ub.adj().array() += (is_not_inf_ub).select(ret.adj().array(), 0.0);
     });
     return ret_type(ret);
-  } else if (!is_constant<T>::value) {
+  } else if constexpr (is_autodiff_v<T>) {
     arena_t<promote_scalar_t<var, T>> arena_x = x;
     auto ub_val = to_ref(value_of(ub));
     auto is_not_inf_ub = to_arena((ub_val.array() != INFTY));

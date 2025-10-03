@@ -72,12 +72,14 @@
 #include <stan/math/prim/meta/append_return_type.hpp>
 #include <stan/math/prim/meta/base_type.hpp>
 #include <stan/math/prim/meta/contains_std_vector.hpp>
+#include <stan/math/prim/meta/contains_tuple.hpp>
 #include <stan/math/prim/meta/error_index.hpp>
 #include <stan/math/prim/meta/forward_as.hpp>
 #include <stan/math/prim/meta/holder.hpp>
 #include <stan/math/prim/meta/include_summand.hpp>
 #include <stan/math/prim/meta/index_type.hpp>
 #include <stan/math/prim/meta/index_apply.hpp>
+#include <stan/math/prim/meta/is_all_arithmetic.hpp>
 #include <stan/math/prim/meta/is_autodiff.hpp>
 #include <stan/math/prim/meta/is_arena_matrix.hpp>
 #include <stan/math/prim/meta/is_base_pointer_convertible.hpp>
@@ -110,6 +112,7 @@
 #include <stan/math/prim/meta/is_var_or_arithmetic.hpp>
 #include <stan/math/prim/meta/is_vector.hpp>
 #include <stan/math/prim/meta/is_vector_like.hpp>
+#include <stan/math/prim/meta/is_real.hpp>
 #include <stan/math/prim/meta/is_stan_scalar.hpp>
 #include <stan/math/prim/meta/is_stan_scalar_or_eigen.hpp>
 #include <stan/math/prim/meta/modify_eigen_options.hpp>

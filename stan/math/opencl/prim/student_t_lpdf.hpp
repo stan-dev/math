@@ -64,7 +64,8 @@ inline return_type_t<T_y_cl, T_dof_cl, T_loc_cl, T_scale_cl> student_t_lpdf(
   if (N == 0) {
     return 0.0;
   }
-  if (!include_summand<propto, T_y_cl, T_dof_cl, T_loc_cl, T_scale_cl>::value) {
+  if constexpr (!include_summand<propto, T_y_cl, T_dof_cl, T_loc_cl,
+                                 T_scale_cl>::value) {
     return 0.0;
   }
 
@@ -129,30 +130,30 @@ inline return_type_t<T_y_cl, T_dof_cl, T_loc_cl, T_scale_cl> student_t_lpdf(
           mu_deriv_cl, sigma_deriv_cl)
       = expressions(y_not_nan, nu_positive_finite, mu_finite,
                     sigma_positive_finite, logp_expr,
-                    calc_if<!is_constant<T_y_cl>::value>(-deriv_y_mu),
-                    calc_if<!is_constant<T_dof_cl>::value>(nu_deriv),
-                    calc_if<!is_constant<T_loc_cl>::value>(deriv_y_mu),
-                    calc_if<!is_constant<T_scale_cl>::value>(sigma_deriv));
+                    calc_if<is_autodiff_v<T_y_cl>>(-deriv_y_mu),
+                    calc_if<is_autodiff_v<T_dof_cl>>(nu_deriv),
+                    calc_if<is_autodiff_v<T_loc_cl>>(deriv_y_mu),
+                    calc_if<is_autodiff_v<T_scale_cl>>(sigma_deriv));
 
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
 
-  if (include_summand<propto>::value) {
+  if constexpr (include_summand<propto>::value) {
     logp -= LOG_SQRT_PI * N;
   }
 
   auto ops_partials
       = make_partials_propagator(y_col, nu_col, mu_col, sigma_col);
 
-  if (!is_constant<T_y_cl>::value) {
+  if constexpr (is_autodiff_v<T_y_cl>) {
     partials<0>(ops_partials) = std::move(y_deriv_cl);
   }
-  if (!is_constant<T_dof_cl>::value) {
+  if constexpr (is_autodiff_v<T_dof_cl>) {
     partials<1>(ops_partials) = std::move(nu_deriv_cl);
   }
-  if (!is_constant<T_loc_cl>::value) {
+  if constexpr (is_autodiff_v<T_loc_cl>) {
     partials<2>(ops_partials) = std::move(mu_deriv_cl);
   }
-  if (!is_constant<T_scale_cl>::value) {
+  if constexpr (is_autodiff_v<T_scale_cl>) {
     partials<3>(ops_partials) = std::move(sigma_deriv_cl);
   }
   return ops_partials.build(logp);

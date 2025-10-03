@@ -36,9 +36,9 @@ namespace math {
  */
 template <typename F, typename T1, typename T2, typename T3,
           require_all_stan_scalar_t<T1, T2, T3>* = nullptr>
-inline auto apply_scalar_ternary(const F& f, const T1& x, const T2& y,
-                                 const T3& z) {
-  return f(x, y, z);
+inline auto apply_scalar_ternary(F&& f, T1&& x, T2&& y, T3&& z) {
+  return std::forward<F>(f)(std::forward<T1>(x), std::forward<T2>(y),
+                            std::forward<T3>(z));
 }
 
 /**
@@ -93,17 +93,19 @@ inline auto apply_scalar_ternary(F&& f, T1&& x, T2&& y, T3&& z) {
  */
 template <typename F, typename T1, typename T2, typename T3,
           require_all_std_vector_vt<is_stan_scalar, T1, T2, T3>* = nullptr>
-inline auto apply_scalar_ternary(const F& f, const T1& x, const T2& y,
-                                 const T3& z) {
+inline auto apply_scalar_ternary(F&& f, T1&& x, T2&& y, T3&& z) {
   check_matching_sizes("Ternary function", "x", x, "y", y);
   check_matching_sizes("Ternary function", "y", y, "z", z);
-  decltype(auto) x_vec = as_column_vector_or_scalar(x);
-  decltype(auto) y_vec = as_column_vector_or_scalar(y);
-  decltype(auto) z_vec = as_column_vector_or_scalar(z);
   using T_return = std::decay_t<decltype(f(x[0], y[0], z[0]))>;
-  std::vector<T_return> result(x.size());
+  decltype(auto) x_vec = as_column_vector_or_scalar(std::forward<T1>(x));
+  decltype(auto) y_vec = as_column_vector_or_scalar(std::forward<T2>(y));
+  decltype(auto) z_vec = as_column_vector_or_scalar(std::forward<T3>(z));
+  std::vector<T_return> result(x_vec.size());
   Eigen::Map<Eigen::Matrix<T_return, -1, 1>>(result.data(), result.size())
-      = apply_scalar_ternary(f, x_vec, y_vec, z_vec);
+      = apply_scalar_ternary(std::forward<F>(f),
+                             std::forward<decltype(x_vec)>(x_vec),
+                             std::forward<decltype(y_vec)>(y_vec),
+                             std::forward<decltype(z_vec)>(z_vec));
   return result;
 }
 
@@ -126,8 +128,7 @@ inline auto apply_scalar_ternary(const F& f, const T1& x, const T2& y,
 template <typename F, typename T1, typename T2, typename T3,
           require_all_std_vector_vt<is_container_or_var_matrix, T1, T2,
                                     T3>* = nullptr>
-inline auto apply_scalar_ternary(const F& f, const T1& x, const T2& y,
-                                 const T3& z) {
+inline auto apply_scalar_ternary(F&& f, T1&& x, T2&& y, T3&& z) {
   check_matching_sizes("Ternary function", "x", x, "y", y);
   check_matching_sizes("Ternary function", "y", y, "z", z);
   using T_return
@@ -159,10 +160,13 @@ inline auto apply_scalar_ternary(const F& f, const T1& x, const T2& y,
 template <typename F, typename T1, typename T2, typename T3,
           require_any_container_t<T1, T2>* = nullptr,
           require_stan_scalar_t<T3>* = nullptr>
-inline auto apply_scalar_ternary(const F& f, const T1& x, const T2& y,
-                                 const T3& z) {
+inline auto apply_scalar_ternary(F&& f, T1&& x, T2&& y, T3&& z) {
   return apply_scalar_binary(
-      x, y, [f, z](const auto& a, const auto& b) { return f(a, b, z); });
+      [f_ = std::forward<F>(f), z](auto&& a, auto&& b) {
+        return f_(std::forward<decltype(a)>(a), std::forward<decltype(b)>(b),
+                  z);
+      },
+      std::forward<T1>(x), std::forward<T2>(y));
 }
 
 /**
@@ -184,10 +188,13 @@ inline auto apply_scalar_ternary(const F& f, const T1& x, const T2& y,
 template <typename F, typename T1, typename T2, typename T3,
           require_all_container_t<T1, T3>* = nullptr,
           require_stan_scalar_t<T2>* = nullptr>
-inline auto apply_scalar_ternary(const F& f, const T1& x, const T2& y,
-                                 const T3& z) {
+inline auto apply_scalar_ternary(F&& f, T1&& x, T2&& y, T3&& z) {
   return apply_scalar_binary(
-      x, z, [f, y](const auto& a, const auto& c) { return f(a, y, c); });
+      [f_ = std::forward<F>(f), y](auto&& a, auto&& c) {
+        return f_(std::forward<decltype(a)>(a), y,
+                  std::forward<decltype(c)>(c));
+      },
+      std::forward<T1>(x), std::forward<T3>(z));
 }
 
 /**
@@ -209,10 +216,13 @@ inline auto apply_scalar_ternary(const F& f, const T1& x, const T2& y,
 template <typename F, typename T1, typename T2, typename T3,
           require_container_t<T3>* = nullptr,
           require_stan_scalar_t<T1>* = nullptr>
-inline auto apply_scalar_ternary(const F& f, const T1& x, const T2& y,
-                                 const T3& z) {
+inline auto apply_scalar_ternary(F&& f, T1&& x, T2&& y, T3&& z) {
   return apply_scalar_binary(
-      y, z, [f, x](const auto& b, const auto& c) { return f(x, b, c); });
+      [f_ = std::forward<F>(f), x](auto&& b, auto&& c) {
+        return f_(x, std::forward<decltype(b)>(b),
+                  std::forward<decltype(c)>(c));
+      },
+      std::forward<T2>(y), std::forward<T3>(z));
 }
 
 }  // namespace math

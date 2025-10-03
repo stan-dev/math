@@ -26,6 +26,11 @@ int64_t size_mvt(const ScalarT& /* unused */) {
   throw std::invalid_argument("size_mvt passed to an unrecognized type.");
 }
 
+template <typename ScalarT, require_stan_scalar_t<ScalarT>* = nullptr>
+int64_t size_mvt(const std::vector<ScalarT>& /* unused */) {
+  return 1;
+}
+
 template <typename MatrixT, require_matrix_t<MatrixT>* = nullptr>
 int64_t size_mvt(const MatrixT& /* unused */) {
   return 1;
@@ -33,6 +38,11 @@ int64_t size_mvt(const MatrixT& /* unused */) {
 
 template <typename MatrixT, require_matrix_t<MatrixT>* = nullptr>
 int64_t size_mvt(const std::vector<MatrixT>& x) {
+  return x.size();
+}
+
+template <typename StdVectorT, require_std_vector_t<StdVectorT>* = nullptr>
+int64_t size_mvt(const std::vector<StdVectorT>& x) {
   return x.size();
 }
 

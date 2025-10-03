@@ -3,8 +3,8 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
+#include <stan/math/fwd/fun/digamma.hpp>
 #include <stan/math/prim/fun/rising_factorial.hpp>
-#include <stan/math/prim/fun/digamma.hpp>
 
 namespace stan {
 namespace math {

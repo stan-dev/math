@@ -5,6 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/constraint/identity_free.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
+#include <stan/math/prim/fun/eval.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <cmath>
 
@@ -42,12 +43,12 @@ template <typename T, typename M, typename S>
 inline auto offset_multiplier_free(const T& y, const M& mu, const S& sigma) {
   auto&& mu_ref = to_ref(mu);
   auto&& sigma_ref = to_ref(sigma);
-  if (is_matrix<T>::value && is_matrix<M>::value) {
+  if constexpr (is_matrix<T>::value && is_matrix<M>::value) {
     check_matching_dims("offset_multiplier_constrain", "y", y, "mu", mu);
   }
-  if (is_matrix<T>::value && is_matrix<S>::value) {
+  if constexpr (is_matrix<T>::value && is_matrix<S>::value) {
     check_matching_dims("offset_multiplier_constrain", "y", y, "sigma", sigma);
-  } else if (is_matrix<M>::value && is_matrix<S>::value) {
+  } else if constexpr (is_matrix<M>::value && is_matrix<S>::value) {
     check_matching_dims("offset_multiplier_constrain", "mu", mu, "sigma",
                         sigma);
   }
@@ -55,7 +56,7 @@ inline auto offset_multiplier_free(const T& y, const M& mu, const S& sigma) {
   check_finite("offset_multiplier_constrain", "offset", value_of(mu_ref));
   check_positive_finite("offset_multiplier_constrain", "multiplier",
                         value_of(sigma_ref));
-  return divide(subtract(y, mu_ref), sigma_ref);
+  return stan::math::eval(divide(subtract(y, mu_ref), sigma_ref));
 }
 
 /**

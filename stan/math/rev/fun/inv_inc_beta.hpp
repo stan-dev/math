@@ -3,17 +3,20 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/inv_inc_beta.hpp>
-#include <stan/math/prim/fun/inc_beta.hpp>
-#include <stan/math/prim/fun/exp.hpp>
-#include <stan/math/prim/fun/log.hpp>
-#include <stan/math/prim/fun/log_diff_exp.hpp>
-#include <stan/math/prim/fun/lbeta.hpp>
-#include <stan/math/prim/fun/lgamma.hpp>
-#include <stan/math/prim/fun/digamma.hpp>
-#include <stan/math/prim/fun/hypergeometric_3F2.hpp>
+#include <stan/math/rev/fun/fabs.hpp>
+#include <stan/math/rev/fun/inc_beta.hpp>
+#include <stan/math/rev/fun/digamma.hpp>
+#include <stan/math/rev/fun/exp.hpp>
+#include <stan/math/rev/fun/hypergeometric_pFq.hpp>
+#include <stan/math/rev/fun/log.hpp>
+#include <stan/math/rev/fun/log_diff_exp.hpp>
+#include <stan/math/rev/fun/lbeta.hpp>
+#include <stan/math/rev/fun/lgamma.hpp>
+#include <stan/math/rev/fun/sum.hpp>
 #include <stan/math/prim/fun/is_any_nan.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/hypergeometric_3F2.hpp>
+#include <stan/math/prim/fun/inv_inc_beta.hpp>
 
 namespace stan {
 namespace math {
@@ -70,7 +73,7 @@ inline var inv_inc_beta(const T1& a, const T2& b, const T3& p) {
     double lbeta_ab = lbeta(a_val, b_val);
     double digamma_apb = digamma(a_val + b_val);
 
-    if (!is_constant_all<T1>::value) {
+    if constexpr (is_autodiff_v<T1>) {
       double da1 = exp(one_m_b * log1m_w + one_m_a * log_w);
       double da2
           = a_val * log_w + 2 * lgamma(a_val)
@@ -82,7 +85,7 @@ inline var inv_inc_beta(const T1& a, const T2& b, const T3& p) {
       forward_as<var>(a).adj() += vi.adj() * da1 * (exp(da2) - da3);
     }
 
-    if (!is_constant_all<T2>::value) {
+    if constexpr (is_autodiff_v<T2>) {
       double db1 = (w - 1) * exp(-b_val * log1m_w + one_m_a * log_w);
       double db2 = 2 * lgamma(b_val)
                    + log(hypergeometric_3F2({b_val, b_val, one_m_a}, {bp1, bp1},
@@ -95,7 +98,7 @@ inline var inv_inc_beta(const T1& a, const T2& b, const T3& p) {
       forward_as<var>(b).adj() += vi.adj() * db1 * (exp(db2) - db3);
     }
 
-    if (!is_constant_all<T3>::value) {
+    if constexpr (is_autodiff_v<T3>) {
       forward_as<var>(p).adj()
           += vi.adj() * exp(one_m_b * log1m_w + one_m_a * log_w + lbeta_ab);
     }

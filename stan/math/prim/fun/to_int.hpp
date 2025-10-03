@@ -56,8 +56,8 @@ inline int to_int(T x) {
  */
 struct to_int_fun {
   template <typename T>
-  static inline auto fun(const T& x) {
-    return to_int(x);
+  static inline auto fun(T&& x) {
+    return to_int(std::forward<T>(x));
   }
 };
 
@@ -71,8 +71,9 @@ struct to_int_fun {
  */
 template <typename Container,
           require_std_vector_st<std::is_arithmetic, Container>* = nullptr>
-inline auto to_int(const Container& x) {
-  return apply_scalar_unary<to_int_fun, Container>::apply(x);
+inline auto to_int(Container&& x) {
+  return apply_scalar_unary<to_int_fun, Container>::apply(
+      std::forward<Container>(x));
 }
 
 }  // namespace math

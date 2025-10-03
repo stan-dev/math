@@ -2,10 +2,11 @@
 #define STAN_MATH_REV_FUN_CSR_MATRIX_TIMES_VECTOR_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/rev/fun/to_soa_sparse_matrix.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/fun/to_soa_sparse_matrix.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/csr_u_to_z.hpp>
+#include <stan/math/prim/fun/csr_matrix_times_vector.hpp>
 #include <vector>
 
 namespace stan {
@@ -182,14 +183,14 @@ inline auto csr_matrix_times_vector(int m, int n, const T1& w,
                  [](auto&& x) { return x - 1; });
   using sparse_var_value_t
       = var_value<Eigen::SparseMatrix<double, Eigen::RowMajor>>;
-  if (!is_constant<T2>::value && !is_constant<T1>::value) {
+  if constexpr (is_autodiff_v<T2> && is_autodiff_v<T1>) {
     arena_t<promote_scalar_t<var, T2>> b_arena = b;
     sparse_var_value_t w_mat_arena
         = to_soa_sparse_matrix<Eigen::RowMajor>(m, n, w, u_arena, v_arena);
     arena_t<return_t> res = w_mat_arena.val() * value_of(b_arena);
     stan::math::internal::make_csr_adjoint(res, w_mat_arena, b_arena);
     return return_t(res);
-  } else if (!is_constant<T2>::value) {
+  } else if constexpr (is_autodiff_v<T2>) {
     arena_t<promote_scalar_t<var, T2>> b_arena = b;
     auto w_val_arena = to_arena(value_of(w));
     sparse_val_mat w_val_mat(m, n, w_val_arena.size(), u_arena.data(),

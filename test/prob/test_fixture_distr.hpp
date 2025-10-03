@@ -719,7 +719,7 @@ class AgradDistributionTestFixture : public ::testing::Test {
     vector<Scalar4> p4s = {get_param<Scalar4>(parameters[0], 4)};
     vector<Scalar5> p5s = {get_param<Scalar5>(parameters[0], 5)};
 
-    T_return_type single_lp = TestClass.template log_prob(
+    T_return_type single_lp = TestClass.log_prob(
         p0s.back(), p1s.back(), p2s.back(), p3s.back(), p4s.back(), p5s.back());
 
     for (size_t n = 1; n < parameters.size(); n++) {

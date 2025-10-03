@@ -23,17 +23,17 @@ namespace math {
  */
 template <typename T, require_container_t<T>* = nullptr,
           require_not_st_var<T>* = nullptr>
-inline auto sd(const T& m) {
+inline auto sd(T&& m) {
   using std::sqrt;
 
-  return apply_vector_unary<T>::reduce(m, [](const auto& x) {
+  return apply_vector_unary<T>::reduce(std::forward<T>(m), [](auto&& x) {
     check_nonzero_size("sd", "x", x);
 
     if (x.size() == 1) {
       return scalar_type_t<T>(0.0);
     }
 
-    return sqrt(variance(x));
+    return sqrt(variance(std::forward<decltype(x)>(x)));
   });
 }
 

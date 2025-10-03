@@ -44,8 +44,8 @@ inline constexpr double aggregate_tangent(const FuncTangent& tangent,
 template <typename FuncTangent, typename InputArg,
           require_st_fvar<InputArg>* = nullptr>
 inline auto aggregate_tangent(const FuncTangent& tangent, const InputArg& arg) {
-  return sum(apply_scalar_binary(
-      tangent, arg, [](const auto& x, const auto& y) { return x * y.d_; }));
+  return sum(apply_scalar_binary([](auto&& x, auto&& y) { return x * y.d_; },
+                                 tangent, arg));
 }
 }  // namespace internal
 
@@ -73,7 +73,7 @@ inline auto finite_diff(const F& func, const TArgs&... args) {
   std::vector<FvarInnerT> serialised_args
       = serialize<FvarInnerT>(value_of(args)...);
 
-  auto serial_functor = [&](const auto& v) {
+  auto serial_functor = [&](auto&& v) {
     auto v_deserializer = to_deserializer(v);
     return func(v_deserializer.read(args)...);
   };

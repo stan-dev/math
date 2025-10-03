@@ -54,7 +54,7 @@ return_type_t<T_prob> bernoulli_cdf(const T_n& n, const T_prob& theta) {
 
   T_partials_return P = sum(P1);
 
-  if (!is_constant_all<T_prob>::value) {
+  if constexpr (is_autodiff_v<T_prob>) {
     partials<0>(ops_partials) = select(n_arr == 0, -exp(P - P1), 0.0);
   }
   return ops_partials.build(exp(P));

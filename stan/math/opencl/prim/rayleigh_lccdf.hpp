@@ -70,17 +70,17 @@ return_type_t<T_y_cl, T_scale_cl> rayleigh_lccdf(const T_y_cl& y,
   results(check_y_nonnegative, check_sigma_positive, lccdf_cl, y_deriv_cl,
           sigma_deriv_cl)
       = expressions(y_nonnegative_expr, sigma_positive_expr, lccdf_expr,
-                    calc_if<!is_constant<T_y_cl>::value>(y_deriv),
-                    calc_if<!is_constant<T_scale_cl>::value>(sigma_deriv));
+                    calc_if<is_autodiff_v<T_y_cl>>(y_deriv),
+                    calc_if<is_autodiff_v<T_scale_cl>>(sigma_deriv));
 
   T_partials_return lccdf = -0.5 * from_matrix_cl(lccdf_cl).sum();
 
   auto ops_partials = make_partials_propagator(y_col, sigma_col);
 
-  if (!is_constant<T_y_cl>::value) {
+  if constexpr (is_autodiff_v<T_y_cl>) {
     partials<0>(ops_partials) = std::move(y_deriv_cl);
   }
-  if (!is_constant<T_scale_cl>::value) {
+  if constexpr (is_autodiff_v<T_scale_cl>) {
     partials<1>(ops_partials) = std::move(sigma_deriv_cl);
   }
 

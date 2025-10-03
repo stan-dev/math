@@ -4,6 +4,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
 #include <stan/math/prim/meta/is_complex.hpp>
+#include <stan/math/prim/meta/holder.hpp>
 #include <stan/math/prim/meta/require_generics.hpp>
 #include <stan/math/prim/meta/is_vector.hpp>
 #include <stan/math/prim/meta/is_vector_like.hpp>
@@ -58,10 +59,16 @@ struct apply_scalar_unary<F, T, require_eigen_t<T>> {
    * @return Componentwise application of the function specified
    * by F to the specified matrix.
    */
-  static inline auto apply(const T& x) {
-    return x.unaryExpr([](auto&& x) {
-      return apply_scalar_unary<F, std::decay_t<decltype(x)>>::apply(x);
-    });
+  template <typename TT>
+  static inline auto apply(TT&& x) {
+    return make_holder(
+        [](auto&& xx) {
+          return std::forward<decltype(xx)>(xx).unaryExpr([](auto&& xxx) {
+            return apply_scalar_unary<F, decltype(xxx)>::apply(
+                std::forward<decltype(xxx)>(xxx));
+          });
+        },
+        std::forward<TT>(x));
   }
 
   /**
@@ -83,7 +90,8 @@ struct apply_scalar_unary<F, T, require_floating_point_t<T>> {
   /**
    * The return type, double.
    */
-  using return_t = std::decay_t<decltype(F::fun(std::declval<T>()))>;
+  using return_t
+      = std::decay_t<decltype(F::fun(std::declval<std::decay_t<T>>()))>;
 
   /**
    * Apply the function specified by F to the specified argument.
@@ -94,7 +102,10 @@ struct apply_scalar_unary<F, T, require_floating_point_t<T>> {
    * @param x Argument scalar.
    * @return Result of applying F to the scalar.
    */
-  static inline auto apply(T x) { return F::fun(x); }
+  template <typename T2>
+  static inline auto apply(T2 x) {
+    return F::fun(x);
+  }
 };
 
 /**
@@ -114,11 +125,15 @@ struct apply_scalar_unary<F, T, require_complex_t<T>> {
    * @param x Argument scalar.
    * @return Result of applying F to the scalar.
    */
-  static inline auto apply(const T& x) { return F::fun(x); }
+  template <typename T2>
+  static inline auto apply(T2&& x) {
+    return F::fun(std::forward<T2>(x));
+  }
   /**
    * The return type
    */
-  using return_t = std::decay_t<decltype(F::fun(std::declval<T>()))>;
+  using return_t
+      = std::decay_t<decltype(F::fun(std::declval<std::decay_t<T>>()))>;
 };
 
 /**
@@ -140,7 +155,10 @@ struct apply_scalar_unary<F, T, require_integral_t<T>> {
    * @param x Argument scalar.
    * @return Result of applying F to the scalar.
    */
-  static inline auto apply(T x) { return F::fun(x); }
+  template <typename T2>
+  static inline auto apply(T2 x) {
+    return F::fun(x);
+  }
   /**
    * The return type, double.
    */
@@ -157,13 +175,13 @@ struct apply_scalar_unary<F, T, require_integral_t<T>> {
  * @tparam T Type of element contained in standard vector.
  */
 template <typename F, typename T>
-struct apply_scalar_unary<F, std::vector<T>> {
+struct apply_scalar_unary<F, T, require_std_vector_t<T>> {
   /**
    * Return type, which is calculated recursively as a standard
    * vector of the return type of the contained type T.
    */
-  using return_t = typename std::vector<
-      plain_type_t<typename apply_scalar_unary<F, T>::return_t>>;
+  using return_t = typename std::vector<plain_type_t<
+      typename apply_scalar_unary<F, value_type_t<std::decay_t<T>>>::return_t>>;
 
   /**
    * Apply the function specified by F elementwise to the
@@ -174,10 +192,15 @@ struct apply_scalar_unary<F, std::vector<T>> {
    * @return Elementwise application of F to the elements of the
    * container.
    */
-  static inline auto apply(const std::vector<T>& x) {
+  template <typename TT>
+  static inline auto apply(TT&& x) {
     return_t fx(x.size());
     for (size_t i = 0; i < x.size(); ++i) {
-      fx[i] = apply_scalar_unary<F, T>::apply(x[i]);
+      if constexpr (std::is_rvalue_reference_v<TT&&>) {
+        fx[i] = apply_scalar_unary<F, value_type_t<TT>>::apply(std::move(x[i]));
+      } else {
+        fx[i] = apply_scalar_unary<F, value_type_t<TT>>::apply(x[i]);
+      }
     }
     return fx;
   }

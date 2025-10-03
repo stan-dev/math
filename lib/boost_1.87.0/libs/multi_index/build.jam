@@ -1,0 +1,38 @@
+# Copyright René Ferdinand Rivera Morell 2023-2024
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at
+# http://www.boost.org/LICENSE_1_0.txt)
+
+require-b2 5.2 ;
+
+constant boost_dependencies :
+    /boost/assert//boost_assert
+    /boost/bind//boost_bind
+    /boost/config//boost_config
+    /boost/container_hash//boost_container_hash
+    /boost/core//boost_core
+    /boost/integer//boost_integer
+    /boost/iterator//boost_iterator
+    /boost/move//boost_move
+    /boost/mpl//boost_mpl
+    /boost/preprocessor//boost_preprocessor
+    /boost/smart_ptr//boost_smart_ptr
+    /boost/static_assert//boost_static_assert
+    /boost/throw_exception//boost_throw_exception
+    /boost/tuple//boost_tuple
+    /boost/type_traits//boost_type_traits
+    /boost/utility//boost_utility ;
+
+project /boost/multi_index
+    : common-requirements
+        <include>include
+    ;
+
+explicit
+    [ alias boost_multi_index : : : : <library>$(boost_dependencies) ]
+    [ alias all : boost_multi_index example perf test ]
+    ;
+
+call-if : boost-library multi_index
+    ;
+

@@ -57,9 +57,10 @@ Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> cov_matrix_free_lkj(
  * @param x The standard vector to untransform.
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
-auto cov_matrix_free_lkj(const T& x) {
-  return apply_vector_unary<T>::apply(
-      x, [](auto&& v) { return cov_matrix_free_lkj(v); });
+auto cov_matrix_free_lkj(T&& x) {
+  return apply_vector_unary<T>::apply(std::forward<T>(x), [](auto&& v) {
+    return cov_matrix_free_lkj(std::forward<decltype(v)>(v));
+  });
 }
 
 }  // namespace math

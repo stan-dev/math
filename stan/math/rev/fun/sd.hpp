@@ -1,12 +1,14 @@
 #ifndef STAN_MATH_REV_FUN_SD_HPP
 #define STAN_MATH_REV_FUN_SD_HPP
 
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/fun/inv_sqrt.hpp>
+#include <stan/math/rev/fun/sqrt.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
-#include <stan/math/prim/fun/inv_sqrt.hpp>
+#include <stan/math/prim/fun/sd.hpp>
 #include <cmath>
 #include <vector>
 
@@ -92,8 +94,10 @@ var sd(const T& x) {
  * @throw domain error  size is not greater than zero.
  */
 template <typename T, require_std_vector_st<is_var, T>* = nullptr>
-auto sd(const T& m) {
-  return apply_vector_unary<T>::reduce(m, [](const auto& x) { return sd(x); });
+auto sd(T&& m) {
+  return apply_vector_unary<T>::reduce(std::forward<T>(m), [](auto&& x) {
+    return sd(std::forward<decltype(x)>(x));
+  });
 }
 
 }  // namespace math

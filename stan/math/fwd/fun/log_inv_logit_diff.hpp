@@ -3,10 +3,10 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
+#include <stan/math/fwd/fun/inv_logit.hpp>
+#include <stan/math/fwd/fun/inv.hpp>
+#include <stan/math/fwd/fun/expm1.hpp>
 #include <stan/math/prim/fun/log_inv_logit_diff.hpp>
-#include <stan/math/prim/fun/inv_logit.hpp>
-#include <stan/math/prim/fun/inv.hpp>
-#include <stan/math/prim/fun/expm1.hpp>
 
 namespace stan {
 namespace math {

@@ -19,8 +19,8 @@ namespace math {
  * @param a The variable.
  * @return The log of 1 plus the variable.
  */
-template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
-inline auto log1p(const var_value<T>& a) {
+template <typename T, require_var_t<T>* = nullptr>
+inline auto log1p(T&& a) {
   return make_callback_var(log1p(a.val()), [a](auto& vi) mutable {
     as_array_or_scalar(a.adj())
         += as_array_or_scalar(vi.adj()) / (1.0 + as_array_or_scalar(a.val()));

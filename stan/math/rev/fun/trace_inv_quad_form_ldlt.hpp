@@ -1,14 +1,15 @@
 #ifndef STAN_MATH_REV_FUN_TRACE_INV_QUAD_FORM_LDLT_HPP
 #define STAN_MATH_REV_FUN_TRACE_INV_QUAD_FORM_LDLT_HPP
 
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/LDLT_factor.hpp>
 #include <stan/math/rev/core/typedefs.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
+#include <stan/math/prim/fun/trace_inv_quad_form_ldlt.hpp>
 #include <type_traits>
 
 namespace stan {
@@ -35,7 +36,7 @@ inline var trace_inv_quad_form_ldlt(LDLT_factor<T1>& A, const T2& B) {
   if (A.matrix().size() == 0)
     return 0.0;
 
-  if (!is_constant<T1>::value && !is_constant<T2>::value) {
+  if constexpr (is_autodiff_v<T1> && is_autodiff_v<T2>) {
     arena_t<promote_scalar_t<var, T1>> arena_A = A.matrix();
     arena_t<promote_scalar_t<var, T2>> arena_B = B;
     auto AsolveB = to_arena(A.ldlt().solve(arena_B.val()));
@@ -48,7 +49,7 @@ inline var trace_inv_quad_form_ldlt(LDLT_factor<T1>& A, const T2& B) {
     });
 
     return res;
-  } else if (!is_constant<T1>::value) {
+  } else if constexpr (is_autodiff_v<T1>) {
     arena_t<promote_scalar_t<var, T1>> arena_A = A.matrix();
     const auto& B_ref = to_ref(B);
 

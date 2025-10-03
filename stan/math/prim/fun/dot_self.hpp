@@ -10,6 +10,11 @@
 namespace stan {
 namespace math {
 
+template <typename T, require_stan_scalar_t<T>* = nullptr>
+inline T dot_self(const T& x) {
+  return x * x;
+}
+
 inline double dot_self(const std::vector<double>& x) {
   double sum = 0.0;
   for (double i : x) {

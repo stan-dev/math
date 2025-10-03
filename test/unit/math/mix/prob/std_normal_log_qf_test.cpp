@@ -46,3 +46,14 @@ TEST_F(AgradRev, mathMixMatFunLog_stdNormalLogQfVarmat) {
   }
   expect_ad_vector_matvar(f, A);
 }
+
+TEST_F(AgradRev, GradientStabilityStdNormalLogQf) {
+  auto f = [](const auto& y) {
+    return stan::math::sum(stan::math::std_normal_log_qf(y));
+  };
+
+  Eigen::VectorXd y1(2);
+  y1 << -10, -2;
+
+  stan::test::expect_ad(f, y1);
+}
