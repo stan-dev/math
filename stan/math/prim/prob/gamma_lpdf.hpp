@@ -49,7 +49,7 @@ namespace math {
 template <bool propto, typename T_y, typename T_shape, typename T_inv_scale,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_shape, T_inv_scale>* = nullptr>
-return_type_t<T_y, T_shape, T_inv_scale> gamma_lpdf(const T_y& y,
+inline return_type_t<T_y, T_shape, T_inv_scale> gamma_lpdf(const T_y& y,
                                                     const T_shape& alpha,
                                                     const T_inv_scale& beta) {
   using T_partials_return = partials_return_t<T_y, T_shape, T_inv_scale>;

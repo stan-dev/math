@@ -129,7 +129,7 @@ struct vectorized_multi_normal_cholesky_fun {
 };
 
 template <int is_row_vec_y, int is_row_vec_mu>
-void test_all_multi_normal_cholesky() {
+inline void test_all_multi_normal_cholesky() {
   {
     using Eigen::Dynamic;
     using Eigen::Matrix;

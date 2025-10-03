@@ -40,7 +40,7 @@ template <bool propto, typename T_n, typename T_N, typename T_size1,
           typename T_size2,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_n, T_N, T_size1, T_size2>* = nullptr>
-return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
+inline return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
                                                    const T_size1& alpha,
                                                    const T_size2& beta) {
   using T_partials_return = partials_return_t<T_size1, T_size2>;
@@ -165,7 +165,7 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
 }
 
 template <typename T_n, typename T_N, typename T_size1, typename T_size2>
-return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
+inline return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
                                                    const T_size1& alpha,
                                                    const T_size2& beta) {
   return beta_binomial_lpmf<false>(n, N, alpha, beta);

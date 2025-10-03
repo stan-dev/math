@@ -21,7 +21,7 @@ namespace math {
 template <typename T_y, typename T_inv_scale,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_inv_scale>* = nullptr>
-return_type_t<T_y, T_inv_scale> exponential_lcdf(const T_y& y,
+inline return_type_t<T_y, T_inv_scale> exponential_lcdf(const T_y& y,
                                                  const T_inv_scale& beta) {
   using T_partials_return = partials_return_t<T_y, T_inv_scale>;
   using T_y_ref = ref_type_if_not_constant_t<T_y>;

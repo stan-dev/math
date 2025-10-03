@@ -25,7 +25,7 @@ namespace math {
 template <typename Mat1, typename Mat2,
           require_all_matrix_t<Mat1, Mat2>* = nullptr,
           require_any_rev_matrix_t<Mat1, Mat2>* = nullptr>
-auto elt_divide(const Mat1& m1, const Mat2& m2) {
+inline auto elt_divide(const Mat1& m1, const Mat2& m2) {
   check_matching_dims("elt_divide", "m1", m1, "m2", m2);
   using inner_ret_type
       = decltype((value_of(m1).array() / value_of(m2).array()).matrix());
@@ -78,7 +78,7 @@ auto elt_divide(const Mat1& m1, const Mat2& m2) {
  */
 template <typename Scal, typename Mat, require_stan_scalar_t<Scal>* = nullptr,
           require_var_matrix_t<Mat>* = nullptr>
-auto elt_divide(Scal s, const Mat& m) {
+inline auto elt_divide(Scal s, const Mat& m) {
   plain_type_t<Mat> res = value_of(s) / m.val().array();
 
   reverse_pass_callback([m, s, res]() mutable {

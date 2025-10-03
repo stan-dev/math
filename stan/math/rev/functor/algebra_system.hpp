@@ -98,7 +98,7 @@ struct hybrj_functor_solver : nlo_functor<double> {
 // TODO(jgaeb): Remove this when the chain method of the fixed point solver is
 // updated.
 template <typename T1, typename T2>
-void algebra_solver_check(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
+inline void algebra_solver_check(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
                           const Eigen::Matrix<T2, Eigen::Dynamic, 1> y,
                           const std::vector<double>& dat,
                           const std::vector<int>& dat_int,

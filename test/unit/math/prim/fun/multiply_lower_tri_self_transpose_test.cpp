@@ -1,7 +1,7 @@
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
 
-stan::math::matrix_d generate_large_L_tri_mat() {
+inline stan::math::matrix_d generate_large_L_tri_mat() {
   stan::math::matrix_d x;
   double vals[10000];
 
@@ -15,7 +15,7 @@ stan::math::matrix_d generate_large_L_tri_mat() {
   return x;
 }
 
-void test_multiply_lower_tri_self_transpose(const stan::math::matrix_d& x) {
+inline void test_multiply_lower_tri_self_transpose(const stan::math::matrix_d& x) {
   using stan::math::multiply_lower_tri_self_transpose;
   stan::math::matrix_d y = multiply_lower_tri_self_transpose(x);
   stan::math::matrix_d xp = x;

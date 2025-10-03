@@ -31,7 +31,7 @@ namespace math {
 template <typename Ta, typename Tz,
           require_all_stan_scalar_t<Ta, Tz>* = nullptr,
           require_any_var_t<Ta, Tz>* = nullptr>
-var hypergeometric_1F0(const Ta& a, const Tz& z) {
+inline var hypergeometric_1F0(const Ta& a, const Tz& z) {
   double a_val = value_of(a);
   double z_val = value_of(z);
   double rtn = hypergeometric_1F0(a_val, z_val);

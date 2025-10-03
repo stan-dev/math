@@ -42,7 +42,7 @@ namespace math {
  * semi-positive definite.
  */
 template <bool propto, typename T_y, typename T_dof, typename T_scale>
-return_type_t<T_y, T_dof, T_scale> inv_wishart_lpdf(const T_y& W,
+inline return_type_t<T_y, T_dof, T_scale> inv_wishart_lpdf(const T_y& W,
                                                     const T_dof& nu,
                                                     const T_scale& S) {
   using Eigen::Dynamic;

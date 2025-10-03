@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 
 template <typename T, typename F>
-void jacobian(const F& f, const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
+inline void jacobian(const F& f, const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
               Eigen::Matrix<T, Eigen::Dynamic, 1>& fx,
               Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& J) {
   using Eigen::Dynamic;

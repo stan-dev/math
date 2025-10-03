@@ -18,7 +18,7 @@ namespace math {
  * @return Matrix exponential of input matrix.
  */
 template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
-Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
+inline Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
               EigMat::ColsAtCompileTime>
 matrix_exp_pade(const EigMat& arg) {
   using MatrixType

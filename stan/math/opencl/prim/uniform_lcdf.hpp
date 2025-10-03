@@ -30,7 +30,7 @@ template <typename T_y_cl, typename T_low_cl, typename T_high_cl,
           require_all_prim_or_rev_kernel_expression_t<T_y_cl, T_low_cl,
                                                       T_high_cl>* = nullptr,
           require_any_not_stan_scalar_t<T_y_cl, T_low_cl, T_high_cl>* = nullptr>
-return_type_t<T_y_cl, T_low_cl, T_high_cl> uniform_lcdf(const T_y_cl& y,
+inline return_type_t<T_y_cl, T_low_cl, T_high_cl> uniform_lcdf(const T_y_cl& y,
                                                         const T_low_cl& alpha,
                                                         const T_high_cl& beta) {
   static constexpr const char* function = "uniform_lcdf(OpenCL)";

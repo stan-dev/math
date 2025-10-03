@@ -25,7 +25,7 @@ namespace math {
 template <typename Ta, typename Tb, typename Tz,
           require_all_vector_st<std::is_arithmetic, Ta, Tb>* = nullptr,
           require_arithmetic_t<Tz>* = nullptr>
-return_type_t<Ta, Tb, Tz> hypergeometric_pFq(const Ta& a, const Tb& b,
+inline return_type_t<Ta, Tb, Tz> hypergeometric_pFq(const Ta& a, const Tb& b,
                                              const Tz& z) {
   plain_type_t<Ta> a_ref = a;
   plain_type_t<Tb> b_ref = b;

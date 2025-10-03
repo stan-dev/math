@@ -132,7 +132,7 @@ struct apply_template_permutations_helper<T_typelist1, T_typelist2, T_typelist3,
  */
 template <typename T_typelist1, typename T_typelist2, typename T_typelist3,
           typename T_functor, typename T_param>
-void apply_template_permutations(const T_functor& func, const T_param& param) {
+inline void apply_template_permutations(const T_functor& func, const T_param& param) {
   apply_template_permutations_helper<T_typelist1, T_typelist2, T_typelist3,
                                      T_functor, T_param,
                                      std::tuple_size<T_typelist1>::value - 1,

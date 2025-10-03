@@ -22,7 +22,7 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_dof, typename T_scale>
-return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lcdf(
+inline return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lcdf(
     const T_y& y, const T_dof& nu, const T_scale& s) {
   using T_partials_return = partials_return_t<T_y, T_dof, T_scale>;
   using std::exp;

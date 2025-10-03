@@ -43,10 +43,10 @@ TEST(test_unit_math_test_ad, expect_ad_vectorized) {
 
 // double overload matches template behavior and passes tests
 template <typename T>
-T f_match(const T& x) {
+inline T f_match(const T& x) {
   return -2 * x;
 }
-double f_match(const double& x) { return -2 * x; }
+inline double f_match(const double& x) { return -2 * x; }
 TEST(test_ad, match) {
   double x = 3.2;
   auto g = [](const auto& u) { return f_match(u); };
@@ -57,10 +57,10 @@ TEST(test_ad, match) {
 
 // double overload does not match template behavior for value
 template <typename T>
-T f_mismatch(const T& x) {
+inline T f_mismatch(const T& x) {
   return -2 * x;
 }
-stan::math::var f_mismatch(const stan::math::var& x) { return 2 * x; }
+inline stan::math::var f_mismatch(const stan::math::var& x) { return 2 * x; }
 TEST(test_ad, mismatch) {
   double x = 3.2;
   auto g = [](const auto& u) { return f_mismatch(u); };
@@ -72,10 +72,10 @@ TEST(test_ad, mismatch) {
 
 // double overload does not match template behavior for exceptions
 template <typename T>
-T f_misthrow(const T& x) {
+inline T f_misthrow(const T& x) {
   return -2 * x;
 }
-double f_misthrow(const double& x) {
+inline double f_misthrow(const double& x) {
   throw std::runtime_error("f_misthrow(double) called");
   return -2 * x;
 }
@@ -234,33 +234,33 @@ int baz_complex = 0;
 int baz_complex_var = 0;
 int baz_complex_fvar = 0;
 
-double baz(int x) {
+inline double baz(int x) {
   ++baz_int;
   return x / 2.0;
 }
-double baz(double x) {
+inline double baz(double x) {
   ++baz_double;
   return x / 2.0;
 }
-stan::math::var baz(const stan::math::var& x) {
+inline stan::math::var baz(const stan::math::var& x) {
   ++baz_var;
   return x / 2.0;
 }
-std::complex<double> baz(std::complex<double> x) {
+inline std::complex<double> baz(std::complex<double> x) {
   ++baz_complex;
   return x / 2.0;
 }
-std::complex<stan::math::var> baz(const std::complex<stan::math::var>& x) {
+inline std::complex<stan::math::var> baz(const std::complex<stan::math::var>& x) {
   ++baz_complex_var;
   return x / 2.0;
 }
 template <typename T>
-stan::math::fvar<T> baz(const stan::math::fvar<T>& x) {
+inline stan::math::fvar<T> baz(const stan::math::fvar<T>& x) {
   ++baz_fvar;
   return x / 2.0;
 }
 template <typename T>
-std::complex<stan::math::fvar<T>> baz(
+inline std::complex<stan::math::fvar<T>> baz(
     const std::complex<stan::math::fvar<T>>& x) {
   ++baz_complex_fvar;
   return x / 2.0;

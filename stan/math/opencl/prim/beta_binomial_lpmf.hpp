@@ -40,7 +40,7 @@ template <
     require_all_prim_or_rev_kernel_expression_t<T_n_cl, T_size1_cl,
                                                 T_size2_cl>* = nullptr,
     require_any_not_stan_scalar_t<T_n_cl, T_size1_cl, T_size2_cl>* = nullptr>
-return_type_t<T_n_cl, T_size1_cl, T_size2_cl> beta_binomial_lpmf(
+inline return_type_t<T_n_cl, T_size1_cl, T_size2_cl> beta_binomial_lpmf(
     const T_n_cl& n, const T_N_cl N, const T_size1_cl& alpha,
     const T_size2_cl& beta) {
   using std::isfinite;

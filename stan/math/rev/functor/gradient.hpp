@@ -43,7 +43,7 @@ namespace math {
  * @param[out] grad_fx Gradient of function at argument
  */
 template <typename F>
-void gradient(const F& f, const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
+inline void gradient(const F& f, const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
               double& fx, Eigen::Matrix<double, Eigen::Dynamic, 1>& grad_fx) {
   nested_rev_autodiff nested;
 
@@ -99,7 +99,7 @@ void gradient(const F& f, const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
  */
 template <typename F, typename EigVec, typename InputIt,
           require_eigen_vector_vt<std::is_arithmetic, EigVec>* = nullptr>
-void gradient(const F& f, const EigVec& x, double& fx, InputIt first_grad_fx,
+inline void gradient(const F& f, const EigVec& x, double& fx, InputIt first_grad_fx,
               InputIt last_grad_fx) {
   nested_rev_autodiff nested;
 

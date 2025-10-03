@@ -5,7 +5,7 @@
 #include <vector>
 #include <iomanip>
 
-void test_grad_eq(Eigen::Matrix<double, -1, 1> grad_1,
+inline void test_grad_eq(Eigen::Matrix<double, -1, 1> grad_1,
                   Eigen::Matrix<double, -1, 1> grad_2) {
   ASSERT_EQ(grad_1.size(), grad_2.size());
   for (int i = 0; i < grad_1.size(); ++i)
@@ -13,7 +13,7 @@ void test_grad_eq(Eigen::Matrix<double, -1, 1> grad_1,
 }
 
 template <typename F>
-std::vector<double> finite_diffs(const F& fun, const std::vector<double>& args,
+inline std::vector<double> finite_diffs(const F& fun, const std::vector<double>& args,
                                  double epsilon = 1e-6) {
   std::vector<double> diffs(args.size());
   std::vector<double> args_plus = args;
@@ -30,7 +30,7 @@ std::vector<double> finite_diffs(const F& fun, const std::vector<double>& args,
 }
 
 template <typename F>
-std::vector<double> grad(const F& fun, const std::vector<double>& args) {
+inline std::vector<double> grad(const F& fun, const std::vector<double>& args) {
   std::vector<stan::math::var> x;
   for (size_t i = 0; i < args.size(); ++i)
     x.push_back(args[i]);
@@ -42,7 +42,7 @@ std::vector<double> grad(const F& fun, const std::vector<double>& args) {
 }
 
 template <typename F>
-void test_grad(const F& fun, const std::vector<double>& args) {
+inline void test_grad(const F& fun, const std::vector<double>& args) {
   using std::fabs;
   std::vector<double> diffs_finite = finite_diffs(fun, args);
   std::vector<double> diffs_var = grad(fun, args);

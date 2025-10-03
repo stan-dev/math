@@ -32,7 +32,7 @@ namespace math {
  * correlations and deviations.
  */
 template <typename T, require_var_vector_t<T>* = nullptr>
-var_value<Eigen::MatrixXd> cov_matrix_constrain_lkj(const T& x, size_t k) {
+inline var_value<Eigen::MatrixXd> cov_matrix_constrain_lkj(const T& x, size_t k) {
   size_t k_choose_2 = (k * (k - 1)) / 2;
   return read_cov_matrix(corr_constrain(x.head(k_choose_2)),
                          positive_constrain(x.tail(k)));
@@ -64,7 +64,7 @@ var_value<Eigen::MatrixXd> cov_matrix_constrain_lkj(const T& x, size_t k) {
  * correlations and deviations.
  */
 template <typename T, require_var_vector_t<T>* = nullptr>
-var_value<Eigen::MatrixXd> cov_matrix_constrain_lkj(const T& x, size_t k,
+inline var_value<Eigen::MatrixXd> cov_matrix_constrain_lkj(const T& x, size_t k,
                                                     scalar_type_t<T>& lp) {
   size_t k_choose_2 = (k * (k - 1)) / 2;
   return read_cov_matrix(corr_constrain(x.head(k_choose_2)),

@@ -15,7 +15,7 @@ namespace math {
 // n: #white balls drawn;  N: #balls drawn;
 // a: #white balls;  b: #black balls
 template <bool propto, typename T_n, typename T_N, typename T_a, typename T_b>
-double hypergeometric_lpmf(const T_n& n, const T_N& N, const T_a& a,
+inline double hypergeometric_lpmf(const T_n& n, const T_N& N, const T_a& a,
                            const T_b& b) {
   static constexpr const char* function = "hypergeometric_lpmf";
   check_bounded(function, "Successes variable", value_of(n), 0, a);

@@ -4,7 +4,7 @@
 
 template <typename Scalar, typename ContainerT1, typename ContainerT2,
           typename Op, typename Container1Plain, typename Container2Plain>
-void test_comparison(Op operation, const Container1Plain& container1_plain,
+inline void test_comparison(Op operation, const Container1Plain& container1_plain,
                      const Container2Plain& container2_plain) {
   EXPECT_MATRIX_EQ(
       operation(container1_plain, container2_plain),
@@ -17,7 +17,7 @@ void test_comparison(Op operation, const Container1Plain& container1_plain,
 
 template <typename Scalar, typename ContainerT, typename Op,
           typename ContainerPlain>
-void test_comparison_combinations(Op operation,
+inline void test_comparison_combinations(Op operation,
                                   const ContainerPlain& container1_plain,
                                   const ContainerPlain& container2_plain) {
   test_comparison<double, ContainerT, ContainerT>(operation, container1_plain,
@@ -29,7 +29,7 @@ void test_comparison_combinations(Op operation,
 }
 
 template <typename Scalar, typename Op>
-void test_comparison_all_shapes(Op operation) {
+inline void test_comparison_all_shapes(Op operation) {
   Eigen::ArrayXXd m1(3, 2);
   m1 << -1, 2, 0.0, 0.5, 1, 1.5;
   Eigen::ArrayXXd m2(3, 2);
@@ -54,7 +54,7 @@ void test_comparison_all_shapes(Op operation) {
 }
 
 template <typename Scalar>
-void test_all_comparisons() {
+inline void test_all_comparisons() {
   test_comparison_all_shapes<Scalar>(
       [](const auto& a, const auto& b) { return a < b; });
   test_comparison_all_shapes<Scalar>(

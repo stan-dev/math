@@ -22,7 +22,7 @@ int ROW_VECTORS = 1;
 int ROW_VECTORS = 0;
 #endif
 
-void push_args(vector<string>& args, const string& type) {
+inline void push_args(vector<string>& args, const string& type) {
   if (type.compare("varmat") == 0) {
     args.push_back("var");
     args.push_back("std::vector<var>");
@@ -40,7 +40,7 @@ void push_args(vector<string>& args, const string& type) {
   }
 }
 
-vector<string> lookup_argument(const string& argument, const int& ind) {
+inline vector<string> lookup_argument(const string& argument, const int& ind) {
   using boost::iequals;
   vector<string> args;
   if (iequals(argument, "int")) {
@@ -83,7 +83,7 @@ std::ostream& operator<<(std::ostream& o, vector<T>& vec) {
   return o;
 }
 
-void write_includes(vector<std::ostream*>& outs, const string& include) {
+inline void write_includes(vector<std::ostream*>& outs, const string& include) {
   for (size_t n = 0; n < outs.size(); n++) {
     std::ostream* out = outs[n];
     *out << "#include <gtest/gtest.h>" << endl;
@@ -97,7 +97,7 @@ void write_includes(vector<std::ostream*>& outs, const string& include) {
   }
 }
 
-vector<string> tokenize_arguments(const string& arguments) {
+inline vector<string> tokenize_arguments(const string& arguments) {
   vector<string> tokens;
   string delimiters = ", ";
   string args_only_string = arguments.substr(arguments.find(":") + 1);
@@ -117,7 +117,7 @@ size_t size(const vector<vector<string> >& sequences) {
   return N;
 }
 
-bool is_argument_list(const string& line) {
+inline bool is_argument_list(const string& line) {
   size_t comment = line.find("// ");
   if (comment == string::npos)
     return false;
@@ -180,7 +180,7 @@ pair<string, string> read_test_name_from_file(const string& file) {
   return name;
 }
 
-vector<vector<string> > build_argument_sequence(const string& arguments,
+inline vector<vector<string> > build_argument_sequence(const string& arguments,
                                                 const int& ind) {
   vector<string> argument_list = tokenize_arguments(arguments);
   vector<vector<string> > argument_sequence;
@@ -244,7 +244,7 @@ int num_ints(string arguments) {
   return num;
 }
 
-void write_types_typedef(vector<std::ostream*>& outs, string base, size_t& N,
+inline void write_types_typedef(vector<std::ostream*>& outs, string base, size_t& N,
                          vector<vector<string> > argument_sequence,
                          const size_t depth, const int& index,
                          const int& N_TESTS) {
@@ -300,7 +300,7 @@ size_t write_types(vector<std::ostream*>& outs,
   return N;
 }
 
-void write_test(vector<std::ostream*>& outs, const string& test_name,
+inline void write_test(vector<std::ostream*>& outs, const string& test_name,
                 const string& fixture_name, const size_t N, const int& index,
                 const int& N_TESTS) {
   for (size_t n = 0; n < N; n++) {
@@ -359,7 +359,7 @@ void write_test(vector<std::ostream*>& outs, const string& test_name,
   }
 }
 
-void write_test_cases(vector<std::ostream*>& outs, const string& file,
+inline void write_test_cases(vector<std::ostream*>& outs, const string& file,
                       const vector<vector<string> >& argument_sequence,
                       const int& index, const int& N_TESTS) {
   pair<string, string> name = read_test_name_from_file(file);

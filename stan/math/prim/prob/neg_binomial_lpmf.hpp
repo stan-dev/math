@@ -30,7 +30,7 @@ constexpr double neg_binomial_alpha_cutoff = 1e10;
 template <bool propto, typename T_n, typename T_shape, typename T_inv_scale,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_n, T_shape, T_inv_scale>* = nullptr>
-return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(const T_n& n,
+inline return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(const T_n& n,
                                                       const T_shape& alpha,
                                                       const T_inv_scale& beta) {
   using T_partials_return = partials_return_t<T_n, T_shape, T_inv_scale>;

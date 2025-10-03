@@ -24,7 +24,7 @@ namespace test {
  */
 template <typename F, typename T1, typename T2, typename T3,
           require_all_not_vector_t<T1, T2, T3>* = nullptr>
-void ternary_scalar_tester_impl(const F& f, const T1& x, const T2& y,
+inline void ternary_scalar_tester_impl(const F& f, const T1& x, const T2& y,
                                 const T3& z) {
   auto mat_mat_mat = math::eval(f(x, y, z));
   auto mat_mat_scal = math::eval(f(x, y, z(0)));
@@ -146,7 +146,7 @@ void ternary_scalar_tester_impl(const F& f, const T1& x, const T2& y,
  */
 template <typename F, typename T1, typename T2, typename T3,
           require_all_vector_t<T1, T2, T3>* = nullptr>
-void ternary_scalar_tester_impl(const F& f, const T1& x, const T2& y,
+inline void ternary_scalar_tester_impl(const F& f, const T1& x, const T2& y,
                                 const T3& z) {
   auto mat_mat_mat = math::eval(f(x, y, z));
   auto mat_mat_scal = math::eval(f(x, y, z[0]));
@@ -266,7 +266,7 @@ void ternary_scalar_tester_impl(const F& f, const T1& x, const T2& y,
  */
 template <typename F, typename T1, typename T2, typename T3,
           require_all_eigen_col_vector_t<T1, T2, T3>* = nullptr>
-void ternary_scalar_tester(const F& f, const T1& x, const T2& y, const T3& z) {
+inline void ternary_scalar_tester(const F& f, const T1& x, const T2& y, const T3& z) {
   ternary_scalar_tester_impl(f, x, y, z);
   ternary_scalar_tester_impl(f, x.transpose().eval(), y.transpose().eval(),
                              z.transpose().eval());

@@ -58,7 +58,7 @@ namespace math {
  *        negative flag that is not due to hitting max_num_steps.
  */
 template <typename F1, typename... Args>
-Eigen::VectorXd kinsol_solve(const F1& f, const Eigen::VectorXd& x,
+inline Eigen::VectorXd kinsol_solve(const F1& f, const Eigen::VectorXd& x,
                              const double scaling_step_tol,    // = 1e-3
                              const double function_tolerance,  // = 1e-6
                              const int64_t max_num_steps,      // = 200

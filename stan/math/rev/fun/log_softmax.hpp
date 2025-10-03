@@ -54,7 +54,7 @@ class log_softmax_elt_vari : public vari {
  * @throw std::domain_error if the input size is 0
  */
 template <typename T, require_eigen_st<is_var, T>* = nullptr>
-auto log_softmax(const T& x) {
+inline auto log_softmax(const T& x) {
   const int a_size = x.size();
 
   check_nonzero_size("log_softmax", "x", x);

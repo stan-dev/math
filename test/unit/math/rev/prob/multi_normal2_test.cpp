@@ -9,7 +9,7 @@
 #include <string>
 
 template <typename T_y, typename T_loc, typename T_scale>
-void expect_propto_multi_normal_lpdf(T_y y1, T_loc mu1, T_scale sigma1, T_y y2,
+inline void expect_propto_multi_normal_lpdf(T_y y1, T_loc mu1, T_scale sigma1, T_y y2,
                                      T_loc mu2, T_scale sigma2,
                                      std::string message = "") {
   expect_eq_diffs(stan::math::multi_normal_lpdf<false>(y1, mu1, sigma1),
@@ -328,7 +328,7 @@ struct vectorized_multi_normal_fun {
 };
 
 template <int is_row_vec_y, int is_row_vec_mu>
-void test_all_multi_normal2() {
+inline void test_all_multi_normal2() {
   {
     std::vector<double> y_(3), mu_(3), sigma_(6);
     // y

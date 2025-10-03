@@ -34,7 +34,7 @@ namespace math {
  * @throw std::invalid_argument If y and theta are different lengths
  */
 template <bool propto, typename T_y, typename T_theta>
-return_type_t<T_theta> poisson_binomial_lccdf(const T_y& y,
+inline return_type_t<T_theta> poisson_binomial_lccdf(const T_y& y,
                                               const T_theta& theta) {
   static constexpr const char* function = "poisson_binomial_lccdf";
 
@@ -74,7 +74,7 @@ return_type_t<T_theta> poisson_binomial_lccdf(const T_y& y,
 }
 
 template <typename T_y, typename T_theta>
-return_type_t<T_theta> poisson_binomial_lccdf(const T_y& y,
+inline return_type_t<T_theta> poisson_binomial_lccdf(const T_y& y,
                                               const T_theta& theta) {
   return poisson_binomial_lccdf<false>(y, theta);
 }

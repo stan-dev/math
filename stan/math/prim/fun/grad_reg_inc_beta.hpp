@@ -32,7 +32,7 @@ namespace math {
  * @param[in] betaAB the value of <code>beta(a, b)</code>
  */
 template <typename T>
-void grad_reg_inc_beta(T& g1, T& g2, const T& a, const T& b, const T& z,
+inline void grad_reg_inc_beta(T& g1, T& g2, const T& a, const T& b, const T& z,
                        const T& digammaA, const T& digammaB,
                        const T& digammaSum, const T& betaAB) {
   using std::exp;

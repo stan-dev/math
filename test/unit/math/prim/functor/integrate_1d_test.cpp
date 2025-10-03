@@ -214,7 +214,7 @@ struct f17 {
   }
 };
 
-double lbaX_pdf(double X, double t, double A, double v, double s,
+inline double lbaX_pdf(double X, double t, double A, double v, double s,
                 std::ostream *pstream__) {
   double b_A_tv_ts;
   double b_tv_ts;
@@ -230,7 +230,7 @@ double lbaX_pdf(double X, double t, double A, double v, double s,
   return pdf;
 }
 
-double lbaX_cdf(double X, double t, double A, double v, double s,
+inline double lbaX_cdf(double X, double t, double A, double v, double s,
                 std::ostream *pstream__) {
   double b_A_tv;
   double b_tv;
@@ -256,7 +256,7 @@ double lbaX_cdf(double X, double t, double A, double v, double s,
   return cdf;
 }
 
-double rank_density(double x, double xc, const std::vector<double> &theta,
+inline double rank_density(double x, double xc, const std::vector<double> &theta,
                     const std::vector<double> &x_r, const std::vector<int> &x_i,
                     std::ostream *pstream__) {
   double t = theta[0];
@@ -277,7 +277,7 @@ struct rank_density_functor__ {
   }
 };
 
-double order(double down, double up, const std::vector<double> &theta,
+inline double order(double down, double up, const std::vector<double> &theta,
              const std::vector<double> &x_r, std::ostream *pstream__) {
   std::vector<int> x_i;
 
@@ -315,7 +315,7 @@ double order(double down, double up, const std::vector<double> &theta,
  * @param val correct value of integral
  */
 template <typename F>
-void test_integration(const F &f, double a, double b,
+inline void test_integration(const F &f, double a, double b,
                       std::vector<double> thetas,
                       const std::vector<double> &x_r,
                       const std::vector<int> &x_i, double val) {

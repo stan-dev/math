@@ -11,7 +11,7 @@ namespace math {
  * @deprecated use <code>poisson_binomial_lcdf</code>
  */
 template <typename T_y, typename T_theta>
-return_type_t<T_theta> poisson_binomial_cdf_log(const T_y& y,
+inline return_type_t<T_theta> poisson_binomial_cdf_log(const T_y& y,
                                                 const T_theta& theta) {
   return poisson_binomial_lcdf<T_y, T_theta>(y, theta);
 }

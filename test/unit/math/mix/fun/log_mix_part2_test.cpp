@@ -2,7 +2,7 @@
 #include <limits>
 #include <vector>
 
-void expect_log_mix(const std::vector<double>& p,
+inline void expect_log_mix(const std::vector<double>& p,
                     const std::vector<double>& d) {
   auto f
       = [](const auto& x, const auto& y) { return stan::math::log_mix(x, y); };
@@ -26,14 +26,14 @@ void expect_log_mix(const std::vector<double>& p,
   stan::test::expect_ad(tols, f, p_rv, d_rv);
 }
 
-std::vector<Eigen::VectorXd> to_vectors(
+inline std::vector<Eigen::VectorXd> to_vectors(
     const std::vector<std::vector<double>>& xs) {
   std::vector<Eigen::VectorXd> ys;
   for (const auto& x : xs)
     ys.push_back(stan::test::to_vector(x));
   return ys;
 }
-std::vector<Eigen::RowVectorXd> to_row_vectors(
+inline std::vector<Eigen::RowVectorXd> to_row_vectors(
     const std::vector<std::vector<double>>& xs) {
   std::vector<Eigen::RowVectorXd> ys;
   for (const auto& x : xs)
@@ -41,7 +41,7 @@ std::vector<Eigen::RowVectorXd> to_row_vectors(
   return ys;
 }
 
-void expect_log_mix(const std::vector<double>& p,
+inline void expect_log_mix(const std::vector<double>& p,
                     const std::vector<std::vector<double>>& ds) {
   auto f
       = [](const auto& x, const auto& y) { return stan::math::log_mix(x, y); };

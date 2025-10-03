@@ -23,7 +23,7 @@ namespace math {
 template <typename Mat1, typename Mat2,
           require_all_eigen_t<Mat1, Mat2>* = nullptr,
           require_all_not_st_var<Mat1, Mat2>* = nullptr>
-auto elt_multiply(const Mat1& m1, const Mat2& m2) {
+inline auto elt_multiply(const Mat1& m1, const Mat2& m2) {
   check_matching_dims("elt_multiply", "m1", m1, "m2", m2);
   return m1.cwiseProduct(m2);
 }
@@ -41,7 +41,7 @@ auto elt_multiply(const Mat1& m1, const Mat2& m2) {
  */
 template <typename Scalar1, typename Scalar2,
           require_all_stan_scalar_t<Scalar1, Scalar2>* = nullptr>
-auto elt_multiply(const Scalar1& a, const Scalar2& b) {
+inline auto elt_multiply(const Scalar1& a, const Scalar2& b) {
   return a * b;
 }
 

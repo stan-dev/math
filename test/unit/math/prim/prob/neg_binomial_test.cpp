@@ -71,7 +71,7 @@ TEST(ProbDistributionsNegBinomial, error_check) {
   }
 }
 
-void expected_bin_sizes(double* expect, const int K, const int N,
+inline void expected_bin_sizes(double* expect, const int K, const int N,
                         const double alpha, const double beta) {
   long double p = 0;
   for (int i = 0; i < K; i++) {

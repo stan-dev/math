@@ -38,7 +38,7 @@ inline void hessian_times_vector(
 template <typename T, typename F, typename EigVec,
           require_eigen_vector_t<EigVec>* = nullptr,
           require_stan_scalar_t<T>* = nullptr>
-void hessian_times_vector(const F& f,
+inline void hessian_times_vector(const F& f,
                           const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
                           const EigVec& v, T& fx,
                           Eigen::Matrix<T, Eigen::Dynamic, 1>& Hv) {

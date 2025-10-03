@@ -178,7 +178,7 @@ const char opencl_std_normal_lcdf_dnlcdf[] = STRINGIFY(
 template <typename T_y_cl,
           require_all_prim_or_rev_kernel_expression_t<T_y_cl>* = nullptr,
           require_any_not_stan_scalar_t<T_y_cl>* = nullptr>
-return_type_t<T_y_cl> std_normal_lcdf(const T_y_cl& y) {
+inline return_type_t<T_y_cl> std_normal_lcdf(const T_y_cl& y) {
   static constexpr const char* function = "std_normal_lcdf(OpenCL)";
   using std::isfinite;
   using std::isnan;

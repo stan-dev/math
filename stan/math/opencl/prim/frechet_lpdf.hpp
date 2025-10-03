@@ -36,7 +36,7 @@ template <
     require_all_prim_or_rev_kernel_expression_t<T_y_cl, T_shape_cl,
                                                 T_scale_cl>* = nullptr,
     require_any_not_stan_scalar_t<T_y_cl, T_shape_cl, T_scale_cl>* = nullptr>
-return_type_t<T_y_cl, T_shape_cl, T_scale_cl> frechet_lpdf(
+inline return_type_t<T_y_cl, T_shape_cl, T_scale_cl> frechet_lpdf(
     const T_y_cl& y, const T_shape_cl& alpha, const T_scale_cl& sigma) {
   using std::isfinite;
   static constexpr const char* function = "frechet_lpdf(OpenCL)";

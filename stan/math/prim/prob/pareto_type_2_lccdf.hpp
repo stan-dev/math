@@ -21,7 +21,7 @@ namespace math {
 template <typename T_y, typename T_loc, typename T_scale, typename T_shape,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_loc, T_scale, T_shape>* = nullptr>
-return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lccdf(
+inline return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lccdf(
     const T_y& y, const T_loc& mu, const T_scale& lambda,
     const T_shape& alpha) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_shape>;

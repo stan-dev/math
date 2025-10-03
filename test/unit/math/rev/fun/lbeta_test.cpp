@@ -20,7 +20,7 @@ struct identity_tolerances {
 };
 
 template <class F1, class F2>
-void expect_identity(const std::string& msg,
+inline void expect_identity(const std::string& msg,
                      const identity_tolerances& tolerances, const F1 lh,
                      const F2 rh, double x_dbl, double y_dbl) {
   using stan::math::var;

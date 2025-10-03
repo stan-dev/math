@@ -28,7 +28,7 @@ namespace math {
  */
 template <typename Vec, require_vector_t<Vec>* = nullptr,
           require_not_std_vector_t<Vec>* = nullptr>
-void check_positive_ordered(const char* function, const char* name,
+inline void check_positive_ordered(const char* function, const char* name,
                             const Vec& y) {
   if (y.size() == 0) {
     return;
@@ -60,7 +60,7 @@ void check_positive_ordered(const char* function, const char* name,
  * `NaN`
  */
 template <typename StdVec, require_std_vector_t<StdVec>* = nullptr>
-void check_positive_ordered(const char* function, const char* name,
+inline void check_positive_ordered(const char* function, const char* name,
                             const StdVec& y) {
   for (size_t i = 0; i < y.size(); ++i) {
     check_positive_ordered(function, internal::make_iter_name(name, i).c_str(),

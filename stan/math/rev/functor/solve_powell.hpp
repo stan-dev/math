@@ -45,7 +45,7 @@ namespace math {
  */
 template <typename F, typename T, typename... Args,
           require_eigen_vector_t<T>* = nullptr>
-T& solve_powell_call_solver(const F& f, T& x, std::ostream* const msgs,
+inline T& solve_powell_call_solver(const F& f, T& x, std::ostream* const msgs,
                             const double relative_tolerance,
                             const double function_tolerance,
                             const int64_t max_num_steps, const Args&... args) {
@@ -125,7 +125,7 @@ T& solve_powell_call_solver(const F& f, T& x, std::ostream* const msgs,
 template <typename F, typename T, typename... Args,
           require_eigen_vector_t<T>* = nullptr,
           require_all_st_arithmetic<Args...>* = nullptr>
-Eigen::VectorXd solve_powell_tol(const F& f, const T& x,
+inline Eigen::VectorXd solve_powell_tol(const F& f, const T& x,
                                  const double relative_tolerance,
                                  const double function_tolerance,
                                  const int64_t max_num_steps,
@@ -185,7 +185,7 @@ Eigen::VectorXd solve_powell_tol(const F& f, const T& x,
  */
 template <typename F, typename T, typename... T_Args,
           require_eigen_vector_t<T>* = nullptr>
-Eigen::Matrix<stan::return_type_t<T_Args...>, Eigen::Dynamic, 1> solve_powell(
+inline Eigen::Matrix<stan::return_type_t<T_Args...>, Eigen::Dynamic, 1> solve_powell(
     const F& f, const T& x, std::ostream* const msgs, const T_Args&... args) {
   double relative_tolerance = 1e-10;
   double function_tolerance = 1e-6;
@@ -248,7 +248,7 @@ Eigen::Matrix<stan::return_type_t<T_Args...>, Eigen::Dynamic, 1> solve_powell(
  */
 template <typename F, typename T1, typename T2,
           require_all_eigen_vector_t<T1, T2>* = nullptr>
-Eigen::Matrix<value_type_t<T2>, Eigen::Dynamic, 1> algebra_solver(
+inline Eigen::Matrix<value_type_t<T2>, Eigen::Dynamic, 1> algebra_solver(
     const F& f, const T1& x, const T2& y, const std::vector<double>& dat,
     const std::vector<int>& dat_int, std::ostream* msgs = nullptr,
     const double relative_tolerance = 1e-10,
@@ -322,7 +322,7 @@ Eigen::Matrix<value_type_t<T2>, Eigen::Dynamic, 1> algebra_solver(
 template <typename F, typename T, typename... T_Args,
           require_eigen_vector_t<T>* = nullptr,
           require_any_st_var<T_Args...>* = nullptr>
-Eigen::Matrix<var, Eigen::Dynamic, 1> solve_powell_tol(
+inline Eigen::Matrix<var, Eigen::Dynamic, 1> solve_powell_tol(
     const F& f, const T& x, const double relative_tolerance,
     const double function_tolerance, const int64_t max_num_steps,
     std::ostream* const msgs, const T_Args&... args) {

@@ -54,7 +54,7 @@ template <
     require_any_not_vector_vt<is_stan_scalar, T_y, T_dof, T_loc>* = nullptr,
     require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
         T_y, T_loc, T_covar>* = nullptr>
-return_type_t<T_y, T_dof, T_loc, T_covar> multi_student_t_cholesky_lpdf(
+inline return_type_t<T_y, T_dof, T_loc, T_covar> multi_student_t_cholesky_lpdf(
     const T_y& y, const T_dof& nu, const T_loc& mu, const T_covar& L) {
   static constexpr const char* function = "multi_student_t_cholesky";
   using T_covar_elem = typename scalar_type<T_covar>::type;
@@ -242,7 +242,7 @@ template <bool propto, typename T_y, typename T_dof, typename T_loc,
           require_all_vector_vt<is_stan_scalar, T_y, T_dof, T_loc>* = nullptr,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_dof, T_loc, T_covar>* = nullptr>
-return_type_t<T_y, T_dof, T_loc, T_covar> multi_student_t_cholesky_lpdf(
+inline return_type_t<T_y, T_dof, T_loc, T_covar> multi_student_t_cholesky_lpdf(
     const T_y& y, const T_dof& nu, const T_loc& mu, const T_covar& L) {
   static const char* function = "multi_student_t_cholesky";
   using T_covar_elem = typename scalar_type<T_covar>::type;

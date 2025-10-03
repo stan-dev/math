@@ -41,7 +41,7 @@ template <
     bool propto, typename T_y_cl, typename T_dof_cl,
     require_all_prim_or_rev_kernel_expression_t<T_y_cl, T_dof_cl>* = nullptr,
     require_any_not_stan_scalar_t<T_y_cl, T_dof_cl>* = nullptr>
-return_type_t<T_y_cl, T_dof_cl> inv_chi_square_lpdf(const T_y_cl& y,
+inline return_type_t<T_y_cl, T_dof_cl> inv_chi_square_lpdf(const T_y_cl& y,
                                                     const T_dof_cl& nu) {
   using std::isfinite;
   using std::isnan;

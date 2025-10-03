@@ -36,7 +36,7 @@ namespace math {
  * @pre 0 <= z <= 1
  */
 template <typename T>
-T inc_beta_dda(T a, T b, T z, T digamma_a, T digamma_ab) {
+inline T inc_beta_dda(T a, T b, T z, T digamma_a, T digamma_ab) {
   using std::fabs;
   using std::log;
   using std::pow;

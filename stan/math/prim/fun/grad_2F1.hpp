@@ -49,7 +49,7 @@ template <bool calc_a1, bool calc_a2, bool calc_b1, typename T1, typename T2,
           typename T3, typename T_z,
           typename ScalarT = return_type_t<T1, T2, T3, T_z>,
           typename TupleT = std::tuple<ScalarT, ScalarT, ScalarT>>
-TupleT grad_2F1_impl_ab(const T1& a1, const T2& a2, const T3& b1, const T_z& z,
+inline TupleT grad_2F1_impl_ab(const T1& a1, const T2& a2, const T3& b1, const T_z& z,
                         double precision = 1e-14, int max_steps = 1e6) {
   TupleT grad_tuple = TupleT(0, 0, 0);
 
@@ -167,7 +167,7 @@ template <bool calc_a1, bool calc_a2, bool calc_b1, bool calc_z, typename T1,
           typename T2, typename T3, typename T_z,
           typename ScalarT = return_type_t<T1, T2, T3, T_z>,
           typename TupleT = std::tuple<ScalarT, ScalarT, ScalarT, ScalarT>>
-TupleT grad_2F1_impl(const T1& a1, const T2& a2, const T3& b1, const T_z& z,
+inline TupleT grad_2F1_impl(const T1& a1, const T2& a2, const T3& b1, const T_z& z,
                      double precision = 1e-14, int max_steps = 1e6) {
   bool euler_transform = false;
   try {
@@ -268,7 +268,7 @@ TupleT grad_2F1_impl(const T1& a1, const T2& a2, const T3& b1, const T_z& z,
  */
 template <bool ReturnSameT, typename T1, typename T2, typename T3, typename T_z,
           require_not_t<std::integral_constant<bool, ReturnSameT>>* = nullptr>
-auto grad_2F1(const T1& a1, const T2& a2, const T3& b1, const T_z& z,
+inline auto grad_2F1(const T1& a1, const T2& a2, const T3& b1, const T_z& z,
               double precision = 1e-14, int max_steps = 1e6) {
   return internal::grad_2F1_impl<is_autodiff_v<T1>, is_autodiff_v<T2>,
                                  is_autodiff_v<T3>, is_autodiff_v<T_z>>(
@@ -301,7 +301,7 @@ auto grad_2F1(const T1& a1, const T2& a2, const T3& b1, const T_z& z,
  */
 template <bool ReturnSameT, typename T1, typename T2, typename T3, typename T_z,
           require_t<std::integral_constant<bool, ReturnSameT>>* = nullptr>
-auto grad_2F1(const T1& a1, const T2& a2, const T3& b1, const T_z& z,
+inline auto grad_2F1(const T1& a1, const T2& a2, const T3& b1, const T_z& z,
               double precision = 1e-14, int max_steps = 1e6) {
   return internal::grad_2F1_impl<true, true, true, true>(a1, a2, b1, z,
                                                          precision, max_steps);
@@ -326,7 +326,7 @@ auto grad_2F1(const T1& a1, const T2& a2, const T3& b1, const T_z& z,
  * @param[in] max_steps number of steps to take
  */
 template <typename T1, typename T2, typename T3, typename T_z>
-auto grad_2F1(const T1& a1, const T2& a2, const T3& b1, const T_z& z,
+inline auto grad_2F1(const T1& a1, const T2& a2, const T3& b1, const T_z& z,
               double precision = 1e-14, int max_steps = 1e6) {
   return grad_2F1<false>(a1, a2, b1, z, precision, max_steps);
 }

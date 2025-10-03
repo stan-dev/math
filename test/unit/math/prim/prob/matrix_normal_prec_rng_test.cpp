@@ -131,7 +131,7 @@ TEST(ProbDistributionsMatrixNormalPrecRng, ErrorSize) {
  * Assert that the samples come from the normal distribution with this
  * mean and variance.
  */
-void assert_matches_normal_distribution(const double mean,
+inline void assert_matches_normal_distribution(const double mean,
                                         const double variance,
                                         const std::vector<double> &samples) {
   using Eigen::MatrixXd;
@@ -146,7 +146,7 @@ void assert_matches_normal_distribution(const double mean,
   assert_matches_quantiles(samples, quantiles, 1e-6);
 }
 
-std::vector<double> extract_entry(const unsigned int r, const unsigned int c,
+inline std::vector<double> extract_entry(const unsigned int r, const unsigned int c,
                                   const std::vector<Eigen::MatrixXd> &samples) {
   using Eigen::MatrixXd;
   using stan::math::matrix_normal_prec_rng;
@@ -156,7 +156,7 @@ std::vector<double> extract_entry(const unsigned int r, const unsigned int c,
   return univariate_samples;
 }
 
-std::vector<double> extract_sum_of_entries(
+inline std::vector<double> extract_sum_of_entries(
     const unsigned int r1, const unsigned int c1, const unsigned int r2,
     const unsigned int c2, const std::vector<Eigen::MatrixXd> &samples) {
   using Eigen::MatrixXd;

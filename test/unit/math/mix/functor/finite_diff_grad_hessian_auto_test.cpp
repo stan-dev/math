@@ -5,7 +5,7 @@
 #include <vector>
 
 template <typename F>
-void test_grad_hessian_finite_diff(const std::string& msg, const F& f,
+inline void test_grad_hessian_finite_diff(const std::string& msg, const F& f,
                                    Eigen::VectorXd& x) {
   double fx;
   Eigen::VectorXd grad_fx;

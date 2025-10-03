@@ -50,7 +50,7 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_x, typename T_alpha,
           typename T_beta, require_matrix_t<T_x>* = nullptr>
-return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(const T_y& y,
+inline return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(const T_y& y,
                                                          const T_x& x,
                                                          const T_alpha& alpha,
                                                          const T_beta& beta) {

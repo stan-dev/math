@@ -38,7 +38,7 @@ namespace math {
  * @param[out] H Hessian of function at argument
  */
 template <typename T, typename F>
-void hessian(const F& f, const Eigen::Matrix<T, Eigen::Dynamic, 1>& x, T& fx,
+inline void hessian(const F& f, const Eigen::Matrix<T, Eigen::Dynamic, 1>& x, T& fx,
              Eigen::Matrix<T, Eigen::Dynamic, 1>& grad,
              Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& H) {
   H.resize(x.size(), x.size());
