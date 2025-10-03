@@ -39,7 +39,9 @@
 #ifndef unlikely
 #define unlikely(x) x
 #endif
-
+#ifndef STAN_DEPRECATED
+#define STAN_DEPRECATED
+#endif
 /**
  * Turns all range and size checks into no-ops
  */
