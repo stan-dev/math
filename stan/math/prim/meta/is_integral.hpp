@@ -14,13 +14,13 @@ template <typename T>
 using is_integral = std::is_integral<std::decay_t<T>>;
 
 template <typename T>
-inline constexpr bool is_integral_v = is_integral<T>::value;
+inline constexpr bool is_integral_v = stan::is_integral<T>::value;
 
 template <typename... Types>
-inline constexpr bool is_all_integral_v = (is_integral_v<Types> && ...);
+inline constexpr bool is_all_integral_v = (stan::is_integral_v<Types> && ...);
 
 template <typename... Types>
-inline constexpr bool is_any_integral_v = (is_integral_v<Types> || ...);
+inline constexpr bool is_any_integral_v = (stan::is_integral_v<Types> || ...);
 
 }  // namespace stan
 

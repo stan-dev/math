@@ -14,15 +14,15 @@ template <typename T>
 using is_floating_point = std::is_floating_point<std::decay_t<T>>;
 
 template <typename T>
-inline constexpr bool is_floating_point_v = is_floating_point<T>::value;
+inline constexpr bool is_floating_point_v = stan::is_floating_point<T>::value;
 
 template <typename... Types>
 inline constexpr bool is_all_floating_point_v
-    = (is_floating_point_v<Types> && ...);
+    = (stan::is_floating_point_v<Types> && ...);
 
 template <typename... Types>
 inline constexpr bool is_any_floating_point_v
-    = (is_floating_point_v<Types> || ...);
+    = (stan::is_floating_point_v<Types> || ...);
 
 }  // namespace stan
 

@@ -23,13 +23,14 @@ struct tuple_element {
 };
 
 template <std::size_t N, typename T>
-struct tuple_element<N, T,
-                     std::enable_if_t<is_tuple_v<T> && (N < tuple_size_v<T>)>> {
+struct tuple_element<
+    N, T,
+    std::enable_if_t<stan::is_tuple_v<T> && (N < stan::tuple_size_v<T>)>> {
   using type = std::tuple_element_t<N, std::decay_t<T>>;
 };
 
 template <std::size_t N, typename T>
-using tuple_element_t = typename tuple_element<N, T>::type;
+using tuple_element_t = typename stan::tuple_element<N, T>::type;
 }  // namespace stan
 
 #endif
