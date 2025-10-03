@@ -1,5 +1,8 @@
-#ifndef STAN_MATH_PRIM_META_IS_TUPLE_ELT_HPP
-#define STAN_MATH_PRIM_META_IS_TUPLE_ELT_HPP
+#ifndef STAN_MATH_PRIM_META_TUPLE_ELEMENT_HPP
+#define STAN_MATH_PRIM_META_TUPLE_ELEMENT_HPP
+
+#include <stan/math/prim/meta/is_tuple.hpp>
+#include <stan/math/prim/meta/tuple_size.hpp>
 
 #include <type_traits>
 #include <cstddef>
@@ -20,8 +23,8 @@ struct tuple_element {
 };
 
 template <std::size_t N, typename T>
-struct tuple_element<
-    N, T, std::enable_if_t<(N < std::tuple_size_v<std::decay_t<T>>)>> {
+struct tuple_element<N, T,
+                     std::enable_if_t<is_tuple_v<T> && (N < tuple_size_v<T>)>> {
   using type = std::tuple_element_t<N, std::decay_t<T>>;
 };
 

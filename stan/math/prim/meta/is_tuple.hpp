@@ -62,10 +62,12 @@ inline constexpr bool is_tuple_v = math::is_tuple_v<T>;
  * @tparam N expected size
  * @ingroup type_trait
  */
+template <typename T, std::size_t N, typename = void>
+struct is_tuple_of_size : std::false_type {};
+
 template <typename T, std::size_t N>
-struct is_tuple_of_size
-    : std::bool_constant<
-          is_tuple_v<T> && std::tuple_size_v<std::decay_t<T>> == N> {};
+struct is_tuple_of_size<T, N, std::enable_if_t<is_tuple_v<T>>>
+    : std::bool_constant<std::tuple_size_v<std::decay_t<T>> == N> {};
 
 template <typename T, std::size_t N>
 inline constexpr bool is_tuple_of_size_v = is_tuple_of_size<T, N>::value;

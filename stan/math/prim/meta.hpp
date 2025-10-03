@@ -130,7 +130,8 @@
 #include <stan/math/prim/meta/scalar_type.hpp>
 #include <stan/math/prim/meta/seq_view.hpp>
 #include <stan/math/prim/meta/static_select.hpp>
-#include <stan/math/prim/meta/tuple_elt.hpp>
+#include <stan/math/prim/meta/tuple_element.hpp>
+#include <stan/math/prim/meta/tuple_size.hpp>
 #include <stan/math/prim/meta/value_type.hpp>
 #include <stan/math/prim/meta/void_t.hpp>
 #include <stan/math/prim/meta/StdVectorBuilder.hpp>
