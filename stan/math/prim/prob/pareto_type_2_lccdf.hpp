@@ -83,15 +83,12 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lccdf(
       using Log_temp_array = Eigen::Array<Log_temp_scalar, Eigen::Dynamic, 1>;
       if constexpr (is_vector<T_y>::value || is_vector<T_loc>::value
                     || is_vector<T_scale>::value) {
-        partials<3>(ops_partials) = -forward_as<Log_temp_array>(log_temp);
+        partials<3>(ops_partials) = -log_temp;
       } else {
-        partials<3>(ops_partials) = Log_temp_array::Constant(
-            N, 1, -forward_as<Log_temp_scalar>(log_temp));
+        partials<3>(ops_partials) = Log_temp_array::Constant(N, 1, -log_temp);
       }
     } else {
-      forward_as<internal::broadcast_array<T_partials_return>>(
-          partials<3>(ops_partials))
-          = -log_temp * N / max_size(y, mu, lambda);
+      partials<3>(ops_partials) = -log_temp * N / max_size(y, mu, lambda);
     }
   }
 

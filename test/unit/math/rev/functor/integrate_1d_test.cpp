@@ -222,15 +222,15 @@ void test_derivatives(const F &f, double a, double b,
                                             tolerance);
     integral.grad();
     EXPECT_LE(std::abs(val - integral.val()), tolerance);
-    if (stan::is_var<T_theta>::value) {
+    if constexpr (stan::is_var<T_theta>::value) {
       for (size_t i = 0; i < grad.size(); ++i)
         EXPECT_LE(std::abs(grad[i] - get_adjoint_if_var(thetas_[i])),
                   tolerance);
     }
-    if (stan::is_var<T_a>::value) {
+    if constexpr (stan::is_var<T_a>::value) {
       EXPECT_LE(std::abs(d_a - get_adjoint_if_var(a_)), tolerance);
     }
-    if (stan::is_var<T_b>::value) {
+    if constexpr (stan::is_var<T_b>::value) {
       EXPECT_LE(std::abs(d_b - get_adjoint_if_var(b_)), tolerance);
     }
   }
