@@ -71,7 +71,7 @@ inline return_type_t<T_alpha> yule_simon_lccdf(const T_n& n,
     auto nap1 = n_vec.val(i) + ap1;
     log_ccdf += lgamma(ap1) + lgamma(np1) - lgamma(nap1);
 
-    if constexpr (!is_constant<T_alpha>::value) {
+    if constexpr (is_autodiff_v<T_alpha>) {
       partials<0>(ops_partials)[i] += digamma(ap1) - digamma(nap1);
     }
   }
