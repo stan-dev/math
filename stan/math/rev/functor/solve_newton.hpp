@@ -300,7 +300,7 @@ algebra_solver_newton(const F& f, const T1& x, const T2& y,
                       std::ostream* const msgs = nullptr,
                       const double scaling_step_size = 1e-3,
                       const double function_tolerance = 1e-6,
-                      const long int max_num_steps
+                      const int64_t max_num_steps
                       = 200) {  // NOLINT(runtime/int)
   return solve_newton_tol(algebra_solver_adapter<F>(f), x, scaling_step_size,
                           function_tolerance, max_num_steps, msgs, y, dat,
