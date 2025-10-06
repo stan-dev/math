@@ -113,9 +113,8 @@ inline return_type_t<T_prob_cl> binomial_lpmf(const T_n_cl& n, const T_N_cl N,
     if constexpr (need_sums) {
       int sum_n = sum(from_matrix_cl(sum_n_cl));
       int sum_N = sum(from_matrix_cl(sum_N_cl));
-      double theta_dbl = forward_as<double>(theta_val);
-      double& partial = forward_as<internal::broadcast_array<double>>(
-          partials<0>(ops_partials))[0];
+      double theta_dbl = theta_val;
+      double& partial = partials<0>(ops_partials)[0];
       if (sum_N != 0) {
         if (sum_n == 0) {
           partial = -sum_N / (1.0 - theta_dbl);

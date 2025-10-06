@@ -64,10 +64,9 @@ inline return_type_t<T_prob> bernoulli_logit_lpmf(const T_n& n,
       (2 * as_array_or_scalar(n_double) - 1));
   T_partials_array ntheta;
   if constexpr (is_vector<T_n>::value || is_vector<T_prob>::value) {
-    ntheta = forward_as<T_partials_array>(signs * theta_val);
+    ntheta = signs * theta_val;
   } else {
-    T_partials_return ntheta_s
-        = forward_as<T_partials_return>(signs * theta_val);
+    T_partials_return ntheta_s = signs * theta_val;
     ntheta = T_partials_array::Constant(1, 1, ntheta_s);
   }
   T_partials_array exp_m_ntheta = exp(-ntheta);

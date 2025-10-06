@@ -111,9 +111,7 @@ inline return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> binomial_logit_glm_lpmf(
     if constexpr (is_alpha_vector) {
       partials<1>(ops_partials) = theta_deriv_cl;
     } else {
-      forward_as<internal::broadcast_array<double>>(
-          partials<1>(ops_partials))[0]
-          = sum(from_matrix_cl(theta_deriv_sum_cl));
+      partials<1>(ops_partials)[0] = sum(from_matrix_cl(theta_deriv_sum_cl));
     }
   }
   if constexpr (is_autodiff_v<T_beta_cl>) {

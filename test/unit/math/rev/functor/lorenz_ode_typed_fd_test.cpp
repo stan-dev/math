@@ -22,13 +22,17 @@ using lorenz_test_types = boost::mp11::mp_product<
 
 TYPED_TEST_SUITE_P(lorenz_test);
 TYPED_TEST_P(lorenz_test, param_and_data_finite_diff) {
-  if (std::is_same<TypeParam,
-                   std::tuple<ode_rk45_functor, ode_rk45_functor>>::value) {
+  constexpr bool is_rk45
+      = std::is_same<TypeParam,
+                     std::tuple<ode_rk45_functor, ode_rk45_functor>>::value;
+  constexpr bool is_ckrk
+      = std::is_same<TypeParam,
+                     std::tuple<ode_ckrk_functor, ode_ckrk_functor>>::value;
+  if constexpr (is_rk45) {
     this->test_fd_vd(1.e-6, 3e-2);
     this->test_fd_dv(1.e-6, 3e-2);
     this->test_fd_vv(1.e-6, 3e-2);
-  } else if (std::is_same<TypeParam, std::tuple<ode_ckrk_functor,
-                                                ode_ckrk_functor>>::value) {
+  } else if constexpr (is_ckrk) {
     this->test_fd_vd(1.e-6, 5e-2);
     this->test_fd_dv(1.e-6, 5e-2);
     this->test_fd_vv(1.e-6, 5e-2);

@@ -84,7 +84,7 @@ inline auto elt_divide(Scal s, const Mat& m) {
   reverse_pass_callback([m, s, res]() mutable {
     m.adj().array() -= res.val().array() * res.adj().array() / m.val().array();
     if constexpr (is_autodiff_v<Scal>)
-      forward_as<var>(s).adj() += (res.adj().array() / m.val().array()).sum();
+      s.adj() += (res.adj().array() / m.val().array()).sum();
   });
 
   return res;

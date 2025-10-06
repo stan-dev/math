@@ -456,7 +456,7 @@ inline void error_conditions_test(const F& f,
 }
 
 template <typename T>
-inline void inline unsolvable_test(Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
+inline void unsolvable_test(Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
                                    int solver_type = 0, bool use_tol = false) {
   Eigen::VectorXd x(2);
   x << 1, 1;
@@ -482,7 +482,7 @@ inline void inline unsolvable_test(Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
 }
 
 template <typename T>
-inline void inline unsolvable_flag_test(Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
+inline void unsolvable_flag_test(Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
                                         int solver_type = 0,
                                         bool use_tol = false) {
   Eigen::VectorXd x(2);

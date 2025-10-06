@@ -12,7 +12,7 @@ auto offset_multiplier_constrain_functor2
     = [](const auto& a, const auto& b, const auto& c) {
         using T_lp = stan::return_type_t<decltype(a), decltype(b), decltype(c)>;
         T_lp lp(4);
-        if (!stan::is_constant<T_lp>::value) {
+        if constexpr (!stan::is_constant<T_lp>::value) {
           stan::math::adjoint_of(lp) += 9;
         }
         return stan::math::offset_multiplier_constrain(a, b, c, lp);

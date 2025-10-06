@@ -24,7 +24,7 @@ inline std::vector<double> finite_diffs_multi_normal3(
   double nu_plus = stan::math::value_of(nu);
   double nu_minus = nu_plus;
 
-  if (!stan::is_constant_all<T_y>::value) {
+  if constexpr (!stan::is_constant_all<T_y>::value) {
     for (size_t i = 0; i < vec_y.size(); ++i) {
       double recover_vec_y_plus = vec_y_plus[i];
       double recover_vec_y_minus = vec_y_minus[i];
@@ -38,7 +38,7 @@ inline std::vector<double> finite_diffs_multi_normal3(
       vec_y_minus[i] = recover_vec_y_minus;
     }
   }
-  if (!stan::is_constant_all<T_mu>::value) {
+  if constexpr (!stan::is_constant_all<T_mu>::value) {
     for (size_t i = 0; i < vec_mu.size(); ++i) {
       double recover_vec_mu_plus = vec_mu_plus[i];
       double recover_vec_mu_minus = vec_mu_minus[i];
@@ -52,7 +52,7 @@ inline std::vector<double> finite_diffs_multi_normal3(
       vec_mu_minus[i] = recover_vec_mu_minus;
     }
   }
-  if (!stan::is_constant_all<T_sigma>::value) {
+  if constexpr (!stan::is_constant_all<T_sigma>::value) {
     for (size_t i = 0; i < vec_sigma.size(); ++i) {
       double recover_vec_sigma_plus = vec_sigma_plus[i];
       double recover_vec_sigma_minus = vec_sigma_minus[i];
@@ -66,7 +66,7 @@ inline std::vector<double> finite_diffs_multi_normal3(
       vec_sigma_minus[i] = recover_vec_sigma_minus;
     }
   }
-  if (!stan::is_constant_all<T_nu>::value) {
+  if constexpr (!stan::is_constant_all<T_nu>::value) {
     nu_plus += epsilon;
     nu_minus -= epsilon;
     diffs.push_back(
@@ -86,19 +86,19 @@ inline std::vector<double> grad_multi_normal3(
   stan::math::var fx = fun(vec_y, vec_mu, vec_sigma, nu);
   std::vector<double> grad;
   std::vector<stan::math::var> vec_vars;
-  if (!stan::is_constant_all<T_y>::value) {
+  if constexpr (!stan::is_constant_all<T_y>::value) {
     for (size_t i = 0; i < vec_y.size(); i++)
       vec_vars.push_back(vec_y[i]);
   }
-  if (!stan::is_constant_all<T_mu>::value) {
+  if constexpr (!stan::is_constant_all<T_mu>::value) {
     for (size_t i = 0; i < vec_mu.size(); i++)
       vec_vars.push_back(vec_mu[i]);
   }
-  if (!stan::is_constant_all<T_sigma>::value) {
+  if constexpr (!stan::is_constant_all<T_sigma>::value) {
     for (size_t i = 0; i < vec_sigma.size(); i++)
       vec_vars.push_back(vec_sigma[i]);
   }
-  if (!stan::is_constant_all<T_nu>::value)
+  if constexpr (!stan::is_constant_all<T_nu>::value)
     vec_vars.push_back(nu);
 
   fx.grad(vec_vars, grad);

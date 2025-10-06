@@ -138,7 +138,7 @@ inline void expect_near_rel(const std::string& msg, EigMat1&& x1, EigMat2&& x2,
   for (int j = 0; j < x1.cols(); ++j) {
     for (int i = 0; i < x1.rows(); ++i) {
       std::string msg2 = std::string("expect_near_rel; require items x1(");
-      if (stan::is_vector<EigMat1>::value) {
+      if constexpr (stan::is_vector<EigMat1>::value) {
         msg2 += std::to_string(sentinal_val) + ") = x2("
                 + std::to_string(sentinal_val) + "): " + msg;
       } else {
