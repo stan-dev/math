@@ -122,9 +122,9 @@ inline constexpr auto make_tuple_seq(std::index_sequence<Idx...> idxs) {
  */
 template <typename... T1, typename... T2>
 inline void expect_near_rel_matvar(const std::string& message,
-                            const std::tuple<T1...>& x,
-                            const std::tuple<T2...>& y,
-                            const ad_tolerances& tols) {
+                                   const std::tuple<T1...>& x,
+                                   const std::tuple<T2...>& y,
+                                   const ad_tolerances& tols) {
   if constexpr (!(sizeof...(T1) == sizeof...(T2))) {
     FAIL() << "The number of arguments in each tuple must match";
   }
