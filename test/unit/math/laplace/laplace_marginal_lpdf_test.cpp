@@ -73,8 +73,6 @@ TEST(laplace, poisson_log_phi_dim_2) {
   constexpr int max_num_steps = 100;
   using stan::is_var_v;
   using stan::scalar_type_t;
-  using stan::math::test::laplace_issue;
-  constexpr std::array known_issues{laplace_issue{0, 0, 0}};
   stan::test::ad_tolerances tols;
 //  tols.gradient_grad_ = 1e-1;
   stan::math::test::run_solver_grid(
@@ -170,8 +168,7 @@ TEST(laplace, bernoulli_logit_phi_dim500) {
   Eigen::VectorXd delta_L;
   std::vector<double> delta;
   constexpr int dim_phi = 2;
-  Eigen::Matrix<double, Eigen::Dynamic, 1> phi_dbl(dim_phi);
-  phi_dbl << 1.6, 1;
+  Eigen::Matrix<double, Eigen::Dynamic, 1> phi_dbl{{1.6, 1}};
 
   double target = laplace_marginal<false>(
       bernoulli_logit_likelihood{}, std::forward_as_tuple(y),
@@ -332,12 +329,6 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
   auto phi_1 = phi_dbl(1);
   Eigen::VectorXd phi_rest = phi_dbl.tail(2);
   Eigen::VectorXd phi_01{{phi_0, phi_1}};
-  using stan::math::test::laplace_issue;
-  using stan::math::test::LaplaceFailures;
-  constexpr std::array known_issues{
-      std::pair(laplace_issue{1, 0, 1}, LaplaceFailures::HessianFailure)};
-
-
   for (int solver_num = 1; solver_num < 4; solver_num++) {
     for (int max_steps_line_search = 300; max_steps_line_search <= 300;
          max_steps_line_search += 100) {
