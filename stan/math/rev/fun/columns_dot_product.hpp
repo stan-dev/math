@@ -67,7 +67,7 @@ inline auto columns_dot_product(const Mat1& v1, const Mat2& v2) {
       (value_of(v1).array() * value_of(v2).array()).colwise().sum().matrix());
   using return_t = return_var_matrix_t<inner_return_t, Mat1, Mat2>;
 
-  if (!is_constant<Mat1>::value && !is_constant<Mat2>::value) {
+  if constexpr (is_autodiff_v<Mat1> && is_autodiff_v<Mat2>) {
     arena_t<promote_scalar_t<var, Mat1>> arena_v1 = v1;
     arena_t<promote_scalar_t<var, Mat2>> arena_v2 = v2;
 
@@ -75,12 +75,12 @@ inline auto columns_dot_product(const Mat1& v1, const Mat2& v2) {
         = (arena_v1.val().array() * arena_v2.val().array()).colwise().sum();
 
     reverse_pass_callback([arena_v1, arena_v2, res]() mutable {
-      if (is_var_matrix<Mat1>::value) {
+      if constexpr (is_var_matrix<Mat1>::value) {
         arena_v1.adj().noalias() += arena_v2.val() * res.adj().asDiagonal();
       } else {
         arena_v1.adj() += arena_v2.val() * res.adj().asDiagonal();
       }
-      if (is_var_matrix<Mat2>::value) {
+      if constexpr (is_var_matrix<Mat2>::value) {
         arena_v2.adj().noalias() += arena_v1.val() * res.adj().asDiagonal();
       } else {
         arena_v2.adj() += arena_v1.val() * res.adj().asDiagonal();
@@ -88,14 +88,14 @@ inline auto columns_dot_product(const Mat1& v1, const Mat2& v2) {
     });
 
     return res;
-  } else if (!is_constant<Mat2>::value) {
+  } else if constexpr (is_autodiff_v<Mat2>) {
     arena_t<promote_scalar_t<double, Mat1>> arena_v1 = value_of(v1);
     arena_t<promote_scalar_t<var, Mat2>> arena_v2 = v2;
 
     return_t res = (arena_v1.array() * arena_v2.val().array()).colwise().sum();
 
     reverse_pass_callback([arena_v1, arena_v2, res]() mutable {
-      if (is_var_matrix<Mat2>::value) {
+      if constexpr (is_var_matrix<Mat2>::value) {
         arena_v2.adj().noalias() += arena_v1 * res.adj().asDiagonal();
       } else {
         arena_v2.adj() += arena_v1 * res.adj().asDiagonal();
@@ -110,7 +110,7 @@ inline auto columns_dot_product(const Mat1& v1, const Mat2& v2) {
     return_t res = (arena_v1.val().array() * arena_v2.array()).colwise().sum();
 
     reverse_pass_callback([arena_v1, arena_v2, res]() mutable {
-      if (is_var_matrix<Mat2>::value) {
+      if constexpr (is_var_matrix<Mat2>::value) {
         arena_v1.adj().noalias() += arena_v2 * res.adj().asDiagonal();
       } else {
         arena_v1.adj() += arena_v2 * res.adj().asDiagonal();

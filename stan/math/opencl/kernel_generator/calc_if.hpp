@@ -44,7 +44,7 @@ class calc_if_
                                const std::string& col_index_name,
                                const bool view_handled,
                                const std::string& var_name_arg) const {
-    if (Do_Calculate) {
+    if constexpr (Do_Calculate) {
       var_name_ = var_name_arg;
     }
     return {};
@@ -70,7 +70,7 @@ class calc_if_
       std::unordered_map<const void*, const char*>& generated_all,
       name_generator& ng, const std::string& row_index_name,
       const std::string& col_index_name, const T_result& result) const {
-    if (Do_Calculate) {
+    if constexpr (Do_Calculate) {
       return this->template get_arg<0>().get_whole_kernel_parts(
           generated, generated_all, ng, row_index_name, col_index_name, result);
     } else {
@@ -92,7 +92,7 @@ class calc_if_
       std::unordered_map<const void*, const char*>& generated,
       std::unordered_map<const void*, const char*>& generated_all,
       cl::Kernel& kernel, int& arg_num) const {
-    if (Do_Calculate) {
+    if constexpr (Do_Calculate) {
       this->template get_arg<0>().set_args(generated, generated_all, kernel,
                                            arg_num);
     }

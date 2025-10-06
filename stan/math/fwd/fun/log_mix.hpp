@@ -41,16 +41,16 @@ inline void log_mix_partial_helper(
       = 1.0 / t_plus_one_m_t_prod_exp_lam2_m_lam1;
 
   unsigned int offset = 0;
-  if (std::is_same<T_theta, partial_return_type>::value) {
+  if constexpr (std::is_same<T_theta, partial_return_type>::value) {
     partials_array[offset]
         = one_m_exp_lam2_m_lam1 * one_d_t_plus_one_m_t_prod_exp_lam2_m_lam1;
     ++offset;
   }
-  if (std::is_same<T_lambda1, partial_return_type>::value) {
+  if constexpr (std::is_same<T_lambda1, partial_return_type>::value) {
     partials_array[offset] = theta * one_d_t_plus_one_m_t_prod_exp_lam2_m_lam1;
     ++offset;
   }
-  if (std::is_same<T_lambda2, partial_return_type>::value) {
+  if constexpr (std::is_same<T_lambda2, partial_return_type>::value) {
     partials_array[offset] = one_m_t_prod_exp_lam2_m_lam1
                              * one_d_t_plus_one_m_t_prod_exp_lam2_m_lam1;
   }

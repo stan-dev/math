@@ -41,7 +41,7 @@ return_type_t<T_rate_cl> poisson_lpmf(const T_n_cl& n,
   if (N == 0) {
     return 0.0;
   }
-  if (!include_summand<propto, T_rate_cl>::value) {
+  if constexpr (!include_summand<propto, T_rate_cl>::value) {
     return 0.0;
   }
 
@@ -76,8 +76,7 @@ return_type_t<T_rate_cl> poisson_lpmf(const T_n_cl& n,
   results(check_n_nonnegative, check_lambda_nonnegative, return_log_zero_cl,
           logp_cl, deriv_cl)
       = expressions(n_nonnegative, lambda_nonnegative, return_log_zero,
-                    logp_expr,
-                    calc_if<!is_constant_all<T_rate_cl>::value>(deriv));
+                    logp_expr, calc_if<is_autodiff_v<T_rate_cl>>(deriv));
 
   if (from_matrix_cl(return_log_zero_cl).any()) {
     return LOG_ZERO;
@@ -85,7 +84,7 @@ return_type_t<T_rate_cl> poisson_lpmf(const T_n_cl& n,
 
   logp = sum(from_matrix_cl(logp_cl));
 
-  if (!is_constant_all<T_rate_cl>::value) {
+  if constexpr (is_autodiff_v<T_rate_cl>) {
     partials<0>(ops_partials) = deriv_cl;
   }
 

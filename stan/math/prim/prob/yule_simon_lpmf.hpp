@@ -75,7 +75,7 @@ inline return_type_t<T_alpha> yule_simon_lpmf(const T_n &n,
     T_partials_return alpha_plus_one = alpha_vec.val(i) + 1.0;
     logp += log(alpha_vec.val(i)) + lgamma(alpha_plus_one)
             - lgamma(n_vec.val(i) + alpha_plus_one);
-    if constexpr (!is_constant<T_alpha>::value) {
+    if constexpr (is_autodiff_v<T_alpha>) {
       partials<0>(ops_partials)[i] += 1.0 / alpha_vec.val(i)
                                       + digamma(alpha_plus_one)
                                       - digamma(n_vec.val(i) + alpha_plus_one);

@@ -19,9 +19,11 @@ namespace math {
 template <typename T,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
 value_type_t<T> prod(const T& m) {
-  if (is_matrix_cl<T>::value && m.size() < 1000) {
-    // for small matrices running another kernel is not worth it
-    return prod(from_matrix_cl(m));
+  if constexpr (is_matrix_cl<T>::value) {
+    if (m.size() < 1000) {
+      // for small matrices running another kernel is not worth it
+      return prod(from_matrix_cl(m));
+    }
   }
   matrix_cl<value_type_t<T>> res;
   if (m.rows() <= 8) {

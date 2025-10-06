@@ -28,7 +28,7 @@ template <typename T1, typename T2, require_all_matrix_t<T1, T2>* = nullptr,
           require_not_row_and_col_vector_t<T1, T2>* = nullptr>
 inline auto multiply(T1&& A, T2&& B) {
   check_multiplicable("multiply", "A", A, "B", B);
-  if (!is_constant<T2>::value && !is_constant<T1>::value) {
+  if constexpr (is_autodiff_v<T2> && is_autodiff_v<T1>) {
     arena_t<promote_scalar_t<var, T1>> arena_A(std::forward<T1>(A));
     arena_t<promote_scalar_t<var, T2>> arena_B(std::forward<T2>(B));
     auto arena_A_val = to_arena(arena_A.val());
@@ -39,7 +39,7 @@ inline auto multiply(T1&& A, T2&& B) {
 
     reverse_pass_callback(
         [arena_A, arena_B, arena_A_val, arena_B_val, res]() mutable {
-          if (is_var_matrix<T1>::value || is_var_matrix<T2>::value) {
+          if constexpr (is_var_matrix<T1>::value || is_var_matrix<T2>::value) {
             arena_A.adj() += res.adj_op() * arena_B_val.transpose();
             arena_B.adj() += arena_A_val.transpose() * res.adj_op();
           } else {
@@ -49,7 +49,7 @@ inline auto multiply(T1&& A, T2&& B) {
           }
         });
     return res;
-  } else if (!is_constant<T2>::value) {
+  } else if constexpr (is_autodiff_v<T2>) {
     arena_t<promote_scalar_t<double, T1>> arena_A = value_of(A);
     arena_t<promote_scalar_t<var, T2>> arena_B(std::forward<T2>(B));
     using return_t
@@ -89,7 +89,7 @@ template <typename T1, typename T2, require_all_matrix_t<T1, T2>* = nullptr,
           require_row_and_col_vector_t<T1, T2>* = nullptr>
 inline var multiply(const T1& A, const T2& B) {
   check_multiplicable("multiply", "A", A, "B", B);
-  if (!is_constant<T2>::value && !is_constant<T1>::value) {
+  if constexpr (is_autodiff_v<T2> && is_autodiff_v<T1>) {
     arena_t<promote_scalar_t<var, T1>> arena_A = A;
     arena_t<promote_scalar_t<var, T2>> arena_B = B;
     arena_t<promote_scalar_t<double, T1>> arena_A_val = value_of(arena_A);
@@ -103,7 +103,7 @@ inline var multiply(const T1& A, const T2& B) {
           arena_B.adj().array() += arena_A_val.transpose().array() * res_adj;
         });
     return res;
-  } else if (!is_constant<T2>::value) {
+  } else if constexpr (is_autodiff_v<T2>) {
     arena_t<promote_scalar_t<var, T2>> arena_B = B;
     arena_t<promote_scalar_t<double, T1>> arena_A_val = value_of(A);
     var res = arena_A_val.dot(value_of(arena_B));
@@ -138,7 +138,7 @@ template <typename T1, typename T2, require_not_matrix_t<T1>* = nullptr,
           require_return_type_t<is_var, T1, T2>* = nullptr,
           require_not_row_and_col_vector_t<T1, T2>* = nullptr>
 inline auto multiply(const T1& a, T2&& B) {
-  if (!is_constant<T2>::value && !is_constant<T1>::value) {
+  if constexpr (is_autodiff_v<T2> && is_autodiff_v<T1>) {
     arena_t<promote_scalar_t<var, T2>> arena_B(std::forward<T2>(B));
     using return_t = return_var_matrix_t<T2, T1, T2>;
     var av = a;
@@ -154,7 +154,7 @@ inline auto multiply(const T1& a, T2&& B) {
       }
     });
     return res;
-  } else if (!is_constant<T2>::value) {
+  } else if constexpr (is_autodiff_v<T2>) {
     double val_a = value_of(a);
     arena_t<promote_scalar_t<var, T2>> arena_B(std::forward<T2>(B));
     using return_t = return_var_matrix_t<T2, T1, T2>;

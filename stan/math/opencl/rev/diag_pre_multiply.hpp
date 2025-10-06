@@ -38,20 +38,20 @@ inline var_value<matrix_cl<double>> diag_pre_multiply(T1&& v1, T2&& v2) {
       res_val,
       [v1_arena, v2_arena](const vari_value<matrix_cl<double>>& res) mutable {
         if (v1_arena.cols() == 1) {
-          if (!is_constant<std::decay_t<T1>>::value) {
+          if constexpr (is_autodiff_v<std::decay_t<T1>>) {
             adjoint_of(v1_arena)
                 += rowwise_sum(elt_multiply(res.adj(), value_of(v2_arena)));
           }
-          if (!is_constant<std::decay_t<T2>>::value) {
+          if constexpr (is_autodiff_v<std::decay_t<T2>>) {
             adjoint_of(v2_arena) += elt_multiply(
                 res.adj(), rowwise_broadcast(value_of(v1_arena)));
           }
         } else {
-          if (!is_constant<std::decay_t<T1>>::value) {
+          if constexpr (is_autodiff_v<std::decay_t<T1>>) {
             adjoint_of(transpose(v1_arena))
                 += rowwise_sum(elt_multiply(res.adj(), value_of(v2_arena)));
           }
-          if (!is_constant<std::decay_t<T2>>::value) {
+          if constexpr (is_autodiff_v<std::decay_t<T2>>) {
             adjoint_of(v2_arena) += elt_multiply(
                 res.adj(), rowwise_broadcast(transpose(value_of(v1_arena))));
           }

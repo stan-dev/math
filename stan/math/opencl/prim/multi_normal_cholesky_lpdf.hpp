@@ -51,7 +51,7 @@ inline return_type_t<T_y_cl, T_loc_cl, T_covar_cl> multi_normal_cholesky_lpdf(
   if (max_size(y, mu, L) == 0) {
     return 0.0;
   }
-  if (!include_summand<propto, T_y_cl, T_loc_cl, T_covar_cl>::value) {
+  if constexpr (!include_summand<propto, T_y_cl, T_loc_cl, T_covar_cl>::value) {
     return 0.0;
   }
 
@@ -63,7 +63,7 @@ inline return_type_t<T_y_cl, T_loc_cl, T_covar_cl> multi_normal_cholesky_lpdf(
   int N_cases = std::max(y_val.cols(), mu_val.cols());
 
   double logp = 0;
-  if (include_summand<propto>::value) {
+  if constexpr (include_summand<propto>::value) {
     logp += NEG_LOG_SQRT_TWO_PI * L_size * N_cases;
   }
 
@@ -108,7 +108,7 @@ inline return_type_t<T_y_cl, T_loc_cl, T_covar_cl> multi_normal_cholesky_lpdf(
         = expressions(mu_finite, y_not_nan, y_mu_diff);
   }
 
-  if (include_summand<propto, T_covar_cl>::value) {
+  if constexpr (include_summand<propto, T_covar_cl>::value) {
     logp += sum(from_matrix_cl(sum_log_diag_inv_L_cl)) * N_cases;
   }
 
@@ -118,21 +118,21 @@ inline return_type_t<T_y_cl, T_loc_cl, T_covar_cl> multi_normal_cholesky_lpdf(
 
   auto ops_partials = make_partials_propagator(y, mu, L);
 
-  if (!is_constant_all<T_y_cl>::value) {
+  if constexpr (is_autodiff_v<T_y_cl>) {
     if (y_val.cols() == 1) {
       partials<0>(ops_partials) = -rowwise_sum(scaled_diff);
     } else {
       partials<0>(ops_partials) = -scaled_diff;
     }
   }
-  if (!is_constant_all<T_loc_cl>::value) {
+  if constexpr (is_autodiff_v<T_loc_cl>) {
     if (mu_val.cols() == 1) {
       partials<1>(ops_partials) = rowwise_sum(scaled_diff);
     } else {
       partials<1>(ops_partials) = scaled_diff;
     }
   }
-  if (!is_constant_all<T_covar_cl>::value) {
+  if constexpr (is_autodiff_v<T_covar_cl>) {
     partials<2>(ops_partials) = scaled_diff * half - N_cases * transpose(inv_L);
   }
 

@@ -51,7 +51,8 @@ inline return_type_t<T_n_cl, T_shape_cl, T_inv_scale_cl> neg_binomial_lpmf(
   if (N == 0) {
     return 0.0;
   }
-  if (!include_summand<propto, T_n_cl, T_shape_cl, T_inv_scale_cl>::value) {
+  if constexpr (!include_summand<propto, T_n_cl, T_shape_cl,
+                                 T_inv_scale_cl>::value) {
     return 0.0;
   }
 
@@ -95,18 +96,17 @@ inline return_type_t<T_n_cl, T_shape_cl, T_inv_scale_cl> neg_binomial_lpmf(
   results(check_n_nonnegative, check_alpha_positive_finite,
           check_beta_positive_finite, logp_cl, alpha_deriv_cl, beta_deriv_cl)
       = expressions(n_nonnegative, alpha_positive_finite, beta_positive_finite,
-                    logp_expr,
-                    calc_if<!is_constant<T_shape_cl>::value>(alpha_deriv),
-                    calc_if<!is_constant<T_inv_scale_cl>::value>(beta_deriv));
+                    logp_expr, calc_if<is_autodiff_v<T_shape_cl>>(alpha_deriv),
+                    calc_if<is_autodiff_v<T_inv_scale_cl>>(beta_deriv));
 
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
 
   auto ops_partials = make_partials_propagator(alpha_col, beta_col);
 
-  if (!is_constant<T_shape_cl>::value) {
+  if constexpr (is_autodiff_v<T_shape_cl>) {
     partials<0>(ops_partials) = std::move(alpha_deriv_cl);
   }
-  if (!is_constant<T_inv_scale_cl>::value) {
+  if constexpr (is_autodiff_v<T_inv_scale_cl>) {
     partials<1>(ops_partials) = std::move(beta_deriv_cl);
   }
   return ops_partials.build(logp);

@@ -64,12 +64,12 @@ return_type_t<T_y, T_shape, T_scale> inv_gamma_lcdf(const T_y& y,
     }
   }
 
-  VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
-      gamma_vec(math::size(alpha));
-  VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
-      digamma_vec(math::size(alpha));
+  VectorBuilder<is_autodiff_v<T_shape>, T_partials_return, T_shape> gamma_vec(
+      math::size(alpha));
+  VectorBuilder<is_autodiff_v<T_shape>, T_partials_return, T_shape> digamma_vec(
+      math::size(alpha));
 
-  if (!is_constant_all<T_shape>::value) {
+  if constexpr (is_autodiff_v<T_shape>) {
     for (size_t i = 0; i < stan::math::size(alpha); i++) {
       const T_partials_return alpha_dbl = alpha_vec.val(i);
       gamma_vec[i] = tgamma(alpha_dbl);
@@ -93,19 +93,19 @@ return_type_t<T_y, T_shape, T_scale> inv_gamma_lcdf(const T_y& y,
 
     P += log(Pn);
 
-    if (!is_constant_all<T_y>::value) {
+    if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials)[n] += beta_dbl * y_inv_dbl * y_inv_dbl
                                       * exp(-beta_dbl * y_inv_dbl)
                                       * pow(beta_dbl * y_inv_dbl, alpha_dbl - 1)
                                       / tgamma(alpha_dbl) / Pn;
     }
-    if (!is_constant_all<T_shape>::value) {
+    if constexpr (is_autodiff_v<T_shape>) {
       partials<1>(ops_partials)[n]
           += grad_reg_inc_gamma(alpha_dbl, beta_dbl * y_inv_dbl, gamma_vec[n],
                                 digamma_vec[n])
              / Pn;
     }
-    if (!is_constant_all<T_scale>::value) {
+    if constexpr (is_autodiff_v<T_scale>) {
       partials<2>(ops_partials)[n] += -y_inv_dbl * exp(-beta_dbl * y_inv_dbl)
                                       * pow(beta_dbl * y_inv_dbl, alpha_dbl - 1)
                                       / tgamma(alpha_dbl) / Pn;

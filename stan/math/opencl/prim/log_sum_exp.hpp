@@ -33,7 +33,7 @@ inline double log_sum_exp(const T& a) {
   if (a.size() == 0) {
     return NEGATIVE_INFTY;
   }
-  if (stan::internal::is_trivial_kg_expression<T>::value) {
+  if constexpr (stan::internal::is_trivial_kg_expression<T>::value) {
     double a_max = from_matrix_cl(max_2d(a)).maxCoeff();
     if (!std::isfinite(a_max)) {
       return a_max;

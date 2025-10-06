@@ -60,13 +60,13 @@ return_type_t<T_y, T_shape, T_scale> frechet_lcdf(const T_y& y,
 
     cdf_log -= pow_n;
 
-    if (!is_constant_all<T_y>::value) {
+    if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials)[n] += pow_n * alpha_dbl / y_dbl;
     }
-    if (!is_constant_all<T_shape>::value) {
+    if constexpr (is_autodiff_v<T_shape>) {
       partials<1>(ops_partials)[n] += pow_n * log(y_dbl / sigma_dbl);
     }
-    if (!is_constant_all<T_scale>::value) {
+    if constexpr (is_autodiff_v<T_scale>) {
       partials<2>(ops_partials)[n] -= pow_n * alpha_dbl / sigma_dbl;
     }
   }

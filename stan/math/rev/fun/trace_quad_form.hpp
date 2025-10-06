@@ -120,7 +120,7 @@ inline var trace_quad_form(const Mat1& A, const Mat2& B) {
 
   var res;
 
-  if (!is_constant<Mat1>::value && !is_constant<Mat2>::value) {
+  if constexpr (is_autodiff_v<Mat1> && is_autodiff_v<Mat2>) {
     arena_t<promote_scalar_t<var, Mat1>> arena_A = A;
     arena_t<promote_scalar_t<var, Mat2>> arena_B = B;
 
@@ -129,7 +129,7 @@ inline var trace_quad_form(const Mat1& A, const Mat2& B) {
               .trace();
 
     reverse_pass_callback([arena_A, arena_B, res]() mutable {
-      if (is_var_matrix<Mat1>::value) {
+      if constexpr (is_var_matrix<Mat1>::value) {
         arena_A.adj().noalias()
             += res.adj() * value_of(arena_B) * value_of(arena_B).transpose();
       } else {
@@ -137,7 +137,7 @@ inline var trace_quad_form(const Mat1& A, const Mat2& B) {
             += res.adj() * value_of(arena_B) * value_of(arena_B).transpose();
       }
 
-      if (is_var_matrix<Mat2>::value) {
+      if constexpr (is_var_matrix<Mat2>::value) {
         arena_B.adj().noalias()
             += res.adj() * (value_of(arena_A) + value_of(arena_A).transpose())
                * value_of(arena_B);
@@ -147,7 +147,7 @@ inline var trace_quad_form(const Mat1& A, const Mat2& B) {
                          * value_of(arena_B);
       }
     });
-  } else if (!is_constant<Mat2>::value) {
+  } else if constexpr (is_autodiff_v<Mat2>) {
     arena_t<promote_scalar_t<double, Mat1>> arena_A = value_of(A);
     arena_t<promote_scalar_t<var, Mat2>> arena_B = B;
 
@@ -156,7 +156,7 @@ inline var trace_quad_form(const Mat1& A, const Mat2& B) {
               .trace();
 
     reverse_pass_callback([arena_A, arena_B, res]() mutable {
-      if (is_var_matrix<Mat2>::value) {
+      if constexpr (is_var_matrix<Mat2>::value) {
         arena_B.adj().noalias()
             += res.adj() * (arena_A + arena_A.transpose()) * value_of(arena_B);
       } else {
@@ -171,7 +171,7 @@ inline var trace_quad_form(const Mat1& A, const Mat2& B) {
     res = (arena_B.transpose() * value_of(arena_A) * arena_B).trace();
 
     reverse_pass_callback([arena_A, arena_B, res]() mutable {
-      if (is_var_matrix<Mat1>::value) {
+      if constexpr (is_var_matrix<Mat1>::value) {
         arena_A.adj().noalias() += res.adj() * arena_B * arena_B.transpose();
       } else {
         arena_A.adj() += res.adj() * arena_B * arena_B.transpose();

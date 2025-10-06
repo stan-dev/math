@@ -154,7 +154,7 @@ inline void elementwise_check(const F& is_good, const char* function,
     auto scal = value_of_rec(x.coeff(i));
     if (unlikely(!is_good(scal))) {
       [&]() STAN_COLD_PATH {
-        if (is_eigen_vector<T>::value) {
+        if constexpr (is_eigen_vector<T>::value) {
           internal::elementwise_throw_domain_error(
               function, ": ", name, indexings..., "[", i + error_index::value,
               "] is ", scal, ", but must be ", must_be, "!");

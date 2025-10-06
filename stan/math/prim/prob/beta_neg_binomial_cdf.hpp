@@ -106,25 +106,24 @@ inline return_type_t<T_r, T_alpha, T_beta> beta_neg_binomial_cdf(
     auto ccdf = stan::math::exp(C + stan::math::log(F));
     cdf *= 1.0 - ccdf;
 
-    if constexpr (!is_constant_all<T_r, T_alpha, T_beta>::value) {
+    if constexpr (is_any_autodiff_v<T_r, T_alpha, T_beta>) {
       auto chain_rule_term = -ccdf / (1.0 - ccdf);
       auto digamma_n_r_alpha_beta = digamma(a_plus_r + b_plus_n + 1.0);
       T_partials_return dF[6];
-      grad_F32<false, !is_constant<T_beta>::value, !is_constant_all<T_r>::value,
-               false, true, false>(dF, 1.0, b_plus_n + 1.0, r_plus_n + 1.0,
-                                   n_dbl + 2.0, a_plus_r + b_plus_n + 1.0, 1.0,
-                                   precision, max_steps);
+      grad_F32<false, is_autodiff_v<T_beta>, is_autodiff_v<T_r>, false, true,
+               false>(dF, 1.0, b_plus_n + 1.0, r_plus_n + 1.0, n_dbl + 2.0,
+                      a_plus_r + b_plus_n + 1.0, 1.0, precision, max_steps);
 
-      if constexpr (!is_constant<T_r>::value || !is_constant<T_alpha>::value) {
+      if constexpr (is_autodiff_v<T_r> || is_autodiff_v<T_alpha>) {
         auto digamma_r_alpha = digamma(a_plus_r);
-        if constexpr (!is_constant<T_r>::value) {
+        if constexpr (is_autodiff_v<T_r>) {
           partials<0>(ops_partials)[i]
               += (digamma(r_plus_n + 1)
                   + (digamma_r_alpha - digamma_n_r_alpha_beta)
                   + (dF[2] + dF[4]) / F - digamma(r_dbl))
                  * chain_rule_term;
         }
-        if constexpr (!is_constant<T_alpha>::value) {
+        if constexpr (is_autodiff_v<T_alpha>) {
           partials<1>(ops_partials)[i]
               += (digamma_r_alpha - digamma_n_r_alpha_beta + dF[4] / F
                   - digamma(alpha_dbl))
@@ -132,13 +131,12 @@ inline return_type_t<T_r, T_alpha, T_beta> beta_neg_binomial_cdf(
         }
       }
 
-      if constexpr (!is_constant<T_alpha>::value
-                    || !is_constant<T_beta>::value) {
+      if constexpr (is_autodiff_v<T_alpha> || is_autodiff_v<T_beta>) {
         auto digamma_alpha_beta = digamma(alpha_dbl + beta_dbl);
-        if constexpr (!is_constant<T_alpha>::value) {
+        if constexpr (is_autodiff_v<T_alpha>) {
           partials<1>(ops_partials)[i] += digamma_alpha_beta * chain_rule_term;
         }
-        if constexpr (!is_constant<T_beta>::value) {
+        if constexpr (is_autodiff_v<T_beta>) {
           partials<2>(ops_partials)[i]
               += (digamma(b_plus_n + 1) - digamma_n_r_alpha_beta
                   + (dF[1] + dF[4]) / F
@@ -149,17 +147,17 @@ inline return_type_t<T_r, T_alpha, T_beta> beta_neg_binomial_cdf(
     }
   }
 
-  if constexpr (!is_constant<T_r>::value) {
+  if constexpr (is_autodiff_v<T_r>) {
     for (size_t i = 0; i < stan::math::size(r); ++i) {
       partials<0>(ops_partials)[i] *= cdf;
     }
   }
-  if constexpr (!is_constant<T_alpha>::value) {
+  if constexpr (is_autodiff_v<T_alpha>) {
     for (size_t i = 0; i < stan::math::size(alpha); ++i) {
       partials<1>(ops_partials)[i] *= cdf;
     }
   }
-  if constexpr (!is_constant<T_beta>::value) {
+  if constexpr (is_autodiff_v<T_beta>) {
     for (size_t i = 0; i < stan::math::size(beta); ++i) {
       partials<2>(ops_partials)[i] *= cdf;
     }

@@ -101,7 +101,7 @@ template <typename Mat1, typename Mat2,
           require_any_var_matrix_t<Mat1, Mat2>* = nullptr,
           require_all_matrix_t<Mat1, Mat2>* = nullptr>
 inline auto beta(const Mat1& a, const Mat2& b) {
-  if (!is_constant<Mat1>::value && !is_constant<Mat2>::value) {
+  if constexpr (is_autodiff_v<Mat1> && is_autodiff_v<Mat2>) {
     arena_t<promote_scalar_t<var, Mat1>> arena_a = a;
     arena_t<promote_scalar_t<var, Mat2>> arena_b = b;
     auto beta_val = beta(arena_a.val(), arena_b.val());
@@ -116,7 +116,7 @@ inline auto beta(const Mat1& a, const Mat2& b) {
           arena_b.adj().array()
               += adj_val * (digamma(arena_b.val().array()) - digamma_ab);
         });
-  } else if (!is_constant<Mat1>::value) {
+  } else if constexpr (is_autodiff_v<Mat1>) {
     arena_t<promote_scalar_t<var, Mat1>> arena_a = a;
     arena_t<promote_scalar_t<double, Mat2>> arena_b = value_of(b);
     auto digamma_ab
@@ -128,7 +128,7 @@ inline auto beta(const Mat1& a, const Mat2& b) {
                                                         * digamma_ab
                                                         * vi.val().array();
                              });
-  } else if (!is_constant<Mat2>::value) {
+  } else if constexpr (is_autodiff_v<Mat2>) {
     arena_t<promote_scalar_t<double, Mat1>> arena_a = value_of(a);
     arena_t<promote_scalar_t<var, Mat2>> arena_b = b;
     auto beta_val = beta(arena_a, arena_b.val());
@@ -147,7 +147,7 @@ template <typename Scalar, typename VarMat,
           require_var_matrix_t<VarMat>* = nullptr,
           require_stan_scalar_t<Scalar>* = nullptr>
 inline auto beta(const Scalar& a, const VarMat& b) {
-  if (!is_constant<Scalar>::value && !is_constant<VarMat>::value) {
+  if constexpr (is_autodiff_v<Scalar> && is_autodiff_v<VarMat>) {
     var arena_a = a;
     arena_t<promote_scalar_t<var, VarMat>> arena_b = b;
     auto beta_val = beta(arena_a.val(), arena_b.val());
@@ -161,7 +161,7 @@ inline auto beta(const Scalar& a, const VarMat& b) {
           arena_b.adj().array()
               += adj_val * (digamma(arena_b.val().array()) - digamma_ab);
         });
-  } else if (!is_constant<Scalar>::value) {
+  } else if constexpr (is_autodiff_v<Scalar>) {
     var arena_a = a;
     arena_t<promote_scalar_t<double, VarMat>> arena_b = value_of(b);
     auto digamma_ab = to_arena(digamma(arena_a.val())
@@ -172,7 +172,7 @@ inline auto beta(const Scalar& a, const VarMat& b) {
           arena_a.adj()
               += (vi.adj().array() * digamma_ab * vi.val().array()).sum();
         });
-  } else if (!is_constant<VarMat>::value) {
+  } else if constexpr (is_autodiff_v<VarMat>) {
     double arena_a = value_of(a);
     arena_t<promote_scalar_t<var, VarMat>> arena_b = b;
     auto beta_val = beta(arena_a, arena_b.val());
@@ -189,7 +189,7 @@ template <typename VarMat, typename Scalar,
           require_var_matrix_t<VarMat>* = nullptr,
           require_stan_scalar_t<Scalar>* = nullptr>
 inline auto beta(const VarMat& a, const Scalar& b) {
-  if (!is_constant<VarMat>::value && !is_constant<Scalar>::value) {
+  if constexpr (is_autodiff_v<VarMat> && is_autodiff_v<Scalar>) {
     arena_t<promote_scalar_t<var, VarMat>> arena_a = a;
     var arena_b = b;
     auto beta_val = beta(arena_a.val(), arena_b.val());
@@ -203,7 +203,7 @@ inline auto beta(const VarMat& a, const Scalar& b) {
           arena_b.adj()
               += (adj_val * (digamma(arena_b.val()) - digamma_ab)).sum();
         });
-  } else if (!is_constant<VarMat>::value) {
+  } else if constexpr (is_autodiff_v<VarMat>) {
     arena_t<promote_scalar_t<var, VarMat>> arena_a = a;
     double arena_b = value_of(b);
     auto digamma_ab = to_arena(digamma(arena_a.val()).array()
@@ -213,7 +213,7 @@ inline auto beta(const VarMat& a, const Scalar& b) {
           arena_a.adj().array()
               += vi.adj().array() * digamma_ab * vi.val().array();
         });
-  } else if (!is_constant<Scalar>::value) {
+  } else if constexpr (is_autodiff_v<Scalar>) {
     arena_t<promote_scalar_t<double, VarMat>> arena_a = value_of(a);
     var arena_b = b;
     auto beta_val = beta(arena_a, arena_b.val());

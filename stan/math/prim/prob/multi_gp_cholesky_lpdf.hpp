@@ -61,19 +61,19 @@ return_type_t<T_y, T_covar, T_w> multi_gp_cholesky_lpdf(const T_y& y,
   }
 
   T_lp lp(0);
-  if (include_summand<propto>::value) {
+  if constexpr (include_summand<propto>::value) {
     lp += NEG_LOG_SQRT_TWO_PI * y.size();
   }
 
-  if (include_summand<propto, T_covar>::value) {
+  if constexpr (include_summand<propto, T_covar>::value) {
     lp -= sum(log(L_ref.diagonal())) * y.rows();
   }
 
-  if (include_summand<propto, T_w>::value) {
+  if constexpr (include_summand<propto, T_w>::value) {
     lp += 0.5 * y.cols() * sum(log(w_ref));
   }
 
-  if (include_summand<propto, T_y, T_w, T_covar>::value) {
+  if constexpr (include_summand<propto, T_y, T_w, T_covar>::value) {
     T_lp sum_lp_vec(0);
     for (int i = 0; i < y.rows(); i++) {
       sum_lp_vec

@@ -31,7 +31,7 @@ inline auto cumulative_sum(T_vec&& v) {
     return res;
   }
 
-  if (!is_matrix_cl<T_vec>::value) {
+  if constexpr (!is_matrix_cl<T_vec>::value) {
     res = v;
   }
   const int local_size

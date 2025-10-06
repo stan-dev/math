@@ -121,31 +121,30 @@ inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl> skew_normal_lpdf(
           check_alpha_finite, logp_cl, y_deriv_cl, mu_deriv_cl, sigma_deriv_cl,
           alpha_deriv_cl)
       = expressions(y_not_nan, mu_finite, sigma_positive, alpha_finite,
-                    logp_expr,
-                    calc_if<!is_constant<T_y_cl>::value>(-y_loc_deriv),
-                    calc_if<!is_constant<T_loc_cl>::value>(y_loc_deriv),
-                    calc_if<!is_constant<T_scale_cl>::value>(sigma_deriv),
-                    calc_if<!is_constant<T_shape_cl>::value>(alpha_deriv));
+                    logp_expr, calc_if<is_autodiff_v<T_y_cl>>(-y_loc_deriv),
+                    calc_if<is_autodiff_v<T_loc_cl>>(y_loc_deriv),
+                    calc_if<is_autodiff_v<T_scale_cl>>(sigma_deriv),
+                    calc_if<is_autodiff_v<T_shape_cl>>(alpha_deriv));
 
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
 
-  if (include_summand<propto>::value) {
+  if constexpr (include_summand<propto>::value) {
     logp -= HALF_LOG_TWO_PI * N;
   }
 
   auto ops_partials
       = make_partials_propagator(y_col, mu_col, sigma_col, alpha_col);
 
-  if (!is_constant<T_y_cl>::value) {
+  if constexpr (is_autodiff_v<T_y_cl>) {
     partials<0>(ops_partials) = std::move(y_deriv_cl);
   }
-  if (!is_constant<T_loc_cl>::value) {
+  if constexpr (is_autodiff_v<T_loc_cl>) {
     partials<1>(ops_partials) = std::move(mu_deriv_cl);
   }
-  if (!is_constant<T_scale_cl>::value) {
+  if constexpr (is_autodiff_v<T_scale_cl>) {
     partials<2>(ops_partials) = std::move(sigma_deriv_cl);
   }
-  if (!is_constant<T_shape_cl>::value) {
+  if constexpr (is_autodiff_v<T_shape_cl>) {
     partials<3>(ops_partials) = std::move(alpha_deriv_cl);
   }
   return ops_partials.build(logp);
