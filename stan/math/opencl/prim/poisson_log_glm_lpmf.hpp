@@ -133,9 +133,7 @@ return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> poisson_log_glm_lpmf(
     if constexpr (is_alpha_vector) {
       partials<1>(ops_partials) = theta_derivative_cl;
     } else {
-      forward_as<internal::broadcast_array<double>>(
-          partials<1>(ops_partials))[0]
-          = theta_derivative_sum;
+      partials<1>(ops_partials)[0] = theta_derivative_sum;
     }
   }
   if constexpr (is_autodiff_v<T_beta_cl>) {

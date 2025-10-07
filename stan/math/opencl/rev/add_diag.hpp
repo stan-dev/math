@@ -40,11 +40,10 @@ inline auto add_diag(const T_m& mat, const T_a& to_add) {
     }
     if constexpr (is_autodiff_v<T_a>) {
       if constexpr (!is_stan_scalar<T_a>::value) {
-        auto& to_add_adj
-            = forward_as<var_value<matrix_cl<double>>>(to_add_arena).adj();
+        auto& to_add_adj = to_add_arena.adj();
         to_add_adj += diagonal(res.adj());
       } else {
-        auto& to_add_adj = forward_as<var_value<double>>(to_add_arena).adj();
+        auto& to_add_adj = to_add_arena.adj();
         to_add_adj += to_add_adj + sum(diagonal(res.adj()));
       }
     }

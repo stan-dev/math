@@ -45,7 +45,6 @@ template <bool propto, typename T_y, typename T_dof,
               T_y, T_dof>* = nullptr>
 return_type_t<T_y, T_dof> chi_square_lpdf(const T_y& y, const T_dof& nu) {
   using T_partials_return = partials_return_t<T_y, T_dof>;
-  using T_partials_array = Eigen::Array<T_partials_return, Eigen::Dynamic, 1>;
   using std::log;
   static constexpr const char* function = "chi_square_lpdf";
   using T_y_ref = ref_type_t<T_y>;
@@ -88,8 +87,8 @@ return_type_t<T_y, T_dof> chi_square_lpdf(const T_y& y, const T_dof& nu) {
   }
   if constexpr (is_autodiff_v<T_dof>) {
     if constexpr (is_vector<T_dof>::value) {
-      partials<1>(ops_partials) = forward_as<T_partials_array>(
-          (log_y - digamma(half_nu)) * 0.5 - HALF_LOG_TWO);
+      partials<1>(ops_partials)
+          = (log_y - digamma(half_nu)) * 0.5 - HALF_LOG_TWO;
     } else {
       partials<1>(ops_partials)[0]
           = sum(log_y - digamma(half_nu)) * 0.5 - HALF_LOG_TWO * N;
