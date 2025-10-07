@@ -1,10 +1,11 @@
 #include <stan/math/rev.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(AgradRev, value_of) {
+TEST_F(AgradRev, Rev_value_of) {
   using stan::math::value_of;
   using stan::math::var;
 
@@ -15,7 +16,7 @@ TEST(AgradRev, value_of) {
   EXPECT_FLOAT_EQ(5.0, value_of(5));
 }
 
-TEST(MathMatrixRevArr, value_of) {
+TEST_F(AgradRev, MathMatrixRevArr_value_of) {
   using stan::math::value_of;
   using stan::math::var;
   using std::vector;
@@ -45,7 +46,7 @@ TEST(MathMatrixRevArr, value_of) {
     EXPECT_FLOAT_EQ(a[i].val(), d_a[i]);
 }
 
-TEST(AgradMatrix, value_of) {
+TEST_F(AgradRev, Matrix_value_of) {
   using stan::math::value_of;
   using stan::math::var;
   using std::vector;
@@ -87,7 +88,7 @@ TEST(AgradMatrix, value_of) {
     }
 }
 
-TEST(AgradMatrix, value_of_vector_of_vectors) {
+TEST_F(AgradRev, Matrix_value_of_vector_of_vectors) {
   using stan::math::var;
   std::vector<var> a(5, 0);
   const std::vector<var> b(5, 0);
@@ -114,7 +115,7 @@ TEST(AgradMatrix, value_of_vector_of_vectors) {
   }
 }
 
-TEST(AgradMatrix, value_of_vector_of_eigen) {
+TEST_F(AgradRev, Matrix_value_of_vector_of_eigen) {
   using stan::math::var;
   Eigen::Matrix<var, Eigen::Dynamic, 1> a
       = Eigen::VectorXd::Random(5).template cast<var>();
@@ -149,7 +150,7 @@ TEST(AgradMatrix, value_of_vector_of_eigen) {
       EXPECT_FLOAT_EQ(vvc[i](j), c(j).val());
 }
 
-TEST(AgradMatrix, value_of_expression) {
+TEST_F(AgradRev, Matrix_value_of_expression) {
   using Eigen::Matrix;
   using Eigen::MatrixXd;
   using stan::math::value_of;
@@ -161,7 +162,7 @@ TEST(AgradMatrix, value_of_expression) {
   EXPECT_MATRIX_NEAR(res, correct, 1e-10);
 }
 
-TEST(AgradMatrixRev, value_of_matrix_rvalue) {
+TEST_F(AgradRev, MatrixRev_value_of_matrix_rvalue) {
   using Eigen::Matrix;
   using Eigen::MatrixXd;
   using stan::math::value_of;

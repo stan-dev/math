@@ -1,4 +1,5 @@
 #include <stan/math/rev.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/prob/test_gradients.hpp>
 #include <test/unit/math/rev/prob/test_gradients_multi_normal.hpp>
@@ -151,7 +152,7 @@ struct multi_normal_prec_fun {
   }
 };
 
-TEST(ProbDistributionsMultiNormalPrec2, TestGradFunctional) {
+TEST_F(AgradRev, ProbDistributionsMultiNormalPrec2_TestGradFunctional) {
   std::vector<double> x(3 + 3 + 3 * 2);
   // y
   x[0] = 1.0;
@@ -391,7 +392,7 @@ void test_all_multi_normal_prec2() {
   }
 }
 
-TEST(ProbDistributionsMultiNormalPrec2, TestGradFunctionalVectorized) {
+TEST_F(AgradRev, ProbDistributionsMultiNormalPrec2_TestGradFunctionalVectorized) {
   test_all_multi_normal_prec2<1, 1>();
   test_all_multi_normal_prec2<1, -1>();
   test_all_multi_normal_prec2<-1, 1>();

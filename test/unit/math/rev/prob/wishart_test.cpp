@@ -90,7 +90,7 @@ TEST_F(AgradDistributionsWishart, ProptoSigma) {
   stan::math::recover_memory();
 }
 
-TEST(Wishart, check_varis_on_stack) {
+TEST_F(AgradRev, Wishart_check_varis_on_stack) {
   using stan::math::to_var;
   Eigen::MatrixXd W(2, 2);
   W << 2.011108, -11.20661, -11.20661, 112.94139;

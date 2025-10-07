@@ -7,7 +7,7 @@
 
 //  We check that the values of the new regression match those of one built
 //  from existing primitives.
-TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_doubles) {
+TEST_F(AgradRev, ProbDistributionsPoissonLogGLM_glm_matches_poisson_log_doubles) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -28,7 +28,7 @@ TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_doubles) {
 }
 //  We check that the values of the new regression match those of one built
 //  from existing primitives.
-TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_doubles_rand) {
+TEST_F(AgradRev, ProbDistributionsPoissonLogGLM_glm_matches_poisson_log_doubles_rand) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -482,7 +482,7 @@ TYPED_TEST(ProbDistributionsPoissonLogGLM,
 }
 
 //  We check that the right errors are thrown.
-TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_error_checking) {
+TEST_F(AgradRev, ProbDistributionsPoissonLogGLM_glm_matches_poisson_log_error_checking) {
   int N = 3;
   int M = 2;
   int W = 4;
@@ -539,7 +539,7 @@ TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_error_checking) {
                std::domain_error);
 }
 
-TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_vars_propto) {
+TEST_F(AgradRev, ProbDistributionsPoissonLogGLM_glm_matches_poisson_log_vars_propto) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;

@@ -1,13 +1,13 @@
 #include <stan/math/rev.hpp>
-#include <stan/math/prim.hpp>
 #include <test/unit/math/rev/util.hpp>
+#include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 #include <cmath>
 
 //  We check that the values of the new regression match those of one built
 //  from existing primitives.
-TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_doubles) {
+TEST_F(AgradRev, ProbDistributionsBernoulliLogitGLM_glm_matches_bernoulli_logit_doubles) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -31,8 +31,7 @@ TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_doubles) {
 
 //  We check that the values of the new regression match those of one built
 //  from existing primitives.
-TEST(ProbDistributionsBernoulliLogitGLM,
-     glm_matches_bernoulli_logit_doubles_rand) {
+TEST_F(AgradRev, ProbDistributionsBernoulliLogitGLM_glm_matches_bernoulli_logit_doubles_rand) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -160,7 +159,7 @@ TYPED_TEST(ProbDistributionsBernoulliLogitGLM, broadcast_x) {
   EXPECT_DOUBLE_EQ(alpha1.adj(), alpha2.adj());
 }
 
-TYPED_TEST(ProbDistributionsBernoulliLogitGLM, broadcast_y) {
+TYPED_TEST(ProbDistributionsBernoulliLogitGLM,broadcast_y) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;

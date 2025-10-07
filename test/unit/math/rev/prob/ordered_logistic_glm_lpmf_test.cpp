@@ -538,7 +538,7 @@ TYPED_TEST(ProbDistributionsOrderedLogisticGLM, glm_interfaces) {
                                                         beta_var, cuts_double));
 }
 
-TEST(ProbDistributionsOrderedLogisticGLM, glm_errors) {
+TEST_F(AgradRev, ProbDistributionsOrderedLogisticGLM_glm_errors) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::MatrixXd;

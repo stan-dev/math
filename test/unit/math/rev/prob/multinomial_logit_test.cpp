@@ -16,7 +16,7 @@ void expect_propto_multinomial_logit_lpmf(std::vector<int>& ns1, T_prob beta1,
                   message);
 }
 
-TEST(AgradDistributionsMultinomialLogit, Propto) {
+TEST_F(AgradRev, DistributionsMultinomialLogit_Propto) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -32,7 +32,7 @@ TEST(AgradDistributionsMultinomialLogit, Propto) {
   expect_propto_multinomial_logit_lpmf(ns, beta1, ns, beta2, "var: beta");
 }
 
-TEST(AgradDistributionsMultinomialLogit, check_varis_on_stack) {
+TEST_F(AgradRev, DistributionsMultinomialLogit_check_varis_on_stack) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;

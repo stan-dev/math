@@ -1,6 +1,7 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/functor/solve_newton.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <test/unit/math/rev/functor/util_algebra_solver.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
@@ -50,7 +51,7 @@ TEST_F(max_steps_test, newton_dbl) {
   max_num_steps_test(y, is_newton);
 }
 
-TEST(MathMatrixRevMat, unsolvable_flag_newton_dbl) {
+TEST_F(AgradRev, MathMatrixRevMat_unsolvable_flag_newton_dbl) {
   Eigen::VectorXd y(2);
   y << 1, 1;
 
@@ -186,7 +187,7 @@ TEST_F(max_steps_test, newton) {
   max_num_steps_test(y_var, is_newton);
 }
 
-TEST(MathMatrixRevMat, unsolvable_flag_newton) {
+TEST_F(AgradRev, MathMatrixRevMat_unsolvable_flag_newton) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y(2);
   y << 1, 1;
 

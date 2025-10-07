@@ -1,4 +1,5 @@
 #include <stan/math/rev.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
@@ -20,7 +21,7 @@ void test_vec_seq_var(const T& m1) {
   EXPECT_FLOAT_EQ(m1.val()(2), vsv_vec.val(0)[2]);
   EXPECT_EQ(vsv_vec.size(), 2);
 }
-TEST(MathMetaRev, VectorSeqViewVar) {
+TEST_F(AgradRev, MathMetaRev_VectorSeqViewVar) {
   Eigen::Matrix<double, -1, 1> values = Eigen::Matrix<double, -1, 1>::Random(4);
   Eigen::Matrix<stan::math::var, -1, 1> A = values;
   test_vec_seq_var(A);

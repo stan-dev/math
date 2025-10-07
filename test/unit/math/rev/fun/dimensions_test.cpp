@@ -1,9 +1,10 @@
 #include <stan/math/rev.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <test/unit/util.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
 #include <gtest/gtest.h>
 
-TEST(AgradRevMatrix, col_varmat) {
+TEST_F(AgradRev, RevMatrix_col_varmat) {
   using stan::math::var_value;
   Eigen::MatrixXd m(2, 3);
   m << 0, 1, 2, 3, 4, 5;
@@ -12,7 +13,7 @@ TEST(AgradRevMatrix, col_varmat) {
   EXPECT_MATRIX_FLOAT_EQ(stan::math::col(m_v, 2).val(), stan::math::col(m, 2));
 }
 
-TEST(AgradRevMatrix, row_varmat) {
+TEST_F(AgradRev, RevMatrix_row_varmat) {
   using stan::math::var_value;
   Eigen::MatrixXd m(2, 3);
   m << 0, 1, 2, 3, 4, 5;
@@ -21,7 +22,7 @@ TEST(AgradRevMatrix, row_varmat) {
   EXPECT_MATRIX_FLOAT_EQ(stan::math::row(m_v, 2).val(), stan::math::row(m, 2));
 }
 
-TEST(AgradRevMatrix, dims_varmat) {
+TEST_F(AgradRev, RevMatrix_dims_varmat) {
   using stan::math::var_value;
   Eigen::MatrixXd m(2, 3);
   m << 0, 1, 2, 3, 4, 5;
@@ -29,7 +30,7 @@ TEST(AgradRevMatrix, dims_varmat) {
   var_value<Eigen::MatrixXd> m_v(m);
   EXPECT_STD_VECTOR_EQ(stan::math::dims(m_v), stan::math::dims(m));
 }
-TEST(AgradRevMatrix, num_elements_varmat) {
+TEST_F(AgradRev, RevMatrix_num_elements_varmat) {
   using stan::math::var_value;
   Eigen::MatrixXd m(2, 3);
   m << 0, 1, 2, 3, 4, 5;
@@ -38,7 +39,7 @@ TEST(AgradRevMatrix, num_elements_varmat) {
   EXPECT_EQ(stan::math::num_elements(m_v), stan::math::num_elements(m));
 }
 
-TEST(AgradRevMatrix, diagonal_varmat) {
+TEST_F(AgradRev, RevMatrix_diagonal_varmat) {
   using stan::math::var_value;
   Eigen::MatrixXd m(2, 3);
   m << 0, 1, 2, 3, 4, 5;
@@ -48,7 +49,7 @@ TEST(AgradRevMatrix, diagonal_varmat) {
                          stan::math::diagonal(m));
 }
 
-TEST(AgradRevMatrix, subsets_varmat) {
+TEST_F(AgradRev, RevMatrix_subsets_varmat) {
   using stan::math::var_value;
   Eigen::MatrixXd m(2, 3);
   m << 0, 1, 2, 3, 4, 5;
@@ -60,7 +61,7 @@ TEST(AgradRevMatrix, subsets_varmat) {
                          stan::math::sub_col(m, 1, 1, 2));
 }
 
-TEST(AgradRevMatrix, transpose_varmat) {
+TEST_F(AgradRev, RevMatrix_transpose_varmat) {
   using stan::math::var_value;
   Eigen::MatrixXd m(2, 3);
   m << 0, 1, 2, 3, 4, 5;
@@ -70,7 +71,7 @@ TEST(AgradRevMatrix, transpose_varmat) {
                          stan::math::transpose(m));
 }
 
-TEST(AgradRevMatrix, head_varmat) {
+TEST_F(AgradRev, RevMatrix_head_varmat) {
   using stan::math::var_value;
   Eigen::VectorXd vec(6);
   vec << 0, 1, 2, 3, 4, 5;
@@ -80,7 +81,7 @@ TEST(AgradRevMatrix, head_varmat) {
                          stan::math::head(vec, 2));
 }
 
-TEST(AgradRevMatrix, tail_varmat) {
+TEST_F(AgradRev, RevMatrix_tail_varmat) {
   using stan::math::var_value;
   Eigen::VectorXd vec(6);
   vec << 0, 1, 2, 3, 4, 5;
@@ -90,7 +91,7 @@ TEST(AgradRevMatrix, tail_varmat) {
                          stan::math::tail(vec, 2));
 }
 
-TEST(AgradRevMatrix, reverse_varmat) {
+TEST_F(AgradRev, RevMatrix_reverse_varmat) {
   using stan::math::var_value;
   Eigen::VectorXd vec(6);
   vec << 0, 1, 2, 3, 4, 5;
@@ -100,7 +101,7 @@ TEST(AgradRevMatrix, reverse_varmat) {
                          stan::math::reverse(vec));
 }
 
-TEST(AgradRevMatrix, segment_varmat) {
+TEST_F(AgradRev, RevMatrix_segment_varmat) {
   using stan::math::var_value;
   Eigen::VectorXd vec(6);
   vec << 0, 1, 2, 3, 4, 5;

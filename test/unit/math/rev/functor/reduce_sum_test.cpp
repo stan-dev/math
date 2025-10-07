@@ -1,5 +1,6 @@
 #include <stan/math.hpp>
 #include <test/unit/math/prim/functor/reduce_sum_util.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
 #include <sstream>
@@ -7,7 +8,7 @@
 #include <vector>
 #include <set>
 
-TEST(StanMathRev_reduce_sum, no_args) {
+TEST_F(AgradRev, StanMathRev_reduce_sum_no_args) {
   using stan::math::var;
   using stan::math::test::get_new_msg;
   using stan::math::test::sum_lpdf;
@@ -22,7 +23,7 @@ TEST(StanMathRev_reduce_sum, no_args) {
       << "Failed for reduce_sum";
 }
 
-TEST(StanMathRev_reduce_sum, value) {
+TEST_F(AgradRev, StanMathRev_reduce_sum_value) {
   using stan::math::test::count_lpdf;
   using stan::math::test::get_new_msg;
   double lambda_d = 10.0;
@@ -51,7 +52,7 @@ TEST(StanMathRev_reduce_sum, value) {
   EXPECT_FLOAT_EQ(poisson_lpdf_static, poisson_lpdf_ref);
 }
 
-TEST(StanMathRev_reduce_sum, gradient) {
+TEST_F(AgradRev, StanMathRev_reduce_sum_gradient) {
   using stan::math::var;
   using stan::math::test::count_lpdf;
   using stan::math::test::get_new_msg;
@@ -99,7 +100,7 @@ TEST(StanMathRev_reduce_sum, gradient) {
   stan::math::recover_memory();
 }
 
-TEST(StanMathRev_reduce_sum, grainsize) {
+TEST_F(AgradRev, StanMathRev_reduce_sum_grainsize) {
   using stan::math::var;
   using stan::math::test::count_lpdf;
   using stan::math::test::get_new_msg;
@@ -147,7 +148,7 @@ TEST(StanMathRev_reduce_sum, grainsize) {
   stan::math::recover_memory();
 }
 
-TEST(StanMathRev_reduce_sum, nesting_gradient) {
+TEST_F(AgradRev, StanMathRev_reduce_sum_nesting_gradient) {
   using stan::math::var;
   using stan::math::test::get_new_msg;
   using stan::math::test::nesting_count_lpdf;
@@ -197,7 +198,7 @@ TEST(StanMathRev_reduce_sum, nesting_gradient) {
   stan::math::recover_memory();
 }
 
-TEST(StanMathRev_reduce_sum, grouped_gradient) {
+TEST_F(AgradRev, StanMathRev_reduce_sum_grouped_gradient) {
   using stan::math::var;
   using stan::math::test::get_new_msg;
   using stan::math::test::grouped_count_lpdf;
@@ -257,7 +258,7 @@ TEST(StanMathRev_reduce_sum, grouped_gradient) {
   stan::math::recover_memory();
 }
 
-TEST(StanMathRev_reduce_sum, grouped_gradient_eigen) {
+TEST_F(AgradRev, StanMathRev_reduce_sum_grouped_gradient_eigen) {
   using stan::math::var;
   using stan::math::test::get_new_msg;
   using stan::math::test::grouped_count_lpdf;
@@ -319,7 +320,7 @@ TEST(StanMathRev_reduce_sum, grouped_gradient_eigen) {
   stan::math::recover_memory();
 }
 
-TEST(StanMathRev_reduce_sum, slice_group_gradient) {
+TEST_F(AgradRev, StanMathRev_reduce_sum_slice_group_gradient) {
   using stan::math::var;
   using stan::math::test::get_new_msg;
   using stan::math::test::slice_group_count_lpdf;
@@ -389,7 +390,7 @@ TEST(StanMathRev_reduce_sum, slice_group_gradient) {
 
 // reduce_sum needs still work fine whenever multiple arguments point
 // to the same vari internally
-TEST(StanMathRev_reduce_sum, linked_args) {
+TEST_F(AgradRev, StanMathRev_reduce_sum_linked_args) {
   using stan::math::test::arg_start_end_lpdf;
   using stan::math::test::get_new_msg;
   auto start_end_rs = [](auto&& arg1, auto&& arg2) {

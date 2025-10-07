@@ -76,7 +76,7 @@ TEST_F(agrad_distributions_multi_student_t_cholesky, ProptoL) {
   stan::math::recover_memory();
 }
 
-TEST(ProbDistributionsMultiStudentTCholesky, MultiStudentTVar) {
+TEST_F(AgradRev, ProbDistributionsMultiStudentTCholesky_MultiStudentTVar) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -96,7 +96,7 @@ TEST(ProbDistributionsMultiStudentTCholesky, MultiStudentTVar) {
 
   stan::math::recover_memory();
 }
-TEST(ProbDistributionsMultiStudentTCholesky, MultiStudentTGradientUnivariate) {
+TEST_F(AgradRev, ProbDistributionsMultiStudentTCholesky_MultiStudentTGradientUnivariate) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::VectorXd;
@@ -209,7 +209,7 @@ struct multi_student_t_cholesky_fun {
   }
 };
 
-TEST(ProbDistributionsMultiStudentTCholesky, TestGradFunctional) {
+TEST_F(AgradRev, ProbDistributionsMultiStudentTCholesky_TestGradFunctional) {
   std::vector<double> x(3 + 3 + 3 * 2 + 1);
   // y
   x[0] = 1.0;
@@ -589,7 +589,7 @@ void test_all_multi_student_t_cholesky() {
   }
 }
 
-TEST(ProbDistributionsMultiStudentTCholesky, TestGradFunctionalVectorized) {
+TEST_F(AgradRev, ProbDistributionsMultiStudentTCholesky_TestGradFunctionalVectorized) {
   test_all_multi_student_t_cholesky<1, 1>();
   test_all_multi_student_t_cholesky<1, -1>();
   test_all_multi_student_t_cholesky<-1, 1>();
@@ -598,7 +598,7 @@ TEST(ProbDistributionsMultiStudentTCholesky, TestGradFunctionalVectorized) {
   stan::math::recover_memory();
 }
 
-TEST(ProbDistributionsMultiStudentTCholesky, check_varis_on_stack) {
+TEST_F(AgradRev, ProbDistributionsMultiStudentTCholesky_check_varis_on_stack) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::vector;

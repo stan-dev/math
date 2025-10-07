@@ -75,7 +75,7 @@ TEST_F(agrad_distributions_multi_student_t, ProptoSigma) {
   stan::math::recover_memory();
 }
 
-TEST(ProbDistributionsMultiStudentT, MultiStudentTVar) {
+TEST_F(AgradRev, ProbDistributionsMultiStudentT_MultiStudentTVar) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -92,7 +92,7 @@ TEST(ProbDistributionsMultiStudentT, MultiStudentTVar) {
 
   stan::math::recover_memory();
 }
-TEST(ProbDistributionsMultiStudentT, MultiStudentTGradientUnivariate) {
+TEST_F(AgradRev, ProbDistributionsMultiStudentT_MultiStudentTGradientUnivariate) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::VectorXd;
@@ -203,7 +203,7 @@ struct multi_student_t_fun {
   }
 };
 
-TEST(ProbDistributionsMultiStudentT, TestGradFunctional) {
+TEST_F(AgradRev, ProbDistributionsMultiStudentT_TestGradFunctional) {
   std::vector<double> x(3 + 3 + 3 * 2 + 1);
   // y
   x[0] = 1.0;
@@ -532,7 +532,7 @@ void test_all_multi_student_t2() {
   }
 }
 
-TEST(ProbDistributionsMultiStudentT, TestGradFunctionalVectorized) {
+TEST_F(AgradRev, ProbDistributionsMultiStudentT_TestGradFunctionalVectorized) {
   test_all_multi_student_t2<1, 1>();
   test_all_multi_student_t2<1, -1>();
   test_all_multi_student_t2<-1, 1>();
@@ -541,7 +541,7 @@ TEST(ProbDistributionsMultiStudentT, TestGradFunctionalVectorized) {
   stan::math::recover_memory();
 }
 
-TEST(ProbDistributionsMultiStudentT, check_varis_on_stack) {
+TEST_F(AgradRev, ProbDistributionsMultiStudentT_check_varis_on_stack) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::vector;

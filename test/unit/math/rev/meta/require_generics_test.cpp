@@ -3,103 +3,104 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <test/unit/math/require_util.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <type_traits>
 #include <vector>
 #include <string>
 
-TEST(requires_rev_scal, var_test) {
+TEST_F(AgradRev, requires_rev_scal_var_test) {
   using stan::math::var;
   using stan::test::require_scal_checker;
   require_scal_checker<stan::require_var_t, var>::unary();
 }
-TEST(requires_rev_scal, var_not_test) {
+TEST_F(AgradRev, requires_rev_scal_var_not_test) {
   using stan::math::var;
   using stan::test::require_scal_checker;
   require_scal_checker<stan::require_not_var_t, var>::not_unary();
 }
-TEST(requires_rev_scal, var_all_test) {
+TEST_F(AgradRev, requires_rev_scal_var_all_test) {
   using stan::math::var;
   using stan::test::require_scal_checker;
   require_scal_checker<stan::require_all_var_t, var, var, var>::all();
 }
-TEST(requires_rev_scal, var_all_not_test) {
+TEST_F(AgradRev, requires_rev_scal_var_all_not_test) {
   using stan::math::var;
   using stan::test::require_scal_checker;
   require_scal_checker<stan::require_all_not_var_t, var, var>::all_not();
 }
-TEST(requires_rev_scal, var_any_test) {
+TEST_F(AgradRev, requires_rev_scal_var_any_test) {
   using stan::math::var;
   using stan::test::require_scal_checker;
   require_scal_checker<stan::require_any_var_t, var, var>::any();
 }
-TEST(requires_rev_scal, var_any_not_test) {
+TEST_F(AgradRev, requires_rev_scal_var_any_not_test) {
   using stan::math::var;
   using stan::test::require_scal_checker;
   require_scal_checker<stan::require_any_not_var_t, var, var>::any_not();
 }
 
-TEST(requires_rev_scal, autodiff_test) {
+TEST_F(AgradRev, requires_rev_scal_autodiff_test) {
   using stan::math::var;
   using stan::test::require_scal_checker;
   require_scal_checker<stan::require_autodiff_scalar_t, var, var>::unary();
 }
-TEST(requires_rev_scal, autodiff_not_test) {
+TEST_F(AgradRev, requires_rev_scal_autodiff_not_test) {
   using stan::math::var;
   using stan::test::require_scal_checker;
   require_scal_checker<stan::require_not_autodiff_scalar_t, var,
                        var>::not_unary();
 }
-TEST(requires_rev_scal, autodiff_all_test) {
+TEST_F(AgradRev, requires_rev_scal_autodiff_all_test) {
   using stan::math::var;
   using stan::test::require_scal_checker;
   require_scal_checker<stan::require_all_autodiff_scalar_t, var, var>::all();
 }
-TEST(requires_rev_scal, autodiff_all_not_test) {
+TEST_F(AgradRev, requires_rev_scal_autodiff_all_not_test) {
   using stan::math::var;
   using stan::test::require_scal_checker;
   require_scal_checker<stan::require_all_not_autodiff_scalar_t, var,
                        var>::all_not();
 }
-TEST(requires_rev_scal, autodiff_any_test) {
+TEST_F(AgradRev, requires_rev_scal_autodiff_any_test) {
   using stan::math::var;
   using stan::test::require_scal_checker;
   require_scal_checker<stan::require_any_autodiff_scalar_t, var, var>::any();
 }
-TEST(requires_rev_scal, autodiff_any_not_test) {
+TEST_F(AgradRev, requires_rev_scal_autodiff_any_not_test) {
   using stan::math::var;
   using stan::test::require_scal_checker;
   require_scal_checker<stan::require_any_not_autodiff_scalar_t, var,
                        var>::any_not();
 }
 
-TEST(requires_rev_scal, stan_scalar_test) {
+TEST_F(AgradRev, requires_rev_scal_stan_scalar_test) {
   using stan::math::var;
   using stan::test::require_scal_checker;
   require_scal_checker<stan::require_stan_scalar_t, var, var>::unary();
 }
-TEST(requires_rev_scal, stan_scalar_not_test) {
+TEST_F(AgradRev, requires_rev_scal_stan_scalar_not_test) {
   using stan::math::var;
   using stan::test::require_scal_checker;
   require_scal_checker<stan::require_not_stan_scalar_t, var, var>::not_unary();
 }
-TEST(requires_rev_scal, stan_scalar_all_test) {
+TEST_F(AgradRev, requires_rev_scal_stan_scalar_all_test) {
   using stan::math::var;
   using stan::test::require_scal_checker;
   require_scal_checker<stan::require_all_stan_scalar_t, var, var>::all();
 }
-TEST(requires_rev_scal, stan_scalar_all_not_test) {
+TEST_F(AgradRev, requires_rev_scal_stan_scalar_all_not_test) {
   using stan::math::var;
   using stan::test::require_scal_checker;
   require_scal_checker<stan::require_all_not_stan_scalar_t, var,
                        var>::all_not();
 }
-TEST(requires_rev_scal, stan_scalar_any_test) {
+TEST_F(AgradRev, requires_rev_scal_stan_scalar_any_test) {
   using stan::math::var;
   using stan::test::require_scal_checker;
   require_scal_checker<stan::require_any_stan_scalar_t, var, var>::any();
 }
-TEST(requires_rev_scal, stan_scalar_any_not_test) {
+TEST_F(AgradRev, requires_rev_scal_stan_scalar_any_not_test) {
   using stan::math::var;
   using stan::test::require_scal_checker;
   require_scal_checker<stan::require_any_not_stan_scalar_t, var,
@@ -122,7 +123,7 @@ template <typename... Types>
 using require_test_not_arithmetic_return_t
     = stan::require_not_return_type_t<std::is_arithmetic, Types...>;
 
-TEST(requires_rev_scal, return_type_t_test) {
+TEST_F(AgradRev, requires_rev_scal_return_type_t_test) {
   using stan::require_return_type_t;
   using stan::math::var;
   using stan::math::var_value;
