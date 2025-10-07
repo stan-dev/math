@@ -51,7 +51,8 @@ TEST_F(AgradRev, MathFunRev_as_value_column_array_or_scalar_vector_lvalue) {
   EXPECT_MATRIX_EQ(res, a_val);
 }
 
-TEST_F(AgradRev, MathFunRev_as_value_column_array_or_scalar_const_rowvector_lvalue) {
+TEST_F(AgradRev,
+       MathFunRev_as_value_column_array_or_scalar_const_rowvector_lvalue) {
   int n = 100;
   const Eigen::RowVectorXd a_val = Eigen::RowVectorXd::Random(n);
   Eigen::Matrix<stan::math::var, 1, -1> a(a_val);
@@ -85,7 +86,8 @@ TEST_F(AgradRev, MathFunRev_as_value_column_array_or_scalar_var_value_vector) {
   EXPECT_MATRIX_EQ(res, a_val);
 }
 
-TEST_F(AgradRev, MathFunRev_as_value_column_array_or_scalar_var_value_row_vector) {
+TEST_F(AgradRev,
+       MathFunRev_as_value_column_array_or_scalar_var_value_row_vector) {
   int n = 100;
   const Eigen::RowVectorXd a_val = Eigen::VectorXd::Random(n);
   stan::math::var_value<Eigen::RowVectorXd> a(a_val);

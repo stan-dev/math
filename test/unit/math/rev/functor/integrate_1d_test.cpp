@@ -276,7 +276,9 @@ TEST_F(AgradRev, StanMath_integrate_1d_rev_TestDerivatives_zero_crossing) {
                                   -19.06340613646808, 21.41380852375568);
 }
 
-TEST_F(AgradRev, StanMath_integrate_1d_rev_TestDerivatives_var_right_endpoint_var_params) {
+TEST_F(
+    AgradRev,
+    StanMath_integrate_1d_rev_TestDerivatives_var_right_endpoint_var_params) {
   // Zero crossing integral + test x_r + vars at right endpoint
   using stan::math::var;
   test_derivatives<double, var, var>(
@@ -286,7 +288,8 @@ TEST_F(AgradRev, StanMath_integrate_1d_rev_TestDerivatives_var_right_endpoint_va
       {5 * pow(0.5, 1.5), 12 * 1.75 * 1.75, 4.0}, 0.0, 21.41380852375568);
 }
 
-TEST_F(AgradRev, StanMath_integrate_1d_rev_TestDerivatives_var_left_endpoint_var_params) {
+TEST_F(AgradRev,
+       StanMath_integrate_1d_rev_TestDerivatives_var_left_endpoint_var_params) {
   // Zero crossing integral + test x_r + var at left endpoint
   using stan::math::var;
   test_derivatives<var, double, var>(
@@ -407,7 +410,8 @@ TEST_F(AgradRev, StanMath_integrate_1d_rev_TestDerivatives_gaussian) {
       {0.0, 0.0});
 }
 
-TEST_F(AgradRev, StanMath_integrate_1d_rev_TestDerivativesSameVarAtEndpointAndInParams) {
+TEST_F(AgradRev,
+       StanMath_integrate_1d_rev_TestDerivativesSameVarAtEndpointAndInParams) {
   using stan::math::var;
 
   var a = 2.0;

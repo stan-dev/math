@@ -32,7 +32,8 @@ TEST_F(AgradRev, StanAgradRevInternal_precomputed_gradients) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, StanAgradRevInternal_precomputed_gradients_vari_no_independent_vars) {
+TEST_F(AgradRev,
+       StanAgradRevInternal_precomputed_gradients_vari_no_independent_vars) {
   double value = 1;
   std::vector<stan::math::var> vars;
   std::vector<double> gradients;
@@ -43,7 +44,8 @@ TEST_F(AgradRev, StanAgradRevInternal_precomputed_gradients_vari_no_independent_
   EXPECT_NO_THROW(vi.chain());
 }
 
-TEST_F(AgradRev, StanAgradRevInternal_precomputed_gradients_vari_mismatched_sizes) {
+TEST_F(AgradRev,
+       StanAgradRevInternal_precomputed_gradients_vari_mismatched_sizes) {
   double value;
   std::vector<stan::math::var> vars;
   std::vector<double> gradients;
@@ -161,7 +163,8 @@ TEST(StanAgradRevInternal,
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, StanAgradRevInternal_precomputed_gradients_mismatched_containers) {
+TEST_F(AgradRev,
+       StanAgradRevInternal_precomputed_gradients_mismatched_containers) {
   double value = 1;
   std::vector<stan::math::var> vars;
   std::vector<double> gradients;

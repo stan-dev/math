@@ -70,7 +70,8 @@ TEST_F(AgradRev, ProbDistributionsMultiGPCholesky_MultiGPCholeskyVar) {
                   stan::math::multi_gp_cholesky_lpdf(y, L, w).val());
 }
 
-TEST_F(AgradRev, ProbDistributionsMultiGPCholesky_MultiGPCholeskyGradientUnivariate) {
+TEST_F(AgradRev,
+       ProbDistributionsMultiGPCholesky_MultiGPCholeskyGradientUnivariate) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::VectorXd;

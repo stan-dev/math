@@ -392,7 +392,8 @@ void test_all_multi_normal_prec2() {
   }
 }
 
-TEST_F(AgradRev, ProbDistributionsMultiNormalPrec2_TestGradFunctionalVectorized) {
+TEST_F(AgradRev,
+       ProbDistributionsMultiNormalPrec2_TestGradFunctionalVectorized) {
   test_all_multi_normal_prec2<1, 1>();
   test_all_multi_normal_prec2<1, -1>();
   test_all_multi_normal_prec2<-1, 1>();

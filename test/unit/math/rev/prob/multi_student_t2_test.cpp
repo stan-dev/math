@@ -92,7 +92,8 @@ TEST_F(AgradRev, ProbDistributionsMultiStudentT_MultiStudentTVar) {
 
   stan::math::recover_memory();
 }
-TEST_F(AgradRev, ProbDistributionsMultiStudentT_MultiStudentTGradientUnivariate) {
+TEST_F(AgradRev,
+       ProbDistributionsMultiStudentT_MultiStudentTGradientUnivariate) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::VectorXd;

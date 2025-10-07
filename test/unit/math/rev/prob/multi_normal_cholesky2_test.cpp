@@ -283,7 +283,8 @@ void test_all_multi_normal_cholesky() {
   }
 }
 
-TEST_F(AgradRev, ProbDistributionsMultiNormalCholesky2_TestGradFunctionalVectorized) {
+TEST_F(AgradRev,
+       ProbDistributionsMultiNormalCholesky2_TestGradFunctionalVectorized) {
   test_all_multi_normal_cholesky<1, 1>();
   test_all_multi_normal_cholesky<1, -1>();
   test_all_multi_normal_cholesky<-1, 1>();
