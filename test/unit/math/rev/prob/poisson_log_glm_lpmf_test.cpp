@@ -7,8 +7,7 @@
 
 //  We check that the values of the new regression match those of one built
 //  from existing primitives.
-TEST_F(AgradRev,
-       ProbDistributionsPoissonLogGLM_glm_matches_poisson_log_doubles) {
+TEST_F(AgradRev, poisson_glm_matches_poisson_log_doubles) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -29,8 +28,7 @@ TEST_F(AgradRev,
 }
 //  We check that the values of the new regression match those of one built
 //  from existing primitives.
-TEST_F(AgradRev,
-       ProbDistributionsPoissonLogGLM_glm_matches_poisson_log_doubles_rand) {
+TEST_F(AgradRev, poisson_glm_matches_poisson_log_doubles_rand) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;

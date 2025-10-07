@@ -7,8 +7,7 @@
 
 //  We check that the values of the new regression match those of one built
 //  from existing primitives.
-TEST_F(AgradRev,
-       ProbDistributionsBernoulliLogitGLM_glm_matches_bernoulli_logit_doubles) {
+TEST_F(AgradRev, bernoulli_glm_matches_bernoulli_logit_doubles) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -32,9 +31,7 @@ TEST_F(AgradRev,
 
 //  We check that the values of the new regression match those of one built
 //  from existing primitives.
-TEST_F(
-    AgradRev,
-    ProbDistributionsBernoulliLogitGLM_glm_matches_bernoulli_logit_doubles_rand) {
+TEST_F(AgradRev, bernoulli_glm_matches_bernoulli_logit_doubles_rand) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;

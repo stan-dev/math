@@ -7,7 +7,7 @@
 
 //  We check that the values of the new regression match those of one built
 //  from existing primitives.
-TEST_F(AgradRev, ProbDistributionsNormalIdGLM_glm_matches_normal_id_doubles) {
+TEST_F(AgradRev, normal_glm_matches_normal_id_doubles) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -30,8 +30,7 @@ TEST_F(AgradRev, ProbDistributionsNormalIdGLM_glm_matches_normal_id_doubles) {
 }
 //  We check that the values of the new regression match those of one built
 //  from existing primitives.
-TEST_F(AgradRev,
-       ProbDistributionsNormalIdGLM_glm_matches_normal_id_doubles_rand) {
+TEST_F(AgradRev, normal_glm_matches_normal_id_doubles_rand) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;

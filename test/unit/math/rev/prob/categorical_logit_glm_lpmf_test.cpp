@@ -30,8 +30,7 @@ stan::return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_simple_lpmf(
   return lpmf;
 }
 
-TEST(ProbDistributionsCategoricalLogitGLM,
-     glm_matches_categorical_logit_doubles) {
+TEST(ProbDistributionsCategoricalLogitGLM, glm_matches_categorical_logit_doubles) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::MatrixXd;
