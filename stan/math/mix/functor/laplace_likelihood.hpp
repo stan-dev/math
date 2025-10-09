@@ -191,6 +191,35 @@ inline auto theta_grad(F&& f, Theta&& theta,
  */
 template <typename F, typename Theta, typename Stream, typename... Args,
           require_eigen_vector_vt<std::is_arithmetic, Theta>* = nullptr>
+inline auto diagonal_hessian(F&& f, Theta&& theta, Stream* msgs, Args&&... args) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  const Eigen::Index theta_size = theta.size();
+  auto v = Eigen::VectorXd::Ones(theta_size);
+  Eigen::VectorXd hessian_v = Eigen::VectorXd::Zero(theta_size);
+  hessian_times_vector(f, hessian_v, std::forward<Theta>(theta), std::move(v),
+                        value_of(args)..., msgs);
+  return (-hessian_v).eval();
+}
+
+/**
+ * Computes negative block diagonal Hessian of `f` wrt`theta` and `args...`
+ * @note If `Args` contains \ref var types then their adjoints will be
+ * calculated as a side effect.
+ * @tparam F A functor with `opertor()(Args&&...)` returning a scalar
+ * @tparam Theta A class assignable to an Eigen vector type
+ * @tparam Stream Type of stream for messages.
+ * @tparam Args Type of variadic arguments.
+ * @param f Log likelihood function.
+ * @param theta Latent Gaussian model.
+ * @param hessian_block_size If the Hessian of the log likelihood function w.r.t
+ *                           the latent Gaussian variable is block-diagonal,
+ *                           size of each block.
+ * @param msgs Stream for messages.
+ * @param args Variadic arguments for the likelihood function.
+ */
+template <typename F, typename Theta, typename Stream, typename... Args,
+          require_eigen_vector_vt<std::is_arithmetic, Theta>* = nullptr>
 inline auto block_hessian(F&& f, Theta&& theta, const Eigen::Index hessian_block_size,
                  Stream* msgs, Args&&... args) {
   using Eigen::Dynamic;
@@ -433,6 +462,21 @@ inline auto theta_grad(F&& f, Theta&& theta, TupleArgs&& ll_tup,
             msgs, std::forward<decltype(args)>(args)...);
       },
       std::forward<TupleArgs>(ll_tup), std::forward<F>(f),
+      std::forward<Theta>(theta), msgs);
+}
+
+template <typename F, typename Theta, typename TupleArgs, typename Stream,
+          require_eigen_vector_t<Theta>* = nullptr,
+          require_tuple_t<TupleArgs>* = nullptr>
+inline auto diagonal_hessian(F&& f, Theta&& theta, TupleArgs&& ll_tuple, Stream* msgs) {
+  return apply(
+      [](auto&& f, auto&& theta, auto* msgs,
+         auto&&... args) {
+        return internal::diagonal_hessian(
+            std::forward<decltype(f)>(f), std::forward<decltype(theta)>(theta),
+            msgs, std::forward<decltype(args)>(args)...);
+      },
+      std::forward<TupleArgs>(ll_tuple), std::forward<F>(f),
       std::forward<Theta>(theta), msgs);
 }
 

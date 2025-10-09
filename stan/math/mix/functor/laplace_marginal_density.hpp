@@ -14,18 +14,6 @@
 #include <stan/math/prim/functor/iter_tuple_nested.hpp>
 #include <unsupported/Eigen/MatrixFunctions>
 #include <cmath>
-// #define LAPLACE_DEBUG
-#ifdef LAPLACE_DEBUG
-#include <iomanip>
-#include <iostream>
-#include <ostream>
-#include <optional>
-#include <fstream>
-static std::string test_name_lap = "overwrite";
-// file for writing csv
-static std::string csv_file_name = "laplace_marginal_density3.csv";
-//static std::ofstream csv_file(csv_file_name, std::ios::out);
-#endif
 
 /**
  * @file
@@ -380,7 +368,7 @@ template <typename LLFun, typename LLTupleArgs,
           typename CovarMat, bool InitTheta,
           require_t<is_all_arithmetic_scalar<CovarMat>>* = nullptr>
 inline auto laplace_marginal_density_est(
-    LLFun&& ll_fun, LLTupleArgs&& ll_args, CovarMat&& covariance, 
+    LLFun&& ll_fun, LLTupleArgs&& ll_args, CovarMat&& covariance,
     const laplace_options<InitTheta>& options, std::ostream* msgs) {
   using Eigen::MatrixXd;
   using Eigen::SparseMatrix;
@@ -479,20 +467,18 @@ inline auto laplace_marginal_density_est(
   int iter = 0;
   if (options.solver == 1) {
     if (options.hessian_block_size == 1) {
+      Eigen::VectorXd W_r(theta_size);
       for (Eigen::Index i = 0; i <= options.max_num_steps; i++) {
         debug::print("======Iter", iter++);
-        auto W = laplace_likelihood::block_hessian(
-            ll_fun, theta, options.hessian_block_size, ll_args, msgs);
-        Eigen::VectorXd W_r(W.rows());
-        Eigen::VectorXd W_vec(W.rows());
-        for (Eigen::Index i = 0; i < W.rows(); i++) {
-          if (W.coeff(i, i) < 0) {
+        auto W = laplace_likelihood::diagonal_hessian(
+            ll_fun, theta, ll_args, msgs);
+        for (Eigen::Index i = 0; i < W.size(); i++) {
+          if (W.coeff(i) < 0) {
             throw std::domain_error(
                 "laplace_marginal_density: Hessian matrix is not positive "
                 "definite");
           } else {
-            W_r.coeffRef(i) = std::sqrt(W.coeff(i, i));
-            W_vec.coeffRef(i) = -W.coeff(i, i);
+            W_r.coeffRef(i) = std::sqrt(W.coeff(i));
           }
         }
         B.noalias() = MatrixXd::Identity(theta_size, theta_size)
@@ -500,7 +486,7 @@ inline auto laplace_marginal_density_est(
         Eigen::LLT<Eigen::Ref<Eigen::MatrixXd>> llt_B(B);
         auto L = llt_B.matrixL();
         auto LT = llt_B.matrixU();
-        b.noalias() = W.diagonal().cwiseProduct(theta) + theta_grad;
+        b.noalias() = (W.array() * theta.array()).matrix() + theta_grad;
         a.noalias()
             = b
               - W_r.asDiagonal()
@@ -511,12 +497,11 @@ inline auto laplace_marginal_density_est(
         double g0_dir = g0.dot(p);
         const Eigen::VectorXd sp = covariance * p;
         double d0_dir = -p.dot(sp)
-                        + sp.dot(W_vec.asDiagonal()
+                        + sp.dot(W.asDiagonal()
                                  * sp);  // <= negative in well-behaved cases
         debug::print("newton opt step", 1, "g0_dir: ", g0_dir,
                      "d0_dir: ", d0_dir);
-        //            "p:      ", p.transpose().eval(),
-        //            "W_vec:  ", W_vec.transpose().eval());
+        //            "p:      ", p.transpose().eval());
         auto newton_step_size = -g0_dir / d0_dir;
         debug::print("", 1, "Newton step size: ", newton_step_size,
                      "prev step size:   ", step_size);
@@ -546,11 +531,11 @@ inline auto laplace_marginal_density_est(
           const double B_log_determinant
               = 2.0 * llt_B.matrixLLT().diagonal().array().log().sum();
           // Overwrite W instead of making a new sparse matrix
-          W.diagonal() = W_r;
+          //W.asdiagonal() = W_r;
           return laplace_density_estimates{
               objective_new - 0.5 * B_log_determinant,
               std::move(theta),
-              std::move(W),
+              Eigen::SparseMatrix<double>(W_r.asDiagonal()),
               Eigen::MatrixXd(L),
               std::move(a),
               std::move(theta_grad),
@@ -690,7 +675,7 @@ inline auto laplace_marginal_density_est(
                    "prev step size:   ", step_size);
       if (!(std::isfinite(newton_step_size) || newton_step_size < 0.0)) {
         // fallback seed if curvature is pathological
-        newton_step_size = 1.0;  
+        newton_step_size = 1.0;
       }
       newton_step_size
           = std::clamp(newton_step_size, options.line_search.min_alpha,
@@ -1098,7 +1083,7 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
     auto covariance = stan::math::apply(
             [&covariance_function, &msgs](auto&&... args) {
               if constexpr (is_any_var_scalar_v<decltype(args)...>) {
-                return to_var_value(covariance_function(args..., msgs)); 
+                return to_var_value(covariance_function(args..., msgs));
               } else {
                 return covariance_function(args..., msgs);
               }

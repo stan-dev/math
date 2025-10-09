@@ -12,7 +12,6 @@
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/quad_form_diag.hpp>
 #include <stan/math/prim/functor/iter_tuple_nested.hpp>
-#include <unsupported/Eigen/MatrixFunctions>
 #include <algorithm>
 #include <cmath>
 #include <limits>
@@ -24,10 +23,6 @@
 #include <ostream>
 #include <optional>
 #include <fstream>
-static std::string test_name_lap = "overwrite";
-// file for writing csv
-static std::string csv_file_name = "laplace_marginal_density3.csv";
-//static std::ofstream csv_file(csv_file_name, std::ios::out);
 #endif
 
 
@@ -159,7 +154,7 @@ constexpr void print(const char* msg, Val&& val) {}
 
 
 
-/* 
+/*
 * Safeguarded cubic-or-bisection step chooser for MAXIMIZATION.
 * Given a bracket [a, b] with values and directional derivatives
 * (fa, fpa) at a and (fb, fpb) at b, returns a trial point in (a, b).
@@ -568,12 +563,12 @@ inline wolfe_return wolfe_line_search(
                  "high.alpha:     ", high.alpha, "high.obj:       ", high.obj,
                  "high.dir: ", high.dir);
     const bool finite_ok = std::isfinite(mid.obj) && theta_try.allFinite();
-    if (!finite_ok) {  
+    if (!finite_ok) {
       debug::print("Exit on failed finite test", 1);
       high = mid;
       continue;
     }
-    /** 
+    /**
      * | Armijo | Wolfe | mid.obj > low.obj | mid.dir * low.dir < 0 | Action |
      * | T     |   T   |                   |                       | Accept |
      * | T     |   F   |         T         |           T           | Dir Sign change pins high = mid |

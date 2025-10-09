@@ -74,7 +74,7 @@ TEST(laplace, poisson_log_phi_dim_2) {
   using stan::is_var_v;
   using stan::scalar_type_t;
   stan::test::ad_tolerances tols;
-//  tols.gradient_grad_ = 1e-1;
+  tols.gradient_grad_ = 1e-3;
   stan::math::test::run_solver_grid(
       [&](int solver_num, int hessian_block_size, int max_steps_line_search,
           auto&& theta_0) {
@@ -102,7 +102,7 @@ struct poisson_log_exposure_likelihood {
 };
 
 TEST_F(laplace_disease_map_test, laplace_marginal) {
-  
+
   using stan::math::laplace_marginal;
   using stan::math::laplace_marginal_poisson_log_lpmf;
   using stan::math::laplace_marginal_tol;
@@ -146,7 +146,7 @@ struct bernoulli_logit_likelihood {
 };
 
 TEST(laplace, bernoulli_logit_phi_dim500) {
-    
+
   using stan::math::laplace_marginal;
   using stan::math::laplace_marginal_tol;
   using stan::math::to_vector;
@@ -300,7 +300,7 @@ class laplace_motorcyle_gp_test : public ::testing::Test {
 
 
 TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
-  
+
   // logger->current_test_name_ = "gp_motorcycle";
   using stan::math::laplace_marginal;
   using stan::math::laplace_marginal_tol;
