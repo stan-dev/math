@@ -48,7 +48,7 @@ TEST(MathMetaRev, ScalarSeqViewArrayVarVal) {
 }
 
 template <typename C>
-void expect_scalar_seq_view_value(const C& v) {
+inline void expect_scalar_seq_view_value(const C& v) {
   using stan::scalar_seq_view;
   scalar_seq_view<C> sv(v);
   EXPECT_FLOAT_EQ(v.val()(0), sv.val(0));
@@ -60,7 +60,7 @@ void expect_scalar_seq_view_value(const C& v) {
 }
 
 template <typename C>
-void expect_scalar_seq_view_adjoints(const C& v) {
+inline void expect_scalar_seq_view_adjoints(const C& v) {
   using stan::scalar_seq_view;
   scalar_seq_view<C> sv(v);
   std::vector<stan::math::var> stdv(sv.size());

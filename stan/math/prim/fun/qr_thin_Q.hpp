@@ -16,8 +16,8 @@ namespace math {
  * @return Orthogonal matrix with minimal columns
  */
 template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
-Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic> qr_thin_Q(
-    const EigMat& m) {
+inline Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic>
+qr_thin_Q(const EigMat& m) {
   using matrix_t
       = Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic>;
   if (unlikely(m.size() == 0)) {

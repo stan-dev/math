@@ -10,10 +10,11 @@
 #include <string>
 
 template <typename T_y, typename T_dof, typename T_loc, typename T_scale>
-void expect_propto_multi_student_t_lpdf(T_y y1, T_dof nu1, T_loc mu1,
-                                        T_scale sigma1, T_y y2, T_dof nu2,
-                                        T_loc mu2, T_scale sigma2,
-                                        std::string message = "") {
+inline void expect_propto_multi_student_t_lpdf(T_y y1, T_dof nu1, T_loc mu1,
+                                               T_scale sigma1, T_y y2,
+                                               T_dof nu2, T_loc mu2,
+                                               T_scale sigma2,
+                                               std::string message = "") {
   expect_eq_diffs(stan::math::multi_student_t_lpdf<false>(y1, nu1, mu1, sigma1),
                   stan::math::multi_student_t_lpdf<false>(y2, nu2, mu2, sigma2),
                   stan::math::multi_student_t_lpdf<true>(y1, nu1, mu1, sigma1),
@@ -302,7 +303,7 @@ struct vectorized_multi_student_t_fun {
 };
 
 template <int is_row_vec_y, int is_row_vec_mu>
-void test_all_multi_student_t2() {
+inline void test_all_multi_student_t2() {
   {
     using stan::math::var;
     std::vector<double> y_(3), mu_(3), sigma_(6);

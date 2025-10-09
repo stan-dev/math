@@ -16,7 +16,7 @@ namespace math {
  * @return Upper triangular matrix with maximal rows
  */
 template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
-Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic> qr_R(
+inline Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic> qr_R(
     const EigMat& m) {
   using matrix_t
       = Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic>;

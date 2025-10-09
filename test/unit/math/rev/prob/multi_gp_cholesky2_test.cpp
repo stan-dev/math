@@ -8,9 +8,9 @@
 #include <vector>
 
 template <typename T_y, typename T_scale, typename T_w>
-void expect_propto_multi_gp_cholesky_lpdf(T_y y1, T_scale L1, T_w w1, T_y y2,
-                                          T_scale L2, T_w w2,
-                                          std::string message = "") {
+inline void expect_propto_multi_gp_cholesky_lpdf(T_y y1, T_scale L1, T_w w1,
+                                                 T_y y2, T_scale L2, T_w w2,
+                                                 std::string message = "") {
   expect_eq_diffs(stan::math::multi_gp_cholesky_lpdf<false>(y1, L1, w1),
                   stan::math::multi_gp_cholesky_lpdf<false>(y2, L2, w2),
                   stan::math::multi_gp_cholesky_lpdf<true>(y1, L1, w1),

@@ -2,7 +2,7 @@
 
 namespace dirichlet_test {
 template <typename T>
-std::vector<T> vectorize_softmax(const std::vector<T>& y) {
+inline std::vector<T> vectorize_softmax(const std::vector<T>& y) {
   std::vector<T> y_simplex;
   for (size_t i = 0; i < y.size(); ++i) {
     y_simplex.push_back(stan::math::softmax(y[i]));
@@ -11,7 +11,7 @@ std::vector<T> vectorize_softmax(const std::vector<T>& y) {
 }
 
 template <typename T, stan::require_not_std_vector_t<T>* = nullptr>
-T vectorize_softmax(const T& y) {
+inline T vectorize_softmax(const T& y) {
   return stan::math::softmax(y);
 }
 }  // namespace dirichlet_test

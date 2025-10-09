@@ -5,9 +5,10 @@
 #include <string>
 
 template <typename T_y, typename T_dof, typename T_scale>
-void expect_propto_inv_wishart_cholesky_lpdf(T_y L_Y1, T_dof nu1, T_scale L_S1,
-                                             T_y L_Y2, T_dof nu2, T_scale L_S2,
-                                             std::string message) {
+inline void expect_propto_inv_wishart_cholesky_lpdf(T_y L_Y1, T_dof nu1,
+                                                    T_scale L_S1, T_y L_Y2,
+                                                    T_dof nu2, T_scale L_S2,
+                                                    std::string message) {
   expect_eq_diffs(stan::math::inv_wishart_cholesky_lpdf<false>(L_Y1, nu1, L_S1),
                   stan::math::inv_wishart_cholesky_lpdf<false>(L_Y2, nu2, L_S2),
                   stan::math::inv_wishart_cholesky_lpdf<true>(L_Y1, nu1, L_S1),

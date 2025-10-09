@@ -35,9 +35,8 @@ namespace math {
  * @throw std::domain_error if y is not greater than 0.
  */
 template <typename T_y, typename T_dof, typename T_scale>
-return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_cdf(const T_y& y,
-                                                             const T_dof& nu,
-                                                             const T_scale& s) {
+inline return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_cdf(
+    const T_y& y, const T_dof& nu, const T_scale& s) {
   using T_partials_return = partials_return_t<T_y, T_dof, T_scale>;
   using std::exp;
   using std::pow;

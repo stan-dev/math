@@ -5,7 +5,7 @@
 #include <vector>
 
 template <typename T_x>
-std::vector<T_x> fill_vec(Eigen::Matrix<T_x, -1, 1> inp) {
+inline std::vector<T_x> fill_vec(Eigen::Matrix<T_x, -1, 1> inp) {
   std::vector<T_x> ret_vec;
   ret_vec.reserve(inp.rows());
   for (int i = 0; i < inp.rows(); ++i)
@@ -130,7 +130,7 @@ struct chol_functor_simple_vec {
   }
 };
 
-void test_gradients(int size, double prec) {
+inline void test_gradients(int size, double prec) {
   std::vector<std::vector<chol_functor> > functors;
   std::vector<std::vector<Eigen::Matrix<double, -1, 1> > > grads_ad;
   std::vector<std::vector<Eigen::Matrix<double, -1, 1> > > grads_fd;
@@ -165,7 +165,7 @@ void test_gradients(int size, double prec) {
   }
 }
 
-void test_gradients_simple(int size, double prec) {
+inline void test_gradients_simple(int size, double prec) {
   std::vector<std::vector<chol_functor_simple> > functors;
   std::vector<std::vector<Eigen::Matrix<double, -1, 1> > > grads_ad;
   std::vector<std::vector<Eigen::Matrix<double, -1, 1> > > grads_fd;
@@ -214,7 +214,7 @@ void test_gradients_simple(int size, double prec) {
   }
 }
 
-void test_gp_grad(int mat_size, double prec) {
+inline void test_gp_grad(int mat_size, double prec) {
   using Eigen::MatrixXd;
   using Eigen::RowVectorXd;
   using Eigen::VectorXd;
@@ -256,7 +256,7 @@ void test_gp_grad(int mat_size, double prec) {
   }
 }
 
-void test_chol_mult(int mat_size, double prec) {
+inline void test_chol_mult(int mat_size, double prec) {
   using Eigen::MatrixXd;
   using Eigen::RowVectorXd;
   using Eigen::VectorXd;
@@ -290,7 +290,7 @@ void test_chol_mult(int mat_size, double prec) {
   }
 }
 
-void test_simple_vec_mult(int size, double prec) {
+inline void test_simple_vec_mult(int size, double prec) {
   Eigen::VectorXd test_vec(size);
   boost::random::mt19937 rng(2);
 
@@ -329,7 +329,7 @@ void test_simple_vec_mult(int size, double prec) {
     EXPECT_NEAR(grad_fd(k), grad_ad(k), prec) << " for k=" << k;
 }
 
-double test_gradient(int size, double prec) {
+inline double test_gradient(int size, double prec) {
   chol_functor_2 functown(size);
   Eigen::Matrix<double, -1, 1> grads_ad;
   Eigen::Matrix<double, -1, 1> grads_fd;

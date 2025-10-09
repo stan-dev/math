@@ -232,7 +232,7 @@ inline T_dst from_matrix_cl(const matrix_cl<T>& src) {
  * @return Eigen matrix with a copy of the data in the source matrix
  */
 template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
-auto from_matrix_cl(const T& src) {
+inline auto from_matrix_cl(const T& src) {
   return from_matrix_cl<
       Eigen::Matrix<scalar_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>>(src);
 }

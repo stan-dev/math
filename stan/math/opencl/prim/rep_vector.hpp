@@ -28,7 +28,7 @@ template <
     require_any_t<
         is_matrix_cl<T>,
         math::conjunction<is_var<T>, is_matrix_cl<value_type_t<T>>>>* = nullptr>
-auto rep_vector(const scalar_type_t<T>& x, int n) {
+inline auto rep_vector(const scalar_type_t<T>& x, int n) {
   return rep_matrix<T>(x, n, 1);
 }
 

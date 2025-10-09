@@ -3,7 +3,7 @@
 #include <vector>
 
 template <typename T>
-void test_vec_seq_var(const T& m1) {
+inline void test_vec_seq_var(const T& m1) {
   using stan::vector_seq_view;
   using stan::math::var;
   vector_seq_view<T> vsv(m1);

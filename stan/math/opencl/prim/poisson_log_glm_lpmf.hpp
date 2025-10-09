@@ -51,7 +51,7 @@ template <bool propto, typename T_y_cl, typename T_x_cl, typename T_alpha_cl,
           typename T_beta_cl,
           require_all_prim_or_rev_kernel_expression_t<
               T_y_cl, T_x_cl, T_alpha_cl, T_beta_cl>* = nullptr>
-return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> poisson_log_glm_lpmf(
+inline return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> poisson_log_glm_lpmf(
     const T_y_cl& y, const T_x_cl& x, const T_alpha_cl& alpha,
     const T_beta_cl& beta) {
   static constexpr const char* function = "poisson_log_glm_lpmf(OpenCL)";

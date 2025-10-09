@@ -9,7 +9,7 @@
 #include <map>
 #include <unordered_map>
 
-void arena_allocator_test() {
+inline void arena_allocator_test() {
   std::vector<int, stan::math::arena_allocator<int>> v;
   v.reserve(3);
   for (int i = 0; i < 5; i++) {

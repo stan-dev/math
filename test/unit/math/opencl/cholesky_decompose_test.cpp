@@ -30,7 +30,7 @@ TEST(MathMatrixOpenCL, cholesky_decompose_cpu_vs_cl_small) {
 }
 
 namespace {
-void cholesky_decompose_test(int size) {
+inline void cholesky_decompose_test(int size) {
   stan::math::matrix_d m1 = stan::math::matrix_d::Random(size, size);
   stan::math::matrix_d m1_pos_def
       = m1 * m1.transpose() + size * Eigen::MatrixXd::Identity(size, size);

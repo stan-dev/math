@@ -113,42 +113,42 @@ T make_pos_definite_matrix(double value = 0.4, int size = 1) {
 }
 
 template <typename T, require_arithmetic_t<T>* = nullptr>
-void expect_eq(T a, T b, const char* msg) {
+inline void expect_eq(T a, T b, const char* msg) {
   EXPECT_EQ(a, b) << msg;
 }
 
-void expect_eq(math::var a, math::var b, const char* msg) {
+inline void expect_eq(math::var a, math::var b, const char* msg) {
   EXPECT_EQ(a.val(), b.val()) << msg;
 }
 
 template <typename T, require_arithmetic_t<T>* = nullptr>
-void expect_eq(math::fvar<T> a, math::fvar<T> b, const char* msg) {
+inline void expect_eq(math::fvar<T> a, math::fvar<T> b, const char* msg) {
   expect_eq(a.val(), b.val(), msg);
   expect_eq(a.d(), b.d(), msg);
 }
 
 template <typename T, require_arithmetic_t<T>* = nullptr>
-void expect_eq(std::complex<T> a, std::complex<T> b, const char* msg) {
+inline void expect_eq(std::complex<T> a, std::complex<T> b, const char* msg) {
   expect_eq(a.real(), b.real(), msg);
   expect_eq(a.imag(), b.imag(), msg);
 }
 
-void expect_eq(std::complex<math::var> a, std::complex<math::var> b,
-               const char* msg) {
+inline void expect_eq(std::complex<math::var> a, std::complex<math::var> b,
+                      const char* msg) {
   expect_eq(a.real(), b.real(), msg);
   expect_eq(a.imag(), b.imag(), msg);
 }
 
 template <typename T, require_arithmetic_t<T>* = nullptr>
-void expect_eq(std::complex<math::fvar<T>> a, std::complex<math::fvar<T>> b,
-               const char* msg) {
+inline void expect_eq(std::complex<math::fvar<T>> a,
+                      std::complex<math::fvar<T>> b, const char* msg) {
   expect_eq(a.real(), b.real(), msg);
   expect_eq(a.imag(), b.imag(), msg);
 }
 
 template <typename T1, typename T2, require_all_eigen_t<T1, T2>* = nullptr,
           require_vt_same<T1, T2>* = nullptr>
-void expect_eq(const T1& a, const T2& b, const char* msg) {
+inline void expect_eq(const T1& a, const T2& b, const char* msg) {
   EXPECT_EQ(a.rows(), b.rows()) << msg;
   EXPECT_EQ(a.cols(), b.cols()) << msg;
   const auto& a_ref = math::to_ref(a);
@@ -161,8 +161,8 @@ void expect_eq(const T1& a, const T2& b, const char* msg) {
 }
 
 template <typename T>
-void expect_eq(const std::vector<T>& a, const std::vector<T>& b,
-               const char* msg) {
+inline void expect_eq(const std::vector<T>& a, const std::vector<T>& b,
+                      const char* msg) {
   EXPECT_EQ(a.size(), b.size());
   for (int i = 0; i < a.size(); i++) {
     expect_eq(a[i], b[i], msg);
@@ -170,21 +170,24 @@ void expect_eq(const std::vector<T>& a, const std::vector<T>& b,
 }
 
 template <typename T, stan::math::require_tuple_t<T>* = nullptr>
-void expect_eq(const T& t1, const T& t2, const char* msg) {
+inline void expect_eq(const T& t1, const T& t2, const char* msg) {
   stan::math::for_each(
       [&msg](auto&& elt1, auto&& elt2) { expect_eq(elt1, elt2, msg); }, t1, t2);
 }
 
 template <typename T, require_not_st_var<T>* = nullptr>
-void expect_adj_eq(const T& a, const T& b, const char* msg = "expect_ad_eq") {}
+inline void expect_adj_eq(const T& a, const T& b,
+                          const char* msg = "expect_ad_eq") {}
 
-void expect_adj_eq(math::var a, math::var b, const char* msg = "expect_ad_eq") {
+inline void expect_adj_eq(math::var a, math::var b,
+                          const char* msg = "expect_ad_eq") {
   EXPECT_EQ(a.adj(), b.adj()) << msg;
 }
 
 template <typename T1, typename T2, require_all_eigen_t<T1, T2>* = nullptr,
           require_vt_same<T1, T2>* = nullptr>
-void expect_adj_eq(const T1& a, const T2& b, const char* msg = "expect_ad_eq") {
+inline void expect_adj_eq(const T1& a, const T2& b,
+                          const char* msg = "expect_ad_eq") {
   EXPECT_EQ(a.rows(), b.rows()) << msg;
   EXPECT_EQ(a.cols(), b.cols()) << msg;
   const auto& a_ref = math::to_ref(a);
@@ -197,16 +200,16 @@ void expect_adj_eq(const T1& a, const T2& b, const char* msg = "expect_ad_eq") {
 }
 
 template <typename T>
-void expect_adj_eq(const std::vector<T>& a, const std::vector<T>& b,
-                   const char* msg = "expect_ad_eq") {
+inline void expect_adj_eq(const std::vector<T>& a, const std::vector<T>& b,
+                          const char* msg = "expect_ad_eq") {
   EXPECT_EQ(a.size(), b.size()) << msg;
   for (int i = 0; i < a.size(); i++) {
     expect_adj_eq(a[i], b[i], msg);
   }
 }
 
-void grad(stan::math::var& a) { a.grad(); }
-void grad(std::complex<stan::math::var>& a) {
+inline void grad(stan::math::var& a) { a.grad(); }
+inline void grad(std::complex<stan::math::var>& a) {
   a.real().grad();
   a.imag().grad();
 }
@@ -225,7 +228,7 @@ scalar_type_t<T> sum_if_number(const T& a) {
   return recursive_sum(a);
 }
 template <typename T, require_not_st_stan_scalar<T>* = nullptr>
-double sum_if_number(const T& a) {
+inline double sum_if_number(const T& a) {
   return 0;
 }
 

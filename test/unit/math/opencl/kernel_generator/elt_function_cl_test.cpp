@@ -19,7 +19,7 @@ using stan::math::matrix_cl;
 namespace stan {
 namespace math {
 
-MatrixXd rsqrt(const MatrixXd& a) { return stan::math::inv_sqrt(a); }
+inline MatrixXd rsqrt(const MatrixXd& a) { return stan::math::inv_sqrt(a); }
 
 }  // namespace math
 }  // namespace stan

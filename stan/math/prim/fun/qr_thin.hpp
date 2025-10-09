@@ -20,8 +20,9 @@ namespace math {
  * 2. Upper triangular matrix with minimal rows
  */
 template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
-std::tuple<Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic>,
-           Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic>>
+inline std::tuple<
+    Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic>,
+    Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic>>
 qr_thin(const EigMat& m) {
   using matrix_t
       = Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic>;

@@ -39,7 +39,7 @@ template <bool propto, typename T_y_cl, typename T_loc_cl, typename T_prec_cl,
           require_all_prim_or_rev_kernel_expression_t<T_y_cl, T_loc_cl,
                                                       T_prec_cl>* = nullptr,
           require_any_not_stan_scalar_t<T_y_cl, T_loc_cl, T_prec_cl>* = nullptr>
-return_type_t<T_y_cl, T_loc_cl, T_prec_cl> beta_proportion_lpdf(
+inline return_type_t<T_y_cl, T_loc_cl, T_prec_cl> beta_proportion_lpdf(
     const T_y_cl& y, const T_loc_cl& mu, const T_prec_cl& kappa) {
   static constexpr const char* function = "beta_proportion_lpdf(OpenCL)";
   using T_partials_return = partials_return_t<T_y_cl, T_loc_cl, T_prec_cl>;

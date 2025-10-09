@@ -8,7 +8,7 @@
 
 // CHECK THAT ALL VALID SCALAR TYPES ARE ACCEPTED
 template <typename F>
-void check_scalar_types(F& f, double value, double res, double deriv) {
+inline void check_scalar_types(F& f, double value, double res, double deriv) {
   // - f: Function with a single parameter exposed, all others
   // have to be scalars
   // - value: value to be used for the parameter
@@ -202,7 +202,7 @@ TEST(ProbWienerFullPrec, wiener_full_prec_all_scalar) {
 
 // CHECK THAT ALL VALID Vector TYPES ARE ACCEPTED
 template <typename F>
-void check_vector_types(F& f, std::vector<double> value, double res) {
+inline void check_vector_types(F& f, std::vector<double> value, double res) {
   // - f: Function where all inputs are vectors
   // - value: value to be used for the parameter
   // - res: expected result of calling `f` with `value`

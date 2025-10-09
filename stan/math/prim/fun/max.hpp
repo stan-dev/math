@@ -22,7 +22,7 @@ namespace math {
  * @return maximum value of the two arguments
  */
 template <typename T1, typename T2, require_all_arithmetic_t<T1, T2>* = nullptr>
-auto max(T1 x, T2 y) {
+inline auto max(T1 x, T2 y) {
   return std::max(x, y);
 }
 

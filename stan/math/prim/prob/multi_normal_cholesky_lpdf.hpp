@@ -45,7 +45,7 @@ template <bool propto, typename T_y, typename T_loc, typename T_covar,
           require_any_not_vector_vt<is_stan_scalar, T_y, T_loc>* = nullptr,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_loc, T_covar>* = nullptr>
-return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
+inline return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
     const T_y& y, const T_loc& mu, const T_covar& L) {
   static constexpr const char* function = "multi_normal_cholesky_lpdf";
   using T_covar_elem = typename scalar_type<T_covar>::type;
@@ -204,7 +204,7 @@ template <bool propto, typename T_y, typename T_loc, typename T_covar,
           require_all_vector_vt<is_stan_scalar, T_y, T_loc>* = nullptr,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_loc, T_covar>* = nullptr>
-return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
+inline return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
     const T_y& y, const T_loc& mu, const T_covar& L) {
   static constexpr const char* function = "multi_normal_cholesky_lpdf";
   using T_covar_elem = typename scalar_type<T_covar>::type;

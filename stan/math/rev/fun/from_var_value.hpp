@@ -17,8 +17,8 @@ namespace math {
  * @param a matrix to convert
  */
 template <typename T, require_var_matrix_t<T>* = nullptr>
-Eigen::Matrix<var, T::RowsAtCompileTime, T::ColsAtCompileTime> from_var_value(
-    const T& a) {
+inline Eigen::Matrix<var, T::RowsAtCompileTime, T::ColsAtCompileTime>
+from_var_value(const T& a) {
   arena_matrix<Eigen::Matrix<var, T::RowsAtCompileTime, T::ColsAtCompileTime>>
       res(a.val());
   reverse_pass_callback([res, a]() mutable { a.vi_->adj_ += res.adj(); });
@@ -37,7 +37,7 @@ template <
         conjunction<is_eigen<T>, is_var<scalar_type_t<T>>>,
         std::is_same<std::decay_t<T>, var>,
         bool_constant<!std::is_same<scalar_type_t<T>, var>::value>>* = nullptr>
-T from_var_value(T&& a) {
+inline T from_var_value(T&& a) {
   return std::forward<T>(a);
 }
 
@@ -49,7 +49,7 @@ T from_var_value(T&& a) {
  * @param a std::vector of elements to convert
  */
 template <typename T>
-auto from_var_value(const std::vector<T>& a) {
+inline auto from_var_value(const std::vector<T>& a) {
   std::vector<decltype(from_var_value(std::declval<T>()))> out;
   out.reserve(a.size());
   for (size_t i = 0; i < a.size(); ++i) {

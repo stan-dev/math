@@ -59,7 +59,7 @@ inline var variance(const std::vector<var>& v) {
  * @return sample variance of specified matrix
  */
 template <typename EigMat, require_eigen_vt<is_var, EigMat>* = nullptr>
-var variance(const EigMat& m) {
+inline var variance(const EigMat& m) {
   const auto& mat = to_ref(m);
   check_nonzero_size("variance", "m", mat);
   if (mat.size() == 1) {

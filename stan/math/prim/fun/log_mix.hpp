@@ -74,8 +74,8 @@ inline double log_mix(T_theta theta, T_lambda1 lambda1, T_lambda2 lambda2) {
  */
 template <typename T_theta, typename T_lam,
           require_any_vector_t<T_theta, T_lam>* = nullptr>
-return_type_t<T_theta, T_lam> log_mix(const T_theta& theta,
-                                      const T_lam& lambda) {
+inline return_type_t<T_theta, T_lam> log_mix(const T_theta& theta,
+                                             const T_lam& lambda) {
   static constexpr const char* function = "log_mix";
   using T_partials_return = partials_return_t<T_theta, T_lam>;
   using T_partials_vec =
@@ -141,7 +141,7 @@ return_type_t<T_theta, T_lam> log_mix(const T_theta& theta,
  * @return log mixture of densities in specified proportion
  */
 template <typename T_theta, typename T_lam, require_vector_t<T_lam>* = nullptr>
-return_type_t<T_theta, std::vector<T_lam>> log_mix(
+inline return_type_t<T_theta, std::vector<T_lam>> log_mix(
     const T_theta& theta, const std::vector<T_lam>& lambda) {
   static constexpr const char* function = "log_mix";
   using T_partials_return = partials_return_t<T_theta, std::vector<T_lam>>;

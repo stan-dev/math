@@ -37,7 +37,7 @@ TEST(MathFunctions, divide) {
   EXPECT_EQ(-2, divide(-44, 17));
 }
 
-void test_divide_modulus(int a, int b) {
+inline void test_divide_modulus(int a, int b) {
   using stan::math::divide;
   using stan::math::modulus;
   EXPECT_EQ(a, divide(a, b) * b + modulus(a, b));

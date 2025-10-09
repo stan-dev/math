@@ -2,7 +2,7 @@
 #include <algorithm>
 
 template <typename T>
-void expect_max(const T& m) {
+inline void expect_max(const T& m) {
   auto f = [](const auto& x) { return stan::math::max(x); };
   Eigen::VectorXd v(m.size());
   Eigen::RowVectorXd rv(m.size());

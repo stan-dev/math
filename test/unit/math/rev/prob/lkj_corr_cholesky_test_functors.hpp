@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 
 template <typename T_L, typename T_eta>
-return_type_t<T_eta, T_L> lkj_corr_cholesky_uc(
+inline return_type_t<T_eta, T_L> lkj_corr_cholesky_uc(
     Eigen::Matrix<T_L, Eigen::Dynamic, 1> L, T_eta eta, int K) {
   using math::cholesky_corr_constrain;
   using math::lkj_corr_cholesky_lpdf;

@@ -41,9 +41,8 @@ namespace math {
 template <bool propto, typename T_y, typename T_shape, typename T_scale,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_shape, T_scale>* = nullptr>
-return_type_t<T_y, T_shape, T_scale> inv_gamma_lpdf(const T_y& y,
-                                                    const T_shape& alpha,
-                                                    const T_scale& beta) {
+inline return_type_t<T_y, T_shape, T_scale> inv_gamma_lpdf(
+    const T_y& y, const T_shape& alpha, const T_scale& beta) {
   using T_partials_return = partials_return_t<T_y, T_shape, T_scale>;
   using T_y_ref = ref_type_if_not_constant_t<T_y>;
   using T_alpha_ref = ref_type_if_not_constant_t<T_shape>;

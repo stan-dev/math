@@ -43,7 +43,8 @@ namespace math {
 template <bool propto, typename T_y, typename T_dof,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_dof>* = nullptr>
-return_type_t<T_y, T_dof> chi_square_lpdf(const T_y& y, const T_dof& nu) {
+inline return_type_t<T_y, T_dof> chi_square_lpdf(const T_y& y,
+                                                 const T_dof& nu) {
   using T_partials_return = partials_return_t<T_y, T_dof>;
   using std::log;
   static constexpr const char* function = "chi_square_lpdf";

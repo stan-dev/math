@@ -35,7 +35,8 @@ namespace math {
  * has zero dimensionality, or has a non-positive diagonal element.
  */
 template <typename T, require_eigen_t<T>* = nullptr>
-Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> cov_matrix_free(const T& y) {
+inline Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> cov_matrix_free(
+    const T& y) {
   const auto& y_ref = to_ref(y);
   check_square("cov_matrix_free", "y", y_ref);
   check_nonzero_size("cov_matrix_free", "y", y_ref);
