@@ -38,7 +38,7 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_y, typename T_scale_succ, typename T_scale_fail>
-return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lccdf(
+inline return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lccdf(
     const T_y& y, const T_scale_succ& alpha, const T_scale_fail& beta_param) {
   using T_partials_return = partials_return_t<T_y, T_scale_succ, T_scale_fail>;
   using std::exp;

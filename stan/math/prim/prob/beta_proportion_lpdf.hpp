@@ -48,9 +48,8 @@ namespace math {
 template <bool propto, typename T_y, typename T_loc, typename T_prec,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_loc, T_prec>* = nullptr>
-return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
-                                                       const T_loc& mu,
-                                                       const T_prec& kappa) {
+inline return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(
+    const T_y& y, const T_loc& mu, const T_prec& kappa) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_prec>;
   using std::log;
   using T_y_ref = ref_type_if_not_constant_t<T_y>;

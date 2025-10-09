@@ -10,7 +10,7 @@ namespace math {
 
 template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
           require_not_st_var<EigMat>* = nullptr>
-Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic>
+inline Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic>
 eigenvectors_sym(const EigMat& m) {
   if (unlikely(m.size() == 0)) {
     return Eigen::Matrix<value_type_t<EigMat>, -1, -1>(0, 0);

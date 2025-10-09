@@ -3,7 +3,7 @@
 #include <vector>
 #include <limits>
 
-void test_logical_and(double x, double y) {
+inline void test_logical_and(double x, double y) {
   using stan::math::var;
   EXPECT_EQ(x && y, var(x) && var(y));
   EXPECT_EQ(x && y, x && var(y));

@@ -7,7 +7,7 @@
 #include <string>
 
 template <int N>
-void test_print_mat_size(const std::string& expected) {
+inline void test_print_mat_size(const std::string& expected) {
   using stan::math::print_mat_size;
   std::stringstream ss;
   stan::math::print_mat_size<N>(ss);

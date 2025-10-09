@@ -1,3 +1,3 @@
 #include <stan/math.hpp>
 
-stan::math::var function1() { return 0; }
+inline stan::math::var function1() { return 0; }

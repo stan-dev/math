@@ -34,9 +34,9 @@ template <typename T_y_cl, typename T_loc_cl, typename T_scale_cl,
               T_y_cl, T_loc_cl, T_scale_cl, T_inv_scale_cl>* = nullptr,
           require_any_not_stan_scalar_t<T_y_cl, T_loc_cl, T_scale_cl,
                                         T_inv_scale_cl>* = nullptr>
-return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_inv_scale_cl> exp_mod_normal_lcdf(
-    const T_y_cl& y, const T_loc_cl& mu, const T_scale_cl& sigma,
-    const T_inv_scale_cl& lambda) {
+inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_inv_scale_cl>
+exp_mod_normal_lcdf(const T_y_cl& y, const T_loc_cl& mu,
+                    const T_scale_cl& sigma, const T_inv_scale_cl& lambda) {
   static constexpr const char* function = "exp_mod_normal_lcdf(OpenCL)";
   using T_partials_return
       = partials_return_t<T_y_cl, T_loc_cl, T_scale_cl, T_inv_scale_cl>;

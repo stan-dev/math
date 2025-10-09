@@ -44,7 +44,7 @@ template <bool propto, typename T_y_cl, typename T_shape_cl,
               T_y_cl, T_shape_cl, T_inv_scale_cl>* = nullptr,
           require_any_not_stan_scalar_t<T_y_cl, T_shape_cl,
                                         T_inv_scale_cl>* = nullptr>
-return_type_t<T_y_cl, T_shape_cl, T_inv_scale_cl> gamma_lpdf(
+inline return_type_t<T_y_cl, T_shape_cl, T_inv_scale_cl> gamma_lpdf(
     const T_y_cl& y, const T_shape_cl& alpha, const T_inv_scale_cl& beta) {
   using std::isfinite;
   using std::isnan;

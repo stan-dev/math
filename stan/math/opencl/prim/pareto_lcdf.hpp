@@ -30,7 +30,7 @@ template <
     require_all_prim_or_rev_kernel_expression_t<T_y_cl, T_scale_cl,
                                                 T_shape_cl>* = nullptr,
     require_any_not_stan_scalar_t<T_y_cl, T_scale_cl, T_shape_cl>* = nullptr>
-return_type_t<T_y_cl, T_scale_cl, T_shape_cl> pareto_lcdf(
+inline return_type_t<T_y_cl, T_scale_cl, T_shape_cl> pareto_lcdf(
     const T_y_cl& y, const T_scale_cl& y_min, const T_shape_cl& alpha) {
   static constexpr const char* function = "pareto_lcdf(OpenCL)";
   using T_partials_return = partials_return_t<T_y_cl, T_scale_cl, T_shape_cl>;

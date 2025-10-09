@@ -28,7 +28,7 @@ namespace math {
  *    factorized by factor_cov_matrix()
  */
 template <typename T, require_eigen_t<T>* = nullptr>
-Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> cov_matrix_free_lkj(
+inline Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> cov_matrix_free_lkj(
     const T& y) {
   using Eigen::Array;
   using Eigen::Dynamic;
@@ -57,7 +57,7 @@ Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> cov_matrix_free_lkj(
  * @param x The standard vector to untransform.
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
-auto cov_matrix_free_lkj(T&& x) {
+inline auto cov_matrix_free_lkj(T&& x) {
   return apply_vector_unary<T>::apply(std::forward<T>(x), [](auto&& v) {
     return cov_matrix_free_lkj(std::forward<decltype(v)>(v));
   });

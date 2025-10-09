@@ -64,7 +64,7 @@ class holder_cl_
  */
 template <typename T, typename... Ptrs,
           require_all_kernel_expressions_t<T, Ptrs...>* = nullptr>
-auto holder_cl(T&& a, Ptrs*... ptrs) {
+inline auto holder_cl(T&& a, Ptrs*... ptrs) {
   return holder_cl_<as_operation_cl_t<T>, Ptrs...>(
       as_operation_cl(std::forward<T>(a)), ptrs...);
 }
@@ -81,8 +81,8 @@ namespace internal {
  * @return `holder_cl` referencing given expression
  */
 template <typename T, std::size_t... Is, typename... Args>
-auto make_holder_cl_impl_step2(T&& expr, std::index_sequence<Is...>,
-                               const std::tuple<Args*...>& ptrs) {
+inline auto make_holder_cl_impl_step2(T&& expr, std::index_sequence<Is...>,
+                                      const std::tuple<Args*...>& ptrs) {
   return holder_cl(std::forward<T>(expr), std::get<Is>(ptrs)...);
 }
 
@@ -96,8 +96,8 @@ auto make_holder_cl_impl_step2(T&& expr, std::index_sequence<Is...>,
  * @return `holder_cl` referencing given expression
  */
 template <typename T, std::size_t... Is, typename... Args>
-auto make_holder_cl_impl_step1(const T& func, std::index_sequence<Is...>,
-                               Args&&... args) {
+inline auto make_holder_cl_impl_step1(const T& func, std::index_sequence<Is...>,
+                                      Args&&... args) {
   std::tuple<std::remove_reference_t<Args>*...> res;
   auto ptrs = std::tuple_cat(
       holder_handle_element(std::forward<Args>(args), std::get<Is>(res))...);
@@ -122,7 +122,7 @@ template <typename T, typename... Args,
           require_all_kernel_expressions_t<
               decltype(std::declval<T>()(std::declval<Args&>()...)),
               Args...>* = nullptr>
-auto make_holder_cl(const T& func, Args&&... args) {
+inline auto make_holder_cl(const T& func, Args&&... args) {
   return internal::make_holder_cl_impl_step1(
       func, std::make_index_sequence<sizeof...(Args)>(),
       std::forward<Args>(args)...);

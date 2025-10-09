@@ -9,7 +9,7 @@ namespace stan {
 namespace math {
 
 template <typename T, typename = require_autodiff_scalar_t<T>>
-double scalbn(const T& x, int n) {
+inline double scalbn(const T& x, int n) {
   return std::scalbn(value_of_rec(x), n);
 }
 

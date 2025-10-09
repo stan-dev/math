@@ -44,7 +44,7 @@ namespace math {
 template <bool propto, typename T_y, typename T_dof, typename T_scale,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_dof, T_scale>* = nullptr>
-return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lpdf(
+inline return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lpdf(
     const T_y& y, const T_dof& nu, const T_scale& s) {
   using T_partials_return = partials_return_t<T_y, T_dof, T_scale>;
   using std::log;

@@ -27,8 +27,8 @@ namespace math {
  */
 template <typename T_CPCs, typename T_sds,
           require_all_var_vector_t<T_CPCs, T_sds>* = nullptr>
-var_value<Eigen::MatrixXd> read_cov_matrix(const T_CPCs& CPCs, const T_sds& sds,
-                                           scalar_type_t<T_CPCs>& log_prob) {
+inline var_value<Eigen::MatrixXd> read_cov_matrix(
+    const T_CPCs& CPCs, const T_sds& sds, scalar_type_t<T_CPCs>& log_prob) {
   return multiply_lower_tri_self_transpose(read_cov_L(CPCs, sds, log_prob));
 }
 

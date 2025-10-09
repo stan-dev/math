@@ -29,7 +29,8 @@ namespace math {
 template <typename T_n, typename T_prob,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_n, T_prob>* = nullptr>
-return_type_t<T_prob> bernoulli_lccdf(const T_n& n, const T_prob& theta) {
+inline return_type_t<T_prob> bernoulli_lccdf(const T_n& n,
+                                             const T_prob& theta) {
   using T_theta_ref = ref_type_t<T_prob>;
   static constexpr const char* function = "bernoulli_lccdf";
   check_consistent_sizes(function, "Random variable", n,

@@ -3,7 +3,7 @@
 #include <limits>
 
 template <typename T>
-void expect_isfinite() {
+inline void expect_isfinite() {
   using stan::math::isfinite;
   using std::isfinite;
   using std::numeric_limits;

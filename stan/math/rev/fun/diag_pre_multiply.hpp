@@ -24,7 +24,7 @@ namespace math {
 template <typename T1, typename T2, require_vector_t<T1>* = nullptr,
           require_matrix_t<T2>* = nullptr,
           require_any_st_var<T1, T2>* = nullptr>
-auto diag_pre_multiply(const T1& m1, const T2& m2) {
+inline auto diag_pre_multiply(const T1& m1, const T2& m2) {
   check_size_match("diag_pre_multiply", "m1.size()", m1.size(), "m2.rows()",
                    m2.rows());
   using inner_ret_type = decltype(value_of(m1).asDiagonal() * value_of(m2));

@@ -58,8 +58,8 @@ inline void check_cholesky_factor(const char* function, const char* name,
  * element in matrix is `NaN`
  */
 template <typename StdVec, require_std_vector_t<StdVec>* = nullptr>
-void check_cholesky_factor(const char* function, const char* name,
-                           const StdVec& y) {
+inline void check_cholesky_factor(const char* function, const char* name,
+                                  const StdVec& y) {
   for (size_t i = 0; i < y.size(); ++i) {
     check_cholesky_factor(function, internal::make_iter_name(name, i).c_str(),
                           y[i]);

@@ -49,7 +49,7 @@ template <bool propto, typename T_y, typename T_x, typename T_beta,
           typename T_cuts,
           require_all_prim_or_rev_kernel_expression_t<T_y, T_x, T_beta,
                                                       T_cuts>* = nullptr>
-return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
+inline return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
     const T_y& y, const T_x& x, const T_beta& beta, const T_cuts& cuts) {
   using Eigen::Array;
   using Eigen::Dynamic;

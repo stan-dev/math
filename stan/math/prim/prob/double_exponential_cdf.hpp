@@ -36,7 +36,7 @@ namespace math {
 template <typename T_y, typename T_loc, typename T_scale,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_loc, T_scale>* = nullptr>
-return_type_t<T_y, T_loc, T_scale> double_exponential_cdf(
+inline return_type_t<T_y, T_loc, T_scale> double_exponential_cdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
   using T_partials_array = Eigen::Array<T_partials_return, Eigen::Dynamic, 1>;

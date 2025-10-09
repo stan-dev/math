@@ -22,7 +22,7 @@ class SkewDoubleExponentialTestRig : public VectorRNGTestRig {
   }
 };
 
-double icdf(double z, double mu, double sigma, double tau) {
+inline double icdf(double z, double mu, double sigma, double tau) {
   if (z < tau) {
     return log(z / tau) * sigma / (2.0 * (1.0 - tau)) + mu;
   } else {

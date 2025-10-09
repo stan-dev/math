@@ -59,7 +59,7 @@ template <bool propto, typename T_y_cl, typename T_x_cl, typename T_alpha_cl,
           typename T_beta_cl, typename T_sigma_cl,
           require_all_prim_or_rev_kernel_expression_t<
               T_x_cl, T_y_cl, T_alpha_cl, T_beta_cl, T_sigma_cl>* = nullptr>
-return_type_t<T_y_cl, T_x_cl, T_alpha_cl, T_beta_cl, T_sigma_cl>
+inline return_type_t<T_y_cl, T_x_cl, T_alpha_cl, T_beta_cl, T_sigma_cl>
 normal_id_glm_lpdf(const T_y_cl& y, const T_x_cl& x, const T_alpha_cl& alpha,
                    const T_beta_cl& beta, const T_sigma_cl& sigma) {
   using T_partials_return

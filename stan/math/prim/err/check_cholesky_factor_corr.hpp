@@ -34,8 +34,8 @@ namespace math {
  * element in matrix is NaN
  */
 template <typename Mat, require_matrix_t<Mat>* = nullptr>
-void check_cholesky_factor_corr(const char* function, const char* name,
-                                const Mat& y) {
+inline void check_cholesky_factor_corr(const char* function, const char* name,
+                                       const Mat& y) {
   const auto& y_ref = to_ref(value_of_rec(y));
   check_square(function, name, y_ref);
   check_lower_triangular(function, name, y_ref);
@@ -66,8 +66,8 @@ void check_cholesky_factor_corr(const char* function, const char* name,
  * element in matrix is NaN
  */
 template <typename StdVec, require_std_vector_t<StdVec>* = nullptr>
-void check_cholesky_factor_corr(const char* function, const char* name,
-                                const StdVec& y) {
+inline void check_cholesky_factor_corr(const char* function, const char* name,
+                                       const StdVec& y) {
   for (size_t i = 0; i < y.size(); ++i) {
     check_cholesky_factor_corr(function,
                                internal::make_iter_name(name, i).c_str(), y[i]);

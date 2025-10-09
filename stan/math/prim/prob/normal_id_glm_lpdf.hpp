@@ -53,7 +53,7 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_x, typename T_alpha,
           typename T_beta, typename T_scale, require_matrix_t<T_x>* = nullptr>
-return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
+inline return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
     const T_y& y, const T_x& x, const T_alpha& alpha, const T_beta& beta,
     const T_scale& sigma) {
   using Eigen::Array;

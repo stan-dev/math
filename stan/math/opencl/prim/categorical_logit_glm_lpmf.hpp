@@ -46,7 +46,7 @@ template <bool propto, typename T_y, typename T_x, typename T_alpha,
           typename T_beta,
           require_all_prim_or_rev_kernel_expression_t<T_y, T_x, T_alpha,
                                                       T_beta>* = nullptr>
-return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
+inline return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
     const T_y& y, const T_x& x, const T_alpha& alpha, const T_beta& beta) {
   using T_partials_return = partials_return_t<T_x, T_alpha, T_beta>;
   constexpr bool is_y_vector = !is_stan_scalar<T_y>::value;
