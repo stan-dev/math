@@ -314,6 +314,98 @@ inline STAN_COLD_PATH void throw_nan(NameStr&& name_str, ParamStr&& param_str,
   throw std::domain_error(msg);
 }
 
+inline double barzilai_borwein_step_size(const Eigen::VectorXd& s, const Eigen::VectorXd& g_curr,
+                             const Eigen::VectorXd& g_prev, double prev_step,
+                             int last_backtracks, double min_alpha, double max_alpha) {
+  // Fallbacks
+//  std::cout << "---------- barzilai_borwein_step_size ----------" << std::endl;
+  auto safe_fallback = [&]() -> double {
+    double a = std::clamp(prev_step > 0.0 && std::isfinite(prev_step) ? prev_step : 1.0,
+                          min_alpha, max_alpha);
+//    std::cout << "\tsafe_fallback: " << a << std::endl;
+    return a;
+  };
+
+  const Eigen::VectorXd y = g_curr - g_prev;
+  const double sty = s.dot(y);
+  const double sts = s.squaredNorm();
+  const double yty = y.squaredNorm();
+
+  // Basic validity checks
+  const double eps = 1e-16;
+  if (!(std::isfinite(sty) && std::isfinite(sts) && std::isfinite(yty)) ||
+      sts <= eps || yty <= eps || sty <= eps || last_backtracks == 99) {
+/*
+        std::cout << "\tInvalid sts etc. " << std::endl;
+    std::cout << "\t         sty: " << sty <<
+                 "\n\t        sts: " << sts <<
+                 "\n\t        yty: " << yty <<
+                 "\n\t         bt: " << last_backtracks << std::endl;
+*/
+                 return safe_fallback();
+  }
+
+  // BB candidates
+  double alpha_bb1 =  std::clamp(std::abs(sts / sty), min_alpha, max_alpha);
+  double alpha_bb2 = std::clamp(std::abs(sty / yty), min_alpha, max_alpha);
+
+  // Safeguard candidates
+  if (!std::isfinite(alpha_bb1) || !std::isfinite(alpha_bb2) ||
+      alpha_bb1 <= 0.0 || alpha_bb2 <= 0.0) {
+/*
+        std::cout << "\tInvalid BB candidates: " << std::endl;
+    std::cout << "\t          sty: " << sty <<
+                 "\n\t        sts: " << sts <<
+                 "\n\t        yty: " << yty << std::endl;
+    std::cout << "\t    alpha_bb1: " << alpha_bb1 <<
+                 "\n\t  alpha_bb2: " << alpha_bb2 << std::endl;
+*/
+                 return safe_fallback();
+  }
+
+  // Spectral cosine r = cos^2(angle(s, y)) in [0,1]
+  const double r = (sty * sty) / (sts * yty);
+
+  // Heuristic thresholds (robust defaults)
+  constexpr double kLoose = 0.9;  // "nice" curvature
+  constexpr double kTight = 0.1;  // "dodgy" curvature
+
+  double alpha0 = alpha_bb2;  // default to short BB for robustness
+  if (r > kLoose && last_backtracks <= 1) {
+    // Spectrum looks friendly and line search was not harsh -> try long BB
+    alpha0 = alpha_bb1;
+  } else if (r >= kTight && r <= kLoose) {
+    // Neither clearly friendly nor clearly dodgy -> neutral middle
+    alpha0 = std::sqrt(alpha_bb1 * alpha_bb2);
+  } // else keep alpha_bb2
+
+  // Clip to user bounds
+  alpha0 = std::clamp(alpha0, min_alpha, max_alpha);
+
+  if (!std::isfinite(alpha0) || alpha0 <= 0.0) {
+/*
+    std::cout << "\tInvalid final alpha0: " << alpha0 << std::endl;
+    std::cout << "\t          sty: " << sty <<
+                 "\n\t        sts: " << sts <<
+                 "\n\t        yty: " << yty << std::endl;
+    std::cout << "\t    alpha_bb1: " << alpha_bb1 <<
+                 "\n\t  alpha_bb2: " << alpha_bb2 << std::endl;
+    std::cout << "\t            r: " << r << std::endl;
+*/
+    return safe_fallback();
+  }
+/*
+  std::cout << "\t Valid alpha0: " << alpha0 << std::endl;
+    std::cout << "\t          sty: " << sty <<
+                 "\n\t        sts: " << sts <<
+                 "\n\t        yty: " << yty << std::endl;
+    std::cout << "\t    alpha_bb1: " << alpha_bb1 <<
+                 "\n\t  alpha_bb2: " << alpha_bb2 << std::endl;
+    std::cout << "\t            r: " << r << std::endl;
+   std::cout <<  "\t     alpha0: " << alpha0 << std::endl;
+*/
+   return alpha0;
+}
 
 
 /**
@@ -437,12 +529,12 @@ inline auto laplace_marginal_density_est(
       return Eigen::VectorXd::Zero(theta_size);
     }
   }();
+  Eigen::VectorXd theta_prev = theta;
   Eigen::VectorXd a_prev = Eigen::VectorXd::Zero(theta_size);
   Eigen::MatrixXd B(theta_size, theta_size);
   Eigen::VectorXd a(theta_size);
   Eigen::VectorXd b(theta_size);
   Eigen::VectorXd a_tmp(theta_size);
-  Eigen::VectorXd theta_tmp(theta_size);
   // FIXME: We should use less full scope referencing here. Hard to follow
   auto obj_fun = [&](const Eigen::VectorXd& a_val, auto&& theta_val) -> double {
     return -0.5 * a_val.dot(theta_val)
@@ -456,17 +548,23 @@ inline auto laplace_marginal_density_est(
   double objective_old = std::numeric_limits<double>::lowest();
   double objective_new = obj_fun(a_prev, theta);
   if (!std::isfinite(objective_new)) {
+//    std::cout << "FAIL: initial objective: " << objective_new << std::endl;
     throw std::domain_error(
         "laplace_marginal_density: log likelihood is not finite at initial "
         "theta and likelihood arguments.");
   }
   double step_size = 1.0;
+//  std::cout << "___________\nSTART\n___________" << std::endl;
   // NOTE: theta_grad is updated in `wolfe_line_search`
   auto theta_grad
       = laplace_likelihood::theta_grad(ll_fun, theta, ll_args, msgs);
+  Eigen::VectorXd theta_grad_prev = theta_grad;
   int iter = 0;
+  // Start with low bb
+  int total_updates = 99;
   if (options.solver == 1) {
     if (options.hessian_block_size == 1) {
+   //   std::cout << "Solver: 1Diag" << std::endl;
       Eigen::VectorXd W_r(theta_size);
       for (Eigen::Index i = 0; i <= options.max_num_steps; i++) {
         debug::print("======Iter", iter++);
@@ -474,6 +572,8 @@ inline auto laplace_marginal_density_est(
             ll_fun, theta, ll_args, msgs);
         for (Eigen::Index i = 0; i < W.size(); i++) {
           if (W.coeff(i) < 0) {
+     //       std::cout << "FAIL: negative hessian diag: " << W.coeff(i)
+   //                   << " at index " << i << std::endl;
             throw std::domain_error(
                 "laplace_marginal_density: Hessian matrix is not positive "
                 "definite");
@@ -491,38 +591,21 @@ inline auto laplace_marginal_density_est(
             = b
               - W_r.asDiagonal()
                     * LT.solve(L.solve(W_r.cwiseProduct(covariance * b)));
-        Eigen::VectorXd p = a - a_prev;
-        const Eigen::VectorXd g0
-            = -covariance * a_prev + covariance * theta_grad;
-        double g0_dir = g0.dot(p);
-        const Eigen::VectorXd sp = covariance * p;
-        double d0_dir = -p.dot(sp)
-                        + sp.dot(W.asDiagonal()
-                                 * sp);  // <= negative in well-behaved cases
-        debug::print("newton opt step", 1, "g0_dir: ", g0_dir,
-                     "d0_dir: ", d0_dir);
-        //            "p:      ", p.transpose().eval());
-        auto newton_step_size = -g0_dir / d0_dir;
-        debug::print("", 1, "Newton step size: ", newton_step_size,
-                     "prev step size:   ", step_size);
-        newton_step_size
-            = std::clamp(newton_step_size, options.line_search.min_alpha,
-                         options.line_search.max_alpha);
-        if (!(std::isfinite(newton_step_size) || newton_step_size < 0.0)) {
-          newton_step_size = 1.0;  // fallback seed if curvature is pathological
-        }
-        if (std::isnan(newton_step_size) || std::isinf(newton_step_size)) {
-        } else {
-          step_size = (step_size * 0.8 + newton_step_size * 0.2);
-        }
-        debug::print("", 1, "Blended step size: ", step_size);
-        // step_size = std::clamp(step_size,
-        // options.line_search.min_alpha, 8.0);
+        // Approximate optimial step size
+        Eigen::VectorXd p = theta - theta_prev;
+        theta_grad = laplace_likelihood::theta_grad(ll_fun, theta, ll_args, msgs);
+        step_size = barzilai_borwein_step_size(p, theta_grad, theta_grad_prev,
+                                      step_size, i, options.line_search.min_alpha,
+                                      options.line_search.max_alpha);
+        theta_grad_prev = theta_grad;
         objective_old = objective_new;
-        auto ok = internal::wolfe_line_search(
+        internal::wolfe_return ok = internal::wolfe_return::FAIL;
+        std::tie(ok, total_updates) = internal::wolfe_line_search(
             theta, objective_new, step_size, theta_grad, a, a_prev, ll_fun,
             obj_fun, grad_fun, covariance, ll_args, options, msgs);
         // Check for convergence or if line search failed
+    //    std::cout << "wolfe_return: " << internal::wolfe_return_str(ok) << std::endl;
+    //    std::cout << "    Wolfe step:" << step_size << std::endl;
         debug::print("", 1, "Objective old: ", objective_old,
                      "Objective new: ", objective_new,
                      "Step size:      ", step_size);
@@ -544,6 +627,7 @@ inline auto laplace_marginal_density_est(
         } else {
           a_prev.swap(a);
           set_zero_adjoint(ll_args);
+          step_size = std::clamp(step_size, 0.0, 4.0);
           // step_size = step_size < options.line_search.min_alpha * 10000 ?
           // 0.25 : step_size;
         }
@@ -562,12 +646,15 @@ inline auto laplace_marginal_density_est(
         }
       }
       W_r.makeCompressed();
+//      std::cout << "Solver: 1Block" << std::endl;
       for (Eigen::Index i = 0; i <= options.max_num_steps; i++) {
         debug::print("======Iter", iter++);
         auto W = laplace_likelihood::block_hessian(
             ll_fun, theta, options.hessian_block_size, ll_args, msgs);
         for (Eigen::Index i = 0; i < W.rows(); i++) {
           if (W.coeff(i, i) < 0) {
+//            std::cout << "FAIL: negative hessian diag: " << W.coeff(i, i)
+//                      << " at index " << i << std::endl;
             throw std::domain_error(
                 "laplace_marginal_density: Hessian matrix is not positive "
                 "definite");
@@ -578,6 +665,7 @@ inline auto laplace_marginal_density_est(
                       + W_r * (covariance * W_r);
         Eigen::LLT<Eigen::Ref<Eigen::MatrixXd>> llt_B(B);
         if (llt_B.info() != Eigen::Success) {
+//          std::cout << "FAIL: Cholesky failed" << std::endl;
           throw std::domain_error(
               "laplace_marginal_density: Cholesky failed in iteration "
               + std::to_string(i));
@@ -587,35 +675,18 @@ inline auto laplace_marginal_density_est(
         b.noalias() = W * theta + theta_grad;
         a.noalias() = b - W_r * LT.solve(L.solve(W_r * (covariance * b)));
         // Simple Newton step
+        Eigen::VectorXd p = theta - theta_prev;
+        step_size = barzilai_borwein_step_size(p, theta_grad, theta_grad_prev,
+                                      step_size, i, options.line_search.min_alpha,
+                                      options.line_search.max_alpha);
         objective_old = objective_new;
-        Eigen::VectorXd p = a - a_prev;
-        const Eigen::VectorXd g0
-            = -covariance * a_prev + covariance * theta_grad;
-        double g0_dir = g0.dot(p);
-        const Eigen::VectorXd sp = covariance * p;
-        double d0_dir
-            = -p.dot(sp)
-              + sp.dot((-W) * sp);  // <= negative in well-behaved cases
-        auto newton_step_size = -g0_dir / d0_dir;
-        debug::print("", 1, "Newton step size: ", newton_step_size,
-                     "prev step size:   ", step_size);
-        if (!(std::isfinite(newton_step_size) || newton_step_size < 0.0)) {
-          newton_step_size = 1.0;  // fallback seed if curvature is pathological
-        }
-        newton_step_size
-            = std::clamp(newton_step_size, options.line_search.min_alpha,
-                         options.line_search.max_alpha);
-        if (std::isnan(newton_step_size) || std::isinf(newton_step_size)) {
-        } else {
-          step_size = (step_size * 0.8 + newton_step_size * 0.2);
-        }
-        debug::print("", 1, "Blended step size: ", step_size);
-        // step_size = std::clamp(step_size,
-        // options.line_search.min_alpha, 2.0);
-
-        auto ok = internal::wolfe_line_search(
+        theta_grad_prev = theta_grad;
+        internal::wolfe_return ok = internal::wolfe_return::FAIL;
+        std::tie(ok, total_updates) = internal::wolfe_line_search(
             theta, objective_new, step_size, theta_grad, a, a_prev, ll_fun,
             obj_fun, grad_fun, covariance, ll_args, options, msgs);
+//        std::cout << "wolfe_return: " << internal::wolfe_return_str(ok) << std::endl;
+//        std::cout << "    Wolfe step:" << step_size << std::endl;
         debug::print("", 1, "Objective old: ", objective_old,
                      "Objective new: ", objective_new,
                      "Step size:      ", step_size);
@@ -636,6 +707,7 @@ inline auto laplace_marginal_density_est(
         } else {
           a_prev.swap(a);
           set_zero_adjoint(ll_args);
+          step_size = std::clamp(step_size, 0.0, 4.0);
           // step_size = step_size < options.line_search.min_alpha * 10000 ?
           // 0.25 : step_size;
         }
@@ -643,6 +715,7 @@ inline auto laplace_marginal_density_est(
     }
     throw_overstep(options.max_num_steps);
   } else if (options.solver == 2) {
+//    std::cout << "Solver: 2" << std::endl;
     Eigen::MatrixXd K_root
         = covariance.template selfadjointView<Eigen::Lower>().llt().matrixL();
     for (Eigen::Index i = 0; i <= options.max_num_steps; i++) {
@@ -653,6 +726,7 @@ inline auto laplace_marginal_density_est(
                     + K_root.transpose() * W * K_root;
       Eigen::LLT<Eigen::Ref<Eigen::MatrixXd>> llt_B(B);
       if (llt_B.info() != Eigen::Success) {
+//        std::cout << "FAIL: Cholesky failed" << std::endl;
         throw std::domain_error(
             "laplace_marginal_density: Cholesky failed in iteration "
             + std::to_string(i));
@@ -663,31 +737,18 @@ inline auto laplace_marginal_density_est(
       a.noalias()
           = K_root.transpose().template triangularView<Eigen::Upper>().solve(
               LT.solve(L.solve(K_root.transpose() * b)));
+      Eigen::VectorXd p = theta - theta_prev;
+      step_size = barzilai_borwein_step_size(p, theta_grad, theta_grad_prev,
+                                    step_size, i, options.line_search.min_alpha,
+                                    options.line_search.max_alpha);
       objective_old = objective_new;
-      Eigen::VectorXd p = a - a_prev;
-      const Eigen::VectorXd g0 = -covariance * a_prev + covariance * theta_grad;
-      double g0_dir = g0.dot(p);
-      const Eigen::VectorXd sp = covariance * p;
-      double d0_dir = -p.dot(sp)
-                      + sp.dot((-W) * sp);  // <= negative in well-behaved cases
-      auto newton_step_size = -g0_dir / d0_dir;
-      debug::print("", 1, "Newton step size: ", newton_step_size,
-                   "prev step size:   ", step_size);
-      if (!(std::isfinite(newton_step_size) || newton_step_size < 0.0)) {
-        // fallback seed if curvature is pathological
-        newton_step_size = 1.0;
-      }
-      newton_step_size
-          = std::clamp(newton_step_size, options.line_search.min_alpha,
-                       options.line_search.max_alpha);
-      if (!(std::isnan(newton_step_size) || std::isinf(newton_step_size))) {
-        step_size = (step_size * 0.8 + newton_step_size * 0.2);
-      }
-      debug::print("", 1, "Blended step size: ", step_size);
-      // step_size = std::clamp(step_size, options.line_search.min_alpha, 8.0);
-      auto ok = internal::wolfe_line_search(
-          theta, objective_new, step_size, theta_grad, a, a_prev, ll_fun,
-          obj_fun, grad_fun, covariance, ll_args, options, msgs);
+      theta_grad_prev = theta_grad;
+      internal::wolfe_return ok = internal::wolfe_return::FAIL;
+      std::tie(ok, total_updates) = internal::wolfe_line_search(
+        theta, objective_new, step_size, theta_grad, a, a_prev, ll_fun,
+        obj_fun, grad_fun, covariance, ll_args, options, msgs);
+//        std::cout << "wolfe_return: " << internal::wolfe_return_str(ok) << std::endl;
+//        std::cout << "    Wolfe step:" << step_size << std::endl;
       // Check for convergence or if line search failed
       debug::print("", 1, "Objective old: ", objective_old,
                    "Objective new: ", objective_new,
@@ -708,12 +769,14 @@ inline auto laplace_marginal_density_est(
       } else {
         a_prev = a;
         set_zero_adjoint(ll_args);
+        step_size = std::clamp(step_size, 0.0, 4.0);
         // step_size = step_size < options.line_search.min_alpha * 10000 ? 0.25
         // : step_size;
       }
     }
     throw_overstep(options.max_num_steps);
   } else if (options.solver == 3) {
+//    std::cout << "Solver: 3" << std::endl;
     for (Eigen::Index i = 0; i <= options.max_num_steps; i++) {
       debug::print("======Iter", iter++);
       auto W = laplace_likelihood::block_hessian(
@@ -723,32 +786,18 @@ inline auto laplace_marginal_density_est(
       // L on lower and U on upper triangular
       b.noalias() = W * theta + theta_grad;
       a.noalias() = b - W * LU.solve(covariance * b);
+      Eigen::VectorXd p = theta - theta_prev;
+      step_size = barzilai_borwein_step_size(p, theta_grad, theta_grad_prev,
+                                    step_size, i, options.line_search.min_alpha,
+                                    options.line_search.max_alpha);
       objective_old = objective_new;
-      Eigen::VectorXd p = a - a_prev;
-      const Eigen::VectorXd g0 = -covariance * a_prev + covariance * theta_grad;
-      double g0_dir = g0.dot(p);
-      const Eigen::VectorXd sp = covariance * p;
-      double d0_dir = -p.dot(sp)
-                      + sp.dot((-W) * sp);  // <= negative in well-behaved cases
-      auto newton_step_size = -g0_dir / d0_dir;
-      debug::print("", 1, "Newton step size: ", newton_step_size,
-                   "prev step size:   ", step_size);
-      if (!(std::isfinite(newton_step_size) || newton_step_size < 0.0)) {
-        newton_step_size = 1.0;  // fallback seed if curvature is pathological
-      }
-      newton_step_size
-          = std::clamp(newton_step_size, options.line_search.min_alpha,
-                       options.line_search.max_alpha);
-      if (std::isnan(newton_step_size) || std::isinf(newton_step_size)) {
-      } else {
-        step_size = (step_size * 0.8 + newton_step_size * 0.2);
-      }
-      debug::print("", 1, "Blended step size: ", step_size);
-      // step_size = std::clamp(step_size, options.line_search.min_alpha, 8.0);
-
-      auto ok = internal::wolfe_line_search(
-          theta, objective_new, step_size, theta_grad, a, a_prev, ll_fun,
-          obj_fun, grad_fun, covariance, ll_args, options, msgs);
+      theta_grad_prev = theta_grad;
+      internal::wolfe_return ok = internal::wolfe_return::FAIL;
+      std::tie(ok, total_updates) = internal::wolfe_line_search(
+        theta, objective_new, step_size, theta_grad, a, a_prev, ll_fun,
+        obj_fun, grad_fun, covariance, ll_args, options, msgs);
+//        std::cout << "wolfe_return: " << internal::wolfe_return_str(ok) << std::endl;
+//        std::cout << "    Wolfe step:" << step_size << std::endl;
       debug::print("", 1, "Objective old: ", objective_old,
                    "Objective new: ", objective_new,
                    "Step size:      ", step_size);
@@ -769,6 +818,7 @@ inline auto laplace_marginal_density_est(
       } else {
         a_prev = a;
         set_zero_adjoint(ll_args);
+        step_size = std::clamp(step_size, 0.0, 4.0);
         // step_size = step_size < 1e-3 ? 1 : step_size;
       }
     }

@@ -76,7 +76,7 @@ struct laplace_line_search_options {
    *
    * Caps the growth of the step length to ensure stability.
    */
-  double max_alpha{32.0};
+  double max_alpha{16.0};
 
   /**
    * @brief Step size expansion factor.
@@ -291,13 +291,37 @@ inline auto check_wolfe_curve(double dir_deriv_next, double dir_deriv_init,
 }
 
 
-
+// TODO: These need to show passed but warning went off for convergence
 enum class wolfe_return {
   PASS,         // Success
-  ARMIJO_PASS,  // Armijo condition passed but Wolfe failed
   FAIL,         // Armijo Wolfe conditions failed
-  GRAD_CONV     // Approximate gradient converged
+  ARMIJO_PASS,  // Armijo condition passed but Wolfe failed
+  GRAD_CONV,     // Approximate gradient converged
+  GRAD_OBJ_CONV, // Approximate gradient and objective converged
+  OBJ_CONV,   // Objective converged
+  ALPHA_FAIL // Alpha high shrank below tolerance
 };
+
+inline auto wolfe_return_str(wolfe_return r) {
+  switch (r) {
+  case wolfe_return::PASS:
+    return "PASS";
+  case wolfe_return::ARMIJO_PASS:
+    return "ARMIJO_PASS";
+  case wolfe_return::FAIL:
+    return "FAIL";
+  case wolfe_return::GRAD_CONV:
+    return "GRAD_CONV";
+  case wolfe_return::GRAD_OBJ_CONV:
+    return "GRAD_OBJ_CONV";
+  case wolfe_return::OBJ_CONV:
+    return "OBJ_CONV";
+  case wolfe_return::ALPHA_FAIL:
+    return "ALPHA_FAIL";
+  default:
+    return "UNKNOWN";
+  }
+}
 
 /**
  * @brief  Strong‑Wolfe line search with cubic‑interpolation "zoom" for
@@ -385,7 +409,7 @@ enum class wolfe_return {
  */
 template <typename F, class Obj, class Grad, typename LLArgs, typename Stream,
           typename Options>
-inline wolfe_return wolfe_line_search(
+inline std::pair<wolfe_return, int> wolfe_line_search(
     Eigen::VectorXd& theta, double& obj_init, double& alpha_init,
     Eigen::VectorXd& theta_grad, Eigen::VectorXd& a,
     const Eigen::VectorXd& a_prev, F&& ll_fun, Obj&& obj_fun, Grad&& grad_fun,
@@ -399,7 +423,6 @@ inline wolfe_return wolfe_line_search(
   Eigen::VectorXd p = a - a_prev;
   double dir_deriv_init = grad_fun(a_prev, theta, theta_grad).dot(p);
   Eval low{0.0, obj_init, dir_deriv_init};
-  Eval best = low;  // keep the best Armijo-OK in case strong-Wolfe fails
 
   auto armijo_ok = [&](const Eval& eval) -> bool {
     return check_armijo(eval.obj, obj_init, eval.alpha, dir_deriv_init, opt);
@@ -426,6 +449,7 @@ inline wolfe_return wolfe_line_search(
   Eigen::VectorXd theta_try(a_prev.size());
   Eval high{alpha_start, obj_init, dir_deriv_init};
   update_step(a_try, theta_try, theta_grad, high);
+  Eval best = low;  // keep the best Armijo-OK in case strong-Wolfe fails
   {
     while (!(std::isfinite(high.obj) && theta_try.allFinite())) {
       high.alpha *= 0.5;
@@ -433,7 +457,7 @@ inline wolfe_return wolfe_line_search(
         debug::print("Exit on precheck numerical trouble", 1);
         debug::print("total_updates", total_updates);
         alpha_init = high.alpha;
-        return wolfe_return::FAIL;
+        return std::pair{wolfe_return::FAIL, total_updates};
       }
       update_step(a_try, theta_try, theta_grad, high);
     }
@@ -449,7 +473,7 @@ inline wolfe_return wolfe_line_search(
         obj_init = high.obj;
         alpha_init = high.alpha;
         debug::print("total_updates", total_updates);
-        return wolfe_return::PASS;
+        return std::pair{wolfe_return::PASS, total_updates};
       } else {
         if (best.obj < high.obj) {
           best = high;
@@ -502,7 +526,7 @@ inline wolfe_return wolfe_line_search(
         alpha_init = high.alpha;
         debug::print("Exit on first while", 1);
         debug::print("total_updates", total_updates);
-        return wolfe_return::PASS;
+        return std::pair{wolfe_return::PASS, total_updates};
       } else {
         if (best.obj < high.obj) {
           best = high;
@@ -522,28 +546,41 @@ inline wolfe_return wolfe_line_search(
     found_right = true;
     break;
   }
-  // Check for grad convergence
-  if (std::abs(high.dir) <= grad_tol ||  // tiny slope
-    std::abs(high.obj - obj_init) <= obj_tol
-        && high.alpha < 1e-4) {                // tiny gain
-    if (std::abs(high.dir) <= grad_tol &&  // tiny slope
-        std::abs(high.obj - obj_init) <= obj_tol) {
-      debug::print("Exit on grad_tol and obj_tol", 1);
-    } else if (std::abs(high.dir) <= grad_tol) {
-      debug::print("Exit on grad_tol", 1);
-    } else if (std::abs(high.obj - obj_init) <= obj_tol) {
-      debug::print("Exit on obj_tol", 1);
-    } else {
-      debug::print("Exit on alpha failure", 1);
+  auto check_bounds = [&]() {
+    // Check for grad convergence
+    if (std::abs(high.dir) <= grad_tol ||  // tiny slope
+      std::abs(high.obj - obj_init) <= obj_tol
+          && high.alpha < 1e-8) {                // tiny gain
+      if (best.obj != low.obj && armijo_ok(best)) {
+       update_step(a_try, theta_try, theta_grad, high);
+       a.swap(a_try);
+       theta.swap(theta_try);
+       obj_init = best.obj;
+       alpha_init = best.alpha;
+      }
+      debug::print("total_updates", total_updates);
+      if (std::abs(high.dir) <= grad_tol &&  // tiny slope
+          std::abs(high.obj - obj_init) <= obj_tol) {
+        debug::print("Exit on grad_tol and obj_tol", 1);
+        return std::pair{wolfe_return::GRAD_OBJ_CONV, total_updates};
+      } else if (std::abs(high.dir) <= grad_tol) {
+        debug::print("Exit on grad_tol", 1);
+        return std::pair{wolfe_return::GRAD_CONV, total_updates};
+      } else if (std::abs(high.obj - obj_init) <= obj_tol) {
+        debug::print("Exit on obj_tol", 1);
+        return std::pair{wolfe_return::OBJ_CONV, total_updates};
+      } else {
+        debug::print("Exit on alpha failure", 1);
+        return std::pair{wolfe_return::ALPHA_FAIL, total_updates};
+      }
     }
-    a.swap(a_try);
-    theta.swap(theta_try);
-    obj_init = high.obj;
-    alpha_init = high.alpha;
-    debug::print("total_updates", total_updates);
-    return wolfe_return::GRAD_CONV;  // add a code in your enum
-  }
+    return std::pair{wolfe_return::PASS, total_updates};
 
+  };
+  auto check_b = check_bounds();
+  if (check_b.first != wolfe_return::PASS) {
+    return check_b;
+  }
   update_step(a_try, theta_try, theta_grad, high);
 
   debug::print("_______End First While: ", 1, "high.alpha: ", high.alpha,
@@ -585,7 +622,7 @@ inline wolfe_return wolfe_line_search(
         alpha_init = mid.alpha;
         debug::print("Exit on safe on zoom", 1);
         debug::print("total_updates", total_updates);
-        return wolfe_return::PASS;
+        return std::pair{wolfe_return::PASS, total_updates};
       } else {
         if (best.obj < mid.obj) {
           best = mid;
@@ -604,25 +641,11 @@ inline wolfe_return wolfe_line_search(
     } else {
       high = mid;
     }
-    if (std::abs(mid.dir) <= grad_tol
-        || std::abs(mid.obj - obj_init) <= obj_tol && mid.alpha < 1e-6) {
-      if (std::abs(mid.dir) <= grad_tol &&  // tiny slope
-          std::abs(mid.obj - obj_init) <= obj_tol) {
-        debug::print("Exit on grad_tol and obj_tol", 1);
-      } else if (std::abs(mid.dir) <= grad_tol) {
-        debug::print("Exit on grad_tol", 1);
-      } else if (std::abs(mid.obj - obj_init) <= obj_tol) {
-        debug::print("Exit on obj_tol", 1);
-      } else {
-        debug::print("Exit on cube alpha failure", 1);
-      }
-      a.swap(a_try);
-      theta.swap(theta_try);
-      obj_init = mid.obj;
-      alpha_init = mid.alpha;
-      debug::print("total_updates", total_updates);
-      return wolfe_return::GRAD_CONV;
+    auto check_bb = check_bounds();
+    if (check_bb.first != wolfe_return::PASS) {
+      return check_bb;
     }
+
   }
   debug::print("Failed zoom: ", 1, "Failed zoom:", 1, "low.alpha: ", low.alpha,
                "low.obj:   ", low.obj, "deriv_low: ", low.dir,
@@ -643,15 +666,15 @@ inline wolfe_return wolfe_line_search(
   if (armijo_ok_mid && curve_ok_mid) {
     debug::print("Exit on safe after zoom", 1);
     debug::print("total_updates", total_updates);
-    return wolfe_return::PASS;
+    return std::pair{wolfe_return::PASS, total_updates};
   } else if (armijo_ok_mid) {
     debug::print("Exit on only satisfying armijo", 1);
     debug::print("total_updates", total_updates);
-    return wolfe_return::ARMIJO_PASS;
+    return std::pair{wolfe_return::ARMIJO_PASS, total_updates};
   } else {
     debug::print("Exit on failure", 1);
     debug::print("total_updates", total_updates);
-    return wolfe_return::FAIL;
+    return std::pair{wolfe_return::FAIL, total_updates};
   }
 }
 }
