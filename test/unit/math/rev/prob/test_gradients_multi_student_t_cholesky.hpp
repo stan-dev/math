@@ -5,6 +5,7 @@
 #include <iomanip>
 #include <stdexcept>
 #include <stan/math.hpp>
+#include <test/unit/math/rev/util.hpp>
 
 template <typename F, typename T_y, typename T_mu, typename T_sigma,
           typename T_nu>

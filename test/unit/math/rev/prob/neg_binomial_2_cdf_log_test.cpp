@@ -1,8 +1,9 @@
 #include <stan/math/rev.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(ProbDistributionsNegBinomial2, derivatives_lcdf_1) {
+TEST_F(AgradRev, ProbDistributionsNegBinomial2_derivatives_lcdf_1) {
   using stan::math::neg_binomial_2_lcdf;
   using stan::math::var;
 
@@ -31,7 +32,7 @@ TEST(ProbDistributionsNegBinomial2, derivatives_lcdf_1) {
   EXPECT_FLOAT_EQ(grad_diff2, gradients[1]);
 }
 
-TEST(ProbDistributionsNegBinomial2, derivatives_lcdf_2) {
+TEST_F(AgradRev, ProbDistributionsNegBinomial2_derivatives_lcdf_2) {
   using stan::math::neg_binomial_2_lcdf;
   using stan::math::var;
 

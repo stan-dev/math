@@ -1,6 +1,7 @@
 #ifndef TEST_UNIT_MATH_REV_PROB_LKJ_CORR_CHOLESKY_TEST_FUNCTORS
 #define TEST_UNIT_MATH_REV_PROB_LKJ_CORR_CHOLESKY_TEST_FUNCTORS
 #include <stan/math/rev.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <vector>
 
 namespace stan {

@@ -63,7 +63,7 @@ TEST_F(agrad_distributions_multi_gp, ProptoSigma) {
   stan::math::recover_memory();
 }
 
-TEST(ProbDistributionsMultiGP, MultiGPVar) {
+TEST_F(AgradRev, ProbDistributionsMultiGP_MultiGPVar) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -78,7 +78,7 @@ TEST(ProbDistributionsMultiGP, MultiGPVar) {
   stan::math::recover_memory();
 }
 
-TEST(ProbDistributionsMultiGP, MultiGPGradientUnivariate) {
+TEST_F(AgradRev, ProbDistributionsMultiGP_MultiGPGradientUnivariate) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::VectorXd;
@@ -175,7 +175,7 @@ struct multi_gp_fun {
   }
 };
 
-TEST(MultiGP, TestGradFunctional) {
+TEST_F(AgradRev, MultiGP_TestGradFunctional) {
   std::vector<double> x(3 * 2 + 3 + 3);
   // y
   x[0] = 1.0;
@@ -208,7 +208,7 @@ TEST(MultiGP, TestGradFunctional) {
   stan::math::recover_memory();
 }
 
-TEST(MultiGP, check_varis_on_stack) {
+TEST_F(AgradRev, MultiGP_check_varis_on_stack) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::to_var;

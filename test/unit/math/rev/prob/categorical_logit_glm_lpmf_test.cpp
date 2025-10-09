@@ -1,6 +1,6 @@
 #include <stan/math/rev.hpp>
-#include <stan/math/prim.hpp>
 #include <test/unit/math/rev/util.hpp>
+#include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
 #include <cmath>
 #include <vector>
@@ -651,7 +651,7 @@ TYPED_TEST(ProbDistributionsCategoricalLogitGLM, glm_interfaces) {
       categorical_logit_glm_lpmf(y_scal, x_var_row, alpha_var, beta_var));
 }
 
-TEST(ProbDistributionsCategoricalLogitGLM, glm_errors) {
+TEST_F(AgradRev, ProbDistributionsCategoricalLogitGLM_glm_errors) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::MatrixXd;

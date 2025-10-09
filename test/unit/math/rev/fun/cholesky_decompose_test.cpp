@@ -1,6 +1,6 @@
 #include <stan/math/rev.hpp>
-#include <gtest/gtest.h>
 #include <test/unit/math/rev/util.hpp>
+#include <gtest/gtest.h>
 #include <boost/random/mersenne_twister.hpp>
 #include <vector>
 
@@ -350,7 +350,7 @@ inline double test_gradient(int size, double prec) {
   return grads_ad.sum();
 }
 
-TEST(AgradRevMatrix, mat_cholesky) {
+TEST_F(AgradRev, RevMatrix_mat_cholesky) {
   using stan::math::cholesky_decompose;
   using stan::math::matrix_v;
   using stan::math::singular_values;
@@ -375,7 +375,7 @@ TEST(AgradRevMatrix, mat_cholesky) {
   EXPECT_NO_THROW(singular_values(X));
 }
 
-TEST(AgradRevMatrix, exception_mat_cholesky) {
+TEST_F(AgradRev, RevMatrix_exception_mat_cholesky) {
   stan::math::matrix_v m;
 
   // not positive definite
@@ -397,7 +397,7 @@ TEST(AgradRevMatrix, exception_mat_cholesky) {
   EXPECT_THROW(stan::math::cholesky_decompose(m), std::domain_error);
 }
 
-TEST(AgradRevMatrix, exception_varmat_cholesky) {
+TEST_F(AgradRev, RevMatrix_exception_varmat_cholesky) {
   stan::math::matrix_d m;
 
   // not positive definite
@@ -423,21 +423,21 @@ TEST(AgradRevMatrix, exception_varmat_cholesky) {
   EXPECT_THROW(stan::math::cholesky_decompose(mv4), std::domain_error);
 }
 
-TEST(AgradRevMatrix, mat_cholesky_1st_deriv_small) {
+TEST_F(AgradRev, RevMatrix_mat_cholesky_1st_deriv_small) {
   test_gradients(9, 1e-10);
   test_gradients_simple(10, 1e-10);
   test_gradient(15, 1e-10);
   test_gp_grad(20, 1e-10);
 }
 
-TEST(AgradRevMatrix, check_varis_on_stack_small) {
+TEST_F(AgradRev, RevMatrix_check_varis_on_stack_small) {
   stan::math::matrix_v X(2, 2);
   X << 3, -1, -1, 1;
 
   test::check_varis_on_stack(stan::math::cholesky_decompose(X));
 }
 
-TEST(AgradRevMatrix, mat_cholesky_1st_deriv_large_gradients) {
+TEST_F(AgradRev, RevMatrix_mat_cholesky_1st_deriv_large_gradients) {
   test_gradient(36, 1e-08);
   test_gp_grad(100, 1e-08);
   test_gp_grad(1000, 1e-08);
@@ -445,7 +445,7 @@ TEST(AgradRevMatrix, mat_cholesky_1st_deriv_large_gradients) {
   test_simple_vec_mult(45, 1e-08);
 }
 
-TEST(AgradRevMatrix, cholesky_replicated_input) {
+TEST_F(AgradRev, RevMatrix_cholesky_replicated_input) {
   using stan::math::var;
 
   auto f = [](int size, const auto& y) {

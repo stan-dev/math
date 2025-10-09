@@ -2,6 +2,7 @@
 #define STAN_MATH_TEST_FIXTURE_DAE_INDEX_3_HPP
 
 #include <stan/math/rev.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/functor/coupled_mm.hpp>
 #include <test/unit/math/rev/functor/test_fixture_ode.hpp>

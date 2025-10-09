@@ -1,5 +1,6 @@
 #include <stan/math/rev/core.hpp>
 #include <test/unit/math/rev/core/gradable.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 

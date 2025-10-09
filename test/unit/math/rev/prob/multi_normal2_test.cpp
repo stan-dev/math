@@ -1,4 +1,5 @@
 #include <stan/math/rev.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/prob/expect_eq_diffs.hpp>
 #include <test/unit/math/rev/prob/test_gradients.hpp>
@@ -121,7 +122,7 @@ TEST_F(agrad_distributions_multi_normal_multi_row, ProptoSigma) {
   stan::math::recover_memory();
 }
 
-TEST(ProbDistributionsMultiNormal, MultiNormalVar2) {
+TEST_F(AgradRev, ProbDistributionsMultiNormal_MultiNormalVar2) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -135,7 +136,7 @@ TEST(ProbDistributionsMultiNormal, MultiNormalVar2) {
 
   stan::math::recover_memory();
 }
-TEST(ProbDistributionsMultiNormal, MultiNormalGradientUnivariate) {
+TEST_F(AgradRev, ProbDistributionsMultiNormal_MultiNormalGradientUnivariate) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::VectorXd;
@@ -232,7 +233,7 @@ struct multi_normal_fun {
   }
 };
 
-TEST(ProbDistributionsMultiNormal, TestGradFunctional) {
+TEST_F(AgradRev, ProbDistributionsMultiNormal_TestGradFunctional) {
   std::vector<double> x(3 + 3 + 3 * 2);
   // y
   x[0] = 1.0;
@@ -472,7 +473,7 @@ inline void test_all_multi_normal2() {
   }
 }
 
-TEST(ProbDistributionsMultiNormal, TestGradFunctionalVectorized) {
+TEST_F(AgradRev, ProbDistributionsMultiNormal_TestGradFunctionalVectorized) {
   test_all_multi_normal2<1, 1>();
   test_all_multi_normal2<1, -1>();
   test_all_multi_normal2<-1, 1>();
