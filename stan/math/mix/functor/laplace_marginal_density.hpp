@@ -599,10 +599,9 @@ inline auto laplace_marginal_density_est(
                                       options.line_search.max_alpha);
         theta_grad_prev = theta_grad;
         objective_old = objective_new;
-        internal::wolfe_return ok = internal::wolfe_return::FAIL;
-        std::tie(ok, total_updates) = internal::wolfe_line_search(
+        auto wolfe_status = internal::wolfe_line_search(
             theta, objective_new, step_size, theta_grad, a, a_prev, ll_fun,
-            obj_fun, grad_fun, covariance, ll_args, options, msgs);
+            obj_fun, grad_fun, covariance, ll_args, options.line_search, msgs);
         // Check for convergence or if line search failed
     //    std::cout << "wolfe_return: " << internal::wolfe_return_str(ok) << std::endl;
     //    std::cout << "    Wolfe step:" << step_size << std::endl;
@@ -610,7 +609,7 @@ inline auto laplace_marginal_density_est(
                      "Objective new: ", objective_new,
                      "Step size:      ", step_size);
         if (abs(objective_new - objective_old) < options.tolerance
-            || (ok != wolfe_return::PASS && objective_new == objective_old)) {
+            || (wolfe_status.stop_ != WolfeReturn::Wolfe && objective_new == objective_old)) {
           const double B_log_determinant
               = 2.0 * llt_B.matrixLLT().diagonal().array().log().sum();
           // Overwrite W instead of making a new sparse matrix
@@ -681,10 +680,9 @@ inline auto laplace_marginal_density_est(
                                       options.line_search.max_alpha);
         objective_old = objective_new;
         theta_grad_prev = theta_grad;
-        internal::wolfe_return ok = internal::wolfe_return::FAIL;
-        std::tie(ok, total_updates) = internal::wolfe_line_search(
+        auto wolfe_status = internal::wolfe_line_search(
             theta, objective_new, step_size, theta_grad, a, a_prev, ll_fun,
-            obj_fun, grad_fun, covariance, ll_args, options, msgs);
+            obj_fun, grad_fun, covariance, ll_args, options.line_search, msgs);
 //        std::cout << "wolfe_return: " << internal::wolfe_return_str(ok) << std::endl;
 //        std::cout << "    Wolfe step:" << step_size << std::endl;
         debug::print("", 1, "Objective old: ", objective_old,
@@ -692,7 +690,7 @@ inline auto laplace_marginal_density_est(
                      "Step size:      ", step_size);
         // Check for convergence or if line search failed
         if (abs(objective_new - objective_old) < options.tolerance
-            || (ok != wolfe_return::PASS && objective_new == objective_old)) {
+            || (wolfe_status.stop_ != WolfeReturn::Wolfe && objective_new == objective_old)) {
           const double B_log_determinant
               = 2.0 * llt_B.matrixLLT().diagonal().array().log().sum();
           return laplace_density_estimates{
@@ -743,10 +741,9 @@ inline auto laplace_marginal_density_est(
                                     options.line_search.max_alpha);
       objective_old = objective_new;
       theta_grad_prev = theta_grad;
-      internal::wolfe_return ok = internal::wolfe_return::FAIL;
-      std::tie(ok, total_updates) = internal::wolfe_line_search(
+      auto wolfe_status = internal::wolfe_line_search(
         theta, objective_new, step_size, theta_grad, a, a_prev, ll_fun,
-        obj_fun, grad_fun, covariance, ll_args, options, msgs);
+        obj_fun, grad_fun, covariance, ll_args, options.line_search, msgs);
 //        std::cout << "wolfe_return: " << internal::wolfe_return_str(ok) << std::endl;
 //        std::cout << "    Wolfe step:" << step_size << std::endl;
       // Check for convergence or if line search failed
@@ -754,7 +751,7 @@ inline auto laplace_marginal_density_est(
                    "Objective new: ", objective_new,
                    "Step size:      ", step_size);
       if (abs(objective_new - objective_old) < options.tolerance
-          || (ok != wolfe_return::PASS && objective_new == objective_old)) {
+          || (wolfe_status.stop_ != WolfeReturn::Wolfe && objective_new == objective_old)) {
         const double B_log_determinant
             = 2.0 * llt_B.matrixLLT().diagonal().array().log().sum();
         return laplace_density_estimates{
@@ -792,10 +789,9 @@ inline auto laplace_marginal_density_est(
                                     options.line_search.max_alpha);
       objective_old = objective_new;
       theta_grad_prev = theta_grad;
-      internal::wolfe_return ok = internal::wolfe_return::FAIL;
-      std::tie(ok, total_updates) = internal::wolfe_line_search(
+      auto wolfe_status = internal::wolfe_line_search(
         theta, objective_new, step_size, theta_grad, a, a_prev, ll_fun,
-        obj_fun, grad_fun, covariance, ll_args, options, msgs);
+        obj_fun, grad_fun, covariance, ll_args, options.line_search, msgs);
 //        std::cout << "wolfe_return: " << internal::wolfe_return_str(ok) << std::endl;
 //        std::cout << "    Wolfe step:" << step_size << std::endl;
       debug::print("", 1, "Objective old: ", objective_old,
@@ -803,7 +799,7 @@ inline auto laplace_marginal_density_est(
                    "Step size:      ", step_size);
       // Check for convergence or if line search failed
       if (abs(objective_new - objective_old) < options.tolerance
-          || (ok != wolfe_return::PASS && objective_new == objective_old)) {
+          || (wolfe_status.stop_ != WolfeReturn::Wolfe && objective_new == objective_old)) {
         // TODO(Charles): There has to be a simple trick for this
         const double B_log_determinant = log(LU.determinant());
         return laplace_density_estimates{
