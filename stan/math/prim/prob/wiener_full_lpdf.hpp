@@ -12,7 +12,7 @@ namespace internal {
 /**
  * Calculate the derivative of the wiener7 density w.r.t. 'sw'
  *
- * @tparam T_y type of scalar variable
+ * @tparam T_y type of reaction time
  * @tparam T_a type of boundary separation
  * @tparam T_v type of drift rate
  * @tparam T_w type of relative starting point
@@ -20,14 +20,14 @@ namespace internal {
  * @tparam T_sw type of inter-trial variability in w
  * @tparam T_err type of log error tolerance
  *
- * @param y A scalar variable; the reaction time in seconds
+ * @param y The reaction time in seconds
  * @param a The boundary separation
  * @param v The drift rate
  * @param w The relative starting point
  * @param sv The inter-trial variability of the drift rate
  * @param sw The inter-trial variability of the relative starting point
  * @param log_error The log error tolerance
- * @return Gradient w.r.t. sw
+ * @return Gradient with respect to sw
  */
 template <typename T_y, typename T_a, typename T_v, typename T_w, typename T_sv,
           typename T_sw, typename T_err>
@@ -52,7 +52,7 @@ inline auto wiener7_grad_sw(const T_y& y, const T_a& a, const T_v& v,
  *
  * @tparam GradSW Whether the gradient of sw is computed
  * @tparam F Type of Gradient/density functor
- * @tparam T_y type of scalar variable
+ * @tparam T_y type of reaction time
  * @tparam T_a type of boundary separation
  * @tparam T_v type of drift rate
  * @tparam T_w type of relative starting point
@@ -89,7 +89,7 @@ inline auto conditionally_grad_sw(F&& functor, T_y&& y_diff, T_a&& a, T_v&& v,
  *
  * @tparam GradSW Whether the gradient of sw is computed
  * @tparam F Type of Gradient/density functor
- * @tparam T_y type of scalar variable
+ * @tparam T_y type of reaction time
  * @tparam T_a type of boundary separation
  * @tparam T_v type of drift rate
  * @tparam T_w type of relative starting point
@@ -212,7 +212,7 @@ inline auto wiener7_integrate(const Wiener7FunctorT& wiener7_functor,
  *
  * See \b Details below for more details on how to use \c wiener_lpdf().
  *
- * @tparam T_y type of scalar
+ * @tparam T_y type of reaction time
  * @tparam T_a type of boundary separation
  * @tparam T_t0 type of non-decision time
  * @tparam T_w type of relative starting point
@@ -221,7 +221,7 @@ inline auto wiener7_integrate(const Wiener7FunctorT& wiener7_functor,
  * @tparam T_sw type of inter-trial variability of relative starting point
  * @tparam T_st0 type of inter-trial variability of non-decision time
  *
- * @param y A scalar variable; the reaction time in seconds
+ * @param y The reaction time in seconds
  * @param a The boundary separation
  * @param t0 The non-decision time
  * @param w The relative starting point
@@ -322,11 +322,6 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
                         const T_sw& sw, const T_st0& st0,
                         const double& precision_derivatives = 1e-4) {
   using ret_t = return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0>;
-  if (!include_summand<propto, T_y, T_a, T_v, T_w, T_t0, T_sv, T_sw,
-                       T_st0>::value) {
-    return ret_t(0);
-  }
-
   using T_y_ref = ref_type_t<T_y>;
   using T_a_ref = ref_type_t<T_a>;
   using T_v_ref = ref_type_t<T_v>;
@@ -335,9 +330,14 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
   using T_sv_ref = ref_type_t<T_sv>;
   using T_sw_ref = ref_type_t<T_sw>;
   using T_st0_ref = ref_type_t<T_st0>;
-
+  using internal::GradientCalc;
   using T_partials_return
       = partials_return_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0>;
+	
+  if (!include_summand<propto, T_y, T_a, T_v, T_w, T_t0, T_sv, T_sw,
+                       T_st0>::value) {
+    return ret_t(0);
+  }
 
   static constexpr const char* function_name = "wiener_lpdf";
   check_consistent_sizes(function_name, "Random variable", y,
@@ -478,7 +478,6 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
 
     T_partials_return hcubature_err
         = log_error_absolute - log_error_density + LOG_TWO + 1;
-    using internal::GradientCalc;
     const auto params = std::make_tuple(y_value, a_value, v_value, w_value,
                                         t0_value, sv_value, sw_value, st0_value,
                                         log_error_absolute - LOG_TWO);
@@ -494,7 +493,6 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
     hcubature_err = log_error_absolute - log_error_derivative
                     + log(fabs(density)) + LOG_TWO + 1;
 
-    // computation of derivatives and precision checks
     // computation of derivative for t and precision check in order to give
     // the value as deriv_t to edge1 and as -deriv_t to edge5
     const T_partials_return deriv_t_7

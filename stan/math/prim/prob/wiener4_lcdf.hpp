@@ -57,9 +57,9 @@ inline auto log_probability_GradAV(const T_a& a, const T_v& v, const T_w& w) {
   //  auto nearly_one = ret_t(1.0 - std::numeric_limits<ret_t>::min());
   ret_t prob;
   if (v < 0) {
-    const auto two_va_one_minus_w = (2.0 * v * a * (1.0 - w));
-    const auto two_avw = 2 * a * v * w;
-    const auto two_av = 2 * a * v;
+	const auto two_av = 2 * a * v;
+    const auto two_va_one_minus_w = (two_av * (1.0 - w));
+    const auto two_avw = two_av * w;
     const auto exp_two_va_one_minus_w = exp(two_va_one_minus_w);
     const auto exp_two_avw = exp(two_avw);
     const auto exp_two_av = exp(two_av);
@@ -77,9 +77,9 @@ inline auto log_probability_GradAV(const T_a& a, const T_v& v, const T_w& w) {
       return -exp(prob);
     }
   } else {
-    const auto minus_two_va_one_minus_w = (-2.0 * v * a * (1.0 - w));
+	const auto minus_two_av = (-2.0 * a * v);
+    const auto minus_two_va_one_minus_w = (minus_two_av * (1.0 - w));
     const auto exp_minus_two_va_one_minus_w = exp(minus_two_va_one_minus_w);
-    const auto minus_two_av = (-2 * a * v);
     const auto exp_minus_two_av = exp(minus_two_av);
     if ((exp_minus_two_va_one_minus_w >= nearly_one)
         || (exp_minus_two_av >= nearly_one)) {
@@ -123,7 +123,7 @@ inline auto logMill(T_x&& x) {
  * @tparam NaturalScale Whether to return the distribution on natural or
  * log-scale
  *
- * @param y A scalar variable; the reaction time in seconds
+ * @param y The reaction time in seconds
  * @param a The boundary separation
  * @param vn The relative starting point
  * @param wn The drift rate
@@ -224,13 +224,13 @@ inline auto wiener4_distribution(const T_y& y, const T_a& a, const T_v& vn,
 /**
  * Calculate derivative of the wiener4 distribution w.r.t. 'a' (natural-scale)
  *
- * @param y A scalar variable; the reaction time in seconds
+ * @param y The reaction time in seconds
  * @param a The boundary separation
  * @param vn The relative starting point
  * @param wn The drift rate
  * @param cdf The value of the distribution
  * @param err The log error tolerance
- * @return Gradient w.r.t. a
+ * @return Gradient with respect to a
  */
 template <typename T_y, typename T_a, typename T_v, typename T_w,
           typename T_cdf, typename T_err>
@@ -332,13 +332,13 @@ inline auto wiener4_cdf_grad_a(const T_y& y, const T_a& a, const T_v& vn,
 /**
  * Calculate derivative of the wiener4 distribution w.r.t. 'v' (natural-scale)
  *
- * @param y A scalar variable; the reaction time in seconds
+ * @param y The reaction time in seconds
  * @param a The boundary separation
  * @param vn The relative starting point
  * @param wn The drift rate
  * @param cdf The value of the distribution
  * @param err The log error tolerance
- * @return Gradient w.r.t. v
+ * @return Gradient with respect to v
  */
 template <typename T_y, typename T_a, typename T_v, typename T_w,
           typename T_cdf, typename T_err>
@@ -413,7 +413,7 @@ inline auto wiener4_cdf_grad_v(const T_y& y, const T_a& a, const T_v& vn,
     F_k = fmin(exp(v * a * w + 0.5 * square(v) * y),
                std::numeric_limits<ret_t>::max());
     const auto summands_small_y = ans / F_k;
-    return -1 * ((-w * a - v * y) * cdf + summands_small_y);
+    return -((-w * a - v * y) * cdf + summands_small_y);
   } else {
     ret_t ans = NEGATIVE_INFTY;
     ans = 0.0;
@@ -435,20 +435,20 @@ inline auto wiener4_cdf_grad_v(const T_y& y, const T_a& a, const T_v& vn,
     ans = (-w * a - v * y) * (cdf - prob)
           + ans * (-2 * v) * (2 * pi() / square(a))
                 * exp(-v * a * w - 0.5 * square(v) * y);
-    return -1 * (prob_deriv + ans);
+    return -(prob_deriv + ans);
   }
 }
 
 /**
  * Calculate derivative of the wiener4 distribution w.r.t. 'w' (natural-scale)
  *
- * @param y A scalar variable; the reaction time in seconds
+ * @param y The reaction time in seconds
  * @param a The boundary separation
  * @param vn The relative starting point
  * @param wn The drift rate
  * @param cdf The value of the distribution
  * @param err The log error tolerance
- * @return Gradient w.r.t. w
+ * @return Gradient with respect to w
  */
 template <typename T_y, typename T_a, typename T_v, typename T_w,
           typename T_cdf, typename T_err>
@@ -531,7 +531,7 @@ inline auto wiener4_cdf_grad_w(const T_y& y, const T_a& a, const T_v& vn,
     F_k = fmin(exp(v * a * w + 0.5 * square(v) * y),
                std::numeric_limits<ret_t>::max());
     const auto summands_small_y = ans / y / F_k;
-    return -1 * (-v * a * cdf + summands_small_y);
+    return -(-v * a * cdf + summands_small_y);
   } else {
     ret_t ans = NEGATIVE_INFTY;
     ans = 0.0;
@@ -570,7 +570,7 @@ inline auto wiener4_cdf_grad_w(const T_y& y, const T_a& a, const T_v& vn,
     auto prob_deriv = dav;
     prob_deriv *= prob;
     ans = -v * a * (cdf - prob) + ans * pia2 * evaw;
-    return -1 * (prob_deriv + ans);
+    return -(prob_deriv + ans);
   }
 }
 }  // namespace internal
@@ -579,13 +579,13 @@ inline auto wiener4_cdf_grad_w(const T_y& y, const T_a& a, const T_v& vn,
  * Log-CDF function for the 4-parameter Wiener distribution.
  * See 'wiener_lpdf' for more comprehensive documentation
  *
- * @tparam T_y type of scalar
+ * @tparam T_y type of reaction time
  * @tparam T_a type of boundary
  * @tparam T_t0 type of non-decision time
  * @tparam T_w type of relative starting point
  * @tparam T_v type of drift rate
  *
- * @param y A scalar variable; the reaction time in seconds
+ * @param y The reaction time in seconds
  * @param a The boundary separation
  * @param t0 The non-decision time
  * @param w The relative starting point
@@ -600,17 +600,16 @@ inline auto wiener_lcdf(const T_y& y, const T_a& a, const T_t0& t0,
                         const T_w& w, const T_v& v,
                         const double& precision_derivatives = 1e-4) {
   using T_partials_return = partials_return_t<T_y, T_a, T_t0, T_w, T_v>;
-
-  using ret_t = return_type_t<T_y, T_a, T_t0, T_w, T_v>;
-  if (!include_summand<propto, T_y, T_a, T_t0, T_w, T_v>::value) {
-    return ret_t(0.0);
-  }
-
   using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
   using T_a_ref = ref_type_if_t<!is_constant<T_a>::value, T_a>;
   using T_t0_ref = ref_type_if_t<!is_constant<T_t0>::value, T_t0>;
   using T_w_ref = ref_type_if_t<!is_constant<T_w>::value, T_w>;
   using T_v_ref = ref_type_if_t<!is_constant<T_v>::value, T_v>;
+  using internal::GradientCalc;
+  using ret_t = return_type_t<T_y, T_a, T_t0, T_w, T_v>;
+  if (!include_summand<propto, T_y, T_a, T_t0, T_w, T_v>::value) {
+    return ret_t(0.0);
+  }
 
   static constexpr const char* function_name = "wiener4_lcdf";
   if (size_zero(y, a, t0, w, v)) {
@@ -676,7 +675,6 @@ inline auto wiener_lcdf(const T_y& y, const T_a& a, const T_t0& t0,
     const auto w_value = w_vec.val(i);
     const auto v_value = v_vec.val(i);
 
-    using internal::GradientCalc;
     const T_partials_return log_cdf
         = internal::estimate_with_err_check<4, 0, GradientCalc::OFF,
                                             GradientCalc::OFF>(

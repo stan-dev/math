@@ -11,14 +11,14 @@ namespace internal {
 /**
  * Calculate the derivative of the wiener7 density w.r.t. 'sw'
  *
- * @tparam T_y type of scalar variable
+ * @tparam T_y type of reaction time
  * @tparam T_a type of boundary separation
  * @tparam T_v type of drift rate
  * @tparam T_w type of relative starting point
  * @tparam T_sv type of inter-trial variability in v
  * @tparam T_err type of log error tolerance
  *
- * @param y A scalar variable; the reaction time in seconds
+ * @param y The reaction time in seconds
  * @param a The boundary separation
  * @param v The drift rate
  * @param w The relative starting point
@@ -26,7 +26,7 @@ namespace internal {
  * @param wildcard This parameter space is needed for a functor. Could be
  * deleted when another solution is found
  * @param log_error The log error tolerance
- * @return Gradient w.r.t. sw
+ * @return Gradient with respect to sw
  */
 template <typename T_y, typename T_a, typename T_v, typename T_w, typename T_sw,
           typename T_err>
@@ -53,7 +53,7 @@ inline auto wiener7_cdf_grad_sw(const T_y& y, const T_a& a, const T_v& v,
  *
  * @tparam GradSW Whether the gradient of sw is computed
  * @tparam F Type of Gradient/density functor
- * @tparam T_y type of scalar variable
+ * @tparam T_y type of reaction time
  * @tparam T_a type of boundary separation
  * @tparam T_v type of drift rate
  * @tparam T_w type of relative starting point
@@ -90,7 +90,7 @@ inline auto conditionally_grad_sw_cdf(F&& functor, T_y&& y_diff, T_a&& a,
  *
  * @tparam GradSW Whether the gradient of sw is computed
  * @tparam F Type of Gradient/density functor
- * @tparam T_y type of scalar variable
+ * @tparam T_y type of reaction time
  * @tparam T_a type of boundary separation
  * @tparam T_v type of drift rate
  * @tparam T_w type of relative starting point
@@ -207,7 +207,7 @@ inline auto wiener7_integrate_cdf(const Wiener7FunctorT& wiener7_functor,
  * If the reaction time goes to infinity, the CDF goes to the probability to
  * hit the upper bound (instead of 1, as it is usually the case)
  *
- * @tparam T_y type of scalar
+ * @tparam T_y type of reaction time
  * @tparam T_a type of boundary separation
  * @tparam T_t0 type of non-decision time
  * @tparam T_w type of relative starting point
@@ -216,7 +216,7 @@ inline auto wiener7_integrate_cdf(const Wiener7FunctorT& wiener7_functor,
  * @tparam T_sw type of inter-trial variability of relative starting point
  * @tparam T_st0 type of inter-trial variability of non-decision time
  *
- * @param y A scalar variable; the reaction time in seconds
+ * @param y The reaction time in seconds
  * @param a The boundary separation
  * @param t0 The non-decision time
  * @param w The relative starting point
@@ -272,10 +272,6 @@ inline auto wiener_lcdf(const T_y& y, const T_a& a, const T_t0& t0,
                         const T_sw& sw, const T_st0& st0,
                         const double& precision_derivatives = 1e-8) {
   using ret_t = return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0>;
-  if (!include_summand<propto, T_y, T_a, T_v, T_w, T_t0, T_sv, T_sw,
-                       T_st0>::value) {
-    return ret_t(0);
-  }
   using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
   using T_a_ref = ref_type_if_t<!is_constant<T_a>::value, T_a>;
   using T_v_ref = ref_type_if_t<!is_constant<T_v>::value, T_v>;
@@ -284,9 +280,14 @@ inline auto wiener_lcdf(const T_y& y, const T_a& a, const T_t0& t0,
   using T_sv_ref = ref_type_if_t<!is_constant<T_sv>::value, T_sv>;
   using T_sw_ref = ref_type_if_t<!is_constant<T_sw>::value, T_sw>;
   using T_st0_ref = ref_type_if_t<!is_constant<T_st0>::value, T_st0>;
-
+  using internal::GradientCalc;
   using T_partials_return
       = partials_return_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0>;
+  if (!include_summand<propto, T_y, T_a, T_v, T_w, T_t0, T_sv, T_sw,
+                       T_st0>::value) {
+    return ret_t(0);
+  }
+
 
   static constexpr const char* function_name = "wiener_lcdf";
   check_consistent_sizes(function_name, "Random variable", y,
@@ -426,8 +427,6 @@ inline auto wiener_lcdf(const T_y& y, const T_a& a, const T_t0& t0,
 
     T_partials_return hcubature_err
         = log_error_absolute - log_error_cdf + LOG_TWO + 1;
-
-    using internal::GradientCalc;
 
     const auto params = std::make_tuple(y_value, a_value, v_value, w_value,
                                         t0_value, sv_value, sw_value, st0_value,

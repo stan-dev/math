@@ -15,23 +15,24 @@ namespace internal {
  * @tparam T_v type of drift rate
  *
  * @param a The boundary separation
- * @param w_value The relative starting point
- * @param v_value The drift rate
+ * @param w The relative starting point
+ * @param v The drift rate
  * @return log probability to reach the upper bound
  */
 template <typename T_a, typename T_w, typename T_v>
-inline auto wiener_prob(const T_a& a, const T_v& v_value, const T_w& w_value) {
+inline auto log_wiener_prob(const T_a& a, const T_v& v, const T_w& w) {
   using ret_t = return_type_t<T_a, T_w, T_v>;
-  const auto v = -v_value;
-  const auto w = 1 - w_value;
+  const auto neg_v = -v;
+  const auto one_m_w = 1 - w;
   if (fabs(v) == 0.0) {
-    return ret_t(log1p(-w));
+    return ret_t(log1p(-one_m_w));
   }
-  const auto exponent = -2.0 * v * a * (1.0 - w);
+  const auto exponent = 2.0 * v * a * w;
+  // This branch is for numeric stability
   if (exponent < 0) {
-    return ret_t(log1m_exp(exponent) - log_diff_exp(2 * v * a * w, exponent));
+    return ret_t(log1m_exp(exponent) - log_diff_exp(2 * neg_v * a * one_m_w, exponent));
   } else {
-    return ret_t(log1m_exp(-exponent) - log1m_exp(2 * v * a));
+    return ret_t(log1m_exp(-exponent) - log1m_exp(2 * neg_v * a));
   }
 }
 
@@ -44,33 +45,35 @@ inline auto wiener_prob(const T_a& a, const T_v& v_value, const T_w& w_value) {
  * @tparam T_v type of drift rate
  *
  * @param a The boundary separation
- * @param w_value The relative starting point
- * @param v_value The drift rate
+ * @param w The relative starting point
+ * @param v The drift rate
  * @return 'ans' term
  */
 template <typename T_a, typename T_w, typename T_v>
-inline auto wiener_prob_derivative_term(const T_a& a, const T_v& v_value,
-                                        const T_w& w_value) noexcept {
+inline auto wiener_prob_derivative_term(const T_a& a, const T_v& v,
+                                        const T_w& w) noexcept {
   using ret_t = return_type_t<T_a, T_w, T_v>;
   const auto exponent_m1 = log1p(-1.1 * 1.0e-8);
   ret_t ans;
-  const auto v = -v_value;
-  const auto w = 1 - w_value;
-  int sign_v = v < 0 ? 1 : -1;
-  const auto exponent_with_1mw = sign_v * 2.0 * v * a * (1.0 - w);
-  const auto exponent = (sign_v * 2 * a * v);
-  const auto exponent_with_w = 2 * a * v * w;
+  const auto neg_v = -v;
+  const auto one_m_w = 1 - w;
+  int sign_v = neg_v < 0 ? 1 : -1;
+  const auto two_a_neg_v = 2.0 * a * neg_v;
+  const auto exponent_with_1mw = sign_v * two_a_neg_v * w;
+  const auto exponent = (sign_v * two_a_neg_v);
+  const auto exponent_with_w = two_a_neg_v * one_m_w;
+  // truncating longer calculations, for numerical stability
   if (unlikely((exponent_with_1mw >= exponent_m1)
                || ((exponent_with_w >= exponent_m1) && (sign_v == 1))
-               || (exponent >= exponent_m1) || v == 0)) {
-    return ret_t(-w);
+               || (exponent >= exponent_m1) || neg_v == 0)) {
+    return ret_t(-one_m_w);
   }
   ret_t diff_term;
-  const auto log_w = log(w);
-  if (v < 0) {
+  const auto log_w = log(one_m_w);
+  if (neg_v < 0) {
     ans = LOG_TWO + exponent_with_1mw - log1m_exp(exponent_with_1mw);
     diff_term = log1m_exp(exponent_with_w) - log1m_exp(exponent);
-  } else if (v > 0) {
+  } else if (neg_v > 0) {
     ans = LOG_TWO - log1m_exp(exponent_with_1mw);
     diff_term = log_diff_exp(exponent_with_1mw, exponent) - log1m_exp(exponent);
   }
@@ -88,7 +91,7 @@ inline auto wiener_prob_derivative_term(const T_a& a, const T_v& v_value,
 /**
  * Calculate wiener4 ccdf (natural-scale)
  *
- * @param y A scalar variable; the reaction time in seconds
+ * @param y The reaction time in seconds
  * @param a The boundary separation
  * @param v The relative starting point
  * @param w The drift rate
@@ -99,7 +102,7 @@ template <typename T_y, typename T_a, typename T_w, typename T_v,
           typename T_err>
 inline auto wiener4_ccdf(const T_y& y, const T_a& a, const T_v& v, const T_w& w,
                          T_err&& err = log(1e-12)) noexcept {
-  const auto prob = exp(wiener_prob(a, v, w));
+  const auto prob = exp(log_wiener_prob(a, v, w));
   const auto cdf
       = internal::wiener4_distribution<GradientCalc::ON>(y, a, v, w, err);
   return prob - cdf;
@@ -108,13 +111,13 @@ inline auto wiener4_ccdf(const T_y& y, const T_a& a, const T_v& v, const T_w& w,
 /**
  * Calculate derivative of the wiener4 ccdf w.r.t. 'a' (natural-scale)
  *
- * @param y A scalar variable; the reaction time in seconds
+ * @param y The reaction time in seconds
  * @param a The boundary separation
  * @param v The relative starting point
  * @param w The drift rate
  * @param cdf The CDF value
  * @param err The log error tolerance
- * @return Gradient w.r.t. a
+ * @return Gradient with respect to a
  */
 template <typename T_y, typename T_a, typename T_w, typename T_v,
           typename T_cdf, typename T_err>
@@ -122,14 +125,14 @@ inline auto wiener4_ccdf_grad_a(const T_y& y, const T_a& a, const T_v& v,
                                 const T_w& w, T_cdf&& cdf,
                                 T_err&& err = log(1e-12)) noexcept {
   using ret_t = return_type_t<T_a, T_w, T_v>;
-  const auto prob = wiener_prob(a, v, w);
 
   // derivative of the wiener probability w.r.t. 'a' (on log-scale)
-  auto prob_grad_a = -1 * wiener_prob_derivative_term(a, v, w) * v;
+  auto prob_grad_a = -wiener_prob_derivative_term(a, v, w) * v;
   if (!is_scal_finite(prob_grad_a)) {
     prob_grad_a = ret_t(NEGATIVE_INFTY);
+	return prob_grad_a;
   }
-
+  const auto prob = log_wiener_prob(a, v, w);
   const auto cdf_grad_a = wiener4_cdf_grad_a(y, a, v, w, cdf, err);
   return prob_grad_a * exp(prob) - cdf_grad_a;
 }
@@ -137,13 +140,13 @@ inline auto wiener4_ccdf_grad_a(const T_y& y, const T_a& a, const T_v& v,
 /**
  * Calculate derivative of the wiener4 ccdf w.r.t. 'v' (natural-scale)
  *
- * @param y A scalar variable; the reaction time in seconds
+ * @param y The reaction time in seconds
  * @param a The boundary separation
  * @param v The relative starting point
  * @param w The drift rate
  * @param cdf The CDF value
  * @param err The log error tolerance
- * @return Gradient w.r.t. v
+ * @return Gradient with respect to v
  */
 template <typename T_y, typename T_a, typename T_w, typename T_v,
           typename T_cdf, typename T_err>
@@ -151,10 +154,10 @@ inline auto wiener4_ccdf_grad_v(const T_y& y, const T_a& a, const T_v& v,
                                 const T_w& w, T_cdf&& cdf,
                                 T_err&& err = log(1e-12)) noexcept {
   using ret_t = return_type_t<T_a, T_w, T_v>;
-  const auto prob = wiener_prob(a, v, w);
+  const auto prob = log_wiener_prob(a, v, w);
   // derivative of the wiener probability w.r.t. 'v' (on log-scale)
-  auto prob_grad_v = -1 * wiener_prob_derivative_term(a, v, w) * a;
-  if (fabs(prob_grad_v) == INFTY) {
+  auto prob_grad_v = -wiener_prob_derivative_term(a, v, w) * a;
+  if (!is_scal_finite(fabs(prob_grad_v))) { 
     prob_grad_v = ret_t(NEGATIVE_INFTY);
   }
 
@@ -165,13 +168,13 @@ inline auto wiener4_ccdf_grad_v(const T_y& y, const T_a& a, const T_v& v,
 /**
  * Calculate derivative of the wiener4 ccdf w.r.t. 'w' (natural-scale)
  *
- * @param y A scalar variable; the reaction time in seconds
+ * @param y The reaction time in seconds
  * @param a The boundary separation
  * @param v The relative starting point
  * @param w The drift rate
  * @param cdf The CDF value
  * @param err The log error tolerance
- * @return Gradient w.r.t. w
+ * @return Gradient with respect to w
  */
 template <typename T_y, typename T_a, typename T_w, typename T_v,
           typename T_cdf, typename T_err>
@@ -179,7 +182,7 @@ inline auto wiener4_ccdf_grad_w(const T_y& y, const T_a& a, const T_v& v,
                                 const T_w& w, T_cdf&& cdf,
                                 T_err&& err = log(1e-12)) noexcept {
   using ret_t = return_type_t<T_a, T_w, T_v>;
-  const auto prob = wiener_prob(a, v, w);
+  const auto prob = log_wiener_prob(a, v, w);
   // derivative of the wiener probability w.r.t. 'v' (on log-scale)
   const auto exponent = -sign(v) * 2.0 * v * a * w;
   auto prob_grad_w
@@ -197,13 +200,13 @@ inline auto wiener4_ccdf_grad_w(const T_y& y, const T_a& a, const T_v& v,
  * Log-CCDF for the 4-parameter Wiener distribution.
  * See 'wiener_full_lpdf' for more comprehensive documentation
  *
- * @tparam T_y type of scalar
+ * @tparam T_y type of reaction time
  * @tparam T_a type of boundary
  * @tparam T_t0 type of non-decision time
  * @tparam T_w type of relative starting point
  * @tparam T_v type of drift rate
  *
- * @param y A scalar variable; the reaction time in seconds
+ * @param y The reaction time in seconds
  * @param a The boundary separation
  * @param t0 The non-decision time
  * @param w The relative starting point
@@ -219,19 +222,19 @@ inline auto wiener_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
                          const double& precision_derivatives) {
   using T_partials_return = partials_return_t<T_y, T_a, T_t0, T_w, T_v>;
   using ret_t = return_type_t<T_y, T_a, T_t0, T_w, T_v>;
-
-  if (!include_summand<propto, T_y, T_a, T_t0, T_w, T_v>::value) {
-    return ret_t(0.0);
-  }
-
   using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
   using T_a_ref = ref_type_if_t<!is_constant<T_a>::value, T_a>;
   using T_t0_ref = ref_type_if_t<!is_constant<T_t0>::value, T_t0>;
   using T_w_ref = ref_type_if_t<!is_constant<T_w>::value, T_w>;
   using T_v_ref = ref_type_if_t<!is_constant<T_v>::value, T_v>;
+  using internal::GradientCalc;
 
   static constexpr const char* function_name = "wiener4_lccdf";
   if (size_zero(y, a, t0, w, v)) {
+    return ret_t(0.0);
+  }
+  
+  if (!include_summand<propto, T_y, T_a, T_t0, T_w, T_v>::value) {
     return ret_t(0.0);
   }
 
@@ -294,7 +297,6 @@ inline auto wiener_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
     const auto w_value = w_vec.val(i);
     const auto v_value = v_vec.val(i);
 
-    using internal::GradientCalc;
     const T_partials_return cdf
         = internal::estimate_with_err_check<4, 0, GradientCalc::OFF,
                                             GradientCalc::OFF>(
@@ -304,7 +306,7 @@ inline auto wiener_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
             log_error_cdf - LOG_TWO, y_value - t0_value, a_value, v_value,
             w_value, log_error_absolute);
 
-    const auto prob = exp(internal::wiener_prob(a_value, v_value, w_value));
+    const auto prob = exp(internal::log_wiener_prob(a_value, v_value, w_value));
     const auto ccdf = prob - cdf;
 
     lccdf += log(ccdf);
