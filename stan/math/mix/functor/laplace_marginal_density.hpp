@@ -522,19 +522,19 @@ inline auto laplace_marginal_density_est(
         + std::to_string(max_num_steps) + " exceeded.");
   };
   auto ll_args_vals = value_of(ll_args);
-  Eigen::VectorXd theta = [theta_size, &options]() {
+  internal::WolfeInfo wolfe_info(theta_size);
+  auto&& theta = wolfe_info.curr_.theta_ = [theta_size, &options]() {
     if constexpr (InitTheta) {
       return options.theta_0;
     } else {
       return Eigen::VectorXd::Zero(theta_size);
     }
   }();
-  Eigen::VectorXd theta_prev = theta;
-  Eigen::VectorXd a_prev = Eigen::VectorXd::Zero(theta_size);
+  auto&& theta_prev = (wolfe_info.prev_.theta_ = theta);
+  auto&& a_prev = wolfe_info.prev_.a_;
   Eigen::MatrixXd B(theta_size, theta_size);
   Eigen::VectorXd a(theta_size);
   Eigen::VectorXd b(theta_size);
-  Eigen::VectorXd a_tmp(theta_size);
   // FIXME: We should use less full scope referencing here. Hard to follow
   auto obj_fun = [&](const Eigen::VectorXd& a_val, auto&& theta_val) -> double {
     return -0.5 * a_val.dot(theta_val)
@@ -545,8 +545,8 @@ inline auto laplace_marginal_density_est(
                       auto&& theta_grad) -> Eigen::VectorXd {
     return -covariance * a_val + covariance * theta_grad;
   };
-  double objective_old = std::numeric_limits<double>::lowest();
-  double objective_new = obj_fun(a_prev, theta);
+  auto&& objective_old = wolfe_info.prev_.obj_ = std::numeric_limits<double>::lowest();
+  auto&& objective_new = wolfe_info.curr_.obj_ = obj_fun(a_prev, theta);
   if (!std::isfinite(objective_new)) {
 //    std::cout << "FAIL: initial objective: " << objective_new << std::endl;
     throw std::domain_error(
@@ -556,12 +556,9 @@ inline auto laplace_marginal_density_est(
   double step_size = 1.0;
 //  std::cout << "___________\nSTART\n___________" << std::endl;
   // NOTE: theta_grad is updated in `wolfe_line_search`
-  auto theta_grad
-      = laplace_likelihood::theta_grad(ll_fun, theta, ll_args, msgs);
-  Eigen::VectorXd theta_grad_prev = theta_grad;
+  auto&& theta_grad = (wolfe_info.curr_.theta_grad_ = laplace_likelihood::theta_grad(ll_fun, theta, ll_args, msgs));
+  auto&& theta_grad_prev = (wolfe_info.prev_.theta_grad_ = theta_grad);
   int iter = 0;
-  // Start with low bb
-  int total_updates = 99;
   if (options.solver == 1) {
     if (options.hessian_block_size == 1) {
    //   std::cout << "Solver: 1Diag" << std::endl;
@@ -594,7 +591,7 @@ inline auto laplace_marginal_density_est(
         // Approximate optimial step size
         Eigen::VectorXd p = theta - theta_prev;
         theta_grad = laplace_likelihood::theta_grad(ll_fun, theta, ll_args, msgs);
-        step_size = barzilai_borwein_step_size(p, theta_grad, theta_grad_prev,
+        wolfe_info.curr_.alpha_ = barzilai_borwein_step_size(p, theta_grad, theta_grad_prev,
                                       step_size, i, options.line_search.min_alpha,
                                       options.line_search.max_alpha);
         theta_grad_prev = theta_grad;
