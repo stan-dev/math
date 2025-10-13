@@ -533,7 +533,7 @@ inline auto laplace_marginal_density_est(
   auto&& theta_prev = (wolfe_info.prev_.theta_ = theta);
   auto&& a_prev = wolfe_info.prev_.a_;
   Eigen::MatrixXd B(theta_size, theta_size);
-  Eigen::VectorXd a(theta_size);
+  auto&& a = wolfe_info.curr_.a_;
   Eigen::VectorXd b(theta_size);
   // FIXME: We should use less full scope referencing here. Hard to follow
   auto obj_fun = [&](const Eigen::VectorXd& a_val, auto&& theta_val) -> double {
@@ -554,10 +554,14 @@ inline auto laplace_marginal_density_est(
         "theta and likelihood arguments.");
   }
   double step_size = 1.0;
+  wolfe_info.curr_.alpha_ = step_size;
 //  std::cout << "___________\nSTART\n___________" << std::endl;
   // NOTE: theta_grad is updated in `wolfe_line_search`
   auto&& theta_grad = (wolfe_info.curr_.theta_grad_ = laplace_likelihood::theta_grad(ll_fun, theta, ll_args, msgs));
   auto&& theta_grad_prev = (wolfe_info.prev_.theta_grad_ = theta_grad);
+  WolfeStatus wolfe_status;
+  // Start with safe step size
+  wolfe_status.num_backtracks_ = 99;
   int iter = 0;
   if (options.solver == 1) {
     if (options.hessian_block_size == 1) {
@@ -592,13 +596,14 @@ inline auto laplace_marginal_density_est(
         Eigen::VectorXd p = theta - theta_prev;
         theta_grad = laplace_likelihood::theta_grad(ll_fun, theta, ll_args, msgs);
         wolfe_info.curr_.alpha_ = barzilai_borwein_step_size(p, theta_grad, theta_grad_prev,
-                                      step_size, i, options.line_search.min_alpha,
+                                      step_size, wolfe_status.num_backtracks_, options.line_search.min_alpha,
                                       options.line_search.max_alpha);
         theta_grad_prev = theta_grad;
         objective_old = objective_new;
-        auto wolfe_status = internal::wolfe_line_search(
-            theta, objective_new, step_size, theta_grad, a, a_prev, ll_fun,
+        wolfe_status = internal::wolfe_line_search(
+            wolfe_info, ll_fun,
             obj_fun, grad_fun, covariance, ll_args, options.line_search, msgs);
+            step_size = wolfe_info.curr_.alpha_;
         // Check for convergence or if line search failed
     //    std::cout << "wolfe_return: " << internal::wolfe_return_str(ok) << std::endl;
     //    std::cout << "    Wolfe step:" << step_size << std::endl;
@@ -672,14 +677,15 @@ inline auto laplace_marginal_density_est(
         a.noalias() = b - W_r * LT.solve(L.solve(W_r * (covariance * b)));
         // Simple Newton step
         Eigen::VectorXd p = theta - theta_prev;
-        step_size = barzilai_borwein_step_size(p, theta_grad, theta_grad_prev,
-                                      step_size, i, options.line_search.min_alpha,
+        step_size = wolfe_info.curr_.alpha_ = barzilai_borwein_step_size(p, theta_grad, theta_grad_prev,
+                                      step_size, wolfe_status.num_backtracks_, options.line_search.min_alpha,
                                       options.line_search.max_alpha);
         objective_old = objective_new;
         theta_grad_prev = theta_grad;
-        auto wolfe_status = internal::wolfe_line_search(
-            theta, objective_new, step_size, theta_grad, a, a_prev, ll_fun,
+        wolfe_status = internal::wolfe_line_search(
+            wolfe_info, ll_fun,
             obj_fun, grad_fun, covariance, ll_args, options.line_search, msgs);
+            step_size = wolfe_info.curr_.alpha_;
 //        std::cout << "wolfe_return: " << internal::wolfe_return_str(ok) << std::endl;
 //        std::cout << "    Wolfe step:" << step_size << std::endl;
         debug::print("", 1, "Objective old: ", objective_old,
@@ -733,14 +739,15 @@ inline auto laplace_marginal_density_est(
           = K_root.transpose().template triangularView<Eigen::Upper>().solve(
               LT.solve(L.solve(K_root.transpose() * b)));
       Eigen::VectorXd p = theta - theta_prev;
-      step_size = barzilai_borwein_step_size(p, theta_grad, theta_grad_prev,
-                                    step_size, i, options.line_search.min_alpha,
+      step_size = wolfe_info.curr_.alpha_ = barzilai_borwein_step_size(p, theta_grad, theta_grad_prev,
+                                    step_size, wolfe_status.num_backtracks_, options.line_search.min_alpha,
                                     options.line_search.max_alpha);
       objective_old = objective_new;
       theta_grad_prev = theta_grad;
-      auto wolfe_status = internal::wolfe_line_search(
-        theta, objective_new, step_size, theta_grad, a, a_prev, ll_fun,
+      wolfe_status = internal::wolfe_line_search(
+        wolfe_info, ll_fun,
         obj_fun, grad_fun, covariance, ll_args, options.line_search, msgs);
+        step_size = wolfe_info.curr_.alpha_;
 //        std::cout << "wolfe_return: " << internal::wolfe_return_str(ok) << std::endl;
 //        std::cout << "    Wolfe step:" << step_size << std::endl;
       // Check for convergence or if line search failed
@@ -781,14 +788,15 @@ inline auto laplace_marginal_density_est(
       b.noalias() = W * theta + theta_grad;
       a.noalias() = b - W * LU.solve(covariance * b);
       Eigen::VectorXd p = theta - theta_prev;
-      step_size = barzilai_borwein_step_size(p, theta_grad, theta_grad_prev,
-                                    step_size, i, options.line_search.min_alpha,
+      step_size = wolfe_info.curr_.alpha_ = barzilai_borwein_step_size(p, theta_grad, theta_grad_prev,
+                                    step_size, wolfe_status.num_backtracks_, options.line_search.min_alpha,
                                     options.line_search.max_alpha);
       objective_old = objective_new;
       theta_grad_prev = theta_grad;
-      auto wolfe_status = internal::wolfe_line_search(
-        theta, objective_new, step_size, theta_grad, a, a_prev, ll_fun,
+      wolfe_status = internal::wolfe_line_search(
+        wolfe_info, ll_fun,
         obj_fun, grad_fun, covariance, ll_args, options.line_search, msgs);
+      step_size = wolfe_info.curr_.alpha_;
 //        std::cout << "wolfe_return: " << internal::wolfe_return_str(ok) << std::endl;
 //        std::cout << "    Wolfe step:" << step_size << std::endl;
       debug::print("", 1, "Objective old: ", objective_old,

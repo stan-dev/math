@@ -323,6 +323,7 @@ struct WolfeStatus {
   int num_evals_{0};
   int num_backtracks_{0};
   WolfeReturn stop_{WolfeReturn::Fail};
+  WolfeStatus() = default;
   WolfeStatus(WolfeReturn stop, double alpha, double obj, double d_obj, int evals, int back) : 
     stop_(stop), alpha_(alpha), obj_(obj), d_obj_(d_obj), num_evals_(evals), num_backtracks_(back) {}
 };
@@ -478,11 +479,22 @@ struct WolfeInfo {
 template <typename F, class Obj, class Grad, typename LLArgs, typename Stream,
           typename Options>
 inline WolfeStatus wolfe_line_search(
-    Eigen::VectorXd& theta, double& obj_init, double& alpha_init,
-    Eigen::VectorXd& theta_grad, Eigen::VectorXd& a,
-    const Eigen::VectorXd& a_prev, F&& ll_fun, Obj&& obj_fun, Grad&& grad_fun,
+    WolfeInfo& wolfe_info, F&& ll_fun, Obj&& obj_fun, Grad&& grad_fun,
     const Eigen::MatrixXd& covariance, LLArgs&& ll_args, Options&& opt,
     Stream* msgs) {
+  auto& curr = wolfe_info.curr_;
+  auto& prev = wolfe_info.prev_;
+  auto& scratch = wolfe_info.scratch_;
+
+  auto& theta = curr.theta_;
+  auto& theta_grad = curr.theta_grad_;
+  auto& a = curr.a_;
+  auto& obj_init = curr.obj_;
+  auto& alpha_init = curr.alpha_;
+  auto& dir_curr = curr.dir_;
+  const auto& a_prev = prev.a_;
+  auto& theta_try = scratch.theta_;
+  auto& a_try = scratch.a_;
   struct Eval {
     double alpha;   // alpha
     double obj;   // obj
@@ -491,7 +503,7 @@ inline WolfeStatus wolfe_line_search(
   Eigen::VectorXd p = a - a_prev;
   double dir_deriv_init = grad_fun(a_prev, theta, theta_grad).dot(p);
   Eval low{0.0, obj_init, dir_deriv_init};
-
+  dir_curr = dir_deriv_init;
   auto armijo_ok = [&](const Eval& eval) -> bool {
     return check_armijo(eval.obj, obj_init, eval.alpha, dir_deriv_init, opt);
   };
@@ -513,8 +525,6 @@ inline WolfeStatus wolfe_line_search(
         };
   double alpha_start = std::clamp(alpha_init * 2.0, opt.min_alpha,
                                  opt.max_alpha);
-  Eigen::VectorXd a_try(a_prev.size());
-  Eigen::VectorXd theta_try(a_prev.size());
   Eval high{alpha_start, obj_init, dir_deriv_init};
   update_step(a_try, theta_try, theta_grad, high);
   Eval best = low;  // keep the best Armijo-OK in case strong-Wolfe fails
@@ -524,7 +534,9 @@ inline WolfeStatus wolfe_line_search(
       if (high.alpha < opt.min_alpha) {
         debug::print("Exit on precheck numerical trouble", 1);
         debug::print("total_updates", total_updates);
+        obj_init = high.obj;
         alpha_init = high.alpha;
+        dir_curr = high.dir;
         return WolfeStatus{WolfeReturn::StepTooSmall, high.alpha, high.obj, high.dir, total_updates, 0};
       }
       update_step(a_try, theta_try, theta_grad, high);
@@ -540,6 +552,7 @@ inline WolfeStatus wolfe_line_search(
         theta.swap(theta_try);
         obj_init = high.obj;
         alpha_init = high.alpha;
+        dir_curr = high.dir;
         debug::print("total_updates", total_updates);
         return WolfeStatus{WolfeReturn::Wolfe, high.alpha, high.obj, high.dir, total_updates, 0};
       } else {
@@ -593,6 +606,7 @@ inline WolfeStatus wolfe_line_search(
         theta.swap(theta_try);
         obj_init = high.obj;
         alpha_init = high.alpha;
+        dir_curr = high.dir;
         debug::print("Exit on first while", 1);
         debug::print("total_updates", total_updates);
         return WolfeStatus{WolfeReturn::Wolfe, high.alpha, high.obj, high.dir, total_updates, num_backtracks};
@@ -620,25 +634,38 @@ inline WolfeStatus wolfe_line_search(
     if (std::abs(curr.dir) <= grad_tol ||  // tiny slope
       std::abs(curr.obj - obj_init) <= obj_tol
           && curr.alpha < 1e-8) {                // tiny gain
-      if (best.obj != low.obj && armijo_ok(best)) {
-       update_step(a_try, theta_try, theta_grad, curr);
-       a.swap(a_try);
-       theta.swap(theta_try);
-       obj_init = best.obj;
-       alpha_init = best.alpha;
+      if (curr.obj != low.obj && armijo_ok(curr)) {
+        update_step(a_try, theta_try, theta_grad, curr);
+        a.swap(a_try);
+        theta.swap(theta_try);
+        obj_init = curr.obj;
+        alpha_init = curr.alpha;
+        dir_curr = curr.dir;
       }
       debug::print("total_updates", total_updates);
       if (std::abs(curr.dir) <= grad_tol &&  // tiny slope
           std::abs(curr.obj - obj_init) <= obj_tol) {
         debug::print("Exit on grad_tol and obj_tol", 1);
+        dir_curr = curr.dir;
+        obj_init = curr.obj;
+        alpha_init = curr.alpha;
         return WolfeStatus{WolfeReturn::ConvergedObjectiveAndGradient, curr.alpha, curr.obj, curr.dir, total_updates, num_backtracks};
       } else if (std::abs(curr.dir) <= grad_tol) {
+        dir_curr = curr.dir;
+        obj_init = curr.obj;
+        alpha_init = curr.alpha;
         debug::print("Exit on grad_tol", 1);
         return WolfeStatus{WolfeReturn::ConvergedGradient, curr.alpha, curr.obj, curr.dir, total_updates, num_backtracks};
       } else if (std::abs(curr.obj - obj_init) <= obj_tol) {
+        dir_curr = curr.dir;
+        obj_init = curr.obj;
+        alpha_init = curr.alpha;
         debug::print("Exit on obj_tol", 1);
         return WolfeStatus{WolfeReturn::ConvergedObjective, curr.alpha, curr.obj, curr.dir, total_updates, num_backtracks};
       } else {
+        dir_curr = curr.dir;
+        obj_init = curr.obj;
+        alpha_init = curr.alpha;
         debug::print("Exit on alpha failure", 1);
         return WolfeStatus{WolfeReturn::IntervalTooSmall, curr.alpha, curr.obj, curr.dir, total_updates, num_backtracks};
       }
@@ -689,6 +716,7 @@ inline WolfeStatus wolfe_line_search(
         theta.swap(theta_try);
         obj_init = mid.obj;
         alpha_init = mid.alpha;
+        dir_curr = mid.dir;
         debug::print("Exit on safe on zoom", 1);
         debug::print("total_updates", total_updates);
         return WolfeStatus{WolfeReturn::Wolfe, mid.alpha, mid.obj, mid.dir, total_updates, num_backtracks};
@@ -732,6 +760,7 @@ inline WolfeStatus wolfe_line_search(
   const bool curve_ok_mid = check_wolfe_curve(best.dir, dir_deriv_init, opt);
   obj_init = best.obj;
   alpha_init = best.alpha;
+  dir_curr = mid.dir;
   if (armijo_ok_mid && curve_ok_mid) {
     debug::print("Exit on safe after zoom", 1);
     debug::print("total_updates", total_updates);
