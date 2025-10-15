@@ -314,18 +314,13 @@ enum class WolfeReturn : uint8_t {
 };
 
 struct WolfeStatus {
-  // End alpha value
-  double alpha_{0.0};
-  // Objective and derivative at end
-  double obj_{0.0};
-  double d_obj_{0.0};
   // total updates/evaluations
   int num_evals_{0};
   int num_backtracks_{0};
   WolfeReturn stop_{WolfeReturn::Fail};
   WolfeStatus() = default;
-  WolfeStatus(WolfeReturn stop, double alpha, double obj, double d_obj, int evals, int back) :
-    stop_(stop), alpha_(alpha), obj_(obj), d_obj_(d_obj), num_evals_(evals), num_backtracks_(back) {}
+  WolfeStatus(WolfeReturn stop, int evals, int back) :
+    stop_(stop), num_evals_(evals), num_backtracks_(back) {}
 };
 
 inline auto wolfe_status_str(WolfeStatus s) {
@@ -355,6 +350,12 @@ inline auto wolfe_status_str(WolfeStatus s) {
   }
 }
 
+struct Eval {
+  double alpha;   // alpha
+  double obj;   // obj
+  double dir;   // directional derivative
+};
+
 struct WolfeData {
   Eigen::VectorXd theta_;
   Eigen::VectorXd theta_grad_;
@@ -376,6 +377,13 @@ struct WolfeData {
     std::swap(obj_, other.obj_);
     std::swap(alpha_, other.alpha_);
     std::swap(dir_, other.dir_);
+  }
+  void swap(WolfeData& other, Eval& eval) {
+    theta_.swap(other.theta_);
+    a_.swap(other.a_);
+    std::swap(obj_, eval.obj);
+    std::swap(alpha_, eval.alpha);
+    std::swap(dir_, eval.dir);
   }
 };
 struct WolfeInfo {
@@ -409,7 +417,15 @@ struct WolfeInfo {
  *  \f$\phi(\alpha)=\text{obj\_fun}\bigl(a(\alpha),\;\theta(\alpha)\bigr)\f$,
  *  \f$\theta(\alpha)=\text{covariance}\;·\;a(\alpha)\f$,
  *  \f$\phi'(\alpha)=\nabla\phi(\alpha)^{\!T} p\f$.
- *
+ *  void swap(WolfeData& other) {
+    theta_.swap(other.theta_);
+    theta_grad_.swap(other.theta_grad_);
+    a_.swap(other.a_);
+    std::swap(obj_, other.obj_);
+    std::swap(alpha_, other.alpha_);
+    std::swap(dir_, other.dir_);
+  }
+
  * The search proceeds in three phases
  *
  *  1. **Back‑tracking** – halve the initial \f$\alpha\f$ until both Wolfe
@@ -451,12 +467,6 @@ inline WolfeStatus wolfe_line_search(
   auto& curr = wolfe_info.curr_;
   auto& prev = wolfe_info.prev_;
   auto& scratch = wolfe_info.scratch_;
-
-  struct Eval {
-    double alpha;   // alpha
-    double obj;   // obj
-    double dir;   // directional derivative
-  };
   Eigen::VectorXd p = curr.a_ - prev.a_;
   double dir_deriv_init = grad_fun(prev.a_, prev.theta_, prev.theta_grad_).dot(p);
   Eval low{0.0, prev.obj_, dir_deriv_init};
@@ -491,7 +501,7 @@ inline WolfeStatus wolfe_line_search(
       if (high.alpha < opt.min_alpha) {
         debug::print("Exit on precheck numerical trouble", 1);
         debug::print("total_updates", total_updates);
-        return WolfeStatus{WolfeReturn::StepTooSmall, high.alpha, high.obj, high.dir, total_updates, 0};
+        return WolfeStatus{WolfeReturn::StepTooSmall, total_updates, 0};
       }
       update_step(scratch.a_, scratch.theta_, curr.theta_grad_, high);
     }
@@ -502,13 +512,9 @@ inline WolfeStatus wolfe_line_search(
     if (armijo_ok(high)) {
       if (wolfe_ok(high)) {
         debug::print("Exit on first precheck", 1);
-        curr.a_.swap(scratch.a_);
-        curr.theta_.swap(scratch.theta_);
-        curr.obj_ = high.obj;
-        curr.alpha_ = high.alpha;
-        curr.dir_ = high.dir;
+        curr.swap(scratch, high);
         debug::print("total_updates", total_updates);
-        return WolfeStatus{WolfeReturn::Wolfe, high.alpha, high.obj, high.dir, total_updates, 0};
+        return WolfeStatus{WolfeReturn::Wolfe, total_updates, 0};
       } else {
         if (best.obj < high.obj) {
           best = high;
@@ -556,14 +562,10 @@ inline WolfeStatus wolfe_line_search(
     if (armijo_ok(high)) {
       // [1]
       if (wolfe_ok(high)) {
-        curr.a_.swap(scratch.a_);
-        curr.theta_.swap(scratch.theta_);
-        curr.obj_ = high.obj;
-        curr.alpha_ = high.alpha;
-        curr.dir_ = high.dir;
+        curr.swap(scratch, high);
         debug::print("Exit on first while", 1);
         debug::print("total_updates", total_updates);
-        return WolfeStatus{WolfeReturn::Wolfe, high.alpha, high.obj, high.dir, total_updates, num_backtracks};
+        return WolfeStatus{WolfeReturn::Wolfe, total_updates, num_backtracks};
       } else {
         if (best.obj < high.obj) {
           best = high;
@@ -590,41 +592,25 @@ inline WolfeStatus wolfe_line_search(
           && curr_eval.alpha < 1e-8) {                // tiny gain
       if (curr_eval.obj != low.obj && armijo_ok(curr_eval)) {
         update_step(scratch.a_, scratch.theta_, curr.theta_grad_, curr_eval);
-        curr.a_.swap(scratch.a_);
-        curr.theta_.swap(scratch.theta_);
-        curr.obj_ = curr_eval.obj;
-        curr.alpha_ = curr_eval.alpha;
-        curr.dir_ = curr_eval.dir;
+        curr.swap(scratch, curr_eval);
       }
       debug::print("total_updates", total_updates);
       if (std::abs(curr_eval.dir) <= grad_tol &&  // tiny slope
           std::abs(curr_eval.obj - curr.obj_) <= obj_tol) {
         debug::print("Exit on grad_tol and obj_tol", 1);
-        curr.dir_ = curr_eval.dir;
-        curr.obj_ = curr_eval.obj;
-        curr.alpha_ = curr_eval.alpha;
-        return WolfeStatus{WolfeReturn::ConvergedObjectiveAndGradient, curr_eval.alpha, curr_eval.obj, curr_eval.dir, total_updates, num_backtracks};
+        return WolfeStatus{WolfeReturn::ConvergedObjectiveAndGradient, total_updates, num_backtracks};
       } else if (std::abs(curr_eval.dir) <= grad_tol) {
-        curr.dir_ = curr_eval.dir;
-        curr.obj_ = curr_eval.obj;
-        curr.alpha_ = curr_eval.alpha;
         debug::print("Exit on grad_tol", 1);
-        return WolfeStatus{WolfeReturn::ConvergedGradient, curr_eval.alpha, curr_eval.obj, curr_eval.dir, total_updates, num_backtracks};
+        return WolfeStatus{WolfeReturn::ConvergedGradient, total_updates, num_backtracks};
       } else if (std::abs(curr_eval.obj - curr.obj_) <= obj_tol) {
-        curr.dir_ = curr_eval.dir;
-        curr.obj_ = curr_eval.obj;
-        curr.alpha_ = curr_eval.alpha;
         debug::print("Exit on obj_tol", 1);
-        return WolfeStatus{WolfeReturn::ConvergedObjective, curr_eval.alpha, curr_eval.obj, curr_eval.dir, total_updates, num_backtracks};
+        return WolfeStatus{WolfeReturn::ConvergedObjective, total_updates, num_backtracks};
       } else {
-        curr.dir_ = curr_eval.dir;
-        curr.obj_ = curr_eval.obj;
-        curr.alpha_ = curr_eval.alpha;
         debug::print("Exit on alpha failure", 1);
-        return WolfeStatus{WolfeReturn::IntervalTooSmall, curr_eval.alpha, curr_eval.obj, curr_eval.dir, total_updates, num_backtracks};
+        return WolfeStatus{WolfeReturn::IntervalTooSmall, total_updates, num_backtracks};
       }
     }
-    return WolfeStatus{WolfeReturn::Wolfe, curr_eval.alpha, curr_eval.obj, curr_eval.dir, total_updates, num_backtracks};
+    return WolfeStatus{WolfeReturn::Wolfe, total_updates, num_backtracks};
   };
   auto check_b = check_bounds(high);
   if (check_b.stop_ != WolfeReturn::Wolfe) {
@@ -666,14 +652,10 @@ inline WolfeStatus wolfe_line_search(
      */
     if (armijo_ok(mid)) {
       if (wolfe_ok(mid)) {
-        curr.a_.swap(scratch.a_);
-        curr.theta_.swap(scratch.theta_);
-        curr.obj_ = mid.obj;
-        curr.alpha_ = mid.alpha;
-        curr.dir_ = mid.dir;
+        curr.swap(scratch, mid);
         debug::print("Exit on safe on zoom", 1);
         debug::print("total_updates", total_updates);
-        return WolfeStatus{WolfeReturn::Wolfe, mid.alpha, mid.obj, mid.dir, total_updates, num_backtracks};
+        return WolfeStatus{WolfeReturn::Wolfe, total_updates, num_backtracks};
       } else {
         if (best.obj < mid.obj) {
           best = mid;
@@ -704,29 +686,28 @@ inline WolfeStatus wolfe_line_search(
                "deriv_high:", high.dir);
   // On failure, use the best point we have found so far that at least satisfies armijo
   update_step(scratch.a_, scratch.theta_, curr.theta_grad_, best);
+  const bool armijo_ok_mid = armijo_ok(best);
+  const bool curve_ok_mid = wolfe_ok(best);
   curr.a_.swap(scratch.a_);
   curr.theta_.swap(scratch.theta_);
   curr.theta_grad_ = laplace_likelihood::theta_grad(ll_fun, scratch.theta_, ll_args, msgs);
   // We already calculated best.obj and theta_grad so no need to recompute here
   best.dir = grad_fun(curr.a_, curr.theta_, curr.theta_grad_).dot(p);
-  const bool armijo_ok_mid
-      = check_armijo(best.obj, curr.obj_, best.alpha, dir_deriv_init, opt);
-  const bool curve_ok_mid = check_wolfe_curve(best.dir, dir_deriv_init, opt);
   curr.obj_ = best.obj;
   curr.alpha_ = best.alpha;
   curr.dir_ = mid.dir;
   if (armijo_ok_mid && curve_ok_mid) {
     debug::print("Exit on safe after zoom", 1);
     debug::print("total_updates", total_updates);
-    return WolfeStatus{WolfeReturn::Wolfe, best.alpha, best.obj, best.dir, total_updates, num_backtracks};
+    return WolfeStatus{WolfeReturn::Wolfe, total_updates, num_backtracks};
   } else if (armijo_ok_mid) {
     debug::print("Exit on only satisfying armijo", 1);
     debug::print("total_updates", total_updates);
-    return WolfeStatus{WolfeReturn::Armijo, best.alpha, best.obj, best.dir, total_updates, num_backtracks};
+    return WolfeStatus{WolfeReturn::Armijo, total_updates, num_backtracks};
   } else {
     debug::print("Exit on failure", 1);
     debug::print("total_updates", total_updates);
-    return WolfeStatus{WolfeReturn::Fail, best.alpha, best.obj, best.dir, total_updates, num_backtracks};
+    return WolfeStatus{WolfeReturn::Fail, total_updates, num_backtracks};
   }
 }
 }

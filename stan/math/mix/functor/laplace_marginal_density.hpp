@@ -542,8 +542,7 @@ inline auto laplace_marginal_density_est(
            + laplace_likelihood::log_likelihood(ll_fun, theta_val, ll_args_vals,
                                                 msgs);
   };
-  auto grad_fun = [&](const Eigen::VectorXd& a_val, auto&& theta_val,
-                      auto&& theta_grad) -> Eigen::VectorXd {
+  auto grad_fun = [&](const Eigen::VectorXd& a_val, auto&& theta_val, auto&& theta_grad) -> Eigen::VectorXd {
     return -covariance * a_val + covariance * theta_grad;
   };
   prev.obj_ = std::numeric_limits<double>::lowest();
