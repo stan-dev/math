@@ -30,7 +30,8 @@ inline auto log_wiener_prob(const T_a& a, const T_v& v, const T_w& w) {
   const auto exponent = 2.0 * v * a * w;
   // This branch is for numeric stability
   if (exponent < 0) {
-    return ret_t(log1m_exp(exponent) - log_diff_exp(2 * neg_v * a * one_m_w, exponent));
+    return ret_t(log1m_exp(exponent)
+                 - log_diff_exp(2 * neg_v * a * one_m_w, exponent));
   } else {
     return ret_t(log1m_exp(-exponent) - log1m_exp(2 * neg_v * a));
   }
@@ -130,7 +131,7 @@ inline auto wiener4_ccdf_grad_a(const T_y& y, const T_a& a, const T_v& v,
   auto prob_grad_a = -wiener_prob_derivative_term(a, v, w) * v;
   if (!is_scal_finite(prob_grad_a)) {
     prob_grad_a = ret_t(NEGATIVE_INFTY);
-	return prob_grad_a;
+    return prob_grad_a;
   }
   const auto prob = log_wiener_prob(a, v, w);
   const auto cdf_grad_a = wiener4_cdf_grad_a(y, a, v, w, cdf, err);
@@ -157,7 +158,7 @@ inline auto wiener4_ccdf_grad_v(const T_y& y, const T_a& a, const T_v& v,
   const auto prob = log_wiener_prob(a, v, w);
   // derivative of the wiener probability w.r.t. 'v' (on log-scale)
   auto prob_grad_v = -wiener_prob_derivative_term(a, v, w) * a;
-  if (!is_scal_finite(fabs(prob_grad_v))) { 
+  if (!is_scal_finite(fabs(prob_grad_v))) {
     prob_grad_v = ret_t(NEGATIVE_INFTY);
   }
 
@@ -189,7 +190,7 @@ inline auto wiener4_ccdf_grad_w(const T_y& y, const T_a& a, const T_v& v,
       = (v != 0) ? exp(LOG_TWO + log(fabs(v)) + log(a) - log1m_exp(exponent))
                  : ret_t(1 / w);
   if (v > 0) {
-  prob_grad_w *= exp(exponent);
+    prob_grad_w *= exp(exponent);
   }
 
   const auto cdf_grad_w = wiener4_cdf_grad_w(y, a, v, w, cdf, err);
@@ -235,7 +236,7 @@ inline auto wiener_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
   if (size_zero(y, a, t0, w, v)) {
     return ret_t(0.0);
   }
-  
+
   if (!include_summand<propto, T_y, T_a, T_t0, T_w, T_v>::value) {
     return ret_t(0.0);
   }
