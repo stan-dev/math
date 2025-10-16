@@ -171,7 +171,7 @@ inline auto wiener7_integrate_cdf(const Wiener7FunctorT& wiener7_functor,
                                         y - new_t0, a, new_v, new_w, lerr);
             const auto temp2 = (sv != 0) ? -0.5 * square(factor) - LOG_SQRT_PI
                                                - 0.5 * LOG_TWO + log1p(temp)
-                                               - 2 * log1p(-temp)
+                                               - 2 * log1m(temp)
                                          : 0;
             const auto factor_sv = GradSV ? factor : 1;
             const auto factor_sw

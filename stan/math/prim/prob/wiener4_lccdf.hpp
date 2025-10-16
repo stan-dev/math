@@ -25,7 +25,7 @@ inline auto log_wiener_prob(const T_a& a, const T_v& v, const T_w& w) {
   const auto neg_v = -v;
   const auto one_m_w = 1 - w;
   if (fabs(v) == 0.0) {
-    return ret_t(log1p(-one_m_w));
+    return ret_t(log1m(one_m_w));
   }
   const auto exponent = 2.0 * v * a * w;
   // This branch is for numeric stability
@@ -54,7 +54,7 @@ template <typename T_a, typename T_w, typename T_v>
 inline auto wiener_prob_derivative_term(const T_a& a, const T_v& v,
                                         const T_w& w) noexcept {
   using ret_t = return_type_t<T_a, T_w, T_v>;
-  const auto exponent_m1 = log1p(-1.1 * 1.0e-8);
+  const auto exponent_m1 = log1m(1.1 * 1.0e-8);
   ret_t ans;
   const auto neg_v = -v;
   const auto one_m_w = 1 - w;
@@ -284,7 +284,7 @@ inline auto wiener_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
   }
 
   // for precs. 1e-6, 1e-12, see Hartmann et al. (2021), Henrich et al. (2023)
-  static constexpr auto log_error_cdf = log(1e-6);
+  const auto log_error_cdf = log(1e-6);
   const auto log_error_derivative = log(precision_derivatives);
   const T_partials_return log_error_absolute = log(1e-12);
   T_partials_return lccdf = 0.0;
