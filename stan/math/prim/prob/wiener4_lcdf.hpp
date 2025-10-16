@@ -57,7 +57,7 @@ inline auto log_probability_GradAV(const T_a& a, const T_v& v, const T_w& w) {
   //  auto nearly_one = ret_t(1.0 - std::numeric_limits<ret_t>::min());
   ret_t prob;
   if (v < 0) {
-	const auto two_av = 2 * a * v;
+    const auto two_av = 2 * a * v;
     const auto two_va_one_minus_w = (two_av * (1.0 - w));
     const auto two_avw = two_av * w;
     const auto exp_two_va_one_minus_w = exp(two_va_one_minus_w);
@@ -77,7 +77,7 @@ inline auto log_probability_GradAV(const T_a& a, const T_v& v, const T_w& w) {
       return -exp(prob);
     }
   } else {
-	const auto minus_two_av = (-2.0 * a * v);
+    const auto minus_two_av = (-2.0 * a * v);
     const auto minus_two_va_one_minus_w = (minus_two_av * (1.0 - w));
     const auto exp_minus_two_va_one_minus_w = exp(minus_two_va_one_minus_w);
     const auto exp_minus_two_av = exp(minus_two_av);

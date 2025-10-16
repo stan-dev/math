@@ -288,7 +288,6 @@ inline auto wiener_lcdf(const T_y& y, const T_a& a, const T_t0& t0,
     return ret_t(0);
   }
 
-
   static constexpr const char* function_name = "wiener_lcdf";
   check_consistent_sizes(function_name, "Random variable", y,
                          "Boundary separation", a, "Drift rate", v,
