@@ -284,7 +284,7 @@ inline auto wiener_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
   }
 
   // for precs. 1e-6, 1e-12, see Hartmann et al. (2021), Henrich et al. (2023)
-  static constexpr log_error_cdf = log(1e-6);
+  static constexpr auto log_error_cdf = log(1e-6);
   const auto log_error_derivative = log(precision_derivatives);
   const T_partials_return log_error_absolute = log(1e-12);
   T_partials_return lccdf = 0.0;
@@ -312,10 +312,11 @@ inline auto wiener_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
 
     const auto prob = exp(internal::log_wiener_prob(a_value, v_value, w_value));
     const auto ccdf = prob - cdf;
+	const auto log_ccdf_single_value = log(ccdf);
 
-    lccdf += log(ccdf);
+    lccdf += log_ccdf_single_value;
 
-    const auto new_est_err = log(ccdf) + log_error_derivative - LOG_FOUR;
+    const auto new_est_err = log_ccdf_single_value + log_error_derivative - LOG_FOUR;
 
     if (!is_constant_all<T_y>::value || !is_constant_all<T_t0>::value) {
       const auto deriv_y = internal::estimate_with_err_check<5, 0>(

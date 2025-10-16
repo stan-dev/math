@@ -660,7 +660,7 @@ inline auto wiener_lcdf(const T_y& y, const T_a& a, const T_t0& t0,
   }
 
   // for precs. 1e-6, 1e-12, see Hartmann et al. (2021), Henrich et al. (2023)
-  static constexpr log_error_cdf = log(1e-6);
+  static constexpr auto log_error_cdf = log(1e-6);
   const auto log_error_derivative = log(precision_derivatives);
   const T_partials_return log_error_absolute = log(1e-12);
   T_partials_return lcdf = 0.0;
