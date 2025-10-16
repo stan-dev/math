@@ -63,11 +63,11 @@ inline auto wiener5_n_terms_small_t(T_y&& y, T_a&& a, T_w&& w,
                                     T_err&& error) noexcept {
   const auto two_error = 2.0 * error;
   const auto y_asq = y / square(a);
-  const auto two_log_a = 2 * log(a);
+  const auto two_log_a = 2.0 * log(a);
   const auto log_y_asq = log(y) - two_log_a;
   const auto one_m_w = 1.0 - w;
 
-  constexpr auto n_1_factor = Density ? 2 : 3;
+  constexpr auto n_1_factor = Density ? 2.0 : 3.0;
   const auto n_1 = (sqrt(n_1_factor * y_asq) + one_m_w) / 2.0;
   auto u_eps = (Density || GradW)
                    ? fmin(-1.0, LOG_TWO + LOG_PI + 2.0 * log_y_asq + two_error)
@@ -101,7 +101,7 @@ template <typename T_y, typename T_a, typename T_w, typename T_err>
 inline auto wiener5_density_large_reaction_time_terms(T_y&& y, T_a&& a, T_w&& w,
                                                       T_err&& error) noexcept {
   const auto y_asq = y / square(a);
-  const auto log_y_asq = log(y) - 2 * log(a);
+  const auto log_y_asq = log(y) - 2.0 * log(a);
   static constexpr double PI_SQUARED = pi() * pi();
   auto n_1 = 1.0 / (pi() * sqrt(y_asq));
   const auto two_log_piy = -2.0 * (LOG_PI + log_y_asq + error);
@@ -131,9 +131,9 @@ inline auto wiener5_gradient_large_reaction_time_terms(T_y&& y, T_a&& a,
                                                        T_w&& w,
                                                        T_err&& error) noexcept {
   const auto y_asq = y / square(a);
-  const auto log_y_asq = log(y) - 2 * log(a);
+  const auto log_y_asq = log(y) - 2.0 * log(a);
   static constexpr double PI_SQUARED = pi() * pi();
-  constexpr auto n_1_factor = GradW ? 2 : 3;
+  constexpr auto n_1_factor = GradW ? 2.0 : 3.0;
   auto n_1 = sqrt(n_1_factor / y_asq) / pi();
   const auto two_error = 2.0 * error;
   const auto u_eps_arg
@@ -180,8 +180,8 @@ inline auto wiener5_log_sum_exp(T_y&& y, T_a&& a, T_w&& w,
   const auto y_asq = y / square(a);
   const auto one_m_w = 1.0 - w;
   const bool small_n_terms_small_t
-      = Density ? (2 * n_terms_small_t <= n_terms_large_t)
-                : (2 * n_terms_small_t < n_terms_large_t);
+      = Density ? (2.0 * n_terms_small_t <= n_terms_large_t)
+                : (2.0 * n_terms_small_t < n_terms_large_t);
   const auto scaling = small_n_terms_small_t ? inv(2.0 * y_asq) : y_asq / 2.0;
   ret_t fplus = NEGATIVE_INFTY;
   ret_t fminus = NEGATIVE_INFTY;
@@ -247,7 +247,7 @@ inline auto wiener5_log_sum_exp(T_y&& y, T_a&& a, T_w&& w,
       fplus = log_sum_exp(fplus, new_val);
     }
   } else {  // for large t
-    constexpr double mult = (Density ? 1 : (GradW ? 2 : 3));
+    constexpr double mult = (Density ? 1.0 : (GradW ? 2.0 : 3.0));
     for (auto k = n_terms_large_t; k >= 1; k--) {
       const auto pi_k = k * pi();
       const auto check = (GradW) ? cos(pi_k * one_m_w) : sin(pi_k * one_m_w);
@@ -312,7 +312,7 @@ inline auto wiener5_density(const T_y& y, const T_a& a, const T_v& v,
                  .first;
   if (2 * n_terms_small_t <= n_terms_large_t) {
     auto log_density = error_term - 0.5 * LOG_TWO - LOG_SQRT_PI
-                       - 1.5 * (log(y) - 2 * log(a)) + res;
+                       - 1.5 * (log(y) - 2.0 * log(a)) + res;
     return NaturalScale ? exp(log_density) : log_density;
   } else {
     auto log_density = error_term + res + LOG_PI;
@@ -345,7 +345,7 @@ template <bool WrtLog = false, typename T_y, typename T_a, typename T_w,
 inline auto wiener5_grad_t(const T_y& y, const T_a& a, const T_v& v,
                            const T_w& w, const T_sv& sv,
                            T_err&& err = log(1e-12)) noexcept {
-  const auto two_log_a = 2 * log(a);
+  const auto two_log_a = 2.0 * log(a);
   const auto log_y_asq = log(y) - two_log_a;
   const auto error_term = wiener5_compute_error_term(y, a, v, w, sv);
   const auto one_m_w = 1.0 - w;
@@ -355,7 +355,7 @@ inline auto wiener5_grad_t(const T_y& y, const T_a& a, const T_v& v,
   const auto density_part_one
       = -0.5
         * (square(sv_sqr) * (y + square(a * one_m_w))
-           + sv_sqr * (1 - (2.0 * a * neg_v * one_m_w)) + square(neg_v))
+           + sv_sqr * (1.0 - (2.0 * a * neg_v * one_m_w)) + square(neg_v))
         / square(one_plus_svsqr_y);
   const auto error = (err - error_term) + two_log_a;
   const auto n_terms_small_t
@@ -372,7 +372,7 @@ inline auto wiener5_grad_t(const T_y& y, const T_a& a, const T_v& v,
       = log(fmax(fabs(density_part_one - 1.5 / y), fabs(density_part_one)));
   const auto log_density = wiener5_density<GradientCalc::OFF>(
       y, a, v, w, sv, err - error_log_density);
-  if (2 * n_terms_small_t < n_terms_large_t) {
+  if (2.0 * n_terms_small_t < n_terms_large_t) {
     auto ans = density_part_one - 1.5 / y
                + newsign
                      * exp(error_term - two_log_a - 1.5 * LOG_TWO - LOG_SQRT_PI
@@ -412,14 +412,14 @@ template <bool WrtLog = false, typename T_y, typename T_a, typename T_w,
 inline auto wiener5_grad_a(const T_y& y, const T_a& a, const T_v& v,
                            const T_w& w, const T_sv& sv,
                            T_err&& err = log(1e-12)) noexcept {
-  const auto two_log_a = 2 * log(a);
+  const auto two_log_a = 2.0 * log(a);
   const auto error_term = wiener5_compute_error_term(y, a, v, w, sv);
   const auto one_m_w = 1.0 - w;
   const auto sv_sqr = square(sv);
-  const auto one_plus_svsqr_y = 1 + sv_sqr * y;
+  const auto one_plus_svsqr_y = 1.0 + sv_sqr * y;
   const auto density_part_one
       = (v * one_m_w + sv_sqr * square(one_m_w) * a) / one_plus_svsqr_y;
-  const auto error = err - error_term + 3 * log(a) - log(y) - LOG_TWO;
+  const auto error = err - error_term + 3.0 * log(a) - log(y) - LOG_TWO;
 
   const auto n_terms_small_t
       = wiener5_n_terms_small_t<GradientCalc::OFF, GradientCalc::OFF>(y, a, w,
@@ -435,7 +435,7 @@ inline auto wiener5_grad_a(const T_y& y, const T_a& a, const T_v& v,
       fmax(fabs(density_part_one + 1.0 / a), fabs(density_part_one - 2.0 / a)));
   const auto log_density = wiener5_density<GradientCalc::OFF>(
       y, a, v, w, sv, err - error_log_density);
-  if (2 * n_terms_small_t < n_terms_large_t) {
+  if (2.0 * n_terms_small_t < n_terms_large_t) {
     auto ans
         = density_part_one + 1.0 / a
           - newsign
@@ -445,7 +445,7 @@ inline auto wiener5_grad_a(const T_y& y, const T_a& a, const T_v& v,
   } else {
     auto ans = density_part_one - 2.0 / a
                + newsign
-                     * exp(log(y) + error_term - 3 * (log(a) - LOG_PI) + result
+                     * exp(log(y) + error_term - 3.0 * (log(a) - LOG_PI) + result
                            - log_density);
     return WrtLog ? ans * exp(log_density) : ans;
   }
@@ -509,12 +509,12 @@ template <bool WrtLog = false, typename T_y, typename T_a, typename T_w,
 inline auto wiener5_grad_w(const T_y& y, const T_a& a, const T_v& v,
                            const T_w& w, const T_sv& sv,
                            T_err&& err = log(1e-12)) noexcept {
-  const auto two_log_a = 2 * log(a);
+  const auto two_log_a = 2.0 * log(a);
   const auto log_y_asq = log(y) - two_log_a;
   const auto error_term = wiener5_compute_error_term(y, a, v, w, sv);
   const auto one_m_w = 1.0 - w;
   const auto sv_sqr = square(sv);
-  const auto one_plus_svsqr_y = 1 + sv_sqr * y;
+  const auto one_plus_svsqr_y = 1.0 + sv_sqr * y;
   const auto density_part_one
       = (v * a + sv_sqr * square(a) * one_m_w) / one_plus_svsqr_y;
   const auto error = (err - error_term);
@@ -531,7 +531,7 @@ inline auto wiener5_grad_w(const T_y& y, const T_a& a, const T_v& v,
   auto&& newsign = wiener_res.second;
   const auto log_density = wiener5_density<GradientCalc::OFF>(
       y, a, v, w, sv, err - log(fabs(density_part_one)));
-  if (2 * n_terms_small_t < n_terms_large_t) {
+  if (2.0 * n_terms_small_t < n_terms_large_t) {
     auto ans = -(density_part_one
                  - newsign
                        * exp(result - (log_density - error_term)
@@ -540,7 +540,7 @@ inline auto wiener5_grad_w(const T_y& y, const T_a& a, const T_v& v,
   } else {
     auto ans
         = -(density_part_one
-            + newsign * exp(result - (log_density - error_term) + 2 * LOG_PI));
+            + newsign * exp(result - (log_density - error_term) + 2.0 * LOG_PI));
     return WrtLog ? ans * exp(log_density) : ans;
   }
 }
@@ -570,12 +570,12 @@ template <bool WrtLog = false, typename T_y, typename T_a, typename T_w,
 inline auto wiener5_grad_sv(const T_y& y, const T_a& a, const T_v& v,
                             const T_w& w, const T_sv& sv,
                             T_err&& err = log(1e-12)) noexcept {
-  const auto one_plus_svsqr_y = 1 + square(sv) * y;
+  const auto one_plus_svsqr_y = 1.0 + square(sv) * y;
   const auto one_m_w = 1.0 - w;
   const auto neg_v = -v;
   const auto t1 = -y / one_plus_svsqr_y;
   const auto t2
-      = (square(a * one_m_w) + 2 * a * neg_v * one_m_w * y + square(neg_v * y))
+      = (square(a * one_m_w) + 2.0 * a * neg_v * one_m_w * y + square(neg_v * y))
         / square(one_plus_svsqr_y);
   const auto ans = sv * (t1 + t2);
   return WrtLog ? ans * wiener5_density<true>(y, a, v, w, sv, err) : ans;
@@ -760,7 +760,7 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
   auto ops_partials
       = make_partials_propagator(y_ref, a_ref, t0_ref, w_ref, v_ref, sv_ref);
 
-  static constexpr double LOG_FOUR = std::log(4.0);
+  const double LOG_FOUR = std::log(4.0);
 
   // calculate density and partials
   for (size_t i = 0; i < N; i++) {

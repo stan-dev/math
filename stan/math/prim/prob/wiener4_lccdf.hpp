@@ -23,7 +23,7 @@ template <typename T_a, typename T_w, typename T_v>
 inline auto log_wiener_prob(const T_a& a, const T_v& v, const T_w& w) {
   using ret_t = return_type_t<T_a, T_w, T_v>;
   const auto neg_v = -v;
-  const auto one_m_w = 1 - w;
+  const auto one_m_w = 1.0 - w;
   if (fabs(v) == 0.0) {
     return ret_t(log1m(one_m_w));
   }
@@ -31,9 +31,9 @@ inline auto log_wiener_prob(const T_a& a, const T_v& v, const T_w& w) {
   // This branch is for numeric stability
   if (exponent < 0) {
     return ret_t(log1m_exp(exponent)
-                 - log_diff_exp(2 * neg_v * a * one_m_w, exponent));
+                 - log_diff_exp(2.0 * neg_v * a * one_m_w, exponent));
   } else {
-    return ret_t(log1m_exp(-exponent) - log1m_exp(2 * neg_v * a));
+    return ret_t(log1m_exp(-exponent) - log1m_exp(2.0 * neg_v * a));
   }
 }
 
@@ -291,7 +291,7 @@ inline auto wiener_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
   auto ops_partials
       = make_partials_propagator(y_ref, a_ref, t0_ref, w_ref, v_ref);
 
-  static constexpr double LOG_FOUR = std::log(4.0);
+  const double LOG_FOUR = std::log(4.0);
 
   // calculate distribution and partials
   for (size_t i = 0; i < N; i++) {

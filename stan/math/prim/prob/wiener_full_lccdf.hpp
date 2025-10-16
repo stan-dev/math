@@ -177,7 +177,7 @@ inline auto wiener_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
   for (size_t i = 0; i < N_beta_sw; ++i) {
     if (unlikely(w_vec[i] - .5 * sw_vec[i] <= 0)) {
       std::stringstream msg;
-      msg << ", but must be smaller than 2*(A-priori bias) = " << 2 * w_vec[i];
+      msg << ", but must be smaller than 2*(A-priori bias) = " << 2.0 * w_vec[i];
       std::string msg_str(msg.str());
       throw_domain_error(function_name,
                          "Inter-trial variability in A-priori bias", sw_vec[i],
@@ -186,7 +186,7 @@ inline auto wiener_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
     if (unlikely(w_vec[i] + .5 * sw_vec[i] >= 1)) {
       std::stringstream msg;
       msg << ", but must be smaller than 2*(1-A-priori bias) = "
-          << 2 * (1 - w_vec[i]);
+          << 2.0 * (1.0 - w_vec[i]);
       std::string msg_str(msg.str());
       throw_domain_error(function_name,
                          "Inter-trial variability in A-priori bias", sw_vec[i],
