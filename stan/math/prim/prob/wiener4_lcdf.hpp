@@ -607,6 +607,19 @@ inline auto wiener_lcdf(const T_y& y, const T_a& a, const T_t0& t0,
   using T_v_ref = ref_type_if_t<!is_constant<T_v>::value, T_v>;
   using internal::GradientCalc;
   using ret_t = return_type_t<T_y, T_a, T_t0, T_w, T_v>;
+ 
+  T_y_ref y_ref = y;
+  T_a_ref a_ref = a;
+  T_t0_ref t0_ref = t0;
+  T_w_ref w_ref = w;
+  T_v_ref v_ref = v;
+
+  decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
+  decltype(auto) a_val = to_ref(as_value_column_array_or_scalar(a_ref));
+  decltype(auto) v_val = to_ref(as_value_column_array_or_scalar(v_ref));
+  decltype(auto) w_val = to_ref(as_value_column_array_or_scalar(w_ref));
+  decltype(auto) t0_val = to_ref(as_value_column_array_or_scalar(t0_ref));
+  
   if (!include_summand<propto, T_y, T_a, T_t0, T_w, T_v>::value) {
     return ret_t(0.0);
   }
@@ -619,18 +632,6 @@ inline auto wiener_lcdf(const T_y& y, const T_a& a, const T_t0& t0,
   check_consistent_sizes(function_name, "Random variable", y,
                          "Boundary separation", a, "Drift rate", v,
                          "A-priori bias", w, "Nondecision time", t0);
-
-  T_y_ref y_ref = y;
-  T_a_ref a_ref = a;
-  T_t0_ref t0_ref = t0;
-  T_w_ref w_ref = w;
-  T_v_ref v_ref = v;
-
-  auto y_val = to_ref(as_value_column_array_or_scalar(y_ref));
-  auto a_val = to_ref(as_value_column_array_or_scalar(a_ref));
-  auto v_val = to_ref(as_value_column_array_or_scalar(v_ref));
-  auto w_val = to_ref(as_value_column_array_or_scalar(w_ref));
-  auto t0_val = to_ref(as_value_column_array_or_scalar(t0_ref));
   check_positive_finite(function_name, "Random variable", y_val);
   check_positive_finite(function_name, "Boundary separation", a_val);
   check_finite(function_name, "Drift rate", v_val);
@@ -658,14 +659,15 @@ inline auto wiener_lcdf(const T_y& y, const T_a& a, const T_t0& t0,
     }
   }
 
-  const auto log_error_cdf = log(1e-6);
+  // for precs. 1e-6, 1e-12, see Hartmann et al. (2021), Henrich et al. (2023)
+  static constexpr log_error_cdf = log(1e-6);
   const auto log_error_derivative = log(precision_derivatives);
   const T_partials_return log_error_absolute = log(1e-12);
   T_partials_return lcdf = 0.0;
   auto ops_partials
       = make_partials_propagator(y_ref, a_ref, t0_ref, w_ref, v_ref);
 
-  static constexpr double LOG_FOUR = LOG_TWO + LOG_TWO;
+  static constexpr double LOG_FOUR = std::log(4.0);
 
   // calculate distribution and partials
   for (size_t i = 0; i < N; i++) {

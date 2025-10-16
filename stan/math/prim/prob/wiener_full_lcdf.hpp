@@ -256,6 +256,8 @@ inline auto wiener7_integrate_cdf(const Wiener7FunctorT& wiener7_functor,
  * The Seven-parameter Diffusion Model: An Implementation in Stan for Bayesian
  * Analyses. *Behavior Research Methods*.
  * https://doi.org/10.3758/s13428-023-02179-1
+ * - Henrich, F., & Klauer, K. C. (in press). Modeling Truncated and Censored
+ * Data With the Diffusion Model in Stan. *Behavior Research Methods*.
  * - Linhart, J. M. (2008). Algorithm 885: Computing the Logarithm of the
  * Normal Distribution. *ACM Transactions on Mathematical Software*.
  * http://doi.acm.org/10.1145/1391989.1391993
@@ -283,6 +285,25 @@ inline auto wiener_lcdf(const T_y& y, const T_a& a, const T_t0& t0,
   using internal::GradientCalc;
   using T_partials_return
       = partials_return_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0>;
+	  
+  T_y_ref y_ref = y;
+  T_a_ref a_ref = a;
+  T_v_ref v_ref = v;
+  T_w_ref w_ref = w;
+  T_t0_ref t0_ref = t0;
+  T_sv_ref sv_ref = sv;
+  T_sw_ref sw_ref = sw;
+  T_st0_ref st0_ref = st0;
+
+  decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
+  decltype(auto) a_val = to_ref(as_value_column_array_or_scalar(a_ref));
+  decltype(auto) v_val = to_ref(as_value_column_array_or_scalar(v_ref));
+  decltype(auto) w_val = to_ref(as_value_column_array_or_scalar(w_ref));
+  decltype(auto) t0_val = to_ref(as_value_column_array_or_scalar(t0_ref));
+  decltype(auto) sv_val = to_ref(as_value_column_array_or_scalar(sv_ref));
+  decltype(auto) sw_val = to_ref(as_value_column_array_or_scalar(sw_ref));
+  decltype(auto) st0_val = to_ref(as_value_column_array_or_scalar(st0_ref));
+  
   if (!include_summand<propto, T_y, T_a, T_v, T_w, T_t0, T_sv, T_sw,
                        T_st0>::value) {
     return ret_t(0);
@@ -295,24 +316,6 @@ inline auto wiener_lcdf(const T_y& y, const T_a& a, const T_t0& t0,
                          "Inter-trial variability in drift rate", sv,
                          "Inter-trial variability in A-priori bias", sw,
                          "Inter-trial variability in Nondecision time", st0);
-
-  T_y_ref y_ref = y;
-  T_a_ref a_ref = a;
-  T_v_ref v_ref = v;
-  T_w_ref w_ref = w;
-  T_t0_ref t0_ref = t0;
-  T_sv_ref sv_ref = sv;
-  T_sw_ref sw_ref = sw;
-  T_st0_ref st0_ref = st0;
-
-  auto y_val = to_ref(as_value_column_array_or_scalar(y_ref));
-  auto a_val = to_ref(as_value_column_array_or_scalar(a_ref));
-  auto v_val = to_ref(as_value_column_array_or_scalar(v_ref));
-  auto w_val = to_ref(as_value_column_array_or_scalar(w_ref));
-  auto t0_val = to_ref(as_value_column_array_or_scalar(t0_ref));
-  auto sv_val = to_ref(as_value_column_array_or_scalar(sv_ref));
-  auto sw_val = to_ref(as_value_column_array_or_scalar(sw_ref));
-  auto st0_val = to_ref(as_value_column_array_or_scalar(st0_ref));
   check_positive_finite(function_name, "Random variable", y_val);
   check_positive_finite(function_name, "Boundary separation", a_val);
   check_finite(function_name, "Drift rate", v_val);
@@ -374,6 +377,7 @@ inline auto wiener_lcdf(const T_y& y, const T_a& a, const T_t0& t0,
     }
   }
 
+  // for precs. 1e-6, 1e-12, see Hartmann et al. (2021), Henrich et al. (2023)
   const T_partials_return log_error_cdf = log(1e-6);  // precision for density
   const auto error_bound = precision_derivatives;     // precision for
   // derivatives (controllable by user)
