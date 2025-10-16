@@ -1,9 +1,10 @@
 #include <stan/math/rev.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <limits>
 #include <vector>
 
-TEST(AgradRevErrorHandlingScalar, CheckGreateOrEqualVarCheckVectorized) {
+TEST_F(AgradRev, RevErrorHandlingScalar_CheckGreateOrEqualVarCheckVectorized) {
   using stan::math::check_greater_or_equal;
   using stan::math::var;
   using std::vector;
@@ -37,7 +38,7 @@ TEST(AgradRevErrorHandlingScalar, CheckGreateOrEqualVarCheckVectorized) {
   stan::math::recover_memory();
 }
 
-TEST(AgradRevErrorHandlingMatrix, CheckGreaterOrEqualMatrix) {
+TEST_F(AgradRev, RevErrorHandlingMatrix_CheckGreaterOrEqualMatrix) {
   using stan::math::check_greater_or_equal;
   using stan::math::var;
   const char* function = "check_greater_or_equal";
@@ -154,7 +155,7 @@ TEST(AgradRevErrorHandlingMatrix, CheckGreaterOrEqualMatrix) {
   stan::math::recover_memory();
 }
 
-TEST(AgradRevErrorHandlingScalar, CheckGreaterOrEqual) {
+TEST_F(AgradRev, RevErrorHandlingScalar_CheckGreaterOrEqual) {
   using stan::math::check_greater_or_equal;
   using stan::math::var;
   const char* function = "check_greater_or_equal";
@@ -189,7 +190,7 @@ TEST(AgradRevErrorHandlingScalar, CheckGreaterOrEqual) {
   stan::math::recover_memory();
 }
 
-TEST(AgradRevErrorHandlingScalar, CheckGreaterOrEqualVarCheckUnivariate) {
+TEST_F(AgradRev, RevErrorHandlingScalar_CheckGreaterOrEqualVarCheckUnivariate) {
   using stan::math::check_greater_or_equal;
   using stan::math::var;
 
@@ -218,7 +219,7 @@ TEST(AgradRevErrorHandlingScalar, CheckGreaterOrEqualVarCheckUnivariate) {
   stan::math::recover_memory();
 }
 
-TEST(AgradRevErrorHandlingMatrix, CheckGreaterOrEqualVarMatrix) {
+TEST_F(AgradRev, RevErrorHandlingMatrix_CheckGreaterOrEqualVarMatrix) {
   using stan::math::check_greater_or_equal;
   using stan::math::var;
   using stan::math::var_value;
@@ -363,7 +364,7 @@ TEST(AgradRevErrorHandlingMatrix, CheckGreaterOrEqualVarMatrix) {
   stan::math::recover_memory();
 }
 
-TEST(AgradRevErrorHandlingMatrix, CheckGreaterOrEqualStdVecVarMatrix) {
+TEST_F(AgradRev, RevErrorHandlingMatrix_CheckGreaterOrEqualStdVecVarMatrix) {
   using stan::math::var;
   std::vector<std::vector<
       stan::conditional_var_value_t<var, Eigen::Matrix<var, -1, -1>>>>

@@ -23,7 +23,7 @@ namespace math {
  * canonical partial correlations.
  */
 template <typename T_CPCs, require_eigen_vector_t<T_CPCs>* = nullptr>
-Eigen::Matrix<value_type_t<T_CPCs>, Eigen::Dynamic, Eigen::Dynamic>
+inline Eigen::Matrix<value_type_t<T_CPCs>, Eigen::Dynamic, Eigen::Dynamic>
 read_corr_matrix(const T_CPCs& CPCs, size_t K) {
   if (K == 0) {
     return {};
@@ -56,7 +56,7 @@ read_corr_matrix(const T_CPCs& CPCs, size_t K) {
 template <typename T_CPCs, typename Lp,
           require_eigen_vector_t<T_CPCs>* = nullptr,
           require_convertible_t<value_type_t<T_CPCs>, Lp>* = nullptr>
-Eigen::Matrix<value_type_t<T_CPCs>, Eigen::Dynamic, Eigen::Dynamic>
+inline Eigen::Matrix<value_type_t<T_CPCs>, Eigen::Dynamic, Eigen::Dynamic>
 read_corr_matrix(const T_CPCs& CPCs, size_t K, Lp& log_prob) {
   if (K == 0) {
     return {};

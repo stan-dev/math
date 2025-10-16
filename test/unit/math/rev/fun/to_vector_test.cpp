@@ -1,9 +1,10 @@
 #include <stan/math/rev.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <test/unit/util.hpp>
 
 #include <gtest/gtest.h>
 
-TEST(MathFunRev, to_vector_var_value) {
+TEST_F(AgradRev, MathFunRev_to_vector_var_value) {
   constexpr Eigen::Index n = 100;
   Eigen::MatrixXd a_val = Eigen::MatrixXd::Random(n, n);
   stan::math::var_value<Eigen::MatrixXd> a(a_val);

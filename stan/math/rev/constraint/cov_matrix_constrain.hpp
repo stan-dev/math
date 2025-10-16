@@ -29,7 +29,8 @@ namespace math {
  * @throws std::invalid_argument if (x.size() != K + (K choose 2)).
  */
 template <typename T, require_var_vector_t<T>* = nullptr>
-var_value<Eigen::MatrixXd> cov_matrix_constrain(const T& x, Eigen::Index K) {
+inline var_value<Eigen::MatrixXd> cov_matrix_constrain(const T& x,
+                                                       Eigen::Index K) {
   using std::exp;
 
   check_size_match("cov_matrix_constrain", "x.size()", x.size(),
@@ -74,8 +75,9 @@ var_value<Eigen::MatrixXd> cov_matrix_constrain(const T& x, Eigen::Index K) {
  * @throws std::domain_error if (x.size() != K + (K choose 2)).
  */
 template <typename T, require_var_vector_t<T>* = nullptr>
-var_value<Eigen::MatrixXd> cov_matrix_constrain(const T& x, Eigen::Index K,
-                                                scalar_type_t<T>& lp) {
+inline var_value<Eigen::MatrixXd> cov_matrix_constrain(const T& x,
+                                                       Eigen::Index K,
+                                                       scalar_type_t<T>& lp) {
   using std::exp;
   using std::log;
 

@@ -32,10 +32,9 @@ namespace math {
 template <typename T_y, typename T_inv_scale,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_inv_scale>* = nullptr>
-return_type_t<T_y, T_inv_scale> exponential_cdf(const T_y& y,
-                                                const T_inv_scale& beta) {
+inline return_type_t<T_y, T_inv_scale> exponential_cdf(
+    const T_y& y, const T_inv_scale& beta) {
   using T_partials_return = partials_return_t<T_y, T_inv_scale>;
-  using T_partials_array = Eigen::Array<T_partials_return, Eigen::Dynamic, 1>;
   using T_y_ref = ref_type_if_not_constant_t<T_y>;
   using T_beta_ref = ref_type_if_not_constant_t<T_inv_scale>;
   static constexpr const char* function = "exponential_cdf";
@@ -60,9 +59,9 @@ return_type_t<T_y, T_inv_scale> exponential_cdf(const T_y& y,
 
   T_partials_return cdf(1.0);
   if constexpr (is_vector<T_y>::value || is_vector<T_inv_scale>::value) {
-    cdf = forward_as<T_partials_array>(one_m_exp).prod();
+    cdf = one_m_exp.prod();
   } else {
-    cdf = forward_as<T_partials_return>(one_m_exp);
+    cdf = one_m_exp;
   }
 
   if constexpr (any_derivatives) {

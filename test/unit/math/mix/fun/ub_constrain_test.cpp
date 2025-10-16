@@ -3,7 +3,7 @@
 
 namespace ub_constrain_test {
 template <typename T1, typename T2>
-void expect(const T1& x, const T2& ub) {
+inline void expect(const T1& x, const T2& ub) {
   auto f1 = [](const auto& x, const auto& ub) {
     stan::return_type_t<decltype(x), decltype(ub)> lp = 0;
     return stan::math::ub_constrain<false>(x, ub, lp);
@@ -30,7 +30,7 @@ void expect(const T1& x, const T2& ub) {
 }
 
 template <typename T1, typename T2>
-void expect_vec(const T1& x, const T2& ub) {
+inline void expect_vec(const T1& x, const T2& ub) {
   auto f1 = [](const auto& x, const auto& ub) {
     stan::return_type_t<decltype(x), decltype(ub)> lp = 0;
     return stan::math::ub_constrain<false>(x, ub, lp);

@@ -95,7 +95,9 @@
 #include <stan/math/prim/meta/is_eigen_matrix.hpp>
 #include <stan/math/prim/meta/is_eigen_matrix_base.hpp>
 #include <stan/math/prim/meta/is_eigen_sparse_base.hpp>
+#include <stan/math/prim/meta/is_floating_point.hpp>
 #include <stan/math/prim/meta/is_fvar.hpp>
+#include <stan/math/prim/meta/is_integral.hpp>
 #include <stan/math/prim/meta/is_kernel_expression.hpp>
 #include <stan/math/prim/meta/is_matrix_cl.hpp>
 #include <stan/math/prim/meta/is_matrix.hpp>
@@ -128,6 +130,8 @@
 #include <stan/math/prim/meta/scalar_type.hpp>
 #include <stan/math/prim/meta/seq_view.hpp>
 #include <stan/math/prim/meta/static_select.hpp>
+#include <stan/math/prim/meta/tuple_element.hpp>
+#include <stan/math/prim/meta/tuple_size.hpp>
 #include <stan/math/prim/meta/value_type.hpp>
 #include <stan/math/prim/meta/void_t.hpp>
 #include <stan/math/prim/meta/StdVectorBuilder.hpp>

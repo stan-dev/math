@@ -14,7 +14,7 @@ namespace math {
  * @return transposed matrix
  */
 template <typename T, require_matrix_t<T>* = nullptr>
-auto inline transpose(const T& m) {
+inline auto transpose(const T& m) {
   return m.transpose();
 }
 

@@ -27,7 +27,8 @@ namespace math {
  */
 template <typename T_y, require_vector_t<T_y>* = nullptr,
           require_not_std_vector_t<T_y>* = nullptr>
-void check_ordered(const char* function, const char* name, const T_y& y) {
+inline void check_ordered(const char* function, const char* name,
+                          const T_y& y) {
   const auto& y_ref = to_ref(value_of_rec(y));
   for (Eigen::Index n = 1; n < y_ref.size(); n++) {
     if (!(y_ref[n] > y_ref[n - 1])) {
@@ -58,7 +59,8 @@ void check_ordered(const char* function, const char* name, const T_y& y) {
  * are duplicated values, or if any element is `NaN`
  */
 template <typename T_y, require_std_vector_vt<is_stan_scalar, T_y>* = nullptr>
-void check_ordered(const char* function, const char* name, const T_y& y) {
+inline void check_ordered(const char* function, const char* name,
+                          const T_y& y) {
   for (size_t n = 1; n < y.size(); n++) {
     if (!(y[n] > y[n - 1])) {
       [&]() STAN_COLD_PATH {
@@ -89,7 +91,8 @@ void check_ordered(const char* function, const char* name, const T_y& y) {
  */
 template <typename T_y, require_std_vector_t<T_y>* = nullptr,
           require_not_vt_stan_scalar<T_y>* = nullptr>
-void check_ordered(const char* function, const char* name, const T_y& y) {
+inline void check_ordered(const char* function, const char* name,
+                          const T_y& y) {
   for (size_t i = 0; i < y.size(); ++i) {
     check_ordered(function, internal::make_iter_name(name, i).c_str(), y[i]);
   }

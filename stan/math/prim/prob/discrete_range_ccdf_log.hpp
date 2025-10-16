@@ -10,8 +10,8 @@ namespace math {
  * @deprecated use <code>discrete_range_lccdf</code>
  */
 template <typename T_y, typename T_lower, typename T_upper>
-double discrete_range_ccdf_log(const T_y& y, const T_lower& lower,
-                               const T_upper& upper) {
+inline double discrete_range_ccdf_log(const T_y& y, const T_lower& lower,
+                                      const T_upper& upper) {
   return discrete_range_lccdf(y, lower, upper);
 }
 

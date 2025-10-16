@@ -1,4 +1,5 @@
 #include <stan/math/rev/core.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 #include <deque>
@@ -9,7 +10,7 @@
 #include <map>
 #include <unordered_map>
 
-void arena_allocator_test() {
+inline void arena_allocator_test() {
   std::vector<int, stan::math::arena_allocator<int>> v;
   v.reserve(3);
   for (int i = 0; i < 5; i++) {
@@ -138,6 +139,6 @@ void arena_allocator_test() {
   }
 }
 
-TEST(AgradRevArena, arena_allocator_test) {
+TEST_F(AgradRev, RevArena_arena_allocator_test) {
   EXPECT_NO_THROW(arena_allocator_test());
 }

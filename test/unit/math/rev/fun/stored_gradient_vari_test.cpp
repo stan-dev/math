@@ -1,9 +1,9 @@
 #include <stan/math/rev.hpp>
-#include <gtest/gtest.h>
 #include <test/unit/math/rev/util.hpp>
+#include <gtest/gtest.h>
 #include <vector>
 
-TEST(StoredGradientVari, propagate3) {
+TEST_F(AgradRev, StoredGradientVari_propagate3) {
   using stan::math::var;
   using stan::math::vari;
   vari** xs = reinterpret_cast<vari**>(
@@ -43,7 +43,7 @@ TEST(StoredGradientVari, propagate3) {
   EXPECT_EQ(1000 * 132.7, g[2]);
 }
 
-TEST(StoredGradientVari, propagate0) {
+TEST_F(AgradRev, StoredGradientVari_propagate0) {
   using stan::math::var;
   using stan::math::vari;
   vari** xs = 0;
@@ -65,7 +65,7 @@ TEST(StoredGradientVari, propagate0) {
   for (int i = 0; i < 3; ++i)
     EXPECT_FLOAT_EQ(0, g[i]);
 }
-TEST(AgradRevMatrix, stored_gradient_vari_check_varis_on_stack) {
+TEST_F(AgradRev, RevMatrix_stored_gradient_vari_check_varis_on_stack) {
   using stan::math::var;
   using stan::math::vari;
   vari** xs = reinterpret_cast<vari**>(

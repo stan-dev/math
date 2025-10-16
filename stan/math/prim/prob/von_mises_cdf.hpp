@@ -20,7 +20,8 @@ namespace internal {
  * scipy.
  */
 template <typename T_x, typename T_k>
-return_type_t<T_x, T_k> von_mises_cdf_series(const T_x& x, const T_k& k) {
+inline return_type_t<T_x, T_k> von_mises_cdf_series(const T_x& x,
+                                                    const T_k& k) {
   const double pi = stan::math::pi();
   int p = value_of_rec(28 + 0.5 * k - 100 / (k + 5) + 1);
   auto s = sin(x);
@@ -49,7 +50,8 @@ return_type_t<T_x, T_k> von_mises_cdf_series(const T_x& x, const T_k& k) {
  * is well-approximated by a normal distribution.
  */
 template <typename T_x, typename T_k>
-return_type_t<T_x, T_k> von_mises_cdf_normalapprox(const T_x& x, const T_k& k) {
+inline return_type_t<T_x, T_k> von_mises_cdf_normalapprox(const T_x& x,
+                                                          const T_k& k) {
   using std::exp;
   using std::sqrt;
 
@@ -68,7 +70,8 @@ return_type_t<T_x, T_k> von_mises_cdf_normalapprox(const T_x& x, const T_k& k) {
  * the cdf with a Gaussian. Otherwise, use the expansion from scipy.
  */
 template <typename T_x, typename T_k>
-return_type_t<T_x, T_k> von_mises_cdf_centered(const T_x& x, const T_k& k) {
+inline return_type_t<T_x, T_k> von_mises_cdf_centered(const T_x& x,
+                                                      const T_k& k) {
   using return_t = return_type_t<T_x, T_k>;
   return_t f;
   if (k < 49) {

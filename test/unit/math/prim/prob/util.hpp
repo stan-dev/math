@@ -10,8 +10,9 @@
  * Uses a chi-squared test to assert that a vector of observed counts
  * is consistent with a vector of expected counts. Useful for testing RNGs.
  */
-void assert_chi_squared(const std::vector<int>& counts,
-                        const std::vector<double>& expected, double tolerance) {
+inline void assert_chi_squared(const std::vector<int>& counts,
+                               const std::vector<double>& expected,
+                               double tolerance) {
   int bins = counts.size();
   EXPECT_EQ(bins, expected.size());
 
@@ -33,10 +34,10 @@ void assert_chi_squared(const std::vector<int>& counts,
  * upper bound bin_boundaries[i], using a chi-squared goodness of fit
  * test. bin_boundaries is assumed sorted in increasing order.
  **/
-void assert_matches_bins(const std::vector<double>& samples,
-                         const std::vector<double>& bin_boundaries,
-                         const std::vector<double>& proportions,
-                         double tolerance) {
+inline void assert_matches_bins(const std::vector<double>& samples,
+                                const std::vector<double>& bin_boundaries,
+                                const std::vector<double>& proportions,
+                                double tolerance) {
   ASSERT_GT(samples.size(), 0);
   int N = samples.size();
   std::vector<double> mysamples = samples;
@@ -71,9 +72,9 @@ void assert_matches_bins(const std::vector<double>& samples,
  * distributed among the quantiles.size() equiprobable bins, who's
  * upper bounds are given in quantiles in increasing order.
  */
-void assert_matches_quantiles(const std::vector<double>& samples,
-                              const std::vector<double>& quantiles,
-                              double tolerance) {
+inline void assert_matches_quantiles(const std::vector<double>& samples,
+                                     const std::vector<double>& quantiles,
+                                     double tolerance) {
   int K = quantiles.size();
   std::vector<double> proportions;
   for (int i = 0; i < K; ++i)

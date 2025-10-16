@@ -85,7 +85,7 @@ inline void pipe_in(std::stringstream& ss, Arg0 arg0, const Args... args) {
  * @param args arguments
  */
 template <typename... Args>
-void elementwise_throw_domain_error(const Args... args) {
+inline void elementwise_throw_domain_error(const Args... args) {
   std::stringstream ss;
   pipe_in(ss, args...);
   throw std::domain_error(ss.str());

@@ -72,9 +72,9 @@ namespace math {
 template <bool propto, typename T_y, typename T_loc, typename T_cut,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_loc, T_cut>* = nullptr>
-return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
-                                                  const T_loc& lambda,
-                                                  const T_cut& c) {
+inline return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
+                                                         const T_loc& lambda,
+                                                         const T_cut& c) {
   using T_partials_return = partials_return_t<T_loc, T_cut>;
   using T_cuts_val = partials_return_t<T_cut>;
   using T_y_ref = ref_type_t<T_y>;
@@ -204,9 +204,9 @@ return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
 }
 
 template <typename T_y, typename T_loc, typename T_cut>
-return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
-                                                  const T_loc& lambda,
-                                                  const T_cut& c) {
+inline return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
+                                                         const T_loc& lambda,
+                                                         const T_cut& c) {
   return ordered_logistic_lpmf<false>(y, lambda, c);
 }
 

@@ -1,5 +1,6 @@
 #ifdef STAN_THREADS
 #include <stan/math/rev.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <test/unit/math/prim/functor/utils_threads.hpp>
 #include <test/unit/math/prim/functor/reduce_sum_util.hpp>
 #include <gtest/gtest.h>
@@ -26,7 +27,7 @@ struct grouped_count_lpdf {
 };
 }  // namespace profiling_test
 
-TEST(Profiling, profile_threading) {
+TEST_F(AgradRev, Profiling_profile_threading) {
   using stan::math::var;
   using stan::math::test::get_new_msg;
   double lambda_d = 10.0;

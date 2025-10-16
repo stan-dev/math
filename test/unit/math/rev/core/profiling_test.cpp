@@ -1,9 +1,10 @@
 #include <stan/math/rev.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <chrono>
 #include <thread>
 
-TEST(Profiling, double_basic) {
+TEST_F(AgradRev, Profiling_double_basic) {
   using stan::math::profile;
   using stan::math::var;
   stan::math::profile_map prof_map;
@@ -33,7 +34,7 @@ TEST(Profiling, double_basic) {
   EXPECT_TRUE(prof_map[key].get_fwd_time() > 0.0);
 }
 
-TEST(Profiling, var_basic) {
+TEST_F(AgradRev, Profiling_var_basic) {
   using stan::math::profile;
   using stan::math::var;
   stan::math::profile_map profiles;
@@ -59,7 +60,7 @@ TEST(Profiling, var_basic) {
   EXPECT_TRUE(profiles[key].get_rev_time() > 0.0);
 }
 
-TEST(Profiling, var_exception) {
+TEST_F(AgradRev, Profiling_var_exception) {
   using stan::math::profile;
   using stan::math::var;
   stan::math::profile_map profiles;
@@ -89,7 +90,7 @@ TEST(Profiling, var_exception) {
   EXPECT_TRUE(profiles[key_t1].get_rev_time() == 0.0);
 }
 
-TEST(Profiling, var_loop) {
+TEST_F(AgradRev, Profiling_var_loop) {
   using stan::math::profile;
   using stan::math::var;
   stan::math::profile_map profiles;
@@ -117,7 +118,7 @@ TEST(Profiling, var_loop) {
   EXPECT_TRUE(profiles[key_t1].get_rev_time() > 0.0);
 }
 
-TEST(Profiling, duplicate_active_profile) {
+TEST_F(AgradRev, Profiling_duplicate_active_profile) {
   using stan::math::profile;
   using stan::math::var;
   stan::math::profile_map profiles;

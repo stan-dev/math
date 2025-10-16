@@ -49,7 +49,8 @@ inline void check_cov_matrix(const char* function, const char* name,
  * not positive definite, or if any element of the matrix is `NaN`
  */
 template <typename StdVec, require_std_vector_t<StdVec>* = nullptr>
-void check_cov_matrix(const char* function, const char* name, const StdVec& y) {
+inline void check_cov_matrix(const char* function, const char* name,
+                             const StdVec& y) {
   for (auto&& y_i : y) {
     check_cov_matrix(function, name, y_i);
   }

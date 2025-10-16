@@ -25,7 +25,7 @@ TEST(ProbTransform, CholeskyCorrelation4) {
       EXPECT_FLOAT_EQ(L(m, n), x(m, n));
 }
 
-void test_cholesky_correlation_values(
+inline void test_cholesky_correlation_values(
     const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& L) {
   using Eigen::Dynamic;
   using Eigen::Matrix;

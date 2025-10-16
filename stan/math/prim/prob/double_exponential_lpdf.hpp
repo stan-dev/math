@@ -39,7 +39,7 @@ namespace math {
 template <bool propto, typename T_y, typename T_loc, typename T_scale,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_loc, T_scale>* = nullptr>
-return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
+inline return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
   using T_y_ref = ref_type_if_not_constant_t<T_y>;
@@ -105,7 +105,7 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
 }
 
 template <typename T_y, typename T_loc, typename T_scale>
-return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
+inline return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma) {
   return double_exponential_lpdf<false>(y, mu, sigma);
 }

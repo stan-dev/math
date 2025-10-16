@@ -3,7 +3,7 @@
 
 namespace lb_constrain_test {
 template <typename T1, typename T2>
-void expect_matvar(const T1& x, const T2& lb) {
+inline void expect_matvar(const T1& x, const T2& lb) {
   auto f1 = [](const auto& x, const auto& lb) {
     stan::return_type_t<decltype(x), decltype(lb)> lp = 0;
     return stan::math::lb_constrain<false>(x, lb, lp);
@@ -30,7 +30,7 @@ void expect_matvar(const T1& x, const T2& lb) {
 }
 
 template <typename T1, typename T2>
-void expect_vec_matvar(const T1& x, const T2& lb) {
+inline void expect_vec_matvar(const T1& x, const T2& lb) {
   auto f1 = [](const auto& x, const auto& lb) {
     stan::return_type_t<decltype(x), decltype(lb)> lp = 0;
     return stan::math::lb_constrain<false>(x, lb, lp);

@@ -70,7 +70,7 @@ inline auto ordered_constrain(T&& x) {
  * @return Positive, increasing ordered vector.
  */
 template <typename VarVec, require_var_col_vector_t<VarVec>* = nullptr>
-auto ordered_constrain(VarVec&& x, scalar_type_t<VarVec>& lp) {
+inline auto ordered_constrain(VarVec&& x, scalar_type_t<VarVec>& lp) {
   if (x.size() > 1) {
     lp += sum(x.tail(x.size() - 1));
   }

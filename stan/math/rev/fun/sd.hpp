@@ -25,7 +25,7 @@ namespace math {
  * @throw domain error  size is not greater than zero.
  */
 template <typename T, require_eigen_st<is_var, T>* = nullptr>
-var sd(const T& x) {
+inline var sd(const T& x) {
   using std::sqrt;
   using T_vi = promote_scalar_t<vari*, T>;
   using T_d = promote_scalar_t<double, T>;
@@ -68,7 +68,7 @@ var sd(const T& x) {
  * @throw domain error  size is not greater than zero.
  */
 template <typename T, require_var_matrix_t<T>* = nullptr>
-var sd(const T& x) {
+inline var sd(const T& x) {
   check_nonzero_size("sd", "x", x);
 
   if (x.size() == 1) {
@@ -94,7 +94,7 @@ var sd(const T& x) {
  * @throw domain error  size is not greater than zero.
  */
 template <typename T, require_std_vector_st<is_var, T>* = nullptr>
-auto sd(T&& m) {
+inline auto sd(T&& m) {
   return apply_vector_unary<T>::reduce(std::forward<T>(m), [](auto&& x) {
     return sd(std::forward<decltype(x)>(x));
   });

@@ -51,7 +51,7 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_s, typename T_n, typename T_loc,
           typename T_scale>
-return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
+inline return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
     const T_y& y_bar, const T_s& s_squared, const T_n& n_obs, const T_loc& mu,
     const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_s, T_n, T_loc, T_scale>;
@@ -132,15 +132,13 @@ return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
     using T_sigma_value_vector
         = Eigen::Array<T_sigma_value_scalar, Eigen::Dynamic, 1>;
     if constexpr (is_vector<T_scale>::value) {
-      edge<1>(ops_partials).partials_
-          = -0.5 / forward_as<T_sigma_value_vector>(sigma_squared);
+      edge<1>(ops_partials).partials_ = -0.5 / sigma_squared;
     } else {
       if constexpr (is_vector<T_s>::value) {
-        partials<1>(ops_partials) = T_sigma_value_vector::Constant(
-            N, -0.5 / forward_as<T_sigma_value_scalar>(sigma_squared));
+        partials<1>(ops_partials)
+            = T_sigma_value_vector::Constant(N, -0.5 / sigma_squared);
       } else {
-        forward_as<internal::broadcast_array<T_partials_return>>(
-            partials<1>(ops_partials))
+        partials<1>(ops_partials)
             = -0.5 / sigma_squared * N / math::size(sigma);
       }
     }

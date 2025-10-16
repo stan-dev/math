@@ -1,8 +1,9 @@
 #include <stan/math/rev.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <test/unit/math/prim/fun/promote_type_test_util.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathFunctionsPromoteScalar, VarMatrix) {
+TEST_F(AgradRev, MathFunctionsPromoteScalar_VarMatrix) {
   using stan::math::var;
   using stan::math::var_value;
   expect_promote_type<var_value<Eigen::MatrixXd>, var,

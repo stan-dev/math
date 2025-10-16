@@ -3,7 +3,7 @@
 
 namespace offset_multiplier_constrain_tests {
 template <typename T1, typename T2, typename T3>
-void expect(const T1& x, const T2& mu, const T3& sigma) {
+inline void expect(const T1& x, const T2& mu, const T3& sigma) {
   auto f1 = [](const auto& x, const auto& mu, const auto& sigma) {
     stan::return_type_t<decltype(x), decltype(mu), decltype(sigma)> lp = 0;
     return stan::math::offset_multiplier_constrain<false>(x, mu, sigma, lp);
@@ -31,7 +31,7 @@ void expect(const T1& x, const T2& mu, const T3& sigma) {
   stan::test::expect_ad(f4, x, mu, sigma);
 }
 template <typename T1, typename T2, typename T3>
-void expect_vec(const T1& x, const T2& mu, const T3& sigma) {
+inline void expect_vec(const T1& x, const T2& mu, const T3& sigma) {
   auto f1 = [](const auto& x, const auto& mu, const auto& sigma) {
     stan::return_type_t<decltype(x), decltype(mu), decltype(sigma)> lp = 0;
     return stan::math::offset_multiplier_constrain<false>(x, mu, sigma, lp);

@@ -16,7 +16,7 @@ namespace math {
  * @param K number of variables in correlation matrix
  */
 template <typename T>
-Eigen::Array<T, Eigen::Dynamic, 1> make_nu(const T& eta, size_t K) {
+inline Eigen::Array<T, Eigen::Dynamic, 1> make_nu(const T& eta, size_t K) {
   using size_type = index_type_t<Eigen::Matrix<T, Eigen::Dynamic, 1>>;
 
   // Best (1978) implies nu = 2 * alpha for the dof in a t

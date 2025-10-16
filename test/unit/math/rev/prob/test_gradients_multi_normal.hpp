@@ -5,9 +5,10 @@
 #include <iomanip>
 #include <stdexcept>
 #include <stan/math.hpp>
+#include <test/unit/math/rev/util.hpp>
 
 template <typename F, typename T_y, typename T_mu, typename T_sigma>
-std::vector<double> finite_diffs_multi_normal(
+inline std::vector<double> finite_diffs_multi_normal(
     const F& fun, const std::vector<T_y>& vec_y,
     const std::vector<T_mu>& vec_mu, const std::vector<T_sigma>& vec_sigma,
     double epsilon = 1e-6) {
@@ -21,7 +22,7 @@ std::vector<double> finite_diffs_multi_normal(
   std::vector<double> vec_sigma_plus = stan::math::value_of(vec_sigma);
   std::vector<double> vec_sigma_minus = vec_sigma_plus;
 
-  if (!stan::is_constant_all<T_y>::value) {
+  if constexpr (!stan::is_constant_all<T_y>::value) {
     for (size_t i = 0; i < vec_y.size(); ++i) {
       double recover_vec_y_plus = vec_y_plus[i];
       double recover_vec_y_minus = vec_y_minus[i];
@@ -34,7 +35,7 @@ std::vector<double> finite_diffs_multi_normal(
       vec_y_minus[i] = recover_vec_y_minus;
     }
   }
-  if (!stan::is_constant_all<T_mu>::value) {
+  if constexpr (!stan::is_constant_all<T_mu>::value) {
     for (size_t i = 0; i < vec_mu.size(); ++i) {
       double recover_vec_mu_plus = vec_mu_plus[i];
       double recover_vec_mu_minus = vec_mu_minus[i];
@@ -47,7 +48,7 @@ std::vector<double> finite_diffs_multi_normal(
       vec_mu_minus[i] = recover_vec_mu_minus;
     }
   }
-  if (!stan::is_constant_all<T_sigma>::value) {
+  if constexpr (!stan::is_constant_all<T_sigma>::value) {
     for (size_t i = 0; i < vec_sigma.size(); ++i) {
       double recover_vec_sigma_plus = vec_sigma_plus[i];
       double recover_vec_sigma_minus = vec_sigma_minus[i];
@@ -64,22 +65,21 @@ std::vector<double> finite_diffs_multi_normal(
 }
 
 template <typename F, typename T_y, typename T_mu, typename T_sigma>
-std::vector<double> grad_multi_normal(const F& fun,
-                                      const std::vector<T_y>& vec_y,
-                                      const std::vector<T_mu>& vec_mu,
-                                      const std::vector<T_sigma>& vec_sigma) {
+inline std::vector<double> grad_multi_normal(
+    const F& fun, const std::vector<T_y>& vec_y,
+    const std::vector<T_mu>& vec_mu, const std::vector<T_sigma>& vec_sigma) {
   stan::math::var fx = fun(vec_y, vec_mu, vec_sigma);
   std::vector<double> grad;
   std::vector<stan::math::var> vec_vars;
-  if (!stan::is_constant_all<T_y>::value) {
+  if constexpr (!stan::is_constant_all<T_y>::value) {
     for (size_t i = 0; i < vec_y.size(); i++)
       vec_vars.push_back(vec_y[i]);
   }
-  if (!stan::is_constant_all<T_mu>::value) {
+  if constexpr (!stan::is_constant_all<T_mu>::value) {
     for (size_t i = 0; i < vec_mu.size(); i++)
       vec_vars.push_back(vec_mu[i]);
   }
-  if (!stan::is_constant_all<T_sigma>::value) {
+  if constexpr (!stan::is_constant_all<T_sigma>::value) {
     for (size_t i = 0; i < vec_sigma.size(); i++)
       vec_vars.push_back(vec_sigma[i]);
   }
@@ -88,9 +88,9 @@ std::vector<double> grad_multi_normal(const F& fun,
 }
 
 template <typename F, typename T_y, typename T_mu, typename T_sigma>
-void test_grad_multi_normal(const F& fun, const std::vector<T_y>& vec_y,
-                            const std::vector<T_mu>& vec_mu,
-                            const std::vector<T_sigma>& vec_sigma) {
+inline void test_grad_multi_normal(const F& fun, const std::vector<T_y>& vec_y,
+                                   const std::vector<T_mu>& vec_mu,
+                                   const std::vector<T_sigma>& vec_sigma) {
   using std::fabs;
   std::vector<double> diffs_finite
       = finite_diffs_multi_normal(fun, vec_y, vec_mu, vec_sigma);

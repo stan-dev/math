@@ -5,7 +5,7 @@
 #include <vector>
 
 template <typename R, typename T>
-void expect_base() {
+inline void expect_base() {
   EXPECT_SAME_TYPE(R, typename stan::base_type<T>::type);
   EXPECT_SAME_TYPE(R, stan::base_type_t<T>);
   EXPECT_SAME_TYPE(R, typename stan::base_type<T&>::type);
@@ -17,7 +17,7 @@ void expect_base() {
 }
 
 template <typename T>
-void test_base() {
+inline void test_base() {
   // scalar types
   expect_base<T, T>();
 

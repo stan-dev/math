@@ -1,4 +1,5 @@
 #include <stan/math/rev.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 #include <algorithm>
@@ -395,7 +396,7 @@ std::vector<TestValue> testValues = {
 
 }  // namespace weibull_test_internal
 
-TEST(ProbDistributionsWeibull, derivativesPrecomputed) {
+TEST_F(AgradRev, ProbDistributionsWeibull_derivativesPrecomputed) {
   using stan::math::is_nan;
   using stan::math::value_of;
   using stan::math::var;

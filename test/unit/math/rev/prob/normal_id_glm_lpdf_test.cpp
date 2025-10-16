@@ -1,13 +1,13 @@
 #include <stan/math/rev.hpp>
-#include <stan/math/prim.hpp>
 #include <test/unit/math/rev/util.hpp>
+#include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 #include <cmath>
 
 //  We check that the values of the new regression match those of one built
 //  from existing primitives.
-TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_doubles) {
+TEST_F(AgradRev, normal_glm_matches_normal_id_doubles) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -30,7 +30,7 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_doubles) {
 }
 //  We check that the values of the new regression match those of one built
 //  from existing primitives.
-TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_doubles_rand) {
+TEST_F(AgradRev, normal_glm_matches_normal_id_doubles_rand) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -675,7 +675,8 @@ TYPED_TEST(ProbDistributionsNormalIdGLM,
 }
 
 //  We check that the right errors are thrown.
-TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_error_checking) {
+TEST_F(AgradRev,
+       ProbDistributionsNormalIdGLM_glm_matches_normal_id_error_checking) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -746,7 +747,7 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_error_checking) {
                std::domain_error);
 }
 
-TEST(ProbDistributionsNormalIdGLM, glm_type_issue_3189) {
+TEST_F(AgradRev, ProbDistributionsNormalIdGLM_glm_type_issue_3189) {
   // regression test for https://github.com/stan-dev/math/issues/3189
   using Eigen::Dynamic;
   using Eigen::Matrix;

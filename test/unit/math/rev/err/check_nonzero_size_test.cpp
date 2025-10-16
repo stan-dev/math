@@ -1,10 +1,11 @@
 #include <stan/math/rev.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
 #include <limits>
 #include <vector>
 
-TEST(AgradRevErrorHandlingMatrix, checkNonzeroSizeMatrix) {
+TEST_F(AgradRev, RevErrorHandlingMatrix_checkNonzeroSizeMatrix) {
   using stan::math::var;
   Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> y;
   using stan::math::check_nonzero_size;
@@ -35,7 +36,7 @@ TEST(AgradRevErrorHandlingMatrix, checkNonzeroSizeMatrix) {
                    std::invalid_argument, "a has size 0");
 }
 
-TEST(AgradRevErrorHandlingMatrix, checkNonzeroSizeMatrix_nan) {
+TEST_F(AgradRev, RevErrorHandlingMatrix_checkNonzeroSizeMatrix_nan) {
   using stan::math::var;
   Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> y;
   var result;

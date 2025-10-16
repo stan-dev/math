@@ -18,7 +18,7 @@ namespace math {
  * @return Flat array of vari pointers
  */
 template <int R, int C>
-vari** build_vari_array(const Eigen::Matrix<var, R, C>& x) {
+inline vari** build_vari_array(const Eigen::Matrix<var, R, C>& x) {
   vari** x_vi_
       = ChainableStack::instance_->memalloc_.alloc_array<vari*>(x.size());
   for (int i = 0; i < x.size(); ++i) {
