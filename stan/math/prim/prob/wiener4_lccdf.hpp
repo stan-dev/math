@@ -312,11 +312,12 @@ inline auto wiener_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
 
     const auto prob = exp(internal::log_wiener_prob(a_value, v_value, w_value));
     const auto ccdf = prob - cdf;
-	const auto log_ccdf_single_value = log(ccdf);
+    const auto log_ccdf_single_value = log(ccdf);
 
     lccdf += log_ccdf_single_value;
 
-    const auto new_est_err = log_ccdf_single_value + log_error_derivative - LOG_FOUR;
+    const auto new_est_err
+        = log_ccdf_single_value + log_error_derivative - LOG_FOUR;
 
     if (!is_constant_all<T_y>::value || !is_constant_all<T_t0>::value) {
       const auto deriv_y = internal::estimate_with_err_check<5, 0>(
