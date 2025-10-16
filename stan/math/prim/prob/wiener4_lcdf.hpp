@@ -194,12 +194,14 @@ inline auto wiener4_distribution(const T_y& y, const T_a& a, const T_v& vn,
       auto sin_k_pi_w = sin(k_pi * w);
       if (sin_k_pi_w > 0) {
         fplus = log_sum_exp(
-            fplus, log_k - log_sum_exp(2.0 * log_v, 2.0 * (log_k + LOG_PI - log_a))
-                       - 0.5 * square(k_pi / a) * y + log(sin_k_pi_w));
+            fplus,
+            log_k - log_sum_exp(2.0 * log_v, 2.0 * (log_k + LOG_PI - log_a))
+                - 0.5 * square(k_pi / a) * y + log(sin_k_pi_w));
       } else if (sin_k_pi_w < 0) {
         fminus = log_sum_exp(
-            fminus, log_k - log_sum_exp(2.0 * log_v, 2.0 * (log_k + LOG_PI - log_a))
-                        - 0.5 * square(k_pi / a) * y + log(-sin_k_pi_w));
+            fminus,
+            log_k - log_sum_exp(2.0 * log_v, 2.0 * (log_k + LOG_PI - log_a))
+                - 0.5 * square(k_pi / a) * y + log(-sin_k_pi_w));
       }
     }
     ret_t ans = NEGATIVE_INFTY;
@@ -242,8 +244,8 @@ inline auto wiener4_cdf_grad_a(const T_y& y, const T_a& a, const T_v& vn,
 
   const auto log_y = log(y);
   const auto log_a = log(a);
-  auto C1
-      = ret_t(LOG_TWO - log_sum_exp(2.0 * log(fabs(v)), 2.0 * (LOG_PI - log_a)));
+  auto C1 = ret_t(LOG_TWO
+                  - log_sum_exp(2.0 * log(fabs(v)), 2.0 * (LOG_PI - log_a)));
   C1 = log_sum_exp(C1, log_y);
   const auto factor = v * a * w + square(v) * y / 2.0 + err;
   const auto alphK = fmin(factor + LOG_PI + log_y + log_a - LOG_TWO - C1, 0.0);

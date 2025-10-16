@@ -445,8 +445,8 @@ inline auto wiener5_grad_a(const T_y& y, const T_a& a, const T_v& v,
   } else {
     auto ans = density_part_one - 2.0 / a
                + newsign
-                     * exp(log(y) + error_term - 3.0 * (log(a) - LOG_PI) + result
-                           - log_density);
+                     * exp(log(y) + error_term - 3.0 * (log(a) - LOG_PI)
+                           + result - log_density);
     return WrtLog ? ans * exp(log_density) : ans;
   }
 }
@@ -538,9 +538,9 @@ inline auto wiener5_grad_w(const T_y& y, const T_a& a, const T_v& v,
                              - 2.5 * log_y_asq - 0.5 * LOG_TWO - 0.5 * LOG_PI));
     return WrtLog ? ans * exp(log_density) : ans;
   } else {
-    auto ans
-        = -(density_part_one
-            + newsign * exp(result - (log_density - error_term) + 2.0 * LOG_PI));
+    auto ans = -(
+        density_part_one
+        + newsign * exp(result - (log_density - error_term) + 2.0 * LOG_PI));
     return WrtLog ? ans * exp(log_density) : ans;
   }
 }
@@ -574,9 +574,9 @@ inline auto wiener5_grad_sv(const T_y& y, const T_a& a, const T_v& v,
   const auto one_m_w = 1.0 - w;
   const auto neg_v = -v;
   const auto t1 = -y / one_plus_svsqr_y;
-  const auto t2
-      = (square(a * one_m_w) + 2.0 * a * neg_v * one_m_w * y + square(neg_v * y))
-        / square(one_plus_svsqr_y);
+  const auto t2 = (square(a * one_m_w) + 2.0 * a * neg_v * one_m_w * y
+                   + square(neg_v * y))
+                  / square(one_plus_svsqr_y);
   const auto ans = sv * (t1 + t2);
   return WrtLog ? ans * wiener5_density<true>(y, a, v, w, sv, err) : ans;
 }
