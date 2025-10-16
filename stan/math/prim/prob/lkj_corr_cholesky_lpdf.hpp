@@ -15,8 +15,8 @@ namespace math {
 // LKJ_Corr(L|eta) [ L Cholesky factor of correlation matrix
 //                  eta > 0; eta == 1 <-> uniform]
 template <bool propto, typename T_covar, typename T_shape>
-inline return_type_t<T_covar, T_shape> lkj_corr_cholesky_lpdf(
-    const T_covar& L, const T_shape& eta) {
+return_type_t<T_covar, T_shape> lkj_corr_cholesky_lpdf(const T_covar& L,
+                                                       const T_shape& eta) {
   using lp_ret = return_type_t<T_covar, T_shape>;
   static constexpr const char* function = "lkj_corr_cholesky_lpdf";
   check_positive(function, "Shape parameter", eta);

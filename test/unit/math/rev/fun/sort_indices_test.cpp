@@ -1,10 +1,9 @@
 #include <stan/math/rev.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/fun/util.hpp>
 #include <vector>
 
-inline void test_sort_indices_asc(std::vector<double> val) {
+void test_sort_indices_asc(std::vector<double> val) {
   using stan::math::sort_indices_asc;
 
   std::vector<stan::math::var> x;
@@ -25,7 +24,7 @@ inline void test_sort_indices_asc(std::vector<double> val) {
         EXPECT_FALSE(x_sorted[i] == x[j]);
 }
 
-inline void test_sort_indices_desc(std::vector<double> val) {
+void test_sort_indices_desc(std::vector<double> val) {
   using stan::math::sort_indices_desc;
 
   std::vector<stan::math::var> x;
@@ -47,7 +46,7 @@ inline void test_sort_indices_desc(std::vector<double> val) {
 }
 
 template <typename T, int R, int C>
-inline void test_sort_indices_asc(Eigen::Matrix<T, R, C> val) {
+void test_sort_indices_asc(Eigen::Matrix<T, R, C> val) {
   using stan::math::sort_indices_asc;
 
   const size_t val_size = val.size();
@@ -71,7 +70,7 @@ inline void test_sort_indices_asc(Eigen::Matrix<T, R, C> val) {
 }
 
 template <typename T, int R, int C>
-inline void test_sort_indices_desc(Eigen::Matrix<T, R, C> val) {
+void test_sort_indices_desc(Eigen::Matrix<T, R, C> val) {
   using stan::math::sort_indices_desc;
 
   const size_t val_size = val.size();
@@ -94,7 +93,7 @@ inline void test_sort_indices_desc(Eigen::Matrix<T, R, C> val) {
         EXPECT_FALSE(x_sorted.data()[i] == x.data()[j]);
 }
 
-TEST_F(AgradRev, Rev_sort_indices) {
+TEST(AgradRev, sort_indices) {
   std::vector<double> a;
   a.push_back(1);
   a.push_back(2);
@@ -150,7 +149,7 @@ TEST_F(AgradRev, Rev_sort_indices) {
   test_sort_indices_desc(vec6);
 }
 
-TEST_F(AgradRev, Rev_sort_indices_no_thrown) {
+TEST(AgradRev, sort_indices_no_thrown) {
   using stan::math::sort_indices_asc;
   using stan::math::sort_indices_desc;
 

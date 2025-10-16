@@ -35,8 +35,8 @@ template <
     typename T1, typename T2,
     require_all_not_std_vector_t<value_type_t<T1>, value_type_t<T2>>* = nullptr,
     require_all_std_vector_st<is_var, T1, T2>* = nullptr>
-inline void expect_near_rel_matvar(const std::string& message, T1&& x, T2&& y,
-                                   const ad_tolerances& tols) {
+void expect_near_rel_matvar(const std::string& message, T1&& x, T2&& y,
+                            const ad_tolerances& tols) {
   stan::math::check_size_match("expect_near_rel_var", "x", x.size(), "y",
                                y.size());
   for (size_t i = 0; i < x.size(); ++i) {
@@ -52,8 +52,8 @@ inline void expect_near_rel_matvar(const std::string& message, T1&& x, T2&& y,
 template <typename T1, typename T2,
           require_all_std_vector_vt<is_std_vector, T1, T2>* = nullptr,
           require_all_std_vector_st<is_var, T1, T2>* = nullptr>
-inline void expect_near_rel_matvar(const std::string& message, T1&& x, T2&& y,
-                                   const ad_tolerances& tols) {
+void expect_near_rel_matvar(const std::string& message, T1&& x, T2&& y,
+                            const ad_tolerances& tols) {
   stan::math::check_size_match("expect_near_rel_var", "x", x.size(), "y",
                                y.size());
   for (size_t i = 0; i < x.size(); ++i) {
@@ -75,8 +75,8 @@ inline void expect_near_rel_matvar(const std::string& message, T1&& x, T2&& y,
  */
 template <typename T1, typename T2, require_all_st_var<T1, T2>* = nullptr,
           require_all_not_std_vector_t<T1, T2>* = nullptr>
-inline void expect_near_rel_matvar(const std::string& message, T1&& x, T2&& y,
-                                   const ad_tolerances& tols) {
+void expect_near_rel_matvar(const std::string& message, T1&& x, T2&& y,
+                            const ad_tolerances& tols) {
   expect_near_rel(message + std::string(" values"), x.val(), y.val(),
                   tols.gradient_val_);
   expect_near_rel(message + std::string(" adjoints"), x.adj(), y.adj(),
@@ -96,8 +96,8 @@ inline void expect_near_rel_matvar(const std::string& message, T1&& x, T2&& y,
  */
 template <typename T1, typename T2,
           require_any_st_arithmetic<T1, T2>* = nullptr>
-inline void expect_near_rel_matvar(const std::string& message, T1&& x, T2&& y,
-                                   const ad_tolerances& tols) {
+void expect_near_rel_matvar(const std::string& message, T1&& x, T2&& y,
+                            const ad_tolerances& tols) {
   expect_near_rel(message + std::string(" doubles"), stan::math::value_of(x),
                   stan::math::value_of(y), tols.gradient_val_);
 }
@@ -121,11 +121,11 @@ inline constexpr auto make_tuple_seq(std::index_sequence<Idx...> idxs) {
  * @param tols Tolerances for comparison
  */
 template <typename... T1, typename... T2>
-inline void expect_near_rel_matvar(const std::string& message,
-                                   const std::tuple<T1...>& x,
-                                   const std::tuple<T2...>& y,
-                                   const ad_tolerances& tols) {
-  if constexpr (!(sizeof...(T1) == sizeof...(T2))) {
+void expect_near_rel_matvar(const std::string& message,
+                            const std::tuple<T1...>& x,
+                            const std::tuple<T2...>& y,
+                            const ad_tolerances& tols) {
+  if (!(sizeof...(T1) == sizeof...(T2))) {
     FAIL() << "The number of arguments in each tuple must match";
   }
   constexpr auto idxs = internal::make_tuple_seq(
@@ -416,8 +416,8 @@ auto make_varmat_compatible(const std::vector<std::vector<S>>& x) {
  * @param x Input values to test function at
  */
 template <typename... Types, typename F, typename... EigMats>
-inline void expect_ad_matvar_impl(const ad_tolerances& tols, const F& f,
-                                  const EigMats&... x) {
+void expect_ad_matvar_impl(const ad_tolerances& tols, const F& f,
+                           const EigMats&... x) {
   using stan::is_eigen;
   using stan::is_var;
   using stan::is_var_matrix;
@@ -426,82 +426,83 @@ inline void expect_ad_matvar_impl(const ad_tolerances& tols, const F& f,
   using stan::math::var;
   using stan::math::var_value;
   using stan::math::test::type_name;
-  constexpr bool has_at_least_one_var
-      = stan::math::disjunction<is_var<scalar_type_t<Types>>...>::value;
-  if constexpr (!stan::math::disjunction<is_var_matrix<Types>...>::value) {
+
+  if (!stan::math::disjunction<is_var_matrix<Types>...>::value) {
     FAIL() << "expect_ad_matvar requires at least one varmat input!"
            << std::endl;
-  } else if constexpr (!has_at_least_one_var) {
+  }
+
+  if (!stan::math::disjunction<is_var<scalar_type_t<Types>>...>::value) {
     FAIL() << "expect_ad_matvar requires at least one autodiff input!"
            << std::endl;
-  } else {
-    auto A_mv_tuple = std::make_tuple(make_matvar_compatible<Types>(x)...);
-    auto A_vm_tuple = std::make_tuple(make_varmat_compatible<Types>(x)...);
+  }
 
-    constexpr bool any_varmat = stan::math::apply(
-        [](const auto&... args) {
-          return stan::math::disjunction<
-                     is_var_matrix<decltype(args)>...>::value
-                 || stan::math::disjunction<stan::math::conjunction<
-                     is_std_vector<decltype(args)>,
-                     is_var_matrix<value_type_t<decltype(args)>>>...>::value;
-        },
-        A_vm_tuple);
+  auto A_mv_tuple = std::make_tuple(make_matvar_compatible<Types>(x)...);
+  auto A_vm_tuple = std::make_tuple(make_varmat_compatible<Types>(x)...);
 
-    if constexpr (!any_varmat) {
-      SUCCEED();  // If no varmats are created, skip this test
+  bool any_varmat = stan::math::apply(
+      [](const auto&... args) {
+        return stan::math::disjunction<is_var_matrix<decltype(args)>...>::value
+               || stan::math::disjunction<stan::math::conjunction<
+                   is_std_vector<decltype(args)>,
+                   is_var_matrix<value_type_t<decltype(args)>>>...>::value;
+      },
+      A_vm_tuple);
+
+  if (!any_varmat) {
+    SUCCEED();  // If no varmats are created, skip this test
+    return;
+  }
+
+  using T_mv_ret = plain_type_t<decltype(stan::math::apply(f, A_mv_tuple))>;
+  using T_vm_ret = plain_type_t<decltype(stan::math::apply(f, A_vm_tuple))>;
+
+  T_mv_ret A_mv_ret;
+  T_vm_ret A_vm_ret;
+
+  if (is_var_matrix<T_mv_ret>::value
+      || (is_std_vector<T_mv_ret>::value
+          && is_var_matrix<value_type_t<T_mv_ret>>::value)) {
+    FAIL() << "A function with matvar inputs should not return "
+           << type_name<T_mv_ret>() << std::endl;
+  }
+
+  if (is_eigen<T_vm_ret>::value
+      || (is_std_vector<T_vm_ret>::value
+          && is_eigen<value_type_t<T_vm_ret>>::value)) {
+    FAIL() << "A function with varmat inputs should not return "
+           << type_name<T_vm_ret>() << std::endl;
+  }
+
+  // If one throws, the other should throw as well
+  try {
+    A_mv_ret = stan::math::apply(f, A_mv_tuple);
+  } catch (...) {
+    try {
+      stan::math::apply(f, A_vm_tuple);
+      FAIL() << "`Eigen::Matrix<var, R, C>` function throws and "
+                "`var_value<Eigen::Matrix<double, R, C>>` does not";
+    } catch (...) {
+      SUCCEED();
       return;
-    } else {
-      using T_mv_ret = plain_type_t<decltype(stan::math::apply(f, A_mv_tuple))>;
-      using T_vm_ret = plain_type_t<decltype(stan::math::apply(f, A_vm_tuple))>;
-
-      T_mv_ret A_mv_ret;
-      T_vm_ret A_vm_ret;
-
-      if constexpr (is_var_matrix<T_mv_ret>::value
-                    || (is_std_vector<T_mv_ret>::value
-                        && is_var_matrix<value_type_t<T_mv_ret>>::value)) {
-        FAIL() << "A function with matvar inputs should not return "
-               << type_name<T_mv_ret>() << std::endl;
-      }
-
-      if constexpr (is_eigen<T_vm_ret>::value
-                    || (is_std_vector<T_vm_ret>::value
-                        && is_eigen<value_type_t<T_vm_ret>>::value)) {
-        FAIL() << "A function with varmat inputs should not return "
-               << type_name<T_vm_ret>() << std::endl;
-      }
-
-      // If one throws, the other should throw as well
-      try {
-        A_mv_ret = stan::math::apply(f, A_mv_tuple);
-      } catch (...) {
-        try {
-          stan::math::apply(f, A_vm_tuple);
-          FAIL() << "`Eigen::Matrix<var, R, C>` function throws and "
-                    "`var_value<Eigen::Matrix<double, R, C>>` does not";
-        } catch (...) {
-          SUCCEED();
-          return;
-        }
-      }
-      try {
-        A_vm_ret = stan::math::apply(f, A_vm_tuple);
-      } catch (...) {
-        try {
-          stan::math::apply(f, A_mv_tuple);
-          FAIL()
-              << "`var_value<Eigen::Matrix<double, R, C>>` function throws and "
-                 "`Eigen::Matrix<var, R, C>` does not";
-        } catch (...) {
-          SUCCEED();
-          return;
-        }
-      }
-      test_matvar_gradient(tols, A_mv_ret, A_vm_ret, A_mv_tuple, A_vm_tuple);
-      stan::math::recover_memory();
     }
   }
+  try {
+    A_vm_ret = stan::math::apply(f, A_vm_tuple);
+  } catch (...) {
+    try {
+      stan::math::apply(f, A_mv_tuple);
+      FAIL() << "`var_value<Eigen::Matrix<double, R, C>>` function throws and "
+                "`Eigen::Matrix<var, R, C>` does not";
+    } catch (...) {
+      SUCCEED();
+      return;
+    }
+  }
+
+  test_matvar_gradient(tols, A_mv_ret, A_vm_ret, A_mv_tuple, A_vm_tuple);
+
+  stan::math::recover_memory();
 }
 
 /** @name expect_ad_matvar
@@ -533,8 +534,7 @@ inline void expect_ad_matvar_impl(const ad_tolerances& tols, const F& f,
  * @param x Value of argument
  */
 template <typename F, typename EigMat>
-inline void expect_ad_matvar(const ad_tolerances& tols, const F& f,
-                             const EigMat& x) {
+void expect_ad_matvar(const ad_tolerances& tols, const F& f, const EigMat& x) {
   using varmat = stan::math::var_value<Eigen::MatrixXd>;
 
   expect_ad_matvar_impl<varmat>(tols, f, x);
@@ -549,8 +549,8 @@ inline void expect_ad_matvar(const ad_tolerances& tols, const F& f,
  * @param x Value of argument
  */
 template <typename F, typename EigMat>
-inline void expect_ad_matvar(const F& f, const EigMat& x) {
-  constexpr ad_tolerances tols;
+void expect_ad_matvar(const F& f, const EigMat& x) {
+  ad_tolerances tols;
 
   expect_ad_matvar(tols, f, x);
 }
@@ -568,8 +568,8 @@ inline void expect_ad_matvar(const F& f, const EigMat& x) {
  */
 template <typename F, typename EigMat1, typename EigMat2,
           require_all_not_st_integral<EigMat1, EigMat2>* = nullptr>
-inline void expect_ad_matvar(const ad_tolerances& tols, const F& f,
-                             const EigMat1& x, const EigMat2& y) {
+void expect_ad_matvar(const ad_tolerances& tols, const F& f, const EigMat1& x,
+                      const EigMat2& y) {
   using stan::math::var;
   using varmat = stan::math::var_value<Eigen::MatrixXd>;
 
@@ -583,8 +583,8 @@ inline void expect_ad_matvar(const ad_tolerances& tols, const F& f,
 template <typename F, typename EigMat1, typename EigMat2,
           require_st_integral<EigMat1>* = nullptr,
           require_not_st_integral<EigMat2>* = nullptr>
-inline void expect_ad_matvar(const ad_tolerances& tols, const F& f,
-                             const EigMat1& x, const EigMat2& y) {
+void expect_ad_matvar(const ad_tolerances& tols, const F& f, const EigMat1& x,
+                      const EigMat2& y) {
   using stan::math::var;
   using varmat = stan::math::var_value<Eigen::MatrixXd>;
 
@@ -594,8 +594,8 @@ inline void expect_ad_matvar(const ad_tolerances& tols, const F& f,
 template <typename F, typename EigMat1, typename EigMat2,
           require_not_st_integral<EigMat1>* = nullptr,
           require_st_integral<EigMat2>* = nullptr>
-inline void expect_ad_matvar(const ad_tolerances& tols, const F& f,
-                             const EigMat1& x, const EigMat2& y) {
+void expect_ad_matvar(const ad_tolerances& tols, const F& f, const EigMat1& x,
+                      const EigMat2& y) {
   using stan::math::var;
   using varmat = stan::math::var_value<Eigen::MatrixXd>;
 
@@ -613,7 +613,7 @@ inline void expect_ad_matvar(const ad_tolerances& tols, const F& f,
  * @param y Value of second argument
  */
 template <typename F, typename EigMat1, typename EigMat2>
-inline void expect_ad_matvar(const F& f, const EigMat1& x, const EigMat2& y) {
+void expect_ad_matvar(const F& f, const EigMat1& x, const EigMat2& y) {
   ad_tolerances tols;
   expect_ad_matvar(tols, f, x, y);
 }
@@ -632,9 +632,8 @@ inline void expect_ad_matvar(const F& f, const EigMat1& x, const EigMat2& y) {
  * @param z Value of third argument
  */
 template <typename F, typename EigMat1, typename EigMat2, typename EigMat3>
-inline void expect_ad_matvar(const ad_tolerances& tols, const F& f,
-                             const EigMat1& x, const EigMat2& y,
-                             const EigMat3& z) {
+void expect_ad_matvar(const ad_tolerances& tols, const F& f, const EigMat1& x,
+                      const EigMat2& y, const EigMat3& z) {
   using stan::math::var;
   using varmat = stan::math::var_value<Eigen::MatrixXd>;
 
@@ -672,8 +671,8 @@ inline void expect_ad_matvar(const ad_tolerances& tols, const F& f,
  * @param z Value of third argument
  */
 template <typename F, typename EigMat1, typename EigMat2, typename EigMat3>
-inline void expect_ad_matvar(const F& f, const EigMat1& x, const EigMat2& y,
-                             const EigMat3& z) {
+void expect_ad_matvar(const F& f, const EigMat1& x, const EigMat2& y,
+                      const EigMat3& z) {
   ad_tolerances tols;
   expect_ad_matvar(tols, f, x, y, z);
 }
@@ -695,9 +694,8 @@ inline void expect_ad_matvar(const F& f, const EigMat1& x, const EigMat2& y,
  */
 template <typename F, typename EigMat1, typename EigMat2, typename EigMat3,
           typename EigMat4>
-inline void expect_ad_matvar(const ad_tolerances& tols, const F& f,
-                             const EigMat1& x, const EigMat2& y,
-                             const EigMat3& z, const EigMat4& q) {
+void expect_ad_matvar(const ad_tolerances& tols, const F& f, const EigMat1& x,
+                      const EigMat2& y, const EigMat3& z, const EigMat4& q) {
   using stan::math::var;
   using varmat = stan::math::var_value<Eigen::MatrixXd>;
 
@@ -792,8 +790,8 @@ inline void expect_ad_matvar(const ad_tolerances& tols, const F& f,
  */
 template <typename F, typename EigMat1, typename EigMat2, typename EigMat3,
           typename EigMat4>
-inline void expect_ad_matvar(const F& f, const EigMat1& x, const EigMat2& y,
-                             const EigMat3& z, const EigMat4& q) {
+void expect_ad_matvar(const F& f, const EigMat1& x, const EigMat2& y,
+                      const EigMat3& z, const EigMat4& q) {
   ad_tolerances tols;
   expect_ad_matvar(tols, f, x, y, z, q);
 }
@@ -818,8 +816,8 @@ inline void expect_ad_matvar(const F& f, const EigMat1& x, const EigMat2& y,
  */
 template <typename F, typename EigVec,
           require_eigen_vector_t<EigVec>* = nullptr>
-inline void expect_ad_vector_matvar(const ad_tolerances& tols, const F& f,
-                                    const EigVec& x) {
+void expect_ad_vector_matvar(const ad_tolerances& tols, const F& f,
+                             const EigVec& x) {
   Eigen::VectorXd v = x;
   Eigen::RowVectorXd r = x.transpose();
   Eigen::MatrixXd m(x.size(), 2);
@@ -850,7 +848,7 @@ inline void expect_ad_vector_matvar(const ad_tolerances& tols, const F& f,
  */
 template <typename F, typename EigVec,
           require_eigen_vector_t<EigVec>* = nullptr>
-inline void expect_ad_vector_matvar(const F& f, const EigVec& x) {
+void expect_ad_vector_matvar(const F& f, const EigVec& x) {
   ad_tolerances tols;
   expect_ad_vector_matvar(tols, f, x);
 }
@@ -867,8 +865,8 @@ inline void expect_ad_vector_matvar(const F& f, const EigVec& x) {
 template <typename F, typename T1, typename T2,
           require_all_eigen_t<T1, T2>* = nullptr,
           require_all_not_st_integral<T1, T2>* = nullptr>
-inline void expect_ad_vectorized_matvar(const ad_tolerances& tols, const F& f,
-                                        const T1& x, const T2& y) {
+void expect_ad_vectorized_matvar(const ad_tolerances& tols, const F& f,
+                                 const T1& x, const T2& y) {
   auto x_scal = x.coeff(0, 0);
   auto y_scal = y.coeff(0, 0);
   auto x_vec = x.col(0).eval();
@@ -960,8 +958,8 @@ inline void expect_ad_vectorized_matvar(const ad_tolerances& tols, const F& f,
 template <typename F, typename T1, typename T2,
           require_std_vector_vt<std::is_integral, T1>* = nullptr,
           require_eigen_t<T2>* = nullptr>
-inline void expect_ad_vectorized_matvar(const ad_tolerances& tols, const F& f,
-                                        const T1& x, const T2& y) {
+void expect_ad_vectorized_matvar(const ad_tolerances& tols, const F& f,
+                                 const T1& x, const T2& y) {
   auto x_scal = x[0];
   auto y_vec = y.col(0).eval();
 
@@ -998,8 +996,8 @@ inline void expect_ad_vectorized_matvar(const ad_tolerances& tols, const F& f,
  */
 template <typename F, typename T1, typename T2, require_eigen_t<T1>* = nullptr,
           require_std_vector_vt<std::is_integral, T2>* = nullptr>
-inline void expect_ad_vectorized_matvar(const ad_tolerances& tols, const F& f,
-                                        const T1& x, const T2& y) {
+void expect_ad_vectorized_matvar(const ad_tolerances& tols, const F& f,
+                                 const T1& x, const T2& y) {
   auto g = [&f](const auto& x, const auto& y) { return f(y, x); };
   expect_ad_vectorized_matvar(tols, g, y, x);
 }
@@ -1014,7 +1012,7 @@ inline void expect_ad_vectorized_matvar(const ad_tolerances& tols, const F& f,
  * @param x Test input
  */
 template <typename F, typename T1, typename T2>
-inline void expect_ad_vectorized_matvar(const F& f, const T1& x, const T2& y) {
+void expect_ad_vectorized_matvar(const F& f, const T1& x, const T2& y) {
   ad_tolerances tols;
   expect_ad_vectorized_matvar(tols, f, x, y);
 }

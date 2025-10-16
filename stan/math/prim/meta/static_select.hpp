@@ -21,13 +21,13 @@ namespace math {
  */
 template <bool Condition, typename T1, typename T2,
           std::enable_if_t<Condition>* = nullptr>
-inline T1 static_select(T1&& a, T2&& b) {
+T1 static_select(T1&& a, T2&& b) {
   return std::forward<T1>(a);
 }
 
 template <bool Condition, typename T1, typename T2,
           std::enable_if_t<!Condition>* = nullptr>
-inline T2 static_select(T1&& a, T2&& b) {
+T2 static_select(T1&& a, T2&& b) {
   return std::forward<T2>(b);
 }
 

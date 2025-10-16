@@ -1,5 +1,4 @@
 #include <stan/math/rev.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <stan/math/prim.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
 #include <test/unit/math/rev/functor/util_algebra_solver.hpp>

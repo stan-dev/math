@@ -17,8 +17,8 @@ namespace math {
 template <typename T_y, typename T_inv_scale,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_inv_scale>* = nullptr>
-inline return_type_t<T_y, T_inv_scale> exponential_lccdf(
-    const T_y& y, const T_inv_scale& beta) {
+return_type_t<T_y, T_inv_scale> exponential_lccdf(const T_y& y,
+                                                  const T_inv_scale& beta) {
   using T_partials_return = partials_return_t<T_y, T_inv_scale>;
   using T_partials_array = Eigen::Array<T_partials_return, Eigen::Dynamic, 1>;
   using T_y_ref = ref_type_if_not_constant_t<T_y>;
@@ -42,21 +42,25 @@ inline return_type_t<T_y, T_inv_scale> exponential_lccdf(
   T_partials_return ccdf_log = -sum(beta_val * y_val);
 
   if constexpr (is_autodiff_v<T_y>) {
+    using beta_val_scalar = scalar_type_t<decltype(beta_val)>;
+    using beta_val_array = Eigen::Array<beta_val_scalar, Eigen::Dynamic, 1>;
     if constexpr (is_vector<T_y>::value && !is_vector<T_inv_scale>::value) {
-      partials<0>(ops_partials)
-          = T_partials_array::Constant(math::size(y), -beta_val);
+      partials<0>(ops_partials) = T_partials_array::Constant(
+          math::size(y), -forward_as<beta_val_scalar>(beta_val));
     } else if constexpr (is_vector<T_inv_scale>::value) {
-      partials<0>(ops_partials) = -beta_val;
+      partials<0>(ops_partials) = -forward_as<beta_val_array>(beta_val);
     } else {
       partials<0>(ops_partials)[0] = -sum(beta_val);
     }
   }
   if constexpr (is_autodiff_v<T_inv_scale>) {
+    using y_val_scalar = scalar_type_t<decltype(y_val)>;
+    using y_val_array = Eigen::Array<y_val_scalar, Eigen::Dynamic, 1>;
     if constexpr (is_vector<T_inv_scale>::value && !is_vector<T_y>::value) {
-      partials<1>(ops_partials)
-          = T_partials_array::Constant(math::size(beta), -y_val);
+      partials<1>(ops_partials) = T_partials_array::Constant(
+          math::size(beta), -forward_as<y_val_scalar>(y_val));
     } else if constexpr (is_vector<T_y>::value) {
-      partials<1>(ops_partials) = -y_val;
+      partials<1>(ops_partials) = -forward_as<y_val_array>(y_val);
     } else {
       partials<1>(ops_partials)[0] = -sum(y_val);
     }

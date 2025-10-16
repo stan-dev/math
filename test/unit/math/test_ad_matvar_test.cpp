@@ -66,10 +66,11 @@ auto two_arg_bad_vals(const T1& x1, const stan::math::var_value<T2>& x2) {
   stan::arena_t<ret_type> ret = ret_val;
 
   stan::math::reverse_pass_callback([x2, ret]() mutable {
-    if constexpr (stan::is_stan_scalar<T2>::value) {
-      x2.adj() += stan::math::sum(ret.adj());
+    if (stan::is_stan_scalar<T2>::value) {
+      stan::math::forward_as<stan::math::var>(x2).adj()
+          += stan::math::sum(ret.adj());
     } else {
-      x2.adj() += ret.adj();
+      stan::math::forward_as<Eigen::VectorXd>(x2.adj()) += ret.adj();
     }
   });
 
@@ -84,10 +85,11 @@ auto two_arg_bad_vals(const stan::math::var_value<T2>& x2, const T1& x1) {
   stan::arena_t<ret_type> ret = ret_val;
 
   stan::math::reverse_pass_callback([x2, ret]() mutable {
-    if constexpr (stan::is_stan_scalar<T2>::value) {
-      x2.adj() += stan::math::sum(ret.adj());
+    if (stan::is_stan_scalar<T2>::value) {
+      stan::math::forward_as<stan::math::var>(x2).adj()
+          += stan::math::sum(ret.adj());
     } else {
-      x2.adj() += ret.adj();
+      stan::math::forward_as<Eigen::VectorXd>(x2.adj()) += ret.adj();
     }
   });
 
@@ -125,10 +127,11 @@ auto two_arg_bad_grads(const T1& x1, const stan::math::var_value<T2>& x2) {
   stan::arena_t<ret_type> ret = stan::math::add(x1, x2.val());
 
   stan::math::reverse_pass_callback([x2, ret]() mutable {
-    if constexpr (stan::is_stan_scalar<T2>::value) {
-      x2.adj() -= stan::math::sum(ret.adj());
+    if (stan::is_stan_scalar<T2>::value) {
+      stan::math::forward_as<stan::math::var>(x2).adj()
+          -= stan::math::sum(ret.adj());
     } else {
-      x2.adj() -= ret.adj();
+      stan::math::forward_as<Eigen::VectorXd>(x2.adj()) -= ret.adj();
     }
   });
 
@@ -143,10 +146,11 @@ auto two_arg_bad_grads(const stan::math::var_value<T2>& x2, const T1& x1) {
   stan::arena_t<ret_type> ret = stan::math::add(x1, x2.val());
 
   stan::math::reverse_pass_callback([x2, ret]() mutable {
-    if constexpr (stan::is_stan_scalar<T2>::value) {
-      x2.adj() -= stan::math::sum(ret.adj());
+    if (stan::is_stan_scalar<T2>::value) {
+      stan::math::forward_as<stan::math::var>(x2).adj()
+          -= stan::math::sum(ret.adj());
     } else {
-      x2.adj() -= ret.adj();
+      stan::math::forward_as<Eigen::VectorXd>(x2.adj()) -= ret.adj();
     }
   });
 
@@ -190,10 +194,11 @@ auto three_arg_bad_vals(const T1& x1, const T2& x2,
   stan::arena_t<ret_type> ret = ret_val;
 
   stan::math::reverse_pass_callback([x3, ret]() mutable {
-    if constexpr (stan::is_stan_scalar<T3>::value) {
-      x3.adj() += stan::math::sum(ret.adj());
+    if (stan::is_stan_scalar<T3>::value) {
+      stan::math::forward_as<stan::math::var>(x3).adj()
+          += stan::math::sum(ret.adj());
     } else {
-      x3.adj() += ret.adj();
+      stan::math::forward_as<Eigen::VectorXd>(x3.adj()) += ret.adj();
     }
   });
 
@@ -210,10 +215,11 @@ auto three_arg_bad_vals(const T1& x1, const stan::math::var_value<T3>& x3,
   stan::arena_t<ret_type> ret = ret_val;
 
   stan::math::reverse_pass_callback([x3, ret]() mutable {
-    if constexpr (stan::is_stan_scalar<T3>::value) {
-      x3.adj() += stan::math::sum(ret.adj());
+    if (stan::is_stan_scalar<T3>::value) {
+      stan::math::forward_as<stan::math::var>(x3).adj()
+          += stan::math::sum(ret.adj());
     } else {
-      x3.adj() += ret.adj();
+      stan::math::forward_as<Eigen::VectorXd>(x3.adj()) += ret.adj();
     }
   });
 
@@ -230,10 +236,11 @@ auto three_arg_bad_vals(const stan::math::var_value<T3>& x3, const T1& x1,
   stan::arena_t<ret_type> ret = ret_val;
 
   stan::math::reverse_pass_callback([x3, ret]() mutable {
-    if constexpr (stan::is_stan_scalar<T3>::value) {
-      x3.adj() += stan::math::sum(ret.adj());
+    if (stan::is_stan_scalar<T3>::value) {
+      stan::math::forward_as<stan::math::var>(x3).adj()
+          += stan::math::sum(ret.adj());
     } else {
-      x3.adj() += ret.adj();
+      stan::math::forward_as<Eigen::VectorXd>(x3.adj()) += ret.adj();
     }
   });
 
@@ -293,10 +300,11 @@ auto three_arg_bad_grads(const T1& x1, const T2& x2,
   stan::arena_t<ret_type> ret = ret_val;
 
   stan::math::reverse_pass_callback([x3, ret]() mutable {
-    if constexpr (stan::is_stan_scalar<T3>::value) {
-      x3.adj() -= stan::math::sum(ret.adj());
+    if (stan::is_stan_scalar<T3>::value) {
+      stan::math::forward_as<stan::math::var>(x3).adj()
+          -= stan::math::sum(ret.adj());
     } else {
-      x3.adj() -= ret.adj();
+      stan::math::forward_as<Eigen::VectorXd>(x3.adj()) -= ret.adj();
     }
   });
 
@@ -313,10 +321,11 @@ auto three_arg_bad_grads(const T1& x1, const stan::math::var_value<T3>& x3,
   stan::arena_t<ret_type> ret = ret_val;
 
   stan::math::reverse_pass_callback([x3, ret]() mutable {
-    if constexpr (stan::is_stan_scalar<T3>::value) {
-      x3.adj() -= stan::math::sum(ret.adj());
+    if (stan::is_stan_scalar<T3>::value) {
+      stan::math::forward_as<stan::math::var>(x3).adj()
+          -= stan::math::sum(ret.adj());
     } else {
-      x3.adj() -= ret.adj();
+      stan::math::forward_as<Eigen::VectorXd>(x3.adj()) -= ret.adj();
     }
   });
 
@@ -333,10 +342,11 @@ auto three_arg_bad_grads(const stan::math::var_value<T3>& x3, const T1& x1,
   stan::arena_t<ret_type> ret = ret_val;
 
   stan::math::reverse_pass_callback([x3, ret]() mutable {
-    if constexpr (stan::is_stan_scalar<T3>::value) {
-      x3.adj() -= stan::math::sum(ret.adj());
+    if (stan::is_stan_scalar<T3>::value) {
+      stan::math::forward_as<stan::math::var>(x3).adj()
+          -= stan::math::sum(ret.adj());
     } else {
-      x3.adj() -= ret.adj();
+      stan::math::forward_as<Eigen::VectorXd>(x3.adj()) -= ret.adj();
     }
   });
 
@@ -489,8 +499,11 @@ auto two_args_bad_vals_std_vector(
 
   stan::math::reverse_pass_callback([arena_x1, arena_x2, out]() mutable {
     for (size_t i = 0; i < arena_x1.size(); ++i) {
-      if constexpr (!stan::is_constant<T1>::value) {
-        arena_x1[i].adj() += out[i].adj();
+      if (!stan::is_constant<T1>::value) {
+        stan::math::forward_as<
+            stan::return_var_matrix_t<T2, T1, stan::math::var>>(arena_x1[i])
+            .adj()
+            += out[i].adj();
       }
       arena_x2[i].adj() += out[i].adj();
     }
@@ -545,8 +558,11 @@ auto two_args_bad_grads_std_vector(
 
   stan::math::reverse_pass_callback([arena_x1, arena_x2, out]() mutable {
     for (size_t i = 0; i < arena_x1.size(); ++i) {
-      if constexpr (!stan::is_constant<T1>::value) {
-        arena_x1[i].adj() += out[i].adj();
+      if (!stan::is_constant<T1>::value) {
+        stan::math::forward_as<
+            stan::return_var_matrix_t<T2, T1, stan::math::var>>(arena_x1[i])
+            .adj()
+            += out[i].adj();
       }
       arena_x2[i].adj() += out[i].adj() * 0;
     }

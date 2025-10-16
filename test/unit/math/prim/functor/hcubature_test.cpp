@@ -101,10 +101,9 @@ inline auto f7(const T_x& x, double a) {
 
 template <typename F, typename ArgsTupleT, typename T_a, typename T_b,
           typename T_relerr>
-inline void test_integration(const F& f, const ArgsTupleT& pars, int dim,
-                             const T_a& a, const T_b& b, int maxEval,
-                             double reqAbsError, const T_relerr& reqRelError,
-                             double val) {
+void test_integration(const F& f, const ArgsTupleT& pars, int dim, const T_a& a,
+                      const T_b& b, int maxEval, double reqAbsError,
+                      const T_relerr& reqRelError, double val) {
   using stan::math::hcubature;
 
   for (auto tolerance : reqRelError) {

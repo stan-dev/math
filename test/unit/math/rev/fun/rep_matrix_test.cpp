@@ -1,13 +1,13 @@
 #include <stan/math/rev.hpp>
+#include <gtest/gtest.h>
 #include <test/unit/math/rev/util.hpp>
 #include <test/unit/util.hpp>
 #include <test/unit/pretty_print_types.hpp>
-#include <gtest/gtest.h>
 #include <limits>
 #include <string>
 #include <vector>
 
-TEST_F(AgradRev, MathMixMatFun_repMatrixVar) {
+TEST(MathMixMatFun, repMatrixVar) {
   using stan::math::rep_matrix;
   using stan::math::sum;
   using stan::math::var;
@@ -33,7 +33,7 @@ TEST_F(AgradRev, MathMixMatFun_repMatrixVar) {
   EXPECT_EQ(x4.cols(), 2);
 }
 
-TEST_F(AgradRev, MathMixMatFun_repVarMatrix) {
+TEST(MathMixMatFun, repVarMatrix) {
   using stan::math::rep_matrix;
   using stan::math::sum;
   using stan::math::var;
@@ -49,7 +49,7 @@ TEST_F(AgradRev, MathMixMatFun_repVarMatrix) {
   EXPECT_EQ(x_var.adj(), 25.0);
 }
 
-TEST_F(AgradRev, MathMixMatFun_repVarMatrixVec) {
+TEST(MathMixMatFun, repVarMatrixVec) {
   using stan::math::rep_matrix;
   using stan::math::sum;
   using stan::math::var;
@@ -67,7 +67,7 @@ TEST_F(AgradRev, MathMixMatFun_repVarMatrixVec) {
   EXPECT_MATRIX_EQ(x_var.adj(), expected_x_var_adjs);
 }
 
-TEST_F(AgradRev, MathMixMatFun_repVarMatrixRowVec) {
+TEST(MathMixMatFun, repVarMatrixRowVec) {
   using stan::math::rep_matrix;
   using stan::math::sum;
   using stan::math::var;

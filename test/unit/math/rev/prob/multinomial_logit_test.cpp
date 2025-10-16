@@ -6,11 +6,9 @@
 #include <vector>
 
 template <typename T_prob>
-inline void expect_propto_multinomial_logit_lpmf(std::vector<int>& ns1,
-                                                 T_prob beta1,
-                                                 std::vector<int>& ns2,
-                                                 T_prob beta2,
-                                                 std::string message) {
+void expect_propto_multinomial_logit_lpmf(std::vector<int>& ns1, T_prob beta1,
+                                          std::vector<int>& ns2, T_prob beta2,
+                                          std::string message) {
   expect_eq_diffs(stan::math::multinomial_logit_lpmf<false>(ns1, beta1),
                   stan::math::multinomial_logit_lpmf<false>(ns2, beta2),
                   stan::math::multinomial_logit_lpmf<true>(ns1, beta1),
@@ -18,7 +16,7 @@ inline void expect_propto_multinomial_logit_lpmf(std::vector<int>& ns1,
                   message);
 }
 
-TEST_F(AgradRev, DistributionsMultinomialLogit_Propto) {
+TEST(AgradDistributionsMultinomialLogit, Propto) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -34,7 +32,7 @@ TEST_F(AgradRev, DistributionsMultinomialLogit_Propto) {
   expect_propto_multinomial_logit_lpmf(ns, beta1, ns, beta2, "var: beta");
 }
 
-TEST_F(AgradRev, DistributionsMultinomialLogit_check_varis_on_stack) {
+TEST(AgradDistributionsMultinomialLogit, check_varis_on_stack) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;

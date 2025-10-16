@@ -38,8 +38,7 @@ namespace math {
  * matrix.
  */
 template <typename T, require_var_vector_t<T>* = nullptr>
-inline var_value<Eigen::MatrixXd> corr_matrix_constrain(const T& x,
-                                                        Eigen::Index k) {
+var_value<Eigen::MatrixXd> corr_matrix_constrain(const T& x, Eigen::Index k) {
   Eigen::Index k_choose_2 = (k * (k - 1)) / 2;
   check_size_match("cov_matrix_constrain", "x.size()", x.size(), "k_choose_2",
                    k_choose_2);
@@ -67,9 +66,8 @@ inline var_value<Eigen::MatrixXd> corr_matrix_constrain(const T& x,
  * @param lp Log probability reference to increment.
  */
 template <typename T, require_var_vector_t<T>* = nullptr>
-inline var_value<Eigen::MatrixXd> corr_matrix_constrain(const T& x,
-                                                        Eigen::Index k,
-                                                        scalar_type_t<T>& lp) {
+var_value<Eigen::MatrixXd> corr_matrix_constrain(const T& x, Eigen::Index k,
+                                                 scalar_type_t<T>& lp) {
   Eigen::Index k_choose_2 = (k * (k - 1)) / 2;
   check_size_match("cov_matrix_constrain", "x.size()", x.size(), "k_choose_2",
                    k_choose_2);

@@ -4,7 +4,7 @@
 #include <vector>
 
 template <typename T>
-inline void test_rank() {
+void test_rank() {
   using stan::math::rank;
 
   T c(1);
@@ -38,7 +38,7 @@ inline void test_rank() {
 }
 
 template <typename T>
-inline void test_rank_int() {
+void test_rank_int() {
   using stan::math::rank;
 
   T c(1);

@@ -1,9 +1,8 @@
 #include <stan/math/rev.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <limits>
 
-TEST_F(AgradRev, RevErrorHandlingMatrix_checkPosDefiniteMatrix_nan) {
+TEST(AgradRevErrorHandlingMatrix, checkPosDefiniteMatrix_nan) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;

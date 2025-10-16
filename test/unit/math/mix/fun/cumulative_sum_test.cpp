@@ -1,7 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
 #include <vector>
 
-inline void expect_cumulative_sum(std::vector<double>& x) {
+void expect_cumulative_sum(std::vector<double>& x) {
   auto f = [](const auto& y) { return stan::math::cumulative_sum(y); };
   Eigen::VectorXd v = Eigen::Map<Eigen::VectorXd>(x.data(), x.size());
   Eigen::RowVectorXd rv = Eigen::Map<Eigen::RowVectorXd>(x.data(), x.size());

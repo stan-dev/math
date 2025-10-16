@@ -17,7 +17,7 @@ TEST(MathFunctions, log_mix_exceptions) {
   EXPECT_THROW(log_mix(0.5, 10, std::numeric_limits<double>::quiet_NaN()),
                std::domain_error);
 }
-inline void test_log_mix(double theta, double lambda1, double lambda2) {
+void test_log_mix(double theta, double lambda1, double lambda2) {
   using stan::math::log_mix;
   using stan::math::row_vector_d;
   using stan::math::vector_d;
@@ -34,7 +34,7 @@ TEST(MathFunctions, log_mix_values) {
 }
 
 template <typename T_a, typename T_b>
-inline void log_mix_val_test(T_a a, T_b b) {
+void log_mix_val_test(T_a a, T_b b) {
   using stan::math::log_mix;
   a[0] = 0.321;
   a[1] = 0.115;

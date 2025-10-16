@@ -41,11 +41,9 @@ namespace internal {
  * @param[out] hvp Product of Hessian and vector at argument
  */
 template <typename F>
-inline void finite_diff_hessian_times_vector_auto(const F& f,
-                                                  const Eigen::VectorXd& x,
-                                                  const Eigen::VectorXd& v,
-                                                  double& fx,
-                                                  Eigen::VectorXd& hvp) {
+void finite_diff_hessian_times_vector_auto(const F& f, const Eigen::VectorXd& x,
+                                           const Eigen::VectorXd& v, double& fx,
+                                           Eigen::VectorXd& hvp) {
   fx = f(x);
 
   double epsilon = std::sqrt(EPSILON) * (1 + x.norm()) / v.norm();

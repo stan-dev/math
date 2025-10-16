@@ -53,7 +53,7 @@ template <bool propto, typename T_x_cl, typename T_y_cl, typename T_alpha_cl,
           typename T_beta_cl,
           require_all_prim_or_rev_kernel_expression_t<
               T_y_cl, T_x_cl, T_alpha_cl, T_beta_cl>* = nullptr>
-inline return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> bernoulli_logit_glm_lpmf(
+return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> bernoulli_logit_glm_lpmf(
     const T_y_cl& y, const T_x_cl& x, const T_alpha_cl& alpha,
     const T_beta_cl& beta) {
   static constexpr const char* function = "bernoulli_logit_glm_lpmf(OpenCL)";
@@ -144,7 +144,8 @@ inline return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> bernoulli_logit_glm_lpmf(
     if constexpr (is_alpha_vector) {
       partials<1>(ops_partials) = theta_derivative_cl;
     } else {
-      partials<1>(ops_partials)[0]
+      forward_as<internal::broadcast_array<double>>(
+          partials<1>(ops_partials))[0]
           = sum(from_matrix_cl(theta_derivative_sum_cl));
     }
   }

@@ -15,7 +15,7 @@ namespace math {
  */
 template <typename T,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
-inline auto sign(const T& x) {
+auto sign(const T& x) {
   return select(x == 0, 0, select(x < 0, -1, 1));
 }
 

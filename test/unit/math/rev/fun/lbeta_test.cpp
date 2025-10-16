@@ -1,5 +1,4 @@
 #include <stan/math/rev.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <stan/math/prim.hpp>
 #include <stan/math/rev/core/nested_rev_autodiff.hpp>
 #include <test/unit/math/expect_near_rel.hpp>
@@ -21,9 +20,9 @@ struct identity_tolerances {
 };
 
 template <class F1, class F2>
-inline void expect_identity(const std::string& msg,
-                            const identity_tolerances& tolerances, const F1 lh,
-                            const F2 rh, double x_dbl, double y_dbl) {
+void expect_identity(const std::string& msg,
+                     const identity_tolerances& tolerances, const F1 lh,
+                     const F2 rh, double x_dbl, double y_dbl) {
   using stan::math::var;
   using stan::test::expect_near_rel;
 
@@ -60,7 +59,7 @@ inline void expect_identity(const std::string& msg,
 }
 }  // namespace lbeta_test_internal
 
-TEST_F(AgradRev, MathFunctions_lbeta_identities_gradient) {
+TEST(MathFunctions, lbeta_identities_gradient) {
   using stan::math::lbeta;
   using stan::math::pi;
   using stan::math::var;
@@ -247,7 +246,7 @@ std::vector<TestValue> testValues = {
 };
 }  // namespace lbeta_test_internal
 
-TEST_F(AgradRev, MathFunctions_lbeta_precomputed) {
+TEST(MathFunctions, lbeta_precomputed) {
   using lbeta_test_internal::TestValue;
   using lbeta_test_internal::testValues;
   using stan::math::is_nan;

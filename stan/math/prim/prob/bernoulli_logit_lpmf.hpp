@@ -33,8 +33,7 @@ namespace math {
 template <bool propto, typename T_n, typename T_prob,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_n, T_prob>* = nullptr>
-inline return_type_t<T_prob> bernoulli_logit_lpmf(const T_n& n,
-                                                  const T_prob& theta) {
+return_type_t<T_prob> bernoulli_logit_lpmf(const T_n& n, const T_prob& theta) {
   using T_partials_return = partials_return_t<T_n, T_prob>;
   using T_partials_array = Eigen::Array<T_partials_return, Eigen::Dynamic, 1>;
   using std::exp;
@@ -64,9 +63,10 @@ inline return_type_t<T_prob> bernoulli_logit_lpmf(const T_n& n,
       (2 * as_array_or_scalar(n_double) - 1));
   T_partials_array ntheta;
   if constexpr (is_vector<T_n>::value || is_vector<T_prob>::value) {
-    ntheta = signs * theta_val;
+    ntheta = forward_as<T_partials_array>(signs * theta_val);
   } else {
-    T_partials_return ntheta_s = signs * theta_val;
+    T_partials_return ntheta_s
+        = forward_as<T_partials_return>(signs * theta_val);
     ntheta = T_partials_array::Constant(1, 1, ntheta_s);
   }
   T_partials_array exp_m_ntheta = exp(-ntheta);

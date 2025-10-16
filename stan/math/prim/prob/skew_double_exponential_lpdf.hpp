@@ -40,9 +40,9 @@ template <bool propto, typename T_y, typename T_loc, typename T_scale,
           typename T_skewness,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_loc, T_scale, T_skewness>* = nullptr>
-inline return_type_t<T_y, T_loc, T_scale, T_skewness>
-skew_double_exponential_lpdf(const T_y& y, const T_loc& mu,
-                             const T_scale& sigma, const T_skewness& tau) {
+return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lpdf(
+    const T_y& y, const T_loc& mu, const T_scale& sigma,
+    const T_skewness& tau) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_skewness>;
   using T_y_ref = ref_type_if_not_constant_t<T_y>;
   using T_mu_ref = ref_type_if_not_constant_t<T_loc>;
@@ -126,9 +126,9 @@ skew_double_exponential_lpdf(const T_y& y, const T_loc& mu,
 }
 
 template <typename T_y, typename T_loc, typename T_scale, typename T_skewness>
-inline return_type_t<T_y, T_loc, T_scale, T_skewness>
-skew_double_exponential_lpdf(const T_y& y, const T_loc& mu,
-                             const T_scale& sigma, const T_skewness& tau) {
+return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lpdf(
+    const T_y& y, const T_loc& mu, const T_scale& sigma,
+    const T_skewness& tau) {
   return skew_double_exponential_lpdf<false>(y, mu, sigma, tau);
 }
 

@@ -1,10 +1,9 @@
 #include <stan/math/rev.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/fun/util.hpp>
 #include <limits>
 
-TEST_F(AgradRev, Rev_asBool) {
+TEST(AgradRev, asBool) {
   using stan::math::as_bool;
   using stan::math::var;
 
@@ -21,7 +20,7 @@ TEST_F(AgradRev, Rev_asBool) {
   EXPECT_FALSE(as_bool(var(0.0)));
   EXPECT_FALSE(as_bool(var(0.0f)));
 }
-TEST_F(AgradRev, Rev_as_bool_nan) {
+TEST(AgradRev, as_bool_nan) {
   stan::math::var nan = std::numeric_limits<double>::quiet_NaN();
   EXPECT_TRUE(stan::math::as_bool(nan));
 }

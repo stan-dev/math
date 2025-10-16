@@ -1,7 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
 
 template <typename T>
-inline void expect_identity_matrix(const T& x) {
+void expect_identity_matrix(const T& x) {
   EXPECT_EQ(x.rows(), x.cols());
   for (int j = 0; j < x.cols(); ++j) {
     for (int i = 0; i < x.rows(); ++i) {
@@ -11,7 +11,7 @@ inline void expect_identity_matrix(const T& x) {
 }
 
 template <typename T>
-inline void expectEigenvectorsId() {
+void expectEigenvectorsId() {
   for (const auto& m_d : stan::test::square_test_matrices(1, 2)) {
     Eigen::Matrix<T, -1, -1> m(m_d);
     auto vecs = stan::math::eigenvectors(m).eval();

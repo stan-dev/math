@@ -26,7 +26,7 @@ namespace math {
 template <bool propto, typename T_n, typename T_rate,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_n, T_rate>* = nullptr>
-inline return_type_t<T_rate> poisson_lpmf(const T_n& n, const T_rate& lambda) {
+return_type_t<T_rate> poisson_lpmf(const T_n& n, const T_rate& lambda) {
   using T_partials_return = partials_return_t<T_n, T_rate>;
   using T_n_ref = ref_type_if_not_constant_t<T_n>;
   using T_lambda_ref = ref_type_if_not_constant_t<T_rate>;

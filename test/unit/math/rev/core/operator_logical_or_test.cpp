@@ -1,17 +1,16 @@
 #include <stan/math/rev/core.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 #include <limits>
 
-inline void test_logical_or(double x, double y) {
+void test_logical_or(double x, double y) {
   stan::math::var x_v = x;
   stan::math::var y_v = y;
   EXPECT_EQ(x || y, x_v || y_v);
 }
 
-TEST_F(AgradRev, Rev_logical_or) {
+TEST(AgradRev, logical_or) {
   std::vector<double> xs;
   xs.push_back(6.1);
   xs.push_back(6.1);

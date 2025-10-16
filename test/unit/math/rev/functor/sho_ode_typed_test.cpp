@@ -1,5 +1,4 @@
 #include <stan/math/rev.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <boost/mp11.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/prim/functor/harmonic_oscillator.hpp>
@@ -101,24 +100,24 @@ using harmonic_oscillator_test_types = boost::mp11::mp_product<
 
 TYPED_TEST_SUITE_P(harmonic_oscillator_t0_ad_test);
 TYPED_TEST_P(harmonic_oscillator_t0_ad_test, t0_ad) {
-  if constexpr (std::is_same<std::tuple_element_t<0, TypeParam>,
-                             ode_rk45_functor>::value) {
+  if (std::is_same<std::tuple_element_t<0, TypeParam>,
+                   ode_rk45_functor>::value) {
     this->test_t0_ad(5e-6);
   }
-  if constexpr (std::is_same<std::tuple_element_t<0, TypeParam>,
-                             ode_ckrk_functor>::value) {
+  if (std::is_same<std::tuple_element_t<0, TypeParam>,
+                   ode_ckrk_functor>::value) {
     this->test_t0_ad(5e-6);
   }
-  if constexpr (std::is_same<std::tuple_element_t<0, TypeParam>,
-                             ode_adams_functor>::value) {
+  if (std::is_same<std::tuple_element_t<0, TypeParam>,
+                   ode_adams_functor>::value) {
     this->test_t0_ad(1e-8);
   }
-  if constexpr (std::is_same<std::tuple_element_t<0, TypeParam>,
-                             ode_bdf_functor>::value) {
+  if (std::is_same<std::tuple_element_t<0, TypeParam>,
+                   ode_bdf_functor>::value) {
     this->test_t0_ad(1e-7);
   }
-  if constexpr (std::is_same<std::tuple_element_t<0, TypeParam>,
-                             ode_adjoint_functor>::value) {
+  if (std::is_same<std::tuple_element_t<0, TypeParam>,
+                   ode_adjoint_functor>::value) {
     this->test_t0_ad(1e-7);
   }
 }

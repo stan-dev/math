@@ -2,7 +2,7 @@
 #include <limits>
 
 template <typename T>
-inline void expect_sum(const T& m) {
+void expect_sum(const T& m) {
   using stan::test::expect_ad_matvar;
   auto f = [](const auto& x) { return stan::math::sum(x); };
   Eigen::VectorXd v = stan::math::to_vector(m);

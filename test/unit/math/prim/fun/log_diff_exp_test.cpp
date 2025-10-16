@@ -4,7 +4,7 @@
 #include <cmath>
 #include <limits>
 
-inline void test_log_diff_exp(double a, double b) {
+void test_log_diff_exp(double a, double b) {
   using stan::math::log_diff_exp;
   using std::exp;
   using std::log;

@@ -50,7 +50,7 @@ TEST(mathMixFun, complexSchurDecompose) {
 }
 
 template <typename V>
-inline void test_complex_schur_decompose(const Eigen::MatrixXd& x) {
+void test_complex_schur_decompose(const Eigen::MatrixXd& x) {
   using stan::math::complex_schur_decompose;
   using stan::math::complex_schur_decompose_t;
   using stan::math::complex_schur_decompose_u;
@@ -70,7 +70,7 @@ inline void test_complex_schur_decompose(const Eigen::MatrixXd& x) {
 }
 
 template <typename V>
-inline void test_complex_schur_decompose_complex(const Eigen::MatrixXd& x) {
+void test_complex_schur_decompose_complex(const Eigen::MatrixXd& x) {
   using stan::math::complex_schur_decompose;
   using stan::math::complex_schur_decompose_t;
   using stan::math::complex_schur_decompose_u;

@@ -1,10 +1,9 @@
 #include <stan/math/rev.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
 template <typename T>
-inline void test_vec_seq_var(const T& m1) {
+void test_vec_seq_var(const T& m1) {
   using stan::vector_seq_view;
   using stan::math::var;
   vector_seq_view<T> vsv(m1);
@@ -21,7 +20,7 @@ inline void test_vec_seq_var(const T& m1) {
   EXPECT_FLOAT_EQ(m1.val()(2), vsv_vec.val(0)[2]);
   EXPECT_EQ(vsv_vec.size(), 2);
 }
-TEST_F(AgradRev, MathMetaRev_VectorSeqViewVar) {
+TEST(MathMetaRev, VectorSeqViewVar) {
   Eigen::Matrix<double, -1, 1> values = Eigen::Matrix<double, -1, 1>::Random(4);
   Eigen::Matrix<stan::math::var, -1, 1> A = values;
   test_vec_seq_var(A);

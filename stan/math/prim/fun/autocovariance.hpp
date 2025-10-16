@@ -30,8 +30,8 @@ namespace math {
  * @param fft FFT engine instance.
  */
 template <typename T>
-inline void autocovariance(const std::vector<T>& y, std::vector<T>& acov,
-                           Eigen::FFT<T>& fft) {
+void autocovariance(const std::vector<T>& y, std::vector<T>& acov,
+                    Eigen::FFT<T>& fft) {
   autocorrelation(y, acov, fft);
 
   T var = variance(y) * (y.size() - 1) / y.size();
@@ -63,9 +63,8 @@ inline void autocovariance(const std::vector<T>& y, std::vector<T>& acov,
  * @param fft FFT engine instance.
  */
 template <typename T, typename DerivedA, typename DerivedB>
-inline void autocovariance(const Eigen::MatrixBase<DerivedA>& y,
-                           Eigen::MatrixBase<DerivedB>& acov,
-                           Eigen::FFT<T>& fft) {
+void autocovariance(const Eigen::MatrixBase<DerivedA>& y,
+                    Eigen::MatrixBase<DerivedB>& acov, Eigen::FFT<T>& fft) {
   autocorrelation(y, acov, fft);
   acov = acov.array() * (y.array() - y.mean()).square().sum() / y.size();
 }
@@ -87,7 +86,7 @@ inline void autocovariance(const Eigen::MatrixBase<DerivedA>& y,
  * @param acov Autocovariances.
  */
 template <typename T>
-inline void autocovariance(const std::vector<T>& y, std::vector<T>& acov) {
+void autocovariance(const std::vector<T>& y, std::vector<T>& acov) {
   Eigen::FFT<T> fft;
   size_t N = y.size();
   acov.resize(N);
@@ -116,8 +115,8 @@ inline void autocovariance(const std::vector<T>& y, std::vector<T>& acov) {
  * @param acov Autocovariances.
  */
 template <typename T, typename DerivedA, typename DerivedB>
-inline void autocovariance(const Eigen::MatrixBase<DerivedA>& y,
-                           Eigen::MatrixBase<DerivedB>& acov) {
+void autocovariance(const Eigen::MatrixBase<DerivedA>& y,
+                    Eigen::MatrixBase<DerivedB>& acov) {
   Eigen::FFT<T> fft;
   autocovariance(y, acov, fft);
 }

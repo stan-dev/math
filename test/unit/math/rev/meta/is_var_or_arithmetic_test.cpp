@@ -1,11 +1,10 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST_F(AgradRev, MathMetaRevScal_is_var_or_arithmetic_simple) {
+TEST(MathMetaRevScal, is_var_or_arithmetic_simple) {
   using stan::is_var_or_arithmetic;
   EXPECT_TRUE(stan::is_var_or_arithmetic<stan::math::var>::value);
   EXPECT_TRUE(stan::is_var_or_arithmetic<stan::math::var&>::value);

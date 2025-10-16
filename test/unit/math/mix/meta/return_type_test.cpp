@@ -5,13 +5,13 @@
 #include <vector>
 
 template <typename R, typename... Ts>
-inline void expect_return() {
+void expect_return() {
   EXPECT_SAME_TYPE(R, typename stan::return_type<Ts...>::type);
   EXPECT_SAME_TYPE(R, stan::return_type_t<Ts...>);
 }
 
 template <typename T>
-inline void test_return() {
+void test_return() {
   // scalar types
   expect_return<T, T>();
   expect_return<T, T, int>();

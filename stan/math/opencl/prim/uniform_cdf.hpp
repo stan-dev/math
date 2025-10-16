@@ -30,8 +30,9 @@ template <typename T_y_cl, typename T_low_cl, typename T_high_cl,
           require_all_prim_or_rev_kernel_expression_t<T_y_cl, T_low_cl,
                                                       T_high_cl>* = nullptr,
           require_any_not_stan_scalar_t<T_y_cl, T_low_cl, T_high_cl>* = nullptr>
-inline return_type_t<T_y_cl, T_low_cl, T_high_cl> uniform_cdf(
-    const T_y_cl& y, const T_low_cl& alpha, const T_high_cl& beta) {
+return_type_t<T_y_cl, T_low_cl, T_high_cl> uniform_cdf(const T_y_cl& y,
+                                                       const T_low_cl& alpha,
+                                                       const T_high_cl& beta) {
   static constexpr const char* function = "uniform_cdf(OpenCL)";
   using T_partials_return = partials_return_t<T_y_cl, T_low_cl, T_high_cl>;
   using std::isfinite;

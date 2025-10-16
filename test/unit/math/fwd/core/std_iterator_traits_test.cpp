@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 
 template <typename T>
-inline void expect_iterator_traits() {
+void expect_iterator_traits() {
   using traits = std::iterator_traits<T>;
   T a;
   T b;

@@ -1,15 +1,12 @@
 #include <stan/math/rev.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/prob/expect_eq_diffs.hpp>
 #include <string>
 
 template <typename T_prob, typename T_prior_sample_size>
-inline void expect_propto_dirichlet_lpdf(T_prob theta,
-                                         T_prior_sample_size alpha,
-                                         T_prob theta2,
-                                         T_prior_sample_size alpha2,
-                                         std::string message) {
+void expect_propto_dirichlet_lpdf(T_prob theta, T_prior_sample_size alpha,
+                                  T_prob theta2, T_prior_sample_size alpha2,
+                                  std::string message) {
   expect_eq_diffs(stan::math::dirichlet_lpdf<false>(theta, alpha),
                   stan::math::dirichlet_lpdf<false>(theta2, alpha2),
                   stan::math::dirichlet_lpdf<true>(theta, alpha),

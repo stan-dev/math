@@ -1,5 +1,4 @@
 #include <stan/math/rev.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <test/unit/math/expect_near_rel.hpp>
 #include <gtest/gtest.h>
 #include <boost/math/differentiation/finite_difference.hpp>
@@ -432,7 +431,7 @@ std::vector<TestValue> testValues = {
 };
 }  // namespace neg_binomial_2_test_internal
 
-TEST_F(AgradRev, ProbDistributionsNegativeBinomial2_derivativesPrecomputed) {
+TEST(ProbDistributionsNegativeBinomial2, derivativesPrecomputed) {
   using neg_binomial_2_test_internal::TestValue;
   using neg_binomial_2_test_internal::testValues;
   using stan::math::is_nan;
@@ -468,7 +467,7 @@ TEST_F(AgradRev, ProbDistributionsNegativeBinomial2_derivativesPrecomputed) {
   }
 }
 
-TEST_F(AgradRev, ProbDistributionsNegBinomial2_derivativesComplexStep) {
+TEST(ProbDistributionsNegBinomial2, derivativesComplexStep) {
   using boost::math::differentiation::complex_step_derivative;
   using stan::math::is_nan;
   using stan::math::neg_binomial_2_lpmf;
@@ -544,7 +543,7 @@ TEST_F(AgradRev, ProbDistributionsNegBinomial2_derivativesComplexStep) {
   }
 }
 
-TEST_F(AgradRev, ProbDistributionsNegBinomial2_derivativesZeroOne) {
+TEST(ProbDistributionsNegBinomial2, derivativesZeroOne) {
   using stan::math::var;
   using stan::test::expect_near_rel;
 
@@ -600,7 +599,7 @@ TEST_F(AgradRev, ProbDistributionsNegBinomial2_derivativesZeroOne) {
   }
 }
 
-TEST_F(AgradRev, ProbDistributionsNegBinomial2_derivatives_diff_sizes) {
+TEST(ProbDistributionsNegBinomial2, derivatives_diff_sizes) {
   using stan::math::neg_binomial_2_lpmf;
   using stan::math::var;
 

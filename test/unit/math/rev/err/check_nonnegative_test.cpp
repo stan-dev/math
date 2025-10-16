@@ -1,5 +1,4 @@
 #include <stan/math/rev.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <limits>
 #include <vector>
@@ -7,7 +6,7 @@
 using stan::math::check_nonnegative;
 using stan::math::var;
 
-TEST_F(AgradRev, RevErrorHandlingScalar_CheckNonnegativeVectorized) {
+TEST(AgradRevErrorHandlingScalar, CheckNonnegativeVectorized) {
   int N = 5;
   const char* function = "check_nonnegative";
   std::vector<var> x(N);
@@ -35,7 +34,7 @@ TEST_F(AgradRev, RevErrorHandlingScalar_CheckNonnegativeVectorized) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, RevErrorHandlingScalar_CheckNonnegativeVarCheckVectorized) {
+TEST(AgradRevErrorHandlingScalar, CheckNonnegativeVarCheckVectorized) {
   using stan::math::check_nonnegative;
   using stan::math::var;
   using std::vector;
@@ -83,7 +82,7 @@ TEST_F(AgradRev, RevErrorHandlingScalar_CheckNonnegativeVarCheckVectorized) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, RevErrorHandlingScalar_CheckNonnegative) {
+TEST(AgradRevErrorHandlingScalar, CheckNonnegative) {
   const char* function = "check_nonnegative";
   var x = 0;
 
@@ -108,7 +107,7 @@ TEST_F(AgradRev, RevErrorHandlingScalar_CheckNonnegative) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, RevErrorHandlingScalar_CheckNonnegativeVarCheckUnivariate) {
+TEST(AgradRevErrorHandlingScalar, CheckNonnegativeVarCheckUnivariate) {
   using stan::math::check_nonnegative;
   using stan::math::var;
 

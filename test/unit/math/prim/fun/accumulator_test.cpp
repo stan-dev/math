@@ -4,7 +4,7 @@
 
 // test sum of first n numbers for sum of a
 template <typename T>
-inline void test_sum(stan::math::accumulator<T>& a, int n) {
+void test_sum(stan::math::accumulator<T>& a, int n) {
   EXPECT_FLOAT_EQ((n * (n + 1)) / 2, a.sum());
 }
 

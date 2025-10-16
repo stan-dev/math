@@ -2,8 +2,6 @@
 #define TEST_UNIT_MATH_REV_FUNCTOR_COUPLED_MM_HPP
 
 #include <stan/math/rev/core.hpp>
-#include <test/unit/math/rev/fun/util.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <vector>
 
 struct coupled_mm_ode_fun {

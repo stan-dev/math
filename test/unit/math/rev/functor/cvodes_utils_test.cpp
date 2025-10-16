@@ -1,5 +1,4 @@
 #include <stan/math/rev.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
 #include <iostream>
@@ -16,7 +15,7 @@ struct Inverse {
   }
 };
 
-TEST_F(AgradRev, StanMath_cvodes_error_handler) {
+TEST(StanMath, cvodes_error_handler) {
   Eigen::VectorXd y0 = Eigen::VectorXd::Ones(1);
   int t0 = 0;
   std::vector<double> ts = {0.45, 1.1};

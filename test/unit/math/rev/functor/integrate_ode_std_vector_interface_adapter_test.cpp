@@ -1,11 +1,10 @@
 #include <stan/math/rev.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/prim/functor/harmonic_oscillator.hpp>
 #include <vector>
 
-TEST_F(AgradRev, StanMathRev_vd) {
+TEST(StanMathRev, vd) {
   using stan::math::var;
   harm_osc_ode_data_fun harm_osc;
   stan::math::internal::integrate_ode_std_vector_interface_adapter<
@@ -41,7 +40,7 @@ TEST_F(AgradRev, StanMathRev_vd) {
   EXPECT_MATRIX_FLOAT_EQ(adjs1, adjs2);
 }
 
-TEST_F(AgradRev, StanMathRev_dv) {
+TEST(StanMathRev, dv) {
   using stan::math::var;
   harm_osc_ode_data_fun harm_osc;
   stan::math::internal::integrate_ode_std_vector_interface_adapter<
@@ -77,7 +76,7 @@ TEST_F(AgradRev, StanMathRev_dv) {
   EXPECT_MATRIX_FLOAT_EQ(adjs1, adjs2);
 }
 
-TEST_F(AgradRev, StanMathRev_vv) {
+TEST(StanMathRev, vv) {
   using stan::math::var;
   harm_osc_ode_data_fun harm_osc;
   stan::math::internal::integrate_ode_std_vector_interface_adapter<

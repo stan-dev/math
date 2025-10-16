@@ -8,9 +8,9 @@
 #include <vector>
 
 template <typename T_y, typename T_scale, typename T_w>
-inline void expect_propto_multi_gp_cholesky_lpdf(T_y y1, T_scale L1, T_w w1,
-                                                 T_y y2, T_scale L2, T_w w2,
-                                                 std::string message = "") {
+void expect_propto_multi_gp_cholesky_lpdf(T_y y1, T_scale L1, T_w w1, T_y y2,
+                                          T_scale L2, T_w w2,
+                                          std::string message = "") {
   expect_eq_diffs(stan::math::multi_gp_cholesky_lpdf<false>(y1, L1, w1),
                   stan::math::multi_gp_cholesky_lpdf<false>(y2, L2, w2),
                   stan::math::multi_gp_cholesky_lpdf<true>(y1, L1, w1),
@@ -55,7 +55,7 @@ TEST_F(agrad_distributions_multi_gp_cholesky, ProptoSigma) {
                                        "var: sigma");
 }
 
-TEST_F(AgradRev, ProbDistributionsMultiGPCholesky_MultiGPCholeskyVar) {
+TEST(ProbDistributionsMultiGPCholesky, MultiGPCholeskyVar) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -70,8 +70,7 @@ TEST_F(AgradRev, ProbDistributionsMultiGPCholesky_MultiGPCholeskyVar) {
                   stan::math::multi_gp_cholesky_lpdf(y, L, w).val());
 }
 
-TEST_F(AgradRev,
-       ProbDistributionsMultiGPCholesky_MultiGPCholeskyGradientUnivariate) {
+TEST(ProbDistributionsMultiGPCholesky, MultiGPCholeskyGradientUnivariate) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::VectorXd;
@@ -169,7 +168,7 @@ struct multi_gp_cholesky_fun {
   }
 };
 
-TEST_F(AgradRev, MultiGPCholesky_TestGradFunctional) {
+TEST(MultiGPCholesky, TestGradFunctional) {
   std::vector<double> x(3 * 2 + 3 + 3);
   // y
   x[0] = 1.0;
@@ -200,7 +199,7 @@ TEST_F(AgradRev, MultiGPCholesky_TestGradFunctional) {
   test_grad(multi_gp_cholesky_fun(1, 1), u);
 }
 
-TEST_F(AgradRev, ProbDistributionsMultiGPCholesky_check_varis_on_stack) {
+TEST(ProbDistributionsMultiGPCholesky, check_varis_on_stack) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::to_var;

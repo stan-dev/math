@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-inline void test_sort_indices_asc(std::vector<double> val) {
+void test_sort_indices_asc(std::vector<double> val) {
   using stan::math::fvar;
   using stan::math::sort_indices_asc;
   using stan::math::sort_indices_desc;
@@ -24,7 +24,7 @@ inline void test_sort_indices_asc(std::vector<double> val) {
         EXPECT_FALSE(x_sorted[i] == x[j]);
 }
 
-inline void test_sort_indices_asc3(std::vector<double> val) {
+void test_sort_indices_asc3(std::vector<double> val) {
   using stan::math::fvar;
   using stan::math::sort_indices_asc;
   using stan::math::sort_indices_desc;
@@ -46,7 +46,7 @@ inline void test_sort_indices_asc3(std::vector<double> val) {
         EXPECT_FALSE(x_sorted[i] == x[j]);
 }
 
-inline void test_sort_indices_desc(std::vector<double> val) {
+void test_sort_indices_desc(std::vector<double> val) {
   using stan::math::fvar;
   using stan::math::sort_indices_asc;
   using stan::math::sort_indices_desc;
@@ -68,7 +68,7 @@ inline void test_sort_indices_desc(std::vector<double> val) {
         EXPECT_FALSE(x_sorted[i] == x[j]);
 }
 
-inline void test_sort_indices_desc3(std::vector<double> val) {
+void test_sort_indices_desc3(std::vector<double> val) {
   using stan::math::fvar;
   using stan::math::sort_indices_asc;
   using stan::math::sort_indices_desc;
@@ -91,7 +91,7 @@ inline void test_sort_indices_desc3(std::vector<double> val) {
 }
 
 template <typename T, int R, int C>
-inline void test_sort_indices_asc(Eigen::Matrix<T, R, C> val) {
+void test_sort_indices_asc(Eigen::Matrix<T, R, C> val) {
   using stan::math::fvar;
   using stan::math::sort_indices_asc;
   using stan::math::sort_indices_desc;
@@ -117,7 +117,7 @@ inline void test_sort_indices_asc(Eigen::Matrix<T, R, C> val) {
 }
 
 template <typename T, int R, int C>
-inline void test_sort_indices_asc3(Eigen::Matrix<T, R, C> val) {
+void test_sort_indices_asc3(Eigen::Matrix<T, R, C> val) {
   using stan::math::fvar;
   using stan::math::sort_indices_asc;
   using stan::math::sort_indices_desc;
@@ -143,7 +143,7 @@ inline void test_sort_indices_asc3(Eigen::Matrix<T, R, C> val) {
 }
 
 template <typename T, int R, int C>
-inline void test_sort_indices_desc(Eigen::Matrix<T, R, C> val) {
+void test_sort_indices_desc(Eigen::Matrix<T, R, C> val) {
   using stan::math::fvar;
   using stan::math::sort_indices_asc;
   using stan::math::sort_indices_desc;
@@ -169,7 +169,7 @@ inline void test_sort_indices_desc(Eigen::Matrix<T, R, C> val) {
 }
 
 template <typename T, int R, int C>
-inline void test_sort_indices_desc3(Eigen::Matrix<T, R, C> val) {
+void test_sort_indices_desc3(Eigen::Matrix<T, R, C> val) {
   using stan::math::fvar;
   using stan::math::sort_indices_asc;
   using stan::math::sort_indices_desc;

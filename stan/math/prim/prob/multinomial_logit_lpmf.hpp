@@ -22,8 +22,8 @@ namespace math {
  */
 template <bool propto, typename T_beta, typename T_prob = scalar_type_t<T_beta>,
           require_eigen_col_vector_t<T_beta>* = nullptr>
-inline return_type_t<T_prob> multinomial_logit_lpmf(const std::vector<int>& ns,
-                                                    const T_beta& beta) {
+return_type_t<T_prob> multinomial_logit_lpmf(const std::vector<int>& ns,
+                                             const T_beta& beta) {
   static constexpr const char* function = "multinomial_logit_lpmf";
   check_size_match(function, "Size of number of trials variable", ns.size(),
                    "rows of log-probabilities parameter", beta.rows());
@@ -52,8 +52,8 @@ inline return_type_t<T_prob> multinomial_logit_lpmf(const std::vector<int>& ns,
 }
 
 template <typename T_beta, require_eigen_col_vector_t<T_beta>* = nullptr>
-inline return_type_t<T_beta> multinomial_logit_lpmf(const std::vector<int>& ns,
-                                                    const T_beta& beta) {
+return_type_t<T_beta> multinomial_logit_lpmf(const std::vector<int>& ns,
+                                             const T_beta& beta) {
   return multinomial_logit_lpmf<false>(ns, beta);
 }
 

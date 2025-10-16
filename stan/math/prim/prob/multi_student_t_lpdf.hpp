@@ -40,7 +40,7 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_dof, typename T_loc,
           typename T_scale>
-inline return_type_t<T_y, T_dof, T_loc, T_scale> multi_student_t_lpdf(
+return_type_t<T_y, T_dof, T_loc, T_scale> multi_student_t_lpdf(
     const T_y& y, const T_dof& nu, const T_loc& mu, const T_scale& Sigma) {
   using T_scale_elem = typename scalar_type<T_scale>::type;
   using lp_type = return_type_t<T_y, T_dof, T_loc, T_scale>;

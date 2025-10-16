@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-TEST_F(AgradRev, RevMath_gp_periodic_cov_vvvv) {
+TEST(RevMath, gp_periodic_cov_vvvv) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
 
   for (std::size_t i = 0; i < 3; ++i) {
@@ -80,7 +80,7 @@ TEST_F(AgradRev, RevMath_gp_periodic_cov_vvvv) {
   }
 }
 
-TEST_F(AgradRev, RevMath_gp_periodic_cov_vvvd) {
+TEST(RevMath, gp_periodic_cov_vvvd) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
 
   double p = 7;
@@ -134,7 +134,7 @@ TEST_F(AgradRev, RevMath_gp_periodic_cov_vvvd) {
   }
 }
 
-TEST_F(AgradRev, RevMath_gp_periodic_cov_vvdv) {
+TEST(RevMath, gp_periodic_cov_vvdv) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
 
   double l = 5;
@@ -189,7 +189,7 @@ TEST_F(AgradRev, RevMath_gp_periodic_cov_vvdv) {
   }
 }
 
-TEST_F(AgradRev, RevMath_gp_periodic_cov_vdvv) {
+TEST(RevMath, gp_periodic_cov_vdvv) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
 
   double sigma = 0.2;
@@ -244,7 +244,7 @@ TEST_F(AgradRev, RevMath_gp_periodic_cov_vdvv) {
   }
 }
 
-TEST_F(AgradRev, RevMath_gp_periodic_cov_vvdd) {
+TEST(RevMath, gp_periodic_cov_vvdd) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
 
   double l = 5;
@@ -293,7 +293,7 @@ TEST_F(AgradRev, RevMath_gp_periodic_cov_vvdd) {
   }
 }
 
-TEST_F(AgradRev, RevMath_gp_periodic_cov_vdvd) {
+TEST(RevMath, gp_periodic_cov_vdvd) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
 
   double sigma = 0.2;
@@ -342,7 +342,7 @@ TEST_F(AgradRev, RevMath_gp_periodic_cov_vdvd) {
   }
 }
 
-TEST_F(AgradRev, RevMath_gp_periodic_cov_vddv) {
+TEST(RevMath, gp_periodic_cov_vddv) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
 
   double sigma = 0.2;
@@ -392,7 +392,7 @@ TEST_F(AgradRev, RevMath_gp_periodic_cov_vddv) {
   }
 }
 
-TEST_F(AgradRev, RevMath_gp_periodic_cov_vddd) {
+TEST(RevMath, gp_periodic_cov_vddd) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
   double sigma = 0.2;
   double l = 5;
@@ -436,7 +436,7 @@ TEST_F(AgradRev, RevMath_gp_periodic_cov_vddd) {
   }
 }
 
-TEST_F(AgradRev, RevMath_gp_periodic_cov_dvvv) {
+TEST(RevMath, gp_periodic_cov_dvvv) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
   std::vector<double> x(3);
   x[0] = -2;
@@ -485,7 +485,7 @@ TEST_F(AgradRev, RevMath_gp_periodic_cov_dvvv) {
   }
 }
 
-TEST_F(AgradRev, RevMath_gp_periodic_cov_dvvd) {
+TEST(RevMath, gp_periodic_cov_dvvd) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
   std::vector<double> x(3);
   x[0] = -2;
@@ -527,7 +527,7 @@ TEST_F(AgradRev, RevMath_gp_periodic_cov_dvvd) {
   }
 }
 //////////////////////////////////////////////////////
-TEST_F(AgradRev, RevMath_gp_periodic_cov_dvdv) {
+TEST(RevMath, gp_periodic_cov_dvdv) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
   std::vector<double> x(3);
   x[0] = -2;
@@ -571,7 +571,7 @@ TEST_F(AgradRev, RevMath_gp_periodic_cov_dvdv) {
   }
 }
 
-TEST_F(AgradRev, RevMath_gp_periodic_cov_ddvv) {
+TEST(RevMath, gp_periodic_cov_ddvv) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
   std::vector<double> x(3);
   x[0] = -2;
@@ -631,7 +631,7 @@ TEST_F(AgradRev, RevMath_gp_periodic_cov_ddvv) {
   }
 }
 
-TEST_F(AgradRev, RevMath_gp_periodic_cov_ddvd) {
+TEST(RevMath, gp_periodic_cov_ddvd) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
   std::vector<double> x(3);
   x[0] = -2;
@@ -669,7 +669,7 @@ TEST_F(AgradRev, RevMath_gp_periodic_cov_ddvd) {
   }
 }
 
-TEST_F(AgradRev, RevMath_gp_periodic_cov_dddv) {
+TEST(RevMath, gp_periodic_cov_dddv) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
   std::vector<double> x(3);
   x[0] = -2;
@@ -709,7 +709,7 @@ TEST_F(AgradRev, RevMath_gp_periodic_cov_dddv) {
   }
 }
 
-TEST_F(AgradRev, RevMath_gp_periodic_cov_dvdd) {
+TEST(RevMath, gp_periodic_cov_dvdd) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
   std::vector<double> x(3);
   x[0] = -2;
@@ -746,7 +746,7 @@ TEST_F(AgradRev, RevMath_gp_periodic_cov_dvdd) {
   }
 }
 
-TEST_F(AgradRev, RevMath_gp_periodic_cov_vector_vvvv) {
+TEST(RevMath, gp_periodic_cov_vector_vvvv) {
   typedef Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> vector_v;
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
 
@@ -837,7 +837,7 @@ TEST_F(AgradRev, RevMath_gp_periodic_cov_vector_vvvv) {
 }
 
 ////////////////////////////////////////////////////////////////////////////
-TEST_F(AgradRev, RevMath_gp_periodic_cov_vector_vvvd) {
+TEST(RevMath, gp_periodic_cov_vector_vvvd) {
   typedef Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> vector_v;
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
 
@@ -921,7 +921,7 @@ TEST_F(AgradRev, RevMath_gp_periodic_cov_vector_vvvd) {
   }
 }
 
-TEST_F(AgradRev, RevMath_gp_periodic_cov_vector_vvdv) {
+TEST(RevMath, gp_periodic_cov_vector_vvdv) {
   typedef Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> vector_v;
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
   double l = 5;
@@ -1006,7 +1006,7 @@ TEST_F(AgradRev, RevMath_gp_periodic_cov_vector_vvdv) {
   }
 }
 
-TEST_F(AgradRev, RevMath_gp_periodic_cov_vector_vdvv) {
+TEST(RevMath, gp_periodic_cov_vector_vdvv) {
   typedef Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> vector_v;
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
   double sigma = 0.2;
@@ -1092,7 +1092,7 @@ TEST_F(AgradRev, RevMath_gp_periodic_cov_vector_vdvv) {
   }
 }
 
-TEST_F(AgradRev, RevMath_gp_periodic_cov_vector_vvdd) {
+TEST(RevMath, gp_periodic_cov_vector_vvdd) {
   typedef Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> vector_v;
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
   double l = 5;
@@ -1171,7 +1171,7 @@ TEST_F(AgradRev, RevMath_gp_periodic_cov_vector_vvdd) {
   }
 }
 
-TEST_F(AgradRev, RevMath_gp_periodic_cov_vector_vdvd) {
+TEST(RevMath, gp_periodic_cov_vector_vdvd) {
   typedef Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> vector_v;
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
   double sigma = 0.2;
@@ -1251,7 +1251,7 @@ TEST_F(AgradRev, RevMath_gp_periodic_cov_vector_vdvd) {
   }
 }
 
-TEST_F(AgradRev, RevMath_gp_periodic_cov_vector_vddv) {
+TEST(RevMath, gp_periodic_cov_vector_vddv) {
   typedef Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> vector_v;
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
   double sigma = 0.2;
@@ -1332,7 +1332,7 @@ TEST_F(AgradRev, RevMath_gp_periodic_cov_vector_vddv) {
   }
 }
 
-TEST_F(AgradRev, RevMath_gp_periodic_cov_vector_vddd) {
+TEST(RevMath, gp_periodic_cov_vector_vddd) {
   typedef Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> vector_v;
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
   double sigma = 0.2;
@@ -1406,7 +1406,7 @@ TEST_F(AgradRev, RevMath_gp_periodic_cov_vector_vddd) {
   }
 }
 
-TEST_F(AgradRev, RevMath_gp_periodic_cov_vector_dvvv) {
+TEST(RevMath, gp_periodic_cov_vector_dvvv) {
   typedef Eigen::Matrix<double, Eigen::Dynamic, 1> vector_d;
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
 
@@ -1466,7 +1466,7 @@ TEST_F(AgradRev, RevMath_gp_periodic_cov_vector_dvvv) {
   }
 }
 
-TEST_F(AgradRev, RevMath_gp_periodic_cov_vector_dvvd) {
+TEST(RevMath, gp_periodic_cov_vector_dvvd) {
   typedef Eigen::Matrix<double, Eigen::Dynamic, 1> vector_d;
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
 
@@ -1519,7 +1519,7 @@ TEST_F(AgradRev, RevMath_gp_periodic_cov_vector_dvvd) {
   }
 }
 
-TEST_F(AgradRev, RevMath_gp_periodic_cov_vector_dvdv) {
+TEST(RevMath, gp_periodic_cov_vector_dvdv) {
   typedef Eigen::Matrix<double, Eigen::Dynamic, 1> vector_d;
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
 
@@ -1574,7 +1574,7 @@ TEST_F(AgradRev, RevMath_gp_periodic_cov_vector_dvdv) {
   }
 }
 
-TEST_F(AgradRev, RevMath_gp_periodic_cov_vector_ddvv) {
+TEST(RevMath, gp_periodic_cov_vector_ddvv) {
   typedef Eigen::Matrix<double, Eigen::Dynamic, 1> vector_d;
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
 
@@ -1630,7 +1630,7 @@ TEST_F(AgradRev, RevMath_gp_periodic_cov_vector_ddvv) {
   }
 }
 
-TEST_F(AgradRev, RevMath_gp_periodic_cov_vector_dvdd) {
+TEST(RevMath, gp_periodic_cov_vector_dvdd) {
   typedef Eigen::Matrix<double, Eigen::Dynamic, 1> vector_d;
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
 
@@ -1679,7 +1679,7 @@ TEST_F(AgradRev, RevMath_gp_periodic_cov_vector_dvdd) {
   }
 }
 
-TEST_F(AgradRev, RevMath_gp_periodic_cov_vector_ddvd) {
+TEST(RevMath, gp_periodic_cov_vector_ddvd) {
   typedef Eigen::Matrix<double, Eigen::Dynamic, 1> vector_d;
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
 
@@ -1728,7 +1728,7 @@ TEST_F(AgradRev, RevMath_gp_periodic_cov_vector_ddvd) {
   }
 }
 
-TEST_F(AgradRev, RevMath_gp_periodic_cov_vector_dddv) {
+TEST(RevMath, gp_periodic_cov_vector_dddv) {
   typedef Eigen::Matrix<double, Eigen::Dynamic, 1> vector_d;
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
 
@@ -1779,7 +1779,7 @@ TEST_F(AgradRev, RevMath_gp_periodic_cov_vector_dddv) {
   }
 }
 
-TEST_F(AgradRev, RevMath_gp_periodic_cov1_vec_eigen_rvec) {
+TEST(RevMath, gp_periodic_cov1_vec_eigen_rvec) {
   using stan::math::squared_distance;
   using stan::math::var;
 
@@ -1812,7 +1812,7 @@ TEST_F(AgradRev, RevMath_gp_periodic_cov1_vec_eigen_rvec) {
   }
 }
 
-TEST_F(AgradRev, RevMath_gp_periodic_cov2_vec_eigen_rvec) {
+TEST(RevMath, gp_periodic_cov2_vec_eigen_rvec) {
   using stan::math::squared_distance;
   using stan::math::var;
   var sigma = 0.2;
@@ -1868,7 +1868,7 @@ TEST_F(AgradRev, RevMath_gp_periodic_cov2_vec_eigen_rvec) {
   }
 }
 
-TEST_F(AgradRev, RevMath_gp_periodic_cov2_vec_eigen_mixed) {
+TEST(RevMath, gp_periodic_cov2_vec_eigen_mixed) {
   using stan::math::squared_distance;
   using stan::math::var;
   var sigma = 0.2;
@@ -2046,7 +2046,7 @@ TEST_F(AgradRev, RevMath_gp_periodic_cov2_vec_eigen_mixed) {
     }
 }
 
-TEST_F(AgradRev, RevMath_gp_periodic_cov_domain_error_training) {
+TEST(RevMath, gp_periodic_cov_domain_error_training) {
   using stan::math::var;
   var sigma = 0.2;
   var l = 5;
@@ -2119,7 +2119,7 @@ TEST_F(AgradRev, RevMath_gp_periodic_cov_domain_error_training) {
                std::domain_error);
 }
 
-TEST_F(AgradRev, RevMath_gp_periodic_cov_nan_error_training) {
+TEST(RevMath, gp_periodic_cov_nan_error_training) {
   using stan::math::var;
   var sigma = 0.2;
   var l = 5;
@@ -2250,7 +2250,7 @@ TEST_F(AgradRev, RevMath_gp_periodic_cov_nan_error_training) {
                std::domain_error);
 }
 
-TEST_F(AgradRev, RevMath_gp_periodic_cov_domain_error) {
+TEST(RevMath, gp_periodic_cov_domain_error) {
   using stan::math::var;
   var sigma = 0.2;
   var l = 5;
@@ -2387,7 +2387,7 @@ TEST_F(AgradRev, RevMath_gp_periodic_cov_domain_error) {
       std::domain_error);
 }
 
-TEST_F(AgradRev, RevMath_gp_periodic_cov2_nan_domain_error) {
+TEST(RevMath, gp_periodic_cov2_nan_domain_error) {
   using stan::math::var;
   var sigma = 0.2;
   var l = 5;
@@ -2577,7 +2577,7 @@ TEST_F(AgradRev, RevMath_gp_periodic_cov2_nan_domain_error) {
       std::domain_error);
 }
 
-TEST_F(AgradRev, RevMath_gp_periodic_cov2_dim_mismatch_vec_eigen_vec) {
+TEST(RevMath, gp_periodic_cov2_dim_mismatch_vec_eigen_vec) {
   using stan::math::var;
   var sigma = 0.2;
   var l = 5;
@@ -2599,7 +2599,7 @@ TEST_F(AgradRev, RevMath_gp_periodic_cov2_dim_mismatch_vec_eigen_vec) {
                std::invalid_argument);
 }
 
-TEST_F(AgradRev, RevMath_gp_periodic_cov2_dim_mismatch_vec_eigen_rvec) {
+TEST(RevMath, gp_periodic_cov2_dim_mismatch_vec_eigen_rvec) {
   using stan::math::var;
   var sigma = 0.2;
   var l = 5;
@@ -2621,7 +2621,7 @@ TEST_F(AgradRev, RevMath_gp_periodic_cov2_dim_mismatch_vec_eigen_rvec) {
                std::invalid_argument);
 }
 
-TEST_F(AgradRev, RevMath_gp_periodic_cov2_dim_mismatch_vec_eigen_mixed) {
+TEST(RevMath, gp_periodic_cov2_dim_mismatch_vec_eigen_mixed) {
   using stan::math::var;
   var sigma = 0.2;
   var l = 5;
@@ -2662,7 +2662,7 @@ TEST_F(AgradRev, RevMath_gp_periodic_cov2_dim_mismatch_vec_eigen_mixed) {
                std::invalid_argument);
 }
 
-TEST_F(AgradRev, RevMatrix_gp_periodic_cov_check_varis_on_stack) {
+TEST(AgradRevMatrix, gp_periodic_cov_check_varis_on_stack) {
   using stan::math::to_var;
   std::vector<double> x(3);
   double sigma = 0.2;

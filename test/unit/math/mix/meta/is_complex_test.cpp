@@ -5,12 +5,12 @@
 #include <string>
 
 template <bool expected, typename T>
-inline void expect_is_complex() {
+void expect_is_complex() {
   EXPECT_EQ(expected, stan::is_complex<T>::value);
 }
 
 template <typename T>
-inline void test_is_complex() {
+void test_is_complex() {
   expect_is_complex<true, std::complex<T>>();
   expect_is_complex<true, const std::complex<T>>();
   expect_is_complex<true, std::complex<T>&>();
@@ -37,12 +37,12 @@ TEST(stanMathMix, isComplex) {
 }
 
 template <bool expected, typename T>
-inline void expect_is_vt_complex() {
+void expect_is_vt_complex() {
   EXPECT_EQ(expected, stan::is_vt_complex<T>::value);
 }
 
 template <typename T>
-inline void test_is_vt_complex() {
+void test_is_vt_complex() {
   using complex_std_vec = std::vector<std::complex<T>>;
   using complex_eigen_vec = Eigen::Matrix<std::complex<T>, -1, 1>;
   expect_is_vt_complex<true, complex_std_vec>();
@@ -78,12 +78,12 @@ TEST(stanMathMix, is_vt_Complex) {
 }
 
 template <bool expected, typename T>
-inline void expect_is_vt_not_complex() {
+void expect_is_vt_not_complex() {
   EXPECT_EQ(expected, stan::is_vt_not_complex<T>::value);
 }
 
 template <typename T>
-inline void test_is_vt_not_complex() {
+void test_is_vt_not_complex() {
   using complex_std_vec = std::vector<std::complex<T>>;
   using complex_eigen_vec = Eigen::Matrix<std::complex<T>, -1, 1>;
   expect_is_vt_not_complex<!true, complex_std_vec>();

@@ -22,8 +22,9 @@ namespace stan {
 namespace math {
 
 template <typename T_n, typename T_shape, typename T_inv_scale>
-inline return_type_t<T_shape, T_inv_scale> neg_binomial_cdf(
-    const T_n& n, const T_shape& alpha, const T_inv_scale& beta) {
+return_type_t<T_shape, T_inv_scale> neg_binomial_cdf(const T_n& n,
+                                                     const T_shape& alpha,
+                                                     const T_inv_scale& beta) {
   using T_partials_return = partials_return_t<T_n, T_shape, T_inv_scale>;
   using T_n_ref = ref_type_t<T_n>;
   using T_alpha_ref = ref_type_t<T_shape>;

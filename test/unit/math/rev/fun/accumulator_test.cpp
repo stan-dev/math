@@ -4,11 +4,11 @@
 #include <vector>
 
 // test sum of first n numbers for sum of a
-inline void test_sum(stan::math::accumulator<stan::math::var>& a, int n) {
+void test_sum(stan::math::accumulator<stan::math::var>& a, int n) {
   EXPECT_FLOAT_EQ((n * (n + 1)) / 2, a.sum().val());
 }
 
-TEST_F(AgradRev, RevMatrix_accumulateDouble) {
+TEST(AgradRevMatrix, accumulateDouble) {
   using stan::math::accumulator;
   using stan::math::var;
 
@@ -22,7 +22,7 @@ TEST_F(AgradRev, RevMatrix_accumulateDouble) {
     a.add(var(i));
   test_sum(a, 1000);
 }
-TEST_F(AgradRev, RevMathMatrix_accumulateCollection) {
+TEST(AgradRevMathMatrix, accumulateCollection) {
   // tests int, double, vector<double>, vector<int>,
   // Matrix<double, ...>,
   // var, vector<var>, Matrix<var, ...>,
@@ -127,7 +127,7 @@ TEST_F(AgradRev, RevMathMatrix_accumulateCollection) {
   test_sum(a, pos - 1);
 }
 
-TEST_F(AgradRev, RevMatrix_accumulator_check_varis_on_stack) {
+TEST(AgradRevMatrix, accumulator_check_varis_on_stack) {
   stan::math::accumulator<stan::math::var> a;
   test::check_varis_on_stack(a.sum());
   a.add(1);

@@ -2,7 +2,6 @@
 #define STAN_MATH_TEST_FIXTURE_ODE_FHO_HPP
 
 #include <stan/math/rev.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <boost/numeric/odeint.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/functor/test_fixture_ode.hpp>

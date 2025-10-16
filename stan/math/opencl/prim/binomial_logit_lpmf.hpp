@@ -31,9 +31,8 @@ template <bool propto, typename T_n_cl, typename T_N_cl, typename T_prob_cl,
                                                       T_prob_cl>* = nullptr,
           require_any_nonscalar_prim_or_rev_kernel_expression_t<
               T_n_cl, T_N_cl, T_prob_cl>* = nullptr>
-inline return_type_t<T_prob_cl> binomial_logit_lpmf(const T_n_cl& n,
-                                                    const T_N_cl N,
-                                                    const T_prob_cl& alpha) {
+return_type_t<T_prob_cl> binomial_logit_lpmf(const T_n_cl& n, const T_N_cl N,
+                                             const T_prob_cl& alpha) {
   static constexpr const char* function = "binomial_logit_lpmf(OpenCL)";
   using T_partials_return = partials_return_t<T_prob_cl>;
   using std::isfinite;

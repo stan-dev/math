@@ -7,7 +7,6 @@
 #include <stan/math/rev/functor/ode_adams.hpp>
 #include <stan/math/rev/functor/ode_adjoint.hpp>
 #include <stan/math/prim/functor/integrate_ode_rk45.hpp>
-#include <test/unit/math/rev/util.hpp>
 
 #define STAN_DEF_ODE_SOLVER_FUNCTOR(solver_name, solver_func)                  \
   struct solver_name##_functor {                                               \

@@ -46,8 +46,7 @@ namespace math {
 template <bool propto, typename T_y, typename T_dof,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_dof>* = nullptr>
-inline return_type_t<T_y, T_dof> inv_chi_square_lpdf(const T_y& y,
-                                                     const T_dof& nu) {
+return_type_t<T_y, T_dof> inv_chi_square_lpdf(const T_y& y, const T_dof& nu) {
   using T_partials_return = partials_return_t<T_y, T_dof>;
   using T_y_ref = ref_type_if_not_constant_t<T_y>;
   using T_nu_ref = ref_type_if_not_constant_t<T_dof>;

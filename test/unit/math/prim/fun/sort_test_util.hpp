@@ -6,7 +6,7 @@
 #include <limits>
 
 template <typename C>
-inline void test_sort_asc_throws() {
+void test_sort_asc_throws() {
   using stan::math::sort_asc;
 
   C xs0;
@@ -31,7 +31,7 @@ inline void test_sort_asc_throws() {
 }
 
 template <typename C>
-inline void test_sort_desc_throws() {
+void test_sort_desc_throws() {
   using stan::math::sort_desc;
 
   C xs0;

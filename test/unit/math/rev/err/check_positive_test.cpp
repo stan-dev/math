@@ -1,11 +1,10 @@
 #include <stan/math/rev.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <exception>
 #include <limits>
 #include <vector>
 
-TEST_F(AgradRev, RevErrorHandlingArray_CheckPositive) {
+TEST(AgradRevErrorHandlingArray, CheckPositive) {
   using stan::math::check_positive;
   using stan::math::var;
 
@@ -21,7 +20,7 @@ TEST_F(AgradRev, RevErrorHandlingArray_CheckPositive) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, RevErrorHandlingMatrix_CheckPositive) {
+TEST(AgradRevErrorHandlingMatrix, CheckPositive) {
   using stan::math::check_positive;
   using stan::math::var;
 
@@ -40,7 +39,7 @@ TEST_F(AgradRev, RevErrorHandlingMatrix_CheckPositive) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, RevErrorHandlingScalar_CheckPositive) {
+TEST(AgradRevErrorHandlingScalar, CheckPositive) {
   using stan::math::check_positive;
   using stan::math::var;
 
@@ -52,7 +51,7 @@ TEST_F(AgradRev, RevErrorHandlingScalar_CheckPositive) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, RevErrorHandlingScalar_CheckPositiveVarCheckUnivariate) {
+TEST(AgradRevErrorHandlingScalar, CheckPositiveVarCheckUnivariate) {
   using stan::math::check_positive;
   using stan::math::var;
 

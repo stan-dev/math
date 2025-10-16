@@ -1,9 +1,8 @@
 #include <stan/math/rev/meta.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <string>
 
-TEST_F(AgradRev, MathMetaRevScal_primitive_to_var) {
+TEST(MathMetaRevScal, primitive_to_var) {
   EXPECT_TRUE((stan::math::ad_promotable<bool, stan::math::var>::value));
   EXPECT_TRUE((stan::math::ad_promotable<char, stan::math::var>::value));
   EXPECT_TRUE(
@@ -26,7 +25,7 @@ TEST_F(AgradRev, MathMetaRevScal_primitive_to_var) {
   EXPECT_TRUE((stan::math::ad_promotable<long double, stan::math::var>::value));
 }
 
-TEST_F(AgradRev, MathMetaRevScal_nonprimitive_to_var) {
+TEST(MathMetaRevScal, nonprimitive_to_var) {
   EXPECT_FALSE(
       (stan::math::ad_promotable<std::string, stan::math::var>::value));
 }

@@ -1,5 +1,4 @@
 #include <stan/math/rev.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <boost/mp11.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/functor/test_fixture_ode.hpp>
@@ -36,11 +35,9 @@ TYPED_TEST_P(harmonic_oscillator_ctl_test, value) {
   this->test_value(1.0);
   this->test_value(-1.0);
 
-  if constexpr (std::is_same<std::tuple_element_t<2, TypeParam>, double>::value
-                && std::is_same<std::tuple_element_t<3, TypeParam>,
-                                double>::value
-                && std::is_same<std::tuple_element_t<4, TypeParam>,
-                                double>::value) {
+  if (std::is_same<std::tuple_element_t<2, TypeParam>, double>::value
+      && std::is_same<std::tuple_element_t<3, TypeParam>, double>::value
+      && std::is_same<std::tuple_element_t<4, TypeParam>, double>::value) {
     EXPECT_EQ(stan::math::nested_size(), 0);
   } else {
     EXPECT_GT(stan::math::nested_size(), 0);

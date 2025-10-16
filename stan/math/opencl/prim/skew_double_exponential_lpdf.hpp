@@ -36,7 +36,7 @@ template <bool propto, typename T_y_cl, typename T_loc_cl, typename T_scale_cl,
               T_y_cl, T_loc_cl, T_scale_cl, T_skewness_cl>* = nullptr,
           require_any_not_stan_scalar_t<T_y_cl, T_loc_cl, T_scale_cl,
                                         T_skewness_cl>* = nullptr>
-inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_skewness_cl>
+return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_skewness_cl>
 skew_double_exponential_lpdf(const T_y_cl& y, const T_loc_cl& mu,
                              const T_scale_cl& sigma,
                              const T_skewness_cl& tau) {

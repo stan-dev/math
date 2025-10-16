@@ -1,10 +1,9 @@
 #include <stan/math/rev.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST_F(AgradRev, Rev_to_arena_scalar_test) {
+TEST(AgradRev, to_arena_scalar_test) {
   int a = 2;
   auto b = stan::math::to_arena(a);
   EXPECT_EQ(b, a);
@@ -15,7 +14,7 @@ TEST_F(AgradRev, Rev_to_arena_scalar_test) {
   EXPECT_TRUE((std::is_same<decltype(a2), decltype(b2)>::value));
 }
 
-TEST_F(AgradRev, Rev_to_arena_std_vector_test) {
+TEST(AgradRev, to_arena_std_vector_test) {
   std::vector<int> a{1, 2};
   auto b = stan::math::to_arena(a);
   ASSERT_EQ(a.size(), b.size());
@@ -29,7 +28,7 @@ TEST_F(AgradRev, Rev_to_arena_std_vector_test) {
   EXPECT_EQ(b.data(), c.data());
 }
 
-TEST_F(AgradRev, Rev_to_arena_col_vector_test) {
+TEST(AgradRev, to_arena_col_vector_test) {
   Eigen::VectorXd a(2);
   a << 1, 2;
   auto b = stan::math::to_arena(a);
@@ -40,7 +39,7 @@ TEST_F(AgradRev, Rev_to_arena_col_vector_test) {
   EXPECT_EQ(b.data(), c.data());
 }
 
-TEST_F(AgradRev, Rev_to_arena_row_vector_test) {
+TEST(AgradRev, to_arena_row_vector_test) {
   Eigen::RowVectorXd a(2);
   a << 1, 2;
   auto b = stan::math::to_arena(a);
@@ -51,7 +50,7 @@ TEST_F(AgradRev, Rev_to_arena_row_vector_test) {
   EXPECT_EQ(b.data(), c.data());
 }
 
-TEST_F(AgradRev, Rev_to_arena_matrix_test) {
+TEST(AgradRev, to_arena_matrix_test) {
   Eigen::MatrixXd a(2, 2);
   a << 1, 2, 3, 4;
   auto b = stan::math::to_arena(a);

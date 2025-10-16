@@ -1,10 +1,9 @@
 #include <stan/math/rev.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <limits>
 #include <vector>
 
-TEST_F(AgradRev, RevErrorHandlingScalar_CheckLessOrEqualVarCheckVectorized) {
+TEST(AgradRevErrorHandlingScalar, CheckLessOrEqualVarCheckVectorized) {
   using stan::math::check_less_or_equal;
   using stan::math::var;
 
@@ -36,7 +35,7 @@ TEST_F(AgradRev, RevErrorHandlingScalar_CheckLessOrEqualVarCheckVectorized) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, RevErrorHandlingMatrix_CheckLessOrEqual_Matrix) {
+TEST(AgradRevErrorHandlingMatrix, CheckLessOrEqual_Matrix) {
   using stan::math::check_less_or_equal;
   using stan::math::var;
   const char* function = "check_less_or_equal";
@@ -117,7 +116,7 @@ TEST_F(AgradRev, RevErrorHandlingMatrix_CheckLessOrEqual_Matrix) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, RevErrorHandlingScalar_CheckLessOrEqual) {
+TEST(AgradRevErrorHandlingScalar, CheckLessOrEqual) {
   using stan::math::check_less_or_equal;
   using stan::math::var;
 
@@ -153,7 +152,7 @@ TEST_F(AgradRev, RevErrorHandlingScalar_CheckLessOrEqual) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, RevErrorHandlingScalar_CheckLessOrEqualVarCheckUnivariate) {
+TEST(AgradRevErrorHandlingScalar, CheckLessOrEqualVarCheckUnivariate) {
   using stan::math::check_less_or_equal;
   using stan::math::var;
 
@@ -188,7 +187,7 @@ TEST_F(AgradRev, RevErrorHandlingScalar_CheckLessOrEqualVarCheckUnivariate) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, RevErrorHandlingMatrix_CheckLessOrEqualStdVecVarMatrix) {
+TEST(AgradRevErrorHandlingMatrix, CheckLessOrEqualStdVecVarMatrix) {
   using stan::math::var;
   std::vector<std::vector<
       stan::conditional_var_value_t<var, Eigen::Matrix<var, -1, -1>>>>

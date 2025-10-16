@@ -38,8 +38,8 @@ struct callback_vari : public vari_value<T> {
  * @param functor functor or other callable to call in the reverse pass
  */
 template <typename T, typename F>
-inline internal::callback_vari<plain_type_t<T>, F>* make_callback_vari(
-    T&& value, F&& functor) {
+internal::callback_vari<plain_type_t<T>, F>* make_callback_vari(T&& value,
+                                                                F&& functor) {
   return new internal::callback_vari<plain_type_t<T>, F>(
       std::move(value), std::forward<F>(functor));
 }
@@ -58,7 +58,7 @@ inline internal::callback_vari<plain_type_t<T>, F>* make_callback_vari(
  * @param functor functor or other callable to call in the reverse pass
  */
 template <typename T, typename F>
-inline var_value<plain_type_t<T>> make_callback_var(T&& value, F&& functor) {
+var_value<plain_type_t<T>> make_callback_var(T&& value, F&& functor) {
   return var_value<plain_type_t<T>>(
       make_callback_vari(std::move(value), std::forward<F>(functor)));
 }

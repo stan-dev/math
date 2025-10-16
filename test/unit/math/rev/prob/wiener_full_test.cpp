@@ -2,14 +2,13 @@
 #include <stan/math/prim/fun.hpp>
 #include <stan/math/prim/prob.hpp>
 #include <stan/math/rev.hpp>
-#include <test/unit/math/rev/util.hpp>
 
 #include <gtest/gtest.h>
 #include <vector>
 
 // CHECK THAT ALL VALID SCALAR TYPES ARE ACCEPTED
 template <typename F>
-inline void check_scalar_types(F& f, double value, double res, double deriv) {
+void check_scalar_types(F& f, double value, double res, double deriv) {
   // - f: Function with a single parameter exposed, all others
   // have to be scalars
   // - value: value to be used for the parameter
@@ -30,7 +29,7 @@ inline void check_scalar_types(F& f, double value, double res, double deriv) {
   EXPECT_NEAR(value_var.adj(), deriv, err_tol);
 }
 
-TEST_F(AgradRev, ProbWienerFull_wiener_full_all_scalar) {
+TEST(ProbWienerFull, wiener_full_all_scalar) {
   // tests all parameter types individually, with other
   // parameters set to double
   using stan::math::wiener_lpdf;
@@ -111,7 +110,7 @@ TEST_F(AgradRev, ProbWienerFull_wiener_full_all_scalar) {
   }
 }
 
-TEST_F(AgradRev, ProbWienerFullPrec_wiener_full_prec_all_scalar) {
+TEST(ProbWienerFullPrec, wiener_full_prec_all_scalar) {
   // tests all parameter types individually, with other parameters
   // set to double
   using stan::math::wiener_lpdf;
@@ -203,7 +202,7 @@ TEST_F(AgradRev, ProbWienerFullPrec_wiener_full_prec_all_scalar) {
 
 // CHECK THAT ALL VALID Vector TYPES ARE ACCEPTED
 template <typename F>
-inline void check_vector_types(F& f, std::vector<double> value, double res) {
+void check_vector_types(F& f, std::vector<double> value, double res) {
   // - f: Function where all inputs are vectors
   // - value: value to be used for the parameter
   // - res: expected result of calling `f` with `value`
@@ -221,7 +220,7 @@ inline void check_vector_types(F& f, std::vector<double> value, double res) {
   EXPECT_NEAR(value_of(result_var), res, err_tol);
 }
 
-TEST_F(AgradRev, ProbWienerFull_wiener_full_all_vector) {
+TEST(ProbWienerFull, wiener_full_all_vector) {
   // tests all parameter types individually, with other
   // parameters set to std::vector<double>
   using stan::math::wiener_lpdf;

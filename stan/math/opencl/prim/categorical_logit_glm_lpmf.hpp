@@ -46,7 +46,7 @@ template <bool propto, typename T_y, typename T_x, typename T_alpha,
           typename T_beta,
           require_all_prim_or_rev_kernel_expression_t<T_y, T_x, T_alpha,
                                                       T_beta>* = nullptr>
-inline return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
+return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
     const T_y& y, const T_x& x, const T_alpha& alpha, const T_beta& beta) {
   using T_partials_return = partials_return_t<T_x, T_alpha, T_beta>;
   constexpr bool is_y_vector = !is_stan_scalar<T_y>::value;
@@ -88,8 +88,8 @@ inline return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
       = opencl_kernels::categorical_logit_glm.get_option("LOCAL_SIZE_");
   const int wgs = (N_instances + local_size - 1) / local_size;
 
-  constexpr bool need_alpha_derivative = is_autodiff_v<T_alpha>;
-  constexpr bool need_beta_derivative = is_autodiff_v<T_beta>;
+  bool need_alpha_derivative = is_autodiff_v<T_alpha>;
+  bool need_beta_derivative = is_autodiff_v<T_beta>;
 
   matrix_cl<double> logp_cl(wgs, 1);
   matrix_cl<double> exp_lin_cl(N_instances, N_classes);
@@ -127,12 +127,13 @@ inline return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
     if constexpr (is_y_vector) {
       partials<0>(ops_partials)
           = indexing(beta_val, col_index(x.rows(), x.cols()),
-                     rowwise_broadcast(y_val - 1))
+                     rowwise_broadcast(forward_as<matrix_cl<int>>(y_val) - 1))
             - elt_multiply(exp_lin_cl * transpose(beta_val),
                            rowwise_broadcast(inv_sum_exp_lin_cl));
     } else {
       partials<0>(ops_partials)
-          = indexing(beta_val, col_index(x.rows(), x.cols()), y_val - 1)
+          = indexing(beta_val, col_index(x.rows(), x.cols()),
+                     forward_as<int>(y_val) - 1)
             - elt_multiply(exp_lin_cl * transpose(beta_val),
                            rowwise_broadcast(inv_sum_exp_lin_cl));
     }
@@ -151,8 +152,9 @@ inline return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
       try {
         opencl_kernels::categorical_logit_glm_beta_derivative(
             cl::NDRange(local_size * N_attributes), cl::NDRange(local_size),
-            partials<2>(ops_partials), temp, y_val_cl, x_val, N_instances,
-            N_attributes, N_classes, is_y_vector);
+            forward_as<arena_matrix_cl<double>>(partials<2>(ops_partials)),
+            temp, y_val_cl, x_val, N_instances, N_attributes, N_classes,
+            is_y_vector);
       } catch (const cl::Error& e) {
         check_opencl_error(function, e);
       }

@@ -1,9 +1,8 @@
 #include <stan/math/rev.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST_F(AgradRev, ProbDistributionsNegBinomial2_derivatives_lccdf) {
+TEST(ProbDistributionsNegBinomial2, derivatives_lccdf) {
   using stan::math::neg_binomial_2_lccdf;
   using stan::math::var;
 

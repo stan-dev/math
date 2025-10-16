@@ -150,8 +150,8 @@ struct f16 {
   }
 };
 
-inline double lbaX_pdf(double X, double t, double A, double v, double s,
-                       std::ostream *pstream__) {
+double lbaX_pdf(double X, double t, double A, double v, double s,
+                std::ostream *pstream__) {
   double b_A_tv_ts;
   double b_tv_ts;
   double term_1;
@@ -166,8 +166,8 @@ inline double lbaX_pdf(double X, double t, double A, double v, double s,
   return pdf;
 }
 
-inline double lbaX_cdf(double X, double t, double A, double v, double s,
-                       std::ostream *pstream__) {
+double lbaX_cdf(double X, double t, double A, double v, double s,
+                std::ostream *pstream__) {
   double b_A_tv;
   double b_tv;
   double ts;
@@ -192,11 +192,9 @@ inline double lbaX_cdf(double X, double t, double A, double v, double s,
   return cdf;
 }
 
-inline double rank_density(double x, double xc,
-                           const std::vector<double> &theta,
-                           const std::vector<double> &x_r,
-                           const std::vector<int> &x_i,
-                           std::ostream *pstream__) {
+double rank_density(double x, double xc, const std::vector<double> &theta,
+                    const std::vector<double> &x_r, const std::vector<int> &x_i,
+                    std::ostream *pstream__) {
   double t = theta[0];
   double A = theta[1];
   double v1 = theta[2];
@@ -216,8 +214,8 @@ struct rank_density_functor__ {
   }
 };
 
-inline double order(double down, double up, const std::vector<double> &theta,
-                    const std::vector<double> &x_r, std::ostream *pstream__) {
+double order(double down, double up, const std::vector<double> &theta,
+             const std::vector<double> &x_r, std::ostream *pstream__) {
   std::vector<int> x_i;
 
   double v;
@@ -254,8 +252,8 @@ inline double order(double down, double up, const std::vector<double> &theta,
  * @param val correct value of integral
  */
 template <typename F, typename... Args>
-inline void test_integration(const F &f, double a, double b, double val,
-                             const Args &... args) {
+void test_integration(const F &f, double a, double b, double val,
+                      const Args &... args) {
   using stan::math::integrate_1d_impl;
 
   std::vector<double> tolerances = {1e-4, 1e-6, 1e-8};

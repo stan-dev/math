@@ -1,8 +1,7 @@
 #include <stan/math/rev/meta.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 
-TEST_F(AgradRev, MetaTraitsRevScal_partials_type) {
+TEST(MetaTraitsRevScal, partials_type) {
   using stan::partials_type;
   using stan::math::var;
 

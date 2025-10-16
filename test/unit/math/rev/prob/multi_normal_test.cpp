@@ -2,7 +2,7 @@
 #include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 
-TEST_F(AgradRev, ProbDistributionsMultiNormal_MultiNormalVar) {
+TEST(ProbDistributionsMultiNormal, MultiNormalVar) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -16,7 +16,7 @@ TEST_F(AgradRev, ProbDistributionsMultiNormal_MultiNormalVar) {
   EXPECT_FLOAT_EQ(-11.73908, stan::math::multi_normal_lpdf(y, mu, Sigma).val());
 }
 
-TEST_F(AgradRev, ProbDistributionsMultiNormal_check_varis_on_stack) {
+TEST(ProbDistributionsMultiNormal, check_varis_on_stack) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::to_var;

@@ -5,8 +5,8 @@
 #include <limits>
 #include <vector>
 
-inline stan::math::vector_d get_simplex_inv_logit(
-    double lambda, const stan::math::vector_d& c) {
+stan::math::vector_d get_simplex_inv_logit(double lambda,
+                                           const stan::math::vector_d& c) {
   using stan::math::inv_logit;
   int K = c.size() + 1;
   stan::math::vector_d theta(K);

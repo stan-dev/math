@@ -145,6 +145,9 @@ TEST(AgradMix, tuple_value_of) {
   // tuple(vector, array[tuple(vec, vec, vec, array[], tuple(mat, mat, mat,
   // array[]))])
   auto a_b_tuple_vec_tuple_ad = std::make_tuple(v_a, a_b_tuple_vec_ad, ffv_b);
+  using ffv = fvar<fvar<var>>;
+  using fv = fvar<var>;
+  using v = var;
   stan::math::test::recursive_for_each(
       [](auto&& x_ad, auto&& x_dbl) {
         EXPECT_FLOAT_EQ(stan::math::test::get_val(x_ad), x_dbl);

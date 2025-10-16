@@ -33,8 +33,8 @@ template <bool propto, typename T_n_cl, typename T_N_cl, typename T_prob_cl,
                                                       T_prob_cl>* = nullptr,
           require_any_nonscalar_prim_or_rev_kernel_expression_t<
               T_n_cl, T_N_cl, T_prob_cl>* = nullptr>
-inline return_type_t<T_prob_cl> binomial_lpmf(const T_n_cl& n, const T_N_cl N,
-                                              const T_prob_cl& theta) {
+return_type_t<T_prob_cl> binomial_lpmf(const T_n_cl& n, const T_N_cl N,
+                                       const T_prob_cl& theta) {
   static constexpr const char* function = "binomial_lpmf(OpenCL)";
   using T_partials_return = partials_return_t<T_prob_cl>;
   using std::isnan;
@@ -113,8 +113,9 @@ inline return_type_t<T_prob_cl> binomial_lpmf(const T_n_cl& n, const T_N_cl N,
     if constexpr (need_sums) {
       int sum_n = sum(from_matrix_cl(sum_n_cl));
       int sum_N = sum(from_matrix_cl(sum_N_cl));
-      double theta_dbl = theta_val;
-      double& partial = partials<0>(ops_partials)[0];
+      double theta_dbl = forward_as<double>(theta_val);
+      double& partial = forward_as<internal::broadcast_array<double>>(
+          partials<0>(ops_partials))[0];
       if (sum_N != 0) {
         if (sum_n == 0) {
           partial = -sum_N / (1.0 - theta_dbl);

@@ -3,7 +3,7 @@
 #include <vector>
 
 template <typename T>
-inline void test_cumulative_sum() {
+void test_cumulative_sum() {
   using stan::math::cumulative_sum;
 
   T c(1);

@@ -9,24 +9,24 @@ namespace elementwise_check_test {
 auto p = [](const auto& x) { return !stan::math::is_nan(x); };
 
 template <typename T>
-inline void do_check(const T& x) {
+void do_check(const T& x) {
   stan::math::elementwise_check([](const auto& x) { return p(x); },
                                 "elementwise_check_tests", "x", x, "not nan");
 }
 
 template <typename T>
-inline bool do_is(const T& x) {
+bool do_is(const T& x) {
   return stan::math::elementwise_is([](const auto& x) { return p(x); }, x);
 }
 
 template <typename T>
-inline void expect_good(const T& x) {
+void expect_good(const T& x) {
   EXPECT_NO_THROW(do_check(x));
   EXPECT_TRUE(do_is(x));
 }
 
 template <typename T>
-inline void expect_bad(const T& x) {
+void expect_bad(const T& x) {
   EXPECT_THROW(do_check(x), std::domain_error);
   EXPECT_FALSE(do_is(x));
 }

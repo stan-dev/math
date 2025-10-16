@@ -5,7 +5,7 @@
 #include <stdexcept>
 
 template <typename T>
-inline void test_quantile_double() {
+void test_quantile_double() {
   using stan::math::index_type_t;
   using stan::math::quantile;
 
@@ -87,7 +87,7 @@ TEST(MathFunctions, quantileStdVecInt) {
 }
 
 template <typename T, typename Tp, stan::require_all_vector_t<T, Tp>* = nullptr>
-inline void test_quantile_double() {
+void test_quantile_double() {
   using stan::math::index_type_t;
   using stan::math::quantile;
 

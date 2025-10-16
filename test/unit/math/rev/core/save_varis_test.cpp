@@ -1,12 +1,11 @@
 #include <stan/math.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
 using stan::math::var;
 using stan::math::vari;
 
-TEST_F(AgradRev, Rev_save_varis_zero_args) {
+TEST(AgradRev_save_varis, zero_args) {
   std::vector<vari*> storage(1000, nullptr);
   vari** ptr = stan::math::save_varis(storage.data());
 
@@ -17,7 +16,7 @@ TEST_F(AgradRev, Rev_save_varis_zero_args) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, Rev_save_varis_int_arg) {
+TEST(AgradRev_save_varis, int_arg) {
   int arg = 5;
 
   std::vector<vari*> storage(1000, nullptr);
@@ -30,7 +29,7 @@ TEST_F(AgradRev, Rev_save_varis_int_arg) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, Rev_save_varis_double_arg) {
+TEST(AgradRev_save_varis, double_arg) {
   double arg = 5.0;
 
   std::vector<vari*> storage(1000, nullptr);
@@ -42,7 +41,7 @@ TEST_F(AgradRev, Rev_save_varis_double_arg) {
   EXPECT_EQ(ptr, storage.data());
 }
 
-TEST_F(AgradRev, Rev_save_varis_std_vector_int_arg) {
+TEST(AgradRev_save_varis, std_vector_int_arg) {
   std::vector<int> arg(5, 10);
 
   std::vector<vari*> storage(1000, nullptr);
@@ -54,7 +53,7 @@ TEST_F(AgradRev, Rev_save_varis_std_vector_int_arg) {
   EXPECT_EQ(ptr, storage.data());
 }
 
-TEST_F(AgradRev, Rev_save_varis_std_vector_double_arg) {
+TEST(AgradRev_save_varis, std_vector_double_arg) {
   std::vector<double> arg(5, 10.0);
 
   std::vector<vari*> storage(1000, nullptr);
@@ -66,7 +65,7 @@ TEST_F(AgradRev, Rev_save_varis_std_vector_double_arg) {
   EXPECT_EQ(ptr, storage.data());
 }
 
-TEST_F(AgradRev, Rev_save_varis_eigen_vector_arg) {
+TEST(AgradRev_save_varis, eigen_vector_arg) {
   Eigen::VectorXd arg = Eigen::VectorXd::Ones(5);
 
   std::vector<vari*> storage(1000, nullptr);
@@ -78,7 +77,7 @@ TEST_F(AgradRev, Rev_save_varis_eigen_vector_arg) {
   EXPECT_EQ(ptr, storage.data());
 }
 
-TEST_F(AgradRev, Rev_save_varis_eigen_row_vector_arg) {
+TEST(AgradRev_save_varis, eigen_row_vector_arg) {
   Eigen::RowVectorXd arg = Eigen::RowVectorXd::Ones(5);
 
   std::vector<vari*> storage(1000, nullptr);
@@ -90,7 +89,7 @@ TEST_F(AgradRev, Rev_save_varis_eigen_row_vector_arg) {
   EXPECT_EQ(ptr, storage.data());
 }
 
-TEST_F(AgradRev, Rev_save_varis_eigen_matrix_arg) {
+TEST(AgradRev_save_varis, eigen_matrix_arg) {
   Eigen::MatrixXd arg = Eigen::MatrixXd::Ones(5, 5);
 
   std::vector<vari*> storage(1000, nullptr);
@@ -102,7 +101,7 @@ TEST_F(AgradRev, Rev_save_varis_eigen_matrix_arg) {
   EXPECT_EQ(ptr, storage.data());
 }
 
-TEST_F(AgradRev, Rev_save_varis_std_vector_std_vector_double_arg) {
+TEST(AgradRev_save_varis, std_vector_std_vector_double_arg) {
   std::vector<std::vector<double>> arg(5, std::vector<double>(5, 10.0));
 
   std::vector<vari*> storage(1000, nullptr);
@@ -114,7 +113,7 @@ TEST_F(AgradRev, Rev_save_varis_std_vector_std_vector_double_arg) {
   EXPECT_EQ(ptr, storage.data());
 }
 
-TEST_F(AgradRev, Rev_save_varis_std_vector_eigen_vector_arg) {
+TEST(AgradRev_save_varis, std_vector_eigen_vector_arg) {
   std::vector<Eigen::VectorXd> arg(2, Eigen::VectorXd::Ones(5));
 
   std::vector<vari*> storage(1000, nullptr);
@@ -126,7 +125,7 @@ TEST_F(AgradRev, Rev_save_varis_std_vector_eigen_vector_arg) {
   EXPECT_EQ(ptr, storage.data());
 }
 
-TEST_F(AgradRev, Rev_save_varis_std_vector_eigen_row_vector_arg) {
+TEST(AgradRev_save_varis, std_vector_eigen_row_vector_arg) {
   std::vector<Eigen::RowVectorXd> arg(2, Eigen::VectorXd::Ones(5));
 
   std::vector<vari*> storage(1000, nullptr);
@@ -138,7 +137,7 @@ TEST_F(AgradRev, Rev_save_varis_std_vector_eigen_row_vector_arg) {
   EXPECT_EQ(ptr, storage.data());
 }
 
-TEST_F(AgradRev, Rev_save_varis_std_vector_eigen_matrix_arg) {
+TEST(AgradRev_save_varis, std_vector_eigen_matrix_arg) {
   std::vector<Eigen::MatrixXd> arg(2, Eigen::MatrixXd::Ones(5, 3));
 
   std::vector<vari*> storage(1000, nullptr);
@@ -150,7 +149,7 @@ TEST_F(AgradRev, Rev_save_varis_std_vector_eigen_matrix_arg) {
   EXPECT_EQ(ptr, storage.data());
 }
 
-TEST_F(AgradRev, Rev_save_varis_var_arg) {
+TEST(AgradRev_save_varis, var_arg) {
   var arg(5.0);
 
   std::vector<vari*> storage(1000, nullptr);
@@ -166,7 +165,7 @@ TEST_F(AgradRev, Rev_save_varis_var_arg) {
   EXPECT_EQ(ptr, storage.data() + num_vars);
 }
 
-TEST_F(AgradRev, Rev_save_varis_std_vector_var_arg) {
+TEST(AgradRev_save_varis, std_vector_var_arg) {
   std::vector<var> arg(5);
   for (size_t i = 0; i < arg.size(); ++i)
     arg[i] = 5.0;
@@ -184,7 +183,7 @@ TEST_F(AgradRev, Rev_save_varis_std_vector_var_arg) {
   EXPECT_EQ(ptr, storage.data() + num_vars);
 }
 
-TEST_F(AgradRev, Rev_save_varis_eigen_vector_var_arg) {
+TEST(AgradRev_save_varis, eigen_vector_var_arg) {
   Eigen::Matrix<var, Eigen::Dynamic, 1> arg(5);
   for (size_t i = 0; i < arg.size(); ++i) {
     arg(i) = 5.0;
@@ -204,7 +203,7 @@ TEST_F(AgradRev, Rev_save_varis_eigen_vector_var_arg) {
   EXPECT_EQ(ptr, storage.data() + num_vars);
 }
 
-TEST_F(AgradRev, Rev_save_varis_eigen_row_vector_var_arg) {
+TEST(AgradRev_save_varis, eigen_row_vector_var_arg) {
   Eigen::Matrix<var, 1, Eigen::Dynamic> arg(5);
   for (size_t i = 0; i < arg.size(); ++i) {
     arg(i) = 5.0;
@@ -224,7 +223,7 @@ TEST_F(AgradRev, Rev_save_varis_eigen_row_vector_var_arg) {
   EXPECT_EQ(ptr, storage.data() + num_vars);
 }
 
-TEST_F(AgradRev, Rev_save_varis_eigen_matrix_var_arg) {
+TEST(AgradRev_save_varis, eigen_matrix_var_arg) {
   Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> arg(5, 5);
   for (size_t i = 0; i < arg.size(); ++i) {
     arg(i) = 5.0;
@@ -244,7 +243,7 @@ TEST_F(AgradRev, Rev_save_varis_eigen_matrix_var_arg) {
   EXPECT_EQ(ptr, storage.data() + num_vars);
 }
 
-TEST_F(AgradRev, Rev_save_varis_std_vector_std_vector_var_arg) {
+TEST(AgradRev_save_varis, std_vector_std_vector_var_arg) {
   std::vector<var> arg_(5);
   std::vector<std::vector<var>> arg(5, arg_);
   for (size_t i = 0; i < arg.size(); ++i)
@@ -266,7 +265,7 @@ TEST_F(AgradRev, Rev_save_varis_std_vector_std_vector_var_arg) {
   EXPECT_EQ(ptr, storage.data() + num_vars);
 }
 
-TEST_F(AgradRev, Rev_save_varis_std_vector_eigen_vector_var_arg) {
+TEST(AgradRev_save_varis, std_vector_eigen_vector_var_arg) {
   Eigen::Matrix<var, Eigen::Dynamic, 1> arg_(5);
   std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> arg(2, arg_);
   for (size_t i = 0; i < arg.size(); ++i)
@@ -288,7 +287,7 @@ TEST_F(AgradRev, Rev_save_varis_std_vector_eigen_vector_var_arg) {
   EXPECT_EQ(ptr, storage.data() + num_vars);
 }
 
-TEST_F(AgradRev, Rev_save_varis_std_vector_eigen_row_vector_var_arg) {
+TEST(AgradRev_save_varis, std_vector_eigen_row_vector_var_arg) {
   Eigen::Matrix<var, 1, Eigen::Dynamic> arg_(5);
   std::vector<Eigen::Matrix<var, 1, Eigen::Dynamic>> arg(2, arg_);
   for (size_t i = 0; i < arg.size(); ++i)
@@ -310,7 +309,7 @@ TEST_F(AgradRev, Rev_save_varis_std_vector_eigen_row_vector_var_arg) {
   EXPECT_EQ(ptr, storage.data() + num_vars);
 }
 
-TEST_F(AgradRev, Rev_save_varis_std_vector_eigen_matrix_var_arg) {
+TEST(AgradRev_save_varis, std_vector_eigen_matrix_var_arg) {
   Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> arg_(5, 3);
   std::vector<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> arg(2, arg_);
   for (size_t i = 0; i < arg.size(); ++i)
@@ -332,7 +331,7 @@ TEST_F(AgradRev, Rev_save_varis_std_vector_eigen_matrix_var_arg) {
   EXPECT_EQ(ptr, storage.data() + num_vars);
 }
 
-TEST_F(AgradRev, Rev_save_varis_sum) {
+TEST(AgradRev_save_varis, sum) {
   int arg1 = 1;
   double arg2 = 1.0;
   std::vector<int> arg3(5, 1);

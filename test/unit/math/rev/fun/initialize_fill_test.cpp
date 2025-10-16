@@ -1,10 +1,9 @@
 #include <stan/math/rev.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/fun/util.hpp>
 #include <vector>
 
-TEST_F(AgradRev, RevMatrix_initialize_fill) {
+TEST(AgradRevMatrix, initialize_fill) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::initialize_fill;
@@ -44,7 +43,7 @@ TEST_F(AgradRev, RevMatrix_initialize_fill) {
     for (size_t j = 0; j < 2; ++j)
       EXPECT_FLOAT_EQ(54, d[i][j].val());
 }
-TEST_F(AgradRev, RevMatrix_initialize_fillDouble) {
+TEST(AgradRevMatrix, initialize_fillDouble) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::initialize_fill;
@@ -54,7 +53,7 @@ TEST_F(AgradRev, RevMatrix_initialize_fillDouble) {
   EXPECT_FLOAT_EQ(3.0, y[0]);
 }
 
-TEST_F(AgradRev, RevMatrix_initialize_fillVarMatDouble) {
+TEST(AgradRevMatrix, initialize_fillVarMatDouble) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::initialize_fill;
@@ -72,7 +71,7 @@ TEST_F(AgradRev, RevMatrix_initialize_fillVarMatDouble) {
   }
 }
 
-TEST_F(AgradRev, RevMatrix_initialize_fillVarMatVar) {
+TEST(AgradRevMatrix, initialize_fillVarMatVar) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::initialize_fill;

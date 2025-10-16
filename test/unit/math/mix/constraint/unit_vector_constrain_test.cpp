@@ -21,7 +21,7 @@ auto g3(const T& x) {
 }
 
 template <typename T>
-inline void expect_unit_vector_constrain(const T& x) {
+void expect_unit_vector_constrain(const T& x) {
   stan::test::ad_tolerances tols;
   tols.gradient_fvar_grad_ = 1e0;
   tols.hessian_grad_ = 1e0;

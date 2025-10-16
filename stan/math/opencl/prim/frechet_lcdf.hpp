@@ -31,7 +31,7 @@ template <
     require_all_prim_or_rev_kernel_expression_t<T_y_cl, T_shape_cl,
                                                 T_scale_cl>* = nullptr,
     require_any_not_stan_scalar_t<T_y_cl, T_shape_cl, T_scale_cl>* = nullptr>
-inline return_type_t<T_y_cl, T_shape_cl, T_scale_cl> frechet_lcdf(
+return_type_t<T_y_cl, T_shape_cl, T_scale_cl> frechet_lcdf(
     const T_y_cl& y, const T_shape_cl& alpha, const T_scale_cl& sigma) {
   static constexpr const char* function = "frechet_lcdf(OpenCL)";
   using T_partials_return = partials_return_t<T_y_cl, T_shape_cl, T_scale_cl>;

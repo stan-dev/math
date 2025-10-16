@@ -3,7 +3,7 @@
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
-TEST_F(AgradRev, MathMixMatFun_repRowVectorVar) {
+TEST(MathMixMatFun, repRowVectorVar) {
   using stan::math::rep_row_vector;
   using stan::math::sum;
   using stan::math::var;
@@ -20,7 +20,7 @@ TEST_F(AgradRev, MathMixMatFun_repRowVectorVar) {
   EXPECT_EQ(x2.cols(), 3);
 }
 
-TEST_F(AgradRev, MathMixMatFun_repRowVarVector) {
+TEST(MathMixMatFun, repRowVarVector) {
   using stan::math::rep_row_vector;
   using stan::math::sum;
   using stan::math::var;

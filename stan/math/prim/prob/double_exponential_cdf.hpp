@@ -36,7 +36,7 @@ namespace math {
 template <typename T_y, typename T_loc, typename T_scale,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_loc, T_scale>* = nullptr>
-inline return_type_t<T_y, T_loc, T_scale> double_exponential_cdf(
+return_type_t<T_y, T_loc, T_scale> double_exponential_cdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
   using T_partials_array = Eigen::Array<T_partials_return, Eigen::Dynamic, 1>;
@@ -75,21 +75,28 @@ inline return_type_t<T_y, T_loc, T_scale> double_exponential_cdf(
 
   T_rep_deriv rep_deriv;
   if constexpr (is_vector<T_y>::value || is_vector<T_loc>::value) {
-    cdf = (y_val < mu_val)
-              .select(exp_scaled_diff * 0.5, 1.0 - 0.5 / exp_scaled_diff)
+    using array_bool = Eigen::Array<bool, Eigen::Dynamic, 1>;
+    cdf = forward_as<array_bool>(y_val < mu_val)
+              .select(forward_as<T_partials_array>(exp_scaled_diff * 0.5),
+                      1.0 - 0.5 / exp_scaled_diff)
               .prod();
-    rep_deriv = (y_val < mu_val)
-                    .select((cdf * inv_sigma),
-                            cdf * inv_sigma / (2 * exp_scaled_diff - 1));
+    rep_deriv = forward_as<T_rep_deriv>(
+        forward_as<array_bool>(y_val < mu_val)
+            .select((cdf * inv_sigma),
+                    forward_as<T_partials_array>(cdf * inv_sigma
+                                                 / (2 * exp_scaled_diff - 1))));
   } else {
     if constexpr (is_vector<T_scale>::value) {
-      cdf = (y_val < mu_val) ? (exp_scaled_diff * 0.5).prod()
-                             : (1.0 - 0.5 / exp_scaled_diff).prod();
+      cdf = forward_as<bool>(y_val < mu_val)
+                ? forward_as<T_partials_array>(exp_scaled_diff * 0.5).prod()
+                : forward_as<T_partials_array>(1.0 - 0.5 / exp_scaled_diff)
+                      .prod();
     } else {
-      cdf = (y_val < mu_val) ? exp_scaled_diff * 0.5
-                             : 1.0 - 0.5 / exp_scaled_diff;
+      cdf = forward_as<bool>(y_val < mu_val)
+                ? forward_as<T_partials_return>(exp_scaled_diff * 0.5)
+                : forward_as<T_partials_return>(1.0 - 0.5 / exp_scaled_diff);
     }
-    if (y_val < mu_val) {
+    if (forward_as<bool>(y_val < mu_val)) {
       rep_deriv = cdf * inv_sigma;
     } else {
       rep_deriv = cdf * inv_sigma / (2 * exp_scaled_diff - 1);

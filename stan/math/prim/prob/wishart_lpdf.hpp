@@ -46,9 +46,8 @@ namespace math {
 template <bool propto, typename T_y, typename T_dof, typename T_scale,
           require_stan_scalar_t<T_dof>* = nullptr,
           require_all_matrix_t<T_y, T_scale>* = nullptr>
-inline return_type_t<T_y, T_dof, T_scale> wishart_lpdf(const T_y& W,
-                                                       const T_dof& nu,
-                                                       const T_scale& S) {
+return_type_t<T_y, T_dof, T_scale> wishart_lpdf(const T_y& W, const T_dof& nu,
+                                                const T_scale& S) {
   using Eigen::Dynamic;
   using Eigen::Lower;
   using Eigen::Matrix;

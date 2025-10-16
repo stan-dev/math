@@ -1,11 +1,10 @@
 #include <gtest/gtest.h>
-#include <stan/math/rev/core.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
-#include <test/unit/math/rev/util.hpp>
+#include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/sin.hpp>
 #include <vector>
 
-TEST_F(AgradRev, Rev_multiple_grads) {
+TEST(AgradRev, multiple_grads) {
   for (int i = 0; i < 100; ++i) {
     stan::math::var a = 2.0;
     stan::math::var b = 3.0 * a;
@@ -31,7 +30,7 @@ TEST_F(AgradRev, Rev_multiple_grads) {
   EXPECT_FLOAT_EQ(2.0, grad_f[1]);
 }
 
-TEST_F(AgradRev, Rev_ensure_first_vari_chained) {
+TEST(AgradRev, ensure_first_vari_chained) {
   using stan::math::var;
 
   // Make sure there aren't any varis on stack
@@ -79,7 +78,7 @@ class test_vari : public vari {
 }  // namespace math
 }  // namespace stan
 
-TEST_F(AgradRev, Rev_nested_grad_during_chain) {
+TEST(AgradRev, nested_grad_during_chain) {
   using stan::math::var;
 
   var total = 0.0;

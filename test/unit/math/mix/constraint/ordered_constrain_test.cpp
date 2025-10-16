@@ -2,24 +2,24 @@
 
 namespace ordered_constrain_test {
 template <typename T>
-inline T g1(const T& x) {
+T g1(const T& x) {
   stan::scalar_type_t<T> lp = 0;
   return stan::math::ordered_constrain<false>(x, lp);
 }
 template <typename T>
-inline T g2(const T& x) {
+T g2(const T& x) {
   stan::scalar_type_t<T> lp = 0;
   return stan::math::ordered_constrain<true>(x, lp);
 }
 template <typename T>
-inline stan::scalar_type_t<T> g3(const T& x) {
+stan::scalar_type_t<T> g3(const T& x) {
   stan::scalar_type_t<T> lp = 0;
   stan::math::ordered_constrain<true>(x, lp);
   return lp;
 }
 
 template <typename T>
-inline void expect_ordered_transform(const T& x) {
+void expect_ordered_transform(const T& x) {
   auto f1 = [](const auto& x) { return g1(x); };
   auto f2 = [](const auto& x) { return g2(x); };
   auto f3 = [](const auto& x) { return g3(x); };

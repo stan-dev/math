@@ -22,8 +22,9 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_shape, typename T_inv_scale>
-inline return_type_t<T_y, T_shape, T_inv_scale> gamma_lcdf(
-    const T_y& y, const T_shape& alpha, const T_inv_scale& beta) {
+return_type_t<T_y, T_shape, T_inv_scale> gamma_lcdf(const T_y& y,
+                                                    const T_shape& alpha,
+                                                    const T_inv_scale& beta) {
   using T_partials_return = partials_return_t<T_y, T_shape, T_inv_scale>;
   using std::exp;
   using std::log;
@@ -54,7 +55,7 @@ inline return_type_t<T_y, T_shape, T_inv_scale> gamma_lcdf(
   size_t N = max_size(y, alpha, beta);
 
   // Explicit return for extreme values
-  // The gradients are technically ill-defined
+  // The gradients are technically ill-defined, but treated as zero
   for (size_t i = 0; i < stan::math::size(y); i++) {
     if (y_vec.val(i) == 0) {
       return ops_partials.build(negative_infinity());
@@ -69,6 +70,7 @@ inline return_type_t<T_y, T_shape, T_inv_scale> gamma_lcdf(
     }
 
     const T_partials_return y_dbl = y_vec.val(n);
+    const T_partials_return log_y_dbl = log(y_dbl);
     const T_partials_return alpha_dbl = alpha_vec.val(n);
     const T_partials_return beta_dbl = beta_vec.val(n);
     const T_partials_return log_beta_dbl = log(beta_dbl);
@@ -80,7 +82,6 @@ inline return_type_t<T_y, T_shape, T_inv_scale> gamma_lcdf(
     P += log_Pn;
 
     if constexpr (is_any_autodiff_v<T_y, T_inv_scale>) {
-      const T_partials_return log_y_dbl = log(y_dbl);
       const T_partials_return d_num
           = (-beta_y_dbl) + (alpha_dbl - 1) * (log_beta_dbl + log_y_dbl);
       const T_partials_return d_den = lgamma(alpha_dbl) + log_Pn;

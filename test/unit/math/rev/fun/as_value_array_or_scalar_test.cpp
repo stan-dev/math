@@ -1,16 +1,15 @@
 #include <stan/math/rev.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST_F(AgradRev, MathFunRev_as_value_array_or_scalar_scalar) {
+TEST(MathFunRev, as_value_array_or_scalar_scalar) {
   double b_val = 4;
   stan::math::var b(b_val);
   EXPECT_EQ(b_val, stan::math::as_value_array_or_scalar(b));
 }
 
-TEST_F(AgradRev, MathFunRev_as_value_array_or_scalar_std_vector_lvalue) {
+TEST(MathFunRev, as_value_array_or_scalar_std_vector_lvalue) {
   int n = 100;
   Eigen::ArrayXd a_val = Eigen::ArrayXd::Random(n);
   std::vector<double> b_val(n);
@@ -24,7 +23,7 @@ TEST_F(AgradRev, MathFunRev_as_value_array_or_scalar_std_vector_lvalue) {
   EXPECT_MATRIX_EQ(res, a_val);
 }
 
-TEST_F(AgradRev, MathFunRev_as_value_array_or_scalar_std_vector_rvalue) {
+TEST(MathFunRev, as_value_array_or_scalar_std_vector_rvalue) {
   int n = 100;
   Eigen::ArrayXd a_val = Eigen::ArrayXd::Random(n);
   std::vector<double> b_val(n);
@@ -38,7 +37,7 @@ TEST_F(AgradRev, MathFunRev_as_value_array_or_scalar_std_vector_rvalue) {
   EXPECT_MATRIX_EQ(res, a_val);
 }
 
-TEST_F(AgradRev, MathFunRev_as_value_array_or_scalar_matrix_lvalue) {
+TEST(MathFunRev, as_value_array_or_scalar_matrix_lvalue) {
   int n = 100;
   Eigen::MatrixXd a_val = Eigen::MatrixXd::Random(n, n);
   Eigen::Matrix<stan::math::var, -1, -1> a(a_val);
@@ -48,7 +47,7 @@ TEST_F(AgradRev, MathFunRev_as_value_array_or_scalar_matrix_lvalue) {
   EXPECT_MATRIX_EQ(res, a_val);
 }
 
-TEST_F(AgradRev, MathFunRev_as_value_array_or_scalar_const_matrix_lvalue) {
+TEST(MathFunRev, as_value_array_or_scalar_const_matrix_lvalue) {
   int n = 100;
   const Eigen::MatrixXd a_val = Eigen::MatrixXd::Random(n, n);
   Eigen::Matrix<stan::math::var, -1, -1> a(a_val);
@@ -58,7 +57,7 @@ TEST_F(AgradRev, MathFunRev_as_value_array_or_scalar_const_matrix_lvalue) {
   EXPECT_MATRIX_EQ(res, a_val);
 }
 
-TEST_F(AgradRev, MathFunRev_as_value_array_or_scalar_matrix_rvalue) {
+TEST(MathFunRev, as_value_array_or_scalar_matrix_rvalue) {
   int n = 10;
   Eigen::MatrixXd a_val = Eigen::MatrixXd::Random(n, n);
   Eigen::Matrix<stan::math::var, -1, -1> a(a_val);
@@ -69,7 +68,7 @@ TEST_F(AgradRev, MathFunRev_as_value_array_or_scalar_matrix_rvalue) {
   EXPECT_MATRIX_EQ(res, a_val);
 }
 
-TEST_F(AgradRev, MathFunRev_as_value_array_or_scalar_var_value) {
+TEST(MathFunRev, as_value_array_or_scalar_var_value) {
   int n = 100;
   const Eigen::MatrixXd a_val = Eigen::MatrixXd::Random(n, n);
   stan::math::var_value<Eigen::Matrix<double, -1, -1>> a(a_val);

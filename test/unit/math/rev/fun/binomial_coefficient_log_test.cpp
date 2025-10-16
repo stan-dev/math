@@ -1,6 +1,5 @@
 #include <stan/math/prim.hpp>
 #include <stan/math/rev.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <test/unit/math/expect_near_rel.hpp>
 #include <gtest/gtest.h>
 #include <limits>
@@ -9,7 +8,7 @@
 #include <string>
 #include <cmath>
 
-TEST_F(AgradRev, MathFunctions_binomial_coefficient_log_identities) {
+TEST(MathFunctions, binomial_coefficient_log_identities) {
   using stan::math::binomial_coefficient_log;
   using stan::math::is_nan;
   using stan::math::log;
@@ -297,7 +296,7 @@ std::vector<TestValue> testValues = {
 
 }  // namespace binomial_coefficient_log_test_internal
 
-TEST_F(AgradRev, MathFunctions_binomial_coefficient_log_precomputed) {
+TEST(MathFunctions, binomial_coefficient_log_precomputed) {
   using binomial_coefficient_log_test_internal::TestValue;
   using binomial_coefficient_log_test_internal::testValues;
   using binomial_coefficient_log_test_internal::testValuesEdge;

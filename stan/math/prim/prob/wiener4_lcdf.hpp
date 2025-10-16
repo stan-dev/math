@@ -57,7 +57,7 @@ inline auto log_probability_GradAV(const T_a& a, const T_v& v, const T_w& w) {
   //  auto nearly_one = ret_t(1.0 - std::numeric_limits<ret_t>::min());
   ret_t prob;
   if (v < 0) {
-    const auto two_av = 2 * a * v;
+	const auto two_av = 2 * a * v;
     const auto two_va_one_minus_w = (two_av * (1.0 - w));
     const auto two_avw = two_av * w;
     const auto exp_two_va_one_minus_w = exp(two_va_one_minus_w);
@@ -77,7 +77,7 @@ inline auto log_probability_GradAV(const T_a& a, const T_v& v, const T_w& w) {
       return -exp(prob);
     }
   } else {
-    const auto minus_two_av = (-2.0 * a * v);
+	const auto minus_two_av = (-2.0 * a * v);
     const auto minus_two_va_one_minus_w = (minus_two_av * (1.0 - w));
     const auto exp_minus_two_va_one_minus_w = exp(minus_two_va_one_minus_w);
     const auto exp_minus_two_av = exp(minus_two_av);
@@ -626,11 +626,11 @@ inline auto wiener_lcdf(const T_y& y, const T_a& a, const T_t0& t0,
   T_w_ref w_ref = w;
   T_v_ref v_ref = v;
 
-  decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
-  decltype(auto) a_val = to_ref(as_value_column_array_or_scalar(a_ref));
-  decltype(auto) v_val = to_ref(as_value_column_array_or_scalar(v_ref));
-  decltype(auto) w_val = to_ref(as_value_column_array_or_scalar(w_ref));
-  decltype(auto) t0_val = to_ref(as_value_column_array_or_scalar(t0_ref));
+  auto y_val = to_ref(as_value_column_array_or_scalar(y_ref));
+  auto a_val = to_ref(as_value_column_array_or_scalar(a_ref));
+  auto v_val = to_ref(as_value_column_array_or_scalar(v_ref));
+  auto w_val = to_ref(as_value_column_array_or_scalar(w_ref));
+  auto t0_val = to_ref(as_value_column_array_or_scalar(t0_ref));
   check_positive_finite(function_name, "Random variable", y_val);
   check_positive_finite(function_name, "Boundary separation", a_val);
   check_finite(function_name, "Drift rate", v_val);

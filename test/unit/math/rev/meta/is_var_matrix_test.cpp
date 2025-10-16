@@ -1,10 +1,8 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <test/unit/math/rev/fun/util.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 
-TEST_F(AgradRev, MetaTraitsRevScal_is_var_matrix_test) {
+TEST(MetaTraitsRevScal, is_var_matrix_test) {
   using stan::is_var_matrix;
   using stan::math::var;
   using stan::math::var_value;
@@ -20,7 +18,7 @@ TEST_F(AgradRev, MetaTraitsRevScal_is_var_matrix_test) {
   EXPECT_FALSE((is_var_matrix<Eigen::MatrixXd>::value));
 }
 
-TEST_F(AgradRev, MetaTraitsRevScal_is_var_col_vector_test) {
+TEST(MetaTraitsRevScal, is_var_col_vector_test) {
   using stan::is_var_col_vector;
   using stan::math::var;
   using stan::math::var_value;
@@ -49,7 +47,7 @@ TEST_F(AgradRev, MetaTraitsRevScal_is_var_col_vector_test) {
   EXPECT_FALSE((is_var_col_vector<Eigen::MatrixXd>::value));
 }
 
-TEST_F(AgradRev, MetaTraitsRevScal_is_var_row_vector_test) {
+TEST(MetaTraitsRevScal, is_var_row_vector_test) {
   using stan::is_var_row_vector;
   using stan::math::var;
   using stan::math::var_value;
@@ -78,7 +76,7 @@ TEST_F(AgradRev, MetaTraitsRevScal_is_var_row_vector_test) {
   EXPECT_FALSE((is_var_row_vector<Eigen::MatrixXd>::value));
 }
 
-TEST_F(AgradRev, MetaTraitsRevScal_is_var_vector_test) {
+TEST(MetaTraitsRevScal, is_var_vector_test) {
   using stan::is_var_vector;
   using stan::math::var;
   using stan::math::var_value;

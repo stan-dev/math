@@ -7,7 +7,7 @@ TEST(mathMixMatFun, get_real) {
 }
 
 template <typename T>
-inline void test_vectorized_get_real() {
+void test_vectorized_get_real() {
   using complex_t = std::complex<T>;
   using matrix_t = Eigen::Matrix<T, -1, -1>;
   using complex_matrix = Eigen::Matrix<complex_t, -1, -1>;

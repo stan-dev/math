@@ -1,10 +1,9 @@
 #include <stan/math/rev.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <limits>
 #include <vector>
 
-TEST_F(AgradRev, RevErrorHandlingScalar_CheckBoundedVarCheckVectorized) {
+TEST(AgradRevErrorHandlingScalar, CheckBoundedVarCheckVectorized) {
   using stan::math::check_bounded;
   using stan::math::var;
   using std::vector;
@@ -30,7 +29,7 @@ TEST_F(AgradRev, RevErrorHandlingScalar_CheckBoundedVarCheckVectorized) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, RevErrorHandlingScalar_CheckBounded_X) {
+TEST(AgradRevErrorHandlingScalar, CheckBounded_X) {
   using stan::math::check_bounded;
   using stan::math::var;
 
@@ -81,7 +80,7 @@ TEST_F(AgradRev, RevErrorHandlingScalar_CheckBounded_X) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, RevErrorHandlingScalar_CheckBounded_Low) {
+TEST(AgradRevErrorHandlingScalar, CheckBounded_Low) {
   using stan::math::check_bounded;
   using stan::math::var;
 
@@ -111,7 +110,7 @@ TEST_F(AgradRev, RevErrorHandlingScalar_CheckBounded_Low) {
       << ", " << high;
   stan::math::recover_memory();
 }
-TEST_F(AgradRev, RevErrorHandlingScalar_CheckBounded_High) {
+TEST(AgradRevErrorHandlingScalar, CheckBounded_High) {
   using stan::math::check_bounded;
   using stan::math::var;
 
@@ -142,7 +141,7 @@ TEST_F(AgradRev, RevErrorHandlingScalar_CheckBounded_High) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, RevErrorHandlingScalar_CheckBoundedVarCheckUnivariate) {
+TEST(AgradRevErrorHandlingScalar, CheckBoundedVarCheckUnivariate) {
   using stan::math::check_bounded;
   using stan::math::var;
 

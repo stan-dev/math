@@ -26,7 +26,7 @@ namespace math {
 template <typename Mat1, typename Mat2,
           require_all_matrix_t<Mat1, Mat2>* = nullptr,
           require_any_rev_matrix_t<Mat1, Mat2>* = nullptr>
-inline auto elt_multiply(const Mat1& m1, const Mat2& m2) {
+auto elt_multiply(const Mat1& m1, const Mat2& m2) {
   check_matching_dims("elt_multiply", "m1", m1, "m2", m2);
   using inner_ret_type = decltype(value_of(m1).cwiseProduct(value_of(m2)));
   using ret_type = return_var_matrix_t<inner_ret_type, Mat1, Mat2>;

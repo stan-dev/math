@@ -24,7 +24,7 @@ TEST(MathMatrixCL, inverse_cl_exception) {
   EXPECT_THROW(m3 = tri_inverse(m5), std::invalid_argument);
 }
 
-inline void lower_inverse_test(int size) {
+void lower_inverse_test(int size) {
   boost::random::mt19937 rng;
   auto m1 = stan::math::matrix_d(size, size);
   for (int i = 0; i < size; i++) {
@@ -55,7 +55,7 @@ inline void lower_inverse_test(int size) {
   EXPECT_LT(max_error, 1e-8);
 }
 
-inline void upper_inverse_test(int size) {
+void upper_inverse_test(int size) {
   boost::random::mt19937 rng;
   auto m1 = stan::math::matrix_d(size, size);
   for (int i = 0; i < size; i++) {

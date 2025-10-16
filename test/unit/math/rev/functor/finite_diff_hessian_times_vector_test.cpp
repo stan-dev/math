@@ -1,5 +1,4 @@
 #include <stan/math/rev.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/fun/util.hpp>
 #include <iostream>
@@ -34,7 +33,7 @@ struct fun2 {
   }
 };
 
-TEST_F(AgradRev, RevFunctor_finiteDiffHessianTimesVector) {
+TEST(RevFunctor, finiteDiffHessianTimesVector) {
   using stan::math::internal::finite_diff_hessian_times_vector_auto;
 
   fun1 f;
@@ -56,7 +55,7 @@ TEST_F(AgradRev, RevFunctor_finiteDiffHessianTimesVector) {
   EXPECT_FLOAT_EQ(2 * x(0) * v(0) + 6 * v(1), Hv(1));
 }
 
-TEST_F(AgradRev, RevFunctor_finiteDiffHessianTimesVector2) {
+TEST(RevFunctor, finiteDiffHessianTimesVector2) {
   using stan::math::internal::finite_diff_hessian_times_vector_auto;
 
   fun2 f;

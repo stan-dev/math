@@ -1,9 +1,8 @@
 #include <stan/math/rev.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/fun/util.hpp>
 
-TEST_F(AgradRev, RevMatrix_rows_vector) {
+TEST(AgradRevMatrix, rows_vector) {
   using stan::math::row_vector_v;
   using stan::math::rows;
   using stan::math::var_value;
@@ -18,7 +17,7 @@ TEST_F(AgradRev, RevMatrix_rows_vector) {
   vec_v.resize(0);
   EXPECT_EQ(0U, rows(vec_v));
 }
-TEST_F(AgradRev, RevMatrix_rows_rowvector) {
+TEST(AgradRevMatrix, rows_rowvector) {
   using stan::math::row_vector_v;
   using stan::math::rows;
   using stan::math::var_value;
@@ -34,7 +33,7 @@ TEST_F(AgradRev, RevMatrix_rows_rowvector) {
   EXPECT_EQ(1U, rows(r_v));
 }
 
-TEST_F(AgradRev, RevMatrix_rows_matrix) {
+TEST(AgradRevMatrix, rows_matrix) {
   using stan::math::matrix_v;
   using stan::math::rows;
   using stan::math::var_value;

@@ -9,7 +9,7 @@ auto unit_vector_constrain_functor
 auto unit_vector_constrain_functor2 = [](const auto& a) {
   using T_lp = stan::return_type_t<decltype(a)>;
   T_lp lp(4);
-  if constexpr (!stan::is_constant<T_lp>::value) {
+  if (!stan::is_constant<T_lp>::value) {
     stan::math::adjoint_of(lp) += 9;
   }
   return stan::math::unit_vector_constrain(a, lp);

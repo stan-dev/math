@@ -33,9 +33,9 @@ namespace math {
 template <bool propto, typename T_y, typename T_covar, typename T_w,
           require_all_matrix_t<T_y, T_covar>* = nullptr,
           require_col_vector_t<T_w>* = nullptr>
-inline return_type_t<T_y, T_covar, T_w> multi_gp_lpdf(const T_y& y,
-                                                      const T_covar& Sigma,
-                                                      const T_w& w) {
+return_type_t<T_y, T_covar, T_w> multi_gp_lpdf(const T_y& y,
+                                               const T_covar& Sigma,
+                                               const T_w& w) {
   using T_lp = return_type_t<T_y, T_covar, T_w>;
   static constexpr const char* function = "multi_gp_lpdf";
   check_size_match(function, "Size of random variable (rows y)", y.rows(),

@@ -1,8 +1,7 @@
 #include <stan/math/rev/meta.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 
-TEST_F(AgradRev, MetaTraitsRevScal_is_vari) {
+TEST(MetaTraitsRevScal, is_vari) {
   using stan::is_vari;
   using stan::math::vari;
   using stan::math::vari_value;

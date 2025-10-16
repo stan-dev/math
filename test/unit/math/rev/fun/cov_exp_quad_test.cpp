@@ -1,12 +1,12 @@
 #include <stan/math/rev.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
+#include <test/unit/math/rev/util.hpp>
 #include <test/unit/util.hpp>
 #include <limits>
 #include <string>
 #include <vector>
 
-TEST_F(AgradRev, RevMath_cov_exp_quad_vvv) {
+TEST(RevMath, cov_exp_quad_vvv) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
 
   for (std::size_t i = 0; i < 3; ++i) {
@@ -54,7 +54,7 @@ TEST_F(AgradRev, RevMath_cov_exp_quad_vvv) {
   }
 }
 
-TEST_F(AgradRev, RevMath_cov_exp_quad_vvd) {
+TEST(RevMath, cov_exp_quad_vvd) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
 
   double l = 5;
@@ -98,7 +98,7 @@ TEST_F(AgradRev, RevMath_cov_exp_quad_vvd) {
   }
 }
 
-TEST_F(AgradRev, RevMath_cov_exp_quad_vdv) {
+TEST(RevMath, cov_exp_quad_vdv) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
 
   double sigma = 0.2;
@@ -139,7 +139,7 @@ TEST_F(AgradRev, RevMath_cov_exp_quad_vdv) {
   }
 }
 
-TEST_F(AgradRev, RevMath_cov_exp_quad_vdd) {
+TEST(RevMath, cov_exp_quad_vdd) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
   double sigma = 0.2;
   double l = 5;
@@ -176,7 +176,7 @@ TEST_F(AgradRev, RevMath_cov_exp_quad_vdd) {
   }
 }
 
-TEST_F(AgradRev, RevMath_cov_exp_quad_dvv) {
+TEST(RevMath, cov_exp_quad_dvv) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
   std::vector<double> x(3);
   x[0] = -2;
@@ -216,7 +216,7 @@ TEST_F(AgradRev, RevMath_cov_exp_quad_dvv) {
   }
 }
 
-TEST_F(AgradRev, RevMath_cov_exp_quad_dvd) {
+TEST(RevMath, cov_exp_quad_dvd) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
   std::vector<double> x(3);
   x[0] = -2;
@@ -251,7 +251,7 @@ TEST_F(AgradRev, RevMath_cov_exp_quad_dvd) {
   }
 }
 
-TEST_F(AgradRev, RevMath_cov_exp_quad_ddv) {
+TEST(RevMath, cov_exp_quad_ddv) {
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
   std::vector<double> x(3);
   x[0] = -2;
@@ -285,7 +285,7 @@ TEST_F(AgradRev, RevMath_cov_exp_quad_ddv) {
   }
 }
 
-TEST_F(AgradRev, RevMath_cov_exp_quad_vector_vvv) {
+TEST(RevMath, cov_exp_quad_vector_vvv) {
   typedef Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> vector_v;
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
 
@@ -352,7 +352,7 @@ TEST_F(AgradRev, RevMath_cov_exp_quad_vector_vvv) {
   }
 }
 
-TEST_F(AgradRev, RevMath_cov_exp_quad_vector_vvd) {
+TEST(RevMath, cov_exp_quad_vector_vvd) {
   typedef Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> vector_v;
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
   double l = 5;
@@ -414,7 +414,7 @@ TEST_F(AgradRev, RevMath_cov_exp_quad_vector_vvd) {
   }
 }
 
-TEST_F(AgradRev, RevMath_cov_exp_quad_vector_vdv) {
+TEST(RevMath, cov_exp_quad_vector_vdv) {
   typedef Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> vector_v;
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
   double sigma = 0.2;
@@ -476,7 +476,7 @@ TEST_F(AgradRev, RevMath_cov_exp_quad_vector_vdv) {
   }
 }
 
-TEST_F(AgradRev, RevMath_cov_exp_quad_vector_vdd) {
+TEST(RevMath, cov_exp_quad_vector_vdd) {
   typedef Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> vector_v;
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
   double sigma = 0.2;
@@ -533,7 +533,7 @@ TEST_F(AgradRev, RevMath_cov_exp_quad_vector_vdd) {
   }
 }
 
-TEST_F(AgradRev, RevMath_cov_exp_quad_vector_dvv) {
+TEST(RevMath, cov_exp_quad_vector_dvv) {
   typedef Eigen::Matrix<double, Eigen::Dynamic, 1> vector_d;
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
 
@@ -603,7 +603,7 @@ TEST_F(AgradRev, RevMath_cov_exp_quad_vector_dvv) {
   }
 }
 
-TEST_F(AgradRev, RevMath_cov_exp_quad_vector_dvd) {
+TEST(RevMath, cov_exp_quad_vector_dvd) {
   typedef Eigen::Matrix<double, Eigen::Dynamic, 1> vector_d;
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
   std::vector<vector_d> x(3);
@@ -648,7 +648,7 @@ TEST_F(AgradRev, RevMath_cov_exp_quad_vector_dvd) {
   }
 }
 
-TEST_F(AgradRev, RevMath_cov_exp_quad_vector_ddv) {
+TEST(RevMath, cov_exp_quad_vector_ddv) {
   typedef Eigen::Matrix<double, Eigen::Dynamic, 1> vector_d;
   Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> cov;
   std::vector<vector_d> x(3);
@@ -693,7 +693,7 @@ TEST_F(AgradRev, RevMath_cov_exp_quad_vector_ddv) {
   }
 }
 
-TEST_F(AgradRev, RevMath_cov_exp_quad1_vec_eigen_rvec) {
+TEST(RevMath, cov_exp_quad1_vec_eigen_rvec) {
   using stan::math::squared_distance;
   using stan::math::var;
 
@@ -720,7 +720,7 @@ TEST_F(AgradRev, RevMath_cov_exp_quad1_vec_eigen_rvec) {
           << "index: (" << i << ", " << j << ")";
 }
 
-TEST_F(AgradRev, RevMath_cov_exp_quad2_vec_eigen_rvec) {
+TEST(RevMath, cov_exp_quad2_vec_eigen_rvec) {
   using stan::math::squared_distance;
   using stan::math::var;
   var sigma = 0.2;
@@ -766,7 +766,7 @@ TEST_F(AgradRev, RevMath_cov_exp_quad2_vec_eigen_rvec) {
     }
 }
 
-TEST_F(AgradRev, RevMath_cov_exp_quad2_vec_eigen_mixed) {
+TEST(RevMath, cov_exp_quad2_vec_eigen_mixed) {
   using stan::math::squared_distance;
   using stan::math::var;
   var sigma = 0.2;
@@ -903,7 +903,7 @@ TEST_F(AgradRev, RevMath_cov_exp_quad2_vec_eigen_mixed) {
     }
 }
 
-TEST_F(AgradRev, RevMath_cov_exp_quad_domain_error_training) {
+TEST(RevMath, cov_exp_quad_domain_error_training) {
   using stan::math::var;
   var sigma = 0.2;
   var l = 5;
@@ -946,7 +946,7 @@ TEST_F(AgradRev, RevMath_cov_exp_quad_domain_error_training) {
                std::domain_error);
 }
 
-TEST_F(AgradRev, RevMath_cov_exp_quad_nan_error_training) {
+TEST(RevMath, cov_exp_quad_nan_error_training) {
   using stan::math::var;
   var sigma = 0.2;
   var l = 5;
@@ -1020,7 +1020,7 @@ TEST_F(AgradRev, RevMath_cov_exp_quad_nan_error_training) {
                std::domain_error);
 }
 
-TEST_F(AgradRev, RevMath_cov_exp_quad_domain_error) {
+TEST(RevMath, cov_exp_quad_domain_error) {
   using stan::math::var;
   var sigma = 0.2;
   var l = 5;
@@ -1099,7 +1099,7 @@ TEST_F(AgradRev, RevMath_cov_exp_quad_domain_error) {
                std::domain_error);
 }
 
-TEST_F(AgradRev, RevMath_cov_exp_quad2_nan_domain_error) {
+TEST(RevMath, cov_exp_quad2_nan_domain_error) {
   using stan::math::var;
   var sigma = 0.2;
   var l = 5;
@@ -1227,7 +1227,7 @@ TEST_F(AgradRev, RevMath_cov_exp_quad2_nan_domain_error) {
                std::domain_error);
 }
 
-TEST_F(AgradRev, RevMath_cov_exp_quad2_dim_mismatch_vec_eigen_vec) {
+TEST(RevMath, cov_exp_quad2_dim_mismatch_vec_eigen_vec) {
   using stan::math::var;
   var sigma = 0.2;
   var l = 5;
@@ -1248,7 +1248,7 @@ TEST_F(AgradRev, RevMath_cov_exp_quad2_dim_mismatch_vec_eigen_vec) {
                std::invalid_argument);
 }
 
-TEST_F(AgradRev, RevMath_cov_exp_quad2_dim_mismatch_vec_eigen_rvec) {
+TEST(RevMath, cov_exp_quad2_dim_mismatch_vec_eigen_rvec) {
   using stan::math::var;
   var sigma = 0.2;
   var l = 5;
@@ -1269,7 +1269,7 @@ TEST_F(AgradRev, RevMath_cov_exp_quad2_dim_mismatch_vec_eigen_rvec) {
                std::invalid_argument);
 }
 
-TEST_F(AgradRev, RevMath_cov_exp_quad2_dim_mismatch_vec_eigen_mixed) {
+TEST(RevMath, cov_exp_quad2_dim_mismatch_vec_eigen_mixed) {
   using stan::math::var;
   var sigma = 0.2;
   var l = 5;
@@ -1308,7 +1308,7 @@ TEST_F(AgradRev, RevMath_cov_exp_quad2_dim_mismatch_vec_eigen_mixed) {
   EXPECT_THROW(stan::math::cov_exp_quad(x_vec_2, x_rvec_2, sigma, l),
                std::invalid_argument);
 }
-TEST_F(AgradRev, RevMatrix_cov_exp_quad_check_varis_on_stack) {
+TEST(AgradRevMatrix, cov_exp_quad_check_varis_on_stack) {
   using stan::math::to_var;
   std::vector<double> x(3);
   double sigma = 0.2;

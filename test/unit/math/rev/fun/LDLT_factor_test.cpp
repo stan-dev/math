@@ -1,9 +1,8 @@
 #include <stan/math/rev.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
 
-TEST_F(AgradRev, RevMatrix_LDLT_factor_default_constructor) {
+TEST(AgradRevMatrix, LDLT_factor_default_constructor) {
   using stan::math::LDLT_factor;
   using stan::math::var;
 
@@ -26,7 +25,7 @@ TEST_F(AgradRev, RevMatrix_LDLT_factor_default_constructor) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, RevMatrix_solve) {
+TEST(AgradRevMatrix, solve) {
   using stan::math::LDLT_factor;
   using stan::math::var;
 
@@ -63,7 +62,7 @@ TEST_F(AgradRev, RevMatrix_solve) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, RevMatrix_matrix) {
+TEST(AgradRevMatrix, matrix) {
   using stan::math::LDLT_factor;
   using stan::math::var;
 

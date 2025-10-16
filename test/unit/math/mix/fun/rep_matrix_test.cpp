@@ -4,14 +4,14 @@ TEST(MathMixMatFun, repMatrix) {
   // y is scalar
   auto f = [](int m, int n) {
     return [=](const auto& y) {
-      return stan::math::rep_matrix<std::decay_t<decltype(y)>>(y, m, n);
+      return stan::math::rep_matrix<decltype(y)>(y, m, n);
     };
   };
 
   // y is row vector or column vector
   auto g = [](int k) {
     return [=](const auto& y) {
-      return stan::math::rep_matrix<std::decay_t<decltype(y)>>(y, k);
+      return stan::math::rep_matrix<decltype(y)>(y, k);
     };
   };
 

@@ -26,7 +26,7 @@ namespace test {
  */
 template <bool Base_v, bool SparseCompressed_v, bool SparseMatrix_v,
           bool SparseMap_v, typename Scalar, template <class...> class Checker>
-inline void test_eigen_sparse_matrix() {
+void test_eigen_sparse_matrix() {
   using Eigen::EigenBase;
   using Eigen::SparseCompressedBase;
   using Eigen::SparseMapBase;
@@ -70,7 +70,7 @@ inline void test_eigen_sparse_matrix() {
  */
 template <bool Base_v, bool Dense_v, bool Matrix_v, bool Array_v, bool Map_v,
           template <class...> class Checker, typename EigenType>
-inline void test_eigen_dense_hierarchy() {
+void test_eigen_dense_hierarchy() {
   using Eigen::ArrayBase;
   using Eigen::DenseBase;
   using Eigen::EigenBase;
@@ -117,7 +117,7 @@ inline void test_eigen_dense_hierarchy() {
  */
 template <bool Base_v, bool Expr_v, bool Segment_v, bool Block_v,
           template <class...> class Checker, typename EigenType>
-inline void test_eigen_dense_exprs() {
+void test_eigen_dense_exprs() {
   std::remove_reference_t<EigenType> A;
   std::remove_reference_t<EigenType> B;
 
@@ -155,7 +155,7 @@ inline void test_eigen_dense_exprs() {
  */
 template <bool eigen_dense_solver_v, typename Scalar,
           template <class...> class Checker>
-inline void test_eigen_dense_decomp_matrix() {
+void test_eigen_dense_decomp_matrix() {
   using Eigen::DenseBase;
   using Eigen::EigenBase;
   using Eigen::MapBase;
@@ -176,7 +176,7 @@ inline void test_eigen_dense_decomp_matrix() {
  */
 template <bool eigen_dense_solver_v, typename Scalar,
           template <class...> class Checker>
-inline void test_eigen_dense_decomp_array() {
+void test_eigen_dense_decomp_array() {
   using Eigen::DenseBase;
   using Eigen::EigenBase;
   using Eigen::MapBase;
@@ -211,7 +211,7 @@ inline void test_eigen_dense_decomp_array() {
 template <bool Base_v, bool Dense_v, bool Matrix_v, bool Array_v, bool Map_v,
           template <class...> class Checker,
           template <class Scalar, int...> class EigenType, int... EigenDims>
-inline void all_eigen_dense() {
+void all_eigen_dense() {
   using stan::math::fvar;
   using stan::math::var;
 
@@ -250,7 +250,7 @@ inline void all_eigen_dense() {
 template <bool Base_v, bool Expr_v, bool Segment_v, bool Block_v,
           template <class...> class Checker,
           template <class Scalar, int...> class EigenType, int... EigenDims>
-inline void all_eigen_dense_exprs() {
+void all_eigen_dense_exprs() {
   using stan::math::fvar;
   using stan::math::var;
   test_eigen_dense_exprs<Base_v, Expr_v, Segment_v, Block_v, Checker,
@@ -273,7 +273,7 @@ inline void all_eigen_dense_exprs() {
  *  true when it's conditional is successful or false otherwise.
  */
 template <bool eigen_dense_solver_v, template <class...> class Checker>
-inline void all_eigen_dense_decomp() {
+void all_eigen_dense_decomp() {
   using stan::math::fvar;
   using stan::math::var;
 
@@ -307,7 +307,7 @@ inline void all_eigen_dense_decomp() {
  */
 template <bool Base_v, bool SparseCompressed_v, bool SparseMatrix_v,
           bool SparseMap_v, template <class...> class Checker>
-inline void all_eigen_sparse() {
+void all_eigen_sparse() {
   using stan::math::fvar;
   using stan::math::var;
 

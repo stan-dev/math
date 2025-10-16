@@ -26,10 +26,11 @@ namespace math {
 template <typename T_y, typename T_loc, typename T_scale, typename T_inv_scale,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_loc, T_scale, T_inv_scale>* = nullptr>
-inline return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_cdf(
+return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_cdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma,
     const T_inv_scale& lambda) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_inv_scale>;
+  using T_partials_array = Eigen::Array<T_partials_return, Eigen::Dynamic, 1>;
   using T_y_ref = ref_type_if_not_constant_t<T_y>;
   using T_mu_ref = ref_type_if_not_constant_t<T_loc>;
   using T_sigma_ref = ref_type_if_not_constant_t<T_scale>;
@@ -61,12 +62,15 @@ inline return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_cdf(
   auto ops_partials
       = make_partials_propagator(y_ref, mu_ref, sigma_ref, lambda_ref);
 
+  using T_y_val_scalar = scalar_type_t<decltype(y_val)>;
   if constexpr (is_vector<T_y>::value) {
-    if ((y_val == NEGATIVE_INFTY).any()) {
+    if ((forward_as<Eigen::Array<T_y_val_scalar, Eigen::Dynamic, 1>>(y_val)
+         == NEGATIVE_INFTY)
+            .any()) {
       return ops_partials.build(0.0);
     }
   } else {
-    if (y_val == NEGATIVE_INFTY) {
+    if (forward_as<T_y_val_scalar>(y_val) == NEGATIVE_INFTY) {
       return ops_partials.build(0.0);
     }
   }
@@ -89,9 +93,9 @@ inline return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_cdf(
 
   T_partials_return cdf(1.0);
   if constexpr (is_vector<decltype(cdf_n)>::value) {
-    cdf = cdf_n.prod();
+    cdf = forward_as<T_partials_array>(cdf_n).prod();
   } else {
-    cdf = cdf_n;
+    cdf = forward_as<T_partials_return>(cdf_n);
   }
 
   if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale, T_inv_scale>) {

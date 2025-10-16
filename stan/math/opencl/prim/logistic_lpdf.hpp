@@ -37,7 +37,7 @@ template <
     require_all_prim_or_rev_kernel_expression_t<T_y_cl, T_loc_cl,
                                                 T_scale_cl>* = nullptr,
     require_any_not_stan_scalar_t<T_y_cl, T_loc_cl, T_scale_cl>* = nullptr>
-inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl> logistic_lpdf(
+return_type_t<T_y_cl, T_loc_cl, T_scale_cl> logistic_lpdf(
     const T_y_cl& y, const T_loc_cl& mu, const T_scale_cl& sigma) {
   using std::isfinite;
   static constexpr const char* function = "logistic_lpdf(OpenCL)";

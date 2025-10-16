@@ -1,8 +1,7 @@
 #include <stan/math/rev.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 
-TEST_F(AgradRev, MathMatrixRevMat_initializeVar) {
+TEST(MathMatrixRevMat, initializeVar) {
   using stan::math::initialize;
   using stan::math::var;
   var a;
@@ -17,7 +16,7 @@ TEST_F(AgradRev, MathMatrixRevMat_initializeVar) {
   EXPECT_FLOAT_EQ(13.2, a.val());
 }
 
-TEST_F(AgradRev, MathMatrixRevMat_initMatrix) {
+TEST(MathMatrixRevMat, initMatrix) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::initialize;

@@ -5,14 +5,14 @@
 #include <limits>
 #include <vector>
 
-inline void test_log_sum_exp(double a, double b) {
+void test_log_sum_exp(double a, double b) {
   using stan::math::log_sum_exp;
   using std::exp;
   using std::log;
   EXPECT_FLOAT_EQ(log(exp(a) + exp(b)), log_sum_exp(a, b));
 }
 
-inline void test_log_sum_exp(const std::vector<double>& as) {
+void test_log_sum_exp(const std::vector<double>& as) {
   using stan::math::log_sum_exp;
   using std::exp;
   using std::log;
@@ -73,7 +73,7 @@ TEST(MathFunctions, log_sum_exp_nan) {
 }
 
 template <int R, int C>
-inline void test_log_sum_exp(const Eigen::Matrix<double, R, C>& as) {
+void test_log_sum_exp(const Eigen::Matrix<double, R, C>& as) {
   using stan::math::log_sum_exp;
   using std::exp;
   using std::log;

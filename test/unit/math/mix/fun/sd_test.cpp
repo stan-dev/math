@@ -1,8 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
 
 template <typename T>
-inline void expect_sd(const T& m, const stan::test::ad_tolerances& tols
-                                  = stan::test::ad_tolerances()) {
+void expect_sd(const T& m, const stan::test::ad_tolerances& tols
+                           = stan::test::ad_tolerances()) {
   auto f = [](const auto& x) { return stan::math::sd(x); };
   Eigen::VectorXd v(m.size());
   Eigen::RowVectorXd rv(m.size());

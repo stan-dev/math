@@ -2,7 +2,7 @@
 #include <vector>
 
 template <typename T>
-inline void expect_prod(const T& m) {
+void expect_prod(const T& m) {
   auto f = [](const auto& x) { return stan::math::prod(x); };
   Eigen::VectorXd v(m.size());
   for (int i = 0; i < m.size(); ++i) {

@@ -82,7 +82,7 @@ inline var inv_inc_beta(const T1& a, const T2& b, const T3& p) {
       double da3 = inc_beta(a_val, b_val, w) * exp(lbeta_ab)
                    * (log_w - digamma(a_val) + digamma_apb);
 
-      a.adj() += vi.adj() * da1 * (exp(da2) - da3);
+      forward_as<var>(a).adj() += vi.adj() * da1 * (exp(da2) - da3);
     }
 
     if constexpr (is_autodiff_v<T2>) {
@@ -95,11 +95,12 @@ inline var inv_inc_beta(const T1& a, const T2& b, const T3& p) {
       double db3 = inc_beta(b_val, a_val, one_m_w) * exp(lbeta_ab)
                    * (log1m_w - digamma(b_val) + digamma_apb);
 
-      b.adj() += vi.adj() * db1 * (exp(db2) - db3);
+      forward_as<var>(b).adj() += vi.adj() * db1 * (exp(db2) - db3);
     }
 
     if constexpr (is_autodiff_v<T3>) {
-      p.adj() += vi.adj() * exp(one_m_b * log1m_w + one_m_a * log_w + lbeta_ab);
+      forward_as<var>(p).adj()
+          += vi.adj() * exp(one_m_b * log1m_w + one_m_a * log_w + lbeta_ab);
     }
   });
 }

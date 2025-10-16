@@ -148,8 +148,7 @@ class adjoint_results_cl : protected results_cl<T_results...> {
  * @param results results that will be calculated.
  */
 template <typename... T_results>
-inline adjoint_results_cl<T_results...> adjoint_results(
-    T_results&&... results) {
+adjoint_results_cl<T_results...> adjoint_results(T_results&&... results) {
   return adjoint_results_cl<T_results...>(std::forward<T_results>(results)...);
 }
 

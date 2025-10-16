@@ -241,7 +241,7 @@ TEST_F(AgradRev, arena_sparse_matrix_inplace_ops) {
   expect_sparse_dense_matrix_equal(A_m, C);
 }
 
-TEST_F(AgradRev, RevArenaMat_arena_matrix_move_test) {
+TEST(AgradRevArenaMat, arena_matrix_move_test) {
   using stan::math::arena_matrix;
   Eigen::VectorXd c = Eigen::VectorXd::Random(3);
   Eigen::VectorXd d = c;

@@ -39,8 +39,9 @@ namespace math {
 template <bool propto, typename T_y, typename T_dof, typename T_scale,
           require_stan_scalar_t<T_dof>* = nullptr,
           require_all_matrix_t<T_y, T_scale>* = nullptr>
-inline return_type_t<T_y, T_dof, T_scale> wishart_cholesky_lpdf(
-    const T_y& L_Y, const T_dof& nu, const T_scale& L_S) {
+return_type_t<T_y, T_dof, T_scale> wishart_cholesky_lpdf(const T_y& L_Y,
+                                                         const T_dof& nu,
+                                                         const T_scale& L_S) {
   using Eigen::Lower;
   using T_L_Y_ref = ref_type_t<T_y>;
   using T_nu_ref = ref_type_t<T_dof>;

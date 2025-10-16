@@ -1,8 +1,7 @@
 #include <stan/math.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 
-TEST_F(AgradRev, revCore_stdIteratorTraits) {
+TEST(revCore, stdIteratorTraits) {
   using stan::math::var;
   using traits = std::iterator_traits<stan::math::var>;
   var a;

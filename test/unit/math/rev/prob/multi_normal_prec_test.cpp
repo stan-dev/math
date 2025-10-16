@@ -1,8 +1,8 @@
 #include <stan/math/rev.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
+#include <test/unit/math/rev/util.hpp>
 
-TEST_F(AgradRev, ProbDistributionsMultiNormalPrec_MultiNormalVar) {
+TEST(ProbDistributionsMultiNormalPrec, MultiNormalVar) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -20,7 +20,7 @@ TEST_F(AgradRev, ProbDistributionsMultiNormalPrec_MultiNormalVar) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, ProbDistributionsMultiNormalPrec_check_varis_on_stack) {
+TEST(ProbDistributionsMultiNormalPrec, check_varis_on_stack) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::to_var;

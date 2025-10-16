@@ -2,7 +2,6 @@
 #define TEST_UNIT_MATH_REV_CORE_GRADABLE_HPP
 
 #include <stan/math/rev.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <stan/math/rev/fun/quad_form.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
 #include <vector>

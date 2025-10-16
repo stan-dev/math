@@ -23,7 +23,7 @@ namespace math {
  * @throw std::domain_error If the matrix is not a Cholesky factor.
  */
 template <typename T, require_eigen_t<T>* = nullptr>
-inline Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> cholesky_factor_free(
+Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> cholesky_factor_free(
     const T& y) {
   using std::log;
 

@@ -5,9 +5,9 @@
 #include <string>
 
 template <typename T_y, typename T_dof, typename T_scale>
-inline void expect_propto_inv_wishart_lpdf(T_y W1, T_dof nu1, T_scale S1,
-                                           T_y W2, T_dof nu2, T_scale S2,
-                                           std::string message) {
+void expect_propto_inv_wishart_lpdf(T_y W1, T_dof nu1, T_scale S1, T_y W2,
+                                    T_dof nu2, T_scale S2,
+                                    std::string message) {
   expect_eq_diffs(stan::math::inv_wishart_lpdf<false>(W1, nu1, S1),
                   stan::math::inv_wishart_lpdf<false>(W2, nu2, S2),
                   stan::math::inv_wishart_lpdf<true>(W1, nu1, S1),
@@ -78,7 +78,7 @@ TEST_F(AgradDistributionsInvWishart, ProptoSigma) {
                                  "var: sigma");
 }
 
-TEST_F(AgradRev, InvWishart_check_varis_on_stack) {
+TEST(InvWishart, check_varis_on_stack) {
   using stan::math::to_var;
   Eigen::MatrixXd W(2, 2);
   W << 2.011108, -11.20661, -11.20661, 112.94139;

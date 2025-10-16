@@ -25,8 +25,9 @@ template <bool propto, typename T_y, typename T_loc, typename T_covar,
           require_any_not_vector_vt<is_stan_scalar, T_y, T_loc>* = nullptr,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_loc, T_covar>* = nullptr>
-inline return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(
-    const T_y& y, const T_loc& mu, const T_covar& Sigma) {
+return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
+                                                     const T_loc& mu,
+                                                     const T_covar& Sigma) {
   using T_covar_elem = typename scalar_type<T_covar>::type;
   using T_return = return_type_t<T_y, T_loc, T_covar>;
   using T_partials_return = partials_return_t<T_y, T_loc, T_covar>;
@@ -158,8 +159,9 @@ template <bool propto, typename T_y, typename T_loc, typename T_covar,
           require_all_vector_vt<is_stan_scalar, T_y, T_loc>* = nullptr,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_loc, T_covar>* = nullptr>
-inline return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(
-    const T_y& y, const T_loc& mu, const T_covar& Sigma) {
+return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
+                                                     const T_loc& mu,
+                                                     const T_covar& Sigma) {
   using T_covar_elem = typename scalar_type<T_covar>::type;
   using T_return = return_type_t<T_y, T_loc, T_covar>;
   using T_partials_return = partials_return_t<T_y, T_loc, T_covar>;

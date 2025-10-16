@@ -1,5 +1,4 @@
 #include <stan/math/rev.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/prob/test_gradients.hpp>
 #include <test/unit/math/rev/prob/test_gradients_multi_normal.hpp>
@@ -37,7 +36,7 @@ struct multi_normal_cholesky_fun {
   }
 };
 
-TEST_F(AgradRev, ProbDistributionsMultiNormalCholesky2_TestGradFunctional) {
+TEST(ProbDistributionsMultiNormalCholesky2, TestGradFunctional) {
   std::vector<double> x(3 + 3 + 3 * 2);
   // y
   x[0] = 1.0;
@@ -130,7 +129,7 @@ struct vectorized_multi_normal_cholesky_fun {
 };
 
 template <int is_row_vec_y, int is_row_vec_mu>
-inline void test_all_multi_normal_cholesky() {
+void test_all_multi_normal_cholesky() {
   {
     using Eigen::Dynamic;
     using Eigen::Matrix;
@@ -283,8 +282,7 @@ inline void test_all_multi_normal_cholesky() {
   }
 }
 
-TEST_F(AgradRev,
-       ProbDistributionsMultiNormalCholesky2_TestGradFunctionalVectorized) {
+TEST(ProbDistributionsMultiNormalCholesky2, TestGradFunctionalVectorized) {
   test_all_multi_normal_cholesky<1, 1>();
   test_all_multi_normal_cholesky<1, -1>();
   test_all_multi_normal_cholesky<-1, 1>();

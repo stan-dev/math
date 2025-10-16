@@ -1,7 +1,6 @@
 #ifndef TEST_UNIT_MATH_REV_PROB_LKJ_CORR_CHOLESKY_TEST_FUNCTORS
 #define TEST_UNIT_MATH_REV_PROB_LKJ_CORR_CHOLESKY_TEST_FUNCTORS
 #include <stan/math/rev.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <vector>
 
 namespace stan {
@@ -9,7 +8,7 @@ namespace stan {
 namespace math {
 
 template <typename T_L, typename T_eta>
-inline return_type_t<T_eta, T_L> lkj_corr_cholesky_uc(
+return_type_t<T_eta, T_L> lkj_corr_cholesky_uc(
     Eigen::Matrix<T_L, Eigen::Dynamic, 1> L, T_eta eta, int K) {
   using math::cholesky_corr_constrain;
   using math::lkj_corr_cholesky_lpdf;

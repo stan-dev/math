@@ -1,5 +1,4 @@
 #include <stan/math/rev.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <stan/math/mix.hpp>
 #include <gtest/gtest.h>
 
@@ -66,8 +65,8 @@ struct one_arg {
  */
 
 template <typename F>
-inline void test_hessian_finite_diff(const std::string& msg, const F& f,
-                                     Eigen::VectorXd& x) {
+void test_hessian_finite_diff(const std::string& msg, const F& f,
+                              Eigen::VectorXd& x) {
   double fx;
   Eigen::VectorXd grad_fx;
   Eigen::MatrixXd hess_fx;
@@ -90,7 +89,7 @@ inline void test_hessian_finite_diff(const std::string& msg, const F& f,
     EXPECT_NEAR(hess_fx_ad(i), hess_fx(i), 1e-4) << msg;
 }
 
-TEST_F(AgradRev, RevFunctor_polynomial) {
+TEST(RevFunctor, polynomial) {
   poly f;
   Matrix<double, Dynamic, 1> x(2);
   x << 5, 7;
@@ -110,7 +109,7 @@ TEST_F(AgradRev, RevFunctor_polynomial) {
   EXPECT_FLOAT_EQ(6, hess_fx(1, 1));
 }
 
-TEST_F(AgradRev, RevFunctor_linear_function) {
+TEST(RevFunctor, linear_function) {
   linear f;
   Matrix<double, Dynamic, 1> x(3);
   x << 5, 7, -1;
@@ -131,7 +130,7 @@ TEST_F(AgradRev, RevFunctor_linear_function) {
   EXPECT_FLOAT_EQ(0, hess_fx(2, 2));
 }
 
-TEST_F(AgradRev, RevFunctor_exp_diag) {
+TEST(RevFunctor, exp_diag) {
   exp_diag f;
   Matrix<double, Dynamic, 1> x(2);
   x << 2, -1;
@@ -147,7 +146,7 @@ TEST_F(AgradRev, RevFunctor_exp_diag) {
   EXPECT_FLOAT_EQ(stan::math::exp(-1), hess_fx(1, 1));
 }
 
-TEST_F(AgradRev, RevFunctor_exp_full) {
+TEST(RevFunctor, exp_full) {
   exp_full f;
   Matrix<double, Dynamic, 1> x(2);
   x << 1, -3;
@@ -163,7 +162,7 @@ TEST_F(AgradRev, RevFunctor_exp_full) {
   EXPECT_FLOAT_EQ(stan::math::exp(4), hess_fx(1, 1));
 }
 
-TEST_F(AgradRev, RevFunctor_one_arg) {
+TEST(RevFunctor, one_arg) {
   one_arg f;
   Matrix<double, Dynamic, 1> x(1);
   x << 8;
@@ -176,7 +175,7 @@ TEST_F(AgradRev, RevFunctor_one_arg) {
   EXPECT_FLOAT_EQ(6 * 8, hess_fx(0, 0));
 }
 
-TEST_F(AgradRev, RevFunctor_FiniteDiffHessianAuto) {
+TEST(RevFunctor, FiniteDiffHessianAuto) {
   auto norm_fun
       = [](const auto& x) { return stan::math::normal_lpdf(x(0), x(1), x(2)); };
   Eigen::VectorXd x(3);

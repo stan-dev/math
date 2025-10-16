@@ -53,11 +53,15 @@ namespace math {
  */
 template <bool propto, typename T_n, typename T_N, typename T_x,
           typename T_alpha, typename T_beta, require_matrix_t<T_x>* = nullptr>
-inline return_type_t<T_x, T_alpha, T_beta> binomial_logit_glm_lpmf(
+return_type_t<T_x, T_alpha, T_beta> binomial_logit_glm_lpmf(
     const T_n& n, const T_N& N, const T_x& x, const T_alpha& alpha,
     const T_beta& beta) {
   constexpr int T_x_rows = T_x::RowsAtCompileTime;
+  using T_xbeta_partials = partials_return_t<T_x, T_beta>;
   using T_partials_return = partials_return_t<T_x, T_alpha, T_beta>;
+  using T_xbeta_tmp =
+      typename std::conditional_t<T_x_rows == 1, T_xbeta_partials,
+                                  Eigen::Array<T_xbeta_partials, -1, 1>>;
   using T_n_ref = ref_type_if_t<is_autodiff_v<T_n>, T_n>;
   using T_N_ref = ref_type_if_t<is_autodiff_v<T_N>, T_N>;
   using T_x_ref = ref_type_if_t<is_autodiff_v<T_x>, T_x>;
@@ -100,7 +104,7 @@ inline return_type_t<T_x, T_alpha, T_beta> binomial_logit_glm_lpmf(
   auto&& x_val = value_of(x_ref);
   Eigen::Array<T_partials_return, -1, 1> theta(N_instances);
   if constexpr (T_x_rows == 1) {
-    theta = (x_val * beta_val)(0, 0) + alpha_val;
+    theta = forward_as<T_xbeta_tmp>((x_val * beta_val)(0, 0)) + alpha_val;
   } else {
     theta = (x_val * beta_val).array() + alpha_val;
   }
@@ -130,7 +134,9 @@ inline return_type_t<T_x, T_alpha, T_beta> binomial_logit_glm_lpmf(
 
     if constexpr (is_autodiff_v<T_beta>) {
       if constexpr (T_x_rows == 1) {
-        edge<2>(ops_partials).partials_ = theta_derivative.sum() * x_val;
+        edge<2>(ops_partials).partials_
+            = forward_as<Eigen::Matrix<T_partials_return, 1, -1>>(
+                theta_derivative.sum() * x_val);
       } else {
         partials<2>(ops_partials) = x_val.transpose() * theta_derivative;
       }
@@ -138,7 +144,9 @@ inline return_type_t<T_x, T_alpha, T_beta> binomial_logit_glm_lpmf(
 
     if constexpr (is_autodiff_v<T_x>) {
       if constexpr (T_x_rows == 1) {
-        edge<0>(ops_partials).partials_ = beta_val * theta_derivative.sum();
+        edge<0>(ops_partials).partials_
+            = forward_as<Eigen::Array<T_partials_return, -1, T_x_rows>>(
+                beta_val * theta_derivative.sum());
       } else {
         edge<0>(ops_partials).partials_
             = (beta_val * theta_derivative.transpose()).transpose();

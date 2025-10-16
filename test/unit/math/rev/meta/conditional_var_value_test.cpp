@@ -1,23 +1,22 @@
 #include <stan/math/rev/meta.hpp>
 #include <test/unit/util.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 
-TEST_F(AgradRev, MathMetaRev_conditional_var_value_scalar) {
+TEST(MathMetaRev, conditional_var_value_scalar) {
   using stan::conditional_var_value_t;
   using stan::math::var;
   EXPECT_SAME_TYPE(double, conditional_var_value_t<double, double>);
   EXPECT_SAME_TYPE(var, conditional_var_value_t<var, double>);
 }
 
-TEST_F(AgradRev, MathMetaRev_conditional_var_value_reference) {
+TEST(MathMetaRev, conditional_var_value_reference) {
   using stan::conditional_var_value_t;
   EXPECT_SAME_TYPE(double, conditional_var_value_t<double, double>);
   EXPECT_SAME_TYPE(double, conditional_var_value_t<double&, double&>);
   EXPECT_SAME_TYPE(double, conditional_var_value_t<double&&, double&&>);
 }
 
-TEST_F(AgradRev, MathMetaRev_conditional_var_value_vector) {
+TEST(MathMetaRev, conditional_var_value_vector) {
   using stan::conditional_var_value_t;
   using stan::math::var;
   using stan::math::var_value;
@@ -27,7 +26,7 @@ TEST_F(AgradRev, MathMetaRev_conditional_var_value_vector) {
                    conditional_var_value_t<var, Eigen::VectorXd>);
 }
 
-TEST_F(AgradRev, MathMetaRev_conditional_var_value_row_vector) {
+TEST(MathMetaRev, conditional_var_value_row_vector) {
   using stan::conditional_var_value_t;
   using stan::math::var;
   using stan::math::var_value;
@@ -37,7 +36,7 @@ TEST_F(AgradRev, MathMetaRev_conditional_var_value_row_vector) {
                    conditional_var_value_t<var, Eigen::RowVectorXd>);
 }
 
-TEST_F(AgradRev, MathMetaRev_conditional_var_value_matrix) {
+TEST(MathMetaRev, conditional_var_value_matrix) {
   using stan::conditional_var_value_t;
   using stan::math::var;
   using stan::math::var_value;
@@ -49,7 +48,7 @@ TEST_F(AgradRev, MathMetaRev_conditional_var_value_matrix) {
                    conditional_var_value_t<var, Eigen::Matrix<var, -1, -1>>);
 }
 
-TEST_F(AgradRev, MathMetaRev_conditional_var_value_expression) {
+TEST(MathMetaRev, conditional_var_value_expression) {
   using stan::conditional_var_value_t;
   using stan::math::var;
   using stan::math::var_value;
@@ -63,7 +62,7 @@ TEST_F(AgradRev, MathMetaRev_conditional_var_value_expression) {
       conditional_var_value_t<var, decltype(a + b.block(1, 1, 2, 2))>);
 }
 
-TEST_F(AgradRev, MathMetaRev_conditional_var_value_container_T_scalar) {
+TEST(MathMetaRev, conditional_var_value_container_T_scalar) {
   using stan::conditional_var_value_t;
   using stan::math::var;
   using stan::math::var_value;

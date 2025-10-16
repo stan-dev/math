@@ -12,7 +12,7 @@
 namespace stan {
 namespace test {
 template <typename T, typename S>
-inline void ctor_overloads_float_impl() {
+void ctor_overloads_float_impl() {
   using stan::math::var_value;
   using stan::math::vari_value;
   using stan::math::test::type_name;
@@ -36,7 +36,7 @@ inline void ctor_overloads_float_impl() {
 }
 
 template <typename T>
-inline void ctor_overloads_float() {
+void ctor_overloads_float() {
   ctor_overloads_float_impl<T, double>();
   ctor_overloads_float_impl<T, long double>();
   ctor_overloads_float_impl<T, float>();
@@ -54,7 +54,7 @@ inline void ctor_overloads_float() {
 }
 
 template <typename EigenMat>
-inline void ctor_overloads_matrix(EigenMat&& xx) {
+void ctor_overloads_matrix(EigenMat&& xx) {
   using stan::math::var_value;
   using stan::math::vari_value;
   using stan::math::test::type_name;
@@ -77,7 +77,7 @@ inline void ctor_overloads_matrix(EigenMat&& xx) {
 }
 
 template <typename EigenMat>
-inline void ctor_overloads_sparse_matrix(EigenMat&& x) {
+void ctor_overloads_sparse_matrix(EigenMat&& x) {
   using stan::math::var_value;
   using stan::math::vari_value;
   using stan::math::test::type_name;
@@ -317,7 +317,7 @@ TEST_F(AgradRev, var_matrix_views_const) {
 }
 
 template <typename dense_vec>
-inline void var_vector_views_test() {
+void var_vector_views_test() {
   using stan::math::var_value;
   dense_vec A(10);
   for (Eigen::Index i = 0; i < A.size(); ++i) {
@@ -355,7 +355,7 @@ TEST_F(AgradRev, var_vector_views) {
 }
 
 template <typename dense_vec>
-inline void var_vector_views_const_test() {
+void var_vector_views_const_test() {
   using stan::math::var_value;
   dense_vec A(10);
   for (Eigen::Index i = 0; i < A.size(); ++i) {

@@ -44,7 +44,7 @@ template <bool propto, typename T_y, typename T_x, typename T_alpha,
           typename T_beta, require_matrix_t<T_x>* = nullptr,
           require_col_vector_t<T_alpha>* = nullptr,
           require_matrix_t<T_beta>* = nullptr>
-inline return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
+return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
     const T_y& y, const T_x& x, const T_alpha& alpha, const T_beta& beta) {
   using T_partials_return = partials_return_t<T_x, T_alpha, T_beta>;
   using Eigen::Array;
@@ -194,7 +194,7 @@ inline return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
 }
 
 template <typename T_y, typename T_x, typename T_alpha, typename T_beta>
-inline return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
+return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
     const T_y& y, const T_x& x, const T_alpha& alpha, const T_beta& beta) {
   return categorical_logit_glm_lpmf<false>(y, x, alpha, beta);
 }

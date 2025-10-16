@@ -1,10 +1,9 @@
 #include <stan/math/rev.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <limits>
 #include <vector>
 
-TEST_F(AgradRev, RevErrorHandlingScalar_CheckPositiveFinite_Vector) {
+TEST(AgradRevErrorHandlingScalar, CheckPositiveFinite_Vector) {
   using stan::math::check_positive_finite;
   using stan::math::var;
 
@@ -55,7 +54,7 @@ TEST_F(AgradRev, RevErrorHandlingScalar_CheckPositiveFinite_Vector) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, RevErrorHandlingScalar_CheckPositiveFiniteVarCheckVectorized) {
+TEST(AgradRevErrorHandlingScalar, CheckPositiveFiniteVarCheckVectorized) {
   using stan::math::check_positive_finite;
   using stan::math::var;
 
@@ -88,7 +87,7 @@ TEST_F(AgradRev, RevErrorHandlingScalar_CheckPositiveFiniteVarCheckVectorized) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, RevErrorHandlingMatrix_CheckPositiveFinite_Matrix) {
+TEST(AgradRevErrorHandlingMatrix, CheckPositiveFinite_Matrix) {
   using stan::math::check_positive_finite;
   using stan::math::var;
 
@@ -127,7 +126,7 @@ TEST_F(AgradRev, RevErrorHandlingMatrix_CheckPositiveFinite_Matrix) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, RevErrorHandlingScalar_CheckPositiveFinite) {
+TEST(AgradRevErrorHandlingScalar, CheckPositiveFinite) {
   using stan::math::check_positive_finite;
   using stan::math::var;
 
@@ -155,7 +154,7 @@ TEST_F(AgradRev, RevErrorHandlingScalar_CheckPositiveFinite) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, RevErrorHandlingScalar_CheckPositiveFiniteVarCheckUnivariate) {
+TEST(AgradRevErrorHandlingScalar, CheckPositiveFiniteVarCheckUnivariate) {
   using stan::math::check_positive_finite;
   using stan::math::var;
 

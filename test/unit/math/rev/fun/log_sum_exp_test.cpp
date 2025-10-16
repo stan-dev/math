@@ -1,9 +1,9 @@
 #include <stan/math/rev.hpp>
-#include <test/unit/math/rev/util.hpp>
-#include <test/unit/math/rev/fun/util.hpp>
 #include <gtest/gtest.h>
+#include <test/unit/math/rev/fun/util.hpp>
+#include <test/unit/math/rev/util.hpp>
 
-TEST_F(AgradRev, log_sum_exp_tests_large_values) {
+TEST(log_sum_exp_tests, large_values) {
   using stan::math::var;
 
   // check autodiffing works with var types with large values

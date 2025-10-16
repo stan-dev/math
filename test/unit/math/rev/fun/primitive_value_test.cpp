@@ -1,9 +1,8 @@
 #include <stan/math/rev.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/fun/util.hpp>
 
-TEST_F(AgradRev, Rev_primitiveValue) {
+TEST(AgradRev, primitiveValue) {
   using stan::math::primitive_value;
   using stan::math::var;
 

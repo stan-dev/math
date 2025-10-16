@@ -26,12 +26,10 @@ namespace internal {
  * @param tol relative tolerance
  */
 template <typename T1, typename T2, require_all_stan_scalar_t<T1, T2>...>
-inline void expect_near_rel_finite(const std::string& msg, const T1& x1,
-                                   const T2& x2,
-                                   const relative_tolerance tol
-                                   = relative_tolerance(),
-                                   const char* x1_name = "x1",
-                                   const char* x2_name = "x2") {
+void expect_near_rel_finite(const std::string& msg, const T1& x1, const T2& x2,
+                            const relative_tolerance tol = relative_tolerance(),
+                            const char* x1_name = "x1",
+                            const char* x2_name = "x2") {
   double tol_val = tol.inexact(x1, x2);
   EXPECT_NEAR(x1, x2, tol_val)
       << "expect_near_rel_finite in: " << msg << " for " << x1_name << " vs "
@@ -40,10 +38,9 @@ inline void expect_near_rel_finite(const std::string& msg, const T1& x1,
 
 template <typename EigMat1, typename EigMat2,
           require_all_eigen_t<EigMat1, EigMat2>...>
-inline void expect_near_rel_finite(const std::string& msg, const EigMat1& x1,
-                                   const EigMat2& x2,
-                                   const char* x1_name = "x1",
-                                   const char* x2_name = "x2") {
+void expect_near_rel_finite(const std::string& msg, const EigMat1& x1,
+                            const EigMat2& x2, const char* x1_name = "x1",
+                            const char* x2_name = "x2") {
   EXPECT_EQ(x1.rows(), x2.rows());
   EXPECT_EQ(x1.cols(), x2.cols());
   auto x1_eval = x1.eval();
@@ -54,11 +51,10 @@ inline void expect_near_rel_finite(const std::string& msg, const EigMat1& x1,
 }
 
 template <typename T1, typename T2>
-inline void expect_near_rel_finite(const std::string& msg,
-                                   const std::vector<T1>& x1,
-                                   const std::vector<T2>& x2,
-                                   const char* x1_name = "x1",
-                                   const char* x2_name = "x2") {
+void expect_near_rel_finite(const std::string& msg, const std::vector<T1>& x1,
+                            const std::vector<T2>& x2,
+                            const char* x1_name = "x1",
+                            const char* x2_name = "x2") {
   EXPECT_EQ(x1.size(), x2.size());
   for (size_t i = 0; i < x1.size(); ++i) {
     expect_near_rel_finite(x1[i], x2[i], x1_name, x2_name);
@@ -82,10 +78,9 @@ inline void expect_near_rel_finite(const std::string& msg,
  * @param tol relative tolerance
  */
 template <typename T1, typename T2, require_all_stan_scalar_t<T1, T2>...>
-inline void expect_near_rel(const std::string& msg, const T1& x1, const T2& x2,
-                            relative_tolerance tol = relative_tolerance(),
-                            const char* x1_name = "x1",
-                            const char* x2_name = "x2") {
+void expect_near_rel(const std::string& msg, const T1& x1, const T2& x2,
+                     relative_tolerance tol = relative_tolerance(),
+                     const char* x1_name = "x1", const char* x2_name = "x2") {
   if (stan::math::is_nan(x1) || stan::math::is_nan(x2)) {
     EXPECT_TRUE(stan::math::is_nan(x1) && stan::math::is_nan(x2))
         << "expect_near_rel(" << x1 << ", " << x2 << ")" << std::endl
@@ -117,10 +112,9 @@ inline void expect_near_rel(const std::string& msg, const T1& x1, const T2& x2,
  */
 template <typename EigMat1, typename EigMat2,
           require_all_eigen_t<EigMat1, EigMat2>...>
-inline void expect_near_rel(const std::string& msg, EigMat1&& x1, EigMat2&& x2,
-                            relative_tolerance tol = relative_tolerance(),
-                            const char* x1_name = "x1",
-                            const char* x2_name = "x2") {
+void expect_near_rel(const std::string& msg, EigMat1&& x1, EigMat2&& x2,
+                     relative_tolerance tol = relative_tolerance(),
+                     const char* x1_name = "x1", const char* x2_name = "x2") {
   EXPECT_EQ(x1.rows(), x2.rows())
       << "expect_near_rel (Eigen::Matrix)"
       << " rows must be same size." << x1_name << ".rows() = " << x1.rows()
@@ -138,7 +132,7 @@ inline void expect_near_rel(const std::string& msg, EigMat1&& x1, EigMat2&& x2,
   for (int j = 0; j < x1.cols(); ++j) {
     for (int i = 0; i < x1.rows(); ++i) {
       std::string msg2 = std::string("expect_near_rel; require items x1(");
-      if constexpr (stan::is_vector<EigMat1>::value) {
+      if (stan::is_vector<EigMat1>::value) {
         msg2 += std::to_string(sentinal_val) + ") = x2("
                 + std::to_string(sentinal_val) + "): " + msg;
       } else {
@@ -173,11 +167,10 @@ inline void expect_near_rel(const std::string& msg, EigMat1&& x1, EigMat2&& x2,
  * @param[in] tol relative tolerance
  */
 template <typename T1, typename T2>
-inline void expect_near_rel(const std::string& msg, const std::vector<T1>& x1,
-                            const std::vector<T2>& x2,
-                            relative_tolerance tol = relative_tolerance(),
-                            const char* x1_name = "x1",
-                            const char* x2_name = "x2") {
+void expect_near_rel(const std::string& msg, const std::vector<T1>& x1,
+                     const std::vector<T2>& x2,
+                     relative_tolerance tol = relative_tolerance(),
+                     const char* x1_name = "x1", const char* x2_name = "x2") {
   EXPECT_EQ(x1.size(), x2.size())
       << "expect_near_rel (std::vector):"
       << " vectors must be same size. " << x1_name << ".size() = " << x1.size()
@@ -202,11 +195,10 @@ inline void expect_near_rel(const std::string& msg, const std::vector<T1>& x1,
  * @param tol[in] tolerance for comparison
  */
 template <typename T1, typename T2>
-inline void expect_near_rel(const std::string& msg, const std::complex<T1>& z1,
-                            const std::complex<T2>& z2,
-                            relative_tolerance tol = relative_tolerance(),
-                            const char* x1_name = "x1",
-                            const char* x2_name = "x2") {
+void expect_near_rel(const std::string& msg, const std::complex<T1>& z1,
+                     const std::complex<T2>& z2,
+                     relative_tolerance tol = relative_tolerance(),
+                     const char* x1_name = "x1", const char* x2_name = "x2") {
   expect_near_rel(msg, z1.real(), z2.real(), tol, x1_name, x2_name);
   expect_near_rel(msg, z1.imag(), z2.imag(), tol, x1_name, x2_name);
 }
@@ -225,11 +217,10 @@ inline void expect_near_rel(const std::string& msg, const std::complex<T1>& z1,
  * @param tol[in] tolerance for comparison
  */
 template <typename T1, typename T2>
-inline void expect_near_rel(const std::string& msg, const T1& x1,
-                            const std::complex<T2>& z2,
-                            relative_tolerance tol = relative_tolerance(),
-                            const char* x1_name = "x1",
-                            const char* x2_name = "x2") {
+void expect_near_rel(const std::string& msg, const T1& x1,
+                     const std::complex<T2>& z2,
+                     relative_tolerance tol = relative_tolerance(),
+                     const char* x1_name = "x1", const char* x2_name = "x2") {
   expect_near_rel(msg, x1, z2.real(), tol, x1_name, x2_name);
   expect_near_rel(msg, 0, z2.imag(), tol, x1_name, x2_name);
 }
@@ -248,11 +239,10 @@ inline void expect_near_rel(const std::string& msg, const T1& x1,
  * @param tol[in] tolerance for comparison
  */
 template <typename T1, typename T2>
-inline void expect_near_rel(const std::string& msg, const std::complex<T1>& z1,
-                            const T2& x2,
-                            relative_tolerance tol = relative_tolerance(),
-                            const char* x1_name = "x1",
-                            const char* x2_name = "x2") {
+void expect_near_rel(const std::string& msg, const std::complex<T1>& z1,
+                     const T2& x2,
+                     relative_tolerance tol = relative_tolerance(),
+                     const char* x1_name = "x1", const char* x2_name = "x2") {
   expect_near_rel(msg, z1.real(), x2, tol, x1_name, x2_name);
   expect_near_rel(msg, z1.imag(), 0, tol, x1_name, x2_name);
 }

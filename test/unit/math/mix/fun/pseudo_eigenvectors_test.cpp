@@ -16,7 +16,7 @@ TEST(mathMixFun, pseudoEigenvectors) {
 }
 
 template <typename T>
-inline void expect_zero_matrix(const T& m) {
+void expect_zero_matrix(const T& m) {
   for (int j = 0; j < m.cols(); ++j) {
     for (int i = 0; i < m.rows(); ++i) {
       EXPECT_NEAR(0.0, stan::math::value_of_rec(m(i, j)), 1e-6);
@@ -25,7 +25,7 @@ inline void expect_zero_matrix(const T& m) {
 }
 
 template <typename T>
-inline void test_pseudo_eigendecomposition() {
+void test_pseudo_eigendecomposition() {
   using stan::math::pseudo_eigenvalues;
   using stan::math::pseudo_eigenvectors;
   for (const auto& x : stan::test::square_test_matrices(1, 3)) {

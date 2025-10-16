@@ -33,7 +33,7 @@ namespace math {
  * @tparam T_scale_fail Type of beta.
  */
 template <typename T_y, typename T_scale_succ, typename T_scale_fail>
-inline return_type_t<T_y, T_scale_succ, T_scale_fail> beta_cdf(
+return_type_t<T_y, T_scale_succ, T_scale_fail> beta_cdf(
     const T_y& y, const T_scale_succ& alpha, const T_scale_fail& beta) {
   using T_partials_return = partials_return_t<T_y, T_scale_succ, T_scale_fail>;
   using T_y_ref = ref_type_t<T_y>;

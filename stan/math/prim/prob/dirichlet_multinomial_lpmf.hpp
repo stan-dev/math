@@ -57,7 +57,7 @@ namespace math {
 
 template <bool propto, typename T_prior_size,
           require_eigen_col_vector_t<T_prior_size>* = nullptr>
-inline return_type_t<T_prior_size> dirichlet_multinomial_lpmf(
+return_type_t<T_prior_size> dirichlet_multinomial_lpmf(
     const std::vector<int>& ns, const T_prior_size& alpha) {
   static const char* function = "dirichlet_multinomial_lpmf";
   check_size_match(function, "Size of number of trials variable", ns.size(),
@@ -98,7 +98,7 @@ inline return_type_t<T_prior_size> dirichlet_multinomial_lpmf(
 }
 
 template <typename T_prior_size>
-inline return_type_t<T_prior_size> dirichlet_multinomial_lpmf(
+return_type_t<T_prior_size> dirichlet_multinomial_lpmf(
     const std::vector<int>& ns, const T_prior_size& alpha) {
   return dirichlet_multinomial_lpmf<false>(ns, alpha);
 }

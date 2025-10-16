@@ -5,10 +5,9 @@
 #include <string>
 
 template <typename T_y, typename T_dof, typename T_scale>
-inline void expect_propto_wishart_cholesky_lpdf(T_y L_Y1, T_dof nu1,
-                                                T_scale L_S1, T_y L_Y2,
-                                                T_dof nu2, T_scale L_S2,
-                                                std::string message) {
+void expect_propto_wishart_cholesky_lpdf(T_y L_Y1, T_dof nu1, T_scale L_S1,
+                                         T_y L_Y2, T_dof nu2, T_scale L_S2,
+                                         std::string message) {
   expect_eq_diffs(stan::math::wishart_cholesky_lpdf<false>(L_Y1, nu1, L_S1),
                   stan::math::wishart_cholesky_lpdf<false>(L_Y2, nu2, L_S2),
                   stan::math::wishart_cholesky_lpdf<true>(L_Y1, nu1, L_S1),
@@ -103,7 +102,7 @@ TEST_F(AgradDistributionsWishartCholesky, ProptoL_S) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, WishartCholesky_check_varis_on_stack) {
+TEST(WishartCholesky, check_varis_on_stack) {
   using stan::math::to_var;
   Eigen::MatrixXd Y(2, 2);
   Y << 2.011108, -11.20661, -11.20661, 112.94139;

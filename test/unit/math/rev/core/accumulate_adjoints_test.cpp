@@ -1,10 +1,9 @@
 #include <gtest/gtest.h>
 #include <stan/math/rev/core.hpp>
 #include <stan/math.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <vector>
 
-TEST_F(AgradRev, Rev_accumulate_adjoints_zero_args) {
+TEST(AgradRev_accumulate_adjoints, zero_args) {
   Eigen::VectorXd storage = Eigen::VectorXd::Zero(1000);
   double* ptr = stan::math::accumulate_adjoints(storage.data());
 
@@ -15,7 +14,7 @@ TEST_F(AgradRev, Rev_accumulate_adjoints_zero_args) {
   EXPECT_EQ(ptr, storage.data());
 }
 
-TEST_F(AgradRev, Rev_accumulate_adjoints_int_arg) {
+TEST(AgradRev_accumulate_adjoints, int_arg) {
   int arg = 5;
   Eigen::VectorXd storage = Eigen::VectorXd::Zero(1000);
 
@@ -28,7 +27,7 @@ TEST_F(AgradRev, Rev_accumulate_adjoints_int_arg) {
   EXPECT_EQ(ptr, storage.data());
 }
 
-TEST_F(AgradRev, Rev_accumulate_adjoints_double_arg) {
+TEST(AgradRev_accumulate_adjoints, double_arg) {
   double arg = 5.0;
 
   Eigen::VectorXd storage = Eigen::VectorXd::Zero(1000);
@@ -41,7 +40,7 @@ TEST_F(AgradRev, Rev_accumulate_adjoints_double_arg) {
   EXPECT_EQ(ptr, storage.data());
 }
 
-TEST_F(AgradRev, Rev_accumulate_adjoints_std_vector_int_arg) {
+TEST(AgradRev_accumulate_adjoints, std_vector_int_arg) {
   std::vector<int> arg(5, 10);
 
   Eigen::VectorXd storage = Eigen::VectorXd::Zero(1000);
@@ -54,7 +53,7 @@ TEST_F(AgradRev, Rev_accumulate_adjoints_std_vector_int_arg) {
   EXPECT_EQ(ptr, storage.data());
 }
 
-TEST_F(AgradRev, Rev_accumulate_adjoints_std_vector_double_arg) {
+TEST(AgradRev_accumulate_adjoints, std_vector_double_arg) {
   std::vector<double> arg(5, 10.0);
 
   Eigen::VectorXd storage = Eigen::VectorXd::Zero(1000);
@@ -67,7 +66,7 @@ TEST_F(AgradRev, Rev_accumulate_adjoints_std_vector_double_arg) {
   EXPECT_EQ(ptr, storage.data());
 }
 
-TEST_F(AgradRev, Rev_accumulate_adjoints_eigen_vector_arg) {
+TEST(AgradRev_accumulate_adjoints, eigen_vector_arg) {
   Eigen::VectorXd arg = Eigen::VectorXd::Ones(5);
 
   Eigen::VectorXd storage = Eigen::VectorXd::Zero(1000);
@@ -79,7 +78,7 @@ TEST_F(AgradRev, Rev_accumulate_adjoints_eigen_vector_arg) {
   EXPECT_EQ(ptr, storage.data());
 }
 
-TEST_F(AgradRev, Rev_accumulate_adjoints_eigen_row_vector_arg) {
+TEST(AgradRev_accumulate_adjoints, eigen_row_vector_arg) {
   Eigen::RowVectorXd arg = Eigen::RowVectorXd::Ones(5);
 
   Eigen::VectorXd storage = Eigen::VectorXd::Zero(1000);
@@ -92,7 +91,7 @@ TEST_F(AgradRev, Rev_accumulate_adjoints_eigen_row_vector_arg) {
   EXPECT_EQ(ptr, storage.data());
 }
 
-TEST_F(AgradRev, Rev_accumulate_adjoints_eigen_matrix_arg) {
+TEST(AgradRev_accumulate_adjoints, eigen_matrix_arg) {
   Eigen::MatrixXd arg = Eigen::MatrixXd::Ones(5, 5);
 
   Eigen::VectorXd storage = Eigen::VectorXd::Zero(1000);
@@ -105,7 +104,7 @@ TEST_F(AgradRev, Rev_accumulate_adjoints_eigen_matrix_arg) {
   EXPECT_EQ(ptr, storage.data());
 }
 
-TEST_F(AgradRev, Rev_accumulate_adjoints_std_vector_std_vector_double_arg) {
+TEST(AgradRev_accumulate_adjoints, std_vector_std_vector_double_arg) {
   std::vector<std::vector<double>> arg(5, std::vector<double>(5, 10.0));
 
   Eigen::VectorXd storage = Eigen::VectorXd::Zero(1000);
@@ -118,7 +117,7 @@ TEST_F(AgradRev, Rev_accumulate_adjoints_std_vector_std_vector_double_arg) {
   EXPECT_EQ(ptr, storage.data());
 }
 
-TEST_F(AgradRev, Rev_accumulate_adjoints_std_vector_eigen_vector_arg) {
+TEST(AgradRev_accumulate_adjoints, std_vector_eigen_vector_arg) {
   std::vector<Eigen::VectorXd> arg(2, Eigen::VectorXd::Ones(5));
 
   Eigen::VectorXd storage = Eigen::VectorXd::Zero(1000);
@@ -131,7 +130,7 @@ TEST_F(AgradRev, Rev_accumulate_adjoints_std_vector_eigen_vector_arg) {
   EXPECT_EQ(ptr, storage.data());
 }
 
-TEST_F(AgradRev, Rev_accumulate_adjoints_std_vector_eigen_row_vector_arg) {
+TEST(AgradRev_accumulate_adjoints, std_vector_eigen_row_vector_arg) {
   std::vector<Eigen::RowVectorXd> arg(2, Eigen::VectorXd::Ones(5));
 
   Eigen::VectorXd storage = Eigen::VectorXd::Zero(1000);
@@ -144,7 +143,7 @@ TEST_F(AgradRev, Rev_accumulate_adjoints_std_vector_eigen_row_vector_arg) {
   EXPECT_EQ(ptr, storage.data());
 }
 
-TEST_F(AgradRev, Rev_accumulate_adjoints_std_vector_eigen_matrix_arg) {
+TEST(AgradRev_accumulate_adjoints, std_vector_eigen_matrix_arg) {
   std::vector<Eigen::MatrixXd> arg(2, Eigen::MatrixXd::Ones(5, 3));
 
   Eigen::VectorXd storage = Eigen::VectorXd::Zero(1000);
@@ -157,7 +156,7 @@ TEST_F(AgradRev, Rev_accumulate_adjoints_std_vector_eigen_matrix_arg) {
   EXPECT_EQ(ptr, storage.data());
 }
 
-TEST_F(AgradRev, Rev_accumulate_adjoints_var_arg) {
+TEST(AgradRev_accumulate_adjoints, var_arg) {
   using stan::math::var;
   using stan::math::vari;
   var arg(5.0);
@@ -179,7 +178,7 @@ TEST_F(AgradRev, Rev_accumulate_adjoints_var_arg) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, Rev_accumulate_adjoints_std_vector_var_arg) {
+TEST(AgradRev_accumulate_adjoints, std_vector_var_arg) {
   using stan::math::var;
   using stan::math::vari;
   std::vector<var> arg(5);
@@ -204,7 +203,7 @@ TEST_F(AgradRev, Rev_accumulate_adjoints_std_vector_var_arg) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, Rev_accumulate_adjoints_eigen_vector_var_arg) {
+TEST(AgradRev_accumulate_adjoints, eigen_vector_var_arg) {
   using stan::math::var;
   using stan::math::vari;
   Eigen::Matrix<var, Eigen::Dynamic, 1> arg(5);
@@ -229,7 +228,7 @@ TEST_F(AgradRev, Rev_accumulate_adjoints_eigen_vector_var_arg) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, Rev_accumulate_adjoints_eigen_row_vector_var_arg) {
+TEST(AgradRev_accumulate_adjoints, eigen_row_vector_var_arg) {
   using stan::math::var;
   using stan::math::vari;
   Eigen::Matrix<var, 1, Eigen::Dynamic> arg(5);
@@ -254,7 +253,7 @@ TEST_F(AgradRev, Rev_accumulate_adjoints_eigen_row_vector_var_arg) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, Rev_accumulate_adjoints_eigen_matrix_var_arg) {
+TEST(AgradRev_accumulate_adjoints, eigen_matrix_var_arg) {
   using stan::math::var;
   using stan::math::vari;
   Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> arg(5, 5);
@@ -279,7 +278,7 @@ TEST_F(AgradRev, Rev_accumulate_adjoints_eigen_matrix_var_arg) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, Rev_accumulate_adjoints_std_vector_std_vector_var_arg) {
+TEST(AgradRev_accumulate_adjoints, std_vector_std_vector_var_arg) {
   using stan::math::var;
   using stan::math::vari;
   std::vector<var> arg_(5, var(5.0));
@@ -303,7 +302,7 @@ TEST_F(AgradRev, Rev_accumulate_adjoints_std_vector_std_vector_var_arg) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, Rev_accumulate_adjoints_std_vector_eigen_vector_var_arg) {
+TEST(AgradRev_accumulate_adjoints, std_vector_eigen_vector_var_arg) {
   using stan::math::var;
   using stan::math::vari;
   Eigen::Matrix<var, Eigen::Dynamic, 1> arg_(5);
@@ -329,7 +328,7 @@ TEST_F(AgradRev, Rev_accumulate_adjoints_std_vector_eigen_vector_var_arg) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, Rev_accumulate_adjoints_std_vector_eigen_row_vector_var_arg) {
+TEST(AgradRev_accumulate_adjoints, std_vector_eigen_row_vector_var_arg) {
   using stan::math::var;
   using stan::math::vari;
   Eigen::Matrix<var, 1, Eigen::Dynamic> arg_(5);
@@ -355,7 +354,7 @@ TEST_F(AgradRev, Rev_accumulate_adjoints_std_vector_eigen_row_vector_var_arg) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, Rev_accumulate_adjoints_std_vector_eigen_matrix_var_arg) {
+TEST(AgradRev_accumulate_adjoints, std_vector_eigen_matrix_var_arg) {
   using stan::math::var;
   using stan::math::vari;
   Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> arg_(5, 3);
@@ -381,7 +380,7 @@ TEST_F(AgradRev, Rev_accumulate_adjoints_std_vector_eigen_matrix_var_arg) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, Rev_accumulate_adjoints_sum) {
+TEST(AgradRev_accumulate_adjoints, sum) {
   using stan::math::var;
   using stan::math::vari;
   int arg1 = 1;

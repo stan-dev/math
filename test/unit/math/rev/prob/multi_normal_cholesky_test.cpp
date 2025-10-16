@@ -2,7 +2,7 @@
 #include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 
-TEST_F(AgradRev, ProbDistributionsMultiNormalCholesky_MultiNormalVar) {
+TEST(ProbDistributionsMultiNormalCholesky, MultiNormalVar) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -18,7 +18,7 @@ TEST_F(AgradRev, ProbDistributionsMultiNormalCholesky_MultiNormalVar) {
                   stan::math::multi_normal_cholesky_lpdf(y, mu, L).val());
 }
 
-TEST_F(AgradRev, ProbDistributionsMultiNormalCholesky_check_varis_on_stack) {
+TEST(ProbDistributionsMultiNormalCholesky, check_varis_on_stack) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::to_var;

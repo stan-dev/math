@@ -8,8 +8,8 @@
 #include <string>
 
 template <typename T_y, typename T_scale, typename T_w>
-inline void expect_propto(T_y y1, T_scale sigma1, T_w w1, T_y y2,
-                          T_scale sigma2, T_w w2, std::string message = "") {
+void expect_propto(T_y y1, T_scale sigma1, T_w w1, T_y y2, T_scale sigma2,
+                   T_w w2, std::string message = "") {
   expect_eq_diffs(stan::math::multi_gp_lpdf<false>(y1, sigma1, w1),
                   stan::math::multi_gp_lpdf<false>(y2, sigma2, w2),
                   stan::math::multi_gp_lpdf<true>(y1, sigma1, w1),
@@ -63,7 +63,7 @@ TEST_F(agrad_distributions_multi_gp, ProptoSigma) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, ProbDistributionsMultiGP_MultiGPVar) {
+TEST(ProbDistributionsMultiGP, MultiGPVar) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -78,7 +78,7 @@ TEST_F(AgradRev, ProbDistributionsMultiGP_MultiGPVar) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, ProbDistributionsMultiGP_MultiGPGradientUnivariate) {
+TEST(ProbDistributionsMultiGP, MultiGPGradientUnivariate) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::VectorXd;
@@ -175,7 +175,7 @@ struct multi_gp_fun {
   }
 };
 
-TEST_F(AgradRev, MultiGP_TestGradFunctional) {
+TEST(MultiGP, TestGradFunctional) {
   std::vector<double> x(3 * 2 + 3 + 3);
   // y
   x[0] = 1.0;
@@ -208,7 +208,7 @@ TEST_F(AgradRev, MultiGP_TestGradFunctional) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, MultiGP_check_varis_on_stack) {
+TEST(MultiGP, check_varis_on_stack) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::to_var;

@@ -36,10 +36,10 @@ namespace math {
 template <typename T_y, typename T_loc, typename T_scale,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_loc, T_scale>* = nullptr>
-inline return_type_t<T_y, T_loc, T_scale> gumbel_cdf(const T_y& y,
-                                                     const T_loc& mu,
-                                                     const T_scale& beta) {
+return_type_t<T_y, T_loc, T_scale> gumbel_cdf(const T_y& y, const T_loc& mu,
+                                              const T_scale& beta) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
+  using T_partials_array = Eigen::Array<T_partials_return, Eigen::Dynamic, 1>;
   using T_y_ref = ref_type_if_not_constant_t<T_y>;
   using T_mu_ref = ref_type_if_not_constant_t<T_loc>;
   using T_beta_ref = ref_type_if_not_constant_t<T_scale>;
@@ -74,9 +74,9 @@ inline return_type_t<T_y, T_loc, T_scale> gumbel_cdf(const T_y& y,
   T_partials_return cdf(1.0);
   if constexpr (is_vector<T_y>::value || is_vector<T_loc>::value
                 || is_vector<T_scale>::value) {
-    cdf = cdf_n.prod();
+    cdf = forward_as<T_partials_array>(cdf_n).prod();
   } else {
-    cdf = cdf_n;
+    cdf = forward_as<T_partials_return>(cdf_n);
   }
 
   if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale>) {

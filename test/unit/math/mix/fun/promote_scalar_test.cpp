@@ -8,22 +8,22 @@ namespace stan {
 namespace math {
 namespace test {
 template <typename T, typename S, require_all_stan_scalar_t<T, S>* = nullptr>
-inline void expect_same_value_of_rec(T&& a, S&& b) {
+void expect_same_value_of_rec(T&& a, S&& b) {
   using stan::math::value_of_rec;
   EXPECT_EQ(value_of_rec(a), value_of_rec(b));
 }
 
 template <typename T, typename S, require_all_eigen_t<T, S>* = nullptr>
-inline void expect_same_value_of_rec(T&& a, S&& b) {
+void expect_same_value_of_rec(T&& a, S&& b) {
   using stan::math::value_of_rec;
   EXPECT_MATRIX_EQ(value_of_rec(a), value_of_rec(b));
 }
 
 template <typename T, typename S, require_all_tuple_t<T, S>* = nullptr>
-inline void expect_same_value_of_rec(T&& a, S&& b);
+void expect_same_value_of_rec(T&& a, S&& b);
 
 template <typename T, typename S, require_all_std_vector_t<T, S>* = nullptr>
-inline void expect_same_value_of_rec(T&& a, S&& b) {
+void expect_same_value_of_rec(T&& a, S&& b) {
   using stan::math::value_of_rec;
   for (size_t i = 0; i < a.size(); ++i) {
     expect_same_value_of_rec(a[i], b[i]);
@@ -31,7 +31,7 @@ inline void expect_same_value_of_rec(T&& a, S&& b) {
 }
 
 template <typename T, typename S, require_all_tuple_t<T, S>*>
-inline void expect_same_value_of_rec(T&& a, S&& b) {
+void expect_same_value_of_rec(T&& a, S&& b) {
   stan::math::for_each(
       [](auto&& test, auto&& result) {
         stan::math::test::expect_same_value_of_rec(test, result);
@@ -44,7 +44,7 @@ inline void expect_same_value_of_rec(T&& a, S&& b) {
 }  // namespace stan
 
 template <typename PromotionType, typename UnPromotedType>
-inline void test_promote_scalar() {
+void test_promote_scalar() {
   using eig_mat = Eigen::Matrix<UnPromotedType, -1, -1>;
   auto tester_gen = []() {
     return std::make_tuple(UnPromotedType(1.0), eig_mat::Random(2, 2).eval(),
@@ -86,7 +86,7 @@ TEST(mixFun, promote_scalar_tuple) {
 }
 
 template <typename UnPromotedType>
-inline void test_promote_scalar_basic() {
+void test_promote_scalar_basic() {
   std::tuple<UnPromotedType, UnPromotedType> x{UnPromotedType(3.5),
                                                UnPromotedType(4.5)};
   std::tuple<std::complex<UnPromotedType>, UnPromotedType> z

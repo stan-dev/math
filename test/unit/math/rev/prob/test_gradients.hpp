@@ -1,22 +1,20 @@
 #ifndef TEST_UNIT_MATH_REV_PROB_TEST_GRADIENTS
 #define TEST_UNIT_MATH_REV_PROB_TEST_GRADIENTS
-#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <cmath>
 #include <vector>
 #include <iomanip>
 
-inline void test_grad_eq(Eigen::Matrix<double, -1, 1> grad_1,
-                         Eigen::Matrix<double, -1, 1> grad_2) {
+void test_grad_eq(Eigen::Matrix<double, -1, 1> grad_1,
+                  Eigen::Matrix<double, -1, 1> grad_2) {
   ASSERT_EQ(grad_1.size(), grad_2.size());
   for (int i = 0; i < grad_1.size(); ++i)
     EXPECT_FLOAT_EQ(grad_1(i), grad_2(i));
 }
 
 template <typename F>
-inline std::vector<double> finite_diffs(const F& fun,
-                                        const std::vector<double>& args,
-                                        double epsilon = 1e-6) {
+std::vector<double> finite_diffs(const F& fun, const std::vector<double>& args,
+                                 double epsilon = 1e-6) {
   std::vector<double> diffs(args.size());
   std::vector<double> args_plus = args;
   std::vector<double> args_minus = args;
@@ -32,7 +30,7 @@ inline std::vector<double> finite_diffs(const F& fun,
 }
 
 template <typename F>
-inline std::vector<double> grad(const F& fun, const std::vector<double>& args) {
+std::vector<double> grad(const F& fun, const std::vector<double>& args) {
   std::vector<stan::math::var> x;
   for (size_t i = 0; i < args.size(); ++i)
     x.push_back(args[i]);
@@ -44,7 +42,7 @@ inline std::vector<double> grad(const F& fun, const std::vector<double>& args) {
 }
 
 template <typename F>
-inline void test_grad(const F& fun, const std::vector<double>& args) {
+void test_grad(const F& fun, const std::vector<double>& args) {
   using std::fabs;
   std::vector<double> diffs_finite = finite_diffs(fun, args);
   std::vector<double> diffs_var = grad(fun, args);

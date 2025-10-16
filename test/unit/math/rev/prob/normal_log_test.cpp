@@ -1,8 +1,7 @@
 #include <stan/math/rev.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 
-TEST_F(AgradRev, ProbDistributionsNormal_intVsDouble) {
+TEST(ProbDistributionsNormal, intVsDouble) {
   using stan::math::var;
   for (double thetaval = -5.0; thetaval < 6.0; thetaval += 0.5) {
     var theta(thetaval);

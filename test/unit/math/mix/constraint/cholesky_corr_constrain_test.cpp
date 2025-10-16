@@ -32,7 +32,7 @@ auto g3(const T& x) {
 }
 
 template <typename T>
-inline void expect_cholesky_corr_transform(const T& x) {
+void expect_cholesky_corr_transform(const T& x) {
   stan::test::ad_tolerances tols;
   tols.hessian_hessian_ = 1e-2;
   tols.hessian_fvar_hessian_ = 1e-2;

@@ -1,9 +1,8 @@
 #include <stan/math/rev.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/fun/util.hpp>
 
-TEST_F(AgradRev, MathMatrixRevMat_getAssignRowVar) {
+TEST(MathMatrixRevMat, getAssignRowVar) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::assign;
@@ -22,7 +21,7 @@ TEST_F(AgradRev, MathMatrixRevMat_getAssignRowVar) {
   EXPECT_FLOAT_EQ(1000.0, m(0, 2).val());
 }
 
-TEST_F(AgradRev, RevMatrix_assign) {
+TEST(AgradRevMatrix, assign) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::assign;
@@ -88,7 +87,7 @@ TEST_F(AgradRev, RevMatrix_assign) {
   EXPECT_FLOAT_EQ(100, m_var(1, 0).val());
   EXPECT_FLOAT_EQ(300, m_var(1, 2).val());
 }
-TEST_F(AgradRev, RevMatrix_assign_error) {
+TEST(AgradRevMatrix, assign_error) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::assign;
@@ -117,7 +116,7 @@ TEST_F(AgradRev, RevMatrix_assign_error) {
   EXPECT_THROW(assign(m_var, m_dbl), std::invalid_argument);
 }
 
-TEST_F(AgradRev, MathAssign_VarDouble) {
+TEST(MathAssign, VarDouble) {
   using stan::math::assign;
   using stan::math::var;
   var x;

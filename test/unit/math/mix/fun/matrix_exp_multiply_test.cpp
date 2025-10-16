@@ -6,7 +6,7 @@ auto f_idx(int i, int j) {
   };
 }
 
-inline void expect_matrix_exp_multiply(int m, int n) {
+void expect_matrix_exp_multiply(int m, int n) {
   auto f = [](const auto& x, auto& y) {
     return stan::math::matrix_exp_multiply(x, y);
   };

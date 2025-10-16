@@ -1,10 +1,9 @@
 #include <stan/math/rev.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/pretty_print_types.hpp>
 
-TEST_F(AgradRev, RevMatrix_from_var_value_types) {
+TEST(AgradRevMatrix, from_var_value_types) {
   using stan::math::from_var_value;
   using stan::math::var;
   using stan::math::var_value;
@@ -59,7 +58,7 @@ TEST_F(AgradRev, RevMatrix_from_var_value_types) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, RevMatrix_from_var_value_vec_types) {
+TEST(AgradRevMatrix, from_var_value_vec_types) {
   using stan::math::from_var_value;
   using stan::math::var;
   using stan::math::var_value;
@@ -105,7 +104,7 @@ TEST_F(AgradRev, RevMatrix_from_var_value_vec_types) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, RevMatrix_from_var_value_matrix_test) {
+TEST(AgradRevMatrix, from_var_value_matrix_test) {
   Eigen::MatrixXd val(2, 3);
   val << 1, 2, 3, 4, 5, 6;
   Eigen::MatrixXd adj(2, 3);
@@ -119,7 +118,7 @@ TEST_F(AgradRev, RevMatrix_from_var_value_matrix_test) {
   EXPECT_MATRIX_EQ(var_value.adj(), adj);
 }
 
-TEST_F(AgradRev, RevMatrix_from_var_value_vector_test) {
+TEST(AgradRevMatrix, from_var_value_vector_test) {
   Eigen::VectorXd val(3);
   val << 1, 2, 3;
   Eigen::VectorXd adj(3);
@@ -133,7 +132,7 @@ TEST_F(AgradRev, RevMatrix_from_var_value_vector_test) {
   EXPECT_MATRIX_EQ(var_value.adj(), adj);
 }
 
-TEST_F(AgradRev, RevMatrix_from_var_value_row_vector_test) {
+TEST(AgradRevMatrix, from_var_value_row_vector_test) {
   Eigen::RowVectorXd val(3);
   val << 1, 2, 3;
   Eigen::RowVectorXd adj(3);
@@ -147,7 +146,7 @@ TEST_F(AgradRev, RevMatrix_from_var_value_row_vector_test) {
   EXPECT_MATRIX_EQ(var_value.adj(), adj);
 }
 
-TEST_F(AgradRev, RevMatrix_from_var_value_matrix_svec_test) {
+TEST(AgradRevMatrix, from_var_value_matrix_svec_test) {
   std::vector<stan::math::promote_scalar_t<stan::math::var, Eigen::MatrixXd>>
       varmats;
 
@@ -166,7 +165,7 @@ TEST_F(AgradRev, RevMatrix_from_var_value_matrix_svec_test) {
   }
 }
 
-TEST_F(AgradRev, RevMatrix_from_var_value_vector_svec_test) {
+TEST(AgradRevMatrix, from_var_value_vector_svec_test) {
   std::vector<stan::math::promote_scalar_t<stan::math::var, Eigen::VectorXd>>
       varmats;
 
@@ -185,7 +184,7 @@ TEST_F(AgradRev, RevMatrix_from_var_value_vector_svec_test) {
   }
 }
 
-TEST_F(AgradRev, RevMatrix_from_var_value_row_vector_svec_test) {
+TEST(AgradRevMatrix, from_var_value_row_vector_svec_test) {
   std::vector<stan::math::promote_scalar_t<stan::math::var, Eigen::RowVectorXd>>
       varmats;
 
@@ -204,7 +203,7 @@ TEST_F(AgradRev, RevMatrix_from_var_value_row_vector_svec_test) {
   }
 }
 
-TEST_F(AgradRev, RevMatrix_from_var_value_prim_test) {
+TEST(AgradRevMatrix, from_var_value_prim_test) {
   Eigen::MatrixXd a(3, 2);
   a << 1, 2, 3, 4, 5, 6;
   Eigen::VectorXd b(3);

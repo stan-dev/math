@@ -1,9 +1,9 @@
 #include <stan/math/rev.hpp>
-#include <test/unit/math/rev/util.hpp>
-#include <test/unit/math/rev/fun/util.hpp>
 #include <gtest/gtest.h>
+#include <test/unit/math/rev/fun/util.hpp>
+#include <test/unit/math/rev/util.hpp>
 
-TEST_F(AgradRev, inv_inc_beta_values) {
+TEST(inv_inc_beta, values) {
   using stan::math::inv_inc_beta;
   using stan::math::var;
 

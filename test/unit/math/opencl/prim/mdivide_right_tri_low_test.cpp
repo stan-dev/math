@@ -28,7 +28,7 @@ TEST(MathMatrixCL, mdivide_right_tri_low_cl_exception) {
                std::invalid_argument);
 }
 
-inline void mdivide_right_tri_low_Ab_test(int size) {
+void mdivide_right_tri_low_Ab_test(int size) {
   boost::random::mt19937 rng;
   auto m1 = stan::math::matrix_d(size, size);
   for (int i = 0; i < size; i++) {

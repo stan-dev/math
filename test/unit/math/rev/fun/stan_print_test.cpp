@@ -1,10 +1,9 @@
 #include <stan/math/rev.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
-TEST_F(AgradRev, Rev_stan_print) {
+TEST(AgradRev, stan_print) {
   using stan::math::var;
 
   var a = 5.0;

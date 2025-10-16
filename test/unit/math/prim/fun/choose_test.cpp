@@ -13,7 +13,7 @@ int finite_choose_test(int N, int n) {
   return round_to_int(exp(lgamma(N + 1) - lgamma(n + 1) - lgamma(N - n + 1)));
 }
 
-inline void test_choose_finite(int N, int n) {
+void test_choose_finite(int N, int n) {
   using stan::math::choose;
   if (n > N)
     EXPECT_EQ(0, choose(N, n));

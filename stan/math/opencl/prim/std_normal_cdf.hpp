@@ -23,7 +23,7 @@ namespace math {
 template <typename T_y_cl,
           require_all_prim_or_rev_kernel_expression_t<T_y_cl>* = nullptr,
           require_any_not_stan_scalar_t<T_y_cl>* = nullptr>
-inline return_type_t<T_y_cl> std_normal_cdf(const T_y_cl& y) {
+return_type_t<T_y_cl> std_normal_cdf(const T_y_cl& y) {
   static constexpr const char* function = "std_normal_cdf(OpenCL)";
   using T_partials_return = partials_return_t<T_y_cl>;
   using std::isfinite;

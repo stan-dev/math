@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 
 template <typename T, typename S>
-inline void test_constructor(const T& re, const S& im) {
+void test_constructor(const T& re, const S& im) {
   std::complex<double> z1(re, im);
   std::complex<double> z2 = stan::math::to_complex(re, im);
   EXPECT_EQ(z1, z2);

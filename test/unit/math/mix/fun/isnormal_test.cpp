@@ -3,7 +3,7 @@
 #include <limits>
 
 template <typename T>
-inline void expect_isnormal() {
+void expect_isnormal() {
   using stan::math::isnormal;
   using std::isnormal;
   using std::numeric_limits;

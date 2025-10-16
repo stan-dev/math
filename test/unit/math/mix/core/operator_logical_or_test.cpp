@@ -3,7 +3,7 @@
 #include <vector>
 #include <limits>
 
-inline void test_logical_or(double x, double y) {
+void test_logical_or(double x, double y) {
   using stan::math::fvar;
   using stan::math::var;
 

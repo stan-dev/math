@@ -1,5 +1,4 @@
 #include <stan/math/rev.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/prob/expect_eq_diffs.hpp>
 #include <test/unit/math/rev/prob/test_gradients.hpp>
@@ -10,9 +9,9 @@
 #include <string>
 
 template <typename T_y, typename T_loc, typename T_scale>
-inline void expect_propto_multi_normal_lpdf(T_y y1, T_loc mu1, T_scale sigma1,
-                                            T_y y2, T_loc mu2, T_scale sigma2,
-                                            std::string message = "") {
+void expect_propto_multi_normal_lpdf(T_y y1, T_loc mu1, T_scale sigma1, T_y y2,
+                                     T_loc mu2, T_scale sigma2,
+                                     std::string message = "") {
   expect_eq_diffs(stan::math::multi_normal_lpdf<false>(y1, mu1, sigma1),
                   stan::math::multi_normal_lpdf<false>(y2, mu2, sigma2),
                   stan::math::multi_normal_lpdf<true>(y1, mu1, sigma1),
@@ -122,7 +121,7 @@ TEST_F(agrad_distributions_multi_normal_multi_row, ProptoSigma) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, ProbDistributionsMultiNormal_MultiNormalVar2) {
+TEST(ProbDistributionsMultiNormal, MultiNormalVar2) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -136,7 +135,7 @@ TEST_F(AgradRev, ProbDistributionsMultiNormal_MultiNormalVar2) {
 
   stan::math::recover_memory();
 }
-TEST_F(AgradRev, ProbDistributionsMultiNormal_MultiNormalGradientUnivariate) {
+TEST(ProbDistributionsMultiNormal, MultiNormalGradientUnivariate) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::VectorXd;
@@ -233,7 +232,7 @@ struct multi_normal_fun {
   }
 };
 
-TEST_F(AgradRev, ProbDistributionsMultiNormal_TestGradFunctional) {
+TEST(ProbDistributionsMultiNormal, TestGradFunctional) {
   std::vector<double> x(3 + 3 + 3 * 2);
   // y
   x[0] = 1.0;
@@ -329,7 +328,7 @@ struct vectorized_multi_normal_fun {
 };
 
 template <int is_row_vec_y, int is_row_vec_mu>
-inline void test_all_multi_normal2() {
+void test_all_multi_normal2() {
   {
     std::vector<double> y_(3), mu_(3), sigma_(6);
     // y
@@ -473,7 +472,7 @@ inline void test_all_multi_normal2() {
   }
 }
 
-TEST_F(AgradRev, ProbDistributionsMultiNormal_TestGradFunctionalVectorized) {
+TEST(ProbDistributionsMultiNormal, TestGradFunctionalVectorized) {
   test_all_multi_normal2<1, 1>();
   test_all_multi_normal2<1, -1>();
   test_all_multi_normal2<-1, 1>();

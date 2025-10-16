@@ -1,9 +1,8 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 
-TEST_F(AgradRev, MetaTraitsRevScal_is_var) {
+TEST(MetaTraitsRevScal, is_var) {
   using stan::is_var;
   using stan::math::var;
   using stan::math::var_value;
@@ -15,7 +14,7 @@ TEST_F(AgradRev, MetaTraitsRevScal_is_var) {
   EXPECT_FALSE((is_var<stan::math::vari_value<double>>::value));
 }
 
-TEST_F(AgradRev, MetaTraitsRevScal_is_any_var_scalar) {
+TEST(MetaTraitsRevScal, is_any_var_scalar) {
   using stan::is_any_var_scalar;
   using stan::is_any_var_scalar_v;
   using stan::math::var;

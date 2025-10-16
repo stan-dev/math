@@ -23,7 +23,7 @@ class LoglogisticTestRig : public VectorRNGTestRig {
   }
 };
 
-inline double icdf(double x, double alpha, double beta) {
+double icdf(double x, double alpha, double beta) {
   return alpha * pow(x / (1 - x), 1 / beta);
 }
 

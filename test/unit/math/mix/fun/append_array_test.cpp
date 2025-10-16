@@ -47,7 +47,7 @@ typedef Eigen::Matrix<ffv, Eigen::Dynamic, Eigen::Dynamic> Mffv;
  * @param z Output variable
  */
 template <typename T1>
-inline void build(int n1, int n0, T1& z) {
+void build(int n1, int n0, T1& z) {
   std::random_device rd;
   std::mt19937 mt(rd());
   z = T1(rd());
@@ -68,7 +68,7 @@ inline void build(int n1, int n0, T1& z) {
  * @param z Output variable
  */
 template <typename T1, int R, int C>
-inline void build(int n1, int n0, Eigen::Matrix<T1, R, C>& z) {
+void build(int n1, int n0, Eigen::Matrix<T1, R, C>& z) {
   z = Eigen::Matrix<T1, R, C>(R == 1 ? 1 : n1, C == 1 ? 1 : n0);
 
   for (int i = 0; i < z.rows(); i++) {
@@ -89,7 +89,7 @@ inline void build(int n1, int n0, Eigen::Matrix<T1, R, C>& z) {
  * @param z Output variable
  */
 template <typename T1>
-inline void build(int n2, int n1, int n0, std::vector<T1>& z) {
+void build(int n2, int n1, int n0, std::vector<T1>& z) {
   z.resize(n2);
   for (int i = 0; i < n2; i++) {
     build(n1, n0, z[i]);
@@ -108,7 +108,7 @@ inline void build(int n2, int n1, int n0, std::vector<T1>& z) {
  * @param z Output variable
  */
 template <typename T1>
-inline void build(int n3, int n2, int n1, int n0, std::vector<T1>& z) {
+void build(int n3, int n2, int n1, int n0, std::vector<T1>& z) {
   z.resize(n3);
   for (int i = 0; i < n3; i++) {
     build(n2, n1, n0, z[i]);
@@ -120,42 +120,42 @@ inline void build(int n3, int n2, int n1, int n0, std::vector<T1>& z) {
  *
  * @param z1 Argument
  */
-inline double get_value(const double& z1) { return z1; }
+double get_value(const double& z1) { return z1; }
 
 /**
  * Get value of var.
  *
  * @param z1 Argument
  */
-inline double get_value(const var& z1) { return z1.val(); }
+double get_value(const var& z1) { return z1.val(); }
 
 /**
  * Get value of fd
  *
  * @param z1 Argument
  */
-inline double get_value(const fd& z1) { return z1.val(); }
+double get_value(const fd& z1) { return z1.val(); }
 
 /**
  * Get value of fvar<var>
  *
  * @param z1 Argument
  */
-inline double get_value(const fv& z1) { return z1.val().val(); }
+double get_value(const fv& z1) { return z1.val().val(); }
 
 /**
  * Get value of fvar<fvar<double> >
  *
  * @param z1 Argument
  */
-inline double get_value(const ffd& z1) { return z1.val().val(); }
+double get_value(const ffd& z1) { return z1.val().val(); }
 
 /**
  * Get value of fvar<fvar<var> >
  *
  * @param z1 Argument
  */
-inline double get_value(const ffv& z1) { return z1.val().val().val(); }
+double get_value(const ffv& z1) { return z1.val().val().val(); }
 
 /**
  * Check if variables are equal via floating point macro
@@ -166,7 +166,7 @@ inline double get_value(const ffv& z1) { return z1.val().val().val(); }
  * @param z2 Second argument
  */
 template <typename T1, typename T2>
-inline void check_eq(const T1& z1, const T2& z2) {
+void check_eq(const T1& z1, const T2& z2) {
   EXPECT_FLOAT_EQ(get_value(z1), get_value(z2));
 }
 
@@ -177,7 +177,7 @@ inline void check_eq(const T1& z1, const T2& z2) {
  * @param z2 Second integer
  */
 template <>
-inline void check_eq(const int& z1, const int& z2) {
+void check_eq(const int& z1, const int& z2) {
   EXPECT_EQ(z1, z2);
 }
 
@@ -190,8 +190,8 @@ inline void check_eq(const int& z1, const int& z2) {
  * @param z2 Second matrix
  */
 template <typename T1, typename T2, int R, int C>
-inline void check_eq(const Eigen::Matrix<T1, R, C>& z1,
-                     const Eigen::Matrix<T2, R, C>& z2) {
+void check_eq(const Eigen::Matrix<T1, R, C>& z1,
+              const Eigen::Matrix<T2, R, C>& z2) {
   EXPECT_EQ(z1.rows(), z2.rows());
   EXPECT_EQ(z1.cols(), z2.cols());
 
@@ -209,7 +209,7 @@ inline void check_eq(const Eigen::Matrix<T1, R, C>& z1,
  * @param z2 Second std::vector
  */
 template <typename T1, typename T2>
-inline void check_eq(const std::vector<T1>& z1, const std::vector<T2>& z2) {
+void check_eq(const std::vector<T1>& z1, const std::vector<T2>& z2) {
   EXPECT_EQ(z1.size(), z2.size());
   for (size_t i = 0; i < z1.size(); i++)
     check_eq(z1[i], z2[i]);
@@ -225,7 +225,7 @@ inline void check_eq(const std::vector<T1>& z1, const std::vector<T2>& z2) {
  * @tparam T3 Element type of return std::vector
  */
 template <typename T1, typename T2, typename T3>
-inline void checkv() {
+void checkv() {
   std::vector<T1> x;
   std::vector<T2> y;
   std::vector<T3> result;
@@ -255,7 +255,7 @@ inline void checkv() {
  * @tparam T3 Element type of return std::vector
  */
 template <typename T1, typename T2, typename T3>
-inline void checkvv() {
+void checkvv() {
   std::vector<std::vector<T1> > x;
   std::vector<std::vector<T2> > y;
   std::vector<std::vector<T3> > result;
@@ -284,7 +284,7 @@ inline void checkvv() {
  * @tparam T3 Element type of third container
  */
 template <typename T1, typename T2, typename T3>
-inline void check() {
+void check() {
   // repeat the checks a few times since they're random
   for (int i = 0; i < 3; i++) {
     checkv<T1, T2, T3>();

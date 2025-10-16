@@ -3,7 +3,7 @@
 #include <stan/math/prim/fun/crossprod.hpp>
 #include <gtest/gtest.h>
 
-inline void test_crossprod(const stan::math::matrix_d& x) {
+void test_crossprod(const stan::math::matrix_d& x) {
   using stan::math::crossprod;
   stan::math::matrix_cl<double> x_cl(x);
   stan::math::matrix_d y_cl = from_matrix_cl(crossprod(x_cl));

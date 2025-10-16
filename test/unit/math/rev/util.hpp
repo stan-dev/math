@@ -2,7 +2,6 @@
 #define TEST_UNIT_MATH_REV_UTIL_HPP
 
 #include <stan/math/rev.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 

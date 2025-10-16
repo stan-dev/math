@@ -28,8 +28,8 @@ template <
     typename T_y_cl, typename T_scale_cl,
     require_all_prim_or_rev_kernel_expression_t<T_y_cl, T_scale_cl>* = nullptr,
     require_any_not_stan_scalar_t<T_y_cl, T_scale_cl>* = nullptr>
-inline return_type_t<T_y_cl, T_scale_cl> rayleigh_cdf(const T_y_cl& y,
-                                                      const T_scale_cl& sigma) {
+return_type_t<T_y_cl, T_scale_cl> rayleigh_cdf(const T_y_cl& y,
+                                               const T_scale_cl& sigma) {
   static constexpr const char* function = "rayleigh_cdf(OpenCL)";
   using T_partials_return = partials_return_t<T_y_cl, T_scale_cl>;
   using std::isfinite;

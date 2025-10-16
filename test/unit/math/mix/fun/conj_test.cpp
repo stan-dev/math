@@ -10,7 +10,7 @@ TEST(mathMixMatFun, conj) {
 }
 
 template <typename T>
-inline void test_vectorized_conj() {
+void test_vectorized_conj() {
   using stan::math::value_of_rec;
   using complex_t = std::complex<T>;
   using complex_matrix = Eigen::Matrix<complex_t, -1, -1>;

@@ -1,12 +1,11 @@
 #include <stan/math/rev.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <stan/math/prim.hpp>
 #include <stan/math/rev/fun/singular_values.hpp>
 #include <stan/math/rev/fun/sum.hpp>
 #include <stan/math/rev/fun/log.hpp>
 #include <gtest/gtest.h>
 
-TEST_F(AgradRev, Rev_singularvalues_gradient) {
+TEST(AgradRev, singularvalues_gradient) {
   // logdet(A) can be calculated using singularvalues of matrix A
   // the derivative of logdet(A) should be inverse(A)
 

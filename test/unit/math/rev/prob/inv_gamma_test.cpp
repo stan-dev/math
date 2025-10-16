@@ -1,5 +1,4 @@
 #include <stan/math/rev.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <boost/math/differentiation/finite_difference.hpp>
 #include <boost/math/special_functions/digamma.hpp>
 #include <gtest/gtest.h>
@@ -418,7 +417,7 @@ std::vector<TestValue> testValues = {
 
 }  // namespace inv_gamma_test_internal
 
-TEST_F(AgradRev, ProbDistributionsInvGamma_derivativesPrecomputed) {
+TEST(ProbDistributionsInvGamma, derivativesPrecomputed) {
   using inv_gamma_test_internal::TestValue;
   using inv_gamma_test_internal::testValues;
   using stan::math::inv_gamma_lpdf;

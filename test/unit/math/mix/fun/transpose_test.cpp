@@ -1,6 +1,6 @@
 #include <test/unit/math/test_ad.hpp>
 
-inline void expect_transpose(const Eigen::MatrixXd& m) {
+void expect_transpose(const Eigen::MatrixXd& m) {
   auto f = [](const auto& x) { return stan::math::transpose(x); };
   Eigen::VectorXd v = stan::test::to_vector(m);
   Eigen::RowVectorXd rv = stan::test::to_row_vector(m);

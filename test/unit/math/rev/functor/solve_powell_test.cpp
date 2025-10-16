@@ -1,7 +1,6 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/functor/solve_powell.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <test/unit/math/rev/functor/util_algebra_solver.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
@@ -54,7 +53,7 @@ TEST_F(error_message_test, powell_dbl) {
   error_conditions_test(non_linear_eq_functor(), y_3, is_newton);
 }
 
-TEST_F(AgradRev, unsolvable_test_powell_dbl) {
+TEST(unsolvable_test, powell_dbl) {
   Eigen::VectorXd y(2);
   y << 1, 1;
   unsolvable_test(y);
@@ -186,7 +185,7 @@ TEST_F(error_message_test, powell) {
   error_conditions_test(non_linear_eq_functor(), y, is_newton);
 }
 
-TEST_F(AgradRev, unsolvable_test_powell) {
+TEST(unsolvable_test, powell) {
   using stan::math::var;
   Eigen::Matrix<var, Eigen::Dynamic, 1> y(2);
   y << 1, 1;

@@ -1,5 +1,4 @@
 #include <stan/math/rev.hpp>
-#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
 #include <vector>
@@ -51,7 +50,7 @@ struct aytm {
   }
 };
 
-TEST_F(AgradRev, Rev_ode_store_sensitivities) {
+TEST(AgradRev, ode_store_sensitivities) {
   using stan::math::coupled_ode_system;
   using stan::math::var;
 
@@ -99,7 +98,7 @@ TEST_F(AgradRev, Rev_ode_store_sensitivities) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, Rev_ode_store_sensitivities_matrix) {
+TEST(AgradRev, ode_store_sensitivities_matrix) {
   using stan::math::coupled_ode_system;
   using stan::math::var;
 
