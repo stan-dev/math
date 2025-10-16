@@ -231,7 +231,7 @@ inline auto wiener_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
   using T_w_ref = ref_type_if_t<!is_constant<T_w>::value, T_w>;
   using T_v_ref = ref_type_if_t<!is_constant<T_v>::value, T_v>;
   using internal::GradientCalc;
-  
+
   T_y_ref y_ref = y;
   T_a_ref a_ref = a;
   T_t0_ref t0_ref = t0;

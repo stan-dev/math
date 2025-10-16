@@ -688,7 +688,7 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
   using T_v_ref = ref_type_t<T_v>;
   using T_sv_ref = ref_type_t<T_sv>;
   using internal::GradientCalc;
-  
+
   T_y_ref y_ref = y;
   T_a_ref a_ref = a;
   T_t0_ref t0_ref = t0;

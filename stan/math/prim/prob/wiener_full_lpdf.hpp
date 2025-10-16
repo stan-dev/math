@@ -333,7 +333,7 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
   using internal::GradientCalc;
   using T_partials_return
       = partials_return_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0>;
-	  
+
   T_y_ref y_ref = y;
   T_a_ref a_ref = a;
   T_v_ref v_ref = v;
@@ -431,9 +431,9 @@ inline auto wiener_lpdf(const T_y& y, const T_a& a, const T_t0& t0,
       }();
     }
   }
-  
+
   // for precs. 1e-6, 1e-12, see Hartmann et al. (2021), Henrich et al. (2023)
-  // precision for density   
+  // precision for density
   const T_partials_return log_error_density = log(1e-6);
   // precision for derivatives (controllable by user)
   const auto error_bound = precision_derivatives;
