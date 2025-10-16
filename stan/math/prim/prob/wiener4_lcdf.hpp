@@ -561,9 +561,9 @@ inline auto wiener4_cdf_grad_w(const T_y& y, const T_a& a, const T_v& vn,
         dav = -1 / (1.0 - w);
       } else {
         auto prob = LOG_TWO + log(fabs(v)) + log(a) - log1m(exp_arg);
-		if (v < 0) {
-        prob +=  sign_two_va_one_minus_w;
-		}
+        if (v < 0) {
+          prob += sign_two_va_one_minus_w;
+        }
         dav = -exp(prob);
       }
     }
