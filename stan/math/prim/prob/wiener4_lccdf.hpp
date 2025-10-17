@@ -20,7 +20,8 @@ namespace internal {
  * @return log probability to reach the upper bound
  */
 template <typename T_a, typename T_w, typename T_v>
-inline auto log_wiener_prob_hit_upper(const T_a& a, const T_v& v, const T_w& w) {
+inline auto log_wiener_prob_hit_upper(const T_a& a, const T_v& v,
+                                      const T_w& w) {
   using ret_t = return_type_t<T_a, T_w, T_v>;
   const auto neg_v = -v;
   const auto one_m_w = 1.0 - w;
@@ -309,7 +310,8 @@ inline auto wiener_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
             log_error_cdf - LOG_TWO, y_value - t0_value, a_value, v_value,
             w_value, log_error_absolute);
 
-    const auto prob_hit_upper = exp(internal::log_wiener_prob_hit_upper(a_value, v_value, w_value));
+    const auto prob_hit_upper
+        = exp(internal::log_wiener_prob_hit_upper(a_value, v_value, w_value));
     const auto ccdf = prob_hit_upper - cdf;
     const auto log_ccdf_single_value = log(ccdf);
 
