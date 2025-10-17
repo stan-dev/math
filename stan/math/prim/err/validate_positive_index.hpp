@@ -10,19 +10,21 @@ namespace stan {
 namespace math {
 
 /**
- * Check that simplex is at least size 1
+ * Check that size is at least 1. Used for simplexes and
+ * other constraints that do a (size - 1) operation.
  *
- * @param var_name Name of simplex variable
+ * @param var_name Name of variable
  * @param expr Expression in which variable is declared
- * @param val Size of simplex
- * @throw std::invalid_argument if simplex size is less than 1
+ * @param val Size to check
+ * @throw std::invalid_argument if size is less than 1
  */
 inline void validate_positive_index(const char* var_name, const char* expr,
                                     int val) {
   if (val < 1) {
     [&]() STAN_COLD_PATH {
       std::stringstream msg;
-      msg << "Found dimension size less than one in simplex declaration"
+      msg << "Found dimension size less than one in constrained type "
+             "declaration (simplex, sum_to_zero_vector, etc.)"
           << "; variable=" << var_name << "; dimension size expression=" << expr
           << "; expression value=" << val;
       std::string msg_str(msg.str());
