@@ -137,12 +137,13 @@ inline auto wiener4_distribution(const T_y& y, const T_a& a, const T_v& v,
   using ret_t = return_type_t<T_y, T_a, T_w, T_v>;
   const auto neg_v = -v;
   const auto one_m_w = 1.0 - w;
-  
+
   const auto one_m_w_a_neg_v = one_m_w * a * neg_v;
 
   const auto K1 = 0.5 * (fabs(neg_v) / a * y - one_m_w);
-  const auto arg
-      = fmax(0.0, fmin(1.0, exp(one_m_w_a_neg_v + square(neg_v) * y / 2.0 + err) / 2.0));
+  const auto arg = fmax(
+      0.0,
+      fmin(1.0, exp(one_m_w_a_neg_v + square(neg_v) * y / 2.0 + err) / 2.0));
   const auto K2 = (arg == 0) ? INFTY
                              : (arg == 1) ? NEGATIVE_INFTY
                                           : -sqrt(y) / 2.0 / a * inv_Phi(arg);
@@ -176,7 +177,7 @@ inline auto wiener4_distribution(const T_y& y, const T_a& a, const T_v& v,
       auto neg2 = dj + logMill((rj + neg_vy) / sqrt_y);
       fminus = log_sum_exp(fminus, log_sum_exp(neg1, neg2));
     }
-	auto ans = ret_t(0.0);
+    auto ans = ret_t(0.0);
     if (fplus > fminus) {
       ans = log_diff_exp(fplus, fminus);
     } else if (fplus < fminus) {
@@ -187,41 +188,41 @@ inline auto wiener4_distribution(const T_y& y, const T_a& a, const T_v& v,
     ret_t log_distribution = ans - one_m_w_a_neg_v - square(neg_v) * y / 2;
     return NaturalScale ? exp(log_distribution) : log_distribution;
   }
-	const auto log_a = log(a);
-	const auto log_v = log(fabs(neg_v));
-	ret_t fplus = NEGATIVE_INFTY;
-	ret_t fminus = NEGATIVE_INFTY;
-	for (auto k = K_large_value; k > 0; --k) {
-	  auto log_k = log(k);
-	  auto k_pi = k * pi();
-	  auto sin_k_pi_w = sin(k_pi * one_m_w);
-	  if (sin_k_pi_w > 0) {
-		fplus = log_sum_exp(
-			fplus,
-			log_k - log_sum_exp(2.0 * log_v, 2.0 * (log_k + LOG_PI - log_a))
-				- 0.5 * square(k_pi / a) * y + log(sin_k_pi_w));
-	  } else if (sin_k_pi_w < 0) {
-		fminus = log_sum_exp(
-			fminus,
-			log_k - log_sum_exp(2.0 * log_v, 2.0 * (log_k + LOG_PI - log_a))
-				- 0.5 * square(k_pi / a) * y + log(-sin_k_pi_w));
-	  }
-	}
-	ret_t ans = NEGATIVE_INFTY;
-	if (fplus > fminus) {
-	  ans = log_diff_exp(fplus, fminus);
-	} else if (fplus < fminus) {
-	  ans = log_diff_exp(fminus, fplus);
-	}
-	auto summand_1 = log_probability_distribution(a, neg_v, one_m_w);
-	auto summand_2 = lg + (ans - one_m_w_a_neg_v - 0.5 * square(neg_v) * y);
-	ret_t log_distribution = NEGATIVE_INFTY;
-	if (summand_1 > summand_2) {
-	  log_distribution = log_diff_exp(summand_1, summand_2);
-	} else if (summand_1 < summand_2) {
-	  log_distribution = log_diff_exp(summand_2, summand_1);
-	}
-	return NaturalScale ? exp(log_distribution) : log_distribution;
+  const auto log_a = log(a);
+  const auto log_v = log(fabs(neg_v));
+  ret_t fplus = NEGATIVE_INFTY;
+  ret_t fminus = NEGATIVE_INFTY;
+  for (auto k = K_large_value; k > 0; --k) {
+    auto log_k = log(k);
+    auto k_pi = k * pi();
+    auto sin_k_pi_w = sin(k_pi * one_m_w);
+    if (sin_k_pi_w > 0) {
+      fplus = log_sum_exp(
+          fplus, log_k
+                     - log_sum_exp(2.0 * log_v, 2.0 * (log_k + LOG_PI - log_a))
+                     - 0.5 * square(k_pi / a) * y + log(sin_k_pi_w));
+    } else if (sin_k_pi_w < 0) {
+      fminus = log_sum_exp(
+          fminus, log_k
+                      - log_sum_exp(2.0 * log_v, 2.0 * (log_k + LOG_PI - log_a))
+                      - 0.5 * square(k_pi / a) * y + log(-sin_k_pi_w));
+    }
+  }
+  ret_t ans = NEGATIVE_INFTY;
+  if (fplus > fminus) {
+    ans = log_diff_exp(fplus, fminus);
+  } else if (fplus < fminus) {
+    ans = log_diff_exp(fminus, fplus);
+  }
+  auto summand_1 = log_probability_distribution(a, neg_v, one_m_w);
+  auto summand_2 = lg + (ans - one_m_w_a_neg_v - 0.5 * square(neg_v) * y);
+  ret_t log_distribution = NEGATIVE_INFTY;
+  if (summand_1 > summand_2) {
+    log_distribution = log_diff_exp(summand_1, summand_2);
+  } else if (summand_1 < summand_2) {
+    log_distribution = log_diff_exp(summand_2, summand_1);
+  }
+  return NaturalScale ? exp(log_distribution) : log_distribution;
 }
 
 /**
@@ -243,14 +244,14 @@ inline auto wiener4_cdf_grad_a(const T_y& y, const T_a& a, const T_v& v,
   using ret_t = return_type_t<T_y, T_a, T_w, T_v>;
   const auto neg_v = -v;
   const auto one_m_w = 1 - w;
-  
+
   const auto one_m_w_neg_v = one_m_w * neg_v;
   const auto one_m_w_a_neg_v = one_m_w_neg_v * a;
 
   const auto log_y = log(y);
   const auto log_a = log(a);
-  auto C1 = ret_t(LOG_TWO
-                  - log_sum_exp(2.0 * log(fabs(neg_v)), 2.0 * (LOG_PI - log_a)));
+  auto C1 = ret_t(
+      LOG_TWO - log_sum_exp(2.0 * log(fabs(neg_v)), 2.0 * (LOG_PI - log_a)));
   C1 = log_sum_exp(C1, log_y);
   const auto factor = one_m_w_a_neg_v + square(neg_v) * y / 2.0 + err;
   const auto alphK = fmin(factor + LOG_PI + log_y + log_a - LOG_TWO - C1, 0.0);
@@ -310,26 +311,26 @@ inline auto wiener4_cdf_grad_a(const T_y& y, const T_a& a, const T_v& v,
     const auto summands_small_y = ans / (y * F_k);
     return -one_m_w_neg_v * cdf + summands_small_y;
   }
-    ret_t ans = 0.0;
-    for (auto k = K_large_value; k > 0; --k) {
-      const auto kpi = k * pi();
-      const auto kpia2 = square(kpi / a);
-      const auto denom = square(neg_v) + kpia2;
-      auto last = (square(kpi) / pow(a, 3) * (y + 2.0 / denom)) * k / denom
-                  * exp(-0.5 * kpia2 * y);
-      ans -= last * sin(kpi * one_m_w);
-    }
-    const ret_t prob = fmin(exp(log_probability_distribution(a, neg_v, one_m_w)),
-                            std::numeric_limits<ret_t>::max());
-    const auto dav = log_probability_GradAV(a, neg_v, one_m_w);
-	auto dav_neg_v = dav * neg_v;
-    auto prob_deriv
-        = fabs(neg_v) == 0 ? ret_t(0.0)
-                          : is_inf(dav_neg_v) ? NEGATIVE_INFTY : dav_neg_v * prob;
-    ans = (-2.0 / a - one_m_w_neg_v) * (cdf - prob)
-          + ans * (2.0 * pi() / square(a))
-                * exp(-one_m_w_a_neg_v - 0.5 * square(neg_v) * y);
-    return prob_deriv + ans;
+  ret_t ans = 0.0;
+  for (auto k = K_large_value; k > 0; --k) {
+    const auto kpi = k * pi();
+    const auto kpia2 = square(kpi / a);
+    const auto denom = square(neg_v) + kpia2;
+    auto last = (square(kpi) / pow(a, 3) * (y + 2.0 / denom)) * k / denom
+                * exp(-0.5 * kpia2 * y);
+    ans -= last * sin(kpi * one_m_w);
+  }
+  const ret_t prob = fmin(exp(log_probability_distribution(a, neg_v, one_m_w)),
+                          std::numeric_limits<ret_t>::max());
+  const auto dav = log_probability_GradAV(a, neg_v, one_m_w);
+  auto dav_neg_v = dav * neg_v;
+  auto prob_deriv = fabs(neg_v) == 0
+                        ? ret_t(0.0)
+                        : is_inf(dav_neg_v) ? NEGATIVE_INFTY : dav_neg_v * prob;
+  ans = (-2.0 / a - one_m_w_neg_v) * (cdf - prob)
+        + ans * (2.0 * pi() / square(a))
+              * exp(-one_m_w_a_neg_v - 0.5 * square(neg_v) * y);
+  return prob_deriv + ans;
 }
 
 /**
@@ -351,10 +352,10 @@ inline auto wiener4_cdf_grad_v(const T_y& y, const T_a& a, const T_v& v,
   using ret_t = return_type_t<T_y, T_a, T_w, T_v>;
   const auto neg_v = -v;
   const auto one_m_w = 1.0 - w;
-  
+
   const auto one_m_w_a = one_m_w * a;
   const auto one_m_w_a_neg_v = one_m_w_a * neg_v;
-  
+
   const auto log_y = log(y);
   const auto factor = one_m_w_a_neg_v + square(neg_v) * y / 2.0 + err;
 
@@ -419,25 +420,25 @@ inline auto wiener4_cdf_grad_v(const T_y& y, const T_a& a, const T_v& v,
     const auto summands_small_y = ans / F_k;
     return (one_m_w_a + neg_vy) * cdf - summands_small_y;
   }
-    ret_t ans = 0.0;
-    for (auto k = K_large_value; k > 0; --k) {
-      const auto kpi = k * pi();
-      const auto kpia2 = square(kpi / a);
-      const auto ekpia2y = exp(-0.5 * kpia2 * y);
-      const auto denom = square(neg_v) + kpia2;
-      const auto denomk = k / denom;
-      auto last = denomk * ekpia2y / denom;
-      ans -= last * sin(kpi * one_m_w);
-    }
-    const ret_t prob = fmin(exp(log_probability_distribution(a, neg_v, one_m_w)),
-                            std::numeric_limits<ret_t>::max());
-    const auto dav = log_probability_GradAV(a, neg_v, one_m_w);
-	auto dav_a = dav * a;
-    auto prob_deriv = is_inf(dav_a) ? ret_t(NEGATIVE_INFTY) : dav_a * prob;
-    ans = (-one_m_w_a + v * y) * (cdf - prob)
-          + ans * 4.0 * v * pi() / square(a)
-                * exp(-one_m_w_a_neg_v - 0.5 * square(neg_v) * y);
-    return -(prob_deriv + ans);
+  ret_t ans = 0.0;
+  for (auto k = K_large_value; k > 0; --k) {
+    const auto kpi = k * pi();
+    const auto kpia2 = square(kpi / a);
+    const auto ekpia2y = exp(-0.5 * kpia2 * y);
+    const auto denom = square(neg_v) + kpia2;
+    const auto denomk = k / denom;
+    auto last = denomk * ekpia2y / denom;
+    ans -= last * sin(kpi * one_m_w);
+  }
+  const ret_t prob = fmin(exp(log_probability_distribution(a, neg_v, one_m_w)),
+                          std::numeric_limits<ret_t>::max());
+  const auto dav = log_probability_GradAV(a, neg_v, one_m_w);
+  auto dav_a = dav * a;
+  auto prob_deriv = is_inf(dav_a) ? ret_t(NEGATIVE_INFTY) : dav_a * prob;
+  ans = (-one_m_w_a + v * y) * (cdf - prob)
+        + ans * 4.0 * v * pi() / square(a)
+              * exp(-one_m_w_a_neg_v - 0.5 * square(neg_v) * y);
+  return -(prob_deriv + ans);
 }
 
 /**
@@ -459,9 +460,9 @@ inline auto wiener4_cdf_grad_w(const T_y& y, const T_a& a, const T_v& v,
   using ret_t = return_type_t<T_y, T_a, T_w, T_v>;
   const auto neg_v = -v;
   const auto one_m_w = 1 - w;
-  
+
   const auto one_m_w_a_neg_v = one_m_w * a * neg_v;
-  
+
   const auto factor = one_m_w_a_neg_v + square(neg_v) * y / 2.0 + err;
 
   const auto log_y = log(y);
@@ -469,8 +470,7 @@ inline auto wiener4_cdf_grad_w(const T_y& y, const T_a& a, const T_v& v,
   const auto temp = -fmin(exp(log_a - LOG_PI - 0.5 * log_y),
                           std::numeric_limits<ret_t>::max());
   auto alphK_large
-      = fmin(exp(factor + 0.5 * (LOG_PI + log_y) - 1.5 * LOG_TWO - log_a),
-             1.0);
+      = fmin(exp(factor + 0.5 * (LOG_PI + log_y) - 1.5 * LOG_TWO - log_a), 1.0);
   alphK_large = fmax(0.0, alphK_large);
   const auto K_large_value
       = fmax(ceil((alphK_large == 0)
@@ -484,8 +484,7 @@ inline auto wiener4_cdf_grad_w(const T_y& y, const T_a& a, const T_v& v,
   const auto K_large = fabs(neg_v) / a * y - wdash;
   const auto lv = log1p(square(neg_v) * y);
   const auto alphK_small = factor - LOG_TWO - lv;
-  const auto arg
-      = fmin(exp(alphK_small), 1.0);
+  const auto arg = fmin(exp(alphK_small), 1.0);
   const auto K_small
       = (arg == 0)
             ? INFTY
@@ -535,43 +534,43 @@ inline auto wiener4_cdf_grad_w(const T_y& y, const T_a& a, const T_v& v,
     const auto summands_small_y = ans / (y * F_k);
     return neg_v * a * cdf - summands_small_y;
   }
-    ret_t ans = 0.0;
-    for (auto k = K_large_value; k > 0; --k) {
-      const auto kpi = k * pi();
-      const auto kpia2 = square(kpi / a);
-      const auto ekpia2y = exp(-0.5 * kpia2 * y);
-      const auto denom = square(neg_v) + kpia2;
-      const auto denomk = k / denom;
-      auto last = kpi;
-      last *= denomk * ekpia2y;
-      ans -= last * cos(kpi * one_m_w);
-    }
-    const auto evaw = exp(-one_m_w_a_neg_v - 0.5 * square(neg_v) * y);
-    const ret_t prob = fmin(exp(log_probability_distribution(a, neg_v, one_m_w)),
-                            std::numeric_limits<ret_t>::max());
+  ret_t ans = 0.0;
+  for (auto k = K_large_value; k > 0; --k) {
+    const auto kpi = k * pi();
+    const auto kpia2 = square(kpi / a);
+    const auto ekpia2y = exp(-0.5 * kpia2 * y);
+    const auto denom = square(neg_v) + kpia2;
+    const auto denomk = k / denom;
+    auto last = kpi;
+    last *= denomk * ekpia2y;
+    ans -= last * cos(kpi * one_m_w);
+  }
+  const auto evaw = exp(-one_m_w_a_neg_v - 0.5 * square(neg_v) * y);
+  const ret_t prob = fmin(exp(log_probability_distribution(a, neg_v, one_m_w)),
+                          std::numeric_limits<ret_t>::max());
 
-    // Calculate the probability term 'P' on log scale
-    auto dav = ret_t(-1 / w);
-    if (neg_v != 0) {
-      auto nearly_one = ret_t(1.0 - 1.0e-6);
-      const auto sign_v = (neg_v < 0) ? 1 : -1;
-      const auto sign_two_va_one_minus_w = sign_v * (2.0 * neg_v * a * w);
-      const auto exp_arg = exp(sign_two_va_one_minus_w);
-      if (exp_arg >= nearly_one) {
-        dav = -1.0 / w;
-      } else {
-        auto prob = LOG_TWO + log(fabs(neg_v)) + log(a) - log1m(exp_arg);
-        if (neg_v < 0) {
-          prob += sign_two_va_one_minus_w;
-        }
-        dav = -exp(prob);
+  // Calculate the probability term 'P' on log scale
+  auto dav = ret_t(-1 / w);
+  if (neg_v != 0) {
+    auto nearly_one = ret_t(1.0 - 1.0e-6);
+    const auto sign_v = (neg_v < 0) ? 1 : -1;
+    const auto sign_two_va_one_minus_w = sign_v * (2.0 * neg_v * a * w);
+    const auto exp_arg = exp(sign_two_va_one_minus_w);
+    if (exp_arg >= nearly_one) {
+      dav = -1.0 / w;
+    } else {
+      auto prob = LOG_TWO + log(fabs(neg_v)) + log(a) - log1m(exp_arg);
+      if (neg_v < 0) {
+        prob += sign_two_va_one_minus_w;
       }
+      dav = -exp(prob);
     }
+  }
 
-    const auto pia2 = 2.0 * pi() / square(a);
-    auto prob_deriv = dav * prob;
-    ans = v * a * (cdf - prob) + ans * pia2 * evaw;
-    return -(prob_deriv + ans);
+  const auto pia2 = 2.0 * pi() / square(a);
+  auto prob_deriv = dav * prob;
+  ans = v * a * (cdf - prob) + ans * pia2 * evaw;
+  return -(prob_deriv + ans);
 }
 }  // namespace internal
 
