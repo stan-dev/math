@@ -532,45 +532,47 @@ inline auto laplace_marginal_density_est(
       return Eigen::VectorXd::Zero(theta_size);
     }
   }();
-  prev.theta_ = curr.theta_;
-  prev.a_ = Eigen::VectorXd::Zero(theta_size);
-  Eigen::MatrixXd B(theta_size, theta_size);
-  Eigen::VectorXd b(theta_size);
-  // FIXME: We should use less full scope referencing here. Hard to follow
+  curr.a_ = Eigen::VectorXd::Zero(theta_size);
   auto obj_fun = [&](const Eigen::VectorXd& a_val, auto&& theta_val) -> double {
     return -0.5 * a_val.dot(theta_val)
            + laplace_likelihood::log_likelihood(ll_fun, theta_val, ll_args_vals,
                                                 msgs);
   };
+  curr.obj_ = obj_fun(prev.a_, curr.theta_);
+  curr.alpha_ = 1.0;
+  curr.theta_grad_ = laplace_likelihood::theta_grad(ll_fun, curr.theta_, ll_args, msgs);
+  prev = curr;
+  Eigen::MatrixXd B(theta_size, theta_size);
+  Eigen::VectorXd b(theta_size);
+  // FIXME: We should use less full scope referencing here. Hard to follow
   auto grad_fun = [&](const Eigen::VectorXd& a_val, auto&& theta_val, auto&& theta_grad) -> Eigen::VectorXd {
     return -covariance * a_val + covariance * theta_grad;
   };
-  prev.obj_ = obj_fun(prev.a_, curr.theta_);
-  curr.obj_ = obj_fun(prev.a_, curr.theta_);
   if (!std::isfinite(curr.obj_)) {
 //    std::cout << "FAIL: initial objective: " << curr.obj_ << std::endl;
     throw std::domain_error(
         "laplace_marginal_density: log likelihood is not finite at initial "
         "theta and likelihood arguments.");
   }
-  curr.alpha_ = 1.0;
-  prev.alpha_ = 1.0;
 //  std::cout << "___________\nSTART\n___________" << std::endl;
   // NOTE: theta_grad is updated in `wolfe_line_search`
-  curr.theta_grad_ = laplace_likelihood::theta_grad(ll_fun, curr.theta_, ll_args, msgs);
-  prev.theta_grad_ = curr.theta_grad_;
   WolfeStatus wolfe_status;
   // Start with safe step size
   wolfe_status.num_backtracks_ = 99;
   int iter = 0;
   auto update_line_search = [&](auto&& curr, auto&& prev) {
-    Eigen::VectorXd p = curr.theta_ - prev.theta_;
+    Eigen::VectorXd p = curr.a_ - prev.a_;
+    double dir_deriv_init = grad_fun(prev.a_, prev.theta_, prev.theta_grad_).dot(p);
+    if (dir_deriv_init < 0) {
+      p = -p;
+      dir_deriv_init = -dir_deriv_init;
+    }
     curr.theta_grad_ = laplace_likelihood::theta_grad(ll_fun, curr.theta_, ll_args, msgs);
-    wolfe_info.curr_.alpha_ = barzilai_borwein_step_size(p, curr.theta_grad_, prev.theta_grad_,
-                                  curr.alpha_, wolfe_status.num_backtracks_, options.line_search.min_alpha,
-                                  options.line_search.max_alpha);
-    prev.theta_grad_ = curr.theta_grad_;
-    prev.obj_ = curr.obj_;
+    wolfe_info.curr_.alpha_ = barzilai_borwein_step_size(p,
+      grad_fun(curr.a_, curr.theta_, curr.theta_grad_),
+      grad_fun(prev.a_, prev.theta_, prev.theta_grad_),
+      prev.alpha_, wolfe_status.num_backtracks_, options.line_search.min_alpha,
+      options.line_search.max_alpha);
     wolfe_status = internal::wolfe_line_search(
         wolfe_info, ll_fun,
         obj_fun, grad_fun, covariance, ll_args, options.line_search, msgs);
