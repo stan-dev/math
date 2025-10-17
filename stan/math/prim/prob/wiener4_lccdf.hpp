@@ -201,7 +201,7 @@ inline auto wiener4_ccdf_grad_w(const T_y& y, const T_a& a, const T_v& v,
 
 /**
  * Log-CCDF for the 4-parameter Wiener distribution.
- * See 'wiener_full_lpdf' for more comprehensive documentation
+ * See 'wiener_full_lpdf' for more comprehensive documentation.
  *
  * @tparam T_y type of reaction time
  * @tparam T_a type of boundary

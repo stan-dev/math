@@ -654,7 +654,7 @@ inline auto estimate_with_err_check(F&& functor, T_err&& err,
 
 /**
  * Log-density function for the 5-parameter Wiener density.
- * See 'wiener_lpdf' for more comprehensive documentation
+ * See 'wiener_lpdf' for more comprehensive documentation.
  *
  * @tparam T_y type of reaction time
  * @tparam T_a type of boundary
