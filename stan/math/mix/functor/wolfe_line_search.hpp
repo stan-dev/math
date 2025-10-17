@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/mix/functor/laplace_likelihood.hpp>
-#include <stan/math/mix/functor/wolfe_line_search.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun.hpp>
@@ -16,7 +15,7 @@
 #include <cmath>
 #include <limits>
 #include <tuple>
-// #define LAPLACE_DEBUG
+//#define LAPLACE_DEBUG
 #ifdef LAPLACE_DEBUG
 #include <iomanip>
 #include <iostream>
@@ -103,6 +102,10 @@ struct laplace_line_search_options {
    * considered insignificant.
    */
   double abs_obj_threshold{1e-12};
+
+  double rel_grad_threshold{1e-3};  // off by default
+  double rel_obj_threshold{1e-10};   // off by default
+  int max_iterations{1000};
 };
 namespace internal {
 namespace debug {
@@ -110,6 +113,7 @@ namespace debug {
 constexpr void print(int tabs) {}
 
 #ifdef LAPLACE_DEBUG
+std::ofstream csv_file("../wolfe_line_search_debug.csv");
 template <typename Val, typename... Types>
 void print(int tabs, const char* name, Val&& val, Types&&... args) {
   csv_file << name << ", " << std::setprecision(13) << std::fixed
@@ -255,8 +259,9 @@ inline Scalar cubic_or_bisect_max(Scalar a, Scalar fa, Scalar fpa,
 template <typename Eval, typename Options>
 inline auto cubic_or_bisect_max(Eval&& low, Eval&& high, Options&& opt) {
   auto alpha = cubic_or_bisect_max(low.alpha, low.obj, low.dir, high.alpha, high.obj, high.dir);
-  alpha
-        = std::clamp(alpha, opt.min_alpha, high.alpha * 0.9);
+  const double width = high.alpha - low.alpha;
+  const double guard = 1e-3 * width;            // or make this an option
+  alpha = std::clamp(alpha, low.alpha + guard, high.alpha - guard);
   return alpha;
 
 }
@@ -271,7 +276,7 @@ inline auto check_armijo(double obj_next, double obj_init, double alpha_next,
       "alpha_next: ", alpha_next, "dir0:       ", dir0,
       "c1:         ", opt.c1, "obj + alpha * dir0 * c1: ",
       (obj_init + alpha_next * dir0 * opt.c1));
-  return obj_next >= obj_init + alpha_next * dir0 * opt.c1;
+  return (obj_next >= obj_init) && (obj_next >= obj_init + alpha_next * dir0 * opt.c1);
 }
 
 template <typename Option>
@@ -310,7 +315,8 @@ enum class WolfeReturn : uint8_t {
   // failed to find a step
   NumericalIssue,
   // All other failures
-  Fail
+  Fail,
+  Continue
 };
 
 struct WolfeStatus {
@@ -345,6 +351,8 @@ inline auto wolfe_status_str(WolfeStatus s) {
     return "NumericalIssue";
   case WolfeReturn::Fail:
     return "Fail";
+  case WolfeReturn::Continue:
+    return "Continue";
   default:
     return "UNKNOWN";
   }
@@ -381,6 +389,7 @@ struct WolfeData {
   void swap(WolfeData& other, Eval& eval) {
     theta_.swap(other.theta_);
     a_.swap(other.a_);
+    theta_grad_.swap(other.theta_grad_);
     std::swap(obj_, eval.obj);
     std::swap(alpha_, eval.alpha);
     std::swap(dir_, eval.dir);
@@ -417,15 +426,6 @@ struct WolfeInfo {
  *  \f$\phi(\alpha)=\text{obj\_fun}\bigl(a(\alpha),\;\theta(\alpha)\bigr)\f$,
  *  \f$\theta(\alpha)=\text{covariance}\;·\;a(\alpha)\f$,
  *  \f$\phi'(\alpha)=\nabla\phi(\alpha)^{\!T} p\f$.
- *  void swap(WolfeData& other) {
-    theta_.swap(other.theta_);
-    theta_grad_.swap(other.theta_grad_);
-    a_.swap(other.a_);
-    std::swap(obj_, other.obj_);
-    std::swap(alpha_, other.alpha_);
-    std::swap(dir_, other.dir_);
-  }
-
  * The search proceeds in three phases
  *
  *  1. **Back‑tracking** – halve the initial \f$\alpha\f$ until both Wolfe
@@ -441,18 +441,26 @@ struct WolfeInfo {
  *     step is found or the interval width falls below
  *`opt.min_alpha`.
  *
- * * **Gradient reuse** – the caller provides `theta_grad` computed at the
- *   starting point; inside the loop it is overwritten with fresh gradients
- *   via `laplace_likelihood::theta_grad`.
  * * **Early‑exit for \f$\alpha\f$ = 1 or < `min_alpha`** Laplace problems
  *commonly accept a full Newton step. The function short‑circuits to avoid any
  *extra work.
  *
- *
- * @return `true`  if a step satisfying both Wolfe conditions was found
- *         `false` if only Armijo is satisfied (strong‑Wolfe failed but a
- *                “least‑bad’’ step was returned).
- *
+ * @tparam F Type of the log‑likelihood function.
+ * @tparam Obj Type of the objective function.
+ * @tparam Grad Type of the gradient function.
+ * @tparam LLArgs Type of additional arguments to the log‑likelihood function.
+ * @tparam Stream Type of the output stream for messages.
+ * @tparam Options Type of the Wolfe line search options.
+ * @param wolfe_info Struct holding current, previous, and scratch data.
+ * @param ll_fun Log‑likelihood function.
+ * @param obj_fun Objective function.
+ * @param grad_fun Gradient function.
+ * @param covariance Covariance matrix for mapping *a* to *θ*.
+ * @param ll_args Additional arguments to the log‑likelihood function.
+ * @param opt Wolfe line search options.
+ * @param msgs Output stream for messages.
+ * @return A `WolfeStatus` struct indicating the result of the line search.
+ * If successful, `wolfe_info.curr_` contains the new point.
  * @warning The helper `cubic_interp` assumes its first point
  *          corresponds to *g*(0)=0; do **not** alter the baseline
  *          initialisation logic or the interpolation will become
@@ -469,6 +477,10 @@ inline WolfeStatus wolfe_line_search(
   auto& scratch = wolfe_info.scratch_;
   Eigen::VectorXd p = curr.a_ - prev.a_;
   double dir_deriv_init = grad_fun(prev.a_, prev.theta_, prev.theta_grad_).dot(p);
+  if (dir_deriv_init <= 0.0) {
+    p = -p;
+    dir_deriv_init = -dir_deriv_init;
+  }
   Eval low{0.0, prev.obj_, dir_deriv_init};
   auto armijo_ok = [&](const Eval& eval) -> bool {
     return check_armijo(eval.obj, prev.obj_, eval.alpha, dir_deriv_init, opt);
@@ -477,32 +489,63 @@ inline WolfeStatus wolfe_line_search(
     return check_wolfe_curve(eval.dir, dir_deriv_init, opt);
   };
   int total_updates = 0;
+  auto assign_step = [&](WolfeData& out, const WolfeData& buf, const Eval& e) {
+    out.a_ = buf.a_;
+    out.theta_ = buf.theta_;
+    out.theta_grad_ = buf.theta_grad_;
+    out.obj_ = e.obj;
+    out.alpha_ = e.alpha;
+    out.dir_ = e.dir;
+  };
   auto update_step
       = [&p, &prev, &covariance, &ll_fun, &ll_args, &obj_fun, &grad_fun, msgs,
-         &total_updates](auto& a_in, auto& theta_in, auto& theta_grad_in,
+         &total_updates, &assign_step](auto& a_in, auto& theta_in, auto& theta_grad_in,
                          auto& eval_in) {
           total_updates++;
           a_in = prev.a_ + eval_in.alpha * p;
           theta_in = covariance * a_in;
-          theta_grad_in
-              = laplace_likelihood::theta_grad(ll_fun, theta_in, ll_args, msgs);
+          theta_grad_in = laplace_likelihood::theta_grad(ll_fun, theta_in, ll_args, msgs);
           eval_in.obj = obj_fun(a_in, theta_in);
           eval_in.dir = grad_fun(a_in, theta_in, theta_grad_in).dot(p);
         };
-  double alpha_start = std::clamp(curr.alpha_ * 2.0, opt.min_alpha,
+  auto check_max_steps = [&assign_step, &total_updates, &armijo_ok, &wolfe_ok, &update_step, &ll_fun, &msgs](auto&& scratch, auto&& curr, auto&& prev, auto&& best, auto&& opt, auto&& ll_args) {
+    if (total_updates > opt.max_iterations) {
+        debug::print("Exit on precheck max iterations", 1);
+        debug::print("total_updates", total_updates);
+        if (armijo_ok(best)) {
+            update_step(scratch.a_, scratch.theta_, scratch.theta_grad_, best);
+            assign_step(curr, scratch, best);
+          if (wolfe_ok(best)) {
+            return WolfeStatus{WolfeReturn::Wolfe, total_updates, 0};
+          } else {
+            return WolfeStatus{WolfeReturn::Armijo, total_updates, 0};
+          }
+        }
+        prev.theta_grad_ = laplace_likelihood::theta_grad(ll_fun, prev.theta_, ll_args, msgs);
+        return WolfeStatus{WolfeReturn::ReachedMaxStep, total_updates, 0};
+    } else {
+      return WolfeStatus{WolfeReturn::Continue, total_updates, 0};
+    }
+  };
+  double alpha_start = std::clamp(curr.alpha_ * opt.scale_up, opt.min_alpha,
                                  opt.max_alpha);
   Eval high{alpha_start, curr.obj_, dir_deriv_init};
-  update_step(scratch.a_, scratch.theta_, curr.theta_grad_, high);
+  update_step(scratch.a_, scratch.theta_, scratch.theta_grad_, high);
   Eval best = low;  // keep the best Armijo-OK in case strong-Wolfe fails
   {
     while (!(std::isfinite(high.obj) && scratch.theta_.allFinite())) {
-      high.alpha *= 0.5;
+      high.alpha *= opt.tau;
       if (high.alpha < opt.min_alpha) {
         debug::print("Exit on precheck numerical trouble", 1);
         debug::print("total_updates", total_updates);
+        prev.theta_grad_ = laplace_likelihood::theta_grad(ll_fun, prev.theta_, ll_args, msgs);
         return WolfeStatus{WolfeReturn::StepTooSmall, total_updates, 0};
       }
-      update_step(scratch.a_, scratch.theta_, curr.theta_grad_, high);
+      update_step(scratch.a_, scratch.theta_, scratch.theta_grad_, high);
+      auto check_steps = check_max_steps(scratch, curr, prev, high, opt, ll_args);
+      if (check_steps.stop_ != WolfeReturn::Continue) {
+        return check_steps;
+      }
     }
     debug::print("First precheck: ", 1, "high.alpha: ", high.alpha,
                  "high.obj:   ", high.obj, "deriv_high: ", high.dir,
@@ -510,8 +553,26 @@ inline WolfeStatus wolfe_line_search(
     // Quick accept if Armijo and Wolfe conditions are satisfied
     if (armijo_ok(high)) {
       if (wolfe_ok(high)) {
+        // Try zooming up till we hit a fail
+        best = high;
+        while (armijo_ok(high) && wolfe_ok(high)) {
+          best = high;
+          auto check_steps = check_max_steps(scratch, curr, prev, best, opt, ll_args);
+          if (check_steps.stop_ != WolfeReturn::Continue) {
+            return check_steps;
+          }
+          high.alpha *= opt.scale_up;
+          if (high.alpha > opt.max_alpha) {
+            break;
+          }
+          update_step(scratch.a_, scratch.theta_, scratch.theta_grad_, high);
+          debug::print("Zoom up: ", 1, "high.alpha: ", high.alpha,
+                       "high.obj:   ", high.obj, "deriv_high: ", high.dir,
+                       "deriv_init: ", dir_deriv_init);
+        }
         debug::print("Exit on first precheck", 1);
-        curr.swap(scratch, high);
+        update_step(scratch.a_, scratch.theta_, scratch.theta_grad_, best);
+        assign_step(curr, scratch, best);
         debug::print("total_updates", total_updates);
         return WolfeStatus{WolfeReturn::Wolfe, total_updates, 0};
       } else {
@@ -523,11 +584,11 @@ inline WolfeStatus wolfe_line_search(
   }
   // If current alpha fails, backtrack down till we find a good point
   debug::print("Begin Loop: ", 1, "Initial alpha: ", high.alpha);
-  //    "g0:            ", g0.transpose().eval(),
-  //    "scratch.theta_:     ", scratch.theta_.transpose().eval());
   int loop_iter = 0;
-  const auto grad_tol = opt.abs_grad_threshold;
-  const auto obj_tol = opt.abs_obj_threshold;
+  const double grad_tol = std::max(opt.abs_grad_threshold,
+                                 opt.rel_grad_threshold * std::abs(dir_deriv_init));
+  const double obj_tol  = std::max(opt.abs_obj_threshold,
+                                 opt.rel_obj_threshold  * (1.0 + std::abs(prev.obj_)));
   // If true we have already found a good first point
   bool found_right = false;
   int num_backtracks = 0;
@@ -544,7 +605,7 @@ inline WolfeStatus wolfe_line_search(
   while (!found_right && high.alpha < opt.max_alpha) {
     num_backtracks++;
     // 1. Evaluate f(α) and g(α)
-    update_step(scratch.a_, scratch.theta_, curr.theta_grad_, high);
+    update_step(scratch.a_, scratch.theta_, scratch.theta_grad_, high);
     debug::print("First While", 1, "Second Iter:       ", loop_iter++,
                  "high.alpha: ", high.alpha, "high.obj:   ", high.obj,
                  "deriv_high: ", high.dir, "deriv_init: ", dir_deriv_init,
@@ -561,7 +622,7 @@ inline WolfeStatus wolfe_line_search(
     if (armijo_ok(high)) {
       // [1]
       if (wolfe_ok(high)) {
-        curr.swap(scratch, high);
+        assign_step(curr, scratch, high);
         debug::print("Exit on first while", 1);
         debug::print("total_updates", total_updates);
         return WolfeStatus{WolfeReturn::Wolfe, total_updates, num_backtracks};
@@ -570,7 +631,7 @@ inline WolfeStatus wolfe_line_search(
           best = high;
         }
         // [2]
-        if (std::signbit(high.dir)) {
+        if (high.dir > 0) {
           low = high;
           high.alpha *= opt.scale_up;
           continue;
@@ -582,26 +643,32 @@ inline WolfeStatus wolfe_line_search(
     }
     // [4,5]
     found_right = true;
-    break;
+    auto check_steps = check_max_steps(scratch, curr, prev, best, opt, ll_args);
+    if (check_steps.stop_ != WolfeReturn::Continue) {
+      return check_steps;
+    }
   }
   auto check_bounds = [&](auto&& curr_eval) {
     // Check for grad convergence
     if (std::abs(curr_eval.dir) <= grad_tol ||  // tiny slope
-      std::abs(curr_eval.obj - curr.obj_) <= obj_tol
-          && curr_eval.alpha < 1e-8) {                // tiny gain
+      std::abs(curr_eval.obj - prev.obj_) <= obj_tol
+          && curr_eval.alpha < opt.min_alpha) {                // tiny gain
       if (curr_eval.obj != low.obj && armijo_ok(curr_eval)) {
-        update_step(scratch.a_, scratch.theta_, curr.theta_grad_, curr_eval);
-        curr.swap(scratch, curr_eval);
+        update_step(scratch.a_, scratch.theta_, scratch.theta_grad_, curr_eval);
+        assign_step(curr, scratch, curr_eval);
+      } else {
+        // Revert ll_args wrt to prev
+        prev.theta_grad_ = laplace_likelihood::theta_grad(ll_fun, prev.theta_, ll_args, msgs);
       }
       debug::print("total_updates", total_updates);
       if (std::abs(curr_eval.dir) <= grad_tol &&  // tiny slope
-          std::abs(curr_eval.obj - curr.obj_) <= obj_tol) {
+          std::abs(curr_eval.obj - prev.obj_) <= obj_tol) {
         debug::print("Exit on grad_tol and obj_tol", 1);
         return WolfeStatus{WolfeReturn::ConvergedObjectiveAndGradient, total_updates, num_backtracks};
       } else if (std::abs(curr_eval.dir) <= grad_tol) {
         debug::print("Exit on grad_tol", 1);
         return WolfeStatus{WolfeReturn::ConvergedGradient, total_updates, num_backtracks};
-      } else if (std::abs(curr_eval.obj - curr.obj_) <= obj_tol) {
+      } else if (std::abs(curr_eval.obj - prev.obj_) <= obj_tol) {
         debug::print("Exit on obj_tol", 1);
         return WolfeStatus{WolfeReturn::ConvergedObjective, total_updates, num_backtracks};
       } else {
@@ -615,18 +682,37 @@ inline WolfeStatus wolfe_line_search(
   if (check_b.stop_ != WolfeReturn::Wolfe) {
     return check_b;
   }
-  update_step(scratch.a_, scratch.theta_, curr.theta_grad_, high);
+  update_step(scratch.a_, scratch.theta_, scratch.theta_grad_, high);
 
   debug::print("_______End First While: ", 1, "high.alpha: ", high.alpha,
                "high.obj:   ", high.obj, "high.dir: ", high.dir,
                "dir_deriv_init: ", dir_deriv_init);
   loop_iter = 0;
+  // Ensure left endpoint satisfies Armijo before cubic/bisection zoom.
+  // (Strong-Wolfe zoom expects the "low" end to be acceptable per Armijo.)
+  if (!armijo_ok(low) && armijo_ok(high)) {
+    std::swap(low, high);
+  }
+
+  // Take a safe bisection on the first pass
+  while ((low.dir > 0 && high.dir > 0) && (high.alpha - low.alpha > opt.min_alpha)) {
+    // Pure bisection to try to get a sign change.
+    Eval mid{ 0.5 * (low.alpha + high.alpha), 0.0, 0.0 };
+    update_step(scratch.a_, scratch.theta_, scratch.theta_grad_, mid);
+    if (!std::isfinite(mid.obj) || !std::isfinite(mid.dir)
+        || !scratch.theta_.allFinite() || !scratch.theta_grad_.allFinite()) {
+      high.alpha *= opt.tau;
+      if (high.alpha < opt.min_alpha) break;
+      continue;
+    }
+    if (mid.dir > 0) low = mid; else high = mid;
+  }
   Eval mid{low};
   while (high.alpha - low.alpha > opt.min_alpha) {
     num_backtracks++;
     const double diff_alpha = high.alpha - low.alpha;
     mid.alpha = cubic_or_bisect_max(low, high, opt);
-    update_step(scratch.a_, scratch.theta_, curr.theta_grad_, mid);
+    update_step(scratch.a_, scratch.theta_, scratch.theta_grad_, mid);
     debug::print("Cube: ", 1, "Cube Iter:           ", loop_iter++,
                  "mid.alpha:      ", mid.alpha, "mid.obj:        ", mid.obj,
                  "high.dir: ", mid.dir,
@@ -651,7 +737,7 @@ inline WolfeStatus wolfe_line_search(
      */
     if (armijo_ok(mid)) {
       if (wolfe_ok(mid)) {
-        curr.swap(scratch, mid);
+        assign_step(curr, scratch, mid);
         debug::print("Exit on safe on zoom", 1);
         debug::print("total_updates", total_updates);
         return WolfeStatus{WolfeReturn::Wolfe, total_updates, num_backtracks};
@@ -671,41 +757,37 @@ inline WolfeStatus wolfe_line_search(
         }
       }
     } else {
+      if (best.obj < high.obj) {
+          best = high;
+      }
       high = mid;
     }
     auto check_bb = check_bounds(mid);
     if (check_bb.stop_ != WolfeReturn::Wolfe) {
       return check_bb;
     }
-
+    auto check_steps = check_max_steps(scratch, curr, prev, best, opt, ll_args);
+    if (check_steps.stop_ != WolfeReturn::Continue) {
+      return check_steps;
+    }
   }
   debug::print("Failed zoom: ", 1, "Failed zoom:", 1, "low.alpha: ", low.alpha,
                "low.obj:   ", low.obj, "deriv_low: ", low.dir,
                "high.alpha:", high.alpha, "high.obj:  ", high.obj,
                "deriv_high:", high.dir);
   // On failure, use the best point we have found so far that at least satisfies armijo
-  update_step(scratch.a_, scratch.theta_, curr.theta_grad_, best);
   const bool armijo_ok_mid = armijo_ok(best);
   const bool curve_ok_mid = wolfe_ok(best);
-  curr.a_.swap(scratch.a_);
-  curr.theta_.swap(scratch.theta_);
-  curr.theta_grad_ = laplace_likelihood::theta_grad(ll_fun, scratch.theta_, ll_args, msgs);
-  // We already calculated best.obj and theta_grad so no need to recompute here
-  best.dir = grad_fun(curr.a_, curr.theta_, curr.theta_grad_).dot(p);
-  curr.obj_ = best.obj;
-  curr.alpha_ = best.alpha;
-  curr.dir_ = mid.dir;
-  if (armijo_ok_mid && curve_ok_mid) {
-    debug::print("Exit on safe after zoom", 1);
-    debug::print("total_updates", total_updates);
-    return WolfeStatus{WolfeReturn::Wolfe, total_updates, num_backtracks};
-  } else if (armijo_ok_mid) {
+  if (armijo_ok_mid) {
+    update_step(scratch.a_, scratch.theta_, scratch.theta_grad_, best);
+    assign_step(curr, scratch, best);
     debug::print("Exit on only satisfying armijo", 1);
     debug::print("total_updates", total_updates);
     return WolfeStatus{WolfeReturn::Armijo, total_updates, num_backtracks};
   } else {
     debug::print("Exit on failure", 1);
     debug::print("total_updates", total_updates);
+    prev.theta_grad_ = laplace_likelihood::theta_grad(ll_fun, prev.theta_, ll_args, msgs);
     return WolfeStatus{WolfeReturn::Fail, total_updates, num_backtracks};
   }
 }
