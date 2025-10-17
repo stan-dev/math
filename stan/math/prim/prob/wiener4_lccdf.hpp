@@ -20,7 +20,7 @@ namespace internal {
  * @return log probability to reach the upper bound
  */
 template <typename T_a, typename T_w, typename T_v>
-inline auto log_wiener_prob(const T_a& a, const T_v& v, const T_w& w) {
+inline auto log_wiener_prob_hit_upper(const T_a& a, const T_v& v, const T_w& w) {
   using ret_t = return_type_t<T_a, T_w, T_v>;
   const auto neg_v = -v;
   const auto one_m_w = 1.0 - w;
@@ -103,10 +103,10 @@ template <typename T_y, typename T_a, typename T_w, typename T_v,
           typename T_err>
 inline auto wiener4_ccdf(const T_y& y, const T_a& a, const T_v& v, const T_w& w,
                          T_err&& err = log(1e-12)) noexcept {
-  const auto prob = exp(log_wiener_prob(a, v, w));
+  const auto prob_hit_upper = exp(log_wiener_prob_hit_upper(a, v, w));
   const auto cdf
       = internal::wiener4_distribution<GradientCalc::ON>(y, a, v, w, err);
-  return prob - cdf;
+  return prob_hit_upper - cdf;
 }
 
 /**
@@ -131,11 +131,10 @@ inline auto wiener4_ccdf_grad_a(const T_y& y, const T_a& a, const T_v& v,
   auto prob_grad_a = -wiener_prob_derivative_term(a, v, w) * v;
   if (!is_scal_finite(prob_grad_a)) {
     prob_grad_a = ret_t(NEGATIVE_INFTY);
-    return prob_grad_a;
   }
-  const auto prob = log_wiener_prob(a, v, w);
+  const auto log_prob_hit_upper = log_wiener_prob_hit_upper(a, v, w);
   const auto cdf_grad_a = wiener4_cdf_grad_a(y, a, v, w, cdf, err);
-  return prob_grad_a * exp(prob) - cdf_grad_a;
+  return prob_grad_a * exp(log_prob_hit_upper) - cdf_grad_a;
 }
 
 /**
@@ -155,7 +154,7 @@ inline auto wiener4_ccdf_grad_v(const T_y& y, const T_a& a, const T_v& v,
                                 const T_w& w, T_cdf&& cdf,
                                 T_err&& err = log(1e-12)) noexcept {
   using ret_t = return_type_t<T_a, T_w, T_v>;
-  const auto prob = log_wiener_prob(a, v, w);
+  const auto log_prob_hit_upper = log_wiener_prob_hit_upper(a, v, w);
   // derivative of the wiener probability w.r.t. 'v' (on log-scale)
   auto prob_grad_v = -wiener_prob_derivative_term(a, v, w) * a;
   if (!is_scal_finite(fabs(prob_grad_v))) {
@@ -163,7 +162,7 @@ inline auto wiener4_ccdf_grad_v(const T_y& y, const T_a& a, const T_v& v,
   }
 
   const auto cdf_grad_v = wiener4_cdf_grad_v(y, a, v, w, cdf, err);
-  return prob_grad_v * exp(prob) - cdf_grad_v;
+  return prob_grad_v * exp(log_prob_hit_upper) - cdf_grad_v;
 }
 
 /**
@@ -183,7 +182,7 @@ inline auto wiener4_ccdf_grad_w(const T_y& y, const T_a& a, const T_v& v,
                                 const T_w& w, T_cdf&& cdf,
                                 T_err&& err = log(1e-12)) noexcept {
   using ret_t = return_type_t<T_a, T_w, T_v>;
-  const auto prob = log_wiener_prob(a, v, w);
+  const auto log_prob_hit_upper = log_wiener_prob_hit_upper(a, v, w);
   // derivative of the wiener probability w.r.t. 'v' (on log-scale)
   const auto exponent = -sign(v) * 2.0 * v * a * w;
   auto prob_grad_w
@@ -194,7 +193,7 @@ inline auto wiener4_ccdf_grad_w(const T_y& y, const T_a& a, const T_v& v,
   }
 
   const auto cdf_grad_w = wiener4_cdf_grad_w(y, a, v, w, cdf, err);
-  return prob_grad_w * exp(prob) - cdf_grad_w;
+  return prob_grad_w * exp(log_prob_hit_upper) - cdf_grad_w;
 }
 
 }  // namespace internal
@@ -310,8 +309,8 @@ inline auto wiener_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
             log_error_cdf - LOG_TWO, y_value - t0_value, a_value, v_value,
             w_value, log_error_absolute);
 
-    const auto prob = exp(internal::log_wiener_prob(a_value, v_value, w_value));
-    const auto ccdf = prob - cdf;
+    const auto prob_hit_upper = exp(internal::log_wiener_prob_hit_upper(a_value, v_value, w_value));
+    const auto ccdf = prob_hit_upper - cdf;
     const auto log_ccdf_single_value = log(ccdf);
 
     lccdf += log_ccdf_single_value;
