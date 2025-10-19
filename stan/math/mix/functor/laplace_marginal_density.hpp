@@ -583,7 +583,7 @@ inline auto laplace_marginal_density_est(
                   "Objective new: ", curr.obj_,
                   "Step size:      ", curr.alpha_);
     return abs(curr.obj_ - prev.obj_) < options.tolerance
-            || (wolfe_status.stop_ != WolfeReturn::Wolfe && curr.obj_ == prev.obj_);
+            || (wolfe_status.stop_ != WolfeReturn::Wolfe && curr.obj_ <= prev.obj_);
   };
   auto set_next_iter = [](auto&& curr, auto&& prev, auto&& ll_args) {
     prev = curr;
@@ -655,8 +655,8 @@ inline auto laplace_marginal_density_est(
         debug::print("======Iter", iter++);
         auto W = laplace_likelihood::block_hessian(
             ll_fun, prev.theta_, options.hessian_block_size, ll_args, msgs);
-        for (Eigen::Index i = 0; i < W.rows(); i++) {
-          if (W.coeff(i, i) < 0) {
+        for (Eigen::Index j = 0; j < W.rows(); j++) {
+          if (W.coeff(j, j) < 0) {
             throw std::domain_error(
                 "laplace_marginal_density: Hessian matrix is not positive "
                 "definite");
