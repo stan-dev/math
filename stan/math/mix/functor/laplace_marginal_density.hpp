@@ -585,10 +585,10 @@ inline auto laplace_marginal_density_est(
     return abs(curr.obj_ - prev.obj_) < options.tolerance
             || (wolfe_status.stop_ != WolfeReturn::Wolfe && curr.obj_ <= prev.obj_);
   };
-  auto set_next_iter = [](auto&& curr, auto&& prev, auto&& ll_args) {
+  auto set_next_iter = [&options](auto&& curr, auto&& prev, auto&& ll_args) {
     prev = curr;
     set_zero_adjoint(ll_args);
-    curr.alpha_ = std::clamp(curr.alpha_, 0.0, 4.0);
+    curr.alpha_ = std::clamp(curr.alpha_, 0.0, options.line_search.max_alpha);
   };
   if (options.solver == 1) {
     if (options.hessian_block_size == 1) {
@@ -735,19 +735,19 @@ inline auto laplace_marginal_density_est(
     throw_overstep(options.max_num_steps);
   } else if (options.solver == 3) {
 //    std::cout << "Solver: 3" << std::endl;
+    Eigen::PartialPivLU<Eigen::MatrixXd> LU(theta_size);
     for (Eigen::Index i = 0; i <= options.max_num_steps; i++) {
       debug::print("======Iter", iter++);
       auto W = laplace_likelihood::block_hessian(
           ll_fun, prev.theta_, options.hessian_block_size, ll_args, msgs);
-      Eigen::PartialPivLU<Eigen::MatrixXd> LU(
-          MatrixXd::Identity(theta_size, theta_size) + covariance * W);
+      LU.compute(MatrixXd::Identity(theta_size, theta_size) + covariance * W);
       // L on lower and U on upper triangular
       b.noalias() = W * prev.theta_ + prev.theta_grad_;
       curr.a_.noalias() = b - W * LU.solve(covariance * b);
       const bool finish_update = update_line_search(curr, prev);
       if (finish_update) {
         // TODO(Charles): There has to be a simple trick for this
-        const double B_log_determinant = log(LU.determinant());
+        const double B_log_determinant = LU.matrixLU().diagonal().array().log().sum();
         return laplace_density_estimates{
             curr.obj_ - 0.5 * B_log_determinant,
             std::move(curr.theta_),

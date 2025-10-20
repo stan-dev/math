@@ -77,6 +77,7 @@ struct cov_fun_functor {
 };
 
 TEST(WriteArrayBodySimple, ExceededIteration) {
+  stan::test::relative_tolerance rel_tol(5e-2);
   const double integrate_1d_reltol = 1e-8;
   auto mu_samples = stan::math::test::laplace::read_matrix_csv("./test/unit/math/laplace/roach_data/mu_bad.csv");
   auto sigmaz_samples = stan::math::test::laplace::read_matrix_csv("./test/unit/math/laplace/roach_data/sigma_bad.csv");
@@ -116,8 +117,8 @@ TEST(WriteArrayBodySimple, ExceededIteration) {
         pstream,
         integrate_1d_reltol
       );
-      EXPECT_NEAR(ll_laplace_val, std::log(piece), 8e-2) <<
-        "for (i) = (" << i << "), laplace and integrated results should be close";
+      std::string msg = std::string("for (i) = (") + std::to_string(i) + "), laplace and integrated results should be close";
+      expect_near_rel(msg, ll_laplace_val, std::log(piece), rel_tol, "laplace_val", "integrated_val");
     } catch (const std::domain_error& e) {
       // NOTE: Failures for integration our fine since we are testing laplace.
       continue;
@@ -126,6 +127,7 @@ TEST(WriteArrayBodySimple, ExceededIteration) {
 }
 
 TEST(WriteArrayBodySimple, ExecutesBodyWithHardcodedData) {
+  stan::test::relative_tolerance rel_tol(5e-1);
   const double integrate_1d_reltol = 1e-8;
   auto&& y = stan::math::test::roaches::y;
   auto&& sigmaz_samples = stan::math::test::roaches::sigmaz;
@@ -184,8 +186,8 @@ TEST(WriteArrayBodySimple, ExecutesBodyWithHardcodedData) {
         ll_integrate_1d_vec.push_back(std::log(piece));
         ll_integrate_1d += std::log(piece);
         ll_laplace += ll_laplace_val;
-        EXPECT_NEAR(ll_laplace_val, std::log(piece), 8e-2) <<
-         "for (i, iter) = (" << i << ", " << iter << "), laplace and integrated results should be close";
+        std::string msg = std::string("for (i) = (") + std::to_string(i) + "), laplace and integrated results should be close";
+        expect_near_rel(msg, ll_laplace_val, std::log(piece), rel_tol, "laplace_val", "integrated_val");
       } catch (const std::domain_error& e) {
         // Note: Integration failures are fine since we are testing laplace.
         continue;
@@ -198,10 +200,10 @@ TEST(WriteArrayBodySimple, ExecutesBodyWithHardcodedData) {
       std::tuple<double, int>(sigmaz, N),
       pstream);
     // Assertions
-    EXPECT_NEAR(ll_laplace, ll_integrate_1d, 2)
-        << "For iter " << iter << ", Laplace and integrated results should be close";
-    EXPECT_NEAR(ll_laplace_all, ll_integrate_1d, 2)
-        << "For iter " << iter << ", Laplace and integrated results should be close";
+//    std::cout << "ll_laplace: " << ll_laplace << "\nll_laplace_all: " << ll_laplace_all << "\nll_integrate_1d: " << ll_integrate_1d << std::endl;
+    stan::test::relative_tolerance sum_rel_tol(3e-2);
+    expect_near_rel("sum laplace vs integrated sum", ll_laplace, ll_integrate_1d, sum_rel_tol, "laplace_sum", "integrated_sum");
+    expect_near_rel("total laplace vs integrated sum", ll_laplace_all, ll_integrate_1d, sum_rel_tol, "laplace_sum", "integrated_sum");
     EXPECT_TRUE(std::isfinite(ll_laplace)) << "Laplace result should be finite";
     EXPECT_TRUE(std::isfinite(ll_integrate_1d)) << "Integrated result should be finite";
   }

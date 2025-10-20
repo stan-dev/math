@@ -141,7 +141,7 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle_ad) {
   Eigen::VectorXd phi_rest = phi_dbl.tail(2);
   Eigen::VectorXd phi_01{{phi_0, phi_1}};
   stan::test::ad_tolerances tols;
-  tols.gradient_grad_ = 1e-1;
+  tols.gradient_grad_ = 1e-2;
   stan::math::test::run_solver_grid(
     [&](int solver_num, int hessian_block_size, int max_steps_line_search,
         auto&& theta_0) {
@@ -236,7 +236,7 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle2_ad) {
   Eigen::VectorXd length_scale_vec = phi_dbl.head(2);
   Eigen::VectorXd sigma_vec = phi_dbl.tail(2);
   stan::test::ad_tolerances tols;
-  tols.gradient_grad_ = 5e-2;
+  tols.gradient_grad_ = 1e-2;
   stan::math::test::run_solver_grid(
       [&](int solver_num, int hessian_block_size, int max_steps_line_search,
           auto&& theta_0) {
