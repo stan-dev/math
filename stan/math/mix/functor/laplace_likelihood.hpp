@@ -454,7 +454,7 @@ template <typename F, typename Theta, typename TupleArgs, typename Stream,
           require_eigen_vector_t<Theta>* = nullptr,
           require_tuple_t<TupleArgs>* = nullptr>
 inline auto theta_grad(F&& f, Theta&& theta, TupleArgs&& ll_tup,
-                           Stream* msgs) {
+                           Stream* msgs = nullptr) {
   return apply(
       [](auto&& f, auto&& theta, auto&& msgs, auto&&... args) {
         return internal::theta_grad(

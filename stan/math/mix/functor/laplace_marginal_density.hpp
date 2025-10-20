@@ -298,13 +298,13 @@ inline STAN_COLD_PATH void throw_nan(NameStr&& name_str, ParamStr&& param_str,
                                      Param&& param) {
   std::string msg = std::string("Error in ") + name_str + ": "
                     + std::string(param_str) + " contains NaN values";
-  if ((Eigen::isnan(param.array()) || Eigen::isinf(param.array())).all()) {
+  if ((param.array().isNaN() || !param.array().isFinite()).all()) {
     msg += " for all values.";
     throw std::domain_error(msg);
   }
   msg += " at indices [";
   for (int i = 0; i < param.size(); ++i) {
-    if (std::isnan(param(i) || std::isinf(param(i)))) {
+    if (std::isnan(param(i)) || std::isinf(param(i))) {
       msg += std::to_string(i) + ", ";
     }
   }
@@ -318,11 +318,9 @@ inline double barzilai_borwein_step_size(const Eigen::VectorXd& s, const Eigen::
                              const Eigen::VectorXd& g_prev, double prev_step,
                              int last_backtracks, double min_alpha, double max_alpha) {
   // Fallbacks
-//  std::cout << "---------- barzilai_borwein_step_size ----------" << std::endl;
   auto safe_fallback = [&]() -> double {
     double a = std::clamp(prev_step > 0.0 && std::isfinite(prev_step) ? prev_step : 1.0,
                           min_alpha, max_alpha);
-//    std::cout << "\tsafe_fallback: " << a << std::endl;
     return a;
   };
 
@@ -335,13 +333,6 @@ inline double barzilai_borwein_step_size(const Eigen::VectorXd& s, const Eigen::
   const double eps = 1e-16;
   if (!(std::isfinite(sty) && std::isfinite(sts) && std::isfinite(yty)) ||
       sts <= eps || yty <= eps || sty <= eps || last_backtracks == 99) {
-/*
-        std::cout << "\tInvalid sts etc. " << std::endl;
-    std::cout << "\t         sty: " << sty <<
-                 "\n\t        sts: " << sts <<
-                 "\n\t        yty: " << yty <<
-                 "\n\t         bt: " << last_backtracks << std::endl;
-*/
                  return safe_fallback();
   }
 
@@ -352,14 +343,6 @@ inline double barzilai_borwein_step_size(const Eigen::VectorXd& s, const Eigen::
   // Safeguard candidates
   if (!std::isfinite(alpha_bb1) || !std::isfinite(alpha_bb2) ||
       alpha_bb1 <= 0.0 || alpha_bb2 <= 0.0) {
-/*
-        std::cout << "\tInvalid BB candidates: " << std::endl;
-    std::cout << "\t          sty: " << sty <<
-                 "\n\t        sts: " << sts <<
-                 "\n\t        yty: " << yty << std::endl;
-    std::cout << "\t    alpha_bb1: " << alpha_bb1 <<
-                 "\n\t  alpha_bb2: " << alpha_bb2 << std::endl;
-*/
                  return safe_fallback();
   }
 
@@ -383,28 +366,9 @@ inline double barzilai_borwein_step_size(const Eigen::VectorXd& s, const Eigen::
   alpha0 = std::clamp(alpha0, min_alpha, max_alpha);
 
   if (!std::isfinite(alpha0) || alpha0 <= 0.0) {
-/*
-    std::cout << "\tInvalid final alpha0: " << alpha0 << std::endl;
-    std::cout << "\t          sty: " << sty <<
-                 "\n\t        sts: " << sts <<
-                 "\n\t        yty: " << yty << std::endl;
-    std::cout << "\t    alpha_bb1: " << alpha_bb1 <<
-                 "\n\t  alpha_bb2: " << alpha_bb2 << std::endl;
-    std::cout << "\t            r: " << r << std::endl;
-*/
     return safe_fallback();
   }
-/*
-  std::cout << "\t Valid alpha0: " << alpha0 << std::endl;
-    std::cout << "\t          sty: " << sty <<
-                 "\n\t        sts: " << sts <<
-                 "\n\t        yty: " << yty << std::endl;
-    std::cout << "\t    alpha_bb1: " << alpha_bb1 <<
-                 "\n\t  alpha_bb2: " << alpha_bb2 << std::endl;
-    std::cout << "\t            r: " << r << std::endl;
-   std::cout <<  "\t     alpha0: " << alpha0 << std::endl;
-*/
-   return alpha0;
+  return alpha0;
 }
 
 
@@ -542,6 +506,11 @@ inline auto laplace_marginal_density_est(
   };
   curr.a_ = Eigen::VectorXd::Zero(theta_size);
   curr.obj_ = obj_fun(curr.a_, curr.theta_);
+  if (!std::isfinite(curr.obj_)) {
+    throw std::domain_error(
+        "laplace_marginal_density: log likelihood is not finite at initial "
+        "theta and likelihood arguments.");
+  }
   prev = curr;
   Eigen::MatrixXd B(theta_size, theta_size);
   Eigen::VectorXd b(theta_size);
@@ -549,35 +518,36 @@ inline auto laplace_marginal_density_est(
   auto grad_fun = [&](const Eigen::VectorXd& a_val, auto&& theta_val, auto&& theta_grad) -> Eigen::VectorXd {
     return -covariance * a_val + covariance * theta_grad;
   };
-  if (!std::isfinite(curr.obj_)) {
-//    std::cout << "FAIL: initial objective: " << curr.obj_ << std::endl;
-    throw std::domain_error(
-        "laplace_marginal_density: log likelihood is not finite at initial "
-        "theta and likelihood arguments.");
-  }
-//  std::cout << "___________\nSTART\n___________" << std::endl;
   // NOTE: theta_grad is updated in `wolfe_line_search`
+  auto update_step
+    = [&prev, &covariance, &ll_fun, &ll_args, &obj_fun, &grad_fun, msgs](auto& step_info, auto& eval_in, auto&& p) {
+        step_info.a_ = prev.a_ + eval_in.alpha * p;
+        step_info.theta_ = covariance * step_info.a_;
+        step_info.theta_grad_ = laplace_likelihood::theta_grad(ll_fun, step_info.theta_, ll_args, msgs);
+        eval_in.obj = obj_fun(step_info.a_, step_info.theta_);
+        eval_in.dir = grad_fun(step_info.a_, step_info.theta_, step_info.theta_grad_).dot(p);
+      };
   WolfeStatus wolfe_status;
   // Start with safe step size
   wolfe_status.num_backtracks_ = 99;
   int iter = 0;
   auto update_line_search = [&](auto&& curr, auto&& prev) {
-    Eigen::VectorXd p = curr.a_ - prev.a_;
-    double dir_deriv_init = grad_fun(prev.a_, prev.theta_, prev.theta_grad_).dot(p);
-    if (dir_deriv_init < 0) {
-      p = -p;
-      dir_deriv_init = -dir_deriv_init;
+    wolfe_info.p_ = curr.a_ - prev.a_;
+    wolfe_info.init_dir_ = grad_fun(prev.a_, prev.theta_, prev.theta_grad_).dot(wolfe_info.p_);
+    if (wolfe_info.init_dir_ < 0) {
+      wolfe_info.p_ = -wolfe_info.p_;
+      wolfe_info.init_dir_ = -wolfe_info.init_dir_;
     }
     curr.theta_ = covariance * curr.a_;
     curr.theta_grad_ = laplace_likelihood::theta_grad(ll_fun, curr.theta_, ll_args, msgs);
-    wolfe_info.curr_.alpha_ = barzilai_borwein_step_size(p,
+    wolfe_info.curr_.alpha_ = barzilai_borwein_step_size(wolfe_info.p_,
       grad_fun(curr.a_, curr.theta_, curr.theta_grad_),
       grad_fun(prev.a_, prev.theta_, prev.theta_grad_),
       prev.alpha_, wolfe_status.num_backtracks_, options.line_search.min_alpha,
       options.line_search.max_alpha);
     wolfe_status = internal::wolfe_line_search(
         wolfe_info, ll_fun,
-        obj_fun, grad_fun, covariance, ll_args, options.line_search, msgs);
+        update_step, ll_args, options.line_search, msgs);
         curr.alpha_ = wolfe_info.curr_.alpha_;
     debug::print("", 1, "Objective old: ", prev.obj_,
                   "Objective new: ", curr.obj_,
@@ -1154,7 +1124,8 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
       internal::copy_compute_s2<true>(partial_parm, ll_args_filter);
     } else {  // options.solver with LU decomposition
       LU_solve_covariance = md_est.LU.solve(value_of(covariance));
-      R = md_est.W_r - md_est.W_r * LU_solve_covariance * md_est.W_r;
+      auto I_minus_BinvKW = Eigen::MatrixXd::Identity(md_est.W_r.rows(), md_est.W_r.cols()) - LU_solve_covariance * md_est.W_r;
+      R = md_est.W_r * I_minus_BinvKW;  // == W - W B^{-1} K W
       arena_t<Eigen::MatrixXd> A
           = value_of(covariance)
             - value_of(covariance) * md_est.W_r * LU_solve_covariance;
