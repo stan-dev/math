@@ -100,8 +100,8 @@ inline double lgamma(int x) {
  */
 struct lgamma_fun {
   template <typename T>
-  static inline auto fun(const T& x) {
-    return lgamma(x);
+  static inline auto fun(T&& x) {
+    return lgamma(std::forward<T>(x));
   }
 };
 
@@ -115,9 +115,10 @@ struct lgamma_fun {
  * @throw std::domain_error if any value is a negative integer or 0.
  */
 template <typename T, require_not_var_matrix_t<T>* = nullptr,
-          require_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr>
-inline auto lgamma(const T& x) {
-  return apply_scalar_unary<lgamma_fun, T>::apply(x);
+          require_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr,
+          require_container_t<T>* = nullptr>
+inline auto lgamma(T&& x) {
+  return apply_scalar_unary<lgamma_fun, T>::apply(std::forward<T>(x));
 }
 
 }  // namespace math

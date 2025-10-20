@@ -39,7 +39,7 @@ template <bool propto, typename T_y_cl, typename T_loc_cl, typename T_prec_cl,
           require_all_prim_or_rev_kernel_expression_t<T_y_cl, T_loc_cl,
                                                       T_prec_cl>* = nullptr,
           require_any_not_stan_scalar_t<T_y_cl, T_loc_cl, T_prec_cl>* = nullptr>
-return_type_t<T_y_cl, T_loc_cl, T_prec_cl> beta_proportion_lpdf(
+inline return_type_t<T_y_cl, T_loc_cl, T_prec_cl> beta_proportion_lpdf(
     const T_y_cl& y, const T_loc_cl& mu, const T_prec_cl& kappa) {
   static constexpr const char* function = "beta_proportion_lpdf(OpenCL)";
   using T_partials_return = partials_return_t<T_y_cl, T_loc_cl, T_prec_cl>;
@@ -51,7 +51,7 @@ return_type_t<T_y_cl, T_loc_cl, T_prec_cl> beta_proportion_lpdf(
   if (N == 0) {
     return 0.0;
   }
-  if (!include_summand<propto, T_y_cl, T_loc_cl, T_prec_cl>::value) {
+  if constexpr (!include_summand<propto, T_y_cl, T_loc_cl, T_prec_cl>::value) {
     return 0.0;
   }
 
@@ -103,21 +103,20 @@ return_type_t<T_y_cl, T_loc_cl, T_prec_cl> beta_proportion_lpdf(
   results(check_y_bounded, check_mu_bounded, check_kappa_positive_finite,
           logp_cl, y_deriv_cl, mu_deriv_cl, kappa_deriv_cl)
       = expressions(y_bounded_expr, mu_bounded_expr, kappa_positive_finite,
-                    logp_expr,
-                    calc_if<!is_constant<T_y_cl>::value>(y_deriv_expr),
-                    calc_if<!is_constant<T_loc_cl>::value>(mu_deriv_expr),
-                    calc_if<!is_constant<T_prec_cl>::value>(kappa_deriv_expr));
+                    logp_expr, calc_if<is_autodiff_v<T_y_cl>>(y_deriv_expr),
+                    calc_if<is_autodiff_v<T_loc_cl>>(mu_deriv_expr),
+                    calc_if<is_autodiff_v<T_prec_cl>>(kappa_deriv_expr));
 
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
 
   auto ops_partials = make_partials_propagator(y_col, mu_col, kappa_col);
-  if (!is_constant<T_y_cl>::value) {
+  if constexpr (is_autodiff_v<T_y_cl>) {
     partials<0>(ops_partials) = std::move(y_deriv_cl);
   }
-  if (!is_constant<T_loc_cl>::value) {
+  if constexpr (is_autodiff_v<T_loc_cl>) {
     partials<1>(ops_partials) = std::move(mu_deriv_cl);
   }
-  if (!is_constant<T_prec_cl>::value) {
+  if constexpr (is_autodiff_v<T_prec_cl>) {
     partials<2>(ops_partials) = std::move(kappa_deriv_cl);
   }
 

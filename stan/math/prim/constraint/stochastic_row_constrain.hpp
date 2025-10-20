@@ -68,9 +68,10 @@ inline plain_type_t<Mat> stochastic_row_constrain(const Mat& y, Lp& lp) {
  * @return vector of matrices with simplex rows of dimensionality (N, K)
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
-inline auto stochastic_row_constrain(const T& y) {
-  return apply_vector_unary<T>::apply(
-      y, [](auto&& v) { return stochastic_row_constrain(v); });
+inline auto stochastic_row_constrain(T&& y) {
+  return apply_vector_unary<T>::apply(std::forward<T>(y), [](auto&& v) {
+    return stochastic_row_constrain(std::forward<decltype(v)>(v));
+  });
 }
 
 /**
@@ -88,9 +89,10 @@ inline auto stochastic_row_constrain(const T& y) {
  */
 template <typename T, typename Lp, require_std_vector_t<T>* = nullptr,
           require_convertible_t<return_type_t<T>, Lp>* = nullptr>
-inline auto stochastic_row_constrain(const T& y, Lp& lp) {
-  return apply_vector_unary<T>::apply(
-      y, [&lp](auto&& v) { return stochastic_row_constrain(v, lp); });
+inline auto stochastic_row_constrain(T&& y, Lp& lp) {
+  return apply_vector_unary<T>::apply(std::forward<T>(y), [&lp](auto&& v) {
+    return stochastic_row_constrain(std::forward<decltype(v)>(v), lp);
+  });
 }
 
 /**
@@ -113,11 +115,11 @@ inline auto stochastic_row_constrain(const T& y, Lp& lp) {
  */
 template <bool Jacobian, typename Mat, typename Lp,
           require_convertible_t<return_type_t<Mat>, Lp>* = nullptr>
-inline plain_type_t<Mat> stochastic_row_constrain(const Mat& y, Lp& lp) {
+inline plain_type_t<Mat> stochastic_row_constrain(Mat&& y, Lp& lp) {
   if constexpr (Jacobian) {
-    return stochastic_row_constrain(y, lp);
+    return stochastic_row_constrain(std::forward<Mat>(y), lp);
   } else {
-    return stochastic_row_constrain(y);
+    return stochastic_row_constrain(std::forward<Mat>(y));
   }
 }
 

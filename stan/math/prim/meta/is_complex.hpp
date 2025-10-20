@@ -103,7 +103,7 @@ struct is_complex_ad : std::false_type {};
 
 template <typename T>
 struct is_complex_ad<T, std::enable_if_t<stan::math::conjunction<
-                            is_autodiff<base_type_t<T>>,
+                            is_autodiff_scalar<base_type_t<T>>,
                             internal::is_complex_impl<std::decay_t<T>>>::value>>
     : std::true_type {};
 

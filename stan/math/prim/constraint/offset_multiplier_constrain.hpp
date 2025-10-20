@@ -46,12 +46,12 @@ inline auto offset_multiplier_constrain(const T& x, const M& mu,
                                         const S& sigma) {
   const auto& mu_ref = to_ref(mu);
   const auto& sigma_ref = to_ref(sigma);
-  if (is_matrix<T>::value && is_matrix<M>::value) {
+  if constexpr (is_matrix<T>::value && is_matrix<M>::value) {
     check_matching_dims("offset_multiplier_constrain", "x", x, "mu", mu);
   }
-  if (is_matrix<T>::value && is_matrix<S>::value) {
+  if constexpr (is_matrix<T>::value && is_matrix<S>::value) {
     check_matching_dims("offset_multiplier_constrain", "x", x, "sigma", sigma);
-  } else if (is_matrix<M>::value && is_matrix<S>::value) {
+  } else if constexpr (is_matrix<M>::value && is_matrix<S>::value) {
     check_matching_dims("offset_multiplier_constrain", "mu", mu, "sigma",
                         sigma);
   }
@@ -97,12 +97,12 @@ inline auto offset_multiplier_constrain(const T& x, const M& mu, const S& sigma,
                                         Lp& lp) {
   const auto& mu_ref = to_ref(mu);
   const auto& sigma_ref = to_ref(sigma);
-  if (is_matrix<T>::value && is_matrix<M>::value) {
+  if constexpr (is_matrix<T>::value && is_matrix<M>::value) {
     check_matching_dims("offset_multiplier_constrain", "x", x, "mu", mu);
   }
-  if (is_matrix<T>::value && is_matrix<S>::value) {
+  if constexpr (is_matrix<T>::value && is_matrix<S>::value) {
     check_matching_dims("offset_multiplier_constrain", "x", x, "sigma", sigma);
-  } else if (is_matrix<M>::value && is_matrix<S>::value) {
+  } else if constexpr (is_matrix<M>::value && is_matrix<S>::value) {
     check_matching_dims("offset_multiplier_constrain", "mu", mu, "sigma",
                         sigma);
   }
@@ -303,12 +303,13 @@ inline auto offset_multiplier_constrain(const std::vector<T>& x,
  */
 template <bool Jacobian, typename T, typename M, typename S, typename Lp,
           require_convertible_t<return_type_t<T, M, S>, Lp>* = nullptr>
-inline auto offset_multiplier_constrain(const T& x, const M& mu, const S& sigma,
-                                        Lp& lp) {
+inline auto offset_multiplier_constrain(T&& x, M&& mu, S&& sigma, Lp& lp) {
   if constexpr (Jacobian) {
-    return offset_multiplier_constrain(x, mu, sigma, lp);
+    return offset_multiplier_constrain(std::forward<T>(x), std::forward<M>(mu),
+                                       std::forward<S>(sigma), lp);
   } else {
-    return offset_multiplier_constrain(x, mu, sigma);
+    return offset_multiplier_constrain(std::forward<T>(x), std::forward<M>(mu),
+                                       std::forward<S>(sigma));
   }
 }
 

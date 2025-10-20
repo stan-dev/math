@@ -269,7 +269,7 @@ inline auto mdivide_left_spd(const T1 &A, const T2 &B) {
 
   check_multiplicable("mdivide_left_spd", "A", A, "B", B);
 
-  if (!is_constant<T1>::value && !is_constant<T2>::value) {
+  if constexpr (is_autodiff_v<T1> && is_autodiff_v<T2>) {
     arena_t<promote_scalar_t<var, T1>> arena_A = A;
     arena_t<promote_scalar_t<var, T2>> arena_B = B;
 
@@ -296,7 +296,7 @@ inline auto mdivide_left_spd(const T1 &A, const T2 &B) {
     });
 
     return ret_type(res);
-  } else if (!is_constant<T1>::value) {
+  } else if constexpr (is_autodiff_v<T1>) {
     arena_t<promote_scalar_t<var, T1>> arena_A = A;
 
     check_symmetric("mdivide_left_spd", "A", arena_A.val());

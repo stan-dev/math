@@ -30,9 +30,8 @@ constexpr double neg_binomial_alpha_cutoff = 1e10;
 template <bool propto, typename T_n, typename T_shape, typename T_inv_scale,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_n, T_shape, T_inv_scale>* = nullptr>
-return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(const T_n& n,
-                                                      const T_shape& alpha,
-                                                      const T_inv_scale& beta) {
+inline return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(
+    const T_n& n, const T_shape& alpha, const T_inv_scale& beta) {
   using T_partials_return = partials_return_t<T_n, T_shape, T_inv_scale>;
   using std::log;
   using T_n_ref = ref_type_t<T_n>;
@@ -51,7 +50,7 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(const T_n& n,
   if (size_zero(n, alpha, beta)) {
     return 0.0;
   }
-  if (!include_summand<propto, T_shape, T_inv_scale>::value) {
+  if constexpr (!include_summand<propto, T_shape, T_inv_scale>::value) {
     return 0.0;
   }
 
@@ -66,9 +65,9 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(const T_n& n,
   size_t size_alpha_beta = max_size(alpha, beta);
   size_t max_size_seq_view = max_size(n, alpha, beta);
 
-  VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
+  VectorBuilder<is_autodiff_v<T_shape>, T_partials_return, T_shape>
       digamma_alpha(size_alpha);
-  if (!is_constant_all<T_shape>::value) {
+  if constexpr (is_autodiff_v<T_shape>) {
     for (size_t i = 0; i < size_alpha; ++i) {
       digamma_alpha[i] = digamma(alpha_vec.val(i));
     }
@@ -82,10 +81,10 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(const T_n& n,
     log1p_beta[i] = log1p(beta_dbl);
   }
 
-  VectorBuilder<!is_constant_all<T_inv_scale>::value, T_partials_return,
-                T_shape, T_inv_scale>
+  VectorBuilder<is_autodiff_v<T_inv_scale>, T_partials_return, T_shape,
+                T_inv_scale>
       lambda_m_alpha_over_1p_beta(size_alpha_beta);
-  if (!is_constant_all<T_inv_scale>::value) {
+  if constexpr (is_autodiff_v<T_inv_scale>) {
     for (size_t i = 0; i < size_alpha_beta; ++i) {
       const T_partials_return alpha_dbl = alpha_vec.val(i);
       const T_partials_return beta_dbl = beta_vec.val(i);
@@ -98,7 +97,7 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(const T_n& n,
     const T_partials_return alpha_dbl = alpha_vec.val(i);
     const T_partials_return beta_dbl = beta_vec.val(i);
 
-    if (include_summand<propto, T_shape>::value) {
+    if constexpr (include_summand<propto, T_shape>::value) {
       if (n_vec[i] != 0) {
         logp += binomial_coefficient_log(n_vec[i] + alpha_dbl - 1.0,
                                          alpha_dbl - 1.0);
@@ -106,11 +105,11 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(const T_n& n,
     }
     logp -= alpha_dbl * log1p_inv_beta[i] + n_vec[i] * log1p_beta[i];
 
-    if (!is_constant_all<T_shape>::value) {
+    if constexpr (is_autodiff_v<T_shape>) {
       partials<0>(ops_partials)[i] += digamma(alpha_dbl + n_vec[i])
                                       - digamma_alpha[i] - log1p_inv_beta[i];
     }
-    if (!is_constant_all<T_inv_scale>::value) {
+    if constexpr (is_autodiff_v<T_inv_scale>) {
       partials<1>(ops_partials)[i]
           += lambda_m_alpha_over_1p_beta[i] - n_vec[i] / (beta_dbl + 1.0);
     }

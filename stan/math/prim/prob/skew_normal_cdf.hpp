@@ -25,7 +25,7 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_loc, typename T_scale, typename T_shape>
-return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_cdf(
+inline return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_cdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma, const T_shape& alpha) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_shape>;
   using T_y_ref = ref_type_if_not_constant_t<T_y>;
@@ -57,49 +57,39 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_cdf(
   auto ops_partials
       = make_partials_propagator(y_ref, mu_ref, sigma_ref, alpha_ref);
 
-  const auto& diff = to_ref((y_val - mu_val) / sigma_val);
-  const auto& scaled_diff
-      = to_ref_if<!is_constant_all<T_y, T_loc, T_scale>::value>(diff
-                                                                / SQRT_TWO);
-  const auto& erfc_m_scaled_diff = erfc(-scaled_diff);
-  const auto& owens_t_diff_alpha = owens_t(diff, alpha_val);
-  const auto& cdf_
-      = to_ref_if<!is_constant_all<T_y, T_loc, T_scale, T_shape>::value>(
-          0.5 * erfc_m_scaled_diff - 2 * owens_t_diff_alpha);
+  auto diff = to_ref((y_val - mu_val) / sigma_val);
+  auto scaled_diff
+      = to_ref_if<is_any_autodiff_v<T_y, T_loc, T_scale>>(diff / SQRT_TWO);
+  auto erfc_m_scaled_diff = erfc(-scaled_diff);
+  auto owens_t_diff_alpha = owens_t(diff, alpha_val);
+  auto cdf_ = to_ref(0.5 * erfc_m_scaled_diff - 2 * owens_t_diff_alpha);
 
   T_partials_return cdf = prod(cdf_);
 
-  if (!is_constant_all<T_y, T_loc, T_scale, T_shape>::value) {
-    const auto& cdf_quot
-        = to_ref_if<(!is_constant_all<T_y, T_loc, T_scale>::value
-                     && !is_constant_all<T_shape>::value)>(cdf / cdf_);
-    const auto& diff_square
-        = to_ref_if<(!is_constant_all<T_y, T_loc, T_scale>::value
-                     && !is_constant_all<T_shape>::value)>(square(diff));
-    if (!is_constant_all<T_y, T_loc, T_scale>::value) {
-      const auto& erf_alpha_scaled_diff = erf(alpha_val * scaled_diff);
-      const auto& exp_m_scaled_diff_square = exp(-0.5 * diff_square);
-      auto rep_deriv
-          = to_ref_if<!is_constant_all<T_y>::value
-                          + !is_constant_all<T_scale>::value
-                          + !is_constant_all<T_loc>::value
-                      >= 2>((erf_alpha_scaled_diff + 1) * INV_SQRT_TWO_PI
-                            * cdf_quot / sigma_val * exp_m_scaled_diff_square);
-      if (!is_constant_all<T_loc>::value) {
+  if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale, T_shape>) {
+    auto cdf_quot = cdf / cdf_;
+    auto diff_square = square(diff);
+    if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale>) {
+      auto erfc_m_alpha_scaled_diff = erfc(-alpha_val * scaled_diff);
+      auto exp_m_scaled_diff_square = exp(-0.5 * diff_square);
+      auto rep_deriv = erfc_m_alpha_scaled_diff * INV_SQRT_TWO_PI * cdf_quot
+                       / sigma_val * std::move(exp_m_scaled_diff_square);
+      if constexpr (is_autodiff_v<T_y>) {
+        partials<0>(ops_partials) = rep_deriv;
+      }
+      if constexpr (is_autodiff_v<T_loc>) {
         partials<1>(ops_partials) = -rep_deriv;
       }
-      if (!is_constant_all<T_scale>::value) {
-        partials<2>(ops_partials) = -rep_deriv * diff;
-      }
-      if (!is_constant_all<T_y>::value) {
-        partials<0>(ops_partials) = std::move(rep_deriv);
+      if constexpr (is_autodiff_v<T_scale>) {
+        partials<2>(ops_partials) = -std::move(rep_deriv) * diff;
       }
     }
-    if (!is_constant_all<T_shape>::value) {
-      const auto& alpha_square = square(alpha_val);
-      const auto& exp_tmp = exp(-0.5 * diff_square * (1.0 + alpha_square));
+    if constexpr (is_autodiff_v<T_shape>) {
+      auto alpha_square = square(alpha_val);
+      auto exp_tmp = exp(-0.5 * std::move(diff_square) * (1.0 + alpha_square));
       edge<3>(ops_partials).partials_
-          = -2.0 * exp_tmp / ((1 + alpha_square) * TWO_PI) * cdf_quot;
+          = -2.0 * std::move(exp_tmp) / ((1 + std::move(alpha_square)) * TWO_PI)
+            * std::move(cdf_quot);
     }
   }
   return ops_partials.build(cdf);

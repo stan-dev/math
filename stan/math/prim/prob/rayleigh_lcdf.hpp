@@ -22,7 +22,8 @@ namespace math {
 template <typename T_y, typename T_scale,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_scale>* = nullptr>
-return_type_t<T_y, T_scale> rayleigh_lcdf(const T_y& y, const T_scale& sigma) {
+inline return_type_t<T_y, T_scale> rayleigh_lcdf(const T_y& y,
+                                                 const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_scale>;
   using T_y_ref = ref_type_if_not_constant_t<T_y>;
   using T_sigma_ref = ref_type_if_not_constant_t<T_scale>;
@@ -45,22 +46,20 @@ return_type_t<T_y, T_scale> rayleigh_lcdf(const T_y& y, const T_scale& sigma) {
 
   auto ops_partials = make_partials_propagator(y_ref, sigma_ref);
 
-  const auto& inv_sigma
-      = to_ref_if<!is_constant_all<T_scale>::value>(inv(sigma_val));
-  const auto& y_div_sigma_square
-      = to_ref_if<!is_constant_all<T_y, T_scale>::value>(y_val * inv_sigma
-                                                         * inv_sigma);
-  const auto& exp_val = to_ref_if<!is_constant_all<T_y, T_scale>::value>(
+  const auto& inv_sigma = to_ref_if<is_autodiff_v<T_scale>>(inv(sigma_val));
+  const auto& y_div_sigma_square = to_ref_if<is_any_autodiff_v<T_y, T_scale>>(
+      y_val * inv_sigma * inv_sigma);
+  const auto& exp_val = to_ref_if<is_any_autodiff_v<T_y, T_scale>>(
       exp(-0.5 * y_val * y_div_sigma_square));
 
   T_partials_return cdf_log = sum(log1m(exp_val));
 
-  if (!is_constant_all<T_y, T_scale>::value) {
+  if constexpr (is_any_autodiff_v<T_y, T_scale>) {
     auto common_deriv = y_div_sigma_square * exp_val / (1 - exp_val);
-    if (!is_constant_all<T_scale>::value) {
+    if constexpr (is_autodiff_v<T_scale>) {
       partials<1>(ops_partials) = -y_val * inv_sigma * common_deriv;
     }
-    if (!is_constant_all<T_y>::value) {
+    if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials) = std::move(common_deriv);
     }
   }

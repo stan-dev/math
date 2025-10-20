@@ -76,12 +76,12 @@ class map_rect_combine {
 
     for (std::size_t i = 0, ij = 0; i != num_jobs; ++i) {
       for (int j = 0; j != world_f_out[i]; ++j, ++ij) {
-        if (!is_constant_all<T_shared_param>::value) {
+        if constexpr (is_autodiff_v<T_shared_param>) {
           edge<0>(ops_partials_[i]).partials_
               = world_result.block(1, ij, num_shared_operands_, 1);
         }
 
-        if (!is_constant_all<T_job_param>::value) {
+        if constexpr (is_autodiff_v<T_job_param>) {
           edge<1>(ops_partials_[i]).partials_
               = world_result.block(offset_job_params, ij, num_job_operands_, 1);
         }

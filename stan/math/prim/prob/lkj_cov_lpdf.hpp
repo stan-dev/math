@@ -18,10 +18,8 @@ namespace math {
 template <bool propto, typename T_y, typename T_loc, typename T_scale,
           typename T_shape, require_eigen_matrix_dynamic_t<T_y>* = nullptr,
           require_all_eigen_col_vector_t<T_loc, T_scale>* = nullptr>
-return_type_t<T_y, T_loc, T_scale, T_shape> lkj_cov_lpdf(const T_y& y,
-                                                         const T_loc& mu,
-                                                         const T_scale& sigma,
-                                                         const T_shape& eta) {
+inline return_type_t<T_y, T_loc, T_scale, T_shape> lkj_cov_lpdf(
+    const T_y& y, const T_loc& mu, const T_scale& sigma, const T_shape& eta) {
   static constexpr const char* function = "lkj_cov_lpdf";
   check_size_match(function, "Rows of location parameter", mu.rows(),
                    "columns of scale parameter", sigma.rows());
@@ -44,10 +42,12 @@ return_type_t<T_y, T_loc, T_scale, T_shape> lkj_cov_lpdf(const T_y& y,
   for (unsigned int k = 0; k < K; k++) {
     lp += lognormal_lpdf<propto>(sds(k), mu_ref(k), sigma_ref(k));
   }
-  if (stan::is_constant_all<T_shape>::value && eta == 1.0) {
-    // no need to rescale y into a correlation matrix
-    lp += lkj_corr_lpdf<propto>(y_ref, eta);
-    return lp;
+  if constexpr (stan::is_constant_all<T_shape>::value) {
+    if (eta == 1.0) {
+      // no need to rescale y into a correlation matrix
+      lp += lkj_corr_lpdf<propto>(y_ref, eta);
+      return lp;
+    }
   }
   Eigen::DiagonalMatrix<value_type_t<T_y>, Eigen::Dynamic> D(K);
   D.diagonal() = sds.inverse();
@@ -63,10 +63,8 @@ return_type_t<T_y, T_loc, T_scale, T_shape> lkj_cov_lpdf(const T_y& y,
 template <bool propto, typename T_y, typename T_loc, typename T_scale,
           typename T_shape, require_eigen_matrix_dynamic_t<T_y>* = nullptr,
           require_all_stan_scalar_t<T_loc, T_scale>* = nullptr>
-return_type_t<T_y, T_loc, T_scale, T_shape> lkj_cov_lpdf(const T_y& y,
-                                                         const T_loc& mu,
-                                                         const T_scale& sigma,
-                                                         const T_shape& eta) {
+inline return_type_t<T_y, T_loc, T_scale, T_shape> lkj_cov_lpdf(
+    const T_y& y, const T_loc& mu, const T_scale& sigma, const T_shape& eta) {
   static constexpr const char* function = "lkj_cov_lpdf";
   check_positive(function, "Shape parameter", eta);
   check_finite(function, "Location parameter", mu);
@@ -82,10 +80,12 @@ return_type_t<T_y, T_loc, T_scale, T_shape> lkj_cov_lpdf(const T_y& y,
   for (unsigned int k = 0; k < K; k++) {
     lp += lognormal_lpdf<propto>(sds(k), mu, sigma);
   }
-  if (stan::is_constant_all<T_shape>::value && eta == 1.0) {
-    // no need to rescale y into a correlation matrix
-    lp += lkj_corr_lpdf<propto>(y_ref, eta);
-    return lp;
+  if constexpr (stan::is_constant_all<T_shape>::value) {
+    if (eta == 1.0) {
+      // no need to rescale y into a correlation matrix
+      lp += lkj_corr_lpdf<propto>(y_ref, eta);
+      return lp;
+    }
   }
   Eigen::DiagonalMatrix<value_type_t<T_y>, Eigen::Dynamic> D(K);
   D.diagonal() = sds.inverse();

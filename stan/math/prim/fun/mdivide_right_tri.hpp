@@ -29,7 +29,7 @@ template <Eigen::UpLoType TriView, typename EigMat1, typename EigMat2,
 inline auto mdivide_right_tri(const EigMat1& b, const EigMat2& A) {
   check_square("mdivide_right_tri", "A", A);
   check_multiplicable("mdivide_right_tri", "b", b, "A", A);
-  if (TriView != Eigen::Lower && TriView != Eigen::Upper) {
+  if constexpr (TriView != Eigen::Lower && TriView != Eigen::Upper) {
     throw_domain_error("mdivide_right_tri",
                        "triangular view must be Eigen::Lower or Eigen::Upper",
                        "", "");

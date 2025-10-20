@@ -24,10 +24,11 @@ namespace math {
  * @throw std::domain_error if y is not in (0, 1)
  */
 template <typename T>
-inline T prob_free(const T& y) {
-  check_bounded<T, double, double>("prob_free", "Probability variable", y, 0,
-                                   1);
-  return logit(y);
+inline auto prob_free(T&& y) {
+  auto&& y_ref = to_ref(std::forward<T>(y));
+  check_bounded<plain_type_t<T>, double, double>(
+      "prob_free", "Probability variable", y_ref, 0, 1);
+  return logit(std::forward<decltype(y_ref)>(y_ref));
 }
 
 }  // namespace math

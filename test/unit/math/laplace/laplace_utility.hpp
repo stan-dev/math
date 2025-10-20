@@ -4,8 +4,6 @@
 #include <test/unit/math/laplace/aki_disease_data/x1.hpp>
 #include <boost/algorithm/string.hpp>
 #include <iostream>
-#include <istream>
-#include <fstream>
 #include <gtest/gtest.h>
 
 namespace stan {
@@ -184,7 +182,7 @@ struct diagonal_kernel_functor {
 };
 
 template <typename F, typename ThetaVec>
-void run_solver_grid(F&& body, ThetaVec&& theta_0) {
+inline void run_solver_grid(F&& body, ThetaVec&& theta_0) {
   constexpr std::array solver_nums{1, 2, 3};            // [1, 3]
   constexpr std::array hessian_block_sizes{1, 2, 3};    // [1, 2]
   constexpr std::array max_steps_line_searches{0, 10};  // 0, 10
@@ -290,6 +288,7 @@ class laplace_disease_map_test : public ::testing::Test {
       n_samples[i] = 1;
 
     theta_0 = Eigen::VectorXd::Zero(dim_theta);
+    mean = Eigen::VectorXd::Zero(dim_theta);
     dim_phi = 2;
     phi_dbl.resize(dim_phi);
     phi_dbl << 0.3162278, 200;  // variance, length scale
@@ -299,7 +298,7 @@ class laplace_disease_map_test : public ::testing::Test {
     for (int i = 0; i < n_observations; i++) {
       delta_lk(i) = y[i];
       delta_lk(n_observations + i) = ye(i);
-      y_index[i] = i;
+      y_index[i] = i + 1;
     }
   }
 
@@ -317,6 +316,7 @@ class laplace_disease_map_test : public ::testing::Test {
   std::vector<int> delta_int;
 
   Eigen::VectorXd theta_0;
+  Eigen::VectorXd mean;
   int dim_phi;
   Eigen::Matrix<double, -1, 1> phi_dbl;
   Eigen::Matrix<double, -1, 1> eta_dummy_dbl;
@@ -333,7 +333,7 @@ class laplace_count_two_dim_diag_test : public ::testing::Test {
     y.resize(2);
     y = {1, 0};
     y_index.resize(2);
-    y_index = {0, 1};
+    y_index = {1, 2};
 
     theta_root = algebra_solver(stan::math::test::stationary_point(), theta_0,
                                 phi, d0, di0);

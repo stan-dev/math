@@ -17,7 +17,7 @@ namespace stan {
 namespace math {
 
 template <bool propto, typename T_y, typename T_loc, typename T_covar>
-return_type_t<T_y, T_loc, T_covar> multi_normal_prec_lpdf(
+inline return_type_t<T_y, T_loc, T_covar> multi_normal_prec_lpdf(
     const T_y& y, const T_loc& mu, const T_covar& Sigma) {
   using T_covar_elem = typename scalar_type<T_covar>::type;
   using lp_type = return_type_t<T_y, T_loc, T_covar>;
@@ -82,15 +82,15 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_prec_lpdf(
     return lp;
   }
 
-  if (include_summand<propto, T_covar_elem>::value) {
+  if constexpr (include_summand<propto, T_covar_elem>::value) {
     lp += 0.5 * log_determinant_ldlt(ldlt_Sigma) * size_vec;
   }
 
-  if (include_summand<propto>::value) {
+  if constexpr (include_summand<propto>::value) {
     lp += NEG_LOG_SQRT_TWO_PI * size_y * size_vec;
   }
 
-  if (include_summand<propto, T_y, T_loc, T_covar_elem>::value) {
+  if constexpr (include_summand<propto, T_y, T_loc, T_covar_elem>::value) {
     lp_type sum_lp_vec(0.0);
     for (size_t i = 0; i < size_vec; i++) {
       const auto& y_col = as_column_vector_or_scalar(y_vec[i]);

@@ -123,7 +123,7 @@ inline auto quad_form_impl(const Mat1& A, const Mat2& B, bool symmetric) {
                                      * value_of(A) * value_of(B).eval()),
                             Mat1, Mat2>;
 
-  if (!is_constant<Mat1>::value && !is_constant<Mat2>::value) {
+  if constexpr (is_autodiff_v<Mat1> && is_autodiff_v<Mat2>) {
     arena_t<promote_scalar_t<var, Mat1>> arena_A = A;
     arena_t<promote_scalar_t<var, Mat2>> arena_B = B;
 
@@ -142,13 +142,13 @@ inline auto quad_form_impl(const Mat1& A, const Mat2& B, bool symmetric) {
     reverse_pass_callback([arena_A, arena_B, res]() mutable {
       auto C_adj_B_t = (res.adj() * value_of(arena_B).transpose()).eval();
 
-      if (is_var_matrix<Mat1>::value) {
+      if constexpr (is_var_matrix<Mat1>::value) {
         arena_A.adj().noalias() += value_of(arena_B) * C_adj_B_t;
       } else {
         arena_A.adj() += value_of(arena_B) * C_adj_B_t;
       }
 
-      if (is_var_matrix<Mat2>::value) {
+      if constexpr (is_var_matrix<Mat2>::value) {
         arena_B.adj().noalias()
             += value_of(arena_A) * C_adj_B_t.transpose()
                + value_of(arena_A).transpose() * value_of(arena_B) * res.adj();
@@ -160,7 +160,7 @@ inline auto quad_form_impl(const Mat1& A, const Mat2& B, bool symmetric) {
     });
 
     return res;
-  } else if (!is_constant<Mat2>::value) {
+  } else if constexpr (is_autodiff_v<Mat2>) {
     arena_t<promote_scalar_t<double, Mat1>> arena_A = value_of(A);
     arena_t<promote_scalar_t<var, Mat2>> arena_B = B;
 
@@ -179,7 +179,7 @@ inline auto quad_form_impl(const Mat1& A, const Mat2& B, bool symmetric) {
     reverse_pass_callback([arena_A, arena_B, res]() mutable {
       auto C_adj_B_t = (res.adj() * value_of(arena_B).transpose());
 
-      if (is_var_matrix<Mat2>::value) {
+      if constexpr (is_var_matrix<Mat2>::value) {
         arena_B.adj().noalias()
             += arena_A * C_adj_B_t.transpose()
                + arena_A.transpose() * value_of(arena_B) * res.adj();
@@ -209,7 +209,7 @@ inline auto quad_form_impl(const Mat1& A, const Mat2& B, bool symmetric) {
     reverse_pass_callback([arena_A, arena_B, res]() mutable {
       auto C_adj_B_t = (res.adj() * arena_B.transpose());
 
-      if (is_var_matrix<Mat1>::value) {
+      if constexpr (is_var_matrix<Mat1>::value) {
         arena_A.adj().noalias() += arena_B * C_adj_B_t;
       } else {
         arena_A.adj() += arena_B * C_adj_B_t;

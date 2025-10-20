@@ -82,7 +82,7 @@ template <typename EigMat, require_eigen_dense_base_t<EigMat>* = nullptr,
 inline auto value_of(EigMat&& M) {
   return make_holder(
       [](auto&& a) {
-        return a.unaryExpr([](const auto& scal) { return value_of(scal); });
+        return a.unaryExpr([](auto&& scal) { return value_of(scal); });
       },
       std::forward<EigMat>(M));
 }

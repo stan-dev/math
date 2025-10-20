@@ -33,7 +33,7 @@ template <typename T_y_cl, typename T_loc_cl, typename T_scale_cl,
               T_y_cl, T_loc_cl, T_scale_cl, T_skewness_cl>* = nullptr,
           require_any_not_stan_scalar_t<T_y_cl, T_loc_cl, T_scale_cl,
                                         T_skewness_cl>* = nullptr>
-return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_skewness_cl>
+inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_skewness_cl>
 skew_double_exponential_cdf(const T_y_cl& y, const T_loc_cl& mu,
                             const T_scale_cl& sigma, const T_skewness_cl& tau) {
   static constexpr const char* function = "skew_double_exponential_cdf(OpenCL)";
@@ -113,39 +113,39 @@ skew_double_exponential_cdf(const T_y_cl& y, const T_loc_cl& mu,
 
   results(check_y_not_nan, check_mu_finite, check_sigma_positive_finite,
           check_tau_bounded, cdf_cl, mu_deriv_cl, sigma_deriv_cl, tau_deriv_cl)
-      = expressions(
-          y_not_nan_expr, mu_finite_expr, sigma_positive_finite_expr,
-          tau_bounded_expr, cdf_expr,
-          calc_if<!is_constant_all<T_y_cl, T_loc_cl>::value>(y_deriv1),
-          calc_if<!is_constant<T_scale_cl>::value>(sigma_deriv1),
-          calc_if<!is_constant<T_skewness_cl>::value>(tau_deriv1));
+      = expressions(y_not_nan_expr, mu_finite_expr, sigma_positive_finite_expr,
+                    tau_bounded_expr, cdf_expr,
+                    calc_if<is_any_autodiff_v<T_y_cl, T_loc_cl>>(y_deriv1),
+                    calc_if<is_autodiff_v<T_scale_cl>>(sigma_deriv1),
+                    calc_if<is_autodiff_v<T_skewness_cl>>(tau_deriv1));
 
   T_partials_return cdf = (from_matrix_cl(cdf_cl)).prod();
 
   auto ops_partials
       = make_partials_propagator(y_col, mu_col, sigma_col, tau_col);
-  if (!is_constant_all<T_y_cl, T_loc_cl, T_scale_cl, T_skewness_cl>::value) {
+  if constexpr (is_any_autodiff_v<T_y_cl, T_loc_cl, T_scale_cl,
+                                  T_skewness_cl>) {
     auto y_deriv = mu_deriv_cl * cdf;
     auto mu_deriv = -y_deriv;
     auto sigma_deriv = sigma_deriv_cl * cdf;
     auto tau_deriv = tau_deriv_cl * cdf;
 
     results(y_deriv_cl, mu_deriv_cl, sigma_deriv_cl, tau_deriv_cl)
-        = expressions(calc_if<!is_constant<T_y_cl>::value>(y_deriv),
-                      calc_if<!is_constant<T_loc_cl>::value>(mu_deriv),
-                      calc_if<!is_constant<T_scale_cl>::value>(sigma_deriv),
-                      calc_if<!is_constant<T_skewness_cl>::value>(tau_deriv));
+        = expressions(calc_if<is_autodiff_v<T_y_cl>>(y_deriv),
+                      calc_if<is_autodiff_v<T_loc_cl>>(mu_deriv),
+                      calc_if<is_autodiff_v<T_scale_cl>>(sigma_deriv),
+                      calc_if<is_autodiff_v<T_skewness_cl>>(tau_deriv));
 
-    if (!is_constant<T_y_cl>::value) {
+    if constexpr (is_autodiff_v<T_y_cl>) {
       partials<0>(ops_partials) = std::move(y_deriv_cl);
     }
-    if (!is_constant<T_loc_cl>::value) {
+    if constexpr (is_autodiff_v<T_loc_cl>) {
       partials<1>(ops_partials) = std::move(mu_deriv_cl);
     }
-    if (!is_constant<T_scale_cl>::value) {
+    if constexpr (is_autodiff_v<T_scale_cl>) {
       partials<2>(ops_partials) = std::move(sigma_deriv_cl);
     }
-    if (!is_constant<T_skewness_cl>::value) {
+    if constexpr (is_autodiff_v<T_skewness_cl>) {
       partials<3>(ops_partials) = std::move(tau_deriv_cl);
     }
   }

@@ -15,8 +15,8 @@ namespace math {
  * @return Negation of subtrahend.
  */
 template <typename T, require_not_std_vector_t<T>* = nullptr>
-inline auto minus(const T& x) {
-  return -x;
+inline auto minus(T&& x) {
+  return make_holder([](auto&& x_) { return -x_; }, std::forward<T>(x));
 }
 
 /**
@@ -26,10 +26,10 @@ inline auto minus(const T& x) {
  * @param x Container.
  * @return Container where each element is negated.
  */
-template <typename T>
-inline auto minus(const std::vector<T>& x) {
-  return apply_vector_unary<std::vector<T>>::apply(
-      x, [](const auto& v) { return -v; });
+template <typename T, require_std_vector_t<T>* = nullptr>
+inline auto minus(T&& x) {
+  return apply_vector_unary<T>::apply(std::forward<T>(x),
+                                      [](auto&& v) { return -v; });
 }
 
 }  // namespace math

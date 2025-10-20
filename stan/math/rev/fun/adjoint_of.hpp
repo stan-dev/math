@@ -16,13 +16,15 @@ struct nonexisting_adjoint {
   nonexisting_adjoint operator+=(T) const {
     throw std::runtime_error(
         "internal::nonexisting_adjoint::operator+= should never be called! "
-        "Please file a bug report.");
+        "Please file a bug report. rev/fun/adjoint_of.hpp line "
+        + std::to_string(__LINE__));
   }
   template <typename T>
   nonexisting_adjoint operator-=(T) const {
     throw std::runtime_error(
         "internal::nonexisting_adjoint::operator-= should never be called! "
-        "Please file a bug report.");
+        "Please file a bug report. rev/fun/adjoint_of.hpp line "
+        + std::to_string(__LINE__));
   }
 };
 }  // namespace internal

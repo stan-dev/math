@@ -44,8 +44,9 @@ namespace math {
 template <bool propto, typename T_y, typename T_low, typename T_high,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_low, T_high>* = nullptr>
-return_type_t<T_y, T_low, T_high> uniform_lpdf(const T_y& y, const T_low& alpha,
-                                               const T_high& beta) {
+inline return_type_t<T_y, T_low, T_high> uniform_lpdf(const T_y& y,
+                                                      const T_low& alpha,
+                                                      const T_high& beta) {
   using T_partials_return = partials_return_t<T_y, T_low, T_high>;
   using T_y_ref = ref_type_if_not_constant_t<T_y>;
   using T_alpha_ref = ref_type_if_not_constant_t<T_low>;
@@ -71,7 +72,7 @@ return_type_t<T_y, T_low, T_high> uniform_lpdf(const T_y& y, const T_low& alpha,
   if (size_zero(y, alpha, beta)) {
     return 0.0;
   }
-  if (!include_summand<propto, T_y, T_low, T_high>::value) {
+  if constexpr (!include_summand<propto, T_y, T_low, T_high>::value) {
     return 0.0;
   }
   if (sum(promote_scalar<int>(y_val < alpha_val))
@@ -81,27 +82,27 @@ return_type_t<T_y, T_low, T_high> uniform_lpdf(const T_y& y, const T_low& alpha,
 
   T_partials_return logp = 0;
   size_t N = max_size(y, alpha, beta);
-  if (include_summand<propto, T_low, T_high>::value) {
+  if constexpr (include_summand<propto, T_low, T_high>::value) {
     logp -= sum(log(beta_val - alpha_val)) * N / max_size(alpha, beta);
   }
 
   auto ops_partials = make_partials_propagator(y_ref, alpha_ref, beta_ref);
 
-  if (!is_constant_all<T_low, T_high>::value) {
-    auto inv_beta_minus_alpha = to_ref_if<(!is_constant_all<T_high>::value
-                                           && !is_constant_all<T_low>::value)>(
-        inv(beta_val - alpha_val));
-    if (!is_constant_all<T_high>::value) {
-      if (is_vector<T_y>::value && !is_vector<T_low>::value
-          && !is_vector<T_high>::value) {
+  if constexpr (is_any_autodiff_v<T_low, T_high>) {
+    auto inv_beta_minus_alpha
+        = to_ref_if<(is_autodiff_v<T_high> && is_autodiff_v<T_low>)>(
+            inv(beta_val - alpha_val));
+    if constexpr (is_autodiff_v<T_high>) {
+      if constexpr (is_vector<T_y>::value && !is_vector<T_low>::value
+                    && !is_vector<T_high>::value) {
         partials<2>(ops_partials) = -inv_beta_minus_alpha * math::size(y);
       } else {
         partials<2>(ops_partials) = -inv_beta_minus_alpha;
       }
     }
-    if (!is_constant_all<T_low>::value) {
-      if (is_vector<T_y>::value && !is_vector<T_low>::value
-          && !is_vector<T_high>::value) {
+    if constexpr (is_autodiff_v<T_low>) {
+      if constexpr (is_vector<T_y>::value && !is_vector<T_low>::value
+                    && !is_vector<T_high>::value) {
         partials<1>(ops_partials) = inv_beta_minus_alpha * math::size(y);
       } else {
         partials<1>(ops_partials) = std::move(inv_beta_minus_alpha);

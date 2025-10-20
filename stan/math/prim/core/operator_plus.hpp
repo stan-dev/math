@@ -14,7 +14,7 @@ namespace math {
  * @param x argument
  * @return argument
  */
-template <typename U, require_autodiff_t<U>>
+template <typename U, require_autodiff_scalar_t<U>>
 inline std::complex<U> operator+(const std::complex<U>& x) {
   return x;
 }

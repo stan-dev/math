@@ -53,7 +53,7 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_x, typename T_alpha,
           typename T_beta, typename T_scale, require_matrix_t<T_x>* = nullptr>
-return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
+inline return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
     const T_y& y, const T_x& x, const T_alpha& alpha, const T_beta& beta,
     const T_scale& sigma) {
   using Eigen::Array;
@@ -95,7 +95,8 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   if (size_zero(y, sigma)) {
     return 0;
   }
-  if (!include_summand<propto, T_y, T_x, T_alpha, T_beta, T_scale>::value) {
+  if constexpr (!include_summand<propto, T_y, T_x, T_alpha, T_beta,
+                                 T_scale>::value) {
     return 0;
   }
 
@@ -105,14 +106,14 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   T_beta_ref beta_ref = beta;
 
   const auto& y_val = value_of(y_ref);
-  const auto& x_val = to_ref_if<!is_constant<T_beta>::value>(value_of(x_ref));
+  const auto& x_val = to_ref_if<is_autodiff_v<T_beta>>(value_of(x_ref));
   const auto& alpha_val = value_of(alpha_ref);
   const auto& beta_val = value_of(beta_ref);
 
   const auto& y_val_vec = as_column_vector_or_scalar(y_val);
   const auto& alpha_val_vec = as_column_vector_or_scalar(alpha_val);
-  const auto& beta_val_vec = to_ref_if<!is_constant<T_x>::value>(
-      as_column_vector_or_scalar(beta_val));
+  const auto& beta_val_vec
+      = to_ref_if<is_autodiff_v<T_x>>(as_column_vector_or_scalar(beta_val));
 
   T_scale_val inv_sigma = 1.0 / as_array_or_scalar(sigma_val_vec);
 
@@ -120,9 +121,8 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   T_partials_return y_scaled_sq_sum;
 
   Array<T_partials_return, Dynamic, 1> y_scaled(N_instances);
-  if (T_x_rows == 1) {
-    T_y_scaled_tmp y_scaled_tmp
-        = forward_as<T_y_scaled_tmp>((x_val * beta_val_vec).coeff(0, 0));
+  if constexpr (T_x_rows == 1) {
+    T_y_scaled_tmp y_scaled_tmp = (x_val * beta_val_vec).coeff(0, 0);
     y_scaled = (as_array_or_scalar(y_val_vec) - y_scaled_tmp
                 - as_array_or_scalar(alpha_val_vec))
                * inv_sigma;
@@ -136,51 +136,46 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   auto ops_partials
       = make_partials_propagator(y_ref, x_ref, alpha_ref, beta_ref, sigma_ref);
 
-  if (!(is_constant_all<T_y, T_x, T_beta, T_alpha, T_scale>::value)) {
+  if constexpr (!(is_constant_all<T_y, T_x, T_beta, T_alpha, T_scale>::value)) {
     Matrix<T_partials_return, Dynamic, 1> mu_derivative = inv_sigma * y_scaled;
-    if (!is_constant_all<T_y>::value) {
-      if (is_vector<T_y>::value) {
+    if constexpr (is_autodiff_v<T_y>) {
+      if constexpr (is_vector<T_y>::value) {
         partials<0>(ops_partials) = -mu_derivative;
       } else {
         partials<0>(ops_partials)[0] = -mu_derivative.sum();
       }
     }
-    if (!is_constant_all<T_x>::value) {
-      if (T_x_rows == 1) {
-        edge<1>(ops_partials).partials_
-            = forward_as<Array<T_partials_return, Dynamic, T_x_rows>>(
-                beta_val_vec * sum(mu_derivative));
+    if constexpr (is_autodiff_v<T_x>) {
+      if constexpr (T_x_rows == 1) {
+        edge<1>(ops_partials).partials_ = beta_val_vec * sum(mu_derivative);
       } else {
         edge<1>(ops_partials).partials_
             = (beta_val_vec * mu_derivative.transpose()).transpose();
       }
     }
-    if (!is_constant_all<T_beta>::value) {
-      if (T_x_rows == 1) {
-        edge<3>(ops_partials).partials_
-            = forward_as<Matrix<T_partials_return, 1, Dynamic>>(
-                mu_derivative.sum() * x_val);
+    if constexpr (is_autodiff_v<T_beta>) {
+      if constexpr (T_x_rows == 1) {
+        edge<3>(ops_partials).partials_ = mu_derivative.sum() * x_val;
       } else {
         partials<3>(ops_partials) = mu_derivative.transpose() * x_val;
       }
     }
-    if (!is_constant_all<T_alpha>::value) {
-      if (is_vector<T_alpha>::value) {
+    if constexpr (is_autodiff_v<T_alpha>) {
+      if constexpr (is_vector<T_alpha>::value) {
         partials<2>(ops_partials) = mu_derivative;
       } else {
         partials<2>(ops_partials)[0] = sum(mu_derivative);
       }
     }
-    if (!is_constant_all<T_scale>::value) {
-      if (is_vector<T_scale>::value) {
+    if constexpr (is_autodiff_v<T_scale>) {
+      if constexpr (is_vector<T_scale>::value) {
         Array<T_partials_return, Dynamic, 1> y_scaled_sq = y_scaled * y_scaled;
         y_scaled_sq_sum = sum(y_scaled_sq);
         partials<4>(ops_partials) = (y_scaled_sq - 1) * inv_sigma;
       } else {
         y_scaled_sq_sum = sum(y_scaled * y_scaled);
         partials<4>(ops_partials)[0]
-            = (y_scaled_sq_sum - N_instances)
-              * forward_as<partials_return_t<T_sigma_ref>>(inv_sigma);
+            = (y_scaled_sq_sum - N_instances) * inv_sigma;
       }
     } else {
       y_scaled_sq_sum = sum(y_scaled * y_scaled);
@@ -199,15 +194,14 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
 
   // Compute log probability.
   T_partials_return logp(0.0);
-  if (include_summand<propto>::value) {
+  if constexpr (include_summand<propto>::value) {
     logp += NEG_LOG_SQRT_TWO_PI * N_instances;
   }
-  if (include_summand<propto, T_scale>::value) {
-    if (is_vector<T_scale>::value) {
+  if constexpr (include_summand<propto, T_scale>::value) {
+    if constexpr (is_vector<T_scale>::value) {
       logp -= sum(log(sigma_val_vec));
     } else {
-      logp -= N_instances
-              * log(forward_as<partials_return_t<T_sigma_ref>>(sigma_val_vec));
+      logp -= N_instances * log(sigma_val_vec);
     }
   }
   logp -= 0.5 * y_scaled_sq_sum;

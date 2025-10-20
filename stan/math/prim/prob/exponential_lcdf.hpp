@@ -21,8 +21,8 @@ namespace math {
 template <typename T_y, typename T_inv_scale,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_inv_scale>* = nullptr>
-return_type_t<T_y, T_inv_scale> exponential_lcdf(const T_y& y,
-                                                 const T_inv_scale& beta) {
+inline return_type_t<T_y, T_inv_scale> exponential_lcdf(
+    const T_y& y, const T_inv_scale& beta) {
   using T_partials_return = partials_return_t<T_y, T_inv_scale>;
   using T_y_ref = ref_type_if_not_constant_t<T_y>;
   using T_beta_ref = ref_type_if_not_constant_t<T_inv_scale>;
@@ -41,19 +41,19 @@ return_type_t<T_y, T_inv_scale> exponential_lcdf(const T_y& y,
   }
 
   auto ops_partials = make_partials_propagator(y_ref, beta_ref);
-  const auto& exp_val = to_ref_if<!is_constant_all<T_y, T_inv_scale>::value>(
-      exp(-beta_val * y_val));
+  const auto& exp_val
+      = to_ref_if<is_any_autodiff_v<T_y, T_inv_scale>>(exp(-beta_val * y_val));
 
   T_partials_return cdf_log = sum(log1m(exp_val));
 
-  if (!is_constant_all<T_y, T_inv_scale>::value) {
-    const auto& rep_deriv = to_ref_if<(
-        !is_constant_all<T_y>::value || !is_constant_all<T_inv_scale>::value)>(
-        -exp_val / (1.0 - exp_val));
-    if (!is_constant_all<T_y>::value) {
+  if constexpr (is_any_autodiff_v<T_y, T_inv_scale>) {
+    const auto& rep_deriv
+        = to_ref_if<(is_autodiff_v<T_y> || is_autodiff_v<T_inv_scale>)>(
+            -exp_val / (1.0 - exp_val));
+    if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials) = -rep_deriv * beta_val;
     }
-    if (!is_constant_all<T_inv_scale>::value) {
+    if constexpr (is_autodiff_v<T_inv_scale>) {
       partials<1>(ops_partials) = -rep_deriv * y_val;
     }
   }

@@ -46,7 +46,8 @@ namespace math {
 template <bool propto, typename T_y, typename T_dof,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_dof>* = nullptr>
-return_type_t<T_y, T_dof> inv_chi_square_lpdf(const T_y& y, const T_dof& nu) {
+inline return_type_t<T_y, T_dof> inv_chi_square_lpdf(const T_y& y,
+                                                     const T_dof& nu) {
   using T_partials_return = partials_return_t<T_y, T_dof>;
   using T_y_ref = ref_type_if_not_constant_t<T_y>;
   using T_nu_ref = ref_type_if_not_constant_t<T_dof>;
@@ -66,7 +67,7 @@ return_type_t<T_y, T_dof> inv_chi_square_lpdf(const T_y& y, const T_dof& nu) {
   if (size_zero(y, nu)) {
     return 0;
   }
-  if (!include_summand<propto, T_y, T_dof>::value) {
+  if constexpr (!include_summand<propto, T_y, T_dof>::value) {
     return 0;
   }
 
@@ -76,24 +77,24 @@ return_type_t<T_y, T_dof> inv_chi_square_lpdf(const T_y& y, const T_dof& nu) {
 
   auto ops_partials = make_partials_propagator(y_ref, nu_ref);
 
-  const auto& log_y = to_ref_if<!is_constant_all<T_dof>::value>(log(y_val));
+  const auto& log_y = to_ref_if<is_autodiff_v<T_dof>>(log(y_val));
   const auto& half_nu = to_ref(0.5 * nu_val);
 
   size_t N = max_size(y, nu);
   T_partials_return logp = -sum((half_nu + 1.0) * log_y);
-  if (include_summand<propto, T_dof>::value) {
+  if constexpr (include_summand<propto, T_dof>::value) {
     logp -= (sum(nu_val) * HALF_LOG_TWO + sum(lgamma(half_nu))) * N
             / math::size(nu);
   }
-  if (include_summand<propto, T_y>::value) {
-    const auto& inv_y = to_ref_if<!is_constant_all<T_y>::value>(inv(y_val));
+  if constexpr (include_summand<propto, T_y>::value) {
+    const auto& inv_y = to_ref_if<is_autodiff_v<T_y>>(inv(y_val));
     logp -= 0.5 * sum(inv_y) * N / math::size(y);
-    if (!is_constant_all<T_y>::value) {
+    if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials) = (0.5 * inv_y - half_nu - 1.0) * inv_y;
     }
   }
 
-  if (!is_constant_all<T_dof>::value) {
+  if constexpr (is_autodiff_v<T_dof>) {
     edge<1>(ops_partials).partials_
         = -HALF_LOG_TWO - (digamma(half_nu) + log_y) * 0.5;
   }

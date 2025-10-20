@@ -44,7 +44,8 @@ namespace math {
  * @param[in] x argument
  * @return derivative of log gamma function at argument
  */
-inline double digamma(double x) {
+template <typename T, require_arithmetic_t<T>* = nullptr>
+inline double digamma(T&& x) {
   return boost::math::digamma(x, boost_policy_t<>());
 }
 
@@ -58,8 +59,8 @@ inline double digamma(double x) {
  */
 struct digamma_fun {
   template <typename T>
-  static inline auto fun(const T& x) {
-    return digamma(x);
+  static inline auto fun(T&& x) {
+    return digamma(std::forward<T>(x));
   }
 };
 
@@ -73,9 +74,10 @@ struct digamma_fun {
  */
 template <typename T,
           require_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr,
+          require_container_t<T>* = nullptr,
           require_not_var_matrix_t<T>* = nullptr>
-inline auto digamma(const T& x) {
-  return apply_scalar_unary<digamma_fun, T>::apply(x);
+inline auto digamma(T&& x) {
+  return apply_scalar_unary<digamma_fun, T>::apply(std::forward<T>(x));
 }
 
 }  // namespace math

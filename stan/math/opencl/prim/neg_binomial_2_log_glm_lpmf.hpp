@@ -65,7 +65,7 @@ template <bool propto, typename T_y_cl, typename T_x_cl, typename T_alpha_cl,
           typename T_beta_cl, typename T_phi_cl,
           require_all_prim_or_rev_kernel_expression_t<
               T_x_cl, T_y_cl, T_alpha_cl, T_beta_cl, T_phi_cl>* = nullptr>
-return_type_t<T_x_cl, T_alpha_cl, T_beta_cl, T_phi_cl>
+inline return_type_t<T_x_cl, T_alpha_cl, T_beta_cl, T_phi_cl>
 neg_binomial_2_log_glm_lpmf(const T_y_cl& y, const T_x_cl& x,
                             const T_alpha_cl& alpha, const T_beta_cl& beta,
                             const T_phi_cl& phi) {
@@ -81,25 +81,25 @@ neg_binomial_2_log_glm_lpmf(const T_y_cl& y, const T_x_cl& x,
   const size_t N = x.rows();
   const size_t M = x.cols();
 
-  if (is_y_vector) {
+  if constexpr (is_y_vector) {
     check_size_match(function, "Rows of ", "x", N, "rows of ", "y",
                      math::size(y));
   }
   check_size_match(function, "Columns of ", "x", M, "size of ", "beta",
                    math::size(beta));
-  if (is_phi_vector) {
+  if constexpr (is_phi_vector) {
     check_size_match(function, "Rows of ", "x", N, "size of ", "phi",
                      math::size(phi));
   }
-  if (is_alpha_vector) {
+  if constexpr (is_alpha_vector) {
     check_size_match(function, "Rows of ", "x", N, "size of ", "alpha",
                      math::size(alpha));
   }
   if (N == 0) {
     return 0;
   }
-  if (!include_summand<propto, T_x_cl, T_alpha_cl, T_beta_cl,
-                       T_phi_cl>::value) {
+  if constexpr (!include_summand<propto, T_x_cl, T_alpha_cl, T_beta_cl,
+                                 T_phi_cl>::value) {
     return 0;
   }
 
@@ -119,14 +119,14 @@ neg_binomial_2_log_glm_lpmf(const T_y_cl& y, const T_x_cl& x,
   const int wgs = (N + local_size - 1) / local_size;
 
   const bool need_theta_derivative
-      = !is_constant_all<T_x_cl, T_beta_cl, T_alpha_cl>::value;
+      = is_any_autodiff_v<T_x_cl, T_beta_cl, T_alpha_cl>;
   matrix_cl<double> theta_derivative_cl(need_theta_derivative ? N : 0, 1);
   const bool need_theta_derivative_sum
       = need_theta_derivative && !is_alpha_vector;
   matrix_cl<double> theta_derivative_sum_cl(wgs, 1);
   const bool need_phi_derivative_sum = !is_alpha_vector;
   const bool need_phi_derivative
-      = !is_constant_all<T_phi_cl>::value || need_phi_derivative_sum;
+      = is_autodiff_v<T_phi_cl> || need_phi_derivative_sum;
   matrix_cl<double> phi_derivative_cl(
       need_phi_derivative ? (need_phi_derivative_sum ? wgs : N) : 0, 1);
   const bool need_logp1 = include_summand<propto>::value;
@@ -167,24 +167,21 @@ neg_binomial_2_log_glm_lpmf(const T_y_cl& y, const T_x_cl& x,
         = isfinite(phi_val) && phi_val > 0;
   }
 
-  if (include_summand<propto, T_phi_cl>::value && !is_phi_vector) {
-    logp += N
-            * (multiply_log(forward_as<double>(phi_val),
-                            forward_as<double>(phi_val))
-               - lgamma(forward_as<double>(phi_val)));
+  if constexpr (include_summand<propto, T_phi_cl>::value && !is_phi_vector) {
+    logp += N * (multiply_log(phi_val, phi_val) - lgamma(phi_val));
   }
-  if (include_summand<propto, T_phi_cl>::value && !is_y_vector
-      && !is_phi_vector) {
-    logp += forward_as<double>(lgamma(y_val + phi_val)) * N;
+  if constexpr (include_summand<propto, T_phi_cl>::value && !is_y_vector
+                && !is_phi_vector) {
+    logp += lgamma(y_val + phi_val) * N;
   }
 
   auto ops_partials = make_partials_propagator(x, alpha, beta, phi);
   // Compute the necessary derivatives.
-  if (!is_constant<T_x_cl>::value) {
+  if constexpr (is_autodiff_v<T_x_cl>) {
     partials<0>(ops_partials)
         = transpose(beta_val * transpose(theta_derivative_cl));
   }
-  if (!is_constant_all<T_beta_cl>::value) {
+  if constexpr (is_autodiff_v<T_beta_cl>) {
     // transposition of a vector can be done without copying
     const matrix_cl<double> theta_derivative_transpose_cl(
         theta_derivative_cl.buffer(), 1, theta_derivative_cl.rows());
@@ -199,22 +196,19 @@ neg_binomial_2_log_glm_lpmf(const T_y_cl& y, const T_x_cl& x,
               edge3_partials_transpose_cl.write_events().back());
     }
   }
-  if (!is_constant_all<T_alpha_cl>::value) {
-    if (is_alpha_vector) {
+  if constexpr (is_autodiff_v<T_alpha_cl>) {
+    if constexpr (is_alpha_vector) {
       partials<1>(ops_partials) = std::move(theta_derivative_cl);
     } else {
-      forward_as<internal::broadcast_array<double>>(
-          partials<1>(ops_partials))[0]
+      partials<1>(ops_partials)[0]
           = sum(from_matrix_cl(theta_derivative_sum_cl));
     }
   }
-  if (!is_constant_all<T_phi_cl>::value) {
-    if (is_phi_vector) {
+  if constexpr (is_autodiff_v<T_phi_cl>) {
+    if constexpr (is_phi_vector) {
       partials<3>(ops_partials) = std::move(phi_derivative_cl);
     } else {
-      forward_as<internal::broadcast_array<double>>(
-          partials<3>(ops_partials))[0]
-          = sum(from_matrix_cl(phi_derivative_cl));
+      partials<3>(ops_partials)[0] = sum(from_matrix_cl(phi_derivative_cl));
     }
   }
   return ops_partials.build(logp);

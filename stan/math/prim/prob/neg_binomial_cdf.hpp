@@ -22,9 +22,8 @@ namespace stan {
 namespace math {
 
 template <typename T_n, typename T_shape, typename T_inv_scale>
-return_type_t<T_shape, T_inv_scale> neg_binomial_cdf(const T_n& n,
-                                                     const T_shape& alpha,
-                                                     const T_inv_scale& beta) {
+inline return_type_t<T_shape, T_inv_scale> neg_binomial_cdf(
+    const T_n& n, const T_shape& alpha, const T_inv_scale& beta) {
   using T_partials_return = partials_return_t<T_n, T_shape, T_inv_scale>;
   using T_n_ref = ref_type_t<T_n>;
   using T_alpha_ref = ref_type_t<T_shape>;
@@ -60,13 +59,12 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_cdf(const T_n& n,
     }
   }
 
-  VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
+  VectorBuilder<is_autodiff_v<T_shape>, T_partials_return, T_shape>
       digamma_alpha_vec(size_alpha);
-  VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_n,
-                T_shape>
+  VectorBuilder<is_autodiff_v<T_shape>, T_partials_return, T_n, T_shape>
       digamma_sum_vec(size_n_alpha);
 
-  if (!is_constant_all<T_shape>::value) {
+  if constexpr (is_autodiff_v<T_shape>) {
     for (size_t i = 0; i < size_alpha; i++) {
       digamma_alpha_vec[i] = digamma(alpha_vec.val(i));
     }
@@ -95,26 +93,26 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_cdf(const T_n& n,
 
     P *= P_i;
 
-    if (!is_constant_all<T_shape>::value) {
+    if constexpr (is_autodiff_v<T_shape>) {
       partials<0>(ops_partials)[i]
           += inc_beta_dda(alpha_dbl, n_dbl + 1, p_dbl, digamma_alpha_vec[i],
                           digamma_sum_vec[i])
              / P_i;
     }
 
-    if (!is_constant_all<T_inv_scale>::value) {
+    if constexpr (is_autodiff_v<T_inv_scale>) {
       partials<1>(ops_partials)[i]
           += inc_beta_ddz(alpha_dbl, n_dbl + 1.0, p_dbl) * d_dbl / P_i;
     }
   }
 
-  if (!is_constant_all<T_shape>::value) {
+  if constexpr (is_autodiff_v<T_shape>) {
     for (size_t i = 0; i < size_alpha; ++i) {
       partials<0>(ops_partials)[i] *= P;
     }
   }
 
-  if (!is_constant_all<T_inv_scale>::value) {
+  if constexpr (is_autodiff_v<T_inv_scale>) {
     for (size_t i = 0; i < stan::math::size(beta); ++i) {
       partials<1>(ops_partials)[i] *= P;
     }

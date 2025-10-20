@@ -31,8 +31,9 @@ template <bool propto, typename T_n_cl, typename T_N_cl, typename T_prob_cl,
                                                       T_prob_cl>* = nullptr,
           require_any_nonscalar_prim_or_rev_kernel_expression_t<
               T_n_cl, T_N_cl, T_prob_cl>* = nullptr>
-return_type_t<T_prob_cl> binomial_logit_lpmf(const T_n_cl& n, const T_N_cl N,
-                                             const T_prob_cl& alpha) {
+inline return_type_t<T_prob_cl> binomial_logit_lpmf(const T_n_cl& n,
+                                                    const T_N_cl N,
+                                                    const T_prob_cl& alpha) {
   static constexpr const char* function = "binomial_logit_lpmf(OpenCL)";
   using T_partials_return = partials_return_t<T_prob_cl>;
   using std::isfinite;
@@ -44,7 +45,7 @@ return_type_t<T_prob_cl> binomial_logit_lpmf(const T_n_cl& n, const T_N_cl N,
   if (siz == 0) {
     return 0.0;
   }
-  if (!include_summand<propto, T_prob_cl>::value) {
+  if constexpr (!include_summand<propto, T_prob_cl>::value) {
     return 0.0;
   }
 
@@ -77,11 +78,11 @@ return_type_t<T_prob_cl> binomial_logit_lpmf(const T_n_cl& n, const T_N_cl N,
   results(check_n_bounded, check_N_nonnegative, check_alpha_finite, logp_cl,
           alpha_deriv_cl)
       = expressions(n_bounded, N_nonnegative, alpha_finite, logp_expr,
-                    calc_if<!is_constant<T_prob_cl>::value>(alpha_deriv));
+                    calc_if<is_autodiff_v<T_prob_cl>>(alpha_deriv));
 
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
   auto ops_partials = make_partials_propagator(alpha_col);
-  if (!is_constant<T_prob_cl>::value) {
+  if constexpr (is_autodiff_v<T_prob_cl>) {
     partials<0>(ops_partials) = std::move(alpha_deriv_cl);
   }
 

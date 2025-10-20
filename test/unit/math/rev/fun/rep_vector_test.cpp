@@ -1,13 +1,13 @@
 #include <stan/math/rev.hpp>
-#include <gtest/gtest.h>
 #include <test/unit/math/rev/util.hpp>
 #include <test/unit/util.hpp>
 #include <test/unit/pretty_print_types.hpp>
+#include <gtest/gtest.h>
 #include <limits>
 #include <string>
 #include <vector>
 
-TEST(MathMixMatFun, repVectorVar) {
+TEST_F(AgradRev, MathMixMatFun_repVectorVar) {
   using stan::math::rep_vector;
   using stan::math::sum;
   using stan::math::var;
@@ -24,7 +24,7 @@ TEST(MathMixMatFun, repVectorVar) {
   EXPECT_EQ(x2.cols(), 1);
 }
 
-TEST(MathMixMatFun, repVarVector) {
+TEST_F(AgradRev, MathMixMatFun_repVarVector) {
   using stan::math::rep_vector;
   using stan::math::sum;
   using stan::math::var;

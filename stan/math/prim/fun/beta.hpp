@@ -68,9 +68,12 @@ template <
     require_t<math::disjunction<
         is_arithmetic<return_type_t<T1, T2>>, is_fvar<return_type_t<T1, T2>>,
         is_std_vector<T1>, is_std_vector<T2>>>* = nullptr>
-inline auto beta(const T1& a, const T2& b) {
+inline auto beta(T1&& a, T2&& b) {
   return apply_scalar_binary(
-      [](const auto& c, const auto& d) { return beta(c, d); }, a, b);
+      [](auto&& c, auto&& d) {
+        return beta(std::forward<decltype(c)>(c), std::forward<decltype(d)>(d));
+      },
+      std::forward<T1>(a), std::forward<T2>(b));
 }
 
 }  // namespace math

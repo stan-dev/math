@@ -51,7 +51,7 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_s, typename T_n, typename T_loc,
           typename T_scale>
-return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
+inline return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
     const T_y& y_bar, const T_s& s_squared, const T_n& n_obs, const T_loc& mu,
     const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_s, T_n, T_loc, T_scale>;
@@ -93,59 +93,57 @@ return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
   if (size_zero(y_bar, s_squared, n_obs, mu, sigma)) {
     return 0.0;
   }
-  if (!include_summand<propto, T_y, T_s, T_loc, T_scale>::value) {
+  if constexpr (!include_summand<propto, T_y, T_s, T_loc, T_scale>::value) {
     return 0.0;
   }
 
   const auto& sigma_squared
-      = to_ref_if<!is_constant_all<T_y, T_loc, T_s, T_scale>::value>(
+      = to_ref_if<is_any_autodiff_v<T_y, T_loc, T_s, T_scale>>(
           square(sigma_val));
   const auto& diff = to_ref(mu_val - y_val);
-  const auto& cons_expr = to_ref_if<!is_constant_all<T_scale>::value>(
+  const auto& cons_expr = to_ref_if<is_autodiff_v<T_scale>>(
       s_squared_val + n_obs_val * diff * diff);
 
   size_t N = max_size(y_bar, s_squared, n_obs, mu, sigma);
   T_partials_return logp = -sum(cons_expr / (2 * sigma_squared));
-  if (include_summand<propto>::value) {
+  if constexpr (include_summand<propto>::value) {
     logp += NEG_LOG_SQRT_TWO_PI * sum(n_obs_val) * N / math::size(n_obs);
   }
-  if (include_summand<propto, T_scale>::value) {
+  if constexpr (include_summand<propto, T_scale>::value) {
     logp -= sum(n_obs_val * log(sigma_val)) * N / max_size(n_obs, sigma);
   }
 
   auto ops_partials
       = make_partials_propagator(y_ref, s_squared_ref, mu_ref, sigma_ref);
-  if (!is_constant_all<T_y, T_loc>::value) {
-    auto common_derivative = to_ref_if<(!is_constant_all<T_loc>::value
-                                        && !is_constant_all<T_y>::value)>(
-        N / max_size(y_bar, mu, n_obs, sigma) * n_obs_val / sigma_squared
-        * diff);
-    if (!is_constant_all<T_loc>::value) {
+  if constexpr (is_any_autodiff_v<T_y, T_loc>) {
+    auto common_derivative
+        = to_ref_if<(is_autodiff_v<T_loc> && is_autodiff_v<T_y>)>(
+            N / max_size(y_bar, mu, n_obs, sigma) * n_obs_val / sigma_squared
+            * diff);
+    if constexpr (is_autodiff_v<T_loc>) {
       partials<2>(ops_partials) = -common_derivative;
     }
-    if (!is_constant_all<T_y>::value) {
+    if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials) = std::move(common_derivative);
     }
   }
-  if (!is_constant_all<T_s>::value) {
+  if constexpr (is_autodiff_v<T_s>) {
     using T_sigma_value_scalar = scalar_type_t<decltype(sigma_val)>;
     using T_sigma_value_vector
         = Eigen::Array<T_sigma_value_scalar, Eigen::Dynamic, 1>;
-    if (is_vector<T_scale>::value) {
-      edge<1>(ops_partials).partials_
-          = -0.5 / forward_as<T_sigma_value_vector>(sigma_squared);
+    if constexpr (is_vector<T_scale>::value) {
+      edge<1>(ops_partials).partials_ = -0.5 / sigma_squared;
     } else {
-      if (is_vector<T_s>::value) {
-        partials<1>(ops_partials) = T_sigma_value_vector::Constant(
-            N, -0.5 / forward_as<T_sigma_value_scalar>(sigma_squared));
+      if constexpr (is_vector<T_s>::value) {
+        partials<1>(ops_partials)
+            = T_sigma_value_vector::Constant(N, -0.5 / sigma_squared);
       } else {
-        forward_as<internal::broadcast_array<T_partials_return>>(
-            partials<1>(ops_partials))
+        partials<1>(ops_partials)
             = -0.5 / sigma_squared * N / math::size(sigma);
       }
     }
   }
-  if (!is_constant_all<T_scale>::value) {
+  if constexpr (is_autodiff_v<T_scale>) {
     edge<3>(ops_partials).partials_
         = (cons_expr / sigma_squared - n_obs_val) / sigma_val;
   }

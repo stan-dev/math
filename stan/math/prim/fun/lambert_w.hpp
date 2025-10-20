@@ -48,8 +48,8 @@ namespace internal {
  */
 struct lambert_w0_fun {
   template <typename T>
-  static inline auto fun(const T& x) {
-    return lambert_w0(x);
+  static inline auto fun(T&& x) {
+    return lambert_w0(std::forward<T>(x));
   }
 };
 
@@ -64,8 +64,8 @@ struct lambert_w0_fun {
  */
 struct lambert_wm1_fun {
   template <typename T>
-  static inline auto fun(const T& x) {
-    return lambert_wm1(x);
+  static inline auto fun(T&& x) {
+    return lambert_wm1(std::forward<T>(x));
   }
 };
 }  // namespace internal
@@ -79,9 +79,11 @@ struct lambert_wm1_fun {
  * @throw std::domain_error if x is less than or equal to `-e^(-1)`
  */
 template <typename T, require_not_stan_scalar_t<T>* = nullptr,
-          require_not_var_matrix_t<T>* = nullptr>
-inline auto lambert_w0(const T& x) {
-  return apply_scalar_unary<internal::lambert_w0_fun, T>::apply(x);
+          require_not_var_matrix_t<T>* = nullptr,
+          require_container_t<T>* = nullptr>
+inline auto lambert_w0(T&& x) {
+  return apply_scalar_unary<internal::lambert_w0_fun, T>::apply(
+      std::forward<T>(x));
 }
 
 /**
@@ -94,9 +96,11 @@ inline auto lambert_w0(const T& x) {
  * than or equal to 0
  */
 template <typename T, require_not_stan_scalar_t<T>* = nullptr,
-          require_not_var_matrix_t<T>* = nullptr>
-inline auto lambert_wm1(const T& x) {
-  return apply_scalar_unary<internal::lambert_wm1_fun, T>::apply(x);
+          require_not_var_matrix_t<T>* = nullptr,
+          require_container_t<T>* = nullptr>
+inline auto lambert_wm1(T&& x) {
+  return apply_scalar_unary<internal::lambert_wm1_fun, T>::apply(
+      std::forward<T>(x));
 }
 
 }  // namespace math

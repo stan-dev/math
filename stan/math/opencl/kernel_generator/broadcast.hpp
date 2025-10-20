@@ -42,10 +42,10 @@ class broadcast_
    */
   explicit broadcast_(T&& a) : base(std::forward<T>(a)) {
     const char* function = "broadcast";
-    if (Colwise) {
+    if constexpr (Colwise) {
       check_size_match(function, "Rows of ", "a", a.rows(), "", "", 1);
     }
-    if (Rowwise) {
+    if constexpr (Rowwise) {
       check_size_match(function, "Columns of ", "a", a.cols(), "", "", 1);
     }
   }
@@ -67,10 +67,10 @@ class broadcast_
    */
   inline void modify_argument_indices(std::string& row_index_name,
                                       std::string& col_index_name) const {
-    if (Colwise) {
+    if constexpr (Colwise) {
       row_index_name = "0";
     }
-    if (Rowwise) {
+    if constexpr (Rowwise) {
       col_index_name = "0";
     }
   }

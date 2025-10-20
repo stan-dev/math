@@ -53,20 +53,16 @@ namespace math {
  */
 template <bool propto, typename T_n, typename T_N, typename T_x,
           typename T_alpha, typename T_beta, require_matrix_t<T_x>* = nullptr>
-return_type_t<T_x, T_alpha, T_beta> binomial_logit_glm_lpmf(
+inline return_type_t<T_x, T_alpha, T_beta> binomial_logit_glm_lpmf(
     const T_n& n, const T_N& N, const T_x& x, const T_alpha& alpha,
     const T_beta& beta) {
   constexpr int T_x_rows = T_x::RowsAtCompileTime;
-  using T_xbeta_partials = partials_return_t<T_x, T_beta>;
   using T_partials_return = partials_return_t<T_x, T_alpha, T_beta>;
-  using T_xbeta_tmp =
-      typename std::conditional_t<T_x_rows == 1, T_xbeta_partials,
-                                  Eigen::Array<T_xbeta_partials, -1, 1>>;
-  using T_n_ref = ref_type_if_t<!is_constant<T_n>::value, T_n>;
-  using T_N_ref = ref_type_if_t<!is_constant<T_N>::value, T_N>;
-  using T_x_ref = ref_type_if_t<!is_constant<T_x>::value, T_x>;
-  using T_alpha_ref = ref_type_if_t<!is_constant<T_alpha>::value, T_alpha>;
-  using T_beta_ref = ref_type_if_t<!is_constant<T_beta>::value, T_beta>;
+  using T_n_ref = ref_type_if_t<is_autodiff_v<T_n>, T_n>;
+  using T_N_ref = ref_type_if_t<is_autodiff_v<T_N>, T_N>;
+  using T_x_ref = ref_type_if_t<is_autodiff_v<T_x>, T_x>;
+  using T_alpha_ref = ref_type_if_t<is_autodiff_v<T_alpha>, T_alpha>;
+  using T_beta_ref = ref_type_if_t<is_autodiff_v<T_beta>, T_beta>;
 
   T_n_ref n_ref = n;
   T_N_ref N_ref = N;
@@ -78,7 +74,7 @@ return_type_t<T_x, T_alpha, T_beta> binomial_logit_glm_lpmf(
     return 0;
   }
 
-  if (!include_summand<propto, T_x, T_alpha, T_beta>::value) {
+  if constexpr (!include_summand<propto, T_x, T_alpha, T_beta>::value) {
     return 0;
   }
 
@@ -103,13 +99,13 @@ return_type_t<T_x, T_alpha, T_beta> binomial_logit_glm_lpmf(
   auto&& beta_val = as_value_column_vector_or_scalar(beta_ref);
   auto&& x_val = value_of(x_ref);
   Eigen::Array<T_partials_return, -1, 1> theta(N_instances);
-  if (T_x_rows == 1) {
-    theta = forward_as<T_xbeta_tmp>((x_val * beta_val)(0, 0)) + alpha_val;
+  if constexpr (T_x_rows == 1) {
+    theta = (x_val * beta_val)(0, 0) + alpha_val;
   } else {
     theta = (x_val * beta_val).array() + alpha_val;
   }
 
-  constexpr bool gradients_calc = !is_constant_all<T_beta, T_x, T_alpha>::value;
+  constexpr bool gradients_calc = is_any_autodiff_v<T_beta, T_x, T_alpha>;
   auto&& log_inv_logit_theta = to_ref_if<gradients_calc>(log_inv_logit(theta));
 
   T_partials_return logp = sum(n_val * log_inv_logit_theta
@@ -122,37 +118,33 @@ return_type_t<T_x, T_alpha, T_beta> binomial_logit_glm_lpmf(
     check_finite(function, "Matrix of independent variables", x);
   }
 
-  if (include_summand<propto, T_n, T_N>::value) {
+  if constexpr (include_summand<propto, T_n, T_N>::value) {
     size_t broadcast_n = max_size(N, n) == N_instances ? 1 : N_instances;
     logp += sum(binomial_coefficient_log(N_val, n_val)) * broadcast_n;
   }
 
   auto ops_partials = make_partials_propagator(x_ref, alpha_ref, beta_ref);
-  if (gradients_calc) {
+  if constexpr (gradients_calc) {
     Eigen::Matrix<T_partials_return, -1, 1> theta_derivative
         = n_val - N_val * exp(log_inv_logit_theta);
 
-    if (!is_constant_all<T_beta>::value) {
-      if (T_x_rows == 1) {
-        edge<2>(ops_partials).partials_
-            = forward_as<Eigen::Matrix<T_partials_return, 1, -1>>(
-                theta_derivative.sum() * x_val);
+    if constexpr (is_autodiff_v<T_beta>) {
+      if constexpr (T_x_rows == 1) {
+        edge<2>(ops_partials).partials_ = theta_derivative.sum() * x_val;
       } else {
         partials<2>(ops_partials) = x_val.transpose() * theta_derivative;
       }
     }
 
-    if (!is_constant_all<T_x>::value) {
-      if (T_x_rows == 1) {
-        edge<0>(ops_partials).partials_
-            = forward_as<Eigen::Array<T_partials_return, -1, T_x_rows>>(
-                beta_val * theta_derivative.sum());
+    if constexpr (is_autodiff_v<T_x>) {
+      if constexpr (T_x_rows == 1) {
+        edge<0>(ops_partials).partials_ = beta_val * theta_derivative.sum();
       } else {
         edge<0>(ops_partials).partials_
             = (beta_val * theta_derivative.transpose()).transpose();
       }
     }
-    if (!is_constant_all<T_alpha>::value) {
+    if constexpr (is_autodiff_v<T_alpha>) {
       partials<1>(ops_partials) = theta_derivative;
     }
   }

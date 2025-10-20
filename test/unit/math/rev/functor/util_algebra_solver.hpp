@@ -3,6 +3,7 @@
 #include <stan/math/rev/functor/solve_powell.hpp>
 #include <stan/math/rev/functor/solve_newton.hpp>
 #include <test/unit/util.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <sstream>
 #include <vector>
 #include <limits>
@@ -456,7 +457,7 @@ inline void error_conditions_test(const F& f,
 }
 
 template <typename T>
-void inline unsolvable_test(Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
+inline void unsolvable_test(Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
                             int solver_type = 0, bool use_tol = false) {
   Eigen::VectorXd x(2);
   x << 1, 1;
@@ -482,7 +483,7 @@ void inline unsolvable_test(Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
 }
 
 template <typename T>
-void inline unsolvable_flag_test(Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
+inline void unsolvable_flag_test(Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
                                  int solver_type = 0, bool use_tol = false) {
   Eigen::VectorXd x(2);
   x << 1, 1;

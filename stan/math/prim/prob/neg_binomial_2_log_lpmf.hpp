@@ -25,7 +25,7 @@ template <bool propto, typename T_n, typename T_log_location,
           typename T_precision,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_n, T_log_location, T_precision>* = nullptr>
-return_type_t<T_log_location, T_precision> neg_binomial_2_log_lpmf(
+inline return_type_t<T_log_location, T_precision> neg_binomial_2_log_lpmf(
     const T_n& n, const T_log_location& eta, const T_precision& phi) {
   using T_partials_return = partials_return_t<T_n, T_log_location, T_precision>;
   using std::exp;
@@ -49,7 +49,7 @@ return_type_t<T_log_location, T_precision> neg_binomial_2_log_lpmf(
   if (size_zero(n, eta, phi)) {
     return 0.0;
   }
-  if (!include_summand<propto, T_log_location, T_precision>::value) {
+  if constexpr (!include_summand<propto, T_log_location, T_precision>::value) {
     return 0.0;
   }
 
@@ -77,19 +77,19 @@ return_type_t<T_log_location, T_precision> neg_binomial_2_log_lpmf(
     log_phi[i] = log(phi_val[i]);
   }
 
-  VectorBuilder<!is_constant_all<T_log_location, T_precision>::value,
+  VectorBuilder<is_any_autodiff_v<T_log_location, T_precision>,
                 T_partials_return, T_log_location>
       exp_eta(size_eta);
-  if (!is_constant_all<T_log_location, T_precision>::value) {
+  if constexpr (is_any_autodiff_v<T_log_location, T_precision>) {
     for (size_t i = 0; i < size_eta; ++i) {
       exp_eta[i] = exp(eta_val[i]);
     }
   }
 
-  VectorBuilder<!is_constant_all<T_log_location, T_precision>::value,
+  VectorBuilder<is_any_autodiff_v<T_log_location, T_precision>,
                 T_partials_return, T_log_location, T_precision>
       exp_eta_over_exp_eta_phi(size_eta_phi);
-  if (!is_constant_all<T_log_location, T_precision>::value) {
+  if constexpr (is_any_autodiff_v<T_log_location, T_precision>) {
     for (size_t i = 0; i < size_eta_phi; ++i) {
       exp_eta_over_exp_eta_phi[i] = inv(phi_val[i] / exp_eta[i] + 1);
     }
@@ -108,20 +108,20 @@ return_type_t<T_log_location, T_precision> neg_binomial_2_log_lpmf(
   }
 
   for (size_t i = 0; i < size_all; i++) {
-    if (include_summand<propto, T_precision>::value) {
+    if constexpr (include_summand<propto, T_precision>::value) {
       logp += binomial_coefficient_log(n_plus_phi[i] - 1, n_vec[i]);
     }
-    if (include_summand<propto, T_log_location>::value) {
+    if constexpr (include_summand<propto, T_log_location>::value) {
       logp += n_vec[i] * eta_val[i];
     }
     logp += -phi_val[i] * log1p_exp_eta_m_logphi[i]
             - n_vec[i] * (log_phi[i] + log1p_exp_eta_m_logphi[i]);
 
-    if (!is_constant_all<T_log_location>::value) {
+    if constexpr (is_autodiff_v<T_log_location>) {
       partials<0>(ops_partials)[i]
           += n_vec[i] - n_plus_phi[i] * exp_eta_over_exp_eta_phi[i];
     }
-    if (!is_constant_all<T_precision>::value) {
+    if constexpr (is_autodiff_v<T_precision>) {
       partials<1>(ops_partials)[i]
           += exp_eta_over_exp_eta_phi[i] - n_vec[i] / (exp_eta[i] + phi_val[i])
              - log1p_exp_eta_m_logphi[i]

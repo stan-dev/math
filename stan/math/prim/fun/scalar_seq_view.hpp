@@ -41,7 +41,7 @@ class scalar_seq_view<C, require_eigen_vector_t<C>> {
     return c_.coeffRef(i);
   }
 
-  template <typename T = C, require_st_autodiff<T>* = nullptr>
+  template <typename T = C, require_st_autodiff_scalar<T>* = nullptr>
   inline decltype(auto) val(size_t i) const {
     return c_.coeffRef(i).val();
   }
@@ -68,12 +68,12 @@ class scalar_seq_view<C, require_var_matrix_t<C>> {
 
   inline auto size() const noexcept { return c_.size(); }
 
-  template <typename T = C, require_st_autodiff<T>* = nullptr>
+  template <typename T = C, require_st_autodiff_scalar<T>* = nullptr>
   inline auto val(size_t i) const {
     return c_.val().coeff(i);
   }
 
-  template <typename T = C, require_st_autodiff<T>* = nullptr>
+  template <typename T = C, require_st_autodiff_scalar<T>* = nullptr>
   inline auto& val(size_t i) {
     return c_.val().coeffRef(i);
   }
@@ -103,7 +103,7 @@ class scalar_seq_view<C, require_std_vector_t<C>> {
     return c_[i];
   }
 
-  template <typename T = C, require_st_autodiff<T>* = nullptr>
+  template <typename T = C, require_st_autodiff_scalar<T>* = nullptr>
   inline decltype(auto) val(size_t i) const {
     return c_[i].val();
   }
@@ -136,7 +136,7 @@ class scalar_seq_view<C, require_t<std::is_pointer<C>>> {
     return c_[i];
   }
 
-  template <typename T = C, require_st_autodiff<T>* = nullptr>
+  template <typename T = C, require_st_autodiff_scalar<T>* = nullptr>
   inline decltype(auto) val(size_t i) const {
     return c_[i].val();
   }
@@ -162,7 +162,7 @@ class scalar_seq_view<C, require_stan_scalar_t<C>> {
     return t_;
   }
 
-  template <typename T = C, require_st_autodiff<T>* = nullptr>
+  template <typename T = C, require_st_autodiff_scalar<T>* = nullptr>
   inline decltype(auto) val(int /* i */) const noexcept {
     return t_.val();
   }

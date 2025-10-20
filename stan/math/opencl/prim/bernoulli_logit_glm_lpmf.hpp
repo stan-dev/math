@@ -53,7 +53,7 @@ template <bool propto, typename T_x_cl, typename T_y_cl, typename T_alpha_cl,
           typename T_beta_cl,
           require_all_prim_or_rev_kernel_expression_t<
               T_y_cl, T_x_cl, T_alpha_cl, T_beta_cl>* = nullptr>
-return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> bernoulli_logit_glm_lpmf(
+inline return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> bernoulli_logit_glm_lpmf(
     const T_y_cl& y, const T_x_cl& x, const T_alpha_cl& alpha,
     const T_beta_cl& beta) {
   static constexpr const char* function = "bernoulli_logit_glm_lpmf(OpenCL)";
@@ -65,13 +65,13 @@ return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> bernoulli_logit_glm_lpmf(
   const size_t N = x.rows();
   const size_t M = x.cols();
 
-  if (is_y_vector) {
+  if constexpr (is_y_vector) {
     check_size_match(function, "Rows of ", "x", N, "rows of ", "y",
                      math::size(y));
   }
   check_size_match(function, "Columns of ", "x_cl", M, "size of ", "beta",
                    math::size(beta));
-  if (is_alpha_vector) {
+  if constexpr (is_alpha_vector) {
     check_size_match(function, "Rows of ", "x", N, "size of ", "alpha",
                      math::size(alpha));
   }
@@ -79,7 +79,8 @@ return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> bernoulli_logit_glm_lpmf(
   if (N == 0) {
     return 0;
   }
-  if (!include_summand<propto, T_x_cl, T_alpha_cl, T_beta_cl>::value) {
+  if constexpr (!include_summand<propto, T_x_cl, T_alpha_cl,
+                                 T_beta_cl>::value) {
     return 0;
   }
 
@@ -110,7 +111,7 @@ return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> bernoulli_logit_glm_lpmf(
   const int wgs = logp_expr.rows();
   matrix_cl<double> logp_cl(wgs, 1);
   constexpr bool need_theta_derivative
-      = !is_constant_all<T_x_cl, T_beta_cl, T_alpha_cl>::value;
+      = is_any_autodiff_v<T_x_cl, T_beta_cl, T_alpha_cl>;
   matrix_cl<double> theta_derivative_cl(need_theta_derivative ? N : 0, 1);
   constexpr bool need_theta_derivative_sum
       = need_theta_derivative && !is_alpha_vector;
@@ -135,20 +136,19 @@ return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> bernoulli_logit_glm_lpmf(
 
   auto ops_partials = make_partials_propagator(x, alpha, beta);
   // Compute the necessary derivatives.
-  if (!is_constant_all<T_x_cl>::value) {
+  if constexpr (is_autodiff_v<T_x_cl>) {
     partials<0>(ops_partials)
         = transpose(beta_val * transpose(theta_derivative_cl));
   }
-  if (!is_constant_all<T_alpha_cl>::value) {
-    if (is_alpha_vector) {
+  if constexpr (is_autodiff_v<T_alpha_cl>) {
+    if constexpr (is_alpha_vector) {
       partials<1>(ops_partials) = theta_derivative_cl;
     } else {
-      forward_as<internal::broadcast_array<double>>(
-          partials<1>(ops_partials))[0]
+      partials<1>(ops_partials)[0]
           = sum(from_matrix_cl(theta_derivative_sum_cl));
     }
   }
-  if (!is_constant_all<T_beta_cl>::value) {
+  if constexpr (is_autodiff_v<T_beta_cl>) {
     // transposition of a vector can be done without copying
     const matrix_cl<double> theta_derivative_transpose_cl(
         theta_derivative_cl.buffer(), 1, theta_derivative_cl.rows());

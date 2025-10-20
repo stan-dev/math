@@ -44,11 +44,11 @@ inline var_value<matrix_cl<double>> append_row(T_a&& a, T_b&& b) {
   return make_callback_var(
       append_row(value_of(a_arena), value_of(b_arena)),
       [a_arena, b_arena](const vari_value<matrix_cl<double>>& res) mutable {
-        if (!is_constant<T_a>::value) {
+        if constexpr (is_autodiff_v<T_a>) {
           adjoint_of(a_arena) += block_zero_based(
               res.adj(), 0, 0, a_arena.rows(), a_arena.cols());
         }
-        if (!is_constant<T_b>::value) {
+        if constexpr (is_autodiff_v<T_b>) {
           adjoint_of(b_arena) += block_zero_based(
               res.adj(), a_arena.rows(), 0, b_arena.rows(), b_arena.cols());
         }

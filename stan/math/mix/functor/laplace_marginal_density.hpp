@@ -12,6 +12,7 @@
 #include <stan/math/prim/functor/iter_tuple_nested.hpp>
 #include <unsupported/Eigen/MatrixFunctions>
 #include <cmath>
+#include <optional>
 
 /**
  * @file
@@ -26,7 +27,7 @@ namespace math {
 /**
  * Options for the laplace sampler
  */
-struct laplace_options {
+struct laplace_options_base {
   /* Size of the blocks in block diagonal hessian*/
   int hessian_block_size{1};
   /**
@@ -46,6 +47,20 @@ struct laplace_options {
   int max_num_steps{100};
 };
 
+template <bool HasInitTheta>
+struct laplace_options;
+
+template <>
+struct laplace_options<false> : public laplace_options_base {};
+
+template <>
+struct laplace_options<true> : public laplace_options_base {
+  /* Value for user supplied initial theta  */
+  Eigen::VectorXd theta_0{0};
+};
+
+using laplace_options_default = laplace_options<false>;
+using laplace_options_user_supplied = laplace_options<true>;
 namespace internal {
 
 template <typename Covar, typename ThetaVec, typename WR, typename L_t,
@@ -448,37 +463,46 @@ inline STAN_COLD_PATH void throw_nan(NameStr&& name_str, ParamStr&& param_str,
  *
  */
 template <typename LLFun, typename LLTupleArgs, typename CovarFun,
-          typename ThetaVec, typename CovarArgs,
-          require_t<is_all_arithmetic_scalar<ThetaVec, CovarArgs>>* = nullptr,
-          require_eigen_vector_t<ThetaVec>* = nullptr>
-inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
-                                         ThetaVec&& theta_0,
-                                         CovarFun&& covariance_function,
-                                         CovarArgs&& covar_args,
-                                         const laplace_options& options,
-                                         std::ostream* msgs) {
+          typename CovarArgs, bool InitTheta,
+          require_t<is_all_arithmetic_scalar<CovarArgs>>* = nullptr>
+inline auto laplace_marginal_density_est(
+    LLFun&& ll_fun, LLTupleArgs&& ll_args, CovarFun&& covariance_function,
+    CovarArgs&& covar_args, const laplace_options<InitTheta>& options,
+    std::ostream* msgs) {
   using Eigen::MatrixXd;
   using Eigen::SparseMatrix;
   using Eigen::VectorXd;
-  check_nonzero_size("laplace_marginal", "initial guess", theta_0);
-  check_finite("laplace_marginal", "initial guess", theta_0);
+  if constexpr (InitTheta) {
+    check_nonzero_size("laplace_marginal", "initial guess", options.theta_0);
+    check_finite("laplace_marginal", "initial guess", options.theta_0);
+  }
   check_nonnegative("laplace_marginal", "tolerance", options.tolerance);
   check_positive("laplace_marginal", "max_num_steps", options.max_num_steps);
   check_positive("laplace_marginal", "hessian_block_size",
                  options.hessian_block_size);
   check_nonnegative("laplace_marginal", "max_steps_line_search",
                     options.max_steps_line_search);
-  if (unlikely(theta_0.size() % options.hessian_block_size != 0)) {
+
+  Eigen::MatrixXd covariance = stan::math::apply(
+      [msgs, &covariance_function](auto&&... args) {
+        return covariance_function(args..., msgs);
+      },
+      covar_args);
+  check_square("laplace_marginal", "covariance", covariance);
+
+  const Eigen::Index theta_size = covariance.rows();
+
+  if (unlikely(theta_size % options.hessian_block_size != 0)) {
     [&]() STAN_COLD_PATH {
       std::stringstream msg;
-      msg << "laplace_marginal_density: The hessian size (" << theta_0.size()
-          << ", " << theta_0.size()
+      msg << "laplace_marginal_density: The hessian size (" << theta_size
+          << ", " << theta_size
           << ") is not divisible by the hessian block size ("
           << options.hessian_block_size
           << ")"
              ". Try a hessian block size such as [1, ";
       for (int i = 2; i < 12; ++i) {
-        if (theta_0.size() % i == 0) {
+        if (theta_size % i == 0) {
           msg << i << ", ";
         }
       }
@@ -488,19 +512,20 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
       throw std::domain_error(msg.str());
     }();
   }
-  Eigen::MatrixXd covariance = stan::math::apply(
-      [msgs, &covariance_function](auto&&... args) {
-        return covariance_function(args..., msgs);
-      },
-      covar_args);
+
   auto throw_overstep = [](const auto max_num_steps) STAN_COLD_PATH {
     throw std::domain_error(
         std::string("laplace_marginal_density: max number of iterations: ")
         + std::to_string(max_num_steps) + " exceeded.");
   };
   auto ll_args_vals = value_of(ll_args);
-  const Eigen::Index theta_size = theta_0.size();
-  Eigen::VectorXd theta = std::forward<ThetaVec>(theta_0);
+  Eigen::VectorXd theta = [theta_size, &options]() {
+    if constexpr (InitTheta) {
+      return options.theta_0;
+    } else {
+      return Eigen::VectorXd::Zero(theta_size);
+    }
+  }();
   double objective_old = std::numeric_limits<double>::lowest();
   double objective_new = std::numeric_limits<double>::lowest() + 1;
   Eigen::VectorXd a_prev = Eigen::VectorXd::Zero(theta_size);
@@ -572,7 +597,7 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
         }
       }
     } else {
-      Eigen::SparseMatrix<double> W_r(theta.rows(), theta.rows());
+      Eigen::SparseMatrix<double> W_r(theta_size, theta_size);
       Eigen::Index block_size = options.hessian_block_size;
       W_r.reserve(Eigen::VectorXi::Constant(W_r.cols(), block_size));
       const Eigen::Index n_block = W_r.cols() / block_size;
@@ -768,20 +793,16 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
  * \msg_arg
  * @return the log maginal density, p(y | phi)
  */
-template <typename LLFun, typename LLTupleArgs, typename CovarFun,
-          typename ThetaVec, typename CovarArgs,
-          require_t<is_all_arithmetic_scalar<ThetaVec, CovarArgs,
-                                             LLTupleArgs>>* = nullptr,
-          require_eigen_vector_t<ThetaVec>* = nullptr>
-inline double laplace_marginal_density(LLFun&& ll_fun, LLTupleArgs&& ll_args,
-                                       ThetaVec&& theta_0,
-                                       CovarFun&& covariance_function,
-                                       CovarArgs&& covar_args,
-                                       const laplace_options& options,
-                                       std::ostream* msgs) {
+template <
+    typename LLFun, typename LLTupleArgs, typename CovarFun, typename CovarArgs,
+    bool InitTheta,
+    require_t<is_all_arithmetic_scalar<CovarArgs, LLTupleArgs>>* = nullptr>
+inline double laplace_marginal_density(
+    LLFun&& ll_fun, LLTupleArgs&& ll_args, CovarFun&& covariance_function,
+    CovarArgs&& covar_args, const laplace_options<InitTheta>& options,
+    std::ostream* msgs) {
   return internal::laplace_marginal_density_est(
              std::forward<LLFun>(ll_fun), std::forward<LLTupleArgs>(ll_args),
-             std::forward<ThetaVec>(theta_0),
              std::forward<CovarFun>(covariance_function),
              std::forward<CovarArgs>(covar_args), options, msgs)
       .lmd;
@@ -1014,16 +1035,13 @@ inline void reverse_pass_collect_adjoints(var ret, Output&& output,
  * \msg_arg
  * @return the log maginal density, p(y | phi)
  */
-template <
-    typename LLFun, typename LLTupleArgs, typename CovarFun, typename ThetaVec,
-    typename CovarArgs,
-    require_t<is_any_var_scalar<ThetaVec, LLTupleArgs, CovarArgs>>* = nullptr,
-    require_eigen_vector_t<ThetaVec>* = nullptr>
+template <typename LLFun, typename LLTupleArgs, typename CovarFun,
+          typename CovarArgs, bool InitTheta,
+          require_t<is_any_var_scalar<LLTupleArgs, CovarArgs>>* = nullptr>
 inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
-                                     ThetaVec&& theta_0,
                                      CovarFun&& covariance_function,
                                      CovarArgs&& covar_args,
-                                     const laplace_options& options,
+                                     const laplace_options<InitTheta>& options,
                                      std::ostream* msgs) {
   auto covar_args_refs = to_ref(std::forward<CovarArgs>(covar_args));
   auto ll_args_refs = to_ref(std::forward<LLTupleArgs>(ll_args));
@@ -1034,13 +1052,7 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
   double lmd = 0.0;
   {
     nested_rev_autodiff nested;
-    // Solver 1, 2
-    arena_t<Eigen::MatrixXd> R(theta_0.size(), theta_0.size());
-    // Solver 3
-    arena_t<Eigen::MatrixXd> LU_solve_covariance;
-    // Solver 1, 2, 3
-    arena_t<promote_scalar_t<double, plain_type_t<std::decay_t<ThetaVec>>>> s2(
-        theta_0.size());
+
     // Make one hard copy here
     using laplace_likelihood::internal::conditional_copy_and_promote;
     using laplace_likelihood::internal::COPY_TYPE;
@@ -1049,13 +1061,21 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
             ll_args_refs);
 
     auto md_est = internal::laplace_marginal_density_est(
-        ll_fun, ll_args_copy, value_of(theta_0), covariance_function,
-        value_of(covar_args_refs), options, msgs);
+        ll_fun, ll_args_copy, covariance_function, value_of(covar_args_refs),
+        options, msgs);
+
+    // Solver 1, 2
+    arena_t<Eigen::MatrixXd> R(md_est.theta.size(), md_est.theta.size());
+    // Solver 3
+    arena_t<Eigen::MatrixXd> LU_solve_covariance;
+    // Solver 1, 2, 3
+    arena_t<Eigen::VectorXd> s2(md_est.theta.size());
+
     // Return references to var types
     auto ll_args_filter = internal::filter_var_scalar_types(ll_args_copy);
     stan::math::for_each(
         [](auto&& output_i, auto&& ll_arg_i) {
-          if (is_any_var_scalar_v<decltype(ll_arg_i)>) {
+          if constexpr (is_any_var_scalar_v<decltype(ll_arg_i)>) {
             internal::collect_adjoints<true>(output_i, ll_arg_i);
           }
         },

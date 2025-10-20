@@ -28,8 +28,8 @@ template <
     typename T_n_cl, typename T_prob_cl,
     require_all_prim_or_rev_kernel_expression_t<T_n_cl, T_prob_cl>* = nullptr,
     require_any_not_stan_scalar_t<T_n_cl, T_prob_cl>* = nullptr>
-return_type_t<T_prob_cl> bernoulli_lcdf(const T_n_cl& n,
-                                        const T_prob_cl& theta) {
+inline return_type_t<T_prob_cl> bernoulli_lcdf(const T_n_cl& n,
+                                               const T_prob_cl& theta) {
   static constexpr const char* function = "bernoulli_lcdf(OpenCL)";
   using T_partials_return = partials_return_t<T_prob_cl>;
   using std::isnan;
@@ -61,7 +61,7 @@ return_type_t<T_prob_cl> bernoulli_lcdf(const T_n_cl& n,
 
   results(check_theta_bounded, any_n_negative_cl, P_cl, deriv_cl)
       = expressions(theta_bounded_expr, any_n_negative, P_expr,
-                    calc_if<(!is_constant_all<T_prob_cl>::value)>(deriv));
+                    calc_if<(is_autodiff_v<T_prob_cl>)>(deriv));
 
   if (from_matrix_cl(any_n_negative_cl).maxCoeff()) {
     return NEGATIVE_INFTY;
@@ -70,7 +70,7 @@ return_type_t<T_prob_cl> bernoulli_lcdf(const T_n_cl& n,
   T_partials_return P = from_matrix_cl(P_cl).sum();
   auto ops_partials = make_partials_propagator(theta_col);
 
-  if (!is_constant_all<T_prob_cl>::value) {
+  if constexpr (is_autodiff_v<T_prob_cl>) {
     partials<0>(ops_partials) = std::move(deriv_cl);
   }
 

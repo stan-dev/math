@@ -43,9 +43,8 @@ namespace math {
 template <typename T_y, typename T_scale, typename T_shape,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_scale, T_shape>* = nullptr>
-return_type_t<T_y, T_scale, T_shape> loglogistic_cdf(const T_y& y,
-                                                     const T_scale& alpha,
-                                                     const T_shape& beta) {
+inline return_type_t<T_y, T_scale, T_shape> loglogistic_cdf(
+    const T_y& y, const T_scale& alpha, const T_shape& beta) {
   using T_partials_return = partials_return_t<T_y, T_scale, T_shape>;
   using T_y_ref = ref_type_t<T_y>;
   using T_alpha_ref = ref_type_t<T_scale>;
@@ -77,40 +76,39 @@ return_type_t<T_y, T_scale, T_shape> loglogistic_cdf(const T_y& y,
   }
 
   const auto& alpha_div_y
-      = to_ref_if<!is_constant_all<T_shape>::value>(alpha_val / y_val);
+      = to_ref_if<is_autodiff_v<T_shape>>(alpha_val / y_val);
   const auto& alpha_div_y_pow_beta
-      = to_ref_if<!is_constant_all<T_y, T_scale, T_shape>::value>(
+      = to_ref_if<is_any_autodiff_v<T_y, T_scale, T_shape>>(
           pow(alpha_div_y, beta_val));
-  const auto& prod_all
-      = to_ref_if<!is_constant_all<T_y, T_scale, T_shape>::value>(
-          1 / (1 + alpha_div_y_pow_beta));
+  const auto& prod_all = to_ref_if<is_any_autodiff_v<T_y, T_scale, T_shape>>(
+      1 / (1 + alpha_div_y_pow_beta));
 
   T_partials_return cdf = prod(prod_all);
 
-  if (!is_constant_all<T_y, T_scale, T_shape>::value) {
-    const auto& prod_all_sq = to_ref_if<!is_constant_all<T_y>::value
-                                            + !is_constant_all<T_scale>::value
-                                            + !is_constant_all<T_shape>::value
-                                        >= 2>(square(prod_all));
-    const auto& cdf_div_elt = to_ref_if<!is_constant_all<T_y>::value
-                                            + !is_constant_all<T_scale>::value
-                                            + !is_constant_all<T_shape>::value
-                                        >= 2>(cdf / prod_all);
-    if (!is_constant_all<T_y, T_scale>::value) {
-      const auto& alpha_div_times_beta = to_ref_if<
-          !is_constant_all<T_y>::value + !is_constant_all<T_scale>::value == 2>(
-          alpha_div_y_pow_beta * beta_val);
-      if (!is_constant_all<T_y>::value) {
+  if constexpr (is_any_autodiff_v<T_y, T_scale, T_shape>) {
+    const auto& prod_all_sq = to_ref_if<
+        is_autodiff_v<
+            T_y> + is_autodiff_v<T_scale> + is_autodiff_v<T_shape> >= 2>(
+        square(prod_all));
+    const auto& cdf_div_elt = to_ref_if<
+        is_autodiff_v<
+            T_y> + is_autodiff_v<T_scale> + is_autodiff_v<T_shape> >= 2>(
+        cdf / prod_all);
+    if constexpr (is_any_autodiff_v<T_y, T_scale>) {
+      const auto& alpha_div_times_beta
+          = to_ref_if<is_autodiff_v<T_y> + is_autodiff_v<T_scale> == 2>(
+              alpha_div_y_pow_beta * beta_val);
+      if constexpr (is_autodiff_v<T_y>) {
         const auto& y_deriv = alpha_div_times_beta / y_val * prod_all_sq;
         partials<0>(ops_partials) = y_deriv * cdf_div_elt;
       }
-      if (!is_constant_all<T_scale>::value) {
+      if constexpr (is_autodiff_v<T_scale>) {
         const auto& alpha_deriv
             = -alpha_div_times_beta / alpha_val * prod_all_sq;
         partials<1>(ops_partials) = alpha_deriv * cdf_div_elt;
       }
     }
-    if (!is_constant_all<T_shape>::value) {
+    if constexpr (is_autodiff_v<T_shape>) {
       const auto& beta_deriv
           = -multiply_log(alpha_div_y_pow_beta, alpha_div_y) * prod_all_sq;
       partials<2>(ops_partials) = beta_deriv * cdf_div_elt;

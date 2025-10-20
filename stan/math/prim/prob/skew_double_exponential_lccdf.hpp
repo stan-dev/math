@@ -37,9 +37,9 @@ namespace math {
 template <typename T_y, typename T_loc, typename T_scale, typename T_skewness,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_loc, T_scale, T_skewness>* = nullptr>
-return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lccdf(
-    const T_y& y, const T_loc& mu, const T_scale& sigma,
-    const T_skewness& tau) {
+inline return_type_t<T_y, T_loc, T_scale, T_skewness>
+skew_double_exponential_lccdf(const T_y& y, const T_loc& mu,
+                              const T_scale& sigma, const T_skewness& tau) {
   static constexpr const char* function = "skew_double_exponential_lccdf";
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_skewness>;
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
@@ -112,16 +112,16 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lccdf(
       cdf_log += log1m(tau_dbl) - 2.0 * expo;
     }
 
-    if (!is_constant_all<T_y>::value) {
+    if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials)[i] += rep_deriv;
     }
-    if (!is_constant_all<T_loc>::value) {
+    if constexpr (is_autodiff_v<T_loc>) {
       partials<1>(ops_partials)[i] -= rep_deriv;
     }
-    if (!is_constant_all<T_scale>::value) {
+    if constexpr (is_autodiff_v<T_scale>) {
       partials<2>(ops_partials)[i] += sig_deriv;
     }
-    if (!is_constant_all<T_skewness>::value) {
+    if constexpr (is_autodiff_v<T_skewness>) {
       partials<3>(ops_partials)[i] += skew_deriv;
     }
   }

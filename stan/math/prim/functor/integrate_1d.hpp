@@ -184,8 +184,8 @@ inline double integrate_1d_impl(const F& f, double a, double b,
     return 0.0;
   } else {
     return integrate(
-        [&](const auto& x, const auto& xc) { return f(x, xc, msgs, args...); },
-        a, b, relative_tolerance);
+        [&](auto&& x, auto&& xc) { return f(x, xc, msgs, args...); }, a, b,
+        relative_tolerance);
   }
 }
 

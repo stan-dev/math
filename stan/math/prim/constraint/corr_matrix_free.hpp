@@ -31,7 +31,8 @@ namespace math {
  *    factor_cov_matrix() on log scale are unconstrained.
  */
 template <typename T, require_eigen_t<T>* = nullptr>
-Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> corr_matrix_free(const T& y) {
+inline Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> corr_matrix_free(
+    const T& y) {
   using Eigen::Array;
   using Eigen::Dynamic;
 
@@ -60,9 +61,10 @@ Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> corr_matrix_free(const T& y) {
  * @param x The standard vector to untransform.
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
-inline auto corr_matrix_free(const T& x) {
-  return apply_vector_unary<T>::apply(
-      x, [](auto&& v) { return corr_matrix_free(v); });
+inline auto corr_matrix_free(T&& x) {
+  return apply_vector_unary<T>::apply(std::forward<T>(x), [](auto&& v) {
+    return corr_matrix_free(std::forward<decltype(v)>(v));
+  });
 }
 
 }  // namespace math

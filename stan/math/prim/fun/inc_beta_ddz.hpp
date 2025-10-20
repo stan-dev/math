@@ -27,7 +27,7 @@ namespace math {
  * @pre 0 < z <= 1
  */
 template <typename T>
-T inc_beta_ddz(T a, T b, T z) {
+inline T inc_beta_ddz(T a, T b, T z) {
   using std::exp;
   using std::log;
   return exp((b - 1) * log1m(z) + (a - 1) * log(z) + lgamma(a + b) - lgamma(a)

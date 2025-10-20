@@ -42,7 +42,7 @@ inline plain_type_t<T> tri_inverse(const T& A) {
   // if the triangular view is not specified use the triangularity of
   // the input matrix
   matrix_cl_view tri_view = matrix_view;
-  if (matrix_view == matrix_cl_view::Entire) {
+  if constexpr (matrix_view == matrix_cl_view::Entire) {
     if (A.view() != matrix_cl_view::Diagonal) {
       check_triangular("tri_inverse (OpenCL)", "A", A);
     }

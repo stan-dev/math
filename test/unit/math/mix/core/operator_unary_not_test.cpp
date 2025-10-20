@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <limits>
 
-void test_unary_not(double x) {
+inline void test_unary_not(double x) {
   using stan::math::fvar;
   using stan::math::var;
 

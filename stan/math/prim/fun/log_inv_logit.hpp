@@ -63,8 +63,8 @@ struct log_inv_logit_fun {
    * @return natural log of inverse logit of argument
    */
   template <typename T>
-  static inline auto fun(const T& x) {
-    return log_inv_logit(x);
+  static inline auto fun(T&& x) {
+    return log_inv_logit(std::forward<T>(x));
   }
 };
 
@@ -80,9 +80,10 @@ struct log_inv_logit_fun {
  */
 template <typename T,
           require_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr,
-          require_not_var_matrix_t<T>* = nullptr>
-inline auto log_inv_logit(const T& x) {
-  return apply_scalar_unary<log_inv_logit_fun, T>::apply(x);
+          require_not_var_matrix_t<T>* = nullptr,
+          require_container_t<T>* = nullptr>
+inline auto log_inv_logit(T&& x) {
+  return apply_scalar_unary<log_inv_logit_fun, T>::apply(std::forward<T>(x));
 }
 
 }  // namespace math

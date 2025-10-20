@@ -23,7 +23,7 @@ namespace math {
 template <typename T_y_cl,
           require_all_prim_or_rev_kernel_expression_t<T_y_cl>* = nullptr,
           require_any_not_stan_scalar_t<T_y_cl>* = nullptr>
-return_type_t<T_y_cl> std_normal_cdf(const T_y_cl& y) {
+inline return_type_t<T_y_cl> std_normal_cdf(const T_y_cl& y) {
   static constexpr const char* function = "std_normal_cdf(OpenCL)";
   using T_partials_return = partials_return_t<T_y_cl>;
   using std::isfinite;
@@ -55,13 +55,13 @@ return_type_t<T_y_cl> std_normal_cdf(const T_y_cl& y) {
   matrix_cl<double> y_deriv_cl;
 
   results(check_y_not_nan, cdf_cl, y_deriv_cl) = expressions(
-      y_not_nan_expr, cdf_expr, calc_if<!is_constant<T_y_cl>::value>(y_deriv1));
+      y_not_nan_expr, cdf_expr, calc_if<is_autodiff_v<T_y_cl>>(y_deriv1));
 
   T_partials_return cdf = (from_matrix_cl(cdf_cl)).prod();
 
   auto ops_partials = make_partials_propagator(y_col);
 
-  if (!is_constant<T_y_cl>::value) {
+  if constexpr (is_autodiff_v<T_y_cl>) {
     partials<0>(ops_partials) = y_deriv_cl * cdf;
   }
   return ops_partials.build(cdf);

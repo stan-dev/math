@@ -57,7 +57,6 @@ class AgradCdfLogPoisson : public AgradCdfLogTest {
                                                const T_rate& lambda, const T2&,
                                                const T3&, const T4&,
                                                const T5&) {
-    using boost::math::lgamma;
     using stan::math::exp;
     using stan::math::lgamma;
     using stan::math::log;

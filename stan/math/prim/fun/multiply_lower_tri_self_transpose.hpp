@@ -16,7 +16,7 @@ namespace math {
  * transpose.
  */
 template <typename EigMat, require_eigen_matrix_dynamic_t<EigMat>* = nullptr,
-          require_not_st_autodiff<EigMat>* = nullptr>
+          require_not_st_autodiff_scalar<EigMat>* = nullptr>
 inline matrix_d multiply_lower_tri_self_transpose(const EigMat& L) {
   int K = L.rows();
   if (K == 0) {

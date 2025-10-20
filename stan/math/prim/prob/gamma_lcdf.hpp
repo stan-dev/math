@@ -22,9 +22,8 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_shape, typename T_inv_scale>
-return_type_t<T_y, T_shape, T_inv_scale> gamma_lcdf(const T_y& y,
-                                                    const T_shape& alpha,
-                                                    const T_inv_scale& beta) {
+inline return_type_t<T_y, T_shape, T_inv_scale> gamma_lcdf(
+    const T_y& y, const T_shape& alpha, const T_inv_scale& beta) {
   using T_partials_return = partials_return_t<T_y, T_shape, T_inv_scale>;
   using std::exp;
   using std::log;
@@ -55,7 +54,7 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lcdf(const T_y& y,
   size_t N = max_size(y, alpha, beta);
 
   // Explicit return for extreme values
-  // The gradients are technically ill-defined, but treated as zero
+  // The gradients are technically ill-defined
   for (size_t i = 0; i < stan::math::size(y); i++) {
     if (y_vec.val(i) == 0) {
       return ops_partials.build(negative_infinity());
@@ -70,7 +69,6 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lcdf(const T_y& y,
     }
 
     const T_partials_return y_dbl = y_vec.val(n);
-    const T_partials_return log_y_dbl = log(y_dbl);
     const T_partials_return alpha_dbl = alpha_vec.val(n);
     const T_partials_return beta_dbl = beta_vec.val(n);
     const T_partials_return log_beta_dbl = log(beta_dbl);
@@ -81,20 +79,21 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lcdf(const T_y& y,
 
     P += log_Pn;
 
-    if (!is_constant_all<T_y, T_inv_scale>::value) {
+    if constexpr (is_any_autodiff_v<T_y, T_inv_scale>) {
+      const T_partials_return log_y_dbl = log(y_dbl);
       const T_partials_return d_num
           = (-beta_y_dbl) + (alpha_dbl - 1) * (log_beta_dbl + log_y_dbl);
       const T_partials_return d_den = lgamma(alpha_dbl) + log_Pn;
       const T_partials_return d = exp(d_num - d_den);
 
-      if (!is_constant_all<T_y>::value) {
+      if constexpr (is_autodiff_v<T_y>) {
         partials<0>(ops_partials)[n] += beta_dbl * d;
       }
-      if (!is_constant_all<T_inv_scale>::value) {
+      if constexpr (is_autodiff_v<T_inv_scale>) {
         partials<2>(ops_partials)[n] += y_dbl * d;
       }
     }
-    if (!is_constant_all<T_shape>::value) {
+    if constexpr (is_autodiff_v<T_shape>) {
       partials<1>(ops_partials)[n]
           += grad_reg_lower_inc_gamma(alpha_dbl, beta_y_dbl) / Pn;
     }

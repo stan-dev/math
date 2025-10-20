@@ -76,7 +76,7 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_alpha, typename T_tau,
           typename T_beta, typename T_delta>
-return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta> wiener_lpdf(
+inline return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta> wiener_lpdf(
     const T_y& y, const T_alpha& alpha, const T_tau& tau, const T_beta& beta,
     const T_delta& delta) {
   using T_return_type = return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta>;
@@ -130,7 +130,8 @@ return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta> wiener_lpdf(
     }
   }
 
-  if (!include_summand<propto, T_y, T_alpha, T_tau, T_beta, T_delta>::value) {
+  if constexpr (!include_summand<propto, T_y, T_alpha, T_tau, T_beta,
+                                 T_delta>::value) {
     return 0;
   }
 

@@ -22,7 +22,7 @@ namespace math {
 template <bool propto, typename T_n, typename T_location, typename T_precision,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_n, T_location, T_precision>* = nullptr>
-return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
+inline return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
     const T_n& n, const T_location& mu, const T_precision& phi) {
   using T_partials_return = partials_return_t<T_n, T_location, T_precision>;
   using std::log;
@@ -44,7 +44,7 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
   if (size_zero(n, mu, phi)) {
     return 0.0;
   }
-  if (!include_summand<propto, T_location, T_precision>::value) {
+  if constexpr (!include_summand<propto, T_location, T_precision>::value) {
     return 0.0;
   }
 
@@ -88,20 +88,20 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
   }
 
   for (size_t i = 0; i < size_all; i++) {
-    if (include_summand<propto, T_precision>::value) {
+    if constexpr (include_summand<propto, T_precision>::value) {
       logp += binomial_coefficient_log(n_plus_phi[i] - 1, n_vec[i]);
     }
-    if (include_summand<propto, T_location>::value) {
+    if constexpr (include_summand<propto, T_location>::value) {
       logp += multiply_log(n_vec[i], mu_val[i]);
     }
     logp += -phi_val[i] * (log1p(mu_val[i] / phi_val[i]))
             - n_vec[i] * log_mu_plus_phi[i];
 
-    if (!is_constant_all<T_location>::value) {
+    if constexpr (is_autodiff_v<T_location>) {
       partials<0>(ops_partials)[i]
           += n_vec[i] / mu_val[i] - (n_vec[i] + phi_val[i]) / mu_plus_phi[i];
     }
-    if (!is_constant_all<T_precision>::value) {
+    if constexpr (is_autodiff_v<T_precision>) {
       T_partials_return log_term;
       if (mu_val[i] < phi_val[i]) {
         log_term = log1p(-mu_val[i] / mu_plus_phi[i]);

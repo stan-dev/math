@@ -43,9 +43,9 @@ namespace math {
 template <bool propto, typename T_y, typename T_dof,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_dof>* = nullptr>
-return_type_t<T_y, T_dof> chi_square_lpdf(const T_y& y, const T_dof& nu) {
+inline return_type_t<T_y, T_dof> chi_square_lpdf(const T_y& y,
+                                                 const T_dof& nu) {
   using T_partials_return = partials_return_t<T_y, T_dof>;
-  using T_partials_array = Eigen::Array<T_partials_return, Eigen::Dynamic, 1>;
   using std::log;
   static constexpr const char* function = "chi_square_lpdf";
   using T_y_ref = ref_type_t<T_y>;
@@ -64,32 +64,32 @@ return_type_t<T_y, T_dof> chi_square_lpdf(const T_y& y, const T_dof& nu) {
   if (size_zero(y, nu)) {
     return 0;
   }
-  if (!include_summand<propto, T_y, T_dof>::value) {
+  if constexpr (!include_summand<propto, T_y, T_dof>::value) {
     return 0;
   }
 
   size_t N = max_size(y, nu);
-  const auto& log_y = to_ref_if<!is_constant_all<T_dof>::value>(log(y_val));
+  const auto& log_y = to_ref_if<is_autodiff_v<T_dof>>(log(y_val));
   const auto& half_nu = to_ref(0.5 * nu_val);
 
   T_partials_return logp(0);
-  if (include_summand<propto, T_dof>::value) {
+  if constexpr (include_summand<propto, T_dof>::value) {
     logp -= sum(nu_val * HALF_LOG_TWO + lgamma(half_nu)) * N / math::size(nu);
   }
   logp += sum((half_nu - 1.0) * log_y);
 
-  if (include_summand<propto, T_y>::value) {
+  if constexpr (include_summand<propto, T_y>::value) {
     logp -= 0.5 * sum(y_val) * N / math::size(y);
   }
 
   auto ops_partials = make_partials_propagator(y_ref, nu_ref);
-  if (!is_constant_all<T_y>::value) {
+  if constexpr (is_autodiff_v<T_y>) {
     partials<0>(ops_partials) = (half_nu - 1.0) / y_val - 0.5;
   }
-  if (!is_constant_all<T_dof>::value) {
-    if (is_vector<T_dof>::value) {
-      partials<1>(ops_partials) = forward_as<T_partials_array>(
-          (log_y - digamma(half_nu)) * 0.5 - HALF_LOG_TWO);
+  if constexpr (is_autodiff_v<T_dof>) {
+    if constexpr (is_vector<T_dof>::value) {
+      partials<1>(ops_partials)
+          = (log_y - digamma(half_nu)) * 0.5 - HALF_LOG_TWO;
     } else {
       partials<1>(ops_partials)[0]
           = sum(log_y - digamma(half_nu)) * 0.5 - HALF_LOG_TWO * N;

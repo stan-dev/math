@@ -15,8 +15,9 @@ namespace math {
  *
  * @tparam F Type of function to apply.
  */
-template <typename F>
-struct apply_scalar_unary<F, var> {
+template <typename F, typename T>
+struct apply_scalar_unary<
+    F, T, std::enable_if_t<is_var<T>::value && is_stan_scalar<T>::value>> {
   /**
    * Function return type, which is <code>var</code>.
    */
@@ -28,7 +29,10 @@ struct apply_scalar_unary<F, var> {
    * @param x Argument variable.
    * @return Function applied to the variable.
    */
-  static inline return_t apply(const var& x) { return F::fun(x); }
+  template <typename T2>
+  static inline auto apply(T2&& x) {
+    return F::fun(std::forward<T2>(x));
+  }
 };
 
 template <typename F, typename T>
@@ -44,7 +48,10 @@ struct apply_scalar_unary<F, T, require_var_matrix_t<T>> {
    * @param x Argument variable.
    * @return Function applied to the variable.
    */
-  static inline return_t apply(const T& x) { return F::fun(x); }
+  template <typename T2>
+  static inline auto apply(T2&& x) {
+    return F::fun(std::forward<T2>(x));
+  }
 };
 
 }  // namespace math

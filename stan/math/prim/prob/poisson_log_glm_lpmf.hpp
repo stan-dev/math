@@ -50,24 +50,18 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_x, typename T_alpha,
           typename T_beta, require_matrix_t<T_x>* = nullptr>
-return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(const T_y& y,
-                                                         const T_x& x,
-                                                         const T_alpha& alpha,
-                                                         const T_beta& beta) {
+inline return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(
+    const T_y& y, const T_x& x, const T_alpha& alpha, const T_beta& beta) {
   using Eigen::Array;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::exp;
   using std::isfinite;
   constexpr int T_x_rows = T_x::RowsAtCompileTime;
-  using T_xbeta_partials = partials_return_t<T_x, T_beta>;
   using T_partials_return = partials_return_t<T_y, T_x, T_alpha, T_beta>;
   using T_theta_tmp =
       typename std::conditional_t<T_x_rows == 1, T_partials_return,
                                   Array<T_partials_return, Dynamic, 1>>;
-  using T_xbeta_tmp =
-      typename std::conditional_t<T_x_rows == 1, T_xbeta_partials,
-                                  Array<T_xbeta_partials, Dynamic, 1>>;
   using T_x_ref = ref_type_if_not_constant_t<T_x>;
   using T_alpha_ref = ref_type_if_not_constant_t<T_alpha>;
   using T_beta_ref = ref_type_if_not_constant_t<T_beta>;
@@ -86,7 +80,7 @@ return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(const T_y& y,
   if (size_zero(y)) {
     return 0;
   }
-  if (!include_summand<propto, T_x, T_alpha, T_beta>::value) {
+  if constexpr (!include_summand<propto, T_x, T_alpha, T_beta>::value) {
     return 0;
   }
 
@@ -95,19 +89,18 @@ return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(const T_y& y,
   T_beta_ref beta_ref = beta;
 
   const auto& y_val = value_of(y_ref);
-  const auto& x_val = to_ref_if<!is_constant<T_beta>::value>(value_of(x_ref));
+  const auto& x_val = to_ref_if<is_autodiff_v<T_beta>>(value_of(x_ref));
   const auto& alpha_val = value_of(alpha_ref);
   const auto& beta_val = value_of(beta_ref);
 
   const auto& y_val_vec = to_ref(as_column_vector_or_scalar(y_val));
   const auto& alpha_val_vec = as_column_vector_or_scalar(alpha_val);
-  const auto& beta_val_vec = to_ref_if<!is_constant<T_x>::value>(
-      as_column_vector_or_scalar(beta_val));
+  const auto& beta_val_vec
+      = to_ref_if<is_autodiff_v<T_x>>(as_column_vector_or_scalar(beta_val));
 
   Array<T_partials_return, Dynamic, 1> theta(N_instances);
-  if (T_x_rows == 1) {
-    T_theta_tmp theta_tmp
-        = forward_as<T_xbeta_tmp>((x_val * beta_val_vec).coeff(0, 0));
+  if constexpr (T_x_rows == 1) {
+    T_theta_tmp theta_tmp = (x_val * beta_val_vec).coeff(0, 0);
     theta = theta_tmp + as_array_or_scalar(alpha_val_vec);
   } else {
     theta = x_val * beta_val_vec;
@@ -124,7 +117,7 @@ return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(const T_y& y,
   }
 
   T_partials_return logp(0);
-  if (include_summand<propto>::value) {
+  if constexpr (include_summand<propto>::value) {
     logp -= sum(lgamma(as_array_or_scalar(y_val_vec) + 1));
   }
 
@@ -133,27 +126,23 @@ return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(const T_y& y,
 
   auto ops_partials = make_partials_propagator(x_ref, alpha_ref, beta_ref);
   // Compute the necessary derivatives.
-  if (!is_constant_all<T_beta>::value) {
-    if (T_x_rows == 1) {
-      edge<2>(ops_partials).partials_
-          = forward_as<Matrix<T_partials_return, 1, Dynamic>>(
-              theta_derivative.sum() * x_val);
+  if constexpr (is_autodiff_v<T_beta>) {
+    if constexpr (T_x_rows == 1) {
+      edge<2>(ops_partials).partials_ = theta_derivative.sum() * x_val;
     } else {
       partials<2>(ops_partials) = x_val.transpose() * theta_derivative;
     }
   }
-  if (!is_constant_all<T_x>::value) {
-    if (T_x_rows == 1) {
-      edge<0>(ops_partials).partials_
-          = forward_as<Array<T_partials_return, Dynamic, T_x_rows>>(
-              beta_val_vec * theta_derivative.sum());
+  if constexpr (is_autodiff_v<T_x>) {
+    if constexpr (T_x_rows == 1) {
+      edge<0>(ops_partials).partials_ = beta_val_vec * theta_derivative.sum();
     } else {
       edge<0>(ops_partials).partials_
           = (beta_val_vec * theta_derivative.transpose()).transpose();
     }
   }
-  if (!is_constant_all<T_alpha>::value) {
-    if (is_vector<T_alpha>::value) {
+  if constexpr (is_autodiff_v<T_alpha>) {
+    if constexpr (is_vector<T_alpha>::value) {
       partials<1>(ops_partials) = theta_derivative;
     } else {
       partials<1>(ops_partials)[0] = theta_derivative_sum;

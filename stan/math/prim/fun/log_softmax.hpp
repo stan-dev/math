@@ -41,14 +41,15 @@ namespace math {
  */
 template <typename Container, require_st_arithmetic<Container>* = nullptr,
           require_container_t<Container>* = nullptr>
-inline auto log_softmax(const Container& x) {
+inline auto log_softmax(Container&& x) {
   check_nonzero_size("log_softmax", "v", x);
   return make_holder(
-      [](const auto& a) {
+      [](auto&& a) {
         return apply_vector_unary<ref_type_t<Container>>::apply(
-            a, [](const auto& v) { return v.array() - log_sum_exp(v); });
+            std::forward<decltype(a)>(a),
+            [](auto&& v) { return v.array() - log_sum_exp(v); });
       },
-      to_ref(x));
+      to_ref(std::forward<Container>(x)));
 }
 
 }  // namespace math
