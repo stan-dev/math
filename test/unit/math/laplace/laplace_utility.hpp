@@ -185,7 +185,7 @@ template <typename F, typename ThetaVec>
 inline void run_solver_grid(F&& body, ThetaVec&& theta_0) {
   constexpr std::array solver_nums{1, 2, 3};            // [1, 3]
   constexpr std::array hessian_block_sizes{1, 2, 3};    // [1, 2]
-  constexpr std::array max_steps_line_searches{0, 100};  // 0, 10
+  constexpr std::array max_steps_line_searches{1000};  // 0, 10
   for (int solver : solver_nums) {
     for (int hblock : hessian_block_sizes) {
       for (int ls_steps : max_steps_line_searches) {

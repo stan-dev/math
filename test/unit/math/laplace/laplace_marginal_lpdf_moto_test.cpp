@@ -32,7 +32,7 @@ struct normal_likelihood {
       std::cout << "y: \n" << y.transpose() << std::endl;
       std::cout << "mu: \n" << mu.transpose() << std::endl;
       std::cout << "sigma: \n" << sigma.transpose() << std::endl;
-      return stan::math::normal_lpdf(y, mu, sigma);
+      return stan::math::normal_lpdf(y, mu, sigma) + lp;
     }
   }
 };
@@ -114,7 +114,7 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle_val) {
   // logger->current_test_name_ = "gp_motorcycle";
   using stan::math::laplace_marginal_tol;
   constexpr double tolerance = 1e-08;
-  constexpr int max_num_steps = 100;
+  constexpr int max_num_steps = 1000;
   constexpr int hessian_block_size = 2;
   constexpr int do_line_search = 1;
   constexpr int max_steps_line_search = 10;
@@ -124,7 +124,7 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle_val) {
       covariance_motorcycle_functor{},
       std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1), phi_dbl(2), phi_dbl(3),
                             n_obs),
-      theta0, tolerance, max_num_steps, hessian_block_size, 2,
+      theta0, tolerance, max_num_steps, hessian_block_size, 3,
       max_steps_line_search, nullptr);
 }
 
@@ -134,7 +134,7 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle_ad) {
   using stan::math::laplace_marginal_tol;
 
   // TODO(Steve): benchmark this result against GPStuff.
-  constexpr double tolerance = 1e-6;
+  constexpr double tolerance = 1e-12;
   constexpr int max_num_steps = 1000;
   auto phi_0 = phi_dbl(0);
   auto phi_1 = phi_dbl(1);
@@ -227,12 +227,12 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle2_ad) {
   Eigen::VectorXd mu_hat = K_plus_I.colPivHouseholderQr().solve(y);
   // Remark: finds optimal point with or without informed initial guess.
   for (int i = 0; i < n_obs - 1; i++) {
-    theta0(2 * i) =  mu_hat(i);
+    theta0(2 * i) = 0;
     theta0(2 * i + 1) = -1.0;
   }
   // TODO(Charles): benchmark this result against GPStuff.
   constexpr double tolerance = 1e-12;
-  constexpr int max_num_steps = 100;
+  constexpr int max_num_steps = 1000;
   Eigen::VectorXd length_scale_vec = phi_dbl.head(2);
   Eigen::VectorXd sigma_vec = phi_dbl.tail(2);
   stan::test::ad_tolerances tols;

@@ -200,6 +200,8 @@ TEST(WriteArrayBodySimple, ExecutesBodyWithHardcodedData) {
     // Assertions
     EXPECT_NEAR(ll_laplace, ll_integrate_1d, 2)
         << "For iter " << iter << ", Laplace and integrated results should be close";
+    EXPECT_NEAR(ll_laplace_all, ll_integrate_1d, 2)
+        << "For iter " << iter << ", Laplace and integrated results should be close";
     EXPECT_TRUE(std::isfinite(ll_laplace)) << "Laplace result should be finite";
     EXPECT_TRUE(std::isfinite(ll_integrate_1d)) << "Integrated result should be finite";
   }
