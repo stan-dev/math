@@ -381,11 +381,6 @@ struct Eval {
   double alpha_{0.0};   // alpha
   double obj_{0.0};   // obj
   double dir_{0.0};   // directional derivative
-  void swap(Eval& other) {
-    std::swap(alpha_, other.alpha_);
-    std::swap(obj_, other.obj_);
-    std::swap(dir_, other.dir_);
-  }
   inline auto&& alpha() { return alpha_; }
   inline const auto& alpha() const { return alpha_; }
   inline auto&& obj() { return obj_; }
@@ -408,13 +403,13 @@ struct WolfeData {
     theta_.swap(other.theta_);
     theta_grad_.swap(other.theta_grad_);
     a_.swap(other.a_);
-    eval_.swap(other.eval_);
+    eval_ = other.eval_;
   }
   void swap(WolfeData& other, Eval& eval) {
     theta_.swap(other.theta_);
     a_.swap(other.a_);
     theta_grad_.swap(other.theta_grad_);
-    eval_.swap(eval);
+    eval_ = eval;
   }
   inline auto&& theta() { return theta_; }
   inline const auto& theta() const { return theta_; }
@@ -465,20 +460,22 @@ struct WolfeInfo {
  *  \f$\phi(\alpha)=\text{obj\_fun}\bigl(a(\alpha),\;\theta(\alpha)\bigr)\f$,
  *  \f$\theta(\alpha)=\text{covariance}\;·\;a(\alpha)\f$,
  *  \f$\phi'(\alpha)=\nabla\phi(\alpha)^{\!T} p\f$.
- * The search proceeds in three phases
+ * The search proceeds in several phases. At any phase if Armijo and Wolfe are satisfied we exit.
  *
- *  1. **Initial step‑finding** – starting from the user given $curr.alpha()$,
- *    check if
- *  2. If the \f$alpha\f$ is 1 or goes below `min_alpha`, then we end the search
- *early, as Laplace problems commonly accept a full Newton step.
- *  3. **Bracketing by doubling** – starting from that good \f$\alpha\f$, double
- *the step until Armijo fails; the last good point is the left end of the
- *bracket, the first failing point the right end.
+ *  1. Contraction: starting from the initial \f$\alpha*2\f$ in `curr_.alpha()`,
+ *   shrink \f$\alpha\f$ by `opt.tau` until theta and theta's gradient
+ *   are finite.
+ *  2. Expansion: If the $alpha$ is a step that satisfies Armijo and Wolfe. Aggressively expand \f$\alpha\f$ by
+ *  `opt.scale_up`.
+ *  3. Low and High bracketing:
+ *   Low is initially set as $alpha=0$ and high as the current step. If Armijo passes for high and the directional derivative is positive,
+ *   then we set low to high and double high.
+ *   Once we find a `high` that fails armijo, or has a negative directional derivative, we exit with our high and low brackets set.
+ *
  *  4. **Cubic zoom** – repeatedly fit a cubic through the bracket end‑points
  *     (`cubic_interp`), evaluate the objective/gradient at the
  *     predicted maximiser, and shrink the bracket until a Wolfe‑compliant
- *     step is found or the interval width falls below
- *`opt.min_alpha`.
+ *     step is found or the interval width falls below `opt.min_alpha`.
  *
  * * **Early‑exit for \f$\alpha\f$ = 1 or < `min_alpha`** Laplace problems
  *commonly accept a full Newton step. The function short‑circuits to avoid any

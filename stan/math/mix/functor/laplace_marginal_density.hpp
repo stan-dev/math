@@ -522,7 +522,7 @@ inline auto laplace_marginal_density_est(
   auto update_step
     = [&prev, &covariance, &ll_fun, &ll_args, &obj_fun, &grad_fun, msgs](auto& step_info, auto& eval_in, auto&& p) {
         step_info.a() = prev.a() + eval_in.alpha() * p;
-        step_info.theta() = covariance * step_info.a();
+        step_info.theta().noalias() = covariance * step_info.a();
         step_info.theta_grad() = laplace_likelihood::theta_grad(ll_fun, step_info.theta(), ll_args, msgs);
         eval_in.obj() = obj_fun(step_info.a(), step_info.theta());
         eval_in.dir() = grad_fun(step_info.a(), step_info.theta(), step_info.theta_grad()).dot(p);
@@ -539,7 +539,7 @@ inline auto laplace_marginal_density_est(
       wolfe_info.p_ = -wolfe_info.p_;
       wolfe_info.init_dir_ = -wolfe_info.init_dir_;
     }
-    curr.theta() = covariance * curr.a();
+    curr.theta().noalias() = covariance * curr.a();
     curr.theta_grad() = laplace_likelihood::theta_grad(ll_fun, curr.theta(), ll_args, msgs);
     curr.alpha() = barzilai_borwein_step_size(wolfe_info.p_,
       grad_fun(curr.a(), curr.theta(), curr.theta_grad()),
@@ -556,7 +556,8 @@ inline auto laplace_marginal_density_est(
             || (!wolfe_status.success_ && curr.obj() <= prev.obj());
   };
   auto set_next_iter = [&options](auto&& curr, auto&& prev, auto&& ll_args) {
-    prev = curr;
+    prev.swap(curr);
+
     curr.alpha() = std::clamp(curr.alpha(), 0.0, options.line_search.max_alpha);
   };
   if (options.solver == 1) {
