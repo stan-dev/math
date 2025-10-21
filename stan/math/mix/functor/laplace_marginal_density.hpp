@@ -531,7 +531,8 @@ inline auto laplace_marginal_density_est(
   // Start with safe step size
   wolfe_status.num_backtracks_ = 99;
   int iter = 0;
-  auto update_line_search = [&grad_fun, &ll_fun, &ll_args, &msgs, &options, &update_step](auto&& wolfe_info, auto&& curr, auto&& prev) {
+  auto update_line_search = [&grad_fun, &ll_fun, &ll_args, &msgs, &covariance, &update_step, &options]
+    (auto&& wolfe_status, auto&& wolfe_info, auto&& curr, auto&& prev) {
     wolfe_info.p_ = curr.a_ - prev.a_;
     wolfe_info.init_dir_ = grad_fun(prev.a_, prev.theta_, prev.theta_grad_).dot(wolfe_info.p_);
     if (wolfe_info.init_dir_ < 0) {
@@ -587,7 +588,7 @@ inline auto laplace_marginal_density_est(
               - W_r.asDiagonal()
                     * LT.solve(L.solve(W_r.cwiseProduct(covariance * b)));
         // Approximate optimial step size
-        const bool finish_update = update_line_search(wolfe_info, curr, prev);
+        const bool finish_update = update_line_search(wolfe_status, wolfe_info, curr, prev);
         if (finish_update) {
           const double B_log_determinant
               = 2.0 * llt_B.matrixLLT().diagonal().array().log().sum();
@@ -644,7 +645,7 @@ inline auto laplace_marginal_density_est(
         auto LT = llt_B.matrixU();
         b.noalias() = W * prev.theta_ + prev.theta_grad_;
         curr.a_.noalias() = b - W_r * LT.solve(L.solve(W_r * (covariance * b)));
-        const bool finish_update = update_line_search(wolfe_info, curr, prev);
+        const bool finish_update = update_line_search(wolfe_status, wolfe_info, curr, prev);
         if (finish_update) {
           const double B_log_determinant
               = 2.0 * llt_B.matrixLLT().diagonal().array().log().sum();
@@ -684,7 +685,7 @@ inline auto laplace_marginal_density_est(
       curr.a_.noalias()
           = K_root.transpose().template triangularView<Eigen::Upper>().solve(
               LT.solve(L.solve(K_root.transpose() * b)));
-      const bool finish_update = update_line_search(wolfe_info, curr, prev);
+      const bool finish_update = update_line_search(wolfe_status, wolfe_info, curr, prev);
       if (finish_update) {
         const double B_log_determinant
             = 2.0 * llt_B.matrixLLT().diagonal().array().log().sum();
@@ -713,7 +714,7 @@ inline auto laplace_marginal_density_est(
       // L on lower and U on upper triangular
       b.noalias() = W * prev.theta_ + prev.theta_grad_;
       curr.a_.noalias() = b - W * LU.solve(covariance * b);
-      const bool finish_update = update_line_search(wolfe_info, curr, prev);
+      const bool finish_update = update_line_search(wolfe_status, wolfe_info, curr, prev);
       if (finish_update) {
         // TODO(Charles): There has to be a simple trick for this
         const double B_log_determinant = LU.matrixLU().diagonal().array().log().sum();

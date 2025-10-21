@@ -373,16 +373,19 @@ inline auto wolfe_status_str(WolfeStatus s) {
   }
 }
 
-/**
- * We continue if the line search found a valid next step.
- */
-inline auto continue_criteria(const WolfStatus& s) {
-  return s.success_;
+inline bool wolfe_stop(const WolfeStatus& status) {
+  return status.success_;
 }
+
 struct Eval {
   double alpha;   // alpha
   double obj;   // obj
   double dir;   // directional derivative
+  void swap(Eval& other) {
+    std::swap(alpha, other.alpha);
+    std::swap(obj, other.obj);
+    std::swap(dir, other.dir);
+  }
 };
 
 struct WolfeData {
@@ -415,7 +418,20 @@ struct WolfeData {
     std::swap(alpha_, eval.alpha);
     std::swap(dir_, eval.dir);
   }
+  inline auto&& theta() { return theta_; }
+  inline const auto& theta() const { return theta_; }
+  inline auto&& theta_grad() { return theta_grad_; }
+  inline const auto& theta_grad() const { return theta_grad_; }
+  inline auto&& a() { return a_; }
+  inline const auto& a() const { return a_; }
+  inline auto&& obj() { return obj_; }
+  inline const auto& obj() const { return obj_; }
+  inline auto&& alpha() { return alpha_; }
+  inline const auto& alpha() const { return alpha_; }
+  inline auto&& dir() { return dir_; }
+  inline const auto& dir() const { return dir_; }
 };
+
 struct WolfeInfo {
   WolfeData curr_;
   WolfeData prev_;
