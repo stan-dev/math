@@ -330,7 +330,7 @@ inline double barzilai_borwein_step_size(const Eigen::VectorXd& s, const Eigen::
   const double yty = y.squaredNorm();
 
   // Basic validity checks
-  const double eps = 1e-16;
+  constexpr double eps = 1e-16;
   if (!(std::isfinite(sty) && std::isfinite(sts) && std::isfinite(yty)) ||
       sts <= eps || yty <= eps || sty <= eps || last_backtracks == 99) {
                  return safe_fallback();
@@ -489,24 +489,24 @@ inline auto laplace_marginal_density_est(
   internal::WolfeInfo wolfe_info(theta_size);
   auto&& curr = wolfe_info.curr_;
   auto&& prev = wolfe_info.prev_;
-  curr.theta_ = [theta_size, &options]() {
+  curr.theta() = [theta_size, &options]() {
     if constexpr (InitTheta) {
       return options.theta_0;
     } else {
       return Eigen::VectorXd::Zero(theta_size);
     }
   }();
-  curr.theta_grad_ = laplace_likelihood::theta_grad(ll_fun, curr.theta_, ll_args, msgs);
-  curr.alpha_ = 1.0;
+  curr.theta_grad() = laplace_likelihood::theta_grad(ll_fun, curr.theta(), ll_args, msgs);
+  curr.alpha() = 1.0;
   // Setup initial a
   auto obj_fun = [&](const Eigen::VectorXd& a_val, auto&& theta_val) -> double {
     return -0.5 * a_val.dot(theta_val)
            + laplace_likelihood::log_likelihood(ll_fun, theta_val, ll_args_vals,
                                                 msgs);
   };
-  curr.a_ = Eigen::VectorXd::Zero(theta_size);
-  curr.obj_ = obj_fun(curr.a_, curr.theta_);
-  if (!std::isfinite(curr.obj_)) {
+  curr.a() = Eigen::VectorXd::Zero(theta_size);
+  curr.obj() = obj_fun(curr.a(), curr.theta());
+  if (!std::isfinite(curr.obj())) {
     throw std::domain_error(
         "laplace_marginal_density: log likelihood is not finite at initial "
         "theta and likelihood arguments.");
@@ -521,11 +521,11 @@ inline auto laplace_marginal_density_est(
   // NOTE: theta_grad is updated in `wolfe_line_search`
   auto update_step
     = [&prev, &covariance, &ll_fun, &ll_args, &obj_fun, &grad_fun, msgs](auto& step_info, auto& eval_in, auto&& p) {
-        step_info.a_ = prev.a_ + eval_in.alpha * p;
-        step_info.theta_ = covariance * step_info.a_;
-        step_info.theta_grad_ = laplace_likelihood::theta_grad(ll_fun, step_info.theta_, ll_args, msgs);
-        eval_in.obj = obj_fun(step_info.a_, step_info.theta_);
-        eval_in.dir = grad_fun(step_info.a_, step_info.theta_, step_info.theta_grad_).dot(p);
+        step_info.a() = prev.a() + eval_in.alpha() * p;
+        step_info.theta() = covariance * step_info.a();
+        step_info.theta_grad() = laplace_likelihood::theta_grad(ll_fun, step_info.theta(), ll_args, msgs);
+        eval_in.obj() = obj_fun(step_info.a(), step_info.theta());
+        eval_in.dir() = grad_fun(step_info.a(), step_info.theta(), step_info.theta_grad()).dot(p);
       };
   WolfeStatus wolfe_status;
   // Start with safe step size
@@ -533,32 +533,31 @@ inline auto laplace_marginal_density_est(
   int iter = 0;
   auto update_line_search = [&grad_fun, &ll_fun, &ll_args, &msgs, &covariance, &update_step, &options]
     (auto&& wolfe_status, auto&& wolfe_info, auto&& curr, auto&& prev) {
-    wolfe_info.p_ = curr.a_ - prev.a_;
-    wolfe_info.init_dir_ = grad_fun(prev.a_, prev.theta_, prev.theta_grad_).dot(wolfe_info.p_);
+    wolfe_info.p_ = curr.a() - prev.a();
+    wolfe_info.init_dir_ = grad_fun(prev.a(), prev.theta(), prev.theta_grad()).dot(wolfe_info.p_);
     if (wolfe_info.init_dir_ < 0) {
       wolfe_info.p_ = -wolfe_info.p_;
       wolfe_info.init_dir_ = -wolfe_info.init_dir_;
     }
-    curr.theta_ = covariance * curr.a_;
-    curr.theta_grad_ = laplace_likelihood::theta_grad(ll_fun, curr.theta_, ll_args, msgs);
-    wolfe_info.curr_.alpha_ = barzilai_borwein_step_size(wolfe_info.p_,
-      grad_fun(curr.a_, curr.theta_, curr.theta_grad_),
-      grad_fun(prev.a_, prev.theta_, prev.theta_grad_),
-      prev.alpha_, wolfe_status.num_backtracks_, options.line_search.min_alpha,
+    curr.theta() = covariance * curr.a();
+    curr.theta_grad() = laplace_likelihood::theta_grad(ll_fun, curr.theta(), ll_args, msgs);
+    curr.alpha() = barzilai_borwein_step_size(wolfe_info.p_,
+      grad_fun(curr.a(), curr.theta(), curr.theta_grad()),
+      grad_fun(prev.a(), prev.theta(), prev.theta_grad()),
+      prev.alpha(), wolfe_status.num_backtracks_, options.line_search.min_alpha,
       options.line_search.max_alpha);
     wolfe_status = internal::wolfe_line_search(
         wolfe_info, ll_fun,
         update_step, ll_args, options.line_search, msgs);
-        curr.alpha_ = wolfe_info.curr_.alpha_;
-    debug::print("", 1, "Objective old: ", prev.obj_,
-                  "Objective new: ", curr.obj_,
-                  "Step size:      ", curr.alpha_);
-    return abs(curr.obj_ - prev.obj_) < options.tolerance
-            || (wolfe_status.stop_ != WolfeReturn::Wolfe && curr.obj_ <= prev.obj_);
+    debug::print("", 1, "Objective old: ", prev.obj(),
+                  "Objective new: ", curr.obj(),
+                  "Step size:      ", curr.alpha());
+    return abs(curr.obj() - prev.obj()) < options.tolerance
+            || (!wolfe_status.success_ && curr.obj() <= prev.obj());
   };
   auto set_next_iter = [&options](auto&& curr, auto&& prev, auto&& ll_args) {
     prev = curr;
-    curr.alpha_ = std::clamp(curr.alpha_, 0.0, options.line_search.max_alpha);
+    curr.alpha() = std::clamp(curr.alpha(), 0.0, options.line_search.max_alpha);
   };
   if (options.solver == 1) {
     if (options.hessian_block_size == 1) {
@@ -567,7 +566,7 @@ inline auto laplace_marginal_density_est(
       for (Eigen::Index i = 0; i <= options.max_num_steps; i++) {
         debug::print("======Iter", iter++);
         auto W = laplace_likelihood::diagonal_hessian(
-            ll_fun, prev.theta_, ll_args, msgs);
+            ll_fun, prev.theta(), ll_args, msgs);
         for (Eigen::Index j = 0; j < W.size(); j++) {
           if (W.coeff(j) < 0) {
             throw std::domain_error(
@@ -582,8 +581,8 @@ inline auto laplace_marginal_density_est(
         Eigen::LLT<Eigen::Ref<Eigen::MatrixXd>> llt_B(B);
         auto L = llt_B.matrixL();
         auto LT = llt_B.matrixU();
-        b.noalias() = (W.array() * prev.theta_.array()).matrix() + prev.theta_grad_;
-        curr.a_.noalias()
+        b.noalias() = (W.array() * prev.theta().array()).matrix() + prev.theta_grad();
+        curr.a().noalias()
             = b
               - W_r.asDiagonal()
                     * LT.solve(L.solve(W_r.cwiseProduct(covariance * b)));
@@ -592,15 +591,15 @@ inline auto laplace_marginal_density_est(
         if (finish_update) {
           const double B_log_determinant
               = 2.0 * llt_B.matrixLLT().diagonal().array().log().sum();
-          // Overwrite W instead of making curr.a_ new sparse matrix
+          // Overwrite W instead of making curr.a() new sparse matrix
           //W.asdiagonal() = W_r;
           return laplace_density_estimates{
-              curr.obj_ - 0.5 * B_log_determinant,
-              std::move(curr.theta_),
+              curr.obj() - 0.5 * B_log_determinant,
+              std::move(curr.theta()),
               Eigen::SparseMatrix<double>(W_r.asDiagonal()),
               Eigen::MatrixXd(L),
-              std::move(curr.a_),
-              std::move(curr.theta_grad_),
+              std::move(curr.a()),
+              std::move(curr.theta_grad()),
               Eigen::PartialPivLU<Eigen::MatrixXd>{},
               Eigen::MatrixXd(0, 0)};
         } else {
@@ -624,7 +623,7 @@ inline auto laplace_marginal_density_est(
       for (Eigen::Index i = 0; i <= options.max_num_steps; i++) {
         debug::print("======Iter", iter++);
         auto W = laplace_likelihood::block_hessian(
-            ll_fun, prev.theta_, options.hessian_block_size, ll_args, msgs);
+            ll_fun, prev.theta(), options.hessian_block_size, ll_args, msgs);
         for (Eigen::Index j = 0; j < W.rows(); j++) {
           if (W.coeff(j, j) < 0) {
             throw std::domain_error(
@@ -643,19 +642,19 @@ inline auto laplace_marginal_density_est(
         }
         auto L = llt_B.matrixL();
         auto LT = llt_B.matrixU();
-        b.noalias() = W * prev.theta_ + prev.theta_grad_;
-        curr.a_.noalias() = b - W_r * LT.solve(L.solve(W_r * (covariance * b)));
+        b.noalias() = W * prev.theta() + prev.theta_grad();
+        curr.a().noalias() = b - W_r * LT.solve(L.solve(W_r * (covariance * b)));
         const bool finish_update = update_line_search(wolfe_status, wolfe_info, curr, prev);
         if (finish_update) {
           const double B_log_determinant
               = 2.0 * llt_B.matrixLLT().diagonal().array().log().sum();
           return laplace_density_estimates{
-              curr.obj_ - 0.5 * B_log_determinant,
-              std::move(curr.theta_),
+              curr.obj() - 0.5 * B_log_determinant,
+              std::move(curr.theta()),
               std::move(W_r),
               Eigen::MatrixXd(L),
-              std::move(curr.a_),
-              std::move(curr.theta_grad_),
+              std::move(curr.a()),
+              std::move(curr.theta_grad()),
               Eigen::PartialPivLU<Eigen::MatrixXd>{},
               Eigen::MatrixXd(0, 0)};
         } else {
@@ -670,7 +669,7 @@ inline auto laplace_marginal_density_est(
     for (Eigen::Index i = 0; i <= options.max_num_steps; i++) {
       debug::print("======Iter", iter++);
       auto W = laplace_likelihood::block_hessian(
-          ll_fun, prev.theta_, options.hessian_block_size, ll_args, msgs);
+          ll_fun, prev.theta(), options.hessian_block_size, ll_args, msgs);
       B.noalias() = MatrixXd::Identity(theta_size, theta_size)
                     + K_root.transpose() * W * K_root;
       Eigen::LLT<Eigen::Ref<Eigen::MatrixXd>> llt_B(B);
@@ -681,8 +680,8 @@ inline auto laplace_marginal_density_est(
       }
       auto L = llt_B.matrixL();
       auto LT = llt_B.matrixU();
-      b.noalias() = W * prev.theta_ + prev.theta_grad_;
-      curr.a_.noalias()
+      b.noalias() = W * prev.theta() + prev.theta_grad();
+      curr.a().noalias()
           = K_root.transpose().template triangularView<Eigen::Upper>().solve(
               LT.solve(L.solve(K_root.transpose() * b)));
       const bool finish_update = update_line_search(wolfe_status, wolfe_info, curr, prev);
@@ -690,12 +689,12 @@ inline auto laplace_marginal_density_est(
         const double B_log_determinant
             = 2.0 * llt_B.matrixLLT().diagonal().array().log().sum();
         return laplace_density_estimates{
-            curr.obj_ - 0.5 * B_log_determinant,
-            std::move(curr.theta_),
+            curr.obj() - 0.5 * B_log_determinant,
+            std::move(curr.theta()),
             std::move(W),
             std::move(Eigen::MatrixXd(L)),
-            std::move(curr.a_),
-            std::move(curr.theta_grad_),
+            std::move(curr.a()),
+            std::move(curr.theta_grad()),
             Eigen::PartialPivLU<Eigen::MatrixXd>{},
             std::move(K_root)};
       } else {
@@ -709,22 +708,22 @@ inline auto laplace_marginal_density_est(
     for (Eigen::Index i = 0; i <= options.max_num_steps; i++) {
       debug::print("======Iter", iter++);
       auto W = laplace_likelihood::block_hessian(
-          ll_fun, prev.theta_, options.hessian_block_size, ll_args, msgs);
+          ll_fun, prev.theta(), options.hessian_block_size, ll_args, msgs);
       LU.compute(MatrixXd::Identity(theta_size, theta_size) + covariance * W);
       // L on lower and U on upper triangular
-      b.noalias() = W * prev.theta_ + prev.theta_grad_;
-      curr.a_.noalias() = b - W * LU.solve(covariance * b);
+      b.noalias() = W * prev.theta() + prev.theta_grad();
+      curr.a().noalias() = b - W * LU.solve(covariance * b);
       const bool finish_update = update_line_search(wolfe_status, wolfe_info, curr, prev);
       if (finish_update) {
         // TODO(Charles): There has to be a simple trick for this
         const double B_log_determinant = LU.matrixLU().diagonal().array().log().sum();
         return laplace_density_estimates{
-            curr.obj_ - 0.5 * B_log_determinant,
-            std::move(curr.theta_),
+            curr.obj() - 0.5 * B_log_determinant,
+            std::move(curr.theta()),
             std::move(W),
             Eigen::MatrixXd(0, 0),
-            std::move(curr.a_),
-            std::move(curr.theta_grad_),
+            std::move(curr.a()),
+            std::move(curr.theta_grad()),
             std::move(LU),
             Eigen::MatrixXd(0, 0)};
       } else {
