@@ -164,14 +164,37 @@ inline auto theta_grad(F&& f, Theta&& theta,
                  Stream* msgs, Args&&... args) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  const Eigen::Index theta_size = theta.size();
-  stan::math::internal::set_zero_adjoint(std::forward_as_tuple(args...));
   nested_rev_autodiff nested;
   Matrix<var, Dynamic, 1> theta_var = theta;
   var f_var = f(theta_var, args..., msgs);
   grad(f_var.vi_);
   return theta_var.adj().eval();
 }
+
+/**
+ * Computes likelihood argument gradient of `f`
+ * @note If `Args` contains \ref var types then their adjoints will be
+ * calculated as a side effect.
+ * @tparam F A functor with `opertor()(Args&&...)` returning a scalar
+ * @tparam Theta A class assignable to an Eigen vector type
+ * @tparam Stream Type of stream for messages.
+ * @tparam Args Type of variadic arguments.
+ * @param f Log likelihood function.
+ * @param theta Latent Gaussian model.
+ * @param msgs Stream for messages.
+ * @param args Variadic arguments for the likelihood function.
+ */
+template <typename F, typename Theta, typename Stream, typename... Args,
+          require_eigen_vector_vt<std::is_arithmetic, Theta>* = nullptr>
+inline void ll_arg_grad(F&& f, Theta&& theta,
+                 Stream* msgs, Args&&... args) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  nested_rev_autodiff nested;
+  var f_var = f(theta, args..., msgs);
+  grad(f_var.vi_);
+}
+
 
 /**
  * Computes negative block diagonal Hessian of `f` wrt`theta` and `args...`
@@ -458,6 +481,22 @@ inline auto theta_grad(F&& f, Theta&& theta, TupleArgs&& ll_tup,
   return apply(
       [](auto&& f, auto&& theta, auto&& msgs, auto&&... args) {
         return internal::theta_grad(
+            std::forward<decltype(f)>(f), std::forward<decltype(theta)>(theta),
+            msgs, std::forward<decltype(args)>(args)...);
+      },
+      std::forward<TupleArgs>(ll_tup), std::forward<F>(f),
+      std::forward<Theta>(theta), msgs);
+}
+
+
+template <typename F, typename Theta, typename TupleArgs, typename Stream,
+          require_eigen_vector_t<Theta>* = nullptr,
+          require_tuple_t<TupleArgs>* = nullptr>
+inline auto ll_arg_grad(F&& f, Theta&& theta, TupleArgs&& ll_tup,
+                           Stream* msgs = nullptr) {
+  return apply(
+      [](auto&& f, auto&& theta, auto&& msgs, auto&&... args) {
+        return internal::ll_arg_grad(
             std::forward<decltype(f)>(f), std::forward<decltype(theta)>(theta),
             msgs, std::forward<decltype(args)>(args)...);
       },

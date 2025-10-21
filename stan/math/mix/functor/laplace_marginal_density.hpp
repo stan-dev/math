@@ -531,7 +531,7 @@ inline auto laplace_marginal_density_est(
   // Start with safe step size
   wolfe_status.num_backtracks_ = 99;
   int iter = 0;
-  auto update_line_search = [&](auto&& curr, auto&& prev) {
+  auto update_line_search = [&grad_fun, &ll_fun, &ll_args, &msgs, &options, &update_step](auto&& wolfe_info, auto&& curr, auto&& prev) {
     wolfe_info.p_ = curr.a_ - prev.a_;
     wolfe_info.init_dir_ = grad_fun(prev.a_, prev.theta_, prev.theta_grad_).dot(wolfe_info.p_);
     if (wolfe_info.init_dir_ < 0) {
@@ -557,7 +557,6 @@ inline auto laplace_marginal_density_est(
   };
   auto set_next_iter = [&options](auto&& curr, auto&& prev, auto&& ll_args) {
     prev = curr;
-    set_zero_adjoint(ll_args);
     curr.alpha_ = std::clamp(curr.alpha_, 0.0, options.line_search.max_alpha);
   };
   if (options.solver == 1) {
@@ -588,7 +587,7 @@ inline auto laplace_marginal_density_est(
               - W_r.asDiagonal()
                     * LT.solve(L.solve(W_r.cwiseProduct(covariance * b)));
         // Approximate optimial step size
-        const bool finish_update = update_line_search(curr, prev);
+        const bool finish_update = update_line_search(wolfe_info, curr, prev);
         if (finish_update) {
           const double B_log_determinant
               = 2.0 * llt_B.matrixLLT().diagonal().array().log().sum();
@@ -645,7 +644,7 @@ inline auto laplace_marginal_density_est(
         auto LT = llt_B.matrixU();
         b.noalias() = W * prev.theta_ + prev.theta_grad_;
         curr.a_.noalias() = b - W_r * LT.solve(L.solve(W_r * (covariance * b)));
-        const bool finish_update = update_line_search(curr, prev);
+        const bool finish_update = update_line_search(wolfe_info, curr, prev);
         if (finish_update) {
           const double B_log_determinant
               = 2.0 * llt_B.matrixLLT().diagonal().array().log().sum();
@@ -685,7 +684,7 @@ inline auto laplace_marginal_density_est(
       curr.a_.noalias()
           = K_root.transpose().template triangularView<Eigen::Upper>().solve(
               LT.solve(L.solve(K_root.transpose() * b)));
-      const bool finish_update = update_line_search(curr, prev);
+      const bool finish_update = update_line_search(wolfe_info, curr, prev);
       if (finish_update) {
         const double B_log_determinant
             = 2.0 * llt_B.matrixLLT().diagonal().array().log().sum();
@@ -714,7 +713,7 @@ inline auto laplace_marginal_density_est(
       // L on lower and U on upper triangular
       b.noalias() = W * prev.theta_ + prev.theta_grad_;
       curr.a_.noalias() = b - W * LU.solve(covariance * b);
-      const bool finish_update = update_line_search(curr, prev);
+      const bool finish_update = update_line_search(wolfe_info, curr, prev);
       if (finish_update) {
         // TODO(Charles): There has to be a simple trick for this
         const double B_log_determinant = LU.matrixLU().diagonal().array().log().sum();
@@ -1030,14 +1029,10 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
     nested_rev_autodiff nested;
 
     // Make one hard copy here
-    using laplace_likelihood::internal::conditional_copy_and_promote;
+    using laplace_likelihood::internal::deep_copy_vargs;
     using laplace_likelihood::internal::COPY_TYPE;
-    auto ll_args_copy
-        = conditional_copy_and_promote<is_any_var_scalar, var, COPY_TYPE::DEEP>(
-            ll_args_refs);
-    auto covar_args_copy
-        = conditional_copy_and_promote<is_any_var_scalar, var, COPY_TYPE::DEEP>(
-            covar_args);
+    auto ll_args_copy = deep_copy_vargs<var>(ll_args_refs);
+    auto covar_args_copy = deep_copy_vargs<var>(covar_args_refs);
 
     auto covariance = stan::math::apply(
             [&covariance_function, &msgs](auto&&... args) {
@@ -1049,9 +1044,11 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
             },
             covar_args_copy);
     auto md_est = internal::laplace_marginal_density_est(
-        ll_fun, ll_args_copy, value_of(covariance),
+        ll_fun, value_of(ll_args_copy), value_of(covariance),
         options, msgs);
-
+    if constexpr (ll_args_contain_var) {
+      laplace_likelihood::ll_arg_grad(ll_fun, md_est.theta, ll_args_copy, msgs);
+    }
     // Solver 1, 2
     arena_t<Eigen::MatrixXd> R(md_est.theta.size(), md_est.theta.size());
     // Solver 3
@@ -1070,7 +1067,7 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
         partial_parm, ll_args_filter);
     if (options.solver == 1) {
       if (options.hessian_block_size == 1) {
-        Eigen::MatrixXd tmp = md_est.W_r.toDense();
+        arena_t<Eigen::MatrixXd> tmp = md_est.W_r.toDense();
         md_est.L.template triangularView<Eigen::Lower>().solveInPlace(tmp);
         R.noalias() = tmp.transpose() * tmp;
         arena_t<Eigen::MatrixXd> C
@@ -1092,7 +1089,7 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
         }
 
       } else {
-        Eigen::MatrixXd tmp = md_est.W_r.toDense();
+        arena_t<Eigen::MatrixXd> tmp = md_est.W_r.toDense();
         md_est.L.template triangularView<Eigen::Lower>().solveInPlace(tmp);
         R.noalias() = tmp.transpose() * tmp;
         arena_t<Eigen::MatrixXd> C

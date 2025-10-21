@@ -373,6 +373,12 @@ inline auto wolfe_status_str(WolfeStatus s) {
   }
 }
 
+/**
+ * We continue if the line search found a valid next step.
+ */
+inline auto continue_criteria(const WolfStatus& s) {
+  return s.success_;
+}
 struct Eval {
   double alpha;   // alpha
   double obj;   // obj
@@ -447,8 +453,8 @@ struct WolfeInfo {
  *  \f$\phi'(\alpha)=\nabla\phi(\alpha)^{\!T} p\f$.
  * The search proceeds in three phases
  *
- *  1. **Back‑tracking** – halve the initial \f$\alpha\f$ until both Wolfe
- *conditions pass.
+ *  1. **Initial step‑finding** – starting from the user given $curr.alpha_$,
+ *    check if
  *  2. If the \f$alpha\f$ is 1 or goes below `min_alpha`, then we end the search
  *early, as Laplace problems commonly accept a full Newton step.
  *  3. **Bracketing by doubling** – starting from that good \f$\alpha\f$, double
@@ -504,7 +510,7 @@ inline WolfeStatus wolfe_line_search(
     return check_wolfe(eval, prev, opt);
   };
   int total_updates = 0;
-  auto assign_step = [&](WolfeData& out, WolfeData& buf, Eval& e) {
+  auto assign_step = [](WolfeData& out, WolfeData& buf, Eval& e) {
     out.swap(buf, e);
   };
   auto update_with_tick = [&total_updates, &update_fun](WolfeData& buf, Eval& e, auto&& p) {
@@ -524,7 +530,6 @@ inline WolfeStatus wolfe_line_search(
             return WolfeStatus{WolfeReturn::Armijo, total_updates, 0, true};
           }
         }
-        prev.theta_grad_ = laplace_likelihood::theta_grad(ll_fun, prev.theta_, ll_args, msgs);
         return WolfeStatus{WolfeReturn::ReachedMaxStep, total_updates, 0, false};
     } else {
       return WolfeStatus{WolfeReturn::Continue, total_updates, 0, false};
@@ -541,7 +546,6 @@ inline WolfeStatus wolfe_line_search(
       if (high.alpha < opt.min_alpha) {
         debug::print("Exit on precheck numerical trouble", 1);
         debug::print("total_updates", total_updates);
-        prev.theta_grad_ = laplace_likelihood::theta_grad(ll_fun, prev.theta_, ll_args, msgs);
         return WolfeStatus{WolfeReturn::StepTooSmall, total_updates, 0, false};
       }
       update_with_tick(scratch, high, p);
@@ -660,9 +664,6 @@ inline WolfeStatus wolfe_line_search(
       if (step_ok) {
         update_with_tick(scratch, curr_eval, p);
         assign_step(curr, scratch, curr_eval);
-      } else {
-        // Revert ll_args wrt to prev
-        prev.theta_grad_ = laplace_likelihood::theta_grad(ll_fun, prev.theta_, ll_args, msgs);
       }
       debug::print("total_updates", total_updates);
       if (std::abs(curr_eval.dir) <= grad_tol &&  // tiny slope
@@ -791,7 +792,6 @@ inline WolfeStatus wolfe_line_search(
   } else {
     debug::print("Exit on failure", 1);
     debug::print("total_updates", total_updates);
-    prev.theta_grad_ = laplace_likelihood::theta_grad(ll_fun, prev.theta_, ll_args, msgs);
     return WolfeStatus{WolfeReturn::Fail, total_updates, num_backtracks, false};
   }
 }
