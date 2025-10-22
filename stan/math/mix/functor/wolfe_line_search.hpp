@@ -710,9 +710,8 @@ inline WolfeStatus wolfe_line_search(
     std::swap(low, high);
   }
 
-  // Take a safe bisection on the first pass
+  // Pure bisection to try to get a sign change.
   while ((low.dir() > 0 && high.dir() > 0) && (high.alpha() - low.alpha() > opt.min_alpha)) {
-    // Pure bisection to try to get a sign change.
     Eval mid{ 0.5 * (low.alpha() + high.alpha()), 0.0, 0.0 };
     update_with_tick(scratch, mid, p);
     if (!std::isfinite(mid.obj()) || !std::isfinite(mid.dir())

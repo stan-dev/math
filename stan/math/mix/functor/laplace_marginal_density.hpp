@@ -560,6 +560,8 @@ inline auto laplace_marginal_density_est(
 
     curr.alpha() = std::clamp(curr.alpha(), 0.0, options.line_search.max_alpha);
   };
+  bool final_loop = false;
+  bool finish_update = false;
   if (options.solver == 1) {
     if (options.hessian_block_size == 1) {
    //   std::cout << "Solver: 1Diag" << std::endl;
@@ -588,8 +590,16 @@ inline auto laplace_marginal_density_est(
               - W_r.asDiagonal()
                     * LT.solve(L.solve(W_r.cwiseProduct(covariance * b)));
         // Approximate optimial step size
-        const bool finish_update = update_line_search(wolfe_status, wolfe_info, curr, prev);
+        if (!final_loop) {
+          finish_update = update_line_search(wolfe_status, wolfe_info, curr, prev);
+        }
         if (finish_update) {
+          if (!final_loop && wolfe_status.success_) {
+            // Do one final loop with exact wolfe conditions
+            final_loop = true;
+            set_next_iter(curr, prev, ll_args);
+            continue;
+          }
           const double B_log_determinant
               = 2.0 * llt_B.matrixLLT().diagonal().array().log().sum();
           // Overwrite W instead of making curr.a() new sparse matrix
@@ -645,8 +655,16 @@ inline auto laplace_marginal_density_est(
         auto LT = llt_B.matrixU();
         b.noalias() = W * prev.theta() + prev.theta_grad();
         curr.a().noalias() = b - W_r * LT.solve(L.solve(W_r * (covariance * b)));
-        const bool finish_update = update_line_search(wolfe_status, wolfe_info, curr, prev);
+        if (!final_loop) {
+          finish_update = update_line_search(wolfe_status, wolfe_info, curr, prev);
+        }
         if (finish_update) {
+          if (!final_loop && wolfe_status.success_) {
+            // Do one final loop with exact wolfe conditions
+            final_loop = true;
+            set_next_iter(curr, prev, ll_args);
+            continue;
+          }
           const double B_log_determinant
               = 2.0 * llt_B.matrixLLT().diagonal().array().log().sum();
           return laplace_density_estimates{
@@ -685,8 +703,16 @@ inline auto laplace_marginal_density_est(
       curr.a().noalias()
           = K_root.transpose().template triangularView<Eigen::Upper>().solve(
               LT.solve(L.solve(K_root.transpose() * b)));
-      const bool finish_update = update_line_search(wolfe_status, wolfe_info, curr, prev);
+      if (!final_loop) {
+        finish_update = update_line_search(wolfe_status, wolfe_info, curr, prev);
+      }
       if (finish_update) {
+        if (!final_loop && wolfe_status.success_) {
+          // Do one final loop with exact wolfe conditions
+          final_loop = true;
+          set_next_iter(curr, prev, ll_args);
+          continue;
+        }
         const double B_log_determinant
             = 2.0 * llt_B.matrixLLT().diagonal().array().log().sum();
         return laplace_density_estimates{
@@ -714,7 +740,9 @@ inline auto laplace_marginal_density_est(
       // L on lower and U on upper triangular
       b.noalias() = W * prev.theta() + prev.theta_grad();
       curr.a().noalias() = b - W * LU.solve(covariance * b);
-      const bool finish_update = update_line_search(wolfe_status, wolfe_info, curr, prev);
+      if (!final_loop) {
+        finish_update = update_line_search(wolfe_status, wolfe_info, curr, prev);
+      }
       if (finish_update) {
         // TODO(Charles): There has to be a simple trick for this
         const double B_log_determinant = LU.matrixLU().diagonal().array().log().sum();
