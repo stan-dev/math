@@ -37,12 +37,12 @@ TEST(laplace_marginal_poisson_log_lpmf, phi_dim_2) {
   std::vector<int> y_index = {1, 2};
 
   stan::math::test::squared_kernel_functor sq_kernel;
-  constexpr double tolerance = 1e-6;
+  constexpr double tolerance = 1e-12;
   constexpr int max_num_steps = 100;
 
   stan::test::ad_tolerances tols;
   // tols.gradient_val_ = 1e-3;
-  tols.gradient_grad_ = 1e-3;
+//  tols.gradient_grad_ = 1e-3;
   stan::math::test::run_solver_grid(
     [&](int solver_num, int hessian_block_size, int max_steps_line_search,
         auto&& theta_0) {
@@ -86,12 +86,14 @@ TEST(laplace_marginal_poisson_log_lpmf, log_phi_dim_2) {
   std::vector<int> y_index = {1, 2};
 
   stan::math::test::squared_kernel_functor sq_kernel;
-  constexpr double tolerance = 1e-6;
+  constexpr double tolerance = 1e-12;
   constexpr int max_num_steps = 100;
 
-  stan::test::ad_tolerances tols;
+//  stan::test::ad_tolerances tols;
   // tols.gradient_val_ = 1e-3;
-  tols.gradient_grad_ = 1e-3;
+  constexpr stan::test::ad_tolerances tols{stan::test::ad_gradient_tols{1e-8, 1e-4}};
+
+//  tols.gradient_grad_ = 1e-3;
   Eigen::VectorXd ye(2);
   ye << 1, 1;
   stan::math::test::run_solver_grid(
@@ -123,7 +125,7 @@ TEST_F(laplace_disease_map_test, laplace_marginal_poisson_log_lpmf) {
   // Benchmark from GPStuff.
   EXPECT_NEAR(-2866.88, marginal_density, tol);
 
-  constexpr double tolerance = 1e-6;
+  constexpr double tolerance = 1e-12;
   constexpr int max_num_steps = 100;
   stan::math::test::run_solver_grid(
     [&](int solver_num, int hessian_block_size, int max_steps_line_search,

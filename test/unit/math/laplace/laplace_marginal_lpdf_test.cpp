@@ -54,7 +54,7 @@ TEST(laplace, poisson_log_phi_dim_2) {
 
   // Test with optional arguments
   {
-    constexpr double tolerance = 1e-8;
+    constexpr double tolerance = 1e-12;
     constexpr int max_num_steps = 100;
     constexpr int hessian_block_size = 1;
     constexpr int solver = 1;
@@ -73,8 +73,8 @@ TEST(laplace, poisson_log_phi_dim_2) {
   constexpr int max_num_steps = 100;
   using stan::is_var_v;
   using stan::scalar_type_t;
-  stan::test::ad_tolerances tols;
-  tols.gradient_grad_ = 1e-3;
+  constexpr stan::test::ad_tolerances tols{stan::test::ad_gradient_tols{1e-8, 1e-4}};
+//  tols.gradient_grad_ = 1e-3;
   stan::math::test::run_solver_grid(
       [&](int solver_num, int hessian_block_size, int max_steps_line_search,
           auto&& theta_0) {
@@ -119,7 +119,7 @@ TEST_F(laplace_disease_map_test, laplace_marginal) {
     // Benchmark from GPStuff.
     EXPECT_NEAR(-2866.88, value_of(marginal_density), tol);
   }
-  constexpr double tolerance = 1e-8;
+  constexpr double tolerance = 1e-12;
   constexpr int max_num_steps = 100;
   stan::math::test::run_solver_grid(
       [&](int solver_num, int hessian_block_size, int max_steps_line_search,
@@ -179,10 +179,9 @@ TEST(laplace, bernoulli_logit_phi_dim500) {
   // Benchmark against gpstuff.
   EXPECT_NEAR(-195.368, target, tol);
   // All fail for ad check with relative tolerance ~0.002
-  constexpr double tolerance = 1e-8;
+  constexpr double tolerance = 1e-12;
   constexpr int max_num_steps = 100;
-  stan::test::ad_tolerances tols;
-  //tols.gradient_grad_ = 1e-3;
+  constexpr stan::test::ad_tolerances tols;
   stan::math::test::run_solver_grid(
       [&](int solver_num, int hessian_block_size, int max_steps_line_search,
           auto&& theta_0) {

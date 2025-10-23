@@ -20,8 +20,9 @@ namespace math {
  */
 inline double finite_diff_stepsize(double u) {
   using std::fabs;
-  static const double cbrt_epsilon = std::cbrt(EPSILON);
-  return cbrt_epsilon * std::fmax(1, fabs(u));
+  static const double eps = std::numeric_limits<double>::epsilon();
+  static const double eps_pow = std::pow(eps, 1.0 / 7.0);   // for 6th-order stencil
+  return eps_pow * std::fmax(1.0, fabs(u));
 }
 
 }  // namespace math

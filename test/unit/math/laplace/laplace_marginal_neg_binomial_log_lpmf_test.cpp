@@ -29,10 +29,10 @@ TEST(laplace_marginal_neg_binomial_log_lpmf, phi_dim_2) {
   std::vector<int> y_index{1, 2};
   constexpr double eta_dbl = 100;
 
-  constexpr double tolerance = 1e-8;
+  constexpr double tolerance = 1e-12;
   constexpr int max_num_steps = 1000;
-  stan::test::ad_tolerances tols;
-  tols.gradient_grad_ = 1e-2;
+  constexpr stan::test::ad_tolerances tols{stan::test::ad_gradient_tols{1e-8, 1e-4}};
+//  tols.gradient_grad_ = 1e-2;
   stan::math::test::run_solver_grid(
       [&](int solver_num, int hessian_block_size, int max_steps_line_search,
           auto&& theta_0) {
@@ -62,7 +62,7 @@ TEST_F(laplace_disease_map_test, laplace_marginal_neg_binomial_2_log_lpmf) {
       std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1)), nullptr);
 
   // TODO (charlesm93): get benchmark from GPStuff or another software.
-  constexpr double tolerance = 1e-6;
+  constexpr double tolerance = 1e-12;
   constexpr int max_num_steps = 100;
   stan::math::test::run_solver_grid(
       [&](int solver_num, int hessian_block_size, int max_steps_line_search,

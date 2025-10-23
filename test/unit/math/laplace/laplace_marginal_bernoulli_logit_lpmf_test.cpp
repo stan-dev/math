@@ -36,8 +36,9 @@ TEST(laplace_marginal_bernoulli_logit_lpmf, phi_dim500) {
   // Benchmark against gpstuff.
   constexpr double tol = 8e-4;
   EXPECT_NEAR(-195.368, target, tol);
-  constexpr double tolerance = 1e-8;
+  constexpr double tolerance = 1e-12;
   constexpr int max_num_steps = 1000;
+  constexpr stan::test::ad_tolerances tols{stan::test::ad_gradient_tols{1e-8, 1e-4}};
   stan::math::test::run_solver_grid(
       [&](int solver_num, int hessian_block_size, int max_steps_line_search,
           auto&& theta_0) {
@@ -48,7 +49,6 @@ TEST(laplace_marginal_bernoulli_logit_lpmf, phi_dim500) {
               max_num_steps, hessian_block_size, solver_num,
               max_steps_line_search, nullptr);
         };
-        stan::test::ad_tolerances tols;
         stan::test::expect_ad<true>(tols, f, phi_dbl[0], phi_dbl[1]);
       },
       theta_0);

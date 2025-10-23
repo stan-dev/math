@@ -113,7 +113,7 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle_val) {
 
   // logger->current_test_name_ = "gp_motorcycle";
   using stan::math::laplace_marginal_tol;
-  constexpr double tolerance = 1e-08;
+  constexpr double tolerance = 1e-12;
   constexpr int max_num_steps = 1000;
   constexpr int hessian_block_size = 2;
   constexpr int do_line_search = 1;
@@ -150,8 +150,7 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle_ad) {
   auto phi_1 = phi_dbl(1);
   Eigen::VectorXd phi_rest = phi_dbl.tail(2);
   Eigen::VectorXd phi_01{{phi_0, phi_1}};
-  stan::test::ad_tolerances tols;
-  tols.gradient_grad_ = 1e-2;
+  constexpr stan::test::ad_tolerances tols{stan::test::ad_gradient_tols{1e-8, 1e-4}};
   stan::math::test::run_solver_grid(
     [&](int solver_num, int hessian_block_size, int max_steps_line_search,
         auto&& theta_0) {
@@ -245,8 +244,7 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle2_ad) {
   constexpr int max_num_steps = 1000;
   Eigen::VectorXd length_scale_vec = phi_dbl.head(2);
   Eigen::VectorXd sigma_vec = phi_dbl.tail(2);
-  stan::test::ad_tolerances tols;
-  tols.gradient_grad_ = 1e-2;
+  constexpr stan::test::ad_tolerances tols{stan::test::ad_gradient_tols{1e-8, 1e-4}};
   stan::math::test::run_solver_grid(
       [&](int solver_num, int hessian_block_size, int max_steps_line_search,
           auto&& theta_0) {
