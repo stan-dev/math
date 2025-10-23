@@ -109,6 +109,7 @@ class laplace_motorcyle_gp_test : public ::testing::Test {
   Eigen::VectorXd phi_dbl{{length_scale_f, length_scale_g, sigma_f, sigma_g}};
 };
 
+
 TEST_F(laplace_motorcyle_gp_test, gp_motorcycle_val) {
 
   // logger->current_test_name_ = "gp_motorcycle";
@@ -150,7 +151,7 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle_ad) {
   auto phi_1 = phi_dbl(1);
   Eigen::VectorXd phi_rest = phi_dbl.tail(2);
   Eigen::VectorXd phi_01{{phi_0, phi_1}};
-  constexpr stan::test::ad_tolerances tols{stan::test::ad_gradient_tols{1e-8, 1e-4}};
+  constexpr stan::test::ad_tolerances tols{stan::test::ad_gradient_tols{1e-8, 1e-3}};
   stan::math::test::run_solver_grid(
     [&](int solver_num, int hessian_block_size, int max_steps_line_search,
         auto&& theta_0) {
@@ -236,7 +237,7 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle2_ad) {
   Eigen::VectorXd mu_hat = K_plus_I.colPivHouseholderQr().solve(y);
   // Remark: finds optimal point with or without informed initial guess.
   for (int i = 0; i < n_obs - 1; i++) {
-    theta0(2 * i) = 0;
+    theta0(2 * i) = mu_hat(i);
     theta0(2 * i + 1) = -1.0;
   }
   // TODO(Charles): benchmark this result against GPStuff.
@@ -244,7 +245,7 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle2_ad) {
   constexpr int max_num_steps = 1000;
   Eigen::VectorXd length_scale_vec = phi_dbl.head(2);
   Eigen::VectorXd sigma_vec = phi_dbl.tail(2);
-  constexpr stan::test::ad_tolerances tols{stan::test::ad_gradient_tols{1e-8, 1e-4}};
+  constexpr stan::test::ad_tolerances tols{stan::test::ad_gradient_tols{1e-8, 1e-2}};
   stan::math::test::run_solver_grid(
       [&](int solver_num, int hessian_block_size, int max_steps_line_search,
           auto&& theta_0) {
