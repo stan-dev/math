@@ -295,8 +295,7 @@ inline auto diff(F&& f, Theta&& theta, const Eigen::Index hessian_block_size,
     Matrix<var, Dynamic, 1> theta_var = theta;
     var f_var = f(theta_var, args..., msgs);
     grad(f_var.vi_);
-    auto theta_grad = theta_var.adj().eval();
-    return theta_grad;
+    return theta_var.adj().eval();
   }(args...);
   if (hessian_block_size == 1) {
     auto v = Eigen::VectorXd::Ones(theta_size);
