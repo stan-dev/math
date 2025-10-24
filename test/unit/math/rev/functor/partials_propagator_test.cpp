@@ -1,9 +1,10 @@
 #include <stan/math/rev/functor/partials_propagator.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(AgradPartialsVari, PartialsPropagatorScal) {
+TEST_F(AgradRev, PartialsVari_PartialsPropagatorScal) {
   using stan::math::make_partials_propagator;
   using stan::math::var;
 
@@ -26,7 +27,7 @@ TEST(AgradPartialsVari, PartialsPropagatorScal) {
   EXPECT_FLOAT_EQ(10.0, grad[0]);
 }
 
-TEST(AgradPartialsVari, PartialsPropagatorVec) {
+TEST_F(AgradRev, PartialsVari_PartialsPropagatorVec) {
   using stan::math::make_partials_propagator;
   using stan::math::var;
   using stan::math::vector_d;
@@ -65,7 +66,7 @@ TEST(AgradPartialsVari, PartialsPropagatorVec) {
   EXPECT_FLOAT_EQ(40.0, grad[3]);
 }
 
-TEST(AgradPartialsVari, PartialsPropagatorStdVec) {
+TEST_F(AgradRev, PartialsVari_PartialsPropagatorStdVec) {
   using stan::math::make_partials_propagator;
   using stan::math::var;
 
@@ -99,7 +100,7 @@ TEST(AgradPartialsVari, PartialsPropagatorStdVec) {
   EXPECT_FLOAT_EQ(40.0, grad[3]);
 }
 
-TEST(AgradPartialsVari, PartialsPropagatorMat) {
+TEST_F(AgradRev, PartialsVari_PartialsPropagatorMat) {
   using stan::math::make_partials_propagator;
   using stan::math::matrix_d;
   using stan::math::matrix_v;
@@ -140,7 +141,7 @@ TEST(AgradPartialsVari, PartialsPropagatorMat) {
   EXPECT_FLOAT_EQ(120.0, grad[3]);
 }
 
-TEST(AgradPartialsVari, PartialsPropagatorMatMultivar) {
+TEST_F(AgradRev, PartialsVari_PartialsPropagatorMatMultivar) {
   using stan::math::make_partials_propagator;
   using stan::math::matrix_d;
   using stan::math::matrix_v;
@@ -202,7 +203,7 @@ TEST(AgradPartialsVari, PartialsPropagatorMatMultivar) {
   EXPECT_FLOAT_EQ(80.0, grad[7]);
 }
 
-TEST(AgradPartialsVari, PartialsPropagatorMultivar) {
+TEST_F(AgradRev, PartialsVari_PartialsPropagatorMultivar) {
   using stan::math::make_partials_propagator;
   using stan::math::var;
   using stan::math::vector_d;
@@ -253,7 +254,7 @@ TEST(AgradPartialsVari, PartialsPropagatorMultivar) {
 
 // XXX Test mixed - partials_propagator<std::vector<matrix_v>,
 //                                        vector_d, vector_v>
-TEST(AgradPartialsVari, PartialsPropagatorMultivarMixed) {
+TEST_F(AgradRev, PartialsVari_PartialsPropagatorMultivarMixed) {
   using stan::math::make_partials_propagator;
   using stan::math::matrix_v;
   using stan::math::var;
@@ -324,7 +325,7 @@ TEST(AgradPartialsVari, PartialsPropagatorMultivarMixed) {
   stan::math::edge<2>(o6).partials_vec_[0] += d_vec2;
 }
 
-TEST(AgradPartialsVari, PartialsPropagatorVarValueMat) {
+TEST_F(AgradRev, PartialsVari_PartialsPropagatorVarValueMat) {
   using stan::math::make_partials_propagator;
   using stan::math::matrix_d;
   using stan::math::matrix_v;
@@ -342,7 +343,7 @@ TEST(AgradPartialsVari, PartialsPropagatorVarValueMat) {
   EXPECT_MATRIX_EQ(av.adj(), Eigen::MatrixXd::Constant(2, 2, -4))
 }
 
-TEST(AgradPartialsVari, PartialsPropagatorStdVectorVarValueMat) {
+TEST_F(AgradRev, PartialsVari_PartialsPropagatorStdVectorVarValueMat) {
   using stan::math::make_partials_propagator;
   using stan::math::matrix_d;
   using stan::math::matrix_v;

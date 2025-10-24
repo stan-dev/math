@@ -1,5 +1,6 @@
 #ifndef TEST_UNIT_MATH_REV_PROB_TEST_GRADIENTS
 #define TEST_UNIT_MATH_REV_PROB_TEST_GRADIENTS
+#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <cmath>
 #include <vector>

@@ -2,6 +2,7 @@
 #define TEST_UNIT_MATH_REV_PROB_EXPECT_EQ_DIFFS_HPP
 
 #include <stan/math/rev.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <cmath>
 #include <string>
 

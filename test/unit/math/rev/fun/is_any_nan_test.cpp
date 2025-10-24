@@ -1,10 +1,10 @@
 #include <stan/math/rev.hpp>
-#include <gtest/gtest.h>
-#include <test/unit/math/rev/util.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
+#include <test/unit/math/rev/util.hpp>
+#include <gtest/gtest.h>
 #include <limits>
 
-TEST(MathFunctions, is_any_nan_variadic_rev) {
+TEST_F(AgradRev, MathFunctions_is_any_nan_variadic_rev) {
   using stan::math::is_any_nan;
 
   double dbl_inf = std::numeric_limits<double>::infinity();

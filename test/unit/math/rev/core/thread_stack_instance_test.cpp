@@ -1,9 +1,11 @@
 #include <gtest/gtest.h>
 #include <stan/math/rev/core.hpp>
+#include <test/unit/math/rev/fun/util.hpp>
+#include <test/unit/math/rev/util.hpp>
 
 #include <thread>
 
-TEST(thread_stack_instance, initialize) {
+TEST_F(AgradRev, thread_stack_instance_initialize) {
   using stan::math::ChainableStack;
 
   // the main thread must be initialized by the time this code is
@@ -31,7 +33,7 @@ TEST(thread_stack_instance, initialize) {
 }
 
 // tear down in a thread the stack and refresh it
-TEST(thread_stack_instance, repeated_initialize) {
+TEST_F(AgradRev, thread_stack_instance_repeated_initialize) {
   using stan::math::ChainableStack;
 
   // the main thread must be initialized by the time this code is
@@ -79,7 +81,7 @@ TEST(thread_stack_instance, repeated_initialize) {
   other_work.join();
 }
 
-TEST(thread_stack_instance, child_instances) {
+TEST_F(AgradRev, thread_stack_instance_child_instances) {
   using stan::math::ChainableStack;
   // place a var on the stack such that a fresh stack in another
   // thread will be different at initialization (if STAN_THREADS is
@@ -110,7 +112,7 @@ TEST(thread_stack_instance, child_instances) {
   other_work.join();
 }
 
-TEST(thread_stack_instance, persistence) {
+TEST_F(AgradRev, thread_stack_instance_persistence) {
   using stan::math::ChainableStack;
 
   ChainableStack::AutodiffStackStorage* main_ad_stack

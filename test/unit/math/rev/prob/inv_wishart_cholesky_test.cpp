@@ -103,7 +103,7 @@ TEST_F(AgradDistributionsInvWishartCholesky, ProptoL_S) {
   stan::math::recover_memory();
 }
 
-TEST(InvWishartCholesky, check_varis_on_stack) {
+TEST_F(AgradRev, InvWishartCholesky_check_varis_on_stack) {
   using stan::math::to_var;
   Eigen::MatrixXd Y(2, 2);
   Y << 2.011108, -11.20661, -11.20661, 112.94139;

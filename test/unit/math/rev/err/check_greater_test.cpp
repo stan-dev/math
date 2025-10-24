@@ -1,9 +1,10 @@
 #include <stan/math/rev.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 #include <limits>
 
-TEST(AgradRevErrorHandlingScalar, CheckGreaterVarCheckVectorized) {
+TEST_F(AgradRev, RevErrorHandlingScalar_CheckGreaterVarCheckVectorized) {
   using stan::math::check_greater;
   using stan::math::var;
 
@@ -35,7 +36,7 @@ TEST(AgradRevErrorHandlingScalar, CheckGreaterVarCheckVectorized) {
   stan::math::recover_memory();
 }
 
-TEST(AgradRevErrorHandlingMatrix, CheckGreaterMatrix) {
+TEST_F(AgradRev, RevErrorHandlingMatrix_CheckGreaterMatrix) {
   using stan::math::check_greater;
   using stan::math::var;
 
@@ -144,7 +145,7 @@ TEST(AgradRevErrorHandlingMatrix, CheckGreaterMatrix) {
   stan::math::recover_memory();
 }
 
-TEST(AgradRevErrorHandlingScalar, CheckGreater) {
+TEST_F(AgradRev, RevErrorHandlingScalar_CheckGreater) {
   using stan::math::check_greater;
   using stan::math::var;
 
@@ -179,7 +180,7 @@ TEST(AgradRevErrorHandlingScalar, CheckGreater) {
   stan::math::recover_memory();
 }
 
-TEST(AgradRevErrorHandlingScalar, CheckGreaterVarCheckUnivariate) {
+TEST_F(AgradRev, RevErrorHandlingScalar_CheckGreaterVarCheckUnivariate) {
   using stan::math::check_greater;
   using stan::math::var;
 
@@ -207,7 +208,7 @@ TEST(AgradRevErrorHandlingScalar, CheckGreaterVarCheckUnivariate) {
   stan::math::recover_memory();
 }
 
-TEST(AgradRevErrorHandlingMatrix, CheckGreaterStdVecVarMatrix) {
+TEST_F(AgradRev, RevErrorHandlingMatrix_CheckGreaterStdVecVarMatrix) {
   using stan::math::var;
   std::vector<std::vector<
       stan::conditional_var_value_t<var, Eigen::Matrix<var, -1, -1>>>>

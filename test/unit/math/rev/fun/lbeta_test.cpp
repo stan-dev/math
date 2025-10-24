@@ -1,4 +1,5 @@
 #include <stan/math/rev.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <stan/math/prim.hpp>
 #include <stan/math/rev/core/nested_rev_autodiff.hpp>
 #include <test/unit/math/expect_near_rel.hpp>
@@ -59,7 +60,7 @@ inline void expect_identity(const std::string& msg,
 }
 }  // namespace lbeta_test_internal
 
-TEST(MathFunctions, lbeta_identities_gradient) {
+TEST_F(AgradRev, MathFunctions_lbeta_identities_gradient) {
   using stan::math::lbeta;
   using stan::math::pi;
   using stan::math::var;
@@ -246,7 +247,7 @@ std::vector<TestValue> testValues = {
 };
 }  // namespace lbeta_test_internal
 
-TEST(MathFunctions, lbeta_precomputed) {
+TEST_F(AgradRev, MathFunctions_lbeta_precomputed) {
   using lbeta_test_internal::TestValue;
   using lbeta_test_internal::testValues;
   using stan::math::is_nan;

@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <stan/math.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <test/unit/util.hpp>
 #include <vector>
 #include <iostream>
@@ -236,7 +237,7 @@ inline void test_derivatives(const F &f, double a, double b,
   }
 }
 
-TEST(StanMath_integrate_1d_impl_rev, test_integer_arguments) {
+TEST_F(AgradRev, StanMath_integrate_1d_impl_rev_test_integer_arguments) {
   stan::math::var v;
   std::vector<stan::math::var> theta = {0.5};
   std::vector<double> x_r;
@@ -249,7 +250,7 @@ TEST(StanMath_integrate_1d_impl_rev, test_integer_arguments) {
                                                     theta, x_r, x_i));
 }
 
-TEST(StanMath_integrate_1d_impl_rev, TestDerivatives_easy) {
+TEST_F(AgradRev, StanMath_integrate_1d_impl_rev_TestDerivatives_easy) {
   // Easy integrals
   using stan::math::var;
   test_derivatives<double, double, var>(f1{}, 0.2, 0.7, {0.75}, {}, {},
@@ -266,7 +267,7 @@ TEST(StanMath_integrate_1d_impl_rev, TestDerivatives_easy) {
                                         {0.0});
 }
 
-TEST(StanMath_integrate_1d_impl_rev, TestDerivatives_zero_crossing) {
+TEST_F(AgradRev, StanMath_integrate_1d_impl_rev_TestDerivatives_zero_crossing) {
   // Zero crossing integral + test x_r + vars at endpoints
   using stan::math::var;
   test_derivatives<var, var, var>(f3{}, -1.0, 1.0, {0.5, 1.75, 3.9}, {2.5, 3.0},
@@ -299,7 +300,7 @@ TEST(StanMath_integrate_1d_impl_rev,
       {5 * pow(0.5, 1.5), 12 * 1.75 * 1.75, 4.0}, -19.06340613646808, 0.0);
 }
 
-TEST(StanMath_integrate_1d_impl_rev, TestDerivatives_no_param_vars) {
+TEST_F(AgradRev, StanMath_integrate_1d_impl_rev_TestDerivatives_no_param_vars) {
   // No param vars
   using stan::math::var;
   test_derivatives<var, var, double>(f3{}, -1.0, 1.0, {0.5, 1.75, 3.9},
@@ -309,7 +310,8 @@ TEST(StanMath_integrate_1d_impl_rev, TestDerivatives_no_param_vars) {
                                      {}, -19.06340613646808, 21.41380852375568);
 }
 
-TEST(StanMath_integrate_1d_impl_rev, TestDerivatives_left_limit_var) {
+TEST_F(AgradRev,
+       StanMath_integrate_1d_impl_rev_TestDerivatives_left_limit_var) {
   // No param vars, only left limit var
   using stan::math::var;
   test_derivatives<var, double, double>(f3{}, -1.0, 1.0, {0.5, 1.75, 3.9},
@@ -319,7 +321,8 @@ TEST(StanMath_integrate_1d_impl_rev, TestDerivatives_left_limit_var) {
                                         {}, -19.06340613646808, 0.0);
 }
 
-TEST(StanMath_integrate_1d_impl_rev, TestDerivatives_right_limit_var) {
+TEST_F(AgradRev,
+       StanMath_integrate_1d_impl_rev_TestDerivatives_right_limit_var) {
   // No param vars, only right limit var
   using stan::math::var;
   test_derivatives<double, var, double>(f3{}, -1.0, 1.0, {0.5, 1.75, 3.9},
@@ -329,7 +332,7 @@ TEST(StanMath_integrate_1d_impl_rev, TestDerivatives_right_limit_var) {
                                         {}, 0.0, 21.41380852375568);
 }
 
-TEST(StanMath_integrate_1d_impl_rev, TestDerivatives_tricky1) {
+TEST_F(AgradRev, StanMath_integrate_1d_impl_rev_TestDerivatives_tricky1) {
   // Tricky integral from Boost docs + limit at infinity + no gradients
   using stan::math::var;
   test_derivatives<double, double, var>(f4{}, 0.0,
@@ -337,7 +340,7 @@ TEST(StanMath_integrate_1d_impl_rev, TestDerivatives_tricky1) {
                                         {}, {}, {}, 1.772453850905516, {});
 }
 
-TEST(StanMath_integrate_1d_impl_rev, TestDerivatives_tricky2) {
+TEST_F(AgradRev, StanMath_integrate_1d_impl_rev_TestDerivatives_tricky2) {
   // Tricky integral from Boost docs + limit at infinity with gradients
   using stan::math::var;
   test_derivatives<double, double, var>(
@@ -347,14 +350,15 @@ TEST(StanMath_integrate_1d_impl_rev, TestDerivatives_tricky2) {
        -1.772453850905516 * 0.5 / (2 * pow(0.5 * 3.0, 1.5))});
 }
 
-TEST(StanMath_integrate_1d_impl_rev, TestDerivatives_tricky3) {
+TEST_F(AgradRev, StanMath_integrate_1d_impl_rev_TestDerivatives_tricky3) {
   // Tricky integral from Boost docs
   using stan::math::var;
   test_derivatives<double, double, var>(
       f6{}, 0.0, 1.0, {0.75}, {}, {}, 0.851926727945904, {0.4814066053874294});
 }
 
-TEST(StanMath_integrate_1d_impl_rev, TestDerivatives_zero_crossing2) {
+TEST_F(AgradRev,
+       StanMath_integrate_1d_impl_rev_TestDerivatives_zero_crossing2) {
   // Zero crossing integral + limit at infinity + var at left limit
   using stan::math::var;
   test_derivatives<var, double, var>(
@@ -363,7 +367,8 @@ TEST(StanMath_integrate_1d_impl_rev, TestDerivatives_zero_crossing2) {
       std::numeric_limits<double>::quiet_NaN());
 }
 
-TEST(StanMath_integrate_1d_impl_rev, TestDerivatives_zero_crossing3) {
+TEST_F(AgradRev,
+       StanMath_integrate_1d_impl_rev_TestDerivatives_zero_crossing3) {
   // Zero crossing integral + limit at negative infinity + var at right limit
   using stan::math::var;
   test_derivatives<double, var, var>(
@@ -372,7 +377,7 @@ TEST(StanMath_integrate_1d_impl_rev, TestDerivatives_zero_crossing3) {
       std::numeric_limits<double>::quiet_NaN(), 1808.042414456063);
 }
 
-TEST(StanMath_integrate_1d_impl_rev, TestDerivatives_indefinite) {
+TEST_F(AgradRev, StanMath_integrate_1d_impl_rev_TestDerivatives_indefinite) {
   // Both limits at infinity + test x_r/x_i + no gradients
   using stan::math::var;
   test_derivatives<double, double, var>(
@@ -381,7 +386,8 @@ TEST(StanMath_integrate_1d_impl_rev, TestDerivatives_indefinite) {
       2.536571480364399, {});
 }
 
-TEST(StanMath_integrate_1d_impl_rev, TestDerivatives_endpoint_precision) {
+TEST_F(AgradRev,
+       StanMath_integrate_1d_impl_rev_TestDerivatives_endpoint_precision) {
   // Various integrals of beta function
   using stan::math::var;
   test_derivatives<double, double, var>(f11{}, 0.0, 1.0, {0.1, 0.1}, {}, {},
@@ -401,7 +407,7 @@ TEST(StanMath_integrate_1d_impl_rev, TestDerivatives_endpoint_precision) {
       {-0.01040816326530613, -0.004852607709750566});
 }
 
-TEST(StanMath_integrate_1d_impl_rev, TestDerivatives_gaussian) {
+TEST_F(AgradRev, StanMath_integrate_1d_impl_rev_TestDerivatives_gaussian) {
   // Check Gaussian integrates to 1.0 always
   using stan::math::var;
   test_derivatives<double, double, var>(
@@ -429,7 +435,7 @@ TEST(StanMath_integrate_1d_impl_rev,
   EXPECT_LT(std::abs(12.0 - b.adj()), 1e-8);
 }
 
-TEST(StanMath_integrate_1d_impl_rev, TestBeta) {
+TEST_F(AgradRev, StanMath_integrate_1d_impl_rev_TestBeta) {
   using stan::math::exp;
   using stan::math::integrate_1d_impl;
   using stan::math::var;
@@ -453,7 +459,7 @@ TEST(StanMath_integrate_1d_impl_rev, TestBeta) {
   EXPECT_FLOAT_EQ(1, 1 + g[1]);
 }
 
-TEST(StanMath_integrate_1d_impl_rev, TestCauchy) {
+TEST_F(AgradRev, StanMath_integrate_1d_impl_rev_TestCauchy) {
   using stan::math::exp;
   using stan::math::integrate_1d_impl;
   using stan::math::var;
@@ -479,7 +485,7 @@ TEST(StanMath_integrate_1d_impl_rev, TestCauchy) {
   EXPECT_FLOAT_EQ(1, 1 + g[1]);
 }
 
-TEST(StanMath_integrate_1d_impl_rev, TestChiSquare) {
+TEST_F(AgradRev, StanMath_integrate_1d_impl_rev_TestChiSquare) {
   using stan::math::exp;
   using stan::math::integrate_1d_impl;
   using stan::math::var;
@@ -502,7 +508,7 @@ TEST(StanMath_integrate_1d_impl_rev, TestChiSquare) {
   EXPECT_FLOAT_EQ(1, 1 + g[0]);
 }
 
-TEST(StanMath_integrate_1d_impl_rev, TestDoubleExponential) {
+TEST_F(AgradRev, StanMath_integrate_1d_impl_rev_TestDoubleExponential) {
   using stan::math::exp;
   using stan::math::integrate_1d;
   using stan::math::var;
@@ -530,7 +536,7 @@ TEST(StanMath_integrate_1d_impl_rev, TestDoubleExponential) {
   EXPECT_FLOAT_EQ(1, 1 + g[1]);
 }
 
-TEST(StanMath_integrate_1d_impl_rev, TestExponential) {
+TEST_F(AgradRev, StanMath_integrate_1d_impl_rev_TestExponential) {
   using stan::math::exp;
   using stan::math::integrate_1d_impl;
   using stan::math::var;
@@ -553,7 +559,7 @@ TEST(StanMath_integrate_1d_impl_rev, TestExponential) {
   EXPECT_FLOAT_EQ(1, 1 + g[0]);
 }
 
-TEST(StanMath_integrate_1d_impl_rev, TestFrechet) {
+TEST_F(AgradRev, StanMath_integrate_1d_impl_rev_TestFrechet) {
   using stan::math::exp;
   using stan::math::integrate_1d_impl;
   using stan::math::var;
@@ -579,7 +585,7 @@ TEST(StanMath_integrate_1d_impl_rev, TestFrechet) {
   EXPECT_FLOAT_EQ(1, 1 + g[1]);
 }
 
-TEST(StanMath_integrate_1d_impl_rev, TestGamma) {
+TEST_F(AgradRev, StanMath_integrate_1d_impl_rev_TestGamma) {
   using stan::math::exp;
   using stan::math::integrate_1d_impl;
   using stan::math::var;
@@ -605,7 +611,7 @@ TEST(StanMath_integrate_1d_impl_rev, TestGamma) {
   EXPECT_FLOAT_EQ(1, 1 + g[1]);
 }
 
-TEST(StanMath_integrate_1d_impl_rev, TestGumbel) {
+TEST_F(AgradRev, StanMath_integrate_1d_impl_rev_TestGumbel) {
   using stan::math::exp;
   using stan::math::integrate_1d_impl;
   using stan::math::var;
@@ -631,7 +637,7 @@ TEST(StanMath_integrate_1d_impl_rev, TestGumbel) {
   EXPECT_FLOAT_EQ(1, 1 + g[1]);
 }
 
-TEST(StanMath_integrate_1d_impl_rev, TestInvChiSquared) {
+TEST_F(AgradRev, StanMath_integrate_1d_impl_rev_TestInvChiSquared) {
   using stan::math::exp;
   using stan::math::integrate_1d_impl;
   using stan::math::var;
@@ -655,7 +661,7 @@ TEST(StanMath_integrate_1d_impl_rev, TestInvChiSquared) {
   EXPECT_FLOAT_EQ(1, 1 + g[0]);
 }
 
-TEST(StanMath_integrate_1d_impl_rev, TestLogistic) {
+TEST_F(AgradRev, StanMath_integrate_1d_impl_rev_TestLogistic) {
   using stan::math::exp;
   using stan::math::integrate_1d_impl;
   using stan::math::var;
@@ -681,7 +687,7 @@ TEST(StanMath_integrate_1d_impl_rev, TestLogistic) {
   EXPECT_FLOAT_EQ(1, 1 + g[1]);
 }
 
-TEST(StanMath_integrate_1d_impl_rev, TestLogNormal) {
+TEST_F(AgradRev, StanMath_integrate_1d_impl_rev_TestLogNormal) {
   using stan::math::exp;
   using stan::math::integrate_1d_impl;
   using stan::math::var;
@@ -707,7 +713,7 @@ TEST(StanMath_integrate_1d_impl_rev, TestLogNormal) {
   EXPECT_FLOAT_EQ(1, 1 + g[1]);
 }
 
-TEST(StanMath_integrate_1d_impl_rev, TestNormal) {
+TEST_F(AgradRev, StanMath_integrate_1d_impl_rev_TestNormal) {
   using stan::math::exp;
   using stan::math::integrate_1d_impl;
   using stan::math::var;
@@ -733,7 +739,7 @@ TEST(StanMath_integrate_1d_impl_rev, TestNormal) {
   EXPECT_FLOAT_EQ(1, 1 + g[1]);
 }
 
-TEST(StanMath_integrate_1d_impl_rev, TestPareto) {
+TEST_F(AgradRev, StanMath_integrate_1d_impl_rev_TestPareto) {
   using stan::math::exp;
   using stan::math::integrate_1d_impl;
   using stan::math::var;
@@ -759,7 +765,7 @@ TEST(StanMath_integrate_1d_impl_rev, TestPareto) {
   EXPECT_FLOAT_EQ(1, 1 + g[1]);
 }
 
-TEST(StanMath_integrate_1d_impl_rev, TestPareto2) {
+TEST_F(AgradRev, StanMath_integrate_1d_impl_rev_TestPareto2) {
   using stan::math::exp;
   using stan::math::integrate_1d_impl;
   using stan::math::var;
@@ -787,7 +793,7 @@ TEST(StanMath_integrate_1d_impl_rev, TestPareto2) {
   EXPECT_FLOAT_EQ(1, 1 + g[2]);
 }
 
-TEST(StanMath_integrate_1d_impl_rev, TestRayleigh) {
+TEST_F(AgradRev, StanMath_integrate_1d_impl_rev_TestRayleigh) {
   using stan::math::exp;
   using stan::math::integrate_1d_impl;
   using stan::math::var;
@@ -810,7 +816,7 @@ TEST(StanMath_integrate_1d_impl_rev, TestRayleigh) {
   EXPECT_FLOAT_EQ(1, 1 + g[0]);
 }
 
-TEST(StanMath_integrate_1d_impl_rev, TestScaledInvChiSquare) {
+TEST_F(AgradRev, StanMath_integrate_1d_impl_rev_TestScaledInvChiSquare) {
   using stan::math::exp;
   using stan::math::integrate_1d_impl;
   using stan::math::var;
@@ -836,7 +842,7 @@ TEST(StanMath_integrate_1d_impl_rev, TestScaledInvChiSquare) {
   EXPECT_FLOAT_EQ(1, 1 + g[1]);
 }
 
-TEST(StanMath_integrate_1d_impl_rev, TestStudentT) {
+TEST_F(AgradRev, StanMath_integrate_1d_impl_rev_TestStudentT) {
   using stan::math::exp;
   using stan::math::integrate_1d_impl;
   using stan::math::var;
@@ -864,7 +870,7 @@ TEST(StanMath_integrate_1d_impl_rev, TestStudentT) {
   EXPECT_FLOAT_EQ(1, 1 + g[2]);
 }
 
-TEST(StanMath_integrate_1d_impl_rev, TestUniform) {
+TEST_F(AgradRev, StanMath_integrate_1d_impl_rev_TestUniform) {
   using stan::math::exp;
   using stan::math::integrate_1d_impl;
   using stan::math::var;
@@ -888,7 +894,7 @@ TEST(StanMath_integrate_1d_impl_rev, TestUniform) {
   EXPECT_FLOAT_EQ(1, 1 + g[1]);
 }
 
-TEST(StanMath_integrate_1d_impl_rev, TestVonMises) {
+TEST_F(AgradRev, StanMath_integrate_1d_impl_rev_TestVonMises) {
   using stan::math::exp;
   using stan::math::integrate_1d_impl;
   using stan::math::var;
@@ -914,7 +920,7 @@ TEST(StanMath_integrate_1d_impl_rev, TestVonMises) {
   EXPECT_FLOAT_EQ(1, 1 + g[1]);
 }
 
-TEST(StanMath_integrate_1d_impl_rev, TestWeibull) {
+TEST_F(AgradRev, StanMath_integrate_1d_impl_rev_TestWeibull) {
   using stan::math::exp;
   using stan::math::integrate_1d_impl;
   using stan::math::var;

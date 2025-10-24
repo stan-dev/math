@@ -1,4 +1,5 @@
 #include <stan/math/rev/meta.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
@@ -9,7 +10,7 @@ inline void expect_not_const() {
   EXPECT_FALSE(temp);
 }
 
-TEST(MetaTraitsRevScal, isConstantStruct) {
+TEST_F(AgradRev, MetaTraitsRevScal_isConstantStruct) {
   expect_not_const<stan::math::var>();
   expect_not_const<stan::math::var, double>();
   expect_not_const<stan::math::var, double, stan::math::var>();
@@ -18,7 +19,7 @@ TEST(MetaTraitsRevScal, isConstantStruct) {
                    stan::math::var, stan::math::var, double, double>();
 }
 
-TEST(MetaTraitsRevArr, isConstantStruct) {
+TEST_F(AgradRev, MetaTraitsRevArr_isConstantStruct) {
   using std::vector;
 
   expect_not_const<vector<stan::math::var> >();
@@ -46,7 +47,7 @@ using var_v1 = Eigen::Matrix<stan::math::var, 1, Eigen::Dynamic>;
 using var_v2 = std::vector<var_v1>;
 using var_v3 = std::vector<var_v2>;
 
-TEST(MetaTraitsRevMat, isConstantStruct) {
+TEST_F(AgradRev, MetaTraitsRevMat_isConstantStruct) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::vector;

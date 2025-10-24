@@ -55,7 +55,7 @@ TEST_F(agrad_distributions_multi_gp_cholesky, ProptoSigma) {
                                        "var: sigma");
 }
 
-TEST(ProbDistributionsMultiGPCholesky, MultiGPCholeskyVar) {
+TEST_F(AgradRev, ProbDistributionsMultiGPCholesky_MultiGPCholeskyVar) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -70,7 +70,8 @@ TEST(ProbDistributionsMultiGPCholesky, MultiGPCholeskyVar) {
                   stan::math::multi_gp_cholesky_lpdf(y, L, w).val());
 }
 
-TEST(ProbDistributionsMultiGPCholesky, MultiGPCholeskyGradientUnivariate) {
+TEST_F(AgradRev,
+       ProbDistributionsMultiGPCholesky_MultiGPCholeskyGradientUnivariate) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::VectorXd;
@@ -168,7 +169,7 @@ struct multi_gp_cholesky_fun {
   }
 };
 
-TEST(MultiGPCholesky, TestGradFunctional) {
+TEST_F(AgradRev, MultiGPCholesky_TestGradFunctional) {
   std::vector<double> x(3 * 2 + 3 + 3);
   // y
   x[0] = 1.0;
@@ -199,7 +200,7 @@ TEST(MultiGPCholesky, TestGradFunctional) {
   test_grad(multi_gp_cholesky_fun(1, 1), u);
 }
 
-TEST(ProbDistributionsMultiGPCholesky, check_varis_on_stack) {
+TEST_F(AgradRev, ProbDistributionsMultiGPCholesky_check_varis_on_stack) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::to_var;

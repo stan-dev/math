@@ -15,7 +15,7 @@ inline void expect_propto_multinomial(std::vector<int>& ns1, T_prob theta1,
                   stan::math::multinomial_lpmf<true>(ns2, theta2), message);
 }
 
-TEST(AgradDistributionsMultinomial, Propto) {
+TEST_F(AgradRev, DistributionsMultinomial_Propto) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -31,7 +31,7 @@ TEST(AgradDistributionsMultinomial, Propto) {
   expect_propto_multinomial(ns, theta1, ns, theta2, "var: theta");
 }
 
-TEST(AgradDistributionsMultinomial, check_varis_on_stack) {
+TEST_F(AgradRev, DistributionsMultinomial_check_varis_on_stack) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;

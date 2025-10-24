@@ -1,10 +1,11 @@
 #include <stan/math/rev.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(AgradRev, value_of_rec) {
+TEST_F(AgradRev, Rev_value_of_rec) {
   using stan::math::value_of_rec;
   using stan::math::var;
 
@@ -13,7 +14,7 @@ TEST(AgradRev, value_of_rec) {
   EXPECT_FLOAT_EQ(5.0, value_of_rec(v_a));
 }
 
-TEST(MathMatrixRevArr, value_of_rec) {
+TEST_F(AgradRev, MathMatrixRevArr_value_of_rec) {
   using stan::math::value_of_rec;
   using stan::math::var;
   using std::vector;
@@ -41,7 +42,7 @@ TEST(MathMatrixRevArr, value_of_rec) {
     EXPECT_FLOAT_EQ(a[i].val(), d_a[i]);
 }
 
-TEST(AgradMatrixRev, value_of_rec) {
+TEST_F(AgradRev, MatrixRev_value_of_rec) {
   using stan::math::value_of_rec;
   using stan::math::var;
   using std::vector;
@@ -79,7 +80,7 @@ TEST(AgradMatrixRev, value_of_rec) {
     }
 }
 
-TEST(AgradMatrixRev, value_of_rec_expression) {
+TEST_F(AgradRev, MatrixRev_value_of_rec_expression) {
   using Eigen::Matrix;
   using Eigen::MatrixXd;
   using stan::math::value_of;
@@ -91,7 +92,7 @@ TEST(AgradMatrixRev, value_of_rec_expression) {
   EXPECT_MATRIX_NEAR(res, correct, 1e-10);
 }
 
-TEST(AgradMatrixRev, value_of_rec_matrix_rvalue) {
+TEST_F(AgradRev, MatrixRev_value_of_rec_matrix_rvalue) {
   using Eigen::Matrix;
   using Eigen::MatrixXd;
   using stan::math::value_of;

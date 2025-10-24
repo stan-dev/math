@@ -2,6 +2,7 @@
 #include <stan/math/prim/fun.hpp>
 #include <stan/math/prim/prob.hpp>
 #include <stan/math/rev.hpp>
+#include <test/unit/math/rev/util.hpp>
 
 #include <gtest/gtest.h>
 #include <vector>
@@ -29,7 +30,7 @@ inline void check_scalar_types(F& f, double value, double res, double deriv) {
   EXPECT_NEAR(value_var.adj(), deriv, err_tol);
 }
 
-TEST(ProbWienerFull, wiener_full_all_scalar) {
+TEST_F(AgradRev, ProbWienerFull_wiener_full_all_scalar) {
   // tests all parameter types individually, with other
   // parameters set to double
   using stan::math::wiener_lpdf;
@@ -110,7 +111,7 @@ TEST(ProbWienerFull, wiener_full_all_scalar) {
   }
 }
 
-TEST(ProbWienerFullPrec, wiener_full_prec_all_scalar) {
+TEST_F(AgradRev, ProbWienerFullPrec_wiener_full_prec_all_scalar) {
   // tests all parameter types individually, with other parameters
   // set to double
   using stan::math::wiener_lpdf;
@@ -220,7 +221,7 @@ inline void check_vector_types(F& f, std::vector<double> value, double res) {
   EXPECT_NEAR(value_of(result_var), res, err_tol);
 }
 
-TEST(ProbWienerFull, wiener_full_all_vector) {
+TEST_F(AgradRev, ProbWienerFull_wiener_full_all_vector) {
   // tests all parameter types individually, with other
   // parameters set to std::vector<double>
   using stan::math::wiener_lpdf;
