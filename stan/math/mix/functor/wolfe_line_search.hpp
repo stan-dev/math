@@ -34,6 +34,9 @@ namespace stan::math {
  * and numerical tolerances.
  */
 struct laplace_line_search_options {
+  constexpr explicit laplace_line_search_options(int max_iter) : max_iterations(max_iter) {}
+  constexpr laplace_line_search_options() = default;
+  int max_iterations{1000};
   /**
    * @brief Armijo condition parameter (sufficient decrease).
    *
@@ -103,7 +106,6 @@ struct laplace_line_search_options {
 
   double rel_grad_threshold{1e-3};  // off by default
   double rel_obj_threshold{1e-10};  // off by default
-  int max_iterations{1000};
 };
 namespace internal {
 namespace debug {
@@ -389,6 +391,9 @@ struct Eval {
   inline const auto& obj() const { return obj_; }
   inline auto&& dir() { return dir_; }
   inline const auto& dir() const { return dir_; }
+  constexpr Eval(double alpha, double obj, double dir)
+      : alpha_(alpha), obj_(obj), dir_(dir) {}
+  constexpr explicit Eval() = default;
 };
 
 struct WolfeData {
@@ -396,11 +401,30 @@ struct WolfeData {
   Eigen::VectorXd theta_grad_;
   Eigen::VectorXd a_;
   Eval eval_;
-  WolfeData(Eigen::Index n)
+  explicit WolfeData(Eigen::Index n)
       : theta_(Eigen::VectorXd::Zero(n)),
         theta_grad_(Eigen::VectorXd::Zero(n)),
         a_(Eigen::VectorXd::Zero(n)),
         eval_() {}
+
+  template <typename ObjFun, typename LLFun, typename LLArgs, typename Theta0, typename Msgs>
+  WolfeData(ObjFun&& obj_fun, Eigen::Index n,
+            const Theta0& theta0,
+            const LLFun& ll_fun,
+            const LLArgs& ll_args, Msgs&& msgs)
+      : theta_(theta0),
+        theta_grad_(laplace_likelihood::theta_grad(ll_fun, theta_, ll_args, msgs)),
+        a_(Eigen::VectorXd::Zero(n)),
+        eval_(1.0, obj_fun(a_, theta_), 0.0) {}
+
+  // Initialize with theta = 0
+  template <typename LLFun, typename LLArgs, typename Msgs>
+  WolfeData(Eigen::Index n,
+            const LLFun& ll_fun,
+            const LLArgs& ll_args,
+            const Msgs& msgs)
+      : WolfeData(n, Eigen::VectorXd::Zero(n), ll_fun, ll_args, msgs) {}
+
   void swap(WolfeData& other) {
     theta_.swap(other.theta_);
     theta_grad_.swap(other.theta_grad_);
@@ -433,9 +457,17 @@ struct WolfeInfo {
   WolfeData scratch_;
   Eigen::VectorXd p_;
   double init_dir_;
-  WolfeInfo(Eigen::Index n)
+  template <typename ObjFun, typename LLFun, typename LLArgs, typename Theta0, typename Msgs>
+  WolfeInfo(ObjFun&& obj_fun, Eigen::Index n,
+            const Theta0& theta0,
+            const LLFun& ll_fun,
+            const LLArgs& ll_args, Msgs&& msgs)
+      : curr_(std::forward<ObjFun>(obj_fun), n, theta0, ll_fun, ll_args, msgs),
+        prev_(curr_),
+        scratch_(n) {}
+  explicit WolfeInfo(Eigen::Index n)
       : curr_(n),
-        prev_(n),
+        prev_(curr_),
         scratch_(n),
         p_(Eigen::VectorXd::Zero(n)),
         init_dir_(0.0) {}

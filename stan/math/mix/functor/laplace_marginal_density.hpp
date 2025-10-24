@@ -39,8 +39,6 @@ struct laplace_options_base {
    * using an LU decomposition (more general, but slower)
    */
   int solver{1};
-  /* Maximum number of steps in line search */
-  int max_steps_line_search{100};
   /* iterations end when difference in objective function is less than tolerance
    */
   double tolerance{1e-12};
@@ -422,7 +420,7 @@ inline double barzilai_borwein_step_size(const Eigen::VectorXd& s,
  */
 template <typename LLFun, typename LLTupleArgs, typename CovarMat,
           bool InitTheta,
-          require_t<is_all_arithmetic_scalar<CovarMat>>* = nullptr>
+          require_t<is_all_arithmetic_scalar<CovarMat, LLTupleArgs>>* = nullptr>
 inline auto laplace_marginal_density_est(
     LLFun&& ll_fun, LLTupleArgs&& ll_args, CovarMat&& covariance,
     const laplace_options<InitTheta>& options, std::ostream* msgs) {
@@ -485,34 +483,26 @@ inline auto laplace_marginal_density_est(
         std::string("laplace_marginal_density: max number of iterations: ")
         + std::to_string(max_num_steps) + " exceeded.");
   };
-  auto ll_args_vals = value_of(ll_args);
-  internal::WolfeInfo wolfe_info(theta_size);
-  auto&& curr = wolfe_info.curr_;
-  auto&& prev = wolfe_info.prev_;
-  curr.theta() = [theta_size, &options]() {
-    if constexpr (InitTheta) {
-      return options.theta_0;
-    } else {
-      return Eigen::VectorXd::Zero(theta_size);
-    }
-  }();
-  curr.theta_grad()
-      = laplace_likelihood::theta_grad(ll_fun, curr.theta(), ll_args, msgs);
-  curr.alpha() = 1.0;
-  // Setup initial a
   auto obj_fun = [&](const Eigen::VectorXd& a_val, auto&& theta_val) -> double {
     return -0.5 * a_val.dot(theta_val)
-           + laplace_likelihood::log_likelihood(ll_fun, theta_val, ll_args_vals,
+           + laplace_likelihood::log_likelihood(ll_fun, theta_val, ll_args,
                                                 msgs);
   };
-  curr.a() = Eigen::VectorXd::Zero(theta_size);
-  curr.obj() = obj_fun(curr.a(), curr.theta());
+  internal::WolfeInfo wolfe_info(obj_fun, theta_size,
+    [theta_size, &options]() -> decltype(auto) {
+      if constexpr (InitTheta) {
+        return options.theta_0;
+      } else {
+        return Eigen::VectorXd::Zero(theta_size);
+      }
+    }(), ll_fun, ll_args, msgs);
+  auto&& curr = wolfe_info.curr_;
+  auto&& prev = wolfe_info.prev_;
   if (!std::isfinite(curr.obj())) {
     throw std::domain_error(
         "laplace_marginal_density: log likelihood is not finite at initial "
         "theta and likelihood arguments.");
   }
-  prev = curr;
   Eigen::MatrixXd B(theta_size, theta_size);
   Eigen::VectorXd b(theta_size);
   // FIXME: We should use less full scope referencing here. Hard to follow
@@ -537,6 +527,7 @@ inline auto laplace_marginal_density_est(
   // Start with safe step size
   wolfe_status.num_backtracks_ = 99;
   int iter = 0;
+
   auto update_line_search = [&grad_fun, &ll_fun, &ll_args, &msgs, &covariance,
                              &update_step,
                              &options](auto&& wolfe_status, auto&& wolfe_info,

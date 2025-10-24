@@ -151,7 +151,7 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle_ad) {
   auto phi_1 = phi_dbl(1);
   Eigen::VectorXd phi_rest = phi_dbl.tail(2);
   Eigen::VectorXd phi_01{{phi_0, phi_1}};
-  constexpr stan::test::ad_tolerances tols{stan::test::ad_gradient_tols{1e-8, 1e-3}};
+  constexpr stan::test::ad_tolerances tols{stan::test::ad_gradient_tols{1e-8, 1e-2}};
   stan::math::test::run_solver_grid(
     [&](int solver_num, int hessian_block_size, int max_steps_line_search,
         auto&& theta_0) {

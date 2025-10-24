@@ -34,8 +34,8 @@ inline auto laplace_marginal_tol(
     int max_num_steps, const int hessian_block_size, const int solver,
     const int max_steps_line_search, std::ostream* msgs) {
   laplace_options_user_supplied ops{hessian_block_size,    solver,
-                                    max_steps_line_search, tolerance,
-                                    max_num_steps, laplace_line_search_options{}, 
+                                    tolerance,
+                                    max_num_steps, laplace_line_search_options{max_steps_line_search},
                                     value_of(theta_0)};
   return laplace_marginal_density(
       std::forward<LFun>(L_f), std::forward<LArgs>(l_args),

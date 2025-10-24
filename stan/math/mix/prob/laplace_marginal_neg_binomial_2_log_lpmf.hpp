@@ -86,8 +86,8 @@ inline auto laplace_marginal_tol_neg_binomial_2_log_lpmf(
     const int hessian_block_size, const int solver,
     const int max_steps_line_search, std::ostream* msgs) {
   laplace_options_user_supplied ops{hessian_block_size,    solver,
-                                    max_steps_line_search, tolerance,
-                                    max_num_steps, laplace_line_search_options{},
+                                    tolerance,
+                                    max_num_steps, laplace_line_search_options{max_steps_line_search},
                                     value_of(theta_0)};
   return laplace_marginal_density(
       neg_binomial_2_log_likelihood{},
@@ -187,8 +187,8 @@ inline auto laplace_marginal_tol_neg_binomial_2_log_summary_lpmf(
     const int hessian_block_size, const int solver,
     const int max_steps_line_search, std::ostream* msgs) {
   laplace_options_user_supplied ops{hessian_block_size,    solver,
-                                    max_steps_line_search, tolerance,
-                                    max_num_steps, laplace_line_search_options{},
+                                    tolerance,
+                                    max_num_steps, laplace_line_search_options{max_steps_line_search},
                                     value_of(theta_0)};
   return laplace_marginal_density(
       neg_binomial_2_log_likelihood_summary{},
