@@ -330,6 +330,9 @@ enum class WolfeReturn : uint8_t {
   Continue
 };
 
+/**
+ * Struct to hold the result status of the Wolfe line search.
+ */
 struct WolfeStatus {
   // total updates/evaluations
   int num_evals_{0};
@@ -350,6 +353,9 @@ struct WolfeStatus {
         success_{success} {}
 };
 
+/**
+ * Helper function for pretty printing
+ */
 inline auto wolfe_status_str(WolfeStatus s) {
   switch (s.stop_) {
     case WolfeReturn::Wolfe:
@@ -379,12 +385,16 @@ inline auto wolfe_status_str(WolfeStatus s) {
   }
 }
 
-inline bool wolfe_stop(const WolfeStatus& status) { return status.success_; }
-
+/**
+ * evaluation struct for Wolfe line search
+ */
 struct Eval {
-  double alpha_{0.0};  // alpha
-  double obj_{0.0};    // obj
-  double dir_{0.0};    // directional derivative
+  // alpha
+  double alpha_{0.0};
+  // obj
+  double obj_{0.0};
+  // directional derivative
+  double dir_{0.0};
   inline auto&& alpha() { return alpha_; }
   inline const auto& alpha() const { return alpha_; }
   inline auto&& obj() { return obj_; }
@@ -396,10 +406,17 @@ struct Eval {
   constexpr explicit Eval() = default;
 };
 
+/**
+ * Data used in current evaluation of wolfe line search at a particular stepsize
+ */
 struct WolfeData {
+  // current parameter values
   Eigen::VectorXd theta_;
+  // parameter gradients
   Eigen::VectorXd theta_grad_;
+  // latent variable
   Eigen::VectorXd a_;
+  // evaluation data
   Eval eval_;
   explicit WolfeData(Eigen::Index n)
       : theta_(Eigen::VectorXd::Zero(n)),
@@ -407,13 +424,21 @@ struct WolfeData {
         a_(Eigen::VectorXd::Zero(n)),
         eval_() {}
 
-  template <typename ObjFun, typename LLFun, typename LLArgs, typename Theta0, typename Msgs>
+  template <typename ObjFun, typename ThetaGradF, typename Theta0>
+  WolfeData(ObjFun&& obj_fun, const Eigen::VectorXd& a,
+            const Theta0& theta0,
+            ThetaGradF&& theta_grad_f)
+      : theta_(theta0),
+        theta_grad_(theta_grad_f(theta_)),
+        a_(a),
+        eval_(1.0, obj_fun(a_, theta_), 0.0) {}
+
+        template <typename ObjFun, typename ThetaGradF, typename Theta0>
   WolfeData(ObjFun&& obj_fun, Eigen::Index n,
             const Theta0& theta0,
-            const LLFun& ll_fun,
-            const LLArgs& ll_args, Msgs&& msgs)
+            ThetaGradF&& theta_grad_f)
       : theta_(theta0),
-        theta_grad_(laplace_likelihood::theta_grad(ll_fun, theta_, ll_args, msgs)),
+        theta_grad_(theta_grad_f(theta_)),
         a_(Eigen::VectorXd::Zero(n)),
         eval_(1.0, obj_fun(a_, theta_), 0.0) {}
 
@@ -425,13 +450,13 @@ struct WolfeData {
             const Msgs& msgs)
       : WolfeData(n, Eigen::VectorXd::Zero(n), ll_fun, ll_args, msgs) {}
 
-  void swap(WolfeData& other) {
+  void update(WolfeData& other) {
     theta_.swap(other.theta_);
     theta_grad_.swap(other.theta_grad_);
     a_.swap(other.a_);
     eval_ = other.eval_;
   }
-  void swap(WolfeData& other, Eval& eval) {
+  void update(WolfeData& other, Eval& eval) {
     theta_.swap(other.theta_);
     a_.swap(other.a_);
     theta_grad_.swap(other.theta_grad_);
@@ -451,96 +476,208 @@ struct WolfeData {
   inline const auto& dir() const { return eval_.dir(); }
 };
 
+/**
+ * Data object used in wolfe line search
+ */
 struct WolfeInfo {
+  // Current step data. On output will be the proposal step
   WolfeData curr_;
+  // Previous step data
   WolfeData prev_;
+  // Scratch space for evaluations of proposal steps
   WolfeData scratch_;
+  // Search direction
   Eigen::VectorXd p_;
+  // Initial directional derivative
   double init_dir_;
-  template <typename ObjFun, typename LLFun, typename LLArgs, typename Theta0, typename Msgs>
+  template <typename ObjFun, typename Theta0, typename ThetaGradF>
   WolfeInfo(ObjFun&& obj_fun, Eigen::Index n,
-            const Theta0& theta0,
-            const LLFun& ll_fun,
-            const LLArgs& ll_args, Msgs&& msgs)
-      : curr_(std::forward<ObjFun>(obj_fun), n, theta0, ll_fun, ll_args, msgs),
+            Theta0&& theta0,
+            ThetaGradF&& theta_grad_f)
+      : curr_(std::forward<ObjFun>(obj_fun), n, std::forward<Theta0>(theta0), std::forward<ThetaGradF>(theta_grad_f)),
         prev_(curr_),
-        scratch_(n) {}
+        scratch_(n) {
+        if (!std::isfinite(curr_.obj())) {
+          throw std::domain_error(
+              "laplace_marginal_density: log likelihood is not finite at initial "
+              "theta and likelihood arguments.");
+        }
+      }
+  WolfeInfo(WolfeData&& curr, WolfeData&& prev)
+      : curr_(std::move(curr)),
+        prev_(std::move(prev)),
+        scratch_(curr_.theta().size()),
+        p_(Eigen::VectorXd::Zero(curr_.theta().size())),
+        init_dir_(0.0) {}
   explicit WolfeInfo(Eigen::Index n)
       : curr_(n),
         prev_(curr_),
         scratch_(n),
         p_(Eigen::VectorXd::Zero(n)),
         init_dir_(0.0) {}
-  void swap() {
-    curr_.swap(prev_);
-    curr_.swap(scratch_);
-  }
 };
 
 /**
- * @brief  Strong‑Wolfe line search with cubic‑interpolation "zoom" for
- *Laplace‐style log‑likelihood problems.
+ * @brief Strong-Wolfe line search with expansion, bracketing, and cubic/bisection zoom
  *
- * This routine searches along the space of the latent gaussian *a*
- * \f$a(\alpha) = prev.a() + \alpha p`, `p = a − prev.a()\f$,
- * looking for the largest step \f$\alpha\f$ that satisfies the **strong‑Wolfe**
- * conditions
+ * This routine searches along the ray
+ * \f[
+ *   a(\alpha) = a_0 + \alpha\,p,\qquad p = a_1 - a_0,
+ * \f]
+ * to find the largest step \f$\alpha\f$ that satisfies the **strong-Wolfe** conditions
  *
  * \f{align*}{
- *   \phi(\alpha) &\;\ge\; \phi(0) + c_1 \alpha \phi'(0) \quad\text{(Armijo)},\\
- *   |\phi'(\alpha)| &\;\le\; c_2 |\phi'(0)| \quad\text{(curvature)}, \f}
+ *   \phi(\alpha) &\le \phi(0) + c_1\,\alpha\,\phi'(0) \quad\text{(Armijo)},\\
+ *   |\phi'(\alpha)| &\le c_2\,|\phi'(0)| \quad\text{(curvature)},
+ * \f}
  *
- * where
- *  \f$\phi(\alpha)=\text{obj\_fun}\bigl(a(\alpha),\;\theta(\alpha)\bigr)\f$,
- *  \f$\theta(\alpha)=\text{covariance}\;·\;a(\alpha)\f$,
- *  \f$\phi'(\alpha)=\nabla\phi(\alpha)^{\!T} p\f$.
- * The search proceeds in several phases. At any phase if Armijo and Wolfe are
- *satisfied we exit.
+ * where \f$\phi(\alpha)\f$ is the objective at \f$a(\alpha)\f$ and
+ * \f$\phi'(\alpha)=\nabla\phi(a(\alpha))^\top p\f$ is the directional derivative.
  *
- *  1. Contraction: starting from the initial \f$\alpha*2\f$ in `curr_.alpha()`,
- *   shrink \f$\alpha\f$ by `opt.tau` until theta and theta's gradient
- *   are finite.
- *  2. Expansion: If the $alpha$ is a step that satisfies Armijo and Wolfe.
- *Aggressively expand \f$\alpha\f$ by `opt.scale_up`.
- *  3. Low and High bracketing:
- *   Low is initially set as $alpha=0$ and high as the current step. If Armijo
- *passes for high and the directional derivative is positive, then we set low to
- *high and double high. Once we find a `high` that fails armijo, or has a
- *negative directional derivative, we exit with our high and low brackets set.
+ * ## How the search proceeds (phases)
  *
- *  4. **Cubic zoom** – repeatedly fit a cubic through the bracket end‑points
- *     (`cubic_interp`), evaluate the objective/gradient at the
- *     predicted maximiser, and shrink the bracket until a Wolfe‑compliant
- *     step is found or the interval width falls below `opt.min_alpha`.
+ * The algorithm works with a *left* point `low` and a *right* point `high`,
+ * stores the “best so far” Armijo-OK point `best`, and reuses a scratch buffer
+ * to avoid recomputation when a step is finally accepted.
  *
- * * **Early‑exit for \f$\alpha\f$ = 1 or < `min_alpha`** Laplace problems
- *commonly accept a full Newton step. The function short‑circuits to avoid any
- *extra work.
+ * 1. **Numerical contraction (pre-check).**
+ *    Start from \f$\alpha_0=\mathrm{clamp}( \text{curr.alpha} \cdot \text{opt.scale_up},
+ *    \text{opt.min_alpha}, \text{opt.max_alpha})\f$.
+ *    Evaluate \f$\phi(\alpha_0)\f$ and the derived state. If either the objective
+ *    or derived quantities (e.g. \f$\theta(\alpha)\f$, its gradient) are non-finite,
+ *    shrink \f$\alpha \leftarrow \alpha \cdot \text{opt.tau}\f$ until everything is finite.
+ *    **Ends when** values become finite → continue, or \f$\alpha<\text{opt.min_alpha}\f$
+ *    → **returns** `StepTooSmall`.
  *
- * @tparam F Type of the log‑likelihood function.
- * @tparam Obj Type of the objective function.
- * @tparam Grad Type of the gradient function.
- * @tparam LLArgs Type of additional arguments to the log‑likelihood function.
- * @tparam Stream Type of the output stream for messages.
- * @tparam Options Type of the Wolfe line search options.
- * @param wolfe_info Struct holding current, previous, and scratch data.
- * @param ll_fun Log‑likelihood function.
- * @param obj_fun Objective function.
- * @param grad_fun Gradient function.
- * @param ll_args Additional arguments to the log‑likelihood function.
- * @param opt Wolfe line search options.
- * @param msgs Output stream for messages.
- * @return A `WolfeStatus` struct indicating the result of the line search.
- * If successful, `wolfe_info.curr_` contains the new point.
- * @warning The helper `cubic_interp` assumes its first point
- *          corresponds to *g*(0)=0; do **not** alter the baseline
- *          initialisation logic or the interpolation will become
- *          inconsistent.
+ * 2. **Quick accept & “zoom-up”.**
+ *    If the current `high` satisfies **both** Armijo and curvature, repeatedly
+ *    *expand* \f$\alpha \leftarrow \alpha \cdot \text{opt.scale_up}\f$ while the
+ *    strong-Wolfe tests continue to pass, keeping the last valid step as `best`.
+ *    **Ends when** a test fails, \f$\alpha>\text{opt.max_alpha}\f$, or iteration limit
+ *    is reached. The function **returns** the last passing step with `Wolfe`.
+ *
+ * 3. **Expansion & right-bracketing.**
+ *    Otherwise, continue evaluating larger \f$\alpha\f$ values:
+ *    - If Armijo holds and \f$\phi'(\alpha)>0\f$, promote the left endpoint
+ *      `low ← high` and *expand* again. (We are on the “far side” of the minimum.)
+ *    - If Armijo holds but \f$\phi'(\alpha)\le 0\f$, or if Armijo fails, a right
+ *      endpoint has been found ⇒ stop expanding and proceed to zoom.
+ *    **Ends when** a right endpoint is found, \f$\alpha>\text{opt.max_alpha}\f$, or
+ *    iteration limit is reached.
+ *
+ * 4. **Safety bisection (optional).**
+ *    If both endpoints currently have positive directional derivatives, take pure
+ *    bisection steps until a sign change is observed or the interval is small.
+ *
+ * 5. **Cubic/bisection zoom.**
+ *    Repeatedly propose an interior point \f$\alpha_m\f$ using a cubic interpolation
+ *    of the bracket end-points (falling back to bisection when the cubic is
+ *    degenerate), evaluate there, and shrink the bracket according to:
+ *    - If Armijo and curvature hold → **returns** `Wolfe`.
+ *    - If Armijo holds but curvature fails → keep the better side; prefer the sub-interval
+ *      with a derivative sign change.
+ *    - If Armijo fails → move the right endpoint left.
+ *    Throughout zoom we remember the best Armijo-OK point `best` in case
+ *    strong-Wolfe cannot be satisfied.
+ *    **Ends when** the interval width is \f$\le\text{opt.min_alpha}\f$, a convergence
+ *    tolerance triggers, or the iteration limit is reached.
+ *
+ * 6. **Convergence/guard rails.**
+ *    After each evaluation we check:
+ *    - Gradient tolerance: \f$|\phi'(\alpha)| \le
+ *      \max(\text{opt.abs\_grad\_threshold},\ \text{opt.rel\_grad\_threshold}\,|\phi'(0)|)\f$.
+ *    - Objective change tolerance (for very small steps):
+ *      \f$|\phi(\alpha)-\phi(0)| \le
+ *      \max(\text{opt.abs\_obj\_threshold},\ \text{opt.rel\_obj\_threshold}\,(1+|\phi(0)|))\f$
+ *      and \f$\alpha < \text{opt.min_alpha}\f$.
+ *    If triggered, the routine returns one of `ConvergedGradient`,
+ *    `ConvergedObjective`, or `ConvergedObjectiveAndGradient`.
+ *    If neither test is met but the bracket becomes too small, it returns
+ *    `IntervalTooSmall` (accepting the current point only if it satisfies Armijo).
+ *
+ * If zoom exits without a strong-Wolfe point but an Armijo-OK point was seen, the
+ * routine **returns** `Armijo` at that best point; otherwise it **returns** `Fail`.
+ *
+ * ### Contract for the step evaluator `UpdateFun`
+ *
+ * The line search delegates *all* numerical work to a user-supplied callable
+ * `update_fun` that evaluates the objective and its directional derivative at a
+ * trial step and prepares the candidate state for acceptance.
+ *
+ * **Required signature**
+ * @code
+ * void update_fun(WolfeData& out, Eval& e, const Direction& p);
+ * @endcode
+ *
+ * **Inputs**
+ *  - `e.alpha()` is the trial step \f$\alpha\f$ to evaluate.
+ *  - `p` is the search direction.
+ *  - The baseline (point at \f$\alpha=0\f$) and its values live in
+ *    `wolfe_info.prev_` (made available when you constructed/captured `update_fun`).
+ *
+ * **You must:**
+ *  - Form the trial point \f$a(\alpha)=a_0+\alpha p\f$ and any derived quantities
+ *    your model needs (e.g., \f$\theta(\alpha)\f$, \f$\nabla\theta(\alpha)\f$).
+ *  - Compute the objective \f$\phi(\alpha)\f$ and set `e.obj()`.
+ *  - Compute the directional derivative \f$\phi'(\alpha)=\nabla\phi(a(\alpha))^\top p\f$
+ *    and set `e.dir()`.
+ *  - Populate `out` with the *entire* candidate state corresponding to \f$\alpha\f$
+ *    (e.g., parameters, `theta()`, `theta_grad()`, cached factors, etc.). The search
+ *    will call `out.swap(...)` to accept this state; **do not** mutate `curr_`/`prev_`.
+ *
+ * **Postconditions**
+ *  - `e.obj()` and `e.dir()` are finite when the step is numerically valid.
+ *  - `out.theta()` and `out.theta_grad()` are finite (used by the search to
+ *    detect numerical trouble).
+ *
+ * `update_fun` is free to close over `ll_fun` and `ll_args`. This routine itself
+ * does not call `ll_fun` directly; it simply invokes `update_fun` whenever it
+ * needs an evaluation.
+ *
+ * ### Options and tolerances
+ * The `opt` object must provide:
+ *  - `double c1, c2;`                          // Wolfe constants (0 < c1 < c2 < 1)
+ *  - `double tau;`                              // contraction factor (0 < tau < 1)
+ *  - `double scale_up;`                         // expansion factor (> 1)
+ *  - `double min_alpha, max_alpha;`             // step bounds
+ *  - `int    max_iterations;`                   // max number of calls to `update_fun`
+ *  - `double abs_grad_threshold, rel_grad_threshold;`
+ *  - `double abs_obj_threshold,  rel_obj_threshold;`
+ *
+ * @tparam Info Type providing the fields documented under *Wolfe line search data*.
+ * @tparam UpdateFun Callable used to evaluate a trial step; must satisfy the contract above.
+ * @tparam Options Type providing the fields documented under *Options and tolerances*.
+ * @tparam Stream Output stream type for diagnostics (e.g., `std::ostream`); may be `nullptr`.
+ *
+ * @param wolfe_info Line-search working set (holds `prev_`, `curr_`, `scratch_`,
+ *                    the direction `p_`, and the initial directional derivative).
+ * @param update_fun Callable that evaluates \f$\phi(\alpha)\f$, \f$\phi'(\alpha)\f$,
+ *                    and prepares the candidate state (see contract above).
+ * @param opt Wolfe and algorithmic options.
+ * @param msgs Optional stream for debug messages; pass `nullptr` to disable.
+ *
+ * @return `WolfeStatus` describing how the search ended:
+ *  - `Wolfe` — Found a step satisfying **both** Armijo and curvature; `curr_` updated.
+ *  - `Armijo` — Could not satisfy curvature; returns the best Armijo-OK step; `curr_` updated.
+ *  - `ConvergedGradient` — \f$|\phi'(\alpha)|\f$ below tolerance at a tiny step; `curr_` may
+ *    be updated iff that point also satisfies Armijo.
+ *  - `ConvergedObjective` — Objective improvement below tolerance at a tiny step; same acceptance rule.
+ *  - `ConvergedObjectiveAndGradient` — Both tests met; same acceptance rule.
+ *  - `IntervalTooSmall` — Bracket is smaller than `min_alpha` without meeting strong-Wolfe;
+ *    accepts the current point only if Armijo holds.
+ *  - `StepTooSmall` — Numerical contraction drove \f$\alpha<\text{min_alpha}\f$ before a finite evaluation.
+ *  - `ReachedMaxStep` — Exceeded `max_iterations`; if the best Armijo-OK point exists it is returned
+ *    (and may be `Wolfe` or `Armijo`), otherwise search aborts without updating `curr_`.
+ *  - `Fail` — No Armijo-OK point was found; `curr_` is left unchanged.
+ *
+ * The status also reports:
+ *  - `num_evals` — total calls to `update_fun`.
+ *  - `num_backtracks` — times the step was reduced during bracketing/zoom.
+ *  - `accepted` — whether `curr_` was updated to a new point.
  */
-template <typename F, class UpdateFun, typename LLArgs, typename Stream,
-          typename Options>
-inline WolfeStatus wolfe_line_search(WolfeInfo& wolfe_info, F&& ll_fun,
-                                     UpdateFun&& update_fun, LLArgs&& ll_args,
+template <typename Info, typename UpdateFun, typename Options, typename Stream>
+inline WolfeStatus wolfe_line_search(Info& wolfe_info,
+                                     UpdateFun&& update_fun,
                                      Options&& opt, Stream* msgs) {
   auto& curr = wolfe_info.curr_;
   auto& prev = wolfe_info.prev_;
@@ -557,16 +694,16 @@ inline WolfeStatus wolfe_line_search(WolfeInfo& wolfe_info, F&& ll_fun,
   };
   int total_updates = 0;
   auto assign_step
-      = [](WolfeData& out, WolfeData& buf, Eval& e) { out.swap(buf, e); };
+      = [](WolfeData& out, WolfeData& buf, Eval& e) { out.update(buf, e); };
   auto update_with_tick
-      = [&total_updates, &update_fun](WolfeData& buf, Eval& e, auto&& p) {
-          update_fun(buf, e, p);
+      = [&total_updates, &update_fun, &prev, &curr](WolfeData& buf, Eval& e, auto&& p) {
+          update_fun(buf, curr, prev, e, p);
           ++total_updates;
         };
   auto check_max_steps = [&assign_step, &p, &total_updates, &armijo_ok,
-                          &wolfe_ok, &update_with_tick, &ll_fun,
+                          &wolfe_ok, &update_with_tick,
                           &msgs](auto&& scratch, auto&& curr, auto&& prev,
-                                 auto&& best, auto&& opt, auto&& ll_args) {
+                                 auto&& best, auto&& opt) {
     if (total_updates > opt.max_iterations) {
       debug::print("Exit on precheck max iterations", 1);
       debug::print("total_updates", total_updates);
@@ -599,7 +736,7 @@ inline WolfeStatus wolfe_line_search(WolfeInfo& wolfe_info, F&& ll_fun,
       }
       update_with_tick(scratch, high, p);
       auto check_steps
-          = check_max_steps(scratch, curr, prev, high, opt, ll_args);
+          = check_max_steps(scratch, curr, prev, high, opt);
       if (check_steps.stop_ != WolfeReturn::Continue) {
         return check_steps;
       }
@@ -615,7 +752,7 @@ inline WolfeStatus wolfe_line_search(WolfeInfo& wolfe_info, F&& ll_fun,
         while (armijo_ok(high) && wolfe_ok(high)) {
           best = high;
           auto check_steps
-              = check_max_steps(scratch, curr, prev, best, opt, ll_args);
+              = check_max_steps(scratch, curr, prev, best, opt);
           if (check_steps.stop_ != WolfeReturn::Continue) {
             return check_steps;
           }
@@ -654,18 +791,17 @@ inline WolfeStatus wolfe_line_search(WolfeInfo& wolfe_info, F&& ll_fun,
   int num_backtracks = 0;
   /**
    * For each case
-   * armijo | wolfe | sign(g) | Action
-   * -------+-------+---------+---------------------------------------------
-   * [1]  T     |   T   |         | Accept α (PASS: strong-Wolfe satisfied)
-   * [2]  T     |   F   |   > 0   | Promote left: set α_low ← α, keep best,
-   *expand α (e.g. α ← scale_up·α) [3]  T     |   F   |   < 0   | Set α_high ←
-   *α, stop expanding → zoom [4]  F     |   T   |         | Set α_high ← α, stop
-   *expanding → zoom [5]  F     |   F   |         | Set α_high ← α, stop
-   *expanding → zoom
+   * | armijo     | wolfe | sign(g) | Action
+   * -------+-------+---------+--------------------------------
+   * | [1]  T     |   T   |         | Accept alpha
+   * | [2]  T     |   F   |   > 0   | set low=high, expand high
+   * | [3]  T     |   F   |   < 0   | Set alpha_high <- alpha, stop
+   * | [4]  F     |   T   |         | Set alpha_high <- alpha, stop
+   * | [5]  F     |   F   |         | Set alpha_high <- alpha, stop
    **/
   while (!found_right && high.alpha() < opt.max_alpha) {
     num_backtracks++;
-    // 1. Evaluate f(α) and g(α)
+    // 1. Evaluate f(alpha) and g(alpha)
     update_with_tick(scratch, high, p);
     debug::print("First While", 1, "Second Iter:       ", loop_iter++,
                  "high.alpha(): ", high.alpha(), "high.obj():   ", high.obj(),
@@ -706,7 +842,7 @@ inline WolfeStatus wolfe_line_search(WolfeInfo& wolfe_info, F&& ll_fun,
     }
     // [4,5]
     found_right = true;
-    auto check_steps = check_max_steps(scratch, curr, prev, best, opt, ll_args);
+    auto check_steps = check_max_steps(scratch, curr, prev, best, opt);
     if (check_steps.stop_ != WolfeReturn::Continue) {
       return check_steps;
     }
@@ -798,14 +934,13 @@ inline WolfeStatus wolfe_line_search(WolfeInfo& wolfe_info, F&& ll_fun,
       continue;
     }
     /**
-     * | Armijo | Wolfe | mid.obj() > low.obj() | mid.dir() * low.dir() < 0 |
-     * Action | | T     |   T   |                   |                       |
-     * Accept | | T     |   F   |         T         |           T           |
-     * Dir Sign change pins high = mid | | T     |   F   |         T         |
-     * F           | low = mid | | T     |   F   |         F         | F | low =
-     * mid | | T     |   F   |         F         |           F           | high
-     * = mid | | F     |   F   |         F         |           F           |
-     * high = mid |
+     * |Armijo|Wolfe|mid.obj > low.obj|mid.dir < 0|Action|
+     * |  T   |  T  |                 |           | Accept |
+     * |  T   |  F  |       T         |     T     | high = mid |
+     * |  T   |  F  |       T         |     F     | low = mid |
+     * |  T   |  F  |       F         |     F     | low = mid |
+     * |  T   |  F  |       F         |     F     | high = mid |
+     * |  F   |  F  |       F         |     F     | high = mid |
      */
     if (armijo_ok(mid)) {
       if (wolfe_ok(mid)) {
@@ -839,7 +974,7 @@ inline WolfeStatus wolfe_line_search(WolfeInfo& wolfe_info, F&& ll_fun,
     if (check_bb.stop_ != WolfeReturn::Continue) {
       return check_bb;
     }
-    auto check_steps = check_max_steps(scratch, curr, prev, best, opt, ll_args);
+    auto check_steps = check_max_steps(scratch, curr, prev, best, opt);
     if (check_steps.stop_ != WolfeReturn::Continue) {
       return check_steps;
     }

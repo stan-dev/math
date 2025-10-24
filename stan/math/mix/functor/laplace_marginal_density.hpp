@@ -39,9 +39,11 @@ struct laplace_options_base {
    * using an LU decomposition (more general, but slower)
    */
   int solver{1};
-  /* iterations end when difference in objective function is less than tolerance
+  /**
+   * iterations end when difference in objective function is less than tolerance
+   * Default is sqrt(machine_epsilon)
    */
-  double tolerance{1e-12};
+  double tolerance{1.49012e-08};
   /* Maximum number of steps*/
   int max_num_steps{500};
   laplace_line_search_options line_search;
@@ -310,6 +312,59 @@ inline STAN_COLD_PATH void throw_nan(NameStr&& name_str, ParamStr&& param_str,
   throw std::domain_error(msg);
 }
 
+/**
+ * @brief  Curvature-aware Barzilai–Borwein (BB) step length with robust
+ * safeguards.
+ *
+ * Given successive parameter displacements \f$s = x_k - x_{k-1}\f$ and
+ * gradients \f$g_k\f$, \f$g_{k-1}\f$, this routine forms
+ * \f$y = g_k - g_{k-1}\f$ and computes the two classical BB candidates
+ *
+ * \f{align*}{
+ *   \alpha_{\text{BB1}} &= \frac{\langle s,s\rangle}{\langle s,y\rangle},\\
+ *   \alpha_{\text{BB2}} &= \frac{\langle s,y\rangle}{\langle y,y\rangle},
+ * \f}
+ *
+ * then chooses between them using the **spectral cosine**
+ * \f$r = \cos^2\!\angle(s,y) = \dfrac{\langle s,y\rangle^2}
+ *                                      {\langle s,s\rangle\,\langle y,y\rangle}\in[0,1]\f$:
+ *
+ *  - if \f$r > 0.9\f$ (well-aligned curvature) and the previous line search
+ *    did **≤ 1** backtrack, prefer the “long” step \f$\alpha_{\text{BB1}}\f$;
+ *  - if \f$0.1 \le r \le 0.9\f$, take the neutral geometric mean
+ *    \f$\sqrt{\alpha_{\text{BB1}}\alpha_{\text{BB2}}}\f$;
+ *  - otherwise default to the “short” step \f$\alpha_{\text{BB2}}\f$.
+ *
+ * All candidates are clamped into \f$[\text{min\_alpha},\,\text{max\_alpha}]\f$
+ * and must be finite and positive.
+ * If the curvature scalars are ill-posed (non-finite or too small),
+ * \f$\langle s,y\rangle \le \varepsilon\f$, or if `last_backtracks == 99`
+ * (explicitly disabling BB for this iteration), the function falls back to a
+ * **safe** step:
+ * use `prev_step` when finite and positive, otherwise \f$1.0\f$, then clamp to
+ * \f$[\text{min\_alpha},\,\text{max\_alpha}]\f$.
+ *
+ * @param s          Displacement between consecutive iterates
+ *                   (\f$s = x_k - x_{k-1}\f$).
+ * @param g_curr     Gradient at the current iterate \f$g_k\f$.
+ * @param g_prev     Gradient at the previous iterate \f$g_{k-1}\f$.
+ * @param prev_step  Previously accepted step length (used by the fallback).
+ * @param last_backtracks
+ *                   Number of backtracking contractions performed by the most
+ *                   recent line search; set to 99 to force the safe fallback.
+ * @param min_alpha  Lower bound for the returned step length.
+ * @param max_alpha  Upper bound for the returned step length.
+ *
+ * @return A finite, positive BB-style step length \f$\alpha \in
+ *         [\text{min\_alpha},\,\text{max\_alpha}]\f$ suitable for seeding a
+ *         line search or as a spectral preconditioner scale.
+ *
+ * @note Uses \f$\varepsilon=10^{-16}\f$ to guard against division by very
+ *       small curvature terms, and applies `std::abs` to BB ratios to avoid
+ *       negative steps; descent is enforced by the line search.
+ * @warning The vectors must have identical size. Non-finite inputs yield the
+ *          safe fallback.
+ */
 inline double barzilai_borwein_step_size(const Eigen::VectorXd& s,
                                          const Eigen::VectorXd& g_curr,
                                          const Eigen::VectorXd& g_prev,
@@ -424,9 +479,6 @@ template <typename LLFun, typename LLTupleArgs, typename CovarMat,
 inline auto laplace_marginal_density_est(
     LLFun&& ll_fun, LLTupleArgs&& ll_args, CovarMat&& covariance,
     const laplace_options<InitTheta>& options, std::ostream* msgs) {
-  using Eigen::MatrixXd;
-  using Eigen::SparseMatrix;
-  using Eigen::VectorXd;
   if constexpr (InitTheta) {
     check_nonzero_size("laplace_marginal", "initial guess", options.theta_0);
     check_finite("laplace_marginal", "initial guess", options.theta_0);
@@ -435,7 +487,6 @@ inline auto laplace_marginal_density_est(
   check_positive("laplace_marginal", "max_num_steps", options.max_num_steps);
   check_positive("laplace_marginal", "hessian_block_size",
                  options.hessian_block_size);
-  //// csv_file << test_name_lap << ", " << "1" << "\n";
   check_square("laplace_marginal", "covariance", covariance);
 
   const Eigen::Index theta_size = covariance.rows();
@@ -483,10 +534,14 @@ inline auto laplace_marginal_density_est(
         std::string("laplace_marginal_density: max number of iterations: ")
         + std::to_string(max_num_steps) + " exceeded.");
   };
+  // Wolfe optimizes over the latent 'a' space
   auto obj_fun = [&](const Eigen::VectorXd& a_val, auto&& theta_val) -> double {
     return -0.5 * a_val.dot(theta_val)
            + laplace_likelihood::log_likelihood(ll_fun, theta_val, ll_args,
                                                 msgs);
+  };
+  auto theta_grad_f = [&ll_fun, &ll_args, &msgs](auto&& theta_val) {
+    return laplace_likelihood::theta_grad(ll_fun, theta_val, ll_args, msgs);
   };
   internal::WolfeInfo wolfe_info(obj_fun, theta_size,
     [theta_size, &options]() -> decltype(auto) {
@@ -495,79 +550,69 @@ inline auto laplace_marginal_density_est(
       } else {
         return Eigen::VectorXd::Zero(theta_size);
       }
-    }(), ll_fun, ll_args, msgs);
+    }(), theta_grad_f);
   auto&& curr = wolfe_info.curr_;
   auto&& prev = wolfe_info.prev_;
-  if (!std::isfinite(curr.obj())) {
-    throw std::domain_error(
-        "laplace_marginal_density: log likelihood is not finite at initial "
-        "theta and likelihood arguments.");
-  }
   Eigen::MatrixXd B(theta_size, theta_size);
   Eigen::VectorXd b(theta_size);
-  // FIXME: We should use less full scope referencing here. Hard to follow
-  auto grad_fun = [&](const Eigen::VectorXd& a_val, auto&& theta_val,
-                      auto&& theta_grad) -> Eigen::VectorXd {
-    return -covariance * a_val + covariance * theta_grad;
+  // 'a' gradient
+  auto grad_fun = [&covariance](auto&& step)  {
+    return -covariance * step.a() + covariance * step.theta_grad();
   };
-  // NOTE: theta_grad is updated in `wolfe_line_search`
-  auto update_step = [&prev, &covariance, &ll_fun, &ll_args, &obj_fun,
-                      &grad_fun,
-                      msgs](auto& step_info, auto& eval_in, auto&& p) {
+  auto update_step = [&covariance, &obj_fun, &theta_grad_f, &grad_fun](
+    auto& step_info, auto&& /* curr */, auto&& prev, auto& eval_in, auto&& p) {
     step_info.a() = prev.a() + eval_in.alpha() * p;
     step_info.theta().noalias() = covariance * step_info.a();
-    step_info.theta_grad() = laplace_likelihood::theta_grad(
-        ll_fun, step_info.theta(), ll_args, msgs);
+    step_info.theta_grad() = theta_grad_f(step_info.theta());
     eval_in.obj() = obj_fun(step_info.a(), step_info.theta());
-    eval_in.dir()
-        = grad_fun(step_info.a(), step_info.theta(), step_info.theta_grad())
-              .dot(p);
+    eval_in.dir() = grad_fun(step_info).dot(p);
   };
-  WolfeStatus wolfe_status;
-  // Start with safe step size
-  wolfe_status.num_backtracks_ = 99;
-  int iter = 0;
-
-  auto update_line_search = [&grad_fun, &ll_fun, &ll_args, &msgs, &covariance,
-                             &update_step,
-                             &options](auto&& wolfe_status, auto&& wolfe_info,
+  Eigen::VectorXd prev_g(theta_size);
+  auto update_line_search = [&grad_fun, &covariance, &prev_g,
+                             &update_step, &theta_grad_f,
+                             &options, &msgs](auto&& wolfe_status, auto&& wolfe_info,
                                        auto&& curr, auto&& prev) {
     wolfe_info.p_ = curr.a() - prev.a();
-    wolfe_info.init_dir_ = grad_fun(prev.a(), prev.theta(), prev.theta_grad())
-                               .dot(wolfe_info.p_);
+    prev_g.noalias() = grad_fun(prev);
+    wolfe_info.init_dir_ = prev_g.dot(wolfe_info.p_);
+    // Flip direction if not ascending
     if (wolfe_info.init_dir_ < 0) {
       wolfe_info.p_ = -wolfe_info.p_;
       wolfe_info.init_dir_ = -wolfe_info.init_dir_;
     }
     curr.theta().noalias() = covariance * curr.a();
-    curr.theta_grad()
-        = laplace_likelihood::theta_grad(ll_fun, curr.theta(), ll_args, msgs);
-    curr.alpha() = barzilai_borwein_step_size(
-        wolfe_info.p_, grad_fun(curr.a(), curr.theta(), curr.theta_grad()),
-        grad_fun(prev.a(), prev.theta(), prev.theta_grad()), prev.alpha(),
-        wolfe_status.num_backtracks_, options.line_search.min_alpha,
-        options.line_search.max_alpha);
+    curr.theta_grad() = theta_grad_f(curr.theta());
+    curr.alpha() = barzilai_borwein_step_size(wolfe_info.p_, grad_fun(curr),
+        prev_g, prev.alpha(), wolfe_status.num_backtracks_,
+        options.line_search.min_alpha, options.line_search.max_alpha);
     wolfe_status = internal::wolfe_line_search(
-        wolfe_info, ll_fun, update_step, ll_args, options.line_search, msgs);
+        wolfe_info, update_step, options.line_search, msgs);
     debug::print("", 1, "Objective old: ", prev.obj(),
                  "Objective new: ", curr.obj(),
                  "Step size:      ", curr.alpha());
     return abs(curr.obj() - prev.obj()) < options.tolerance
            || (!wolfe_status.success_ && curr.obj() <= prev.obj());
   };
-  auto set_next_iter = [&options](auto&& curr, auto&& prev, auto&& ll_args) {
-    prev.swap(curr);
-
+  auto set_next_iter = [&options](auto&& curr, auto&& prev) {
+    prev.update(curr);
     curr.alpha() = std::clamp(curr.alpha(), 0.0, options.line_search.max_alpha);
   };
+  /**
+   * On the final loop if we found a better wolfe step, but we are going to
+   * exit, we want to make sure all of our return values are with the most
+   * recent wolfe step that was accepted. So we do one final loop to update
+   * our return values.
+   */
   bool final_loop = false;
   bool finish_update = false;
+  WolfeStatus wolfe_status;
+  // Start with safe step size
+  wolfe_status.num_backtracks_ = 99;
   if (options.solver == 1) {
     if (options.hessian_block_size == 1) {
       //   std::cout << "Solver: 1Diag" << std::endl;
       Eigen::VectorXd W_r(theta_size);
       for (Eigen::Index i = 0; i <= options.max_num_steps; i++) {
-        debug::print("======Iter", iter++);
         auto W = laplace_likelihood::diagonal_hessian(ll_fun, prev.theta(),
                                                       ll_args, msgs);
         for (Eigen::Index j = 0; j < W.size(); j++) {
@@ -579,7 +624,7 @@ inline auto laplace_marginal_density_est(
             W_r.coeffRef(j) = std::sqrt(W.coeff(j));
           }
         }
-        B.noalias() = MatrixXd::Identity(theta_size, theta_size)
+        B.noalias() = Eigen::MatrixXd::Identity(theta_size, theta_size)
                       + W_r.asDiagonal() * covariance * W_r.asDiagonal();
         Eigen::LLT<Eigen::Ref<Eigen::MatrixXd>> llt_B(B);
         auto L = llt_B.matrixL();
@@ -590,7 +635,6 @@ inline auto laplace_marginal_density_est(
             = b
               - W_r.asDiagonal()
                     * LT.solve(L.solve(W_r.cwiseProduct(covariance * b)));
-        // Approximate optimial step size
         if (!final_loop) {
           finish_update
               = update_line_search(wolfe_status, wolfe_info, curr, prev);
@@ -599,24 +643,28 @@ inline auto laplace_marginal_density_est(
           if (!final_loop && wolfe_status.success_) {
             // Do one final loop with exact wolfe conditions
             final_loop = true;
-            set_next_iter(curr, prev, ll_args);
+            // NOTE: Swapping here so we need to swap prev and curr later
+            set_next_iter(curr, prev);
             continue;
           }
           const double B_log_determinant
               = 2.0 * llt_B.matrixLLT().diagonal().array().log().sum();
-          // Overwrite W instead of making curr.a() new sparse matrix
-          // W.asdiagonal() = W_r;
+          /**
+           * NOTE: At this point we are return prev because either
+           * 1. Line search + tolerance passed and we swapped prev<->curr
+           * 2. Line search failed and we want to return the previous step
+           */
           return laplace_density_estimates{
-              curr.obj() - 0.5 * B_log_determinant,
-              std::move(curr.theta()),
+              prev.obj() - 0.5 * B_log_determinant,
+              std::move(prev.theta()),
               Eigen::SparseMatrix<double>(W_r.asDiagonal()),
               Eigen::MatrixXd(L),
-              std::move(curr.a()),
-              std::move(curr.theta_grad()),
+              std::move(prev.a()),
+              std::move(prev.theta_grad()),
               Eigen::PartialPivLU<Eigen::MatrixXd>{},
               Eigen::MatrixXd(0, 0)};
         } else {
-          set_next_iter(curr, prev, ll_args);
+          set_next_iter(curr, prev);
         }
       }
     } else {
@@ -634,7 +682,7 @@ inline auto laplace_marginal_density_est(
       }
       W_r.makeCompressed();
       for (Eigen::Index i = 0; i <= options.max_num_steps; i++) {
-        debug::print("======Iter", iter++);
+        debug::print("======Iter", i);
         auto W = laplace_likelihood::block_hessian(
             ll_fun, prev.theta(), options.hessian_block_size, ll_args, msgs);
         for (Eigen::Index j = 0; j < W.rows(); j++) {
@@ -645,7 +693,7 @@ inline auto laplace_marginal_density_est(
           }
         }
         block_matrix_sqrt(W_r, W, options.hessian_block_size);
-        B.noalias() = MatrixXd::Identity(theta_size, theta_size)
+        B.noalias() = Eigen::MatrixXd::Identity(theta_size, theta_size)
                       + W_r * (covariance * W_r);
         Eigen::LLT<Eigen::Ref<Eigen::MatrixXd>> llt_B(B);
         if (llt_B.info() != Eigen::Success) {
@@ -666,22 +714,22 @@ inline auto laplace_marginal_density_est(
           if (!final_loop && wolfe_status.success_) {
             // Do one final loop with exact wolfe conditions
             final_loop = true;
-            set_next_iter(curr, prev, ll_args);
+            set_next_iter(curr, prev);
             continue;
           }
           const double B_log_determinant
               = 2.0 * llt_B.matrixLLT().diagonal().array().log().sum();
           return laplace_density_estimates{
-              curr.obj() - 0.5 * B_log_determinant,
-              std::move(curr.theta()),
+              prev.obj() - 0.5 * B_log_determinant,
+              std::move(prev.theta()),
               std::move(W_r),
               Eigen::MatrixXd(L),
-              std::move(curr.a()),
-              std::move(curr.theta_grad()),
+              std::move(prev.a()),
+              std::move(prev.theta_grad()),
               Eigen::PartialPivLU<Eigen::MatrixXd>{},
               Eigen::MatrixXd(0, 0)};
         } else {
-          set_next_iter(curr, prev, ll_args);
+          set_next_iter(curr, prev);
         }
       }
     }
@@ -690,10 +738,10 @@ inline auto laplace_marginal_density_est(
     Eigen::MatrixXd K_root
         = covariance.template selfadjointView<Eigen::Lower>().llt().matrixL();
     for (Eigen::Index i = 0; i <= options.max_num_steps; i++) {
-      debug::print("======Iter", iter++);
+      debug::print("======Iter", i);
       auto W = laplace_likelihood::block_hessian(
           ll_fun, prev.theta(), options.hessian_block_size, ll_args, msgs);
-      B.noalias() = MatrixXd::Identity(theta_size, theta_size)
+      B.noalias() = Eigen::MatrixXd::Identity(theta_size, theta_size)
                     + K_root.transpose() * W * K_root;
       Eigen::LLT<Eigen::Ref<Eigen::MatrixXd>> llt_B(B);
       if (llt_B.info() != Eigen::Success) {
@@ -715,21 +763,22 @@ inline auto laplace_marginal_density_est(
         if (!final_loop && wolfe_status.success_) {
           // Do one final loop with exact wolfe conditions
           final_loop = true;
-          set_next_iter(curr, prev, ll_args);
+          // NOTE: Swapping here so we need to swap prev and curr later
+          set_next_iter(curr, prev);
           continue;
         }
         const double B_log_determinant
             = 2.0 * llt_B.matrixLLT().diagonal().array().log().sum();
-        return laplace_density_estimates{curr.obj() - 0.5 * B_log_determinant,
-                                         std::move(curr.theta()),
+        return laplace_density_estimates{prev.obj() - 0.5 * B_log_determinant,
+                                         std::move(prev.theta()),
                                          std::move(W),
                                          std::move(Eigen::MatrixXd(L)),
-                                         std::move(curr.a()),
-                                         std::move(curr.theta_grad()),
+                                         std::move(prev.a()),
+                                         std::move(prev.theta_grad()),
                                          Eigen::PartialPivLU<Eigen::MatrixXd>{},
                                          std::move(K_root)};
       } else {
-        set_next_iter(curr, prev, ll_args);
+        set_next_iter(curr, prev);
       }
     }
     throw_overstep(options.max_num_steps);
@@ -737,10 +786,10 @@ inline auto laplace_marginal_density_est(
     //    std::cout << "Solver: 3" << std::endl;
     Eigen::PartialPivLU<Eigen::MatrixXd> LU(theta_size);
     for (Eigen::Index i = 0; i <= options.max_num_steps; i++) {
-      debug::print("======Iter", iter++);
+      debug::print("======Iter", i);
       auto W = laplace_likelihood::block_hessian(
           ll_fun, prev.theta(), options.hessian_block_size, ll_args, msgs);
-      LU.compute(MatrixXd::Identity(theta_size, theta_size) + covariance * W);
+      LU.compute(Eigen::MatrixXd::Identity(theta_size, theta_size) + covariance * W);
       // L on lower and U on upper triangular
       b.noalias() = W * prev.theta() + prev.theta_grad();
       curr.a().noalias() = b - W * LU.solve(covariance * b);
@@ -749,19 +798,25 @@ inline auto laplace_marginal_density_est(
             = update_line_search(wolfe_status, wolfe_info, curr, prev);
       }
       if (finish_update) {
-        // TODO(Charles): There has to be a simple trick for this
+        if (!final_loop && wolfe_status.success_) {
+          // Do one final loop with exact wolfe conditions
+          final_loop = true;
+          // NOTE: Swapping here so we need to swap prev and curr later
+          set_next_iter(curr, prev);
+          continue;
+        }
         const double B_log_determinant
             = LU.matrixLU().diagonal().array().log().sum();
-        return laplace_density_estimates{curr.obj() - 0.5 * B_log_determinant,
-                                         std::move(curr.theta()),
+        return laplace_density_estimates{prev.obj() - 0.5 * B_log_determinant,
+                                         std::move(prev.theta()),
                                          std::move(W),
                                          Eigen::MatrixXd(0, 0),
-                                         std::move(curr.a()),
-                                         std::move(curr.theta_grad()),
+                                         std::move(prev.a()),
+                                         std::move(prev.theta_grad()),
                                          std::move(LU),
                                          Eigen::MatrixXd(0, 0)};
       } else {
-        set_next_iter(curr, prev, ll_args);
+        set_next_iter(curr, prev);
       }
     }
     throw_overstep(options.max_num_steps);
@@ -1067,7 +1122,6 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
     using laplace_likelihood::internal::deep_copy_vargs;
     auto ll_args_copy = deep_copy_vargs<var>(ll_args_refs);
     auto covar_args_copy = deep_copy_vargs<var>(covar_args_refs);
-
     auto covariance = stan::math::apply(
         [&covariance_function, &msgs](auto&&... args) {
           if constexpr (is_any_var_scalar_v<decltype(args)...>) {
@@ -1075,8 +1129,7 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
           } else {
             return covariance_function(args..., msgs);
           }
-        },
-        covar_args_copy);
+        }, covar_args_copy);
     auto md_est = internal::laplace_marginal_density_est(
         ll_fun, value_of(ll_args_copy), value_of(covariance), options, msgs);
     if constexpr (ll_args_contain_var) {
