@@ -327,7 +327,8 @@ inline STAN_COLD_PATH void throw_nan(NameStr&& name_str, ParamStr&& param_str,
  *
  * then chooses between them using the **spectral cosine**
  * \f$r = \cos^2\!\angle(s,y) = \dfrac{\langle s,y\rangle^2}
- *                                      {\langle s,s\rangle\,\langle y,y\rangle}\in[0,1]\f$:
+ *                                      {\langle s,s\rangle\,\langle
+ * y,y\rangle}\in[0,1]\f$:
  *
  *  - if \f$r > 0.9\f$ (well-aligned curvature) and the previous line search
  *    did **≤ 1** backtrack, prefer the “long” step \f$\alpha_{\text{BB1}}\f$;
@@ -543,24 +544,27 @@ inline auto laplace_marginal_density_est(
   auto theta_grad_f = [&ll_fun, &ll_args, &msgs](auto&& theta_val) {
     return laplace_likelihood::theta_grad(ll_fun, theta_val, ll_args, msgs);
   };
-  internal::WolfeInfo wolfe_info(obj_fun, theta_size,
-    [theta_size, &options]() -> decltype(auto) {
-      if constexpr (InitTheta) {
-        return options.theta_0;
-      } else {
-        return Eigen::VectorXd::Zero(theta_size);
-      }
-    }(), theta_grad_f);
+  internal::WolfeInfo wolfe_info(
+      obj_fun, theta_size,
+      [theta_size, &options]() -> decltype(auto) {
+        if constexpr (InitTheta) {
+          return options.theta_0;
+        } else {
+          return Eigen::VectorXd::Zero(theta_size);
+        }
+      }(),
+      theta_grad_f);
   auto&& curr = wolfe_info.curr_;
   auto&& prev = wolfe_info.prev_;
   Eigen::MatrixXd B(theta_size, theta_size);
   Eigen::VectorXd b(theta_size);
   // 'a' gradient
-  auto grad_fun = [&covariance](auto&& step)  {
+  auto grad_fun = [&covariance](auto&& step) {
     return -covariance * step.a() + covariance * step.theta_grad();
   };
   auto update_step = [&covariance, &obj_fun, &theta_grad_f, &grad_fun](
-    auto& step_info, auto&& /* curr */, auto&& prev, auto& eval_in, auto&& p) {
+                         auto& step_info, auto&& /* curr */, auto&& prev,
+                         auto& eval_in, auto&& p) {
     step_info.a() = prev.a() + eval_in.alpha() * p;
     step_info.theta().noalias() = covariance * step_info.a();
     step_info.theta_grad() = theta_grad_f(step_info.theta());
@@ -568,31 +572,32 @@ inline auto laplace_marginal_density_est(
     eval_in.dir() = grad_fun(step_info).dot(p);
   };
   Eigen::VectorXd prev_g(theta_size);
-  auto update_line_search = [&grad_fun, &covariance, &prev_g,
-                             &update_step, &theta_grad_f,
-                             &options, &msgs](auto&& wolfe_status, auto&& wolfe_info,
-                                       auto&& curr, auto&& prev) {
-    wolfe_info.p_ = curr.a() - prev.a();
-    prev_g.noalias() = grad_fun(prev);
-    wolfe_info.init_dir_ = prev_g.dot(wolfe_info.p_);
-    // Flip direction if not ascending
-    if (wolfe_info.init_dir_ < 0) {
-      wolfe_info.p_ = -wolfe_info.p_;
-      wolfe_info.init_dir_ = -wolfe_info.init_dir_;
-    }
-    curr.theta().noalias() = covariance * curr.a();
-    curr.theta_grad() = theta_grad_f(curr.theta());
-    curr.alpha() = barzilai_borwein_step_size(wolfe_info.p_, grad_fun(curr),
-        prev_g, prev.alpha(), wolfe_status.num_backtracks_,
-        options.line_search.min_alpha, options.line_search.max_alpha);
-    wolfe_status = internal::wolfe_line_search(
-        wolfe_info, update_step, options.line_search, msgs);
-    debug::print("", 1, "Objective old: ", prev.obj(),
-                 "Objective new: ", curr.obj(),
-                 "Step size:      ", curr.alpha());
-    return abs(curr.obj() - prev.obj()) < options.tolerance
-           || (!wolfe_status.success_ && curr.obj() <= prev.obj());
-  };
+  auto update_line_search
+      = [&grad_fun, &covariance, &prev_g, &update_step, &theta_grad_f, &options,
+         &msgs](auto&& wolfe_status, auto&& wolfe_info, auto&& curr,
+                auto&& prev) {
+          wolfe_info.p_ = curr.a() - prev.a();
+          prev_g.noalias() = grad_fun(prev);
+          wolfe_info.init_dir_ = prev_g.dot(wolfe_info.p_);
+          // Flip direction if not ascending
+          if (wolfe_info.init_dir_ < 0) {
+            wolfe_info.p_ = -wolfe_info.p_;
+            wolfe_info.init_dir_ = -wolfe_info.init_dir_;
+          }
+          curr.theta().noalias() = covariance * curr.a();
+          curr.theta_grad() = theta_grad_f(curr.theta());
+          curr.alpha() = barzilai_borwein_step_size(
+              wolfe_info.p_, grad_fun(curr), prev_g, prev.alpha(),
+              wolfe_status.num_backtracks_, options.line_search.min_alpha,
+              options.line_search.max_alpha);
+          wolfe_status = internal::wolfe_line_search(wolfe_info, update_step,
+                                                     options.line_search, msgs);
+          debug::print("", 1, "Objective old: ", prev.obj(),
+                       "Objective new: ", curr.obj(),
+                       "Step size:      ", curr.alpha());
+          return abs(curr.obj() - prev.obj()) < options.tolerance
+                 || (!wolfe_status.success_ && curr.obj() <= prev.obj());
+        };
   auto set_next_iter = [&options](auto&& curr, auto&& prev) {
     prev.update(curr);
     curr.alpha() = std::clamp(curr.alpha(), 0.0, options.line_search.max_alpha);
@@ -789,7 +794,8 @@ inline auto laplace_marginal_density_est(
       debug::print("======Iter", i);
       auto W = laplace_likelihood::block_hessian(
           ll_fun, prev.theta(), options.hessian_block_size, ll_args, msgs);
-      LU.compute(Eigen::MatrixXd::Identity(theta_size, theta_size) + covariance * W);
+      LU.compute(Eigen::MatrixXd::Identity(theta_size, theta_size)
+                 + covariance * W);
       // L on lower and U on upper triangular
       b.noalias() = W * prev.theta() + prev.theta_grad();
       curr.a().noalias() = b - W * LU.solve(covariance * b);
@@ -1129,7 +1135,8 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
           } else {
             return covariance_function(args..., msgs);
           }
-        }, covar_args_copy);
+        },
+        covar_args_copy);
     auto md_est = internal::laplace_marginal_density_est(
         ll_fun, value_of(ll_args_copy), value_of(covariance), options, msgs);
     if constexpr (ll_args_contain_var) {
