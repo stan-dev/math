@@ -57,13 +57,16 @@ template <typename T, typename = void>
 struct is_autodiff : internal::is_autodiff<T> {};
 
 template <typename T>
-inline constexpr bool is_autodiff_v = internal::is_autodiff<std::decay_t<T>>::value;
+inline constexpr bool is_autodiff_v
+    = internal::is_autodiff<std::decay_t<T>>::value;
 
 template <typename... Types>
-inline constexpr bool is_all_autodiff_v = (is_autodiff_v<std::decay_t<Types>> && ...);
+inline constexpr bool is_all_autodiff_v
+    = (is_autodiff_v<std::decay_t<Types>> && ...);
 
 template <typename... Types>
-inline constexpr bool is_any_autodiff_v = (is_autodiff_v<std::decay_t<Types>> || ...);
+inline constexpr bool is_any_autodiff_v
+    = (is_autodiff_v<std::decay_t<Types>> || ...);
 
 /*! \ingroup require_stan_scalar_real */
 /*! \defgroup autodiff_types autodiff  */

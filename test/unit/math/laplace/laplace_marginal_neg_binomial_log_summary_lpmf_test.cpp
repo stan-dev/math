@@ -16,7 +16,7 @@ TEST(laplace_marginal_neg_binomial_log_summary_lpmf, phi_dim_2) {
   using stan::math::var;
 
   constexpr double alpha_dbl = 3.0;     // stronger mean sensitivity
-  constexpr double rho_dbl   = 0.25;    // sharper lengthscale
+  constexpr double rho_dbl = 0.25;      // sharper lengthscale
   Eigen::VectorXd theta_0{{0.5, 0.5}};  // moves s toward 0.5
   constexpr int dim_theta = 2;
 
@@ -25,9 +25,10 @@ TEST(laplace_marginal_neg_binomial_log_summary_lpmf, phi_dim_2) {
   Eigen::VectorXd x_1{{2.0, 2.0}};
   x[0] = x_0;
   x[1] = x_1;
-  std::vector<int> y{3,2,4,1,  0,1,0,2};
-  std::vector<int> y_index{1,1,1,1,  2,2,2,2}; // 4 obs/group → bigger n, counts
-  constexpr double eta_dbl = 1.0;              // puts s ~ 0.5
+  std::vector<int> y{3, 2, 4, 1, 0, 1, 0, 2};
+  std::vector<int> y_index{1, 1, 1, 1,
+                           2, 2, 2, 2};  // 4 obs/group → bigger n, counts
+  constexpr double eta_dbl = 1.0;        // puts s ~ 0.5
   std::vector<int> n_per_group(theta_0.size(), 0);
   std::vector<int> counts_per_group(theta_0.size(), 0);
   for (int i = 0; i < y.size(); i++) {
@@ -36,7 +37,8 @@ TEST(laplace_marginal_neg_binomial_log_summary_lpmf, phi_dim_2) {
   }
   constexpr double tolerance = 1e-12;
   constexpr int max_num_steps = 1000;
-  constexpr stan::test::ad_tolerances tols{stan::test::ad_gradient_tols{1e-8, 1e-4}};
+  constexpr stan::test::ad_tolerances tols{
+      stan::test::ad_gradient_tols{1e-8, 1e-4}};
   stan::math::test::run_solver_grid(
       [&](int solver_num, int hessian_block_size, int max_steps_line_search,
           auto&& theta_0) {

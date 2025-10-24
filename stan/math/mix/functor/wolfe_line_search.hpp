@@ -590,16 +590,17 @@ struct WolfeInfo {
  * 6. **Convergence/guard rails.**
  *    After each evaluation we check:
  *    - Gradient tolerance: \f$|\phi'(\alpha)| \le
- *      \max(\text{opt.abs\_grad\_threshold},\ \text{opt.rel\_grad\_threshold}\,|\phi'(0)|)\f$.
+ *      \max(\text{opt.abs\_grad\_threshold},\
+ * \text{opt.rel\_grad\_threshold}\,|\phi'(0)|)\f$.
  *    - Objective change tolerance (for very small steps):
  *      \f$|\phi(\alpha)-\phi(0)| \le
- *      \max(\text{opt.abs\_obj\_threshold},\ \text{opt.rel\_obj\_threshold}\,(1+|\phi(0)|))\f$
- *      and \f$\alpha < \text{opt.min_alpha}\f$.
- *    If triggered, the routine returns one of `ConvergedGradient`,
- *    `ConvergedObjective`, or `ConvergedObjectiveAndGradient`.
- *    If neither test is met but the bracket becomes too small, it returns
- *    `IntervalTooSmall` (accepting the current point only if it satisfies
- * Armijo).
+ *      \max(\text{opt.abs\_obj\_threshold},\
+ * \text{opt.rel\_obj\_threshold}\,(1+|\phi(0)|))\f$ and \f$\alpha <
+ * \text{opt.min_alpha}\f$. If triggered, the routine returns one of
+ * `ConvergedGradient`, `ConvergedObjective`, or
+ * `ConvergedObjectiveAndGradient`. If neither test is met but the bracket
+ * becomes too small, it returns `IntervalTooSmall` (accepting the current point
+ * only if it satisfies Armijo).
  *
  * If zoom exits without a strong-Wolfe point but an Armijo-OK point was seen,
  * the routine **returns** `Armijo` at that best point; otherwise it **returns**

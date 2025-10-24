@@ -136,9 +136,10 @@ TEST(laplace, poisson_log_phi_dim_2_tuple_extended) {
   using stan::scalar_type_t;
   using stan::math::test::laplace_issue;
   constexpr std::array known_issues{laplace_issue{0, 0, 0}};
-  constexpr stan::test::ad_tolerances tols{stan::test::ad_gradient_tols{1e-8, 1e-4}};
-//  stan::test::ad_tolerances tols;
-//  tols.gradient_grad_ = 1e-1;
+  constexpr stan::test::ad_tolerances tols{
+      stan::test::ad_gradient_tols{1e-8, 1e-4}};
+  //  stan::test::ad_tolerances tols;
+  //  tols.gradient_grad_ = 1e-1;
   stan::math::test::run_solver_grid(
       [&](int solver_num, int hessian_block_size, int max_steps_line_search,
           auto&& theta_0) {
@@ -191,9 +192,10 @@ TEST(laplace, poisson_log_phi_dim_2_tuple) {
   using stan::scalar_type_t;
   using stan::math::test::laplace_issue;
   constexpr std::array known_issues{laplace_issue{0, 0, 0}};
-  constexpr stan::test::ad_tolerances tols{stan::test::ad_gradient_tols{1e-8, 1e-4}};
-//  stan::test::ad_tolerances tols;
-//  tols.gradient_grad_ = 1e-1;
+  constexpr stan::test::ad_tolerances tols{
+      stan::test::ad_gradient_tols{1e-8, 1e-4}};
+  //  stan::test::ad_tolerances tols;
+  //  tols.gradient_grad_ = 1e-1;
   stan::math::test::run_solver_grid(
       [&](int solver_num, int hessian_block_size, int max_steps_line_search,
           auto&& theta_0) {
@@ -269,9 +271,10 @@ TEST(laplace, poisson_log_phi_dim_2_array_tuple) {
   using stan::scalar_type_t;
   using stan::math::test::laplace_issue;
   constexpr std::array known_issues{laplace_issue{0, 0, 0}};
-  constexpr stan::test::ad_tolerances tols{stan::test::ad_gradient_tols{1e-8, 1e-4}};
-//  stan::test::ad_tolerances tols;
- // tols.gradient_grad_ = 1e-1;
+  constexpr stan::test::ad_tolerances tols{
+      stan::test::ad_gradient_tols{1e-8, 1e-4}};
+  //  stan::test::ad_tolerances tols;
+  // tols.gradient_grad_ = 1e-1;
   stan::math::test::run_solver_grid(
       [&](int solver_num, int hessian_block_size, int max_steps_line_search,
           auto&& theta_0) {

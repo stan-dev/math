@@ -42,11 +42,11 @@ struct neg_binomial_2_log_likelihood {
     Eigen::Map<const Eigen::VectorXi> y_map(y.data(), y.size());
 
     auto theta_offset = add(theta, mean);
-    auto log_eta      = log(eta);
+    auto log_eta = log(eta);
     auto lse = to_ref(log_sum_exp(theta_offset, log_eta));
 
     return sum(binomial_coefficient_log(subtract(add(y_map, eta), 1.0), y_map))
-         + sum(add(
+           + sum(add(
                // counts_per_group * (theta - log(eta + exp(theta)))
                elt_multiply(counts_per_group, subtract(theta_offset, lse)),
                // n_per_group * eta * (log(eta) - log(eta + exp(theta)))
@@ -85,10 +85,13 @@ inline auto laplace_marginal_tol_neg_binomial_2_log_lpmf(
     const ThetaVec& theta_0, double tolerance, int max_num_steps,
     const int hessian_block_size, const int solver,
     const int max_steps_line_search, std::ostream* msgs) {
-  laplace_options_user_supplied ops{hessian_block_size,    solver,
-                                    tolerance,
-                                    max_num_steps, laplace_line_search_options{max_steps_line_search},
-                                    value_of(theta_0)};
+  laplace_options_user_supplied ops{
+      hessian_block_size,
+      solver,
+      tolerance,
+      max_num_steps,
+      laplace_line_search_options{max_steps_line_search},
+      value_of(theta_0)};
   return laplace_marginal_density(
       neg_binomial_2_log_likelihood{},
       std::forward_as_tuple(eta, y, y_index, std::forward<Mean>(mean)),
@@ -142,11 +145,11 @@ struct neg_binomial_2_log_likelihood_summary {
         counts_per_group.data(), counts_per_group.size());
 
     auto theta_offset = add(theta, mean);
-    auto log_eta      = log(eta);
+    auto log_eta = log(eta);
     auto lse = to_ref(log_sum_exp(theta_offset, log_eta));
 
     return sum(binomial_coefficient_log(subtract(add(y_map, eta), 1.0), y_map))
-         + sum(add(
+           + sum(add(
                // counts_per_group * (theta - log(eta + exp(theta)))
                elt_multiply(counts_per_group_map, subtract(theta_offset, lse)),
                // n_per_group * eta * (log(eta) - log(eta + exp(theta)))
@@ -186,10 +189,13 @@ inline auto laplace_marginal_tol_neg_binomial_2_log_summary_lpmf(
     const ThetaVec& theta_0, double tolerance, int max_num_steps,
     const int hessian_block_size, const int solver,
     const int max_steps_line_search, std::ostream* msgs) {
-  laplace_options_user_supplied ops{hessian_block_size,    solver,
-                                    tolerance,
-                                    max_num_steps, laplace_line_search_options{max_steps_line_search},
-                                    value_of(theta_0)};
+  laplace_options_user_supplied ops{
+      hessian_block_size,
+      solver,
+      tolerance,
+      max_num_steps,
+      laplace_line_search_options{max_steps_line_search},
+      value_of(theta_0)};
   return laplace_marginal_density(
       neg_binomial_2_log_likelihood_summary{},
       std::forward_as_tuple(eta, y, n_per_group, counts_per_group,

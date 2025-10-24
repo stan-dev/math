@@ -43,8 +43,9 @@ struct QuadraticObjective {
     Eigen::Matrix<scalar_t, Eigen::Dynamic, 1> theta_cast = theta;
     Eigen::Matrix<scalar_t, Eigen::Dynamic, 1> Qt
         = Q.template cast<scalar_t>() * theta_cast;
-    return scale * (b.template cast<scalar_t>().dot(theta_cast)
-                    - 0.5 * theta_cast.dot(Qt));
+    return scale
+           * (b.template cast<scalar_t>().dot(theta_cast)
+              - 0.5 * theta_cast.dot(Qt));
   }
 };
 
@@ -90,8 +91,8 @@ struct LogBarrierObjective {
     double norm_sq = a.squaredNorm();
     double denom = radius * radius - norm_sq;
     if (denom <= 0.0) {
-      Eigen::VectorXd nan = Eigen::VectorXd::Constant(a.size(),
-                                                      std::numeric_limits<double>::quiet_NaN());
+      Eigen::VectorXd nan = Eigen::VectorXd::Constant(
+          a.size(), std::numeric_limits<double>::quiet_NaN());
       return nan;
     }
     return (-2.0 / denom) * a;
@@ -282,24 +283,26 @@ struct LineSearchHarness {
   WolfeStatus run(WolfeInfo& info, const Obj& obj, const LL& ll_fun,
                   LLArgs&& ll_args) {
     auto grad_fun = make_grad_fun(obj);
-    auto obj_fun = [&obj](const Eigen::VectorXd& a,
-                          const Eigen::VectorXd& theta) {
-      return obj(a, theta);
-    };
+    auto obj_fun
+        = [&obj](const Eigen::VectorXd& a, const Eigen::VectorXd& theta) {
+            return obj(a, theta);
+          };
     auto ll_adapter = [&ll_fun](const auto& theta, auto&&... args) {
       return ll_fun(theta, std::forward<decltype(args)>(args)...);
     };
     std::ostream* msgs = nullptr;
-    auto update_step
-      = [&](auto& step_info, auto&& curr, auto&& prev, auto& eval_in, auto&& p) {
-          stan::math::set_zero_all_adjoints();
-          step_info.a() = info.prev_.a() + eval_in.alpha() * p;
-          step_info.theta() = covariance * step_info.a();
-          step_info.theta_grad() = laplace_likelihood::theta_grad(ll_adapter, step_info.theta(), ll_args, msgs);
-          eval_in.obj() = obj_fun(step_info.a(), step_info.theta());
-          eval_in.dir() = grad_fun(step_info.a(), step_info.theta(),
-                                step_info.theta_grad()).dot(p);
-        };
+    auto update_step = [&](auto& step_info, auto&& curr, auto&& prev,
+                           auto& eval_in, auto&& p) {
+      stan::math::set_zero_all_adjoints();
+      step_info.a() = info.prev_.a() + eval_in.alpha() * p;
+      step_info.theta() = covariance * step_info.a();
+      step_info.theta_grad() = laplace_likelihood::theta_grad(
+          ll_adapter, step_info.theta(), ll_args, msgs);
+      eval_in.obj() = obj_fun(step_info.a(), step_info.theta());
+      eval_in.dir()
+          = grad_fun(step_info.a(), step_info.theta(), step_info.theta_grad())
+                .dot(p);
+    };
     info.curr_.theta() = covariance * info.curr_.a();
     info.curr_.theta_grad().setZero();
     info.p_ = info.curr_.a() - info.prev_.a();
@@ -314,16 +317,18 @@ struct LineSearchHarness {
   }
 
   /**
-   * @brief Execute the Wolfe search using the objective's default log-likelihood.
+   * @brief Execute the Wolfe search using the objective's default
+   * log-likelihood.
    */
   template <typename Obj>
   WolfeStatus run(WolfeInfo& info, const Obj& obj) {
-    return run(info, obj,
-               [&obj](const auto& theta, auto&&... args) {
-                 return obj.log_likelihood(theta,
-                                           std::forward<decltype(args)>(args)...);
-               },
-               std::tuple<>{});
+    return run(
+        info, obj,
+        [&obj](const auto& theta, auto&&... args) {
+          return obj.log_likelihood(theta,
+                                    std::forward<decltype(args)>(args)...);
+        },
+        std::tuple<>{});
   }
 };
 
@@ -346,13 +351,13 @@ inline std::pair<Eigen::VectorXd, double> initial_direction(
  * @brief Evaluate the directional derivative of a quadratic objective.
  */
 template <typename Obj>
-inline double directional_derivative(const Obj& obj,
-                                     const Eigen::VectorXd& a,
+inline double directional_derivative(const Obj& obj, const Eigen::VectorXd& a,
                                      const Eigen::VectorXd& p) {
   return obj.gradient(a).dot(p);
 }
 
-// Checks that a well-conditioned concave quadratic accepts the strong-Wolfe step.
+// Checks that a well-conditioned concave quadratic accepts the strong-Wolfe
+// step.
 TEST(WolfeLineSearch, StrongWolfeConcaveQuadratic) {
   const int n = 3;
   LineSearchHarness harness(n);
@@ -371,8 +376,8 @@ TEST(WolfeLineSearch, StrongWolfeConcaveQuadratic) {
 
   auto status = harness.run(info, obj);
   EXPECT_EQ(status.stop_, WolfeReturn::Wolfe)
-  << "Expected Wolfe but wolfe returned "
-  << stan::math::internal::wolfe_status_str(status);
+      << "Expected Wolfe but wolfe returned "
+      << stan::math::internal::wolfe_status_str(status);
   EXPECT_GT(status.num_evals_, 0);
 
   auto [p, dir0] = initial_direction(obj, before);
@@ -383,10 +388,8 @@ TEST(WolfeLineSearch, StrongWolfeConcaveQuadratic) {
 
   EXPECT_GT(alpha, harness.opt.min_alpha);
   EXPECT_LE(alpha, harness.opt.max_alpha);
-  EXPECT_GE(phi_alpha,
-            phi0 + harness.opt.c1 * alpha * dir0 - 1e-12);
-  EXPECT_LE(std::abs(dir_alpha),
-            harness.opt.c2 * std::abs(dir0) + 1e-12);
+  EXPECT_GE(phi_alpha, phi0 + harness.opt.c1 * alpha * dir0 - 1e-12);
+  EXPECT_LE(std::abs(dir_alpha), harness.opt.c2 * std::abs(dir0) + 1e-12);
   EXPECT_TRUE(info.curr_.theta().isApprox(harness.covariance * info.curr_.a()));
   EXPECT_TRUE(info.curr_.theta().allFinite());
   EXPECT_TRUE(info.curr_.theta_grad().allFinite());
@@ -412,16 +415,15 @@ TEST(WolfeLineSearch, AcceptsOnFirstPrecheck) {
 
   auto status = harness.run(info, obj);
   EXPECT_EQ(status.stop_, WolfeReturn::Wolfe)
-  << "Expected Wolfe but wolfe returned "
-  << stan::math::internal::wolfe_status_str(status);
+      << "Expected Wolfe but wolfe returned "
+      << stan::math::internal::wolfe_status_str(status);
   EXPECT_EQ(status.num_backtracks_, 0);
 
   auto [p, dir0] = initial_direction(obj, before);
   double phi0 = obj(before.prev_.a(), before.prev_.theta());
   double alpha = info.curr_.alpha();
   double phi_alpha = obj(info.curr_.a(), info.curr_.theta());
-  EXPECT_GE(phi_alpha,
-            phi0 + harness.opt.c1 * alpha * dir0 - 1e-12);
+  EXPECT_GE(phi_alpha, phi0 + harness.opt.c1 * alpha * dir0 - 1e-12);
 }
 
 // Checks that the search zooms to satisfy the curvature condition.
@@ -443,14 +445,13 @@ TEST(WolfeLineSearch, RequiresZoomForCurvature) {
 
   auto status = harness.run(info, obj);
   EXPECT_EQ(status.stop_, WolfeReturn::Wolfe)
-  << "Expected Wolfe but wolfe returned "
-  << stan::math::internal::wolfe_status_str(status);
+      << "Expected Wolfe but wolfe returned "
+      << stan::math::internal::wolfe_status_str(status);
   EXPECT_GE(status.num_backtracks_, 0);
 
   auto [p, dir0] = initial_direction(obj, before);
   double dir_alpha = directional_derivative(obj, info.curr_.a(), p);
-  EXPECT_LE(std::abs(dir_alpha),
-            harness.opt.c2 * std::abs(dir0) + 1e-12);
+  EXPECT_LE(std::abs(dir_alpha), harness.opt.c2 * std::abs(dir0) + 1e-12);
 }
 
 // Checks that exact Armijo equality is accepted.
@@ -470,8 +471,8 @@ TEST(WolfeLineSearch, ArmijoEqualityAccepted) {
 
   auto status = harness.run(info, obj);
   EXPECT_EQ(status.stop_, WolfeReturn::Wolfe)
-  << "Expected Wolfe but wolfe returned "
-  << stan::math::internal::wolfe_status_str(status);
+      << "Expected Wolfe but wolfe returned "
+      << stan::math::internal::wolfe_status_str(status);
 
   auto [p, dir0] = initial_direction(obj, before);
   double alpha = info.curr_.alpha();
@@ -519,8 +520,7 @@ TEST(WolfeLineSearch, OneDimensionalQuadraticStrongWolfe) {
   EXPECT_GT(alpha, harness.opt.min_alpha);
   EXPECT_GT(alpha, 1e-3);
   EXPECT_LT(alpha, harness.opt.max_alpha);
-  EXPECT_GE(phi_alpha,
-            phi0 + harness.opt.c1 * alpha * dir0 - 1e-12);
+  EXPECT_GE(phi_alpha, phi0 + harness.opt.c1 * alpha * dir0 - 1e-12);
   EXPECT_LE(dir_alpha, harness.opt.c2 * dir0 + 1e-12);
 
   double quad_prev = 0.5 * std::pow(before.prev_.a()[0] - 3.0, 2);
@@ -557,10 +557,8 @@ TEST(WolfeLineSearch, RosenbrockStrongWolfeStep) {
 
   EXPECT_GT(alpha, harness.opt.min_alpha);
   EXPECT_LT(alpha, harness.opt.max_alpha);
-  EXPECT_GE(phi_alpha,
-            phi0 + harness.opt.c1 * alpha * dir0 - 1e-12);
-  EXPECT_LE(std::abs(dir_alpha),
-            harness.opt.c2 * std::abs(dir0) + 1e-12);
+  EXPECT_GE(phi_alpha, phi0 + harness.opt.c1 * alpha * dir0 - 1e-12);
+  EXPECT_LE(std::abs(dir_alpha), harness.opt.c2 * std::abs(dir0) + 1e-12);
 
   double rosen_prev = rosenbrock_value(before.prev_.a());
   double rosen_curr = rosenbrock_value(info.curr_.a());
@@ -596,10 +594,8 @@ TEST(WolfeLineSearch, WavyNonconvexStrongWolfeStep) {
 
   EXPECT_GT(alpha, harness.opt.min_alpha);
   EXPECT_LT(alpha, harness.opt.max_alpha);
-  EXPECT_GE(phi_alpha,
-            phi0 + harness.opt.c1 * alpha * dir0 - 1e-12);
-  EXPECT_LE(std::abs(dir_alpha),
-            harness.opt.c2 * std::abs(dir0) + 1e-12);
+  EXPECT_GE(phi_alpha, phi0 + harness.opt.c1 * alpha * dir0 - 1e-12);
+  EXPECT_LE(std::abs(dir_alpha), harness.opt.c2 * std::abs(dir0) + 1e-12);
 
   double wavy_prev = wavy_value(before.prev_.a()[0]);
   double wavy_curr = wavy_value(info.curr_.a()[0]);
@@ -623,12 +619,12 @@ TEST(WolfeLineSearch, CurvatureEqualityAccepted) {
 
   auto status = harness.run(info, obj);
   EXPECT_EQ(status.stop_, WolfeReturn::Wolfe)
-  << "Expected Wolfe but wolfe returned "
-  << stan::math::internal::wolfe_status_str(status);
+      << "Expected Wolfe but wolfe returned "
+      << stan::math::internal::wolfe_status_str(status);
 
   auto [p, dir0] = initial_direction(obj, before);
   double dir_alpha = directional_derivative(obj, info.curr_.a(), p);
-//  EXPECT_GE(harness.opt.c2 * std::abs(dir0), std::abs(dir_alpha));
+  //  EXPECT_GE(harness.opt.c2 * std::abs(dir0), std::abs(dir_alpha));
 }
 
 // Checks that gradients for ll_args propagate when the Wolfe step succeeds.
@@ -652,8 +648,8 @@ TEST(WolfeLineSearch, AutodiffGradientsPropagateOnWolfeSuccess) {
 
   auto status = harness.run(info, obj, ll_fun, ll_args);
   EXPECT_EQ(status.stop_, WolfeReturn::Wolfe)
-  << "Expected Wolfe but wolfe returned "
-  << stan::math::internal::wolfe_status_str(status);
+      << "Expected Wolfe but wolfe returned "
+      << stan::math::internal::wolfe_status_str(status);
 
   auto [scale_grad, shift_grad]
       = coupled_likelihood_arg_gradients(info.curr_.theta());
@@ -681,7 +677,7 @@ TEST(WolfeLineSearch, DirectionalDerivativeSignFlipImprovesObjective) {
   EXPECT_NE(status.stop_, WolfeReturn::Fail);
   double phi0 = obj(before.prev_.a(), before.prev_.theta());
   double phi_alpha = obj(info.curr_.a(), info.curr_.theta());
-//  EXPECT_GT(phi_alpha, phi0);
+  //  EXPECT_GT(phi_alpha, phi0);
 }
 
 // Checks that non-identity covariance produces consistent theta.
@@ -699,7 +695,8 @@ TEST(WolfeLineSearch, CovarianceTransformsTheta) {
   info.curr_.alpha() = 0.5;
 
   auto status = harness.run(info, obj);
-  EXPECT_TRUE(info.curr_.theta().isApprox(harness.covariance * info.curr_.a(), 1e-12));
+  EXPECT_TRUE(
+      info.curr_.theta().isApprox(harness.covariance * info.curr_.a(), 1e-12));
   EXPECT_TRUE(info.curr_.theta().allFinite());
   EXPECT_NE(status.stop_, WolfeReturn::Fail);
 }
@@ -808,8 +805,8 @@ TEST(CubicOrBisect, ReturnsInteriorMaximiser) {
 // Checks that the chooser falls back to the midpoint on non-finite data.
 TEST(CubicOrBisect, FallsBackToMidpointOnNonfinite) {
   using stan::math::internal::cubic_or_bisect_max;
-  double alpha = cubic_or_bisect_max(0.0, std::numeric_limits<double>::quiet_NaN(),
-                                     1.0, 1.0, -1.0, -0.5);
+  double alpha = cubic_or_bisect_max(
+      0.0, std::numeric_limits<double>::quiet_NaN(), 1.0, 1.0, -1.0, -0.5);
   EXPECT_DOUBLE_EQ(alpha, 0.5);
 }
 

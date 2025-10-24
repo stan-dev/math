@@ -1,5 +1,5 @@
 #pragma once
-#include <stan/math/prim/fun/Eigen.hpp>   // or <Eigen/Dense>
+#include <stan/math/prim/fun/Eigen.hpp>  // or <Eigen/Dense>
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
@@ -36,15 +36,13 @@ inline Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> read_matrix_csv(
       try {
         row.push_back(std::stod(cell));
       } catch (const std::invalid_argument&) {
-        throw std::runtime_error(
-            "Non-numeric value in CSV at line: " + line);
+        throw std::runtime_error("Non-numeric value in CSV at line: " + line);
       }
     }
     if (!buffer.empty() && row.size() != buffer[0].size()) {
-      throw std::runtime_error(
-          "Inconsistent column count in CSV: expected " +
-          std::to_string(buffer[0].size()) +
-          " but got " + std::to_string(row.size()));
+      throw std::runtime_error("Inconsistent column count in CSV: expected "
+                               + std::to_string(buffer[0].size()) + " but got "
+                               + std::to_string(row.size()));
     }
     buffer.push_back(std::move(row));
   }
@@ -65,4 +63,4 @@ inline Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> read_matrix_csv(
   return mat;
 }
 
-}  
+}  // namespace stan::math::test::laplace

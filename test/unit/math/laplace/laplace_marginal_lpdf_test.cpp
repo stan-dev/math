@@ -73,8 +73,9 @@ TEST(laplace, poisson_log_phi_dim_2) {
   constexpr int max_num_steps = 100;
   using stan::is_var_v;
   using stan::scalar_type_t;
-  constexpr stan::test::ad_tolerances tols{stan::test::ad_gradient_tols{1e-8, 1e-4}};
-//  tols.gradient_grad_ = 1e-3;
+  constexpr stan::test::ad_tolerances tols{
+      stan::test::ad_gradient_tols{1e-8, 1e-4}};
+  //  tols.gradient_grad_ = 1e-3;
   stan::math::test::run_solver_grid(
       [&](int solver_num, int hessian_block_size, int max_steps_line_search,
           auto&& theta_0) {
@@ -102,7 +103,6 @@ struct poisson_log_exposure_likelihood {
 };
 
 TEST_F(laplace_disease_map_test, laplace_marginal) {
-
   using stan::math::laplace_marginal;
   using stan::math::laplace_marginal_poisson_log_lpmf;
   using stan::math::laplace_marginal_tol;
@@ -146,7 +146,6 @@ struct bernoulli_logit_likelihood {
 };
 
 TEST(laplace, bernoulli_logit_phi_dim500) {
-
   using stan::math::laplace_marginal;
   using stan::math::laplace_marginal_tol;
   using stan::math::to_vector;
@@ -197,4 +196,3 @@ TEST(laplace, bernoulli_logit_phi_dim500) {
       },
       theta_0);
 }
-

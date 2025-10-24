@@ -9,7 +9,7 @@ namespace stan {
 namespace math {
 
 namespace internal {
-    /**
+/**
  * Set all adjoints of the output to zero.
  */
 template <typename Output>
@@ -43,8 +43,7 @@ inline void set_zero_adjoint(Output&& output) {
   }
 }
 
-}
-
+}  // namespace internal
 
 /**
  * functions to compute the log density, first, second,
@@ -160,8 +159,7 @@ inline auto shallow_copy_vargs(Args&&... args) {
  */
 template <typename F, typename Theta, typename Stream, typename... Args,
           require_eigen_vector_vt<std::is_arithmetic, Theta>* = nullptr>
-inline auto theta_grad(F&& f, Theta&& theta,
-                 Stream* msgs, Args&&... args) {
+inline auto theta_grad(F&& f, Theta&& theta, Stream* msgs, Args&&... args) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   nested_rev_autodiff nested;
@@ -186,15 +184,13 @@ inline auto theta_grad(F&& f, Theta&& theta,
  */
 template <typename F, typename Theta, typename Stream, typename... Args,
           require_eigen_vector_vt<std::is_arithmetic, Theta>* = nullptr>
-inline void ll_arg_grad(F&& f, Theta&& theta,
-                 Stream* msgs, Args&&... args) {
+inline void ll_arg_grad(F&& f, Theta&& theta, Stream* msgs, Args&&... args) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   nested_rev_autodiff nested;
   var f_var = f(theta, args..., msgs);
   grad(f_var.vi_);
 }
-
 
 /**
  * Computes negative block diagonal Hessian of `f` wrt`theta` and `args...`
@@ -214,14 +210,15 @@ inline void ll_arg_grad(F&& f, Theta&& theta,
  */
 template <typename F, typename Theta, typename Stream, typename... Args,
           require_eigen_vector_vt<std::is_arithmetic, Theta>* = nullptr>
-inline auto diagonal_hessian(F&& f, Theta&& theta, Stream* msgs, Args&&... args) {
+inline auto diagonal_hessian(F&& f, Theta&& theta, Stream* msgs,
+                             Args&&... args) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   const Eigen::Index theta_size = theta.size();
   auto v = Eigen::VectorXd::Ones(theta_size);
   Eigen::VectorXd hessian_v = Eigen::VectorXd::Zero(theta_size);
   hessian_times_vector(f, hessian_v, std::forward<Theta>(theta), std::move(v),
-                        value_of(args)..., msgs);
+                       value_of(args)..., msgs);
   return (-hessian_v).eval();
 }
 
@@ -243,8 +240,9 @@ inline auto diagonal_hessian(F&& f, Theta&& theta, Stream* msgs, Args&&... args)
  */
 template <typename F, typename Theta, typename Stream, typename... Args,
           require_eigen_vector_vt<std::is_arithmetic, Theta>* = nullptr>
-inline auto block_hessian(F&& f, Theta&& theta, const Eigen::Index hessian_block_size,
-                 Stream* msgs, Args&&... args) {
+inline auto block_hessian(F&& f, Theta&& theta,
+                          const Eigen::Index hessian_block_size, Stream* msgs,
+                          Args&&... args) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   const Eigen::Index theta_size = theta.size();
@@ -260,11 +258,11 @@ inline auto block_hessian(F&& f, Theta&& theta, const Eigen::Index hessian_block
     }
     return (-hessian_theta).eval();
   } else {
-    return (-hessian_block_diag(f, std::forward<Theta>(theta), hessian_block_size,
-                             value_of(args)..., msgs)).eval();
+    return (-hessian_block_diag(f, std::forward<Theta>(theta),
+                                hessian_block_size, value_of(args)..., msgs))
+        .eval();
   }
 }
-
 
 /**
  * Computes theta gradient and negative block diagonal Hessian of `f` wrt
@@ -476,28 +474,27 @@ template <typename F, typename Theta, typename TupleArgs, typename Stream,
           require_eigen_vector_t<Theta>* = nullptr,
           require_tuple_t<TupleArgs>* = nullptr>
 inline auto theta_grad(F&& f, Theta&& theta, TupleArgs&& ll_tup,
-                           Stream* msgs = nullptr) {
+                       Stream* msgs = nullptr) {
   return apply(
       [](auto&& f, auto&& theta, auto&& msgs, auto&&... args) {
-        return internal::theta_grad(
-            std::forward<decltype(f)>(f), std::forward<decltype(theta)>(theta),
-            msgs, std::forward<decltype(args)>(args)...);
+        return internal::theta_grad(std::forward<decltype(f)>(f),
+                                    std::forward<decltype(theta)>(theta), msgs,
+                                    std::forward<decltype(args)>(args)...);
       },
       std::forward<TupleArgs>(ll_tup), std::forward<F>(f),
       std::forward<Theta>(theta), msgs);
 }
-
 
 template <typename F, typename Theta, typename TupleArgs, typename Stream,
           require_eigen_vector_t<Theta>* = nullptr,
           require_tuple_t<TupleArgs>* = nullptr>
 inline auto ll_arg_grad(F&& f, Theta&& theta, TupleArgs&& ll_tup,
-                           Stream* msgs = nullptr) {
+                        Stream* msgs = nullptr) {
   return apply(
       [](auto&& f, auto&& theta, auto&& msgs, auto&&... args) {
-        return internal::ll_arg_grad(
-            std::forward<decltype(f)>(f), std::forward<decltype(theta)>(theta),
-            msgs, std::forward<decltype(args)>(args)...);
+        return internal::ll_arg_grad(std::forward<decltype(f)>(f),
+                                     std::forward<decltype(theta)>(theta), msgs,
+                                     std::forward<decltype(args)>(args)...);
       },
       std::forward<TupleArgs>(ll_tup), std::forward<F>(f),
       std::forward<Theta>(theta), msgs);
@@ -506,10 +503,10 @@ inline auto ll_arg_grad(F&& f, Theta&& theta, TupleArgs&& ll_tup,
 template <typename F, typename Theta, typename TupleArgs, typename Stream,
           require_eigen_vector_t<Theta>* = nullptr,
           require_tuple_t<TupleArgs>* = nullptr>
-inline auto diagonal_hessian(F&& f, Theta&& theta, TupleArgs&& ll_tuple, Stream* msgs) {
+inline auto diagonal_hessian(F&& f, Theta&& theta, TupleArgs&& ll_tuple,
+                             Stream* msgs) {
   return apply(
-      [](auto&& f, auto&& theta, auto* msgs,
-         auto&&... args) {
+      [](auto&& f, auto&& theta, auto* msgs, auto&&... args) {
         return internal::diagonal_hessian(
             std::forward<decltype(f)>(f), std::forward<decltype(theta)>(theta),
             msgs, std::forward<decltype(args)>(args)...);
@@ -521,8 +518,9 @@ inline auto diagonal_hessian(F&& f, Theta&& theta, TupleArgs&& ll_tuple, Stream*
 template <typename F, typename Theta, typename TupleArgs, typename Stream,
           require_eigen_vector_t<Theta>* = nullptr,
           require_tuple_t<TupleArgs>* = nullptr>
-inline auto block_hessian(F&& f, Theta&& theta, const Eigen::Index hessian_block_size,
-                 TupleArgs&& ll_tuple, Stream* msgs) {
+inline auto block_hessian(F&& f, Theta&& theta,
+                          const Eigen::Index hessian_block_size,
+                          TupleArgs&& ll_tuple, Stream* msgs) {
   return apply(
       [](auto&& f, auto&& theta, auto hessian_block_size, auto* msgs,
          auto&&... args) {

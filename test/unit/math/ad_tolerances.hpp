@@ -6,7 +6,6 @@
 namespace stan {
 namespace test {
 
-
 /**
  * Helper struct for setting the gradient tolerances used for reverse mode.
  */
@@ -14,8 +13,7 @@ struct ad_gradient_tols {
   relative_tolerance val_{1e-8};
   relative_tolerance grad_{1e-4};
   constexpr ad_gradient_tols() = default;
-  constexpr ad_gradient_tols(relative_tolerance val,
-                              relative_tolerance grad)
+  constexpr ad_gradient_tols(relative_tolerance val, relative_tolerance grad)
       : val_(val), grad_(grad) {}
 };
 
@@ -62,8 +60,7 @@ struct ad_tolerances {
   relative_tolerance grad_hessian_grad_hessian_{1e-2};
   constexpr ad_tolerances() = default;
   constexpr ad_tolerances(ad_gradient_tols grad_tols)
-      : gradient_val_(grad_tols.val_),
-        gradient_grad_(grad_tols.grad_) {}
+      : gradient_val_(grad_tols.val_), gradient_grad_(grad_tols.grad_) {}
 };
 }  // namespace test
 }  // namespace stan

@@ -37,7 +37,6 @@ struct normal_likelihood {
   }
 };
 
-
 struct covariance_motorcycle_functor {
   template <typename TX, typename LengthF, typename LengthG, typename SigmaF,
             typename SigmaG>
@@ -74,7 +73,6 @@ struct covariance_motorcycle_functor {
   }
 };
 
-
 class laplace_motorcyle_gp_test : public ::testing::Test {
  protected:
   void SetUp() override {
@@ -86,7 +84,7 @@ class laplace_motorcyle_gp_test : public ::testing::Test {
     Eigen::VectorXd mu_hat = K_plus_I.colPivHouseholderQr().solve(y);
     // Remark: finds optimal point with or without informed initial guess.
     for (int i = 0; i < n_obs - 1; i++) {
-      theta0(2 * i) =  0;
+      theta0(2 * i) = 0;
       theta0(2 * i + 1) = -1.0;
     }
   }
@@ -104,14 +102,12 @@ class laplace_motorcyle_gp_test : public ::testing::Test {
   Eigen::Matrix<double, -1, 1> eta{{1.0}};
   static constexpr double sigma_global{1.0};
   Eigen::VectorXd eta_dbl{{sigma_global}};
-  static constexpr  int solver{2};
+  static constexpr int solver{2};
   static constexpr double eps{1e-7};
   Eigen::VectorXd phi_dbl{{length_scale_f, length_scale_g, sigma_f, sigma_g}};
 };
 
-
 TEST_F(laplace_motorcyle_gp_test, gp_motorcycle_val) {
-
   // logger->current_test_name_ = "gp_motorcycle";
   using stan::math::laplace_marginal_tol;
   constexpr double tolerance = 1e-12;
@@ -138,7 +134,7 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle_ad) {
   Eigen::VectorXd mu_hat = K_plus_I.colPivHouseholderQr().solve(y);
   // Remark: finds optimal point with or without informed initial guess.
   for (int i = 0; i < n_obs - 1; i++) {
-    theta0(2 * i) =  mu_hat(i);
+    theta0(2 * i) = mu_hat(i);
     theta0(2 * i + 1) = -1.0;
   }
   // logger->current_test_name_ = "gp_motorcycle";
@@ -151,19 +147,20 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle_ad) {
   auto phi_1 = phi_dbl(1);
   Eigen::VectorXd phi_rest = phi_dbl.tail(2);
   Eigen::VectorXd phi_01{{phi_0, phi_1}};
-  constexpr stan::test::ad_tolerances tols{stan::test::ad_gradient_tols{1e-8, 1e-2}};
+  constexpr stan::test::ad_tolerances tols{
+      stan::test::ad_gradient_tols{1e-8, 1e-2}};
   stan::math::test::run_solver_grid(
-    [&](int solver_num, int hessian_block_size, int max_steps_line_search,
-        auto&& theta_0) {
-      auto f = [&](auto&& y_v, auto&& phi_01_v, auto&& phi_rest_v) {
-        return laplace_marginal_tol<false>(
-            normal_likelihood{}, std::forward_as_tuple(y_v, n_obs),
-            covariance_motorcycle_functor{},
-            std::forward_as_tuple(x, phi_01_v(0), phi_01_v(1), phi_rest_v(0),
-                                  phi_rest_v(1), n_obs),
-            theta_0, tolerance, max_num_steps, hessian_block_size, solver_num,
-            max_steps_line_search, nullptr);
-      };
+      [&](int solver_num, int hessian_block_size, int max_steps_line_search,
+          auto&& theta_0) {
+        auto f = [&](auto&& y_v, auto&& phi_01_v, auto&& phi_rest_v) {
+          return laplace_marginal_tol<false>(
+              normal_likelihood{}, std::forward_as_tuple(y_v, n_obs),
+              covariance_motorcycle_functor{},
+              std::forward_as_tuple(x, phi_01_v(0), phi_01_v(1), phi_rest_v(0),
+                                    phi_rest_v(1), n_obs),
+              theta_0, tolerance, max_num_steps, hessian_block_size, solver_num,
+              max_steps_line_search, nullptr);
+        };
         try {
           stan::test::expect_ad<true>(tols, f, y, phi_01, phi_rest);
         } catch (const std::domain_error e) {
@@ -175,14 +172,14 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle_ad) {
                         << std::endl;
           stan::math::recover_memory();
         }
-
-  }, theta0);
+      },
+      theta0);
 }
 
 struct normal_likelihood2 {
   template <typename Theta, typename SigmaGlobal>
-  auto operator()(const Theta& theta, const Eigen::VectorXd& y,
-                  const int n_obs, const SigmaGlobal& sigma_global,
+  auto operator()(const Theta& theta, const Eigen::VectorXd& y, const int n_obs,
+                  const SigmaGlobal& sigma_global,
                   std::ostream* pstream) const {
     using stan::math::multiply;
     Eigen::Matrix<stan::return_type_t<Theta>, -1, 1> mu(n_obs);
@@ -190,11 +187,12 @@ struct normal_likelihood2 {
     stan::return_type_t<Theta> lp = 0;
     for (int i = 0; i < n_obs; i++) {
       mu(i) = theta(2 * i);
-      sigma(i) = stan::math::lb_constrain<true>(
-          multiply(0.5, theta(2 * i + 1)), 0.0, lp);  // * sigma_global;
+      sigma(i) = stan::math::lb_constrain<true>(multiply(0.5, theta(2 * i + 1)),
+                                                0.0, lp);  // * sigma_global;
     }
     // return stan::math::normal_lpdf(y, mu, sigma);
-    return stan::math::normal_lpdf(y, mu, stan::math::add(sigma_global, sigma)) + lp;
+    return stan::math::normal_lpdf(y, mu, stan::math::add(sigma_global, sigma))
+           + lp;
   }
 };
 
@@ -207,7 +205,7 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle2_val) {
   Eigen::VectorXd mu_hat = K_plus_I.colPivHouseholderQr().solve(y);
   // Remark: finds optimal point with or without informed initial guess.
   for (int i = 0; i < n_obs - 1; i++) {
-    theta0(2 * i) =  mu_hat(i);
+    theta0(2 * i) = mu_hat(i);
     theta0(2 * i + 1) = -1.0;
   }
   using stan::math::laplace_marginal_tol;
@@ -221,16 +219,16 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle2_val) {
   double target = laplace_marginal_tol<false>(
       normal_likelihood2{}, std::forward_as_tuple(y, n_obs, sigma_global),
       covariance_motorcycle_functor{},
-      std::forward_as_tuple(x, length_scale_f, length_scale_g, sigma_f,
-        sigma_g, n_obs),
+      std::forward_as_tuple(x, length_scale_f, length_scale_g, sigma_f, sigma_g,
+                            n_obs),
       theta0, tolerance, max_num_steps, hessian_block_size, 3,
       max_steps_line_search, nullptr);
 }
 
 TEST_F(laplace_motorcyle_gp_test, gp_motorcycle2_ad) {
   using stan::math::gp_exp_quad_cov;
-  using stan::math::value_of;
   using stan::math::laplace_marginal_tol;
+  using stan::math::value_of;
   Eigen::MatrixXd K_plus_I
       = gp_exp_quad_cov(x, value_of(sigma_f), value_of(length_scale_f))
         + Eigen::MatrixXd::Identity(n_obs, n_obs);
@@ -245,20 +243,24 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle2_ad) {
   constexpr int max_num_steps = 1000;
   Eigen::VectorXd length_scale_vec = phi_dbl.head(2);
   Eigen::VectorXd sigma_vec = phi_dbl.tail(2);
-  constexpr stan::test::ad_tolerances tols{stan::test::ad_gradient_tols{1e-8, 1e-2}};
+  constexpr stan::test::ad_tolerances tols{
+      stan::test::ad_gradient_tols{1e-8, 1e-2}};
   stan::math::test::run_solver_grid(
       [&](int solver_num, int hessian_block_size, int max_steps_line_search,
           auto&& theta_0) {
-        auto f = [&](auto&& sigma_global_v, auto&& length_scale_v, auto&& sigma_v) {
+        auto f = [&](auto&& sigma_global_v, auto&& length_scale_v,
+                     auto&& sigma_v) {
           return laplace_marginal_tol<false>(
-              normal_likelihood2{}, std::forward_as_tuple(y, n_obs, sigma_global_v),
+              normal_likelihood2{},
+              std::forward_as_tuple(y, n_obs, sigma_global_v),
               covariance_motorcycle_functor{},
               std::forward_as_tuple(x, length_scale_v(0), length_scale_v(1),
-                sigma_v(0), sigma_v(1), n_obs),
+                                    sigma_v(0), sigma_v(1), n_obs),
               theta_0, tolerance, max_num_steps, hessian_block_size, solver_num,
               max_steps_line_search, nullptr);
         };
-        stan::test::expect_ad<true>(tols, f, sigma_global, length_scale_vec, sigma_vec);
+        stan::test::expect_ad<true>(tols, f, sigma_global, length_scale_vec,
+                                    sigma_vec);
       },
       theta0);
 }
