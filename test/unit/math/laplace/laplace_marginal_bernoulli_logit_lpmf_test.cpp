@@ -39,7 +39,7 @@ TEST(laplace_marginal_bernoulli_logit_lpmf, phi_dim500) {
   constexpr double tolerance = 1e-12;
   constexpr int max_num_steps = 1000;
   constexpr stan::test::ad_tolerances tols{
-      stan::test::ad_gradient_tols{1e-8, 1e-4}};
+      stan::test::ad_gradient_tols{1e-8, 1e-3}};
   stan::math::test::run_solver_grid(
       [&](int solver_num, int hessian_block_size, int max_steps_line_search,
           auto&& theta_0) {

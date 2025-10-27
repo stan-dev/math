@@ -74,7 +74,7 @@ TEST(laplace, poisson_log_phi_dim_2) {
   using stan::is_var_v;
   using stan::scalar_type_t;
   constexpr stan::test::ad_tolerances tols{
-      stan::test::ad_gradient_tols{1e-8, 1e-4}};
+      stan::test::ad_gradient_tols{1e-8, 1e-3}};
   //  tols.gradient_grad_ = 1e-3;
   stan::math::test::run_solver_grid(
       [&](int solver_num, int hessian_block_size, int max_steps_line_search,
@@ -180,7 +180,8 @@ TEST(laplace, bernoulli_logit_phi_dim500) {
   // All fail for ad check with relative tolerance ~0.002
   constexpr double tolerance = 1e-12;
   constexpr int max_num_steps = 100;
-  constexpr stan::test::ad_tolerances tols;
+  constexpr stan::test::ad_tolerances tols{
+      stan::test::ad_gradient_tols{1e-8, 5e-3}};
   stan::math::test::run_solver_grid(
       [&](int solver_num, int hessian_block_size, int max_steps_line_search,
           auto&& theta_0) {

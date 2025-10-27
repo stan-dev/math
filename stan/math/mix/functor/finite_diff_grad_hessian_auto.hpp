@@ -58,7 +58,7 @@ inline void finite_diff_grad_hessian_auto(
 
   for (int i = 0; i < d; ++i) {
     double dummy_fx_eval;
-    double epsilon = finite_diff_stepsize(x(i));
+    double epsilon = finite_diff_stepsize<2>(x(i));
     hess_diff.setZero();
 
     x_temp(i) = x(i) + 2 * epsilon;

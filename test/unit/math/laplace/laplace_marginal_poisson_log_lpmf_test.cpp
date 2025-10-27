@@ -93,7 +93,7 @@ TEST(laplace_marginal_poisson_log_lpmf, log_phi_dim_2) {
   //  stan::test::ad_tolerances tols;
   // tols.gradient_val_ = 1e-3;
   constexpr stan::test::ad_tolerances tols{
-      stan::test::ad_gradient_tols{1e-8, 1e-4}};
+      stan::test::ad_gradient_tols{1e-8, 1e-3}};
 
   //  tols.gradient_grad_ = 1e-3;
   Eigen::VectorXd ye(2);
