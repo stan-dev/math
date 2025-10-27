@@ -30,7 +30,7 @@ inline constexpr auto eps_root_calc() {
     return std::pow(eps, T(1) / T(StencilOrder + 1));
   }
 }
-}
+}  // namespace internal
 /**
  * @brief Compute a finite-difference step size suitable for a stencil with
  *        leading truncation order \p StencilOrder.
