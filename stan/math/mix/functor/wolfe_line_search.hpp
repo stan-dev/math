@@ -287,7 +287,7 @@ template <typename Eval, typename WolfeT, typename Option>
 inline bool check_armijo(const Eval& eval, const WolfeT& prev,
                          const Option& opt) {
   return check_armijo(eval.obj(), prev.obj(), eval.alpha(), prev.dir(), opt);
-};
+}
 
 template <typename Option>
 inline auto check_wolfe_curve(double dir_deriv_next, double dir_deriv_init,
@@ -404,7 +404,7 @@ struct Eval {
   inline const auto& dir() const { return dir_; }
   constexpr Eval(double alpha, double obj, double dir)
       : alpha_(alpha), obj_(obj), dir_(dir) {}
-  constexpr explicit Eval() = default;
+  constexpr Eval() = default;
 };
 
 /**

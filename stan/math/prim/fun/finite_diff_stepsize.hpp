@@ -3,14 +3,11 @@
 
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/fabs.hpp>
+#include <limits>
 #include <cmath>
 
 namespace stan {
 namespace math {
-
-#include <cmath>
-#include <limits>
-#include <algorithm>
 
 namespace internal {
 template <std::size_t StencilOrder = 2, typename T>
@@ -74,13 +71,15 @@ inline constexpr auto eps_root_calc() {
  *       differentiable) behavior along the perturbed coordinate.
  */
 template <std::size_t StencilOrder = 2, typename T>
-inline T finite_diff_stepsize(T u, T c = T(1)) {
-  const T scale = std::max(T(1), std::abs(u));
-  const T eps_root = internal::eps_root_calc<StencilOrder, T>();
-  const T h = c * eps_root * scale;
+inline auto finite_diff_stepsize(T u_, T c = T(1)) {
+  using fp_t = std::conditional_t<std::is_integral_v<T>, double, T>;
+  const fp_t u = static_cast<fp_t>(u_);
+  const fp_t scale = std::max(fp_t{1}, std::abs(u));
+  const fp_t eps_root = internal::eps_root_calc<StencilOrder, fp_t>();
+  const fp_t h = static_cast<fp_t>(c) * eps_root * scale;
   // Ensure perturbation isn’t rounded away at u.
   if (u + h == u) {
-    const T next = std::nextafter(u, std::numeric_limits<T>::infinity());
+    const fp_t next = std::nextafter(u, std::numeric_limits<fp_t>::infinity());
     return std::max(h, next - u);
   }
   return h;
