@@ -458,6 +458,7 @@ inline double barzilai_borwein_step_size(const Eigen::VectorXd& s,
  * \laplace_common_template_args
  * @param[in] ll_fun A log likelihood functor
  * @param[in] ll_args Tuple containing parameters for `LLFun`
+ * @param[in] covariance The covariance matrix for the latent Gaussian
  * \laplace_common_args
  * @param[in] options A set of options for tuning the solver
  * \msg_arg
