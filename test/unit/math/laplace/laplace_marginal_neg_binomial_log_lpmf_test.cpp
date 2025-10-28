@@ -61,7 +61,7 @@ TEST_F(laplace_disease_map_test, laplace_marginal_neg_binomial_2_log_lpmf) {
       y, y_index, eta, mean, stan::math::test::sqr_exp_kernel_functor(),
       std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1)), nullptr);
 
-  // TODO (charlesm93): get benchmark from GPStuff or another software.
+  // TODO(charlesm93): get benchmark from GPStuff or another software.
   constexpr double tolerance = 1e-12;
   constexpr int max_num_steps = 100;
   stan::math::test::run_solver_grid(

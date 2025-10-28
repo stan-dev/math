@@ -38,3 +38,4 @@ static const auto y = Eigen::VectorXd{
 }  // namespace test
 }  // namespace stan
 #endif
+

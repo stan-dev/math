@@ -59,7 +59,7 @@ struct ad_tolerances {
   relative_tolerance grad_hessian_hessian_{1e-3};
   relative_tolerance grad_hessian_grad_hessian_{1e-2};
   constexpr ad_tolerances() = default;
-  constexpr ad_tolerances(ad_gradient_tols grad_tols)
+  constexpr explicit ad_tolerances(ad_gradient_tols grad_tols)
       : gradient_val_(grad_tols.val_), gradient_grad_(grad_tols.grad_) {}
 };
 }  // namespace test
