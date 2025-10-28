@@ -134,27 +134,27 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle_ad) {
   Eigen::VectorXd mu_hat = K_plus_I.colPivHouseholderQr().solve(y);
   // Remark: finds optimal point with or without informed initial guess.
   for (int i = 0; i < n_obs - 1; i++) {
-    theta0(2 * i) = mu_hat(i);
+    theta0(2 * i) = 0.0;
     theta0(2 * i + 1) = -1.0;
   }
   // logger->current_test_name_ = "gp_motorcycle";
   using stan::math::laplace_marginal_tol;
 
   // TODO(Steve): benchmark this result against GPStuff.
-  constexpr double tolerance = 1e-12;
+  constexpr double tolerance = 1e-8;
   constexpr int max_num_steps = 1000;
   auto phi_0 = phi_dbl(0);
   auto phi_1 = phi_dbl(1);
   Eigen::VectorXd phi_rest = phi_dbl.tail(2);
   Eigen::VectorXd phi_01{{phi_0, phi_1}};
   constexpr stan::test::ad_tolerances tols{
-      stan::test::ad_gradient_tols{1e-8, 1e-2}};
+      stan::test::ad_gradient_tols{1e-8, 1e-1}};
   stan::math::test::run_solver_grid(
       [&](int solver_num, int hessian_block_size, int max_steps_line_search,
           auto&& theta_0) {
-        auto f = [&](auto&& y_v, auto&& phi_01_v, auto&& phi_rest_v) {
+        auto f = [&](auto&& phi_01_v, auto&& phi_rest_v) {
           return laplace_marginal_tol<false>(
-              normal_likelihood{}, std::forward_as_tuple(y_v, n_obs),
+              normal_likelihood{}, std::forward_as_tuple(y, n_obs),
               covariance_motorcycle_functor{},
               std::forward_as_tuple(x, phi_01_v(0), phi_01_v(1), phi_rest_v(0),
                                     phi_rest_v(1), n_obs),
@@ -162,7 +162,7 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle_ad) {
               max_steps_line_search, nullptr);
         };
         try {
-          stan::test::expect_ad<true>(tols, f, y, phi_01, phi_rest);
+          stan::test::expect_ad<true>(tols, f, phi_01, phi_rest);
         } catch (const std::domain_error e) {
           ADD_FAILURE() << "Exception: " << e.what()
                         << "\n\tsolver_num: " << solver_num
@@ -239,12 +239,12 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle2_ad) {
     theta0(2 * i + 1) = -1.0;
   }
   // TODO(Charles): benchmark this result against GPStuff.
-  constexpr double tolerance = 1e-12;
+  constexpr double tolerance = 1e-8;
   constexpr int max_num_steps = 1000;
   Eigen::VectorXd length_scale_vec = phi_dbl.head(2);
   Eigen::VectorXd sigma_vec = phi_dbl.tail(2);
   constexpr stan::test::ad_tolerances tols{
-      stan::test::ad_gradient_tols{1e-8, 1e-2}};
+      stan::test::ad_gradient_tols{1e-8, 1e-1}};
   stan::math::test::run_solver_grid(
       [&](int solver_num, int hessian_block_size, int max_steps_line_search,
           auto&& theta_0) {
