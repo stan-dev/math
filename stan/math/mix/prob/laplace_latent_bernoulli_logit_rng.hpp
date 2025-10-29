@@ -40,8 +40,8 @@ inline Eigen::VectorXd laplace_latent_tol_bernoulli_logit_rng(
     const int hessian_block_size, const int solver,
     const int max_steps_line_search, RNG& rng, std::ostream* msgs) {
   laplace_options_user_supplied ops{
-      hessian_block_size, solver,        max_steps_line_search,
-      tolerance,          max_num_steps, laplace_line_search_options{},
+      hessian_block_size, solver, tolerance,  max_num_steps,
+      laplace_line_search_options{max_steps_line_search},
       value_of(theta_0)};
   return laplace_base_rng(
       bernoulli_logit_likelihood{},

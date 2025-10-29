@@ -343,14 +343,14 @@ struct WolfeStatus {
   bool success_{false};
   WolfeStatus() = default;
   WolfeStatus(WolfeReturn stop, int evals, int back)
-      : stop_(stop),
-        num_evals_(evals),
+      : num_evals_(evals),
         num_backtracks_(back),
+        stop_(stop),
         success_{false} {}
   WolfeStatus(WolfeReturn stop, int evals, int back, bool success)
-      : stop_(stop),
-        num_evals_(evals),
+      : num_evals_(evals),
         num_backtracks_(back),
+        stop_(stop),
         success_{success} {}
 };
 
