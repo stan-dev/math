@@ -133,7 +133,7 @@ inline auto wiener4_ccdf_grad_a(const T_y& y, const T_a& a, const T_v& v,
   // derivative of the wiener probability w.r.t. 'a' (on log-scale)
   auto prob_grad_a = -wiener_prob_derivative_term(a, v, w) * v;
   if (!is_scal_finite(prob_grad_a)) {
-	prob_grad_a = ret_t(NEGATIVE_INFTY);
+    prob_grad_a = ret_t(NEGATIVE_INFTY);
   }
   const auto log_prob_hit_upper = log_wiener_prob_hit_upper(a, v, w);
   const auto cdf_grad_a = wiener4_cdf_grad_a(y, a, v, w, cdf, log_err);
