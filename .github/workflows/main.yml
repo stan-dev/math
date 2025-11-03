@@ -71,7 +71,7 @@ jobs:
         python runTests.py -j4 ${{ matrix.config.tests }}
 
     - name: Upload gtest_output xml
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       if: failure()
       with:
         name: gtest_outputs_xml
@@ -134,7 +134,7 @@ jobs:
         python runTests.py -j2 $MixFunProbTestsArray[(${{ matrix.group }} - 1)]
 
     - name: Upload gtest_output xml
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       if: failure()
       with:
         name: gtest_outputs_xml
