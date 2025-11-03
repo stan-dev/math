@@ -9,6 +9,9 @@ namespace internal {
 
 /**
  * Make the expression finite
+ *
+ * @param x Expression to test
+ * @return Expression or limited to maximum numeric_limit
  */
 template <typename T_x>
 inline auto make_finite(const T_x& x) {
@@ -18,6 +21,7 @@ inline auto make_finite(const T_x& x) {
     return std::numeric_limits<T_x>::max();
   }
 }
+
 /**
  * Calculate the probability term 'P' on log scale for distribution
  *
@@ -106,9 +110,9 @@ inline auto log_probability_GradAV(const T_a& a, const T_v& v, const T_w& w) {
       log_quotient = NEGATIVE_INFTY;
     }
     if (log(w) > log_quotient) {
-      return -exp(log_prob) * (w - exp(log_quotient));
-    } else {
-      return exp(log_prob) * (exp(log_quotient) - w);
+      return -exp(log_prob + log_diff_exp(log(w), log_quotient));
+    } else { 
+      return exp(log_prob + log_diff_exp(log_quotient, log(w)));
     }
   }
 }

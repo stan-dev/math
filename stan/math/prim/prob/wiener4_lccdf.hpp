@@ -56,13 +56,12 @@ inline auto wiener_prob_derivative_term(const T_a& a, const T_v& v,
                                         const T_w& w) noexcept {
   using ret_t = return_type_t<T_a, T_w, T_v>;
   const auto exponent_m1 = log1m(1.1 * 1.0e-8);
-  ret_t ans;
   const auto neg_v = -v;
   const auto one_m_w = 1 - w;
   int sign_v = neg_v < 0 ? 1 : -1;
   const auto two_a_neg_v = 2.0 * a * neg_v;
   const auto exponent_with_1mw = sign_v * two_a_neg_v * w;
-  const auto exponent = (sign_v * two_a_neg_v);
+  const auto exponent = sign_v * two_a_neg_v;
   const auto exponent_with_w = two_a_neg_v * one_m_w;
   // truncating longer calculations, for numerical stability
   if (unlikely((exponent_with_1mw >= exponent_m1)
@@ -70,6 +69,7 @@ inline auto wiener_prob_derivative_term(const T_a& a, const T_v& v,
                || (exponent >= exponent_m1) || neg_v == 0)) {
     return ret_t(-one_m_w);
   }
+  ret_t ans;
   ret_t diff_term;
   const auto log_w = log(one_m_w);
   if (neg_v < 0) {
@@ -133,7 +133,7 @@ inline auto wiener4_ccdf_grad_a(const T_y& y, const T_a& a, const T_v& v,
   // derivative of the wiener probability w.r.t. 'a' (on log-scale)
   auto prob_grad_a = -wiener_prob_derivative_term(a, v, w) * v;
   if (!is_scal_finite(prob_grad_a)) {
-    prob_grad_a = ret_t(NEGATIVE_INFTY);
+    return ret_t(NEGATIVE_INFTY);
   }
   const auto log_prob_hit_upper = log_wiener_prob_hit_upper(a, v, w);
   const auto cdf_grad_a = wiener4_cdf_grad_a(y, a, v, w, cdf, log_err);
