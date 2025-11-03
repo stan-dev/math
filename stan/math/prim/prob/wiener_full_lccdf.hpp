@@ -32,11 +32,9 @@ template <typename T_y, typename T_a, typename T_v, typename T_w, typename T_sw,
           typename T_err>
 inline auto wiener7_ccdf_grad_sw(const T_y& y, const T_a& a, const T_v& v,
                                  const T_w& w, const T_sw& sw,
-                                 T_err&& log_error) {
-  auto low = w - sw / 2.0;
-  low = (0 > low) ? 0 : low;
-  auto high = w + sw / 2.0;
-  high = (1 < high) ? 1 : high;
+                                 T_err log_error) {
+  auto low = fmax(0.0, w - sw / 2.0);
+  auto high = fmin(1.0, w + sw / 2.0);
 
   const auto lower_value = wiener4_ccdf(y, a, v, low, log_error);
   const auto upper_value = wiener4_ccdf(y, a, v, high, log_error);
@@ -112,14 +110,14 @@ inline auto wiener_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
   T_sw_ref sw_ref = sw;
   T_st0_ref st0_ref = st0;
 
-  decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
-  decltype(auto) a_val = to_ref(as_value_column_array_or_scalar(a_ref));
-  decltype(auto) v_val = to_ref(as_value_column_array_or_scalar(v_ref));
-  decltype(auto) w_val = to_ref(as_value_column_array_or_scalar(w_ref));
-  decltype(auto) t0_val = to_ref(as_value_column_array_or_scalar(t0_ref));
-  decltype(auto) sv_val = to_ref(as_value_column_array_or_scalar(sv_ref));
-  decltype(auto) sw_val = to_ref(as_value_column_array_or_scalar(sw_ref));
-  decltype(auto) st0_val = to_ref(as_value_column_array_or_scalar(st0_ref));
+  auto y_val = to_ref(as_value_column_array_or_scalar(y_ref));
+  auto a_val = to_ref(as_value_column_array_or_scalar(a_ref));
+  auto v_val = to_ref(as_value_column_array_or_scalar(v_ref));
+  auto w_val = to_ref(as_value_column_array_or_scalar(w_ref));
+  auto t0_val = to_ref(as_value_column_array_or_scalar(t0_ref));
+  auto sv_val = to_ref(as_value_column_array_or_scalar(sv_ref));
+  auto sw_val = to_ref(as_value_column_array_or_scalar(sw_ref));
+  auto st0_val = to_ref(as_value_column_array_or_scalar(st0_ref));
 
   if (!include_summand<propto, T_y, T_a, T_v, T_w, T_t0, T_sv, T_sw,
                        T_st0>::value) {
@@ -151,7 +149,7 @@ inline auto wiener_lccdf(const T_y& y, const T_a& a, const T_t0& t0,
                st0_val);
 
   const size_t N = max_size(y, a, v, w, t0, sv, sw, st0);
-  if (!N) {
+  if (N == 0) {
     return ret_t(0.0);
   }
   scalar_seq_view<T_y_ref> y_vec(y_ref);

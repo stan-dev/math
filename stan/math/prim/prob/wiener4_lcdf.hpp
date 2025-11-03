@@ -7,6 +7,18 @@ namespace stan {
 namespace math {
 namespace internal {
 
+
+/** 
+ * Make the expression finite
+ */
+template <typename T_x>
+inline auto make_finite(const T_x& x) {
+	if (x < std::numeric_limits<T_x>::max()) {
+		return x;
+	} else {
+		return std::numeric_limits<T_x>::max();
+	}
+}
 /**
  * Calculate the probability term 'P' on log scale for distribution
  *
@@ -55,7 +67,7 @@ inline auto log_probability_GradAV(const T_a& a, const T_v& v, const T_w& w) {
     return ret_t(-w);
   }
   auto nearly_one = ret_t(1.0 - 1.1 * 1.0e-5);
-  ret_t prob;
+  ret_t log_prob;
   if (v < 0) {
     const auto two_av = 2.0 * a * v;
     const auto two_va_one_minus_w = (two_av * (1.0 - w));
@@ -67,14 +79,12 @@ inline auto log_probability_GradAV(const T_a& a, const T_v& v, const T_w& w) {
         || (exp_two_av >= nearly_one)) {
       return ret_t(-w);
     }
-    prob = LOG_TWO + two_va_one_minus_w - log1m(exp_two_va_one_minus_w);
+    log_prob = LOG_TWO + two_va_one_minus_w - log1m(exp_two_va_one_minus_w);
     auto log_quotient = log1m(exp_two_avw) - log1m(exp_two_av);
     if (log(w) > log_quotient) {
-      prob += log_diff_exp(log(w), log_quotient);
-      return exp(prob);
+      return exp(log_prob) * (w - exp(log_quotient));
     } else {
-      prob += log_diff_exp(log_quotient, log(w));
-      return -exp(prob);
+      return -exp(log_prob) * (exp(log_quotient) - w);
     }
   } else {
     const auto minus_two_av = -2.0 * a * v;
@@ -85,7 +95,7 @@ inline auto log_probability_GradAV(const T_a& a, const T_v& v, const T_w& w) {
         || (exp_minus_two_av >= nearly_one)) {
       return ret_t(-w);
     }
-    prob = LOG_TWO - log1m(exp_minus_two_va_one_minus_w);
+    log_prob = LOG_TWO - log1m(exp_minus_two_va_one_minus_w);
     ret_t log_quotient;
     if (minus_two_va_one_minus_w > minus_two_av) {
       log_quotient = log_diff_exp(minus_two_va_one_minus_w, minus_two_av)
@@ -97,11 +107,9 @@ inline auto log_probability_GradAV(const T_a& a, const T_v& v, const T_w& w) {
       log_quotient = NEGATIVE_INFTY;
     }
     if (log(w) > log_quotient) {
-      prob += log_diff_exp(log(w), log_quotient);
-      return -exp(prob);
+      return -exp(log_prob) * (w - exp(log_quotient));
     } else {
-      prob += log_diff_exp(log_quotient, log(w));
-      return exp(prob);
+      return exp(log_prob) * (exp(log_quotient) - w);
     }
   }
 }
@@ -127,13 +135,14 @@ inline auto logMill(T_x&& x) {
  * @param a The boundary separation
  * @param v The relative starting point
  * @param w The drift rate
- * @param err The log error tolerance
+ * @param log_err The log error tolerance in the computation of the number
+ * of terms for the infinite sums
  * @return distribution
  */
 template <bool NaturalScale = false, typename T_y, typename T_a, typename T_w,
           typename T_v, typename T_err>
 inline auto wiener4_distribution(const T_y& y, const T_a& a, const T_v& v,
-                                 const T_w& w, T_err&& err = log(1e-12)) {
+                                 const T_w& w, T_err log_err = log(1e-12)) {
   using ret_t = return_type_t<T_y, T_a, T_w, T_v>;
   const auto neg_v = -v;
   const auto one_m_w = 1.0 - w;
@@ -143,7 +152,7 @@ inline auto wiener4_distribution(const T_y& y, const T_a& a, const T_v& v,
   const auto K1 = 0.5 * (fabs(neg_v) / a * y - one_m_w);
   const auto arg = fmax(
       0.0,
-      fmin(1.0, exp(one_m_w_a_neg_v + square(neg_v) * y / 2.0 + err) / 2.0));
+      fmin(1.0, exp(one_m_w_a_neg_v + square(neg_v) * y / 2.0 + log_err) / 2.0));
   const auto K2 = (arg == 0) ? INFTY
                              : (arg == 1) ? NEGATIVE_INFTY
                                           : -sqrt(y) / 2.0 / a * inv_Phi(arg);
@@ -154,7 +163,7 @@ inline auto wiener4_distribution(const T_y& y, const T_a& a, const T_v& v,
   const auto sqrtL1 = sqrt(1.0 / y) * api;
   const auto sqrtL2 = sqrt(
       fmax(1.0, -2.0 / y * square(api)
-                    * (err + log(pi() * y / 2.0 * (v_square + square(pi() / a)))
+                    * (log_err + log(pi() * y / 2.0 * (v_square + square(pi() / a)))
                        + one_m_w_a_neg_v + v_square * y / 2.0)));
   const auto K_large_value = ceil(fmax(sqrtL1, sqrtL2));
 
@@ -178,13 +187,7 @@ inline auto wiener4_distribution(const T_y& y, const T_a& a, const T_v& v,
       fminus = log_sum_exp(fminus, log_sum_exp(neg1, neg2));
     }
     auto ans = ret_t(0.0);
-    if (fplus > fminus) {
-      ans = log_diff_exp(fplus, fminus);
-    } else if (fplus < fminus) {
-      ans = log_diff_exp(fminus, fplus);
-    } else {
-      ans = NEGATIVE_INFTY;
-    }
+	ans = fplus > fminus ? log_diff_exp(fplus, fminus) : log_diff_exp(fminus, fplus);
     ret_t log_distribution = ans - one_m_w_a_neg_v - square(neg_v) * y / 2;
     return NaturalScale ? exp(log_distribution) : log_distribution;
   }
@@ -209,11 +212,7 @@ inline auto wiener4_distribution(const T_y& y, const T_a& a, const T_v& v,
     }
   }
   ret_t ans = NEGATIVE_INFTY;
-  if (fplus > fminus) {
-    ans = log_diff_exp(fplus, fminus);
-  } else if (fplus < fminus) {
-    ans = log_diff_exp(fminus, fplus);
-  }
+  ans = fplus > fminus ? log_diff_exp(fplus, fminus) : log_diff_exp(fminus, fplus);
   auto summand_1 = log_probability_distribution(a, neg_v, one_m_w);
   auto summand_2 = lg + (ans - one_m_w_a_neg_v - 0.5 * square(neg_v) * y);
   ret_t log_distribution = NEGATIVE_INFTY;
@@ -233,14 +232,15 @@ inline auto wiener4_distribution(const T_y& y, const T_a& a, const T_v& v,
  * @param v The relative starting point
  * @param w The drift rate
  * @param cdf The value of the distribution
- * @param err The log error tolerance
+ * @param log_err The log error tolerance in the computation of the number
+ * of terms for the infinite sums 
  * @return Gradient with respect to a
  */
 template <typename T_y, typename T_a, typename T_v, typename T_w,
           typename T_cdf, typename T_err>
 inline auto wiener4_cdf_grad_a(const T_y& y, const T_a& a, const T_v& v,
                                const T_w& w, T_cdf&& cdf,
-                               T_err&& err = log(1e-12)) {
+                               T_err log_err = log(1e-12)) {
   using ret_t = return_type_t<T_y, T_a, T_w, T_v>;
   const auto neg_v = -v;
   const auto one_m_w = 1 - w;
@@ -253,7 +253,7 @@ inline auto wiener4_cdf_grad_a(const T_y& y, const T_a& a, const T_v& v,
   auto C1 = ret_t(
       LOG_TWO - log_sum_exp(2.0 * log(fabs(neg_v)), 2.0 * (LOG_PI - log_a)));
   C1 = log_sum_exp(C1, log_y);
-  const auto factor = one_m_w_a_neg_v + square(neg_v) * y / 2.0 + err;
+  const auto factor = one_m_w_a_neg_v + square(neg_v) * y / 2.0 + log_err;
   const auto alphK = fmin(factor + LOG_PI + log_y + log_a - LOG_TWO - C1, 0.0);
   const auto K = a / pi() / sqrt(y);
   const auto K_large_value
@@ -268,46 +268,42 @@ inline auto wiener4_cdf_grad_a(const T_y& y, const T_a& a, const T_v& v,
   const auto K_large = sqrt_y / a - wdash;
   const auto K_small_value = ceil(fmax(fmax(K_small, K_large), ret_t(1.0)));
 
+// Depending on the Ks use formula for small reaction times or large
+// reaction times (see Navarro & Fuss, 2009)
   if (K_large_value > 4 * K_small_value) {
     const auto neg_vy = neg_v * y;
     auto ans = ret_t(0.0);
     auto F_k = ret_t(0.0);
     for (auto k = K_small_value; k >= 0; --k) {
-      auto r_k = a * (2.0 * k + one_m_w);
-      auto x = r_k - neg_vy;
-      auto xsqrt_y = x / sqrt_y;
-      auto d_k = std_normal_lpdf(r_k / sqrt_y);
-      auto temp = fmin(exp(d_k + logMill(xsqrt_y)),
-                       std::numeric_limits<ret_t>::max());
-      auto temp2 = exp(d_k);
-      auto temp3 = -temp * neg_vy - sqrt_y * temp2;
-      const auto factor = (2.0 * k + one_m_w);
-      const auto t1 = temp3 * factor;
-      x = r_k + neg_vy;
-      xsqrt_y = x / sqrt_y;
-      temp = fmin(exp(d_k + logMill(xsqrt_y)),
-                  std::numeric_limits<ret_t>::max());
-      temp3 = temp * neg_vy - sqrt_y * temp2;
-      const auto t2 = temp3 * factor;
-      r_k = a * (2.0 * k + 1.0 + w);
-      d_k = std_normal_lpdf(r_k / sqrt_y);
-      x = r_k - neg_vy;
-      xsqrt_y = x / sqrt_y;
-      temp = fmin(exp(d_k + logMill(xsqrt_y)),
-                  std::numeric_limits<ret_t>::max());
-      temp2 = exp(d_k);
-      temp3 = -temp * neg_vy - sqrt_y * temp2;
-      const auto t3 = temp3 * 2.0 * (k + one_m_w);
-      x = r_k + neg_vy;
-      xsqrt_y = x / sqrt_y;
-      temp = fmin(exp(d_k + logMill(xsqrt_y)),
-                  std::numeric_limits<ret_t>::max());
-      temp3 = temp * neg_vy - sqrt_y * temp2;
-      const auto t4 = -temp3 * factor;
-      ans += t1 + t2 + t3 + t4;
+      auto r_k_1 = a * (2.0 * k + one_m_w);
+      auto x_1 = r_k_1 - neg_vy;
+      auto x_over_sqrt_y_1 = x_1 / sqrt_y;
+      auto d_k_1 = std_normal_lpdf(r_k_1 / sqrt_y);
+      auto temp_1 = make_finite(exp(d_k_1 + logMill(x_over_sqrt_y_1)));
+      auto exp_d_k_1 = exp(d_k_1);
+      auto ans_1 = -temp_1 * neg_vy - sqrt_y * exp_d_k_1;
+	  
+      auto x_2 = r_k_1 + neg_vy;
+      auto x_over_sqrt_y_2 = x_2 / sqrt_y;
+      auto temp_2 = make_finite(exp(d_k_1 + logMill(x_over_sqrt_y_2)));
+      auto ans_2 = temp_2 * neg_vy - sqrt_y * exp_d_k_1;
+      auto r_k_2 = a * (2.0 * k + 1.0 + w);
+      auto d_k_2 = std_normal_lpdf(r_k_2 / sqrt_y);
+	  
+      auto x_3 = r_k_2 - neg_vy;
+      auto x_over_sqrt_y_3 = x_3 / sqrt_y;
+      auto temp_3 = make_finite(exp(d_k_2 + logMill(x_over_sqrt_y_3)));
+      auto exp_d_k_2 = exp(d_k_2);
+      auto ans_3 = -temp_3 * neg_vy - sqrt_y * exp_d_k_2;
+	  
+      auto x_4 = r_k_2 + neg_vy;
+      auto x_over_sqrt_y_4 = x_4 / sqrt_y;
+      auto temp_4 = make_finite(exp(d_k_2 + logMill(x_over_sqrt_y_4)));
+      auto ans_4 = temp_4 * neg_vy - sqrt_y * exp_d_k_2;
+
+      ans += (ans_1 + ans_2 + ans_3 - ans_4) * (2.0 * k + one_m_w) + ans_3 * one_m_w;
     }
-    F_k = fmin(exp(one_m_w_a_neg_v + 0.5 * square(neg_v) * y),
-               std::numeric_limits<ret_t>::max());
+    F_k = make_finite(exp(one_m_w_a_neg_v + 0.5 * square(neg_v) * y));
     const auto summands_small_y = ans / (y * F_k);
     return -one_m_w_neg_v * cdf + summands_small_y;
   }
@@ -320,8 +316,7 @@ inline auto wiener4_cdf_grad_a(const T_y& y, const T_a& a, const T_v& v,
                 * exp(-0.5 * kpia2 * y);
     ans -= last * sin(kpi * one_m_w);
   }
-  const ret_t prob = fmin(exp(log_probability_distribution(a, neg_v, one_m_w)),
-                          std::numeric_limits<ret_t>::max());
+  const ret_t prob = make_finite(exp(log_probability_distribution(a, neg_v, one_m_w)));
   const auto dav = log_probability_GradAV(a, neg_v, one_m_w);
   auto dav_neg_v = dav * neg_v;
   auto prob_deriv = fabs(neg_v) == 0
@@ -341,14 +336,15 @@ inline auto wiener4_cdf_grad_a(const T_y& y, const T_a& a, const T_v& v,
  * @param v The relative starting point
  * @param w The drift rate
  * @param cdf The value of the distribution
- * @param err The log error tolerance
+ * @param log_err The log error tolerance in the computation of the number
+ * of terms for the infinite sums 
  * @return Gradient with respect to v
  */
 template <typename T_y, typename T_a, typename T_v, typename T_w,
           typename T_cdf, typename T_err>
 inline auto wiener4_cdf_grad_v(const T_y& y, const T_a& a, const T_v& v,
                                const T_w& w, T_cdf&& cdf,
-                               T_err&& err = log(1e-12)) {
+                               T_err log_err = log(1e-12)) {
   using ret_t = return_type_t<T_y, T_a, T_w, T_v>;
   const auto neg_v = -v;
   const auto one_m_w = 1.0 - w;
@@ -357,13 +353,12 @@ inline auto wiener4_cdf_grad_v(const T_y& y, const T_a& a, const T_v& v,
   const auto one_m_w_a_neg_v = one_m_w_a * neg_v;
 
   const auto log_y = log(y);
-  const auto factor = one_m_w_a_neg_v + square(neg_v) * y / 2.0 + err;
+  const auto factor = one_m_w_a_neg_v + square(neg_v) * y / 2.0 + log_err;
 
   const auto log_a = log(a);
   auto K_large_value = ret_t(1.0);
   if (neg_v != 0) {
-    const auto temp = -fmin(exp(log_a - LOG_PI - 0.5 * log_y),
-                            std::numeric_limits<ret_t>::max());
+    const auto temp = -make_finite(exp(log_a - LOG_PI - 0.5 * log_y));
     const auto log_v = log(fabs(neg_v));
     auto alphK_large = fmin(exp(factor + 0.5 * (7 * LOG_PI + log_y)
                                 - 2.5 * LOG_TWO - 3 * log_a - log_v),
@@ -389,34 +384,28 @@ inline auto wiener4_cdf_grad_v(const T_y& y, const T_a& a, const T_v& v,
     auto ans = ret_t(0.0);
     auto F_k = ret_t(0.0);
     for (auto k = K_small_value; k >= 0; --k) {
-      auto r_k = a * (2.0 * k + one_m_w);
-      auto d_k = std_normal_lpdf(r_k / sqrt_y);
-      auto x = r_k - neg_vy;
-      auto xsqrt_y = x / sqrt_y;
-      auto temp = fmin(exp(d_k + logMill(xsqrt_y)),
-                       std::numeric_limits<ret_t>::max());
-      const auto t1 = -temp * x;
-      x = r_k + neg_vy;
-      xsqrt_y = x / sqrt_y;
-      temp = fmin(exp(d_k + logMill(xsqrt_y)),
-                  std::numeric_limits<ret_t>::max());
-      const auto t2 = temp * x;
-      r_k = a * (2.0 * k + 1.0 + w);
-      d_k = std_normal_lpdf(r_k / sqrt_y);
-      x = r_k - neg_vy;
-      xsqrt_y = x / sqrt_y;
-      temp = fmin(exp(d_k + logMill(xsqrt_y)),
-                  std::numeric_limits<ret_t>::max());
-      const auto t3 = temp * x;
-      x = r_k + neg_vy;
-      xsqrt_y = x / sqrt_y;
-      temp = fmin(exp(d_k + logMill(xsqrt_y)),
-                  std::numeric_limits<ret_t>::max());
-      const auto t4 = -temp * x;
-      ans += t1 + t2 + t3 + t4;
+      auto r_k_1 = a * (2.0 * k + one_m_w);
+      auto d_k_1 = std_normal_lpdf(r_k_1 / sqrt_y);
+      auto x_1 = r_k_1 - neg_vy;
+      auto x_over_sqrt_y_1 = x_1 / sqrt_y;
+      auto ans_1 = make_finite(exp(d_k_1 + logMill(x_over_sqrt_y_1)));
+
+      auto x_2 = r_k_1 + neg_vy;
+      auto x_over_sqrt_y_2 = x_2 / sqrt_y;
+      auto ans_2 = make_finite(exp(d_k_1 + logMill(x_over_sqrt_y_2)));
+      auto r_k_2 = a * (2.0 * k + 1.0 + w);
+      auto d_k_2 = std_normal_lpdf(r_k_2 / sqrt_y);
+	  
+      auto x_3 = r_k_2 - neg_vy; 
+      auto x_over_sqrt_y_3 = x_3 / sqrt_y;
+      auto ans_3 = make_finite(exp(d_k_2 + logMill(x_over_sqrt_y_3)));
+	  
+      auto x_4 = r_k_2 + neg_vy;
+      auto x_over_sqrt_y_4 = x_4 / sqrt_y;
+      auto ans_4 = make_finite(exp(d_k_2 + logMill(x_over_sqrt_y_4)));
+      ans += -ans_1 * x_1 + ans_2 * x_2 + ans_3 * x_3 - ans_4 * x_4;
     }
-    F_k = fmin(exp(one_m_w_a_neg_v + 0.5 * square(neg_v) * y),
-               std::numeric_limits<ret_t>::max());
+    F_k = make_finite(exp(one_m_w_a_neg_v + 0.5 * square(neg_v) * y));
     const auto summands_small_y = ans / F_k;
     return (one_m_w_a + neg_vy) * cdf - summands_small_y;
   }
@@ -430,8 +419,7 @@ inline auto wiener4_cdf_grad_v(const T_y& y, const T_a& a, const T_v& v,
     auto last = denomk * ekpia2y / denom;
     ans -= last * sin(kpi * one_m_w);
   }
-  const ret_t prob = fmin(exp(log_probability_distribution(a, neg_v, one_m_w)),
-                          std::numeric_limits<ret_t>::max());
+  const ret_t prob = make_finite(exp(log_probability_distribution(a, neg_v, one_m_w)));
   const auto dav = log_probability_GradAV(a, neg_v, one_m_w);
   auto dav_a = dav * a;
   auto prob_deriv = is_inf(dav_a) ? ret_t(NEGATIVE_INFTY) : dav_a * prob;
@@ -449,26 +437,26 @@ inline auto wiener4_cdf_grad_v(const T_y& y, const T_a& a, const T_v& v,
  * @param v The relative starting point
  * @param w The drift rate
  * @param cdf The value of the distribution
- * @param err The log error tolerance
+ * @param log_err The log error tolerance in the computation of the number
+ * of terms for the infinite sums
  * @return Gradient with respect to w
  */
 template <typename T_y, typename T_a, typename T_v, typename T_w,
           typename T_cdf, typename T_err>
 inline auto wiener4_cdf_grad_w(const T_y& y, const T_a& a, const T_v& v,
                                const T_w& w, T_cdf&& cdf,
-                               T_err&& err = log(1e-12)) {
+                               T_err log_err = log(1e-12)) {
   using ret_t = return_type_t<T_y, T_a, T_w, T_v>;
   const auto neg_v = -v;
   const auto one_m_w = 1 - w;
 
   const auto one_m_w_a_neg_v = one_m_w * a * neg_v;
 
-  const auto factor = one_m_w_a_neg_v + square(neg_v) * y / 2.0 + err;
+  const auto factor = one_m_w_a_neg_v + square(neg_v) * y / 2.0 + log_err;
 
   const auto log_y = log(y);
   const auto log_a = log(a);
-  const auto temp = -fmin(exp(log_a - LOG_PI - 0.5 * log_y),
-                          std::numeric_limits<ret_t>::max());
+  const auto temp = -make_finite(exp(log_a - LOG_PI - 0.5 * log_y));
   auto alphK_large
       = fmin(exp(factor + 0.5 * (LOG_PI + log_y) - 1.5 * LOG_TWO - log_a), 1.0);
   alphK_large = fmax(0.0, alphK_large);
@@ -497,40 +485,35 @@ inline auto wiener4_cdf_grad_w(const T_y& y, const T_a& a, const T_v& v,
     auto ans = ret_t(0.0);
     auto F_k = ret_t(0.0);
     for (auto k = K_small_value; k >= 0; --k) {
-      auto r_k = a * (2.0 * k + one_m_w);
-      auto d_k = std_normal_lpdf(r_k / sqrt_y);
-      auto x = r_k - neg_vy;
-      auto xsqrt_y = x / sqrt_y;
-      auto temp = fmin(exp(d_k + logMill(xsqrt_y)),
-                       std::numeric_limits<ret_t>::max());
-      auto temp2 = exp(d_k);
-      auto temp3 = -temp * neg_vy - sqrt_y * temp2;
-      const auto t1 = temp3 * a;
-      x = r_k + neg_vy;
-      xsqrt_y = x / sqrt_y;
-      temp = fmin(exp(d_k + logMill(xsqrt_y)),
-                  std::numeric_limits<ret_t>::max());
-      temp3 = temp * neg_vy - sqrt_y * temp2;
-      const auto t2 = temp3 * a;
-      r_k = a * (2.0 * k + 1.0 + w);
-      d_k = std_normal_lpdf(r_k / sqrt_y);
-      x = r_k - neg_vy;
-      xsqrt_y = x / sqrt_y;
-      temp = fmin(exp(d_k + logMill(xsqrt_y)),
-                  std::numeric_limits<ret_t>::max());
-      temp2 = exp(d_k);
-      temp3 = -temp * neg_vy - sqrt_y * temp2;
-      const auto t3 = temp3 * a;
-      x = r_k + neg_vy;
-      xsqrt_y = x / sqrt_y;
-      temp = fmin(exp(d_k + logMill(xsqrt_y)),
-                  std::numeric_limits<ret_t>::max());
-      temp3 = temp * neg_vy - sqrt_y * temp2;
-      const auto t4 = -temp3 * a;
-      ans += t1 + t2 + t3 + t4;
+      auto r_k_1 = a * (2.0 * k + one_m_w);
+      auto d_k_1 = std_normal_lpdf(r_k_1 / sqrt_y);
+      auto x_1 = r_k_1 - neg_vy;
+      auto x_over_sqrt_y_1 = x_1 / sqrt_y;
+      auto temp_1 = make_finite(exp(d_k_1 + logMill(x_over_sqrt_y_1)));
+      auto exp_d_k_1 = exp(d_k_1);
+      auto ans_1 = -temp_1 * neg_vy - sqrt_y * exp_d_k_1;
+	  
+      auto x_2 = r_k_1 + neg_vy;
+      auto x_over_sqrt_y_2 = x_2 / sqrt_y;
+      auto temp_2 = make_finite(exp(d_k_1 + logMill(x_over_sqrt_y_2)));
+      auto ans_2 = temp_2 * neg_vy - sqrt_y * exp_d_k_1;
+      auto r_k_2 = a * (2.0 * k + 1.0 + w);
+      auto d_k_2 = std_normal_lpdf(r_k_2 / sqrt_y);
+	  
+      auto x_3 = r_k_2 - neg_vy;
+      auto x_over_sqrt_y_3 = x_3 / sqrt_y;
+      auto temp_3 = make_finite(exp(d_k_2 + logMill(x_over_sqrt_y_3)));
+      auto exp_d_k_2 = exp(d_k_2);
+      auto ans_3 = -temp_3 * neg_vy - sqrt_y * exp_d_k_2;
+	  
+      auto x_4 = r_k_2 + neg_vy;
+      auto x_over_sqrt_y_4 = x_4 / sqrt_y;
+      auto temp_4 = make_finite(exp(d_k_2 + logMill(x_over_sqrt_y_4)));
+      auto ans_4 = temp_4 * neg_vy - sqrt_y * exp_d_k_2;
+
+      ans += (ans_1 + ans_2 + ans_3 - ans_4) * a;
     }
-    F_k = fmin(exp(one_m_w_a_neg_v + 0.5 * square(neg_v) * y),
-               std::numeric_limits<ret_t>::max());
+    F_k = make_finite(exp(one_m_w_a_neg_v + 0.5 * square(neg_v) * y));
     const auto summands_small_y = ans / (y * F_k);
     return neg_v * a * cdf - summands_small_y;
   }
@@ -546,8 +529,7 @@ inline auto wiener4_cdf_grad_w(const T_y& y, const T_a& a, const T_v& v,
     ans -= last * cos(kpi * one_m_w);
   }
   const auto evaw = exp(-one_m_w_a_neg_v - 0.5 * square(neg_v) * y);
-  const ret_t prob = fmin(exp(log_probability_distribution(a, neg_v, one_m_w)),
-                          std::numeric_limits<ret_t>::max());
+  const ret_t prob = make_finite(exp(log_probability_distribution(a, neg_v, one_m_w)));
 
   // Calculate the probability term 'P' on log scale
   auto dav = ret_t(-1 / w);
@@ -613,11 +595,11 @@ inline auto wiener_lcdf(const T_y& y, const T_a& a, const T_t0& t0,
   T_w_ref w_ref = w;
   T_v_ref v_ref = v;
 
-  decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
-  decltype(auto) a_val = to_ref(as_value_column_array_or_scalar(a_ref));
-  decltype(auto) v_val = to_ref(as_value_column_array_or_scalar(v_ref));
-  decltype(auto) w_val = to_ref(as_value_column_array_or_scalar(w_ref));
-  decltype(auto) t0_val = to_ref(as_value_column_array_or_scalar(t0_ref));
+  auto y_val = to_ref(as_value_column_array_or_scalar(y_ref));
+  auto a_val = to_ref(as_value_column_array_or_scalar(a_ref));
+  auto v_val = to_ref(as_value_column_array_or_scalar(v_ref));
+  auto w_val = to_ref(as_value_column_array_or_scalar(w_ref));
+  auto t0_val = to_ref(as_value_column_array_or_scalar(t0_ref));
 
   if (!include_summand<propto, T_y, T_a, T_t0, T_w, T_v>::value) {
     return ret_t(0.0);

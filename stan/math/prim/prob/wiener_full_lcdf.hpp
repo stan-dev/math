@@ -32,11 +32,9 @@ template <typename T_y, typename T_a, typename T_v, typename T_w, typename T_sw,
           typename T_err>
 inline auto wiener7_cdf_grad_sw(const T_y& y, const T_a& a, const T_v& v,
                                 const T_w& w, const T_sw& sw,
-                                T_err&& log_error) {
-  auto low = w - sw / 2.0;
-  low = (0 > low) ? 0 : low;
-  auto high = w + sw / 2.0;
-  high = (1 < high) ? 1 : high;
+                                T_err log_error) {
+  auto low = fmax(0.0, w - sw / 2.0);
+  auto high = fmin(1.0, w + sw / 2.0);
   const auto lower_value
       = wiener4_distribution<GradientCalc::ON>(y, a, v, low, log_error);
   const auto upper_value
@@ -77,7 +75,7 @@ template <GradientCalc Dist, typename F, typename T_y, typename T_a,
           typename T_err, std::enable_if_t<!Dist>* = nullptr>
 inline auto conditionally_grad_sw_cdf(F&& functor, T_y&& y_diff, T_a&& a,
                                       T_v&& v, T_w&& w, T_sv&& sv, T_sw&& sw,
-                                      T_err&& log_error) {
+                                      T_err log_error) {
   return functor(y_diff, a, v, w, log_error);
 }
 
@@ -114,7 +112,7 @@ template <GradientCalc Dist, typename F, typename T_y, typename T_a,
           typename T_err, std::enable_if_t<Dist>* = nullptr>
 inline auto conditionally_grad_sw_cdf(F&& functor, T_y&& y_diff, T_a&& a,
                                       T_v&& v, T_w&& w, T_sv&& sv, T_sw&& sw,
-                                      T_err&& log_error) {
+                                      T_err log_error) {
   return functor(y_diff, a, v, w, sv, log_error);
 }
 
@@ -151,45 +149,37 @@ inline auto wiener7_integrate_cdf(const Wiener7FunctorT& wiener7_functor,
                               decltype(w), decltype(t0), decltype(sv),
                               decltype(sw), decltype(st0), decltype(lerr)>;
           scalar_seq_view<decltype(x)> x_vec(x);
-          const auto temp = (sv != 0) ? square(x_vec[0]) : 0;
-          const auto factor = (sv != 0) ? x_vec[0] / (1 - temp) : 0;
-          const auto new_v = (sv != 0) ? v + sv * factor : v;
-          const auto new_w = (sv != 0)
-                                 ? ((sw != 0) ? w + sw * (x_vec[1] - 0.5) : w)
-                                 : ((sw != 0) ? w + sw * (x_vec[0] - 0.5) : w);
-          const auto new_t0
-              = (sv != 0)
-                    ? ((sw != 0) ? ((st0 != 0) ? t0 + st0 * x_vec[2] : t0)
-                                 : ((st0 != 0) ? t0 + st0 * x_vec[1] : t0))
-                    : ((sw != 0) ? ((st0 != 0) ? t0 + st0 * x_vec[1] : t0)
-                                 : ((st0 != 0) ? t0 + st0 * x_vec[0] : t0));
+          const auto temp = (sv == 0) ? 0 : square(x_vec[0]);
+          const auto factor = (sv == 0) ? 0 : x_vec[0] / (1 - temp);
+          const auto new_v = (sv == 0) ? v : v + sv * factor;
+		  const auto new_w = (sw == 0) ? w : w + sw * (x_vec[sv == 0 ? 0 : 1] - 0.5);
+		  const auto idx = (sv == 0 && sw == 0) ? 0 : (sv != 0 && sw != 0) ? 2 : 1;
+		  const auto new_t0 = (st0 == 0) ? t0 : t0 + st0 * x_vec[idx];
           if (y - new_t0 <= 0) {
             return ret_t(0.0);
-          } else {
-            const auto dist = GradT ? 0
-                                    : wiener4_distribution<true>(
-                                        y - new_t0, a, new_v, new_w, lerr);
-            const auto temp2 = (sv != 0) ? -0.5 * square(factor) - LOG_SQRT_PI
-                                               - 0.5 * LOG_TWO + log1p(temp)
-                                               - 2.0 * log1m(temp)
-                                         : 0;
-            const auto factor_sv = GradSV ? factor : 1;
-            const auto factor_sw
-                = GradSW ? ((sv != 0) ? (x_vec[1] - 0.5) : (x_vec[0] - 0.5))
-                         : 1;
-            const auto integrand
-                = Distribution ? dist
-                               : GradT ? conditionally_grad_sw_cdf<
-                                     Conditionally_cdf>(  // deleted internal::
-                                     wiener7_functor, y - new_t0, a, v, new_w,
-                                     sv, sw, lerr)
-                                       : factor_sv * factor_sw
-                                             * conditionally_grad_sw_cdf<
-                                                 Conditionally_cdf>(
-                                                 wiener7_functor, y - new_t0, a,
-                                                 new_v, new_w, dist, sw, lerr);
-            return ret_t(integrand * exp(temp2));
           }
+		const auto dist = GradT ? 0
+								: wiener4_distribution<true>(
+									y - new_t0, a, new_v, new_w, lerr);
+		const auto temp2 = (sv == 0) ? 0 : -0.5 * square(factor) - LOG_SQRT_PI
+										   - 0.5 * LOG_TWO + log1p(temp)
+										   - 2.0 * log1m(temp);
+		const auto factor_sv = GradSV ? factor : 1;
+		const auto factor_sw
+			= GradSW ? ((sv == 0) ? (x_vec[0] - 0.5) : (x_vec[1] - 0.5))
+					 : 1;
+		const auto integrand
+			= Distribution ? dist
+						   : GradT ? conditionally_grad_sw_cdf<
+								 Conditionally_cdf>(  
+								 wiener7_functor, y - new_t0, a, v, new_w,
+								 sv, sw, lerr)
+								   : factor_sv * factor_sw
+										 * conditionally_grad_sw_cdf<
+											 Conditionally_cdf>(
+											 wiener7_functor, y - new_t0, a,
+											 new_v, new_w, dist, sw, lerr);
+		return ret_t(integrand * exp(temp2));
         },
         integration_args...);
   };
@@ -295,14 +285,14 @@ inline auto wiener_lcdf(const T_y& y, const T_a& a, const T_t0& t0,
   T_sw_ref sw_ref = sw;
   T_st0_ref st0_ref = st0;
 
-  decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
-  decltype(auto) a_val = to_ref(as_value_column_array_or_scalar(a_ref));
-  decltype(auto) v_val = to_ref(as_value_column_array_or_scalar(v_ref));
-  decltype(auto) w_val = to_ref(as_value_column_array_or_scalar(w_ref));
-  decltype(auto) t0_val = to_ref(as_value_column_array_or_scalar(t0_ref));
-  decltype(auto) sv_val = to_ref(as_value_column_array_or_scalar(sv_ref));
-  decltype(auto) sw_val = to_ref(as_value_column_array_or_scalar(sw_ref));
-  decltype(auto) st0_val = to_ref(as_value_column_array_or_scalar(st0_ref));
+  auto y_val = to_ref(as_value_column_array_or_scalar(y_ref));
+  auto a_val = to_ref(as_value_column_array_or_scalar(a_ref));
+  auto v_val = to_ref(as_value_column_array_or_scalar(v_ref));
+  auto w_val = to_ref(as_value_column_array_or_scalar(w_ref));
+  auto t0_val = to_ref(as_value_column_array_or_scalar(t0_ref));
+  auto sv_val = to_ref(as_value_column_array_or_scalar(sv_ref));
+  auto sw_val = to_ref(as_value_column_array_or_scalar(sw_ref));
+  auto st0_val = to_ref(as_value_column_array_or_scalar(st0_ref));
 
   if (!include_summand<propto, T_y, T_a, T_v, T_w, T_t0, T_sv, T_sw,
                        T_st0>::value) {
@@ -334,7 +324,7 @@ inline auto wiener_lcdf(const T_y& y, const T_a& a, const T_t0& t0,
                st0_val);
 
   const size_t N = max_size(y, a, v, w, t0, sv, sw, st0);
-  if (!N) {
+  if (N == 0) {
     return ret_t(0);
   }
   scalar_seq_view<T_y_ref> y_vec(y_ref);
@@ -451,7 +441,6 @@ inline auto wiener_lcdf(const T_y& y, const T_a& a, const T_t0& t0,
     hcubature_err
         = log_error_absolute - lerror_bound + log(fabs(cdf)) + LOG_TWO + 1;
 
-    // computation of derivatives and precision checks
     // computation of derivative for t and precision check in order to give
     // the value as deriv_t to edge1 and as -deriv_t to edge5
     const auto params_dt7 = std::make_tuple(
