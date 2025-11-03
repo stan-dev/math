@@ -28,7 +28,7 @@ enum GradientCalc { OFF = 0, ON = 1 };
  */
 template <typename T_y, typename T_a, typename T_v, typename T_w, typename T_sv>
 inline auto wiener5_compute_log_error_term(T_y&& y, T_a&& a, T_v&& v, T_w&& w,
-                                       T_sv&& sv) noexcept {
+                                           T_sv&& sv) noexcept {
   const auto one_m_w = 1.0 - w;
   const auto neg_v = -v;
   const auto sv_sqr = square(sv);
@@ -361,11 +361,11 @@ inline auto wiener5_grad_t(const T_y& y, const T_a& a, const T_v& v,
         / square(one_plus_svsqr_y);
   const auto log_error = (log_err - log_error_term) + two_log_a;
   const auto n_terms_small_t
-      = wiener5_n_terms_small_t<GradientCalc::OFF, GradientCalc::OFF>(y, a, w,
-                                                                      log_error);
+      = wiener5_n_terms_small_t<GradientCalc::OFF, GradientCalc::OFF>(
+          y, a, w, log_error);
   const auto n_terms_large_t
-      = wiener5_gradient_large_reaction_time_terms<GradientCalc::OFF>(y, a, w,
-                                                                      log_error);
+      = wiener5_gradient_large_reaction_time_terms<GradientCalc::OFF>(
+          y, a, w, log_error);
   auto wiener_res = wiener5_log_sum_exp<GradientCalc::OFF, GradientCalc::OFF>(
       y, a, w, n_terms_small_t, n_terms_large_t);
   auto&& result = wiener_res.first;
@@ -375,10 +375,11 @@ inline auto wiener5_grad_t(const T_y& y, const T_a& a, const T_v& v,
   const auto log_density = wiener5_density<GradientCalc::OFF>(
       y, a, v, w, sv, log_err - error_log_density);
   if (2.0 * n_terms_small_t < n_terms_large_t) {
-    auto ans = density_part_one - 1.5 / y
-               + newsign
-                     * exp(log_error_term - two_log_a - 1.5 * LOG_TWO - LOG_SQRT_PI
-                           - 3.5 * log_y_asq + result - log_density);
+    auto ans
+        = density_part_one - 1.5 / y
+          + newsign
+                * exp(log_error_term - two_log_a - 1.5 * LOG_TWO - LOG_SQRT_PI
+                      - 3.5 * log_y_asq + result - log_density);
     return WrtLog ? ans * exp(log_density) : ans;
   } else {
     auto ans = density_part_one
@@ -422,14 +423,15 @@ inline auto wiener5_grad_a(const T_y& y, const T_a& a, const T_v& v,
   const auto one_plus_svsqr_y = 1.0 + sv_sqr * y;
   const auto density_part_one
       = (v * one_m_w + sv_sqr * square(one_m_w) * a) / one_plus_svsqr_y;
-  const auto log_error = log_err - log_error_term + 3.0 * log(a) - log(y) - LOG_TWO;
+  const auto log_error
+      = log_err - log_error_term + 3.0 * log(a) - log(y) - LOG_TWO;
 
   const auto n_terms_small_t
-      = wiener5_n_terms_small_t<GradientCalc::OFF, GradientCalc::OFF>(y, a, w,
-                                                                      log_error);
+      = wiener5_n_terms_small_t<GradientCalc::OFF, GradientCalc::OFF>(
+          y, a, w, log_error);
   const auto n_terms_large_t
-      = wiener5_gradient_large_reaction_time_terms<GradientCalc::OFF>(y, a, w,
-                                                                      log_error);
+      = wiener5_gradient_large_reaction_time_terms<GradientCalc::OFF>(
+          y, a, w, log_error);
   auto wiener_res = wiener5_log_sum_exp<GradientCalc::OFF, GradientCalc::OFF>(
       y, a, w, n_terms_small_t, n_terms_large_t);
   auto&& result = wiener_res.first;
@@ -439,11 +441,11 @@ inline auto wiener5_grad_a(const T_y& y, const T_a& a, const T_v& v,
   const auto log_density = wiener5_density<GradientCalc::OFF>(
       y, a, v, w, sv, log_err - log_error_log_density);
   if (2.0 * n_terms_small_t < n_terms_large_t) {
-    auto ans
-        = density_part_one + 1.0 / a
-          - newsign
-                * exp(-0.5 * LOG_TWO - LOG_SQRT_PI - 2.5 * log(y)
-                      + 2.0 * two_log_a + log_error_term + result - log_density);
+    auto ans = density_part_one + 1.0 / a
+               - newsign
+                     * exp(-0.5 * LOG_TWO - LOG_SQRT_PI - 2.5 * log(y)
+                           + 2.0 * two_log_a + log_error_term + result
+                           - log_density);
     return WrtLog ? ans * exp(log_density) : ans;
   } else {
     auto ans = density_part_one - 2.0 / a
@@ -545,7 +547,8 @@ inline auto wiener5_grad_w(const T_y& y, const T_a& a, const T_v& v,
   } else {
     auto ans = -(
         density_part_one
-        + newsign * exp(result - (log_density - log_error_term) + 2.0 * LOG_PI));
+        + newsign
+              * exp(result - (log_density - log_error_term) + 2.0 * LOG_PI));
     return WrtLog ? ans * exp(log_density) : ans;
   }
 }
@@ -645,8 +648,8 @@ inline auto estimate_with_err_check(F&& functor, T_err&& log_err,
   if (log_fabs_result < log_err) {
     log_fabs_result = is_inf(log_fabs_result) ? 0 : log_fabs_result;
     auto err_args_tuple = std::make_tuple(args_tuple...);
-    const auto new_error
-        = GradW7 ? log_err + log_fabs_result + LOG_TWO : log_err + log_fabs_result;
+    const auto new_error = GradW7 ? log_err + log_fabs_result + LOG_TWO
+                                  : log_err + log_fabs_result;
     if constexpr (NestedIndex != -1) {
       assign_err<NestedIndex>(std::get<ErrIndex>(err_args_tuple), new_error);
     }

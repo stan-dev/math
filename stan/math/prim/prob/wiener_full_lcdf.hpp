@@ -31,8 +31,7 @@ namespace internal {
 template <typename T_y, typename T_a, typename T_v, typename T_w, typename T_sw,
           typename T_err>
 inline auto wiener7_cdf_grad_sw(const T_y& y, const T_a& a, const T_v& v,
-                                const T_w& w, const T_sw& sw,
-                                T_err log_error) {
+                                const T_w& w, const T_sw& sw, T_err log_error) {
   auto low = fmax(0.0, w - sw / 2.0);
   auto high = fmin(1.0, w + sw / 2.0);
   const auto lower_value
@@ -152,34 +151,36 @@ inline auto wiener7_integrate_cdf(const Wiener7FunctorT& wiener7_functor,
           const auto temp = (sv == 0) ? 0 : square(x_vec[0]);
           const auto factor = (sv == 0) ? 0 : x_vec[0] / (1 - temp);
           const auto new_v = (sv == 0) ? v : v + sv * factor;
-		  const auto new_w = (sw == 0) ? w : w + sw * (x_vec[sv == 0 ? 0 : 1] - 0.5);
-		  const auto idx = (sv == 0 && sw == 0) ? 0 : (sv != 0 && sw != 0) ? 2 : 1;
-		  const auto new_t0 = (st0 == 0) ? t0 : t0 + st0 * x_vec[idx];
+          const auto new_w
+              = (sw == 0) ? w : w + sw * (x_vec[sv == 0 ? 0 : 1] - 0.5);
+          const auto idx
+              = (sv == 0 && sw == 0) ? 0 : (sv != 0 && sw != 0) ? 2 : 1;
+          const auto new_t0 = (st0 == 0) ? t0 : t0 + st0 * x_vec[idx];
           if (y - new_t0 <= 0) {
             return ret_t(0.0);
           }
-		const auto dist = GradT ? 0
-								: wiener4_distribution<true>(
-									y - new_t0, a, new_v, new_w, lerr);
-		const auto temp2 = (sv == 0) ? 0 : -0.5 * square(factor) - LOG_SQRT_PI
-										   - 0.5 * LOG_TWO + log1p(temp)
-										   - 2.0 * log1m(temp);
-		const auto factor_sv = GradSV ? factor : 1;
-		const auto factor_sw
-			= GradSW ? ((sv == 0) ? (x_vec[0] - 0.5) : (x_vec[1] - 0.5))
-					 : 1;
-		const auto integrand
-			= Distribution ? dist
-						   : GradT ? conditionally_grad_sw_cdf<
-								 Conditionally_cdf>(  
-								 wiener7_functor, y - new_t0, a, v, new_w,
-								 sv, sw, lerr)
-								   : factor_sv * factor_sw
-										 * conditionally_grad_sw_cdf<
-											 Conditionally_cdf>(
-											 wiener7_functor, y - new_t0, a,
-											 new_v, new_w, dist, sw, lerr);
-		return ret_t(integrand * exp(temp2));
+          const auto dist = GradT ? 0
+                                  : wiener4_distribution<true>(
+                                      y - new_t0, a, new_v, new_w, lerr);
+          const auto temp2 = (sv == 0) ? 0
+                                       : -0.5 * square(factor) - LOG_SQRT_PI
+                                             - 0.5 * LOG_TWO + log1p(temp)
+                                             - 2.0 * log1m(temp);
+          const auto factor_sv = GradSV ? factor : 1;
+          const auto factor_sw
+              = GradSW ? ((sv == 0) ? (x_vec[0] - 0.5) : (x_vec[1] - 0.5)) : 1;
+          const auto integrand
+              = Distribution
+                    ? dist
+                    : GradT
+                          ? conditionally_grad_sw_cdf<Conditionally_cdf>(
+                              wiener7_functor, y - new_t0, a, v, new_w, sv, sw,
+                              lerr)
+                          : factor_sv * factor_sw
+                                * conditionally_grad_sw_cdf<Conditionally_cdf>(
+                                    wiener7_functor, y - new_t0, a, new_v,
+                                    new_w, dist, sw, lerr);
+          return ret_t(integrand * exp(temp2));
         },
         integration_args...);
   };
