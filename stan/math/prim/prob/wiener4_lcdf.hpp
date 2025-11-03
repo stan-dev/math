@@ -111,7 +111,7 @@ inline auto log_probability_GradAV(const T_a& a, const T_v& v, const T_w& w) {
     }
     if (log(w) > log_quotient) {
       return -exp(log_prob + log_diff_exp(log(w), log_quotient));
-    } else { 
+    } else {
       return exp(log_prob + log_diff_exp(log_quotient, log(w)));
     }
   }
