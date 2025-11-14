@@ -92,7 +92,6 @@ class dae_system {
         N(yy0.size()),
         M(count_vars(args...)),
         ns((is_var_yy0 ? N : 0) + (is_var_yp0 ? N : 0) + M),
-        msgs_(msgs),
         varis(ChainableStack::instance().memalloc_.alloc_array<vari*>(ns)),
         all_vars(ns),
         dbl_rr(N) {
