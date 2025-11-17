@@ -83,7 +83,8 @@ class laplace_motorcyle_gp_test : public ::testing::Test {
           + Eigen::MatrixXd::Identity(n_obs, n_obs);
     Eigen::VectorXd mu_hat = K_plus_I.colPivHouseholderQr().solve(y);
     // Remark: finds optimal point with or without informed initial guess.
-    // Better θ0: μ at GP posterior mean; g at a stable constant σ from residuals
+    // Better θ0: μ at GP posterior mean; g at a stable constant σ from
+    // residuals
     for (int i = 0; i < n_obs; ++i) {
       theta0(2 * i) = mu_hat(i);
     }
@@ -93,8 +94,12 @@ class laplace_motorcyle_gp_test : public ::testing::Test {
     // Optional tiny smoothing to avoid zeros / spikes (window radius = 2)
     Eigen::VectorXd r_smooth = r;
     for (int i = 0; i < n_obs; ++i) {
-      double acc = 0.0; int cnt = 0;
-      for (int j = std::max(0, i-2); j <= std::min(n_obs-1, i+2); ++j) { acc += r(j); ++cnt; }
+      double acc = 0.0;
+      int cnt = 0;
+      for (int j = std::max(0, i - 2); j <= std::min(n_obs - 1, i + 2); ++j) {
+        acc += r(j);
+        ++cnt;
+      }
       r_smooth(i) = acc / cnt;
     }
 
@@ -107,7 +112,6 @@ class laplace_motorcyle_gp_test : public ::testing::Test {
       // sigma = lb + exp(0.5 * theta)  =>  theta = 2 * log(sigma - lb)
       theta0(2 * i + 1) = 2.0 * std::log(std::max(si - 1e-14, 1e-12));
     }
-
   }
 
   static constexpr int n_obs{133};

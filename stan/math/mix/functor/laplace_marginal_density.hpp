@@ -575,55 +575,56 @@ inline auto laplace_marginal_density_est(
     eval_in.dir() = grad_fun(step_info).dot(p);
   };
   Eigen::VectorXd prev_g(theta_size);
-  auto update_line_search
-      = [&grad_fun, &covariance, &prev_g, &update_step, &theta_grad_f, &options,
-         &msgs](auto&& wolfe_status, auto&& wolfe_info, auto&& curr,
-                auto&& prev) {
-          wolfe_info.p_ = curr.a() - prev.a();
-          prev_g.noalias() = grad_fun(prev);
-          wolfe_info.init_dir_ = prev_g.dot(wolfe_info.p_);
-          // Flip direction if not ascending
-          if (wolfe_info.init_dir_ < 0) {
-            wolfe_info.p_ = -wolfe_info.p_;
-            wolfe_info.init_dir_ = -wolfe_info.init_dir_;
-          }
-          auto scratch = wolfe_info.scratch_;
-          scratch.alpha() = 1.0;
-          while (scratch.alpha() > options.line_search.min_alpha) {
-            try {
-              update_step(scratch, curr, prev, scratch.eval_, wolfe_info.p_);
-              if (std::isnan(scratch.eval_.obj()) || std::isinf(scratch.eval_.obj()) || std::isnan(scratch.eval_.dir()) || std::isinf(scratch.eval_.dir())) {
-                scratch.alpha() *= options.line_search.tau;
-                continue;
-              }
-            } catch (const std::exception& e) {
-              scratch.alpha() *= options.line_search.tau;
-              continue;
-            }
-            break;
-          }
-          if (scratch.alpha() <= options.line_search.min_alpha) {
-            wolfe_status.success_ = false;
-            return true;
-          }
-          if (options.line_search.max_iterations == 0) {
-            if (scratch.alpha() > options.line_search.min_alpha) {
-              curr.update(scratch);
-              wolfe_status.success_ = true;
-              return false;
-            }
-          } else {
-            curr.alpha() = barzilai_borwein_step_size(
-                wolfe_info.p_, grad_fun(scratch), prev_g, prev.alpha(),
-                wolfe_status.num_backtracks_, options.line_search.min_alpha,
-                options.line_search.max_alpha);
-            wolfe_status = internal::wolfe_line_search(wolfe_info, update_step,
-                                                      options.line_search, msgs);
-
-          }
-          return abs(curr.obj() - prev.obj()) < options.tolerance
-                 || (!wolfe_status.success_ && curr.obj() <= prev.obj());
-        };
+  auto update_line_search = [&grad_fun, &covariance, &prev_g, &update_step,
+                             &theta_grad_f, &options,
+                             &msgs](auto&& wolfe_status, auto&& wolfe_info,
+                                    auto&& curr, auto&& prev) {
+    wolfe_info.p_ = curr.a() - prev.a();
+    prev_g.noalias() = grad_fun(prev);
+    wolfe_info.init_dir_ = prev_g.dot(wolfe_info.p_);
+    // Flip direction if not ascending
+    if (wolfe_info.init_dir_ < 0) {
+      wolfe_info.p_ = -wolfe_info.p_;
+      wolfe_info.init_dir_ = -wolfe_info.init_dir_;
+    }
+    auto scratch = wolfe_info.scratch_;
+    scratch.alpha() = 1.0;
+    while (scratch.alpha() > options.line_search.min_alpha) {
+      try {
+        update_step(scratch, curr, prev, scratch.eval_, wolfe_info.p_);
+        if (std::isnan(scratch.eval_.obj()) || std::isinf(scratch.eval_.obj())
+            || std::isnan(scratch.eval_.dir())
+            || std::isinf(scratch.eval_.dir())) {
+          scratch.alpha() *= options.line_search.tau;
+          continue;
+        }
+      } catch (const std::exception& e) {
+        scratch.alpha() *= options.line_search.tau;
+        continue;
+      }
+      break;
+    }
+    if (scratch.alpha() <= options.line_search.min_alpha) {
+      wolfe_status.success_ = false;
+      return true;
+    }
+    if (options.line_search.max_iterations == 0) {
+      if (scratch.alpha() > options.line_search.min_alpha) {
+        curr.update(scratch);
+        wolfe_status.success_ = true;
+        return false;
+      }
+    } else {
+      curr.alpha() = barzilai_borwein_step_size(
+          wolfe_info.p_, grad_fun(scratch), prev_g, prev.alpha(),
+          wolfe_status.num_backtracks_, options.line_search.min_alpha,
+          options.line_search.max_alpha);
+      wolfe_status = internal::wolfe_line_search(wolfe_info, update_step,
+                                                 options.line_search, msgs);
+    }
+    return abs(curr.obj() - prev.obj()) < options.tolerance
+           || (!wolfe_status.success_ && curr.obj() <= prev.obj());
+  };
   auto set_next_iter = [&options](auto&& curr, auto&& prev) {
     prev.update(curr);
     curr.alpha() = std::clamp(curr.alpha(), 0.0, options.line_search.max_alpha);
@@ -640,13 +641,13 @@ inline auto laplace_marginal_density_est(
   WolfeStatus wolfe_status;
   // Start with safe step size
   wolfe_status.num_backtracks_ = 99;
-  Eigen::Index i = 0; 
+  Eigen::Index i = 0;
   try {
     if (options.solver == 1) {
       if (options.hessian_block_size == 1) {
         //   std::cout << "Solver: 1Diag" << std::endl;
         Eigen::VectorXd W_r(theta_size);
-        for (;i <= options.max_num_steps; i++) {
+        for (; i <= options.max_num_steps; i++) {
           auto W = laplace_likelihood::diagonal_hessian(ll_fun, prev.theta(),
                                                         ll_args, msgs);
           for (Eigen::Index j = 0; j < W.size(); j++) {
@@ -711,7 +712,7 @@ inline auto laplace_marginal_density_est(
                 std::move(prev.a()),
                 std::move(prev.theta_grad()),
                 Eigen::PartialPivLU<Eigen::MatrixXd>{},
-                Eigen::MatrixXd(0, 0), 
+                Eigen::MatrixXd(0, 0),
                 1};
           } else {
             set_next_iter(curr, prev);
@@ -731,7 +732,7 @@ inline auto laplace_marginal_density_est(
           }
         }
         W_r.makeCompressed();
-        for (;i <= options.max_num_steps; i++) {
+        for (; i <= options.max_num_steps; i++) {
           auto W = laplace_likelihood::block_hessian(
               ll_fun, prev.theta(), options.hessian_block_size, ll_args, msgs);
           for (Eigen::Index j = 0; j < W.rows(); j++) {
@@ -786,7 +787,8 @@ inline auto laplace_marginal_density_est(
                 std::move(prev.a()),
                 std::move(prev.theta_grad()),
                 Eigen::PartialPivLU<Eigen::MatrixXd>{},
-                Eigen::MatrixXd(0, 0), 1};
+                Eigen::MatrixXd(0, 0),
+                1};
           } else {
             set_next_iter(curr, prev);
           }
@@ -797,17 +799,17 @@ inline auto laplace_marginal_density_est(
   } catch (const std::exception& e) {
     allow_bounce = true;
     if (msgs != nullptr) {
-      (*msgs) << "Solver 1 failed at iteration " << i << " with error: "
-          << e.what() << std::endl;
+      (*msgs) << "Solver 1 failed at iteration " << i
+              << " with error: " << e.what() << std::endl;
       (*msgs) << "Attempting to switch to solver 2 (LLT decomposition)."
-          << std::endl;
+              << std::endl;
     }
   }
   try {
     if (options.solver == 2 || allow_bounce) {
       Eigen::MatrixXd K_root
           = covariance.template selfadjointView<Eigen::Lower>().llt().matrixL();
-      for (;i <= options.max_num_steps; i++) {
+      for (; i <= options.max_num_steps; i++) {
         debug::print("======Iter", i);
         auto W = laplace_likelihood::block_hessian(
             ll_fun, prev.theta(), options.hessian_block_size, ll_args, msgs);
@@ -849,14 +851,16 @@ inline auto laplace_marginal_density_est(
           }
           const double B_log_determinant
               = 2.0 * llt_B.matrixLLT().diagonal().array().log().sum();
-          return laplace_density_estimates{prev.obj() - 0.5 * B_log_determinant,
-                                          std::move(prev.theta()),
-                                          std::move(W),
-                                          std::move(Eigen::MatrixXd(L)),
-                                          std::move(prev.a()),
-                                          std::move(prev.theta_grad()),
-                                          Eigen::PartialPivLU<Eigen::MatrixXd>{},
-                                          std::move(K_root), 2};
+          return laplace_density_estimates{
+              prev.obj() - 0.5 * B_log_determinant,
+              std::move(prev.theta()),
+              std::move(W),
+              std::move(Eigen::MatrixXd(L)),
+              std::move(prev.a()),
+              std::move(prev.theta_grad()),
+              Eigen::PartialPivLU<Eigen::MatrixXd>{},
+              std::move(K_root),
+              2};
         } else {
           set_next_iter(curr, prev);
         }
@@ -866,10 +870,10 @@ inline auto laplace_marginal_density_est(
   } catch (const std::exception& e) {
     allow_bounce = true;
     if (msgs != nullptr) {
-      (*msgs) << "Solver 2 failed at iteration " << i << " with error: "
-          << e.what() << std::endl;
+      (*msgs) << "Solver 2 failed at iteration " << i
+              << " with error: " << e.what() << std::endl;
       (*msgs) << "Attempting to switch to solver 3 (LU decomposition)."
-          << std::endl;
+              << std::endl;
     }
   }
   if (options.solver == 3 || allow_bounce) {
@@ -904,7 +908,8 @@ inline auto laplace_marginal_density_est(
                                          std::move(prev.a()),
                                          std::move(prev.theta_grad()),
                                          std::move(LU),
-                                         Eigen::MatrixXd(0, 0), 3};
+                                         Eigen::MatrixXd(0, 0),
+                                         3};
       } else {
         set_next_iter(curr, prev);
       }
