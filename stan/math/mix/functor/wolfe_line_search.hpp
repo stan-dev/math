@@ -903,17 +903,7 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
     return check_b;
   }
   update_with_tick(scratch, high, p);
-
-  debug::print("_______End First While: ", 1, "high.alpha(): ", high.alpha(),
-               "high.obj():   ", high.obj(), "high.dir(): ", high.dir(),
-               "dir_deriv_init: ", dir_deriv_init);
   loop_iter = 0;
-  // Ensure left endpoint satisfies Armijo before cubic/bisection zoom.
-  // (Strong-Wolfe zoom expects the "low" end to be acceptable per Armijo.)
-  if (!armijo_ok(low) && armijo_ok(high)) {
-    std::swap(low, high);
-  }
-
   // Pure bisection to try to get a sign change.
   while ((low.dir() > 0 && high.dir() > 0)
          && (high.alpha() - low.alpha() > opt.min_alpha)) {
@@ -926,28 +916,30 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
         break;
       continue;
     }
-    if (mid.dir() > 0)
+    if (best.obj() < mid.obj()) {
+      best = mid;
+    }
+    if (mid.dir() > 0) {
       low = mid;
-    else
+    } else {
       high = mid;
+    }
   }
-  Eval mid{low};
-  while (high.alpha() - low.alpha() > opt.min_alpha) {
+  Eval mid{high};
+  while (mid.alpha() > opt.min_alpha) {
     num_backtracks++;
     const double diff_alpha = high.alpha() - low.alpha();
     mid.alpha() = cubic_or_bisect_max(low, high, opt);
+    if (mid.alpha() <= opt.min_alpha) {
+      break;
+    }
     update_with_tick(scratch, mid, p);
-    debug::print("Cube: ", 1, "Cube Iter:           ", loop_iter++,
-                 "mid.alpha():      ", mid.alpha(),
-                 "mid.obj():        ", mid.obj(), "high.dir(): ", mid.dir(),
-                 "low.alpha():      ", low.alpha(),
-                 "low.obj():        ", low.obj(), "low.dir():  ", low.dir(),
-                 "high.alpha():     ", high.alpha(),
-                 "high.obj():       ", high.obj(), "high.dir(): ", high.dir());
+    if (mid.alpha() <= opt.min_alpha) {
+      break;
+    }
     const bool finite_ok
         = std::isfinite(mid.obj()) && scratch.theta().allFinite();
     if (!finite_ok) {
-      debug::print("Exit on failed finite test", 1);
       high = mid;
       continue;
     }
@@ -1003,9 +995,9 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
                "high.obj():  ", high.obj(), "deriv_high:", high.dir());
   // On failure, use the best point we have found so far that at least satisfies
   // armijo
-  const bool armijo_ok_mid = armijo_ok(best);
-  const bool curve_ok_mid = wolfe_ok(best);
-  if (armijo_ok_mid) {
+  const bool armijo_ok_best = armijo_ok(best);
+  const bool curve_ok_best = wolfe_ok(best);
+  if (armijo_ok_best) {
     update_with_tick(scratch, best, p);
     assign_step(curr, scratch, best);
     debug::print("Exit on only satisfying armijo", 1);
