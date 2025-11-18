@@ -46,7 +46,25 @@ map_rect_concurrent(
   };
 
 #ifdef STAN_THREADS
+  /*
+  std::cout << "--------------------------------------------------------------------------------" << std::endl;
+  std::cout << "here map_rect_concurrent()" << std::endl;
+  std::cout << "num_jobs = " << num_jobs << std::endl;
+  std::cout << "--------------------------------------------------------------------------------" << std::endl;
+  */
+  auto& pool = stan::math::ThreadPool::instance();
+  std::vector<std::future<void>> futures;
+  futures.reserve(num_jobs);
 
+  for (int job = 0; job < num_jobs; ++job) {
+    futures.emplace_back(pool.submit(execute_chunk, job, job + 1));
+  }
+  
+  for (auto& f : futures) {
+    f.get();    // waits for all jobs to finish
+  }
+
+  /*
   // FIXME (DL): redo this without TBB.
   std::vector<std::thread> threads;
 
@@ -56,7 +74,8 @@ map_rect_concurrent(
   for (auto& thread : threads) {
     thread.join();
   }
-
+  */
+  
   /*
   // we must use task isolation as described here:
   // https://software.intel.com/content/www/us/en/develop/documentation/tbb-documentation/top/intel-threading-building-blocks-developer-guide/task-isolation.html
