@@ -52,12 +52,12 @@ map_rect_concurrent(
   std::cout << "num_jobs = " << num_jobs << std::endl;
   std::cout << "--------------------------------------------------------------------------------" << std::endl;
   */
-  auto& pool = stan::math::ThreadPool::instance();
+  //auto& pool = stan::math::ThreadPool::instance();
   std::vector<std::future<void>> futures;
   futures.reserve(num_jobs);
 
   for (int job = 0; job < num_jobs; ++job) {
-    futures.emplace_back(pool.submit(execute_chunk, job, job + 1));
+    futures.emplace_back(stan::math::WorkStealingThreadPool::instance().submit(execute_chunk, job, job + 1));
   }
   
   for (auto& f : futures) {

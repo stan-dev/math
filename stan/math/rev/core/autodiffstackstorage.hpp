@@ -108,6 +108,11 @@ namespace stan {
 
       static AutodiffStackStorage& instance() {
 	static thread_local AutodiffStackStorage instance;
+
+	/*std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl
+		  << "AutodiffStackStorage.instance()" << std::endl
+		  << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;*/
+	
 	return instance;
       }
       

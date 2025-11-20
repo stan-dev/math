@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_CORE_INIT_THREADPOOL_TBB_HPP
 #define STAN_MATH_PRIM_CORE_INIT_THREADPOOL_TBB_HPP
 
+#include <iostream>
 #include <stan/math/prim/err/invalid_argument.hpp>
 
 #include <boost/lexical_cast.hpp>
@@ -99,6 +100,10 @@ inline int get_num_threads() {
  */
 inline tbb::task_arena& init_threadpool_tbb(int n_threads = 0) {
   int tbb_max_threads = 1;
+  std::cout << "--------------------------------------------------------------------------------" << std::endl;
+  std::cout << "here init_threadpool_tbb" << std::endl;
+  std::cout << "--------------------------------------------------------------------------------" << std::endl;
+  
 #ifdef STAN_THREADS
   if (n_threads == 0) {
     tbb_max_threads = internal::get_num_threads();
@@ -144,6 +149,10 @@ inline tbb::task_arena& init_threadpool_tbb(int n_threads = 0) {
  */
 inline tbb::task_scheduler_init& init_threadpool_tbb(int n_threads = 0) {
   int tbb_max_threads = 1;
+  std::cout << "--------------------------------------------------------------------------------" << std::endl;
+  std::cout << "here init_threadpool_tbb" << std::endl;
+  std::cout << "--------------------------------------------------------------------------------" << std::endl;
+
 #ifdef STAN_THREADS
   if (n_threads == 0) {
     tbb_max_threads = internal::get_num_threads();

@@ -57,7 +57,6 @@ struct map_rect_con_threads : public ::testing::Test {
 
 TEST_F(map_rect_con_threads, concurrent_varying_num_threads_ragged_dd) {
   set_n_threads(-1);
-
   for (std::size_t i = 1; i < 20; ++i) {
     for (std::size_t n = 0; n < N_test.size(); ++n) {
       const int N = N_test[n];
@@ -97,6 +96,7 @@ TEST_F(map_rect_con_threads, concurrent_varying_num_threads_ragged_dd) {
 
 TEST_F(map_rect_con_threads, concurrent_varying_num_threads_eval_ok_dd) {
   set_n_threads(-1);
+
   for (std::size_t i = 1; i < 20; ++i) {
     for (std::size_t n = 0; n < N_test.size(); ++n) {
       const int N = N_test[n];
@@ -112,9 +112,11 @@ TEST_F(map_rect_con_threads, concurrent_varying_num_threads_eval_ok_dd) {
         EXPECT_FLOAT_EQ(res1(j + 1),
                         x_r[i][0] * job_params_d[i](1) * job_params_d[i](0)
                             + 2 * shared_params_d(0) + shared_params_d(1));
+	//stan::math::print_stack(std::cout);
       }
     }
     set_n_threads(i);
   }
+
 }
 #endif
