@@ -342,7 +342,7 @@ endif
 # Sets up CXXFLAGS_THREADS to use threading
 
 ifdef STAN_THREADS
-  CXXFLAGS_THREADS ?= -DSTAN_THREADS
+  CXXFLAGS_THREADS ?= -DSTAN_THREADS -pthread
 endif
 
 ################################################################################
