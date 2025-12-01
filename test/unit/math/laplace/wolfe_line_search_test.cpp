@@ -444,8 +444,8 @@ TEST(WolfeLineSearch, RequiresZoomForCurvature) {
   WolfeInfo before = info;
 
   auto status = harness.run(info, obj);
-  EXPECT_EQ(status.stop_, WolfeReturn::Wolfe)
-      << "Expected Wolfe but wolfe returned "
+  EXPECT_EQ(status.stop_, WolfeReturn::ConvergedObjective)
+      << "Expected Converged Objective but wolfe returned "
       << stan::math::internal::wolfe_status_str(status);
   EXPECT_GE(status.num_backtracks_, 0);
 

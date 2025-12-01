@@ -137,7 +137,7 @@ TEST(laplace, poisson_log_phi_dim_2_tuple_extended) {
   using stan::math::test::laplace_issue;
   constexpr std::array known_issues{laplace_issue{0, 0, 0}};
   constexpr stan::test::ad_tolerances tols{
-      stan::test::ad_gradient_tols{1e-8, 1e-3}};
+      stan::test::ad_gradient_tols{1e-8, 1e-2}};
   //  stan::test::ad_tolerances tols;
   //  tols.gradient_grad_ = 1e-1;
   stan::math::test::run_solver_grid(

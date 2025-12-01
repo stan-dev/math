@@ -120,7 +120,7 @@ inline void block_matrix_sqrt(WRootMat& W_root,
     sqrt_t_mat.setZero();
     local_block
         = W.block(i * block_size, i * block_size, block_size, block_size);
-    if (Eigen::isnan(local_block.array()).any()) {
+    if (!local_block.array().isFinite().any()) {
       throw std::domain_error(
           std::string("Error in block_matrix_sqrt: "
                       "NaNs detected in block diagonal starting at (")
@@ -231,9 +231,6 @@ inline void block_matrix_chol_L(WRootMat& W_root,
               = local_block_sqrt(j, k);
         }
       }
-      throw std::domain_error(
-          "Error in block_matrix_sqrt: "
-          "The matrix is not positive definite");
     }
   }
 }
@@ -579,9 +576,7 @@ inline auto laplace_marginal_density_est(
     while (scratch.alpha() > options.line_search.min_alpha) {
       try {
         update_step(scratch, curr, prev, scratch.eval_, wolfe_info.p_);
-        if (std::isnan(scratch.eval_.obj()) || std::isinf(scratch.eval_.obj())
-            || std::isnan(scratch.eval_.dir())
-            || std::isinf(scratch.eval_.dir())) {
+        if (!std::isfinite(scratch.eval_.obj()) || !std::isfinite(scratch.eval_.dir())) {
           scratch.alpha() *= options.line_search.tau;
           continue;
         }
@@ -592,25 +587,27 @@ inline auto laplace_marginal_density_est(
       break;
     }
     if (scratch.alpha() <= options.line_search.min_alpha) {
-      wolfe_status.success_ = false;
+      wolfe_status.accept_ = false;
       return true;
     }
     if (options.line_search.max_iterations == 0) {
       if (scratch.alpha() > options.line_search.min_alpha) {
         curr.update(scratch);
-        wolfe_status.success_ = true;
+        wolfe_status.accept_ = true;
         return false;
       }
     } else {
+      // TODO:
+      Eigen::VectorXd s = scratch.a() - prev.a();
       curr.alpha() = barzilai_borwein_step_size(
-          wolfe_info.p_, grad_fun(scratch), prev_g, prev.alpha(),
+          s, grad_fun(scratch), prev_g, prev.alpha(),
           wolfe_status.num_backtracks_, options.line_search.min_alpha,
           options.line_search.max_alpha);
       wolfe_status = internal::wolfe_line_search(wolfe_info, update_step,
                                                  options.line_search, msgs);
     }
-    return abs(curr.obj() - prev.obj()) < options.tolerance
-           || (!wolfe_status.success_ && curr.obj() <= prev.obj());
+    return std::abs(curr.obj() - prev.obj()) < options.tolerance
+           || (!wolfe_status.accept_ && curr.obj() <= prev.obj());
   };
   auto set_next_iter = [&options](auto&& curr, auto&& prev) {
     prev.update(curr);
@@ -638,7 +635,7 @@ inline auto laplace_marginal_density_est(
           auto W = laplace_likelihood::diagonal_hessian(ll_fun, prev.theta(),
                                                         ll_args, msgs);
           for (Eigen::Index j = 0; j < W.size(); j++) {
-            if (W.coeff(j) < 0) {
+            if (W.coeff(j) < 0 || !std::isfinite(W.coeff(j))) {
               throw std::domain_error(
                   "laplace_marginal_density: Hessian matrix is not positive "
                   "definite");
@@ -677,7 +674,7 @@ inline auto laplace_marginal_density_est(
                 = update_line_search(wolfe_status, wolfe_info, curr, prev);
           }
           if (finish_update) {
-            if (!final_loop && wolfe_status.success_) {
+            if (!final_loop && wolfe_status.accept_) {
               // Do one final loop with exact wolfe conditions
               final_loop = true;
               // NOTE: Swapping here so we need to swap prev and curr later
@@ -723,7 +720,7 @@ inline auto laplace_marginal_density_est(
           auto W = laplace_likelihood::block_hessian(
               ll_fun, prev.theta(), options.hessian_block_size, ll_args, msgs);
           for (Eigen::Index j = 0; j < W.rows(); j++) {
-            if (W.coeff(j, j) < 0) {
+            if (W.coeff(j, j) < 0 || !std::isfinite(W.coeff(j, j))) {
               throw std::domain_error(
                   "laplace_marginal_density: Hessian matrix is not positive "
                   "definite");
@@ -758,7 +755,7 @@ inline auto laplace_marginal_density_est(
                 = update_line_search(wolfe_status, wolfe_info, curr, prev);
           }
           if (finish_update) {
-            if (!final_loop && wolfe_status.success_) {
+            if (!final_loop && wolfe_status.accept_) {
               // Do one final loop with exact wolfe conditions
               final_loop = true;
               set_next_iter(curr, prev);
@@ -794,8 +791,13 @@ inline auto laplace_marginal_density_est(
   }
   try {
     if (options.solver == 2 || allow_bounce) {
-      Eigen::MatrixXd K_root
-          = covariance.template selfadjointView<Eigen::Lower>().llt().matrixL();
+      auto K_root_llt
+          = covariance.template selfadjointView<Eigen::Lower>().llt();
+      if (K_root_llt.info() != Eigen::Success) {
+        throw std::domain_error(
+            "laplace_marginal_density: Cholesky of covariance failed at start");
+      }
+      Eigen::MatrixXd K_root = K_root_llt.matrixL();
       for (; step_iter <= options.max_num_steps; step_iter++) {
         auto W = laplace_likelihood::block_hessian(
             ll_fun, prev.theta(), options.hessian_block_size, ll_args, msgs);
@@ -828,7 +830,7 @@ inline auto laplace_marginal_density_est(
               = update_line_search(wolfe_status, wolfe_info, curr, prev);
         }
         if (finish_update) {
-          if (!final_loop && wolfe_status.success_) {
+          if (!final_loop && wolfe_status.accept_) {
             // Do one final loop with exact wolfe conditions
             final_loop = true;
             // NOTE: Swapping here so we need to swap prev and curr later
@@ -878,7 +880,7 @@ inline auto laplace_marginal_density_est(
             = update_line_search(wolfe_status, wolfe_info, curr, prev);
       }
       if (finish_update) {
-        if (!final_loop && wolfe_status.success_) {
+        if (!final_loop && wolfe_status.accept_) {
           // Do one final loop with exact wolfe conditions
           final_loop = true;
           // NOTE: Swapping here so we need to swap prev and curr later

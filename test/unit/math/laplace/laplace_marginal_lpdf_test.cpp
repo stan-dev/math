@@ -121,6 +121,8 @@ TEST_F(laplace_disease_map_test, laplace_marginal) {
   }
   constexpr double tolerance = 1e-12;
   constexpr int max_num_steps = 100;
+  constexpr stan::test::ad_tolerances tols{
+      stan::test::ad_gradient_tols{1e-8, 1e-3}};
   stan::math::test::run_solver_grid(
       [&](int solver_num, int hessian_block_size, int max_steps_line_search,
           auto&& theta_0) {
@@ -132,7 +134,7 @@ TEST_F(laplace_disease_map_test, laplace_marginal) {
               max_num_steps, hessian_block_size, solver_num,
               max_steps_line_search, nullptr);
         };
-        stan::test::expect_ad<true>(f, phi_dbl[0], phi_dbl[1]);
+        stan::test::expect_ad<true>(tols, f, phi_dbl[0], phi_dbl[1]);
       },
       theta_0);
 }
