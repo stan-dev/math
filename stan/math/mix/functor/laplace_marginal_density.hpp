@@ -492,8 +492,8 @@ inline auto laplace_marginal_density_est(
 
   const Eigen::Index theta_size = covariance.rows();
 
-  if (unlikely(theta_size % options.hessian_block_size != 0 ||
-    theta_size < options.hessian_block_size)) {
+  if (unlikely(theta_size % options.hessian_block_size != 0
+               || theta_size < options.hessian_block_size)) {
     [&]() STAN_COLD_PATH {
       std::stringstream msg;
       msg << "laplace_marginal_density: The hessian size (" << theta_size
@@ -559,56 +559,57 @@ inline auto laplace_marginal_density_est(
     eval_in.dir() = grad_fun(step_info).dot(p);
   };
   Eigen::VectorXd prev_g(theta_size);
-  auto update_line_search = [&grad_fun, &covariance, &prev_g, &update_step,
-                             &theta_grad_f, &options,
-                             &msgs](auto&& wolfe_status, auto&& wolfe_info,
-                                    auto&& curr, auto&& prev) {
-    wolfe_info.p_ = curr.a() - prev.a();
-    prev_g.noalias() = grad_fun(prev);
-    wolfe_info.init_dir_ = prev_g.dot(wolfe_info.p_);
-    // Flip direction if not ascending
-    if (wolfe_info.init_dir_ < 0) {
-      wolfe_info.p_ = -wolfe_info.p_;
-      wolfe_info.init_dir_ = -wolfe_info.init_dir_;
-    }
-    auto scratch = wolfe_info.scratch_;
-    scratch.alpha() = 1.0;
-    while (scratch.alpha() > options.line_search.min_alpha) {
-      try {
-        update_step(scratch, curr, prev, scratch.eval_, wolfe_info.p_);
-        if (!std::isfinite(scratch.eval_.obj()) || !std::isfinite(scratch.eval_.dir())) {
-          scratch.alpha() *= options.line_search.tau;
-          continue;
-        }
-      } catch (const std::exception& e) {
-        scratch.alpha() *= options.line_search.tau;
-        continue;
-      }
-      break;
-    }
-    if (scratch.alpha() <= options.line_search.min_alpha) {
-      wolfe_status.accept_ = false;
-      return true;
-    }
-    if (options.line_search.max_iterations == 0) {
-      if (scratch.alpha() > options.line_search.min_alpha) {
-        curr.update(scratch);
-        wolfe_status.accept_ = true;
-        return false;
-      }
-    } else {
-      // TODO:
-      Eigen::VectorXd s = scratch.a() - prev.a();
-      curr.alpha() = barzilai_borwein_step_size(
-          s, grad_fun(scratch), prev_g, prev.alpha(),
-          wolfe_status.num_backtracks_, options.line_search.min_alpha,
-          options.line_search.max_alpha);
-      wolfe_status = internal::wolfe_line_search(wolfe_info, update_step,
-                                                 options.line_search, msgs);
-    }
-    return std::abs(curr.obj() - prev.obj()) < options.tolerance
-           || (!wolfe_status.accept_ && curr.obj() <= prev.obj());
-  };
+  auto update_line_search
+      = [&grad_fun, &covariance, &prev_g, &update_step, &theta_grad_f, &options,
+         &msgs](auto&& wolfe_status, auto&& wolfe_info, auto&& curr,
+                auto&& prev) {
+          wolfe_info.p_ = curr.a() - prev.a();
+          prev_g.noalias() = grad_fun(prev);
+          wolfe_info.init_dir_ = prev_g.dot(wolfe_info.p_);
+          // Flip direction if not ascending
+          if (wolfe_info.init_dir_ < 0) {
+            wolfe_info.p_ = -wolfe_info.p_;
+            wolfe_info.init_dir_ = -wolfe_info.init_dir_;
+          }
+          auto scratch = wolfe_info.scratch_;
+          scratch.alpha() = 1.0;
+          while (scratch.alpha() > options.line_search.min_alpha) {
+            try {
+              update_step(scratch, curr, prev, scratch.eval_, wolfe_info.p_);
+              if (!std::isfinite(scratch.eval_.obj())
+                  || !std::isfinite(scratch.eval_.dir())) {
+                scratch.alpha() *= options.line_search.tau;
+                continue;
+              }
+            } catch (const std::exception& e) {
+              scratch.alpha() *= options.line_search.tau;
+              continue;
+            }
+            break;
+          }
+          if (scratch.alpha() <= options.line_search.min_alpha) {
+            wolfe_status.accept_ = false;
+            return true;
+          }
+          if (options.line_search.max_iterations == 0) {
+            if (scratch.alpha() > options.line_search.min_alpha) {
+              curr.update(scratch);
+              wolfe_status.accept_ = true;
+              return false;
+            }
+          } else {
+            // TODO:
+            Eigen::VectorXd s = scratch.a() - prev.a();
+            curr.alpha() = barzilai_borwein_step_size(
+                s, grad_fun(scratch), prev_g, prev.alpha(),
+                wolfe_status.num_backtracks_, options.line_search.min_alpha,
+                options.line_search.max_alpha);
+            wolfe_status = internal::wolfe_line_search(
+                wolfe_info, update_step, options.line_search, msgs);
+          }
+          return std::abs(curr.obj() - prev.obj()) < options.tolerance
+                 || (!wolfe_status.accept_ && curr.obj() <= prev.obj());
+        };
   auto set_next_iter = [&options](auto&& curr, auto&& prev) {
     prev.update(curr);
     curr.alpha() = std::clamp(curr.alpha(), 0.0, options.line_search.max_alpha);

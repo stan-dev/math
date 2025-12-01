@@ -343,10 +343,7 @@ struct WolfeStatus {
   bool accept_{false};
   WolfeStatus() = default;
   WolfeStatus(WolfeReturn stop, int evals, int back)
-      : num_evals_(evals),
-        num_backtracks_(back),
-        stop_(stop),
-        accept_{false} {}
+      : num_evals_(evals), num_backtracks_(back), stop_(stop), accept_{false} {}
   WolfeStatus(WolfeReturn stop, int evals, int back, bool success)
       : num_evals_(evals),
         num_backtracks_(back),
@@ -716,10 +713,8 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
   auto assign_step
       = [](WolfeData& out, WolfeData& buf, auto&& e) { out.update(buf, e); };
   auto eval_finite = [](const Eval& e, const WolfeData& state) {
-    return std::isfinite(e.obj())
-        && std::isfinite(e.dir())
-        && state.theta().allFinite()
-        && state.theta_grad().allFinite();
+    return std::isfinite(e.obj()) && std::isfinite(e.dir())
+           && state.theta().allFinite() && state.theta_grad().allFinite();
   };
   Eval best = low;  // keep the best Armijo-OK in case strong-Wolfe fails
   auto update_with_tick = [&](WolfeData& buf, Eval& e, auto&& p) {
@@ -885,7 +880,7 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
   }
   loop_iter = 0;
   while ((high.alpha() - low.alpha() > opt.min_alpha)
-        && high.alpha() > opt.min_alpha) {
+         && high.alpha() > opt.min_alpha) {
     num_backtracks++;
 
     const bool have_sign_change = (low.dir() * high.dir() < 0);
@@ -893,9 +888,8 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
     const bool use_cubic = have_sign_change && high_armijo_ok;
 
     // Choose trial alpha: cubic when bracket is good, else bisection.
-    double alpha_mid = use_cubic
-                      ? cubic_or_bisect_max(low, high, opt)
-                      : 0.5 * (low.alpha() + high.alpha());
+    double alpha_mid = use_cubic ? cubic_or_bisect_max(low, high, opt)
+                                 : 0.5 * (low.alpha() + high.alpha());
 
     if (alpha_mid <= opt.min_alpha) {
       break;
@@ -911,8 +905,8 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
     while (!eval_finite(mid, scratch)) {
       alpha_mid = low.alpha() + opt.tau * (alpha_mid - low.alpha());
       if (alpha_mid <= opt.min_alpha) {
-        return WolfeStatus{WolfeReturn::StepTooSmall,
-                          total_updates, num_backtracks, false};
+        return WolfeStatus{WolfeReturn::StepTooSmall, total_updates,
+                           num_backtracks, false};
       }
       mid.alpha() = alpha_mid;
       wolfe_check = update_with_tick(scratch, mid, p);
@@ -922,8 +916,8 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
     }
     if (armijo_ok(mid) && wolfe_ok(mid)) {
       assign_step(curr, scratch, mid);
-      return WolfeStatus{WolfeReturn::Wolfe,
-                        total_updates, num_backtracks, true};
+      return WolfeStatus{WolfeReturn::Wolfe, total_updates, num_backtracks,
+                         true};
     }
 
     // Track best Armijo-OK point for fallback.
