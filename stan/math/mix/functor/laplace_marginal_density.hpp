@@ -495,39 +495,26 @@ inline auto laplace_marginal_density_est(
 
   const Eigen::Index theta_size = covariance.rows();
 
-  if (unlikely(theta_size % options.hessian_block_size != 0)) {
+  if (unlikely(theta_size % options.hessian_block_size != 0 ||
+    theta_size < options.hessian_block_size)) {
     [&]() STAN_COLD_PATH {
       std::stringstream msg;
       msg << "laplace_marginal_density: The hessian size (" << theta_size
-          << ", " << theta_size
-          << ") is not divisible by the hessian block size ("
-          << options.hessian_block_size
+          << ", " << theta_size << ")";
+      if (theta_size % options.hessian_block_size != 0) {
+        msg << " is not divisible by the hessian block size (";
+      } else {
+        msg << " is smaller than the hessian block size (";
+      }
+      msg << options.hessian_block_size
           << ")"
-             ". Try a hessian block size such as [1, ";
+             ". Use a hessian block size such as [1, ";
       for (int i = 2; i < 12; ++i) {
         if (theta_size % i == 0) {
           msg << i << ", ";
         }
       }
-      msg.str().pop_back();
-      msg.str().pop_back();
-      msg << "].";
-      throw std::domain_error(msg.str());
-    }();
-  } else if (unlikely(theta_size < options.hessian_block_size)) {
-    [&]() STAN_COLD_PATH {
-      std::stringstream msg;
-      msg << "laplace_marginal_density: The hessian size (" << theta_size
-          << ", " << theta_size << ") is smaller than the hessian block size ("
-          << options.hessian_block_size
-          << "). Try a hessian block size such as [1, ";
-      for (int i = 2; i < theta_size; ++i) {
-        if (theta_size % i == 0) {
-          msg << i << ", ";
-        }
-      }
-      msg.str().pop_back();
-      msg.str().pop_back();
+      msg << "... " << theta_size;
       msg << "].";
       throw std::domain_error(msg.str());
     }();
@@ -641,13 +628,13 @@ inline auto laplace_marginal_density_est(
   WolfeStatus wolfe_status;
   // Start with safe step size
   wolfe_status.num_backtracks_ = 99;
-  Eigen::Index i = 0;
+  Eigen::Index step_iter = 0;
   try {
     if (options.solver == 1) {
       if (options.hessian_block_size == 1) {
         //   std::cout << "Solver: 1Diag" << std::endl;
         Eigen::VectorXd W_r(theta_size);
-        for (; i <= options.max_num_steps; i++) {
+        for (; step_iter <= options.max_num_steps; step_iter++) {
           auto W = laplace_likelihood::diagonal_hessian(ll_fun, prev.theta(),
                                                         ll_args, msgs);
           for (Eigen::Index j = 0; j < W.size(); j++) {
@@ -674,7 +661,7 @@ inline auto laplace_marginal_density_est(
             if (llt_B.info() != Eigen::Success) {
               throw std::domain_error(
                   "laplace_marginal_density: Cholesky failed in iteration "
-                  + std::to_string(i));
+                  + std::to_string(step_iter));
             }
           }
           auto L = llt_B.matrixL();
@@ -732,7 +719,7 @@ inline auto laplace_marginal_density_est(
           }
         }
         W_r.makeCompressed();
-        for (; i <= options.max_num_steps; i++) {
+        for (; step_iter <= options.max_num_steps; step_iter++) {
           auto W = laplace_likelihood::block_hessian(
               ll_fun, prev.theta(), options.hessian_block_size, ll_args, msgs);
           for (Eigen::Index j = 0; j < W.rows(); j++) {
@@ -758,7 +745,7 @@ inline auto laplace_marginal_density_est(
             if (llt_B.info() != Eigen::Success) {
               throw std::domain_error(
                   "laplace_marginal_density: Cholesky failed in iteration "
-                  + std::to_string(i));
+                  + std::to_string(step_iter));
             }
           }
           auto L = llt_B.matrixL();
@@ -799,7 +786,7 @@ inline auto laplace_marginal_density_est(
   } catch (const std::exception& e) {
     allow_bounce = true;
     if (msgs != nullptr) {
-      (*msgs) << "Solver 1 failed at iteration " << i
+      (*msgs) << "Solver 1 failed at iteration " << step_iter
               << " with error: " << e.what() << std::endl;
       (*msgs) << "Attempting to switch to solver 2 (LLT decomposition)."
               << std::endl;
@@ -809,8 +796,7 @@ inline auto laplace_marginal_density_est(
     if (options.solver == 2 || allow_bounce) {
       Eigen::MatrixXd K_root
           = covariance.template selfadjointView<Eigen::Lower>().llt().matrixL();
-      for (; i <= options.max_num_steps; i++) {
-        debug::print("======Iter", i);
+      for (; step_iter <= options.max_num_steps; step_iter++) {
         auto W = laplace_likelihood::block_hessian(
             ll_fun, prev.theta(), options.hessian_block_size, ll_args, msgs);
         B.noalias() = Eigen::MatrixXd::Identity(theta_size, theta_size)
@@ -828,7 +814,7 @@ inline auto laplace_marginal_density_est(
           if (llt_B.info() != Eigen::Success) {
             throw std::domain_error(
                 "laplace_marginal_density: Cholesky failed in iteration "
-                + std::to_string(i));
+                + std::to_string(step_iter));
           }
         }
         auto L = llt_B.matrixL();
@@ -870,7 +856,7 @@ inline auto laplace_marginal_density_est(
   } catch (const std::exception& e) {
     allow_bounce = true;
     if (msgs != nullptr) {
-      (*msgs) << "Solver 2 failed at iteration " << i
+      (*msgs) << "Solver 2 failed at iteration " << step_iter
               << " with error: " << e.what() << std::endl;
       (*msgs) << "Attempting to switch to solver 3 (LU decomposition)."
               << std::endl;
@@ -879,7 +865,7 @@ inline auto laplace_marginal_density_est(
   if (options.solver == 3 || allow_bounce) {
     //    std::cout << "Solver: 3" << std::endl;
     Eigen::PartialPivLU<Eigen::MatrixXd> LU(theta_size);
-    for (; i <= options.max_num_steps; i++) {
+    for (; step_iter <= options.max_num_steps; step_iter++) {
       auto W = laplace_likelihood::block_hessian(
           ll_fun, prev.theta(), options.hessian_block_size, ll_args, msgs);
       LU.compute(Eigen::MatrixXd::Identity(theta_size, theta_size)
