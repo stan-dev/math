@@ -65,6 +65,8 @@ struct cov_fun {
   }
 };
 
+class laplace_types : public LaplaceAdTest {};
+
 TEST(laplace, theta_0_as_expression_issue_3196) {
   // See https://github.com/stan-dev/math/issues/3196
   std::vector<int> y{1, 1, 1, 1, 1};
@@ -79,11 +81,11 @@ TEST(laplace, theta_0_as_expression_issue_3196) {
                      {1, 1, 1, 1, 1},
                      {1, 1, 1, 1, 1}}};
 
-  double tolerance = 1e-6;
-  int max_num_steps = 100;
-  int hessian_block_size = 1;
-  int solver_num = 1;
-  int max_steps_line_search = 10;
+  constexpr double tolerance = 1e-6;
+  constexpr int max_num_steps = 100;
+  constexpr int hessian_block_size = 1;
+  constexpr int solver_num = 1;
+  constexpr int max_steps_line_search = 10;
 
   EXPECT_NO_THROW(stan::math::laplace_marginal_tol<false>(
       poisson_re_log_ll(),
@@ -104,14 +106,14 @@ TEST(laplace, theta_0_as_expression_issue_3196) {
       nullptr));
 }
 
-TEST(laplace, poisson_log_phi_dim_2_tuple_extended) {
+TEST_P(laplace_types, poisson_log_phi_dim_2_tuple_extended) {
   using stan::math::laplace_marginal;
   using stan::math::laplace_marginal_tol;
   using stan::math::to_vector;
   using stan::math::value_of;
   using stan::math::var;
   // logger->current_test_name_ = "poisson_log_phi_dim_2";
-  int dim_phi = 2;
+  constexpr int dim_phi = 2;
   Eigen::Matrix<double, Eigen::Dynamic, 1> phi_dbl(dim_phi);
   phi_dbl << 1.6, 0.45;
 
@@ -129,6 +131,9 @@ TEST(laplace, poisson_log_phi_dim_2_tuple_extended) {
 
   std::vector<int> n_samples = {1, 1};
   std::vector<int> sums = {1, 0};
+  const auto [solver_num, hessian_block_size, max_steps_line_search] = GetParam();
+  LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
+  LAPLACE_SKIP_ZERO_STEPS(max_steps_line_search);
 
   constexpr double tolerance = 1e-12;
   constexpr int max_num_steps = 100;
@@ -140,38 +145,33 @@ TEST(laplace, poisson_log_phi_dim_2_tuple_extended) {
       stan::test::ad_gradient_tols{1e-8, 1e-2}};
   //  stan::test::ad_tolerances tols;
   //  tols.gradient_grad_ = 1e-1;
-  stan::math::test::run_solver_grid(
-      [&](int solver_num, int hessian_block_size, int max_steps_line_search,
-          auto&& theta_0) {
-        auto f_ll = [&](auto&& eta1, auto&& eta2, auto&& eta3) {
-          auto eta1_tuple = std::make_tuple(eta1(0), eta1(1));
-          return laplace_marginal_tol<false>(
-              poisson_log_likelihood_tuple_expanded{},
-              std::forward_as_tuple(sums, eta1_tuple, eta2, eta3),
-              stan::math::test::squared_kernel_functor{},
-              std::forward_as_tuple(x, std::make_tuple(phi_dbl(0), phi_dbl(1))),
-              theta_0, tolerance, max_num_steps, hessian_block_size, solver_num,
-              max_steps_line_search, nullptr);
-        };
-        Eigen::VectorXd test1(phi_dbl);
-        std::vector<double> test2 = {1.0, 1.0};
-        stan::test::expect_ad<true>(tols, f_ll, phi_dbl, test1, test2);
-      },
-      theta_0);
+  auto f_ll = [&](auto&& eta1, auto&& eta2, auto&& eta3) {
+    auto eta1_tuple = std::make_tuple(eta1(0), eta1(1));
+    return laplace_marginal_tol<false>(
+        poisson_log_likelihood_tuple_expanded{},
+        std::forward_as_tuple(sums, eta1_tuple, eta2, eta3),
+        stan::math::test::squared_kernel_functor{},
+        std::forward_as_tuple(x, std::make_tuple(phi_dbl(0), phi_dbl(1))),
+        theta_0, tolerance, max_num_steps, hessian_block_size, solver_num,
+        max_steps_line_search, nullptr);
+  };
+  Eigen::VectorXd test1(phi_dbl);
+  std::vector<double> test2 = {1.0, 1.0};
+  stan::test::expect_ad<true>(tols, f_ll, phi_dbl, test1, test2);
 }
 
-TEST(laplace, poisson_log_phi_dim_2_tuple) {
+TEST_P(laplace_types, poisson_log_phi_dim_2_tuple) {
   using stan::math::laplace_marginal;
   using stan::math::laplace_marginal_tol;
   using stan::math::to_vector;
   using stan::math::value_of;
   using stan::math::var;
   // logger->current_test_name_ = "poisson_log_phi_dim_2";
-  int dim_phi = 2;
+  constexpr int dim_phi = 2;
   Eigen::Matrix<double, Eigen::Dynamic, 1> phi_dbl(dim_phi);
   phi_dbl << 1.6, 0.45;
 
-  int dim_theta = 2;
+  constexpr int dim_theta = 2;
   Eigen::VectorXd theta_0(dim_theta);
   theta_0 << 0, 0;
 
@@ -185,6 +185,8 @@ TEST(laplace, poisson_log_phi_dim_2_tuple) {
 
   std::vector<int> n_samples = {1, 1};
   std::vector<int> sums = {1, 0};
+  const auto [solver_num, hessian_block_size, max_steps_line_search] = GetParam();
+  LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
 
   constexpr double tolerance = 1e-12;
   constexpr int max_num_steps = 100;
@@ -196,38 +198,27 @@ TEST(laplace, poisson_log_phi_dim_2_tuple) {
       stan::test::ad_gradient_tols{1e-8, 1e-3}};
   //  stan::test::ad_tolerances tols;
   //  tols.gradient_grad_ = 1e-1;
-  stan::math::test::run_solver_grid(
-      [&](int solver_num, int hessian_block_size, int max_steps_line_search,
-          auto&& theta_0) {
-        auto f_covar = [&](auto&& x_v, auto&& alpha, auto&& rho) {
-          return laplace_marginal_tol<false>(
-              poisson_log_likelihood2{}, std::forward_as_tuple(sums),
-              stan::math::test::squared_kernel_functor{},
-              std::forward_as_tuple(x_v, std::make_tuple(alpha, rho)), theta_0,
-              tolerance, max_num_steps, hessian_block_size, solver_num,
-              max_steps_line_search, nullptr);
-        };
-        stan::test::expect_ad<true>(tols, f_covar, x, phi_dbl[0], phi_dbl[1]);
-      },
-      theta_0);
-  stan::math::test::run_solver_grid(
-      [&](int solver_num, int hessian_block_size, int max_steps_line_search,
-          auto&& theta_0) {
-        auto f_ll = [&](auto&& alpha_rho, auto&& eta1, auto&& eta2) {
-          return laplace_marginal_tol<false>(
-              poisson_log_likelihood_tuple{},
-              std::forward_as_tuple(sums, std::make_tuple(eta1, eta2)),
-              stan::math::test::squared_kernel_functor{},
-              std::forward_as_tuple(
-                  x, std::make_tuple(alpha_rho(0), alpha_rho(1))),
-              theta_0, tolerance, max_num_steps, hessian_block_size, solver_num,
-              max_steps_line_search, nullptr);
-        };
-        auto test1 = 1.0;
-        auto test2 = 1.0;
-        stan::test::expect_ad<true>(tols, f_ll, phi_dbl, test1, test2);
-      },
-      theta_0);
+  auto f_covar = [&](auto&& x_v, auto&& alpha, auto&& rho) {
+    return laplace_marginal_tol<false>(
+        poisson_log_likelihood2{}, std::forward_as_tuple(sums),
+        stan::math::test::squared_kernel_functor{},
+        std::forward_as_tuple(x_v, std::make_tuple(alpha, rho)), theta_0,
+        tolerance, max_num_steps, hessian_block_size, solver_num,
+        max_steps_line_search, nullptr);
+  };
+  stan::test::expect_ad<true>(tols, f_covar, x, phi_dbl[0], phi_dbl[1]);
+  auto f_ll = [&](auto&& alpha_rho, auto&& eta1, auto&& eta2) {
+    return laplace_marginal_tol<false>(
+        poisson_log_likelihood_tuple{},
+        std::forward_as_tuple(sums, std::make_tuple(eta1, eta2)),
+        stan::math::test::squared_kernel_functor{},
+        std::forward_as_tuple(x, std::make_tuple(alpha_rho(0), alpha_rho(1))),
+        theta_0, tolerance, max_num_steps, hessian_block_size, solver_num,
+        max_steps_line_search, nullptr);
+  };
+  constexpr auto test1 = 1.0;
+  constexpr auto test2 = 1.0;
+  stan::test::expect_ad<true>(tols, f_ll, phi_dbl, test1, test2);
 }
 
 struct poisson_log_likelihood_array_tuple {
@@ -239,18 +230,18 @@ struct poisson_log_likelihood_array_tuple {
   }
 };
 
-TEST(laplace, poisson_log_phi_dim_2_array_tuple) {
+TEST_P(laplace_types, poisson_log_phi_dim_2_array_tuple) {
   using stan::math::laplace_marginal;
   using stan::math::laplace_marginal_tol;
   using stan::math::to_vector;
   using stan::math::value_of;
   using stan::math::var;
   // logger->current_test_name_ = "poisson_log_phi_dim_2";
-  int dim_phi = 2;
+  constexpr int dim_phi = 2;
   Eigen::Matrix<double, Eigen::Dynamic, 1> phi_dbl(dim_phi);
   phi_dbl << 1.6, 0.45;
 
-  int dim_theta = 2;
+  constexpr int dim_theta = 2;
   Eigen::VectorXd theta_0(dim_theta);
   theta_0 << 0, 0;
 
@@ -264,6 +255,8 @@ TEST(laplace, poisson_log_phi_dim_2_array_tuple) {
 
   std::vector<int> n_samples = {1, 1};
   std::vector<int> sums = {1, 0};
+  const auto [solver_num, hessian_block_size, max_steps_line_search] = GetParam();
+  LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
 
   constexpr double tolerance = 1e-12;
   constexpr int max_num_steps = 100;
@@ -275,30 +268,27 @@ TEST(laplace, poisson_log_phi_dim_2_array_tuple) {
       stan::test::ad_gradient_tols{1e-8, 1e-3}};
   //  stan::test::ad_tolerances tols;
   // tols.gradient_grad_ = 1e-1;
-  stan::math::test::run_solver_grid(
-      [&](int solver_num, int hessian_block_size, int max_steps_line_search,
-          auto&& theta_0) {
-        auto f_ll = [&](auto&& alpha_rho, auto&& eta1, auto&& eta2) {
-          std::vector<std::tuple<std::decay_t<decltype(eta1)>,
-                                 std::decay_t<decltype(eta2)>>>
-              eta_tuple;
-          eta_tuple.push_back(std::make_tuple(eta1, eta2));
-          using alpha_scalar = stan::scalar_type_t<decltype(alpha_rho)>;
-          std::vector<std::tuple<alpha_scalar, alpha_scalar>> alpha_tuple;
-          alpha_tuple.push_back(std::make_tuple(alpha_rho(0), alpha_rho(1)));
-          return laplace_marginal_tol<false>(
-              poisson_log_likelihood_array_tuple{},
-              std::forward_as_tuple(sums, eta_tuple),
-              stan::math::test::squared_kernel_functor{},
-              std::forward_as_tuple(x, alpha_tuple), theta_0, tolerance,
-              max_num_steps, hessian_block_size, solver_num,
-              max_steps_line_search, nullptr);
-        };
-        auto test1 = 1.0;
-        auto test2 = 1.0;
-        stan::test::expect_ad<true>(tols, f_ll, phi_dbl, test1, test2);
-      },
-      theta_0);
+  auto f_ll = [&](auto&& alpha_rho, auto&& eta1, auto&& eta2) {
+    std::vector<std::tuple<std::decay_t<decltype(eta1)>,
+                           std::decay_t<decltype(eta2)>>>
+        eta_tuple;
+    eta_tuple.push_back(std::make_tuple(eta1, eta2));
+    using alpha_scalar = stan::scalar_type_t<decltype(alpha_rho)>;
+    std::vector<std::tuple<alpha_scalar, alpha_scalar>> alpha_tuple;
+    alpha_tuple.push_back(std::make_tuple(alpha_rho(0), alpha_rho(1)));
+    return laplace_marginal_tol<false>(
+        poisson_log_likelihood_array_tuple{},
+        std::forward_as_tuple(sums, eta_tuple),
+        stan::math::test::squared_kernel_functor{},
+        std::forward_as_tuple(x, alpha_tuple), theta_0, tolerance,
+        max_num_steps, hessian_block_size, solver_num, max_steps_line_search,
+        nullptr);
+  };
+  constexpr auto test1 = 1.0;
+  constexpr auto test2 = 1.0;
+  stan::test::expect_ad<true>(tols, f_ll, phi_dbl, test1, test2);
 }
+
+LAPLACE_INSTANTIATE_TEST_SUITE_P(laplace_types);
 
 }  // namespace

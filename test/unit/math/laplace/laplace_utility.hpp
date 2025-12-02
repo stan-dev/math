@@ -260,7 +260,34 @@ inline void print_adjoint(Output&& output) {
                   "https://github.com/stan-dev/math/issues");
   }
 }
-
+template <typename T_>
+constexpr const char* test_type_name() {
+  using T = std::decay_t<T_>;
+  if constexpr (stan::is_var_v<T>) {
+    return "var";
+  } else if constexpr (std::is_arithmetic_v<T>) {
+    return "double";
+  } else if constexpr (stan::is_fvar_v<T>) {
+    using FvarScalar = stan::partials_type_t<T>;
+    if constexpr (std::is_arithmetic_v<FvarScalar>) {
+      return "fvar<double>";
+    } else if constexpr (stan::is_var_v<FvarScalar>) {
+      return "fvar<var>";
+    } else if constexpr (stan::is_fvar_v<FvarScalar>) {
+      using FvarFvarScalar = stan::partials_type_t<FvarScalar>;
+      if constexpr (std::is_arithmetic_v<FvarFvarScalar>) {
+        return "fvar<fvar<double>>";
+      } else if constexpr (stan::is_var_v<FvarFvarScalar>) {
+        return "fvar<fvar<var>>";
+      } else {
+        return "fvar<fvar<unknown>>";
+      }
+    } else {
+      return "fvar<unknown>";
+    }
+  }
+  return "unknown";
+}
 }  // namespace test
 }  // namespace math
 }  // namespace stan
@@ -294,7 +321,7 @@ static std::string ParamName(
   }                                                                            \
 
 #define LAPLACE_SKIP_ZERO_STEPS(max_steps_line_search) \
-  if (max_steps_line_search == 0) {                     \
+ if (max_steps_line_search == 0) {                     \
     GTEST_SKIP() << "[  INFO    ]"                 \
                   << " Skipping test for zero line search steps."; \
   }                                                    \

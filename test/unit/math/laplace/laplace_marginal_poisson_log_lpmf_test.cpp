@@ -7,6 +7,8 @@
 #include <gtest/gtest.h>
 #include <vector>
 
+namespace {
+
 class laplace_marginal_poisson_log_lpmf : public LaplaceAdTest {};
 
 TEST_P(laplace_marginal_poisson_log_lpmf, phi_dim_2) {
@@ -180,4 +182,4 @@ TEST_P(laplace_disease_map_test, laplace_marginal_poisson_log_lpmf) {
 }
 LAPLACE_INSTANTIATE_TEST_SUITE_P(laplace_disease_map_test);
 
-
+}  // namespace
