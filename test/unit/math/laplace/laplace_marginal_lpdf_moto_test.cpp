@@ -6,8 +6,10 @@
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <test/unit/math/laplace/aki_synth_data/x1.hpp>
 #include <test/unit/math/laplace/motorcycle_gp/x_vec.hpp>
+#include <test/unit/pretty_print_types.hpp>
 #include <gtest/gtest.h>
 #include <iostream>
+#include <sstream>
 #include <vector>
 
 namespace {
@@ -173,13 +175,24 @@ TEST_P(laplace_motorcyle_gp_test, gp_motorcycle_ad) {
   constexpr stan::test::ad_tolerances tols{
       stan::test::ad_gradient_tols{1e-8, 1e-1}};
   auto f = [&](auto&& phi_01_v, auto&& phi_rest_v) {
-    return laplace_marginal_tol<false>(
-        normal_likelihood{}, std::forward_as_tuple(y, n_obs),
-        covariance_motorcycle_functor{},
-        std::forward_as_tuple(x, phi_01_v(0), phi_01_v(1), phi_rest_v(0),
-                              phi_rest_v(1), n_obs),
-        theta0, tolerance, max_num_steps, hessian_block_size, solver_num,
-        max_steps_line_search, nullptr);
+    try {
+      return laplace_marginal_tol<false>(
+          normal_likelihood{}, std::forward_as_tuple(y, n_obs),
+          covariance_motorcycle_functor{},
+          std::forward_as_tuple(x, phi_01_v(0), phi_01_v(1), phi_rest_v(0),
+                                phi_rest_v(1), n_obs),
+          theta0, tolerance, max_num_steps, hessian_block_size, solver_num,
+          max_steps_line_search, nullptr);
+    } catch (const std::exception& e) {
+      std::stringstream fail_msg;
+      using stan::math::test::test_type_name;
+      fail_msg << "Exception thrown with phi_01_v("
+               << test_type_name<decltype(phi_01_v)>() << ")=" << phi_01_v
+               << ", phi_rest_v(" << test_type_name<decltype(phi_rest_v)>()
+               << ")=" << phi_rest_v << ". ";
+      ADD_FAILURE() << fail_msg.str() << "\n Error message: " << e.what();
+      throw;
+    }
   };
   try {
     stan::test::expect_ad<true>(tols, f, phi_01, phi_rest);
@@ -263,13 +276,27 @@ TEST_P(laplace_motorcyle_gp_test, gp_motorcycle2_ad) {
   constexpr stan::test::ad_tolerances tols{
       stan::test::ad_gradient_tols{1e-8, 1e-1}};
   auto f = [&](auto&& sigma_global_v, auto&& length_scale_v, auto&& sigma_v) {
-    return laplace_marginal_tol<false>(
-        normal_likelihood2{}, std::forward_as_tuple(y, n_obs, sigma_global_v),
-        covariance_motorcycle_functor{},
-        std::forward_as_tuple(x, length_scale_v(0), length_scale_v(1),
-                              sigma_v(0), sigma_v(1), n_obs),
-        theta0, tolerance, max_num_steps, hessian_block_size, solver_num,
-        max_steps_line_search, nullptr);
+    try {
+      return laplace_marginal_tol<false>(
+          normal_likelihood2{}, std::forward_as_tuple(y, n_obs, sigma_global_v),
+          covariance_motorcycle_functor{},
+          std::forward_as_tuple(x, length_scale_v(0), length_scale_v(1),
+                                sigma_v(0), sigma_v(1), n_obs),
+          theta0, tolerance, max_num_steps, hessian_block_size, solver_num,
+          max_steps_line_search, nullptr);
+    } catch (const std::exception& e) {
+      std::stringstream fail_msg;
+      using stan::math::test::test_type_name;
+      fail_msg << "Exception thrown with sigma_global_v("
+               << test_type_name<decltype(sigma_global_v)>() << ")="
+               << sigma_global_v << ", length_scale_v("
+               << test_type_name<decltype(length_scale_v)>() << ")="
+               << length_scale_v << ", sigma_v("
+               << test_type_name<decltype(sigma_v)>() << ")=" << sigma_v
+               << ". ";
+      ADD_FAILURE() << fail_msg.str() << "\n Error message: " << e.what();
+      throw;
+    }
   };
   stan::test::expect_ad<true>(tols, f, sigma_global, length_scale_vec,
                               sigma_vec);

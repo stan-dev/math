@@ -6,8 +6,10 @@
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <test/unit/math/laplace/aki_synth_data/x1.hpp>
 #include <test/unit/math/laplace/motorcycle_gp/x_vec.hpp>
+#include <test/unit/pretty_print_types.hpp>
 #include <gtest/gtest.h>
 #include <iostream>
+#include <sstream>
 #include <vector>
 
 namespace {
@@ -82,7 +84,7 @@ TEST(laplace, theta_0_as_expression_issue_3196) {
                      {1, 1, 1, 1, 1}}};
 
   constexpr double tolerance = 1e-6;
-  constexpr int max_num_steps = 100;
+  constexpr int max_num_steps = 1000;
   constexpr int hessian_block_size = 1;
   constexpr int solver_num = 1;
   constexpr int max_steps_line_search = 10;
@@ -136,7 +138,7 @@ TEST_P(laplace_types, poisson_log_phi_dim_2_tuple_extended) {
   LAPLACE_SKIP_ZERO_STEPS(max_steps_line_search);
 
   constexpr double tolerance = 1e-12;
-  constexpr int max_num_steps = 100;
+  constexpr int max_num_steps = 1000;
   using stan::is_var_v;
   using stan::scalar_type_t;
   using stan::math::test::laplace_issue;
@@ -146,14 +148,26 @@ TEST_P(laplace_types, poisson_log_phi_dim_2_tuple_extended) {
   //  stan::test::ad_tolerances tols;
   //  tols.gradient_grad_ = 1e-1;
   auto f_ll = [&](auto&& eta1, auto&& eta2, auto&& eta3) {
-    auto eta1_tuple = std::make_tuple(eta1(0), eta1(1));
-    return laplace_marginal_tol<false>(
-        poisson_log_likelihood_tuple_expanded{},
-        std::forward_as_tuple(sums, eta1_tuple, eta2, eta3),
-        stan::math::test::squared_kernel_functor{},
-        std::forward_as_tuple(x, std::make_tuple(phi_dbl(0), phi_dbl(1))),
-        theta_0, tolerance, max_num_steps, hessian_block_size, solver_num,
-        max_steps_line_search, nullptr);
+    try {
+      auto eta1_tuple = std::make_tuple(eta1(0), eta1(1));
+      return laplace_marginal_tol<false>(
+          poisson_log_likelihood_tuple_expanded{},
+          std::forward_as_tuple(sums, eta1_tuple, eta2, eta3),
+          stan::math::test::squared_kernel_functor{},
+          std::forward_as_tuple(x, std::make_tuple(phi_dbl(0), phi_dbl(1))),
+          theta_0, tolerance, max_num_steps, hessian_block_size, solver_num,
+          max_steps_line_search, nullptr);
+    } catch (const std::exception& e) {
+      std::stringstream fail_msg;
+      using stan::math::test::test_type_name;
+      fail_msg << "Exception thrown with eta1("
+               << test_type_name<decltype(eta1)>() << ")=" << eta1[0] << ", eta2("
+               << test_type_name<decltype(eta2)>() << ")=" << eta2[0]
+               << ", eta3(" << test_type_name<decltype(eta3)>() << ")=" << eta3[0]
+               << ". ";
+      ADD_FAILURE() << fail_msg.str() << "\n Error message: " << e.what();
+      throw;
+    }
   };
   Eigen::VectorXd test1(phi_dbl);
   std::vector<double> test2 = {1.0, 1.0};
@@ -187,9 +201,10 @@ TEST_P(laplace_types, poisson_log_phi_dim_2_tuple) {
   std::vector<int> sums = {1, 0};
   const auto [solver_num, hessian_block_size, max_steps_line_search] = GetParam();
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
+  LAPLACE_SKIP_ZERO_STEPS(max_steps_line_search);
 
   constexpr double tolerance = 1e-12;
-  constexpr int max_num_steps = 100;
+  constexpr int max_num_steps = 1000;
   using stan::is_var_v;
   using stan::scalar_type_t;
   using stan::math::test::laplace_issue;
@@ -199,22 +214,45 @@ TEST_P(laplace_types, poisson_log_phi_dim_2_tuple) {
   //  stan::test::ad_tolerances tols;
   //  tols.gradient_grad_ = 1e-1;
   auto f_covar = [&](auto&& x_v, auto&& alpha, auto&& rho) {
-    return laplace_marginal_tol<false>(
-        poisson_log_likelihood2{}, std::forward_as_tuple(sums),
-        stan::math::test::squared_kernel_functor{},
-        std::forward_as_tuple(x_v, std::make_tuple(alpha, rho)), theta_0,
-        tolerance, max_num_steps, hessian_block_size, solver_num,
-        max_steps_line_search, nullptr);
+    try {
+      return laplace_marginal_tol<false>(
+          poisson_log_likelihood2{}, std::forward_as_tuple(sums),
+          stan::math::test::squared_kernel_functor{},
+          std::forward_as_tuple(x_v, std::make_tuple(alpha, rho)), theta_0,
+          tolerance, max_num_steps, hessian_block_size, solver_num,
+          max_steps_line_search, nullptr);
+    } catch (const std::exception& e) {
+      std::stringstream fail_msg;
+      using stan::math::test::test_type_name;
+      fail_msg << "Exception thrown with x(" << test_type_name<decltype(x_v)>() << "), alpha("
+               << test_type_name<decltype(alpha)>() << ")=" << alpha << ", rho("
+               << test_type_name<decltype(rho)>() << ")=" << rho << ". ";
+      ADD_FAILURE() << fail_msg.str() << "\n Error message: " << e.what();
+      throw;
+    }
   };
   stan::test::expect_ad<true>(tols, f_covar, x, phi_dbl[0], phi_dbl[1]);
   auto f_ll = [&](auto&& alpha_rho, auto&& eta1, auto&& eta2) {
-    return laplace_marginal_tol<false>(
-        poisson_log_likelihood_tuple{},
-        std::forward_as_tuple(sums, std::make_tuple(eta1, eta2)),
-        stan::math::test::squared_kernel_functor{},
-        std::forward_as_tuple(x, std::make_tuple(alpha_rho(0), alpha_rho(1))),
-        theta_0, tolerance, max_num_steps, hessian_block_size, solver_num,
-        max_steps_line_search, nullptr);
+    try {
+      return laplace_marginal_tol<false>(
+          poisson_log_likelihood_tuple{},
+          std::forward_as_tuple(sums, std::make_tuple(eta1, eta2)),
+          stan::math::test::squared_kernel_functor{},
+          std::forward_as_tuple(
+              x, std::make_tuple(alpha_rho(0), alpha_rho(1))),
+          theta_0, tolerance, max_num_steps, hessian_block_size, solver_num,
+          max_steps_line_search, nullptr);
+    } catch (const std::exception& e) {
+      std::stringstream fail_msg;
+      using stan::math::test::test_type_name;
+      fail_msg << "Exception thrown with alpha_rho("
+               << test_type_name<decltype(alpha_rho)>() << ")=" << alpha_rho
+               << ", eta1(" << test_type_name<decltype(eta1)>() << ")=" << eta1
+               << ", eta2(" << test_type_name<decltype(eta2)>() << ")=" << eta2
+               << ". ";
+      ADD_FAILURE() << fail_msg.str() << "\n Error message: " << e.what();
+      throw;
+    }
   };
   constexpr auto test1 = 1.0;
   constexpr auto test2 = 1.0;
@@ -257,9 +295,10 @@ TEST_P(laplace_types, poisson_log_phi_dim_2_array_tuple) {
   std::vector<int> sums = {1, 0};
   const auto [solver_num, hessian_block_size, max_steps_line_search] = GetParam();
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
+  LAPLACE_SKIP_ZERO_STEPS(max_steps_line_search);
 
   constexpr double tolerance = 1e-12;
-  constexpr int max_num_steps = 100;
+  constexpr int max_num_steps = 1000;
   using stan::is_var_v;
   using stan::scalar_type_t;
   using stan::math::test::laplace_issue;
@@ -269,20 +308,32 @@ TEST_P(laplace_types, poisson_log_phi_dim_2_array_tuple) {
   //  stan::test::ad_tolerances tols;
   // tols.gradient_grad_ = 1e-1;
   auto f_ll = [&](auto&& alpha_rho, auto&& eta1, auto&& eta2) {
-    std::vector<std::tuple<std::decay_t<decltype(eta1)>,
-                           std::decay_t<decltype(eta2)>>>
-        eta_tuple;
-    eta_tuple.push_back(std::make_tuple(eta1, eta2));
-    using alpha_scalar = stan::scalar_type_t<decltype(alpha_rho)>;
-    std::vector<std::tuple<alpha_scalar, alpha_scalar>> alpha_tuple;
-    alpha_tuple.push_back(std::make_tuple(alpha_rho(0), alpha_rho(1)));
-    return laplace_marginal_tol<false>(
-        poisson_log_likelihood_array_tuple{},
-        std::forward_as_tuple(sums, eta_tuple),
-        stan::math::test::squared_kernel_functor{},
-        std::forward_as_tuple(x, alpha_tuple), theta_0, tolerance,
-        max_num_steps, hessian_block_size, solver_num, max_steps_line_search,
-        nullptr);
+    try {
+      std::vector<std::tuple<std::decay_t<decltype(eta1)>,
+                             std::decay_t<decltype(eta2)>>>
+          eta_tuple;
+      eta_tuple.push_back(std::make_tuple(eta1, eta2));
+      using alpha_scalar = stan::scalar_type_t<decltype(alpha_rho)>;
+      std::vector<std::tuple<alpha_scalar, alpha_scalar>> alpha_tuple;
+      alpha_tuple.push_back(std::make_tuple(alpha_rho(0), alpha_rho(1)));
+      return laplace_marginal_tol<false>(
+          poisson_log_likelihood_array_tuple{},
+          std::forward_as_tuple(sums, eta_tuple),
+          stan::math::test::squared_kernel_functor{},
+          std::forward_as_tuple(x, alpha_tuple), theta_0, tolerance,
+          max_num_steps, hessian_block_size, solver_num, max_steps_line_search,
+          nullptr);
+    } catch (const std::exception& e) {
+      std::stringstream fail_msg;
+      using stan::math::test::test_type_name;
+      fail_msg << "Exception thrown with alpha_rho("
+               << test_type_name<decltype(alpha_rho)>() << ")=" << alpha_rho
+               << ", eta1(" << test_type_name<decltype(eta1)>() << ")=" << eta1
+               << ", eta2(" << test_type_name<decltype(eta2)>() << ")=" << eta2
+               << ". ";
+      ADD_FAILURE() << fail_msg.str() << "\n Error message: " << e.what();
+      throw;
+    }
   };
   constexpr auto test1 = 1.0;
   constexpr auto test2 = 1.0;

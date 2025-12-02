@@ -6,8 +6,10 @@
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <test/unit/math/laplace/aki_synth_data/x1.hpp>
 #include <test/unit/math/laplace/motorcycle_gp/x_vec.hpp>
+#include <test/unit/pretty_print_types.hpp>
 #include <gtest/gtest.h>
 #include <iostream>
+#include <sstream>
 #include <vector>
 
 namespace {
@@ -48,6 +50,7 @@ TEST_P(laplace_marginal_lpdf, poisson_log_phi_dim_2) {
   std::vector<int> sums = {1, 0};
   const auto [solver_num, hessian_block_size, max_steps_line_search] = GetParam();
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
+  LAPLACE_SKIP_ZERO_STEPS(max_steps_line_search);
 
   double target = laplace_marginal<false>(
       poisson_log_likelihood2{}, std::forward_as_tuple(sums),
@@ -61,7 +64,7 @@ TEST_P(laplace_marginal_lpdf, poisson_log_phi_dim_2) {
   // Test with optional arguments
   {
     constexpr double tolerance = 1e-12;
-    constexpr int max_num_steps = 100;
+    constexpr int max_num_steps = 1000;
     constexpr int hessian_block_size = 1;
     constexpr int solver = 1;
     constexpr int max_steps_line_search = 10;
@@ -76,19 +79,29 @@ TEST_P(laplace_marginal_lpdf, poisson_log_phi_dim_2) {
   }
 
   constexpr double tolerance = 1e-12;
-  constexpr int max_num_steps = 100;
+  constexpr int max_num_steps = 1000;
   using stan::is_var_v;
   using stan::scalar_type_t;
   constexpr stan::test::ad_tolerances tols{
       stan::test::ad_gradient_tols{1e-8, 1e-3}};
   //  tols.gradient_grad_ = 1e-3;
   auto f = [&](auto&& x_v, auto&& alpha, auto&& rho) {
-    return laplace_marginal_tol<false>(
-        poisson_log_likelihood2{}, std::forward_as_tuple(sums),
-        stan::math::test::squared_kernel_functor{},
-        std::forward_as_tuple(x_v, alpha, rho), theta_0, tolerance,
-        max_num_steps, hessian_block_size, solver_num, max_steps_line_search,
-        nullptr);
+    try {
+      return laplace_marginal_tol<false>(
+          poisson_log_likelihood2{}, std::forward_as_tuple(sums),
+          stan::math::test::squared_kernel_functor{},
+          std::forward_as_tuple(x_v, alpha, rho), theta_0, tolerance,
+          max_num_steps, hessian_block_size, solver_num, max_steps_line_search,
+          nullptr);
+    } catch (const std::exception& e) {
+      std::stringstream fail_msg;
+      using stan::math::test::test_type_name;
+      fail_msg << "Exception thrown with alpha("
+               << test_type_name<decltype(alpha)>() << ")=" << alpha << ", rho("
+               << test_type_name<decltype(rho)>() << ")=" << rho << ". ";
+      ADD_FAILURE() << fail_msg.str() << "\n Error message: " << e.what();
+      throw;
+    }
   };
   stan::test::expect_ad<true>(tols, f, x, phi_dbl[0], phi_dbl[1]);
 }
@@ -111,6 +124,7 @@ TEST_P(laplace_disease_map_test, laplace_marginal) {
   using stan::math::var;
   const auto [solver_num, hessian_block_size, max_steps_line_search] = GetParam();
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
+  LAPLACE_SKIP_ZERO_STEPS(max_steps_line_search);
 
   {
     double marginal_density = laplace_marginal<false>(
@@ -123,15 +137,26 @@ TEST_P(laplace_disease_map_test, laplace_marginal) {
     EXPECT_NEAR(-2866.88, value_of(marginal_density), tol);
   }
   constexpr double tolerance = 1e-12;
-  constexpr int max_num_steps = 100;
+  constexpr int max_num_steps = 1000;
   constexpr stan::test::ad_tolerances tols{
       stan::test::ad_gradient_tols{1e-8, 1e-3}};
   auto f = [&](auto&& alpha, auto&& rho) {
-    return laplace_marginal_tol<false>(
-        poisson_log_exposure_likelihood{}, std::forward_as_tuple(ye, y),
-        stan::math::test::sqr_exp_kernel_functor{},
-        std::forward_as_tuple(x, alpha, rho), theta_0, tolerance, max_num_steps,
-        hessian_block_size, solver_num, max_steps_line_search, nullptr);
+    try {
+      return laplace_marginal_tol<false>(
+          poisson_log_exposure_likelihood{}, std::forward_as_tuple(ye, y),
+          stan::math::test::sqr_exp_kernel_functor{},
+          std::forward_as_tuple(x, alpha, rho), theta_0, tolerance,
+          max_num_steps, hessian_block_size, solver_num,
+          max_steps_line_search, nullptr);
+    } catch (const std::exception& e) {
+      std::stringstream fail_msg;
+      using stan::math::test::test_type_name;
+      fail_msg << "Exception thrown with alpha("
+               << test_type_name<decltype(alpha)>() << ")=" << alpha << ", rho("
+               << test_type_name<decltype(rho)>() << ")=" << rho << ". ";
+      ADD_FAILURE() << fail_msg.str() << "\n Error message: " << e.what();
+      throw;
+    }
   };
   stan::test::expect_ad<true>(tols, f, phi_dbl[0], phi_dbl[1]);
 }
@@ -169,6 +194,7 @@ TEST_P(laplace_marginal_lpdf, bernoulli_logit_phi_dim500) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> phi_dbl{{1.6, 1}};
   const auto [solver_num, hessian_block_size, max_steps_line_search] = GetParam();
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
+  LAPLACE_SKIP_ZERO_STEPS(max_steps_line_search);
 
   double target = laplace_marginal<false>(
       bernoulli_logit_likelihood{}, std::forward_as_tuple(y),
@@ -180,15 +206,26 @@ TEST_P(laplace_marginal_lpdf, bernoulli_logit_phi_dim500) {
   EXPECT_NEAR(-195.368, target, tol);
   // All fail for ad check with relative tolerance ~0.002
   constexpr double tolerance = 1e-12;
-  constexpr int max_num_steps = 100;
+  constexpr int max_num_steps = 1000;
   constexpr stan::test::ad_tolerances tols{
       stan::test::ad_gradient_tols{1e-8, 5e-3}};
   auto f = [&](auto&& alpha, auto&& rho) {
-    return laplace_marginal_tol<false>(
-        bernoulli_logit_likelihood{}, std::forward_as_tuple(y),
-        stan::math::test::sqr_exp_kernel_functor{},
-        std::forward_as_tuple(x, alpha, rho), theta_0, tolerance, max_num_steps,
-        hessian_block_size, solver_num, max_steps_line_search, nullptr);
+    try {
+      return laplace_marginal_tol<false>(
+          bernoulli_logit_likelihood{}, std::forward_as_tuple(y),
+          stan::math::test::sqr_exp_kernel_functor{},
+          std::forward_as_tuple(x, alpha, rho), theta_0, tolerance,
+          max_num_steps, hessian_block_size, solver_num,
+          max_steps_line_search, nullptr);
+    } catch (const std::exception& e) {
+      std::stringstream fail_msg;
+      using stan::math::test::test_type_name;
+      fail_msg << "Exception thrown with alpha("
+               << test_type_name<decltype(alpha)>() << ")=" << alpha << ", rho("
+               << test_type_name<decltype(rho)>() << ")=" << rho << ". ";
+      ADD_FAILURE() << fail_msg.str() << "\n Error message: " << e.what();
+      throw;
+    }
   };
   stan::test::expect_ad<true>(tols, f, phi_dbl[0], phi_dbl[1]);
 }

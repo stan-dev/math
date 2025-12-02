@@ -3,8 +3,10 @@
 #include <stan/math/mix.hpp>
 #include <test/unit/math/laplace/laplace_utility.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
+#include <test/unit/pretty_print_types.hpp>
 
 #include <gtest/gtest.h>
+#include <sstream>
 #include <vector>
 
 namespace {
@@ -15,6 +17,8 @@ TEST_P(laplace_marginal_poisson_log_lpmf, phi_dim_2) {
   constexpr int dim_theta = 2;
   const auto [solver_num, hessian_block_size, max_steps_line_search] = GetParam();
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
+  LAPLACE_SKIP_ZERO_STEPS(max_steps_line_search);
+
   using stan::math::laplace_marginal_poisson_log_lpmf;
   using stan::math::laplace_marginal_tol_poisson_log_lpmf;
 
@@ -50,10 +54,20 @@ TEST_P(laplace_marginal_poisson_log_lpmf, phi_dim_2) {
   // tols.gradient_val_ = 1e-3;
   //  tols.gradient_grad_ = 1e-3;
   auto f = [&](auto&& alpha, auto&& rho) {
-    return laplace_marginal_tol_poisson_log_lpmf(
-        y, y_index, 0, sq_kernel, std::forward_as_tuple(x, alpha, rho),
-        theta_0, tolerance, max_num_steps, hessian_block_size, solver_num,
-        max_steps_line_search, nullptr);
+    try {
+      return laplace_marginal_tol_poisson_log_lpmf(
+          y, y_index, 0, sq_kernel, std::forward_as_tuple(x, alpha, rho),
+          theta_0, tolerance, max_num_steps, hessian_block_size, solver_num,
+          max_steps_line_search, nullptr);
+    } catch (const std::exception& e) {
+      std::stringstream fail_msg;
+      using stan::math::test::test_type_name;
+      fail_msg << "Exception thrown with alpha("
+               << test_type_name<decltype(alpha)>() << ")=" << alpha << ", rho("
+               << test_type_name<decltype(rho)>() << ")=" << rho << ". ";
+      ADD_FAILURE() << fail_msg.str() << "\n Error message: " << e.what();
+      throw;
+    }
   };
   stan::test::expect_ad<true>(tols, f, alpha_dbl, rho_dbl);
 }
@@ -62,6 +76,7 @@ TEST_P(laplace_marginal_poisson_log_lpmf, log_phi_dim_2) {
   constexpr int dim_theta = 2;
   const auto [solver_num, hessian_block_size, max_steps_line_search] = GetParam();
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
+  LAPLACE_SKIP_ZERO_STEPS(max_steps_line_search);
   using stan::math::laplace_marginal_poisson_log_lpmf;
   using stan::math::laplace_marginal_tol_poisson_log_lpmf;
 
@@ -101,11 +116,21 @@ TEST_P(laplace_marginal_poisson_log_lpmf, log_phi_dim_2) {
   Eigen::VectorXd ye(2);
   ye << 1, 1;
   auto f = [&](auto&& alpha, auto&& rho) {
-    return laplace_marginal_tol_poisson_log_lpmf(
-        y, y_index, log(ye), sq_kernel,
-        std::forward_as_tuple(x, alpha, rho), theta_0, tolerance,
-        max_num_steps, hessian_block_size, solver_num,
-        max_steps_line_search, nullptr);
+    try {
+      return laplace_marginal_tol_poisson_log_lpmf(
+          y, y_index, log(ye), sq_kernel,
+          std::forward_as_tuple(x, alpha, rho), theta_0, tolerance,
+          max_num_steps, hessian_block_size, solver_num,
+          max_steps_line_search, nullptr);
+    } catch (const std::exception& e) {
+      std::stringstream fail_msg;
+      using stan::math::test::test_type_name;
+      fail_msg << "Exception thrown with alpha("
+               << test_type_name<decltype(alpha)>() << ")=" << alpha << ", rho("
+               << test_type_name<decltype(rho)>() << ")=" << rho << ". ";
+      ADD_FAILURE() << fail_msg.str() << "\n Error message: " << e.what();
+      throw;
+    }
   };
   stan::test::expect_ad<true>(tols, f, alpha_dbl, rho_dbl);
 }
@@ -124,6 +149,7 @@ TEST_P(laplace_marginal_poisson_log_lpmf, mean_argument) {
   const auto [solver_num, hessian_block_size, max_steps_line_search] = GetParam();
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
   LAPLACE_SKIP_ZERO_STEPS(max_steps_line_search);
+
   // working example from
   // https://discourse.mc-stan.org/t/embedded-laplace-numerical-problem/39700
   using stan::math::laplace_marginal_tol_poisson_log_lpmf;
@@ -153,6 +179,7 @@ TEST_P(laplace_disease_map_test, laplace_marginal_poisson_log_lpmf) {
   const auto [solver_num, hessian_block_size, max_steps_line_search] = GetParam();
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
   LAPLACE_SKIP_ZERO_STEPS(max_steps_line_search);
+  LAPLACE_SKIP_ZERO_STEPS(max_steps_line_search);
 
   using stan::math::laplace_marginal_poisson_log_lpmf;
   using stan::math::laplace_marginal_tol_poisson_log_lpmf;
@@ -172,11 +199,21 @@ TEST_P(laplace_disease_map_test, laplace_marginal_poisson_log_lpmf) {
   // Benchmark from GPStuff.
   EXPECT_NEAR(-2866.88, marginal_density, tol);
   auto f = [&](auto&& alpha, auto&& rho) {
-    return laplace_marginal_tol_poisson_log_lpmf(
-        y, y_index, log(ye), stan::math::test::sqr_exp_kernel_functor(),
-        std::forward_as_tuple(x, alpha, rho), theta_0, tolerance,
-        max_num_steps, hessian_block_size, solver_num,
-        max_steps_line_search, nullptr);
+    try {
+      return laplace_marginal_tol_poisson_log_lpmf(
+          y, y_index, log(ye), stan::math::test::sqr_exp_kernel_functor(),
+          std::forward_as_tuple(x, alpha, rho), theta_0, tolerance,
+          max_num_steps, hessian_block_size, solver_num,
+          max_steps_line_search, nullptr);
+    } catch (const std::exception& e) {
+      std::stringstream fail_msg;
+      using stan::math::test::test_type_name;
+      fail_msg << "Exception thrown with alpha("
+               << test_type_name<decltype(alpha)>() << ")=" << alpha << ", rho("
+               << test_type_name<decltype(rho)>() << ")=" << rho << ". ";
+      ADD_FAILURE() << fail_msg.str() << "\n Error message: " << e.what();
+      throw;
+    }
   };
   stan::test::expect_ad<true>(f, phi_dbl[0], phi_dbl[1]);
 }

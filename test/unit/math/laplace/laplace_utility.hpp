@@ -181,10 +181,6 @@ struct diagonal_kernel_functor {
   }
 };
 
-using ::testing::TestWithParam;
-using ::testing::Values;
-using ::testing::Combine;
-
 
 template <typename F, typename ThetaVec>
 inline void run_solver_grid(F&& body, ThetaVec&& theta_0) {
@@ -288,7 +284,83 @@ constexpr const char* test_type_name() {
   }
   return "unknown";
 }
+
 }  // namespace test
+
+namespace laplace_test_fails {
+
+auto poisson_log_phi_dim_2 = std::array{
+    std::array{1, 1, 0},
+    std::array{1, 2, 0},
+    std::array{2, 1, 0},
+    std::array{2, 2, 0},
+    std::array{3, 1, 0},
+    std::array{3, 2, 0}};
+
+auto bernoulli_logit_phi_dim500 = std::array{
+    std::array{1, 1, 0},
+    std::array{1, 2, 0},
+    std::array{2, 1, 0},
+    std::array{2, 2, 0},
+    std::array{3, 1, 0},
+    std::array{3, 2, 0}};
+
+auto disease_map_laplace_marginal = std::array{
+    std::array{1, 1, 0},
+    std::array{2, 1, 0},
+    std::array{3, 1, 0}};
+
+auto poisson_log_phi_dim_2_tuple = std::array{
+    std::array{1, 1, 0},
+    std::array{1, 2, 0},
+    std::array{2, 1, 0},
+    std::array{2, 2, 0},
+    std::array{3, 1, 0},
+    std::array{3, 2, 0}};
+
+auto poisson_log_phi_dim_2_array_tuple = std::array{
+    std::array{1, 1, 0},
+    std::array{1, 2, 0},
+    std::array{2, 1, 0},
+    std::array{2, 2, 0},
+    std::array{3, 1, 0},
+    std::array{3, 2, 0}};
+
+auto bernoulli_logit_lpmf_phi_dim500 = std::array{
+    std::array{1, 1, 0},
+    std::array{1, 2, 0},
+    std::array{2, 1, 0},
+    std::array{2, 2, 0},
+    std::array{3, 1, 0},
+    std::array{3, 2, 0}};
+
+auto poisson_log_lpmf_phi_dim_2 = std::array{
+    std::array{1, 1, 0},
+    std::array{1, 2, 0},
+    std::array{2, 1, 0},
+    std::array{2, 2, 0},
+    std::array{3, 1, 0},
+    std::array{3, 2, 0}};
+
+auto poisson_log_lpmf_log_phi_dim_2 = std::array{
+    std::array{1, 1, 0},
+    std::array{1, 2, 0},
+    std::array{2, 1, 0},
+    std::array{2, 2, 0},
+    std::array{3, 1, 0},
+    std::array{3, 2, 0}};
+
+auto neg_binomial_log_lpmf_phi_dim_2 = std::array{
+    std::array{1, 1, 0},
+    std::array{1, 2, 0},
+    std::array{2, 1, 0},
+    std::array{2, 2, 0},
+    std::array{3, 1, 0},
+    std::array{3, 2, 0}};
+
+}  // namespace laplace_test_fails
+
+
 }  // namespace math
 }  // namespace stan
 
@@ -325,6 +397,9 @@ static std::string ParamName(
     GTEST_SKIP() << "[  INFO    ]"                 \
                   << " Skipping test for zero line search steps."; \
   }                                                    \
+
+
+
 
 //////////////////////////////////////////////////////////////////////////
 class laplace_disease_map_test : public LaplaceAdTest {
