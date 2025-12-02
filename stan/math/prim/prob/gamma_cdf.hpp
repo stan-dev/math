@@ -38,9 +38,8 @@ namespace math {
  * @throw std::domain_error if y is not greater than or equal to 0.
  */
 template <typename T_y, typename T_shape, typename T_inv_scale>
-return_type_t<T_y, T_shape, T_inv_scale> gamma_cdf(const T_y& y,
-                                                   const T_shape& alpha,
-                                                   const T_inv_scale& beta) {
+inline return_type_t<T_y, T_shape, T_inv_scale> gamma_cdf(
+    const T_y& y, const T_shape& alpha, const T_inv_scale& beta) {
   using T_partials_return = partials_return_t<T_y, T_shape, T_inv_scale>;
   using T_y_ref = ref_type_t<T_y>;
   using T_alpha_ref = ref_type_t<T_shape>;

@@ -1,10 +1,11 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MetaTraitsRevScal, VectorBuilderHelper_false_true) {
+TEST_F(AgradRev, MetaTraitsRevScal_VectorBuilderHelper_false_true) {
   using stan::VectorBuilderHelper;
   using stan::math::size;
   using stan::math::var;
@@ -16,7 +17,7 @@ TEST(MetaTraitsRevScal, VectorBuilderHelper_false_true) {
   EXPECT_THROW(dvv1.data(), std::logic_error);
 }
 
-TEST(MetaTraitsRevArr, VectorBuilderHelper_false_true) {
+TEST_F(AgradRev, MetaTraitsRevArr_VectorBuilderHelper_false_true) {
   using stan::VectorBuilderHelper;
   using stan::math::size;
   using stan::math::var;
@@ -29,7 +30,7 @@ TEST(MetaTraitsRevArr, VectorBuilderHelper_false_true) {
   EXPECT_THROW(dvv2.data(), std::logic_error);
 }
 
-TEST(MetaTraitsRevArr, VectorBuilderHelper_true_true) {
+TEST_F(AgradRev, MetaTraitsRevArr_VectorBuilderHelper_true_true) {
   using stan::VectorBuilderHelper;
   using stan::math::size;
   using stan::math::var;
@@ -56,7 +57,7 @@ TEST(MetaTraitsRevArr, VectorBuilderHelper_true_true) {
   EXPECT_EQ(stan::math::size(a_std_vector), data2.size());
 }
 
-TEST(MetaTraitsRevMat, VectorBuilderHelper_false_true) {
+TEST_F(AgradRev, MetaTraitsRevMat_VectorBuilderHelper_false_true) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::VectorBuilderHelper;
@@ -75,7 +76,7 @@ TEST(MetaTraitsRevMat, VectorBuilderHelper_false_true) {
   EXPECT_THROW(dvv3.data(), std::logic_error);
 }
 
-TEST(MetaTraitsRevMat, VectorBuilderHelper_true_true) {
+TEST_F(AgradRev, MetaTraitsRevMat_VectorBuilderHelper_true_true) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::VectorBuilderHelper;

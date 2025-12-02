@@ -19,8 +19,8 @@ namespace math {
  * @param idx indices
  * @param res adjoint of the result of the indexing operation
  */
-void indexing_rev(matrix_cl<double>& adj, const matrix_cl<int>& idx,
-                  const matrix_cl<double>& res) {
+inline void indexing_rev(matrix_cl<double>& adj, const matrix_cl<int>& idx,
+                         const matrix_cl<double>& res) {
   int local_mem_size
       = opencl_context.device()[0].getInfo<CL_DEVICE_LOCAL_MEM_SIZE>();
   int preferred_work_groups

@@ -25,7 +25,8 @@ namespace internal {
  * @param z_adj The adjoint of the zero-sum vector (size N + 1)
  */
 template <typename T>
-void sum_to_zero_vector_backprop(T&& y_adj, const Eigen::VectorXd& z_adj) {
+inline void sum_to_zero_vector_backprop(T&& y_adj,
+                                        const Eigen::VectorXd& z_adj) {
   const auto N = y_adj.size();
 
   double sum_u_adj = 0;

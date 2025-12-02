@@ -19,7 +19,7 @@ namespace math {
  * @return ln(det(A))
  */
 template <typename T, require_rev_matrix_t<T>* = nullptr>
-var log_determinant_ldlt(LDLT_factor<T>& A) {
+inline var log_determinant_ldlt(LDLT_factor<T>& A) {
   if (A.matrix().size() == 0) {
     return 0;
   }

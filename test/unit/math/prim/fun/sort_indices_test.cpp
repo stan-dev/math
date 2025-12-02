@@ -3,7 +3,7 @@
 #include <vector>
 
 template <typename T>
-void test_sort_indices_asc() {
+inline void test_sort_indices_asc() {
   using stan::math::sort_indices_asc;
   using idx_t = stan::math::index_type_t<T>;
 
@@ -47,7 +47,7 @@ TEST(MathMatrixPrimMat, sort_indices_asc) {
 }
 
 template <typename T>
-void test_sort_indices_desc() {
+inline void test_sort_indices_desc() {
   using stan::math::sort_indices_desc;
   using idx_t = stan::math::index_type_t<T>;
 

@@ -38,9 +38,9 @@ namespace math {
 template <bool propto, typename T_y, typename T_covar, typename T_w,
           require_all_eigen_matrix_dynamic_t<T_y, T_covar>* = nullptr,
           require_eigen_col_vector_t<T_w>* = nullptr>
-return_type_t<T_y, T_covar, T_w> multi_gp_cholesky_lpdf(const T_y& y,
-                                                        const T_covar& L,
-                                                        const T_w& w) {
+inline return_type_t<T_y, T_covar, T_w> multi_gp_cholesky_lpdf(const T_y& y,
+                                                               const T_covar& L,
+                                                               const T_w& w) {
   using T_lp = return_type_t<T_y, T_covar, T_w>;
   static constexpr const char* function = "multi_gp_cholesky_lpdf";
   check_size_match(function, "Size of random variable (rows y)", y.rows(),

@@ -31,7 +31,8 @@ namespace math {
  *    factor_cov_matrix() on log scale are unconstrained.
  */
 template <typename T, require_eigen_t<T>* = nullptr>
-Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> corr_matrix_free(const T& y) {
+inline Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> corr_matrix_free(
+    const T& y) {
   using Eigen::Array;
   using Eigen::Dynamic;
 

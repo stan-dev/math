@@ -65,7 +65,7 @@ template <bool propto, typename T_y_cl, typename T_x_cl, typename T_alpha_cl,
           typename T_beta_cl, typename T_phi_cl,
           require_all_prim_or_rev_kernel_expression_t<
               T_x_cl, T_y_cl, T_alpha_cl, T_beta_cl, T_phi_cl>* = nullptr>
-return_type_t<T_x_cl, T_alpha_cl, T_beta_cl, T_phi_cl>
+inline return_type_t<T_x_cl, T_alpha_cl, T_beta_cl, T_phi_cl>
 neg_binomial_2_log_glm_lpmf(const T_y_cl& y, const T_x_cl& x,
                             const T_alpha_cl& alpha, const T_beta_cl& beta,
                             const T_phi_cl& phi) {
@@ -168,14 +168,11 @@ neg_binomial_2_log_glm_lpmf(const T_y_cl& y, const T_x_cl& x,
   }
 
   if constexpr (include_summand<propto, T_phi_cl>::value && !is_phi_vector) {
-    logp += N
-            * (multiply_log(forward_as<double>(phi_val),
-                            forward_as<double>(phi_val))
-               - lgamma(forward_as<double>(phi_val)));
+    logp += N * (multiply_log(phi_val, phi_val) - lgamma(phi_val));
   }
   if constexpr (include_summand<propto, T_phi_cl>::value && !is_y_vector
                 && !is_phi_vector) {
-    logp += forward_as<double>(lgamma(y_val + phi_val)) * N;
+    logp += lgamma(y_val + phi_val) * N;
   }
 
   auto ops_partials = make_partials_propagator(x, alpha, beta, phi);
@@ -203,8 +200,7 @@ neg_binomial_2_log_glm_lpmf(const T_y_cl& y, const T_x_cl& x,
     if constexpr (is_alpha_vector) {
       partials<1>(ops_partials) = std::move(theta_derivative_cl);
     } else {
-      forward_as<internal::broadcast_array<double>>(
-          partials<1>(ops_partials))[0]
+      partials<1>(ops_partials)[0]
           = sum(from_matrix_cl(theta_derivative_sum_cl));
     }
   }
@@ -212,9 +208,7 @@ neg_binomial_2_log_glm_lpmf(const T_y_cl& y, const T_x_cl& x,
     if constexpr (is_phi_vector) {
       partials<3>(ops_partials) = std::move(phi_derivative_cl);
     } else {
-      forward_as<internal::broadcast_array<double>>(
-          partials<3>(ops_partials))[0]
-          = sum(from_matrix_cl(phi_derivative_cl));
+      partials<3>(ops_partials)[0] = sum(from_matrix_cl(phi_derivative_cl));
     }
   }
   return ops_partials.build(logp);

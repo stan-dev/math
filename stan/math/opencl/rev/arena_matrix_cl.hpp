@@ -145,7 +145,7 @@ class arena_matrix_cl : public matrix_cl_base {
 #undef ARENA_MATRIX_CL_CONST_FUNCTION_WRAPPER
 };
 template <typename T>
-matrix_cl<T>::matrix_cl(const arena_matrix_cl<T>& A)
+inline matrix_cl<T>::matrix_cl(const arena_matrix_cl<T>& A)
     // works like a move constructor, except it does not modify `a`
     : buffer_cl_(A.impl_->buffer_cl_),
       rows_(A.impl_->rows_),

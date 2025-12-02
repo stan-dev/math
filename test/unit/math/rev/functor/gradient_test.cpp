@@ -1,4 +1,5 @@
 #include <stan/math/rev.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 
 #include <tbb/parallel_for.h>
@@ -22,7 +23,7 @@ struct fun1 {
   }
 };
 
-TEST(RevFunctor, gradient) {
+TEST_F(AgradRev, RevFunctor_gradient) {
   fun1 f;
   Matrix<double, Dynamic, 1> x(2);
   x << 5, 7;
@@ -35,7 +36,7 @@ TEST(RevFunctor, gradient) {
   EXPECT_FLOAT_EQ(x(0) * x(0) + 3 * 2 * x(1), grad_fx(1));
 }
 
-TEST(RevFunctor, gradient_input_rowvector) {
+TEST_F(AgradRev, RevFunctor_gradient_input_rowvector) {
   fun1 f;
   Matrix<double, 1, Dynamic> x(2);
   x << 5, 7;
@@ -48,7 +49,7 @@ TEST(RevFunctor, gradient_input_rowvector) {
   EXPECT_FLOAT_EQ(x(0) * x(0) + 3 * 2 * x(1), grad_fx[1]);
 }
 
-TEST(RevFunctor, gradient_array) {
+TEST_F(AgradRev, RevFunctor_gradient_array) {
   fun1 f;
   Matrix<double, Dynamic, 1> x(2);
   x << 5, 7;
@@ -62,7 +63,7 @@ TEST(RevFunctor, gradient_array) {
 }
 
 // test threaded AD if enabled
-TEST(RevFunctor, gradient_threaded) {
+TEST_F(AgradRev, RevFunctor_gradient_threaded) {
   fun1 f;
   Matrix<double, Dynamic, 1> x_ref(2);
   x_ref << 5, 7;
@@ -147,7 +148,7 @@ TEST(RevFunctor, gradient_threaded) {
 }
 
 // test threaded AD if enabled
-TEST(RevFunctor, gradient_array_threaded) {
+TEST_F(AgradRev, RevFunctor_gradient_array_threaded) {
   fun1 f;
   Matrix<double, Dynamic, 1> x_ref(2);
   x_ref << 5, 7;
@@ -239,7 +240,7 @@ TEST(RevFunctor, gradient_array_threaded) {
 
 // test threaded AD through the Intel TBB whenever threading is used
 #ifdef STAN_THREADS
-TEST(RevFunctor, gradient_threaded_tbb) {
+TEST_F(AgradRev, RevFunctor_gradient_threaded_tbb) {
   fun1 f;
   Matrix<double, Dynamic, 1> x_ref(2);
   x_ref << 5, 7;
@@ -313,7 +314,7 @@ TEST(RevFunctor, gradient_threaded_tbb) {
   }
 }
 
-TEST(RevFunctor, gradient_array_threaded_tbb) {
+TEST_F(AgradRev, RevFunctor_gradient_array_threaded_tbb) {
   fun1 f;
   Matrix<double, Dynamic, 1> x_ref(2);
   x_ref << 5, 7;
@@ -391,14 +392,15 @@ TEST(RevFunctor, gradient_array_threaded_tbb) {
 }
 #endif
 
-stan::math::var sum_and_throw(const Matrix<stan::math::var, Dynamic, 1>& x) {
+inline stan::math::var sum_and_throw(
+    const Matrix<stan::math::var, Dynamic, 1>& x) {
   stan::math::var y = 0;
   for (int i = 0; i < x.size(); ++i)
     y += x(i);
   throw std::domain_error("fooey");
 }
 
-TEST(RevFunctor, RecoverMemory) {
+TEST_F(AgradRev, RevFunctor_RecoverMemory) {
   using Eigen::VectorXd;
   for (int i = 0; i < 100000; ++i) {
     try {
@@ -417,7 +419,7 @@ TEST(RevFunctor, RecoverMemory) {
             100000);
 }
 
-TEST(RevFunctor, RecoverMemory_gradient_array) {
+TEST_F(AgradRev, RevFunctor_RecoverMemory_gradient_array) {
   using Eigen::VectorXd;
   for (int i = 0; i < 100000; ++i) {
     try {
@@ -437,7 +439,7 @@ TEST(RevFunctor, RecoverMemory_gradient_array) {
             100000);
 }
 
-TEST(RevFunctor, gradientBoundaryConds) {
+TEST_F(AgradRev, RevFunctor_gradientBoundaryConds) {
   VectorXd x(5);
   using stan::math::gradient;
   x << 1, 2, 3, 4, 5;

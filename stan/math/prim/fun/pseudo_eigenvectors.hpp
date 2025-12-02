@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 
 template <typename T>
-Eigen::Matrix<T, -1, -1> pseudo_eigenvectors(
+inline Eigen::Matrix<T, -1, -1> pseudo_eigenvectors(
     const Eigen::Matrix<T, -1, -1>& m) {
   check_nonzero_size("pseudo_eigenvectors", "m", m);
   check_square("pseudo_eigenvectors", "m", m);

@@ -19,7 +19,7 @@ namespace math {
  */
 template <typename T,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
-value_type_t<T> trace(const T& m) {
+inline value_type_t<T> trace(const T& m) {
   return sum(diagonal(m));
 }
 

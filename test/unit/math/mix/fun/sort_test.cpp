@@ -2,9 +2,9 @@
 #include <limits>
 #include <vector>
 
-void expect_sort(const std::vector<double>& sv,
-                 const stan::test::ad_tolerances& tols
-                 = stan::test::ad_tolerances()) {
+inline void expect_sort(const std::vector<double>& sv,
+                        const stan::test::ad_tolerances& tols
+                        = stan::test::ad_tolerances()) {
   auto f_asc = [](const auto& x) { return stan::math::sort_asc(x); };
   auto f_desc = [](const auto& x) { return stan::math::sort_desc(x); };
 

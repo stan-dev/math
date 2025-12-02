@@ -23,7 +23,7 @@ namespace math {
  * @return Stirling's approximation to lgamma(x).
  */
 template <typename T>
-return_type_t<T> lgamma_stirling(const T x) {
+inline return_type_t<T> lgamma_stirling(const T x) {
   return HALF_LOG_TWO_PI + (x - 0.5) * log(x) - x;
 }
 

@@ -34,7 +34,7 @@ namespace math {
  *    output vectors differ.
  */
 template <typename Vector, require_vector_t<Vector>* = nullptr>
-void inverse_softmax(const Vector& simplex, Vector& y) {
+inline void inverse_softmax(const Vector& simplex, Vector& y) {
   check_matching_sizes("inverse_softmax", "simplex", simplex, "y", y);
   y = log(simplex);
 }

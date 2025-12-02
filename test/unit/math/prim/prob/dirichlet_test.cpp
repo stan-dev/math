@@ -131,14 +131,14 @@ TEST(ProbDistributions, DirichletBounds) {
       << "size mismatch: theta is a 2-vector, alpha is a 4-vector";
 }
 
-double chi_square(std::vector<int> bin, std::vector<double> expect) {
+inline double chi_square(std::vector<int> bin, std::vector<double> expect) {
   double chi = 0;
   for (size_t j = 0; j < bin.size(); j++)
     chi += ((bin[j] - expect[j]) * (bin[j] - expect[j]) / expect[j]);
   return chi;
 }
 
-void test_dirichlet3_1(Eigen::VectorXd alpha) {
+inline void test_dirichlet3_1(Eigen::VectorXd alpha) {
   boost::random::mt19937 rng;
   int N = 10000;
   int K = stan::math::round(2 * std::pow(N, 0.4));
@@ -164,7 +164,7 @@ void test_dirichlet3_1(Eigen::VectorXd alpha) {
   EXPECT_TRUE(chi_square(bin, expect) < quantile(complement(mydist, 1e-6)));
 }
 
-void test_dirichlet3_2(Eigen::VectorXd alpha) {
+inline void test_dirichlet3_2(Eigen::VectorXd alpha) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::VectorXd;

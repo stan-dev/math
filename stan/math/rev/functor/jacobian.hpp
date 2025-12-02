@@ -11,9 +11,10 @@ namespace stan {
 namespace math {
 
 template <typename F>
-void jacobian(const F& f, const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
-              Eigen::Matrix<double, Eigen::Dynamic, 1>& fx,
-              Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& J) {
+inline void jacobian(const F& f,
+                     const Eigen::Matrix<double, Eigen::Dynamic, 1>& x,
+                     Eigen::Matrix<double, Eigen::Dynamic, 1>& fx,
+                     Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& J) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   // Run nested autodiff in this scope

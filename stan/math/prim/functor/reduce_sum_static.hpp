@@ -42,8 +42,8 @@ namespace math {
  */
 template <typename ReduceFunction, typename Vec,
           typename = require_vector_like_t<Vec>, typename... Args>
-auto reduce_sum_static(Vec&& vmapped, int grainsize, std::ostream* msgs,
-                       Args&&... args) {
+inline auto reduce_sum_static(Vec&& vmapped, int grainsize, std::ostream* msgs,
+                              Args&&... args) {
   using return_type = return_type_t<Vec, Args...>;
 
   check_positive("reduce_sum", "grainsize", grainsize);

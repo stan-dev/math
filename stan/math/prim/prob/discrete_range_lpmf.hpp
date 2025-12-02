@@ -43,8 +43,8 @@ namespace math {
  * sizes.
  */
 template <bool propto, typename T_y, typename T_lower, typename T_upper>
-double discrete_range_lpmf(const T_y& y, const T_lower& lower,
-                           const T_upper& upper) {
+inline double discrete_range_lpmf(const T_y& y, const T_lower& lower,
+                                  const T_upper& upper) {
   using std::log;
   static constexpr const char* function = "discrete_range_lpmf";
   check_not_nan(function, "Random variable", y);

@@ -15,7 +15,7 @@ namespace math {
 namespace test {
 
 template <typename T1, typename T2>
-void expect_ad_reduce_sum_lpdf(T1&& data, T2&& arg) {
+inline void expect_ad_reduce_sum_lpdf(T1&& data, T2&& arg) {
   using stan::math::test::reduce_sum_int_sum_lpdf;
   using stan::math::test::reduce_sum_static_int_sum_lpdf;
   using stan::math::test::reduce_sum_static_sum_lpdf;

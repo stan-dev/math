@@ -40,7 +40,7 @@ template <bool propto, typename T_y_cl, typename T_scale_succ_cl,
               T_y_cl, T_scale_succ_cl, T_scale_fail_cl>* = nullptr,
           require_any_not_stan_scalar_t<T_y_cl, T_scale_succ_cl,
                                         T_scale_fail_cl>* = nullptr>
-return_type_t<T_y_cl, T_scale_succ_cl, T_scale_fail_cl> beta_lpdf(
+inline return_type_t<T_y_cl, T_scale_succ_cl, T_scale_fail_cl> beta_lpdf(
     const T_y_cl& y, const T_scale_succ_cl& alpha,
     const T_scale_fail_cl& beta) {
   using std::isfinite;

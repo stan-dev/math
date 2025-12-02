@@ -1,7 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
 
 template <typename T>
-void expect_mean(const T& m) {
+inline void expect_mean(const T& m) {
   auto f = [](const auto& x) { return stan::math::mean(x); };
   Eigen::VectorXd v(m.size());
   Eigen::RowVectorXd rv(m.size());

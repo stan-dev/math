@@ -4,7 +4,7 @@
 #include <vector>
 
 template <typename R, typename T>
-void expect_scalar_type() {
+inline void expect_scalar_type() {
   using stan::scalar_type_t;
   static_assert(std::is_same<R, scalar_type_t<T>>::value, "NOT SAME");
   static_assert(std::is_same<R, scalar_type_t<T&>>::value, "NOT SAME");
@@ -19,7 +19,7 @@ void expect_scalar_type() {
 }
 
 template <typename T>
-void test_scalar_type() {
+inline void test_scalar_type() {
   using Eigen::Matrix;
   using std::complex;
   using std::vector;

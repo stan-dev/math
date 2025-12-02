@@ -1,8 +1,10 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
+#include <test/unit/math/rev/fun/util.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 
-TEST(MetaTraitsRevScal, is_arena_matrix_test) {
+TEST_F(AgradRev, MetaTraitsRevScal_is_arena_matrix_test) {
   using stan::is_arena_matrix;
   using stan::math::arena_matrix;
   using stan::math::var;

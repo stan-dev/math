@@ -62,7 +62,7 @@ namespace math {
  * @return Log of the beta function applied to the two values.
  */
 template <typename T1, typename T2, require_all_arithmetic_t<T1, T2>* = nullptr>
-return_type_t<T1, T2> lbeta(const T1 a, const T2 b) {
+inline return_type_t<T1, T2> lbeta(const T1 a, const T2 b) {
   using T_ret = return_type_t<T1, T2>;
 
   if (is_any_nan(a, b)) {

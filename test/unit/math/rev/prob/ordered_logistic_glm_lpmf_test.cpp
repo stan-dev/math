@@ -5,8 +5,9 @@
 #include <vector>
 
 template <bool propto, typename T_x, typename T_beta, typename T_cuts>
-stan::return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_simple_lpmf(
-    const std::vector<int>& y, T_x&& x, T_beta&& beta, T_cuts&& cuts) {
+inline stan::return_type_t<T_x, T_beta, T_cuts>
+ordered_logistic_glm_simple_lpmf(const std::vector<int>& y, T_x&& x,
+                                 T_beta&& beta, T_cuts&& cuts) {
   using stan::math::as_column_vector_or_scalar;
   auto&& beta_col = as_column_vector_or_scalar(beta);
   auto location = stan::math::multiply(x, beta_col);
@@ -538,7 +539,7 @@ TYPED_TEST(ProbDistributionsOrderedLogisticGLM, glm_interfaces) {
                                                         beta_var, cuts_double));
 }
 
-TEST(ProbDistributionsOrderedLogisticGLM, glm_errors) {
+TEST_F(AgradRev, ProbDistributionsOrderedLogisticGLM_glm_errors) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::MatrixXd;

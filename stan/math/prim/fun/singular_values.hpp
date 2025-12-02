@@ -20,7 +20,7 @@ namespace math {
  */
 template <typename EigMat, require_eigen_matrix_dynamic_t<EigMat>* = nullptr,
           require_not_st_var<EigMat>* = nullptr>
-auto singular_values(const EigMat& m) {
+inline auto singular_values(const EigMat& m) {
   if (unlikely(m.size() == 0)) {
     return Eigen::Matrix<base_type_t<EigMat>, Eigen::Dynamic, 1>(0, 1);
   }

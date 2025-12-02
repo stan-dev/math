@@ -59,7 +59,7 @@ template <bool propto, typename T_y_cl, typename T_x_cl, typename T_alpha_cl,
           typename T_beta_cl, typename T_sigma_cl,
           require_all_prim_or_rev_kernel_expression_t<
               T_x_cl, T_y_cl, T_alpha_cl, T_beta_cl, T_sigma_cl>* = nullptr>
-return_type_t<T_y_cl, T_x_cl, T_alpha_cl, T_beta_cl, T_sigma_cl>
+inline return_type_t<T_y_cl, T_x_cl, T_alpha_cl, T_beta_cl, T_sigma_cl>
 normal_id_glm_lpdf(const T_y_cl& y, const T_x_cl& x, const T_alpha_cl& alpha,
                    const T_beta_cl& beta, const T_sigma_cl& sigma) {
   using T_partials_return
@@ -149,9 +149,7 @@ normal_id_glm_lpdf(const T_y_cl& y, const T_x_cl& x, const T_alpha_cl& alpha,
     if constexpr (is_y_vector) {
       partials<0>(ops_partials) = -mu_derivative_cl;
     } else {
-      forward_as<internal::broadcast_array<double>>(
-          partials<0>(ops_partials))[0]
-          = -mu_derivative_sum;
+      partials<0>(ops_partials)[0] = -mu_derivative_sum;
     }
   }
   if constexpr (is_autodiff_v<T_x_cl>) {
@@ -162,9 +160,7 @@ normal_id_glm_lpdf(const T_y_cl& y, const T_x_cl& x, const T_alpha_cl& alpha,
     if constexpr (is_alpha_vector) {
       partials<2>(ops_partials) = mu_derivative_cl;
     } else {
-      forward_as<internal::broadcast_array<double>>(
-          partials<2>(ops_partials))[0]
-          = mu_derivative_sum;
+      partials<2>(ops_partials)[0] = mu_derivative_sum;
     }
   }
   if constexpr (is_autodiff_v<T_beta_cl>) {
@@ -207,7 +203,7 @@ normal_id_glm_lpdf(const T_y_cl& y, const T_x_cl& x, const T_alpha_cl& alpha,
     if constexpr (is_sigma_vector) {
       logp -= sum(from_matrix_cl(log_sigma_sum_cl));
     } else {
-      logp -= N * log(forward_as<double>(sigma_val));
+      logp -= N * log(sigma_val);
     }
   }
   logp -= 0.5 * y_scaled_sq_sum;

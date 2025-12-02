@@ -2,6 +2,7 @@
 #define TEST_UNIT_MATH_REV_FUNCTOR_ODE_FIXTURE_HPP
 
 #include <stan/math/rev.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <test/prob/utility.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>

@@ -68,7 +68,7 @@ template <typename F, typename T_y0, typename T_t0, typename T_ts,
           require_all_eigen_col_vector_t<T_y0, T_abs_tol_fwd,
                                          T_abs_tol_bwd>* = nullptr,
           require_any_not_st_arithmetic<T_y0, T_t0, T_ts, T_Args...>* = nullptr>
-auto ode_adjoint_impl(
+inline auto ode_adjoint_impl(
     const char* function_name, F&& f, const T_y0& y0, const T_t0& t0,
     const std::vector<T_ts>& ts, double relative_tolerance_forward,
     const T_abs_tol_fwd& absolute_tolerance_forward,
@@ -152,7 +152,7 @@ template <typename F, typename T_y0, typename T_t0, typename T_ts,
           require_all_eigen_col_vector_t<T_y0, T_abs_tol_fwd,
                                          T_abs_tol_bwd>* = nullptr,
           require_all_st_arithmetic<T_y0, T_t0, T_ts, T_Args...>* = nullptr>
-std::vector<Eigen::VectorXd> ode_adjoint_impl(
+inline std::vector<Eigen::VectorXd> ode_adjoint_impl(
     const char* function_name, F&& f, const T_y0& y0, const T_t0& t0,
     const std::vector<T_ts>& ts, double relative_tolerance_forward,
     const T_abs_tol_fwd& absolute_tolerance_forward,
@@ -240,7 +240,7 @@ template <typename F, typename T_y0, typename T_t0, typename T_ts,
           typename T_abs_tol_fwd, typename T_abs_tol_bwd, typename... T_Args,
           require_all_eigen_col_vector_t<T_y0, T_abs_tol_fwd,
                                          T_abs_tol_bwd>* = nullptr>
-auto ode_adjoint_tol_ctl(
+inline auto ode_adjoint_tol_ctl(
     F&& f, const T_y0& y0, const T_t0& t0, const std::vector<T_ts>& ts,
     double relative_tolerance_forward,
     const T_abs_tol_fwd& absolute_tolerance_forward,

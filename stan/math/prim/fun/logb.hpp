@@ -21,7 +21,7 @@ namespace math {
  * @return unbiased radix-independent exponent of the argument
  */
 template <typename T, typename = require_autodiff_scalar_t<T>>
-double logb(const T& x) {
+inline double logb(const T& x) {
   return std::logb(value_of_rec(x));
 }
 
