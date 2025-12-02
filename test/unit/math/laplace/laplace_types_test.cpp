@@ -133,7 +133,8 @@ TEST_P(laplace_types, poisson_log_phi_dim_2_tuple_extended) {
 
   std::vector<int> n_samples = {1, 1};
   std::vector<int> sums = {1, 0};
-  const auto [solver_num, hessian_block_size, max_steps_line_search] = GetParam();
+  const auto [solver_num, hessian_block_size, max_steps_line_search]
+      = GetParam();
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
   LAPLACE_SKIP_ZERO_STEPS(max_steps_line_search);
 
@@ -161,10 +162,10 @@ TEST_P(laplace_types, poisson_log_phi_dim_2_tuple_extended) {
       std::stringstream fail_msg;
       using stan::math::test::test_type_name;
       fail_msg << "Exception thrown with eta1("
-               << test_type_name<decltype(eta1)>() << ")=" << eta1[0] << ", eta2("
-               << test_type_name<decltype(eta2)>() << ")=" << eta2[0]
-               << ", eta3(" << test_type_name<decltype(eta3)>() << ")=" << eta3[0]
-               << ". ";
+               << test_type_name<decltype(eta1)>() << ")=" << eta1[0]
+               << ", eta2(" << test_type_name<decltype(eta2)>()
+               << ")=" << eta2[0] << ", eta3("
+               << test_type_name<decltype(eta3)>() << ")=" << eta3[0] << ". ";
       ADD_FAILURE() << fail_msg.str() << "\n Error message: " << e.what();
       throw;
     }
@@ -199,7 +200,8 @@ TEST_P(laplace_types, poisson_log_phi_dim_2_tuple) {
 
   std::vector<int> n_samples = {1, 1};
   std::vector<int> sums = {1, 0};
-  const auto [solver_num, hessian_block_size, max_steps_line_search] = GetParam();
+  const auto [solver_num, hessian_block_size, max_steps_line_search]
+      = GetParam();
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
   LAPLACE_SKIP_ZERO_STEPS(max_steps_line_search);
 
@@ -224,9 +226,10 @@ TEST_P(laplace_types, poisson_log_phi_dim_2_tuple) {
     } catch (const std::exception& e) {
       std::stringstream fail_msg;
       using stan::math::test::test_type_name;
-      fail_msg << "Exception thrown with x(" << test_type_name<decltype(x_v)>() << "), alpha("
-               << test_type_name<decltype(alpha)>() << ")=" << alpha << ", rho("
-               << test_type_name<decltype(rho)>() << ")=" << rho << ". ";
+      fail_msg << "Exception thrown with x(" << test_type_name<decltype(x_v)>()
+               << "), alpha(" << test_type_name<decltype(alpha)>()
+               << ")=" << alpha << ", rho(" << test_type_name<decltype(rho)>()
+               << ")=" << rho << ". ";
       ADD_FAILURE() << fail_msg.str() << "\n Error message: " << e.what();
       throw;
     }
@@ -238,8 +241,7 @@ TEST_P(laplace_types, poisson_log_phi_dim_2_tuple) {
           poisson_log_likelihood_tuple{},
           std::forward_as_tuple(sums, std::make_tuple(eta1, eta2)),
           stan::math::test::squared_kernel_functor{},
-          std::forward_as_tuple(
-              x, std::make_tuple(alpha_rho(0), alpha_rho(1))),
+          std::forward_as_tuple(x, std::make_tuple(alpha_rho(0), alpha_rho(1))),
           theta_0, tolerance, max_num_steps, hessian_block_size, solver_num,
           max_steps_line_search, nullptr);
     } catch (const std::exception& e) {
@@ -293,7 +295,8 @@ TEST_P(laplace_types, poisson_log_phi_dim_2_array_tuple) {
 
   std::vector<int> n_samples = {1, 1};
   std::vector<int> sums = {1, 0};
-  const auto [solver_num, hessian_block_size, max_steps_line_search] = GetParam();
+  const auto [solver_num, hessian_block_size, max_steps_line_search]
+      = GetParam();
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
   LAPLACE_SKIP_ZERO_STEPS(max_steps_line_search);
 

@@ -141,7 +141,8 @@ TEST_P(laplace_motorcyle_gp_test, gp_motorcycle_val) {
   using stan::math::laplace_marginal_tol;
   constexpr double tolerance = 1e-12;
   constexpr int max_num_steps = 1000;
-  const auto [solver_num, hessian_block_size, max_steps_line_search] = GetParam();
+  const auto [solver_num, hessian_block_size, max_steps_line_search]
+      = GetParam();
   constexpr int dim_theta = 2 * n_obs;
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
   LAPLACE_SKIP_ZERO_STEPS(max_steps_line_search);
@@ -168,7 +169,8 @@ TEST_P(laplace_motorcyle_gp_test, gp_motorcycle_ad) {
   auto phi_1 = phi_dbl(1);
   Eigen::VectorXd phi_rest = phi_dbl.tail(2);
   Eigen::VectorXd phi_01{{phi_0, phi_1}};
-  const auto [solver_num, hessian_block_size, max_steps_line_search] = GetParam();
+  const auto [solver_num, hessian_block_size, max_steps_line_search]
+      = GetParam();
   constexpr int dim_theta = 2 * n_obs;
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
   LAPLACE_SKIP_ZERO_STEPS(max_steps_line_search);
@@ -243,7 +245,8 @@ TEST_P(laplace_motorcyle_gp_test, gp_motorcycle2_val) {
   Eigen::VectorXd sigma_vec = phi_dbl.tail(2);
   constexpr double tolerance = 1e-12;
   constexpr int max_num_steps = 300;
-  const auto [solver_num, hessian_block_size, max_steps_line_search] = GetParam();
+  const auto [solver_num, hessian_block_size, max_steps_line_search]
+      = GetParam();
   constexpr int dim_theta = 2 * n_obs;
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
   LAPLACE_SKIP_ZERO_STEPS(max_steps_line_search);
@@ -269,7 +272,8 @@ TEST_P(laplace_motorcyle_gp_test, gp_motorcycle2_ad) {
   constexpr int max_num_steps = 1000;
   Eigen::VectorXd length_scale_vec = phi_dbl.head(2);
   Eigen::VectorXd sigma_vec = phi_dbl.tail(2);
-  const auto [solver_num, hessian_block_size, max_steps_line_search] = GetParam();
+  const auto [solver_num, hessian_block_size, max_steps_line_search]
+      = GetParam();
   constexpr int dim_theta = 2 * n_obs;
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
   LAPLACE_SKIP_ZERO_STEPS(max_steps_line_search);
@@ -288,10 +292,10 @@ TEST_P(laplace_motorcyle_gp_test, gp_motorcycle2_ad) {
       std::stringstream fail_msg;
       using stan::math::test::test_type_name;
       fail_msg << "Exception thrown with sigma_global_v("
-               << test_type_name<decltype(sigma_global_v)>() << ")="
-               << sigma_global_v << ", length_scale_v("
-               << test_type_name<decltype(length_scale_v)>() << ")="
-               << length_scale_v << ", sigma_v("
+               << test_type_name<decltype(sigma_global_v)>()
+               << ")=" << sigma_global_v << ", length_scale_v("
+               << test_type_name<decltype(length_scale_v)>()
+               << ")=" << length_scale_v << ", sigma_v("
                << test_type_name<decltype(sigma_v)>() << ")=" << sigma_v
                << ". ";
       ADD_FAILURE() << fail_msg.str() << "\n Error message: " << e.what();

@@ -48,7 +48,8 @@ TEST_P(laplace_marginal_lpdf, poisson_log_phi_dim_2) {
 
   std::vector<int> n_samples = {1, 1};
   std::vector<int> sums = {1, 0};
-  const auto [solver_num, hessian_block_size, max_steps_line_search] = GetParam();
+  const auto [solver_num, hessian_block_size, max_steps_line_search]
+      = GetParam();
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
   LAPLACE_SKIP_ZERO_STEPS(max_steps_line_search);
 
@@ -122,7 +123,8 @@ TEST_P(laplace_disease_map_test, laplace_marginal) {
   using stan::math::laplace_marginal_tol;
   using stan::math::value_of;
   using stan::math::var;
-  const auto [solver_num, hessian_block_size, max_steps_line_search] = GetParam();
+  const auto [solver_num, hessian_block_size, max_steps_line_search]
+      = GetParam();
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
   LAPLACE_SKIP_ZERO_STEPS(max_steps_line_search);
 
@@ -146,8 +148,8 @@ TEST_P(laplace_disease_map_test, laplace_marginal) {
           poisson_log_exposure_likelihood{}, std::forward_as_tuple(ye, y),
           stan::math::test::sqr_exp_kernel_functor{},
           std::forward_as_tuple(x, alpha, rho), theta_0, tolerance,
-          max_num_steps, hessian_block_size, solver_num,
-          max_steps_line_search, nullptr);
+          max_num_steps, hessian_block_size, solver_num, max_steps_line_search,
+          nullptr);
     } catch (const std::exception& e) {
       std::stringstream fail_msg;
       using stan::math::test::test_type_name;
@@ -192,7 +194,8 @@ TEST_P(laplace_marginal_lpdf, bernoulli_logit_phi_dim500) {
   std::vector<double> delta;
   constexpr int dim_phi = 2;
   Eigen::Matrix<double, Eigen::Dynamic, 1> phi_dbl{{1.6, 1}};
-  const auto [solver_num, hessian_block_size, max_steps_line_search] = GetParam();
+  const auto [solver_num, hessian_block_size, max_steps_line_search]
+      = GetParam();
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
   LAPLACE_SKIP_ZERO_STEPS(max_steps_line_search);
 
@@ -215,8 +218,8 @@ TEST_P(laplace_marginal_lpdf, bernoulli_logit_phi_dim500) {
           bernoulli_logit_likelihood{}, std::forward_as_tuple(y),
           stan::math::test::sqr_exp_kernel_functor{},
           std::forward_as_tuple(x, alpha, rho), theta_0, tolerance,
-          max_num_steps, hessian_block_size, solver_num,
-          max_steps_line_search, nullptr);
+          max_num_steps, hessian_block_size, solver_num, max_steps_line_search,
+          nullptr);
     } catch (const std::exception& e) {
       std::stringstream fail_msg;
       using stan::math::test::test_type_name;

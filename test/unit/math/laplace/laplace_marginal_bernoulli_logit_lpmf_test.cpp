@@ -22,7 +22,8 @@ TEST_P(laplace_marginal_bernoulli_logit_lpmf, phi_dim500) {
   using stan::math::var;
   using stan::math::test::flag_test;
   constexpr int dim_theta = 500;
-  const auto [solver_num, hessian_block_size, max_steps_line_search] = GetParam();
+  const auto [solver_num, hessian_block_size, max_steps_line_search]
+      = GetParam();
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
   LAPLACE_SKIP_ZERO_STEPS(max_steps_line_search);
 
