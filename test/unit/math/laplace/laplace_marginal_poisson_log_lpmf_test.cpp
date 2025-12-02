@@ -7,7 +7,12 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(laplace_marginal_poisson_log_lpmf, phi_dim_2) {
+class laplace_marginal_poisson_log_lpmf : public LaplaceAdTest {};
+
+TEST_P(laplace_marginal_poisson_log_lpmf, phi_dim_2) {
+  constexpr int dim_theta = 2;
+  const auto [solver_num, hessian_block_size, max_steps_line_search] = GetParam();
+  LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
   using stan::math::laplace_marginal_poisson_log_lpmf;
   using stan::math::laplace_marginal_tol_poisson_log_lpmf;
 
@@ -18,7 +23,6 @@ TEST(laplace_marginal_poisson_log_lpmf, phi_dim_2) {
 
   double alpha_dbl = 1.6;
   double rho_dbl = 0.45;
-  int dim_theta = 2;
   Eigen::VectorXd theta_0(dim_theta);
   theta_0 << 0, 0;
 
@@ -38,26 +42,24 @@ TEST(laplace_marginal_poisson_log_lpmf, phi_dim_2) {
 
   stan::math::test::squared_kernel_functor sq_kernel;
   constexpr double tolerance = 1e-12;
-  constexpr int max_num_steps = 100;
+  constexpr int max_num_steps = 500;
 
-  stan::test::ad_tolerances tols;
+  constexpr stan::test::ad_tolerances tols;
   // tols.gradient_val_ = 1e-3;
   //  tols.gradient_grad_ = 1e-3;
-  stan::math::test::run_solver_grid(
-      [&](int solver_num, int hessian_block_size, int max_steps_line_search,
-          auto&& theta_0) {
-        auto f = [&](auto&& alpha, auto&& rho) {
-          return laplace_marginal_tol_poisson_log_lpmf(
-              y, y_index, 0, sq_kernel, std::forward_as_tuple(x, alpha, rho),
-              theta_0, tolerance, max_num_steps, hessian_block_size, solver_num,
-              max_steps_line_search, nullptr);
-        };
-        stan::test::expect_ad<true>(tols, f, alpha_dbl, rho_dbl);
-      },
-      theta_0);
+  auto f = [&](auto&& alpha, auto&& rho) {
+    return laplace_marginal_tol_poisson_log_lpmf(
+        y, y_index, 0, sq_kernel, std::forward_as_tuple(x, alpha, rho),
+        theta_0, tolerance, max_num_steps, hessian_block_size, solver_num,
+        max_steps_line_search, nullptr);
+  };
+  stan::test::expect_ad<true>(tols, f, alpha_dbl, rho_dbl);
 }
 
-TEST(laplace_marginal_poisson_log_lpmf, log_phi_dim_2) {
+TEST_P(laplace_marginal_poisson_log_lpmf, log_phi_dim_2) {
+  constexpr int dim_theta = 2;
+  const auto [solver_num, hessian_block_size, max_steps_line_search] = GetParam();
+  LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
   using stan::math::laplace_marginal_poisson_log_lpmf;
   using stan::math::laplace_marginal_tol_poisson_log_lpmf;
 
@@ -68,7 +70,6 @@ TEST(laplace_marginal_poisson_log_lpmf, log_phi_dim_2) {
 
   double alpha_dbl = 1.6;
   double rho_dbl = 0.45;
-  int dim_theta = 2;
   Eigen::VectorXd theta_0(dim_theta);
   theta_0 << 0, 0;
 
@@ -88,61 +89,23 @@ TEST(laplace_marginal_poisson_log_lpmf, log_phi_dim_2) {
 
   stan::math::test::squared_kernel_functor sq_kernel;
   constexpr double tolerance = 1e-12;
-  constexpr int max_num_steps = 100;
+  constexpr int max_num_steps = 500;
 
   //  stan::test::ad_tolerances tols;
   // tols.gradient_val_ = 1e-3;
   constexpr stan::test::ad_tolerances tols{
       stan::test::ad_gradient_tols{1e-8, 1e-3}};
-
   //  tols.gradient_grad_ = 1e-3;
   Eigen::VectorXd ye(2);
   ye << 1, 1;
-  stan::math::test::run_solver_grid(
-      [&](int solver_num, int hessian_block_size, int max_steps_line_search,
-          auto&& theta_0) {
-        auto f = [&](auto&& alpha, auto&& rho) {
-          return laplace_marginal_tol_poisson_log_lpmf(
-              y, y_index, log(ye), sq_kernel,
-              std::forward_as_tuple(x, alpha, rho), theta_0, tolerance,
-              max_num_steps, hessian_block_size, solver_num,
-              max_steps_line_search, nullptr);
-        };
-        stan::test::expect_ad<true>(tols, f, alpha_dbl, rho_dbl);
-      },
-      theta_0);
-}
-
-TEST_F(laplace_disease_map_test, laplace_marginal_poisson_log_lpmf) {
-  using stan::math::laplace_marginal_poisson_log_lpmf;
-  using stan::math::laplace_marginal_tol_poisson_log_lpmf;
-  using stan::math::log;
-  using stan::math::value_of;
-  using stan::math::var;
-
-  double marginal_density = laplace_marginal_poisson_log_lpmf(
-      y, y_index, log(ye), stan::math::test::sqr_exp_kernel_functor(),
-      std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1)), nullptr);
-
-  double tol = 6e-4;
-  // Benchmark from GPStuff.
-  EXPECT_NEAR(-2866.88, marginal_density, tol);
-
-  constexpr double tolerance = 1e-12;
-  constexpr int max_num_steps = 100;
-  stan::math::test::run_solver_grid(
-      [&](int solver_num, int hessian_block_size, int max_steps_line_search,
-          auto&& theta_0) {
-        auto f = [&](auto&& alpha, auto&& rho) {
-          return laplace_marginal_tol_poisson_log_lpmf(
-              y, y_index, log(ye), stan::math::test::sqr_exp_kernel_functor(),
-              std::forward_as_tuple(x, alpha, rho), theta_0, tolerance,
-              max_num_steps, hessian_block_size, solver_num,
-              max_steps_line_search, nullptr);
-        };
-        stan::test::expect_ad<true>(f, phi_dbl[0], phi_dbl[1]);
-      },
-      theta_0);
+  auto f = [&](auto&& alpha, auto&& rho) {
+    return laplace_marginal_tol_poisson_log_lpmf(
+        y, y_index, log(ye), sq_kernel,
+        std::forward_as_tuple(x, alpha, rho), theta_0, tolerance,
+        max_num_steps, hessian_block_size, solver_num,
+        max_steps_line_search, nullptr);
+  };
+  stan::test::expect_ad<true>(tols, f, alpha_dbl, rho_dbl);
 }
 
 struct diag_covariance {
@@ -154,23 +117,67 @@ struct diag_covariance {
   }
 };
 
-TEST(laplace_marginal_poisson_log_lpmf, mean_argument) {
+TEST_P(laplace_marginal_poisson_log_lpmf, mean_argument) {
+  constexpr int dim_theta = 1;
+  const auto [solver_num, hessian_block_size, max_steps_line_search] = GetParam();
+  LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
+  LAPLACE_SKIP_ZERO_STEPS(max_steps_line_search);
   // working example from
   // https://discourse.mc-stan.org/t/embedded-laplace-numerical-problem/39700
-  using stan::math::laplace_marginal_poisson_log_lpmf;
+  using stan::math::laplace_marginal_tol_poisson_log_lpmf;
 
-  const int N = 1;
   const std::vector<int> y{153};
   const std::vector<int> y_index{1};
+  Eigen::VectorXd theta_0(dim_theta);
+  theta_0 << 0;
 
   Eigen::VectorXd mu(1);
   mu << 4.3;
 
-  const double sigmaz = 2.0;
-
-  double marginal_density = laplace_marginal_poisson_log_lpmf(
-      y, y_index, mu, diag_covariance(), std::tuple<double, int>(sigmaz, N),
-      nullptr);
+  constexpr double sigmaz = 2.0;
+  constexpr double tolerance = 1e-12;
+  constexpr int max_num_steps = 500;
+  double marginal_density = laplace_marginal_tol_poisson_log_lpmf(
+      y, y_index, mu, diag_covariance{}, std::tuple<double, int>(sigmaz, dim_theta),
+      theta_0, tolerance, max_num_steps, hessian_block_size, solver_num,
+      max_steps_line_search, nullptr);
 
   EXPECT_FLOAT_EQ(-6.7098737, marginal_density);
 }
+
+LAPLACE_INSTANTIATE_TEST_SUITE_P(laplace_marginal_poisson_log_lpmf);
+
+TEST_P(laplace_disease_map_test, laplace_marginal_poisson_log_lpmf) {
+  const auto [solver_num, hessian_block_size, max_steps_line_search] = GetParam();
+  LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
+  LAPLACE_SKIP_ZERO_STEPS(max_steps_line_search);
+
+  using stan::math::laplace_marginal_poisson_log_lpmf;
+  using stan::math::laplace_marginal_tol_poisson_log_lpmf;
+  using stan::math::log;
+  using stan::math::value_of;
+  using stan::math::var;
+  constexpr double tolerance = 1e-12;
+  constexpr int max_num_steps = 500;
+
+  double marginal_density = laplace_marginal_tol_poisson_log_lpmf(
+      y, y_index, log(ye), stan::math::test::sqr_exp_kernel_functor(),
+      std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1)), theta_0, tolerance,
+        max_num_steps, hessian_block_size, solver_num,
+        max_steps_line_search, nullptr);
+
+  double tol = 6e-4;
+  // Benchmark from GPStuff.
+  EXPECT_NEAR(-2866.88, marginal_density, tol);
+  auto f = [&](auto&& alpha, auto&& rho) {
+    return laplace_marginal_tol_poisson_log_lpmf(
+        y, y_index, log(ye), stan::math::test::sqr_exp_kernel_functor(),
+        std::forward_as_tuple(x, alpha, rho), theta_0, tolerance,
+        max_num_steps, hessian_block_size, solver_num,
+        max_steps_line_search, nullptr);
+  };
+  stan::test::expect_ad<true>(f, phi_dbl[0], phi_dbl[1]);
+}
+LAPLACE_INSTANTIATE_TEST_SUITE_P(laplace_disease_map_test);
+
+

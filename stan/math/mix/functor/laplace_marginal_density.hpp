@@ -498,10 +498,10 @@ inline auto laplace_marginal_density_est(
       std::stringstream msg;
       msg << "laplace_marginal_density: The hessian size (" << theta_size
           << ", " << theta_size << ")";
-      if (theta_size % options.hessian_block_size != 0) {
-        msg << " is not divisible by the hessian block size (";
-      } else {
+      if (theta_size < options.hessian_block_size) {
         msg << " is smaller than the hessian block size (";
+      } else {
+        msg << " is not divisible by the hessian block size (";
       }
       msg << options.hessian_block_size
           << ")"
@@ -598,7 +598,6 @@ inline auto laplace_marginal_density_est(
               return false;
             }
           } else {
-            // TODO:
             Eigen::VectorXd s = scratch.a() - prev.a();
             curr.alpha() = barzilai_borwein_step_size(
                 s, grad_fun(scratch), prev_g, prev.alpha(),

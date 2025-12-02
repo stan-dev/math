@@ -181,6 +181,11 @@ struct diagonal_kernel_functor {
   }
 };
 
+using ::testing::TestWithParam;
+using ::testing::Values;
+using ::testing::Combine;
+
+
 template <typename F, typename ThetaVec>
 inline void run_solver_grid(F&& body, ThetaVec&& theta_0) {
   constexpr std::array solver_nums{1, 2, 3};           // [1, 3]
@@ -260,9 +265,42 @@ inline void print_adjoint(Output&& output) {
 }  // namespace math
 }  // namespace stan
 
-//////////////////////////////////////////////////////////////////////////
+class LaplaceAdTest : public ::testing::TestWithParam<std::tuple<int, int, int>> {};
 
-class laplace_disease_map_test : public ::testing::Test {
+// Nice readable per-case names: Solver{n}_Block{b}_LS{steps}
+static std::string ParamName(
+    const ::testing::TestParamInfo<std::tuple<int,int,int>>& info) {
+  const auto& [solver, hblock, ls] = info.param;
+  std::ostringstream os;
+  os << "solver_" << solver << "_block_" << hblock << "_linesearch_" << ls;
+  return os.str();
+}
+
+#define LAPLACE_INSTANTIATE_TEST_SUITE_P(TEST_SUITE_NAME)        \
+  INSTANTIATE_TEST_SUITE_P(,                                                  \
+      TEST_SUITE_NAME,                                                        \
+      ::testing::Combine(                                                     \
+          ::testing::Values(1, 2, 3),            /* solver_num */             \
+          ::testing::Values(1, 2, 3),            /* hessian_block_size */     \
+          ::testing::Values(0, 1000)             /* max_steps_line_search */  \
+      ),                                                                      \
+      ParamName)
+
+#define LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta)      \
+  if (dim_theta % hessian_block_size != 0 || dim_theta < hessian_block_size) { \
+    GTEST_SKIP() << "[  INFO    ]"                                    \
+              << " Skipping test for hessian of size " << dim_theta            \
+              << " with hessian block size of " << hessian_block_size;         \
+  }                                                                            \
+
+#define LAPLACE_SKIP_ZERO_STEPS(max_steps_line_search) \
+  if (max_steps_line_search == 0) {                     \
+    GTEST_SKIP() << "[  INFO    ]"                 \
+                  << " Skipping test for zero line search steps."; \
+  }                                                    \
+
+//////////////////////////////////////////////////////////////////////////
+class laplace_disease_map_test : public LaplaceAdTest {
   // Based on (Vanhatalo, Pietilainen and Vethari, 2010). See
   // https://research.cs.aalto.fi/pml/software/gpstuff/demo_spatial1.shtml
  protected:
