@@ -340,13 +340,13 @@ static std::string ParamName(
   return os.str();
 }
 
-#define LAPLACE_INSTANTIATE_TEST_SUITE_P(TEST_SUITE_NAME)         \
-  INSTANTIATE_TEST_SUITE_P(                                       \
-      , TEST_SUITE_NAME,                                          \
-      ::testing::Combine(                                         \
-          ::testing::Values(1, 2, 3), /* solver_num */            \
-          ::testing::Values(1, 2, 3), /* hessian_block_size */    \
-          ::testing::Values(0, 1000)),  /* max_steps_line_search */ \
+#define LAPLACE_INSTANTIATE_TEST_SUITE_P(TEST_SUITE_NAME)          \
+  INSTANTIATE_TEST_SUITE_P(                                        \
+      , TEST_SUITE_NAME,                                           \
+      ::testing::Combine(                                          \
+          ::testing::Values(1, 2, 3),  /* solver_num */            \
+          ::testing::Values(1, 2, 3),  /* hessian_block_size */    \
+          ::testing::Values(0, 1000)), /* max_steps_line_search */ \
       ParamName)
 
 #define LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta)      \
