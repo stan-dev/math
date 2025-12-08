@@ -216,7 +216,14 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, Ve
           num_vars_per_term, num_vars_shared_terms, partials,
           vmapped, msgs, args...));
     }
-
+    /*
+    std::cout << "--------------------------------------------------------------------------------" << std::endl
+	      << "worker count = " << pool.worker_count() << std::endl
+	      << "team size = " << pool.team_size() << std::endl
+	      << "gs = " << gs << std::endl
+	      << std::endl << std::endl;
+    */
+    
     // Static partition: each participant gets a contiguous block once
     pool.parallel_region(n, [&](std::size_t tid) {
       const std::size_t b0 = (num_terms * tid) / n;

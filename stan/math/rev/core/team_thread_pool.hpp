@@ -26,6 +26,16 @@ namespace math {
  */
 class TeamThreadPool {
  public:
+  // Call this before first use of TeamThreadPool::instance()
+  static void set_num_threads(std::size_t n) noexcept {
+    if (n < 1) n = 1;
+    user_cap_().store(n, std::memory_order_release);
+  }
+
+  static std::size_t get_num_threads() noexcept {
+    return user_cap_().load(std::memory_order_acquire);
+  }
+
   static TeamThreadPool& instance() {
     static TeamThreadPool pool;
     return pool;
@@ -42,14 +52,15 @@ class TeamThreadPool {
 
   template <typename F>
   void parallel_region(std::size_t n, F&& fn) {
+    //std::cout << "#################### parallel_region, n = " << n << std::endl;
     if (n == 0) return;
 
     // If called from a worker, run serial to avoid nested deadlocks.
+    //std::cout << "in_worker_ = " << in_worker_ << std::endl;
     if (in_worker_) {
       fn(std::size_t{0});
       return;
     }
-
     const std::size_t max_team = team_size();
     if (max_team == 1) {
       fn(std::size_t{0});
@@ -84,14 +95,36 @@ class TeamThreadPool {
     fn_copy(0);
     in_worker_ = false;
 
+    //std::cout << "waiting for workers" << std::endl;
     // Wait for workers 1..n-1
     std::unique_lock<std::mutex> lk(done_m_);
     done_cv_.wait(lk, [&] {
       return remaining_.load(std::memory_order_acquire) == 0;
     });
+    //std::cout << "#################### done" << std::endl << std::endl;
   }
 
- private:
+private:
+  // Function-local static avoids static init order fiasco.
+  static std::atomic<std::size_t>& user_cap_() {
+    static std::atomic<std::size_t> cap{0};  // 0 => "unset"
+    return cap;
+  }
+
+  static std::size_t configured_cap_(std::size_t hw) {
+    // priority: user cap > env var > hw
+    std::size_t cap = user_cap_().load(std::memory_order_acquire);
+    if (cap == 0) {
+      cap = env_num_threads_();   // if you have STAN_NUM_THREADS support
+    }
+    if (cap == 0) cap = hw;
+
+    if (cap < 1) cap = 1;
+    if (cap > hw) cap = hw;       // prevent oversubscription by default
+    return cap;
+  }
+
+  
   using call_fn_t = void (*)(void*, std::size_t);
 
   template <typename Fn>
@@ -99,15 +132,53 @@ class TeamThreadPool {
     (*static_cast<Fn*>(ctx))(tid);
   }
 
+  static size_t env_num_threads_() {
+    size_t num_threads = 1;
+#ifdef STAN_THREADS
+    const char* env_stan_num_threads = std::getenv("STAN_NUM_THREADS");
+    if (env_stan_num_threads != nullptr) {
+      try {
+	const int env_num_threads
+          = boost::lexical_cast<int>(env_stan_num_threads);
+	if (env_num_threads > 0) {
+	  num_threads = env_num_threads;
+	} else if (env_num_threads == -1) {
+	  num_threads = std::thread::hardware_concurrency();
+	} else {
+	  invalid_argument("get_num_threads(int)", "STAN_NUM_THREADS",
+			   env_stan_num_threads,
+			   "The STAN_NUM_THREADS environment variable is '",
+			   "' but it must be positive or -1");
+	}
+      } catch (const boost::bad_lexical_cast&) {
+	invalid_argument("get_num_threads(int)", "STAN_NUM_THREADS",
+			 env_stan_num_threads,
+			 "The STAN_NUM_THREADS environment variable is '",
+			 "' but it must be a positive number or -1");
+      }
+    }
+#endif
+  return num_threads;
+}
+
+
   TeamThreadPool()
       : stop_(false), epoch_(0), region_n_(0), region_ctx_(nullptr),
         region_call_(nullptr), remaining_(0) {
-    unsigned hw = std::thread::hardware_concurrency();
-    if (hw == 0) hw = 2;
 
-    // hw-1 worker threads; caller is +1 participant.
-    const unsigned num_workers = (hw > 1) ? (hw - 1) : 1;
+    unsigned hw_u = std::thread::hardware_concurrency();
+    if (hw_u == 0) hw_u = 2;
+    const std::size_t hw = static_cast<std::size_t>(hw_u);
+    
+    const std::size_t cap = configured_cap_(hw);
+    const std::size_t num_workers = (cap > 1) ? (cap - 1) : 0;
 
+    std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl
+	      << "hw = " << hw << std::endl 
+	      << "num_workers = " << num_workers << std::endl
+	      << "cap = " << cap << std::endl
+	      << std::endl << std::endl;
+    
     workers_.reserve(num_workers);
     for (unsigned i = 0; i < num_workers; ++i) {
       const std::size_t tid = static_cast<std::size_t>(i + 1);  // workers are 1..N
@@ -151,7 +222,9 @@ class TeamThreadPool {
         in_worker_ = false;
       });
     }
+    std::cout << "done with constructor" << std::endl;
   }
+  
 
   ~TeamThreadPool() {
     stop_.store(true, std::memory_order_release);
