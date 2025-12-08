@@ -26,7 +26,7 @@ inline auto log_wiener_prob_hit_upper(const T_a& a, const T_v& v,
   const auto neg_v = -v;
   const auto one_m_w = 1.0 - w;
   if (fabs(v) == 0.0) {
-    return ret_t(log1m(one_m_w));
+    return ret_t(log(w));
   }
   const auto exponent = 2.0 * v * a * w;
   // This branch is for numeric stability
