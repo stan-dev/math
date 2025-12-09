@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_PROB_WIENER4_LCCDF_DEFECTIVE_HPP
 #define STAN_MATH_PRIM_PROB_WIENER4_LCCDF_DEFECTIVE_HPP
 
-#include <stan/math/prim/prob/wiener4_lcdf.hpp>
+#include <stan/math/prim/prob/wiener4_lcdf_defective.hpp>
 
 namespace stan {
 namespace math {
