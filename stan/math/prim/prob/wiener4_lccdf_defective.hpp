@@ -225,8 +225,8 @@ inline auto wiener4_ccdf_grad_w(const T_y& y, const T_a& a, const T_v& v,
 template <bool propto = false, typename T_y, typename T_a, typename T_t0,
           typename T_w, typename T_v>
 inline auto wiener_lccdf_defective(const T_y& y, const T_a& a, const T_t0& t0,
-                         const T_w& w, const T_v& v,
-                         const double& precision_derivatives) {
+                                   const T_w& w, const T_v& v,
+                                   const double& precision_derivatives) {
   using T_partials_return = partials_return_t<T_y, T_a, T_t0, T_w, T_v>;
   using ret_t = return_type_t<T_y, T_a, T_t0, T_w, T_v>;
   using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;

@@ -85,9 +85,9 @@ template <bool propto = false, typename T_y, typename T_a, typename T_t0,
           typename T_w, typename T_v, typename T_sv, typename T_sw,
           typename T_st0>
 inline auto wiener_lccdf_defective(const T_y& y, const T_a& a, const T_t0& t0,
-                         const T_w& w, const T_v& v, const T_sv& sv,
-                         const T_sw& sw, const T_st0& st0,
-                         const double& precision_derivatives = 1e-8) {
+                                   const T_w& w, const T_v& v, const T_sv& sv,
+                                   const T_sw& sw, const T_st0& st0,
+                                   const double& precision_derivatives = 1e-8) {
   using ret_t = return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0>;
   using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
   using T_a_ref = ref_type_if_t<!is_constant<T_a>::value, T_a>;
@@ -211,8 +211,9 @@ inline auto wiener_lccdf_defective(const T_y& y, const T_a& a, const T_t0& t0,
   // calculate density and partials
   for (size_t i = 0; i < N; i++) {
     if (sv_vec[i] == 0 && sw_vec[i] == 0 && st0_vec[i] == 0) {
-      result += wiener_lccdf_defective<propto>(y_vec[i], a_vec[i], t0_vec[i], w_vec[i],
-                                     v_vec[i], precision_derivatives);
+      result += wiener_lccdf_defective<propto>(y_vec[i], a_vec[i], t0_vec[i],
+                                               w_vec[i], v_vec[i],
+                                               precision_derivatives);
       continue;
     }
     const T_partials_return y_value = y_vec.val(i);
