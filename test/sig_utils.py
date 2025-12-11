@@ -145,7 +145,7 @@ special_arg_values = {
     "uniform_lcdf": [None, 0.2, 0.9],
     "uniform_lpdf": [None, 0.2, 0.9],
     "uniform_rng": [0.2, 1.9, None],
-    "wiener_lpdf": [0.8, None, 0.4, None, None, None, None, None],
+    "wiener_lpdf": [0.8, None, 0.4, None, None, None, None, None, 1e-4],
 }
 
 # list of functions we do not test. These are mainly functions implemented in compiler
@@ -180,6 +180,9 @@ non_differentiable_args = {
     "ode_adams_tol": [4, 5, 6],
     "ode_bdf_tol": [4, 5, 6],
     "ode_rk45_tol": [4, 5, 6],
+    "wiener_lpdf": [6, 8],
+    "wiener_lccdf_defective": [5, 8],
+    "wiener_lcdf_defective": [5, 8],
 }
 
 # lists of functions that do not support fwd or rev autodiff
