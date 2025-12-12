@@ -75,7 +75,7 @@ inline auto wiener_prob_derivative_term(const T_a& a, const T_v& v,
   if (neg_v < 0) {
     ans = LOG_TWO + exponent_with_1mw - log1m_exp(exponent_with_1mw);
     diff_term = log1m_exp(exponent_with_w) - log1m_exp(exponent);
-  } else if (neg_v > 0) {
+  } else /* neg_v > 0 */ {
     ans = LOG_TWO - log1m_exp(exponent_with_1mw);
     diff_term = log_diff_exp(exponent_with_1mw, exponent) - log1m_exp(exponent);
   }
