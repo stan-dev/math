@@ -267,9 +267,7 @@ inline auto wiener_lccdf_defective(const T_y& y, const T_a& a, const T_t0& t0,
 
     // computation of derivative for t and precision check in order to give
     // the value as deriv_t to edge1 and as -deriv_t to edge5
-    const auto params_dt7 = std::make_tuple(
-        y_value, a_value, v_value, w_value, t0_value, sv_value, sw_value,
-        st0_value, log_error_absolute - LOG_TWO - 9 * LOG_TWO);
+
     // computation of derivatives and precision checks
     if (!is_constant_all<T_y>::value || !is_constant_all<T_t0>::value) {
       const T_partials_return deriv_t_7
