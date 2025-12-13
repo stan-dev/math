@@ -265,14 +265,14 @@ inline auto wiener_lcdf_defective(const T_y& y, const T_a& a, const T_t0& t0,
                                   const T_sw& sw, const T_st0& st0,
                                   const double& precision_derivatives = 1e-8) {
   using ret_t = return_type_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0>;
-  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
-  using T_a_ref = ref_type_if_t<!is_constant<T_a>::value, T_a>;
-  using T_v_ref = ref_type_if_t<!is_constant<T_v>::value, T_v>;
-  using T_w_ref = ref_type_if_t<!is_constant<T_w>::value, T_w>;
-  using T_t0_ref = ref_type_if_t<!is_constant<T_t0>::value, T_t0>;
-  using T_sv_ref = ref_type_if_t<!is_constant<T_sv>::value, T_sv>;
-  using T_sw_ref = ref_type_if_t<!is_constant<T_sw>::value, T_sw>;
-  using T_st0_ref = ref_type_if_t<!is_constant<T_st0>::value, T_st0>;
+  using T_y_ref = ref_type_t<T_y>;
+  using T_a_ref = ref_type_t<T_a>;
+  using T_v_ref = ref_type_t<T_v>;
+  using T_w_ref = ref_type_t<T_w>;
+  using T_t0_ref = ref_type_t<T_t0>;
+  using T_sv_ref = ref_type_t<T_sv>;
+  using T_sw_ref = ref_type_t<T_sw>;
+  using T_st0_ref = ref_type_t<T_st0>;
   using internal::GradientCalc;
   using T_partials_return
       = partials_return_t<T_y, T_a, T_t0, T_w, T_v, T_sv, T_sw, T_st0>;
@@ -445,9 +445,7 @@ inline auto wiener_lcdf_defective(const T_y& y, const T_a& a, const T_t0& t0,
 
     // computation of derivative for t and precision check in order to give
     // the value as deriv_t to edge1 and as -deriv_t to edge5
-    const auto params_dt7 = std::make_tuple(
-        y_value, a_value, v_value, w_value, t0_value, sv_value, sw_value,
-        st0_value, log_error_absolute - LOG_TWO - 9 * LOG_TWO);
+
     if (!is_constant_all<T_y>::value || !is_constant_all<T_t0>::value) {
       T_partials_return deriv_t_7
           = internal::wiener7_integrate_cdf<
