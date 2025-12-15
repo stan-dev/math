@@ -65,7 +65,7 @@ gp_periodic_cov(const std::vector<T_x> &x, const T_sigma &sigma, const T_l &l,
 
   T_sigma sigma_sq = square(sigma);
   T_l neg_two_inv_l_sq = -2.0 * inv_square(l);
-  T_p pi_div_p = pi() / p;
+  auto pi_div_p = pi() / p;
   size_t block_size = 10;
 
   for (size_t jb = 0; jb < x_size; jb += block_size) {
@@ -144,7 +144,7 @@ gp_periodic_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
 
   T_sigma sigma_sq = square(sigma);
   T_l neg_two_inv_l_sq = -2.0 * inv_square(l);
-  T_p pi_div_p = pi() / p;
+  auto pi_div_p = pi() / p;
   size_t block_size = 10;
 
   for (size_t ib = 0; ib < x1.size(); ib += block_size) {
