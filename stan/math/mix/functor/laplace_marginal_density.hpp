@@ -483,6 +483,16 @@ inline auto laplace_marginal_density_est(
   if constexpr (InitTheta) {
     check_nonzero_size("laplace_marginal", "initial guess", options.theta_0);
     check_finite("laplace_marginal", "initial guess", options.theta_0);
+    if (unlikely(options.theta_0.size() != covariance.rows())) {
+      [&]() STAN_COLD_PATH {
+        std::stringstream msg;
+        msg << "laplace_marginal_density: The size of the initial theta ("
+            << options.theta_0.size() << ") does not match the size of "
+               "the covariance matrix ("
+            << covariance.rows() << ", " << covariance.cols() << ").";
+        throw std::domain_error(msg.str());
+      }();
+    }
   }
   check_nonnegative("laplace_marginal", "tolerance", options.tolerance);
   check_positive("laplace_marginal", "max_num_steps", options.max_num_steps);
@@ -613,13 +623,14 @@ inline auto laplace_marginal_density_est(
     prev.update(curr);
     curr.alpha() = std::clamp(curr.alpha(), 0.0, options.line_search.max_alpha);
   };
+  // If solver 1 throws an error, we will try solver 2, then solver 3
+  bool allow_bounce = false;
   /**
    * On the final loop if we found a better wolfe step, but we are going to
    * exit, we want to make sure all of our return values are with the most
    * recent wolfe step that was accepted. So we do one final loop to update
    * our return values.
    */
-  bool allow_bounce = false;
   bool final_loop = false;
   bool finish_update = false;
   WolfeStatus wolfe_status;
@@ -629,7 +640,6 @@ inline auto laplace_marginal_density_est(
   try {
     if (options.solver == 1) {
       if (options.hessian_block_size == 1) {
-        //   std::cout << "Solver: 1Diag" << std::endl;
         Eigen::VectorXd W_r(theta_size);
         for (; step_iter <= options.max_num_steps; step_iter++) {
           auto W = laplace_likelihood::diagonal_hessian(ll_fun, prev.theta(),
@@ -865,7 +875,6 @@ inline auto laplace_marginal_density_est(
     }
   }
   if (options.solver == 3 || allow_bounce) {
-    //    std::cout << "Solver: 3" << std::endl;
     Eigen::PartialPivLU<Eigen::MatrixXd> LU(theta_size);
     for (; step_iter <= options.max_num_steps; step_iter++) {
       auto W = laplace_likelihood::block_hessian(

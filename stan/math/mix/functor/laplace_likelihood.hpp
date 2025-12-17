@@ -193,7 +193,7 @@ inline void ll_arg_grad(F&& f, Theta&& theta, Stream* msgs, Args&&... args) {
 }
 
 /**
- * Computes negative block diagonal Hessian of `f` wrt`theta` and `args...`
+ * Computes negative diagonal Hessian of `f` wrt`theta` and `args...`
  * @note If `Args` contains \ref var types then their adjoints will be
  * calculated as a side effect.
  * @tparam F A functor with `opertor()(Args&&...)` returning a scalar

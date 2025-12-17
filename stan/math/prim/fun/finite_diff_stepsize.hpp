@@ -3,86 +3,25 @@
 
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/fabs.hpp>
-#include <limits>
 #include <cmath>
 
 namespace stan {
 namespace math {
 
-namespace internal {
-template <std::size_t StencilOrder = 2, typename T>
-inline constexpr auto eps_root_calc() {
-  constexpr T eps = std::numeric_limits<T>::epsilon();
-  if constexpr (StencilOrder == 2) {
-    // ε^(1/3)
-    return std::cbrt(eps);
-  } else if constexpr (StencilOrder == 3) {
-    // ε^(1/4) = sqrt(sqrt(ε))
-    return std::sqrt(std::sqrt(eps));
-  } else if constexpr (StencilOrder == 5) {
-    // ε^(1/6) = sqrt(cbrt(ε))
-    return std::sqrt(std::cbrt(eps));
-  } else {
-    // General fallback: ε^(1/(p+1))
-    return std::pow(eps, T(1) / T(StencilOrder + 1));
-  }
-}
-}  // namespace internal
 /**
- * @brief Compute a finite-difference step size suitable for a stencil with
- *        leading truncation order \p StencilOrder.
+ * Return the stepsize for finite difference evaluations at the
+ * specified scalar.
  *
- * This implements the standard balance between truncation error
- * \f$A\,h^{p}\f$ and floating-point rounding error \f$B\,\varepsilon/h\f$,
- * whose minimizer is \f$h_\star \propto \varepsilon^{1/(p+1)}\f$, where
- * \f$p = \texttt{StencilOrder}\f$ and \f$\varepsilon\f$ is machine epsilon
- * for the scalar type \p T. We additionally scale by \f$\max(1, |u|)\f$ to
- * obtain an absolute step size near the point being perturbed.
+ * <p>The formula used is `stepsize(u) = cbrt(epsilon) * max(1,
+ * abs(u)).`
  *
- * For the common second-order (3-point central) stencil, the function uses an
- * `if constexpr` branch to compute \f$\varepsilon^{1/3}\f$ via `std::cbrt`
- * (avoids a `pow` and is numerically tidy). For higher orders it uses
- * \f$\varepsilon^{1/(p+1)}\f` via `std::pow`.
- *
- * @tparam T            Floating-point scalar type (e.g., float, double).
- * @tparam StencilOrder Leading truncation order \f$p\f$ of your stencil:
- *                      - first-derivative 3-point central  → \f$p=2\f$
- *                      - first-derivative 5-point central  → \f$p=4\f$
- *                      - first-derivative 6-point central  → \f$p=6\f$
- *                      - “derivative of Hessian” via 5-point diff → \f$p=4\f$
- *
- * @param u  The coordinate value (or local scale) at which the step will be
- *           applied; the step is scaled by \f$\max(1, |u|)\f$.
- * @param c  Dimensionless tuning constant multiplying the theoretically
- *           optimal step. Default is 1.0. In practice, \f$c \in [0.5, 2]\f$
- *           works well:
- *           - Increase \p c (larger h) if round-off/cancellation dominates
- *             (noisy function values, very large |f|, many subtractions).
- *           - Decrease \p c (smaller h) if truncation dominates (very smooth
- *             function with large higher derivatives or low curvature scale).
- *           If your problem has a known physical scale S (not |u|), prefer
- *           passing \p u scaled by S or modify the scaling accordingly.
- *
- * @return A step size \f$h\f$ such that \f$u+h \neq u\f$; if the theoretical
- *         step underflows at \p u, the function falls back to the next
- *         representable increment.
- *
- * @note The step computed here assumes smooth (at least \(p{+}1\) times
- *       differentiable) behavior along the perturbed coordinate.
+ * @param u initial value to increment
+ * @return stepsize away from u for finite differences
  */
-template <std::size_t StencilOrder = 2, typename T>
-inline auto finite_diff_stepsize(T u_, T c = T(1)) {
-  using fp_t = std::conditional_t<std::is_integral_v<T>, double, T>;
-  const fp_t u = static_cast<fp_t>(u_);
-  const fp_t scale = std::max(fp_t{1}, std::abs(u));
-  const fp_t eps_root = internal::eps_root_calc<StencilOrder, fp_t>();
-  const fp_t h = static_cast<fp_t>(c) * eps_root * scale;
-  // Ensure perturbation isn’t rounded away at u.
-  if (u + h == u) {
-    const fp_t next = std::nextafter(u, std::numeric_limits<fp_t>::infinity());
-    return std::max(h, next - u);
-  }
-  return h;
+inline double finite_diff_stepsize(double u) {
+  using std::fabs;
+  static const double cbrt_epsilon = std::cbrt(EPSILON);
+  return cbrt_epsilon * std::fmax(1, fabs(u));
 }
 
 }  // namespace math

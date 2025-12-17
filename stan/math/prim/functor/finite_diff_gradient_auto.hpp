@@ -59,7 +59,7 @@ inline void finite_diff_gradient_auto(const F& f, VectorT&& x, ScalarT& fx,
   Eigen::Map<EigT> grad_map(grad_fx.data(), grad_fx.size());
 
   grad_map = EigT::NullaryExpr(x.size(), [&f, &x](Eigen::Index i) {
-    double h = finite_diff_stepsize<2>(value_of_rec(x[i]));
+    double h = finite_diff_stepsize(value_of_rec(x[i]));
     ScalarT delta_f = 0;
     for (int j = 0; j < 6; ++j) {
       auto x_temp

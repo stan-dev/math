@@ -181,36 +181,6 @@ struct diagonal_kernel_functor {
   }
 };
 
-template <typename F, typename ThetaVec>
-inline void run_solver_grid(F&& body, ThetaVec&& theta_0) {
-  constexpr std::array solver_nums{1, 2, 3};           // [1, 3]
-  constexpr std::array hessian_block_sizes{1, 2, 3};   // [1, 2]
-  constexpr std::array max_steps_line_searches{1000};  // 0, 10
-  for (int solver : solver_nums) {
-    for (int hblock : hessian_block_sizes) {
-      for (int ls_steps : max_steps_line_searches) {
-        if (theta_0.size() % hblock != 0) {
-          std::cerr << "[          ] [ INFO ]"
-                    << " Skipping test for hessian of size " << theta_0.size()
-                    << " with hessian block size of " << hblock << std::endl;
-          continue;
-        }
-        try {
-          std::forward<F>(body)(solver, hblock, ls_steps, theta_0);
-        } catch (const std::exception& e) {
-          ADD_FAILURE() << "Exception: " << e.what();
-        }
-        if (::testing::Test::HasFailure()) {
-          std::cout << "----------" << std::endl;
-          std::cout << "solver_num: " << solver << std::endl;
-          std::cout << "hessian_block_size: " << hblock << std::endl;
-          std::cout << "max_steps_line_search: " << ls_steps << std::endl;
-        }
-      }
-    }
-  }
-}
-
 template <typename T1, typename T2>
 Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic> laplace_covariance(
     const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta_root,
@@ -285,46 +255,6 @@ constexpr const char* test_type_name() {
 }
 
 }  // namespace test
-
-namespace laplace_test_fails {
-
-auto poisson_log_phi_dim_2
-    = std::array{std::array{1, 1, 0}, std::array{1, 2, 0}, std::array{2, 1, 0},
-                 std::array{2, 2, 0}, std::array{3, 1, 0}, std::array{3, 2, 0}};
-
-auto bernoulli_logit_phi_dim500
-    = std::array{std::array{1, 1, 0}, std::array{1, 2, 0}, std::array{2, 1, 0},
-                 std::array{2, 2, 0}, std::array{3, 1, 0}, std::array{3, 2, 0}};
-
-auto disease_map_laplace_marginal
-    = std::array{std::array{1, 1, 0}, std::array{2, 1, 0}, std::array{3, 1, 0}};
-
-auto poisson_log_phi_dim_2_tuple
-    = std::array{std::array{1, 1, 0}, std::array{1, 2, 0}, std::array{2, 1, 0},
-                 std::array{2, 2, 0}, std::array{3, 1, 0}, std::array{3, 2, 0}};
-
-auto poisson_log_phi_dim_2_array_tuple
-    = std::array{std::array{1, 1, 0}, std::array{1, 2, 0}, std::array{2, 1, 0},
-                 std::array{2, 2, 0}, std::array{3, 1, 0}, std::array{3, 2, 0}};
-
-auto bernoulli_logit_lpmf_phi_dim500
-    = std::array{std::array{1, 1, 0}, std::array{1, 2, 0}, std::array{2, 1, 0},
-                 std::array{2, 2, 0}, std::array{3, 1, 0}, std::array{3, 2, 0}};
-
-auto poisson_log_lpmf_phi_dim_2
-    = std::array{std::array{1, 1, 0}, std::array{1, 2, 0}, std::array{2, 1, 0},
-                 std::array{2, 2, 0}, std::array{3, 1, 0}, std::array{3, 2, 0}};
-
-auto poisson_log_lpmf_log_phi_dim_2
-    = std::array{std::array{1, 1, 0}, std::array{1, 2, 0}, std::array{2, 1, 0},
-                 std::array{2, 2, 0}, std::array{3, 1, 0}, std::array{3, 2, 0}};
-
-auto neg_binomial_log_lpmf_phi_dim_2
-    = std::array{std::array{1, 1, 0}, std::array{1, 2, 0}, std::array{2, 1, 0},
-                 std::array{2, 2, 0}, std::array{3, 1, 0}, std::array{3, 2, 0}};
-
-}  // namespace laplace_test_fails
-
 }  // namespace math
 }  // namespace stan
 
