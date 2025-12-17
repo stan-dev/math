@@ -81,7 +81,7 @@ special_arg_values = {
     "cov_matrix_constrain": [None, 1],
     "cholesky_decompose": [pos_definite, None],
     "cholesky_corr_constrain": [None, 2],
-    "cholesky_factor_constrain": [None, 1,1],
+    "cholesky_factor_constrain": [None, 1, 1],
     "csr_to_dense_matrix": [1, 1, None, [1], [1, 2]],
     "csr_matrix_times_vector": [1, 1, None, [1], [1, 2], None],
     "distance": [0.6, 0.4],
@@ -145,17 +145,17 @@ special_arg_values = {
     "uniform_lcdf": [None, 0.2, 0.9],
     "uniform_lpdf": [None, 0.2, 0.9],
     "uniform_rng": [0.2, 1.9, None],
-    "wiener_lpdf":            [0.8, None, 0.4, None, None, None, None, None, 1e-4],
-    "wiener_lccdf_defective": [0.8, None, 0.4, None, None, None, None, None, 1e-4],
-    "wiener_lcdf_defective":  [0.8, None, 0.4, None, None, None, None, None, 1e-4],
+    "wiener_lpdf": [0.8, None, 0.4, None, None, None, None, None, 1e-4],
+    "wiener_lccdf_unnorm": [0.8, None, 0.4, None, None, None, None, None, 1e-4],
+    "wiener_lcdf_unnorm": [0.8, None, 0.4, None, None, None, None, None, 1e-4],
 }
 
 # list of functions we do not test. These are mainly functions implemented in compiler
 # (not in Stan Math).
 ignored = [
-    "std_normal_qf", # synonym for inv_Phi
+    "std_normal_qf",  # synonym for inv_Phi
     "if_else",
-    "hypergeometric_3F2", # requires arguments of specific lengths
+    "hypergeometric_3F2",  # requires arguments of specific lengths
 ]
 
 # these are all slight renames compared to stan math
@@ -183,8 +183,8 @@ non_differentiable_args = {
     "ode_bdf_tol": [4, 5, 6],
     "ode_rk45_tol": [4, 5, 6],
     "wiener_lpdf": [6, 8],
-    "wiener_lccdf_defective": [5, 8],
-    "wiener_lcdf_defective": [5, 8],
+    "wiener_lccdf_unnorm": [5, 8],
+    "wiener_lcdf_unnorm": [5, 8],
 }
 
 # lists of functions that do not support fwd or rev autodiff
@@ -297,6 +297,7 @@ def get_signatures():
 
     return res + internal_signatures
 
+
 def handle_rename(function_name):
     """
     Replace certain function names with their stan math counterparts
@@ -305,6 +306,7 @@ def handle_rename(function_name):
     if fname.endswith("_unconstrain"):
         fname = fname.replace("_unconstrain", "_free")
     return fname
+
 
 def parse_signature(signature):
     """
