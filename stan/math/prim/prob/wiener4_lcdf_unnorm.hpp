@@ -156,9 +156,9 @@ inline auto wiener4_distribution(const T_y& y, const T_a& a, const T_v& v,
   const auto arg = fmax(
       0.0, fmin(1.0, exp(one_m_w_a_neg_v + square(neg_v) * y / 2.0 + log_err)
                          / 2.0));
-  const auto K2 = (arg == 0)   ? INFTY
-                  : (arg == 1) ? NEGATIVE_INFTY
-                               : -sqrt(y) / 2.0 / a * inv_Phi(arg);
+  const auto K2 = (arg == 0) ? INFTY
+                             : (arg == 1) ? NEGATIVE_INFTY
+                                          : -sqrt(y) / 2.0 / a * inv_Phi(arg);
   const auto K_small_value = ceil(fmax(K1, K1 + K2));
 
   const auto api = a / pi();
@@ -326,9 +326,9 @@ inline auto wiener4_cdf_grad_a(const T_y& y, const T_a& a, const T_v& v,
       = make_finite(exp(log_probability_distribution(a, neg_v, one_m_w)));
   const auto dav = log_probability_GradAV(a, neg_v, one_m_w);
   auto dav_neg_v = dav * neg_v;
-  auto prob_deriv = fabs(neg_v) == 0    ? ret_t(0.0)
-                    : is_inf(dav_neg_v) ? NEGATIVE_INFTY
-                                        : dav_neg_v * prob;
+  auto prob_deriv = fabs(neg_v) == 0
+                        ? ret_t(0.0)
+                        : is_inf(dav_neg_v) ? NEGATIVE_INFTY : dav_neg_v * prob;
   ans = (-2.0 / a - one_m_w_neg_v) * (cdf - prob)
         + ans * (2.0 * pi() / square(a))
               * exp(-one_m_w_a_neg_v - 0.5 * square(neg_v) * y);
@@ -371,9 +371,10 @@ inline auto wiener4_cdf_grad_v(const T_y& y, const T_a& a, const T_v& v,
                                 - 2.5 * LOG_TWO - 3 * log_a - log_v),
                             1.0);
     K_large_value
-        = fmax(ceil((alphK_large == 0)   ? ret_t(INFTY)
-                    : (alphK_large == 1) ? ret_t(NEGATIVE_INFTY)
-                                         : temp * inv_Phi(alphK_large)),
+        = fmax(ceil((alphK_large == 0)
+                        ? ret_t(INFTY)
+                        : (alphK_large == 1) ? ret_t(NEGATIVE_INFTY)
+                                             : temp * inv_Phi(alphK_large)),
                ret_t(1.0));
   }
 
@@ -468,9 +469,10 @@ inline auto wiener4_cdf_grad_w(const T_y& y, const T_a& a, const T_v& v,
       = fmin(exp(factor + 0.5 * (LOG_PI + log_y) - 1.5 * LOG_TWO - log_a), 1.0);
   alphK_large = fmax(0.0, alphK_large);
   const auto K_large_value
-      = fmax(ceil((alphK_large == 0)   ? ret_t(INFTY)
-                  : (alphK_large == 1) ? ret_t(NEGATIVE_INFTY)
-                                       : temp * inv_Phi(alphK_large)),
+      = fmax(ceil((alphK_large == 0)
+                      ? ret_t(INFTY)
+                      : (alphK_large == 1) ? ret_t(NEGATIVE_INFTY)
+                                           : temp * inv_Phi(alphK_large)),
              ret_t(1.0));
 
   const auto sqrt_y = sqrt(y);
@@ -479,9 +481,10 @@ inline auto wiener4_cdf_grad_w(const T_y& y, const T_a& a, const T_v& v,
   const auto lv = log1p(square(neg_v) * y);
   const auto alphK_small = factor - LOG_TWO - lv;
   const auto arg = fmin(exp(alphK_small), 1.0);
-  const auto K_small = (arg == 0)   ? INFTY
-                       : (arg == 1) ? NEGATIVE_INFTY
-                                    : -sqrt_y / a * inv_Phi(arg) - wdash;
+  const auto K_small
+      = (arg == 0)
+            ? INFTY
+            : (arg == 1) ? NEGATIVE_INFTY : -sqrt_y / a * inv_Phi(arg) - wdash;
   const auto K_small_value = ceil(fmax(fmax(K_small, K_large), ret_t(1.0)));
 
   if (K_large_value > 4 * K_small_value) {
