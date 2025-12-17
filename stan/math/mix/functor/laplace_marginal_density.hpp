@@ -487,7 +487,8 @@ inline auto laplace_marginal_density_est(
       [&]() STAN_COLD_PATH {
         std::stringstream msg;
         msg << "laplace_marginal_density: The size of the initial theta ("
-            << options.theta_0.size() << ") does not match the size of "
+            << options.theta_0.size()
+            << ") does not match the size of "
                "the covariance matrix ("
             << covariance.rows() << ", " << covariance.cols() << ").";
         throw std::domain_error(msg.str());

@@ -142,45 +142,44 @@ namespace internal {
  *
  * @param x_left   Left endpoint of the current bracket.
  * @param f_left   Function value at x_left, i.e. f(x_left).
- * @param df_left  Directional derivative at x_left with respect to increasing x,
- *                 i.e. f'(x_left) in the search direction.
+ * @param df_left  Directional derivative at x_left with respect to increasing
+ * x, i.e. f'(x_left) in the search direction.
  * @param x_right  Right endpoint of the current bracket.
  * @param f_right  Function value at x_right, i.e. f(x_right).
- * @param df_right Directional derivative at x_right with respect to increasing x,
- *                 i.e. f'(x_right) in the search direction.
+ * @param df_right Directional derivative at x_right with respect to increasing
+ * x, i.e. f'(x_right) in the search direction.
  *
  * @return A trial point in the trimmed interior of (x_left, x_right) chosen by
  *         the cubic/derivative model. If inputs are degenerate, the midpoint
  *         (x_left + x_right) / 2 is returned instead.
  */
 template <typename Scalar>
-[[nodiscard]] inline Scalar
-cubic_or_bisect_max(Scalar x_left,  Scalar f_left,  Scalar df_left,
-                    Scalar x_right, Scalar f_right, Scalar df_right) noexcept {
-
+[[nodiscard]] inline Scalar cubic_or_bisect_max(Scalar x_left, Scalar f_left,
+                                                Scalar df_left, Scalar x_right,
+                                                Scalar f_right,
+                                                Scalar df_right) noexcept {
   const Scalar midpoint = (x_left + x_right) / Scalar(2);
 
   // Basic validation: ordering + finiteness.
-  if (!(x_right > x_left) ||
-      !std::isfinite(f_left)  || !std::isfinite(f_right) ||
-      !std::isfinite(df_left) || !std::isfinite(df_right)) {
+  if (!(x_right > x_left) || !std::isfinite(f_left) || !std::isfinite(f_right)
+      || !std::isfinite(df_left) || !std::isfinite(df_right)) {
     return midpoint;
   }
 
   const Scalar width = x_right - x_left;
-  const Scalar eps   = std::numeric_limits<Scalar>::epsilon();
+  const Scalar eps = std::numeric_limits<Scalar>::epsilon();
 
   // If the bracket is extremely tight, just bisect.
   {
-    const Scalar x_scale =
-        std::max(std::max(std::abs(x_left), std::abs(x_right)), Scalar(1));
+    const Scalar x_scale
+        = std::max(std::max(std::abs(x_left), std::abs(x_right)), Scalar(1));
     if (width <= eps * x_scale) {
       return midpoint;
     }
   }
 
   // Derivatives with respect to s, where x = x_left + s * width.
-  const Scalar df_left_s = width * df_left;   // F'(0)
+  const Scalar df_left_s = width * df_left;    // F'(0)
   const Scalar df_right_s = width * df_right;  // F'(1)
 
   // Cubic Hermite coefficients in s ∈ [0,1]:
@@ -188,7 +187,8 @@ cubic_or_bisect_max(Scalar x_left,  Scalar f_left,  Scalar df_left,
   // with F(0) = f_left, F'(0) = df_left_s, F(1) = f_right, F'(1) = df_right_s.
   const Scalar a0 = f_left;
   const Scalar a1 = df_left_s;
-  const Scalar a2 = Scalar(3) * (f_right - f_left) - Scalar(2) * df_left_s - df_right_s;
+  const Scalar a2
+      = Scalar(3) * (f_right - f_left) - Scalar(2) * df_left_s - df_right_s;
   const Scalar a3 = Scalar(2) * (f_left - f_right) + df_left_s + df_right_s;
 
   auto eval = [&](Scalar s) -> Scalar {
@@ -196,14 +196,15 @@ cubic_or_bisect_max(Scalar x_left,  Scalar f_left,  Scalar df_left,
     return ((a3 * s + a2) * s + a1) * s + a0;
   };
 
-  // Candidates are restricted to a trimmed interior [edge_guard, 1 - edge_guard].
+  // Candidates are restricted to a trimmed interior [edge_guard, 1 -
+  // edge_guard].
   constexpr Scalar edge_guard = Scalar(1e-9);
 
   struct Candidate {
     Scalar s_;
     Scalar value_;
   };
-  Candidate best{ 0.5, eval(0.5) };  // Start from bisection.
+  Candidate best{0.5, eval(0.5)};  // Start from bisection.
   auto consider = [&](Scalar s) {
     if (!std::isfinite(s)) {
       return;
@@ -213,18 +214,19 @@ cubic_or_bisect_max(Scalar x_left,  Scalar f_left,  Scalar df_left,
     }
     const Scalar value = eval(s);
     if (value > best.value_) {
-      best.s_     = s;
+      best.s_ = s;
       best.value_ = value;
     }
   };
 
   // 1) Secant estimate for the derivative root between s = 0 and s = 1.
   {
-    const Scalar denom       = df_left_s - df_right_s;
-    const Scalar deriv_scale =
-        std::max(std::max(std::abs(df_left_s), std::abs(df_right_s)), Scalar(1));
+    const Scalar denom = df_left_s - df_right_s;
+    const Scalar deriv_scale = std::max(
+        std::max(std::abs(df_left_s), std::abs(df_right_s)), Scalar(1));
     if (std::abs(denom) > eps * deriv_scale) {
-      const Scalar s_secant = df_left_s / denom;  // Root of linear interpolation of F'.
+      const Scalar s_secant
+          = df_left_s / denom;  // Root of linear interpolation of F'.
       consider(s_secant);
     }
   }
@@ -236,8 +238,8 @@ cubic_or_bisect_max(Scalar x_left,  Scalar f_left,  Scalar df_left,
     const Scalar B = Scalar(2) * a2;
     const Scalar C = a1;
 
-    const Scalar scale =
-        std::max(std::max(std::abs(B), std::abs(C)), Scalar(1));
+    const Scalar scale
+        = std::max(std::max(std::abs(B), std::abs(C)), Scalar(1));
     const Scalar A_tol = eps * scale;
 
     if (std::abs(A) <= A_tol) {
@@ -249,8 +251,8 @@ cubic_or_bisect_max(Scalar x_left,  Scalar f_left,  Scalar df_left,
     } else {
       // Proper quadratic: A*s^2 + B*s + C = 0.
       Scalar disc = std::fma(-Scalar(4) * A, C, B * B);  // B^2 - 4AC
-      const Scalar disc_scale =
-          std::max(B * B + std::abs(Scalar(4) * A * C), Scalar(1));
+      const Scalar disc_scale
+          = std::max(B * B + std::abs(Scalar(4) * A * C), Scalar(1));
       const Scalar disc_tol = Scalar(10) * eps * disc_scale;
 
       // Treat tiny negative discriminants as zero.
@@ -261,8 +263,7 @@ cubic_or_bisect_max(Scalar x_left,  Scalar f_left,  Scalar df_left,
       if (disc >= Scalar(0)) {
         const Scalar r = std::sqrt(disc);
         const Scalar q = -Scalar(0.5) * (B + std::copysign(r, B));
-        const Scalar q_scale =
-            std::max(std::abs(B) + r, Scalar(1));
+        const Scalar q_scale = std::max(std::abs(B) + r, Scalar(1));
         const Scalar q_tol = eps * q_scale;
 
         if (std::abs(q) > q_tol) {
@@ -583,8 +584,8 @@ struct WolfeInfo {
  * 2. **Quick strong-Wolfe accept and “zoom-up”.**
  *
  *    If the current `high` satisfies **both** Armijo and curvature, the code
- *    repeatedly *expands* \f$\alpha \leftarrow \alpha \cdot \text{opt.scale\_up}\f$
- *    while the strong-Wolfe tests continue to hold and
+ *    repeatedly *expands* \f$\alpha \leftarrow \alpha \cdot
+ * \text{opt.scale\_up}\f$ while the strong-Wolfe tests continue to hold and
  *    \f$\alpha \le \text{opt.max\_alpha}\f$.  The last step that still passes
  *    strong-Wolfe is stored and finally accepted into `curr_`, and the routine
  *    returns with status `Wolfe`.
