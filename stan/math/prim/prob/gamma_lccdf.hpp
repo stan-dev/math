@@ -62,8 +62,7 @@ inline return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(
     }
   }
 
-  constexpr bool need_y_beta_deriv
-      = is_any_autodiff_v<T_y, T_inv_scale>;
+  constexpr bool need_y_beta_deriv = is_any_autodiff_v<T_y, T_inv_scale>;
   constexpr bool alpha_is_scalar = is_constant_all<T_shape>::value;
 
   T_partials_return lgamma_alpha_const = 0.0;
@@ -87,8 +86,8 @@ inline return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(
     // Pn = P(alpha, beta*y) = CDF
     // Qn = 1 - Pn = CCDF
     const T_partials_return Pn = gamma_p(alpha_dbl, beta_y);
-    const T_partials_return log_Qn = log1m(Pn);   // = log(1 - Pn)
-    const T_partials_return Qn = 1.0 - Pn;        // needed for gradients
+    const T_partials_return log_Qn = log1m(Pn);  // = log(1 - Pn)
+    const T_partials_return Qn = 1.0 - Pn;       // needed for gradients
 
     // If Qn underflows to 0 numerically, the log-CCDF is -infinity
     if (Qn <= 0.0) {
@@ -103,9 +102,8 @@ inline return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(
       const T_partials_return lgamma_alpha
           = (alpha_is_scalar ? lgamma_alpha_const : lgamma(alpha_dbl));
 
-      const T_partials_return log_pdf
-          = alpha_dbl * log_beta - lgamma_alpha
-            + (alpha_dbl - 1.0) * log_y - beta_y;
+      const T_partials_return log_pdf = alpha_dbl * log_beta - lgamma_alpha
+                                        + (alpha_dbl - 1.0) * log_y - beta_y;
 
       // hazard = f(y) / Q(y), on the log scale as exp(log_pdf - log_Qn)
       const T_partials_return hazard = exp(log_pdf - log_Qn);
