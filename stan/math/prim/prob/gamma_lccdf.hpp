@@ -56,24 +56,24 @@ inline return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(
   scalar_seq_view<T_beta_ref> beta_vec(beta_ref);
   const size_t N = max_size(y, alpha, beta);
 
-  for (size_t i = 0; i < stan::math::size(y); ++i) {
-    if (y_vec.val(i) == 0.0) {
-      return ops_partials.build(0.0);
-    }
-  }
-
   constexpr bool need_y_beta_deriv = is_any_autodiff_v<T_y, T_inv_scale>;
-  constexpr bool alpha_is_scalar = is_constant_all<T_shape>::value;
 
-  T_partials_return lgamma_alpha_const = 0.0;
-  if constexpr (need_y_beta_deriv && alpha_is_scalar) {
-    const T_partials_return alpha0 = value_of(alpha_vec.val(0));
-    lgamma_alpha_const = lgamma(alpha0);
+  [[maybe_unused]] T_partials_return lgamma_alpha_const = 0.0;
+  [[maybe_unused]] bool alpha_is_scalar = false;
+  if constexpr (need_y_beta_deriv) {
+    alpha_is_scalar = stan::math::size(alpha) == 1;
+    if (alpha_is_scalar) {
+      const T_partials_return alpha0 = value_of(alpha_vec.val(0));
+      lgamma_alpha_const = lgamma(alpha0);
+    }
   }
 
   for (size_t n = 0; n < N; ++n) {
     const T_partials_return y_dbl = value_of(y_vec.val(n));
 
+    if (y_dbl == 0.0) {
+      continue;
+    }
     if (y_dbl == INFTY) {
       return ops_partials.build(negative_infinity());
     }
