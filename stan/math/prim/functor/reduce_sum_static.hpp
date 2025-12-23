@@ -4,9 +4,6 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/functor/reduce_sum.hpp>
-#include <tbb/task_arena.h>
-#include <tbb/parallel_reduce.h>
-#include <tbb/blocked_range.h>
 
 #include <tuple>
 #include <vector>
