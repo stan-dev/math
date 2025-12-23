@@ -230,6 +230,48 @@ TEST(ProbDistributionsGamma, lccdf_extreme_values_small) {
   }
 }
 
+TEST(ProbDistributionsGamma,
+     lccdf_alpha_gt_30_small_y_old_code_rounds_to_zero) {
+  using stan::math::gamma_lccdf;
+  using stan::math::gamma_p;
+  using stan::math::gamma_q;
+  using stan::math::log1m;
+  using stan::math::var;
+
+  // Same comparison as the prim test, but also exercises autodiff for
+  // alpha > 30.
+  double y_d = 1e-8;
+  double alpha_d = 31.25;
+  double beta_d = 1.0;
+
+  var y_v = y_d;
+  var alpha_v = alpha_d;
+  var beta_v = beta_d;
+
+  var lccdf_var = gamma_lccdf(y_v, alpha_v, beta_v);
+
+  // Old code: log(gamma_q(alpha, beta * y))
+  double old_val = std::log(gamma_q(alpha_d, beta_d * y_d));
+  double expected = log1m(gamma_p(alpha_d, beta_d * y_d));
+
+  EXPECT_EQ(old_val, 0.0);
+  EXPECT_LT(lccdf_var.val(), 0.0);
+  EXPECT_DOUBLE_EQ(lccdf_var.val(), expected);
+
+  std::vector<var> vars = {y_v, alpha_v, beta_v};
+  std::vector<double> grads;
+  lccdf_var.grad(vars, grads);
+
+  for (size_t i = 0; i < grads.size(); ++i) {
+    EXPECT_FALSE(std::isnan(grads[i])) << "Gradient " << i << " is NaN";
+    EXPECT_TRUE(std::isfinite(grads[i]))
+        << "Gradient " << i << " is not finite";
+  }
+
+  // d/dy log(CCDF) should be <= 0 (can underflow to -0)
+  EXPECT_LE(grads[0], 0.0);
+}
+
 TEST(ProbDistributionsGamma, lccdf_extreme_values_large) {
   using stan::math::gamma_lccdf;
   using stan::math::var;
@@ -255,6 +297,36 @@ TEST(ProbDistributionsGamma, lccdf_extreme_values_large) {
         << "Gradient " << i << " not finite for large values";
     EXPECT_FALSE(std::isnan(grads[i]))
         << "Gradient " << i << " is NaN for large values";
+  }
+}
+
+TEST(ProbDistributionsGamma, lccdf_large_alpha_1000_beta_3) {
+  using stan::math::gamma_lccdf;
+  using stan::math::var;
+
+  // Large alpha = 1000, beta = 3
+  // Note: This test only checks values, not gradients, as large alpha values
+  // can cause numerical issues with gradient computation
+  double alpha_d = 1000.0;
+  double beta_d = 3.0;
+
+  // Test various y values
+  std::vector<double> y_values = {100.0, 300.0, 333.333, 400.0, 500.0};
+
+  for (double y_d : y_values) {
+    var y_v = y_d;
+    var alpha_v = alpha_d;
+    var beta_v = beta_d;
+
+    var lccdf_var = gamma_lccdf(y_v, alpha_v, beta_v);
+
+    // Value should be finite and <= 0
+    EXPECT_TRUE(std::isfinite(lccdf_var.val()))
+        << "Failed for y=" << y_d << ", alpha=" << alpha_d << ", beta="
+        << beta_d;
+    EXPECT_LE(lccdf_var.val(), 0.0)
+        << "Positive value for y=" << y_d << ", alpha=" << alpha_d
+        << ", beta=" << beta_d;
   }
 }
 

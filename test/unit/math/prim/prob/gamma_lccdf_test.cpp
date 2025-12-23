@@ -66,6 +66,31 @@ TEST(ProbGamma, lccdf_small_alpha_small_y) {
   EXPECT_LT(result, 0.0);
 }
 
+TEST(ProbGamma, lccdf_alpha_gt_30_small_y_old_code_rounds_to_zero) {
+  using stan::math::gamma_lccdf;
+  using stan::math::gamma_p;
+  using stan::math::gamma_q;
+  using stan::math::log1m;
+
+  // For large alpha and very small y, the CCDF is extremely close to 1.
+  // The old implementation computed `log(gamma_q(alpha, beta * y))`, which can
+  // round to `log(1) == 0`. The updated implementation uses `log1m(gamma_p)`,
+  // which preserves the tiny negative value.
+  double y = 1e-8;
+  double alpha = 31.25;
+  double beta = 1.0;
+
+  double new_val = gamma_lccdf(y, alpha, beta);
+  double expected = log1m(gamma_p(alpha, beta * y));
+
+  // Old code: log(gamma_q(alpha, beta * y))
+  double old_val = std::log(gamma_q(alpha, beta * y));
+
+  EXPECT_EQ(old_val, 0.0);
+  EXPECT_LT(new_val, 0.0);
+  EXPECT_DOUBLE_EQ(new_val, expected);
+}
+
 TEST(ProbGamma, lccdf_large_alpha_large_y) {
   using stan::math::gamma_lccdf;
 
@@ -152,6 +177,29 @@ TEST(ProbGamma, lccdf_extreme_large_alpha) {
   double result = gamma_lccdf(y, alpha, beta);
 
   EXPECT_TRUE(std::isfinite(result));
+}
+
+TEST(ProbGamma, lccdf_large_alpha_1000_beta_3) {
+  using stan::math::gamma_lccdf;
+
+  // Large alpha = 1000, beta = 3
+  double alpha = 1000.0;
+  double beta = 3.0;
+
+  // Test various y values
+  std::vector<double> y_values = {100.0, 300.0, 333.333, 400.0, 500.0};
+
+  for (double y : y_values) {
+    double result = gamma_lccdf(y, alpha, beta);
+
+    // Result should be finite
+    EXPECT_TRUE(std::isfinite(result))
+        << "Failed for y=" << y << ", alpha=" << alpha << ", beta=" << beta;
+
+    // Result should be <= 0 (log of probability)
+    EXPECT_LE(result, 0.0) << "Positive value for y=" << y << ", alpha="
+                           << alpha << ", beta=" << beta;
+  }
 }
 
 TEST(ProbGamma, lccdf_monotonic_in_y) {
