@@ -197,8 +197,8 @@ TEST(ProbGamma, lccdf_large_alpha_1000_beta_3) {
         << "Failed for y=" << y << ", alpha=" << alpha << ", beta=" << beta;
 
     // Result should be <= 0 (log of probability)
-    EXPECT_LE(result, 0.0) << "Positive value for y=" << y << ", alpha="
-                           << alpha << ", beta=" << beta;
+    EXPECT_LE(result, 0.0) << "Positive value for y=" << y
+                           << ", alpha=" << alpha << ", beta=" << beta;
   }
 }
 

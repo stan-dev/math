@@ -27,12 +27,12 @@ namespace math {
 namespace internal {
 
 template <typename T_a>
-inline auto log_q_gamma_cf(const T_a& a, const double x,
-                           int max_steps = 250, double precision = 1e-16) {
-  using std::fabs;
+inline auto log_q_gamma_cf(const T_a& a, const double x, int max_steps = 250,
+                           double precision = 1e-16) {
   using stan::math::lgamma;
   using stan::math::log;
   using stan::math::value_of;
+  using std::fabs;
 
   const auto log_prefactor = a * log(x) - x - lgamma(a);
 
@@ -131,7 +131,8 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(const T_y& y,
     bool use_cf = beta_y > alpha_dbl + 1.0;
     T_partials_return log_Qn;
     [[maybe_unused]] T_partials_return dlogQ_dalpha = 0.0;
-    // Extract double values for continued fraction - we handle y/beta derivatives via hazard
+    // Extract double values for continued fraction - we handle y/beta
+    // derivatives via hazard
     const double beta_y_dbl = value_of(value_of(beta_y));
     const double alpha_dbl_val = value_of(value_of(alpha_dbl));
 
@@ -191,8 +192,8 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(const T_y& y,
       const T_partials_return lgamma_alpha = lgamma(alpha_dbl);
       const T_partials_return alpha_minus_one = fma(alpha_dbl, log_y, -log_y);
 
-      const T_partials_return log_pdf = alpha_dbl * log_beta - lgamma_alpha
-                                        + alpha_minus_one - beta_y;
+      const T_partials_return log_pdf
+          = alpha_dbl * log_beta - lgamma_alpha + alpha_minus_one - beta_y;
 
       const T_partials_return hazard = exp(log_pdf - log_Qn);  // f/Q
 

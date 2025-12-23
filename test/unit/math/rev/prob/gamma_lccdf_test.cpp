@@ -322,8 +322,8 @@ TEST(ProbDistributionsGamma, lccdf_large_alpha_1000_beta_3) {
 
     // Value should be finite and <= 0
     EXPECT_TRUE(std::isfinite(lccdf_var.val()))
-        << "Failed for y=" << y_d << ", alpha=" << alpha_d << ", beta="
-        << beta_d;
+        << "Failed for y=" << y_d << ", alpha=" << alpha_d
+        << ", beta=" << beta_d;
     EXPECT_LE(lccdf_var.val(), 0.0)
         << "Positive value for y=" << y_d << ", alpha=" << alpha_d
         << ", beta=" << beta_d;
