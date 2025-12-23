@@ -7,9 +7,10 @@
 #include <stan/math/prim/functor/map_rect_reduce.hpp>
 #include <stan/math/prim/functor/map_rect_combine.hpp>
 #include <stan/math/rev/core/chainablestack.hpp>
+#include <stan/math/rev/core/team_thread_pool.hpp>
 
-#include <tbb/parallel_for.h>
-#include <tbb/blocked_range.h>
+//#include <tbb/parallel_for.h>
+//#include <tbb/blocked_range.h>
 
 #include <algorithm>
 #include <numeric>
@@ -34,7 +35,7 @@ map_rect_concurrent(
       = map_rect_reduce<F, scalar_type_t<T_shared_param>, T_job_param>;
   using CombineF = map_rect_combine<F, T_shared_param, T_job_param>;
 
-  const int num_jobs = job_params.size();
+  const std::size_t num_jobs = job_params.size();
   const vector_d shared_params_dbl = value_of(shared_params);
   std::vector<matrix_d> job_output(num_jobs);
   std::vector<int> world_f_out(num_jobs, 0);
@@ -48,39 +49,25 @@ map_rect_concurrent(
   };
 
 #ifdef STAN_THREADS
-  std::cout << "********************************************************************************" << std::endl;
-  if (num_jobs > 1) {
-    // simple chunked threading over [0, num_jobs)
-    unsigned hw_threads = std::thread::hardware_concurrency();
-    if (hw_threads == 0) {
-      hw_threads = 2;  // arbitrary but > 0
-    }
+  auto& pool = stan::math::TeamThreadPool::instance();
 
-    const unsigned max_threads
-        = static_cast<unsigned>(std::min<std::size_t>(hw_threads, num_jobs));
-    std::cout << "max_threads = " << max_threads << std::endl;
-    std::vector<std::thread> threads;
-    threads.reserve(max_threads);
+  // Total participants includes caller (tid=0).
+  const std::size_t max_team = pool.team_size();
+  const std::size_t n = std::min<std::size_t>(max_team,
+                                              num_jobs == 0 ? 1u
+					      : num_jobs);
 
-    const std::size_t chunk
-        = (num_jobs + max_threads - 1) / max_threads;  // ceil
-
-    for (unsigned t = 0; t < max_threads; ++t) {
-      const std::size_t start = t * chunk;
-      if (start >= num_jobs) break;
-      const std::size_t end
-          = std::min<std::size_t>(start + chunk, num_jobs);
-
-      threads.emplace_back([&, start, end] {
-        execute_chunk(start, end);
-      });
-    }
-
-    for (auto& th : threads) {
-      th.join();
-    }
-  } else {
+  if (n <= 1 || num_jobs <= 1) {
     execute_chunk(0, num_jobs);
+  } else {
+    pool.parallel_region(n, [&](std::size_t tid) {
+      const std::size_t nj = num_jobs;
+      const std::size_t b0 = (nj * tid) / n;
+      const std::size_t b1 = (nj * (tid + 1)) / n;
+      if (b0 < b1) {
+        execute_chunk(b0, b1);
+      }
+    });
   }
 #else
   execute_chunk(0, num_jobs);
