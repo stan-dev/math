@@ -21,12 +21,12 @@ namespace internal {
 
 template <typename ReduceFunction, typename ReturnType, typename Vec,
           typename... Args>
-struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, Vec,
-                       Args...> {
+struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
+                       Vec, Args...> {
   struct scoped_args_tuple {
     ScopedChainableStack stack_;
-    using args_tuple_t =
-        std::tuple<decltype(deep_copy_vars(std::declval<std::decay_t<Args>>()))...>;
+    using args_tuple_t = std::tuple<decltype(
+        deep_copy_vars(std::declval<std::decay_t<Args>>()))...>;
     std::unique_ptr<args_tuple_t> args_tuple_holder_;
     scoped_args_tuple() : stack_(), args_tuple_holder_(nullptr) {}
   };
@@ -70,21 +70,21 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, Ve
 
     recursive_reducer(std::size_t num_vars_per_term,
                       std::size_t num_vars_shared_terms,
-                      double* sliced_partials,
-                      const VecRef& vmapped,
-                      std::ostream* msgs,
-                      const std::decay_t<Args>&... args)
+                      double* sliced_partials, const VecRef& vmapped,
+                      std::ostream* msgs, const std::decay_t<Args>&... args)
         : num_vars_per_term_(num_vars_per_term),
           num_vars_shared_terms_(num_vars_shared_terms),
           sliced_partials_(sliced_partials),
           vmapped_(&vmapped),
           args_ptrs_(&args...),
           msgs_out_(msgs) {
-      if (msgs_out_) msgs_ = std::make_unique<std::stringstream>();
+      if (msgs_out_)
+        msgs_ = std::make_unique<std::stringstream>();
     }
 
     inline void operator()(std::size_t begin, std::size_t end) {
-      if (begin >= end) return;
+      if (begin >= end)
+        return;
 
       if (args_adjoints_.empty()) {
         args_adjoints_.assign(num_vars_shared_terms_, 0.0);
@@ -92,11 +92,13 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, Ve
 
       if (!local_args_tuple_scope_.args_tuple_holder_) {
         local_args_tuple_scope_.stack_.execute([&]() {
-          apply_ptr_tuple([&](auto const&... a) {
-            local_args_tuple_scope_.args_tuple_holder_ =
-                std::make_unique<typename scoped_args_tuple::args_tuple_t>(
+          apply_ptr_tuple(
+              [&](auto const&... a) {
+                local_args_tuple_scope_.args_tuple_holder_ = std::make_unique<
+                    typename scoped_args_tuple::args_tuple_t>(
                     deep_copy_vars(a)...);
-          }, args_ptrs_);
+              },
+              args_ptrs_);
         });
       } else {
         local_args_tuple_scope_.stack_.execute([] { set_zero_all_adjoints(); });
@@ -118,13 +120,13 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, Ve
         local_sub_slice_.emplace_back(deep_copy_vars((*vmapped_)[i]));
       }
 
-      std::ostream* local_msgs =
-          msgs_ ? static_cast<std::ostream*>(msgs_.get()) : nullptr;
+      std::ostream* local_msgs
+          = msgs_ ? static_cast<std::ostream*>(msgs_.get()) : nullptr;
 
       var sub_sum_v = math::apply(
           [&](auto&&... args_local) {
-            return ReduceFunction()(local_sub_slice_, begin, end - 1, local_msgs,
-                                    args_local...);
+            return ReduceFunction()(local_sub_slice_, begin, end - 1,
+                                    local_msgs, args_local...);
           },
           args_tuple_local);
 
@@ -145,43 +147,48 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, Ve
     }
   };
 
-  inline var operator()(Vec&& vmapped, bool /*auto_partitioning*/, int grainsize,
-                        std::ostream* msgs, Args&&... args) const {
-    if (vmapped.empty()) return var(0.0);
+  inline var operator()(Vec&& vmapped, bool /*auto_partitioning*/,
+                        int grainsize, std::ostream* msgs,
+                        Args&&... args) const {
+    if (vmapped.empty())
+      return var(0.0);
 
     const std::size_t num_terms = vmapped.size();
     const std::size_t num_vars_per_term = count_vars(vmapped[0]);
     const std::size_t num_vars_sliced_terms = num_terms * num_vars_per_term;
     const std::size_t num_vars_shared_terms = count_vars(args...);
 
-    vari** varis =
-        ChainableStack::instance_->memalloc_.alloc_array<vari*>(
-            num_vars_sliced_terms + num_vars_shared_terms);
-    double* partials =
-        ChainableStack::instance_->memalloc_.alloc_array<double>(
-            num_vars_sliced_terms + num_vars_shared_terms);
+    vari** varis = ChainableStack::instance_->memalloc_.alloc_array<vari*>(
+        num_vars_sliced_terms + num_vars_shared_terms);
+    double* partials = ChainableStack::instance_->memalloc_.alloc_array<double>(
+        num_vars_sliced_terms + num_vars_shared_terms);
 
     save_varis(varis, vmapped);
     save_varis(varis + num_vars_sliced_terms, args...);
 
-    for (std::size_t i = 0; i < num_vars_sliced_terms; ++i) partials[i] = 0.0;
+    for (std::size_t i = 0; i < num_vars_sliced_terms; ++i)
+      partials[i] = 0.0;
 
     auto& pool = stan::math::TeamThreadPool::instance();
     const std::size_t max_team = pool.team_size();
 
     // Choose workers. (Caller participates, so total participants = n)
-    std::size_t n = std::min<std::size_t>(max_team, num_terms == 0 ? 1 : num_terms);
-    if (n < 1) n = 1;
+    std::size_t n
+        = std::min<std::size_t>(max_team, num_terms == 0 ? 1 : num_terms);
+    if (n < 1)
+      n = 1;
 
     // Chunking: default to ~2 chunks per participant (lower overhead).
     std::size_t gs;
     if (grainsize > 0) {
       gs = static_cast<std::size_t>(grainsize);
-      if (gs < 1) gs = 1;
+      if (gs < 1)
+        gs = 1;
     } else {
       const std::size_t target_chunks = n * 2;
       gs = (num_terms + target_chunks - 1) / target_chunks;
-      if (gs < 1) gs = 1;
+      if (gs < 1)
+        gs = 1;
     }
 
     // Serial cutoff: if too few terms, don't parallelize.
@@ -201,29 +208,34 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, Ve
         }
       }
 
-      if (msgs && r.msgs_) *msgs << r.msgs_->str();
+      if (msgs && r.msgs_)
+        *msgs << r.msgs_->str();
 
       return var(new precomputed_gradients_vari(
-          r.sum_, num_vars_sliced_terms + num_vars_shared_terms, varis, partials));
+          r.sum_, num_vars_sliced_terms + num_vars_shared_terms, varis,
+          partials));
     }
 
     // One reducer per participant (0..n-1) for static partitioning.
-    // NOTE: we avoid copying vmapped/args by taking references/pointers inside reducer.
+    // NOTE: we avoid copying vmapped/args by taking references/pointers inside
+    // reducer.
     std::vector<std::unique_ptr<recursive_reducer>> workers;
     workers.reserve(n);
     for (std::size_t tid = 0; tid < n; ++tid) {
       workers.emplace_back(std::make_unique<recursive_reducer>(
-          num_vars_per_term, num_vars_shared_terms, partials,
-          vmapped, msgs, args...));
+          num_vars_per_term, num_vars_shared_terms, partials, vmapped, msgs,
+          args...));
     }
     /*
-    std::cout << "--------------------------------------------------------------------------------" << std::endl
-	      << "worker count = " << pool.worker_count() << std::endl
-	      << "team size = " << pool.team_size() << std::endl
-	      << "gs = " << gs << std::endl
-	      << std::endl << std::endl;
+    std::cout <<
+    "--------------------------------------------------------------------------------"
+    << std::endl
+              << "worker count = " << pool.worker_count() << std::endl
+              << "team size = " << pool.team_size() << std::endl
+              << "gs = " << gs << std::endl
+              << std::endl << std::endl;
     */
-    
+
     // Static partition: each participant gets a contiguous block once
     pool.parallel_region(n, [&](std::size_t tid) {
       const std::size_t b0 = (num_terms * tid) / n;
@@ -255,10 +267,12 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType, Ve
       partials[num_vars_sliced_terms + i] = shared_adj[i];
     }
 
-    if (msgs) *msgs << all_msgs.str();
+    if (msgs)
+      *msgs << all_msgs.str();
 
     return var(new precomputed_gradients_vari(
-        total_sum, num_vars_sliced_terms + num_vars_shared_terms, varis, partials));
+        total_sum, num_vars_sliced_terms + num_vars_shared_terms, varis,
+        partials));
   }
 };
 

@@ -51,8 +51,9 @@ class matrix_cl : public matrix_cl_base {
   int cols_{0};           // Number of columns.
   // Holds info on if matrix is a special type
   matrix_cl_view view_{matrix_cl_view::Entire};
-  mutable internal::concurrent_vector<cl::Event> write_events_;  // Tracks write jobs
-  mutable internal::concurrent_vector<cl::Event> read_events_;   // Tracks reads
+  mutable internal::concurrent_vector<cl::Event>
+      write_events_;  // Tracks write jobs
+  mutable internal::concurrent_vector<cl::Event> read_events_;  // Tracks reads
 
  public:
   using Scalar = T;  // Underlying type of the matrix
@@ -116,7 +117,8 @@ class matrix_cl : public matrix_cl_base {
    * Get the events from the event stacks.
    * @return The read/write event stack.
    */
-  inline const internal::concurrent_vector<cl::Event> read_write_events() const {
+  inline const internal::concurrent_vector<cl::Event> read_write_events()
+      const {
     return vec_concat(this->read_events(), this->write_events());
   }
 

@@ -19,7 +19,7 @@ namespace stan {
 namespace math {
 
 class SimpleThreadPool {
-public:
+ public:
   static SimpleThreadPool& instance() {
     static SimpleThreadPool pool;
     return pool;
@@ -44,7 +44,8 @@ public:
 
   template <typename F>
   void parallel_region(std::size_t n, F&& fn) {
-    if (n == 0) return;
+    if (n == 0)
+      return;
 
     // Avoid nested parallelism deadlocks/oversubscription.
     if (in_worker_) {
@@ -57,7 +58,8 @@ public:
       fn(std::size_t{0});
       return;
     }
-    if (n > tc) n = tc;
+    if (n > tc)
+      n = tc;
 
     using Fn = std::decay_t<F>;
     struct Shared {
@@ -86,10 +88,11 @@ public:
     });
   }
 
-private:
+ private:
   SimpleThreadPool() : done_(false) {
     unsigned hw = std::thread::hardware_concurrency();
-    if (hw == 0) hw = 2;
+    if (hw == 0)
+      hw = 2;
     const unsigned num_threads = hw;
 
     workers_.reserve(num_threads);
@@ -103,7 +106,8 @@ private:
           {
             std::unique_lock<std::mutex> lock(mtx_);
             cv_.wait(lock, [&] { return done_ || !tasks_.empty(); });
-            if (done_ && tasks_.empty()) return;
+            if (done_ && tasks_.empty())
+              return;
             task = std::move(tasks_.front());
             tasks_.pop();
           }
@@ -122,7 +126,8 @@ private:
     }
     cv_.notify_all();
     for (auto& th : workers_) {
-      if (th.joinable()) th.join();
+      if (th.joinable())
+        th.join();
     }
   }
 

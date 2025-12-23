@@ -53,9 +53,8 @@ map_rect_concurrent(
 
   // Total participants includes caller (tid=0).
   const std::size_t max_team = pool.team_size();
-  const std::size_t n = std::min<std::size_t>(max_team,
-                                              num_jobs == 0 ? 1u
-					      : num_jobs);
+  const std::size_t n
+      = std::min<std::size_t>(max_team, num_jobs == 0 ? 1u : num_jobs);
 
   if (n <= 1 || num_jobs <= 1) {
     execute_chunk(0, num_jobs);

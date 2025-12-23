@@ -28,13 +28,15 @@ namespace math {
  * Notes:
  * - Nested parallel_region calls from a worker run serially to avoid deadlock.
  * - Uses an epoch counter + condition_variable to wake workers per region.
- * - Startup barrier ensures all workers are waiting before the first region launch.
+ * - Startup barrier ensures all workers are waiting before the first region
+ * launch.
  */
 class TeamThreadPool {
  public:
   // Total participants INCLUDING caller (tid=0). Call before instance().
   static void set_num_threads(std::size_t n) noexcept {
-    if (n < 1) n = 1;
+    if (n < 1)
+      n = 1;
     user_cap_().store(n, std::memory_order_release);
   }
 
@@ -52,7 +54,8 @@ class TeamThreadPool {
 
   template <typename F>
   void parallel_region(std::size_t n, F&& fn) {
-    if (n == 0) return;
+    if (n == 0)
+      return;
 
     // Prevent nested parallelism from deadlocking the pool.
     if (in_worker_) {
@@ -68,7 +71,8 @@ class TeamThreadPool {
       fn(std::size_t{0});
       return;
     }
-    if (n > max_team) n = max_team;
+    if (n > max_team)
+      n = max_team;
     if (n == 1) {
       fn(std::size_t{0});
       return;
@@ -91,8 +95,8 @@ class TeamThreadPool {
     region_call_.store(&call_impl<Fn>, std::memory_order_release);
 
     // Bump epoch to start the region, then wake workers.
-    const std::size_t new_epoch =
-        epoch_.fetch_add(1, std::memory_order_acq_rel) + 1;
+    const std::size_t new_epoch
+        = epoch_.fetch_add(1, std::memory_order_acq_rel) + 1;
 
     {
       std::lock_guard<std::mutex> lk(wake_m_);
@@ -107,20 +111,21 @@ class TeamThreadPool {
       fn_copy(0);
     } catch (...) {
       std::lock_guard<std::mutex> lk(exc_m_);
-      if (eptr == nullptr) eptr = std::current_exception();
+      if (eptr == nullptr)
+        eptr = std::current_exception();
     }
     in_worker_ = false;
 
     // Wait for workers 1..n-1.
     std::unique_lock<std::mutex> lk(done_m_);
-    done_cv_.wait(lk, [&] {
-      return remaining_.load(std::memory_order_acquire) == 0;
-    });
+    done_cv_.wait(
+        lk, [&] { return remaining_.load(std::memory_order_acquire) == 0; });
 
     // Hygiene.
     region_n_.store(0, std::memory_order_release);
 
-    if (eptr) std::rethrow_exception(eptr);
+    if (eptr)
+      std::rethrow_exception(eptr);
   }
 
  private:
@@ -138,19 +143,25 @@ class TeamThreadPool {
 
   static std::size_t env_num_threads_() noexcept {
     const char* s = std::getenv("STAN_NUM_THREADS");
-    if (!s || !*s) return 0;
+    if (!s || !*s)
+      return 0;
     char* end = nullptr;
     long v = std::strtol(s, &end, 10);
-    if (end == s || v <= 0) return 0;
+    if (end == s || v <= 0)
+      return 0;
     return static_cast<std::size_t>(v);
   }
 
   static std::size_t configured_cap_(std::size_t hw) noexcept {
     std::size_t cap = user_cap_().load(std::memory_order_acquire);
-    if (cap == 0) cap = env_num_threads_();
-    if (cap == 0) cap = hw;
-    if (cap < 1) cap = 1;
-    if (cap > hw) cap = hw;
+    if (cap == 0)
+      cap = env_num_threads_();
+    if (cap == 0)
+      cap = hw;
+    if (cap < 1)
+      cap = 1;
+    if (cap > hw)
+      cap = hw;
     return cap;
   }
 
@@ -164,7 +175,8 @@ class TeamThreadPool {
         exc_ptr_(nullptr),
         ready_count_(0) {
     unsigned hw_u = std::thread::hardware_concurrency();
-    if (hw_u == 0) hw_u = 2;
+    if (hw_u == 0)
+      hw_u = 2;
     const std::size_t hw = static_cast<std::size_t>(hw_u);
 
     const std::size_t cap = configured_cap_(hw);
@@ -197,12 +209,14 @@ class TeamThreadPool {
               return stop_.load(std::memory_order_acquire)
                      || epoch_.load(std::memory_order_acquire) != seen_epoch;
             });
-            if (stop_.load(std::memory_order_acquire)) break;
+            if (stop_.load(std::memory_order_acquire))
+              break;
             seen_epoch = epoch_.load(std::memory_order_acquire);
           }
 
           const std::size_t n = region_n_.load(std::memory_order_acquire);
-          if (tid >= n) continue;  // not participating this region
+          if (tid >= n)
+            continue;  // not participating this region
 
           // Always decrement once for participating workers.
           struct DoneGuard {
@@ -255,7 +269,8 @@ class TeamThreadPool {
     wake_cv_.notify_all();
 
     for (auto& t : workers_) {
-      if (t.joinable()) t.join();
+      if (t.joinable())
+        t.join();
     }
   }
 
