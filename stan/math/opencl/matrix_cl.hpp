@@ -12,7 +12,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/vec_concat.hpp>
 #include <CL/opencl.hpp>
-#include <tbb/concurrent_vector.h>
+#include <stan/math/opencl/concurrent_vector.h>
 #include <algorithm>
 #include <iostream>
 #include <string>
@@ -51,8 +51,8 @@ class matrix_cl : public matrix_cl_base {
   int cols_{0};           // Number of columns.
   // Holds info on if matrix is a special type
   matrix_cl_view view_{matrix_cl_view::Entire};
-  mutable tbb::concurrent_vector<cl::Event> write_events_;  // Tracks write jobs
-  mutable tbb::concurrent_vector<cl::Event> read_events_;   // Tracks reads
+  mutable internal::concurrent_vector<cl::Event> write_events_;  // Tracks write jobs
+  mutable internal::concurrent_vector<cl::Event> read_events_;   // Tracks reads
 
  public:
   using Scalar = T;  // Underlying type of the matrix
@@ -100,7 +100,7 @@ class matrix_cl : public matrix_cl_base {
    * Get the events from the event stacks.
    * @return The write event stack.
    */
-  inline const tbb::concurrent_vector<cl::Event>& write_events() const {
+  inline const internal::concurrent_vector<cl::Event>& write_events() const {
     return write_events_;
   }
 
@@ -108,7 +108,7 @@ class matrix_cl : public matrix_cl_base {
    * Get the events from the event stacks.
    * @return The read/write event stack.
    */
-  inline const tbb::concurrent_vector<cl::Event>& read_events() const {
+  inline const internal::concurrent_vector<cl::Event>& read_events() const {
     return read_events_;
   }
 
@@ -116,7 +116,7 @@ class matrix_cl : public matrix_cl_base {
    * Get the events from the event stacks.
    * @return The read/write event stack.
    */
-  inline const tbb::concurrent_vector<cl::Event> read_write_events() const {
+  inline const internal::concurrent_vector<cl::Event> read_write_events() const {
     return vec_concat(this->read_events(), this->write_events());
   }
 
