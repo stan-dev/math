@@ -12,7 +12,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/vec_concat.hpp>
 #include <CL/opencl.hpp>
-#include <stan/math/opencl/concurrent_vector.h>
+#include <stan/math/opencl/concurrent_vector.hpp>
 #include <algorithm>
 #include <iostream>
 #include <string>
