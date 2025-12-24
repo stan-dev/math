@@ -8,7 +8,8 @@
 #include <stan/math/prim/fun/fma.hpp>
 #include <stan/math/prim/fun/gamma_p.hpp>
 #include <stan/math/prim/fun/grad_reg_lower_inc_gamma.hpp>
-#include <stan/math/prim/fun/log.hpp>
+// #include <stan/math/prim/fun/lgamma.hpp>
+// #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log1m.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
@@ -16,6 +17,7 @@
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
+
 #include <stan/math/fwd/fun/lgamma.hpp>
 #include <stan/math/fwd/fun/log.hpp>
 #include <stan/math/fwd/fun/value_of.hpp>
@@ -26,6 +28,19 @@ namespace math {
 
 namespace internal {
 
+/**
+ * Compute log(Q(a,x)) using continued fraction expansion for upper incomplete
+ * gamma function, where Q(a,x) = Gamma(a,x) / Gamma(a) is the regularized
+ * upper incomplete gamma function.
+ *
+ * @tparam T_a Type of shape parameter a; can be either double or fvar<double>
+ *             for forward-mode automatic differentiation
+ * @param a Shape parameter
+ * @param x Value at which to evaluate
+ * @param max_steps Maximum number of continued fraction iterations
+ * @param precision Convergence threshold
+ * @return log(Q(a,x)) with same type as T_a
+ */
 template <typename T_a>
 inline auto log_q_gamma_cf(const T_a& a, const double x, int max_steps = 250,
                            double precision = 1e-16) {
