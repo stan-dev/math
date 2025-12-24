@@ -109,12 +109,14 @@ inline void assign_events(const cl::Event& new_event, CallArg& m,
  * @return A vector of OpenCL events.
  */
 template <typename T, require_not_matrix_cl_t<T>* = nullptr>
-inline stan::math::internal::concurrent_vector<cl::Event> select_events(const T& m) {
+inline stan::math::internal::concurrent_vector<cl::Event> select_events(
+    const T& m) {
   return stan::math::internal::concurrent_vector<cl::Event>{};
 }
 template <typename T, typename K, require_matrix_cl_t<K>* = nullptr,
           require_same_t<T, in_buffer>* = nullptr>
-inline const stan::math::internal::concurrent_vector<cl::Event>& select_events(const K& m) {
+inline const stan::math::internal::concurrent_vector<cl::Event>& select_events(
+    const K& m) {
   return m.write_events();
 }
 template <typename T, typename K, require_matrix_cl_t<K>* = nullptr,

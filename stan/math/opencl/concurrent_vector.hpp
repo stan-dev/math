@@ -27,8 +27,8 @@ namespace internal {
  *
  * Notes:
  *  - Intended for append-then-read patterns.
- *  - size_ increments before construction finishes. If readers iterate up to size()
- *    concurrently with writers, you need a constructed/published protocol.
+ *  - size_ increments before construction finishes. If readers iterate up to
+ * size() concurrently with writers, you need a constructed/published protocol.
  *  - clear()/destruction are NOT concurrent with pushes/reads.
  */
 template <typename T, std::size_t BaseSegmentSize = 1024,
@@ -41,7 +41,8 @@ class concurrent_vector {
 
  public:
   concurrent_vector() noexcept : size_(0) {
-    for (auto& p : segments_) p.store(nullptr, std::memory_order_relaxed);
+    for (auto& p : segments_)
+      p.store(nullptr, std::memory_order_relaxed);
   }
 
   concurrent_vector(const concurrent_vector& other) : concurrent_vector() {
@@ -55,17 +56,19 @@ class concurrent_vector {
     }
     return *this;
   }
-  
+
   // Movable (needed so Stan can return-by-value)
   concurrent_vector(concurrent_vector&& other) noexcept : size_(0) {
-    for (auto& p : segments_) p.store(nullptr, std::memory_order_relaxed);
+    for (auto& p : segments_)
+      p.store(nullptr, std::memory_order_relaxed);
     move_from_(other);
   }
 
   concurrent_vector& operator=(concurrent_vector&& other) noexcept {
     if (this != &other) {
       destroy_all_();
-      for (auto& p : segments_) p.store(nullptr, std::memory_order_relaxed);
+      for (auto& p : segments_)
+        p.store(nullptr, std::memory_order_relaxed);
       size_.store(0, std::memory_order_relaxed);
       move_from_(other);
     }
@@ -87,13 +90,16 @@ class concurrent_vector {
   }
 
   // Pre-allocate enough segments to back indices [0, capacity-1].
-  // Safe to call concurrently with emplace_back (may race allocating segments; losers free).
+  // Safe to call concurrently with emplace_back (may race allocating segments;
+  // losers free).
   void reserve(std::size_t capacity) {
-    if (capacity == 0) return;
+    if (capacity == 0)
+      return;
     const std::size_t last = capacity - 1;
     const std::size_t last_seg = segment_index_(last);
     if (last_seg >= MaxSegments) {
-      throw std::length_error("concurrent_vector::reserve: exceeds MaxSegments");
+      throw std::length_error(
+          "concurrent_vector::reserve: exceeds MaxSegments");
     }
     for (std::size_t s = 0; s <= last_seg; ++s) {
       ensure_segment_(s);
@@ -124,11 +130,13 @@ class concurrent_vector {
 
   // Bounds-checked access.
   T& at(std::size_t i) {
-    if (i >= size()) throw std::out_of_range("concurrent_vector::at");
+    if (i >= size())
+      throw std::out_of_range("concurrent_vector::at");
     return *data_at(i);
   }
   const T& at(std::size_t i) const {
-    if (i >= size()) throw std::out_of_range("concurrent_vector::at");
+    if (i >= size())
+      throw std::out_of_range("concurrent_vector::at");
     return *data_at(i);
   }
 
@@ -154,13 +162,22 @@ class concurrent_vector {
     reference operator*() const { return (*v_)[i_]; }
     pointer operator->() const { return &(*v_)[i_]; }
 
-    iterator& operator++() { ++i_; return *this; }
-    iterator operator++(int) { iterator tmp = *this; ++(*this); return tmp; }
+    iterator& operator++() {
+      ++i_;
+      return *this;
+    }
+    iterator operator++(int) {
+      iterator tmp = *this;
+      ++(*this);
+      return tmp;
+    }
 
     friend bool operator==(const iterator& a, const iterator& b) {
       return a.v_ == b.v_ && a.i_ == b.i_;
     }
-    friend bool operator!=(const iterator& a, const iterator& b) { return !(a == b); }
+    friend bool operator!=(const iterator& a, const iterator& b) {
+      return !(a == b);
+    }
 
    private:
     concurrent_vector* v_;
@@ -181,13 +198,22 @@ class concurrent_vector {
     reference operator*() const { return (*v_)[i_]; }
     pointer operator->() const { return &(*v_)[i_]; }
 
-    const_iterator& operator++() { ++i_; return *this; }
-    const_iterator operator++(int) { const_iterator tmp = *this; ++(*this); return tmp; }
+    const_iterator& operator++() {
+      ++i_;
+      return *this;
+    }
+    const_iterator operator++(int) {
+      const_iterator tmp = *this;
+      ++(*this);
+      return tmp;
+    }
 
     friend bool operator==(const const_iterator& a, const const_iterator& b) {
       return a.v_ == b.v_ && a.i_ == b.i_;
     }
-    friend bool operator!=(const const_iterator& a, const const_iterator& b) { return !(a == b); }
+    friend bool operator!=(const const_iterator& a, const const_iterator& b) {
+      return !(a == b);
+    }
 
    private:
     const concurrent_vector* v_;
@@ -195,7 +221,9 @@ class concurrent_vector {
   };
 
   iterator begin() noexcept { return iterator(this, 0); }
-  iterator end() noexcept { return iterator(this, size()); }  // snapshot at call time
+  iterator end() noexcept {
+    return iterator(this, size());
+  }  // snapshot at call time
 
   const_iterator begin() const noexcept { return const_iterator(this, 0); }
   const_iterator end() const noexcept { return const_iterator(this, size()); }
@@ -205,13 +233,15 @@ class concurrent_vector {
 
   T& back() {
     const std::size_t n = size();
-    if (n == 0) throw std::out_of_range("concurrent_vector::back on empty");
+    if (n == 0)
+      throw std::out_of_range("concurrent_vector::back on empty");
     return (*this)[n - 1];
   }
 
   const T& back() const {
     const std::size_t n = size();
-    if (n == 0) throw std::out_of_range("concurrent_vector::back on empty");
+    if (n == 0)
+      throw std::out_of_range("concurrent_vector::back on empty");
     return (*this)[n - 1];
   }
   // -------------------------
@@ -235,16 +265,19 @@ class concurrent_vector {
 
 #if defined(__GNUG__) || defined(__clang__)
     if constexpr (sizeof(std::size_t) == 8) {
-      return 63u - static_cast<std::size_t>(
-                       __builtin_clzll(static_cast<unsigned long long>(x)));
+      return 63u
+             - static_cast<std::size_t>(
+                 __builtin_clzll(static_cast<unsigned long long>(x)));
     } else {
-      return 31u - static_cast<std::size_t>(
-                       __builtin_clzl(static_cast<unsigned long>(x)));
+      return 31u
+             - static_cast<std::size_t>(
+                 __builtin_clzl(static_cast<unsigned long>(x)));
     }
 #else
     std::size_t s = 0;
     std::size_t t = x;
-    while (t >>= 1) ++s;
+    while (t >>= 1)
+      ++s;
     return s;
 #endif
   }
@@ -263,7 +296,8 @@ class concurrent_vector {
 
   T* ensure_segment_(std::size_t s) {
     T* seg = segment_ptr_(s);
-    if (seg) return seg;
+    if (seg)
+      return seg;
 
     const std::size_t n = segment_size_(s);
     void* raw = ::operator new(sizeof(T) * n);
@@ -299,7 +333,8 @@ class concurrent_vector {
 
     for (auto& a : segments_) {
       void* p = a.exchange(nullptr, std::memory_order_acq_rel);
-      if (p) ::operator delete(p);
+      if (p)
+        ::operator delete(p);
     }
   }
 
@@ -317,7 +352,8 @@ class concurrent_vector {
 
   void copy_from_(const concurrent_vector& other) {
     const std::size_t n = other.size();
-    if (n == 0) return;
+    if (n == 0)
+      return;
 
     reserve(n);
     // Important: we want size_ to match, but we must construct elements.
@@ -326,7 +362,7 @@ class concurrent_vector {
       emplace_back(other[i]);
     }
   }
-  
+
   std::atomic<std::size_t> size_;
   std::array<std::atomic<void*>, MaxSegments> segments_;
 };

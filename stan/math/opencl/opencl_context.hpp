@@ -420,7 +420,7 @@ class opencl_context {
     for (std::size_t i = 0; i < kernel_caches_.size(); ++i) {
       cl::Kernel*& cache = kernel_caches_[i];
       if (cache) {
-	*cache = cl::Kernel();
+        *cache = cl::Kernel();
       }
     }
     kernel_caches_.clear();
