@@ -417,8 +417,11 @@ class opencl_context {
    * @param instance_id if of the device
    */
   inline void select_device(int platform_id, int instance_id) {
-    for (cl::Kernel* cache : kernel_caches_) {
-      *cache = cl::Kernel();
+    for (std::size_t i = 0; i < kernel_caches_.size(); ++i) {
+      cl::Kernel*& cache = kernel_caches_[i];
+      if (cache) {
+	*cache = cl::Kernel();
+      }
     }
     kernel_caches_.clear();
     opencl_context_base::select_device(platform_id, instance_id);
