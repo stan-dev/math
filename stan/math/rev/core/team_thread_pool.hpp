@@ -146,10 +146,10 @@ class TeamThreadPool {
     if (!s || !*s)
       return 0;
     char* end = nullptr;
-    long v = std::strtol(s, &end, 10);
+    std::size_t v = static_cast<std::size_t>(std::strtol(s, &end, 10));
     if (end == s || v <= 0)
       return 0;
-    return static_cast<std::size_t>(v);
+    return v;
   }
 
   static std::size_t configured_cap_(std::size_t hw) noexcept {

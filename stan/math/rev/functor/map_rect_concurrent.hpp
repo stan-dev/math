@@ -9,9 +9,6 @@
 #include <stan/math/rev/core/chainablestack.hpp>
 #include <stan/math/rev/core/team_thread_pool.hpp>
 
-//#include <tbb/parallel_for.h>
-//#include <tbb/blocked_range.h>
-
 #include <algorithm>
 #include <numeric>
 #include <thread>
