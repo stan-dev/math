@@ -48,8 +48,7 @@ struct log_gamma_q_result {
  */
 template <typename T_a, typename T_z>
 inline log_gamma_q_result<return_type_t<T_a, T_z>> log_gamma_q_dgamma(
-    const T_a& a, const T_z& z, int max_steps = 250,
-    double precision = 1e-16) {
+    const T_a& a, const T_z& z, int max_steps = 250, double precision = 1e-16) {
   using std::exp;
   using std::fabs;
   using std::log;
@@ -99,7 +98,8 @@ inline log_gamma_q_result<return_type_t<T_a, T_z>> log_gamma_q_dgamma(
     // For gradient, use: d/da log(Q) = (1/Q) * dQ/da
     // grad_reg_inc_gamma computes dQ/da
     const double Q_val = exp(result.log_q);
-    const double dQ_da = grad_reg_inc_gamma(a_dbl, z_dbl, tgamma(a_dbl), digamma(a_dbl));
+    const double dQ_da
+        = grad_reg_inc_gamma(a_dbl, z_dbl, tgamma(a_dbl), digamma(a_dbl));
     result.dlog_q_da = dQ_da / Q_val;
 
   } else {
@@ -111,7 +111,8 @@ inline log_gamma_q_result<return_type_t<T_a, T_z>> log_gamma_q_dgamma(
     // grad_reg_inc_gamma computes dQ/da
     const double Q_val = exp(result.log_q);
     if (Q_val > 0) {
-      const double dQ_da = grad_reg_inc_gamma(a_dbl, z_dbl, tgamma(a_dbl), digamma(a_dbl));
+      const double dQ_da
+          = grad_reg_inc_gamma(a_dbl, z_dbl, tgamma(a_dbl), digamma(a_dbl));
       result.dlog_q_da = dQ_da / Q_val;
     } else {
       // Fallback if Q rounds to zero - use asymptotic approximation

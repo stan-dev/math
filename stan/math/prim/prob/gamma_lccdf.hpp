@@ -30,7 +30,8 @@ namespace internal {
 
 /**
  * Compute log(Q(a,x)) using continued fraction expansion for upper incomplete
- * gamma function. When used with fvar types, automatically computes derivatives.
+ * gamma function. When used with fvar types, automatically computes
+ * derivatives.
  *
  * @tparam T_a Type of shape parameter a (double or fvar types)
  * @param a Shape parameter
@@ -118,10 +119,9 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(const T_y& y,
   const size_t N = max_size(y, alpha, beta);
 
   constexpr bool need_y_beta_deriv = !is_constant_all<T_y, T_inv_scale>::value;
-  constexpr bool any_fvar
-      = is_fvar<scalar_type_t<T_y>>::value
-        || is_fvar<scalar_type_t<T_shape>>::value
-        || is_fvar<scalar_type_t<T_inv_scale>>::value;
+  constexpr bool any_fvar = is_fvar<scalar_type_t<T_y>>::value
+                            || is_fvar<scalar_type_t<T_shape>>::value
+                            || is_fvar<scalar_type_t<T_inv_scale>>::value;
   constexpr bool partials_fvar = is_fvar<T_partials_return>::value;
 
   for (size_t n = 0; n < N; n++) {
@@ -164,8 +164,7 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(const T_y& y,
             alpha_unit.d_ = 1;
             auto beta_unit = beta_y;
             beta_unit.d_ = 0;
-            auto log_Qn_fvar
-                = internal::log_q_gamma_cf(alpha_unit, beta_unit);
+            auto log_Qn_fvar = internal::log_q_gamma_cf(alpha_unit, beta_unit);
             dlogQ_dalpha = log_Qn_fvar.d_;
           } else {
             const T_partials_return Qn = exp(log_Qn);
