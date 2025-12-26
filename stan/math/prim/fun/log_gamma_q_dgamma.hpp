@@ -39,13 +39,12 @@ namespace internal {
  * @tparam T_z Type of value parameter z (double or fvar types)
  * @param a Shape parameter
  * @param z Value at which to evaluate
- * @param max_steps Maximum number of continued fraction iterations
  * @param precision Convergence threshold
+ * @param max_steps Maximum number of continued fraction iterations
  * @return log(Q(a,z)) with same type as T_a and T_z
  */
 template <typename T_a, typename T_z>
-inline auto log_q_gamma_cf(const T_a& a, const T_z& z, int max_steps = 250,
-                           double precision = 1e-16) {
+inline auto log_q_gamma_cf(const T_a& a, const T_z& z, double precision = 1e-16, int max_steps = 250) {
   using stan::math::lgamma;
   using stan::math::log;
   using stan::math::value_of;
@@ -102,13 +101,13 @@ inline auto log_q_gamma_cf(const T_a& a, const T_z& z, int max_steps = 250,
  * @tparam T_z type of the value parameter
  * @param a shape parameter (must be positive)
  * @param z value parameter (must be non-negative)
- * @param max_steps maximum iterations for continued fraction
  * @param precision convergence threshold
+ * @param max_steps maximum iterations for continued fraction
  * @return structure containing log(Q(a,z)) and d/da log(Q(a,z))
  */
 template <typename T_a, typename T_z>
 inline log_gamma_q_result<return_type_t<T_a, T_z>> log_gamma_q_dgamma(
-    const T_a& a, const T_z& z, int max_steps = 250, double precision = 1e-16) {
+    const T_a& a, const T_z& z, double precision = 1e-16, int max_steps = 250) {
   using std::exp;
   using std::log;
   using T_return = return_type_t<T_a, T_z>;
@@ -120,7 +119,8 @@ inline log_gamma_q_result<return_type_t<T_a, T_z>> log_gamma_q_dgamma(
 
   // For z > a + 1, use continued fraction for better numerical stability
   if (z_dbl > a_dbl + 1.0) {
-    result.log_q = internal::log_q_gamma_cf(a_dbl, z_dbl, max_steps, precision);
+    result.log_q
+        = internal::log_q_gamma_cf(a_dbl, z_dbl, precision,  max_steps);
 
     // For gradient, use: d/da log(Q) = (1/Q) * dQ/da
     // grad_reg_inc_gamma computes dQ/da
