@@ -44,7 +44,8 @@ namespace internal {
  * @return log(Q(a,z)) with same type as T_a and T_z
  */
 template <typename T_a, typename T_z>
-inline auto log_q_gamma_cf(const T_a& a, const T_z& z, double precision = 1e-16, int max_steps = 250) {
+inline auto log_q_gamma_cf(const T_a& a, const T_z& z, double precision = 1e-16,
+                           int max_steps = 250) {
   using stan::math::lgamma;
   using stan::math::log;
   using stan::math::value_of;
@@ -119,8 +120,7 @@ inline log_gamma_q_result<return_type_t<T_a, T_z>> log_gamma_q_dgamma(
 
   // For z > a + 1, use continued fraction for better numerical stability
   if (z_dbl > a_dbl + 1.0) {
-    result.log_q
-        = internal::log_q_gamma_cf(a_dbl, z_dbl, precision,  max_steps);
+    result.log_q = internal::log_q_gamma_cf(a_dbl, z_dbl, precision, max_steps);
 
     // For gradient, use: d/da log(Q) = (1/Q) * dQ/da
     // grad_reg_inc_gamma computes dQ/da
