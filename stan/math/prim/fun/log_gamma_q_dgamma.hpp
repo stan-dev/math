@@ -29,6 +29,66 @@ struct log_gamma_q_result {
   T dlog_q_da;  ///< d/da log(Q(a,z))
 };
 
+namespace internal {
+
+/**
+ * Compute log(Q(a,z)) using continued fraction expansion for upper incomplete
+ * gamma function.
+ *
+ * @tparam T_a Type of shape parameter a (double or fvar types)
+ * @tparam T_z Type of value parameter z (double or fvar types)
+ * @param a Shape parameter
+ * @param z Value at which to evaluate
+ * @param max_steps Maximum number of continued fraction iterations
+ * @param precision Convergence threshold
+ * @return log(Q(a,z)) with same type as T_a and T_z
+ */
+template <typename T_a, typename T_z>
+inline auto log_q_gamma_cf(const T_a& a, const T_z& z, int max_steps = 250,
+                           double precision = 1e-16) {
+  using stan::math::lgamma;
+  using stan::math::log;
+  using stan::math::value_of;
+  using std::fabs;
+  using T_return = return_type_t<T_a, T_z>;
+
+  const T_return a_ret = a;
+  const T_return z_ret = z;
+  const auto log_prefactor = a_ret * log(z_ret) - z_ret - lgamma(a_ret);
+
+  auto b = z_ret + 1.0 - a_ret;
+  auto C = (fabs(value_of(b)) >= EPSILON) ? b : T_return(EPSILON);
+  auto D = T_return(0.0);
+  auto f = C;
+
+  for (int i = 1; i <= max_steps; ++i) {
+    auto an = -i * (i - a_ret);
+    b += 2.0;
+
+    D = b + an * D;
+    if (fabs(value_of(D)) < EPSILON) {
+      D = T_return(EPSILON);
+    }
+    C = b + an / C;
+    if (fabs(value_of(C)) < EPSILON) {
+      C = T_return(EPSILON);
+    }
+
+    D = 1.0 / D;
+    auto delta = C * D;
+    f *= delta;
+
+    const double delta_m1 = value_of(fabs(value_of(delta) - 1.0));
+    if (delta_m1 < precision) {
+      break;
+    }
+  }
+
+  return log_prefactor - log(f);
+}
+
+}  // namespace internal
+
 /**
  * Compute log(Q(a,z)) and its gradient with respect to a using continued
  * fraction expansion, where Q(a,z) = Gamma(a,z) / Gamma(a) is the regularized
@@ -50,7 +110,6 @@ template <typename T_a, typename T_z>
 inline log_gamma_q_result<return_type_t<T_a, T_z>> log_gamma_q_dgamma(
     const T_a& a, const T_z& z, int max_steps = 250, double precision = 1e-16) {
   using std::exp;
-  using std::fabs;
   using std::log;
   using T_return = return_type_t<T_a, T_z>;
 
@@ -61,39 +120,8 @@ inline log_gamma_q_result<return_type_t<T_a, T_z>> log_gamma_q_dgamma(
 
   // For z > a + 1, use continued fraction for better numerical stability
   if (z_dbl > a_dbl + 1.0) {
-    // Continued fraction for Q(a,z) in log space
-    // log(Q(a,z)) = log_prefactor - log(continued_fraction)
-    const double log_prefactor = a_dbl * log(z_dbl) - z_dbl - lgamma(a_dbl);
-
-    double b = z_dbl + 1.0 - a_dbl;
-    double C = (fabs(b) >= EPSILON) ? b : EPSILON;
-    double D = 0.0;
-    double f = C;
-
-    for (int i = 1; i <= max_steps; ++i) {
-      const double an = -i * (i - a_dbl);
-      b += 2.0;
-
-      D = b + an * D;
-      if (fabs(D) < EPSILON) {
-        D = EPSILON;
-      }
-      C = b + an / C;
-      if (fabs(C) < EPSILON) {
-        C = EPSILON;
-      }
-
-      D = 1.0 / D;
-      const double delta = C * D;
-      f *= delta;
-
-      const double delta_m1 = fabs(delta - 1.0);
-      if (delta_m1 < precision) {
-        break;
-      }
-    }
-
-    result.log_q = log_prefactor - log(f);
+    result.log_q
+        = internal::log_q_gamma_cf(a_dbl, z_dbl, max_steps, precision);
 
     // For gradient, use: d/da log(Q) = (1/Q) * dQ/da
     // grad_reg_inc_gamma computes dQ/da

@@ -26,66 +26,6 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-
-/**
- * Compute log(Q(a,x)) using continued fraction expansion for upper incomplete
- * gamma function. When used with fvar types, automatically computes
- * derivatives.
- *
- * @tparam T_a Type of shape parameter a (double or fvar types)
- * @param a Shape parameter
- * @param x Value at which to evaluate
- * @param max_steps Maximum number of continued fraction iterations
- * @param precision Convergence threshold
- * @return log(Q(a,x)) with same type as T_a
- */
-template <typename T_a, typename T_x>
-inline auto log_q_gamma_cf(const T_a& a, const T_x& x, int max_steps = 250,
-                           double precision = 1e-16) {
-  using stan::math::lgamma;
-  using stan::math::log;
-  using stan::math::value_of;
-  using std::fabs;
-  using T_return = return_type_t<T_a, T_x>;
-
-  const T_return a_ret = a;
-  const T_return x_ret = x;
-  const auto log_prefactor = a_ret * log(x_ret) - x_ret - lgamma(a_ret);
-
-  auto b = x_ret + 1.0 - a_ret;
-  auto C = (fabs(value_of(b)) >= EPSILON) ? b : T_return(EPSILON);
-  auto D = T_return(0.0);
-  auto f = C;
-
-  for (int i = 1; i <= max_steps; ++i) {
-    auto an = -i * (i - a_ret);
-    b += 2.0;
-
-    D = b + an * D;
-    if (fabs(value_of(D)) < EPSILON) {
-      D = T_a(EPSILON);
-    }
-    C = b + an / C;
-    if (fabs(value_of(C)) < EPSILON) {
-      C = T_a(EPSILON);
-    }
-
-    D = 1.0 / D;
-    auto delta = C * D;
-    f *= delta;
-
-    const double delta_m1 = value_of(fabs(value_of(delta) - 1.0));
-    if (delta_m1 < precision) {
-      break;
-    }
-  }
-
-  return log_prefactor - log(f);
-}
-
-}  // namespace internal
-
 template <typename T_y, typename T_shape, typename T_inv_scale>
 return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(const T_y& y,
                                                      const T_shape& alpha,

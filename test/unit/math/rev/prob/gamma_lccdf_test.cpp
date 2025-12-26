@@ -272,6 +272,31 @@ TEST(ProbDistributionsGamma,
   EXPECT_LE(grads[0], 0.0);
 }
 
+TEST(ProbDistributionsGamma, lccdf_log1m_exp_lcdf_rounds_to_inf) {
+  using stan::math::gamma_lcdf;
+  using stan::math::gamma_lccdf;
+  using stan::math::log1m_exp;
+  using stan::math::negative_infinity;
+  using stan::math::var;
+
+  double y_d = 20000.0;
+  double alpha_d = 800.0;
+  double beta_d = 0.1;
+
+  double lcdf = gamma_lcdf(y_d, alpha_d, beta_d);
+  double log1m_lcdf = log1m_exp(lcdf);
+
+  var y_v = y_d;
+  var alpha_v = alpha_d;
+  var beta_v = beta_d;
+  var lccdf_var = gamma_lccdf(y_v, alpha_v, beta_v);
+
+  EXPECT_EQ(lcdf, 0.0);
+  EXPECT_EQ(log1m_lcdf, negative_infinity());
+  EXPECT_TRUE(std::isfinite(lccdf_var.val()));
+  EXPECT_LT(lccdf_var.val(), 0.0);
+}
+
 TEST(ProbDistributionsGamma, lccdf_extreme_values_large) {
   using stan::math::gamma_lccdf;
   using stan::math::var;
