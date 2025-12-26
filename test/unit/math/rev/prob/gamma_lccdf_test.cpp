@@ -273,8 +273,8 @@ TEST(ProbDistributionsGamma,
 }
 
 TEST(ProbDistributionsGamma, lccdf_log1m_exp_lcdf_rounds_to_inf) {
-  using stan::math::gamma_lcdf;
   using stan::math::gamma_lccdf;
+  using stan::math::gamma_lcdf;
   using stan::math::log1m_exp;
   using stan::math::negative_infinity;
   using stan::math::var;

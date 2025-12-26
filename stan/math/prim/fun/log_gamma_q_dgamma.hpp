@@ -120,8 +120,7 @@ inline log_gamma_q_result<return_type_t<T_a, T_z>> log_gamma_q_dgamma(
 
   // For z > a + 1, use continued fraction for better numerical stability
   if (z_dbl > a_dbl + 1.0) {
-    result.log_q
-        = internal::log_q_gamma_cf(a_dbl, z_dbl, max_steps, precision);
+    result.log_q = internal::log_q_gamma_cf(a_dbl, z_dbl, max_steps, precision);
 
     // For gradient, use: d/da log(Q) = (1/Q) * dQ/da
     // grad_reg_inc_gamma computes dQ/da

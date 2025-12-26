@@ -92,8 +92,8 @@ TEST(ProbGamma, lccdf_alpha_gt_30_small_y_old_code_rounds_to_zero) {
 }
 
 TEST(ProbGamma, lccdf_log1m_exp_lcdf_rounds_to_inf) {
-  using stan::math::gamma_lcdf;
   using stan::math::gamma_lccdf;
+  using stan::math::gamma_lcdf;
   using stan::math::log1m_exp;
   using stan::math::negative_infinity;
 
