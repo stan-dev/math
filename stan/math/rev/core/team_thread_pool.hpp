@@ -54,29 +54,30 @@ class TeamThreadPool {
 
   template <typename F>
   void parallel_region(std::size_t n, F&& fn) {
-    if (n == 0)
-      return;
-
-    // Prevent nested parallelism from deadlocking the pool.
-    if (in_worker_) {
-      fn(std::size_t{0});
-      return;
-    }
-
-    // Only one active region at a time (shared region state).
-    std::unique_lock<std::mutex> region_lock(region_m_);
+    if (n == 0) return;
 
     const std::size_t max_team = team_size();
     if (max_team <= 1) {
       fn(std::size_t{0});
       return;
     }
-    if (n > max_team)
-      n = max_team;
-    if (n == 1) {
+    if (n > max_team) n = max_team;
+    if (n <= 1) {
       fn(std::size_t{0});
       return;
     }
+
+    // Prevent nested parallelism from deadlocking the pool.
+    // IMPORTANT: must still execute ALL tids to preserve correctness.
+    if (in_worker_) {
+      for (std::size_t tid = 0; tid < n; ++tid) {
+	fn(tid);
+      }
+      return;
+    }
+
+    // Only one active region at a time (shared region state).
+    std::unique_lock<std::mutex> region_lock(region_m_);
 
     using Fn = std::decay_t<F>;
     Fn fn_copy = std::forward<F>(fn);
@@ -88,20 +89,17 @@ class TeamThreadPool {
       exc_ptr_ = &eptr;
     }
 
-    // Publish region state BEFORE bumping epoch.
-    remaining_.store(n - 1, std::memory_order_release);  // workers only
+    // Publish region state (workers read with acquire)
+    remaining_.store(n - 1, std::memory_order_release);
     region_n_.store(n, std::memory_order_release);
     region_ctx_.store(static_cast<void*>(&fn_copy), std::memory_order_release);
     region_call_.store(&call_impl<Fn>, std::memory_order_release);
 
-    // Bump epoch to start the region, then wake workers.
-    const std::size_t new_epoch
-        = epoch_.fetch_add(1, std::memory_order_acq_rel) + 1;
-
+    // Start region: bump wake generation under wake_m_
     {
       std::lock_guard<std::mutex> lk(wake_m_);
-      // epoch_ already updated; the mutex pairs with the cv wait.
-      (void)new_epoch;
+      ++wake_gen_;
+      ++epoch_;  // optional debug
     }
     wake_cv_.notify_all();
 
@@ -111,24 +109,33 @@ class TeamThreadPool {
       fn_copy(0);
     } catch (...) {
       std::lock_guard<std::mutex> lk(exc_m_);
-      if (eptr == nullptr)
-        eptr = std::current_exception();
+      if (!eptr) eptr = std::current_exception();
     }
     in_worker_ = false;
 
     // Wait for workers 1..n-1.
-    std::unique_lock<std::mutex> lk(done_m_);
-    done_cv_.wait(
-        lk, [&] { return remaining_.load(std::memory_order_acquire) == 0; });
+    {
+      std::unique_lock<std::mutex> lk(done_m_);
+      done_cv_.wait(lk, [&] {
+	return remaining_.load(std::memory_order_acquire) == 0;
+      });
+    }
 
-    // Hygiene.
+    // Hygiene: deactivate region state
+    region_call_.store(nullptr, std::memory_order_release);
+    region_ctx_.store(nullptr, std::memory_order_release);
     region_n_.store(0, std::memory_order_release);
 
-    if (eptr)
-      std::rethrow_exception(eptr);
+    // Clear exception pointer slot
+    {
+      std::lock_guard<std::mutex> lk(exc_m_);
+      exc_ptr_ = nullptr;
+    }
+
+    if (eptr) std::rethrow_exception(eptr);
   }
 
- private:
+private:
   using call_fn_t = void (*)(void*, std::size_t);
 
   template <typename Fn>
@@ -166,17 +173,17 @@ class TeamThreadPool {
   }
 
   TeamThreadPool()
-      : stop_(false),
-        epoch_(0),
-        region_n_(0),
-        region_ctx_(nullptr),
-        region_call_(nullptr),
-        remaining_(0),
-        exc_ptr_(nullptr),
-        ready_count_(0) {
+    : stop_(false),
+      epoch_(0),                 // optional: keep for logging if you want
+      wake_gen_(0),              // NEW: protected by wake_m_
+      region_n_(0),
+      region_ctx_(nullptr),
+      region_call_(nullptr),
+      remaining_(0),
+      exc_ptr_(nullptr),
+      ready_count_(0) {
     unsigned hw_u = std::thread::hardware_concurrency();
-    if (hw_u == 0)
-      hw_u = 2;
+    if (hw_u == 0) hw_u = 2;
     const std::size_t hw = static_cast<std::size_t>(hw_u);
 
     const std::size_t cap = configured_cap_(hw);
@@ -185,68 +192,79 @@ class TeamThreadPool {
     workers_.reserve(num_workers);
     for (std::size_t i = 0; i < num_workers; ++i) {
       const std::size_t tid = i + 1;  // workers are 1..num_workers
+
       workers_.emplace_back([this, tid] {
-        // Per-worker AD tape initialized once.
-        static thread_local ChainableStack ad_tape;
-        (void)ad_tape;
+	// Per-worker AD tape initialized once.
+	static thread_local ChainableStack ad_tape;
+	(void)ad_tape;
 
-        in_worker_ = true;
+	in_worker_ = true;
 
-        // Startup barrier: ensure each worker has entered the wait loop once.
-        {
-          std::lock_guard<std::mutex> lk(wake_m_);
-          ready_count_.fetch_add(1, std::memory_order_acq_rel);
-        }
-        ready_cv_.notify_one();
+	// Startup barrier: ensure each worker has entered the wait loop once.
+	std::size_t seen_gen = 0;
+	{
+	  std::lock_guard<std::mutex> lk(wake_m_);
+	  ready_count_.fetch_add(1, std::memory_order_acq_rel);
+	  seen_gen = wake_gen_;  // establish initial seen generation under the same mutex
+	}
+	ready_cv_.notify_one();
 
-        std::size_t seen_epoch = epoch_.load(std::memory_order_acquire);
+	for (;;) {
+	  // Wait for a new generation (or stop).
+	  {
+	    std::unique_lock<std::mutex> lk(wake_m_);
+	    wake_cv_.wait(lk, [&] {
+	      return stop_.load(std::memory_order_acquire) || wake_gen_ != seen_gen;
+	    });
+	    if (stop_.load(std::memory_order_acquire)) break;
 
-        for (;;) {
-          // Wait for a new epoch (or stop).
-          {
-            std::unique_lock<std::mutex> lk(wake_m_);
-            wake_cv_.wait(lk, [&] {
-              return stop_.load(std::memory_order_acquire)
-                     || epoch_.load(std::memory_order_acquire) != seen_epoch;
-            });
-            if (stop_.load(std::memory_order_acquire))
-              break;
-            seen_epoch = epoch_.load(std::memory_order_acquire);
-          }
+	    // Consume the generation we were woken for.
+	    seen_gen = wake_gen_;
+	  }
 
-          const std::size_t n = region_n_.load(std::memory_order_acquire);
-          if (tid >= n)
-            continue;  // not participating this region
+	  const std::size_t n = region_n_.load(std::memory_order_acquire);
+	  if (tid >= n) {
+	    continue;  // not participating in this region
+	  }
 
-          // Always decrement once for participating workers.
-          struct DoneGuard {
-            std::atomic<std::size_t>& rem;
-            std::mutex& m;
-            std::condition_variable& cv;
-            ~DoneGuard() {
-              if (rem.fetch_sub(1, std::memory_order_acq_rel) == 1) {
-                std::lock_guard<std::mutex> lk(m);
-                cv.notify_one();
-              }
-            }
-          } guard{remaining_, done_m_, done_cv_};
+	  // Always decrement once for participating workers.
+	  struct DoneGuard {
+	    std::atomic<std::size_t>& rem;
+	    std::mutex& m;
+	    std::condition_variable& cv;
+	    ~DoneGuard() {
+	      if (rem.fetch_sub(1, std::memory_order_acq_rel) == 1) {
+		std::lock_guard<std::mutex> lk(m);
+		cv.notify_one();
+	      }
+	    }
+	  } guard{remaining_, done_m_, done_cv_};
 
-          void* ctx = region_ctx_.load(std::memory_order_acquire);
-          call_fn_t call = region_call_.load(std::memory_order_acquire);
+	  void* ctx = region_ctx_.load(std::memory_order_acquire);
+	  call_fn_t call = region_call_.load(std::memory_order_acquire);
 
-          if (call) {
-            try {
-              call(ctx, tid);
-            } catch (...) {
-              std::lock_guard<std::mutex> lk(exc_m_);
-              if (exc_ptr_ && *exc_ptr_ == nullptr) {
-                *exc_ptr_ = std::current_exception();
-              }
-            }
-          }
-        }
+	  // If call is unexpectedly null, that's a serious publication bug.
+	  // Don't decrement early without doing work; treat it as an error.
+	  if (!call) {
+	    std::lock_guard<std::mutex> lk(exc_m_);
+	    if (exc_ptr_ && *exc_ptr_ == nullptr) {
+	      *exc_ptr_ = std::make_exception_ptr(
+						  std::runtime_error("TeamThreadPool: region_call_ is null"));
+	    }
+	    continue;
+	  }
 
-        in_worker_ = false;
+	  try {
+	    call(ctx, tid);
+	  } catch (...) {
+	    std::lock_guard<std::mutex> lk(exc_m_);
+	    if (exc_ptr_ && *exc_ptr_ == nullptr) {
+	      *exc_ptr_ = std::current_exception();
+	    }
+	  }
+	}
+
+	in_worker_ = false;
       });
     }
 
@@ -254,11 +272,10 @@ class TeamThreadPool {
     {
       std::unique_lock<std::mutex> lk(wake_m_);
       ready_cv_.wait(lk, [&] {
-        return ready_count_.load(std::memory_order_acquire) == workers_.size();
+	return ready_count_.load(std::memory_order_acquire) == workers_.size();
       });
     }
   }
-
   ~TeamThreadPool() {
     stop_.store(true, std::memory_order_release);
     {
@@ -291,6 +308,7 @@ class TeamThreadPool {
   // Wake workers.
   std::mutex wake_m_;
   std::condition_variable wake_cv_;
+  std::size_t wake_gen_{0};  // protected by wake_m_
 
   // Startup barrier.
   std::condition_variable ready_cv_;
