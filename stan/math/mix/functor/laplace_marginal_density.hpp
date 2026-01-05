@@ -1151,53 +1151,10 @@ template <typename LLFun, typename LLTupleArgs, typename CovarMat,
 inline auto laplace_marginal_density_est(
     LLFun&& ll_fun, LLTupleArgs&& ll_args, CovarMat&& covariance,
     const laplace_options<InitTheta>& options, std::ostream* msgs) {
-  if constexpr (InitTheta) {
-    check_nonzero_size("laplace_marginal", "initial guess", options.theta_0);
-    check_finite("laplace_marginal", "initial guess", options.theta_0);
-    if (unlikely(options.theta_0.size() != covariance.rows())) {
-      [&]() STAN_COLD_PATH {
-        std::stringstream msg;
-        msg << "laplace_marginal_density: The size of the initial theta ("
-            << options.theta_0.size()
-            << ") does not match the size of "
-               "the covariance matrix ("
-            << covariance.rows() << ", " << covariance.cols() << ").";
-        throw std::domain_error(msg.str());
-      }();
-    }
-  }
-  check_nonnegative("laplace_marginal", "tolerance", options.tolerance);
-  check_positive("laplace_marginal", "max_num_steps", options.max_num_steps);
-  check_positive("laplace_marginal", "hessian_block_size",
-                 options.hessian_block_size);
-  check_square("laplace_marginal", "covariance", covariance);
+  internal::validate_laplace_options("laplace_marginal_density", options,
+                                     covariance);
 
   const Eigen::Index theta_size = covariance.rows();
-
-  if (unlikely(theta_size % options.hessian_block_size != 0
-               || theta_size < options.hessian_block_size)) {
-    [&]() STAN_COLD_PATH {
-      std::stringstream msg;
-      msg << "laplace_marginal_density: The hessian size (" << theta_size
-          << ", " << theta_size << ")";
-      if (theta_size < options.hessian_block_size) {
-        msg << " is smaller than the hessian block size (";
-      } else {
-        msg << " is not divisible by the hessian block size (";
-      }
-      msg << options.hessian_block_size
-          << ")"
-             ". Use a hessian block size such as [1, ";
-      for (int i = 2; i < 12; ++i) {
-        if (theta_size % i == 0) {
-          msg << i << ", ";
-        }
-      }
-      msg << "... " << theta_size;
-      msg << "].";
-      throw std::domain_error(msg.str());
-    }();
-  }
 
   auto throw_overstep = [](const auto max_num_steps) STAN_COLD_PATH {
     throw std::domain_error(
@@ -1213,20 +1170,24 @@ inline auto laplace_marginal_density_est(
   auto theta_grad_f = [&ll_fun, &ll_args, &msgs](auto&& theta_val) {
     return laplace_likelihood::theta_grad(ll_fun, theta_val, ll_args, msgs);
   };
-  internal::WolfeInfo wolfe_info(
-      obj_fun, theta_size,
-      [theta_size, &options]() -> decltype(auto) {
-        if constexpr (InitTheta) {
-          return options.theta_0;
-        } else {
-          return Eigen::VectorXd::Zero(theta_size);
-        }
-      }(),
-      theta_grad_f);
-  auto&& curr = wolfe_info.curr_;
-  auto&& prev = wolfe_info.prev_;
-  Eigen::MatrixXd B(theta_size, theta_size);
-  Eigen::VectorXd b(theta_size);
+  auto theta_init = [theta_size, &options]() -> decltype(auto) {
+    if constexpr (InitTheta) {
+      return options.theta_0;
+    } else {
+      return Eigen::VectorXd::Zero(theta_size);
+    }
+  }();
+  auto obj_fun_state = obj_fun;
+  auto theta_grad_f_state = theta_grad_f;
+  internal::NewtonState<decltype(obj_fun_state), decltype(theta_grad_f_state)>
+      state(theta_size, std::move(obj_fun_state),
+            std::move(theta_grad_f_state), theta_init);
+  auto& wolfe_info = state.wolfe_info;
+  auto& wolfe_status = state.wolfe_status;
+  auto& curr = state.curr();
+  auto& prev = state.prev();
+  auto& B = state.B;
+  auto& b = state.b;
   // 'a' gradient
   auto grad_fun = [&covariance](auto&& step) {
     return -covariance * step.a() + covariance * step.theta_grad();
@@ -1240,14 +1201,13 @@ inline auto laplace_marginal_density_est(
     eval_in.obj() = obj_fun(step_info.a(), step_info.theta());
     eval_in.dir() = grad_fun(step_info).dot(p);
   };
-  Eigen::VectorXd prev_g(theta_size);
   auto update_line_search
-      = [&grad_fun, &covariance, &prev_g, &update_step, &theta_grad_f, &options,
-         &msgs](auto&& wolfe_status, auto&& wolfe_info, auto&& curr,
-                auto&& prev) {
+      = [&grad_fun, &covariance, &update_step, &options, &msgs,
+         &state](auto&& wolfe_status, auto&& wolfe_info, auto&& curr,
+                 auto&& prev) {
           wolfe_info.p_ = curr.a() - prev.a();
-          prev_g.noalias() = grad_fun(prev);
-          wolfe_info.init_dir_ = prev_g.dot(wolfe_info.p_);
+          state.prev_g.noalias() = grad_fun(prev);
+          wolfe_info.init_dir_ = state.prev_g.dot(wolfe_info.p_);
           // Flip direction if not ascending
           if (wolfe_info.init_dir_ < 0) {
             wolfe_info.p_ = -wolfe_info.p_;
@@ -1282,7 +1242,7 @@ inline auto laplace_marginal_density_est(
           } else {
             Eigen::VectorXd s = scratch.a() - prev.a();
             curr.alpha() = barzilai_borwein_step_size(
-                s, grad_fun(scratch), prev_g, prev.alpha(),
+                s, grad_fun(scratch), state.prev_g, prev.alpha(),
                 wolfe_status.num_backtracks_, options.line_search.min_alpha,
                 options.line_search.max_alpha);
             wolfe_status = internal::wolfe_line_search(
@@ -1303,9 +1263,7 @@ inline auto laplace_marginal_density_est(
    * recent wolfe step that was accepted. So we do one final loop to update
    * our return values.
    */
-  bool final_loop = false;
   bool finish_update = false;
-  WolfeStatus wolfe_status;
   // Start with safe step size
   wolfe_status.num_backtracks_ = 99;
   Eigen::Index step_iter = 0;
@@ -1351,14 +1309,14 @@ inline auto laplace_marginal_density_est(
               = b
                 - W_r.asDiagonal()
                       * LT.solve(L.solve(W_r.cwiseProduct(covariance * b)));
-          if (!final_loop) {
+          if (!state.final_loop) {
             finish_update
                 = update_line_search(wolfe_status, wolfe_info, curr, prev);
           }
           if (finish_update) {
-            if (!final_loop && wolfe_status.accept_) {
+            if (!state.final_loop && wolfe_status.accept_) {
               // Do one final loop with exact wolfe conditions
-              final_loop = true;
+              state.final_loop = true;
               // NOTE: Swapping here so we need to swap prev and curr later
               set_next_iter(curr, prev);
               continue;
@@ -1432,14 +1390,14 @@ inline auto laplace_marginal_density_est(
           b.noalias() = W * prev.theta() + prev.theta_grad();
           curr.a().noalias()
               = b - W_r * LT.solve(L.solve(W_r * (covariance * b)));
-          if (!final_loop) {
+          if (!state.final_loop) {
             finish_update
                 = update_line_search(wolfe_status, wolfe_info, curr, prev);
           }
           if (finish_update) {
-            if (!final_loop && wolfe_status.accept_) {
+            if (!state.final_loop && wolfe_status.accept_) {
               // Do one final loop with exact wolfe conditions
-              final_loop = true;
+              state.final_loop = true;
               set_next_iter(curr, prev);
               continue;
             }
@@ -1507,14 +1465,14 @@ inline auto laplace_marginal_density_est(
         curr.a().noalias()
             = K_root.transpose().template triangularView<Eigen::Upper>().solve(
                 LT.solve(L.solve(K_root.transpose() * b)));
-        if (!final_loop) {
+        if (!state.final_loop) {
           finish_update
               = update_line_search(wolfe_status, wolfe_info, curr, prev);
         }
         if (finish_update) {
-          if (!final_loop && wolfe_status.accept_) {
+          if (!state.final_loop && wolfe_status.accept_) {
             // Do one final loop with exact wolfe conditions
-            final_loop = true;
+            state.final_loop = true;
             // NOTE: Swapping here so we need to swap prev and curr later
             set_next_iter(curr, prev);
             continue;
@@ -1556,14 +1514,14 @@ inline auto laplace_marginal_density_est(
       // L on lower and U on upper triangular
       b.noalias() = W * prev.theta() + prev.theta_grad();
       curr.a().noalias() = b - W * LU.solve(covariance * b);
-      if (!final_loop) {
+      if (!state.final_loop) {
         finish_update
             = update_line_search(wolfe_status, wolfe_info, curr, prev);
       }
       if (finish_update) {
-        if (!final_loop && wolfe_status.accept_) {
+        if (!state.final_loop && wolfe_status.accept_) {
           // Do one final loop with exact wolfe conditions
-          final_loop = true;
+          state.final_loop = true;
           // NOTE: Swapping here so we need to swap prev and curr later
           set_next_iter(curr, prev);
           continue;
