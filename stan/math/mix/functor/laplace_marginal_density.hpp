@@ -425,6 +425,677 @@ inline double barzilai_borwein_step_size(const Eigen::VectorXd& s,
   return alpha0;
 }
 
+// ============================================================================
+// REFACTORING CLASSES (C++17)
+// These classes are part of the ongoing refactoring effort.
+// They are NOT yet used by the main laplace_marginal_density_est function.
+// ============================================================================
+
+/**
+ * Validates the options for the Laplace approximation.
+ *
+ * @tparam InitTheta Whether an initial theta is provided
+ * @tparam CovarMat Type of the covariance matrix
+ * @param frame_name Name of the calling function (for error messages)
+ * @param options The options to validate
+ * @param covariance The covariance matrix (for size checks)
+ */
+template <bool InitTheta, typename CovarMat>
+inline void validate_laplace_options(const char* frame_name,
+                                     const laplace_options<InitTheta>& options,
+                                     const CovarMat& covariance) {
+  if constexpr (InitTheta) {
+    check_nonzero_size(frame_name, "initial guess", options.theta_0);
+    check_finite(frame_name, "initial guess", options.theta_0);
+    if (unlikely(options.theta_0.size() != covariance.rows())) {
+      std::stringstream msg;
+      msg << frame_name << ": The size of the initial theta ("
+          << options.theta_0.size()
+          << ") does not match the size of the covariance matrix ("
+          << covariance.rows() << ", " << covariance.cols() << ").";
+      throw std::domain_error(msg.str());
+    }
+  }
+  check_nonnegative(frame_name, "tolerance", options.tolerance);
+  check_positive(frame_name, "max_num_steps", options.max_num_steps);
+  check_positive(frame_name, "hessian_block_size", options.hessian_block_size);
+  check_square(frame_name, "covariance", covariance);
+
+  const Eigen::Index theta_size = covariance.rows();
+  if (unlikely(theta_size % options.hessian_block_size != 0
+               || theta_size < options.hessian_block_size)) {
+    throw std::domain_error(
+        "laplace_marginal_density: Hessian block size mismatch.");
+  }
+
+  if (unlikely(options.solver < 1 || options.solver > 3)) {
+    throw std::domain_error(
+        "laplace_marginal_density: solver must be 1, 2, or 3. Got: "
+        + std::to_string(options.solver));
+  }
+}
+
+/**
+ * @brief Holds the state for the Newton-Raphson optimization loop.
+ *
+ * This struct centralizes all state needed during the Newton iteration,
+ * including the Wolfe line search state, workspace matrices, and convergence
+ * flags. It is shared across different solver policies to avoid re-allocation
+ * and to maintain progress (e.g., line search history) across solver fallbacks.
+ *
+ * @tparam ObjFun Type of the objective function callable
+ * @tparam ThetaGradFun Type of the theta gradient function callable
+ */
+template <typename ObjFun, typename ThetaGradFun>
+struct NewtonState {
+  /** @brief Wolfe line search state including current/previous steps */
+  WolfeInfo wolfe_info;
+
+  /** @brief Status of the most recent Wolfe line search */
+  WolfeStatus wolfe_status;
+
+  /** @brief Workspace vector: b = W * theta + grad(log_lik) */
+  Eigen::VectorXd b;
+
+  /** @brief Workspace matrix: B = I + W_r * Sigma * W_r (or similar) */
+  Eigen::MatrixXd B;
+
+  /** @brief Previous gradient for Barzilai-Borwein step calculation */
+  Eigen::VectorXd prev_g;
+
+  /** @brief Flag indicating final pass to sync return values after convergence
+   */
+  bool final_loop = false;
+
+  /**
+   * @brief Constructs Newton state with given dimensions and functors.
+   *
+   * @tparam ThetaInitializer Type of the initial theta provider
+   * @param theta_size Dimension of the latent space
+   * @param obj_fun Objective function: (a, theta) -> double
+   * @param theta_grad_f Gradient function: theta -> grad
+   * @param theta_init Initial theta value or provider
+   */
+  template <typename ThetaInitializer>
+  NewtonState(int theta_size, ObjFun&& obj_fun, ThetaGradFun&& theta_grad_f,
+              ThetaInitializer&& theta_init)
+      : wolfe_info(std::forward<ObjFun>(obj_fun), theta_size,
+                   std::forward<ThetaInitializer>(theta_init),
+                   std::forward<ThetaGradFun>(theta_grad_f)),
+        b(theta_size),
+        B(theta_size, theta_size),
+        prev_g(theta_size) {
+    wolfe_status.num_backtracks_ = 99;  // Safe initial value for BB step
+  }
+
+  /**
+   * @brief Access the current step state (mutable).
+   * @return Reference to current WolfeStep
+   */
+  auto& curr() { return wolfe_info.curr_; }
+
+  /**
+   * @brief Access the current step state (const).
+   * @return Const reference to current WolfeStep
+   */
+  const auto& curr() const { return wolfe_info.curr_; }
+
+  /**
+   * @brief Access the previous step state (mutable).
+   * @return Reference to previous WolfeStep
+   */
+  auto& prev() { return wolfe_info.prev_; }
+
+  /**
+   * @brief Access the previous step state (const).
+   * @return Const reference to previous WolfeStep
+   */
+  const auto& prev() const { return wolfe_info.prev_; }
+};
+
+/**
+ * @brief Solver Policy 1 (Diagonal): Cholesky decomposition using W.
+ *
+ * This solver is used when `hessian_block_size == 1`. It computes the
+ * diagonal of the negative Hessian of the log-likelihood, takes its
+ * square root, and forms the system matrix B = I + W_r * Sigma * W_r
+ * for Cholesky factorization.
+ *
+ * The solver is the fastest option but only valid when the Hessian
+ * is truly diagonal (no cross-terms between latent variables).
+ *
+ * @note This solver corresponds to `solver == 1` in the original code.
+ */
+struct CholeskyWSolverDiag {
+  /** @brief Square root of diagonal Hessian: W_r[j] = sqrt(W[j]) */
+  Eigen::VectorXd W_r_diag;
+
+  /** @brief Diagonal Hessian values from the likelihood */
+  Eigen::VectorXd W_diag;
+
+  /** @brief Cholesky factorization of B = I + W_r * Sigma * W_r */
+  Eigen::LLT<Eigen::MatrixXd> llt_B;
+
+  /**
+   * @brief Initialize the solver (no-op for diagonal solver).
+   * @tparam NewtonStateT Type of the Newton state
+   * @param state The shared Newton optimization state
+   */
+  template <typename NewtonStateT>
+  void initialize(NewtonStateT& /*state*/) {
+    // No specific pre-computation needed for diagonal W solver
+  }
+
+  /**
+   * @brief Perform one Newton step using diagonal Hessian solver.
+   *
+   * Computes the diagonal Hessian, forms B = I + W_r * Sigma * W_r,
+   * performs Cholesky factorization, and solves for the new `a` vector.
+   *
+   * @tparam NewtonStateT Type of the Newton state
+   * @tparam LLFun Type of the log-likelihood functor
+   * @tparam LLTupleArgs Type of the likelihood arguments tuple
+   * @tparam CovarMat Type of the covariance matrix
+   * @param state Shared Newton state (modified: B, b, curr().a())
+   * @param ll_fun Log-likelihood functor
+   * @param ll_args Additional arguments for the likelihood
+   * @param covariance Prior covariance matrix Sigma
+   * @param hessian_block_size Ignored for diagonal solver
+   * @param msgs Output stream for diagnostic messages (may be nullptr)
+   * @throws std::domain_error If Hessian is not positive definite or Cholesky
+   * fails
+   */
+  template <typename NewtonStateT, typename LLFun, typename LLTupleArgs,
+            typename CovarMat>
+  void solve_step(NewtonStateT& state, const LLFun& ll_fun,
+                  const LLTupleArgs& ll_args, const CovarMat& covariance,
+                  int /*hessian_block_size*/, std::ostream* msgs) {
+    const Eigen::Index theta_size = state.b.size();
+    if (W_r_diag.size() != theta_size) {
+      W_r_diag.resize(theta_size);
+    }
+
+    // 1. Compute diagonal Hessian
+    W_diag = laplace_likelihood::diagonal_hessian(ll_fun, state.prev().theta(),
+                                                  ll_args, msgs);
+    for (Eigen::Index j = 0; j < W_diag.size(); j++) {
+      if (W_diag.coeff(j) < 0 || !std::isfinite(W_diag.coeff(j))) {
+        throw std::domain_error(
+            "laplace_marginal_density: Hessian matrix is not positive "
+            "definite");
+      } else {
+        W_r_diag.coeffRef(j) = std::sqrt(W_diag.coeff(j));
+      }
+    }
+
+    // 2. Formulate B = I + W_r * Sigma * W_r
+    state.B.noalias()
+        = Eigen::MatrixXd::Identity(theta_size, theta_size)
+          + W_r_diag.asDiagonal() * covariance * W_r_diag.asDiagonal();
+
+    // 3. Factorize B with jittering fallback
+    llt_B.compute(state.B);
+    if (llt_B.info() != Eigen::Success) {
+      double jitter_try = 1e-10;
+      for (; jitter_try < 1e-5; jitter_try *= 10) {
+        state.B.diagonal().array() += jitter_try;
+        llt_B.compute(state.B);
+        if (llt_B.info() == Eigen::Success) {
+          break;
+        }
+      }
+      if (llt_B.info() != Eigen::Success) {
+        throw std::domain_error(
+            "laplace_marginal_density: Cholesky (Diag) failed");
+      }
+    }
+
+    // 4. Solve for curr.a
+    state.b.noalias() = (W_diag.array() * state.prev().theta().array()).matrix()
+                        + state.prev().theta_grad();
+    auto L = llt_B.matrixL();
+    auto LT = llt_B.matrixU();
+    state.curr().a().noalias()
+        = state.b
+          - W_r_diag.asDiagonal()
+                * LT.solve(
+                    L.solve(W_r_diag.cwiseProduct(covariance * state.b)));
+  }
+
+  /**
+   * @brief Compute log determinant of B from Cholesky factor.
+   * @return log(det(B)) = 2 * sum(log(diag(L)))
+   */
+  double compute_log_determinant() const {
+    return 2.0 * llt_B.matrixLLT().diagonal().array().log().sum();
+  }
+
+  /**
+   * @brief Build the final result structure.
+   *
+   * @tparam NewtonStateT Type of the Newton state
+   * @param state Newton state containing converged values
+   * @param log_det Log determinant from compute_log_determinant()
+   * @return laplace_density_estimates with solver_used = 1
+   */
+  template <typename NewtonStateT>
+  auto build_result(const NewtonStateT& state, double log_det) const {
+    return laplace_density_estimates{
+        state.prev().obj() - 0.5 * log_det,
+        std::move(state.prev().theta()),
+        Eigen::SparseMatrix<double>(W_r_diag.asDiagonal()),
+        Eigen::MatrixXd(llt_B.matrixL()),
+        std::move(state.prev().a()),
+        std::move(state.prev().theta_grad()),
+        Eigen::PartialPivLU<Eigen::MatrixXd>{},
+        Eigen::MatrixXd(0, 0),
+        1};
+  }
+};
+
+/**
+ * @brief Solver Policy 1 (Block): Cholesky decomposition using block W.
+ *
+ * This solver is used when `hessian_block_size > 1`. It computes
+ * the block-diagonal negative Hessian of the log-likelihood, computes
+ * its principal square root via `block_matrix_sqrt`, and forms the
+ * system matrix B = I + W_r * Sigma * W_r for Cholesky factorization.
+ *
+ * The sparse structure of W_r is lazily initialized on the first call
+ * to `solve_step` to match the problem dimensions.
+ *
+ * @note This solver corresponds to `solver == 1` with `hessian_block_size > 1`.
+ */
+struct CholeskyWSolverBlock {
+  /** @brief Sparse square root of block Hessian */
+  Eigen::SparseMatrix<double> W_r;
+
+  /** @brief Sparse block-diagonal Hessian from likelihood */
+  Eigen::SparseMatrix<double> W_block;
+
+  /** @brief Cholesky factorization of B = I + W_r * Sigma * W_r */
+  Eigen::LLT<Eigen::MatrixXd> llt_B;
+
+  /** @brief Flag indicating if sparse structure has been initialized */
+  bool sparse_initialized = false;
+
+  /**
+   * @brief Initialize the solver (no-op, uses lazy initialization).
+   * @tparam NewtonStateT Type of the Newton state
+   * @param state The shared Newton optimization state
+   */
+  template <typename NewtonStateT>
+  void initialize(NewtonStateT& /*state*/) {
+    // Sparse matrix structure is initialized lazily in solve_step
+  }
+
+  /**
+   * @brief Perform one Newton step using block-diagonal Hessian solver.
+   *
+   * Computes the block Hessian, its square root via Schur decomposition,
+   * forms B = I + W_r * Sigma * W_r, performs Cholesky factorization,
+   * and solves for the new `a` vector.
+   *
+   * @tparam NewtonStateT Type of the Newton state
+   * @tparam LLFun Type of the log-likelihood functor
+   * @tparam LLTupleArgs Type of the likelihood arguments tuple
+   * @tparam CovarMat Type of the covariance matrix
+   * @param state Shared Newton state (modified: B, b, curr().a())
+   * @param ll_fun Log-likelihood functor
+   * @param ll_args Additional arguments for the likelihood
+   * @param covariance Prior covariance matrix Sigma
+   * @param hessian_block_size Size of each Hessian block (must divide
+   * theta_size)
+   * @param msgs Output stream for diagnostic messages (may be nullptr)
+   * @throws std::domain_error If Hessian is not positive definite or Cholesky
+   * fails
+   */
+
+  template <typename NewtonStateT, typename LLFun, typename LLTupleArgs,
+            typename CovarMat>
+  void solve_step(NewtonStateT& state, const LLFun& ll_fun,
+                  const LLTupleArgs& ll_args, const CovarMat& covariance,
+                  int hessian_block_size, std::ostream* msgs) {
+    const Eigen::Index theta_size = state.b.size();
+
+    // Lazy initialization of sparse structure
+    if (!sparse_initialized) {
+      W_r.resize(theta_size, theta_size);
+      W_r.reserve(Eigen::VectorXi::Constant(theta_size, hessian_block_size));
+      const Eigen::Index n_block = theta_size / hessian_block_size;
+      for (Eigen::Index ii = 0; ii < n_block; ii++) {
+        for (Eigen::Index k = 0; k < hessian_block_size; k++) {
+          for (Eigen::Index j = 0; j < hessian_block_size; j++) {
+            W_r.insert(ii * hessian_block_size + j, ii * hessian_block_size + k)
+                = 1.0;
+          }
+        }
+      }
+      W_r.makeCompressed();
+      sparse_initialized = true;
+    }
+
+    // 1. Compute block Hessian
+    W_block = laplace_likelihood::block_hessian(
+        ll_fun, state.prev().theta(), hessian_block_size, ll_args, msgs);
+
+    for (Eigen::Index j = 0; j < W_block.rows(); j++) {
+      if (W_block.coeff(j, j) < 0 || !std::isfinite(W_block.coeff(j, j))) {
+        throw std::domain_error(
+            "laplace_marginal_density: Hessian matrix is not positive "
+            "definite");
+      }
+    }
+
+    // 2. Compute W_r = sqrt(W)
+    block_matrix_sqrt(W_r, W_block, hessian_block_size);
+
+    // 3. Formulate B = I + W_r * Sigma * W_r
+    state.B.noalias() = Eigen::MatrixXd::Identity(theta_size, theta_size)
+                        + W_r * (covariance * W_r);
+
+    // 4. Factorize B with jittering fallback
+    llt_B.compute(state.B);
+    if (llt_B.info() != Eigen::Success) {
+      double jitter_try = 1e-10;
+      for (; jitter_try < 1e-5; jitter_try *= 10) {
+        state.B.diagonal().array() += jitter_try;
+        llt_B.compute(state.B);
+        if (llt_B.info() == Eigen::Success) {
+          break;
+        }
+      }
+      if (llt_B.info() != Eigen::Success) {
+        throw std::domain_error(
+            "laplace_marginal_density: Cholesky (Block) failed");
+      }
+    }
+
+    // 5. Solve for curr.a
+    state.b.noalias()
+        = W_block * state.prev().theta() + state.prev().theta_grad();
+    auto L = llt_B.matrixL();
+    auto LT = llt_B.matrixU();
+    state.curr().a().noalias()
+        = state.b - W_r * LT.solve(L.solve(W_r * (covariance * state.b)));
+  }
+
+  /**
+   * @brief Compute log determinant of B from Cholesky factor.
+   * @return log(det(B)) = 2 * sum(log(diag(L)))
+   */
+  double compute_log_determinant() const {
+    return 2.0 * llt_B.matrixLLT().diagonal().array().log().sum();
+  }
+
+  /**
+   * @brief Build the final result structure.
+   *
+   * @tparam NewtonStateT Type of the Newton state
+   * @param state Newton state containing converged values
+   * @param log_det Log determinant from compute_log_determinant()
+   * @return laplace_density_estimates with solver_used = 1
+   */
+  template <typename NewtonStateT>
+  auto build_result(NewtonStateT& state, double log_det) {
+    return laplace_density_estimates{state.prev().obj() - 0.5 * log_det,
+                                     std::move(state.prev().theta()),
+                                     std::move(W_r),
+                                     Eigen::MatrixXd(llt_B.matrixL()),
+                                     std::move(state.prev().a()),
+                                     std::move(state.prev().theta_grad()),
+                                     Eigen::PartialPivLU<Eigen::MatrixXd>{},
+                                     Eigen::MatrixXd(0, 0),
+                                     1};
+  }
+};
+
+/**
+ * @brief Solver Policy 2: Cholesky decomposition of K (Covariance).
+ *
+ * This solver pre-computes the Cholesky factorization of the prior
+ * covariance matrix Sigma = K_root * K_root^T. The system matrix becomes
+ * B = I + K_root^T * W * K_root, which is factorized in each iteration.
+ *
+ * This approach is numerically more stable than Solver 1 when the
+ * covariance matrix has a more complex structure, at the cost of
+ * requiring the full Hessian W (not just diagonal).
+ *
+ * @note This solver corresponds to `solver == 2` in the original code.
+ */
+struct CholeskyKSolver {
+  /** @brief Lower Cholesky factor of covariance: Sigma = K_root * K_root^T */
+  Eigen::MatrixXd K_root;
+
+  /** @brief Full (block) Hessian matrix from likelihood */
+  Eigen::MatrixXd W_full;
+
+  /** @brief Cholesky factorization of B = I + K_root^T * W * K_root */
+  Eigen::LLT<Eigen::MatrixXd> llt_B;
+
+  /** @brief Flag indicating if K_root has been computed */
+  bool K_initialized = false;
+
+  /**
+   * @brief Initialize solver by computing Cholesky of covariance.
+   *
+   * @tparam NewtonStateT Type of the Newton state
+   * @tparam CovarMat Type of the covariance matrix
+   * @param state The shared Newton optimization state (unused)
+   * @param covariance Prior covariance matrix Sigma
+   * @throws std::domain_error If covariance is not positive definite
+   */
+  template <typename NewtonStateT, typename CovarMat>
+  void initialize(NewtonStateT& /*state*/, const CovarMat& covariance) {
+    auto K_root_llt = covariance.template selfadjointView<Eigen::Lower>().llt();
+    if (K_root_llt.info() != Eigen::Success) {
+      throw std::domain_error(
+          "laplace_marginal_density: Cholesky of covariance failed at start");
+    }
+    K_root = K_root_llt.matrixL();
+    K_initialized = true;
+  }
+
+  /**
+   * @brief Perform one Newton step using covariance Cholesky solver.
+   *
+   * Computes the full Hessian, forms B = I + K_root^T * W * K_root,
+   * performs Cholesky factorization, and solves for the new `a` vector
+   * using triangular solves.
+   *
+   * @tparam NewtonStateT Type of the Newton state
+   * @tparam LLFun Type of the log-likelihood functor
+   * @tparam LLTupleArgs Type of the likelihood arguments tuple
+   * @tparam CovarMat Type of the covariance matrix
+   * @param state Shared Newton state (modified: B, b, curr().a())
+   * @param ll_fun Log-likelihood functor
+   * @param ll_args Additional arguments for the likelihood
+   * @param covariance Prior covariance matrix Sigma
+   * @param hessian_block_size Size of each Hessian block
+   * @param msgs Output stream for diagnostic messages (may be nullptr)
+   * @throws std::domain_error If Cholesky factorization fails
+   */
+
+  template <typename NewtonStateT, typename LLFun, typename LLTupleArgs,
+            typename CovarMat>
+  void solve_step(NewtonStateT& state, const LLFun& ll_fun,
+                  const LLTupleArgs& ll_args, const CovarMat& covariance,
+                  int hessian_block_size, std::ostream* msgs) {
+    const Eigen::Index theta_size = state.b.size();
+
+    // Lazy initialization if not done
+    if (!K_initialized) {
+      initialize(state, covariance);
+    }
+
+    // 1. Compute Hessian
+    W_full = laplace_likelihood::block_hessian(
+        ll_fun, state.prev().theta(), hessian_block_size, ll_args, msgs);
+
+    // 2. Formulate B = I + K^T * W * K
+    state.B.noalias() = Eigen::MatrixXd::Identity(theta_size, theta_size)
+                        + K_root.transpose() * W_full * K_root;
+
+    // 3. Factorize B with jittering fallback
+    llt_B.compute(state.B);
+    if (llt_B.info() != Eigen::Success) {
+      double jitter_try = 1e-10;
+      for (; jitter_try < 1e-5; jitter_try *= 10) {
+        state.B.diagonal().array() += jitter_try;
+        llt_B.compute(state.B);
+        if (llt_B.info() == Eigen::Success) {
+          break;
+        }
+      }
+      if (llt_B.info() != Eigen::Success) {
+        throw std::domain_error(
+            "laplace_marginal_density: Cholesky (K) failed");
+      }
+    }
+
+    // 4. Solve for curr.a
+    state.b.noalias()
+        = W_full * state.prev().theta() + state.prev().theta_grad();
+    auto L = llt_B.matrixL();
+    auto LT = llt_B.matrixU();
+    state.curr().a().noalias()
+        = K_root.transpose().template triangularView<Eigen::Upper>().solve(
+            LT.solve(L.solve(K_root.transpose() * state.b)));
+  }
+
+  /**
+   * @brief Compute log determinant of B from Cholesky factor.
+   * @return log(det(B)) = 2 * sum(log(diag(L)))
+   */
+  double compute_log_determinant() const {
+    return 2.0 * llt_B.matrixLLT().diagonal().array().log().sum();
+  }
+
+  /**
+   * @brief Build the final result structure.
+   *
+   * @tparam NewtonStateT Type of the Newton state
+   * @param state Newton state containing converged values
+   * @param log_det Log determinant from compute_log_determinant()
+   * @return laplace_density_estimates with solver_used = 2
+   */
+  template <typename NewtonStateT>
+  auto build_result(NewtonStateT& state, double log_det) {
+    return laplace_density_estimates{state.prev().obj() - 0.5 * log_det,
+                                     std::move(state.prev().theta()),
+                                     std::move(W_full),
+                                     Eigen::MatrixXd(llt_B.matrixL()),
+                                     std::move(state.prev().a()),
+                                     std::move(state.prev().theta_grad()),
+                                     Eigen::PartialPivLU<Eigen::MatrixXd>{},
+                                     std::move(K_root),
+                                     2};
+  }
+};
+
+/**
+ * @brief Solver Policy 3: LU Decomposition.
+ *
+ * This solver uses LU decomposition with partial pivoting to factorize
+ * the system matrix B = I + Sigma * W. This is the most numerically
+ * robust solver but also the slowest, as it does not exploit the
+ * positive definiteness of B that the Cholesky solvers assume.
+ *
+ * This solver is used as a fallback when Solvers 1 and 2 fail due to
+ * numerical issues (e.g., near-singular Hessians).
+ *
+ * @note This solver corresponds to `solver == 3` in the original code.
+ */
+struct LUSolver {
+  /** @brief LU factorization of B = I + Sigma * W */
+  Eigen::PartialPivLU<Eigen::MatrixXd> lu;
+
+  /** @brief Full Hessian matrix from likelihood */
+  Eigen::MatrixXd W_full;
+
+  /**
+   * @brief Initialize the solver (no-op for LU solver).
+   * @tparam NewtonStateT Type of the Newton state
+   * @param state The shared Newton optimization state
+   */
+  template <typename NewtonStateT>
+  void initialize(NewtonStateT& /*state*/) {
+    // No pre-computation needed
+  }
+
+  /**
+   * @brief Perform one Newton step using LU decomposition solver.
+   *
+   * Computes the full Hessian, forms B = I + Sigma * W, performs
+   * LU decomposition, and solves for the new `a` vector.
+   *
+   * @tparam NewtonStateT Type of the Newton state
+   * @tparam LLFun Type of the log-likelihood functor
+   * @tparam LLTupleArgs Type of the likelihood arguments tuple
+   * @tparam CovarMat Type of the covariance matrix
+   * @param state Shared Newton state (modified: b, curr().a())
+   * @param ll_fun Log-likelihood functor
+   * @param ll_args Additional arguments for the likelihood
+   * @param covariance Prior covariance matrix Sigma
+   * @param hessian_block_size Size of each Hessian block
+   * @param msgs Output stream for diagnostic messages (may be nullptr)
+   */
+  template <typename NewtonStateT, typename LLFun, typename LLTupleArgs,
+            typename CovarMat>
+  void solve_step(NewtonStateT& state, const LLFun& ll_fun,
+                  const LLTupleArgs& ll_args, const CovarMat& covariance,
+                  int hessian_block_size, std::ostream* msgs) {
+    const Eigen::Index theta_size = state.b.size();
+
+    // 1. Compute Hessian
+    W_full = laplace_likelihood::block_hessian(
+        ll_fun, state.prev().theta(), hessian_block_size, ll_args, msgs);
+
+    // 2. Factorize B = I + Sigma * W
+    lu.compute(Eigen::MatrixXd::Identity(theta_size, theta_size)
+               + covariance * W_full);
+
+    // 3. Solve for curr.a
+    state.b.noalias()
+        = W_full * state.prev().theta() + state.prev().theta_grad();
+    state.curr().a().noalias()
+        = state.b - W_full * lu.solve(covariance * state.b);
+  }
+
+  /**
+   * @brief Compute log determinant from LU factorization.
+   * @return log(det(B)) = sum(log(diag(LU)))
+   */
+  double compute_log_determinant() const {
+    return lu.matrixLU().diagonal().array().log().sum();
+  }
+
+  /**
+   * @brief Build the final result structure.
+   *
+   * @tparam NewtonStateT Type of the Newton state
+   * @param state Newton state containing converged values
+   * @param log_det Log determinant from compute_log_determinant()
+   * @return laplace_density_estimates with solver_used = 3
+   */
+  template <typename NewtonStateT>
+  auto build_result(NewtonStateT& state, double log_det) {
+    return laplace_density_estimates{state.prev().obj() - 0.5 * log_det,
+                                     std::move(state.prev().theta()),
+                                     std::move(W_full),
+                                     Eigen::MatrixXd(0, 0),
+                                     std::move(state.prev().a()),
+                                     std::move(state.prev().theta_grad()),
+                                     std::move(lu),
+                                     Eigen::MatrixXd(0, 0),
+                                     3};
+  }
+};
+
+// ============================================================================
+// END REFACTORING CLASSES
+// ============================================================================
+
 /**
  * For a latent Gaussian model with hyperparameters phi and
  * latent variables theta, and observations y, this function computes
