@@ -1635,6 +1635,125 @@ inline auto laplace_var_eval_covariance(CovarFun&& covariance_function,
       },
       std::forward<CovarArgsCopy>(covar_args_copy));
 }
+
+template <bool LLArgsContainVar, typename MdEst, typename CovarMat,
+          typename Options, typename LLFun, typename LLArgsCopy,
+          typename LLArgsFilter, typename PartialParm>
+inline void laplace_var_solver_postprocess(
+    const MdEst& md_est, const CovarMat& covariance, const Options& options,
+    const LLFun& ll_fun, const LLArgsCopy& ll_args_copy,
+    const LLArgsFilter& ll_args_filter, PartialParm& partial_parm,
+    arena_t<Eigen::MatrixXd>& R, arena_t<Eigen::VectorXd>& s2,
+    arena_t<Eigen::MatrixXd>& LU_solve_covariance, std::ostream* msgs) {
+  if (md_est.solver_used == 1) {
+    if (options.hessian_block_size == 1) {
+      arena_t<Eigen::MatrixXd> tmp = md_est.W_r.toDense();
+      md_est.L.template triangularView<Eigen::Lower>().solveInPlace(tmp);
+      R.noalias() = tmp.transpose() * tmp;
+      arena_t<Eigen::MatrixXd> C
+          = md_est.L.template triangularView<Eigen::Lower>().solve(
+              md_est.W_r * value_of(covariance));
+      if constexpr (!LLArgsContainVar) {
+        s2.deep_copy(
+            (0.5
+             * (value_of(covariance).diagonal()
+                - (C.transpose() * C).diagonal())
+                   .cwiseProduct(laplace_likelihood::third_diff(
+                       ll_fun, md_est.theta, value_of(ll_args_copy), msgs))));
+      } else {
+        arena_t<Eigen::MatrixXd> A = value_of(covariance) - C.transpose() * C;
+        auto s2_tmp = laplace_likelihood::compute_s2(
+            ll_fun, md_est.theta, A, options.hessian_block_size, ll_args_copy,
+            msgs);
+        s2.deep_copy(s2_tmp);
+        copy_compute_s2<true>(partial_parm, ll_args_filter);
+      }
+
+    } else {
+      arena_t<Eigen::MatrixXd> tmp = md_est.W_r.toDense();
+      md_est.L.template triangularView<Eigen::Lower>().solveInPlace(tmp);
+      R.noalias() = tmp.transpose() * tmp;
+      arena_t<Eigen::MatrixXd> C
+          = md_est.L.template triangularView<Eigen::Lower>().solve(
+              md_est.W_r * value_of(covariance));
+      arena_t<Eigen::MatrixXd> A = value_of(covariance) - C.transpose() * C;
+      auto s2_tmp = laplace_likelihood::compute_s2(ll_fun, md_est.theta, A,
+                                                   options.hessian_block_size,
+                                                   ll_args_copy, msgs);
+      s2.deep_copy(s2_tmp);
+      copy_compute_s2<true>(partial_parm, ll_args_filter);
+    }
+  } else if (md_est.solver_used == 2) {
+    R = md_est.W_r
+        - md_est.W_r * md_est.K_root
+              * md_est.L.transpose()
+                    .template triangularView<Eigen::Upper>()
+                    .solve(md_est.L.template triangularView<Eigen::Lower>()
+                               .solve(md_est.K_root.transpose() * md_est.W_r));
+
+    arena_t<Eigen::MatrixXd> C
+        = md_est.L.template triangularView<Eigen::Lower>().solve(
+            md_est.K_root.transpose());
+    auto s2_tmp = laplace_likelihood::compute_s2(
+        ll_fun, md_est.theta, (C.transpose() * C).eval(),
+        options.hessian_block_size, ll_args_copy, msgs);
+    s2.deep_copy(s2_tmp);
+    copy_compute_s2<true>(partial_parm, ll_args_filter);
+  } else {  // options.solver with LU decomposition
+    LU_solve_covariance = md_est.LU.solve(value_of(covariance));
+    auto I_minus_BinvKW
+        = Eigen::MatrixXd::Identity(md_est.W_r.rows(), md_est.W_r.cols())
+          - LU_solve_covariance * md_est.W_r;
+    R = md_est.W_r * I_minus_BinvKW;  // == W - W B^{-1} K W
+    arena_t<Eigen::MatrixXd> A
+        = value_of(covariance)
+          - value_of(covariance) * md_est.W_r * LU_solve_covariance;
+    auto s2_tmp = laplace_likelihood::compute_s2(ll_fun, md_est.theta, A,
+                                                 options.hessian_block_size,
+                                                 ll_args_copy, msgs);
+    s2.deep_copy(s2_tmp);
+    copy_compute_s2<true>(partial_parm, ll_args_filter);
+  }
+}
+
+template <typename LLFun, typename MdEst, typename LLArgsCopy,
+          typename LLArgsFilter, typename CovarMat, typename PartialParm>
+inline void laplace_var_collect_ll_args_adjoints(
+    const LLFun& ll_fun, const MdEst& md_est, const LLArgsCopy& ll_args_copy,
+    const LLArgsFilter& ll_args_filter, const CovarMat& covariance,
+    const arena_t<Eigen::VectorXd>& s2, const arena_t<Eigen::MatrixXd>& R,
+    const arena_t<Eigen::MatrixXd>& LU_solve_covariance,
+    PartialParm& partial_parm, std::ostream* msgs) {
+  arena_t<Eigen::VectorXd> v;
+  if (md_est.solver_used == 1 || md_est.solver_used == 2) {
+    v = value_of(covariance) * s2
+        - value_of(covariance) * R * value_of(covariance) * s2;
+  } else {
+    v = LU_solve_covariance * s2;
+  }
+  laplace_likelihood::diff_eta_implicit(ll_fun, v, md_est.theta, ll_args_copy,
+                                        msgs);
+  collect_adjoints<true>(partial_parm, ll_args_filter);
+}
+
+template <typename MdEst, typename CovarMat, typename CovarArgsCopy,
+          typename CovarArgsAdj>
+inline void laplace_var_collect_covar_args_adjoints(
+    const MdEst& md_est, CovarMat& covariance,
+    const CovarArgsCopy& covar_args_copy, CovarArgsAdj& covar_args_adj,
+    const arena_t<Eigen::MatrixXd>& R, const arena_t<Eigen::VectorXd>& s2) {
+  arena_t<Eigen::MatrixXd> K_adj_arena
+      = 0.5 * md_est.a * md_est.a.transpose() - 0.5 * R
+        + s2 * md_est.theta_grad.transpose()
+        - (R * (covariance.val() * s2)) * md_est.theta_grad.transpose();
+  var Z = make_callback_var(
+      0.0, [covariance, K_adj_arena](auto&& vi) mutable {
+        covariance.adj().array() += vi.adj() * K_adj_arena.array();
+      });
+  grad(Z.vi_);
+  auto covar_args_filter = filter_var_scalar_types(covar_args_copy);
+  collect_adjoints(covar_args_adj, covar_args_filter);
+}
 }  // namespace internal
 /**
  * For a latent Gaussian model with global parameters phi, latent
@@ -1712,102 +1831,18 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
           }
         },
         partial_parm, ll_args_filter);
-    if (md_est.solver_used == 1) {
-      if (options.hessian_block_size == 1) {
-        arena_t<Eigen::MatrixXd> tmp = md_est.W_r.toDense();
-        md_est.L.template triangularView<Eigen::Lower>().solveInPlace(tmp);
-        R.noalias() = tmp.transpose() * tmp;
-        arena_t<Eigen::MatrixXd> C
-            = md_est.L.template triangularView<Eigen::Lower>().solve(
-                md_est.W_r * value_of(covariance));
-        if constexpr (!ll_args_contain_var) {
-          s2.deep_copy(
-              (0.5
-               * (value_of(covariance).diagonal()
-                  - (C.transpose() * C).diagonal())
-                     .cwiseProduct(laplace_likelihood::third_diff(
-                         ll_fun, md_est.theta, value_of(ll_args_copy), msgs))));
-        } else {
-          arena_t<Eigen::MatrixXd> A = value_of(covariance) - C.transpose() * C;
-          auto s2_tmp = laplace_likelihood::compute_s2(
-              ll_fun, md_est.theta, A, options.hessian_block_size, ll_args_copy,
-              msgs);
-          s2.deep_copy(s2_tmp);
-          internal::copy_compute_s2<true>(partial_parm, ll_args_filter);
-        }
-
-      } else {
-        arena_t<Eigen::MatrixXd> tmp = md_est.W_r.toDense();
-        md_est.L.template triangularView<Eigen::Lower>().solveInPlace(tmp);
-        R.noalias() = tmp.transpose() * tmp;
-        arena_t<Eigen::MatrixXd> C
-            = md_est.L.template triangularView<Eigen::Lower>().solve(
-                md_est.W_r * value_of(covariance));
-        arena_t<Eigen::MatrixXd> A = value_of(covariance) - C.transpose() * C;
-        auto s2_tmp = laplace_likelihood::compute_s2(ll_fun, md_est.theta, A,
-                                                     options.hessian_block_size,
-                                                     ll_args_copy, msgs);
-        s2.deep_copy(s2_tmp);
-        internal::copy_compute_s2<true>(partial_parm, ll_args_filter);
-      }
-    } else if (md_est.solver_used == 2) {
-      R = md_est.W_r
-          - md_est.W_r * md_est.K_root
-                * md_est.L.transpose()
-                      .template triangularView<Eigen::Upper>()
-                      .solve(
-                          md_est.L.template triangularView<Eigen::Lower>()
-                              .solve(md_est.K_root.transpose() * md_est.W_r));
-
-      arena_t<Eigen::MatrixXd> C
-          = md_est.L.template triangularView<Eigen::Lower>().solve(
-              md_est.K_root.transpose());
-      auto s2_tmp = laplace_likelihood::compute_s2(
-          ll_fun, md_est.theta, (C.transpose() * C).eval(),
-          options.hessian_block_size, ll_args_copy, msgs);
-      s2.deep_copy(s2_tmp);
-      internal::copy_compute_s2<true>(partial_parm, ll_args_filter);
-    } else {  // options.solver with LU decomposition
-      LU_solve_covariance = md_est.LU.solve(value_of(covariance));
-      auto I_minus_BinvKW
-          = Eigen::MatrixXd::Identity(md_est.W_r.rows(), md_est.W_r.cols())
-            - LU_solve_covariance * md_est.W_r;
-      R = md_est.W_r * I_minus_BinvKW;  // == W - W B^{-1} K W
-      arena_t<Eigen::MatrixXd> A
-          = value_of(covariance)
-            - value_of(covariance) * md_est.W_r * LU_solve_covariance;
-      auto s2_tmp = laplace_likelihood::compute_s2(ll_fun, md_est.theta, A,
-                                                   options.hessian_block_size,
-                                                   ll_args_copy, msgs);
-      s2.deep_copy(s2_tmp);
-      internal::copy_compute_s2<true>(partial_parm, ll_args_filter);
-    }
+    internal::laplace_var_solver_postprocess<ll_args_contain_var>(
+        md_est, covariance, options, ll_fun, ll_args_copy, ll_args_filter,
+        partial_parm, R, s2, LU_solve_covariance, msgs);
     lmd = md_est.lmd;
     if constexpr (is_any_var_scalar_v<scalar_type_t<CovarArgs>>) {
-      arena_t<Eigen::MatrixXd> K_adj_arena
-          = 0.5 * md_est.a * md_est.a.transpose() - 0.5 * R
-            + s2 * md_est.theta_grad.transpose()
-            - (R * (covariance.val() * s2)) * md_est.theta_grad.transpose();
-      var Z = make_callback_var(
-          0.0, [covariance, K_adj_arena](auto&& vi) mutable {
-            covariance.adj().array() += vi.adj() * K_adj_arena.array();
-          });
-      grad(Z.vi_);
-      auto covar_args_filter
-          = internal::filter_var_scalar_types(covar_args_copy);
-      internal::collect_adjoints(covar_args_adj, covar_args_filter);
+      internal::laplace_var_collect_covar_args_adjoints(
+          md_est, covariance, covar_args_copy, covar_args_adj, R, s2);
     }
     if constexpr (ll_args_contain_var) {
-      arena_t<Eigen::VectorXd> v;
-      if (md_est.solver_used == 1 || md_est.solver_used == 2) {
-        v = value_of(covariance) * s2
-            - value_of(covariance) * R * value_of(covariance) * s2;
-      } else {
-        v = LU_solve_covariance * s2;
-      }
-      laplace_likelihood::diff_eta_implicit(ll_fun, v, md_est.theta,
-                                            ll_args_copy, msgs);
-      internal::collect_adjoints<true>(partial_parm, ll_args_filter);
+      internal::laplace_var_collect_ll_args_adjoints(
+          ll_fun, md_est, ll_args_copy, ll_args_filter, covariance, s2, R,
+          LU_solve_covariance, partial_parm, msgs);
     }
   }
   var ret(lmd);
