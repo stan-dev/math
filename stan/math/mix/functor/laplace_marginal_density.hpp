@@ -1187,8 +1187,6 @@ inline auto laplace_marginal_density_est(
   auto& wolfe_status = state.wolfe_status;
   auto& curr = state.curr();
   auto& prev = state.prev();
-  auto& B = state.B;
-  auto& b = state.b;
   // 'a' gradient
   auto grad_fun = [&covariance](auto&& step) {
     return -covariance * step.a() + covariance * step.theta_grad();
@@ -1203,9 +1201,9 @@ inline auto laplace_marginal_density_est(
     eval_in.dir() = grad_fun(step_info).dot(p);
   };
   auto update_line_search
-      = [&grad_fun, &covariance, &update_step, &options, &msgs,
-         &state](auto&& wolfe_status, auto&& wolfe_info, auto&& curr,
-                 auto&& prev) {
+      = [&grad_fun, &update_step, &options, &msgs, &state](
+            auto&& wolfe_status, auto&& wolfe_info, auto&& curr,
+            auto&& prev) {
           wolfe_info.p_ = curr.a() - prev.a();
           state.prev_g.noalias() = grad_fun(prev);
           wolfe_info.init_dir_ = state.prev_g.dot(wolfe_info.p_);
