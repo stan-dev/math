@@ -1288,8 +1288,7 @@ inline auto laplace_marginal_density_est(
               set_next_iter(curr, prev);
               continue;
             }
-            const double B_log_determinant = solver.compute_log_determinant();
-            return solver.build_result(state, B_log_determinant);
+            return solver.build_result(state, solver.compute_log_determinant());
           } else {
             set_next_iter(curr, prev);
           }
@@ -1311,8 +1310,7 @@ inline auto laplace_marginal_density_est(
               set_next_iter(curr, prev);
               continue;
             }
-            const double B_log_determinant = solver.compute_log_determinant();
-            return solver.build_result(state, B_log_determinant);
+            return solver.build_result(state, solver.compute_log_determinant());
           } else {
             set_next_iter(curr, prev);
           }
@@ -1348,8 +1346,7 @@ inline auto laplace_marginal_density_est(
             set_next_iter(curr, prev);
             continue;
           }
-          const double B_log_determinant = solver.compute_log_determinant();
-          return solver.build_result(state, B_log_determinant);
+          return solver.build_result(state, solver.compute_log_determinant());
         } else {
           set_next_iter(curr, prev);
         }
@@ -1383,8 +1380,7 @@ inline auto laplace_marginal_density_est(
           set_next_iter(curr, prev);
           continue;
         }
-        const double B_log_determinant = solver.compute_log_determinant();
-        return solver.build_result(state, B_log_determinant);
+        return solver.build_result(state, solver.compute_log_determinant());
       } else {
         set_next_iter(curr, prev);
       }
