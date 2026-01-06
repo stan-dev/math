@@ -933,9 +933,8 @@ struct CholeskyKSolver {
         ll_fun, state.prev().theta(), hessian_block_size, ll_args, msgs);
 
     // 2. Formulate B = I + K^T * W * K
-    state.B.noalias()
-        = Eigen::MatrixXd::Identity(theta_size, theta_size)
-          + K_root.transpose() * (W_full * K_root);
+    state.B.noalias() = Eigen::MatrixXd::Identity(theta_size, theta_size)
+                        + K_root.transpose() * (W_full * K_root);
 
     // 3. Factorize B with jittering fallback
     llt_B.compute(state.B);
@@ -1093,6 +1092,49 @@ struct LUSolver {
   }
 };
 
+/**
+ * @brief Run a Newton loop with a solver policy, updating the shared state.
+ *
+ * This helper centralizes the iteration/line-search logic shared across
+ * solver policies while preserving the step counter and fallback behavior.
+ */
+template <typename SolverPolicy, typename NewtonStateT, typename OptionsT,
+          typename LLFunT, typename LLTupleArgsT, typename CovarMatT,
+          typename UpdateLineSearch, typename SetNextIter,
+          typename ThrowOverstep>
+inline auto run_newton_loop(SolverPolicy& solver, NewtonStateT& state,
+                            const OptionsT& options, Eigen::Index& step_iter,
+                            const LLFunT& ll_fun, const LLTupleArgsT& ll_args,
+                            const CovarMatT& covariance,
+                            UpdateLineSearch&& update_line_search,
+                            SetNextIter&& set_next_iter,
+                            ThrowOverstep&& throw_overstep,
+                            std::ostream* msgs) {
+  bool finish_update = false;
+  for (; step_iter <= options.max_num_steps; step_iter++) {
+    solver.solve_step(state, ll_fun, ll_args, covariance,
+                      options.hessian_block_size, msgs);
+    if (!state.final_loop) {
+      finish_update = update_line_search(state.wolfe_status, state.wolfe_info,
+                                         state.curr(), state.prev());
+    }
+    if (finish_update) {
+      if (!state.final_loop && state.wolfe_status.accept_) {
+        // Do one final loop with exact wolfe conditions
+        state.final_loop = true;
+        // NOTE: Swapping here so we need to swap prev and curr later
+        set_next_iter(state.curr(), state.prev());
+        continue;
+      }
+      return solver.build_result(state, solver.compute_log_determinant());
+    } else {
+      set_next_iter(state.curr(), state.prev());
+    }
+  }
+  throw_overstep(options.max_num_steps);
+  return solver.build_result(state, solver.compute_log_determinant());
+}
+
 // ============================================================================
 // END REFACTORING CLASSES
 // ============================================================================
@@ -1181,8 +1223,8 @@ inline auto laplace_marginal_density_est(
   auto obj_fun_state = obj_fun;
   auto theta_grad_f_state = theta_grad_f;
   internal::NewtonState<decltype(obj_fun_state), decltype(theta_grad_f_state)>
-      state(theta_size, std::move(obj_fun_state),
-            std::move(theta_grad_f_state), theta_init);
+      state(theta_size, std::move(obj_fun_state), std::move(theta_grad_f_state),
+            theta_init);
   auto& wolfe_info = state.wolfe_info;
   auto& wolfe_status = state.wolfe_status;
   auto& curr = state.curr();
@@ -1202,8 +1244,7 @@ inline auto laplace_marginal_density_est(
   };
   auto update_line_search
       = [&grad_fun, &update_step, &options, &msgs, &state](
-            auto&& wolfe_status, auto&& wolfe_info, auto&& curr,
-            auto&& prev) {
+            auto&& wolfe_status, auto&& wolfe_info, auto&& curr, auto&& prev) {
           wolfe_info.p_ = curr.a() - prev.a();
           state.prev_g.noalias() = grad_fun(prev);
           wolfe_info.init_dir_ = state.prev_g.dot(wolfe_info.p_);
@@ -1262,7 +1303,6 @@ inline auto laplace_marginal_density_est(
    * recent wolfe step that was accepted. So we do one final loop to update
    * our return values.
    */
-  bool finish_update = false;
   // Start with safe step size
   wolfe_status.num_backtracks_ = 99;
   Eigen::Index step_iter = 0;
@@ -1270,51 +1310,15 @@ inline auto laplace_marginal_density_est(
     if (options.solver == 1) {
       if (options.hessian_block_size == 1) {
         CholeskyWSolverDiag solver;
-        solver.initialize(state);
-        for (; step_iter <= options.max_num_steps; step_iter++) {
-          solver.solve_step(state, ll_fun, ll_args, covariance,
-                            options.hessian_block_size, msgs);
-          if (!state.final_loop) {
-            finish_update
-                = update_line_search(wolfe_status, wolfe_info, curr, prev);
-          }
-          if (finish_update) {
-            if (!state.final_loop && wolfe_status.accept_) {
-              // Do one final loop with exact wolfe conditions
-              state.final_loop = true;
-              // NOTE: Swapping here so we need to swap prev and curr later
-              set_next_iter(curr, prev);
-              continue;
-            }
-            return solver.build_result(state, solver.compute_log_determinant());
-          } else {
-            set_next_iter(curr, prev);
-          }
-        }
+        return run_newton_loop(solver, state, options, step_iter, ll_fun,
+                               ll_args, covariance, update_line_search,
+                               set_next_iter, throw_overstep, msgs);
       } else {
         CholeskyWSolverBlock solver;
-        solver.initialize(state);
-        for (; step_iter <= options.max_num_steps; step_iter++) {
-          solver.solve_step(state, ll_fun, ll_args, covariance,
-                            options.hessian_block_size, msgs);
-          if (!state.final_loop) {
-            finish_update
-                = update_line_search(wolfe_status, wolfe_info, curr, prev);
-          }
-          if (finish_update) {
-            if (!state.final_loop && wolfe_status.accept_) {
-              // Do one final loop with exact wolfe conditions
-              state.final_loop = true;
-              set_next_iter(curr, prev);
-              continue;
-            }
-            return solver.build_result(state, solver.compute_log_determinant());
-          } else {
-            set_next_iter(curr, prev);
-          }
-        }
+        return run_newton_loop(solver, state, options, step_iter, ll_fun,
+                               ll_args, covariance, update_line_search,
+                               set_next_iter, throw_overstep, msgs);
       }
-      throw_overstep(options.max_num_steps);
     }
   } catch (const std::exception& e) {
     allow_bounce = true;
@@ -1329,27 +1333,9 @@ inline auto laplace_marginal_density_est(
     if (options.solver == 2 || allow_bounce) {
       CholeskyKSolver solver;
       solver.initialize(state, covariance);
-      for (; step_iter <= options.max_num_steps; step_iter++) {
-        solver.solve_step(state, ll_fun, ll_args, covariance,
-                          options.hessian_block_size, msgs);
-        if (!state.final_loop) {
-          finish_update
-              = update_line_search(wolfe_status, wolfe_info, curr, prev);
-        }
-        if (finish_update) {
-          if (!state.final_loop && wolfe_status.accept_) {
-            // Do one final loop with exact wolfe conditions
-            state.final_loop = true;
-            // NOTE: Swapping here so we need to swap prev and curr later
-            set_next_iter(curr, prev);
-            continue;
-          }
-          return solver.build_result(state, solver.compute_log_determinant());
-        } else {
-          set_next_iter(curr, prev);
-        }
-      }
-      throw_overstep(options.max_num_steps);
+      return run_newton_loop(solver, state, options, step_iter, ll_fun, ll_args,
+                             covariance, update_line_search, set_next_iter,
+                             throw_overstep, msgs);
     }
   } catch (const std::exception& e) {
     allow_bounce = true;
@@ -1362,28 +1348,9 @@ inline auto laplace_marginal_density_est(
   }
   if (options.solver == 3 || allow_bounce) {
     LUSolver solver;
-    solver.initialize(state);
-    for (; step_iter <= options.max_num_steps; step_iter++) {
-      solver.solve_step(state, ll_fun, ll_args, covariance,
-                        options.hessian_block_size, msgs);
-      if (!state.final_loop) {
-        finish_update
-            = update_line_search(wolfe_status, wolfe_info, curr, prev);
-      }
-      if (finish_update) {
-        if (!state.final_loop && wolfe_status.accept_) {
-          // Do one final loop with exact wolfe conditions
-          state.final_loop = true;
-          // NOTE: Swapping here so we need to swap prev and curr later
-          set_next_iter(curr, prev);
-          continue;
-        }
-        return solver.build_result(state, solver.compute_log_determinant());
-      } else {
-        set_next_iter(curr, prev);
-      }
-    }
-    throw_overstep(options.max_num_steps);
+    return run_newton_loop(solver, state, options, step_iter, ll_fun, ll_args,
+                           covariance, update_line_search, set_next_iter,
+                           throw_overstep, msgs);
   }
   throw std::domain_error(
       std::string("You chose a solver (") + std::to_string(options.solver)
@@ -1421,10 +1388,11 @@ template <
     typename LLFun, typename LLTupleArgs, typename CovarFun, typename CovarArgs,
     bool InitTheta,
     require_t<is_all_arithmetic_scalar<CovarArgs, LLTupleArgs>>* = nullptr>
-inline double laplace_marginal_density(
-    LLFun&& ll_fun, LLTupleArgs&& ll_args, CovarFun&& covariance_function,
-    CovarArgs&& covar_args, const laplace_options<InitTheta>& options,
-    std::ostream* msgs) {
+inline auto laplace_marginal_density(LLFun&& ll_fun, LLTupleArgs&& ll_args,
+                                     CovarFun&& covariance_function,
+                                     CovarArgs&& covar_args,
+                                     const laplace_options<InitTheta>& options,
+                                     std::ostream* msgs) {
   Eigen::MatrixXd covariance = stan::math::apply(
       [msgs, &covariance_function](auto&&... args) {
         return covariance_function(std::forward<decltype(args)>(args)..., msgs);
@@ -1635,6 +1603,38 @@ inline void reverse_pass_collect_adjoints(var ret, Output&& output,
         });
   }
 }
+
+template <typename Args>
+inline auto laplace_var_to_ref(Args&& args) {
+  return to_ref(std::forward<Args>(args));
+}
+
+template <typename ArgsRef>
+inline auto laplace_var_make_zeroed(ArgsRef&& args_ref) {
+  return make_zeroed_arena(std::forward<ArgsRef>(args_ref));
+}
+
+template <typename ArgsRef>
+inline auto laplace_var_deep_copy_vargs(ArgsRef&& args_ref) {
+  using laplace_likelihood::internal::COPY_TYPE;
+  using laplace_likelihood::internal::deep_copy_vargs;
+  return deep_copy_vargs<var>(std::forward<ArgsRef>(args_ref));
+}
+
+template <typename CovarFun, typename CovarArgsCopy>
+inline auto laplace_var_eval_covariance(CovarFun&& covariance_function,
+                                        CovarArgsCopy&& covar_args_copy,
+                                        std::ostream* msgs) {
+  return stan::math::apply(
+      [&covariance_function, &msgs](auto&&... args) {
+        if constexpr (is_any_var_scalar_v<decltype(args)...>) {
+          return to_var_value(covariance_function(args..., msgs));
+        } else {
+          return covariance_function(args..., msgs);
+        }
+      },
+      std::forward<CovarArgsCopy>(covar_args_copy));
+}
 }  // namespace internal
 /**
  * For a latent Gaussian model with global parameters phi, latent
@@ -1671,30 +1671,24 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
                                      CovarArgs&& covar_args,
                                      const laplace_options<InitTheta>& options,
                                      std::ostream* msgs) {
-  auto covar_args_refs = to_ref(std::forward<CovarArgs>(covar_args));
-  auto ll_args_refs = to_ref(std::forward<LLTupleArgs>(ll_args));
+  auto covar_args_refs
+      = internal::laplace_var_to_ref(std::forward<CovarArgs>(covar_args));
+  auto ll_args_refs
+      = internal::laplace_var_to_ref(std::forward<LLTupleArgs>(ll_args));
   // Solver 1, 2, 3
   constexpr bool ll_args_contain_var = is_any_var_scalar<LLTupleArgs>::value;
-  auto partial_parm = internal::make_zeroed_arena(ll_args_refs);
-  auto covar_args_adj = internal::make_zeroed_arena(covar_args_refs);
+  auto partial_parm = internal::laplace_var_make_zeroed(ll_args_refs);
+  auto covar_args_adj = internal::laplace_var_make_zeroed(covar_args_refs);
   double lmd = 0.0;
   {
     nested_rev_autodiff nested;
 
     // Make one hard copy here
-    using laplace_likelihood::internal::COPY_TYPE;
-    using laplace_likelihood::internal::deep_copy_vargs;
-    auto ll_args_copy = deep_copy_vargs<var>(ll_args_refs);
-    auto covar_args_copy = deep_copy_vargs<var>(covar_args_refs);
-    auto covariance = stan::math::apply(
-        [&covariance_function, &msgs](auto&&... args) {
-          if constexpr (is_any_var_scalar_v<decltype(args)...>) {
-            return to_var_value(covariance_function(args..., msgs));
-          } else {
-            return covariance_function(args..., msgs);
-          }
-        },
-        covar_args_copy);
+    auto ll_args_copy = internal::laplace_var_deep_copy_vargs(ll_args_refs);
+    auto covar_args_copy
+        = internal::laplace_var_deep_copy_vargs(covar_args_refs);
+    auto covariance = internal::laplace_var_eval_covariance(
+        covariance_function, covar_args_copy, msgs);
     auto md_est = internal::laplace_marginal_density_est(
         ll_fun, value_of(ll_args_copy), value_of(covariance), options, msgs);
     if constexpr (ll_args_contain_var) {
