@@ -8,7 +8,8 @@
 
 namespace stan::math::internal {
 /**
- * Filter a tuple and return a tuple with references to the types with a var scalar type.
+ * Filter a tuple and return a tuple with references to the types with a var
+ * scalar type.
  * @tparam T Possibly a tuple, std::vector, Eigen type, or scalar
  * @param[in] t Input to filter
  * @return Filtered input with only var scalar types
@@ -22,5 +23,5 @@ inline constexpr decltype(auto) filter_var_scalar_types(T&& t) {
       std::forward<T>(t));
 }
 
-}
+}  // namespace stan::math::internal
 #endif

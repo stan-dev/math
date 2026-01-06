@@ -73,13 +73,12 @@ inline auto laplace_marginal_density(LLFun&& ll_fun, LLTupleArgs&& ll_args,
 namespace internal {
 
 template <bool ZeroInput = false, typename Output, typename Input,
-    require_tuple_t<Output>* = nullptr,
-    require_tuple_t<Input>* = nullptr,
-    require_t<std::bool_constant<std::tuple_size_v<std::decay_t<Output>> == 0>>* = nullptr,
-    require_t<std::bool_constant<std::tuple_size_v<std::decay_t<Input>> == 0>>* = nullptr
-    >
+          require_tuple_t<Output>* = nullptr, require_tuple_t<Input>* = nullptr,
+          require_t<std::bool_constant<
+              std::tuple_size_v<std::decay_t<Output>> == 0>>* = nullptr,
+          require_t<std::bool_constant<
+              std::tuple_size_v<std::decay_t<Input>> == 0>>* = nullptr>
 inline constexpr void copy_compute_s2(Output&& output, Input&& input) {}
-
 
 /**
  * Copies the adjoints from the input to the output, scaling them by 0.5.
@@ -109,7 +108,8 @@ inline constexpr void copy_compute_s2(Output&& output, Input&& input) {
           using dbl_map_t = Eigen::Map<Eigen::Matrix<double, -1, 1>>;
           using var_map_t = Eigen::Map<Eigen::Matrix<var, -1, 1>>;
           var_map_t input_map(input_i.data(), input_i.size());
-          dbl_map_t(output_i.data(), output_i.size()).array() += 0.5 * input_map.adj().array();
+          dbl_map_t(output_i.data(), output_i.size()).array()
+              += 0.5 * input_map.adj().array();
           if constexpr (ZeroInput) {
             input_map.adj().setZero();
           }
@@ -217,26 +217,27 @@ inline auto laplace_marginal_density(LLFun&& ll_fun, LLTupleArgs&& ll_args,
     nested_rev_autodiff nested;
     // Make one hard copy here
     auto ll_args_copy = internal::deep_copy_vargs<var>(ll_args_refs);
-    auto covar_args_copy
-        = internal::deep_copy_vargs<var>(covar_args_refs);
+    auto covar_args_copy = internal::deep_copy_vargs<var>(covar_args_refs);
     auto covariance = stan::math::apply(
-      [&covariance_function, &msgs](auto&&... args) {
-        if constexpr (is_any_var_scalar_v<decltype(args)...>) {
-          return to_var_value(covariance_function(args..., msgs));
-        } else {
-          return covariance_function(args..., msgs);
-        }
-      }, covar_args_copy);
+        [&covariance_function, &msgs](auto&&... args) {
+          if constexpr (is_any_var_scalar_v<decltype(args)...>) {
+            return to_var_value(covariance_function(args..., msgs));
+          } else {
+            return covariance_function(args..., msgs);
+          }
+        },
+        covar_args_copy);
     decltype(auto) covariance_val = value_of(covariance);
     decltype(auto) ll_args_vals = value_of(ll_args_copy);
     auto md_est = internal::laplace_marginal_density_est(
         ll_fun, ll_args_vals, covariance_val, options, msgs);
     auto ll_args_filter = internal::filter_var_scalar_types(ll_args_copy);
-        // tuple of references to var types
+    // tuple of references to var types
     // Solver 1, 2
-    const bool solver_1_or_2 = md_est.solver_used == 1 || md_est.solver_used == 2;
+    const bool solver_1_or_2
+        = md_est.solver_used == 1 || md_est.solver_used == 2;
     arena_t<Eigen::MatrixXd> R(md_est.theta.size() * solver_1_or_2,
-      md_est.theta.size() * solver_1_or_2);
+                               md_est.theta.size() * solver_1_or_2);
     // Solver 3
     arena_t<Eigen::MatrixXd> LU_solve_covariance(
         covariance.rows() * (md_est.solver_used == 3),
@@ -250,21 +251,21 @@ inline auto laplace_marginal_density(LLFun&& ll_fun, LLTupleArgs&& ll_args,
         md_est.L.template triangularView<Eigen::Lower>().solveInPlace(tmp);
         R.noalias() = tmp.transpose() * tmp;
         arena_t<Eigen::MatrixXd> C
-            = md_est.L.template triangularView<Eigen::Lower>().solve(md_est.W_r
-                                                                    * covariance_val);
+            = md_est.L.template triangularView<Eigen::Lower>().solve(
+                md_est.W_r * covariance_val);
         if constexpr (ll_args_contain_var) {
           arena_t<Eigen::MatrixXd> A = covariance_val - C.transpose() * C;
-          auto s2_tmp = laplace_likelihood::compute_s2(ll_fun, md_est.theta, A,
-                                                      options.hessian_block_size,
-                                                      ll_args_copy, msgs);
+          auto s2_tmp = laplace_likelihood::compute_s2(
+              ll_fun, md_est.theta, A, options.hessian_block_size, ll_args_copy,
+              msgs);
           s2.deep_copy(s2_tmp);
           internal::copy_compute_s2<ZeroOut>(partial_parm, ll_args_filter);
         } else {
           s2.deep_copy(
               (0.5
-              * (covariance_val.diagonal() - (C.transpose() * C).diagonal())
-                    .cwiseProduct(laplace_likelihood::third_diff(
-                        ll_fun, md_est.theta, ll_args_vals, msgs))));
+               * (covariance_val.diagonal() - (C.transpose() * C).diagonal())
+                     .cwiseProduct(laplace_likelihood::third_diff(
+                         ll_fun, md_est.theta, ll_args_vals, msgs))));
         }
 
       } else {
@@ -272,12 +273,12 @@ inline auto laplace_marginal_density(LLFun&& ll_fun, LLTupleArgs&& ll_args,
         md_est.L.template triangularView<Eigen::Lower>().solveInPlace(tmp);
         R.noalias() = tmp.transpose() * tmp;
         arena_t<Eigen::MatrixXd> C
-            = md_est.L.template triangularView<Eigen::Lower>().solve(md_est.W_r
-                                                                    * covariance_val);
+            = md_est.L.template triangularView<Eigen::Lower>().solve(
+                md_est.W_r * covariance_val);
         arena_t<Eigen::MatrixXd> A = covariance_val - C.transpose() * C;
         auto s2_tmp = laplace_likelihood::compute_s2(ll_fun, md_est.theta, A,
-                                                    options.hessian_block_size,
-                                                    ll_args_copy, msgs);
+                                                     options.hessian_block_size,
+                                                     ll_args_copy, msgs);
         s2.deep_copy(s2_tmp);
         internal::copy_compute_s2<ZeroOut>(partial_parm, ll_args_filter);
       }
@@ -287,8 +288,8 @@ inline auto laplace_marginal_density(LLFun&& ll_fun, LLTupleArgs&& ll_args,
                 * md_est.L.transpose()
                       .template triangularView<Eigen::Upper>()
                       .solve(
-                          md_est.L.template triangularView<Eigen::Lower>().solve(
-                              md_est.K_root.transpose() * md_est.W_r));
+                          md_est.L.template triangularView<Eigen::Lower>()
+                              .solve(md_est.K_root.transpose() * md_est.W_r));
 
       arena_t<Eigen::MatrixXd> C
           = md_est.L.template triangularView<Eigen::Lower>().solve(
@@ -307,8 +308,8 @@ inline auto laplace_marginal_density(LLFun&& ll_fun, LLTupleArgs&& ll_args,
       arena_t<Eigen::MatrixXd> A
           = covariance_val - covariance_val * md_est.W_r * LU_solve_covariance;
       auto s2_tmp = laplace_likelihood::compute_s2(ll_fun, md_est.theta, A,
-                                                  options.hessian_block_size,
-                                                  ll_args_copy, msgs);
+                                                   options.hessian_block_size,
+                                                   ll_args_copy, msgs);
       s2.deep_copy(s2_tmp);
       internal::copy_compute_s2<ZeroOut>(partial_parm, ll_args_filter);
     }
@@ -317,11 +318,13 @@ inline auto laplace_marginal_density(LLFun&& ll_fun, LLTupleArgs&& ll_args,
           = 0.5 * md_est.a * md_est.a.transpose() - 0.5 * R
             + s2 * md_est.theta_grad.transpose()
             - (R * (covariance.val() * s2)) * md_est.theta_grad.transpose();
-      var Z = make_callback_var(0.0, [covariance, K_adj_arena](auto&& vi) mutable {
-        covariance.adj().array() += vi.adj() * K_adj_arena.array();
-      });
+      var Z = make_callback_var(
+          0.0, [covariance, K_adj_arena](auto&& vi) mutable {
+            covariance.adj().array() += vi.adj() * K_adj_arena.array();
+          });
       grad(Z.vi_);
-      auto covar_args_filter = internal::filter_var_scalar_types(covar_args_copy);
+      auto covar_args_filter
+          = internal::filter_var_scalar_types(covar_args_copy);
       internal::collect_adjoints(covar_args_adj, covar_args_filter);
     }
     if constexpr (ll_args_contain_var) {
@@ -333,8 +336,8 @@ inline auto laplace_marginal_density(LLFun&& ll_fun, LLTupleArgs&& ll_args,
       } else {
         v = LU_solve_covariance * s2;
       }
-      laplace_likelihood::diff_eta_implicit(ll_fun, v, md_est.theta, ll_args_copy,
-                                            msgs);
+      laplace_likelihood::diff_eta_implicit(ll_fun, v, md_est.theta,
+                                            ll_args_copy, msgs);
       internal::collect_adjoints<ZeroOut>(partial_parm, ll_args_filter);
     }
     lmd = md_est.lmd;
@@ -347,7 +350,8 @@ inline auto laplace_marginal_density(LLFun&& ll_fun, LLTupleArgs&& ll_args,
   }
   if constexpr (ll_args_contain_var) {
     auto ll_args_filter = internal::filter_var_scalar_types(ll_args_refs);
-    internal::reverse_pass_collect_adjoints(ret, ll_args_filter, std::move(partial_parm));
+    internal::reverse_pass_collect_adjoints(ret, ll_args_filter,
+                                            std::move(partial_parm));
   }
   return ret;
 }

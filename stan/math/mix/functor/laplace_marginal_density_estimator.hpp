@@ -234,7 +234,6 @@ inline void block_matrix_chol_L(WRootMat& W_root,
   }
 }
 
-
 /**
  * Throws an error if the parameter contains NaN or Inf values.
  * @tparam NameStr Type of the name string, e.g. `std::string` or `char*`.
@@ -264,7 +263,6 @@ inline STAN_COLD_PATH void throw_nan(NameStr&& name_str, ParamStr&& param_str,
   msg += "].";
   throw std::domain_error(msg);
 }
-
 
 /**
  * Validates the options for the Laplace approximation.
@@ -999,22 +997,22 @@ inline auto run_newton_loop(SolverPolicy& solver, NewtonStateT& state,
  * @param next_solver Name of the solver being attempted next
  * @param e Exception that caused the fallback
  */
-inline void log_solver_fallback(std::ostream* msgs,
-                               std::string_view context,
-                               Eigen::Index iter,
-                               std::string_view failed_solver,
-                               std::string_view next_solver,
-                               const std::exception& e) {
-  if (!msgs) return;
+inline void log_solver_fallback(std::ostream* msgs, std::string_view context,
+                                Eigen::Index iter,
+                                std::string_view failed_solver,
+                                std::string_view next_solver,
+                                const std::exception& e) {
+  if (!msgs)
+    return;
 
   // Build once so we don't interleave with other logs.
   std::ostringstream os;
   os << "[" << context << "] WARNING: solver fallback\n"
      << "  " << std::left << std::setw(12) << "iteration:" << iter << "\n"
-     << "  " << std::left << std::setw(12) << "failed:"    << failed_solver << "\n"
-     << "  " << std::left << std::setw(12) << "reason:"    << e.what() << "\n"
-     << "  " << std::left << std::setw(12) << "action:"    << "trying " << next_solver
-     << "\n";
+     << "  " << std::left << std::setw(12) << "failed:" << failed_solver << "\n"
+     << "  " << std::left << std::setw(12) << "reason:" << e.what() << "\n"
+     << "  " << std::left << std::setw(12) << "action:"
+     << "trying " << next_solver << "\n";
   (*msgs) << os.str();
 }
 
@@ -1201,10 +1199,11 @@ inline auto laplace_marginal_density_est(
     }
   } catch (const std::exception& e) {
     allow_bounce = true;
-    std::string solver_type = (options.hessian_block_size == 1) ? "Diagonal" : "Block";
+    std::string solver_type
+        = (options.hessian_block_size == 1) ? "Diagonal" : "Block";
     std::string failed = "solver 1 (" + solver_type + " Hessian-root Cholesky)";
-    log_solver_fallback(msgs, "laplace_marginal_density", step_iter,
-                        failed, "solver 2 (Covariance-root Cholesky)", e);
+    log_solver_fallback(msgs, "laplace_marginal_density", step_iter, failed,
+                        "solver 2 (Covariance-root Cholesky)", e);
   }
   try {
     if (options.solver == 2 || allow_bounce) {
@@ -1231,6 +1230,6 @@ inline auto laplace_marginal_density_est(
       + ") that is not valid. Please choose either 1, 2, or 3.");
 }
 }  // namespace internal
-}
-}
+}  // namespace math
+}  // namespace stan
 #endif

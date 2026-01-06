@@ -7,10 +7,12 @@
 
 namespace stan::math::internal {
 /**
- * Creates an arena type that is the same type as the input and initialized with zeros
+ * Creates an arena type that is the same type as the input and initialized with
+ * zeros
  * @tparam Input tuple, std::vector, Eigen type, or scalar
  * @param input The input to be converted to an arena type
- * @return An arena type with the same structure as the input and initialized to zeros
+ * @return An arena type with the same structure as the input and initialized to
+ * zeros
  */
 template <typename Input>
 inline constexpr auto make_zeroed_arena(Input&& input) {
@@ -38,6 +40,6 @@ inline constexpr auto make_zeroed_arena(Input&& input) {
   }
 }
 
-}
+}  // namespace stan::math::internal
 
 #endif

@@ -40,6 +40,6 @@ inline void set_zero_adjoint(Output&& output) {
         std::forward<Output>(output));
   }
 }
-}
+}  // namespace stan::math::internal
 
 #endif

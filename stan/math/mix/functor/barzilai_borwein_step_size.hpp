@@ -120,5 +120,5 @@ inline double barzilai_borwein_step_size(const Eigen::VectorXd& s,
   return alpha0;
 }
 
-}
+}  // namespace stan::math::internal
 #endif

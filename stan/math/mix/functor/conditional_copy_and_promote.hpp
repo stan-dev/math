@@ -101,8 +101,6 @@ inline auto shallow_copy_vargs(Args&&... args) {
       std::forward<Args>(args)...);
 }
 
-
 }  // namespace stan::math::internal
-
 
 #endif

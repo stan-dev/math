@@ -9,7 +9,6 @@
 #include <stan/math/prim/meta/is_stan_scalar.hpp>
 #include <type_traits>
 
-
 namespace stan::math::internal {
 
 inline constexpr bool ZeroOut = true;
@@ -58,7 +57,6 @@ inline void collect_adjoints(Output& output, Input&& input) {
       },
       std::forward<Output>(output), std::forward<Input>(input));
 }
-
 
 /**
  * Collects the adjoints from the input and adds them to the output.
@@ -133,6 +131,6 @@ inline void collect_adjoints(Output&& output, const vari* ret, Input&& input) {
   }
 }
 
-}
+}  // namespace stan::math::internal
 
 #endif
