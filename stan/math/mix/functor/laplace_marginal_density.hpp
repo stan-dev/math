@@ -679,7 +679,7 @@ struct CholeskyWSolverDiag {
    * @return laplace_density_estimates with solver_used = 1
    */
   template <typename NewtonStateT>
-  auto build_result(const NewtonStateT& state, double log_det) const {
+  auto build_result(NewtonStateT& state, double log_det) {
     return laplace_density_estimates{
         state.prev().obj() - 0.5 * log_det,
         std::move(state.prev().theta()),
@@ -1270,45 +1270,11 @@ inline auto laplace_marginal_density_est(
   try {
     if (options.solver == 1) {
       if (options.hessian_block_size == 1) {
-        Eigen::VectorXd W_r(theta_size);
+        CholeskyWSolverDiag solver;
+        solver.initialize(state);
         for (; step_iter <= options.max_num_steps; step_iter++) {
-          auto W = laplace_likelihood::diagonal_hessian(ll_fun, prev.theta(),
-                                                        ll_args, msgs);
-          for (Eigen::Index j = 0; j < W.size(); j++) {
-            if (W.coeff(j) < 0 || !std::isfinite(W.coeff(j))) {
-              throw std::domain_error(
-                  "laplace_marginal_density: Hessian matrix is not positive "
-                  "definite");
-            } else {
-              W_r.coeffRef(j) = std::sqrt(W.coeff(j));
-            }
-          }
-          B.noalias() = Eigen::MatrixXd::Identity(theta_size, theta_size)
-                        + W_r.asDiagonal() * covariance * W_r.asDiagonal();
-          Eigen::LLT<Eigen::Ref<Eigen::MatrixXd>> llt_B(B);
-          if (llt_B.info() != Eigen::Success) {
-            double jitter_try = 1e-10;
-            for (; jitter_try < 1e-5; jitter_try *= 10) {
-              B.diagonal().array() += jitter_try;
-              llt_B.compute(B);
-              if (llt_B.info() == Eigen::Success) {
-                break;
-              }
-            }
-            if (llt_B.info() != Eigen::Success) {
-              throw std::domain_error(
-                  "laplace_marginal_density: Cholesky failed in iteration "
-                  + std::to_string(step_iter));
-            }
-          }
-          auto L = llt_B.matrixL();
-          auto LT = llt_B.matrixU();
-          b.noalias()
-              = (W.array() * prev.theta().array()).matrix() + prev.theta_grad();
-          curr.a().noalias()
-              = b
-                - W_r.asDiagonal()
-                      * LT.solve(L.solve(W_r.cwiseProduct(covariance * b)));
+          solver.solve_step(state, ll_fun, ll_args, covariance,
+                            options.hessian_block_size, msgs);
           if (!state.final_loop) {
             finish_update
                 = update_line_search(wolfe_status, wolfe_info, curr, prev);
@@ -1321,75 +1287,18 @@ inline auto laplace_marginal_density_est(
               set_next_iter(curr, prev);
               continue;
             }
-            const double B_log_determinant
-                = 2.0 * llt_B.matrixLLT().diagonal().array().log().sum();
-            /**
-             * NOTE: At this point we are return prev because either
-             * 1. Line search + tolerance passed and we swapped prev<->curr
-             * 2. Line search failed and we want to return the previous step
-             */
-            return laplace_density_estimates{
-                prev.obj() - 0.5 * B_log_determinant,
-                std::move(prev.theta()),
-                Eigen::SparseMatrix<double>(W_r.asDiagonal()),
-                Eigen::MatrixXd(L),
-                std::move(prev.a()),
-                std::move(prev.theta_grad()),
-                Eigen::PartialPivLU<Eigen::MatrixXd>{},
-                Eigen::MatrixXd(0, 0),
-                1};
+            const double B_log_determinant = solver.compute_log_determinant();
+            return solver.build_result(state, B_log_determinant);
           } else {
             set_next_iter(curr, prev);
           }
         }
       } else {
-        Eigen::SparseMatrix<double> W_r(theta_size, theta_size);
-        Eigen::Index block_size = options.hessian_block_size;
-        W_r.reserve(Eigen::VectorXi::Constant(W_r.cols(), block_size));
-        const Eigen::Index n_block = W_r.cols() / block_size;
-        // Prefill W_r so we only make space once
-        for (Eigen::Index ii = 0; ii < n_block; ii++) {
-          for (Eigen::Index k = 0; k < block_size; k++) {
-            for (Eigen::Index j = 0; j < block_size; j++) {
-              W_r.insert(ii * block_size + j, ii * block_size + k) = 1.0;
-            }
-          }
-        }
-        W_r.makeCompressed();
+        CholeskyWSolverBlock solver;
+        solver.initialize(state);
         for (; step_iter <= options.max_num_steps; step_iter++) {
-          auto W = laplace_likelihood::block_hessian(
-              ll_fun, prev.theta(), options.hessian_block_size, ll_args, msgs);
-          for (Eigen::Index j = 0; j < W.rows(); j++) {
-            if (W.coeff(j, j) < 0 || !std::isfinite(W.coeff(j, j))) {
-              throw std::domain_error(
-                  "laplace_marginal_density: Hessian matrix is not positive "
-                  "definite");
-            }
-          }
-          block_matrix_sqrt(W_r, W, options.hessian_block_size);
-          B.noalias() = Eigen::MatrixXd::Identity(theta_size, theta_size)
-                        + W_r * (covariance * W_r);
-          Eigen::LLT<Eigen::MatrixXd> llt_B(B);
-          if (llt_B.info() != Eigen::Success) {
-            double jitter_try = 1e-10;
-            for (; jitter_try < 1e-5; jitter_try *= 10) {
-              B.diagonal().array() += jitter_try;
-              llt_B.compute(B);
-              if (llt_B.info() == Eigen::Success) {
-                break;
-              }
-            }
-            if (llt_B.info() != Eigen::Success) {
-              throw std::domain_error(
-                  "laplace_marginal_density: Cholesky failed in iteration "
-                  + std::to_string(step_iter));
-            }
-          }
-          auto L = llt_B.matrixL();
-          auto LT = llt_B.matrixU();
-          b.noalias() = W * prev.theta() + prev.theta_grad();
-          curr.a().noalias()
-              = b - W_r * LT.solve(L.solve(W_r * (covariance * b)));
+          solver.solve_step(state, ll_fun, ll_args, covariance,
+                            options.hessian_block_size, msgs);
           if (!state.final_loop) {
             finish_update
                 = update_line_search(wolfe_status, wolfe_info, curr, prev);
@@ -1401,18 +1310,8 @@ inline auto laplace_marginal_density_est(
               set_next_iter(curr, prev);
               continue;
             }
-            const double B_log_determinant
-                = 2.0 * llt_B.matrixLLT().diagonal().array().log().sum();
-            return laplace_density_estimates{
-                prev.obj() - 0.5 * B_log_determinant,
-                std::move(prev.theta()),
-                std::move(W_r),
-                Eigen::MatrixXd(L),
-                std::move(prev.a()),
-                std::move(prev.theta_grad()),
-                Eigen::PartialPivLU<Eigen::MatrixXd>{},
-                Eigen::MatrixXd(0, 0),
-                1};
+            const double B_log_determinant = solver.compute_log_determinant();
+            return solver.build_result(state, B_log_determinant);
           } else {
             set_next_iter(curr, prev);
           }
