@@ -868,7 +868,7 @@ struct CholeskyKSolver {
   Eigen::MatrixXd K_root;
 
   /** @brief Full (block) Hessian matrix from likelihood */
-  Eigen::MatrixXd W_full;
+  Eigen::SparseMatrix<double> W_full;
 
   /** @brief Cholesky factorization of B = I + K_root^T * W * K_root */
   Eigen::LLT<Eigen::MatrixXd> llt_B;
@@ -933,8 +933,9 @@ struct CholeskyKSolver {
         ll_fun, state.prev().theta(), hessian_block_size, ll_args, msgs);
 
     // 2. Formulate B = I + K^T * W * K
-    state.B.noalias() = Eigen::MatrixXd::Identity(theta_size, theta_size)
-                        + K_root.transpose() * W_full * K_root;
+    state.B.noalias()
+        = Eigen::MatrixXd::Identity(theta_size, theta_size)
+          + K_root.transpose() * (W_full * K_root);
 
     // 3. Factorize B with jittering fallback
     llt_B.compute(state.B);
@@ -1330,40 +1331,11 @@ inline auto laplace_marginal_density_est(
   }
   try {
     if (options.solver == 2 || allow_bounce) {
-      auto K_root_llt
-          = covariance.template selfadjointView<Eigen::Lower>().llt();
-      if (K_root_llt.info() != Eigen::Success) {
-        throw std::domain_error(
-            "laplace_marginal_density: Cholesky of covariance failed at start");
-      }
-      Eigen::MatrixXd K_root = K_root_llt.matrixL();
+      CholeskyKSolver solver;
+      solver.initialize(state, covariance);
       for (; step_iter <= options.max_num_steps; step_iter++) {
-        auto W = laplace_likelihood::block_hessian(
-            ll_fun, prev.theta(), options.hessian_block_size, ll_args, msgs);
-        B.noalias() = Eigen::MatrixXd::Identity(theta_size, theta_size)
-                      + K_root.transpose() * W * K_root;
-        Eigen::LLT<Eigen::Ref<Eigen::MatrixXd>> llt_B(B);
-        if (llt_B.info() != Eigen::Success) {
-          double jitter_try = 1e-10;
-          for (; jitter_try < 1e-5; jitter_try *= 10) {
-            B.diagonal().array() += jitter_try;
-            llt_B.compute(B);
-            if (llt_B.info() == Eigen::Success) {
-              break;
-            }
-          }
-          if (llt_B.info() != Eigen::Success) {
-            throw std::domain_error(
-                "laplace_marginal_density: Cholesky failed in iteration "
-                + std::to_string(step_iter));
-          }
-        }
-        auto L = llt_B.matrixL();
-        auto LT = llt_B.matrixU();
-        b.noalias() = W * prev.theta() + prev.theta_grad();
-        curr.a().noalias()
-            = K_root.transpose().template triangularView<Eigen::Upper>().solve(
-                LT.solve(L.solve(K_root.transpose() * b)));
+        solver.solve_step(state, ll_fun, ll_args, covariance,
+                          options.hessian_block_size, msgs);
         if (!state.final_loop) {
           finish_update
               = update_line_search(wolfe_status, wolfe_info, curr, prev);
@@ -1376,18 +1348,8 @@ inline auto laplace_marginal_density_est(
             set_next_iter(curr, prev);
             continue;
           }
-          const double B_log_determinant
-              = 2.0 * llt_B.matrixLLT().diagonal().array().log().sum();
-          return laplace_density_estimates{
-              prev.obj() - 0.5 * B_log_determinant,
-              std::move(prev.theta()),
-              std::move(W),
-              std::move(Eigen::MatrixXd(L)),
-              std::move(prev.a()),
-              std::move(prev.theta_grad()),
-              Eigen::PartialPivLU<Eigen::MatrixXd>{},
-              std::move(K_root),
-              2};
+          const double B_log_determinant = solver.compute_log_determinant();
+          return solver.build_result(state, B_log_determinant);
         } else {
           set_next_iter(curr, prev);
         }
