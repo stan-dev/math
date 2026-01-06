@@ -1652,8 +1652,8 @@ inline void laplace_var_solver_postprocess(
       md_est.L.template triangularView<Eigen::Lower>().solveInPlace(tmp);
       R.noalias() = tmp.transpose() * tmp;
       arena_t<Eigen::MatrixXd> C
-          = md_est.L.template triangularView<Eigen::Lower>().solve(
-              md_est.W_r * cov_val);
+          = md_est.L.template triangularView<Eigen::Lower>().solve(md_est.W_r
+                                                                   * cov_val);
       if constexpr (!LLArgsContainVar) {
         s2.deep_copy(
             (0.5
@@ -1662,9 +1662,9 @@ inline void laplace_var_solver_postprocess(
                        ll_fun, md_est.theta, value_of(ll_args_copy), msgs))));
       } else {
         arena_t<Eigen::MatrixXd> A = cov_val - C.transpose() * C;
-        auto s2_tmp = laplace_likelihood::compute_s2(
-            ll_fun, md_est.theta, A, options.hessian_block_size, ll_args_copy,
-            msgs);
+        auto s2_tmp = laplace_likelihood::compute_s2(ll_fun, md_est.theta, A,
+                                                     options.hessian_block_size,
+                                                     ll_args_copy, msgs);
         s2.deep_copy(s2_tmp);
         copy_compute_s2<true>(partial_parm, ll_args_filter);
       }
@@ -1674,8 +1674,8 @@ inline void laplace_var_solver_postprocess(
       md_est.L.template triangularView<Eigen::Lower>().solveInPlace(tmp);
       R.noalias() = tmp.transpose() * tmp;
       arena_t<Eigen::MatrixXd> C
-          = md_est.L.template triangularView<Eigen::Lower>().solve(
-              md_est.W_r * cov_val);
+          = md_est.L.template triangularView<Eigen::Lower>().solve(md_est.W_r
+                                                                   * cov_val);
       arena_t<Eigen::MatrixXd> A = cov_val - C.transpose() * C;
       auto s2_tmp = laplace_likelihood::compute_s2(ll_fun, md_est.theta, A,
                                                    options.hessian_block_size,
@@ -1688,8 +1688,9 @@ inline void laplace_var_solver_postprocess(
         - md_est.W_r * md_est.K_root
               * md_est.L.transpose()
                     .template triangularView<Eigen::Upper>()
-                    .solve(md_est.L.template triangularView<Eigen::Lower>()
-                               .solve(md_est.K_root.transpose() * md_est.W_r));
+                    .solve(
+                        md_est.L.template triangularView<Eigen::Lower>().solve(
+                            md_est.K_root.transpose() * md_est.W_r));
 
     arena_t<Eigen::MatrixXd> C
         = md_est.L.template triangularView<Eigen::Lower>().solve(
@@ -1745,10 +1746,9 @@ inline void laplace_var_collect_covar_args_adjoints(
       = 0.5 * md_est.a * md_est.a.transpose() - 0.5 * R
         + s2 * md_est.theta_grad.transpose()
         - (R * (covariance.val() * s2)) * md_est.theta_grad.transpose();
-  var Z = make_callback_var(
-      0.0, [covariance, K_adj_arena](auto&& vi) mutable {
-        covariance.adj().array() += vi.adj() * K_adj_arena.array();
-      });
+  var Z = make_callback_var(0.0, [covariance, K_adj_arena](auto&& vi) mutable {
+    covariance.adj().array() += vi.adj() * K_adj_arena.array();
+  });
   grad(Z.vi_);
   auto covar_args_filter = filter_var_scalar_types(covar_args_copy);
   collect_adjoints(covar_args_adj, covar_args_filter);
