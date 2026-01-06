@@ -259,7 +259,35 @@ constexpr const char* test_type_name() {
 }  // namespace stan
 
 class LaplaceAdTest
-    : public ::testing::TestWithParam<std::tuple<int, int, int>> {};
+    : public ::testing::TestWithParam<std::tuple<int, int, int>> {
+public:
+  std::stringstream output_stream;
+  /**
+   * Prints a count and internal warnings that happen in each test
+   */
+  void TearDown() override {
+      std::string output = output_stream.str();
+      if (output.length() > 0) {
+        std::istringstream stream(output);
+        std::string line;
+        std::unordered_map<std::string, int> line_counts;
+
+        while (std::getline(stream, line)) {
+          if (line_counts.find(line) != line_counts.end()) {
+            line_counts[line]++;
+          } else {
+            line_counts.insert({line, 1});
+          }
+        }
+        for (const auto& pair : line_counts) {
+          std::cout << "[ WARN_MSG ] ";
+          std::cout << " (count: " << pair.second << "): ";
+          std::cout << pair.first << std::endl;
+        }
+        output_stream.str("");
+      }
+    }
+};
 
 // Nice readable per-case names: Solver{n}_Block{b}_LS{steps}
 static std::string ParamName(

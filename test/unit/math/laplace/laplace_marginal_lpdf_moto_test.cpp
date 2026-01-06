@@ -153,7 +153,7 @@ TEST_P(laplace_motorcyle_gp_test, gp_motorcycle_val) {
       std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1), phi_dbl(2), phi_dbl(3),
                             n_obs),
       theta0, tolerance, max_num_steps, hessian_block_size, solver_num,
-      max_steps_line_search, nullptr);
+      max_steps_line_search, &output_stream);
 }
 
 TEST_P(laplace_motorcyle_gp_test, gp_motorcycle_ad) {
@@ -184,7 +184,7 @@ TEST_P(laplace_motorcyle_gp_test, gp_motorcycle_ad) {
           std::forward_as_tuple(x, phi_01_v(0), phi_01_v(1), phi_rest_v(0),
                                 phi_rest_v(1), n_obs),
           theta0, tolerance, max_num_steps, hessian_block_size, solver_num,
-          max_steps_line_search, nullptr);
+          max_steps_line_search, &output_stream);
     } catch (const std::exception& e) {
       std::stringstream fail_msg;
       using stan::math::test::test_type_name;
@@ -256,7 +256,7 @@ TEST_P(laplace_motorcyle_gp_test, gp_motorcycle2_val) {
       std::forward_as_tuple(x, length_scale_f, length_scale_g, sigma_f, sigma_g,
                             n_obs),
       theta0, tolerance, max_num_steps, hessian_block_size, solver_num,
-      max_steps_line_search, nullptr);
+      max_steps_line_search, &output_stream);
 }
 
 TEST_P(laplace_motorcyle_gp_test, gp_motorcycle2_ad) {
@@ -287,7 +287,7 @@ TEST_P(laplace_motorcyle_gp_test, gp_motorcycle2_ad) {
           std::forward_as_tuple(x, length_scale_v(0), length_scale_v(1),
                                 sigma_v(0), sigma_v(1), n_obs),
           theta0, tolerance, max_num_steps, hessian_block_size, solver_num,
-          max_steps_line_search, nullptr);
+          max_steps_line_search, &output_stream);
     } catch (const std::exception& e) {
       std::stringstream fail_msg;
       using stan::math::test::test_type_name;

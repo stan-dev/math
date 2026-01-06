@@ -59,7 +59,7 @@ TEST_P(laplace_marginal_poisson_log_lpmf, phi_dim_2) {
       return laplace_marginal_tol_poisson_log_lpmf(
           y, y_index, 0, sq_kernel, std::forward_as_tuple(x, alpha, rho),
           theta_0, tolerance, max_num_steps, hessian_block_size, solver_num,
-          max_steps_line_search, nullptr);
+          max_steps_line_search, &output_stream);
     } catch (const std::exception& e) {
       std::stringstream fail_msg;
       using stan::math::test::test_type_name;
@@ -122,7 +122,7 @@ TEST_P(laplace_marginal_poisson_log_lpmf, log_phi_dim_2) {
       return laplace_marginal_tol_poisson_log_lpmf(
           y, y_index, log(ye), sq_kernel, std::forward_as_tuple(x, alpha, rho),
           theta_0, tolerance, max_num_steps, hessian_block_size, solver_num,
-          max_steps_line_search, nullptr);
+          max_steps_line_search, &output_stream);
     } catch (const std::exception& e) {
       std::stringstream fail_msg;
       using stan::math::test::test_type_name;
@@ -171,7 +171,7 @@ TEST_P(laplace_marginal_poisson_log_lpmf, mean_argument) {
       y, y_index, mu, diag_covariance{},
       std::tuple<double, int>(sigmaz, dim_theta), theta_0, tolerance,
       max_num_steps, hessian_block_size, solver_num, max_steps_line_search,
-      nullptr);
+      &output_stream);
 
   EXPECT_FLOAT_EQ(-6.7098737, marginal_density);
 }
@@ -197,7 +197,7 @@ TEST_P(laplace_disease_map_test, laplace_marginal_poisson_log_lpmf) {
       y, y_index, log(ye), stan::math::test::sqr_exp_kernel_functor(),
       std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1)), theta_0, tolerance,
       max_num_steps, hessian_block_size, solver_num, max_steps_line_search,
-      nullptr);
+      &output_stream);
 
   double tol = 6e-4;
   // Benchmark from GPStuff.
@@ -208,7 +208,7 @@ TEST_P(laplace_disease_map_test, laplace_marginal_poisson_log_lpmf) {
           y, y_index, log(ye), stan::math::test::sqr_exp_kernel_functor(),
           std::forward_as_tuple(x, alpha, rho), theta_0, tolerance,
           max_num_steps, hessian_block_size, solver_num, max_steps_line_search,
-          nullptr);
+          &output_stream);
     } catch (const std::exception& e) {
       std::stringstream fail_msg;
       using stan::math::test::test_type_name;

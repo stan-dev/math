@@ -1,16 +1,14 @@
-
 #ifndef STAN_MATH_MIX_FUNCTOR_LAPLACE_MARGINAL_DENSITY_HPP
 #define STAN_MATH_MIX_FUNCTOR_LAPLACE_MARGINAL_DENSITY_HPP
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/mix/functor/laplace_likelihood.hpp>
-#include <stan/math/mix/functor/wolfe_line_search.hpp>
+#include <stan/math/mix/functor/laplace_marginal_density_estimator.hpp>
+#include <stan/math/mix/functor/conditional_copy_and_promote.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun.hpp>
-#include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/rev/functor.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
-#include <stan/math/prim/fun/quad_form_diag.hpp>
 #include <stan/math/prim/functor/iter_tuple_nested.hpp>
 #include <unsupported/Eigen/MatrixFunctions>
 #include <cmath>
@@ -25,1328 +23,6 @@
 namespace stan {
 namespace math {
 
-/**
- * Options for the laplace sampler
- */
-struct laplace_options_base {
-  /* Size of the blocks in block diagonal hessian*/
-  int hessian_block_size{1};
-  /**
-   * Which Newton solver to use: (B matrix in equation 1 of
-   * https://arxiv.org/pdf/2306.14976) (1) method using the cholesky
-   * decomposition of `W` (the negative Hessian of log likelihood) (2) method
-   * using the cholesky decomposition of `K` (the covariance matrix) (3) method
-   * using an LU decomposition (more general, but slower)
-   */
-  int solver{1};
-  /**
-   * iterations end when difference in objective function is less than tolerance
-   * Default is sqrt(machine_epsilon)
-   */
-  double tolerance{1.49012e-08};
-  /* Maximum number of steps*/
-  int max_num_steps{500};
-  laplace_line_search_options line_search;
-};
-
-template <bool HasInitTheta>
-struct laplace_options;
-
-template <>
-struct laplace_options<false> : public laplace_options_base {};
-
-template <>
-struct laplace_options<true> : public laplace_options_base {
-  /* Value for user supplied initial theta  */
-  Eigen::VectorXd theta_0{0};
-};
-
-using laplace_options_default = laplace_options<false>;
-using laplace_options_user_supplied = laplace_options<true>;
-namespace internal {
-
-template <typename ThetaVec, typename WR, typename L_t, typename A_vec,
-          typename ThetaGrad, typename LU_t, typename KRoot>
-struct laplace_density_estimates {
-  /* log marginal density */
-  double lmd{std::numeric_limits<double>::infinity()};
-  /* ThetaVec at the mode */
-  ThetaVec theta;
-  /* negative hessian or sqrt of negative hessian */
-  WR W_r;
-  /* Lower left of cholesky decomposition of stabilized inverse covariance */
-  L_t L;
-  /* inverse covariance times theta at the mode */
-  A_vec a;
-  /* the gradient of the log density with respect to theta */
-  ThetaGrad theta_grad;
-  /* LU matrix from solver 3 */
-  LU_t LU;
-  /* Cholesky of the covariance matrix */
-  KRoot K_root;
-  int solver_used{1};
-  laplace_density_estimates(double lmd_, ThetaVec&& theta_, WR&& W_r_, L_t&& L_,
-                            A_vec&& a_, ThetaGrad&& theta_grad_, LU_t&& LU_,
-                            KRoot&& K_root_, int solver_used_)
-      : lmd(lmd_),
-        theta(std::move(theta_)),
-        W_r(std::move(W_r_)),
-        L(std::move(L_)),
-        a(std::move(a_)),
-        theta_grad(std::move(theta_grad_)),
-        LU(std::move(LU_)),
-        K_root(std::move(K_root_)),
-        solver_used(solver_used_) {}
-};
-
-/**
- * Returns the principal square root of a block diagonal matrix.
- * @tparam WRootMat A type inheriting from `Eigen::EigenBase`.
- * @param W_root The output matrix to store the square root.
- * @param W The input block diagonal matrix.
- * @param block_size The size of each block in the block diagonal matrix.
- */
-template <typename WRootMat>
-inline void block_matrix_sqrt(WRootMat& W_root,
-                              const Eigen::SparseMatrix<double>& W,
-                              const Eigen::Index block_size) {
-  int n_block = W.cols() / block_size;
-  Eigen::MatrixXd local_block(block_size, block_size);
-  Eigen::MatrixXd local_block_sqrt(block_size, block_size);
-  Eigen::MatrixXd sqrt_t_mat = Eigen::MatrixXd::Zero(block_size, block_size);
-  // No block operation available for sparse matrices, so we have to loop
-  // See https://eigen.tuxfamily.org/dox/group__TutorialSparse.html#title7
-  for (int i = 0; i < n_block; i++) {
-    sqrt_t_mat.setZero();
-    local_block
-        = W.block(i * block_size, i * block_size, block_size, block_size);
-    if (!local_block.array().isFinite().any()) {
-      throw std::domain_error(
-          std::string("Error in block_matrix_sqrt: "
-                      "NaNs detected in block diagonal starting at (")
-          + std::to_string(i) + ", " + std::to_string(i) + ")");
-    }
-    // Issue here, sqrt is done over T of the complex schur
-    Eigen::RealSchur<Eigen::MatrixXd> schurOfA(local_block);
-    // Compute Schur decomposition of arg
-    const auto& t_mat = schurOfA.matrixT();
-    const auto& u_mat = schurOfA.matrixU();
-    // Check if diagonal of schur is not positive
-    if ((t_mat.diagonal().array() < 0).any()) {
-      throw std::domain_error(
-          std::string("Error in block_matrix_sqrt: "
-                      "values less than 0 detected in block diagonal's schur "
-                      "decomposition starting at (")
-          + std::to_string(i) + ", " + std::to_string(i) + ")");
-    }
-    try {
-      // Compute square root of T
-      Eigen::matrix_sqrt_quasi_triangular(t_mat, sqrt_t_mat);
-      // Compute square root of arg
-      local_block_sqrt = u_mat * sqrt_t_mat * u_mat.adjoint();
-    } catch (const std::exception& e) {
-      throw std::domain_error(
-          "Error in block_matrix_sqrt: "
-          "The matrix is not positive definite");
-    }
-    for (int k = 0; k < block_size; k++) {
-      for (int j = 0; j < block_size; j++) {
-        W_root.coeffRef(i * block_size + j, i * block_size + k)
-            = local_block_sqrt(j, k);
-      }
-    }
-  }
-}
-
-/**
- * @brief Performs a Cholesky decomposition on a block diagonal matrix.
- * @tparam WRootMat A type inheriting from `Eigen::EigenBase`.
- * @param W_root The output matrix to store the square root.
- * @param W The input block diagonal matrix.
- * @param block_size The size of each block in the block diagonal matrix.
- */
-template <typename WRootMat>
-inline void block_matrix_chol_L(WRootMat& W_root,
-                                const Eigen::SparseMatrix<double>& W,
-                                const Eigen::Index block_size) {
-  int n_block = W.cols() / block_size;
-  Eigen::MatrixXd local_block(block_size, block_size);
-  Eigen::MatrixXd local_block_sqrt(block_size, block_size);
-  Eigen::MatrixXd sqrt_t_mat = Eigen::MatrixXd::Zero(block_size, block_size);
-  // No block operation available for sparse matrices, so we have to loop
-  // See https://eigen.tuxfamily.org/dox/group__TutorialSparse.html#title7
-  for (int i = 0; i < n_block; i++) {
-    sqrt_t_mat.setZero();
-    local_block
-        = W.block(i * block_size, i * block_size, block_size, block_size);
-    if (Eigen::isnan(local_block.array()).any()) {
-      throw std::domain_error(
-          std::string("Error in block_matrix_sqrt: "
-                      "NaNs detected in block diagonal starting at (")
-          + std::to_string(i) + ", " + std::to_string(i) + ")");
-    }
-    try {
-      // Compute square root of T
-      Eigen::LLT<Eigen::Ref<Eigen::MatrixXd>> llt(local_block);
-      if (llt.info() != Eigen::Success) {
-        throw std::runtime_error("Cholesky failed on block "
-                                 + std::to_string(i));
-      }
-      const auto Lb = llt.matrixL();
-      for (int k = 0; k < block_size; k++) {
-        for (int j = k; j < block_size; j++) {
-          W_root.coeffRef(i * block_size + j, i * block_size + k) = Lb(j, k);
-        }
-      }
-    } catch (const std::exception& e) {
-      // As a backup do the schur decomposition for this block diagonal
-      local_block
-          = W.block(i * block_size, i * block_size, block_size, block_size);
-      // Issue here, sqrt is done over T of the complex schur
-      Eigen::RealSchur<Eigen::MatrixXd> schurOfA(local_block);
-      // Compute Schur decomposition of arg
-      const auto& t_mat = schurOfA.matrixT();
-      const auto& u_mat = schurOfA.matrixU();
-      // Check if diagonal of schur is not positive
-      if ((t_mat.diagonal().array() < 0).any()) {
-        throw std::domain_error(
-            std::string("Error in block_matrix_sqrt: "
-                        "values less than 0 detected in block diagonal's schur "
-                        "decomposition starting at (")
-            + std::to_string(i) + ", " + std::to_string(i) + ")");
-      }
-      try {
-        // Compute square root of T
-        Eigen::matrix_sqrt_quasi_triangular(t_mat, sqrt_t_mat);
-        // Compute square root of arg
-        local_block_sqrt.noalias() = u_mat * sqrt_t_mat * u_mat.adjoint();
-      } catch (const std::exception& e) {
-        throw std::domain_error(
-            "Error in block_matrix_sqrt: "
-            "The matrix is not positive definite");
-      }
-      for (int k = 0; k < block_size; k++) {
-        for (int j = 0; j < block_size; j++) {
-          W_root.coeffRef(i * block_size + j, i * block_size + k)
-              = local_block_sqrt(j, k);
-        }
-      }
-    }
-  }
-}
-
-/**
- * Collect the adjoints from the input and add them to the output.
- * @tparam ZeroInput If true, the adjoints of the input will be set to zero
- * @tparam Output A tuple or type where all scalar types are `arithmetic` types
- * @tparam Input A tuple or type where all scalar types are `var` types
- * @param output The output to which the adjoints will be added
- * @param input The input from which the adjoints will be collected
- */
-template <bool ZeroInput = false, typename Output, typename Input,
-          require_t<is_all_arithmetic_scalar<Output>>* = nullptr,
-          require_t<is_all_var_scalar<Input>>* = nullptr>
-inline void collect_adjoints(Output& output, Input&& input) {
-  return iter_tuple_nested(
-      [](auto&& output_i, auto&& input_i) {
-        using output_i_t = std::decay_t<decltype(output_i)>;
-        if constexpr (is_std_vector_v<output_i_t>) {
-          Eigen::Map<Eigen::Matrix<double, -1, 1>> output_map(output_i.data(),
-                                                              output_i.size());
-          Eigen::Map<Eigen::Matrix<var, -1, 1>> input_map(input_i.data(),
-                                                          input_i.size());
-          output_map.array() += input_map.adj().array();
-          if constexpr (ZeroInput) {
-            input_map.adj().setZero();
-          }
-        } else if constexpr (is_eigen_v<output_i_t>) {
-          output_i.array() += input_i.adj().array();
-          if constexpr (ZeroInput) {
-            input_i.adj().setZero();
-          }
-        } else if constexpr (is_stan_scalar_v<output_i_t>) {
-          output_i += input_i.adj();
-          if constexpr (ZeroInput) {
-            input_i.adj() = 0;
-          }
-        } else {
-          static_assert(
-              sizeof(std::decay_t<output_i_t>*) == 0,
-              "INTERNAL ERROR:(laplace_marginal_lpdf) set_zero_adjoints was "
-              "not able to deduce the actions needed for the given type. "
-              "This is an internal error, please report it: "
-              "https://github.com/stan-dev/math/issues");
-        }
-      },
-      std::forward<Output>(output), std::forward<Input>(input));
-}
-
-/**
- * Throws an error if the parameter contains NaN or Inf values.
- * @tparam NameStr Type of the name string, e.g. `std::string` or `char*`.
- * @tparam ParamStr Type of the parameter string, e.g. `std::string` or `char*`.
- * @tparam Param Type of the parameter such as a vector, matrix, or scalar.
- * @param name_str Name of the function or context where the error occurred.
- * @param param_str Name of the parameter that contains NaN or Inf values.
- * @param param The parameter to check for NaN or Inf values.
- */
-template <typename NameStr, typename ParamStr, typename Param>
-inline STAN_COLD_PATH void throw_nan(NameStr&& name_str, ParamStr&& param_str,
-                                     Param&& param) {
-  std::string msg = std::string("Error in ") + name_str + ": "
-                    + std::string(param_str) + " contains NaN values";
-  if ((param.array().isNaN() || !param.array().isFinite()).all()) {
-    msg += " for all values.";
-    throw std::domain_error(msg);
-  }
-  msg += " at indices [";
-  for (int i = 0; i < param.size(); ++i) {
-    if (std::isnan(param(i)) || std::isinf(param(i))) {
-      msg += std::to_string(i) + ", ";
-    }
-  }
-  msg.pop_back();
-  msg.pop_back();
-  msg += "].";
-  throw std::domain_error(msg);
-}
-
-/**
- * @brief  Curvature-aware Barzilai–Borwein (BB) step length with robust
- * safeguards.
- *
- * Given successive parameter displacements \f$s = x_k - x_{k-1}\f$ and
- * gradients \f$g_k\f$, \f$g_{k-1}\f$, this routine forms
- * \f$y = g_k - g_{k-1}\f$ and computes the two classical BB candidates
- *
- * \f{align*}{
- *   \alpha_{\text{BB1}} &= \frac{\langle s,s\rangle}{\langle s,y\rangle},\\
- *   \alpha_{\text{BB2}} &= \frac{\langle s,y\rangle}{\langle y,y\rangle},
- * \f}
- *
- * then chooses between them using the **spectral cosine**
- * \f$r = \cos^2\!\angle(s,y) = \dfrac{\langle s,y\rangle^2}
- *                                      {\langle s,s\rangle\,\langle
- * y,y\rangle}\in[0,1]\f$:
- *
- *  - if \f$r > 0.9\f$ (well-aligned curvature) and the previous line search
- *    did **≤ 1** backtrack, prefer the “long” step \f$\alpha_{\text{BB1}}\f$;
- *  - if \f$0.1 \le r \le 0.9\f$, take the neutral geometric mean
- *    \f$\sqrt{\alpha_{\text{BB1}}\alpha_{\text{BB2}}}\f$;
- *  - otherwise default to the “short” step \f$\alpha_{\text{BB2}}\f$.
- *
- * All candidates are clamped into \f$[\text{min\_alpha},\,\text{max\_alpha}]\f$
- * and must be finite and positive.
- * If the curvature scalars are ill-posed (non-finite or too small),
- * \f$\langle s,y\rangle \le \varepsilon\f$, or if `last_backtracks == 99`
- * (explicitly disabling BB for this iteration), the function falls back to a
- * **safe** step:
- * use `prev_step` when finite and positive, otherwise \f$1.0\f$, then clamp to
- * \f$[\text{min\_alpha},\,\text{max\_alpha}]\f$.
- *
- * @param s          Displacement between consecutive iterates
- *                   (\f$s = x_k - x_{k-1}\f$).
- * @param g_curr     Gradient at the current iterate \f$g_k\f$.
- * @param g_prev     Gradient at the previous iterate \f$g_{k-1}\f$.
- * @param prev_step  Previously accepted step length (used by the fallback).
- * @param last_backtracks
- *                   Number of backtracking contractions performed by the most
- *                   recent line search; set to 99 to force the safe fallback.
- * @param min_alpha  Lower bound for the returned step length.
- * @param max_alpha  Upper bound for the returned step length.
- *
- * @return A finite, positive BB-style step length \f$\alpha \in
- *         [\text{min\_alpha},\,\text{max\_alpha}]\f$ suitable for seeding a
- *         line search or as a spectral preconditioner scale.
- *
- * @note Uses \f$\varepsilon=10^{-16}\f$ to guard against division by very
- *       small curvature terms, and applies `std::abs` to BB ratios to avoid
- *       negative steps; descent is enforced by the line search.
- * @warning The vectors must have identical size. Non-finite inputs yield the
- *          safe fallback.
- */
-inline double barzilai_borwein_step_size(const Eigen::VectorXd& s,
-                                         const Eigen::VectorXd& g_curr,
-                                         const Eigen::VectorXd& g_prev,
-                                         double prev_step, int last_backtracks,
-                                         double min_alpha, double max_alpha) {
-  // Fallbacks
-  auto safe_fallback = [&]() -> double {
-    double a = std::clamp(
-        prev_step > 0.0 && std::isfinite(prev_step) ? prev_step : 1.0,
-        min_alpha, max_alpha);
-    return a;
-  };
-
-  const Eigen::VectorXd y = g_curr - g_prev;
-  const double sty = s.dot(y);
-  const double sts = s.squaredNorm();
-  const double yty = y.squaredNorm();
-
-  // Basic validity checks
-  constexpr double eps = 1e-16;
-  if (!(std::isfinite(sty) && std::isfinite(sts) && std::isfinite(yty))
-      || sts <= eps || yty <= eps || sty <= eps || last_backtracks == 99) {
-    return safe_fallback();
-  }
-
-  // BB candidates
-  double alpha_bb1 = std::clamp(std::abs(sts / sty), min_alpha, max_alpha);
-  double alpha_bb2 = std::clamp(std::abs(sty / yty), min_alpha, max_alpha);
-
-  // Safeguard candidates
-  if (!std::isfinite(alpha_bb1) || !std::isfinite(alpha_bb2) || alpha_bb1 <= 0.0
-      || alpha_bb2 <= 0.0) {
-    return safe_fallback();
-  }
-
-  // Spectral cosine r = cos^2(angle(s, y)) in [0,1]
-  const double r = (sty * sty) / (sts * yty);
-
-  // Heuristic thresholds (robust defaults)
-  constexpr double kLoose = 0.9;  // "nice" curvature
-  constexpr double kTight = 0.1;  // "dodgy" curvature
-
-  double alpha0 = alpha_bb2;  // default to short BB for robustness
-  if (r > kLoose && last_backtracks <= 1) {
-    // Spectrum looks friendly and line search was not harsh -> try long BB
-    alpha0 = alpha_bb1;
-  } else if (r >= kTight && r <= kLoose) {
-    // Neither clearly friendly nor clearly dodgy -> neutral middle
-    alpha0 = std::sqrt(alpha_bb1 * alpha_bb2);
-  }  // else keep alpha_bb2
-
-  // Clip to user bounds
-  alpha0 = std::clamp(alpha0, min_alpha, max_alpha);
-
-  if (!std::isfinite(alpha0) || alpha0 <= 0.0) {
-    return safe_fallback();
-  }
-  return alpha0;
-}
-
-/**
- * Validates the options for the Laplace approximation.
- *
- * @tparam InitTheta Whether an initial theta is provided
- * @tparam CovarMat Type of the covariance matrix
- * @param frame_name Name of the calling function (for error messages)
- * @param options The options to validate
- * @param covariance The covariance matrix (for size checks)
- */
-template <bool InitTheta, typename CovarMat>
-inline void validate_laplace_options(const char* frame_name,
-                                     const laplace_options<InitTheta>& options,
-                                     const CovarMat& covariance) {
-  if constexpr (InitTheta) {
-    check_nonzero_size(frame_name, "initial guess", options.theta_0);
-    check_finite(frame_name, "initial guess", options.theta_0);
-    if (unlikely(options.theta_0.size() != covariance.rows())) {
-      std::stringstream msg;
-      msg << frame_name << ": The size of the initial theta ("
-          << options.theta_0.size()
-          << ") does not match the size of the covariance matrix ("
-          << covariance.rows() << ", " << covariance.cols() << ").";
-      throw std::domain_error(msg.str());
-    }
-  }
-  check_nonnegative(frame_name, "tolerance", options.tolerance);
-  check_positive(frame_name, "max_num_steps", options.max_num_steps);
-  check_positive(frame_name, "hessian_block_size", options.hessian_block_size);
-  check_square(frame_name, "covariance", covariance);
-
-  const Eigen::Index theta_size = covariance.rows();
-  if (unlikely(theta_size % options.hessian_block_size != 0
-               || theta_size < options.hessian_block_size)) {
-    throw std::domain_error(
-        "laplace_marginal_density: Hessian block size mismatch.");
-  }
-
-  if (unlikely(options.solver < 1 || options.solver > 3)) {
-    throw std::domain_error(
-        "laplace_marginal_density: solver must be 1, 2, or 3. Got: "
-        + std::to_string(options.solver));
-  }
-}
-
-/**
- * @brief Holds the state for the Newton-Raphson optimization loop.
- *
- * This struct centralizes all state needed during the Newton iteration,
- * including the Wolfe line search state, workspace matrices, and convergence
- * flags. It is shared across different solver policies to avoid re-allocation
- * and to maintain progress (e.g., line search history) across solver fallbacks.
- *
- * @tparam ObjFun Type of the objective function callable
- * @tparam ThetaGradFun Type of the theta gradient function callable
- */
-template <typename ObjFun, typename ThetaGradFun>
-struct NewtonState {
-  /** @brief Wolfe line search state including current/previous steps */
-  WolfeInfo wolfe_info;
-
-  /** @brief Status of the most recent Wolfe line search */
-  WolfeStatus wolfe_status;
-
-  /** @brief Workspace vector: b = W * theta + grad(log_lik) */
-  Eigen::VectorXd b;
-
-  /** @brief Workspace matrix: B = I + W_r * Sigma * W_r (or similar) */
-  Eigen::MatrixXd B;
-
-  /** @brief Previous gradient for Barzilai-Borwein step calculation */
-  Eigen::VectorXd prev_g;
-
-  /** @brief Flag indicating final pass to sync return values after convergence
-   */
-  bool final_loop = false;
-
-  /**
-   * @brief Constructs Newton state with given dimensions and functors.
-   *
-   * @tparam ThetaInitializer Type of the initial theta provider
-   * @param theta_size Dimension of the latent space
-   * @param obj_fun Objective function: (a, theta) -> double
-   * @param theta_grad_f Gradient function: theta -> grad
-   * @param theta_init Initial theta value or provider
-   */
-  template <typename ThetaInitializer>
-  NewtonState(int theta_size, ObjFun&& obj_fun, ThetaGradFun&& theta_grad_f,
-              ThetaInitializer&& theta_init)
-      : wolfe_info(std::forward<ObjFun>(obj_fun), theta_size,
-                   std::forward<ThetaInitializer>(theta_init),
-                   std::forward<ThetaGradFun>(theta_grad_f)),
-        b(theta_size),
-        B(theta_size, theta_size),
-        prev_g(theta_size) {
-    wolfe_status.num_backtracks_ = 99;  // Safe initial value for BB step
-  }
-
-  /**
-   * @brief Access the current step state (mutable).
-   * @return Reference to current WolfeStep
-   */
-  auto& curr() { return wolfe_info.curr_; }
-
-  /**
-   * @brief Access the current step state (const).
-   * @return Const reference to current WolfeStep
-   */
-  const auto& curr() const { return wolfe_info.curr_; }
-
-  /**
-   * @brief Access the previous step state (mutable).
-   * @return Reference to previous WolfeStep
-   */
-  auto& prev() { return wolfe_info.prev_; }
-
-  /**
-   * @brief Access the previous step state (const).
-   * @return Const reference to previous WolfeStep
-   */
-  const auto& prev() const { return wolfe_info.prev_; }
-};
-
-/**
- * @brief Solver Policy 1 (Diagonal): Cholesky decomposition using W.
- *
- * This solver is used when `hessian_block_size == 1`. It computes the
- * diagonal of the negative Hessian of the log-likelihood, takes its
- * square root, and forms the system matrix B = I + W_r * Sigma * W_r
- * for Cholesky factorization.
- *
- * The solver is the fastest option but only valid when the Hessian
- * is truly diagonal (no cross-terms between latent variables).
- *
- * @note This solver corresponds to `solver == 1` in the original code.
- */
-struct CholeskyWSolverDiag {
-  /** @brief Square root of diagonal Hessian: W_r[j] = sqrt(W[j]) */
-  Eigen::VectorXd W_r_diag;
-
-  /** @brief Diagonal Hessian values from the likelihood */
-  Eigen::VectorXd W_diag;
-
-  /** @brief Cholesky factorization of B = I + W_r * Sigma * W_r */
-  Eigen::LLT<Eigen::MatrixXd> llt_B;
-
-  /**
-   * @brief Initialize the solver (no-op for diagonal solver).
-   * @tparam NewtonStateT Type of the Newton state
-   * @param state The shared Newton optimization state
-   */
-  template <typename NewtonStateT>
-  void initialize(NewtonStateT& /*state*/) {
-    // No specific pre-computation needed for diagonal W solver
-  }
-
-  /**
-   * @brief Perform one Newton step using diagonal Hessian solver.
-   *
-   * Computes the diagonal Hessian, forms B = I + W_r * Sigma * W_r,
-   * performs Cholesky factorization, and solves for the new `a` vector.
-   *
-   * @tparam NewtonStateT Type of the Newton state
-   * @tparam LLFun Type of the log-likelihood functor
-   * @tparam LLTupleArgs Type of the likelihood arguments tuple
-   * @tparam CovarMat Type of the covariance matrix
-   * @param state Shared Newton state (modified: B, b, curr().a())
-   * @param ll_fun Log-likelihood functor
-   * @param ll_args Additional arguments for the likelihood
-   * @param covariance Prior covariance matrix Sigma
-   * @param hessian_block_size Ignored for diagonal solver
-   * @param msgs Output stream for diagnostic messages (may be nullptr)
-   * @throws std::domain_error If Hessian is not positive definite or Cholesky
-   * fails
-   */
-  template <typename NewtonStateT, typename LLFun, typename LLTupleArgs,
-            typename CovarMat>
-  void solve_step(NewtonStateT& state, const LLFun& ll_fun,
-                  const LLTupleArgs& ll_args, const CovarMat& covariance,
-                  int /*hessian_block_size*/, std::ostream* msgs) {
-    const Eigen::Index theta_size = state.b.size();
-    if (W_r_diag.size() != theta_size) {
-      W_r_diag.resize(theta_size);
-    }
-
-    // 1. Compute diagonal Hessian
-    W_diag = laplace_likelihood::diagonal_hessian(ll_fun, state.prev().theta(),
-                                                  ll_args, msgs);
-    for (Eigen::Index j = 0; j < W_diag.size(); j++) {
-      if (W_diag.coeff(j) < 0 || !std::isfinite(W_diag.coeff(j))) {
-        throw std::domain_error(
-            "laplace_marginal_density: Hessian matrix is not positive "
-            "definite");
-      } else {
-        W_r_diag.coeffRef(j) = std::sqrt(W_diag.coeff(j));
-      }
-    }
-
-    // 2. Formulate B = I + W_r * Sigma * W_r
-    state.B.noalias()
-        = Eigen::MatrixXd::Identity(theta_size, theta_size)
-          + W_r_diag.asDiagonal() * covariance * W_r_diag.asDiagonal();
-
-    // 3. Factorize B with jittering fallback
-    llt_B.compute(state.B);
-    if (llt_B.info() != Eigen::Success) {
-      double jitter_try = 1e-10;
-      for (; jitter_try < 1e-5; jitter_try *= 10) {
-        state.B.diagonal().array() += jitter_try;
-        llt_B.compute(state.B);
-        if (llt_B.info() == Eigen::Success) {
-          break;
-        }
-      }
-      if (llt_B.info() != Eigen::Success) {
-        throw std::domain_error(
-            "laplace_marginal_density: Cholesky (Diag) failed");
-      }
-    }
-
-    // 4. Solve for curr.a
-    state.b.noalias() = (W_diag.array() * state.prev().theta().array()).matrix()
-                        + state.prev().theta_grad();
-    auto L = llt_B.matrixL();
-    auto LT = llt_B.matrixU();
-    state.curr().a().noalias()
-        = state.b
-          - W_r_diag.asDiagonal()
-                * LT.solve(
-                    L.solve(W_r_diag.cwiseProduct(covariance * state.b)));
-  }
-
-  /**
-   * @brief Compute log determinant of B from Cholesky factor.
-   * @return log(det(B)) = 2 * sum(log(diag(L)))
-   */
-  double compute_log_determinant() const {
-    return 2.0 * llt_B.matrixLLT().diagonal().array().log().sum();
-  }
-
-  /**
-   * @brief Build the final result structure.
-   *
-   * @tparam NewtonStateT Type of the Newton state
-   * @param state Newton state containing converged values
-   * @param log_det Log determinant from compute_log_determinant()
-   * @return laplace_density_estimates with solver_used = 1
-   */
-  template <typename NewtonStateT>
-  auto build_result(NewtonStateT& state, double log_det) {
-    return laplace_density_estimates{
-        state.prev().obj() - 0.5 * log_det,
-        std::move(state.prev().theta()),
-        Eigen::SparseMatrix<double>(W_r_diag.asDiagonal()),
-        Eigen::MatrixXd(llt_B.matrixL()),
-        std::move(state.prev().a()),
-        std::move(state.prev().theta_grad()),
-        Eigen::PartialPivLU<Eigen::MatrixXd>{},
-        Eigen::MatrixXd(0, 0),
-        1};
-  }
-};
-
-/**
- * @brief Solver Policy 1 (Block): Cholesky decomposition using block W.
- *
- * This solver is used when `hessian_block_size > 1`. It computes
- * the block-diagonal negative Hessian of the log-likelihood, computes
- * its principal square root via `block_matrix_sqrt`, and forms the
- * system matrix B = I + W_r * Sigma * W_r for Cholesky factorization.
- *
- * The sparse structure of W_r is lazily initialized on the first call
- * to `solve_step` to match the problem dimensions.
- *
- * @note This solver corresponds to `solver == 1` with `hessian_block_size > 1`.
- */
-struct CholeskyWSolverBlock {
-  /** @brief Sparse square root of block Hessian */
-  Eigen::SparseMatrix<double> W_r;
-
-  /** @brief Sparse block-diagonal Hessian from likelihood */
-  Eigen::SparseMatrix<double> W_block;
-
-  /** @brief Cholesky factorization of B = I + W_r * Sigma * W_r */
-  Eigen::LLT<Eigen::MatrixXd> llt_B;
-
-  /** @brief Flag indicating if sparse structure has been initialized */
-  bool sparse_initialized = false;
-
-  /**
-   * @brief Initialize the solver (no-op, uses lazy initialization).
-   * @tparam NewtonStateT Type of the Newton state
-   * @param state The shared Newton optimization state
-   */
-  template <typename NewtonStateT>
-  void initialize(NewtonStateT& /*state*/) {
-    // Sparse matrix structure is initialized lazily in solve_step
-  }
-
-  /**
-   * @brief Perform one Newton step using block-diagonal Hessian solver.
-   *
-   * Computes the block Hessian, its square root via Schur decomposition,
-   * forms B = I + W_r * Sigma * W_r, performs Cholesky factorization,
-   * and solves for the new `a` vector.
-   *
-   * @tparam NewtonStateT Type of the Newton state
-   * @tparam LLFun Type of the log-likelihood functor
-   * @tparam LLTupleArgs Type of the likelihood arguments tuple
-   * @tparam CovarMat Type of the covariance matrix
-   * @param state Shared Newton state (modified: B, b, curr().a())
-   * @param ll_fun Log-likelihood functor
-   * @param ll_args Additional arguments for the likelihood
-   * @param covariance Prior covariance matrix Sigma
-   * @param hessian_block_size Size of each Hessian block (must divide
-   * theta_size)
-   * @param msgs Output stream for diagnostic messages (may be nullptr)
-   * @throws std::domain_error If Hessian is not positive definite or Cholesky
-   * fails
-   */
-
-  template <typename NewtonStateT, typename LLFun, typename LLTupleArgs,
-            typename CovarMat>
-  void solve_step(NewtonStateT& state, const LLFun& ll_fun,
-                  const LLTupleArgs& ll_args, const CovarMat& covariance,
-                  int hessian_block_size, std::ostream* msgs) {
-    const Eigen::Index theta_size = state.b.size();
-
-    // Lazy initialization of sparse structure
-    if (!sparse_initialized) {
-      W_r.resize(theta_size, theta_size);
-      W_r.reserve(Eigen::VectorXi::Constant(theta_size, hessian_block_size));
-      const Eigen::Index n_block = theta_size / hessian_block_size;
-      for (Eigen::Index ii = 0; ii < n_block; ii++) {
-        for (Eigen::Index k = 0; k < hessian_block_size; k++) {
-          for (Eigen::Index j = 0; j < hessian_block_size; j++) {
-            W_r.insert(ii * hessian_block_size + j, ii * hessian_block_size + k)
-                = 1.0;
-          }
-        }
-      }
-      W_r.makeCompressed();
-      sparse_initialized = true;
-    }
-
-    // 1. Compute block Hessian
-    W_block = laplace_likelihood::block_hessian(
-        ll_fun, state.prev().theta(), hessian_block_size, ll_args, msgs);
-
-    for (Eigen::Index j = 0; j < W_block.rows(); j++) {
-      if (W_block.coeff(j, j) < 0 || !std::isfinite(W_block.coeff(j, j))) {
-        throw std::domain_error(
-            "laplace_marginal_density: Hessian matrix is not positive "
-            "definite");
-      }
-    }
-
-    // 2. Compute W_r = sqrt(W)
-    block_matrix_sqrt(W_r, W_block, hessian_block_size);
-
-    // 3. Formulate B = I + W_r * Sigma * W_r
-    state.B.noalias() = Eigen::MatrixXd::Identity(theta_size, theta_size)
-                        + W_r * (covariance * W_r);
-
-    // 4. Factorize B with jittering fallback
-    llt_B.compute(state.B);
-    if (llt_B.info() != Eigen::Success) {
-      double jitter_try = 1e-10;
-      for (; jitter_try < 1e-5; jitter_try *= 10) {
-        state.B.diagonal().array() += jitter_try;
-        llt_B.compute(state.B);
-        if (llt_B.info() == Eigen::Success) {
-          break;
-        }
-      }
-      if (llt_B.info() != Eigen::Success) {
-        throw std::domain_error(
-            "laplace_marginal_density: Cholesky (Block) failed");
-      }
-    }
-
-    // 5. Solve for curr.a
-    state.b.noalias()
-        = W_block * state.prev().theta() + state.prev().theta_grad();
-    auto L = llt_B.matrixL();
-    auto LT = llt_B.matrixU();
-    state.curr().a().noalias()
-        = state.b - W_r * LT.solve(L.solve(W_r * (covariance * state.b)));
-  }
-
-  /**
-   * @brief Compute log determinant of B from Cholesky factor.
-   * @return log(det(B)) = 2 * sum(log(diag(L)))
-   */
-  double compute_log_determinant() const {
-    return 2.0 * llt_B.matrixLLT().diagonal().array().log().sum();
-  }
-
-  /**
-   * @brief Build the final result structure.
-   *
-   * @tparam NewtonStateT Type of the Newton state
-   * @param state Newton state containing converged values
-   * @param log_det Log determinant from compute_log_determinant()
-   * @return laplace_density_estimates with solver_used = 1
-   */
-  template <typename NewtonStateT>
-  auto build_result(NewtonStateT& state, double log_det) {
-    return laplace_density_estimates{state.prev().obj() - 0.5 * log_det,
-                                     std::move(state.prev().theta()),
-                                     std::move(W_r),
-                                     Eigen::MatrixXd(llt_B.matrixL()),
-                                     std::move(state.prev().a()),
-                                     std::move(state.prev().theta_grad()),
-                                     Eigen::PartialPivLU<Eigen::MatrixXd>{},
-                                     Eigen::MatrixXd(0, 0),
-                                     1};
-  }
-};
-
-/**
- * @brief Solver Policy 2: Cholesky decomposition of K (Covariance).
- *
- * This solver pre-computes the Cholesky factorization of the prior
- * covariance matrix Sigma = K_root * K_root^T. The system matrix becomes
- * B = I + K_root^T * W * K_root, which is factorized in each iteration.
- *
- * This approach is numerically more stable than Solver 1 when the
- * covariance matrix has a more complex structure, at the cost of
- * requiring the full Hessian W (not just diagonal).
- *
- * @note This solver corresponds to `solver == 2` in the original code.
- */
-struct CholeskyKSolver {
-  /** @brief Lower Cholesky factor of covariance: Sigma = K_root * K_root^T */
-  Eigen::MatrixXd K_root;
-
-  /** @brief Full (block) Hessian matrix from likelihood */
-  Eigen::SparseMatrix<double> W_full;
-
-  /** @brief Cholesky factorization of B = I + K_root^T * W * K_root */
-  Eigen::LLT<Eigen::MatrixXd> llt_B;
-
-  /** @brief Flag indicating if K_root has been computed */
-  bool K_initialized = false;
-
-  /**
-   * @brief Initialize solver by computing Cholesky of covariance.
-   *
-   * @tparam NewtonStateT Type of the Newton state
-   * @tparam CovarMat Type of the covariance matrix
-   * @param state The shared Newton optimization state (unused)
-   * @param covariance Prior covariance matrix Sigma
-   * @throws std::domain_error If covariance is not positive definite
-   */
-  template <typename NewtonStateT, typename CovarMat>
-  void initialize(NewtonStateT& /*state*/, const CovarMat& covariance) {
-    auto K_root_llt = covariance.template selfadjointView<Eigen::Lower>().llt();
-    if (K_root_llt.info() != Eigen::Success) {
-      throw std::domain_error(
-          "laplace_marginal_density: Cholesky of covariance failed at start");
-    }
-    K_root = K_root_llt.matrixL();
-    K_initialized = true;
-  }
-
-  /**
-   * @brief Perform one Newton step using covariance Cholesky solver.
-   *
-   * Computes the full Hessian, forms B = I + K_root^T * W * K_root,
-   * performs Cholesky factorization, and solves for the new `a` vector
-   * using triangular solves.
-   *
-   * @tparam NewtonStateT Type of the Newton state
-   * @tparam LLFun Type of the log-likelihood functor
-   * @tparam LLTupleArgs Type of the likelihood arguments tuple
-   * @tparam CovarMat Type of the covariance matrix
-   * @param state Shared Newton state (modified: B, b, curr().a())
-   * @param ll_fun Log-likelihood functor
-   * @param ll_args Additional arguments for the likelihood
-   * @param covariance Prior covariance matrix Sigma
-   * @param hessian_block_size Size of each Hessian block
-   * @param msgs Output stream for diagnostic messages (may be nullptr)
-   * @throws std::domain_error If Cholesky factorization fails
-   */
-
-  template <typename NewtonStateT, typename LLFun, typename LLTupleArgs,
-            typename CovarMat>
-  void solve_step(NewtonStateT& state, const LLFun& ll_fun,
-                  const LLTupleArgs& ll_args, const CovarMat& covariance,
-                  int hessian_block_size, std::ostream* msgs) {
-    const Eigen::Index theta_size = state.b.size();
-
-    // Lazy initialization if not done
-    if (!K_initialized) {
-      initialize(state, covariance);
-    }
-
-    // 1. Compute Hessian
-    W_full = laplace_likelihood::block_hessian(
-        ll_fun, state.prev().theta(), hessian_block_size, ll_args, msgs);
-
-    // 2. Formulate B = I + K^T * W * K
-    state.B.noalias() = Eigen::MatrixXd::Identity(theta_size, theta_size)
-                        + K_root.transpose() * (W_full * K_root);
-
-    // 3. Factorize B with jittering fallback
-    llt_B.compute(state.B);
-    if (llt_B.info() != Eigen::Success) {
-      double jitter_try = 1e-10;
-      for (; jitter_try < 1e-5; jitter_try *= 10) {
-        state.B.diagonal().array() += jitter_try;
-        llt_B.compute(state.B);
-        if (llt_B.info() == Eigen::Success) {
-          break;
-        }
-      }
-      if (llt_B.info() != Eigen::Success) {
-        throw std::domain_error(
-            "laplace_marginal_density: Cholesky (K) failed");
-      }
-    }
-
-    // 4. Solve for curr.a
-    state.b.noalias()
-        = W_full * state.prev().theta() + state.prev().theta_grad();
-    auto L = llt_B.matrixL();
-    auto LT = llt_B.matrixU();
-    state.curr().a().noalias()
-        = K_root.transpose().template triangularView<Eigen::Upper>().solve(
-            LT.solve(L.solve(K_root.transpose() * state.b)));
-  }
-
-  /**
-   * @brief Compute log determinant of B from Cholesky factor.
-   * @return log(det(B)) = 2 * sum(log(diag(L)))
-   */
-  double compute_log_determinant() const {
-    return 2.0 * llt_B.matrixLLT().diagonal().array().log().sum();
-  }
-
-  /**
-   * @brief Build the final result structure.
-   *
-   * @tparam NewtonStateT Type of the Newton state
-   * @param state Newton state containing converged values
-   * @param log_det Log determinant from compute_log_determinant()
-   * @return laplace_density_estimates with solver_used = 2
-   */
-  template <typename NewtonStateT>
-  auto build_result(NewtonStateT& state, double log_det) {
-    return laplace_density_estimates{state.prev().obj() - 0.5 * log_det,
-                                     std::move(state.prev().theta()),
-                                     std::move(W_full),
-                                     Eigen::MatrixXd(llt_B.matrixL()),
-                                     std::move(state.prev().a()),
-                                     std::move(state.prev().theta_grad()),
-                                     Eigen::PartialPivLU<Eigen::MatrixXd>{},
-                                     std::move(K_root),
-                                     2};
-  }
-};
-
-/**
- * @brief Solver Policy 3: LU Decomposition.
- *
- * This solver uses LU decomposition with partial pivoting to factorize
- * the system matrix B = I + Sigma * W. This is the most numerically
- * robust solver but also the slowest, as it does not exploit the
- * positive definiteness of B that the Cholesky solvers assume.
- *
- * This solver is used as a fallback when Solvers 1 and 2 fail due to
- * numerical issues (e.g., near-singular Hessians).
- *
- * @note This solver corresponds to `solver == 3` in the original code.
- */
-struct LUSolver {
-  /** @brief LU factorization of B = I + Sigma * W */
-  Eigen::PartialPivLU<Eigen::MatrixXd> lu;
-
-  /** @brief Full Hessian matrix from likelihood */
-  Eigen::SparseMatrix<double> W_full;
-
-  /**
-   * @brief Initialize the solver (no-op for LU solver).
-   * @tparam NewtonStateT Type of the Newton state
-   * @param state The shared Newton optimization state
-   */
-  template <typename NewtonStateT>
-  void initialize(NewtonStateT& /*state*/) {
-    // No pre-computation needed
-  }
-
-  /**
-   * @brief Perform one Newton step using LU decomposition solver.
-   *
-   * Computes the full Hessian, forms B = I + Sigma * W, performs
-   * LU decomposition, and solves for the new `a` vector.
-   *
-   * @tparam NewtonStateT Type of the Newton state
-   * @tparam LLFun Type of the log-likelihood functor
-   * @tparam LLTupleArgs Type of the likelihood arguments tuple
-   * @tparam CovarMat Type of the covariance matrix
-   * @param state Shared Newton state (modified: b, curr().a())
-   * @param ll_fun Log-likelihood functor
-   * @param ll_args Additional arguments for the likelihood
-   * @param covariance Prior covariance matrix Sigma
-   * @param hessian_block_size Size of each Hessian block
-   * @param msgs Output stream for diagnostic messages (may be nullptr)
-   */
-  template <typename NewtonStateT, typename LLFun, typename LLTupleArgs,
-            typename CovarMat>
-  void solve_step(NewtonStateT& state, const LLFun& ll_fun,
-                  const LLTupleArgs& ll_args, const CovarMat& covariance,
-                  int hessian_block_size, std::ostream* msgs) {
-    const Eigen::Index theta_size = state.b.size();
-
-    // 1. Compute Hessian
-    W_full = laplace_likelihood::block_hessian(
-        ll_fun, state.prev().theta(), hessian_block_size, ll_args, msgs);
-
-    // 2. Factorize B = I + Sigma * W
-    lu.compute(Eigen::MatrixXd::Identity(theta_size, theta_size)
-               + covariance * W_full);
-
-    // 3. Solve for curr.a
-    state.b.noalias()
-        = W_full * state.prev().theta() + state.prev().theta_grad();
-    state.curr().a().noalias()
-        = state.b - W_full * lu.solve(covariance * state.b);
-  }
-
-  /**
-   * @brief Compute log determinant from LU factorization.
-   * @return log(det(B)) = sum(log(diag(LU)))
-   */
-  double compute_log_determinant() const {
-    return lu.matrixLU().diagonal().array().log().sum();
-  }
-
-  /**
-   * @brief Build the final result structure.
-   *
-   * @tparam NewtonStateT Type of the Newton state
-   * @param state Newton state containing converged values
-   * @param log_det Log determinant from compute_log_determinant()
-   * @return laplace_density_estimates with solver_used = 3
-   */
-  template <typename NewtonStateT>
-  auto build_result(NewtonStateT& state, double log_det) {
-    return laplace_density_estimates{state.prev().obj() - 0.5 * log_det,
-                                     std::move(state.prev().theta()),
-                                     std::move(W_full),
-                                     Eigen::MatrixXd(0, 0),
-                                     std::move(state.prev().a()),
-                                     std::move(state.prev().theta_grad()),
-                                     std::move(lu),
-                                     Eigen::MatrixXd(0, 0),
-                                     3};
-  }
-};
-
-/**
- * @brief Run a Newton loop with a solver policy, updating the shared state.
- *
- * This helper centralizes the iteration/line-search logic shared across
- * solver policies while preserving the step counter and fallback behavior.
- */
-template <typename SolverPolicy, typename NewtonStateT, typename OptionsT,
-          typename LLFunT, typename LLTupleArgsT, typename CovarMatT,
-          typename UpdateLineSearch, typename SetNextIter,
-          typename ThrowOverstep>
-inline auto run_newton_loop(SolverPolicy& solver, NewtonStateT& state,
-                            const OptionsT& options, Eigen::Index& step_iter,
-                            const LLFunT& ll_fun, const LLTupleArgsT& ll_args,
-                            const CovarMatT& covariance,
-                            UpdateLineSearch&& update_line_search,
-                            SetNextIter&& set_next_iter,
-                            ThrowOverstep&& throw_overstep,
-                            std::ostream* msgs) {
-  bool finish_update = false;
-  for (; step_iter <= options.max_num_steps; step_iter++) {
-    solver.solve_step(state, ll_fun, ll_args, covariance,
-                      options.hessian_block_size, msgs);
-    if (!state.final_loop) {
-      finish_update = update_line_search(state.wolfe_status, state.wolfe_info,
-                                         state.curr(), state.prev());
-    }
-    if (finish_update) {
-      if (!state.final_loop && state.wolfe_status.accept_) {
-        // Do one final loop with exact wolfe conditions
-        state.final_loop = true;
-        // NOTE: Swapping here so we need to swap prev and curr later
-        set_next_iter(state.curr(), state.prev());
-        continue;
-      }
-      return solver.build_result(state, solver.compute_log_determinant());
-    } else {
-      set_next_iter(state.curr(), state.prev());
-    }
-  }
-  throw_overstep(options.max_num_steps);
-  return solver.build_result(state, solver.compute_log_determinant());
-}
-
-/**
- * For a latent Gaussian model with hyperparameters phi and
- * latent variables theta, and observations y, this function computes
- * an approximation of the log marginal density, p(y | phi).
- * This is done by marginalizing out theta, using a Laplace
- * approxmation. The latter is obtained by finding the mode,
- * via Newton's method, and computing the Hessian of the likelihood.
- *
- * The convergence criterion for the Newton is a small change in
- * log marginal density. The user controls the tolerance (i.e.
- * threshold under which change is deemed small enough) and
- * maximum number of steps.
- *
- * A description of this algorithm can be found in:
- *  - (2023) Margossian, "General Adjoint-Differentiated Laplace approximation",
- *    https://arxiv.org/pdf/2306.14976.
- * Additional references include:
- *  - (2020) Margossian et al, "HMC using an adjoint-differentiated Laplace...",
- *    NeurIPS, https://arxiv.org/abs/2004.12550.
- *  - (2006) Rasmussen and Williams, "Gaussian Processes for Machine Learning",
- *    second edition, MIT Press, algorithm 3.1.
- *
- * Variables needed for the gradient or generating quantities
- * are stored by reference.
- *
- * @tparam LLFun Type with a valid `operator(ThetaVec,  InnerLLTupleArgs)`
- * where `InnerLLTupleArgs` are the elements of `LLTupleArgs`
- * @tparam LLTupleArgs A tuple whose elements follow the types required for
- * `LLFun`
- * \laplace_common_template_args
- * @param[in] ll_fun A log likelihood functor
- * @param[in] ll_args Tuple containing parameters for `LLFun`
- * @param[in] covariance The covariance matrix for the latent Gaussian
- * \laplace_common_args
- * @param[in] options A set of options for tuning the solver
- * \msg_arg
- *
- * @return A struct containing
- * 1. lmd the log marginal density, p(y | phi)
- * 2. covariance the evaluated covariance function for the latent gaussian
- * variable
- * 3. theta a vector to store the mode
- * 4. W_r A sparse matrix containing the square root of the negative
- *    hessian, if solver 1 or 2 are used.
- * 5. L cholesky decomposition of stabilized inverse covariance
- * 6. a element in the Newton step
- * 7. l_grad the log density of the likelihood, evaluated at the mode
- *
- */
-template <typename LLFun, typename LLTupleArgs, typename CovarMat,
-          bool InitTheta,
-          require_t<is_all_arithmetic_scalar<CovarMat, LLTupleArgs>>* = nullptr>
-inline auto laplace_marginal_density_est(
-    LLFun&& ll_fun, LLTupleArgs&& ll_args, CovarMat&& covariance,
-    const laplace_options<InitTheta>& options, std::ostream* msgs) {
-  internal::validate_laplace_options("laplace_marginal_density", options,
-                                     covariance);
-
-  const Eigen::Index theta_size = covariance.rows();
-
-  auto throw_overstep = [](const auto max_num_steps) STAN_COLD_PATH {
-    throw std::domain_error(
-        std::string("laplace_marginal_density: max number of iterations: ")
-        + std::to_string(max_num_steps) + " exceeded.");
-  };
-  // Wolfe optimizes over the latent 'a' space
-  auto obj_fun = [&](const Eigen::VectorXd& a_val, auto&& theta_val) -> double {
-    return -0.5 * a_val.dot(theta_val)
-           + laplace_likelihood::log_likelihood(ll_fun, theta_val, ll_args,
-                                                msgs);
-  };
-  auto theta_grad_f = [&ll_fun, &ll_args, &msgs](auto&& theta_val) {
-    return laplace_likelihood::theta_grad(ll_fun, theta_val, ll_args, msgs);
-  };
-  auto theta_init = [theta_size, &options]() -> decltype(auto) {
-    if constexpr (InitTheta) {
-      return options.theta_0;
-    } else {
-      return Eigen::VectorXd::Zero(theta_size);
-    }
-  }();
-  auto obj_fun_state = obj_fun;
-  auto theta_grad_f_state = theta_grad_f;
-  internal::NewtonState<decltype(obj_fun_state), decltype(theta_grad_f_state)>
-      state(theta_size, std::move(obj_fun_state), std::move(theta_grad_f_state),
-            theta_init);
-  auto& wolfe_info = state.wolfe_info;
-  auto& wolfe_status = state.wolfe_status;
-  auto& curr = state.curr();
-  auto& prev = state.prev();
-  // 'a' gradient
-  auto grad_fun = [&covariance](auto&& step) {
-    return -covariance * step.a() + covariance * step.theta_grad();
-  };
-  auto update_step = [&covariance, &obj_fun, &theta_grad_f, &grad_fun](
-                         auto& step_info, auto&& /* curr */, auto&& prev,
-                         auto& eval_in, auto&& p) {
-    step_info.a() = prev.a() + eval_in.alpha() * p;
-    step_info.theta().noalias() = covariance * step_info.a();
-    step_info.theta_grad() = theta_grad_f(step_info.theta());
-    eval_in.obj() = obj_fun(step_info.a(), step_info.theta());
-    eval_in.dir() = grad_fun(step_info).dot(p);
-  };
-  auto update_line_search
-      = [&grad_fun, &update_step, &options, &msgs, &state](
-            auto&& wolfe_status, auto&& wolfe_info, auto&& curr, auto&& prev) {
-          wolfe_info.p_ = curr.a() - prev.a();
-          state.prev_g.noalias() = grad_fun(prev);
-          wolfe_info.init_dir_ = state.prev_g.dot(wolfe_info.p_);
-          // Flip direction if not ascending
-          if (wolfe_info.init_dir_ < 0) {
-            wolfe_info.p_ = -wolfe_info.p_;
-            wolfe_info.init_dir_ = -wolfe_info.init_dir_;
-          }
-          auto scratch = wolfe_info.scratch_;
-          scratch.alpha() = 1.0;
-          while (scratch.alpha() > options.line_search.min_alpha) {
-            try {
-              update_step(scratch, curr, prev, scratch.eval_, wolfe_info.p_);
-              if (!std::isfinite(scratch.eval_.obj())
-                  || !std::isfinite(scratch.eval_.dir())) {
-                scratch.alpha() *= options.line_search.tau;
-                continue;
-              }
-            } catch (const std::exception& e) {
-              scratch.alpha() *= options.line_search.tau;
-              continue;
-            }
-            break;
-          }
-          if (scratch.alpha() <= options.line_search.min_alpha) {
-            wolfe_status.accept_ = false;
-            return true;
-          }
-          if (options.line_search.max_iterations == 0) {
-            if (scratch.alpha() > options.line_search.min_alpha) {
-              curr.update(scratch);
-              wolfe_status.accept_ = true;
-              return false;
-            }
-          } else {
-            Eigen::VectorXd s = scratch.a() - prev.a();
-            curr.alpha() = barzilai_borwein_step_size(
-                s, grad_fun(scratch), state.prev_g, prev.alpha(),
-                wolfe_status.num_backtracks_, options.line_search.min_alpha,
-                options.line_search.max_alpha);
-            wolfe_status = internal::wolfe_line_search(
-                wolfe_info, update_step, options.line_search, msgs);
-          }
-          return std::abs(curr.obj() - prev.obj()) < options.tolerance
-                 || (!wolfe_status.accept_ && curr.obj() <= prev.obj());
-        };
-  auto set_next_iter = [&options](auto&& curr, auto&& prev) {
-    prev.update(curr);
-    curr.alpha() = std::clamp(curr.alpha(), 0.0, options.line_search.max_alpha);
-  };
-  // If solver 1 throws an error, we will try solver 2, then solver 3
-  bool allow_bounce = false;
-  /**
-   * On the final loop if we found a better wolfe step, but we are going to
-   * exit, we want to make sure all of our return values are with the most
-   * recent wolfe step that was accepted. So we do one final loop to update
-   * our return values.
-   */
-  // Start with safe step size
-  wolfe_status.num_backtracks_ = 99;
-  Eigen::Index step_iter = 0;
-  try {
-    if (options.solver == 1) {
-      if (options.hessian_block_size == 1) {
-        CholeskyWSolverDiag solver;
-        return run_newton_loop(solver, state, options, step_iter, ll_fun,
-                               ll_args, covariance, update_line_search,
-                               set_next_iter, throw_overstep, msgs);
-      } else {
-        CholeskyWSolverBlock solver;
-        return run_newton_loop(solver, state, options, step_iter, ll_fun,
-                               ll_args, covariance, update_line_search,
-                               set_next_iter, throw_overstep, msgs);
-      }
-    }
-  } catch (const std::exception& e) {
-    allow_bounce = true;
-    if (msgs != nullptr) {
-      (*msgs) << "Solver 1 failed at iteration " << step_iter
-              << " with error: " << e.what() << std::endl;
-      (*msgs) << "Attempting to switch to solver 2 (LLT decomposition)."
-              << std::endl;
-    }
-  }
-  try {
-    if (options.solver == 2 || allow_bounce) {
-      CholeskyKSolver solver;
-      solver.initialize(state, covariance);
-      return run_newton_loop(solver, state, options, step_iter, ll_fun, ll_args,
-                             covariance, update_line_search, set_next_iter,
-                             throw_overstep, msgs);
-    }
-  } catch (const std::exception& e) {
-    allow_bounce = true;
-    if (msgs != nullptr) {
-      (*msgs) << "Solver 2 failed at iteration " << step_iter
-              << " with error: " << e.what() << std::endl;
-      (*msgs) << "Attempting to switch to solver 3 (LU decomposition)."
-              << std::endl;
-    }
-  }
-  if (options.solver == 3 || allow_bounce) {
-    LUSolver solver;
-    return run_newton_loop(solver, state, options, step_iter, ll_fun, ll_args,
-                           covariance, update_line_search, set_next_iter,
-                           throw_overstep, msgs);
-  }
-  throw std::domain_error(
-      std::string("You chose a solver (") + std::to_string(options.solver)
-      + ") that is not valid. Please choose either 1, 2, or 3.");
-}
-}  // namespace internal
 /**
  * For a latent Gaussian model with global parameters phi, latent
  * variables theta, and observations y, this function computes
@@ -1396,47 +72,14 @@ inline auto laplace_marginal_density(LLFun&& ll_fun, LLTupleArgs&& ll_args,
 
 namespace internal {
 
-/**
- * Collects the adjoints from the input and adds them to the output.
- * @tparam Output A tuple or type where all scalar types are `arithmetic` types
- * @tparam Input A tuple or type where all scalar types are `arithmetic` types
- * @param output The output to which the adjoints will be added
- * @param input The input from which the adjoints will be collected
- */
-template <typename Output, typename Input,
-          require_t<is_all_arithmetic_scalar<Output>>* = nullptr,
-          require_t<is_all_arithmetic_scalar<Input>>* = nullptr>
-inline void collect_adjoints(Output&& output, Input&& input) {
-  return iter_tuple_nested(
-      [](auto&& output_i, auto&& input_i) {
-        using output_i_t = std::decay_t<decltype(output_i)>;
-        if constexpr (is_std_vector_v<output_i_t>) {
-          Eigen::Map<Eigen::Matrix<double, -1, 1>> output_map(output_i.data(),
-                                                              output_i.size());
-          Eigen::Map<Eigen::Matrix<double, -1, 1>> input_map(input_i.data(),
-                                                             input_i.size());
-          output_map.array() += input_map.array();
-        } else if constexpr (is_eigen_v<output_i_t>) {
-          output_i.array() += input_i.array();
-        } else if constexpr (is_stan_scalar_v<output_i_t>) {
-          output_i += input_i;
-        } else {
-          static_assert(
-              sizeof(std::decay_t<output_i_t>*) == 0,
-              "INTERNAL ERROR:(laplace_marginal_lpdf) set_zero_adjoints was "
-              "not able to deduce the actions needed for the given type. "
-              "This is an internal error, please report it: "
-              "https://github.com/stan-dev/math/issues");
-        }
-      },
-      std::forward<Output>(output), std::forward<Input>(input));
-}
-/**
- * Base case for zero sized tuples
- */
-template <bool ZeroInput = false>
-inline void constexpr copy_compute_s2(const std::tuple<>& output,
-                                      const std::tuple<>& input) noexcept {}
+template <bool ZeroInput = false, typename Output, typename Input,
+    require_tuple_t<Output>* = nullptr,
+    require_tuple_t<Input>* = nullptr,
+    require_t<std::bool_constant<std::tuple_size_v<std::decay_t<Output>> == 0>>* = nullptr,
+    require_t<std::bool_constant<std::tuple_size_v<std::decay_t<Input>> == 0>>* = nullptr
+    >
+inline constexpr void copy_compute_s2(Output&& output, Input&& input) {}
+
 
 /**
  * Copies the adjoints from the input to the output, scaling them by 0.5.
@@ -1449,16 +92,24 @@ inline void constexpr copy_compute_s2(const std::tuple<>& output,
 template <bool ZeroInput = false, typename Output, typename Input,
           require_t<is_all_arithmetic_scalar<Output>>* = nullptr,
           require_t<is_any_var_scalar<Input>>* = nullptr>
-inline void copy_compute_s2(Output&& output, Input&& input) {
+inline constexpr void copy_compute_s2(Output&& output, Input&& input) {
+  if constexpr (is_tuple_v<Output> && is_tuple_v<Input>) {
+    static_assert(
+        std::tuple_size<std::decay_t<Output>>::value
+            == std::tuple_size<std::decay_t<Input>>::value,
+        "INTERNAL ERROR:(laplace_marginal_lpdf) copy_compute_s2 called on "
+        "tuples of different sizes. This is an internal error, please report "
+        "it: "
+        "https://github.com/stan-dev/math/issues");
+  }
   return iter_tuple_nested(
       [](auto&& output_i, auto&& input_i) {
         using output_i_t = std::decay_t<decltype(output_i)>;
         if constexpr (is_std_vector_v<output_i_t>) {
-          Eigen::Map<Eigen::Matrix<double, -1, 1>> output_map(output_i.data(),
-                                                              output_i.size());
-          Eigen::Map<Eigen::Matrix<var, -1, 1>> input_map(input_i.data(),
-                                                          input_i.size());
-          output_map.array() += 0.5 * input_map.adj().array();
+          using dbl_map_t = Eigen::Map<Eigen::Matrix<double, -1, 1>>;
+          using var_map_t = Eigen::Map<Eigen::Matrix<var, -1, 1>>;
+          var_map_t input_map(input_i.data(), input_i.size());
+          dbl_map_t(output_i.data(), output_i.size()).array() += 0.5 * input_map.adj().array();
           if constexpr (ZeroInput) {
             input_map.adj().setZero();
           }
@@ -1475,89 +126,13 @@ inline void copy_compute_s2(Output&& output, Input&& input) {
         } else {
           static_assert(
               sizeof(std::decay_t<output_i_t>*) == 0,
-              "INTERNAL ERROR:(laplace_marginal_lpdf) set_zero_adjoints was "
+              "INTERNAL ERROR:(laplace_marginal_lpdf) copy_compute_s2 was "
               "not able to deduce the actions needed for the given type. "
               "This is an internal error, please report it: "
               "https://github.com/stan-dev/math/issues");
         }
       },
       std::forward<Output>(output), std::forward<Input>(input));
-}
-
-template <typename T>
-inline constexpr decltype(auto) filter_var_scalar_types(T&& t) {
-  return stan::math::filter_map<is_any_var_scalar>(
-      [](auto&& arg) -> decltype(auto) {
-        return std::forward<decltype(arg)>(arg);
-      },
-      std::forward<T>(t));
-}
-/**
- * Creates an arena type from the input with initialized with zeros
- * @tparam Input Possibly a tuple, std::vector, Eigen type, or scalar
- * @param input The input to be converted to an arena type
- */
-template <typename Input>
-inline constexpr auto make_zeroed_arena(Input&& input) {
-  if constexpr (is_tuple_v<Input>) {
-    return stan::math::filter_map<is_any_var_scalar>(
-        [](auto&& output_i) { return make_zeroed_arena(output_i); }, input);
-  } else if constexpr (is_std_vector_v<Input>) {
-    if constexpr (!is_var_v<value_type_t<Input>>) {
-      const auto output_size = input.size();
-      arena_t<std::vector<decltype(make_zeroed_arena(input[0]))>> ret;
-      ret.reserve(output_size);
-      for (Eigen::Index i = 0; i < output_size; ++i) {
-        ret.push_back(make_zeroed_arena(input[i]));
-      }
-      return ret;
-    } else {
-      return arena_t<std::vector<double>>(input.size(), 0.0);
-    }
-  } else if constexpr (is_eigen_v<Input>) {
-    return arena_t<promote_scalar_t<double, Input>>(
-        plain_type_t<promote_scalar_t<double, Input>>::Zero(input.rows(),
-                                                            input.cols()));
-  } else if constexpr (is_var<Input>::value) {
-    return static_cast<double>(0.0);
-  }
-}
-
-/**
- * Used in reverse pass to collect adjoints to the output
- * @tparam Output A tuple or type where all scalar types are `var` types
- * @tparam Input A tuple or type where all scalar types are `arithmetic` types
- * @param output The output to which the adjoints will be added
- * @param ret The vari object containing the adjoint to be added
- * @param input The input from which the adjoints will be collected
- */
-template <typename Output, typename Input>
-inline void collect_adjoints(Output&& output, const vari* ret, Input&& input) {
-  if constexpr (is_tuple_v<Output>) {
-    static_assert(sizeof(std::decay_t<Output>*) == 0,
-                  "INTERNAL ERROR:(laplace_marginal_lpdf) "
-                  "Accumulate Adjoints called on a tuple, but tuples cannot be "
-                  "on the reverse mode stack! "
-                  "This is an internal error, please report it: "
-                  "https://github.com/stan-dev/math/issues");
-  } else if constexpr (is_std_vector_v<Output>) {
-    if constexpr (!is_var_v<value_type_t<Output>>) {
-      const auto output_size = output.size();
-      for (std::size_t i = 0; i < output_size; ++i) {
-        collect_adjoints(output[i], ret, input[i]);
-      }
-    } else {
-      Eigen::Map<Eigen::Matrix<var, -1, 1>> output_map(output.data(),
-                                                       output.size());
-      Eigen::Map<const Eigen::Matrix<double, -1, 1>> input_map(input.data(),
-                                                               input.size());
-      output_map.array().adj() += ret->adj_ * input_map.array();
-    }
-  } else if constexpr (is_eigen_v<Output>) {
-    output.adj().array() += ret->adj_ * input.array();
-  } else if constexpr (is_var_v<Output>) {
-    output.adj() += ret->adj_ * input;
-  }
 }
 
 /**
@@ -1594,156 +169,8 @@ inline void reverse_pass_collect_adjoints(var ret, Output&& output,
   }
 }
 
-template <typename Args>
-inline auto laplace_var_to_ref(Args&& args) {
-  return to_ref(std::forward<Args>(args));
-}
-
-template <typename ArgsRef>
-inline auto laplace_var_make_zeroed(ArgsRef&& args_ref) {
-  return make_zeroed_arena(std::forward<ArgsRef>(args_ref));
-}
-
-template <typename ArgsRef>
-inline auto laplace_var_deep_copy_vargs(ArgsRef&& args_ref) {
-  using laplace_likelihood::internal::COPY_TYPE;
-  using laplace_likelihood::internal::deep_copy_vargs;
-  return deep_copy_vargs<var>(std::forward<ArgsRef>(args_ref));
-}
-
-template <typename CovarFun, typename CovarArgsCopy>
-inline auto laplace_var_eval_covariance(CovarFun&& covariance_function,
-                                        CovarArgsCopy&& covar_args_copy,
-                                        std::ostream* msgs) {
-  return stan::math::apply(
-      [&covariance_function, &msgs](auto&&... args) {
-        if constexpr (is_any_var_scalar_v<decltype(args)...>) {
-          return to_var_value(covariance_function(args..., msgs));
-        } else {
-          return covariance_function(args..., msgs);
-        }
-      },
-      std::forward<CovarArgsCopy>(covar_args_copy));
-}
-
-template <bool LLArgsContainVar, typename MdEst, typename CovarMat,
-          typename Options, typename LLFun, typename LLArgsCopy,
-          typename LLArgsFilter, typename PartialParm>
-inline void laplace_var_solver_postprocess(
-    const MdEst& md_est, const CovarMat& covariance, const Options& options,
-    const LLFun& ll_fun, const LLArgsCopy& ll_args_copy,
-    const LLArgsFilter& ll_args_filter, PartialParm& partial_parm,
-    arena_t<Eigen::MatrixXd>& R, arena_t<Eigen::VectorXd>& s2,
-    arena_t<Eigen::MatrixXd>& LU_solve_covariance, std::ostream* msgs) {
-  const auto cov_val = value_of(covariance);
-  if (md_est.solver_used == 1) {
-    if (options.hessian_block_size == 1) {
-      arena_t<Eigen::MatrixXd> tmp = md_est.W_r.toDense();
-      md_est.L.template triangularView<Eigen::Lower>().solveInPlace(tmp);
-      R.noalias() = tmp.transpose() * tmp;
-      arena_t<Eigen::MatrixXd> C
-          = md_est.L.template triangularView<Eigen::Lower>().solve(md_est.W_r
-                                                                   * cov_val);
-      if constexpr (!LLArgsContainVar) {
-        s2.deep_copy(
-            (0.5
-             * (cov_val.diagonal() - (C.transpose() * C).diagonal())
-                   .cwiseProduct(laplace_likelihood::third_diff(
-                       ll_fun, md_est.theta, value_of(ll_args_copy), msgs))));
-      } else {
-        arena_t<Eigen::MatrixXd> A = cov_val - C.transpose() * C;
-        auto s2_tmp = laplace_likelihood::compute_s2(ll_fun, md_est.theta, A,
-                                                     options.hessian_block_size,
-                                                     ll_args_copy, msgs);
-        s2.deep_copy(s2_tmp);
-        copy_compute_s2<true>(partial_parm, ll_args_filter);
-      }
-
-    } else {
-      arena_t<Eigen::MatrixXd> tmp = md_est.W_r.toDense();
-      md_est.L.template triangularView<Eigen::Lower>().solveInPlace(tmp);
-      R.noalias() = tmp.transpose() * tmp;
-      arena_t<Eigen::MatrixXd> C
-          = md_est.L.template triangularView<Eigen::Lower>().solve(md_est.W_r
-                                                                   * cov_val);
-      arena_t<Eigen::MatrixXd> A = cov_val - C.transpose() * C;
-      auto s2_tmp = laplace_likelihood::compute_s2(ll_fun, md_est.theta, A,
-                                                   options.hessian_block_size,
-                                                   ll_args_copy, msgs);
-      s2.deep_copy(s2_tmp);
-      copy_compute_s2<true>(partial_parm, ll_args_filter);
-    }
-  } else if (md_est.solver_used == 2) {
-    R = md_est.W_r
-        - md_est.W_r * md_est.K_root
-              * md_est.L.transpose()
-                    .template triangularView<Eigen::Upper>()
-                    .solve(
-                        md_est.L.template triangularView<Eigen::Lower>().solve(
-                            md_est.K_root.transpose() * md_est.W_r));
-
-    arena_t<Eigen::MatrixXd> C
-        = md_est.L.template triangularView<Eigen::Lower>().solve(
-            md_est.K_root.transpose());
-    auto s2_tmp = laplace_likelihood::compute_s2(
-        ll_fun, md_est.theta, (C.transpose() * C).eval(),
-        options.hessian_block_size, ll_args_copy, msgs);
-    s2.deep_copy(s2_tmp);
-    copy_compute_s2<true>(partial_parm, ll_args_filter);
-  } else {  // options.solver with LU decomposition
-    LU_solve_covariance = md_est.LU.solve(cov_val);
-    auto I_minus_BinvKW
-        = Eigen::MatrixXd::Identity(md_est.W_r.rows(), md_est.W_r.cols())
-          - LU_solve_covariance * md_est.W_r;
-    R = md_est.W_r * I_minus_BinvKW;  // == W - W B^{-1} K W
-    arena_t<Eigen::MatrixXd> A
-        = cov_val - cov_val * md_est.W_r * LU_solve_covariance;
-    auto s2_tmp = laplace_likelihood::compute_s2(ll_fun, md_est.theta, A,
-                                                 options.hessian_block_size,
-                                                 ll_args_copy, msgs);
-    s2.deep_copy(s2_tmp);
-    copy_compute_s2<true>(partial_parm, ll_args_filter);
-  }
-}
-
-template <typename LLFun, typename MdEst, typename LLArgsCopy,
-          typename LLArgsFilter, typename CovarMat, typename PartialParm>
-inline void laplace_var_collect_ll_args_adjoints(
-    const LLFun& ll_fun, const MdEst& md_est, const LLArgsCopy& ll_args_copy,
-    const LLArgsFilter& ll_args_filter, const CovarMat& covariance,
-    const arena_t<Eigen::VectorXd>& s2, const arena_t<Eigen::MatrixXd>& R,
-    const arena_t<Eigen::MatrixXd>& LU_solve_covariance,
-    PartialParm& partial_parm, std::ostream* msgs) {
-  const auto cov_val = value_of(covariance);
-  arena_t<Eigen::VectorXd> v;
-  if (md_est.solver_used == 1 || md_est.solver_used == 2) {
-    v = cov_val * s2 - cov_val * R * cov_val * s2;
-  } else {
-    v = LU_solve_covariance * s2;
-  }
-  laplace_likelihood::diff_eta_implicit(ll_fun, v, md_est.theta, ll_args_copy,
-                                        msgs);
-  collect_adjoints<true>(partial_parm, ll_args_filter);
-}
-
-template <typename MdEst, typename CovarMat, typename CovarArgsCopy,
-          typename CovarArgsAdj>
-inline void laplace_var_collect_covar_args_adjoints(
-    const MdEst& md_est, CovarMat& covariance,
-    const CovarArgsCopy& covar_args_copy, CovarArgsAdj& covar_args_adj,
-    const arena_t<Eigen::MatrixXd>& R, const arena_t<Eigen::VectorXd>& s2) {
-  arena_t<Eigen::MatrixXd> K_adj_arena
-      = 0.5 * md_est.a * md_est.a.transpose() - 0.5 * R
-        + s2 * md_est.theta_grad.transpose()
-        - (R * (covariance.val() * s2)) * md_est.theta_grad.transpose();
-  var Z = make_callback_var(0.0, [covariance, K_adj_arena](auto&& vi) mutable {
-    covariance.adj().array() += vi.adj() * K_adj_arena.array();
-  });
-  grad(Z.vi_);
-  auto covar_args_filter = filter_var_scalar_types(covar_args_copy);
-  collect_adjoints(covar_args_adj, covar_args_filter);
-}
 }  // namespace internal
+
 /**
  * For a latent Gaussian model with global parameters phi, latent
  * variables theta, and observations y, this function computes
@@ -1774,75 +201,153 @@ inline void laplace_var_collect_covar_args_adjoints(
 template <typename LLFun, typename LLTupleArgs, typename CovarFun,
           typename CovarArgs, bool InitTheta,
           require_t<is_any_var_scalar<LLTupleArgs, CovarArgs>>* = nullptr>
-inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
+inline auto laplace_marginal_density(LLFun&& ll_fun, LLTupleArgs&& ll_args,
                                      CovarFun&& covariance_function,
                                      CovarArgs&& covar_args,
                                      const laplace_options<InitTheta>& options,
                                      std::ostream* msgs) {
-  auto covar_args_refs
-      = internal::laplace_var_to_ref(std::forward<CovarArgs>(covar_args));
-  auto ll_args_refs
-      = internal::laplace_var_to_ref(std::forward<LLTupleArgs>(ll_args));
+  auto covar_args_refs = to_ref(std::forward<CovarArgs>(covar_args));
+  auto ll_args_refs = to_ref(std::forward<LLTupleArgs>(ll_args));
   // Solver 1, 2, 3
   constexpr bool ll_args_contain_var = is_any_var_scalar<LLTupleArgs>::value;
-  auto partial_parm = internal::laplace_var_make_zeroed(ll_args_refs);
-  auto covar_args_adj = internal::laplace_var_make_zeroed(covar_args_refs);
+  auto partial_parm = internal::make_zeroed_arena(ll_args_refs);
+  auto covar_args_adj = internal::make_zeroed_arena(covar_args_refs);
   double lmd = 0.0;
   {
     nested_rev_autodiff nested;
-
     // Make one hard copy here
-    auto ll_args_copy = internal::laplace_var_deep_copy_vargs(ll_args_refs);
+    auto ll_args_copy = internal::deep_copy_vargs<var>(ll_args_refs);
     auto covar_args_copy
-        = internal::laplace_var_deep_copy_vargs(covar_args_refs);
-    auto covariance = internal::laplace_var_eval_covariance(
-        covariance_function, covar_args_copy, msgs);
+        = internal::deep_copy_vargs<var>(covar_args_refs);
+    auto covariance = stan::math::apply(
+      [&covariance_function, &msgs](auto&&... args) {
+        if constexpr (is_any_var_scalar_v<decltype(args)...>) {
+          return to_var_value(covariance_function(args..., msgs));
+        } else {
+          return covariance_function(args..., msgs);
+        }
+      }, covar_args_copy);
+    decltype(auto) covariance_val = value_of(covariance);
+    decltype(auto) ll_args_vals = value_of(ll_args_copy);
     auto md_est = internal::laplace_marginal_density_est(
-        ll_fun, value_of(ll_args_copy), value_of(covariance), options, msgs);
-    if constexpr (ll_args_contain_var) {
-      laplace_likelihood::ll_arg_grad(ll_fun, md_est.theta, ll_args_copy, msgs);
-    }
+        ll_fun, ll_args_vals, covariance_val, options, msgs);
+    auto ll_args_filter = internal::filter_var_scalar_types(ll_args_copy);
+        // tuple of references to var types
     // Solver 1, 2
-    arena_t<Eigen::MatrixXd> R(md_est.theta.size(), md_est.theta.size());
+    const bool solver_1_or_2 = md_est.solver_used == 1 || md_est.solver_used == 2;
+    arena_t<Eigen::MatrixXd> R(md_est.theta.size() * solver_1_or_2,
+      md_est.theta.size() * solver_1_or_2);
     // Solver 3
     arena_t<Eigen::MatrixXd> LU_solve_covariance(
         covariance.rows() * (md_est.solver_used == 3),
         covariance.cols() * (md_est.solver_used == 3));
     // Solver 1, 2, 3
     arena_t<Eigen::VectorXd> s2(md_est.theta.size());
+    using stan::math::internal::ZeroOut;
+    if (md_est.solver_used == 1) {
+      if (options.hessian_block_size == 1) {
+        arena_t<Eigen::MatrixXd> tmp = md_est.W_r.toDense();
+        md_est.L.template triangularView<Eigen::Lower>().solveInPlace(tmp);
+        R.noalias() = tmp.transpose() * tmp;
+        arena_t<Eigen::MatrixXd> C
+            = md_est.L.template triangularView<Eigen::Lower>().solve(md_est.W_r
+                                                                    * covariance_val);
+        if constexpr (ll_args_contain_var) {
+          arena_t<Eigen::MatrixXd> A = covariance_val - C.transpose() * C;
+          auto s2_tmp = laplace_likelihood::compute_s2(ll_fun, md_est.theta, A,
+                                                      options.hessian_block_size,
+                                                      ll_args_copy, msgs);
+          s2.deep_copy(s2_tmp);
+          internal::copy_compute_s2<ZeroOut>(partial_parm, ll_args_filter);
+        } else {
+          s2.deep_copy(
+              (0.5
+              * (covariance_val.diagonal() - (C.transpose() * C).diagonal())
+                    .cwiseProduct(laplace_likelihood::third_diff(
+                        ll_fun, md_est.theta, ll_args_vals, msgs))));
+        }
 
-    // Return references to var types
-    auto ll_args_filter = internal::filter_var_scalar_types(ll_args_copy);
-    stan::math::for_each(
-        [](auto&& output_i, auto&& ll_arg_i) {
-          if constexpr (is_any_var_scalar_v<decltype(ll_arg_i)>) {
-            internal::collect_adjoints<true>(output_i, ll_arg_i);
-          }
-        },
-        partial_parm, ll_args_filter);
-    internal::laplace_var_solver_postprocess<ll_args_contain_var>(
-        md_est, covariance, options, ll_fun, ll_args_copy, ll_args_filter,
-        partial_parm, R, s2, LU_solve_covariance, msgs);
-    lmd = md_est.lmd;
+      } else {
+        arena_t<Eigen::MatrixXd> tmp = md_est.W_r.toDense();
+        md_est.L.template triangularView<Eigen::Lower>().solveInPlace(tmp);
+        R.noalias() = tmp.transpose() * tmp;
+        arena_t<Eigen::MatrixXd> C
+            = md_est.L.template triangularView<Eigen::Lower>().solve(md_est.W_r
+                                                                    * covariance_val);
+        arena_t<Eigen::MatrixXd> A = covariance_val - C.transpose() * C;
+        auto s2_tmp = laplace_likelihood::compute_s2(ll_fun, md_est.theta, A,
+                                                    options.hessian_block_size,
+                                                    ll_args_copy, msgs);
+        s2.deep_copy(s2_tmp);
+        internal::copy_compute_s2<ZeroOut>(partial_parm, ll_args_filter);
+      }
+    } else if (md_est.solver_used == 2) {
+      R = md_est.W_r
+          - md_est.W_r * md_est.K_root
+                * md_est.L.transpose()
+                      .template triangularView<Eigen::Upper>()
+                      .solve(
+                          md_est.L.template triangularView<Eigen::Lower>().solve(
+                              md_est.K_root.transpose() * md_est.W_r));
+
+      arena_t<Eigen::MatrixXd> C
+          = md_est.L.template triangularView<Eigen::Lower>().solve(
+              md_est.K_root.transpose());
+      auto s2_tmp = laplace_likelihood::compute_s2(
+          ll_fun, md_est.theta, (C.transpose() * C).eval(),
+          options.hessian_block_size, ll_args_copy, msgs);
+      s2.deep_copy(s2_tmp);
+      internal::copy_compute_s2<ZeroOut>(partial_parm, ll_args_filter);
+    } else {  // options.solver with LU decomposition
+      LU_solve_covariance = md_est.LU.solve(covariance_val);
+      auto I_minus_BinvKW
+          = Eigen::MatrixXd::Identity(md_est.W_r.rows(), md_est.W_r.cols())
+            - LU_solve_covariance * md_est.W_r;
+      R = md_est.W_r * I_minus_BinvKW;  // == W - W B^{-1} K W
+      arena_t<Eigen::MatrixXd> A
+          = covariance_val - covariance_val * md_est.W_r * LU_solve_covariance;
+      auto s2_tmp = laplace_likelihood::compute_s2(ll_fun, md_est.theta, A,
+                                                  options.hessian_block_size,
+                                                  ll_args_copy, msgs);
+      s2.deep_copy(s2_tmp);
+      internal::copy_compute_s2<ZeroOut>(partial_parm, ll_args_filter);
+    }
     if constexpr (is_any_var_scalar_v<scalar_type_t<CovarArgs>>) {
-      internal::laplace_var_collect_covar_args_adjoints(
-          md_est, covariance, covar_args_copy, covar_args_adj, R, s2);
+      arena_t<Eigen::MatrixXd> K_adj_arena
+          = 0.5 * md_est.a * md_est.a.transpose() - 0.5 * R
+            + s2 * md_est.theta_grad.transpose()
+            - (R * (covariance.val() * s2)) * md_est.theta_grad.transpose();
+      var Z = make_callback_var(0.0, [covariance, K_adj_arena](auto&& vi) mutable {
+        covariance.adj().array() += vi.adj() * K_adj_arena.array();
+      });
+      grad(Z.vi_);
+      auto covar_args_filter = internal::filter_var_scalar_types(covar_args_copy);
+      internal::collect_adjoints(covar_args_adj, covar_args_filter);
     }
     if constexpr (ll_args_contain_var) {
-      internal::laplace_var_collect_ll_args_adjoints(
-          ll_fun, md_est, ll_args_copy, ll_args_filter, covariance, s2, R,
-          LU_solve_covariance, partial_parm, msgs);
+      laplace_likelihood::ll_arg_grad(ll_fun, md_est.theta, ll_args_copy, msgs);
+      internal::collect_adjoints<ZeroOut>(partial_parm, ll_args_filter);
+      arena_t<Eigen::VectorXd> v;
+      if (md_est.solver_used == 1 || md_est.solver_used == 2) {
+        v = covariance_val * s2 - covariance_val * R * covariance_val * s2;
+      } else {
+        v = LU_solve_covariance * s2;
+      }
+      laplace_likelihood::diff_eta_implicit(ll_fun, v, md_est.theta, ll_args_copy,
+                                            msgs);
+      internal::collect_adjoints<ZeroOut>(partial_parm, ll_args_filter);
     }
+    lmd = md_est.lmd;
   }
   var ret(lmd);
   if constexpr (is_any_var_scalar_v<CovarArgs>) {
     auto covar_args_filter = internal::filter_var_scalar_types(covar_args_refs);
     internal::reverse_pass_collect_adjoints(ret, covar_args_filter,
-                                            covar_args_adj);
+                                            std::move(covar_args_adj));
   }
   if constexpr (ll_args_contain_var) {
     auto ll_args_filter = internal::filter_var_scalar_types(ll_args_refs);
-    internal::reverse_pass_collect_adjoints(ret, ll_args_filter, partial_parm);
+    internal::reverse_pass_collect_adjoints(ret, ll_args_filter, std::move(partial_parm));
   }
   return ret;
 }

@@ -157,7 +157,7 @@ TEST_P(laplace_types, poisson_log_phi_dim_2_tuple_extended) {
           stan::math::test::squared_kernel_functor{},
           std::forward_as_tuple(x, std::make_tuple(phi_dbl(0), phi_dbl(1))),
           theta_0, tolerance, max_num_steps, hessian_block_size, solver_num,
-          max_steps_line_search, nullptr);
+          max_steps_line_search, &output_stream);
     } catch (const std::exception& e) {
       std::stringstream fail_msg;
       using stan::math::test::test_type_name;
@@ -222,7 +222,7 @@ TEST_P(laplace_types, poisson_log_phi_dim_2_tuple) {
           stan::math::test::squared_kernel_functor{},
           std::forward_as_tuple(x_v, std::make_tuple(alpha, rho)), theta_0,
           tolerance, max_num_steps, hessian_block_size, solver_num,
-          max_steps_line_search, nullptr);
+          max_steps_line_search, &output_stream);
     } catch (const std::exception& e) {
       std::stringstream fail_msg;
       using stan::math::test::test_type_name;
@@ -243,7 +243,7 @@ TEST_P(laplace_types, poisson_log_phi_dim_2_tuple) {
           stan::math::test::squared_kernel_functor{},
           std::forward_as_tuple(x, std::make_tuple(alpha_rho(0), alpha_rho(1))),
           theta_0, tolerance, max_num_steps, hessian_block_size, solver_num,
-          max_steps_line_search, nullptr);
+          max_steps_line_search, &output_stream);
     } catch (const std::exception& e) {
       std::stringstream fail_msg;
       using stan::math::test::test_type_name;
@@ -325,7 +325,7 @@ TEST_P(laplace_types, poisson_log_phi_dim_2_array_tuple) {
           stan::math::test::squared_kernel_functor{},
           std::forward_as_tuple(x, alpha_tuple), theta_0, tolerance,
           max_num_steps, hessian_block_size, solver_num, max_steps_line_search,
-          nullptr);
+          &output_stream);
     } catch (const std::exception& e) {
       std::stringstream fail_msg;
       using stan::math::test::test_type_name;

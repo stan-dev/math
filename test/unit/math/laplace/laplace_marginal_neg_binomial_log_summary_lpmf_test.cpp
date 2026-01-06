@@ -55,7 +55,7 @@ TEST_P(laplace_marginal_neg_binomial_log_summary_lpmf, phi_dim_2) {
           stan::math::test::squared_kernel_functor{},
           std::forward_as_tuple(x, alpha, rho), theta_0, tolerance,
           max_num_steps, hessian_block_size, solver_num, max_steps_line_search,
-          nullptr);
+          &output_stream);
     } catch (const std::exception& e) {
       std::stringstream fail_msg;
       using stan::math::test::test_type_name;
@@ -96,7 +96,7 @@ TEST_P(laplace_disease_map_test,
   double marginal_density = laplace_marginal_neg_binomial_2_log_summary_lpmf(
       y, n_per_group, counts_per_group, eta, mean,
       stan::math::test::sqr_exp_kernel_functor{},
-      std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1)), nullptr);
+      std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1)), &output_stream);
 
   // ToDo (charlesm93): get benchmark from GPStuff or another software.
   constexpr double tolerance = 1e-12;
@@ -106,7 +106,7 @@ TEST_P(laplace_disease_map_test,
         y, n_per_group, counts_per_group, eta_arg, 0,
         stan::math::test::sqr_exp_kernel_functor{},
         std::forward_as_tuple(x, alpha, rho), theta_0, tolerance, max_num_steps,
-        hessian_block_size, solver_num, max_steps_line_search, nullptr);
+        hessian_block_size, solver_num, max_steps_line_search, &output_stream);
   };
   smoke(phi_dbl[0], phi_dbl[1], eta);
   auto f = [&](auto&& alpha, auto&& rho, auto&& eta_arg) {
@@ -116,7 +116,7 @@ TEST_P(laplace_disease_map_test,
           stan::math::test::sqr_exp_kernel_functor{},
           std::forward_as_tuple(x, alpha, rho), theta_0, tolerance,
           max_num_steps, hessian_block_size, solver_num, max_steps_line_search,
-          nullptr);
+          &output_stream);
     } catch (const std::exception& e) {
       std::stringstream fail_msg;
       using stan::math::test::test_type_name;

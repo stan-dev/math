@@ -2,48 +2,12 @@
 #define STAN_MATH_MIX_FUNCTOR_LAPLACE_LIKELIHOOD_HPP
 
 #include <stan/math/mix/functor/hessian_block_diag.hpp>
+#include <stan/math/mix/functor/conditional_copy_and_promote.hpp>
 #include <stan/math/prim/functor.hpp>
 #include <stan/math/prim/fun.hpp>
 
 namespace stan {
 namespace math {
-
-namespace internal {
-/**
- * Set all adjoints of the output to zero.
- */
-template <typename Output>
-inline void set_zero_adjoint(Output&& output) {
-  if constexpr (is_all_arithmetic_scalar_v<Output>) {
-    return;
-  } else {
-    return iter_tuple_nested(
-        [](auto&& output_i) {
-          using output_i_t = std::decay_t<decltype(output_i)>;
-          if constexpr (is_all_arithmetic_scalar_v<output_i_t>) {
-            return;
-          } else if constexpr (is_std_vector<output_i_t>::value) {
-            for (Eigen::Index i = 0; i < output_i.size(); ++i) {
-              output_i[i].adj() = 0;
-            }
-          } else if constexpr (is_eigen_v<output_i_t>) {
-            output_i.adj().setZero();
-          } else if constexpr (is_stan_scalar_v<output_i_t>) {
-            output_i.adj() = 0;
-          } else {
-            static_assert(
-                sizeof(std::decay_t<output_i_t>*) == 0,
-                "INTERNAL ERROR:(laplace_marginal_lpdf) set_zero_adjoints was "
-                "not able to deduce the actions needed for the given type. "
-                "This is an internal error, please report it: "
-                "https://github.com/stan-dev/math/issues");
-          }
-        },
-        std::forward<Output>(output));
-  }
-}
-
-}  // namespace internal
 
 /**
  * functions to compute the log density, first, second,
@@ -70,81 +34,6 @@ inline auto log_likelihood(F&& f, Theta&& theta, Stream* msgs, Args&&... args) {
 }
 
 /**
- * Decide if object should be deep or shallow copied when
- * using @ref conditional_copy_and_promote .
- */
-enum class COPY_TYPE { SHALLOW = 0, DEEP = 1 };
-
-/**
- * Conditional copy and promote a type's scalar type to a `PromotedType`.
- * @tparam Filter type trait with a static constexpr bool member `value`
- *  that is true if the type should be promoted. Otherwise, the type is
- *  left unchanged.
- * @tparam PromotedType type to promote the scalar to.
- * @tparam CopyType type of copy to perform.
- * @tparam Args variadic arguments.
- * @param args variadic arguments to conditionally copy and promote.
- * @return a tuple where each element is either a reference to the original
- * argument or a promoted copy of the argument.
- */
-template <template <typename...> class Filter,
-          typename PromotedType = stan::math::var,
-          COPY_TYPE CopyType = COPY_TYPE::DEEP, typename... Args>
-inline auto conditional_copy_and_promote(Args&&... args) {
-  return map_if<Filter>(
-      [](auto&& arg) {
-        if constexpr (is_tuple_v<decltype(arg)>) {
-          return stan::math::apply(
-              [](auto&&... inner_args) {
-                return make_holder_tuple(
-                    conditional_copy_and_promote<Filter, PromotedType,
-                                                 CopyType>(
-                        std::forward<decltype(inner_args)>(inner_args))...);
-              },
-              std::forward<decltype(arg)>(arg));
-        } else if constexpr (is_std_vector_v<decltype(arg)>) {
-          std::vector<decltype(conditional_copy_and_promote<
-                               Filter, PromotedType, CopyType>(arg[0]))>
-              ret;
-          for (std::size_t i = 0; i < arg.size(); ++i) {
-            ret.push_back(
-                conditional_copy_and_promote<Filter, PromotedType, CopyType>(
-                    arg[i]));
-          }
-          return ret;
-        } else {
-          if constexpr (CopyType == COPY_TYPE::DEEP) {
-            return stan::math::eval(promote_scalar<PromotedType>(
-                value_of_rec(std::forward<decltype(arg)>(arg))));
-          } else if (CopyType == COPY_TYPE::SHALLOW) {
-            if constexpr (std::is_same_v<PromotedType,
-                                         scalar_type_t<decltype(arg)>>) {
-              return std::forward<decltype(arg)>(arg);
-            } else {
-              return stan::math::eval(promote_scalar<PromotedType>(
-                  std::forward<decltype(arg)>(arg)));
-            }
-          }
-        }
-      },
-      std::forward<Args>(args)...);
-}
-
-template <typename PromotedType, typename... Args>
-inline auto deep_copy_vargs(Args&&... args) {
-  return conditional_copy_and_promote<is_any_var_scalar, PromotedType,
-                                      COPY_TYPE::DEEP>(
-      std::forward<Args>(args)...);
-}
-
-template <typename PromotedType, typename... Args>
-inline auto shallow_copy_vargs(Args&&... args) {
-  return conditional_copy_and_promote<is_any_var_scalar, PromotedType,
-                                      COPY_TYPE::SHALLOW>(
-      std::forward<Args>(args)...);
-}
-
-/**
  * Computes theta gradient `f` wrt `theta` and `args...`
  * @note If `Args` contains \ref var types then their adjoints will be
  * calculated as a side effect.
@@ -163,7 +52,7 @@ inline auto theta_grad(F&& f, Theta&& theta, Stream* msgs, Args&&... args) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   nested_rev_autodiff nested;
-  Matrix<var, Dynamic, 1> theta_var = theta;
+  arena_t<Matrix<var, Dynamic, 1>> theta_var = theta;
   var f_var = f(theta_var, args..., msgs);
   grad(f_var.vi_);
   return theta_var.adj().eval();
@@ -334,8 +223,8 @@ inline Eigen::VectorXd third_diff(F&& f, Theta&& theta, Stream&& msgs,
                                   Args&&... args) {
   nested_rev_autodiff nested;
   const Eigen::Index theta_size = theta.size();
-  Eigen::Matrix<var, Eigen::Dynamic, 1> theta_var = std::forward<Theta>(theta);
-  Eigen::Matrix<fvar<fvar<var>>, Eigen::Dynamic, 1> theta_ffvar(theta_size);
+  arena_t<Eigen::Matrix<var, Eigen::Dynamic, 1>> theta_var = std::forward<Theta>(theta);
+  arena_t<Eigen::Matrix<fvar<fvar<var>>, Eigen::Dynamic, 1>> theta_ffvar(theta_size);
   for (Eigen::Index i = 0; i < theta_size; ++i) {
     theta_ffvar(i) = fvar<fvar<var>>(fvar<var>(theta_var(i), 1.0), 1.0);
   }
@@ -377,13 +266,13 @@ inline auto compute_s2(F&& f, Theta&& theta, AMat&& A,
 
   nested_rev_autodiff nested;
   const Eigen::Index theta_size = theta.size();
-  Matrix<var, Dynamic, 1> theta_var = std::forward<Theta>(theta);
+  arena_t<Matrix<var, Dynamic, 1>> theta_var = std::forward<Theta>(theta);
   int n_blocks = theta_size / hessian_block_size;
-  VectorXd v(theta_size);
-  VectorXd w(theta_size);
+  arena_t<VectorXd> v(theta_size);
+  arena_t<VectorXd> w(theta_size);
   Matrix<fvar<fvar<var>>, Dynamic, 1> theta_ffvar(theta_size);
   auto shallow_copy_args
-      = shallow_copy_vargs<fvar<fvar<var>>>(std::forward_as_tuple(args...));
+      = stan::math::internal::shallow_copy_vargs<fvar<fvar<var>>>(std::forward_as_tuple(args...));
   for (Eigen::Index i = 0; i < hessian_block_size; ++i) {
     nested_rev_autodiff nested;
     v.setZero();
@@ -442,13 +331,13 @@ inline auto diff_eta_implicit(F&& f, V_t&& v, Theta&& theta, Stream* msgs,
   }
   nested_rev_autodiff nested;
   const Eigen::Index theta_size = theta.size();
-  Matrix<var, Dynamic, 1> theta_var = std::forward<Theta>(theta);
+  arena_t<Matrix<var, Dynamic, 1>> theta_var = std::forward<Theta>(theta);
   Matrix<fvar<var>, Dynamic, 1> theta_fvar(theta_size);
   for (Eigen::Index i = 0; i < theta_size; i++) {
     theta_fvar(i) = fvar<var>(theta_var(i), v(i));
   }
   auto shallow_copy_args
-      = shallow_copy_vargs<fvar<var>>(std::forward_as_tuple(args...));
+      = stan::math::internal::shallow_copy_vargs<fvar<var>>(std::forward_as_tuple(args...));
   fvar<var> f_sum = stan::math::apply(
       [](auto&& f, auto&& theta_fvar, auto&& msgs, auto&&... inner_args) {
         return f(theta_fvar, inner_args..., msgs);

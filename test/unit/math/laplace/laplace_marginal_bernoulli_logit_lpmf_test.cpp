@@ -57,7 +57,7 @@ TEST_P(laplace_marginal_bernoulli_logit_lpmf, phi_dim500) {
           y, n_samples, mean, sqr_exp_kernel_functor{},
           std::forward_as_tuple(x, alpha, rho), theta_0, tolerance,
           max_num_steps, hessian_block_size, solver_num, max_steps_line_search,
-          nullptr);
+          &output_stream);
     } catch (const std::exception& e) {
       std::stringstream fail_msg;
       using stan::math::test::test_type_name;
