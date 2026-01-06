@@ -813,7 +813,9 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
   };
   Eval best = low;  // keep the best Armijo-OK in case strong-Wolfe fails
   auto update_with_tick = [&](WolfeData& buf, Eval& e, auto&& p) {
-    if (total_updates > opt.max_iterations) {
+    const bool over_budget = total_updates > opt.max_iterations;
+    if (over_budget) {
+      // Soft budget: stop evaluating new trial points once exceeded.
       if (armijo_ok(best)) {
         update_fun(buf, curr, prev, best, p);
         assign_step(curr, scratch, best);
@@ -837,10 +839,12 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
   if (wolfe_check.stop_ != WolfeReturn::Continue) {
     return wolfe_check;
   }
+  bool high_has_eval = true;
   // Initial check for numerical trouble
   {
     while (!eval_finite(high, scratch)) {
-      high.alpha() *= opt.tau;
+      const double contracted = high.alpha() * opt.tau;
+      high.alpha() = contracted;
       if (high.alpha() < opt.min_alpha) {
         return WolfeStatus{WolfeReturn::StepTooSmall, total_updates, 0, false};
       }
@@ -848,6 +852,7 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
       if (wolfe_check.stop_ != WolfeReturn::Continue) {
         return wolfe_check;
       }
+      high_has_eval = true;
     }
     // Quick accept if Armijo and Wolfe conditions are satisfied
     if (armijo_ok(high)) {
@@ -864,6 +869,7 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
           if (wolfe_check.stop_ != WolfeReturn::Continue) {
             return wolfe_check;
           }
+          high_has_eval = true;
         }
         wolfe_check = update_with_tick(scratch, best, p);
         if (wolfe_check.stop_ != WolfeReturn::Continue) {
@@ -878,7 +884,6 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
       }
     }
   }
-  int loop_iter = 0;
   bool found_right = false;
   int num_backtracks = 0;
   /**
@@ -898,37 +903,35 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
     if (wolfe_check.stop_ != WolfeReturn::Continue) {
       return wolfe_check;
     }
+    high_has_eval = true;
     const bool finite_ok = eval_finite(high, scratch);
     // 2. Handle numerical trouble first
     if (!finite_ok) {  //   f or g is NaN/Inf → shrink
       high.alpha() *= 0.5;
+      high_has_eval = false;
       if (high.alpha() < opt.min_alpha) {
         break;
       }
       continue;
     }
-    if (armijo_ok(high)) {
-      // [1]
-      if (wolfe_ok(high)) {
-        assign_step(curr, scratch, high);
-        return WolfeStatus{WolfeReturn::Wolfe, total_updates, num_backtracks,
-                           true};
-      } else {
-        if (best.obj() < high.obj()) {
-          best = high;
-        }
-        // [2]
-        if (high.dir() > 0) {
-          low = high;
-          high.alpha() *= opt.scale_up;
-          continue;
-        } else {
-          // [3]
-          found_right = true;
-        }
-      }
+    const bool armijo = armijo_ok(high);
+    const bool wolfe = wolfe_ok(high);
+    if (armijo && wolfe) {  // [1]
+      assign_step(curr, scratch, high);
+      return WolfeStatus{WolfeReturn::Wolfe, total_updates, num_backtracks,
+                         true};
     }
-    // [4,5]
+    if (armijo && best.obj() < high.obj()) {
+      best = high;
+    }
+    const bool dir_pos = high.dir() > 0;
+    if (armijo && !wolfe && dir_pos) {  // [2]
+      low = high;
+      high.alpha() *= opt.scale_up;
+      high_has_eval = false;
+      continue;
+    }
+    // [3,4,5]
     found_right = true;
   }
   const double grad_tol
@@ -946,11 +949,6 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
     const bool alpha_check = curr_eval.alpha() < opt.min_alpha;
     if (slope_check || obj_check || alpha_check) {
       bool step_ok = curr_eval.obj() != low.obj() && armijo_ok(curr_eval);
-      if (step_ok) {
-        // We are about to end so no need to check step num
-        wolfe_check = update_with_tick(scratch, curr_eval, p);
-        assign_step(curr, scratch, curr_eval);
-      }
       if (slope_check && obj_check) {
         return WolfeStatus{WolfeReturn::ConvergedObjectiveAndGradient,
                            total_updates, num_backtracks, step_ok};
@@ -968,15 +966,24 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
     return WolfeStatus{WolfeReturn::Continue, total_updates, num_backtracks,
                        false};
   };
+  if (!high_has_eval) {
+    wolfe_check = update_with_tick(scratch, high, p);
+    if (wolfe_check.stop_ != WolfeReturn::Continue) {
+      return wolfe_check;
+    }
+    high_has_eval = true;
+  }
   auto check_b = check_bounds(high);
   if (check_b.stop_ != WolfeReturn::Continue) {
+    if (check_b.accept_) {
+      assign_step(curr, scratch, high);
+    }
     return check_b;
   }
   wolfe_check = update_with_tick(scratch, high, p);
   if (wolfe_check.stop_ != WolfeReturn::Continue) {
     return wolfe_check;
   }
-  loop_iter = 0;
   // Zoom phase
   while ((high.alpha() - low.alpha() > opt.min_alpha)
          && high.alpha() > opt.min_alpha) {
@@ -1002,7 +1009,9 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
 
     // if we hit NaN/Inf, contract toward low until finite
     while (!eval_finite(mid, scratch)) {
-      alpha_mid = low.alpha() + opt.tau * (alpha_mid - low.alpha());
+      const double contracted
+          = low.alpha() + opt.tau * (alpha_mid - low.alpha());
+      alpha_mid = contracted;
       if (alpha_mid <= opt.min_alpha) {
         return WolfeStatus{WolfeReturn::StepTooSmall, total_updates,
                            num_backtracks, false};
@@ -1036,6 +1045,9 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
     // Convergence/guard-rail checks (uses prev/grad_tol/obj_tol etc.)
     auto bounds_check = check_bounds(mid);
     if (bounds_check.stop_ != WolfeReturn::Continue) {
+      if (bounds_check.accept_) {
+        assign_step(curr, scratch, mid);
+      }
       return bounds_check;
     }
   }
