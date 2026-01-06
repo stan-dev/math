@@ -425,12 +425,6 @@ inline double barzilai_borwein_step_size(const Eigen::VectorXd& s,
   return alpha0;
 }
 
-// ============================================================================
-// REFACTORING CLASSES (C++17)
-// These classes are part of the ongoing refactoring effort.
-// They are NOT yet used by the main laplace_marginal_density_est function.
-// ============================================================================
-
 /**
  * Validates the options for the Laplace approximation.
  *
@@ -1134,10 +1128,6 @@ inline auto run_newton_loop(SolverPolicy& solver, NewtonStateT& state,
   throw_overstep(options.max_num_steps);
   return solver.build_result(state, solver.compute_log_determinant());
 }
-
-// ============================================================================
-// END REFACTORING CLASSES
-// ============================================================================
 
 /**
  * For a latent Gaussian model with hyperparameters phi and
