@@ -1012,7 +1012,7 @@ struct LUSolver {
   Eigen::PartialPivLU<Eigen::MatrixXd> lu;
 
   /** @brief Full Hessian matrix from likelihood */
-  Eigen::MatrixXd W_full;
+  Eigen::SparseMatrix<double> W_full;
 
   /**
    * @brief Initialize the solver (no-op for LU solver).
@@ -1366,15 +1366,11 @@ inline auto laplace_marginal_density_est(
     }
   }
   if (options.solver == 3 || allow_bounce) {
-    Eigen::PartialPivLU<Eigen::MatrixXd> LU(theta_size);
+    LUSolver solver;
+    solver.initialize(state);
     for (; step_iter <= options.max_num_steps; step_iter++) {
-      auto W = laplace_likelihood::block_hessian(
-          ll_fun, prev.theta(), options.hessian_block_size, ll_args, msgs);
-      LU.compute(Eigen::MatrixXd::Identity(theta_size, theta_size)
-                 + covariance * W);
-      // L on lower and U on upper triangular
-      b.noalias() = W * prev.theta() + prev.theta_grad();
-      curr.a().noalias() = b - W * LU.solve(covariance * b);
+      solver.solve_step(state, ll_fun, ll_args, covariance,
+                        options.hessian_block_size, msgs);
       if (!state.final_loop) {
         finish_update
             = update_line_search(wolfe_status, wolfe_info, curr, prev);
@@ -1387,17 +1383,8 @@ inline auto laplace_marginal_density_est(
           set_next_iter(curr, prev);
           continue;
         }
-        const double B_log_determinant
-            = LU.matrixLU().diagonal().array().log().sum();
-        return laplace_density_estimates{prev.obj() - 0.5 * B_log_determinant,
-                                         std::move(prev.theta()),
-                                         std::move(W),
-                                         Eigen::MatrixXd(0, 0),
-                                         std::move(prev.a()),
-                                         std::move(prev.theta_grad()),
-                                         std::move(LU),
-                                         Eigen::MatrixXd(0, 0),
-                                         3};
+        const double B_log_determinant = solver.compute_log_determinant();
+        return solver.build_result(state, B_log_determinant);
       } else {
         set_next_iter(curr, prev);
       }
