@@ -25,22 +25,33 @@ namespace stan {
 namespace math {
 
 /**
- * Options for the laplace sampler
+ * Options for the Laplace approximation.
  */
 struct laplace_options_base {
   /* Size of the blocks in block diagonal hessian*/
   int hessian_block_size{1};
   /**
-   * Which Newton solver to use: (B matrix in equation 1 of
-   * https://arxiv.org/pdf/2306.14976) (1) method using the cholesky
-   * decomposition of `W` (the negative Hessian of log likelihood) (2) method
-   * using the cholesky decomposition of `K` (the covariance matrix) (3) method
-   * using an LU decomposition (more general, but slower)
+   * Which linear solver to use inside the Newton step.
+   *
+   * This selects how the system matrix `B` is formed and factorized.
+   * For details, see equation 1 in:
+   *   https://arxiv.org/pdf/2306.14976
+   *
+   * 1. Hessian-root Cholesky: form `B = I + W_r * Sigma * W_r` where
+   *    `W_r = sqrt(W)` and `W` is the negative Hessian of the log-likelihood
+   *    w.r.t. `theta`. This uses either a diagonal (`hessian_block_size == 1`)
+   *    or block-diagonal (`hessian_block_size > 1`) approximation of `W`.
+   * 2. Covariance-root Cholesky: precompute `K_root` such that
+   *    `Sigma = K_root * K_root^T` and form `B = I + K_root^T * W * K_root`.
+   * 3. General LU: form `B = I + Sigma * W` and factorize with LU.
    */
   int solver{1};
   /**
-   * iterations end when difference in objective function is less than tolerance
-   * Default is sqrt(machine_epsilon)
+   * Iterations end when the absolute change in the optimization objective
+   * is less than this tolerance.
+   *
+   * Note: the objective used for convergence is the one optimized by the
+   * Newton/Wolfe loop (not the final Laplace-corrected log marginal density).
    */
   double tolerance{1.49012e-08};
   /* Maximum number of steps*/
@@ -71,17 +82,36 @@ struct laplace_density_estimates {
   double lmd{std::numeric_limits<double>::infinity()};
   /* ThetaVec at the mode */
   ThetaVec theta;
-  /* negative hessian or sqrt of negative hessian */
+  /**
+   * Solver-dependent Hessian quantity.
+   *
+   * - solver 1: sparse square root `W_r = sqrt(W)` where
+   *   `W = -d^2/dtheta^2 log_likelihood(theta)` (diagonal or block-diagonal).
+   * - solvers 2/3: sparse `W` itself.
+   */
   WR W_r;
-  /* Lower left of cholesky decomposition of stabilized inverse covariance */
+  /**
+   * Solver-dependent factorization of the system matrix `B`.
+   *
+   * - solvers 1/2: lower Cholesky factor `L` such that `B = L * L^T`.
+   * - solver 3: empty (0x0).
+   */
   L_t L;
-  /* inverse covariance times theta at the mode */
+  /**
+   * Mode in the `a` parameterization, where `theta = covariance * a`.
+   * Equivalently, `a = covariance^{-1} * theta` when the inverse exists.
+   */
   A_vec a;
-  /* the gradient of the log density with respect to theta */
+  /** Gradient of the log-likelihood with respect to `theta` at the mode. */
   ThetaGrad theta_grad;
   /* LU matrix from solver 3 */
   LU_t LU;
-  /* Cholesky of the covariance matrix */
+  /**
+   * Lower Cholesky factor of the covariance matrix.
+   *
+   * - solver 2: `covariance = K_root * K_root^T`.
+   * - other solvers: empty (0x0).
+   */
   KRoot K_root;
   int solver_used{1};
   laplace_density_estimates(double lmd_, ThetaVec&& theta_, WR&& W_r_, L_t&& L_,
@@ -160,9 +190,11 @@ inline void block_matrix_sqrt(WRootMat& W_root,
 /**
  * @brief Performs a Cholesky decomposition on a block diagonal matrix.
  * @tparam WRootMat A type inheriting from `Eigen::EigenBase`.
- * @param[out] W_root The output matrix to store the square root.
+ * @param[out] W_root The output matrix to store the per-block factor.
  * @param W The input block diagonal matrix.
  * @param block_size The size of each block in the block diagonal matrix.
+ *
+ * @note This helper is currently unused in the Laplace solvers in this file.
  */
 template <typename WRootMat>
 inline void block_matrix_chol_L(WRootMat& W_root,
@@ -180,7 +212,7 @@ inline void block_matrix_chol_L(WRootMat& W_root,
         = W.block(i * block_size, i * block_size, block_size, block_size);
     if (Eigen::isnan(local_block.array()).any()) {
       throw std::domain_error(
-          std::string("Error in block_matrix_sqrt: "
+          std::string("Error in block_matrix_chol_L: "
                       "NaNs detected in block diagonal starting at (")
           + std::to_string(i) + ", " + std::to_string(i) + ")");
     }
@@ -209,7 +241,7 @@ inline void block_matrix_chol_L(WRootMat& W_root,
       // Check if diagonal of schur is not positive
       if ((t_mat.diagonal().array() < 0).any()) {
         throw std::domain_error(
-            std::string("Error in block_matrix_sqrt: "
+            std::string("Error in block_matrix_chol_L: "
                         "values less than 0 detected in block diagonal's schur "
                         "decomposition starting at (")
             + std::to_string(i) + ", " + std::to_string(i) + ")");
@@ -221,7 +253,7 @@ inline void block_matrix_chol_L(WRootMat& W_root,
         local_block_sqrt.noalias() = u_mat * sqrt_t_mat * u_mat.adjoint();
       } catch (const std::exception& e) {
         throw std::domain_error(
-            "Error in block_matrix_sqrt: "
+            "Error in block_matrix_chol_L: "
             "The matrix is not positive definite");
       }
       for (int k = 0; k < block_size; k++) {
@@ -319,7 +351,6 @@ inline void validate_laplace_options(const char* frame_name,
  * @tparam ObjFun Type of the objective function callable
  * @tparam ThetaGradFun Type of the theta gradient function callable
  */
-template <typename ObjFun, typename ThetaGradFun>
 struct NewtonState {
   /** @brief Wolfe line search state including current/previous steps */
   WolfeInfo wolfe_info;
@@ -335,8 +366,12 @@ struct NewtonState {
 
   /** @brief Previous gradient for Barzilai-Borwein step calculation */
   Eigen::VectorXd prev_g;
-
-  /** @brief Flag indicating final pass to sync return values after convergence
+  /**
+   * On the final loop if we found a better wolfe step, but we are going to
+   * exit, we want to make sure all of our return values are with the most
+   * recent wolfe step that was accepted. So we do one final loop to update
+   * our return values. This flag tells us if we are on the final loop and
+   * need to update the values one more time.
    */
   bool final_loop = false;
 
@@ -349,7 +384,7 @@ struct NewtonState {
    * @param theta_grad_f Gradient function: theta -> grad
    * @param theta_init Initial theta value or provider
    */
-  template <typename ThetaInitializer>
+  template <typename ObjFun, typename ThetaGradFun, typename ThetaInitializer>
   NewtonState(int theta_size, ObjFun&& obj_fun, ThetaGradFun&& theta_grad_f,
               ThetaInitializer&& theta_init)
       : wolfe_info(std::forward<ObjFun>(obj_fun), theta_size,
@@ -527,8 +562,8 @@ struct CholeskyWSolverDiag {
  * its principal square root via `block_matrix_sqrt`, and forms the
  * system matrix B = I + W_r * Sigma * W_r for Cholesky factorization.
  *
- * The sparse structure of W_r is lazily initialized on the first call
- * to `solve_step` to match the problem dimensions.
+ * The sparse structure of `W_r` is initialized in the constructor to match the
+ * problem dimensions.
  *
  * @note This solver corresponds to `solver == 1` with `hessian_block_size > 1`.
  */
@@ -684,7 +719,7 @@ struct CholeskyKSolver {
   /** @brief Cholesky factorization of B = I + K_root^T * W * K_root */
   Eigen::LLT<Eigen::MatrixXd> llt_B;
 
-  /** @brief Flag indicating if K_root has been computed */
+  /** @brief Unused (legacy). */
   bool K_initialized = false;
 
   template <typename NewtonStateT, typename CovarMat>
@@ -855,7 +890,12 @@ struct LUSolver {
 
   /**
    * @brief Compute log determinant from LU factorization.
-   * @return log(det(B)) = sum(log(diag(LU)))
+   *
+   * @note This uses the diagonal of the combined LU matrix produced by Eigen
+   * (equivalently the diagonal of U). It does not account for the sign of the
+   * permutation; callers assume `det(B) > 0` in the Laplace correction.
+   *
+   * @return Sum of log of the LU diagonal entries.
    */
   double compute_log_determinant() const {
     return lu.matrixLU().diagonal().array().log().sum();
@@ -922,6 +962,7 @@ inline auto run_newton_loop(SolverPolicy& solver, NewtonStateT& state,
                             SetNextIter&& set_next_iter,
                             ThrowOverstep&& throw_overstep,
                             std::ostream* msgs) {
+
   bool finish_update = false;
   for (; step_iter <= options.max_num_steps; step_iter++) {
     solver.solve_step(state, ll_fun, ll_args, covariance,
@@ -980,13 +1021,13 @@ inline void log_solver_fallback(std::ostream* msgs, std::string_view context,
  * latent variables theta, and observations y, this function computes
  * an approximation of the log marginal density, p(y | phi).
  * This is done by marginalizing out theta, using a Laplace
- * approxmation. The latter is obtained by finding the mode,
+ * approximation. The latter is obtained by finding the mode,
  * via Newton's method, and computing the Hessian of the likelihood.
  *
- * The convergence criterion for the Newton is a small change in
- * log marginal density. The user controls the tolerance (i.e.
- * threshold under which change is deemed small enough) and
- * maximum number of steps.
+ * The convergence criterion for the Newton/Wolfe loop is a small change in the
+ * optimization objective (stored in the Wolfe step state). The user controls
+ * the tolerance (i.e. threshold under which the change is deemed small enough)
+ * and maximum number of steps.
  *
  * A description of this algorithm can be found in:
  *  - (2023) Margossian, "General Adjoint-Differentiated Laplace approximation",
@@ -997,8 +1038,10 @@ inline void log_solver_fallback(std::ostream* msgs, std::string_view context,
  *  - (2006) Rasmussen and Williams, "Gaussian Processes for Machine Learning",
  *    second edition, MIT Press, algorithm 3.1.
  *
- * Variables needed for the gradient or generating quantities
- * are stored by reference.
+ * This function returns intermediate quantities needed by
+ * `laplace_marginal_density` (including its reverse-mode implementation) to
+ * compute gradients and/or generate quantities. Which fields are populated
+ * depends on the solver that converged (see `solver_used`).
  *
  * @tparam LLFun Type with a valid `operator(ThetaVec,  InnerLLTupleArgs)`
  * where `InnerLLTupleArgs` are the elements of `LLTupleArgs`
@@ -1012,16 +1055,16 @@ inline void log_solver_fallback(std::ostream* msgs, std::string_view context,
  * @param[in] options A set of options for tuning the solver
  * \msg_arg
  *
- * @return A struct containing
- * 1. lmd the log marginal density, p(y | phi)
- * 2. covariance the evaluated covariance function for the latent gaussian
- * variable
- * 3. theta a vector to store the mode
- * 4. W_r A sparse matrix containing the square root of the negative
- *    hessian, if solver 1 or 2 are used.
- * 5. L cholesky decomposition of stabilized inverse covariance
- * 6. a element in the Newton step
- * 7. l_grad the log density of the likelihood, evaluated at the mode
+ * @return A `laplace_density_estimates` containing:
+ * 1. `lmd`: the Laplace approximation of the log marginal density, p(y | phi)
+ * 2. `theta`: the mode of the latent variables
+ * 3. `a`: the mode in the `a` parameterization (`theta = covariance * a`)
+ * 4. `theta_grad`: gradient of the log-likelihood w.r.t. `theta` at the mode
+ * 5. `W_r`: solver-dependent Hessian quantity (see struct docs)
+ * 6. `L`: solver-dependent factorization of `B` (Cholesky for solvers 1/2)
+ * 7. `LU`: LU factorization of `B` (solver 3 only)
+ * 8. `K_root`: Cholesky factor of the covariance (solver 2 only)
+ * 9. `solver_used`: the solver policy that produced the result
  *
  */
 template <typename LLFun, typename LLTupleArgs, typename CovarMat,
@@ -1041,7 +1084,7 @@ inline auto laplace_marginal_density_est(
         + std::to_string(max_num_steps) + " exceeded.");
   };
   // Wolfe optimizes over the latent 'a' space
-  auto obj_fun = [&](const Eigen::VectorXd& a_val, auto&& theta_val) -> double {
+  auto obj_fun = [&ll_fun, &ll_args, &msgs](const Eigen::VectorXd& a_val, auto&& theta_val) -> double {
     return -0.5 * a_val.dot(theta_val)
            + laplace_likelihood::log_likelihood(ll_fun, theta_val, ll_args,
                                                 msgs);
@@ -1058,8 +1101,7 @@ inline auto laplace_marginal_density_est(
   }();
   auto obj_fun_state = obj_fun;
   auto theta_grad_f_state = theta_grad_f;
-  internal::NewtonState<decltype(obj_fun_state), decltype(theta_grad_f_state)>
-      state(theta_size, std::move(obj_fun_state), std::move(theta_grad_f_state),
+  internal::NewtonState state(theta_size, std::move(obj_fun_state), std::move(theta_grad_f_state),
             theta_init);
   auto& wolfe_info = state.wolfe_info;
   auto& wolfe_status = state.wolfe_status;
@@ -1089,7 +1131,7 @@ inline auto laplace_marginal_density_est(
             wolfe_info.p_ = -wolfe_info.p_;
             wolfe_info.init_dir_ = -wolfe_info.init_dir_;
           }
-          auto scratch = wolfe_info.scratch_;
+          auto&& scratch = wolfe_info.scratch_;
           scratch.alpha() = 1.0;
           while (scratch.alpha() > options.line_search.min_alpha) {
             try {
@@ -1133,12 +1175,6 @@ inline auto laplace_marginal_density_est(
   };
   // If solver 1 throws an error, we will try solver 2, then solver 3
   bool allow_bounce = false;
-  /**
-   * On the final loop if we found a better wolfe step, but we are going to
-   * exit, we want to make sure all of our return values are with the most
-   * recent wolfe step that was accepted. So we do one final loop to update
-   * our return values.
-   */
   // Start with safe step size
   wolfe_status.num_backtracks_ = 99;
   Eigen::Index step_iter = 0;

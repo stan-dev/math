@@ -28,13 +28,13 @@ namespace math {
  * variables theta, and observations y, this function computes
  * an approximation of the log marginal density, p(y | phi).
  * This is done by marginalizing out theta, using a Laplace
- * approxmation. The latter is obtained by finding the mode,
+ * approximation. The latter is obtained by finding the mode,
  * using a custom Newton method, and the Hessian of the likelihood.
  *
- * The convergence criterion for the Newton is a small change in
- * log marginal density. The user controls the tolerance (i.e.
- * threshold under which change is deemed small enough) and
- * maximum number of steps.
+ * The convergence criterion for the Newton/Wolfe loop is a small change in
+ * the optimization objective (not the final Laplace-corrected log marginal
+ * density). The user controls the tolerance (i.e. threshold under which the
+ * change is deemed small enough) and maximum number of steps.
  *
  * Wrapper for when the hyperparameters are passed as a double.
  *
@@ -48,7 +48,7 @@ namespace math {
  * \laplace_common_args
  * @param[in] options A set of options for tuning the solver
  * \msg_arg
- * @return the log maginal density, p(y | phi)
+ * @return the log marginal density, p(y | phi)
  */
 template <
     typename LLFun, typename LLTupleArgs, typename CovarFun, typename CovarArgs,
@@ -176,13 +176,13 @@ inline void reverse_pass_collect_adjoints(var ret, Output&& output,
  * variables theta, and observations y, this function computes
  * an approximation of the log marginal density, p(y | phi).
  * This is done by marginalizing out theta, using a Laplace
- * approxmation. The latter is obtained by finding the mode,
+ * approximation. The latter is obtained by finding the mode,
  * using a custom Newton method, and the Hessian of the likelihood.
  *
- * The convergence criterion for the Newton is a small change in
- * the log marginal density. The user controls the tolerance (i.e.
- * threshold under which change is deemed small enough) and
- * maximum number of steps.
+ * The convergence criterion for the Newton/Wolfe loop is a small change in
+ * the optimization objective (not the final Laplace-corrected log marginal
+ * density). The user controls the tolerance (i.e. threshold under which the
+ * change is deemed small enough) and maximum number of steps.
  *
  * Wrapper for when the global parameter is passed as a double.
  *
@@ -196,7 +196,7 @@ inline void reverse_pass_collect_adjoints(var ret, Output&& output,
  * \laplace_common_args
  * @param[in] options A set of options for tuning the solver
  * \msg_arg
- * @return the log maginal density, p(y | phi)
+ * @return the log marginal density, p(y | phi)
  */
 template <typename LLFun, typename LLTupleArgs, typename CovarFun,
           typename CovarArgs, bool InitTheta,
