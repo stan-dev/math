@@ -20,7 +20,7 @@ namespace internal {
  * @param A Input matrix
  * @param[out] packed Packed form of the tridiagonal matrix. Elements of the
  * resulting symmetric tridiagonal matrix T are in the diagonal and first
- * superdiagonal. Columns bellow diagonal contain householder vectors that can
+ * superdiagonal. Columns below diagonal contain householder vectors that can
  * be used to construct orthogonal matrix Q.
  * @param r Block size. Affects only performance of the algorithm. Optimal value
  * depends on the size of A and cache of the processor. For larger matrices or
@@ -89,7 +89,7 @@ inline void block_householder_tridiag_cl(const matrix_cl<double>& A,
  * as input A.
  *
  * @param packed_cl Packed result of tridiagonalization that contains
- * householder vectors that define Q in columns bellow the diagonal. Usually
+ * householder vectors that define Q in columns below the diagonal. Usually
  * result of a call to `block_householder_tridiag_cl`.
  * @param[in,out] A On input a matrix to multiply with Q. On output the product
  * Q*A.

@@ -80,7 +80,7 @@ inline auto offset_multiplier_constrain(const T& x, const M& mu,
  * @tparam T type of scalar
  * @tparam M type of offset
  * @tparam S type of multiplier
- * @tparam Lp Scalar type, convertable from T, M, and S
+ * @tparam Lp Scalar type, convertible from T, M, and S
  * @param[in] x Unconstrained scalar input
  * @param[in] mu offset of constrained output
  * @param[in] sigma multiplier of constrained output
@@ -291,7 +291,7 @@ inline auto offset_multiplier_constrain(const std::vector<T>& x,
  * type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
  * @tparam S A type inheriting from `Eigen::EigenBase`, a `var_value` with inner
  * type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
- * @tparam Lp Scalar, the scalar types of T, M, and S should be convertable to
+ * @tparam Lp Scalar, the scalar types of T, M, and S should be convertible to
  * this
  * @param[in] x Unconstrained scalar input
  * @param[in] mu offset of constrained output

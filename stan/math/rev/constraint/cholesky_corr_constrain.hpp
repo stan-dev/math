@@ -14,7 +14,7 @@ namespace stan {
 namespace math {
 
 /**
- * Return the Cholesky factor of the correlation matrix of the sepcified
+ * Return the Cholesky factor of the correlation matrix of the specified
  * size read from the unconstrained vector `y`. A total of K choose 2
  * elements are required to build a K by K Cholesky factor.
  *
@@ -77,7 +77,7 @@ inline var_value<Eigen::MatrixXd> cholesky_corr_constrain(const T& y, int K) {
 }
 
 /**
- * Return the Cholesky factor of the correlation matrix of the sepcified
+ * Return the Cholesky factor of the correlation matrix of the specified
  * size read from the unconstrained vector `y`. A total of K choose 2
  * elements are required to build a K by K Cholesky factor.
  *

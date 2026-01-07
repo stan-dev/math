@@ -59,7 +59,7 @@ inline auto positive_constrain(T&& x, S& lp) {
  * @tparam T A type inheriting from `Eigen::EigenBase`, a `var_value` with inner
  * type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
  * @tparam Lp A scalar type for the lp argument. The scalar type of T should be
- * convertable to this.
+ * convertible to this.
  * @param x unconstrained value or container
  * @param[in, out] lp log density accumulator
  * @return positive constrained version of unconstrained value(s)
@@ -88,7 +88,7 @@ inline auto positive_constrain(T&& x, Lp& lp) {
  * `Eigen::EigenBase`, a `var_value` with inner type inheriting from
  * `Eigen::EigenBase`, a standard vector, or a scalar
  * @tparam Lp A scalar type for the lp argument. The scalar type of T should be
- * convertable to this.
+ * convertible to this.
  * @param x unconstrained value or container
  * @param[in, out] lp log density accumulator
  * @return positive constrained version of unconstrained value(s)

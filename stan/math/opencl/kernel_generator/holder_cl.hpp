@@ -74,7 +74,7 @@ namespace internal {
  * Second step in implementation of construction `holder_cl` from a functor.
  * @tparam T type of the result expression
  * @tparam Is index sequence for `ptrs`
- * @tparam Args types of pointes to heap
+ * @tparam Args types of points to heap
  * @param expr result expression
  * @param ptrs pointers to heap that need to be released when the expression is
  * destructed

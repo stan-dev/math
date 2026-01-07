@@ -51,7 +51,7 @@ inline auto aggregate_tangent(const FuncTangent& tangent, const InputArg& arg) {
 
 /**
  * Construct an fvar<T> where the tangent is calculated by finite-differencing.
- * Finite-differencing is only perfomed where the scalar type to be evaluated is
+ * Finite-differencing is only performed where the scalar type to be evaluated is
  * `fvar<T>.
  *
  * Higher-order inputs (i.e., fvar<var> & fvar<fvar<T>>) are also implicitly
@@ -95,7 +95,7 @@ inline auto finite_diff(const F& func, const TArgs&... args) {
 
 /**
  * Construct an fvar<T> where the tangent is calculated by finite-differencing.
- * Finite-differencing is only perfomed where the scalar type to be evaluated is
+ * Finite-differencing is only performed where the scalar type to be evaluated is
  * `fvar<T>.
  *
  * This overload is used when no fvar<T> arguments are passed and simply

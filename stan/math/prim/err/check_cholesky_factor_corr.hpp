@@ -60,7 +60,7 @@ inline void check_cholesky_factor_corr(const char* function, const char* name,
  * be equal to 1
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
- * @param y Standard vector of matrics to test
+ * @param y Standard vector of matrices to test
  * @throw `std::domain_error` if y[i] is not a valid Cholesky factor, if number
  * of rows is less than the number of columns, if there are 0 columns, or if any
  * element in matrix is NaN

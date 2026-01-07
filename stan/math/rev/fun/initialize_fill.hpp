@@ -12,7 +12,7 @@ namespace math {
 
 /**
  * Fill the specified container with the specified value. This function does
- * not perform a callback to propogate the adjoints upward
+ * not perform a callback to propagate the adjoints upward
  *
  * The specified matrix is filled by element.
  *

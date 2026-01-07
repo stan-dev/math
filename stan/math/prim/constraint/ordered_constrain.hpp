@@ -47,7 +47,7 @@ inline plain_type_t<EigVec> ordered_constrain(EigVec&& x) {
  *
  * @tparam T type of the vector
  * @tparam Lp A scalar type for the lp argument. The scalar type of T should be
- * convertable to this.
+ * convertible to this.
  * @param x Free vector of scalars.
  * @param lp Log probability reference.
  * @return Positive, increasing ordered vector.
@@ -92,7 +92,7 @@ inline auto ordered_constrain(T&& x) {
  * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
  * `Eigen::DenseBase` with compile time dynamic rows and 1 column
  * @tparam Lp Scalar type for the lp argument. The scalar type of T should be
- * convertable to this.
+ * convertible to this.
  * @param x Free vector of scalars
  * @param[in, out] lp log density accumulator or empty
  * @return Positive, increasing ordered vector.
@@ -120,7 +120,7 @@ inline auto ordered_constrain(T&& x, Lp& lp) {
  *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
  *  and 1 column, or a standard vector thereof
  * @tparam Lp A scalar type for the lp argument. The scalar type of T should be
- * convertable to this.
+ * convertible to this.
  * @param x Free vector of scalars
  * @param[in, out] lp log density accumulator
  * @return Positive, increasing ordered vector.

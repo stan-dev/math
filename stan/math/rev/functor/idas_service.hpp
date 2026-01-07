@@ -20,7 +20,7 @@ namespace math {
 
 /**
  * For each type of Ode(with different rhs functor F and
- * senstivity parameters), we allocate mem and workspace for
+ * sensitivity parameters), we allocate mem and workspace for
  * idas. This service manages the
  * allocation/deallocation, so ODE systems only request
  * service by injection.
