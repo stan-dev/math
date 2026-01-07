@@ -444,12 +444,9 @@ struct CholeskyWSolverDiag {
   /** @brief Cholesky factorization of B = I + W_r * Sigma * W_r */
   Eigen::LLT<Eigen::MatrixXd> llt_B;
 
-  template <typename NewtonStateT,
-            typename CovarMat>
-  CholeskyWSolverDiag(const NewtonStateT& state, const CovarMat& covariance) :
-      W_r_diag(Eigen::VectorXd::Zero(state.b.size())),
-      W_diag(0),
-      llt_B() {}
+  template <typename NewtonStateT, typename CovarMat>
+  CholeskyWSolverDiag(const NewtonStateT& state, const CovarMat& covariance)
+      : W_r_diag(Eigen::VectorXd::Zero(state.b.size())), W_diag(0), llt_B() {}
   /**
    * @brief Perform one Newton step using diagonal Hessian solver.
    *
@@ -578,20 +575,20 @@ struct CholeskyWSolverBlock {
   Eigen::LLT<Eigen::MatrixXd> llt_B;
 
   template <typename NewtonStateT>
-  CholeskyWSolverBlock(const NewtonStateT& state, int hessian_block_size) :
-    W_r(state.b.size(), state.b.size()) {
-      const Eigen::Index theta_size = state.b.size();
-      W_r.reserve(Eigen::VectorXi::Constant(theta_size, hessian_block_size));
-      const Eigen::Index n_block = theta_size / hessian_block_size;
-      for (Eigen::Index ii = 0; ii < n_block; ii++) {
-        for (Eigen::Index k = 0; k < hessian_block_size; k++) {
-          for (Eigen::Index j = 0; j < hessian_block_size; j++) {
-            W_r.insert(ii * hessian_block_size + j, ii * hessian_block_size + k)
-                = 1.0;
-          }
+  CholeskyWSolverBlock(const NewtonStateT& state, int hessian_block_size)
+      : W_r(state.b.size(), state.b.size()) {
+    const Eigen::Index theta_size = state.b.size();
+    W_r.reserve(Eigen::VectorXi::Constant(theta_size, hessian_block_size));
+    const Eigen::Index n_block = theta_size / hessian_block_size;
+    for (Eigen::Index ii = 0; ii < n_block; ii++) {
+      for (Eigen::Index k = 0; k < hessian_block_size; k++) {
+        for (Eigen::Index j = 0; j < hessian_block_size; j++) {
+          W_r.insert(ii * hessian_block_size + j, ii * hessian_block_size + k)
+              = 1.0;
         }
       }
-      W_r.makeCompressed();
+    }
+    W_r.makeCompressed();
   }
 
   /**
@@ -723,16 +720,14 @@ struct CholeskyKSolver {
   bool K_initialized = false;
 
   template <typename NewtonStateT, typename CovarMat>
-  CholeskyKSolver(const NewtonStateT& state, const CovarMat& covariance) :
-      K_root(0, 0),
-      W_full(0, 0),
-      llt_B() {
-        auto K_root_llt = covariance.template selfadjointView<Eigen::Lower>().llt();
-        if (K_root_llt.info() != Eigen::Success) {
-          throw std::domain_error(
-              "laplace_marginal_density: Cholesky of covariance failed at start");
-        }
-        K_root = std::move(K_root_llt.matrixL());
+  CholeskyKSolver(const NewtonStateT& state, const CovarMat& covariance)
+      : K_root(0, 0), W_full(0, 0), llt_B() {
+    auto K_root_llt = covariance.template selfadjointView<Eigen::Lower>().llt();
+    if (K_root_llt.info() != Eigen::Success) {
+      throw std::domain_error(
+          "laplace_marginal_density: Cholesky of covariance failed at start");
+    }
+    K_root = std::move(K_root_llt.matrixL());
   }
 
   /**
@@ -847,8 +842,6 @@ struct LUSolver {
   /** @brief Full Hessian matrix from likelihood */
   Eigen::SparseMatrix<double> W_full;
 
-
-
   /**
    * @brief Perform one Newton step using LU decomposition solver.
    *
@@ -962,7 +955,6 @@ inline auto run_newton_loop(SolverPolicy& solver, NewtonStateT& state,
                             SetNextIter&& set_next_iter,
                             ThrowOverstep&& throw_overstep,
                             std::ostream* msgs) {
-
   bool finish_update = false;
   for (; step_iter <= options.max_num_steps; step_iter++) {
     solver.solve_step(state, ll_fun, ll_args, covariance,
@@ -1084,7 +1076,8 @@ inline auto laplace_marginal_density_est(
         + std::to_string(max_num_steps) + " exceeded.");
   };
   // Wolfe optimizes over the latent 'a' space
-  auto obj_fun = [&ll_fun, &ll_args, &msgs](const Eigen::VectorXd& a_val, auto&& theta_val) -> double {
+  auto obj_fun = [&ll_fun, &ll_args, &msgs](const Eigen::VectorXd& a_val,
+                                            auto&& theta_val) -> double {
     return -0.5 * a_val.dot(theta_val)
            + laplace_likelihood::log_likelihood(ll_fun, theta_val, ll_args,
                                                 msgs);
@@ -1101,8 +1094,8 @@ inline auto laplace_marginal_density_est(
   }();
   auto obj_fun_state = obj_fun;
   auto theta_grad_f_state = theta_grad_f;
-  internal::NewtonState state(theta_size, std::move(obj_fun_state), std::move(theta_grad_f_state),
-            theta_init);
+  internal::NewtonState state(theta_size, std::move(obj_fun_state),
+                              std::move(theta_grad_f_state), theta_init);
   auto& wolfe_info = state.wolfe_info;
   auto& wolfe_status = state.wolfe_status;
   auto& curr = state.curr();
