@@ -409,16 +409,12 @@ struct CholeskyWSolverDiag {
   /** @brief Cholesky factorization of B = I + W_r * Sigma * W_r */
   Eigen::LLT<Eigen::MatrixXd> llt_B;
 
-  /**
-   * @brief Initialize the solver (no-op for diagonal solver).
-   * @tparam NewtonStateT Type of the Newton state
-   * @param state The shared Newton optimization state
-   */
-  template <typename NewtonStateT>
-  void initialize(NewtonStateT& /*state*/) {
-    // No specific pre-computation needed for diagonal W solver
-  }
-
+  template <typename NewtonStateT,
+            typename CovarMat>
+  CholeskyWSolverDiag(const NewtonStateT& state, const CovarMat& covariance) :
+      W_r_diag(Eigen::VectorXd::Zero(state.b.size())),
+      W_diag(0),
+      llt_B() {}
   /**
    * @brief Perform one Newton step using diagonal Hessian solver.
    *
@@ -444,9 +440,6 @@ struct CholeskyWSolverDiag {
                   const LLTupleArgs& ll_args, const CovarMat& covariance,
                   int /*hessian_block_size*/, std::ostream* msgs) {
     const Eigen::Index theta_size = state.b.size();
-    if (W_r_diag.size() != theta_size) {
-      W_r_diag.resize(theta_size);
-    }
 
     // 1. Compute diagonal Hessian
     W_diag = laplace_likelihood::diagonal_hessian(ll_fun, state.prev().theta(),
@@ -549,17 +542,21 @@ struct CholeskyWSolverBlock {
   /** @brief Cholesky factorization of B = I + W_r * Sigma * W_r */
   Eigen::LLT<Eigen::MatrixXd> llt_B;
 
-  /** @brief Flag indicating if sparse structure has been initialized */
-  bool sparse_initialized = false;
-
-  /**
-   * @brief Initialize the solver (no-op, uses lazy initialization).
-   * @tparam NewtonStateT Type of the Newton state
-   * @param[in] state The shared Newton optimization state
-   */
   template <typename NewtonStateT>
-  void initialize(NewtonStateT& /*state*/) {
-    // Sparse matrix structure is initialized lazily in solve_step
+  CholeskyWSolverBlock(const NewtonStateT& state, int hessian_block_size) :
+    W_r(state.b.size(), state.b.size()) {
+      const Eigen::Index theta_size = state.b.size();
+      W_r.reserve(Eigen::VectorXi::Constant(theta_size, hessian_block_size));
+      const Eigen::Index n_block = theta_size / hessian_block_size;
+      for (Eigen::Index ii = 0; ii < n_block; ii++) {
+        for (Eigen::Index k = 0; k < hessian_block_size; k++) {
+          for (Eigen::Index j = 0; j < hessian_block_size; j++) {
+            W_r.insert(ii * hessian_block_size + j, ii * hessian_block_size + k)
+                = 1.0;
+          }
+        }
+      }
+      W_r.makeCompressed();
   }
 
   /**
@@ -589,24 +586,6 @@ struct CholeskyWSolverBlock {
                   const LLTupleArgs& ll_args, const CovarMat& covariance,
                   int hessian_block_size, std::ostream* msgs) {
     const Eigen::Index theta_size = state.b.size();
-
-    // Lazy initialization of sparse structure
-    if (!sparse_initialized) {
-      W_r.resize(theta_size, theta_size);
-      W_r.reserve(Eigen::VectorXi::Constant(theta_size, hessian_block_size));
-      const Eigen::Index n_block = theta_size / hessian_block_size;
-      for (Eigen::Index ii = 0; ii < n_block; ii++) {
-        for (Eigen::Index k = 0; k < hessian_block_size; k++) {
-          for (Eigen::Index j = 0; j < hessian_block_size; j++) {
-            W_r.insert(ii * hessian_block_size + j, ii * hessian_block_size + k)
-                = 1.0;
-          }
-        }
-      }
-      W_r.makeCompressed();
-      sparse_initialized = true;
-    }
-
     // 1. Compute block Hessian
     W_block = laplace_likelihood::block_hessian(
         ll_fun, state.prev().theta(), hessian_block_size, ll_args, msgs);
@@ -708,24 +687,17 @@ struct CholeskyKSolver {
   /** @brief Flag indicating if K_root has been computed */
   bool K_initialized = false;
 
-  /**
-   * @brief Initialize solver by computing Cholesky of covariance.
-   *
-   * @tparam NewtonStateT Type of the Newton state
-   * @tparam CovarMat Type of the covariance matrix
-   * @param[in] state The shared Newton optimization state (unused)
-   * @param[in] covariance Prior covariance matrix Sigma
-   * @throws std::domain_error If covariance is not positive definite
-   */
   template <typename NewtonStateT, typename CovarMat>
-  void initialize(NewtonStateT& /*state*/, const CovarMat& covariance) {
-    auto K_root_llt = covariance.template selfadjointView<Eigen::Lower>().llt();
-    if (K_root_llt.info() != Eigen::Success) {
-      throw std::domain_error(
-          "laplace_marginal_density: Cholesky of covariance failed at start");
-    }
-    K_root = K_root_llt.matrixL();
-    K_initialized = true;
+  CholeskyKSolver(const NewtonStateT& state, const CovarMat& covariance) :
+      K_root(0, 0),
+      W_full(0, 0),
+      llt_B() {
+        auto K_root_llt = covariance.template selfadjointView<Eigen::Lower>().llt();
+        if (K_root_llt.info() != Eigen::Success) {
+          throw std::domain_error(
+              "laplace_marginal_density: Cholesky of covariance failed at start");
+        }
+        K_root = std::move(K_root_llt.matrixL());
   }
 
   /**
@@ -754,11 +726,6 @@ struct CholeskyKSolver {
                   const LLTupleArgs& ll_args, const CovarMat& covariance,
                   int hessian_block_size, std::ostream* msgs) {
     const Eigen::Index theta_size = state.b.size();
-
-    // Lazy initialization if not done
-    if (!K_initialized) {
-      initialize(state, covariance);
-    }
 
     // 1. Compute Hessian
     W_full = laplace_likelihood::block_hessian(
@@ -845,15 +812,7 @@ struct LUSolver {
   /** @brief Full Hessian matrix from likelihood */
   Eigen::SparseMatrix<double> W_full;
 
-  /**
-   * @brief Initialize the solver (no-op for LU solver).
-   * @tparam NewtonStateT Type of the Newton state
-   * @param state The shared Newton optimization state
-   */
-  template <typename NewtonStateT>
-  void initialize(NewtonStateT& /*state*/) {
-    // No pre-computation needed
-  }
+
 
   /**
    * @brief Perform one Newton step using LU decomposition solver.
@@ -1186,12 +1145,12 @@ inline auto laplace_marginal_density_est(
   try {
     if (options.solver == 1) {
       if (options.hessian_block_size == 1) {
-        CholeskyWSolverDiag solver;
+        CholeskyWSolverDiag solver(state, covariance);
         return run_newton_loop(solver, state, options, step_iter, ll_fun,
                                ll_args, covariance, update_line_search,
                                set_next_iter, throw_overstep, msgs);
       } else {
-        CholeskyWSolverBlock solver;
+        CholeskyWSolverBlock solver(state, options.hessian_block_size);
         return run_newton_loop(solver, state, options, step_iter, ll_fun,
                                ll_args, covariance, update_line_search,
                                set_next_iter, throw_overstep, msgs);
@@ -1207,8 +1166,7 @@ inline auto laplace_marginal_density_est(
   }
   try {
     if (options.solver == 2 || allow_bounce) {
-      CholeskyKSolver solver;
-      solver.initialize(state, covariance);
+      CholeskyKSolver solver(state, covariance);
       return run_newton_loop(solver, state, options, step_iter, ll_fun, ll_args,
                              covariance, update_line_search, set_next_iter,
                              throw_overstep, msgs);
