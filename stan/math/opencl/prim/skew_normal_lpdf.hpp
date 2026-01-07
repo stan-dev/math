@@ -49,7 +49,7 @@ inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl> skew_normal_lpdf(
   using std::isnan;
 
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
-                         mu, "Scale parameter", sigma, "Shape paramter", alpha);
+                         mu, "Scale parameter", sigma, "Shape parameter", alpha);
   const size_t N = max_size(y, mu, sigma, alpha);
   if (N == 0) {
     return 0.0;
