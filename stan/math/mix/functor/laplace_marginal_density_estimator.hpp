@@ -316,7 +316,8 @@ inline void validate_laplace_options(const char* frame_name,
       std::stringstream msg;
       msg << frame_name << ": The size of the initial theta ("
           << options.theta_0.size()
-          << ") vector must match the rows and columns of the covariance matrix ("
+          << ") vector must match the rows and columns of the covariance "
+             "matrix ("
           << covariance.rows() << ", " << covariance.cols() << ").";
       throw std::domain_error(msg.str());
     }
@@ -420,7 +421,6 @@ struct NewtonState {
    */
   const auto& prev() const& { return wolfe_info.prev_; }
   auto&& prev() && { return std::move(wolfe_info).prev(); }
-
 };
 
 /**
@@ -1114,8 +1114,8 @@ inline auto laplace_marginal_density_est(
     eval_in.obj() = obj_fun(proposal.a(), proposal.theta());
     eval_in.dir() = grad_fun(proposal).dot(p);
   };
-  auto update_try = [&update_step](auto&& proposal, auto&& curr_ref, auto&& prev_ref, auto& eval,
-                        auto&& p) {
+  auto update_try = [&update_step](auto&& proposal, auto&& curr_ref,
+                                   auto&& prev_ref, auto& eval, auto&& p) {
     try {
       update_step(proposal, curr_ref, prev_ref, eval, p);
       return std::isfinite(eval.obj()) && std::isfinite(eval.dir());
@@ -1128,43 +1128,44 @@ inline auto laplace_marginal_density_est(
     return eval.alpha() > options.line_search.min_alpha;
   };
   auto is_valid = [](const auto& /* eval */, bool ok) { return ok; };
-  auto update_line_search
-      = [&grad_fun, &update_step, &options, &msgs, &state, &backoff, &update_try, &is_valid](
-            auto&& wolfe_status, auto&& wolfe_info, auto&& curr, auto&& prev) {
-          wolfe_info.p_ = curr.a() - prev.a();
-          state.prev_g.noalias() = grad_fun(prev);
-          wolfe_info.init_dir_ = state.prev_g.dot(wolfe_info.p_);
-          // Flip direction if not ascending
-          if (wolfe_info.init_dir_ < 0) {
-            wolfe_info.p_ = -wolfe_info.p_;
-            wolfe_info.init_dir_ = -wolfe_info.init_dir_;
-          }
-          auto&& scratch = wolfe_info.scratch_;
-          scratch.alpha() = 1.0;
-          internal::retry_evaluate(update_try, scratch, curr, prev, scratch.eval_,
-                                   wolfe_info.p_, backoff, is_valid);
-          if (scratch.alpha() <= options.line_search.min_alpha) {
-            wolfe_status.accept_ = false;
-            return true;
-          }
-          if (options.line_search.max_iterations == 0) {
-            if (scratch.alpha() > options.line_search.min_alpha) {
-              curr.update(scratch);
-              wolfe_status.accept_ = true;
-              return false;
-            }
-          } else {
-            Eigen::VectorXd s = scratch.a() - prev.a();
-            curr.alpha() = barzilai_borwein_step_size(
-                s, grad_fun(scratch), state.prev_g, prev.alpha(),
-                wolfe_status.num_backtracks_, options.line_search.min_alpha,
-                options.line_search.max_alpha);
-            wolfe_status = internal::wolfe_line_search(
-                wolfe_info, update_step, options.line_search, msgs);
-          }
-          return std::abs(curr.obj() - prev.obj()) < options.tolerance
-                 || (!wolfe_status.accept_ && curr.obj() <= prev.obj());
-        };
+  auto update_line_search = [&grad_fun, &update_step, &options, &msgs, &state,
+                             &backoff, &update_try,
+                             &is_valid](auto&& wolfe_status, auto&& wolfe_info,
+                                        auto&& curr, auto&& prev) {
+    wolfe_info.p_ = curr.a() - prev.a();
+    state.prev_g.noalias() = grad_fun(prev);
+    wolfe_info.init_dir_ = state.prev_g.dot(wolfe_info.p_);
+    // Flip direction if not ascending
+    if (wolfe_info.init_dir_ < 0) {
+      wolfe_info.p_ = -wolfe_info.p_;
+      wolfe_info.init_dir_ = -wolfe_info.init_dir_;
+    }
+    auto&& scratch = wolfe_info.scratch_;
+    scratch.alpha() = 1.0;
+    internal::retry_evaluate(update_try, scratch, curr, prev, scratch.eval_,
+                             wolfe_info.p_, backoff, is_valid);
+    if (scratch.alpha() <= options.line_search.min_alpha) {
+      wolfe_status.accept_ = false;
+      return true;
+    }
+    if (options.line_search.max_iterations == 0) {
+      if (scratch.alpha() > options.line_search.min_alpha) {
+        curr.update(scratch);
+        wolfe_status.accept_ = true;
+        return false;
+      }
+    } else {
+      Eigen::VectorXd s = scratch.a() - prev.a();
+      curr.alpha() = barzilai_borwein_step_size(
+          s, grad_fun(scratch), state.prev_g, prev.alpha(),
+          wolfe_status.num_backtracks_, options.line_search.min_alpha,
+          options.line_search.max_alpha);
+      wolfe_status = internal::wolfe_line_search(wolfe_info, update_step,
+                                                 options.line_search, msgs);
+    }
+    return std::abs(curr.obj() - prev.obj()) < options.tolerance
+           || (!wolfe_status.accept_ && curr.obj() <= prev.obj());
+  };
   auto set_next_iter = [&options](auto&& curr, auto&& prev) {
     prev.update(curr);
     curr.alpha() = std::clamp(curr.alpha(), 0.0, options.line_search.max_alpha);

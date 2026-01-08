@@ -542,14 +542,15 @@ struct WolfeInfo {
 /**
  * Retry evaluation of a step until it passes a validity check.
  *
- * The update callable is invoked with `(curr, prev, eval, p)` and is expected to
- * fill `eval` (at `eval.alpha()`) with the objective and directional
+ * The update callable is invoked with `(curr, prev, eval, p)` and is expected
+ * to fill `eval` (at `eval.alpha()`) with the objective and directional
  * derivative. If the evaluation is not valid, the backoff callable should
  * shrink `eval.alpha()` and return whether another retry should be attempted.
  * The validity check can inspect the evaluation and, for non-void updates, the
  * returned status.
  *
- * @tparam Update Callable that performs one evaluation step. Must accept 4 arguments.
+ * @tparam Update Callable that performs one evaluation step. Must accept 4
+ * arguments.
  * @tparam Curr Current state type passed to `update`.
  * @tparam Prev Previous state type passed to `update`.
  * @tparam Eval Evaluation record containing alpha/obj/dir.
@@ -568,12 +569,13 @@ struct WolfeInfo {
  * @return For void updates, returns void. Otherwise returns the value from the
  *         first valid evaluation.
  */
-template <typename Update, typename Proposal, typename Curr, typename Prev, typename Eval,
-          typename P, typename Backoff, typename IsValid>
-inline auto retry_evaluate(Update&& update, Proposal&& proposal, Curr&& curr, Prev&& prev, Eval& eval,
-                           P&& p, Backoff&& backoff, IsValid&& is_valid) {
-  if constexpr (std::is_void_v<
-                    std::invoke_result_t<Update&, Proposal, Curr, Prev, Eval&, P>>) {
+template <typename Update, typename Proposal, typename Curr, typename Prev,
+          typename Eval, typename P, typename Backoff, typename IsValid>
+inline auto retry_evaluate(Update&& update, Proposal&& proposal, Curr&& curr,
+                           Prev&& prev, Eval& eval, P&& p, Backoff&& backoff,
+                           IsValid&& is_valid) {
+  if constexpr (std::is_void_v<std::invoke_result_t<Update&, Proposal, Curr,
+                                                    Prev, Eval&, P>>) {
     while (true) {
       update(proposal, curr, prev, eval, p);
       if (is_valid(eval)) {
@@ -595,7 +597,6 @@ inline auto retry_evaluate(Update&& update, Proposal&& proposal, Curr&& curr, Pr
     }
   }
 }
-
 
 /**
  * @brief Strong-Wolfe line search with expansion, bracketing, and
@@ -885,8 +886,10 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
            && state.theta().allFinite() && state.theta_grad().allFinite();
   };
   Eval best = low;  // keep the best Armijo-OK in case strong-Wolfe fails
-  auto update_with_tick
-      = [&total_updates, &opt, &best, &update_fun, &assign_step, &wolfe_ok, &armijo_ok](auto&& proposal, auto&& curr, auto&& prev, Eval& e, auto&& p) {
+  auto update_with_tick = [&total_updates, &opt, &best, &update_fun,
+                           &assign_step, &wolfe_ok,
+                           &armijo_ok](auto&& proposal, auto&& curr,
+                                       auto&& prev, Eval& e, auto&& p) {
     const bool over_budget = total_updates > opt.max_iterations;
     if (over_budget) {
       // Soft budget: stop evaluating new trial points once exceeded.
@@ -918,10 +921,11 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
       return eval.alpha() >= opt.min_alpha;
     };
     auto is_valid = [&](const Eval& eval, const WolfeStatus& status) {
-      return status.stop_ != WolfeReturn::Continue || eval_finite(eval, scratch);
+      return status.stop_ != WolfeReturn::Continue
+             || eval_finite(eval, scratch);
     };
-    wolfe_check = retry_evaluate(update_with_tick, scratch, curr, prev, high, p, backoff,
-                                 is_valid);
+    wolfe_check = retry_evaluate(update_with_tick, scratch, curr, prev, high, p,
+                                 backoff, is_valid);
     if (wolfe_check.stop_ != WolfeReturn::Continue) {
       return wolfe_check;
     }
@@ -1081,10 +1085,11 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
       return eval.alpha() > opt.min_alpha;
     };
     auto is_valid = [&](const Eval& eval, const WolfeStatus& status) {
-      return status.stop_ != WolfeReturn::Continue || eval_finite(eval, scratch);
+      return status.stop_ != WolfeReturn::Continue
+             || eval_finite(eval, scratch);
     };
-    auto wolfe_check = retry_evaluate(update_with_tick, scratch, curr, prev, mid, p,
-                                      backoff, is_valid);
+    auto wolfe_check = retry_evaluate(update_with_tick, scratch, curr, prev,
+                                      mid, p, backoff, is_valid);
     if (wolfe_check.stop_ != WolfeReturn::Continue) {
       return wolfe_check;
     }
