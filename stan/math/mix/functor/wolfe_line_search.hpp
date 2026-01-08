@@ -469,18 +469,22 @@ struct WolfeData {
     theta_grad_.swap(other.theta_grad_);
     eval_ = eval;
   }
-  inline auto& theta() { return theta_; }
-  inline const auto& theta() const { return theta_; }
-  inline auto& theta_grad() { return theta_grad_; }
-  inline const auto& theta_grad() const { return theta_grad_; }
-  inline auto& a() { return a_; }
-  inline const auto& a() const { return a_; }
-  inline auto& obj() { return eval_.obj(); }
-  inline const auto& obj() const { return eval_.obj(); }
-  inline auto& alpha() { return eval_.alpha(); }
-  inline const auto& alpha() const { return eval_.alpha(); }
-  inline auto& dir() { return eval_.dir(); }
-  inline const auto& dir() const { return eval_.dir(); }
+  inline auto& theta() & { return theta_; }
+  inline auto&& theta() && { return std::move(theta_); }
+  inline const auto& theta() const& { return theta_; }
+
+  inline auto& theta_grad() & { return theta_grad_; }
+  inline const auto& theta_grad() const& { return theta_grad_; }
+  inline auto&& theta_grad() && { return std::move(theta_grad_); }
+  inline auto& a() & { return a_; }
+  inline const auto& a() const& { return a_; }
+  inline auto&& a() && { return std::move(a_); }
+  inline auto& obj() & { return eval_.obj(); }
+  inline const auto& obj() const& { return eval_.obj(); }
+  inline auto& alpha() & { return eval_.alpha(); }
+  inline const auto& alpha() const& { return eval_.alpha(); }
+  inline auto& dir() & { return eval_.dir(); }
+  inline const auto& dir() const& { return eval_.dir(); }
 };
 
 /**
@@ -522,6 +526,16 @@ struct WolfeInfo {
         scratch_(n),
         p_(Eigen::VectorXd::Zero(n)),
         init_dir_(0.0) {}
+
+  inline auto& curr() & { return curr_; }
+  inline const auto& curr() const& { return curr_; }
+  inline auto&& curr() && { return std::move(curr_); }
+  inline auto& prev() & { return prev_; }
+  inline const auto& prev() const& { return prev_; }
+  inline auto&& prev() && { return std::move(prev_); }
+  inline auto& scratch() & { return scratch_; }
+  inline const auto& scratch() const& { return scratch_; }
+  inline auto&& scratch() && { return std::move(scratch_); }
 };
 
 /**

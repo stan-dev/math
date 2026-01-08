@@ -316,7 +316,7 @@ inline void validate_laplace_options(const char* frame_name,
       std::stringstream msg;
       msg << frame_name << ": The size of the initial theta ("
           << options.theta_0.size()
-          << ") does not match the size of the covariance matrix ("
+          << ") vector must match the rows and columns of the covariance matrix ("
           << covariance.rows() << ", " << covariance.cols() << ").";
       throw std::domain_error(msg.str());
     }
@@ -400,25 +400,27 @@ struct NewtonState {
    * @brief Access the current step state (mutable).
    * @return Reference to current WolfeStep
    */
-  auto& curr() { return wolfe_info.curr_; }
+  auto& curr() & { return wolfe_info.curr_; }
 
   /**
    * @brief Access the current step state (const).
    * @return Const reference to current WolfeStep
    */
-  const auto& curr() const { return wolfe_info.curr_; }
-
+  const auto& curr() const& { return wolfe_info.curr_; }
+  auto&& curr() && { return std::move(wolfe_info).curr(); }
   /**
    * @brief Access the previous step state (mutable).
    * @return Reference to previous WolfeStep
    */
-  auto& prev() { return wolfe_info.prev_; }
+  auto& prev() & { return wolfe_info.prev_; }
 
   /**
    * @brief Access the previous step state (const).
    * @return Const reference to previous WolfeStep
    */
-  const auto& prev() const { return wolfe_info.prev_; }
+  const auto& prev() const& { return wolfe_info.prev_; }
+  auto&& prev() && { return std::move(wolfe_info).prev(); }
+
 };
 
 /**
@@ -540,11 +542,11 @@ struct CholeskyWSolverDiag {
   auto build_result(NewtonStateT& state, double log_det) {
     return laplace_density_estimates{
         state.prev().obj() - 0.5 * log_det,
-        std::move(state.prev().theta()),
+        std::move(state).prev().theta(),
         Eigen::SparseMatrix<double>(W_r_diag.asDiagonal()),
         Eigen::MatrixXd(llt_B.matrixL()),
-        std::move(state.prev().a()),
-        std::move(state.prev().theta_grad()),
+        std::move(state).prev().a(),
+        std::move(state).prev().theta_grad(),
         Eigen::PartialPivLU<Eigen::MatrixXd>{},
         Eigen::MatrixXd(0, 0),
         1};
@@ -682,11 +684,11 @@ struct CholeskyWSolverBlock {
   template <typename NewtonStateT>
   auto build_result(NewtonStateT& state, double log_det) {
     return laplace_density_estimates{state.prev().obj() - 0.5 * log_det,
-                                     std::move(state.prev().theta()),
+                                     std::move(state).prev().theta(),
                                      std::move(W_r),
                                      Eigen::MatrixXd(llt_B.matrixL()),
-                                     std::move(state.prev().a()),
-                                     std::move(state.prev().theta_grad()),
+                                     std::move(state).prev().a(),
+                                     std::move(state).prev().theta_grad(),
                                      Eigen::PartialPivLU<Eigen::MatrixXd>{},
                                      Eigen::MatrixXd(0, 0),
                                      1};
@@ -701,8 +703,7 @@ struct CholeskyWSolverBlock {
  * B = I + K_root^T * W * K_root, which is factorized in each iteration.
  *
  * This approach is numerically more stable than Solver 1 when the
- * covariance matrix has a more complex structure, at the cost of
- * requiring the full Hessian W (not just diagonal).
+ * covariance matrix has a more complex structure.
  *
  * @note This solver corresponds to `solver == 2` in the original code.
  */
@@ -905,11 +906,11 @@ struct LUSolver {
   template <typename NewtonStateT>
   auto build_result(NewtonStateT& state, double log_det) {
     return laplace_density_estimates{state.prev().obj() - 0.5 * log_det,
-                                     std::move(state.prev().theta()),
+                                     std::move(state).prev().theta(),
                                      std::move(W_full),
                                      Eigen::MatrixXd(0, 0),
-                                     std::move(state.prev().a()),
-                                     std::move(state.prev().theta_grad()),
+                                     std::move(state).prev().a(),
+                                     std::move(state).prev().theta_grad(),
                                      std::move(lu),
                                      Eigen::MatrixXd(0, 0),
                                      3};
