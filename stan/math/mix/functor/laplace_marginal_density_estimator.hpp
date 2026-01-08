@@ -1106,20 +1106,30 @@ inline auto laplace_marginal_density_est(
     return -covariance * step.a() + covariance * step.theta_grad();
   };
   auto update_step = [&covariance, &obj_fun, &theta_grad_f, &grad_fun](
-                         auto& step_info, auto&& /* curr */, auto&& prev,
+                         auto& proposal, auto&& /* curr */, auto&& prev,
                          auto& eval_in, auto&& p) {
-    step_info.a() = prev.a() + eval_in.alpha() * p;
-    step_info.theta().noalias() = covariance * step_info.a();
-    step_info.theta_grad() = theta_grad_f(step_info.theta());
-    eval_in.obj() = obj_fun(step_info.a(), step_info.theta());
-    eval_in.dir() = grad_fun(step_info).dot(p);
+    proposal.a() = prev.a() + eval_in.alpha() * p;
+    proposal.theta().noalias() = covariance * proposal.a();
+    proposal.theta_grad() = theta_grad_f(proposal.theta());
+    eval_in.obj() = obj_fun(proposal.a(), proposal.theta());
+    eval_in.dir() = grad_fun(proposal).dot(p);
+  };
+  auto update_try = [&update_step](auto&& proposal, auto&& curr_ref, auto&& prev_ref, auto& eval,
+                        auto&& p) {
+    try {
+      update_step(proposal, curr_ref, prev_ref, eval, p);
+      return std::isfinite(eval.obj()) && std::isfinite(eval.dir());
+    } catch (const std::exception&) {
+      return false;
+    }
   };
   auto backoff = [&options](auto& eval) {
     eval.alpha() *= options.line_search.tau;
     return eval.alpha() > options.line_search.min_alpha;
   };
+  auto is_valid = [](const auto& /* eval */, bool ok) { return ok; };
   auto update_line_search
-      = [&grad_fun, &update_step, &options, &msgs, &state](
+      = [&grad_fun, &update_step, &options, &msgs, &state, &backoff, &update_try, &is_valid](
             auto&& wolfe_status, auto&& wolfe_info, auto&& curr, auto&& prev) {
           wolfe_info.p_ = curr.a() - prev.a();
           state.prev_g.noalias() = grad_fun(prev);
@@ -1131,16 +1141,6 @@ inline auto laplace_marginal_density_est(
           }
           auto&& scratch = wolfe_info.scratch_;
           scratch.alpha() = 1.0;
-          auto update_try = [&](auto&& proposal, auto&& curr_ref, auto&& prev_ref, auto& eval,
-                                auto&& p) {
-            try {
-              update_step(proposal, curr_ref, prev_ref, eval, p);
-              return std::isfinite(eval.obj()) && std::isfinite(eval.dir());
-            } catch (const std::exception&) {
-              return false;
-            }
-          };
-          auto is_valid = [](const auto& /* eval */, bool ok) { return ok; };
           internal::retry_evaluate(update_try, scratch, curr, prev, scratch.eval_,
                                    wolfe_info.p_, backoff, is_valid);
           if (scratch.alpha() <= options.line_search.min_alpha) {
