@@ -3,7 +3,6 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 namespace stan::test::laplace::roach {
 
-
 static const Eigen::Matrix<double, -1, -1> sigmaz{
     {{2.03651, 1.97969, 2.01858, 2.05345, 2.01933, 1.8819,  1.87645, 2.12067,
       1.97148, 2.02071, 1.80958, 1.92785, 1.80715, 2.07926, 2.01801, 1.84052,

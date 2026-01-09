@@ -80,11 +80,14 @@ TEST(WriteArrayBodySimple, ExceededIteration) {
   stan::test::relative_tolerance rel_tol(5e-2);
   const double integrate_1d_reltol = 1e-8;
   auto&& mu_bad_raw = stan::test::laplace::roach::mu_bad_raw;
-  Eigen::Map<const Eigen::VectorXd> mu_bad(mu_bad_raw.data(), mu_bad_raw.size());
+  Eigen::Map<const Eigen::VectorXd> mu_bad(mu_bad_raw.data(),
+                                           mu_bad_raw.size());
   auto&& sigma_bad_raw = stan::test::laplace::roach::sigma_bad_raw;
-  Eigen::Map<const Eigen::VectorXd> sigma_bad(sigma_bad_raw.data(), sigma_bad_raw.size());
+  Eigen::Map<const Eigen::VectorXd> sigma_bad(sigma_bad_raw.data(),
+                                              sigma_bad_raw.size());
   auto&& y_bad_raw = stan::test::laplace::roach::y_bad_raw;
-  Eigen::Map<const Eigen::Matrix<int, -1, 1>> y_bad(y_bad_raw.data(), y_bad_raw.size());
+  Eigen::Map<const Eigen::Matrix<int, -1, 1>> y_bad(y_bad_raw.data(),
+                                                    y_bad_raw.size());
   const int num_samples = mu_bad.cols();
   const int N = mu_bad.rows();
   std::ostream* pstream = nullptr;

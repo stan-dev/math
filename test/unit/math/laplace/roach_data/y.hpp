@@ -2,7 +2,6 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 namespace stan::test::laplace::roach {
 
-
 static const std::vector<int> y{
     153, 127, 7,  7,   0,   0,   73,  24,  2,  2,   0,  21,  0,   179, 136, 104,
     2,   5,   1,  203, 32,  1,   135, 59,  29, 120, 44, 1,   2,   193, 13,  37,
