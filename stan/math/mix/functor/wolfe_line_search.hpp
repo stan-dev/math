@@ -557,7 +557,9 @@ struct WolfeInfo {
  * @tparam Eval Evaluation record containing alpha/obj/dir.
  * @tparam P Search direction type passed to `update`.
  * @tparam Backoff Callable that shrinks `eval.alpha()` and returns a bool.
- * @tparam IsValid Callable that returns true when the evaluation is valid. When `Update` is non-void, must accept 2 arguments whereh the second argument is the return of `Update`.
+ * @tparam IsValid Callable that returns true when the evaluation is valid. When
+ * `Update` is non-void, must accept 2 arguments whereh the second argument is
+ * the return of `Update`.
  *
  * @param[in] update Evaluator invoked as `update(curr, prev, eval, p)`.
  * @param[in,out] proposal Proposed step forwarded to `update`.
@@ -565,7 +567,8 @@ struct WolfeInfo {
  * @param[in] prev Previous state forwarded to `update`.
  * @param[in,out] eval Evaluation record, updated in-place by `update`.
  * @param[in] p Search direction forwarded to `update`.
- * @param[in] backoff Shrinks alpha and returns whether another retry should occur.
+ * @param[in] backoff Shrinks alpha and returns whether another retry should
+ * occur.
  * @param[in] is_valid Checks whether the evaluation is valid.
  *
  * @return For void updates, returns void. Otherwise returns the value from the
