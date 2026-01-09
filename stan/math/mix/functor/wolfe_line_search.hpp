@@ -551,20 +551,22 @@ struct WolfeInfo {
  *
  * @tparam Update Callable that performs one evaluation step. Must accept 4
  * arguments.
+ * @tparam Proposal Proposed step type passed to `update`.
  * @tparam Curr Current state type passed to `update`.
  * @tparam Prev Previous state type passed to `update`.
  * @tparam Eval Evaluation record containing alpha/obj/dir.
  * @tparam P Search direction type passed to `update`.
  * @tparam Backoff Callable that shrinks `eval.alpha()` and returns a bool.
- * @tparam IsValid Callable that returns true when the evaluation is valid.
+ * @tparam IsValid Callable that returns true when the evaluation is valid. When `Update` is non-void, must accept 2 arguments whereh the second argument is the return of `Update`.
  *
- * @param update Evaluator invoked as `update(curr, prev, eval, p)`.
- * @param curr Current state forwarded to `update`.
- * @param prev Previous state forwarded to `update`.
- * @param eval Evaluation record, updated in-place by `update`.
- * @param p Search direction forwarded to `update`.
- * @param backoff Shrinks alpha and returns whether another retry should occur.
- * @param is_valid Checks whether the evaluation is valid.
+ * @param[in] update Evaluator invoked as `update(curr, prev, eval, p)`.
+ * @param[in,out] proposal Proposed step forwarded to `update`.
+ * @param[in] curr Current state forwarded to `update`.
+ * @param[in] prev Previous state forwarded to `update`.
+ * @param[in,out] eval Evaluation record, updated in-place by `update`.
+ * @param[in] p Search direction forwarded to `update`.
+ * @param[in] backoff Shrinks alpha and returns whether another retry should occur.
+ * @param[in] is_valid Checks whether the evaluation is valid.
  *
  * @return For void updates, returns void. Otherwise returns the value from the
  *         first valid evaluation.

@@ -1083,12 +1083,13 @@ inline auto run_newton_loop(SolverPolicy& solver, NewtonStateT& state,
 
 /**
  * @brief Log a solver fallback event to the provided stream.
- * @param msgs Output stream (may be nullptr)
- * @param context Context string for the log
- * @param iter Current iteration number
- * @param failed_solver Name of the solver that failed
- * @param next_solver Name of the solver being attempted next
- * @param e Exception that caused the fallback
+ * @param[in] allow_fallthrough If false, throw instead of logging
+ * @param[in,out] msgs Output stream (may be nullptr)
+ * @param[in] context Context string for the log
+ * @param[in] iter Current iteration number
+ * @param[in] failed_solver Name of the solver that failed
+ * @param[in] next_solver Name of the solver being attempted next
+ * @param[in] e Exception that caused the fallback
  */
 inline void log_solver_fallback(const bool allow_fallthrough,
                                 std::ostream* msgs, std::string_view context,
