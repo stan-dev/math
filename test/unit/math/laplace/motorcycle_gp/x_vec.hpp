@@ -1,5 +1,7 @@
 #ifndef STAN_TEST_UNIT_MIX_LAPLACE_MOTORCYCLE_GP_HPP
 #define STAN_TEST_UNIT_MIX_LAPLACE_MOTORCYCLE_GP_HPP
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <vector>
 namespace stan {
 namespace test {
 namespace laplace {

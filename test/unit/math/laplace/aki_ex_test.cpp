@@ -3,9 +3,12 @@
 #include <stan/math/mix.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
 #include <test/unit/math/laplace/laplace_utility.hpp>
-#include <test/unit/math/laplace/roach_data/y.hpp>
+#include <test/unit/math/laplace/roach_data/mu_bad.hpp>
+#include <test/unit/math/laplace/roach_data/sigma_bad.hpp>
+#include <test/unit/math/laplace/roach_data/y_bad.hpp>
+#include <test/unit/math/laplace/roach_data/mu.hpp>
 #include <test/unit/math/laplace/roach_data/sigmaz.hpp>
-#include <test/unit/math/laplace/csv_reader.hpp>
+#include <test/unit/math/laplace/roach_data/y.hpp>
 
 #include <gtest/gtest.h>
 #include <iostream>
@@ -76,21 +79,19 @@ struct cov_fun_functor {
 TEST(WriteArrayBodySimple, ExceededIteration) {
   stan::test::relative_tolerance rel_tol(5e-2);
   const double integrate_1d_reltol = 1e-8;
-  auto mu_samples = stan::math::test::laplace::read_matrix_csv(
-      "./test/unit/math/laplace/roach_data/mu_bad.csv");
-  auto sigmaz_samples = stan::math::test::laplace::read_matrix_csv(
-      "./test/unit/math/laplace/roach_data/sigma_bad.csv");
-  auto y_samples_dbl = stan::math::test::laplace::read_matrix_csv(
-      "./test/unit/math/laplace/roach_data/y_bad.csv");
-  auto y_samples = y_samples_dbl.cast<int>();
-  const int num_samples = mu_samples.cols();
-  const int N = mu_samples.rows();
+  auto&& mu_bad_raw = stan::test::laplace::roach::mu_bad_raw;
+  Eigen::Map<const Eigen::VectorXd> mu_bad(mu_bad_raw.data(), mu_bad_raw.size());
+  auto&& sigma_bad_raw = stan::test::laplace::roach::sigma_bad_raw;
+  Eigen::Map<const Eigen::VectorXd> sigma_bad(sigma_bad_raw.data(), sigma_bad_raw.size());
+  auto&& y_bad_raw = stan::test::laplace::roach::y_bad_raw;
+  Eigen::Map<const Eigen::Matrix<int, -1, 1>> y_bad(y_bad_raw.data(), y_bad_raw.size());
+  const int num_samples = mu_bad.cols();
+  const int N = mu_bad.rows();
   std::ostream* pstream = nullptr;
   for (int i = 1; i <= N; ++i) {
-    auto y = y_samples(i - 1, 0);
-    auto mu = mu_samples(i - 1, 0);
-    auto sigmaz = sigmaz_samples(i - 1, 0);
-
+    auto y = y_bad(i - 1);
+    auto mu = mu_bad(i - 1);
+    auto sigmaz = sigma_bad(i - 1);
     double ll_laplace_val{0};
     try {
       ll_laplace_val = stan::math::laplace_marginal(
@@ -125,10 +126,15 @@ TEST(WriteArrayBodySimple, ExceededIteration) {
 TEST(WriteArrayBodySimple, ExecutesBodyWithHardcodedData) {
   stan::test::relative_tolerance rel_tol(5e-1);
   const double integrate_1d_reltol = 1e-8;
-  auto&& y = stan::math::test::roaches::y;
-  auto&& sigmaz_samples = stan::math::test::roaches::sigmaz;
-  auto mu_samples = stan::math::test::laplace::read_matrix_csv(
-      "./test/unit/math/laplace/roach_data/mu.csv");
+  auto&& y = stan::test::laplace::roach::y;
+  auto&& sigmaz_samples = stan::test::laplace::roach::sigmaz;
+  auto&& mu_raw = stan::test::laplace::roach::mu_raw;
+  std::size_t mu_cols = mu_raw.size() / y.size();
+  Eigen::MatrixXd mu_samples(y.size(), mu_cols);
+  for (std::size_t i = 0; i < y.size(); ++i) {
+    mu_samples.row(i) = Eigen::Map<const Eigen::RowVectorXd>(
+        mu_raw.data() + i * mu_cols, mu_cols);
+  }
   const int num_samples = mu_samples.cols();
   const int N = mu_samples.rows();
   std::ostream* pstream = nullptr;
