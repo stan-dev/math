@@ -55,8 +55,8 @@ TEST_P(laplace_marginal_bernoulli_logit_lpmf, phi_dim500) {
     try {
       return laplace_marginal_tol_bernoulli_logit_lpmf(
           y, n_samples, mean, sqr_exp_kernel_functor{},
-          std::forward_as_tuple(x, alpha, rho), theta_0, tolerance,
-          max_num_steps, hessian_block_size, solver_num, max_steps_line_search,
+          std::forward_as_tuple(x, alpha, rho), std::make_tuple(theta_0, tolerance,
+          max_num_steps, hessian_block_size, solver_num, max_steps_line_search, true),
           &output_stream);
     } catch (const std::exception& e) {
       std::stringstream fail_msg;

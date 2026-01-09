@@ -29,24 +29,17 @@ namespace math {
  * \rng_arg
  * \msg_arg
  */
-template <typename LLFunc, typename LLArgs, typename ThetaVec,
-          typename CovarFun, typename CovarArgs, typename RNG>
+template <typename LLFunc, typename LLArgs,
+          typename CovarFun, typename CovarArgs, typename OpsTuple, typename RNG>
 inline auto laplace_latent_tol_rng(
     LLFunc&& L_f, LLArgs&& ll_args, CovarFun&& covariance_function,
-    CovarArgs&& covar_args, ThetaVec&& theta_0, const double tolerance,
-    const int max_num_steps, const int hessian_block_size, const int solver,
-    const int max_steps_line_search, RNG& rng, std::ostream* msgs) {
-  const laplace_options_user_supplied ops{
-      hessian_block_size,
-      solver,
-      tolerance,
-      max_num_steps,
-      laplace_line_search_options{max_steps_line_search},
-      value_of(theta_0)};
+    CovarArgs&& covar_args, OpsTuple&& ops, RNG& rng, std::ostream* msgs) {
   return laplace_base_rng(std::forward<LLFunc>(L_f),
                           std::forward<LLArgs>(ll_args),
                           std::forward<CovarFun>(covariance_function),
-                          std::forward<CovarArgs>(covar_args), ops, rng, msgs);
+                          std::forward<CovarArgs>(covar_args),
+                          internal::tuple_to_laplace_options(std::forward<OpsTuple>(ops)),
+                          rng, msgs);
 }
 
 /**

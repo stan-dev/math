@@ -76,27 +76,18 @@ struct neg_binomial_2_log_likelihood {
  * \laplace_options
  * \msg_arg
  */
-template <bool propto = false, typename Eta, typename ThetaVec, typename Mean,
-          typename CovarFun, typename CovarArgs,
-          require_eigen_vector_t<ThetaVec>* = nullptr>
+template <bool propto = false, typename Eta, typename Mean,
+          typename CovarFun, typename CovarArgs, typename OpsTuple>
 inline auto laplace_marginal_tol_neg_binomial_2_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& y_index, const Eta& eta,
     Mean&& mean, CovarFun&& covariance_function, CovarArgs&& covar_args,
-    const ThetaVec& theta_0, double tolerance, int max_num_steps,
-    const int hessian_block_size, const int solver,
-    const int max_steps_line_search, std::ostream* msgs) {
-  laplace_options_user_supplied ops{
-      hessian_block_size,
-      solver,
-      tolerance,
-      max_num_steps,
-      laplace_line_search_options{max_steps_line_search},
-      value_of(theta_0)};
+    OpsTuple&& ops, std::ostream* msgs) {
   return laplace_marginal_density(
       neg_binomial_2_log_likelihood{},
       std::forward_as_tuple(eta, y, y_index, std::forward<Mean>(mean)),
       std::forward<CovarFun>(covariance_function),
-      std::forward<CovarArgs>(covar_args), ops, msgs);
+      std::forward<CovarArgs>(covar_args),
+      internal::tuple_to_laplace_options(std::forward<OpsTuple>(ops)), msgs);
 }
 
 /**
@@ -179,29 +170,20 @@ struct neg_binomial_2_log_likelihood_summary {
  * \laplace_options
  * \msg_arg
  */
-template <bool propto = false, typename Eta, typename ThetaVec, typename Mean,
-          typename CovarFun, typename CovarArgs,
-          require_eigen_vector_t<ThetaVec>* = nullptr>
+template <bool propto = false, typename Eta, typename Mean,
+          typename CovarFun, typename CovarArgs, typename OpsTuple>
 inline auto laplace_marginal_tol_neg_binomial_2_log_summary_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_per_group,
     const std::vector<int>& counts_per_group, const Eta& eta, Mean&& mean,
     CovarFun&& covariance_function, CovarArgs&& covar_args,
-    const ThetaVec& theta_0, double tolerance, int max_num_steps,
-    const int hessian_block_size, const int solver,
-    const int max_steps_line_search, std::ostream* msgs) {
-  laplace_options_user_supplied ops{
-      hessian_block_size,
-      solver,
-      tolerance,
-      max_num_steps,
-      laplace_line_search_options{max_steps_line_search},
-      value_of(theta_0)};
+    OpsTuple&& ops, std::ostream* msgs) {
   return laplace_marginal_density(
       neg_binomial_2_log_likelihood_summary{},
       std::forward_as_tuple(eta, y, n_per_group, counts_per_group,
                             std::forward<Mean>(mean)),
       std::forward<CovarFun>(covariance_function),
-      std::forward<CovarArgs>(covar_args), ops, msgs);
+      std::forward<CovarArgs>(covar_args),
+      internal::tuple_to_laplace_options(std::forward<OpsTuple>(ops)), msgs);
 }
 
 /**

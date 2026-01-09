@@ -53,8 +53,8 @@ TEST_P(laplace_marginal_neg_binomial_log_summary_lpmf, phi_dim_2) {
       return laplace_marginal_tol_neg_binomial_2_log_summary_lpmf(
           y, n_per_group, counts_per_group, eta, 0,
           stan::math::test::squared_kernel_functor{},
-          std::forward_as_tuple(x, alpha, rho), theta_0, tolerance,
-          max_num_steps, hessian_block_size, solver_num, max_steps_line_search,
+          std::forward_as_tuple(x, alpha, rho), std::make_tuple(theta_0, tolerance,
+          max_num_steps, hessian_block_size, solver_num, max_steps_line_search, true),
           &output_stream);
     } catch (const std::exception& e) {
       std::stringstream fail_msg;
@@ -105,8 +105,8 @@ TEST_P(laplace_disease_map_test,
     return laplace_marginal_tol_neg_binomial_2_log_summary_lpmf(
         y, n_per_group, counts_per_group, eta_arg, 0,
         stan::math::test::sqr_exp_kernel_functor{},
-        std::forward_as_tuple(x, alpha, rho), theta_0, tolerance, max_num_steps,
-        hessian_block_size, solver_num, max_steps_line_search, &output_stream);
+        std::forward_as_tuple(x, alpha, rho), std::make_tuple(theta_0, tolerance, max_num_steps,
+        hessian_block_size, solver_num, max_steps_line_search, true), &output_stream);
   };
   smoke(phi_dbl[0], phi_dbl[1], eta);
   auto f = [&](auto&& alpha, auto&& rho, auto&& eta_arg) {
@@ -114,8 +114,8 @@ TEST_P(laplace_disease_map_test,
       return laplace_marginal_tol_neg_binomial_2_log_summary_lpmf(
           y, n_per_group, counts_per_group, eta_arg, mean,
           stan::math::test::sqr_exp_kernel_functor{},
-          std::forward_as_tuple(x, alpha, rho), theta_0, tolerance,
-          max_num_steps, hessian_block_size, solver_num, max_steps_line_search,
+          std::forward_as_tuple(x, alpha, rho), std::make_tuple(theta_0, tolerance,
+          max_num_steps, hessian_block_size, solver_num, max_steps_line_search, true),
           &output_stream);
     } catch (const std::exception& e) {
       std::stringstream fail_msg;

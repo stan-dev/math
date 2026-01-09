@@ -68,26 +68,17 @@ struct poisson_log_likelihood {
  * \laplace_options
  * \msg_arg
  */
-template <bool propto = false, typename ThetaVec, typename Mean,
-          typename CovarFun, typename CovarArgs,
-          require_eigen_vector_t<ThetaVec>* = nullptr>
+template <bool propto = false, typename Mean,
+          typename CovarFun, typename CovarArgs, typename OpsTuple>
 inline auto laplace_marginal_tol_poisson_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& y_index, Mean&& mean,
     CovarFun&& covariance_function, CovarArgs&& covar_args,
-    const ThetaVec& theta_0, double tolerance, int max_num_steps,
-    const int hessian_block_size, const int solver,
-    const int max_steps_line_search, std::ostream* msgs) {
-  laplace_options_user_supplied ops{
-      hessian_block_size,
-      solver,
-      tolerance,
-      max_num_steps,
-      laplace_line_search_options{max_steps_line_search},
-      value_of(theta_0)};
+    OpsTuple&& ops, std::ostream* msgs) {
   return laplace_marginal_density(
       poisson_log_likelihood{},
       std::forward_as_tuple(y, y_index, std::forward<Mean>(mean)),
-      covariance_function, std::forward<CovarArgs>(covar_args), ops, msgs);
+      covariance_function, std::forward<CovarArgs>(covar_args),
+      internal::tuple_to_laplace_options(std::forward<OpsTuple>(ops)), msgs);
 }
 
 /**

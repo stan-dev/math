@@ -26,24 +26,15 @@ namespace math {
  * \msg_arg
  */
 template <bool propto = false, typename LFun, typename LArgs, typename CovarFun,
-          typename ThetaVec, typename CovarArgs,
-          require_all_eigen_vector_t<ThetaVec>* = nullptr>
+          typename CovarArgs, typename OpsTuple>
 inline auto laplace_marginal_tol(
     LFun&& L_f, LArgs&& l_args, CovarFun&& covariance_function,
-    CovarArgs&& covar_args, const ThetaVec& theta_0, double tolerance,
-    int max_num_steps, const int hessian_block_size, const int solver,
-    const int max_steps_line_search, std::ostream* msgs) {
-  laplace_options_user_supplied ops{
-      hessian_block_size,
-      solver,
-      tolerance,
-      max_num_steps,
-      laplace_line_search_options{max_steps_line_search},
-      value_of(theta_0)};
+    CovarArgs&& covar_args, OpsTuple&& ops,std::ostream* msgs) {
   return laplace_marginal_density(
       std::forward<LFun>(L_f), std::forward<LArgs>(l_args),
       std::forward<CovarFun>(covariance_function),
-      std::forward<CovarArgs>(covar_args), ops, msgs);
+      std::forward<CovarArgs>(covar_args),
+      internal::tuple_to_laplace_options(std::forward<OpsTuple>(ops)), msgs);
 }
 
 /**

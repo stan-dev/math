@@ -35,28 +35,20 @@ namespace math {
  * \rng_arg
  * \msg_arg
  */
-template <typename Eta, typename ThetaVec, typename Mean, typename CovarFun,
-          typename CovarArgs, typename RNG,
-          require_eigen_vector_t<ThetaVec>* = nullptr>
+template <typename Eta, typename Mean, typename CovarFun,
+          typename CovarArgs, typename OpsTuple, typename RNG>
 inline Eigen::VectorXd laplace_latent_tol_neg_binomial_2_log_rng(
     const std::vector<int>& y, const std::vector<int>& y_index, Eta&& eta,
     Mean&& mean, CovarFun&& covariance_function, CovarArgs&& covar_args,
-    ThetaVec&& theta_0, const double tolerance, const int max_num_steps,
-    const int hessian_block_size, const int solver,
-    const int max_steps_line_search, RNG& rng, std::ostream* msgs) {
-  laplace_options_user_supplied ops{
-      hessian_block_size,
-      solver,
-      tolerance,
-      max_num_steps,
-      laplace_line_search_options{max_steps_line_search},
-      value_of(theta_0)};
+    OpsTuple&& ops, RNG& rng, std::ostream* msgs) {
   return laplace_base_rng(
       neg_binomial_2_log_likelihood{},
       std::forward_as_tuple(std::forward<Eta>(eta), y, y_index,
                             std::forward<Mean>(mean)),
       std::forward<CovarFun>(covariance_function),
-      std::forward<CovarArgs>(covar_args), ops, rng, msgs);
+      std::forward<CovarArgs>(covar_args),
+      internal::tuple_to_laplace_options(std::forward<OpsTuple>(ops)),
+      rng, msgs);
 }
 
 /**
