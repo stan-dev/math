@@ -68,12 +68,12 @@ struct poisson_log_likelihood {
  * \laplace_options
  * \msg_arg
  */
-template <bool propto = false, typename Mean,
-          typename CovarFun, typename CovarArgs, typename OpsTuple>
+template <bool propto = false, typename Mean, typename CovarFun,
+          typename CovarArgs, typename OpsTuple>
 inline auto laplace_marginal_tol_poisson_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& y_index, Mean&& mean,
-    CovarFun&& covariance_function, CovarArgs&& covar_args,
-    OpsTuple&& ops, std::ostream* msgs) {
+    CovarFun&& covariance_function, CovarArgs&& covar_args, OpsTuple&& ops,
+    std::ostream* msgs) {
   return laplace_marginal_density(
       poisson_log_likelihood{},
       std::forward_as_tuple(y, y_index, std::forward<Mean>(mean)),

@@ -52,12 +52,12 @@ struct bernoulli_logit_likelihood {
  * \laplace_options
  * \msg_arg
  */
-template <bool propto = false, typename Mean,
-          typename CovarFun, typename CovarArgs, typename OpsTuple>
+template <bool propto = false, typename Mean, typename CovarFun,
+          typename CovarArgs, typename OpsTuple>
 inline auto laplace_marginal_tol_bernoulli_logit_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples, Mean&& mean,
-    CovarFun&& covariance_function, CovarArgs&& covar_args,
-    OpsTuple&& ops, std::ostream* msgs) {
+    CovarFun&& covariance_function, CovarArgs&& covar_args, OpsTuple&& ops,
+    std::ostream* msgs) {
   return laplace_marginal_density(
       bernoulli_logit_likelihood{},
       std::forward_as_tuple(to_vector(y), n_samples, std::forward<Mean>(mean)),

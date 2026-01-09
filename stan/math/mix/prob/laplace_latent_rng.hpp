@@ -29,17 +29,18 @@ namespace math {
  * \rng_arg
  * \msg_arg
  */
-template <typename LLFunc, typename LLArgs,
-          typename CovarFun, typename CovarArgs, typename OpsTuple, typename RNG>
-inline auto laplace_latent_tol_rng(
-    LLFunc&& L_f, LLArgs&& ll_args, CovarFun&& covariance_function,
-    CovarArgs&& covar_args, OpsTuple&& ops, RNG& rng, std::ostream* msgs) {
-  return laplace_base_rng(std::forward<LLFunc>(L_f),
-                          std::forward<LLArgs>(ll_args),
-                          std::forward<CovarFun>(covariance_function),
-                          std::forward<CovarArgs>(covar_args),
-                          internal::tuple_to_laplace_options(std::forward<OpsTuple>(ops)),
-                          rng, msgs);
+template <typename LLFunc, typename LLArgs, typename CovarFun,
+          typename CovarArgs, typename OpsTuple, typename RNG>
+inline auto laplace_latent_tol_rng(LLFunc&& L_f, LLArgs&& ll_args,
+                                   CovarFun&& covariance_function,
+                                   CovarArgs&& covar_args, OpsTuple&& ops,
+                                   RNG& rng, std::ostream* msgs) {
+  return laplace_base_rng(
+      std::forward<LLFunc>(L_f), std::forward<LLArgs>(ll_args),
+      std::forward<CovarFun>(covariance_function),
+      std::forward<CovarArgs>(covar_args),
+      internal::tuple_to_laplace_options(std::forward<OpsTuple>(ops)), rng,
+      msgs);
 }
 
 /**

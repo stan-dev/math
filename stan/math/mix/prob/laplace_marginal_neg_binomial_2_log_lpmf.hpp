@@ -76,8 +76,8 @@ struct neg_binomial_2_log_likelihood {
  * \laplace_options
  * \msg_arg
  */
-template <bool propto = false, typename Eta, typename Mean,
-          typename CovarFun, typename CovarArgs, typename OpsTuple>
+template <bool propto = false, typename Eta, typename Mean, typename CovarFun,
+          typename CovarArgs, typename OpsTuple>
 inline auto laplace_marginal_tol_neg_binomial_2_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& y_index, const Eta& eta,
     Mean&& mean, CovarFun&& covariance_function, CovarArgs&& covar_args,
@@ -170,13 +170,13 @@ struct neg_binomial_2_log_likelihood_summary {
  * \laplace_options
  * \msg_arg
  */
-template <bool propto = false, typename Eta, typename Mean,
-          typename CovarFun, typename CovarArgs, typename OpsTuple>
+template <bool propto = false, typename Eta, typename Mean, typename CovarFun,
+          typename CovarArgs, typename OpsTuple>
 inline auto laplace_marginal_tol_neg_binomial_2_log_summary_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_per_group,
     const std::vector<int>& counts_per_group, const Eta& eta, Mean&& mean,
-    CovarFun&& covariance_function, CovarArgs&& covar_args,
-    OpsTuple&& ops, std::ostream* msgs) {
+    CovarFun&& covariance_function, CovarArgs&& covar_args, OpsTuple&& ops,
+    std::ostream* msgs) {
   return laplace_marginal_density(
       neg_binomial_2_log_likelihood_summary{},
       std::forward_as_tuple(eta, y, n_per_group, counts_per_group,

@@ -27,9 +27,10 @@ namespace math {
  */
 template <bool propto = false, typename LFun, typename LArgs, typename CovarFun,
           typename CovarArgs, typename OpsTuple>
-inline auto laplace_marginal_tol(
-    LFun&& L_f, LArgs&& l_args, CovarFun&& covariance_function,
-    CovarArgs&& covar_args, OpsTuple&& ops,std::ostream* msgs) {
+inline auto laplace_marginal_tol(LFun&& L_f, LArgs&& l_args,
+                                 CovarFun&& covariance_function,
+                                 CovarArgs&& covar_args, OpsTuple&& ops,
+                                 std::ostream* msgs) {
   return laplace_marginal_density(
       std::forward<LFun>(L_f), std::forward<LArgs>(l_args),
       std::forward<CovarFun>(covariance_function),

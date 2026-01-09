@@ -30,20 +30,19 @@ namespace math {
  * \rng_arg
  * \msg_arg
  */
-template <typename Mean, typename CovarFun,
-          typename CovarArgs, typename OpsTuple, typename RNG>
+template <typename Mean, typename CovarFun, typename CovarArgs,
+          typename OpsTuple, typename RNG>
 inline Eigen::VectorXd laplace_latent_tol_poisson_log_rng(
     const std::vector<int>& y, const std::vector<int>& y_index, Mean&& mean,
-    CovarFun&& covariance_function, CovarArgs&& covar_args,
-    OpsTuple&& ops,
+    CovarFun&& covariance_function, CovarArgs&& covar_args, OpsTuple&& ops,
     RNG& rng, std::ostream* msgs) {
   return laplace_base_rng(
       poisson_log_likelihood{},
       std::forward_as_tuple(y, y_index, std::forward<Mean>(mean)),
       std::forward<CovarFun>(covariance_function),
       std::forward<CovarArgs>(covar_args),
-      internal::tuple_to_laplace_options(std::forward<OpsTuple>(ops)),
-      rng, msgs);
+      internal::tuple_to_laplace_options(std::forward<OpsTuple>(ops)), rng,
+      msgs);
 }
 
 /**
