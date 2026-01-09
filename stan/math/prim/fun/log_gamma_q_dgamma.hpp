@@ -8,6 +8,7 @@
 #include <stan/math/prim/fun/gamma_p.hpp>
 #include <stan/math/prim/fun/gamma_q.hpp>
 #include <stan/math/prim/fun/grad_reg_inc_gamma.hpp>
+#include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log1m.hpp>
@@ -41,41 +42,40 @@ namespace internal {
  * @param z Value at which to evaluate
  * @param precision Convergence threshold
  * @param max_steps Maximum number of continued fraction iterations
- * @return log(Q(a,z)) with same type as T_a and T_z
+ * @return log(Q(a,z)) with the return type of T_a and T_z
  */
 template <typename T_a, typename T_z>
-inline auto log_q_gamma_cf(const T_a& a, const T_z& z, double precision = 1e-16,
-                           int max_steps = 250) {
+inline return_type_t<T_a, T_z> log_q_gamma_cf(const T_a& a, const T_z& z,
+                                              double precision = 1e-16,
+                                              int max_steps = 250) {
   using stan::math::lgamma;
   using stan::math::log;
   using stan::math::value_of;
   using std::fabs;
   using T_return = return_type_t<T_a, T_z>;
 
-  const T_return a_ret = a;
-  const T_return z_ret = z;
-  const auto log_prefactor = a_ret * log(z_ret) - z_ret - lgamma(a_ret);
+  const T_return log_prefactor = a * log(z) - z - lgamma(a);
 
-  auto b = z_ret + 1.0 - a_ret;
-  auto C = (fabs(value_of(b)) >= EPSILON) ? b : T_return(EPSILON);
-  auto D = T_return(0.0);
-  auto f = C;
+  T_return b = z + 1.0 - a;
+  T_return C = (fabs(value_of(b)) >= EPSILON) ? b : T_return(EPSILON);
+  T_return D = 0.0;
+  T_return f = C;
 
   for (int i = 1; i <= max_steps; ++i) {
-    auto an = -i * (i - a_ret);
+    T_a an = -i * (i - a);
     b += 2.0;
 
     D = b + an * D;
-    if (fabs(value_of(D)) < EPSILON) {
-      D = T_return(EPSILON);
+    if (fabs(D) < EPSILON) {
+      D = EPSILON;
     }
     C = b + an / C;
-    if (fabs(value_of(C)) < EPSILON) {
-      C = T_return(EPSILON);
+    if (fabs(C) < EPSILON) {
+      C = EPSILON;
     }
 
-    D = 1.0 / D;
-    auto delta = C * D;
+    D = inv(D);
+    T_return delta = C * D;
     f *= delta;
 
     const double delta_m1 = value_of(fabs(value_of(delta) - 1.0));
