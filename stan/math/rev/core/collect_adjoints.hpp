@@ -49,7 +49,7 @@ inline void collect_adjoints(Output& output, Input&& input) {
         } else {
           static_assert(
               sizeof(std::decay_t<output_i_t>*) == 0,
-              "INTERNAL ERROR:(laplace_marginal_lpdf) collect_adjoints was "
+              "INTERNAL ERROR: collect_adjoints was "
               "not able to deduce the actions needed for the given type. "
               "This is an internal error, please report it: "
               "https://github.com/stan-dev/math/issues");
@@ -85,7 +85,7 @@ inline void collect_adjoints(Output&& output, Input&& input) {
         } else {
           static_assert(
               sizeof(std::decay_t<output_i_t>*) == 0,
-              "INTERNAL ERROR:(laplace_marginal_lpdf) collect_adjoints was "
+              "INTERNAL ERROR: collect_adjoints was "
               "not able to deduce the actions needed for the given type. "
               "This is an internal error, please report it: "
               "https://github.com/stan-dev/math/issues");
@@ -106,9 +106,8 @@ template <typename Output, typename Input>
 inline void collect_adjoints(Output&& output, const vari* ret, Input&& input) {
   if constexpr (is_tuple_v<Output>) {
     static_assert(sizeof(std::decay_t<Output>*) == 0,
-                  "INTERNAL ERROR:(laplace_marginal_lpdf) "
-                  "Accumulate Adjoints called on a tuple, but tuples cannot be "
-                  "on the reverse mode stack! "
+                  "INTERNAL ERROR: collect_adjoints was "
+                  "not able to deduce the actions needed for the given type. "
                   "This is an internal error, please report it: "
                   "https://github.com/stan-dev/math/issues");
   } else if constexpr (is_std_vector_v<Output>) {
