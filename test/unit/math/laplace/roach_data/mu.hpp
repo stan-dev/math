@@ -2,7 +2,7 @@
 #include <vector>
 namespace stan::test::laplace::roach {
 
-static const auto mu_raw = std::vector<double>{
+const auto mu_raw = std::vector<double>{
     5.50893,
     5.5827,
     5.34534,
