@@ -104,8 +104,8 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(const T_y& y,
         const T_partials_return Qn = exp(log_Qn);
 
         // Check if we need to fallback to continued fraction
-        bool need_cf_fallback = !std::isfinite(value_of(value_of(log_Qn)))
-                                || Qn <= 0.0;
+        bool need_cf_fallback
+            = !std::isfinite(value_of(value_of(log_Qn))) || Qn <= 0.0;
         if (need_cf_fallback && beta_y > 0.0) {
           auto log_q_result = log_gamma_q_dgamma(alpha_dbl_val, beta_y_dbl);
           log_Qn = log_q_result.log_q;
