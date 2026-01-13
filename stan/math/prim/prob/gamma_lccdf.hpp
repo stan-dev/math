@@ -86,101 +86,69 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(const T_y& y,
     bool use_cf = beta_y > alpha_dbl + 1.0;
     T_partials_return log_Qn;
     [[maybe_unused]] T_partials_return dlogQ_dalpha = 0.0;
-    // Extract double values for the double-only continued fraction path.
-    [[maybe_unused]] const double beta_y_dbl = value_of(value_of(beta_y));
-    [[maybe_unused]] const double alpha_dbl_val = value_of(value_of(alpha_dbl));
 
-    if (use_cf) {
-      if constexpr (!any_fvar && is_autodiff_v<T_shape>) {
-        // var-only: use analytical gradient with double inputs
+    // Branch by autodiff type first, then handle use_cf logic inside each path
+    if constexpr (!any_fvar && is_autodiff_v<T_shape>) {
+      // var-only path: use log_gamma_q_dgamma which computes both log_q
+      // and its gradient analytically with double inputs
+      const double beta_y_dbl = value_of(value_of(beta_y));
+      const double alpha_dbl_val = value_of(value_of(alpha_dbl));
+
+      if (use_cf) {
         auto log_q_result = log_gamma_q_dgamma(alpha_dbl_val, beta_y_dbl);
         log_Qn = log_q_result.log_q;
         dlogQ_dalpha = log_q_result.dlog_q_da;
       } else {
+        const T_partials_return Pn = gamma_p(alpha_dbl, beta_y);
+        log_Qn = log1m(Pn);
+        const T_partials_return Qn = exp(log_Qn);
+
+        // Check if we need to fallback to continued fraction
+        bool need_cf_fallback = !std::isfinite(value_of(value_of(log_Qn)))
+                                || Qn <= 0.0;
+        if (need_cf_fallback && beta_y > 0.0) {
+          auto log_q_result = log_gamma_q_dgamma(alpha_dbl_val, beta_y_dbl);
+          log_Qn = log_q_result.log_q;
+          dlogQ_dalpha = log_q_result.dlog_q_da;
+        } else {
+          dlogQ_dalpha = -grad_reg_lower_inc_gamma(alpha_dbl, beta_y) / Qn;
+        }
+      }
+    } else if constexpr (partials_fvar && is_autodiff_v<T_shape>) {
+      // fvar path: use unit derivative trick to compute gradients
+      auto alpha_unit = alpha_dbl;
+      alpha_unit.d_ = 1;
+      auto beta_unit = beta_y;
+      beta_unit.d_ = 0;
+
+      if (use_cf) {
         log_Qn = internal::log_q_gamma_cf(alpha_dbl, beta_y);
-        if constexpr (is_autodiff_v<T_shape>) {
-          if constexpr (partials_fvar) {
-            auto alpha_unit = alpha_dbl;
-            alpha_unit.d_ = 1;
-            auto beta_unit = beta_y;
-            beta_unit.d_ = 0;
-            auto log_Qn_fvar = internal::log_q_gamma_cf(alpha_unit, beta_unit);
-            dlogQ_dalpha = log_Qn_fvar.d_;
-          } else {
-            const T_partials_return Qn = exp(log_Qn);
-            dlogQ_dalpha
-                = grad_reg_inc_gamma(alpha_dbl, beta_y, tgamma(alpha_dbl),
-                                     digamma(alpha_dbl))
-                  / Qn;
-          }
+        auto log_Qn_fvar = internal::log_q_gamma_cf(alpha_unit, beta_unit);
+        dlogQ_dalpha = log_Qn_fvar.d_;
+      } else {
+        const T_partials_return Pn = gamma_p(alpha_dbl, beta_y);
+        log_Qn = log1m(Pn);
+
+        if (!std::isfinite(value_of(value_of(log_Qn))) && beta_y > 0.0) {
+          // Fallback to continued fraction
+          log_Qn = internal::log_q_gamma_cf(alpha_dbl, beta_y);
+          auto log_Qn_fvar = internal::log_q_gamma_cf(alpha_unit, beta_unit);
+          dlogQ_dalpha = log_Qn_fvar.d_;
+        } else {
+          auto log_Qn_fvar = log1m(gamma_p(alpha_unit, beta_unit));
+          dlogQ_dalpha = log_Qn_fvar.d_;
         }
       }
     } else {
-      const T_partials_return Pn = gamma_p(alpha_dbl, beta_y);
-      log_Qn = log1m(Pn);
+      // No alpha derivative needed (alpha is constant or double-only)
+      if (use_cf) {
+        log_Qn = internal::log_q_gamma_cf(alpha_dbl, beta_y);
+      } else {
+        const T_partials_return Pn = gamma_p(alpha_dbl, beta_y);
+        log_Qn = log1m(Pn);
 
-      if (!std::isfinite(value_of(value_of(log_Qn)))) {
-        use_cf = beta_y > 0.0;
-        if (use_cf) {
-          // Fallback to continued fraction if log1m fails
-          if constexpr (!any_fvar && is_autodiff_v<T_shape>) {
-            auto log_q_result = log_gamma_q_dgamma(alpha_dbl_val, beta_y_dbl);
-            log_Qn = log_q_result.log_q;
-            dlogQ_dalpha = log_q_result.dlog_q_da;
-          } else {
-            log_Qn = internal::log_q_gamma_cf(alpha_dbl, beta_y);
-            if constexpr (is_autodiff_v<T_shape>) {
-              if constexpr (partials_fvar) {
-                auto alpha_unit = alpha_dbl;
-                alpha_unit.d_ = 1;
-                auto beta_unit = beta_y;
-                beta_unit.d_ = 0;
-                auto log_Qn_fvar
-                    = internal::log_q_gamma_cf(alpha_unit, beta_unit);
-                dlogQ_dalpha = log_Qn_fvar.d_;
-              } else {
-                const T_partials_return Qn = exp(log_Qn);
-                dlogQ_dalpha
-                    = grad_reg_inc_gamma(alpha_dbl, beta_y, tgamma(alpha_dbl),
-                                         digamma(alpha_dbl))
-                      / Qn;
-              }
-            }
-          }
-        }
-      }
-
-      if constexpr (is_autodiff_v<T_shape>) {
-        if (!use_cf) {
-          if constexpr (partials_fvar) {
-            auto alpha_unit = alpha_dbl;
-            alpha_unit.d_ = 1;
-            auto beta_unit = beta_y;
-            beta_unit.d_ = 0;
-            auto log_Qn_fvar = log1m(gamma_p(alpha_unit, beta_unit));
-            dlogQ_dalpha = log_Qn_fvar.d_;
-          } else {
-            const T_partials_return Qn = exp(log_Qn);
-            if (Qn > 0.0) {
-              dlogQ_dalpha = -grad_reg_lower_inc_gamma(alpha_dbl, beta_y) / Qn;
-            } else {
-              // Fallback to continued fraction if Q rounds to zero
-              if constexpr (!any_fvar) {
-                auto log_q_result
-                    = log_gamma_q_dgamma(alpha_dbl_val, beta_y_dbl);
-                log_Qn = log_q_result.log_q;
-                dlogQ_dalpha = log_q_result.dlog_q_da;
-              } else {
-                log_Qn = internal::log_q_gamma_cf(alpha_dbl, beta_y);
-                const T_partials_return Qn_cf = exp(log_Qn);
-                dlogQ_dalpha
-                    = grad_reg_inc_gamma(alpha_dbl, beta_y, tgamma(alpha_dbl),
-                                         digamma(alpha_dbl))
-                      / Qn_cf;
-              }
-              use_cf = true;
-            }
-          }
+        if (!std::isfinite(value_of(value_of(log_Qn))) && beta_y > 0.0) {
+          log_Qn = internal::log_q_gamma_cf(alpha_dbl, beta_y);
         }
       }
     }
