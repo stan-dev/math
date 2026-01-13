@@ -1,7 +1,7 @@
 Stan Math Library Release Notes
 
 ======================================================================
-v5.2.0 (6 January 2026)
+v5.2.0 (13 January 2026)
 ======================================================================
 
  - Added the unnormalized CDF and CCDF for the wiener 7-parameter diffusion model. Allows modeling truncated and censored data. (#3042, #3258, #3260, #3263)
