@@ -27,9 +27,8 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_shape, typename T_inv_scale>
-inline return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(const T_y& y,
-                                                            const T_shape& alpha,
-                                                            const T_inv_scale& beta) {
+inline return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(
+    const T_y& y, const T_shape& alpha, const T_inv_scale& beta) {
   using std::exp;
   using std::log;
   using T_partials_return = partials_return_t<T_y, T_shape, T_inv_scale>;
@@ -122,7 +121,8 @@ inline return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(const T_y& y,
 
       if (use_cf) {
         log_Qn = internal::log_q_gamma_cf(alpha_dbl, beta_y);
-        T_partials_return log_Qn_fvar = internal::log_q_gamma_cf(alpha_unit, beta_unit);
+        T_partials_return log_Qn_fvar
+            = internal::log_q_gamma_cf(alpha_unit, beta_unit);
         dlogQ_dalpha = log_Qn_fvar.d_;
       } else {
         const T_partials_return Pn = gamma_p(alpha_dbl, beta_y);
@@ -131,7 +131,8 @@ inline return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(const T_y& y,
         if (!std::isfinite(value_of_rec(log_Qn)) && beta_y > 0.0) {
           // Fallback to continued fraction
           log_Qn = internal::log_q_gamma_cf(alpha_dbl, beta_y);
-          T_partials_return log_Qn_fvar = internal::log_q_gamma_cf(alpha_unit, beta_unit);
+          T_partials_return log_Qn_fvar
+              = internal::log_q_gamma_cf(alpha_unit, beta_unit);
           dlogQ_dalpha = log_Qn_fvar.d_;
         } else {
           T_partials_return log_Qn_fvar = log1m(gamma_p(alpha_unit, beta_unit));
@@ -156,13 +157,15 @@ inline return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(const T_y& y,
     }
     P += log_Qn;
 
-    constexpr bool need_y_beta_deriv = !is_constant_all<T_y, T_inv_scale>::value;
+    constexpr bool need_y_beta_deriv
+        = !is_constant_all<T_y, T_inv_scale>::value;
     if constexpr (is_autodiff_v<T_y> || is_autodiff_v<T_inv_scale>) {
       const T_partials_return log_y = log(y_dbl);
       const T_partials_return alpha_minus_one = fma(alpha_dbl, log_y, -log_y);
 
-      const T_partials_return log_pdf
-        = alpha_dbl * log(beta_dbl) - lgamma(alpha_dbl) + alpha_minus_one - beta_y;
+      const T_partials_return log_pdf = alpha_dbl * log(beta_dbl)
+                                        - lgamma(alpha_dbl) + alpha_minus_one
+                                        - beta_y;
 
       const T_partials_return hazard = exp(log_pdf - log_Qn);  // f/Q
 
