@@ -18,7 +18,7 @@
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/tgamma.hpp>
-#include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/fun/value_of_rec.hpp>
 #include <stan/math/prim/fun/log_gamma_q_dgamma.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
@@ -27,12 +27,12 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_shape, typename T_inv_scale>
-return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(const T_y& y,
-                                                     const T_shape& alpha,
-                                                     const T_inv_scale& beta) {
-  using T_partials_return = partials_return_t<T_y, T_shape, T_inv_scale>;
+inline return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(const T_y& y,
+                                                            const T_shape& alpha,
+                                                            const T_inv_scale& beta) {
   using std::exp;
   using std::log;
+  using T_partials_return = partials_return_t<T_y, T_shape, T_inv_scale>;
   using T_y_ref = ref_type_t<T_y>;
   using T_alpha_ref = ref_type_t<T_shape>;
   using T_beta_ref = ref_type_t<T_inv_scale>;
@@ -58,7 +58,6 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(const T_y& y,
   scalar_seq_view<T_beta_ref> beta_vec(beta_ref);
   const size_t N = max_size(y, alpha, beta);
 
-  constexpr bool need_y_beta_deriv = !is_constant_all<T_y, T_inv_scale>::value;
   constexpr bool any_fvar = is_fvar<scalar_type_t<T_y>>::value
                             || is_fvar<scalar_type_t<T_shape>>::value
                             || is_fvar<scalar_type_t<T_inv_scale>>::value;
@@ -91,8 +90,8 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(const T_y& y,
     if constexpr (!any_fvar && is_autodiff_v<T_shape>) {
       // var-only path: use log_gamma_q_dgamma which computes both log_q
       // and its gradient analytically with double inputs
-      const double beta_y_dbl = value_of(value_of(beta_y));
-      const double alpha_dbl_val = value_of(value_of(alpha_dbl));
+      const double beta_y_dbl = value_of_rec(beta_y);
+      const double alpha_dbl_val = value_of_rec(alpha_dbl);
 
       if (use_cf) {
         auto log_q_result = log_gamma_q_dgamma(alpha_dbl_val, beta_y_dbl);
@@ -105,7 +104,7 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(const T_y& y,
 
         // Check if we need to fallback to continued fraction
         bool need_cf_fallback
-            = !std::isfinite(value_of(value_of(log_Qn))) || Qn <= 0.0;
+            = !std::isfinite(value_of_rec(log_Qn)) || Qn <= 0.0;
         if (need_cf_fallback && beta_y > 0.0) {
           auto log_q_result = log_gamma_q_dgamma(alpha_dbl_val, beta_y_dbl);
           log_Qn = log_q_result.log_q;
@@ -116,26 +115,26 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(const T_y& y,
       }
     } else if constexpr (partials_fvar && is_autodiff_v<T_shape>) {
       // fvar path: use unit derivative trick to compute gradients
-      auto alpha_unit = alpha_dbl;
+      T_partials_return alpha_unit = alpha_dbl;
       alpha_unit.d_ = 1;
-      auto beta_unit = beta_y;
+      T_partials_return beta_unit = beta_y;
       beta_unit.d_ = 0;
 
       if (use_cf) {
         log_Qn = internal::log_q_gamma_cf(alpha_dbl, beta_y);
-        auto log_Qn_fvar = internal::log_q_gamma_cf(alpha_unit, beta_unit);
+        T_partials_return log_Qn_fvar = internal::log_q_gamma_cf(alpha_unit, beta_unit);
         dlogQ_dalpha = log_Qn_fvar.d_;
       } else {
         const T_partials_return Pn = gamma_p(alpha_dbl, beta_y);
         log_Qn = log1m(Pn);
 
-        if (!std::isfinite(value_of(value_of(log_Qn))) && beta_y > 0.0) {
+        if (!std::isfinite(value_of_rec(log_Qn)) && beta_y > 0.0) {
           // Fallback to continued fraction
           log_Qn = internal::log_q_gamma_cf(alpha_dbl, beta_y);
-          auto log_Qn_fvar = internal::log_q_gamma_cf(alpha_unit, beta_unit);
+          T_partials_return log_Qn_fvar = internal::log_q_gamma_cf(alpha_unit, beta_unit);
           dlogQ_dalpha = log_Qn_fvar.d_;
         } else {
-          auto log_Qn_fvar = log1m(gamma_p(alpha_unit, beta_unit));
+          T_partials_return log_Qn_fvar = log1m(gamma_p(alpha_unit, beta_unit));
           dlogQ_dalpha = log_Qn_fvar.d_;
         }
       }
@@ -147,24 +146,23 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(const T_y& y,
         const T_partials_return Pn = gamma_p(alpha_dbl, beta_y);
         log_Qn = log1m(Pn);
 
-        if (!std::isfinite(value_of(value_of(log_Qn))) && beta_y > 0.0) {
+        if (!std::isfinite(value_of_rec(log_Qn)) && beta_y > 0.0) {
           log_Qn = internal::log_q_gamma_cf(alpha_dbl, beta_y);
         }
       }
     }
-    if (!std::isfinite(value_of(value_of(log_Qn)))) {
+    if (!std::isfinite(value_of_rec(log_Qn))) {
       return ops_partials.build(negative_infinity());
     }
     P += log_Qn;
 
-    if constexpr (need_y_beta_deriv) {
+    constexpr bool need_y_beta_deriv = !is_constant_all<T_y, T_inv_scale>::value;
+    if constexpr (is_autodiff_v<T_y> || is_autodiff_v<T_inv_scale>) {
       const T_partials_return log_y = log(y_dbl);
-      const T_partials_return log_beta = log(beta_dbl);
-      const T_partials_return lgamma_alpha = lgamma(alpha_dbl);
       const T_partials_return alpha_minus_one = fma(alpha_dbl, log_y, -log_y);
 
       const T_partials_return log_pdf
-          = alpha_dbl * log_beta - lgamma_alpha + alpha_minus_one - beta_y;
+        = alpha_dbl * log(beta_dbl) - lgamma(alpha_dbl) + alpha_minus_one - beta_y;
 
       const T_partials_return hazard = exp(log_pdf - log_Qn);  // f/Q
 
