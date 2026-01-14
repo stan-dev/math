@@ -157,8 +157,6 @@ inline return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(
     }
     P += log_Qn;
 
-    constexpr bool need_y_beta_deriv
-        = !is_constant_all<T_y, T_inv_scale>::value;
     if constexpr (is_autodiff_v<T_y> || is_autodiff_v<T_inv_scale>) {
       const T_partials_return log_y = log(y_dbl);
       const T_partials_return alpha_minus_one = fma(alpha_dbl, log_y, -log_y);
