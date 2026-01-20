@@ -81,7 +81,7 @@ inline double barzilai_borwein_step_size(const Eigen::VectorXd& s,
   // Basic validity checks
   constexpr double eps = 1e-16;
   if (!(std::isfinite(sty) && std::isfinite(sts) && std::isfinite(yty))
-      || sts <= eps || yty <= eps || sty <= eps || last_backtracks == 99) {
+      || sts <= eps || yty <= eps || sty <= eps || last_backtracks == -1) {
     return safe_fallback();
   }
 

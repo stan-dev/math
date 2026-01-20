@@ -109,10 +109,10 @@ namespace internal {
  * The routine assumes a 1-D bracket [x_left, x_right], together with function
  * values and directional derivatives at both endpoints. Internally it:
  *
- *   1. Normalizes the interval to s ∈ [0, 1] via
- *        x(s) = x_left + s * (x_right - x_left),
+ *   1. Normalizes the interval to $s \in [0, 1]$ via
+ *        `x(s) = x_left + s * (x_right - x_left)`,
  *      and builds a cubic Hermite model F(s) that matches
- *      {f_left, df_left} at s = 0 and {f_right, df_right} at s = 1.
+ *      `{f_left, df_left}` at `s = 0` and `{f_right, df_right}` at `s = 1`.
  *
  *   2. Initializes the best candidate at the bisection point s = 0.5.
  *
@@ -128,8 +128,8 @@ namespace internal {
  *   5. Evaluates all admissible model-based candidates and keeps the one
  *      with the largest F(s). All such candidates are restricted to a
  *      trimmed interior
- *        s ∈ [edge_guard, 1 - edge_guard],
- *      i.e. x ∈ [x_left + edge_guard * width, x_right - edge_guard * width].
+ *        $s \in [edge_guard, 1 - edge_guard]$,
+ *      i.e. $x \in [x_left + edge_guard * width, x_right - edge_guard * width]$.
  *
  *   6. If the bracket is invalid (x_right <= x_left), any input is non-finite,
  *      or the interval is too tiny to be useful, it falls back to pure
@@ -183,7 +183,7 @@ template <typename Scalar>
   const Scalar df_left_s = width * df_left;    // F'(0)
   const Scalar df_right_s = width * df_right;  // F'(1)
 
-  // Cubic Hermite coefficients in s ∈ [0,1]:
+  // Cubic Hermite coefficients in $s \in [0,1]$:
   //   F(s) = a3*s^3 + a2*s^2 + a1*s + a0
   // with F(0) = f_left, F'(0) = df_left_s, F(1) = f_right, F'(1) = df_right_s.
   const Scalar a0 = f_left;
@@ -201,11 +201,8 @@ template <typename Scalar>
   // edge_guard].
   constexpr Scalar edge_guard = Scalar(1e-9);
 
-  struct Candidate {
-    Scalar s_;
-    Scalar value_;
-  };
-  Candidate best{0.5, eval(0.5)};  // Start from bisection.
+  Scalar best_s = 0.5;
+  Scalar best_val = eval(0.5);
   auto consider = [&](Scalar s) {
     if (!std::isfinite(s)) {
       return;
@@ -214,9 +211,9 @@ template <typename Scalar>
       return;
     }
     const Scalar value = eval(s);
-    if (value > best.value_) {
-      best.s_ = s;
-      best.value_ = value;
+    if (value > best_val) {
+      best_s = s;
+      best_val = value;
     }
   };
 
@@ -281,8 +278,7 @@ template <typename Scalar>
     }
   }
 
-  const Scalar s_best = best.s_;
-  return x_left + s_best * width;
+  return x_left + best_s * width;
 }
 
 template <typename Eval, typename Options>
@@ -351,7 +347,7 @@ enum class WolfeReturn : uint8_t {
 struct WolfeStatus {
   // total updates/evaluations
   int num_evals_{0};
-  int num_backtracks_{0};
+  int num_backtracks_{-1};
   WolfeReturn stop_{WolfeReturn::Fail};
   // Whether a valid new step was found
   bool accept_{false};
@@ -528,6 +524,13 @@ struct WolfeInfo {
         p_(Eigen::VectorXd::Zero(n)),
         init_dir_(0.0) {}
 
+  inline void flip_direction() {
+    if (this->init_dir_ < 0) {
+      this->p_ *= -1;
+      this->init_dir_ *= -1;
+    }
+  }
+
   inline auto& curr() & { return curr_; }
   inline const auto& curr() const& { return curr_; }
   inline auto&& curr() && { return std::move(curr_); }
@@ -557,9 +560,6 @@ struct WolfeInfo {
  * @tparam Eval Evaluation record containing alpha/obj/dir.
  * @tparam P Search direction type passed to `update`.
  * @tparam Backoff Callable that shrinks `eval.alpha()` and returns a bool.
- * @tparam IsValid Callable that returns true when the evaluation is valid. When
- * `Update` is non-void, must accept 2 arguments whereh the second argument is
- * the return of `Update`.
  *
  * @param[in] update Evaluator invoked as `update(curr, prev, eval, p)`.
  * @param[in,out] proposal Proposed step forwarded to `update`.
@@ -569,36 +569,21 @@ struct WolfeInfo {
  * @param[in] p Search direction forwarded to `update`.
  * @param[in] backoff Shrinks alpha and returns whether another retry should
  * occur.
- * @param[in] is_valid Checks whether the evaluation is valid.
  *
  * @return For void updates, returns void. Otherwise returns the value from the
  *         first valid evaluation.
  */
 template <typename Update, typename Proposal, typename Curr, typename Prev,
-          typename Eval, typename P, typename Backoff, typename IsValid>
+          typename Eval, typename P, typename Backoff>
 inline auto retry_evaluate(Update&& update, Proposal&& proposal, Curr&& curr,
-                           Prev&& prev, Eval& eval, P&& p, Backoff&& backoff,
-                           IsValid&& is_valid) {
-  if constexpr (std::is_void_v<std::invoke_result_t<Update&, Proposal, Curr,
-                                                    Prev, Eval&, P>>) {
-    while (true) {
-      update(proposal, curr, prev, eval, p);
-      if (is_valid(eval)) {
-        return;
-      }
-      if (!backoff(eval)) {
-        return;
-      }
+                           Prev&& prev, Eval& eval, P&& p, Backoff&& backoff) {
+  while (true) {
+    auto res = update(proposal, curr, prev, eval, p);
+    if (res) {
+      return res;
     }
-  } else {
-    while (true) {
-      auto res = update(proposal, curr, prev, eval, p);
-      if (is_valid(eval, res)) {
-        return res;
-      }
-      if (!backoff(eval)) {
-        return res;
-      }
+    if (!backoff(eval)) {
+      return res;
     }
   }
 }
@@ -884,15 +869,13 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
     return check_wolfe(eval, prev, opt);
   };
   int total_updates = 0;
-  auto assign_step
-      = [](WolfeData& out, WolfeData& buf, auto&& e) { out.update(buf, e); };
   auto eval_finite = [](const Eval& e, const WolfeData& state) {
     return std::isfinite(e.obj()) && std::isfinite(e.dir())
            && state.theta().allFinite() && state.theta_grad().allFinite();
   };
   Eval best = low;  // keep the best Armijo-OK in case strong-Wolfe fails
   auto update_with_tick = [&total_updates, &opt, &best, &update_fun,
-                           &assign_step, &wolfe_ok,
+                           &wolfe_ok,
                            &armijo_ok](auto&& proposal, auto&& curr,
                                        auto&& prev, Eval& e, auto&& p) {
     const bool over_budget = total_updates > opt.max_iterations;
@@ -900,7 +883,7 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
       // Soft budget: stop evaluating new trial points once exceeded.
       if (armijo_ok(best)) {
         update_fun(proposal, curr, prev, best, p);
-        assign_step(curr, proposal, best);
+        curr.update(proposal, best);
         if (wolfe_ok(best)) {
           return WolfeStatus{WolfeReturn::Wolfe, total_updates, 0, true};
         } else {
@@ -921,16 +904,7 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
   bool high_has_eval = true;
   // Initial check for numerical trouble
   {
-    auto backoff = [&opt](Eval& eval) {
-      eval.alpha() *= opt.tau;
-      return eval.alpha() >= opt.min_alpha;
-    };
-    auto is_valid = [&](const Eval& eval, const WolfeStatus& status) {
-      return status.stop_ != WolfeReturn::Continue
-             || eval_finite(eval, scratch);
-    };
-    wolfe_check = retry_evaluate(update_with_tick, scratch, curr, prev, high, p,
-                                 backoff, is_valid);
+    wolfe_check = update_with_tick(scratch, curr, prev, high, p);
     if (wolfe_check.stop_ != WolfeReturn::Continue) {
       return wolfe_check;
     }
@@ -958,7 +932,7 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
         if (wolfe_check.stop_ != WolfeReturn::Continue) {
           return wolfe_check;
         }
-        assign_step(curr, scratch, best);
+        curr.update(scratch, best);
         return WolfeStatus{WolfeReturn::Wolfe, total_updates, 0, true};
       } else {
         if (best.obj() < high.obj()) {
@@ -1000,7 +974,7 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
     const bool armijo = armijo_ok(high);
     const bool wolfe = wolfe_ok(high);
     if (armijo && wolfe) {  // [1]
-      assign_step(curr, scratch, high);
+      curr.update(scratch, high);
       return WolfeStatus{WolfeReturn::Wolfe, total_updates, num_backtracks,
                          true};
     }
@@ -1059,7 +1033,7 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
   auto check_b = check_bounds(high);
   if (check_b.stop_ != WolfeReturn::Continue) {
     if (check_b.accept_) {
-      assign_step(curr, scratch, high);
+      curr.update(scratch, high);
     }
     return check_b;
   }
@@ -1084,17 +1058,7 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
       break;
     }
     Eval mid{alpha_mid, 0.0, 0.0};
-
-    auto backoff = [&](Eval& eval) {
-      eval.alpha() = low.alpha() + opt.tau * (eval.alpha() - low.alpha());
-      return eval.alpha() > opt.min_alpha;
-    };
-    auto is_valid = [&](const Eval& eval, const WolfeStatus& status) {
-      return status.stop_ != WolfeReturn::Continue
-             || eval_finite(eval, scratch);
-    };
-    auto wolfe_check = retry_evaluate(update_with_tick, scratch, curr, prev,
-                                      mid, p, backoff, is_valid);
+    auto wolfe_check = update_with_tick(scratch, curr, prev, mid, p);
     if (wolfe_check.stop_ != WolfeReturn::Continue) {
       return wolfe_check;
     }
@@ -1103,7 +1067,7 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
                          num_backtracks, false};
     }
     if (armijo_ok(mid) && wolfe_ok(mid)) {
-      assign_step(curr, scratch, mid);
+      curr.update(scratch, mid);
       return WolfeStatus{WolfeReturn::Wolfe, total_updates, num_backtracks,
                          true};
     }
@@ -1126,7 +1090,7 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
     auto bounds_check = check_bounds(mid);
     if (bounds_check.stop_ != WolfeReturn::Continue) {
       if (bounds_check.accept_) {
-        assign_step(curr, scratch, mid);
+        curr.update(scratch, mid);
       }
       return bounds_check;
     }
@@ -1136,7 +1100,7 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
   const bool armijo_ok_best = armijo_ok(best);
   if (armijo_ok_best) {
     wolfe_check = update_with_tick(scratch, curr, prev, best, p);
-    assign_step(curr, scratch, best);
+    curr.update(scratch, best);
     return WolfeStatus{WolfeReturn::Armijo, total_updates, num_backtracks,
                        true};
   } else {

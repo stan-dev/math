@@ -109,11 +109,6 @@ inline auto generate_laplace_options(int theta_0_size) {
 
 namespace internal {
 
-template <std::size_t N, typename Tuple, typename CheckType>
-inline constexpr bool is_tuple_type_v
-    = std::is_same_v<std::decay_t<CheckType>,
-                     std::tuple_element_t<N, std::decay_t<Tuple>>>;
-
 template <typename Ops>
 inline constexpr auto tuple_to_laplace_options(Ops&& ops) {
   if constexpr (is_tuple_v<Ops>) {
@@ -124,38 +119,38 @@ inline constexpr auto tuple_to_laplace_options(Ops&& ops) {
           "expected to be an Eigen vector of dynamic size representing the "
           "initial theta_0.");
     }
-    if constexpr (!is_tuple_type_v<1, Ops, double>) {
+    if constexpr (!stan::is_inner_tuple_type_v<1, Ops, double>) {
       static_assert(
           sizeof(std::decay_t<Ops>*) == 0,
           "ERROR:(laplace_marginal_lpdf) The second laplace argument is "
           "expected to be a double representing the tolerance.");
     }
-    if constexpr (!is_tuple_type_v<2, Ops, int>) {
+    if constexpr (!stan::is_inner_tuple_type_v<2, Ops, int>) {
       static_assert(
           sizeof(std::decay_t<Ops>*) == 0,
           "ERROR:(laplace_marginal_lpdf) The third laplace argument is "
           "expected to be an int representing the maximum number of steps.");
     }
-    if constexpr (!is_tuple_type_v<3, Ops, int>) {
+    if constexpr (!stan::is_inner_tuple_type_v<3, Ops, int>) {
       static_assert(
           sizeof(std::decay_t<Ops>*) == 0,
           "ERROR:(laplace_marginal_lpdf) The fourth laplace argument is "
           "expected to be an int representing the solver.");
     }
-    if constexpr (!is_tuple_type_v<4, Ops, int>) {
+    if constexpr (!stan::is_inner_tuple_type_v<4, Ops, int>) {
       static_assert(
           sizeof(std::decay_t<Ops>*) == 0,
           "ERROR:(laplace_marginal_lpdf) The fifth laplace argument is "
           "expected to be an int representing the hessian block size.");
     }
-    if constexpr (!is_tuple_type_v<5, Ops, int>) {
+    if constexpr (!stan::is_inner_tuple_type_v<5, Ops, int>) {
       static_assert(
           sizeof(std::decay_t<Ops>*) == 0,
           "ERROR:(laplace_marginal_lpdf) The sixth laplace argument is "
           "expected to be an int representing the max steps line search.");
     }
-    if constexpr (!(is_tuple_type_v<6, Ops,
-                                    int> || is_tuple_type_v<6, Ops, bool>)) {
+    constexpr bool is_fallthrough = stan::is_inner_tuple_type_v<6, Ops, int> || stan::is_inner_tuple_type_v<6, Ops, bool>;
+    if constexpr (!is_fallthrough) {
       static_assert(
           sizeof(std::decay_t<Ops>*) == 0,
           "ERROR:(laplace_marginal_lpdf) The seventh laplace argument is "
@@ -288,115 +283,6 @@ inline void block_matrix_sqrt(WRootMat& W_root,
 }
 
 /**
- * @brief Performs a Cholesky decomposition on a block diagonal matrix.
- * @tparam WRootMat A type inheriting from `Eigen::EigenBase`.
- * @param[out] W_root The output matrix to store the per-block factor.
- * @param W The input block diagonal matrix.
- * @param block_size The size of each block in the block diagonal matrix.
- *
- * @note This helper is currently unused in the Laplace solvers in this file.
- */
-template <typename WRootMat>
-inline void block_matrix_chol_L(WRootMat& W_root,
-                                const Eigen::SparseMatrix<double>& W,
-                                const Eigen::Index block_size) {
-  int n_block = W.cols() / block_size;
-  Eigen::MatrixXd local_block(block_size, block_size);
-  Eigen::MatrixXd local_block_sqrt(block_size, block_size);
-  Eigen::MatrixXd sqrt_t_mat = Eigen::MatrixXd::Zero(block_size, block_size);
-  // No block operation available for sparse matrices, so we have to loop
-  // See https://eigen.tuxfamily.org/dox/group__TutorialSparse.html#title7
-  for (int i = 0; i < n_block; i++) {
-    sqrt_t_mat.setZero();
-    local_block
-        = W.block(i * block_size, i * block_size, block_size, block_size);
-    if (Eigen::isnan(local_block.array()).any()) {
-      throw std::domain_error(
-          std::string("Error in block_matrix_chol_L: "
-                      "NaNs detected in block diagonal starting at (")
-          + std::to_string(i) + ", " + std::to_string(i) + ")");
-    }
-    try {
-      // Compute square root of T
-      Eigen::LLT<Eigen::Ref<Eigen::MatrixXd>> llt(local_block);
-      if (llt.info() != Eigen::Success) {
-        throw std::runtime_error("Cholesky failed on block "
-                                 + std::to_string(i));
-      }
-      const auto Lb = llt.matrixL();
-      for (int k = 0; k < block_size; k++) {
-        for (int j = k; j < block_size; j++) {
-          W_root.coeffRef(i * block_size + j, i * block_size + k) = Lb(j, k);
-        }
-      }
-    } catch (const std::exception& e) {
-      // As a backup do the schur decomposition for this block diagonal
-      local_block
-          = W.block(i * block_size, i * block_size, block_size, block_size);
-      // Issue here, sqrt is done over T of the complex schur
-      Eigen::RealSchur<Eigen::MatrixXd> schurOfA(local_block);
-      // Compute Schur decomposition of arg
-      const auto& t_mat = schurOfA.matrixT();
-      const auto& u_mat = schurOfA.matrixU();
-      // Check if diagonal of schur is not positive
-      if ((t_mat.diagonal().array() < 0).any()) {
-        throw std::domain_error(
-            std::string("Error in block_matrix_chol_L: "
-                        "values less than 0 detected in block diagonal's schur "
-                        "decomposition starting at (")
-            + std::to_string(i) + ", " + std::to_string(i) + ")");
-      }
-      try {
-        // Compute square root of T
-        Eigen::matrix_sqrt_quasi_triangular(t_mat, sqrt_t_mat);
-        // Compute square root of arg
-        local_block_sqrt.noalias() = u_mat * sqrt_t_mat * u_mat.adjoint();
-      } catch (const std::exception& e) {
-        throw std::domain_error(
-            "Error in block_matrix_chol_L: "
-            "The matrix is not positive definite");
-      }
-      for (int k = 0; k < block_size; k++) {
-        for (int j = 0; j < block_size; j++) {
-          W_root.coeffRef(i * block_size + j, i * block_size + k)
-              = local_block_sqrt(j, k);
-        }
-      }
-    }
-  }
-}
-
-/**
- * Throws an error if the parameter contains NaN or Inf values.
- * @tparam NameStr Type of the name string, e.g. `std::string` or `char*`.
- * @tparam ParamStr Type of the parameter string, e.g. `std::string` or `char*`.
- * @tparam Param Type of the parameter such as a vector, matrix, or scalar.
- * @param name_str Name of the function or context where the error occurred.
- * @param param_str Name of the parameter that contains NaN or Inf values.
- * @param param The parameter to check for NaN or Inf values.
- */
-template <typename NameStr, typename ParamStr, typename Param>
-inline STAN_COLD_PATH void throw_nan(NameStr&& name_str, ParamStr&& param_str,
-                                     Param&& param) {
-  std::string msg = std::string("Error in ") + name_str + ": "
-                    + std::string(param_str) + " contains NaN values";
-  if ((param.array().isNaN() || !param.array().isFinite()).all()) {
-    msg += " for all values.";
-    throw std::domain_error(msg);
-  }
-  msg += " at indices [";
-  for (int i = 0; i < param.size(); ++i) {
-    if (std::isnan(param(i)) || std::isinf(param(i))) {
-      msg += std::to_string(i) + ", ";
-    }
-  }
-  msg.pop_back();
-  msg.pop_back();
-  msg += "].";
-  throw std::domain_error(msg);
-}
-
-/**
  * Validates the options for the Laplace approximation.
  *
  * @tparam InitTheta Whether an initial theta is provided
@@ -494,7 +380,7 @@ struct NewtonState {
         b(theta_size),
         B(theta_size, theta_size),
         prev_g(theta_size) {
-    wolfe_status.num_backtracks_ = 99;  // Safe initial value for BB step
+    wolfe_status.num_backtracks_ = -1;  // Safe initial value for BB step
   }
 
   /**
@@ -521,7 +407,35 @@ struct NewtonState {
    */
   const auto& prev() const& { return wolfe_info.prev_; }
   auto&& prev() && { return std::move(wolfe_info).prev(); }
+  template <typename Options>
+  inline void update_next_step(const Options& options) {
+    this->prev().update(this->curr());
+    this->curr().alpha() = std::clamp(this->curr().alpha(), 0.0, options.line_search.max_alpha);
+
+  }
 };
+
+template <typename LLT, typename B_t>
+inline void llt_with_jitter(LLT& llt_B, B_t& B, double min_jitter = 1e-10, double max_jitter = 1e-5) {
+    // 3. Factorize B with jittering fallback
+    llt_B.compute(B);
+    if (llt_B.info() != Eigen::Success) {
+      double jitter_try = min_jitter;
+      for (; jitter_try < max_jitter; jitter_try *= 10) {
+        B.diagonal().array() += jitter_try;
+        llt_B.compute(B);
+        if (llt_B.info() == Eigen::Success) {
+          break;
+        }
+      }
+      if (llt_B.info() != Eigen::Success) {
+        throw std::domain_error(
+            "laplace_marginal_density: Cholesky (Diag) failed");
+      }
+    }
+
+}
+
 
 /**
  * @brief Solver Policy 1 (Diagonal): Cholesky decomposition using W.
@@ -594,22 +508,7 @@ struct CholeskyWSolverDiag {
           + W_r_diag.asDiagonal() * covariance * W_r_diag.asDiagonal();
 
     // 3. Factorize B with jittering fallback
-    llt_B.compute(state.B);
-    if (llt_B.info() != Eigen::Success) {
-      double jitter_try = 1e-10;
-      for (; jitter_try < 1e-5; jitter_try *= 10) {
-        state.B.diagonal().array() += jitter_try;
-        llt_B.compute(state.B);
-        if (llt_B.info() == Eigen::Success) {
-          break;
-        }
-      }
-      if (llt_B.info() != Eigen::Success) {
-        throw std::domain_error(
-            "laplace_marginal_density: Cholesky (Diag) failed");
-      }
-    }
-
+    llt_with_jitter(llt_B, state.B);
     // 4. Solve for curr.a
     state.b.noalias() = (W_diag.array() * state.prev().theta().array()).matrix()
                         + state.prev().theta_grad();
@@ -740,21 +639,7 @@ struct CholeskyWSolverBlock {
                         + W_r * (covariance * W_r);
 
     // 4. Factorize B with jittering fallback
-    llt_B.compute(state.B);
-    if (llt_B.info() != Eigen::Success) {
-      double jitter_try = 1e-10;
-      for (; jitter_try < 1e-5; jitter_try *= 10) {
-        state.B.diagonal().array() += jitter_try;
-        llt_B.compute(state.B);
-        if (llt_B.info() == Eigen::Success) {
-          break;
-        }
-      }
-      if (llt_B.info() != Eigen::Success) {
-        throw std::domain_error(
-            "laplace_marginal_density: Cholesky (Block) failed");
-      }
-    }
+    llt_with_jitter(llt_B, state.B);
 
     // 5. Solve for curr.a
     state.b.noalias()
@@ -817,9 +702,6 @@ struct CholeskyKSolver {
   /** @brief Cholesky factorization of B = I + K_root^T * W * K_root */
   Eigen::LLT<Eigen::MatrixXd> llt_B;
 
-  /** @brief Unused (legacy). */
-  bool K_initialized = false;
-
   template <typename NewtonStateT, typename CovarMat>
   CholeskyKSolver(const NewtonStateT& state, const CovarMat& covariance)
       : K_root(0, 0), W_full(0, 0), llt_B() {
@@ -867,21 +749,7 @@ struct CholeskyKSolver {
                         + K_root.transpose() * (W_full * K_root);
 
     // 3. Factorize B with jittering fallback
-    llt_B.compute(state.B);
-    if (llt_B.info() != Eigen::Success) {
-      double jitter_try = 1e-10;
-      for (; jitter_try < 1e-5; jitter_try *= 10) {
-        state.B.diagonal().array() += jitter_try;
-        llt_B.compute(state.B);
-        if (llt_B.info() == Eigen::Success) {
-          break;
-        }
-      }
-      if (llt_B.info() != Eigen::Success) {
-        throw std::domain_error(
-            "laplace_marginal_density: Cholesky (K) failed");
-      }
-    }
+    llt_with_jitter(llt_B, state.B);
 
     // 4. Solve for curr.a
     state.b.noalias()
@@ -1029,7 +897,6 @@ struct LUSolver {
  * @tparam LLTupleArgsT tuple of additional args for LLFunT
  * @tparam CovarMatT Type of the covariance matrix
  * @tparam UpdateLineSearch Callable to update line search state
- * @tparam SetNextIter Callable to set next iteration's theta
  * @tparam ThrowOverstep Callable to throw on max iterations exceeded
  * @param[in,out] solver The solver policy instance
  * @param[in,out] state Shared Newton optimization state
@@ -1046,15 +913,12 @@ struct LUSolver {
  */
 template <typename SolverPolicy, typename NewtonStateT, typename OptionsT,
           typename LLFunT, typename LLTupleArgsT, typename CovarMatT,
-          typename UpdateLineSearch, typename SetNextIter,
-          typename ThrowOverstep>
+          typename UpdateLineSearch>
 inline auto run_newton_loop(SolverPolicy& solver, NewtonStateT& state,
                             const OptionsT& options, Eigen::Index& step_iter,
                             const LLFunT& ll_fun, const LLTupleArgsT& ll_args,
                             const CovarMatT& covariance,
                             UpdateLineSearch&& update_line_search,
-                            SetNextIter&& set_next_iter,
-                            ThrowOverstep&& throw_overstep,
                             std::ostream* msgs) {
   bool finish_update = false;
   for (; step_iter <= options.max_num_steps; step_iter++) {
@@ -1069,15 +933,18 @@ inline auto run_newton_loop(SolverPolicy& solver, NewtonStateT& state,
         // Do one final loop with exact wolfe conditions
         state.final_loop = true;
         // NOTE: Swapping here so we need to swap prev and curr later
-        set_next_iter(state.curr(), state.prev());
+        state.update_next_step(options);
         continue;
       }
       return solver.build_result(state, solver.compute_log_determinant());
     } else {
-      set_next_iter(state.curr(), state.prev());
+      state.update_next_step(options);
     }
   }
-  throw_overstep(options.max_num_steps);
+  if (msgs) {
+    (*msgs) << std::string("WARNING(laplace_marginal_density): max number of iterations: ")
+           + std::to_string(options.max_num_steps) + " exceeded.";
+  }
   return solver.build_result(state, solver.compute_log_determinant());
 }
 
@@ -1099,16 +966,17 @@ inline void log_solver_fallback(const bool allow_fallthrough,
                                 const std::exception& e) {
   // Build once so we don't interleave with other logs.
   std::ostringstream os;
-  os << "[" << context << "] WARNING: solver fallback\n"
+  std::string msg_type = allow_fallthrough ? "WARNING" : "ERROR";
+  os << "[" << context << "] " << msg_type << ": solver fallback\n"
      << "  " << std::left << std::setw(12) << "iteration:" << iter << "\n"
      << "  " << std::left << std::setw(12) << "failed:" << failed_solver << "\n"
      << "  " << std::left << std::setw(12) << "reason:" << e.what() << "\n"
      << "  " << std::left << std::setw(12) << "action:"
      << "trying " << next_solver << "\n";
-  if (!allow_fallthrough) {
-    throw std::domain_error(std::string("[") + std::string(context) + "]");
-  } else if (msgs) {
+  if (allow_fallthrough) {
     (*msgs) << os.str();
+  } else if (msgs) {
+    throw std::domain_error(std::string("[") + std::string(context) + "]");
   }
 }
 
@@ -1174,11 +1042,6 @@ inline auto laplace_marginal_density_est(
 
   const Eigen::Index theta_size = covariance.rows();
 
-  auto throw_overstep = [](const auto max_num_steps) STAN_COLD_PATH {
-    throw std::domain_error(
-        std::string("laplace_marginal_density: max number of iterations: ")
-        + std::to_string(max_num_steps) + " exceeded.");
-  };
   // Wolfe optimizes over the latent 'a' space
   auto obj_fun = [&ll_fun, &ll_args, &msgs](const Eigen::VectorXd& a_val,
                                             auto&& theta_val) -> double {
@@ -1197,53 +1060,46 @@ inline auto laplace_marginal_density_est(
     }
   }();
   internal::NewtonState state(theta_size, obj_fun, theta_grad_f, theta_init);
-  auto& wolfe_info = state.wolfe_info;
-  auto& wolfe_status = state.wolfe_status;
-  auto& curr = state.curr();
-  auto& prev = state.prev();
   // 'a' gradient
   auto grad_fun = [&covariance](auto&& step) {
     return -covariance * step.a() + covariance * step.theta_grad();
   };
-  auto update_step = [&covariance, &obj_fun, &theta_grad_f, &grad_fun](
-                         auto& proposal, auto&& /* curr */, auto&& prev,
-                         auto& eval_in, auto&& p) {
-    proposal.a() = prev.a() + eval_in.alpha() * p;
-    proposal.theta().noalias() = covariance * proposal.a();
-    proposal.theta_grad() = theta_grad_f(proposal.theta());
-    eval_in.obj() = obj_fun(proposal.a(), proposal.theta());
-    eval_in.dir() = grad_fun(proposal).dot(p);
-  };
-  auto update_try = [&update_step](auto&& proposal, auto&& curr_ref,
-                                   auto&& prev_ref, auto& eval, auto&& p) {
-    try {
-      update_step(proposal, curr_ref, prev_ref, eval, p);
-      return std::isfinite(eval.obj()) && std::isfinite(eval.dir());
-    } catch (const std::exception&) {
-      return false;
-    }
-  };
-  auto backoff = [&options](auto& eval) {
-    eval.alpha() *= options.line_search.tau;
-    return eval.alpha() > options.line_search.min_alpha;
-  };
-  auto is_valid = [](const auto& /* eval */, bool ok) { return ok; };
-  auto update_line_search = [&grad_fun, &update_step, &options, &msgs, &state,
-                             &backoff, &update_try,
-                             &is_valid](auto&& wolfe_status, auto&& wolfe_info,
-                                        auto&& curr, auto&& prev) {
+  auto update_fun = [&covariance, &obj_fun, &theta_grad_f, &grad_fun, &options]() {
+    auto update_step = [&covariance, &obj_fun, &theta_grad_f, &grad_fun](
+        auto& proposal, auto&& /* curr */, auto&& prev, auto& eval_in,
+        auto&& p) {
+      try {
+        proposal.a() = prev.a() + eval_in.alpha() * p;
+        proposal.theta().noalias() = covariance * proposal.a();
+        proposal.theta_grad() = theta_grad_f(proposal.theta());
+        eval_in.obj() = obj_fun(proposal.a(), proposal.theta());
+        eval_in.dir() = grad_fun(proposal).dot(p);
+        return std::isfinite(eval_in.obj()) && std::isfinite(eval_in.dir());
+      } catch (const std::exception&) {
+        return false;
+      }
+    };
+    auto backoff = [&options](auto& eval) {
+      eval.alpha() *= options.line_search.tau;
+      return eval.alpha() > options.line_search.min_alpha;
+    };
+    return [update_step_ = std::move(update_step), backoff_ = std::move(backoff)](
+        auto& proposal, auto&& curr , auto&& prev, auto& eval_in,
+        auto&& p) {
+          return internal::retry_evaluate(update_step_, proposal, curr, prev, eval_in,
+                                           p, backoff_);
+        };
+  }();
+  auto update_line_search = [&grad_fun, &update_fun, &options, &msgs, &state](
+    auto&& wolfe_status, auto&& wolfe_info, auto&& curr, auto&& prev) {
     wolfe_info.p_ = curr.a() - prev.a();
     state.prev_g.noalias() = grad_fun(prev);
     wolfe_info.init_dir_ = state.prev_g.dot(wolfe_info.p_);
     // Flip direction if not ascending
-    if (wolfe_info.init_dir_ < 0) {
-      wolfe_info.p_ = -wolfe_info.p_;
-      wolfe_info.init_dir_ = -wolfe_info.init_dir_;
-    }
+    wolfe_info.flip_direction();
     auto&& scratch = wolfe_info.scratch_;
     scratch.alpha() = 1.0;
-    internal::retry_evaluate(update_try, scratch, curr, prev, scratch.eval_,
-                             wolfe_info.p_, backoff, is_valid);
+    update_fun(scratch, curr, prev, scratch.eval_, wolfe_info.p_);
     if (scratch.alpha() <= options.line_search.min_alpha) {
       wolfe_status.accept_ = false;
       return true;
@@ -1260,18 +1116,13 @@ inline auto laplace_marginal_density_est(
           s, grad_fun(scratch), state.prev_g, prev.alpha(),
           wolfe_status.num_backtracks_, options.line_search.min_alpha,
           options.line_search.max_alpha);
-      wolfe_status = internal::wolfe_line_search(wolfe_info, update_step,
+      wolfe_status = internal::wolfe_line_search(wolfe_info, update_fun,
                                                  options.line_search, msgs);
     }
     return std::abs(curr.obj() - prev.obj()) < options.tolerance
            || (!wolfe_status.accept_ && curr.obj() <= prev.obj());
   };
-  auto set_next_iter = [&options](auto&& curr, auto&& prev) {
-    prev.update(curr);
-    curr.alpha() = std::clamp(curr.alpha(), 0.0, options.line_search.max_alpha);
-  };
   // Start with safe step size
-  wolfe_status.num_backtracks_ = 99;
   Eigen::Index step_iter = 0;
   try {
     if (options.solver == 1) {
@@ -1279,12 +1130,12 @@ inline auto laplace_marginal_density_est(
         CholeskyWSolverDiag solver(state, covariance);
         return run_newton_loop(solver, state, options, step_iter, ll_fun,
                                ll_args, covariance, update_line_search,
-                               set_next_iter, throw_overstep, msgs);
+                               msgs);
       } else {
         CholeskyWSolverBlock solver(state, options.hessian_block_size);
         return run_newton_loop(solver, state, options, step_iter, ll_fun,
                                ll_args, covariance, update_line_search,
-                               set_next_iter, throw_overstep, msgs);
+                               msgs);
       }
     }
   } catch (const std::exception& e) {
@@ -1299,8 +1150,8 @@ inline auto laplace_marginal_density_est(
     if (options.solver == 2 || options.allow_fallthrough) {
       CholeskyKSolver solver(state, covariance);
       return run_newton_loop(solver, state, options, step_iter, ll_fun, ll_args,
-                             covariance, update_line_search, set_next_iter,
-                             throw_overstep, msgs);
+                             covariance, update_line_search,
+                             msgs);
     }
   } catch (const std::exception& e) {
     log_solver_fallback(options.allow_fallthrough, msgs,
@@ -1311,8 +1162,7 @@ inline auto laplace_marginal_density_est(
   if (options.solver == 3 || options.allow_fallthrough) {
     LUSolver solver;
     return run_newton_loop(solver, state, options, step_iter, ll_fun, ll_args,
-                           covariance, update_line_search, set_next_iter,
-                           throw_overstep, msgs);
+                           covariance, update_line_search, msgs);
   }
   throw std::domain_error(
       std::string("You chose a solver (") + std::to_string(options.solver)
