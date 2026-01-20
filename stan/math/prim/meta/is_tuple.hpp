@@ -83,7 +83,6 @@ inline constexpr bool is_inner_tuple_type_v
     = std::is_same_v<std::decay_t<CheckType>,
                      std::tuple_element_t<N, std::decay_t<Tuple>>>;
 
-
 }  // namespace stan
 
 #endif

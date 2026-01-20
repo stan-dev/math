@@ -149,7 +149,9 @@ inline constexpr auto tuple_to_laplace_options(Ops&& ops) {
           "ERROR:(laplace_marginal_lpdf) The sixth laplace argument is "
           "expected to be an int representing the max steps line search.");
     }
-    constexpr bool is_fallthrough = stan::is_inner_tuple_type_v<6, Ops, int> || stan::is_inner_tuple_type_v<6, Ops, bool>;
+    constexpr bool is_fallthrough
+        = stan::is_inner_tuple_type_v<
+              6, Ops, int> || stan::is_inner_tuple_type_v<6, Ops, bool>;
     if constexpr (!is_fallthrough) {
       static_assert(
           sizeof(std::decay_t<Ops>*) == 0,
@@ -410,32 +412,31 @@ struct NewtonState {
   template <typename Options>
   inline void update_next_step(const Options& options) {
     this->prev().update(this->curr());
-    this->curr().alpha() = std::clamp(this->curr().alpha(), 0.0, options.line_search.max_alpha);
-
+    this->curr().alpha()
+        = std::clamp(this->curr().alpha(), 0.0, options.line_search.max_alpha);
   }
 };
 
 template <typename LLT, typename B_t>
-inline void llt_with_jitter(LLT& llt_B, B_t& B, double min_jitter = 1e-10, double max_jitter = 1e-5) {
-    // 3. Factorize B with jittering fallback
-    llt_B.compute(B);
-    if (llt_B.info() != Eigen::Success) {
-      double jitter_try = min_jitter;
-      for (; jitter_try < max_jitter; jitter_try *= 10) {
-        B.diagonal().array() += jitter_try;
-        llt_B.compute(B);
-        if (llt_B.info() == Eigen::Success) {
-          break;
-        }
-      }
-      if (llt_B.info() != Eigen::Success) {
-        throw std::domain_error(
-            "laplace_marginal_density: Cholesky (Diag) failed");
+inline void llt_with_jitter(LLT& llt_B, B_t& B, double min_jitter = 1e-10,
+                            double max_jitter = 1e-5) {
+  // 3. Factorize B with jittering fallback
+  llt_B.compute(B);
+  if (llt_B.info() != Eigen::Success) {
+    double jitter_try = min_jitter;
+    for (; jitter_try < max_jitter; jitter_try *= 10) {
+      B.diagonal().array() += jitter_try;
+      llt_B.compute(B);
+      if (llt_B.info() == Eigen::Success) {
+        break;
       }
     }
-
+    if (llt_B.info() != Eigen::Success) {
+      throw std::domain_error(
+          "laplace_marginal_density: Cholesky (Diag) failed");
+    }
+  }
 }
-
 
 /**
  * @brief Solver Policy 1 (Diagonal): Cholesky decomposition using W.
@@ -942,8 +943,10 @@ inline auto run_newton_loop(SolverPolicy& solver, NewtonStateT& state,
     }
   }
   if (msgs) {
-    (*msgs) << std::string("WARNING(laplace_marginal_density): max number of iterations: ")
-           + std::to_string(options.max_num_steps) + " exceeded.";
+    (*msgs)
+        << std::string(
+               "WARNING(laplace_marginal_density): max number of iterations: ")
+               + std::to_string(options.max_num_steps) + " exceeded.";
   }
   return solver.build_result(state, solver.compute_log_determinant());
 }
@@ -1064,10 +1067,11 @@ inline auto laplace_marginal_density_est(
   auto grad_fun = [&covariance](auto&& step) {
     return -covariance * step.a() + covariance * step.theta_grad();
   };
-  auto update_fun = [&covariance, &obj_fun, &theta_grad_f, &grad_fun, &options]() {
+  auto update_fun = [&covariance, &obj_fun, &theta_grad_f, &grad_fun,
+                     &options]() {
     auto update_step = [&covariance, &obj_fun, &theta_grad_f, &grad_fun](
-        auto& proposal, auto&& /* curr */, auto&& prev, auto& eval_in,
-        auto&& p) {
+                           auto& proposal, auto&& /* curr */, auto&& prev,
+                           auto& eval_in, auto&& p) {
       try {
         proposal.a() = prev.a() + eval_in.alpha() * p;
         proposal.theta().noalias() = covariance * proposal.a();
@@ -1083,45 +1087,46 @@ inline auto laplace_marginal_density_est(
       eval.alpha() *= options.line_search.tau;
       return eval.alpha() > options.line_search.min_alpha;
     };
-    return [update_step_ = std::move(update_step), backoff_ = std::move(backoff)](
-        auto& proposal, auto&& curr , auto&& prev, auto& eval_in,
-        auto&& p) {
-          return internal::retry_evaluate(update_step_, proposal, curr, prev, eval_in,
-                                           p, backoff_);
+    return
+        [update_step_ = std::move(update_step), backoff_ = std::move(backoff)](
+            auto& proposal, auto&& curr, auto&& prev, auto& eval_in, auto&& p) {
+          return internal::retry_evaluate(update_step_, proposal, curr, prev,
+                                          eval_in, p, backoff_);
         };
   }();
-  auto update_line_search = [&grad_fun, &update_fun, &options, &msgs, &state](
-    auto&& wolfe_status, auto&& wolfe_info, auto&& curr, auto&& prev) {
-    wolfe_info.p_ = curr.a() - prev.a();
-    state.prev_g.noalias() = grad_fun(prev);
-    wolfe_info.init_dir_ = state.prev_g.dot(wolfe_info.p_);
-    // Flip direction if not ascending
-    wolfe_info.flip_direction();
-    auto&& scratch = wolfe_info.scratch_;
-    scratch.alpha() = 1.0;
-    update_fun(scratch, curr, prev, scratch.eval_, wolfe_info.p_);
-    if (scratch.alpha() <= options.line_search.min_alpha) {
-      wolfe_status.accept_ = false;
-      return true;
-    }
-    if (options.line_search.max_iterations == 0) {
-      if (scratch.alpha() > options.line_search.min_alpha) {
-        curr.update(scratch);
-        wolfe_status.accept_ = true;
-        return false;
-      }
-    } else {
-      Eigen::VectorXd s = scratch.a() - prev.a();
-      curr.alpha() = barzilai_borwein_step_size(
-          s, grad_fun(scratch), state.prev_g, prev.alpha(),
-          wolfe_status.num_backtracks_, options.line_search.min_alpha,
-          options.line_search.max_alpha);
-      wolfe_status = internal::wolfe_line_search(wolfe_info, update_fun,
-                                                 options.line_search, msgs);
-    }
-    return std::abs(curr.obj() - prev.obj()) < options.tolerance
-           || (!wolfe_status.accept_ && curr.obj() <= prev.obj());
-  };
+  auto update_line_search
+      = [&grad_fun, &update_fun, &options, &msgs, &state](
+            auto&& wolfe_status, auto&& wolfe_info, auto&& curr, auto&& prev) {
+          wolfe_info.p_ = curr.a() - prev.a();
+          state.prev_g.noalias() = grad_fun(prev);
+          wolfe_info.init_dir_ = state.prev_g.dot(wolfe_info.p_);
+          // Flip direction if not ascending
+          wolfe_info.flip_direction();
+          auto&& scratch = wolfe_info.scratch_;
+          scratch.alpha() = 1.0;
+          update_fun(scratch, curr, prev, scratch.eval_, wolfe_info.p_);
+          if (scratch.alpha() <= options.line_search.min_alpha) {
+            wolfe_status.accept_ = false;
+            return true;
+          }
+          if (options.line_search.max_iterations == 0) {
+            if (scratch.alpha() > options.line_search.min_alpha) {
+              curr.update(scratch);
+              wolfe_status.accept_ = true;
+              return false;
+            }
+          } else {
+            Eigen::VectorXd s = scratch.a() - prev.a();
+            curr.alpha() = barzilai_borwein_step_size(
+                s, grad_fun(scratch), state.prev_g, prev.alpha(),
+                wolfe_status.num_backtracks_, options.line_search.min_alpha,
+                options.line_search.max_alpha);
+            wolfe_status = internal::wolfe_line_search(
+                wolfe_info, update_fun, options.line_search, msgs);
+          }
+          return std::abs(curr.obj() - prev.obj()) < options.tolerance
+                 || (!wolfe_status.accept_ && curr.obj() <= prev.obj());
+        };
   // Start with safe step size
   Eigen::Index step_iter = 0;
   try {
@@ -1129,13 +1134,11 @@ inline auto laplace_marginal_density_est(
       if (options.hessian_block_size == 1) {
         CholeskyWSolverDiag solver(state, covariance);
         return run_newton_loop(solver, state, options, step_iter, ll_fun,
-                               ll_args, covariance, update_line_search,
-                               msgs);
+                               ll_args, covariance, update_line_search, msgs);
       } else {
         CholeskyWSolverBlock solver(state, options.hessian_block_size);
         return run_newton_loop(solver, state, options, step_iter, ll_fun,
-                               ll_args, covariance, update_line_search,
-                               msgs);
+                               ll_args, covariance, update_line_search, msgs);
       }
     }
   } catch (const std::exception& e) {
@@ -1150,8 +1153,7 @@ inline auto laplace_marginal_density_est(
     if (options.solver == 2 || options.allow_fallthrough) {
       CholeskyKSolver solver(state, covariance);
       return run_newton_loop(solver, state, options, step_iter, ll_fun, ll_args,
-                             covariance, update_line_search,
-                             msgs);
+                             covariance, update_line_search, msgs);
     }
   } catch (const std::exception& e) {
     log_solver_fallback(options.allow_fallthrough, msgs,

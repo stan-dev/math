@@ -129,7 +129,8 @@ namespace internal {
  *      with the largest F(s). All such candidates are restricted to a
  *      trimmed interior
  *        $s \in [edge_guard, 1 - edge_guard]$,
- *      i.e. $x \in [x_left + edge_guard * width, x_right - edge_guard * width]$.
+ *      i.e. $x \in [x_left + edge_guard * width, x_right - edge_guard *
+ * width]$.
  *
  *   6. If the bracket is invalid (x_right <= x_left), any input is non-finite,
  *      or the interval is too tiny to be useful, it falls back to pure
@@ -874,8 +875,7 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
            && state.theta().allFinite() && state.theta_grad().allFinite();
   };
   Eval best = low;  // keep the best Armijo-OK in case strong-Wolfe fails
-  auto update_with_tick = [&total_updates, &opt, &best, &update_fun,
-                           &wolfe_ok,
+  auto update_with_tick = [&total_updates, &opt, &best, &update_fun, &wolfe_ok,
                            &armijo_ok](auto&& proposal, auto&& curr,
                                        auto&& prev, Eval& e, auto&& p) {
     const bool over_budget = total_updates > opt.max_iterations;
