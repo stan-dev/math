@@ -863,28 +863,21 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
   auto&& dir_deriv_init = wolfe_info.init_dir_;
   Eval low{0.0, prev.obj(), dir_deriv_init};
   prev.dir() = dir_deriv_init;
-  auto armijo_ok = [&prev, &opt](const Eval& eval) -> bool {
-    return check_armijo(eval, prev, opt);
-  };
-  auto wolfe_ok = [&prev, &opt](const Eval& eval) -> bool {
-    return check_wolfe(eval, prev, opt);
-  };
   int total_updates = 0;
   auto eval_finite = [](const Eval& e, const WolfeData& state) {
     return std::isfinite(e.obj()) && std::isfinite(e.dir())
            && state.theta().allFinite() && state.theta_grad().allFinite();
   };
   Eval best = low;  // keep the best Armijo-OK in case strong-Wolfe fails
-  auto update_with_tick = [&total_updates, &opt, &best, &update_fun, &wolfe_ok,
-                           &armijo_ok](auto&& proposal, auto&& curr,
+  auto update_with_tick = [&total_updates, &opt, &best, &update_fun](auto&& proposal, auto&& curr,
                                        auto&& prev, Eval& e, auto&& p) {
     const bool over_budget = total_updates > opt.max_iterations;
     if (over_budget) {
       // Soft budget: stop evaluating new trial points once exceeded.
-      if (armijo_ok(best)) {
+      if (check_armijo(best, prev, opt)) {
         update_fun(proposal, curr, prev, best, p);
         curr.update(proposal, best);
-        if (wolfe_ok(best)) {
+        if (check_wolfe(best, prev, opt)) {
           return WolfeStatus{WolfeReturn::Wolfe, total_updates, 0, true};
         } else {
           return WolfeStatus{WolfeReturn::Armijo, total_updates, 0, true};
@@ -912,11 +905,11 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
       return WolfeStatus{WolfeReturn::StepTooSmall, total_updates, 0, false};
     }
     // Quick accept if Armijo and Wolfe conditions are satisfied
-    if (armijo_ok(high)) {
-      if (wolfe_ok(high)) {
+    if (check_armijo(high, prev, opt)) {
+      if (check_wolfe(high, prev, opt)) {
         // Try zooming up till we hit a fail
         best = high;
-        while (armijo_ok(high) && wolfe_ok(high)) {
+        while (check_armijo(high, prev, opt) && check_wolfe(high, prev, opt)) {
           best = high;
           high.alpha() *= opt.scale_up;
           if (high.alpha() > opt.max_alpha) {
@@ -971,8 +964,8 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
       }
       continue;
     }
-    const bool armijo = armijo_ok(high);
-    const bool wolfe = wolfe_ok(high);
+    const bool armijo = check_armijo(high, prev, opt);
+    const bool wolfe = check_wolfe(high, prev, opt);
     if (armijo && wolfe) {  // [1]
       curr.update(scratch, high);
       return WolfeStatus{WolfeReturn::Wolfe, total_updates, num_backtracks,
@@ -1002,10 +995,10 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
     const bool slope_check = std::abs(curr_eval.dir()) <= grad_tol;
     // tiny slope or gain
     const bool obj_check = std::abs(curr_eval.obj() - prev.obj()) <= obj_tol;
-    // alpha too smole
+    // alpha too small
     const bool alpha_check = curr_eval.alpha() < opt.min_alpha;
     if (slope_check || obj_check || alpha_check) {
-      bool step_ok = curr_eval.obj() != low.obj() && armijo_ok(curr_eval);
+      bool step_ok = curr_eval.obj() != low.obj() && check_armijo(curr_eval, prev, opt);
       if (slope_check && obj_check) {
         return WolfeStatus{WolfeReturn::ConvergedObjectiveAndGradient,
                            total_updates, num_backtracks, step_ok};
@@ -1047,7 +1040,7 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
     num_backtracks++;
 
     const bool have_sign_change = (low.dir() * high.dir() < 0);
-    const bool high_armijo_ok = armijo_ok(high);
+    const bool high_armijo_ok = check_armijo(high, prev, opt);
     const bool use_cubic = have_sign_change && high_armijo_ok;
 
     // Choose trial alpha: cubic when bracket is good, else bisection.
@@ -1066,16 +1059,18 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
       return WolfeStatus{WolfeReturn::StepTooSmall, total_updates,
                          num_backtracks, false};
     }
-    if (armijo_ok(mid) && wolfe_ok(mid)) {
-      curr.update(scratch, mid);
-      return WolfeStatus{WolfeReturn::Wolfe, total_updates, num_backtracks,
-                         true};
+    if (check_armijo(mid, prev, opt)) {
+      if (check_wolfe(mid, prev, opt)) {
+        curr.update(scratch, mid);
+        return WolfeStatus{WolfeReturn::Wolfe, total_updates, num_backtracks,
+                          true};
+      }
+      // Track best Armijo-OK point for fallback.
+      if (mid.obj() > best.obj()) {
+        best = mid;
+      }
     }
 
-    // Track best Armijo-OK point for fallback.
-    if (armijo_ok(mid) && mid.obj() > best.obj()) {
-      best = mid;
-    }
 
     // Update bracket based on derivative sign
     if (mid.dir() * low.dir() < 0) {
@@ -1097,7 +1092,7 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
   }
   // On failure, use the best point we have found so far that at least satisfies
   // armijo
-  const bool armijo_ok_best = armijo_ok(best);
+  const bool armijo_ok_best = check_armijo(best, prev, opt);
   if (armijo_ok_best) {
     wolfe_check = update_with_tick(scratch, curr, prev, best, p);
     curr.update(scratch, best);
