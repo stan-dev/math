@@ -869,8 +869,9 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
            && state.theta().allFinite() && state.theta_grad().allFinite();
   };
   Eval best = low;  // keep the best Armijo-OK in case strong-Wolfe fails
-  auto update_with_tick = [&total_updates, &opt, &best, &update_fun](auto&& proposal, auto&& curr,
-                                       auto&& prev, Eval& e, auto&& p) {
+  auto update_with_tick = [&total_updates, &opt, &best, &update_fun](
+                              auto&& proposal, auto&& curr, auto&& prev,
+                              Eval& e, auto&& p) {
     const bool over_budget = total_updates > opt.max_iterations;
     if (over_budget) {
       // Soft budget: stop evaluating new trial points once exceeded.
@@ -998,7 +999,8 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
     // alpha too small
     const bool alpha_check = curr_eval.alpha() < opt.min_alpha;
     if (slope_check || obj_check || alpha_check) {
-      bool step_ok = curr_eval.obj() != low.obj() && check_armijo(curr_eval, prev, opt);
+      bool step_ok
+          = curr_eval.obj() != low.obj() && check_armijo(curr_eval, prev, opt);
       if (slope_check && obj_check) {
         return WolfeStatus{WolfeReturn::ConvergedObjectiveAndGradient,
                            total_updates, num_backtracks, step_ok};
@@ -1063,14 +1065,13 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
       if (check_wolfe(mid, prev, opt)) {
         curr.update(scratch, mid);
         return WolfeStatus{WolfeReturn::Wolfe, total_updates, num_backtracks,
-                          true};
+                           true};
       }
       // Track best Armijo-OK point for fallback.
       if (mid.obj() > best.obj()) {
         best = mid;
       }
     }
-
 
     // Update bracket based on derivative sign
     if (mid.dir() * low.dir() < 0) {
