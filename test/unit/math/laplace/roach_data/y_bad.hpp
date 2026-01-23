@@ -1,9 +1,0 @@
-#pragma once
-#include <vector>
-namespace stan::test::laplace::roach {
-
-static const auto y_bad_raw = std::vector<int>{
-    104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 104, 19,
-    1,   40,  5,   2,   1,   7,   2,   136, 3,   17,  77,  27,  73,  0,   2,
-    7,   50,  37,  0,   15,  0,   12,  12,  0,   0,   37,  293, 102, 3,   19};
-}

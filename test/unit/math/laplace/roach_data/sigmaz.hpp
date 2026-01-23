@@ -1,7 +1,7 @@
 
 #pragma once
 #include <stan/math/prim/fun/Eigen.hpp>
-namespace stan::test::laplace::roach {
+namespace stan::math::test::roaches {
 
 static const Eigen::Matrix<double, -1, -1> sigmaz{
     {{2.03651, 1.97969, 2.01858, 2.05345, 2.01933, 1.8819,  1.87645, 2.12067,
