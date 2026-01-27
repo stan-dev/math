@@ -109,8 +109,9 @@ inline auto generate_laplace_options(int theta_0_size) {
 
 namespace internal {
 
-template <typename Ops>
-inline constexpr auto tuple_to_laplace_options(Ops&& ops) {
+template <typename Options>
+inline constexpr auto tuple_to_laplace_options(Options&& ops) {
+  using Ops = std::decay_t<Options>;
   if constexpr (is_tuple_v<Ops>) {
     if constexpr (!is_eigen_v<std::tuple_element_t<0, std::decay_t<Ops>>>) {
       static_assert(
