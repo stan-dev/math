@@ -81,7 +81,7 @@ inline constexpr bool is_tuple_of_size_v = stan::is_tuple_of_size<T, N>::value;
 template <std::size_t N, typename Tuple, typename CheckType>
 inline constexpr bool is_inner_tuple_type_v
     = std::is_same_v<std::decay_t<CheckType>,
-                     std::tuple_element_t<N, std::decay_t<Tuple>>>;
+                     std::decay_t<std::tuple_element_t<N, std::decay_t<Tuple>>>>;
 
 }  // namespace stan
 
