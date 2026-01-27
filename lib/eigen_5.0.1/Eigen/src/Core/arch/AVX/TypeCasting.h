@@ -57,7 +57,7 @@ struct type_casting_traits<int64_t, double> : vectorized_type_casting_traits<int
 #endif
 
 EIGEN_STRONG_INLINE __m256 eigen_mm256_set_m128(__m128 hi, __m128 lo) {
-#if EIGEN_COMP_GNUC && !EIGEN_COMP_CLANG && EIGEN_COMP_GNUC < 800
+#if EIGEN_COMP_GNUC && !EIGEN_COMP_CLANG && EIGEN_COMP_GNUC < 810
   __m256 result = _mm256_castps128_ps256(lo);
   return _mm256_insertf128_ps(result, hi, 1);
 #else
@@ -66,7 +66,7 @@ EIGEN_STRONG_INLINE __m256 eigen_mm256_set_m128(__m128 hi, __m128 lo) {
 }
 
 EIGEN_STRONG_INLINE __m256d eigen_mm256_set_m128d(__m128d hi, __m128d lo) {
-#if EIGEN_COMP_GNUC && !EIGEN_COMP_CLANG && EIGEN_COMP_GNUC < 800
+#if EIGEN_COMP_GNUC && !EIGEN_COMP_CLANG && EIGEN_COMP_GNUC < 810
   __m256d result = _mm256_castpd128_pd256(lo);
   return _mm256_insertf128_pd(result, hi, 1);
 #else
@@ -75,7 +75,7 @@ EIGEN_STRONG_INLINE __m256d eigen_mm256_set_m128d(__m128d hi, __m128d lo) {
 }
 
 EIGEN_STRONG_INLINE __m256i eigen_mm256_set_m128i(__m128i hi, __m128i lo) {
-#if EIGEN_COMP_GNUC && !EIGEN_COMP_CLANG && EIGEN_COMP_GNUC < 800
+#if EIGEN_COMP_GNUC && !EIGEN_COMP_CLANG && EIGEN_COMP_GNUC < 810
 #if defined(EIGEN_VECTORIZE_AVX2)
   __m256i result = _mm256_castsi128_si256(lo);
   return _mm256_inserti128_si256(result, hi, 1);

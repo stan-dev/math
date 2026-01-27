@@ -53,7 +53,7 @@ template <>
 struct type_casting_traits<float, bfloat16> : vectorized_type_casting_traits<float, bfloat16> {};
 
 EIGEN_STRONG_INLINE __mmask16 eigen_mm512_cmpneq_ps_mask(__m512 a, __m512 b) {
-#if EIGEN_COMP_GNUC && !EIGEN_COMP_CLANG && EIGEN_COMP_GNUC < 800
+#if EIGEN_COMP_GNUC && !EIGEN_COMP_CLANG && EIGEN_COMP_GNUC < 810
   return _mm512_cmp_ps_mask(a, b, _CMP_NEQ_UQ);
 #else
   return _mm512_cmpneq_ps_mask(a, b);

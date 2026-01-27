@@ -45,7 +45,7 @@ typedef eigen_packet_wrapper<__m256i, 6> Packet16s;
 typedef eigen_packet_wrapper<__m128i, 6> Packet8s;
 
 EIGEN_STRONG_INLINE __m512i eigen_mm512_loadu_epi32(const int* from) {
-#if EIGEN_COMP_GNUC && !EIGEN_COMP_CLANG && EIGEN_COMP_GNUC < 800
+#if EIGEN_COMP_GNUC && !EIGEN_COMP_CLANG && EIGEN_COMP_GNUC < 1010
   return _mm512_loadu_si512(reinterpret_cast<const void*>(from));
 #else
   return _mm512_loadu_epi32(from);
@@ -53,7 +53,7 @@ EIGEN_STRONG_INLINE __m512i eigen_mm512_loadu_epi32(const int* from) {
 }
 
 EIGEN_STRONG_INLINE __m512i eigen_mm512_loadu_epi64(const int64_t* from) {
-#if EIGEN_COMP_GNUC && !EIGEN_COMP_CLANG && EIGEN_COMP_GNUC < 800
+#if EIGEN_COMP_GNUC && !EIGEN_COMP_CLANG && EIGEN_COMP_GNUC < 1010
   return _mm512_loadu_si512(reinterpret_cast<const void*>(from));
 #else
   return _mm512_loadu_epi64(from);
@@ -61,7 +61,7 @@ EIGEN_STRONG_INLINE __m512i eigen_mm512_loadu_epi64(const int64_t* from) {
 }
 
 EIGEN_STRONG_INLINE void eigen_mm512_storeu_epi32(void* to, const __m512i& from) {
-#if EIGEN_COMP_GNUC && !EIGEN_COMP_CLANG && EIGEN_COMP_GNUC < 800
+#if EIGEN_COMP_GNUC && !EIGEN_COMP_CLANG && EIGEN_COMP_GNUC < 1010
   _mm512_storeu_si512(to, from);
 #else
   _mm512_storeu_epi32(to, from);
@@ -69,7 +69,7 @@ EIGEN_STRONG_INLINE void eigen_mm512_storeu_epi32(void* to, const __m512i& from)
 }
 
 EIGEN_STRONG_INLINE void eigen_mm512_storeu_epi64(void* to, const __m512i& from) {
-#if EIGEN_COMP_GNUC && !EIGEN_COMP_CLANG && EIGEN_COMP_GNUC < 800
+#if EIGEN_COMP_GNUC && !EIGEN_COMP_CLANG && EIGEN_COMP_GNUC < 1010
   _mm512_storeu_si512(to, from);
 #else
   _mm512_storeu_epi64(to, from);
@@ -77,7 +77,7 @@ EIGEN_STRONG_INLINE void eigen_mm512_storeu_epi64(void* to, const __m512i& from)
 }
 
 EIGEN_STRONG_INLINE void eigen_mm256_storeu_epi32(void* to, const __m256i& from) {
-#if EIGEN_COMP_GNUC && !EIGEN_COMP_CLANG && EIGEN_COMP_GNUC < 800
+#if EIGEN_COMP_GNUC && !EIGEN_COMP_CLANG && EIGEN_COMP_GNUC < 1010
   _mm256_storeu_si256(reinterpret_cast<__m256i*>(to), from);
 #else
   _mm256_storeu_epi32(to, from);
@@ -85,7 +85,7 @@ EIGEN_STRONG_INLINE void eigen_mm256_storeu_epi32(void* to, const __m256i& from)
 }
 
 EIGEN_STRONG_INLINE void eigen_mm_storeu_epi32(void* to, const __m128i& from) {
-#if EIGEN_COMP_GNUC && !EIGEN_COMP_CLANG && EIGEN_COMP_GNUC < 800
+#if EIGEN_COMP_GNUC && !EIGEN_COMP_CLANG && EIGEN_COMP_GNUC < 1010
   _mm_storeu_si128(reinterpret_cast<__m128i*>(to), from);
 #else
   _mm_storeu_epi32(to, from);
