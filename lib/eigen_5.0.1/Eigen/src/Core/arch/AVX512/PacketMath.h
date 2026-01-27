@@ -44,6 +44,54 @@ typedef eigen_packet_wrapper<__m512i, 6> Packet32s;
 typedef eigen_packet_wrapper<__m256i, 6> Packet16s;
 typedef eigen_packet_wrapper<__m128i, 6> Packet8s;
 
+EIGEN_STRONG_INLINE __m512i eigen_mm512_loadu_epi32(const int* from) {
+#if EIGEN_COMP_GNUC && !EIGEN_COMP_CLANG && EIGEN_COMP_GNUC < 800
+  return _mm512_loadu_si512(reinterpret_cast<const void*>(from));
+#else
+  return _mm512_loadu_epi32(from);
+#endif
+}
+
+EIGEN_STRONG_INLINE __m512i eigen_mm512_loadu_epi64(const int64_t* from) {
+#if EIGEN_COMP_GNUC && !EIGEN_COMP_CLANG && EIGEN_COMP_GNUC < 800
+  return _mm512_loadu_si512(reinterpret_cast<const void*>(from));
+#else
+  return _mm512_loadu_epi64(from);
+#endif
+}
+
+EIGEN_STRONG_INLINE void eigen_mm512_storeu_epi32(void* to, const __m512i& from) {
+#if EIGEN_COMP_GNUC && !EIGEN_COMP_CLANG && EIGEN_COMP_GNUC < 800
+  _mm512_storeu_si512(to, from);
+#else
+  _mm512_storeu_epi32(to, from);
+#endif
+}
+
+EIGEN_STRONG_INLINE void eigen_mm512_storeu_epi64(void* to, const __m512i& from) {
+#if EIGEN_COMP_GNUC && !EIGEN_COMP_CLANG && EIGEN_COMP_GNUC < 800
+  _mm512_storeu_si512(to, from);
+#else
+  _mm512_storeu_epi64(to, from);
+#endif
+}
+
+EIGEN_STRONG_INLINE void eigen_mm256_storeu_epi32(void* to, const __m256i& from) {
+#if EIGEN_COMP_GNUC && !EIGEN_COMP_CLANG && EIGEN_COMP_GNUC < 800
+  _mm256_storeu_si256(reinterpret_cast<__m256i*>(to), from);
+#else
+  _mm256_storeu_epi32(to, from);
+#endif
+}
+
+EIGEN_STRONG_INLINE void eigen_mm_storeu_epi32(void* to, const __m128i& from) {
+#if EIGEN_COMP_GNUC && !EIGEN_COMP_CLANG && EIGEN_COMP_GNUC < 800
+  _mm_storeu_si128(reinterpret_cast<__m128i*>(to), from);
+#else
+  _mm_storeu_epi32(to, from);
+#endif
+}
+
 template <>
 struct is_arithmetic<__m512> {
   enum { value = true };
@@ -1033,11 +1081,11 @@ EIGEN_STRONG_INLINE Packet8d ploadu<Packet8d>(const double* from) {
 }
 template <>
 EIGEN_STRONG_INLINE Packet16i ploadu<Packet16i>(const int* from) {
-  EIGEN_DEBUG_UNALIGNED_LOAD return _mm512_loadu_epi32(from);
+  EIGEN_DEBUG_UNALIGNED_LOAD return eigen_mm512_loadu_epi32(from);
 }
 template <>
 EIGEN_STRONG_INLINE Packet8l ploadu<Packet8l>(const int64_t* from) {
-  EIGEN_DEBUG_UNALIGNED_LOAD return _mm512_loadu_epi64(from);
+  EIGEN_DEBUG_UNALIGNED_LOAD return eigen_mm512_loadu_epi64(from);
 }
 
 template <>
@@ -1158,11 +1206,11 @@ EIGEN_STRONG_INLINE void pstoreu<double>(double* to, const Packet8d& from) {
 }
 template <>
 EIGEN_STRONG_INLINE void pstoreu<int>(int* to, const Packet16i& from) {
-  EIGEN_DEBUG_UNALIGNED_STORE _mm512_storeu_epi32(to, from);
+  EIGEN_DEBUG_UNALIGNED_STORE eigen_mm512_storeu_epi32(to, from);
 }
 template <>
 EIGEN_STRONG_INLINE void pstoreu<int64_t>(int64_t* to, const Packet8l& from) {
-  EIGEN_DEBUG_UNALIGNED_STORE _mm512_storeu_epi64(to, from);
+  EIGEN_DEBUG_UNALIGNED_STORE eigen_mm512_storeu_epi64(to, from);
 }
 template <>
 EIGEN_STRONG_INLINE void pstoreu<float>(float* to, const Packet16f& from, uint16_t umask) {
@@ -2997,19 +3045,19 @@ EIGEN_STRONG_INLINE void pstore<numext::int16_t, Packet8s>(numext::int16_t* out,
 template <>
 EIGEN_STRONG_INLINE void pstoreu<numext::int16_t, Packet32s>(numext::int16_t* out, const Packet32s& x) {
   EIGEN_DEBUG_UNALIGNED_STORE
-  _mm512_storeu_epi32(out, x);
+  eigen_mm512_storeu_epi32(out, x);
 }
 
 template <>
 EIGEN_STRONG_INLINE void pstoreu<numext::int16_t, Packet16s>(numext::int16_t* out, const Packet16s& x) {
   EIGEN_DEBUG_UNALIGNED_STORE
-  _mm256_storeu_epi32(out, x);
+  eigen_mm256_storeu_epi32(out, x);
 }
 
 template <>
 EIGEN_STRONG_INLINE void pstoreu<numext::int16_t, Packet8s>(numext::int16_t* out, const Packet8s& x) {
   EIGEN_DEBUG_UNALIGNED_STORE
-  _mm_storeu_epi32(out, x);
+  eigen_mm_storeu_epi32(out, x);
 }
 
 template <>
