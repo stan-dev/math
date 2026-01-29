@@ -621,7 +621,6 @@ TEST(WolfeLineSearch, CurvatureEqualityAccepted) {
   EXPECT_EQ(status.stop_, WolfeReturn::Wolfe)
       << "Expected Wolfe but wolfe returned "
       << stan::math::internal::wolfe_status_str(status);
-
 }
 
 // Checks that gradients for ll_args propagate when the Wolfe step succeeds.

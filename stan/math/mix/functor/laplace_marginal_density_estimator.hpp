@@ -82,8 +82,8 @@ struct laplace_options<true> : public laplace_options_base {
   Eigen::VectorXd theta_0{0};  // 6
 
   template <typename ThetaVec>
-  laplace_options(ThetaVec&& theta_0_,
-                  double tolerance_, int max_num_steps_, int hessian_block_size_, int solver_,
+  laplace_options(ThetaVec&& theta_0_, double tolerance_, int max_num_steps_,
+                  int hessian_block_size_, int solver_,
                   int max_steps_line_search_, bool allow_fallthrough_)
       : laplace_options_base(hessian_block_size_, solver_, tolerance_,
                              max_num_steps_, allow_fallthrough_,
@@ -130,7 +130,8 @@ inline constexpr auto tuple_to_laplace_options(Options&& ops) {
       static_assert(
           sizeof(std::decay_t<Ops>*) == 0,
           "ERROR:(laplace_marginal_lpdf) The third laplace argument is "
-          "expected to be an int representing the maximum number of steps for the laplace approximation.");
+          "expected to be an int representing the maximum number of steps for "
+          "the laplace approximation.");
     }
     if constexpr (!stan::is_inner_tuple_type_v<3, Ops, int>) {
       static_assert(
@@ -148,7 +149,8 @@ inline constexpr auto tuple_to_laplace_options(Options&& ops) {
       static_assert(
           sizeof(std::decay_t<Ops>*) == 0,
           "ERROR:(laplace_marginal_lpdf) The sixth laplace argument is "
-          "expected to be an int representing the max steps for the laplace approximaton's wolfe line search.");
+          "expected to be an int representing the max steps for the laplace "
+          "approximaton's wolfe line search.");
     }
     constexpr bool is_fallthrough
         = stan::is_inner_tuple_type_v<
@@ -923,8 +925,7 @@ template <typename SolverPolicy, typename NewtonStateT, typename OptionsT,
 inline auto run_newton_loop(SolverPolicy& solver, NewtonStateT& state,
                             const OptionsT& options, Eigen::Index& step_iter,
                             const LLFunT& ll_fun, const LLTupleArgsT& ll_args,
-                            const CovarMatT& covariance,
-                            UpdateFun&& update_fun,
+                            const CovarMatT& covariance, UpdateFun&& update_fun,
                             std::ostream* msgs) {
   bool finish_update = false;
   for (; step_iter <= options.max_num_steps; step_iter++) {
@@ -932,13 +933,15 @@ inline auto run_newton_loop(SolverPolicy& solver, NewtonStateT& state,
                       options.hessian_block_size, msgs);
     if (!state.final_loop) {
       state.wolfe_info.p_ = state.curr().a() - state.prev().a();
-      state.prev_g.noalias() = -covariance * state.prev().a() + covariance * state.prev().theta_grad();
+      state.prev_g.noalias() = -covariance * state.prev().a()
+                               + covariance * state.prev().theta_grad();
       state.wolfe_info.init_dir_ = state.prev_g.dot(state.wolfe_info.p_);
       // Flip direction if not ascending
       state.wolfe_info.flip_direction();
       auto&& scratch = state.wolfe_info.scratch_;
       scratch.alpha() = 1.0;
-      update_fun(scratch, state.curr(), state.prev(), scratch.eval_, state.wolfe_info.p_);
+      update_fun(scratch, state.curr(), state.prev(), scratch.eval_,
+                 state.wolfe_info.p_);
       bool run_convergence_check = true;
       if (scratch.alpha() <= options.line_search.min_alpha) {
         state.wolfe_status.accept_ = false;
@@ -951,7 +954,9 @@ inline auto run_newton_loop(SolverPolicy& solver, NewtonStateT& state,
         run_convergence_check = false;
       } else {
         Eigen::VectorXd s = scratch.a() - state.prev().a();
-        auto full_step_grad = (-covariance * scratch.a() + covariance * scratch.theta_grad()).eval();
+        auto full_step_grad
+            = (-covariance * scratch.a() + covariance * scratch.theta_grad())
+                  .eval();
         state.curr().alpha() = barzilai_borwein_step_size(
             s, full_step_grad, state.prev_g, state.prev().alpha(),
             state.wolfe_status.num_backtracks_, options.line_search.min_alpha,
@@ -964,8 +969,10 @@ inline auto run_newton_loop(SolverPolicy& solver, NewtonStateT& state,
          * Stop when objective change is small, or when a rejected Wolfe step
          * fails to improve; finish_update then exits the Newton loop.
          */
-        finish_update = std::abs(state.curr().obj() - state.prev().obj()) < options.tolerance
-                        || (!state.wolfe_status.accept_ && state.curr().obj() <= state.prev().obj());
+        finish_update = std::abs(state.curr().obj() - state.prev().obj())
+                            < options.tolerance
+                        || (!state.wolfe_status.accept_
+                            && state.curr().obj() <= state.prev().obj());
       }
     }
     if (finish_update) {
@@ -1116,7 +1123,9 @@ inline auto laplace_marginal_density_est(
         proposal.theta().noalias() = covariance * proposal.a();
         proposal.theta_grad() = theta_grad_f(proposal.theta());
         eval_in.obj() = obj_fun(proposal.a(), proposal.theta());
-        eval_in.dir() = (-covariance * proposal.a() + covariance * proposal.theta_grad()).dot(p);
+        eval_in.dir()
+            = (-covariance * proposal.a() + covariance * proposal.theta_grad())
+                  .dot(p);
         return std::isfinite(eval_in.obj()) && std::isfinite(eval_in.dir());
       } catch (const std::exception&) {
         return false;
