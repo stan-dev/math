@@ -290,7 +290,7 @@ class LaplaceAdTest
 };
 
 // Nice readable per-case names: Solver{n}_Block{b}_LS{steps}
-static std::string ParamName(
+inline std::string ParamName(
     const ::testing::TestParamInfo<std::tuple<int, int, int>>& info) {
   const auto& [solver, hblock, ls] = info.param;
   std::ostringstream os;
@@ -348,10 +348,6 @@ class laplace_disease_map_test : public LaplaceAdTest {
 
     theta_0 = Eigen::VectorXd::Zero(dim_theta);
     mean = Eigen::VectorXd::Zero(dim_theta);
-    dim_phi = 2;
-    phi_dbl.resize(dim_phi);
-    phi_dbl << 0.3162278, 200;  // variance, length scale
-
     delta_lk.resize(2 * n_observations);
     y_index.resize(dim_theta);
     for (int i = 0; i < n_observations; i++) {
@@ -376,8 +372,7 @@ class laplace_disease_map_test : public LaplaceAdTest {
 
   Eigen::VectorXd theta_0;
   Eigen::VectorXd mean;
-  int dim_phi;
-  Eigen::Matrix<double, -1, 1> phi_dbl;
+  Eigen::Matrix<double, -1, 1> phi_dbl{{0.3162278, 200}};
   Eigen::Matrix<double, -1, 1> eta_dummy_dbl;
 
   Eigen::VectorXd delta_lk;

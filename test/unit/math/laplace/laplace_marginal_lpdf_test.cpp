@@ -31,7 +31,6 @@ TEST_P(laplace_marginal_lpdf, poisson_log_phi_dim_2) {
   using stan::math::value_of;
   using stan::math::var;
   // logger->current_test_name_ = "poisson_log_phi_dim_2";
-  constexpr int dim_phi = 2;
   Eigen::Matrix<double, Eigen::Dynamic, 1> phi_dbl{{1.6, 0.45}};
 
   constexpr int dim_theta = 2;
@@ -180,7 +179,6 @@ TEST_P(laplace_marginal_lpdf, bernoulli_logit_phi_dim500) {
   using stan::math::to_vector;
   // logger->current_test_name_ = "bernoulli_logit_phi_dim500";
   constexpr int dim_theta = 500;
-  constexpr int n_observations = 500;
   auto x1 = stan::test::laplace::x1;
   auto x2 = stan::test::laplace::x2;
   auto y = stan::test::laplace::y;
@@ -195,7 +193,6 @@ TEST_P(laplace_marginal_lpdf, bernoulli_logit_phi_dim500) {
   Eigen::VectorXd theta_0 = Eigen::VectorXd::Zero(dim_theta);
   Eigen::VectorXd delta_L;
   std::vector<double> delta;
-  constexpr int dim_phi = 2;
   Eigen::Matrix<double, Eigen::Dynamic, 1> phi_dbl{{1.6, 1}};
   const auto [solver_num, hessian_block_size, max_steps_line_search]
       = GetParam();

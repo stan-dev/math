@@ -292,7 +292,7 @@ struct LineSearchHarness {
     };
     std::ostream* msgs = nullptr;
     auto update_step = [&](auto& step_info, auto&& curr, auto&& prev,
-                           auto& eval_in, auto&& p) {
+                           auto& eval_in, auto&& p) -> void {
       stan::math::set_zero_all_adjoints();
       step_info.a() = info.prev_.a() + eval_in.alpha() * p;
       step_info.theta() = covariance * step_info.a();
@@ -622,9 +622,6 @@ TEST(WolfeLineSearch, CurvatureEqualityAccepted) {
       << "Expected Wolfe but wolfe returned "
       << stan::math::internal::wolfe_status_str(status);
 
-  auto [p, dir0] = initial_direction(obj, before);
-  double dir_alpha = directional_derivative(obj, info.curr_.a(), p);
-  //  EXPECT_GE(harness.opt.c2 * std::abs(dir0), std::abs(dir_alpha));
 }
 
 // Checks that gradients for ll_args propagate when the Wolfe step succeeds.
@@ -675,9 +672,6 @@ TEST(WolfeLineSearch, DirectionalDerivativeSignFlipImprovesObjective) {
 
   auto status = harness.run(info, obj);
   EXPECT_NE(status.stop_, WolfeReturn::Fail);
-  double phi0 = obj(before.prev_.a(), before.prev_.theta());
-  double phi_alpha = obj(info.curr_.a(), info.curr_.theta());
-  //  EXPECT_GT(phi_alpha, phi0);
 }
 
 // Checks that non-identity covariance produces consistent theta.

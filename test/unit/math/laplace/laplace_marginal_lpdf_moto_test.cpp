@@ -119,7 +119,6 @@ class laplace_motorcyle_gp_test : public LaplaceAdTest {
   }
 
   static constexpr int n_obs{133};
-  static constexpr int dim_phi{4};
   std::vector<double> x{stan::test::laplace::moto::x};
   Eigen::VectorXd y{stan::test::laplace::moto::y};
 
@@ -147,7 +146,7 @@ TEST_P(laplace_motorcyle_gp_test, gp_motorcycle_val) {
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
   LAPLACE_SKIP_ZERO_STEPS(max_steps_line_search);
 
-  double target = laplace_marginal_tol<false>(
+  laplace_marginal_tol<false>(
       normal_likelihood{}, std::forward_as_tuple(y, n_obs),
       covariance_motorcycle_functor{},
       std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1), phi_dbl(2), phi_dbl(3),
@@ -200,7 +199,7 @@ TEST_P(laplace_motorcyle_gp_test, gp_motorcycle_ad) {
   };
   try {
     stan::test::expect_ad<true>(tols, f, phi_01, phi_rest);
-  } catch (const std::domain_error e) {
+  } catch (const std::domain_error& e) {
     ADD_FAILURE() << "Exception: " << e.what()
                   << "\n\tsolver_num: " << solver_num
                   << "\n\tmax_steps_line_search: " << max_steps_line_search
@@ -252,7 +251,7 @@ TEST_P(laplace_motorcyle_gp_test, gp_motorcycle2_val) {
   constexpr int dim_theta = 2 * n_obs;
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
   LAPLACE_SKIP_ZERO_STEPS(max_steps_line_search);
-  double target = laplace_marginal_tol<false>(
+  laplace_marginal_tol<false>(
       normal_likelihood2{}, std::forward_as_tuple(y, n_obs, sigma_global),
       covariance_motorcycle_functor{},
       std::forward_as_tuple(x, length_scale_f, length_scale_g, sigma_f, sigma_g,

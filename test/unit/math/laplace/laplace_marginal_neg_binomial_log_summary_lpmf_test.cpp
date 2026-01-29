@@ -93,12 +93,6 @@ TEST_P(laplace_disease_map_test,
     n_per_group[y_index[i] - 1]++;
     counts_per_group[y_index[i] - 1] += y[i];
   }
-
-  double marginal_density = laplace_marginal_neg_binomial_2_log_summary_lpmf(
-      y, n_per_group, counts_per_group, eta, mean,
-      stan::math::test::sqr_exp_kernel_functor{},
-      std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1)), &output_stream);
-
   // ToDo (charlesm93): get benchmark from GPStuff or another software.
   constexpr double tolerance = 1e-12;
   constexpr int max_num_steps = 1000;
