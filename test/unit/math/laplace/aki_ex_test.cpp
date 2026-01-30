@@ -131,9 +131,6 @@ TEST(WriteArrayBodySimple, ExecutesBodyWithHardcodedData) {
     auto mu = mu_samples.col(iter);
     auto sigmaz = sigmaz_samples(0, iter);
     for (int i = 1; i <= N; ++i) {
-      //      std::cout << "y and mu for (i, iter) = (" << i << ", " << iter <<
-      //      "): ("
-      //                << y[i - 1] << ", " << mu[i - 1] << ")" << std::endl;
       double ll_laplace_val{0};
       try {
         ll_laplace_val = stan::math::laplace_marginal(
@@ -141,19 +138,6 @@ TEST(WriteArrayBodySimple, ExecutesBodyWithHardcodedData) {
             std::forward_as_tuple(y[i - 1], mu[i - 1]), cov_fun_functor(),
             std::tuple<double, int>(sigmaz, 1), pstream);
       } catch (const std::domain_error& e) {
-        // Log bad values to CSV files
-
-        /*
-                  std::ofstream
-           y_bad("./test/unit/math/laplace/roach_data/y_bad.csv",
-           std::ios::app); std::ofstream
-           mu_bad("./test/unit/math/laplace/roach_data/mu_bad.csv",
-           std::ios::app); std::ofstream
-           sigma_bad("./test/unit/math/laplace/roach_data/sigma_bad.csv",
-           std::ios::app); if (y_bad && mu_bad && sigma_bad) { y_bad << y[i - 1]
-           << '\n'; mu_bad << mu[i - 1] << '\n'; sigma_bad << sigmaz << '\n';
-                  }
-        */
         ADD_FAILURE() << "LAPLACE FAILURE: y and mu for i = " << i << ": ("
                       << y[i - 1] << ", " << mu[i - 1] << ")"
                       << "\nerror: " << e.what() << std::endl;
@@ -182,10 +166,6 @@ TEST(WriteArrayBodySimple, ExecutesBodyWithHardcodedData) {
     auto ll_laplace_all = stan::math::laplace_marginal(
         poisson_re_log_ll_functor(), std::forward_as_tuple(y, mu),
         cov_fun_functor(), std::tuple<double, int>(sigmaz, N), pstream);
-    // Assertions
-    //    std::cout << "ll_laplace: " << ll_laplace << "\nll_laplace_all: " <<
-    //    ll_laplace_all << "\nll_integrate_1d: " << ll_integrate_1d <<
-    //    std::endl;
     stan::test::relative_tolerance sum_rel_tol(3e-2);
     expect_near_rel("sum laplace vs integrated sum", ll_laplace,
                     ll_integrate_1d, sum_rel_tol, "laplace_sum",
