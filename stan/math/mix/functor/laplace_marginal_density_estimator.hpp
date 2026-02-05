@@ -13,6 +13,7 @@
 #include <stan/math/prim/functor/iter_tuple_nested.hpp>
 #include <unsupported/Eigen/MatrixFunctions>
 #include <cmath>
+#include <sstream>
 
 /**
  * @file
@@ -443,8 +444,12 @@ inline void llt_with_jitter(LLT& llt_B, B_t& B, double min_jitter = 1e-10,
       }
     }
     if (llt_B.info() != Eigen::Success) {
-      throw std::domain_error(
-          "laplace_marginal_density: Cholesky (Diag) failed");
+      std::stringstream msg;
+      msg << "laplace_marginal_density: Cholesky decomposition failed on "
+          << "Hessian matrix B after attempting jitter values from "
+          << min_jitter << " to " << max_jitter
+          << ". Matrix may not be positive definite.";
+      throw std::domain_error(msg.str());
     }
   }
 }
@@ -942,16 +947,13 @@ inline auto run_newton_loop(SolverPolicy& solver, NewtonStateT& state,
       scratch.alpha() = 1.0;
       update_fun(scratch, state.curr(), state.prev(), scratch.eval_,
                  state.wolfe_info.p_);
-      bool run_convergence_check = true;
+      bool force_finish = false;
       if (scratch.alpha() <= options.line_search.min_alpha) {
         state.wolfe_status.accept_ = false;
-        finish_update = true;
-        run_convergence_check = false;
+        force_finish = true;
       } else if (options.line_search.max_iterations == 0) {
         state.curr().update(scratch);
         state.wolfe_status.accept_ = true;
-        finish_update = false;
-        run_convergence_check = false;
       } else {
         Eigen::VectorXd s = scratch.a() - state.prev().a();
         auto full_step_grad
@@ -964,16 +966,15 @@ inline auto run_newton_loop(SolverPolicy& solver, NewtonStateT& state,
         state.wolfe_status = internal::wolfe_line_search(
             state.wolfe_info, update_fun, options.line_search, msgs);
       }
-      if (run_convergence_check) {
-        /**
-         * Stop when objective change is small, or when a rejected Wolfe step
-         * fails to improve; finish_update then exits the Newton loop.
-         */
-        finish_update = std::abs(state.curr().obj() - state.prev().obj())
-                            < options.tolerance
-                        || (!state.wolfe_status.accept_
-                            && state.curr().obj() <= state.prev().obj());
-      }
+      /**
+       * Stop when objective change is small, or when a rejected Wolfe step
+       * fails to improve; finish_update then exits the Newton loop.
+       */
+      const bool obj_below_tol = std::abs(state.curr().obj() - state.prev().obj()) <
+                          options.tolerance;
+      const bool wolfe_failed = !state.wolfe_status.accept_
+                                  && state.curr().obj() <= state.prev().obj();
+      finish_update = force_finish || obj_below_tol || wolfe_failed;
     }
     if (finish_update) {
       if (!state.final_loop && state.wolfe_status.accept_) {
