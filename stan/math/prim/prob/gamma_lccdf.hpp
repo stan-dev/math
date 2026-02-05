@@ -6,20 +6,20 @@
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/digamma.hpp>
 #include <stan/math/prim/fun/exp.hpp>
-#include <stan/math/prim/fun/fma.hpp>
-#include <stan/math/prim/fun/gamma_p.hpp>
+#include <stan/math/prim/fun/gamma_q.hpp>
 #include <stan/math/prim/fun/grad_reg_inc_gamma.hpp>
-#include <stan/math/prim/fun/grad_reg_lower_inc_gamma.hpp>
-#include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/log.hpp>
-#include <stan/math/prim/fun/log1m.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/tgamma.hpp>
+<<<<<<< HEAD
 #include <stan/math/prim/fun/value_of_rec.hpp>
 #include <stan/math/prim/fun/log_gamma_q_dgamma.hpp>
+=======
+#include <stan/math/prim/fun/value_of.hpp>
+>>>>>>> develop
 #include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
@@ -127,7 +127,7 @@ inline return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(
   scalar_seq_view<T_y_ref> y_vec(y_ref);
   scalar_seq_view<T_alpha_ref> alpha_vec(alpha_ref);
   scalar_seq_view<T_beta_ref> beta_vec(beta_ref);
-  const size_t N = max_size(y, alpha, beta);
+  size_t N = max_size(y, alpha, beta);
 
   constexpr bool any_fvar = is_fvar<scalar_type_t<T_y>>::value
                             || is_fvar<scalar_type_t<T_shape>>::value
@@ -137,21 +137,19 @@ inline return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(
   for (size_t n = 0; n < N; n++) {
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
-    const T_partials_return y_dbl = y_vec.val(n);
-    if (y_dbl == 0.0) {
-      continue;
-    }
-    if (y_dbl == INFTY) {
+    if (y_vec.val(n) == INFTY) {
+      // LCCDF(∞) = log(P(Y > ∞)) = log(0) = -∞
       return ops_partials.build(negative_infinity());
     }
 
+    const T_partials_return y_dbl = y_vec.val(n);
     const T_partials_return alpha_dbl = alpha_vec.val(n);
     const T_partials_return beta_dbl = beta_vec.val(n);
+    const T_partials_return beta_y_dbl = beta_dbl * y_dbl;
 
-    const T_partials_return beta_y = beta_dbl * y_dbl;
-    if (beta_y == INFTY) {
-      return ops_partials.build(negative_infinity());
-    }
+    // Qn = 1 - Pn
+    const T_partials_return Qn = gamma_q(alpha_dbl, beta_y_dbl);
+    const T_partials_return log_Qn = log(Qn);
 
     const bool use_continued_fraction = beta_y > alpha_dbl + 1.0;
     internal::Q_eval<T_partials_return> result;
@@ -186,12 +184,15 @@ inline return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(
       const T_partials_return hazard = exp(log_pdf - result.log_Q);  // f/Q
 
       if constexpr (is_autodiff_v<T_y>) {
-        partials<0>(ops_partials)[n] -= hazard;
+        // d/dy log(1-F(y)) = -f(y)/(1-F(y))
+        partials<0>(ops_partials)[n] -= common_term;
       }
       if constexpr (is_autodiff_v<T_inv_scale>) {
-        partials<2>(ops_partials)[n] -= (y_dbl / beta_dbl) * hazard;
+        // d/dbeta log(1-F(y)) = -y*f(y)/(beta*(1-F(y)))
+        partials<2>(ops_partials)[n] -= y_dbl / beta_dbl * common_term;
       }
     }
+
     if constexpr (is_autodiff_v<T_shape>) {
       partials<1>(ops_partials)[n] += result.dlogQ_dalpha;
     }
