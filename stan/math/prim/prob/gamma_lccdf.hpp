@@ -14,12 +14,8 @@
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/tgamma.hpp>
-<<<<<<< HEAD
 #include <stan/math/prim/fun/value_of_rec.hpp>
 #include <stan/math/prim/fun/log_gamma_q_dgamma.hpp>
-=======
-#include <stan/math/prim/fun/value_of.hpp>
->>>>>>> develop
 #include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
