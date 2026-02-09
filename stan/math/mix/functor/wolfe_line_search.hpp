@@ -940,11 +940,10 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
    * | [3]  T     |   F   |   < 0   | Bracket found: stop
    * | [4]  F     |   T   |         | Bracket found: stop
    * | [5]  F     |   F   |         | Bracket found: stop
-   * NOTE: In an ideal case we would end up with a positive low directional
-   *gradient and negative high directional gradient. Cubic interpolation
-   *requires a bracket with directional shape like /\. This scheme does not
-   *gurantee a bracket with that shape will be found. So in the zoom we will
-   *have to check if we can do cubic or have to fallback to bisection.
+   * NOTE: In an ideal case we would end up with a positive low directional gradient and
+   * negative high directional gradient. Cubic interpolation requires a bracket with directional
+   * shape like /\. This scheme does not gurantee a bracket with that shape will be found.
+   * So in the zoom we will have to check if we can do cubic or have to fallback to bisection.
    **/
   while (high.alpha() < opt.max_alpha) {
     num_backtracks++;
@@ -1025,12 +1024,11 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
    * Exit/update table (evaluated at `mid`, with `low` = best Armijo endpoint):
    * | Armijo? | obj(mid) >= obj(low)? | Wolfe? | dir(mid) >= 0? | Action
    * |---------|-----------------------|--------|----------------|--------------------------|
-   * |   T     |           F           |   T    |       *        | accept mid
-   *[1]           | |   T     |           T           |   *    |       * | high
-   *= mid [2]           | |   T     |           F           |   F    |       T
-   *| high = low; low = mid [3]| |   T     |           F           |   F    | F
-   *| low = mid [4]            | |   F     |           *           |   *    | *
-   *| high = mid [5]           |
+   * |   T     |           F           |   T    |       *        | accept mid [1]           |
+   * |   T     |           T           |   *    |       *        | high = mid [2]           |
+   * |   T     |           F           |   F    |       T        | high = low; low = mid [3]|
+   * |   T     |           F           |   F    |       F        | low = mid [4]            |
+   * |   F     |           *           |   *    |       *        | high = mid [5]           |
    * ----------------------------------------------------------------------------------------
    **/
   while ((high.alpha() - low.alpha() > opt.min_alpha)

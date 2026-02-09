@@ -970,11 +970,10 @@ inline auto run_newton_loop(SolverPolicy& solver, NewtonStateT& state,
        * Stop when objective change is small, or when a rejected Wolfe step
        * fails to improve; finish_update then exits the Newton loop.
        */
-      const bool obj_below_tol
-          = std::abs(state.curr().obj() - state.prev().obj())
-            < options.tolerance;
+      const bool obj_below_tol = std::abs(state.curr().obj() - state.prev().obj()) <
+                          options.tolerance;
       const bool wolfe_failed = !state.wolfe_status.accept_
-                                && state.curr().obj() <= state.prev().obj();
+                                  && state.curr().obj() <= state.prev().obj();
       finish_update = force_finish || obj_below_tol || wolfe_failed;
     }
     if (finish_update) {
