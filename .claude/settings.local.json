@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:arxiv.org)",
+      "WebFetch(domain:docs.scipy.org)",
+      "WebFetch(domain:www.ime.unicamp.br)",
+      "WebFetch(domain:sites.math.washington.edu)",
+      "WebFetch(domain:indrag49.github.io)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:www.sciencedirect.com)",
+      "WebFetch(domain:optax.readthedocs.io)"
+    ]
+  }
+}
