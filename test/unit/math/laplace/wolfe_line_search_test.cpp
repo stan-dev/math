@@ -783,39 +783,39 @@ TEST(WolfeLineSearch, HonorsMaxAlphaBound) {
 
 // Checks that the cubic-or-bisect chooser returns an interior maximiser.
 TEST(CubicOrBisect, ReturnsInteriorMaximiser) {
-  using stan::math::internal::cubic_or_bisect_max;
+  using stan::math::internal::cubic_spline;
   double a = 0.0;
   double b = 1.0;
   double fa = 0.0;
   double fb = -1.0;
   double fpa = 1.0;
   double fpb = -0.5;
-  double alpha = cubic_or_bisect_max(a, fa, fpa, b, fb, fpb);
+  double alpha = cubic_spline(a, fa, fpa, b, fb, fpb);
   EXPECT_GT(alpha, a);
   EXPECT_LT(alpha, b);
 }
 
 // Checks that the chooser falls back to the midpoint on non-finite data.
 TEST(CubicOrBisect, FallsBackToMidpointOnNonfinite) {
-  using stan::math::internal::cubic_or_bisect_max;
-  double alpha = cubic_or_bisect_max(
+  using stan::math::internal::cubic_spline;
+  double alpha = cubic_spline(
       0.0, std::numeric_limits<double>::quiet_NaN(), 1.0, 1.0, -1.0, -0.5);
   EXPECT_DOUBLE_EQ(alpha, 0.5);
 }
 
 // Checks that the chooser moves right when the right endpoint improves.
 TEST(CubicOrBisect, MovesRightWhenRightImproves) {
-  using stan::math::internal::cubic_or_bisect_max;
+  using stan::math::internal::cubic_spline;
   double a = 0.0;
   double fa = 0.0;
   double fpa = 1.0;
   double b1 = 1.0;
   double fb1 = -1.0;
   double fpb = -0.5;
-  double alpha1 = cubic_or_bisect_max(a, fa, fpa, b1, fb1, fpb);
+  double alpha1 = cubic_spline(a, fa, fpa, b1, fb1, fpb);
   double b2 = 1.0;
   double fb2 = -0.1;  // improved right endpoint
-  double alpha2 = cubic_or_bisect_max(a, fa, fpa, b2, fb2, fpb);
+  double alpha2 = cubic_spline(a, fa, fpa, b2, fb2, fpb);
   EXPECT_GT(alpha2, alpha1);
 }
 

@@ -138,7 +138,6 @@ TEST_P(laplace_types, poisson_log_phi_dim_2_tuple_extended) {
   const auto [solver_num, hessian_block_size, max_steps_line_search]
       = GetParam();
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
-  LAPLACE_SKIP_ZERO_STEPS(max_steps_line_search);
 
   constexpr double tolerance = 1e-12;
   constexpr int max_num_steps = 1000;
@@ -205,7 +204,6 @@ TEST_P(laplace_types, poisson_log_phi_dim_2_tuple) {
   const auto [solver_num, hessian_block_size, max_steps_line_search]
       = GetParam();
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
-  LAPLACE_SKIP_ZERO_STEPS(max_steps_line_search);
 
   constexpr double tolerance = 1e-12;
   constexpr int max_num_steps = 1000;
@@ -301,7 +299,6 @@ TEST_P(laplace_types, poisson_log_phi_dim_2_array_tuple) {
   const auto [solver_num, hessian_block_size, max_steps_line_search]
       = GetParam();
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
-  LAPLACE_SKIP_ZERO_STEPS(max_steps_line_search);
 
   constexpr double tolerance = 1e-12;
   constexpr int max_num_steps = 1000;

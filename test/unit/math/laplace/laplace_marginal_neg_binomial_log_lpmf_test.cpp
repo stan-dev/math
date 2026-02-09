@@ -36,7 +36,6 @@ TEST_P(laplace_marginal_neg_binomial_log_lpmf, phi_dim_2) {
   const auto [solver_num, hessian_block_size, max_steps_line_search]
       = GetParam();
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
-  LAPLACE_SKIP_ZERO_STEPS(max_steps_line_search);
 
   constexpr double tolerance = 1e-12;
   constexpr int max_num_steps = 1000;
@@ -76,7 +75,6 @@ TEST_P(laplace_disease_map_test, laplace_marginal_neg_binomial_2_log_lpmf) {
   const auto [solver_num, hessian_block_size, max_steps_line_search]
       = GetParam();
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
-  LAPLACE_SKIP_ZERO_STEPS(max_steps_line_search);
   constexpr double eta = 1;
 
   // TODO(charlesm93): get benchmark from GPStuff or another software.

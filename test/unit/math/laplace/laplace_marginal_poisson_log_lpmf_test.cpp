@@ -18,7 +18,6 @@ TEST_P(laplace_marginal_poisson_log_lpmf, phi_dim_2) {
   const auto [solver_num, hessian_block_size, max_steps_line_search]
       = GetParam();
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
-  LAPLACE_SKIP_ZERO_STEPS(max_steps_line_search);
 
   using stan::math::laplace_marginal_poisson_log_lpmf;
   using stan::math::laplace_marginal_tol_poisson_log_lpmf;
@@ -80,7 +79,6 @@ TEST_P(laplace_marginal_poisson_log_lpmf, log_phi_dim_2) {
   const auto [solver_num, hessian_block_size, max_steps_line_search]
       = GetParam();
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
-  LAPLACE_SKIP_ZERO_STEPS(max_steps_line_search);
   using stan::math::laplace_marginal_poisson_log_lpmf;
   using stan::math::laplace_marginal_tol_poisson_log_lpmf;
 
@@ -153,7 +151,6 @@ TEST_P(laplace_marginal_poisson_log_lpmf, mean_argument) {
   const auto [solver_num, hessian_block_size, max_steps_line_search]
       = GetParam();
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
-  LAPLACE_SKIP_ZERO_STEPS(max_steps_line_search);
 
   // working example from
   // https://discourse.mc-stan.org/t/embedded-laplace-numerical-problem/39700
@@ -185,8 +182,6 @@ TEST_P(laplace_disease_map_test, laplace_marginal_poisson_log_lpmf) {
   const auto [solver_num, hessian_block_size, max_steps_line_search]
       = GetParam();
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
-  LAPLACE_SKIP_ZERO_STEPS(max_steps_line_search);
-  LAPLACE_SKIP_ZERO_STEPS(max_steps_line_search);
 
   using stan::math::laplace_marginal_poisson_log_lpmf;
   using stan::math::laplace_marginal_tol_poisson_log_lpmf;

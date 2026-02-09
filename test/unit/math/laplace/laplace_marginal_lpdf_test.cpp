@@ -50,7 +50,6 @@ TEST_P(laplace_marginal_lpdf, poisson_log_phi_dim_2) {
   const auto [solver_num, hessian_block_size, max_steps_line_search]
       = GetParam();
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
-  LAPLACE_SKIP_ZERO_STEPS(max_steps_line_search);
 
   double target = laplace_marginal<false>(
       poisson_log_likelihood2{}, std::forward_as_tuple(sums),
@@ -127,7 +126,6 @@ TEST_P(laplace_disease_map_test, laplace_marginal) {
   const auto [solver_num, hessian_block_size, max_steps_line_search]
       = GetParam();
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
-  LAPLACE_SKIP_ZERO_STEPS(max_steps_line_search);
 
   {
     double marginal_density = laplace_marginal<false>(
@@ -197,8 +195,6 @@ TEST_P(laplace_marginal_lpdf, bernoulli_logit_phi_dim500) {
   const auto [solver_num, hessian_block_size, max_steps_line_search]
       = GetParam();
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
-  LAPLACE_SKIP_ZERO_STEPS(max_steps_line_search);
-
   double target = laplace_marginal<false>(
       bernoulli_logit_likelihood{}, std::forward_as_tuple(y),
       stan::math::test::sqr_exp_kernel_functor{},

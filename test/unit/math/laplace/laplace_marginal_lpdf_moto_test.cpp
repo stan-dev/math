@@ -144,7 +144,6 @@ TEST_P(laplace_motorcyle_gp_test, gp_motorcycle_val) {
       = GetParam();
   constexpr int dim_theta = 2 * n_obs;
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
-  LAPLACE_SKIP_ZERO_STEPS(max_steps_line_search);
 
   laplace_marginal_tol<false>(
       normal_likelihood{}, std::forward_as_tuple(y, n_obs),
@@ -173,7 +172,6 @@ TEST_P(laplace_motorcyle_gp_test, gp_motorcycle_ad) {
       = GetParam();
   constexpr int dim_theta = 2 * n_obs;
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
-  LAPLACE_SKIP_ZERO_STEPS(max_steps_line_search);
   constexpr stan::test::ad_tolerances tols{
       stan::test::ad_gradient_tols{1e-8, 1e-1}};
   auto f = [&](auto&& phi_01_v, auto&& phi_rest_v) {
@@ -250,7 +248,6 @@ TEST_P(laplace_motorcyle_gp_test, gp_motorcycle2_val) {
       = GetParam();
   constexpr int dim_theta = 2 * n_obs;
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
-  LAPLACE_SKIP_ZERO_STEPS(max_steps_line_search);
   laplace_marginal_tol<false>(
       normal_likelihood2{}, std::forward_as_tuple(y, n_obs, sigma_global),
       covariance_motorcycle_functor{},
@@ -278,7 +275,6 @@ TEST_P(laplace_motorcyle_gp_test, gp_motorcycle2_ad) {
       = GetParam();
   constexpr int dim_theta = 2 * n_obs;
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
-  LAPLACE_SKIP_ZERO_STEPS(max_steps_line_search);
   constexpr stan::test::ad_tolerances tols{
       stan::test::ad_gradient_tols{1e-8, 1e-1}};
   auto f = [&](auto&& sigma_global_v, auto&& length_scale_v, auto&& sigma_v) {
