@@ -798,8 +798,8 @@ TEST(CubicOrBisect, ReturnsInteriorMaximiser) {
 // Checks that the chooser falls back to the midpoint on non-finite data.
 TEST(CubicOrBisect, FallsBackToMidpointOnNonfinite) {
   using stan::math::internal::cubic_spline;
-  double alpha = cubic_spline(
-      0.0, std::numeric_limits<double>::quiet_NaN(), 1.0, 1.0, -1.0, -0.5);
+  double alpha = cubic_spline(0.0, std::numeric_limits<double>::quiet_NaN(),
+                              1.0, 1.0, -1.0, -0.5);
   EXPECT_DOUBLE_EQ(alpha, 0.5);
 }
 

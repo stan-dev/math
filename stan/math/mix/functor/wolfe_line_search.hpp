@@ -157,9 +157,9 @@ namespace internal {
  */
 template <typename Scalar>
 [[nodiscard]] inline Scalar cubic_spline(Scalar x_left, Scalar f_left,
-                                                Scalar df_left, Scalar x_right,
-                                                Scalar f_right,
-                                                Scalar df_right) noexcept {
+                                         Scalar df_left, Scalar x_right,
+                                         Scalar f_right,
+                                         Scalar df_right) noexcept {
   const Scalar midpoint = (x_left + x_right) / Scalar(2);
 
   // Basic validation: ordering + finiteness.
@@ -284,8 +284,8 @@ template <typename Scalar>
 
 template <typename Eval, typename Options>
 inline auto cubic_spline(Eval&& low, Eval&& high, Options&& opt) {
-  auto alpha = cubic_spline(low.alpha(), low.obj(), low.dir(),
-                                   high.alpha(), high.obj(), high.dir());
+  auto alpha = cubic_spline(low.alpha(), low.obj(), low.dir(), high.alpha(),
+                            high.obj(), high.dir());
   const double width = high.alpha() - low.alpha();
   const double guard = 1e-3 * width;  // or make this an option
   alpha = std::clamp(alpha, low.alpha() + guard, high.alpha() - guard);
@@ -608,13 +608,13 @@ inline auto retry_evaluate(Update&& update, Proposal&& proposal, Curr&& curr,
  * The search maintains a left endpoint `low`, a right endpoint `high`,
  * and a fallback `best` (best Armijo-satisfying point seen so far).
  * Non-finite evaluations are contracted by factor `opt.tau` automatically.
- * 
+ *
  * ## Phase 1: Aggresive Expansion
  * The user given initial step size is expanded by `opt.scale_up` until
  * either Wolfe conditions are violated or `opt.max_alpha` is reached.
  * If the first evaluation satisfies both conditions, the search expands
  * further ("zoom-up") to find the largest such step before accepting.
- * 
+ *
  * ## Phase 2: Expansion / Bracketing
  *
  * Starting from $\alpha_0 = \text{clamp}(\text{curr.alpha} \cdot
@@ -632,9 +632,9 @@ inline auto retry_evaluate(Update&& update, Proposal&& proposal, Curr&& curr,
  * | T      | F     | <= 0  | Bracket found, go to zoom |
  * | F      | -     | -     | Bracket found, go to zoom |
  * ```
- * 
+ *
  * The goal of this phase is to find a valid bracket `[low, high]`
- * Ideally such that the low endpoint satisfies Armijo and has 
+ * Ideally such that the low endpoint satisfies Armijo and has
  * a positive derivative, while the high endpoint has a negative
  * derivative. This gives us a shape like /\ to search through
  * in the zoom phase. If such a bracket cannot be found
@@ -790,10 +790,10 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
       return wolfe_check;
     }
     if (check_armijo(high, prev, opt)) {
-      if (check_wolfe(high, prev, opt)) { // [1]
+      if (check_wolfe(high, prev, opt)) {  // [1]
         curr.update(scratch, high);
         return WolfeStatus{WolfeReturn::Wolfe, total_updates, num_backtracks,
-                          true};
+                           true};
       }
       if (best.obj() < high.obj()) {
         best = high;
@@ -887,7 +887,7 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
                          num_backtracks, false};
     }
     if (check_armijo(mid, prev, opt)) {
-      if (check_wolfe(mid, prev, opt)) { // [1]
+      if (check_wolfe(mid, prev, opt)) {  // [1]
         curr.update(scratch, mid);
         return WolfeStatus{WolfeReturn::Wolfe, total_updates, num_backtracks,
                            true};
@@ -897,16 +897,16 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
         best = mid;
       }
       if (mid.obj() > low.obj()) {
-        if (mid.dir() > 0) { // [2]
+        if (mid.dir() > 0) {  // [2]
           low = mid;
-        } else { // [3]
+        } else {  // [3]
           high = mid;
         }
       }
       // [4]
-      high = mid; 
-    } else { 
-      // [5] 
+      high = mid;
+    } else {
+      // [5]
       high = mid;
     }
     // Convergence/guard-rail checks (uses prev/grad_tol/obj_tol etc.)

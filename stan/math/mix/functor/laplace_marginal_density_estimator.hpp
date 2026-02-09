@@ -444,7 +444,8 @@ inline void llt_with_jitter(LLT& llt_B, B_t& B, double min_jitter = 1e-10,
     }
     if (llt_B.info() != Eigen::Success) {
       throw std::domain_error(
-          "laplace_marginal_density: Cholesky failed after adding jitter up to " + std::to_string(jitter_try));
+          "laplace_marginal_density: Cholesky failed after adding jitter up to "
+          + std::to_string(jitter_try));
     }
   }
 }
@@ -964,10 +965,11 @@ inline auto run_newton_loop(SolverPolicy& solver, NewtonStateT& state,
        * Stop when objective change is small, or when a rejected Wolfe step
        * fails to improve; finish_update then exits the Newton loop.
        */
-      bool objective_converged = std::abs(state.curr().obj() - state.prev().obj())
-                          < options.tolerance;
+      bool objective_converged
+          = std::abs(state.curr().obj() - state.prev().obj())
+            < options.tolerance;
       bool search_failed = (!state.wolfe_status.accept_
-                          && state.curr().obj() <= state.prev().obj());
+                            && state.curr().obj() <= state.prev().obj());
       finish_update = objective_converged || search_failed;
     }
     if (finish_update) {
@@ -1037,8 +1039,10 @@ inline decltype(auto) theta_init_impl(Eigen::Index theta_size, Opts&& options) {
 /**
  * @brief Create the update function for the line search, capturing necessary
  * references.
- * @tparam ObjFun Callable type for the objective function (accepting (a, theta))
- * @tparam ThetaGradFun Callable type for the theta gradient function (accepting theta)
+ * @tparam ObjFun Callable type for the objective function (accepting (a,
+ * theta))
+ * @tparam ThetaGradFun Callable type for the theta gradient function (accepting
+ * theta)
  * @tparam Covariance Type of the covariance matrix
  * @tparam Options Type of the options struct containing line search parameters
  * @param[in] obj_fun Objective function functor
@@ -1050,12 +1054,13 @@ inline decltype(auto) theta_init_impl(Eigen::Index theta_size, Opts&& options) {
  *  bool update_fun(proposal, curr, prev, eval_in, p)
  * ```
  */
-template <typename ObjFun, typename ThetaGradFun, typename Covariance, typename Options>
+template <typename ObjFun, typename ThetaGradFun, typename Covariance,
+          typename Options>
 inline auto create_update_fun(ObjFun&& obj_fun, ThetaGradFun&& theta_grad_f,
-                             Covariance&& covariance, Options&& options) {
+                              Covariance&& covariance, Options&& options) {
   auto update_step = [&covariance, &obj_fun, &theta_grad_f](
-                          auto& proposal, auto&& /* curr */, auto&& prev,
-                          auto& eval_in, auto&& p) {
+                         auto& proposal, auto&& /* curr */, auto&& prev,
+                         auto& eval_in, auto&& p) {
     try {
       proposal.a() = prev.a() + eval_in.alpha() * p;
       proposal.theta().noalias() = covariance * proposal.a();
@@ -1073,7 +1078,8 @@ inline auto create_update_fun(ObjFun&& obj_fun, ThetaGradFun&& theta_grad_f,
     eval.alpha() *= options.line_search.tau;
     return eval.alpha() > options.line_search.min_alpha;
   };
-  return [update_step_ = std::move(update_step), backoff_ = std::move(backoff)](
+  return
+      [update_step_ = std::move(update_step), backoff_ = std::move(backoff)](
           auto& proposal, auto&& curr, auto&& prev, auto& eval_in, auto&& p) {
         return internal::retry_evaluate(update_step_, proposal, curr, prev,
                                         eval_in, p, backoff_);
@@ -1153,7 +1159,8 @@ inline auto laplace_marginal_density_est(
   decltype(auto) theta_init = theta_init_impl<InitTheta>(theta_size, options);
   internal::NewtonState state(theta_size, obj_fun, theta_grad_f, theta_init);
   // Start with safe step size
-  auto update_fun = create_update_fun(std::move(obj_fun), std::move(theta_grad_f), covariance, options);
+  auto update_fun = create_update_fun(
+      std::move(obj_fun), std::move(theta_grad_f), covariance, options);
   Eigen::Index step_iter = 0;
   try {
     if (options.solver == 1) {
