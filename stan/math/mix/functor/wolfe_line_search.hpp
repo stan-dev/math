@@ -156,7 +156,7 @@ namespace internal {
  *         (x_left + x_right) / 2 is returned instead.
  */
 template <typename Scalar>
-[[nodiscard]] inline Scalar cubic_interpolation(Scalar x_left, Scalar f_left,
+[[nodiscard]] inline Scalar cubic_or_bisect_max(Scalar x_left, Scalar f_left,
                                                 Scalar df_left, Scalar x_right,
                                                 Scalar f_right,
                                                 Scalar df_right) noexcept {
@@ -283,8 +283,8 @@ template <typename Scalar>
 }
 
 template <typename Eval, typename Options>
-inline auto cubic_interpolation(Eval&& low, Eval&& high, Options&& opt) {
-  auto alpha = cubic_interpolation(low.alpha(), low.obj(), low.dir(),
+inline auto cubic_or_bisect_max(Eval&& low, Eval&& high, Options&& opt) {
+  auto alpha = cubic_or_bisect_max(low.alpha(), low.obj(), low.dir(),
                                    high.alpha(), high.obj(), high.dir());
   const double width = high.alpha() - low.alpha();
   const double guard = 1e-3 * width;  // or make this an option
@@ -714,7 +714,7 @@ inline auto retry_evaluate(Update&& update, Proposal&& proposal, Curr&& curr,
  *
  *    - If `low.dir()` and `high.dir()` have opposite signs and the right
  *      endpoint `high` satisfies Armijo, a cubic interpolation of the endpoints
- *      is used (`cubic_interpolation(low, high, opt)`).
+ *      is used (`cubic_or_bisect_max(low, high, opt)`).
  *    - Otherwise the trial is the simple bisection midpoint
  *      \f$\tfrac{1}{2}(\alpha_\text{low} + \alpha_\text{high})\f$.
  *
@@ -864,6 +864,10 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
   Eval low{0.0, prev.obj(), dir_deriv_init};
   prev.dir() = dir_deriv_init;
   int total_updates = 0;
+  auto eval_finite = [](const Eval& e, const WolfeData& state) {
+    return std::isfinite(e.obj()) && std::isfinite(e.dir())
+           && state.theta().allFinite() && state.theta_grad().allFinite();
+  };
   Eval best = low;  // keep the best Armijo-OK in case strong-Wolfe fails
   auto update_with_tick = [&total_updates, &opt, &best, &update_fun](
                               auto&& proposal, auto&& curr, auto&& prev,
@@ -891,6 +895,7 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
       = std::clamp(curr.alpha() * opt.scale_up, opt.min_alpha, opt.max_alpha);
   Eval high{alpha_start, curr.obj(), dir_deriv_init};
   WolfeStatus wolfe_check{WolfeReturn::Continue, 0, 0, false};
+  bool high_has_eval = true;
   // Initial check for numerical trouble
   {
     wolfe_check = update_with_tick(scratch, curr, prev, high, p);
@@ -915,6 +920,7 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
           if (wolfe_check.stop_ != WolfeReturn::Continue) {
             return wolfe_check;
           }
+          high_has_eval = true;
         }
         wolfe_check = update_with_tick(scratch, curr, prev, best, p);
         if (wolfe_check.stop_ != WolfeReturn::Continue) {
@@ -929,50 +935,55 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
       }
     }
   }
+  bool found_right = false;
   int num_backtracks = 0;
   /**
-   * From Nocedal–Wright (2006), Algorithm 3.5:
-   * https://www.math.uci.edu/~qnie/Publications/NumericalOptimization.pdf
+   * For each case
    * | armijo     | wolfe | sign(g) | Action
    * -------+-------+---------+--------------------------------
    * | [1]  T     |   T   |         | Accept alpha
    * | [2]  T     |   F   |   > 0   | set low=high, expand high
-   * | [3]  T     |   F   |   < 0   | Bracket found: stop
-   * | [4]  F     |   T   |         | Bracket found: stop
-   * | [5]  F     |   F   |         | Bracket found: stop
-   * NOTE: In an ideal case we would end up with a positive low directional gradient and
-   * negative high directional gradient. Cubic interpolation requires a bracket with directional
-   * shape like /\. This scheme does not gurantee a bracket with that shape will be found.
-   * So in the zoom we will have to check if we can do cubic or have to fallback to bisection.
+   * | [3]  T     |   F   |   < 0   | Set alpha_high <- alpha, stop
+   * | [4]  F     |   T   |         | Set alpha_high <- alpha, stop
+   * | [5]  F     |   F   |         | Set alpha_high <- alpha, stop
    **/
-  while (high.alpha() < opt.max_alpha) {
+  while (!found_right && high.alpha() < opt.max_alpha) {
     num_backtracks++;
+    // 1. Evaluate f(alpha) and g(alpha)
     wolfe_check = update_with_tick(scratch, curr, prev, high, p);
     if (wolfe_check.stop_ != WolfeReturn::Continue) {
       return wolfe_check;
     }
+    high_has_eval = true;
+    const bool finite_ok = eval_finite(high, scratch);
+    // 2. Handle numerical trouble first
+    if (!finite_ok) {  //   f or g is NaN/Inf → shrink
+      high.alpha() *= 0.5;
+      high_has_eval = false;
+      if (high.alpha() < opt.min_alpha) {
+        break;
+      }
+      continue;
+    }
     const bool armijo = check_armijo(high, prev, opt);
     const bool wolfe = check_wolfe(high, prev, opt);
-    // [1]
-    if (armijo && wolfe) {
+    if (armijo && wolfe) {  // [1]
       curr.update(scratch, high);
       return WolfeStatus{WolfeReturn::Wolfe, total_updates, num_backtracks,
                          true};
-    } else if (armijo) {
-      if (best.obj() < high.obj()) {
-        best = high;
-      }
-      // [2]
-      if (high.dir() > 0) {
-        low = high;
-        high.alpha() *= opt.scale_up;
-        continue;
-      }
-      // [3]
-      break;
     }
-    // [3, 4, 5]
-    break;
+    if (armijo && best.obj() < high.obj()) {
+      best = high;
+    }
+    const bool dir_pos = high.dir() > 0;
+    if (armijo && !wolfe && dir_pos) {  // [2]
+      low = high;
+      high.alpha() *= opt.scale_up;
+      high_has_eval = false;
+      continue;
+    }
+    // [3,4,5]
+    found_right = true;
   }
   const double grad_tol
       = std::max(opt.abs_grad_threshold,
@@ -1007,6 +1018,13 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
     return WolfeStatus{WolfeReturn::Continue, total_updates, num_backtracks,
                        false};
   };
+  if (!high_has_eval) {
+    wolfe_check = update_with_tick(scratch, curr, prev, high, p);
+    if (wolfe_check.stop_ != WolfeReturn::Continue) {
+      return wolfe_check;
+    }
+    high_has_eval = true;
+  }
   auto check_b = check_bounds(high);
   if (check_b.stop_ != WolfeReturn::Continue) {
     if (check_b.accept_) {
@@ -1018,19 +1036,7 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
   if (wolfe_check.stop_ != WolfeReturn::Continue) {
     return wolfe_check;
   }
-  /**
-   * Zoom Step: (Alg 3.6, adapted to maximization via phi=-obj)
-   *
-   * Exit/update table (evaluated at `mid`, with `low` = best Armijo endpoint):
-   * | Armijo? | obj(mid) >= obj(low)? | Wolfe? | dir(mid) >= 0? | Action
-   * |---------|-----------------------|--------|----------------|--------------------------|
-   * |   T     |           F           |   T    |       *        | accept mid [1]           |
-   * |   T     |           T           |   *    |       *        | high = mid [2]           |
-   * |   T     |           F           |   F    |       T        | high = low; low = mid [3]|
-   * |   T     |           F           |   F    |       F        | low = mid [4]            |
-   * |   F     |           *           |   *    |       *        | high = mid [5]           |
-   * ----------------------------------------------------------------------------------------
-   **/
+  // Zoom phase
   while ((high.alpha() - low.alpha() > opt.min_alpha)
          && high.alpha() > opt.min_alpha) {
     num_backtracks++;
@@ -1040,12 +1046,9 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
     const bool use_cubic = have_sign_change && high_armijo_ok;
 
     // Choose trial alpha: cubic when bracket is good, else bisection.
-    double alpha_mid{0};
-    if (use_cubic) {
-      alpha_mid = cubic_interpolation(low, high, opt);
-    } else {
-      alpha_mid = 0.5 * (low.alpha() + high.alpha());
-    }
+    double alpha_mid = use_cubic ? cubic_or_bisect_max(low, high, opt)
+                                 : 0.5 * (low.alpha() + high.alpha());
+
     if (alpha_mid <= opt.min_alpha) {
       break;
     }
@@ -1060,7 +1063,6 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
     }
     if (check_armijo(mid, prev, opt)) {
       if (check_wolfe(mid, prev, opt)) {
-        // [1]
         curr.update(scratch, mid);
         return WolfeStatus{WolfeReturn::Wolfe, total_updates, num_backtracks,
                            true};
@@ -1069,17 +1071,17 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
       if (mid.obj() > best.obj()) {
         best = mid;
       }
-      if (mid.obj() >= low.obj()) {
-        // [2]
-        high = mid;
-      } else if (mid.dir() >= 0) {
-        // [3]
-        high = low;
-        low = mid;
-      }
-      // [4]
+    }
+
+    // Update bracket based on derivative sign
+    if (mid.dir() * low.dir() < 0) {
+      // sign change between low and mid -> [low, mid]
+      high = mid;
+    } else {
+      // otherwise shift left endpoint -> [mid, high]
       low = mid;
     }
+
     // Convergence/guard-rail checks (uses prev/grad_tol/obj_tol etc.)
     auto bounds_check = check_bounds(mid);
     if (bounds_check.stop_ != WolfeReturn::Continue) {
@@ -1088,8 +1090,6 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
       }
       return bounds_check;
     }
-    // [5]
-    high = mid;
   }
   // On failure, use the best point we have found so far that at least satisfies
   // armijo
