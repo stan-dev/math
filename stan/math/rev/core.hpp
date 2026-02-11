@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_REV_CORE_HPP
 #define STAN_MATH_REV_CORE_HPP
 
+#include <stan/math/rev/core/Eigen_NumTraits.hpp>
 #include <stan/math/rev/core/accumulate_adjoints.hpp>
 #include <stan/math/rev/core/arena_allocator.hpp>
 #include <stan/math/rev/core/arena_matrix.hpp>
@@ -11,6 +12,7 @@
 #include <stan/math/rev/core/chainablestack.hpp>
 #include <stan/math/rev/core/count_vars.hpp>
 #include <stan/math/rev/core/callback_vari.hpp>
+#include <stan/math/rev/core/collect_adjoints.hpp>
 #include <stan/math/rev/core/init_chainablestack.hpp>
 #include <stan/math/rev/core/std_iterator_traits.hpp>
 #include <stan/math/rev/core/ddv_vari.hpp>
@@ -18,11 +20,12 @@
 #include <stan/math/rev/core/dv_vari.hpp>
 #include <stan/math/rev/core/dvd_vari.hpp>
 #include <stan/math/rev/core/dvv_vari.hpp>
-#include <stan/math/rev/core/Eigen_NumTraits.hpp>
 #include <stan/math/rev/core/empty_nested.hpp>
+#include <stan/math/rev/core/filter_var_scalar_types.hpp>
 #include <stan/math/rev/core/gevv_vvv_vari.hpp>
 #include <stan/math/rev/core/grad.hpp>
 #include <stan/math/rev/core/nested_rev_autodiff.hpp>
+#include <stan/math/rev/core/make_zeroed_arena.hpp>
 #include <stan/math/rev/core/matrix_vari.hpp>
 #include <stan/math/rev/core/nested_size.hpp>
 #include <stan/math/rev/core/operator_addition.hpp>

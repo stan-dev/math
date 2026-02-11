@@ -11,12 +11,14 @@
 #include <stan/math/rev/fun/elt_multiply.hpp>
 #include <stan/math/rev/fun/lgamma.hpp>
 #include <stan/math/rev/fun/log.hpp>
+#include <stan/math/rev/fun/log_sum_exp.hpp>
 #include <stan/math/rev/fun/exp.hpp>
 #include <stan/math/rev/fun/multiply.hpp>
 #include <stan/math/rev/fun/sum.hpp>
 #include <stan/math/fwd/fun/exp.hpp>
 #include <stan/math/fwd/fun/lgamma.hpp>
 #include <stan/math/fwd/fun/log.hpp>
+#include <stan/math/fwd/fun/log_sum_exp.hpp>
 #include <stan/math/fwd/fun/sum.hpp>
 #include <stan/math/prim/fun/binomial_coefficient_log.hpp>
 
@@ -39,14 +41,17 @@ struct neg_binomial_2_log_likelihood {
     }
     Eigen::Map<const Eigen::VectorXi> y_map(y.data(), y.size());
 
-    auto theta_offset = to_ref(add(theta, mean));
-    auto log_eta_plus_exp_theta = eval(log(add(eta, exp(theta_offset))));
-    return sum(binomial_coefficient_log(subtract(add(y_map, eta), 1), y_map))
-           + sum(
-               add(elt_multiply(counts_per_group,
-                                subtract(theta_offset, log_eta_plus_exp_theta)),
-                   elt_multiply(multiply(n_per_group, eta),
-                                subtract(log(eta), log_eta_plus_exp_theta))));
+    auto theta_offset = add(theta, mean);
+    auto log_eta = log(eta);
+    auto lse = to_ref(log_sum_exp(theta_offset, log_eta));
+
+    return sum(binomial_coefficient_log(subtract(add(y_map, eta), 1.0), y_map))
+           + sum(add(
+               // counts_per_group * (theta - log(eta + exp(theta)))
+               elt_multiply(counts_per_group, subtract(theta_offset, lse)),
+               // n_per_group * eta * (log(eta) - log(eta + exp(theta)))
+               elt_multiply(multiply(n_per_group, eta),
+                            subtract(log_eta, lse))));
   }
 };
 
@@ -71,23 +76,18 @@ struct neg_binomial_2_log_likelihood {
  * \laplace_options
  * \msg_arg
  */
-template <bool propto = false, typename Eta, typename ThetaVec, typename Mean,
-          typename CovarFun, typename CovarArgs,
-          require_eigen_vector_t<ThetaVec>* = nullptr>
+template <bool propto = false, typename Eta, typename Mean, typename CovarFun,
+          typename CovarArgs, typename OpsTuple>
 inline auto laplace_marginal_tol_neg_binomial_2_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& y_index, const Eta& eta,
     Mean&& mean, CovarFun&& covariance_function, CovarArgs&& covar_args,
-    const ThetaVec& theta_0, double tolerance, int max_num_steps,
-    const int hessian_block_size, const int solver,
-    const int max_steps_line_search, std::ostream* msgs) {
-  laplace_options_user_supplied ops{hessian_block_size,    solver,
-                                    max_steps_line_search, tolerance,
-                                    max_num_steps,         value_of(theta_0)};
+    OpsTuple&& ops, std::ostream* msgs) {
   return laplace_marginal_density(
       neg_binomial_2_log_likelihood{},
       std::forward_as_tuple(eta, y, y_index, std::forward<Mean>(mean)),
       std::forward<CovarFun>(covariance_function),
-      std::forward<CovarArgs>(covar_args), ops, msgs);
+      std::forward<CovarArgs>(covar_args),
+      internal::tuple_to_laplace_options(std::forward<OpsTuple>(ops)), msgs);
 }
 
 /**
@@ -135,15 +135,17 @@ struct neg_binomial_2_log_likelihood_summary {
     Eigen::Map<const Eigen::VectorXi> counts_per_group_map(
         counts_per_group.data(), counts_per_group.size());
 
-    auto theta_offset = to_ref(add(theta, mean));
-    auto log_eta_plus_exp_theta = eval(log(add(eta, exp(theta_offset))));
+    auto theta_offset = add(theta, mean);
+    auto log_eta = log(eta);
+    auto lse = to_ref(log_sum_exp(theta_offset, log_eta));
 
     return sum(binomial_coefficient_log(subtract(add(y_map, eta), 1.0), y_map))
-           + sum(
-               add(elt_multiply(counts_per_group_map,
-                                subtract(theta_offset, log_eta_plus_exp_theta)),
-                   elt_multiply(multiply(n_per_group_map, eta),
-                                subtract(log(eta), log_eta_plus_exp_theta))));
+           + sum(add(
+               // counts_per_group * (theta - log(eta + exp(theta)))
+               elt_multiply(counts_per_group_map, subtract(theta_offset, lse)),
+               // n_per_group * eta * (log(eta) - log(eta + exp(theta)))
+               elt_multiply(multiply(n_per_group_map, eta),
+                            subtract(log_eta, lse))));
   }
 };
 
@@ -168,25 +170,20 @@ struct neg_binomial_2_log_likelihood_summary {
  * \laplace_options
  * \msg_arg
  */
-template <bool propto = false, typename Eta, typename ThetaVec, typename Mean,
-          typename CovarFun, typename CovarArgs,
-          require_eigen_vector_t<ThetaVec>* = nullptr>
+template <bool propto = false, typename Eta, typename Mean, typename CovarFun,
+          typename CovarArgs, typename OpsTuple>
 inline auto laplace_marginal_tol_neg_binomial_2_log_summary_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_per_group,
     const std::vector<int>& counts_per_group, const Eta& eta, Mean&& mean,
-    CovarFun&& covariance_function, CovarArgs&& covar_args,
-    const ThetaVec& theta_0, double tolerance, int max_num_steps,
-    const int hessian_block_size, const int solver,
-    const int max_steps_line_search, std::ostream* msgs) {
-  laplace_options_user_supplied ops{hessian_block_size,    solver,
-                                    max_steps_line_search, tolerance,
-                                    max_num_steps,         value_of(theta_0)};
+    CovarFun&& covariance_function, CovarArgs&& covar_args, OpsTuple&& ops,
+    std::ostream* msgs) {
   return laplace_marginal_density(
       neg_binomial_2_log_likelihood_summary{},
       std::forward_as_tuple(eta, y, n_per_group, counts_per_group,
                             std::forward<Mean>(mean)),
       std::forward<CovarFun>(covariance_function),
-      std::forward<CovarArgs>(covar_args), ops, msgs);
+      std::forward<CovarArgs>(covar_args),
+      internal::tuple_to_laplace_options(std::forward<OpsTuple>(ops)), msgs);
 }
 
 /**
