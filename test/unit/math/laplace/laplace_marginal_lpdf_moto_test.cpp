@@ -141,9 +141,9 @@ TEST_P(laplace_motorcyle_gp_test, gp_motorcycle_val) {
   constexpr double tolerance = 1e-12;
   constexpr int max_num_steps = 1000;
   const auto test_params = GetParam();
-const auto solver_num = std::get<0>(test_params);
-const auto hessian_block_size = std::get<1>(test_params);
-const auto max_steps_line_search = std::get<2>(test_params);
+  const auto solver_num = std::get<0>(test_params);
+  const auto hessian_block_size = std::get<1>(test_params);
+  const auto max_steps_line_search = std::get<2>(test_params);
   constexpr int dim_theta = 2 * n_obs;
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
 
@@ -171,9 +171,9 @@ TEST_P(laplace_motorcyle_gp_test, gp_motorcycle_ad) {
   Eigen::VectorXd phi_rest = phi_dbl.tail(2);
   Eigen::VectorXd phi_01{{phi_0, phi_1}};
   const auto test_params = GetParam();
-const auto solver_num = std::get<0>(test_params);
-const auto hessian_block_size = std::get<1>(test_params);
-const auto max_steps_line_search = std::get<2>(test_params);
+  const auto solver_num = std::get<0>(test_params);
+  const auto hessian_block_size = std::get<1>(test_params);
+  const auto max_steps_line_search = std::get<2>(test_params);
   constexpr int dim_theta = 2 * n_obs;
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
   constexpr stan::test::ad_tolerances tols{
@@ -249,9 +249,9 @@ TEST_P(laplace_motorcyle_gp_test, gp_motorcycle2_val) {
   constexpr double tolerance = 1e-12;
   constexpr int max_num_steps = 300;
   const auto test_params = GetParam();
-const auto solver_num = std::get<0>(test_params);
-const auto hessian_block_size = std::get<1>(test_params);
-const auto max_steps_line_search = std::get<2>(test_params);
+  const auto solver_num = std::get<0>(test_params);
+  const auto hessian_block_size = std::get<1>(test_params);
+  const auto max_steps_line_search = std::get<2>(test_params);
   constexpr int dim_theta = 2 * n_obs;
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
   laplace_marginal_tol<false>(
@@ -278,9 +278,9 @@ TEST_P(laplace_motorcyle_gp_test, gp_motorcycle2_ad) {
   Eigen::VectorXd length_scale_vec = phi_dbl.head(2);
   Eigen::VectorXd sigma_vec = phi_dbl.tail(2);
   const auto test_params = GetParam();
-const auto solver_num = std::get<0>(test_params);
-const auto hessian_block_size = std::get<1>(test_params);
-const auto max_steps_line_search = std::get<2>(test_params);
+  const auto solver_num = std::get<0>(test_params);
+  const auto hessian_block_size = std::get<1>(test_params);
+  const auto max_steps_line_search = std::get<2>(test_params);
   constexpr int dim_theta = 2 * n_obs;
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
   constexpr stan::test::ad_tolerances tols{

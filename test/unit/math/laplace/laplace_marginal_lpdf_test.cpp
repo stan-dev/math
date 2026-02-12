@@ -48,9 +48,9 @@ TEST_P(laplace_marginal_lpdf, poisson_log_phi_dim_2) {
   std::vector<int> n_samples = {1, 1};
   std::vector<int> sums = {1, 0};
   const auto test_params = GetParam();
-const auto solver_num = std::get<0>(test_params);
-const auto hessian_block_size = std::get<1>(test_params);
-const auto max_steps_line_search = std::get<2>(test_params);
+  const auto solver_num = std::get<0>(test_params);
+  const auto hessian_block_size = std::get<1>(test_params);
+  const auto max_steps_line_search = std::get<2>(test_params);
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
 
   double target = laplace_marginal<false>(
@@ -126,9 +126,9 @@ TEST_P(laplace_disease_map_test, laplace_marginal) {
   using stan::math::value_of;
   using stan::math::var;
   const auto test_params = GetParam();
-const auto solver_num = std::get<0>(test_params);
-const auto hessian_block_size = std::get<1>(test_params);
-const auto max_steps_line_search = std::get<2>(test_params);
+  const auto solver_num = std::get<0>(test_params);
+  const auto hessian_block_size = std::get<1>(test_params);
+  const auto max_steps_line_search = std::get<2>(test_params);
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
 
   {
@@ -197,9 +197,9 @@ TEST_P(laplace_marginal_lpdf, bernoulli_logit_phi_dim500) {
   std::vector<double> delta;
   Eigen::Matrix<double, Eigen::Dynamic, 1> phi_dbl{{1.6, 1}};
   const auto test_params = GetParam();
-const auto solver_num = std::get<0>(test_params);
-const auto hessian_block_size = std::get<1>(test_params);
-const auto max_steps_line_search = std::get<2>(test_params);
+  const auto solver_num = std::get<0>(test_params);
+  const auto hessian_block_size = std::get<1>(test_params);
+  const auto max_steps_line_search = std::get<2>(test_params);
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
   double target = laplace_marginal<false>(
       bernoulli_logit_likelihood{}, std::forward_as_tuple(y),

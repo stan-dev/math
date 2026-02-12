@@ -34,9 +34,9 @@ TEST_P(laplace_marginal_neg_binomial_log_lpmf, phi_dim_2) {
   std::vector<int> y_index{1, 2};
   constexpr double eta_dbl = 100;
   const auto test_params = GetParam();
-const auto solver_num = std::get<0>(test_params);
-const auto hessian_block_size = std::get<1>(test_params);
-const auto max_steps_line_search = std::get<2>(test_params);
+  const auto solver_num = std::get<0>(test_params);
+  const auto hessian_block_size = std::get<1>(test_params);
+  const auto max_steps_line_search = std::get<2>(test_params);
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
 
   constexpr double tolerance = 1e-12;
@@ -75,9 +75,9 @@ TEST_P(laplace_disease_map_test, laplace_marginal_neg_binomial_2_log_lpmf) {
   using stan::math::value_of;
   using stan::math::var;
   const auto test_params = GetParam();
-const auto solver_num = std::get<0>(test_params);
-const auto hessian_block_size = std::get<1>(test_params);
-const auto max_steps_line_search = std::get<2>(test_params);
+  const auto solver_num = std::get<0>(test_params);
+  const auto hessian_block_size = std::get<1>(test_params);
+  const auto max_steps_line_search = std::get<2>(test_params);
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
   constexpr double eta = 1;
 
