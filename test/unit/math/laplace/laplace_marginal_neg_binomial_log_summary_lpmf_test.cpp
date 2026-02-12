@@ -40,8 +40,10 @@ TEST_P(laplace_marginal_neg_binomial_log_summary_lpmf, phi_dim_2) {
     n_per_group[y_index[i] - 1]++;
     counts_per_group[y_index[i] - 1] += y[i];
   }
-  const auto [solver_num, hessian_block_size, max_steps_line_search]
-      = GetParam();
+  const auto test_params = GetParam();
+const auto solver_num = std::get<0>(test_params);
+const auto hessian_block_size = std::get<1>(test_params);
+const auto max_steps_line_search = std::get<2>(test_params);
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
   constexpr double tolerance = 1e-12;
   constexpr int max_num_steps = 1000;
@@ -81,8 +83,10 @@ TEST_P(laplace_disease_map_test,
   using stan::math::to_vector;
   using stan::math::value_of;
   using stan::math::var;
-  const auto [solver_num, hessian_block_size, max_steps_line_search]
-      = GetParam();
+  const auto test_params = GetParam();
+const auto solver_num = std::get<0>(test_params);
+const auto hessian_block_size = std::get<1>(test_params);
+const auto max_steps_line_search = std::get<2>(test_params);
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
   constexpr double eta = 1;
   std::vector<int> n_per_group(theta_0.size(), 0);

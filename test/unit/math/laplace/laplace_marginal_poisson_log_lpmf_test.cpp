@@ -15,8 +15,10 @@ class laplace_marginal_poisson_log_lpmf : public LaplaceAdTest {};
 
 TEST_P(laplace_marginal_poisson_log_lpmf, phi_dim_2) {
   constexpr int dim_theta = 2;
-  const auto [solver_num, hessian_block_size, max_steps_line_search]
-      = GetParam();
+  const auto test_params = GetParam();
+const auto solver_num = std::get<0>(test_params);
+const auto hessian_block_size = std::get<1>(test_params);
+const auto max_steps_line_search = std::get<2>(test_params);
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
 
   using stan::math::laplace_marginal_poisson_log_lpmf;
@@ -76,8 +78,10 @@ TEST_P(laplace_marginal_poisson_log_lpmf, phi_dim_2) {
 
 TEST_P(laplace_marginal_poisson_log_lpmf, log_phi_dim_2) {
   constexpr int dim_theta = 2;
-  const auto [solver_num, hessian_block_size, max_steps_line_search]
-      = GetParam();
+  const auto test_params = GetParam();
+const auto solver_num = std::get<0>(test_params);
+const auto hessian_block_size = std::get<1>(test_params);
+const auto max_steps_line_search = std::get<2>(test_params);
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
   using stan::math::laplace_marginal_poisson_log_lpmf;
   using stan::math::laplace_marginal_tol_poisson_log_lpmf;
@@ -148,8 +152,10 @@ struct diag_covariance {
 
 TEST_P(laplace_marginal_poisson_log_lpmf, mean_argument) {
   constexpr int dim_theta = 1;
-  const auto [solver_num, hessian_block_size, max_steps_line_search]
-      = GetParam();
+  const auto test_params = GetParam();
+const auto solver_num = std::get<0>(test_params);
+const auto hessian_block_size = std::get<1>(test_params);
+const auto max_steps_line_search = std::get<2>(test_params);
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
 
   // working example from
@@ -179,8 +185,10 @@ TEST_P(laplace_marginal_poisson_log_lpmf, mean_argument) {
 LAPLACE_INSTANTIATE_TEST_SUITE_P(laplace_marginal_poisson_log_lpmf);
 
 TEST_P(laplace_disease_map_test, laplace_marginal_poisson_log_lpmf) {
-  const auto [solver_num, hessian_block_size, max_steps_line_search]
-      = GetParam();
+  const auto test_params = GetParam();
+const auto solver_num = std::get<0>(test_params);
+const auto hessian_block_size = std::get<1>(test_params);
+const auto max_steps_line_search = std::get<2>(test_params);
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
 
   using stan::math::laplace_marginal_poisson_log_lpmf;
