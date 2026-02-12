@@ -1,6 +1,18 @@
 Stan Math Library Release Notes
 
 ======================================================================
+v5.2.0 (13 January 2026)
+======================================================================
+
+ - Added the unnormalized CDF and CCDF for the wiener 7-parameter diffusion model. Allows modeling truncated and censored data. (#3042, #3258, #3260, #3263)
+ - Added `yule_simon_lpmf` and `yule_simon_lccdf`. Allows modeling power-law count data. (#3220, #3236)
+ - Updated wording of validate_positive_index. (#3248)
+ - Replaced standard `if` statements with `if constexpr` where posssible. (#3240)
+ - Removed use of `forward_as` in the math library. (#3242)
+ - Added some more type traits for dealing with tuples. (#3244)
+ - Added `inline` to all functions. (#3245)
+
+======================================================================
 v5.1.0 (2 September 2025)
 ======================================================================
 

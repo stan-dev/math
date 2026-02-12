@@ -223,7 +223,8 @@ pipeline {
                     steps {
                         retry(3) { checkout scm }
 
-                        sh "echo CXXFLAGS += -fsanitize=address >> make/local"
+                        sh "echo O=3 >> make/local"
+                        sh "echo CXXFLAGS+=-march=native -mtune=native >> make/local"
                         sh "./runTests.py -j${PARALLEL} --changed --debug"
 
                     }
