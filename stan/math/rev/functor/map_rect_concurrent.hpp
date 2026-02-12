@@ -19,13 +19,14 @@ namespace internal {
 
 // NOTE: Do NOT redeclare the default template argument here.
 // The prim header declares it already; rev header provides the definition.
-template <int call_id, typename F, typename T_shared_param, typename T_job_param,
-          require_eigen_col_vector_t<T_shared_param>*>
+template <int call_id, typename F, typename T_shared_param,
+          typename T_job_param, require_eigen_col_vector_t<T_shared_param>*>
 inline Eigen::Matrix<return_type_t<T_shared_param, T_job_param>, Eigen::Dynamic,
                      1>
 map_rect_concurrent(
     const T_shared_param& shared_params,
-    const std::vector<Eigen::Matrix<T_job_param, Eigen::Dynamic, 1>>& job_params,
+    const std::vector<Eigen::Matrix<T_job_param, Eigen::Dynamic, 1>>&
+        job_params,
     const std::vector<std::vector<double>>& x_r,
     const std::vector<std::vector<int>>& x_i, std::ostream* msgs) {
   using ReduceF
@@ -70,7 +71,8 @@ map_rect_concurrent(
   } else {
     const std::size_t max_team = pool.team_size();
     std::size_t n = std::min<std::size_t>(max_team, num_jobs);
-    if (n < 1) n = 1;
+    if (n < 1)
+      n = 1;
 
     if (n <= 1 || num_jobs <= 1) {
       execute_chunk(0, num_jobs);
@@ -78,7 +80,8 @@ map_rect_concurrent(
       pool.parallel_region(n, [&](std::size_t tid) {
         const std::size_t b0 = (num_jobs * tid) / n;
         const std::size_t b1 = (num_jobs * (tid + 1)) / n;
-        if (b0 < b1) execute_chunk(b0, b1);
+        if (b0 < b1)
+          execute_chunk(b0, b1);
       });
     }
   }
@@ -112,7 +115,8 @@ map_rect_concurrent(
   for (std::size_t i = 0; i < num_jobs; ++i) {
     const auto& job = job_output[i];
     const int c = static_cast<int>(job.cols());
-    if (c == 0) continue;
+    if (c == 0)
+      continue;
 
     if (job.rows() != out_rows) {
       throw std::runtime_error(
@@ -134,4 +138,3 @@ map_rect_concurrent(
 }  // namespace stan
 
 #endif
-

@@ -26,8 +26,8 @@ namespace math {
  *  - tid=0 runs on the caller thread
  *  - tid=1..n-1 run on persistent worker threads
  *
- * This is optimized for repeated short parallel regions (like reduce_sum/map_rect),
- * avoiding task-queue overhead.
+ * This is optimized for repeated short parallel regions (like
+ * reduce_sum/map_rect), avoiding task-queue overhead.
  *
  * This version uses a single atomic wake generation counter (wake_gen_) and
  * removes the older "epoch" concept entirely.
@@ -42,9 +42,11 @@ class TeamThreadPool {
     return pool;
   }
 
-  /** Set total participants INCLUDING caller (tid=0). Call before instance(). */
+  /** Set total participants INCLUDING caller (tid=0). Call before instance().
+   */
   static void set_num_threads(int n) {
-    if (n < 1) n = 1;
+    if (n < 1)
+      n = 1;
     configured_threads_.store(n, std::memory_order_release);
   }
 
@@ -54,18 +56,15 @@ class TeamThreadPool {
   }
 
   /** Total participants INCLUDING caller (tid=0). */
-  std::size_t team_size() const noexcept {
-    return workers_.size() + 1;
-  }
+  std::size_t team_size() const noexcept { return workers_.size() + 1; }
 
   /** Number of worker threads (excludes caller). */
-  std::size_t worker_count() const noexcept {
-    return workers_.size();
-  }
+  std::size_t worker_count() const noexcept { return workers_.size(); }
 
   template <typename F>
   void parallel_region(std::size_t n, F&& fn) {
-    if (n == 0) return;
+    if (n == 0)
+      return;
 
     // Clamp to actual team size
     const std::size_t max_team = team_size();
@@ -73,7 +72,8 @@ class TeamThreadPool {
       fn(std::size_t{0});
       return;
     }
-    if (n > max_team) n = max_team;
+    if (n > max_team)
+      n = max_team;
     if (n <= 1) {
       fn(std::size_t{0});
       return;
@@ -87,10 +87,12 @@ class TeamThreadPool {
         try {
           fn(tid);
         } catch (...) {
-          if (!ep) ep = std::current_exception();
+          if (!ep)
+            ep = std::current_exception();
         }
       }
-      if (ep) std::rethrow_exception(ep);
+      if (ep)
+        std::rethrow_exception(ep);
       return;
     }
 
@@ -126,16 +128,16 @@ class TeamThreadPool {
       fn_copy(0);
     } catch (...) {
       std::lock_guard<std::mutex> lk(exc_m_);
-      if (!eptr) eptr = std::current_exception();
+      if (!eptr)
+        eptr = std::current_exception();
     }
     in_worker_ = false;
 
     // Wait for workers 1..n-1
     {
       std::unique_lock<std::mutex> lk(done_m_);
-      done_cv_.wait(lk, [&] {
-        return remaining_.load(std::memory_order_acquire) == 0;
-      });
+      done_cv_.wait(
+          lk, [&] { return remaining_.load(std::memory_order_acquire) == 0; });
     }
 
     // Hygiene: deactivate region state
@@ -149,7 +151,8 @@ class TeamThreadPool {
       exc_ptr_ = nullptr;
     }
 
-    if (eptr) std::rethrow_exception(eptr);
+    if (eptr)
+      std::rethrow_exception(eptr);
   }
 
   static bool in_worker_thread() noexcept { return in_worker_; }
@@ -165,8 +168,10 @@ class TeamThreadPool {
   static std::size_t configured_cap_(std::size_t hw) {
     int cfg = configured_threads_.load(std::memory_order_acquire);
     std::size_t cap = (cfg > 0) ? static_cast<std::size_t>(cfg) : hw;
-    if (cap < 1) cap = 1;
-    if (cap > hw) cap = hw;  // don't exceed hardware threads by default
+    if (cap < 1)
+      cap = 1;
+    if (cap > hw)
+      cap = hw;  // don't exceed hardware threads by default
     return cap;
   }
 
@@ -180,7 +185,8 @@ class TeamThreadPool {
         exc_ptr_(nullptr),
         ready_count_(0) {
     unsigned hw_u = std::thread::hardware_concurrency();
-    if (hw_u == 0) hw_u = 2;
+    if (hw_u == 0)
+      hw_u = 2;
     const std::size_t hw = static_cast<std::size_t>(hw_u);
 
     const std::size_t cap = configured_cap_(hw);
@@ -200,7 +206,8 @@ class TeamThreadPool {
 
         in_worker_ = true;
 
-        // Startup barrier: ensure each worker reached the wait loop at least once.
+        // Startup barrier: ensure each worker reached the wait loop at least
+        // once.
         {
           std::lock_guard<std::mutex> lk(wake_m_);
           ready_count_.fetch_add(1, std::memory_order_release);
@@ -216,11 +223,13 @@ class TeamThreadPool {
             std::unique_lock<std::mutex> lk(wake_m_);
             wake_cv_.wait(lk, [&] {
               return stop_.load(std::memory_order_acquire)
-                  || wake_gen_.load(std::memory_order_acquire) != seen_gen;
+                     || wake_gen_.load(std::memory_order_acquire) != seen_gen;
             });
-            if (stop_.load(std::memory_order_acquire)) break;
+            if (stop_.load(std::memory_order_acquire))
+              break;
 
-            // IMPORTANT: update while holding wake_m_ so we can't miss rapid increments
+            // IMPORTANT: update while holding wake_m_ so we can't miss rapid
+            // increments
             seen_gen = wake_gen_.load(std::memory_order_acquire);
           }
 
@@ -281,7 +290,8 @@ class TeamThreadPool {
     }
     wake_cv_.notify_all();
     for (auto& th : workers_) {
-      if (th.joinable()) th.join();
+      if (th.joinable())
+        th.join();
     }
   }
 
