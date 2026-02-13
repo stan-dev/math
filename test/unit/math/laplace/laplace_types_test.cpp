@@ -135,8 +135,10 @@ TEST_P(laplace_types, poisson_log_phi_dim_2_tuple_extended) {
 
   std::vector<int> n_samples = {1, 1};
   std::vector<int> sums = {1, 0};
-  const auto [solver_num, hessian_block_size, max_steps_line_search]
-      = GetParam();
+  const auto test_params = GetParam();
+  const auto solver_num = std::get<0>(test_params);
+  const auto hessian_block_size = std::get<1>(test_params);
+  const auto max_steps_line_search = std::get<2>(test_params);
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
 
   constexpr double tolerance = 1e-12;
@@ -201,8 +203,10 @@ TEST_P(laplace_types, poisson_log_phi_dim_2_tuple) {
 
   std::vector<int> n_samples = {1, 1};
   std::vector<int> sums = {1, 0};
-  const auto [solver_num, hessian_block_size, max_steps_line_search]
-      = GetParam();
+  const auto test_params = GetParam();
+  const auto solver_num = std::get<0>(test_params);
+  const auto hessian_block_size = std::get<1>(test_params);
+  const auto max_steps_line_search = std::get<2>(test_params);
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
 
   constexpr double tolerance = 1e-12;
@@ -296,8 +300,10 @@ TEST_P(laplace_types, poisson_log_phi_dim_2_array_tuple) {
 
   std::vector<int> n_samples = {1, 1};
   std::vector<int> sums = {1, 0};
-  const auto [solver_num, hessian_block_size, max_steps_line_search]
-      = GetParam();
+  const auto test_params = GetParam();
+  const auto solver_num = std::get<0>(test_params);
+  const auto hessian_block_size = std::get<1>(test_params);
+  const auto max_steps_line_search = std::get<2>(test_params);
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
 
   constexpr double tolerance = 1e-12;

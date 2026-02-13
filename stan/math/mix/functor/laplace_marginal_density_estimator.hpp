@@ -13,6 +13,7 @@
 #include <stan/math/prim/functor/iter_tuple_nested.hpp>
 #include <unsupported/Eigen/MatrixFunctions>
 #include <cmath>
+#include <mutex>
 
 /**
  * @file
@@ -1018,7 +1019,9 @@ inline void log_solver_fallback(const bool allow_fallthrough,
      << "  " << std::left << std::setw(12) << "failed:" << failed_solver << "\n"
      << "  " << std::left << std::setw(12) << "reason:" << e.what() << "\n"
      << "  " << std::left << std::setw(12) << "action:"
-     << "trying " << next_solver << "\n";
+     << "trying " << next_solver << "\n"
+     << "note: this warning message will only be displayed once."
+     << "\n";
   if (allow_fallthrough && msgs) {
     (*msgs) << os.str();
   } else {
@@ -1086,6 +1089,7 @@ inline auto create_update_fun(ObjFun&& obj_fun, ThetaGradFun&& theta_grad_f,
       };
 }
 
+static STAN_THREADS_DEF std::once_flag fallback_warning;
 /**
  * For a latent Gaussian model with hyperparameters phi and
  * latent variables theta, and observations y, this function computes
@@ -1175,12 +1179,16 @@ inline auto laplace_marginal_density_est(
       }
     }
   } catch (const std::exception& e) {
-    std::string solver_type
+    const std::string solver_type
         = (options.hessian_block_size == 1) ? "Diagonal" : "Block";
     std::string failed = "solver 1 (" + solver_type + " Hessian-root Cholesky)";
-    log_solver_fallback(options.allow_fallthrough, msgs,
-                        "laplace_marginal_density", step_iter, failed,
-                        "solver 2 (Covariance-root Cholesky)", e);
+    std::call_once(
+        fallback_warning,
+        [](auto&&... args) {
+          log_solver_fallback(std::forward<decltype(args)>(args)...);
+        },
+        options.allow_fallthrough, msgs, "laplace_marginal_density", step_iter,
+        std::move(failed), "solver 2 (Covariance-root Cholesky)", e);
   }
   try {
     if (options.solver == 2 || options.allow_fallthrough) {
@@ -1189,10 +1197,14 @@ inline auto laplace_marginal_density_est(
                              covariance, update_fun, msgs);
     }
   } catch (const std::exception& e) {
-    log_solver_fallback(options.allow_fallthrough, msgs,
-                        "laplace_marginal_density", step_iter,
-                        "solver 2 (Covariance-root Cholesky)",
-                        "solver 3 (General LU solver)", e);
+    std::call_once(
+        fallback_warning,
+        [](auto&&... args) {
+          log_solver_fallback(std::forward<decltype(args)>(args)...);
+        },
+        options.allow_fallthrough, msgs, "laplace_marginal_density", step_iter,
+        "solver 2 (Covariance-root Cholesky)", "solver 3 (General LU solver)",
+        e);
   }
   if (options.solver == 3 || options.allow_fallthrough) {
     LUSolver solver;
