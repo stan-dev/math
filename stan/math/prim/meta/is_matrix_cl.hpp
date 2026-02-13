@@ -25,6 +25,12 @@ template <typename T>
 struct is_matrix_cl
     : public std::is_base_of<math::matrix_cl_base, std::decay_t<T>> {};
 
+
+/** \ingroup matrix_cl_group
+ * Checks if the decayed type of T is a matrix_cl.
+ */
+template <typename T>
+inline constexpr bool is_matrix_cl_v = is_matrix_cl<std::decay_t<T>>::value;
 /*! \ingroup matrix_cl_group */
 /*! \defgroup matrix_cl_types matrix_cl  */
 /*! \addtogroup matrix_cl_types */

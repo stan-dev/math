@@ -14,6 +14,9 @@ namespace stan {
 template <typename T, typename = void>
 struct is_fvar : std::false_type {};
 
+template <typename T>
+inline constexpr bool is_fvar_v = is_fvar<T>::value;
+
 /** \ingroup type_trait
  * Specialization for pointers returns the underlying value the pointer is
  * pointing to.
@@ -22,6 +25,70 @@ template <typename T>
 struct value_type<T, std::enable_if_t<is_fvar<std::decay_t<T>>::value>> {
   using type = typename std::decay_t<T>::Scalar;
 };
+
+template <typename T>
+using has_fvar_scalar_type = is_fvar<scalar_type_t<T>>;
+
+
+namespace internal {
+
+template <typename... Types>
+struct is_any_fvar_scalar_impl {
+  static constexpr bool value
+      = (has_fvar_scalar_type<std::decay_t<Types>>::value || ...);
+};
+
+template <typename... Types>
+struct is_any_fvar_scalar_impl<std::tuple<Types...>> {
+  static constexpr bool value
+      = (is_any_fvar_scalar_impl<std::decay_t<Types>>::value || ...);
+};
+
+template <typename T, typename... VecArgs>
+struct is_any_fvar_scalar_impl<std::vector<T, VecArgs...>> {
+  static constexpr bool value = is_any_fvar_scalar_impl<std::decay_t<T>>::value;
+};
+
+}  // namespace internal
+
+template <typename... Types>
+struct is_any_fvar_scalar
+    : std::disjunction<
+          internal::is_any_fvar_scalar_impl<std::decay_t<Types>>...> {};
+
+template <typename... Types>
+constexpr bool is_any_fvar_scalar_v
+    = is_any_fvar_scalar<std::decay_t<Types>...>::value;
+
+namespace internal {
+template <typename... Types>
+struct is_all_fvar_scalar_impl {
+  static constexpr bool value
+      = (has_fvar_scalar_type<std::decay_t<Types>>::value && ...);
+};
+template <typename... Types>
+struct is_all_fvar_scalar_impl<std::tuple<Types...>> {
+  static constexpr bool value
+      = (is_all_fvar_scalar_impl<std::decay_t<Types>>::value && ...);
+};
+
+template <typename... Types, typename... VecArgs>
+struct is_all_fvar_scalar_impl<std::vector<std::tuple<Types...>, VecArgs...>> {
+  static constexpr bool value
+      = (is_all_fvar_scalar_impl<std::decay_t<Types>>::value && ...);
+};
+
+}  // namespace internal
+
+template <typename... Types>
+struct is_all_fvar_scalar
+    : std::disjunction<
+          internal::is_all_fvar_scalar_impl<std::decay_t<Types>>...> {};
+
+template <typename... Types>
+constexpr bool is_all_fvar_scalar_v
+    = is_all_fvar_scalar<std::decay_t<Types>...>::value;
+
 
 /*! \ingroup require_stan_scalar_real */
 /*! \defgroup fvar_types fvar  */

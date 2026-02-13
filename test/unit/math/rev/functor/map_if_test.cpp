@@ -1,23 +1,20 @@
-#include <stan/math/prim.hpp>
+#include <stan/math/rev.hpp>
 #include <test/unit/util.hpp>
 #include <test/unit/math/prim/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 #include <stdexcept>
 namespace {
-template <typename T>
-using is_floating_point_decay = std::is_floating_point<std::decay_t<T>>;
+
 TEST(MathPrim, map_if_base) {
+  using stan::is_any_var_scalar;
   using stan::math::map_if;
+  using stan::math::var;
   auto x
-      = map_if<is_floating_point_decay>([](auto&& x) noexcept { return static_cast<double>(x) + 1; },
-                                        std::forward_as_tuple(1, 2.0, 3, 4.0));
-  EXPECT_EQ(std::get<0>(x), 1);
-  EXPECT_EQ(std::get<1>(x), 3.0);
-  EXPECT_EQ(std::get<2>(x), 3);
-  EXPECT_EQ(std::get<3>(x), 5.0);
-  static_assert(std::is_same_v<decltype(x), std::tuple<int, double, int, double>>,
-                "Should be tuple of int, double, int, double!");
+      = map_if<is_any_var_scalar>([](auto&& x) noexcept { return x + 1; },
+                                        std::forward_as_tuple(1, var(2.0), std::vector<double>{3.0, 4.0}, std::vector<int>{4, 3, 2, 1}));
+  static_assert(std::is_same_v<decltype(x), std::tuple<int, var, std::vector<double>, std::vector<int>>>,
+                "Should be tuple of int, var, vector<double>, vector<int>!");
 }
 
 TEST(MathPrim, map_if_eigen) {

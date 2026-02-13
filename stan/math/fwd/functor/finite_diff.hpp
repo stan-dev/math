@@ -1,11 +1,12 @@
 #ifndef STAN_MATH_FWD_FUNCTOR_FINITE_DIFF_HPP
 #define STAN_MATH_FWD_FUNCTOR_FINITE_DIFF_HPP
 
-#include <stan/math/prim/meta.hpp>
+#include <stan/math/fwd/fun/tangent_of.hpp>
+#include <stan/math/fwd/meta.hpp>
+#include <stan/math/fwd/fun/value_of.hpp>
+#include <stan/math/fwd/fun/sum.hpp>
 #include <stan/math/prim/functor/apply_scalar_binary.hpp>
 #include <stan/math/prim/functor/finite_diff_gradient_auto.hpp>
-#include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/serializer.hpp>
 
 namespace stan {
@@ -43,9 +44,9 @@ inline constexpr double aggregate_tangent(const FuncTangent& tangent,
  */
 template <typename FuncTangent, typename InputArg,
           require_st_fvar<InputArg>* = nullptr>
-inline auto aggregate_tangent(const FuncTangent& tangent, const InputArg& arg) {
-  return sum(apply_scalar_binary([](auto&& x, auto&& y) { return x * y.d_; },
-                                 tangent, arg));
+inline auto aggregate_tangent(FuncTangent&& tangent, InputArg&& arg) {
+  return sum(apply_scalar_binary([](auto&& x, auto&& y) { return x * y; },
+                                 std::forward<FuncTangent>(tangent), tangent_of(std::forward<InputArg>(arg))));
 }
 }  // namespace internal
 

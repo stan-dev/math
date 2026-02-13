@@ -28,7 +28,7 @@ namespace internal {
 template <typename T>
 struct deduce_cvr {
   using type
-      = std::conditional_t<std::is_rvalue_reference_v<T>, std::decay_t<T>, T&&>;
+      = std::conditional_t<std::is_rvalue_reference_v<T&&>, std::decay_t<T>, T&&>;
 };
 
 template <typename T>
