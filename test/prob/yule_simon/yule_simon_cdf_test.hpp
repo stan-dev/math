@@ -7,8 +7,7 @@ using std::vector;
 
 class AgradCdfYuleSimon : public AgradCdfTest {
  public:
-  void valid_values(vector<vector<double>>& parameters,
-                    vector<double>& cdf) {
+  void valid_values(vector<vector<double>>& parameters, vector<double>& cdf) {
     vector<double> param(2);
 
     param[0] = 5;     // n
