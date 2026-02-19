@@ -20,12 +20,12 @@ class AgradCdfYuleSimon : public AgradCdfTest {
     parameters.push_back(param);
     cdf.push_back(0.9997987132162779);  // expected cdf
 
-    param[0] = 1;   // n
+    param[0] = 1;    // n
     param[1] = 0.1;  // alpha
     parameters.push_back(param);
     cdf.push_back(0.0909090909090918);  // expected cdf
 
-    param[0] = 1;   // n
+    param[0] = 1;     // n
     param[1] = 0.01;  // alpha
     parameters.push_back(param);
     cdf.push_back(0.0099009900990106);  // expected cdf
