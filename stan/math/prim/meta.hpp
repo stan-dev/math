@@ -136,5 +136,6 @@
 #include <stan/math/prim/meta/void_t.hpp>
 #include <stan/math/prim/meta/StdVectorBuilder.hpp>
 #include <stan/math/prim/meta/VectorBuilder.hpp>
+#include <stan/math/prim/meta/conditional_copy_and_promote.hpp>
 
 #endif

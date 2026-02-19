@@ -1,6 +1,7 @@
 #include <stan/math/mix.hpp>
 #include <test/unit/math/expect_near_rel.hpp>
 #include <gtest/gtest.h>
+#include <tuple>
 #include <vector>
 
 template <typename F>
@@ -47,4 +48,41 @@ TEST(MathMixMatFunctor, FiniteDiffGradientAuto) {
   Eigen::VectorXd w(5);
   w << 1, 2, 3, 4, 5;
   expect_match_autodiff(log_fun, w);
+}
+
+TEST(MathMixMatFunctor, FiniteDiffGradientAutoTupleNested) {
+  using stan::math::fvar;
+  using fvar_stdvec = std::vector<fvar<double>>;
+  fvar_stdvec a(2);
+  a[0] = fvar<double>(1.3, 0.0);
+  a[1] = fvar<double>(-0.7, 0.0);
+  using fvar_mat = Eigen::Matrix<fvar<double>, -1, 1>;
+  fvar_mat b{{fvar<double>(2.0, 0.0), fvar<double>(-3.0, 0.0)}};
+  const std::vector<int> x_i{5, 6};
+  Eigen::VectorXd c{{4.0}};
+  auto args = std::make_tuple(a,
+    std::make_tuple(b, x_i),
+    c);
+  fvar_mat b_grad = fvar_mat::Zero(b.size());
+  auto grads = std::make_tuple(
+      fvar_stdvec(a.size(), 0.0),
+      std::make_tuple(b_grad, std::vector<int>(x_i.size(), 0)),
+      Eigen::VectorXd{{0.0}});
+
+  auto f = [](const auto& arg_a, const auto& arg_b_tuple, const auto& arg_c) {
+    const auto& arg_b = std::get<0>(arg_b_tuple);
+    const auto& arg_i = std::get<1>(arg_b_tuple);
+    return arg_a[0] * arg_a[1] + arg_b(0) * arg_b(1) + arg_c(0) * arg_i[0];
+  };
+
+  fvar<double> fx = 0;
+  stan::math::finite_diff_gradient_auto(f, fx, args, grads);
+
+  EXPECT_NEAR(13.09, fx.val(), 1e-8);
+  EXPECT_NEAR(a[1].val_, std::get<0>(grads)[0].val_, 1e-8);
+  EXPECT_NEAR(a[0].val_, std::get<0>(grads)[1].val_, 1e-8);
+  EXPECT_NEAR(b(1).val_, std::get<0>(std::get<1>(grads))(0).val_, 1e-8);
+  EXPECT_NEAR(b(0).val_, std::get<0>(std::get<1>(grads))(1).val_, 1e-8);
+  EXPECT_EQ(0, std::get<1>(std::get<1>(grads))[0]);
+  EXPECT_EQ(0, std::get<1>(std::get<1>(grads))[1]);
 }

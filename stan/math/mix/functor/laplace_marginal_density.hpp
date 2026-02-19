@@ -3,7 +3,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/mix/functor/laplace_likelihood.hpp>
 #include <stan/math/mix/functor/laplace_marginal_density_estimator.hpp>
-#include <stan/math/mix/functor/conditional_copy_and_promote.hpp>
+#include <stan/math/prim/meta/conditional_copy_and_promote.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun.hpp>

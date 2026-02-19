@@ -18,7 +18,11 @@ template <typename T>
 inline constexpr decltype(auto) filter_var_scalar_types(T&& t) {
   return stan::math::filter_map<is_any_var_scalar>(
       [](auto&& arg) -> decltype(auto) {
-        return std::forward<decltype(arg)>(arg);
+        if constexpr (is_tuple_v<std::decay_t<decltype(arg)>>) {
+          return filter_var_scalar_types(std::forward<decltype(arg)>(arg));
+        } else {
+          return std::forward<decltype(arg)>(arg);
+        }
       },
       std::forward<T>(t));
 }

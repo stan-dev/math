@@ -4,10 +4,10 @@
 #include <stan/math/fwd/fun/tangent_of.hpp>
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/fun/value_of.hpp>
-#include <stan/math/fwd/fun/sum.hpp>
-#include <stan/math/prim/functor/apply_scalar_binary.hpp>
+#include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/functor/finite_diff_gradient_auto.hpp>
-#include <stan/math/prim/fun/serializer.hpp>
+#include <stan/math/prim/functor/for_each.hpp>
+#include <tuple>
 
 namespace stan {
 namespace math {
@@ -45,10 +45,58 @@ inline constexpr double aggregate_tangent(const FuncTangent& tangent,
 template <typename FuncTangent, typename InputArg,
           require_st_fvar<InputArg>* = nullptr>
 inline auto aggregate_tangent(FuncTangent&& tangent, InputArg&& arg) {
-  return sum(apply_scalar_binary([](auto&& x, auto&& y) { return x * y; },
-                                 std::forward<FuncTangent>(tangent), tangent_of(std::forward<InputArg>(arg))));
+  auto tangent_arr = as_array_or_scalar(std::forward<FuncTangent>(tangent));
+  auto arg_tangent_arr
+      = as_array_or_scalar(tangent_of(std::forward<InputArg>(arg)));
+  if constexpr (is_stan_scalar_v<std::decay_t<decltype(tangent_arr)>>) {
+    return tangent_arr * arg_tangent_arr;
+  } else {
+    using RetType = return_type_t<std::decay_t<decltype(tangent_arr(0))>,
+                                  std::decay_t<decltype(arg_tangent_arr(0))>>;
+    RetType rtn = 0;
+    for (Eigen::Index i = 0; i < tangent_arr.size(); ++i) {
+      rtn += tangent_arr(i) * arg_tangent_arr(i);
+    }
+    return rtn;
+  }
 }
 }  // namespace internal
+
+template <typename SeqT, SeqT... s, SeqT... t>
+inline constexpr std::integer_sequence<SeqT, s..., t...> concat_sequences(
+    std::integer_sequence<SeqT, s...>, std::integer_sequence<SeqT, t...>) {
+  return {};
+}
+
+template <typename SeqT, SeqT... s, SeqT... t, class... R>
+inline constexpr auto concat_sequences(std::integer_sequence<SeqT, s...>,
+                                std::integer_sequence<SeqT, t...>, R...) {
+  return concat_sequences(std::integer_sequence<SeqT, s..., t...>{}, R{}...);
+}
+
+template <template <std::size_t...> class Predicate, class SeqT, SeqT a>
+constexpr auto filter_single_seq(std::integer_sequence<SeqT, a>) {
+  if constexpr (Predicate<a>::value)
+    return std::integer_sequence<SeqT, a>{};
+  else
+    return std::integer_sequence<SeqT>{};
+}
+
+template <template <std::size_t...> class Predicate, class SeqT, SeqT... b>
+constexpr auto filter_integer_seq(std::integer_sequence<SeqT, b...>) {
+  if constexpr (sizeof...(b) > 0)  // non empty sequence
+    return concat_sequences(
+        filter_single_seq<Predicate>(std::integer_sequence<SeqT, b>{})...);
+  else  // empty sequence case
+    return std::integer_sequence<SeqT>{};
+}
+
+
+template <typename SeqT>
+constexpr std::integer_sequence<SeqT> concat_sequences(
+    std::integer_sequence<SeqT>) {
+  return {};
+}
 
 /**
  * Construct an fvar<T> where the tangent is calculated by finite-differencing.
@@ -70,26 +118,23 @@ template <typename F, typename... TArgs,
 inline auto finite_diff(const F& func, const TArgs&... args) {
   using FvarT = return_type_t<TArgs...>;
   using FvarInnerT = typename FvarT::Scalar;
-
-  std::vector<FvarInnerT> serialised_args
-      = serialize<FvarInnerT>(value_of(args)...);
-
-  auto serial_functor = [&](auto&& v) {
-    auto v_deserializer = to_deserializer(v);
-    return func(v_deserializer.read(args)...);
-  };
-
+  auto val_args_tuple = std::forward_as_tuple(value_of(args)...);
+  auto autodiff_args = filter_ad_scalar_types(std::forward_as_tuple(args...));
   FvarInnerT rtn_value;
-  std::vector<FvarInnerT> grad;
-  finite_diff_gradient_auto(serial_functor, serialised_args, rtn_value, grad);
-
+  auto grads = zeroed_container(std::forward_as_tuple(value_of(args)...));
+  constexpr auto autodiff_idxs = filter_integer_seq<internal::contains_autodiff>(std::index_sequence_for<TArgs...>{});
+  constexpr auto grad_idxs = stan::math::apply([](auto&&... grads) {
+    return std::index_sequence_for<decltype(grads)...>{};
+  }, grads);
+  finite_diff_gradient_auto(func, rtn_value, val_args_tuple, grads, autodiff_idxs, grad_idxs);
   FvarInnerT rtn_grad = 0;
-  auto grad_deserializer = to_deserializer(grad);
-  // Use a fold-expression to aggregate tangents for input arguments
-  static_cast<void>(
-      std::initializer_list<int>{(rtn_grad += internal::aggregate_tangent(
-                                      grad_deserializer.read(args), args),
-                                  0)...});
+  stan::math::for_each(
+      [&rtn_grad](auto&& grad_i, auto&& arg_i) {
+        rtn_grad += internal::aggregate_tangent(
+            std::forward<decltype(grad_i)>(grad_i),
+            std::forward<decltype(arg_i)>(arg_i));
+      },
+      grads, autodiff_args);
 
   return FvarT(rtn_value, rtn_grad);
 }
