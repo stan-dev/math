@@ -8,6 +8,7 @@
 #include <stan/math/prim/functor/apply_vector_unary.hpp>
 #include <stan/math/prim/functor/coupled_ode_system.hpp>
 #include <stan/math/prim/functor/filter_map.hpp>
+#include <stan/math/prim/functor/filter_types.hpp>
 #include <stan/math/prim/functor/finite_diff_gradient.hpp>
 #include <stan/math/prim/functor/finite_diff_gradient_auto.hpp>
 #include <stan/math/prim/functor/for_each.hpp>

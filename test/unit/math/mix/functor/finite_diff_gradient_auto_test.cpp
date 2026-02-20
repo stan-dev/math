@@ -86,3 +86,56 @@ TEST(MathMixMatFunctor, FiniteDiffGradientAutoTupleNested) {
   EXPECT_EQ(0, std::get<1>(std::get<1>(grads))[0]);
   EXPECT_EQ(0, std::get<1>(std::get<1>(grads))[1]);
 }
+
+TEST(MathMixMatFunctor, FiniteDiffGradientAutoTupleRestoresInputs) {
+  using stan::math::fvar;
+  using fvar_stdvec = std::vector<fvar<double>>;
+  fvar_stdvec a(2);
+  a[0] = fvar<double>(1.3, 0.0);
+  a[1] = fvar<double>(-0.7, 0.0);
+  using fvar_mat = Eigen::Matrix<fvar<double>, -1, 1>;
+  fvar_mat b{{fvar<double>(2.0, 0.0), fvar<double>(-3.0, 0.0)}};
+  std::vector<int> x_i{5, 6};
+  Eigen::VectorXd c{{4.0}};
+
+  auto args = std::make_tuple(a, std::make_tuple(b, x_i), c);
+  auto args_before = args;
+  fvar_mat b_grad = fvar_mat::Zero(b.size());
+  auto grads = std::make_tuple(
+      fvar_stdvec(a.size(), 0.0), std::make_tuple(b_grad, x_i),
+      Eigen::VectorXd::Zero(c.size()));
+
+  auto f = [](const auto& arg_a, const auto& arg_b_tuple, const auto& arg_c) {
+    const auto& arg_b = std::get<0>(arg_b_tuple);
+    const auto& arg_i = std::get<1>(arg_b_tuple);
+    return arg_a[0] * arg_a[1] + arg_b(0) * arg_b(1) + arg_c(0) * arg_i[0];
+  };
+
+  fvar<double> fx = 0;
+  stan::math::finite_diff_gradient_auto(f, fx, args, grads);
+
+  const auto& a_after = std::get<0>(args);
+  const auto& a_orig = std::get<0>(args_before);
+  for (std::size_t i = 0; i < a_after.size(); ++i) {
+    EXPECT_FLOAT_EQ(a_orig[i].val_, a_after[i].val_);
+    EXPECT_FLOAT_EQ(a_orig[i].d_, a_after[i].d_);
+  }
+
+  const auto& b_after = std::get<0>(std::get<1>(args));
+  const auto& b_orig = std::get<0>(std::get<1>(args_before));
+  for (Eigen::Index i = 0; i < b_after.size(); ++i) {
+    EXPECT_FLOAT_EQ(b_orig(i).val_, b_after(i).val_);
+    EXPECT_FLOAT_EQ(b_orig(i).d_, b_after(i).d_);
+  }
+
+  const auto& x_i_after = std::get<1>(std::get<1>(args));
+  const auto& x_i_orig = std::get<1>(std::get<1>(args_before));
+  EXPECT_EQ(x_i_orig, x_i_after);
+
+  const auto& c_after = std::get<2>(args);
+  const auto& c_orig = std::get<2>(args_before);
+  ASSERT_EQ(c_orig.size(), c_after.size());
+  for (Eigen::Index i = 0; i < c_after.size(); ++i) {
+    EXPECT_FLOAT_EQ(c_orig(i), c_after(i));
+  }
+}

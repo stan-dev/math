@@ -26,9 +26,11 @@ enum class COPY_TYPE : uint8_t { SHALLOW = 0, DEEP = 1 };
  * @tparam PromotedType type to promote the scalar to.
  * @tparam CopyType type of copy to perform.
  * @tparam Args variadic arguments.
- * @param args variadic arguments to conditionally copy and promote.
+ * @param[in] args variadic arguments to conditionally copy and promote.
  * @return a tuple where each element is either a reference to the original
  * argument or a promoted copy of the argument.
+ * @throw `std::bad_alloc` if allocation of nested `std::vector` storage fails.
+ * @throw Any exception thrown by element copy/promotion routines.
  */
 template <template <typename...> class Filter, typename PromotedType = double,
           COPY_TYPE CopyType = COPY_TYPE::DEEP, typename... Args>
@@ -78,9 +80,11 @@ inline auto conditional_copy_and_promote(Args&&... args) {
  * Conditional deep copy types with a `var` scalar type to `PromotedType`.
  * @tparam PromotedType type to promote the scalar to.
  * @tparam Args variadic arguments.
- * @param args variadic arguments to conditionally copy and promote.
+ * @param[in] args variadic arguments to conditionally copy and promote.
  * @return a tuple where each element is either a reference to the original
  * argument or a promoted copy of the argument.
+ * @throw `std::bad_alloc` if allocation of nested `std::vector` storage fails.
+ * @throw Any exception thrown by element copy/promotion routines.
  */
 template <typename PromotedType, typename... Args>
 inline auto deep_copy_vargs(Args&&... args) {
@@ -96,9 +100,11 @@ inline auto deep_copy_vargs(Args&&... args) {
  *  in an inner autodiff without making a hard copy of the input arguments.
  * @tparam PromotedType type to promote the scalar to.
  * @tparam Args variadic arguments.
- * @param args variadic arguments to conditionally copy and promote.
+ * @param[in] args variadic arguments to conditionally copy and promote.
  * @return a tuple where each element is either a reference to the original
  * argument or a promoted copy of the argument.
+ * @throw `std::bad_alloc` if allocation of nested `std::vector` storage fails.
+ * @throw Any exception thrown by element copy/promotion routines.
  */
 template <typename PromotedType, typename... Args>
 inline auto shallow_copy_vargs(Args&&... args) {

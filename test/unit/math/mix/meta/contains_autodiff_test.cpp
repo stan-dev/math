@@ -29,3 +29,23 @@ TEST(MathMetaContainsAutodiff, nested_tuple_detection) {
   EXPECT_TRUE((stan::contains_autodiff_v<nested_ad_t>));
   EXPECT_FALSE((stan::contains_autodiff_v<nested_non_ad_t>));
 }
+
+TEST(MathMetaContainsAutodiff, eigen_detection) {
+  using stan::math::fvar;
+  using ad_eigen_t = Eigen::Matrix<fvar<double>, -1, 1>;
+  using non_ad_eigen_t = Eigen::VectorXd;
+
+  EXPECT_TRUE((stan::contains_autodiff_v<ad_eigen_t>));
+  EXPECT_FALSE((stan::contains_autodiff_v<non_ad_eigen_t>));
+}
+
+TEST(MathMetaContainsAutodiff, nested_tuple_with_eigen_detection) {
+  using stan::math::fvar;
+  using nested_ad_eigen_t
+      = std::tuple<int, std::tuple<Eigen::Matrix<fvar<double>, -1, 1>, double>>;
+  using nested_non_ad_eigen_t
+      = std::tuple<int, std::tuple<Eigen::VectorXd, double>>;
+
+  EXPECT_TRUE((stan::contains_autodiff_v<nested_ad_eigen_t>));
+  EXPECT_FALSE((stan::contains_autodiff_v<nested_non_ad_eigen_t>));
+}

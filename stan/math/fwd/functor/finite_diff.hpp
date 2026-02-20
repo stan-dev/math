@@ -2,12 +2,13 @@
 #define STAN_MATH_FWD_FUNCTOR_FINITE_DIFF_HPP
 
 #include <stan/math/fwd/fun/tangent_of.hpp>
-#include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/fun/value_of.hpp>
+#include <stan/math/fwd/meta.hpp>
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
-#include <stan/math/prim/fun/zeroed_container.hpp>
+#include <stan/math/prim/fun/zeroed_filtered_tuple.hpp>
 #include <stan/math/prim/functor/finite_diff_gradient_auto.hpp>
 #include <stan/math/prim/functor/for_each.hpp>
+#include <stan/math/prim/functor/filter_types.hpp>
 #include <stan/math/prim/meta/contains_autodiff.hpp>
 #include <stan/math/prim/meta/filtered_tuple_indices.hpp>
 #include <tuple>
@@ -23,15 +24,18 @@ namespace internal {
  *
  * @tparam FuncTangent Type of tangent calculated by finite-differences
  * @tparam InputArg Type of the function input argument
- * @param tangent Calculated tangent
- * @param arg Input argument
+ * @param[in] tangent Calculated tangent
+ * @param[in] arg Input argument
+ * @return `0.0`, because non-fvar inputs do not contribute to the tangent
+ * aggregation.
+ * @throw None.
  */
 template <typename FuncTangent, typename InputArg,
           require_not_st_fvar<InputArg>* = nullptr>
 inline constexpr double aggregate_tangent(const FuncTangent& tangent,
                                           const InputArg& arg) {
   return 0;
-}  // namespace internal
+}
 
 /**
  * Helper function for aggregating tangents if the respective input argument
@@ -42,8 +46,10 @@ inline constexpr double aggregate_tangent(const FuncTangent& tangent,
  *
  * @tparam FuncTangent Type of tangent calculated by finite-differences
  * @tparam InputArg Type of the function input argument
- * @param tangent Calculated tangent
- * @param arg Input argument
+ * @param[in] tangent Calculated tangent
+ * @param[in] arg Input argument
+ * @return dot product of finite-difference tangent and input tangent.
+ * @throw None.
  */
 template <typename FuncTangent, typename InputArg,
           require_st_fvar<InputArg>* = nullptr>
@@ -63,7 +69,8 @@ inline auto aggregate_tangent(FuncTangent&& tangent, InputArg&& arg) {
     return rtn;
   }
 }
-}
+
+}  // namespace internal
 
 /**
  * Construct an fvar<T> where the tangent is calculated by finite-differencing.
@@ -77,23 +84,35 @@ inline auto aggregate_tangent(FuncTangent&& tangent, InputArg&& arg) {
  * @tparam TArgs Template parameter pack of the types passed in the `operator()`
  *                of the functor type `F`. Must contain at least on type whose
  *                scalar type is `fvar<T>`
+ *
+ * Internal pattern used by this overload:
+ * 1. Build `autodiff_args` with `filter_types<contains_autodiff>(args...)`.
+ * 2. Build compact zero-initialized `grads` with
+ *    `zeroed_filtered_tuple<contains_autodiff>(args...)`.
+ * 3. Use filtered top-level index sequences to dispatch tuple-native finite
+ *    differencing.
+ * 4. Aggregate tangent contributions by zipping compact `grads` and
+ *    `autodiff_args`.
+ *
  * @param func Functor for which fvar<T> support is needed
  * @param args Parameter pack of arguments to be passed to functor.
+ * @return Function value and tangent packed in the resulting `fvar`.
+ * @throw Any exception thrown by `func`.
  */
 template <typename F, typename... TArgs,
           require_any_st_fvar<TArgs...>* = nullptr>
 inline auto finite_diff(const F& func, const TArgs&... args) {
   using FvarT = return_type_t<TArgs...>;
   using FvarInnerT = typename FvarT::Scalar;
-  auto autodiff_args = filter_ad_scalar_types(std::forward_as_tuple(args...));
-  FvarInnerT rtn_value;
-  auto grads = stan::math::zeroed_container<contains_autodiff>(
-      std::forward_as_tuple(args...));
-  using args_tuple_t = std::tuple<TArgs...>;
+  auto autodiff_args
+      = stan::math::filter_types<contains_autodiff>(std::forward_as_tuple(args...));
   using autodiff_idxs_t
-      = filtered_tuple_indices_t<contains_autodiff, args_tuple_t>;
-  using grads_t = std::decay_t<decltype(grads)>;
-  using grad_idxs_t = std::make_index_sequence<std::tuple_size<grads_t>::value>;
+      = filtered_tuple_indices_t<contains_autodiff, std::tuple<TArgs...>>;
+  auto grads = stan::math::zeroed_filtered_tuple<contains_autodiff>(
+      std::forward_as_tuple(args...));
+  using grad_idxs_t = std::make_index_sequence<
+      std::tuple_size<std::decay_t<decltype(grads)>>::value>;
+  FvarInnerT rtn_value;
   finite_diff_gradient_auto(func, rtn_value, std::forward_as_tuple(args...),
                             std::forward_as_tuple(value_of(args)...), grads,
                             autodiff_idxs_t{}, grad_idxs_t{});
@@ -123,6 +142,8 @@ inline auto finite_diff(const F& func, const TArgs&... args) {
  *                scalar type is `fvar<T>`
  * @param func Functor
  * @param args... Parameter pack of arguments to be passed to functor.
+ * @return direct result of `func(args...)`.
+ * @throw Any exception thrown by `func`.
  */
 template <typename F, typename... TArgs,
           require_all_not_st_fvar<TArgs...>* = nullptr>

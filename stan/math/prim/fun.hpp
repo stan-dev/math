@@ -344,7 +344,7 @@
 #include <stan/math/prim/fun/variance.hpp>
 #include <stan/math/prim/fun/welford_covar_estimator.hpp>
 #include <stan/math/prim/fun/welford_var_estimator.hpp>
-#include <stan/math/prim/fun/zeroed_container.hpp>
+#include <stan/math/prim/fun/zeroed_filtered_tuple.hpp>
 #include <stan/math/prim/fun/zeros_array.hpp>
 #include <stan/math/prim/fun/zeros_int_array.hpp>
 #include <stan/math/prim/fun/zeros_row_vector.hpp>

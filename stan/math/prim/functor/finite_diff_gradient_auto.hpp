@@ -22,36 +22,28 @@ namespace internal {
 
 /**
  * Type-dependent false helper for `static_assert` in unreachable branches.
+ *
+ * @tparam ... ignored dependent types used to delay `static_assert`
  */
 template <typename...>
 struct dependent_false : std::false_type {};
 
 /**
- * Filter a tuple and return a tuple containing references to the elements
- * whose types satisfy `contains_autodiff`.
+ * Construct a holder tuple containing elements selected by `Is...`.
  *
- * This mirrors the `filter_var_scalar_types` pattern in rev.
+ * Returned elements preserve reference/value category through
+ * `make_holder_tuple`, so this helper can be used with tuples of references.
  *
- * @tparam T input tuple or nested tuple-like structure
- * @param t input to filter
- * @return tuple of references to autodiff-containing entries
+ * @tparam Tuple tuple-like input type
+ * @tparam Is selected index pack
+ * @param[in] tuple input tuple
+ * @param[in] selected_idxs index sequence selecting tuple entries
+ * @return holder tuple containing selected entries
+ * @throw None.
  */
-template <typename T>
-inline constexpr decltype(auto) filter_autodiff_types(T&& t) {
-  return stan::math::filter_map<contains_autodiff>(
-      [](auto&& arg) -> decltype(auto) {
-        using arg_t = std::decay_t<decltype(arg)>;
-        if constexpr (is_tuple_v<arg_t>) {
-          return filter_autodiff_types(std::forward<decltype(arg)>(arg));
-        } else {
-          return std::forward<decltype(arg)>(arg);
-        }
-      },
-      std::forward<T>(t));
-}
-
 template <typename Tuple, std::size_t... Is>
-inline auto tuple_subset(Tuple&& tuple, std::index_sequence<Is...>) {
+inline auto tuple_subset(Tuple&& tuple,
+                         [[maybe_unused]] std::index_sequence<Is...> selected_idxs) {
   return make_holder_tuple(std::get<Is>(std::forward<Tuple>(tuple))...);
 }
 
@@ -60,8 +52,9 @@ inline auto tuple_subset(Tuple&& tuple, std::index_sequence<Is...>) {
  * computation from scalar-like autodiff stacks.
  *
  * @tparam T scalar type
- * @param x scalar value
+ * @param[in] x scalar value
  * @return value used to compute finite-difference step size
+ * @throw None.
  */
 template <typename T>
 inline double finite_diff_stepsize_value(const T& x) {
@@ -81,18 +74,32 @@ inline double finite_diff_stepsize_value(const T& x) {
  * `arg_mask` controls whether a scalar coordinate is perturbable, while
  * `arg_work` is the mutable coordinate that gets perturbed.
  *
+ * Supported containers are:
+ * - Stan scalars
+ * - Eigen dense objects
+ * - `std::vector` (possibly nested)
+ * - `std::tuple` (including tuple-of-tuples)
+ *
+ * The `arg_mask` and `arg_work` structures must match exactly. The `grad`
+ * structure may either:
+ * - match top-level tuple arity with `arg_mask`, or
+ * - be compacted to only autodiff-containing top-level tuple entries.
+ *
  * @tparam ArgMask traversal mask type
  * @tparam ArgWork mutable argument type
  * @tparam Grad gradient output type
  * @tparam F callable compatible with `(arg_work_coord, grad_coord)`
- * @param arg_mask mask selecting perturbable coordinates
- * @param arg_work mutable argument coordinates
- * @param grad gradient output coordinates
- * @param fn callback applied for each perturbable coordinate
+ * @param[in] arg_mask mask selecting perturbable coordinates
+ * @param[in,out] arg_work mutable argument coordinates
+ * @param[out] grad gradient output coordinates
+ * @param[in] fn callback applied for each perturbable coordinate
+ * @return None.
+ * @throw None. Fails compilation with `static_assert` for unsupported
+ * container categories or mismatched tuple arity.
  */
 template <typename ArgMask, typename ArgWork, typename Grad, typename F>
-inline void for_each_coordinate_pair_mut(ArgMask&& arg_mask, ArgWork&& arg_work,
-                                         Grad&& grad, F&& fn) {
+inline void for_each_leaf_pair(ArgMask&& arg_mask, ArgWork&& arg_work,
+                               Grad&& grad, F&& fn) {
   using arg_mask_t = std::decay_t<ArgMask>;
   if constexpr (is_stan_scalar_v<arg_mask_t>) {
     if constexpr (contains_autodiff_v<arg_mask_t>) {
@@ -100,12 +107,12 @@ inline void for_each_coordinate_pair_mut(ArgMask&& arg_mask, ArgWork&& arg_work,
     }
   } else if constexpr (is_eigen_v<arg_mask_t>) {
     for (Eigen::Index i = 0; i < arg_mask.size(); ++i) {
-      for_each_coordinate_pair_mut(arg_mask.coeffRef(i), arg_work.coeffRef(i),
-                                   grad.coeffRef(i), fn);
+      for_each_leaf_pair(arg_mask.coeffRef(i), arg_work.coeffRef(i),
+                         grad.coeffRef(i), fn);
     }
   } else if constexpr (is_std_vector_v<arg_mask_t>) {
     for (std::size_t i = 0; i < arg_mask.size(); ++i) {
-      for_each_coordinate_pair_mut(arg_mask[i], arg_work[i], grad[i], fn);
+      for_each_leaf_pair(arg_mask[i], arg_work[i], grad[i], fn);
     }
   } else if constexpr (is_tuple_v<arg_mask_t>) {
     constexpr auto arg_mask_size = std::tuple_size<std::decay_t<ArgMask>>::value;
@@ -117,7 +124,7 @@ inline void for_each_coordinate_pair_mut(ArgMask&& arg_mask, ArgWork&& arg_work,
     if constexpr (arg_mask_size == grad_size) {
       stan::math::for_each(
           [&fn](auto&& arg_mask_i, auto&& arg_work_i, auto&& grad_i) {
-            for_each_coordinate_pair_mut(arg_mask_i, arg_work_i, grad_i, fn);
+            for_each_leaf_pair(arg_mask_i, arg_work_i, grad_i, fn);
           },
           std::forward<ArgMask>(arg_mask), std::forward<ArgWork>(arg_work),
           std::forward<Grad>(grad));
@@ -136,7 +143,7 @@ inline void for_each_coordinate_pair_mut(ArgMask&& arg_mask, ArgWork&& arg_work,
           "Tuple size mismatch in finite_diff_gradient_auto traversal");
       stan::math::for_each(
           [&fn](auto&& arg_mask_i, auto&& arg_work_i, auto&& grad_i) {
-            for_each_coordinate_pair_mut(arg_mask_i, arg_work_i, grad_i, fn);
+            for_each_leaf_pair(arg_mask_i, arg_work_i, grad_i, fn);
           },
           std::move(arg_mask_ad), std::move(arg_work_ad),
           std::forward<Grad>(grad));
@@ -160,11 +167,14 @@ inline void for_each_coordinate_pair_mut(ArgMask&& arg_mask, ArgWork&& arg_work,
  * @tparam ArgWork mutable working argument type
  * @tparam NthGrad gradient container type for this top-level argument
  * @tparam TupleArgsWork mutable tuple of all working arguments passed to `f`
- * @param f function being finite-differenced
- * @param arg_mask mask argument used to choose perturbable coordinates
- * @param arg_work mutable working argument coordinates
- * @param grad gradient output container for this top-level argument
- * @param args_work mutable tuple of all working arguments passed to `f`
+ * @param[in] f function being finite-differenced
+ * @param[in] arg_mask mask argument used to choose perturbable coordinates
+ * @param[in,out] arg_work mutable working argument coordinates
+ * @param[out] grad gradient output container for this top-level argument
+ * @param[in,out] args_work mutable tuple of all working arguments passed to
+ * `f`
+ * @return None.
+ * @throw Any exception thrown by `f`.
  */
 template <typename ScalarT, typename F, typename ArgMask, typename ArgWork,
           typename NthGrad, typename TupleArgsWork>
@@ -174,7 +184,7 @@ inline void finite_diff_gradient_auto_impl(const F& f, ArgMask&& arg_mask,
   static constexpr int h_scale[6] = {3, 2, 1, -3, -2, -1};
   static constexpr int mults[6] = {1, -9, 45, -1, 9, -45};
 
-  for_each_coordinate_pair_mut(
+  for_each_leaf_pair(
       std::forward<ArgMask>(arg_mask), std::forward<ArgWork>(arg_work),
       std::forward<NthGrad>(grad), [&f, &args_work](auto& arg_coord, auto& grad_coord) {
         const auto orig = arg_coord;
@@ -231,6 +241,8 @@ inline void finite_diff_gradient_auto_impl(const F& f, ArgMask&& arg_mask,
  * @param[in] x argument to function
  * @param[out] fx function applied to argument
  * @param[out] grad_fx gradient of function at argument
+ * @return None.
+ * @throw Any exception thrown by `f`.
  */
 template <typename F, typename VectorT, typename GradVectorT,
           typename ScalarT = return_type_t<VectorT>,
@@ -259,24 +271,18 @@ inline void finite_diff_gradient_auto(const F& f, VectorT&& x, ScalarT& fx,
 }
 
 /**
- * Filter a tuple and return a tuple with references to entries with autodiff
- * scalar type.
- *
- * @tparam T Possibly a tuple, std::vector, Eigen type, or scalar
- * @param[in] t Input to filter
- * @return Filtered input with only autodiff scalar entries
- */
-template <typename T>
-inline constexpr decltype(auto) filter_ad_scalar_types(T&& t) {
-  return internal::filter_autodiff_types(std::forward<T>(t));
-}
-
-/**
  * Calculate the function value and gradients for heterogeneous tuple arguments
  * while preserving argument scalar types at the call boundary.
  *
  * This overload expects `grads` to mirror the top-level structure of `args`.
- * Non-autodiff top-level entries are skipped.
+ * Non-autodiff top-level entries are skipped in the finite-difference pass.
+ *
+ * Pattern used by this overload:
+ * 1. Evaluate `f(args...)` once for `fx`.
+ * 2. Zip top-level `args` and `grads`.
+ * 3. Use `contains_autodiff_v` to skip non-autodiff top-level entries.
+ * 4. Traverse nested leaves with `for_each_leaf_pair`, perturbing one
+ *    coordinate at a time and restoring it after each stencil evaluation.
  *
  * @tparam F callable type
  * @tparam ScalarT scalar type used for function value and gradient storage
@@ -286,6 +292,8 @@ inline constexpr decltype(auto) filter_ad_scalar_types(T&& t) {
  * @param[out] fx function value at `args`
  * @param[in] args tuple of function arguments
  * @param[out] grads tuple of gradient containers
+ * @return None.
+ * @throw Any exception thrown by `f`.
  */
 template <typename F, typename ScalarT, typename TupleArgs, typename TupleGrads,
           require_tuple_t<TupleArgs>* = nullptr,
@@ -306,13 +314,28 @@ inline void finite_diff_gradient_auto(const F& f, ScalarT& fx, TupleArgs&& args,
 /**
  * Indexed tuple overload used for compact gradient tuples. `Idxs` select
  * autodiff-containing top-level entries from both `args_mask` and `args_work`,
- * while `GradIdxs` selects matching gradient entries from `grads`.
+ * while `GradIdxs` selects matching compact gradient entries from `grads`.
+ *
+ * This overload is used by `stan::math::finite_diff` where:
+ * - `args_mask` preserves original autodiff type information
+ * - `args_work` is the value-only work tuple passed to function evaluations
+ * - `grads` stores only autodiff top-level gradient containers
  *
  * @tparam F callable type
  * @tparam ScalarT scalar type used for function value and gradients
  * @tparam TupleArgsMask tuple used only as perturbation mask
  * @tparam TupleArgsWork mutable tuple used for function evaluation
  * @tparam TupleGrads compact tuple of gradient containers
+ * @param[in] f function to differentiate
+ * @param[out] fx function value at `args_work`
+ * @param[in] args_mask tuple carrying autodiff mask information
+ * @param[in,out] args_work mutable value tuple used for finite-difference
+ * evaluations
+ * @param[out] grads compact tuple of gradient containers
+ * @param[in] idxs selected top-level indices in `args_mask`/`args_work`
+ * @param[in] grad_idxs selected top-level indices in `grads`
+ * @return None.
+ * @throw Any exception thrown by `f`.
  */
 template <typename F, typename ScalarT, typename TupleArgsMask,
           typename TupleArgsWork, typename TupleGrads, std::size_t... Idxs,
@@ -321,8 +344,8 @@ template <typename F, typename ScalarT, typename TupleArgsMask,
           require_tuple_t<TupleGrads>* = nullptr>
 inline void finite_diff_gradient_auto(
     const F& f, ScalarT& fx, TupleArgsMask&& args_mask, TupleArgsWork&& args_work,
-    TupleGrads&& grads, std::index_sequence<Idxs...> /* idxs */,
-    std::index_sequence<GradIdxs...> /* grad_idxs */) {
+    TupleGrads&& grads, [[maybe_unused]] std::index_sequence<Idxs...> idxs,
+    [[maybe_unused]] std::index_sequence<GradIdxs...> grad_idxs) {
   static_assert(sizeof...(Idxs) == sizeof...(GradIdxs),
                 "Index sequence size mismatch in finite_diff_gradient_auto.");
   fx = stan::math::apply([&f](auto&&... args_i) { return f(args_i...); },
