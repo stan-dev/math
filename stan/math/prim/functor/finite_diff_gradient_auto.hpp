@@ -31,32 +31,34 @@ struct dependent_false : std::false_type {};
  * Scalars are checked directly, while container specializations recurse into
  * contained value types.
  */
-template <typename T, typename = void>
-struct contains_autodiff : bool_constant<is_autodiff_v<std::decay_t<T>>> {};
+template <typename T>
+struct contains_autodiff_impl : bool_constant<is_autodiff_v<std::decay_t<T>>> {};
 
 template <typename... Args>
-struct contains_autodiff<std::tuple<Args...>, void>
-    : bool_constant<(contains_autodiff<std::decay_t<Args>>::value || ...)> {};
+struct contains_autodiff_impl<std::tuple<Args...>>
+    : bool_constant<(contains_autodiff_impl<std::decay_t<Args>>::value || ...)> {};
 
 template <typename T, typename... VecArgs>
-struct contains_autodiff<std::vector<T, VecArgs...>, void>
-    : bool_constant<contains_autodiff<std::decay_t<T>>::value> {};
+struct contains_autodiff_impl<std::vector<T, VecArgs...>>
+    : bool_constant<contains_autodiff_impl<std::decay_t<T>>::value> {};
 
 template <typename T>
-inline constexpr bool contains_autodiff_v
-    = contains_autodiff<std::decay_t<T>>::value;
+struct contains_autodiff : contains_autodiff_impl<std::decay_t<T>> {};
 
 template <typename T>
-struct contains_autodiff_decayed : contains_autodiff<std::decay_t<T>> {};
+inline constexpr bool contains_autodiff_v = contains_autodiff<T>::value;
 
-template <typename T, typename = void>
-struct count_autodiff_args;
+template <typename T>
+struct count_autodiff_args_impl;
 
 template <typename... Args>
-struct count_autodiff_args<std::tuple<Args...>, void>
+struct count_autodiff_args_impl<std::tuple<Args...>>
     : std::integral_constant<
           std::size_t,
           (static_cast<std::size_t>(contains_autodiff_v<Args>) + ... + 0)> {};
+
+template <typename T>
+struct count_autodiff_args : count_autodiff_args_impl<std::decay_t<T>> {};
 
 template <typename TupleArgs>
 inline constexpr std::size_t count_autodiff_args_v
@@ -67,76 +69,6 @@ struct indices_of_if_impl {
   static constexpr std::size_t value = (Cond<T>::value ? pos : -1);
 };
 
-/**
- * Wrapper that carries a top-level argument by reference and exposes a
- * potentially different mask type for filtering.
- *
- * @tparam MaskT type used for filter decisions
- * @tparam ArgT referenced argument type
- */
-template <typename MaskT, typename ArgT>
-struct masked_arg_ref {
-  using arg_t = std::remove_reference_t<ArgT>;
-  std::reference_wrapper<arg_t> arg_;
-
-  explicit masked_arg_ref(arg_t& arg) : arg_(arg) {}
-  inline arg_t& get() const { return arg_.get(); }
-};
-
-/**
- * Specialization so `filter_map<contains_autodiff>` can filter wrapped
- * top-level arguments based on the explicit mask type.
- *
- * @tparam MaskT mask type used for autodiff detection
- * @tparam ArgT referenced argument type
- */
-template <typename MaskT, typename ArgT>
-struct contains_autodiff<masked_arg_ref<MaskT, ArgT>, void>
-    : contains_autodiff<std::decay_t<MaskT>> {};
-
-/**
- * Trait to detect wrapped top-level arguments.
- */
-template <typename T>
-struct is_masked_arg_ref : std::false_type {};
-
-template <typename MaskT, typename ArgT>
-struct is_masked_arg_ref<masked_arg_ref<MaskT, ArgT>> : std::true_type {};
-
-/**
- * Internal implementation for creating a tuple of masked top-level argument
- * wrappers.
- *
- * @tparam TupleMask tuple type used for autodiff mask decisions
- * @tparam TupleArgs tuple instance to filter
- * @tparam Is compile-time tuple indices
- * @param args tuple instance to filter
- * @return tuple of wrapped top-level arguments carrying explicit mask types
- */
-template <typename TupleMask, typename TupleArgs, std::size_t... Is>
-inline auto make_masked_arg_ref_tuple_impl(
-    TupleArgs&& args, std::index_sequence<Is...>) {
-  return make_holder_tuple(
-      masked_arg_ref<std::tuple_element_t<Is, std::decay_t<TupleMask>>,
-                     decltype(std::get<Is>(std::forward<TupleArgs>(args)))>(
-          std::get<Is>(std::forward<TupleArgs>(args)))...);
-}
-
-/**
- * Create a tuple of masked top-level argument wrappers.
- *
- * @tparam TupleMask tuple type used for autodiff mask decisions
- * @tparam TupleArgs tuple instance to wrap
- * @param args tuple instance to wrap
- * @return tuple of wrapped top-level arguments carrying explicit mask types
- */
-template <typename TupleMask, typename TupleArgs>
-inline auto make_masked_arg_ref_tuple(TupleArgs&& args) {
-  return make_masked_arg_ref_tuple_impl<TupleMask>(
-      std::forward<TupleArgs>(args),
-      std::make_index_sequence<std::tuple_size<std::decay_t<TupleMask>>::value>{
-      });
-}
 
 /**
  * Filter a tuple and return a tuple containing references to the elements
@@ -155,8 +87,6 @@ inline constexpr decltype(auto) filter_autodiff_types(T&& t) {
         using arg_t = std::decay_t<decltype(arg)>;
         if constexpr (is_tuple_v<arg_t>) {
           return filter_autodiff_types(std::forward<decltype(arg)>(arg));
-        } else if constexpr (is_masked_arg_ref<arg_t>::value) {
-          return std::forward<decltype(arg)>(arg).get();
         } else {
           return std::forward<decltype(arg)>(arg);
         }
@@ -165,55 +95,60 @@ inline constexpr decltype(auto) filter_autodiff_types(T&& t) {
 }
 
 /**
- * Filter top-level arguments using an explicit tuple mask.
+ * Build a zero-initialized gradient object for a single autodiff-containing
+ * leaf/container argument.
  *
- * @tparam TupleMask tuple type used for autodiff mask decisions
- * @tparam TupleArgs tuple instance to filter
- * @param args tuple instance to filter
- * @return tuple of references to autodiff-containing top-level arguments
- */
-template <typename TupleMask, typename TupleArgs>
-inline constexpr decltype(auto) filter_autodiff_types_with_mask(
-    TupleArgs&& args) {
-  return filter_autodiff_types(
-      make_masked_arg_ref_tuple<TupleMask>(std::forward<TupleArgs>(args)));
-}
-
-/**
- * Builds a zero-initialized gradient container matching `arg` shape for
- * autodiff leaves, while preserving non-autodiff leaves by value.
- *
- * @tparam ScalarT scalar type
- * @tparam Arg argument/container type used as the shape template
- * @param arg shape template argument
- * @return gradient container aligned with `arg`
+ * @tparam Arg leaf/container type
+ * @param arg argument value used for shape
+ * @return zero-initialized gradient container matching `arg` shape
  */
 template <typename Arg>
-inline auto zeroed_container(const Arg& arg) {
+inline auto zeroed_container_leaf(const Arg& arg) {
   using ArgDec = std::decay_t<Arg>;
   using PartialType = partials_type_t<scalar_type_t<ArgDec>>;
-  if constexpr (is_tuple_v<ArgDec>) {
-    return stan::math::apply(
-        [](const auto&... inner_args) {
-          return std::make_tuple(zeroed_container(inner_args)...);
-        }, arg);
-  } else if constexpr (is_std_vector_v<ArgDec>) {
-    std::vector<PartialType> ret;
+  if constexpr (is_std_vector_v<ArgDec>) {
+    using ElemType = std::decay_t<decltype(
+        zeroed_container_leaf(std::declval<const value_type_t<ArgDec>&>()))>;
+    std::vector<ElemType> ret;
     ret.reserve(arg.size());
     for (const auto& el : arg) {
-      ret.push_back(zeroed_container(el));
+      ret.push_back(zeroed_container_leaf(el));
     }
     return ret;
   } else if constexpr (is_eigen_v<ArgDec>) {
-      using eigen_t = promote_scalar_t<PartialType, plain_type_t<ArgDec>>;
-      return eigen_t::Zero(arg.rows(), arg.cols()).eval();
+    using eigen_t = promote_scalar_t<PartialType, plain_type_t<ArgDec>>;
+    return eigen_t::Zero(arg.rows(), arg.cols()).eval();
   } else if constexpr (is_stan_scalar_v<ArgDec>) {
-      return PartialType(0);
+    return PartialType(0);
   } else {
     static_assert(
         dependent_false<ArgDec>::value,
         "Unsupported gradient container in finite_diff_gradient_auto.");
   }
+}
+
+/**
+ * Build a compact tuple of zero-initialized gradient containers for
+ * autodiff-containing entries in `args`.
+ *
+ * Non-autodiff top-level entries are filtered out.
+ *
+ * @tparam TupleArgs tuple of input arguments
+ * @param args tuple of input arguments
+ * @return tuple of zeroed gradient containers for autodiff-containing entries
+ */
+template <typename TupleArgs, require_tuple_t<TupleArgs>* = nullptr>
+inline auto zeroed_container(TupleArgs&& args) {
+  return stan::math::filter_map<contains_autodiff>(
+      [](auto&& arg) {
+        using Arg = std::decay_t<decltype(arg)>;
+        if constexpr (is_tuple_v<Arg>) {
+          return zeroed_container(std::forward<decltype(arg)>(arg));
+        } else {
+          return zeroed_container_leaf(arg);
+        }
+      },
+      std::forward<TupleArgs>(args));
 }
 
 /**
@@ -255,9 +190,7 @@ template <typename ArgMask, typename Grad, typename F>
 inline void for_each_coordinate_pair_mut(ArgMask&& arg_mask, Grad&& grad, F&& fn) {
   using arg_mask_t = std::decay_t<ArgMask>;
   if constexpr (is_stan_scalar_v<arg_mask_t>) {
-    if constexpr (is_autodiff_v<arg_mask_t>) {
       fn(arg_mask, grad);
-    }
   } else if constexpr (is_eigen_v<arg_mask_t>) {
     for (Eigen::Index i = 0; i < arg_mask.size(); ++i) {
       for_each_coordinate_pair_mut(arg_mask.coeffRef(i),
@@ -454,7 +387,7 @@ inline void finite_diff_gradient_auto(const F& f, ScalarT& fx, TupleArgs&& args,
   fx = stan::math::apply([&f](auto&&... args_i) { return f(args_i...); },
                          args);
   stan::math::for_each([&f, &args, &grads](auto&& arg, auto&& grad) {
-    if (!std::is_integral_v<scalar_type_t<decltype(grad)>> && !std::is_integral_v<scalar_type_t<decltype(arg)>>) {
+    if constexpr (!std::is_integral_v<scalar_type_t<decltype(grad)>> && !std::is_integral_v<scalar_type_t<decltype(arg)>>) {
       internal::finite_diff_gradient_auto_impl<ScalarT>(
           f, arg, grad, args);
     }
@@ -496,9 +429,7 @@ template <typename F, typename ScalarT, typename TupleArgs, typename TupleGrads,
           require_tuple_t<TupleArgs>* = nullptr,
           require_tuple_t<TupleGrads>* = nullptr,
           std::size_t... Idxs,
-          std::size_t... GradIdxs,
-          require_t<bool_constant<
-              (internal::count_autodiff_args_v<TupleArgs> > 0)>>* = nullptr>
+          std::size_t... GradIdxs>
 inline void finite_diff_gradient_auto(const F& f, ScalarT& fx, TupleArgs&& args,
                                       TupleGrads&& grads,
                                       std::index_sequence<Idxs...> /* idxs */,

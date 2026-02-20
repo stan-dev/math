@@ -68,34 +68,35 @@ inline constexpr std::integer_sequence<SeqT, s..., t...> concat_sequences(
   return {};
 }
 
+template <typename SeqT>
+constexpr std::integer_sequence<SeqT> concat_sequences(
+    std::integer_sequence<SeqT>) {
+  return {};
+}
+
 template <typename SeqT, SeqT... s, SeqT... t, class... R>
 inline constexpr auto concat_sequences(std::integer_sequence<SeqT, s...>,
-                                std::integer_sequence<SeqT, t...>, R...) {
+                                       std::integer_sequence<SeqT, t...>,
+                                       R...) {
   return concat_sequences(std::integer_sequence<SeqT, s..., t...>{}, R{}...);
 }
 
-template <template <std::size_t...> class Predicate, class SeqT, SeqT a>
+template <template <class...> class Predicate, typename Arg, class SeqT, SeqT a>
 constexpr auto filter_single_seq(std::integer_sequence<SeqT, a>) {
-  if constexpr (Predicate<a>::value)
+  if constexpr (Predicate<Arg>::value)
     return std::integer_sequence<SeqT, a>{};
   else
     return std::integer_sequence<SeqT>{};
 }
 
-template <template <std::size_t...> class Predicate, class SeqT, SeqT... b>
+template <template <class...> class Predicate, typename... Args, class SeqT,
+          SeqT... b>
 constexpr auto filter_integer_seq(std::integer_sequence<SeqT, b...>) {
   if constexpr (sizeof...(b) > 0)  // non empty sequence
-    return concat_sequences(
-        filter_single_seq<Predicate>(std::integer_sequence<SeqT, b>{})...);
+    return concat_sequences(filter_single_seq<Predicate, Args>(
+        std::integer_sequence<SeqT, b>{})...);
   else  // empty sequence case
     return std::integer_sequence<SeqT>{};
-}
-
-
-template <typename SeqT>
-constexpr std::integer_sequence<SeqT> concat_sequences(
-    std::integer_sequence<SeqT>) {
-  return {};
 }
 
 /**
@@ -118,15 +119,14 @@ template <typename F, typename... TArgs,
 inline auto finite_diff(const F& func, const TArgs&... args) {
   using FvarT = return_type_t<TArgs...>;
   using FvarInnerT = typename FvarT::Scalar;
-  auto val_args_tuple = std::forward_as_tuple(value_of(args)...);
   auto autodiff_args = filter_ad_scalar_types(std::forward_as_tuple(args...));
   FvarInnerT rtn_value;
-  auto grads = zeroed_container(std::forward_as_tuple(value_of(args)...));
-  constexpr auto autodiff_idxs = filter_integer_seq<internal::contains_autodiff>(std::index_sequence_for<TArgs...>{});
+  auto grads = internal::zeroed_container(std::forward_as_tuple(args...));
+  constexpr auto autodiff_idxs = filter_integer_seq<internal::contains_autodiff, TArgs...>(std::index_sequence_for<TArgs...>{});
   constexpr auto grad_idxs = stan::math::apply([](auto&&... grads) {
     return std::index_sequence_for<decltype(grads)...>{};
   }, grads);
-  finite_diff_gradient_auto(func, rtn_value, val_args_tuple, grads, autodiff_idxs, grad_idxs);
+  finite_diff_gradient_auto(func, rtn_value, std::forward_as_tuple(value_of(args)...), grads, autodiff_idxs, grad_idxs);
   FvarInnerT rtn_grad = 0;
   stan::math::for_each(
       [&rtn_grad](auto&& grad_i, auto&& arg_i) {
