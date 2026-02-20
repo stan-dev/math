@@ -63,7 +63,7 @@ inline auto apply_scalar_binary(F&& f, T1&& x, T2&& y) {
  * @param f functor to apply to inputs.
  * @param x Either a var matrix or nested integer std::vector input to which
  * operation is applied.
- * @param x Either a var matrix or nested integer std::vector input to which
+ * @param y Either a var matrix or nested integer std::vector input to which
  * operation is applied.
  * @return Eigen object with result of applying functor to inputs.
  */
@@ -86,7 +86,7 @@ inline auto apply_scalar_binary(F&& f, T1&& x, T2&& y) {
  * functor is applied.
  * @param f functor to apply to var matrix and scalar inputs.
  * @param x Matrix or Scalar input to which operation is applied.
- * @param x Matrix or Scalar input to which operation is applied.
+ * @param y Matrix or Scalar input to which operation is applied.
  * @return `var_value<Matrix> object with result of applying functor to inputs.
  *
  */
