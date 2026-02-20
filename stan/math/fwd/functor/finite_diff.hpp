@@ -5,8 +5,11 @@
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/fun/value_of.hpp>
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
+#include <stan/math/prim/fun/zeroed_container.hpp>
 #include <stan/math/prim/functor/finite_diff_gradient_auto.hpp>
 #include <stan/math/prim/functor/for_each.hpp>
+#include <stan/math/prim/meta/contains_autodiff.hpp>
+#include <stan/math/prim/meta/filtered_tuple_indices.hpp>
 #include <tuple>
 
 namespace stan {
@@ -28,7 +31,7 @@ template <typename FuncTangent, typename InputArg,
 inline constexpr double aggregate_tangent(const FuncTangent& tangent,
                                           const InputArg& arg) {
   return 0;
-}
+}  // namespace internal
 
 /**
  * Helper function for aggregating tangents if the respective input argument
@@ -60,43 +63,6 @@ inline auto aggregate_tangent(FuncTangent&& tangent, InputArg&& arg) {
     return rtn;
   }
 }
-}  // namespace internal
-
-template <typename SeqT, SeqT... s, SeqT... t>
-inline constexpr std::integer_sequence<SeqT, s..., t...> concat_sequences(
-    std::integer_sequence<SeqT, s...>, std::integer_sequence<SeqT, t...>) {
-  return {};
-}
-
-template <typename SeqT>
-constexpr std::integer_sequence<SeqT> concat_sequences(
-    std::integer_sequence<SeqT>) {
-  return {};
-}
-
-template <typename SeqT, SeqT... s, SeqT... t, class... R>
-inline constexpr auto concat_sequences(std::integer_sequence<SeqT, s...>,
-                                       std::integer_sequence<SeqT, t...>,
-                                       R...) {
-  return concat_sequences(std::integer_sequence<SeqT, s..., t...>{}, R{}...);
-}
-
-template <template <class...> class Predicate, typename Arg, class SeqT, SeqT a>
-constexpr auto filter_single_seq(std::integer_sequence<SeqT, a>) {
-  if constexpr (Predicate<Arg>::value)
-    return std::integer_sequence<SeqT, a>{};
-  else
-    return std::integer_sequence<SeqT>{};
-}
-
-template <template <class...> class Predicate, typename... Args, class SeqT,
-          SeqT... b>
-constexpr auto filter_integer_seq(std::integer_sequence<SeqT, b...>) {
-  if constexpr (sizeof...(b) > 0)  // non empty sequence
-    return concat_sequences(filter_single_seq<Predicate, Args>(
-        std::integer_sequence<SeqT, b>{})...);
-  else  // empty sequence case
-    return std::integer_sequence<SeqT>{};
 }
 
 /**
@@ -121,12 +87,16 @@ inline auto finite_diff(const F& func, const TArgs&... args) {
   using FvarInnerT = typename FvarT::Scalar;
   auto autodiff_args = filter_ad_scalar_types(std::forward_as_tuple(args...));
   FvarInnerT rtn_value;
-  auto grads = internal::zeroed_container(std::forward_as_tuple(args...));
-  constexpr auto autodiff_idxs = filter_integer_seq<internal::contains_autodiff, TArgs...>(std::index_sequence_for<TArgs...>{});
-  constexpr auto grad_idxs = stan::math::apply([](auto&&... grads) {
-    return std::index_sequence_for<decltype(grads)...>{};
-  }, grads);
-  finite_diff_gradient_auto(func, rtn_value, std::forward_as_tuple(value_of(args)...), grads, autodiff_idxs, grad_idxs);
+  auto grads = stan::math::zeroed_container<contains_autodiff>(
+      std::forward_as_tuple(args...));
+  using args_tuple_t = std::tuple<TArgs...>;
+  using autodiff_idxs_t
+      = filtered_tuple_indices_t<contains_autodiff, args_tuple_t>;
+  using grads_t = std::decay_t<decltype(grads)>;
+  using grad_idxs_t = std::make_index_sequence<std::tuple_size<grads_t>::value>;
+  finite_diff_gradient_auto(func, rtn_value, std::forward_as_tuple(args...),
+                            std::forward_as_tuple(value_of(args)...), grads,
+                            autodiff_idxs_t{}, grad_idxs_t{});
   FvarInnerT rtn_grad = 0;
   stan::math::for_each(
       [&rtn_grad](auto&& grad_i, auto&& arg_i) {
