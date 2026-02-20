@@ -21,14 +21,6 @@ namespace math {
 namespace internal {
 
 /**
- * Type-dependent false helper for `static_assert` in unreachable branches.
- *
- * @tparam ... ignored dependent types used to delay `static_assert`
- */
-template <typename...>
-struct dependent_false : std::false_type {};
-
-/**
  * Construct a holder tuple containing elements selected by `Is...`.
  *
  * Returned elements preserve reference/value category through
@@ -66,6 +58,7 @@ inline double finite_diff_stepsize_value(const T& x) {
     return value_of_rec(x);
   }
 }
+
 
 /**
  * Recursively traverses `arg_mask`, `arg_work`, and `grad` and invokes `fn` on
@@ -145,11 +138,10 @@ inline void for_each_leaf_pair(ArgMask&& arg_mask, ArgWork&& arg_work,
           [&fn](auto&& arg_mask_i, auto&& arg_work_i, auto&& grad_i) {
             for_each_leaf_pair(arg_mask_i, arg_work_i, grad_i, fn);
           },
-          std::move(arg_mask_ad), std::move(arg_work_ad),
-          std::forward<Grad>(grad));
+          arg_mask_ad, arg_work_ad, std::forward<Grad>(grad));
     }
   } else {
-    static_assert(dependent_false<arg_mask_t>::value,
+    static_assert(sizeof(std::decay_t<arg_mask_t>*) == 0,
                   "Unsupported container in finite_diff_gradient_auto.");
   }
 }
@@ -275,13 +267,12 @@ inline void finite_diff_gradient_auto(const F& f, VectorT&& x, ScalarT& fx,
  * while preserving argument scalar types at the call boundary.
  *
  * This overload expects `grads` to mirror the top-level structure of `args`.
- * Non-autodiff top-level entries are skipped in the finite-difference pass.
+ * Non-autodiff leaves are skipped in the finite-difference pass.
  *
  * Pattern used by this overload:
  * 1. Evaluate `f(args...)` once for `fx`.
  * 2. Zip top-level `args` and `grads`.
- * 3. Use `contains_autodiff_v` to skip non-autodiff top-level entries.
- * 4. Traverse nested leaves with `for_each_leaf_pair`, perturbing one
+ * 3. Traverse nested leaves with `for_each_leaf_pair`, perturbing one
  *    coordinate at a time and restoring it after each stencil evaluation.
  *
  * @tparam F callable type
@@ -303,7 +294,7 @@ inline void finite_diff_gradient_auto(const F& f, ScalarT& fx, TupleArgs&& args,
   fx = stan::math::apply([&f](auto&&... args_i) { return f(args_i...); }, args);
   stan::math::for_each(
       [&f, &args](auto&& arg_i, auto&& grad_i) {
-        if constexpr (contains_autodiff_v<std::decay_t<decltype(arg_i)>>) {
+        if constexpr (!std::is_integral_v<scalar_type_t<decltype(arg_i)>>) {
           internal::finite_diff_gradient_auto_impl<ScalarT>(f, arg_i, arg_i,
                                                             grad_i, args);
         }
@@ -312,9 +303,7 @@ inline void finite_diff_gradient_auto(const F& f, ScalarT& fx, TupleArgs&& args,
 }
 
 /**
- * Indexed tuple overload used for compact gradient tuples. `Idxs` select
- * autodiff-containing top-level entries from both `args_mask` and `args_work`,
- * while `GradIdxs` selects matching compact gradient entries from `grads`.
+ * Tuple overload used for compact gradient tuples with an explicit mask tuple.
  *
  * This overload is used by `stan::math::finite_diff` where:
  * - `args_mask` preserves original autodiff type information
@@ -332,30 +321,36 @@ inline void finite_diff_gradient_auto(const F& f, ScalarT& fx, TupleArgs&& args,
  * @param[in,out] args_work mutable value tuple used for finite-difference
  * evaluations
  * @param[out] grads compact tuple of gradient containers
- * @param[in] idxs selected top-level indices in `args_mask`/`args_work`
- * @param[in] grad_idxs selected top-level indices in `grads`
  * @return None.
  * @throw Any exception thrown by `f`.
  */
 template <typename F, typename ScalarT, typename TupleArgsMask,
-          typename TupleArgsWork, typename TupleGrads, std::size_t... Idxs,
-          std::size_t... GradIdxs, require_tuple_t<TupleArgsMask>* = nullptr,
+          typename TupleArgsWork, typename TupleGrads,
+          require_tuple_t<TupleArgsMask>* = nullptr,
           require_tuple_t<TupleArgsWork>* = nullptr,
           require_tuple_t<TupleGrads>* = nullptr>
 inline void finite_diff_gradient_auto(
     const F& f, ScalarT& fx, TupleArgsMask&& args_mask, TupleArgsWork&& args_work,
-    TupleGrads&& grads, [[maybe_unused]] std::index_sequence<Idxs...> idxs,
-    [[maybe_unused]] std::index_sequence<GradIdxs...> grad_idxs) {
-  static_assert(sizeof...(Idxs) == sizeof...(GradIdxs),
-                "Index sequence size mismatch in finite_diff_gradient_auto.");
+    TupleGrads&& grads) {
   fx = stan::math::apply([&f](auto&&... args_i) { return f(args_i...); },
                          args_work);
-  using Swallow = int[];
-  static_cast<void>(Swallow{
-      (static_cast<void>(internal::finite_diff_gradient_auto_impl<ScalarT>(
-           f, std::get<Idxs>(args_mask), std::get<Idxs>(args_work),
-           std::get<GradIdxs>(grads), args_work)),
-       0)...});
+  using selected_idxs_t
+      = filtered_tuple_indices_t<contains_autodiff, std::decay_t<TupleArgsMask>>;
+  auto args_mask_ad = internal::tuple_subset(args_mask, selected_idxs_t{});
+  auto args_work_ad = internal::tuple_subset(args_work, selected_idxs_t{});
+  static_assert(std::tuple_size<std::decay_t<decltype(args_mask_ad)>>::value
+                        == std::tuple_size<std::decay_t<decltype(args_work_ad)>>::value
+                    && std::tuple_size<std::decay_t<decltype(args_mask_ad)>>::value
+                           == std::tuple_size<std::decay_t<TupleGrads>>::value,
+                "Tuple size mismatch in finite_diff_gradient_auto.");
+  stan::math::for_each(
+      [&f, &args_work](auto&& arg_mask_i, auto&& arg_work_i, auto&& grad_i) {
+        internal::finite_diff_gradient_auto_impl<ScalarT>(
+            f, std::forward<decltype(arg_mask_i)>(arg_mask_i),
+            std::forward<decltype(arg_work_i)>(arg_work_i),
+            std::forward<decltype(grad_i)>(grad_i), args_work);
+      },
+      args_mask_ad, args_work_ad, std::forward<TupleGrads>(grads));
 }
 
 }  // namespace math

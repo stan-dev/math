@@ -10,7 +10,6 @@
 #include <stan/math/prim/functor/for_each.hpp>
 #include <stan/math/prim/functor/filter_types.hpp>
 #include <stan/math/prim/meta/contains_autodiff.hpp>
-#include <stan/math/prim/meta/filtered_tuple_indices.hpp>
 #include <tuple>
 
 namespace stan {
@@ -89,8 +88,9 @@ inline auto aggregate_tangent(FuncTangent&& tangent, InputArg&& arg) {
  * 1. Build `autodiff_args` with `filter_types<contains_autodiff>(args...)`.
  * 2. Build compact zero-initialized `grads` with
  *    `zeroed_filtered_tuple<contains_autodiff>(args...)`.
- * 3. Use filtered top-level index sequences to dispatch tuple-native finite
- *    differencing.
+ * 3. Dispatch tuple-native finite differencing with:
+ *    - `args_mask = args...` (original autodiff typing)
+ *    - `args_work = value_of(args)...` (mutable finite-diff work tuple)
  * 4. Aggregate tangent contributions by zipping compact `grads` and
  *    `autodiff_args`.
  *
@@ -106,16 +106,11 @@ inline auto finite_diff(const F& func, const TArgs&... args) {
   using FvarInnerT = typename FvarT::Scalar;
   auto autodiff_args
       = stan::math::filter_types<contains_autodiff>(std::forward_as_tuple(args...));
-  using autodiff_idxs_t
-      = filtered_tuple_indices_t<contains_autodiff, std::tuple<TArgs...>>;
   auto grads = stan::math::zeroed_filtered_tuple<contains_autodiff>(
       std::forward_as_tuple(args...));
-  using grad_idxs_t = std::make_index_sequence<
-      std::tuple_size<std::decay_t<decltype(grads)>>::value>;
   FvarInnerT rtn_value;
   finite_diff_gradient_auto(func, rtn_value, std::forward_as_tuple(args...),
-                            std::forward_as_tuple(value_of(args)...), grads,
-                            autodiff_idxs_t{}, grad_idxs_t{});
+                            std::forward_as_tuple(value_of(args)...), grads);
   FvarInnerT rtn_grad = 0;
   stan::math::for_each(
       [&rtn_grad](auto&& grad_i, auto&& arg_i) {

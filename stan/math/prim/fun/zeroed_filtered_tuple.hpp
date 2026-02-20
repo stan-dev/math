@@ -14,14 +14,6 @@ namespace math {
 namespace internal {
 
 /**
- * Type-dependent false helper for `static_assert` in unreachable branches.
- *
- * @tparam ... ignored dependent types used to delay `static_assert`
- */
-template <typename...>
-struct zeroed_filtered_tuple_dependent_false : std::false_type {};
-
-/**
  * Build a zero-initialized container matching the shape of `arg`.
  *
  * Scalars produce zero partials scalars, Eigen produces zero matrices of the
@@ -55,7 +47,7 @@ inline auto zeroed_filtered_tuple_leaf(const Arg& arg) {
     return partial_t(0);
   } else {
     static_assert(
-        zeroed_filtered_tuple_dependent_false<arg_t>::value,
+        sizeof(std::decay_t<Arg>*) == 0,
         "Unsupported container in zeroed_filtered_tuple.");
   }
 }
