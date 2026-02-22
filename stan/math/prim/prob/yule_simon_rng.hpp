@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_PROB_YULE_SIMON_RNG_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/log1m.hpp>
 #include <stan/math/prim/prob/exponential_rng.hpp>
 #include <stan/math/prim/prob/neg_binomial_rng.hpp>
 
@@ -38,8 +39,9 @@ inline auto yule_simon_rng(const T_alpha &alpha, RNG &rng) {
 
   VectorBuilder<true, int, T_alpha> output(size_w);
   for (size_t n = 0; n < size_w; ++n) {
-    double p = exp(-w_vec.val(n));
-    double odds_ratio_p = exp(log(p) - log1m(p));
+    double p = stan::math::exp(-w_vec.val(n));
+    double odds_ratio_p
+        = stan::math::exp(stan::math::log(p) - stan::math::log1m(p));
     output[n] = neg_binomial_rng(1.0, odds_ratio_p, rng) + 1;
   }
 

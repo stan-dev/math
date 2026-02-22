@@ -38,21 +38,17 @@ TEST(ProbDistributionsYuleSimon, distributionCheck) {
 TEST(ProbDistributionsYuleSimon, error_check) {
   boost::random::mt19937 rng;
 
-  // Valid parameters should not throw
   EXPECT_NO_THROW(stan::math::yule_simon_rng(1.0, rng));
   EXPECT_NO_THROW(stan::math::yule_simon_rng(2.0, rng));
   EXPECT_NO_THROW(stan::math::yule_simon_rng(10.0, rng));
 
-  // Invalid parameters should throw domain_error
   EXPECT_THROW(stan::math::yule_simon_rng(-0.5, rng), std::domain_error);
   EXPECT_THROW(stan::math::yule_simon_rng(0.0, rng), std::domain_error);
   EXPECT_THROW(stan::math::yule_simon_rng(-10.0, rng), std::domain_error);
 
-  // Infinity should throw
   EXPECT_THROW(stan::math::yule_simon_rng(stan::math::positive_infinity(), rng),
                std::domain_error);
 
-  // NaN should throw
   EXPECT_THROW(stan::math::yule_simon_rng(stan::math::not_a_number(), rng),
                std::domain_error);
 }
