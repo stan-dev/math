@@ -2,6 +2,8 @@
 #define STAN_MATH_PRIM_PROB_YULE_SIMON_RNG_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/exp.hpp>
+#include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log1m.hpp>
 #include <stan/math/prim/prob/exponential_rng.hpp>
 #include <stan/math/prim/prob/neg_binomial_rng.hpp>
