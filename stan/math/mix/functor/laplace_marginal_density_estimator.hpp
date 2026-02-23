@@ -109,10 +109,10 @@ using laplace_options_user_supplied = laplace_options<true>;
  */
 inline auto generate_laplace_options(int theta_0_size) {
   auto ops = laplace_options_default{};
-  return std::make_tuple(
-      Eigen::VectorXd::Zero(theta_0_size).eval(),  
-      ops.tolerance, ops.max_num_steps, ops.solver,
-      ops.line_search.max_iterations, static_cast<int>(ops.allow_fallthrough));
+  return std::make_tuple(Eigen::VectorXd::Zero(theta_0_size).eval(),
+                         ops.tolerance, ops.max_num_steps, ops.solver,
+                         ops.line_search.max_iterations,
+                         static_cast<int>(ops.allow_fallthrough));
 }
 
 /**
@@ -123,10 +123,10 @@ inline auto generate_laplace_options(int theta_0_size) {
 template <typename ThetaVec, require_eigen_t<ThetaVec>* = nullptr>
 inline auto generate_laplace_options(ThetaVec&& theta_0) {
   auto ops = laplace_options_default{};
-  return std::make_tuple(
-      std::forward<ThetaVec>(theta_0),  
-      ops.tolerance, ops.max_num_steps, ops.solver,
-      ops.line_search.max_iterations, static_cast<int>(ops.allow_fallthrough));
+  return std::make_tuple(std::forward<ThetaVec>(theta_0), ops.tolerance,
+                         ops.max_num_steps, ops.solver,
+                         ops.line_search.max_iterations,
+                         static_cast<int>(ops.allow_fallthrough));
 }
 
 namespace internal {

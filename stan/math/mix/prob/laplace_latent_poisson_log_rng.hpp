@@ -38,7 +38,8 @@ inline Eigen::VectorXd laplace_latent_tol_poisson_log_rng(
     const std::vector<int>& y, const std::vector<int>& y_index, Mean&& mean,
     CovarFun&& covariance_function, CovarArgs&& covar_args,
     int hessian_block_size, OpsTuple&& ops, RNG& rng, std::ostream* msgs) {
-  auto options = internal::tuple_to_laplace_options(std::forward<OpsTuple>(ops));
+  auto options
+      = internal::tuple_to_laplace_options(std::forward<OpsTuple>(ops));
   options.hessian_block_size = hessian_block_size;
   return laplace_base_rng(
       poisson_log_likelihood{},
@@ -73,8 +74,7 @@ template <typename CovarFun, typename CovarArgs, typename RNG, typename Mean>
 inline Eigen::VectorXd laplace_latent_poisson_log_rng(
     const std::vector<int>& y, const std::vector<int>& y_index, Mean&& mean,
     CovarFun&& covariance_function, CovarArgs&& covar_args,
-    int hessian_block_size, RNG& rng,
-    std::ostream* msgs) {
+    int hessian_block_size, RNG& rng, std::ostream* msgs) {
   auto options = laplace_options_default{hessian_block_size};
   return laplace_base_rng(
       poisson_log_likelihood{},

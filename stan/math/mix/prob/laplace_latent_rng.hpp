@@ -38,7 +38,8 @@ inline auto laplace_latent_tol_rng(LLFunc&& L_f, LLArgs&& ll_args,
                                    CovarArgs&& covar_args,
                                    int hessian_block_size, OpsTuple&& ops,
                                    RNG& rng, std::ostream* msgs) {
-  auto options = internal::tuple_to_laplace_options(std::forward<OpsTuple>(ops));
+  auto options
+      = internal::tuple_to_laplace_options(std::forward<OpsTuple>(ops));
   options.hessian_block_size = hessian_block_size;
   return laplace_base_rng(
       std::forward<LLFunc>(L_f), std::forward<LLArgs>(ll_args),
@@ -71,14 +72,12 @@ template <typename LLFunc, typename LLArgs, typename CovarFun,
 inline auto laplace_latent_rng(LLFunc&& L_f, LLArgs&& ll_args,
                                CovarFun&& covariance_function,
                                CovarArgs&& covar_args, int hessian_block_size,
-                               RNG& rng,
-                               std::ostream* msgs) {
+                               RNG& rng, std::ostream* msgs) {
   auto options = laplace_options_default{hessian_block_size};
-  return laplace_base_rng(std::forward<LLFunc>(L_f),
-                          std::forward<LLArgs>(ll_args),
-                          std::forward<CovarFun>(covariance_function),
-                          std::forward<CovarArgs>(covar_args), options, rng,
-                          msgs);
+  return laplace_base_rng(
+      std::forward<LLFunc>(L_f), std::forward<LLArgs>(ll_args),
+      std::forward<CovarFun>(covariance_function),
+      std::forward<CovarArgs>(covar_args), options, rng, msgs);
 }
 
 }  // namespace math

@@ -84,7 +84,8 @@ inline auto laplace_marginal_tol_neg_binomial_2_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& y_index, const Eta& eta,
     Mean&& mean, CovarFun&& covariance_function, CovarArgs&& covar_args,
     int hessian_block_size, OpsTuple&& ops, std::ostream* msgs) {
-  auto options = internal::tuple_to_laplace_options(std::forward<OpsTuple>(ops));
+  auto options
+      = internal::tuple_to_laplace_options(std::forward<OpsTuple>(ops));
   options.hessian_block_size = hessian_block_size;
   return laplace_marginal_density(
       neg_binomial_2_log_likelihood{},
@@ -185,7 +186,8 @@ inline auto laplace_marginal_tol_neg_binomial_2_log_summary_lpmf(
     const std::vector<int>& counts_per_group, const Eta& eta, Mean&& mean,
     CovarFun&& covariance_function, CovarArgs&& covar_args,
     int hessian_block_size, OpsTuple&& ops, std::ostream* msgs) {
-  auto options = internal::tuple_to_laplace_options(std::forward<OpsTuple>(ops));
+  auto options
+      = internal::tuple_to_laplace_options(std::forward<OpsTuple>(ops));
   options.hessian_block_size = hessian_block_size;
   return laplace_marginal_density(
       neg_binomial_2_log_likelihood_summary{},

@@ -94,8 +94,7 @@ TEST(laplace, theta_0_as_expression_issue_3196) {
       std::tuple<const std::vector<int>&, Eigen::Matrix<double, -1, 1>>(
           y, stan::math::add(stan::math::add(offset, alpha),
                              stan::math::multiply(X, beta))),
-      cov_fun(), std::tuple<double, int>(sigmaz, N),
-      hessian_block_size,
+      cov_fun(), std::tuple<double, int>(sigmaz, N), hessian_block_size,
       std::tuple{stan::math::rep_vector(0.0, N), tolerance, max_num_steps,
                  solver_num, max_steps_line_search, 1},
       nullptr));
@@ -105,8 +104,7 @@ TEST(laplace, theta_0_as_expression_issue_3196) {
       std::tuple<const std::vector<int>&, Eigen::Matrix<double, -1, 1>>(
           y, stan::math::add(stan::math::add(offset, alpha),
                              stan::math::multiply(X, beta))),
-      cov_fun(), std::tuple(sigmaz, N),
-      hessian_block_size,
+      cov_fun(), std::tuple(sigmaz, N), hessian_block_size,
       std::make_tuple(arena_init, tolerance, max_num_steps, solver_num,
                       max_steps_line_search, true),
       nullptr));
@@ -333,8 +331,7 @@ TEST_P(laplace_types, poisson_log_phi_dim_2_array_tuple) {
           poisson_log_likelihood_array_tuple{},
           std::forward_as_tuple(sums, eta_tuple),
           stan::math::test::squared_kernel_functor{},
-          std::forward_as_tuple(x, alpha_tuple),
-          hessian_block_size,
+          std::forward_as_tuple(x, alpha_tuple), hessian_block_size,
           std::make_tuple(theta_0, tolerance, max_num_steps, solver_num,
                           max_steps_line_search, true),
           &output_stream);

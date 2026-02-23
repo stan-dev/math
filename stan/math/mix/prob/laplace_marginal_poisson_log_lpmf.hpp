@@ -76,7 +76,8 @@ inline auto laplace_marginal_tol_poisson_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& y_index, Mean&& mean,
     CovarFun&& covariance_function, CovarArgs&& covar_args,
     int hessian_block_size, OpsTuple&& ops, std::ostream* msgs) {
-  auto options = internal::tuple_to_laplace_options(std::forward<OpsTuple>(ops));
+  auto options
+      = internal::tuple_to_laplace_options(std::forward<OpsTuple>(ops));
   options.hessian_block_size = hessian_block_size;
   return laplace_marginal_density(
       poisson_log_likelihood{},
@@ -105,19 +106,15 @@ inline auto laplace_marginal_tol_poisson_log_lpmf(
  */
 template <bool propto = false, typename CovarFun, typename CovarArgs,
           typename Mean>
-inline auto laplace_marginal_poisson_log_lpmf(const std::vector<int>& y,
-                                              const std::vector<int>& y_index,
-                                              Mean&& mean,
-                                              CovarFun&& covariance_function,
-                                              CovarArgs&& covar_args,
-                                              int hessian_block_size,
-                                              std::ostream* msgs) {
+inline auto laplace_marginal_poisson_log_lpmf(
+    const std::vector<int>& y, const std::vector<int>& y_index, Mean&& mean,
+    CovarFun&& covariance_function, CovarArgs&& covar_args,
+    int hessian_block_size, std::ostream* msgs) {
   auto options = laplace_options_default{hessian_block_size};
   return laplace_marginal_density(
       poisson_log_likelihood{},
       std::forward_as_tuple(y, y_index, std::forward<Mean>(mean)),
-      covariance_function, std::forward<CovarArgs>(covar_args),
-      options, msgs);
+      covariance_function, std::forward<CovarArgs>(covar_args), options, msgs);
 }
 
 }  // namespace math
