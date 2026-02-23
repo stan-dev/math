@@ -117,7 +117,8 @@ inline auto generate_laplace_options(int theta_0_size) {
 
 /**
  * User function for generating laplace options tuple
- * @param theta_0_size Size of user supplied initial theta
+ * @tparam ThetaVec An Eigen vector type for user supplied initial theta
+ * @param theta_0 User supplied initial theta
  * @return tuple representing laplace options exposed to user.
  */
 template <typename ThetaVec, require_eigen_t<ThetaVec>* = nullptr>
