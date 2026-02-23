@@ -103,8 +103,22 @@ using laplace_options_user_supplied = laplace_options<true>;
 inline auto generate_laplace_options(int theta_0_size) {
   auto ops = laplace_options_default{};
   return std::make_tuple(
-      Eigen::VectorXd::Zero(theta_0_size).eval(),  // 0 -> 6
-      ops.tolerance, ops.max_num_steps, ops.hessian_block_size, ops.solver,
+      Eigen::VectorXd::Zero(theta_0_size).eval(),  
+      ops.tolerance, ops.max_num_steps, ops.solver,
+      ops.line_search.max_iterations, static_cast<int>(ops.allow_fallthrough));
+}
+
+/**
+ * User function for generating laplace options tuple
+ * @param theta_0_size Size of user supplied initial theta
+ * @return tuple representing laplace options exposed to user.
+ */
+template <typename ThetaVec, require_eigen_t<ThetaVec>* = nullptr>
+inline auto generate_laplace_options(ThetaVec&& theta_0) {
+  auto ops = laplace_options_default{};
+  return std::make_tuple(
+      std::forward<ThetaVec>(theta_0),  
+      ops.tolerance, ops.max_num_steps, ops.solver,
       ops.line_search.max_iterations, static_cast<int>(ops.allow_fallthrough));
 }
 
@@ -137,39 +151,34 @@ inline constexpr auto tuple_to_laplace_options(Options&& ops) {
     if constexpr (!stan::is_inner_tuple_type_v<3, Ops, int>) {
       static_assert(
           sizeof(std::decay_t<Ops>*) == 0,
-          "ERROR:(laplace_marginal_lpdf) The fifth laplace argument is "
-          "expected to be an int representing the hessian block size.");
+          "ERROR:(laplace_marginal_lpdf) The fourth laplace argument is "
+          "expected to be an int representing the solver.");
     }
     if constexpr (!stan::is_inner_tuple_type_v<4, Ops, int>) {
       static_assert(
           sizeof(std::decay_t<Ops>*) == 0,
-          "ERROR:(laplace_marginal_lpdf) The fourth laplace argument is "
-          "expected to be an int representing the solver.");
-    }
-    if constexpr (!stan::is_inner_tuple_type_v<5, Ops, int>) {
-      static_assert(
-          sizeof(std::decay_t<Ops>*) == 0,
-          "ERROR:(laplace_marginal_lpdf) The sixth laplace argument is "
+          "ERROR:(laplace_marginal_lpdf) The fifth laplace argument is "
           "expected to be an int representing the max steps for the laplace "
           "approximaton's wolfe line search.");
     }
     constexpr bool is_fallthrough
         = stan::is_inner_tuple_type_v<
-              6, Ops, int> || stan::is_inner_tuple_type_v<6, Ops, bool>;
+              5, Ops, int> || stan::is_inner_tuple_type_v<5, Ops, bool>;
     if constexpr (!is_fallthrough) {
       static_assert(
           sizeof(std::decay_t<Ops>*) == 0,
-          "ERROR:(laplace_marginal_lpdf) The seventh laplace argument is "
+          "ERROR:(laplace_marginal_lpdf) The sixth laplace argument is "
           "expected to be an int representing allow fallthrough (0/1).");
     }
+    auto defaults = laplace_options_default{};
     return laplace_options_user_supplied{
         value_of(std::get<0>(std::forward<Ops>(ops))),
         std::get<1>(ops),
         std::get<2>(ops),
+        defaults.hessian_block_size,
         std::get<3>(ops),
         std::get<4>(ops),
-        std::get<5>(ops),
-        (std::get<6>(ops) > 0) ? true : false,
+        (std::get<5>(ops) > 0) ? true : false,
     };
   } else {
     return std::forward<Ops>(ops);

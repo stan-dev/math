@@ -73,6 +73,8 @@ struct neg_binomial_2_log_likelihood {
  * @param[in] eta non-marginalized model parameters for the likelihood.
  * @param[in] mean the mean of the latent normal variable
  * \laplace_common_args
+ * @param[in] hessian_block_size Block size for the Hessian approximation with
+ * respect to the latent gaussian variable theta.
  * \laplace_options
  * \msg_arg
  */
@@ -81,13 +83,14 @@ template <bool propto = false, typename Eta, typename Mean, typename CovarFun,
 inline auto laplace_marginal_tol_neg_binomial_2_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& y_index, const Eta& eta,
     Mean&& mean, CovarFun&& covariance_function, CovarArgs&& covar_args,
-    OpsTuple&& ops, std::ostream* msgs) {
+    int hessian_block_size, OpsTuple&& ops, std::ostream* msgs) {
+  auto options = internal::tuple_to_laplace_options(std::forward<OpsTuple>(ops));
+  options.hessian_block_size = hessian_block_size;
   return laplace_marginal_density(
       neg_binomial_2_log_likelihood{},
       std::forward_as_tuple(eta, y, y_index, std::forward<Mean>(mean)),
       std::forward<CovarFun>(covariance_function),
-      std::forward<CovarArgs>(covar_args),
-      internal::tuple_to_laplace_options(std::forward<OpsTuple>(ops)), msgs);
+      std::forward<CovarArgs>(covar_args), std::move(options), msgs);
 }
 
 /**
@@ -106,6 +109,8 @@ inline auto laplace_marginal_tol_neg_binomial_2_log_lpmf(
  * @param[in] eta Parameter argument for likelihood function.
  * @param[in] mean the mean of the latent normal variable
  * \laplace_common_args
+ * @param[in] hessian_block_size Block size for the Hessian approximation with
+ * respect to the latent gaussian variable theta.
  * \msg_arg
  */
 template <bool propto = false, typename Eta, typename Mean, typename CovarFun,
@@ -113,12 +118,14 @@ template <bool propto = false, typename Eta, typename Mean, typename CovarFun,
 inline auto laplace_marginal_neg_binomial_2_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& y_index, const Eta& eta,
     Mean&& mean, CovarFun&& covariance_function, CovarArgs&& covar_args,
-    std::ostream* msgs) {
+    int hessian_block_size, std::ostream* msgs) {
+  auto options = laplace_options_default{};
+  options.hessian_block_size = hessian_block_size;
   return laplace_marginal_density(
       neg_binomial_2_log_likelihood{},
       std::forward_as_tuple(eta, y, y_index, std::forward<Mean>(mean)),
       std::forward<CovarFun>(covariance_function),
-      std::forward<CovarArgs>(covar_args), laplace_options_default{}, msgs);
+      std::forward<CovarArgs>(covar_args), options, msgs);
 }
 
 struct neg_binomial_2_log_likelihood_summary {
@@ -167,6 +174,8 @@ struct neg_binomial_2_log_likelihood_summary {
  * @param[in] eta non-marginalized model parameters for the likelihood.
  * @param[in] mean the mean of the latent normal variable
  * \laplace_common_args
+ * @param[in] hessian_block_size Block size for the Hessian approximation with
+ * respect to the latent gaussian variable theta.
  * \laplace_options
  * \msg_arg
  */
@@ -175,15 +184,16 @@ template <bool propto = false, typename Eta, typename Mean, typename CovarFun,
 inline auto laplace_marginal_tol_neg_binomial_2_log_summary_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_per_group,
     const std::vector<int>& counts_per_group, const Eta& eta, Mean&& mean,
-    CovarFun&& covariance_function, CovarArgs&& covar_args, OpsTuple&& ops,
-    std::ostream* msgs) {
+    CovarFun&& covariance_function, CovarArgs&& covar_args,
+    int hessian_block_size, OpsTuple&& ops, std::ostream* msgs) {
+  auto options = internal::tuple_to_laplace_options(std::forward<OpsTuple>(ops));
+  options.hessian_block_size = hessian_block_size;
   return laplace_marginal_density(
       neg_binomial_2_log_likelihood_summary{},
       std::forward_as_tuple(eta, y, n_per_group, counts_per_group,
                             std::forward<Mean>(mean)),
       std::forward<CovarFun>(covariance_function),
-      std::forward<CovarArgs>(covar_args),
-      internal::tuple_to_laplace_options(std::forward<OpsTuple>(ops)), msgs);
+      std::forward<CovarArgs>(covar_args), std::move(options), msgs);
 }
 
 /**
@@ -202,6 +212,8 @@ inline auto laplace_marginal_tol_neg_binomial_2_log_summary_lpmf(
  * @param[in] eta non-marginalized model parameters for the likelihood.
  * @param[in] mean the mean of the latent normal variable
  * \laplace_common_args
+ * @param[in] hessian_block_size Block size for the Hessian approximation with
+ * respect to the latent gaussian variable theta.
  * \msg_arg
  */
 template <bool propto = false, typename Eta, typename Mean, typename CovarFun,
@@ -210,13 +222,15 @@ inline auto laplace_marginal_neg_binomial_2_log_summary_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_per_group,
     const std::vector<int>& counts_per_group, const Eta& eta, Mean&& mean,
     CovarFun&& covariance_function, CovarArgs&& covar_args,
-    std::ostream* msgs) {
+    int hessian_block_size, std::ostream* msgs) {
+  auto options = laplace_options_default{};
+  options.hessian_block_size = hessian_block_size;
   return laplace_marginal_density(
       neg_binomial_2_log_likelihood_summary{},
       std::forward_as_tuple(eta, y, n_per_group, counts_per_group,
                             std::forward<Mean>(mean)),
       std::forward<CovarFun>(covariance_function),
-      std::forward<CovarArgs>(covar_args), laplace_options_default{}, msgs);
+      std::forward<CovarArgs>(covar_args), options, msgs);
 }
 
 }  // namespace math
