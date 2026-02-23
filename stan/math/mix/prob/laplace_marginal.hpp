@@ -67,8 +67,7 @@ inline auto laplace_marginal(LFun&& L_f, LArgs&& l_args,
                              CovarFun&& covariance_function,
                              CovarArgs&& covar_args, int hessian_block_size,
                              std::ostream* msgs) {
-  auto options = laplace_options_default{};
-  options.hessian_block_size = hessian_block_size;
+  auto options = laplace_options_default{hessian_block_size};
   return laplace_marginal_density(
       std::forward<LFun>(L_f), std::forward<LArgs>(l_args),
       std::forward<CovarFun>(covariance_function),

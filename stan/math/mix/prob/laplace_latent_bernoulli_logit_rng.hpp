@@ -72,8 +72,7 @@ inline Eigen::VectorXd laplace_latent_bernoulli_logit_rng(
     CovarFun&& covariance_function, CovarArgs&& covar_args,
     int hessian_block_size, RNG& rng,
     std::ostream* msgs) {
-  auto options = laplace_options_default{};
-  options.hessian_block_size = hessian_block_size;
+  auto options = laplace_options_default{hessian_block_size};
   return laplace_base_rng(
       bernoulli_logit_likelihood{},
       std::forward_as_tuple(to_vector(y), n_samples, std::forward<Mean>(mean)),

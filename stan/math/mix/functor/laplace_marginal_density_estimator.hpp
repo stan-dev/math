@@ -10,6 +10,7 @@
 #include <stan/math/mix/functor/barzilai_borwein_step_size.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/quad_form_diag.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/iter_tuple_nested.hpp>
 #include <unsupported/Eigen/MatrixFunctions>
 #include <cmath>
@@ -75,7 +76,13 @@ template <bool HasInitTheta>
 struct laplace_options;
 
 template <>
-struct laplace_options<false> : public laplace_options_base {};
+struct laplace_options<false> : public laplace_options_base {
+  laplace_options() = default;
+
+  explicit laplace_options(int hessian_block_size_) {
+    hessian_block_size = hessian_block_size_;
+  }
+};
 
 template <>
 struct laplace_options<true> : public laplace_options_base {
@@ -89,7 +96,7 @@ struct laplace_options<true> : public laplace_options_base {
       : laplace_options_base(hessian_block_size_, solver_, tolerance_,
                              max_num_steps_, allow_fallthrough_,
                              max_steps_line_search_),
-        theta_0(std::forward<ThetaVec>(theta_0_)) {}
+        theta_0(value_of(std::forward<ThetaVec>(theta_0_))) {}
 };
 
 using laplace_options_default = laplace_options<false>;

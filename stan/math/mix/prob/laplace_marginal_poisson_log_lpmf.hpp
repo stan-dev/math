@@ -112,8 +112,7 @@ inline auto laplace_marginal_poisson_log_lpmf(const std::vector<int>& y,
                                               CovarArgs&& covar_args,
                                               int hessian_block_size,
                                               std::ostream* msgs) {
-  auto options = laplace_options_default{};
-  options.hessian_block_size = hessian_block_size;
+  auto options = laplace_options_default{hessian_block_size};
   return laplace_marginal_density(
       poisson_log_likelihood{},
       std::forward_as_tuple(y, y_index, std::forward<Mean>(mean)),

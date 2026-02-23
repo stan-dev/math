@@ -73,8 +73,7 @@ inline auto laplace_latent_rng(LLFunc&& L_f, LLArgs&& ll_args,
                                CovarArgs&& covar_args, int hessian_block_size,
                                RNG& rng,
                                std::ostream* msgs) {
-  auto options = laplace_options_default{};
-  options.hessian_block_size = hessian_block_size;
+  auto options = laplace_options_default{hessian_block_size};
   return laplace_base_rng(std::forward<LLFunc>(L_f),
                           std::forward<LLArgs>(ll_args),
                           std::forward<CovarFun>(covariance_function),

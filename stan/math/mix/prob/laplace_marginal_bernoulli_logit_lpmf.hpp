@@ -95,8 +95,7 @@ inline auto laplace_marginal_bernoulli_logit_lpmf(
     CovarFun&& covariance_function, CovarArgs&& covar_args,
     int hessian_block_size,
     std::ostream* msgs) {
-  auto options = laplace_options_default{};
-  options.hessian_block_size = hessian_block_size;
+  auto options = laplace_options_default{hessian_block_size};
   return laplace_marginal_density(
       bernoulli_logit_likelihood{},
       std::forward_as_tuple(to_vector(y), n_samples, std::forward<Mean>(mean)),

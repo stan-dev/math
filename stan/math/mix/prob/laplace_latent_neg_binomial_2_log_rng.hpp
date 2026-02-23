@@ -85,8 +85,7 @@ inline Eigen::VectorXd laplace_latent_neg_binomial_2_log_rng(
     const std::vector<int>& y, const std::vector<int>& y_index, Eta&& eta,
     Mean&& mean, CovarFun&& covariance_function, CovarArgs&& covar_args,
     int hessian_block_size, RNG& rng, std::ostream* msgs) {
-  auto options = laplace_options_default{};
-  options.hessian_block_size = hessian_block_size;
+  auto options = laplace_options_default{hessian_block_size};
   return laplace_base_rng(
       neg_binomial_2_log_likelihood{},
       std::forward_as_tuple(std::forward<Eta>(eta), y, y_index,
