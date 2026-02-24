@@ -33,16 +33,14 @@ inline auto yule_simon_rng(const T_alpha &alpha, RNG &rng) {
   T_alpha_ref alpha_ref = alpha;
   check_positive_finite(function, "Shape parameter", alpha_ref);
 
-  using T_w = decltype(exponential_rng(alpha_ref, rng));
-  T_w w = exponential_rng(alpha_ref, rng);
+  auto w = exponential_rng(alpha_ref, rng);
+  scalar_seq_view<decltype(w)> w_vec(w);
 
-  scalar_seq_view<T_w> w_vec(w);
   size_t size_w = stan::math::size(w);
-
   VectorBuilder<true, int, T_alpha> output(size_w);
   for (size_t n = 0; n < size_w; ++n) {
-    double p = stan::math::exp(-w_vec.val(n));
-    double odds_ratio_p
+    const double p = stan::math::exp(-w_vec[n]);
+    const double odds_ratio_p
         = stan::math::exp(stan::math::log(p) - stan::math::log1m(p));
     output[n] = neg_binomial_rng(1.0, odds_ratio_p, rng) + 1;
   }
