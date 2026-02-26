@@ -148,8 +148,8 @@ TEST_P(laplace_motorcyle_gp_test, gp_motorcycle_val) {
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
 
   laplace_marginal_tol<false>(
-      normal_likelihood{}, std::forward_as_tuple(y, n_obs),
-      hessian_block_size, covariance_motorcycle_functor{},
+      normal_likelihood{}, std::forward_as_tuple(y, n_obs), hessian_block_size,
+      covariance_motorcycle_functor{},
       std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1), phi_dbl(2), phi_dbl(3),
                             n_obs),
       std::make_tuple(theta0, tolerance, max_num_steps, solver_num,

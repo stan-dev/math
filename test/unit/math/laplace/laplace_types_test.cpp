@@ -326,8 +326,8 @@ TEST_P(laplace_types, poisson_log_phi_dim_2_array_tuple) {
       alpha_tuple.push_back(std::make_tuple(alpha_rho(0), alpha_rho(1)));
       return laplace_marginal_tol<false>(
           poisson_log_likelihood_array_tuple{},
-          std::forward_as_tuple(sums, eta_tuple),
-          hessian_block_size, stan::math::test::squared_kernel_functor{},
+          std::forward_as_tuple(sums, eta_tuple), hessian_block_size,
+          stan::math::test::squared_kernel_functor{},
           std::forward_as_tuple(x, alpha_tuple),
           std::make_tuple(theta_0, tolerance, max_num_steps, solver_num,
                           max_steps_line_search, true),

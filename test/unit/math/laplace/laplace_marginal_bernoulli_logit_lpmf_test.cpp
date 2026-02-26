@@ -45,8 +45,7 @@ TEST_P(laplace_marginal_bernoulli_logit_lpmf, phi_dim500) {
   using stan::math::test::sqr_exp_kernel_functor;
   double target = laplace_marginal_bernoulli_logit_lpmf(
       y, n_samples, 0, hessian_block_size, sqr_exp_kernel_functor{},
-      std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1)),
-      nullptr);
+      std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1)), nullptr);
   // Benchmark against gpstuff.
   constexpr double tol = 8e-4;
   EXPECT_NEAR(-195.368, target, tol);
