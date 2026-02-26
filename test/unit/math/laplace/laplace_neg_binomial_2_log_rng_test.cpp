@@ -103,8 +103,8 @@ TEST(laplace_latent_neg_binomial_2_log_rng, count_two_dim_diag) {
 
   rng.seed(1954);
   Eigen::MatrixXd theta_pred = laplace_latent_neg_binomial_2_log_rng(
-      y, y_index, eta, 0, diagonal_kernel_nb_functor{},
-      std::forward_as_tuple(phi(0), phi(1)), 1, rng, nullptr);
+      y, y_index, eta, 0, 1, diagonal_kernel_nb_functor{},
+      std::forward_as_tuple(phi(0), phi(1)), rng, nullptr);
 
   double tol = 1e-3;
   EXPECT_NEAR(theta_benchmark(0), theta_pred(0), tol);
@@ -116,8 +116,8 @@ TEST(laplace_latent_neg_binomial_2_log_rng, count_two_dim_diag) {
   for (int i = 0; i < n_sim; i++) {
     rng.seed(2025 + i);
     Eigen::MatrixXd theta_pred = laplace_latent_neg_binomial_2_log_rng(
-        y, y_index, eta, 0, diagonal_kernel_nb_functor{},
-        std::forward_as_tuple(phi(0), phi(1)), 1, rng, nullptr);
+        y, y_index, eta, 0, 1, diagonal_kernel_nb_functor{},
+        std::forward_as_tuple(phi(0), phi(1)), rng, nullptr);
 
     theta_dim0(i) = theta_pred(0);
     theta_dim1(i) = theta_pred(1);
