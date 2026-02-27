@@ -13,7 +13,7 @@ template <typename T_p, typename T_nu, typename T_mu, typename T_sigma,
           typename FvarT = return_type_t<T_p, T_mu, T_sigma, T_nu>,
           require_all_stan_scalar_t<T_p, T_mu, T_sigma, T_nu>* = nullptr,
           require_fvar_t<FvarT>* = nullptr>
-FvarT student_t_qf(const T_p& p, const T_nu& nu, const T_mu& mu,
+inline FvarT student_t_qf(const T_p& p, const T_nu& nu, const T_mu& mu,
                    const T_sigma& sigma) {
   static constexpr const char* function = "student_t_qf";
   using T_partials = partials_type_t<FvarT>;

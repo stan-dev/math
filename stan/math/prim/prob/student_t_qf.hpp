@@ -28,7 +28,7 @@ namespace math {
 template <typename T_p, typename T_nu, typename T_mu, typename T_sigma,
           require_all_stan_scalar_t<T_p, T_nu, T_mu, T_sigma>* = nullptr,
           require_all_arithmetic_t<T_p, T_nu, T_mu, T_sigma>* = nullptr>
-double student_t_qf(const T_p& p, const T_nu& nu, const T_mu& mu,
+inline double student_t_qf(const T_p& p, const T_nu& nu, const T_mu& mu,
                     const T_sigma& sigma) {
   static constexpr const char* function = "student_t_qf";
   check_nonnegative(function, "Degrees of freedom parameter", nu);
@@ -67,11 +67,10 @@ double student_t_qf(const T_p& p, const T_nu& nu, const T_mu& mu,
  * @return Container with quantile function values for each input.
  */
 template <typename T_p, typename T_nu, typename T_mu, typename T_sigma,
-          typename T_container = common_container_t<T_p, T_nu, T_mu, T_sigma>,
-          require_any_vector_t<T_p, T_nu, T_mu, T_sigma>* = nullptr,
-          require_not_t<std::is_void<T_container>>* = nullptr>
-auto student_t_qf(const T_p& p, const T_nu& nu, const T_mu& mu,
+          require_any_vector_t<T_p, T_nu, T_mu, T_sigma>* = nullptr>
+inline auto student_t_qf(const T_p& p, const T_nu& nu, const T_mu& mu,
                   const T_sigma& sigma) {
+  using T_container = common_container_t<T_p, T_nu, T_mu, T_sigma>;
   static constexpr const char* function = "student_t_qf";
   const size_t max_size_all = max_size(p, nu, mu, sigma);
   T_container result(max_size_all);
