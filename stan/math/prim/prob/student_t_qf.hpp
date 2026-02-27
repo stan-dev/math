@@ -29,7 +29,7 @@ template <typename T_p, typename T_nu, typename T_mu, typename T_sigma,
           require_all_stan_scalar_t<T_p, T_nu, T_mu, T_sigma>* = nullptr,
           require_all_arithmetic_t<T_p, T_nu, T_mu, T_sigma>* = nullptr>
 inline double student_t_qf(const T_p& p, const T_nu& nu, const T_mu& mu,
-                    const T_sigma& sigma) {
+                           const T_sigma& sigma) {
   static constexpr const char* function = "student_t_qf";
   check_nonnegative(function, "Degrees of freedom parameter", nu);
   check_positive(function, "Scale parameter", sigma);
@@ -69,7 +69,7 @@ inline double student_t_qf(const T_p& p, const T_nu& nu, const T_mu& mu,
 template <typename T_p, typename T_nu, typename T_mu, typename T_sigma,
           require_any_vector_t<T_p, T_nu, T_mu, T_sigma>* = nullptr>
 inline auto student_t_qf(const T_p& p, const T_nu& nu, const T_mu& mu,
-                  const T_sigma& sigma) {
+                         const T_sigma& sigma) {
   using T_container = common_container_t<T_p, T_nu, T_mu, T_sigma>;
   static constexpr const char* function = "student_t_qf";
   const size_t max_size_all = max_size(p, nu, mu, sigma);

@@ -13,7 +13,7 @@ template <typename T_p, typename T_nu, typename T_mu, typename T_sigma,
           require_all_stan_scalar_t<T_p, T_mu, T_sigma, T_nu>* = nullptr,
           require_any_var_t<T_p, T_mu, T_sigma, T_nu>* = nullptr>
 inline var student_t_qf(const T_p& p, const T_nu& nu, const T_mu& mu,
-                 const T_sigma& sigma) {
+                        const T_sigma& sigma) {
   static constexpr const char* function = "student_t_qf";
   const double p_val = value_of(p);
   const double nu_val = value_of(nu);
