@@ -48,8 +48,8 @@ namespace math {
  */
 template <typename F, typename VectorT, typename GradVectorT,
           typename ScalarT = return_type_t<VectorT>>
-void finite_diff_gradient_auto(const F& f, VectorT&& x, ScalarT& fx,
-                               GradVectorT& grad_fx) {
+inline void finite_diff_gradient_auto(const F& f, VectorT&& x, ScalarT& fx,
+                                      GradVectorT& grad_fx) {
   using EigT = Eigen::Matrix<ScalarT, -1, 1>;
   static constexpr int h_scale[6] = {3, 2, 1, -3, -2, -1};
   static constexpr int mults[6] = {1, -9, 45, -1, 9, -45};

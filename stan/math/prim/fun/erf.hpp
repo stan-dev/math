@@ -8,6 +8,11 @@
 namespace stan {
 namespace math {
 
+template <typename T, require_arithmetic_t<T>* = nullptr>
+inline auto erf(T&& x) {
+  return std::erf(x);
+}
+
 /**
  * Structure to wrap `erf()` so it can be vectorized.
  *
@@ -17,9 +22,8 @@ namespace math {
  */
 struct erf_fun {
   template <typename T>
-  static inline auto fun(const T& x) {
-    using std::erf;
-    return erf(x);
+  static inline auto fun(T&& x) {
+    return erf(std::forward<T>(x));
   }
 };
 
@@ -34,9 +38,9 @@ struct erf_fun {
 template <
     typename T,
     require_all_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr,
-    require_not_var_matrix_t<T>* = nullptr>
-inline auto erf(const T& x) {
-  return apply_scalar_unary<erf_fun, T>::apply(x);
+    require_not_var_matrix_t<T>* = nullptr, require_container_t<T>* = nullptr>
+inline auto erf(T&& x) {
+  return apply_scalar_unary<erf_fun, T>::apply(std::forward<T>(x));
 }
 
 }  // namespace math

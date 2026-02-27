@@ -33,7 +33,8 @@ namespace math {
 template <bool propto, typename T_n, typename T_prob,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_n, T_prob>* = nullptr>
-return_type_t<T_prob> bernoulli_logit_lpmf(const T_n& n, const T_prob& theta) {
+inline return_type_t<T_prob> bernoulli_logit_lpmf(const T_n& n,
+                                                  const T_prob& theta) {
   using T_partials_return = partials_return_t<T_n, T_prob>;
   using T_partials_array = Eigen::Array<T_partials_return, Eigen::Dynamic, 1>;
   using std::exp;
@@ -52,21 +53,20 @@ return_type_t<T_prob> bernoulli_logit_lpmf(const T_n& n, const T_prob& theta) {
   decltype(auto) theta_val = to_ref(as_value_column_array_or_scalar(theta_ref));
 
   check_not_nan(function, "Logit transformed probability parameter", theta_val);
-  if (!include_summand<propto, T_prob>::value) {
+  if constexpr (!include_summand<propto, T_prob>::value) {
     return 0.0;
   }
 
   const auto& n_col = as_column_vector_or_scalar(n_ref);
   const auto& n_double = value_of_rec(n_col);
 
-  auto signs = to_ref_if<!is_constant<T_prob>::value>(
+  auto signs = to_ref_if<is_autodiff_v<T_prob>>(
       (2 * as_array_or_scalar(n_double) - 1));
   T_partials_array ntheta;
-  if (is_vector<T_n>::value || is_vector<T_prob>::value) {
-    ntheta = forward_as<T_partials_array>(signs * theta_val);
+  if constexpr (is_vector<T_n>::value || is_vector<T_prob>::value) {
+    ntheta = signs * theta_val;
   } else {
-    T_partials_return ntheta_s
-        = forward_as<T_partials_return>(signs * theta_val);
+    T_partials_return ntheta_s = signs * theta_val;
     ntheta = T_partials_array::Constant(1, 1, ntheta_s);
   }
   T_partials_array exp_m_ntheta = exp(-ntheta);
@@ -77,7 +77,7 @@ return_type_t<T_prob> bernoulli_logit_lpmf(const T_n& n, const T_prob& theta) {
                   (ntheta < -cutoff).select(ntheta, -log1p(exp_m_ntheta))));
 
   auto ops_partials = make_partials_propagator(theta_ref);
-  if (!is_constant_all<T_prob>::value) {
+  if constexpr (is_autodiff_v<T_prob>) {
     edge<0>(ops_partials).partials_
         = (ntheta > cutoff)
               .select(-exp_m_ntheta,

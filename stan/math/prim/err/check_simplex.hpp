@@ -31,7 +31,8 @@ namespace math {
  * is `NaN`
  */
 template <typename T, require_matrix_t<T>* = nullptr>
-void check_simplex(const char* function, const char* name, const T& theta) {
+inline void check_simplex(const char* function, const char* name,
+                          const T& theta) {
   using std::fabs;
   check_nonzero_size(function, name, theta);
   auto&& theta_ref = to_ref(value_of_rec(theta));
@@ -78,7 +79,8 @@ void check_simplex(const char* function, const char* name, const T& theta) {
  * is `NaN`
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
-void check_simplex(const char* function, const char* name, const T& theta) {
+inline void check_simplex(const char* function, const char* name,
+                          const T& theta) {
   for (size_t i = 0; i < theta.size(); ++i) {
     check_simplex(function, internal::make_iter_name(name, i).c_str(),
                   theta[i]);

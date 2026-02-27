@@ -28,7 +28,8 @@ namespace math {
  * @throw `std::domain_error` if the vector does not sum to zero
  */
 template <typename T, require_matrix_t<T>* = nullptr>
-void check_sum_to_zero(const char* function, const char* name, const T& theta) {
+inline void check_sum_to_zero(const char* function, const char* name,
+                              const T& theta) {
   using std::fabs;
   // the size-zero case is technically a valid sum-to-zero vector,
   // but it cannot be unconstrained to anything
@@ -60,7 +61,8 @@ void check_sum_to_zero(const char* function, const char* name, const T& theta) {
  * @throw `std::domain_error` if the vector does not sum to zero
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
-void check_sum_to_zero(const char* function, const char* name, const T& theta) {
+inline void check_sum_to_zero(const char* function, const char* name,
+                              const T& theta) {
   for (size_t i = 0; i < theta.size(); ++i) {
     check_sum_to_zero(function, internal::make_iter_name(name, i).c_str(),
                       theta[i]);

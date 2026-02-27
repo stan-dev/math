@@ -7,6 +7,17 @@ namespace stan {
 namespace test {
 
 /**
+ * Helper struct for setting the gradient tolerances used for reverse mode.
+ */
+struct ad_gradient_tols {
+  relative_tolerance val_{1e-8};
+  relative_tolerance grad_{1e-4};
+  constexpr ad_gradient_tols() = default;
+  constexpr ad_gradient_tols(relative_tolerance val, relative_tolerance grad)
+      : val_(val), grad_(grad) {}
+};
+
+/**
  * Simple struct to hold the complete set of tolerances used to test a
  * function.  The default constructor uses default values for all
  * tolerances.  These are 1e-8 for values, 1e-4 for first derivatives,
@@ -33,42 +44,24 @@ namespace test {
  * `grad_hessian_grad_hessian_`: 1e-2
  */
 struct ad_tolerances {
-  relative_tolerance gradient_val_;
-  relative_tolerance gradient_grad_;
-  relative_tolerance gradient_grad_varmat_matvar_;
-  relative_tolerance gradient_fvar_val_;
-  relative_tolerance gradient_fvar_grad_;
-  relative_tolerance hessian_val_;
-  relative_tolerance hessian_grad_;
-  relative_tolerance hessian_hessian_;
-  relative_tolerance hessian_fvar_val_;
-  relative_tolerance hessian_fvar_grad_;
-  relative_tolerance hessian_fvar_hessian_;
-  relative_tolerance grad_hessian_val_;
-  relative_tolerance grad_hessian_hessian_;
-  relative_tolerance grad_hessian_grad_hessian_;
-  constexpr ad_tolerances()
-      : gradient_val_(1e-8),
-        gradient_grad_(1e-4),
-
-        gradient_grad_varmat_matvar_(1e-8),
-
-        gradient_fvar_val_(1e-8),
-        gradient_fvar_grad_(1e-4),
-
-        hessian_val_(1e-8),
-        hessian_grad_(1e-4),
-        hessian_hessian_(1e-4, 1e-3),
-
-        hessian_fvar_val_(1e-8),
-        hessian_fvar_grad_(1e-4),
-        hessian_fvar_hessian_(1e-4, 1e-3),
-
-        grad_hessian_val_(1e-8),
-        grad_hessian_hessian_(1e-3),
-        grad_hessian_grad_hessian_(1e-2) {}
+  relative_tolerance gradient_val_{1e-8};
+  relative_tolerance gradient_grad_{1e-4};
+  relative_tolerance gradient_grad_varmat_matvar_{1e-8};
+  relative_tolerance gradient_fvar_val_{1e-8};
+  relative_tolerance gradient_fvar_grad_{1e-4};
+  relative_tolerance hessian_val_{1e-8};
+  relative_tolerance hessian_grad_{1e-4};
+  relative_tolerance hessian_hessian_{1e-4, 1e-3};
+  relative_tolerance hessian_fvar_val_{1e-8};
+  relative_tolerance hessian_fvar_grad_{1e-4};
+  relative_tolerance hessian_fvar_hessian_{1e-4, 1e-3};
+  relative_tolerance grad_hessian_val_{1e-8};
+  relative_tolerance grad_hessian_hessian_{1e-3};
+  relative_tolerance grad_hessian_grad_hessian_{1e-2};
+  constexpr ad_tolerances() = default;
+  constexpr explicit ad_tolerances(ad_gradient_tols grad_tols)
+      : gradient_val_(grad_tols.val_), gradient_grad_(grad_tols.grad_) {}
 };
-
 }  // namespace test
 }  // namespace stan
 #endif

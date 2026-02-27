@@ -25,8 +25,9 @@ namespace math {
 template <bool propto, typename T_y, typename T_loc, typename T_scale,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_loc, T_scale>* = nullptr>
-return_type_t<T_y, T_loc, T_scale> lognormal_lpdf(const T_y& y, const T_loc& mu,
-                                                  const T_scale& sigma) {
+inline return_type_t<T_y, T_loc, T_scale> lognormal_lpdf(const T_y& y,
+                                                         const T_loc& mu,
+                                                         const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
   using T_y_ref = ref_type_if_not_constant_t<T_y>;
   using T_mu_ref = ref_type_if_not_constant_t<T_loc>;
@@ -50,7 +51,7 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lpdf(const T_y& y, const T_loc& mu,
   if (size_zero(y, mu, sigma)) {
     return 0;
   }
-  if (!include_summand<propto, T_y, T_loc, T_scale>::value) {
+  if constexpr (!include_summand<propto, T_y, T_loc, T_scale>::value) {
     return 0;
   }
 
@@ -60,11 +61,9 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lpdf(const T_y& y, const T_loc& mu,
     return ops_partials.build(LOG_ZERO);
   }
 
-  const auto& inv_sigma
-      = to_ref_if<!is_constant_all<T_scale>::value>(inv(sigma_val));
+  const auto& inv_sigma = to_ref_if<is_autodiff_v<T_scale>>(inv(sigma_val));
   const auto& inv_sigma_sq
-      = to_ref_if<!is_constant_all<T_y, T_loc, T_scale>::value>(
-          square(inv_sigma));
+      = to_ref_if<is_any_autodiff_v<T_y, T_loc, T_scale>>(square(inv_sigma));
   const auto& log_y
       = to_ref_if<include_summand<propto, T_y>::value>(log(y_val));
   const auto& logy_m_mu = to_ref(log_y - mu_val);
@@ -72,26 +71,25 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lpdf(const T_y& y, const T_loc& mu,
   size_t N = max_size(y, mu, sigma);
   T_partials_return logp
       = N * NEG_LOG_SQRT_TWO_PI - 0.5 * sum(square(logy_m_mu) * inv_sigma_sq);
-  if (include_summand<propto, T_scale>::value) {
+  if constexpr (include_summand<propto, T_scale>::value) {
     logp -= sum(log(sigma_val)) * N / math::size(sigma);
   }
-  if (include_summand<propto, T_y>::value) {
+  if constexpr (include_summand<propto, T_y>::value) {
     logp -= sum(log_y) * N / math::size(y);
   }
 
-  if (!is_constant_all<T_y, T_loc, T_scale>::value) {
-    const auto& logy_m_mu_div_sigma
-        = to_ref_if<!is_constant_all<T_y>::value
-                        + !is_constant_all<T_loc>::value
-                        + !is_constant_all<T_scale>::value
-                    >= 2>(logy_m_mu * inv_sigma_sq);
-    if (!is_constant_all<T_y>::value) {
+  if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale>) {
+    const auto& logy_m_mu_div_sigma = to_ref_if<
+        is_autodiff_v<
+            T_y> + is_autodiff_v<T_loc> + is_autodiff_v<T_scale> >= 2>(
+        logy_m_mu * inv_sigma_sq);
+    if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials) = -(1 + logy_m_mu_div_sigma) / y_val;
     }
-    if (!is_constant_all<T_loc>::value) {
+    if constexpr (is_autodiff_v<T_loc>) {
       partials<1>(ops_partials) = logy_m_mu_div_sigma;
     }
-    if (!is_constant_all<T_scale>::value) {
+    if constexpr (is_autodiff_v<T_scale>) {
       edge<2>(ops_partials).partials_
           = (logy_m_mu_div_sigma * logy_m_mu - 1) * inv_sigma;
     }

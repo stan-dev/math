@@ -1,4 +1,5 @@
 #include <stan/math/rev.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/prob/test_gradients.hpp>
 #include <test/unit/math/rev/prob/test_gradients_multi_normal.hpp>
@@ -9,9 +10,10 @@
 #include <string>
 
 template <typename T_y, typename T_loc, typename T_scale>
-void expect_propto_multi_normal_prec_lpdf(T_y y1, T_loc mu1, T_scale sigma1,
-                                          T_y y2, T_loc mu2, T_scale sigma2,
-                                          std::string message = "") {
+inline void expect_propto_multi_normal_prec_lpdf(T_y y1, T_loc mu1,
+                                                 T_scale sigma1, T_y y2,
+                                                 T_loc mu2, T_scale sigma2,
+                                                 std::string message = "") {
   expect_eq_diffs(stan::math::multi_normal_prec_lpdf<false>(y1, mu1, sigma1),
                   stan::math::multi_normal_prec_lpdf<false>(y2, mu2, sigma2),
                   stan::math::multi_normal_prec_lpdf<true>(y1, mu1, sigma1),
@@ -151,7 +153,7 @@ struct multi_normal_prec_fun {
   }
 };
 
-TEST(ProbDistributionsMultiNormalPrec2, TestGradFunctional) {
+TEST_F(AgradRev, ProbDistributionsMultiNormalPrec2_TestGradFunctional) {
   std::vector<double> x(3 + 3 + 3 * 2);
   // y
   x[0] = 1.0;
@@ -247,7 +249,7 @@ struct vectorized_multi_normal_prec_fun {
 };
 
 template <int is_row_vec_y, int is_row_vec_mu>
-void test_all_multi_normal_prec2() {
+inline void test_all_multi_normal_prec2() {
   {
     std::vector<double> y_(3), mu_(3), sigma_(6);
     // y
@@ -391,7 +393,8 @@ void test_all_multi_normal_prec2() {
   }
 }
 
-TEST(ProbDistributionsMultiNormalPrec2, TestGradFunctionalVectorized) {
+TEST_F(AgradRev,
+       ProbDistributionsMultiNormalPrec2_TestGradFunctionalVectorized) {
   test_all_multi_normal_prec2<1, 1>();
   test_all_multi_normal_prec2<1, -1>();
   test_all_multi_normal_prec2<-1, 1>();

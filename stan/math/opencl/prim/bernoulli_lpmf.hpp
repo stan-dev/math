@@ -29,8 +29,8 @@ template <
     bool propto, typename T_n_cl, typename T_prob_cl,
     require_all_prim_or_rev_kernel_expression_t<T_n_cl, T_prob_cl>* = nullptr,
     require_any_not_stan_scalar_t<T_n_cl, T_prob_cl>* = nullptr>
-return_type_t<T_prob_cl> bernoulli_lpmf(const T_n_cl& n,
-                                        const T_prob_cl& theta) {
+inline return_type_t<T_prob_cl> bernoulli_lpmf(const T_n_cl& n,
+                                               const T_prob_cl& theta) {
   static constexpr const char* function = "bernoulli_lpmf(OpenCL)";
   using T_partials_return = partials_return_t<T_prob_cl>;
   constexpr bool is_n_vector = !is_stan_scalar<T_n_cl>::value;
@@ -42,7 +42,7 @@ return_type_t<T_prob_cl> bernoulli_lpmf(const T_n_cl& n,
   if (N == 0) {
     return 0.0;
   }
-  if (!include_summand<propto, T_prob_cl>::value) {
+  if constexpr (!include_summand<propto, T_prob_cl>::value) {
     return 0.0;
   }
 
@@ -55,7 +55,7 @@ return_type_t<T_prob_cl> bernoulli_lpmf(const T_n_cl& n,
   auto check_n_bounded = check_cl(function, "n", n, "in the interval [0, 1]");
   auto n_bounded_expr = 0 <= n && n <= 1;
 
-  if (is_theta_vector) {
+  if constexpr (is_theta_vector) {
     auto logp_expr
         = colwise_sum(select(n == 1, log(theta_val), log1p(-theta_val)));
     auto deriv_expr = inv(theta_val + select(n == 1, 0, -1));
@@ -68,17 +68,16 @@ return_type_t<T_prob_cl> bernoulli_lpmf(const T_n_cl& n,
     matrix_cl<double> deriv_cl;
 
     results(logp_cl, deriv_cl, check_n_bounded, check_theta_bounded)
-        = expressions(logp_expr,
-                      calc_if<!is_constant_all<T_prob_cl>::value>(deriv_expr),
+        = expressions(logp_expr, calc_if<is_autodiff_v<T_prob_cl>>(deriv_expr),
                       n_bounded_expr, theta_bounded_expr);
 
     logp = sum(from_matrix_cl(logp_cl));
 
-    if (!is_constant_all<T_prob_cl>::value) {
+    if constexpr (is_autodiff_v<T_prob_cl>) {
       partials<0>(ops_partials) = deriv_cl;
     }
   } else {
-    auto n_sum_expr = rowwise_sum(forward_as<matrix_cl<int>>(n));
+    auto n_sum_expr = rowwise_sum(n);
 
     matrix_cl<int> n_sum_cl;
 
@@ -86,7 +85,7 @@ return_type_t<T_prob_cl> bernoulli_lpmf(const T_n_cl& n,
         = expressions(n_sum_expr, n_bounded_expr);
 
     size_t n_sum = sum(from_matrix_cl(n_sum_cl));
-    double theta_val_scal = forward_as<double>(theta_val);
+    double theta_val_scal = theta_val;
     if (n_sum == N) {
       logp = N * log(theta_val_scal);
     } else if (n_sum == 0) {
@@ -94,9 +93,8 @@ return_type_t<T_prob_cl> bernoulli_lpmf(const T_n_cl& n,
     } else {
       logp = n_sum * log(theta_val_scal) + (N - n_sum) * log1m(theta_val_scal);
     }
-    if (!is_constant_all<T_prob_cl>::value) {
-      double& edge1_partial = forward_as<internal::broadcast_array<double>>(
-          partials<0>(ops_partials))[0];
+    if constexpr (is_autodiff_v<T_prob_cl>) {
+      double& edge1_partial = partials<0>(ops_partials)[0];
       if (n_sum == N) {
         edge1_partial += N / theta_val_scal;
       } else if (n_sum == 0) {

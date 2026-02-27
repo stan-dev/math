@@ -54,7 +54,7 @@ class log_softmax_elt_vari : public vari {
  * @throw std::domain_error if the input size is 0
  */
 template <typename T, require_eigen_st<is_var, T>* = nullptr>
-auto log_softmax(const T& x) {
+inline auto log_softmax(const T& x) {
   const int a_size = x.size();
 
   check_nonzero_size("log_softmax", "x", x);
@@ -120,9 +120,10 @@ inline auto log_softmax(const T& x) {
  * @throw std::domain_error if the input size is 0
  */
 template <typename T, require_std_vector_st<is_var, T>* = nullptr>
-inline auto log_softmax(const T& x) {
-  return apply_vector_unary<T>::apply(
-      x, [](const auto& alpha) { return log_softmax(alpha); });
+inline auto log_softmax(T&& x) {
+  return apply_vector_unary<T>::apply(std::forward<T>(x), [](auto&& alpha) {
+    return log_softmax(std::forward<decltype(alpha)>(alpha));
+  });
 }
 
 }  // namespace math

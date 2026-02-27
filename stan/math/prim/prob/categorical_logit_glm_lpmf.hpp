@@ -44,7 +44,7 @@ template <bool propto, typename T_y, typename T_x, typename T_alpha,
           typename T_beta, require_matrix_t<T_x>* = nullptr,
           require_col_vector_t<T_alpha>* = nullptr,
           require_matrix_t<T_beta>* = nullptr>
-return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
+inline return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
     const T_y& y, const T_x& x, const T_alpha& alpha, const T_beta& beta) {
   using T_partials_return = partials_return_t<T_x, T_alpha, T_beta>;
   using Eigen::Array;
@@ -77,7 +77,7 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
   check_bounded(function, "categorical outcome out of support", y_ref, 1,
                 N_classes);
 
-  if (!include_summand<propto, T_x, T_alpha, T_beta>::value) {
+  if constexpr (!include_summand<propto, T_x, T_alpha, T_beta>::value) {
     return 0;
   }
 
@@ -85,10 +85,9 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
   T_alpha_ref alpha_ref = alpha;
   T_beta_ref beta_ref = beta;
 
-  const auto& x_val = to_ref_if<!is_constant<T_beta>::value>(value_of(x_ref));
+  const auto& x_val = to_ref_if<is_autodiff_v<T_beta>>(value_of(x_ref));
   const auto& alpha_val = value_of(alpha_ref);
-  const auto& beta_val
-      = to_ref_if<!is_constant<T_x>::value>(value_of(beta_ref));
+  const auto& beta_val = to_ref_if<is_autodiff_v<T_x>>(value_of(beta_ref));
 
   const auto& alpha_val_vec = as_column_vector_or_scalar(alpha_val).transpose();
 
@@ -104,12 +103,12 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
       = 1 / exp_lin.rowwise().sum();
 
   T_partials_return logp = log(inv_sum_exp_lin).sum() - lin_max.sum();
-  if (T_x_rows == 1) {
+  if constexpr (T_x_rows == 1) {
     logp *= N_instances;
   }
   scalar_seq_view<T_y_ref> y_seq(y_ref);
   for (int i = 0; i < N_instances; i++) {
-    if (T_x_rows == 1) {
+    if constexpr (T_x_rows == 1) {
       logp += lin(0, y_seq[i] - 1);
     } else {
       logp += lin(i, y_seq[i] - 1);
@@ -128,8 +127,8 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
   // Compute the derivatives.
   auto ops_partials = make_partials_propagator(x_ref, alpha_ref, beta_ref);
 
-  if (!is_constant_all<T_x>::value) {
-    if (T_x_rows == 1) {
+  if constexpr (is_autodiff_v<T_x>) {
+    if constexpr (T_x_rows == 1) {
       Array<T_beta_partials, 1, Dynamic> beta_y = beta_val.col(y_seq[0] - 1);
       for (int i = 1; i < N_instances; i++) {
         beta_y += beta_val.col(y_seq[i] - 1).array();
@@ -154,11 +153,11 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
       // inv_sum_exp_lin;
     }
   }
-  if (!is_constant_all<T_alpha, T_beta>::value) {
+  if constexpr (is_any_autodiff_v<T_alpha, T_beta>) {
     Array<T_partials_return, T_x_rows, Dynamic> neg_softmax_lin
         = exp_lin.colwise() * -inv_sum_exp_lin;
-    if (!is_constant_all<T_alpha>::value) {
-      if (T_x_rows == 1) {
+    if constexpr (is_autodiff_v<T_alpha>) {
+      if constexpr (T_x_rows == 1) {
         edge<1>(ops_partials).partials_
             = neg_softmax_lin.colwise().sum() * N_instances;
       } else {
@@ -168,16 +167,16 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
         partials<1>(ops_partials)[y_seq[i] - 1] += 1;
       }
     }
-    if (!is_constant_all<T_beta>::value) {
+    if constexpr (is_autodiff_v<T_beta>) {
       Matrix<T_partials_return, Dynamic, Dynamic> beta_derivative
           = x_val.transpose().template cast<T_partials_return>()
             * neg_softmax_lin.matrix();
-      if (T_x_rows == 1) {
+      if constexpr (T_x_rows == 1) {
         beta_derivative *= N_instances;
       }
 
       for (int i = 0; i < N_instances; i++) {
-        if (T_x_rows == 1) {
+        if constexpr (T_x_rows == 1) {
           beta_derivative.col(y_seq[i] - 1) += x_val;
         } else {
           beta_derivative.col(y_seq[i] - 1) += x_val.row(i);
@@ -195,7 +194,7 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
 }
 
 template <typename T_y, typename T_x, typename T_alpha, typename T_beta>
-return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
+inline return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
     const T_y& y, const T_x& x, const T_alpha& alpha, const T_beta& beta) {
   return categorical_logit_glm_lpmf<false>(y, x, alpha, beta);
 }

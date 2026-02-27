@@ -123,8 +123,8 @@ inline plain_type_t<Mat> sum_to_zero_constrain(const Mat& x) {
  * @return Zero-sum vector or matrix which is one larger in each dimension
  */
 template <typename T, typename Lp, require_not_st_var<T>* = nullptr>
-inline plain_type_t<T> sum_to_zero_constrain(const T& y, Lp& lp) {
-  return sum_to_zero_constrain(y);
+inline plain_type_t<T> sum_to_zero_constrain(T&& y, Lp& lp) {
+  return sum_to_zero_constrain(std::forward<T>(y));
 }
 
 /**
@@ -138,9 +138,10 @@ inline plain_type_t<T> sum_to_zero_constrain(const T& y, Lp& lp) {
  * @return Zero-sum vectors or matrices which are one larger in each dimension
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
-inline auto sum_to_zero_constrain(const T& y) {
-  return apply_vector_unary<T>::apply(
-      y, [](auto&& v) { return sum_to_zero_constrain(v); });
+inline auto sum_to_zero_constrain(T&& y) {
+  return apply_vector_unary<T>::apply(std::forward<T>(y), [](auto&& v) {
+    return sum_to_zero_constrain(std::forward<decltype(v)>(v));
+  });
 }
 
 /**
@@ -157,9 +158,10 @@ inline auto sum_to_zero_constrain(const T& y) {
  */
 template <typename T, typename Lp, require_std_vector_t<T>* = nullptr,
           require_convertible_t<return_type_t<T>, Lp>* = nullptr>
-inline auto sum_to_zero_constrain(const T& y, Lp& lp) {
-  return apply_vector_unary<T>::apply(
-      y, [](auto&& v) { return sum_to_zero_constrain(v); });
+inline auto sum_to_zero_constrain(T&& y, Lp& lp) {
+  return apply_vector_unary<T>::apply(std::forward<T>(y), [](auto&& v) {
+    return sum_to_zero_constrain(std::forward<decltype(v)>(v));
+  });
 }
 
 /**
@@ -175,8 +177,8 @@ inline auto sum_to_zero_constrain(const T& y, Lp& lp) {
  * @return Zero-sum vector or matrix which is one larger in each dimension
  */
 template <bool Jacobian, typename T, typename Lp>
-inline plain_type_t<T> sum_to_zero_constrain(const T& y, Lp& lp) {
-  return sum_to_zero_constrain(y);
+inline plain_type_t<T> sum_to_zero_constrain(T&& y, Lp& lp) {
+  return sum_to_zero_constrain(std::forward<T>(y));
 }
 
 }  // namespace math

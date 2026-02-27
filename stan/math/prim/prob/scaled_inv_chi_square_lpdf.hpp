@@ -44,7 +44,7 @@ namespace math {
 template <bool propto, typename T_y, typename T_dof, typename T_scale,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_dof, T_scale>* = nullptr>
-return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lpdf(
+inline return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lpdf(
     const T_y& y, const T_dof& nu, const T_scale& s) {
   using T_partials_return = partials_return_t<T_y, T_dof, T_scale>;
   using std::log;
@@ -65,7 +65,7 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lpdf(
   if (size_zero(y, nu, s)) {
     return 0;
   }
-  if (!include_summand<propto, T_y, T_dof, T_scale>::value) {
+  if constexpr (!include_summand<propto, T_y, T_dof, T_scale>::value) {
     return 0;
   }
 
@@ -87,7 +87,7 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lpdf(
                 T_partials_return, T_dof>
       half_nu(math::size(nu));
   for (size_t i = 0; i < stan::math::size(nu); i++) {
-    if (include_summand<propto, T_dof, T_y, T_scale>::value) {
+    if constexpr (include_summand<propto, T_dof, T_y, T_scale>::value) {
       half_nu[i] = 0.5 * nu_vec.val(i);
     }
   }
@@ -96,7 +96,7 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lpdf(
                 T_y>
       log_y(math::size(y));
   for (size_t i = 0; i < stan::math::size(y); i++) {
-    if (include_summand<propto, T_dof, T_y>::value) {
+    if constexpr (include_summand<propto, T_dof, T_y>::value) {
       log_y[i] = log(y_vec.val(i));
     }
   }
@@ -105,7 +105,7 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lpdf(
                 T_partials_return, T_y>
       inv_y(math::size(y));
   for (size_t i = 0; i < stan::math::size(y); i++) {
-    if (include_summand<propto, T_dof, T_y, T_scale>::value) {
+    if constexpr (include_summand<propto, T_dof, T_y, T_scale>::value) {
       inv_y[i] = 1.0 / y_vec.val(i);
     }
   }
@@ -114,7 +114,7 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lpdf(
                 T_partials_return, T_scale>
       log_s(math::size(s));
   for (size_t i = 0; i < stan::math::size(s); i++) {
-    if (include_summand<propto, T_dof, T_scale>::value) {
+    if constexpr (include_summand<propto, T_dof, T_scale>::value) {
       log_s[i] = log(s_vec.val(i));
     }
   }
@@ -123,16 +123,16 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lpdf(
       log_half_nu(math::size(nu));
   VectorBuilder<include_summand<propto, T_dof>::value, T_partials_return, T_dof>
       lgamma_half_nu(math::size(nu));
-  VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
+  VectorBuilder<is_autodiff_v<T_dof>, T_partials_return, T_dof>
       digamma_half_nu_over_two(math::size(nu));
   for (size_t i = 0; i < stan::math::size(nu); i++) {
-    if (include_summand<propto, T_dof>::value) {
+    if constexpr (include_summand<propto, T_dof>::value) {
       lgamma_half_nu[i] = lgamma(half_nu[i]);
     }
-    if (include_summand<propto, T_dof>::value) {
+    if constexpr (include_summand<propto, T_dof>::value) {
       log_half_nu[i] = log(half_nu[i]);
     }
-    if (!is_constant_all<T_dof>::value) {
+    if constexpr (is_autodiff_v<T_dof>) {
       digamma_half_nu_over_two[i] = digamma(half_nu[i]) * 0.5;
     }
   }
@@ -140,30 +140,30 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lpdf(
   for (size_t n = 0; n < N; n++) {
     const T_partials_return s_dbl = s_vec.val(n);
     const T_partials_return nu_dbl = nu_vec.val(n);
-    if (include_summand<propto, T_dof>::value) {
+    if constexpr (include_summand<propto, T_dof>::value) {
       logp += half_nu[n] * log_half_nu[n] - lgamma_half_nu[n];
     }
-    if (include_summand<propto, T_dof, T_scale>::value) {
+    if constexpr (include_summand<propto, T_dof, T_scale>::value) {
       logp += nu_dbl * log_s[n];
     }
-    if (include_summand<propto, T_dof, T_y>::value) {
+    if constexpr (include_summand<propto, T_dof, T_y>::value) {
       logp -= (half_nu[n] + 1.0) * log_y[n];
     }
-    if (include_summand<propto, T_dof, T_y, T_scale>::value) {
+    if constexpr (include_summand<propto, T_dof, T_y, T_scale>::value) {
       logp -= half_nu[n] * s_dbl * s_dbl * inv_y[n];
     }
 
-    if (!is_constant_all<T_y>::value) {
+    if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials)[n]
           += -(half_nu[n] + 1.0) * inv_y[n]
              + half_nu[n] * s_dbl * s_dbl * inv_y[n] * inv_y[n];
     }
-    if (!is_constant_all<T_dof>::value) {
+    if constexpr (is_autodiff_v<T_dof>) {
       partials<1>(ops_partials)[n]
           += 0.5 * log_half_nu[n] + 0.5 - digamma_half_nu_over_two[n] + log_s[n]
              - 0.5 * log_y[n] - 0.5 * s_dbl * s_dbl * inv_y[n];
     }
-    if (!is_constant_all<T_scale>::value) {
+    if constexpr (is_autodiff_v<T_scale>) {
       partials<2>(ops_partials)[n]
           += nu_dbl / s_dbl - nu_dbl * inv_y[n] * s_dbl;
     }

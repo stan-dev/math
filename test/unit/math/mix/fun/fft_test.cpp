@@ -1,6 +1,6 @@
 #include <test/unit/math/test_ad.hpp>
 
-void expect_fft(const Eigen::VectorXcd& x) {
+inline void expect_fft(const Eigen::VectorXcd& x) {
   for (int m = 0; m < x.rows(); ++m) {
     auto g = [m](const auto& x) {
       using stan::math::fft;
@@ -39,7 +39,7 @@ TEST(mathMixFun, fft) {
   expect_fft(x4);
 }
 
-void expect_inv_fft(const Eigen::VectorXcd& x) {
+inline void expect_inv_fft(const Eigen::VectorXcd& x) {
   for (int m = 0; m < x.rows(); ++m) {
     auto g = [m](const auto& x) {
       using stan::math::inv_fft;
@@ -78,7 +78,7 @@ TEST(mathMixFun, invFft) {
   expect_inv_fft(x4);
 }
 
-void expect_fft2(const Eigen::MatrixXcd& x) {
+inline void expect_fft2(const Eigen::MatrixXcd& x) {
   for (int n = 0; n < x.cols(); ++n) {
     for (int m = 0; m < x.rows(); ++m) {
       auto g = [m, n](const auto& x) {
@@ -125,7 +125,7 @@ TEST(mathMixFun, fft2) {
   expect_fft2(x33);
 }
 
-void expect_inv_fft2(const Eigen::MatrixXcd& x) {
+inline void expect_inv_fft2(const Eigen::MatrixXcd& x) {
   for (int n = 0; n < x.cols(); ++n) {
     for (int m = 0; m < x.rows(); ++m) {
       auto g = [m, n](const auto& x) {

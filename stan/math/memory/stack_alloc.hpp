@@ -26,7 +26,7 @@ namespace math {
  * @tparam Type of object to which pointer points.
  */
 template <typename T>
-bool is_aligned(T* ptr, unsigned int bytes_aligned) {
+inline bool is_aligned(T* ptr, unsigned int bytes_aligned) {
   return (reinterpret_cast<uintptr_t>(ptr) % bytes_aligned) == 0U;
 }
 

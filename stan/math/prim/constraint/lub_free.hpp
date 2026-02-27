@@ -72,9 +72,9 @@ inline auto lub_free(T&& y, L&& lb, U&& ub) {
   check_matching_dims("lub_free", "y", y, "lb", lb);
   auto&& y_ref = to_ref(std::forward<T>(y));
   auto&& lb_ref = to_ref(std::forward<L>(lb));
-  promote_scalar_t<return_type_t<T, L, U>, T> ret(y.rows(), y.cols());
-  for (Eigen::Index j = 0; j < y.cols(); ++j) {
-    for (Eigen::Index i = 0; i < y.rows(); ++i) {
+  promote_scalar_t<return_type_t<T, L, U>, T> ret(y_ref.rows(), y_ref.cols());
+  for (Eigen::Index j = 0; j < y_ref.cols(); ++j) {
+    for (Eigen::Index i = 0; i < y_ref.rows(); ++i) {
       ret.coeffRef(i, j) = lub_free(y_ref.coeff(i, j), lb_ref.coeff(i, j), ub);
     }
   }
@@ -92,9 +92,9 @@ inline auto lub_free(T&& y, L&& lb, U&& ub) {
   check_matching_dims("lub_free", "y", y, "ub", ub);
   auto&& y_ref = to_ref(std::forward<T>(y));
   auto&& ub_ref = to_ref(std::forward<U>(ub));
-  promote_scalar_t<return_type_t<T, L, U>, T> ret(y.rows(), y.cols());
-  for (Eigen::Index j = 0; j < y.cols(); ++j) {
-    for (Eigen::Index i = 0; i < y.rows(); ++i) {
+  promote_scalar_t<return_type_t<T, L, U>, T> ret(y_ref.rows(), y_ref.cols());
+  for (Eigen::Index j = 0; j < y_ref.cols(); ++j) {
+    for (Eigen::Index i = 0; i < y_ref.rows(); ++i) {
       ret.coeffRef(i, j) = lub_free(y_ref.coeff(i, j), lb, ub_ref.coeff(i, j));
     }
   }
@@ -113,9 +113,9 @@ inline auto lub_free(T&& y, L&& lb, U&& ub) {
   auto&& y_ref = to_ref(std::forward<T>(y));
   auto&& lb_ref = to_ref(std::forward<L>(lb));
   auto&& ub_ref = to_ref(std::forward<U>(ub));
-  promote_scalar_t<return_type_t<T, L, U>, T> ret(y.rows(), y.cols());
-  for (Eigen::Index j = 0; j < y.cols(); ++j) {
-    for (Eigen::Index i = 0; i < y.rows(); ++i) {
+  promote_scalar_t<return_type_t<T, L, U>, T> ret(y_ref.rows(), y_ref.cols());
+  for (Eigen::Index j = 0; j < y_ref.cols(); ++j) {
+    for (Eigen::Index i = 0; i < y_ref.rows(); ++i) {
       ret.coeffRef(i, j)
           = lub_free(y_ref.coeff(i, j), lb_ref.coeff(i, j), ub_ref.coeff(i, j));
     }

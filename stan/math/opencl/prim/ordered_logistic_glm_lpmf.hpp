@@ -49,7 +49,7 @@ template <bool propto, typename T_y, typename T_x, typename T_beta,
           typename T_cuts,
           require_all_prim_or_rev_kernel_expression_t<T_y, T_x, T_beta,
                                                       T_cuts>* = nullptr>
-return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
+inline return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
     const T_y& y, const T_x& x, const T_beta& beta, const T_cuts& cuts) {
   using Eigen::Array;
   using Eigen::Dynamic;
@@ -65,7 +65,7 @@ return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
   const size_t N_attributes = x.cols();
   const size_t N_classes = math::size(cuts) + 1;
 
-  if (is_y_vector) {
+  if constexpr (is_y_vector) {
     check_size_match(function, "Rows of ", "x", N_instances, "rows of ", "y",
                      math::size(y));
   }
@@ -85,7 +85,7 @@ return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
   if (N_instances == 0 || N_classes == 1) {
     return 0;
   }
-  if (!include_summand<propto, T_x, T_beta, T_cuts>::value) {
+  if constexpr (!include_summand<propto, T_x, T_beta, T_cuts>::value) {
     return 0;
   }
 
@@ -99,8 +99,8 @@ return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
       = opencl_kernels::ordered_logistic_glm.get_option("LOCAL_SIZE_");
   const int wgs = (N_instances + local_size - 1) / local_size;
 
-  bool need_location_derivative = !is_constant_all<T_x, T_beta>::value;
-  bool need_cuts_derivative = !is_constant_all<T_cuts>::value;
+  bool need_location_derivative = is_any_autodiff_v<T_x, T_beta>;
+  bool need_cuts_derivative = is_autodiff_v<T_cuts>;
   matrix_cl<double> logp_cl(wgs, 1);
   matrix_cl<double> location_sum_cl(wgs, 1);
   matrix_cl<double> location_derivative_cl(need_location_derivative ? 1 : 0,
@@ -130,11 +130,11 @@ return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
   }
 
   auto ops_partials = make_partials_propagator(x, beta, cuts);
-  if (!is_constant_all<T_x>::value) {
+  if constexpr (is_autodiff_v<T_x>) {
     partials<0>(ops_partials)
         = transpose(location_derivative_cl) * transpose(beta_val);
   }
-  if (!is_constant_all<T_beta>::value) {
+  if constexpr (is_autodiff_v<T_beta>) {
     matrix_cl<double> edge2_partials_transpose = location_derivative_cl * x_val;
     partials<1>(ops_partials) = matrix_cl<double>(
         edge2_partials_transpose.buffer(), edge2_partials_transpose.cols(),
@@ -145,7 +145,7 @@ return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
               edge2_partials_transpose.write_events().back());
     }
   }
-  if (!is_constant_all<T_cuts>::value) {
+  if constexpr (is_autodiff_v<T_cuts>) {
     if (wgs == 1) {
       partials<2>(ops_partials) = std::move(cuts_derivative_cl);
     } else {

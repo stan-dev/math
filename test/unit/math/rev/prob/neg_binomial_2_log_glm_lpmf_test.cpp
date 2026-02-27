@@ -1,6 +1,6 @@
 #include <stan/math/rev.hpp>
-#include <stan/math/prim.hpp>
 #include <test/unit/math/rev/util.hpp>
+#include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 #include <cmath>

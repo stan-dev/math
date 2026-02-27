@@ -24,7 +24,7 @@ namespace stan {
 namespace math {
 
 template <typename T_n, typename T_shape, typename T_inv_scale>
-return_type_t<T_shape, T_inv_scale> neg_binomial_lcdf(
+inline return_type_t<T_shape, T_inv_scale> neg_binomial_lcdf(
     const T_n& n, const T_shape& alpha, const T_inv_scale& beta_param) {
   using T_partials_return = partials_return_t<T_n, T_shape, T_inv_scale>;
   using std::exp;
@@ -65,15 +65,14 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lcdf(
     }
   }
 
-  VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_n>
-      digammaN_vec(size_n);
-  VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
+  VectorBuilder<is_autodiff_v<T_shape>, T_partials_return, T_n> digammaN_vec(
+      size_n);
+  VectorBuilder<is_autodiff_v<T_shape>, T_partials_return, T_shape>
       digammaAlpha_vec(size_alpha);
-  VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_n,
-                T_shape>
+  VectorBuilder<is_autodiff_v<T_shape>, T_partials_return, T_n, T_shape>
       digammaSum_vec(size_n_alpha);
 
-  if (!is_constant_all<T_shape>::value) {
+  if constexpr (is_autodiff_v<T_shape>) {
     for (size_t i = 0; i < size_n; i++) {
       digammaN_vec[i] = digamma(n_vec.val(i) + 1);
     }
@@ -105,7 +104,7 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lcdf(
 
     P += log(Pi);
 
-    if (!is_constant_all<T_shape>::value) {
+    if constexpr (is_autodiff_v<T_shape>) {
       T_partials_return g1 = 0;
       T_partials_return g2 = 0;
 
@@ -114,7 +113,7 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lcdf(
                         beta_func);
       partials<0>(ops_partials)[i] += g1 / Pi;
     }
-    if (!is_constant_all<T_inv_scale>::value) {
+    if constexpr (is_autodiff_v<T_inv_scale>) {
       partials<1>(ops_partials)[i] += d_dbl * pow(1 - p_dbl, n_dbl)
                                       * pow(p_dbl, alpha_dbl - 1)
                                       / (beta_func * Pi);

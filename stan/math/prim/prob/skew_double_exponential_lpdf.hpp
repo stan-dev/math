@@ -40,9 +40,9 @@ template <bool propto, typename T_y, typename T_loc, typename T_scale,
           typename T_skewness,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_loc, T_scale, T_skewness>* = nullptr>
-return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lpdf(
-    const T_y& y, const T_loc& mu, const T_scale& sigma,
-    const T_skewness& tau) {
+inline return_type_t<T_y, T_loc, T_scale, T_skewness>
+skew_double_exponential_lpdf(const T_y& y, const T_loc& mu,
+                             const T_scale& sigma, const T_skewness& tau) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_skewness>;
   using T_y_ref = ref_type_if_not_constant_t<T_y>;
   using T_mu_ref = ref_type_if_not_constant_t<T_loc>;
@@ -61,7 +61,8 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lpdf(
   if (size_zero(y, mu, sigma, tau)) {
     return 0.0;
   }
-  if (!include_summand<propto, T_y, T_loc, T_scale, T_skewness>::value) {
+  if constexpr (!include_summand<propto, T_y, T_loc, T_scale,
+                                 T_skewness>::value) {
     return 0.0;
   }
 
@@ -78,47 +79,44 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lpdf(
   check_positive_finite(function, "Scale parameter", sigma_val);
   check_bounded(function, "Skewness parameter", tau_val, 0.0, 1.0);
 
-  const auto& inv_sigma
-      = to_ref_if<!is_constant_all<T_scale>::value>(inv(sigma_val));
-  const auto& y_m_mu
-      = to_ref_if<!is_constant_all<T_y, T_loc>::value>(y_val - mu_val);
+  const auto& inv_sigma = to_ref_if<is_autodiff_v<T_scale>>(inv(sigma_val));
+  const auto& y_m_mu = to_ref_if<is_any_autodiff_v<T_y, T_loc>>(y_val - mu_val);
   const auto& diff_sign = sign(y_m_mu);
 
   const auto& diff_sign_smaller_0 = step(-diff_sign);
   const auto& abs_diff_y_mu = fabs(y_m_mu);
   const auto& abs_diff_y_mu_over_sigma = abs_diff_y_mu * inv_sigma;
-  const auto& expo = to_ref_if<!is_constant_all<T_skewness>::value>(
+  const auto& expo = to_ref_if<is_autodiff_v<T_skewness>>(
       (diff_sign_smaller_0 + diff_sign * tau_val) * abs_diff_y_mu_over_sigma);
 
   size_t N = max_size(y, mu, sigma, tau);
   T_partials_return logp = -2.0 * sum(expo);
 
-  if (include_summand<propto>::value) {
+  if constexpr (include_summand<propto>::value) {
     logp += N * LOG_TWO;
   }
-  if (include_summand<propto, T_scale>::value) {
+  if constexpr (include_summand<propto, T_scale>::value) {
     logp -= sum(log(sigma_val)) * N / math::size(sigma);
   }
-  if (include_summand<propto, T_skewness>::value) {
+  if constexpr (include_summand<propto, T_skewness>::value) {
     logp += sum(log(tau_val) + log1m(tau_val)) * N / math::size(tau);
   }
 
-  if (!is_constant_all<T_y, T_loc>::value) {
-    const auto& deriv = to_ref_if<(!is_constant_all<T_y>::value
-                                   && !is_constant_all<T_loc>::value)>(
+  if constexpr (is_any_autodiff_v<T_y, T_loc>) {
+    const auto& deriv = to_ref_if<(is_autodiff_v<T_y> && is_autodiff_v<T_loc>)>(
         2.0 * (diff_sign_smaller_0 + diff_sign * tau_val) * diff_sign
         * inv_sigma);
-    if (!is_constant_all<T_y>::value) {
+    if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials) = -deriv;
     }
-    if (!is_constant_all<T_loc>::value) {
+    if constexpr (is_autodiff_v<T_loc>) {
       partials<1>(ops_partials) = deriv;
     }
   }
-  if (!is_constant_all<T_scale>::value) {
+  if constexpr (is_autodiff_v<T_scale>) {
     partials<2>(ops_partials) = -inv_sigma + 2.0 * expo * inv_sigma;
   }
-  if (!is_constant_all<T_skewness>::value) {
+  if constexpr (is_autodiff_v<T_skewness>) {
     edge<3>(ops_partials).partials_
         = inv(tau_val) - inv(1.0 - tau_val)
           + (-1.0 * diff_sign) * 2.0 * abs_diff_y_mu_over_sigma;
@@ -128,9 +126,9 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lpdf(
 }
 
 template <typename T_y, typename T_loc, typename T_scale, typename T_skewness>
-return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lpdf(
-    const T_y& y, const T_loc& mu, const T_scale& sigma,
-    const T_skewness& tau) {
+inline return_type_t<T_y, T_loc, T_scale, T_skewness>
+skew_double_exponential_lpdf(const T_y& y, const T_loc& mu,
+                             const T_scale& sigma, const T_skewness& tau) {
   return skew_double_exponential_lpdf<false>(y, mu, sigma, tau);
 }
 

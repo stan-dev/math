@@ -23,7 +23,8 @@ namespace math {
  *   not sorted, or if any element is <code>NaN</code>.
  */
 template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>
-void check_sorted(const char* function, const char* name, const EigVec& y) {
+inline void check_sorted(const char* function, const char* name,
+                         const EigVec& y) {
   const auto& y_ref = to_ref(y);
   for (Eigen::Index n = 1; n < y_ref.size(); n++) {
     if (!(y_ref[n] >= y_ref[n - 1])) {
@@ -53,8 +54,8 @@ void check_sorted(const char* function, const char* name, const EigVec& y) {
  *   is <code>NaN</code>.
  */
 template <typename T_y>
-void check_sorted(const char* function, const char* name,
-                  const std::vector<T_y>& y) {
+inline void check_sorted(const char* function, const char* name,
+                         const std::vector<T_y>& y) {
   for (size_t n = 1; n < y.size(); n++) {
     if (!(y[n] >= y[n - 1])) {
       std::ostringstream msg1;

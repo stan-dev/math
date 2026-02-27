@@ -55,7 +55,7 @@ inline fvar<partials_return_t<T1, T2, T3>> inv_inc_beta(const T1& a,
 
   T_return inv_d_(0);
 
-  if (is_fvar<T1>::value) {
+  if constexpr (is_fvar<T1>::value) {
     std::vector<T_return> da_a{a_val, a_val, one_m_b};
     std::vector<T_return> da_b{ap1, ap1};
     auto da1 = exp(one_m_b * log1m_w + one_m_a * log_w);
@@ -63,10 +63,10 @@ inline fvar<partials_return_t<T1, T2, T3>> inv_inc_beta(const T1& a,
                    + log(hypergeometric_3F2(da_a, da_b, w)) - 2 * lgamma(ap1));
     auto da3 = inc_beta(a_val, b_val, w) * exp(lbeta_ab)
                * (log_w - digamma(a_val) + digamma_apb);
-    inv_d_ += forward_as<fvar<T_return>>(a).d_ * da1 * (da2 - da3);
+    inv_d_ += a.d_ * da1 * (da2 - da3);
   }
 
-  if (is_fvar<T2>::value) {
+  if constexpr (is_fvar<T2>::value) {
     std::vector<T_return> db_a{b_val, b_val, one_m_a};
     std::vector<T_return> db_b{bp1, bp1};
     auto db1 = (w - 1) * exp(-b_val * log1m_w + one_m_a * log_w);
@@ -76,12 +76,11 @@ inline fvar<partials_return_t<T1, T2, T3>> inv_inc_beta(const T1& a,
     auto db3 = inc_beta(b_val, a_val, one_m_w) * exp(lbeta_ab)
                * (log1m_w - digamma(b_val) + digamma_apb);
 
-    inv_d_ += forward_as<fvar<T_return>>(b).d_ * db1 * (exp(db2) - db3);
+    inv_d_ += b.d_ * db1 * (exp(db2) - db3);
   }
 
-  if (is_fvar<T3>::value) {
-    inv_d_ += forward_as<fvar<T_return>>(p).d_
-              * exp(one_m_b * log1m_w + one_m_a * log_w + lbeta_ab);
+  if constexpr (is_fvar<T3>::value) {
+    inv_d_ += p.d_ * exp(one_m_b * log1m_w + one_m_a * log_w + lbeta_ab);
   }
 
   return fvar<T_return>(w, inv_d_);

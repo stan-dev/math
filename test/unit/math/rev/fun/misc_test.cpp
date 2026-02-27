@@ -1,9 +1,10 @@
 #include <stan/math/rev.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/fun/util.hpp>
 #include <vector>
 
-TEST(AgradRevMatrix, mv_squaredNorm) {
+TEST_F(AgradRev, RevMatrix_mv_squaredNorm) {
   using stan::math::matrix_v;
 
   matrix_v a(2, 2);
@@ -21,7 +22,7 @@ TEST(AgradRevMatrix, mv_squaredNorm) {
   EXPECT_FLOAT_EQ(10.0, g[2]);
   EXPECT_FLOAT_EQ(20.0, g[3]);
 }
-TEST(AgradRevMatrix, mv_norm) {
+TEST_F(AgradRev, RevMatrix_mv_norm) {
   using stan::math::matrix_v;
 
   matrix_v a(2, 1);
@@ -38,7 +39,7 @@ TEST(AgradRevMatrix, mv_norm) {
   EXPECT_FLOAT_EQ(-3.0 / 5.0, g[0]);
   EXPECT_FLOAT_EQ(4.0 / 5.0, g[1]);
 }
-TEST(AgradRevMatrix, mv_lp_norm) {
+TEST_F(AgradRev, RevMatrix_mv_lp_norm) {
   using stan::math::matrix_v;
 
   matrix_v a(2, 2);
@@ -57,7 +58,7 @@ TEST(AgradRevMatrix, mv_lp_norm) {
   // ? depends on impl here, could be -1 or 1
   EXPECT_FLOAT_EQ(0.0, g[3]);
 }
-TEST(AgradRevMatrix, mv_lp_norm_inf) {
+TEST_F(AgradRev, RevMatrix_mv_lp_norm_inf) {
   using stan::math::matrix_v;
 
   matrix_v a(2, 2);
@@ -76,7 +77,7 @@ TEST(AgradRevMatrix, mv_lp_norm_inf) {
   EXPECT_FLOAT_EQ(0.0, g[3]);
 }
 
-TEST(AgradRevMatrix, UserCase1) {
+TEST_F(AgradRev, RevMatrix_UserCase1) {
   using stan::math::assign;
   using stan::math::dot_product;
   using stan::math::get_base1;

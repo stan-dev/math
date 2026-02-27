@@ -10,6 +10,7 @@
 
 #include <gtest/gtest.h>
 #include <stan/math/rev.hpp>
+#include <test/unit/math/rev/util.hpp>
 
 #include <test/unit/math/prim/functor/hard_work.hpp>
 #include <test/unit/math/prim/functor/utils_threads.hpp>
@@ -21,10 +22,10 @@
 STAN_REGISTER_MAP_RECT(0, hard_work)
 STAN_REGISTER_MAP_RECT(1, hard_work)
 
-void setup_job(int N, Eigen::VectorXd& shared_params_d,
-               std::vector<Eigen::VectorXd>& job_params_d,
-               std::vector<std::vector<double> >& x_r,
-               std::vector<std::vector<int> >& x_i) {
+inline void setup_job(int N, Eigen::VectorXd& shared_params_d,
+                      std::vector<Eigen::VectorXd>& job_params_d,
+                      std::vector<std::vector<double> >& x_r,
+                      std::vector<std::vector<int> >& x_i) {
   shared_params_d.resize(2);
   shared_params_d << 2, 0;
 

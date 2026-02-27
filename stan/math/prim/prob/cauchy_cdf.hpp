@@ -32,8 +32,9 @@ namespace math {
 template <typename T_y, typename T_loc, typename T_scale,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_loc, T_scale>* = nullptr>
-return_type_t<T_y, T_loc, T_scale> cauchy_cdf(const T_y& y, const T_loc& mu,
-                                              const T_scale& sigma) {
+inline return_type_t<T_y, T_loc, T_scale> cauchy_cdf(const T_y& y,
+                                                     const T_loc& mu,
+                                                     const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
   using std::atan;
   using T_y_ref = ref_type_t<T_y>;
@@ -86,31 +87,31 @@ return_type_t<T_y, T_loc, T_scale> cauchy_cdf(const T_y& y, const T_loc& mu,
 
     P *= Pn;
 
-    if (!is_constant_all<T_y>::value) {
+    if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials)[n]
           += sigma_inv_dbl / (pi() * (1.0 + z * z) * Pn);
     }
-    if (!is_constant_all<T_loc>::value) {
+    if constexpr (is_autodiff_v<T_loc>) {
       partials<1>(ops_partials)[n]
           += -sigma_inv_dbl / (pi() * (1.0 + z * z) * Pn);
     }
-    if (!is_constant_all<T_scale>::value) {
+    if constexpr (is_autodiff_v<T_scale>) {
       partials<2>(ops_partials)[n]
           += -z * sigma_inv_dbl / (pi() * (1.0 + z * z) * Pn);
     }
   }
 
-  if (!is_constant_all<T_y>::value) {
+  if constexpr (is_autodiff_v<T_y>) {
     for (size_t n = 0; n < stan::math::size(y); ++n) {
       partials<0>(ops_partials)[n] *= P;
     }
   }
-  if (!is_constant_all<T_loc>::value) {
+  if constexpr (is_autodiff_v<T_loc>) {
     for (size_t n = 0; n < stan::math::size(mu); ++n) {
       partials<1>(ops_partials)[n] *= P;
     }
   }
-  if (!is_constant_all<T_scale>::value) {
+  if constexpr (is_autodiff_v<T_scale>) {
     for (size_t n = 0; n < stan::math::size(sigma); ++n) {
       partials<2>(ops_partials)[n] *= P;
     }

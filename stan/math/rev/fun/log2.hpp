@@ -40,8 +40,8 @@ namespace math {
  * @param a The variable.
  * @return Base 2 logarithm of the variable.
  */
-template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
-inline auto log2(const var_value<T>& a) {
+template <typename T, require_var_t<T>* = nullptr>
+inline auto log2(T&& a) {
   return make_callback_var(log2(a.val()), [a](auto& vi) mutable {
     as_array_or_scalar(a.adj()) += as_array_or_scalar(vi.adj())
                                    / (LOG_TWO * as_array_or_scalar(a.val()));

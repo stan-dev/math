@@ -33,9 +33,9 @@ template <typename T_y_cl, typename T_loc_cl, typename T_scale_cl,
               T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl>* = nullptr,
           require_any_not_stan_scalar_t<T_y_cl, T_loc_cl, T_scale_cl,
                                         T_shape_cl>* = nullptr>
-return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl> pareto_type_2_lccdf(
-    const T_y_cl& y, const T_loc_cl& mu, const T_scale_cl& lambda,
-    const T_shape_cl& alpha) {
+inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl>
+pareto_type_2_lccdf(const T_y_cl& y, const T_loc_cl& mu,
+                    const T_scale_cl& lambda, const T_shape_cl& alpha) {
   static constexpr const char* function = "pareto_type_2_lccdf(OpenCL)";
   using T_partials_return
       = partials_return_t<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl>;
@@ -94,26 +94,26 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl> pareto_type_2_lccdf(
           y_deriv_cl, mu_deriv_cl, lambda_deriv_cl, alpha_deriv_cl)
       = expressions(y_nonnegative_expr, lambda_positive_finite_expr,
                     alpha_positive_finite_expr, diff_nonnegative_expr,
-                    lccdf_expr, calc_if<!is_constant<T_y_cl>::value>(y_deriv),
-                    calc_if<!is_constant<T_loc_cl>::value>(mu_deriv),
-                    calc_if<!is_constant<T_scale_cl>::value>(lambda_deriv),
-                    calc_if<!is_constant<T_shape_cl>::value>(alpha_deriv));
+                    lccdf_expr, calc_if<is_autodiff_v<T_y_cl>>(y_deriv),
+                    calc_if<is_autodiff_v<T_loc_cl>>(mu_deriv),
+                    calc_if<is_autodiff_v<T_scale_cl>>(lambda_deriv),
+                    calc_if<is_autodiff_v<T_shape_cl>>(alpha_deriv));
 
   T_partials_return lccdf = -from_matrix_cl(lccdf_cl).sum();
 
   auto ops_partials
       = make_partials_propagator(y_col, mu_col, lambda_col, alpha_col);
-  if (!is_constant_all<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl>::value) {
-    if (!is_constant<T_y_cl>::value) {
+  if constexpr (is_any_autodiff_v<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl>) {
+    if constexpr (is_autodiff_v<T_y_cl>) {
       partials<0>(ops_partials) = std::move(y_deriv_cl);
     }
-    if (!is_constant<T_loc_cl>::value) {
+    if constexpr (is_autodiff_v<T_loc_cl>) {
       partials<1>(ops_partials) = std::move(mu_deriv_cl);
     }
-    if (!is_constant<T_scale_cl>::value) {
+    if constexpr (is_autodiff_v<T_scale_cl>) {
       partials<2>(ops_partials) = std::move(lambda_deriv_cl);
     }
-    if (!is_constant<T_shape_cl>::value) {
+    if constexpr (is_autodiff_v<T_shape_cl>) {
       partials<3>(ops_partials) = std::move(alpha_deriv_cl);
     }
   }

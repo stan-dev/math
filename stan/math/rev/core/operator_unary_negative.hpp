@@ -35,8 +35,8 @@ namespace math {
  * @return Negation of variable.
  */
 inline var operator-(const var& a) {
-  return make_callback_var(
-      -a.val(), [a](const auto& vi) mutable { a.adj() -= vi.adj(); });
+  return make_callback_var(-a.val(),
+                           [a](auto&& vi) mutable { a.adj() -= vi.adj(); });
 }
 
 /**
@@ -48,7 +48,7 @@ inline var operator-(const var& a) {
  */
 template <typename T, require_var_matrix_t<T>* = nullptr>
 inline auto operator-(const T& a) {
-  return make_callback_var(-a.val(), [a](const auto& vi) mutable {
+  return make_callback_var(-a.val(), [a](auto&& vi) mutable {
     for (Eigen::Index j = 0; j < a.cols(); ++j) {
       for (Eigen::Index i = 0; i < a.rows(); ++i) {
         a.adj().coeffRef(i, j) -= vi.adj().coeff(i, j);

@@ -44,7 +44,7 @@ template <bool propto, typename T_y_cl, typename T_shape_cl,
               T_y_cl, T_shape_cl, T_inv_scale_cl>* = nullptr,
           require_any_not_stan_scalar_t<T_y_cl, T_shape_cl,
                                         T_inv_scale_cl>* = nullptr>
-return_type_t<T_y_cl, T_shape_cl, T_inv_scale_cl> gamma_lpdf(
+inline return_type_t<T_y_cl, T_shape_cl, T_inv_scale_cl> gamma_lpdf(
     const T_y_cl& y, const T_shape_cl& alpha, const T_inv_scale_cl& beta) {
   using std::isfinite;
   using std::isnan;
@@ -58,7 +58,8 @@ return_type_t<T_y_cl, T_shape_cl, T_inv_scale_cl> gamma_lpdf(
   if (N == 0) {
     return 0.0;
   }
-  if (!include_summand<propto, T_y_cl, T_shape_cl, T_inv_scale_cl>::value) {
+  if constexpr (!include_summand<propto, T_y_cl, T_shape_cl,
+                                 T_inv_scale_cl>::value) {
     return 0.0;
   }
 
@@ -107,12 +108,11 @@ return_type_t<T_y_cl, T_shape_cl, T_inv_scale_cl> gamma_lpdf(
 
   results(check_y_not_nan, check_alpha_pos_finite, check_beta_pos_finite,
           any_y_negative_cl, logp_cl, y_deriv_cl, alpha_deriv_cl, beta_deriv_cl)
-      = expressions(
-          y_not_nan_expr, alpha_pos_finite_expr, beta_pos_finite_expr,
-          any_y_negative_expr, logp_expr,
-          calc_if<!is_constant<T_y_cl>::value>(y_deriv_expr),
-          calc_if<!is_constant<T_shape_cl>::value>(alpha_deriv_expr),
-          calc_if<!is_constant<T_inv_scale_cl>::value>(beta_deriv_expr));
+      = expressions(y_not_nan_expr, alpha_pos_finite_expr, beta_pos_finite_expr,
+                    any_y_negative_expr, logp_expr,
+                    calc_if<is_autodiff_v<T_y_cl>>(y_deriv_expr),
+                    calc_if<is_autodiff_v<T_shape_cl>>(alpha_deriv_expr),
+                    calc_if<is_autodiff_v<T_inv_scale_cl>>(beta_deriv_expr));
 
   if (from_matrix_cl(any_y_negative_cl).any()) {
     return LOG_ZERO;
@@ -121,13 +121,13 @@ return_type_t<T_y_cl, T_shape_cl, T_inv_scale_cl> gamma_lpdf(
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
 
   auto ops_partials = make_partials_propagator(y_col, alpha_col, beta_col);
-  if (!is_constant<T_y_cl>::value) {
+  if constexpr (is_autodiff_v<T_y_cl>) {
     partials<0>(ops_partials) = std::move(y_deriv_cl);
   }
-  if (!is_constant<T_shape_cl>::value) {
+  if constexpr (is_autodiff_v<T_shape_cl>) {
     partials<1>(ops_partials) = std::move(alpha_deriv_cl);
   }
-  if (!is_constant<T_inv_scale_cl>::value) {
+  if constexpr (is_autodiff_v<T_inv_scale_cl>) {
     partials<2>(ops_partials) = std::move(beta_deriv_cl);
   }
 

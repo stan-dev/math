@@ -39,7 +39,7 @@ inline auto mdivide_left(const T1& A, const T2& B) {
     return ret_type(ret_val_type(0, B.cols()));
   }
 
-  if (!is_constant<T1>::value && !is_constant<T2>::value) {
+  if constexpr (is_autodiff_v<T1> && is_autodiff_v<T2>) {
     arena_t<promote_scalar_t<var, T1>> arena_A = A;
     arena_t<promote_scalar_t<var, T2>> arena_B = B;
 
@@ -57,7 +57,7 @@ inline auto mdivide_left(const T1& A, const T2& B) {
     });
 
     return ret_type(res);
-  } else if (!is_constant<T2>::value) {
+  } else if constexpr (is_autodiff_v<T2>) {
     arena_t<promote_scalar_t<var, T2>> arena_B = B;
 
     auto hqr_A_ptr = make_chainable_ptr(value_of(A).householderQr());

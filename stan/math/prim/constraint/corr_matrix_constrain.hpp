@@ -38,11 +38,11 @@ namespace math {
  */
 template <typename T, require_eigen_col_vector_t<T>* = nullptr>
 inline Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
-corr_matrix_constrain(const T& x, Eigen::Index k) {
+corr_matrix_constrain(T&& x, Eigen::Index k) {
   Eigen::Index k_choose_2 = (k * (k - 1)) / 2;
   check_size_match("cov_matrix_constrain", "x.size()", x.size(), "k_choose_2",
                    k_choose_2);
-  return read_corr_matrix(corr_constrain(x), k);
+  return read_corr_matrix(corr_constrain(std::forward<T>(x)), k);
 }
 
 /**
@@ -70,11 +70,11 @@ corr_matrix_constrain(const T& x, Eigen::Index k) {
 template <typename T, typename Lp, require_eigen_col_vector_t<T>* = nullptr,
           require_convertible_t<return_type_t<T>, Lp>* = nullptr>
 inline Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
-corr_matrix_constrain(const T& x, Eigen::Index k, Lp& lp) {
+corr_matrix_constrain(T&& x, Eigen::Index k, Lp& lp) {
   Eigen::Index k_choose_2 = (k * (k - 1)) / 2;
   check_size_match("cov_matrix_constrain", "x.size()", x.size(), "k_choose_2",
                    k_choose_2);
-  return read_corr_matrix(corr_constrain(x, lp), k, lp);
+  return read_corr_matrix(corr_constrain(std::forward<T>(x), lp), k, lp);
 }
 
 /**
@@ -91,9 +91,10 @@ corr_matrix_constrain(const T& x, Eigen::Index k, Lp& lp) {
  * @param K Dimensionality of returned correlation matrix
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
-inline auto corr_matrix_constrain(const T& y, int K) {
-  return apply_vector_unary<T>::apply(
-      y, [K](auto&& v) { return corr_matrix_constrain(v, K); });
+inline auto corr_matrix_constrain(T&& y, int K) {
+  return apply_vector_unary<T>::apply(std::forward<T>(y), [K](auto&& v) {
+    return corr_matrix_constrain(std::forward<decltype(v)>(v), K);
+  });
 }
 
 /**
@@ -114,9 +115,10 @@ inline auto corr_matrix_constrain(const T& y, int K) {
  */
 template <typename T, typename Lp, require_std_vector_t<T>* = nullptr,
           require_convertible_t<return_type_t<T>, Lp>* = nullptr>
-inline auto corr_matrix_constrain(const T& y, int K, Lp& lp) {
-  return apply_vector_unary<T>::apply(
-      y, [&lp, K](auto&& v) { return corr_matrix_constrain(v, K, lp); });
+inline auto corr_matrix_constrain(T&& y, int K, Lp& lp) {
+  return apply_vector_unary<T>::apply(std::forward<T>(y), [&lp, K](auto&& v) {
+    return corr_matrix_constrain(std::forward<decltype(v)>(v), K, lp);
+  });
 }
 
 /**
@@ -142,11 +144,11 @@ inline auto corr_matrix_constrain(const T& y, int K, Lp& lp) {
  */
 template <bool Jacobian, typename T, typename Lp,
           require_convertible_t<return_type_t<T>, Lp>* = nullptr>
-inline auto corr_matrix_constrain(const T& x, Eigen::Index k, Lp& lp) {
+inline auto corr_matrix_constrain(T&& x, Eigen::Index k, Lp& lp) {
   if constexpr (Jacobian) {
-    return corr_matrix_constrain(x, k, lp);
+    return corr_matrix_constrain(std::forward<T>(x), k, lp);
   } else {
-    return corr_matrix_constrain(x, k);
+    return corr_matrix_constrain(std::forward<T>(x), k);
   }
 }
 

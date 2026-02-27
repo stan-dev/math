@@ -21,7 +21,7 @@ namespace math {
 template <typename T_y, typename T_loc, typename T_scale, typename T_shape,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_loc, T_scale, T_shape>* = nullptr>
-return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lcdf(
+inline return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lcdf(
     const T_y& y, const T_loc& mu, const T_scale& lambda,
     const T_shape& alpha) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_shape>;
@@ -55,39 +55,38 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lcdf(
   check_positive_finite(function, "Shape parameter", alpha_val);
   check_greater_or_equal(function, "Random variable", y_val, mu_val);
 
-  const auto& temp = to_ref_if<!is_constant_all<T_shape>::value>(
-      1 + (y_val - mu_val) / lambda_val);
+  const auto& temp
+      = to_ref_if<is_autodiff_v<T_shape>>(1 + (y_val - mu_val) / lambda_val);
   const auto& p1_pow_alpha
-      = to_ref_if<!is_constant_all<T_y, T_loc, T_scale, T_shape>::value>(
+      = to_ref_if<is_any_autodiff_v<T_y, T_loc, T_scale, T_shape>>(
           pow(temp, alpha_val));
   T_partials_return P = sum(log1m(1 / p1_pow_alpha));
 
   auto ops_partials
       = make_partials_propagator(y_ref, mu_ref, lambda_ref, alpha_ref);
 
-  if (!is_constant_all<T_y, T_loc, T_scale, T_shape>::value) {
+  if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale, T_shape>) {
     const auto& inv_p1_pow_alpha_minus_one
-        = to_ref_if<(!is_constant_all<T_y, T_loc, T_scale, T_shape>::value
-                     && !is_constant_all<T_shape>::value)>(
+        = to_ref_if<(is_any_autodiff_v<T_y, T_loc, T_scale,
+                                       T_shape> && is_autodiff_v<T_shape>)>(
             inv(p1_pow_alpha - 1));
-    if (!is_constant_all<T_y, T_loc, T_scale, T_shape>::value) {
-      auto grad_1_2 = to_ref_if<(!is_constant_all<T_loc>::value
-                                 + !is_constant_all<T_scale>::value
-                                 + !is_constant_all<T_y>::value)
-                                >= 2>(alpha_val * inv_p1_pow_alpha_minus_one
-                                      / (lambda_val - mu_val + y_val));
-      if (!is_constant_all<T_loc>::value) {
+    if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale, T_shape>) {
+      auto grad_1_2 = to_ref_if<
+          (is_autodiff_v<T_loc> + is_autodiff_v<T_scale> + is_autodiff_v<T_y>)
+          >= 2>(alpha_val * inv_p1_pow_alpha_minus_one
+                / (lambda_val - mu_val + y_val));
+      if constexpr (is_autodiff_v<T_loc>) {
         partials<1>(ops_partials) = -grad_1_2;
       }
-      if (!is_constant_all<T_scale>::value) {
+      if constexpr (is_autodiff_v<T_scale>) {
         edge<2>(ops_partials).partials_
             = (mu_val - y_val) * grad_1_2 / lambda_val;
       }
-      if (!is_constant_all<T_y>::value) {
+      if constexpr (is_autodiff_v<T_y>) {
         partials<0>(ops_partials) = std::move(grad_1_2);
       }
     }
-    if (!is_constant_all<T_shape>::value) {
+    if constexpr (is_autodiff_v<T_shape>) {
       partials<3>(ops_partials) = log(temp) * inv_p1_pow_alpha_minus_one;
     }
   }

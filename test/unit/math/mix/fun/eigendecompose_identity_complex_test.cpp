@@ -1,7 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
 
 template <typename T>
-void expect_identity_matrix_complex(const T& x) {
+inline void expect_identity_matrix_complex(const T& x) {
   EXPECT_EQ(x.rows(), x.cols());
   for (int j = 0; j < x.cols(); ++j) {
     for (int i = 0; i < x.rows(); ++i) {
@@ -12,7 +12,7 @@ void expect_identity_matrix_complex(const T& x) {
 }
 
 template <typename T>
-void expectComplexEigenvectorsId() {
+inline void expectComplexEigenvectorsId() {
   Eigen::Matrix<std::complex<T>, -1, -1> c22(2, 2);
   c22 << stan::math::to_complex(T(0), T(-1)),
       stan::math::to_complex(T(0), T(0)), stan::math::to_complex(T(2), T(0)),

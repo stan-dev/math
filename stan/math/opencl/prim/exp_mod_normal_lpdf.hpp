@@ -36,9 +36,9 @@ template <bool propto, typename T_y_cl, typename T_loc_cl, typename T_scale_cl,
               T_y_cl, T_loc_cl, T_scale_cl, T_inv_scale_cl>* = nullptr,
           require_any_not_stan_scalar_t<T_y_cl, T_loc_cl, T_scale_cl,
                                         T_inv_scale_cl>* = nullptr>
-return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_inv_scale_cl> exp_mod_normal_lpdf(
-    const T_y_cl& y, const T_loc_cl& mu, const T_scale_cl& sigma,
-    const T_inv_scale_cl& lambda) {
+inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_inv_scale_cl>
+exp_mod_normal_lpdf(const T_y_cl& y, const T_loc_cl& mu,
+                    const T_scale_cl& sigma, const T_inv_scale_cl& lambda) {
   static constexpr const char* function = "exp_mod_normal_lpdf(OpenCL)";
   using T_partials_return
       = partials_return_t<T_y_cl, T_loc_cl, T_scale_cl, T_inv_scale_cl>;
@@ -118,31 +118,30 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_inv_scale_cl> exp_mod_normal_lpdf(
   results(check_y_not_nan, check_mu_finite, check_sigma_positive_finite,
           check_lambda_positive_finite, logp_cl, y_deriv_cl, mu_deriv_cl,
           sigma_deriv_cl, lambda_deriv_cl)
-      = expressions(
-          y_not_nan_expr, mu_finite_expr, sigma_positive_finite_expr,
-          lambda_positive_finite_expr, logp_expr,
-          calc_if<!is_constant<T_y_cl>::value>(-deriv_expr),
-          calc_if<!is_constant<T_loc_cl>::value>(deriv_expr),
-          calc_if<!is_constant<T_scale_cl>::value>(deriv_sigma_expr),
-          calc_if<!is_constant<T_inv_scale_cl>::value>(deriv_lambda_expr));
+      = expressions(y_not_nan_expr, mu_finite_expr, sigma_positive_finite_expr,
+                    lambda_positive_finite_expr, logp_expr,
+                    calc_if<is_autodiff_v<T_y_cl>>(-deriv_expr),
+                    calc_if<is_autodiff_v<T_loc_cl>>(deriv_expr),
+                    calc_if<is_autodiff_v<T_scale_cl>>(deriv_sigma_expr),
+                    calc_if<is_autodiff_v<T_inv_scale_cl>>(deriv_lambda_expr));
 
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
-  if (include_summand<propto>::value) {
+  if constexpr (include_summand<propto>::value) {
     logp -= LOG_TWO * N;
   }
 
   auto ops_partials
       = make_partials_propagator(y_col, mu_col, sigma_col, lambda_col);
-  if (!is_constant<T_y_cl>::value) {
+  if constexpr (is_autodiff_v<T_y_cl>) {
     partials<0>(ops_partials) = std::move(y_deriv_cl);
   }
-  if (!is_constant<T_loc_cl>::value) {
+  if constexpr (is_autodiff_v<T_loc_cl>) {
     partials<1>(ops_partials) = std::move(mu_deriv_cl);
   }
-  if (!is_constant<T_scale_cl>::value) {
+  if constexpr (is_autodiff_v<T_scale_cl>) {
     partials<2>(ops_partials) = std::move(sigma_deriv_cl);
   }
-  if (!is_constant<T_inv_scale_cl>::value) {
+  if constexpr (is_autodiff_v<T_inv_scale_cl>) {
     partials<3>(ops_partials) = std::move(lambda_deriv_cl);
   }
   return ops_partials.build(logp);

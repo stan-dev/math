@@ -23,9 +23,9 @@ namespace math {
 template <typename T_y, typename T_shape, typename T_scale,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_shape, T_scale>* = nullptr>
-return_type_t<T_y, T_shape, T_scale> frechet_lcdf(const T_y& y,
-                                                  const T_shape& alpha,
-                                                  const T_scale& sigma) {
+inline return_type_t<T_y, T_shape, T_scale> frechet_lcdf(const T_y& y,
+                                                         const T_shape& alpha,
+                                                         const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_shape, T_scale>;
   using T_y_ref = ref_type_t<T_y>;
   using T_alpha_ref = ref_type_t<T_shape>;
@@ -60,13 +60,13 @@ return_type_t<T_y, T_shape, T_scale> frechet_lcdf(const T_y& y,
 
     cdf_log -= pow_n;
 
-    if (!is_constant_all<T_y>::value) {
+    if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials)[n] += pow_n * alpha_dbl / y_dbl;
     }
-    if (!is_constant_all<T_shape>::value) {
+    if constexpr (is_autodiff_v<T_shape>) {
       partials<1>(ops_partials)[n] += pow_n * log(y_dbl / sigma_dbl);
     }
-    if (!is_constant_all<T_scale>::value) {
+    if constexpr (is_autodiff_v<T_scale>) {
       partials<2>(ops_partials)[n] -= pow_n * alpha_dbl / sigma_dbl;
     }
   }

@@ -17,12 +17,11 @@ namespace math {
  * @throw std::out_of_range if s is out of range.
  */
 template <typename C, require_container_t<C>* = nullptr>
-inline int rank(const C& v, int s) {
+inline int rank(C&& v, int s) {
   check_range("rank", "v", v.size(), s);
   --s;  // adjust for indexing by one
-  return apply_vector_unary<C>::reduce(v, [s](const auto& vec) {
-    const auto& vec_ref = to_ref(vec);
-
+  return apply_vector_unary<C>::reduce(std::forward<C>(v), [s](auto&& vec) {
+    auto&& vec_ref = to_ref(std::forward<decltype(vec)>(vec));
     return (vec_ref.array() < vec_ref.coeff(s)).template cast<int>().sum();
   });
 }

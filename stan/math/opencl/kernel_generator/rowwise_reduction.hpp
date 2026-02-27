@@ -408,7 +408,7 @@ struct max_op {
   }
 
   inline static std::string init() {
-    if (std::is_floating_point<T>()) {
+    if constexpr (std::is_floating_point<T>()) {
       return "-INFINITY";
     }
     return "INT_MIN";

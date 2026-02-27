@@ -65,10 +65,9 @@ class AgradDistributionsPoisson : public AgradDistributionTest {
                                                      const T_rate& lambda,
                                                      const T2&, const T3&,
                                                      const T4&, const T5&) {
-    using boost::math::lgamma;
+    using stan::math::lgamma;
     using stan::math::LOG_ZERO;
     using stan::math::multiply_log;
-
     if (lambda == 0)
       return n == 0 ? 0 : LOG_ZERO;
 

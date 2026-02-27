@@ -23,9 +23,8 @@ namespace math {
  * @return Generalized hypergeometric function
  */
 template <typename Ta, typename Tb, typename Tz,
-          bool grad_a = !is_constant<Ta>::value,
-          bool grad_b = !is_constant<Tb>::value,
-          bool grad_z = !is_constant<Tz>::value,
+          bool grad_a = is_autodiff_v<Ta>, bool grad_b = is_autodiff_v<Tb>,
+          bool grad_z = is_autodiff_v<Tz>,
           require_all_vector_t<Ta, Tb>* = nullptr,
           require_return_type_t<is_var, Ta, Tb, Tz>* = nullptr>
 inline var hypergeometric_pFq(Ta&& a, Tb&& b, Tz&& z) {

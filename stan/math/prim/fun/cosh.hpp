@@ -20,7 +20,7 @@ namespace math {
  * @return hyperbolic cosine of the argument
  */
 template <typename T, require_arithmetic_t<T>* = nullptr>
-inline auto cosh(const T x) {
+inline auto cosh(T&& x) {
   return std::cosh(x);
 }
 
@@ -32,7 +32,7 @@ inline auto cosh(const T x) {
  * @return hyperbolic cosine of the argument
  */
 template <typename T, require_complex_bt<std::is_arithmetic, T>* = nullptr>
-inline auto cosh(const T x) {
+inline auto cosh(T&& x) {
   return std::cosh(x);
 }
 
@@ -45,8 +45,8 @@ inline auto cosh(const T x) {
  */
 struct cosh_fun {
   template <typename T>
-  static inline auto fun(const T& x) {
-    return cosh(x);
+  static inline auto fun(T&& x) {
+    return cosh(std::forward<T>(x));
   }
 };
 
@@ -59,8 +59,9 @@ struct cosh_fun {
  * @return Hyberbolic cosine of x.
  */
 template <typename Container, require_ad_container_t<Container>* = nullptr>
-inline auto cosh(const Container& x) {
-  return apply_scalar_unary<cosh_fun, Container>::apply(x);
+inline auto cosh(Container&& x) {
+  return apply_scalar_unary<cosh_fun, Container>::apply(
+      std::forward<Container>(x));
 }
 
 /**
@@ -73,9 +74,9 @@ inline auto cosh(const Container& x) {
  */
 template <typename Container,
           require_container_bt<std::is_arithmetic, Container>* = nullptr>
-inline auto cosh(const Container& x) {
+inline auto cosh(Container&& x) {
   return apply_vector_unary<Container>::apply(
-      x, [](const auto& v) { return v.array().cosh(); });
+      std::forward<Container>(x), [](auto&& v) { return v.array().cosh(); });
 }
 
 namespace internal {

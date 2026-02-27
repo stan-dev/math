@@ -24,7 +24,7 @@ namespace math {
  */
 template <typename T_theta, typename T_scalar = scalar_type_t<T_theta>,
           require_vector_t<T_theta>* = nullptr>
-Eigen::Matrix<T_scalar, -1, 1> poisson_binomial_log_probs(
+inline Eigen::Matrix<T_scalar, -1, 1> poisson_binomial_log_probs(
     int y, const T_theta& theta) {
   int size_theta = theta.size();
   plain_type_t<T_theta> log_theta = log(theta);
@@ -54,7 +54,7 @@ Eigen::Matrix<T_scalar, -1, 1> poisson_binomial_log_probs(
 }
 
 template <typename T_y, typename T_theta, require_vt_integral<T_y>* = nullptr>
-auto poisson_binomial_log_probs(const T_y& y, const T_theta& theta) {
+inline auto poisson_binomial_log_probs(const T_y& y, const T_theta& theta) {
   using T_scalar = scalar_type_t<T_theta>;
   size_t max_sizes = std::max(stan::math::size(y), size_mvt(theta));
   std::vector<Eigen::Matrix<T_scalar, Eigen::Dynamic, 1>> result(max_sizes);

@@ -32,7 +32,7 @@ template <typename Mat1, typename Mat2,
           require_any_eigen_vt<is_var, Mat1, Mat2>* = nullptr>
 inline Eigen::Matrix<var, Mat1::RowsAtCompileTime, 1> rows_dot_product(
     const Mat1& v1, const Mat2& v2) {
-  check_matching_sizes("dot_product", "v1", v1, "v2", v2);
+  check_matching_dims("rows_dot_product", "v1", v1, "v2", v2);
   Eigen::Matrix<var, Mat1::RowsAtCompileTime, 1> ret(v1.rows(), 1);
   for (size_type j = 0; j < v1.rows(); ++j) {
     ret.coeffRef(j) = dot_product(v1.row(j), v2.row(j));
@@ -61,13 +61,13 @@ template <typename Mat1, typename Mat2,
           require_all_matrix_t<Mat1, Mat2>* = nullptr,
           require_any_var_matrix_t<Mat1, Mat2>* = nullptr>
 inline auto rows_dot_product(const Mat1& v1, const Mat2& v2) {
-  check_matching_sizes("rows_dot_product", "v1", v1, "v2", v2);
+  check_matching_dims("rows_dot_product", "v1", v1, "v2", v2);
 
   using return_t = return_var_matrix_t<
       decltype((v1.val().array() * v2.val().array()).rowwise().sum().matrix()),
       Mat1, Mat2>;
 
-  if (!is_constant<Mat1>::value && !is_constant<Mat2>::value) {
+  if constexpr (is_autodiff_v<Mat1> && is_autodiff_v<Mat2>) {
     arena_t<promote_scalar_t<var, Mat1>> arena_v1 = v1;
     arena_t<promote_scalar_t<var, Mat2>> arena_v2 = v2;
 
@@ -75,12 +75,12 @@ inline auto rows_dot_product(const Mat1& v1, const Mat2& v2) {
         = (arena_v1.val().array() * arena_v2.val().array()).rowwise().sum();
 
     reverse_pass_callback([arena_v1, arena_v2, res]() mutable {
-      if (is_var_matrix<Mat1>::value) {
+      if constexpr (is_var_matrix<Mat1>::value) {
         arena_v1.adj().noalias() += res.adj().asDiagonal() * arena_v2.val();
       } else {
         arena_v1.adj() += res.adj().asDiagonal() * arena_v2.val();
       }
-      if (is_var_matrix<Mat2>::value) {
+      if constexpr (is_var_matrix<Mat2>::value) {
         arena_v2.adj().noalias() += res.adj().asDiagonal() * arena_v1.val();
       } else {
         arena_v2.adj() += res.adj().asDiagonal() * arena_v1.val();
@@ -88,14 +88,14 @@ inline auto rows_dot_product(const Mat1& v1, const Mat2& v2) {
     });
 
     return res;
-  } else if (!is_constant<Mat2>::value) {
+  } else if constexpr (is_autodiff_v<Mat2>) {
     arena_t<promote_scalar_t<double, Mat1>> arena_v1 = value_of(v1);
     arena_t<promote_scalar_t<var, Mat2>> arena_v2 = v2;
 
     return_t res = (arena_v1.array() * arena_v2.val().array()).rowwise().sum();
 
     reverse_pass_callback([arena_v1, arena_v2, res]() mutable {
-      if (is_var_matrix<Mat2>::value) {
+      if constexpr (is_var_matrix<Mat2>::value) {
         arena_v2.adj().noalias() += res.adj().asDiagonal() * arena_v1;
       } else {
         arena_v2.adj() += res.adj().asDiagonal() * arena_v1;
@@ -110,7 +110,7 @@ inline auto rows_dot_product(const Mat1& v1, const Mat2& v2) {
     return_t res = (arena_v1.val().array() * arena_v2.array()).rowwise().sum();
 
     reverse_pass_callback([arena_v1, arena_v2, res]() mutable {
-      if (is_var_matrix<Mat2>::value) {
+      if constexpr (is_var_matrix<Mat2>::value) {
         arena_v1.adj().noalias() += res.adj().asDiagonal() * arena_v2;
       } else {
         arena_v1.adj() += res.adj().asDiagonal() * arena_v2;

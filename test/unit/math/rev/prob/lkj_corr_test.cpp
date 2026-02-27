@@ -6,7 +6,7 @@
 #include <boost/math/distributions.hpp>
 #include <gtest/gtest.h>
 
-TEST(ProbDistributionsLkjCorr, var) {
+TEST_F(AgradRev, ProbDistributionsLkjCorr_var) {
   using stan::math::var;
   boost::random::mt19937 rng;
   int K = 4;
@@ -27,7 +27,7 @@ TEST(ProbDistributionsLkjCorr, var) {
   EXPECT_FLOAT_EQ(f.val(), stan::math::lkj_corr_lpdf(Sigma, eta_d).val());
 }
 
-TEST(ProbDistributionsLkjCorrCholesky, var) {
+TEST_F(AgradRev, ProbDistributionsLkjCorrCholesky_var) {
   using stan::math::var;
   boost::random::mt19937 rng;
   int K = 4;
@@ -52,7 +52,7 @@ TEST(ProbDistributionsLkjCorrCholesky, var) {
                   stan::math::lkj_corr_cholesky_lpdf(Sigma, eta_d).val());
 }
 
-TEST(ProbDistributionsLkjCorrCholesky, gradients) {
+TEST_F(AgradRev, ProbDistributionsLkjCorrCholesky_gradients) {
   using stan::math::var;
   int dim_mat = 3;
   Eigen::Matrix<double, Eigen::Dynamic, 1> x1(dim_mat);

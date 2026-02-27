@@ -28,9 +28,9 @@ namespace math {
 template <typename F, typename T1, typename T2,
           require_any_var_matrix_t<T1, T2>* = nullptr,
           require_all_matrix_t<T1, T2>* = nullptr>
-inline auto apply_scalar_binary(const F& f, const T1& x, const T2& y) {
+inline auto apply_scalar_binary(F&& f, T1&& x, T2&& y) {
   check_matching_dims("Binary function", "x", x, "y", y);
-  return f(x, y);
+  return std::forward<F>(f)(std::forward<T1>(x), std::forward<T2>(y));
 }
 
 /**
@@ -48,9 +48,9 @@ inline auto apply_scalar_binary(const F& f, const T1& x, const T2& y) {
 template <typename F, typename T1, typename T2,
           require_any_var_matrix_t<T1, T2>* = nullptr,
           require_any_std_vector_vt<std::is_integral, T1, T2>* = nullptr>
-inline auto apply_scalar_binary(const F& f, const T1& x, const T2& y) {
+inline auto apply_scalar_binary(F&& f, T1&& x, T2&& y) {
   check_matching_sizes("Binary function", "x", x, "y", y);
-  return f(x, y);
+  return std::forward<F>(f)(std::forward<T1>(x), std::forward<T2>(y));
 }
 
 /**
@@ -63,7 +63,7 @@ inline auto apply_scalar_binary(const F& f, const T1& x, const T2& y) {
  * @param f functor to apply to inputs.
  * @param x Either a var matrix or nested integer std::vector input to which
  * operation is applied.
- * @param x Either a var matrix or nested integer std::vector input to which
+ * @param y Either a var matrix or nested integer std::vector input to which
  * operation is applied.
  * @return Eigen object with result of applying functor to inputs.
  */
@@ -71,8 +71,8 @@ template <typename F, typename T1, typename T2,
           require_any_std_vector_vt<is_std_vector, T1, T2>* = nullptr,
           require_any_std_vector_st<std::is_integral, T1, T2>* = nullptr,
           require_any_var_matrix_t<T1, T2>* = nullptr>
-inline auto apply_scalar_binary(const F& f, const T1& x, const T2& y) {
-  return f(x, y);
+inline auto apply_scalar_binary(F&& f, T1&& x, T2&& y) {
+  return std::forward<F>(f)(std::forward<T1>(x), std::forward<T2>(y));
 }
 
 /**
@@ -86,15 +86,15 @@ inline auto apply_scalar_binary(const F& f, const T1& x, const T2& y) {
  * functor is applied.
  * @param f functor to apply to var matrix and scalar inputs.
  * @param x Matrix or Scalar input to which operation is applied.
- * @param x Matrix or Scalar input to which operation is applied.
+ * @param y Matrix or Scalar input to which operation is applied.
  * @return `var_value<Matrix> object with result of applying functor to inputs.
  *
  */
 template <typename F, typename T1, typename T2,
           require_any_stan_scalar_t<T1, T2>* = nullptr,
           require_any_var_matrix_t<T1, T2>* = nullptr>
-inline auto apply_scalar_binary(const F& f, const T1& x, const T2& y) {
-  return f(x, y);
+inline auto apply_scalar_binary(F&& f, T1&& x, T2&& y) {
+  return std::forward<F>(f)(std::forward<T1>(x), std::forward<T2>(y));
 }
 
 }  // namespace math

@@ -54,8 +54,8 @@ namespace math {
  */
 template <typename F, typename T_y0, typename T_t0, typename T_ts,
           typename... Args, require_eigen_vector_t<T_y0>* = nullptr>
-std::vector<Eigen::Matrix<stan::return_type_t<T_y0, T_t0, T_ts, Args...>,
-                          Eigen::Dynamic, 1>>
+inline std::vector<Eigen::Matrix<stan::return_type_t<T_y0, T_t0, T_ts, Args...>,
+                                 Eigen::Dynamic, 1>>
 ode_rk45_tol_impl(const char* function_name, const F& f, const T_y0& y0_arg,
                   T_t0 t0, const std::vector<T_ts>& ts,
                   double relative_tolerance, double absolute_tolerance,
@@ -196,8 +196,8 @@ ode_rk45_tol_impl(const char* function_name, const F& f, const T_y0& y0_arg,
  */
 template <typename F, typename T_y0, typename T_t0, typename T_ts,
           typename... Args, require_eigen_vector_t<T_y0>* = nullptr>
-std::vector<Eigen::Matrix<stan::return_type_t<T_y0, T_t0, T_ts, Args...>,
-                          Eigen::Dynamic, 1>>
+inline std::vector<Eigen::Matrix<stan::return_type_t<T_y0, T_t0, T_ts, Args...>,
+                                 Eigen::Dynamic, 1>>
 ode_rk45_tol(const F& f, const T_y0& y0_arg, T_t0 t0,
              const std::vector<T_ts>& ts, double relative_tolerance,
              double absolute_tolerance,
@@ -242,8 +242,8 @@ ode_rk45_tol(const F& f, const T_y0& y0_arg, T_t0 t0,
  */
 template <typename F, typename T_y0, typename T_t0, typename T_ts,
           typename... Args, require_eigen_vector_t<T_y0>* = nullptr>
-std::vector<Eigen::Matrix<stan::return_type_t<T_y0, T_t0, T_ts, Args...>,
-                          Eigen::Dynamic, 1>>
+inline std::vector<Eigen::Matrix<stan::return_type_t<T_y0, T_t0, T_ts, Args...>,
+                                 Eigen::Dynamic, 1>>
 ode_rk45(const F& f, const T_y0& y0, T_t0 t0, const std::vector<T_ts>& ts,
          std::ostream* msgs, const Args&... args) {
   double relative_tolerance = 1e-6;

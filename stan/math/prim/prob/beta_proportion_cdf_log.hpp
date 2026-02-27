@@ -11,9 +11,8 @@ namespace math {
  * @deprecated use <code>beta_proportion_lcdf</code>
  */
 template <typename T_y, typename T_loc, typename T_prec>
-return_type_t<T_y, T_loc, T_prec> beta_proportion_cdf_log(const T_y& y,
-                                                          const T_loc& mu,
-                                                          const T_prec& kappa) {
+inline return_type_t<T_y, T_loc, T_prec> beta_proportion_cdf_log(
+    const T_y& y, const T_loc& mu, const T_prec& kappa) {
   return beta_proportion_lcdf<T_y, T_loc, T_prec>(y, mu, kappa);
 }
 

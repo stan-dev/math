@@ -35,8 +35,8 @@ template <
     bool propto, typename T_y_cl, typename T_dof_cl,
     require_all_prim_or_rev_kernel_expression_t<T_y_cl, T_dof_cl>* = nullptr,
     require_any_not_stan_scalar_t<T_y_cl, T_dof_cl>* = nullptr>
-return_type_t<T_y_cl, T_dof_cl> chi_square_lpdf(const T_y_cl& y,
-                                                const T_dof_cl& nu) {
+inline return_type_t<T_y_cl, T_dof_cl> chi_square_lpdf(const T_y_cl& y,
+                                                       const T_dof_cl& nu) {
   static constexpr const char* function = "chi_square_lpdf(OpenCL)";
   using T_partials_return = partials_return_t<T_y_cl, T_dof_cl>;
   using std::isfinite;
@@ -47,7 +47,7 @@ return_type_t<T_y_cl, T_dof_cl> chi_square_lpdf(const T_y_cl& y,
   if (N == 0) {
     return 0.0;
   }
-  if (!include_summand<propto, T_y_cl, T_dof_cl>::value) {
+  if constexpr (!include_summand<propto, T_y_cl, T_dof_cl>::value) {
     return 0.0;
   }
 
@@ -85,17 +85,17 @@ return_type_t<T_y_cl, T_dof_cl> chi_square_lpdf(const T_y_cl& y,
   results(check_y_nonnegative, check_nu_positive_finite, logp_cl, y_deriv_cl,
           nu_deriv_cl)
       = expressions(y_nonnegative_expr, nu_positive_finite_expr, logp_expr,
-                    calc_if<!is_constant<T_y_cl>::value>(y_deriv_expr),
-                    calc_if<!is_constant<T_dof_cl>::value>(nu_deriv_expr));
+                    calc_if<is_autodiff_v<T_y_cl>>(y_deriv_expr),
+                    calc_if<is_autodiff_v<T_dof_cl>>(nu_deriv_expr));
 
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
 
   auto ops_partials = make_partials_propagator(y_col, nu_col);
 
-  if (!is_constant<T_y_cl>::value) {
+  if constexpr (is_autodiff_v<T_y_cl>) {
     partials<0>(ops_partials) = std::move(y_deriv_cl);
   }
-  if (!is_constant<T_dof_cl>::value) {
+  if constexpr (is_autodiff_v<T_dof_cl>) {
     partials<1>(ops_partials) = std::move(nu_deriv_cl);
   }
   return ops_partials.build(logp);

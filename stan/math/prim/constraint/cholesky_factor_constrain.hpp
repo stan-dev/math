@@ -101,9 +101,10 @@ cholesky_factor_constrain(const T& x, int M, int N, Lp& lp) {
  * @return Cholesky factor
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
-inline auto cholesky_factor_constrain(const T& x, int M, int N) {
-  return apply_vector_unary<T>::apply(
-      x, [M, N](auto&& v) { return cholesky_factor_constrain(v, M, N); });
+inline auto cholesky_factor_constrain(T&& x, int M, int N) {
+  return apply_vector_unary<T>::apply(std::forward<T>(x), [M, N](auto&& v) {
+    return cholesky_factor_constrain(std::forward<decltype(v)>(v), M, N);
+  });
 }
 
 /**
@@ -125,9 +126,10 @@ inline auto cholesky_factor_constrain(const T& x, int M, int N) {
  */
 template <typename T, typename Lp, require_std_vector_t<T>* = nullptr,
           require_convertible_t<return_type_t<T>, Lp>* = nullptr>
-inline auto cholesky_factor_constrain(const T& x, int M, int N, Lp& lp) {
-  return apply_vector_unary<T>::apply(x, [&lp, M, N](auto&& v) {
-    return cholesky_factor_constrain(v, M, N, lp);
+inline auto cholesky_factor_constrain(T&& x, int M, int N, Lp& lp) {
+  return apply_vector_unary<T>::apply(std::forward<T>(x), [&lp, M,
+                                                           N](auto&& v) {
+    return cholesky_factor_constrain(std::forward<decltype(v)>(v), M, N, lp);
   });
 }
 
@@ -155,11 +157,11 @@ inline auto cholesky_factor_constrain(const T& x, int M, int N, Lp& lp) {
  */
 template <bool Jacobian, typename T, typename Lp,
           require_convertible_t<return_type_t<T>, Lp>* = nullptr>
-inline auto cholesky_factor_constrain(const T& x, int M, int N, Lp& lp) {
+inline auto cholesky_factor_constrain(T&& x, int M, int N, Lp& lp) {
   if constexpr (Jacobian) {
-    return cholesky_factor_constrain(x, M, N, lp);
+    return cholesky_factor_constrain(std::forward<T>(x), M, N, lp);
   } else {
-    return cholesky_factor_constrain(x, M, N);
+    return cholesky_factor_constrain(std::forward<T>(x), M, N);
   }
 }
 

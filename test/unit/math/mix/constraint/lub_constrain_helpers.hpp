@@ -3,7 +3,7 @@
 
 namespace lub_constrain_tests {
 template <typename T1, typename T2, typename T3>
-void expect(const T1& x, const T2& lb, const T3& ub) {
+inline void expect(const T1& x, const T2& lb, const T3& ub) {
   auto f1 = [](const auto& x, const auto& lb, const auto& ub) {
     stan::return_type_t<decltype(x), decltype(lb), decltype(ub)> lp = 0;
     return stan::math::lub_constrain<false>(x, lb, ub, lp);
@@ -39,7 +39,7 @@ void expect(const T1& x, const T2& lb, const T3& ub) {
   stan::test::expect_ad(f6, x, lb, ub);
 }
 template <typename T1, typename T2, typename T3>
-void expect_vec(const T1& x, const T2& lb, const T3& ub) {
+inline void expect_vec(const T1& x, const T2& lb, const T3& ub) {
   auto f1 = [](const auto& x, const auto& lb, const auto& ub) {
     stan::return_type_t<decltype(x), decltype(lb), decltype(ub)> lp = 0;
     return stan::math::lub_constrain<false>(x, lb, ub, lp);

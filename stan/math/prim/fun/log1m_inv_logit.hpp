@@ -30,26 +30,17 @@ namespace math {
    \end{cases}
    \f]
  *
- * @param u argument
+ * @tparam T An arithmetic type.
+ * @param uu argument
  * @return log of one minus the inverse logit of the argument
  */
-inline double log1m_inv_logit(double u) {
-  using std::exp;
+template <typename T, require_arithmetic_t<T>* = nullptr>
+inline double log1m_inv_logit(T&& uu) {
+  const auto u = static_cast<double>(uu);
   if (u > 0.0) {
     return -u - log1p_exp(-u);  // prevent underflow
   }
   return -log1p_exp(u);
-}
-
-/**
- * Return the natural logarithm of one minus the inverse logit of
- * the specified argument.
- *
- * @param u argument
- * @return log of one minus the inverse logit of the argument
- */
-inline double log1m_inv_logit(int u) {
-  return log1m_inv_logit(static_cast<double>(u));
 }
 
 /**
@@ -65,8 +56,8 @@ struct log1m_inv_logit_fun {
    * @return natural log of one minus inverse logit of argument
    */
   template <typename T>
-  static inline auto fun(const T& x) {
-    return log1m_inv_logit(x);
+  static inline auto fun(T&& x) {
+    return log1m_inv_logit(std::forward<T>(x));
   }
 };
 
@@ -81,10 +72,10 @@ struct log1m_inv_logit_fun {
  * @return Elementwise log1m_inv_logit of members of container.
  */
 template <typename T, require_not_var_matrix_t<T>* = nullptr,
-          require_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr>
-inline typename apply_scalar_unary<log1m_inv_logit_fun, T>::return_t
-log1m_inv_logit(const T& x) {
-  return apply_scalar_unary<log1m_inv_logit_fun, T>::apply(x);
+          require_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr,
+          require_container_t<T>* = nullptr>
+inline auto log1m_inv_logit(T&& x) {
+  return apply_scalar_unary<log1m_inv_logit_fun, T>::apply(std::forward<T>(x));
 }
 
 }  // namespace math

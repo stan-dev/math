@@ -36,8 +36,8 @@ jobs:
         ]
 
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-python@v5
+    - uses: actions/checkout@v6
+    - uses: actions/setup-python@v6
       with:
         python-version: '3.x'
 
@@ -71,7 +71,7 @@ jobs:
         python runTests.py -j4 ${{ matrix.config.tests }}
 
     - name: Upload gtest_output xml
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       if: failure()
       with:
         name: gtest_outputs_xml
@@ -87,8 +87,8 @@ jobs:
         group: [1, 2, 3, 4, 5]
 
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-python@v5
+    - uses: actions/checkout@v6
+    - uses: actions/setup-python@v6
       with:
         python-version: '3.x'
 
@@ -134,7 +134,7 @@ jobs:
         python runTests.py -j2 $MixFunProbTestsArray[(${{ matrix.group }} - 1)]
 
     - name: Upload gtest_output xml
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       if: failure()
       with:
         name: gtest_outputs_xml

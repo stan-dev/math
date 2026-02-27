@@ -27,7 +27,7 @@ namespace math {
 template <typename T_n, typename T_prob,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_n, T_prob>* = nullptr>
-return_type_t<T_prob> bernoulli_lcdf(const T_n& n, const T_prob& theta) {
+inline return_type_t<T_prob> bernoulli_lcdf(const T_n& n, const T_prob& theta) {
   using T_theta_ref = ref_type_t<T_prob>;
   static constexpr const char* function = "bernoulli_lcdf";
   check_consistent_sizes(function, "Random variable", n,
@@ -51,7 +51,7 @@ return_type_t<T_prob> bernoulli_lcdf(const T_n& n, const T_prob& theta) {
 
   const auto& log1m_theta = select(theta_arr == 1, 0.0, log1m(theta_arr));
 
-  if (!is_constant_all<T_prob>::value) {
+  if constexpr (is_autodiff_v<T_prob>) {
     partials<0>(ops_partials) = select(n_arr == 0, -exp(-log1m_theta), 0.0);
   }
 

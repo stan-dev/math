@@ -29,7 +29,7 @@ namespace math {
 template <
     bool propto, typename T_y,
     require_all_not_nonscalar_prim_or_rev_kernel_expression_t<T_y>* = nullptr>
-return_type_t<T_y> std_normal_lpdf(const T_y& y) {
+inline return_type_t<T_y> std_normal_lpdf(const T_y& y) {
   using T_partials_return = partials_return_t<T_y>;
   using T_y_ref = ref_type_t<T_y>;
   static constexpr const char* function = "std_normal_lpdf";
@@ -39,7 +39,7 @@ return_type_t<T_y> std_normal_lpdf(const T_y& y) {
   if (size_zero(y)) {
     return 0.0;
   }
-  if (!include_summand<propto, T_y>::value) {
+  if constexpr (!include_summand<propto, T_y>::value) {
     return 0.0;
   }
 
@@ -47,11 +47,11 @@ return_type_t<T_y> std_normal_lpdf(const T_y& y) {
   T_partials_return logp = -dot_self(y_val) / 2.0;
   auto ops_partials = make_partials_propagator(y_ref);
 
-  if (!is_constant_all<T_y>::value) {
+  if constexpr (is_autodiff_v<T_y>) {
     partials<0>(ops_partials) = -y_val;
   }
 
-  if (include_summand<propto>::value) {
+  if constexpr (include_summand<propto>::value) {
     logp += NEG_LOG_SQRT_TWO_PI * math::size(y);
   }
 

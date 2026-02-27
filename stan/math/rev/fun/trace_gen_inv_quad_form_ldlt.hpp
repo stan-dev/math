@@ -41,8 +41,7 @@ inline var trace_gen_inv_quad_form_ldlt(const Td& D, LDLT_factor<Ta>& A,
     return 0;
   }
 
-  if (!is_constant<Ta>::value && !is_constant<Tb>::value
-      && !is_constant<Td>::value) {
+  if constexpr (is_all_autodiff_v<Ta, Tb, Td>) {
     arena_t<promote_scalar_t<var, Ta>> arena_A = A.matrix();
     arena_t<promote_scalar_t<var, Tb>> arena_B = B;
     arena_t<promote_scalar_t<var, Td>> arena_D = D;
@@ -63,8 +62,7 @@ inline var trace_gen_inv_quad_form_ldlt(const Td& D, LDLT_factor<Ta>& A,
         });
 
     return res;
-  } else if (!is_constant<Ta>::value && !is_constant<Tb>::value
-             && is_constant<Td>::value) {
+  } else if constexpr (is_all_autodiff_v<Ta, Tb> && is_constant_v<Td>) {
     arena_t<promote_scalar_t<var, Ta>> arena_A = A.matrix();
     arena_t<promote_scalar_t<var, Tb>> arena_B = B;
     arena_t<promote_scalar_t<double, Td>> arena_D = value_of(D);
@@ -81,8 +79,7 @@ inline var trace_gen_inv_quad_form_ldlt(const Td& D, LDLT_factor<Ta>& A,
     });
 
     return res;
-  } else if (!is_constant<Ta>::value && is_constant<Tb>::value
-             && !is_constant<Td>::value) {
+  } else if constexpr (is_all_autodiff_v<Ta, Td> && is_constant_v<Tb>) {
     arena_t<promote_scalar_t<var, Ta>> arena_A = A.matrix();
     const auto& B_ref = to_ref(B);
     arena_t<promote_scalar_t<var, Td>> arena_D = D;
@@ -101,8 +98,7 @@ inline var trace_gen_inv_quad_form_ldlt(const Td& D, LDLT_factor<Ta>& A,
         });
 
     return res;
-  } else if (!is_constant<Ta>::value && is_constant<Tb>::value
-             && is_constant<Td>::value) {
+  } else if constexpr (is_autodiff_v<Ta> && is_constant_all_v<Tb, Td>) {
     arena_t<promote_scalar_t<var, Ta>> arena_A = A.matrix();
     const auto& B_ref = to_ref(B);
     arena_t<promote_scalar_t<double, Td>> arena_D = value_of(D);
@@ -118,8 +114,7 @@ inline var trace_gen_inv_quad_form_ldlt(const Td& D, LDLT_factor<Ta>& A,
     });
 
     return res;
-  } else if (is_constant<Ta>::value && !is_constant<Tb>::value
-             && !is_constant<Td>::value) {
+  } else if constexpr (is_constant_v<Ta> && is_all_autodiff_v<Tb, Td>) {
     arena_t<promote_scalar_t<var, Tb>> arena_B = B;
     arena_t<promote_scalar_t<var, Td>> arena_D = D;
     auto AsolveB = to_arena(A.ldlt().solve(arena_B.val()));
@@ -137,8 +132,7 @@ inline var trace_gen_inv_quad_form_ldlt(const Td& D, LDLT_factor<Ta>& A,
         });
 
     return res;
-  } else if (is_constant<Ta>::value && !is_constant<Tb>::value
-             && is_constant<Td>::value) {
+  } else if constexpr (is_constant_all_v<Ta, Td> && is_autodiff_v<Tb>) {
     arena_t<promote_scalar_t<var, Tb>> arena_B = B;
     arena_t<promote_scalar_t<double, Td>> arena_D = value_of(D);
     auto AsolveB = to_arena(A.ldlt().solve(arena_B.val()));
@@ -150,8 +144,7 @@ inline var trace_gen_inv_quad_form_ldlt(const Td& D, LDLT_factor<Ta>& A,
     });
 
     return res;
-  } else if (is_constant<Ta>::value && is_constant<Tb>::value
-             && !is_constant<Td>::value) {
+  } else if constexpr (is_constant_all_v<Ta, Tb> && is_autodiff_v<Td>) {
     const auto& B_ref = to_ref(B);
     arena_t<promote_scalar_t<var, Td>> arena_D = D;
     auto BTAsolveB = to_arena(value_of(B_ref).transpose()
@@ -197,8 +190,7 @@ inline var trace_gen_inv_quad_form_ldlt(const Td& D, const LDLT_factor<Ta>& A,
     return 0;
   }
 
-  if (!is_constant<Ta>::value && !is_constant<Tb>::value
-      && !is_constant<Td>::value) {
+  if constexpr (is_all_autodiff_v<Ta, Tb, Td>) {
     arena_t<promote_scalar_t<var, Ta>> arena_A = A.matrix();
     arena_t<promote_scalar_t<var, Tb>> arena_B = B;
     arena_t<promote_scalar_t<var, Td>> arena_D = D;
@@ -218,8 +210,7 @@ inline var trace_gen_inv_quad_form_ldlt(const Td& D, const LDLT_factor<Ta>& A,
         });
 
     return res;
-  } else if (!is_constant<Ta>::value && !is_constant<Tb>::value
-             && is_constant<Td>::value) {
+  } else if constexpr (is_all_autodiff_v<Ta, Tb> && is_constant_v<Td>) {
     arena_t<promote_scalar_t<var, Ta>> arena_A = A.matrix();
     arena_t<promote_scalar_t<var, Tb>> arena_B = B;
     arena_t<promote_scalar_t<double, Td>> arena_D = value_of(D);
@@ -237,8 +228,7 @@ inline var trace_gen_inv_quad_form_ldlt(const Td& D, const LDLT_factor<Ta>& A,
     });
 
     return res;
-  } else if (!is_constant<Ta>::value && is_constant<Tb>::value
-             && !is_constant<Td>::value) {
+  } else if constexpr (is_all_autodiff_v<Ta, Td> && is_constant_v<Tb>) {
     arena_t<promote_scalar_t<var, Ta>> arena_A = A.matrix();
     const auto& B_ref = to_ref(B);
     arena_t<promote_scalar_t<var, Td>> arena_D = D;
@@ -257,8 +247,7 @@ inline var trace_gen_inv_quad_form_ldlt(const Td& D, const LDLT_factor<Ta>& A,
         });
 
     return res;
-  } else if (!is_constant<Ta>::value && is_constant<Tb>::value
-             && is_constant<Td>::value) {
+  } else if constexpr (is_autodiff_v<Ta> && is_constant_all_v<Tb, Td>) {
     arena_t<promote_scalar_t<var, Ta>> arena_A = A.matrix();
     const auto& B_ref = to_ref(B);
     arena_t<promote_scalar_t<double, Td>> arena_D = value_of(D);
@@ -275,8 +264,7 @@ inline var trace_gen_inv_quad_form_ldlt(const Td& D, const LDLT_factor<Ta>& A,
     });
 
     return res;
-  } else if (is_constant<Ta>::value && !is_constant<Tb>::value
-             && !is_constant<Td>::value) {
+  } else if constexpr (is_constant_v<Ta> && is_all_autodiff_v<Tb, Td>) {
     arena_t<promote_scalar_t<var, Tb>> arena_B = B;
     arena_t<promote_scalar_t<var, Td>> arena_D = D;
     auto AsolveB = to_arena(A.ldlt().solve(arena_B.val()));
@@ -293,8 +281,7 @@ inline var trace_gen_inv_quad_form_ldlt(const Td& D, const LDLT_factor<Ta>& A,
         });
 
     return res;
-  } else if (is_constant<Ta>::value && !is_constant<Tb>::value
-             && is_constant<Td>::value) {
+  } else if constexpr (is_constant_all_v<Ta, Td> && is_autodiff_v<Tb>) {
     arena_t<promote_scalar_t<var, Tb>> arena_B = B;
     arena_t<promote_scalar_t<double, Td>> arena_D = value_of(D);
     auto AsolveB = to_arena(A.ldlt().solve(arena_B.val()));
@@ -307,8 +294,7 @@ inline var trace_gen_inv_quad_form_ldlt(const Td& D, const LDLT_factor<Ta>& A,
     });
 
     return res;
-  } else if (is_constant<Ta>::value && is_constant<Tb>::value
-             && !is_constant<Td>::value) {
+  } else if constexpr (is_constant_all_v<Ta, Tb> && is_autodiff_v<Td>) {
     const auto& B_ref = to_ref(B);
     arena_t<promote_scalar_t<var, Td>> arena_D = D;
     auto BTAsolveB = to_arena(value_of(B_ref).transpose()

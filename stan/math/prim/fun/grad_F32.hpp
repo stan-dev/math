@@ -52,9 +52,9 @@ template <bool grad_a1 = true, bool grad_a2 = true, bool grad_a3 = true,
           bool grad_b1 = true, bool grad_b2 = true, bool grad_z = true,
           typename T1, typename T2, typename T3, typename T4, typename T5,
           typename T6, typename T7, typename T8 = double>
-void grad_F32(T1* g, const T2& a1, const T3& a2, const T4& a3, const T5& b1,
-              const T6& b2, const T7& z, const T8& precision = 1e-6,
-              int max_steps = 1e5) {
+inline void grad_F32(T1* g, const T2& a1, const T3& a2, const T4& a3,
+                     const T5& b1, const T6& b2, const T7& z,
+                     const T8& precision = 1e-6, int max_steps = 1e5) {
   check_3F2_converges("grad_F32", a1, a2, a3, b1, b2, z);
 
   for (int i = 0; i < 6; ++i) {

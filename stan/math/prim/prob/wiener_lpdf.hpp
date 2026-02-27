@@ -130,7 +130,8 @@ return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta> wiener_lpdf(
     }
   }
 
-  if (!include_summand<propto, T_y, T_alpha, T_tau, T_beta, T_delta>::value) {
+  if constexpr (!include_summand<propto, T_y, T_alpha, T_tau, T_beta,
+                                 T_delta>::value) {
     return 0;
   }
 

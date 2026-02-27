@@ -114,8 +114,29 @@ struct is_holder : internal::is_holder<std::decay_t<T>> {};
 template <typename T>
 inline constexpr bool is_holder_v = is_holder<T>::value;
 
+template <typename T>
+using require_holder_t = require_t<is_holder<T>>;
+
 namespace math {
 
+template <
+    typename F, typename... Args,
+    require_not_plain_type_t<std::invoke_result_t<F, Args&&...>>* = nullptr>
+inline auto make_holder(F&& func, Args&&... args);
+
+/**
+ * Calls given function with given arguments. No `holder` is necessary if the
+ * function is not returning Eigen expression.
+ *
+ * @tparam F type of the functor
+ * @tparam Args types of the arguments
+ * @param func the functor
+ * @param args arguments for the functor
+ * @return `holder` referencing expression constructed by given functor
+ */
+template <typename F, typename... Args,
+          require_plain_type_t<std::invoke_result_t<F, Args&&...>>* = nullptr>
+inline auto make_holder(F&& func, Args&&... args);
 /**
  * A no-op Eigen operation. This object also owns pointers to dynamically
  * allocated objects used in its argument expression. When this object is
@@ -131,9 +152,9 @@ class Holder
       Nested;
   typename Eigen::internal::ref_selector<ArgType>::non_const_type m_arg;
   std::tuple<std::unique_ptr<Ptrs>...> m_unique_ptrs;
-
   explicit Holder(ArgType&& arg, Ptrs*... pointers)
-      : m_arg(arg), m_unique_ptrs(std::unique_ptr<Ptrs>(pointers)...) {}
+      : m_arg(std::forward<ArgType>(arg)),
+        m_unique_ptrs(std::unique_ptr<Ptrs>(pointers)...) {}
 
   // we need to explicitely default copy and move constructors as we are
   // defining copy and move assignment operators
@@ -146,6 +167,7 @@ class Holder
   Eigen::Index innerStride() const { return m_arg.innerStride(); }
   Eigen::Index outerStride() const { return m_arg.outerStride(); }
   auto* data() { return m_arg.data(); }
+  const auto* data() const { return m_arg.data(); }
 
   /**
    * Assignment operator assigns expresssions.
@@ -171,6 +193,52 @@ class Holder
   }
 };
 
+template <typename T, require_holder_t<T>* = nullptr>
+inline auto operator-(T&& h) {
+  return make_holder([](auto&& arg) { return -arg; }, std::forward<T>(h).m_arg);
+}
+template <typename T, require_holder_t<T>* = nullptr>
+inline auto operator+(T&& h) {
+  return make_holder([](auto&& arg) { return arg; }, std::forward<T>(h).m_arg);
+}
+
+template <typename T, typename Other, require_holder_t<T>* = nullptr,
+          require_holder_t<Other>* = nullptr>
+inline auto operator-(T&& h, Other&& other) {
+  return make_holder(
+      [](auto&& arg, auto&& other_) {
+        return arg - std::forward<decltype(other_)>(other_);
+      },
+      std::forward<T>(h).m_arg, std::forward<Other>(other));
+}
+template <typename T, typename Other, require_holder_t<T>* = nullptr,
+          require_holder_t<Other>* = nullptr>
+inline auto operator+(T&& h, Other&& other) {
+  return make_holder(
+      [](auto&& arg, auto&& other_) {
+        return arg + std::forward<decltype(other_)>(other_);
+      },
+      std::forward<T>(h).m_arg, std::forward<Other>(other));
+}
+template <typename T, typename Other, require_holder_t<T>* = nullptr,
+          require_holder_t<Other>* = nullptr>
+inline auto operator*(T&& h, Other&& other) {
+  return make_holder(
+      [](auto&& arg, auto&& other_) {
+        return arg * std::forward<decltype(other_)>(other_);
+      },
+      std::forward<T>(h).m_arg, std::forward<Other>(other));
+}
+template <typename T, typename Other, require_holder_t<T>* = nullptr,
+          require_holder_t<Other>* = nullptr>
+inline auto operator/(T&& h, Other&& other) {
+  return make_holder(
+      [](auto&& arg, auto&& other_) {
+        return arg / std::forward<decltype(other_)>(other_);
+      },
+      std::forward<T>(h).m_arg, std::forward<Other>(other));
+}
+
 }  // namespace math
 }  // namespace stan
 
@@ -195,6 +263,8 @@ struct evaluator<stan::math::Holder<ArgType, Ptrs...>>
   evaluator<ArgTypeNestedCleaned> m_argImpl;
 
   explicit evaluator(const XprType& xpr) : m_argImpl(xpr.m_arg) {}
+  explicit evaluator(XprType&& xpr)
+      : m_argImpl(std::forward<XprType>(xpr).m_arg) {}
 
   // all these functions just call the same on the argument
   EIGEN_STRONG_INLINE CoeffReturnType coeff(Index row, Index col) const {
@@ -362,9 +432,8 @@ inline auto make_holder_impl(F&& func, std::index_sequence<Is...>,
  * @param args arguments for the functor
  * @return `holder` referencing expression constructed by given functor
  */
-template <
-    typename F, typename... Args,
-    require_not_plain_type_t<std::invoke_result_t<F, Args&&...>>* = nullptr>
+template <typename F, typename... Args,
+          require_not_plain_type_t<std::invoke_result_t<F, Args&&...>>*>
 inline auto make_holder(F&& func, Args&&... args) {
   return internal::make_holder_impl(std::forward<F>(func),
                                     std::make_index_sequence<sizeof...(Args)>(),
@@ -382,7 +451,7 @@ inline auto make_holder(F&& func, Args&&... args) {
  * @return `holder` referencing expression constructed by given functor
  */
 template <typename F, typename... Args,
-          require_plain_type_t<std::invoke_result_t<F, Args&&...>>* = nullptr>
+          require_plain_type_t<std::invoke_result_t<F, Args&&...>>*>
 inline auto make_holder(F&& func, Args&&... args) {
   return std::forward<F>(func)(std::forward<Args>(args)...);
 }

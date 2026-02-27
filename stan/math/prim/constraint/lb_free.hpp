@@ -29,7 +29,7 @@ template <typename T, typename L, require_not_std_vector_t<T>* = nullptr,
           require_stan_scalar_t<L>* = nullptr>
 inline auto lb_free(T&& y, L&& lb) {
   if (value_of_rec(lb) == NEGATIVE_INFTY) {
-    return identity_free(y, lb);
+    return identity_free(std::forward<T>(y), lb);
   } else {
     auto&& y_ref = to_ref(std::forward<T>(y));
     auto&& lb_ref = to_ref(std::forward<L>(lb));
@@ -57,9 +57,9 @@ template <typename T, typename L, require_all_eigen_t<T, L>* = nullptr>
 inline auto lb_free(T&& y, L&& lb) {
   auto&& y_ref = to_ref(std::forward<T>(y));
   auto&& lb_ref = to_ref(std::forward<L>(lb));
-  promote_scalar_t<return_type_t<T, L>, T> ret(y.rows(), y.cols());
-  for (Eigen::Index j = 0; j < y.cols(); ++j) {
-    for (Eigen::Index i = 0; i < y.rows(); ++i) {
+  promote_scalar_t<return_type_t<T, L>, T> ret(y_ref.rows(), y_ref.cols());
+  for (Eigen::Index j = 0; j < y_ref.cols(); ++j) {
+    for (Eigen::Index i = 0; i < y_ref.rows(); ++i) {
       ret.coeffRef(i, j) = lb_free(y_ref.coeff(i, j), lb_ref.coeff(i, j));
     }
   }

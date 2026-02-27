@@ -26,7 +26,7 @@ template <bool propto, typename T_y, typename T_loc, typename T_scale,
           typename T_shape,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_loc, T_scale, T_shape>* = nullptr>
-return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
+inline return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma, const T_shape& alpha) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_shape>;
   using T_y_ref = ref_type_if_not_constant_t<T_y>;
@@ -54,7 +54,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
   if (size_zero(y, mu, sigma, alpha)) {
     return 0.0;
   }
-  if (!include_summand<propto, T_y, T_loc, T_scale, T_shape>::value) {
+  if constexpr (!include_summand<propto, T_y, T_loc, T_scale, T_shape>::value) {
     return 0.0;
   }
 
@@ -62,53 +62,53 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
       = make_partials_propagator(y_ref, mu_ref, sigma_ref, alpha_ref);
 
   const auto& inv_sigma
-      = to_ref_if<!is_constant_all<T_y, T_loc, T_scale>::value>(inv(sigma_val));
+      = to_ref_if<is_any_autodiff_v<T_y, T_loc, T_scale>>(inv(sigma_val));
   const auto& y_minus_mu_over_sigma
       = to_ref_if<include_summand<propto, T_y, T_loc, T_scale, T_shape>::value>(
           (y_val - mu_val) * inv_sigma);
   const auto& log_erfc_alpha_z
-      = to_ref_if<!is_constant_all<T_y, T_loc, T_scale, T_shape>::value>(
+      = to_ref_if<is_any_autodiff_v<T_y, T_loc, T_scale, T_shape>>(
           log(erfc(-alpha_val * y_minus_mu_over_sigma * INV_SQRT_TWO)));
 
   size_t N = max_size(y, mu, sigma, alpha);
   T_partials_return logp = sum(log_erfc_alpha_z);
-  if (include_summand<propto>::value) {
+  if constexpr (include_summand<propto>::value) {
     logp -= HALF_LOG_TWO_PI * N;
   }
-  if (include_summand<propto, T_scale>::value) {
+  if constexpr (include_summand<propto, T_scale>::value) {
     logp -= sum(log(sigma_val)) * N / math::size(sigma);
   }
-  if (include_summand<propto, T_y, T_loc, T_scale>::value) {
+  if constexpr (include_summand<propto, T_y, T_loc, T_scale>::value) {
     logp -= sum(square(y_minus_mu_over_sigma)) * 0.5 * N
             / max_size(y, mu, sigma);
   }
 
-  if (!is_constant_all<T_y, T_loc, T_scale, T_shape>::value) {
+  if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale, T_shape>) {
     const auto& sq = square(alpha_val * y_minus_mu_over_sigma * INV_SQRT_TWO);
     const auto& ex = exp(-sq - log_erfc_alpha_z);
-    auto deriv_logerf = to_ref_if<!is_constant_all<T_y, T_loc>::value
-                                      + !is_constant_all<T_scale>::value
-                                      + !is_constant_all<T_shape>::value
-                                  >= 2>(SQRT_TWO_OVER_SQRT_PI * ex);
-    if (!is_constant_all<T_y, T_loc>::value) {
-      auto deriv_y_loc = to_ref_if<(!is_constant_all<T_y>::value
-                                    && !is_constant_all<T_loc>::value)>(
-          (y_minus_mu_over_sigma - deriv_logerf * alpha_val) * inv_sigma);
-      if (!is_constant_all<T_y>::value) {
+    auto deriv_logerf = to_ref_if<
+        is_any_autodiff_v<
+            T_y, T_loc> + is_autodiff_v<T_scale> + is_autodiff_v<T_shape> >= 2>(
+        SQRT_TWO_OVER_SQRT_PI * ex);
+    if constexpr (is_any_autodiff_v<T_y, T_loc>) {
+      auto deriv_y_loc
+          = to_ref_if<(is_autodiff_v<T_y> && is_autodiff_v<T_loc>)>(
+              (y_minus_mu_over_sigma - deriv_logerf * alpha_val) * inv_sigma);
+      if constexpr (is_autodiff_v<T_y>) {
         partials<0>(ops_partials) = -deriv_y_loc;
       }
-      if (!is_constant_all<T_loc>::value) {
+      if constexpr (is_autodiff_v<T_loc>) {
         partials<1>(ops_partials) = std::move(deriv_y_loc);
       }
     }
-    if (!is_constant_all<T_scale>::value) {
+    if constexpr (is_autodiff_v<T_scale>) {
       edge<2>(ops_partials).partials_
           = ((y_minus_mu_over_sigma - deriv_logerf * alpha_val)
                  * y_minus_mu_over_sigma
              - 1)
             * inv_sigma;
     }
-    if (!is_constant_all<T_shape>::value) {
+    if constexpr (is_autodiff_v<T_shape>) {
       partials<3>(ops_partials) = deriv_logerf * y_minus_mu_over_sigma;
     }
   }

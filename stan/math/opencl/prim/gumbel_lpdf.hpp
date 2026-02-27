@@ -33,7 +33,7 @@ template <
     require_all_prim_or_rev_kernel_expression_t<T_y_cl, T_loc_cl,
                                                 T_scale_cl>* = nullptr,
     require_any_not_stan_scalar_t<T_y_cl, T_loc_cl, T_scale_cl>* = nullptr>
-return_type_t<T_y_cl, T_loc_cl, T_scale_cl> gumbel_lpdf(
+inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl> gumbel_lpdf(
     const T_y_cl& y, const T_loc_cl& mu, const T_scale_cl& beta) {
   using std::isfinite;
   using std::isnan;
@@ -46,7 +46,7 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> gumbel_lpdf(
   if (N == 0) {
     return 0.0;
   }
-  if (!include_summand<propto, T_y_cl, T_loc_cl, T_scale_cl>::value) {
+  if constexpr (!include_summand<propto, T_y_cl, T_loc_cl, T_scale_cl>::value) {
     return 0.0;
   }
 
@@ -91,21 +91,20 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> gumbel_lpdf(
   results(check_y_not_nan, check_mu_finite, check_beta_positive, logp_cl,
           y_deriv_cl, mu_deriv_cl, beta_deriv_cl)
       = expressions(y_not_nan_expr, mu_finite_expr, beta_positive_expr,
-                    logp_expr,
-                    calc_if<!is_constant<T_y_cl>::value>(scaled_diff_expr),
-                    calc_if<!is_constant<T_loc_cl>::value>(-scaled_diff_expr),
-                    calc_if<!is_constant<T_scale_cl>::value>(beta_deriv_expr));
+                    logp_expr, calc_if<is_autodiff_v<T_y_cl>>(scaled_diff_expr),
+                    calc_if<is_autodiff_v<T_loc_cl>>(-scaled_diff_expr),
+                    calc_if<is_autodiff_v<T_scale_cl>>(beta_deriv_expr));
 
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
 
   auto ops_partials = make_partials_propagator(y_col, mu_col, beta_col);
-  if (!is_constant<T_y_cl>::value) {
+  if constexpr (is_autodiff_v<T_y_cl>) {
     partials<0>(ops_partials) = std::move(y_deriv_cl);
   }
-  if (!is_constant<T_loc_cl>::value) {
+  if constexpr (is_autodiff_v<T_loc_cl>) {
     partials<1>(ops_partials) = std::move(mu_deriv_cl);
   }
-  if (!is_constant<T_scale_cl>::value) {
+  if constexpr (is_autodiff_v<T_scale_cl>) {
     partials<2>(ops_partials) = std::move(beta_deriv_cl);
   }
 

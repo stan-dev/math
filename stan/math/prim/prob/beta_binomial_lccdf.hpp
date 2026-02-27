@@ -41,9 +41,8 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_n, typename T_N, typename T_size1, typename T_size2>
-return_type_t<T_size1, T_size2> beta_binomial_lccdf(const T_n& n, const T_N& N,
-                                                    const T_size1& alpha,
-                                                    const T_size2& beta) {
+inline return_type_t<T_size1, T_size2> beta_binomial_lccdf(
+    const T_n& n, const T_N& N, const T_size1& alpha, const T_size2& beta) {
   using T_partials_return = partials_return_t<T_n, T_N, T_size1, T_size2>;
   using std::exp;
   using std::log;
@@ -116,14 +115,14 @@ return_type_t<T_size1, T_size2> beta_binomial_lccdf(const T_n& n, const T_N& N,
               : digamma(alpha_dbl + beta_dbl) - digamma(mu + nu);
 
     T_partials_return dF[6];
-    if (!is_constant_all<T_size1, T_size2>::value) {
+    if constexpr (is_any_autodiff_v<T_size1, T_size2>) {
       grad_F32(dF, one, mu, -N_dbl + n_dbl + 1, n_dbl + 2, 1 - nu, one);
     }
-    if (!is_constant_all<T_size1>::value) {
+    if constexpr (is_autodiff_v<T_size1>) {
       partials<0>(ops_partials)[i]
           += digamma(mu) - digamma(alpha_dbl) + digammaDiff + dF[1] / F;
     }
-    if (!is_constant_all<T_size2>::value) {
+    if constexpr (is_autodiff_v<T_size2>) {
       partials<1>(ops_partials)[i]
           += digamma(nu) - digamma(beta_dbl) + digammaDiff - dF[4] / F;
     }

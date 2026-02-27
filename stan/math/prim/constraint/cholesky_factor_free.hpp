@@ -23,7 +23,7 @@ namespace math {
  * @throw std::domain_error If the matrix is not a Cholesky factor.
  */
 template <typename T, require_eigen_t<T>* = nullptr>
-Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> cholesky_factor_free(
+inline Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> cholesky_factor_free(
     const T& y) {
   using std::log;
 
@@ -56,9 +56,10 @@ Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> cholesky_factor_free(
  * @param x The standard vector to untransform.
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
-inline auto cholesky_factor_free(const T& x) {
-  return apply_vector_unary<T>::apply(
-      x, [](auto&& v) { return cholesky_factor_free(v); });
+inline auto cholesky_factor_free(T&& x) {
+  return apply_vector_unary<T>::apply(std::forward<T>(x), [](auto&& v) {
+    return cholesky_factor_free(std::forward<decltype(v)>(v));
+  });
 }
 
 }  // namespace math

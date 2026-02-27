@@ -44,10 +44,14 @@ inline double inc_beta(double a, double b, double x) {
 template <typename T1, typename T2, typename T3,
           require_any_container_t<T1, T2, T3>* = nullptr,
           require_all_not_var_matrix_t<T1, T2, T3>* = nullptr>
-inline auto inc_beta(const T1& a, const T2& b, const T3& c) {
-  return apply_scalar_ternary([](const auto& d, const auto& e,
-                                 const auto& f) { return inc_beta(d, e, f); },
-                              a, b, c);
+inline auto inc_beta(T1&& a, T2&& b, T3&& c) {
+  return apply_scalar_ternary(
+      [](auto&& d, auto&& e, auto&& f) {
+        return inc_beta(std::forward<decltype(d)>(d),
+                        std::forward<decltype(e)>(e),
+                        std::forward<decltype(f)>(f));
+      },
+      std::forward<T1>(a), std::forward<T2>(b), std::forward<T3>(c));
 }
 
 }  // namespace math

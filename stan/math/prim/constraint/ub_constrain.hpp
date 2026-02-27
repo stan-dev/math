@@ -261,11 +261,11 @@ inline auto ub_constrain(const std::vector<T>& x, const std::vector<U>& ub,
  */
 template <bool Jacobian, typename T, typename U, typename Lp,
           require_convertible_t<return_type_t<T, U>, Lp>* = nullptr>
-inline auto ub_constrain(const T& x, const U& ub, Lp& lp) {
+inline auto ub_constrain(T&& x, U&& ub, Lp& lp) {
   if constexpr (Jacobian) {
-    return ub_constrain(x, ub, lp);
+    return ub_constrain(std::forward<T>(x), std::forward<U>(ub), lp);
   } else {
-    return ub_constrain(x, ub);
+    return ub_constrain(std::forward<T>(x), std::forward<U>(ub));
   }
 }
 

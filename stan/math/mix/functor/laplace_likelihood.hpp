@@ -2,6 +2,7 @@
 #define STAN_MATH_MIX_FUNCTOR_LAPLACE_LIKELIHOOD_HPP
 
 #include <stan/math/mix/functor/hessian_block_diag.hpp>
+#include <stan/math/mix/functor/conditional_copy_and_promote.hpp>
 #include <stan/math/prim/functor.hpp>
 #include <stan/math/prim/fun.hpp>
 
@@ -13,6 +14,7 @@ namespace math {
  * and third-order derivatives for a likelihoood specified by the user.
  */
 namespace laplace_likelihood {
+
 namespace internal {
 /**
  * @tparam F A functor with `opertor()(Args&&...)` returning a scalar
@@ -32,78 +34,123 @@ inline auto log_likelihood(F&& f, Theta&& theta, Stream* msgs, Args&&... args) {
 }
 
 /**
- * Decide if object should be deep or shallow copied when
- * using @ref conditional_copy_and_promote .
+ * Computes theta gradient `f` wrt `theta` and `args...`
+ * @note If `Args` contains \ref var types then their adjoints will be
+ * calculated as a side effect.
+ * @tparam F A functor with `opertor()(Args&&...)` returning a scalar
+ * @tparam Theta A class assignable to an Eigen vector type
+ * @tparam Stream Type of stream for messages.
+ * @tparam Args Type of variadic arguments.
+ * @param f Log likelihood function.
+ * @param theta Latent Gaussian model.
+ * @param msgs Stream for messages.
+ * @param args Variadic arguments for the likelihood function.
  */
-enum class COPY_TYPE { SHALLOW = 0, DEEP = 1 };
+template <typename F, typename Theta, typename Stream, typename... Args,
+          require_eigen_vector_vt<std::is_arithmetic, Theta>* = nullptr>
+inline auto theta_grad(F&& f, Theta&& theta, Stream* msgs, Args&&... args) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  nested_rev_autodiff nested;
+  arena_t<Matrix<var, Dynamic, 1>> theta_var = theta;
+  var f_var = f(theta_var, args..., msgs);
+  grad(f_var.vi_);
+  return theta_var.adj().eval();
+}
 
 /**
- * Conditional copy and promote a type's scalar type to a `PromotedType`.
- * @tparam Filter type trait with a static constexpr bool member `value`
- *  that is true if the type should be promoted. Otherwise, the type is
- *  left unchanged.
- * @tparam PromotedType type to promote the scalar to.
- * @tparam CopyType type of copy to perform.
- * @tparam Args variadic arguments.
- * @param args variadic arguments to conditionally copy and promote.
- * @return a tuple where each element is either a reference to the original
- * argument or a promoted copy of the argument.
+ * Computes likelihood argument gradient of `f`
+ * @note If `Args` contains \ref var types then their adjoints will be
+ * calculated as a side effect.
+ * @tparam F A functor with `opertor()(Args&&...)` returning a scalar
+ * @tparam Theta A class assignable to an Eigen vector type
+ * @tparam Stream Type of stream for messages.
+ * @tparam Args Type of variadic arguments.
+ * @param f Log likelihood function.
+ * @param theta Latent Gaussian model.
+ * @param msgs Stream for messages.
+ * @param args Variadic arguments for the likelihood function.
  */
-template <template <typename...> class Filter,
-          typename PromotedType = stan::math::var,
-          COPY_TYPE CopyType = COPY_TYPE::DEEP, typename... Args>
-inline auto conditional_copy_and_promote(Args&&... args) {
-  return map_if<Filter>(
-      [](auto&& arg) {
-        if constexpr (is_tuple_v<decltype(arg)>) {
-          return stan::math::apply(
-              [](auto&&... inner_args) {
-                return make_holder_tuple(
-                    conditional_copy_and_promote<Filter, PromotedType,
-                                                 CopyType>(
-                        std::forward<decltype(inner_args)>(inner_args))...);
-              },
-              std::forward<decltype(arg)>(arg));
-        } else if constexpr (is_std_vector_v<decltype(arg)>) {
-          std::vector<decltype(conditional_copy_and_promote<
-                               Filter, PromotedType, CopyType>(arg[0]))>
-              ret;
-          for (std::size_t i = 0; i < arg.size(); ++i) {
-            ret.push_back(
-                conditional_copy_and_promote<Filter, PromotedType, CopyType>(
-                    arg[i]));
-          }
-          return ret;
-        } else {
-          if constexpr (CopyType == COPY_TYPE::DEEP) {
-            return stan::math::eval(promote_scalar<PromotedType>(
-                value_of_rec(std::forward<decltype(arg)>(arg))));
-          } else if (CopyType == COPY_TYPE::SHALLOW) {
-            if constexpr (std::is_same_v<PromotedType,
-                                         scalar_type_t<decltype(arg)>>) {
-              return std::forward<decltype(arg)>(arg);
-            } else {
-              return stan::math::eval(promote_scalar<PromotedType>(
-                  std::forward<decltype(arg)>(arg)));
-            }
-          }
-        }
-      },
-      std::forward<Args>(args)...);
+template <typename F, typename Theta, typename Stream, typename... Args,
+          require_eigen_vector_vt<std::is_arithmetic, Theta>* = nullptr>
+inline void ll_arg_grad(F&& f, Theta&& theta, Stream* msgs, Args&&... args) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  nested_rev_autodiff nested;
+  var f_var = f(theta, args..., msgs);
+  grad(f_var.vi_);
 }
 
-template <typename PromotedType, typename... Args>
-inline auto deep_copy_vargs(Args&&... args) {
-  return conditional_copy_and_promote<is_any_var_scalar, PromotedType,
-                                      COPY_TYPE::DEEP>(
-      std::forward<Args>(args)...);
+/**
+ * Computes negative diagonal Hessian of `f` wrt`theta` and `args...`
+ * @note If `Args` contains \ref var types then their adjoints will be
+ * calculated as a side effect.
+ * @tparam F A functor with `opertor()(Args&&...)` returning a scalar
+ * @tparam Theta A class assignable to an Eigen vector type
+ * @tparam Stream Type of stream for messages.
+ * @tparam Args Type of variadic arguments.
+ * @param f Log likelihood function.
+ * @param theta Latent Gaussian model.
+ * @param hessian_block_size If the Hessian of the log likelihood function w.r.t
+ *                           the latent Gaussian variable is block-diagonal,
+ *                           size of each block.
+ * @param msgs Stream for messages.
+ * @param args Variadic arguments for the likelihood function.
+ */
+template <typename F, typename Theta, typename Stream, typename... Args,
+          require_eigen_vector_vt<std::is_arithmetic, Theta>* = nullptr>
+inline auto diagonal_hessian(F&& f, Theta&& theta, Stream* msgs,
+                             Args&&... args) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  const Eigen::Index theta_size = theta.size();
+  auto v = Eigen::VectorXd::Ones(theta_size);
+  Eigen::VectorXd hessian_v = Eigen::VectorXd::Zero(theta_size);
+  hessian_times_vector(f, hessian_v, std::forward<Theta>(theta), std::move(v),
+                       value_of(args)..., msgs);
+  return (-hessian_v).eval();
 }
 
-template <typename PromotedType, typename... Args>
-inline auto shallow_copy_vargs(Args&&... args) {
-  return conditional_copy_and_promote<is_any_var_scalar, PromotedType,
-                                      COPY_TYPE::SHALLOW>(
-      std::forward<Args>(args)...);
+/**
+ * Computes negative block diagonal Hessian of `f` wrt`theta` and `args...`
+ * @note If `Args` contains \ref var types then their adjoints will be
+ * calculated as a side effect.
+ * @tparam F A functor with `opertor()(Args&&...)` returning a scalar
+ * @tparam Theta A class assignable to an Eigen vector type
+ * @tparam Stream Type of stream for messages.
+ * @tparam Args Type of variadic arguments.
+ * @param f Log likelihood function.
+ * @param theta Latent Gaussian model.
+ * @param hessian_block_size If the Hessian of the log likelihood function w.r.t
+ *                           the latent Gaussian variable is block-diagonal,
+ *                           size of each block.
+ * @param msgs Stream for messages.
+ * @param args Variadic arguments for the likelihood function.
+ */
+template <typename F, typename Theta, typename Stream, typename... Args,
+          require_eigen_vector_vt<std::is_arithmetic, Theta>* = nullptr>
+inline auto block_hessian(F&& f, Theta&& theta,
+                          const Eigen::Index hessian_block_size, Stream* msgs,
+                          Args&&... args) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  const Eigen::Index theta_size = theta.size();
+  if (hessian_block_size == 1) {
+    auto v = Eigen::VectorXd::Ones(theta_size);
+    Eigen::VectorXd hessian_v = Eigen::VectorXd::Zero(theta_size);
+    hessian_times_vector(f, hessian_v, std::forward<Theta>(theta), std::move(v),
+                         value_of(args)..., msgs);
+    Eigen::SparseMatrix<double> hessian_theta(theta_size, theta_size);
+    hessian_theta.reserve(Eigen::VectorXi::Constant(theta_size, 1));
+    for (Eigen::Index i = 0; i < theta_size; i++) {
+      hessian_theta.insert(i, i) = hessian_v(i);
+    }
+    return (-hessian_theta).eval();
+  } else {
+    return (-hessian_block_diag(f, std::forward<Theta>(theta),
+                                hessian_block_size, value_of(args)..., msgs))
+        .eval();
+  }
 }
 
 /**
@@ -176,8 +223,10 @@ inline Eigen::VectorXd third_diff(F&& f, Theta&& theta, Stream&& msgs,
                                   Args&&... args) {
   nested_rev_autodiff nested;
   const Eigen::Index theta_size = theta.size();
-  Eigen::Matrix<var, Eigen::Dynamic, 1> theta_var = std::forward<Theta>(theta);
-  Eigen::Matrix<fvar<fvar<var>>, Eigen::Dynamic, 1> theta_ffvar(theta_size);
+  arena_t<Eigen::Matrix<var, Eigen::Dynamic, 1>> theta_var
+      = std::forward<Theta>(theta);
+  arena_t<Eigen::Matrix<fvar<fvar<var>>, Eigen::Dynamic, 1>> theta_ffvar(
+      theta_size);
   for (Eigen::Index i = 0; i < theta_size; ++i) {
     theta_ffvar(i) = fvar<fvar<var>>(fvar<var>(theta_var(i), 1.0), 1.0);
   }
@@ -219,13 +268,14 @@ inline auto compute_s2(F&& f, Theta&& theta, AMat&& A,
 
   nested_rev_autodiff nested;
   const Eigen::Index theta_size = theta.size();
-  Matrix<var, Dynamic, 1> theta_var = std::forward<Theta>(theta);
+  arena_t<Matrix<var, Dynamic, 1>> theta_var = std::forward<Theta>(theta);
   int n_blocks = theta_size / hessian_block_size;
-  VectorXd v(theta_size);
-  VectorXd w(theta_size);
+  arena_t<VectorXd> v(theta_size);
+  arena_t<VectorXd> w(theta_size);
   Matrix<fvar<fvar<var>>, Dynamic, 1> theta_ffvar(theta_size);
   auto shallow_copy_args
-      = shallow_copy_vargs<fvar<fvar<var>>>(std::forward_as_tuple(args...));
+      = stan::math::internal::shallow_copy_vargs<fvar<fvar<var>>>(
+          std::forward_as_tuple(args...));
   for (Eigen::Index i = 0; i < hessian_block_size; ++i) {
     nested_rev_autodiff nested;
     v.setZero();
@@ -284,13 +334,13 @@ inline auto diff_eta_implicit(F&& f, V_t&& v, Theta&& theta, Stream* msgs,
   }
   nested_rev_autodiff nested;
   const Eigen::Index theta_size = theta.size();
-  Matrix<var, Dynamic, 1> theta_var = std::forward<Theta>(theta);
+  arena_t<Matrix<var, Dynamic, 1>> theta_var = std::forward<Theta>(theta);
   Matrix<fvar<var>, Dynamic, 1> theta_fvar(theta_size);
   for (Eigen::Index i = 0; i < theta_size; i++) {
     theta_fvar(i) = fvar<var>(theta_var(i), v(i));
   }
-  auto shallow_copy_args
-      = shallow_copy_vargs<fvar<var>>(std::forward_as_tuple(args...));
+  auto shallow_copy_args = stan::math::internal::shallow_copy_vargs<fvar<var>>(
+      std::forward_as_tuple(args...));
   fvar<var> f_sum = stan::math::apply(
       [](auto&& f, auto&& theta_fvar, auto&& msgs, auto&&... inner_args) {
         return f(theta_fvar, inner_args..., msgs);
@@ -300,6 +350,79 @@ inline auto diff_eta_implicit(F&& f, V_t&& v, Theta&& theta, Stream* msgs,
 }
 
 }  // namespace internal
+
+/**
+ * A wrapper that accepts a tuple as arguments.
+ * @tparam F A functor with `opertor()(Args&&...)` returning a scalar
+ * @tparam Theta A class assignable to an Eigen vector type
+ * @tparam TupleArgs Type of arguments for covariance function.
+ * @tparam Stream Type of stream for messages.
+ * @param f Log likelihood function.
+ * @param theta Latent Gaussian model.
+ * @param ll_tup Arguments for likelihood function
+ * @param msgs stream messages.
+ */
+template <typename F, typename Theta, typename TupleArgs, typename Stream,
+          require_eigen_vector_t<Theta>* = nullptr,
+          require_tuple_t<TupleArgs>* = nullptr>
+inline auto theta_grad(F&& f, Theta&& theta, TupleArgs&& ll_tup,
+                       Stream* msgs = nullptr) {
+  return apply(
+      [](auto&& f, auto&& theta, auto&& msgs, auto&&... args) {
+        return internal::theta_grad(std::forward<decltype(f)>(f),
+                                    std::forward<decltype(theta)>(theta), msgs,
+                                    std::forward<decltype(args)>(args)...);
+      },
+      std::forward<TupleArgs>(ll_tup), std::forward<F>(f),
+      std::forward<Theta>(theta), msgs);
+}
+
+template <typename F, typename Theta, typename TupleArgs, typename Stream,
+          require_eigen_vector_t<Theta>* = nullptr,
+          require_tuple_t<TupleArgs>* = nullptr>
+inline auto ll_arg_grad(F&& f, Theta&& theta, TupleArgs&& ll_tup,
+                        Stream* msgs = nullptr) {
+  return apply(
+      [](auto&& f, auto&& theta, auto&& msgs, auto&&... args) {
+        return internal::ll_arg_grad(std::forward<decltype(f)>(f),
+                                     std::forward<decltype(theta)>(theta), msgs,
+                                     std::forward<decltype(args)>(args)...);
+      },
+      std::forward<TupleArgs>(ll_tup), std::forward<F>(f),
+      std::forward<Theta>(theta), msgs);
+}
+
+template <typename F, typename Theta, typename TupleArgs, typename Stream,
+          require_eigen_vector_t<Theta>* = nullptr,
+          require_tuple_t<TupleArgs>* = nullptr>
+inline auto diagonal_hessian(F&& f, Theta&& theta, TupleArgs&& ll_tuple,
+                             Stream* msgs) {
+  return apply(
+      [](auto&& f, auto&& theta, auto* msgs, auto&&... args) {
+        return internal::diagonal_hessian(
+            std::forward<decltype(f)>(f), std::forward<decltype(theta)>(theta),
+            msgs, std::forward<decltype(args)>(args)...);
+      },
+      std::forward<TupleArgs>(ll_tuple), std::forward<F>(f),
+      std::forward<Theta>(theta), msgs);
+}
+
+template <typename F, typename Theta, typename TupleArgs, typename Stream,
+          require_eigen_vector_t<Theta>* = nullptr,
+          require_tuple_t<TupleArgs>* = nullptr>
+inline auto block_hessian(F&& f, Theta&& theta,
+                          const Eigen::Index hessian_block_size,
+                          TupleArgs&& ll_tuple, Stream* msgs) {
+  return apply(
+      [](auto&& f, auto&& theta, auto hessian_block_size, auto* msgs,
+         auto&&... args) {
+        return internal::block_hessian(
+            std::forward<decltype(f)>(f), std::forward<decltype(theta)>(theta),
+            hessian_block_size, msgs, std::forward<decltype(args)>(args)...);
+      },
+      std::forward<TupleArgs>(ll_tuple), std::forward<F>(f),
+      std::forward<Theta>(theta), hessian_block_size, msgs);
+}
 
 /**
  * A wrapper that accepts a tuple as arguments.

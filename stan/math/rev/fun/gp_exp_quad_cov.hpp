@@ -49,7 +49,7 @@ inline Eigen::Matrix<var, -1, -1> gp_exp_quad_cov(const std::vector<T_x>& x,
   arena_matrix<Eigen::VectorXd> sq_dists_lin(l_tri_size);
   arena_matrix<Eigen::Matrix<var, -1, 1>> cov_l_tri_lin(l_tri_size);
   arena_matrix<Eigen::Matrix<var, -1, 1>> cov_diag(
-      is_constant<T_sigma>::value ? 0 : x_size);
+      is_constant_v<T_sigma> ? 0 : x_size);
 
   double l_val = value_of(length_scale);
   double sigma_sq = square(value_of(sigma));
@@ -62,7 +62,7 @@ inline Eigen::Matrix<var, -1, -1> gp_exp_quad_cov(const std::vector<T_x>& x,
     size_t j_size = j_end - jb;
     cov.diagonal().segment(jb, j_size)
         = Eigen::VectorXd::Constant(j_size, sigma_sq);
-    if (!is_constant<T_sigma>::value) {
+    if constexpr (is_autodiff_v<T_sigma>) {
       cov_diag.segment(jb, j_size) = cov.diagonal().segment(jb, j_size);
     }
     for (size_t ib = jb; ib < x_size; ib += block_size) {
@@ -87,11 +87,11 @@ inline Eigen::Matrix<var, -1, -1> gp_exp_quad_cov(const std::vector<T_x>& x,
           double prod_add
               = cov_l_tri_lin.coeff(pos).val() * cov_l_tri_lin.coeff(pos).adj();
           adjl += prod_add * sq_dists_lin.coeff(pos);
-          if (!is_constant<T_sigma>::value) {
+          if constexpr (is_autodiff_v<T_sigma>) {
             adjsigma += prod_add;
           }
         }
-        if (!is_constant<T_sigma>::value) {
+        if constexpr (is_autodiff_v<T_sigma>) {
           adjsigma += (cov_diag.val().array() * cov_diag.adj().array()).sum();
           adjoint_of(sigma) += adjsigma * 2 / value_of(sigma);
         }

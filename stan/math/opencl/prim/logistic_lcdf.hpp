@@ -31,7 +31,7 @@ template <
     require_all_prim_or_rev_kernel_expression_t<T_y_cl, T_loc_cl,
                                                 T_scale_cl>* = nullptr,
     require_any_not_stan_scalar_t<T_y_cl, T_loc_cl, T_scale_cl>* = nullptr>
-return_type_t<T_y_cl, T_loc_cl, T_scale_cl> logistic_lcdf(
+inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl> logistic_lcdf(
     const T_y_cl& y, const T_loc_cl& mu, const T_scale_cl& sigma) {
   static constexpr const char* function = "logistic_lcdf(OpenCL)";
   using T_partials_return = partials_return_t<T_y_cl, T_loc_cl, T_scale_cl>;
@@ -87,9 +87,9 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> logistic_lcdf(
           any_y_neg_inf_cl, P_cl, y_deriv_cl, mu_deriv_cl, sigma_deriv_cl)
       = expressions(y_not_nan_expr, mu_finite_expr, sigma_positive_finite_expr,
                     any_y_neg_inf, P_expr,
-                    calc_if<!is_constant<T_y_cl>::value>(y_deriv),
-                    calc_if<!is_constant<T_loc_cl>::value>(mu_deriv),
-                    calc_if<!is_constant<T_scale_cl>::value>(sigma_deriv));
+                    calc_if<is_autodiff_v<T_y_cl>>(y_deriv),
+                    calc_if<is_autodiff_v<T_loc_cl>>(mu_deriv),
+                    calc_if<is_autodiff_v<T_scale_cl>>(sigma_deriv));
 
   if (from_matrix_cl(any_y_neg_inf_cl).maxCoeff()) {
     return NEGATIVE_INFTY;
@@ -99,13 +99,13 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> logistic_lcdf(
 
   auto ops_partials = make_partials_propagator(y_col, mu_col, sigma_col);
 
-  if (!is_constant<T_y_cl>::value) {
+  if constexpr (is_autodiff_v<T_y_cl>) {
     partials<0>(ops_partials) = std::move(y_deriv_cl);
   }
-  if (!is_constant<T_loc_cl>::value) {
+  if constexpr (is_autodiff_v<T_loc_cl>) {
     partials<1>(ops_partials) = std::move(mu_deriv_cl);
   }
-  if (!is_constant<T_scale_cl>::value) {
+  if constexpr (is_autodiff_v<T_scale_cl>) {
     partials<2>(ops_partials) = std::move(sigma_deriv_cl);
   }
   return ops_partials.build(P);

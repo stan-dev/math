@@ -41,9 +41,8 @@ namespace math {
 template <bool propto, typename T_y, typename T_shape, typename T_scale,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_shape, T_scale>* = nullptr>
-return_type_t<T_y, T_shape, T_scale> inv_gamma_lpdf(const T_y& y,
-                                                    const T_shape& alpha,
-                                                    const T_scale& beta) {
+inline return_type_t<T_y, T_shape, T_scale> inv_gamma_lpdf(
+    const T_y& y, const T_shape& alpha, const T_scale& beta) {
   using T_partials_return = partials_return_t<T_y, T_shape, T_scale>;
   using T_y_ref = ref_type_if_not_constant_t<T_y>;
   using T_alpha_ref = ref_type_if_not_constant_t<T_shape>;
@@ -67,7 +66,7 @@ return_type_t<T_y, T_shape, T_scale> inv_gamma_lpdf(const T_y& y,
   if (size_zero(y, alpha, beta)) {
     return 0;
   }
-  if (!include_summand<propto, T_y, T_shape, T_scale>::value) {
+  if constexpr (!include_summand<propto, T_y, T_shape, T_scale>::value) {
     return 0;
   }
   if (sum(promote_scalar<int>(y_val <= 0))) {
@@ -81,30 +80,28 @@ return_type_t<T_y, T_shape, T_scale> inv_gamma_lpdf(const T_y& y,
       = to_ref_if<include_summand<propto, T_y, T_shape>::value>(log(y_val));
 
   size_t N = max_size(y, alpha, beta);
-  if (include_summand<propto, T_shape>::value) {
+  if constexpr (include_summand<propto, T_shape>::value) {
     logp -= sum(lgamma(alpha_val)) * N / math::size(alpha);
   }
-  if (include_summand<propto, T_shape, T_scale>::value) {
-    const auto& log_beta
-        = to_ref_if<!is_constant_all<T_shape>::value>(log(beta_val));
+  if constexpr (include_summand<propto, T_shape, T_scale>::value) {
+    const auto& log_beta = to_ref_if<is_autodiff_v<T_shape>>(log(beta_val));
     logp += sum(alpha_val * log_beta) * N / max_size(alpha, beta);
-    if (!is_constant_all<T_shape>::value) {
+    if constexpr (is_autodiff_v<T_shape>) {
       partials<1>(ops_partials) = log_beta - digamma(alpha_val) - log_y;
     }
   }
-  if (include_summand<propto, T_y, T_shape>::value) {
+  if constexpr (include_summand<propto, T_y, T_shape>::value) {
     logp -= sum((alpha_val + 1.0) * log_y) * N / max_size(y, alpha);
   }
-  if (include_summand<propto, T_y, T_scale>::value) {
+  if constexpr (include_summand<propto, T_y, T_scale>::value) {
     const auto& inv_y
-        = to_ref_if<(!is_constant_all<T_y>::value
-                     || !is_constant_all<T_scale>::value)>(inv(y_val));
+        = to_ref_if<(is_autodiff_v<T_y> || is_autodiff_v<T_scale>)>(inv(y_val));
     logp -= sum(beta_val * inv_y) * N / max_size(y, beta);
-    if (!is_constant_all<T_y>::value) {
+    if constexpr (is_autodiff_v<T_y>) {
       edge<0>(ops_partials).partials_
           = (beta_val * inv_y - alpha_val - 1) * inv_y;
     }
-    if (!is_constant_all<T_scale>::value) {
+    if constexpr (is_autodiff_v<T_scale>) {
       partials<2>(ops_partials) = alpha_val / beta_val - inv_y;
     }
   }

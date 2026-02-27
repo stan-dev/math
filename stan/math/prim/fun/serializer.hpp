@@ -269,7 +269,7 @@ struct serializer {
  * @return deserializer based on specified values
  */
 template <typename T>
-deserializer<T> to_deserializer(const std::vector<T>& vals) {
+inline deserializer<T> to_deserializer(const std::vector<T>& vals) {
   return deserializer<T>(vals);
 }
 
@@ -281,20 +281,20 @@ deserializer<T> to_deserializer(const std::vector<T>& vals) {
  * @return deserializer based on specified values
  */
 template <typename T, require_eigen_vector_t<T>* = nullptr>
-deserializer<scalar_type_t<T>> to_deserializer(const T& vals) {
+inline deserializer<scalar_type_t<T>> to_deserializer(const T& vals) {
   return deserializer<scalar_type_t<T>>(vals);
 }
 
 template <typename T>
-deserializer<T> to_deserializer(const std::complex<T>& vals) {
+inline deserializer<T> to_deserializer(const std::complex<T>& vals) {
   return to_deserializer(std::vector<T>{vals.real(), vals.imag()});
 }
 
 template <typename U>
-void serialize_helper(serializer<U>& s) {}
+inline void serialize_helper(serializer<U>& s) {}
 
 template <typename U, typename T, typename... Ts>
-void serialize_helper(serializer<U>& s, const T& x, const Ts... xs) {
+inline void serialize_helper(serializer<U>& s, const T& x, const Ts... xs) {
   s.write(x);
   serialize_helper(s, xs...);
 }
@@ -336,7 +336,7 @@ std::vector<real_return_t<T>> serialize_return(const T& x) {
  * @return serialized form of arguments
  */
 template <typename... Ts>
-Eigen::VectorXd serialize_args(const Ts... xs) {
+inline Eigen::VectorXd serialize_args(const Ts... xs) {
   return to_vector(serialize<double>(xs...));
 }
 

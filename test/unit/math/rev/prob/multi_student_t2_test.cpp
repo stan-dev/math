@@ -10,10 +10,11 @@
 #include <string>
 
 template <typename T_y, typename T_dof, typename T_loc, typename T_scale>
-void expect_propto_multi_student_t_lpdf(T_y y1, T_dof nu1, T_loc mu1,
-                                        T_scale sigma1, T_y y2, T_dof nu2,
-                                        T_loc mu2, T_scale sigma2,
-                                        std::string message = "") {
+inline void expect_propto_multi_student_t_lpdf(T_y y1, T_dof nu1, T_loc mu1,
+                                               T_scale sigma1, T_y y2,
+                                               T_dof nu2, T_loc mu2,
+                                               T_scale sigma2,
+                                               std::string message = "") {
   expect_eq_diffs(stan::math::multi_student_t_lpdf<false>(y1, nu1, mu1, sigma1),
                   stan::math::multi_student_t_lpdf<false>(y2, nu2, mu2, sigma2),
                   stan::math::multi_student_t_lpdf<true>(y1, nu1, mu1, sigma1),
@@ -75,7 +76,7 @@ TEST_F(agrad_distributions_multi_student_t, ProptoSigma) {
   stan::math::recover_memory();
 }
 
-TEST(ProbDistributionsMultiStudentT, MultiStudentTVar) {
+TEST_F(AgradRev, ProbDistributionsMultiStudentT_MultiStudentTVar) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -92,7 +93,8 @@ TEST(ProbDistributionsMultiStudentT, MultiStudentTVar) {
 
   stan::math::recover_memory();
 }
-TEST(ProbDistributionsMultiStudentT, MultiStudentTGradientUnivariate) {
+TEST_F(AgradRev,
+       ProbDistributionsMultiStudentT_MultiStudentTGradientUnivariate) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::VectorXd;
@@ -203,7 +205,7 @@ struct multi_student_t_fun {
   }
 };
 
-TEST(ProbDistributionsMultiStudentT, TestGradFunctional) {
+TEST_F(AgradRev, ProbDistributionsMultiStudentT_TestGradFunctional) {
   std::vector<double> x(3 + 3 + 3 * 2 + 1);
   // y
   x[0] = 1.0;
@@ -302,7 +304,7 @@ struct vectorized_multi_student_t_fun {
 };
 
 template <int is_row_vec_y, int is_row_vec_mu>
-void test_all_multi_student_t2() {
+inline void test_all_multi_student_t2() {
   {
     using stan::math::var;
     std::vector<double> y_(3), mu_(3), sigma_(6);
@@ -532,7 +534,7 @@ void test_all_multi_student_t2() {
   }
 }
 
-TEST(ProbDistributionsMultiStudentT, TestGradFunctionalVectorized) {
+TEST_F(AgradRev, ProbDistributionsMultiStudentT_TestGradFunctionalVectorized) {
   test_all_multi_student_t2<1, 1>();
   test_all_multi_student_t2<1, -1>();
   test_all_multi_student_t2<-1, 1>();
@@ -541,7 +543,7 @@ TEST(ProbDistributionsMultiStudentT, TestGradFunctionalVectorized) {
   stan::math::recover_memory();
 }
 
-TEST(ProbDistributionsMultiStudentT, check_varis_on_stack) {
+TEST_F(AgradRev, ProbDistributionsMultiStudentT_check_varis_on_stack) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::vector;

@@ -17,30 +17,30 @@ namespace math {
  * return a multivariate normal random variate sampled
  * from the gaussian approximation of p(theta | y, phi),
  * where the likelihood is a Bernoulli with logit link.
+ * @tparam Mean type of the mean of the latent normal distribution
  * \laplace_common_template_args
  * @tparam RNG A valid boost rng type
  * @param[in] y Vector Vector of total number of trials with a positive outcome.
  * @param[in] n_samples Vector of number of trials.
+ * @param[in] mean the mean of the latent normal variable.
  * \laplace_common_args
  * \laplace_options
  * \rng_arg
  * \msg_arg
  */
-template <typename ThetaVec, typename CovarFun, typename CovarArgs,
-          typename RNG, require_eigen_t<ThetaVec>* = nullptr>
+template <typename Mean, typename CovarFun, typename CovarArgs,
+          typename OpsTuple, typename RNG>
 inline Eigen::VectorXd laplace_latent_tol_bernoulli_logit_rng(
-    const std::vector<int>& y, const std::vector<int>& n_samples,
-    ThetaVec&& theta_0, CovarFun&& covariance_function, CovarArgs&& covar_args,
-    const double tolerance, const int max_num_steps,
-    const int hessian_block_size, const int solver,
-    const int max_steps_line_search, RNG& rng, std::ostream* msgs) {
-  laplace_options ops{hessian_block_size, solver, max_steps_line_search,
-                      tolerance, max_num_steps};
-  return laplace_base_rng(bernoulli_logit_likelihood{},
-                          std::forward_as_tuple(to_vector(y), n_samples),
-                          std::forward<ThetaVec>(theta_0),
-                          std::forward<CovarFun>(covariance_function),
-                          std::forward<CovarArgs>(covar_args), ops, rng, msgs);
+    const std::vector<int>& y, const std::vector<int>& n_samples, Mean&& mean,
+    CovarFun&& covariance_function, CovarArgs&& covar_args, OpsTuple&& ops,
+    RNG& rng, std::ostream* msgs) {
+  return laplace_base_rng(
+      bernoulli_logit_likelihood{},
+      std::forward_as_tuple(to_vector(y), n_samples, std::forward<Mean>(mean)),
+      std::forward<CovarFun>(covariance_function),
+      std::forward<CovarArgs>(covar_args),
+      internal::tuple_to_laplace_options(std::forward<OpsTuple>(ops)), rng,
+      msgs);
 }
 
 /**
@@ -52,26 +52,27 @@ inline Eigen::VectorXd laplace_latent_tol_bernoulli_logit_rng(
  * return a multivariate normal random variate sampled
  * from the gaussian approximation of p(theta | y, phi),
  * where the likelihood is a Bernoulli with logit link.
+ * @tparam Mean type of the mean of the latent normal distribution
  * \laplace_common_template_args
  * @tparam RNG A valid boost rng type
  * @param[in] y Vector Vector of total number of trials with a positive outcome.
  * @param[in] n_samples Vector of number of trials.
+ * @param[in] mean the mean of the latent normal variable.
  * \laplace_common_args
  * \rng_arg
  * \msg_arg
  */
-template <typename CovarFun, typename ThetaVec, typename CovarArgs,
-          typename RNG, require_eigen_t<ThetaVec>* = nullptr>
+template <typename Mean, typename CovarFun, typename CovarArgs, typename RNG>
 inline Eigen::VectorXd laplace_latent_bernoulli_logit_rng(
-    const std::vector<int>& y, const std::vector<int>& n_samples,
-    ThetaVec&& theta_0, CovarFun&& covariance_function, CovarArgs&& covar_args,
-    RNG& rng, std::ostream* msgs) {
-  constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
-  return laplace_base_rng(bernoulli_logit_likelihood{},
-                          std::forward_as_tuple(to_vector(y), n_samples),
-                          std::forward<ThetaVec>(theta_0),
-                          std::forward<CovarFun>(covariance_function),
-                          std::forward<CovarArgs>(covar_args), ops, rng, msgs);
+    const std::vector<int>& y, const std::vector<int>& n_samples, Mean&& mean,
+    CovarFun&& covariance_function, CovarArgs&& covar_args, RNG& rng,
+    std::ostream* msgs) {
+  return laplace_base_rng(
+      bernoulli_logit_likelihood{},
+      std::forward_as_tuple(to_vector(y), n_samples, std::forward<Mean>(mean)),
+      std::forward<CovarFun>(covariance_function),
+      std::forward<CovarArgs>(covar_args), laplace_options_default{}, rng,
+      msgs);
 }
 
 }  // namespace math

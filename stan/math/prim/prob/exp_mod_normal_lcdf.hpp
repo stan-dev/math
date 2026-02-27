@@ -28,7 +28,7 @@ namespace math {
 template <typename T_y, typename T_loc, typename T_scale, typename T_inv_scale,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_loc, T_scale, T_inv_scale>* = nullptr>
-return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf(
+inline return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma,
     const T_inv_scale& lambda) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_inv_scale>;
@@ -71,31 +71,30 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf(
   }
 
   const auto& inv_sigma
-      = to_ref_if<!is_constant_all<T_y, T_loc, T_scale>::value>(inv(sigma_val));
+      = to_ref_if<is_any_autodiff_v<T_y, T_loc, T_scale>>(inv(sigma_val));
   const auto& diff = to_ref(y_val - mu_val);
   const auto& v = to_ref(lambda_val * sigma_val);
   const auto& scaled_diff = to_ref(diff * INV_SQRT_TWO * inv_sigma);
   const auto& scaled_diff_diff
-      = to_ref_if<!is_constant_all<T_y, T_loc, T_scale, T_inv_scale>::value>(
+      = to_ref_if<is_any_autodiff_v<T_y, T_loc, T_scale, T_inv_scale>>(
           scaled_diff - v * INV_SQRT_TWO);
   const auto& erf_calc = to_ref(0.5 * (1 + erf(scaled_diff_diff)));
 
   const auto& exp_term
-      = to_ref_if<!is_constant_all<T_y, T_loc, T_scale, T_inv_scale>::value>(
+      = to_ref_if<is_any_autodiff_v<T_y, T_loc, T_scale, T_inv_scale>>(
           exp(0.5 * square(v) - lambda_val * diff));
   const auto& cdf_n
       = to_ref(0.5 + 0.5 * erf(scaled_diff) - exp_term * erf_calc);
 
   T_partials_return cdf_log = sum(log(cdf_n));
 
-  if (!is_constant_all<T_y, T_loc, T_scale, T_inv_scale>::value) {
-    const auto& exp_term_2
-        = to_ref_if<(!is_constant_all<T_y, T_loc, T_scale>::value
-                     && !is_constant_all<T_inv_scale>::value)>(
-            exp(-square(scaled_diff_diff)));
-    if (!is_constant_all<T_y, T_loc, T_scale>::value) {
-      constexpr bool need_deriv_refs = !is_constant_all<T_y, T_loc>::value
-                                       && !is_constant_all<T_scale>::value;
+  if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale, T_inv_scale>) {
+    const auto& exp_term_2 = to_ref_if<(
+        is_any_autodiff_v<T_y, T_loc, T_scale> && is_autodiff_v<T_inv_scale>)>(
+        exp(-square(scaled_diff_diff)));
+    if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale>) {
+      constexpr bool need_deriv_refs
+          = is_any_autodiff_v<T_y, T_loc> && is_autodiff_v<T_scale>;
       const auto& deriv_1
           = to_ref_if<need_deriv_refs>(lambda_val * exp_term * erf_calc);
       const auto& deriv_2 = to_ref_if<need_deriv_refs>(
@@ -104,25 +103,25 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf(
       const auto& exp_m_sq_scaled_diff = exp(-sq_scaled_diff);
       const auto& deriv_3 = to_ref_if<need_deriv_refs>(
           INV_SQRT_TWO_PI * exp_m_sq_scaled_diff * inv_sigma);
-      if (!is_constant_all<T_y, T_loc>::value) {
-        const auto& deriv = to_ref_if<(!is_constant_all<T_loc>::value
-                                       && !is_constant_all<T_y>::value)>(
-            (deriv_1 - deriv_2 + deriv_3) / cdf_n);
-        if (!is_constant_all<T_y>::value) {
+      if constexpr (is_any_autodiff_v<T_y, T_loc>) {
+        const auto& deriv
+            = to_ref_if<(is_autodiff_v<T_loc> && is_autodiff_v<T_y>)>(
+                (deriv_1 - deriv_2 + deriv_3) / cdf_n);
+        if constexpr (is_autodiff_v<T_y>) {
           partials<0>(ops_partials) = deriv;
         }
-        if (!is_constant_all<T_loc>::value) {
+        if constexpr (is_autodiff_v<T_loc>) {
           partials<1>(ops_partials) = -deriv;
         }
       }
-      if (!is_constant_all<T_scale>::value) {
+      if constexpr (is_autodiff_v<T_scale>) {
         edge<2>(ops_partials).partials_
             = -((deriv_1 - deriv_2) * v
                 + (deriv_3 - deriv_2) * scaled_diff * SQRT_TWO)
               / cdf_n;
       }
     }
-    if (!is_constant_all<T_inv_scale>::value) {
+    if constexpr (is_autodiff_v<T_inv_scale>) {
       edge<3>(ops_partials).partials_
           = exp_term
             * (INV_SQRT_TWO_PI * sigma_val * exp_term_2

@@ -102,9 +102,10 @@ cov_matrix_constrain(const T& x, Eigen::Index K, Lp& lp) {
  * @throws std::domain_error if (x.size() != K + (K choose 2)).
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
-inline auto cov_matrix_constrain(const T& x, Eigen::Index K) {
-  return apply_vector_unary<T>::apply(
-      x, [K](auto&& v) { return cov_matrix_constrain(v, K); });
+inline auto cov_matrix_constrain(T&& x, Eigen::Index K) {
+  return apply_vector_unary<T>::apply(std::forward<T>(x), [K](auto&& v) {
+    return cov_matrix_constrain(std::forward<decltype(v)>(v), K);
+  });
 }
 
 /**
@@ -124,9 +125,10 @@ inline auto cov_matrix_constrain(const T& x, Eigen::Index K) {
  */
 template <typename T, typename Lp, require_std_vector_t<T>* = nullptr,
           require_convertible_t<return_type_t<T>, Lp>* = nullptr>
-inline auto cov_matrix_constrain(const T& x, Eigen::Index K, Lp& lp) {
-  return apply_vector_unary<T>::apply(
-      x, [&lp, K](auto&& v) { return cov_matrix_constrain(v, K, lp); });
+inline auto cov_matrix_constrain(T&& x, Eigen::Index K, Lp& lp) {
+  return apply_vector_unary<T>::apply(std::forward<T>(x), [&lp, K](auto&& v) {
+    return cov_matrix_constrain(std::forward<decltype(v)>(v), K, lp);
+  });
 }
 
 /**
@@ -151,11 +153,11 @@ inline auto cov_matrix_constrain(const T& x, Eigen::Index K, Lp& lp) {
  */
 template <bool Jacobian, typename T, typename Lp,
           require_convertible_t<return_type_t<T>, Lp>* = nullptr>
-inline auto cov_matrix_constrain(const T& x, Eigen::Index K, Lp& lp) {
+inline auto cov_matrix_constrain(T&& x, Eigen::Index K, Lp& lp) {
   if constexpr (Jacobian) {
-    return cov_matrix_constrain(x, K, lp);
+    return cov_matrix_constrain(std::forward<T>(x), K, lp);
   } else {
-    return cov_matrix_constrain(x, K);
+    return cov_matrix_constrain(std::forward<T>(x), K);
   }
 }
 

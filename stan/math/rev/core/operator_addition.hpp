@@ -52,7 +52,7 @@ namespace math {
  */
 inline var operator+(const var& a, const var& b) {
   return make_callback_vari(a.vi_->val_ + b.vi_->val_,
-                            [avi = a.vi_, bvi = b.vi_](const auto& vi) mutable {
+                            [avi = a.vi_, bvi = b.vi_](auto&& vi) mutable {
                               avi->adj_ += vi.adj_;
                               bvi->adj_ += vi.adj_;
                             });
@@ -75,9 +75,9 @@ inline var operator+(const var& a, Arith b) {
   if (unlikely(b == 0.0)) {
     return a;
   }
-  return make_callback_vari(
-      a.vi_->val_ + b,
-      [avi = a.vi_](const auto& vi) mutable { avi->adj_ += vi.adj_; });
+  return make_callback_vari(a.vi_->val_ + b, [avi = a.vi_](auto&& vi) mutable {
+    avi->adj_ += vi.adj_;
+  });
 }
 
 /**
@@ -140,7 +140,7 @@ template <typename Arith, typename VarMat,
           require_st_arithmetic<Arith>* = nullptr,
           require_rev_matrix_t<VarMat>* = nullptr>
 inline auto add(VarMat&& a, const Arith& b) {
-  if (is_eigen<Arith>::value) {
+  if constexpr (is_eigen<Arith>::value) {
     check_matching_dims("add", "a", a, "b", b);
   }
   using op_ret_type

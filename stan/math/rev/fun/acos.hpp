@@ -53,7 +53,7 @@ namespace math {
  * @return Arc cosine of variable, in radians.
  */
 inline var acos(const var& x) {
-  return make_callback_var(std::acos(x.val()), [x](const auto& vi) mutable {
+  return make_callback_var(std::acos(x.val()), [x](auto&& vi) mutable {
     x.adj() -= vi.adj() / std::sqrt(1.0 - (x.val() * x.val()));
   });
 }
@@ -68,7 +68,7 @@ inline var acos(const var& x) {
 template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
 inline auto acos(const VarMat& x) {
   return make_callback_var(
-      x.val().array().acos().matrix(), [x](const auto& vi) mutable {
+      x.val().array().acos().matrix(), [x](auto&& vi) mutable {
         x.adj().array()
             -= vi.adj().array() / (1.0 - (x.val().array().square())).sqrt();
       });

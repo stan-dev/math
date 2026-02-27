@@ -35,9 +35,8 @@ namespace math {
  * @throw std::domain_error if y is not greater than 0.
  */
 template <typename T_y, typename T_dof, typename T_scale>
-return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_cdf(const T_y& y,
-                                                             const T_dof& nu,
-                                                             const T_scale& s) {
+inline return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_cdf(
+    const T_y& y, const T_dof& nu, const T_scale& s) {
   using T_partials_return = partials_return_t<T_y, T_dof, T_scale>;
   using std::exp;
   using std::pow;
@@ -76,12 +75,12 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_cdf(const T_y& y,
     }
   }
 
-  VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
-      gamma_vec(math::size(nu));
-  VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
-      digamma_vec(math::size(nu));
+  VectorBuilder<is_autodiff_v<T_dof>, T_partials_return, T_dof> gamma_vec(
+      math::size(nu));
+  VectorBuilder<is_autodiff_v<T_dof>, T_partials_return, T_dof> digamma_vec(
+      math::size(nu));
 
-  if (!is_constant_all<T_dof>::value) {
+  if constexpr (is_autodiff_v<T_dof>) {
     for (size_t i = 0; i < stan::math::size(nu); i++) {
       const T_partials_return half_nu_dbl = 0.5 * nu_vec.val(i);
       gamma_vec[i] = tgamma(half_nu_dbl);
@@ -111,12 +110,12 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_cdf(const T_y& y,
 
     P *= Pn;
 
-    if (!is_constant_all<T_y>::value) {
+    if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials)[n]
           += half_nu_s2_overx_dbl * y_inv_dbl * gamma_p_deriv / Pn;
     }
 
-    if (!is_constant_all<T_dof>::value) {
+    if constexpr (is_autodiff_v<T_dof>) {
       partials<1>(ops_partials)[n]
           += (0.5
                   * grad_reg_inc_gamma(half_nu_dbl, half_nu_s2_overx_dbl,
@@ -125,23 +124,23 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_cdf(const T_y& y,
              / Pn;
     }
 
-    if (!is_constant_all<T_scale>::value) {
+    if constexpr (is_autodiff_v<T_scale>) {
       partials<2>(ops_partials)[n]
           += -2.0 * half_nu_dbl * s_dbl * y_inv_dbl * gamma_p_deriv / Pn;
     }
   }
 
-  if (!is_constant_all<T_y>::value) {
+  if constexpr (is_autodiff_v<T_y>) {
     for (size_t n = 0; n < stan::math::size(y); ++n) {
       partials<0>(ops_partials)[n] *= P;
     }
   }
-  if (!is_constant_all<T_dof>::value) {
+  if constexpr (is_autodiff_v<T_dof>) {
     for (size_t n = 0; n < stan::math::size(nu); ++n) {
       partials<1>(ops_partials)[n] *= P;
     }
   }
-  if (!is_constant_all<T_scale>::value) {
+  if constexpr (is_autodiff_v<T_scale>) {
     for (size_t n = 0; n < stan::math::size(s); ++n) {
       partials<2>(ops_partials)[n] *= P;
     }
