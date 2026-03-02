@@ -13,6 +13,9 @@ inline void expect_max(const T& m) {
   stan::test::expect_ad(f, v);
   stan::test::expect_ad(f, rv);
   stan::test::expect_ad(f, m);
+  stan::test::expect_ad_matvar(f, v);
+  stan::test::expect_ad_matvar(f, rv);
+  stan::test::expect_ad_matvar(f, m);
 }
 
 TEST(MathMixMatFun, max) {
@@ -34,4 +37,36 @@ TEST(MathMixMatFun, max) {
   Eigen::MatrixXd e(3, 2);
   e << -100, 0, 1, 20, -40, 2;
   expect_max(e);
+
+  Eigen::MatrixXd ties(2, 2);
+  ties << 10.5, 1.0, 10.5, 10.5;
+  expect_max(ties);
+
+  double inf = std::numeric_limits<double>::infinity();
+  Eigen::VectorXd o(3);
+  o << -inf, 5.0, inf;
+  expect_max(o);
+
+  double nan = std::numeric_limits<double>::quiet_NaN();
+  Eigen::VectorXd n1(3);
+  n1 << 1.0, nan, 2.0;
+  expect_max(n1);
+
+  Eigen::MatrixXd n2(2, 2);
+  n2 << nan, nan, nan, nan;
+  expect_max(n2);
+
+}
+
+TEST(MathMixMatFun, max_binary) {
+  auto f = [](const auto& x, const auto& y) { return stan::math::max(x, y); };
+  
+  stan::test::expect_ad(f, 1.0, 2.0);
+  stan::test::expect_ad(f, 2.0, 1.0);
+  stan::test::expect_ad(f, 3.0, 3.0);
+  
+  double nan = std::numeric_limits<double>::quiet_NaN();
+  stan::test::expect_ad(f, nan, 1.0);
+  stan::test::expect_ad(f, 1.0, nan);
+  stan::test::expect_ad(f, nan, nan);
 }

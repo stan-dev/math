@@ -81,6 +81,7 @@
 #include <stan/math/fwd/fun/log_softmax.hpp>
 #include <stan/math/fwd/fun/log_sum_exp.hpp>
 #include <stan/math/fwd/fun/logit.hpp>
+#include <stan/math/fwd/fun/max.hpp>
 #include <stan/math/fwd/fun/mdivide_left.hpp>
 #include <stan/math/fwd/fun/mdivide_left_ldlt.hpp>
 #include <stan/math/fwd/fun/mdivide_left_tri_low.hpp>
