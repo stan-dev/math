@@ -58,7 +58,7 @@ struct laplace_options_base {
    */
   double tolerance{internal::laplace_default_tolerance};  // 2
   /* Maximum number of steps*/
-  int max_num_steps{internal::laplace_default_max_num_steps};  // 3
+  int max_num_steps{internal::laplace_default_max_num_steps};          // 3
   int allow_fallthrough{internal::laplace_default_allow_fallthrough};  // 4
   laplace_line_search_options line_search{
       internal::laplace_default_max_steps_line_search};  // 5

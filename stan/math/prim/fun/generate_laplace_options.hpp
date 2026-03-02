@@ -24,13 +24,12 @@ inline constexpr int laplace_default_max_steps_line_search = 1000;
  * @return tuple representing laplace options exposed to user.
  */
 inline auto generate_laplace_options(int theta_0_size) {
-  return std::make_tuple(
-      Eigen::VectorXd::Zero(theta_0_size).eval(),
-      internal::laplace_default_tolerance,
-      internal::laplace_default_max_num_steps,
-      internal::laplace_default_solver,
-      internal::laplace_default_max_steps_line_search,
-      internal::laplace_default_allow_fallthrough);
+  return std::make_tuple(Eigen::VectorXd::Zero(theta_0_size).eval(),
+                         internal::laplace_default_tolerance,
+                         internal::laplace_default_max_num_steps,
+                         internal::laplace_default_solver,
+                         internal::laplace_default_max_steps_line_search,
+                         internal::laplace_default_allow_fallthrough);
 }
 
 /**
@@ -43,8 +42,7 @@ template <typename ThetaVec, require_eigen_t<ThetaVec>* = nullptr>
 inline auto generate_laplace_options(ThetaVec&& theta_0) {
   return std::make_tuple(
       std::forward<ThetaVec>(theta_0), internal::laplace_default_tolerance,
-      internal::laplace_default_max_num_steps,
-      internal::laplace_default_solver,
+      internal::laplace_default_max_num_steps, internal::laplace_default_solver,
       internal::laplace_default_max_steps_line_search,
       internal::laplace_default_allow_fallthrough);
 }
