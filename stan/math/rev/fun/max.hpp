@@ -14,7 +14,7 @@ namespace stan {
 namespace math {
 
 /**
- * Returns the maximum value of the two specified scalar arguments, 
+ * Returns the maximum value of the two specified scalar arguments,
  * where at least one argument is a 'var'.
  *
  * @tparam Scal1 type of first argument (must be 'var' if Scal2 is not)
@@ -24,16 +24,17 @@ namespace math {
  * @return maximum value of the two arguments
  */
 template <typename Scal1, typename Scal2,
-          require_any_var_t<Scal1, Scal2>* = nullptr,
-          require_all_not_fvar_t<Scal1, Scal2>* = nullptr>
+          require_any_var_t<Scal1, Scal2>* = nullptr>
 inline var max(Scal1 x, Scal2 y) {
   double x_val = stan::math::value_of(x);
   double y_val = stan::math::value_of(y);
   if (unlikely(is_nan(x_val))) {
     if (unlikely(is_nan(y_val))) {
-      return make_callback_var(NOT_A_NUMBER, [x, y](auto& vi) mutable {  
-        if constexpr (is_var<Scal1>::value) x.adj() = NOT_A_NUMBER;
-        if constexpr (is_var<Scal2>::value) y.adj() = NOT_A_NUMBER;
+      return make_callback_var(NOT_A_NUMBER, [x, y](auto& vi) mutable {
+        if constexpr (is_var<Scal1>::value)
+          x.adj() = NOT_A_NUMBER;
+        if constexpr (is_var<Scal2>::value)
+          y.adj() = NOT_A_NUMBER;
       });
     }
     return y;
@@ -44,12 +45,16 @@ inline var max(Scal1 x, Scal2 y) {
   double max_val = std::fmax(x_val, y_val);
   return make_callback_var(max_val, [x, y, x_val, y_val](auto& vi) mutable {
     if (x_val > y_val) {
-      if constexpr (is_var<Scal1>::value) x.adj() += vi.adj();
+      if constexpr (is_var<Scal1>::value)
+        x.adj() += vi.adj();
     } else if (y_val > x_val) {
-      if constexpr (is_var<Scal2>::value) y.adj() += vi.adj();
+      if constexpr (is_var<Scal2>::value)
+        y.adj() += vi.adj();
     } else {
-      if constexpr (is_var<Scal1>::value) x.adj() += vi.adj() * 0.5;
-      if constexpr (is_var<Scal2>::value) y.adj() += vi.adj() * 0.5;
+      if constexpr (is_var<Scal1>::value)
+        x.adj() += vi.adj() * 0.5;
+      if constexpr (is_var<Scal2>::value)
+        y.adj() += vi.adj() * 0.5;
     }
   });
 }
@@ -59,8 +64,7 @@ inline var max(Scal1 x, Scal2 y) {
  * @param[in] x container (Eigen matrix, vector, row vector or std vector)
  * @return maximum value in the container, or -infinity if size is zero
  */
-template <typename T,
-          require_st_var<T>* = nullptr,
+template <typename T, require_st_var<T>* = nullptr,
           require_container_t<T>* = nullptr,
           require_not_var_matrix_t<T>* = nullptr>
 inline var max(T&& x) {
@@ -83,7 +87,8 @@ inline var max(T&& x) {
       auto is_max = (x_arena.val().array() == max_val);
       double count = is_max.template cast<double>().sum();
       double adj_to_propagate = vi.adj() / count;
-      x_arena.adj().array() += is_max.template cast<double>() * adj_to_propagate;
+      x_arena.adj().array()
+          += is_max.template cast<double>() * adj_to_propagate;
     });
   });
 }
