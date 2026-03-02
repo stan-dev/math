@@ -58,8 +58,8 @@ template <bool propto = false, typename Mean, typename CovarFun,
           typename CovarArgs, typename OpsTuple>
 inline auto laplace_marginal_tol_bernoulli_logit_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples, Mean&& mean,
-    CovarFun&& covariance_function, CovarArgs&& covar_args,
-    int hessian_block_size, OpsTuple&& ops, std::ostream* msgs) {
+    int hessian_block_size, CovarFun&& covariance_function,
+    CovarArgs&& covar_args, OpsTuple&& ops, std::ostream* msgs) {
   auto options
       = internal::tuple_to_laplace_options(std::forward<OpsTuple>(ops));
   options.hessian_block_size = hessian_block_size;
@@ -93,8 +93,8 @@ template <bool propto = false, typename Mean, typename CovarFun,
           typename CovarArgs>
 inline auto laplace_marginal_bernoulli_logit_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples, Mean&& mean,
-    CovarFun&& covariance_function, CovarArgs&& covar_args,
-    int hessian_block_size, std::ostream* msgs) {
+    int hessian_block_size, CovarFun&& covariance_function,
+    CovarArgs&& covar_args, std::ostream* msgs) {
   auto options = laplace_options_default{hessian_block_size};
   return laplace_marginal_density(
       bernoulli_logit_likelihood{},

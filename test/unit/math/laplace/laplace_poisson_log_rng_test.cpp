@@ -23,8 +23,8 @@ TEST_F(laplace_count_two_dim_diag_test, poisson_log_likelihood) {
   boost::random::mt19937 rng;
   rng.seed(1954);
   Eigen::MatrixXd theta_pred = laplace_latent_poisson_log_rng(
-      y, y_index, 0, stan::math::test::diagonal_kernel_functor{},
-      std::forward_as_tuple(phi(0), phi(1)), 1, rng, nullptr);
+      y, y_index, 0, 1, stan::math::test::diagonal_kernel_functor{},
+      std::forward_as_tuple(phi(0), phi(1)), rng, nullptr);
 
   // double tol = 1e-3;
   EXPECT_NEAR(theta_benchmark(0), theta_pred(0), tol);
@@ -36,8 +36,8 @@ TEST_F(laplace_count_two_dim_diag_test, poisson_log_likelihood) {
   for (int i = 0; i < n_sim; i++) {
     rng.seed(2025 + i);
     Eigen::MatrixXd theta_pred = laplace_latent_poisson_log_rng(
-        y, y_index, 0, stan::math::test::diagonal_kernel_functor{},
-        std::forward_as_tuple(phi(0), phi(1)), 1, rng, nullptr);
+        y, y_index, 0, 1, stan::math::test::diagonal_kernel_functor{},
+        std::forward_as_tuple(phi(0), phi(1)), rng, nullptr);
 
     theta_dim0(i) = theta_pred(0);
     theta_dim1(i) = theta_pred(1);
@@ -73,8 +73,8 @@ TEST_F(laplace_count_two_dim_diag_test, poisson_log_exp_likelihood) {
 
   rng.seed(1954);
   Eigen::MatrixXd theta_pred_exp = laplace_latent_poisson_log_rng(
-      y, y_index, log(ye), stan::math::test::diagonal_kernel_functor{},
-      std::forward_as_tuple(phi(0), phi(1)), 1, rng, nullptr);
+      y, y_index, log(ye), 1, stan::math::test::diagonal_kernel_functor{},
+      std::forward_as_tuple(phi(0), phi(1)), rng, nullptr);
 
   EXPECT_NEAR(theta_benchmark(0), theta_pred_exp(0), tol);
   EXPECT_NEAR(theta_benchmark(1), theta_pred_exp(1), tol);
@@ -84,8 +84,8 @@ TEST_F(laplace_count_two_dim_diag_test, poisson_log_exp_likelihood) {
   for (int i = 0; i < n_sim; i++) {
     rng.seed(2025 + i);
     Eigen::MatrixXd theta_pred = laplace_latent_poisson_log_rng(
-        y, y_index, log(ye), stan::math::test::diagonal_kernel_functor{},
-        std::forward_as_tuple(phi(0), phi(1)), 1, rng, nullptr);
+        y, y_index, log(ye), 1, stan::math::test::diagonal_kernel_functor{},
+        std::forward_as_tuple(phi(0), phi(1)), rng, nullptr);
 
     theta_dim0(i) = theta_pred(0);
     theta_dim1(i) = theta_pred(1);

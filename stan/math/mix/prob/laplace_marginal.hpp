@@ -30,9 +30,10 @@ namespace math {
 template <bool propto = false, typename LFun, typename LArgs, typename CovarFun,
           typename CovarArgs, typename OpsTuple>
 inline auto laplace_marginal_tol(LFun&& L_f, LArgs&& l_args,
+                                 int hessian_block_size,
                                  CovarFun&& covariance_function,
-                                 CovarArgs&& covar_args, int hessian_block_size,
-                                 OpsTuple&& ops, std::ostream* msgs) {
+                                 CovarArgs&& covar_args, OpsTuple&& ops,
+                                 std::ostream* msgs) {
   auto options
       = internal::tuple_to_laplace_options(std::forward<OpsTuple>(ops));
   options.hessian_block_size = hessian_block_size;
@@ -63,10 +64,9 @@ inline auto laplace_marginal_tol(LFun&& L_f, LArgs&& l_args,
  */
 template <bool propto = false, typename LFun, typename LArgs, typename CovarFun,
           typename CovarArgs>
-inline auto laplace_marginal(LFun&& L_f, LArgs&& l_args,
+inline auto laplace_marginal(LFun&& L_f, LArgs&& l_args, int hessian_block_size,
                              CovarFun&& covariance_function,
-                             CovarArgs&& covar_args, int hessian_block_size,
-                             std::ostream* msgs) {
+                             CovarArgs&& covar_args, std::ostream* msgs) {
   auto options = laplace_options_default{hessian_block_size};
   return laplace_marginal_density(
       std::forward<LFun>(L_f), std::forward<LArgs>(l_args),

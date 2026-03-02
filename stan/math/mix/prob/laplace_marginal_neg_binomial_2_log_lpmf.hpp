@@ -82,8 +82,8 @@ template <bool propto = false, typename Eta, typename Mean, typename CovarFun,
           typename CovarArgs, typename OpsTuple>
 inline auto laplace_marginal_tol_neg_binomial_2_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& y_index, const Eta& eta,
-    Mean&& mean, CovarFun&& covariance_function, CovarArgs&& covar_args,
-    int hessian_block_size, OpsTuple&& ops, std::ostream* msgs) {
+    Mean&& mean, int hessian_block_size, CovarFun&& covariance_function,
+    CovarArgs&& covar_args, OpsTuple&& ops, std::ostream* msgs) {
   auto options
       = internal::tuple_to_laplace_options(std::forward<OpsTuple>(ops));
   options.hessian_block_size = hessian_block_size;
@@ -118,8 +118,8 @@ template <bool propto = false, typename Eta, typename Mean, typename CovarFun,
           typename CovarArgs>
 inline auto laplace_marginal_neg_binomial_2_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& y_index, const Eta& eta,
-    Mean&& mean, CovarFun&& covariance_function, CovarArgs&& covar_args,
-    int hessian_block_size, std::ostream* msgs) {
+    Mean&& mean, int hessian_block_size, CovarFun&& covariance_function,
+    CovarArgs&& covar_args, std::ostream* msgs) {
   auto options = laplace_options_default{hessian_block_size};
   return laplace_marginal_density(
       neg_binomial_2_log_likelihood{},
@@ -184,8 +184,8 @@ template <bool propto = false, typename Eta, typename Mean, typename CovarFun,
 inline auto laplace_marginal_tol_neg_binomial_2_log_summary_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_per_group,
     const std::vector<int>& counts_per_group, const Eta& eta, Mean&& mean,
-    CovarFun&& covariance_function, CovarArgs&& covar_args,
-    int hessian_block_size, OpsTuple&& ops, std::ostream* msgs) {
+    int hessian_block_size, CovarFun&& covariance_function,
+    CovarArgs&& covar_args, OpsTuple&& ops, std::ostream* msgs) {
   auto options
       = internal::tuple_to_laplace_options(std::forward<OpsTuple>(ops));
   options.hessian_block_size = hessian_block_size;
@@ -222,8 +222,8 @@ template <bool propto = false, typename Eta, typename Mean, typename CovarFun,
 inline auto laplace_marginal_neg_binomial_2_log_summary_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_per_group,
     const std::vector<int>& counts_per_group, const Eta& eta, Mean&& mean,
-    CovarFun&& covariance_function, CovarArgs&& covar_args,
-    int hessian_block_size, std::ostream* msgs) {
+    int hessian_block_size, CovarFun&& covariance_function,
+    CovarArgs&& covar_args, std::ostream* msgs) {
   auto options = laplace_options_default{hessian_block_size};
   return laplace_marginal_density(
       neg_binomial_2_log_likelihood_summary{},
