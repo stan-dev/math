@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_MIX_FUNCTOR_LAPLACE_MARGINAL_DENSITY_ESTIMATOR_HPP
 #define STAN_MATH_MIX_FUNCTOR_LAPLACE_MARGINAL_DENSITY_ESTIMATOR_HPP
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/generate_laplace_options.hpp>
 #include <stan/math/mix/functor/laplace_likelihood.hpp>
 #include <stan/math/mix/functor/wolfe_line_search.hpp>
 #include <stan/math/rev/meta.hpp>
@@ -31,7 +32,7 @@ namespace math {
  */
 struct laplace_options_base {
   /* Size of the blocks in block diagonal hessian*/
-  int hessian_block_size{1};  // 0
+  int hessian_block_size{internal::laplace_default_hessian_block_size};  // 0
   /**
    * Which linear solver to use inside the Newton step.
    *
@@ -47,7 +48,7 @@ struct laplace_options_base {
    *    `Sigma = K_root * K_root^T` and form `B = I + K_root^T * W * K_root`.
    * 3. General LU: form `B = I + Sigma * W` and factorize with LU.
    */
-  int solver{1};  // 1
+  int solver{internal::laplace_default_solver};  // 1
   /**
    * Iterations end when the absolute change in the optimization objective
    * is less than this tolerance.
@@ -55,11 +56,12 @@ struct laplace_options_base {
    * Note: the objective used for convergence is the one optimized by the
    * Newton/Wolfe loop (not the final Laplace-corrected log marginal density).
    */
-  double tolerance{1.49012e-08};  // 2
+  double tolerance{internal::laplace_default_tolerance};  // 2
   /* Maximum number of steps*/
-  int max_num_steps{500};                   // 3
-  int allow_fallthrough{true};              // 4
-  laplace_line_search_options line_search;  // 5
+  int max_num_steps{internal::laplace_default_max_num_steps};  // 3
+  int allow_fallthrough{internal::laplace_default_allow_fallthrough};  // 4
+  laplace_line_search_options line_search{
+      internal::laplace_default_max_steps_line_search};  // 5
   laplace_options_base() = default;
   laplace_options_base(int hessian_block_size_, int solver_, double tolerance_,
                        int max_num_steps_, bool allow_fallthrough_,
@@ -101,34 +103,6 @@ struct laplace_options<true> : public laplace_options_base {
 
 using laplace_options_default = laplace_options<false>;
 using laplace_options_user_supplied = laplace_options<true>;
-
-/**
- * User function for generating laplace options tuple
- * @param theta_0_size Size of user supplied initial theta
- * @return tuple representing laplace options exposed to user.
- */
-inline auto generate_laplace_options(int theta_0_size) {
-  auto ops = laplace_options_default{};
-  return std::make_tuple(Eigen::VectorXd::Zero(theta_0_size).eval(),
-                         ops.tolerance, ops.max_num_steps, ops.solver,
-                         ops.line_search.max_iterations,
-                         static_cast<int>(ops.allow_fallthrough));
-}
-
-/**
- * User function for generating laplace options tuple
- * @tparam ThetaVec An Eigen vector type for user supplied initial theta
- * @param theta_0 User supplied initial theta
- * @return tuple representing laplace options exposed to user.
- */
-template <typename ThetaVec, require_eigen_t<ThetaVec>* = nullptr>
-inline auto generate_laplace_options(ThetaVec&& theta_0) {
-  auto ops = laplace_options_default{};
-  return std::make_tuple(std::forward<ThetaVec>(theta_0), ops.tolerance,
-                         ops.max_num_steps, ops.solver,
-                         ops.line_search.max_iterations,
-                         static_cast<int>(ops.allow_fallthrough));
-}
 
 namespace internal {
 
