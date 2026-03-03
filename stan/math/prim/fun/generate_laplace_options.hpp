@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/eval.hpp>
 #include <tuple>
 #include <utility>
 
@@ -41,7 +42,7 @@ inline auto generate_laplace_options(int theta_0_size) {
 template <typename ThetaVec, require_eigen_t<ThetaVec>* = nullptr>
 inline auto generate_laplace_options(ThetaVec&& theta_0) {
   return std::make_tuple(
-      std::forward<ThetaVec>(theta_0), internal::laplace_default_tolerance,
+      stan::math::eval(std::forward<ThetaVec>(theta_0)), internal::laplace_default_tolerance,
       internal::laplace_default_max_num_steps, internal::laplace_default_solver,
       internal::laplace_default_max_steps_line_search,
       internal::laplace_default_allow_fallthrough);

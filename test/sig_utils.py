@@ -156,6 +156,7 @@ ignored = [
     "std_normal_qf",  # synonym for inv_Phi
     "if_else",
     "hypergeometric_3F2",  # requires arguments of specific lengths
+    "generate_laplace_options",
 ]
 
 # these are all slight renames compared to stan math
