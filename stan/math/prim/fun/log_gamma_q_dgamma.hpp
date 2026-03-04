@@ -5,6 +5,7 @@
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/digamma.hpp>
 #include <stan/math/prim/fun/exp.hpp>
+#include <stan/math/prim/fun/fabs.hpp>
 #include <stan/math/prim/fun/gamma_p.hpp>
 #include <stan/math/prim/fun/gamma_q.hpp>
 #include <stan/math/prim/fun/grad_reg_inc_gamma.hpp>
@@ -48,18 +49,13 @@ template <typename T_a, typename T_z>
 inline return_type_t<T_a, T_z> log_q_gamma_cf(const T_a& a, const T_z& z,
                                               double precision = 1e-16,
                                               int max_steps = 250) {
-  using stan::math::lgamma;
-  using stan::math::log;
-  using stan::math::value_of;
-  using std::fabs;
   using T_return = return_type_t<T_a, T_z>;
+  const auto log_prefactor = a * log(z) - z - lgamma(a);
 
-  const T_return log_prefactor = a * log(z) - z - lgamma(a);
-
-  T_return b = z + 1.0 - a;
-  T_return C = (fabs(value_of(b)) >= EPSILON) ? b : T_return(EPSILON);
-  T_return D = 0.0;
-  T_return f = C;
+  auto b = z + 1.0 - a;
+  auto C = (fabs(value_of(b)) >= EPSILON) ? b : std::decay_t<decltype(b)>(EPSILON);
+  auto D = 0.0;
+  auto f = C;
 
   for (int i = 1; i <= max_steps; ++i) {
     T_a an = -i * (i - a);
@@ -75,7 +71,7 @@ inline return_type_t<T_a, T_z> log_q_gamma_cf(const T_a& a, const T_z& z,
     }
 
     D = inv(D);
-    T_return delta = C * D;
+    auto delta = C * D;
     f *= delta;
 
     const double delta_m1 = value_of(fabs(value_of(delta) - 1.0));
@@ -83,7 +79,6 @@ inline return_type_t<T_a, T_z> log_q_gamma_cf(const T_a& a, const T_z& z,
       break;
     }
   }
-
   return log_prefactor - log(f);
 }
 
@@ -109,45 +104,36 @@ inline return_type_t<T_a, T_z> log_q_gamma_cf(const T_a& a, const T_z& z,
 template <typename T_a, typename T_z>
 inline log_gamma_q_result<return_type_t<T_a, T_z>> log_gamma_q_dgamma(
     const T_a& a, const T_z& z, double precision = 1e-16, int max_steps = 250) {
-  using std::exp;
-  using std::log;
   using T_return = return_type_t<T_a, T_z>;
-
-  const double a_dbl = value_of(a);
-  const double z_dbl = value_of(z);
-
-  log_gamma_q_result<T_return> result;
-
+  const auto a_dbl = value_of(a);
+  const auto z_dbl = value_of(z);
   // For z > a + 1, use continued fraction for better numerical stability
   if (z_dbl > a_dbl + 1.0) {
-    result.log_q = internal::log_q_gamma_cf(a_dbl, z_dbl, precision, max_steps);
-
+    log_gamma_q_result<T_return> result{internal::log_q_gamma_cf(a_dbl, z_dbl, precision, max_steps), 0.0};
     // For gradient, use: d/da log(Q) = (1/Q) * dQ/da
     // grad_reg_inc_gamma computes dQ/da
-    const double Q_val = exp(result.log_q);
-    const double dQ_da
+    const auto Q_val = exp(result.log_q);
+    const auto dQ_da
         = grad_reg_inc_gamma(a_dbl, z_dbl, tgamma(a_dbl), digamma(a_dbl));
     result.dlog_q_da = dQ_da / Q_val;
-
+    return result;
   } else {
     // For z <= a + 1, use log1m(P(a,z)) for better numerical accuracy
-    const double P_val = gamma_p(a_dbl, z_dbl);
-    result.log_q = log1m(P_val);
-
+    const auto P_val = gamma_p(a_dbl, z_dbl);
+    log_gamma_q_result<T_return> result{log1m(P_val), 0.0};
     // Gradient: d/da log(Q) = (1/Q) * dQ/da
     // grad_reg_inc_gamma computes dQ/da
-    const double Q_val = exp(result.log_q);
+    const auto Q_val = exp(result.log_q);
     if (Q_val > 0) {
-      const double dQ_da
+      const auto dQ_da
           = grad_reg_inc_gamma(a_dbl, z_dbl, tgamma(a_dbl), digamma(a_dbl));
       result.dlog_q_da = dQ_da / Q_val;
     } else {
       // Fallback if Q rounds to zero - use asymptotic approximation
       result.dlog_q_da = log(z_dbl) - digamma(a_dbl);
     }
+    return result;
   }
-
-  return result;
 }
 
 }  // namespace math

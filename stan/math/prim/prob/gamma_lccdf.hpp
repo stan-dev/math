@@ -22,7 +22,7 @@
 #include <stan/math/prim/fun/log_gamma_q_dgamma.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
-
+#include <optional>
 namespace stan {
 namespace math {
 namespace internal {
@@ -30,15 +30,14 @@ template <typename T>
 struct Q_eval {
   T log_Q{0.0};
   T dlogQ_dalpha{0.0};
-  bool ok{false};
 };
 
 /**
  * Computes log q and d(log q) / d(alpha) using continued fraction.
  */
-template <typename T, typename T_shape, bool any_fvar, bool partials_fvar>
-static inline Q_eval<T> eval_q_cf(const T& alpha, const T& beta_y) {
-  Q_eval<T> out;
+template <bool any_fvar, bool partials_fvar, typename T_shape, typename T>
+static inline auto eval_q_cf(const T& alpha, const T& beta_y) {
+  Q_eval<return_type_t<T>> out;
   if constexpr (!any_fvar && is_autodiff_v<T_shape>) {
     auto log_q_result
         = log_gamma_q_dgamma(value_of_rec(alpha), value_of_rec(beta_y));
@@ -62,23 +61,23 @@ static inline Q_eval<T> eval_q_cf(const T& alpha, const T& beta_y) {
     }
   }
 
-  out.ok = std::isfinite(value_of_rec(out.log_Q));
-  return out;
+  if (std::isfinite(value_of_rec(out.log_Q))) {
+    return std::optional<Q_eval<return_type_t<T>>>{out};
+  } else {
+    return std::optional<Q_eval<return_type_t<T>>>{std::nullopt};
+  }
 }
 
 /**
  * Computes log q and d(log q) / d(alpha) using log1m.
  */
-template <typename T, typename T_shape, bool partials_fvar>
+template <bool partials_fvar, typename T_shape, typename T>
 static inline Q_eval<T> eval_q_log1m(const T& alpha, const T& beta_y) {
   Q_eval<T> out;
   out.log_Q = log1m(gamma_p(alpha, beta_y));
-
   if (!std::isfinite(value_of_rec(out.log_Q))) {
-    out.ok = false;
     return out;
   }
-
   if constexpr (is_autodiff_v<T_shape>) {
     if constexpr (partials_fvar) {
       T alpha_unit = alpha;
@@ -92,8 +91,6 @@ static inline Q_eval<T> eval_q_log1m(const T& alpha, const T& beta_y) {
           = -grad_reg_lower_inc_gamma(alpha, beta_y) / exp(out.log_Q);
     }
   }
-
-  out.ok = true;
   return out;
 }
 }  // namespace internal
@@ -154,26 +151,21 @@ inline return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(
     }
 
     const bool use_continued_fraction = beta_y > alpha_dbl + 1.0;
-    internal::Q_eval<T_partials_return> result;
+    std::optional<internal::Q_eval<T_partials_return>> result;
     if (use_continued_fraction) {
-      result = internal::eval_q_cf<T_partials_return, T_shape, any_fvar,
-                                   partials_fvar>(alpha_dbl, beta_y);
+      result = internal::eval_q_cf<any_fvar, partials_fvar, T_shape>(alpha_dbl, beta_y);
     } else {
-      result
-          = internal::eval_q_log1m<T_partials_return, T_shape, partials_fvar>(
-              alpha_dbl, beta_y);
-
-      if (!result.ok && beta_y > 0.0) {
+      result = internal::eval_q_log1m<partials_fvar, T_shape>(alpha_dbl, beta_y);
+      if (!result && beta_y > 0.0) {
         // Fallback to continued fraction if log1m fails
-        result = internal::eval_q_cf<T_partials_return, T_shape, any_fvar,
-                                     partials_fvar>(alpha_dbl, beta_y);
+        result = internal::eval_q_cf<any_fvar, partials_fvar, T_shape>(alpha_dbl, beta_y);
       }
     }
-    if (!result.ok) {
+    if (!result) {
       return ops_partials.build(negative_infinity());
     }
 
-    P += result.log_Q;
+    P += result->log_Q;
 
     if constexpr (is_autodiff_v<T_y> || is_autodiff_v<T_inv_scale>) {
       const T_partials_return log_y = log(y_dbl);
@@ -183,7 +175,7 @@ inline return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(
                                         - lgamma(alpha_dbl) + alpha_minus_one
                                         - beta_y;
 
-      const T_partials_return hazard = exp(log_pdf - result.log_Q);  // f/Q
+      const T_partials_return hazard = exp(log_pdf - result->log_Q);  // f/Q
 
       if constexpr (is_autodiff_v<T_y>) {
         partials<0>(ops_partials)[n] -= hazard;
@@ -193,7 +185,7 @@ inline return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(
       }
     }
     if constexpr (is_autodiff_v<T_shape>) {
-      partials<1>(ops_partials)[n] += result.dlogQ_dalpha;
+      partials<1>(ops_partials)[n] += result->dlogQ_dalpha;
     }
   }
   return ops_partials.build(P);
