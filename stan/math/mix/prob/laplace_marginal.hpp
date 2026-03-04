@@ -22,20 +22,25 @@ namespace math {
  * @param[in] L_f a function which returns the log likelihood.
  * @param[in] l_args A tuple of arguments to pass to the log likelihood.
  * \laplace_common_args
+ * @param[in] hessian_block_size Block size for the Hessian approximation with
+ * respect to the latent gaussian variable theta.
  * \laplace_options
  * \msg_arg
  */
 template <bool propto = false, typename LFun, typename LArgs, typename CovarFun,
           typename CovarArgs, typename OpsTuple>
 inline auto laplace_marginal_tol(LFun&& L_f, LArgs&& l_args,
+                                 int hessian_block_size,
                                  CovarFun&& covariance_function,
                                  CovarArgs&& covar_args, OpsTuple&& ops,
                                  std::ostream* msgs) {
+  auto options
+      = internal::tuple_to_laplace_options(std::forward<OpsTuple>(ops));
+  options.hessian_block_size = hessian_block_size;
   return laplace_marginal_density(
       std::forward<LFun>(L_f), std::forward<LArgs>(l_args),
       std::forward<CovarFun>(covariance_function),
-      std::forward<CovarArgs>(covar_args),
-      internal::tuple_to_laplace_options(std::forward<OpsTuple>(ops)), msgs);
+      std::forward<CovarArgs>(covar_args), std::move(options), msgs);
 }
 
 /**
@@ -53,17 +58,20 @@ inline auto laplace_marginal_tol(LFun&& L_f, LArgs&& l_args,
  * @param[in] L_f a function which returns the log likelihood.
  * @param[in] l_args A tuple of arguments to pass to the log likelihood
  * \laplace_common_args
+ * @param[in] hessian_block_size Block size for the Hessian approximation with
+ * respect to the latent gaussian variable theta.
  * \msg_arg
  */
 template <bool propto = false, typename LFun, typename LArgs, typename CovarFun,
           typename CovarArgs>
-inline auto laplace_marginal(LFun&& L_f, LArgs&& l_args,
+inline auto laplace_marginal(LFun&& L_f, LArgs&& l_args, int hessian_block_size,
                              CovarFun&& covariance_function,
                              CovarArgs&& covar_args, std::ostream* msgs) {
+  auto options = laplace_options_default{hessian_block_size};
   return laplace_marginal_density(
       std::forward<LFun>(L_f), std::forward<LArgs>(l_args),
       std::forward<CovarFun>(covariance_function),
-      std::forward<CovarArgs>(covar_args), laplace_options_default{}, msgs);
+      std::forward<CovarArgs>(covar_args), options, msgs);
 }
 
 }  // namespace math

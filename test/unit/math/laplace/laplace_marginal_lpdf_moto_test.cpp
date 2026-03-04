@@ -148,12 +148,12 @@ TEST_P(laplace_motorcyle_gp_test, gp_motorcycle_val) {
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
 
   laplace_marginal_tol<false>(
-      normal_likelihood{}, std::forward_as_tuple(y, n_obs),
+      normal_likelihood{}, std::forward_as_tuple(y, n_obs), hessian_block_size,
       covariance_motorcycle_functor{},
       std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1), phi_dbl(2), phi_dbl(3),
                             n_obs),
-      std::make_tuple(theta0, tolerance, max_num_steps, hessian_block_size,
-                      solver_num, max_steps_line_search, true),
+      std::make_tuple(theta0, tolerance, max_num_steps, solver_num,
+                      max_steps_line_search, true),
       &output_stream);
 }
 
@@ -182,11 +182,11 @@ TEST_P(laplace_motorcyle_gp_test, gp_motorcycle_ad) {
     try {
       return laplace_marginal_tol<false>(
           normal_likelihood{}, std::forward_as_tuple(y, n_obs),
-          covariance_motorcycle_functor{},
+          hessian_block_size, covariance_motorcycle_functor{},
           std::forward_as_tuple(x, phi_01_v(0), phi_01_v(1), phi_rest_v(0),
                                 phi_rest_v(1), n_obs),
-          std::make_tuple(theta0, tolerance, max_num_steps, hessian_block_size,
-                          solver_num, max_steps_line_search, true),
+          std::make_tuple(theta0, tolerance, max_num_steps, solver_num,
+                          max_steps_line_search, true),
           &output_stream);
     } catch (const std::exception& e) {
       std::stringstream fail_msg;
@@ -256,11 +256,11 @@ TEST_P(laplace_motorcyle_gp_test, gp_motorcycle2_val) {
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
   laplace_marginal_tol<false>(
       normal_likelihood2{}, std::forward_as_tuple(y, n_obs, sigma_global),
-      covariance_motorcycle_functor{},
+      hessian_block_size, covariance_motorcycle_functor{},
       std::forward_as_tuple(x, length_scale_f, length_scale_g, sigma_f, sigma_g,
                             n_obs),
-      std::make_tuple(theta0, tolerance, max_num_steps, hessian_block_size,
-                      solver_num, max_steps_line_search, true),
+      std::make_tuple(theta0, tolerance, max_num_steps, solver_num,
+                      max_steps_line_search, true),
       &output_stream);
 }
 
@@ -289,11 +289,11 @@ TEST_P(laplace_motorcyle_gp_test, gp_motorcycle2_ad) {
     try {
       return laplace_marginal_tol<false>(
           normal_likelihood2{}, std::forward_as_tuple(y, n_obs, sigma_global_v),
-          covariance_motorcycle_functor{},
+          hessian_block_size, covariance_motorcycle_functor{},
           std::forward_as_tuple(x, length_scale_v(0), length_scale_v(1),
                                 sigma_v(0), sigma_v(1), n_obs),
-          std::make_tuple(theta0, tolerance, max_num_steps, hessian_block_size,
-                          solver_num, max_steps_line_search, true),
+          std::make_tuple(theta0, tolerance, max_num_steps, solver_num,
+                          max_steps_line_search, true),
           &output_stream);
     } catch (const std::exception& e) {
       std::stringstream fail_msg;

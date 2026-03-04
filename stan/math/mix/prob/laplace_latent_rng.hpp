@@ -25,6 +25,8 @@ namespace math {
  * @param[in] L_f Function that returns log likelihood.
  * @param[in] ll_args Arguments for likelihood function.
  * \laplace_common_args
+ * @param[in] hessian_block_size Block size for the Hessian approximation with
+ * respect to the latent gaussian variable theta.
  * \laplace_options
  * \rng_arg
  * \msg_arg
@@ -32,15 +34,17 @@ namespace math {
 template <typename LLFunc, typename LLArgs, typename CovarFun,
           typename CovarArgs, typename OpsTuple, typename RNG>
 inline auto laplace_latent_tol_rng(LLFunc&& L_f, LLArgs&& ll_args,
+                                   int hessian_block_size,
                                    CovarFun&& covariance_function,
                                    CovarArgs&& covar_args, OpsTuple&& ops,
                                    RNG& rng, std::ostream* msgs) {
+  auto options
+      = internal::tuple_to_laplace_options(std::forward<OpsTuple>(ops));
+  options.hessian_block_size = hessian_block_size;
   return laplace_base_rng(
       std::forward<LLFunc>(L_f), std::forward<LLArgs>(ll_args),
       std::forward<CovarFun>(covariance_function),
-      std::forward<CovarArgs>(covar_args),
-      internal::tuple_to_laplace_options(std::forward<OpsTuple>(ops)), rng,
-      msgs);
+      std::forward<CovarArgs>(covar_args), std::move(options), rng, msgs);
 }
 
 /**
@@ -58,20 +62,23 @@ inline auto laplace_latent_tol_rng(LLFunc&& L_f, LLArgs&& ll_args,
  * @param[in] L_f Function that returns log likelihood.
  * @param[in] ll_args Arguments for likelihood function.
  * \laplace_common_args
+ * @param[in] hessian_block_size Block size for the Hessian approximation with
+ * respect to the latent gaussian variable theta.
  * \rng_arg
  * \msg_arg
  */
 template <typename LLFunc, typename LLArgs, typename CovarFun,
           typename CovarArgs, typename RNG>
 inline auto laplace_latent_rng(LLFunc&& L_f, LLArgs&& ll_args,
+                               int hessian_block_size,
                                CovarFun&& covariance_function,
                                CovarArgs&& covar_args, RNG& rng,
                                std::ostream* msgs) {
-  return laplace_base_rng(std::forward<LLFunc>(L_f),
-                          std::forward<LLArgs>(ll_args),
-                          std::forward<CovarFun>(covariance_function),
-                          std::forward<CovarArgs>(covar_args),
-                          laplace_options_default{}, rng, msgs);
+  auto options = laplace_options_default{hessian_block_size};
+  return laplace_base_rng(
+      std::forward<LLFunc>(L_f), std::forward<LLArgs>(ll_args),
+      std::forward<CovarFun>(covariance_function),
+      std::forward<CovarArgs>(covar_args), options, rng, msgs);
 }
 
 }  // namespace math

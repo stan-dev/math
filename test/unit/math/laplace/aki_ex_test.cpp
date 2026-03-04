@@ -85,7 +85,7 @@ TEST(WriteArrayBodySimple, ExceededIteration) {
     double ll_laplace_val{0};
     try {
       ll_laplace_val = stan::math::laplace_marginal(
-          poisson_re_log_ll_functor(), std::forward_as_tuple(y, mu),
+          poisson_re_log_ll_functor(), std::forward_as_tuple(y, mu), 1,
           cov_fun_functor(), std::tuple<double, int>(sigmaz, 1), pstream);
     } catch (const std::domain_error& e) {
       // Log bad values to CSV files
@@ -135,7 +135,7 @@ TEST(WriteArrayBodySimple, ExecutesBodyWithHardcodedData) {
       try {
         ll_laplace_val = stan::math::laplace_marginal(
             poisson_re_log_ll_functor(),
-            std::forward_as_tuple(y[i - 1], mu[i - 1]), cov_fun_functor(),
+            std::forward_as_tuple(y[i - 1], mu[i - 1]), 1, cov_fun_functor(),
             std::tuple<double, int>(sigmaz, 1), pstream);
       } catch (const std::domain_error& e) {
         ADD_FAILURE() << "LAPLACE FAILURE: y and mu for i = " << i << ": ("
@@ -164,7 +164,7 @@ TEST(WriteArrayBodySimple, ExecutesBodyWithHardcodedData) {
       }
     }
     auto ll_laplace_all = stan::math::laplace_marginal(
-        poisson_re_log_ll_functor(), std::forward_as_tuple(y, mu),
+        poisson_re_log_ll_functor(), std::forward_as_tuple(y, mu), 1,
         cov_fun_functor(), std::tuple<double, int>(sigmaz, N), pstream);
     stan::test::relative_tolerance sum_rel_tol(3e-2);
     expect_near_rel("sum laplace vs integrated sum", ll_laplace,

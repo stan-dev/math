@@ -55,7 +55,7 @@ TEST_P(laplace_marginal_lpdf, poisson_log_phi_dim_2) {
 
   double target = laplace_marginal<false>(
       poisson_log_likelihood2{}, std::forward_as_tuple(sums),
-      stan::math::test::squared_kernel_functor{},
+      hessian_block_size, stan::math::test::squared_kernel_functor{},
       std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1)), &output_stream);
 
   // TODO(Charles): benchmark target against gpstuff.
@@ -72,10 +72,10 @@ TEST_P(laplace_marginal_lpdf, poisson_log_phi_dim_2) {
 
     target = laplace_marginal_tol<false>(
         poisson_log_likelihood2{}, std::forward_as_tuple(sums),
-        stan::math::test::squared_kernel_functor{},
+        hessian_block_size, stan::math::test::squared_kernel_functor{},
         std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1)),
-        std::make_tuple(theta_0, tolerance, max_num_steps, hessian_block_size,
-                        solver, max_steps_line_search, true),
+        std::make_tuple(theta_0, tolerance, max_num_steps, solver,
+                        max_steps_line_search, true),
         &output_stream);
     EXPECT_NEAR(-2.53056, value_of(target), tol);
   }
@@ -91,10 +91,10 @@ TEST_P(laplace_marginal_lpdf, poisson_log_phi_dim_2) {
     try {
       return laplace_marginal_tol<false>(
           poisson_log_likelihood2{}, std::forward_as_tuple(sums),
-          stan::math::test::squared_kernel_functor{},
+          hessian_block_size, stan::math::test::squared_kernel_functor{},
           std::forward_as_tuple(x_v, alpha, rho),
-          std::make_tuple(theta_0, tolerance, max_num_steps, hessian_block_size,
-                          solver_num, max_steps_line_search, true),
+          std::make_tuple(theta_0, tolerance, max_num_steps, solver_num,
+                          max_steps_line_search, true),
           &output_stream);
     } catch (const std::exception& e) {
       std::stringstream fail_msg;
@@ -134,7 +134,7 @@ TEST_P(laplace_disease_map_test, laplace_marginal) {
   {
     double marginal_density = laplace_marginal<false>(
         poisson_log_exposure_likelihood{}, std::forward_as_tuple(ye, y),
-        stan::math::test::sqr_exp_kernel_functor{},
+        hessian_block_size, stan::math::test::sqr_exp_kernel_functor{},
         std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1)), &output_stream);
 
     constexpr double tol = 6e-4;
@@ -149,10 +149,10 @@ TEST_P(laplace_disease_map_test, laplace_marginal) {
     try {
       return laplace_marginal_tol<false>(
           poisson_log_exposure_likelihood{}, std::forward_as_tuple(ye, y),
-          stan::math::test::sqr_exp_kernel_functor{},
+          hessian_block_size, stan::math::test::sqr_exp_kernel_functor{},
           std::forward_as_tuple(x, alpha, rho),
-          std::make_tuple(theta_0, tolerance, max_num_steps, hessian_block_size,
-                          solver_num, max_steps_line_search, true),
+          std::make_tuple(theta_0, tolerance, max_num_steps, solver_num,
+                          max_steps_line_search, true),
           &output_stream);
     } catch (const std::exception& e) {
       std::stringstream fail_msg;
@@ -203,7 +203,7 @@ TEST_P(laplace_marginal_lpdf, bernoulli_logit_phi_dim500) {
   LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta);
   double target = laplace_marginal<false>(
       bernoulli_logit_likelihood{}, std::forward_as_tuple(y),
-      stan::math::test::sqr_exp_kernel_functor{},
+      hessian_block_size, stan::math::test::sqr_exp_kernel_functor{},
       std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1)), &output_stream);
 
   constexpr double tol = 3e-4;
@@ -218,10 +218,10 @@ TEST_P(laplace_marginal_lpdf, bernoulli_logit_phi_dim500) {
     try {
       return laplace_marginal_tol<false>(
           bernoulli_logit_likelihood{}, std::forward_as_tuple(y),
-          stan::math::test::sqr_exp_kernel_functor{},
+          hessian_block_size, stan::math::test::sqr_exp_kernel_functor{},
           std::forward_as_tuple(x, alpha, rho),
-          std::make_tuple(theta_0, tolerance, max_num_steps, hessian_block_size,
-                          solver_num, max_steps_line_search, true),
+          std::make_tuple(theta_0, tolerance, max_num_steps, solver_num,
+                          max_steps_line_search, true),
           &output_stream);
     } catch (const std::exception& e) {
       std::stringstream fail_msg;
