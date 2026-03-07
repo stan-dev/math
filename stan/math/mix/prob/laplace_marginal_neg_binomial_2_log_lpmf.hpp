@@ -92,18 +92,18 @@ struct neg_binomial_2_log_likelihood {
         = Eigen::VectorXd::Ones(theta_size) + eta_scalar * exp_neg_theta;
 
     // Gradient: sums - (sums + eta * n) / (1 + eta * exp(-theta))
-    Eigen::VectorXd gradient = sums - sums_plus_n_eta.cwiseQuotient(one_plus_exp);
+    Eigen::VectorXd gradient
+        = sums - sums_plus_n_eta.cwiseQuotient(one_plus_exp);
 
     // Negative Hessian diagonal:
     //   eta * (sums + eta * n) * exp(-theta) / (1 + eta * exp(-theta))^2
     Eigen::VectorXd hessian_diag
         = eta_scalar
-          * sums_plus_n_eta.cwiseProduct(
-                exp_neg_theta.cwiseQuotient(one_plus_exp.cwiseProduct(one_plus_exp)));
+          * sums_plus_n_eta.cwiseProduct(exp_neg_theta.cwiseQuotient(
+              one_plus_exp.cwiseProduct(one_plus_exp)));
 
     Eigen::SparseMatrix<double> hessian(theta_size, theta_size);
-    hessian.reserve(
-        Eigen::VectorXi::Constant(theta_size, hessian_block_size));
+    hessian.reserve(Eigen::VectorXi::Constant(theta_size, hessian_block_size));
     for (int i = 0; i < theta_size; i++) {
       hessian.insert(i, i) = hessian_diag(i);
     }
@@ -147,8 +147,7 @@ struct neg_binomial_2_log_likelihood {
     Eigen::VectorXd theta_offset = add(theta, value_of(mean));
 
     Eigen::VectorXd exp_theta = exp(theta_offset);
-    Eigen::VectorXd eta_vec
-        = Eigen::VectorXd::Constant(theta_size, eta_scalar);
+    Eigen::VectorXd eta_vec = Eigen::VectorXd::Constant(theta_size, eta_scalar);
     Eigen::VectorXd eta_plus_exp_theta = eta_vec + exp_theta;
 
     // -(sums + eta*n) * eta * exp(theta) * (eta - exp(theta))

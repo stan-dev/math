@@ -31,9 +31,8 @@ template <typename F, typename = void>
 struct has_custom_diff : std::false_type {};
 
 template <typename F>
-struct has_custom_diff<F,
-    std::void_t<decltype(std::declval<const F&>().diff(
-        std::declval<const Eigen::VectorXd&>(), 1))>>
+struct has_custom_diff<F, std::void_t<decltype(std::declval<const F&>().diff(
+                              std::declval<const Eigen::VectorXd&>(), 1))>>
     : std::true_type {};
 
 template <typename F>
@@ -47,14 +46,12 @@ template <typename F, typename = void>
 struct has_custom_third_diff : std::false_type {};
 
 template <typename F>
-struct has_custom_third_diff<F,
-    std::void_t<decltype(std::declval<const F&>().third_diff(
-        std::declval<const Eigen::VectorXd&>()))>>
-    : std::true_type {};
+struct has_custom_third_diff<
+    F, std::void_t<decltype(std::declval<const F&>().third_diff(
+           std::declval<const Eigen::VectorXd&>()))>> : std::true_type {};
 
 template <typename F>
-inline constexpr bool has_custom_third_diff_v
-    = has_custom_third_diff<F>::value;
+inline constexpr bool has_custom_third_diff_v = has_custom_third_diff<F>::value;
 /**
  * @tparam F A functor with `opertor()(Args&&...)` returning a scalar
  * @tparam Theta A class assignable to an Eigen vector type
