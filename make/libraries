@@ -258,7 +258,33 @@ $(GTEST)/src/gtest-all.o: $(GTEST)/src/gtest-all.cc
 	$(COMPILE.cpp) -x c++ $(CXXFLAGS_GTEST) $(CPPFLAGS_GTEST) $(INC_GTEST) -o $@ -c $<
 
 ############################################################
+# Google Benchmark:
+#   Build the local google benchmark library.
+ifndef BENCHMARK_TARGETS
+
+BENCHMARK_BUILD_DIR ?= $(BENCHMARK)/build
+BENCHMARK_STATIC_LIB ?= $(BENCHMARK_BUILD_DIR)/src/libbenchmark.a
+BENCHMARK_BUILD_CXXFLAGS ?= -Wno-unused-but-set-variable -Wno-error=unused-but-set-variable
+
+$(BENCHMARK_STATIC_LIB):
+	cmake -S $(BENCHMARK) -B $(BENCHMARK_BUILD_DIR) \
+	  -DBENCHMARK_ENABLE_GTEST_TESTS=OFF \
+	  -DBENCHMARK_ENABLE_TESTING=OFF \
+	  -DBENCHMARK_ENABLE_INSTALL=OFF \
+	  -DCMAKE_BUILD_TYPE=Release \
+	  -DCMAKE_CXX_COMPILER="$(lastword $(CXX))" \
+	  -DCMAKE_CXX_FLAGS="$(BENCHMARK_BUILD_CXXFLAGS)"
+	cmake --build $(BENCHMARK_BUILD_DIR) --parallel
+
+BENCHMARK_TARGETS ?= $(BENCHMARK_STATIC_LIB)
+
+clean-benchmark:
+	@echo '  cleaning google benchmark targets'
+	$(RM) -r $(BENCHMARK_BUILD_DIR)
+endif
+
+############################################################
 # Clean all libraries
 
-.PHONY: clean-libraries clean-sundials clean-mpi clean-tbb
-clean-libraries: clean-sundials clean-mpi clean-tbb
+.PHONY: clean-libraries clean-sundials clean-mpi clean-tbb clean-benchmark
+clean-libraries: clean-sundials clean-mpi clean-tbb clean-benchmark
