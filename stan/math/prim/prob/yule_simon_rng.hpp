@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_PROB_YULE_SIMON_RNG_HPP
 #define STAN_MATH_PRIM_PROB_YULE_SIMON_RNG_HPP
 
+#include <utility>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/log.hpp>
@@ -26,26 +27,24 @@ namespace math {
  * @throw std::domain_error if alpha is nonpositive
  */
 template <typename T_alpha, typename RNG>
-inline auto yule_simon_rng(const T_alpha &alpha, RNG &rng) {
-  using T_alpha_ref = ref_type_t<T_alpha>;
-  static constexpr const char *function = "yule_simon_rng";
-
-  T_alpha_ref alpha_ref = alpha;
+inline auto yule_simon_rng(T_alpha&& alpha, RNG& rng) {
+  static constexpr const char* function = "yule_simon_rng";
+  decltype(auto) alpha_ref = to_ref(std::forward<T_alpha>(alpha));
   check_positive_finite(function, "Shape parameter", alpha_ref);
 
-  auto w = exponential_rng(alpha_ref, rng);
-  scalar_seq_view<decltype(w)> w_vec(w);
+  auto w = exponential_rng(std::forward<decltype(alpha_ref)>(alpha_ref), rng);
+  auto w_arr = as_array_or_scalar(w);
+  const auto p = stan::math::exp(-w_arr);
+  const auto odds_ratio_p
+      = stan::math::exp(stan::math::log(p) - stan::math::log1m(p));
 
-  size_t size_w = stan::math::size(w);
-  VectorBuilder<true, int, T_alpha> output(size_w);
-  for (size_t n = 0; n < size_w; ++n) {
-    const double p = stan::math::exp(-w_vec[n]);
-    const double odds_ratio_p
-        = stan::math::exp(stan::math::log(p) - stan::math::log1m(p));
-    output[n] = neg_binomial_rng(1.0, odds_ratio_p, rng) + 1;
+  if constexpr (is_stan_scalar_v<T_alpha>) {
+    return neg_binomial_rng(1.0, odds_ratio_p, rng) + 1;
+  } else {
+    return to_array_1d(
+        as_array_or_scalar(neg_binomial_rng(1.0, std::move(odds_ratio_p), rng))
+        + 1);
   }
-
-  return output.data();
 }
 
 }  // namespace math
