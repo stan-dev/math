@@ -1,0 +1,9 @@
+src/*
+1
+3
+Done processing src/interface-descriptors.h
+Total errors found: 2
+
+src/interface-descriptors.h:5:  #ifndef header guard has wrong style, please use: SAMPLES_V8_SAMPLE_SRC_INTERFACE_DESCRIPTORS_H_  [build/header_guard] [5]
+src/interface-descriptors.h:1255:  #endif line should be "#endif  // SAMPLES_V8_SAMPLE_SRC_INTERFACE_DESCRIPTORS_H_"  [build/header_guard] [5]
+
