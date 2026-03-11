@@ -142,6 +142,47 @@ def check_non_test_files_in_test():
     return errors
 
 
+def check_rev_test_fixtures():
+    test_files = [
+        x for x in files_in_folder("test/unit/math/rev")
+        if os.path.isfile(x) and x.endswith(testsfx)
+    ]
+    errors = []
+    for filepath in test_files:
+        line_num = 0
+        multi_line_comment = False
+        old_state_multi_line_comment = False
+        with open(filepath, "r") as f:
+            for line in f:
+                line_num += 1
+                if multi_line_comment:
+                    if re.search("\*/", line):
+                        multi_line_comment = False
+                else:
+                    if re.search("/\*", line):
+                        multi_line_comment = True
+                if not multi_line_comment or (
+                    multi_line_comment and not old_state_multi_line_comment
+                ):
+                    if (
+                        not re.search(r".*\bTEST\(.*\*/.*", line)
+                        and not re.search(r".*/\*.*\bTEST\(", line)
+                        and not re.search(r".*//.*\bTEST\(", line)
+                        and re.search(r"\bTEST\(", line)
+                    ):
+                        errors.append(
+                            filepath
+                            + " at line "
+                            + str(line_num)
+                            + ":\n\t[rev-tests] Reverse-mode tests in "
+                            + "test/unit/math/rev must use a cleanup fixture. "
+                            + "Replace raw TEST(...) with TEST_F(AgradRev, ...) "
+                            + "or another approved fixture-based form."
+                        )
+                old_state_multi_line_comment = multi_line_comment
+    return errors
+
+
 def main():
     errors = []
     # Check for files inside stan/math/prim that contain stan/math/rev or stan/math/fwd
@@ -242,6 +283,7 @@ def main():
     )
 
     errors.extend(check_non_test_files_in_test())
+    errors.extend(check_rev_test_fixtures())
 
     errors.extend(check_non_unique_test_names())
 

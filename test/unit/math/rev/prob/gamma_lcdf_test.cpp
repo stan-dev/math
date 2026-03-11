@@ -1,9 +1,10 @@
 #include <stan/math/rev.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 #include <limits>
 
-TEST(ProbDistributionsGamma, lcdf_values) {
+TEST_F(AgradRev, ProbDistributionsGamma_lcdf_values) {
   using stan::math::gamma_lcdf;
   using stan::math::var;
 
@@ -22,7 +23,7 @@ TEST(ProbDistributionsGamma, lcdf_values) {
   EXPECT_LE(lcdf_var.val(), 0.0);  // log of probability
 }
 
-TEST(ProbDistributionsGamma, lcdf_derivatives_y) {
+TEST_F(AgradRev, ProbDistributionsGamma_lcdf_derivatives_y) {
   using stan::math::gamma_lcdf;
   using stan::math::var;
 
@@ -47,7 +48,7 @@ TEST(ProbDistributionsGamma, lcdf_derivatives_y) {
   EXPECT_TRUE(std::isfinite(grads[0]));
 }
 
-TEST(ProbDistributionsGamma, lcdf_derivatives_alpha) {
+TEST_F(AgradRev, ProbDistributionsGamma_lcdf_derivatives_alpha) {
   using stan::math::gamma_lcdf;
   using stan::math::var;
 
@@ -70,7 +71,7 @@ TEST(ProbDistributionsGamma, lcdf_derivatives_alpha) {
   EXPECT_TRUE(std::isfinite(grads[0]));
 }
 
-TEST(ProbDistributionsGamma, lcdf_derivatives_beta) {
+TEST_F(AgradRev, ProbDistributionsGamma_lcdf_derivatives_beta) {
   using stan::math::gamma_lcdf;
   using stan::math::var;
 
@@ -93,7 +94,7 @@ TEST(ProbDistributionsGamma, lcdf_derivatives_beta) {
   EXPECT_TRUE(std::isfinite(grads[0]));
 }
 
-TEST(ProbDistributionsGamma, lcdf_derivatives_all_params) {
+TEST_F(AgradRev, ProbDistributionsGamma_lcdf_derivatives_all_params) {
   using stan::math::gamma_lcdf;
   using stan::math::var;
 
@@ -123,7 +124,7 @@ TEST(ProbDistributionsGamma, lcdf_derivatives_all_params) {
   EXPECT_GT(grads[0], 0.0) << "d/dy should be positive";
 }
 
-TEST(ProbDistributionsGamma, lcdf_finite_diff_y) {
+TEST_F(AgradRev, ProbDistributionsGamma_lcdf_finite_diff_y) {
   using stan::math::gamma_lcdf;
   using stan::math::var;
 
@@ -149,7 +150,7 @@ TEST(ProbDistributionsGamma, lcdf_finite_diff_y) {
   EXPECT_NEAR(grad_autodiff, grad_findiff, 1e-5);
 }
 
-TEST(ProbDistributionsGamma, lcdf_finite_diff_alpha) {
+TEST_F(AgradRev, ProbDistributionsGamma_lcdf_finite_diff_alpha) {
   using stan::math::gamma_lcdf;
   using stan::math::var;
 
@@ -176,7 +177,7 @@ TEST(ProbDistributionsGamma, lcdf_finite_diff_alpha) {
   EXPECT_NEAR(grad_autodiff, grad_findiff, 1e-3);
 }
 
-TEST(ProbDistributionsGamma, lcdf_finite_diff_beta) {
+TEST_F(AgradRev, ProbDistributionsGamma_lcdf_finite_diff_beta) {
   using stan::math::gamma_lcdf;
   using stan::math::var;
 
@@ -202,7 +203,7 @@ TEST(ProbDistributionsGamma, lcdf_finite_diff_beta) {
   EXPECT_NEAR(grad_autodiff, grad_findiff, 1e-5);
 }
 
-TEST(ProbDistributionsGamma, lcdf_extreme_values_small) {
+TEST_F(AgradRev, ProbDistributionsGamma_lcdf_extreme_values_small) {
   using stan::math::gamma_lcdf;
   using stan::math::var;
 
@@ -230,7 +231,7 @@ TEST(ProbDistributionsGamma, lcdf_extreme_values_small) {
   }
 }
 
-TEST(ProbDistributionsGamma, lcdf_extreme_values_large) {
+TEST_F(AgradRev, ProbDistributionsGamma_lcdf_extreme_values_large) {
   using stan::math::gamma_lcdf;
   using stan::math::var;
 
@@ -258,7 +259,7 @@ TEST(ProbDistributionsGamma, lcdf_extreme_values_large) {
   }
 }
 
-TEST(ProbDistributionsGamma, lcdf_alpha_one_derivatives) {
+TEST_F(AgradRev, ProbDistributionsGamma_lcdf_alpha_one_derivatives) {
   using stan::math::gamma_lcdf;
   using stan::math::var;
 
@@ -286,7 +287,7 @@ TEST(ProbDistributionsGamma, lcdf_alpha_one_derivatives) {
   EXPECT_NEAR(grads[0], expected_dy, 1e-10);
 }
 
-TEST(ProbDistributionsGamma, lcdf_various_parameter_combinations) {
+TEST_F(AgradRev, ProbDistributionsGamma_lcdf_various_parameter_combinations) {
   using stan::math::gamma_lcdf;
   using stan::math::var;
 
@@ -322,7 +323,7 @@ TEST(ProbDistributionsGamma, lcdf_various_parameter_combinations) {
   }
 }
 
-TEST(ProbDistributionsGamma, lcdf_consistency_with_lccdf) {
+TEST_F(AgradRev, ProbDistributionsGamma_lcdf_consistency_with_lccdf) {
   using stan::math::gamma_lccdf;
   using stan::math::gamma_lcdf;
   using stan::math::var;
@@ -357,7 +358,7 @@ TEST(ProbDistributionsGamma, lcdf_consistency_with_lccdf) {
   EXPECT_LT(grads_lccdf[0], 0.0);
 }
 
-TEST(ProbDistributionsGamma, lcdf_second_derivative_y) {
+TEST_F(AgradRev, ProbDistributionsGamma_lcdf_second_derivative_y) {
   using stan::math::gamma_lcdf;
   using stan::math::var;
 
@@ -379,7 +380,8 @@ TEST(ProbDistributionsGamma, lcdf_second_derivative_y) {
   EXPECT_TRUE(std::isfinite(grads[0]));
 }
 
-TEST(ProbDistributionsGamma, lcdf_numerically_challenging_derivatives) {
+TEST_F(AgradRev,
+       ProbDistributionsGamma_lcdf_numerically_challenging_derivatives) {
   using stan::math::gamma_lcdf;
   using stan::math::var;
 
@@ -416,7 +418,7 @@ TEST(ProbDistributionsGamma, lcdf_numerically_challenging_derivatives) {
   }
 }
 
-TEST(ProbDistributionsGamma, lcdf_monotonic_derivative) {
+TEST_F(AgradRev, ProbDistributionsGamma_lcdf_monotonic_derivative) {
   using stan::math::gamma_lcdf;
   using stan::math::var;
 

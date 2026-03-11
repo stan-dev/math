@@ -131,8 +131,8 @@ TEST_F(AgradRev, StanAgradRevInternal_precomputed_gradients_containers) {
   stan::math::recover_memory();
 }
 
-TEST(StanAgradRevInternal,
-     precomputed_gradients_containers_direct_construction) {
+TEST_F(AgradRev,
+       StanAgradRevInternal_precomputed_gradients_containers_direct_construction) {
   double value = 1;
   std::vector<stan::math::var> vars;
   std::vector<double> gradients;
