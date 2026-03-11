@@ -7,9 +7,7 @@
 
 //  We check that the values of the new regression match those of one built
 //  from existing primitives.
-TEST_F(
-    AgradRev,
-    NegBinomial2LogGLM_glm_matches_neg_binomial_2_log_doubles) {
+TEST_F(AgradRev, NegBinomial2LogGLM_glm_matches_neg_binomial_2_log_doubles) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -33,9 +31,8 @@ TEST_F(
 }
 //  We check that the values of the new regression match those of one built
 //  from existing primitives.
-TEST_F(
-    AgradRev,
-    NegBinomial2LogGLM_glm_matches_neg_binomial_2_log_doubles_rand) {
+TEST_F(AgradRev,
+       NegBinomial2LogGLM_glm_matches_neg_binomial_2_log_doubles_rand) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -543,9 +540,8 @@ TYPED_TEST(ProbDistributionsNegBinomial2LogGLM,
 }
 
 //  We check that the right errors are thrown.
-TEST_F(
-    AgradRev,
-    NegBinomial2LogGLM_glm_matches_neg_binomial_2_log_error_checking) {
+TEST_F(AgradRev,
+       NegBinomial2LogGLM_glm_matches_neg_binomial_2_log_error_checking) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;

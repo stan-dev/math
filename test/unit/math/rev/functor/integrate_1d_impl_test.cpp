@@ -278,9 +278,8 @@ TEST_F(AgradRev, integrate_1d_impl_rev_TestDerivatives_zero_crossing) {
                                   -19.06340613646808, 21.41380852375568);
 }
 
-TEST_F(
-    AgradRev,
-    integrate_1d_impl_rev_TestDerivatives_var_right_endpoint_var_params) {
+TEST_F(AgradRev,
+       integrate_1d_impl_rev_TestDerivatives_var_right_endpoint_var_params) {
   // Zero crossing integral + test x_r + vars at right endpoint
   using stan::math::var;
   test_derivatives<double, var, var>(
@@ -290,9 +289,8 @@ TEST_F(
       {5 * pow(0.5, 1.5), 12 * 1.75 * 1.75, 4.0}, 0.0, 21.41380852375568);
 }
 
-TEST_F(
-    AgradRev,
-    integrate_1d_impl_rev_TestDerivatives_var_left_endpoint_var_params) {
+TEST_F(AgradRev,
+       integrate_1d_impl_rev_TestDerivatives_var_left_endpoint_var_params) {
   // Zero crossing integral + test x_r + var at left endpoint
   using stan::math::var;
   test_derivatives<var, double, var>(
@@ -312,8 +310,7 @@ TEST_F(AgradRev, integrate_1d_impl_rev_TestDerivatives_no_param_vars) {
                                      {}, -19.06340613646808, 21.41380852375568);
 }
 
-TEST_F(AgradRev,
-       integrate_1d_impl_rev_TestDerivatives_left_limit_var) {
+TEST_F(AgradRev, integrate_1d_impl_rev_TestDerivatives_left_limit_var) {
   // No param vars, only left limit var
   using stan::math::var;
   test_derivatives<var, double, double>(f3{}, -1.0, 1.0, {0.5, 1.75, 3.9},
@@ -323,8 +320,7 @@ TEST_F(AgradRev,
                                         {}, -19.06340613646808, 0.0);
 }
 
-TEST_F(AgradRev,
-       integrate_1d_impl_rev_TestDerivatives_right_limit_var) {
+TEST_F(AgradRev, integrate_1d_impl_rev_TestDerivatives_right_limit_var) {
   // No param vars, only right limit var
   using stan::math::var;
   test_derivatives<double, var, double>(f3{}, -1.0, 1.0, {0.5, 1.75, 3.9},
@@ -359,8 +355,7 @@ TEST_F(AgradRev, integrate_1d_impl_rev_TestDerivatives_tricky3) {
       f6{}, 0.0, 1.0, {0.75}, {}, {}, 0.851926727945904, {0.4814066053874294});
 }
 
-TEST_F(AgradRev,
-       integrate_1d_impl_rev_TestDerivatives_zero_crossing2) {
+TEST_F(AgradRev, integrate_1d_impl_rev_TestDerivatives_zero_crossing2) {
   // Zero crossing integral + limit at infinity + var at left limit
   using stan::math::var;
   test_derivatives<var, double, var>(
@@ -369,8 +364,7 @@ TEST_F(AgradRev,
       std::numeric_limits<double>::quiet_NaN());
 }
 
-TEST_F(AgradRev,
-       integrate_1d_impl_rev_TestDerivatives_zero_crossing3) {
+TEST_F(AgradRev, integrate_1d_impl_rev_TestDerivatives_zero_crossing3) {
   // Zero crossing integral + limit at negative infinity + var at right limit
   using stan::math::var;
   test_derivatives<double, var, var>(
@@ -388,8 +382,7 @@ TEST_F(AgradRev, integrate_1d_impl_rev_TestDerivatives_indefinite) {
       2.536571480364399, {});
 }
 
-TEST_F(AgradRev,
-       integrate_1d_impl_rev_TestDerivatives_endpoint_precision) {
+TEST_F(AgradRev, integrate_1d_impl_rev_TestDerivatives_endpoint_precision) {
   // Various integrals of beta function
   using stan::math::var;
   test_derivatives<double, double, var>(f11{}, 0.0, 1.0, {0.1, 0.1}, {}, {},
