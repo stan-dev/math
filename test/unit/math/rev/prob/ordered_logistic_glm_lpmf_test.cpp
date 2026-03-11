@@ -16,7 +16,7 @@ ordered_logistic_glm_simple_lpmf(const std::vector<int>& y, T_x&& x,
 
 TEST_F(
     AgradRev,
-    ProbDistributionsOrderedLogisticGLM_glm_matches_ordered_logistic_doubles) {
+    OrderedLogisticGLM_glm_matches_ordered_logistic_doubles) {
   using Eigen::MatrixXd;
   using Eigen::VectorXd;
   using std::vector;
@@ -36,7 +36,7 @@ TEST_F(
 
 TEST_F(
     AgradRev,
-    ProbDistributionsOrderedLogisticGLM_glm_matches_ordered_logistic_doubles_broadcast_y) {
+    OrderedLogisticGLM_glm_matches_ordered_logistic_doubles_broadcast_y) {
   using Eigen::MatrixXd;
   using Eigen::VectorXd;
   using std::vector;

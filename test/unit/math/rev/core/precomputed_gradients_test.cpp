@@ -132,7 +132,7 @@ TEST_F(AgradRev, StanAgradRevInternal_precomputed_gradients_containers) {
 }
 
 TEST_F(AgradRev,
-       StanAgradRevInternal_precomputed_gradients_containers_direct_construction) {
+       precomputed_gradients_containers_direct_construction) {
   double value = 1;
   std::vector<stan::math::var> vars;
   std::vector<double> gradients;

@@ -32,7 +32,7 @@ categorical_logit_glm_simple_lpmf(const std::vector<int>& y, const T_x& x,
 
 TEST_F(
     AgradRev,
-    ProbDistributionsCategoricalLogitGLM_glm_matches_categorical_logit_doubles) {
+    CategoricalLogitGLM_glm_matches_categorical_logit_doubles) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::MatrixXd;

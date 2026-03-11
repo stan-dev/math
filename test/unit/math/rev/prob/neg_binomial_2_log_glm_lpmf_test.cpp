@@ -9,7 +9,7 @@
 //  from existing primitives.
 TEST_F(
     AgradRev,
-    ProbDistributionsNegBinomial2LogGLM_glm_matches_neg_binomial_2_log_doubles) {
+    NegBinomial2LogGLM_glm_matches_neg_binomial_2_log_doubles) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -35,7 +35,7 @@ TEST_F(
 //  from existing primitives.
 TEST_F(
     AgradRev,
-    ProbDistributionsNegBinomial2LogGLM_glm_matches_neg_binomial_2_log_doubles_rand) {
+    NegBinomial2LogGLM_glm_matches_neg_binomial_2_log_doubles_rand) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -545,7 +545,7 @@ TYPED_TEST(ProbDistributionsNegBinomial2LogGLM,
 //  We check that the right errors are thrown.
 TEST_F(
     AgradRev,
-    ProbDistributionsNegBinomial2LogGLM_glm_matches_neg_binomial_2_log_error_checking) {
+    NegBinomial2LogGLM_glm_matches_neg_binomial_2_log_error_checking) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
