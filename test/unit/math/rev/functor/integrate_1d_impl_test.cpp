@@ -418,8 +418,9 @@ TEST_F(AgradRev, StanMath_integrate_1d_impl_rev_TestDerivatives_gaussian) {
       {0.0, 0.0});
 }
 
-TEST_F(AgradRev,
-       StanMath_integrate_1d_impl_rev_TestDerivativesSameVarAtEndpointAndInParams) {
+TEST_F(
+    AgradRev,
+    StanMath_integrate_1d_impl_rev_TestDerivativesSameVarAtEndpointAndInParams) {
   using stan::math::var;
 
   var a = 2.0;
