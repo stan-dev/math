@@ -23,6 +23,7 @@
 #include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 #include <optional>
+
 namespace stan {
 namespace math {
 namespace internal {
@@ -31,11 +32,12 @@ namespace internal {
  * Computes log q and d(log q) / d(alpha) using continued fraction.
  */
 template <bool any_fvar, bool partials_fvar, typename T_shape, typename T1, typename T2>
-inline auto eval_q_cf(const T1& alpha, const T2& beta_y) {
+inline std::optional<std::pair<return_type_t<T1, T2>, return_type_t<T1, T2>>>
+eval_q_cf(const T1& alpha, const T2& beta_y) {
   using scalar_t = return_type_t<T1, T2>;
   using ret_t = std::pair<scalar_t, scalar_t>;
   if constexpr (!any_fvar && is_autodiff_v<T_shape>) {
-    auto log_q_result
+    std::pair<double, double> log_q_result
         = log_gamma_q_dgamma(value_of_rec(alpha), value_of_rec(beta_y));
     if (likely(std::isfinite(value_of_rec(log_q_result.first)))) {
       return std::optional{log_q_result};
@@ -69,7 +71,8 @@ inline auto eval_q_cf(const T1& alpha, const T2& beta_y) {
  * Computes log q and d(log q) / d(alpha) using log1m.
  */
 template <bool partials_fvar, typename T_shape, typename T1, typename T2>
-inline auto eval_q_log1m(const T1& alpha, const T2& beta_y) {
+inline std::optional<std::pair<return_type_t<T1, T2>, return_type_t<T1, T2>>>
+eval_q_log1m(const T1& alpha, const T2& beta_y) {
   using scalar_t = return_type_t<T1, T2>;
   using ret_t = std::pair<scalar_t, scalar_t>;
   ret_t out{log1m(gamma_p(alpha, beta_y)), 0.0};
@@ -132,7 +135,7 @@ inline return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(
   for (size_t n = 0; n < N; n++) {
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
-    const auto y_val = y_vec.val(n);
+    const T_partials_return y_val = y_vec.val(n);
     if (y_val == 0.0) {
       continue;
     }
@@ -140,10 +143,10 @@ inline return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(
       return ops_partials.build(negative_infinity());
     }
 
-    const auto alpha_val = alpha_vec.val(n);
-    const auto beta_val = beta_vec.val(n);
+    const T_partials_return alpha_val = alpha_vec.val(n);
+    const T_partials_return beta_val = beta_vec.val(n);
 
-    const auto beta_y = beta_val * y_val;
+    const T_partials_return beta_y = beta_val * y_val;
     if (beta_y == INFTY) {
       return ops_partials.build(negative_infinity());
     }
@@ -164,14 +167,14 @@ inline return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(
     P += result->first;
 
     if constexpr (is_autodiff_v<T_y> || is_autodiff_v<T_inv_scale>) {
-      const auto log_y = log(y_val);
-      const auto alpha_minus_one = fma(alpha_val, log_y, -log_y);
+      const T_partials_return log_y = log(y_val);
+      const T_partials_return alpha_minus_one = fma(alpha_val, log_y, -log_y);
 
-      const auto log_pdf = alpha_val * log(beta_val)
+      const T_partials_return log_pdf = alpha_val * log(beta_val)
                                         - lgamma(alpha_val) + alpha_minus_one
                                         - beta_y;
 
-      const auto hazard = exp(log_pdf - result->first);  // f/Q
+      const T_partials_return hazard = exp(log_pdf - result->first);  // f/Q
 
       if constexpr (is_autodiff_v<T_y>) {
         partials<0>(ops_partials)[n] -= hazard;
