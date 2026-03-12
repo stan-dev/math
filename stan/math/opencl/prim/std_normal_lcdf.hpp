@@ -165,10 +165,8 @@ const char opencl_std_normal_lcdf_dnlcdf[] = STRINGIFY(
                - 0.0170137970924080 * std_normal_lcdf_deriv_scaled_y
                - 0.0100428567412041;
       }
-    } else {
-      std_normal_lcdf_dnlcdf = INFINITY;
-    });
-    // NOLINTEND
+    } else { std_normal_lcdf_dnlcdf = INFINITY; });
+// NOLINTEND
 }  // namespace internal
 
 /** \ingroup opencl

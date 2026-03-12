@@ -156,10 +156,8 @@ const char opencl_normal_lcdf_ldncdf_impl[] = STRINGIFY(
                - 0.0170137970924080 * normal_lcdf_deriv_scaled_diff
                - 0.0100428567412041;
       }
-    } else {
-      normal_ldncdf = INFINITY;
-    });
-  // NOLINTEND
+    } else { normal_ldncdf = INFINITY; });
+// NOLINTEND
 }  // namespace internal
 
 /** \ingroup opencl
