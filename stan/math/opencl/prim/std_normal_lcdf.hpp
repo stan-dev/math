@@ -49,6 +49,7 @@ const char opencl_std_normal_lcdf_impl[] = STRINGIFY(
       // std_normal_lcdf_scaled_y^10 term will overflow
       std_normal_lcdf_lcdf_n = -INFINITY;
     });
+// NOLINTBEGIN
 const char opencl_std_normal_lcdf_dnlcdf[] = STRINGIFY(
     // compute partial derivatives
     // based on analytic form given by:
@@ -167,6 +168,7 @@ const char opencl_std_normal_lcdf_dnlcdf[] = STRINGIFY(
     } else {
       std_normal_lcdf_dnlcdf = INFINITY;
     });
+    // NOLINTEND
 }  // namespace internal
 
 /** \ingroup opencl
