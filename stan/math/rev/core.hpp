@@ -66,6 +66,7 @@
 #include <stan/math/rev/core/std_isnan.hpp>
 #include <stan/math/rev/core/std_numeric_limits.hpp>
 #include <stan/math/rev/core/stored_gradient_vari.hpp>
+#include <stan/math/rev/core/team_thread_pool.hpp>
 #include <stan/math/rev/core/typedefs.hpp>
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/vari.hpp>

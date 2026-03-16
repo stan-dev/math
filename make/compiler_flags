@@ -303,9 +303,6 @@ ifneq ($(OS), Windows_NT)
   LDFLAGS_TBB_RPATH ?= -Wl,-rpath,"$(TBB_LIB)"
 endif
 
-LDFLAGS_TBB ?= -Wl,-L,"$(TBB_LIB)" $(LDFLAGS_TBB_DTAGS) $(LDFLAGS_TBB_RPATH)
-
-LDLIBS_TBB ?= -ltbb
 
 else
 
@@ -342,7 +339,7 @@ endif
 # Sets up CXXFLAGS_THREADS to use threading
 
 ifdef STAN_THREADS
-  CXXFLAGS_THREADS ?= -DSTAN_THREADS
+  CXXFLAGS_THREADS ?= -DSTAN_THREADS -pthread
 endif
 
 ################################################################################
