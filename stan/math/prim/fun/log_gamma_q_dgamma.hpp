@@ -15,12 +15,15 @@
 #include <stan/math/prim/fun/log1m.hpp>
 #include <stan/math/prim/fun/tgamma.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/fun/value_of_rec.hpp>
 #include <cmath>
 
 namespace stan {
 namespace math {
 
 namespace internal {
+
+constexpr double LOG_Q_GAMMA_CF_PRECISION = 1.49012e-12;
 
 /**
  * Compute log(Q(a,z)) using continued fraction expansion for upper incomplete
@@ -36,26 +39,33 @@ namespace internal {
  */
 template <typename T_a, typename T_z>
 inline return_type_t<T_a, T_z> log_q_gamma_cf(const T_a& a, const T_z& z,
-                                              double precision = 1.49012e-08,
+                                              double precision
+                                              = LOG_Q_GAMMA_CF_PRECISION,
                                               int max_steps = 250) {
   using T_return = return_type_t<T_a, T_z>;
   const T_return log_prefactor = a * log(z) - z - lgamma(a);
 
   T_return b_init = z + 1.0 - a;
-  T_return C = (fabs(value_of(b_init)) >= EPSILON) ? b_init : std::decay_t<decltype(b_init)>(EPSILON);
+  T_return C = (fabs(value_of_rec(b_init)) >= EPSILON)
+                   ? b_init
+                   : std::decay_t<decltype(b_init)>(EPSILON);
   T_return D = 0.0;
   T_return f = C;
   for (int i = 1; i <= max_steps; ++i) {
     T_a an = -i * (i - a);
     const T_return b = b_init + 2.0 * i;
     D = b + an * D;
-    D = (fabs(value_of(D)) >= EPSILON) ? D : std::decay_t<decltype(D)>(EPSILON);
+    D = (fabs(value_of_rec(D)) >= EPSILON)
+            ? D
+            : std::decay_t<decltype(D)>(EPSILON);
     C = b + an / C;
-    C = (fabs(value_of(C)) >= EPSILON) ? C : std::decay_t<decltype(C)>(EPSILON);
+    C = (fabs(value_of_rec(C)) >= EPSILON)
+            ? C
+            : std::decay_t<decltype(C)>(EPSILON);
     D = inv(D);
     const T_return delta = C * D;
     f *= delta;
-    const double delta_m1 = fabs(value_of(delta) - 1.0);
+    const double delta_m1 = fabs(value_of_rec(delta) - 1.0);
     if (delta_m1 < precision) {
       break;
     }
@@ -84,13 +94,16 @@ inline return_type_t<T_a, T_z> log_q_gamma_cf(const T_a& a, const T_z& z,
  */
 template <typename T_a, typename T_z>
 inline std::pair<return_type_t<T_a, T_z>, return_type_t<T_a, T_z>> log_gamma_q_dgamma(
-    const T_a& a, const T_z& z, double precision = 1.49012e-08, int max_steps = 250) {
+    const T_a& a, const T_z& z,
+    double precision = internal::LOG_Q_GAMMA_CF_PRECISION,
+    int max_steps = 250) {
   using T_return = return_type_t<T_a, T_z>;
   const double a_val = value_of(a);
   const double z_val = value_of(z);
   // For z > a + 1, use continued fraction for better numerical stability
   if (z_val > a_val + 1.0) {
-    std::pair<T_return, T_return> result{internal::log_q_gamma_cf(a_val, z_val, precision, max_steps), 0.0};
+    std::pair<T_return, T_return> result{
+        internal::log_q_gamma_cf(a_val, z_val, precision, max_steps), 0.0};
     // For gradient, use: d/da log(Q) = (1/Q) * dQ/da
     // grad_reg_inc_gamma computes dQ/da
     const T_return Q_val = exp(result.first);
