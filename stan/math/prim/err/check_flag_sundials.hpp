@@ -155,9 +155,9 @@ inline std::array<std::string, 2> cvodes_flag_msg(int flag) {
                  "checkpoint"};
           break;  // NOLINT
         case -106:
-          msg = {
-              "CV_FWD_FAIL",
-              "An error occurred during the integration of the forward problem"};
+          msg = {"CV_FWD_FAIL",
+                 "An error occurred during the integration of the forward "
+                 "problem"};
           break;  // NOLINT
         case -107:
           msg = {"CV_BAD_ITASK", "Wrong task for backward integration"};
