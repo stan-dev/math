@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_PROB_GAMMA_LCCDF_HPP
 #define STAN_MATH_PRIM_PROB_GAMMA_LCCDF_HPP
 
+#include <stan/math/fwd/meta/is_fvar.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
@@ -38,8 +39,8 @@ eval_q_cf(const T1& alpha, const T2& beta_y) {
   using ret_t = std::pair<scalar_t, scalar_t>;
   if constexpr (!any_fvar && is_autodiff_v<T_shape>) {
     std::pair<double, double> log_q_result
-        = log_gamma_q_dgamma(value_of_rec(alpha), value_of_rec(beta_y));
-    if (likely(std::isfinite(value_of_rec(log_q_result.first)))) {
+        = log_gamma_q_dgamma(value_of(alpha), value_of(beta_y));
+    if (likely(std::isfinite(log_q_result.first))) {
       return std::optional{log_q_result};
     } else {
       return std::optional<ret_t>{std::nullopt};
@@ -127,10 +128,10 @@ inline return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(
   scalar_seq_view<T_beta_ref> beta_vec(beta_ref);
   const size_t N = max_size(y, alpha, beta);
 
-  constexpr bool any_fvar = is_fvar<scalar_type_t<T_y>>::value
-                            || is_fvar<scalar_type_t<T_shape>>::value
-                            || is_fvar<scalar_type_t<T_inv_scale>>::value;
-  constexpr bool partials_fvar = is_fvar<T_partials_return>::value;
+  constexpr bool any_fvar = is_fvar_v<scalar_type_t<T_y>>
+                            || is_fvar_v<scalar_type_t<T_shape>>
+                            || is_fvar_v<scalar_type_t<T_inv_scale>>;
+  constexpr bool partials_fvar = is_fvar_v<T_partials_return>;
 
   for (size_t n = 0; n < N; n++) {
     // Explicit results for extreme values
