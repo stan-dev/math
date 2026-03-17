@@ -37,23 +37,27 @@ inline return_type_t<Ta, Tb, Tz> hypergeometric_pFq(Ta&& a, Tb&& b, Tz&& z) {
   check_not_nan("hypergeometric_pFq", "z", z);
 
   const bool condition_1 = (a_ref.size() > (b_ref.size() + 1)) && (z != 0);
-  const bool condition_2 = (a_ref.size() == (b_ref.size() + 1)) && (std::fabs(z) > 1);
+  const bool condition_2
+      = (a_ref.size() == (b_ref.size() + 1)) && (std::fabs(z) > 1);
 
   if (condition_1 || condition_2) {
     [&]() STAN_COLD_PATH {
       std::stringstream msg;
       msg << "hypergeometric function pFq does not meet convergence "
-          "conditions with given arguments. "
-          "a: " << to_row_vector(a_ref) << ", "
+             "conditions with given arguments. "
+             "a: "
+          << to_row_vector(a_ref) << ", "
           << "b: " << to_row_vector(b_ref) << ", "
           << "z: " << z;
       throw std::domain_error(msg.str());
     }();
   }
   // For plain vectors, we can use Eigen's Map to avoid unnecessary copies
-  constexpr bool is_plain_vec =
-    std::is_same_v<std::decay_t<decltype(a_ref)>, plain_type_t<decltype(a_ref)>> &&
-    std::is_same_v<std::decay_t<decltype(b_ref)>, plain_type_t<decltype(b_ref)>>;
+  constexpr bool is_plain_vec
+      = std::is_same_v<
+            std::decay_t<decltype(a_ref)>,
+            plain_type_t<decltype(
+                a_ref)>> && std::is_same_v<std::decay_t<decltype(b_ref)>, plain_type_t<decltype(b_ref)>>;
   if constexpr (is_plain_vec) {
     // We use type erasure not do a hard copy here
     using map_t = Eigen::Map<Eigen::VectorXd>;

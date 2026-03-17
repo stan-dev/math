@@ -21,7 +21,7 @@ template <typename T_p, typename T_nu, typename T_mu, typename T_sigma,
           require_all_stan_scalar_t<T_p, T_mu, T_sigma, T_nu>* = nullptr,
           require_any_fvar_t<T_p, T_nu, T_mu, T_sigma>* = nullptr>
 inline auto student_t_qf(const T_p& p, const T_nu& nu, const T_mu& mu,
-                          const T_sigma& sigma) {
+                         const T_sigma& sigma) {
   static constexpr const char* function = "student_t_qf";
   using FvarT = return_type_t<T_p, T_mu, T_sigma, T_nu>;
   using T_partials = partials_type_t<FvarT>;
@@ -47,9 +47,9 @@ inline auto student_t_qf(const T_p& p, const T_nu& nu, const T_mu& mu,
   const double p_sign = value_of_rec(p_val) < 0.5 ? -1.0 : 1.0;
   auto sqrt_nu_val = sqrt(nu_val);
   auto ibeta_arg = inv_inc_beta(0.5 * nu_val, 0.5, 2.0 * p_val_flip);
-  auto rtn_val = mu_val
-                 + p_sign * sigma_val * sqrt_nu_val
-                       * sqrt(-1.0 + 1.0 / ibeta_arg);
+  auto rtn_val
+      = mu_val
+        + p_sign * sigma_val * sqrt_nu_val * sqrt(-1.0 + 1.0 / ibeta_arg);
 
   FvarT rtn(rtn_val, 0.0);
 
@@ -60,17 +60,18 @@ inline auto student_t_qf(const T_p& p, const T_nu& nu, const T_mu& mu,
   if constexpr (is_autodiff_v<T_nu>) {
     const auto half_nu = nu_val / 2.0;
     Eigen::Matrix<T_partials, -1, 1> hyper_arg_a{{0.5, half_nu, half_nu}};
-    Eigen::Matrix<T_partials, -1, 1> hyper_arg_b{{1.0 + half_nu, 1.0 + half_nu}};
+    Eigen::Matrix<T_partials, -1, 1> hyper_arg_b{
+        {1.0 + half_nu, 1.0 + half_nu}};
     const auto hyper_arg
         = hypergeometric_pFq(hyper_arg_a, hyper_arg_b, ibeta_arg);
-    const auto hyper2f1
-        = hypergeometric_2F1(1.0, (1.0 + nu_val) / 2.0, (2.0 + nu_val) / 2.0, ibeta_arg);
+    const auto hyper2f1 = hypergeometric_2F1(1.0, (1.0 + nu_val) / 2.0,
+                                             (2.0 + nu_val) / 2.0, ibeta_arg);
     const auto digamma_a1 = digamma(half_nu);
     const auto digamma_a2 = digamma((1.0 + nu_val) / 2.0);
 
     const auto arg_1 = (4.0 * hyper_arg * sqrt(1.0 - ibeta_arg)) / nu_val;
     const auto arg_2 = -2.0 * hyper2f1 * (-1.0 + ibeta_arg)
-                             * (log(ibeta_arg) - digamma_a1 + digamma_a2);
+                       * (log(ibeta_arg) - digamma_a1 + digamma_a2);
 
     const auto num1 = sigma_val * (-2.0 + (2.0 - arg_1 + arg_2) / ibeta_arg);
     const auto den1 = 4.0 * sqrt_nu_val * sqrt(-1.0 + 1.0 / ibeta_arg);
@@ -82,8 +83,7 @@ inline auto student_t_qf(const T_p& p, const T_nu& nu, const T_mu& mu,
   }
 
   if constexpr (is_autodiff_v<T_sigma>) {
-    rtn.d_ += sigma.d_ * p_sign * sqrt_nu_val
-              * sqrt(-1.0 + 1.0 / ibeta_arg);
+    rtn.d_ += sigma.d_ * p_sign * sqrt_nu_val * sqrt(-1.0 + 1.0 / ibeta_arg);
   }
 
   return rtn;

@@ -31,7 +31,8 @@ inline var hypergeometric_pFq(Ta&& a, Tb&& b, Tz&& z) {
   constexpr bool grad_z = is_autodiff_v<Tz>;
   auto arena_a = to_arena(as_column_vector_or_scalar(std::forward<Ta>(a)));
   auto arena_b = to_arena(as_column_vector_or_scalar(std::forward<Tb>(b)));
-  auto pfq_val = hypergeometric_pFq(value_of(arena_a), value_of(arena_b), value_of(z));
+  auto pfq_val
+      = hypergeometric_pFq(value_of(arena_a), value_of(arena_b), value_of(z));
   return make_callback_var(
       pfq_val, [arena_a, arena_b, z, pfq_val](auto& vi) mutable {
         auto grad_tuple = grad_pFq<grad_a, grad_b, grad_z>(

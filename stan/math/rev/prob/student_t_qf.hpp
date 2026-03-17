@@ -40,11 +40,11 @@ inline var student_t_qf(const T_p& p, const T_nu& nu, const T_mu& mu,
     const double p_sign = p_val < 0.5 ? -1.0 : 1.0;
     const double ibeta_arg = inv_inc_beta(0.5 * nu_val, 0.5, 2 * p_val_flip);
     const double sqrt_inv_ibeta_m1 = sqrt(inv(ibeta_arg) - 1.0);
-    double ret_val = mu_val
-              + p_sign * sigma_val * sqrt(nu_val)
-                    * sqrt(-1.0 + 1.0 / ibeta_arg);
+    double ret_val
+        = mu_val
+          + p_sign * sigma_val * sqrt(nu_val) * sqrt(-1.0 + 1.0 / ibeta_arg);
     return make_callback_var(ret_val, [p, mu, sigma, nu,
-                                      ibeta_arg](auto& vi) mutable {
+                                       ibeta_arg](auto& vi) mutable {
       const double p_val = value_of(p);
       const double mu_val = value_of(mu);
       const double sigma_val = value_of(sigma);
@@ -54,8 +54,9 @@ inline var student_t_qf(const T_p& p, const T_nu& nu, const T_mu& mu,
       const double sqrt_inv_ibeta_m1 = sqrt(inv(ibeta_arg) - 1.0);
       if constexpr (is_autodiff_v<T_p>) {
         if (likely(p.val() > 0.0 && p.val() < 1.0)) {
-          p.adj() += vi.adj()
-                    * exp(-student_t_lpdf(vi.val(), nu_val, mu_val, sigma_val));
+          p.adj()
+              += vi.adj()
+                 * exp(-student_t_lpdf(vi.val(), nu_val, mu_val, sigma_val));
         }
       }
       if constexpr (is_autodiff_v<T_nu>) {
@@ -72,9 +73,10 @@ inline var student_t_qf(const T_p& p, const T_nu& nu, const T_mu& mu,
 
         const double arg_1 = (4.0 * hyper_arg * sqrt(1.0 - ibeta_arg)) / nu_val;
         const double arg_2 = -2.0 * hyper2f1 * (-1.0 + ibeta_arg)
-                            * (log(ibeta_arg) - digamma_a1 + digamma_a2);
+                             * (log(ibeta_arg) - digamma_a1 + digamma_a2);
 
-        const double num1 = sigma_val * (-2.0 + (2.0 - arg_1 + arg_2) / ibeta_arg);
+        const double num1
+            = sigma_val * (-2.0 + (2.0 - arg_1 + arg_2) / ibeta_arg);
         const double den1 = 4.0 * sqrt(nu_val) * sqrt_inv_ibeta_m1;
         nu.adj() += vi.adj() * p_sign * num1 / den1;
       }
