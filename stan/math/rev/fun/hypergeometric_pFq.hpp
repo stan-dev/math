@@ -23,14 +23,15 @@ namespace math {
  * @return Generalized hypergeometric function
  */
 template <typename Ta, typename Tb, typename Tz,
-          bool grad_a = is_autodiff_v<Ta>, bool grad_b = is_autodiff_v<Tb>,
-          bool grad_z = is_autodiff_v<Tz>,
           require_all_vector_t<Ta, Tb>* = nullptr,
           require_return_type_t<is_var, Ta, Tb, Tz>* = nullptr>
 inline var hypergeometric_pFq(Ta&& a, Tb&& b, Tz&& z) {
-  auto&& arena_a = to_arena(as_column_vector_or_scalar(std::forward<Ta>(a)));
-  auto&& arena_b = to_arena(as_column_vector_or_scalar(std::forward<Tb>(b)));
-  auto pfq_val = hypergeometric_pFq(arena_a.val(), arena_b.val(), value_of(z));
+  constexpr bool grad_a = is_autodiff_v<Ta>;
+  constexpr bool grad_b = is_autodiff_v<Tb>;
+  constexpr bool grad_z = is_autodiff_v<Tz>;
+  auto arena_a = to_arena(as_column_vector_or_scalar(std::forward<Ta>(a)));
+  auto arena_b = to_arena(as_column_vector_or_scalar(std::forward<Tb>(b)));
+  auto pfq_val = hypergeometric_pFq(value_of(arena_a), value_of(arena_b), value_of(z));
   return make_callback_var(
       pfq_val, [arena_a, arena_b, z, pfq_val](auto& vi) mutable {
         auto grad_tuple = grad_pFq<grad_a, grad_b, grad_z>(

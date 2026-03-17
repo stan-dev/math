@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err/check_not_nan.hpp>
 #include <stan/math/prim/err/check_finite.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/to_row_vector.hpp>
 #include <boost/math/special_functions/hypergeometric_pFq.hpp>
 
@@ -25,34 +26,48 @@ namespace math {
 template <typename Ta, typename Tb, typename Tz,
           require_all_vector_st<std::is_arithmetic, Ta, Tb>* = nullptr,
           require_arithmetic_t<Tz>* = nullptr>
-inline return_type_t<Ta, Tb, Tz> hypergeometric_pFq(const Ta& a, const Tb& b,
-                                                    const Tz& z) {
-  plain_type_t<Ta> a_ref = a;
-  plain_type_t<Tb> b_ref = b;
+inline return_type_t<Ta, Tb, Tz> hypergeometric_pFq(Ta&& a, Tb&& b, Tz&& z) {
+  decltype(auto) a_ref = to_ref(std::forward<Ta>(a));
+  decltype(auto) b_ref = to_ref(std::forward<Tb>(b));
   check_finite("hypergeometric_pFq", "a", a_ref);
   check_finite("hypergeometric_pFq", "b", b_ref);
   check_finite("hypergeometric_pFq", "z", z);
-
   check_not_nan("hypergeometric_pFq", "a", a_ref);
   check_not_nan("hypergeometric_pFq", "b", b_ref);
   check_not_nan("hypergeometric_pFq", "z", z);
 
-  bool condition_1 = (a_ref.size() > (b_ref.size() + 1)) && (z != 0);
-  bool condition_2 = (a_ref.size() == (b_ref.size() + 1)) && (std::fabs(z) > 1);
+  const bool condition_1 = (a_ref.size() > (b_ref.size() + 1)) && (z != 0);
+  const bool condition_2 = (a_ref.size() == (b_ref.size() + 1)) && (std::fabs(z) > 1);
 
   if (condition_1 || condition_2) {
-    std::stringstream msg;
-    msg << "hypergeometric function pFq does not meet convergence "
-        << "conditions with given arguments. "
-        << "a: " << to_row_vector(a_ref) << ", "
-        << "b: " << to_row_vector(b_ref) << ", "
-        << "z: " << z;
-    throw std::domain_error(msg.str());
+    [&]() STAN_COLD_PATH {
+      std::stringstream msg;
+      msg << "hypergeometric function pFq does not meet convergence "
+          "conditions with given arguments. "
+          "a: " << to_row_vector(a_ref) << ", "
+          << "b: " << to_row_vector(b_ref) << ", "
+          << "z: " << z;
+      throw std::domain_error(msg.str());
+    }();
   }
-
-  return boost::math::hypergeometric_pFq(
-      std::vector<double>(a_ref.data(), a_ref.data() + a_ref.size()),
-      std::vector<double>(b_ref.data(), b_ref.data() + b_ref.size()), z);
+  // For plain vectors, we can use Eigen's Map to avoid unnecessary copies
+  constexpr bool is_plain_vec =
+    std::is_same_v<std::decay_t<decltype(a_ref)>, plain_type_t<decltype(a_ref)>> &&
+    std::is_same_v<std::decay_t<decltype(b_ref)>, plain_type_t<decltype(b_ref)>>;
+  if constexpr (is_plain_vec) {
+    // We use type erasure not do a hard copy here
+    using map_t = Eigen::Map<Eigen::VectorXd>;
+    auto map_a = map_t(const_cast<double*>(a_ref.data()), a_ref.size());
+    auto map_b = map_t(const_cast<double*>(b_ref.data()), b_ref.size());
+    return boost::math::hypergeometric_pFq(map_a, map_b, z);
+  } else {
+    // boost needs `a` and `b` to be the exact same type, so we evaluate here
+    auto a_eval = eval(a_ref);
+    auto b_eval = eval(b_ref);
+    return boost::math::hypergeometric_pFq(
+        std::vector<double>(a_eval.data(), a_eval.data() + a_eval.size()),
+        std::vector<double>(b_eval.data(), b_eval.data() + b_eval.size()), z);
+  }
 }
 }  // namespace math
 }  // namespace stan

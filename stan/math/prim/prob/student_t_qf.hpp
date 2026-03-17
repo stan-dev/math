@@ -45,7 +45,7 @@ inline double student_t_qf(const T_p& p, const T_nu& nu, const T_mu& mu,
 
   const double p_val_flip = p < 0.5 ? p : 1.0 - p;
   const double p_sign = p < 0.5 ? -1.0 : 1.0;
-  const auto& ibeta_arg = inv_inc_beta(0.5 * nu, 0.5, 2 * p_val_flip);
+  const auto ibeta_arg = inv_inc_beta(0.5 * nu, 0.5, 2 * p_val_flip);
 
   return mu + p_sign * sigma * sqrt(nu) * sqrt(-1.0 + 1.0 / ibeta_arg);
 }
