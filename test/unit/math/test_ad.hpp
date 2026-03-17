@@ -1031,7 +1031,6 @@ inline std::vector<double> common_args(F&& comparison) {
   return common_args_filtered;
 }
 
-
 inline std::vector<int> common_nonzero_int_args() {
   static const std::vector<int> args{-1, 1};
   return args;

@@ -121,9 +121,12 @@ template <typename T, typename L, typename U, require_eigen_t<T>* = nullptr,
           require_all_stan_scalar_t<L, U>* = nullptr,
           require_not_var_t<return_type_t<T, L, U>>* = nullptr>
 inline auto lub_constrain(T&& x, const L& lb, const U& ub) {
-  return make_holder([lb, ub](auto&& x_) {
-    return std::forward<decltype(x_)>(x_).unaryExpr([lb, ub](auto&& xx) { return lub_constrain(xx, lb, ub); });
-  }, std::forward<T>(x));
+  return make_holder(
+      [lb, ub](auto&& x_) {
+        return std::forward<decltype(x_)>(x_).unaryExpr(
+            [lb, ub](auto&& xx) { return lub_constrain(xx, lb, ub); });
+      },
+      std::forward<T>(x));
 }
 
 /**
@@ -135,10 +138,12 @@ template <typename T, typename L, typename U, typename Lp,
           require_not_var_t<return_type_t<T, L, U>>* = nullptr,
           require_convertible_t<return_type_t<T, L, U>, Lp>* = nullptr>
 inline auto lub_constrain(T&& x, const L& lb, const U& ub, Lp& lp) {
-  return eval(make_holder([lb, ub, &lp](auto&& x_) {
-    return std::forward<decltype(x_)>(x_).unaryExpr(
-      [lb, ub, &lp](auto&& xx) { return lub_constrain(xx, lb, ub, lp); });
-  }, std::forward<T>(x)));
+  return eval(make_holder(
+      [lb, ub, &lp](auto&& x_) {
+        return std::forward<decltype(x_)>(x_).unaryExpr(
+            [lb, ub, &lp](auto&& xx) { return lub_constrain(xx, lb, ub, lp); });
+      },
+      std::forward<T>(x)));
 }
 
 /**
@@ -151,11 +156,13 @@ template <typename T, typename L, typename U,
           require_not_var_t<return_type_t<T, L, U>>* = nullptr>
 inline auto lub_constrain(T&& x, L&& lb, const U& ub) {
   check_matching_dims("lub_constrain", "x", x, "lb", lb);
-  return make_holder([ub](auto&& x_, auto&& lb_) {
-    return std::forward<decltype(x_)>(x_).binaryExpr(lb_, [ub](auto&& xx, auto&& llb) {
-      return lub_constrain(xx, llb, ub);
-    });
-  }, std::forward<T>(x), std::forward<L>(lb));
+  return make_holder(
+      [ub](auto&& x_, auto&& lb_) {
+        return std::forward<decltype(x_)>(x_).binaryExpr(
+            lb_,
+            [ub](auto&& xx, auto&& llb) { return lub_constrain(xx, llb, ub); });
+      },
+      std::forward<T>(x), std::forward<L>(lb));
 }
 
 /**
@@ -169,11 +176,13 @@ template <typename T, typename L, typename U, typename Lp,
           require_convertible_t<return_type_t<T, L, U>, Lp>* = nullptr>
 inline auto lub_constrain(T&& x, L&& lb, const U& ub, Lp& lp) {
   check_matching_dims("lub_constrain", "x", x, "lb", lb);
-  return eval(make_holder([ub, &lp](auto&& x_, auto&& lb_) {
-    return to_ref(x_).binaryExpr(lb_, [ub, &lp](auto&& xx, auto&& llb) {
-      return lub_constrain(xx, llb, ub, lp);
-    });
-  }, std::forward<T>(x), std::forward<L>(lb)));
+  return eval(make_holder(
+      [ub, &lp](auto&& x_, auto&& lb_) {
+        return to_ref(x_).binaryExpr(lb_, [ub, &lp](auto&& xx, auto&& llb) {
+          return lub_constrain(xx, llb, ub, lp);
+        });
+      },
+      std::forward<T>(x), std::forward<L>(lb)));
 }
 
 /**
@@ -186,11 +195,13 @@ template <typename T, typename L, typename U,
           require_not_var_t<return_type_t<T, L, U>>* = nullptr>
 inline auto lub_constrain(T&& x, const L& lb, U&& ub) {
   check_matching_dims("lub_constrain", "x", x, "ub", ub);
-  return make_holder([lb](auto&& x_, auto&& ub_){
-    return x_.binaryExpr(ub_, [lb](auto&& xx, auto&& uub) {
-      return lub_constrain(xx, lb, uub);
-    });
-  }, std::forward<T>(x), std::forward<U>(ub));
+  return make_holder(
+      [lb](auto&& x_, auto&& ub_) {
+        return x_.binaryExpr(ub_, [lb](auto&& xx, auto&& uub) {
+          return lub_constrain(xx, lb, uub);
+        });
+      },
+      std::forward<T>(x), std::forward<U>(ub));
 }
 
 /**
@@ -204,11 +215,13 @@ template <typename T, typename L, typename U, typename Lp,
           require_convertible_t<return_type_t<T, L, U>, Lp>* = nullptr>
 inline auto lub_constrain(T&& x, const L& lb, U&& ub, Lp& lp) {
   check_matching_dims("lub_constrain", "x", x, "ub", ub);
-  return eval(make_holder([lb, &lp](auto&& x_, auto&& ub_){
-    return x_.binaryExpr(ub_, [lb, &lp](auto&& xx, auto&& uub) {
-      return lub_constrain(xx, lb, uub, lp);
-    });
-  }, std::forward<T>(x), std::forward<U>(ub)));
+  return eval(make_holder(
+      [lb, &lp](auto&& x_, auto&& ub_) {
+        return x_.binaryExpr(ub_, [lb, &lp](auto&& xx, auto&& uub) {
+          return lub_constrain(xx, lb, uub, lp);
+        });
+      },
+      std::forward<T>(x), std::forward<U>(ub)));
 }
 
 /**
