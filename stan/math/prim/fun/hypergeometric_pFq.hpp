@@ -55,8 +55,10 @@ inline return_type_t<Ta, Tb, Tz> hypergeometric_pFq(Ta&& a, Tb&& b, Tz&& z) {
   // For plain vectors, we can use Eigen's Map to avoid unnecessary copies
   using a_ref_t = decltype(a_ref);
   using b_ref_t = decltype(b_ref);
-  constexpr bool is_a_plain_vec = std::is_same_v<std::decay_t<a_ref_t>, plain_type_t<a_ref_t>>;
-  constexpr bool is_b_plain_vec = std::is_same_v<std::decay_t<b_ref_t>, plain_type_t<b_ref_t>>;
+  constexpr bool is_a_plain_vec
+      = std::is_same_v<std::decay_t<a_ref_t>, plain_type_t<a_ref_t>>;
+  constexpr bool is_b_plain_vec
+      = std::is_same_v<std::decay_t<b_ref_t>, plain_type_t<b_ref_t>>;
   if constexpr (is_a_plain_vec && is_b_plain_vec) {
     // We use type erasure not do a hard copy here
     using map_t = Eigen::Map<Eigen::VectorXd>;
