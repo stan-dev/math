@@ -52,7 +52,7 @@ inline constexpr bool inspect_tuple_v
  * itself to inner containers as long as it sees a tuple in type type.
  *  So for instance if your type is a
  * `tuple<vector<tuple<vector<vector<double>>>>` your functor `f` must support
- * operationg on `vector<vector<double>>` types.
+ * operating on `vector<vector<double>>` types.
  * @tparam Filter a struct that accepts one template parameter and has a static
  *  constexpr bool member named value that is true if the type should be
  *  included in the output tuple.

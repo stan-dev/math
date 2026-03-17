@@ -90,7 +90,7 @@ read_corr_L(const T& CPCs,  // on (-1, 1)
  * @tparam T type of the array (must be derived from \c Eigen::ArrayBase and
  * have one compile-time dimension equal to 1)
  * @tparam Lp A scalar type for the lp argument. The scalar type of T should be
- * convertable to this.
+ * convertible to this.
  * @param CPCs The (K choose 2) canonical partial correlations in
  * (-1, 1).
  * @param K Dimensionality of correlation matrix.

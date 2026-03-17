@@ -62,7 +62,7 @@
  * `C` and `D`. When executing `C`'s operation, `A` and `B` are assigned
  * events to their read event stack while `C` is assigned an event to it's write
  *event stack. Once `A` and `B` have finished their write event the kernel to
- *compute `C` can begin. The excution to create `D` also waits for the write
+ *compute `C` can begin. The execution to create `D` also waits for the write
  *events of `A` and `B`, but does not have to wait for the execution of `C` to
  *finish. Executing `E` requires waiting for for the write events of both `C`
  *and `D`.

@@ -15,16 +15,16 @@ template <typename T>
 template <typename Expr,
           require_all_kernel_expressions_and_none_scalar_t<Expr>*,
           require_not_matrix_cl_t<Expr>*>
-matrix_cl<T>::matrix_cl(const Expr& expresion) : rows_(0), cols_(0) {
-  results(*this) = expressions(expresion);
+matrix_cl<T>::matrix_cl(const Expr& expression) : rows_(0), cols_(0) {
+  results(*this) = expressions(expression);
 }
 
 template <typename T>
 template <typename Expr,
           require_all_kernel_expressions_and_none_scalar_t<Expr>*,
           require_not_matrix_cl_t<Expr>*>
-matrix_cl<T>& matrix_cl<T>::operator=(const Expr& expresion) {
-  results(*this) = expressions(expresion);
+matrix_cl<T>& matrix_cl<T>::operator=(const Expr& expression) {
+  results(*this) = expressions(expression);
   return *this;
 }
 /** @}*/

@@ -34,7 +34,7 @@ inline std::vector<std::vector<std::vector<plain_type_t<In>>>> rep_array(
     const In& x, int k, int m, int n) {
   using std::vector;
   using T = plain_type_t<In>;
-  check_nonnegative("rep_array", "shelfs", k);
+  check_nonnegative("rep_array", "shelves", k);
   check_nonnegative("rep_array", "rows", m);
   check_nonnegative("rep_array", "cols", n);
   return vector<vector<vector<T>>>(k, vector<vector<T>>(m, vector<T>(n, x)));

@@ -48,7 +48,7 @@ skew_double_exponential_lpdf(const T_y_cl& y, const T_loc_cl& mu,
   using std::isnan;
 
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
-                         mu, "Scale parameter", sigma, "Inv_scale paramter",
+                         mu, "Scale parameter", sigma, "Inv_scale parameter",
                          tau);
   const size_t N = max_size(y, mu, sigma, tau);
   if (N == 0) {

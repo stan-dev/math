@@ -387,7 +387,7 @@ inline auto lub_constrain(const std::vector<T>& x, const std::vector<L>& lb,
  * type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
  * @tparam U A type inheriting from `Eigen::EigenBase`, a `var_value` with inner
  * type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
- * @tparam Lp Scalar, convertable from the scalar types of T, L, and U
+ * @tparam Lp Scalar, convertible from the scalar types of T, L, and U
  * @param[in] x Free scalar to transform
  * @param[in] lb Lower bound
  * @param[in] ub Upper bound

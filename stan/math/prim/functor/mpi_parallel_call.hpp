@@ -97,7 +97,7 @@ bool mpi_parallel_call_cache<call_id, member, T>::is_valid_ = false;
  * information from the root node to all worker nodes. The class
  * discriminates between parameters and static data. The static data
  * is only transmitted a single time and cached on each worker locally
- * after the inital transfer.
+ * after the initial transfer.
  *
  * The flow of commands are:
  *
@@ -113,7 +113,7 @@ bool mpi_parallel_call_cache<call_id, member, T>::is_valid_ = false;
  *    cluster. Static data (including meta information on data shapes)
  *    are locally cached such that static data is only transferred on
  *    the first evaluation. Note that the work is equally distributed
- *    among the workers. That is N jobs are distributed ot a cluster
+ *    among the workers. That is N jobs are distributed to a cluster
  *    of size W in N/W chunks (the remainder is allocated to node 1
  *    onwards which ensures that the root node 0 has one job less).
  * 5. Once the parameters and static data is distributed, the reduce
@@ -145,7 +145,7 @@ bool mpi_parallel_call_cache<call_id, member, T>::is_valid_ = false;
  * computed on each worker. This information is then cached for all
  * subsequent evaluations. However, caching this information can
  * occur if and only if the evaluation of all functions was
- * successfull on all workers during the first run. Thus, the first
+ * successful on all workers during the first run. Thus, the first
  * evaluation is handled with special care to ensure that caching of
  * this meta info is only done when all workers have successfully
  * evaluated the function and otherwise an exception is raised.

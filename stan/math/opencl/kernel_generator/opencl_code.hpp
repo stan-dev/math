@@ -24,7 +24,7 @@ namespace math {
  */
 /**
  * Represents output variable of custom code in kernel generator expressions.
- * @tparam T_code intantiation of `opencl_code_` class template this is output
+ * @tparam T_code instantiation of `opencl_code_` class template this is output
  * of
  * @tparam T_scalar scalar type of the output variable
  */
@@ -319,7 +319,7 @@ class opencl_code_ : public operation_cl_base {
   }
 
   /**
-   * Get object representing output variable of ccustom code.
+   * Get object representing output variable of custom code.
    * @param var_name name of the variable output object represents
    */
   template <typename T_scalar>

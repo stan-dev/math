@@ -25,7 +25,7 @@ inline T as_column_vector_or_scalar(const T& a) {
 
 /**
  * No-op used when working with operands and partials.
- * This is not implimented so it cannot be invoked and only exists so the
+ * This is not implemented so it cannot be invoked and only exists so the
  * compiler can resolve it's output type.
  */
 template <typename T, typename S>

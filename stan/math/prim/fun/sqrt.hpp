@@ -26,7 +26,7 @@ inline auto sqrt(T&& x) {
 /**
  * Return the square root of the complex argument.
  *
- * @tparam V `complex<Aritmetic>` argument
+ * @tparam V `complex<Arithmetic>` argument
  * @param[in] x argument
  * @return square root of the argument
  */

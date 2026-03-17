@@ -21,8 +21,6 @@ struct is_fvar<T,
                std::enable_if_t<internal::is_fvar_impl<std::decay_t<T>>::value>>
     : std::true_type {};
 
-template <typename T>
-inline constexpr bool is_fvar_v = is_fvar<T>::value;
 
 }  // namespace stan
 #endif

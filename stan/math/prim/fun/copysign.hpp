@@ -55,7 +55,7 @@ inline T copysign_non_zero(const T& x, const U& y) {
  * with signs copied from the real and complex parts of the first
  * arguments to the real and complex parts of the second.
  *
- * This is an overload of the standard libary `copysign` for complex
+ * This is an overload of the standard library `copysign` for complex
  * numbers that will be used with argument-dependent lookup.  Rather
  * than using the standard library `copysign`, it uses
  * `copysign_non_zero`, which does not change sign if the reference
