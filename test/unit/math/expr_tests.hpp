@@ -72,7 +72,7 @@ constexpr const char*
  */
 template <typename ScalarType, std::size_t N>
 inline void expect_all_used_only_once(std::array<int, N>& arg_evals,
-                               std::array<int, N>& size_of_arg) {
+                                      std::array<int, N>& size_of_arg) {
   for (int i = 0; i < N; ++i) {
     EXPECT_LE(arg_evals[i], size_of_arg[i])
         << "(" << char_scalar_type<ScalarType>::scalar << ")"
@@ -129,7 +129,8 @@ inline constexpr auto make_expr(int& /* count */, T&& arg) {
  *  `counterOp`.
  */
 template <std::size_t N, typename... Args>
-inline constexpr auto make_expr_args(std::array<int, N>& expr_evals, Args&&... args) {
+inline constexpr auto make_expr_args(std::array<int, N>& expr_evals,
+                                     Args&&... args) {
   return stan::math::index_apply<N>([&expr_evals, &args...](auto... Is) {
     return std::make_tuple(make_expr(expr_evals[Is], args)...);
   });
@@ -161,7 +162,8 @@ inline constexpr Eigen::Index eigen_size(EigMat&& x) {
  *  an Eigen type then the value is be zero.
  */
 template <typename... Args>
-inline constexpr std::array<int, sizeof...(Args)> eigen_arg_sizes(Args&&... args) {
+inline constexpr std::array<int, sizeof...(Args)> eigen_arg_sizes(
+    Args&&... args) {
   return std::array<int, sizeof...(Args)>{eigen_size(args)...};
 }
 
@@ -246,7 +248,8 @@ inline void check_expr_test(F&& f, Args&&... args) {
       stan::math::recover_memory();
     }
     if constexpr (!ReverseOnly) {
-      stan::test::internal::check_expr_test<stan::math::fvar<double>>(f, args...);
+      stan::test::internal::check_expr_test<stan::math::fvar<double>>(f,
+                                                                      args...);
     }
   } catch (const std::exception& e) {
   }
