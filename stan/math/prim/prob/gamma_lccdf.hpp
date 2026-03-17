@@ -128,9 +128,10 @@ inline return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(
   scalar_seq_view<T_beta_ref> beta_vec(beta_ref);
   const size_t N = max_size(y, alpha, beta);
 
-  constexpr bool any_fvar
-      = is_fvar_v<scalar_type_t<
-            T_y>> || is_fvar_v<scalar_type_t<T_shape>> || is_fvar_v<scalar_type_t<T_inv_scale>>;
+  constexpr bool is_y_fvar = is_fvar_v<scalar_type_t<T_y>>;
+  constexpr bool is_shape_fvar = is_fvar_v<scalar_type_t<T_shape>>;
+  constexpr bool is_beta_fvar = is_fvar_v<scalar_type_t<T_inv_scale>>;
+  constexpr bool any_fvar = is_y_fvar || is_shape_fvar || is_beta_fvar;
   constexpr bool partials_fvar = is_fvar_v<T_partials_return>;
 
   for (size_t n = 0; n < N; n++) {
