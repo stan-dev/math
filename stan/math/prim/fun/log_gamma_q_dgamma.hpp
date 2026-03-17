@@ -55,13 +55,11 @@ inline return_type_t<T_a, T_z> log_q_gamma_cf(const T_a& a, const T_z& z,
     T_a an = -i * (i - a);
     const T_return b = b_init + 2.0 * i;
     D = b + an * D;
-    D = (fabs(value_of_rec(D)) >= EPSILON)
-            ? D
-            : std::decay_t<decltype(D)>(EPSILON);
+    D = (fabs(value_of_rec(D)) >= EPSILON) ? D
+                                           : std::decay_t<decltype(D)>(EPSILON);
     C = b + an / C;
-    C = (fabs(value_of_rec(C)) >= EPSILON)
-            ? C
-            : std::decay_t<decltype(C)>(EPSILON);
+    C = (fabs(value_of_rec(C)) >= EPSILON) ? C
+                                           : std::decay_t<decltype(C)>(EPSILON);
     D = inv(D);
     const T_return delta = C * D;
     f *= delta;
@@ -93,10 +91,10 @@ inline return_type_t<T_a, T_z> log_q_gamma_cf(const T_a& a, const T_z& z,
  * @return structure containing log(Q(a,z)) and d/da log(Q(a,z))
  */
 template <typename T_a, typename T_z>
-inline std::pair<return_type_t<T_a, T_z>, return_type_t<T_a, T_z>> log_gamma_q_dgamma(
-    const T_a& a, const T_z& z,
-    double precision = internal::LOG_Q_GAMMA_CF_PRECISION,
-    int max_steps = 250) {
+inline std::pair<return_type_t<T_a, T_z>, return_type_t<T_a, T_z>>
+log_gamma_q_dgamma(const T_a& a, const T_z& z,
+                   double precision = internal::LOG_Q_GAMMA_CF_PRECISION,
+                   int max_steps = 250) {
   using T_return = return_type_t<T_a, T_z>;
   const double a_val = value_of(a);
   const double z_val = value_of(z);

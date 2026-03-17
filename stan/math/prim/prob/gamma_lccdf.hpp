@@ -32,7 +32,8 @@ namespace internal {
 /**
  * Computes log q and d(log q) / d(alpha) using continued fraction.
  */
-template <bool any_fvar, bool partials_fvar, typename T_shape, typename T1, typename T2>
+template <bool any_fvar, bool partials_fvar, typename T_shape, typename T1,
+          typename T2>
 inline std::optional<std::pair<return_type_t<T1, T2>, return_type_t<T1, T2>>>
 eval_q_cf(const T1& alpha, const T2& beta_y) {
   using scalar_t = return_type_t<T1, T2>;
@@ -89,8 +90,7 @@ eval_q_log1m(const T1& alpha, const T2& beta_y) {
       auto log_Q_fvar = log1m(gamma_p(alpha_unit, beta_unit));
       out.second = log_Q_fvar.d_;
     } else {
-      out.second
-          = -grad_reg_lower_inc_gamma(alpha, beta_y) / exp(out.first);
+      out.second = -grad_reg_lower_inc_gamma(alpha, beta_y) / exp(out.first);
     }
   }
   return std::optional{out};
@@ -128,9 +128,9 @@ inline return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(
   scalar_seq_view<T_beta_ref> beta_vec(beta_ref);
   const size_t N = max_size(y, alpha, beta);
 
-  constexpr bool any_fvar = is_fvar_v<scalar_type_t<T_y>>
-                            || is_fvar_v<scalar_type_t<T_shape>>
-                            || is_fvar_v<scalar_type_t<T_inv_scale>>;
+  constexpr bool any_fvar
+      = is_fvar_v<scalar_type_t<
+            T_y>> || is_fvar_v<scalar_type_t<T_shape>> || is_fvar_v<scalar_type_t<T_inv_scale>>;
   constexpr bool partials_fvar = is_fvar_v<T_partials_return>;
 
   for (size_t n = 0; n < N; n++) {
@@ -153,12 +153,15 @@ inline return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(
     }
     std::optional<std::pair<T_partials_return, T_partials_return>> result;
     if (beta_y > alpha_val + 1.0) {
-      result = internal::eval_q_cf<any_fvar, partials_fvar, T_shape>(alpha_val, beta_y);
+      result = internal::eval_q_cf<any_fvar, partials_fvar, T_shape>(alpha_val,
+                                                                     beta_y);
     } else {
-      result = internal::eval_q_log1m<partials_fvar, T_shape>(alpha_val, beta_y);
+      result
+          = internal::eval_q_log1m<partials_fvar, T_shape>(alpha_val, beta_y);
       if (!result && beta_y > 0.0) {
         // Fallback to continued fraction if log1m fails
-        result = internal::eval_q_cf<any_fvar, partials_fvar, T_shape>(alpha_val, beta_y);
+        result = internal::eval_q_cf<any_fvar, partials_fvar, T_shape>(
+            alpha_val, beta_y);
       }
     }
     if (unlikely(!result)) {
