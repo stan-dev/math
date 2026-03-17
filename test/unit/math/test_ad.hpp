@@ -490,7 +490,7 @@ inline void expect_ad_helper(const ad_tolerances& tols, const F& f, const G& g,
   size_t result_size = 0;
   try {
     auto y1 = eval(f(xs...));  // original types, including int
-    stan::test::check_expr_test(f, xs...);
+    stan::test::check_expr_test<ReverseOnly>(f, xs...);
     auto y2 = eval(g(x));  // all int cast to double
     auto y1_serial = serialize<double>(y1);
     expect_near_rel("expect_ad_helper", y1_serial, y2, 1e-10);
@@ -551,7 +551,7 @@ inline void expect_ad_v(const ad_tolerances& tols, const F& f, int x) {
   // if f throws on int, must throw everywhere with double
   try {
     f(x);
-    stan::test::check_expr_test(f, x);
+    stan::test::check_expr_test<ReverseOnly>(f, x);
   } catch (...) {
     expect_all_throw<ReverseOnly>(f, x_dbl);
     return;
@@ -619,7 +619,7 @@ inline void expect_ad_vv(const ad_tolerances& tols, const F& f, int x1,
                          const T2& x2) {
   try {
     f(x1, x2);
-    stan::test::check_expr_test(f, x1, x2);
+    stan::test::check_expr_test<ReverseOnly>(f, x1, x2);
   } catch (...) {
     expect_all_throw<ReverseOnly>(f, x1, x2);
     return;
@@ -643,7 +643,7 @@ inline void expect_ad_vv(const ad_tolerances& tols, const F& f, const T1& x1,
                          int x2) {
   try {
     f(x1, x2);
-    stan::test::check_expr_test(f, x1, x2);
+    stan::test::check_expr_test<ReverseOnly>(f, x1, x2);
   } catch (...) {
     expect_all_throw<ReverseOnly>(f, x1, x2);
     return;
@@ -668,7 +668,7 @@ inline void expect_ad_vv(const ad_tolerances& tols, const F& f, int x1,
   // this one needs throw test because it's not handled by recursion
   try {
     f(x1, x2);
-    stan::test::check_expr_test(f, x1, x2);
+    stan::test::check_expr_test<ReverseOnly>(f, x1, x2);
   } catch (...) {
     expect_all_throw<ReverseOnly>(f, x1, x2);
     return;
@@ -784,7 +784,7 @@ inline void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, int x2,
                           const T3& x3) {
   try {
     f(x1, x2, x3);
-    stan::test::check_expr_test(f, x1, x2, x3);
+    stan::test::check_expr_test<ReverseOnly>(f, x1, x2, x3);
   } catch (...) {
     expect_all_throw<ReverseOnly>(f, x1, x2, x3);
     return;
@@ -814,7 +814,7 @@ inline void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1,
                           const T2& x2, const T3& x3) {
   try {
     f(x1, x2, x3);
-    stan::test::check_expr_test(f, x1, x2, x3);
+    stan::test::check_expr_test<ReverseOnly>(f, x1, x2, x3);
   } catch (...) {
     expect_all_throw<ReverseOnly>(f, x1, x2, x3);
     return;
@@ -839,7 +839,7 @@ inline void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
                           int x2, const T3& x3) {
   try {
     f(x1, x2, x3);
-    stan::test::check_expr_test(f, x1, x2, x3);
+    stan::test::check_expr_test<ReverseOnly>(f, x1, x2, x3);
   } catch (...) {
     expect_all_throw<ReverseOnly>(f, x1, x2, x3);
     return;
@@ -864,7 +864,7 @@ inline void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
                           const T2& x2, int x3) {
   try {
     f(x1, x2, x3);
-    stan::test::check_expr_test(f, x1, x2, x3);
+    stan::test::check_expr_test<ReverseOnly>(f, x1, x2, x3);
   } catch (...) {
     expect_all_throw<ReverseOnly>(f, x1, x2, x3);
     return;
@@ -889,7 +889,7 @@ inline void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1,
                           const T2& x2, int x3) {
   try {
     f(x1, x2, x3);
-    stan::test::check_expr_test(f, x1, x2, x3);
+    stan::test::check_expr_test<ReverseOnly>(f, x1, x2, x3);
   } catch (...) {
     expect_all_throw<ReverseOnly>(f, x1, x2, x3);
     return;
@@ -919,7 +919,7 @@ inline void expect_ad_vvv(const ad_tolerances& tols, const F& f, const T1& x1,
                           int x2, int x3) {
   try {
     f(x1, x2, x3);
-    stan::test::check_expr_test(f, x1, x2, x3);
+    stan::test::check_expr_test<ReverseOnly>(f, x1, x2, x3);
   } catch (...) {
     expect_all_throw<ReverseOnly>(f, x1, x2, x3);
     return;
@@ -950,7 +950,7 @@ inline void expect_ad_vvv(const ad_tolerances& tols, const F& f, int x1, int x2,
   // test exception behavior; other exception cases tested recursively
   try {
     f(x1, x2, x3);
-    stan::test::check_expr_test(f, x1, x2, x3);
+    stan::test::check_expr_test<ReverseOnly>(f, x1, x2, x3);
   } catch (...) {
     expect_all_throw<ReverseOnly>(f, x1, x2, x3);
     return;

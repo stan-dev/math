@@ -71,7 +71,7 @@ constexpr const char*
  *  the associated array will be zero.
  */
 template <typename ScalarType, std::size_t N>
-void expect_all_used_only_once(std::array<int, N>& arg_evals,
+inline void expect_all_used_only_once(std::array<int, N>& arg_evals,
                                std::array<int, N>& size_of_arg) {
   for (int i = 0; i < N; ++i) {
     EXPECT_LE(arg_evals[i], size_of_arg[i])
@@ -105,7 +105,7 @@ void expect_all_used_only_once(std::array<int, N>& arg_evals,
  * @param arg A type derived from `Eigen::EigenBase`
  */
 template <typename EigMat, stan::require_eigen_t<EigMat>* = nullptr>
-auto make_expr(int& count, EigMat&& arg) {
+inline auto make_expr(int& count, EigMat&& arg) {
   return arg.unaryExpr(
       stan::test::counterOp<stan::scalar_type_t<EigMat>>(&count));
 }
@@ -115,7 +115,7 @@ auto make_expr(int& count, EigMat&& arg) {
  * @tparam Any type not derived from `Eigen::EigenBase`
  */
 template <typename T, stan::require_not_eigen_t<T>* = nullptr>
-auto make_expr(int& /* count */, T&& arg) {
+inline constexpr auto make_expr(int& /* count */, T&& arg) {
   return arg;
 }
 
@@ -129,7 +129,7 @@ auto make_expr(int& /* count */, T&& arg) {
  *  `counterOp`.
  */
 template <std::size_t N, typename... Args>
-auto make_expr_args(std::array<int, N>& expr_evals, Args&&... args) {
+inline constexpr auto make_expr_args(std::array<int, N>& expr_evals, Args&&... args) {
   return stan::math::index_apply<N>([&expr_evals, &args...](auto... Is) {
     return std::make_tuple(make_expr(expr_evals[Is], args)...);
   });
@@ -148,7 +148,7 @@ inline constexpr int eigen_size(T&& x) {
  * @tparam EigMat A type derived from `Eigen::EigenBase`
  */
 template <typename EigMat, stan::require_eigen_t<EigMat>* = nullptr>
-inline int eigen_size(EigMat&& x) {
+inline constexpr Eigen::Index eigen_size(EigMat&& x) {
   return x.size();
 }
 
@@ -161,7 +161,7 @@ inline int eigen_size(EigMat&& x) {
  *  an Eigen type then the value is be zero.
  */
 template <typename... Args>
-std::array<int, sizeof...(Args)> eigen_arg_sizes(Args&&... args) {
+inline constexpr std::array<int, sizeof...(Args)> eigen_arg_sizes(Args&&... args) {
   return std::array<int, sizeof...(Args)>{eigen_size(args)...};
 }
 
@@ -170,7 +170,7 @@ std::array<int, sizeof...(Args)> eigen_arg_sizes(Args&&... args) {
  */
 template <typename ScalarType, typename F, typename... Args,
           require_all_not_eigen_t<Args...>* = nullptr>
-void check_expr_test(F&& f, Args&&... args) {}
+inline constexpr void check_expr_test(F&& f, Args&&... args) {}
 
 /**
  * Check whether any Eigen inputs are executed too many times.
@@ -200,7 +200,7 @@ void check_expr_test(F&& f, Args&&... args) {}
  */
 template <typename ScalarType, typename F, typename... Args,
           require_any_eigen_t<Args...>* = nullptr>
-void check_expr_test(F&& f, Args&&... args) {
+inline void check_expr_test(F&& f, Args&&... args) {
   std::array<int, sizeof...(args)> expr_eval_counts;
   for (int i = 0; i < sizeof...(args); ++i) {
     expr_eval_counts[i] = 0;
@@ -219,7 +219,7 @@ void check_expr_test(F&& f, Args&&... args) {
       [&f](auto&&... args) { return f(std::forward<decltype(args)>(args)...); },
       expr_args));
   expect_all_used_only_once<ScalarType>(expr_eval_counts, size_of_eigen_args);
-  if (stan::is_var<ScalarType>::value) {
+  if constexpr (stan::is_var<ScalarType>::value) {
     stan::math::recover_memory();
   }
 }
@@ -233,10 +233,10 @@ void check_expr_test(F&& f, Args&&... args) {
  * @param f functor whose `operator()` will be called.
  * @param args pack of arguments to pass to the functor.
  */
-template <typename F, typename... Args,
+template <bool ReverseOnly = false, typename F, typename... Args,
           require_all_st_stan_scalar<Args...>* = nullptr,
           require_all_not_st_complex<Args...>* = nullptr>
-void check_expr_test(F&& f, Args&&... args) {
+inline void check_expr_test(F&& f, Args&&... args) {
   try {
     stan::test::internal::check_expr_test<double>(f, args...);
     try {
@@ -245,12 +245,14 @@ void check_expr_test(F&& f, Args&&... args) {
     } catch (const std::exception& e) {
       stan::math::recover_memory();
     }
-    stan::test::internal::check_expr_test<stan::math::fvar<double>>(f, args...);
+    if constexpr (!ReverseOnly) {
+      stan::test::internal::check_expr_test<stan::math::fvar<double>>(f, args...);
+    }
   } catch (const std::exception& e) {
   }
 }
 
-template <typename F, typename... Args,
+template <bool ReverseOnly = false, typename F, typename... Args,
           require_any_st_complex<Args...>* = nullptr>
 void check_expr_test(F&& f, Args&&... args) {
   try {
@@ -262,8 +264,10 @@ void check_expr_test(F&& f, Args&&... args) {
     } catch (const std::exception& e) {
       stan::math::recover_memory();
     }
-    stan::test::internal::check_expr_test<
-        std::complex<stan::math::fvar<double>>>(f, args...);
+    if constexpr (!ReverseOnly) {
+      stan::test::internal::check_expr_test<
+          std::complex<stan::math::fvar<double>>>(f, args...);
+    }
   } catch (const std::exception& e) {
   }
 }
