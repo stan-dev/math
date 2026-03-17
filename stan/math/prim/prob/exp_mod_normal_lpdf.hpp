@@ -36,7 +36,7 @@ inline return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
   using T_lambda_ref = ref_type_if_not_constant_t<T_inv_scale>;
   static constexpr const char* function = "exp_mod_normal_lpdf";
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
-                         mu, "Scale parameter", sigma, "Inv_scale paramter",
+                         mu, "Scale parameter", sigma, "Inv_scale parameter",
                          lambda);
   T_y_ref y_ref = y;
   T_mu_ref mu_ref = mu;

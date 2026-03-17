@@ -26,10 +26,10 @@ namespace internal {
 class colwise_reduction_base {};
 
 /**
- * Determine number of work groups in rows direction that will be run fro
+ * Determine number of work groups in rows direction that will be run for
  * colwise reduction of given size.
- * @param n_rows number of rows of expression to resuce
- * @param n_cols number of columns of expression to resuce
+ * @param n_rows number of rows of expression to reduce
+ * @param n_cols number of columns of expression to reduce
  * @return number of work groups in rows direction
  */
 inline int colwise_reduction_wgs_rows(int n_rows, int n_cols) {

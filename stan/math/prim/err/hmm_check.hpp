@@ -10,7 +10,7 @@ namespace math {
 /**
  * Check arguments for hidden Markov model functions with a discrete
  * latent state (lpdf, rng for latent states, and marginal probabilities
- * for latent sates).
+ * for latent states).
  *
  * @tparam T_omega type of the log likelihood matrix
  * @tparam T_Gamma type of the transition matrix

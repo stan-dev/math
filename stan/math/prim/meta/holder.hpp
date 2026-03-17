@@ -43,7 +43,7 @@
  * ```
  * This function will return back a `CwiseBinaryOp` Eigen expression, which is
  * then evaluated out of the function scope when assigned to `X`. The expression
- * references `x_ref`, which was created withing function and destroyed when
+ * references `x_ref`, which was created within function and destroyed when
  * the function returned. The returned expression is evaluated after the
  * function returned, so its evaluation references a matrix that was already
  * deleted. In other words the returned expression contains a dangling
@@ -60,7 +60,7 @@
  * `make_holder`, which will move any rvalues to heap first.
  */
 
-// This was implenmented following the tutorial on edding new expressions to
+// This was implemented following the tutorial on edding new expressions to
 // Eigen: https://eigen.tuxfamily.org/dox/TopicNewExpressionType.html
 
 namespace stan {
@@ -156,7 +156,7 @@ class Holder
       : m_arg(std::forward<ArgType>(arg)),
         m_unique_ptrs(std::unique_ptr<Ptrs>(pointers)...) {}
 
-  // we need to explicitely default copy and move constructors as we are
+  // we need to explicitly default copy and move constructors as we are
   // defining copy and move assignment operators
   Holder(const Holder<ArgType, Ptrs...>&) = default;
   Holder(Holder<ArgType, Ptrs...>&&) = default;
@@ -170,7 +170,7 @@ class Holder
   const auto* data() const { return m_arg.data(); }
 
   /**
-   * Assignment operator assigns expresssions.
+   * Assignment operator assigns expressions.
    * @param other expression to assign  to this
    * @return *this
    */
@@ -386,7 +386,7 @@ inline auto holder_handle_element(T&& a, T*& res) {
  * Constructs holder object form given expression and tuple of pointers.
  * @tparam T type of the result expression
  * @tparam Is index sequence for `ptrs`
- * @tparam Args types of pointes to heap
+ * @tparam Args types of points to heap
  * @param expr result expression
  * @param ptrs pointers to heap that need to be released when the expression is
  * destructed

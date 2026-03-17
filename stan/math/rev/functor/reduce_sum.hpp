@@ -250,7 +250,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
 
     // we must use task isolation as described here:
     // https://software.intel.com/content/www/us/en/develop/documentation/tbb-documentation/top/intel-threading-building-blocks-developer-guide/task-isolation.html
-    // this is to ensure that the thread local AD tape ressource is
+    // this is to ensure that the thread local AD tape resource is
     // not being modified from a different task which may happen
     // whenever this function is being used itself in a parallel
     // context (like running multiple chains for Stan)

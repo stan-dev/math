@@ -38,7 +38,7 @@ inline plain_type_t<Mat> stochastic_row_constrain(const Mat& y) {
  *
  * @tparam Mat type of the matrix
  * @tparam Lp A scalar type for the lp argument. The scalar type of Mat should
- * be convertable to this.
+ * be convertible to this.
  * @param y Free matrix input of dimensionality (N, K - 1).
  * @param lp Log probability reference to increment.
  * @return Matrix with simplexes along the rows of dimensionality (N, K).
@@ -82,7 +82,7 @@ inline auto stochastic_row_constrain(T&& y) {
  * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
  * `Eigen::DenseBase` with compile time dynamic rows and dynamic columns
  * @tparam Lp Scalar type for the lp argument. The scalar type of T should be
- * convertable to this.
+ * convertible to this.
  * @param[in] y free vector with matrices of size (N, K - 1)
  * @param[in, out] lp log density accumulator
  * @return vector of matrices with simplex rows of dimensionality (N, K)
@@ -108,7 +108,7 @@ inline auto stochastic_row_constrain(T&& y, Lp& lp) {
  *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
  *  and dynamic columns, or a standard vector thereof
  * @tparam Lp A scalar type for the lp argument. The scalar type of Mat should
- * be convertable to this.
+ * be convertible to this.
  * @param[in] y free matrix
  * @param[in, out] lp log density accumulator
  * @return Matrix with simplexes along the rows of dimensionality (N, K).
