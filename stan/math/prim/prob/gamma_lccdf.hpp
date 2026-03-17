@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_PROB_GAMMA_LCCDF_HPP
 #define STAN_MATH_PRIM_PROB_GAMMA_LCCDF_HPP
 
-#include <stan/math/fwd/meta/is_fvar.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
