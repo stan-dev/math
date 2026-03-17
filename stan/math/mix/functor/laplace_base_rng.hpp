@@ -38,12 +38,13 @@ inline Eigen::VectorXd laplace_base_rng(
     LLFunc&& ll_fun, LLArgs&& ll_args, CovarFun&& covariance_function,
     CovarArgs&& covar_args, const laplace_options<InitTheta>& options, RNG& rng,
     std::ostream* msgs) {
+  Eigen::MatrixXd covariance_train = stan::math::apply(
+      [msgs, &covariance_function](auto&&... args) {
+        return covariance_function(std::forward<decltype(args)>(args)..., msgs);
+      },
+      std::forward<CovarArgs>(covar_args));
   auto md_est = internal::laplace_marginal_density_est(
-      ll_fun, std::forward<LLArgs>(ll_args),
-      std::forward<CovarFun>(covariance_function),
-      to_ref(std::forward<CovarArgs>(covar_args)), options, msgs);
-  // Modified R&W method
-  auto&& covariance_train = md_est.covariance;
+      ll_fun, std::forward<LLArgs>(ll_args), covariance_train, options, msgs);
   Eigen::VectorXd mean_train = covariance_train * md_est.theta_grad;
   if (options.solver == 1 || options.solver == 2) {
     Eigen::MatrixXd V_dec

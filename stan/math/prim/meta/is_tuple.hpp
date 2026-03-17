@@ -72,6 +72,17 @@ struct is_tuple_of_size<T, N, std::enable_if_t<stan::is_tuple_v<T>>>
 template <typename T, std::size_t N>
 inline constexpr bool is_tuple_of_size_v = stan::is_tuple_of_size<T, N>::value;
 
+/**
+ * Checks if the N-th element of a tuple is of the same type as CheckType
+ * @tparam N index of the element to check
+ * @tparam Tuple the tuple type
+ * @tparam CheckType the type to check against
+ */
+template <std::size_t N, typename Tuple, typename CheckType>
+inline constexpr bool is_inner_tuple_type_v = std::is_same_v<
+    std::decay_t<CheckType>,
+    std::decay_t<std::tuple_element_t<N, std::decay_t<Tuple>>>>;
+
 }  // namespace stan
 
 #endif

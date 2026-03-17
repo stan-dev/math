@@ -25,24 +25,26 @@ namespace math {
  * @param[in] L_f Function that returns log likelihood.
  * @param[in] ll_args Arguments for likelihood function.
  * \laplace_common_args
+ * @param[in] hessian_block_size Block size for the Hessian approximation with
+ * respect to the latent gaussian variable theta.
  * \laplace_options
  * \rng_arg
  * \msg_arg
  */
-template <typename LLFunc, typename LLArgs, typename ThetaVec,
-          typename CovarFun, typename CovarArgs, typename RNG>
-inline auto laplace_latent_tol_rng(
-    LLFunc&& L_f, LLArgs&& ll_args, CovarFun&& covariance_function,
-    CovarArgs&& covar_args, ThetaVec&& theta_0, const double tolerance,
-    const int max_num_steps, const int hessian_block_size, const int solver,
-    const int max_steps_line_search, RNG& rng, std::ostream* msgs) {
-  const laplace_options_user_supplied ops{
-      hessian_block_size, solver,        max_steps_line_search,
-      tolerance,          max_num_steps, value_of(theta_0)};
-  return laplace_base_rng(std::forward<LLFunc>(L_f),
-                          std::forward<LLArgs>(ll_args),
-                          std::forward<CovarFun>(covariance_function),
-                          std::forward<CovarArgs>(covar_args), ops, rng, msgs);
+template <typename LLFunc, typename LLArgs, typename CovarFun,
+          typename CovarArgs, typename OpsTuple, typename RNG>
+inline auto laplace_latent_tol_rng(LLFunc&& L_f, LLArgs&& ll_args,
+                                   int hessian_block_size,
+                                   CovarFun&& covariance_function,
+                                   CovarArgs&& covar_args, OpsTuple&& ops,
+                                   RNG& rng, std::ostream* msgs) {
+  auto options
+      = internal::tuple_to_laplace_options(std::forward<OpsTuple>(ops));
+  options.hessian_block_size = hessian_block_size;
+  return laplace_base_rng(
+      std::forward<LLFunc>(L_f), std::forward<LLArgs>(ll_args),
+      std::forward<CovarFun>(covariance_function),
+      std::forward<CovarArgs>(covar_args), std::move(options), rng, msgs);
 }
 
 /**
@@ -60,20 +62,23 @@ inline auto laplace_latent_tol_rng(
  * @param[in] L_f Function that returns log likelihood.
  * @param[in] ll_args Arguments for likelihood function.
  * \laplace_common_args
+ * @param[in] hessian_block_size Block size for the Hessian approximation with
+ * respect to the latent gaussian variable theta.
  * \rng_arg
  * \msg_arg
  */
 template <typename LLFunc, typename LLArgs, typename CovarFun,
           typename CovarArgs, typename RNG>
 inline auto laplace_latent_rng(LLFunc&& L_f, LLArgs&& ll_args,
+                               int hessian_block_size,
                                CovarFun&& covariance_function,
                                CovarArgs&& covar_args, RNG& rng,
                                std::ostream* msgs) {
-  return laplace_base_rng(std::forward<LLFunc>(L_f),
-                          std::forward<LLArgs>(ll_args),
-                          std::forward<CovarFun>(covariance_function),
-                          std::forward<CovarArgs>(covar_args),
-                          laplace_options_default{}, rng, msgs);
+  auto options = laplace_options_default{hessian_block_size};
+  return laplace_base_rng(
+      std::forward<LLFunc>(L_f), std::forward<LLArgs>(ll_args),
+      std::forward<CovarFun>(covariance_function),
+      std::forward<CovarArgs>(covar_args), options, rng, msgs);
 }
 
 }  // namespace math

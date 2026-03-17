@@ -65,25 +65,25 @@ struct poisson_log_likelihood {
  * @param[in] y_index group to which each observation belongs
  * @param[in] mean the mean of the latent normal variable
  * \laplace_common_args
+ * @param[in] hessian_block_size Block size for the Hessian approximation with
+ * respect to the latent gaussian variable theta.
  * \laplace_options
  * \msg_arg
  */
-template <bool propto = false, typename ThetaVec, typename Mean,
-          typename CovarFun, typename CovarArgs,
-          require_eigen_vector_t<ThetaVec>* = nullptr>
+template <bool propto = false, typename Mean, typename CovarFun,
+          typename CovarArgs, typename OpsTuple>
 inline auto laplace_marginal_tol_poisson_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& y_index, Mean&& mean,
-    CovarFun&& covariance_function, CovarArgs&& covar_args,
-    const ThetaVec& theta_0, double tolerance, int max_num_steps,
-    const int hessian_block_size, const int solver,
-    const int max_steps_line_search, std::ostream* msgs) {
-  laplace_options_user_supplied ops{hessian_block_size,    solver,
-                                    max_steps_line_search, tolerance,
-                                    max_num_steps,         value_of(theta_0)};
+    int hessian_block_size, CovarFun&& covariance_function,
+    CovarArgs&& covar_args, OpsTuple&& ops, std::ostream* msgs) {
+  auto options
+      = internal::tuple_to_laplace_options(std::forward<OpsTuple>(ops));
+  options.hessian_block_size = hessian_block_size;
   return laplace_marginal_density(
       poisson_log_likelihood{},
       std::forward_as_tuple(y, y_index, std::forward<Mean>(mean)),
-      covariance_function, std::forward<CovarArgs>(covar_args), ops, msgs);
+      covariance_function, std::forward<CovarArgs>(covar_args),
+      std::move(options), msgs);
 }
 
 /**
@@ -100,21 +100,21 @@ inline auto laplace_marginal_tol_poisson_log_lpmf(
  * @param[in] y_index group to which each observation belongs
  * @param[in] mean the mean of the latent normal variable
  * \laplace_common_args
+ * @param[in] hessian_block_size Block size for the Hessian approximation with
+ * respect to the latent gaussian variable theta.
  * \msg_arg
  */
 template <bool propto = false, typename CovarFun, typename CovarArgs,
           typename Mean>
-inline auto laplace_marginal_poisson_log_lpmf(const std::vector<int>& y,
-                                              const std::vector<int>& y_index,
-                                              Mean&& mean,
-                                              CovarFun&& covariance_function,
-                                              CovarArgs&& covar_args,
-                                              std::ostream* msgs) {
+inline auto laplace_marginal_poisson_log_lpmf(
+    const std::vector<int>& y, const std::vector<int>& y_index, Mean&& mean,
+    int hessian_block_size, CovarFun&& covariance_function,
+    CovarArgs&& covar_args, std::ostream* msgs) {
+  auto options = laplace_options_default{hessian_block_size};
   return laplace_marginal_density(
       poisson_log_likelihood{},
       std::forward_as_tuple(y, y_index, std::forward<Mean>(mean)),
-      covariance_function, std::forward<CovarArgs>(covar_args),
-      laplace_options_default{}, msgs);
+      covariance_function, std::forward<CovarArgs>(covar_args), options, msgs);
 }
 
 }  // namespace math

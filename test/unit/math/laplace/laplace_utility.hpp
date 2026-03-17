@@ -181,36 +181,6 @@ struct diagonal_kernel_functor {
   }
 };
 
-template <typename F, typename ThetaVec>
-inline void run_solver_grid(F&& body, ThetaVec&& theta_0) {
-  constexpr std::array solver_nums{1, 2, 3};            // [1, 3]
-  constexpr std::array hessian_block_sizes{1, 2, 3};    // [1, 2]
-  constexpr std::array max_steps_line_searches{0, 10};  // 0, 10
-  for (int solver : solver_nums) {
-    for (int hblock : hessian_block_sizes) {
-      for (int ls_steps : max_steps_line_searches) {
-        if (theta_0.size() % hblock != 0) {
-          std::cerr << "[          ] [ INFO ]"
-                    << " Skipping test for hessian of size " << theta_0.size()
-                    << " with hessian block size of " << hblock << std::endl;
-          continue;
-        }
-        try {
-          std::forward<F>(body)(solver, hblock, ls_steps, theta_0);
-        } catch (const std::exception& e) {
-          ADD_FAILURE() << "Exception: " << e.what();
-        }
-        if (::testing::Test::HasFailure()) {
-          std::cout << "----------" << std::endl;
-          std::cout << "solver_num: " << solver << std::endl;
-          std::cout << "hessian_block_size: " << hblock << std::endl;
-          std::cout << "max_steps_line_search: " << ls_steps << std::endl;
-        }
-      }
-    }
-  }
-}
-
 template <typename T1, typename T2>
 Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic> laplace_covariance(
     const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta_root,
@@ -255,14 +225,103 @@ inline void print_adjoint(Output&& output) {
                   "https://github.com/stan-dev/math/issues");
   }
 }
+template <typename T_>
+constexpr const char* test_type_name() {
+  using T = std::decay_t<T_>;
+  if constexpr (stan::is_var_v<T>) {
+    return "var";
+  } else if constexpr (std::is_arithmetic_v<T>) {
+    return "double";
+  } else if constexpr (stan::is_fvar_v<T>) {
+    using FvarScalar = stan::partials_type_t<T>;
+    if constexpr (std::is_arithmetic_v<FvarScalar>) {
+      return "fvar<double>";
+    } else if constexpr (stan::is_var_v<FvarScalar>) {
+      return "fvar<var>";
+    } else if constexpr (stan::is_fvar_v<FvarScalar>) {
+      using FvarFvarScalar = stan::partials_type_t<FvarScalar>;
+      if constexpr (std::is_arithmetic_v<FvarFvarScalar>) {
+        return "fvar<fvar<double>>";
+      } else if constexpr (stan::is_var_v<FvarFvarScalar>) {
+        return "fvar<fvar<var>>";
+      } else {
+        return "fvar<fvar<unknown>>";
+      }
+    } else {
+      return "fvar<unknown>";
+    }
+  }
+  return "unknown";
+}
 
 }  // namespace test
 }  // namespace math
 }  // namespace stan
 
-//////////////////////////////////////////////////////////////////////////
+class LaplaceAdTest
+    : public ::testing::TestWithParam<std::tuple<int, int, int>> {
+ public:
+  std::stringstream output_stream;
+  /**
+   * Prints a count and internal warnings that happen in each test
+   */
+  void TearDown() override {
+    std::string output = output_stream.str();
+    if (output.length() > 0) {
+      std::istringstream stream(output);
+      std::string line;
+      std::unordered_map<std::string, int> line_counts;
 
-class laplace_disease_map_test : public ::testing::Test {
+      while (std::getline(stream, line)) {
+        if (line_counts.find(line) != line_counts.end()) {
+          line_counts[line]++;
+        } else {
+          line_counts.insert({line, 1});
+        }
+      }
+      for (const auto& pair : line_counts) {
+        std::cout << "[ WARN_MSG ] ";
+        std::cout << " (count: " << pair.second << "): ";
+        std::cout << pair.first << std::endl;
+      }
+      output_stream.str("");
+    }
+  }
+};
+
+// Nice readable per-case names: Solver{n}_Block{b}_LS{steps}
+inline std::string ParamName(
+    const ::testing::TestParamInfo<std::tuple<int, int, int>>& info) {
+  const auto& [solver, hblock, ls] = info.param;
+  std::ostringstream os;
+  os << "solver_" << solver << "_block_" << hblock << "_linesearch_" << ls;
+  return os.str();
+}
+
+#define LAPLACE_INSTANTIATE_TEST_SUITE_P(TEST_SUITE_NAME)          \
+  INSTANTIATE_TEST_SUITE_P(                                        \
+      , TEST_SUITE_NAME,                                           \
+      ::testing::Combine(                                          \
+          ::testing::Values(1, 2, 3),  /* solver_num */            \
+          ::testing::Values(1, 2, 3),  /* hessian_block_size */    \
+          ::testing::Values(0, 1000)), /* max_steps_line_search */ \
+      ParamName)
+
+#define LAPLACE_SKIP_IF_INVALID_TEST_COMBO(hessian_block_size, dim_theta)      \
+  if (dim_theta % hessian_block_size != 0 || dim_theta < hessian_block_size) { \
+    GTEST_SKIP() << "[  INFO    ]"                                             \
+                 << " Skipping test for hessian of size " << dim_theta         \
+                 << " with hessian block size of " << hessian_block_size;      \
+  }
+
+#define LAPLACE_SKIP_ZERO_STEPS(max_steps_line_search)            \
+  if (max_steps_line_search == 0) {                               \
+    GTEST_SKIP() << "[  INFO    ]"                                \
+                 << " Skipping test for zero line search steps."; \
+  }
+
+//////////////////////////////////////////////////////////////////////////
+class laplace_disease_map_test : public LaplaceAdTest {
   // Based on (Vanhatalo, Pietilainen and Vethari, 2010). See
   // https://research.cs.aalto.fi/pml/software/gpstuff/demo_spatial1.shtml
  protected:
@@ -289,10 +348,6 @@ class laplace_disease_map_test : public ::testing::Test {
 
     theta_0 = Eigen::VectorXd::Zero(dim_theta);
     mean = Eigen::VectorXd::Zero(dim_theta);
-    dim_phi = 2;
-    phi_dbl.resize(dim_phi);
-    phi_dbl << 0.3162278, 200;  // variance, length scale
-
     delta_lk.resize(2 * n_observations);
     y_index.resize(dim_theta);
     for (int i = 0; i < n_observations; i++) {
@@ -317,8 +372,7 @@ class laplace_disease_map_test : public ::testing::Test {
 
   Eigen::VectorXd theta_0;
   Eigen::VectorXd mean;
-  int dim_phi;
-  Eigen::Matrix<double, -1, 1> phi_dbl;
+  Eigen::Matrix<double, -1, 1> phi_dbl{{0.3162278, 200}};
   Eigen::Matrix<double, -1, 1> eta_dummy_dbl;
 
   Eigen::VectorXd delta_lk;

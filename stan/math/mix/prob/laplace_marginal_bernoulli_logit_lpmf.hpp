@@ -8,11 +8,13 @@
 #include <stan/math/rev/fun/elt_multiply.hpp>
 #include <stan/math/rev/fun/exp.hpp>
 #include <stan/math/rev/fun/log.hpp>
+#include <stan/math/rev/fun/log1p_exp.hpp>
 #include <stan/math/rev/fun/multiply.hpp>
 #include <stan/math/rev/fun/sum.hpp>
 #include <stan/math/fwd/fun/exp.hpp>
 #include <stan/math/fwd/fun/lgamma.hpp>
 #include <stan/math/fwd/fun/log.hpp>
+#include <stan/math/fwd/fun/log1p_exp.hpp>
 #include <stan/math/fwd/fun/sum.hpp>
 #include <stan/math/prim/fun/binomial_coefficient_log.hpp>
 
@@ -25,9 +27,8 @@ struct bernoulli_logit_likelihood {
                          const std::vector<int>& delta_int, Mean&& mean,
                          std::ostream* pstream) const {
     auto theta_offset = to_ref(add(theta, mean));
-    return sum(
-        elt_multiply(theta_offset, y)
-        - elt_multiply(to_vector(delta_int), log(add(1.0, exp(theta_offset)))));
+    return sum(elt_multiply(theta_offset, y)
+               - elt_multiply(to_vector(delta_int), log1p_exp(theta_offset)));
   }
 };
 
@@ -48,26 +49,25 @@ struct bernoulli_logit_likelihood {
  * statistics.
  * @param[in] mean the mean of the latent normal variable.
  * \laplace_common_args
+ * @param[in] hessian_block_size Block size for the Hessian approximation with
+ * respect to the latent gaussian variable theta.
  * \laplace_options
  * \msg_arg
  */
-template <bool propto = false, typename ThetaVec, typename Mean,
-          typename CovarFun, typename CovarArgs,
-          require_eigen_vector_t<ThetaVec>* = nullptr>
+template <bool propto = false, typename Mean, typename CovarFun,
+          typename CovarArgs, typename OpsTuple>
 inline auto laplace_marginal_tol_bernoulli_logit_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples, Mean&& mean,
-    CovarFun&& covariance_function, CovarArgs&& covar_args,
-    const ThetaVec& theta_0, double tolerance, int max_num_steps,
-    const int hessian_block_size, const int solver,
-    const int max_steps_line_search, std::ostream* msgs) {
-  laplace_options_user_supplied ops{hessian_block_size,    solver,
-                                    max_steps_line_search, tolerance,
-                                    max_num_steps,         value_of(theta_0)};
+    int hessian_block_size, CovarFun&& covariance_function,
+    CovarArgs&& covar_args, OpsTuple&& ops, std::ostream* msgs) {
+  auto options
+      = internal::tuple_to_laplace_options(std::forward<OpsTuple>(ops));
+  options.hessian_block_size = hessian_block_size;
   return laplace_marginal_density(
       bernoulli_logit_likelihood{},
       std::forward_as_tuple(to_vector(y), n_samples, std::forward<Mean>(mean)),
       std::forward<CovarFun>(covariance_function),
-      std::forward<CovarArgs>(covar_args), ops, msgs);
+      std::forward<CovarArgs>(covar_args), std::move(options), msgs);
 }
 
 /**
@@ -85,19 +85,22 @@ inline auto laplace_marginal_tol_bernoulli_logit_lpmf(
  * statistics.
  * @param[in] mean the mean of the latent normal variable.
  * \laplace_common_args
+ * @param[in] hessian_block_size Block size for the Hessian approximation with
+ * respect to the latent gaussian variable theta.
  * \msg_arg
  */
 template <bool propto = false, typename Mean, typename CovarFun,
           typename CovarArgs>
 inline auto laplace_marginal_bernoulli_logit_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples, Mean&& mean,
-    CovarFun&& covariance_function, CovarArgs&& covar_args,
-    std::ostream* msgs) {
+    int hessian_block_size, CovarFun&& covariance_function,
+    CovarArgs&& covar_args, std::ostream* msgs) {
+  auto options = laplace_options_default{hessian_block_size};
   return laplace_marginal_density(
       bernoulli_logit_likelihood{},
       std::forward_as_tuple(to_vector(y), n_samples, std::forward<Mean>(mean)),
       std::forward<CovarFun>(covariance_function),
-      std::forward<CovarArgs>(covar_args), laplace_options_default{}, msgs);
+      std::forward<CovarArgs>(covar_args), options, msgs);
 }
 
 }  // namespace math
