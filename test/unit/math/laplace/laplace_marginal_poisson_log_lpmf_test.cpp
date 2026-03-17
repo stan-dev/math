@@ -59,9 +59,10 @@ TEST_P(laplace_marginal_poisson_log_lpmf, phi_dim_2) {
   auto f = [&](auto&& alpha, auto&& rho) {
     try {
       return laplace_marginal_tol_poisson_log_lpmf(
-          y, y_index, 0, sq_kernel, std::forward_as_tuple(x, alpha, rho),
-          std::make_tuple(theta_0, tolerance, max_num_steps, hessian_block_size,
-                          solver_num, max_steps_line_search, allow_fallthrough),
+          y, y_index, 0, hessian_block_size, sq_kernel,
+          std::forward_as_tuple(x, alpha, rho),
+          std::make_tuple(theta_0, tolerance, max_num_steps, solver_num,
+                          max_steps_line_search, allow_fallthrough),
           &output_stream);
     } catch (const std::exception& e) {
       std::stringstream fail_msg;
@@ -124,9 +125,10 @@ TEST_P(laplace_marginal_poisson_log_lpmf, log_phi_dim_2) {
   auto f = [&](auto&& alpha, auto&& rho) {
     try {
       return laplace_marginal_tol_poisson_log_lpmf(
-          y, y_index, log(ye), sq_kernel, std::forward_as_tuple(x, alpha, rho),
-          std::make_tuple(theta_0, tolerance, max_num_steps, hessian_block_size,
-                          solver_num, max_steps_line_search, true),
+          y, y_index, log(ye), hessian_block_size, sq_kernel,
+          std::forward_as_tuple(x, alpha, rho),
+          std::make_tuple(theta_0, tolerance, max_num_steps, solver_num,
+                          max_steps_line_search, true),
           &output_stream);
     } catch (const std::exception& e) {
       std::stringstream fail_msg;
@@ -174,10 +176,10 @@ TEST_P(laplace_marginal_poisson_log_lpmf, mean_argument) {
   constexpr double tolerance = 1e-12;
   constexpr int max_num_steps = 500;
   double marginal_density = laplace_marginal_tol_poisson_log_lpmf(
-      y, y_index, mu, diag_covariance{},
+      y, y_index, mu, hessian_block_size, diag_covariance{},
       std::tuple<double, int>(sigmaz, dim_theta),
-      std::make_tuple(theta_0, tolerance, max_num_steps, hessian_block_size,
-                      solver_num, max_steps_line_search, true),
+      std::make_tuple(theta_0, tolerance, max_num_steps, solver_num,
+                      max_steps_line_search, true),
       &output_stream);
 
   EXPECT_FLOAT_EQ(-6.7098737, marginal_density);
@@ -200,10 +202,11 @@ TEST_P(laplace_disease_map_test, laplace_marginal_poisson_log_lpmf) {
   constexpr int max_num_steps = 500;
 
   double marginal_density = laplace_marginal_tol_poisson_log_lpmf(
-      y, y_index, log(ye), stan::math::test::sqr_exp_kernel_functor(),
+      y, y_index, log(ye), hessian_block_size,
+      stan::math::test::sqr_exp_kernel_functor(),
       std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1)),
-      std::make_tuple(theta_0, tolerance, max_num_steps, hessian_block_size,
-                      solver_num, max_steps_line_search, true),
+      std::make_tuple(theta_0, tolerance, max_num_steps, solver_num,
+                      max_steps_line_search, true),
       &output_stream);
 
   double tol = 6e-4;
@@ -212,10 +215,11 @@ TEST_P(laplace_disease_map_test, laplace_marginal_poisson_log_lpmf) {
   auto f = [&](auto&& alpha, auto&& rho) {
     try {
       return laplace_marginal_tol_poisson_log_lpmf(
-          y, y_index, log(ye), stan::math::test::sqr_exp_kernel_functor(),
+          y, y_index, log(ye), hessian_block_size,
+          stan::math::test::sqr_exp_kernel_functor(),
           std::forward_as_tuple(x, alpha, rho),
-          std::make_tuple(theta_0, tolerance, max_num_steps, hessian_block_size,
-                          solver_num, max_steps_line_search, true),
+          std::make_tuple(theta_0, tolerance, max_num_steps, solver_num,
+                          max_steps_line_search, true),
           &output_stream);
     } catch (const std::exception& e) {
       std::stringstream fail_msg;

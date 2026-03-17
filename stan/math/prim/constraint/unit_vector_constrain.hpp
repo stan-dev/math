@@ -80,7 +80,7 @@ inline auto unit_vector_constrain(T&& y) {
  * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
  * `Eigen::DenseBase` with compile time dynamic rows and 1 column
  * @tparam Lp Scalar type for the lp argument. The scalar type of T should be
- * convertable to this.
+ * convertible to this.
  * @param y vector of K unrestricted variables
  * @param[in, out] lp log density accumulator
  * @return Unit length vector of dimension K
@@ -106,7 +106,7 @@ inline auto unit_vector_constrain(T&& y, Lp& lp) {
  *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
  *  and 1 column
  * @tparam Lp A scalar type for the lp argument. The scalar type of T should be
- * convertable to this.
+ * convertible to this.
  * @param y vector of K unrestricted variables
  * @param[in, out] lp log density accumulator
  * @return Unit length vector of dimension K

@@ -30,7 +30,7 @@ namespace math {
  * @tparam T_loc_cl type of prior location
  * @tparam T_prec_cl type of prior precision
  *
- * @param y (Sequence of) dependant variable(s)
+ * @param y (Sequence of) dependent variable(s)
  * @param mu (Sequence of) location parameter(s)
  * @param kappa (Sequence of) precision parameter(s)
  * @return The log of the product of densities.

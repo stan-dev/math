@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_MIX_FUNCTOR_LAPLACE_MARGINAL_DENSITY_ESTIMATOR_HPP
 #define STAN_MATH_MIX_FUNCTOR_LAPLACE_MARGINAL_DENSITY_ESTIMATOR_HPP
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/generate_laplace_options.hpp>
 #include <stan/math/mix/functor/laplace_likelihood.hpp>
 #include <stan/math/mix/functor/wolfe_line_search.hpp>
 #include <stan/math/rev/meta.hpp>
@@ -10,6 +11,7 @@
 #include <stan/math/mix/functor/barzilai_borwein_step_size.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/quad_form_diag.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/iter_tuple_nested.hpp>
 #include <unsupported/Eigen/MatrixFunctions>
 #include <cmath>
@@ -30,7 +32,7 @@ namespace math {
  */
 struct laplace_options_base {
   /* Size of the blocks in block diagonal hessian*/
-  int hessian_block_size{1};  // 0
+  int hessian_block_size{internal::laplace_default_hessian_block_size};  // 0
   /**
    * Which linear solver to use inside the Newton step.
    *
@@ -46,7 +48,7 @@ struct laplace_options_base {
    *    `Sigma = K_root * K_root^T` and form `B = I + K_root^T * W * K_root`.
    * 3. General LU: form `B = I + Sigma * W` and factorize with LU.
    */
-  int solver{1};  // 1
+  int solver{internal::laplace_default_solver};  // 1
   /**
    * Iterations end when the absolute change in the optimization objective
    * is less than this tolerance.
@@ -54,11 +56,12 @@ struct laplace_options_base {
    * Note: the objective used for convergence is the one optimized by the
    * Newton/Wolfe loop (not the final Laplace-corrected log marginal density).
    */
-  double tolerance{1.49012e-08};  // 2
+  double tolerance{internal::laplace_default_tolerance};  // 2
   /* Maximum number of steps*/
-  int max_num_steps{500};                   // 3
-  int allow_fallthrough{true};              // 4
-  laplace_line_search_options line_search;  // 5
+  int max_num_steps{internal::laplace_default_max_num_steps};          // 3
+  int allow_fallthrough{internal::laplace_default_allow_fallthrough};  // 4
+  laplace_line_search_options line_search{
+      internal::laplace_default_max_steps_line_search};  // 5
   laplace_options_base() = default;
   laplace_options_base(int hessian_block_size_, int solver_, double tolerance_,
                        int max_num_steps_, bool allow_fallthrough_,
@@ -75,7 +78,13 @@ template <bool HasInitTheta>
 struct laplace_options;
 
 template <>
-struct laplace_options<false> : public laplace_options_base {};
+struct laplace_options<false> : public laplace_options_base {
+  laplace_options() = default;
+
+  explicit laplace_options(int hessian_block_size_) {
+    hessian_block_size = hessian_block_size_;
+  }
+};
 
 template <>
 struct laplace_options<true> : public laplace_options_base {
@@ -89,24 +98,11 @@ struct laplace_options<true> : public laplace_options_base {
       : laplace_options_base(hessian_block_size_, solver_, tolerance_,
                              max_num_steps_, allow_fallthrough_,
                              max_steps_line_search_),
-        theta_0(std::forward<ThetaVec>(theta_0_)) {}
+        theta_0(value_of(std::forward<ThetaVec>(theta_0_))) {}
 };
 
 using laplace_options_default = laplace_options<false>;
 using laplace_options_user_supplied = laplace_options<true>;
-
-/**
- * User function for generating laplace options tuple
- * @param theta_0_size Size of user supplied initial theta
- * @return tuple representing laplace options exposed to user.
- */
-inline auto generate_laplace_options(int theta_0_size) {
-  auto ops = laplace_options_default{};
-  return std::make_tuple(
-      Eigen::VectorXd::Zero(theta_0_size).eval(),  // 0 -> 6
-      ops.tolerance, ops.max_num_steps, ops.hessian_block_size, ops.solver,
-      ops.line_search.max_iterations, static_cast<int>(ops.allow_fallthrough));
-}
 
 namespace internal {
 
@@ -137,39 +133,34 @@ inline constexpr auto tuple_to_laplace_options(Options&& ops) {
     if constexpr (!stan::is_inner_tuple_type_v<3, Ops, int>) {
       static_assert(
           sizeof(std::decay_t<Ops>*) == 0,
-          "ERROR:(laplace_marginal_lpdf) The fifth laplace argument is "
-          "expected to be an int representing the hessian block size.");
+          "ERROR:(laplace_marginal_lpdf) The fourth laplace argument is "
+          "expected to be an int representing the solver.");
     }
     if constexpr (!stan::is_inner_tuple_type_v<4, Ops, int>) {
       static_assert(
           sizeof(std::decay_t<Ops>*) == 0,
-          "ERROR:(laplace_marginal_lpdf) The fourth laplace argument is "
-          "expected to be an int representing the solver.");
-    }
-    if constexpr (!stan::is_inner_tuple_type_v<5, Ops, int>) {
-      static_assert(
-          sizeof(std::decay_t<Ops>*) == 0,
-          "ERROR:(laplace_marginal_lpdf) The sixth laplace argument is "
+          "ERROR:(laplace_marginal_lpdf) The fifth laplace argument is "
           "expected to be an int representing the max steps for the laplace "
           "approximaton's wolfe line search.");
     }
     constexpr bool is_fallthrough
         = stan::is_inner_tuple_type_v<
-              6, Ops, int> || stan::is_inner_tuple_type_v<6, Ops, bool>;
+              5, Ops, int> || stan::is_inner_tuple_type_v<5, Ops, bool>;
     if constexpr (!is_fallthrough) {
       static_assert(
           sizeof(std::decay_t<Ops>*) == 0,
-          "ERROR:(laplace_marginal_lpdf) The seventh laplace argument is "
+          "ERROR:(laplace_marginal_lpdf) The sixth laplace argument is "
           "expected to be an int representing allow fallthrough (0/1).");
     }
+    auto defaults = laplace_options_default{};
     return laplace_options_user_supplied{
         value_of(std::get<0>(std::forward<Ops>(ops))),
         std::get<1>(ops),
         std::get<2>(ops),
+        defaults.hessian_block_size,
         std::get<3>(ops),
         std::get<4>(ops),
-        std::get<5>(ops),
-        (std::get<6>(ops) > 0) ? true : false,
+        (std::get<5>(ops) > 0) ? true : false,
     };
   } else {
     return std::forward<Ops>(ops);

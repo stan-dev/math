@@ -9,12 +9,12 @@ namespace math {
 /**
  * Return the specified complex number multiplied by `i`.
  *
- * This compound function is more efficient than mulitplying by a
+ * This compound function is more efficient than multiplying by a
  * constant `i` because it involves only a single arithmetic negation.
  *
  * @tparam value type of complex argument
  * @param[in] z complex argument
- * @return argument multipled by `i`
+ * @return argument multiplied by `i`
  */
 template <typename T>
 inline std::complex<T> i_times(const std::complex<T>& z) {
@@ -24,13 +24,13 @@ inline std::complex<T> i_times(const std::complex<T>& z) {
 /**
  * Return the specified complex number multiplied by `-i`.
  *
- * This compound function is more efficient than mulitplying by the
+ * This compound function is more efficient than multiplying by the
  * constant `-i` because it involves only a single arithmetic
  * negation.
  *
  * @tparam value type of complex argument
  * @param[in] z complex argument
- * @return argument multipled by `-i`
+ * @return argument multiplied by `-i`
  */
 template <typename T>
 inline std::complex<T> neg_i_times(const std::complex<T>& z) {

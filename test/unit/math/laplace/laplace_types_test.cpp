@@ -94,9 +94,9 @@ TEST(laplace, theta_0_as_expression_issue_3196) {
       std::tuple<const std::vector<int>&, Eigen::Matrix<double, -1, 1>>(
           y, stan::math::add(stan::math::add(offset, alpha),
                              stan::math::multiply(X, beta))),
-      cov_fun(), std::tuple<double, int>(sigmaz, N),
+      hessian_block_size, cov_fun(), std::tuple<double, int>(sigmaz, N),
       std::tuple{stan::math::rep_vector(0.0, N), tolerance, max_num_steps,
-                 hessian_block_size, solver_num, max_steps_line_search, 1},
+                 solver_num, max_steps_line_search, 1},
       nullptr));
   auto arena_init = stan::math::to_arena(stan::math::rep_vector(0.0, N));
   EXPECT_NO_THROW(stan::math::laplace_marginal_tol<false>(
@@ -104,9 +104,9 @@ TEST(laplace, theta_0_as_expression_issue_3196) {
       std::tuple<const std::vector<int>&, Eigen::Matrix<double, -1, 1>>(
           y, stan::math::add(stan::math::add(offset, alpha),
                              stan::math::multiply(X, beta))),
-      cov_fun(), std::tuple(sigmaz, N),
-      std::make_tuple(arena_init, tolerance, max_num_steps, hessian_block_size,
-                      solver_num, max_steps_line_search, true),
+      hessian_block_size, cov_fun(), std::tuple(sigmaz, N),
+      std::make_tuple(arena_init, tolerance, max_num_steps, solver_num,
+                      max_steps_line_search, true),
       nullptr));
 }
 
@@ -156,10 +156,10 @@ TEST_P(laplace_types, poisson_log_phi_dim_2_tuple_extended) {
       return laplace_marginal_tol<false>(
           poisson_log_likelihood_tuple_expanded{},
           std::forward_as_tuple(sums, eta1_tuple, eta2, eta3),
-          stan::math::test::squared_kernel_functor{},
+          hessian_block_size, stan::math::test::squared_kernel_functor{},
           std::forward_as_tuple(x, std::make_tuple(phi_dbl(0), phi_dbl(1))),
-          std::make_tuple(theta_0, tolerance, max_num_steps, hessian_block_size,
-                          solver_num, max_steps_line_search, true),
+          std::make_tuple(theta_0, tolerance, max_num_steps, solver_num,
+                          max_steps_line_search, true),
           &output_stream);
     } catch (const std::exception& e) {
       std::stringstream fail_msg;
@@ -222,10 +222,10 @@ TEST_P(laplace_types, poisson_log_phi_dim_2_tuple) {
     try {
       return laplace_marginal_tol<false>(
           poisson_log_likelihood2{}, std::forward_as_tuple(sums),
-          stan::math::test::squared_kernel_functor{},
+          hessian_block_size, stan::math::test::squared_kernel_functor{},
           std::forward_as_tuple(x_v, std::make_tuple(alpha, rho)),
-          std::make_tuple(theta_0, tolerance, max_num_steps, hessian_block_size,
-                          solver_num, max_steps_line_search, true),
+          std::make_tuple(theta_0, tolerance, max_num_steps, solver_num,
+                          max_steps_line_search, true),
           &output_stream);
     } catch (const std::exception& e) {
       std::stringstream fail_msg;
@@ -244,10 +244,10 @@ TEST_P(laplace_types, poisson_log_phi_dim_2_tuple) {
       return laplace_marginal_tol<false>(
           poisson_log_likelihood_tuple{},
           std::forward_as_tuple(sums, std::make_tuple(eta1, eta2)),
-          stan::math::test::squared_kernel_functor{},
+          hessian_block_size, stan::math::test::squared_kernel_functor{},
           std::forward_as_tuple(x, std::make_tuple(alpha_rho(0), alpha_rho(1))),
-          std::make_tuple(theta_0, tolerance, max_num_steps, hessian_block_size,
-                          solver_num, max_steps_line_search, true),
+          std::make_tuple(theta_0, tolerance, max_num_steps, solver_num,
+                          max_steps_line_search, true),
           &output_stream);
     } catch (const std::exception& e) {
       std::stringstream fail_msg;
@@ -326,11 +326,11 @@ TEST_P(laplace_types, poisson_log_phi_dim_2_array_tuple) {
       alpha_tuple.push_back(std::make_tuple(alpha_rho(0), alpha_rho(1)));
       return laplace_marginal_tol<false>(
           poisson_log_likelihood_array_tuple{},
-          std::forward_as_tuple(sums, eta_tuple),
+          std::forward_as_tuple(sums, eta_tuple), hessian_block_size,
           stan::math::test::squared_kernel_functor{},
           std::forward_as_tuple(x, alpha_tuple),
-          std::make_tuple(theta_0, tolerance, max_num_steps, hessian_block_size,
-                          solver_num, max_steps_line_search, true),
+          std::make_tuple(theta_0, tolerance, max_num_steps, solver_num,
+                          max_steps_line_search, true),
           &output_stream);
     } catch (const std::exception& e) {
       std::stringstream fail_msg;

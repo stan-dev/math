@@ -233,7 +233,7 @@ ode_ckrk_tol(const F& f, const T_y0& y0_arg, T_t0 t0,
  * @param y0 Initial state
  * @param t0 Initial time
  * @param ts Times at which to solve the ODE at. All values must be sorted and
- *   greather than t0.
+ *   greater than t0.
  * @param[in, out] msgs the print stream for warning messages
  * @param args Extra arguments passed unmodified through to ODE right hand side
  * @return Solution to ODE at times \p ts

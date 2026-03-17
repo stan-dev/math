@@ -321,5 +321,9 @@
 #include <stan/math/prim/prob/wishart_cholesky_rng.hpp>
 #include <stan/math/prim/prob/wishart_lpdf.hpp>
 #include <stan/math/prim/prob/wishart_rng.hpp>
+#include <stan/math/prim/prob/yule_simon_cdf.hpp>
+#include <stan/math/prim/prob/yule_simon_lccdf.hpp>
+#include <stan/math/prim/prob/yule_simon_lcdf.hpp>
 #include <stan/math/prim/prob/yule_simon_lpmf.hpp>
+#include <stan/math/prim/prob/yule_simon_rng.hpp>
 #endif

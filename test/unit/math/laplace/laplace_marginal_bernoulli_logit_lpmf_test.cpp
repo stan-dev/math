@@ -44,7 +44,7 @@ TEST_P(laplace_marginal_bernoulli_logit_lpmf, phi_dim500) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> phi_dbl{{1.6, 1}};
   using stan::math::test::sqr_exp_kernel_functor;
   double target = laplace_marginal_bernoulli_logit_lpmf(
-      y, n_samples, 0, sqr_exp_kernel_functor{},
+      y, n_samples, 0, hessian_block_size, sqr_exp_kernel_functor{},
       std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1)), nullptr);
   // Benchmark against gpstuff.
   constexpr double tol = 8e-4;
@@ -56,10 +56,10 @@ TEST_P(laplace_marginal_bernoulli_logit_lpmf, phi_dim500) {
   auto f = [&](auto&& alpha, auto&& rho) {
     try {
       return laplace_marginal_tol_bernoulli_logit_lpmf(
-          y, n_samples, mean, sqr_exp_kernel_functor{},
+          y, n_samples, mean, hessian_block_size, sqr_exp_kernel_functor{},
           std::forward_as_tuple(x, alpha, rho),
-          std::make_tuple(theta_0, tolerance, max_num_steps, hessian_block_size,
-                          solver_num, max_steps_line_search, true),
+          std::make_tuple(theta_0, tolerance, max_num_steps, solver_num,
+                          max_steps_line_search, true),
           &output_stream);
     } catch (const std::exception& e) {
       std::stringstream fail_msg;
