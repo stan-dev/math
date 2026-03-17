@@ -14,8 +14,7 @@ ordered_logistic_glm_simple_lpmf(const std::vector<int>& y, T_x&& x,
   return stan::math::ordered_logistic_lpmf<propto>(y, location, cuts);
 }
 
-TEST(ProbDistributionsOrderedLogisticGLM,
-     glm_matches_ordered_logistic_doubles) {
+TEST_F(AgradRev, OrderedLogisticGLM_glm_matches_ordered_logistic_doubles) {
   using Eigen::MatrixXd;
   using Eigen::VectorXd;
   using std::vector;
@@ -33,8 +32,8 @@ TEST(ProbDistributionsOrderedLogisticGLM,
                   ordered_logistic_glm_simple_lpmf<false>(y, x, beta, cuts));
 }
 
-TEST(ProbDistributionsOrderedLogisticGLM,
-     glm_matches_ordered_logistic_doubles_broadcast_y) {
+TEST_F(AgradRev,
+       OrderedLogisticGLM_glm_matches_ordered_logistic_doubles_broadcast_y) {
   using Eigen::MatrixXd;
   using Eigen::VectorXd;
   using std::vector;
