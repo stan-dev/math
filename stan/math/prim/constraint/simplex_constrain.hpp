@@ -83,7 +83,7 @@ inline plain_type_t<Vec> simplex_constrain(const Vec& y) {
  *
  * @tparam Vec type of the vector
  * @tparam Lp A scalar type for the lp argument. The scalar type of Vec should
- * be convertable to this.
+ * be convertible to this.
  * @param y Free vector input of dimensionality K - 1.
  * @param lp Log probability reference to increment.
  * @return Simplex of dimensionality K.
@@ -159,7 +159,7 @@ inline auto simplex_constrain(T&& y) {
  * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
  * `Eigen::DenseBase` with compile time dynamic rows and 1 column
  * @tparam Lp Scalar type for the lp argument. The scalar type of T should be
- * convertable to this.
+ * convertible to this.
  * @param[in] y free vector
  * @param[in, out] lp log density accumulator
  * @return simplex of dimensionality one greater than `y`
@@ -185,7 +185,7 @@ inline auto simplex_constrain(T&& y, Lp& lp) {
  *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
  *  and 1 column
  * @tparam Lp A scalar type for the lp argument. The scalar type of Vec should
- * be convertable to this.
+ * be convertible to this.
  * @param[in] y free vector
  * @param[in, out] lp log density accumulator
  * @return simplex of dimensionality one greater than `y`

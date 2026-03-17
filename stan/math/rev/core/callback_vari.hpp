@@ -25,7 +25,7 @@ struct callback_vari : public vari_value<T> {
 
 /**
  * Creates a new vari with given value and a callback that implements the
- * reverse pass (chain). The callback needs to accept a referenct to the vari.
+ * reverse pass (chain). The callback needs to accept a referenced to the vari.
  * If it needs any other data it should be implemented as a lambda capturing the
  * variables it needs.
  *

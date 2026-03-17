@@ -76,7 +76,7 @@ class optional_broadcast_
   }
 
   /**
-   * Sets index/indices along broadcasted dimmension(s) to 0.
+   * Sets index/indices along broadcasted dimension(s) to 0.
    * @param[in, out] row_idx_name row index
    * @param[in, out] col_idx_name  column index
    */
@@ -207,7 +207,7 @@ optional_broadcast(T&& a) {
 }
 
 /**
- * Broadcast an expression in rowwise dimmension if the number of columns equals
+ * Broadcast an expression in rowwise dimension if the number of columns equals
  * to 1. In that case further expressions can use this expression as if had any
  * number of columns, repeating the values.
  *
@@ -225,7 +225,7 @@ inline auto rowwise_optional_broadcast(T&& a) {
 }
 
 /**
- * Broadcast an expression in colwise dimmension if the number of rows equals
+ * Broadcast an expression in colwise dimension if the number of rows equals
  * to 1. In that case further expressions can use this expression as if had any
  * number of rows, repeating the values.
  *

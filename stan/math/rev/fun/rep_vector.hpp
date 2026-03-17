@@ -14,7 +14,7 @@ namespace math {
  * Overload for `var_value<Vector>`.
  * @tparam T_ret The user supplied return type.
  * @tparam T A double or var type
- * @param x The type to be propogated through the new vector.
+ * @param x The type to be propagated through the new vector.
  * @param n The size of the new vector.
  */
 template <typename T_ret, require_var_matrix_t<T_ret>* = nullptr,

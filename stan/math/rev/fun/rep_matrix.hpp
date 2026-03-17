@@ -15,7 +15,7 @@ namespace math {
  * type.
  * @tparam Ret A `var_value` with inner Eigen type.
  * @tparam T A Scalar type.
- * @param x A Scalar whose values are propogated to all values in the return
+ * @param x A Scalar whose values are propagated to all values in the return
  * matrix.
  * @param m Number or rows.
  * @param n Number of columns.
@@ -36,7 +36,7 @@ inline auto rep_matrix(const T& x, int m, int n) {
  * @tparam Ret A `var_value` with inner Eigen dynamic matrix type.
  * @tparam Vec A `var_value` with an inner Eigen vector type.
  * @param x A `var_value` with inner Eigen vector type. For Row vectors the
- * values are replacated rowwise and for column vectors the values are
+ * values are replicated rowwise and for column vectors the values are
  * repliacated colwise.
  * @param n Number of rows or columns.
  */

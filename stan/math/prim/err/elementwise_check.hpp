@@ -71,7 +71,7 @@ inline void pipe_in(std::stringstream& ss) {}
  * @tparam Args types of remaining arguments
  * @param ss stringstream to pipe arguments in
  * @param arg0 the first argument
- * @param args remining arguments
+ * @param args remaining arguments
  */
 template <typename Arg0, typename... Args>
 inline void pipe_in(std::stringstream& ss, Arg0 arg0, const Args... args) {

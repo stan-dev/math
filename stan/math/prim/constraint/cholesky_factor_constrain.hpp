@@ -117,7 +117,7 @@ inline auto cholesky_factor_constrain(T&& x, int M, int N) {
  * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
  * `Eigen::DenseBase` with compile time dynamic rows and 1 column
  * @tparam Lp Scalar type for the lp argument. The scalar type of T should be
- * convertable to this.
+ * convertible to this.
  * @param x Vector of unconstrained values
  * @param M number of rows
  * @param N number of columns
@@ -148,7 +148,7 @@ inline auto cholesky_factor_constrain(T&& x, int M, int N, Lp& lp) {
  *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
  *  and 1 column
  * @tparam Lp A scalar type for the lp argument. The scalar type of T should be
- * convertable to this.
+ * convertible to this.
  * @param x Vector of unconstrained values
  * @param M number of rows
  * @param N number of columns

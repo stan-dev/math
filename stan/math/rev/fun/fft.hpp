@@ -146,7 +146,7 @@ inline plain_type_t<M> fft2(const M& x) {
  * ```
  *
  * @tparam M type of complex matrix argument
- * @param[in] y matrix to inverse trnasform
+ * @param[in] y matrix to inverse transform
  * @return inverse discrete 2D Fourier transform of `y`
  */
 template <typename M, require_eigen_dense_dynamic_vt<is_complex, M>* = nullptr,

@@ -41,7 +41,7 @@ inline void check_positive_ordered(const char* function, const char* name,
           << " The element at " << stan::error_index::value << " is ";
       std::string msg_str(msg.str());
       throw_domain_error(function, name, value_of_rec(to_ref(y).coeff(0)),
-                         msg_str.c_str(), ", but should be postive.");
+                         msg_str.c_str(), ", but should be positive.");
     }();
   }
   check_ordered(function, name, y_ref);

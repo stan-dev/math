@@ -38,7 +38,7 @@ endif
 
 ##
 # Adding a test for multiple translation units. If this fails,
-# a new function is probably missing an inline
+# a public umbrella header likely exposes a new non-inline external definition.
 ##
 
 ifneq ($(OS),Windows_NT)

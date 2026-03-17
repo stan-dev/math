@@ -56,7 +56,7 @@ inline auto ub_constrain(const T& x, const U& ub) {
  *
  * @tparam T type of scalar
  * @tparam U type of upper bound
- * @tparam Lp Scalar, should be convertable from T and U
+ * @tparam Lp Scalar, should be convertible from T and U
  * @param[in] x free scalar
  * @param[in] ub upper bound
  * @param[in,out] lp log density
@@ -98,7 +98,7 @@ inline auto ub_constrain(const T& x, const U& ub) {
  *
  * @tparam T A type inheriting from `EigenBase`.
  * @tparam U Scalar.
- * @tparam Lp Scalar, should be convertable from U and the scalar type of T.
+ * @tparam Lp Scalar, should be convertible from U and the scalar type of T.
  * @param[in] x unconstrained input
  * @param[in] ub upper bound on output
  * @param[in,out] lp reference to log probability to increment
@@ -137,7 +137,7 @@ inline auto ub_constrain(const T& x, const U& ub) {
  *
  * @tparam T A type inheriting from `EigenBase`.
  * @tparam U A type inheriting from `EigenBase`.
- * @tparam Lp Scalar, should be convertable from the scalar types of T and U.
+ * @tparam Lp Scalar, should be convertible from the scalar types of T and U.
  * @param[in] x unconstrained input
  * @param[in] ub upper bound on output
  * @param[in,out] lp reference to log probability to increment
@@ -179,7 +179,7 @@ inline auto ub_constrain(const std::vector<T>& x, const U& ub) {
  *
  * @tparam T A Any type with a Scalar `scalar_type`.
  * @tparam U Scalar.
- * @tparam Lp Scalar, should be convertable from T and U.
+ * @tparam Lp Scalar, should be convertible from T and U.
  * @param[in] x unconstrained input
  * @param[in] ub upper bound on output
  * @param[in,out] lp reference to log probability to increment
@@ -223,7 +223,7 @@ inline auto ub_constrain(const std::vector<T>& x, const std::vector<U>& ub) {
  *
  * @tparam T A Any type with a Scalar `scalar_type`.
  * @tparam U A type inheriting from `EigenBase` or a standard vector.
- * @tparam Lp Scalar, should be convertable from T and the scalar type of U
+ * @tparam Lp Scalar, should be convertible from T and the scalar type of U
  * @param[in] x unconstrained input
  * @param[in] ub upper bound on output
  * @param[in,out] lp reference to log probability to increment
@@ -255,7 +255,7 @@ inline auto ub_constrain(const std::vector<T>& x, const std::vector<U>& ub,
  * @tparam U A type inheriting from `Eigen::EigenBase`, a `var_value` with inner
  * type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
  * @tparam Lp A scalar type for the lp argument. The scalar type of T and U
- * should be convertable to this.
+ * should be convertible to this.
  * @param[in] x unconstrained input
  * @param[in] ub upper bound on output
  * @param[in, out] lp log density accumulator

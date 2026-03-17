@@ -37,9 +37,9 @@ matrix_exp_pade(const EigMat& arg) {
                                                arg_ref(0, 0));
   // Pade approximant is
   // (U+V) / (-U+V)
-  MatrixType numer = U + V;
+  MatrixType number = U + V;
   MatrixType denom = -U + V;
-  MatrixType pade_approximation = denom.partialPivLu().solve(numer);
+  MatrixType pade_approximation = denom.partialPivLu().solve(number);
   for (int i = 0; i < squarings; ++i) {
     pade_approximation *= pade_approximation;  // undo scaling by
   }

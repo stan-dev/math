@@ -26,8 +26,7 @@ inline auto skew_de_ccdf_test(const T1& y, const T2& mu, const T3& sigma,
   }
 }
 
-TEST(RevProbDistributionsSkewedDoubleExponential,
-     lccdf_computes_correct_gradients) {
+TEST_F(AgradRev, SkewedDoubleExponential_lccdf_computes_correct_gradients) {
   using stan::math::skew_double_exponential_lccdf;
 
   for (double ys : {-1.7, 0.2, 0.5, 0.9, 1.1, 3.2, 8.3}) {

@@ -24,7 +24,7 @@ inline auto possibly_sum(T&& x) {
  * @tparam CondSum A struct with a static boolean member `value` which if false
  *  will pass the input to the output.
  * @tparam T A scalar, Eigen type, or standard vector with inner scalar type.
- * @param x The value to be passed trhough.
+ * @param x The value to be passed through.
  */
 template <typename CondSum, typename T1, require_not_t<CondSum>* = nullptr>
 inline auto possibly_sum(T1&& x) {

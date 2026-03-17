@@ -16,7 +16,7 @@ namespace math {
  * parameters \f$\alpha\f$ and \f$N\f$ and pseudo-random number generator rng.
  *
  * The Dirichlet-Multinomial distribution is a continuous mixture of
- * Multinomial distirbutions, where the mixing distribution is the Dirichlet
+ * Multinomial distributions, where the mixing distribution is the Dirichlet
  * distribution. This fact is used for generating DirMult random draws.
  * First, we sample a probability vector
  * \f$\theta \sim \mbox{Dirichlet}(\alpha)\f$.

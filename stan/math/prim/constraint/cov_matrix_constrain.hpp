@@ -56,7 +56,7 @@ cov_matrix_constrain(const T& x, Eigen::Index K) {
  * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase and
  * have one compile-time dimension equal to 1)
  * @tparam Lp A scalar type for the lp argument. The scalar type of T should be
- * convertable to this.
+ * convertible to this.
  * @param x The vector to convert to a covariance matrix.
  * @param K The dimensions of the resulting covariance matrix.
  * @param lp Reference
@@ -117,7 +117,7 @@ inline auto cov_matrix_constrain(T&& x, Eigen::Index K) {
  * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
  * `Eigen::DenseBase` with compile time dynamic rows and 1 column
  * @tparam Lp Scalar type for the lp argument. The scalar type of T should be
- * convertable to this.
+ * convertible to this.
  * @param x The vector to convert to a covariance matrix
  * @param K The dimensions of the resulting covariance matrix
  * @param[in, out] lp log density accumulator
@@ -145,7 +145,7 @@ inline auto cov_matrix_constrain(T&& x, Eigen::Index K, Lp& lp) {
  *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
  *  and 1 column, or standard vector thereof
  * @tparam Lp A scalar type for the lp argument. The scalar type of T should be
- * convertable to this.
+ * convertible to this.
  * @param x The vector to convert to a covariance matrix
  * @param K The dimensions of the resulting covariance matrix
  * @param[in, out] lp log density accumulator

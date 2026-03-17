@@ -85,7 +85,7 @@ inline return_type_t<T_y_cl, T_scale_succ_cl, T_scale_fail_cl> beta_lpdf(
   auto alpha_beta_expr = alpha_val + beta_val;
 
   auto zero_expr
-      = as_operation_cl(0);  // simplifiy the kernel by only using one zero
+      = as_operation_cl(0);  // simplify the kernel by only using one zero
   auto logp_expr = colwise_sum(
       static_select<include_summand<propto, T_scale_succ_cl>::value>(
           -lgamma(alpha_val), zero_expr)
