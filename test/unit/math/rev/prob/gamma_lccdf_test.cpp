@@ -231,7 +231,9 @@ TEST_F(AgradRev, ProbDistributionsGamma_lccdf_extreme_values_small) {
   }
 }
 
-TEST_F(AgradRev, ProbDistributionsGammalccdf_alpha_gt_30_small_y_old_code_rounds_to_zero) {
+TEST_F(
+    AgradRev,
+    ProbDistributionsGammalccdf_alpha_gt_30_small_y_old_code_rounds_to_zero) {
   using stan::math::gamma_lccdf;
   using stan::math::gamma_p;
   using stan::math::gamma_q;

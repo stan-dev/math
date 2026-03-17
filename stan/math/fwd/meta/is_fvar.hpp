@@ -21,6 +21,5 @@ struct is_fvar<T,
                std::enable_if_t<internal::is_fvar_impl<std::decay_t<T>>::value>>
     : std::true_type {};
 
-
 }  // namespace stan
 #endif
