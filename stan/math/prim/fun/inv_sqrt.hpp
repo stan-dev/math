@@ -12,11 +12,16 @@
 namespace stan {
 namespace math {
 
-template <typename T, require_stan_scalar_t<T>* = nullptr>
-inline auto inv_sqrt(T x) {
-  using std::sqrt;
+template <typename T, require_arithmetic_t<T>* = nullptr>
+inline auto inv_sqrt(const T x) {
+  return inv(std::sqrt(x));
+}
+
+template <typename T, require_complex_t<T>* = nullptr>
+inline auto inv_sqrt(const T x) {
   return inv(sqrt(x));
 }
+
 /**
  * Structure to wrap `1 / sqrt(x)` so that it can be vectorized.
  *
@@ -26,8 +31,8 @@ inline auto inv_sqrt(T x) {
  */
 struct inv_sqrt_fun {
   template <typename T>
-  static inline auto fun(const T& x) {
-    return inv_sqrt(x);
+  static inline auto fun(T&& x) {
+    return inv_sqrt(std::forward<T>(x));
   }
 };
 
@@ -39,14 +44,10 @@ struct inv_sqrt_fun {
  * @param x container
  * @return inverse square root of each value in x.
  */
-template <typename Container,
-          require_not_container_st<std::is_arithmetic, Container>* = nullptr,
-          require_not_var_matrix_t<Container>* = nullptr,
-          require_not_stan_scalar_t<Container>* = nullptr,
-          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
-              Container>* = nullptr>
-inline auto inv_sqrt(const Container& x) {
-  return apply_scalar_unary<inv_sqrt_fun, Container>::apply(x);
+template <typename Container, require_ad_container_t<Container>* = nullptr>
+inline auto inv_sqrt(Container&& x) {
+  return apply_scalar_unary<inv_sqrt_fun, Container>::apply(
+      std::forward<Container>(x));
 }
 
 /**
@@ -58,15 +59,16 @@ inline auto inv_sqrt(const Container& x) {
  * @return inverse square root each variable in the container.
  */
 template <typename Container, require_not_var_matrix_t<Container>* = nullptr,
-          require_container_st<std::is_arithmetic, Container>* = nullptr>
-inline auto inv_sqrt(const Container& x) {
+          require_container_bt<std::is_arithmetic, Container>* = nullptr>
+inline auto inv_sqrt(Container&& x) {
 // Eigen 3.4.0 has precision issues on ARM64 with vectorised rsqrt
 // Resolved in current master branch, below can be removed on next release
 #ifdef __aarch64__
-  return apply_scalar_unary<inv_sqrt_fun, Container>::apply(x);
+  return apply_scalar_unary<inv_sqrt_fun, Container>::apply(
+      std::forward<Container>(x));
 #else
   return apply_vector_unary<Container>::apply(
-      x, [](const auto& v) { return v.array().rsqrt(); });
+      std::forward<Container>(x), [](auto&& v) { return v.array().rsqrt(); });
 #endif
 }
 

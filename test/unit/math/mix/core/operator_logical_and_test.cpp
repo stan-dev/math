@@ -4,7 +4,7 @@
 #include <limits>
 #include <vector>
 
-void test_logical_and(double x, double y) {
+inline void test_logical_and(double x, double y) {
   using stan::math::fvar;
   using stan::math::var;
 

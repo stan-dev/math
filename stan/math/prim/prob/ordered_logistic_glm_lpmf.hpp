@@ -46,7 +46,7 @@ namespace math {
 template <bool propto, typename T_y, typename T_x, typename T_beta,
           typename T_cuts, require_matrix_t<T_x>* = nullptr,
           require_all_col_vector_t<T_beta, T_cuts>* = nullptr>
-return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
+inline return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
     const T_y& y, const T_x& x, const T_beta& beta, const T_cuts& cuts) {
   using Eigen::Array;
   using Eigen::Dynamic;
@@ -91,18 +91,18 @@ return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
   if (size_zero(y, cuts)) {
     return 0;
   }
-  if (!include_summand<propto, T_x, T_beta, T_cuts>::value) {
+  if constexpr (!include_summand<propto, T_x, T_beta, T_cuts>::value) {
     return 0;
   }
 
   T_x_ref x_ref = x;
   T_beta_ref beta_ref = beta;
 
-  const auto& x_val = to_ref_if<!is_constant<T_beta>::value>(value_of(x_ref));
+  const auto& x_val = to_ref_if<is_autodiff_v<T_beta>>(value_of(x_ref));
   const auto& beta_val = value_of(beta_ref);
 
-  const auto& beta_val_vec = to_ref_if<!is_constant<T_x>::value>(
-      as_column_vector_or_scalar(beta_val));
+  const auto& beta_val_vec
+      = to_ref_if<is_autodiff_v<T_x>>(as_column_vector_or_scalar(beta_val));
 
   scalar_seq_view<T_y_ref> y_seq(y_ref);
   Array<T_cuts_partials, Dynamic, 1> cuts_y1(N_instances), cuts_y2(N_instances);
@@ -138,7 +138,7 @@ return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
       = (cut2 <= 0.0).select(cut2, 0) - (-cut2.abs()).exp().log1p();
 
   T_partials_return logp(0);
-  if (is_vector<T_y>::value) {
+  if constexpr (is_vector<T_y>::value) {
     Eigen::Map<const Eigen::Matrix<int, Eigen::Dynamic, 1>> y_vec(y_seq.data(),
                                                                   y_seq.size());
     logp = y_vec.cwiseEqual(1)
@@ -161,7 +161,7 @@ return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
   }
 
   auto ops_partials = make_partials_propagator(x_ref, beta_ref, cuts_ref);
-  if (!is_constant_all<T_x, T_beta, T_cuts>::value) {
+  if constexpr (is_any_autodiff_v<T_x, T_beta, T_cuts>) {
     Array<T_partials_return, Dynamic, 1> exp_m_cut1 = exp(-cut1);
     Array<T_partials_return, Dynamic, 1> exp_m_cut2 = exp(-cut2);
     Array<T_partials_return, Dynamic, 1> exp_cuts_diff = exp(cuts_y2 - cuts_y1);
@@ -172,10 +172,10 @@ return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
         = 1 / (1 - exp_cuts_diff)
           - (cut1 > 0).select(exp_m_cut1 / (1 + exp_m_cut1),
                               1 / (1 + exp(cut1)));
-    if (!is_constant_all<T_x, T_beta>::value) {
+    if constexpr (is_any_autodiff_v<T_x, T_beta>) {
       Matrix<T_partials_return, 1, Dynamic> location_derivative = d1 - d2;
-      if (!is_constant_all<T_x>::value) {
-        if (T_x_rows == 1) {
+      if constexpr (is_autodiff_v<T_x>) {
+        if constexpr (T_x_rows == 1) {
           edge<0>(ops_partials).partials_
               = beta_val_vec * location_derivative.sum();
         } else {
@@ -183,8 +183,8 @@ return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
               = (beta_val_vec * location_derivative).transpose();
         }
       }
-      if (!is_constant_all<T_beta>::value) {
-        if (T_x_rows == 1) {
+      if constexpr (is_autodiff_v<T_beta>) {
+        if constexpr (T_x_rows == 1) {
           edge<1>(ops_partials).partials_
               = (location_derivative * x_val.replicate(N_instances, 1))
                     .transpose();
@@ -194,7 +194,7 @@ return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
         }
       }
     }
-    if (!is_constant_all<T_cuts>::value) {
+    if constexpr (is_autodiff_v<T_cuts>) {
       for (int i = 0; i < N_instances; i++) {
         int c = y_seq[i];
         if (c != N_classes) {
@@ -210,7 +210,7 @@ return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
 }
 
 template <typename T_y, typename T_x, typename T_beta, typename T_cuts>
-return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
+inline return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
     const T_y& y, const T_x& x, const T_beta& beta, const T_cuts& cuts) {
   return ordered_logistic_glm_lpmf<false>(y, x, beta, cuts);
 }

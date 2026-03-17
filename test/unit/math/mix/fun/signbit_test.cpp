@@ -4,7 +4,7 @@
 #include <limits>
 
 template <typename T>
-void expect_signbit() {
+inline void expect_signbit() {
   using stan::math::signbit;
   using std::numeric_limits;
   using std::signbit;

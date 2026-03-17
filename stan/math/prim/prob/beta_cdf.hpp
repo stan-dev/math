@@ -33,7 +33,7 @@ namespace math {
  * @tparam T_scale_fail Type of beta.
  */
 template <typename T_y, typename T_scale_succ, typename T_scale_fail>
-return_type_t<T_y, T_scale_succ, T_scale_fail> beta_cdf(
+inline return_type_t<T_y, T_scale_succ, T_scale_fail> beta_cdf(
     const T_y& y, const T_scale_succ& alpha, const T_scale_fail& beta) {
   using T_partials_return = partials_return_t<T_y, T_scale_succ, T_scale_fail>;
   using T_y_ref = ref_type_t<T_y>;
@@ -72,28 +72,26 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_cdf(
     }
   }
 
-  VectorBuilder<!is_constant_all<T_scale_succ>::value, T_partials_return,
-                T_scale_succ>
+  VectorBuilder<is_autodiff_v<T_scale_succ>, T_partials_return, T_scale_succ>
       digamma_alpha(size_alpha);
-  if (!is_constant_all<T_scale_succ>::value) {
+  if constexpr (is_autodiff_v<T_scale_succ>) {
     for (size_t n = 0; n < size_alpha; n++) {
       digamma_alpha[n] = digamma(alpha_vec.val(n));
     }
   }
 
-  VectorBuilder<!is_constant_all<T_scale_fail>::value, T_partials_return,
-                T_scale_fail>
+  VectorBuilder<is_autodiff_v<T_scale_fail>, T_partials_return, T_scale_fail>
       digamma_beta(size_beta);
-  if (!is_constant_all<T_scale_fail>::value) {
+  if constexpr (is_autodiff_v<T_scale_fail>) {
     for (size_t n = 0; n < size_beta; n++) {
       digamma_beta[n] = digamma(beta_vec.val(n));
     }
   }
 
-  VectorBuilder<!is_constant_all<T_scale_succ, T_scale_fail>::value,
+  VectorBuilder<is_any_autodiff_v<T_scale_succ, T_scale_fail>,
                 T_partials_return, T_scale_succ, T_scale_fail>
       digamma_sum(size_alpha_beta);
-  if (!is_constant_all<T_scale_succ, T_scale_fail>::value) {
+  if constexpr (is_any_autodiff_v<T_scale_succ, T_scale_fail>) {
     for (size_t n = 0; n < size_alpha_beta; n++) {
       digamma_sum[n] = digamma(alpha_vec.val(n) + beta_vec.val(n));
     }
@@ -116,18 +114,18 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_cdf(
 
     P *= Pn;
 
-    if (!is_constant_all<T_y>::value) {
+    if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials)[n]
           += inc_beta_ddz(alpha_dbl, beta_dbl, y_dbl) * inv_Pn;
     }
 
-    if (!is_constant_all<T_scale_succ>::value) {
+    if constexpr (is_autodiff_v<T_scale_succ>) {
       partials<1>(ops_partials)[n]
           += inc_beta_dda(alpha_dbl, beta_dbl, y_dbl, digamma_alpha[n],
                           digamma_sum[n])
              * inv_Pn;
     }
-    if (!is_constant_all<T_scale_fail>::value) {
+    if constexpr (is_autodiff_v<T_scale_fail>) {
       partials<2>(ops_partials)[n]
           += inc_beta_ddb(alpha_dbl, beta_dbl, y_dbl, digamma_beta[n],
                           digamma_sum[n])
@@ -135,17 +133,17 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_cdf(
     }
   }
 
-  if (!is_constant_all<T_y>::value) {
+  if constexpr (is_autodiff_v<T_y>) {
     for (size_t n = 0; n < stan::math::size(y); ++n) {
       partials<0>(ops_partials)[n] *= P;
     }
   }
-  if (!is_constant_all<T_scale_succ>::value) {
+  if constexpr (is_autodiff_v<T_scale_succ>) {
     for (size_t n = 0; n < stan::math::size(alpha); ++n) {
       partials<1>(ops_partials)[n] *= P;
     }
   }
-  if (!is_constant_all<T_scale_fail>::value) {
+  if constexpr (is_autodiff_v<T_scale_fail>) {
     for (size_t n = 0; n < stan::math::size(beta); ++n) {
       partials<2>(ops_partials)[n] *= P;
     }

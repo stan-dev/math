@@ -1,8 +1,9 @@
 #include <stan/math/rev.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MathMetaRev, ScalarSeqViewvar) {
+TEST_F(AgradRev, MathMetaRev_ScalarSeqViewvar) {
   using stan::scalar_seq_view;
   using stan::math::var;
   var d = 10;
@@ -23,7 +24,7 @@ TEST(MathMetaRev, ScalarSeqViewvar) {
   EXPECT_EQ(1, sv.size());
 }
 
-TEST(MathMetaRev, ScalarSeqViewArrayVarVal) {
+TEST_F(AgradRev, MathMetaRev_ScalarSeqViewArrayVarVal) {
   using stan::scalar_seq_view;
   using stan::math::var;
   using std::vector;
@@ -48,7 +49,7 @@ TEST(MathMetaRev, ScalarSeqViewArrayVarVal) {
 }
 
 template <typename C>
-void expect_scalar_seq_view_value(const C& v) {
+inline void expect_scalar_seq_view_value(const C& v) {
   using stan::scalar_seq_view;
   scalar_seq_view<C> sv(v);
   EXPECT_FLOAT_EQ(v.val()(0), sv.val(0));
@@ -60,7 +61,7 @@ void expect_scalar_seq_view_value(const C& v) {
 }
 
 template <typename C>
-void expect_scalar_seq_view_adjoints(const C& v) {
+inline void expect_scalar_seq_view_adjoints(const C& v) {
   using stan::scalar_seq_view;
   scalar_seq_view<C> sv(v);
   std::vector<stan::math::var> stdv(sv.size());
@@ -80,30 +81,30 @@ void expect_scalar_seq_view_adjoints(const C& v) {
   }
 }
 
-TEST(MathMetaRev, ScalarSeqViewVectorVar) {
+TEST_F(AgradRev, MathMetaRev_ScalarSeqViewVectorVar) {
   using stan::math::var;
-  Eigen::Matrix<var, -1, 1> A = Eigen::VectorXd(4);
+  Eigen::Matrix<var, -1, 1> A = Eigen::VectorXd::Ones(4);
   expect_scalar_seq_view_value(A);
   expect_scalar_seq_view_adjoints(A);
 }
 
-TEST(MathMetaRev, ScalarSeqViewRowVectorVar) {
+TEST_F(AgradRev, MathMetaRev_ScalarSeqViewRowVectorVar) {
   using stan::math::var;
-  Eigen::Matrix<var, 1, -1> A = Eigen::RowVectorXd(4);
+  Eigen::Matrix<var, 1, -1> A = Eigen::RowVectorXd::Ones(4);
   expect_scalar_seq_view_value(A);
   expect_scalar_seq_view_adjoints(A);
 }
 
-TEST(MathMetaRev, VarScalarSeqViewVector) {
+TEST_F(AgradRev, MathMetaRev_VarScalarSeqViewVector) {
   using stan::math::var_value;
-  var_value<Eigen::Matrix<double, -1, 1>> A = Eigen::VectorXd(4);
+  var_value<Eigen::Matrix<double, -1, 1>> A = Eigen::VectorXd::Ones(4);
   expect_scalar_seq_view_value(A);
   expect_scalar_seq_view_adjoints(A);
 }
 
-TEST(MathMetaRev, VarScalarSeqViewRowVector) {
+TEST_F(AgradRev, MathMetaRev_VarScalarSeqViewRowVector) {
   using stan::math::var_value;
-  var_value<Eigen::Matrix<double, 1, -1>> A = Eigen::RowVectorXd(4);
+  var_value<Eigen::Matrix<double, 1, -1>> A = Eigen::RowVectorXd::Ones(4);
   expect_scalar_seq_view_value(A);
   expect_scalar_seq_view_adjoints(A);
 }

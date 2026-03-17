@@ -1,9 +1,10 @@
 #include <stan/math/rev.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
 #include <limits>
 
-TEST(ErrorHandlingMatrix, checkMatchingDims_double_var) {
+TEST_F(AgradRev, ErrorHandlingMatrix_checkMatchingDims_double_var) {
   using stan::math::check_matching_dims;
 
   std::vector<Eigen::Matrix<double, -1, 1>> x;
@@ -24,7 +25,7 @@ TEST(ErrorHandlingMatrix, checkMatchingDims_double_var) {
                std::invalid_argument);
 }
 
-TEST(ErrorHandlingMatrix, checkMatchingDims_var) {
+TEST_F(AgradRev, ErrorHandlingMatrix_checkMatchingDims_var) {
   using stan::math::check_matching_dims;
 
   std::vector<Eigen::Matrix<stan::math::var, -1, 1>> x;

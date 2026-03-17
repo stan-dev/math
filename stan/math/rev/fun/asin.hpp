@@ -1,13 +1,12 @@
 #ifndef STAN_MATH_REV_FUN_ASIN_HPP
 #define STAN_MATH_REV_FUN_ASIN_HPP
 
-#include <stan/math/prim/fun/asin.hpp>
-#include <stan/math/prim/fun/abs.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/fun/abs.hpp>
 #include <stan/math/rev/fun/asinh.hpp>
 #include <stan/math/rev/fun/value_of_rec.hpp>
+#include <stan/math/prim/fun/asin.hpp>
 #include <cmath>
 #include <complex>
 
@@ -51,7 +50,7 @@ namespace math {
  * @return Arc sine of variable, in radians.
  */
 inline var asin(const var& x) {
-  return make_callback_var(std::asin(x.val()), [x](const auto& vi) mutable {
+  return make_callback_var(std::asin(x.val()), [x](auto&& vi) mutable {
     x.adj() += vi.adj() / std::sqrt(1.0 - (x.val() * x.val()));
   });
 }
@@ -67,7 +66,7 @@ inline var asin(const var& x) {
 template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
 inline auto asin(const VarMat& x) {
   return make_callback_var(
-      x.val().array().asin().matrix(), [x](const auto& vi) mutable {
+      x.val().array().asin().matrix(), [x](auto&& vi) mutable {
         x.adj().array()
             += vi.adj().array() / (1.0 - (x.val().array().square())).sqrt();
       });

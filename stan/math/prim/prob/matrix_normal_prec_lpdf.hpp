@@ -65,19 +65,19 @@ inline return_type_t<T_y, T_Mu, T_Sigma, T_D> matrix_normal_prec_lpdf(
 
   return_type_t<T_y, T_Mu, T_Sigma, T_D> lp(0.0);
 
-  if (include_summand<propto>::value) {
+  if constexpr (include_summand<propto>::value) {
     lp += NEG_LOG_SQRT_TWO_PI * y.cols() * y.rows();
   }
 
-  if (include_summand<propto, T_Sigma>::value) {
+  if constexpr (include_summand<propto, T_Sigma>::value) {
     lp += log_determinant_ldlt(ldlt_Sigma) * (0.5 * y.rows());
   }
 
-  if (include_summand<propto, T_D>::value) {
+  if constexpr (include_summand<propto, T_D>::value) {
     lp += log_determinant_ldlt(ldlt_D) * (0.5 * y.cols());
   }
 
-  if (include_summand<propto, T_y, T_Mu, T_Sigma, T_D>::value) {
+  if constexpr (include_summand<propto, T_y, T_Mu, T_Sigma, T_D>::value) {
     lp -= 0.5 * trace_gen_quad_form(D_ref, Sigma_ref, subtract(y_ref, Mu_ref));
   }
   return lp;
@@ -85,7 +85,7 @@ inline return_type_t<T_y, T_Mu, T_Sigma, T_D> matrix_normal_prec_lpdf(
 
 template <typename T_y, typename T_Mu, typename T_Sigma, typename T_D,
           require_all_matrix_t<T_y, T_Mu, T_Sigma, T_D>* = nullptr>
-return_type_t<T_y, T_Mu, T_Sigma, T_D> matrix_normal_prec_lpdf(
+inline return_type_t<T_y, T_Mu, T_Sigma, T_D> matrix_normal_prec_lpdf(
     const T_y& y, const T_Mu& Mu, const T_Sigma& Sigma, const T_D& D) {
   return matrix_normal_prec_lpdf<false>(y, Mu, Sigma, D);
 }

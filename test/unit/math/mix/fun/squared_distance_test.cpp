@@ -17,10 +17,10 @@ TEST_F(mathMix, squaredDistance_nan) {
   stan::test::expect_ad(f, nan, 1.0);
   stan::test::expect_ad(f, nan, nan);
 }
-void expect_squared_distance(const std::vector<double>& sv1,
-                             const std::vector<double>& sv2,
-                             const stan::test::ad_tolerances& tols
-                             = stan::test::ad_tolerances()) {
+inline void expect_squared_distance(const std::vector<double>& sv1,
+                                    const std::vector<double>& sv2,
+                                    const stan::test::ad_tolerances& tols
+                                    = stan::test::ad_tolerances()) {
   auto f = [](const auto& x, const auto& y) {
     return stan::math::squared_distance(x, y);
   };

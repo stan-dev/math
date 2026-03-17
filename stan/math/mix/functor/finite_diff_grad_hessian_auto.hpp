@@ -2,9 +2,9 @@
 #define STAN_MATH_MIX_FUNCTOR_FINITE_DIFF_GRAD_HESSIAN_AUTO_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/functor/finite_diff_gradient_auto.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/mix/functor/hessian.hpp>
+#include <stan/math/prim/functor/finite_diff_gradient_auto.hpp>
 #include <vector>
 
 namespace stan {
@@ -41,9 +41,9 @@ namespace math {
  * @param[out] grad_hess_fx gradient of Hessian of function at argument
  */
 template <typename F>
-void finite_diff_grad_hessian_auto(const F& f, const Eigen::VectorXd& x,
-                                   double& fx, Eigen::MatrixXd& hess,
-                                   std::vector<Eigen::MatrixXd>& grad_hess_fx) {
+inline void finite_diff_grad_hessian_auto(
+    const F& f, const Eigen::VectorXd& x, double& fx, Eigen::MatrixXd& hess,
+    std::vector<Eigen::MatrixXd>& grad_hess_fx) {
   int d = x.size();
 
   grad_hess_fx.clear();

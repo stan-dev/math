@@ -10,7 +10,7 @@ auto lub_constrain_functor = [](const auto& a, const auto& b, const auto& c) {
 auto lub_constrain_functor2 = [](const auto& a, const auto& b, const auto& c) {
   using T_lp = stan::return_type_t<decltype(a), decltype(b), decltype(c)>;
   T_lp lp(4);
-  if (!stan::is_constant<T_lp>::value) {
+  if constexpr (!stan::is_constant<T_lp>::value) {
     stan::math::adjoint_of(lp) += 9;
   }
   return stan::math::lub_constrain(a, b, c, lp);

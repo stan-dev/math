@@ -74,8 +74,8 @@ inline double log_mix(T_theta theta, T_lambda1 lambda1, T_lambda2 lambda2) {
  */
 template <typename T_theta, typename T_lam,
           require_any_vector_t<T_theta, T_lam>* = nullptr>
-return_type_t<T_theta, T_lam> log_mix(const T_theta& theta,
-                                      const T_lam& lambda) {
+inline return_type_t<T_theta, T_lam> log_mix(const T_theta& theta,
+                                             const T_lam& lambda) {
   static constexpr const char* function = "log_mix";
   using T_partials_return = partials_return_t<T_theta, T_lam>;
   using T_partials_vec =
@@ -97,12 +97,12 @@ return_type_t<T_theta, T_lam> log_mix(const T_theta& theta,
   T_partials_return logp = log_sum_exp(log(theta_dbl) + lam_dbl);
 
   auto ops_partials = make_partials_propagator(theta_ref, lambda_ref);
-  if (!is_constant_all<T_lam, T_theta>::value) {
+  if constexpr (is_any_autodiff_v<T_lam, T_theta>) {
     T_partials_vec theta_deriv = (lam_dbl.array() - logp).exp();
-    if (!is_constant_all<T_lam>::value) {
+    if constexpr (is_autodiff_v<T_lam>) {
       partials<1>(ops_partials) = theta_deriv.cwiseProduct(theta_dbl);
     }
-    if (!is_constant_all<T_theta>::value) {
+    if constexpr (is_autodiff_v<T_theta>) {
       partials<0>(ops_partials) = std::move(theta_deriv);
     }
   }
@@ -141,7 +141,7 @@ return_type_t<T_theta, T_lam> log_mix(const T_theta& theta,
  * @return log mixture of densities in specified proportion
  */
 template <typename T_theta, typename T_lam, require_vector_t<T_lam>* = nullptr>
-return_type_t<T_theta, std::vector<T_lam>> log_mix(
+inline return_type_t<T_theta, std::vector<T_lam>> log_mix(
     const T_theta& theta, const std::vector<T_lam>& lambda) {
   static constexpr const char* function = "log_mix";
   using T_partials_return = partials_return_t<T_theta, std::vector<T_lam>>;
@@ -177,12 +177,12 @@ return_type_t<T_theta, std::vector<T_lam>> log_mix(
   }
 
   auto ops_partials = make_partials_propagator(theta_ref, lambda);
-  if (!is_constant_all<T_theta, T_lam>::value) {
+  if constexpr (is_any_autodiff_v<T_theta, T_lam>) {
     T_partials_mat derivs = exp(lam_dbl.rowwise() - logp.transpose());
-    if (!is_constant_all<T_theta>::value) {
+    if constexpr (is_autodiff_v<T_theta>) {
       partials<0>(ops_partials) = derivs.rowwise().sum();
     }
-    if (!is_constant_all<T_lam>::value) {
+    if constexpr (is_autodiff_v<T_lam>) {
       for (int n = 0; n < N; ++n) {
         as_column_vector_or_scalar(partials_vec<1>(ops_partials)[n])
             = derivs.col(n).cwiseProduct(theta_dbl);

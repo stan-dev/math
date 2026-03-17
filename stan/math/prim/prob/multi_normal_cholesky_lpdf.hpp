@@ -45,7 +45,7 @@ template <bool propto, typename T_y, typename T_loc, typename T_covar,
           require_any_not_vector_vt<is_stan_scalar, T_y, T_loc>* = nullptr,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_loc, T_covar>* = nullptr>
-return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
+inline return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
     const T_y& y, const T_loc& mu, const T_covar& L) {
   static constexpr const char* function = "multi_normal_cholesky_lpdf";
   using T_covar_elem = typename scalar_type<T_covar>::type;
@@ -116,11 +116,11 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
   auto ops_partials = make_partials_propagator(y_ref, mu_ref, L_ref);
 
   T_partials_return logp(0);
-  if (include_summand<propto>::value) {
+  if constexpr (include_summand<propto>::value) {
     logp += NEG_LOG_SQRT_TWO_PI * size_y * size_vec;
   }
 
-  if (include_summand<propto, T_y, T_loc, T_covar_elem>::value) {
+  if constexpr (include_summand<propto, T_y, T_loc, T_covar_elem>::value) {
     Eigen::Matrix<T_partials_return, Eigen::Dynamic, Eigen::Dynamic>
         y_val_minus_mu_val(size_y, size_vec);
 
@@ -135,7 +135,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
 
     // If the covariance is not autodiff, we can avoid computing a matrix
     // inverse
-    if (is_constant<T_covar_elem>::value) {
+    if constexpr (is_constant_v<T_covar_elem>) {
       matrix_partials_t L_val = value_of(L_ref);
 
       half = mdivide_left_tri<Eigen::Lower>(L_val, y_val_minus_mu_val)
@@ -143,7 +143,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
 
       scaled_diff = mdivide_right_tri<Eigen::Lower>(half, L_val).transpose();
 
-      if (include_summand<propto>::value) {
+      if constexpr (include_summand<propto>::value) {
         logp -= sum(log(L_val.diagonal())) * size_vec;
       }
     } else {
@@ -168,10 +168,10 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
     logp -= 0.5 * sum(columns_dot_self(half));
 
     for (size_t i = 0; i < size_vec; i++) {
-      if (!is_constant_all<T_y>::value) {
+      if constexpr (is_autodiff_v<T_y>) {
         partials_vec<0>(ops_partials)[i] -= scaled_diff.col(i);
       }
-      if (!is_constant_all<T_loc>::value) {
+      if constexpr (is_autodiff_v<T_loc>) {
         partials_vec<1>(ops_partials)[i] += scaled_diff.col(i);
       }
     }
@@ -204,7 +204,7 @@ template <bool propto, typename T_y, typename T_loc, typename T_covar,
           require_all_vector_vt<is_stan_scalar, T_y, T_loc>* = nullptr,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_loc, T_covar>* = nullptr>
-return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
+inline return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
     const T_y& y, const T_loc& mu, const T_covar& L) {
   static constexpr const char* function = "multi_normal_cholesky_lpdf";
   using T_covar_elem = typename scalar_type<T_covar>::type;
@@ -245,18 +245,18 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
   auto ops_partials = make_partials_propagator(y_ref, mu_ref, L_ref);
 
   T_partials_return logp(0);
-  if (include_summand<propto>::value) {
+  if constexpr (include_summand<propto>::value) {
     logp += NEG_LOG_SQRT_TWO_PI * size_y;
   }
 
-  if (include_summand<propto, T_y, T_loc, T_covar_elem>::value) {
+  if constexpr (include_summand<propto, T_y, T_loc, T_covar_elem>::value) {
     row_vector_partials_t half;
     vector_partials_t scaled_diff;
     vector_partials_t y_val_minus_mu_val = y_val - mu_val;
 
     // If the covariance is not autodiff, we can avoid computing a matrix
     // inverse
-    if (is_constant<T_covar_elem>::value) {
+    if constexpr (is_constant_v<T_covar_elem>) {
       matrix_partials_t L_val = value_of(L_ref);
 
       half = mdivide_left_tri<Eigen::Lower>(L_val, y_val_minus_mu_val)
@@ -264,7 +264,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
 
       scaled_diff = mdivide_right_tri<Eigen::Lower>(half, L_val).transpose();
 
-      if (include_summand<propto>::value) {
+      if constexpr (include_summand<propto>::value) {
         logp -= sum(log(L_val.diagonal()));
       }
     } else {
@@ -285,10 +285,10 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
 
     logp -= 0.5 * sum(dot_self(half));
 
-    if (!is_constant_all<T_y>::value) {
+    if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials) -= scaled_diff;
     }
-    if (!is_constant_all<T_loc>::value) {
+    if constexpr (is_autodiff_v<T_loc>) {
       partials<1>(ops_partials) += scaled_diff;
     }
   }

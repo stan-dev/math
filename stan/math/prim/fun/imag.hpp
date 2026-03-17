@@ -14,8 +14,8 @@ namespace math {
  * @param[in] z complex value whose imaginary component is extracted
  * @return imaginary component of argument
  */
-template <typename T, require_autodiff_t<T>>
-T imag(const std::complex<T>& z) {
+template <typename T, require_autodiff_scalar_t<T>>
+inline T imag(const std::complex<T>& z) {
   return z.imag();
 }
 

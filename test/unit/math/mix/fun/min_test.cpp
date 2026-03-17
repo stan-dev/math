@@ -3,7 +3,7 @@
 #include <algorithm>
 
 template <typename T>
-void expect_min(const T& m) {
+inline void expect_min(const T& m) {
   auto f = [](const auto& x) { return stan::math::min(x); };
   Eigen::VectorXd v(m.size());
   Eigen::RowVectorXd rv(m.size());

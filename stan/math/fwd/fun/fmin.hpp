@@ -4,8 +4,8 @@
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/fmin.hpp>
 #include <stan/math/prim/fun/is_nan.hpp>
+#include <stan/math/prim/fun/fmin.hpp>
 
 namespace stan {
 namespace math {

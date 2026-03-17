@@ -3,10 +3,11 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/prim/fun/digamma.hpp>
-#include <stan/math/prim/fun/gamma_q.hpp>
+#include <stan/math/rev/fun/digamma.hpp>
+#include <stan/math/rev/fun/tgamma.hpp>
 #include <stan/math/prim/fun/grad_reg_inc_gamma.hpp>
-#include <stan/math/prim/fun/tgamma.hpp>
+#include <stan/math/prim/fun/gamma_q.hpp>
+
 #include <boost/math/special_functions/gamma.hpp>
 
 namespace stan {

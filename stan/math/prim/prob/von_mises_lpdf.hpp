@@ -23,8 +23,9 @@ namespace stan {
 namespace math {
 
 template <bool propto, typename T_y, typename T_loc, typename T_scale>
-return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
-                                                  T_scale const& kappa) {
+inline return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y,
+                                                         T_loc const& mu,
+                                                         T_scale const& kappa) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
   using T_y_ref = ref_type_if_not_constant_t<T_y>;
   using T_mu_ref = ref_type_if_not_constant_t<T_loc>;
@@ -47,38 +48,37 @@ return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
   if (size_zero(y, mu, kappa)) {
     return 0;
   }
-  if (!include_summand<propto, T_y, T_loc, T_scale>::value) {
+  if constexpr (!include_summand<propto, T_y, T_loc, T_scale>::value) {
     return 0;
   }
 
   auto ops_partials = make_partials_propagator(y_ref, mu_ref, kappa_ref);
 
   const auto& cos_mu_minus_y
-      = to_ref_if<!is_constant_all<T_scale>::value>(cos(mu_val - y_val));
+      = to_ref_if<is_autodiff_v<T_scale>>(cos(mu_val - y_val));
 
   size_t N = max_size(y, mu, kappa);
   T_partials_return logp = sum(kappa_val * cos_mu_minus_y);
-  if (include_summand<propto>::value) {
+  if constexpr (include_summand<propto>::value) {
     logp -= LOG_TWO_PI * N;
   }
-  if (include_summand<propto, T_scale>::value) {
+  if constexpr (include_summand<propto, T_scale>::value) {
     logp -= sum(log_modified_bessel_first_kind(0, kappa_val)) * N
             / math::size(kappa);
   }
 
-  if (!is_constant_all<T_y, T_loc>::value) {
+  if constexpr (is_any_autodiff_v<T_y, T_loc>) {
     const auto& sin_diff = sin(y_val - mu_val);
-    auto kappa_sin
-        = to_ref_if<(!is_constant_all<T_y>::value
-                     && !is_constant_all<T_loc>::value)>(kappa_val * sin_diff);
-    if (!is_constant_all<T_y>::value) {
+    auto kappa_sin = to_ref_if<(is_autodiff_v<T_y> && is_autodiff_v<T_loc>)>(
+        kappa_val * sin_diff);
+    if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials) = -kappa_sin;
     }
-    if (!is_constant_all<T_loc>::value) {
+    if constexpr (is_autodiff_v<T_loc>) {
       partials<1>(ops_partials) = std::move(kappa_sin);
     }
   }
-  if (!is_constant_all<T_scale>::value) {
+  if constexpr (is_autodiff_v<T_scale>) {
     edge<2>(ops_partials).partials_
         = cos_mu_minus_y
           - exp(log_modified_bessel_first_kind(1, kappa_val)

@@ -1,6 +1,16 @@
 #ifndef STAN_MATH_PRIM_FUN_EIGEN_HPP
 #define STAN_MATH_PRIM_FUN_EIGEN_HPP
-
+#include <stdexcept>
+#ifdef STAN_OVERRIDE_EIGEN_ASSERT
+#ifdef eigen_assert
+#undef eigen_assert
+#endif
+#define eigen_assert(x)                                            \
+  if (!(x)) {                                                      \
+    throw(std::domain_error("Internal Eigen Error: Assertion '" #x \
+                            "' failed in " __FILE__));             \
+  }
+#endif
 #ifdef EIGEN_MATRIXBASE_PLUGIN
 #ifndef EIGEN_STAN_MATRIXBASE_PLUGIN
 #error "Stan uses Eigen's EIGEN_MATRIXBASE_PLUGIN macro. To use your own "

@@ -23,7 +23,7 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_loc, typename T_scale, typename T_shape>
-return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lccdf(
+inline return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lccdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma, const T_shape& alpha) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_shape>;
   using T_y_ref = ref_type_if_not_constant_t<T_y>;
@@ -57,39 +57,37 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lccdf(
 
   const auto& diff = to_ref((y_val - mu_val) / sigma_val);
   const auto& scaled_diff
-      = to_ref_if<!is_constant_all<T_y, T_scale, T_loc>::value>(diff
-                                                                / SQRT_TWO);
+      = to_ref_if<is_any_autodiff_v<T_y, T_scale, T_loc>>(diff / SQRT_TWO);
   const auto& erfc_m_scaled_diff = erfc(-scaled_diff);
   const auto& owens_t_diff_alpha = owens_t(diff, alpha_val);
-  const auto& ccdf_log_ = to_ref_if<!is_constant_all<T_shape>::value>(
+  const auto& ccdf_log_ = to_ref_if<is_autodiff_v<T_shape>>(
       1.0 - 0.5 * erfc_m_scaled_diff + 2 * owens_t_diff_alpha);
 
   T_partials_return ccdf_log = sum(log(ccdf_log_));
 
-  if (!is_constant_all<T_y, T_scale, T_loc, T_shape>::value) {
-    const auto& diff_square
-        = to_ref_if<(!is_constant_all<T_y, T_scale, T_loc>::value
-                     && !is_constant_all<T_shape>::value)>(square(diff));
-    if (!is_constant_all<T_y, T_scale, T_loc>::value) {
+  if constexpr (is_any_autodiff_v<T_y, T_scale, T_loc, T_shape>) {
+    const auto& diff_square = to_ref_if<(
+        is_any_autodiff_v<T_y, T_scale, T_loc> && is_autodiff_v<T_shape>)>(
+        square(diff));
+    if constexpr (is_any_autodiff_v<T_y, T_scale, T_loc>) {
       const auto& erf_alpha_scaled_diff = erf(alpha_val * scaled_diff);
       const auto& exp_m_scaled_diff_square = exp(-0.5 * diff_square);
-      auto rep_deriv = to_ref_if<!is_constant_all<T_y>::value
-                                     + !is_constant_all<T_scale>::value
-                                     + !is_constant_all<T_loc>::value
-                                 >= 2>(
+      auto rep_deriv = to_ref_if<
+          is_autodiff_v<
+              T_y> + is_autodiff_v<T_scale> + is_autodiff_v<T_loc> >= 2>(
           (erf_alpha_scaled_diff + 1) * INV_SQRT_TWO_PI
           / (ccdf_log_ * sigma_val) * exp_m_scaled_diff_square);
-      if (!is_constant_all<T_y>::value) {
+      if constexpr (is_autodiff_v<T_y>) {
         partials<0>(ops_partials) = -rep_deriv;
       }
-      if (!is_constant_all<T_scale>::value) {
+      if constexpr (is_autodiff_v<T_scale>) {
         partials<2>(ops_partials) = rep_deriv * diff;
       }
-      if (!is_constant_all<T_loc>::value) {
+      if constexpr (is_autodiff_v<T_loc>) {
         partials<1>(ops_partials) = std::move(rep_deriv);
       }
     }
-    if (!is_constant_all<T_shape>::value) {
+    if constexpr (is_autodiff_v<T_shape>) {
       const auto& alpha_square = square(alpha_val);
       edge<3>(ops_partials).partials_
           = 2.0 * exp(-0.5 * diff_square * (1.0 + alpha_square))

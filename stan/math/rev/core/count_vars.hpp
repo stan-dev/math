@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_REV_CORE_COUNT_VARS_HPP
 #define STAN_MATH_REV_CORE_COUNT_VARS_HPP
 
-#include <stan/math/prim/meta.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core/var.hpp>
+#include <stan/math/prim/functor/apply.hpp>
 
 #include <utility>
 #include <vector>
@@ -34,7 +34,6 @@ template <typename Arith, require_arithmetic_t<scalar_type_t<Arith>>* = nullptr,
 inline size_t count_vars_impl(size_t count, Arith& x, Pargs&&... args);
 
 inline size_t count_vars_impl(size_t count);
-
 /**
  * Count the number of vars in x (a std::vector of vars),
  *  add it to the running total,
@@ -130,10 +129,26 @@ inline size_t count_vars_impl(size_t count, Arith& x, Pargs&&... args) {
   return count_vars_impl(count, std::forward<Pargs>(args)...);
 }
 
+inline size_t count_vars_impl(size_t count, std::basic_ostream<char>*&) {
+  return count;
+}
 /**
  * End count_vars_impl recursion and return total number of counted vars
  */
 inline size_t count_vars_impl(size_t count) { return count; }
+
+template <typename... Pargs, typename... Args>
+inline size_t count_vars_impl(std::size_t count,
+                              const std::tuple<Pargs...>& arg, Args&&... args) {
+  return count_vars_impl(
+      stan::math::apply(
+          [count](auto&&... inner_args) {
+            return (count_vars_impl(0, inner_args) + ... + count);
+          },
+          arg),
+      std::forward<Args>(args)...);
+}
+
 }  // namespace internal
 
 /**

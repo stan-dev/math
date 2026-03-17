@@ -14,7 +14,7 @@ namespace math {
  * @return result of unary plus of the input.
  */
 template <typename T>
-inline T plus(T&& x) {
+inline auto plus(T&& x) {
   return std::forward<T>(x);
 }
 

@@ -2,9 +2,10 @@
 #include <stan/math/rev/core/typedefs.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
 #include <test/unit/util.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 
-TEST(MetaTraitsRev, rev_matrix_type_test) {
+TEST_F(AgradRev, MetaTraitsRev_rev_matrix_type_test) {
   using v_matrix = stan::math::var_value<Eigen::MatrixXd>;
   using v_vector = stan::math::var_value<Eigen::VectorXd>;
   using stan::math::matrix_d;

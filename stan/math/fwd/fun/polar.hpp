@@ -3,6 +3,9 @@
 
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/meta.hpp>
+#include <stan/math/fwd/fun/cos.hpp>
+#include <stan/math/fwd/fun/is_inf.hpp>
+#include <stan/math/fwd/fun/sin.hpp>
 #include <stan/math/prim/fun/polar.hpp>
 #include <complex>
 #include <type_traits>
@@ -41,7 +44,7 @@ inline std::complex<fvar<T>> polar(const fvar<T>& r, U theta) {
  * Returns complex number with specified magnitude and phase angle.
  *
  * @tparam T autodiff value type for phase angle
-+* * @tparam U arithmetic type for magnitude
+ * * @tparam U arithmetic type for magnitude
  * @param[in] r magnitude
  * @param[in] theta phase angle
  * @return complex number with magnitude and phase angle

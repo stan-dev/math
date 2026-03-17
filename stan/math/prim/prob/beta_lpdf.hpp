@@ -44,7 +44,7 @@ template <bool propto, typename T_y, typename T_scale_succ,
           typename T_scale_fail,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_scale_succ, T_scale_fail>* = nullptr>
-return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
+inline return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
     const T_y& y, const T_scale_succ& alpha, const T_scale_fail& beta) {
   using T_partials_return = partials_return_t<T_y, T_scale_succ, T_scale_fail>;
   using T_y_ref = ref_type_if_not_constant_t<T_y>;
@@ -69,7 +69,8 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
   check_positive_finite(function, "First shape parameter", alpha_val);
   check_positive_finite(function, "Second shape parameter", beta_val);
   check_bounded(function, "Random variable", value_of(y_val), 0, 1);
-  if (!include_summand<propto, T_y, T_scale_succ, T_scale_fail>::value) {
+  if constexpr (!include_summand<propto, T_y, T_scale_succ,
+                                 T_scale_fail>::value) {
     return 0;
   }
 
@@ -78,39 +79,39 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
 
   size_t N = max_size(y, alpha, beta);
   T_partials_return logp(0);
-  if (include_summand<propto, T_scale_succ>::value) {
+  if constexpr (include_summand<propto, T_scale_succ>::value) {
     logp -= sum(lgamma(alpha_val)) * N / max_size(alpha);
   }
-  if (include_summand<propto, T_scale_fail>::value) {
+  if constexpr (include_summand<propto, T_scale_fail>::value) {
     logp -= sum(lgamma(beta_val)) * N / max_size(beta);
   }
-  if (include_summand<propto, T_y, T_scale_succ>::value) {
+  if constexpr (include_summand<propto, T_y, T_scale_succ>::value) {
     logp += sum((alpha_val - 1.0) * log_y) * N / max_size(y, alpha);
   }
-  if (include_summand<propto, T_y, T_scale_fail>::value) {
+  if constexpr (include_summand<propto, T_y, T_scale_fail>::value) {
     logp += sum((beta_val - 1.0) * log1m_y) * N / max_size(y, beta);
   }
 
   auto ops_partials = make_partials_propagator(y_ref, alpha_ref, beta_ref);
-  if (!is_constant_all<T_y>::value) {
+  if constexpr (is_autodiff_v<T_y>) {
     edge<0>(ops_partials).partials_
         = (alpha_val - 1) / y_val + (beta_val - 1) / (y_val - 1);
   }
 
-  if (include_summand<propto, T_scale_succ, T_scale_fail>::value) {
+  if constexpr (include_summand<propto, T_scale_succ, T_scale_fail>::value) {
     const auto& alpha_beta
-        = to_ref_if<!is_constant_all<T_scale_succ, T_scale_fail>::value>(
-            alpha_val + beta_val);
+        = to_ref_if<is_any_autodiff_v<T_scale_succ, T_scale_fail>>(alpha_val
+                                                                   + beta_val);
     logp += sum(lgamma(alpha_beta)) * N / max_size(alpha, beta);
-    if (!is_constant_all<T_scale_succ, T_scale_fail>::value) {
+    if constexpr (is_any_autodiff_v<T_scale_succ, T_scale_fail>) {
       const auto& digamma_alpha_beta
-          = to_ref_if < !is_constant_all<T_scale_succ>::value
-            && !is_constant_all<T_scale_fail>::value > (digamma(alpha_beta));
-      if (!is_constant_all<T_scale_succ>::value) {
+          = to_ref_if<is_all_autodiff_v<T_scale_succ, T_scale_fail>>(
+              digamma(alpha_beta));
+      if constexpr (is_autodiff_v<T_scale_succ>) {
         edge<1>(ops_partials).partials_
             = log_y + digamma_alpha_beta - digamma(alpha_val);
       }
-      if (!is_constant_all<T_scale_fail>::value) {
+      if constexpr (is_autodiff_v<T_scale_fail>) {
         edge<2>(ops_partials).partials_
             = log1m_y + digamma_alpha_beta - digamma(beta_val);
       }

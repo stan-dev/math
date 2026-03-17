@@ -3,7 +3,8 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/prim/fun/expm1.hpp>
+#include <stan/math/rev/fun/expm1.hpp>
+#include <stan/math/rev/functor/apply_scalar_unary.hpp>
 #include <stan/math/prim/fun/log1m_exp.hpp>
 
 namespace stan {
@@ -21,8 +22,8 @@ namespace math {
  * @return Natural logarithm of one minus the exponential of the
  * argument.
  */
-template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
-inline auto log1m_exp(const var_value<T>& x) {
+template <typename T, require_var_t<T>* = nullptr>
+inline auto log1m_exp(T&& x) {
   return make_callback_var(log1m_exp(x.val()), [x](auto& vi) mutable {
     as_array_or_scalar(x.adj())
         -= as_array_or_scalar(vi.adj()) / as_array_or_scalar(expm1(-x.val()));

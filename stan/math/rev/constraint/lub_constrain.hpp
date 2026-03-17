@@ -49,20 +49,19 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
     check_less("lub_constrain", "lb", lb_val, ub_val);
     auto diff = ub_val - lb_val;
     double inv_logit_x = inv_logit(value_of(x));
-    return make_callback_var(
-        diff * inv_logit_x + lb_val,
-        [x, ub, lb, diff, inv_logit_x](auto& vi) mutable {
-          if (!is_constant<T>::value) {
-            forward_as<var>(x).adj()
-                += vi.adj() * diff * inv_logit_x * (1.0 - inv_logit_x);
-          }
-          if (!is_constant<L>::value) {
-            forward_as<var>(lb).adj() += vi.adj() * (1.0 - inv_logit_x);
-          }
-          if (!is_constant<U>::value) {
-            forward_as<var>(ub).adj() += vi.adj() * inv_logit_x;
-          }
-        });
+    return make_callback_var(diff * inv_logit_x + lb_val,
+                             [x, ub, lb, diff, inv_logit_x](auto& vi) mutable {
+                               if constexpr (is_autodiff_v<T>) {
+                                 x.adj() += vi.adj() * diff * inv_logit_x
+                                            * (1.0 - inv_logit_x);
+                               }
+                               if constexpr (is_autodiff_v<L>) {
+                                 lb.adj() += vi.adj() * (1.0 - inv_logit_x);
+                               }
+                               if constexpr (is_autodiff_v<U>) {
+                                 ub.adj() += vi.adj() * inv_logit_x;
+                               }
+                             });
   }
 }
 
@@ -124,23 +123,20 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
     return make_callback_var(
         diff * inv_logit_x + lb_val,
         [x, ub, lb, diff, lp, inv_logit_x](auto& vi) mutable {
-          if (!is_constant<T>::value) {
-            forward_as<var>(x).adj()
-                += vi.adj() * diff * inv_logit_x * (1.0 - inv_logit_x)
-                   + lp.adj() * (1.0 - 2.0 * inv_logit_x);
+          if constexpr (is_autodiff_v<T>) {
+            x.adj() += vi.adj() * diff * inv_logit_x * (1.0 - inv_logit_x)
+                       + lp.adj() * (1.0 - 2.0 * inv_logit_x);
           }
-          if (!is_constant<L>::value && !is_constant<U>::value) {
+          if constexpr (is_autodiff_v<L> && is_autodiff_v<U>) {
             const auto one_over_diff = 1.0 / diff;
-            forward_as<var>(lb).adj()
+            lb.adj()
                 += vi.adj() * (1.0 - inv_logit_x) + -one_over_diff * lp.adj();
-            forward_as<var>(ub).adj()
-                += vi.adj() * inv_logit_x + one_over_diff * lp.adj();
-          } else if (!is_constant<L>::value) {
-            forward_as<var>(lb).adj()
+            ub.adj() += vi.adj() * inv_logit_x + one_over_diff * lp.adj();
+          } else if constexpr (is_autodiff_v<L>) {
+            lb.adj()
                 += vi.adj() * (1.0 - inv_logit_x) + (-1.0 / diff) * lp.adj();
-          } else if (!is_constant<U>::value) {
-            forward_as<var>(ub).adj()
-                += vi.adj() * inv_logit_x + (1.0 / diff) * lp.adj();
+          } else if constexpr (is_autodiff_v<U>) {
+            ub.adj() += vi.adj() * inv_logit_x + (1.0 / diff) * lp.adj();
           }
         });
   }
@@ -172,17 +168,15 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
     auto inv_logit_x = to_arena(inv_logit(arena_x.val().array()));
     arena_t<ret_type> ret = diff * inv_logit_x + lb_val;
     reverse_pass_callback([arena_x, ub, lb, ret, diff, inv_logit_x]() mutable {
-      if (!is_constant<T>::value) {
-        using T_var = arena_t<promote_scalar_t<var, T>>;
-        forward_as<T_var>(arena_x).adj().array()
+      if constexpr (is_autodiff_v<T>) {
+        arena_x.adj().array()
             += ret.adj().array() * diff * inv_logit_x * (1.0 - inv_logit_x);
       }
-      if (!is_constant<L>::value) {
-        forward_as<var>(lb).adj()
-            += (ret.adj().array() * (1.0 - inv_logit_x)).sum();
+      if constexpr (is_autodiff_v<L>) {
+        lb.adj() += (ret.adj().array() * (1.0 - inv_logit_x)).sum();
       }
-      if (!is_constant<U>::value) {
-        forward_as<var>(ub).adj() += (ret.adj().array() * inv_logit_x).sum();
+      if constexpr (is_autodiff_v<U>) {
+        ub.adj() += (ret.adj().array() * inv_logit_x).sum();
       }
     });
     return ret_type(ret);
@@ -219,26 +213,24 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
     arena_t<ret_type> ret = diff * inv_logit_x + lb_val;
     reverse_pass_callback(
         [arena_x, ub, lb, ret, lp, diff, inv_logit_x]() mutable {
-          if (!is_constant<T>::value) {
-            forward_as<arena_t<promote_scalar_t<var, T>>>(arena_x).adj().array()
+          if constexpr (is_autodiff_v<T>) {
+            arena_x.adj().array()
                 += ret.adj().array() * diff * inv_logit_x * (1.0 - inv_logit_x)
                    + lp.adj() * (1.0 - 2.0 * inv_logit_x);
           }
-          if (!is_constant<L>::value && !is_constant<U>::value) {
+          if constexpr (is_autodiff_v<L> && is_autodiff_v<U>) {
             const auto lp_calc = lp.adj() * ret.size();
             const auto one_over_diff = 1.0 / diff;
-            forward_as<var>(lb).adj()
-                += (ret.adj().array() * (1.0 - inv_logit_x)).sum()
-                   + -one_over_diff * lp_calc;
-            forward_as<var>(ub).adj() += (ret.adj().array() * inv_logit_x).sum()
-                                         + one_over_diff * lp_calc;
-          } else if (!is_constant<L>::value) {
-            forward_as<var>(lb).adj()
-                += (ret.adj().array() * (1.0 - inv_logit_x)).sum()
-                   + -(1.0 / diff) * lp.adj() * ret.size();
-          } else if (!is_constant<U>::value) {
-            forward_as<var>(ub).adj() += (ret.adj().array() * inv_logit_x).sum()
-                                         + (1.0 / diff) * lp.adj() * ret.size();
+            lb.adj() += (ret.adj().array() * (1.0 - inv_logit_x)).sum()
+                        + -one_over_diff * lp_calc;
+            ub.adj() += (ret.adj().array() * inv_logit_x).sum()
+                        + one_over_diff * lp_calc;
+          } else if constexpr (is_autodiff_v<L>) {
+            lb.adj() += (ret.adj().array() * (1.0 - inv_logit_x)).sum()
+                        + -(1.0 / diff) * lp.adj() * ret.size();
+          } else if constexpr (is_autodiff_v<U>) {
+            ub.adj() += (ret.adj().array() * inv_logit_x).sum()
+                        + (1.0 / diff) * lp.adj() * ret.size();
           }
         });
     return ret_type(ret);
@@ -272,21 +264,19 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
         ub_val - value_of(arena_x).array().exp(), diff * inv_logit_x + lb_val);
     reverse_pass_callback([arena_x, ub, arena_lb, ret, diff, inv_logit_x,
                            is_lb_inf]() mutable {
-      using T_var = arena_t<promote_scalar_t<var, T>>;
-      using L_var = arena_t<promote_scalar_t<var, L>>;
-      if (!is_constant<T>::value) {
-        forward_as<T_var>(arena_x).adj().array() += (is_lb_inf).select(
+      if constexpr (is_autodiff_v<T>) {
+        arena_x.adj().array() += (is_lb_inf).select(
             ret.adj().array() * -value_of(arena_x).array().exp(),
             ret.adj().array() * diff * inv_logit_x * (1.0 - inv_logit_x));
       }
-      if (!is_constant<U>::value) {
-        forward_as<var>(ub).adj()
+      if constexpr (is_autodiff_v<U>) {
+        ub.adj()
             += (is_lb_inf)
                    .select(ret.adj().array(), ret.adj().array() * inv_logit_x)
                    .sum();
       }
-      if (!is_constant<L>::value) {
-        forward_as<L_var>(arena_lb).adj().array()
+      if constexpr (is_autodiff_v<L>) {
+        arena_lb.adj().array()
             += (is_lb_inf).select(0, ret.adj().array() * (1.0 - inv_logit_x));
       }
     });
@@ -328,23 +318,21 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
               .sum();
     reverse_pass_callback([arena_x, arena_x_val, ub, arena_lb, ret, lp, diff,
                            inv_logit_x, is_lb_inf]() mutable {
-      using T_var = arena_t<promote_scalar_t<var, T>>;
-      using L_var = arena_t<promote_scalar_t<var, L>>;
       const auto lp_adj = lp.adj();
-      if (!is_constant<T>::value) {
+      if constexpr (is_autodiff_v<T>) {
         const auto x_sign = arena_x_val.sign().eval();
-        forward_as<T_var>(arena_x).adj().array() += (is_lb_inf).select(
+        arena_x.adj().array() += (is_lb_inf).select(
             ret.adj().array() * -arena_x_val.exp() + lp_adj,
             ret.adj().array() * diff * inv_logit_x * (1.0 - inv_logit_x)
                 + lp.adj() * (1.0 - 2.0 * inv_logit_x));
       }
-      if (!is_constant<L>::value) {
-        forward_as<L_var>(arena_lb).adj().array()
+      if constexpr (is_autodiff_v<L>) {
+        arena_lb.adj().array()
             += (is_lb_inf).select(0, ret.adj().array() * (1.0 - inv_logit_x)
                                          + -(1.0 / diff) * lp_adj);
       }
-      if (!is_constant<U>::value) {
-        forward_as<var>(ub).adj()
+      if constexpr (is_autodiff_v<U>) {
+        ub.adj()
             += (is_lb_inf)
                    .select(ret.adj().array(), ret.adj().array() * inv_logit_x
                                                   + (1.0 / diff) * lp_adj)
@@ -383,22 +371,19 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
         arena_x_val.array().exp() + lb_val, diff * inv_logit_x + lb_val);
     reverse_pass_callback([arena_x, arena_x_val, arena_ub, lb, ret, is_ub_inf,
                            inv_logit_x, diff]() mutable {
-      using T_var = arena_t<promote_scalar_t<var, T>>;
-      using U_var = arena_t<promote_scalar_t<var, U>>;
-      if (!is_constant<T>::value) {
-        forward_as<T_var>(arena_x).adj().array() += (is_ub_inf).select(
+      if constexpr (is_autodiff_v<T>) {
+        arena_x.adj().array() += (is_ub_inf).select(
             ret.adj().array() * arena_x_val.array().exp(),
             ret.adj().array() * diff * inv_logit_x * (1.0 - inv_logit_x));
       }
-      if (!is_constant<L>::value) {
-        forward_as<var>(lb).adj()
-            += (is_ub_inf)
-                   .select(ret.adj().array(),
-                           ret.adj().array() * (1.0 - inv_logit_x))
-                   .sum();
+      if constexpr (is_autodiff_v<L>) {
+        lb.adj() += (is_ub_inf)
+                        .select(ret.adj().array(),
+                                ret.adj().array() * (1.0 - inv_logit_x))
+                        .sum();
       }
-      if (!is_constant<U>::value) {
-        forward_as<U_var>(arena_ub).adj().array()
+      if constexpr (is_autodiff_v<U>) {
+        arena_ub.adj().array()
             += (is_ub_inf).select(0, ret.adj().array() * inv_logit_x);
       }
     });
@@ -440,25 +425,22 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
         arena_x_val.array().exp() + lb_val, diff * inv_logit_x + lb_val);
     reverse_pass_callback([arena_x, arena_x_val, diff, inv_logit_x, arena_ub,
                            lb, ret, lp, is_ub_inf]() mutable {
-      using T_var = arena_t<promote_scalar_t<var, T>>;
-      using U_var = arena_t<promote_scalar_t<var, U>>;
       const auto lp_adj = lp.adj();
-      if (!is_constant<T>::value) {
-        forward_as<T_var>(arena_x).adj().array() += (is_ub_inf).select(
+      if constexpr (is_autodiff_v<T>) {
+        arena_x.adj().array() += (is_ub_inf).select(
             ret.adj().array() * arena_x_val.array().exp() + lp_adj,
             ret.adj().array() * diff * inv_logit_x * (1.0 - inv_logit_x)
                 + lp.adj() * (1.0 - 2.0 * inv_logit_x));
       }
-      if (!is_constant<L>::value) {
-        forward_as<var>(lb).adj()
-            += (is_ub_inf)
-                   .select(ret.adj().array(),
-                           ret.adj().array() * (1.0 - inv_logit_x)
-                               + -(1.0 / diff) * lp_adj)
-                   .sum();
+      if constexpr (is_autodiff_v<L>) {
+        lb.adj() += (is_ub_inf)
+                        .select(ret.adj().array(),
+                                ret.adj().array() * (1.0 - inv_logit_x)
+                                    + -(1.0 / diff) * lp_adj)
+                        .sum();
       }
-      if (!is_constant<U>::value) {
-        forward_as<U_var>(arena_ub).adj().array() += (is_ub_inf).select(
+      if constexpr (is_autodiff_v<U>) {
+        arena_ub.adj().array() += (is_ub_inf).select(
             0, ret.adj().array() * inv_logit_x + (1.0 / diff) * lp_adj);
       }
     });
@@ -498,27 +480,22 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
   reverse_pass_callback([arena_x, arena_x_val, inv_logit_x, arena_ub, arena_lb,
                          diff, ret, is_ub_inf, is_lb_inf,
                          is_lb_ub_inf]() mutable {
-    using T_var = arena_t<promote_scalar_t<var, T>>;
-    using L_var = arena_t<promote_scalar_t<var, L>>;
-    using U_var = arena_t<promote_scalar_t<var, U>>;
     // The most likely case is neither of them are infinity
     const bool is_none_inf = !(is_lb_inf.any() || is_ub_inf.any());
     if (is_none_inf) {
-      if (!is_constant<T>::value) {
-        forward_as<T_var>(arena_x).adj().array()
+      if constexpr (is_autodiff_v<T>) {
+        arena_x.adj().array()
             += ret.adj().array() * diff * inv_logit_x * (1.0 - inv_logit_x);
       }
-      if (!is_constant<L>::value) {
-        forward_as<L_var>(arena_lb).adj().array()
-            += ret.adj().array() * (1.0 - inv_logit_x);
+      if constexpr (is_autodiff_v<L>) {
+        arena_lb.adj().array() += ret.adj().array() * (1.0 - inv_logit_x);
       }
-      if (!is_constant<U>::value) {
-        forward_as<U_var>(arena_ub).adj().array()
-            += ret.adj().array() * inv_logit_x;
+      if constexpr (is_autodiff_v<U>) {
+        arena_ub.adj().array() += ret.adj().array() * inv_logit_x;
       }
     } else {
-      if (!is_constant<T>::value) {
-        forward_as<T_var>(arena_x).adj().array()
+      if constexpr (is_autodiff_v<T>) {
+        arena_x.adj().array()
             += (is_lb_ub_inf)
                    .select(
                        ret.adj().array(),
@@ -529,13 +506,13 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
                                ret.adj().array() * diff * inv_logit_x
                                    * (1.0 - inv_logit_x))));
       }
-      if (!is_constant<U>::value) {
-        forward_as<U_var>(arena_ub).adj().array() += (is_ub_inf).select(
+      if constexpr (is_autodiff_v<U>) {
+        arena_ub.adj().array() += (is_ub_inf).select(
             0, (is_lb_inf).select(ret.adj().array(),
                                   ret.adj().array() * inv_logit_x));
       }
-      if (!is_constant<L>::value) {
-        forward_as<L_var>(arena_lb).adj().array() += (is_lb_inf).select(
+      if constexpr (is_autodiff_v<L>) {
+        arena_lb.adj().array() += (is_lb_inf).select(
             0, (is_ub_inf).select(ret.adj().array(),
                                   ret.adj().array() * (1.0 - inv_logit_x)));
       }
@@ -586,29 +563,26 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
   reverse_pass_callback([arena_x, arena_x_val, inv_logit_x, arena_ub, arena_lb,
                          diff, ret, is_ub_inf, is_lb_inf, is_lb_ub_inf,
                          lp]() mutable {
-    using T_var = arena_t<promote_scalar_t<var, T>>;
-    using L_var = arena_t<promote_scalar_t<var, L>>;
-    using U_var = arena_t<promote_scalar_t<var, U>>;
     const auto lp_adj = lp.adj();
     // The most likely case is neither of them are infinity
     const bool is_none_inf = !(is_lb_inf.any() || is_ub_inf.any());
     if (is_none_inf) {
-      if (!is_constant<T>::value) {
-        forward_as<T_var>(arena_x).adj().array()
+      if constexpr (is_autodiff_v<T>) {
+        arena_x.adj().array()
             += ret.adj().array() * diff * inv_logit_x * (1.0 - inv_logit_x)
                + lp.adj() * (1.0 - 2.0 * inv_logit_x);
       }
-      if (!is_constant<L>::value) {
-        forward_as<L_var>(arena_lb).adj().array()
+      if constexpr (is_autodiff_v<L>) {
+        arena_lb.adj().array()
             += ret.adj().array() * (1.0 - inv_logit_x) + -(1.0 / diff) * lp_adj;
       }
-      if (!is_constant<U>::value) {
-        forward_as<U_var>(arena_ub).adj().array()
+      if constexpr (is_autodiff_v<U>) {
+        arena_ub.adj().array()
             += ret.adj().array() * inv_logit_x + (1.0 / diff) * lp_adj;
       }
     } else {
-      if (!is_constant<T>::value) {
-        forward_as<T_var>(arena_x).adj().array()
+      if constexpr (is_autodiff_v<T>) {
+        arena_x.adj().array()
             += (is_lb_ub_inf)
                    .select(
                        ret.adj().array(),
@@ -622,14 +596,14 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
                                        * (1.0 - inv_logit_x)
                                    + lp.adj() * (1.0 - 2.0 * inv_logit_x))));
       }
-      if (!is_constant<L>::value) {
-        forward_as<L_var>(arena_lb).adj().array() += (is_lb_inf).select(
+      if constexpr (is_autodiff_v<L>) {
+        arena_lb.adj().array() += (is_lb_inf).select(
             0, (is_ub_inf).select(ret.adj().array(),
                                   ret.adj().array() * (1.0 - inv_logit_x)
                                       + -(1.0 / diff) * lp_adj));
       }
-      if (!is_constant<U>::value) {
-        forward_as<U_var>(arena_ub).adj().array() += (is_ub_inf).select(
+      if constexpr (is_autodiff_v<U>) {
+        arena_ub.adj().array() += (is_ub_inf).select(
             0, (is_lb_inf).select(
                    ret.adj().array(),
                    ret.adj().array() * inv_logit_x + (1.0 / diff) * lp_adj));

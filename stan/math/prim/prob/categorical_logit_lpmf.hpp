@@ -14,14 +14,14 @@ namespace math {
 
 // CategoricalLog(n|theta)  [0 < n <= N, theta unconstrained], no checking
 template <bool propto, typename T_prob, require_col_vector_t<T_prob>* = nullptr>
-return_type_t<T_prob> categorical_logit_lpmf(int n, const T_prob& beta) {
+inline return_type_t<T_prob> categorical_logit_lpmf(int n, const T_prob& beta) {
   static constexpr const char* function = "categorical_logit_lpmf";
   check_bounded(function, "categorical outcome out of support", n, 1,
                 beta.size());
   ref_type_t<T_prob> beta_ref = beta;
   check_finite(function, "log odds parameter", beta_ref);
 
-  if (!include_summand<propto, T_prob>::value) {
+  if constexpr (!include_summand<propto, T_prob>::value) {
     return 0.0;
   }
 
@@ -31,8 +31,8 @@ return_type_t<T_prob> categorical_logit_lpmf(int n, const T_prob& beta) {
 }
 
 template <bool propto, typename T_prob, require_col_vector_t<T_prob>* = nullptr>
-return_type_t<T_prob> categorical_logit_lpmf(const std::vector<int>& ns,
-                                             const T_prob& beta) {
+inline return_type_t<T_prob> categorical_logit_lpmf(const std::vector<int>& ns,
+                                                    const T_prob& beta) {
   static constexpr const char* function = "categorical_logit_lpmf";
 
   check_bounded(function, "categorical outcome out of support", ns, 1,
@@ -40,7 +40,7 @@ return_type_t<T_prob> categorical_logit_lpmf(const std::vector<int>& ns,
   ref_type_t<T_prob> beta_ref = beta;
   check_finite(function, "log odds parameter", beta_ref);
 
-  if (!include_summand<propto, T_prob>::value) {
+  if constexpr (!include_summand<propto, T_prob>::value) {
     return 0.0;
   }
 

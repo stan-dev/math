@@ -1,0 +1,23 @@
+# Copyright 2023-2024 René Ferdinand Rivera Morell
+# Copyright 2024 Peter Dimov
+# Distributed under the Boost Software License, Version 1.0.
+# https://www.boost.org/LICENSE_1_0.txt
+
+require-b2 5.2 ;
+
+constant boost_dependencies :
+    /boost/assert//boost_assert
+    /boost/config//boost_config
+    /boost/throw_exception//boost_throw_exception
+    /boost/type_traits//boost_type_traits
+    ;
+
+project /boost/uuid ;
+
+explicit
+    [ alias boost_uuid : : : : <include>include <library>$(boost_dependencies) ]
+    [ alias all : boost_uuid test ]
+    ;
+
+call-if : boost-library uuid
+    ;

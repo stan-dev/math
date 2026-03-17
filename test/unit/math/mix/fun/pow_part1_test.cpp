@@ -5,7 +5,7 @@
 #include <vector>
 
 template <typename T>
-void expect_arith_instantiate() {
+inline void expect_arith_instantiate() {
   auto a1 = stan::math::pow(T(1.0), 1);
   auto b1 = stan::math::pow(T(1.0), 1.0);
   auto c1 = stan::math::pow(1, T(1.0));

@@ -33,9 +33,9 @@ namespace math {
 template <bool propto, typename T_y, typename T_covar, typename T_w,
           require_all_matrix_t<T_y, T_covar>* = nullptr,
           require_col_vector_t<T_w>* = nullptr>
-return_type_t<T_y, T_covar, T_w> multi_gp_lpdf(const T_y& y,
-                                               const T_covar& Sigma,
-                                               const T_w& w) {
+inline return_type_t<T_y, T_covar, T_w> multi_gp_lpdf(const T_y& y,
+                                                      const T_covar& Sigma,
+                                                      const T_w& w) {
   using T_lp = return_type_t<T_y, T_covar, T_w>;
   static constexpr const char* function = "multi_gp_lpdf";
   check_size_match(function, "Size of random variable (rows y)", y.rows(),
@@ -62,19 +62,19 @@ return_type_t<T_y, T_covar, T_w> multi_gp_lpdf(const T_y& y,
     return lp;
   }
 
-  if (include_summand<propto>::value) {
+  if constexpr (include_summand<propto>::value) {
     lp += NEG_LOG_SQRT_TWO_PI * y.size();
   }
 
-  if (include_summand<propto, T_covar>::value) {
+  if constexpr (include_summand<propto, T_covar>::value) {
     lp -= 0.5 * log_determinant_ldlt(ldlt_Sigma) * y.rows();
   }
 
-  if (include_summand<propto, T_w>::value) {
+  if constexpr (include_summand<propto, T_w>::value) {
     lp += (0.5 * y.cols()) * sum(log(w_ref));
   }
 
-  if (include_summand<propto, T_y, T_w, T_covar>::value) {
+  if constexpr (include_summand<propto, T_y, T_w, T_covar>::value) {
     lp -= 0.5 * trace_gen_inv_quad_form_ldlt(w_ref, ldlt_Sigma, y_t_ref);
   }
 

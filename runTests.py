@@ -383,7 +383,7 @@ def checkToolchainPathWindows():
             universal_newlines=True,
         )
         out, err = p1.communicate()
-        if re.search(" |\(|\)", out):
+        if re.search(r" |\(|\)", out):
             stopErr(
                 "The RTools toolchain is installed in a path with spaces or bracket. Please reinstall to a valid path.",
                 -1,

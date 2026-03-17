@@ -3,7 +3,12 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/prim/fun/tgamma.hpp>
+#include <stan/math/fwd/fun/digamma.hpp>
+#include <stan/math/fwd/fun/exp.hpp>
+#include <stan/math/fwd/fun/fabs.hpp>
+#include <stan/math/fwd/fun/log.hpp>
+#include <stan/math/fwd/fun/pow.hpp>
+#include <stan/math/fwd/fun/tgamma.hpp>
 #include <stan/math/prim/fun/gamma_q.hpp>
 #include <cmath>
 
@@ -12,12 +17,6 @@ namespace math {
 
 template <typename T>
 inline fvar<T> gamma_q(const fvar<T>& x1, const fvar<T>& x2) {
-  using boost::math::digamma;
-  using std::exp;
-  using std::fabs;
-  using std::log;
-  using std::pow;
-
   T u = gamma_q(x1.val_, x2.val_);
 
   T S = 0;
@@ -44,14 +43,7 @@ inline fvar<T> gamma_q(const fvar<T>& x1, const fvar<T>& x2) {
 
 template <typename T>
 inline fvar<T> gamma_q(const fvar<T>& x1, double x2) {
-  using boost::math::digamma;
-  using std::exp;
-  using std::fabs;
-  using std::log;
-  using std::pow;
-
   T u = gamma_q(x1.val_, x2);
-
   T S = 0;
   double s = 1;
   double l = log(x2);
@@ -75,15 +67,9 @@ inline fvar<T> gamma_q(const fvar<T>& x1, double x2) {
 
 template <typename T>
 inline fvar<T> gamma_q(double x1, const fvar<T>& x2) {
-  using std::exp;
-  using std::pow;
-
   T u = gamma_q(x1, x2.val_);
-
   double g = tgamma(x1);
-
   T der2 = -exp(-x2.val_) * pow(x2.val_, x1 - 1.0) / g;
-
   return fvar<T>(u, x2.d_ * der2);
 }
 }  // namespace math

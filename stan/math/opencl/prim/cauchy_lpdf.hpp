@@ -35,7 +35,7 @@ template <
     require_all_prim_or_rev_kernel_expression_t<T_y_cl, T_loc_cl,
                                                 T_scale_cl>* = nullptr,
     require_any_not_stan_scalar_t<T_y_cl, T_loc_cl, T_scale_cl>* = nullptr>
-return_type_t<T_y_cl, T_loc_cl, T_scale_cl> cauchy_lpdf(
+inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl> cauchy_lpdf(
     const T_y_cl& y, const T_loc_cl& mu, const T_scale_cl& sigma) {
   static constexpr const char* function = "cauchy_lpdf(OpenCL)";
   using T_partials_return = partials_return_t<T_y_cl, T_loc_cl, T_scale_cl>;
@@ -48,7 +48,7 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> cauchy_lpdf(
   if (N == 0) {
     return 0.0;
   }
-  if (!include_summand<propto, T_y_cl, T_loc_cl, T_scale_cl>::value) {
+  if constexpr (!include_summand<propto, T_y_cl, T_loc_cl, T_scale_cl>::value) {
     return 0.0;
   }
 
@@ -95,24 +95,23 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> cauchy_lpdf(
   results(check_y_not_nan, check_mu_finite, check_sigma_positive_finite,
           logp_cl, mu_deriv_cl, y_deriv_cl, sigma_deriv_cl)
       = expressions(y_not_nan_expr, mu_finite_expr, sigma_positive_finite_expr,
-                    logp_expr,
-                    calc_if<!is_constant<T_loc_cl>::value>(mu_deriv_expr),
-                    calc_if<!is_constant<T_y_cl>::value>(-mu_deriv_expr),
-                    calc_if<!is_constant<T_scale_cl>::value>(sigma_deriv_expr));
+                    logp_expr, calc_if<is_autodiff_v<T_loc_cl>>(mu_deriv_expr),
+                    calc_if<is_autodiff_v<T_y_cl>>(-mu_deriv_expr),
+                    calc_if<is_autodiff_v<T_scale_cl>>(sigma_deriv_expr));
 
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
-  if (include_summand<propto>::value) {
+  if constexpr (include_summand<propto>::value) {
     logp -= N * LOG_PI;
   }
   auto ops_partials = make_partials_propagator(y_col, mu_col, sigma_col);
 
-  if (!is_constant<T_y_cl>::value) {
+  if constexpr (is_autodiff_v<T_y_cl>) {
     partials<0>(ops_partials) = std::move(y_deriv_cl);
   }
-  if (!is_constant<T_loc_cl>::value) {
+  if constexpr (is_autodiff_v<T_loc_cl>) {
     partials<1>(ops_partials) = std::move(mu_deriv_cl);
   }
-  if (!is_constant<T_scale_cl>::value) {
+  if constexpr (is_autodiff_v<T_scale_cl>) {
     partials<2>(ops_partials) = std::move(sigma_deriv_cl);
   }
   return ops_partials.build(logp);

@@ -36,7 +36,7 @@ template <bool propto, typename T_y_cl, typename T_loc_cl, typename T_scale_cl,
               T_y_cl, T_loc_cl, T_scale_cl, T_skewness_cl>* = nullptr,
           require_any_not_stan_scalar_t<T_y_cl, T_loc_cl, T_scale_cl,
                                         T_skewness_cl>* = nullptr>
-return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_skewness_cl>
+inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_skewness_cl>
 skew_double_exponential_lpdf(const T_y_cl& y, const T_loc_cl& mu,
                              const T_scale_cl& sigma,
                              const T_skewness_cl& tau) {
@@ -115,29 +115,29 @@ skew_double_exponential_lpdf(const T_y_cl& y, const T_loc_cl& mu,
           tau_deriv_cl)
       = expressions(y_not_nan_expr, mu_finite_expr, sigma_positive_finite_expr,
                     tau_bounded_expr, logp_expr,
-                    calc_if<!is_constant<T_y_cl>::value>(y_deriv),
-                    calc_if<!is_constant<T_loc_cl>::value>(mu_deriv),
-                    calc_if<!is_constant<T_scale_cl>::value>(sigma_deriv),
-                    calc_if<!is_constant<T_skewness_cl>::value>(tau_deriv));
+                    calc_if<is_autodiff_v<T_y_cl>>(y_deriv),
+                    calc_if<is_autodiff_v<T_loc_cl>>(mu_deriv),
+                    calc_if<is_autodiff_v<T_scale_cl>>(sigma_deriv),
+                    calc_if<is_autodiff_v<T_skewness_cl>>(tau_deriv));
 
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
 
-  if (include_summand<propto>::value) {
+  if constexpr (include_summand<propto>::value) {
     logp += N * LOG_TWO;
   }
 
   auto ops_partials
       = make_partials_propagator(y_col, mu_col, sigma_col, tau_col);
-  if (!is_constant<T_y_cl>::value) {
+  if constexpr (is_autodiff_v<T_y_cl>) {
     partials<0>(ops_partials) = std::move(y_deriv_cl);
   }
-  if (!is_constant<T_loc_cl>::value) {
+  if constexpr (is_autodiff_v<T_loc_cl>) {
     partials<1>(ops_partials) = std::move(mu_deriv_cl);
   }
-  if (!is_constant<T_scale_cl>::value) {
+  if constexpr (is_autodiff_v<T_scale_cl>) {
     partials<2>(ops_partials) = std::move(sigma_deriv_cl);
   }
-  if (!is_constant<T_skewness_cl>::value) {
+  if constexpr (is_autodiff_v<T_skewness_cl>) {
     partials<3>(ops_partials) = std::move(tau_deriv_cl);
   }
   return ops_partials.build(logp);

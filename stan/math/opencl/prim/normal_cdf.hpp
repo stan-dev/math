@@ -31,7 +31,7 @@ template <
     require_all_prim_or_rev_kernel_expression_t<T_y_cl, T_loc_cl,
                                                 T_scale_cl>* = nullptr,
     require_any_not_stan_scalar_t<T_y_cl, T_loc_cl, T_scale_cl>* = nullptr>
-return_type_t<T_y_cl, T_loc_cl, T_scale_cl> normal_cdf(
+inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl> normal_cdf(
     const T_y_cl& y, const T_loc_cl& mu, const T_scale_cl& sigma) {
   static constexpr const char* function = "normal_cdf(OpenCL)";
   using T_partials_return = partials_return_t<T_y_cl, T_loc_cl, T_scale_cl>;
@@ -83,10 +83,10 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> normal_cdf(
 
   results(check_y_not_nan, check_mu_finite, check_sigma_positive, cdf_cl,
           mu_deriv_cl, sigma_deriv_cl)
-      = expressions(
-          y_not_nan_expr, mu_finite_expr, sigma_positive_expr, cdf_expr,
-          calc_if<!is_constant_all<T_y_cl, T_loc_cl>::value>(mu_deriv_tmp),
-          calc_if<!is_constant<T_scale_cl>::value>(sigma_deriv_tmp));
+      = expressions(y_not_nan_expr, mu_finite_expr, sigma_positive_expr,
+                    cdf_expr,
+                    calc_if<is_any_autodiff_v<T_y_cl, T_loc_cl>>(mu_deriv_tmp),
+                    calc_if<is_autodiff_v<T_scale_cl>>(sigma_deriv_tmp));
 
   T_partials_return cdf = (from_matrix_cl(cdf_cl)).prod();
 
@@ -95,19 +95,19 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> normal_cdf(
   auto sigma_deriv = elt_multiply(sigma_deriv_cl, -SQRT_TWO * cdf);
 
   results(mu_deriv_cl, y_deriv_cl, sigma_deriv_cl)
-      = expressions(calc_if<!is_constant<T_loc_cl>::value>(mu_deriv),
-                    calc_if<!is_constant<T_y_cl>::value>(y_deriv),
-                    calc_if<!is_constant<T_scale_cl>::value>(sigma_deriv));
+      = expressions(calc_if<is_autodiff_v<T_loc_cl>>(mu_deriv),
+                    calc_if<is_autodiff_v<T_y_cl>>(y_deriv),
+                    calc_if<is_autodiff_v<T_scale_cl>>(sigma_deriv));
 
   auto ops_partials = make_partials_propagator(y_col, mu_col, sigma_col);
 
-  if (!is_constant<T_y_cl>::value) {
+  if constexpr (is_autodiff_v<T_y_cl>) {
     partials<0>(ops_partials) = std::move(y_deriv_cl);
   }
-  if (!is_constant<T_loc_cl>::value) {
+  if constexpr (is_autodiff_v<T_loc_cl>) {
     partials<1>(ops_partials) = std::move(mu_deriv_cl);
   }
-  if (!is_constant<T_scale_cl>::value) {
+  if constexpr (is_autodiff_v<T_scale_cl>) {
     partials<2>(ops_partials) = std::move(sigma_deriv_cl);
   }
   return ops_partials.build(cdf);

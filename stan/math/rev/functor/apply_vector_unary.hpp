@@ -24,9 +24,9 @@ struct apply_vector_unary<T, require_var_matrix_t<T>> {
    * @param f functor to apply to Eigen input.
    * @return object with result of applying functor to input
    */
-  template <typename F>
-  static inline plain_type_t<T> apply(const T& x, const F& f) {
-    return f(x);
+  template <typename T2, typename F>
+  static inline auto apply(T2&& x, F&& f) {
+    return std::forward<F>(f)(std::forward<T2>(x));
   }
 
   /**
@@ -39,9 +39,9 @@ struct apply_vector_unary<T, require_var_matrix_t<T>> {
    * @param f functor to apply to Eigen input.
    * @return object with result of applying functor to input
    */
-  template <typename F>
-  static inline plain_type_t<T> apply_no_holder(const T& x, const F& f) {
-    return f(x);
+  template <typename T2, typename F>
+  static inline auto apply_no_holder(T2&& x, F&& f) {
+    return std::forward<F>(f)(std::forward<T2>(x));
   }
 
   /**
@@ -55,9 +55,9 @@ struct apply_vector_unary<T, require_var_matrix_t<T>> {
    * @param f functor to apply to input.
    * @return scalar result of applying functor to input.
    */
-  template <typename F>
-  static inline var reduce(const T& x, const F& f) {
-    return f(x);
+  template <typename T2, typename F>
+  static inline auto reduce(T2& x, F&& f) {
+    return make_holder(std::forward<F>(f), std::forward<T2>(x));
   }
 };
 

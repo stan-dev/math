@@ -33,10 +33,12 @@ struct is_rev_matrix<
  */
 template <typename T>
 struct is_rev_col_vector<
-    T, require_all_t<is_var<scalar_type_t<T>>,
-                     math::disjunction<is_eigen_col_vector<T>,
-                                       is_eigen_col_vector<value_type_t<T>>>>>
-    : std::true_type {};
+    T,
+    require_all_t<
+        is_var<scalar_type_t<T>>,
+        math::disjunction<
+            math::conjunction<is_var<T>, is_eigen_col_vector<value_type_t<T>>>,
+            is_eigen_col_vector<T>>>> : std::true_type {};
 
 /** \ingroup type_trait
  * Defines a static member named value which is defined to be true
@@ -47,10 +49,12 @@ struct is_rev_col_vector<
  */
 template <typename T>
 struct is_rev_row_vector<
-    T, require_all_t<is_var<scalar_type_t<T>>,
-                     math::disjunction<is_eigen_row_vector<T>,
-                                       is_eigen_row_vector<value_type_t<T>>>>>
-    : std::true_type {};
+    T,
+    require_all_t<
+        is_var<scalar_type_t<T>>,
+        math::disjunction<
+            math::conjunction<is_var<T>, is_eigen_row_vector<value_type_t<T>>>,
+            is_eigen_row_vector<T>>>> : std::true_type {};
 
 /** \ingroup type_trait
  * Defines a static member named value which is defined to be true

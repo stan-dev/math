@@ -4,7 +4,7 @@
 #include <vector>
 
 template <typename T, typename S>
-void test_constructor_init_type() {
+inline void test_constructor_init_type() {
   S a = 2;
   std::complex<T> z(a);
   EXPECT_EQ(a, z.real());
@@ -12,7 +12,7 @@ void test_constructor_init_type() {
 }
 
 template <typename T1, typename T2, typename T>
-void test_binary_constructor(const T1& x, const T2& y) {
+inline void test_binary_constructor(const T1& x, const T2& y) {
   using stan::math::value_of_rec;
   std::complex<T> z(x, y);
   EXPECT_EQ(1.1, value_of_rec(z.real()));
@@ -20,7 +20,7 @@ void test_binary_constructor(const T1& x, const T2& y) {
 }
 
 template <typename T>
-void test_set_real_imag() {
+inline void test_set_real_imag() {
   std::complex<T> z;
   z.real(3.2);
   EXPECT_TRUE(z.real() == 3.2);
@@ -29,7 +29,7 @@ void test_set_real_imag() {
 }
 
 template <typename T>
-void test_std_complex_constructor() {
+inline void test_std_complex_constructor() {
   using stan::math::value_of_rec;
   using c_t = std::complex<T>;
 
@@ -78,12 +78,12 @@ TEST_F(mathMix, stdComplexConstructor) {
 
 // convenience for type inference of T
 template <typename T>
-std::complex<T> to_std_complex(const T& x) {
+inline std::complex<T> to_std_complex(const T& x) {
   return {x};
 }
 
 template <typename F>
-void expect_common_complex(const F& f) {
+inline void expect_common_complex(const F& f) {
   // cover all quadrants and projections
   for (double re : std::vector<double>{-1.4, -1e-3, 0, 2e-3, 2.3}) {
     for (double im : std::vector<double>{-0.5, -3e-3, 0, 4e-3, 1.5}) {
@@ -93,7 +93,7 @@ void expect_common_complex(const F& f) {
 }
 
 template <typename F>
-void expect_common_for_complex(const F& f) {
+inline void expect_common_for_complex(const F& f) {
   for (double re : std::vector<double>{-3.9, -1e-3, 0, 2e-3, 4.1}) {
     stan::test::expect_ad(f, re);
   }

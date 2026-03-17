@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_REV_FUN_LOG_HPP
 #define STAN_MATH_REV_FUN_LOG_HPP
 
-#include <stan/math/prim/fun/log.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/functor/apply_scalar_unary.hpp>
@@ -13,6 +12,7 @@
 #include <stan/math/rev/fun/is_nan.hpp>
 #include <stan/math/rev/fun/norm.hpp>
 #include <stan/math/rev/fun/sqrt.hpp>
+#include <stan/math/prim/fun/log.hpp>
 #include <cmath>
 
 namespace stan {
@@ -47,8 +47,8 @@ namespace math {
  * @param a Variable whose log is taken.
  * @return Natural log of variable.
  */
-template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
-inline auto log(const var_value<T>& a) {
+template <typename T, require_var_t<T>* = nullptr>
+inline auto log(T&& a) {
   return make_callback_var(log(a.val()), [a](auto& vi) mutable {
     as_array_or_scalar(a.adj())
         += as_array_or_scalar(vi.adj()) / as_array_or_scalar(a.val());

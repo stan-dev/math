@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_REV_FUN_READ_CORR_MATRIX_HPP
 #define STAN_MATH_REV_FUN_READ_CORR_MATRIX_HPP
 
-#include <stan/math/rev/core.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/fun/read_corr_L.hpp>
-#include <stan/math/prim/fun/multiply_lower_tri_self_transpose.hpp>
+#include <stan/math/rev/core.hpp>
+#include <stan/math/rev/fun/read_corr_L.hpp>
+#include <stan/math/rev/fun/multiply_lower_tri_self_transpose.hpp>
 
 namespace stan {
 namespace math {

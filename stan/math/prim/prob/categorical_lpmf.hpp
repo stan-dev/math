@@ -14,7 +14,7 @@ namespace math {
 // Categorical(n|theta)  [0 < n <= N;   0 <= theta[n] <= 1;  SUM theta = 1]
 template <bool propto, typename T_prob,
           require_eigen_col_vector_t<T_prob>* = nullptr>
-return_type_t<T_prob> categorical_lpmf(int n, const T_prob& theta) {
+inline return_type_t<T_prob> categorical_lpmf(int n, const T_prob& theta) {
   static constexpr const char* function = "categorical_lpmf";
   using std::log;
 
@@ -22,7 +22,7 @@ return_type_t<T_prob> categorical_lpmf(int n, const T_prob& theta) {
   ref_type_t<T_prob> theta_ref = theta;
   check_simplex(function, "Probabilities parameter", value_of(theta_ref));
 
-  if (include_summand<propto, T_prob>::value) {
+  if constexpr (include_summand<propto, T_prob>::value) {
     return log(theta_ref.coeff(n - 1));
   }
   return 0.0;
@@ -30,15 +30,15 @@ return_type_t<T_prob> categorical_lpmf(int n, const T_prob& theta) {
 
 template <bool propto, typename T_prob,
           require_eigen_col_vector_t<T_prob>* = nullptr>
-return_type_t<T_prob> categorical_lpmf(const std::vector<int>& ns,
-                                       const T_prob& theta) {
+inline return_type_t<T_prob> categorical_lpmf(const std::vector<int>& ns,
+                                              const T_prob& theta) {
   static constexpr const char* function = "categorical_lpmf";
 
   check_bounded(function, "element of outcome array", ns, 1, theta.size());
   ref_type_t<T_prob> theta_ref = theta;
   check_simplex(function, "Probabilities parameter", value_of(theta_ref));
 
-  if (!include_summand<propto, T_prob>::value) {
+  if constexpr (!include_summand<propto, T_prob>::value) {
     return 0.0;
   }
 

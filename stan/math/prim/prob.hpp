@@ -25,7 +25,11 @@
 #include <stan/math/prim/prob/beta_lccdf.hpp>
 #include <stan/math/prim/prob/beta_lcdf.hpp>
 #include <stan/math/prim/prob/beta_lpdf.hpp>
+#include <stan/math/prim/prob/beta_neg_binomial_cdf.hpp>
+#include <stan/math/prim/prob/beta_neg_binomial_lccdf.hpp>
+#include <stan/math/prim/prob/beta_neg_binomial_lcdf.hpp>
 #include <stan/math/prim/prob/beta_neg_binomial_lpmf.hpp>
+#include <stan/math/prim/prob/beta_neg_binomial_rng.hpp>
 #include <stan/math/prim/prob/beta_proportion_ccdf_log.hpp>
 #include <stan/math/prim/prob/beta_proportion_cdf_log.hpp>
 #include <stan/math/prim/prob/beta_proportion_lccdf.hpp>
@@ -307,10 +311,18 @@
 #include <stan/math/prim/prob/weibull_rng.hpp>
 #include <stan/math/prim/prob/wiener5_lpdf.hpp>
 #include <stan/math/prim/prob/wiener_lpdf.hpp>
+#include <stan/math/prim/prob/wiener4_lcdf_unnorm.hpp>
+#include <stan/math/prim/prob/wiener4_lccdf_unnorm.hpp>
 #include <stan/math/prim/prob/wiener_full_lpdf.hpp>
+#include <stan/math/prim/prob/wiener_full_lcdf_unnorm.hpp>
+#include <stan/math/prim/prob/wiener_full_lccdf_unnorm.hpp>
 #include <stan/math/prim/prob/wishart_cholesky_lpdf.hpp>
 #include <stan/math/prim/prob/wishart_cholesky_rng.hpp>
 #include <stan/math/prim/prob/wishart_lpdf.hpp>
 #include <stan/math/prim/prob/wishart_rng.hpp>
-
+#include <stan/math/prim/prob/yule_simon_cdf.hpp>
+#include <stan/math/prim/prob/yule_simon_lccdf.hpp>
+#include <stan/math/prim/prob/yule_simon_lcdf.hpp>
+#include <stan/math/prim/prob/yule_simon_lpmf.hpp>
+#include <stan/math/prim/prob/yule_simon_rng.hpp>
 #endif

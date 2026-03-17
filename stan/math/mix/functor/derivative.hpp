@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_MIX_FUNCTOR_DERIVATIVE_HPP
 #define STAN_MATH_MIX_FUNCTOR_DERIVATIVE_HPP
 
-#include <stan/math/fwd/core.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/fwd/core.hpp>
 #include <vector>
 
 namespace stan {
@@ -21,7 +21,7 @@ namespace math {
  * @param[out] dfx_dx Value of derivative
  */
 template <typename T, typename F>
-void derivative(const F& f, const T& x, T& fx, T& dfx_dx) {
+inline void derivative(const F& f, const T& x, T& fx, T& dfx_dx) {
   fvar<T> x_fvar = fvar<T>(x, 1.0);
   fvar<T> fx_fvar = f(x_fvar);
   fx = fx_fvar.val_;

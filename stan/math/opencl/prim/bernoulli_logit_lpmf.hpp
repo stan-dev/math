@@ -26,8 +26,8 @@ template <
     bool propto, typename T_n_cl, typename T_prob_cl,
     require_all_prim_or_rev_kernel_expression_t<T_n_cl, T_prob_cl>* = nullptr,
     require_any_not_stan_scalar_t<T_n_cl, T_prob_cl>* = nullptr>
-return_type_t<T_prob_cl> bernoulli_logit_lpmf(const T_n_cl& n,
-                                              const T_prob_cl& theta) {
+inline return_type_t<T_prob_cl> bernoulli_logit_lpmf(const T_n_cl& n,
+                                                     const T_prob_cl& theta) {
   static constexpr const char* function = "bernoulli_logit_lpmf(OpenCL)";
   using T_partials_return = partials_return_t<T_prob_cl>;
   using std::isnan;
@@ -39,7 +39,7 @@ return_type_t<T_prob_cl> bernoulli_logit_lpmf(const T_n_cl& n,
   if (N == 0) {
     return 0.0;
   }
-  if (!include_summand<propto, T_prob_cl>::value) {
+  if constexpr (!include_summand<propto, T_prob_cl>::value) {
     return 0.0;
   }
 
@@ -72,14 +72,13 @@ return_type_t<T_prob_cl> bernoulli_logit_lpmf(const T_n_cl& n,
   matrix_cl<double> deriv_cl;
 
   results(logp_cl, deriv_cl, check_n_bounded, check_theta_not_nan)
-      = expressions(logp_expr,
-                    calc_if<!is_constant_all<T_prob_cl>::value>(deriv_expr),
+      = expressions(logp_expr, calc_if<is_autodiff_v<T_prob_cl>>(deriv_expr),
                     n_bounded_expr, theta_not_nan_expr);
 
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
   auto ops_partials = make_partials_propagator(theta_col);
 
-  if (!is_constant_all<T_prob_cl>::value) {
+  if constexpr (is_autodiff_v<T_prob_cl>) {
     partials<0>(ops_partials) = deriv_cl;
   }
 

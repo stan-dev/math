@@ -87,6 +87,7 @@ doxygen:
 clean:
 	@echo '  removing generated test files'
 	@$(RM) $(wildcard test/prob/generate_tests$(EXE))
+	@$(RM) $(EXPRESSION_TESTS) $(call findfiles,test/expressions,*_test.cpp)
 	@$(RM) $(call findfiles,test/prob,*_generated_v_test.cpp)
 	@$(RM) $(call findfiles,test/prob,*_generated_vv_test.cpp)
 	@$(RM) $(call findfiles,test/prob,*_generated_fd_test.cpp)

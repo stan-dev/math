@@ -5,7 +5,7 @@
 #include <vector>
 
 template <typename T>
-void expect_scalbn(double x) {
+inline void expect_scalbn(double x) {
   using std::scalbn;
   T xt(x);
   for (int n = 2; n < 5; ++n) {
@@ -13,7 +13,7 @@ void expect_scalbn(double x) {
   }
 }
 
-void expect_all_scalbn(double x) {
+inline void expect_all_scalbn(double x) {
   using stan::math::fvar;
   using stan::math::var;
   expect_scalbn<double>(x);

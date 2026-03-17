@@ -22,12 +22,8 @@ namespace math {
  * @return Matrix exponential of A.
  */
 template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
-Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic>
+inline Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic>
 matrix_exp_2x2(const EigMat& A) {
-  using std::cosh;
-  using std::exp;
-  using std::sinh;
-  using std::sqrt;
   auto&& A_ref = to_ref(A);
   using T = value_type_t<EigMat>;
   T a = A_ref(0, 0), b = A_ref(0, 1), c = A_ref(1, 0), d = A_ref(1, 1), delta;

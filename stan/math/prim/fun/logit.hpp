@@ -43,9 +43,9 @@ namespace math {
  * @param u argument
  * @return log odds of argument
  */
-inline double logit(double u) {
-  using std::log;
-  return log(u / (1 - u));
+template <typename T, require_floating_point_t<T>* = nullptr>
+inline double logit(const T u) {
+  return std::log(u / (1 - u));
 }
 
 /**
@@ -54,7 +54,10 @@ inline double logit(double u) {
  * @param u argument
  * @return log odds of argument
  */
-inline double logit(int u) { return logit(static_cast<double>(u)); }
+template <typename T, require_integral_t<T>* = nullptr>
+inline double logit(const T u) {
+  return logit(static_cast<double>(u));
+}
 
 /**
  * Structure to wrap logit() so it can be vectorized.
@@ -68,8 +71,8 @@ struct logit_fun {
    * @return log odds of the argument
    */
   template <typename T>
-  static inline auto fun(const T& x) {
-    return logit(x);
+  static inline auto fun(T&& x) {
+    return logit(std::forward<T>(x));
   }
 };
 
@@ -83,13 +86,10 @@ struct logit_fun {
  * @param x container
  * @return elementwise logit of container elements
  */
-template <
-    typename Container,
-    require_not_container_st<std::is_arithmetic, Container>* = nullptr,
-    require_not_var_matrix_t<Container>* = nullptr,
-    require_not_nonscalar_prim_or_rev_kernel_expression_t<Container>* = nullptr>
-inline auto logit(const Container& x) {
-  return apply_scalar_unary<logit_fun, Container>::apply(x);
+template <typename Container, require_ad_container_t<Container>* = nullptr>
+inline auto logit(Container&& x) {
+  return apply_scalar_unary<logit_fun, Container>::apply(
+      std::forward<Container>(x));
 }
 
 /**
@@ -104,15 +104,15 @@ inline auto logit(const Container& x) {
  * of scope
  */
 template <typename Container,
-          require_container_st<std::is_arithmetic, Container>* = nullptr>
-inline auto logit(const Container& x) {
+          require_container_bt<std::is_arithmetic, Container>* = nullptr>
+inline auto logit(Container&& x) {
   return make_holder(
-      [](const auto& v_ref) {
+      [](auto&& v_ref) {
         return apply_vector_unary<ref_type_t<Container>>::apply(
-            v_ref,
-            [](const auto& v) { return (v.array() / (1 - v.array())).log(); });
+            std::forward<decltype(v_ref)>(v_ref),
+            [](auto&& v) { return (v.array() / (1 - v.array())).log(); });
       },
-      to_ref(x));
+      to_ref(std::forward<Container>(x)));
 }
 
 }  // namespace math

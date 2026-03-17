@@ -126,35 +126,24 @@ to_matrix(EigMat&& x, int m, int n) {
  * @throw <code>std::invalid_argument</code>
  * if the sizes do not match
  */
-template <typename T>
-inline auto to_matrix(const std::vector<T>& x, int m, int n) {
+template <typename T, require_std_vector_vt<is_stan_scalar, T>* = nullptr>
+inline auto to_matrix(T&& x, int m, int n) {
   static constexpr const char* function = "to_matrix(array)";
   check_size_match(function, "rows * columns", m * n, "vector size", x.size());
-  return Eigen::Map<const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>>(
-      &x[0], m, n);
-}
-
-/**
- * Returns a matrix representation of the vector in column-major
- * order with the specified number of rows and columns.
- *
- * @param x vector of values
- * @param m rows
- * @param n columns
- * @return the matrix representation of the input
- * @throw <code>std::invalid_argument</code>
- * if the sizes do not match
- */
-inline Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> to_matrix(
-    const std::vector<int>& x, int m, int n) {
-  static constexpr const char* function = "to_matrix(array)";
-  int x_size = x.size();
-  check_size_match(function, "rows * columns", m * n, "vector size", x_size);
-  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> result(m, n);
-  for (int i = 0; i < x_size; i++) {
-    result.coeffRef(i) = x[i];
-  }
-  return result;
+  return make_holder(
+      [m, n](auto&& x_) {
+        if constexpr (std::is_integral_v<value_type_t<decltype(x_)>>) {
+          return Eigen::Map<const Eigen::Matrix<
+              value_type_t<decltype(x_)>, Eigen::Dynamic, Eigen::Dynamic>>(
+                     &x_[0], m, n)
+              .template cast<double>();
+        } else {
+          return Eigen::Map<const Eigen::Matrix<
+              value_type_t<decltype(x_)>, Eigen::Dynamic, Eigen::Dynamic>>(
+              &x_[0], m, n);
+        }
+      },
+      std::forward<T>(x));
 }
 
 /**

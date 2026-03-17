@@ -1,5 +1,6 @@
 import numbers
 import os
+from re import S
 
 from sig_utils import overload_scalar, get_cpp_type, arg_types
 
@@ -209,6 +210,11 @@ class SimplexVariable(CppStatement):
             )
         )
 
+class StochasticMatrixVariable(SimplexVariable):
+    # works for size one
+    def __init__(self, overload, name, size, value=None):
+        super().__init__(overload, name, size, value)
+        self.stan_arg = "matrix"
 
 class PositiveDefiniteMatrixVariable(CppStatement):
     """Represents a positive definite matrix variable"""

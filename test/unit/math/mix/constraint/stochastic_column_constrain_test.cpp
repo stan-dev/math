@@ -2,24 +2,24 @@
 
 namespace stochastic_column_constrain_test {
 template <typename T>
-stan::plain_type_t<T> g1(const T& x) {
+inline stan::plain_type_t<T> g1(const T& x) {
   stan::scalar_type_t<T> lp = 0;
   return stan::math::stochastic_column_constrain<false>(x, lp);
 }
 template <typename T>
-stan::plain_type_t<T> g2(const T& x) {
+inline stan::plain_type_t<T> g2(const T& x) {
   stan::scalar_type_t<T> lp = 0;
   return stan::math::stochastic_column_constrain<true>(x, lp);
 }
 template <typename T>
-typename stan::scalar_type<T>::type g3(const T& x) {
+inline typename stan::scalar_type<T>::type g3(const T& x) {
   stan::scalar_type_t<T> lp = 0;
   stan::math::stochastic_column_constrain<true>(x, lp);
   return lp;
 }
 
 template <typename T>
-void expect_simplex_transform(const T& x) {
+inline void expect_simplex_transform(const T& x) {
   auto f1 = [](const auto& x) { return g1(x); };
   auto f2 = [](const auto& x) { return g2(x); };
   auto f3 = [](const auto& x) { return g3(x); };

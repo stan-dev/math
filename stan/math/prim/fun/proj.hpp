@@ -15,7 +15,7 @@ namespace math {
  * @param[in] z argument
  * @return projection of the argument onto the Riemann sphere
  */
-template <typename V>
+template <typename V, require_arithmetic_t<V>* = nullptr>
 inline std::complex<V> proj(const std::complex<V>& z) {
   return std::proj(z);
 }

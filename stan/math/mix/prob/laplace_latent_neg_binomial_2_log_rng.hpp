@@ -1,0 +1,101 @@
+#ifndef STAN_MATH_MIX_PROB_LAPLACE_LATENT_NEG_BINOMIAL_2_LOG_RNG_HPP
+#define STAN_MATH_MIX_PROB_LAPLACE_LATENT_NEG_BINOMIAL_2_LOG_RNG_HPP
+
+#include <stan/math/mix/functor/laplace_base_rng.hpp>
+#include <stan/math/mix/functor/laplace_likelihood.hpp>
+#include <stan/math/mix/prob/laplace_marginal_neg_binomial_2_log_lpmf.hpp>
+
+namespace stan {
+namespace math {
+
+/**
+ * In a latent gaussian model,
+ *
+ *   theta ~ Normal(0, Sigma(phi))
+ *   y ~ p(y|theta,phi)
+ *
+ * return a sample from the Laplace approximation to p(theta|y,phi).
+ * The Laplace approximation is computed using a Newton solver.
+ * In this specialized function, the likelihood p(y|theta) is a
+ * Negative Binomial with a log link. This function uses the second
+ * parameterization of the Negative Binomial.
+ *
+ * @tparam Eta A type for the overdispersion parameter.
+ * @tparam ThetaVec A type inheriting from `Eigen::EigenBase`
+ * with dynamic sized rows and 1 column.
+ * @tparam Mean type of the mean of the latent normal distribution
+ * \laplace_common_template_args
+ * @tparam RNG A valid boost rng type
+ * @param[in] y Observed counts.
+ * @param[in] y_index Index indicating which group each observation belongs to.
+ * @param[in] eta Overdisperison parameter.
+ * @param[in] mean The mean of the latent normal variable.
+ * \laplace_common_args
+ * @param[in] hessian_block_size Block size for the Hessian approximation with
+ * respect to the latent gaussian variable theta.
+ * \laplace_options
+ * \rng_arg
+ * \msg_arg
+ */
+template <typename Eta, typename Mean, typename CovarFun, typename CovarArgs,
+          typename OpsTuple, typename RNG>
+inline Eigen::VectorXd laplace_latent_tol_neg_binomial_2_log_rng(
+    const std::vector<int>& y, const std::vector<int>& y_index, Eta&& eta,
+    Mean&& mean, int hessian_block_size, CovarFun&& covariance_function,
+    CovarArgs&& covar_args, OpsTuple&& ops, RNG& rng, std::ostream* msgs) {
+  auto options
+      = internal::tuple_to_laplace_options(std::forward<OpsTuple>(ops));
+  options.hessian_block_size = hessian_block_size;
+  return laplace_base_rng(
+      neg_binomial_2_log_likelihood{},
+      std::forward_as_tuple(std::forward<Eta>(eta), y, y_index,
+                            std::forward<Mean>(mean)),
+      std::forward<CovarFun>(covariance_function),
+      std::forward<CovarArgs>(covar_args), std::move(options), rng, msgs);
+}
+
+/**
+ * In a latent gaussian model,
+ *
+ *   theta ~ Normal(0, Sigma(phi))
+ *   y ~ p(y|theta,phi)
+ *
+ * return a sample from the Laplace approximation to p(theta|y,phi).
+ * The Laplace approximation is computed using a Newton solver.
+ * In this specialized function, the likelihood p(y|theta) is a
+ * Negative Binomial with a log link. This function uses the second
+ * parameterization of the Negative Binomial.
+ *
+ * @tparam Eta A type for the overdispersion parameter.
+ * @tparam Mean type of the mean of the latent normal distribution
+ * \laplace_common_template_args
+ * @tparam RNG A valid boost rng type
+ * @param[in] y Observed counts.
+ * @param[in] y_index Index indicating which group each observation belongs to.
+ * @param[in] eta Overdisperison parameter.
+ * @param[in] mean The mean of the latent normal variable.
+ * \laplace_common_args
+ * @param[in] hessian_block_size Block size for the Hessian approximation with
+ * respect to the latent gaussian variable theta.
+ * \rng_arg
+ * \msg_arg
+ */
+template <typename Eta, typename Mean, typename CovarFun, typename CovarArgs,
+          typename RNG>
+inline Eigen::VectorXd laplace_latent_neg_binomial_2_log_rng(
+    const std::vector<int>& y, const std::vector<int>& y_index, Eta&& eta,
+    Mean&& mean, int hessian_block_size, CovarFun&& covariance_function,
+    CovarArgs&& covar_args, RNG& rng, std::ostream* msgs) {
+  auto options = laplace_options_default{hessian_block_size};
+  return laplace_base_rng(
+      neg_binomial_2_log_likelihood{},
+      std::forward_as_tuple(std::forward<Eta>(eta), y, y_index,
+                            std::forward<Mean>(mean)),
+      std::forward<CovarFun>(covariance_function),
+      std::forward<CovarArgs>(covar_args), options, rng, msgs);
+}
+
+}  // namespace math
+}  // namespace stan
+
+#endif

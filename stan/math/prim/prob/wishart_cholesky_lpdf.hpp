@@ -39,9 +39,8 @@ namespace math {
 template <bool propto, typename T_y, typename T_dof, typename T_scale,
           require_stan_scalar_t<T_dof>* = nullptr,
           require_all_matrix_t<T_y, T_scale>* = nullptr>
-return_type_t<T_y, T_dof, T_scale> wishart_cholesky_lpdf(const T_y& L_Y,
-                                                         const T_dof& nu,
-                                                         const T_scale& L_S) {
+inline return_type_t<T_y, T_dof, T_scale> wishart_cholesky_lpdf(
+    const T_y& L_Y, const T_dof& nu, const T_scale& L_S) {
   using Eigen::Lower;
   using T_L_Y_ref = ref_type_t<T_y>;
   using T_nu_ref = ref_type_t<T_dof>;
@@ -66,11 +65,11 @@ return_type_t<T_y, T_dof, T_scale> wishart_cholesky_lpdf(const T_y& L_Y,
   T_nu_ref nu_ref = nu;
   T_return lp(0.0);
 
-  if (include_summand<propto, T_dof>::value) {
+  if constexpr (include_summand<propto, T_dof>::value) {
     lp += k * LOG_TWO * (1 - 0.5 * nu_ref);
     lp += -lmgamma(k, 0.5 * nu_ref);
   }
-  if (include_summand<propto, T_dof, T_scale, T_y>::value) {
+  if constexpr (include_summand<propto, T_dof, T_scale, T_y>::value) {
     auto L_SinvL_Y = mdivide_left_tri<Eigen::Lower>(L_S_ref, L_Y_ref);
     T_return dot_LSinvLY(0.0);
     Eigen::Matrix<T_return, 1, Eigen::Dynamic> linspaced_rv(k);

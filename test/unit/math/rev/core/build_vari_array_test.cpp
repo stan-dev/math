@@ -1,8 +1,9 @@
 #include <stan/math/rev/core.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <sstream>
 
-TEST(AgradRevBuild, build_vari_array) {
+TEST_F(AgradRev, RevBuild_build_vari_array) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;

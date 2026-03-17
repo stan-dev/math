@@ -1,15 +1,18 @@
 #ifndef STAN_MATH_REV_FUN_GP_PERIODIC_COV_HPP
 #define STAN_MATH_REV_FUN_GP_PERIODIC_COV_HPP
 
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/rev/fun/adjoint_of.hpp>
+#include <stan/math/rev/fun/exp.hpp>
+#include <stan/math/rev/fun/sin.hpp>
+#include <stan/math/rev/fun/square.hpp>
+#include <stan/math/rev/fun/squared_distance.hpp>
+#include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/square.hpp>
-#include <stan/math/prim/fun/squared_distance.hpp>
+#include <stan/math/prim/fun/gp_exp_quad_cov.hpp>
 #include <cmath>
 #include <type_traits>
 #include <vector>
@@ -41,8 +44,6 @@ template <typename T_x, typename T_sigma, require_st_arithmetic<T_x>* = nullptr,
           require_stan_scalar_t<T_sigma>* = nullptr>
 inline Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> gp_periodic_cov(
     const std::vector<T_x>& x, const T_sigma sigma, const var l, const var p) {
-  using std::exp;
-  using std::sin;
   const char* fun = "gp_periodic_cov";
   check_positive(fun, "signal standard deviation", sigma);
   check_positive(fun, "length-scale", l);
@@ -61,7 +62,7 @@ inline Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> gp_periodic_cov(
   arena_matrix<Eigen::VectorXd> sin_dists_sq_lin(l_tri_size);
   arena_matrix<Eigen::Matrix<var, -1, 1>> cov_l_tri_lin(l_tri_size);
   arena_matrix<Eigen::Matrix<var, -1, 1>> cov_diag(
-      is_constant<T_sigma>::value ? 0 : x_size);
+      is_constant_v<T_sigma> ? 0 : x_size);
 
   double sigma_sq = square(value_of(sigma));
   double pi_div_p = pi() / value_of(p);
@@ -75,7 +76,7 @@ inline Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> gp_periodic_cov(
     cov.diagonal().segment(jb, j_size)
         = Eigen::VectorXd::Constant(j_size, sigma_sq);
 
-    if (!is_constant<T_sigma>::value) {
+    if constexpr (is_autodiff_v<T_sigma>) {
       cov_diag.segment(jb, j_size) = cov.diagonal().segment(jb, j_size);
     }
     for (size_t ib = jb; ib < x_size; ib += block_size) {
@@ -114,7 +115,7 @@ inline Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> gp_periodic_cov(
       double dist = dists_lin.coeff(pos);
       adjp += prod_add * sin(two_pi_div_p * dist) * dist;
     }
-    if (!is_constant<T_sigma>::value) {
+    if constexpr (is_autodiff_v<T_sigma>) {
       adjsigma += (cov_diag.val().array() * cov_diag.adj().array()).sum();
       adjoint_of(sigma) += adjsigma * 2 / value_of(sigma);
     }

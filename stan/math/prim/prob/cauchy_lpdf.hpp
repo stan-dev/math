@@ -40,8 +40,9 @@ namespace math {
 template <bool propto, typename T_y, typename T_loc, typename T_scale,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_loc, T_scale>* = nullptr>
-return_type_t<T_y, T_loc, T_scale> cauchy_lpdf(const T_y& y, const T_loc& mu,
-                                               const T_scale& sigma) {
+inline return_type_t<T_y, T_loc, T_scale> cauchy_lpdf(const T_y& y,
+                                                      const T_loc& mu,
+                                                      const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
   using std::log;
   using T_y_ref = ref_type_if_not_constant_t<T_y>;
@@ -57,7 +58,7 @@ return_type_t<T_y, T_loc, T_scale> cauchy_lpdf(const T_y& y, const T_loc& mu,
   if (size_zero(y, mu, sigma)) {
     return 0.0;
   }
-  if (!include_summand<propto, T_y, T_loc, T_scale>::value) {
+  if constexpr (!include_summand<propto, T_y, T_loc, T_scale>::value) {
     return 0.0;
   }
 
@@ -73,40 +74,38 @@ return_type_t<T_y, T_loc, T_scale> cauchy_lpdf(const T_y& y, const T_loc& mu,
 
   size_t N = max_size(y, mu, sigma);
 
-  const auto& inv_sigma
-      = to_ref_if<!is_constant_all<T_scale>::value>(inv(sigma_val));
+  const auto& inv_sigma = to_ref_if<is_autodiff_v<T_scale>>(inv(sigma_val));
   const auto& y_minus_mu
-      = to_ref_if<!is_constant_all<T_y, T_loc, T_scale>::value>(y_val - mu_val);
+      = to_ref_if<is_any_autodiff_v<T_y, T_loc, T_scale>>(y_val - mu_val);
 
   logp -= sum(log1p(square(y_minus_mu * inv_sigma)));
-  if (include_summand<propto>::value) {
+  if constexpr (include_summand<propto>::value) {
     logp -= N * LOG_PI;
   }
-  if (include_summand<propto, T_scale>::value) {
+  if constexpr (include_summand<propto, T_scale>::value) {
     logp -= sum(log(sigma_val)) * N / math::size(sigma);
   }
 
-  if (!is_constant_all<T_y, T_loc, T_scale>::value) {
+  if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale>) {
     const auto& sigma_squared
-        = to_ref_if<!is_constant_all<T_scale>::value>(square(sigma_val));
+        = to_ref_if<is_autodiff_v<T_scale>>(square(sigma_val));
     const auto& y_minus_mu_squared
-        = to_ref_if<!is_constant_all<T_scale>::value>(square(y_minus_mu));
-    if (!is_constant_all<T_y, T_loc>::value) {
-      auto mu_deriv = to_ref_if<(!is_constant_all<T_y>::value
-                                 && !is_constant_all<T_loc>::value)>(
+        = to_ref_if<is_autodiff_v<T_scale>>(square(y_minus_mu));
+    if constexpr (is_any_autodiff_v<T_y, T_loc>) {
+      auto mu_deriv = to_ref_if<(is_autodiff_v<T_y> && is_autodiff_v<T_loc>)>(
           2 * y_minus_mu / (sigma_squared + y_minus_mu_squared));
-      if (!is_constant_all<T_y>::value) {
-        if (is_vector<T_y>::value) {
+      if constexpr (is_autodiff_v<T_y>) {
+        if constexpr (is_vector<T_y>::value) {
           partials<0>(ops_partials) = -mu_deriv;
         } else {
           partials<0>(ops_partials)[0] = -sum(mu_deriv);
         }
       }
-      if (!is_constant_all<T_loc>::value) {
+      if constexpr (is_autodiff_v<T_loc>) {
         partials<1>(ops_partials) = std::move(mu_deriv);
       }
     }
-    if (!is_constant_all<T_scale>::value) {
+    if constexpr (is_autodiff_v<T_scale>) {
       partials<2>(ops_partials) = (y_minus_mu_squared - sigma_squared)
                                   * inv_sigma
                                   / (sigma_squared + y_minus_mu_squared);

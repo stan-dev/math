@@ -40,7 +40,7 @@ constexpr double lgamma_stirling_diff_useful = 10;
  * @return Difference between lgamma(x) and its Stirling approximation.
  */
 template <typename T>
-return_type_t<T> lgamma_stirling_diff(const T x) {
+inline return_type_t<T> lgamma_stirling_diff(const T x) {
   using T_ret = return_type_t<T>;
 
   if (is_nan(value_of_rec(x))) {

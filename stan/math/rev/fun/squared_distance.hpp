@@ -1,15 +1,15 @@
 #ifndef STAN_MATH_REV_FUN_SQUARED_DISTANCE_HPP
 #define STAN_MATH_REV_FUN_SQUARED_DISTANCE_HPP
 
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/value_of_rec.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
-#include <stan/math/prim/fun/squared_distance.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
+#include <stan/math/prim/fun/squared_distance.hpp>
 #include <vector>
 
 namespace stan {
@@ -158,7 +158,7 @@ inline var squared_distance(const T1& A, const T2& B) {
   check_matching_sizes("squared_distance", "A", A.val(), "B", B.val());
   if (unlikely(A.size() == 0)) {
     return var(0.0);
-  } else if (!is_constant<T1>::value && !is_constant<T2>::value) {
+  } else if constexpr (is_autodiff_v<T1> && is_autodiff_v<T2>) {
     arena_t<promote_scalar_t<var, T1>> arena_A = A;
     arena_t<promote_scalar_t<var, T2>> arena_B = B;
     arena_t<Eigen::VectorXd> res_diff(arena_A.size());
@@ -177,7 +177,7 @@ inline var squared_distance(const T1& A, const T2& B) {
             arena_B.adj().coeffRef(i) -= diff;
           }
         }));
-  } else if (!is_constant<T1>::value) {
+  } else if constexpr (is_autodiff_v<T1>) {
     arena_t<promote_scalar_t<var, T1>> arena_A = A;
     arena_t<promote_scalar_t<double, T2>> arena_B = value_of(B);
     arena_t<Eigen::VectorXd> res_diff(arena_A.size());

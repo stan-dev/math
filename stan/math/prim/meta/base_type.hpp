@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_META_BASE_TYPE_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/meta/is_complex.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
 #include <stan/math/prim/meta/value_type.hpp>
 #include <stan/math/prim/meta/is_vector.hpp>
@@ -51,18 +50,6 @@ struct base_type<T, std::enable_if_t<is_std_vector<T>::value>> {
 template <typename T>
 struct base_type<T, std::enable_if_t<is_eigen<T>::value>> {
   using type = base_type_t<typename std::decay_t<T>::Scalar>;
-};
-
-/**
- * Template metaprogram defining the base type for values
- * stored in a complex number.
- *
- * @tparam T type of complex number
- * @ingroup type_trait
- */
-template <typename T>
-struct base_type<T, std::enable_if_t<is_complex<T>::value>> {
-  using type = base_type_t<typename std::decay_t<T>::value_type>;
 };
 
 }  // namespace stan

@@ -29,6 +29,9 @@ def save_tests_in_files(N_files, tests):
     for i in range(N_files):
         start = i * len(tests) // N_files
         end = (i + 1) * len(tests) // N_files
+        if start >= end:
+            # don't try to compile an empty file
+            continue
         with open(src_folder + "tests%d_test.cpp" % i, "w") as out:
             out.write("#include <test/expressions/expression_test_helpers.hpp>\n\n")
             for test in tests[start:end]:
@@ -125,5 +128,5 @@ def main(functions=(), j=1):
                     code = cg.cpp(),
                 )
             )
-    
+
     save_tests_in_files(j, tests)

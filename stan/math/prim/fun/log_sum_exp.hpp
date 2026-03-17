@@ -79,8 +79,8 @@ inline return_type_t<T1, T2> log_sum_exp(const T2& a, const T1& b) {
  * @return The log of the sum of the exponentiated vector values.
  */
 template <typename T, require_container_st<std::is_arithmetic, T>* = nullptr>
-inline auto log_sum_exp(const T& x) {
-  return apply_vector_unary<T>::reduce(x, [&](const auto& v) {
+inline auto log_sum_exp(T&& x) {
+  return apply_vector_unary<T>::reduce(std::forward<T>(x), [](auto&& v) {
     if (v.size() == 0) {
       return NEGATIVE_INFTY;
     }
@@ -104,9 +104,13 @@ inline auto log_sum_exp(const T& x) {
  * @return log_sum_exp function applied to the two inputs.
  */
 template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr>
-inline auto log_sum_exp(const T1& a, const T2& b) {
+inline auto log_sum_exp(T1&& a, T2&& b) {
   return apply_scalar_binary(
-      a, b, [](const auto& c, const auto& d) { return log_sum_exp(c, d); });
+      [](auto&& c, auto&& d) {
+        return log_sum_exp(std::forward<decltype(c)>(c),
+                           std::forward<decltype(d)>(d));
+      },
+      std::forward<T1>(a), std::forward<T2>(b));
 }
 
 }  // namespace math

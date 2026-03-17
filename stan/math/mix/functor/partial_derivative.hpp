@@ -1,9 +1,9 @@
 #ifndef STAN_MATH_MIX_FUNCTOR_PARTIAL_DERIVATIVE_HPP
 #define STAN_MATH_MIX_FUNCTOR_PARTIAL_DERIVATIVE_HPP
 
+#include <stan/math/rev/core.hpp>
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/rev/core.hpp>
 #include <vector>
 
 namespace stan {
@@ -22,9 +22,9 @@ namespace math {
  * @param[out] dfx_dxn Value of partial derivative
  */
 template <typename T, typename F>
-void partial_derivative(const F& f,
-                        const Eigen::Matrix<T, Eigen::Dynamic, 1>& x, int n,
-                        T& fx, T& dfx_dxn) {
+inline void partial_derivative(const F& f,
+                               const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
+                               int n, T& fx, T& dfx_dxn) {
   Eigen::Matrix<fvar<T>, Eigen::Dynamic, 1> x_fvar(x.size());
   for (int i = 0; i < x.size(); ++i) {
     x_fvar(i) = fvar<T>(x(i), i == n);

@@ -4,7 +4,7 @@
 
 TEST_F(mathMix, besselSecondKind) {
   // bind integer arg because can't autodiff through
-  auto f = [](const int x1) {
+  auto f = [](const auto& x1) {
     return
         [=](const auto& x2) { return stan::math::bessel_second_kind(x1, x2); };
   };
@@ -14,6 +14,13 @@ TEST_F(mathMix, besselSecondKind) {
   stan::test::expect_ad(f(1), 3.0);
   stan::test::expect_ad(f(1), std::numeric_limits<double>::quiet_NaN());
   stan::test::expect_ad(f(2), 2.79);
+  std::vector<int> std_in1{3, 1};
+  stan::test::expect_ad(f(std_in1), 4.0);
+  stan::test::expect_ad(f(std_in1), std::numeric_limits<double>::quiet_NaN());
+  stan::test::expect_ad(f(std_in1), -3.0);
+  stan::test::expect_ad(f(std_in1), 3.0);
+  stan::test::expect_ad(f(std_in1), std::numeric_limits<double>::quiet_NaN());
+  stan::test::expect_ad(f(std_in1), 2.79);
 }
 
 TEST_F(mathMix, besselSecondKind_vec) {
@@ -26,10 +33,12 @@ TEST_F(mathMix, besselSecondKind_vec) {
   Eigen::VectorXd in2(2);
   in2 << 0.5, 3.4;
   stan::test::expect_ad_vectorized_binary(f, std_in1, in2);
+  stan::test::expect_ad_matvar(f, std_in1, in2);
 
   std::vector<std::vector<int>> std_std_in1{std_in1, std_in1};
   Eigen::MatrixXd mat_in2 = in2.replicate(1, 2);
   stan::test::expect_ad_vectorized_binary(f, std_std_in1, mat_in2);
+  stan::test::expect_ad_matvar(f, std_std_in1, mat_in2);
 }
 
 TEST_F(mathMix, besselSecondKind_matvec) {

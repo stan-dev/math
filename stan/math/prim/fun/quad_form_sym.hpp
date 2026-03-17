@@ -32,9 +32,8 @@ inline plain_type_t<EigMat2> quad_form_sym(const EigMat1& A, const EigMat2& B) {
   const auto& A_ref = to_ref(A);
   const auto& B_ref = to_ref(B);
   check_symmetric("quad_form_sym", "A", A_ref);
-  return make_holder(
-      [](const auto& ret) { return 0.5 * (ret + ret.transpose()); },
-      (B_ref.transpose() * A_ref * B_ref).eval());
+  return make_holder([](auto&& ret) { return 0.5 * (ret + ret.transpose()); },
+                     (B_ref.transpose() * A_ref * B_ref).eval());
 }
 
 /**

@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_REV_FUN_READ_CORR_L_HPP
 #define STAN_MATH_REV_FUN_READ_CORR_L_HPP
 
-#include <stan/math/prim/fun/read_corr_L.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/core/operator_multiplication.hpp>
+#include <stan/math/prim/fun/read_corr_L.hpp>
 #include <cmath>
 #include <complex>
 
@@ -33,7 +33,7 @@ namespace math {
  * canonical partial correlations.
  */
 template <typename T, require_var_vector_t<T>* = nullptr>
-auto read_corr_L(const T& CPCs, size_t K) {  // on (-1, 1)
+inline auto read_corr_L(const T& CPCs, size_t K) {  // on (-1, 1)
   using ret_type = var_value<Eigen::MatrixXd>;
 
   if (K == 0) {
@@ -132,7 +132,7 @@ auto read_corr_L(const T& CPCs, size_t K) {  // on (-1, 1)
  */
 template <typename T1, typename T2, require_var_vector_t<T1>* = nullptr,
           require_stan_scalar_t<T2>* = nullptr>
-auto read_corr_L(const T1& CPCs, size_t K, T2& log_prob) {
+inline auto read_corr_L(const T1& CPCs, size_t K, T2& log_prob) {
   using ret_val_type = Eigen::MatrixXd;
   using ret_type = var_value<Eigen::MatrixXd>;
 

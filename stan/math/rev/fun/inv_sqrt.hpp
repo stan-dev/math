@@ -3,8 +3,10 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/prim/fun/inv_sqrt.hpp>
 #include <stan/math/rev/fun/to_arena.hpp>
+#include <stan/math/rev/fun/inv.hpp>
+#include <stan/math/rev/fun/sqrt.hpp>
+#include <stan/math/prim/fun/inv_sqrt.hpp>
 #include <cmath>
 
 namespace stan {
@@ -30,8 +32,8 @@ namespace math {
    \f]
  *
  */
-template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
-inline auto inv_sqrt(const var_value<T>& a) {
+template <typename T, require_var_t<T>* = nullptr>
+inline auto inv_sqrt(T&& a) {
   auto denom = to_arena(as_array_or_scalar(a.val())
                         * as_array_or_scalar(sqrt(a.val())));
   return make_callback_var(inv_sqrt(a.val()), [a, denom](auto& vi) mutable {

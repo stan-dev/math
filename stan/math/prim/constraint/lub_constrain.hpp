@@ -9,6 +9,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/add.hpp>
 #include <stan/math/prim/fun/exp.hpp>
+#include <stan/math/prim/fun/eval.hpp>
 #include <stan/math/prim/fun/elt_multiply.hpp>
 #include <stan/math/prim/fun/inv_logit.hpp>
 #include <stan/math/prim/fun/log.hpp>
@@ -92,10 +93,11 @@ inline auto lub_constrain(T&& x, L&& lb, U&& ub) {
  *   the free scalar.
  * @throw std::domain_error if ub <= lb
  */
-template <typename T, typename L, typename U,
+template <typename T, typename L, typename U, typename Lp,
           require_all_stan_scalar_t<T, L, U>* = nullptr,
-          require_not_var_t<return_type_t<T, L, U>>* = nullptr>
-inline auto lub_constrain(T&& x, L&& lb, U&& ub, return_type_t<T, L, U>& lp) {
+          require_not_var_t<return_type_t<T, L, U>>* = nullptr,
+          require_convertible_t<return_type_t<T, L, U>, Lp>* = nullptr>
+inline auto lub_constrain(T&& x, L&& lb, U&& ub, Lp& lp) {
   const bool is_lb_inf = value_of(lb) == NEGATIVE_INFTY;
   const bool is_ub_inf = value_of(ub) == INFTY;
   if (unlikely(is_ub_inf && is_lb_inf)) {
@@ -118,21 +120,25 @@ inline auto lub_constrain(T&& x, L&& lb, U&& ub, return_type_t<T, L, U>& lp) {
 template <typename T, typename L, typename U, require_eigen_t<T>* = nullptr,
           require_all_stan_scalar_t<L, U>* = nullptr,
           require_not_var_t<return_type_t<T, L, U>>* = nullptr>
-inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
-  return eval(to_ref(x).unaryExpr(
-      [ub, lb](auto&& xx) { return lub_constrain(xx, lb, ub); }));
+inline auto lub_constrain(T&& x, const L& lb, const U& ub) {
+  return make_holder([lb, ub](auto&& x_) {
+    return std::forward<decltype(x_)>(x_).unaryExpr([lb, ub](auto&& xx) { return lub_constrain(xx, lb, ub); });
+  }, std::forward<T>(x));
 }
 
 /**
  * Overload for Eigen matrix and scalar bounds plus lp.
  */
-template <typename T, typename L, typename U, require_eigen_t<T>* = nullptr,
+template <typename T, typename L, typename U, typename Lp,
+          require_eigen_t<T>* = nullptr,
           require_all_stan_scalar_t<L, U>* = nullptr,
-          require_not_var_t<return_type_t<T, L, U>>* = nullptr>
-inline auto lub_constrain(const T& x, const L& lb, const U& ub,
-                          return_type_t<T, L, U>& lp) {
-  return eval(to_ref(x).unaryExpr(
-      [lb, ub, &lp](auto&& xx) { return lub_constrain(xx, lb, ub, lp); }));
+          require_not_var_t<return_type_t<T, L, U>>* = nullptr,
+          require_convertible_t<return_type_t<T, L, U>, Lp>* = nullptr>
+inline auto lub_constrain(T&& x, const L& lb, const U& ub, Lp& lp) {
+  return eval(make_holder([lb, ub, &lp](auto&& x_) {
+    return std::forward<decltype(x_)>(x_).unaryExpr(
+      [lb, ub, &lp](auto&& xx) { return lub_constrain(xx, lb, ub, lp); });
+  }, std::forward<T>(x)));
 }
 
 /**
@@ -143,27 +149,31 @@ template <typename T, typename L, typename U,
           require_all_eigen_t<T, L>* = nullptr,
           require_stan_scalar_t<U>* = nullptr,
           require_not_var_t<return_type_t<T, L, U>>* = nullptr>
-inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
+inline auto lub_constrain(T&& x, L&& lb, const U& ub) {
   check_matching_dims("lub_constrain", "x", x, "lb", lb);
-  return eval(to_ref(x).binaryExpr(to_ref(lb), [ub](auto&& x, auto&& lb) {
-    return lub_constrain(x, lb, ub);
-  }));
+  return make_holder([ub](auto&& x_, auto&& lb_) {
+    return std::forward<decltype(x_)>(x_).binaryExpr(lb_, [ub](auto&& xx, auto&& llb) {
+      return lub_constrain(xx, llb, ub);
+    });
+  }, std::forward<T>(x), std::forward<L>(lb));
 }
 
 /**
  * Overload for Eigen matrix with matrix lower bound and scalar upper
  * bound plus lp.
  */
-template <typename T, typename L, typename U,
+template <typename T, typename L, typename U, typename Lp,
           require_all_eigen_t<T, L>* = nullptr,
           require_stan_scalar_t<U>* = nullptr,
-          require_not_var_t<return_type_t<T, L, U>>* = nullptr>
-inline auto lub_constrain(const T& x, const L& lb, const U& ub,
-                          return_type_t<T, L, U>& lp) {
+          require_not_var_t<return_type_t<T, L, U>>* = nullptr,
+          require_convertible_t<return_type_t<T, L, U>, Lp>* = nullptr>
+inline auto lub_constrain(T&& x, L&& lb, const U& ub, Lp& lp) {
   check_matching_dims("lub_constrain", "x", x, "lb", lb);
-  return eval(to_ref(x).binaryExpr(to_ref(lb), [ub, &lp](auto&& x, auto&& lb) {
-    return lub_constrain(x, lb, ub, lp);
-  }));
+  return eval(make_holder([ub, &lp](auto&& x_, auto&& lb_) {
+    return to_ref(x_).binaryExpr(lb_, [ub, &lp](auto&& xx, auto&& llb) {
+      return lub_constrain(xx, llb, ub, lp);
+    });
+  }, std::forward<T>(x), std::forward<L>(lb)));
 }
 
 /**
@@ -174,27 +184,31 @@ template <typename T, typename L, typename U,
           require_all_eigen_t<T, U>* = nullptr,
           require_stan_scalar_t<L>* = nullptr,
           require_not_var_t<return_type_t<T, L, U>>* = nullptr>
-inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
+inline auto lub_constrain(T&& x, const L& lb, U&& ub) {
   check_matching_dims("lub_constrain", "x", x, "ub", ub);
-  return eval(to_ref(x).binaryExpr(to_ref(ub), [lb](auto&& x, auto&& ub) {
-    return lub_constrain(x, lb, ub);
-  }));
+  return make_holder([lb](auto&& x_, auto&& ub_){
+    return x_.binaryExpr(ub_, [lb](auto&& xx, auto&& uub) {
+      return lub_constrain(xx, lb, uub);
+    });
+  }, std::forward<T>(x), std::forward<U>(ub));
 }
 
 /**
  * Overload for Eigen matrix with scalar lower bound and matrix upper
  * bound plus lp.
  */
-template <typename T, typename L, typename U,
+template <typename T, typename L, typename U, typename Lp,
           require_all_eigen_t<T, U>* = nullptr,
           require_stan_scalar_t<L>* = nullptr,
-          require_not_var_t<return_type_t<T, L, U>>* = nullptr>
-inline auto lub_constrain(const T& x, const L& lb, const U& ub,
-                          return_type_t<T, L, U>& lp) {
+          require_not_var_t<return_type_t<T, L, U>>* = nullptr,
+          require_convertible_t<return_type_t<T, L, U>, Lp>* = nullptr>
+inline auto lub_constrain(T&& x, const L& lb, U&& ub, Lp& lp) {
   check_matching_dims("lub_constrain", "x", x, "ub", ub);
-  return eval(to_ref(x).binaryExpr(to_ref(ub), [lb, &lp](auto&& x, auto&& ub) {
-    return lub_constrain(x, lb, ub, lp);
-  }));
+  return eval(make_holder([lb, &lp](auto&& x_, auto&& ub_){
+    return x_.binaryExpr(ub_, [lb, &lp](auto&& xx, auto&& uub) {
+      return lub_constrain(xx, lb, uub, lp);
+    });
+  }, std::forward<T>(x), std::forward<U>(ub)));
 }
 
 /**
@@ -222,11 +236,11 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
 /**
  * Overload for Eigen matrix and matrix bounds plus lp.
  */
-template <typename T, typename L, typename U,
+template <typename T, typename L, typename U, typename Lp,
           require_all_eigen_t<T, L, U>* = nullptr,
-          require_not_var_t<return_type_t<T, L, U>>* = nullptr>
-inline auto lub_constrain(const T& x, const L& lb, const U& ub,
-                          return_type_t<T, L, U>& lp) {
+          require_not_var_t<return_type_t<T, L, U>>* = nullptr,
+          require_convertible_t<return_type_t<T, L, U>, Lp>* = nullptr>
+inline auto lub_constrain(const T& x, const L& lb, const U& ub, Lp& lp) {
   check_matching_dims("lub_constrain", "x", x, "lb", lb);
   check_matching_dims("lub_constrain", "x", x, "ub", ub);
   auto x_ref = to_ref(x);
@@ -261,10 +275,11 @@ inline auto lub_constrain(const std::vector<T>& x, const L& lb, const U& ub) {
 /**
  * Overload for array of x and non-array lb and ub with lp
  */
-template <typename T, typename L, typename U,
+template <typename T, typename L, typename U, typename Lp,
+          require_convertible_t<return_type_t<T, L, U>, Lp>* = nullptr,
           require_all_not_std_vector_t<L, U>* = nullptr>
 inline auto lub_constrain(const std::vector<T>& x, const L& lb, const U& ub,
-                          return_type_t<T, L, U>& lp) {
+                          Lp& lp) {
   std::vector<plain_type_t<decltype(lub_constrain(x[0], lb, ub))>> ret(
       x.size());
   auto&& lb_ref = to_ref(lb);
@@ -295,11 +310,11 @@ inline auto lub_constrain(const std::vector<T>& x, const L& lb,
 /**
  * Overload for array of x and ub and non-array lb with lp
  */
-template <typename T, typename L, typename U,
+template <typename T, typename L, typename U, typename Lp,
+          require_convertible_t<return_type_t<T, L, U>, Lp>* = nullptr,
           require_not_std_vector_t<L>* = nullptr>
 inline auto lub_constrain(const std::vector<T>& x, const L& lb,
-                          const std::vector<U>& ub,
-                          return_type_t<T, L, U>& lp) {
+                          const std::vector<U>& ub, Lp& lp) {
   check_matching_dims("lub_constrain", "x", x, "ub", ub);
   std::vector<plain_type_t<decltype(lub_constrain(x[0], lb, ub[0]))>> ret(
       x.size());
@@ -330,10 +345,11 @@ inline auto lub_constrain(const std::vector<T>& x, const std::vector<L>& lb,
 /**
  * Overload for array of x and lb and non-array ub with lp
  */
-template <typename T, typename L, typename U,
+template <typename T, typename L, typename U, typename Lp,
+          require_convertible_t<return_type_t<T, L, U>, Lp>* = nullptr,
           require_not_std_vector_t<U>* = nullptr>
 inline auto lub_constrain(const std::vector<T>& x, const std::vector<L>& lb,
-                          const U& ub, return_type_t<T, L, U>& lp) {
+                          const U& ub, Lp& lp) {
   check_matching_dims("lub_constrain", "x", x, "lb", lb);
   std::vector<plain_type_t<decltype(lub_constrain(x[0], lb[0], ub))>> ret(
       x.size());
@@ -363,10 +379,10 @@ inline auto lub_constrain(const std::vector<T>& x, const std::vector<L>& lb,
 /**
  * Overload for array of x, lb, and ub
  */
-template <typename T, typename L, typename U>
+template <typename T, typename L, typename U, typename Lp,
+          require_convertible_t<return_type_t<T, L, U>, Lp>* = nullptr>
 inline auto lub_constrain(const std::vector<T>& x, const std::vector<L>& lb,
-                          const std::vector<U>& ub,
-                          return_type_t<T, L, U>& lp) {
+                          const std::vector<U>& ub, Lp& lp) {
   check_matching_dims("lub_constrain", "x", x, "lb", lb);
   check_matching_dims("lub_constrain", "x", x, "ub", ub);
   std::vector<plain_type_t<decltype(lub_constrain(x[0], lb[0], ub[0]))>> ret(
@@ -393,6 +409,7 @@ inline auto lub_constrain(const std::vector<T>& x, const std::vector<L>& lb,
  * type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
  * @tparam U A type inheriting from `Eigen::EigenBase`, a `var_value` with inner
  * type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
+ * @tparam Lp Scalar, convertable from the scalar types of T, L, and U
  * @param[in] x Free scalar to transform
  * @param[in] lb Lower bound
  * @param[in] ub Upper bound
@@ -401,13 +418,15 @@ inline auto lub_constrain(const std::vector<T>& x, const std::vector<L>& lb,
  * scalar
  * @throw std::domain_error if `ub <= lb`
  */
-template <bool Jacobian, typename T, typename L, typename U>
-inline auto lub_constrain(const T& x, const L& lb, const U& ub,
-                          return_type_t<T, L, U>& lp) {
-  if (Jacobian) {
-    return lub_constrain(x, lb, ub, lp);
+template <bool Jacobian, typename T, typename L, typename U, typename Lp,
+          require_convertible_t<return_type_t<T, L, U>, Lp>* = nullptr>
+inline auto lub_constrain(T&& x, L&& lb, U&& ub, Lp& lp) {
+  if constexpr (Jacobian) {
+    return lub_constrain(std::forward<T>(x), std::forward<L>(lb),
+                         std::forward<U>(ub), lp);
   } else {
-    return lub_constrain(x, lb, ub);
+    return lub_constrain(std::forward<T>(x), std::forward<L>(lb),
+                         std::forward<U>(ub));
   }
 }
 
@@ -415,27 +434,29 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
  * Wrapper for tuple of bounds, simply delegates to the appropriate overload
  */
 template <typename T, typename L, typename U>
-inline auto lub_constrain(const T& x, const std::tuple<L, U>& bounds) {
-  return lub_constrain(x, std::get<0>(bounds), std::get<1>(bounds));
+inline auto lub_constrain(T&& x, const std::tuple<L, U>& bounds) {
+  return lub_constrain(std::forward<T>(x), std::get<0>(bounds),
+                       std::get<1>(bounds));
 }
 
 /**
  * Wrapper for tuple of bounds, simply delegates to the appropriate overload
  */
-template <typename T, typename L, typename U>
-inline auto lub_constrain(const T& x, const std::tuple<L, U>& bounds,
-                          return_type_t<T, L, U>& lp) {
-  return lub_constrain(x, std::get<0>(bounds), std::get<1>(bounds), lp);
+template <typename T, typename L, typename U, typename Lp,
+          require_convertible_t<return_type_t<T, L, U>, Lp>* = nullptr>
+inline auto lub_constrain(T&& x, const std::tuple<L, U>& bounds, Lp& lp) {
+  return lub_constrain(std::forward<T>(x), std::get<0>(bounds),
+                       std::get<1>(bounds), lp);
 }
 
 /**
  * Wrapper for tuple of bounds, simply delegates to the appropriate overload
  */
-template <bool Jacobian, typename T, typename L, typename U>
-inline auto lub_constrain(const T& x, const std::tuple<L, U>& bounds,
-                          return_type_t<T, L, U>& lp) {
-  return lub_constrain<Jacobian>(x, std::get<0>(bounds), std::get<1>(bounds),
-                                 lp);
+template <bool Jacobian, typename T, typename L, typename U, typename Lp,
+          require_convertible_t<return_type_t<T, L, U>, Lp>* = nullptr>
+inline auto lub_constrain(T&& x, const std::tuple<L, U>& bounds, Lp& lp) {
+  return lub_constrain<Jacobian>(std::forward<T>(x), std::get<0>(bounds),
+                                 std::get<1>(bounds), lp);
 }
 
 }  // namespace math

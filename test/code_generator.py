@@ -129,6 +129,10 @@ class CodeGenerator:
                     )
                 elif inner_type == "(real, vector, ostream_ptr, vector) => vector":
                     arg = statement_types.OdeFunctorVariable("functor" + suffix)
+                elif inner_type == "stochastic_matrix":
+                    arg = statement_types.StochasticMatrixVariable(
+                        overload, "stochastic_matrix" + suffix, size, value
+                    )
                 else:
                     raise Exception("Inner type " + inner_type + " not supported")
 

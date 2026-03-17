@@ -31,13 +31,14 @@ namespace math {
  * @param r Block size. Optimal value depends on the hardware.
  */
 template <bool need_Q = true>
-void qr_decomposition_cl(const matrix_cl<double>& A, matrix_cl<double>& Q,
-                         matrix_cl<double>& R, int r = 100) {
+inline void qr_decomposition_cl(const matrix_cl<double>& A,
+                                matrix_cl<double>& Q, matrix_cl<double>& R,
+                                int r = 100) {
   using std::copysign;
   using std::sqrt;
   int rows = A.rows();
   int cols = A.cols();
-  if (need_Q) {
+  if constexpr (need_Q) {
     Q = identity_matrix<matrix_cl<double>>(rows);
   }
   R = A;
@@ -99,7 +100,7 @@ void qr_decomposition_cl(const matrix_cl<double>& A, matrix_cl<double>& Q,
         = block_zero_based(R, k, k + actual_r, rows - k, cols - k - actual_r);
     R_block -= Y_cl * (transpose(W_cl) * R_block);
 
-    if (need_Q) {
+    if constexpr (need_Q) {
       auto Q_block = block_zero_based(Q, 0, k, Q.rows(), Q.cols() - k);
       Q_block -= (Q_block * W_cl) * transpose(Y_cl);
     }

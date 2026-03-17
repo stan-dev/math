@@ -665,7 +665,7 @@ class results_cl {
  * @param results results that will be calculated in same kernel.
  */
 template <typename... T_results>
-results_cl<T_results...> results(T_results&&... results) {
+inline results_cl<T_results...> results(T_results&&... results) {
   return results_cl<T_results...>(std::forward<T_results>(results)...);
 }
 

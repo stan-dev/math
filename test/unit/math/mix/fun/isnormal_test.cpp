@@ -4,7 +4,7 @@
 #include <limits>
 
 template <typename T>
-void expect_isnormal() {
+inline void expect_isnormal() {
   using stan::math::isnormal;
   using std::isnormal;
   using std::numeric_limits;

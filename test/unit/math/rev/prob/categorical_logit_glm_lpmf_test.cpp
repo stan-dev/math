@@ -1,14 +1,14 @@
 #include <stan/math/rev.hpp>
-#include <stan/math/prim.hpp>
 #include <test/unit/math/rev/util.hpp>
+#include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
 #include <cmath>
 #include <vector>
 
 template <bool propto, typename T_x, typename T_alpha, typename T_beta>
-stan::return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_simple_lpmf(
-    const std::vector<int>& y, const T_x& x, const T_alpha& alpha,
-    const T_beta& beta) {
+inline stan::return_type_t<T_x, T_alpha, T_beta>
+categorical_logit_glm_simple_lpmf(const std::vector<int>& y, const T_x& x,
+                                  const T_alpha& alpha, const T_beta& beta) {
   using T_return = stan::return_type_t<T_x, T_beta, T_alpha>;
 
   const size_t N_instances = x.rows();
@@ -652,7 +652,7 @@ TYPED_TEST(ProbDistributionsCategoricalLogitGLM, glm_interfaces) {
       categorical_logit_glm_lpmf(y_scal, x_var_row, alpha_var, beta_var));
 }
 
-TEST(ProbDistributionsCategoricalLogitGLM, glm_errors) {
+TEST_F(AgradRev, ProbDistributionsCategoricalLogitGLM_glm_errors) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::MatrixXd;

@@ -3,7 +3,7 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/prim/fun/trigamma.hpp>
+#include <stan/math/rev/fun/trigamma.hpp>
 #include <stan/math/prim/fun/digamma.hpp>
 
 namespace stan {
@@ -17,7 +17,7 @@ namespace math {
  * @return derivative of log gamma function at argument
  */
 inline var digamma(const var& a) {
-  return make_callback_var(digamma(a.val()), [a](auto& vi) {
+  return make_callback_var(digamma(a.val()), [a](auto&& vi) {
     a.adj() += vi.adj() * trigamma(a.val());
   });
 }
@@ -32,17 +32,17 @@ inline var digamma(const var& a) {
  */
 template <typename T, require_var_matrix_t<T>* = nullptr>
 inline auto digamma(const T& a) {
-  return make_callback_var(
-      a.val()
-          .array()
-          .unaryExpr([](auto& x) { return digamma(x); })
-          .matrix()
-          .eval(),
-      [a](auto& vi) mutable {
-        a.adj().array()
-            += vi.adj().array()
-               * a.val().array().unaryExpr([](auto& x) { return trigamma(x); });
-      });
+  return make_callback_var(a.val()
+                               .array()
+                               .unaryExpr([](auto&& x) { return digamma(x); })
+                               .matrix()
+                               .eval(),
+                           [a](auto&& vi) mutable {
+                             a.adj().array()
+                                 += vi.adj().array()
+                                    * a.val().array().unaryExpr(
+                                        [](auto&& x) { return trigamma(x); });
+                           });
 }
 
 }  // namespace math

@@ -362,7 +362,7 @@ struct FixedPointSolver<KinsolFixedPointEnv<F>, fp_jac_type> {
  * <code>std::runtime_error</code>) if solver exceeds max_num_steps.
  */
 template <typename F, typename T1, typename T2, typename T_u, typename T_f>
-Eigen::Matrix<T2, -1, 1> algebra_solver_fp(
+inline Eigen::Matrix<T2, -1, 1> algebra_solver_fp(
     const F& f, const Eigen::Matrix<T1, -1, 1>& x,
     const Eigen::Matrix<T2, -1, 1>& y, const std::vector<double>& x_r,
     const std::vector<int>& x_i, const std::vector<T_u>& u_scale,

@@ -11,9 +11,10 @@ namespace stan {
 namespace math {
 
 template <typename T, require_eigen_t<T>* = nullptr>
-auto cholesky_corr_free(const T& x) {
+inline auto cholesky_corr_free(const T& x) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  using std::sqrt;
 
   check_square("cholesky_corr_free", "x", x);
   // should validate lower-triangular, unit lengths
@@ -24,9 +25,9 @@ auto cholesky_corr_free(const T& x) {
   int k = 0;
   for (int i = 1; i < x.rows(); ++i) {
     z.coeffRef(k++) = corr_free(x_ref.coeff(i, 0));
-    double sum_sqs = square(x_ref.coeff(i, 0));
+    auto sum_sqs = square(x_ref.coeff(i, 0));
     for (int j = 1; j < i; ++j) {
-      z.coeffRef(k++) = corr_free(x_ref.coeff(i, j) / std::sqrt(1.0 - sum_sqs));
+      z.coeffRef(k++) = corr_free(x_ref.coeff(i, j) / sqrt(1.0 - sum_sqs));
       sum_sqs += square(x_ref.coeff(i, j));
     }
   }
@@ -41,9 +42,10 @@ auto cholesky_corr_free(const T& x) {
  * @param x The standard vector to untransform.
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
-auto cholesky_corr_free(const T& x) {
-  return apply_vector_unary<T>::apply(
-      x, [](auto&& v) { return cholesky_corr_free(v); });
+inline auto cholesky_corr_free(T&& x) {
+  return apply_vector_unary<T>::apply(std::forward<T>(x), [](auto&& v) {
+    return cholesky_corr_free(std::forward<decltype(v)>(v));
+  });
 }
 
 }  // namespace math

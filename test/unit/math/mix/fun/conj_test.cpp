@@ -1,4 +1,3 @@
-#include <stan/math/prim.hpp>
 #include <test/unit/math/test_ad.hpp>
 #include <test/unit/math/mix/util.hpp>
 #include <complex>
@@ -12,7 +11,7 @@ TEST_F(mathMix, conj) {
 }
 
 template <typename T>
-void test_vectorized_conj() {
+inline void test_vectorized_conj() {
   using stan::math::value_of_rec;
   using complex_t = std::complex<T>;
   using complex_matrix = Eigen::Matrix<complex_t, -1, -1>;

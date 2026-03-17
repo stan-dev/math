@@ -2,7 +2,7 @@
 #include <test/unit/math/mix/util.hpp>
 #include <vector>
 
-void expect_variance(const Eigen::MatrixXd& m) {
+inline void expect_variance(const Eigen::MatrixXd& m) {
   auto f = [](const auto& x) { return stan::math::variance(x); };
   Eigen::VectorXd v = stan::test::to_vector(m);
   Eigen::RowVectorXd rv = stan::math::to_row_vector(m);

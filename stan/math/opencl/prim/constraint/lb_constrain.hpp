@@ -31,7 +31,7 @@ template <typename T, typename L,
           require_all_kernel_expressions_t<L>* = nullptr>
 inline auto lb_constrain(T&& x, L&& lb) {
   return make_holder_cl(
-      [](auto& x_, auto& lb_) {
+      [](auto&& x_, auto& lb_) {
         return select(lb_ == NEGATIVE_INFTY, x_, lb_ + exp(x_));
       },
       std::forward<T>(x), std::forward<L>(lb));

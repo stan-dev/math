@@ -1,6 +1,74 @@
 Stan Math Library Release Notes
 
 ======================================================================
+v5.2.0 (13 January 2026)
+======================================================================
+
+ - Added the unnormalized CDF and CCDF for the wiener 7-parameter diffusion model. Allows modeling truncated and censored data. (#3042, #3258, #3260, #3263)
+ - Added `yule_simon_lpmf` and `yule_simon_lccdf`. Allows modeling power-law count data. (#3220, #3236)
+ - Updated wording of validate_positive_index. (#3248)
+ - Replaced standard `if` statements with `if constexpr` where posssible. (#3240)
+ - Removed use of `forward_as` in the math library. (#3242)
+ - Added some more type traits for dealing with tuples. (#3244)
+ - Added `inline` to all functions. (#3245)
+
+======================================================================
+v5.1.0 (2 September 2025)
+======================================================================
+
+ - Added functions for the embedded Laplace approximation. (#3097, #3209, #3210)
+ - Added new overloads for `sum_to_zero_constrain` and `sum_to_zero_free` that accept Eigen Matrix types. (#3169)
+ - The simplex transform is now defined in terms of the isometric log ratio transform instead of stick breaking. (#3171)
+ - Renamed `hypergeometric_1f0` to `hypergeometric_1F0` for consistency, fixed compilation for `hypergeometric_2f1` with autodiff second argument. (#3165)
+ - Simplified implementation of `chol2inv` using matrix functions. (#3136)
+ - Improved the numerical stability of the gradient calculations for `inv_Phi` and `std_normal_log_qf`. (#3139, #3207)
+ - Simplified vectorisation of `std_normal_lpdf`. (#3140)
+ - Removed redundant computation in `grad_reg_inc_beta`. (#3159)
+ - Updated signature for `apply_scalar_binary` to take the functor as its first argument, instead of the last. (#3156)
+ - Added perfect forwarding to all functions that use the `apply_` family of functors. (#3221, #3228, #3229)
+ - Fixed expression test errors with `poisson_binomial_rng`, added support for row-vector and `std::vector<double>` `theta` arguments for `poisson_binomial`. (#3178)
+ - Updated `inv_logit` to use the logistic function from Eigen. (#3155, #3160)
+ - Update the constraint functions templating to be more flexible. (#3151)
+ - Added ARM64 testing to the Github CI for Windows and Ubuntu (#3177, #3173, #3180, #3174, #3158, #3164)
+ - Disabled Make's implicit rules in our Makefiles. (#3183)
+ - Updated Boost to version 1.87.0 (#3185)
+ - Patched an issue preventing TBB from building with clang 21.1 (#3223)
+
+======================================================================
+v5.0.0 (10 December 2024)
+======================================================================
+
+Breaking changes:
+
+ - Removed deprecated `_log()` probability functions. (#2995)
+ - Moved constraint transforms to their own folder. (#3039)
+ - Updated arena_matrix to use move semantics. (#2928)
+ - Un-vendored a great many unused boost libraries. (#3129)
+ - C++17 is now required.
+
+ Other changes:
+
+ - Added `sum_to_zero_constrain`, `sum_to_zero_free`, and `check_sum_to_zero`. (#3101)
+ - Added beta_neg_binomial_lpmf. Allows modeling heavy-tail count data. (#3108)
+ - Added beta_neg_binomial_lccdf. (#3114, #3118)
+ - Added beta_neg_binomial_lcdf. (#3116)
+ - Added beta_neg_binomial_cdf. (#3120)
+ - Added beta_neg_binomial_rng. (#3126)
+ - Added overloads for tuples of bounds to `lub_free` and `lub_constrain`. (#3087)
+ - Added error checking functions for row/column stochastic matrices. (#3095)
+ - Added constructor to vari for passing initial values and adjoints. (#3089)
+ - Improved efficiency of `finite_diff_gradient_auto`. (#3096)
+ - Functions concerned with the number of entries in a container (`size`, `cols`, `rows`, ...) now consistently use `long int` as their return type. (#3086)
+ - Removed support for adding makefile variables in `~/.config/stan/make.local`. Use the `make/local` file in the Math directory instead. (#3090)
+ - Fixed an indexing bug inside gp_matern32_cov. (#3084)
+ - Fixed the new `wiener_lpdf` overloads evaluating their expression template arguments more than once. (#3112)
+ - Fixed some failures to compile calls to `pow` when using libc++ 19. (#3110)
+ - Updated templated complex functions in the Stan math library to be better candidates than the standard library functions during ADL. (#3122)
+ - Fixed a warning about a mismatched struct/class declaration from clang 18. (#3091)
+ - Fixed compilation of `fabs` with Apple Clang 15. (#3093)
+ - Fix Eigen issue [2852](https://gitlab.com/libeigen/eigen/-/issues/2852) so that Eigen's kronecker product type works  with `value_type_t`. (#3124)
+
+======================================================================
 v4.9.0 (3 June 2024)
 ======================================================================
 

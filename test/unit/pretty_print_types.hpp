@@ -70,26 +70,32 @@ inline std::ostream& operator<<(std::ostream& os, static_string const& s) {
   return os.write(s.data(), s.size());
 }
 
+template <typename... Types>
+struct pack;
 /**
  * Prints out an input type.
  * @tparam T The type to print out.
  */
-template <class Arg>
-CONSTEXPR14_TN static_string type_name() {
+template <typename... Arg>
+inline CONSTEXPR14_TN static_string type_name() {
+  if constexpr (sizeof...(Arg) > 1) {
+    return type_name<pack<Arg...>>();
+  } else {
 #ifdef __clang__
-  static_string p = __PRETTY_FUNCTION__;
-  return static_string(p.data() + 31, p.size() - 31 - 1);
+    static_string p = __PRETTY_FUNCTION__;
+    return static_string(p.data() + 31, p.size() - 31 - 1);
 #elif defined(__GNUC__)
-  static_string p = __PRETTY_FUNCTION__;
+    static_string p = __PRETTY_FUNCTION__;
 #if __cplusplus < 201402
-  return static_string(p.data() + 36, p.size() - 36 - 1);
+    return static_string(p.data() + 36, p.size() - 36 - 1);
 #else
-  return static_string(p.data() + 83, p.size() - 83 - 1);
+    return static_string(p.data() + 83, p.size() - 83 - 1);
 #endif
 #elif defined(_MSC_VER)
-  static_string p = __FUNCSIG__;
-  return static_string(p.data() + 38, p.size() - 38 - 7);
+    static_string p = __FUNCSIG__;
+    return static_string(p.data() + 38, p.size() - 38 - 7);
 #endif
+  }
 }
 
 }  // namespace test

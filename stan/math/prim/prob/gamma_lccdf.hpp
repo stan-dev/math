@@ -22,9 +22,8 @@ namespace stan {
 namespace math {
 
 template <typename T_y, typename T_shape, typename T_inv_scale>
-return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(const T_y& y,
-                                                     const T_shape& alpha,
-                                                     const T_inv_scale& beta) {
+inline return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(
+    const T_y& y, const T_shape& alpha, const T_inv_scale& beta) {
   using T_partials_return = partials_return_t<T_y, T_shape, T_inv_scale>;
   using std::exp;
   using std::log;
@@ -58,20 +57,8 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(const T_y& y,
   // The gradients are technically ill-defined, but treated as zero
   for (size_t i = 0; i < stan::math::size(y); i++) {
     if (y_vec.val(i) == 0) {
+      // LCCDF(0) = log(P(Y > 0)) = log(1) = 0
       return ops_partials.build(0.0);
-    }
-  }
-
-  VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
-      gamma_vec(math::size(alpha));
-  VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
-      digamma_vec(math::size(alpha));
-
-  if (!is_constant_all<T_shape>::value) {
-    for (size_t i = 0; i < stan::math::size(alpha); i++) {
-      const T_partials_return alpha_dbl = alpha_vec.val(i);
-      gamma_vec[i] = tgamma(alpha_dbl);
-      digamma_vec[i] = digamma(alpha_dbl);
     }
   }
 
@@ -79,32 +66,46 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lccdf(const T_y& y,
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
     if (y_vec.val(n) == INFTY) {
+      // LCCDF(∞) = log(P(Y > ∞)) = log(0) = -∞
       return ops_partials.build(negative_infinity());
     }
 
     const T_partials_return y_dbl = y_vec.val(n);
     const T_partials_return alpha_dbl = alpha_vec.val(n);
     const T_partials_return beta_dbl = beta_vec.val(n);
+    const T_partials_return beta_y_dbl = beta_dbl * y_dbl;
 
-    const T_partials_return Pn = gamma_q(alpha_dbl, beta_dbl * y_dbl);
+    // Qn = 1 - Pn
+    const T_partials_return Qn = gamma_q(alpha_dbl, beta_y_dbl);
+    const T_partials_return log_Qn = log(Qn);
 
-    P += log(Pn);
+    P += log_Qn;
 
-    if (!is_constant_all<T_y>::value) {
-      partials<0>(ops_partials)[n] -= beta_dbl * exp(-beta_dbl * y_dbl)
-                                      * pow(beta_dbl * y_dbl, alpha_dbl - 1)
-                                      / tgamma(alpha_dbl) / Pn;
+    if constexpr (is_any_autodiff_v<T_y, T_inv_scale>) {
+      const T_partials_return log_y_dbl = log(y_dbl);
+      const T_partials_return log_beta_dbl = log(beta_dbl);
+      const T_partials_return log_pdf
+          = alpha_dbl * log_beta_dbl - lgamma(alpha_dbl)
+            + (alpha_dbl - 1.0) * log_y_dbl - beta_y_dbl;
+      const T_partials_return common_term = exp(log_pdf - log_Qn);
+
+      if constexpr (is_autodiff_v<T_y>) {
+        // d/dy log(1-F(y)) = -f(y)/(1-F(y))
+        partials<0>(ops_partials)[n] -= common_term;
+      }
+      if constexpr (is_autodiff_v<T_inv_scale>) {
+        // d/dbeta log(1-F(y)) = -y*f(y)/(beta*(1-F(y)))
+        partials<2>(ops_partials)[n] -= y_dbl / beta_dbl * common_term;
+      }
     }
-    if (!is_constant_all<T_shape>::value) {
+
+    if constexpr (is_autodiff_v<T_shape>) {
+      const T_partials_return digamma_val = digamma(alpha_dbl);
+      const T_partials_return gamma_val = tgamma(alpha_dbl);
+      // d/dalpha log(1-F(y)) = grad_upper_inc_gamma / (1-F(y))
       partials<1>(ops_partials)[n]
-          += grad_reg_inc_gamma(alpha_dbl, beta_dbl * y_dbl, gamma_vec[n],
-                                digamma_vec[n])
-             / Pn;
-    }
-    if (!is_constant_all<T_inv_scale>::value) {
-      partials<2>(ops_partials)[n] -= y_dbl * exp(-beta_dbl * y_dbl)
-                                      * pow(beta_dbl * y_dbl, alpha_dbl - 1)
-                                      / tgamma(alpha_dbl) / Pn;
+          += grad_reg_inc_gamma(alpha_dbl, beta_y_dbl, gamma_val, digamma_val)
+             / Qn;
     }
   }
   return ops_partials.build(P);

@@ -2,8 +2,8 @@
 #include <test/unit/math/mix/util.hpp>
 #include <iostream>
 
-void expect_diag_pre_multiply(const Eigen::VectorXd& v,
-                              const Eigen::MatrixXd& a) {
+inline void expect_diag_pre_multiply(const Eigen::VectorXd& v,
+                                     const Eigen::MatrixXd& a) {
   auto f = [](const auto& x, const auto& y) {
     return stan::math::diag_pre_multiply(x, y);
   };

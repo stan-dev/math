@@ -30,8 +30,6 @@ template <typename T1, typename T2,
           require_any_fvar_t<base_type_t<T1>, base_type_t<T2>>* = nullptr,
           require_all_stan_scalar_t<T1, T2>* = nullptr>
 inline auto pow(const T1& x1, const T2& x2) {
-  using std::log;
-  using std::pow;
   if constexpr (is_complex<T1>::value || is_complex<T2>::value) {
     return internal::complex_pow(x1, x2);
   } else if constexpr (is_fvar<T1>::value && is_fvar<T2>::value) {
@@ -43,23 +41,17 @@ inline auto pow(const T1& x1, const T2& x2) {
     auto u = stan::math::pow(x1, x2.val_);
     return T2(u, x2.d_ * stan::math::log(x1) * u);
   } else {
-    using std::sqrt;
     if (x2 == -2) {
       return stan::math::inv_square(x1);
-    }
-    if (x2 == -1) {
+    } else if (x2 == -1) {
       return stan::math::inv(x1);
-    }
-    if (x2 == -0.5) {
+    } else if (x2 == -0.5) {
       return stan::math::inv_sqrt(x1);
-    }
-    if (x2 == 0.5) {
+    } else if (x2 == 0.5) {
       return stan::math::sqrt(x1);
-    }
-    if (x2 == 1.0) {
+    } else if (x2 == 1.0) {
       return x1;
-    }
-    if (x2 == 2.0) {
+    } else if (x2 == 2.0) {
       return stan::math::square(x1);
     }
     return T1(stan::math::pow(x1.val_, x2),
@@ -81,9 +73,13 @@ inline auto pow(const T1& x1, const T2& x2) {
 template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr,
           require_all_not_matrix_st<is_var, T1, T2>* = nullptr,
           require_any_fvar_t<base_type_t<T1>, base_type_t<T2>>* = nullptr>
-inline auto pow(const T1& a, const T2& b) {
+inline auto pow(T1&& a, T2&& b) {
   return apply_scalar_binary(
-      a, b, [](const auto& c, const auto& d) { return stan::math::pow(c, d); });
+      [](auto&& c, auto&& d) {
+        return stan::math::pow(std::forward<decltype(c)>(c),
+                               std::forward<decltype(d)>(d));
+      },
+      std::forward<T1>(a), std::forward<T2>(b));
 }
 
 }  // namespace math

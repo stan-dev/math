@@ -5,7 +5,7 @@
 #include <vector>
 
 template <typename F>
-void expect_match_autodiff(const F& f, Eigen::VectorXd x) {
+inline void expect_match_autodiff(const F& f, Eigen::VectorXd x) {
   double fx_fd;
   Eigen::VectorXd grad_fx_fd;
   stan::math::finite_diff_gradient_auto(f, x, fx_fd, grad_fx_fd);

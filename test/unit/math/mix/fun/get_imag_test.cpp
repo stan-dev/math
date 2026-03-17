@@ -8,7 +8,7 @@ TEST_F(mathMix, get_imag) {
 }
 
 template <typename T>
-void test_vectorized_get_imag() {
+inline void test_vectorized_get_imag() {
   using complex_t = std::complex<T>;
   using matrix_t = Eigen::Matrix<T, -1, -1>;
   using complex_matrix = Eigen::Matrix<complex_t, -1, -1>;

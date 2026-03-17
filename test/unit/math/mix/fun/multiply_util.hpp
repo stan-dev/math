@@ -4,7 +4,7 @@
 #include <test/unit/math/mix/util.hpp>
 
 template <typename T>
-void instantiate_multiply() {
+inline void instantiate_multiply() {
   using stan::math::multiply;
   T v_scalar = 1.0;
   double d_scalar = 1.0;

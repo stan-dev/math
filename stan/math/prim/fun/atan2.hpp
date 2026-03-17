@@ -36,9 +36,13 @@ double atan2(T1 y, T2 x) {
  */
 template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr,
           require_all_not_var_matrix_t<T1, T2>* = nullptr>
-inline auto atan2(const T1& a, const T2& b) {
+inline auto atan2(T1&& a, T2&& b) {
   return apply_scalar_binary(
-      a, b, [](const auto& c, const auto& d) { return atan2(c, d); });
+      [](auto&& c, auto&& d) {
+        return atan2(std::forward<decltype(c)>(c),
+                     std::forward<decltype(d)>(d));
+      },
+      std::forward<T1>(a), std::forward<T2>(b));
 }
 
 }  // namespace math

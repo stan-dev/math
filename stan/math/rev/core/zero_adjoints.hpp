@@ -48,7 +48,8 @@ inline void zero_adjoints(var& x) { x.adj() = 0; }
  * @param x current argument
  * @param args rest of arguments to zero
  */
-template <typename EigMat, require_eigen_vt<is_autodiff, EigMat>* = nullptr>
+template <typename EigMat,
+          require_eigen_vt<is_autodiff_scalar, EigMat>* = nullptr>
 inline void zero_adjoints(EigMat& x) {
   for (size_t i = 0; i < x.size(); ++i)
     x.coeffRef(i).adj() = 0;
@@ -65,7 +66,7 @@ inline void zero_adjoints(EigMat& x) {
  * @param args rest of arguments to zero
  */
 template <typename StdVec,
-          require_std_vector_st<is_autodiff, StdVec>* = nullptr>
+          require_std_vector_st<is_autodiff_scalar, StdVec>* = nullptr>
 inline void zero_adjoints(StdVec& x) {
   for (size_t i = 0; i < x.size(); ++i) {
     zero_adjoints(x[i]);

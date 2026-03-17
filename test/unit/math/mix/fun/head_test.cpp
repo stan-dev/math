@@ -3,7 +3,7 @@
 #include <vector>
 
 template <typename T>
-void expect_head(const T& x, int n) {
+inline void expect_head(const T& x, int n) {
   auto f = [](int i) {
     return [=](const auto& y) { return stan::math::head(y, i); };
   };

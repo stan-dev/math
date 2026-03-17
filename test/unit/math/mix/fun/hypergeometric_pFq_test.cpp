@@ -2,7 +2,10 @@
 #include <test/unit/math/mix/util.hpp>
 #include <limits>
 
-TEST_F(mathMix, hyper_2f2) {
+TEST(mathMixScalFun, hyper_2f2) {
+  using stan::math::to_array_1d;
+  using stan::math::to_row_vector;
+
   auto f = [](const auto& a, const auto& b, const auto& z) {
     using stan::math::hypergeometric_pFq;
     return hypergeometric_pFq(a, b, z);
@@ -15,6 +18,9 @@ TEST_F(mathMix, hyper_2f2) {
   double z = 4;
 
   stan::test::expect_ad(f, in1, in2, z);
+  stan::test::expect_ad(f, to_array_1d(in1), to_row_vector(in2), z);
+  stan::test::expect_ad(f, to_row_vector(in1), to_array_1d(in2), z);
+  stan::test::expect_ad(f, to_array_1d(in1), to_array_1d(in2), z);
 }
 
 TEST_F(mathMix, hyper_2f3) {

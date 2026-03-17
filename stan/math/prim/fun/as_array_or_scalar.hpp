@@ -54,12 +54,18 @@ inline T as_array_or_scalar(T&& v) {
 template <typename T, typename = require_eigen_t<T>,
           require_not_eigen_array_t<T>* = nullptr>
 inline auto as_array_or_scalar(T&& v) {
-  return make_holder([](auto& x) { return x.array(); }, std::forward<T>(v));
+  return make_holder([](auto&& x) { return x.array(); }, std::forward<T>(v));
 }
 
 /**
  * Converts a std::vector type to an array.
- *
+ * @note The math library's reverse mode assumes that `Eigen::Map`
+ *  types are allocated and owned elsewhere so we cannot just return
+ *  back a map here else the reverse mode library
+ *  may try to access into a dangling pointer. Instead we wrap
+ *  the `Eigen::Map` in a `Holder` to trick the reverse mode library
+ *  into not thinking this is a map. The `.array().matrix()` inside the
+ *  holder is so that the holder thinks it is returning an expression.
  * @tparam T Type of scalar element.
  * @param v Specified vector.
  * @return Matrix converted to an array.
@@ -67,10 +73,11 @@ inline auto as_array_or_scalar(T&& v) {
 template <typename T, require_std_vector_t<T>* = nullptr,
           require_not_std_vector_t<value_type_t<T>>* = nullptr>
 inline auto as_array_or_scalar(T&& v) {
-  using T_map
-      = Eigen::Map<const Eigen::Array<value_type_t<T>, Eigen::Dynamic, 1>>;
-  return make_holder([](auto& x) { return T_map(x.data(), x.size()); },
-                     std::forward<T>(v));
+  using arr_t = Eigen::Array<value_type_t<T>, Eigen::Dynamic, 1>;
+  using T_map = Eigen::Map<const arr_t>;
+  return make_holder(
+      [](auto&& x) { return T_map(x.data(), x.size()).matrix().array(); },
+      std::forward<T>(v));
 }
 
 /**

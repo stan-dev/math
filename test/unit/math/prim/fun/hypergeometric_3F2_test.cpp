@@ -3,8 +3,16 @@
 
 // converge
 TEST(MathPrimScalFun, F32_converges_by_z) {
-  EXPECT_NEAR(2.5,
-              stan::math::hypergeometric_3F2({1.0, 1.0, 1.0}, {1.0, 1.0}, 0.6),
+  using stan::math::hypergeometric_3F2;
+  using stan::math::to_row_vector;
+  using stan::math::to_vector;
+  std::vector<double> a = {1.0, 1.0, 1.0};
+  std::vector<double> b = {1.0, 1.0};
+  double z = 0.6;
+
+  EXPECT_NEAR(2.5, hypergeometric_3F2(a, b, z), 1e-8);
+  EXPECT_NEAR(2.5, hypergeometric_3F2(to_vector(a), to_vector(b), z), 1e-8);
+  EXPECT_NEAR(2.5, hypergeometric_3F2(to_row_vector(a), to_row_vector(b), z),
               1e-8);
 }
 // terminate by zero numerator, no sign-flip

@@ -3,10 +3,12 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
+#include <stan/math/fwd/fun/exp.hpp>
+#include <stan/math/fwd/fun/lgamma.hpp>
+#include <stan/math/fwd/fun/log.hpp>
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/gamma_p.hpp>
 #include <stan/math/prim/fun/grad_reg_lower_inc_gamma.hpp>
-#include <stan/math/prim/fun/lgamma.hpp>
+#include <stan/math/prim/fun/gamma_p.hpp>
 #include <cmath>
 
 namespace stan {
@@ -14,9 +16,6 @@ namespace math {
 
 template <typename T>
 inline fvar<T> gamma_p(const fvar<T> &x1, const fvar<T> &x2) {
-  using std::exp;
-  using std::log;
-
   T u = gamma_p(x1.val_, x2.val_);
   if (is_inf(x1.val_)) {
     return fvar<T>(u, NOT_A_NUMBER);
@@ -48,9 +47,6 @@ inline fvar<T> gamma_p(const fvar<T> &x1, double x2) {
 
 template <typename T>
 inline fvar<T> gamma_p(double x1, const fvar<T> &x2) {
-  using std::exp;
-  using std::log;
-
   T u = gamma_p(x1, x2.val_);
   if (is_inf(x1)) {
     return fvar<T>(u, NOT_A_NUMBER);

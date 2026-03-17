@@ -3,10 +3,10 @@
 
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/meta.hpp>
+#include <stan/math/rev/fun/square.hpp>
+#include <stan/math/rev/fun/exp.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/inv_erfc.hpp>
-#include <stan/math/prim/fun/square.hpp>
-#include <stan/math/prim/fun/exp.hpp>
 #include <cmath>
 
 namespace stan {

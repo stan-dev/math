@@ -26,7 +26,7 @@ namespace math {
 template <bool propto, typename T_n, typename T_rate,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_n, T_rate>* = nullptr>
-return_type_t<T_rate> poisson_lpmf(const T_n& n, const T_rate& lambda) {
+inline return_type_t<T_rate> poisson_lpmf(const T_n& n, const T_rate& lambda) {
   using T_partials_return = partials_return_t<T_n, T_rate>;
   using T_n_ref = ref_type_if_not_constant_t<T_n>;
   using T_lambda_ref = ref_type_if_not_constant_t<T_rate>;
@@ -48,7 +48,7 @@ return_type_t<T_rate> poisson_lpmf(const T_n& n, const T_rate& lambda) {
   if (size_zero(n, lambda)) {
     return 0.0;
   }
-  if (!include_summand<propto, T_rate>::value) {
+  if constexpr (!include_summand<propto, T_rate>::value) {
     return 0.0;
   }
   if (sum(promote_scalar<int>(isinf(lambda_val)))) {
@@ -67,14 +67,14 @@ return_type_t<T_rate> poisson_lpmf(const T_n& n, const T_rate& lambda) {
   auto ops_partials = make_partials_propagator(lambda_ref);
 
   T_partials_return logp = stan::math::sum(multiply_log(n_val, lambda_val));
-  if (include_summand<propto, T_rate>::value) {
+  if constexpr (include_summand<propto, T_rate>::value) {
     logp -= sum(lambda_val) * N / math::size(lambda);
   }
-  if (include_summand<propto>::value) {
+  if constexpr (include_summand<propto>::value) {
     logp -= sum(lgamma(n_val + 1.0)) * N / math::size(n);
   }
 
-  if (!is_constant_all<T_rate>::value) {
+  if constexpr (is_autodiff_v<T_rate>) {
     partials<0>(ops_partials) = n_val / lambda_val - 1.0;
   }
 

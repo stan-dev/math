@@ -30,7 +30,7 @@ template <
     require_all_prim_or_rev_kernel_expression_t<T_y_cl, T_scale_cl,
                                                 T_shape_cl>* = nullptr,
     require_any_not_stan_scalar_t<T_y_cl, T_scale_cl, T_shape_cl>* = nullptr>
-return_type_t<T_y_cl, T_scale_cl, T_shape_cl> pareto_cdf(
+inline return_type_t<T_y_cl, T_scale_cl, T_shape_cl> pareto_cdf(
     const T_y_cl& y, const T_scale_cl& y_min, const T_shape_cl& alpha) {
   static constexpr const char* function = "pareto_cdf(OpenCL)";
   using T_partials_return = partials_return_t<T_y_cl, T_scale_cl, T_shape_cl>;
@@ -89,9 +89,9 @@ return_type_t<T_y_cl, T_scale_cl, T_shape_cl> pareto_cdf(
           y_deriv_cl, y_min_deriv_cl, alpha_deriv_cl)
       = expressions(y_not_nonnegative_expr, y_min_positive_finite_expr,
                     alpha_positive_finite_expr, any_y_lower_than_y_min,
-                    cdf_expr, calc_if<!is_constant<T_y_cl>::value>(y_deriv),
-                    calc_if<!is_constant<T_scale_cl>::value>(y_min_deriv),
-                    calc_if<!is_constant<T_shape_cl>::value>(alpha_deriv));
+                    cdf_expr, calc_if<is_autodiff_v<T_y_cl>>(y_deriv),
+                    calc_if<is_autodiff_v<T_scale_cl>>(y_min_deriv),
+                    calc_if<is_autodiff_v<T_shape_cl>>(alpha_deriv));
 
   if (from_matrix_cl(any_y_lower_than_y_min_cl).maxCoeff()) {
     return 0;
@@ -100,19 +100,19 @@ return_type_t<T_y_cl, T_scale_cl, T_shape_cl> pareto_cdf(
   T_partials_return cdf = from_matrix_cl(cdf_cl).prod();
 
   auto ops_partials = make_partials_propagator(y_col, y_min_col, alpha_col);
-  if (!is_constant_all<T_y_cl, T_scale_cl, T_shape_cl>::value) {
-    results(y_min_deriv_cl, y_deriv_cl, alpha_deriv_cl) = expressions(
-        calc_if<!is_constant<T_scale_cl>::value>(y_min_deriv_cl * cdf),
-        calc_if<!is_constant<T_y_cl>::value>(y_deriv_cl * cdf),
-        calc_if<!is_constant<T_shape_cl>::value>(alpha_deriv_cl * cdf));
+  if constexpr (is_any_autodiff_v<T_y_cl, T_scale_cl, T_shape_cl>) {
+    results(y_min_deriv_cl, y_deriv_cl, alpha_deriv_cl)
+        = expressions(calc_if<is_autodiff_v<T_scale_cl>>(y_min_deriv_cl * cdf),
+                      calc_if<is_autodiff_v<T_y_cl>>(y_deriv_cl * cdf),
+                      calc_if<is_autodiff_v<T_shape_cl>>(alpha_deriv_cl * cdf));
 
-    if (!is_constant<T_y_cl>::value) {
+    if constexpr (is_autodiff_v<T_y_cl>) {
       partials<0>(ops_partials) = std::move(y_deriv_cl);
     }
-    if (!is_constant<T_scale_cl>::value) {
+    if constexpr (is_autodiff_v<T_scale_cl>) {
       partials<1>(ops_partials) = std::move(y_min_deriv_cl);
     }
-    if (!is_constant<T_shape_cl>::value) {
+    if constexpr (is_autodiff_v<T_shape_cl>) {
       partials<2>(ops_partials) = std::move(alpha_deriv_cl);
     }
   }

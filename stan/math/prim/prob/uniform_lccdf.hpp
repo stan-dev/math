@@ -22,9 +22,9 @@ namespace math {
 template <typename T_y, typename T_low, typename T_high,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_low, T_high>* = nullptr>
-return_type_t<T_y, T_low, T_high> uniform_lccdf(const T_y& y,
-                                                const T_low& alpha,
-                                                const T_high& beta) {
+inline return_type_t<T_y, T_low, T_high> uniform_lccdf(const T_y& y,
+                                                       const T_low& alpha,
+                                                       const T_high& beta) {
   using T_partials_return = partials_return_t<T_y, T_low, T_high>;
   using T_y_ref = ref_type_if_not_constant_t<T_y>;
   using T_alpha_ref = ref_type_if_not_constant_t<T_low>;
@@ -59,25 +59,23 @@ return_type_t<T_y, T_low, T_high> uniform_lccdf(const T_y& y,
   auto ops_partials = make_partials_propagator(y_ref, alpha_ref, beta_ref);
 
   const auto& b_minus_a
-      = to_ref_if<!is_constant_all<T_y, T_low, T_high>::value>(beta_val
-                                                               - alpha_val);
-  const auto& ccdf_log_n
-      = to_ref_if<!is_constant_all<T_y, T_low, T_high>::value>(
-          1 - (y_val - alpha_val) / b_minus_a);
+      = to_ref_if<is_any_autodiff_v<T_y, T_low, T_high>>(beta_val - alpha_val);
+  const auto& ccdf_log_n = to_ref_if<is_any_autodiff_v<T_y, T_low, T_high>>(
+      1 - (y_val - alpha_val) / b_minus_a);
 
   T_partials_return ccdf_log = sum(log(ccdf_log_n));
 
-  if (!is_constant_all<T_y>::value) {
+  if constexpr (is_autodiff_v<T_y>) {
     partials<0>(ops_partials) = inv(-b_minus_a * ccdf_log_n);
   }
-  if (!is_constant_all<T_low, T_high>::value) {
-    const auto& rep_deriv = to_ref_if<(!is_constant_all<T_low>::value
-                                       && !is_constant_all<T_high>::value)>(
-        inv(b_minus_a * b_minus_a * ccdf_log_n));
-    if (!is_constant_all<T_low>::value) {
+  if constexpr (is_any_autodiff_v<T_low, T_high>) {
+    const auto& rep_deriv
+        = to_ref_if<(is_autodiff_v<T_low> && is_autodiff_v<T_high>)>(
+            inv(b_minus_a * b_minus_a * ccdf_log_n));
+    if constexpr (is_autodiff_v<T_low>) {
       partials<1>(ops_partials) = (beta_val - y_val) * rep_deriv;
     }
-    if (!is_constant_all<T_high>::value) {
+    if constexpr (is_autodiff_v<T_high>) {
       partials<2>(ops_partials) = (y_val - alpha_val) * rep_deriv;
     }
   }

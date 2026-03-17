@@ -31,7 +31,7 @@ template <
     require_all_prim_or_rev_kernel_expression_t<T_y_cl, T_shape_cl,
                                                 T_scale_cl>* = nullptr,
     require_any_not_stan_scalar_t<T_y_cl, T_shape_cl, T_scale_cl>* = nullptr>
-return_type_t<T_y_cl, T_shape_cl, T_scale_cl> weibull_lccdf(
+inline return_type_t<T_y_cl, T_shape_cl, T_scale_cl> weibull_lccdf(
     const T_y_cl& y, const T_shape_cl& alpha, const T_scale_cl& sigma) {
   static constexpr const char* function = "weibull_lccdf(OpenCL)";
   using T_partials_return = partials_return_t<T_y_cl, T_shape_cl, T_scale_cl>;
@@ -80,21 +80,21 @@ return_type_t<T_y_cl, T_shape_cl, T_scale_cl> weibull_lccdf(
           sigma_deriv_cl)
       = expressions(y_nonnegative, alpha_positive_finite_expr,
                     sigma_positive_finite_expr, lccdf_expr,
-                    calc_if<!is_constant<T_y_cl>::value>(y_deriv),
-                    calc_if<!is_constant<T_shape_cl>::value>(alpha_deriv),
-                    calc_if<!is_constant<T_scale_cl>::value>(sigma_deriv));
+                    calc_if<is_autodiff_v<T_y_cl>>(y_deriv),
+                    calc_if<is_autodiff_v<T_shape_cl>>(alpha_deriv),
+                    calc_if<is_autodiff_v<T_scale_cl>>(sigma_deriv));
 
   T_partials_return lccdf = -from_matrix_cl(lccdf_cl).sum();
 
   auto ops_partials = make_partials_propagator(y_col, alpha_col, sigma_col);
 
-  if (!is_constant<T_y_cl>::value) {
+  if constexpr (is_autodiff_v<T_y_cl>) {
     partials<0>(ops_partials) = std::move(y_deriv_cl);
   }
-  if (!is_constant<T_shape_cl>::value) {
+  if constexpr (is_autodiff_v<T_shape_cl>) {
     partials<1>(ops_partials) = std::move(alpha_deriv_cl);
   }
-  if (!is_constant<T_scale_cl>::value) {
+  if constexpr (is_autodiff_v<T_scale_cl>) {
     partials<2>(ops_partials) = std::move(sigma_deriv_cl);
   }
   return ops_partials.build(lccdf);

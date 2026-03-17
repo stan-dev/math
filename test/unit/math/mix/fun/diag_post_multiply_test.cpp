@@ -1,8 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
 #include <test/unit/math/mix/util.hpp>
 
-void expect_diag_post_multiply(const Eigen::MatrixXd& a,
-                               const Eigen::VectorXd& v) {
+inline void expect_diag_post_multiply(const Eigen::MatrixXd& a,
+                                      const Eigen::VectorXd& v) {
   auto f = [](const auto& x, const auto& y) {
     return stan::math::diag_post_multiply(x, y);
   };

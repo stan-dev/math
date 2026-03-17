@@ -20,9 +20,9 @@ namespace math {
 template <typename T_y, typename T_scale, typename T_shape,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_scale, T_shape>* = nullptr>
-return_type_t<T_y, T_scale, T_shape> pareto_cdf(const T_y& y,
-                                                const T_scale& y_min,
-                                                const T_shape& alpha) {
+inline return_type_t<T_y, T_scale, T_shape> pareto_cdf(const T_y& y,
+                                                       const T_scale& y_min,
+                                                       const T_shape& alpha) {
   using T_partials_return = partials_return_t<T_y, T_scale, T_shape>;
   using T_y_ref = ref_type_t<T_y>;
   using T_y_min_ref = ref_type_t<T_scale>;
@@ -75,30 +75,30 @@ return_type_t<T_y, T_scale, T_shape> pareto_cdf(const T_y& y,
 
     P *= Pn;
 
-    if (!is_constant_all<T_y>::value) {
+    if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials)[n]
           += alpha_dbl * y_min_inv_dbl * exp((alpha_dbl + 1) * log_dbl) / Pn;
     }
-    if (!is_constant_all<T_scale>::value) {
+    if constexpr (is_autodiff_v<T_scale>) {
       partials<1>(ops_partials)[n]
           += -alpha_dbl * y_min_inv_dbl * exp(alpha_dbl * log_dbl) / Pn;
     }
-    if (!is_constant_all<T_shape>::value) {
+    if constexpr (is_autodiff_v<T_shape>) {
       partials<2>(ops_partials)[n] += -exp(alpha_dbl * log_dbl) * log_dbl / Pn;
     }
   }
 
-  if (!is_constant_all<T_y>::value) {
+  if constexpr (is_autodiff_v<T_y>) {
     for (size_t n = 0; n < stan::math::size(y); ++n) {
       partials<0>(ops_partials)[n] *= P;
     }
   }
-  if (!is_constant_all<T_scale>::value) {
+  if constexpr (is_autodiff_v<T_scale>) {
     for (size_t n = 0; n < stan::math::size(y_min); ++n) {
       partials<1>(ops_partials)[n] *= P;
     }
   }
-  if (!is_constant_all<T_shape>::value) {
+  if constexpr (is_autodiff_v<T_shape>) {
     for (size_t n = 0; n < stan::math::size(alpha); ++n) {
       partials<2>(ops_partials)[n] *= P;
     }

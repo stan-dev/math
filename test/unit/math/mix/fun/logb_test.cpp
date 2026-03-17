@@ -5,13 +5,13 @@
 #include <vector>
 
 template <typename T>
-void expect_logb(double x) {
+inline void expect_logb(double x) {
   using std::logb;
   T xt(x);
   stan::test::expect_near_rel("logb", logb(x), logb(xt));
 }
 
-void expect_all_logb(double x) {
+inline void expect_all_logb(double x) {
   using stan::math::fvar;
   using stan::math::var;
   expect_logb<double>(x);

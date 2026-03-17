@@ -22,7 +22,8 @@ namespace math {
 template <bool propto, typename T_y, typename T_scale,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_scale>* = nullptr>
-return_type_t<T_y, T_scale> rayleigh_lpdf(const T_y& y, const T_scale& sigma) {
+inline return_type_t<T_y, T_scale> rayleigh_lpdf(const T_y& y,
+                                                 const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_scale>;
   using T_y_ref = ref_type_if_not_constant_t<T_y>;
   using T_sigma_ref = ref_type_if_not_constant_t<T_scale>;
@@ -42,34 +43,34 @@ return_type_t<T_y, T_scale> rayleigh_lpdf(const T_y& y, const T_scale& sigma) {
   if (size_zero(y, sigma)) {
     return 0.0;
   }
-  if (!include_summand<propto, T_y, T_scale>::value) {
+  if constexpr (!include_summand<propto, T_y, T_scale>::value) {
     return 0.0;
   }
 
   auto ops_partials = make_partials_propagator(y_ref, sigma_ref);
 
   const auto& inv_sigma
-      = to_ref_if<!is_constant_all<T_y, T_scale>::value>(inv(sigma_val));
+      = to_ref_if<is_any_autodiff_v<T_y, T_scale>>(inv(sigma_val));
   const auto& y_over_sigma
-      = to_ref_if<!is_constant_all<T_y, T_scale>::value>(y_val * inv_sigma);
+      = to_ref_if<is_any_autodiff_v<T_y, T_scale>>(y_val * inv_sigma);
 
   size_t N = max_size(y, sigma);
   T_partials_return logp = -0.5 * sum(square(y_over_sigma));
-  if (include_summand<propto, T_scale>::value) {
+  if constexpr (include_summand<propto, T_scale>::value) {
     logp -= 2.0 * sum(log(sigma_val)) * N / math::size(sigma);
   }
-  if (include_summand<propto, T_y>::value) {
+  if constexpr (include_summand<propto, T_y>::value) {
     logp += sum(log(y_val)) * N / math::size(y);
   }
 
-  if (!is_constant_all<T_y, T_scale>::value) {
-    const auto& scaled_diff = to_ref_if<(!is_constant_all<T_y>::value
-                                         && !is_constant_all<T_scale>::value)>(
-        inv_sigma * y_over_sigma);
-    if (!is_constant_all<T_y>::value) {
+  if constexpr (is_any_autodiff_v<T_y, T_scale>) {
+    const auto& scaled_diff
+        = to_ref_if<(is_autodiff_v<T_y> && is_autodiff_v<T_scale>)>(
+            inv_sigma * y_over_sigma);
+    if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials) = inv(y_val) - scaled_diff;
     }
-    if (!is_constant_all<T_scale>::value) {
+    if constexpr (is_autodiff_v<T_scale>) {
       edge<1>(ops_partials).partials_
           = y_over_sigma * scaled_diff - 2.0 * inv_sigma;
     }
