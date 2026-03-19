@@ -13,7 +13,7 @@ namespace math {
 /**
  * Calculates product of given kernel generator expression elements.
  * @tparam T type of the expression
- * @param m expression to calcualte product of
+ * @param m expression to calculate product of
  * @return product of given expression
  */
 template <typename T,

@@ -38,7 +38,7 @@ namespace math {
  * prim/prob/neg_binomial_2_log_glm_lpdf.hpp that is implemented in OpenCL.
  * @tparam T_y_cl type of independent variable;
  * this can be a `matrix_cl` vector of intercepts or a single
- * value (wich will be broadcast - used for all instances);
+ * value (which will be broadcast - used for all instances);
  * @tparam T_x_cl type of the design matrix
  * @tparam T_alpha_cl type of the intercept(s);
  * this can be a vector (of the same length as y) of intercepts or a single

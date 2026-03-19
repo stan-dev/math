@@ -40,6 +40,7 @@ struct var_matrix_types {
   using matrix_v = stan::math::test::cond_var_matrix_t<UseVarMat>;
   using row_vector_v = stan::math::test::cond_var_row_vector_t<UseVarMat>;
   using vector_v = stan::math::test::cond_var_vector_t<UseVarMat>;
+  virtual ~var_matrix_types() { stan::math::recover_memory(); }
 };
 
 template <class T>

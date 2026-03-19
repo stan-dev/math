@@ -368,7 +368,7 @@ class var_value<T, internal::require_matrix_var_value<T>> {
   /**
    * Copy constructor for var_val when the vari_type from `other` is directly
    * assignable.
-   * @tparam S type of the value in the `var_value` to assing
+   * @tparam S type of the value in the `var_value` to assign
    * @param other the value to assign
    * @return this
    */
@@ -403,7 +403,7 @@ class var_value<T, internal::require_matrix_var_value<T>> {
   /**
    * Construct a `var_value` with a plain type
    *  from another `var_value` containing an expression.
-   * @tparam S type of the value in the `var_value` to assing
+   * @tparam S type of the value in the `var_value` to assign
    * @param other the value to assign
    * @return this
    */
@@ -421,7 +421,7 @@ class var_value<T, internal::require_matrix_var_value<T>> {
   /**
    * Construct a `var_value` with premade @ref arena_matrix types.
    *  The values and adjoint matrices passed here will be shallow copied.
-   * @tparam S type of the value in the `var_value` to assing
+   * @tparam S type of the value in the `var_value` to assign
    * @param val The value matrix to go into the vari
    * @param adj the adjoint matrix to go into the vari
    */
@@ -739,7 +739,7 @@ class var_value<T, internal::require_matrix_var_value<T>> {
   /**
    * View element of eigen matrices. This creates a new
    * vari_value<double> so unlike the other views this subset will not
-   * have the same adjoints as the original matrix and must be propogated
+   * have the same adjoints as the original matrix and must be propagated
    * back.
    * @param i Element to access
    */
@@ -763,7 +763,7 @@ class var_value<T, internal::require_matrix_var_value<T>> {
   /**
    * View element of eigen matrices. This creates a new
    * vari_value<double> so unlike the other views this subset will not
-   * have the same adjoints as the original matrix and must be propogated
+   * have the same adjoints as the original matrix and must be propagated
    * back.
    * @param i Row to access
    * @param j Column to access
@@ -788,7 +788,7 @@ class var_value<T, internal::require_matrix_var_value<T>> {
   /**
    * View element of eigen matrices. This creates a new
    * vari_value<double> so unlike the other views this subset will not
-   * have the same adjoints as the original matrix and must be propogated
+   * have the same adjoints as the original matrix and must be propagated
    * back.
    * @param i Element to access
    */
@@ -798,7 +798,7 @@ class var_value<T, internal::require_matrix_var_value<T>> {
   /**
    * View element of eigen matrices. This creates a new
    * vari_value<double> so unlike the other views this subset will not
-   * have the same adjoints as the original matrix and must be propogated
+   * have the same adjoints as the original matrix and must be propagated
    * back.
    * @param i Row to access
    * @param j Column to access
@@ -813,7 +813,7 @@ class var_value<T, internal::require_matrix_var_value<T>> {
   /**
    * View element of eigen matrices. This creates a new
    * vari_value<double> so unlike the other views this subset will not
-   * have the same adjoints as the original matrix and must be propogated
+   * have the same adjoints as the original matrix and must be propagated
    * back.
    * @param i Element to access
    */
@@ -823,7 +823,7 @@ class var_value<T, internal::require_matrix_var_value<T>> {
   /**
    * View element of eigen matrices. This creates a new
    * vari_value<double> so unlike the other views this subset will not
-   * have the same adjoints as the original matrix and must be propogated
+   * have the same adjoints as the original matrix and must be propagated
    * back.
    * @param i Row to access
    * @param j Column to access
@@ -1036,7 +1036,7 @@ class var_value<T, internal::require_matrix_var_value<T>> {
   /**
    * Assignment of another plain var value, when this also contains a plain
    * type.
-   * @tparam S type of the value in the `var_value` to assing
+   * @tparam S type of the value in the `var_value` to assign
    * @param other the value to assign
    * @return this
    */
@@ -1097,7 +1097,7 @@ class var_value<T, internal::require_matrix_var_value<T>> {
           this_vi->val_.deep_copy(prev_val);
 
           // we have no way of detecting aliasing between this->vi_->adj_ and
-          // other.vi_->adj_, so we must copy adjoint before reseting to zero
+          // other.vi_->adj_, so we must copy adjoint before resetting to zero
 
           // we can reuse prev_val instead of allocating a new matrix
           prev_val.deep_copy(this_vi->adj_);
@@ -1139,7 +1139,7 @@ class var_value<T, internal::require_matrix_var_value<T>> {
           this_vi->val_ = prev_val;
 
           // we have no way of detecting aliasing between this->vi_->adj_ and
-          // other.vi_->adj_, so we must copy adjoint before reseting to zero
+          // other.vi_->adj_, so we must copy adjoint before resetting to zero
 
           // we can reuse prev_val instead of allocating a new matrix
           prev_val = this_vi->adj_;
@@ -1183,7 +1183,7 @@ class var_value<T, internal::require_matrix_var_value<T>> {
   }
 };
 
-// For backwards compatability the default value is double
+// For backwards compatibility the default value is double
 using var = var_value<double>;
 
 }  // namespace math

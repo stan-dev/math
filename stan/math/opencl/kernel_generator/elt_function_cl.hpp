@@ -191,7 +191,7 @@ class elt_function_cl : public operation_cl<Derived, Scal, T...> {
 
 /**
  * Generates a class and function for an unary function, defined by OpenCL with
- * special property that it passes trough zero. That is \f$ f(0)=0 \f$. Such a
+ * special property that it passes through zero. That is \f$ f(0)=0 \f$. Such a
  * function can have triangular view equal to its argument's.
  * @param fun function name
  */

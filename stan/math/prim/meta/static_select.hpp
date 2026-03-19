@@ -17,7 +17,7 @@ namespace math {
  *
  * @param a first argument; returned if the `Condition` is true
  * @param b second argument; returned if the `Condition` is false
- * @return One of the arguemtns, depending on the `Condition`
+ * @return One of the arguments, depending on the `Condition`
  */
 template <bool Condition, typename T1, typename T2,
           std::enable_if_t<Condition>* = nullptr>

@@ -15,7 +15,7 @@ TBB ?= $(MATH)lib/tbb_2020.3
 SUNDIALS ?= $(MATH)lib/sundials_6.1.1
 BENCHMARK ?= $(MATH)lib/benchmark_1.5.1
 GTEST ?= $(BENCHMARK)/googletest/googletest
-CPPLINT ?= $(MATH)lib/cpplint_1.4.5
+CPPLINT ?= $(MATH)lib/cpplint_2.0.2
 
 ################################################################################
 # SUNDIALS build rules

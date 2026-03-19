@@ -22,7 +22,7 @@ inline fvar<T> atan(const fvar<T>& x) {
  *
  * @tparam T autodiff value type
  * @param[in] z argument
- * @return arc tanget of the argument
+ * @return arc tangent of the argument
  */
 template <typename T>
 inline std::complex<fvar<T>> atan(const std::complex<fvar<T>>& z) {

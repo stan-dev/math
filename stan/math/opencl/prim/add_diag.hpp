@@ -19,7 +19,7 @@ namespace math {
  * @param mat input kernel generator expression
  * @param to_add scalar value or input kernel generator expression to add along
  * the diagonal
- * @return a kernel generator expressio with to_add added along main diagonal
+ * @return a kernel generator expression with to_add added along main diagonal
  */
 template <typename T_m, typename T_a,
           require_all_kernel_expressions_and_none_scalar_t<T_m>* = nullptr,

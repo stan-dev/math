@@ -32,7 +32,7 @@ class read_fvar_functor {
 
 /**
  * Function applying the read_fvar_functor to extract the values
- * and tangets of a given fvar matrix into separate matrices.
+ * and tangents of a given fvar matrix into separate matrices.
  *
  * @tparam EigFvar type of the Eigen container of fvar.
  * @tparam EigOut type of the Eigen containers to copy to

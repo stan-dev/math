@@ -45,7 +45,7 @@ inline auto positive_ordered_constrain(const EigVec& x) {
  *
  * @tparam Vec type of the vector
  * @tparam Lp A scalar type for the lp argument. The scalar type of Vec should
- * be convertable to this.
+ * be convertible to this.
  * @param x Free vector of scalars.
  * @param lp Log probability reference.
  * @return Positive, increasing ordered vector.
@@ -86,7 +86,7 @@ inline auto positive_ordered_constrain(T&& x) {
  * `Eigen::EigenBase`, a `var_value` with inner type inheriting from
  * `Eigen::EigenBase`
  * @tparam Lp Scalar type for the lp argument. The scalar type of T should be
- * convertable to this.
+ * convertible to this.
  * @param x Free vector of scalars
  * @param[in, out] lp log density accumulator
  * @return Positive, increasing ordered vector
@@ -113,9 +113,9 @@ inline auto positive_ordered_constrain(T&& x, Lp& lp) {
  * @tparam Vec A type inheriting from `Eigen::EigenBase`, a `var_value` with
  * inner type inheriting from `Eigen::EigenBase`, or a vector thereof
  * @tparam Lp A scalar type for the lp argument. The scalar type of Vec should
- * be convertable to this.
+ * be convertible to this.
  * @param x Free vector of scalars
- * @param[in, out] lp log density accumulato
+ * @param[in, out] lp log density accumulation
  * @return Positive, increasing ordered vector
  */
 template <bool Jacobian, typename Vec, typename Lp,

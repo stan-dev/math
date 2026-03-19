@@ -52,7 +52,7 @@ struct hybrj_functor_solver : nlo_functor<double> {
   explicit hybrj_functor_solver(const S& fs) : fs_(fs) {}
 
   /**
-   * Computes the value the algebraic function, f, when pluging in the
+   * Computes the value the algebraic function, f, when plugging in the
    * independent variables, and the Jacobian w.r.t unknowns.
    *
    * @param [in] iv independent variables

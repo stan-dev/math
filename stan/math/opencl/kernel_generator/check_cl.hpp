@@ -142,7 +142,7 @@ class check_cl_ : public operation_cl_lhs<check_cl_<T>, bool> {
 
   /**
    * Adds all write events on any matrices used by nested expression to a list.
-   * Ignores read events anc clears no events.
+   * Ignores read events and clears no events.
    * @param[out] events List of all events.
    */
   inline void get_clear_read_write_events(
@@ -189,7 +189,7 @@ class check_cl_ : public operation_cl_lhs<check_cl_<T>, bool> {
   /**
    * Assignment of a scalar bool triggers the scalar check.
    * @param condition whether the state is ok.
-   * @throws std::domain_error condition is false (chack failed).
+   * @throws std::domain_error condition is false (check failed).
    */
   void operator=(bool condition);  // implemented in multi_result_kernel.hpp
 };

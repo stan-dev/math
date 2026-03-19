@@ -55,7 +55,7 @@ const char opencl_normal_lcdf_impl[] = STRINGIFY(
       // normal_lcdf_scaled_diff^10 term will overflow
       normal_lcdf_n = -INFINITY;
     });
-
+// NOLINTBEGIN
 const char opencl_normal_lcdf_ldncdf_impl[] = STRINGIFY(
     double normal_ldncdf = 0.0; double t = 0.0; double t2 = 0.0;
     double t4 = 0.0;
@@ -157,6 +157,7 @@ const char opencl_normal_lcdf_ldncdf_impl[] = STRINGIFY(
                - 0.0100428567412041;
       }
     } else { normal_ldncdf = INFINITY; });
+// NOLINTEND
 }  // namespace internal
 
 /** \ingroup opencl

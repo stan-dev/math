@@ -42,7 +42,7 @@ namespace math {
  * \f]
  *
  * <p>The next N + M states correspond to the sensitivities
- * of the initial conditions followed by the sensitivites of the
+ * of the initial conditions followed by the sensitivities of the
  * parameters with respect to the second base system equation, and
  * so on through the last base system equation.
  *
