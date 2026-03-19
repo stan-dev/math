@@ -179,7 +179,8 @@ TEST(ProbDistributionsDoubleExpModNormalLcdf, opencl_matches_cpu_big) {
                                                 mu, sigma, lambda);
 }
 
-TEST(ProbDistributionsDoubleExpModNormalLcdf, opencl_matches_cpu_big_transpose) {
+TEST(ProbDistributionsDoubleExpModNormalLcdf,
+     opencl_matches_cpu_big_transpose) {
   constexpr int N = 153;
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> y

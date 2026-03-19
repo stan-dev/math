@@ -81,7 +81,8 @@ inline void expect_eq(const T1& a, const T2& b, const char* msg,
 }
 template <typename T>
 inline void expect_eq(const std::vector<T>& a, const std::vector<T>& b,
-                      const char* msg, stan::test::relative_tolerance tol
+                      const char* msg,
+                      stan::test::relative_tolerance tol
                       = stan::test::relative_tolerance()) {
   EXPECT_EQ(a.size(), b.size());
   for (int i = 0; i < a.size(); i++) {
@@ -119,7 +120,8 @@ auto recursive_sum(const std::vector<T>& a) {
 template <typename T, require_not_st_var<T>* = nullptr>
 inline void expect_adj_near(const T& a, const T& b, const char* msg) {}
 inline void expect_adj_near(var a, var b, const char* msg) {
-  stan::test::expect_near_rel(msg, a.adj(), b.adj(), stan::test::relative_tolerance(1e-5));
+  stan::test::expect_near_rel(msg, a.adj(), b.adj(),
+                              stan::test::relative_tolerance(1e-5));
 }
 template <typename T1, typename T2, require_all_eigen_t<T1, T2>* = nullptr,
           require_vt_same<T1, T2>* = nullptr>
@@ -128,7 +130,8 @@ inline void expect_adj_near(const T1& a, const T2& b, const char* msg) {
   EXPECT_EQ(a.cols(), b.cols()) << msg;
   const auto& a_ref = math::to_ref(a);
   const auto& b_ref = math::to_ref(b);
-  stan::test::expect_near_rel(msg, a_ref.adj(), b_ref.adj(), stan::test::relative_tolerance(1e-5));
+  stan::test::expect_near_rel(msg, a_ref.adj(), b_ref.adj(),
+                              stan::test::relative_tolerance(1e-5));
 }
 template <typename T>
 inline void expect_adj_near(const std::vector<T>& a, const std::vector<T>& b,
@@ -355,9 +358,9 @@ inline void compare_cpu_opencl_prim_rev(const Functor& functor,
 }
 
 template <typename Functor, typename... Args>
-inline void compare_cpu_opencl_prim_rev(
-    const Functor& functor, stan::test::relative_tolerance tol,
-    const Args&... args) {
+inline void compare_cpu_opencl_prim_rev(const Functor& functor,
+                                        stan::test::relative_tolerance tol,
+                                        const Args&... args) {
   internal::compare_cpu_opencl_prim_rev_impl(
       functor, tol, std::make_index_sequence<sizeof...(args)>{}, args...);
   recover_memory();
