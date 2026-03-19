@@ -65,8 +65,9 @@ inline auto laplace_marginal_density(LLFun&& ll_fun, LLTupleArgs&& ll_args,
       },
       std::forward<CovarArgs>(covar_args));
   return internal::laplace_marginal_density_est(
-             std::forward<LLFun>(ll_fun), to_ref(std::forward<LLTupleArgs>(ll_args)),
-             std::move(covariance), options, msgs)
+             std::forward<LLFun>(ll_fun),
+             to_ref(std::forward<LLTupleArgs>(ll_args)), std::move(covariance),
+             options, msgs)
       .lmd;
 }
 

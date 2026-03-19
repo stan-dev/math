@@ -123,7 +123,8 @@ TEST_P(laplace_types, poisson_log_phi_dim_2_tuple_extended) {
   int dim_theta = 2;
   Eigen::VectorXd theta_0{{0, 0}};
 
-  std::vector<Eigen::VectorXd> x{Eigen::VectorXd{{0.05100797, 0.16086164}}, Eigen::VectorXd{{-0.59823393, 0.98701425}}};
+  std::vector<Eigen::VectorXd> x{Eigen::VectorXd{{0.05100797, 0.16086164}},
+                                 Eigen::VectorXd{{-0.59823393, 0.98701425}}};
 
   std::vector<int> n_samples = {1, 1};
   std::vector<int> sums = {1, 0};
@@ -161,10 +162,11 @@ TEST_P(laplace_types, poisson_log_phi_dim_2_tuple_extended) {
       auto eta2_ref = stan::math::eval(stan::math::to_ref(eta2));
       fail_msg << "Exception thrown with phi("
                << test_type_name<decltype(phi_ref)>() << ")=" << phi_ref[0]
-               << ", phi(" << test_type_name<decltype(phi_ref)>() << ")="
-               << phi_ref[0] << ", eta1(" << test_type_name<decltype(eta1_ref)>() << ")="
-               << eta1_ref[0] << ", eta2(" << test_type_name<decltype(eta2_ref)>() << ")="
-               << eta2_ref[0] << ". ";
+               << ", phi(" << test_type_name<decltype(phi_ref)>()
+               << ")=" << phi_ref[0] << ", eta1("
+               << test_type_name<decltype(eta1_ref)>() << ")=" << eta1_ref[0]
+               << ", eta2(" << test_type_name<decltype(eta2_ref)>()
+               << ")=" << eta2_ref[0] << ". ";
       ADD_FAILURE() << fail_msg.str() << "\n Error message: " << e.what();
       throw;
     }
@@ -280,7 +282,8 @@ TEST_P(laplace_types, poisson_log_phi_dim_2_array_tuple) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> phi_dbl{{1.6, 0.45}};
   constexpr int dim_theta = 2;
   Eigen::VectorXd theta_0{{0, 0}};
-  std::vector<Eigen::VectorXd> x{Eigen::VectorXd{{0.05100797, 0.16086164}}, Eigen::VectorXd{{-0.59823393, 0.98701425}}};
+  std::vector<Eigen::VectorXd> x{Eigen::VectorXd{{0.05100797, 0.16086164}},
+                                 Eigen::VectorXd{{-0.59823393, 0.98701425}}};
   std::vector<int> n_samples = {1, 1};
   std::vector<int> sums = {1, 0};
   const auto test_params = GetParam();
