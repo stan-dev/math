@@ -11,6 +11,11 @@
 #include <thread>
 #include <tuple>
 
+#ifdef __APPLE__
+#include <pthread.h>
+#include <sys/qos.h>
+#endif
+
 namespace stan {
 namespace math {
 
@@ -19,6 +24,10 @@ namespace math {
  * TBB scheduler adds a new thread to the TBB managed threadpool. This
  * hook ensures that each worker thread has an initialized AD tape
  * ready for use.
+ *
+ * On Apple Silicon, this also sets the thread QoS class to
+ * USER_INITIATED so that macOS prefers scheduling compute threads
+ * on performance cores rather than efficiency cores.
  *
  * Refer to
  * https://software.intel.com/content/www/us/en/develop/documentation/tbb-documentation/top/intel-threading-building-blocks-developer-reference/task-scheduler/taskschedulerobserver.html
@@ -37,6 +46,13 @@ class ad_tape_observer final : public tbb::task_scheduler_observer {
   ~ad_tape_observer() { observe(false); }
 
   void on_scheduler_entry(bool worker) {
+#ifdef __APPLE__
+#if defined(__arm64__) || defined(__aarch64__)
+    // Set thread QoS to USER_INITIATED so macOS prefers scheduling
+    // TBB worker threads on performance cores rather than efficiency cores.
+    pthread_set_qos_class_self_np(QOS_CLASS_USER_INITIATED, 0);
+#endif
+#endif
     std::lock_guard<std::mutex> thread_tape_map_lock(thread_tape_map_mutex_);
     const std::thread::id thread_id = std::this_thread::get_id();
     if (thread_tape_map_.find(thread_id) == thread_tape_map_.end()) {

@@ -43,8 +43,11 @@ class VectorBuilderHelper<T1, true, false> {
   T1 x_;
 
  public:
-  explicit VectorBuilderHelper(size_t /* n */) : x_(0) {}
-  T1& operator[](size_t /* i */) { return x_; }
+  explicit VectorBuilderHelper(size_t n) : x_(0) { static_cast<void>(n); }
+  T1& operator[](size_t i) {
+    static_cast<void>(i);
+    return x_;
+  }
 
   using type = T1;
 
