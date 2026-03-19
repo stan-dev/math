@@ -12,8 +12,8 @@ namespace opencl_kernels {
 static constexpr const char* std_normal_lcdf_device_function
     = "\n"
       "#ifndef STAN_MATH_OPENCL_KERNELS_DEVICE_FUNCTIONS_STD_NORMAL_LCDF\n"
-      "#define STAN_MATH_OPENCL_KERNELS_DEVICE_FUNCTIONS_STD_NORMAL_LCDF\n"
-      STRINGIFY(
+      "#define "
+      "STAN_MATH_OPENCL_KERNELS_DEVICE_FUNCTIONS_STD_NORMAL_LCDF\n" STRINGIFY(
           /** \ingroup opencl_kernels
            * Return the log standard normal cumulative distribution function
            * evaluated from the scaled input `x / sqrt(2)`.
@@ -39,20 +39,18 @@ static constexpr const char* std_normal_lcdf_device_function
               const double x6 = pow(scaled_y, 6);
               const double x8 = pow(scaled_y, 8);
               const double x10 = pow(scaled_y, 10);
-              const double temp_p
-                  = 0.000658749161529837803157 + 0.0160837851487422766278 / x2
-                    + 0.125781726111229246204 / x4
-                    + 0.360344899949804439429 / x6
-                    + 0.305326634961232344035 / x8
-                    + 0.0163153871373020978498 / x10;
+              const double temp_p = 0.000658749161529837803157
+                                    + 0.0160837851487422766278 / x2
+                                    + 0.125781726111229246204 / x4
+                                    + 0.360344899949804439429 / x6
+                                    + 0.305326634961232344035 / x8
+                                    + 0.0163153871373020978498 / x10;
               const double temp_q
-                  = -0.00233520497626869185443
-                    - 0.0605183413124413191178 / x2
-                    - 0.527905102951428412248 / x4
-                    - 1.87295284992346047209 / x6
+                  = -0.00233520497626869185443 - 0.0605183413124413191178 / x2
+                    - 0.527905102951428412248 / x4 - 1.87295284992346047209 / x6
                     - 2.56852019228982242072 / x8 - 1.0 / x10;
-              lcdf_n = log(0.5 * M_2_SQRTPI + (temp_p / temp_q) / x2)
-                       - M_LN2 - log(-scaled_y) - x2;
+              lcdf_n = log(0.5 * M_2_SQRTPI + (temp_p / temp_q) / x2) - M_LN2
+                       - log(-scaled_y) - x2;
             } else {
               lcdf_n = -INFINITY;
             }
@@ -78,11 +76,10 @@ static constexpr const char* std_normal_lcdf_device_function
               t = 1.0 / (1.0 + 0.3275911 * scaled_y);
               t2 = t * t;
               t4 = pow(t, 4);
-              dnlcdf
-                  = 0.5 * M_2_SQRTPI
-                    / (exp(x2) - 0.254829592 + 0.284496736 * t
-                       - 1.421413741 * t2 + 1.453152027 * t2 * t
-                       - 1.061405429 * t4);
+              dnlcdf = 0.5 * M_2_SQRTPI
+                       / (exp(x2) - 0.254829592 + 0.284496736 * t
+                          - 1.421413741 * t2 + 1.453152027 * t2 * t
+                          - 1.061405429 * t4);
             } else if (scaled_y > 2.5) {
               t = scaled_y - 2.7;
               t2 = t * t;
@@ -95,46 +92,41 @@ static constexpr const char* std_normal_lcdf_device_function
               t = scaled_y - 2.3;
               t2 = t * t;
               t4 = pow(t, 4);
-              dnlcdf = 0.002846135439 - 0.01310032351 * t
-                       + 0.02732189391 * t2 - 0.03326906904 * t2 * t
-                       + 0.02482478940 * t4 - 0.009883071924 * t4 * t
-                       - 0.0002771362254 * pow(t, 6);
+              dnlcdf = 0.002846135439 - 0.01310032351 * t + 0.02732189391 * t2
+                       - 0.03326906904 * t2 * t + 0.02482478940 * t4
+                       - 0.009883071924 * t4 * t - 0.0002771362254 * pow(t, 6);
             } else if (scaled_y > 1.5) {
               t = scaled_y - 1.85;
               t2 = t * t;
               t4 = pow(t, 4);
-              dnlcdf = 0.01849212058 - 0.06876280470 * t
-                       + 0.1099906382 * t2 - 0.09274533184 * t2 * t
-                       + 0.03543327418 * t4 + 0.005644855518 * t4 * t
-                       - 0.01111434424 * pow(t, 6);
+              dnlcdf = 0.01849212058 - 0.06876280470 * t + 0.1099906382 * t2
+                       - 0.09274533184 * t2 * t + 0.03543327418 * t4
+                       + 0.005644855518 * t4 * t - 0.01111434424 * pow(t, 6);
             } else if (scaled_y > 0.8) {
               t = scaled_y - 1.15;
               t2 = t * t;
               t4 = pow(t, 4);
-              dnlcdf = 0.1585747034 - 0.3898677543 * t
-                       + 0.3515963775 * t2 - 0.09748053605 * t2 * t
-                       - 0.04347986191 * t4 + 0.02182506378 * t4 * t
-                       + 0.01074751427 * pow(t, 6);
+              dnlcdf = 0.1585747034 - 0.3898677543 * t + 0.3515963775 * t2
+                       - 0.09748053605 * t2 * t - 0.04347986191 * t4
+                       + 0.02182506378 * t4 * t + 0.01074751427 * pow(t, 6);
             } else if (scaled_y > 0.1) {
               t = scaled_y - 0.45;
               t2 = t * t;
               t4 = pow(t, 4);
-              dnlcdf = 0.6245634904 - 0.9521866949 * t
-                       + 0.3986215682 * t2 + 0.04700850676 * t2 * t
-                       - 0.03478651979 * t4 - 0.01772675404 * t4 * t
-                       + 0.0006577254811 * pow(t, 6);
+              dnlcdf = 0.6245634904 - 0.9521866949 * t + 0.3986215682 * t2
+                       + 0.04700850676 * t2 * t - 0.03478651979 * t4
+                       - 0.01772675404 * t4 * t + 0.0006577254811 * pow(t, 6);
             } else if (10.0 * log(fabs(scaled_y)) < log(DBL_MAX)) {
               t = 1.0 / (1.0 - 0.3275911 * scaled_y);
               t2 = t * t;
               t4 = pow(t, 4);
               dnlcdf
                   = M_2_SQRTPI
-                    / (0.254829592 * t - 0.284496736 * t2
-                       + 1.421413741 * t2 * t - 1.453152027 * t4
-                       + 1.061405429 * t4 * t);
+                    / (0.254829592 * t - 0.284496736 * t2 + 1.421413741 * t2 * t
+                       - 1.453152027 * t4 + 1.061405429 * t4 * t);
               if (scaled_y < -29.0) {
-                dnlcdf += 0.0015065154280332 * x2 - 0.3993154819705530 * scaled_y
-                          - 4.2919418242931700;
+                dnlcdf += 0.0015065154280332 * x2
+                          - 0.3993154819705530 * scaled_y - 4.2919418242931700;
               } else if (scaled_y < -17.0) {
                 dnlcdf += 0.0001263257217272 * x2 * scaled_y
                           + 0.0123586859488623 * x2

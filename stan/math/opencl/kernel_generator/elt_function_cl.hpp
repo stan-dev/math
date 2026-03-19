@@ -365,8 +365,8 @@ class lbeta_ : public elt_function_cl<lbeta_<T1, T2>, double, T1, T2> {
   using base::arguments_;
 
  public:
-  using base::rows;
   using base::cols;
+  using base::rows;
   static const std::vector<const char*> includes;
   explicit lbeta_(T1&& a, T2&& b)
       : base("stan_lbeta", std::forward<T1>(a), std::forward<T2>(b)) {
