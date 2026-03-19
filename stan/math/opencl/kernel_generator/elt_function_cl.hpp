@@ -24,6 +24,7 @@
 #include <stan/math/opencl/kernels/device_functions/multiply_log.hpp>
 #include <stan/math/opencl/kernels/device_functions/Phi.hpp>
 #include <stan/math/opencl/kernels/device_functions/Phi_approx.hpp>
+#include <stan/math/opencl/kernels/device_functions/std_normal_lcdf.hpp>
 #include <stan/math/opencl/kernels/device_functions/trigamma.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/kernel_generator/common_return_scalar.hpp>
@@ -314,6 +315,12 @@ ADD_UNARY_FUNCTION_WITH_INCLUDES(Phi, opencl_kernels::phi_device_function)
 ADD_UNARY_FUNCTION_WITH_INCLUDES(Phi_approx,
                                  opencl_kernels::inv_logit_device_function,
                                  opencl_kernels::phi_approx_device_function)
+ADD_UNARY_FUNCTION_WITH_INCLUDES(
+    std_normal_lcdf_scaled_impl,
+    opencl_kernels::std_normal_lcdf_device_function)
+ADD_UNARY_FUNCTION_WITH_INCLUDES(
+    std_normal_lcdf_dscaled_impl,
+    opencl_kernels::std_normal_lcdf_device_function)
 ADD_UNARY_FUNCTION_WITH_INCLUDES(inv_Phi, opencl_kernels::log1m_device_function,
                                  opencl_kernels::phi_device_function,
                                  opencl_kernels::inv_phi_device_function)
@@ -352,10 +359,53 @@ ADD_BINARY_FUNCTION_WITH_INCLUDES(
     stan::math::opencl_kernels::lgamma_stirling_diff_device_function,
     stan::math::opencl_kernels::lbeta_device_function,
     stan::math::opencl_kernels::binomial_coefficient_log_device_function)
-ADD_BINARY_FUNCTION_WITH_INCLUDES(
-    lbeta, stan::math::opencl_kernels::lgamma_stirling_device_function,
+template <typename T1, typename T2>
+class lbeta_ : public elt_function_cl<lbeta_<T1, T2>, double, T1, T2> {
+  using base = elt_function_cl<lbeta_<T1, T2>, double, T1, T2>;
+  using base::arguments_;
+
+ public:
+  using base::rows;
+  using base::cols;
+  static const std::vector<const char*> includes;
+  explicit lbeta_(T1&& a, T2&& b)
+      : base("stan_lbeta", std::forward<T1>(a), std::forward<T2>(b)) {
+    if (a.rows() != base::dynamic && b.rows() != base::dynamic) {
+      check_size_match("lbeta", "Rows of ", "a", a.rows(), "rows of ", "b",
+                       b.rows());
+    }
+    if (a.cols() != base::dynamic && b.cols() != base::dynamic) {
+      check_size_match("lbeta", "Columns of ", "a", a.cols(), "columns of ",
+                       "b", b.cols());
+    }
+  }
+  inline auto deep_copy() const {
+    auto&& arg1_copy = this->template get_arg<0>().deep_copy();
+    auto&& arg2_copy = this->template get_arg<1>().deep_copy();
+    return lbeta_<std::remove_reference_t<decltype(arg1_copy)>,
+                  std::remove_reference_t<decltype(arg2_copy)>>{
+        std::move(arg1_copy), std::move(arg2_copy)};
+  }
+  inline std::pair<int, int> extreme_diagonals() const {
+    return {-rows() + 1, cols() - 1};
+  }
+};
+
+template <typename T1, typename T2,
+          require_all_kernel_expressions_t<T1, T2>* = nullptr,
+          require_any_not_stan_scalar_t<T1, T2>* = nullptr>
+inline lbeta_<as_operation_cl_t<T1>, as_operation_cl_t<T2>> lbeta(T1&& a,
+                                                                  T2&& b) {
+  return lbeta_<as_operation_cl_t<T1>, as_operation_cl_t<T2>>(
+      as_operation_cl(std::forward<T1>(a)),
+      as_operation_cl(std::forward<T2>(b)));
+}
+
+template <typename T1, typename T2>
+const std::vector<const char*> lbeta_<T1, T2>::includes{
+    stan::math::opencl_kernels::lgamma_stirling_device_function,
     stan::math::opencl_kernels::lgamma_stirling_diff_device_function,
-    stan::math::opencl_kernels::lbeta_device_function)
+    stan::math::opencl_kernels::lbeta_device_function};
 ADD_BINARY_FUNCTION_WITH_INCLUDES(
     log_inv_logit_diff, opencl_kernels::log1p_exp_device_function,
     opencl_kernels::log1m_exp_device_function,

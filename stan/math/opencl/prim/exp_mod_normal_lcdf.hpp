@@ -8,6 +8,7 @@
 #include <stan/math/prim/fun/elt_divide.hpp>
 #include <stan/math/prim/fun/elt_multiply.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
+#include <stan/math/opencl/prim/std_normal_lcdf.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
 
 namespace stan {
@@ -80,29 +81,75 @@ exp_mod_normal_lcdf(const T_y_cl& y, const T_loc_cl& mu,
   auto scaled_diff = elt_multiply(diff * INV_SQRT_TWO, sigma_inv);
   auto v = elt_multiply(lambda_val, sigma_val);
   auto scaled_diff_diff = scaled_diff - v * INV_SQRT_TWO;
-  auto erf_calc = 0.5 * (1.0 + erf(scaled_diff_diff));
-  auto exp_term = exp(0.5 * square(v) - elt_multiply(lambda_val, diff));
-  auto cdf_n = 0.5 + 0.5 * erf(scaled_diff) - elt_multiply(exp_term, erf_calc);
-  auto cdf_log_expr = colwise_sum(log(cdf_n));
+  auto cdf_term_1 = 0.5 + 0.5 * erf(scaled_diff);
+  auto cdf_term_2_phi = 0.5 * (1.0 + erf(scaled_diff_diff));
+  auto log_exp_term = 0.5 * square(v) - elt_multiply(lambda_val, diff);
+  auto exp_term = exp(log_exp_term);
+  auto cdf_term_2 = elt_multiply(exp_term, cdf_term_2_phi);
+  auto cdf_n = cdf_term_1 - cdf_term_2;
+  auto use_stable = cdf_n <= 0.0 || !isfinite(cdf_n);
 
   auto exp_term_2 = exp(-square(scaled_diff_diff));
-  auto deriv_1 = elt_multiply(elt_multiply(lambda_val, exp_term), erf_calc);
+  auto deriv_1 = elt_multiply(elt_multiply(lambda_val, exp_term), cdf_term_2_phi);
   auto deriv_2 = INV_SQRT_TWO_PI
                  * elt_multiply(elt_multiply(exp_term, exp_term_2), sigma_inv);
   auto deriv_3
       = INV_SQRT_TWO_PI * elt_multiply(exp(-square(scaled_diff)), sigma_inv);
-  auto y_deriv = elt_divide(deriv_1 - deriv_2 + deriv_3, cdf_n);
-  auto mu_deriv = -y_deriv;
-  auto sigma_deriv = -elt_divide(
+  auto direct_cdf_log = log(cdf_n);
+  auto direct_y_deriv = elt_divide(deriv_1 - deriv_2 + deriv_3, cdf_n);
+  auto direct_mu_deriv = -direct_y_deriv;
+  auto direct_sigma_deriv = -elt_divide(
       elt_multiply(deriv_1 - deriv_2, v)
           + elt_multiply(deriv_3 - deriv_2, scaled_diff) * SQRT_TWO,
       cdf_n);
-  auto lambda_deriv = elt_divide(
+  auto direct_lambda_deriv = elt_divide(
       elt_multiply(
           exp_term,
           INV_SQRT_TWO_PI * elt_multiply(sigma_val, exp_term_2)
-              - elt_multiply(elt_multiply(v, sigma_val) - diff, erf_calc)),
+              - elt_multiply(elt_multiply(v, sigma_val) - diff, cdf_term_2_phi)),
       cdf_n);
+
+  auto log_cdf_term_1 = std_normal_lcdf_scaled_impl(scaled_diff);
+  auto dlog_cdf_term_1 = std_normal_lcdf_dscaled_impl(scaled_diff);
+  auto log_cdf_term_2_phi = std_normal_lcdf_scaled_impl(scaled_diff_diff);
+  auto dlog_cdf_term_2_phi = std_normal_lcdf_dscaled_impl(scaled_diff_diff);
+  auto log_cdf_term_2 = log_exp_term + log_cdf_term_2_phi;
+  auto log_cdf_n = log_diff_exp(log_cdf_term_1, log_cdf_term_2);
+  auto cdf_term_1_weight = exp(log_cdf_term_1 - log_cdf_n);
+  auto cdf_term_2_weight = exp(log_cdf_term_2 - log_cdf_n);
+  auto scaled_diff_deriv
+      = elt_multiply(dlog_cdf_term_1, sigma_inv * INV_SQRT_TWO);
+  auto scaled_diff_diff_deriv
+      = elt_multiply(dlog_cdf_term_2_phi, sigma_inv * INV_SQRT_TWO);
+  auto stable_y_deriv = elt_multiply(cdf_term_1_weight, scaled_diff_deriv)
+                        - elt_multiply(cdf_term_2_weight,
+                                       -lambda_val + scaled_diff_diff_deriv);
+  auto stable_mu_deriv = -stable_y_deriv;
+  auto stable_sigma_deriv = elt_multiply(
+                                cdf_term_1_weight,
+                                -elt_multiply(dlog_cdf_term_1,
+                                              elt_multiply(scaled_diff,
+                                                           sigma_inv)))
+                            - elt_multiply(
+                                cdf_term_2_weight,
+                                elt_multiply(lambda_val, v)
+                                    - elt_multiply(
+                                        dlog_cdf_term_2_phi,
+                                        elt_multiply(
+                                            scaled_diff + v * INV_SQRT_TWO,
+                                            sigma_inv)));
+  auto stable_lambda_deriv
+      = -elt_multiply(cdf_term_2_weight,
+                      elt_multiply(v, sigma_val) - diff
+                          - elt_multiply(dlog_cdf_term_2_phi,
+                                         sigma_val * INV_SQRT_TWO));
+  auto cdf_log_expr = colwise_sum(select(use_stable, log_cdf_n, direct_cdf_log));
+  auto y_deriv = select(use_stable, stable_y_deriv, direct_y_deriv);
+  auto mu_deriv = select(use_stable, stable_mu_deriv, direct_mu_deriv);
+  auto sigma_deriv
+      = select(use_stable, stable_sigma_deriv, direct_sigma_deriv);
+  auto lambda_deriv
+      = select(use_stable, stable_lambda_deriv, direct_lambda_deriv);
 
   matrix_cl<char> any_y_neg_inf_cl;
   matrix_cl<char> any_y_pos_inf_cl;

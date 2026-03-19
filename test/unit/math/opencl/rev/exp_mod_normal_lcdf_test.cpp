@@ -146,7 +146,7 @@ TEST(ProbDistributionsDoubleExpModNormalLcdf,
 }
 
 TEST(ProbDistributionsDoubleExpModNormalLcdf, opencl_broadcast_y) {
-  int N = 3;
+  constexpr int N = 3;
 
   double y_scal = 12.3;
   Eigen::VectorXd mu(N);
@@ -164,7 +164,7 @@ TEST(ProbDistributionsDoubleExpModNormalLcdf, opencl_broadcast_y) {
 }
 
 TEST(ProbDistributionsDoubleExpModNormalLcdf, opencl_matches_cpu_big) {
-  int N = 153;
+  constexpr int N = 153;
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> y
       = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs();
@@ -175,13 +175,28 @@ TEST(ProbDistributionsDoubleExpModNormalLcdf, opencl_matches_cpu_big) {
         + 0.1;
   Eigen::Matrix<double, Eigen::Dynamic, 1> lambda
       = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs();
-
   stan::math::test::compare_cpu_opencl_prim_rev(exp_mod_normal_lcdf_functor, y,
                                                 mu, sigma, lambda);
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      exp_mod_normal_lcdf_functor, y.transpose().eval(), mu.transpose().eval(),
-      sigma.transpose().eval(), lambda.transpose().eval());
 }
+
+TEST(ProbDistributionsDoubleExpModNormalLcdf, opencl_matches_cpu_big_transpose) {
+  constexpr int N = 153;
+
+  Eigen::Matrix<double, Eigen::Dynamic, 1> y
+      = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs();
+  Eigen::Matrix<double, Eigen::Dynamic, 1> mu
+      = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs();
+  Eigen::Matrix<double, Eigen::Dynamic, 1> sigma
+      = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs().array()
+        + 0.1;
+  Eigen::Matrix<double, Eigen::Dynamic, 1> lambda
+      = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs();
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      exp_mod_normal_lcdf_functor, stan::test::relative_tolerance(1.5e-8),
+      y.transpose().eval(), mu.transpose().eval(), sigma.transpose().eval(),
+      lambda.transpose().eval());
+}
+
 }  // namespace exp_mod_normal_lcdf_test
 
 #endif

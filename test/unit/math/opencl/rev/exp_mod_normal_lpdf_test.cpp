@@ -235,11 +235,55 @@ TEST(ProbDistributionsExpModNormal, opencl_matches_cpu_big) {
 
   stan::math::test::compare_cpu_opencl_prim_rev(exp_mod_normal_lpdf_functor, y,
                                                 mu, sigma, lambda);
+}
+
+TEST(ProbDistributionsExpModNormal, opencl_matches_cpu_big_propto) {
+  int N = 153;
+
+  Eigen::Matrix<double, Eigen::Dynamic, 1> y
+      = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs();
+  Eigen::Matrix<double, Eigen::Dynamic, 1> mu
+      = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs();
+  Eigen::Matrix<double, Eigen::Dynamic, 1> sigma
+      = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs().array()
+        + 0.1;
+  Eigen::Matrix<double, Eigen::Dynamic, 1> lambda
+      = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs();
+
   stan::math::test::compare_cpu_opencl_prim_rev(
       exp_mod_normal_lpdf_functor_propto, y, mu, sigma, lambda);
+}
+
+TEST(ProbDistributionsExpModNormal, opencl_matches_cpu_big_transpose) {
+  int N = 153;
+
+  Eigen::Matrix<double, Eigen::Dynamic, 1> y
+      = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs();
+  Eigen::Matrix<double, Eigen::Dynamic, 1> mu
+      = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs();
+  Eigen::Matrix<double, Eigen::Dynamic, 1> sigma
+      = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs().array()
+        + 0.1;
+  Eigen::Matrix<double, Eigen::Dynamic, 1> lambda
+      = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs();
   stan::math::test::compare_cpu_opencl_prim_rev(
       exp_mod_normal_lpdf_functor, y.transpose().eval(), mu.transpose().eval(),
       sigma.transpose().eval(), lambda.transpose().eval());
+}
+
+TEST(ProbDistributionsExpModNormal, opencl_matches_cpu_big_propto_transpose) {
+  int N = 153;
+
+  Eigen::Matrix<double, Eigen::Dynamic, 1> y
+      = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs();
+  Eigen::Matrix<double, Eigen::Dynamic, 1> mu
+      = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs();
+  Eigen::Matrix<double, Eigen::Dynamic, 1> sigma
+      = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs().array()
+        + 0.1;
+  Eigen::Matrix<double, Eigen::Dynamic, 1> lambda
+      = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs();
+
   stan::math::test::compare_cpu_opencl_prim_rev(
       exp_mod_normal_lpdf_functor_propto, y.transpose().eval(),
       mu.transpose().eval(), sigma.transpose().eval(),
