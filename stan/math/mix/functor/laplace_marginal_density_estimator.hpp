@@ -381,6 +381,31 @@ struct NewtonState {
   }
 
   /**
+   * @brief Constructs Newton state with a consistent (a_init, theta_init) pair.
+   *
+   * When the caller supplies a non-zero theta_init, a_init = Sigma^{-1} *
+   * theta_init must be provided to maintain the invariant theta = Sigma * a.
+   *
+   * @param theta_size Dimension of the latent space
+   * @param obj_fun Objective function: (a, theta) -> double
+   * @param theta_grad_f Gradient function: theta -> grad
+   * @param a_init Initial a value consistent with theta_init
+   * @param theta_init Initial theta value
+   */
+  template <typename ObjFun, typename ThetaGradFun, typename ThetaInitializer>
+  NewtonState(int theta_size, ObjFun&& obj_fun, ThetaGradFun&& theta_grad_f,
+              const Eigen::VectorXd& a_init,
+              ThetaInitializer&& theta_init)
+      : wolfe_info(std::forward<ObjFun>(obj_fun), a_init,
+                   std::forward<ThetaInitializer>(theta_init),
+                   std::forward<ThetaGradFun>(theta_grad_f), 0),
+        b(theta_size),
+        B(theta_size, theta_size),
+        prev_g(theta_size) {
+    wolfe_status.num_backtracks_ = -1;  // Safe initial value for BB step
+  }
+
+  /**
    * @brief Access the current step state (mutable).
    * @return Reference to current WolfeStep
    */
@@ -426,9 +451,13 @@ inline void llt_with_jitter(LLT& llt_B, B_t& B, double min_jitter = 1e-10,
                             double max_jitter = 1e-5) {
   llt_B.compute(B);
   if (llt_B.info() != Eigen::Success) {
+    double prev_jitter = 0.0;
     double jitter_try = min_jitter;
     for (; jitter_try < max_jitter; jitter_try *= 10) {
-      B.diagonal().array() += jitter_try;
+      // Remove previously added jitter before adding the new (larger) amount,
+      // so that the total diagonal perturbation is exactly jitter_try.
+      B.diagonal().array() += (jitter_try - prev_jitter);
+      prev_jitter = jitter_try;
       llt_B.compute(B);
       if (llt_B.info() == Eigen::Success) {
         break;
@@ -935,6 +964,9 @@ inline auto run_newton_loop(SolverPolicy& solver, NewtonStateT& state,
       scratch.alpha() = 1.0;
       update_fun(scratch, state.curr(), state.prev(), scratch.eval_,
                  state.wolfe_info.p_);
+      // Save the full Newton step objective before the Wolfe line search
+      // overwrites scratch with intermediate trial points.
+      const double full_newton_obj = scratch.eval_.obj();
       if (scratch.alpha() <= options.line_search.min_alpha) {
         state.wolfe_status.accept_ = false;
         finish_update = true;
@@ -953,15 +985,42 @@ inline auto run_newton_loop(SolverPolicy& solver, NewtonStateT& state,
         state.wolfe_status = internal::wolfe_line_search(
             state.wolfe_info, update_fun, options.line_search, msgs);
       }
+      // When the Wolfe line search rejects, don't immediately terminate.
+      // Instead, let the Newton loop try at least one more iteration.
+      // The original code compared the stale curr.obj() (which equalled
+      // prev.obj() after the swap in update_next_step) and would always
+      // terminate on ANY Wolfe rejection — even on the very first Newton
+      // step.  Now we only declare search_failed if the full Newton step
+      // itself didn't improve the objective.
+      bool search_failed;
+      if (!state.wolfe_status.accept_) {
+        if (full_newton_obj > state.prev().obj()) {
+          // The full Newton step (evaluated before Wolfe ran) improved
+          // the objective.  Re-evaluate scratch at the full Newton step
+          // so we can accept it as the current iterate.
+          scratch.eval_.alpha() = 1.0;
+          update_fun(scratch, state.curr(), state.prev(), scratch.eval_,
+                     state.wolfe_info.p_);
+          state.curr().update(scratch);
+          state.wolfe_status.accept_ = true;
+          search_failed = false;
+        } else {
+          search_failed = true;
+        }
+      } else {
+        search_failed = false;
+      }
       /**
-       * Stop when objective change is small, or when a rejected Wolfe step
-       * fails to improve; finish_update then exits the Newton loop.
+       * Stop when objective change is small (absolute AND relative), or when
+       * a rejected Wolfe step fails to improve; finish_update then exits the
+       * Newton loop.
        */
+      double obj_change = std::abs(state.curr().obj() - state.prev().obj());
       bool objective_converged
-          = std::abs(state.curr().obj() - state.prev().obj())
-            < options.tolerance;
-      bool search_failed = (!state.wolfe_status.accept_
-                            && state.curr().obj() <= state.prev().obj());
+          = obj_change < options.tolerance
+            && obj_change
+                   < options.tolerance
+                         * std::abs(state.prev().obj());
       finish_update = objective_converged || search_failed;
     }
     if (finish_update) {
@@ -1152,7 +1211,23 @@ inline auto laplace_marginal_density_est(
     return laplace_likelihood::theta_grad(ll_fun, theta_val, ll_args, msgs);
   };
   decltype(auto) theta_init = theta_init_impl<InitTheta>(theta_size, options);
-  internal::NewtonState state(theta_size, obj_fun, theta_grad_f, theta_init);
+  // When the user supplies a non-zero theta_init, we must initialise a
+  // consistently so that the invariant theta = Sigma * a holds.  Otherwise
+  // the prior term -0.5 * a'*theta vanishes (a=0 while theta!=0), inflating
+  // the initial objective and causing the Wolfe line search to reject the
+  // first Newton step.
+  auto make_state = [&](auto&& theta_0) {
+    if constexpr (InitTheta) {
+      Eigen::VectorXd a_init = covariance.llt().solve(
+          Eigen::VectorXd(theta_0));
+      return internal::NewtonState(theta_size, obj_fun, theta_grad_f,
+                                   a_init, theta_0);
+    } else {
+      return internal::NewtonState(theta_size, obj_fun, theta_grad_f,
+                                   theta_0);
+    }
+  };
+  auto state = make_state(theta_init);
   // Start with safe step size
   auto update_fun = create_update_fun(
       std::move(obj_fun), std::move(theta_grad_f), covariance, options);

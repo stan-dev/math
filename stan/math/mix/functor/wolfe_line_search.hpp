@@ -512,6 +512,29 @@ struct WolfeInfo {
           "theta and likelihood arguments.");
     }
   }
+  /**
+   * Construct WolfeInfo with a consistent (a_init, theta_init) pair.
+   *
+   * When the caller supplies a non-zero theta_init, the corresponding
+   * a_init = Sigma^{-1} * theta_init must be provided so that the
+   * invariant theta = Sigma * a holds at initialization.  This avoids
+   * an inflated initial objective (the prior term -0.5 * a'*theta would
+   * otherwise vanish when a is zero but theta is not).
+   */
+  template <typename ObjFun, typename Theta0, typename ThetaGradF>
+  WolfeInfo(ObjFun&& obj_fun, const Eigen::VectorXd& a_init, Theta0&& theta0,
+            ThetaGradF&& theta_grad_f, int /*tag*/)
+      : curr_(std::forward<ObjFun>(obj_fun), a_init,
+              std::forward<Theta0>(theta0),
+              std::forward<ThetaGradF>(theta_grad_f)),
+        prev_(curr_),
+        scratch_(a_init.size()) {
+    if (!std::isfinite(curr_.obj())) {
+      throw std::domain_error(
+          "laplace_marginal_density: log likelihood is not finite at initial "
+          "theta and likelihood arguments.");
+    }
+  }
   WolfeInfo(WolfeData&& curr, WolfeData&& prev)
       : curr_(std::move(curr)),
         prev_(std::move(prev)),
@@ -902,9 +925,10 @@ inline WolfeStatus wolfe_line_search(Info& wolfe_info, UpdateFun&& update_fun,
         } else {  // [3]
           high = mid;
         }
+      } else {
+        // [4]
+        high = mid;
       }
-      // [4]
-      high = mid;
     } else {
       // [5]
       high = mid;
