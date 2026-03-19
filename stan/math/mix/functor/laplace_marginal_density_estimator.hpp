@@ -394,8 +394,7 @@ struct NewtonState {
    */
   template <typename ObjFun, typename ThetaGradFun, typename ThetaInitializer>
   NewtonState(int theta_size, ObjFun&& obj_fun, ThetaGradFun&& theta_grad_f,
-              const Eigen::VectorXd& a_init,
-              ThetaInitializer&& theta_init)
+              const Eigen::VectorXd& a_init, ThetaInitializer&& theta_init)
       : wolfe_info(std::forward<ObjFun>(obj_fun), a_init,
                    std::forward<ThetaInitializer>(theta_init),
                    std::forward<ThetaGradFun>(theta_grad_f), 0),
@@ -1018,9 +1017,7 @@ inline auto run_newton_loop(SolverPolicy& solver, NewtonStateT& state,
       double obj_change = std::abs(state.curr().obj() - state.prev().obj());
       bool objective_converged
           = obj_change < options.tolerance
-            && obj_change
-                   < options.tolerance
-                         * std::abs(state.prev().obj());
+            && obj_change < options.tolerance * std::abs(state.prev().obj());
       finish_update = objective_converged || search_failed;
     }
     if (finish_update) {
@@ -1218,13 +1215,11 @@ inline auto laplace_marginal_density_est(
   // first Newton step.
   auto make_state = [&](auto&& theta_0) {
     if constexpr (InitTheta) {
-      Eigen::VectorXd a_init = covariance.llt().solve(
-          Eigen::VectorXd(theta_0));
-      return internal::NewtonState(theta_size, obj_fun, theta_grad_f,
-                                   a_init, theta_0);
-    } else {
-      return internal::NewtonState(theta_size, obj_fun, theta_grad_f,
+      Eigen::VectorXd a_init = covariance.llt().solve(Eigen::VectorXd(theta_0));
+      return internal::NewtonState(theta_size, obj_fun, theta_grad_f, a_init,
                                    theta_0);
+    } else {
+      return internal::NewtonState(theta_size, obj_fun, theta_grad_f, theta_0);
     }
   };
   auto state = make_state(theta_init);
