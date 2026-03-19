@@ -24,6 +24,12 @@
 extern "C" {
 #endif
 
+#if defined(_WIN32) && defined(_MSC_VER) && __CL_HAS_ANON_STRUCT__
+   /* Disable warning C4201: nonstandard extension used : nameless struct/union */
+    #pragma warning( push )
+    #pragma warning( disable : 4201 )
+#endif
+
 /******************************************************************************/
 
 typedef struct _cl_platform_id *    cl_platform_id;
@@ -112,9 +118,9 @@ typedef cl_uint             cl_kernel_exec_info;
 typedef cl_bitfield         cl_device_atomic_capabilities;
 typedef cl_bitfield         cl_device_device_enqueue_capabilities;
 typedef cl_uint             cl_khronos_vendor_id;
-typedef cl_properties       cl_mem_properties;
-typedef cl_uint             cl_version;
+typedef cl_properties cl_mem_properties;
 #endif
+typedef cl_uint cl_version;
 
 typedef struct _cl_image_format {
     cl_channel_order        image_channel_order;
@@ -133,31 +139,13 @@ typedef struct _cl_image_desc {
     size_t                  image_slice_pitch;
     cl_uint                 num_mip_levels;
     cl_uint                 num_samples;
-#ifdef CL_VERSION_2_0
-#if defined(__GNUC__)
-    __extension__                   /* Prevents warnings about anonymous union in -pedantic builds */
-#endif
-#if defined(_MSC_VER) && !defined(__STDC__)
-#pragma warning( push )
-#pragma warning( disable : 4201 )   /* Prevents warning about nameless struct/union in /W4 builds */
-#endif
-#if defined(_MSC_VER) && defined(__STDC__)
-    /* Anonymous unions are not supported in /Za builds */
-#else
-    union {
-#endif
+#if defined(CL_VERSION_2_0) && __CL_HAS_ANON_STRUCT__
+    __CL_ANON_STRUCT__ union {
 #endif
       cl_mem                  buffer;
-#ifdef CL_VERSION_2_0
-#if defined(_MSC_VER) && defined(__STDC__)
-    /* Anonymous unions are not supported in /Za builds */
-#else
+#if defined(CL_VERSION_2_0) && __CL_HAS_ANON_STRUCT__
       cl_mem                  mem_object;
     };
-#endif
-#if defined(_MSC_VER) && !defined(__STDC__)
-#pragma warning( pop )
-#endif
 #endif
 } cl_image_desc;
 
@@ -562,11 +550,8 @@ typedef struct _cl_name_version {
 #define CL_RGx                                      0x10BB
 #define CL_RGBx                                     0x10BC
 #endif
-#ifdef CL_VERSION_1_2
-#define CL_DEPTH                                    0x10BD
-#define CL_DEPTH_STENCIL                            0x10BE
-#endif
 #ifdef CL_VERSION_2_0
+#define CL_DEPTH                                    0x10BD
 #define CL_sRGB                                     0x10BF
 #define CL_sRGBx                                    0x10C0
 #define CL_sRGBA                                    0x10C1
@@ -590,9 +575,6 @@ typedef struct _cl_name_version {
 #define CL_UNSIGNED_INT32                           0x10DC
 #define CL_HALF_FLOAT                               0x10DD
 #define CL_FLOAT                                    0x10DE
-#ifdef CL_VERSION_1_2
-#define CL_UNORM_INT24                              0x10DF
-#endif
 #ifdef CL_VERSION_2_1
 #define CL_UNORM_INT_101010_2                       0x10E0
 #endif
@@ -913,8 +895,6 @@ typedef struct _cl_name_version {
 /* cl_khronos_vendor_id */
 #define CL_KHRONOS_VENDOR_ID_CODEPLAY               0x10004
 
-#ifdef CL_VERSION_3_0
-
 /* cl_version */
 #define CL_VERSION_MAJOR_BITS (10)
 #define CL_VERSION_MINOR_BITS (10)
@@ -938,9 +918,14 @@ typedef struct _cl_name_version {
    (((minor) & CL_VERSION_MINOR_MASK) << CL_VERSION_PATCH_BITS) | \
    ((patch) & CL_VERSION_PATCH_MASK))
 
+/********************************************************************************************************/
+
+/* CL_NO_PROTOTYPES implies CL_NO_CORE_PROTOTYPES: */
+#if defined(CL_NO_PROTOTYPES) && !defined(CL_NO_CORE_PROTOTYPES)
+#define CL_NO_CORE_PROTOTYPES
 #endif
 
-/********************************************************************************************************/
+#if !defined(CL_NO_CORE_PROTOTYPES)
 
 /* Platform API */
 extern CL_API_ENTRY cl_int CL_API_CALL
@@ -1922,8 +1907,14 @@ clEnqueueTask(cl_command_queue  command_queue,
               const cl_event *  event_wait_list,
               cl_event *        event) CL_API_SUFFIX__VERSION_1_2_DEPRECATED;
 
+#endif /* !defined(CL_NO_CORE_PROTOTYPES) */
+
 #ifdef __cplusplus
 }
+#endif
+
+#if defined(_WIN32) && defined(_MSC_VER) && __CL_HAS_ANON_STRUCT__
+    #pragma warning( pop )
 #endif
 
 #endif  /* __OPENCL_CL_H */
