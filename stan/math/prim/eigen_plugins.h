@@ -10,7 +10,7 @@ template<class, class = void>
 struct is_fvar : std::false_type
 { };
 template<class T>
-struct is_fvar<T, decltype((void)(T::d_))> : std::true_type
+struct is_fvar<T, std::void_t<decltype(std::decay_t<T>::d_)>> : std::true_type
 { };
 
 //TODO(Andrew): Replace std::is_const<>::value with std::is_const_v<> after move to C++17

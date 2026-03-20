@@ -78,6 +78,12 @@ target/
 profile_default/
 ipython_config.py
 
+# VSCode
+.vscode/
+
+# JetBrains PyCharm
+.idea/
+
 # pyenv
 .python-version
 
