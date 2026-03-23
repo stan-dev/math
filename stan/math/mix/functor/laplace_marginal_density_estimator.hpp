@@ -360,27 +360,6 @@ struct NewtonState {
   bool final_loop = false;
 
   /**
-   * @brief Constructs Newton state with given dimensions and functors.
-   *
-   * @tparam ThetaInitializer Type of the initial theta provider
-   * @param theta_size Dimension of the latent space
-   * @param obj_fun Objective function: (a, theta) -> double
-   * @param theta_grad_f Gradient function: theta -> grad
-   * @param theta_init Initial theta value or provider
-   */
-  template <typename ObjFun, typename ThetaGradFun, typename ThetaInitializer>
-  NewtonState(int theta_size, ObjFun&& obj_fun, ThetaGradFun&& theta_grad_f,
-              ThetaInitializer&& theta_init)
-      : wolfe_info(std::forward<ObjFun>(obj_fun), theta_size,
-                   std::forward<ThetaInitializer>(theta_init),
-                   std::forward<ThetaGradFun>(theta_grad_f)),
-        b(theta_size),
-        B(theta_size, theta_size),
-        prev_g(theta_size) {
-    wolfe_status.num_backtracks_ = -1;  // Safe initial value for BB step
-  }
-
-  /**
    * @brief Constructs Newton state with a consistent (a_init, theta_init) pair.
    *
    * When the caller supplies a non-zero theta_init, a_init = Sigma^{-1} *
@@ -392,12 +371,12 @@ struct NewtonState {
    * @param a_init Initial a value consistent with theta_init
    * @param theta_init Initial theta value
    */
-  template <typename ObjFun, typename ThetaGradFun, typename ThetaInitializer>
+  template <typename ObjFun, typename ThetaGradFun, typename CovarianceT, typename ThetaInitializer>
   NewtonState(int theta_size, ObjFun&& obj_fun, ThetaGradFun&& theta_grad_f,
-              const Eigen::VectorXd& a_init, ThetaInitializer&& theta_init)
-      : wolfe_info(std::forward<ObjFun>(obj_fun), a_init,
+              CovarianceT&& covariance, ThetaInitializer&& theta_init)
+      : wolfe_info(std::forward<ObjFun>(obj_fun), covariance.llt().solve(theta_init),
                    std::forward<ThetaInitializer>(theta_init),
-                   std::forward<ThetaGradFun>(theta_grad_f), 0),
+                   std::forward<ThetaGradFun>(theta_grad_f)),
         b(theta_size),
         B(theta_size, theta_size),
         prev_g(theta_size) {
@@ -1213,16 +1192,7 @@ inline auto laplace_marginal_density_est(
   // the prior term -0.5 * a'*theta vanishes (a=0 while theta!=0), inflating
   // the initial objective and causing the Wolfe line search to reject the
   // first Newton step.
-  auto make_state = [&](auto&& theta_0) {
-    if constexpr (InitTheta) {
-      Eigen::VectorXd a_init = covariance.llt().solve(Eigen::VectorXd(theta_0));
-      return internal::NewtonState(theta_size, obj_fun, theta_grad_f, a_init,
-                                   theta_0);
-    } else {
-      return internal::NewtonState(theta_size, obj_fun, theta_grad_f, theta_0);
-    }
-  };
-  auto state = make_state(theta_init);
+  auto state = NewtonState(theta_size, obj_fun, theta_grad_f, covariance, theta_init);
   // Start with safe step size
   auto update_fun = create_update_fun(
       std::move(obj_fun), std::move(theta_grad_f), covariance, options);
