@@ -75,8 +75,10 @@ inline return_type_t<T_prob> geometric_cdf(const T_n& n,
     cdf *= cdf_i;
 
     if constexpr (is_autodiff_v<T_prob>) {
-      partials<0>(ops_partials)[i]
-          += np1 * ccdf_i / ((1.0 - theta_val) * cdf_i);
+      if (cdf_i > 0.0 && theta_val > 0.0) {
+        partials<0>(ops_partials)[i]
+            += np1 * ccdf_i / ((1.0 - theta_val) * cdf_i);
+      }
     }
   }
 

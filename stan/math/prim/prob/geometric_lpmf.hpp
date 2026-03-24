@@ -78,6 +78,11 @@ inline return_type_t<T_prob> geometric_lpmf(const T_n& n,
     const auto theta_val = theta_vec.val(i);
     const auto n_val = n_vec.val(i);
 
+    // When theta == 0.0, P(n) = 0 for all n
+    if (theta_val == 0.0) {
+      return negative_infinity();
+    }
+
     // When theta == 1.0, P(n=0) = 1, P(n>0) = 0
     if (theta_val == 1.0) {
       if (n_val > 0) {

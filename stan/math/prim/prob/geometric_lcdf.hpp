@@ -75,8 +75,10 @@ inline return_type_t<T_prob> geometric_lcdf(const T_n& n,
 
     if constexpr (is_autodiff_v<T_prob>) {
       const auto ccdf = stan::math::exp(log_ccdf);
-      partials<0>(ops_partials)[i]
-          += np1 * ccdf / ((1.0 - theta_val) * (1.0 - ccdf));
+      if (theta_val > 0.0 && ccdf < 1.0) {
+        partials<0>(ops_partials)[i]
+            += np1 * ccdf / ((1.0 - theta_val) * (1.0 - ccdf));
+      }
     }
   }
 

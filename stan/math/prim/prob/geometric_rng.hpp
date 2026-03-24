@@ -58,7 +58,7 @@ inline auto geometric_rng(T_prob&& theta, RNG& rng) {
   } else {
     auto theta_arr = as_array_or_scalar(theta_ref);
     std::vector<int> result(theta_arr.size());
-    for (int i = 0; i < theta_arr.size(); i++) {
+    for (size_t i = 0; i < theta_arr.size(); i++) {
       if (theta_arr[i] == 1.0) {
         result[i] = 0;
       } else {

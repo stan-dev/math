@@ -111,13 +111,13 @@
 #include <stan/math/prim/prob/gamma_lcdf.hpp>
 #include <stan/math/prim/prob/gamma_lpdf.hpp>
 #include <stan/math/prim/prob/gamma_rng.hpp>
+#include <stan/math/prim/prob/gaussian_dlm_obs_lpdf.hpp>
+#include <stan/math/prim/prob/gaussian_dlm_obs_rng.hpp>
 #include <stan/math/prim/prob/geometric_cdf.hpp>
 #include <stan/math/prim/prob/geometric_lccdf.hpp>
 #include <stan/math/prim/prob/geometric_lcdf.hpp>
 #include <stan/math/prim/prob/geometric_lpmf.hpp>
 #include <stan/math/prim/prob/geometric_rng.hpp>
-#include <stan/math/prim/prob/gaussian_dlm_obs_lpdf.hpp>
-#include <stan/math/prim/prob/gaussian_dlm_obs_rng.hpp>
 #include <stan/math/prim/prob/gumbel_ccdf_log.hpp>
 #include <stan/math/prim/prob/gumbel_cdf.hpp>
 #include <stan/math/prim/prob/gumbel_cdf_log.hpp>
