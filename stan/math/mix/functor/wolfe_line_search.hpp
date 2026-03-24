@@ -515,7 +515,8 @@ struct WolfeInfo {
    * an inflated initial objective (the prior term -0.5 * a'*theta would
    * otherwise vanish when a is zero but theta is not).
    */
-  template <typename ObjFun, typename Theta0, typename AInit, typename ThetaGradF>
+  template <typename ObjFun, typename Theta0, typename AInit,
+            typename ThetaGradF>
   WolfeInfo(ObjFun&& obj_fun, AInit&& a_init, Theta0&& theta0,
             ThetaGradF&& theta_grad_f)
       : curr_(std::forward<ObjFun>(obj_fun), std::forward<AInit>(a_init),

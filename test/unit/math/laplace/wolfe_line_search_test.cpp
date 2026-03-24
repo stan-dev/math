@@ -805,30 +805,30 @@ TEST(WolfeLineSearch, ZoomPreservesCaseTwoLowUpdate) {
   opt.scale_up = 2.0;
   opt.max_alpha = 1.0;
 
-  auto scripted_update = [](auto& proposal, auto&&, auto&&, Eval& eval,
-                            auto&&) {
-    proposal.a()(0) = eval.alpha();
-    proposal.theta()(0) = eval.alpha();
-    proposal.theta_grad()(0) = 0.0;
-    const double alpha = eval.alpha();
-    if (std::abs(alpha - 0.5) < 1e-12) {
-      eval.obj() = 0.5;
-      eval.dir() = -2.0;
-    } else if (std::abs(alpha - 0.25) < 1e-12) {
-      eval.obj() = 0.75;
-      eval.dir() = 1.0;
-    } else if (std::abs(alpha - 0.375) < 1e-12) {
-      eval.obj() = 0.95;
-      eval.dir() = 0.0;
-    } else if (std::abs(alpha - 0.125) < 1e-12) {
-      eval.obj() = 0.6;
-      eval.dir() = 0.0;
-    } else {
-      ADD_FAILURE() << "Unexpected alpha " << alpha;
-      eval.obj() = -1.0;
-      eval.dir() = -2.0;
-    }
-  };
+  auto scripted_update
+      = [](auto& proposal, auto&&, auto&&, Eval& eval, auto&&) {
+          proposal.a()(0) = eval.alpha();
+          proposal.theta()(0) = eval.alpha();
+          proposal.theta_grad()(0) = 0.0;
+          const double alpha = eval.alpha();
+          if (std::abs(alpha - 0.5) < 1e-12) {
+            eval.obj() = 0.5;
+            eval.dir() = -2.0;
+          } else if (std::abs(alpha - 0.25) < 1e-12) {
+            eval.obj() = 0.75;
+            eval.dir() = 1.0;
+          } else if (std::abs(alpha - 0.375) < 1e-12) {
+            eval.obj() = 0.95;
+            eval.dir() = 0.0;
+          } else if (std::abs(alpha - 0.125) < 1e-12) {
+            eval.obj() = 0.6;
+            eval.dir() = 0.0;
+          } else {
+            ADD_FAILURE() << "Unexpected alpha " << alpha;
+            eval.obj() = -1.0;
+            eval.dir() = -2.0;
+          }
+        };
 
   auto status = wolfe_line_search(info, scripted_update, opt,
                                   static_cast<std::ostream*>(nullptr));

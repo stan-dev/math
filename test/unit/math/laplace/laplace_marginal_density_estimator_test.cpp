@@ -69,10 +69,10 @@ TEST(LaplaceMarginalDensityEstimator, PublicLineSearchMatchesDirectStep) {
   std::ostringstream no_search_msgs;
   std::ostringstream wolfe_msgs;
 
-  const double no_search = run_laplace(QuarticLikelihood{}, 2.0, 1e-12, 50, 0,
-                                       &no_search_msgs);
-  const double with_wolfe = run_laplace(QuarticLikelihood{}, 2.0, 1e-12, 50,
-                                        1000, &wolfe_msgs);
+  const double no_search
+      = run_laplace(QuarticLikelihood{}, 2.0, 1e-12, 50, 0, &no_search_msgs);
+  const double with_wolfe
+      = run_laplace(QuarticLikelihood{}, 2.0, 1e-12, 50, 1000, &wolfe_msgs);
 
   EXPECT_TRUE(std::isfinite(no_search));
   EXPECT_TRUE(std::isfinite(with_wolfe));
@@ -93,12 +93,9 @@ TEST(LaplaceMarginalDensityEstimator,
      InvalidCachedProposalDoesNotTriggerArmijoFallback) {
   Eigen::MatrixXd covariance = Eigen::MatrixXd::Identity(1, 1);
   Eigen::VectorXd theta0 = Eigen::VectorXd::Zero(1);
-  auto obj_fun = [](const auto& /*a*/, const auto& /*theta*/) {
-    return -1.0;
-  };
-  auto theta_grad_f = [](const auto& theta) {
-    return Eigen::VectorXd::Zero(theta.size());
-  };
+  auto obj_fun = [](const auto& /*a*/, const auto& /*theta*/) { return -1.0; };
+  auto theta_grad_f
+      = [](const auto& theta) { return Eigen::VectorXd::Zero(theta.size()); };
   internal::NewtonState state(1, obj_fun, theta_grad_f, covariance, theta0);
   laplace_options_base options;
   options.hessian_block_size = 1;
@@ -115,14 +112,12 @@ TEST(LaplaceMarginalDensityEstimator,
     eval_in.alpha() = 0.5 * min_alpha;
     return false;
   };
-  auto unused_ll = [](const auto& /*theta*/, std::ostream* /*msgs*/) {
-    return 0.0;
-  };
+  auto unused_ll
+      = [](const auto& /*theta*/, std::ostream* /*msgs*/) { return 0.0; };
 
-  const double result
-      = internal::run_newton_loop(solver, state, options, step_iter, unused_ll,
-                                  std::tuple<>{}, covariance, failing_update,
-                                  nullptr);
+  const double result = internal::run_newton_loop(
+      solver, state, options, step_iter, unused_ll, std::tuple<>{}, covariance,
+      failing_update, nullptr);
 
   EXPECT_DOUBLE_EQ(result, 0.0);
   EXPECT_FALSE(state.wolfe_status.accept_);

@@ -374,10 +374,12 @@ struct NewtonState {
    * @param a_init Initial a value consistent with theta_init
    * @param theta_init Initial theta value
    */
-  template <typename ObjFun, typename ThetaGradFun, typename CovarianceT, typename ThetaInitializer>
+  template <typename ObjFun, typename ThetaGradFun, typename CovarianceT,
+            typename ThetaInitializer>
   NewtonState(int theta_size, ObjFun&& obj_fun, ThetaGradFun&& theta_grad_f,
               CovarianceT&& covariance, ThetaInitializer&& theta_init)
-      : wolfe_info(std::forward<ObjFun>(obj_fun), covariance.llt().solve(theta_init),
+      : wolfe_info(std::forward<ObjFun>(obj_fun),
+                   covariance.llt().solve(theta_init),
                    std::forward<ThetaInitializer>(theta_init),
                    std::forward<ThetaGradFun>(theta_grad_f)),
         proposal(theta_size),
@@ -950,9 +952,9 @@ inline auto run_newton_loop(SolverPolicy& solver, NewtonStateT& state,
       state.wolfe_info.flip_direction();
       auto&& scratch = state.wolfe_info.scratch_;
       proposal.eval_.alpha() = 1.0;
-      const bool proposal_valid = update_fun(
-          proposal, state.curr(), state.prev(), proposal.eval_,
-          state.wolfe_info.p_);
+      const bool proposal_valid
+          = update_fun(proposal, state.curr(), state.prev(), proposal.eval_,
+                       state.wolfe_info.p_);
       const bool cached_proposal_ok
           = proposal_valid && std::isfinite(proposal.obj())
             && std::isfinite(proposal.dir())
@@ -979,14 +981,13 @@ inline auto run_newton_loop(SolverPolicy& solver, NewtonStateT& state,
       const bool proposal_armijo_ok
           = cached_proposal_ok
             && internal::check_armijo(
-                   proposal.obj(), state.prev().obj(), proposal.alpha(),
-                   state.wolfe_info.init_dir_, options.line_search);
+                proposal.obj(), state.prev().obj(), proposal.alpha(),
+                state.wolfe_info.init_dir_, options.line_search);
       if (search_failed && proposal_armijo_ok) {
         state.curr().update(proposal);
-        state.wolfe_status = WolfeStatus{WolfeReturn::Armijo,
-                                         state.wolfe_status.num_evals_,
-                                         state.wolfe_status.num_backtracks_,
-                                         true};
+        state.wolfe_status
+            = WolfeStatus{WolfeReturn::Armijo, state.wolfe_status.num_evals_,
+                          state.wolfe_status.num_backtracks_, true};
         search_failed = false;
       }
       bool objective_converged
@@ -1187,7 +1188,8 @@ inline auto laplace_marginal_density_est(
   // the prior term -0.5 * a'*theta vanishes (a=0 while theta!=0), inflating
   // the initial objective and causing the Wolfe line search to reject the
   // first Newton step.
-  auto state = NewtonState(theta_size, obj_fun, theta_grad_f, covariance, theta_init);
+  auto state
+      = NewtonState(theta_size, obj_fun, theta_grad_f, covariance, theta_init);
   // Start with safe step size
   auto update_fun = create_update_fun(
       std::move(obj_fun), std::move(theta_grad_f), covariance, options);
