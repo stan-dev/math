@@ -781,6 +781,64 @@ TEST(WolfeLineSearch, HonorsMaxAlphaBound) {
   EXPECT_NE(status.stop_, WolfeReturn::Fail);
 }
 
+// Checks that zoom case 2 updates the low endpoint, not the high endpoint.
+TEST(WolfeLineSearch, ZoomPreservesCaseTwoLowUpdate) {
+  using internal::Eval;
+
+  WolfeInfo info(1);
+  info.prev_.a()(0) = 0.0;
+  info.prev_.theta()(0) = 0.0;
+  info.prev_.theta_grad()(0) = 0.0;
+  info.prev_.obj() = 0.0;
+  info.prev_.alpha() = 0.0;
+  info.curr_.a()(0) = 1.0;
+  info.curr_.theta()(0) = 1.0;
+  info.curr_.theta_grad()(0) = 0.0;
+  info.curr_.obj() = 0.0;
+  info.curr_.alpha() = 0.25;  // alpha_start = 0.5
+  info.p_(0) = 1.0;
+  info.init_dir_ = 4.0;
+
+  laplace_line_search_options opt{};
+  opt.c1 = 0.5;
+  opt.c2 = 0.1;
+  opt.scale_up = 2.0;
+  opt.max_alpha = 1.0;
+
+  auto scripted_update = [](auto& proposal, auto&&, auto&&, Eval& eval,
+                            auto&&) {
+    proposal.a()(0) = eval.alpha();
+    proposal.theta()(0) = eval.alpha();
+    proposal.theta_grad()(0) = 0.0;
+    const double alpha = eval.alpha();
+    if (std::abs(alpha - 0.5) < 1e-12) {
+      eval.obj() = 0.5;
+      eval.dir() = -2.0;
+    } else if (std::abs(alpha - 0.25) < 1e-12) {
+      eval.obj() = 0.75;
+      eval.dir() = 1.0;
+    } else if (std::abs(alpha - 0.375) < 1e-12) {
+      eval.obj() = 0.95;
+      eval.dir() = 0.0;
+    } else if (std::abs(alpha - 0.125) < 1e-12) {
+      eval.obj() = 0.6;
+      eval.dir() = 0.0;
+    } else {
+      ADD_FAILURE() << "Unexpected alpha " << alpha;
+      eval.obj() = -1.0;
+      eval.dir() = -2.0;
+    }
+  };
+
+  auto status = wolfe_line_search(info, scripted_update, opt,
+                                  static_cast<std::ostream*>(nullptr));
+
+  EXPECT_TRUE(status.accept_);
+  EXPECT_EQ(status.stop_, WolfeReturn::Wolfe);
+  EXPECT_DOUBLE_EQ(info.curr_.alpha(), 0.375);
+  EXPECT_DOUBLE_EQ(info.curr_.a()(0), 0.375);
+}
+
 // Checks that the cubic-or-bisect chooser returns an interior maximiser.
 TEST(CubicOrBisect, ReturnsInteriorMaximiser) {
   using stan::math::internal::cubic_spline;

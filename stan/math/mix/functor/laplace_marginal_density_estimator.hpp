@@ -342,6 +342,9 @@ struct NewtonState {
   /** @brief Status of the most recent Wolfe line search */
   WolfeStatus wolfe_status;
 
+  /** @brief Cached proposal evaluated before the Wolfe line search. */
+  WolfeData proposal;
+
   /** @brief Workspace vector: b = W * theta + grad(log_lik) */
   Eigen::VectorXd b;
 
@@ -377,6 +380,7 @@ struct NewtonState {
       : wolfe_info(std::forward<ObjFun>(obj_fun), covariance.llt().solve(theta_init),
                    std::forward<ThetaInitializer>(theta_init),
                    std::forward<ThetaGradFun>(theta_grad_f)),
+        proposal(theta_size),
         b(theta_size),
         B(theta_size, theta_size),
         prev_g(theta_size) {
@@ -407,9 +411,12 @@ struct NewtonState {
    */
   const auto& prev() const& { return wolfe_info.prev_; }
   auto&& prev() && { return std::move(wolfe_info).prev(); }
+  auto& proposal_step() & { return proposal; }
+  const auto& proposal_step() const& { return proposal; }
+  auto&& proposal_step() && { return std::move(proposal); }
   template <typename Options>
   inline void update_next_step(const Options& options) {
-    this->prev().update(this->curr());
+    this->prev().swap(this->curr());
     this->curr().alpha()
         = std::clamp(this->curr().alpha(), 0.0, options.line_search.max_alpha);
   }
@@ -485,7 +492,8 @@ struct CholeskyWSolverDiag {
    * @tparam LLFun Type of the log-likelihood functor
    * @tparam LLTupleArgs Type of the likelihood arguments tuple
    * @tparam CovarMat Type of the covariance matrix
-   * @param[in,out] state Shared Newton state (modified: B, b, curr().a())
+   * @param[in,out] state Shared Newton state (modified: B, b,
+   * proposal_step().a())
    * @param[in] ll_fun Log-likelihood functor
    * @param[in,out] ll_args Additional arguments for the likelihood
    * @param[in] covariance Prior covariance matrix Sigma
@@ -521,12 +529,12 @@ struct CholeskyWSolverDiag {
 
     // 3. Factorize B with jittering fallback
     llt_with_jitter(llt_B, state.B);
-    // 4. Solve for curr.a
+    // 4. Solve for the raw Newton proposal in a-space.
     state.b.noalias() = (W_diag.array() * state.prev().theta().array()).matrix()
                         + state.prev().theta_grad();
     auto L = llt_B.matrixL();
     auto LT = llt_B.matrixU();
-    state.curr().a().noalias()
+    state.proposal_step().a().noalias()
         = state.b
           - W_r_diag.asDiagonal()
                 * LT.solve(
@@ -615,7 +623,8 @@ struct CholeskyWSolverBlock {
    * @tparam LLFun Type of the log-likelihood functor
    * @tparam LLTupleArgs Type of the likelihood arguments tuple
    * @tparam CovarMat Type of the covariance matrix
-   * @param[in,out] state Shared Newton state (modified: B, b, curr().a())
+   * @param[in,out] state Shared Newton state (modified: B, b,
+   * proposal_step().a())
    * @param[in] ll_fun Log-likelihood functor
    * @param[in,out] ll_args Additional arguments for the likelihood
    * @param[in] covariance Prior covariance matrix Sigma
@@ -653,12 +662,12 @@ struct CholeskyWSolverBlock {
     // 4. Factorize B with jittering fallback
     llt_with_jitter(llt_B, state.B);
 
-    // 5. Solve for curr.a
+    // 5. Solve for the raw Newton proposal in a-space.
     state.b.noalias()
         = W_block * state.prev().theta() + state.prev().theta_grad();
     auto L = llt_B.matrixL();
     auto LT = llt_B.matrixU();
-    state.curr().a().noalias()
+    state.proposal_step().a().noalias()
         = state.b - W_r * LT.solve(L.solve(W_r * (covariance * state.b)));
   }
 
@@ -736,7 +745,7 @@ struct CholeskyKSolver {
    * @tparam LLFun Type of the log-likelihood functor
    * @tparam LLTupleArgs Type of the likelihood arguments tuple
    * @tparam CovarMat Type of the covariance matrix
-   * @param[in] state Shared Newton state (modified: B, b, curr().a())
+   * @param[in] state Shared Newton state (modified: B, b, proposal_step().a())
    * @param[in] ll_fun Log-likelihood functor
    * @param[in] ll_args Additional arguments for the likelihood
    * @param[in] covariance Prior covariance matrix Sigma
@@ -763,12 +772,12 @@ struct CholeskyKSolver {
     // 3. Factorize B with jittering fallback
     llt_with_jitter(llt_B, state.B);
 
-    // 4. Solve for curr.a
+    // 4. Solve for the raw Newton proposal in a-space.
     state.b.noalias()
         = W_full * state.prev().theta() + state.prev().theta_grad();
     auto L = llt_B.matrixL();
     auto LT = llt_B.matrixU();
-    state.curr().a().noalias()
+    state.proposal_step().a().noalias()
         = K_root.transpose().template triangularView<Eigen::Upper>().solve(
             LT.solve(L.solve(K_root.transpose() * state.b)));
   }
@@ -833,7 +842,7 @@ struct LUSolver {
    * @tparam LLFun Type of the log-likelihood functor
    * @tparam LLTupleArgs Type of the likelihood arguments tuple
    * @tparam CovarMat Type of the covariance matrix
-   * @param[in,out] state Shared Newton state (modified: b, curr().a())
+   * @param[in,out] state Shared Newton state (modified: b, proposal_step().a())
    * @param[in] ll_fun Log-likelihood functor
    * @param[in,out] ll_args Additional arguments for the likelihood
    * @param[in] covariance Prior covariance matrix Sigma
@@ -855,10 +864,10 @@ struct LUSolver {
     lu.compute(Eigen::MatrixXd::Identity(theta_size, theta_size)
                + covariance * W_full);
 
-    // 3. Solve for curr.a
+    // 3. Solve for the raw Newton proposal in a-space.
     state.b.noalias()
         = W_full * state.prev().theta() + state.prev().theta_grad();
-    state.curr().a().noalias()
+    state.proposal_step().a().noalias()
         = state.b - W_full * lu.solve(covariance * state.b);
   }
 
@@ -932,29 +941,32 @@ inline auto run_newton_loop(SolverPolicy& solver, NewtonStateT& state,
     solver.solve_step(state, ll_fun, ll_args, covariance,
                       options.hessian_block_size, msgs);
     if (!state.final_loop) {
-      state.wolfe_info.p_ = state.curr().a() - state.prev().a();
+      auto&& proposal = state.proposal_step();
+      state.wolfe_info.p_ = proposal.a() - state.prev().a();
       state.prev_g.noalias() = -covariance * state.prev().a()
                                + covariance * state.prev().theta_grad();
       state.wolfe_info.init_dir_ = state.prev_g.dot(state.wolfe_info.p_);
       // Flip direction if not ascending
       state.wolfe_info.flip_direction();
       auto&& scratch = state.wolfe_info.scratch_;
-      scratch.alpha() = 1.0;
-      update_fun(scratch, state.curr(), state.prev(), scratch.eval_,
-                 state.wolfe_info.p_);
-      // Save the full Newton step objective before the Wolfe line search
-      // overwrites scratch with intermediate trial points.
-      const double full_newton_obj = scratch.eval_.obj();
-      if (scratch.alpha() <= options.line_search.min_alpha) {
-        state.wolfe_status.accept_ = false;
-        finish_update = true;
+      proposal.eval_.alpha() = 1.0;
+      const bool proposal_valid = update_fun(
+          proposal, state.curr(), state.prev(), proposal.eval_,
+          state.wolfe_info.p_);
+      const bool cached_proposal_ok
+          = proposal_valid && std::isfinite(proposal.obj())
+            && std::isfinite(proposal.dir())
+            && proposal.alpha() > options.line_search.min_alpha;
+      if (!cached_proposal_ok) {
+        state.wolfe_status
+            = WolfeStatus{WolfeReturn::StepTooSmall, 1, 0, false};
       } else if (options.line_search.max_iterations == 0) {
-        state.curr().update(scratch);
-        state.wolfe_status.accept_ = true;
+        state.curr().update(proposal);
+        state.wolfe_status = WolfeStatus{WolfeReturn::Continue, 1, 0, true};
       } else {
-        Eigen::VectorXd s = scratch.a() - state.prev().a();
+        Eigen::VectorXd s = proposal.a() - state.prev().a();
         auto full_step_grad
-            = (-covariance * scratch.a() + covariance * scratch.theta_grad())
+            = (-covariance * proposal.a() + covariance * proposal.theta_grad())
                   .eval();
         state.curr().alpha() = barzilai_borwein_step_size(
             s, full_step_grad, state.prev_g, state.prev().alpha(),
@@ -963,47 +975,30 @@ inline auto run_newton_loop(SolverPolicy& solver, NewtonStateT& state,
         state.wolfe_status = internal::wolfe_line_search(
             state.wolfe_info, update_fun, options.line_search, msgs);
       }
-      // When the Wolfe line search rejects, don't immediately terminate.
-      // Instead, let the Newton loop try at least one more iteration.
-      // The original code compared the stale curr.obj() (which equalled
-      // prev.obj() after the swap in update_next_step) and would always
-      // terminate on ANY Wolfe rejection — even on the very first Newton
-      // step.  Now we only declare search_failed if the full Newton step
-      // itself didn't improve the objective.
-      bool search_failed;
-      if (!state.wolfe_status.accept_) {
-        if (full_newton_obj > state.prev().obj()) {
-          // The full Newton step (evaluated before Wolfe ran) improved
-          // the objective.  Re-evaluate scratch at the full Newton step
-          // so we can accept it as the current iterate.
-          scratch.eval_.alpha() = 1.0;
-          update_fun(scratch, state.curr(), state.prev(), scratch.eval_,
-                     state.wolfe_info.p_);
-          state.curr().update(scratch);
-          state.wolfe_status.accept_ = true;
-          search_failed = false;
-        } else {
-          search_failed = true;
-        }
-      } else {
+      bool search_failed = !state.wolfe_status.accept_;
+      const bool proposal_armijo_ok
+          = cached_proposal_ok
+            && internal::check_armijo(
+                   proposal.obj(), state.prev().obj(), proposal.alpha(),
+                   state.wolfe_info.init_dir_, options.line_search);
+      if (search_failed && proposal_armijo_ok) {
+        state.curr().update(proposal);
+        state.wolfe_status = WolfeStatus{WolfeReturn::Armijo,
+                                         state.wolfe_status.num_evals_,
+                                         state.wolfe_status.num_backtracks_,
+                                         true};
         search_failed = false;
       }
-      /**
-       * Stop when objective change is small (absolute AND relative), or when
-       * a rejected Wolfe step fails to improve; finish_update then exits the
-       * Newton loop.
-       */
-      double obj_change = std::abs(state.curr().obj() - state.prev().obj());
       bool objective_converged
-          = obj_change < options.tolerance
-            && obj_change < options.tolerance * std::abs(state.prev().obj());
+          = state.wolfe_status.accept_
+            && std::abs(state.curr().obj() - state.prev().obj())
+                   < options.tolerance;
       finish_update = objective_converged || search_failed;
     }
     if (finish_update) {
       if (!state.final_loop && state.wolfe_status.accept_) {
         // Do one final loop with exact wolfe conditions
         state.final_loop = true;
-        // NOTE: Swapping here so we need to swap prev and curr later
         state.update_next_step(options);
         continue;
       }

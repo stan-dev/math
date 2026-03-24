@@ -461,6 +461,12 @@ struct WolfeData {
     a_.swap(other.a_);
     eval_ = other.eval_;
   }
+  void swap(WolfeData& other) {
+    theta_.swap(other.theta_);
+    theta_grad_.swap(other.theta_grad_);
+    a_.swap(other.a_);
+    std::swap(eval_, other.eval_);
+  }
   void update(WolfeData& other, const Eval& eval) {
     theta_.swap(other.theta_);
     a_.swap(other.a_);
