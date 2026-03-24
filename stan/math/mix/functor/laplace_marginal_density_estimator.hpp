@@ -367,10 +367,14 @@ struct NewtonState {
    *
    * When the caller supplies a non-zero theta_init, a_init = Sigma^{-1} *
    * theta_init must be provided to maintain the invariant theta = Sigma * a.
-   *
+   * @tparam ObjFun A callable type for the objective function
+   * @tparam ThetaGradFun A callable type for the theta gradient function
+   * @tparam CovarianceT A matrix type for the covariance (must support LLT solve)
+   * @tparam ThetaInitializer A type for the initial theta (e.g., Eigen vector)
    * @param theta_size Dimension of the latent space
    * @param obj_fun Objective function: (a, theta) -> double
    * @param theta_grad_f Gradient function: theta -> grad
+   * @param covariance Covariance matrix for the latent variables
    * @param a_init Initial a value consistent with theta_init
    * @param theta_init Initial theta value
    */

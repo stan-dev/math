@@ -28,7 +28,7 @@ struct QuarticLikelihood {
 struct TinyQuarticLikelihood {
   template <typename Theta>
   auto operator()(const Theta& theta, std::ostream* /*msgs*/) const {
-    return 1e-8 * QuarticLikelihood{}(theta, nullptr);
+    return 1e-8 * QuarticLikelihood{}(theta, nullptr); // NOLINT
   }
 };
 
