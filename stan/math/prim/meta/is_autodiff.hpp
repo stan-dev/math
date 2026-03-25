@@ -8,12 +8,10 @@
 #include <stan/math/prim/meta/is_fvar.hpp>
 #include <stan/math/prim/meta/is_vector.hpp>
 #include <stan/math/prim/meta/is_var.hpp>
-#include <stan/math/prim/meta/is_tuple.hpp>
 #include <stan/math/prim/meta/require_helpers.hpp>
 #include <stan/math/prim/meta/scalar_type.hpp>
 #include <stan/math/prim/meta/value_type.hpp>
 #include <complex>
-#include <tuple>
 #include <type_traits>
 
 namespace stan {
@@ -47,17 +45,6 @@ struct is_autodiff<T, require_std_vector_t<T>>
 template <typename T>
 struct is_autodiff<T, require_eigen_t<T>>
     : bool_constant<is_autodiff<typename std::decay_t<T>::Scalar>::value> {};
-
-template <typename Tuple, typename = void>
-struct is_tuple_autodiff : std::false_type {};
-
-template <typename... Ts>
-struct is_tuple_autodiff<std::tuple<Ts...>, void>
-    : bool_constant<(is_autodiff<Ts>::value || ...)> {};
-
-template <typename T>
-struct is_autodiff<T, math::require_tuple_t<T>>
-    : is_tuple_autodiff<std::decay_t<T>> {};
 
 }  // namespace internal
 

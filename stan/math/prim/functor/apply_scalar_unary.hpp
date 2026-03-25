@@ -4,13 +4,11 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
 #include <stan/math/prim/meta/is_complex.hpp>
-#include <stan/math/prim/meta/is_tuple.hpp>
 #include <stan/math/prim/meta/holder.hpp>
 #include <stan/math/prim/meta/require_generics.hpp>
 #include <stan/math/prim/meta/is_vector.hpp>
 #include <stan/math/prim/meta/is_vector_like.hpp>
 #include <stan/math/prim/meta/plain_type.hpp>
-#include <tuple>
 #include <utility>
 #include <vector>
 
@@ -206,36 +204,6 @@ struct apply_scalar_unary<F, T, require_std_vector_t<T>> {
     }
     return fx;
   }
-};
-
-/**
- * Template specialization for vectorized functions applying to
- * tuple arguments.  Each element of the tuple is processed
- * recursively through apply_scalar_unary, allowing heterogeneous
- * element types.
- *
- * @tparam F Type of function defining static apply function.
- * @tparam T Tuple type.
- */
-template <typename F, typename T>
-struct apply_scalar_unary<F, T, require_tuple_t<T>> {
-  template <typename TT, size_t... Is>
-  static inline auto apply_impl(TT&& x, std::index_sequence<Is...>) {
-    return std::make_tuple(
-        apply_scalar_unary<
-            F, std::tuple_element_t<Is, std::decay_t<T>>>::
-            apply(std::get<Is>(std::forward<TT>(x)))...);
-  }
-
-  template <typename TT>
-  static inline auto apply(TT&& x) {
-    return apply_impl(
-        std::forward<TT>(x),
-        std::make_index_sequence<std::tuple_size_v<std::decay_t<T>>>());
-  }
-
-  using return_t = std::decay_t<decltype(
-      apply_scalar_unary<F, T>::apply(std::declval<T>()))>;
 };
 
 }  // namespace math
