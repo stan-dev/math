@@ -58,18 +58,14 @@ inline return_type_t<T_prob> geometric_lpmf(const T_n& n,
   scalar_seq_view<T_n_ref> n_vec(n_ref);
   scalar_seq_view<T_prob_ref> theta_vec(theta_ref);
   const size_t max_sz = max_size(n_ref, theta_ref);
+  bool all_theta_one = true;
   for (size_t i = 0; i < max_sz; i++) {
     if (value_of(theta_vec[i]) == 1.0) {
       if (n_vec[i] > 0) {
         return negative_infinity();
       }
-    }
-  }
-  bool all_theta_one = true;
-  for (size_t i = 0; i < stan::math::size(theta); i++) {
-    if (value_of(theta_vec[i]) != 1.0) {
+    } else {
       all_theta_one = false;
-      break;
     }
   }
   if (all_theta_one) {
