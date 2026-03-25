@@ -53,9 +53,9 @@ class AgradCdfGeometric : public AgradCdfTest {
   template <class T_n, class T_prob, typename T2, typename T3, typename T4,
             typename T5>
   stan::return_type_t<T_n, T_prob> cdf_function(const T_n& n,
-                                                const T_prob& theta,
-                                                const T2&, const T3&,
-                                                const T4&, const T5&) {
+                                                const T_prob& theta, const T2&,
+                                                const T3&, const T4&,
+                                                const T5&) {
     using stan::math::log1m;
     return 1.0 - stan::math::exp((n + 1.0) * log1m(theta));
   }

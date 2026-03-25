@@ -11,8 +11,8 @@ class GeometricTestRig : public VectorIntRNGTestRig {
  public:
   GeometricTestRig()
       : VectorIntRNGTestRig(10000, 10, {0, 1, 2, 3, 4, 5, 6, 7, 8, 9},
-                            {0.1, 0.3, 0.5, 0.7, 0.9}, {1},
-                            {-0.1, 1.1}, {-1, 0, 2}) {}
+                            {0.1, 0.3, 0.5, 0.7, 0.9}, {1}, {-0.1, 1.1},
+                            {-1, 0, 2}) {}
 
   template <typename T1, typename T2, typename T3, typename T_rng>
   auto generate_samples(const T1& theta, const T2&, const T3&,

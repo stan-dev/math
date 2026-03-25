@@ -47,25 +47,25 @@ class AgradDistributionsGeometric : public AgradDistributionTest {
   template <class T_n, class T_prob, typename T2, typename T3, typename T4,
             typename T5>
   stan::return_type_t<T_prob> log_prob(const T_n& n, const T_prob& theta,
-                                      const T2&, const T3&, const T4&,
-                                      const T5&) {
+                                       const T2&, const T3&, const T4&,
+                                       const T5&) {
     return stan::math::geometric_lpmf(n, theta);
   }
 
   template <bool propto, class T_n, class T_prob, typename T2, typename T3,
             typename T4, typename T5>
   stan::return_type_t<T_prob> log_prob(const T_n& n, const T_prob& theta,
-                                      const T2&, const T3&, const T4&,
-                                      const T5&) {
+                                       const T2&, const T3&, const T4&,
+                                       const T5&) {
     return stan::math::geometric_lpmf<propto>(n, theta);
   }
 
   template <class T_n, class T_prob, typename T2, typename T3, typename T4,
             typename T5>
   stan::return_type_t<T_prob> log_prob_function(const T_n& n,
-                                               const T_prob& theta,
-                                               const T2&, const T3&,
-                                               const T4&, const T5&) {
+                                                const T_prob& theta, const T2&,
+                                                const T3&, const T4&,
+                                                const T5&) {
     using stan::math::log1m;
     using std::log;
     return log(theta) + n * log1m(theta);
