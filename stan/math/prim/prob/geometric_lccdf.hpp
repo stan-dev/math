@@ -47,8 +47,8 @@ inline return_type_t<T_prob> geometric_lccdf(const T_n& n,
 
   T_n_ref n_ref = n;
   T_prob_ref theta_ref = theta;
-  check_bounded(function, "Success probability parameter",
-                value_of(theta_ref), 0.0, 1.0);
+  check_bounded(function, "Success probability parameter", value_of(theta_ref),
+                0.0, 1.0);
 
   scalar_seq_view<T_n_ref> n_vec(n_ref);
   for (int i = 0; i < stan::math::size(n); i++) {

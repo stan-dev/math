@@ -33,8 +33,7 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_n, typename T_prob>
-inline return_type_t<T_prob> geometric_lcdf(const T_n& n,
-                                            const T_prob& theta) {
+inline return_type_t<T_prob> geometric_lcdf(const T_n& n, const T_prob& theta) {
   using T_n_ref = ref_type_t<T_n>;
   using T_prob_ref = ref_type_t<T_prob>;
   static constexpr const char* function = "geometric_lcdf";
@@ -47,8 +46,8 @@ inline return_type_t<T_prob> geometric_lcdf(const T_n& n,
 
   T_n_ref n_ref = n;
   T_prob_ref theta_ref = theta;
-  check_bounded(function, "Success probability parameter",
-                value_of(theta_ref), 0.0, 1.0);
+  check_bounded(function, "Success probability parameter", value_of(theta_ref),
+                0.0, 1.0);
 
   scalar_seq_view<T_n_ref> n_vec(n_ref);
   for (int i = 0; i < stan::math::size(n); i++) {
