@@ -8,6 +8,7 @@
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
+#include <vector>
 #include <stan/math/prim/prob/neg_binomial_lccdf.hpp>
 #include <stan/math/prim/fun/elt_divide.hpp>
 #include <stan/math/prim/fun/subtract.hpp>
