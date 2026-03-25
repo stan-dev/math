@@ -5,6 +5,7 @@
 #include <stan/math/prim/meta/disjunction.hpp>
 #include <stan/math/prim/meta/is_autodiff.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
+#include <stan/math/prim/meta/is_tuple.hpp>
 #include <stan/math/prim/meta/is_vector.hpp>
 #include <stan/math/prim/meta/is_var_matrix.hpp>
 #include <stan/math/prim/meta/base_type.hpp>
@@ -99,9 +100,11 @@ using require_not_container_st
 /*! and holds a base type that satisfies @ref is_autodiff_scalar */
 /*! @tparam T the type to check */
 template <typename T>
-using require_ad_container_t
-    = require_all_t<stan::math::disjunction<is_eigen<T>, is_std_vector<T>>,
-                    is_autodiff_scalar<base_type_t<T>>>;
+using require_ad_container_t = require_t<math::disjunction<
+    math::conjunction<math::disjunction<is_eigen<T>, is_std_vector<T>>,
+                      is_autodiff_scalar<base_type_t<T>>>,
+    math::conjunction<math::is_tuple<T>,
+                      internal::is_autodiff<std::decay_t<T>>>>>;
 /*! @} */
 
 }  // namespace stan
