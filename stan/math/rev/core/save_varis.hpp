@@ -162,8 +162,8 @@ template <typename Tuple, require_tuple_t<Tuple>*, typename... Pargs>
 inline vari** save_varis(vari** dest, Tuple&& x, Pargs&&... args) {
   dest = stan::math::apply(
       [dest](auto&&... inner_args) {
-        return save_varis(
-            dest, std::forward<decltype(inner_args)>(inner_args)...);
+        return save_varis(dest,
+                          std::forward<decltype(inner_args)>(inner_args)...);
       },
       std::forward<Tuple>(x));
   return save_varis(dest, std::forward<Pargs>(args)...);
