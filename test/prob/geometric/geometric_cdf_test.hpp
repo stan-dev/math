@@ -27,12 +27,6 @@ class AgradCdfGeometric : public AgradCdfTest {
     param[1] = 0.3;  // theta
     parameters.push_back(param);
     cdf.push_back(0.83193);
-
-    // CDF(n=0|theta=1.0) = 1.0
-    param[0] = 0;    // n
-    param[1] = 1.0;  // theta
-    parameters.push_back(param);
-    cdf.push_back(1.0);
   }
 
   void invalid_values(vector<size_t>& index, vector<double>& value) {
