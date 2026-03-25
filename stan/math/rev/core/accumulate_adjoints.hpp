@@ -2,9 +2,11 @@
 #define STAN_MATH_REV_CORE_ACCUMULATE_ADJOINTS_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/functor/apply.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core/var.hpp>
 
+#include <tuple>
 #include <utility>
 #include <vector>
 
@@ -34,6 +36,9 @@ template <typename Arith, require_st_arithmetic<Arith>* = nullptr,
 inline double* accumulate_adjoints(double* dest, Arith&& x, Pargs&&... args);
 
 inline double* accumulate_adjoints(double* dest);
+
+template <typename Tuple, require_tuple_t<Tuple>* = nullptr, typename... Pargs>
+inline double* accumulate_adjoints(double* dest, Tuple&& x, Pargs&&... args);
 
 /**
  * Accumulate adjoints from x into storage pointed to by dest,
@@ -146,6 +151,20 @@ inline double* accumulate_adjoints(double* dest, Arith&& x, Pargs&&... args) {
  * @param dest Pointer
  */
 inline double* accumulate_adjoints(double* dest) { return dest; }
+
+/**
+ * Unpack a tuple and accumulate adjoints from each element.
+ */
+template <typename Tuple, require_tuple_t<Tuple>* = nullptr, typename... Pargs>
+inline double* accumulate_adjoints(double* dest, Tuple&& x, Pargs&&... args) {
+  dest = stan::math::apply(
+      [dest](auto&&... inner_args) {
+        return accumulate_adjoints(
+            dest, std::forward<decltype(inner_args)>(inner_args)...);
+      },
+      std::forward<Tuple>(x));
+  return accumulate_adjoints(dest, std::forward<Pargs>(args)...);
+}
 
 }  // namespace math
 }  // namespace stan

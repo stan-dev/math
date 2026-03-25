@@ -3,9 +3,11 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/functor/apply.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core/var.hpp>
 
+#include <tuple>
 #include <utility>
 #include <vector>
 
@@ -34,6 +36,9 @@ template <typename Arith, require_st_arithmetic<Arith>* = nullptr,
 inline vari** save_varis(vari** dest, Arith&& x, Pargs&&... args);
 
 inline vari** save_varis(vari** dest);
+
+template <typename Tuple, require_tuple_t<Tuple>* = nullptr, typename... Pargs>
+inline vari** save_varis(vari** dest, Tuple&& x, Pargs&&... args);
 
 /**
  * Save the vari pointer in x into the memory pointed to by dest,
@@ -142,6 +147,19 @@ inline vari** save_varis(vari** dest, Arith&& x, Pargs&&... args) {
  * @param dest Pointer
  */
 inline vari** save_varis(vari** dest) { return dest; }
+
+/**
+ * Unpack a tuple and save the varis of each element.
+ */
+template <typename Tuple, require_tuple_t<Tuple>* = nullptr, typename... Pargs>
+inline vari** save_varis(vari** dest, Tuple&& x, Pargs&&... args) {
+  dest = stan::math::apply(
+      [dest](auto&&... inner_args) {
+        return save_varis(dest, std::forward<decltype(inner_args)>(inner_args)...);
+      },
+      std::forward<Tuple>(x));
+  return save_varis(dest, std::forward<Pargs>(args)...);
+}
 
 }  // namespace math
 }  // namespace stan
