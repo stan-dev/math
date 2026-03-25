@@ -1,0 +1,193 @@
+# MWE: mwe.jl on main
+# started: 2026-03-25 11:14:04
+# dir: /home/niko/github/stan-dev/math
+# project: /home/niko/github/issues/stan-dev-math/worktrees/3041-map-tuple/mwe/.env-main
+---
+==> Pkg.instantiate()
+==> Running mwe.jl
+ERROR: LoadError: Compilation failed!
+Command: setenv(`make STAN_MATH=/home/niko/github/stan-dev/math STAN_THREADS=true /tmp/jl_aYanbD/mwe_model.so`; dir="/home/niko/.bridgestan/bridgestan-2.7.0")
+stdout: 
+--- Translating Stan model to C++ code ---
+./bin/stanc  --o=/tmp/jl_aYanbD/mwe.hpp /tmp/jl_aYanbD/mwe.stan
+
+--- Compiling C++ code ---
+g++ -std=c++17 -pthread -D_REENTRANT -Wno-sign-compare -Wno-ignored-attributes -Wno-class-memaccess     -DSTAN_THREADS -I ./stan/lib/stan_math/lib/tbb_2020.3/include    -O3 -I ./stan/src -I ./stan/lib/rapidjson_1.1.0/ -I ./stan/lib/stan_math/ -I ./stan/lib/stan_math/lib/eigen_3.4.0 -I ./stan/lib/stan_math/lib/boost_1.87.0 -I ./stan/lib/stan_math/lib/sundials_6.1.1/include -I ./stan/lib/stan_math/lib/sundials_6.1.1/src/sundials -fPIC -fvisibility=hidden -fvisibility-inlines-hidden    -DBOOST_DISABLE_ASSERTS         -DBRIDGESTAN_EXPORT -DSTAN_OVERRIDE_EIGEN_ASSERT  -c  -x c++ -o /tmp/jl_aYanbD/mwe.o /tmp/jl_aYanbD/mwe.hpp
+rm /tmp/jl_aYanbD/mwe.hpp
+
+stderr: In file included from ./stan/lib/stan_math/stan/math/rev/functor.hpp:30,
+                 from ./stan/lib/stan_math/stan/math/rev.hpp:15,
+                 from ./stan/lib/stan_math/stan/math.hpp:19,
+                 from ./stan/src/stan/model/model_header.hpp:6,
+                 from /tmp/jl_aYanbD/mwe.hpp:2:
+./stan/lib/stan_math/stan/math/rev/functor/reduce_sum.hpp: In instantiation of ‘stan::math::var stan::math::internal::reduce_sum_impl<ReduceFunction, typename std::enable_if<stan::is_var<typename std::decay<_Tp2>::type>::value, void>::type, ReturnType, Vec, Args ...>::operator()(Vec&&, bool, int, std::ostream*, Args&& ...) const [with ReduceFunction = mwe_model_namespace::partial_sum_rsfunctor__; ReturnType = stan::math::var_value<double>; Vec = const std::vector<double>&; Args = {std::tuple<stan::math::var_value<double, void>&, const int&>}; typename std::enable_if<stan::is_var<typename std::decay<_Tp2>::type>::value, void>::type = void; typename std::decay<_Tp2>::type = std::decay<stan::math::var_value<double> >::type; stan::math::var = stan::math::var_value<double>; std::ostream = std::basic_ostream<char>]’:
+./stan/lib/stan_math/stan/math/prim/functor/reduce_sum.hpp:208:60:   required from ‘auto stan::math::reduce_sum(Vec&&, int, std::ostream*, Args&& ...) [with ReduceFunction = mwe_model_namespace::partial_sum_rsfunctor__; Vec = const std::vector<double>&; <template-parameter-1-3> = void; Args = {std::tuple<stan::math::var_value<double, void>&, const int&>}; std::ostream = std::basic_ostream<char>]’
+/tmp/jl_aYanbD/mwe.hpp:252:71:   required from ‘stan::scalar_type_t<T2> mwe_model_namespace::mwe_model::log_prob_impl(VecR&, VecI&, std::ostream*) const [with bool propto__ = false; bool jacobian__ = false; VecR = Eigen::Matrix<stan::math::var_value<double>, -1, 1>; VecI = Eigen::Matrix<int, -1, 1>; stan::require_vector_like_t<VecR>* <anonymous> = 0; stan::require_vector_like_vt<std::is_integral, VecI>* <anonymous> = 0; stan::require_st_var<VecR>* <anonymous> = 0; stan::scalar_type_t<T2> = stan::math::var_value<double>; std::ostream = std::basic_ostream<char>]’
+/tmp/jl_aYanbD/mwe.hpp:434:47:   required from ‘T_ mwe_model_namespace::mwe_model::log_prob(Eigen::Matrix<T_a, -1, 1>&, std::ostream*) const [with bool propto__ = false; bool jacobian__ = false; T_ = stan::math::var_value<double>; std::ostream = std::basic_ostream<char>]’
+./stan/src/stan/model/model_base_crtp.hpp:98:72:   required from ‘stan::math::var stan::model::model_base_crtp<M>::log_prob(Eigen::Matrix<stan::math::var_value<double>, -1, 1>&, std::ostream*) const [with M = mwe_model_namespace::mwe_model; stan::math::var = stan::math::var_value<double>; std::ostream = std::basic_ostream<char>]’
+./stan/src/stan/model/model_base_crtp.hpp:96:20:   required from here
+./stan/lib/stan_math/stan/math/rev/functor/reduce_sum.hpp:241:15: error: no matching function for call to ‘save_varis(stan::math::vari**, std::tuple<stan::math::var_value<double, void>&, const int&>&)’
+  241 |     save_varis(varis + num_vars_sliced_terms, args...);
+      |     ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from ./stan/lib/stan_math/stan/math/rev/core.hpp:76,
+                 from ./stan/src/stan/model/model_base.hpp:8,
+                 from ./stan/src/stan/model/model_header.hpp:4,
+                 from /tmp/jl_aYanbD/mwe.hpp:2:
+./stan/lib/stan_math/stan/math/rev/core/save_varis.hpp:51:15: note: candidate: ‘template<class ... Pargs> stan::math::vari** stan::math::save_varis(stan::math::vari**, const var&, Pargs&& ...)’
+   51 | inline vari** save_varis(vari** dest, const var& x, Pargs&&... args) {
+      |               ^~~~~~~~~~
+./stan/lib/stan_math/stan/math/rev/core/save_varis.hpp:51:15: note:   template argument deduction/substitution failed:
+In file included from ./stan/lib/stan_math/stan/math/rev/functor.hpp:30,
+                 from ./stan/lib/stan_math/stan/math/rev.hpp:15,
+                 from ./stan/lib/stan_math/stan/math.hpp:19,
+                 from ./stan/src/stan/model/model_header.hpp:6,
+                 from /tmp/jl_aYanbD/mwe.hpp:2:
+./stan/lib/stan_math/stan/math/rev/functor/reduce_sum.hpp:241:15: note:   cannot convert ‘args#0’ (type ‘std::tuple<stan::math::var_value<double, void>&, const int&>’) to type ‘const var&’ {aka ‘const stan::math::var_value<double>&’}
+  241 |     save_varis(varis + num_vars_sliced_terms, args...);
+      |     ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from ./stan/lib/stan_math/stan/math/rev/core.hpp:76,
+                 from ./stan/src/stan/model/model_base.hpp:8,
+                 from ./stan/src/stan/model/model_header.hpp:4,
+                 from /tmp/jl_aYanbD/mwe.hpp:2:
+./stan/lib/stan_math/stan/math/rev/core/save_varis.hpp:71:15: note: candidate: ‘template<class VarVec, stan::require_std_vector_vt<stan::is_var, VarVec>* <anonymous>, class ... Pargs> stan::math::vari** stan::math::save_varis(stan::math::vari**, VarVec&&, Pargs&& ...)’
+   71 | inline vari** save_varis(vari** dest, VarVec&& x, Pargs&&... args) {
+      |               ^~~~~~~~~~
+./stan/lib/stan_math/stan/math/rev/core/save_varis.hpp:71:15: note:   template argument deduction/substitution failed:
+In file included from /usr/include/c++/11/bits/move.h:57,
+                 from /usr/include/c++/11/bits/exception_ptr.h:43,
+                 from /usr/include/c++/11/exception:153,
+                 from /usr/include/c++/11/ios:39,
+                 from /usr/include/c++/11/istream:38,
+                 from /usr/include/c++/11/sstream:38,
+                 from ./stan/src/stan/io/var_context.hpp:4,
+                 from ./stan/src/stan/model/model_base.hpp:7,
+                 from ./stan/src/stan/model/model_header.hpp:4,
+                 from /tmp/jl_aYanbD/mwe.hpp:2:
+/usr/include/c++/11/type_traits: In substitution of ‘template<bool _Cond, class _Tp> using enable_if_t = typename std::enable_if::type [with bool _Cond = false; _Tp = void]’:
+./stan/lib/stan_math/stan/math/prim/meta/require_helpers.hpp:19:7:   required by substitution of ‘template<class Check> using require_t = std::enable_if_t<Check::value> [with Check = std::integral_constant<bool, false>]’
+./stan/lib/stan_math/stan/math/prim/meta/is_vector.hpp:677:7:   required by substitution of ‘template<template<class ...> class TypeCheck, class ... Check> using require_std_vector_vt = stan::require_t<stan::container_type_check_base<stan::is_std_vector, stan::value_type_t, TypeCheck, Check ...> > [with TypeCheck = stan::is_var; Check = {std::tuple<stan::math::var_value<double, void>&, const int&>&}]’
+./stan/lib/stan_math/stan/math/rev/core/save_varis.hpp:18:69:   required from ‘stan::math::var stan::math::internal::reduce_sum_impl<ReduceFunction, typename std::enable_if<stan::is_var<typename std::decay<_Tp2>::type>::value, void>::type, ReturnType, Vec, Args ...>::operator()(Vec&&, bool, int, std::ostream*, Args&& ...) const [with ReduceFunction = mwe_model_namespace::partial_sum_rsfunctor__; ReturnType = stan::math::var_value<double>; Vec = const std::vector<double>&; Args = {std::tuple<stan::math::var_value<double, void>&, const int&>}; typename std::enable_if<stan::is_var<typename std::decay<_Tp2>::type>::value, void>::type = void; typename std::decay<_Tp2>::type = std::decay<stan::math::var_value<double> >::type; stan::math::var = stan::math::var_value<double>; std::ostream = std::basic_ostream<char>]’
+./stan/lib/stan_math/stan/math/prim/functor/reduce_sum.hpp:208:60:   required from ‘auto stan::math::reduce_sum(Vec&&, int, std::ostream*, Args&& ...) [with ReduceFunction = mwe_model_namespace::partial_sum_rsfunctor__; Vec = const std::vector<double>&; <template-parameter-1-3> = void; Args = {std::tuple<stan::math::var_value<double, void>&, const int&>}; std::ostream = std::basic_ostream<char>]’
+/tmp/jl_aYanbD/mwe.hpp:252:71:   required from ‘stan::scalar_type_t<T2> mwe_model_namespace::mwe_model::log_prob_impl(VecR&, VecI&, std::ostream*) const [with bool propto__ = false; bool jacobian__ = false; VecR = Eigen::Matrix<stan::math::var_value<double>, -1, 1>; VecI = Eigen::Matrix<int, -1, 1>; stan::require_vector_like_t<VecR>* <anonymous> = 0; stan::require_vector_like_vt<std::is_integral, VecI>* <anonymous> = 0; stan::require_st_var<VecR>* <anonymous> = 0; stan::scalar_type_t<T2> = stan::math::var_value<double>; std::ostream = std::basic_ostream<char>]’
+/tmp/jl_aYanbD/mwe.hpp:434:47:   required from ‘T_ mwe_model_namespace::mwe_model::log_prob(Eigen::Matrix<T_a, -1, 1>&, std::ostream*) const [with bool propto__ = false; bool jacobian__ = false; T_ = stan::math::var_value<double>; std::ostream = std::basic_ostream<char>]’
+./stan/src/stan/model/model_base_crtp.hpp:98:72:   required from ‘stan::math::var stan::model::model_base_crtp<M>::log_prob(Eigen::Matrix<stan::math::var_value<double>, -1, 1>&, std::ostream*) const [with M = mwe_model_namespace::mwe_model; stan::math::var = stan::math::var_value<double>; std::ostream = std::basic_ostream<char>]’
+./stan/src/stan/model/model_base_crtp.hpp:96:20:   required from here
+/usr/include/c++/11/type_traits:2579:11: error: no type named ‘type’ in ‘struct std::enable_if<false, void>’
+ 2579 |     using enable_if_t = typename enable_if<_Cond, _Tp>::type;
+      |           ^~~~~~~~~~~
+In file included from ./stan/lib/stan_math/stan/math/rev/core.hpp:76,
+                 from ./stan/src/stan/model/model_base.hpp:8,
+                 from ./stan/src/stan/model/model_header.hpp:4,
+                 from /tmp/jl_aYanbD/mwe.hpp:2:
+./stan/lib/stan_math/stan/math/rev/functor/reduce_sum.hpp: In instantiation of ‘stan::math::var stan::math::internal::reduce_sum_impl<ReduceFunction, typename std::enable_if<stan::is_var<typename std::decay<_Tp2>::type>::value, void>::type, ReturnType, Vec, Args ...>::operator()(Vec&&, bool, int, std::ostream*, Args&& ...) const [with ReduceFunction = mwe_model_namespace::partial_sum_rsfunctor__; ReturnType = stan::math::var_value<double>; Vec = const std::vector<double>&; Args = {std::tuple<stan::math::var_value<double, void>&, const int&>}; typename std::enable_if<stan::is_var<typename std::decay<_Tp2>::type>::value, void>::type = void; typename std::decay<_Tp2>::type = std::decay<stan::math::var_value<double> >::type; stan::math::var = stan::math::var_value<double>; std::ostream = std::basic_ostream<char>]’:
+./stan/lib/stan_math/stan/math/prim/functor/reduce_sum.hpp:208:60:   required from ‘auto stan::math::reduce_sum(Vec&&, int, std::ostream*, Args&& ...) [with ReduceFunction = mwe_model_namespace::partial_sum_rsfunctor__; Vec = const std::vector<double>&; <template-parameter-1-3> = void; Args = {std::tuple<stan::math::var_value<double, void>&, const int&>}; std::ostream = std::basic_ostream<char>]’
+/tmp/jl_aYanbD/mwe.hpp:252:71:   required from ‘stan::scalar_type_t<T2> mwe_model_namespace::mwe_model::log_prob_impl(VecR&, VecI&, std::ostream*) const [with bool propto__ = false; bool jacobian__ = false; VecR = Eigen::Matrix<stan::math::var_value<double>, -1, 1>; VecI = Eigen::Matrix<int, -1, 1>; stan::require_vector_like_t<VecR>* <anonymous> = 0; stan::require_vector_like_vt<std::is_integral, VecI>* <anonymous> = 0; stan::require_st_var<VecR>* <anonymous> = 0; stan::scalar_type_t<T2> = stan::math::var_value<double>; std::ostream = std::basic_ostream<char>]’
+/tmp/jl_aYanbD/mwe.hpp:434:47:   required from ‘T_ mwe_model_namespace::mwe_model::log_prob(Eigen::Matrix<T_a, -1, 1>&, std::ostream*) const [with bool propto__ = false; bool jacobian__ = false; T_ = stan::math::var_value<double>; std::ostream = std::basic_ostream<char>]’
+./stan/src/stan/model/model_base_crtp.hpp:98:72:   required from ‘stan::math::var stan::model::model_base_crtp<M>::log_prob(Eigen::Matrix<stan::math::var_value<double>, -1, 1>&, std::ostream*) const [with M = mwe_model_namespace::mwe_model; stan::math::var = stan::math::var_value<double>; std::ostream = std::basic_ostream<char>]’
+./stan/src/stan/model/model_base_crtp.hpp:96:20:   required from here
+./stan/lib/stan_math/stan/math/rev/core/save_varis.hpp:93:15: note: candidate: ‘template<class VecContainer, stan::require_std_vector_st<stan::is_var, VecContainer>* <anonymous>, stan::require_std_vector_vt<stan::is_container, VecContainer>* <anonymous>, class ... Pargs> stan::math::vari** stan::math::save_varis(stan::math::vari**, VecContainer&&, Pargs&& ...)’
+   93 | inline vari** save_varis(vari** dest, VecContainer&& x, Pargs&&... args) {
+      |               ^~~~~~~~~~
+./stan/lib/stan_math/stan/math/rev/core/save_varis.hpp:93:15: note:   template argument deduction/substitution failed:
+./stan/lib/stan_math/stan/math/rev/core/save_varis.hpp:114:15: note: candidate: ‘template<class EigT, stan::require_eigen_vt<stan::is_var, EigT>* <anonymous>, class ... Pargs> stan::math::vari** stan::math::save_varis(stan::math::vari**, EigT&&, Pargs&& ...)’
+  114 | inline vari** save_varis(vari** dest, EigT&& x, Pargs&&... args) {
+      |               ^~~~~~~~~~
+./stan/lib/stan_math/stan/math/rev/core/save_varis.hpp:114:15: note:   template argument deduction/substitution failed:
+./stan/lib/stan_math/stan/math/rev/core/save_varis.hpp:135:15: note: candidate: ‘template<class Arith, stan::require_st_arithmetic<Arith>* <anonymous>, class ... Pargs> stan::math::vari** stan::math::save_varis(stan::math::vari**, Arith&&, Pargs&& ...)’
+  135 | inline vari** save_varis(vari** dest, Arith&& x, Pargs&&... args) {
+      |               ^~~~~~~~~~
+./stan/lib/stan_math/stan/math/rev/core/save_varis.hpp:135:15: note:   template argument deduction/substitution failed:
+./stan/lib/stan_math/stan/math/rev/core/save_varis.hpp:144:15: note: candidate: ‘stan::math::vari** stan::math::save_varis(stan::math::vari**)’
+  144 | inline vari** save_varis(vari** dest) { return dest; }
+      |               ^~~~~~~~~~
+./stan/lib/stan_math/stan/math/rev/core/save_varis.hpp:144:15: note:   candidate expects 1 argument, 2 provided
+In file included from ./stan/lib/stan_math/stan/math/rev/functor.hpp:30,
+                 from ./stan/lib/stan_math/stan/math/rev.hpp:15,
+                 from ./stan/lib/stan_math/stan/math.hpp:19,
+                 from ./stan/src/stan/model/model_header.hpp:6,
+                 from /tmp/jl_aYanbD/mwe.hpp:2:
+./stan/lib/stan_math/stan/math/rev/functor/reduce_sum.hpp: In instantiation of ‘struct stan::math::internal::reduce_sum_impl<mwe_model_namespace::partial_sum_rsfunctor__, void, stan::math::var_value<double>, const std::vector<double>&, std::tuple<stan::math::var_value<double, void>&, const int&> >::scoped_args_tuple’:
+./stan/lib/stan_math/stan/math/rev/functor/reduce_sum.hpp:58:23:   required from ‘struct stan::math::internal::reduce_sum_impl<mwe_model_namespace::partial_sum_rsfunctor__, void, stan::math::var_value<double>, const std::vector<double>&, std::tuple<stan::math::var_value<double, void>&, const int&> >::recursive_reducer’
+./stan/lib/stan_math/stan/math/rev/functor/reduce_sum.hpp:247:23:   required from ‘stan::math::var stan::math::internal::reduce_sum_impl<ReduceFunction, typename std::enable_if<stan::is_var<typename std::decay<_Tp2>::type>::value, void>::type, ReturnType, Vec, Args ...>::operator()(Vec&&, bool, int, std::ostream*, Args&& ...) const [with ReduceFunction = mwe_model_namespace::partial_sum_rsfunctor__; ReturnType = stan::math::var_value<double>; Vec = const std::vector<double>&; Args = {std::tuple<stan::math::var_value<double, void>&, const int&>}; typename std::enable_if<stan::is_var<typename std::decay<_Tp2>::type>::value, void>::type = void; typename std::decay<_Tp2>::type = std::decay<stan::math::var_value<double> >::type; stan::math::var = stan::math::var_value<double>; std::ostream = std::basic_ostream<char>]’
+./stan/lib/stan_math/stan/math/prim/functor/reduce_sum.hpp:208:60:   required from ‘auto stan::math::reduce_sum(Vec&&, int, std::ostream*, Args&& ...) [with ReduceFunction = mwe_model_namespace::partial_sum_rsfunctor__; Vec = const std::vector<double>&; <template-parameter-1-3> = void; Args = {std::tuple<stan::math::var_value<double, void>&, const int&>}; std::ostream = std::basic_ostream<char>]’
+/tmp/jl_aYanbD/mwe.hpp:252:71:   required from ‘stan::scalar_type_t<T2> mwe_model_namespace::mwe_model::log_prob_impl(VecR&, VecI&, std::ostream*) const [with bool propto__ = false; bool jacobian__ = false; VecR = Eigen::Matrix<stan::math::var_value<double>, -1, 1>; VecI = Eigen::Matrix<int, -1, 1>; stan::require_vector_like_t<VecR>* <anonymous> = 0; stan::require_vector_like_vt<std::is_integral, VecI>* <anonymous> = 0; stan::require_st_var<VecR>* <anonymous> = 0; stan::scalar_type_t<T2> = stan::math::var_value<double>; std::ostream = std::basic_ostream<char>]’
+/tmp/jl_aYanbD/mwe.hpp:434:47:   required from ‘T_ mwe_model_namespace::mwe_model::log_prob(Eigen::Matrix<T_a, -1, 1>&, std::ostream*) const [with bool propto__ = false; bool jacobian__ = false; T_ = stan::math::var_value<double>; std::ostream = std::basic_ostream<char>]’
+./stan/src/stan/model/model_base_crtp.hpp:98:72:   required from ‘stan::math::var stan::model::model_base_crtp<M>::log_prob(Eigen::Matrix<stan::math::var_value<double>, -1, 1>&, std::ostream*) const [with M = mwe_model_namespace::mwe_model; stan::math::var = stan::math::var_value<double>; std::ostream = std::basic_ostream<char>]’
+./stan/src/stan/model/model_base_crtp.hpp:96:20:   required from here
+./stan/lib/stan_math/stan/math/rev/functor/reduce_sum.hpp:36:45: error: no matching function for call to ‘deep_copy_vars(std::tuple<stan::math::var_value<double, void>&, const int&>)’
+   36 |         = std::tuple<decltype(deep_copy_vars(std::declval<Args>()))...>;
+      |                               ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+In file included from ./stan/lib/stan_math/stan/math/rev/core.hpp:17,
+                 from ./stan/src/stan/model/model_base.hpp:8,
+                 from ./stan/src/stan/model/model_header.hpp:4,
+                 from /tmp/jl_aYanbD/mwe.hpp:2:
+./stan/lib/stan_math/stan/math/rev/core/deep_copy_vars.hpp:23:14: note: candidate: ‘template<class Arith, class> Arith stan::math::deep_copy_vars(Arith&&)’
+   23 | inline Arith deep_copy_vars(Arith&& arg) {
+      |              ^~~~~~~~~~~~~~
+./stan/lib/stan_math/stan/math/rev/core/deep_copy_vars.hpp:23:14: note:   template argument deduction/substitution failed:
+./stan/lib/stan_math/stan/math/rev/core/deep_copy_vars.hpp:45:13: note: candidate: ‘template<class VarVec, stan::require_std_vector_vt<stan::is_var, VarVec>* <anonymous> > auto stan::math::deep_copy_vars(VarVec&&)’
+   45 | inline auto deep_copy_vars(VarVec&& arg) {
+      |             ^~~~~~~~~~~~~~
+./stan/lib/stan_math/stan/math/rev/core/deep_copy_vars.hpp:45:13: note:   template argument deduction/substitution failed:
+./stan/lib/stan_math/stan/math/rev/core/deep_copy_vars.hpp:63:13: note: candidate: ‘template<class VecContainer, stan::require_std_vector_st<stan::is_var, VecContainer>* <anonymous>, stan::require_std_vector_vt<stan::is_container, VecContainer>* <anonymous> > auto stan::math::deep_copy_vars(VecContainer&&)’
+   63 | inline auto deep_copy_vars(VecContainer&& arg) {
+      |             ^~~~~~~~~~~~~~
+./stan/lib/stan_math/stan/math/rev/core/deep_copy_vars.hpp:63:13: note:   template argument deduction/substitution failed:
+./stan/lib/stan_math/stan/math/rev/core/deep_copy_vars.hpp:79:13: note: candidate: ‘template<class EigT, stan::require_eigen_vt<stan::is_var, EigT>* <anonymous> > auto stan::math::deep_copy_vars(EigT&&)’
+   79 | inline auto deep_copy_vars(EigT&& arg) {
+      |             ^~~~~~~~~~~~~~
+./stan/lib/stan_math/stan/math/rev/core/deep_copy_vars.hpp:79:13: note:   template argument deduction/substitution failed:
+./stan/lib/stan_math/stan/math/rev/core/deep_copy_vars.hpp:33:13: note: candidate: ‘auto stan::math::deep_copy_vars(const var&)’
+   33 | inline auto deep_copy_vars(const var& arg) {
+      |             ^~~~~~~~~~~~~~
+./stan/lib/stan_math/stan/math/rev/core/deep_copy_vars.hpp:33:39: note:   no known conversion for argument 1 from ‘std::tuple<stan::math::var_value<double, void>&, const int&>’ to ‘const var&’ {aka ‘const stan::math::var_value<double>&’}
+   33 | inline auto deep_copy_vars(const var& arg) {
+      |                            ~~~~~~~~~~~^~~
+In file included from ./stan/lib/stan_math/stan/math/rev/functor.hpp:30,
+                 from ./stan/lib/stan_math/stan/math/rev.hpp:15,
+                 from ./stan/lib/stan_math/stan/math.hpp:19,
+                 from ./stan/src/stan/model/model_header.hpp:6,
+                 from /tmp/jl_aYanbD/mwe.hpp:2:
+./stan/lib/stan_math/stan/math/rev/functor/reduce_sum.hpp:36:45: error: no matching function for call to ‘deep_copy_vars(std::tuple<stan::math::var_value<double, void>&, const int&>)’
+   36 |         = std::tuple<decltype(deep_copy_vars(std::declval<Args>()))...>;
+      |                               ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+In file included from ./stan/lib/stan_math/stan/math/rev/core.hpp:17,
+                 from ./stan/src/stan/model/model_base.hpp:8,
+                 from ./stan/src/stan/model/model_header.hpp:4,
+                 from /tmp/jl_aYanbD/mwe.hpp:2:
+./stan/lib/stan_math/stan/math/rev/core/deep_copy_vars.hpp:23:14: note: candidate: ‘template<class Arith, class> Arith stan::math::deep_copy_vars(Arith&&)’
+   23 | inline Arith deep_copy_vars(Arith&& arg) {
+      |              ^~~~~~~~~~~~~~
+./stan/lib/stan_math/stan/math/rev/core/deep_copy_vars.hpp:23:14: note:   template argument deduction/substitution failed:
+./stan/lib/stan_math/stan/math/rev/core/deep_copy_vars.hpp:45:13: note: candidate: ‘template<class VarVec, stan::require_std_vector_vt<stan::is_var, VarVec>* <anonymous> > auto stan::math::deep_copy_vars(VarVec&&)’
+   45 | inline auto deep_copy_vars(VarVec&& arg) {
+      |             ^~~~~~~~~~~~~~
+./stan/lib/stan_math/stan/math/rev/core/deep_copy_vars.hpp:45:13: note:   template argument deduction/substitution failed:
+./stan/lib/stan_math/stan/math/rev/core/deep_copy_vars.hpp:63:13: note: candidate: ‘template<class VecContainer, stan::require_std_vector_st<stan::is_var, VecContainer>* <anonymous>, stan::require_std_vector_vt<stan::is_container, VecContainer>* <anonymous> > auto stan::math::deep_copy_vars(VecContainer&&)’
+   63 | inline auto deep_copy_vars(VecContainer&& arg) {
+      |             ^~~~~~~~~~~~~~
+./stan/lib/stan_math/stan/math/rev/core/deep_copy_vars.hpp:63:13: note:   template argument deduction/substitution failed:
+./stan/lib/stan_math/stan/math/rev/core/deep_copy_vars.hpp:79:13: note: candidate: ‘template<class EigT, stan::require_eigen_vt<stan::is_var, EigT>* <anonymous> > auto stan::math::deep_copy_vars(EigT&&)’
+   79 | inline auto deep_copy_vars(EigT&& arg) {
+      |             ^~~~~~~~~~~~~~
+./stan/lib/stan_math/stan/math/rev/core/deep_copy_vars.hpp:79:13: note:   template argument deduction/substitution failed:
+./stan/lib/stan_math/stan/math/rev/core/deep_copy_vars.hpp:33:13: note: candidate: ‘auto stan::math::deep_copy_vars(const var&)’
+   33 | inline auto deep_copy_vars(const var& arg) {
+      |             ^~~~~~~~~~~~~~
+./stan/lib/stan_math/stan/math/rev/core/deep_copy_vars.hpp:33:39: note:   no known conversion for argument 1 from ‘std::tuple<stan::math::var_value<double, void>&, const int&>’ to ‘const var&’ {aka ‘const stan::math::var_value<double>&’}
+   33 | inline auto deep_copy_vars(const var& arg) {
+      |                            ~~~~~~~~~~~^~~
+make: *** [Makefile:77: /tmp/jl_aYanbD/mwe.o] Error 1
+
+Stacktrace:
+ [1] error(s::String)
+   @ Base ./error.jl:35
+ [2] compile_model(stan_file::String; stanc_args::Vector{String}, make_args::Vector{String})
+   @ BridgeStan ~/.julia/packages/BridgeStan/Bodre/src/compile.jl:114
+ [3] top-level scope
+   @ ~/github/issues/stan-dev-math/worktrees/3041-map-tuple/mwe/mwe.jl:37
+in expression starting at /home/niko/github/issues/stan-dev-math/worktrees/3041-map-tuple/mwe/mwe.jl:37
+
+# exit_code: 1
+# status: FAIL
+# finished: 2026-03-25 11:14:22
