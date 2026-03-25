@@ -6,7 +6,6 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core/var.hpp>
 
-#include <tuple>
 #include <utility>
 #include <vector>
 
@@ -84,8 +83,8 @@ inline auto deep_copy_vars(EigT&& arg) {
 }
 
 /**
- * Copy the vars in a tuple but reallocate new varis for them.
- * Non-var elements are forwarded unchanged.
+ * Deep copy vars in a tuple, reallocating new varis for var elements
+ * and forwarding non-var elements unchanged.
  *
  * @tparam Tuple A std::tuple type
  * @param arg A tuple potentially containing vars
@@ -95,8 +94,8 @@ template <typename Tuple, require_tuple_t<Tuple>* = nullptr>
 inline auto deep_copy_vars(Tuple&& arg) {
   return stan::math::apply(
       [](auto&&... args) {
-        return std::make_tuple(deep_copy_vars(
-            std::forward<decltype(args)>(args))...);
+        return std::make_tuple(
+            deep_copy_vars(std::forward<decltype(args)>(args))...);
       },
       std::forward<Tuple>(arg));
 }

@@ -283,6 +283,43 @@ TEST_F(AgradRev, Rev_deep_copy_vars_std_vector_eigen_row_vector_var_arg) {
     }
 }
 
+TEST_F(AgradRev, Rev_deep_copy_vars_tuple_var_int_arg) {
+  var a(3.0);
+  int b = 5;
+  auto arg = std::make_tuple(a, b);
+
+  auto out = stan::math::deep_copy_vars(arg);
+
+  EXPECT_EQ(std::get<0>(out).val(), a.val());
+  EXPECT_NE(std::get<0>(out).vi_, a.vi_);
+  EXPECT_EQ(std::get<1>(out), b);
+}
+
+TEST_F(AgradRev, Rev_deep_copy_vars_tuple_var_double_arg) {
+  var a(3.0);
+  double b = 5.0;
+  auto arg = std::make_tuple(a, b);
+
+  auto out = stan::math::deep_copy_vars(arg);
+
+  EXPECT_EQ(std::get<0>(out).val(), a.val());
+  EXPECT_NE(std::get<0>(out).vi_, a.vi_);
+  EXPECT_EQ(std::get<1>(out), b);
+}
+
+TEST_F(AgradRev, Rev_deep_copy_vars_tuple_var_var_arg) {
+  var a(3.0);
+  var b(7.0);
+  auto arg = std::make_tuple(a, b);
+
+  auto out = stan::math::deep_copy_vars(arg);
+
+  EXPECT_EQ(std::get<0>(out).val(), a.val());
+  EXPECT_NE(std::get<0>(out).vi_, a.vi_);
+  EXPECT_EQ(std::get<1>(out).val(), b.val());
+  EXPECT_NE(std::get<1>(out).vi_, b.vi_);
+}
+
 TEST_F(AgradRev, Rev_deep_copy_vars_std_vector_eigen_matrix_var_arg) {
   Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> arg_(5, 3);
   std::vector<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> arg(2, arg_);

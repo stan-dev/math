@@ -7,7 +7,6 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core/var.hpp>
 
-#include <tuple>
 #include <utility>
 #include <vector>
 
@@ -149,13 +148,22 @@ inline vari** save_varis(vari** dest, Arith&& x, Pargs&&... args) {
 inline vari** save_varis(vari** dest) { return dest; }
 
 /**
- * Unpack a tuple and save the varis of each element.
+ * Save the vari pointers in a tuple into the memory pointed to by dest
+ * by unpacking the tuple and recursively processing each element.
+ *
+ * @tparam Tuple A std::tuple type
+ * @tparam Pargs Types of remaining arguments
+ * @param[in, out] dest Pointer to where vari pointers are saved
+ * @param[in] x A tuple potentially containing vars
+ * @param[in] args Additional arguments to have their varis saved
+ * @return Final position of dest pointer
  */
-template <typename Tuple, require_tuple_t<Tuple>* = nullptr, typename... Pargs>
+template <typename Tuple, require_tuple_t<Tuple>*, typename... Pargs>
 inline vari** save_varis(vari** dest, Tuple&& x, Pargs&&... args) {
   dest = stan::math::apply(
       [dest](auto&&... inner_args) {
-        return save_varis(dest, std::forward<decltype(inner_args)>(inner_args)...);
+        return save_varis(
+            dest, std::forward<decltype(inner_args)>(inner_args)...);
       },
       std::forward<Tuple>(x));
   return save_varis(dest, std::forward<Pargs>(args)...);

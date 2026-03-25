@@ -6,7 +6,6 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core/var.hpp>
 
-#include <tuple>
 #include <utility>
 #include <vector>
 
@@ -153,9 +152,17 @@ inline double* accumulate_adjoints(double* dest, Arith&& x, Pargs&&... args) {
 inline double* accumulate_adjoints(double* dest) { return dest; }
 
 /**
- * Unpack a tuple and accumulate adjoints from each element.
+ * Accumulate adjoints from a tuple into storage pointed to by dest
+ * by unpacking the tuple and recursively processing each element.
+ *
+ * @tparam Tuple A std::tuple type
+ * @tparam Pargs Types of remaining arguments
+ * @param dest Pointer to where adjoints are to be accumulated
+ * @param x A tuple potentially containing vars
+ * @param args Further args to accumulate over
+ * @return Final position of adjoint storage pointer
  */
-template <typename Tuple, require_tuple_t<Tuple>* = nullptr, typename... Pargs>
+template <typename Tuple, require_tuple_t<Tuple>*, typename... Pargs>
 inline double* accumulate_adjoints(double* dest, Tuple&& x, Pargs&&... args) {
   dest = stan::math::apply(
       [dest](auto&&... inner_args) {

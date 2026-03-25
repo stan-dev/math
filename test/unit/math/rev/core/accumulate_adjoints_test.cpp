@@ -381,6 +381,44 @@ TEST_F(AgradRev, Rev_accumulate_adjoints_std_vector_eigen_matrix_var_arg) {
   stan::math::recover_memory();
 }
 
+TEST_F(AgradRev, Rev_accumulate_adjoints_tuple_var_int_arg) {
+  using stan::math::var;
+  using stan::math::vari;
+  var a(5.0);
+  a.vi_->adj_ = 3.0;
+  int b = 7;
+  auto arg = std::make_tuple(a, b);
+
+  Eigen::VectorXd storage = Eigen::VectorXd::Zero(1000);
+  double* ptr = stan::math::accumulate_adjoints(storage.data(), arg);
+
+  EXPECT_FLOAT_EQ(storage(0), 3.0);
+  for (int i = 1; i < storage.size(); ++i)
+    EXPECT_FLOAT_EQ(storage(i), 0.0);
+  EXPECT_EQ(ptr, storage.data() + 1);
+  stan::math::recover_memory();
+}
+
+TEST_F(AgradRev, Rev_accumulate_adjoints_tuple_var_var_arg) {
+  using stan::math::var;
+  using stan::math::vari;
+  var a(5.0);
+  a.vi_->adj_ = 3.0;
+  var b(7.0);
+  b.vi_->adj_ = 4.0;
+  auto arg = std::make_tuple(a, b);
+
+  Eigen::VectorXd storage = Eigen::VectorXd::Zero(1000);
+  double* ptr = stan::math::accumulate_adjoints(storage.data(), arg);
+
+  EXPECT_FLOAT_EQ(storage(0), 3.0);
+  EXPECT_FLOAT_EQ(storage(1), 4.0);
+  for (int i = 2; i < storage.size(); ++i)
+    EXPECT_FLOAT_EQ(storage(i), 0.0);
+  EXPECT_EQ(ptr, storage.data() + 2);
+  stan::math::recover_memory();
+}
+
 TEST_F(AgradRev, Rev_accumulate_adjoints_sum) {
   using stan::math::var;
   using stan::math::vari;

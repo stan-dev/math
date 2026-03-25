@@ -332,6 +332,39 @@ TEST_F(AgradRev, Rev_save_varis_std_vector_eigen_matrix_var_arg) {
   EXPECT_EQ(ptr, storage.data() + num_vars);
 }
 
+TEST_F(AgradRev, Rev_save_varis_tuple_var_int_arg) {
+  var a(5.0);
+  int b = 3;
+  auto arg = std::make_tuple(a, b);
+
+  std::vector<vari*> storage(1000, nullptr);
+  vari** ptr = stan::math::save_varis(storage.data(), arg);
+
+  size_t num_vars = stan::math::count_vars(arg);
+  EXPECT_EQ(num_vars, 1);
+  EXPECT_EQ(storage[0], a.vi_);
+  for (int i = num_vars; i < storage.size(); ++i)
+    EXPECT_EQ(storage[i], nullptr);
+  EXPECT_EQ(ptr, storage.data() + num_vars);
+}
+
+TEST_F(AgradRev, Rev_save_varis_tuple_var_var_arg) {
+  var a(5.0);
+  var b(7.0);
+  auto arg = std::make_tuple(a, b);
+
+  std::vector<vari*> storage(1000, nullptr);
+  vari** ptr = stan::math::save_varis(storage.data(), arg);
+
+  size_t num_vars = stan::math::count_vars(arg);
+  EXPECT_EQ(num_vars, 2);
+  EXPECT_EQ(storage[0], a.vi_);
+  EXPECT_EQ(storage[1], b.vi_);
+  for (int i = num_vars; i < storage.size(); ++i)
+    EXPECT_EQ(storage[i], nullptr);
+  EXPECT_EQ(ptr, storage.data() + num_vars);
+}
+
 TEST_F(AgradRev, Rev_save_varis_sum) {
   int arg1 = 1;
   double arg2 = 1.0;
