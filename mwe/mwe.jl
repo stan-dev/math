@@ -34,7 +34,7 @@ workdir = mktempdir()
 stan_file = joinpath(workdir, "mwe.stan")
 write(stan_file, stan_code)
 
-lib = compile_model(stan_file; make_args=["STAN_MATH=$stan_math", "STAN_THREADS=true"])
+lib = compile_model(stan_file; make_args=["MATH=$stan_math/", "STAN_THREADS=true"])
 
 data = """{"N": 5, "K": 2, "y": [1.0, 2.0, 3.0, 4.0, 5.0]}"""
 sm = StanModel(lib, data)
