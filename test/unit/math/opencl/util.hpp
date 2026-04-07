@@ -48,46 +48,60 @@ auto var_argument(const T& x) {
 }
 
 template <typename T, require_arithmetic_t<T>* = nullptr>
-inline void expect_eq(T a, T b, const char* msg) {
-  stan::test::expect_near_rel(msg, a, b);
+inline void expect_eq(T a, T b, const char* msg,
+                      stan::test::relative_tolerance tol
+                      = stan::test::relative_tolerance()) {
+  stan::test::expect_near_rel(msg, a, b, tol);
 }
-inline void expect_eq(math::var a, math::var b, const char* msg) {
-  stan::test::expect_near_rel(msg, a.val(), b.val());
+inline void expect_eq(math::var a, math::var b, const char* msg,
+                      stan::test::relative_tolerance tol
+                      = stan::test::relative_tolerance()) {
+  stan::test::expect_near_rel(msg, a.val(), b.val(), tol);
 }
 template <typename T1, typename T2, require_all_eigen_t<T1, T2>* = nullptr,
           require_all_not_st_var<T1, T2>* = nullptr>
-inline void expect_eq(const T1& a, const T2& b, const char* msg) {
+inline void expect_eq(const T1& a, const T2& b, const char* msg,
+                      stan::test::relative_tolerance tol
+                      = stan::test::relative_tolerance()) {
   EXPECT_EQ(a.rows(), b.rows()) << msg;
   EXPECT_EQ(a.cols(), b.cols()) << msg;
   const auto& a_ref = math::to_ref(a);
   const auto& b_ref = math::to_ref(b);
   for (int i = 0; i < a.rows(); i++) {
     for (int j = 0; j < a.cols(); j++) {
-      expect_eq(a_ref(i, j), b_ref(i, j), msg);
+      expect_eq(a_ref(i, j), b_ref(i, j), msg, tol);
     }
   }
 }
 template <typename T1, typename T2, require_all_rev_matrix_t<T1, T2>* = nullptr>
-inline void expect_eq(const T1& a, const T2& b, const char* msg) {
-  expect_eq(a.val(), b.val(), msg);
+inline void expect_eq(const T1& a, const T2& b, const char* msg,
+                      stan::test::relative_tolerance tol
+                      = stan::test::relative_tolerance()) {
+  expect_eq(a.val(), b.val(), msg, tol);
 }
 template <typename T>
 inline void expect_eq(const std::vector<T>& a, const std::vector<T>& b,
-                      const char* msg) {
+                      const char* msg,
+                      stan::test::relative_tolerance tol
+                      = stan::test::relative_tolerance()) {
   EXPECT_EQ(a.size(), b.size());
   for (int i = 0; i < a.size(); i++) {
-    expect_eq(a[i], b[i], msg);
+    expect_eq(a[i], b[i], msg, tol);
   }
 }
 template <typename T1, typename T2,
           require_nonscalar_prim_or_rev_kernel_expression_t<T1>* = nullptr>
-inline void expect_eq(const T1& a, const T2& b, const char* msg) {
-  expect_eq(from_matrix_cl<plain_type_t<T2>>(a), b, msg);
+inline void expect_eq(const T1& a, const T2& b, const char* msg,
+                      stan::test::relative_tolerance tol
+                      = stan::test::relative_tolerance()) {
+  expect_eq(from_matrix_cl<plain_type_t<T2>>(a), b, msg, tol);
 }
 template <typename T1, typename T2,
           require_nonscalar_prim_or_rev_kernel_expression_t<T2>* = nullptr>
-inline void expect_eq(const T1& a, const T2& b, const char* msg) {
-  expect_eq(a, from_matrix_cl<plain_type_t<T1>>(b), msg);
+inline void expect_eq(const T1& a, const T2& b, const char* msg,
+                      stan::test::relative_tolerance tol
+                      = stan::test::relative_tolerance()) {
+  expect_eq(a, from_matrix_cl<plain_type_t<T1>>(b), msg, tol);
 }
 
 template <typename T>
@@ -106,7 +120,8 @@ auto recursive_sum(const std::vector<T>& a) {
 template <typename T, require_not_st_var<T>* = nullptr>
 inline void expect_adj_near(const T& a, const T& b, const char* msg) {}
 inline void expect_adj_near(var a, var b, const char* msg) {
-  stan::test::expect_near_rel(msg, a.adj(), b.adj());
+  stan::test::expect_near_rel(msg, a.adj(), b.adj(),
+                              stan::test::relative_tolerance(1e-5));
 }
 template <typename T1, typename T2, require_all_eigen_t<T1, T2>* = nullptr,
           require_vt_same<T1, T2>* = nullptr>
@@ -115,7 +130,8 @@ inline void expect_adj_near(const T1& a, const T2& b, const char* msg) {
   EXPECT_EQ(a.cols(), b.cols()) << msg;
   const auto& a_ref = math::to_ref(a);
   const auto& b_ref = math::to_ref(b);
-  stan::test::expect_near_rel(msg, a_ref.adj(), b_ref.adj());
+  stan::test::expect_near_rel(msg, a_ref.adj(), b_ref.adj(),
+                              stan::test::relative_tolerance(1e-5));
 }
 template <typename T>
 inline void expect_adj_near(const std::vector<T>& a, const std::vector<T>& b,
@@ -157,10 +173,11 @@ inline void prim_rev_argument_combinations(const Functor& f, const Arg0& arg0,
 
 template <typename Functor, std::size_t... Is, typename... Args>
 inline void compare_cpu_opencl_prim_rev_impl(const Functor& functor,
+                                             stan::test::relative_tolerance tol,
                                              std::index_sequence<Is...>,
                                              const Args&... args) {
   prim_rev_argument_combinations(
-      [&functor](const auto& args_for_cpu, const auto& args_for_opencl) {
+      [&functor, tol](const auto& args_for_cpu, const auto& args_for_opencl) {
         std::string signature = type_name<decltype(args_for_cpu)>().data();
         try {
           auto res_cpu = eval(functor(std::get<Is>(args_for_cpu)...));
@@ -169,7 +186,8 @@ inline void compare_cpu_opencl_prim_rev_impl(const Functor& functor,
           expect_eq(res_opencl, res_cpu,
                     ("CPU and OpenCL return values do not match for signature "
                      + signature + "!")
-                        .c_str());
+                        .c_str(),
+                    tol);
           var(recursive_sum(res_cpu) + recursive_sum(res_opencl)).grad();
 
           static_cast<void>(std::initializer_list<int>{
@@ -194,11 +212,12 @@ template <typename FunctorCPU, typename FunctorCL, std::size_t... Is,
           typename... Args>
 inline void compare_cpu_opencl_prim_rev_impl(const FunctorCPU& functorCPU,
                                              const FunctorCL& functorCL,
+                                             stan::test::relative_tolerance tol,
                                              std::index_sequence<Is...>,
                                              const Args&... args) {
   prim_rev_argument_combinations(
-      [&functorCPU, &functorCL](const auto& args_for_cpu,
-                                const auto& args_for_opencl) {
+      [&functorCPU, &functorCL, tol](const auto& args_for_cpu,
+                                     const auto& args_for_opencl) {
         auto res_cpu = eval(functorCPU(std::get<Is>(args_for_cpu)...));
         auto res_opencl = eval(
             functorCL(opencl_argument(std::get<Is>(args_for_opencl))...));
@@ -206,7 +225,8 @@ inline void compare_cpu_opencl_prim_rev_impl(const FunctorCPU& functorCPU,
         expect_eq(res_opencl, res_cpu,
                   ("CPU and OpenCL return values do not match for signature "
                    + signature + "!")
-                      .c_str());
+                      .c_str(),
+                  tol);
         var(recursive_sum(res_cpu) + recursive_sum(res_opencl)).grad();
 
         static_cast<void>(std::initializer_list<int>{
@@ -332,7 +352,17 @@ template <typename Functor, typename... Args>
 inline void compare_cpu_opencl_prim_rev(const Functor& functor,
                                         const Args&... args) {
   internal::compare_cpu_opencl_prim_rev_impl(
-      functor, std::make_index_sequence<sizeof...(args)>{}, args...);
+      functor, stan::test::relative_tolerance(),
+      std::make_index_sequence<sizeof...(args)>{}, args...);
+  recover_memory();
+}
+
+template <typename Functor, typename... Args>
+inline void compare_cpu_opencl_prim_rev(const Functor& functor,
+                                        stan::test::relative_tolerance tol,
+                                        const Args&... args) {
+  internal::compare_cpu_opencl_prim_rev_impl(
+      functor, tol, std::make_index_sequence<sizeof...(args)>{}, args...);
   recover_memory();
 }
 
@@ -358,7 +388,17 @@ inline void compare_cpu_opencl_prim_rev_separate(const FunctorCPU& functorCPU,
                                                  const FunctorCL& fucntorCL,
                                                  const Args&... args) {
   internal::compare_cpu_opencl_prim_rev_impl(
-      functorCPU, fucntorCL, std::make_index_sequence<sizeof...(args)>{},
+      functorCPU, fucntorCL, stan::test::relative_tolerance(),
+      std::make_index_sequence<sizeof...(args)>{}, args...);
+  recover_memory();
+}
+
+template <typename FunctorCPU, typename FunctorCL, typename... Args>
+inline void compare_cpu_opencl_prim_rev_separate(
+    const FunctorCPU& functorCPU, const FunctorCL& fucntorCL,
+    stan::test::relative_tolerance tol, const Args&... args) {
+  internal::compare_cpu_opencl_prim_rev_impl(
+      functorCPU, fucntorCL, tol, std::make_index_sequence<sizeof...(args)>{},
       args...);
   recover_memory();
 }

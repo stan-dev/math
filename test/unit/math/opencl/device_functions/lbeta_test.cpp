@@ -11,7 +11,7 @@
 static const std::string test_lbeta_kernel_code = STRINGIFY(__kernel void test(
     __global double *C, __global double *B, __global double *A) {
   const int i = get_global_id(0);
-  C[i] = lbeta(A[i], B[i]);
+  C[i] = stan_lbeta(A[i], B[i]);
 });
 
 const stan::math::opencl_kernels::kernel_cl<
@@ -42,7 +42,7 @@ TEST(MathMatrixCL, lbeta_edge_cases) {
   a << NAN, INFINITY, 1.0E50;
 
   Eigen::VectorXd b(3);
-  a << 1, 1, 1;
+  b << 1, 1, 1;
 
   stan::math::matrix_cl<double> a_cl(a);
   stan::math::matrix_cl<double> b_cl(b);

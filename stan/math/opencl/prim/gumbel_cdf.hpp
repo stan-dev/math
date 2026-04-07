@@ -67,8 +67,7 @@ inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl> gumbel_cdf(
   auto exp_m_scaled_diff = exp(-scaled_diff);
   auto cdf_n = exp(-exp_m_scaled_diff);
   auto cdf_expr = colwise_prod(cdf_n);
-  auto rep_deriv = elt_divide(exp(-scaled_diff - exp_m_scaled_diff),
-                              elt_multiply(beta_val, cdf_n));
+  auto rep_deriv = elt_divide(exp_m_scaled_diff, beta_val);
 
   matrix_cl<double> cdf_cl;
   matrix_cl<double> y_deriv_cl;
