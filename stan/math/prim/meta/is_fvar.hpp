@@ -14,6 +14,9 @@ namespace stan {
 template <typename T, typename = void>
 struct is_fvar : std::false_type {};
 
+template <typename T>
+inline constexpr bool is_fvar_v = is_fvar<T>::value;
+
 /** \ingroup type_trait
  * Specialization for pointers returns the underlying value the pointer is
  * pointing to.
