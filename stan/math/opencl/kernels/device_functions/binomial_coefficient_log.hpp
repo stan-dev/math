@@ -95,7 +95,7 @@ static constexpr const char* binomial_coefficient_log_device_function
             } else if (n_plus_1 < LGAMMA_STIRLING_DIFF_USEFUL) {
               return lgamma(n_plus_1) - lgamma(k + 1) - lgamma(n_plus_1_mk);
             } else {
-              return -lbeta(n_plus_1_mk, k + 1) - log1p(n);
+              return -stan_lbeta(n_plus_1_mk, k + 1) - log1p(n);
             }
           }
           // \cond

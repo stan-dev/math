@@ -59,9 +59,9 @@ static constexpr const char* lbeta_device_function
            * @param b Second value
            * @return Log of the beta function applied to the two values.
            */
-          double lbeta(double a, double b) {
+          double stan_lbeta(double a, double b) {
             if (isnan(a) || isnan(b)) {
-              return a;
+              return NAN;
             }
 
             double x;  // x is the smaller of the two
