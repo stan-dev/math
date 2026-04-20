@@ -487,6 +487,12 @@ pipeline {
             steps {
                 script {
                     retry(3) { checkout scm }
+
+                    if (params.withRowVector || isBranch('develop') || isBranch('master')) {
+                        sh "echo CXXFLAGS+=-DSTAN_TEST_ROW_VECTORS >> make/local"
+                        sh "echo CXXFLAGS+=-DSTAN_PROB_TEST_ALL >> make/local"
+                    }
+
                     if (params.runAllDistributions || isBranch('develop') || isBranch('master')) {
                         changedDistributionTests = sh(script:"python3 test/prob/getDependencies.py --pretend-all", returnStdout:true).trim().readLines()
                     } else {
@@ -511,10 +517,10 @@ pipeline {
             steps {
                 script {
                     def tests = [:]
-                    def tests_per_executor = 180
+
+                    def executors = 10
+                    def tests_per_executor = Math.ceil(changedDistributionTests.size() / executors)
                     def idx = 0
-                    // roughly 10 executors when all tests run
-                    def executors = (changedDistributionTests.size() + tests_per_executor - 1) / tests_per_executor
                     for (f in changedDistributionTests.collate(tests_per_executor)) {
                         idx = idx + 1
                         def names = f.join(" ")
