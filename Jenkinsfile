@@ -511,9 +511,14 @@ pipeline {
             steps {
                 script {
                     def tests = [:]
-                    for (f in changedDistributionTests.collate(18)) {
+                    def tests_per_executor = 180
+                    def idx = 0
+                    // roughly 10 executors when all tests run
+                    def executors = (changedDistributionTests.size() + tests_per_executor - 1) / tests_per_executor
+                    for (f in changedDistributionTests.collate(tests_per_executor)) {
+                        idx = idx + 1
                         def names = f.join(" ")
-                        tests["Distribution Tests: ${names}"] = { node ("linux && docker && 8core") {
+                        tests["Distribution Tests: ${idx} / ${executors}"] = { node ("linux && docker && 8core") {
                             deleteDir()
                             docker.image('stanorg/ci:gpu-cpp17').inside {
                                 catchError(buildResult: "FAILURE", stageResult: "FAILURE") {
@@ -536,7 +541,8 @@ pipeline {
                             }
                         } }
                     }
-                    parallel(failfast: true) tests
+                    tests.failFast = true
+                    parallel tests
                 }
             }
             post {
