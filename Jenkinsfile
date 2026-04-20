@@ -511,12 +511,12 @@ pipeline {
             steps {
                 script {
                     def tests = [:]
-                    for (f in changedDistributionTests.collate(24)) {
+                    for (f in changedDistributionTests.collate(18)) {
                         def names = f.join(" ")
                         tests["Distribution Tests: ${names}"] = { node ("linux && docker && 8core") {
                             deleteDir()
                             docker.image('stanorg/ci:gpu-cpp17').inside {
-                                catchError {
+                                catchError(buildResult: "FAILURE", stageResult: "FAILURE") {
                                     unstash 'MathSetup'
                                     sh """
                                         echo CXX=${CLANG_CXX} > make/local
@@ -536,8 +536,7 @@ pipeline {
                             }
                         } }
                     }
-                    tests.failFast = true
-                    parallel tests
+                    parallel(failfast: true) tests
                 }
             }
             post {
