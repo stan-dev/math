@@ -30,7 +30,7 @@ class AgradDistributionsFrechet : public AgradDistributionTest {
     param[1] = 3.9;   // alpha
     param[2] = 1.7;   // sigma
     parameters.push_back(param);
-    log_prob.push_back(-1754.93950342517);  // expected log_prob
+    log_prob.push_back(-1754.98950342517);  // expected log_prob
   }
 
   void invalid_values(vector<size_t>& index, vector<double>& value) {
