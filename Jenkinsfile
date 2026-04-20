@@ -519,7 +519,7 @@ pipeline {
                     def tests = [:]
 
                     def executors = 10
-                    def tests_per_executor = Math.ceil((changedDistributionTests.size() / executors).doubleValue())
+                    def tests_per_executor = Math.ceil((changedDistributionTests.size() / executors).doubleValue()).toInteger()
                     def idx = 0
                     for (f in changedDistributionTests.collate(tests_per_executor)) {
                         idx = idx + 1
