@@ -487,6 +487,12 @@ pipeline {
             steps {
                 script {
                     retry(3) { checkout scm }
+
+                    if (params.withRowVector || isBranch('develop') || isBranch('master')) {
+                        sh "echo CXXFLAGS+=-DSTAN_TEST_ROW_VECTORS >> make/local"
+                        sh "echo CXXFLAGS+=-DSTAN_PROB_TEST_ALL >> make/local"
+                    }
+
                     if (params.runAllDistributions || isBranch('develop') || isBranch('master')) {
                         changedDistributionTests = sh(script:"python3 test/prob/getDependencies.py --pretend-all", returnStdout:true).trim().readLines()
                     } else {
@@ -511,12 +517,17 @@ pipeline {
             steps {
                 script {
                     def tests = [:]
-                    for (f in changedDistributionTests.collate(24)) {
+
+                    def executors = 10
+                    def tests_per_executor = Math.ceil((changedDistributionTests.size() / executors).doubleValue()).toInteger()
+                    def idx = 0
+                    for (f in changedDistributionTests.collate(tests_per_executor)) {
+                        idx = idx + 1
                         def names = f.join(" ")
-                        tests["Distribution Tests: ${names}"] = { node ("linux && docker && 8core") {
+                        tests["Distribution Tests: ${idx} / ${executors}"] = { node ("linux && docker && 8core") {
                             deleteDir()
                             docker.image('stanorg/ci:gpu-cpp17').inside {
-                                catchError {
+                                catchError(buildResult: "FAILURE", stageResult: "FAILURE") {
                                     unstash 'MathSetup'
                                     sh """
                                         echo CXX=${CLANG_CXX} > make/local
