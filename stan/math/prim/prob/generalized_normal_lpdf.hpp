@@ -91,9 +91,30 @@ inline return_type_t<T_y, T_loc, T_scale, T_shape> generalized_normal_lpdf(
   const auto& scaled_abs_diff
       = to_ref_if<!is_constant_all<T_y, T_loc, T_shape>::value>(abs(diff)
                                                                 * inv_alpha);
-  const auto& scaled_abs_diff_pow
-      = to_ref_if<!is_constant_all<T_scale, T_shape>::value>(
-          pow(scaled_abs_diff, beta_val));
+  // pow(0, beta) is 0 for beta > 0, but autodiff of pow at base == 0
+  // produces NaN (0 * log(0) in the tangent) and pollutes the autodiff stack.
+  // Replace 0 with 1 in the base (pow(1, p) is always clean), then zero
+  // out those results afterward.
+  const auto& sad_is_zero = eval(value_of_rec(scaled_abs_diff) == 0);
+  auto safe_abs_diff = eval(scaled_abs_diff);
+  if constexpr (is_eigen_v<std::decay_t<decltype(sad_is_zero)>>) {
+    for (Eigen::Index i = 0; i < sad_is_zero.size(); ++i)
+      if (sad_is_zero.coeff(i))
+        safe_abs_diff.coeffRef(i) += 1;
+  } else {
+    if (sad_is_zero)
+      safe_abs_diff += 1;
+  }
+  auto scaled_abs_diff_pow = eval(pow(safe_abs_diff, beta_val));
+  if constexpr (is_eigen_v<std::decay_t<decltype(sad_is_zero)>>) {
+    for (Eigen::Index i = 0; i < sad_is_zero.size(); ++i) {
+      if (sad_is_zero.coeff(i))
+        scaled_abs_diff_pow.coeffRef(i) = 0;
+    }
+  } else {
+    if (sad_is_zero)
+      scaled_abs_diff_pow = 0;
+  }
   const size_t N = max_size(y, mu, alpha, beta);
 
   T_partials_return logp = -sum(scaled_abs_diff_pow);
@@ -112,15 +133,19 @@ inline return_type_t<T_y, T_loc, T_scale, T_shape> generalized_normal_lpdf(
       = make_partials_propagator(y_ref, mu_ref, alpha_ref, beta_ref);
 
   if constexpr (!is_constant_all<T_y, T_loc>::value) {
-    // note: The partial derivatives for y, μ are undefined when
-    // y == μ && beta < 1.
-    // The derivative limit as y → μ (i.e. diff → 0) has the following cases:
-    //   β > 1: 0 from both sides (defined as 0)
-    //   β == 1: +1/α from right, but -1/α from left (defined as
-    //     0, consistent with double_exponential_lpdf)
-    //   β < 1: -∞ from left as y → μ, but +∞ from right (undefined)
+    // At y == mu, the derivative is 0 for beta >= 1, undefined for beta < 1.
+    // Use safe_abs_diff (0 replaced with 1) to avoid NaN from pow(0, beta-1).
     auto rep_deriv = eval(sign(diff) * beta_val
-                          * pow(scaled_abs_diff, beta_val - 1) * inv_alpha);
+                          * pow(safe_abs_diff, beta_val - 1) * inv_alpha);
+    if constexpr (is_eigen_v<std::decay_t<decltype(sad_is_zero)>>) {
+      for (Eigen::Index i = 0; i < sad_is_zero.size(); ++i) {
+        if (sad_is_zero.coeff(i))
+          rep_deriv.coeffRef(i) = 0;
+      }
+    } else {
+      if (sad_is_zero)
+        rep_deriv = 0;
+    }
     if constexpr (!is_constant<T_y>::value) {
       partials<0>(ops_partials) = -rep_deriv;
     }
@@ -133,9 +158,11 @@ inline return_type_t<T_y, T_loc, T_scale, T_shape> generalized_normal_lpdf(
         = (beta_val * scaled_abs_diff_pow - 1) * inv_alpha;
   }
   if constexpr (!is_constant<T_shape>::value) {
+    // multiply_log(0, 0) = 0 by convention, but fvar autodiff of
+    // multiply_log at (0, 0) produces NaN.  safe_abs_diff avoids this.
     partials<3>(ops_partials)
         = digamma(inv_beta1p) * inv_square(beta_val)
-          - multiply_log(scaled_abs_diff_pow, scaled_abs_diff);
+          - multiply_log(scaled_abs_diff_pow, safe_abs_diff);
   }
 
   return ops_partials.build(logp);
