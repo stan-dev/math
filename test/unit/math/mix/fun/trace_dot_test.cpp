@@ -46,10 +46,14 @@ TEST(MathMixMatFun, traceDot) {
   stan::test::expect_ad(f, a33, b33);
   stan::test::expect_ad_matvar(f, a33, b33);
 
-  // dimension mismatch exceptions
+  // dimension mismatch: A.cols() != B.rows()
   stan::test::expect_ad(f, a22, b32);
   stan::test::expect_ad(f, a23, b22);
 
   stan::test::expect_ad_matvar(f, a22, b32);
   stan::test::expect_ad_matvar(f, a23, b22);
+
+  // dimension mismatch: A.cols() == B.rows() but A.rows() != B.cols()
+  stan::test::expect_ad(f, a23, a33);
+  stan::test::expect_ad_matvar(f, a23, a33);
 }

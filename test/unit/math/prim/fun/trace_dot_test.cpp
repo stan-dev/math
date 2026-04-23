@@ -56,5 +56,11 @@ TEST(MathMatrixPrim, trace_dot_dimension_mismatch) {
   a << 1, 2, 3, 4, 5, 6;
   b << 1, 2, 3, 4, 5, 6;
 
+  // A.cols() != B.rows()
   EXPECT_THROW(trace_dot(a, b), std::invalid_argument);
+
+  // A.cols() == B.rows() but A.rows() != B.cols() (product not square)
+  matrix_d c(3, 3);
+  c << 1, 2, 3, 4, 5, 6, 7, 8, 9;
+  EXPECT_THROW(trace_dot(a, c), std::invalid_argument);
 }
