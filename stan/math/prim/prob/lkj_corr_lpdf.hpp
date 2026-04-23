@@ -13,8 +13,8 @@ namespace stan {
 namespace math {
 
 template <typename T_shape>
-return_type_t<double, T_shape> do_lkj_constant(const T_shape& eta,
-                                               const unsigned int& K) {
+inline return_type_t<double, T_shape> do_lkj_constant(const T_shape& eta,
+                                                      const unsigned int& K) {
   // Lewandowski, Kurowicka, and Joe (2009) theorem 5
   return_type_t<double, T_shape> constant;
   const int Km1 = K - 1;
@@ -46,7 +46,8 @@ return_type_t<double, T_shape> do_lkj_constant(const T_shape& eta,
 // LKJ_Corr(y|eta) [ y correlation matrix (not covariance matrix)
 //                  eta > 0; eta == 1 <-> uniform]
 template <bool propto, typename T_y, typename T_shape>
-return_type_t<T_y, T_shape> lkj_corr_lpdf(const T_y& y, const T_shape& eta) {
+inline return_type_t<T_y, T_shape> lkj_corr_lpdf(const T_y& y,
+                                                 const T_shape& eta) {
   static constexpr const char* function = "lkj_corr_lpdf";
 
   return_type_t<T_y, T_shape> lp(0.0);
@@ -59,15 +60,16 @@ return_type_t<T_y, T_shape> lkj_corr_lpdf(const T_y& y, const T_shape& eta) {
     return 0.0;
   }
 
-  if (include_summand<propto, T_shape>::value) {
+  if constexpr (include_summand<propto, T_shape>::value) {
     lp += do_lkj_constant(eta, K);
   }
-
-  if (eta == 1.0 && is_constant_all<scalar_type<T_shape>>::value) {
-    return lp;
+  if constexpr (is_constant_all<scalar_type<T_shape>>::value) {
+    if (eta == 1.0) {
+      return lp;
+    }
   }
 
-  if (!include_summand<propto, T_y, T_shape>::value) {
+  if constexpr (!include_summand<propto, T_y, T_shape>::value) {
     return lp;
   }
 

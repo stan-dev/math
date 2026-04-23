@@ -9,7 +9,7 @@ from typing import Set
 import sys
 import subprocess
 from pathlib import Path
-
+import glob
 
 def get_dependencies(file: Path) -> Set[str]:
     file_dot_d = file.with_suffix(".d")
@@ -36,6 +36,11 @@ def get_changed() -> Set[str]:
     return set(changed_files)
 
 
+def add_tests_from_hpp(tests_to_run, test):
+    pattern = str(test).replace("_test.hpp", "_0*_test.cpp")
+    tests = glob.glob(pattern)
+    tests_to_run.extend(tests)
+
 if __name__ == "__main__":
     if Path("makefile") not in Path(".").iterdir():
         raise ValueError("getDependencies must be ran from the top-level repository")
@@ -47,12 +52,16 @@ if __name__ == "__main__":
 
     distribution_tests = Path("test", "prob")
 
+    subprocess.run(["make", "generate-tests"], stdout=subprocess.DEVNULL)
+
     for dist in distribution_tests.iterdir():
         if not dist.is_dir():
             continue
+        print(f"Considering {dist}.", file=sys.stderr)
         for test in dist.iterdir():
+            if test.suffix != ".hpp": continue
             if pretend:
-                tests_to_run.append(str(test).replace("_test.hpp", "_0*_test.cpp"))
+                add_tests_from_hpp(tests_to_run, test)
             else:
                 deps = get_dependencies(test)
                 intersection = changed & deps
@@ -61,7 +70,6 @@ if __name__ == "__main__":
                         f"{test} has {len(intersection)} changed dependencies out of {len(deps)} files #included.",
                         file=sys.stderr,
                     )
+                    add_tests_from_hpp(tests_to_run, test)
 
-                    tests_to_run.append(str(test).replace("_test.hpp", "_0*_test.cpp"))
-
-    print("\n".join(tests_to_run))
+    print("\n".join(set(tests_to_run)))

@@ -40,8 +40,9 @@ namespace math {
  * @param[in] epsilon perturbation size
  */
 template <typename F>
-void finite_diff_gradient(const F& f, const Eigen::VectorXd& x, double& fx,
-                          Eigen::VectorXd& grad_fx, double epsilon = 1e-03) {
+inline void finite_diff_gradient(const F& f, const Eigen::VectorXd& x,
+                                 double& fx, Eigen::VectorXd& grad_fx,
+                                 double epsilon = 1e-03) {
   Eigen::VectorXd x_temp(x);
   int d = x.size();
   grad_fx.resize(d);

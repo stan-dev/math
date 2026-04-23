@@ -10,7 +10,7 @@
  * into a single OpenCL kernel. This is much simpler than writing
  * multi-operation kernels by hand.
  *
- * Because global GPU memory loads and stores are relativly slow compared to
+ * Because global GPU memory loads and stores are relatively slow compared to
  * calculations in a kernel, using one kernel for multiple operations is faster
  * than using one kernel per operation.
  *
@@ -27,13 +27,13 @@
  * Element-wise functions can be added using one of the macros in
  * `elt_functions.hpp`.
  *
- * New kernel generator classes must satsify the conditions below:
+ * New kernel generator classes must satisfy the conditions below:
  *
  * 1. The class must be derived from a class inheriting from `operation_cl`.
  * Optionally, if the operation should support being assigned to, it can be
  * derived from a class inheriting `operation_cl_lhs` instead.
  * 2. It's parent template arguments should be set to derived type, type of
- *  scalar and types of any expression arguements.
+ *  scalar and types of any expression arguments.
  * 3. Member type `Scalar` should be defined as scalar type of the result of
  * the operation.
  * 4. Member function `deep_copy` should make a copy of the expression.
@@ -97,7 +97,7 @@
  *
  * A new operation should also have a user-facing function that accepts
  * arguments to the operation and returns the operation object. Arguments should
- * be passed trough function `as_operation_cl` so that they are wrapped in
+ * be passed through function `as_operation_cl` so that they are wrapped in
  * operations if they are not operations themselves. If the operation defines
  * `modify_argument_indices` this function should make copies of arguments by
  * calling `deep_copy()` on them internally.

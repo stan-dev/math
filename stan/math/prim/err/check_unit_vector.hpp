@@ -34,8 +34,8 @@ namespace math {
  */
 template <typename Vec, require_vector_t<Vec>* = nullptr,
           require_not_std_vector_t<Vec>* = nullptr>
-void check_unit_vector(const char* function, const char* name,
-                       const Vec& theta) {
+inline void check_unit_vector(const char* function, const char* name,
+                              const Vec& theta) {
   check_nonzero_size(function, name, theta);
   using std::fabs;
   scalar_type_t<Vec> ssq = value_of_rec(theta).squaredNorm();
@@ -64,8 +64,8 @@ void check_unit_vector(const char* function, const char* name,
  * element is `NaN`
  */
 template <typename StdVec, require_std_vector_t<StdVec>* = nullptr>
-void check_unit_vector(const char* function, const char* name,
-                       const StdVec& theta) {
+inline void check_unit_vector(const char* function, const char* name,
+                              const StdVec& theta) {
   for (size_t i = 0; i < theta.size(); ++i) {
     check_unit_vector(function, internal::make_iter_name(name, i).c_str(),
                       theta[i]);

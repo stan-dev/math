@@ -30,7 +30,7 @@ template <typename T_y_cl, typename T_inv_scale_cl,
           require_all_prim_or_rev_kernel_expression_t<
               T_y_cl, T_inv_scale_cl>* = nullptr,
           require_any_not_stan_scalar_t<T_y_cl, T_inv_scale_cl>* = nullptr>
-return_type_t<T_y_cl, T_inv_scale_cl> exponential_lcdf(
+inline return_type_t<T_y_cl, T_inv_scale_cl> exponential_lcdf(
     const T_y_cl& y, const T_inv_scale_cl& beta) {
   static constexpr const char* function = "exponential_lcdf(OpenCL)";
   using T_partials_return = partials_return_t<T_y_cl, T_inv_scale_cl>;
@@ -71,17 +71,17 @@ return_type_t<T_y_cl, T_inv_scale_cl> exponential_lcdf(
   results(check_y_nonnegative, check_beta_positive_finite, lcdf_cl, y_deriv_cl,
           beta_deriv_cl)
       = expressions(y_nonnegative_expr, beta_positive_finite_expr, lcdf_expr,
-                    calc_if<!is_constant<T_y_cl>::value>(y_deriv),
-                    calc_if<!is_constant<T_inv_scale_cl>::value>(beta_deriv));
+                    calc_if<is_autodiff_v<T_y_cl>>(y_deriv),
+                    calc_if<is_autodiff_v<T_inv_scale_cl>>(beta_deriv));
 
   T_partials_return lcdf = (from_matrix_cl(lcdf_cl)).sum();
 
   auto ops_partials = make_partials_propagator(y_col, beta_col);
 
-  if (!is_constant<T_y_cl>::value) {
+  if constexpr (is_autodiff_v<T_y_cl>) {
     partials<0>(ops_partials) = std::move(y_deriv);
   }
-  if (!is_constant<T_inv_scale_cl>::value) {
+  if constexpr (is_autodiff_v<T_inv_scale_cl>) {
     partials<1>(ops_partials) = std::move(beta_deriv);
   }
   return ops_partials.build(lcdf);

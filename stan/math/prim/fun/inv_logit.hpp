@@ -48,16 +48,16 @@ namespace math {
  * @param a Argument.
  * @return Inverse logit of argument.
  */
-inline double inv_logit(double a) {
-  using std::exp;
+template <typename T, require_arithmetic_t<T>* = nullptr>
+inline double inv_logit(T&& a) {
   if (a < 0) {
-    double exp_a = exp(a);
+    double exp_a = std::exp(a);
     if (a < LOG_EPSILON) {
       return exp_a;
     }
-    return exp_a / (1 + exp_a);
+    return exp_a / (1.0 + exp_a);
   }
-  return inv(1 + exp(-a));
+  return inv(1.0 + std::exp(-a));
 }
 
 /**
@@ -69,28 +69,46 @@ inline double inv_logit(double a) {
  */
 struct inv_logit_fun {
   template <typename T>
-  static inline auto fun(const T& x) {
-    return inv_logit(x);
+  static inline auto fun(T&& x) {
+    return inv_logit(std::forward<T>(x));
   }
 };
 
 /**
- * Vectorized version of inv_logit().
+ * Vectorized version of inv_logit() for containers containing ad types.
  *
- * @tparam T type of container
- * @param x container
+ * @tparam T type of std::vector
+ * @param x std::vector
  * @return Inverse logit applied to each value in x.
  */
-template <
-    typename T, require_not_var_matrix_t<T>* = nullptr,
-    require_all_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr>
-inline auto inv_logit(const T& x) {
-  return apply_scalar_unary<inv_logit_fun, T>::apply(x);
+template <typename Container, require_ad_container_t<Container>* = nullptr,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              Container>* = nullptr,
+          require_not_rev_matrix_t<Container>* = nullptr>
+inline auto inv_logit(Container&& x) {
+  return apply_scalar_unary<inv_logit_fun, Container>::apply(
+      std::forward<Container>(x));
 }
 
-// TODO(Tadej): Eigen is introducing their implementation logistic() of this
-// in 3.4. Use that once we switch to Eigen 3.4
-
+/**
+ * Vectorized version of inv_logit() for containers with arithmetic scalar
+ * types.
+ *
+ * @tparam T A type of either `std::vector` or a type that directly inherits
+ * from `Eigen::DenseBase`. The inner scalar type must not have an auto diff
+ * scalar type.
+ * @param x Eigen expression
+ * @return Inverse logit applied to each value in x.
+ */
+template <typename Container,
+          require_container_bt<std::is_arithmetic, Container>* = nullptr,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              Container>* = nullptr>
+inline auto inv_logit(Container&& x) {
+  return apply_vector_unary<Container>::apply(
+      std::forward<Container>(x),
+      [](auto&& v) { return v.array().logistic(); });
+}
 }  // namespace math
 }  // namespace stan
 

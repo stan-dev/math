@@ -79,22 +79,26 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_impl(
       partials[i] = 0.0;
     }
 
-    if (is_var<T_a>::value && !is_inf(a)) {
-      *partials_ptr = math::apply(
-          [&f, a_val, msgs](auto &&... val_args) {
-            return -f(a_val, 0.0, msgs, val_args...);
-          },
-          args_val_tuple);
-      partials_ptr++;
+    if constexpr (is_var<T_a>::value) {
+      if (!is_inf(a)) {
+        *partials_ptr = math::apply(
+            [&f, a_val, msgs](auto &&... val_args) {
+              return -f(a_val, 0.0, msgs, val_args...);
+            },
+            args_val_tuple);
+        partials_ptr++;
+      }
     }
 
-    if (!is_inf(b) && is_var<T_b>::value) {
-      *partials_ptr = math::apply(
-          [&f, b_val, msgs](auto &&... val_args) {
-            return f(b_val, 0.0, msgs, val_args...);
-          },
-          args_val_tuple);
-      partials_ptr++;
+    if constexpr (is_var<T_b>::value) {
+      if (!is_inf(b)) {
+        *partials_ptr = math::apply(
+            [&f, b_val, msgs](auto &&... val_args) {
+              return f(b_val, 0.0, msgs, val_args...);
+            },
+            args_val_tuple);
+        partials_ptr++;
+      }
     }
 
     {

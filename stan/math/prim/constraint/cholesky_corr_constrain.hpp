@@ -87,9 +87,10 @@ cholesky_corr_constrain(const EigVec& y, int K, Lp& lp) {
  * @param K The size of the matrix to return
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
-inline auto cholesky_corr_constrain(const T& y, int K) {
-  return apply_vector_unary<T>::apply(
-      y, [K](auto&& v) { return cholesky_corr_constrain(v, K); });
+inline auto cholesky_corr_constrain(T&& y, int K) {
+  return apply_vector_unary<T>::apply(std::forward<T>(y), [K](auto&& v) {
+    return cholesky_corr_constrain(std::forward<decltype(v)>(v), K);
+  });
 }
 
 /**
@@ -99,7 +100,7 @@ inline auto cholesky_corr_constrain(const T& y, int K) {
  * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
  * `Eigen::DenseBase` with compile time dynamic rows and 1 column
  * @tparam Lp Scalar type for the lp argument. The scalar type of T should be
- * convertable to this.
+ * convertible to this.
  * @param y Linearly Serialized vector of size `(K * (K - 1))/2` holding the
  *  column major order elements of the lower triangurlar
  * @param K The size of the matrix to return
@@ -107,9 +108,10 @@ inline auto cholesky_corr_constrain(const T& y, int K) {
  */
 template <typename T, typename Lp, require_std_vector_t<T>* = nullptr,
           require_convertible_t<return_type_t<T>, Lp>* = nullptr>
-inline auto cholesky_corr_constrain(const T& y, int K, Lp& lp) {
-  return apply_vector_unary<T>::apply(
-      y, [&lp, K](auto&& v) { return cholesky_corr_constrain(v, K, lp); });
+inline auto cholesky_corr_constrain(T&& y, int K, Lp& lp) {
+  return apply_vector_unary<T>::apply(std::forward<T>(y), [&lp, K](auto&& v) {
+    return cholesky_corr_constrain(std::forward<decltype(v)>(v), K, lp);
+  });
 }
 
 /**
@@ -124,7 +126,7 @@ inline auto cholesky_corr_constrain(const T& y, int K, Lp& lp) {
  *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
  *  and 1 column, or a standard vector thereof
  * @tparam Lp A scalar type for the lp argument. The scalar type of T should be
- * convertable to this.
+ * convertible to this.
  * @param y Linearly Serialized vector of size `(K * (K - 1))/2` holding the
  *  column major order elements of the lower triangurlar
  * @param K The size of the matrix to return
@@ -132,11 +134,11 @@ inline auto cholesky_corr_constrain(const T& y, int K, Lp& lp) {
  */
 template <bool Jacobian, typename T, typename Lp,
           require_convertible_t<return_type_t<T>, Lp>* = nullptr>
-inline auto cholesky_corr_constrain(const T& y, int K, Lp& lp) {
+inline auto cholesky_corr_constrain(T&& y, int K, Lp& lp) {
   if constexpr (Jacobian) {
-    return cholesky_corr_constrain(y, K, lp);
+    return cholesky_corr_constrain(std::forward<T>(y), K, lp);
   } else {
-    return cholesky_corr_constrain(y, K);
+    return cholesky_corr_constrain(std::forward<T>(y), K);
   }
 }
 

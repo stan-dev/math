@@ -40,7 +40,7 @@ template <
     require_all_prim_or_rev_kernel_expression_t<T_n_cl, T_size1_cl,
                                                 T_size2_cl>* = nullptr,
     require_any_not_stan_scalar_t<T_n_cl, T_size1_cl, T_size2_cl>* = nullptr>
-return_type_t<T_n_cl, T_size1_cl, T_size2_cl> beta_binomial_lpmf(
+inline return_type_t<T_n_cl, T_size1_cl, T_size2_cl> beta_binomial_lpmf(
     const T_n_cl& n, const T_N_cl N, const T_size1_cl& alpha,
     const T_size2_cl& beta) {
   using std::isfinite;
@@ -54,7 +54,7 @@ return_type_t<T_n_cl, T_size1_cl, T_size2_cl> beta_binomial_lpmf(
   if (N_size == 0) {
     return 0.0;
   }
-  if (!include_summand<propto, T_size1_cl, T_size2_cl>::value) {
+  if constexpr (!include_summand<propto, T_size1_cl, T_size2_cl>::value) {
     return 0.0;
   }
 
@@ -96,8 +96,8 @@ return_type_t<T_n_cl, T_size1_cl, T_size2_cl> beta_binomial_lpmf(
   results(check_N_nonnegative, check_alpha_pos_finite, check_beta_pos_finite,
           logp_cl, alpha_deriv_cl, beta_deriv_cl)
       = expressions(N_nonnegative, alpha_pos_finite, beta_pos_finite, logp_expr,
-                    calc_if<!is_constant<T_size1_cl>::value>(alpha_deriv),
-                    calc_if<!is_constant<T_size2_cl>::value>(beta_deriv));
+                    calc_if<is_autodiff_v<T_size1_cl>>(alpha_deriv),
+                    calc_if<is_autodiff_v<T_size2_cl>>(beta_deriv));
 
   if (from_matrix_cl(return_neg_inf_cl).any()) {
     return LOG_ZERO;
@@ -106,10 +106,10 @@ return_type_t<T_n_cl, T_size1_cl, T_size2_cl> beta_binomial_lpmf(
   double logp = sum(from_matrix_cl(logp_cl));
 
   auto ops_partials = make_partials_propagator(alpha_col, beta_col);
-  if (!is_constant<T_size1_cl>::value) {
+  if constexpr (is_autodiff_v<T_size1_cl>) {
     partials<0>(ops_partials) = std::move(alpha_deriv_cl);
   }
-  if (!is_constant<T_size2_cl>::value) {
+  if constexpr (is_autodiff_v<T_size2_cl>) {
     partials<1>(ops_partials) = std::move(beta_deriv_cl);
   }
 

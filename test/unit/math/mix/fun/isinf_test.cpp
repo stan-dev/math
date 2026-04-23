@@ -2,7 +2,7 @@
 #include <limits>
 
 template <typename T>
-void expect_isinf() {
+inline void expect_isinf() {
   // C++ idiom for clients of the math lib
   // std::isnan explicit using; stan::math::nan by ADL
   using std::isinf;

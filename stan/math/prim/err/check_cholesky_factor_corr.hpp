@@ -34,8 +34,8 @@ namespace math {
  * element in matrix is NaN
  */
 template <typename Mat, require_matrix_t<Mat>* = nullptr>
-void check_cholesky_factor_corr(const char* function, const char* name,
-                                const Mat& y) {
+inline void check_cholesky_factor_corr(const char* function, const char* name,
+                                       const Mat& y) {
   const auto& y_ref = to_ref(value_of_rec(y));
   check_square(function, name, y_ref);
   check_lower_triangular(function, name, y_ref);
@@ -60,14 +60,14 @@ void check_cholesky_factor_corr(const char* function, const char* name,
  * be equal to 1
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
- * @param y Standard vector of matrics to test
+ * @param y Standard vector of matrices to test
  * @throw `std::domain_error` if y[i] is not a valid Cholesky factor, if number
  * of rows is less than the number of columns, if there are 0 columns, or if any
  * element in matrix is NaN
  */
 template <typename StdVec, require_std_vector_t<StdVec>* = nullptr>
-void check_cholesky_factor_corr(const char* function, const char* name,
-                                const StdVec& y) {
+inline void check_cholesky_factor_corr(const char* function, const char* name,
+                                       const StdVec& y) {
   for (size_t i = 0; i < y.size(); ++i) {
     check_cholesky_factor_corr(function,
                                internal::make_iter_name(name, i).c_str(), y[i]);

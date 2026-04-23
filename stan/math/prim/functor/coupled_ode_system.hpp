@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/size.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/apply.hpp>
 #include <ostream>
 #include <vector>

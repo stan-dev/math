@@ -14,14 +14,14 @@ namespace math {
  * Overload for `var_value<Vector>`.
  * @tparam T_ret The user supplied return type.
  * @tparam T A double or var type
- * @param x The type to be propogated through the new vector.
+ * @param x The type to be propagated through the new vector.
  * @param n The size of the new vector.
  */
 template <typename T_ret, require_var_matrix_t<T_ret>* = nullptr,
           require_eigen_row_vector_t<value_type_t<T_ret>>* = nullptr>
 inline auto rep_row_vector(var x, int n) {
   return make_callback_var(rep_row_vector(x.val(), n), [x](auto& vi) mutable {
-    forward_as<var>(x).adj() += vi.adj().sum();
+    x.adj() += vi.adj().sum();
   });
 }
 

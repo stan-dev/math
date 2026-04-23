@@ -1,6 +1,10 @@
 #ifndef STAN_MATH_MIX_HPP
 #define STAN_MATH_MIX_HPP
 
+#include <stan/math/fwd/fun/Eigen_NumTraits.hpp>
+#include <stan/math/rev/core/Eigen_NumTraits.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
+
 #include <stan/math/mix/meta.hpp>
 #include <stan/math/mix/fun.hpp>
 #include <stan/math/mix/functor.hpp>
@@ -25,5 +29,7 @@
 #endif
 
 #include <stan/math/prim.hpp>
+
+#include <stan/math/mix/prob.hpp>
 
 #endif

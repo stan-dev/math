@@ -10,9 +10,9 @@ namespace stan {
 namespace math {
 
 template <bool need_eigenvectors = true>
-void symmetric_eigensolver(const matrix_cl<double>& A,
-                           matrix_cl<double>& eigenvalues,
-                           matrix_cl<double>& eigenvectors) {
+inline void symmetric_eigensolver(const matrix_cl<double>& A,
+                                  matrix_cl<double>& eigenvalues,
+                                  matrix_cl<double>& eigenvectors) {
   matrix_cl<double> packed;
   if (A.rows() <= 2) {
     packed = A;

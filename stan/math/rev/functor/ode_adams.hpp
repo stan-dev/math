@@ -47,8 +47,8 @@ namespace math {
  */
 template <typename F, typename T_y0, typename T_t0, typename T_ts,
           typename... T_Args, require_eigen_col_vector_t<T_y0>* = nullptr>
-std::vector<Eigen::Matrix<stan::return_type_t<T_y0, T_t0, T_ts, T_Args...>,
-                          Eigen::Dynamic, 1>>
+inline std::vector<Eigen::Matrix<
+    stan::return_type_t<T_y0, T_t0, T_ts, T_Args...>, Eigen::Dynamic, 1>>
 ode_adams_tol_impl(const char* function_name, const F& f, const T_y0& y0,
                    const T_t0& t0, const std::vector<T_ts>& ts,
                    double relative_tolerance, double absolute_tolerance,
@@ -101,8 +101,8 @@ ode_adams_tol_impl(const char* function_name, const F& f, const T_y0& y0,
  */
 template <typename F, typename T_y0, typename T_t0, typename T_ts,
           typename... T_Args, require_eigen_col_vector_t<T_y0>* = nullptr>
-std::vector<Eigen::Matrix<stan::return_type_t<T_y0, T_t0, T_ts, T_Args...>,
-                          Eigen::Dynamic, 1>>
+inline std::vector<Eigen::Matrix<
+    stan::return_type_t<T_y0, T_t0, T_ts, T_Args...>, Eigen::Dynamic, 1>>
 ode_adams_tol(const F& f, const T_y0& y0, const T_t0& t0,
               const std::vector<T_ts>& ts, double relative_tolerance,
               double absolute_tolerance,
@@ -144,8 +144,8 @@ ode_adams_tol(const F& f, const T_y0& y0, const T_t0& t0,
  */
 template <typename F, typename T_y0, typename T_t0, typename T_ts,
           typename... T_Args, require_eigen_col_vector_t<T_y0>* = nullptr>
-std::vector<Eigen::Matrix<stan::return_type_t<T_y0, T_t0, T_ts, T_Args...>,
-                          Eigen::Dynamic, 1>>
+inline std::vector<Eigen::Matrix<
+    stan::return_type_t<T_y0, T_t0, T_ts, T_Args...>, Eigen::Dynamic, 1>>
 ode_adams(const F& f, const T_y0& y0, const T_t0& t0,
           const std::vector<T_ts>& ts, std::ostream* msgs,
           const T_Args&... args) {

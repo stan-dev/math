@@ -40,7 +40,7 @@ inline var dot_product(const T1& v1, const T2& v2) {
     return 0.0;
   }
 
-  if (!is_constant<T1>::value && !is_constant<T2>::value) {
+  if constexpr (is_autodiff_v<T1> && is_autodiff_v<T2>) {
     arena_t<promote_scalar_t<var, T1>> v1_arena = v1;
     arena_t<promote_scalar_t<var, T2>> v2_arena = v2;
     return make_callback_var(
@@ -52,7 +52,7 @@ inline var dot_product(const T1& v1, const T2& v2) {
             v2_arena.adj().coeffRef(i) += res_adj * v1_arena.val().coeff(i);
           }
         });
-  } else if (!is_constant<T2>::value) {
+  } else if constexpr (is_autodiff_v<T2>) {
     arena_t<promote_scalar_t<var, T2>> v2_arena = v2;
     arena_t<promote_scalar_t<double, T1>> v1_val_arena = value_of(v1);
     return make_callback_var(v1_val_arena.dot(v2_arena.val()),

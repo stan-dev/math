@@ -44,7 +44,7 @@ inline std::complex<fvar<T>> polar(const fvar<T>& r, U theta) {
  * Returns complex number with specified magnitude and phase angle.
  *
  * @tparam T autodiff value type for phase angle
-+* * @tparam U arithmetic type for magnitude
+ * * @tparam U arithmetic type for magnitude
  * @param[in] r magnitude
  * @param[in] theta phase angle
  * @return complex number with magnitude and phase angle

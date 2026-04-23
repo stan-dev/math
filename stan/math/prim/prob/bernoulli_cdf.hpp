@@ -27,7 +27,7 @@ namespace math {
 template <typename T_n, typename T_prob,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_n, T_prob>* = nullptr>
-return_type_t<T_prob> bernoulli_cdf(const T_n& n, const T_prob& theta) {
+inline return_type_t<T_prob> bernoulli_cdf(const T_n& n, const T_prob& theta) {
   using T_partials_return = partials_return_t<T_n, T_prob>;
   using T_theta_ref = ref_type_t<T_prob>;
   static constexpr const char* function = "bernoulli_cdf";
@@ -54,7 +54,7 @@ return_type_t<T_prob> bernoulli_cdf(const T_n& n, const T_prob& theta) {
 
   T_partials_return P = sum(P1);
 
-  if (!is_constant_all<T_prob>::value) {
+  if constexpr (is_autodiff_v<T_prob>) {
     partials<0>(ops_partials) = select(n_arr == 0, -exp(P - P1), 0.0);
   }
   return ops_partials.build(exp(P));

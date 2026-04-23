@@ -73,8 +73,8 @@ inline void check_corr_matrix(const char* function, const char* name,
  * 1, not positive definite, or any of the elements are `NaN`
  */
 template <typename StdVec, require_std_vector_t<StdVec>* = nullptr>
-void check_corr_matrix(const char* function, const char* name,
-                       const StdVec& y) {
+inline void check_corr_matrix(const char* function, const char* name,
+                              const StdVec& y) {
   for (auto&& y_i : y) {
     check_corr_matrix(function, name, y_i);
   }

@@ -36,8 +36,8 @@ namespace math {
 template <bool propto, typename T_n, typename T_N, typename T_prob,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_n, T_N, T_prob>* = nullptr>
-return_type_t<T_prob> binomial_lpmf(const T_n& n, const T_N& N,
-                                    const T_prob& theta) {
+inline return_type_t<T_prob> binomial_lpmf(const T_n& n, const T_N& N,
+                                           const T_prob& theta) {
   using T_partials_return = partials_return_t<T_n, T_N, T_prob>;
   using T_n_ref = ref_type_t<T_n>;
   using T_N_ref = ref_type_t<T_N>;
@@ -59,7 +59,7 @@ return_type_t<T_prob> binomial_lpmf(const T_n& n, const T_N& N,
   if (size_zero(n, N, theta)) {
     return 0.0;
   }
-  if (!include_summand<propto, T_prob>::value) {
+  if constexpr (!include_summand<propto, T_prob>::value) {
     return 0.0;
   }
 
@@ -77,7 +77,7 @@ return_type_t<T_prob> binomial_lpmf(const T_n& n, const T_N& N,
     log1m_theta[i] = log1m(theta_vec.val(i));
   }
 
-  if (include_summand<propto>::value) {
+  if constexpr (include_summand<propto>::value) {
     for (size_t i = 0; i < max_size_seq_view; ++i) {
       logp += binomial_coefficient_log(N_vec[i], n_vec[i]);
     }
@@ -96,7 +96,7 @@ return_type_t<T_prob> binomial_lpmf(const T_n& n, const T_N& N,
     }
   }
 
-  if (!is_constant_all<T_prob>::value) {
+  if constexpr (is_autodiff_v<T_prob>) {
     if (size_theta == 1) {
       T_partials_return sum_n = 0;
       T_partials_return sum_N = 0;

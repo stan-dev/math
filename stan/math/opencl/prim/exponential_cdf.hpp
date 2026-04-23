@@ -30,7 +30,7 @@ template <typename T_y_cl, typename T_inv_scale_cl,
           require_all_prim_or_rev_kernel_expression_t<
               T_y_cl, T_inv_scale_cl>* = nullptr,
           require_any_not_stan_scalar_t<T_y_cl, T_inv_scale_cl>* = nullptr>
-return_type_t<T_y_cl, T_inv_scale_cl> exponential_cdf(
+inline return_type_t<T_y_cl, T_inv_scale_cl> exponential_cdf(
     const T_y_cl& y, const T_inv_scale_cl& beta) {
   static constexpr const char* function = "exponential_cdf(OpenCL)";
   using T_partials_return = partials_return_t<T_y_cl, T_inv_scale_cl>;
@@ -70,26 +70,26 @@ return_type_t<T_y_cl, T_inv_scale_cl> exponential_cdf(
           beta_deriv_cl)
       = expressions(
           y_nonnegative_expr, beta_positive_finite_expr, cdf_expr,
-          calc_if<!is_constant_all<T_y_cl, T_inv_scale_cl>::value>(rep_deriv1));
+          calc_if<is_any_autodiff_v<T_y_cl, T_inv_scale_cl>>(rep_deriv1));
 
   T_partials_return cdf = (from_matrix_cl(cdf_cl)).prod();
 
   auto rep_deriv2 = beta_deriv_cl * cdf;
-  auto y_deriv = elt_multiply(
-      static_select<is_constant<T_y_cl>::value>(0, beta_val), rep_deriv2);
+  auto y_deriv = elt_multiply(static_select<is_constant_v<T_y_cl>>(0, beta_val),
+                              rep_deriv2);
   auto beta_deriv = elt_multiply(
-      static_select<is_constant<T_inv_scale_cl>::value>(0, y_val), rep_deriv2);
+      static_select<is_constant_v<T_inv_scale_cl>>(0, y_val), rep_deriv2);
 
   results(y_deriv_cl, beta_deriv_cl)
-      = expressions(calc_if<!is_constant<T_y_cl>::value>(y_deriv),
-                    calc_if<!is_constant<T_inv_scale_cl>::value>(beta_deriv));
+      = expressions(calc_if<is_autodiff_v<T_y_cl>>(y_deriv),
+                    calc_if<is_autodiff_v<T_inv_scale_cl>>(beta_deriv));
 
   auto ops_partials = make_partials_propagator(y_col, beta_col);
 
-  if (!is_constant<T_y_cl>::value) {
+  if constexpr (is_autodiff_v<T_y_cl>) {
     partials<0>(ops_partials) = std::move(y_deriv_cl);
   }
-  if (!is_constant<T_inv_scale_cl>::value) {
+  if constexpr (is_autodiff_v<T_inv_scale_cl>) {
     partials<1>(ops_partials) = std::move(beta_deriv_cl);
   }
   return ops_partials.build(cdf);

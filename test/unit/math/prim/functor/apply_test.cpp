@@ -64,7 +64,7 @@ TEST(MathFunctions, apply_temporary_function) {
 }
 
 TEST(MathFunctions, apply_temporary_function_reference) {
-  auto y = stan::math::apply([](auto& x) { return x; }, std::make_tuple(1.0));
+  auto y = stan::math::apply([](auto&& x) { return x; }, std::make_tuple(1.0));
 
   EXPECT_EQ(1.0, y);
   EXPECT_TRUE((std::is_same<double, decltype(y)>::value));

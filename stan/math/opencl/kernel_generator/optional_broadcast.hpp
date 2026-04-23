@@ -66,26 +66,26 @@ class optional_broadcast_
     kernel_parts res;
     res.body
         += type_str<Scalar>() + " " + var_name_ + " = " + var_name_arg + ";\n";
-    if (Colwise) {
+    if constexpr (Colwise) {
       res.args += "int " + var_name_ + "is_multirow, ";
     }
-    if (Rowwise) {
+    if constexpr (Rowwise) {
       res.args += "int " + var_name_ + "is_multicol, ";
     }
     return res;
   }
 
   /**
-   * Sets index/indices along broadcasted dimmension(s) to 0.
+   * Sets index/indices along broadcasted dimension(s) to 0.
    * @param[in, out] row_idx_name row index
    * @param[in, out] col_idx_name  column index
    */
   inline void modify_argument_indices(std::string& row_idx_name,
                                       std::string& col_idx_name) const {
-    if (Colwise) {
+    if constexpr (Colwise) {
       row_idx_name = "(" + row_idx_name + " * " + var_name_ + "is_multirow)";
     }
-    if (Rowwise) {
+    if constexpr (Rowwise) {
       col_idx_name = "(" + col_idx_name + " * " + var_name_ + "is_multicol)";
     }
   }
@@ -109,11 +109,11 @@ class optional_broadcast_
       std::unordered_map<const void*, const char*> generated2;
       this->template get_arg<0>().set_args(generated2, generated_all, kernel,
                                            arg_num);
-      if (Colwise) {
+      if constexpr (Colwise) {
         kernel.setArg(arg_num++, static_cast<int>(
                                      this->template get_arg<0>().rows() != 1));
       }
-      if (Rowwise) {
+      if constexpr (Rowwise) {
         kernel.setArg(arg_num++, static_cast<int>(
                                      this->template get_arg<0>().cols() != 1));
       }
@@ -207,7 +207,7 @@ optional_broadcast(T&& a) {
 }
 
 /**
- * Broadcast an expression in rowwise dimmension if the number of columns equals
+ * Broadcast an expression in rowwise dimension if the number of columns equals
  * to 1. In that case further expressions can use this expression as if had any
  * number of columns, repeating the values.
  *
@@ -225,7 +225,7 @@ inline auto rowwise_optional_broadcast(T&& a) {
 }
 
 /**
- * Broadcast an expression in colwise dimmension if the number of rows equals
+ * Broadcast an expression in colwise dimension if the number of rows equals
  * to 1. In that case further expressions can use this expression as if had any
  * number of rows, repeating the values.
  *

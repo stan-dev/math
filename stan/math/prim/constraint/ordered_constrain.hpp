@@ -23,11 +23,11 @@ namespace math {
  */
 template <typename EigVec, require_eigen_col_vector_t<EigVec>* = nullptr,
           require_not_st_var<EigVec>* = nullptr>
-inline plain_type_t<EigVec> ordered_constrain(const EigVec& x) {
+inline plain_type_t<EigVec> ordered_constrain(EigVec&& x) {
   using std::exp;
-  Eigen::Index k = x.size();
+  auto&& x_ref = to_ref(std::forward<EigVec>(x));
+  Eigen::Index k = x_ref.size();
   plain_type_t<EigVec> y(k);
-  const auto& x_ref = to_ref(x);
   if (unlikely(k == 0)) {
     return y;
   }
@@ -47,7 +47,7 @@ inline plain_type_t<EigVec> ordered_constrain(const EigVec& x) {
  *
  * @tparam T type of the vector
  * @tparam Lp A scalar type for the lp argument. The scalar type of T should be
- * convertable to this.
+ * convertible to this.
  * @param x Free vector of scalars.
  * @param lp Log probability reference.
  * @return Positive, increasing ordered vector.
@@ -55,12 +55,12 @@ inline plain_type_t<EigVec> ordered_constrain(const EigVec& x) {
 template <typename EigVec, typename Lp,
           require_eigen_col_vector_t<EigVec>* = nullptr,
           require_convertible_t<value_type_t<EigVec>, Lp>* = nullptr>
-inline auto ordered_constrain(const EigVec& x, Lp& lp) {
-  const auto& x_ref = to_ref(x);
-  if (likely(x.size() > 1)) {
-    lp += sum(x_ref.tail(x.size() - 1));
+inline auto ordered_constrain(EigVec&& x, Lp& lp) {
+  auto&& x_ref = to_ref(std::forward<EigVec>(x));
+  if (likely(x_ref.size() > 1)) {
+    lp += sum(x_ref.tail(x_ref.size() - 1));
   }
-  return ordered_constrain(x_ref);
+  return ordered_constrain(std::forward<decltype(x_ref)>(x_ref));
 }
 
 /**
@@ -76,9 +76,10 @@ inline auto ordered_constrain(const EigVec& x, Lp& lp) {
  * @return Positive, increasing ordered vector.
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
-inline auto ordered_constrain(const T& x) {
-  return apply_vector_unary<T>::apply(
-      x, [](auto&& v) { return ordered_constrain(v); });
+inline auto ordered_constrain(T&& x) {
+  return apply_vector_unary<T>::apply(std::forward<T>(x), [](auto&& v) {
+    return ordered_constrain(std::forward<decltype(v)>(v));
+  });
 }
 
 /**
@@ -91,16 +92,17 @@ inline auto ordered_constrain(const T& x) {
  * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
  * `Eigen::DenseBase` with compile time dynamic rows and 1 column
  * @tparam Lp Scalar type for the lp argument. The scalar type of T should be
- * convertable to this.
+ * convertible to this.
  * @param x Free vector of scalars
  * @param[in, out] lp log density accumulator or empty
  * @return Positive, increasing ordered vector.
  */
 template <typename T, typename Lp, require_std_vector_t<T>* = nullptr,
           require_convertible_t<return_type_t<T>, Lp>* = nullptr>
-inline auto ordered_constrain(const T& x, Lp& lp) {
-  return apply_vector_unary<T>::apply(
-      x, [&lp](auto&& v) { return ordered_constrain(v, lp); });
+inline auto ordered_constrain(T&& x, Lp& lp) {
+  return apply_vector_unary<T>::apply(std::forward<T>(x), [&lp](auto&& v) {
+    return ordered_constrain(std::forward<decltype(v)>(v), lp);
+  });
 }
 
 /**
@@ -118,18 +120,18 @@ inline auto ordered_constrain(const T& x, Lp& lp) {
  *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
  *  and 1 column, or a standard vector thereof
  * @tparam Lp A scalar type for the lp argument. The scalar type of T should be
- * convertable to this.
+ * convertible to this.
  * @param x Free vector of scalars
  * @param[in, out] lp log density accumulator
  * @return Positive, increasing ordered vector.
  */
 template <bool Jacobian, typename T, typename Lp,
           require_convertible_t<return_type_t<T>, Lp>* = nullptr>
-inline auto ordered_constrain(const T& x, Lp& lp) {
+inline auto ordered_constrain(T&& x, Lp& lp) {
   if constexpr (Jacobian) {
-    return ordered_constrain(x, lp);
+    return ordered_constrain(std::forward<T>(x), lp);
   } else {
-    return ordered_constrain(x);
+    return ordered_constrain(std::forward<T>(x));
   }
 }
 

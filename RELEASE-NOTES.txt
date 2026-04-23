@@ -1,6 +1,40 @@
 Stan Math Library Release Notes
 
 ======================================================================
+v5.2.0 (13 January 2026)
+======================================================================
+
+ - Added the unnormalized CDF and CCDF for the wiener 7-parameter diffusion model. Allows modeling truncated and censored data. (#3042, #3258, #3260, #3263)
+ - Added `yule_simon_lpmf` and `yule_simon_lccdf`. Allows modeling power-law count data. (#3220, #3236)
+ - Updated wording of validate_positive_index. (#3248)
+ - Replaced standard `if` statements with `if constexpr` where posssible. (#3240)
+ - Removed use of `forward_as` in the math library. (#3242)
+ - Added some more type traits for dealing with tuples. (#3244)
+ - Added `inline` to all functions. (#3245)
+
+======================================================================
+v5.1.0 (2 September 2025)
+======================================================================
+
+ - Added functions for the embedded Laplace approximation. (#3097, #3209, #3210)
+ - Added new overloads for `sum_to_zero_constrain` and `sum_to_zero_free` that accept Eigen Matrix types. (#3169)
+ - The simplex transform is now defined in terms of the isometric log ratio transform instead of stick breaking. (#3171)
+ - Renamed `hypergeometric_1f0` to `hypergeometric_1F0` for consistency, fixed compilation for `hypergeometric_2f1` with autodiff second argument. (#3165)
+ - Simplified implementation of `chol2inv` using matrix functions. (#3136)
+ - Improved the numerical stability of the gradient calculations for `inv_Phi` and `std_normal_log_qf`. (#3139, #3207)
+ - Simplified vectorisation of `std_normal_lpdf`. (#3140)
+ - Removed redundant computation in `grad_reg_inc_beta`. (#3159)
+ - Updated signature for `apply_scalar_binary` to take the functor as its first argument, instead of the last. (#3156)
+ - Added perfect forwarding to all functions that use the `apply_` family of functors. (#3221, #3228, #3229)
+ - Fixed expression test errors with `poisson_binomial_rng`, added support for row-vector and `std::vector<double>` `theta` arguments for `poisson_binomial`. (#3178)
+ - Updated `inv_logit` to use the logistic function from Eigen. (#3155, #3160)
+ - Update the constraint functions templating to be more flexible. (#3151)
+ - Added ARM64 testing to the Github CI for Windows and Ubuntu (#3177, #3173, #3180, #3174, #3158, #3164)
+ - Disabled Make's implicit rules in our Makefiles. (#3183)
+ - Updated Boost to version 1.87.0 (#3185)
+ - Patched an issue preventing TBB from building with clang 21.1 (#3223)
+
+======================================================================
 v5.0.0 (10 December 2024)
 ======================================================================
 

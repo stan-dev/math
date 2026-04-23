@@ -14,8 +14,8 @@ namespace math {
 //                            0 <= theta[n] <= 1;  SUM theta = 1]
 template <bool propto, typename T_prob,
           require_eigen_col_vector_t<T_prob>* = nullptr>
-return_type_t<T_prob> multinomial_lpmf(const std::vector<int>& ns,
-                                       const T_prob& theta) {
+inline return_type_t<T_prob> multinomial_lpmf(const std::vector<int>& ns,
+                                              const T_prob& theta) {
   static constexpr const char* function = "multinomial_lpmf";
   check_size_match(function, "Size of number of trials variable", ns.size(),
                    "rows of probabilities parameter", theta.rows());
@@ -25,7 +25,7 @@ return_type_t<T_prob> multinomial_lpmf(const std::vector<int>& ns,
 
   return_type_t<T_prob> lp(0.0);
 
-  if (include_summand<propto>::value) {
+  if constexpr (include_summand<propto>::value) {
     double sum = 1.0;
     for (int n : ns) {
       sum += n;
@@ -33,7 +33,7 @@ return_type_t<T_prob> multinomial_lpmf(const std::vector<int>& ns,
     }
     lp += lgamma(sum);
   }
-  if (include_summand<propto, T_prob>::value) {
+  if constexpr (include_summand<propto, T_prob>::value) {
     for (unsigned int i = 0; i < ns.size(); ++i) {
       lp += multiply_log(ns[i], theta_ref.coeff(i));
     }
@@ -42,8 +42,8 @@ return_type_t<T_prob> multinomial_lpmf(const std::vector<int>& ns,
 }
 
 template <typename T_prob>
-return_type_t<T_prob> multinomial_lpmf(const std::vector<int>& ns,
-                                       const T_prob& theta) {
+inline return_type_t<T_prob> multinomial_lpmf(const std::vector<int>& ns,
+                                              const T_prob& theta) {
   return multinomial_lpmf<false>(ns, theta);
 }
 

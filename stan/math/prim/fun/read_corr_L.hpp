@@ -34,9 +34,9 @@ namespace math {
  * canonical partial correlations.
  */
 template <typename T, require_eigen_vector_t<T>* = nullptr>
-Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic> read_corr_L(
-    const T& CPCs,  // on (-1, 1)
-    size_t K) {
+inline Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
+read_corr_L(const T& CPCs,  // on (-1, 1)
+            size_t K) {
   using T_scalar = value_type_t<T>;
   if (K == 0) {
     return {};
@@ -90,7 +90,7 @@ Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic> read_corr_L(
  * @tparam T type of the array (must be derived from \c Eigen::ArrayBase and
  * have one compile-time dimension equal to 1)
  * @tparam Lp A scalar type for the lp argument. The scalar type of T should be
- * convertable to this.
+ * convertible to this.
  * @param CPCs The (K choose 2) canonical partial correlations in
  * (-1, 1).
  * @param K Dimensionality of correlation matrix.
@@ -101,8 +101,8 @@ Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic> read_corr_L(
  */
 template <typename T, typename Lp, require_eigen_vector_t<T>* = nullptr,
           require_convertible_t<value_type_t<T>, Lp>* = nullptr>
-Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic> read_corr_L(
-    const T& CPCs, size_t K, Lp& log_prob) {
+inline Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
+read_corr_L(const T& CPCs, size_t K, Lp& log_prob) {
   using T_scalar = value_type_t<T>;
   if (K == 0) {
     return {};

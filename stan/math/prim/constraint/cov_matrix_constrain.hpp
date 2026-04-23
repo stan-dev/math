@@ -56,7 +56,7 @@ cov_matrix_constrain(const T& x, Eigen::Index K) {
  * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase and
  * have one compile-time dimension equal to 1)
  * @tparam Lp A scalar type for the lp argument. The scalar type of T should be
- * convertable to this.
+ * convertible to this.
  * @param x The vector to convert to a covariance matrix.
  * @param K The dimensions of the resulting covariance matrix.
  * @param lp Reference
@@ -102,9 +102,10 @@ cov_matrix_constrain(const T& x, Eigen::Index K, Lp& lp) {
  * @throws std::domain_error if (x.size() != K + (K choose 2)).
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
-inline auto cov_matrix_constrain(const T& x, Eigen::Index K) {
-  return apply_vector_unary<T>::apply(
-      x, [K](auto&& v) { return cov_matrix_constrain(v, K); });
+inline auto cov_matrix_constrain(T&& x, Eigen::Index K) {
+  return apply_vector_unary<T>::apply(std::forward<T>(x), [K](auto&& v) {
+    return cov_matrix_constrain(std::forward<decltype(v)>(v), K);
+  });
 }
 
 /**
@@ -116,7 +117,7 @@ inline auto cov_matrix_constrain(const T& x, Eigen::Index K) {
  * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
  * `Eigen::DenseBase` with compile time dynamic rows and 1 column
  * @tparam Lp Scalar type for the lp argument. The scalar type of T should be
- * convertable to this.
+ * convertible to this.
  * @param x The vector to convert to a covariance matrix
  * @param K The dimensions of the resulting covariance matrix
  * @param[in, out] lp log density accumulator
@@ -124,9 +125,10 @@ inline auto cov_matrix_constrain(const T& x, Eigen::Index K) {
  */
 template <typename T, typename Lp, require_std_vector_t<T>* = nullptr,
           require_convertible_t<return_type_t<T>, Lp>* = nullptr>
-inline auto cov_matrix_constrain(const T& x, Eigen::Index K, Lp& lp) {
-  return apply_vector_unary<T>::apply(
-      x, [&lp, K](auto&& v) { return cov_matrix_constrain(v, K, lp); });
+inline auto cov_matrix_constrain(T&& x, Eigen::Index K, Lp& lp) {
+  return apply_vector_unary<T>::apply(std::forward<T>(x), [&lp, K](auto&& v) {
+    return cov_matrix_constrain(std::forward<decltype(v)>(v), K, lp);
+  });
 }
 
 /**
@@ -143,7 +145,7 @@ inline auto cov_matrix_constrain(const T& x, Eigen::Index K, Lp& lp) {
  *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
  *  and 1 column, or standard vector thereof
  * @tparam Lp A scalar type for the lp argument. The scalar type of T should be
- * convertable to this.
+ * convertible to this.
  * @param x The vector to convert to a covariance matrix
  * @param K The dimensions of the resulting covariance matrix
  * @param[in, out] lp log density accumulator
@@ -151,11 +153,11 @@ inline auto cov_matrix_constrain(const T& x, Eigen::Index K, Lp& lp) {
  */
 template <bool Jacobian, typename T, typename Lp,
           require_convertible_t<return_type_t<T>, Lp>* = nullptr>
-inline auto cov_matrix_constrain(const T& x, Eigen::Index K, Lp& lp) {
+inline auto cov_matrix_constrain(T&& x, Eigen::Index K, Lp& lp) {
   if constexpr (Jacobian) {
-    return cov_matrix_constrain(x, K, lp);
+    return cov_matrix_constrain(std::forward<T>(x), K, lp);
   } else {
-    return cov_matrix_constrain(x, K);
+    return cov_matrix_constrain(std::forward<T>(x), K);
   }
 }
 

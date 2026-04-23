@@ -22,7 +22,8 @@ namespace math {
 template <typename T_y, typename T_scale,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_scale>* = nullptr>
-return_type_t<T_y, T_scale> rayleigh_cdf(const T_y& y, const T_scale& sigma) {
+inline return_type_t<T_y, T_scale> rayleigh_cdf(const T_y& y,
+                                                const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_scale>;
   using T_y_ref = ref_type_if_not_constant_t<T_y>;
   using T_sigma_ref = ref_type_if_not_constant_t<T_scale>;
@@ -45,23 +46,22 @@ return_type_t<T_y, T_scale> rayleigh_cdf(const T_y& y, const T_scale& sigma) {
 
   auto ops_partials = make_partials_propagator(y_ref, sigma_ref);
 
-  const auto& inv_sigma
-      = to_ref_if<!is_constant_all<T_scale>::value>(inv(sigma_val));
+  const auto& inv_sigma = to_ref_if<is_autodiff_v<T_scale>>(inv(sigma_val));
   const auto& inv_sigma_square
-      = to_ref_if<!is_constant_all<T_y, T_scale>::value>(square(inv_sigma));
-  const auto& exp_val = to_ref_if<!is_constant_all<T_y, T_scale>::value>(
+      = to_ref_if<is_any_autodiff_v<T_y, T_scale>>(square(inv_sigma));
+  const auto& exp_val = to_ref_if<is_any_autodiff_v<T_y, T_scale>>(
       exp(-0.5 * square(y_val) * inv_sigma_square));
 
   T_partials_return cdf = prod(1 - exp_val);
 
-  if (!is_constant_all<T_y, T_scale>::value) {
-    const auto& common_deriv = to_ref_if<(!is_constant_all<T_y>::value
-                                          && !is_constant_all<T_scale>::value)>(
-        y_val * inv_sigma_square * exp_val / (1.0 - exp_val) * cdf);
-    if (!is_constant_all<T_y>::value) {
+  if constexpr (is_any_autodiff_v<T_y, T_scale>) {
+    const auto& common_deriv
+        = to_ref_if<(is_autodiff_v<T_y> && is_autodiff_v<T_scale>)>(
+            y_val * inv_sigma_square * exp_val / (1.0 - exp_val) * cdf);
+    if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials) = common_deriv;
     }
-    if (!is_constant_all<T_scale>::value) {
+    if constexpr (is_autodiff_v<T_scale>) {
       partials<1>(ops_partials) = -y_val * inv_sigma * common_deriv;
     }
   }

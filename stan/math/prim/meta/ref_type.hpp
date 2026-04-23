@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta/is_constant.hpp>
+#include <stan/math/prim/meta/is_autodiff.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
 #include <stan/math/prim/meta/is_arena_matrix.hpp>
 #include <stan/math/prim/meta/is_vector.hpp>
@@ -59,7 +60,7 @@ using ref_type_if_t = typename ref_type_if<Condition, T>::type;
 
 template <typename T>
 using ref_type_if_not_constant_t =
-    typename ref_type_if<!is_constant<T>::value, T>::type;
+    typename ref_type_if<is_autodiff_v<T>, T>::type;
 
 }  // namespace stan
 

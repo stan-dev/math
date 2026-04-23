@@ -8,17 +8,18 @@ namespace stan {
 namespace math {
 namespace internal {
 template <typename T, int R, int C>
-void resize(Eigen::Matrix<T, R, C>& x, const std::vector<int>& dims, int pos) {
+inline void resize(Eigen::Matrix<T, R, C>& x, const std::vector<int>& dims,
+                   int pos) {
   x.resize(dims[pos], dims[pos + 1]);
 }
 
 template <typename T>
-void resize(T /*x*/, const std::vector<int>& /*dims*/, int /*pos*/) {
+inline void resize(T /*x*/, const std::vector<int>& /*dims*/, int /*pos*/) {
   // no-op
 }
 
 template <typename T>
-void resize(std::vector<T>& x, const std::vector<int>& dims, int pos) {
+inline void resize(std::vector<T>& x, const std::vector<int>& dims, int pos) {
   x.resize(dims[pos]);
   ++pos;
   if (pos >= static_cast<int>(dims.size())) {

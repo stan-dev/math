@@ -14,7 +14,7 @@ namespace stan {
 namespace math {
 
 /**
- * Return the Cholesky factor of the correlation matrix of the sepcified
+ * Return the Cholesky factor of the correlation matrix of the specified
  * size read from the unconstrained vector `y`. A total of K choose 2
  * elements are required to build a K by K Cholesky factor.
  *
@@ -25,7 +25,7 @@ namespace math {
  * @return Cholesky factor of correlation matrix
  */
 template <typename T, require_var_vector_t<T>* = nullptr>
-var_value<Eigen::MatrixXd> cholesky_corr_constrain(const T& y, int K) {
+inline var_value<Eigen::MatrixXd> cholesky_corr_constrain(const T& y, int K) {
   using std::sqrt;
   int k_choose_2 = (K * (K - 1)) / 2;
   check_size_match("cholesky_corr_constrain", "y.size()", y.size(),
@@ -77,7 +77,7 @@ var_value<Eigen::MatrixXd> cholesky_corr_constrain(const T& y, int K) {
 }
 
 /**
- * Return the Cholesky factor of the correlation matrix of the sepcified
+ * Return the Cholesky factor of the correlation matrix of the specified
  * size read from the unconstrained vector `y`. A total of K choose 2
  * elements are required to build a K by K Cholesky factor.
  *
@@ -89,8 +89,8 @@ var_value<Eigen::MatrixXd> cholesky_corr_constrain(const T& y, int K) {
  * @return Cholesky factor of correlation matrix
  */
 template <typename T, require_var_vector_t<T>* = nullptr>
-var_value<Eigen::MatrixXd> cholesky_corr_constrain(const T& y, int K,
-                                                   scalar_type_t<T>& lp) {
+inline var_value<Eigen::MatrixXd> cholesky_corr_constrain(
+    const T& y, int K, scalar_type_t<T>& lp) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::sqrt;

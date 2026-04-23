@@ -40,7 +40,6 @@
 #include <stan/math/fwd/fun/fmod.hpp>
 #include <stan/math/fwd/fun/gamma_p.hpp>
 #include <stan/math/fwd/fun/gamma_q.hpp>
-#include <stan/math/fwd/fun/grad_inc_beta.hpp>
 #include <stan/math/fwd/fun/hypergeometric_1F0.hpp>
 #include <stan/math/fwd/fun/hypergeometric_2F1.hpp>
 #include <stan/math/fwd/fun/hypergeometric_pFq.hpp>

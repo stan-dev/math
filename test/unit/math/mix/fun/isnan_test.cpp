@@ -2,7 +2,7 @@
 #include <limits>
 
 template <typename T>
-void expect_isnan() {
+inline void expect_isnan() {
   // C++ idiom for clients of the math library
   // std::isnan explicit using; stan::math::nan by ADL
   using std::isnan;

@@ -35,3 +35,18 @@ TEST(MathMatrixPrimMat, cholesky_decompose_exception) {
   EXPECT_THROW_MSG(stan::math::cholesky_decompose(m), std::domain_error,
                    "is not symmetric");
 }
+
+TEST(MathMatrixPrimMat, cholesky_decompose_expressions) {
+  // Test for https://github.com/stan-dev/math/issues/3198
+  stan::math::matrix_d A(2, 3);
+  A << 1, 2, 3, 4, 5, 6;
+
+  stan::math::vector_d L_u(3);
+  L_u << 1, 0, 0.5;
+
+  auto L = stan::math::cholesky_corr_constrain(L_u, 3);
+
+  EXPECT_NO_THROW(stan::math::cholesky_decompose(stan::math::multiply(
+      stan::math::multiply(A, stan::math::multiply_lower_tri_self_transpose(L)),
+      stan::math::transpose(A))));
+}

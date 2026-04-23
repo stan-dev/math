@@ -59,7 +59,7 @@ struct matvec_mul_opt<elt_multiply_<Mat, broadcast_<VecT, true, false>>> {
   /**
    * Generates kernel code for the argument of rowwise reduction, applying the
    * optimization - ignoring the triangular view of the vector, as it is already
-   * handeled by rowwise reduction.
+   * handled by rowwise reduction.
    * @param mul argument of the rowwise reduction
    * @param[in,out] generated map from (pointer to) already generated local
    * operations to variable names
@@ -116,7 +116,7 @@ struct matvec_mul_opt<elt_multiply_<Mat, broadcast_<VecT, true, false>>> {
  * @tparam T type of first argument
  * @tparam operation type with member function generate that accepts two
  * variable names and returns OpenCL source code for reduction operation_cl
- * @tparam PassZero whether \c operation passes trough zeros
+ * @tparam PassZero whether \c operation passes through zeros
  */
 template <typename Derived, typename T, typename operation, bool PassZero>
 class rowwise_reduction
@@ -408,7 +408,7 @@ struct max_op {
   }
 
   inline static std::string init() {
-    if (std::is_floating_point<T>()) {
+    if constexpr (std::is_floating_point<T>()) {
       return "-INFINITY";
     }
     return "INT_MIN";

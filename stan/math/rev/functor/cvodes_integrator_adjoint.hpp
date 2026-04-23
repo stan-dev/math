@@ -319,7 +319,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
                       &cvodes_integrator_adjoint_vari::cv_jacobian_rhs_states));
 
     // initialize backward sensitivity system of CVODES as needed
-    if (is_var_return_ && !is_var_only_ts_) {
+    if constexpr (is_var_return_ && !is_var_only_ts_) {
       CHECK_CVODES_CALL(CVodeAdjInit(solver_->cvodes_mem_,
                                      num_steps_between_checkpoints_,
                                      interpolation_polynomial_));
@@ -335,7 +335,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
     for (size_t n = 0; n < ts_dbl.size(); ++n) {
       double t_final = ts_dbl[n];
       if (t_final != t_init) {
-        if (is_var_return_ && !is_var_only_ts_) {
+        if constexpr (is_var_return_ && !is_var_only_ts_) {
           int ncheck;
 
           CHECK_CVODES_CALL(CVodeF(solver_->cvodes_mem_, t_final,
@@ -348,7 +348,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
         }
       }
       solver_->y_[n] = solver_->state_forward_;
-      if (is_var_return_) {
+      if constexpr (is_var_return_) {
         for (std::size_t i = 0; i < N_; ++i)
           y_return_varis_[N_ * n + i]
               = new vari(solver_->state_forward_.coeff(i), false);
@@ -399,13 +399,13 @@ class cvodes_integrator_adjoint_vari : public vari_base {
   void set_zero_adjoint() final{};
 
   void chain() final {
-    if (!is_var_return_) {
+    if constexpr (!is_var_return_) {
       return;
     }
 
     // for sensitivities wrt to ts we do not need to run the backward
     // integration
-    if (is_var_ts_) {
+    if constexpr (is_var_ts_) {
       Eigen::VectorXd step_sens = Eigen::VectorXd::Zero(N_);
       for (int i = 0; i < solver_->ts_.size(); ++i) {
         for (int j = 0; j < N_; ++j) {
@@ -418,7 +418,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
         step_sens.setZero();
       }
 
-      if (is_var_only_ts_) {
+      if constexpr (is_var_only_ts_) {
         return;
       }
     }
@@ -473,7 +473,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
 
           // Allocate space for backwards quadrature needed when
           // parameters vary.
-          if (is_any_var_args_) {
+          if constexpr (is_any_var_args_) {
             CHECK_CVODES_CALL(
                 CVodeQuadInitB(solver_->cvodes_mem_, index_backward_,
                                &cvodes_integrator_adjoint_vari::cv_quad_rhs_adj,
@@ -495,7 +495,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
           CHECK_CVODES_CALL(CVodeReInitB(solver_->cvodes_mem_, index_backward_,
                                          t_init, solver_->nv_state_backward_));
 
-          if (is_any_var_args_) {
+          if constexpr (is_any_var_args_) {
             CHECK_CVODES_CALL(CVodeQuadReInitB(
                 solver_->cvodes_mem_, index_backward_, solver_->nv_quad_));
           }
@@ -508,7 +508,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
         CHECK_CVODES_CALL(CVodeGetB(solver_->cvodes_mem_, index_backward_,
                                     &t_init, solver_->nv_state_backward_));
 
-        if (is_any_var_args_) {
+        if constexpr (is_any_var_args_) {
           CHECK_CVODES_CALL(CVodeGetQuadB(solver_->cvodes_mem_, index_backward_,
                                           &t_init, solver_->nv_quad_));
         }
@@ -519,19 +519,18 @@ class cvodes_integrator_adjoint_vari : public vari_base {
     // the adjoints we wanted
 
     // This is the dlog_density / d(initial_time_point) adjoint
-    if (is_var_t0_) {
+    if constexpr (is_var_t0_) {
       adjoint_of(solver_->t0_) += -solver_->state_backward_.dot(
           rhs(t_init, value_of(solver_->y0_), solver_->value_of_args_tuple_));
     }
 
     // These are the dlog_density / d(initial_conditions[s]) adjoints
-    if (is_var_y0_t0_) {
-      forward_as<Eigen::Matrix<var, Eigen::Dynamic, 1>>(solver_->y0_).adj()
-          += solver_->state_backward_;
+    if constexpr (is_var_y0_t0_) {
+      solver_->y0_.adj() += solver_->state_backward_;
     }
 
     // These are the dlog_density / d(parameters[s]) adjoints
-    if (is_any_var_args_) {
+    if constexpr (is_any_var_args_) {
       for (size_t s = 0; s < num_args_vars_; ++s) {
         args_varis_[s]->adj_ += solver_->quad_.coeff(s);
       }

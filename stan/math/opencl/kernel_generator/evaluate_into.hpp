@@ -18,7 +18,8 @@ namespace math {
  */
 template <typename Derived, typename Scalar, typename... Args>
 template <typename T_lhs>
-void operation_cl<Derived, Scalar, Args...>::evaluate_into(T_lhs& lhs) const {
+inline void operation_cl<Derived, Scalar, Args...>::evaluate_into(
+    T_lhs& lhs) const {
   static_assert(
       is_kernel_expression<T_lhs>::value,
       "operation_cl::evaluate_into: left hand side is not a valid expression!");

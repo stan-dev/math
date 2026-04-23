@@ -26,7 +26,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest, ubuntu-24.04-arm]
+        os: [windows-11-arm, windows-latest, ubuntu-24.04-arm]
         config: [
           { label: misc, tests: 'test/unit/*_test.cpp test/unit/math/*_test.cpp test/unit/math/memory' },
           { label: prim, tests: 'test/unit/math/prim' },
@@ -36,31 +36,34 @@ jobs:
         ]
 
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-python@v5
+    - uses: actions/checkout@v6
+    - uses: actions/setup-python@v6
       with:
         python-version: '3.x'
 
-    - uses: r-lib/actions/setup-r@v2
+    - name: Download and Install Rtools45
       if: runner.os == 'Windows'
-      with:
-        r-version: 'release'
-        rtools-version: '44'
+      run: |
+        $ARCH = if ('${{ matrix.os }}' -eq 'windows-11-arm') { 'aarch64' } else { 'x86_64' }
+        $RTOOLS = if ('${{ matrix.os }}' -eq 'windows-11-arm') { "rtools45-$ARCH" } else { 'rtools45' }
 
-    - name: Set path for Rtools44
-      if: runner.os == 'Windows'
-      run: echo "C:/rtools44/usr/bin;C:/rtools44/x86_64-w64-mingw32.static.posix/bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
+        # Installation will hang if the toolchain is already installed
+        if (-Not $(Test-Path -Path "C:/$RTOOLS")) {
+          Invoke-WebRequest `
+              -Uri https://github.com/r-hub/rtools45/releases/download/latest/$RTOOLS.exe `
+              -OutFile "$RTOOLS.exe"
+          Start-Process -FilePath "$RTOOLS.exe" -ArgumentList "/INSTALL /VERYSILENT /SUPPRESSMSGBOXES" -Wait
+        }
+
+        echo "C:/$RTOOLS/usr/bin;C:/$RTOOLS/$ARCH-w64-mingw32.static.posix/bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
+        echo "$(pwd)/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
 
     - name: Build Math libs
       shell: pwsh
       run: |
         Add-Content make\local "CPPFLAGS=-w -Wno-psabi -Wno-misleading-indentation`n"
+        Add-Content make\local "STAN_THREADS=true`n"
         make -f make/standalone math-libs -j2
-
-    - name: Add TBB to PATH
-      if: runner.os == 'Windows'
-      shell: pwsh
-      run: echo "D:/a/math/math/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
 
     - name: Run ${{ matrix.config.label }} unit tests
       shell: pwsh
@@ -68,7 +71,7 @@ jobs:
         python runTests.py -j4 ${{ matrix.config.tests }}
 
     - name: Upload gtest_output xml
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       if: failure()
       with:
         name: gtest_outputs_xml
@@ -80,35 +83,38 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest, ubuntu-24.04-arm]
+        os: [windows-11-arm, windows-latest, ubuntu-24.04-arm]
         group: [1, 2, 3, 4, 5]
 
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-python@v5
+    - uses: actions/checkout@v6
+    - uses: actions/setup-python@v6
       with:
         python-version: '3.x'
 
-    - uses: r-lib/actions/setup-r@v2
+    - name: Download and Install Rtools45
       if: runner.os == 'Windows'
-      with:
-        r-version: 'release'
-        rtools-version: '44'
+      run: |
+        $ARCH = if ('${{ matrix.os }}' -eq 'windows-11-arm') { 'aarch64' } else { 'x86_64' }
+        $RTOOLS = if ('${{ matrix.os }}' -eq 'windows-11-arm') { "rtools45-$ARCH" } else { 'rtools45' }
 
-    - name: Set path for Rtools44
-      if: runner.os == 'Windows'
-      run: echo "C:/rtools44/usr/bin;C:/rtools44/x86_64-w64-mingw32.static.posix/bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
+        # Installation will hang if the toolchain is already installed
+        if (-Not $(Test-Path -Path "C:/$RTOOLS")) {
+          Invoke-WebRequest `
+              -Uri https://github.com/r-hub/rtools45/releases/download/latest/$RTOOLS.exe `
+              -OutFile "$RTOOLS.exe"
+          Start-Process -FilePath "$RTOOLS.exe" -ArgumentList "/INSTALL /VERYSILENT /SUPPRESSMSGBOXES" -Wait
+        }
+
+        echo "C:/$RTOOLS/usr/bin;C:/$RTOOLS/$ARCH-w64-mingw32.static.posix/bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
+        echo "$(pwd)/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
 
     - name: Build Math libs
       shell: pwsh
       run: |
         Add-Content make\local "CPPFLAGS=-w -Wno-psabi -Wno-misleading-indentation`n"
+        Add-Content make\local "STAN_THREADS=true`n"
         make -f make/standalone math-libs -j2
-
-    - name: Add TBB to PATH
-      if: runner.os == 'Windows'
-      shell: pwsh
-      run: echo "D:/a/math/math/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
 
     - name: Run mix/fun unit tests
       shell: pwsh
@@ -128,7 +134,7 @@ jobs:
         python runTests.py -j2 $MixFunProbTestsArray[(${{ matrix.group }} - 1)]
 
     - name: Upload gtest_output xml
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       if: failure()
       with:
         name: gtest_outputs_xml

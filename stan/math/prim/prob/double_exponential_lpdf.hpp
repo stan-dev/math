@@ -39,7 +39,7 @@ namespace math {
 template <bool propto, typename T_y, typename T_loc, typename T_scale,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_loc, T_scale>* = nullptr>
-return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
+inline return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
   using T_y_ref = ref_type_if_not_constant_t<T_y>;
@@ -55,7 +55,7 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
   if (size_zero(y, mu, sigma)) {
     return 0.0;
   }
-  if (!include_summand<propto, T_y, T_loc, T_scale>::value) {
+  if constexpr (!include_summand<propto, T_y, T_loc, T_scale>::value) {
     return 0.0;
   }
 
@@ -71,34 +71,33 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
   check_positive_finite(function, "Scale parameter", sigma_val);
 
   const auto& inv_sigma = to_ref(inv(sigma_val));
-  const auto& y_m_mu
-      = to_ref_if<!is_constant_all<T_y, T_loc>::value>(y_val - mu_val);
+  const auto& y_m_mu = to_ref_if<is_any_autodiff_v<T_y, T_loc>>(y_val - mu_val);
   const auto& abs_diff_y_mu = fabs(y_m_mu);
   const auto& scaled_diff
-      = to_ref_if<!is_constant_all<T_scale>::value>(abs_diff_y_mu * inv_sigma);
+      = to_ref_if<is_autodiff_v<T_scale>>(abs_diff_y_mu * inv_sigma);
 
   size_t N = max_size(y, mu, sigma);
-  if (include_summand<propto>::value) {
+  if constexpr (include_summand<propto>::value) {
     logp -= N * LOG_TWO;
   }
-  if (include_summand<propto, T_scale>::value) {
+  if constexpr (include_summand<propto, T_scale>::value) {
     logp -= sum(log(sigma_val)) * N / math::size(sigma);
   }
   logp -= sum(scaled_diff);
 
-  if (!is_constant_all<T_y, T_loc>::value) {
+  if constexpr (is_any_autodiff_v<T_y, T_loc>) {
     const auto& diff_sign = sign(y_m_mu);
     const auto& rep_deriv
-        = to_ref_if<(!is_constant_all<T_y>::value
-                     && !is_constant_all<T_loc>::value)>(diff_sign * inv_sigma);
-    if (!is_constant_all<T_y>::value) {
+        = to_ref_if<(is_autodiff_v<T_y> && is_autodiff_v<T_loc>)>(diff_sign
+                                                                  * inv_sigma);
+    if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials) = -rep_deriv;
     }
-    if (!is_constant_all<T_loc>::value) {
+    if constexpr (is_autodiff_v<T_loc>) {
       partials<1>(ops_partials) = rep_deriv;
     }
   }
-  if (!is_constant_all<T_scale>::value) {
+  if constexpr (is_autodiff_v<T_scale>) {
     partials<2>(ops_partials) = inv_sigma * (scaled_diff - 1);
   }
 
@@ -106,7 +105,7 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
 }
 
 template <typename T_y, typename T_loc, typename T_scale>
-return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
+inline return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma) {
   return double_exponential_lpdf<false>(y, mu, sigma);
 }

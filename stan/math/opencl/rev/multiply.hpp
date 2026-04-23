@@ -37,10 +37,10 @@ inline auto multiply(T_a&& A, T_b&& B) {
   return make_callback_var(
       value_of(a_arena) * value_of(b_arena),
       [a_arena, b_arena](vari_value<matrix_cl<double>>& res) mutable {
-        if (!is_constant<T_a>::value) {
+        if constexpr (is_autodiff_v<T_a>) {
           adjoint_of(a_arena) += res.adj() * transpose(value_of(b_arena));
         }
-        if (!is_constant<T_b>::value) {
+        if constexpr (is_autodiff_v<T_b>) {
           adjoint_of(b_arena) += transpose(value_of(a_arena)) * res.adj();
         }
       });

@@ -4,10 +4,10 @@
 #include <functional>
 #include <tuple>
 #include <utility>
-
 namespace stan {
 namespace math {
 namespace internal {
+
 /*
  * Invoke the functor f with arguments given in t and indexed in the index
  * sequence I with other arguments possibly before or after
@@ -24,12 +24,11 @@ namespace internal {
  * tuple.
  */
 template <class F, class Tuple, typename... PreArgs, std::size_t... I>
-constexpr decltype(auto) apply_impl(F&& f, Tuple&& t,
-                                    std::index_sequence<I...> i,
-                                    PreArgs&&... pre_args) {
-  return std::forward<F>(f)(
-      std::forward<PreArgs>(pre_args)...,
-      std::forward<decltype(std::get<I>(t))>(std::get<I>(t))...);
+inline constexpr decltype(auto) apply_impl(F&& f, Tuple&& t,
+                                           std::index_sequence<I...> /* i */,
+                                           PreArgs&&... pre_args) {
+  return std::forward<F>(f)(std::forward<PreArgs>(pre_args)...,
+                            std::get<I>(std::forward<Tuple>(t))...);
 }
 }  // namespace internal
 
@@ -49,7 +48,7 @@ constexpr decltype(auto) apply_impl(F&& f, Tuple&& t,
  * tuple.
  */
 template <class F, class Tuple, typename... PreArgs>
-constexpr decltype(auto) apply(F&& f, Tuple&& t, PreArgs&&... pre_args) {
+inline constexpr decltype(auto) apply(F&& f, Tuple&& t, PreArgs&&... pre_args) {
   return internal::apply_impl(
       std::forward<F>(f), std::forward<Tuple>(t),
       std::make_index_sequence<

@@ -35,7 +35,8 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_y, typename T_dof>
-return_type_t<T_y, T_dof> chi_square_lccdf(const T_y& y, const T_dof& nu) {
+inline return_type_t<T_y, T_dof> chi_square_lccdf(const T_y& y,
+                                                  const T_dof& nu) {
   using T_partials_return = partials_return_t<T_y, T_dof>;
   using std::exp;
   using std::log;
@@ -70,12 +71,12 @@ return_type_t<T_y, T_dof> chi_square_lccdf(const T_y& y, const T_dof& nu) {
     }
   }
 
-  VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
-      gamma_vec(math::size(nu));
-  VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
-      digamma_vec(math::size(nu));
+  VectorBuilder<is_autodiff_v<T_dof>, T_partials_return, T_dof> gamma_vec(
+      math::size(nu));
+  VectorBuilder<is_autodiff_v<T_dof>, T_partials_return, T_dof> digamma_vec(
+      math::size(nu));
 
-  if (!is_constant_all<T_dof>::value) {
+  if constexpr (is_autodiff_v<T_dof>) {
     for (size_t i = 0; i < stan::math::size(nu); i++) {
       const T_partials_return alpha_dbl = nu_vec.val(i) * 0.5;
       gamma_vec[i] = tgamma(alpha_dbl);
@@ -98,12 +99,12 @@ return_type_t<T_y, T_dof> chi_square_lccdf(const T_y& y, const T_dof& nu) {
 
     ccdf_log += log(Pn);
 
-    if (!is_constant_all<T_y>::value) {
+    if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials)[n] -= beta_dbl * exp(-beta_dbl * y_dbl)
                                       * pow(beta_dbl * y_dbl, alpha_dbl - 1)
                                       / tgamma(alpha_dbl) / Pn;
     }
-    if (!is_constant_all<T_dof>::value) {
+    if constexpr (is_autodiff_v<T_dof>) {
       partials<1>(ops_partials)[n]
           += 0.5
              * grad_reg_inc_gamma(alpha_dbl, beta_dbl * y_dbl, gamma_vec[n],

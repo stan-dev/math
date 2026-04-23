@@ -1,0 +1,36 @@
+# Jamfile.v2
+#
+# Copyright 2010 Steven Watanabe
+# Copyright 2024 Matt Borland
+#
+# Distributed under the Boost Software License, Version 1.0. (See
+# accompanying file LICENSE_1_0.txt or copy at
+# http://www.boost.org/LICENSE_1_0.txt)
+
+import-search /boost/config/checks ;
+import config : requires ;
+
+project
+    : common-requirements <library>$(boost_dependencies) ;
+
+local SOURCES = random_device.cpp ;
+
+lib boost_random
+
+  # Sources
+  : ../src/$(SOURCES)
+
+  # Requirements
+  : <link>shared:<define>BOOST_RANDOM_DYN_LINK=1
+    <define>BOOST_RANDOM_SOURCE=1
+
+    [ requires cxx11_noexcept cxx11_rvalue_references sfinae_expr cxx11_auto_declarations cxx11_lambdas cxx11_unified_initialization_syntax cxx11_hdr_tuple cxx11_hdr_initializer_list cxx11_hdr_chrono cxx11_thread_local cxx11_constexpr cxx11_nullptr cxx11_numeric_limits cxx11_decltype cxx11_hdr_array cxx11_hdr_atomic cxx11_hdr_type_traits cxx11_allocator cxx11_explicit_conversion_operators ]
+
+  # default-build
+  :
+
+  # usage-requirements
+  : <link>shared:<define>BOOST_RANDOM_DYN_LINK=1
+    <define>BOOST_RANDOM_NO_LIB=1
+
+;

@@ -118,7 +118,7 @@ class constant_ : public operation_cl<constant_<T>, T> {
  *
  * In most cases scalars should be directly used instead of this. This is,
  * however, useful for initializing some expression to specific value if that
- * expresssion could also be plain `matrix_cl`.
+ * expression could also be plain `matrix_cl`.
  *
  * @tparam T type of argument
  * @param a input argument

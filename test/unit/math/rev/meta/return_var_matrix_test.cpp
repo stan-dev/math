@@ -1,8 +1,9 @@
 
 #include <stan/math/rev.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathFunctions, ReturnVarMatrix) {
+TEST_F(AgradRev, MathFunctions_ReturnVarMatrix) {
   using stan::return_var_matrix_t;
   using stan::math::var;
   using stan::math::var_value;

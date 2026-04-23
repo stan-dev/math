@@ -70,7 +70,6 @@
 #include <stan/math/rev/fun/generalized_inverse.hpp>
 #include <stan/math/rev/fun/gp_periodic_cov.hpp>
 #include <stan/math/rev/fun/grad.hpp>
-#include <stan/math/rev/fun/grad_inc_beta.hpp>
 #include <stan/math/rev/fun/hypergeometric_1F0.hpp>
 #include <stan/math/rev/fun/hypergeometric_2F1.hpp>
 #include <stan/math/rev/fun/hypergeometric_pFq.hpp>

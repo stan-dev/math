@@ -14,6 +14,7 @@ TEST(ProbDistributionsMultiNormalPrec, vectorized) {
   Eigen::RowVectorXd mu_t(3);
   std::vector<Eigen::VectorXd> vec_mu(2);
   std::vector<Eigen::RowVectorXd> vec_mu_t(2);
+  mu << -1.0, 2.0, 4.0;
   vec_mu[0] = mu;
   vec_mu_t[0] = mu;
   mu << 2.0, -1.0, 4.0;

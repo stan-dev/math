@@ -101,7 +101,7 @@ inline Eigen::Matrix<scalar_type_t<M>, -1, -1> fft2(const M& x) {
  * FFT and inverse FFT (or vice-versa) is the identity.
  *
  * @tparam M type of complex matrix argument
- * @param[in] y matrix to inverse trnasform
+ * @param[in] y matrix to inverse transform
  * @return inverse discrete 2D Fourier transform of `y`
  */
 template <typename M, require_eigen_dense_dynamic_vt<is_complex, M>* = nullptr,

@@ -31,7 +31,7 @@ namespace math {
 template <bool propto, typename T_n, typename T_prob,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_n, T_prob>* = nullptr>
-return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
+inline return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
   using T_partials_return = partials_return_t<T_n, T_prob>;
   using T_theta_ref = ref_type_t<T_prob>;
   using T_n_ref = ref_type_t<T_n>;
@@ -48,7 +48,7 @@ return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
   if (size_zero(n, theta)) {
     return 0.0;
   }
-  if (!include_summand<propto, T_prob>::value) {
+  if constexpr (!include_summand<propto, T_prob>::value) {
     return 0.0;
   }
 
@@ -68,12 +68,12 @@ return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
     // avoid nans when sum == N or sum == 0
     if (sum == N) {
       logp += N * log(theta_dbl);
-      if (!is_constant_all<T_prob>::value) {
+      if constexpr (is_autodiff_v<T_prob>) {
         partials<0>(ops_partials)[0] += N / theta_dbl;
       }
     } else if (sum == 0) {
       logp += N * log1m(theta_dbl);
-      if (!is_constant_all<T_prob>::value) {
+      if constexpr (is_autodiff_v<T_prob>) {
         partials<0>(ops_partials)[0] += N / (theta_dbl - 1);
       }
     } else {
@@ -83,7 +83,7 @@ return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
       logp += sum * log_theta;
       logp += (N - sum) * log1m_theta;
 
-      if (!is_constant_all<T_prob>::value) {
+      if constexpr (is_autodiff_v<T_prob>) {
         partials<0>(ops_partials)[0] += sum * inv(theta_dbl);
         partials<0>(ops_partials)[0] += (N - sum) * inv(theta_dbl - 1);
       }
@@ -99,7 +99,7 @@ return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
         logp += log1m(theta_dbl);
       }
 
-      if (!is_constant_all<T_prob>::value) {
+      if constexpr (is_autodiff_v<T_prob>) {
         if (n_int == 1) {
           partials<0>(ops_partials)[n] += inv(theta_dbl);
         } else {

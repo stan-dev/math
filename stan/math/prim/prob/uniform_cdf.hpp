@@ -20,8 +20,9 @@ namespace math {
 template <typename T_y, typename T_low, typename T_high,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_low, T_high>* = nullptr>
-return_type_t<T_y, T_low, T_high> uniform_cdf(const T_y& y, const T_low& alpha,
-                                              const T_high& beta) {
+inline return_type_t<T_y, T_low, T_high> uniform_cdf(const T_y& y,
+                                                     const T_low& alpha,
+                                                     const T_high& beta) {
   using T_partials_return = partials_return_t<T_y, T_low, T_high>;
   using T_y_ref = ref_type_if_not_constant_t<T_y>;
   using T_alpha_ref = ref_type_if_not_constant_t<T_low>;
@@ -56,32 +57,30 @@ return_type_t<T_y, T_low, T_high> uniform_cdf(const T_y& y, const T_low& alpha,
   auto ops_partials = make_partials_propagator(y_ref, alpha_ref, beta_ref);
 
   const auto& b_minus_a
-      = to_ref_if<!is_constant_all<T_y, T_low, T_high>::value>(beta_val
-                                                               - alpha_val);
-  const auto& cdf_n = to_ref_if<!is_constant_all<T_y, T_low>::value>(
+      = to_ref_if<is_any_autodiff_v<T_y, T_low, T_high>>(beta_val - alpha_val);
+  const auto& cdf_n = to_ref_if<is_any_autodiff_v<T_y, T_low>>(
       (y_val - alpha_val) / b_minus_a);
 
   T_partials_return cdf = prod(cdf_n);
 
-  if (!is_constant_all<T_y, T_low, T_high>::value) {
+  if constexpr (is_any_autodiff_v<T_y, T_low, T_high>) {
     const auto& rep_deriv
-        = to_ref_if<(!is_constant_all<T_y, T_low>::value
-                     && !is_constant_all<T_high>::value)>(cdf / b_minus_a);
-    if (!is_constant_all<T_y, T_low>::value) {
-      auto deriv_y
-          = to_ref_if<(!is_constant_all<T_low>::value
-                       && !is_constant_all<T_y>::value)>(rep_deriv / cdf_n);
-      if (!is_constant_all<T_low>::value) {
+        = to_ref_if<(is_any_autodiff_v<T_y, T_low> && is_autodiff_v<T_high>)>(
+            cdf / b_minus_a);
+    if constexpr (is_any_autodiff_v<T_y, T_low>) {
+      auto deriv_y = to_ref_if<(is_autodiff_v<T_low> && is_autodiff_v<T_y>)>(
+          rep_deriv / cdf_n);
+      if constexpr (is_autodiff_v<T_low>) {
         edge<1>(ops_partials).partials_
             = (y_val - beta_val) * deriv_y / b_minus_a;
       }
-      if (!is_constant_all<T_y>::value) {
+      if constexpr (is_autodiff_v<T_y>) {
         partials<0>(ops_partials) = std::move(deriv_y);
       }
     }
-    if (!is_constant_all<T_high>::value) {
-      if (is_vector<T_y>::value && !is_vector<T_low>::value
-          && !is_vector<T_high>::value) {
+    if constexpr (is_autodiff_v<T_high>) {
+      if constexpr (is_vector<T_y>::value && !is_vector<T_low>::value
+                    && !is_vector<T_high>::value) {
         edge<2>(ops_partials).partials_
             = -rep_deriv * max_size(y, alpha, beta) / max_size(alpha, beta);
       } else {

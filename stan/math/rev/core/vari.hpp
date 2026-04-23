@@ -193,7 +193,7 @@ class vari_value<T, require_t<std::is_floating_point<T>>> : public vari_base {
   friend class var_value;
 };
 
-// For backwards compatability the default is double
+// For backwards compatibility the default is double
 using vari = vari_value<double>;
 
 /**

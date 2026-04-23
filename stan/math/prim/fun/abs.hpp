@@ -22,7 +22,7 @@ namespace math {
  * @return absolute value of argument
  */
 template <typename T, require_arithmetic_t<T>* = nullptr>
-inline T abs(T x) {
+inline auto abs(T&& x) {
   return std::abs(x);
 }
 
@@ -35,7 +35,7 @@ inline T abs(T x) {
  * @return absolute value of argument (a real number)
  */
 template <typename T, require_complex_bt<std::is_arithmetic, T>* = nullptr>
-inline auto abs(T x) {
+inline auto abs(T&& x) {
   return std::hypot(x.real(), x.imag());
 }
 
@@ -49,8 +49,8 @@ inline auto abs(T x) {
  */
 struct abs_fun {
   template <typename T>
-  static inline auto fun(const T& x) {
-    return abs(x);
+  static inline auto fun(T&& x) {
+    return abs(std::forward<T>(x));
   }
 };
 
@@ -63,8 +63,9 @@ struct abs_fun {
  * @return Absolute value of each variable in the container.
  */
 template <typename Container, require_ad_container_t<Container>* = nullptr>
-inline auto abs(const Container& x) {
-  return apply_scalar_unary<abs_fun, Container>::apply(x);
+inline auto abs(Container&& x) {
+  return apply_scalar_unary<abs_fun, Container>::apply(
+      std::forward<Container>(x));
 }
 
 /**
@@ -77,9 +78,9 @@ inline auto abs(const Container& x) {
  */
 template <typename Container,
           require_container_bt<std::is_arithmetic, Container>* = nullptr>
-inline auto abs(const Container& x) {
+inline auto abs(Container&& x) {
   return apply_vector_unary<Container>::apply(
-      x, [&](const auto& v) { return v.array().abs(); });
+      std::forward<Container>(x), [](auto&& v) { return v.array().abs(); });
 }
 
 namespace internal {

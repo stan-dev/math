@@ -1,0 +1,34 @@
+# Copyright 2019 Peter Dimov
+# Copyright René Ferdinand Rivera Morell 2024
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at http://boost.org/LICENSE_1_0.txt)
+
+require-b2 5.2 ;
+
+import make ;
+import option ;
+import path ;
+
+local DIST_DIR = [ option.get distdir ] ;
+DIST_DIR ?= [ option.get build-dir ] ;
+DIST_DIR ?= [ path.join $(BOOST_ROOT) dist ] ;
+DIST_DIR ?= dist ;
+DIST_DIR = [ path.root [ path.make $(DIST_DIR) ] [ path.pwd ] ] ;
+
+project /boost/boost_install ;
+
+# BoostConfigVersion.cmake
+
+make BoostConfigVersion.cmake : : @boost-install%make-cmake-config-version : <version>$(BOOST_VERSION) ;
+explicit BoostConfigVersion.cmake ;
+
+explicit
+    [ install dist-cmake
+        : BoostConfigVersion.cmake [ glob *.cmake ]
+        : <location>$(DIST_DIR)/libs/cmake ]
+    [ alias boost_install ]
+    [ alias all : boost_install dist-cmake ]
+    ;
+
+# Install distribution files/execs by default.
+alias dist : dist-cmake ;

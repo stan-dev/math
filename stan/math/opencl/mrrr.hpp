@@ -310,7 +310,7 @@ inline void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diagonal,
   const Eigen::VectorXd subdiagonal_squared
       = subdiagonal.array() * subdiagonal.array();
   get_gresgorin(diagonal, subdiagonal, min_eigval, max_eigval);
-  if (!need_eigenvectors) {
+  if constexpr (!need_eigenvectors) {
     matrix_cl<double> diagonal_cl(diagonal);
     matrix_cl<double> subdiagonal_squared_cl(subdiagonal_squared);
     matrix_cl<double> eigenvalues_cl(n, 1);
@@ -458,7 +458,7 @@ inline void tridiagonal_eigensolver_cl(const matrix_cl<double>& diagonal_cl,
   using std::sqrt;
   const int n = diagonal_cl.rows();
   Eigen::MatrixXd eigenvectors;
-  if (need_eigenvectors) {
+  if constexpr (need_eigenvectors) {
     eigenvectors.resize(n, n);
   }
   Eigen::VectorXd eigenvalues(n);
@@ -502,7 +502,7 @@ inline void tridiagonal_eigensolver_cl(const matrix_cl<double>& diagonal_cl,
     }
     eigenvalues[last] = diagonal[last];
   } else {
-    if (need_eigenvectors) {
+    if constexpr (need_eigenvectors) {
       mrrr_cl<need_eigenvectors>(
           diagonal.segment(last, n - last),
           subdiagonal.segment(last, subdiagonal.size() - last),
@@ -516,7 +516,7 @@ inline void tridiagonal_eigensolver_cl(const matrix_cl<double>& diagonal_cl,
     }
   }
   eigenvalues_cl = to_matrix_cl(std::move(eigenvalues));
-  if (need_eigenvectors) {
+  if constexpr (need_eigenvectors) {
     eigenvectors_cl = to_matrix_cl(std::move(eigenvectors));
   }
 }

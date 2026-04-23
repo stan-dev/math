@@ -45,7 +45,7 @@ inline auto positive_ordered_constrain(const EigVec& x) {
  *
  * @tparam Vec type of the vector
  * @tparam Lp A scalar type for the lp argument. The scalar type of Vec should
- * be convertable to this.
+ * be convertible to this.
  * @param x Free vector of scalars.
  * @param lp Log probability reference.
  * @return Positive, increasing ordered vector.
@@ -53,10 +53,10 @@ inline auto positive_ordered_constrain(const EigVec& x) {
 template <typename Vec, typename Lp, require_col_vector_t<Vec>* = nullptr,
           require_convertible_t<return_type_t<Vec>, Lp>* = nullptr>
 
-inline auto positive_ordered_constrain(const Vec& x, Lp& lp) {
-  const auto& x_ref = to_ref(x);
+inline auto positive_ordered_constrain(Vec&& x, Lp& lp) {
+  auto&& x_ref = to_ref(std::forward<Vec>(x));
   lp += sum(x_ref);
-  return positive_ordered_constrain(x_ref);
+  return positive_ordered_constrain(std::forward<decltype(x_ref)>(x_ref));
 }
 
 /**
@@ -71,9 +71,10 @@ inline auto positive_ordered_constrain(const Vec& x, Lp& lp) {
  * @return Positive, increasing ordered vector
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
-inline auto positive_ordered_constrain(const T& x) {
-  return apply_vector_unary<T>::apply(
-      x, [](auto&& v) { return positive_ordered_constrain(v); });
+inline auto positive_ordered_constrain(T&& x) {
+  return apply_vector_unary<T>::apply(std::forward<T>(x), [](auto&& v) {
+    return positive_ordered_constrain(std::forward<decltype(v)>(v));
+  });
 }
 
 /**
@@ -85,16 +86,17 @@ inline auto positive_ordered_constrain(const T& x) {
  * `Eigen::EigenBase`, a `var_value` with inner type inheriting from
  * `Eigen::EigenBase`
  * @tparam Lp Scalar type for the lp argument. The scalar type of T should be
- * convertable to this.
+ * convertible to this.
  * @param x Free vector of scalars
  * @param[in, out] lp log density accumulator
  * @return Positive, increasing ordered vector
  */
 template <typename T, typename Lp, require_std_vector_t<T>* = nullptr,
           require_convertible_t<return_type_t<T>, Lp>* = nullptr>
-inline auto positive_ordered_constrain(const T& x, Lp& lp) {
-  return apply_vector_unary<T>::apply(
-      x, [&lp](auto&& v) { return positive_ordered_constrain(v, lp); });
+inline auto positive_ordered_constrain(T&& x, Lp& lp) {
+  return apply_vector_unary<T>::apply(std::forward<T>(x), [&lp](auto&& v) {
+    return positive_ordered_constrain(std::forward<decltype(v)>(v), lp);
+  });
 }
 
 /**
@@ -111,18 +113,18 @@ inline auto positive_ordered_constrain(const T& x, Lp& lp) {
  * @tparam Vec A type inheriting from `Eigen::EigenBase`, a `var_value` with
  * inner type inheriting from `Eigen::EigenBase`, or a vector thereof
  * @tparam Lp A scalar type for the lp argument. The scalar type of Vec should
- * be convertable to this.
+ * be convertible to this.
  * @param x Free vector of scalars
- * @param[in, out] lp log density accumulato
+ * @param[in, out] lp log density accumulation
  * @return Positive, increasing ordered vector
  */
 template <bool Jacobian, typename Vec, typename Lp,
           require_convertible_t<return_type_t<Vec>, Lp>* = nullptr>
-inline auto positive_ordered_constrain(const Vec& x, Lp& lp) {
+inline auto positive_ordered_constrain(Vec&& x, Lp& lp) {
   if constexpr (Jacobian) {
-    return positive_ordered_constrain(x, lp);
+    return positive_ordered_constrain(std::forward<Vec>(x), lp);
   } else {
-    return positive_ordered_constrain(x);
+    return positive_ordered_constrain(std::forward<Vec>(x));
   }
 }
 

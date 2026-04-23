@@ -206,7 +206,7 @@ inline T_dst from_matrix_cl(const var_value<T>& a) {
  * @return var with a copy of the data on the host
  */
 template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
-auto from_matrix_cl(const var_value<T>& src) {
+inline auto from_matrix_cl(const var_value<T>& src) {
   return from_matrix_cl<var_value<Eigen::MatrixXd>>(src);
 }
 

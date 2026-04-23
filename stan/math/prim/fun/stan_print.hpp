@@ -12,12 +12,12 @@ namespace math {
 
 template <typename T, require_not_container_t<T>* = nullptr,
           require_not_tuple_t<T>* = nullptr>
-void stan_print(std::ostream* o, const T& x) {
+inline void stan_print(std::ostream* o, const T& x) {
   *o << x;
 }
 
 template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>
-void stan_print(std::ostream* o, const EigVec& x) {
+inline void stan_print(std::ostream* o, const EigVec& x) {
   const auto& x_ref = to_ref(x);
 
   *o << '[';
@@ -32,7 +32,7 @@ void stan_print(std::ostream* o, const EigVec& x) {
 
 template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
           require_not_eigen_vector_t<EigMat>* = nullptr>
-void stan_print(std::ostream* o, const EigMat& x) {
+inline void stan_print(std::ostream* o, const EigMat& x) {
   const auto& x_ref = to_ref(x);
 
   *o << '[';
@@ -54,10 +54,10 @@ void stan_print(std::ostream* o, const EigMat& x) {
 
 // forward decl to allow the next two overloads to call each other
 template <typename T, require_tuple_t<T>* = nullptr>
-void stan_print(std::ostream* o, const T& x);
+inline void stan_print(std::ostream* o, const T& x);
 
 template <typename T, require_std_vector_t<T>* = nullptr>
-void stan_print(std::ostream* o, const T& x) {
+inline void stan_print(std::ostream* o, const T& x) {
   *o << '[';
   for (size_t i = 0; i < x.size(); ++i) {
     if (i > 0) {
@@ -69,7 +69,7 @@ void stan_print(std::ostream* o, const T& x) {
 }
 
 template <typename T, require_tuple_t<T>*>
-void stan_print(std::ostream* o, const T& x) {
+inline void stan_print(std::ostream* o, const T& x) {
   *o << '(';
   size_t i = 0;
   stan::math::for_each(

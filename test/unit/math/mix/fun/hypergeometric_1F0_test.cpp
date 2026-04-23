@@ -1,9 +1,9 @@
 #include <test/unit/math/test_ad.hpp>
 
-TEST(mathMixScalFun, hypergeometric_1f0) {
+TEST(mathMixScalFun, hypergeometric_1F0) {
   auto f = [](const auto& x1, const auto& x2) {
-    using stan::math::hypergeometric_1f0;
-    return hypergeometric_1f0(x1, x2);
+    using stan::math::hypergeometric_1F0;
+    return hypergeometric_1F0(x1, x2);
   };
 
   stan::test::expect_ad(f, 5, 0.3);

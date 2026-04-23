@@ -211,7 +211,7 @@ inline const T& get_base1(
  * @param i5 Fifth index plus 1.
  * @param i6 Sixth index plus 1.
  * @param i7 Seventh index plus 1.
- * @param i8 Eigth index plus 1.
+ * @param i8 Eighth index plus 1.
  * @param error_msg Error message if an index is out of range.
  * @param idx Nested index level to report in error message if
  * the index is out of range.

@@ -1,10 +1,10 @@
 #include <stan/math/rev.hpp>
-#include <test/unit/math/rev/fun/util.hpp>
 #include <test/unit/math/rev/util.hpp>
+#include <test/unit/math/rev/fun/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(ProbDistributionsOrdLog, vv) {
+TEST_F(AgradRev, ProbDistributionsOrdLog_vv) {
   using stan::math::ordered_logistic_lpmf;
   using stan::math::var;
   using stan::math::vector_d;
@@ -27,7 +27,7 @@ TEST(ProbDistributionsOrdLog, vv) {
   EXPECT_FLOAT_EQ(c_v[2].adj(), 0.0);
 }
 
-TEST(ProbDistributionsOrdLog, vd) {
+TEST_F(AgradRev, ProbDistributionsOrdLog_vd) {
   using stan::math::ordered_logistic_lpmf;
   using stan::math::var;
   using stan::math::vector_d;
@@ -59,7 +59,7 @@ TEST(ProbDistributionsOrdLog, vd) {
   EXPECT_FLOAT_EQ(c_v[2].adj(), 0.0);
 }
 
-TEST(ProbDistributionsOrdLog, vv_vec) {
+TEST_F(AgradRev, ProbDistributionsOrdLog_vv_vec) {
   using stan::math::ordered_logistic_lpmf;
   using stan::math::var;
   using stan::math::vector_d;
@@ -88,7 +88,7 @@ TEST(ProbDistributionsOrdLog, vv_vec) {
   EXPECT_FLOAT_EQ(c_v[2].adj(), 0.682830271039293);
 }
 
-TEST(ProbDistributionsOrdLog, vd_vec) {
+TEST_F(AgradRev, ProbDistributionsOrdLog_vd_vec) {
   using stan::math::ordered_logistic_lpmf;
   using stan::math::var;
   using stan::math::vector_d;
@@ -128,7 +128,7 @@ TEST(ProbDistributionsOrdLog, vd_vec) {
   EXPECT_FLOAT_EQ(c_v[2].adj(), 1.27666307650735);
 }
 
-TEST(ProbDistributionsOrdLog, vv_stvec) {
+TEST_F(AgradRev, ProbDistributionsOrdLog_vv_stvec) {
   using stan::math::ordered_logistic_lpmf;
   using stan::math::var;
   using stan::math::vector_d;
@@ -180,7 +180,7 @@ TEST(ProbDistributionsOrdLog, vv_stvec) {
   EXPECT_FLOAT_EQ(std_c_v[3][2].adj(), -0.766741064228543);
 }
 
-TEST(ProbDistributionsOrdLog, vd_stvec) {
+TEST_F(AgradRev, ProbDistributionsOrdLog_vd_stvec) {
   using stan::math::ordered_logistic_lpmf;
   using stan::math::var;
   using stan::math::vector_d;
@@ -253,7 +253,7 @@ TEST(ProbDistributionsOrdLog, vd_stvec) {
   EXPECT_FLOAT_EQ(std_c_v[3][2].adj(), -0.792489941440364);
 }
 
-TEST(ProbDistributionsOrdLog, intErrors) {
+TEST_F(AgradRev, ProbDistributionsOrdLog_intErrors) {
   using stan::math::ordered_logistic_lpmf;
   using stan::math::vector_v;
 
@@ -297,7 +297,7 @@ TEST(ProbDistributionsOrdLog, intErrors) {
   EXPECT_FLOAT_EQ(std_c_v[3][2].adj(), -0.70889017256612);
 }
 
-TEST(ProbDistributionsOrdLog, vv_vec_y1) {
+TEST_F(AgradRev, ProbDistributionsOrdLog_vv_vec_y1) {
   using stan::math::inv_logit;
   using stan::math::ordered_logistic_lpmf;
   using stan::math::var;
@@ -327,7 +327,7 @@ TEST(ProbDistributionsOrdLog, vv_vec_y1) {
   EXPECT_FLOAT_EQ(c_v[2].adj(), 0.0);
 }
 
-TEST(ProbDistributionsOrdLog, single_class) {
+TEST_F(AgradRev, ProbDistributionsOrdLog_single_class) {
   using stan::math::inv_logit;
   using stan::math::ordered_logistic_lpmf;
   using stan::math::var;

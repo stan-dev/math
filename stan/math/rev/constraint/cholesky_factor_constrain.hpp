@@ -27,7 +27,8 @@ namespace math {
  * @return Cholesky factor
  */
 template <typename T, require_var_vector_t<T>* = nullptr>
-var_value<Eigen::MatrixXd> cholesky_factor_constrain(const T& x, int M, int N) {
+inline var_value<Eigen::MatrixXd> cholesky_factor_constrain(const T& x, int M,
+                                                            int N) {
   using std::exp;
   check_greater_or_equal("cholesky_factor_constrain",
                          "num rows (must be greater or equal to num cols)", M,
@@ -86,8 +87,8 @@ var_value<Eigen::MatrixXd> cholesky_factor_constrain(const T& x, int M, int N) {
  * @return Cholesky factor
  */
 template <typename T, require_var_vector_t<T>* = nullptr>
-var_value<Eigen::MatrixXd> cholesky_factor_constrain(const T& x, int M, int N,
-                                                     scalar_type_t<T>& lp) {
+inline var_value<Eigen::MatrixXd> cholesky_factor_constrain(
+    const T& x, int M, int N, scalar_type_t<T>& lp) {
   check_size_match("cholesky_factor_constrain", "x.size()", x.size(),
                    "((N * (N + 1)) / 2 + (M - N) * N)",
                    ((N * (N + 1)) / 2 + (M - N) * N));

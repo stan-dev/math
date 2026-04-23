@@ -1,13 +1,13 @@
 #include <stan/math/rev.hpp>
-#include <stan/math/prim.hpp>
 #include <test/unit/math/rev/util.hpp>
+#include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 #include <cmath>
 
 //  We check that the values of the new regression match those of one built
 //  from existing primitives.
-TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_doubles) {
+TEST_F(AgradRev, normal_glm_matches_normal_id_doubles) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -30,7 +30,7 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_doubles) {
 }
 //  We check that the values of the new regression match those of one built
 //  from existing primitives.
-TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_doubles_rand) {
+TEST_F(AgradRev, normal_glm_matches_normal_id_doubles_rand) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -675,7 +675,8 @@ TYPED_TEST(ProbDistributionsNormalIdGLM,
 }
 
 //  We check that the right errors are thrown.
-TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_error_checking) {
+TEST_F(AgradRev,
+       ProbDistributionsNormalIdGLM_glm_matches_normal_id_error_checking) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -744,4 +745,24 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_error_checking) {
                std::domain_error);
   EXPECT_THROW(stan::math::normal_id_glm_lpdf(y, x, alpha, beta, sigmaw3),
                std::domain_error);
+}
+
+TEST_F(AgradRev, ProbDistributionsNormalIdGLM_glm_type_issue_3189) {
+  // regression test for https://github.com/stan-dev/math/issues/3189
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
+  int J = 3;
+  int K = 2;
+
+  Eigen::Matrix<double, -1, -1> x(J, K);
+  x << 1.0, 2.0, 3.0, 4.0, 5.0, 6.0;
+
+  Eigen::Matrix<stan::math::var, -1, 1> y(J);
+  y << 0.1, 0.2, 0.3;
+  Eigen::Matrix<stan::math::var, -1, 1> beta(K);
+  beta << 0.5, 0.6;
+
+  EXPECT_FLOAT_EQ(stan::math::normal_id_glm_lpdf<false>(y, x, 0, beta, 1).val(),
+                  -27.701815);
 }

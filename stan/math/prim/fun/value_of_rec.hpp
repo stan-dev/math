@@ -1,14 +1,23 @@
 #ifndef STAN_MATH_PRIM_FUN_VALUE_OF_REC_HPP
 #define STAN_MATH_PRIM_FUN_VALUE_OF_REC_HPP
 
-#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/functor/apply.hpp>
+#include <stan/math/prim/functor/make_holder_tuple.hpp>
 #include <complex>
 #include <cstddef>
 #include <vector>
 
 namespace stan {
 namespace math {
+
+template <typename Tuple, require_tuple_t<Tuple>* = nullptr>
+inline auto value_of_rec(Tuple&& tup);
+
+template <typename T, require_not_same_t<double, T>* = nullptr>
+inline std::vector<promote_scalar_t<double, T>> value_of_rec(
+    const std::vector<T>& x);
 
 /**
  * Return the value of the specified scalar argument
@@ -25,8 +34,8 @@ namespace math {
  * @param x Scalar to convert to double.
  * @return Value of scalar cast to a double.
  */
-template <typename T, typename = require_stan_scalar_t<T>>
-inline double value_of_rec(const T x) {
+template <typename T, require_stan_scalar_t<T> = nullptr>
+inline double constexpr value_of_rec(const T x) noexcept {
   return static_cast<double>(x);
 }
 
@@ -41,7 +50,7 @@ inline double value_of_rec(const T x) {
  * @param x Specified value.
  * @return Specified value.
  */
-inline double value_of_rec(double x) { return x; }
+inline double constexpr value_of_rec(double x) noexcept { return x; }
 
 /**
  * Recursively apply value-of to the parts of the argument.
@@ -53,26 +62,6 @@ inline double value_of_rec(double x) { return x; }
 template <typename T>
 inline std::complex<double> value_of_rec(const std::complex<T>& x) {
   return {value_of_rec(x.real()), value_of_rec(x.imag())};
-}
-
-/**
- * Convert a std::vector of type T to a std::vector of doubles.
- *
- * T must implement value_of_rec. See
- * test/math/fwd/fun/value_of_rec.cpp for fvar and var usage.
- *
- * @tparam T Scalar type in std::vector
- * @param[in] x std::vector to be converted
- * @return std::vector of values
- **/
-template <typename T, require_not_same_t<double, T>* = nullptr>
-inline std::vector<double> value_of_rec(const std::vector<T>& x) {
-  size_t x_size = x.size();
-  std::vector<double> result(x_size);
-  for (size_t i = 0; i < x_size; i++) {
-    result[i] = value_of_rec(x[i]);
-  }
-  return result;
 }
 
 /**
@@ -102,11 +91,11 @@ inline T value_of_rec(T&& x) {
  * @param[in] M Matrix to be converted
  * @return Matrix of values
  **/
-template <typename T, typename = require_not_st_same<T, double>,
-          typename = require_eigen_t<T>>
+template <typename T, require_not_st_same<T, double>* = nullptr,
+          require_eigen_t<T>* = nullptr>
 inline auto value_of_rec(T&& M) {
   return make_holder(
-      [](auto& m) {
+      [](auto&& m) {
         return m.unaryExpr([](auto x) { return value_of_rec(x); });
       },
       std::forward<T>(M));
@@ -124,11 +113,56 @@ inline auto value_of_rec(T&& M) {
  * @param x Specified matrix.
  * @return Specified matrix.
  */
-template <typename T, typename = require_st_same<T, double>,
-          typename = require_eigen_t<T>>
-inline T value_of_rec(T&& x) {
-  return std::forward<T>(x);
+template <typename T, require_st_same<T, double>* = nullptr,
+          require_eigen_t<T>* = nullptr>
+inline decltype(auto) value_of_rec(T&& x) {
+  if constexpr (is_plain_type<T>::value || is_holder_v<T>) {
+    if constexpr (std::is_rvalue_reference_v<T&&>) {
+      return std::decay_t<T>(std::forward<T>(x));
+    } else {
+      return x;
+    }
+  } else {
+    return make_holder([](auto&& m) { return m; }, std::forward<T>(x));
+  }
 }
+
+/**
+ * Convert a std::vector of type T to a std::vector of doubles.
+ *
+ * T must implement value_of_rec. See
+ * test/math/fwd/fun/value_of_rec.cpp for fvar and var usage.
+ *
+ * @tparam T Scalar type in std::vector
+ * @param[in] x std::vector to be converted
+ * @return std::vector of values
+ **/
+template <typename T, require_not_same_t<double, T>*>
+inline std::vector<promote_scalar_t<double, T>> value_of_rec(
+    const std::vector<T>& x) {
+  size_t x_size = x.size();
+  std::vector<promote_scalar_t<double, plain_type_t<T>>> result(x_size);
+  for (size_t i = 0; i < x_size; i++) {
+    result[i] = value_of_rec(x[i]);
+  }
+  return result;
+}
+
+/**
+ * Converts a tuples elements scalar types from ad to double types
+ * @tparam Tuple type of tuple
+ * @param[in] tup tuple to be converted
+ */
+template <typename Tuple, require_tuple_t<Tuple>*>
+inline auto value_of_rec(Tuple&& tup) {
+  return stan::math::apply(
+      [](auto&&... args) {
+        return make_holder_tuple(
+            value_of_rec(std::forward<decltype(args)>(args))...);
+      },
+      std::forward<Tuple>(tup));
+}
+
 }  // namespace math
 }  // namespace stan
 

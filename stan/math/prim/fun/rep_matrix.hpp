@@ -13,7 +13,7 @@ namespace math {
  * type equal to the input scalar type.
  * @tparam Ret An Eigen type.
  * @tparam T A Scalar type.
- * @param x A Scalar whose values are propogated to all values in the return
+ * @param x A Scalar whose values are propagated to all values in the return
  * matrix.
  * @param m Number or rows.
  * @param n Number of columns.
@@ -31,7 +31,7 @@ inline auto rep_matrix(const T& x, int m, int n) {
  * Default Implementation of rep_matrix returning an Eigen matrix with scalar
  * type equal to the input scalar type.
  * @tparam T A Scalar type.
- * @param x A Scalar whose values are propogated to all values in the return
+ * @param x A Scalar whose values are propagated to all values in the return
  * matrix.
  * @param m Number or rows.
  * @param n Number of columns.
@@ -46,13 +46,13 @@ inline auto rep_matrix(const T& x, int m, int n) {
  * Implementation of rep_matrix returning an Eigen matrix from an Eigen
  * vector.
  * @tparam Vec An Eigen vector.
- * @param x An Eigen vector. For Row vectors the values are replacated rowwise.
+ * @param x An Eigen vector. For Row vectors the values are replicated rowwise.
  * and for column vectors the values are repliacated colwise.
  * @param n Number of rows or columns.
  */
 template <typename Vec, require_eigen_vector_t<Vec>* = nullptr>
 inline auto rep_matrix(const Vec& x, int n) {
-  if (is_eigen_row_vector<Vec>::value) {
+  if constexpr (is_eigen_row_vector<Vec>::value) {
     check_nonnegative("rep_matrix", "rows", n);
     return x.replicate(n, 1);
   } else {

@@ -15,13 +15,13 @@ namespace math {
  * @param OPERATOR name of the operator function to implement
  * @param OP operator to use for comparison of values
  **/
-#define ADD_MIXED_AUTODIFF_SCALAR_COMPARISON(OPERATOR, OP) \
-  template <typename T_a, typename T_b,                    \
-            require_any_eigen_t<T_a, T_b>* = nullptr,      \
-            require_any_st_autodiff<T_a, T_b>* = nullptr,  \
-            require_not_st_same<T_a, T_b>* = nullptr>      \
-  auto OPERATOR(const T_a& a, const T_b& b) {              \
-    return value_of(a) OP value_of(b);                     \
+#define ADD_MIXED_AUTODIFF_SCALAR_COMPARISON(OPERATOR, OP)       \
+  template <typename T_a, typename T_b,                          \
+            require_any_eigen_t<T_a, T_b>* = nullptr,            \
+            require_any_st_autodiff_scalar<T_a, T_b>* = nullptr, \
+            require_not_st_same<T_a, T_b>* = nullptr>            \
+  auto OPERATOR(const T_a& a, const T_b& b) {                    \
+    return value_of(a) OP value_of(b);                           \
   }
 
 ADD_MIXED_AUTODIFF_SCALAR_COMPARISON(operator<, <);

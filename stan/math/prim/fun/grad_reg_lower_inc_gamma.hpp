@@ -107,9 +107,9 @@ namespace math {
  *
  */
 template <typename T1, typename T2>
-return_type_t<T1, T2> grad_reg_lower_inc_gamma(const T1& a, const T2& z,
-                                               double precision = 1e-10,
-                                               int max_steps = 1e5) {
+inline return_type_t<T1, T2> grad_reg_lower_inc_gamma(const T1& a, const T2& z,
+                                                      double precision = 1e-10,
+                                                      int max_steps = 1e5) {
   using std::exp;
   using std::log;
   using std::pow;
@@ -133,7 +133,7 @@ return_type_t<T1, T2> grad_reg_lower_inc_gamma(const T1& a, const T2& z,
                   + 60 * value_of_rec(z))) {
     T1 tg = tgamma(a);
     T1 dig = digamma(a);
-    return -grad_reg_inc_gamma(a, z, tg, dig, max_steps, precision);
+    return -grad_reg_inc_gamma(a, z, tg, dig, precision, max_steps);
   }
 
   T2 log_z = log(z);

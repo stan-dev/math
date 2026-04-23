@@ -54,7 +54,7 @@ inline return_type_t<T_y_cl, T_dof_cl, T_scale_cl> scaled_inv_chi_square_lpdf(
   if (N == 0) {
     return 0.0;
   }
-  if (!include_summand<propto, T_y_cl, T_dof_cl, T_scale_cl>::value) {
+  if constexpr (!include_summand<propto, T_y_cl, T_dof_cl, T_scale_cl>::value) {
     return 0.0;
   }
 
@@ -116,9 +116,9 @@ inline return_type_t<T_y_cl, T_dof_cl, T_scale_cl> scaled_inv_chi_square_lpdf(
           any_y_nonpositive_cl, logp_cl, y_deriv_cl, nu_deriv_cl, s_deriv_cl)
       = expressions(y_not_nan, nu_positive_finite, s_positive_finite,
                     any_y_nonpositive, logp_expr,
-                    calc_if<!is_constant<T_y_cl>::value>(y_deriv),
-                    calc_if<!is_constant<T_dof_cl>::value>(nu_deriv),
-                    calc_if<!is_constant<T_scale_cl>::value>(s_deriv));
+                    calc_if<is_autodiff_v<T_y_cl>>(y_deriv),
+                    calc_if<is_autodiff_v<T_dof_cl>>(nu_deriv),
+                    calc_if<is_autodiff_v<T_scale_cl>>(s_deriv));
 
   if (from_matrix_cl(any_y_nonpositive_cl).any()) {
     return LOG_ZERO;
@@ -128,13 +128,13 @@ inline return_type_t<T_y_cl, T_dof_cl, T_scale_cl> scaled_inv_chi_square_lpdf(
 
   auto ops_partials = make_partials_propagator(y_col, nu_col, s_col);
 
-  if (!is_constant<T_y_cl>::value) {
+  if constexpr (is_autodiff_v<T_y_cl>) {
     partials<0>(ops_partials) = std::move(y_deriv_cl);
   }
-  if (!is_constant<T_dof_cl>::value) {
+  if constexpr (is_autodiff_v<T_dof_cl>) {
     partials<1>(ops_partials) = std::move(nu_deriv_cl);
   }
-  if (!is_constant<T_scale_cl>::value) {
+  if constexpr (is_autodiff_v<T_scale_cl>) {
     partials<2>(ops_partials) = std::move(s_deriv_cl);
   }
   return ops_partials.build(logp);

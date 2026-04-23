@@ -37,8 +37,9 @@ namespace math {
 template <bool propto, typename T_y, typename T_loc, typename T_scale,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_loc, T_scale>* = nullptr>
-return_type_t<T_y, T_loc, T_scale> gumbel_lpdf(const T_y& y, const T_loc& mu,
-                                               const T_scale& beta) {
+inline return_type_t<T_y, T_loc, T_scale> gumbel_lpdf(const T_y& y,
+                                                      const T_loc& mu,
+                                                      const T_scale& beta) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
   using T_y_ref = ref_type_if_not_constant_t<T_y>;
   using T_mu_ref = ref_type_if_not_constant_t<T_loc>;
@@ -61,38 +62,37 @@ return_type_t<T_y, T_loc, T_scale> gumbel_lpdf(const T_y& y, const T_loc& mu,
   if (size_zero(y, mu, beta)) {
     return 0.0;
   }
-  if (!include_summand<propto, T_y, T_loc, T_scale>::value) {
+  if constexpr (!include_summand<propto, T_y, T_loc, T_scale>::value) {
     return 0.0;
   }
 
   auto ops_partials = make_partials_propagator(y_ref, mu_ref, beta_ref);
 
   const auto& inv_beta
-      = to_ref_if<!is_constant_all<T_y, T_loc, T_scale>::value>(inv(beta_val));
+      = to_ref_if<is_any_autodiff_v<T_y, T_loc, T_scale>>(inv(beta_val));
   const auto& y_minus_mu_over_beta = to_ref((y_val - mu_val) * inv_beta);
   const auto& exp_y_m_mu_over_beta
-      = to_ref_if<!is_constant_all<T_y, T_loc, T_scale>::value>(
+      = to_ref_if<is_any_autodiff_v<T_y, T_loc, T_scale>>(
           exp(-y_minus_mu_over_beta));
 
   size_t N = max_size(y, mu, beta);
   T_partials_return logp = -sum(y_minus_mu_over_beta + exp_y_m_mu_over_beta);
-  if (include_summand<propto, T_scale>::value) {
+  if constexpr (include_summand<propto, T_scale>::value) {
     logp -= sum(log(beta_val)) * N / math::size(beta);
   }
 
-  if (!is_constant_all<T_y, T_loc, T_scale>::value) {
-    const auto& scaled_diff
-        = to_ref_if<!is_constant_all<T_loc>::value
-                        + !is_constant_all<T_scale>::value
-                        + !is_constant_all<T_y>::value
-                    >= 2>(inv_beta * exp_y_m_mu_over_beta - inv_beta);
-    if (!is_constant_all<T_y>::value) {
+  if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale>) {
+    const auto& scaled_diff = to_ref_if<
+        is_autodiff_v<
+            T_loc> + is_autodiff_v<T_scale> + is_autodiff_v<T_y> >= 2>(
+        inv_beta * exp_y_m_mu_over_beta - inv_beta);
+    if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials) = scaled_diff;
     }
-    if (!is_constant_all<T_loc>::value) {
+    if constexpr (is_autodiff_v<T_loc>) {
       partials<1>(ops_partials) = -scaled_diff;
     }
-    if (!is_constant_all<T_scale>::value) {
+    if constexpr (is_autodiff_v<T_scale>) {
       edge<2>(ops_partials).partials_
           = -y_minus_mu_over_beta * scaled_diff - inv_beta;
     }

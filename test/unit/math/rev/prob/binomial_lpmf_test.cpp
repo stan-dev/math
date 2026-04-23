@@ -1,7 +1,8 @@
 #include <stan/math/rev.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 
-TEST(ProbBinomial, N_equals_0) {
+TEST_F(AgradRev, ProbBinomial_N_equals_0) {
   using stan::math::var;
   for (double theta_val : {0.0, 0.5, 1.0}) {
     var theta = theta_val;
@@ -15,7 +16,7 @@ TEST(ProbBinomial, N_equals_0) {
   stan::math::recover_memory();
 }
 
-TEST(ProbBinomial, N_equals_1) {
+TEST_F(AgradRev, ProbBinomial_N_equals_1) {
   using stan::math::var;
   for (double theta_val : {0.0, 0.5, 1.0}) {
     for (int n : {0, 1}) {
@@ -46,7 +47,7 @@ TEST(ProbBinomial, N_equals_1) {
   }
 }
 
-TEST(ProbBinomial, N_equals_2) {
+TEST_F(AgradRev, ProbBinomial_N_equals_2) {
   using stan::math::var;
   for (double theta_val : {0.0, 0.5, 1.0}) {
     for (int n : {0, 1, 2}) {
@@ -84,7 +85,7 @@ TEST(ProbBinomial, N_equals_2) {
   }
 }
 
-TEST(ProbBinomial, n_equals_N) {
+TEST_F(AgradRev, ProbBinomial_n_equals_N) {
   using stan::math::var;
   var theta = 1.0;
 
@@ -96,7 +97,7 @@ TEST(ProbBinomial, n_equals_N) {
   stan::math::recover_memory();
 }
 
-TEST(ProbBinomial, n_equals_N_vec) {
+TEST_F(AgradRev, ProbBinomial_n_equals_N_vec) {
   using stan::math::var;
   var theta = 1.0;
   std::vector<int> n = {2, 3};
@@ -110,7 +111,7 @@ TEST(ProbBinomial, n_equals_N_vec) {
   stan::math::recover_memory();
 }
 
-TEST(ProbBinomial, n_equals_zero) {
+TEST_F(AgradRev, ProbBinomial_n_equals_zero) {
   using stan::math::var;
   var theta = 0.0;
 
@@ -122,7 +123,7 @@ TEST(ProbBinomial, n_equals_zero) {
   stan::math::recover_memory();
 }
 
-TEST(ProbBinomial, n_equals_0_vec) {
+TEST_F(AgradRev, ProbBinomial_n_equals_0_vec) {
   using stan::math::var;
   var theta = 0.0;
   std::vector<int> n = {0, 0};
@@ -136,7 +137,7 @@ TEST(ProbBinomial, n_equals_0_vec) {
   stan::math::recover_memory();
 }
 
-TEST(ProbBinomial, N_equals_0_vec) {
+TEST_F(AgradRev, ProbBinomial_N_equals_0_vec) {
   using stan::math::var;
   var theta = 0.0;
   std::vector<int> n = {0, 0};

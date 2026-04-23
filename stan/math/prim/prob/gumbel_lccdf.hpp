@@ -36,8 +36,9 @@ namespace math {
 template <typename T_y, typename T_loc, typename T_scale,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_loc, T_scale>* = nullptr>
-return_type_t<T_y, T_loc, T_scale> gumbel_lccdf(const T_y& y, const T_loc& mu,
-                                                const T_scale& beta) {
+inline return_type_t<T_y, T_loc, T_scale> gumbel_lccdf(const T_y& y,
+                                                       const T_loc& mu,
+                                                       const T_scale& beta) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
   using T_y_ref = ref_type_if_not_constant_t<T_y>;
   using T_mu_ref = ref_type_if_not_constant_t<T_loc>;
@@ -61,31 +62,28 @@ return_type_t<T_y, T_loc, T_scale> gumbel_lccdf(const T_y& y, const T_loc& mu,
 
   auto ops_partials = make_partials_propagator(y_ref, mu_ref, beta_ref);
 
-  const auto& scaled_diff
-      = to_ref_if<!is_constant_all<T_y, T_loc, T_scale>::value>((y_val - mu_val)
-                                                                / beta_val);
+  const auto& scaled_diff = to_ref_if<is_any_autodiff_v<T_y, T_loc, T_scale>>(
+      (y_val - mu_val) / beta_val);
   const auto& exp_m_scaled_diff
-      = to_ref_if<!is_constant_all<T_y, T_loc, T_scale>::value>(
-          exp(-scaled_diff));
+      = to_ref_if<is_any_autodiff_v<T_y, T_loc, T_scale>>(exp(-scaled_diff));
   const auto& cdf_log_n_tmp = exp(-exp_m_scaled_diff);
-  const auto& ccdf_n = to_ref_if<!is_constant_all<T_y, T_loc, T_scale>::value>(
-      1.0 - cdf_log_n_tmp);
+  const auto& ccdf_n
+      = to_ref_if<is_any_autodiff_v<T_y, T_loc, T_scale>>(1.0 - cdf_log_n_tmp);
   T_partials_return ccdf_log = sum(log(ccdf_n));
 
-  if (!is_constant_all<T_y, T_loc, T_scale>::value) {
+  if constexpr (is_any_autodiff_v<T_y, T_loc, T_scale>) {
     const auto& rep_deriv_tmp = exp(-scaled_diff - exp_m_scaled_diff);
-    const auto& rep_deriv
-        = to_ref_if<!is_constant_all<T_loc>::value
-                        + !is_constant_all<T_scale>::value
-                        + !is_constant_all<T_y>::value
-                    >= 2>(rep_deriv_tmp / (beta_val * ccdf_n));
-    if (!is_constant_all<T_y>::value) {
+    const auto& rep_deriv = to_ref_if<
+        is_autodiff_v<
+            T_loc> + is_autodiff_v<T_scale> + is_autodiff_v<T_y> >= 2>(
+        rep_deriv_tmp / (beta_val * ccdf_n));
+    if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials) = -rep_deriv;
     }
-    if (!is_constant_all<T_loc>::value) {
+    if constexpr (is_autodiff_v<T_loc>) {
       partials<1>(ops_partials) = rep_deriv;
     }
-    if (!is_constant_all<T_scale>::value) {
+    if constexpr (is_autodiff_v<T_scale>) {
       partials<2>(ops_partials) = rep_deriv * scaled_diff;
     }
   }

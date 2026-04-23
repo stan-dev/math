@@ -94,7 +94,7 @@ class arena_matrix_cl : public matrix_cl_base {
   matrix_cl<T> eval() const& { return *impl_; }
   matrix_cl<T> eval() && { return std::move(*impl_); }
 
-  // Wrapers to functions with explicit template parameters are implemented
+  // Wrappers to functions with explicit template parameters are implemented
   // without macros.
   template <matrix_cl_view matrix_view = matrix_cl_view::Entire>
   inline void zeros_strict_tri() {
@@ -145,7 +145,7 @@ class arena_matrix_cl : public matrix_cl_base {
 #undef ARENA_MATRIX_CL_CONST_FUNCTION_WRAPPER
 };
 template <typename T>
-matrix_cl<T>::matrix_cl(const arena_matrix_cl<T>& A)
+inline matrix_cl<T>::matrix_cl(const arena_matrix_cl<T>& A)
     // works like a move constructor, except it does not modify `a`
     : buffer_cl_(A.impl_->buffer_cl_),
       rows_(A.impl_->rows_),

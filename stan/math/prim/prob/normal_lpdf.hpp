@@ -65,39 +65,39 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(T_y&& y, T_loc&& mu,
   if (size_zero(y_ref, mu_ref, sigma_ref)) {
     return 0.0;
   }
-  if (!include_summand<propto, T_y, T_loc, T_scale>::value) {
+  if constexpr (!include_summand<propto, T_y, T_loc, T_scale>::value) {
     return 0.0;
   }
 
   auto ops_partials = make_partials_propagator(y_ref, mu_ref, sigma_ref);
 
   const auto& inv_sigma
-      = to_ref_if<!is_constant_all<T_y, T_scale, T_loc>::value>(inv(sigma_val));
+      = to_ref_if<is_any_autodiff_v<T_y, T_scale, T_loc>>(inv(sigma_val));
   const auto& y_scaled = to_ref((y_val - mu_val) * inv_sigma);
   const auto& y_scaled_sq
-      = to_ref_if<!is_constant_all<T_scale>::value>(y_scaled * y_scaled);
+      = to_ref_if<is_autodiff_v<T_scale>>(y_scaled * y_scaled);
 
   size_t N = max_size(y_ref, mu_ref, sigma_ref);
   T_partials_return logp = -0.5 * sum(y_scaled_sq);
-  if (include_summand<propto>::value) {
+  if constexpr (include_summand<propto>::value) {
     logp += NEG_LOG_SQRT_TWO_PI * N;
   }
-  if (include_summand<propto, T_scale>::value) {
+  if constexpr (include_summand<propto, T_scale>::value) {
     logp -= sum(log(sigma_val)) * N / math::size(sigma);
   }
 
-  if (!is_constant_all<T_y, T_scale, T_loc>::value) {
-    auto scaled_diff = to_ref_if<!is_constant_all<T_y>::value
-                                     + !is_constant_all<T_scale>::value
-                                     + !is_constant_all<T_loc>::value
-                                 >= 2>(inv_sigma * y_scaled);
-    if (!is_constant_all<T_y>::value) {
+  if constexpr (is_any_autodiff_v<T_y, T_scale, T_loc>) {
+    auto scaled_diff = to_ref_if<
+        is_autodiff_v<
+            T_y> + is_autodiff_v<T_scale> + is_autodiff_v<T_loc> >= 2>(
+        inv_sigma * y_scaled);
+    if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials) = -scaled_diff;
     }
-    if (!is_constant_all<T_scale>::value) {
+    if constexpr (is_autodiff_v<T_scale>) {
       partials<2>(ops_partials) = inv_sigma * y_scaled_sq - inv_sigma;
     }
-    if (!is_constant_all<T_loc>::value) {
+    if constexpr (is_autodiff_v<T_loc>) {
       partials<1>(ops_partials) = std::move(scaled_diff);
     }
   }

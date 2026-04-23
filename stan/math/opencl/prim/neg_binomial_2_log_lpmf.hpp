@@ -55,8 +55,8 @@ neg_binomial_2_log_lpmf(const T_n_cl& n, const T_log_location_cl& eta,
   if (N == 0) {
     return 0.0;
   }
-  if (!include_summand<propto, T_n_cl, T_log_location_cl,
-                       T_precision_cl>::value) {
+  if constexpr (!include_summand<propto, T_n_cl, T_log_location_cl,
+                                 T_precision_cl>::value) {
     return 0.0;
   }
 
@@ -103,17 +103,17 @@ neg_binomial_2_log_lpmf(const T_n_cl& n, const T_log_location_cl& eta,
   results(check_n_nonnegative, check_eta_finite, check_phi_positive_finite,
           logp_cl, eta_deriv_cl, phi_deriv_cl)
       = expressions(n_nonnegative, eta_finite, phi_positive_finite, logp_expr,
-                    calc_if<!is_constant<T_log_location_cl>::value>(eta_deriv),
-                    calc_if<!is_constant<T_precision_cl>::value>(phi_deriv));
+                    calc_if<is_autodiff_v<T_log_location_cl>>(eta_deriv),
+                    calc_if<is_autodiff_v<T_precision_cl>>(phi_deriv));
 
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
 
   auto ops_partials = make_partials_propagator(eta_col, phi_col);
 
-  if (!is_constant<T_log_location_cl>::value) {
+  if constexpr (is_autodiff_v<T_log_location_cl>) {
     partials<0>(ops_partials) = std::move(eta_deriv_cl);
   }
-  if (!is_constant<T_precision_cl>::value) {
+  if constexpr (is_autodiff_v<T_precision_cl>) {
     partials<1>(ops_partials) = std::move(phi_deriv_cl);
   }
   return ops_partials.build(logp);

@@ -5,8 +5,9 @@
 #include <string>
 
 template <typename T_y, typename T_dof, typename T_scale>
-void expect_propto_wishart_lpdf(T_y W1, T_dof nu1, T_scale S1, T_y W2,
-                                T_dof nu2, T_scale S2, std::string message) {
+inline void expect_propto_wishart_lpdf(T_y W1, T_dof nu1, T_scale S1, T_y W2,
+                                       T_dof nu2, T_scale S2,
+                                       std::string message) {
   expect_eq_diffs(stan::math::wishart_lpdf<false>(W1, nu1, S1),
                   stan::math::wishart_lpdf<false>(W2, nu2, S2),
                   stan::math::wishart_lpdf<true>(W1, nu1, S1),
@@ -90,7 +91,7 @@ TEST_F(AgradDistributionsWishart, ProptoSigma) {
   stan::math::recover_memory();
 }
 
-TEST(Wishart, check_varis_on_stack) {
+TEST_F(AgradRev, Wishart_check_varis_on_stack) {
   using stan::math::to_var;
   Eigen::MatrixXd W(2, 2);
   W << 2.011108, -11.20661, -11.20661, 112.94139;

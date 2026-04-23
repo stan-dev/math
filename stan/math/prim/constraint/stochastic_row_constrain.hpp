@@ -3,10 +3,6 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/fun/inv_logit.hpp>
-#include <stan/math/prim/fun/log.hpp>
-#include <stan/math/prim/fun/log1p_exp.hpp>
-#include <stan/math/prim/fun/logit.hpp>
 #include <stan/math/prim/constraint/simplex_constrain.hpp>
 #include <cmath>
 
@@ -16,7 +12,8 @@ namespace math {
 /**
  * Return a row stochastic matrix.
  *
- * The transform is based on a centered stick-breaking process.
+ * The transform is defined using the inverse of the
+ * isometric log ratio (ILR) transform
  *
  * @tparam Mat type of the Matrix
  * @param y Free Matrix input of dimensionality (N, K - 1).
@@ -27,27 +24,21 @@ template <typename Mat, require_eigen_matrix_dynamic_t<Mat>* = nullptr,
 inline plain_type_t<Mat> stochastic_row_constrain(const Mat& y) {
   auto&& y_ref = to_ref(y);
   const Eigen::Index N = y_ref.rows();
-  int Km1 = y_ref.cols();
-  plain_type_t<Mat> x(N, Km1 + 1);
-  using eigen_arr = Eigen::Array<scalar_type_t<Mat>, -1, 1>;
-  eigen_arr stick_len = eigen_arr::Constant(N, 1.0);
-  for (Eigen::Index k = 0; k < Km1; ++k) {
-    auto z_k = inv_logit(y_ref.array().col(k) - log(Km1 - k));
-    x.array().col(k) = stick_len * z_k;
-    stick_len -= x.array().col(k);
+  plain_type_t<Mat> ret(N, y_ref.cols() + 1);
+  for (Eigen::Index i = 0; i < N; ++i) {
+    ret.row(i) = simplex_constrain(y_ref.row(i));
   }
-  x.array().col(Km1) = stick_len;
-  return x;
+  return ret;
 }
 
 /**
  * Return a row stochastic matrix.
- * The simplex transform is defined through a centered
- * stick-breaking process.
+ * The simplex transform is defined using the inverse of the
+ * isometric log ratio (ILR) transform
  *
  * @tparam Mat type of the matrix
  * @tparam Lp A scalar type for the lp argument. The scalar type of Mat should
- * be convertable to this.
+ * be convertible to this.
  * @param y Free matrix input of dimensionality (N, K - 1).
  * @param lp Log probability reference to increment.
  * @return Matrix with simplexes along the rows of dimensionality (N, K).
@@ -59,21 +50,11 @@ template <typename Mat, typename Lp,
 inline plain_type_t<Mat> stochastic_row_constrain(const Mat& y, Lp& lp) {
   auto&& y_ref = to_ref(y);
   const Eigen::Index N = y_ref.rows();
-  Eigen::Index Km1 = y_ref.cols();
-  plain_type_t<Mat> x(N, Km1 + 1);
-  Eigen::Array<scalar_type_t<Mat>, -1, 1> stick_len
-      = Eigen::Array<scalar_type_t<Mat>, -1, 1>::Constant(N, 1.0);
-  for (Eigen::Index k = 0; k < Km1; ++k) {
-    const auto eq_share = -log(Km1 - k);  // = logit(1.0/(Km1 + 1 - k));
-    auto adj_y_k = (y_ref.array().col(k) + eq_share).eval();
-    auto z_k = inv_logit(adj_y_k);
-    x.array().col(k) = stick_len * z_k;
-    lp += -sum(log1p_exp(adj_y_k)) - sum(log1p_exp(-adj_y_k))
-          + sum(log(stick_len));
-    stick_len -= x.array().col(k);  // equivalently *= (1 - z_k);
+  plain_type_t<Mat> ret(N, y_ref.cols() + 1);
+  for (Eigen::Index i = 0; i < N; ++i) {
+    ret.row(i) = simplex_constrain(y_ref.row(i), lp);
   }
-  x.col(Km1).array() = stick_len;
-  return x;
+  return ret;
 }
 
 /**
@@ -87,9 +68,10 @@ inline plain_type_t<Mat> stochastic_row_constrain(const Mat& y, Lp& lp) {
  * @return vector of matrices with simplex rows of dimensionality (N, K)
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
-inline auto stochastic_row_constrain(const T& y) {
-  return apply_vector_unary<T>::apply(
-      y, [](auto&& v) { return stochastic_row_constrain(v); });
+inline auto stochastic_row_constrain(T&& y) {
+  return apply_vector_unary<T>::apply(std::forward<T>(y), [](auto&& v) {
+    return stochastic_row_constrain(std::forward<decltype(v)>(v));
+  });
 }
 
 /**
@@ -100,16 +82,17 @@ inline auto stochastic_row_constrain(const T& y) {
  * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
  * `Eigen::DenseBase` with compile time dynamic rows and dynamic columns
  * @tparam Lp Scalar type for the lp argument. The scalar type of T should be
- * convertable to this.
+ * convertible to this.
  * @param[in] y free vector with matrices of size (N, K - 1)
  * @param[in, out] lp log density accumulator
  * @return vector of matrices with simplex rows of dimensionality (N, K)
  */
 template <typename T, typename Lp, require_std_vector_t<T>* = nullptr,
           require_convertible_t<return_type_t<T>, Lp>* = nullptr>
-inline auto stochastic_row_constrain(const T& y, Lp& lp) {
-  return apply_vector_unary<T>::apply(
-      y, [&lp](auto&& v) { return stochastic_row_constrain(v, lp); });
+inline auto stochastic_row_constrain(T&& y, Lp& lp) {
+  return apply_vector_unary<T>::apply(std::forward<T>(y), [&lp](auto&& v) {
+    return stochastic_row_constrain(std::forward<decltype(v)>(v), lp);
+  });
 }
 
 /**
@@ -125,18 +108,18 @@ inline auto stochastic_row_constrain(const T& y, Lp& lp) {
  *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
  *  and dynamic columns, or a standard vector thereof
  * @tparam Lp A scalar type for the lp argument. The scalar type of Mat should
- * be convertable to this.
+ * be convertible to this.
  * @param[in] y free matrix
  * @param[in, out] lp log density accumulator
  * @return Matrix with simplexes along the rows of dimensionality (N, K).
  */
 template <bool Jacobian, typename Mat, typename Lp,
           require_convertible_t<return_type_t<Mat>, Lp>* = nullptr>
-inline plain_type_t<Mat> stochastic_row_constrain(const Mat& y, Lp& lp) {
+inline plain_type_t<Mat> stochastic_row_constrain(Mat&& y, Lp& lp) {
   if constexpr (Jacobian) {
-    return stochastic_row_constrain(y, lp);
+    return stochastic_row_constrain(std::forward<Mat>(y), lp);
   } else {
-    return stochastic_row_constrain(y);
+    return stochastic_row_constrain(std::forward<Mat>(y));
   }
 }
 

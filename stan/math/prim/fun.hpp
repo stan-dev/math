@@ -102,6 +102,7 @@
 #include <stan/math/prim/fun/fmod.hpp>
 #include <stan/math/prim/fun/gamma_p.hpp>
 #include <stan/math/prim/fun/gamma_q.hpp>
+#include <stan/math/prim/fun/generate_laplace_options.hpp>
 #include <stan/math/prim/fun/generalized_inverse.hpp>
 #include <stan/math/prim/fun/get.hpp>
 #include <stan/math/prim/fun/get_base1.hpp>
@@ -116,7 +117,6 @@
 #include <stan/math/prim/fun/gp_periodic_cov.hpp>
 #include <stan/math/prim/fun/grad_2F1.hpp>
 #include <stan/math/prim/fun/grad_F32.hpp>
-#include <stan/math/prim/fun/grad_inc_beta.hpp>
 #include <stan/math/prim/fun/grad_pFq.hpp>
 #include <stan/math/prim/fun/grad_reg_inc_beta.hpp>
 #include <stan/math/prim/fun/grad_reg_inc_gamma.hpp>

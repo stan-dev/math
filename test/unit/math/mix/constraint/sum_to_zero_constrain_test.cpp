@@ -2,12 +2,12 @@
 
 namespace sum_to_zero_constrain_test {
 template <typename T>
-T g1(const T& x) {
+inline T g1(const T& x) {
   stan::scalar_type_t<T> lp = 0;
   return stan::math::sum_to_zero_constrain<false>(x, lp);
 }
 template <typename T>
-T g2(const T& x) {
+inline T g2(const T& x) {
   stan::scalar_type_t<T> lp = 0;
   return stan::math::sum_to_zero_constrain<true>(x, lp);
 }
@@ -19,7 +19,7 @@ typename stan::scalar_type<T>::type g3(const T& x) {
 }
 
 template <typename T>
-void expect_sum_to_zero_transform(const T& x) {
+inline void expect_sum_to_zero_transform(const T& x) {
   auto f1 = [](const auto& x) { return g1(x); };
   auto f2 = [](const auto& x) { return g2(x); };
   auto f3 = [](const auto& x) { return g3(x); };
@@ -55,4 +55,25 @@ TEST(MathMixMatFun, sum_to_zeroTransform) {
   Eigen::VectorXd v5(5);
   v5 << 1, -3, 2, 0, -1;
   sum_to_zero_constrain_test::expect_sum_to_zero_transform(v5);
+}
+
+TEST(MathMixMatFun, sum_to_zero_matrixTransform) {
+  Eigen::MatrixXd m0_0(0, 0);
+  sum_to_zero_constrain_test::expect_sum_to_zero_transform(m0_0);
+
+  Eigen::MatrixXd m1_1(1, 1);
+  m1_1 << 1;
+  sum_to_zero_constrain_test::expect_sum_to_zero_transform(m1_1);
+
+  Eigen::MatrixXd m2_2(2, 2);
+  m2_2 << 1, 2, -3, 4;
+  sum_to_zero_constrain_test::expect_sum_to_zero_transform(m2_2);
+
+  Eigen::MatrixXd m3_4(3, 4);
+  m3_4 << 1, 2, -3, 4, 5, 6, -7, 8, 9, -10, 11, -12;
+
+  sum_to_zero_constrain_test::expect_sum_to_zero_transform(m3_4);
+
+  Eigen::MatrixXd m4_3 = m3_4.transpose();
+  sum_to_zero_constrain_test::expect_sum_to_zero_transform(m4_3);
 }

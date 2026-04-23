@@ -36,9 +36,9 @@ namespace math {
 template <typename T_y, typename T_shape, typename T_scale,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_shape, T_scale>* = nullptr>
-return_type_t<T_y, T_shape, T_scale> weibull_cdf(const T_y& y,
-                                                 const T_shape& alpha,
-                                                 const T_scale& sigma) {
+inline return_type_t<T_y, T_shape, T_scale> weibull_cdf(const T_y& y,
+                                                        const T_shape& alpha,
+                                                        const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_shape, T_scale>;
   using T_y_ref = ref_type_if_not_constant_t<T_y>;
   using T_alpha_ref = ref_type_if_not_constant_t<T_shape>;
@@ -66,7 +66,7 @@ return_type_t<T_y, T_shape, T_scale> weibull_cdf(const T_y& y,
     return ops_partials.build(0.0);
   }
 
-  constexpr bool any_derivs = !is_constant_all<T_y, T_shape, T_scale>::value;
+  constexpr bool any_derivs = is_any_autodiff_v<T_y, T_shape, T_scale>;
   const auto& log_y = to_ref_if<any_derivs>(log(y_val));
   const auto& log_sigma = to_ref_if<any_derivs>(log(sigma_val));
   const auto& log_y_div_sigma = to_ref_if<any_derivs>(log_y - log_sigma);
@@ -78,16 +78,16 @@ return_type_t<T_y, T_shape, T_scale> weibull_cdf(const T_y& y,
 
   if (any_derivs) {
     const auto& log_rep_deriv = to_ref(log_pow_n + log_cdf - log_cdf_n - pow_n);
-    if (!is_constant_all<T_y, T_scale>::value) {
+    if constexpr (is_any_autodiff_v<T_y, T_scale>) {
       const auto& log_deriv_y_sigma = to_ref(log_rep_deriv + log(alpha_val));
-      if (!is_constant_all<T_y>::value) {
+      if constexpr (is_autodiff_v<T_y>) {
         partials<0>(ops_partials) = exp(log_deriv_y_sigma - log_y);
       }
-      if (!is_constant_all<T_scale>::value) {
+      if constexpr (is_autodiff_v<T_scale>) {
         partials<2>(ops_partials) = -exp(log_deriv_y_sigma - log_sigma);
       }
     }
-    if (!is_constant_all<T_shape>::value) {
+    if constexpr (is_autodiff_v<T_shape>) {
       partials<1>(ops_partials) = exp(log_rep_deriv) * log_y_div_sigma;
     }
   }

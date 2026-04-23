@@ -20,7 +20,7 @@ namespace test {
  */
 template <typename F, typename T1, typename T2,
           require_all_not_vector_t<T1, T2>* = nullptr>
-void binary_scalar_tester_impl(const F& f, const T1& x, const T2& y) {
+inline void binary_scalar_tester_impl(const F& f, const T1& x, const T2& y) {
   auto vec_vec = math::eval(f(x, y));
   auto vec_scal = math::eval(f(x, y(0)));
   auto scal_vec = math::eval(f(x(0), y));
@@ -90,7 +90,7 @@ void binary_scalar_tester_impl(const F& f, const T1& x, const T2& y) {
  */
 template <typename F, typename T1, typename T2,
           require_all_vector_t<T1, T2>* = nullptr>
-void binary_scalar_tester_impl(const F& f, const T1& x, const T2& y) {
+inline void binary_scalar_tester_impl(const F& f, const T1& x, const T2& y) {
   auto vec_vec = math::eval(f(x, y));
   auto vec_scal = math::eval(f(x, y[0]));
   auto scal_vec = math::eval(f(x[0], y));
@@ -162,7 +162,7 @@ template <typename F, typename T1, typename T2,
           typename T1_plain = plain_type_t<T1>,
           require_eigen_matrix_dynamic_t<T1>* = nullptr,
           require_std_vector_t<T2>* = nullptr>
-void binary_scalar_tester_impl(const F& f, const T1& x, const T2& y) {
+inline void binary_scalar_tester_impl(const F& f, const T1& x, const T2& y) {
   auto vec_vec = math::eval(f(x, y));
   for (int r = 0; r < x.rows(); ++r) {
     for (int c = 0; c < x.cols(); ++c) {
@@ -215,7 +215,7 @@ template <typename F, typename T1, typename T2,
           typename T2_plain = plain_type_t<T2>,
           require_std_vector_t<T1>* = nullptr,
           require_eigen_matrix_dynamic_t<T2>* = nullptr>
-void binary_scalar_tester_impl(const F& f, const T1& x, const T2& y) {
+inline void binary_scalar_tester_impl(const F& f, const T1& x, const T2& y) {
   auto vec_vec = math::eval(f(x, y));
   for (int r = 0; r < y.rows(); ++r) {
     for (int c = 0; c < y.cols(); ++c) {
@@ -281,7 +281,7 @@ void binary_scalar_tester_impl(const F& f, const T1& x, const T2& y) {
  */
 template <typename F, typename T1, typename T2,
           require_all_eigen_col_vector_t<T1, T2>* = nullptr>
-void binary_scalar_tester(const F& f, const T1& x, const T2& y) {
+inline void binary_scalar_tester(const F& f, const T1& x, const T2& y) {
   binary_scalar_tester_impl(f, x, y);
   binary_scalar_tester_impl(f, x.transpose().eval(), y.transpose().eval());
   binary_scalar_tester_impl(f, x.replicate(1, x.size()).eval(),
@@ -311,7 +311,7 @@ template <typename F, typename T1, typename T2,
           require_any_std_vector_vt<is_std_vector, T1, T2>* = nullptr,
           require_any_std_vector_st<std::is_integral, T1, T2>* = nullptr,
           require_any_eigen_matrix_dynamic_t<T1, T2>* = nullptr>
-void binary_scalar_tester(const F& f, const T1& x, const T2& y) {
+inline void binary_scalar_tester(const F& f, const T1& x, const T2& y) {
   binary_scalar_tester_impl(f, x, y);
 }
 
@@ -329,7 +329,7 @@ void binary_scalar_tester(const F& f, const T1& x, const T2& y) {
  */
 template <typename F, typename T1, typename T2,
           require_all_std_vector_vt<std::is_integral, T1, T2>* = nullptr>
-void binary_scalar_tester(const F& f, const T1& x, const T2& y) {
+inline void binary_scalar_tester(const F& f, const T1& x, const T2& y) {
   binary_scalar_tester_impl(f, x, y);
 }
 
@@ -350,7 +350,7 @@ void binary_scalar_tester(const F& f, const T1& x, const T2& y) {
 template <typename F, typename T1, typename T2,
           require_std_vector_t<T1>* = nullptr,
           require_eigen_vector_t<T2>* = nullptr>
-void binary_scalar_tester(const F& f, const T1& x, const T2& y) {
+inline void binary_scalar_tester(const F& f, const T1& x, const T2& y) {
   binary_scalar_tester_impl(f, x, y);
   binary_scalar_tester_impl(f, x, y.transpose());
   binary_scalar_tester_impl(f, x, y.array());
@@ -373,7 +373,7 @@ void binary_scalar_tester(const F& f, const T1& x, const T2& y) {
 template <typename F, typename T1, typename T2,
           require_eigen_vector_t<T1>* = nullptr,
           require_std_vector_t<T2>* = nullptr>
-void binary_scalar_tester(const F& f, const T1& x, const T2& y) {
+inline void binary_scalar_tester(const F& f, const T1& x, const T2& y) {
   binary_scalar_tester_impl(f, x, y);
   binary_scalar_tester_impl(f, x.transpose(), y);
   binary_scalar_tester_impl(f, x.array(), y);

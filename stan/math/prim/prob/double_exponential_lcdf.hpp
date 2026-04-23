@@ -34,7 +34,7 @@ namespace math {
 template <typename T_y, typename T_loc, typename T_scale,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_loc, T_scale>* = nullptr>
-return_type_t<T_y, T_loc, T_scale> double_exponential_lcdf(
+inline return_type_t<T_y, T_loc, T_scale> double_exponential_lcdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
   using std::exp;
@@ -85,13 +85,13 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lcdf(
       cdf_log += log1m(0.5 * exp(-scaled_diff));
     }
 
-    if (!is_constant_all<T_y>::value) {
+    if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials)[n] += rep_deriv;
     }
-    if (!is_constant_all<T_loc>::value) {
+    if constexpr (is_autodiff_v<T_loc>) {
       partials<1>(ops_partials)[n] -= rep_deriv;
     }
-    if (!is_constant_all<T_scale>::value) {
+    if constexpr (is_autodiff_v<T_scale>) {
       partials<2>(ops_partials)[n] -= rep_deriv * scaled_diff;
     }
   }

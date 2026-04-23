@@ -44,15 +44,15 @@ inline constexpr double aggregate_tangent(const FuncTangent& tangent,
 template <typename FuncTangent, typename InputArg,
           require_st_fvar<InputArg>* = nullptr>
 inline auto aggregate_tangent(const FuncTangent& tangent, const InputArg& arg) {
-  return sum(apply_scalar_binary(
-      [](const auto& x, const auto& y) { return x * y.d_; }, tangent, arg));
+  return sum(apply_scalar_binary([](auto&& x, auto&& y) { return x * y.d_; },
+                                 tangent, arg));
 }
 }  // namespace internal
 
 /**
  * Construct an fvar<T> where the tangent is calculated by finite-differencing.
- * Finite-differencing is only perfomed where the scalar type to be evaluated is
- * `fvar<T>.
+ * Finite-differencing is only performed where the scalar type to be evaluated
+ * is `fvar<T>.
  *
  * Higher-order inputs (i.e., fvar<var> & fvar<fvar<T>>) are also implicitly
  * supported through auto-diffing the finite-differencing process.
@@ -73,7 +73,7 @@ inline auto finite_diff(const F& func, const TArgs&... args) {
   std::vector<FvarInnerT> serialised_args
       = serialize<FvarInnerT>(value_of(args)...);
 
-  auto serial_functor = [&](const auto& v) {
+  auto serial_functor = [&](auto&& v) {
     auto v_deserializer = to_deserializer(v);
     return func(v_deserializer.read(args)...);
   };
@@ -95,8 +95,8 @@ inline auto finite_diff(const F& func, const TArgs&... args) {
 
 /**
  * Construct an fvar<T> where the tangent is calculated by finite-differencing.
- * Finite-differencing is only perfomed where the scalar type to be evaluated is
- * `fvar<T>.
+ * Finite-differencing is only performed where the scalar type to be evaluated
+ * is `fvar<T>.
  *
  * This overload is used when no fvar<T> arguments are passed and simply
  * evaluates the functor with the provided arguments.

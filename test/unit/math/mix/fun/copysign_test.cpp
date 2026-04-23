@@ -6,14 +6,14 @@
 #include <vector>
 
 template <typename U, typename V>
-void expect_eq_signbit(const U& u, const V& v) {
+inline void expect_eq_signbit(const U& u, const V& v) {
   using stan::math::signbit;
   using std::signbit;
   EXPECT_EQ(signbit(u), signbit(v));
 }
 
 template <typename T>
-void expect_copysign() {
+inline void expect_copysign() {
   using stan::math::copysign;
   using stan::math::copysign_non_zero;
   using stan::math::is_nan;

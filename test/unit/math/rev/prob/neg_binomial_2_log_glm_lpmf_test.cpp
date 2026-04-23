@@ -1,14 +1,13 @@
 #include <stan/math/rev.hpp>
-#include <stan/math/prim.hpp>
 #include <test/unit/math/rev/util.hpp>
+#include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 #include <cmath>
 
 //  We check that the values of the new regression match those of one built
 //  from existing primitives.
-TEST(ProbDistributionsNegBinomial2LogGLM,
-     glm_matches_neg_binomial_2_log_doubles) {
+TEST_F(AgradRev, NegBinomial2LogGLM_glm_matches_neg_binomial_2_log_doubles) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -32,8 +31,8 @@ TEST(ProbDistributionsNegBinomial2LogGLM,
 }
 //  We check that the values of the new regression match those of one built
 //  from existing primitives.
-TEST(ProbDistributionsNegBinomial2LogGLM,
-     glm_matches_neg_binomial_2_log_doubles_rand) {
+TEST_F(AgradRev,
+       NegBinomial2LogGLM_glm_matches_neg_binomial_2_log_doubles_rand) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -541,8 +540,8 @@ TYPED_TEST(ProbDistributionsNegBinomial2LogGLM,
 }
 
 //  We check that the right errors are thrown.
-TEST(ProbDistributionsNegBinomial2LogGLM,
-     glm_matches_neg_binomial_2_log_error_checking) {
+TEST_F(AgradRev,
+       NegBinomial2LogGLM_glm_matches_neg_binomial_2_log_error_checking) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;

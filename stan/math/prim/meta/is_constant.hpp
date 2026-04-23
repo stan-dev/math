@@ -38,6 +38,10 @@ struct is_constant : bool_constant<std::is_convertible<T, double>::value> {};
 template <typename... T>
 using is_constant_all = math::conjunction<is_constant<T>...>;
 
+template <typename... T>
+inline constexpr bool is_constant_all_v
+    = is_constant_all<std::decay_t<T>...>::value;
+
 /** \ingroup type_trait
  * Defines a static member named value and sets it to true
  * if the type of the elements in the provided std::vector
@@ -61,6 +65,9 @@ struct is_constant<T, require_std_vector_t<T>>
 template <typename T>
 struct is_constant<T, require_eigen_t<T>>
     : bool_constant<is_constant<typename std::decay_t<T>::Scalar>::value> {};
+
+template <typename T>
+inline constexpr bool is_constant_v = is_constant<std::decay_t<T>>::value;
 
 }  // namespace stan
 #endif

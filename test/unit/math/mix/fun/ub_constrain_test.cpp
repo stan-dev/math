@@ -3,7 +3,7 @@
 
 namespace ub_constrain_test {
 template <typename T1, typename T2>
-void expect(const T1& x, const T2& ub) {
+inline void expect(const T1& x, const T2& ub) {
   auto f1 = [](const auto& x, const auto& ub) {
     stan::return_type_t<decltype(x), decltype(ub)> lp = 0;
     return stan::math::ub_constrain<false>(x, ub, lp);
@@ -30,7 +30,7 @@ void expect(const T1& x, const T2& ub) {
 }
 
 template <typename T1, typename T2>
-void expect_vec(const T1& x, const T2& ub) {
+inline void expect_vec(const T1& x, const T2& ub) {
   auto f1 = [](const auto& x, const auto& ub) {
     stan::return_type_t<decltype(x), decltype(ub)> lp = 0;
     return stan::math::ub_constrain<false>(x, ub, lp);
@@ -119,9 +119,9 @@ TEST(mathMixMatFun, ub_stdvec_constrain_inf) {
 // matrix[], real
 TEST(mathMixMatFun, ub_stdvec_mat_mat_constrain) {
   Eigen::MatrixXd A_inner(2, 3);
-  A_inner << 5.0, 2.0, 4.0, -2.0, 0.0, 0.005;
+  A_inner << 5.0, 2.0, 4.0, -2.0, 1.0, 2.0;
   Eigen::MatrixXd ubm_inner(2, 3);
-  ubm_inner << 7.0, 5.0, 6.0, 100.0, 0.0, 0.0005;
+  ubm_inner << 7.0, 5.0, 6.0, 100.0, 2.0, 1.0005;
   Eigen::MatrixXd ubm_inner_bad(2, 1);
   ubm_inner_bad << 7.0, 5.0;
   Eigen::MatrixXd A_inner2 = 2.0 * A_inner;

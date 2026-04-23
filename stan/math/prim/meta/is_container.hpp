@@ -24,6 +24,9 @@ template <typename Container>
 using is_container = bool_constant<
     math::disjunction<is_eigen<Container>, is_std_vector<Container>>::value>;
 
+template <typename T>
+inline constexpr bool is_container_v = is_container<std::decay_t<T>>::value;
+
 /*! \ingroup general_types */
 /*! \defgroup container_types container  */
 /*! \addtogroup container_types */
@@ -93,12 +96,12 @@ using require_not_container_st
                                               TypeCheck, Check...>>;
 
 /*! \brief Require type satisfies @ref is_container */
-/*! and holds a base type that satisfies @ref is_autodiff */
+/*! and holds a base type that satisfies @ref is_autodiff_scalar */
 /*! @tparam T the type to check */
 template <typename T>
 using require_ad_container_t
     = require_all_t<stan::math::disjunction<is_eigen<T>, is_std_vector<T>>,
-                    is_autodiff<base_type_t<T>>>;
+                    is_autodiff_scalar<base_type_t<T>>>;
 /*! @} */
 
 }  // namespace stan

@@ -28,8 +28,8 @@ template <bool propto, typename T_n_cl, typename T_log_rate_cl,
           require_all_prim_or_rev_kernel_expression_t<T_n_cl,
                                                       T_log_rate_cl>* = nullptr,
           require_any_not_stan_scalar_t<T_n_cl, T_log_rate_cl>* = nullptr>
-return_type_t<T_log_rate_cl> poisson_log_lpmf(const T_n_cl& n,
-                                              const T_log_rate_cl& alpha) {
+inline return_type_t<T_log_rate_cl> poisson_log_lpmf(
+    const T_n_cl& n, const T_log_rate_cl& alpha) {
   static constexpr const char* function = "poisson_log_lpmf(OpenCL)";
   using T_partials_return = partials_return_t<T_log_rate_cl>;
   using std::isinf;
@@ -42,7 +42,7 @@ return_type_t<T_log_rate_cl> poisson_log_lpmf(const T_n_cl& n,
   if (N == 0) {
     return 0.0;
   }
-  if (!include_summand<propto, T_log_rate_cl>::value) {
+  if constexpr (!include_summand<propto, T_log_rate_cl>::value) {
     return 0.0;
   }
 
@@ -78,7 +78,7 @@ return_type_t<T_log_rate_cl> poisson_log_lpmf(const T_n_cl& n,
   results(check_n_nonnegative, check_alpha_not_nan, return_log_zero_cl, logp_cl,
           deriv_cl)
       = expressions(n_nonnegativer, alpha_not_nan, return_log_zero, logp_expr,
-                    calc_if<!is_constant_all<T_log_rate_cl>::value>(deriv));
+                    calc_if<is_autodiff_v<T_log_rate_cl>>(deriv));
 
   if (from_matrix_cl(return_log_zero_cl).any()) {
     return LOG_ZERO;
@@ -86,7 +86,7 @@ return_type_t<T_log_rate_cl> poisson_log_lpmf(const T_n_cl& n,
 
   logp = sum(from_matrix_cl(logp_cl));
 
-  if (!is_constant_all<T_log_rate_cl>::value) {
+  if constexpr (is_autodiff_v<T_log_rate_cl>) {
     partials<0>(ops_partials) = deriv_cl;
   }
 

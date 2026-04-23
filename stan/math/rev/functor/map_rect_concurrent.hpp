@@ -20,7 +20,8 @@ namespace internal {
 
 template <int call_id, typename F, typename T_shared_param,
           typename T_job_param, require_eigen_col_vector_t<T_shared_param>*>
-Eigen::Matrix<return_type_t<T_shared_param, T_job_param>, Eigen::Dynamic, 1>
+inline Eigen::Matrix<return_type_t<T_shared_param, T_job_param>, Eigen::Dynamic,
+                     1>
 map_rect_concurrent(
     const T_shared_param& shared_params,
     const std::vector<Eigen::Matrix<T_job_param, Eigen::Dynamic, 1>>&
@@ -47,7 +48,7 @@ map_rect_concurrent(
 #ifdef STAN_THREADS
   // we must use task isolation as described here:
   // https://software.intel.com/content/www/us/en/develop/documentation/tbb-documentation/top/intel-threading-building-blocks-developer-guide/task-isolation.html
-  // this is to ensure that the thread local AD tape ressource is
+  // this is to ensure that the thread local AD tape resource is
   // not being modified from a different task which may happen
   // whenever this function is being used itself in a parallel
   // context (like running multiple chains for Stan)

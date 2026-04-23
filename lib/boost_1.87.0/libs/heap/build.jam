@@ -1,0 +1,34 @@
+# Copyright René Ferdinand Rivera Morell 2023-2024
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at
+# http://www.boost.org/LICENSE_1_0.txt)
+
+require-b2 5.2 ;
+
+constant boost_dependencies :
+    /boost/array//boost_array
+    /boost/assert//boost_assert
+    /boost/bind//boost_bind
+    /boost/concept_check//boost_concept_check
+    /boost/config//boost_config
+    /boost/core//boost_core
+    /boost/intrusive//boost_intrusive
+    /boost/iterator//boost_iterator
+    /boost/parameter//boost_parameter
+    /boost/static_assert//boost_static_assert
+    /boost/throw_exception//boost_throw_exception
+    /boost/type_traits//boost_type_traits ;
+
+project /boost/heap
+    : common-requirements
+        <include>include
+    ;
+
+explicit
+    [ alias boost_heap : : : : <library>$(boost_dependencies) ]
+    [ alias all : boost_heap test ]
+    ;
+
+call-if : boost-library heap
+    ;
+

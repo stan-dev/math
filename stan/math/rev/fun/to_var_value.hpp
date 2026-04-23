@@ -43,7 +43,7 @@ inline T to_var_value(T&& a) {
  * Convert the elements of the `std::vector` input to `var_value` types
  * if possible
  *
- * @tparam T type of elemnts of the input vector
+ * @tparam T type of elements of the input vector
  * @param a std::vector of elements to convert
  */
 template <typename T>

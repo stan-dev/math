@@ -38,9 +38,9 @@ namespace math {
 template <typename T_y, typename T_loc, typename T_scale, typename T_skewness,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_loc, T_scale, T_skewness>* = nullptr>
-return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_cdf(
-    const T_y& y, const T_loc& mu, const T_scale& sigma,
-    const T_skewness& tau) {
+inline return_type_t<T_y, T_loc, T_scale, T_skewness>
+skew_double_exponential_cdf(const T_y& y, const T_loc& mu, const T_scale& sigma,
+                            const T_skewness& tau) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_skewness>;
   static constexpr const char* function = "skew_double_exponential_lcdf";
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
@@ -115,36 +115,36 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_cdf(
     }
     cdf *= cdfn;
 
-    if (!is_constant_all<T_y>::value) {
+    if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials)[i] += rep_deriv;
     }
-    if (!is_constant_all<T_loc>::value) {
+    if constexpr (is_autodiff_v<T_loc>) {
       partials<1>(ops_partials)[i] -= rep_deriv;
     }
-    if (!is_constant_all<T_scale>::value) {
+    if constexpr (is_autodiff_v<T_scale>) {
       partials<2>(ops_partials)[i] += sig_deriv;
     }
-    if (!is_constant_all<T_skewness>::value) {
+    if constexpr (is_autodiff_v<T_skewness>) {
       partials<3>(ops_partials)[i] += skew_deriv;
     }
   }
 
-  if (!is_constant_all<T_y>::value) {
+  if constexpr (is_autodiff_v<T_y>) {
     for (size_t n = 0; n < stan::math::size(y); ++n) {
       partials<0>(ops_partials)[n] *= cdf;
     }
   }
-  if (!is_constant_all<T_loc>::value) {
+  if constexpr (is_autodiff_v<T_loc>) {
     for (size_t n = 0; n < stan::math::size(mu); ++n) {
       partials<1>(ops_partials)[n] *= cdf;
     }
   }
-  if (!is_constant_all<T_scale>::value) {
+  if constexpr (is_autodiff_v<T_scale>) {
     for (size_t n = 0; n < stan::math::size(sigma); ++n) {
       partials<2>(ops_partials)[n] *= cdf;
     }
   }
-  if (!is_constant_all<T_skewness>::value) {
+  if constexpr (is_autodiff_v<T_skewness>) {
     for (size_t n = 0; n < stan::math::size(tau); ++n) {
       partials<3>(ops_partials)[n] *= cdf;
     }

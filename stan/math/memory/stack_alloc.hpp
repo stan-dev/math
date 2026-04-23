@@ -26,7 +26,7 @@ namespace math {
  * @tparam Type of object to which pointer points.
  */
 template <typename T>
-bool is_aligned(T* ptr, unsigned int bytes_aligned) {
+inline bool is_aligned(T* ptr, unsigned int bytes_aligned) {
   return (reinterpret_cast<uintptr_t>(ptr) % bytes_aligned) == 0U;
 }
 
@@ -254,7 +254,7 @@ class stack_alloc {
   /**
    * Return number of bytes allocated to this instance by the heap.
    * This is not the same as the number of bytes allocated through
-   * calls to memalloc_.  The latter number is not calculatable
+   * calls to memalloc_.  The latter number is not calculable
    * because space is wasted at the end of blocks if the next
    * alloc request doesn't fit.  (Perhaps we could trim down to
    * what is actually used?)

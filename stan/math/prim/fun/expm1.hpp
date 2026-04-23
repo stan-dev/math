@@ -8,6 +8,11 @@
 namespace stan {
 namespace math {
 
+template <typename T, require_arithmetic_t<T>* = nullptr>
+inline auto expm1(T&& x) {
+  return std::expm1(x);
+}
+
 /**
  * Structure to wrap `expm1()` so that it can be vectorized.
  *
@@ -17,9 +22,8 @@ namespace math {
  */
 struct expm1_fun {
   template <typename T>
-  static inline auto fun(const T& x) {
-    using std::expm1;
-    return expm1(x);
+  static inline auto fun(T&& x) {
+    return expm1(std::forward<T>(x));
   }
 };
 
@@ -35,9 +39,9 @@ struct expm1_fun {
 template <
     typename T,
     require_all_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr,
-    require_not_var_matrix_t<T>* = nullptr>
-inline auto expm1(const T& x) {
-  return apply_scalar_unary<expm1_fun, T>::apply(x);
+    require_not_var_matrix_t<T>* = nullptr, require_container_t<T>* = nullptr>
+inline auto expm1(T&& x) {
+  return apply_scalar_unary<expm1_fun, T>::apply(std::forward<T>(x));
 }
 
 }  // namespace math

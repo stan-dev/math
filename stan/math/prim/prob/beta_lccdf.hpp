@@ -38,7 +38,7 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_y, typename T_scale_succ, typename T_scale_fail>
-return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lccdf(
+inline return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lccdf(
     const T_y& y, const T_scale_succ& alpha, const T_scale_fail& beta_param) {
   using T_partials_return = partials_return_t<T_y, T_scale_succ, T_scale_fail>;
   using std::exp;
@@ -72,17 +72,17 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lccdf(
   size_t size_alpha_beta = max_size(alpha, beta_param);
   size_t N = max_size(y, alpha, beta_param);
 
-  VectorBuilder<!is_constant_all<T_scale_succ, T_scale_fail>::value,
+  VectorBuilder<is_any_autodiff_v<T_scale_succ, T_scale_fail>,
                 T_partials_return, T_scale_succ>
       digamma_alpha(size_alpha);
-  VectorBuilder<!is_constant_all<T_scale_succ, T_scale_fail>::value,
+  VectorBuilder<is_any_autodiff_v<T_scale_succ, T_scale_fail>,
                 T_partials_return, T_scale_fail>
       digamma_beta(size_beta);
-  VectorBuilder<!is_constant_all<T_scale_succ, T_scale_fail>::value,
+  VectorBuilder<is_any_autodiff_v<T_scale_succ, T_scale_fail>,
                 T_partials_return, T_scale_succ, T_scale_fail>
       digamma_sum(size_alpha_beta);
 
-  if (!is_constant_all<T_scale_succ, T_scale_fail>::value) {
+  if constexpr (is_any_autodiff_v<T_scale_succ, T_scale_fail>) {
     for (size_t i = 0; i < size_alpha; i++) {
       digamma_alpha[i] = digamma(alpha_vec.val(i));
     }
@@ -105,7 +105,7 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lccdf(
 
     ccdf_log += log(Pn);
 
-    if (!is_constant_all<T_y>::value) {
+    if constexpr (is_autodiff_v<T_y>) {
       partials<0>(ops_partials)[n] -= pow(1 - y_dbl, beta_dbl - 1)
                                       * pow(y_dbl, alpha_dbl - 1) * inv_Pn
                                       / betafunc_dbl;
@@ -114,14 +114,14 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lccdf(
     T_partials_return g1 = 0;
     T_partials_return g2 = 0;
 
-    if (!is_constant_all<T_scale_succ, T_scale_fail>::value) {
+    if constexpr (is_any_autodiff_v<T_scale_succ, T_scale_fail>) {
       grad_reg_inc_beta(g1, g2, alpha_dbl, beta_dbl, y_dbl, digamma_alpha[n],
                         digamma_beta[n], digamma_sum[n], betafunc_dbl);
     }
-    if (!is_constant_all<T_scale_succ>::value) {
+    if constexpr (is_autodiff_v<T_scale_succ>) {
       partials<1>(ops_partials)[n] -= g1 * inv_Pn;
     }
-    if (!is_constant_all<T_scale_fail>::value) {
+    if constexpr (is_autodiff_v<T_scale_fail>) {
       partials<2>(ops_partials)[n] -= g2 * inv_Pn;
     }
   }

@@ -1,4 +1,5 @@
 #include <stan/math/rev.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <stan/math/prim.hpp>
 #include <boost/typeof/typeof.hpp>
 #include <gtest/gtest.h>
@@ -10,7 +11,7 @@ using stan::math::promote_elements;
 using stan::math::var;
 using std::vector;
 
-TEST(MathFunctionsScalPromote_Elements, double2var) {
+TEST_F(AgradRev, MathFunctionsScalPromote_Elements_double2var) {
   double from;
   promote_elements<var, double> p;
   typedef BOOST_TYPEOF(p.promote(from)) result_t;
@@ -18,7 +19,7 @@ TEST(MathFunctionsScalPromote_Elements, double2var) {
   EXPECT_TRUE(same);
 }
 
-TEST(MathFunctionsArrPromote_Elements, doubleVec2varVec) {
+TEST_F(AgradRev, MathFunctionsArrPromote_Elements_doubleVec2varVec) {
   vector<double> from;
   from.push_back(1);
   from.push_back(2);
@@ -29,7 +30,7 @@ TEST(MathFunctionsArrPromote_Elements, doubleVec2varVec) {
   EXPECT_TRUE(same);
 }
 
-TEST(MathFunctionsMatPromote_Elements, doubleMat2varMat) {
+TEST_F(AgradRev, MathFunctionsMatPromote_Elements_doubleMat2varMat) {
   stan::math::matrix_d m1(2, 3);
   m1 << 1, 2, 3, 4, 5, 6;
   promote_elements<Matrix<var, 2, 3>, Matrix<double, 2, 3> > p;

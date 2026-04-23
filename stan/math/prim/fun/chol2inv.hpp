@@ -20,7 +20,7 @@ namespace math {
  *  lower triangular
  */
 template <typename T, require_eigen_t<T>* = nullptr>
-plain_type_t<T> chol2inv(const T& L) {
+inline plain_type_t<T> chol2inv(const T& L) {
   const Eigen::Ref<const plain_type_t<T>>& L_ref = L;
   check_square("chol2inv", "L", L_ref);
   check_lower_triangular("chol2inv", "L", L_ref);

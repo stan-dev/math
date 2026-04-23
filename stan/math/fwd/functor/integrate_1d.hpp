@@ -45,18 +45,18 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_impl(
   FvarT ret = finite_diff(func, args...);
 
   // Calculate tangents w.r.t. integration bounds if needed
-  if (is_fvar<T_a>::value || is_fvar<T_b>::value) {
+  if constexpr (is_fvar<T_a>::value || is_fvar<T_b>::value) {
     auto val_args = std::make_tuple(value_of(args)...);
-    if (is_fvar<T_a>::value) {
-      ret.d_ += math::forward_as<FvarT>(a).d_
+    if constexpr (is_fvar<T_a>::value) {
+      ret.d_ += a.d_
                 * math::apply(
                     [&](auto &&... tuple_args) {
                       return -f(a_val, 0.0, msgs, tuple_args...);
                     },
                     val_args);
     }
-    if (is_fvar<T_b>::value) {
-      ret.d_ += math::forward_as<FvarT>(b).d_
+    if constexpr (is_fvar<T_b>::value) {
+      ret.d_ += b.d_
                 * math::apply(
                     [&](auto &&... tuple_args) {
                       return f(b_val, 0.0, msgs, tuple_args...);

@@ -218,32 +218,32 @@ class VectorRNGTestRig {
 };
 
 template <>
-std::vector<int> VectorRNGTestRig::get_good_p1<int>() const {
+inline std::vector<int> VectorRNGTestRig::get_good_p1<int>() const {
   return good_p1_int_;
 }
 
 template <>
-std::vector<int> VectorRNGTestRig::get_bad_p1<int>() const {
+inline std::vector<int> VectorRNGTestRig::get_bad_p1<int>() const {
   return bad_p1_int_;
 }
 
 template <>
-std::vector<int> VectorRNGTestRig::get_good_p2<int>() const {
+inline std::vector<int> VectorRNGTestRig::get_good_p2<int>() const {
   return good_p2_int_;
 }
 
 template <>
-std::vector<int> VectorRNGTestRig::get_bad_p2<int>() const {
+inline std::vector<int> VectorRNGTestRig::get_bad_p2<int>() const {
   return bad_p2_int_;
 }
 
 template <>
-std::vector<int> VectorRNGTestRig::get_good_p3<int>() const {
+inline std::vector<int> VectorRNGTestRig::get_good_p3<int>() const {
   return good_p3_int_;
 }
 
 template <>
-std::vector<int> VectorRNGTestRig::get_bad_p3<int>() const {
+inline std::vector<int> VectorRNGTestRig::get_bad_p3<int>() const {
   return bad_p3_int_;
 }
 

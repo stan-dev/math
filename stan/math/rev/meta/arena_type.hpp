@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta/is_eigen.hpp>
 #include <stan/math/prim/meta/is_var.hpp>
+#include <stan/math/prim/meta/is_tuple.hpp>
 #include <stan/math/prim/meta/plain_type.hpp>
 #include <stan/math/rev/core/arena_allocator.hpp>
 #include <stan/math/rev/core/chainable_alloc.hpp>
@@ -47,6 +48,7 @@ struct arena_type_impl<
                      && T::ColsAtCompileTime != Eigen::Dynamic>> {
   using type = plain_type_t<T>;
 };
+
 }  // namespace internal
 
 /**

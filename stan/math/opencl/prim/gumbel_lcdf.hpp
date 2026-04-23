@@ -31,7 +31,7 @@ template <
     require_all_prim_or_rev_kernel_expression_t<T_y_cl, T_loc_cl,
                                                 T_scale_cl>* = nullptr,
     require_any_not_stan_scalar_t<T_y_cl, T_loc_cl, T_scale_cl>* = nullptr>
-return_type_t<T_y_cl, T_loc_cl, T_scale_cl> gumbel_lcdf(
+inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl> gumbel_lcdf(
     const T_y_cl& y, const T_loc_cl& mu, const T_scale_cl& beta) {
   static constexpr const char* function = "gumbel_lcdf(OpenCL)";
   using T_partials_return = partials_return_t<T_y_cl, T_loc_cl, T_scale_cl>;
@@ -78,21 +78,21 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> gumbel_lcdf(
   results(check_y_not_nan, check_mu_finite, check_beta_positive, lcdf_cl,
           y_deriv_cl, mu_deriv_cl, beta_deriv_cl)
       = expressions(y_not_nan_expr, mu_finite_expr, beta_positive_expr,
-                    lcdf_expr, calc_if<!is_constant<T_y_cl>::value>(y_deriv),
-                    calc_if<!is_constant<T_loc_cl>::value>(mu_deriv),
-                    calc_if<!is_constant<T_scale_cl>::value>(beta_deriv));
+                    lcdf_expr, calc_if<is_autodiff_v<T_y_cl>>(y_deriv),
+                    calc_if<is_autodiff_v<T_loc_cl>>(mu_deriv),
+                    calc_if<is_autodiff_v<T_scale_cl>>(beta_deriv));
 
   T_partials_return lcdf = -sum(from_matrix_cl(lcdf_cl));
 
   auto ops_partials = make_partials_propagator(y_col, mu_col, beta_col);
 
-  if (!is_constant<T_y_cl>::value) {
+  if constexpr (is_autodiff_v<T_y_cl>) {
     partials<0>(ops_partials) = std::move(y_deriv_cl);
   }
-  if (!is_constant<T_loc_cl>::value) {
+  if constexpr (is_autodiff_v<T_loc_cl>) {
     partials<1>(ops_partials) = std::move(mu_deriv_cl);
   }
-  if (!is_constant<T_scale_cl>::value) {
+  if constexpr (is_autodiff_v<T_scale_cl>) {
     partials<2>(ops_partials) = std::move(beta_deriv_cl);
   }
   return ops_partials.build(lcdf);
