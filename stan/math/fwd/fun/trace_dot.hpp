@@ -25,7 +25,7 @@ template <typename EigMat1, typename EigMat2,
           require_all_eigen_t<EigMat1, EigMat2>* = nullptr,
           require_any_vt_fvar<EigMat1, EigMat2>* = nullptr>
 inline return_type_t<EigMat1, EigMat2> trace_dot(const EigMat1& A,
-                                                  const EigMat2& B) {
+                                                 const EigMat2& B) {
   check_size_match("trace_dot", "A.cols()", A.cols(), "B.rows()", B.rows());
   check_size_match("trace_dot", "A.rows()", A.rows(), "B.cols()", B.cols());
   return trace(multiply(A, B));
