@@ -30,9 +30,11 @@ template <typename EigMat1, typename EigMat2,
 inline auto trace_dot(EigMat1&& A, EigMat2&& B) {
   check_size_match("trace_dot", "A.cols()", A.cols(), "B.rows()", B.rows());
   check_size_match("trace_dot", "A.rows()", A.rows(), "B.cols()", B.cols());
-  return make_holder([](auto&& A_, auto&& B_) {
-    return A_.cwiseProduct(B_.transpose()).sum();
-  }, std::forward<EigMat1>(A), std::forward<EigMat2>(B));
+  return make_holder(
+      [](auto&& A_, auto&& B_) {
+        return A_.cwiseProduct(B_.transpose()).sum();
+      },
+      std::forward<EigMat1>(A), std::forward<EigMat2>(B));
 }
 
 }  // namespace math
