@@ -15,8 +15,10 @@ namespace math {
  * This is more efficient than computing the full product and
  * taking the trace, as it avoids forming the intermediate matrix.
  *
- * @tparam EigMat1 type of the first matrix
- * @tparam EigMat2 type of the second matrix
+ * @tparam EigMat1 A type either inheriting from `Eigen::DenseBase` or a
+ * `var_value` with an inner type inheriting from `Eigen::DenseBase`
+ * @tparam EigMat2 A type either inheriting from `Eigen::DenseBase` or a
+ * `var_value` with an inner type inheriting from `Eigen::DenseBase`
  *
  * @param A first matrix (m x n)
  * @param B second matrix (n x m)
@@ -25,11 +27,12 @@ namespace math {
  */
 template <typename EigMat1, typename EigMat2,
           require_all_eigen_vt<std::is_arithmetic, EigMat1, EigMat2>* = nullptr>
-inline return_type_t<EigMat1, EigMat2> trace_dot(const EigMat1& A,
-                                                 const EigMat2& B) {
+inline auto trace_dot(EigMat1&& A, EigMat2&& B) {
   check_size_match("trace_dot", "A.cols()", A.cols(), "B.rows()", B.rows());
   check_size_match("trace_dot", "A.rows()", A.rows(), "B.cols()", B.cols());
-  return A.cwiseProduct(B.transpose()).sum();
+  return make_holder([](auto&& A_, auto&& B_) {
+    return A_.cwiseProduct(B_.transpose()).sum();
+  }, std::forward<EigMat1>(A), std::forward<EigMat2>(B));
 }
 
 }  // namespace math

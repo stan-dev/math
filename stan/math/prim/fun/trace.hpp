@@ -19,8 +19,10 @@ namespace math {
  */
 template <typename T, require_eigen_t<T>* = nullptr,
           require_not_st_var<T>* = nullptr>
-inline value_type_t<T> trace(const T& m) {
-  return m.trace();
+inline auto trace(T&& m) {
+  return make_holder([](auto&& m_) {
+    return m_.trace();
+  }, std::forward<T>(m));
 }
 
 }  // namespace math
