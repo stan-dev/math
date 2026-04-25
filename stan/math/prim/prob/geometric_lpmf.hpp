@@ -12,6 +12,7 @@
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/select.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
@@ -93,7 +94,11 @@ inline return_type_t<T_prob> geometric_lpmf(const T_n& n, const T_prob& theta) {
     // theta != 1 here, so theta - 1 != 0.
     const auto& failure_grad = select(n_arr == 0, T_partials_return(0),
                                       n_arr * inv(theta_arr - 1.0));
-    partials<0>(ops_partials) = inv(theta_arr) + failure_grad;
+    if constexpr (is_stan_scalar_v<T_prob>) {
+      partials<0>(ops_partials) = sum(inv(theta_arr) + failure_grad);
+    } else {
+      partials<0>(ops_partials) = inv(theta_arr) + failure_grad;
+    }
   }
 
   return ops_partials.build(logp);

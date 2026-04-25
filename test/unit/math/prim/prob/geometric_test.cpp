@@ -112,3 +112,23 @@ TEST(ProbDistributionsGeometric, theta_zero_throws) {
   EXPECT_THROW(stan::math::geometric_lcdf(0, 0.0), std::domain_error);
   EXPECT_THROW(stan::math::geometric_lccdf(0, 0.0), std::domain_error);
 }
+
+TEST(ProbDistributionsGeometric, lccdf_vectorized_mixed_sign) {
+  // n = [-1, 2], theta = 0.5: P(N > -1) = 1 (contributes log 1 = 0),
+  //                          P(N >  2) = 0.5^3 = 0.125 (contributes 3*log 0.5).
+  // Expected: 3 * log(0.5) ~= -2.0794.
+  std::vector<int> n = {-1, 2};
+  EXPECT_NEAR(stan::math::geometric_lccdf(n, 0.5), 3.0 * std::log(0.5), 1e-10);
+}
+
+TEST(ProbDistributionsGeometric, lccdf_vectorized_theta_one_alignment) {
+  // theta_i = 1 must only zero out the result when paired with n_i >= 0.
+  // n = [2, -1], theta = [0.5, 1.0]:
+  //   i=0: theta=0.5, n= 2 -> 3 * log(0.5)
+  //   i=1: theta=1.0, n=-1 -> 0  (n below support)
+  // Expected: 3 * log(0.5).
+  std::vector<int> n = {2, -1};
+  std::vector<double> theta = {0.5, 1.0};
+  EXPECT_NEAR(stan::math::geometric_lccdf(n, theta), 3.0 * std::log(0.5),
+              1e-10);
+}
