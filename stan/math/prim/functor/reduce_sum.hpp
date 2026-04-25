@@ -46,7 +46,11 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
   struct recursive_reducer {
     Vec vmapped_;
     std::stringstream msgs_;
-    std::tuple<Args...> args_tuple_;
+    // Materialize Eigen expression-template args (e.g. M.row(0)) at storage
+    // time via the implicit ref_type_t<Args> conversion. Owning the materialized
+    // form keeps the tuple safe across TBB worker splits even after callers'
+    // temporaries fall out of scope.
+    std::tuple<ref_type_t<Args>...> args_tuple_;
     return_type_t<Vec, Args...> sum_{0.0};
 
     recursive_reducer(Vec&& vmapped, std::ostream* msgs, Args&&... args)
@@ -205,7 +209,7 @@ inline auto reduce_sum(Vec&& vmapped, int grainsize, std::ostream* msgs,
 
 #ifdef STAN_THREADS
   return internal::reduce_sum_impl<ReduceFunction, void, return_type, Vec,
-                                   ref_type_t<Args&&>...>()(
+                                   Args...>()(
       std::forward<Vec>(vmapped), true, grainsize, msgs,
       std::forward<Args>(args)...);
 #else

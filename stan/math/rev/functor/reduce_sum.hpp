@@ -54,7 +54,10 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     double* sliced_partials_;  // Points to adjoints of the partial calculations
     Vec vmapped_;
     std::stringstream msgs_;
-    std::tuple<Args...> args_tuple_;
+    // Materialize Eigen expression-template args at storage time via the
+    // implicit ref_type_t<Args> conversion so the tuple owns its data across
+    // TBB worker splits and nested autodiff scopes.
+    std::tuple<ref_type_t<Args>...> args_tuple_;
     scoped_args_tuple local_args_tuple_scope_;
     double sum_{0.0};
     Eigen::VectorXd args_adjoints_{0};
