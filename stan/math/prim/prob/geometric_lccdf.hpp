@@ -85,8 +85,8 @@ inline return_type_t<T_prob> geometric_lccdf(const T_n& n,
   // for any n_i below the support), so they are no-ops in the sum.
   // n_i >= 0 contributes (n_i + 1) * log1m(theta).
   const auto& log1m_theta = log1m(theta_arr);
-  const auto& term = select(n_arr < 0, T_partials_return(0),
-                            (n_arr + 1.0) * log1m_theta);
+  const auto& term
+      = select(n_arr < 0, T_partials_return(0), (n_arr + 1.0) * log1m_theta);
   T_partials_return logP = sum(term);
 
   if constexpr (is_autodiff_v<T_prob>) {
