@@ -50,9 +50,9 @@ inline auto reduce_sum_static(Vec&& vmapped, int grainsize, std::ostream* msgs,
 
 #ifdef STAN_THREADS
   return internal::reduce_sum_impl<ReduceFunction, void, return_type, Vec,
-                                   Args...>()(
-      std::forward<Vec>(vmapped), false, grainsize, msgs,
-      std::forward<Args>(args)...);
+                                   Args...>()(std::forward<Vec>(vmapped), false,
+                                              grainsize, msgs,
+                                              std::forward<Args>(args)...);
 #else
   if (vmapped.empty()) {
     return return_type(0);
