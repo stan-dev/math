@@ -62,7 +62,6 @@ inline return_type_t<T_prob> geometric_cdf(const T_n& n, const T_prob& theta) {
     return ops_partials.build(0.0);
   }
 
-
   // P_i = 1 - (1 - theta)^(n + 1) = -expm1((n + 1) * log1m(theta))
   // For theta = 1: log1m(1) = -inf, (n+1)*-inf = -inf (n >= 0),
   //   expm1(-inf) = -1, so P_i = 1 (correct: certain success means

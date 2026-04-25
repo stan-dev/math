@@ -62,7 +62,6 @@ inline return_type_t<T_prob> geometric_lcdf(const T_n& n, const T_prob& theta) {
     return ops_partials.build(NEGATIVE_INFTY);
   }
 
-
   // log_q = log((1 - theta)^(n + 1)) = (n + 1) * log1m(theta)
   // log P_i = log(1 - q_i) = log1m_exp(log_q_i)
   // For theta = 1: log_q = -inf, log1m_exp(-inf) = log(1 - 0) = 0
