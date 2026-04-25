@@ -30,7 +30,7 @@ namespace math {
  * @param n outcome variable (number of failures before first success)
  * @param theta success probability parameter
  * @return log complementary probability or log product of complements
- * @throw std::domain_error if theta is not in [0, 1]
+ * @throw std::domain_error if theta is not in (0, 1]
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_n, typename T_prob,
@@ -46,7 +46,8 @@ inline return_type_t<T_prob> geometric_lccdf(const T_n& n,
   T_theta_ref theta_ref = theta;
   const auto& n_arr = as_value_column_array_or_scalar(n);
   const auto& theta_arr = as_value_column_array_or_scalar(theta_ref);
-  check_bounded(function, "Probability parameter", theta_arr, 0.0, 1.0);
+  check_positive_finite(function, "Probability parameter", theta_arr);
+  check_less_or_equal(function, "Probability parameter", theta_arr, 1.0);
 
   if (size_zero(n, theta)) {
     return 0.0;
@@ -75,7 +76,6 @@ inline return_type_t<T_prob> geometric_lccdf(const T_n& n,
   }
 
   // log P(N > n) = (n + 1) * log1m(theta)
-  // For theta = 0: log1m(0) = 0, lccdf = 0 (correct: certain failure).
   const auto& log1m_theta = log1m(theta_arr);
   T_partials_return logP = sum((n_arr + 1.0) * log1m_theta);
 

@@ -32,7 +32,7 @@ namespace math {
  * @param n outcome variable (number of failures before first success)
  * @param theta success probability parameter
  * @return log probability or log sum of probabilities
- * @throw std::domain_error if theta is not in [0, 1]
+ * @throw std::domain_error if theta is not in (0, 1]
  * @throw std::domain_error if n is negative
  * @throw std::invalid_argument if container sizes mismatch
  */
@@ -49,8 +49,10 @@ inline return_type_t<T_prob> geometric_lpmf(const T_n& n, const T_prob& theta) {
   T_n_ref n_ref = n;
   T_theta_ref theta_ref = theta;
   check_nonnegative(function, "Outcome variable", n_ref);
-  check_bounded(function, "Success probability parameter", value_of(theta_ref),
-                0.0, 1.0);
+  check_positive_finite(function, "Success probability parameter",
+                        value_of(theta_ref));
+  check_less_or_equal(function, "Success probability parameter",
+                      value_of(theta_ref), 1.0);
 
   if (size_zero(n, theta)) {
     return 0.0;

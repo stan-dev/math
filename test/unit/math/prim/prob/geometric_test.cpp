@@ -101,3 +101,14 @@ TEST(ProbDistributionsGeometric, rng_theta_one) {
     EXPECT_EQ(stan::math::geometric_rng(1.0, rng), 0);
   }
 }
+
+TEST(ProbDistributionsGeometric, theta_zero_throws) {
+  // theta = 0 is a degenerate parameter (no successes possible) and is
+  // outside the documented domain (0, 1]; all four distribution functions
+  // must throw rather than returning a poisoned partial.
+  EXPECT_THROW(stan::math::geometric_lpmf(0, 0.0), std::domain_error);
+  EXPECT_THROW(stan::math::geometric_lpmf(3, 0.0), std::domain_error);
+  EXPECT_THROW(stan::math::geometric_cdf(0, 0.0), std::domain_error);
+  EXPECT_THROW(stan::math::geometric_lcdf(0, 0.0), std::domain_error);
+  EXPECT_THROW(stan::math::geometric_lccdf(0, 0.0), std::domain_error);
+}

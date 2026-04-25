@@ -33,7 +33,7 @@ namespace math {
  * @param n outcome variable (number of failures before first success)
  * @param theta success probability parameter
  * @return log probability or log sum of probabilities
- * @throw std::domain_error if theta is not in [0, 1]
+ * @throw std::domain_error if theta is not in (0, 1]
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_n, typename T_prob,
@@ -48,7 +48,8 @@ inline return_type_t<T_prob> geometric_lcdf(const T_n& n, const T_prob& theta) {
   T_theta_ref theta_ref = theta;
   const auto& n_arr = as_value_column_array_or_scalar(n);
   const auto& theta_arr = as_value_column_array_or_scalar(theta_ref);
-  check_bounded(function, "Probability parameter", theta_arr, 0.0, 1.0);
+  check_positive_finite(function, "Probability parameter", theta_arr);
+  check_less_or_equal(function, "Probability parameter", theta_arr, 1.0);
 
   if (size_zero(n, theta)) {
     return 0.0;
@@ -61,11 +62,6 @@ inline return_type_t<T_prob> geometric_lcdf(const T_n& n, const T_prob& theta) {
     return ops_partials.build(NEGATIVE_INFTY);
   }
 
-  // theta = 0 is degenerate: log P = -inf and the partials path divides
-  // by P_i = 0. Short-circuit.
-  if (any(theta_arr == 0.0)) {
-    return ops_partials.build(NEGATIVE_INFTY);
-  }
 
   // log_q = log((1 - theta)^(n + 1)) = (n + 1) * log1m(theta)
   // log P_i = log(1 - q_i) = log1m_exp(log_q_i)
