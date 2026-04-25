@@ -81,8 +81,8 @@ inline return_type_t<T_prob> geometric_lpmf(const T_n& n, const T_prob& theta) {
   // The select on n == 0 avoids 0 * log1m(1) = 0 * (-inf) = NaN when
   // theta = 1; the n > 0 && theta = 1 case was already handled above.
   const auto& log1m_theta = log1m(theta_arr);
-  const auto& failure_term = select(n_arr == 0, T_partials_return(0),
-                                    n_arr * log1m_theta);
+  const auto& failure_term
+      = select(n_arr == 0, T_partials_return(0), n_arr * log1m_theta);
   T_partials_return logp = sum(log(theta_arr) + failure_term);
 
   if constexpr (is_autodiff_v<T_prob>) {
