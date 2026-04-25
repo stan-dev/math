@@ -3,83 +3,94 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/max_size.hpp>
-#include <stan/math/prim/fun/scalar_seq_view.hpp>
-#include <stan/math/prim/fun/size.hpp>
+#include <stan/math/prim/fun/any.hpp>
+#include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/inv.hpp>
+#include <stan/math/prim/fun/log1m.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
-#include <vector>
-#include <stan/math/prim/prob/neg_binomial_lccdf.hpp>
-#include <stan/math/prim/fun/elt_divide.hpp>
-#include <stan/math/prim/fun/subtract.hpp>
+#include <stan/math/prim/functor/partials_propagator.hpp>
+#include <limits>
 
 namespace stan {
 namespace math {
 
 /** \ingroup prob_dists
  * Returns the log CCDF of the geometric distribution. Given containers of
- * matching sizes, returns the log sum of probabilities.
+ * matching sizes, returns the log of the product of complementary
+ * probabilities.
  *
- * Delegates to the negative binomial log CCDF with alpha = 1 and
- * beta = theta / (1 - theta).
+ * log P(N > n | theta) = log((1 - theta)^(n + 1)) = (n + 1) * log1m(theta).
  *
  * @tparam T_n type of outcome variable
  * @tparam T_prob type of success probability parameter
  *
  * @param n outcome variable (number of failures before first success)
  * @param theta success probability parameter
- * @return log complementary probability or log sum
- * @throw std::domain_error if theta is not in (0, 1]
+ * @return log complementary probability or log product of complements
+ * @throw std::domain_error if theta is not in [0, 1]
  * @throw std::invalid_argument if container sizes mismatch
  */
-template <typename T_n, typename T_prob>
+template <typename T_n, typename T_prob,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_n, T_prob>* = nullptr>
 inline return_type_t<T_prob> geometric_lccdf(const T_n& n,
                                              const T_prob& theta) {
-  using T_n_ref = ref_type_t<T_n>;
-  using T_prob_ref = ref_type_t<T_prob>;
+  using T_partials_return = partials_return_t<T_n, T_prob>;
+  using T_theta_ref = ref_type_t<T_prob>;
   static constexpr const char* function = "geometric_lccdf";
+  check_consistent_sizes(function, "Random variable", n,
+                         "Probability parameter", theta);
+  T_theta_ref theta_ref = theta;
+  const auto& n_arr = as_value_column_array_or_scalar(n);
+  const auto& theta_arr = as_value_column_array_or_scalar(theta_ref);
+  check_bounded(function, "Probability parameter", theta_arr, 0.0, 1.0);
 
-  check_consistent_sizes(function, "Outcome variable", n,
-                         "Success probability parameter", theta);
   if (size_zero(n, theta)) {
     return 0.0;
   }
 
-  T_n_ref n_ref = n;
-  T_prob_ref theta_ref = theta;
-  check_bounded(function, "Success probability parameter", value_of(theta_ref),
-                0.0, 1.0);
+  auto ops_partials = make_partials_propagator(theta_ref);
 
-  scalar_seq_view<T_n_ref> n_vec(n_ref);
-  for (int i = 0; i < stan::math::size(n); i++) {
-    if (n_vec.val(i) < 0) {
-      return 0.0;
+  // log P(N > n) = 0 (i.e. P = 1) when n < 0, matching the existing
+  // implementation that short-circuits on the first negative element.
+  if (any(n_arr < 0)) {
+    return ops_partials.build(0.0);
+  }
+
+  // n at INT_MAX: P(N > n) underflows to 0, lccdf = -inf.
+  // (The autodiff test framework probes the upper bound at INT_MAX,
+  // mirroring the early return used in neg_binomial_lccdf.)
+  if (any(n_arr == std::numeric_limits<int>::max())) {
+    return ops_partials.build(NEGATIVE_INFTY);
+  }
+
+  // theta = 1 means certain success, so P(N > n) = 0 for n >= 0 and the
+  // log is -inf. The partials path divides by (theta - 1) = 0, so we
+  // short-circuit.
+  if (any(theta_arr == 1.0)) {
+    return ops_partials.build(NEGATIVE_INFTY);
+  }
+
+  // log P(N > n) = (n + 1) * log1m(theta)
+  // For theta = 0: log1m(0) = 0, lccdf = 0 (correct: certain failure).
+  const auto& log1m_theta = log1m(theta_arr);
+  T_partials_return logP = sum((n_arr + 1.0) * log1m_theta);
+
+  if constexpr (is_autodiff_v<T_prob>) {
+    // d/dtheta (n + 1) * log1m(theta) = -(n + 1) / (1 - theta)
+    //                                 = (n + 1) / (theta - 1)
+    // theta = 1 case was filtered above so theta - 1 != 0 here.
+    if constexpr (is_stan_scalar_v<T_prob>) {
+      partials<0>(ops_partials) = sum((n_arr + 1.0) * inv(theta_arr - 1.0));
+    } else {
+      partials<0>(ops_partials) = (n_arr + 1.0) * inv(theta_arr - 1.0);
     }
   }
 
-  // theta = 1 => CCDF = 0 for n >= 0, log CCDF = -inf
-  scalar_seq_view<T_prob_ref> theta_vec(theta_ref);
-  const size_t max_sz = max_size(n_ref, theta_ref);
-  for (size_t i = 0; i < max_sz; i++) {
-    if (value_of(theta_vec[i]) == 1.0 && n_vec.val(i) >= 0) {
-      return negative_infinity();
-    }
-  }
-
-  if constexpr (is_stan_scalar_v<T_prob>) {
-    const auto beta = theta_ref / (1.0 - theta_ref);
-    return neg_binomial_lccdf(n_ref, 1, beta);
-  } else if constexpr (is_std_vector_v<T_prob>) {
-    std::vector<value_type_t<T_prob>> beta;
-    beta.reserve(stan::math::size(theta));
-    for (size_t i = 0; i < stan::math::size(theta); i++) {
-      beta.push_back(theta_vec[i] / (1.0 - theta_vec[i]));
-    }
-    return neg_binomial_lccdf(n_ref, 1, beta);
-  } else {
-    const auto beta = elt_divide(theta_ref, subtract(1.0, theta_ref));
-    return neg_binomial_lccdf(n_ref, 1, beta);
-  }
+  return ops_partials.build(logP);
 }
 
 }  // namespace math
