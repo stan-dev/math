@@ -1,3 +1,5 @@
+
+
 #include <stan/math.hpp>
 #include <gtest/gtest.h>
 
@@ -16,12 +18,15 @@ TEST(MathFunctions, expVec) {
   for (size_t i = 0; i < N; ++i) {
     vec[i] = i + 1;
   }
-  EXPECT_NO_THROW(stan::math::exp_test(vec));
+  std::vector<double> vec_test;
+  EXPECT_NO_THROW(vec_test = stan::math::exp_test(vec));
 
   // std::vector<double> vec_test;
   // vec_test = stan::math::exp_test(vec);
   // for (size_t i = 0; i < N; ++i) {
-  //   EXPECT_FLOAT_EQ(std::exp(i + 1), vec_test[i]);
+  //   std::cout << vec_test[i] << "\n";
+  //   std::cout << std::exp(i + 1) << "\n";
+  //   //EXPECT_FLOAT_EQ(std::exp(i + 1), vec_test[i]);
   // }
 }
 

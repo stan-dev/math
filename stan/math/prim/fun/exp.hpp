@@ -108,10 +108,11 @@ template <typename Container,
           require_container_bt<std::is_arithmetic, Container>* = nullptr>
 inline auto exp_test(Container&& x) {
   std::size_t N = x.size();
-  // tbb::parallel_for(tbb::blocked_range<size_t>(0,N),
-  //		    typename apply_exp<Container>::apply_exp(x));
-  return tbb::parallel_for(tbb::blocked_range<size_t>(0,N),
+  tbb::parallel_for(tbb::blocked_range<size_t>(0,N),
 		    typename apply_exp<Container>::apply_exp(x));
+  // return tbb::parallel_for(tbb::blocked_range<size_t>(0,N),
+  // 		    typename apply_exp<Container>::apply_exp(x));
+  return x;
   // return apply_vector_unary<Container>::apply(
   //     std::forward<Container>(x), [](auto&& v) { return v.array().exp(); });
 }
