@@ -13,6 +13,7 @@
 #include <stan/math/prim/core.hpp>
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
+#include <stan/math/prim/core/init_threadpool_tbb.hpp>
 
 namespace stan {
 namespace math {
@@ -110,15 +111,9 @@ template <typename Container,
           require_container_bt<std::is_arithmetic, Container>* = nullptr>
 inline auto exp_test(Container&& x) {
   std::size_t N = x.size();
-  //Container&& ret = x;
   tbb::parallel_for(tbb::blocked_range<size_t>(0,N),
 		    typename apply_exp<Container>::apply_exp(x));
   return x;
-  // return tbb::parallel_for(tbb::blocked_range<size_t>(0,N),
-  // 		    typename apply_exp<Container>::apply_exp(x));
-  //return ret;
-  // return apply_vector_unary<Container>::apply(
-  //     std::forward<Container>(x), [](auto&& v) { return v.array().exp(); });
 }
   
 namespace internal {
