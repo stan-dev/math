@@ -69,13 +69,24 @@ template <typename Container>
 class apply_exp {
   Container const my_a;
 public:
-  void operator()(const tbb::blocked_range<std::size_t>& r) const {
+  Container operator()(const tbb::blocked_range<std::size_t>& r) const {
     Container a = my_a;
-    for (std::size_t i = r.begin(); i != r.end(); ++i)
+    //    Container a_out = my_a;
+    for (std::size_t i = r.begin(); i != r.end(); ++i) {
       exp(a[i]);
+      //      a_out[i] = exp(a[i]);
+      a[i] = exp(a[i]);
+      // std::cout << "exp ai\n";
+      // std::cout << exp(a[i]) << std::endl;
+      // std::cout << "a_out\n";
+      // std::cout << a_out[i] << std::endl;
+      // std::cout << "a[i]= exp(a[i])\n";
+      // std::cout << a[i] << std::endl;
+    }
+    return a;
   }
   apply_exp<Container>(Container a):
-      my_a(a)
+    my_a(a)
   {}
 };
 
@@ -108,11 +119,13 @@ template <typename Container,
           require_container_bt<std::is_arithmetic, Container>* = nullptr>
 inline auto exp_test(Container&& x) {
   std::size_t N = x.size();
+  //Container&& ret = x;
   tbb::parallel_for(tbb::blocked_range<size_t>(0,N),
 		    typename apply_exp<Container>::apply_exp(x));
+  return x;
   // return tbb::parallel_for(tbb::blocked_range<size_t>(0,N),
   // 		    typename apply_exp<Container>::apply_exp(x));
-  return x;
+  //return ret;
   // return apply_vector_unary<Container>::apply(
   //     std::forward<Container>(x), [](auto&& v) { return v.array().exp(); });
 }
