@@ -206,8 +206,8 @@ TEST(ToMatrixRowVector, answers) {
 // [[T]] -> Matrix
 inline void test_to_matrix_2darray_answers(int m, int n) {
   using stan::math::to_matrix;
-  std::vector<std::vector<double> > vec(m, std::vector<double>(n));
-  std::vector<std::vector<int> > vec_int(m, std::vector<int>(n));
+  std::vector<std::vector<double>> vec(m, std::vector<double>(n));
+  std::vector<std::vector<int>> vec_int(m, std::vector<int>(n));
   // Any vec (0, C) will become (0, 0)
   if (m == 0)
     n = 0;
@@ -284,10 +284,10 @@ TEST(ToMatrixVectorArray, preservesScalarType) {
   vecs[1] << 3, 4;
 
   auto result = to_matrix(vecs);
-  static_assert(std::is_same<decltype(result),
-                             Eigen::Matrix<int, Eigen::Dynamic,
-                                           Eigen::Dynamic>>::value,
-                "to_matrix should preserve the vector scalar type");
+  static_assert(
+      std::is_same<decltype(result),
+                   Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic>>::value,
+      "to_matrix should preserve the vector scalar type");
   EXPECT_EQ(1, result(0, 0));
   EXPECT_EQ(2, result(1, 0));
   EXPECT_EQ(3, result(0, 1));
@@ -332,8 +332,7 @@ TEST(ToMatrixRowVectorArray, empty) {
   EXPECT_EQ(3, zero_cols_result.rows());
   EXPECT_EQ(0, zero_cols_result.cols());
 
-  std::vector<row_vector_d> round_trip
-      = to_row_vector_array(zero_cols_result);
+  std::vector<row_vector_d> round_trip = to_row_vector_array(zero_cols_result);
   ASSERT_EQ(zero_cols.size(), round_trip.size());
   for (size_t i = 0; i < zero_cols.size(); ++i) {
     EXPECT_MATRIX_FLOAT_EQ(zero_cols[i], round_trip[i]);
