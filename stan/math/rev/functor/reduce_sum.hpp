@@ -54,9 +54,11 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     double* sliced_partials_;  // Points to adjoints of the partial calculations
     Vec vmapped_;
     std::stringstream msgs_;
-    // Materialize Eigen expression-template args at storage time via the
-    // implicit ref_type_t<Args> conversion so the tuple owns its data across
-    // TBB worker splits and nested autodiff scopes.
+    // Owns ref_type_t<Args>... so the tuple holds materialized values across
+    // TBB worker splits and nested autodiff scopes. The impl's outer
+    // operator() materializes args... once before invoking save_varis or
+    // constructing this reducer to avoid double evaluation of Eigen
+    // expression-template args (e.g. M.row(0)).
     std::tuple<ref_type_t<Args>...> args_tuple_;
     scoped_args_tuple local_args_tuple_scope_;
     double sum_{0.0};
@@ -230,10 +232,13 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
       return var(0.0);
     }
 
+    std::tuple<ref_type_t<Args>...> args_refs(std::forward<Args>(args)...);
+
     const std::size_t num_terms = vmapped.size();
     const std::size_t num_vars_per_term = count_vars(vmapped[0]);
     const std::size_t num_vars_sliced_terms = num_terms * num_vars_per_term;
-    const std::size_t num_vars_shared_terms = count_vars(args...);
+    const std::size_t num_vars_shared_terms = math::apply(
+        [](auto&&... args_refs) { return count_vars(args_refs...); }, args_refs);
 
     vari** varis = ChainableStack::instance_->memalloc_.alloc_array<vari*>(
         num_vars_sliced_terms + num_vars_shared_terms);
@@ -241,15 +246,23 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
         num_vars_sliced_terms + num_vars_shared_terms);
 
     save_varis(varis, vmapped);
-    save_varis(varis + num_vars_sliced_terms, args...);
+    math::apply(
+        [&](auto&&... args_refs) {
+          save_varis(varis + num_vars_sliced_terms, args_refs...);
+        },
+        args_refs);
 
     for (size_t i = 0; i < num_vars_sliced_terms; ++i) {
       partials[i] = 0.0;
     }
 
-    recursive_reducer worker(num_vars_per_term, num_vars_shared_terms, partials,
-                             std::forward<Vec>(vmapped),
-                             std::forward<Args>(args)...);
+    recursive_reducer worker = math::apply(
+        [&](auto&&... args_refs) {
+          return recursive_reducer(num_vars_per_term, num_vars_shared_terms,
+                                   partials, std::forward<Vec>(vmapped),
+                                   args_refs...);
+        },
+        args_refs);
 
     // we must use task isolation as described here:
     // https://software.intel.com/content/www/us/en/develop/documentation/tbb-documentation/top/intel-threading-building-blocks-developer-guide/task-isolation.html
