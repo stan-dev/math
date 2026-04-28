@@ -38,20 +38,20 @@ namespace math {
  * \end{array}
  * \f$
  *
- * @tparam ColVec type of elements in the vector
+ * @tparam Vec type of elements in the vector
  * @param[in] v Vector to transform.
  * @return Unit simplex result of the softmax transform of the vector.
  */
-template <typename ColVec,
-          require_eigen_col_vector_vt<std::is_arithmetic, ColVec>* = nullptr>
-inline plain_type_t<ColVec> softmax(const ColVec& v) {
+template <typename Vec,
+          require_eigen_vector_vt<std::is_arithmetic, Vec>* = nullptr>
+inline plain_type_t<Vec> softmax(const Vec& v) {
   using std::exp;
   if (v.size() == 0) {
     return v;
   }
   const auto& v_ref = to_ref(v);
   const auto theta = (v_ref.array() - v_ref.maxCoeff()).exp().eval();
-  return theta.array() / theta.sum();
+  return (theta.array() / theta.sum()).matrix();
 }
 
 }  // namespace math

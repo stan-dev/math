@@ -10,6 +10,12 @@
 namespace stan {
 namespace math {
 
+template <typename RowVec, require_eigen_row_vector_t<RowVec>* = nullptr,
+          require_t<is_fvar<value_type_t<RowVec>>>* = nullptr>
+inline auto softmax(const RowVec& alpha) {
+  return softmax(alpha.transpose()).transpose().eval();
+}
+
 template <typename ColVec,
           require_eigen_col_vector_vt<is_fvar, ColVec>* = nullptr>
 inline auto softmax(const ColVec& alpha) {

@@ -19,7 +19,14 @@ namespace math {
  * @return Softmax of the input.
  * @throw std::domain_error If the input vector is size 0.
  */
-template <typename T, require_vector_st<is_fvar, T>* = nullptr>
+template <typename RowVec, require_eigen_row_vector_t<RowVec>* = nullptr,
+          require_t<is_fvar<value_type_t<RowVec>>>* = nullptr>
+inline auto log_softmax(const RowVec& x) {
+  return log_softmax(x.transpose()).transpose().eval();
+}
+
+template <typename T, require_vector_st<is_fvar, T>* = nullptr,
+          require_not_t<is_eigen_row_vector<std::decay_t<T>>>* = nullptr>
 inline auto log_softmax(T&& x) {
   return apply_vector_unary<T>::apply(std::forward<T>(x), [](auto&& alpha) {
     using T_alpha = decltype(alpha);

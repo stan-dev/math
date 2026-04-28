@@ -31,7 +31,9 @@ inline auto softmax(const Mat& alpha) {
     return ret_type(alpha);
   }
   arena_t<mat_plain> alpha_arena = alpha;
-  arena_t<Eigen::VectorXd> res_val = softmax(value_of(alpha_arena));
+  using double_mat_t
+      = Eigen::Matrix<double, Mat::RowsAtCompileTime, Mat::ColsAtCompileTime>;
+  arena_t<double_mat_t> res_val = softmax(value_of(alpha_arena));
   arena_t<ret_type> res = res_val;
 
   reverse_pass_callback([res_val, res, alpha_arena]() mutable {

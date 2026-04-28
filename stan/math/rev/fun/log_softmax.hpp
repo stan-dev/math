@@ -53,7 +53,14 @@ class log_softmax_elt_vari : public vari {
  * @return softmax of the input
  * @throw std::domain_error if the input size is 0
  */
-template <typename T, require_eigen_st<is_var, T>* = nullptr>
+template <typename T, require_eigen_row_vector_t<T>* = nullptr,
+          require_eigen_st<is_var, T>* = nullptr>
+inline auto log_softmax(const T& x) {
+  return log_softmax(x.transpose()).transpose().eval();
+}
+
+template <typename T, require_eigen_st<is_var, T>* = nullptr,
+          require_not_t<is_eigen_row_vector<std::decay_t<T>>>* = nullptr>
 inline auto log_softmax(const T& x) {
   const int a_size = x.size();
 
