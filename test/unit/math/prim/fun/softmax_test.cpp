@@ -1,5 +1,6 @@
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
+#include <limits>
 
 TEST(MathMatrixPrimMat, softmax) {
   using Eigen::Dynamic;
@@ -27,6 +28,36 @@ TEST(MathMatrixPrimMat, softmax) {
   EXPECT_FLOAT_EQ(exp(-1) / (exp(-1) + exp(1) + exp(10.0)), theta3[0]);
   EXPECT_FLOAT_EQ(exp(1) / (exp(-1) + exp(1) + exp(10.0)), theta3[1]);
   EXPECT_FLOAT_EQ(exp(10) / (exp(-1) + exp(1) + exp(10.0)), theta3[2]);
+}
+
+TEST(MathMatrixPrimMat, softmax_neg_inf) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::softmax;
+  constexpr double neg_inf = -std::numeric_limits<double>::infinity();
+
+  // -inf in a vector pins that component to exactly 0; the rest renormalize.
+  Matrix<double, Dynamic, 1> v(3);
+  v << neg_inf, 1.0, 2.0;
+  Matrix<double, Dynamic, 1> theta = softmax(v);
+  EXPECT_FLOAT_EQ(0.0, theta[0]);
+  EXPECT_FLOAT_EQ(exp(1.0) / (exp(1.0) + exp(2.0)), theta[1]);
+  EXPECT_FLOAT_EQ(exp(2.0) / (exp(1.0) + exp(2.0)), theta[2]);
+  EXPECT_FLOAT_EQ(1.0, theta.sum());
+
+  // Row-wise on a matrix: each row independently handles -inf.
+  Matrix<double, Dynamic, Dynamic> m(2, 3);
+  m << neg_inf, 1.0, 2.0,  //
+      0.0, neg_inf, 0.0;
+  Matrix<double, Dynamic, Dynamic> result = softmax(m);
+  EXPECT_FLOAT_EQ(0.0, result(0, 0));
+  EXPECT_FLOAT_EQ(exp(1.0) / (exp(1.0) + exp(2.0)), result(0, 1));
+  EXPECT_FLOAT_EQ(exp(2.0) / (exp(1.0) + exp(2.0)), result(0, 2));
+  EXPECT_FLOAT_EQ(0.5, result(1, 0));
+  EXPECT_FLOAT_EQ(0.0, result(1, 1));
+  EXPECT_FLOAT_EQ(0.5, result(1, 2));
+  EXPECT_FLOAT_EQ(1.0, result.row(0).sum());
+  EXPECT_FLOAT_EQ(1.0, result.row(1).sum());
 }
 
 TEST(MathMatrixPrimMat, softmax_matrix) {
