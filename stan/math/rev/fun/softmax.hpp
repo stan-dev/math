@@ -23,7 +23,9 @@ namespace math {
  * @return Softmax of the input.
  * @throw std::domain_error If the input vector is size 0.
  */
-template <typename Mat, require_rev_matrix_t<Mat>* = nullptr>
+template <typename Mat, require_rev_matrix_t<Mat>* = nullptr,
+          require_t<bool_constant<Mat::RowsAtCompileTime == 1
+                                  || Mat::ColsAtCompileTime == 1>>* = nullptr>
 inline auto softmax(const Mat& alpha) {
   using mat_plain = plain_type_t<Mat>;
   using ret_type = return_var_matrix_t<Mat>;
@@ -40,6 +42,39 @@ inline auto softmax(const Mat& alpha) {
     const auto& res_adj = to_ref(res.adj());
     alpha_arena.adj()
         += -res_val * res_adj.dot(res_val) + res_val.cwiseProduct(res_adj);
+  });
+
+  return ret_type(res);
+}
+
+/**
+ * Return the softmax of the rows of the specified matrix.
+ * Softmax is applied independently to each row, producing a
+ * row-stochastic matrix.
+ *
+ * @param m Unconstrained input matrix.
+ * @return Row-stochastic matrix result.
+ */
+template <typename Mat, require_rev_matrix_t<Mat>* = nullptr,
+          require_t<bool_constant<Mat::RowsAtCompileTime != 1
+                                  && Mat::ColsAtCompileTime != 1>>* = nullptr>
+inline auto softmax(const Mat& m) {
+  using mat_plain = plain_type_t<Mat>;
+  using ret_type = return_var_matrix_t<Mat>;
+  if (m.size() == 0) {
+    return ret_type(m);
+  }
+  arena_t<mat_plain> m_arena = m;
+  using double_mat_t
+      = Eigen::Matrix<double, Mat::RowsAtCompileTime, Mat::ColsAtCompileTime>;
+  arena_t<double_mat_t> res_val = softmax(value_of(m_arena));
+  arena_t<ret_type> res = res_val;
+
+  reverse_pass_callback([res_val, res, m_arena]() mutable {
+    const auto& g = to_ref(res.adj());
+    const auto dots = (res_val.array() * g.array()).rowwise().sum().eval();
+    m_arena.adj() += (res_val.array() * (g.array().colwise() - dots.array()))
+                         .matrix();
   });
 
   return ret_type(res);

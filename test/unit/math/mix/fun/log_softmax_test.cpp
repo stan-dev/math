@@ -33,6 +33,17 @@ TEST(MathMixMatFun, logSoftmax) {
   stan::test::expect_ad(f, x3c);
   stan::test::expect_ad_matvar(f, x3c);
 
+  // Matrices (row-wise log_softmax)
+  Eigen::MatrixXd mx2(2, 2);
+  mx2 << -1, 1, 0, 2;
+  stan::test::expect_ad(f, mx2);
+  stan::test::expect_ad_matvar(f, mx2);
+
+  Eigen::MatrixXd mx3(2, 3);
+  mx3 << -1, 1, 10, 0.5, -1, 3;
+  stan::test::expect_ad(f, mx3);
+  stan::test::expect_ad_matvar(f, mx3);
+
   // Row Vectors
   Eigen::RowVectorXd rx0(0);  // error case
   stan::test::expect_ad(f, rx0);

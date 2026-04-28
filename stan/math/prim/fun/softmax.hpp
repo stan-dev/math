@@ -45,13 +45,31 @@ namespace math {
 template <typename Vec,
           require_eigen_vector_vt<std::is_arithmetic, Vec>* = nullptr>
 inline plain_type_t<Vec> softmax(const Vec& v) {
-  using std::exp;
   if (v.size() == 0) {
     return v;
   }
   const auto& v_ref = to_ref(v);
   const auto theta = (v_ref.array() - v_ref.maxCoeff()).exp().eval();
-  return (theta.array() / theta.sum()).matrix();
+  return (theta / theta.sum()).matrix();
+}
+
+/**
+ * Return the softmax of the rows of the specified matrix.
+ * Each row is transformed independently; the result is a row-stochastic
+ * matrix whose rows each sum to one.
+ *
+ * @tparam Mat type of input matrix
+ * @param[in] m Matrix to transform row-wise.
+ * @return Row-stochastic matrix result of applying softmax to each row.
+ */
+template <typename Mat, require_eigen_vt<std::is_arithmetic, Mat>* = nullptr,
+          require_not_eigen_vector_t<Mat>* = nullptr>
+inline plain_type_t<Mat> softmax(const Mat& m) {
+  const auto& m_ref = to_ref(m);
+  const auto shifted
+      = (m_ref.array().colwise() - m_ref.rowwise().maxCoeff().array()).eval();
+  const auto exp_s = shifted.exp().eval();
+  return (exp_s.colwise() / exp_s.rowwise().sum()).matrix();
 }
 
 }  // namespace math

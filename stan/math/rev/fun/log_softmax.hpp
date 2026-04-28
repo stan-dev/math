@@ -60,7 +60,7 @@ inline auto log_softmax(const T& x) {
 }
 
 template <typename T, require_eigen_st<is_var, T>* = nullptr,
-          require_not_t<is_eigen_row_vector<std::decay_t<T>>>* = nullptr>
+          require_eigen_col_vector_t<T>* = nullptr>
 inline auto log_softmax(const T& x) {
   const int a_size = x.size();
 
@@ -103,18 +103,62 @@ inline auto log_softmax(const T& x) {
  * @return softmax of the input
  * @throw std::domain_error if the input size is 0
  */
-template <typename T, require_var_matrix_t<T>* = nullptr>
+template <typename T, require_var_matrix_t<T>* = nullptr,
+          require_t<bool_constant<T::RowsAtCompileTime == 1
+                                  || T::ColsAtCompileTime == 1>>* = nullptr>
 inline auto log_softmax(const T& x) {
   check_nonzero_size("log_softmax", "x", x);
-
-  const auto& theta = (x.val().array() - x.val().maxCoeff()).eval();
-
   return make_callback_var(
-      (theta.array() - log(theta.exp().sum())).matrix(),
+      log_softmax(x.val()).eval(),
       [x](const auto& res) mutable {
+        // grad: g - sum(g) * softmax(x), where softmax(x) = exp(log_softmax(x))
         x.adj().noalias()
             += res.adj() - (res.adj().sum() * res.val().array().exp()).matrix();
       });
+}
+
+/**
+ * Return the log softmax of the rows of the specified matrix.
+ * Applied independently to each row.
+ *
+ * @tparam T type of input (var_value<Matrix>)
+ * @param x input matrix
+ * @return log-softmax applied row-wise
+ */
+template <typename T, require_var_matrix_t<T>* = nullptr,
+          require_t<bool_constant<T::RowsAtCompileTime != 1
+                                  && T::ColsAtCompileTime != 1>>* = nullptr>
+inline auto log_softmax(const T& x) {
+  check_nonzero_size("log_softmax", "x", x);
+  return make_callback_var(
+      Eigen::MatrixXd(log_softmax(x.val())),
+      [x](const auto& res) mutable {
+        // grad per row: g - softmax(x) * sum(g),  softmax(x) = exp(log_softmax(x))
+        const auto row_sums = res.adj().rowwise().sum().eval();
+        x.adj().noalias()
+            += res.adj()
+               - (res.val().array().exp().colwise() * row_sums.array())
+                     .matrix();
+      });
+}
+
+/**
+ * Return the log softmax of the rows of the specified Eigen matrix
+ * whose entries are vars. Applied independently to each row.
+ *
+ * @tparam T type of input (Eigen matrix with var scalar)
+ * @param x input matrix
+ * @return log-softmax applied row-wise
+ */
+template <typename T, require_eigen_st<is_var, T>* = nullptr,
+          require_not_t<is_eigen_vector<std::decay_t<T>>>* = nullptr>
+inline auto log_softmax(const T& x) {
+  check_nonzero_size("log_softmax", "x", x);
+  plain_type_t<T> result(x.rows(), x.cols());
+  for (int i = 0; i < x.rows(); ++i) {
+    result.row(i) = log_softmax(x.row(i));
+  }
+  return result;
 }
 
 /**

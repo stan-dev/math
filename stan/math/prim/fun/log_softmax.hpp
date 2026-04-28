@@ -40,7 +40,10 @@ namespace math {
  * @return log unit simplex result of the softmax transform of the vector.
  */
 template <typename Container, require_st_arithmetic<Container>* = nullptr,
-          require_container_t<Container>* = nullptr>
+          require_container_t<Container>* = nullptr,
+          require_not_t<bool_constant<is_eigen<std::decay_t<Container>>::value
+                                      && !is_eigen_vector<std::decay_t<
+                                             Container>>::value>>* = nullptr>
 inline auto log_softmax(Container&& x) {
   check_nonzero_size("log_softmax", "v", x);
   return make_holder(
@@ -50,6 +53,26 @@ inline auto log_softmax(Container&& x) {
             [](auto&& v) { return v.array() - log_sum_exp(v); });
       },
       to_ref(std::forward<Container>(x)));
+}
+
+/**
+ * Return the log softmax of the rows of the specified matrix.
+ * Each row is transformed independently; the result has the same shape
+ * as the input.
+ *
+ * @tparam Mat type of input matrix
+ * @param[in] m Matrix to transform row-wise.
+ * @return Log-softmax applied row-wise.
+ */
+template <typename Mat, require_eigen_vt<std::is_arithmetic, Mat>* = nullptr,
+          require_not_eigen_vector_t<Mat>* = nullptr>
+inline plain_type_t<Mat> log_softmax(const Mat& m) {
+  check_nonzero_size("log_softmax", "m", m);
+  const auto& m_ref = to_ref(m);
+  const auto shifted
+      = (m_ref.array().colwise() - m_ref.rowwise().maxCoeff().array()).eval();
+  const auto exp_s = shifted.exp().eval();
+  return (shifted.colwise() - exp_s.rowwise().sum().log()).matrix();
 }
 
 }  // namespace math

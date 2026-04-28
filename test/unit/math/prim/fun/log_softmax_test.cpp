@@ -66,6 +66,26 @@ TEST(MathMatrixPrimMat, log_softmax) {
   // x3 << -1.0, 1.0, 10.0;
   // test_log_softmax(x3);
 }
+TEST(MathMatrixPrimMat, log_softmax_matrix) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::log_softmax;
+  using stan::math::softmax;
+
+  Matrix<double, Dynamic, Dynamic> m(2, 3);
+  m << -1.0, 1.0, 10.0, 0.5, -1.0, 3.0;
+  Matrix<double, Dynamic, Dynamic> result = log_softmax(m);
+
+  EXPECT_EQ(m.rows(), result.rows());
+  EXPECT_EQ(m.cols(), result.cols());
+  // each row matches per-row log_softmax and is consistent with log(softmax)
+  for (int i = 0; i < result.rows(); ++i) {
+    Matrix<double, 1, Dynamic> expected = log_softmax(m.row(i));
+    for (int j = 0; j < result.cols(); ++j)
+      EXPECT_FLOAT_EQ(expected(j), result(i, j));
+  }
+}
+
 TEST(MathMatrixPrimMat, log_softmax_exception) {
   using stan::math::log_softmax;
   stan::math::vector_d v0;  // size == 0

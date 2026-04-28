@@ -43,6 +43,17 @@ TEST(MathMixMatFun, softmax) {
   stan::test::expect_ad(tols, f, d4);
   expect_ad_matvar(f, d4);
 
+  // Matrices (row-wise softmax)
+  Eigen::MatrixXd ma(2, 3);
+  ma << -1, 1, 10, 0.5, -1, 3;
+  stan::test::expect_ad(tols, f, ma);
+  expect_ad_matvar(f, ma);
+
+  Eigen::MatrixXd mb(3, 2);
+  mb << 0, 1, -1, 2, 3, -2;
+  stan::test::expect_ad(tols, f, mb);
+  expect_ad_matvar(f, mb);
+
   // Row vectors
   Eigen::RowVectorXd ra(0);
   stan::test::expect_ad(tols, f, ra);

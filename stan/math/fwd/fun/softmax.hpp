@@ -10,6 +10,21 @@
 namespace stan {
 namespace math {
 
+template <typename Mat, require_eigen_t<Mat>* = nullptr,
+          require_not_eigen_vector_t<Mat>* = nullptr,
+          require_t<is_fvar<value_type_t<Mat>>>* = nullptr>
+inline auto softmax(const Mat& m) {
+  const auto& m_ref = to_ref(m);
+  const auto s = softmax(m_ref.val());
+  const auto d_in = m_ref.d().eval();
+  // d/dx softmax(x) applied to tangent: s ⊙ (d_in - s · d_in)  (per row)
+  const auto dots = (s.array() * d_in.array()).rowwise().sum().eval();
+  plain_type_t<Mat> result(m_ref.rows(), m_ref.cols());
+  result.val() = s;
+  result.d() = (s.array() * (d_in.array().colwise() - dots.array())).matrix();
+  return result;
+}
+
 template <typename RowVec, require_eigen_row_vector_t<RowVec>* = nullptr,
           require_t<is_fvar<value_type_t<RowVec>>>* = nullptr>
 inline auto softmax(const RowVec& alpha) {
@@ -26,33 +41,13 @@ inline auto softmax(const ColVec& alpha) {
     return Matrix<fvar<T>, Dynamic, 1>();
   }
   const auto& alpha_ref = to_ref(alpha);
-
-  Matrix<T, Dynamic, 1> softmax_alpha_t = softmax(value_of(alpha_ref));
-
-  Matrix<fvar<T>, Dynamic, 1> softmax_alpha(alpha.size());
-  for (int k = 0; k < alpha.size(); ++k) {
-    softmax_alpha.coeffRef(k).val_ = softmax_alpha_t.coeff(k);
-    softmax_alpha.coeffRef(k).d_ = 0;
-  }
-
-  for (int m = 0; m < alpha.size(); ++m) {
-    T negative_alpha_m_d_times_softmax_alpha_t_m
-        = -alpha_ref.coeff(m).d_ * softmax_alpha_t.coeff(m);
-    for (int k = 0; k < alpha.size(); ++k) {
-      if (m == k) {
-        softmax_alpha.coeffRef(k).d_
-            += softmax_alpha_t.coeff(k)
-               * (alpha_ref.coeff(m).d_
-                  + negative_alpha_m_d_times_softmax_alpha_t_m);
-      } else {
-        softmax_alpha.coeffRef(k).d_
-            += softmax_alpha_t.coeff(k)
-               * negative_alpha_m_d_times_softmax_alpha_t_m;
-      }
-    }
-  }
-
-  return softmax_alpha;
+  const Matrix<T, Dynamic, 1> s = softmax(value_of(alpha_ref));
+  const auto d_in = alpha_ref.d().eval();
+  const T dot_sd = s.dot(d_in);
+  Matrix<fvar<T>, Dynamic, 1> result(alpha.size());
+  result.val() = s;
+  result.d() = (s.array() * (d_in.array() - dot_sd)).matrix();
+  return result;
 }
 
 }  // namespace math
