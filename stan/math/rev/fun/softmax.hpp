@@ -73,8 +73,8 @@ inline auto softmax(const Mat& m) {
   reverse_pass_callback([res_val, res, m_arena]() mutable {
     const auto& g = to_ref(res.adj());
     const auto dots = (res_val.array() * g.array()).rowwise().sum().eval();
-    m_arena.adj() += (res_val.array() * (g.array().colwise() - dots.array()))
-                         .matrix();
+    m_arena.adj()
+        += (res_val.array() * (g.array().colwise() - dots.array())).matrix();
   });
 
   return ret_type(res);

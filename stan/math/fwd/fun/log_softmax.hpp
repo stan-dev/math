@@ -31,7 +31,8 @@ inline auto log_softmax(const Mat& m) {
   const auto exp_s = shifted.exp().eval();
   const auto row_sums = exp_s.rowwise().sum().eval();
   const auto lsm_val = (shifted.colwise() - row_sums.log()).matrix().eval();
-  // softmax values needed for the tangent: d_in - softmax(x) ⊙ dot(softmax(x), d_in)
+  // softmax values needed for the tangent: d_in - softmax(x) ⊙ dot(softmax(x),
+  // d_in)
   const auto s = (exp_s.colwise() / row_sums).eval();
   const auto d_in = m_ref.d().eval();
   const auto dots = (s.array() * d_in.array()).rowwise().sum().eval();

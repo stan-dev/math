@@ -41,9 +41,9 @@ namespace math {
  */
 template <typename Container, require_st_arithmetic<Container>* = nullptr,
           require_container_t<Container>* = nullptr,
-          require_not_t<bool_constant<is_eigen<std::decay_t<Container>>::value
-                                      && !is_eigen_vector<std::decay_t<
-                                             Container>>::value>>* = nullptr>
+          require_not_t<bool_constant<
+              is_eigen<std::decay_t<Container>>::value
+              && !is_eigen_vector<std::decay_t<Container>>::value>>* = nullptr>
 inline auto log_softmax(Container&& x) {
   check_nonzero_size("log_softmax", "v", x);
   return make_holder(

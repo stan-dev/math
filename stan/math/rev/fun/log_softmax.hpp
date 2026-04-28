@@ -109,8 +109,7 @@ template <typename T, require_var_matrix_t<T>* = nullptr,
 inline auto log_softmax(const T& x) {
   check_nonzero_size("log_softmax", "x", x);
   return make_callback_var(
-      log_softmax(x.val()).eval(),
-      [x](const auto& res) mutable {
+      log_softmax(x.val()).eval(), [x](const auto& res) mutable {
         // grad: g - sum(g) * softmax(x), where softmax(x) = exp(log_softmax(x))
         x.adj().noalias()
             += res.adj() - (res.adj().sum() * res.val().array().exp()).matrix();
@@ -131,9 +130,9 @@ template <typename T, require_var_matrix_t<T>* = nullptr,
 inline auto log_softmax(const T& x) {
   check_nonzero_size("log_softmax", "x", x);
   return make_callback_var(
-      Eigen::MatrixXd(log_softmax(x.val())),
-      [x](const auto& res) mutable {
-        // grad per row: g - softmax(x) * sum(g),  softmax(x) = exp(log_softmax(x))
+      Eigen::MatrixXd(log_softmax(x.val())), [x](const auto& res) mutable {
+        // grad per row: g - softmax(x) * sum(g),  softmax(x) =
+        // exp(log_softmax(x))
         const auto row_sums = res.adj().rowwise().sum().eval();
         x.adj().noalias()
             += res.adj()
