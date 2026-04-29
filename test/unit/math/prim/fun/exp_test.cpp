@@ -148,7 +148,147 @@ TEST(MathFunctions, expVecBench_10000000_17_all10) {
 
 #else
 
+TEST(MathFunctions, expVecBench_10000000) {
+  std::cout << "NO THREADING\n";
+  // std timing includes
+  using std::chrono::high_resolution_clock;
+  using std::chrono::duration_cast;
+  using std::chrono::duration;
+  using std::chrono::milliseconds;
+
+  // stan math includes
+  using stan::math::exp;
+  size_t N = 10000000; // we're computing exp 10000 times but  scaling number of threads
+  // scaling Nthreads by squares N, N^2, N^3
+  std::cout << "N,noThreads,msInt,msDouble\n";
+  std::vector<double> vec(N);
+  for (size_t i = 0; i < N; ++i) {
+    vec[i] = i + 1;
+  }
+  std::vector<double> vec_test;
+  
+  auto t1 = high_resolution_clock::now();
+  EXPECT_NO_THROW(vec_test = stan::math::exp(vec));
+  auto t2 = high_resolution_clock::now();
+
+  /* Getting number of milliseconds as an integer. */
+  auto ms_int = duration_cast<milliseconds>(t2 - t1);
+
+  /* Getting number of milliseconds as a double. */
+  duration<double, std::milli> ms_double = t2 - t1;
+  
+  std::cout << N << ",";
+  std::cout << "NA" << ",";
+  std::cout << ms_int.count() << "ms,";
+  std::cout << ms_double.count() << "ms\n";
+}
+
 TEST(MathFunctions, expVecBench) {
+  std::cout << "NO THREADING 10000 Nincr\n";
+  // std timing includes
+  using std::chrono::high_resolution_clock;
+  using std::chrono::duration_cast;
+  using std::chrono::duration;
+  using std::chrono::milliseconds;
+
+  // stan math includes
+  using stan::math::exp;
+  size_t N = 10000; // we're computing exp 10000 times but  scaling number of threads
+  // scaling Nthreads by squares N, N^2, N^3
+  std::cout << "N,noThreads,msInt,msDouble\n";
+  std::vector<double> vec(N);
+  for (size_t i = 0; i < N; ++i) {
+    vec[i] = i + 1;
+  }
+  std::vector<double> vec_test;
+  
+  auto t1 = high_resolution_clock::now();
+  EXPECT_NO_THROW(vec_test = stan::math::exp(vec));
+  auto t2 = high_resolution_clock::now();
+
+  /* Getting number of milliseconds as an integer. */
+  auto ms_int = duration_cast<milliseconds>(t2 - t1);
+
+  /* Getting number of milliseconds as a double. */
+  duration<double, std::milli> ms_double = t2 - t1;
+  
+  std::cout << N << ",";
+  std::cout << "NA" << ",";
+  std::cout << ms_int.count() << "ms,";
+  std::cout << ms_double.count() << "ms\n";
+}
+
+TEST(MathFunctions, expVecBench_10000000_10only) {
+  std::cout << "NO THREADING 10000000 10 ONLY\n";
+  // std timing includes
+  using std::chrono::high_resolution_clock;
+  using std::chrono::duration_cast;
+  using std::chrono::duration;
+  using std::chrono::milliseconds;
+
+  // stan math includes
+  using stan::math::exp;
+  size_t N = 10000000; // we're computing exp 10000 times but  scaling number of threads
+  // scaling Nthreads by squares N, N^2, N^3
+  std::cout << "N,noThreads,msInt,msDouble\n";
+  std::vector<double> vec(N);
+  for (size_t i = 0; i < N; ++i) {
+    vec[i] = 10;
+  }
+  std::vector<double> vec_test;
+  
+  auto t1 = high_resolution_clock::now();
+  EXPECT_NO_THROW(vec_test = stan::math::exp(vec));
+  auto t2 = high_resolution_clock::now();
+
+  /* Getting number of milliseconds as an integer. */
+  auto ms_int = duration_cast<milliseconds>(t2 - t1);
+
+  /* Getting number of milliseconds as a double. */
+  duration<double, std::milli> ms_double = t2 - t1;
+  
+  std::cout << N << ",";
+  std::cout << "NA" << ",";
+  std::cout << ms_int.count() << "ms,";
+  std::cout << ms_double.count() << "ms\n";
+}
+
+TEST(MathFunctions, expVecBench_10000_10only) {
+  std::cout << "NO THREADING, 10000 10 only\n";
+  // std timing includes
+  using std::chrono::high_resolution_clock;
+  using std::chrono::duration_cast;
+  using std::chrono::duration;
+  using std::chrono::milliseconds;
+
+  // stan math includes
+  using stan::math::exp;
+  size_t N = 10000; // we're computing exp 10000 times but  scaling number of threads
+  // scaling Nthreads by squares N, N^2, N^3
+  std::cout << "N,noThreads,msInt,msDouble\n";
+  std::vector<double> vec(N);
+  for (size_t i = 0; i < N; ++i) {
+    vec[i] = 10;
+  }
+  std::vector<double> vec_test;
+  
+  auto t1 = high_resolution_clock::now();
+  EXPECT_NO_THROW(vec_test = stan::math::exp(vec));
+  auto t2 = high_resolution_clock::now();
+
+  /* Getting number of milliseconds as an integer. */
+  auto ms_int = duration_cast<milliseconds>(t2 - t1);
+
+  /* Getting number of milliseconds as a double. */
+  duration<double, std::milli> ms_double = t2 - t1;
+  
+  std::cout << N << ",";
+  std::cout << "NA" << ",";
+  std::cout << ms_int.count() << "ms,";
+  std::cout << ms_double.count() << "ms\n";
+}
+
+TEST(MathFunctions, expVecBench_10000_Nincr) {
   std::cout << "NO THREADING\n";
   // std timing includes
   using std::chrono::high_resolution_clock;
@@ -182,6 +322,7 @@ TEST(MathFunctions, expVecBench) {
   std::cout << ms_int.count() << "ms,";
   std::cout << ms_double.count() << "ms\n";
 }
+
 
 TEST(MathFunctions, expInt) {
   using stan::math::exp;
