@@ -421,26 +421,28 @@ TEST(MathFunctions, expVecBench_N2_noThreads_exp10) {
   size_t N = 2; // we're computing exp 10000 times but  scaling number of threads
   // scaling Nthreads by squares N, N^2, N^3
   std::cout << "N,noThreads,msInt,msDouble\n";
-  std::vector<double> vec(N);
   for (size_t i = 0; i < 30; ++i) {
-    vec[i] = 10;
-  }
-  std::vector<double> vec_test;
-  N = std::pow(2, i);
-  auto t1 = high_resolution_clock::now();
-  EXPECT_NO_THROW(vec_test = stan::math::exp(vec));
-  auto t2 = high_resolution_clock::now();
+    std::vector<double> vec_test;
+    N = std::pow(2, i);
+    std::vector<double> vec(N);
+    for (size_t i = 0; i < N; ++i) {
+      vec[i] = 10;
+    }
+    auto t1 = high_resolution_clock::now();
+    EXPECT_NO_THROW(vec_test = stan::math::exp(vec));
+    auto t2 = high_resolution_clock::now();
 
-  /* Getting number of milliseconds as an integer. */
-  auto ms_int = duration_cast<milliseconds>(t2 - t1);
+    /* Getting number of milliseconds as an integer. */
+    auto ms_int = duration_cast<milliseconds>(t2 - t1);
 
-  /* Getting number of milliseconds as a double. */
-  duration<double, std::milli> ms_double = t2 - t1;
+    /* Getting number of milliseconds as a double. */
+    duration<double, std::milli> ms_double = t2 - t1;
   
-  std::cout << N << ",";
-  std::cout << "NA" << ",";
-  std::cout << ms_int.count() << "ms,";
-  std::cout << ms_double.count() << "ms\n";
+    std::cout << N << ",";
+    std::cout << "NA" << ",";
+    std::cout << ms_int.count() << "ms,";
+    std::cout << ms_double.count() << "ms\n";
+  }
 }
 
 TEST(MathFunctions, expVecBench_10000_Nincr) {
