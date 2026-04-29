@@ -98,7 +98,7 @@ inline auto exp(Container&& x) {
       std::forward<Container>(x));
 }
 
-/**
+/**x
  * Version of `exp()` that accepts std::vectors, Eigen Matrix/Array objects
  *  or expressions, and containers of these.
  *
@@ -109,7 +109,7 @@ inline auto exp(Container&& x) {
 // experimental function
 template <typename Container,
           require_container_bt<std::is_arithmetic, Container>* = nullptr>
-inline auto exp_test(Container&& x) {
+inline auto exp(Container&& x) {
   std::size_t N = x.size();
   tbb::parallel_for(tbb::blocked_range<size_t>(0,N),
 		    typename apply_exp<Container>::apply_exp(x));
