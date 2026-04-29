@@ -12,12 +12,14 @@ namespace stan {
 namespace math {
 
 /**
- * Return the log softmax of the specified vector or container of vectors.
+ * Return the log softmax of the rows of the specified matrix.
+ * Each row is transformed independently; the result has the same shape
+ * as the input.
  *
- * @tparam T Type of input vector or matrix.
- * @param[in] x Unconstrained input vector.
- * @return Softmax of the input.
- * @throw std::domain_error If the input vector is size 0.
+ * @tparam Mat type of input matrix (Eigen matrix with fvar scalar)
+ * @param[in] m Matrix to transform row-wise.
+ * @return Log-softmax applied row-wise.
+ * @throw std::domain_error If the input matrix is size 0.
  */
 template <typename Mat, require_eigen_t<Mat>* = nullptr,
           require_not_eigen_vector_t<Mat>* = nullptr,
