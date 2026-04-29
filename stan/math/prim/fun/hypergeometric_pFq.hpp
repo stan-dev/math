@@ -4,12 +4,14 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err/check_not_nan.hpp>
 #include <stan/math/prim/err/check_finite.hpp>
+#include <stan/math/prim/fun/to_array_1d.hpp>
 #include <stan/math/prim/fun/to_row_vector.hpp>
-#include <boost/math/special_functions/hypergeometric_pFq.hpp>
+#include <stan/math/prim/fun/hypergeometric_1F0.hpp>
+#include <stan/math/prim/fun/hypergeometric_2F1.hpp>
+#include <stan/math/prim/fun/hypergeometric_pFq_helper.hpp>
 
 namespace stan {
 namespace math {
-
 /**
  * Returns the generalized hypergeometric function applied to the
  * input arguments:
@@ -29,6 +31,13 @@ inline return_type_t<Ta, Tb, Tz> hypergeometric_pFq(const Ta& a, const Tb& b,
                                                     const Tz& z) {
   plain_type_t<Ta> a_ref = a;
   plain_type_t<Tb> b_ref = b;
+
+  if (a_ref.size() == 1 && b_ref.size() == 0) {
+    return hypergeometric_1F0(a_ref[0], z);
+  } else if (a_ref.size() == 2 && b_ref.size() == 1) {
+    return hypergeometric_2F1(a_ref[0], a_ref[1], b_ref[0], z);
+  }
+
   check_finite("hypergeometric_pFq", "a", a_ref);
   check_finite("hypergeometric_pFq", "b", b_ref);
   check_finite("hypergeometric_pFq", "z", z);
@@ -50,9 +59,7 @@ inline return_type_t<Ta, Tb, Tz> hypergeometric_pFq(const Ta& a, const Tb& b,
     throw std::domain_error(msg.str());
   }
 
-  return boost::math::hypergeometric_pFq(
-      std::vector<double>(a_ref.data(), a_ref.data() + a_ref.size()),
-      std::vector<double>(b_ref.data(), b_ref.data() + b_ref.size()), z);
+  return internal::hypergeometric_pFq_helper(a_ref, b_ref, z);
 }
 }  // namespace math
 }  // namespace stan

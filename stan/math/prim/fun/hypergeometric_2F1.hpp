@@ -16,7 +16,7 @@
 #include <stan/math/prim/fun/pow.hpp>
 #include <stan/math/prim/fun/sqrt.hpp>
 #include <stan/math/prim/fun/square.hpp>
-#include <stan/math/prim/fun/hypergeometric_pFq.hpp>
+#include <stan/math/prim/fun/hypergeometric_pFq_helper.hpp>
 #include <boost/optional.hpp>
 
 namespace stan {
@@ -187,7 +187,7 @@ inline return_type_t<Ta1, Ta2, Tb, Tz> hypergeometric_2F1(const Ta1& a1,
 
     a_args << a1, a2;
     b_args << b;
-    return hypergeometric_pFq(a_args, b_args, z);
+    return internal::hypergeometric_pFq_helper(a_args, b_args, z);
   } catch (const std::exception& e) {
     // Apply Euler's hypergeometric transformation if function
     // will not converge with current arguments
@@ -200,7 +200,8 @@ inline return_type_t<Ta1, Ta2, Tb, Tz> hypergeometric_2F1(const Ta1& a1,
 
     a_args << a1_t, a2_t;
     b_args << b_t;
-    return hypergeometric_pFq(a_args, b_args, z_t) / pow(1 - z, a2);
+    return internal::hypergeometric_pFq_helper(a_args, b_args, z_t)
+           / pow(1 - z, a2);
   }
 }
 }  // namespace math
