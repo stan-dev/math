@@ -9,7 +9,7 @@
 #include <complex>
 #include <limits>
 
-#ifdef STAN_THREADS // threaded block
+#ifdef STAN_THREADS  // threaded block
 #include <stan/math/prim/core.hpp>
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
@@ -61,15 +61,16 @@ struct exp_fun {
   template <typename T>
   static inline auto fun(T&& x) {
     return exp(std::forward<T>(x));
-  }  
+  }
 };
 
-  // implement a class so we can parallelize a for loop of evaluating
-  // exp
+// implement a class so we can parallelize a for loop of evaluating
+// exp
 template <typename Container>
 class apply_exp {
   Container const my_a;
-public:
+
+ public:
   Container operator()(const tbb::blocked_range<std::size_t>& r) const {
     Container a = my_a;
     for (std::size_t i = r.begin(); i != r.end(); ++i) {
@@ -77,12 +78,9 @@ public:
     }
     return a;
   }
-  apply_exp<Container>(Container a):
-    my_a(a)
-  {}
+  apply_exp<Container>(Container a) : my_a(a) {}
 };
 
-  
 /**
  * Return the elementwise `exp()` of the specified argument,
  * which may be a scalar or any Stan container of numeric scalars.
@@ -111,11 +109,11 @@ template <typename Container,
           require_container_bt<std::is_arithmetic, Container>* = nullptr>
 inline auto exp(Container&& x) {
   std::size_t N = x.size();
-  tbb::parallel_for(tbb::blocked_range<size_t>(0,N),
-		    typename apply_exp<Container>::apply_exp(x));
+  tbb::parallel_for(tbb::blocked_range<size_t>(0, N),
+                    typename apply_exp<Container>::apply_exp(x));
   return x;
 }
-  
+
 namespace internal {
 /**
  * Return the natural (base e) complex exponentiation of the specified
@@ -156,7 +154,7 @@ inline std::complex<V> complex_exp(const std::complex<V>& z) {
 }
 }  // namespace internal
 }  // namespace math
-}  // namespace stan 
+}  // namespace stan
 
 #else  // unthreaded code
 
@@ -279,6 +277,6 @@ inline std::complex<V> complex_exp(const std::complex<V>& z) {
 }
 }  // namespace internal
 }  // namespace math
-}  // namespace stan 
+}  // namespace stan
 #endif
 #endif
