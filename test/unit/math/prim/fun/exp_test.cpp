@@ -4,7 +4,7 @@
 #include <gtest/gtest.h>
 
 #ifdef STAN_THREADS
-TEST(MathFunctions, expInt) {
+TEST(MathFunctions, expInt0) {
   using stan::math::exp;
   EXPECT_FLOAT_EQ(std::exp(3), exp(3));
   EXPECT_FLOAT_EQ(std::exp(3.1), exp(3.1));
@@ -19,13 +19,13 @@ TEST(MathFunctions, expVecN100) {
     vec[i] = i + 1;
   }
   std::vector<double> vec_test;
-  EXPECT_NO_THROW(vec_test = stan::math::exp_test(vec));
+  EXPECT_NO_THROW(vec_test = stan::math::exp(vec));
   for (size_t i = 0; i < N; ++i) {
     EXPECT_FLOAT_EQ(std::exp(i + 1), vec_test[i]);
   }
 }
 
-TEST(MathFunctions, expVecBench) {
+TEST(MathFunctions, expVecBench0) {
   // std timing includes
   using std::chrono::high_resolution_clock;
   using std::chrono::duration_cast;
@@ -49,7 +49,7 @@ TEST(MathFunctions, expVecBench) {
     std::vector<double> vec_test;
     
     auto t1 = high_resolution_clock::now();
-    EXPECT_NO_THROW(vec_test = stan::math::exp_test(vec));
+    EXPECT_NO_THROW(vec_test = stan::math::exp(vec));
     auto t2 = high_resolution_clock::now();
 
 	/* Getting number of milliseconds as an integer. */
@@ -88,7 +88,7 @@ TEST(MathFunctions, expVecBench_10000000_17) {
     std::vector<double> vec_test;
     
     auto t1 = high_resolution_clock::now();
-    EXPECT_NO_THROW(vec_test = stan::math::exp_test(vec));
+    EXPECT_NO_THROW(vec_test = stan::math::exp(vec));
     auto t2 = high_resolution_clock::now();
 
 	/* Getting number of milliseconds as an integer. */
@@ -129,7 +129,7 @@ TEST(MathFunctions, expVecBench_10000000_17_all10) {
     std::vector<double> vec_test;
     
     auto t1 = high_resolution_clock::now();
-    EXPECT_NO_THROW(vec_test = stan::math::exp_test(vec));
+    EXPECT_NO_THROW(vec_test = stan::math::exp(vec));
     auto t2 = high_resolution_clock::now();
 
 	/* Getting number of milliseconds as an integer. */
@@ -169,7 +169,7 @@ TEST(MathFunctions, expVecBench_N2_2_threads2_all10) {
     std::vector<double> vec_test;
     
     auto t1 = high_resolution_clock::now();
-    EXPECT_NO_THROW(vec_test = stan::math::exp_test(vec));
+    EXPECT_NO_THROW(vec_test = stan::math::exp(vec));
     auto t2 = high_resolution_clock::now();
 
 	/* Getting number of milliseconds as an integer. */
@@ -209,7 +209,7 @@ TEST(MathFunctions, expVecBench_N2_2_threads4_all10) {
     std::vector<double> vec_test;
     
     auto t1 = high_resolution_clock::now();
-    EXPECT_NO_THROW(vec_test = stan::math::exp_test(vec));
+    EXPECT_NO_THROW(vec_test = stan::math::exp(vec));
     auto t2 = high_resolution_clock::now();
 
 	/* Getting number of milliseconds as an integer. */
@@ -249,7 +249,7 @@ TEST(MathFunctions, expVecBench_N2_2_threads8_all10) {
     std::vector<double> vec_test;
     
     auto t1 = high_resolution_clock::now();
-    EXPECT_NO_THROW(vec_test = stan::math::exp_test(vec));
+    EXPECT_NO_THROW(vec_test = stan::math::exp(vec));
     auto t2 = high_resolution_clock::now();
 
 	/* Getting number of milliseconds as an integer. */
