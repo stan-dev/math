@@ -75,7 +75,7 @@ class apply_exp {
     Container a = my_a;
     Container a_out = my_a;
     for (std::size_t i = r.begin(); i != r.end(); ++i) {
-      a_out[i] = exp(a[i]);
+      a_out[i] = std::exp(a[i]);
     }
     return a_out;
   }
