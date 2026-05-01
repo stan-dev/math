@@ -10,6 +10,14 @@ TEST(MathFunctions, expInt0) {
   EXPECT_FLOAT_EQ(std::exp(3.1), exp(3.1));
   EXPECT_FLOAT_EQ(std::exp(3.0), exp(3.0));
 }
+TEST(MathFuncions, investigateDrift) {
+  using stan::math::exp;
+  for (size_t i = 0; i < 100; ++i) {
+    EXPECT_FLOAT_EQ(std::exp(i), exp(i));
+    std::cout << "std::exp: " << std::exp(i) << std::endl;
+    std::cout << "stan::math::exp(i): " << stan::math::exp(i) << std::endl;
+  }
+}
 
 TEST(MathFunctions, expVecN100) {
   using stan::math::exp;
@@ -305,6 +313,15 @@ TEST(MathFunctions, expVecBench_10000000) {
             << ",";
   std::cout << ms_int.count() << "ms,";
   std::cout << ms_double.count() << "ms\n";
+}
+
+TEST(MathFuncions, investigateDrift) {
+  using stan::math::exp;
+  for (size_t i = 0; i < 100; ++i) {
+    EXPECT_FLOAT_EQ(std::exp(i), exp(i));
+    std::cout << "std::exp: " << std::exp(i) << std::endl;
+    std::cout << "stan::math::exp(i): " << stan::math::exp(i) << std::endl;
+  }
 }
 
 TEST(MathFunctions, expVecBench) {
