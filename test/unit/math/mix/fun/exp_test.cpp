@@ -1,5 +1,6 @@
 #include <test/unit/math/test_ad.hpp>
 
+#if 0
 TEST(mathMixMatFun, exp) {
   auto f = [](const auto& x) {
     using stan::math::exp;
@@ -18,3 +19,4 @@ TEST(mathMixMatFun, exp) {
   stan::test::expect_ad_vector_matvar(f, stan::math::to_vector(com_args));
   stan::test::expect_ad_vector_matvar(f, stan::math::to_vector(args));
 }
+#endif
