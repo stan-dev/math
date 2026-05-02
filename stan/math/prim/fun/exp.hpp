@@ -77,9 +77,9 @@ class apply_exp {
     for (std::size_t i = r.begin(); i != r.end(); ++i) {
       a_out[i] = std::exp(a[i]);
     }
-    return a;
+    return a_out;
   }
-  apply_exp<Container>(Container&& a) : my_a(a) {}
+  apply_exp<Container>(Container a) : my_a(a) {}
 };
 
 /**
