@@ -73,11 +73,11 @@ class apply_exp {
  public:
   Container operator()(const tbb::blocked_range<std::size_t>& r) const {
     Container a = my_a;
-    Container a_out = my_a;
+    //Container a_out = my_a;
     for (std::size_t i = r.begin(); i != r.end(); ++i) {
-      a_out[i] = std::exp(a[i]);
+      my_a[i] = std::exp(a[i]);
     }
-    return a_out;
+    return my_a;
   }
   apply_exp<Container>(Container a) : my_a(a) {}
 };
