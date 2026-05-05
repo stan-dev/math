@@ -25,7 +25,21 @@ namespace math {
  * matching sizes, returns the log of the product of complementary
  * probabilities.
  *
- * log P(N > n | theta) = log((1 - theta)^(n + 1)) = (n + 1) * log1m(theta).
+ * The geometric distribution has log CCDF
+ *
+ * \f[
+ *   \log P(N > n \mid \theta) = (n + 1)\,\log(1 - \theta),
+ *   \quad n \in \{0, 1, 2, \dots\},
+ *   \quad \theta \in (0, 1].
+ * \f]
+ *
+ * The gradient with respect to \f$\theta\f$ is
+ *
+ * \f[
+ *   \frac{\partial}{\partial \theta} \log P(N > n \mid \theta)
+ *     = -\frac{n + 1}{1 - \theta}
+ *     = \frac{n + 1}{\theta - 1}.
+ * \f]
  *
  * @tparam T_n type of outcome variable
  * @tparam T_prob type of success probability parameter
@@ -83,14 +97,12 @@ inline return_type_t<T_prob> geometric_lccdf(const T_n& n,
 
   // Per-element: n_i < 0 contributes log(1) = 0 (since P(N > n_i) = 1
   // for any n_i below the support), so they are no-ops in the sum.
-  // n_i >= 0 contributes (n_i + 1) * log1m(theta).
   const auto& log1m_theta = log1m(theta_arr);
   const auto& term
       = select(n_arr < 0, T_partials_return(0), (n_arr + 1.0) * log1m_theta);
   T_partials_return logP = sum(term);
 
   if constexpr (is_autodiff_v<T_prob>) {
-    // d/dtheta of 0 = 0 for n_i < 0, and (n + 1) / (theta - 1) for n_i >= 0.
     // theta = 1 was filtered above, so theta - 1 != 0 here.
     const auto& dterm = select(n_arr < 0, T_partials_return(0),
                                (n_arr + 1.0) * inv(theta_arr - 1.0));

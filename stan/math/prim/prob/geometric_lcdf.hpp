@@ -24,8 +24,24 @@ namespace math {
  * Returns the log CDF of the geometric distribution. Given containers of
  * matching sizes, returns the log of the product of probabilities.
  *
- * log P(N <= n | theta) = log(1 - (1 - theta)^(n + 1))
- *                       = log1m_exp((n + 1) * log1m(theta))
+ * The geometric distribution has log CDF
+ *
+ * \f[
+ *   \log P(N \le n \mid \theta)
+ *     = \log\!\bigl(1 - (1 - \theta)^{n + 1}\bigr),
+ *   \quad n \in \{0, 1, 2, \dots\},
+ *   \quad \theta \in (0, 1].
+ * \f]
+ *
+ * The gradient with respect to \f$\theta\f$ is
+ *
+ * \f[
+ *   \frac{\partial}{\partial \theta} \log P(N \le n \mid \theta)
+ *     = \frac{(n + 1)\,(1 - \theta)^n}{1 - (1 - \theta)^{n + 1}}.
+ * \f]
+ *
+ * Implemented as \f$\mathrm{log1m\_exp}((n + 1)\,\mathrm{log1m}(\theta))\f$
+ * for numerical stability.
  *
  * @tparam T_n type of outcome variable
  * @tparam T_prob type of success probability parameter
@@ -62,19 +78,14 @@ inline return_type_t<T_prob> geometric_lcdf(const T_n& n, const T_prob& theta) {
     return ops_partials.build(NEGATIVE_INFTY);
   }
 
-  // log_q = log((1 - theta)^(n + 1)) = (n + 1) * log1m(theta)
-  // log P_i = log(1 - q_i) = log1m_exp(log_q_i)
   // For theta = 1: log_q = -inf, log1m_exp(-inf) = log(1 - 0) = 0
-  //   (correct: P = 1 when success is certain).
+  //   (correct: log P = 0 when success is certain).
   const auto& log1m_theta = log1m(theta_arr);
   const auto& log_q = (n_arr + 1.0) * log1m_theta;
   const auto& log_P_i = log1m_exp(log_q);
   T_partials_return logP = sum(log_P_i);
 
   if constexpr (is_autodiff_v<T_prob>) {
-    // partial of log P_i = (dP_i/dtheta) / P_i
-    // dP_i/dtheta = (n + 1) * (1 - theta)^n = (n + 1) * exp(n * log1m_theta)
-    // P_i = -expm1(log_q)
     // For n = 0: dP_dtheta = 1 (avoid 0 * log1m(1) = NaN at theta = 1).
     // For n > 0, theta = 1: dP_dtheta = 0 and P_i = 1 -> partial = 0.
     const auto& dP_dtheta = select(n_arr == 0, T_partials_return(1.0),

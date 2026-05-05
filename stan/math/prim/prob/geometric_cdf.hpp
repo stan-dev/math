@@ -24,8 +24,20 @@ namespace math {
  * Returns the CDF of the geometric distribution. Given containers of
  * matching sizes, returns the product of probabilities.
  *
- * The geometric distribution counts the number of failures before
- * the first success: P(N <= n | theta) = 1 - (1 - theta)^(n + 1).
+ * The geometric distribution has CDF
+ *
+ * \f[
+ *   P(N \le n \mid \theta) = 1 - (1 - \theta)^{n + 1},
+ *   \quad n \in \{0, 1, 2, \dots\},
+ *   \quad \theta \in (0, 1].
+ * \f]
+ *
+ * The gradient with respect to \f$\theta\f$ is
+ *
+ * \f[
+ *   \frac{\partial}{\partial \theta} P(N \le n \mid \theta)
+ *     = (n + 1)\,(1 - \theta)^n.
+ * \f]
  *
  * @tparam T_n type of outcome variable
  * @tparam T_prob type of success probability parameter
@@ -62,17 +74,15 @@ inline return_type_t<T_prob> geometric_cdf(const T_n& n, const T_prob& theta) {
     return ops_partials.build(0.0);
   }
 
-  // P_i = 1 - (1 - theta)^(n + 1) = -expm1((n + 1) * log1m(theta))
+  // Compute via -expm1((n + 1) * log1m(theta)) for numerical stability.
   // For theta = 1: log1m(1) = -inf, (n+1)*-inf = -inf (n >= 0),
-  //   expm1(-inf) = -1, so P_i = 1 (correct: certain success means
-  //   N <= n always for n >= 0).
+  //   expm1(-inf) = -1, so P_i = 1 (certain success means N <= n always).
   const auto& log1m_theta = log1m(theta_arr);
   const auto& P_i = -expm1((n_arr + 1.0) * log1m_theta);
   const T_partials_return P = prod(P_i);
 
   if constexpr (is_autodiff_v<T_prob>) {
-    // d/dtheta P_i = (n + 1) * (1 - theta)^n
-    //             = (n + 1) * exp(n * log1m(theta))
+    // Compute (n + 1) * exp(n * log1m(theta)) for numerical stability.
     // For n = 0: (n+1)*exp(0) = 1; the select avoids 0 * log1m(1) = NaN
     //   when theta = 1.
     // For n > 0, theta = 1: (n+1) * exp(n * -inf) = (n+1) * 0 = 0

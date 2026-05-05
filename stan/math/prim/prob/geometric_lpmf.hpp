@@ -25,7 +25,23 @@ namespace math {
  * of matching sizes are supplied, returns the log sum of probabilities.
  *
  * The geometric distribution counts the number of failures before
- * the first success: P(N = n | theta) = theta * (1 - theta)^n.
+ * the first success, with PMF
+ *
+ * \f[
+ *   P(N = n \mid \theta) = \theta\, (1 - \theta)^n,
+ *   \quad n \in \{0, 1, 2, \dots\},
+ *   \quad \theta \in (0, 1].
+ * \f]
+ *
+ * The log probability and its gradient with respect to \f$\theta\f$ are
+ *
+ * \f{aligned}{
+ *   \log P(N = n \mid \theta)
+ *     &= \log \theta + n \log(1 - \theta), \cr
+ *   \frac{\partial}{\partial \theta} \log P(N = n \mid \theta)
+ *     &= \frac{1}{\theta} - \frac{n}{1 - \theta}
+ *      = \frac{1}{\theta} + \frac{n}{\theta - 1}.
+ * \f}
  *
  * @tparam T_n type of outcome variable
  * @tparam T_prob type of success probability parameter
@@ -80,8 +96,7 @@ inline return_type_t<T_prob> geometric_lpmf(const T_n& n, const T_prob& theta) {
   const auto& n_arr = as_value_column_array_or_scalar(n_ref);
   const auto& theta_arr = as_value_column_array_or_scalar(theta_ref);
 
-  // log P = log(theta) + n * log1m(theta).
-  // The select on n == 0 avoids 0 * log1m(1) = 0 * (-inf) = NaN when
+  // The select on n == 0 avoids 0 * log1m(1) = 0 * (-inf) = NaN at
   // theta = 1; the n > 0 && theta = 1 case was already handled above.
   const auto& log1m_theta = log1m(theta_arr);
   const auto& failure_term
@@ -89,7 +104,6 @@ inline return_type_t<T_prob> geometric_lpmf(const T_n& n, const T_prob& theta) {
   T_partials_return logp = sum(log(theta_arr) + failure_term);
 
   if constexpr (is_autodiff_v<T_prob>) {
-    // d/dtheta log P = 1/theta - n/(1 - theta) = 1/theta + n/(theta - 1).
     // For n = 0 the failure term contributes nothing; for n > 0 we have
     // theta != 1 here, so theta - 1 != 0.
     const auto& failure_grad = select(n_arr == 0, T_partials_return(0),
