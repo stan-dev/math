@@ -4,3 +4,4 @@
 *.py text diff=python
 *.tex text diff=tex
 lib/** binary
+lib/eigen_5.0.1/STAN_CHANGES.md -binary text diff=markdown
