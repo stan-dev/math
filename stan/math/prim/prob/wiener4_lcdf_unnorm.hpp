@@ -610,7 +610,7 @@ inline auto wiener_lcdf_unnorm(const T_y& y, const T_a& a, const T_t0& t0,
   auto w_val = to_ref(as_value_column_array_or_scalar(w_ref));
   auto t0_val = to_ref(as_value_column_array_or_scalar(t0_ref));
 
-  if (!include_summand<propto, T_y, T_a, T_t0, T_w, T_v>::value) {
+  if constexpr (!include_summand<propto, T_y, T_a, T_t0, T_w, T_v>::value) {
     return ret_t(0.0);
   }
 
@@ -682,7 +682,8 @@ inline auto wiener_lcdf_unnorm(const T_y& y, const T_a& a, const T_t0& t0,
 
     const auto new_est_err = log_cdf + log_error_derivative - LOG_FOUR;
 
-    if (!is_constant_all<T_y>::value || !is_constant_all<T_t0>::value) {
+    if constexpr (!is_constant_all<T_y>::value
+                  || !is_constant_all<T_t0>::value) {
       const auto deriv_y
           = internal::estimate_with_err_check<5, 0, GradientCalc::OFF,
                                               GradientCalc::ON>(
@@ -692,14 +693,14 @@ inline auto wiener_lcdf_unnorm(const T_y& y, const T_a& a, const T_t0& t0,
               new_est_err, y_value - t0_value, a_value, v_value, w_value, 0,
               log_error_absolute);
 
-      if (!is_constant_all<T_y>::value) {
+      if constexpr (!is_constant_all<T_y>::value) {
         partials<0>(ops_partials)[i] = deriv_y / cdf;
       }
-      if (!is_constant_all<T_t0>::value) {
+      if constexpr (!is_constant_all<T_t0>::value) {
         partials<2>(ops_partials)[i] = -deriv_y / cdf;
       }
     }
-    if (!is_constant_all<T_a>::value) {
+    if constexpr (!is_constant_all<T_a>::value) {
       partials<1>(ops_partials)[i]
           = internal::estimate_with_err_check<5, 0, GradientCalc::OFF,
                                               GradientCalc::ON>(
@@ -710,7 +711,7 @@ inline auto wiener_lcdf_unnorm(const T_y& y, const T_a& a, const T_t0& t0,
                 log_error_absolute)
             / cdf;
     }
-    if (!is_constant_all<T_w>::value) {
+    if constexpr (!is_constant_all<T_w>::value) {
       partials<3>(ops_partials)[i]
           = internal::estimate_with_err_check<5, 0, GradientCalc::OFF,
                                               GradientCalc::ON>(
@@ -721,7 +722,7 @@ inline auto wiener_lcdf_unnorm(const T_y& y, const T_a& a, const T_t0& t0,
                 log_error_absolute)
             / cdf;
     }
-    if (!is_constant_all<T_v>::value) {
+    if constexpr (!is_constant_all<T_v>::value) {
       partials<4>(ops_partials)[i]
           = internal::wiener4_cdf_grad_v(y_value - t0_value, a_value, v_value,
                                          w_value, cdf, log_error_absolute)

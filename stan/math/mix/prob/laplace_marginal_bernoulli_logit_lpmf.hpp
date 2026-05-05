@@ -1,22 +1,25 @@
 #ifndef STAN_MATH_MIX_PROB_LAPLACE_MARGINAL_BERNOULLI_LOGIT_LPMF_HPP
 #define STAN_MATH_MIX_PROB_LAPLACE_MARGINAL_BERNOULLI_LOGIT_LPMF_HPP
 
+#include <stan/math/mix/meta.hpp>
 #include <stan/math/mix/functor/laplace_likelihood.hpp>
 #include <stan/math/mix/functor/laplace_marginal_density.hpp>
-#include <stan/math/rev/core/operator_addition.hpp>
-#include <stan/math/rev/core/operator_subtraction.hpp>
 #include <stan/math/rev/fun/elt_multiply.hpp>
 #include <stan/math/rev/fun/exp.hpp>
-#include <stan/math/rev/fun/log.hpp>
-#include <stan/math/rev/fun/log1p_exp.hpp>
-#include <stan/math/rev/fun/multiply.hpp>
-#include <stan/math/rev/fun/sum.hpp>
 #include <stan/math/fwd/fun/exp.hpp>
-#include <stan/math/fwd/fun/lgamma.hpp>
+#include <stan/math/rev/fun/log.hpp>
 #include <stan/math/fwd/fun/log.hpp>
+#include <stan/math/rev/fun/log1p_exp.hpp>
 #include <stan/math/fwd/fun/log1p_exp.hpp>
+#include <stan/math/rev/fun/multiply.hpp>
+#include <stan/math/fwd/fun/multiply.hpp>
+#include <stan/math/rev/fun/lgamma.hpp>
+#include <stan/math/fwd/fun/lgamma.hpp>
+#include <stan/math/rev/fun/sum.hpp>
 #include <stan/math/fwd/fun/sum.hpp>
 #include <stan/math/prim/fun/binomial_coefficient_log.hpp>
+#include <stan/math/rev/fun/to_vector.hpp>
+#include <stan/math/prim/fun/to_vector.hpp>
 
 namespace stan {
 namespace math {

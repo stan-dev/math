@@ -7,6 +7,7 @@
 #include <stan/math/prim/core/operator_division.hpp>
 #include <stan/math/prim/functor/apply_scalar_unary.hpp>
 #include <stan/math/prim/functor/apply_vector_unary.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <cmath>
 #include <complex>
 
@@ -75,8 +76,10 @@ inline auto tanh(Container&& x) {
 template <typename Container,
           require_container_bt<std::is_arithmetic, Container>* = nullptr>
 inline auto tanh(Container&& x) {
-  return apply_vector_unary<Container>::apply(
-      std::forward<Container>(x), [](auto&& v) { return v.array().tanh(); });
+  auto&& x_ref = to_ref(std::forward<Container>(x));
+  return apply_vector_unary<decltype(x_ref)>::apply(
+      std::forward<decltype(x_ref)>(x_ref),
+      [](auto&& v) { return v.array().tanh(); });
 }
 
 namespace internal {

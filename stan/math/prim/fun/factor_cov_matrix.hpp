@@ -25,11 +25,10 @@ template <typename T_Sigma, typename T_CPCs, typename T_sds,
           require_eigen_t<T_Sigma>* = nullptr,
           require_all_eigen_vector_t<T_CPCs, T_sds>* = nullptr,
           require_all_vt_same<T_Sigma, T_CPCs, T_sds>* = nullptr>
-inline bool factor_cov_matrix(const T_Sigma& Sigma, T_CPCs&& CPCs,
-                              T_sds&& sds) {
+inline bool factor_cov_matrix(T_Sigma&& Sigma, T_CPCs&& CPCs, T_sds&& sds) {
   using T_scalar = value_type_t<T_Sigma>;
   size_t K = sds.rows();
-  const Eigen::Ref<const plain_type_t<T_Sigma>>& Sigma_ref = Sigma;
+  decltype(auto) Sigma_ref = to_ref(std::forward<T_Sigma>(Sigma));
   sds = Sigma_ref.diagonal().array();
   if ((sds <= 0.0).any()) {
     return false;
@@ -49,7 +48,7 @@ inline bool factor_cov_matrix(const T_Sigma& Sigma, T_CPCs&& CPCs,
     return false;
   }
   Eigen::Matrix<T_scalar, Eigen::Dynamic, Eigen::Dynamic> U = ldlt.matrixU();
-  factor_U(U, CPCs);
+  factor_U(std::move(U), std::forward<T_CPCs>(CPCs));
   return true;
 }
 

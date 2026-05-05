@@ -3,8 +3,8 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/core.hpp>
-#include <stan/math/fwd/fun/read_fvar.hpp>
-#include <stan/math/fwd/core.hpp>
+#include <stan/math/prim/meta/lazy_select_evaluator.hpp>
+#include <stan/math/fwd/core/fvar.hpp>
 #include <stan/math/fwd/core/std_numeric_limits.hpp>
 #include <limits>
 
@@ -20,7 +20,7 @@ struct NumTraits<stan::math::fvar<T>> : GenericNumTraits<stan::math::fvar<T>> {
     /**
      * stan::math::fvar requires initialization
      */
-    RequireInitialization = 1,
+    RequireInitialization = 0,
 
     /**
      * twice the cost to copy a double
@@ -219,14 +219,36 @@ struct ScalarBinaryOpTraits<std::complex<stan::math::fvar<T>>,
 namespace internal {
 
 /**
- * Enable linear access of inputs when using read_fvar.
+ * Partial specialization of Eigen's ternary evaluator for `.select()`
+ * expressions on matrices of `fvar<T>`, restoring the lazy (Eigen 3.x)
+ * semantics where only the branch chosen by the condition is evaluated
+ * for each coefficient. Higher-order autodiff types (e.g. `fvar<var>`)
+ * tape their inner operations, so eagerly evaluating an unselected
+ * branch can allocate orphan varis whose chain rules inject
+ * `0 * INF = NaN` into the adjoints of live inputs. See
+ * stan/math/prim/meta/lazy_select_evaluator.hpp for details.
+ *
+ * @tparam T value and tangent type of autodiff variable
  */
-template <typename EigFvar, typename EigOut>
-struct functor_has_linear_access<
-    stan::math::read_fvar_functor<EigFvar, EigOut>> {
-  enum { ret = 1 };
+template <typename T, typename CondScalar, typename Arg1, typename Arg2,
+          typename Arg3>
+struct ternary_evaluator<
+    CwiseTernaryOp<scalar_boolean_select_op<stan::math::fvar<T>,
+                                            stan::math::fvar<T>, CondScalar>,
+                   Arg1, Arg2, Arg3>,
+    IndexBased, IndexBased>
+    : stan::math::internal::lazy_select_evaluator<
+          scalar_boolean_select_op<stan::math::fvar<T>, stan::math::fvar<T>,
+                                   CondScalar>,
+          Arg1, Arg2, Arg3> {
+  using Base = stan::math::internal::lazy_select_evaluator<
+      scalar_boolean_select_op<stan::math::fvar<T>, stan::math::fvar<T>,
+                               CondScalar>,
+      Arg1, Arg2, Arg3>;
+  using Base::Base;
 };
 
 }  // namespace internal
+
 }  // namespace Eigen
 #endif

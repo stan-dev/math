@@ -131,10 +131,11 @@ inline auto cholesky_lambda(T1& L_A, T2& L, T3& A) {
  * @return L cholesky factor of A
  */
 template <typename EigMat, require_eigen_vt<is_var, EigMat>* = nullptr>
-inline auto cholesky_decompose(const EigMat& A) {
+inline auto cholesky_decompose(EigMat&& A) {
   check_square("cholesky_decompose", "A", A);
-  arena_t<EigMat> arena_A = A;
-  arena_t<Eigen::Matrix<double, -1, -1>> L_A(arena_A.val());
+  decltype(auto) A_ref = to_ref(std::forward<EigMat>(A));
+  arena_t<EigMat> arena_A = std::forward<decltype(A_ref)>(A_ref);
+  arena_t<promote_scalar_t<double, EigMat>> L_A(arena_A.val().eval());
 
   check_symmetric("cholesky_decompose", "A", A);
   Eigen::LLT<Eigen::Ref<Eigen::MatrixXd>, Eigen::Lower> L_factor(L_A);

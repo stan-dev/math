@@ -1,9 +1,18 @@
-#ifndef STAN_MATH_MIX_FUNCTOR_CONDITIONAL_COPY_AND_PROMOTE_HPP
-#define STAN_MATH_MIX_FUNCTOR_CONDITIONAL_COPY_AND_PROMOTE_HPP
+#ifndef STAN_MATH_PRIM_FUNCTOR_CONDITIONAL_COPY_AND_PROMOTE_HPP
+#define STAN_MATH_PRIM_FUNCTOR_CONDITIONAL_COPY_AND_PROMOTE_HPP
 
-#include <stan/math/mix/functor/hessian_block_diag.hpp>
-#include <stan/math/prim/functor.hpp>
-#include <stan/math/prim/fun.hpp>
+#include <stan/math/prim/functor/apply.hpp>
+#include <stan/math/prim/functor/map_if.hpp>
+#include <stan/math/prim/functor/make_holder_tuple.hpp>
+#include <stan/math/prim/fun/eval.hpp>
+#include <stan/math/prim/fun/promote_scalar.hpp>
+#include <stan/math/prim/fun/value_of_rec.hpp>
+#include <stan/math/prim/meta/is_tuple.hpp>
+#include <stan/math/prim/meta/is_var.hpp>
+#include <stan/math/prim/meta/is_vector.hpp>
+#include <stan/math/prim/meta/scalar_type.hpp>
+#include <utility>
+#include <vector>
 
 namespace stan::math::internal {
 
@@ -25,8 +34,7 @@ enum class COPY_TYPE : uint8_t { SHALLOW = 0, DEEP = 1 };
  * @return a tuple where each element is either a reference to the original
  * argument or a promoted copy of the argument.
  */
-template <template <typename...> class Filter,
-          typename PromotedType = stan::math::var,
+template <template <typename...> class Filter, typename PromotedType = double,
           COPY_TYPE CopyType = COPY_TYPE::DEEP, typename... Args>
 inline auto conditional_copy_and_promote(Args&&... args) {
   return map_if<Filter>(

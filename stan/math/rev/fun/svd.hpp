@@ -38,8 +38,8 @@ inline auto svd(const EigMat& m) {
   const int M = std::min(m.rows(), m.cols());
   auto arena_m = to_arena(m);
 
-  Eigen::JacobiSVD<Eigen::MatrixXd> svd(
-      arena_m.val(), Eigen::ComputeThinU | Eigen::ComputeThinV);
+  Eigen::JacobiSVD<promote_scalar_t<double, plain_type_t<EigMat>>> svd(
+      arena_m.val().eval(), Eigen::ComputeThinU | Eigen::ComputeThinV);
 
   auto singular_values_d = svd.singularValues();
 

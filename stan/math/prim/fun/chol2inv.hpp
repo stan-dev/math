@@ -6,6 +6,7 @@
 #include <stan/math/prim/fun/mdivide_left_tri.hpp>
 #include <stan/math/prim/fun/inv_square.hpp>
 #include <stan/math/prim/fun/crossprod.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 
 namespace stan {
 namespace math {
@@ -20,21 +21,22 @@ namespace math {
  *  lower triangular
  */
 template <typename T, require_eigen_t<T>* = nullptr>
-inline plain_type_t<T> chol2inv(const T& L) {
-  const Eigen::Ref<const plain_type_t<T>>& L_ref = L;
+inline plain_type_t<T> chol2inv(T&& L) {
+  decltype(auto) L_ref = to_ref(std::forward<T>(L));
   check_square("chol2inv", "L", L_ref);
   check_lower_triangular("chol2inv", "L", L_ref);
-  int K = L.rows();
+  int K = L_ref.rows();
   using T_result = plain_type_t<T>;
   if (K == 0) {
-    return L_ref;
+    return std::forward<decltype(L_ref)>(L_ref);
   }
   if (K == 1) {
     T_result X(1, 1);
     X.coeffRef(0) = inv_square(L_ref.coeff(0, 0));
     return X;
   }
-  return crossprod(mdivide_left_tri<Eigen::Lower>(L_ref));
+  return crossprod(
+      mdivide_left_tri<Eigen::Lower>(std::forward<decltype(L_ref)>(L_ref)));
 }
 
 }  // namespace math

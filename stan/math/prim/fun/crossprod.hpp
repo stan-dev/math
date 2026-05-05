@@ -17,8 +17,8 @@ namespace math {
  * @return Transpose of M times M
  */
 template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
-inline auto crossprod(const EigMat& M) {
-  return tcrossprod(M.transpose());
+inline auto crossprod(EigMat&& M) {
+  return tcrossprod(std::forward<EigMat>(M).transpose());
 }
 
 }  // namespace math

@@ -2,6 +2,7 @@
 #define STAN_MATH_FWD_FUNCTOR_HPP
 
 #include <stan/math/fwd/functor/apply_scalar_unary.hpp>
+#include <stan/math/fwd/functor/broadcast_array.hpp>
 #include <stan/math/fwd/functor/gradient.hpp>
 #include <stan/math/fwd/functor/finite_diff.hpp>
 #include <stan/math/fwd/functor/hessian.hpp>

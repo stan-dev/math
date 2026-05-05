@@ -4,7 +4,6 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta/require_generics.hpp>
 #include <stan/math/prim/meta/return_type.hpp>
-#include <stan/math/prim/functor/broadcast_array.hpp>
 #include <vector>
 #include <type_traits>
 #include <tuple>
@@ -56,17 +55,6 @@ class ops_partials_edge;
 template <typename ViewElt, typename Op>
 class ops_partials_edge<ViewElt, Op, require_st_arithmetic<Op>> {
  public:
-  using inner_op = std::conditional_t<is_eigen<value_type_t<Op>>::value,
-                                      value_type_t<Op>, Op>;
-  using partials_t = empty_broadcast_array<ViewElt, inner_op>;
-  /**
-   * The `partials_` are always called in `if` statements that will be
-   *  removed by the dead code elimination pass of the compiler. So if we ever
-   *  move up to C++17 these can be made into `constexpr if` and
-   *  this can be deleted.
-   */
-  partials_t partials_;
-  empty_broadcast_array<partials_t, inner_op> partials_vec_;
   static constexpr double operands_{0};
   ops_partials_edge() = default;
 
@@ -188,15 +176,31 @@ class operands_and_partials {
    */
   inline double build(double value) const noexcept { return value; }
 
-  // These will always be 0 size base template instantiations (above).
-  internal::ops_partials_edge<double, std::decay_t<Op1>> edge1_;
-  internal::ops_partials_edge<double, std::decay_t<Op2>> edge2_;
-  internal::ops_partials_edge<double, std::decay_t<Op3>> edge3_;
-  internal::ops_partials_edge<double, std::decay_t<Op4>> edge4_;
-  internal::ops_partials_edge<double, std::decay_t<Op5>> edge5_;
-  internal::ops_partials_edge<double, std::decay_t<Op6>> edge6_;
-  internal::ops_partials_edge<double, std::decay_t<Op7>> edge7_;
-  internal::ops_partials_edge<double, std::decay_t<Op8>> edge8_;
+  /**
+   * Get the operand for the edge. For doubles this is a compile time
+   * expression returning zero.
+   */
+  static constexpr double operand() noexcept {
+    return static_cast<double>(0.0);
+  }
+
+  /**
+   * Get the partial for the edge. For doubles this is a compile time
+   * expression returning zero.
+   */
+  static constexpr double partial() noexcept {
+    return static_cast<double>(0.0);
+  }
+  /**
+   * Return the tangent for the edge. For doubles this is a comple time
+   * expression returning zero.
+   */
+  static constexpr double dx() noexcept { return static_cast<double>(0); }
+  /**
+   * Return the size of the operand for the edge. For doubles this is a comple
+   * time expression returning zero.
+   */
+  static constexpr int size() noexcept { return 0; }  // reverse mode
 };
 
 }  // namespace math

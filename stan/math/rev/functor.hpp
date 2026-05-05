@@ -8,6 +8,7 @@
 #include <stan/math/rev/functor/apply_scalar_unary.hpp>
 #include <stan/math/rev/functor/apply_scalar_binary.hpp>
 #include <stan/math/rev/functor/apply_vector_unary.hpp>
+#include <stan/math/rev/functor/broadcast_array.hpp>
 #include <stan/math/rev/functor/coupled_ode_system.hpp>
 #include <stan/math/rev/functor/cvodes_integrator.hpp>
 #include <stan/math/rev/functor/cvodes_utils.hpp>
