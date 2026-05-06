@@ -591,16 +591,15 @@ pipeline {
                                                   usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
                     sh """#!/bin/bash
                         set -x
-                        make doxygen
                         git config user.email "mc.stanislaw@gmail.com"
                         git config user.name "Stan Jenkins"
-                        git checkout --detach
-                        git branch -D gh-pages
-                        git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/stan-dev/math.git :gh-pages
-                        git checkout --orphan gh-pages
-                        git add -f doc
-                        git commit --author='Stan BuildBot <mc.stanislaw@gmail.com>' -m "auto generated docs from Jenkins"
-                        git subtree push --prefix doc/api/html https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/stan-dev/math.git gh-pages
+                        git worktree add doc/api/html gh-pages
+                        rm -rf doc/api/html/*
+                        make doxygen
+                        cd doc/api/html
+                        git add -f .
+                        git commit --author='Stan BuildBot <mc.stanislaw@gmail.com>' -m "auto generated docs from Jenkins" --amend
+                        git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/stan-dev/math.git gh-pages --force
                         """
                 }
             }
