@@ -591,14 +591,14 @@ pipeline {
                                                   usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
                     sh """#!/bin/bash
                         set -x
-                        git config user.email "mc.stanislaw@gmail.com"
-                        git config user.name "Stan Jenkins"
-                        git worktree add doc/api/html gh-pages
-                        rm -rf doc/api/html/*
                         make doxygen
                         cd doc/api/html
+                        git init
+                        git checkout -b gh-pages
+                        git config user.email "mc.stanislaw@gmail.com"
+                        git config user.name "Stan Jenkins"
                         git add -f .
-                        git commit --author='Stan BuildBot <mc.stanislaw@gmail.com>' -m "auto generated docs from Jenkins" --amend
+                        git commit --author='Stan BuildBot <mc.stanislaw@gmail.com>' -m "auto generated docs from Jenkins"
                         git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/stan-dev/math.git gh-pages --force
                         """
                 }
