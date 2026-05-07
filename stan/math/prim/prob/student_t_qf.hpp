@@ -6,6 +6,7 @@
 #include <stan/math/prim/fun/sqrt.hpp>
 #include <stan/math/prim/fun/inv_inc_beta.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 
 namespace stan {
 namespace math {
@@ -70,20 +71,20 @@ template <typename T_p, typename T_nu, typename T_mu, typename T_sigma,
           require_any_vector_t<T_p, T_nu, T_mu, T_sigma>* = nullptr>
 inline auto student_t_qf(const T_p& p, const T_nu& nu, const T_mu& mu,
                          const T_sigma& sigma) {
-  using T_container = common_container_t<T_p, T_nu, T_mu, T_sigma>;
+  using ret_scalar = return_type_t<T_p, T_nu, T_mu, T_sigma>;
   static constexpr const char* function = "student_t_qf";
   const size_t max_size_all = max_size(p, nu, mu, sigma);
-  T_container result(max_size_all);
+  Eigen::Matrix<ret_scalar, -1, 1> result(max_size_all);
 
-  ref_type_t<T_p> p_ref = p;
-  ref_type_t<T_nu> nu_ref = nu;
-  ref_type_t<T_mu> mu_ref = mu;
-  ref_type_t<T_sigma> sigma_ref = sigma;
+  decltype(auto) p_ref = to_ref(p);
+  decltype(auto) nu_ref = to_ref(nu);
+  decltype(auto) mu_ref = to_ref(mu);
+  decltype(auto) sigma_ref = to_ref(sigma);
 
-  scalar_seq_view<ref_type_t<T_p>> p_vec(p_ref);
-  scalar_seq_view<ref_type_t<T_nu>> nu_vec(nu_ref);
-  scalar_seq_view<ref_type_t<T_mu>> mu_vec(mu_ref);
-  scalar_seq_view<ref_type_t<T_sigma>> sigma_vec(sigma_ref);
+  scalar_seq_view<decltype(p_ref)> p_vec(p_ref);
+  scalar_seq_view<decltype(nu_ref)> nu_vec(nu_ref);
+  scalar_seq_view<decltype(mu_ref)> mu_vec(mu_ref);
+  scalar_seq_view<decltype(sigma_ref)> sigma_vec(sigma_ref);
 
   for (size_t i = 0; i < max_size_all; ++i) {
     result[i] = student_t_qf(p_vec[i], nu_vec[i], mu_vec[i], sigma_vec[i]);
