@@ -44,7 +44,6 @@ TEST(MathMatrixPrimMat, softmax_neg_inf) {
   EXPECT_FLOAT_EQ(exp(1.0) / (exp(1.0) + exp(2.0)), theta[1]);
   EXPECT_FLOAT_EQ(exp(2.0) / (exp(1.0) + exp(2.0)), theta[2]);
   EXPECT_FLOAT_EQ(1.0, theta.sum());
-
 }
 
 TEST(MathMatrixPrimMat, softmax_row_vector) {

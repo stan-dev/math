@@ -82,7 +82,6 @@ TEST(MathMatrixPrimMat, log_softmax_neg_inf) {
   EXPECT_EQ(neg_inf, result[0]);
   EXPECT_FLOAT_EQ(1.0 - lse_finite, result[1]);
   EXPECT_FLOAT_EQ(2.0 - lse_finite, result[2]);
-
 }
 
 TEST(MathMatrixPrimMat, log_softmax_exception) {

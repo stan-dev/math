@@ -23,7 +23,8 @@ namespace math {
 template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline auto softmax(T&& x) {
   auto x_arena = to_arena(std::forward<T>(x));
-  using return_t = return_var_matrix_t<plain_type_t<decltype(x_arena.val())>, T>;
+  using return_t
+      = return_var_matrix_t<plain_type_t<decltype(x_arena.val())>, T>;
   if (x_arena.size() == 0) {
     return return_t(x_arena);
   }
