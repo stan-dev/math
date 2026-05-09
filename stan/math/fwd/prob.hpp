@@ -5,5 +5,6 @@
 #include <stan/math/fwd/fun/Eigen_NumTraits.hpp>
 
 #include <stan/math/fwd/prob/std_normal_log_qf.hpp>
+#include <stan/math/fwd/prob/student_t_qf.hpp>
 
 #endif
