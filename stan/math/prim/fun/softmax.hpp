@@ -4,6 +4,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
+#include <stan/math/prim/functor/apply_vector_unary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -38,7 +39,7 @@ namespace math {
  * \end{array}
  * \f$
  *
- * @tparam Vec type of elements in the vector
+ * @tparam Vec type of the input vector
  * @param[in] v Vector to transform.
  * @return Unit simplex result of the softmax transform of the vector.
  */
@@ -54,22 +55,17 @@ inline plain_type_t<Vec> softmax(const Vec& v) {
 }
 
 /**
- * Return the softmax of the rows of the specified matrix.
- * Each row is transformed independently; the result is a row-stochastic
- * matrix whose rows each sum to one.
+ * Return the softmax of each vector in an array.
  *
- * @tparam Mat type of input matrix
- * @param[in] m Matrix to transform row-wise.
- * @return Row-stochastic matrix result of applying softmax to each row.
+ * @tparam T `std::vector` whose scalar type is arithmetic
+ * @param[in] x Array of vectors to transform.
+ * @return Array of unit simplex results.
  */
-template <typename Mat, require_eigen_vt<std::is_arithmetic, Mat>* = nullptr,
-          require_not_eigen_vector_t<Mat>* = nullptr>
-inline plain_type_t<Mat> softmax(const Mat& m) {
-  const auto& m_ref = to_ref(m);
-  const auto shifted
-      = (m_ref.array().colwise() - m_ref.rowwise().maxCoeff().array()).eval();
-  const auto exp_s = shifted.exp().eval();
-  return (exp_s.colwise() / exp_s.rowwise().sum()).matrix();
+template <typename T, require_std_vector_st<std::is_arithmetic, T>* = nullptr>
+inline auto softmax(T&& x) {
+  return apply_vector_unary<T>::apply(std::forward<T>(x), [](auto&& v) {
+    return softmax(std::forward<decltype(v)>(v));
+  });
 }
 
 }  // namespace math

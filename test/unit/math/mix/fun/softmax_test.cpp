@@ -43,17 +43,6 @@ TEST(MathMixMatFun, softmax) {
   stan::test::expect_ad(tols, f, d4);
   expect_ad_matvar(f, d4);
 
-  // Matrices (row-wise softmax)
-  Eigen::MatrixXd ma(2, 3);
-  ma << -1, 1, 10, 0.5, -1, 3;
-  stan::test::expect_ad(tols, f, ma);
-  expect_ad_matvar(f, ma);
-
-  Eigen::MatrixXd mb(3, 2);
-  mb << 0, 1, -1, 2, 3, -2;
-  stan::test::expect_ad(tols, f, mb);
-  expect_ad_matvar(f, mb);
-
   // Row vectors
   Eigen::RowVectorXd ra(0);
   stan::test::expect_ad(tols, f, ra);
@@ -78,4 +67,29 @@ TEST(MathMixMatFun, softmax) {
   rd2 << 0.5, -1, 3;
   stan::test::expect_ad(tols, f, rd2);
   expect_ad_matvar(f, rd2);
+
+  // Arrays of vectors (array[] vector and array[] row_vector)
+  std::vector<Eigen::VectorXd> stvx0{a, a};  // error case
+  stan::test::expect_ad(tols, f, stvx0);
+  expect_ad_matvar(f, stvx0);
+
+  std::vector<Eigen::VectorXd> stvx1{b, b};
+  stan::test::expect_ad(tols, f, stvx1);
+  expect_ad_matvar(f, stvx1);
+
+  std::vector<Eigen::VectorXd> stvx2{c, d};
+  stan::test::expect_ad(tols, f, stvx2);
+  expect_ad_matvar(f, stvx2);
+
+  std::vector<Eigen::RowVectorXd> strx0{ra, ra};  // error case
+  stan::test::expect_ad(tols, f, strx0);
+  expect_ad_matvar(f, strx0);
+
+  std::vector<Eigen::RowVectorXd> strx1{rb, rb};
+  stan::test::expect_ad(tols, f, strx1);
+  expect_ad_matvar(f, strx1);
+
+  std::vector<Eigen::RowVectorXd> strx2{rc, rd};
+  stan::test::expect_ad(tols, f, strx2);
+  expect_ad_matvar(f, strx2);
 }
