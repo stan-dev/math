@@ -27,8 +27,7 @@ inline auto softmax(T&& x) {
   if (x_arena.size() == 0) {
     return return_t(x_arena);
   }
-  auto res_val = to_arena(softmax(x_arena.val()));
-  arena_t<return_t> res = res_val;
+  arena_t<return_t> res = softmax(x_arena.val());
   reverse_pass_callback([x_arena, res]() mutable {
     const auto& s = to_ref(res.val());
     const auto& res_adj = to_ref(res.adj());

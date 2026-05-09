@@ -29,9 +29,9 @@ inline auto log_softmax(T&& x) {
       = return_var_matrix_t<plain_type_t<decltype(x_arena.val())>, T>;
   arena_t<return_t> res = log_softmax(x_arena.val());
   reverse_pass_callback([x_arena, res]() mutable {
-    const auto s = res.val().array().exp().eval();
     const auto& res_adj = to_ref(res.adj());
-    x_arena.adj().array() += res_adj.array() - res_adj.sum() * s;
+    x_arena.adj().array()
+        += res_adj.array() - res_adj.sum() * res.val().array().exp();
   });
   return return_t(res);
 }
