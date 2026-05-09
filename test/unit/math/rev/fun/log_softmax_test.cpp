@@ -63,4 +63,3 @@ TEST(AgradRevLogSoftmax, var_value_row_vector) {
 
   stan::math::recover_memory();
 }
-
