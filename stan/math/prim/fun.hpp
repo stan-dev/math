@@ -328,6 +328,7 @@
 #include <stan/math/prim/fun/to_row_vector.hpp>
 #include <stan/math/prim/fun/to_vector.hpp>
 #include <stan/math/prim/fun/trace.hpp>
+#include <stan/math/prim/fun/trace_dot.hpp>
 #include <stan/math/prim/fun/trace_gen_inv_quad_form_ldlt.hpp>
 #include <stan/math/prim/fun/trace_gen_quad_form.hpp>
 #include <stan/math/prim/fun/trace_inv_quad_form_ldlt.hpp>
