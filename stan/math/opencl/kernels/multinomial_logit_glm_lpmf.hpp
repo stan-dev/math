@@ -30,9 +30,11 @@ static constexpr const char* multinomial_logit_glm_kernel_code = STRINGIFY(
      * and delta_global, without re-reading x_beta_global or alpha_global.
      *
      * @param[out] logp_global partial logp sums, one per work group
-     * @param[out] delta_global residual matrix N_instances x N_classes (col-major)
+     * @param[out] delta_global residual matrix N_instances x N_classes
+     * (col-major)
      * @param[in] y_global outcome counts, N_instances x N_classes (col-major)
-     * @param[in] x_beta_global product x*beta, N_instances x N_classes (col-major)
+     * @param[in] x_beta_global product x*beta, N_instances x N_classes
+     * (col-major)
      * @param[in] alpha_global intercepts: K values if is_alpha_vector, else
      *   N_instances x N_classes (col-major)
      * @param N_instances number of instances
@@ -66,7 +68,8 @@ static constexpr const char* multinomial_logit_glm_kernel_code = STRINGIFY(
             eta_max = eta_k;
         }
 
-        // Pass 2: sum_exp, S_n, logp; if need_delta stash exp_k in delta_global.
+        // Pass 2: sum_exp, S_n, logp; if need_delta stash exp_k in
+        // delta_global.
         double sum_exp = 0;
         int S_n = 0;
         for (int k = 0; k < N_classes; k++) {

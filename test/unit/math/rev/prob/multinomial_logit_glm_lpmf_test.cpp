@@ -7,8 +7,8 @@
 template <bool propto, typename T_x, typename T_alpha, typename T_beta>
 inline stan::return_type_t<T_x, T_alpha, T_beta>
 multinomial_logit_glm_simple_lpmf(const std::vector<std::vector<int>>& y,
-                                   const T_x& x, const T_alpha& alpha,
-                                   const T_beta& beta) {
+                                  const T_x& x, const T_alpha& alpha,
+                                  const T_beta& beta) {
   using T_return = stan::return_type_t<T_x, T_alpha, T_beta>;
   const int N = x.rows();
   // alpha is 1xK; as_column_vector_or_scalar+transpose gives a row-vector
@@ -18,7 +18,7 @@ multinomial_logit_glm_simple_lpmf(const std::vector<std::vector<int>>& y,
   auto lin = stan::math::to_ref(
       stan::math::multiply(x, beta)
       + stan::math::rep_matrix<std::decay_t<decltype(alpha_row)>>(alpha_row,
-                                                                   N));
+                                                                  N));
   T_return lpmf = 0;
   for (int n = 0; n < N; ++n)
     lpmf += stan::math::multinomial_logit_lpmf<propto>(
@@ -29,8 +29,8 @@ multinomial_logit_glm_simple_lpmf(const std::vector<std::vector<int>>& y,
 TEST_F(AgradRev, MultinomialLogitGLM_matches_simple_doubles) {
   using stan::math::multinomial_logit_glm_lpmf;
   const size_t N = 5, M = 2, K = 3;
-  std::vector<std::vector<int>> y{{2, 1, 3}, {0, 4, 1}, {3, 0, 2},
-                                  {1, 2, 0}, {0, 1, 4}};
+  std::vector<std::vector<int>> y{
+      {2, 1, 3}, {0, 4, 1}, {3, 0, 2}, {1, 2, 0}, {0, 1, 4}};
   Eigen::MatrixXd x(N, M);
   x << -1.2, 0.5, 0.3, -0.7, 1.0, 0.2, -0.4, 0.8, 0.6, -1.1;
   Eigen::MatrixXd beta(M, K);
@@ -59,8 +59,8 @@ TYPED_TEST(ProbDistributionsMultinomialLogitGLM, glm_matches_simple_vars) {
   using row_vector_v = typename TypeParam::row_vector_v;
   const size_t N = 5, M = 2, K = 3;
   const double eps = 1e-13;
-  std::vector<std::vector<int>> y{{2, 1, 3}, {0, 4, 1}, {3, 0, 2},
-                                  {1, 2, 0}, {0, 1, 4}};
+  std::vector<std::vector<int>> y{
+      {2, 1, 3}, {0, 4, 1}, {3, 0, 2}, {1, 2, 0}, {0, 1, 4}};
   Eigen::MatrixXd x_val(N, M);
   x_val << -1.2, 0.5, 0.3, -0.7, 1.0, 0.2, -0.4, 0.8, 0.6, -1.1;
   Eigen::MatrixXd beta_val(M, K);
@@ -183,10 +183,7 @@ TYPED_TEST(ProbDistributionsMultinomialLogitGLM, matrix_alpha_grads) {
   Eigen::MatrixXd x_val(N, M);
   x_val << -1.2, 0.5, 0.3, -0.7, 1.0, 0.2, -0.4, 0.8;
   Eigen::MatrixXd alpha_val(N, K);
-  alpha_val <<  0.2, -0.1,  0.5,
-               -0.3,  0.4,  0.1,
-                0.1,  0.0, -0.2,
-                0.5, -0.3,  0.2;
+  alpha_val << 0.2, -0.1, 0.5, -0.3, 0.4, 0.1, 0.1, 0.0, -0.2, 0.5, -0.3, 0.2;
   Eigen::MatrixXd beta_val(M, K);
   beta_val << 0.3, -0.2, 0.1, -0.1, 0.4, -0.3;
   Eigen::RowVectorXd x_row_val(M);
@@ -199,11 +196,10 @@ TYPED_TEST(ProbDistributionsMultinomialLogitGLM, matrix_alpha_grads) {
 
   var res1 = 0.0;
   {
-    auto lin = stan::math::to_ref(
-        stan::math::multiply(x1, beta1) + alpha1);
+    auto lin = stan::math::to_ref(stan::math::multiply(x1, beta1) + alpha1);
     for (size_t n = 0; n < N; ++n)
-      res1 += stan::math::multinomial_logit_lpmf(
-          y[n], lin.row(n).transpose().eval());
+      res1 += stan::math::multinomial_logit_lpmf(y[n],
+                                                 lin.row(n).transpose().eval());
   }
   var res2 = multinomial_logit_glm_lpmf(y, x2, alpha2, beta2);
   (res1 + res2).grad();

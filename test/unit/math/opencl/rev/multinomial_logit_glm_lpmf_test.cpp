@@ -51,34 +51,33 @@ TEST(ProbDistributionsMultinomialLogitGLM, error_checking) {
   matrix_cl<double> alpha_cl(alpha), alpha_bad_k_cl(alpha_bad_k),
       alpha_inf_cl(alpha_inf);
   matrix_cl<double> alpha_mat_cl(alpha_mat),
-      alpha_mat_bad_n_cl(alpha_mat_bad_n),
-      alpha_mat_bad_k_cl(alpha_mat_bad_k);
+      alpha_mat_bad_n_cl(alpha_mat_bad_n), alpha_mat_bad_k_cl(alpha_mat_bad_k);
 
   EXPECT_NO_THROW(
       stan::math::multinomial_logit_glm_lpmf(y, x_cl, alpha_cl, beta_cl));
-  EXPECT_NO_THROW(stan::math::multinomial_logit_glm_lpmf(y, x_cl, alpha_mat_cl,
-                                                          beta_cl));
+  EXPECT_NO_THROW(
+      stan::math::multinomial_logit_glm_lpmf(y, x_cl, alpha_mat_cl, beta_cl));
 
-  EXPECT_THROW(stan::math::multinomial_logit_glm_lpmf(y_bad_n, x_cl, alpha_cl,
-                                                       beta_cl),
-               std::invalid_argument);
-  EXPECT_THROW(stan::math::multinomial_logit_glm_lpmf(y_bad_k, x_cl, alpha_cl,
-                                                       beta_cl),
-               std::invalid_argument);
+  EXPECT_THROW(
+      stan::math::multinomial_logit_glm_lpmf(y_bad_n, x_cl, alpha_cl, beta_cl),
+      std::invalid_argument);
+  EXPECT_THROW(
+      stan::math::multinomial_logit_glm_lpmf(y_bad_k, x_cl, alpha_cl, beta_cl),
+      std::invalid_argument);
   EXPECT_THROW(
       stan::math::multinomial_logit_glm_lpmf(y_neg, x_cl, alpha_cl, beta_cl),
       std::domain_error);
 
-  EXPECT_THROW(stan::math::multinomial_logit_glm_lpmf(y, x_bad_n_cl, alpha_cl,
-                                                       beta_cl),
-               std::invalid_argument);
-  EXPECT_THROW(stan::math::multinomial_logit_glm_lpmf(y, x_bad_m_cl, alpha_cl,
-                                                       beta_cl),
-               std::invalid_argument);
+  EXPECT_THROW(
+      stan::math::multinomial_logit_glm_lpmf(y, x_bad_n_cl, alpha_cl, beta_cl),
+      std::invalid_argument);
+  EXPECT_THROW(
+      stan::math::multinomial_logit_glm_lpmf(y, x_bad_m_cl, alpha_cl, beta_cl),
+      std::invalid_argument);
 
-  EXPECT_THROW(stan::math::multinomial_logit_glm_lpmf(y, x_cl, alpha_bad_k_cl,
-                                                       beta_cl),
-               std::invalid_argument);
+  EXPECT_THROW(
+      stan::math::multinomial_logit_glm_lpmf(y, x_cl, alpha_bad_k_cl, beta_cl),
+      std::invalid_argument);
   EXPECT_THROW(stan::math::multinomial_logit_glm_lpmf(
                    y, x_cl, alpha_mat_bad_n_cl, beta_cl),
                std::invalid_argument);
@@ -86,22 +85,22 @@ TEST(ProbDistributionsMultinomialLogitGLM, error_checking) {
                    y, x_cl, alpha_mat_bad_k_cl, beta_cl),
                std::invalid_argument);
 
-  EXPECT_THROW(stan::math::multinomial_logit_glm_lpmf(y, x_cl, alpha_cl,
-                                                       beta_bad_m_cl),
-               std::invalid_argument);
-  EXPECT_THROW(stan::math::multinomial_logit_glm_lpmf(y, x_cl, alpha_cl,
-                                                       beta_bad_k_cl),
-               std::invalid_argument);
+  EXPECT_THROW(
+      stan::math::multinomial_logit_glm_lpmf(y, x_cl, alpha_cl, beta_bad_m_cl),
+      std::invalid_argument);
+  EXPECT_THROW(
+      stan::math::multinomial_logit_glm_lpmf(y, x_cl, alpha_cl, beta_bad_k_cl),
+      std::invalid_argument);
 
   EXPECT_THROW(
       stan::math::multinomial_logit_glm_lpmf(y, x_inf_cl, alpha_cl, beta_cl),
       std::domain_error);
-  EXPECT_THROW(stan::math::multinomial_logit_glm_lpmf(y, x_cl, alpha_inf_cl,
-                                                       beta_cl),
-               std::domain_error);
-  EXPECT_THROW(stan::math::multinomial_logit_glm_lpmf(y, x_cl, alpha_cl,
-                                                       beta_inf_cl),
-               std::domain_error);
+  EXPECT_THROW(
+      stan::math::multinomial_logit_glm_lpmf(y, x_cl, alpha_inf_cl, beta_cl),
+      std::domain_error);
+  EXPECT_THROW(
+      stan::math::multinomial_logit_glm_lpmf(y, x_cl, alpha_cl, beta_inf_cl),
+      std::domain_error);
 }
 
 TEST(ProbDistributionsMultinomialLogitGLM,
@@ -165,8 +164,7 @@ TEST(ProbDistributionsMultinomialLogitGLM, opencl_matches_cpu_zero_instances) {
   stan::math::test::compare_cpu_opencl_prim_rev(f_propto, x, alpha, beta);
 }
 
-TEST(ProbDistributionsMultinomialLogitGLM,
-     opencl_matches_cpu_zero_attributes) {
+TEST(ProbDistributionsMultinomialLogitGLM, opencl_matches_cpu_zero_attributes) {
   int N = 3, K = 3;
   vector<vector<int>> y{{1, 2, 0}, {0, 3, 1}, {2, 0, 2}};
   Matrix<double, Dynamic, Dynamic> x(N, 0);
@@ -184,8 +182,7 @@ TEST(ProbDistributionsMultinomialLogitGLM,
   stan::math::test::compare_cpu_opencl_prim_rev(f_propto, x, alpha, beta);
 }
 
-TEST(ProbDistributionsMultinomialLogitGLM,
-     opencl_matches_cpu_single_instance) {
+TEST(ProbDistributionsMultinomialLogitGLM, opencl_matches_cpu_single_instance) {
   int N = 1, M = 3, K = 4;
   vector<vector<int>> y{{2, 0, 3, 1}};
   Matrix<double, Dynamic, Dynamic> x(N, M);

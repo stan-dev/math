@@ -146,7 +146,8 @@ inline return_type_t<T_x, T_alpha, T_beta> multinomial_logit_glm_lpmf(
   const Array<double, Dynamic, Dynamic> y_mat = to_matrix(y).array();
   const Array<double, Dynamic, 1> instance_totals = y_mat.rowwise().sum();
 
-  // lmultiply implements 0*log(0)=0: classes with softmax=0 and y=0 contribute 0.
+  // lmultiply implements 0*log(0)=0: classes with softmax=0 and y=0 contribute
+  // 0.
   T_partials_return logp = lmultiply(y_mat, softmax_mat).sum();
   if constexpr (include_summand<propto>::value) {
     logp += lgamma(instance_totals + 1.0).sum() - lgamma(y_mat + 1.0).sum();
@@ -174,7 +175,8 @@ inline return_type_t<T_x, T_alpha, T_beta> multinomial_logit_glm_lpmf(
     }
     if constexpr (is_autodiff_v<T_beta>) {
       partials<2>(ops_partials)
-          = x_val.transpose().template cast<T_partials_return>() * delta.matrix();
+          = x_val.transpose().template cast<T_partials_return>()
+            * delta.matrix();
     }
     if constexpr (is_autodiff_v<T_x>) {
       edge<0>(ops_partials).partials_ = delta.matrix() * beta_val.transpose();
