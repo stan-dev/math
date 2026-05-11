@@ -128,13 +128,12 @@ inline return_type_t<T_x, T_alpha, T_beta> multinomial_logit_glm_lpmf(
   const auto& x_val = to_ref_if<is_autodiff_v<T_beta>>(value_of(x_ref));
   const auto& beta_val = to_ref_if<is_autodiff_v<T_x>>(value_of(beta_ref));
 
-
   Array<T_partials_return, Dynamic, Dynamic> eta;
   if constexpr (T_alpha_rows == 1) {
     eta = ((x_val * beta_val).rowwise() + value_of(alpha_ref)).array();
   } else {
     eta = (x_val * beta_val + value_of(alpha_ref)).array();
-  }                                                                                                                                                                                                                                         
+  }
 
   // Row-max shift for numerical stability; cancels in log-softmax.
   const Array<T_partials_return, Dynamic, Dynamic> shifted_eta
