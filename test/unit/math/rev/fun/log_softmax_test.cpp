@@ -1,11 +1,12 @@
 #include <stan/math/rev.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <cmath>
 
 // Direct exercise of the var_value vector overload in
 // stan/math/rev/fun/log_softmax.hpp for both row and column var_value vectors.
 
-TEST(AgradRevLogSoftmax, var_value_col_vector) {
+TEST_F(AgradRev, log_softmax_var_value_col_vector) {
   using stan::math::log_softmax;
   using stan::math::sum;
   using stan::math::var_value;
@@ -30,11 +31,9 @@ TEST(AgradRevLogSoftmax, var_value_col_vector) {
   EXPECT_FLOAT_EQ(1.0 - 3.0 * std::exp(-1.0) / denom, x.adj()(0));
   EXPECT_FLOAT_EQ(1.0 - 3.0 * std::exp(1.0) / denom, x.adj()(1));
   EXPECT_FLOAT_EQ(1.0 - 3.0 * std::exp(2.0) / denom, x.adj()(2));
-
-  stan::math::recover_memory();
 }
 
-TEST(AgradRevLogSoftmax, var_value_row_vector) {
+TEST_F(AgradRev, log_softmax_var_value_row_vector) {
   using stan::math::log_softmax;
   using stan::math::sum;
   using stan::math::var_value;
@@ -60,6 +59,4 @@ TEST(AgradRevLogSoftmax, var_value_row_vector) {
   EXPECT_FLOAT_EQ(1.0 - 3.0 * std::exp(-1.0) / denom, x.adj()(0));
   EXPECT_FLOAT_EQ(1.0 - 3.0 * std::exp(1.0) / denom, x.adj()(1));
   EXPECT_FLOAT_EQ(1.0 - 3.0 * std::exp(2.0) / denom, x.adj()(2));
-
-  stan::math::recover_memory();
 }
