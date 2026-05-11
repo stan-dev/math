@@ -68,8 +68,10 @@ TYPED_TEST(ProbDistributionsMultinomialLogitGLM, glm_matches_simple_vars) {
   Eigen::RowVectorXd alpha_val(K);
   alpha_val << 0.2, -0.1, 0.5;
 
-  // Reference always uses Matrix<var> so multinomial_logit_lpmf can extract rows.
-  Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> x1 = x_val, beta1 = beta_val;
+  // Reference always uses Matrix<var> so multinomial_logit_lpmf can extract
+  // rows.
+  Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> x1 = x_val,
+                                                     beta1 = beta_val;
   Eigen::Matrix<var, 1, Eigen::Dynamic> alpha1 = alpha_val;
   matrix_v x2 = x_val;
   matrix_v beta2 = beta_val;
@@ -121,7 +123,8 @@ TYPED_TEST(ProbDistributionsMultinomialLogitGLM, glm_matches_simple_big) {
   Eigen::MatrixXd beta_val = Eigen::MatrixXd::Random(M, K);
   Eigen::RowVectorXd alpha_val = Eigen::RowVectorXd::Random(K);
 
-  Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> x1 = x_val, beta1 = beta_val;
+  Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> x1 = x_val,
+                                                     beta1 = beta_val;
   Eigen::Matrix<var, 1, Eigen::Dynamic> alpha1 = alpha_val;
   matrix_v x2 = x_val;
   matrix_v beta2 = beta_val;
@@ -155,8 +158,10 @@ TYPED_TEST(ProbDistributionsMultinomialLogitGLM, matrix_alpha_grads) {
   Eigen::MatrixXd beta_val(M, K);
   beta_val << 0.3, -0.2, 0.1, -0.1, 0.4, -0.3;
   // full x + matrix alpha: exercises the T_alpha_rows != 1 gradient path
-  // Reference uses Matrix<var> so multinomial_logit_lpmf can extract Eigen rows.
-  Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> x1 = x_val, alpha1 = alpha_val,
+  // Reference uses Matrix<var> so multinomial_logit_lpmf can extract Eigen
+  // rows.
+  Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> x1 = x_val,
+                                                     alpha1 = alpha_val,
                                                      beta1 = beta_val;
   matrix_v x2 = x_val;
   matrix_v alpha2 = alpha_val;
@@ -181,7 +186,6 @@ TYPED_TEST(ProbDistributionsMultinomialLogitGLM, matrix_alpha_grads) {
   for (size_t n = 0; n < N; ++n)
     for (size_t k = 0; k < K; ++k)
       EXPECT_NEAR(alpha1.adj()(n, k), alpha2.adj()(n, k), eps);
-
 }
 
 TYPED_TEST(ProbDistributionsMultinomialLogitGLM, interfaces) {
