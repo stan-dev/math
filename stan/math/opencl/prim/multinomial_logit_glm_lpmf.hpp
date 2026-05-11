@@ -139,15 +139,6 @@ inline return_type_t<T_x, T_alpha, T_beta> multinomial_logit_glm_lpmf(
   return ops_partials.build(logp);
 }
 
-template <typename T_x, typename T_alpha, typename T_beta,
-          require_all_prim_or_rev_kernel_expression_t<T_x, T_alpha,
-                                                      T_beta>* = nullptr>
-inline return_type_t<T_x, T_alpha, T_beta> multinomial_logit_glm_lpmf(
-    const std::vector<std::vector<int>>& y, const T_x& x, const T_alpha& alpha,
-    const T_beta& beta) {
-  return multinomial_logit_glm_lpmf<false>(y, x, alpha, beta);
-}
-
 }  // namespace math
 }  // namespace stan
 
