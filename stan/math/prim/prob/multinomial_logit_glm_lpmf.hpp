@@ -78,7 +78,7 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <bool propto, typename T_x, typename T_alpha, typename T_beta,
-          require_eigen_matrix_dynamic_t<T_x>* = nullptr,
+          require_matrix_t<T_x>* = nullptr,
           require_matrix_t<T_alpha>* = nullptr,
           require_matrix_t<T_beta>* = nullptr>
 inline return_type_t<T_x, T_alpha, T_beta> multinomial_logit_glm_lpmf(
@@ -185,10 +185,7 @@ inline return_type_t<T_x, T_alpha, T_beta> multinomial_logit_glm_lpmf(
   return ops_partials.build(logp);
 }
 
-template <typename T_x, typename T_alpha, typename T_beta,
-          require_eigen_matrix_dynamic_t<T_x>* = nullptr,
-          require_matrix_t<T_alpha>* = nullptr,
-          require_matrix_t<T_beta>* = nullptr>
+template <typename T_x, typename T_alpha, typename T_beta>
 inline return_type_t<T_x, T_alpha, T_beta> multinomial_logit_glm_lpmf(
     const std::vector<std::vector<int>>& y, const T_x& x, const T_alpha& alpha,
     const T_beta& beta) {

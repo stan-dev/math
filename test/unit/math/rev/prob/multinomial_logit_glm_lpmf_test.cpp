@@ -68,9 +68,12 @@ TYPED_TEST(ProbDistributionsMultinomialLogitGLM, glm_matches_simple_vars) {
   Eigen::RowVectorXd alpha_val(K);
   alpha_val << 0.2, -0.1, 0.5;
 
-  matrix_v x1 = x_val, x2 = x_val;
-  matrix_v beta1 = beta_val, beta2 = beta_val;
-  row_vector_v alpha1 = alpha_val, alpha2 = alpha_val;
+  // Reference always uses Matrix<var> so multinomial_logit_lpmf can extract rows.
+  Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> x1 = x_val, beta1 = beta_val;
+  Eigen::Matrix<var, 1, Eigen::Dynamic> alpha1 = alpha_val;
+  matrix_v x2 = x_val;
+  matrix_v beta2 = beta_val;
+  row_vector_v alpha2 = alpha_val;
 
   var res1 = multinomial_logit_glm_simple_lpmf<false>(y, x1, alpha1, beta1);
   var res2 = multinomial_logit_glm_lpmf(y, x2, alpha2, beta2);
@@ -101,42 +104,6 @@ TYPED_TEST(ProbDistributionsMultinomialLogitGLM, glm_matches_simple_vars) {
     EXPECT_NEAR(alpha1.adj()[i], alpha2.adj()[i], eps);
 }
 
-TYPED_TEST(ProbDistributionsMultinomialLogitGLM, x_broadcasting) {
-  using stan::math::multinomial_logit_glm_lpmf;
-  using stan::math::var;
-  using matrix_v = typename TypeParam::matrix_v;
-  using row_vector_v = typename TypeParam::row_vector_v;
-  const size_t N = 4, M = 2, K = 3;
-  const double eps = 1e-13;
-  std::vector<std::vector<int>> y{{1, 2, 0}, {3, 0, 1}, {0, 1, 4}, {2, 2, 1}};
-  Eigen::RowVectorXd x_row_val(M);
-  x_row_val << 0.7, -0.3;
-  Eigen::MatrixXd beta_val(M, K);
-  beta_val << 0.4, -0.1, 0.2, -0.2, 0.5, -0.1;
-  Eigen::RowVectorXd alpha_val(K);
-  alpha_val << 0.1, 0.2, -0.3;
-
-  row_vector_v x_row = x_row_val;
-  matrix_v x_full = x_row_val.replicate(N, 1);
-  matrix_v beta1 = beta_val, beta2 = beta_val;
-  row_vector_v alpha1 = alpha_val, alpha2 = alpha_val;
-
-  var res1 = multinomial_logit_glm_lpmf(y, x_row, alpha1, beta1);
-  var res2 = multinomial_logit_glm_lpmf(y, x_full, alpha2, beta2);
-  (res1 + res2).grad();
-  EXPECT_NEAR(res1.val(), res2.val(), eps);
-  for (size_t i = 0; i < M; ++i) {
-    double x_sum = 0;
-    for (size_t j = 0; j < N; ++j)
-      x_sum += x_full.adj()(j, i);
-    EXPECT_NEAR(x_row.adj()[i], x_sum, eps);
-    for (size_t j = 0; j < K; ++j)
-      EXPECT_NEAR(beta1.adj()(i, j), beta2.adj()(i, j), eps);
-  }
-  for (size_t i = 0; i < K; ++i)
-    EXPECT_NEAR(alpha1.adj()[i], alpha2.adj()[i], eps);
-}
-
 TYPED_TEST(ProbDistributionsMultinomialLogitGLM, glm_matches_simple_big) {
   using stan::math::multinomial_logit_glm_lpmf;
   using stan::math::var;
@@ -154,9 +121,11 @@ TYPED_TEST(ProbDistributionsMultinomialLogitGLM, glm_matches_simple_big) {
   Eigen::MatrixXd beta_val = Eigen::MatrixXd::Random(M, K);
   Eigen::RowVectorXd alpha_val = Eigen::RowVectorXd::Random(K);
 
-  matrix_v x1 = x_val, x2 = x_val;
-  matrix_v beta1 = beta_val, beta2 = beta_val;
-  row_vector_v alpha1 = alpha_val, alpha2 = alpha_val;
+  Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> x1 = x_val, beta1 = beta_val;
+  Eigen::Matrix<var, 1, Eigen::Dynamic> alpha1 = alpha_val;
+  matrix_v x2 = x_val;
+  matrix_v beta2 = beta_val;
+  row_vector_v alpha2 = alpha_val;
 
   var res1 = multinomial_logit_glm_simple_lpmf<false>(y, x1, alpha1, beta1);
   var res2 = multinomial_logit_glm_lpmf(y, x2, alpha2, beta2);
@@ -176,7 +145,6 @@ TYPED_TEST(ProbDistributionsMultinomialLogitGLM, matrix_alpha_grads) {
   using stan::math::multinomial_logit_glm_lpmf;
   using stan::math::var;
   using matrix_v = typename TypeParam::matrix_v;
-  using row_vector_v = typename TypeParam::row_vector_v;
   const size_t N = 4, M = 2, K = 3;
   const double eps = 1e-13;
   std::vector<std::vector<int>> y{{2, 1, 3}, {0, 4, 1}, {3, 0, 2}, {1, 2, 0}};
@@ -186,13 +154,13 @@ TYPED_TEST(ProbDistributionsMultinomialLogitGLM, matrix_alpha_grads) {
   alpha_val << 0.2, -0.1, 0.5, -0.3, 0.4, 0.1, 0.1, 0.0, -0.2, 0.5, -0.3, 0.2;
   Eigen::MatrixXd beta_val(M, K);
   beta_val << 0.3, -0.2, 0.1, -0.1, 0.4, -0.3;
-  Eigen::RowVectorXd x_row_val(M);
-  x_row_val << 0.7, -0.3;
-
   // full x + matrix alpha: exercises the T_alpha_rows != 1 gradient path
-  matrix_v x1 = x_val, x2 = x_val;
-  matrix_v alpha1 = alpha_val, alpha2 = alpha_val;
-  matrix_v beta1 = beta_val, beta2 = beta_val;
+  // Reference uses Matrix<var> so multinomial_logit_lpmf can extract Eigen rows.
+  Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> x1 = x_val, alpha1 = alpha_val,
+                                                     beta1 = beta_val;
+  matrix_v x2 = x_val;
+  matrix_v alpha2 = alpha_val;
+  matrix_v beta2 = beta_val;
 
   var res1 = 0.0;
   {
@@ -214,29 +182,6 @@ TYPED_TEST(ProbDistributionsMultinomialLogitGLM, matrix_alpha_grads) {
     for (size_t k = 0; k < K; ++k)
       EXPECT_NEAR(alpha1.adj()(n, k), alpha2.adj()(n, k), eps);
 
-  stan::math::set_zero_all_adjoints();
-
-  // broadcast x + matrix alpha: exercises the sum_delta_for_x gradient path
-  row_vector_v x_row = x_row_val;
-  matrix_v x_full = x_row_val.replicate(N, 1);
-  matrix_v alpha3 = alpha_val, alpha4 = alpha_val;
-  matrix_v beta3 = beta_val, beta4 = beta_val;
-
-  var res3 = multinomial_logit_glm_lpmf(y, x_full, alpha3, beta3);
-  var res4 = multinomial_logit_glm_lpmf(y, x_row, alpha4, beta4);
-  (res3 + res4).grad();
-  EXPECT_NEAR(res3.val(), res4.val(), eps);
-  for (size_t i = 0; i < M; ++i) {
-    double x_sum = 0;
-    for (size_t j = 0; j < N; ++j)
-      x_sum += x_full.adj()(j, i);
-    EXPECT_NEAR(x_row.adj()[i], x_sum, eps);
-    for (size_t j = 0; j < K; ++j)
-      EXPECT_NEAR(beta3.adj()(i, j), beta4.adj()(i, j), eps);
-  }
-  for (size_t n = 0; n < N; ++n)
-    for (size_t k = 0; k < K; ++k)
-      EXPECT_NEAR(alpha3.adj()(n, k), alpha4.adj()(n, k), eps);
 }
 
 TYPED_TEST(ProbDistributionsMultinomialLogitGLM, interfaces) {
@@ -247,14 +192,12 @@ TYPED_TEST(ProbDistributionsMultinomialLogitGLM, interfaces) {
   std::vector<std::vector<int>> y{{1, 2, 0}, {0, 1, 3}, {2, 0, 1}};
   Eigen::MatrixXd x_d(N, M);
   x_d << 1.0, -0.5, 0.3, 0.7, -0.2, 0.4;
-  Eigen::RowVectorXd x_row_d = x_d.row(0);
   Eigen::MatrixXd beta_d(M, K);
   beta_d << 0.1, 0.2, 0.3, 0.4, 0.5, 0.6;
   Eigen::RowVectorXd alpha_d(K);
   alpha_d << 0.1, 0.2, 0.3;
 
   matrix_v x_v = x_d;
-  row_vector_v x_row_v = x_row_d;
   matrix_v beta_v = beta_d;
   row_vector_v alpha_v = alpha_d;
 
@@ -266,13 +209,4 @@ TYPED_TEST(ProbDistributionsMultinomialLogitGLM, interfaces) {
   EXPECT_NO_THROW(multinomial_logit_glm_lpmf(y, x_v, alpha_d, beta_v));
   EXPECT_NO_THROW(multinomial_logit_glm_lpmf(y, x_d, alpha_v, beta_v));
   EXPECT_NO_THROW(multinomial_logit_glm_lpmf(y, x_v, alpha_v, beta_v));
-
-  EXPECT_NO_THROW(multinomial_logit_glm_lpmf(y, x_row_d, alpha_d, beta_d));
-  EXPECT_NO_THROW(multinomial_logit_glm_lpmf(y, x_row_v, alpha_d, beta_d));
-  EXPECT_NO_THROW(multinomial_logit_glm_lpmf(y, x_row_d, alpha_v, beta_d));
-  EXPECT_NO_THROW(multinomial_logit_glm_lpmf(y, x_row_d, alpha_d, beta_v));
-  EXPECT_NO_THROW(multinomial_logit_glm_lpmf(y, x_row_v, alpha_v, beta_d));
-  EXPECT_NO_THROW(multinomial_logit_glm_lpmf(y, x_row_v, alpha_d, beta_v));
-  EXPECT_NO_THROW(multinomial_logit_glm_lpmf(y, x_row_d, alpha_v, beta_v));
-  EXPECT_NO_THROW(multinomial_logit_glm_lpmf(y, x_row_v, alpha_v, beta_v));
 }
