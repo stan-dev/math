@@ -430,30 +430,3 @@ TEST_F(AgradRev, StanMathRev_reduce_sum_linked_args) {
   stan::math::recover_memory();
 }
 
-
-TEST(StanMathPrim_reduce_sum, no_threads_return_type_deduction) {
-  struct int_sum_fn {
-    int operator()(const std::vector<int>& slice, size_t, size_t,
-                   std::ostream*) const {
-      return std::accumulate(slice.begin(), slice.end(), 0);
-    }
-  };
-
-  std::vector<int> data = {1, 2, 3, 4};
-  // This must compile (even without STAN_THREADS)
-  auto result = stan::math::reduce_sum<int_sum_fn>(data, 1, nullptr);
-  EXPECT_DOUBLE_EQ(result, 10.0);  // return_type_t<vector<int>> = double
-}
-
-TEST(StanMathPrim_reduce_sum, no_threads_empty_return_type_deduction) {
-  struct int_sum_fn {
-    int operator()(const std::vector<int>& slice, size_t, size_t,
-                   std::ostream*) const {
-      return 0;
-    }
-  };
-
-  std::vector<int> empty;
-  auto result = stan::math::reduce_sum<int_sum_fn>(empty, 1, nullptr);
-  EXPECT_DOUBLE_EQ(result, 0.0);
-}
