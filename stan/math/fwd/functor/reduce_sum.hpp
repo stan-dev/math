@@ -85,7 +85,7 @@ struct reduce_sum_impl {
         }
 
         sum += ReduceFunction()(std::forward<Vec>(sub_slice), start, end, msgs,
-                                std::forward<Args>(args)...);
+                                args);
       }
       return sum;
     }
