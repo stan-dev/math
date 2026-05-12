@@ -429,4 +429,3 @@ TEST_F(AgradRev, StanMathRev_reduce_sum_linked_args) {
 
   stan::math::recover_memory();
 }
-
