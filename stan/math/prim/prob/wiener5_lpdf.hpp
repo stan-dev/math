@@ -516,40 +516,109 @@ template <bool WrtLog = false, typename T_y, typename T_a, typename T_w,
 inline auto wiener5_grad_w(const T_y& y, const T_a& a, const T_v& v,
                            const T_w& w, const T_sv& sv,
                            T_err log_err = log(1e-12)) noexcept {
-  const auto two_log_a = 2.0 * log(a);
-  const auto log_y_asq = log(y) - two_log_a;
-  const auto log_error_term = wiener5_compute_log_error_term(y, a, v, w, sv);
-  const auto one_m_w = 1.0 - w;
+  using ret_t = return_type_t<T_y, T_a, T_w, T_v, T_sv, T_err>;
+
+  const auto y_asq = y / square(a);
+  const auto q = 1.0 - w;
   const auto sv_sqr = square(sv);
   const auto one_plus_svsqr_y = 1.0 + sv_sqr * y;
-  const auto density_part_one
-      = (v * a + sv_sqr * square(a) * one_m_w) / one_plus_svsqr_y;
-  const auto log_error = (log_err - log_error_term);
 
-  const auto n_terms_small_t
-      = wiener5_n_terms_small_t<GradientCalc::OFF, GradientCalc::ON>(y, a, w,
-                                                                     log_error);
-  const auto n_terms_large_t
+  const auto log_error_term = wiener5_compute_log_error_term(y, a, v, w, sv);
+  const auto log_error = log_err - log_error_term;
+
+  // d/dw of
+  //
+  // -2 log(a)
+  // - 0.5 log(1 + sv^2 y)
+  // + [-v^2 y + 2 a v (1-w) + a^2 (1-w)^2 sv^2]
+  //   / [2 (1 + sv^2 y)].
+  const auto pref_grad_w = (-a * v - square(a) * sv_sqr * q) / one_plus_svsqr_y;
+
+  // Use the density branch decision. The derivative is the derivative of
+  // the same scalar value, so do not let the w-gradient path switch to a
+  // different underconverged representation.
+  const auto n_small_density
+      = wiener5_n_terms_small_t<true, GradientCalc::OFF>(y, a, w, log_error);
+  const auto n_large_density
+      = wiener5_density_large_reaction_time_terms(y, a, w, log_error);
+
+  const auto n_small_grad
+      = wiener5_n_terms_small_t<false, GradientCalc::ON>(y, a, w, log_error);
+  const auto n_large_grad
       = wiener5_gradient_large_reaction_time_terms<GradientCalc::ON>(y, a, w,
                                                                      log_error);
-  auto wiener_res = wiener5_log_sum_exp<GradientCalc::OFF, GradientCalc::ON>(
-      y, a, w, n_terms_small_t, n_terms_large_t);
-  auto&& result = wiener_res.first;
-  auto&& newsign = wiener_res.second;
-  const auto log_density = wiener5_density<GradientCalc::OFF>(
-      y, a, v, w, sv, log_err - log(fabs(density_part_one)));
-  if (2.0 * n_terms_small_t < n_terms_large_t) {
-    auto ans = -(density_part_one
-                 - newsign
-                       * exp(result - (log_density - log_error_term)
-                             - 2.5 * log_y_asq - 0.5 * LOG_TWO - 0.5 * LOG_PI));
-    return WrtLog ? ans * exp(log_density) : ans;
+
+  const int n_small = static_cast<int>(
+      fmax(value_of_rec(n_small_density), value_of_rec(n_small_grad)));
+  const int n_large = static_cast<int>(
+      fmax(value_of_rec(n_large_density), value_of_rec(n_large_grad)));
+
+  ret_t series_grad_w = 0.0;
+
+  if (2.0 * n_small_density <= n_large_density) {
+    // Small-time representation.
+    //
+    // R_s = sum_{k=-K}^{K} z_k exp(-z_k^2 / (2 t*)),
+    // z_k = 1 - w + 2k.
+    //
+    // dR_s/dw = sum_k (z_k^2 / t* - 1)
+    //                  exp(-z_k^2 / (2 t*)).
+    ret_t max_log = NEGATIVE_INFTY;
+
+    for (int k = -n_small; k <= n_small; ++k) {
+      const double kd = static_cast<double>(k);
+      const auto z = q + 2.0 * kd;
+      const auto log_e = -square(z) / (2.0 * y_asq);
+      max_log = fmax(max_log, log_e);
+    }
+
+    ret_t raw = 0.0;
+    ret_t draw_dw = 0.0;
+
+    for (int k = -n_small; k <= n_small; ++k) {
+      const double kd = static_cast<double>(k);
+      const auto z = q + 2.0 * kd;
+      const auto e = exp(-square(z) / (2.0 * y_asq) - max_log);
+
+      raw += z * e;
+      draw_dw += (square(z) / y_asq - 1.0) * e;
+    }
+
+    series_grad_w = draw_dw / raw;
   } else {
-    auto ans = -(
-        density_part_one
-        + newsign
-              * exp(result - (log_density - log_error_term) + 2.0 * LOG_PI));
-    return WrtLog ? ans * exp(log_density) : ans;
+    // Large-time representation in the same upper-bound coordinate used
+    // by the density code: q = 1 - w.
+    //
+    // R_l = sum_{k=1}^{K}
+    //         k sin(k pi q)
+    //         exp(-(k^2 - 1) pi^2 t* / 2).
+    //
+    // dR_l/dw = -sum_{k=1}^{K}
+    //             k^2 pi cos(k pi q)
+    //             exp(-(k^2 - 1) pi^2 t* / 2).
+    ret_t raw = 0.0;
+    ret_t draw_dw = 0.0;
+
+    const auto half_pi2_y = 0.5 * square(pi()) * y_asq;
+
+    for (int k = 1; k <= n_large; ++k) {
+      const double kd = static_cast<double>(k);
+      const auto exp_term = exp(-(square(kd) - 1.0) * half_pi2_y);
+      const auto angle = kd * pi() * q;
+
+      raw += kd * sin(angle) * exp_term;
+      draw_dw += -square(kd) * pi() * cos(angle) * exp_term;
+    }
+
+    series_grad_w = draw_dw / raw;
+  }
+
+  const auto ans = pref_grad_w + series_grad_w;
+
+  if constexpr (WrtLog) {
+    return ans * wiener5_density<true>(y, a, v, w, sv, log_err);
+  } else {
+    return ans;
   }
 }
 
