@@ -26,11 +26,11 @@ inline auto softmax(T&& x) {
 }
 
 /**
- * Return the softmax of the specified column vector of `fvar` values.
+ * Return the softmax of the specified vector of `fvar` values.
  *
- * @tparam ColVec Eigen column vector with `fvar` scalar
- * @param x column vector to transform
- * @return softmax of the column vector
+ * @tparam Vec Eigen vector with `fvar` scalar
+ * @param x vector to transform
+ * @return softmax of the vector
  */
 template <typename Vec, require_eigen_vector_vt<is_fvar, Vec>* = nullptr>
 inline auto softmax(Vec&& x) {
