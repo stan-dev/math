@@ -30,7 +30,8 @@ inline auto softmax(T&& x) {
   }
   arena_t<return_t> res = softmax(x_arena.val());
   reverse_pass_callback([x_arena, res]() mutable {
-    x_arena.adj().array() += res.val().array() * (res.adj().array() - res.val().dot(res.adj()));
+    x_arena.adj().array()
+        += res.val().array() * (res.adj().array() - res.val().dot(res.adj()));
   });
   return res;
 }

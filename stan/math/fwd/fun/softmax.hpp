@@ -32,8 +32,7 @@ inline auto softmax(T&& x) {
  * @param x column vector to transform
  * @return softmax of the column vector
  */
-template <typename Vec,
-          require_eigen_vector_vt<is_fvar, Vec>* = nullptr>
+template <typename Vec, require_eigen_vector_vt<is_fvar, Vec>* = nullptr>
 inline auto softmax(Vec&& x) {
   using vec = std::decay_t<Vec>;
   constexpr int Rows = vec::RowsAtCompileTime;

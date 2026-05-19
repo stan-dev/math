@@ -13,7 +13,6 @@
 namespace stan {
 namespace math {
 
-
 /**
  * Return the log softmax of each vector in a container of `fvar` values.
  *
@@ -36,8 +35,7 @@ inline auto log_softmax(T&& x) {
  * @return log softmax of the vector
  * @throw std::domain_error if the input size is 0
  */
-template <typename Vec,
-          require_eigen_vector_vt<is_fvar, Vec>* = nullptr>
+template <typename Vec, require_eigen_vector_vt<is_fvar, Vec>* = nullptr>
 inline auto log_softmax(Vec&& x) {
   using vec = std::decay_t<Vec>;
   constexpr int Rows = vec::RowsAtCompileTime;
