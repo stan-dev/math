@@ -1,6 +1,24 @@
 Stan Math Library Release Notes
 
 ======================================================================
+v5.3.0 (19 May 2026)
+======================================================================
+
+ - Improved the embedded Laplace approximation. (#3250, #3286, #3297, #3281)
+ - Added `yule_simon_lcdf`, `yule_simon_cdf`, and `yule_simon_rng`. (#3276, #3283, #3285)
+ - Added quantile function for student-t distribution. (#3211)
+ - Added `trace_dot(A, B)`. (#3310)
+ - Improved the robustness of `gamma_lccdf`. (#3275, #3272, #3292, #3296)
+ - Set thread QoS to USER_INITIATED on Apple Silicon. (#3278)
+ - Updated tests to ensure they properly clean up memory. (#3293)
+ - Fixed typos in error messages, code comments. (#3295)
+ - Documented parameter 'y' in apply_scalar_binary. (#3284)
+ - Jenkins: change how gh-pages branch gets re-built. (#3316)
+ - Jenkins: improved error handling of parallel distribution tests. (#3307)
+ - Updated OpenCL C++ to use v2025.07.22. (#3298)
+ - Updated cpplint to 2.0.2. (#3294)
+
+======================================================================
 v5.2.0 (13 January 2026)
 ======================================================================
 
