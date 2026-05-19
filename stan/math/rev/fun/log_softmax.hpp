@@ -33,7 +33,7 @@ inline auto log_softmax(T&& x) {
     x_arena.adj().array()
         += res_adj.array() - res_adj.sum() * res.val().array().exp();
   });
-  return return_t(res);
+  return res;
 }
 
 /**

@@ -45,12 +45,12 @@ namespace math {
  */
 template <typename Vec,
           require_eigen_vector_vt<std::is_arithmetic, Vec>* = nullptr>
-inline plain_type_t<Vec> softmax(const Vec& v) {
+inline plain_type_t<Vec> softmax(Vec&& v) {
   if (v.size() == 0) {
     return v;
   }
-  const auto& v_ref = to_ref(v);
-  const auto theta = (v_ref.array() - v_ref.maxCoeff()).exp().eval();
+  decltype(auto) v_ref = to_ref(std::forward<Vec>(v));
+  const auto theta = (v_ref.array() - v_ref.maxCoeff()).exp();
   return (theta / theta.sum()).matrix();
 }
 

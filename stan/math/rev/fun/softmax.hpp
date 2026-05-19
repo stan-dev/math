@@ -26,15 +26,13 @@ inline auto softmax(T&& x) {
   using return_t
       = return_var_matrix_t<plain_type_t<decltype(x_arena.val())>, T>;
   if (x_arena.size() == 0) {
-    return return_t(x_arena);
+    return x_arena;
   }
   arena_t<return_t> res = softmax(x_arena.val());
   reverse_pass_callback([x_arena, res]() mutable {
-    const auto& s = to_ref(res.val());
-    const auto& res_adj = to_ref(res.adj());
-    x_arena.adj().array() += s.array() * (res_adj.array() - s.dot(res_adj));
+    x_arena.adj().array() += res.val().array() * (res.adj().array() - res.val().dot(res.adj()));
   });
-  return return_t(res);
+  return res;
 }
 
 /**
