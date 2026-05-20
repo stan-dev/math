@@ -106,9 +106,8 @@ inline return_type_t<T_a, T_b, T_theta> integrate_1d_gauss_kronrod(
     const double absolute_tolerance = 0.0,
     const int max_depth = INTEGRATE_1D_GAUSS_KRONROD_MAX_DEPTH) {
   return integrate_1d_gauss_kronrod_impl(integrate_1d_adapter<F>(f), a, b,
-                                         relative_tolerance,
-                                         absolute_tolerance, max_depth, msgs,
-                                         theta, x_r, x_i);
+                                         relative_tolerance, absolute_tolerance,
+                                         max_depth, msgs, theta, x_r, x_i);
 }
 
 }  // namespace math
