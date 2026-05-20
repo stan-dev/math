@@ -219,8 +219,8 @@ inline void test_derivatives(const F &f, double a, double b,
     for (size_t i = 0; i < thetas.size(); ++i)
       thetas_[i] = thetas[i];
 
-    var integral = stan::math::integrate_1d_double_exponential(f, a_, b_, thetas_, x_r, x_i, msgs,
-                                            tolerance);
+    var integral = stan::math::integrate_1d_double_exponential(
+        f, a_, b_, thetas_, x_r, x_i, msgs, tolerance);
     integral.grad();
     EXPECT_LE(std::abs(val - integral.val()), tolerance);
     if constexpr (stan::is_var<T_theta>::value) {
@@ -240,12 +240,12 @@ inline void test_derivatives(const F &f, double a, double b,
 TEST_F(AgradRev, StanMath_integrate_1d_de_rev_test_integer_arguments) {
   stan::math::var v;
   std::vector<stan::math::var> theta = {0.5};
-  EXPECT_NO_THROW(
-      v = stan::math::integrate_1d_double_exponential(f2{}, 0, 1, theta, {}, {}, msgs, 1e-6));
-  EXPECT_NO_THROW(
-      v = stan::math::integrate_1d_double_exponential(f2{}, 0.0, 1, theta, {}, {}, msgs, 1e-6));
-  EXPECT_NO_THROW(
-      v = stan::math::integrate_1d_double_exponential(f2{}, 0, 1.0, theta, {}, {}, msgs, 1e-6));
+  EXPECT_NO_THROW(v = stan::math::integrate_1d_double_exponential(
+                      f2{}, 0, 1, theta, {}, {}, msgs, 1e-6));
+  EXPECT_NO_THROW(v = stan::math::integrate_1d_double_exponential(
+                      f2{}, 0.0, 1, theta, {}, {}, msgs, 1e-6));
+  EXPECT_NO_THROW(v = stan::math::integrate_1d_double_exponential(
+                      f2{}, 0, 1.0, theta, {}, {}, msgs, 1e-6));
 }
 
 TEST_F(AgradRev, StanMath_integrate_1d_de_rev_TestDerivatives_easy) {
@@ -288,8 +288,9 @@ TEST_F(
       {5 * pow(0.5, 1.5), 12 * 1.75 * 1.75, 4.0}, 0.0, 21.41380852375568);
 }
 
-TEST_F(AgradRev,
-       StanMath_integrate_1d_de_rev_TestDerivatives_var_left_endpoint_var_params) {
+TEST_F(
+    AgradRev,
+    StanMath_integrate_1d_de_rev_TestDerivatives_var_left_endpoint_var_params) {
   // Zero crossing integral + test x_r + var at left endpoint
   using stan::math::var;
   test_derivatives<var, double, var>(
@@ -381,7 +382,8 @@ TEST_F(AgradRev, StanMath_integrate_1d_de_rev_TestDerivatives_indefinite) {
       2.536571480364399, {});
 }
 
-TEST_F(AgradRev, StanMath_integrate_1d_de_rev_TestDerivatives_endpoint_precision) {
+TEST_F(AgradRev,
+       StanMath_integrate_1d_de_rev_TestDerivatives_endpoint_precision) {
   // Various integrals of beta function
   using stan::math::var;
   test_derivatives<double, double, var>(f11{}, 0.0, 1.0, {0.1, 0.1}, {}, {},
@@ -410,16 +412,17 @@ TEST_F(AgradRev, StanMath_integrate_1d_de_rev_TestDerivatives_gaussian) {
       {0.0, 0.0});
 }
 
-TEST_F(AgradRev,
-       StanMath_integrate_1d_de_rev_TestDerivativesSameVarAtEndpointAndInParams) {
+TEST_F(
+    AgradRev,
+    StanMath_integrate_1d_de_rev_TestDerivativesSameVarAtEndpointAndInParams) {
   using stan::math::var;
 
   var a = 2.0;
   var b = 4.0;
   std::vector<var> thetas = {a, b};
 
-  var integral
-      = stan::math::integrate_1d_double_exponential(f13{}, a, b, thetas, {}, {}, msgs, 1e-8);
+  var integral = stan::math::integrate_1d_double_exponential(
+      f13{}, a, b, thetas, {}, {}, msgs, 1e-8);
   integral.grad();
 
   EXPECT_LT(std::abs(18.0 - integral.val()), 1e-8);
@@ -439,7 +442,8 @@ TEST_F(AgradRev, StanMath_integrate_1d_de_rev_TestBeta) {
                 std::ostream *msgs) {
     return exp(stan::math::beta_lpdf(x, theta[0], theta[1]));
   };
-  var I = integrate_1d_double_exponential(pdf, 0.0, 1.0, theta, {}, {}, msgs, 1e-8);
+  var I = integrate_1d_double_exponential(pdf, 0.0, 1.0, theta, {}, {}, msgs,
+                                          1e-8);
   EXPECT_FLOAT_EQ(1, I.val());
 
   std::vector<stan::math::var> x{alpha, beta};
@@ -511,7 +515,8 @@ TEST_F(AgradRev, StanMath_integrate_1d_de_rev_TestDoubleExponential) {
   };
   // requires two subintervals to achieve numerical accuracy
   var I = integrate_1d_double_exponential(pdf, a, b, theta, {}, {}, msgs, 1e-8)
-          + integrate_1d_double_exponential(pdf, b, -a, theta, {}, {}, msgs, 1e-8);
+          + integrate_1d_double_exponential(pdf, b, -a, theta, {}, {}, msgs,
+                                            1e-8);
   EXPECT_FLOAT_EQ(1, I.val());
 
   std::vector<stan::math::var> x{mu, sigma};

@@ -82,8 +82,8 @@ constexpr int INTEGRATE_1D_DOUBLE_EXPONENTIAL_MAX_REFINEMENTS = 15;
  */
 template <typename F>
 inline double integrate_de(const F& f, double a, double b,
-                           double relative_tolerance,
-                           double absolute_tolerance, int max_refinements) {
+                           double relative_tolerance, double absolute_tolerance,
+                           int max_refinements) {
   static constexpr const char* function = "integrate_1d_double_exponential";
   double error1 = 0.0;
   double error2 = 0.0;
@@ -91,21 +91,20 @@ inline double integrate_de(const F& f, double a, double b,
   double L2 = 0.0;
   size_t levels = 0;
 
-  const size_t mr = max_refinements < 0
-                        ? 0u
-                        : static_cast<size_t>(max_refinements);
+  const size_t mr
+      = max_refinements < 0 ? 0u : static_cast<size_t>(max_refinements);
 
-  auto one_integral_convergence_check = [&](double e, double rel_tol,
-                                            double abs_tol, double L) {
-    const double threshold = std::max(rel_tol * L, abs_tol);
-    if (e > threshold) {
-      [e]() STAN_COLD_PATH {
-        throw_domain_error(
-            function, "error estimate of integral", e, "",
-            " exceeds max(relative_tolerance * L1, absolute_tolerance)");
-      }();
-    }
-  };
+  auto one_integral_convergence_check
+      = [&](double e, double rel_tol, double abs_tol, double L) {
+          const double threshold = std::max(rel_tol * L, abs_tol);
+          if (e > threshold) {
+            [e]() STAN_COLD_PATH {
+              throw_domain_error(
+                  function, "error estimate of integral", e, "",
+                  " exceeds max(relative_tolerance * L1, absolute_tolerance)");
+            }();
+          }
+        };
   auto two_integral_convergence_check = [&](double e1, double e2,
                                             double rel_tol, double abs_tol,
                                             double La, double Lb) {
@@ -272,8 +271,7 @@ template <typename F>
 inline double integrate_1d_double_exponential(
     const F& f, double a, double b, const std::vector<double>& theta,
     const std::vector<double>& x_r, const std::vector<int>& x_i,
-    std::ostream* msgs,
-    const double relative_tolerance = std::sqrt(EPSILON),
+    std::ostream* msgs, const double relative_tolerance = std::sqrt(EPSILON),
     const double absolute_tolerance = 0.0,
     const int max_refinements
     = INTEGRATE_1D_DOUBLE_EXPONENTIAL_MAX_REFINEMENTS) {

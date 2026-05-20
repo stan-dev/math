@@ -285,8 +285,8 @@ inline double order(double down, double up, const std::vector<double> &theta,
 
   double v;
 
-  v = stan::math::integrate_1d_double_exponential(rank_density_functor__(), down, up, theta, x_r,
-                               x_i, pstream__, 1e-8);
+  v = stan::math::integrate_1d_double_exponential(
+      rank_density_functor__(), down, up, theta, x_r, x_i, pstream__, 1e-8);
   return v;
 }
 }  // namespace integrate_1d_de_test
@@ -326,8 +326,9 @@ inline void test_integration(const F &f, double a, double b,
   std::vector<double> tolerances = {1e-4, 1e-6, 1e-8};
 
   for (auto tolerance : tolerances) {
-    EXPECT_LE(std::abs(integrate_1d_double_exponential(f, a, b, thetas, x_r, x_i,
-                                    integrate_1d_de_test::msgs, tolerance)
+    EXPECT_LE(std::abs(integrate_1d_double_exponential(
+                           f, a, b, thetas, x_r, x_i,
+                           integrate_1d_de_test::msgs, tolerance)
                        - val),
               tolerance);
     // Flip the domain of integration and check that the integral is working
@@ -335,8 +336,9 @@ inline void test_integration(const F &f, double a, double b,
         [&](const double &x, const double &xc, const std::vector<double> &theta,
             const std::vector<double> &x_r, const std::vector<int> &x_i,
             std::ostream *msgs) { return f(-x, -xc, theta, x_r, x_i, msgs); };
-    EXPECT_LE(std::abs(integrate_1d_double_exponential(flipped, -b, -a, thetas, x_r, x_i,
-                                    integrate_1d_de_test::msgs, tolerance)
+    EXPECT_LE(std::abs(integrate_1d_double_exponential(
+                           flipped, -b, -a, thetas, x_r, x_i,
+                           integrate_1d_de_test::msgs, tolerance)
                        - val),
               tolerance);
   }
@@ -344,16 +346,16 @@ inline void test_integration(const F &f, double a, double b,
 
 TEST(StanMath_integrate_1d_de_prim, TestThrows) {
   // Left limit of integration must be less than or equal to right limit
-  EXPECT_THROW(stan::math::integrate_1d_double_exponential(integrate_1d_de_test::f2{}, 1.0, 0.0,
-                                        std::vector<double>(), {}, {},
-                                        integrate_1d_de_test::msgs, 1e-6),
+  EXPECT_THROW(stan::math::integrate_1d_double_exponential(
+                   integrate_1d_de_test::f2{}, 1.0, 0.0, std::vector<double>(),
+                   {}, {}, integrate_1d_de_test::msgs, 1e-6),
                std::domain_error);
   // NaN limits not okay
   EXPECT_THROW(
-      stan::math::integrate_1d_double_exponential(integrate_1d_de_test::f2{}, 0.0,
-                               std::numeric_limits<double>::quiet_NaN(),
-                               std::vector<double>(), {}, {},
-                               integrate_1d_de_test::msgs, 1e-6),
+      stan::math::integrate_1d_double_exponential(
+          integrate_1d_de_test::f2{}, 0.0,
+          std::numeric_limits<double>::quiet_NaN(), std::vector<double>(), {},
+          {}, integrate_1d_de_test::msgs, 1e-6),
       std::domain_error);
   EXPECT_THROW(
       stan::math::integrate_1d_double_exponential(
@@ -374,45 +376,46 @@ TEST(StanMath_integrate_1d_de_prim, TestThrows) {
           {}, integrate_1d_de_test::msgs, 1e-6),
       std::domain_error);
 
-  EXPECT_THROW(stan::math::integrate_1d_double_exponential(integrate_1d_de_test::f2{},
-                                        std::numeric_limits<double>::infinity(),
-                                        std::numeric_limits<double>::infinity(),
-                                        std::vector<double>(), {}, {},
-                                        integrate_1d_de_test::msgs, 1e-6),
-               std::domain_error);
+  EXPECT_THROW(
+      stan::math::integrate_1d_double_exponential(
+          integrate_1d_de_test::f2{}, std::numeric_limits<double>::infinity(),
+          std::numeric_limits<double>::infinity(), std::vector<double>(), {},
+          {}, integrate_1d_de_test::msgs, 1e-6),
+      std::domain_error);
   // xc should be nan if there are infinite limits
-  EXPECT_THROW(stan::math::integrate_1d_double_exponential(integrate_1d_de_test::f11{}, 0.0,
-                                        std::numeric_limits<double>::infinity(),
-                                        std::vector<double>(), {}, {},
-                                        integrate_1d_de_test::msgs, 1e-6),
-               std::runtime_error);
-  EXPECT_THROW(stan::math::integrate_1d_double_exponential(integrate_1d_de_test::f11{},
-                                        std::numeric_limits<double>::infinity(),
-                                        0.0, std::vector<double>(), {}, {},
-                                        integrate_1d_de_test::msgs, 1e-6),
-               std::domain_error);
-  EXPECT_THROW(stan::math::integrate_1d_double_exponential(integrate_1d_de_test::f11{},
-                                        std::numeric_limits<double>::infinity(),
-                                        std::numeric_limits<double>::infinity(),
-                                        std::vector<double>(), {}, {},
-                                        integrate_1d_de_test::msgs, 1e-6),
-               std::domain_error);
+  EXPECT_THROW(
+      stan::math::integrate_1d_double_exponential(
+          integrate_1d_de_test::f11{}, 0.0,
+          std::numeric_limits<double>::infinity(), std::vector<double>(), {},
+          {}, integrate_1d_de_test::msgs, 1e-6),
+      std::runtime_error);
+  EXPECT_THROW(
+      stan::math::integrate_1d_double_exponential(
+          integrate_1d_de_test::f11{}, std::numeric_limits<double>::infinity(),
+          0.0, std::vector<double>(), {}, {}, integrate_1d_de_test::msgs, 1e-6),
+      std::domain_error);
+  EXPECT_THROW(
+      stan::math::integrate_1d_double_exponential(
+          integrate_1d_de_test::f11{}, std::numeric_limits<double>::infinity(),
+          std::numeric_limits<double>::infinity(), std::vector<double>(), {},
+          {}, integrate_1d_de_test::msgs, 1e-6),
+      std::domain_error);
   // But not otherwise
-  EXPECT_NO_THROW(stan::math::integrate_1d_double_exponential(integrate_1d_de_test::f11{}, 0.0, 1.0,
-                                           std::vector<double>(), {}, {},
-                                           integrate_1d_de_test::msgs, 1e-6));
+  EXPECT_NO_THROW(stan::math::integrate_1d_double_exponential(
+      integrate_1d_de_test::f11{}, 0.0, 1.0, std::vector<double>(), {}, {},
+      integrate_1d_de_test::msgs, 1e-6));
 }
 
 TEST(StanMath_integrate_1d_de_prim, test_integer_arguments) {
-  EXPECT_NO_THROW(stan::math::integrate_1d_double_exponential(integrate_1d_de_test::f2{}, 0, 1,
-                                           std::vector<double>(), {}, {},
-                                           integrate_1d_de_test::msgs, 1e-6));
-  EXPECT_NO_THROW(stan::math::integrate_1d_double_exponential(integrate_1d_de_test::f2{}, 0.0, 1,
-                                           std::vector<double>(), {}, {},
-                                           integrate_1d_de_test::msgs, 1e-6));
-  EXPECT_NO_THROW(stan::math::integrate_1d_double_exponential(integrate_1d_de_test::f2{}, 0, 1.0,
-                                           std::vector<double>(), {}, {},
-                                           integrate_1d_de_test::msgs, 1e-6));
+  EXPECT_NO_THROW(stan::math::integrate_1d_double_exponential(
+      integrate_1d_de_test::f2{}, 0, 1, std::vector<double>(), {}, {},
+      integrate_1d_de_test::msgs, 1e-6));
+  EXPECT_NO_THROW(stan::math::integrate_1d_double_exponential(
+      integrate_1d_de_test::f2{}, 0.0, 1, std::vector<double>(), {}, {},
+      integrate_1d_de_test::msgs, 1e-6));
+  EXPECT_NO_THROW(stan::math::integrate_1d_double_exponential(
+      integrate_1d_de_test::f2{}, 0, 1.0, std::vector<double>(), {}, {},
+      integrate_1d_de_test::msgs, 1e-6));
 }
 
 TEST(StanMath_integrate_1d_de_prim, test1) {
@@ -436,13 +439,14 @@ TEST(StanMath_integrate_1d_de_prim, test1) {
   test_integration(integrate_1d_de_test::f5{}, -0.2, 0.7, {0.4, 0.4}, {}, {},
                    1.396621954392482);
   test_integration(integrate_1d_de_test::f4{}, 0.0, 0.0, {0.5}, {}, {}, 0.0);
-  test_integration(integrate_1d_de_test::f5{}, 1.0, 1.0, {0.4, 0.4}, {}, {}, 0.0);
+  test_integration(integrate_1d_de_test::f5{}, 1.0, 1.0, {0.4, 0.4}, {}, {},
+                   0.0);
   // Test x_i
   test_integration(integrate_1d_de_test::f6{}, -0.2, 2.9, {6.0, 5.1}, {}, {4},
                    4131.985414616364);
   // Test x_r
-  test_integration(integrate_1d_de_test::f7{}, -0.2, 2.9, {}, {4.0, 6.0, 5.1}, {},
-                   24219.985414616367);
+  test_integration(integrate_1d_de_test::f7{}, -0.2, 2.9, {}, {4.0, 6.0, 5.1},
+                   {}, 24219.985414616367);
   // Both limits at infinity + test x_r/x_i
   test_integration(integrate_1d_de_test::f8{},
                    -std::numeric_limits<double>::infinity(),
@@ -477,8 +481,8 @@ TEST(StanMath_integrate_1d_de_prim, test1) {
   //  test_integration(f15{}, 0.0, 1.0, {}, {}, {},
   //                   stan::math::square(stan::math::pi()) * (2 - sqrt(2.0)) /
   //                   32);
-  test_integration(integrate_1d_de_test::f16{}, 0.0, stan::math::pi(), {}, {}, {},
-                   stan::math::square(stan::math::pi()) / 4);
+  test_integration(integrate_1d_de_test::f16{}, 0.0, stan::math::pi(), {}, {},
+                   {}, stan::math::square(stan::math::pi()) / 4);
 
   // Make sure bounds working right
   test_integration(integrate_1d_de_test::f17{},
@@ -521,9 +525,9 @@ TEST(StanMath_integrate_1d_de_prim, abs_tol_argument_smoke) {
 TEST(StanMath_integrate_1d_de_prim, max_refinements_argument) {
   using stan::math::integrate_1d_double_exponential;
   std::ostringstream *msgs = nullptr;
-  double Q = integrate_1d_double_exponential(
-      integrate_1d_de_test::f4{}, 0.2, 0.7, std::vector<double>{0.5}, {}, {},
-      msgs, 1e-8, 0.0, 20);
+  double Q = integrate_1d_double_exponential(integrate_1d_de_test::f4{}, 0.2,
+                                             0.7, std::vector<double>{0.5}, {},
+                                             {}, msgs, 1e-8, 0.0, 20);
   EXPECT_NEAR(Q, 1.0423499493102901, 1e-8);
 }
 
@@ -531,9 +535,9 @@ TEST(StanMath_integrate_1d_de_prim, max_refinements_argument) {
 TEST(StanMath_integrate_1d_de_prim, negative_max_refinements_throws) {
   using stan::math::integrate_1d_double_exponential;
   std::ostringstream *msgs = nullptr;
-  EXPECT_THROW(integrate_1d_double_exponential(
-                   integrate_1d_de_test::f4{}, 0.2, 0.7,
-                   std::vector<double>{0.5}, {}, {}, msgs, 1e-6, 0.0, -1),
+  EXPECT_THROW(integrate_1d_double_exponential(integrate_1d_de_test::f4{}, 0.2,
+                                               0.7, std::vector<double>{0.5},
+                                               {}, {}, msgs, 1e-6, 0.0, -1),
                std::domain_error);
 }
 
@@ -541,8 +545,8 @@ TEST(StanMath_integrate_1d_de_prim, negative_max_refinements_throws) {
 TEST(StanMath_integrate_1d_de_prim, negative_abs_tol_throws) {
   using stan::math::integrate_1d_double_exponential;
   std::ostringstream *msgs = nullptr;
-  EXPECT_THROW(integrate_1d_double_exponential(
-                   integrate_1d_de_test::f4{}, 0.2, 0.7,
-                   std::vector<double>{0.5}, {}, {}, msgs, 1e-6, -1e-3),
+  EXPECT_THROW(integrate_1d_double_exponential(integrate_1d_de_test::f4{}, 0.2,
+                                               0.7, std::vector<double>{0.5},
+                                               {}, {}, msgs, 1e-6, -1e-3),
                std::domain_error);
 }
