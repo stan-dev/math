@@ -74,8 +74,8 @@ constexpr int INTEGRATE_1D_GAUSS_KRONROD_MAX_DEPTH = 15;
  */
 template <typename F>
 inline double integrate_gk(const F& f, double a, double b,
-                           double relative_tolerance,
-                           double absolute_tolerance, int max_depth) {
+                           double relative_tolerance, double absolute_tolerance,
+                           int max_depth) {
   static constexpr const char* function = "integrate_1d_gauss_kronrod";
   double error = 0.0;
   double L1 = 0.0;
@@ -86,9 +86,8 @@ inline double integrate_gk(const F& f, double a, double b,
   auto f_wrap = [&f](double x) { return f(x, NOT_A_NUMBER); };
 
   using boost::math::quadrature::gauss_kronrod;
-  const unsigned int depth = max_depth < 0
-                                 ? 0u
-                                 : static_cast<unsigned int>(max_depth);
+  const unsigned int depth
+      = max_depth < 0 ? 0u : static_cast<unsigned int>(max_depth);
   double Q = gauss_kronrod<double, INTEGRATE_1D_GAUSS_KRONROD_ORDER>::integrate(
       f_wrap, a, b, depth, relative_tolerance, &error, &L1);
 
@@ -128,10 +127,11 @@ inline double integrate_gk(const F& f, double a, double b,
  */
 template <typename F, typename... Args,
           require_all_st_arithmetic<Args...>* = nullptr>
-inline double integrate_1d_gauss_kronrod_impl(
-    const F& f, double a, double b, double relative_tolerance,
-    double absolute_tolerance, int max_depth, std::ostream* msgs,
-    const Args&... args) {
+inline double integrate_1d_gauss_kronrod_impl(const F& f, double a, double b,
+                                              double relative_tolerance,
+                                              double absolute_tolerance,
+                                              int max_depth, std::ostream* msgs,
+                                              const Args&... args) {
   static constexpr const char* function = "integrate_1d_gauss_kronrod";
   check_less_or_equal(function, "lower limit", a, b);
   check_nonnegative(function, "max_depth", max_depth);
@@ -189,14 +189,12 @@ template <typename F>
 inline double integrate_1d_gauss_kronrod(
     const F& f, double a, double b, const std::vector<double>& theta,
     const std::vector<double>& x_r, const std::vector<int>& x_i,
-    std::ostream* msgs,
-    const double relative_tolerance = std::sqrt(EPSILON),
+    std::ostream* msgs, const double relative_tolerance = std::sqrt(EPSILON),
     const double absolute_tolerance = 0.0,
     const int max_depth = INTEGRATE_1D_GAUSS_KRONROD_MAX_DEPTH) {
   return integrate_1d_gauss_kronrod_impl(integrate_1d_adapter<F>(f), a, b,
-                                         relative_tolerance,
-                                         absolute_tolerance, max_depth, msgs,
-                                         theta, x_r, x_i);
+                                         relative_tolerance, absolute_tolerance,
+                                         max_depth, msgs, theta, x_r, x_i);
 }
 
 }  // namespace math

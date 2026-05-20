@@ -303,8 +303,7 @@ TEST_F(AgradRev, StanMath_integrate_1d_gk_rev_TestDerivatives_indefinite) {
 // Kronrod will throw a domain_error here rather than return a wrong
 // answer. We keep one case with large shapes (5, 3) where the integrand
 // is smooth and gradients converge.
-TEST_F(AgradRev,
-       StanMath_integrate_1d_gk_rev_TestDerivatives_smooth_beta) {
+TEST_F(AgradRev, StanMath_integrate_1d_gk_rev_TestDerivatives_smooth_beta) {
   using stan::math::var;
   test_derivatives<double, double, var>(
       f11{}, 0.0, 1.0, {5.0, 3.0}, {}, {}, 0.00952380952380952,
@@ -322,7 +321,8 @@ TEST_F(AgradRev, StanMath_integrate_1d_gk_rev_TestDerivatives_gaussian) {
       {0.0, 0.0});
 }
 
-TEST_F(AgradRev, StanMath_integrate_1d_gk_rev_TestSameVarAtEndpointAndInParams) {
+TEST_F(AgradRev,
+       StanMath_integrate_1d_gk_rev_TestSameVarAtEndpointAndInParams) {
   using stan::math::var;
 
   var a = 2.0;

@@ -214,14 +214,12 @@ template <typename F, typename T_a, typename T_b, typename T_theta,
 inline return_type_t<T_a, T_b, T_theta> integrate_1d_gauss_kronrod(
     const F &f, const T_a &a, const T_b &b, const std::vector<T_theta> &theta,
     const std::vector<double> &x_r, const std::vector<int> &x_i,
-    std::ostream *msgs,
-    const double relative_tolerance = std::sqrt(EPSILON),
+    std::ostream *msgs, const double relative_tolerance = std::sqrt(EPSILON),
     const double absolute_tolerance = 0.0,
     const int max_depth = INTEGRATE_1D_GAUSS_KRONROD_MAX_DEPTH) {
   return integrate_1d_gauss_kronrod_impl(integrate_1d_adapter<F>(f), a, b,
-                                         relative_tolerance,
-                                         absolute_tolerance, max_depth, msgs,
-                                         theta, x_r, x_i);
+                                         relative_tolerance, absolute_tolerance,
+                                         max_depth, msgs, theta, x_r, x_i);
 }
 
 }  // namespace math

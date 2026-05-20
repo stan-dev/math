@@ -229,9 +229,9 @@ inline void test_integration(const F &f, double a, double b,
   std::vector<double> tolerances = {1e-4, 1e-6, 1e-8};
 
   for (auto tolerance : tolerances) {
-    EXPECT_LE(std::abs(integrate_1d_gauss_kronrod(
-                           f, a, b, thetas, x_r, x_i,
-                           integrate_1d_gk_test::msgs, tolerance)
+    EXPECT_LE(std::abs(integrate_1d_gauss_kronrod(f, a, b, thetas, x_r, x_i,
+                                                  integrate_1d_gk_test::msgs,
+                                                  tolerance)
                        - val),
               tolerance);
     // Flip the domain of integration and check that the integral matches
@@ -249,57 +249,55 @@ inline void test_integration(const F &f, double a, double b,
 
 TEST(StanMath_integrate_1d_gk_prim, TestThrows) {
   // Left limit of integration must be less than or equal to right limit
-  EXPECT_THROW(stan::math::integrate_1d_gauss_kronrod(
-                   integrate_1d_gk_test::f4{}, 1.0, 0.0, std::vector<double>{0.5},
-                   {}, {}, integrate_1d_gk_test::msgs, 1e-6),
-               std::domain_error);
+  EXPECT_THROW(
+      stan::math::integrate_1d_gauss_kronrod(
+          integrate_1d_gk_test::f4{}, 1.0, 0.0, std::vector<double>{0.5}, {},
+          {}, integrate_1d_gk_test::msgs, 1e-6),
+      std::domain_error);
   // NaN limits not okay
-  EXPECT_THROW(stan::math::integrate_1d_gauss_kronrod(
-                   integrate_1d_gk_test::f4{}, 0.0,
-                   std::numeric_limits<double>::quiet_NaN(),
-                   std::vector<double>{0.5}, {}, {},
-                   integrate_1d_gk_test::msgs, 1e-6),
-               std::domain_error);
-  EXPECT_THROW(stan::math::integrate_1d_gauss_kronrod(
-                   integrate_1d_gk_test::f4{},
-                   std::numeric_limits<double>::quiet_NaN(), 0.0,
-                   std::vector<double>{0.5}, {}, {},
-                   integrate_1d_gk_test::msgs, 1e-6),
-               std::domain_error);
-  EXPECT_THROW(stan::math::integrate_1d_gauss_kronrod(
-                   integrate_1d_gk_test::f4{},
-                   std::numeric_limits<double>::quiet_NaN(),
-                   std::numeric_limits<double>::quiet_NaN(),
-                   std::vector<double>{0.5}, {}, {},
-                   integrate_1d_gk_test::msgs, 1e-6),
-               std::domain_error);
+  EXPECT_THROW(
+      stan::math::integrate_1d_gauss_kronrod(
+          integrate_1d_gk_test::f4{}, 0.0,
+          std::numeric_limits<double>::quiet_NaN(), std::vector<double>{0.5},
+          {}, {}, integrate_1d_gk_test::msgs, 1e-6),
+      std::domain_error);
+  EXPECT_THROW(
+      stan::math::integrate_1d_gauss_kronrod(
+          integrate_1d_gk_test::f4{}, std::numeric_limits<double>::quiet_NaN(),
+          0.0, std::vector<double>{0.5}, {}, {}, integrate_1d_gk_test::msgs,
+          1e-6),
+      std::domain_error);
+  EXPECT_THROW(
+      stan::math::integrate_1d_gauss_kronrod(
+          integrate_1d_gk_test::f4{}, std::numeric_limits<double>::quiet_NaN(),
+          std::numeric_limits<double>::quiet_NaN(), std::vector<double>{0.5},
+          {}, {}, integrate_1d_gk_test::msgs, 1e-6),
+      std::domain_error);
   // Two of the same inf limits not okay
-  EXPECT_THROW(stan::math::integrate_1d_gauss_kronrod(
-                   integrate_1d_gk_test::f4{},
-                   -std::numeric_limits<double>::infinity(),
-                   -std::numeric_limits<double>::infinity(),
-                   std::vector<double>{0.5}, {}, {},
-                   integrate_1d_gk_test::msgs, 1e-6),
-               std::domain_error);
-  EXPECT_THROW(stan::math::integrate_1d_gauss_kronrod(
-                   integrate_1d_gk_test::f4{},
-                   std::numeric_limits<double>::infinity(),
-                   std::numeric_limits<double>::infinity(),
-                   std::vector<double>{0.5}, {}, {},
-                   integrate_1d_gk_test::msgs, 1e-6),
-               std::domain_error);
+  EXPECT_THROW(
+      stan::math::integrate_1d_gauss_kronrod(
+          integrate_1d_gk_test::f4{}, -std::numeric_limits<double>::infinity(),
+          -std::numeric_limits<double>::infinity(), std::vector<double>{0.5},
+          {}, {}, integrate_1d_gk_test::msgs, 1e-6),
+      std::domain_error);
+  EXPECT_THROW(
+      stan::math::integrate_1d_gauss_kronrod(
+          integrate_1d_gk_test::f4{}, std::numeric_limits<double>::infinity(),
+          std::numeric_limits<double>::infinity(), std::vector<double>{0.5}, {},
+          {}, integrate_1d_gk_test::msgs, 1e-6),
+      std::domain_error);
   // Negative max_depth not okay
-  EXPECT_THROW(stan::math::integrate_1d_gauss_kronrod(
-                   integrate_1d_gk_test::f4{}, 0.0, 1.0,
-                   std::vector<double>{0.5}, {}, {},
-                   integrate_1d_gk_test::msgs, 1e-6, 0.0, -1),
-               std::domain_error);
+  EXPECT_THROW(
+      stan::math::integrate_1d_gauss_kronrod(
+          integrate_1d_gk_test::f4{}, 0.0, 1.0, std::vector<double>{0.5}, {},
+          {}, integrate_1d_gk_test::msgs, 1e-6, 0.0, -1),
+      std::domain_error);
   // Negative absolute_tolerance not okay
-  EXPECT_THROW(stan::math::integrate_1d_gauss_kronrod(
-                   integrate_1d_gk_test::f4{}, 0.0, 1.0,
-                   std::vector<double>{0.5}, {}, {},
-                   integrate_1d_gk_test::msgs, 1e-6, -1e-3),
-               std::domain_error);
+  EXPECT_THROW(
+      stan::math::integrate_1d_gauss_kronrod(
+          integrate_1d_gk_test::f4{}, 0.0, 1.0, std::vector<double>{0.5}, {},
+          {}, integrate_1d_gk_test::msgs, 1e-6, -1e-3),
+      std::domain_error);
 }
 
 TEST(StanMath_integrate_1d_gk_prim, test_integer_arguments) {
@@ -365,23 +363,23 @@ TEST(StanMath_integrate_1d_gk_prim, test1_smooth) {
 // behaviour so future maintainers do not mistake it for a regression.
 TEST(StanMath_integrate_1d_gk_prim, endpoint_singularity_throws) {
   // 1/sqrt(x) at x = 0 (f1)
-  EXPECT_THROW(stan::math::integrate_1d_gauss_kronrod(
-                   integrate_1d_gk_test::f1{}, 0.0,
-                   std::numeric_limits<double>::infinity(),
-                   std::vector<double>(), {}, {}, integrate_1d_gk_test::msgs,
-                   1e-6),
-               std::domain_error);
+  EXPECT_THROW(
+      stan::math::integrate_1d_gauss_kronrod(
+          integrate_1d_gk_test::f1{}, 0.0,
+          std::numeric_limits<double>::infinity(), std::vector<double>(), {},
+          {}, integrate_1d_gk_test::msgs, 1e-6),
+      std::domain_error);
   // 1/sqrt(1-x*x) at x = 1 (f2)
   EXPECT_THROW(stan::math::integrate_1d_gauss_kronrod(
                    integrate_1d_gk_test::f2{}, 0.0, 1.0, std::vector<double>(),
                    {}, {}, integrate_1d_gk_test::msgs, 1e-6),
                std::domain_error);
   // beta integrand with small shape parameters (f10, a=b=0.1)
-  EXPECT_THROW(stan::math::integrate_1d_gauss_kronrod(
-                   integrate_1d_gk_test::f10{}, 0.0, 1.0,
-                   std::vector<double>{0.1, 0.1}, {}, {},
-                   integrate_1d_gk_test::msgs, 1e-6),
-               std::domain_error);
+  EXPECT_THROW(
+      stan::math::integrate_1d_gauss_kronrod(
+          integrate_1d_gk_test::f10{}, 0.0, 1.0, std::vector<double>{0.1, 0.1},
+          {}, {}, integrate_1d_gk_test::msgs, 1e-6),
+      std::domain_error);
 }
 
 TEST(StanMath_integrate_1d_gk_prim, max_depth_argument) {
@@ -408,11 +406,11 @@ TEST(StanMath_integrate_1d_gk_prim, max_depth_argument) {
 TEST(StanMath_integrate_1d_gk_prim, abs_tol_suppresses_throw) {
   // Sanity: with abs_tol = 0 (default) the call throws (this is the
   // same case as endpoint_singularity_throws.f10 above).
-  EXPECT_THROW(stan::math::integrate_1d_gauss_kronrod(
-                   integrate_1d_gk_test::f10{}, 0.0, 1.0,
-                   std::vector<double>{0.1, 0.1}, {}, {},
-                   integrate_1d_gk_test::msgs, 1e-6),
-               std::domain_error);
+  EXPECT_THROW(
+      stan::math::integrate_1d_gauss_kronrod(
+          integrate_1d_gk_test::f10{}, 0.0, 1.0, std::vector<double>{0.1, 0.1},
+          {}, {}, integrate_1d_gk_test::msgs, 1e-6),
+      std::domain_error);
 
   // With a very generous abs_tol the convergence threshold is
   // satisfied and the integral is returned. The endpoint singularity
