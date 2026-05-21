@@ -6,47 +6,49 @@
 #include <stan/math/fwd/fun/value_of.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/softmax.hpp>
+#include <stan/math/prim/functor/apply_vector_unary.hpp>
 
 namespace stan {
 namespace math {
 
-template <typename ColVec,
-          require_eigen_col_vector_vt<is_fvar, ColVec>* = nullptr>
-inline auto softmax(const ColVec& alpha) {
-  using Eigen::Dynamic;
-  using Eigen::Matrix;
-  using T = typename value_type_t<ColVec>::Scalar;
-  if (alpha.size() == 0) {
-    return Matrix<fvar<T>, Dynamic, 1>();
+/**
+ * Return the softmax of each vector in a container of `fvar` values.
+ *
+ * @tparam T `std::vector` whose scalar type is `fvar`
+ * @param x container of vectors to transform
+ * @return container of softmax results
+ */
+template <typename T, require_std_vector_st<is_fvar, T>* = nullptr>
+inline auto softmax(T&& x) {
+  return apply_vector_unary<T>::apply(std::forward<T>(x), [](auto&& v) {
+    return softmax(std::forward<decltype(v)>(v));
+  });
+}
+
+/**
+ * Return the softmax of the specified vector of `fvar` values.
+ *
+ * @tparam Vec Eigen vector with `fvar` scalar
+ * @param x vector to transform
+ * @return softmax of the vector
+ */
+template <typename Vec, require_eigen_vector_vt<is_fvar, Vec>* = nullptr>
+inline auto softmax(Vec&& x) {
+  using vec = std::decay_t<Vec>;
+  constexpr int Rows = vec::RowsAtCompileTime;
+  constexpr int Cols = vec::ColsAtCompileTime;
+  using T = typename value_type_t<vec>::Scalar;
+  if (x.size() == 0) {
+    return Eigen::Matrix<fvar<T>, Rows, Cols>();
   }
-  const auto& alpha_ref = to_ref(alpha);
-
-  Matrix<T, Dynamic, 1> softmax_alpha_t = softmax(value_of(alpha_ref));
-
-  Matrix<fvar<T>, Dynamic, 1> softmax_alpha(alpha.size());
-  for (int k = 0; k < alpha.size(); ++k) {
-    softmax_alpha.coeffRef(k).val_ = softmax_alpha_t.coeff(k);
-    softmax_alpha.coeffRef(k).d_ = 0;
-  }
-
-  for (int m = 0; m < alpha.size(); ++m) {
-    T negative_alpha_m_d_times_softmax_alpha_t_m
-        = -alpha_ref.coeff(m).d_ * softmax_alpha_t.coeff(m);
-    for (int k = 0; k < alpha.size(); ++k) {
-      if (m == k) {
-        softmax_alpha.coeffRef(k).d_
-            += softmax_alpha_t.coeff(k)
-               * (alpha_ref.coeff(m).d_
-                  + negative_alpha_m_d_times_softmax_alpha_t_m);
-      } else {
-        softmax_alpha.coeffRef(k).d_
-            += softmax_alpha_t.coeff(k)
-               * negative_alpha_m_d_times_softmax_alpha_t_m;
-      }
-    }
-  }
-
-  return softmax_alpha;
+  decltype(auto) x_ref = to_ref(std::forward<Vec>(x));
+  const auto s = softmax(value_of(x_ref));
+  const auto d_in = x_ref.d();
+  const auto dot_sd = s.dot(d_in);
+  Eigen::Matrix<fvar<T>, Rows, Cols> result(x_ref.size());
+  result.val() = s;
+  result.d() = (s.array() * (d_in.array() - dot_sd)).matrix();
+  return result;
 }
 
 }  // namespace math
