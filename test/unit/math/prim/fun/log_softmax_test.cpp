@@ -1,5 +1,6 @@
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
+#include <limits>
 #include <vector>
 
 inline void test_log_softmax(
@@ -66,6 +67,23 @@ TEST(MathMatrixPrimMat, log_softmax) {
   // x3 << -1.0, 1.0, 10.0;
   // test_log_softmax(x3);
 }
+TEST(MathMatrixPrimMat, log_softmax_neg_inf) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::log_softmax;
+  constexpr double neg_inf = -std::numeric_limits<double>::infinity();
+
+  // -inf in a vector stays -inf in the output; the rest get the
+  // proper restricted log-softmax.
+  Matrix<double, Dynamic, 1> v(3);
+  v << neg_inf, 1.0, 2.0;
+  Matrix<double, Dynamic, 1> result = log_softmax(v);
+  const double lse_finite = std::log(exp(1.0) + exp(2.0));
+  EXPECT_EQ(neg_inf, result[0]);
+  EXPECT_FLOAT_EQ(1.0 - lse_finite, result[1]);
+  EXPECT_FLOAT_EQ(2.0 - lse_finite, result[2]);
+}
+
 TEST(MathMatrixPrimMat, log_softmax_exception) {
   using stan::math::log_softmax;
   stan::math::vector_d v0;  // size == 0
