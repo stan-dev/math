@@ -11,10 +11,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstddef>
-#include <functional>
-#include <limits>
 #include <ostream>
-#include <vector>
 
 namespace stan {
 namespace math {
@@ -216,7 +213,7 @@ inline double integrate_de(const F& f, double a, double b,
  */
 template <typename F, typename... Args,
           require_all_st_arithmetic<Args...>* = nullptr>
-inline double integrate_1d_double_exponential_impl(
+inline double integrate_1d_double_exponential_tol(
     const F& f, double a, double b, double relative_tolerance,
     double absolute_tolerance, int max_refinements, std::ostream* msgs,
     const Args&... args) {
@@ -253,31 +250,27 @@ inline double integrate_1d_double_exponential_impl(
  * where L1 is the Boost estimate of the L1 norm of the integral.
  *
  * @tparam F type of function to integrate
+ * @tparam Args types of additional arguments forwarded to f (all arithmetic)
  *
  * @param f the function to be integrated
  * @param a lower limit of integration
  * @param b upper limit of integration
- * @param theta additional parameters to be passed to f
- * @param x_r additional data to be passed to f
- * @param x_i additional integer data to be passed to f
- * @param[in, out] msgs the print stream for warning messages
- * @param relative_tolerance tolerance passed to Boost quadrature
+ * @param relative_tolerance relative tolerance passed to Boost quadrature
  * @param absolute_tolerance absolute-error floor on the convergence test
- * @param max_refinements maximum refinement level passed to the Boost
- *   quadrature class constructor
+ * @param max_refinements maximum refinement level passed to the
+ *   Boost quadrature class constructor
+ * @param[in, out] msgs the print stream for warning messages
+ * @param args additional arguments passed to f
  * @return numeric integral of function f
  */
-template <typename F>
-inline double integrate_1d_double_exponential(
-    const F& f, double a, double b, const std::vector<double>& theta,
-    const std::vector<double>& x_r, const std::vector<int>& x_i,
-    std::ostream* msgs, const double relative_tolerance = std::sqrt(EPSILON),
-    const double absolute_tolerance = 0.0,
-    const int max_refinements
-    = INTEGRATE_1D_DOUBLE_EXPONENTIAL_MAX_REFINEMENTS) {
-  return integrate_1d_double_exponential_impl(
-      integrate_1d_adapter<F>(f), a, b, relative_tolerance, absolute_tolerance,
-      max_refinements, msgs, theta, x_r, x_i);
+template <typename F, typename... Args,
+          require_all_st_arithmetic<Args...>* = nullptr>
+inline double integrate_1d_double_exponential(const F& f, double a, double b,
+                                              std::ostream* msgs,
+                                              const Args&... args) {
+  return integrate_1d_double_exponential_tol(
+      f, a, b, std::sqrt(EPSILON), 0.0,
+      INTEGRATE_1D_DOUBLE_EXPONENTIAL_MAX_REFINEMENTS, msgs, args...);
 }
 
 }  // namespace math

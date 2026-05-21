@@ -8,10 +8,7 @@
 #include <boost/math/quadrature/gauss_kronrod.hpp>
 #include <algorithm>
 #include <cmath>
-#include <functional>
-#include <limits>
 #include <ostream>
-#include <vector>
 
 namespace stan {
 namespace math {
@@ -127,11 +124,11 @@ inline double integrate_gk(const F& f, double a, double b,
  */
 template <typename F, typename... Args,
           require_all_st_arithmetic<Args...>* = nullptr>
-inline double integrate_1d_gauss_kronrod_impl(const F& f, double a, double b,
-                                              double relative_tolerance,
-                                              double absolute_tolerance,
-                                              int max_depth, std::ostream* msgs,
-                                              const Args&... args) {
+inline double integrate_1d_gauss_kronrod_tol(const F& f, double a, double b,
+                                             double relative_tolerance,
+                                             double absolute_tolerance,
+                                             int max_depth, std::ostream* msgs,
+                                             const Args&... args) {
   static constexpr const char* function = "integrate_1d_gauss_kronrod";
   check_less_or_equal(function, "lower limit", a, b);
   check_nonnegative(function, "max_depth", max_depth);
@@ -154,9 +151,7 @@ inline double integrate_1d_gauss_kronrod_impl(const F& f, double a, double b,
  * infinite.
  *
  * The signature for f should be:
- *   double f(double x, double xc, const std::vector<double>& theta,
- *     const std::vector<double>& x_r, const std::vector<int>& x_i,
- *     std::ostream* msgs)
+ *   double f(double x, double xc, std::ostream* msgs, Args... args...)
  *
  * It should return the value of the function evaluated at x. Any errors
  * should be printed to the msgs stream. xc is unused (always NaN) here; see
@@ -170,31 +165,26 @@ inline double integrate_1d_gauss_kronrod_impl(const F& f, double a, double b,
  *   \f]
  * where \f$|I|\f$ is the Boost estimate of the L1 norm of the integral.
  *
+ *
  * @tparam F type of function to integrate
+ * @tparam Args types of additional arguments forwarded to f (all arithmetic)
  *
  * @param f the function to be integrated
  * @param a lower limit of integration
  * @param b upper limit of integration
- * @param theta additional parameters to be passed to f
- * @param x_r additional data to be passed to f
- * @param x_i additional integer data to be passed to f
  * @param[in, out] msgs the print stream for warning messages
- * @param relative_tolerance relative tolerance passed to Boost quadrature
- * @param absolute_tolerance absolute-error floor on the convergence test
- * @param max_depth maximum recursive bisection depth passed to Boost
- *   quadrature
+ * @param args additional arguments passed to f
  * @return numeric integral of function f
  */
-template <typename F>
-inline double integrate_1d_gauss_kronrod(
-    const F& f, double a, double b, const std::vector<double>& theta,
-    const std::vector<double>& x_r, const std::vector<int>& x_i,
-    std::ostream* msgs, const double relative_tolerance = std::sqrt(EPSILON),
-    const double absolute_tolerance = 0.0,
-    const int max_depth = INTEGRATE_1D_GAUSS_KRONROD_MAX_DEPTH) {
-  return integrate_1d_gauss_kronrod_impl(integrate_1d_adapter<F>(f), a, b,
-                                         relative_tolerance, absolute_tolerance,
-                                         max_depth, msgs, theta, x_r, x_i);
+
+template <typename F, typename... Args,
+          require_all_st_arithmetic<Args...>* = nullptr>
+inline double integrate_1d_gauss_kronrod(const F& f, double a, double b,
+                                         std::ostream* msgs,
+                                         const Args&... args) {
+  return integrate_1d_gauss_kronrod_tol(f, a, b, std::sqrt(EPSILON), 0.0,
+                                        INTEGRATE_1D_GAUSS_KRONROD_MAX_DEPTH,
+                                        msgs, args...);
 }
 
 }  // namespace math

@@ -11,10 +11,7 @@
 #include <stan/math/prim/functor/apply.hpp>
 #include <stan/math/prim/functor/integrate_1d_gauss_kronrod.hpp>
 #include <cmath>
-#include <functional>
 #include <ostream>
-#include <string>
-#include <type_traits>
 #include <vector>
 
 namespace stan {
@@ -42,10 +39,10 @@ namespace math {
  */
 template <typename F, typename T_a, typename T_b, typename... Args,
           require_any_st_var<T_a, T_b, Args...> * = nullptr>
-inline return_type_t<T_a, T_b, Args...> integrate_1d_gauss_kronrod_impl(
+inline return_type_t<T_a, T_b, Args...> integrate_1d_gauss_kronrod_tol(
     const F &f, const T_a &a, const T_b &b, double relative_tolerance,
     double absolute_tolerance, int max_depth, std::ostream *msgs,
-    const Args &... args) {
+    const Args &...args) {
   static constexpr const char *function = "integrate_1d_gauss_kronrod";
   check_less_or_equal(function, "lower limit", a, b);
   check_nonnegative(function, "max_depth", max_depth);
@@ -66,7 +63,7 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_gauss_kronrod_impl(
     double integral = integrate_gk(
         [&](const auto &x, const auto &xc) {
           return math::apply(
-              [&](auto &&... val_args) { return f(x, xc, msgs, val_args...); },
+              [&](auto &&...val_args) { return f(x, xc, msgs, val_args...); },
               args_val_tuple);
         },
         a_val, b_val, relative_tolerance, absolute_tolerance, max_depth);
@@ -89,7 +86,7 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_gauss_kronrod_impl(
     if constexpr (is_var<T_a>::value) {
       if (!is_inf(a)) {
         *partials_ptr = math::apply(
-            [&f, a_val, msgs](auto &&... val_args) {
+            [&f, a_val, msgs](auto &&...val_args) {
               return -f(a_val, 0.0, msgs, val_args...);
             },
             args_val_tuple);
@@ -100,7 +97,7 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_gauss_kronrod_impl(
     if constexpr (is_var<T_b>::value) {
       if (!is_inf(b)) {
         *partials_ptr = math::apply(
-            [&f, b_val, msgs](auto &&... val_args) {
+            [&f, b_val, msgs](auto &&...val_args) {
               return f(b_val, 0.0, msgs, val_args...);
             },
             args_val_tuple);
@@ -117,9 +114,7 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_gauss_kronrod_impl(
       // Save the varis so it's easy to efficiently access the nth adjoint
       std::vector<vari *> local_varis(num_vars_args);
       math::apply(
-          [&](const auto &... args) {
-            save_varis(local_varis.data(), args...);
-          },
+          [&](const auto &...args) { save_varis(local_varis.data(), args...); },
           args_tuple_local_copy);
 
       for (size_t n = 0; n < num_vars_args; ++n) {
@@ -131,7 +126,7 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_gauss_kronrod_impl(
 
               nested_rev_autodiff gradient_nest;
               var fx = math::apply(
-                  [&f, &x, &xc, msgs](auto &&... local_args) {
+                  [&f, &x, &xc, msgs](auto &&...local_args) {
                     return f(x, xc, msgs, local_args...);
                   },
                   args_tuple_local_copy);
@@ -173,9 +168,7 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_gauss_kronrod_impl(
  * infinite.
  *
  * f should be compatible with reverse mode autodiff and have the signature:
- *   var f(double x, double xc, const std::vector<var>& theta,
- *     const std::vector<double>& x_r, const std::vector<int> &x_i,
- *     std::ostream* msgs)
+ *   var f(double x, double xc, std::ostream* msgs, Args... args...);
  *
  * It should return the value of the function evaluated at x. Any errors
  * should be printed to the msgs stream. xc is unused (always NaN) here.
@@ -191,35 +184,26 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_gauss_kronrod_impl(
  * values (where the function should be zero anyway for the integral to
  * exist).
  *
+ * @tparam F Type of f
  * @tparam T_a type of first limit
  * @tparam T_b type of second limit
- * @tparam T_theta type of parameters
- * @tparam F Type of f
+ * @tparam Args types of parameter pack arguments
  *
  * @param f the functor to integrate
  * @param a lower limit of integration
  * @param b upper limit of integration
- * @param theta additional parameters to be passed to f
- * @param x_r additional data to be passed to f
- * @param x_i additional integer data to be passed to f
  * @param[in, out] msgs the print stream for warning messages
- * @param relative_tolerance relative tolerance passed to Boost quadrature
- * @param absolute_tolerance absolute-error floor on the convergence test
- * @param max_depth maximum recursive bisection depth passed to Boost
- *   quadrature
+ * @param args additional arguments to pass to f
  * @return numeric integral of function f
  */
-template <typename F, typename T_a, typename T_b, typename T_theta,
-          typename = require_any_var_t<T_a, T_b, T_theta>>
-inline return_type_t<T_a, T_b, T_theta> integrate_1d_gauss_kronrod(
-    const F &f, const T_a &a, const T_b &b, const std::vector<T_theta> &theta,
-    const std::vector<double> &x_r, const std::vector<int> &x_i,
-    std::ostream *msgs, const double relative_tolerance = std::sqrt(EPSILON),
-    const double absolute_tolerance = 0.0,
-    const int max_depth = INTEGRATE_1D_GAUSS_KRONROD_MAX_DEPTH) {
-  return integrate_1d_gauss_kronrod_impl(integrate_1d_adapter<F>(f), a, b,
-                                         relative_tolerance, absolute_tolerance,
-                                         max_depth, msgs, theta, x_r, x_i);
+template <typename F, typename T_a, typename T_b, typename... Args,
+          require_any_st_var<T_a, T_b, Args...> * = nullptr>
+inline return_type_t<T_a, T_b, Args...> integrate_1d_gauss_kronrod(
+    const F &f, const T_a &a, const T_b &b, std::ostream *msgs,
+    const Args &...args) {
+  return integrate_1d_gauss_kronrod_tol(f, a, b, std::sqrt(EPSILON), 0.0,
+                                        INTEGRATE_1D_GAUSS_KRONROD_MAX_DEPTH,
+                                        msgs, args...);
 }
 
 }  // namespace math

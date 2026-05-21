@@ -11,10 +11,7 @@
 #include <stan/math/prim/functor/apply.hpp>
 #include <stan/math/prim/functor/integrate_1d_double_exponential.hpp>
 #include <cmath>
-#include <functional>
 #include <ostream>
-#include <string>
-#include <type_traits>
 #include <vector>
 
 namespace stan {
@@ -42,10 +39,10 @@ namespace math {
  */
 template <typename F, typename T_a, typename T_b, typename... Args,
           require_any_st_var<T_a, T_b, Args...> * = nullptr>
-inline return_type_t<T_a, T_b, Args...> integrate_1d_double_exponential_impl(
+inline return_type_t<T_a, T_b, Args...> integrate_1d_double_exponential_tol(
     const F &f, const T_a &a, const T_b &b, double relative_tolerance,
     double absolute_tolerance, int max_refinements, std::ostream *msgs,
-    const Args &... args) {
+    const Args &...args) {
   static constexpr const char *function = "integrate_1d_double_exponential";
   check_less_or_equal(function, "lower limit", a, b);
   check_nonnegative(function, "max_refinements", max_refinements);
@@ -66,7 +63,7 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_double_exponential_impl(
     double integral = integrate_de(
         [&](const auto &x, const auto &xc) {
           return math::apply(
-              [&](auto &&... val_args) { return f(x, xc, msgs, val_args...); },
+              [&](auto &&...val_args) { return f(x, xc, msgs, val_args...); },
               args_val_tuple);
         },
         a_val, b_val, relative_tolerance, absolute_tolerance, max_refinements);
@@ -88,7 +85,7 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_double_exponential_impl(
     if constexpr (is_var<T_a>::value) {
       if (!is_inf(a)) {
         *partials_ptr = math::apply(
-            [&f, a_val, msgs](auto &&... val_args) {
+            [&f, a_val, msgs](auto &&...val_args) {
               return -f(a_val, 0.0, msgs, val_args...);
             },
             args_val_tuple);
@@ -99,7 +96,7 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_double_exponential_impl(
     if constexpr (is_var<T_b>::value) {
       if (!is_inf(b)) {
         *partials_ptr = math::apply(
-            [&f, b_val, msgs](auto &&... val_args) {
+            [&f, b_val, msgs](auto &&...val_args) {
               return f(b_val, 0.0, msgs, val_args...);
             },
             args_val_tuple);
@@ -112,9 +109,7 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_double_exponential_impl(
       auto args_tuple_local_copy = std::make_tuple(deep_copy_vars(args)...);
       std::vector<vari *> local_varis(num_vars_args);
       math::apply(
-          [&](const auto &... args) {
-            save_varis(local_varis.data(), args...);
-          },
+          [&](const auto &...args) { save_varis(local_varis.data(), args...); },
           args_tuple_local_copy);
 
       for (size_t n = 0; n < num_vars_args; ++n) {
@@ -124,7 +119,7 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_double_exponential_impl(
 
               nested_rev_autodiff gradient_nest;
               var fx = math::apply(
-                  [&f, &x, &xc, msgs](auto &&... local_args) {
+                  [&f, &x, &xc, msgs](auto &&...local_args) {
                     return f(x, xc, msgs, local_args...);
                   },
                   args_tuple_local_copy);
@@ -171,36 +166,30 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_double_exponential_impl(
  * Gradients of f that evaluate to NaN when the function evaluates to zero
  * are set to zero themselves.
  *
+ * @tparam F Type of f
  * @tparam T_a type of first limit
  * @tparam T_b type of second limit
- * @tparam T_theta type of parameters
- * @tparam F Type of f
+ * @tparam Args types of parameter pack arguments
  *
  * @param f the functor to integrate
  * @param a lower limit of integration
  * @param b upper limit of integration
- * @param theta additional parameters to be passed to f
- * @param x_r additional data to be passed to f
- * @param x_i additional integer data to be passed to f
- * @param[in, out] msgs the print stream for warning messages
  * @param relative_tolerance relative tolerance passed to Boost quadrature
  * @param absolute_tolerance absolute-error floor on the convergence test
  * @param max_refinements maximum refinement level passed to the Boost
  *   quadrature class constructor
+ * @param[in, out] msgs the print stream for warning messages
+ * @param args additional arguments to pass to f
  * @return numeric integral of function f
  */
-template <typename F, typename T_a, typename T_b, typename T_theta,
-          typename = require_any_var_t<T_a, T_b, T_theta>>
-inline return_type_t<T_a, T_b, T_theta> integrate_1d_double_exponential(
-    const F &f, const T_a &a, const T_b &b, const std::vector<T_theta> &theta,
-    const std::vector<double> &x_r, const std::vector<int> &x_i,
-    std::ostream *msgs, const double relative_tolerance = std::sqrt(EPSILON),
-    const double absolute_tolerance = 0.0,
-    const int max_refinements
-    = INTEGRATE_1D_DOUBLE_EXPONENTIAL_MAX_REFINEMENTS) {
-  return integrate_1d_double_exponential_impl(
-      integrate_1d_adapter<F>(f), a, b, relative_tolerance, absolute_tolerance,
-      max_refinements, msgs, theta, x_r, x_i);
+template <typename F, typename T_a, typename T_b, typename... Args,
+          require_any_st_var<T_a, T_b, Args...> * = nullptr>
+inline return_type_t<T_a, T_b, Args...> integrate_1d_double_exponential(
+    const F &f, const T_a &a, const T_b &b, std::ostream *msgs,
+    const Args &...args) {
+  return integrate_1d_double_exponential_tol(
+      f, a, b, std::sqrt(EPSILON), 0.0,
+      INTEGRATE_1D_DOUBLE_EXPONENTIAL_MAX_REFINEMENTS, msgs, args...);
 }
 
 }  // namespace math
