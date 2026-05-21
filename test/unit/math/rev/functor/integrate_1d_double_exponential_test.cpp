@@ -285,7 +285,7 @@ TEST_F(AgradRev, StanMath_integrate_1d_de_rev_TestDerivatives_zero_crossing) {
 
 TEST_F(
     AgradRev,
-    StanMath_integrate_1d_de_rev_TestDerivatives_var_right_endpoint_var_params) {
+    StanMath_integrate_1d_de_rev_TestDerivatives_var_right_endpt_var_params) {
   // Zero crossing integral + test x_r + vars at right endpoint
   using stan::math::var;
   test_derivatives<double, var, var>(
