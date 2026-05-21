@@ -46,9 +46,9 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_gauss_kronrod_tol(
   auto b_val = value_of(b);
   auto func = [f, msgs, relative_tolerance, absolute_tolerance, max_depth,
                a_val, b_val](const auto &... args_var) {
-    return integrate_1d_gauss_kronrod_impl(f, a_val, b_val, relative_tolerance,
-                                           absolute_tolerance, max_depth, msgs,
-                                           args_var...);
+    return integrate_1d_gauss_kronrod_tol(f, a_val, b_val, relative_tolerance,
+                                          absolute_tolerance, max_depth, msgs,
+                                          args_var...);
   };
   FvarT ret = finite_diff(func, args...);
 

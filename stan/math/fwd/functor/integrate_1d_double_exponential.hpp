@@ -44,7 +44,7 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_double_exponential_tol(
   auto b_val = value_of(b);
   auto func = [f, msgs, relative_tolerance, absolute_tolerance, max_refinements,
                a_val, b_val](const auto &... args_var) {
-    return integrate_1d_double_exponential_impl(
+    return integrate_1d_double_exponential_tol(
         f, a_val, b_val, relative_tolerance, absolute_tolerance,
         max_refinements, msgs, args_var...);
   };
