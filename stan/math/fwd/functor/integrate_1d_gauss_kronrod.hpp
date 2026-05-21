@@ -37,7 +37,7 @@ template <typename F, typename T_a, typename T_b, typename... Args,
 inline return_type_t<T_a, T_b, Args...> integrate_1d_gauss_kronrod_tol(
     const F &f, const T_a &a, const T_b &b, double relative_tolerance,
     double absolute_tolerance, int max_depth, std::ostream *msgs,
-    const Args &...args) {
+    const Args &... args) {
   using FvarT = scalar_type_t<return_type_t<T_a, T_b, Args...>>;
 
   // Wrap integrate_1d_gauss_kronrod call in a functor where the input
@@ -45,7 +45,7 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_gauss_kronrod_tol(
   auto a_val = value_of(a);
   auto b_val = value_of(b);
   auto func = [f, msgs, relative_tolerance, absolute_tolerance, max_depth,
-               a_val, b_val](const auto &...args_var) {
+               a_val, b_val](const auto &... args_var) {
     return integrate_1d_gauss_kronrod_impl(f, a_val, b_val, relative_tolerance,
                                            absolute_tolerance, max_depth, msgs,
                                            args_var...);
@@ -58,7 +58,7 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_gauss_kronrod_tol(
     if constexpr (is_fvar<T_a>::value) {
       ret.d_ += a.d_
                 * math::apply(
-                    [&](auto &&...tuple_args) {
+                    [&](auto &&... tuple_args) {
                       return -f(a_val, 0.0, msgs, tuple_args...);
                     },
                     val_args);
@@ -66,7 +66,7 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_gauss_kronrod_tol(
     if constexpr (is_fvar<T_b>::value) {
       ret.d_ += b.d_
                 * math::apply(
-                    [&](auto &&...tuple_args) {
+                    [&](auto &&... tuple_args) {
                       return f(b_val, 0.0, msgs, tuple_args...);
                     },
                     val_args);
@@ -97,7 +97,7 @@ template <typename F, typename T_a, typename T_b, typename... Args,
 inline return_type_t<T_a, T_b, Args...> integrate_1d_gauss_kronrod(
     const F &f, const T_a &a, const T_b &b, double relative_tolerance,
     double absolute_tolerance, int max_depth, std::ostream *msgs,
-    const Args &...args) {
+    const Args &... args) {
   return integrate_1d_gauss_kronrod_tol(f, a, b, std::sqrt(EPSILON), 0.0,
                                         INTEGRATE_1D_GAUSS_KRONROD_MAX_DEPTH,
                                         msgs, args...);
