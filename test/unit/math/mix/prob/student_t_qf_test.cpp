@@ -16,14 +16,11 @@ TEST_F(AgradRev, mathMixProb_student_t_qf) {
   stan::test::expect_ad(f, 0.8, 0.5, 0.1);
   stan::test::expect_ad(f, 0.1, 3, 3);
 
-  Eigen::VectorXd p(3);
-  p << 0.3, 0.8, 0.1;
+  Eigen::VectorXd p{{0.3, 0.8, 0.1}};
 
-  Eigen::VectorXd nu(3);
-  nu << 0.5, 0.5, 3;
+  Eigen::VectorXd nu{{0.5, 0.5, 3}};
 
-  Eigen::VectorXd sigma(3);
-  sigma << 3, 0.1, 3;
+  Eigen::VectorXd sigma{{3, 0.1, 3}};
 
   stan::test::expect_ad(f, p, nu, sigma);
 }
