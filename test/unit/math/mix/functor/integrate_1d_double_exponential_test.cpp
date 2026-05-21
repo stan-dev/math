@@ -10,7 +10,7 @@ TEST(mixFunctor, integrate1DDoubleExponential) {
     const double absolute_tolerance = 0.0;
     const int max_refinements = 15;
     std::ostringstream* msgs = nullptr;
-    return stan::math::integrate_1d_double_exponential_impl(
+    return stan::math::integrate_1d_double_exponential_tol(
         func, lb, ub, relative_tolerance, absolute_tolerance, max_refinements,
         msgs, x_input);
   };

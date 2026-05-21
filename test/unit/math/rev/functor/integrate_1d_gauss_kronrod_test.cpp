@@ -20,9 +20,9 @@ std::ostringstream *msgs = nullptr;
 struct f1 {
   template <typename T1, typename T2, typename T3>
   inline stan::return_type_t<T1, T2, T3> operator()(
-      const T1 &x, const T2 &xc, const std::vector<T3> &theta,
-      const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream *msgs) const {
+      const T1 &x, const T2 &xc, std::ostream *msgs,
+      const std::vector<T3> &theta,
+      const std::vector<double> &x_r, const std::vector<int> &x_i) const {
     return exp(x) + theta[0];
   }
 };
@@ -30,9 +30,9 @@ struct f1 {
 struct f2 {
   template <typename T1, typename T2, typename T3>
   inline stan::return_type_t<T1, T2, T3> operator()(
-      const T1 &x, const T2 &xc, const std::vector<T3> &theta,
-      const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream *msgs) const {
+      const T1 &x, const T2 &xc, std::ostream *msgs,
+      const std::vector<T3> &theta,
+      const std::vector<double> &x_r, const std::vector<int> &x_i) const {
     return exp(theta[0] * cos(2 * 3.141593 * x)) + theta[0];
   }
 };
@@ -40,9 +40,9 @@ struct f2 {
 struct f3 {
   template <typename T1, typename T2, typename T3>
   inline stan::return_type_t<T1, T2, T3> operator()(
-      const T1 &x, const T2 &xc, const std::vector<T3> &theta,
-      const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream *msgs) const {
+      const T1 &x, const T2 &xc, std::ostream *msgs,
+      const std::vector<T3> &theta,
+      const std::vector<double> &x_r, const std::vector<int> &x_i) const {
     return exp(x) + pow(theta[0], x_r[0]) + 2 * pow(theta[1], x_r[1])
            + 2 * theta[2];
   }
@@ -51,9 +51,9 @@ struct f3 {
 struct f4 {
   template <typename T1, typename T2, typename T3>
   inline stan::return_type_t<T1, T2, T3> operator()(
-      const T1 &x, const T2 &xc, const std::vector<T3> &theta,
-      const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream *msgs) const {
+      const T1 &x, const T2 &xc, std::ostream *msgs,
+      const std::vector<T3> &theta,
+      const std::vector<double> &x_r, const std::vector<int> &x_i) const {
     return exp(-x) / sqrt(x);
   }
 };
@@ -61,9 +61,9 @@ struct f4 {
 struct f5 {
   template <typename T1, typename T2, typename T3>
   inline stan::return_type_t<T1, T2, T3> operator()(
-      const T1 &x, const T2 &xc, const std::vector<T3> &theta,
-      const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream *msgs) const {
+      const T1 &x, const T2 &xc, std::ostream *msgs,
+      const std::vector<T3> &theta,
+      const std::vector<double> &x_r, const std::vector<int> &x_i) const {
     return exp(-theta[0] * x) / sqrt(theta[1] * x);
   }
 };
@@ -71,9 +71,9 @@ struct f5 {
 struct f6 {
   template <typename T1, typename T2, typename T3>
   inline stan::return_type_t<T1, T2, T3> operator()(
-      const T1 &x, const T2 &xc, const std::vector<T3> &theta,
-      const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream *msgs) const {
+      const T1 &x, const T2 &xc, std::ostream *msgs,
+      const std::vector<T3> &theta,
+      const std::vector<double> &x_r, const std::vector<int> &x_i) const {
     return sqrt(x / (1 - theta[0] * x * x));
   }
 };
@@ -81,9 +81,9 @@ struct f6 {
 struct f7 {
   template <typename T1, typename T2, typename T3>
   inline stan::return_type_t<T1, T2, T3> operator()(
-      const T1 &x, const T2 &xc, const std::vector<T3> &theta,
-      const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream *msgs) const {
+      const T1 &x, const T2 &xc, std::ostream *msgs,
+      const std::vector<T3> &theta,
+      const std::vector<double> &x_r, const std::vector<int> &x_i) const {
     return exp(-theta[0] * x);
   }
 };
@@ -91,9 +91,9 @@ struct f7 {
 struct f8 {
   template <typename T1, typename T2, typename T3>
   inline stan::return_type_t<T1, T2, T3> operator()(
-      const T1 &x, const T2 &xc, const std::vector<T3> &theta,
-      const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream *msgs) const {
+      const T1 &x, const T2 &xc, std::ostream *msgs,
+      const std::vector<T3> &theta,
+      const std::vector<double> &x_r, const std::vector<int> &x_i) const {
     return exp(theta[0] * x);
   }
 };
@@ -101,9 +101,9 @@ struct f8 {
 struct f10 {
   template <typename T1, typename T2, typename T3>
   inline stan::return_type_t<T1, T2, T3> operator()(
-      const T1 &x, const T2 &xc, const std::vector<T3> &theta,
-      const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream *msgs) const {
+      const T1 &x, const T2 &xc, std::ostream *msgs,
+      const std::vector<T3> &theta,
+      const std::vector<double> &x_r, const std::vector<int> &x_i) const {
     return 1 / (1 + pow(x, x_i[0]) / x_r[0]);
   }
 };
@@ -112,9 +112,9 @@ struct f10 {
 struct f11 {
   template <typename T1, typename T2, typename T3>
   inline stan::return_type_t<T1, T2, T3> operator()(
-      const T1 &x, const T2 &xc, const std::vector<T3> &theta,
-      const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream *msgs) const {
+      const T1 &x, const T2 &xc, std::ostream *msgs,
+      const std::vector<T3> &theta,
+      const std::vector<double> &x_r, const std::vector<int> &x_i) const {
     return pow(x, theta[0] - 1.0) * pow(1 - x, theta[1] - 1.0);
   }
 };
@@ -122,9 +122,9 @@ struct f11 {
 struct f12 {
   template <typename T1, typename T2, typename T3>
   inline stan::return_type_t<T1, T2, T3> operator()(
-      const T1 &x, const T2 &xc, const std::vector<T3> &theta,
-      const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream *msgs) const {
+      const T1 &x, const T2 &xc, std::ostream *msgs,
+      const std::vector<T3> &theta,
+      const std::vector<double> &x_r, const std::vector<int> &x_i) const {
     T3 mu = theta[0];
     T3 sigma = theta[1];
     return exp(-0.5 * stan::math::square((x - mu) / sigma))
@@ -135,9 +135,9 @@ struct f12 {
 struct f13 {
   template <typename T1, typename T2, typename T3>
   inline stan::return_type_t<T1, T2, T3> operator()(
-      const T1 &x, const T2 &xc, const std::vector<T3> &theta,
-      const std::vector<double> &x_r, const std::vector<int> &x_i,
-      std::ostream *msgs) const {
+      const T1 &x, const T2 &xc, std::ostream *msgs,
+      const std::vector<T3> &theta,
+      const std::vector<double> &x_r, const std::vector<int> &x_i) const {
     return x + theta[0] + theta[1];
   }
 };
@@ -176,8 +176,16 @@ inline void test_derivatives(const F &f, double a, double b,
     for (size_t i = 0; i < thetas.size(); ++i)
       thetas_[i] = thetas[i];
 
-    var integral = stan::math::integrate_1d_gauss_kronrod(
-        f, a_, b_, thetas_, x_r, x_i, msgs, tolerance);
+    var integral = stan::math::integrate_1d_gauss_kronrod_tol(f,
+                                                              a_,
+                                                              b_,
+                                                              tolerance,
+                                                              0.0,
+                                                              15,
+                                                              msgs,
+                                                              thetas_,
+                                                              x_r,
+                                                              x_i);
     integral.grad();
     EXPECT_LE(std::abs(val - integral.val()), tolerance);
     if constexpr (stan::is_var<T_theta>::value) {
@@ -197,27 +205,51 @@ inline void test_derivatives(const F &f, double a, double b,
 TEST_F(AgradRev, StanMath_integrate_1d_gk_rev_test_integer_arguments) {
   stan::math::var v;
   std::vector<stan::math::var> theta = {0.5};
-  EXPECT_NO_THROW(v = stan::math::integrate_1d_gauss_kronrod(
-                      f2{}, 0, 1, theta, {}, {}, msgs, 1e-6));
-  EXPECT_NO_THROW(v = stan::math::integrate_1d_gauss_kronrod(
-                      f2{}, 0.0, 1, theta, {}, {}, msgs, 1e-6));
-  EXPECT_NO_THROW(v = stan::math::integrate_1d_gauss_kronrod(
-                      f2{}, 0, 1.0, theta, {}, {}, msgs, 1e-6));
+  EXPECT_NO_THROW(v = stan::math::integrate_1d_gauss_kronrod_tol(f2{},
+                                                                 0,
+                                                                 1,
+                                                                 1e-6,
+                                                                 0.0,
+                                                                 15,
+                                                                 msgs,
+                                                                 theta,
+                                                                 std::vector<double>{},
+                                                                 std::vector<int>{}));
+  EXPECT_NO_THROW(v = stan::math::integrate_1d_gauss_kronrod_tol(f2{},
+                                                                 0.0,
+                                                                 1,
+                                                                 1e-6,
+                                                                 0.0,
+                                                                 15,
+                                                                 msgs,
+                                                                 theta,
+                                                                 std::vector<double>{},
+                                                                 std::vector<int>{}));
+  EXPECT_NO_THROW(v = stan::math::integrate_1d_gauss_kronrod_tol(f2{},
+                                                                 0,
+                                                                 1.0,
+                                                                 1e-6,
+                                                                 0.0,
+                                                                 15,
+                                                                 msgs,
+                                                                 theta,
+                                                                 std::vector<double>{},
+                                                                 std::vector<int>{}));
 }
 
 TEST_F(AgradRev, StanMath_integrate_1d_gk_rev_TestDerivatives_easy) {
   using stan::math::var;
-  test_derivatives<double, double, var>(f1{}, 0.2, 0.7, {0.75}, {}, {},
+  test_derivatives<double, double, var>(f1{}, 0.2, 0.7, {0.75}, std::vector<double>{}, std::vector<int>{},
                                         0.7923499493102901 + 0.5 * 0.75, {0.5});
-  test_derivatives<var, var, var>(f2{}, 0.0, 1.0, {0.5}, {}, {},
+  test_derivatives<var, var, var>(f2{}, 0.0, 1.0, {0.5}, std::vector<double>{}, std::vector<int>{},
                                   1.56348343527304, {1.25789445875152},
                                   -2.148721270700128, 2.14872127069993);
-  test_derivatives<var, var, double>(f2{}, 0.0, 1.0, {0.5}, {}, {},
+  test_derivatives<var, var, double>(f2{}, 0.0, 1.0, {0.5}, std::vector<double>{}, std::vector<int>{},
                                      1.56348343527304, {}, -2.148721270700128,
                                      2.14872127069993);
-  test_derivatives<double, double, var>(f1{}, 0.0, 0.0, {0.75}, {}, {}, 0.0,
+  test_derivatives<double, double, var>(f1{}, 0.0, 0.0, {0.75}, std::vector<double>{}, std::vector<int>{}, 0.0,
                                         {0.0});
-  test_derivatives<double, double, var>(f2{}, 1.0, 1.0, {0.5}, {}, {}, 0.0,
+  test_derivatives<double, double, var>(f2{}, 1.0, 1.0, {0.5}, std::vector<double>{}, std::vector<int>{}, 0.0,
                                         {0.0});
 }
 
@@ -306,10 +338,10 @@ TEST_F(AgradRev, StanMath_integrate_1d_gk_rev_TestDerivatives_indefinite) {
 TEST_F(AgradRev, StanMath_integrate_1d_gk_rev_TestDerivatives_smooth_beta) {
   using stan::math::var;
   test_derivatives<double, double, var>(
-      f11{}, 0.0, 1.0, {5.0, 3.0}, {}, {}, 0.00952380952380952,
+      f11{}, 0.0, 1.0, {5.0, 3.0}, std::vector<double>{}, std::vector<int>{}, 0.00952380952380952,
       {-0.004852607709750566, -0.01040816326530613});
   test_derivatives<double, double, var>(
-      f11{}, 0.0, 1.0, {3.0, 5.0}, {}, {}, 0.00952380952380952,
+      f11{}, 0.0, 1.0, {3.0, 5.0}, std::vector<double>{}, std::vector<int>{}, 0.00952380952380952,
       {-0.01040816326530613, -0.004852607709750566});
 }
 
@@ -317,7 +349,7 @@ TEST_F(AgradRev, StanMath_integrate_1d_gk_rev_TestDerivatives_gaussian) {
   using stan::math::var;
   test_derivatives<double, double, var>(
       f12{}, -std::numeric_limits<double>::infinity(),
-      std::numeric_limits<double>::infinity(), {5.7, 1}, {}, {}, 1.0,
+      std::numeric_limits<double>::infinity(), {5.7, 1}, std::vector<double>{}, std::vector<int>{}, 1.0,
       {0.0, 0.0});
 }
 
@@ -329,8 +361,16 @@ TEST_F(AgradRev,
   var b = 4.0;
   std::vector<var> thetas = {a, b};
 
-  var integral = stan::math::integrate_1d_gauss_kronrod(f13{}, a, b, thetas, {},
-                                                        {}, msgs, 1e-8);
+  var integral = stan::math::integrate_1d_gauss_kronrod_tol(f13{},
+                                                            a,
+                                                            b,
+                                                            1e-8,
+                                                            0.0,
+                                                            15,
+                                                            msgs,
+                                                            thetas,
+                                                            std::vector<double>{},
+                                                            std::vector<int>{});
   integral.grad();
 
   EXPECT_LT(std::abs(18.0 - integral.val()), 1e-8);
@@ -356,11 +396,11 @@ TEST_F(AgradRev, StanMath_integrate_1d_gk_rev_TestCauchy) {
   std::vector<stan::math::var> theta = {mu, sigma};
   double b = std::numeric_limits<double>::infinity();
   double a = -b;
-  auto pdf = [](auto x, auto xc, auto theta, auto x_r, auto x_i,
-                std::ostream *msgs) {
+  auto pdf = [](auto x, auto xc, std::ostream *msgs,
+                auto theta, auto x_r, auto x_i) {
     return exp(stan::math::cauchy_lpdf(x, theta[0], theta[1]));
   };
-  var I = integrate_1d_gauss_kronrod(pdf, a, b, theta, {}, {}, msgs, 1e-8);
+  var I = integrate_1d_gauss_kronrod_tol(pdf, a, b, 1e-8, 0.0, 15, msgs, theta, std::vector<double>{}, std::vector<int>{});
   EXPECT_FLOAT_EQ(1, I.val());
 
   std::vector<stan::math::var> x{mu, sigma};
@@ -379,11 +419,11 @@ TEST_F(AgradRev, StanMath_integrate_1d_gk_rev_TestExponential) {
   std::vector<stan::math::var> theta = {beta};
   double b = std::numeric_limits<double>::infinity();
   double a = 0;
-  auto pdf = [](auto x, auto xc, auto theta, auto x_r, auto x_i,
-                std::ostream *msgs) {
+  auto pdf = [](auto x, auto xc, std::ostream *msgs,
+                auto theta, auto x_r, auto x_i) {
     return exp(stan::math::exponential_lpdf(x, theta[0]));
   };
-  var I = integrate_1d_gauss_kronrod(pdf, a, b, theta, {}, {}, msgs, 1e-8);
+  var I = integrate_1d_gauss_kronrod_tol(pdf, a, b, 1e-8, 0.0, 15, msgs, theta, std::vector<double>{}, std::vector<int>{});
   EXPECT_FLOAT_EQ(1, I.val());
 
   std::vector<stan::math::var> x = {beta};
@@ -402,11 +442,11 @@ TEST_F(AgradRev, StanMath_integrate_1d_gk_rev_TestNormal) {
   std::vector<stan::math::var> theta = {mu, sigma};
   double b = std::numeric_limits<double>::infinity();
   double a = -b;
-  auto pdf = [](auto x, auto xc, auto theta, auto x_r, auto x_i,
-                std::ostream *msgs) {
+  auto pdf = [](auto x, auto xc, std::ostream *msgs,
+                auto theta, auto x_r, auto x_i) {
     return exp(stan::math::normal_lpdf(x, theta[0], theta[1]));
   };
-  var I = integrate_1d_gauss_kronrod(pdf, a, b, theta, {}, {}, msgs, 1e-8);
+  var I = integrate_1d_gauss_kronrod_tol(pdf, a, b, 1e-8, 0.0, 15, msgs, theta, std::vector<double>{}, std::vector<int>{});
   EXPECT_FLOAT_EQ(1, I.val());
 
   std::vector<stan::math::var> x{mu, sigma};
@@ -427,11 +467,11 @@ TEST_F(AgradRev, StanMath_integrate_1d_gk_rev_TestStudentT) {
   std::vector<stan::math::var> theta = {nu, mu, sigma};
   double b = std::numeric_limits<double>::infinity();
   double a = -b;
-  auto pdf = [](auto x, auto xc, auto theta, auto x_r, auto x_i,
-                std::ostream *msgs) {
+  auto pdf = [](auto x, auto xc, std::ostream *msgs,
+                auto theta, auto x_r, auto x_i) {
     return exp(stan::math::student_t_lpdf(x, theta[0], theta[1], theta[2]));
   };
-  var I = integrate_1d_gauss_kronrod(pdf, a, b, theta, {}, {}, msgs, 1e-8);
+  var I = integrate_1d_gauss_kronrod_tol(pdf, a, b, 1e-8, 0.0, 15, msgs, theta, std::vector<double>{}, std::vector<int>{});
   EXPECT_FLOAT_EQ(1, I.val());
 
   std::vector<stan::math::var> x{nu, mu, sigma};
@@ -450,11 +490,11 @@ TEST_F(AgradRev, StanMath_integrate_1d_gk_rev_TestUniform) {
   var a = 9.0 / 5;
   var b = 13.0 / 7;
   std::vector<stan::math::var> theta = {a, b};
-  auto pdf = [](auto x, auto xc, auto theta, auto x_r, auto x_i,
-                std::ostream *msgs) {
+  auto pdf = [](auto x, auto xc, std::ostream *msgs,
+                auto theta, auto x_r, auto x_i) {
     return exp(stan::math::uniform_lpdf(x, theta[0], theta[1]));
   };
-  var I = integrate_1d_gauss_kronrod(pdf, a, b, theta, {}, {}, msgs, 1e-8);
+  var I = integrate_1d_gauss_kronrod_tol(pdf, a, b, 1e-8, 0.0, 15, msgs, theta, std::vector<double>{}, std::vector<int>{});
   EXPECT_FLOAT_EQ(1, I.val());
 
   std::vector<stan::math::var> x{a, b};

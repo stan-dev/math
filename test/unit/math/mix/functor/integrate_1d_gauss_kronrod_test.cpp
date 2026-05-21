@@ -10,7 +10,7 @@ TEST(mixFunctor, integrate1DGaussKronrod) {
     const double absolute_tolerance = 0.0;
     const int max_depth = 15;
     std::ostringstream* msgs = nullptr;
-    return stan::math::integrate_1d_gauss_kronrod_impl(
+    return stan::math::integrate_1d_gauss_kronrod_tol(
         func, lb, ub, relative_tolerance, absolute_tolerance, max_depth, msgs,
         x_input);
   };

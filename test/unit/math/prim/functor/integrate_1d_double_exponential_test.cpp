@@ -13,10 +13,10 @@ std::ostringstream *msgs = nullptr;
 struct f1 {
   template <typename T1, typename T2>
   inline stan::return_type_t<T1, T2> operator()(const T1 &x, const T1 &xc,
+                                                std::ostream *msgs,
                                                 const std::vector<T2> &theta,
                                                 const std::vector<double> &x_r,
-                                                const std::vector<int> &x_i,
-                                                std::ostream *msgs) const {
+                                                const std::vector<int> &x_i) const {
     return exp(-x) / sqrt(x);
   }
 };
@@ -24,10 +24,10 @@ struct f1 {
 struct f2 {
   template <typename T1, typename T2>
   inline stan::return_type_t<T1, T2> operator()(const T1 &x, const T1 &xc,
+                                                std::ostream *msgs,
                                                 const std::vector<T2> &theta,
                                                 const std::vector<double> &x_r,
-                                                const std::vector<int> &x_i,
-                                                std::ostream *msgs) const {
+                                                const std::vector<int> &x_i) const {
     if (x <= 0.5) {
       return sqrt(x) / sqrt(1 - x * x);
     } else {
@@ -39,10 +39,10 @@ struct f2 {
 struct f3 {
   template <typename T1, typename T2>
   inline stan::return_type_t<T1, T2> operator()(const T1 &x, const T1 &xc,
+                                                std::ostream *msgs,
                                                 const std::vector<T2> &theta,
                                                 const std::vector<double> &x_r,
-                                                const std::vector<int> &x_i,
-                                                std::ostream *msgs) const {
+                                                const std::vector<int> &x_i) const {
     return exp(-x);
   }
 };
@@ -50,10 +50,10 @@ struct f3 {
 struct f4 {
   template <typename T1, typename T2>
   inline stan::return_type_t<T1, T2> operator()(const T1 &x, const T1 &xc,
+                                                std::ostream *msgs,
                                                 const std::vector<T2> &theta,
                                                 const std::vector<double> &x_r,
-                                                const std::vector<int> &x_i,
-                                                std::ostream *msgs) const {
+                                                const std::vector<int> &x_i) const {
     return exp(x) + theta[0];
   }
 };
@@ -61,10 +61,10 @@ struct f4 {
 struct f5 {
   template <typename T1, typename T2>
   inline stan::return_type_t<T1, T2> operator()(const T1 &x, const T1 &xc,
+                                                std::ostream *msgs,
                                                 const std::vector<T2> &theta,
                                                 const std::vector<double> &x_r,
-                                                const std::vector<int> &x_i,
-                                                std::ostream *msgs) const {
+                                                const std::vector<int> &x_i) const {
     return exp(x) + pow(theta[0], 2) + pow(theta[1], 3);
   }
 };
@@ -72,10 +72,10 @@ struct f5 {
 struct f6 {
   template <typename T1, typename T2>
   inline stan::return_type_t<T1, T2> operator()(const T1 &x, const T1 &xc,
+                                                std::ostream *msgs,
                                                 const std::vector<T2> &theta,
                                                 const std::vector<double> &x_r,
-                                                const std::vector<int> &x_i,
-                                                std::ostream *msgs) const {
+                                                const std::vector<int> &x_i) const {
     return exp(x) + pow(x_i[0], 2) + pow(theta[0], 4) + 3 * theta[1];
   }
 };
@@ -83,10 +83,10 @@ struct f6 {
 struct f7 {
   template <typename T1, typename T2>
   inline stan::return_type_t<T1, T2> operator()(const T1 &x, const T1 &xc,
+                                                std::ostream *msgs,
                                                 const std::vector<T2> &theta,
                                                 const std::vector<double> &x_r,
-                                                const std::vector<int> &x_i,
-                                                std::ostream *msgs) const {
+                                                const std::vector<int> &x_i) const {
     return exp(x) + pow(x_r[0], 2) + pow(x_r[1], 5) + 3 * x_r[2];
   }
 };
@@ -94,10 +94,10 @@ struct f7 {
 struct f8 {
   template <typename T1, typename T2>
   inline stan::return_type_t<T1, T2> operator()(const T1 &x, const T1 &xc,
+                                                std::ostream *msgs,
                                                 const std::vector<T2> &theta,
                                                 const std::vector<double> &x_r,
-                                                const std::vector<int> &x_i,
-                                                std::ostream *msgs) const {
+                                                const std::vector<int> &x_i) const {
     return exp(-pow(x - theta[0], x_i[0]) / pow(x_r[0], x_i[0]));
   }
 };
@@ -105,10 +105,10 @@ struct f8 {
 struct f9 {
   template <typename T1, typename T2>
   inline stan::return_type_t<T1, T2> operator()(const T1 &x, const T1 &xc,
+                                                std::ostream *msgs,
                                                 const std::vector<T2> &theta,
                                                 const std::vector<double> &x_r,
-                                                const std::vector<int> &x_i,
-                                                std::ostream *msgs) const {
+                                                const std::vector<int> &x_i) const {
     return 1.0 / (1.0 + pow(x, x_i[0]) / theta[0]);
   }
 };
@@ -116,10 +116,10 @@ struct f9 {
 struct f10 {
   template <typename T1, typename T2>
   inline stan::return_type_t<T1, T2> operator()(const T1 &x, const T1 &xc,
+                                                std::ostream *msgs,
                                                 const std::vector<T2> &theta,
                                                 const std::vector<double> &x_r,
-                                                const std::vector<int> &x_i,
-                                                std::ostream *msgs) const {
+                                                const std::vector<int> &x_i) const {
     return pow(x, theta[0] - 1.0)
            * pow((x > 0.5) ? xc : (1 - x), theta[1] - 1.0);
   }
@@ -128,10 +128,10 @@ struct f10 {
 struct f11 {
   template <typename T1, typename T2>
   inline stan::return_type_t<T1, T2> operator()(const T1 &x, const T1 &xc,
+                                                std::ostream *msgs,
                                                 const std::vector<T2> &theta,
                                                 const std::vector<double> &x_r,
-                                                const std::vector<int> &x_i,
-                                                std::ostream *msgs) const {
+                                                const std::vector<int> &x_i) const {
     return (std::isnan(xc)) ? xc : 0.0;
   }
 };
@@ -139,10 +139,10 @@ struct f11 {
 struct f12 {
   template <typename T1, typename T2>
   inline stan::return_type_t<T1, T2> operator()(const T1 &x, const T1 &xc,
+                                                std::ostream *msgs,
                                                 const std::vector<T2> &theta,
                                                 const std::vector<double> &x_r,
-                                                const std::vector<int> &x_i,
-                                                std::ostream *msgs) const {
+                                                const std::vector<int> &x_i) const {
     T1 out = stan::math::modified_bessel_second_kind(0, x);
     if (out > 0)
       return 2 * x * out;
@@ -153,10 +153,10 @@ struct f12 {
 struct f13 {
   template <typename T1, typename T2>
   inline stan::return_type_t<T1, T2> operator()(const T1 &x, const T1 &xc,
+                                                std::ostream *msgs,
                                                 const std::vector<T2> &theta,
                                                 const std::vector<double> &x_r,
-                                                const std::vector<int> &x_i,
-                                                std::ostream *msgs) const {
+                                                const std::vector<int> &x_i) const {
     T1 out = stan::math::modified_bessel_second_kind(0, x);
     if (out > 0)
       return 2 * x * stan::math::square(out);
@@ -167,10 +167,10 @@ struct f13 {
 struct f14 {
   template <typename T1, typename T2>
   inline stan::return_type_t<T1, T2> operator()(const T1 &x, const T1 &xc,
+                                                std::ostream *msgs,
                                                 const std::vector<T2> &theta,
                                                 const std::vector<double> &x_r,
-                                                const std::vector<int> &x_i,
-                                                std::ostream *msgs) const {
+                                                const std::vector<int> &x_i) const {
     return exp(x) * stan::math::inv_sqrt(x > 0.5 ? xc : 1 - x);
   }
 };
@@ -178,10 +178,10 @@ struct f14 {
 struct f15 {
   template <typename T1, typename T2>
   inline stan::return_type_t<T1, T2> operator()(const T1 &x, const T1 &xc,
+                                                std::ostream *msgs,
                                                 const std::vector<T2> &theta,
                                                 const std::vector<double> &x_r,
-                                                const std::vector<int> &x_i,
-                                                std::ostream *msgs) const {
+                                                const std::vector<int> &x_i) const {
     T1 x2 = x * x;
     T1 numer = x2 * log(x);
     T1 denom = x < 0.5 ? (x + 1) * (x - 1) : (x + 1) * -xc;
@@ -193,20 +193,20 @@ struct f15 {
 struct f16 {
   template <typename T1, typename T2>
   inline stan::return_type_t<T1, T2> operator()(const T1 &x, const T1 &xc,
+                                                std::ostream *msgs,
                                                 const std::vector<T2> &theta,
                                                 const std::vector<double> &x_r,
-                                                const std::vector<int> &x_i,
-                                                std::ostream *msgs) const {
+                                                const std::vector<int> &x_i) const {
     return x * sin(x) / (1 + stan::math::square(cos(x)));
   }
 };
 
 struct f17 {
   inline double operator()(const double &x, const double &xc,
+                           std::ostream *msgs,
                            const std::vector<double> &theta,
                            const std::vector<double> &x_r,
-                           const std::vector<int> &x_i,
-                           std::ostream *msgs) const {
+                           const std::vector<int> &x_i) const {
     double mu = theta[0];
     double sigma = theta[1];
     return 1.0 / (sqrt(2.0 * stan::math::pi()) * sigma)
@@ -256,11 +256,10 @@ inline double lbaX_cdf(double X, double t, double A, double v, double s,
   return cdf;
 }
 
-inline double rank_density(double x, double xc,
+inline double rank_density(double x, double xc, std::ostream *pstream__,
                            const std::vector<double> &theta,
                            const std::vector<double> &x_r,
-                           const std::vector<int> &x_i,
-                           std::ostream *pstream__) {
+                           const std::vector<int> &x_i) {
   double t = theta[0];
   double A = theta[1];
   double v1 = theta[2];
@@ -272,10 +271,11 @@ inline double rank_density(double x, double xc,
 }
 
 struct rank_density_functor__ {
-  double operator()(double x, double xc, const std::vector<double> &theta,
-                    const std::vector<double> &x_r, const std::vector<int> &x_i,
-                    std::ostream *pstream__) const {
-    return rank_density(x, xc, theta, x_r, x_i, pstream__);
+  double operator()(double x, double xc, std::ostream *pstream__,
+                    const std::vector<double> &theta,
+                    const std::vector<double> &x_r,
+                    const std::vector<int> &x_i) const {
+    return rank_density(x, xc, pstream__, theta, x_r, x_i);
   }
 };
 
@@ -285,8 +285,9 @@ inline double order(double down, double up, const std::vector<double> &theta,
 
   double v;
 
-  v = stan::math::integrate_1d_double_exponential(
-      rank_density_functor__(), down, up, theta, x_r, x_i, pstream__, 1e-8);
+  v = stan::math::integrate_1d_double_exponential_tol(
+      rank_density_functor__(), down, up, 1e-8, 0.0, 15, pstream__, theta, x_r,
+      x_i);
   return v;
 }
 }  // namespace integrate_1d_de_test
@@ -322,23 +323,40 @@ inline void test_integration(const F &f, double a, double b,
                              const std::vector<double> &x_r,
                              const std::vector<int> &x_i, double val) {
   using stan::math::integrate_1d_double_exponential;
+  using stan::math::integrate_1d_double_exponential_tol;
 
   std::vector<double> tolerances = {1e-4, 1e-6, 1e-8};
 
   for (auto tolerance : tolerances) {
-    EXPECT_LE(std::abs(integrate_1d_double_exponential(
-                           f, a, b, thetas, x_r, x_i,
-                           integrate_1d_de_test::msgs, tolerance)
+    EXPECT_LE(std::abs(integrate_1d_double_exponential_tol(f,
+                                                           a,
+                                                           b,
+                                                           tolerance,
+                                                           0.0,
+                                                           15,
+                                                           integrate_1d_de_test::msgs,
+                                                           thetas,
+                                                           x_r,
+                                                           x_i)
                        - val),
               tolerance);
     // Flip the domain of integration and check that the integral is working
     auto flipped =
-        [&](const double &x, const double &xc, const std::vector<double> &theta,
-            const std::vector<double> &x_r, const std::vector<int> &x_i,
-            std::ostream *msgs) { return f(-x, -xc, theta, x_r, x_i, msgs); };
-    EXPECT_LE(std::abs(integrate_1d_double_exponential(
-                           flipped, -b, -a, thetas, x_r, x_i,
-                           integrate_1d_de_test::msgs, tolerance)
+        [&](const double &x, const double &xc, std::ostream *msgs,
+            const std::vector<double> &theta,
+            const std::vector<double> &x_r, const std::vector<int> &x_i) {
+          return f(-x, -xc, msgs, theta, x_r, x_i);
+        };
+    EXPECT_LE(std::abs(integrate_1d_double_exponential_tol(flipped,
+                                                           -b,
+                                                           -a,
+                                                           tolerance,
+                                                           0.0,
+                                                           15,
+                                                           integrate_1d_de_test::msgs,
+                                                           thetas,
+                                                           x_r,
+                                                           x_i)
                        - val),
               tolerance);
   }
@@ -346,76 +364,161 @@ inline void test_integration(const F &f, double a, double b,
 
 TEST(StanMath_integrate_1d_de_prim, TestThrows) {
   // Left limit of integration must be less than or equal to right limit
-  EXPECT_THROW(stan::math::integrate_1d_double_exponential(
-                   integrate_1d_de_test::f2{}, 1.0, 0.0, std::vector<double>(),
-                   {}, {}, integrate_1d_de_test::msgs, 1e-6),
+  EXPECT_THROW(stan::math::integrate_1d_double_exponential_tol(integrate_1d_de_test::f2{},
+                                                               1.0,
+                                                               0.0,
+                                                               1e-6,
+                                                               0.0,
+                                                               15,
+                                                               integrate_1d_de_test::msgs,
+                                                               std::vector<double>(),
+                                                               std::vector<double>{},
+                                                               std::vector<int>{}),
                std::domain_error);
   // NaN limits not okay
   EXPECT_THROW(
-      stan::math::integrate_1d_double_exponential(
-          integrate_1d_de_test::f2{}, 0.0,
-          std::numeric_limits<double>::quiet_NaN(), std::vector<double>(), {},
-          {}, integrate_1d_de_test::msgs, 1e-6),
+      stan::math::integrate_1d_double_exponential_tol(integrate_1d_de_test::f2{},
+                                                      0.0,
+                                                      std::numeric_limits<double>::quiet_NaN(),
+                                                      1e-6,
+                                                      0.0,
+                                                      15,
+                                                      integrate_1d_de_test::msgs,
+                                                      std::vector<double>(),
+                                                      std::vector<double>{},
+                                                      std::vector<int>{}),
       std::domain_error);
   EXPECT_THROW(
-      stan::math::integrate_1d_double_exponential(
-          integrate_1d_de_test::f2{}, std::numeric_limits<double>::quiet_NaN(),
-          0.0, std::vector<double>(), {}, {}, integrate_1d_de_test::msgs, 1e-6),
+      stan::math::integrate_1d_double_exponential_tol(integrate_1d_de_test::f2{},
+                                                      std::numeric_limits<double>::quiet_NaN(),
+                                                      0.0,
+                                                      1e-6,
+                                                      0.0,
+                                                      15,
+                                                      integrate_1d_de_test::msgs,
+                                                      std::vector<double>(),
+                                                      std::vector<double>{},
+                                                      std::vector<int>{}),
       std::domain_error);
   EXPECT_THROW(
-      stan::math::integrate_1d_double_exponential(
-          integrate_1d_de_test::f2{}, std::numeric_limits<double>::quiet_NaN(),
-          std::numeric_limits<double>::quiet_NaN(), std::vector<double>(), {},
-          {}, integrate_1d_de_test::msgs, 1e-6),
+      stan::math::integrate_1d_double_exponential_tol(integrate_1d_de_test::f2{},
+                                                      std::numeric_limits<double>::quiet_NaN(),
+                                                      std::numeric_limits<double>::quiet_NaN(),
+                                                      1e-6,
+                                                      0.0,
+                                                      15,
+                                                      integrate_1d_de_test::msgs,
+                                                      std::vector<double>(),
+                                                      std::vector<double>{},
+                                                      std::vector<int>{}),
       std::domain_error);
   // Two of the same inf limits not okay
   EXPECT_THROW(
-      stan::math::integrate_1d_double_exponential(
-          integrate_1d_de_test::f2{}, -std::numeric_limits<double>::infinity(),
-          -std::numeric_limits<double>::infinity(), std::vector<double>(), {},
-          {}, integrate_1d_de_test::msgs, 1e-6),
+      stan::math::integrate_1d_double_exponential_tol(integrate_1d_de_test::f2{},
+                                                      -std::numeric_limits<double>::infinity(),
+                                                      -std::numeric_limits<double>::infinity(),
+                                                      1e-6,
+                                                      0.0,
+                                                      15,
+                                                      integrate_1d_de_test::msgs,
+                                                      std::vector<double>(),
+                                                      std::vector<double>{},
+                                                      std::vector<int>{}),
       std::domain_error);
 
   EXPECT_THROW(
-      stan::math::integrate_1d_double_exponential(
-          integrate_1d_de_test::f2{}, std::numeric_limits<double>::infinity(),
-          std::numeric_limits<double>::infinity(), std::vector<double>(), {},
-          {}, integrate_1d_de_test::msgs, 1e-6),
+      stan::math::integrate_1d_double_exponential_tol(integrate_1d_de_test::f2{},
+                                                      std::numeric_limits<double>::infinity(),
+                                                      std::numeric_limits<double>::infinity(),
+                                                      1e-6,
+                                                      0.0,
+                                                      15,
+                                                      integrate_1d_de_test::msgs,
+                                                      std::vector<double>(),
+                                                      std::vector<double>{},
+                                                      std::vector<int>{}),
       std::domain_error);
   // xc should be nan if there are infinite limits
   EXPECT_THROW(
-      stan::math::integrate_1d_double_exponential(
-          integrate_1d_de_test::f11{}, 0.0,
-          std::numeric_limits<double>::infinity(), std::vector<double>(), {},
-          {}, integrate_1d_de_test::msgs, 1e-6),
+      stan::math::integrate_1d_double_exponential_tol(integrate_1d_de_test::f11{},
+                                                      0.0,
+                                                      std::numeric_limits<double>::infinity(),
+                                                      1e-6,
+                                                      0.0,
+                                                      15,
+                                                      integrate_1d_de_test::msgs,
+                                                      std::vector<double>(),
+                                                      std::vector<double>{},
+                                                      std::vector<int>{}),
       std::runtime_error);
   EXPECT_THROW(
-      stan::math::integrate_1d_double_exponential(
-          integrate_1d_de_test::f11{}, std::numeric_limits<double>::infinity(),
-          0.0, std::vector<double>(), {}, {}, integrate_1d_de_test::msgs, 1e-6),
+      stan::math::integrate_1d_double_exponential_tol(integrate_1d_de_test::f11{},
+                                                      std::numeric_limits<double>::infinity(),
+                                                      0.0,
+                                                      1e-6,
+                                                      0.0,
+                                                      15,
+                                                      integrate_1d_de_test::msgs,
+                                                      std::vector<double>(),
+                                                      std::vector<double>{},
+                                                      std::vector<int>{}),
       std::domain_error);
   EXPECT_THROW(
-      stan::math::integrate_1d_double_exponential(
-          integrate_1d_de_test::f11{}, std::numeric_limits<double>::infinity(),
-          std::numeric_limits<double>::infinity(), std::vector<double>(), {},
-          {}, integrate_1d_de_test::msgs, 1e-6),
+      stan::math::integrate_1d_double_exponential_tol(integrate_1d_de_test::f11{},
+                                                      std::numeric_limits<double>::infinity(),
+                                                      std::numeric_limits<double>::infinity(),
+                                                      1e-6,
+                                                      0.0,
+                                                      15,
+                                                      integrate_1d_de_test::msgs,
+                                                      std::vector<double>(),
+                                                      std::vector<double>{},
+                                                      std::vector<int>{}),
       std::domain_error);
   // But not otherwise
-  EXPECT_NO_THROW(stan::math::integrate_1d_double_exponential(
-      integrate_1d_de_test::f11{}, 0.0, 1.0, std::vector<double>(), {}, {},
-      integrate_1d_de_test::msgs, 1e-6));
+  EXPECT_NO_THROW(stan::math::integrate_1d_double_exponential_tol(integrate_1d_de_test::f11{},
+                                                                  0.0,
+                                                                  1.0,
+                                                                  1e-6,
+                                                                  0.0,
+                                                                  15,
+                                                                  integrate_1d_de_test::msgs,
+                                                                  std::vector<double>(),
+                                                                  std::vector<double>{},
+                                                                  std::vector<int>{}));
 }
 
 TEST(StanMath_integrate_1d_de_prim, test_integer_arguments) {
-  EXPECT_NO_THROW(stan::math::integrate_1d_double_exponential(
-      integrate_1d_de_test::f2{}, 0, 1, std::vector<double>(), {}, {},
-      integrate_1d_de_test::msgs, 1e-6));
-  EXPECT_NO_THROW(stan::math::integrate_1d_double_exponential(
-      integrate_1d_de_test::f2{}, 0.0, 1, std::vector<double>(), {}, {},
-      integrate_1d_de_test::msgs, 1e-6));
-  EXPECT_NO_THROW(stan::math::integrate_1d_double_exponential(
-      integrate_1d_de_test::f2{}, 0, 1.0, std::vector<double>(), {}, {},
-      integrate_1d_de_test::msgs, 1e-6));
+  EXPECT_NO_THROW(stan::math::integrate_1d_double_exponential_tol(integrate_1d_de_test::f2{},
+                                                                  0,
+                                                                  1,
+                                                                  1e-6,
+                                                                  0.0,
+                                                                  15,
+                                                                  integrate_1d_de_test::msgs,
+                                                                  std::vector<double>(),
+                                                                  std::vector<double>{},
+                                                                  std::vector<int>{}));
+  EXPECT_NO_THROW(stan::math::integrate_1d_double_exponential_tol(integrate_1d_de_test::f2{},
+                                                                  0.0,
+                                                                  1,
+                                                                  1e-6,
+                                                                  0.0,
+                                                                  15,
+                                                                  integrate_1d_de_test::msgs,
+                                                                  std::vector<double>(),
+                                                                  std::vector<double>{},
+                                                                  std::vector<int>{}));
+  EXPECT_NO_THROW(stan::math::integrate_1d_double_exponential_tol(integrate_1d_de_test::f2{},
+                                                                  0,
+                                                                  1.0,
+                                                                  1e-6,
+                                                                  0.0,
+                                                                  15,
+                                                                  integrate_1d_de_test::msgs,
+                                                                  std::vector<double>(),
+                                                                  std::vector<double>{},
+                                                                  std::vector<int>{}));
 }
 
 TEST(StanMath_integrate_1d_de_prim, test1) {
@@ -434,12 +537,12 @@ TEST(StanMath_integrate_1d_de_prim, test1) {
                    std::numeric_limits<double>::infinity(), {}, {}, {},
                    7.38905609893065);
   // Easy integrals
-  test_integration(integrate_1d_de_test::f4{}, 0.2, 0.7, {0.5}, {}, {},
+  test_integration(integrate_1d_de_test::f4{}, 0.2, 0.7, {0.5}, std::vector<double>{}, std::vector<int>{},
                    1.0423499493102901);
-  test_integration(integrate_1d_de_test::f5{}, -0.2, 0.7, {0.4, 0.4}, {}, {},
+  test_integration(integrate_1d_de_test::f5{}, -0.2, 0.7, {0.4, 0.4}, std::vector<double>{}, std::vector<int>{},
                    1.396621954392482);
-  test_integration(integrate_1d_de_test::f4{}, 0.0, 0.0, {0.5}, {}, {}, 0.0);
-  test_integration(integrate_1d_de_test::f5{}, 1.0, 1.0, {0.4, 0.4}, {}, {},
+  test_integration(integrate_1d_de_test::f4{}, 0.0, 0.0, {0.5}, std::vector<double>{}, std::vector<int>{}, 0.0);
+  test_integration(integrate_1d_de_test::f5{}, 1.0, 1.0, {0.4, 0.4}, std::vector<double>{}, std::vector<int>{},
                    0.0);
   // Test x_i
   test_integration(integrate_1d_de_test::f6{}, -0.2, 2.9, {6.0, 5.1}, {}, {4},
@@ -458,13 +561,13 @@ TEST(StanMath_integrate_1d_de_prim, test1) {
                    std::numeric_limits<double>::infinity(), {1.3}, {}, {4},
                    2.372032924895055);
   // Various integrals of beta function
-  test_integration(integrate_1d_de_test::f10{}, 0.0, 1.0, {0.1, 0.1}, {}, {},
+  test_integration(integrate_1d_de_test::f10{}, 0.0, 1.0, {0.1, 0.1}, std::vector<double>{}, std::vector<int>{},
                    19.71463948905016);
-  test_integration(integrate_1d_de_test::f10{}, 0.0, 1.0, {0.1, 0.5}, {}, {},
+  test_integration(integrate_1d_de_test::f10{}, 0.0, 1.0, {0.1, 0.5}, std::vector<double>{}, std::vector<int>{},
                    11.32308697521577);
-  test_integration(integrate_1d_de_test::f10{}, 0.0, 1.0, {0.5, 0.1}, {}, {},
+  test_integration(integrate_1d_de_test::f10{}, 0.0, 1.0, {0.5, 0.1}, std::vector<double>{}, std::vector<int>{},
                    11.32308697521577);
-  test_integration(integrate_1d_de_test::f10{}, 0.0, 1.0, {5.0, 3.0}, {}, {},
+  test_integration(integrate_1d_de_test::f10{}, 0.0, 1.0, {5.0, 3.0}, std::vector<double>{}, std::vector<int>{},
                    0.00952380952380952);
 
   // Integrals from
@@ -509,13 +612,28 @@ TEST(StanMath_integrate_1d_de_prim, TestTolerance) {
 // the value on a well-converged integrand.
 TEST(StanMath_integrate_1d_de_prim, abs_tol_argument_smoke) {
   using stan::math::integrate_1d_double_exponential;
+  using stan::math::integrate_1d_double_exponential_tol;
   std::ostringstream *msgs = nullptr;
-  double Q_strict = integrate_1d_double_exponential(
-      integrate_1d_de_test::f4{}, 0.2, 0.7, std::vector<double>{0.5}, {}, {},
-      msgs, 1e-8, 0.0);
-  double Q_lenient = integrate_1d_double_exponential(
-      integrate_1d_de_test::f4{}, 0.2, 0.7, std::vector<double>{0.5}, {}, {},
-      msgs, 1e-8, 1e-12);
+  double Q_strict = integrate_1d_double_exponential_tol(integrate_1d_de_test::f4{},
+                                                        0.2,
+                                                        0.7,
+                                                        1e-8,
+                                                        0.0,
+                                                        15,
+                                                        msgs,
+                                                        std::vector<double>{0.5},
+                                                        std::vector<double>{},
+                                                        std::vector<int>{});
+  double Q_lenient = integrate_1d_double_exponential_tol(integrate_1d_de_test::f4{},
+                                                         0.2,
+                                                         0.7,
+                                                         1e-8,
+                                                         1e-12,
+                                                         15,
+                                                         msgs,
+                                                         std::vector<double>{0.5},
+                                                         std::vector<double>{},
+                                                         std::vector<int>{});
   EXPECT_NEAR(Q_strict, 1.0423499493102901, 1e-8);
   EXPECT_NEAR(Q_lenient, Q_strict, 1e-12);
 }
@@ -524,29 +642,53 @@ TEST(StanMath_integrate_1d_de_prim, abs_tol_argument_smoke) {
 // result. Argument order is (rel_tol, abs_tol, max_refinements).
 TEST(StanMath_integrate_1d_de_prim, max_refinements_argument) {
   using stan::math::integrate_1d_double_exponential;
+  using stan::math::integrate_1d_double_exponential_tol;
   std::ostringstream *msgs = nullptr;
-  double Q = integrate_1d_double_exponential(integrate_1d_de_test::f4{}, 0.2,
-                                             0.7, std::vector<double>{0.5}, {},
-                                             {}, msgs, 1e-8, 0.0, 20);
+  double Q = integrate_1d_double_exponential_tol(integrate_1d_de_test::f4{},
+                                                 0.2,
+                                                 0.7,
+                                                 1e-8,
+                                                 0.0,
+                                                 20,
+                                                 msgs,
+                                                 std::vector<double>{0.5},
+                                                 std::vector<double>{},
+                                                 std::vector<int>{});
   EXPECT_NEAR(Q, 1.0423499493102901, 1e-8);
 }
 
 // Negative max_refinements not okay.
 TEST(StanMath_integrate_1d_de_prim, negative_max_refinements_throws) {
   using stan::math::integrate_1d_double_exponential;
+  using stan::math::integrate_1d_double_exponential_tol;
   std::ostringstream *msgs = nullptr;
-  EXPECT_THROW(integrate_1d_double_exponential(integrate_1d_de_test::f4{}, 0.2,
-                                               0.7, std::vector<double>{0.5},
-                                               {}, {}, msgs, 1e-6, 0.0, -1),
+  EXPECT_THROW(integrate_1d_double_exponential_tol(integrate_1d_de_test::f4{},
+                                                   0.2,
+                                                   0.7,
+                                                   1e-6,
+                                                   0.0,
+                                                   -1,
+                                                   msgs,
+                                                   std::vector<double>{0.5},
+                                                   std::vector<double>{},
+                                                   std::vector<int>{}),
                std::domain_error);
 }
 
 // Negative absolute_tolerance not okay.
 TEST(StanMath_integrate_1d_de_prim, negative_abs_tol_throws) {
   using stan::math::integrate_1d_double_exponential;
+  using stan::math::integrate_1d_double_exponential_tol;
   std::ostringstream *msgs = nullptr;
-  EXPECT_THROW(integrate_1d_double_exponential(integrate_1d_de_test::f4{}, 0.2,
-                                               0.7, std::vector<double>{0.5},
-                                               {}, {}, msgs, 1e-6, -1e-3),
+  EXPECT_THROW(integrate_1d_double_exponential_tol(integrate_1d_de_test::f4{},
+                                                   0.2,
+                                                   0.7,
+                                                   1e-6,
+                                                   -1e-3,
+                                                   15,
+                                                   msgs,
+                                                   std::vector<double>{0.5},
+                                                   std::vector<double>{},
+                                                   std::vector<int>{}),
                std::domain_error);
 }
