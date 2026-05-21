@@ -273,7 +273,7 @@ inline double order(double down, double up, const std::vector<double> &theta,
       x_i);
   return v;
 }
-}  // namespace integrate_1d_de_test
+
 /*
  * test_integration is a helper function to make it easy to test the
  * integrate_1d function.
@@ -312,8 +312,7 @@ inline void test_integration(const F &f, double a, double b,
 
   for (auto tolerance : tolerances) {
     EXPECT_LE(std::abs(integrate_1d_double_exponential_tol(
-                           f, a, b, tolerance, 0.0, 15,
-                           integrate_1d_de_test::msgs, thetas, x_r, x_i)
+                           f, a, b, tolerance, 0.0, 15, msgs, thetas, x_r, x_i)
                        - val),
               tolerance);
     // Flip the domain of integration and check that the integral is working
@@ -324,12 +323,14 @@ inline void test_integration(const F &f, double a, double b,
             return f(-x, -xc, msgs, theta, x_r, x_i);
           };
     EXPECT_LE(std::abs(integrate_1d_double_exponential_tol(
-                           flipped, -b, -a, tolerance, 0.0, 15,
-                           integrate_1d_de_test::msgs, thetas, x_r, x_i)
+                           flipped, -b, -a, tolerance, 0.0, 15, msgs, thetas,
+                           x_r, x_i)
                        - val),
               tolerance);
   }
 }
+
+}  // namespace integrate_1d_de_test
 
 TEST(StanMath_integrate_1d_de_prim, TestThrows) {
   // Left limit of integration must be less than or equal to right limit
@@ -418,81 +419,89 @@ TEST(StanMath_integrate_1d_de_prim, test_integer_arguments) {
 
 TEST(StanMath_integrate_1d_de_prim, test1) {
   // Tricky integral from Boost docs + limit at infinity
-  test_integration(integrate_1d_de_test::f1{}, 0.0,
-                   std::numeric_limits<double>::infinity(), {}, {}, {},
-                   1.772453850905516);
+  integrate_1d_de_test::test_integration(
+      integrate_1d_de_test::f1{}, 0.0, std::numeric_limits<double>::infinity(),
+      {}, {}, {}, 1.772453850905516);
   // Tricky integral from Boost 1d integration docs
-  test_integration(integrate_1d_de_test::f2{}, 0.0, 1.0, {}, {}, {},
-                   1.198140234735592);
+  integrate_1d_de_test::test_integration(integrate_1d_de_test::f2{}, 0.0, 1.0,
+                                         {}, {}, {}, 1.198140234735592);
   // Tricky integral from Boost 1d integration docs
-  test_integration(integrate_1d_de_test::f2{}, 0, 1, {}, {}, {},
-                   1.198140234735592);
+  integrate_1d_de_test::test_integration(integrate_1d_de_test::f2{}, 0, 1, {},
+                                         {}, {}, 1.198140234735592);
   // Zero crossing integral + limit at infinity
-  test_integration(integrate_1d_de_test::f3{}, -2.0,
-                   std::numeric_limits<double>::infinity(), {}, {}, {},
-                   7.38905609893065);
+  integrate_1d_de_test::test_integration(
+      integrate_1d_de_test::f3{}, -2.0, std::numeric_limits<double>::infinity(),
+      {}, {}, {}, 7.38905609893065);
   // Easy integrals
-  test_integration(integrate_1d_de_test::f4{}, 0.2, 0.7, {0.5},
-                   std::vector<double>{}, std::vector<int>{},
-                   1.0423499493102901);
-  test_integration(integrate_1d_de_test::f5{}, -0.2, 0.7, {0.4, 0.4},
-                   std::vector<double>{}, std::vector<int>{},
-                   1.396621954392482);
-  test_integration(integrate_1d_de_test::f4{}, 0.0, 0.0, {0.5},
-                   std::vector<double>{}, std::vector<int>{}, 0.0);
-  test_integration(integrate_1d_de_test::f5{}, 1.0, 1.0, {0.4, 0.4},
-                   std::vector<double>{}, std::vector<int>{}, 0.0);
+  integrate_1d_de_test::test_integration(
+      integrate_1d_de_test::f4{}, 0.2, 0.7, {0.5}, std::vector<double>{},
+      std::vector<int>{}, 1.0423499493102901);
+  integrate_1d_de_test::test_integration(integrate_1d_de_test::f5{}, -0.2, 0.7,
+                                         {0.4, 0.4}, std::vector<double>{},
+                                         std::vector<int>{}, 1.396621954392482);
+  integrate_1d_de_test::test_integration(integrate_1d_de_test::f4{}, 0.0, 0.0,
+                                         {0.5}, std::vector<double>{},
+                                         std::vector<int>{}, 0.0);
+  integrate_1d_de_test::test_integration(integrate_1d_de_test::f5{}, 1.0, 1.0,
+                                         {0.4, 0.4}, std::vector<double>{},
+                                         std::vector<int>{}, 0.0);
   // Test x_i
-  test_integration(integrate_1d_de_test::f6{}, -0.2, 2.9, {6.0, 5.1}, {}, {4},
-                   4131.985414616364);
+  integrate_1d_de_test::test_integration(integrate_1d_de_test::f6{}, -0.2, 2.9,
+                                         {6.0, 5.1}, {}, {4},
+                                         4131.985414616364);
   // Test x_r
-  test_integration(integrate_1d_de_test::f7{}, -0.2, 2.9, {}, {4.0, 6.0, 5.1},
-                   {}, 24219.985414616367);
+  integrate_1d_de_test::test_integration(integrate_1d_de_test::f7{}, -0.2, 2.9,
+                                         {}, {4.0, 6.0, 5.1}, {},
+                                         24219.985414616367);
   // Both limits at infinity + test x_r/x_i
-  test_integration(integrate_1d_de_test::f8{},
-                   -std::numeric_limits<double>::infinity(),
-                   std::numeric_limits<double>::infinity(), {5.0}, {1.7}, {2},
-                   3.013171546539377);
+  integrate_1d_de_test::test_integration(
+      integrate_1d_de_test::f8{}, -std::numeric_limits<double>::infinity(),
+      std::numeric_limits<double>::infinity(), {5.0}, {1.7}, {2},
+      3.013171546539377);
   // Both limits at infinity + test x_i
-  test_integration(integrate_1d_de_test::f9{},
-                   -std::numeric_limits<double>::infinity(),
-                   std::numeric_limits<double>::infinity(), {1.3}, {}, {4},
-                   2.372032924895055);
+  integrate_1d_de_test::test_integration(
+      integrate_1d_de_test::f9{}, -std::numeric_limits<double>::infinity(),
+      std::numeric_limits<double>::infinity(), {1.3}, {}, {4},
+      2.372032924895055);
   // Various integrals of beta function
-  test_integration(integrate_1d_de_test::f10{}, 0.0, 1.0, {0.1, 0.1},
-                   std::vector<double>{}, std::vector<int>{},
-                   19.71463948905016);
-  test_integration(integrate_1d_de_test::f10{}, 0.0, 1.0, {0.1, 0.5},
-                   std::vector<double>{}, std::vector<int>{},
-                   11.32308697521577);
-  test_integration(integrate_1d_de_test::f10{}, 0.0, 1.0, {0.5, 0.1},
-                   std::vector<double>{}, std::vector<int>{},
-                   11.32308697521577);
-  test_integration(integrate_1d_de_test::f10{}, 0.0, 1.0, {5.0, 3.0},
-                   std::vector<double>{}, std::vector<int>{},
-                   0.00952380952380952);
+  integrate_1d_de_test::test_integration(integrate_1d_de_test::f10{}, 0.0, 1.0,
+                                         {0.1, 0.1}, std::vector<double>{},
+                                         std::vector<int>{}, 19.71463948905016);
+  integrate_1d_de_test::test_integration(integrate_1d_de_test::f10{}, 0.0, 1.0,
+                                         {0.1, 0.5}, std::vector<double>{},
+                                         std::vector<int>{}, 11.32308697521577);
+  integrate_1d_de_test::test_integration(integrate_1d_de_test::f10{}, 0.0, 1.0,
+                                         {0.5, 0.1}, std::vector<double>{},
+                                         std::vector<int>{}, 11.32308697521577);
+  integrate_1d_de_test::test_integration(
+      integrate_1d_de_test::f10{}, 0.0, 1.0, {5.0, 3.0}, std::vector<double>{},
+      std::vector<int>{}, 0.00952380952380952);
 
   // Integrals from
   // http://crd-legacy.lbl.gov/~dhbailey/dhbpapers/dhb-tanh-sinh.pdf
-  test_integration(integrate_1d_de_test::f12{}, 0.0,
-                   std::numeric_limits<double>::infinity(), {}, {}, {}, 2.0);
-  test_integration(integrate_1d_de_test::f13{}, 0.0,
-                   std::numeric_limits<double>::infinity(), {}, {}, {}, 1.0);
-  test_integration(integrate_1d_de_test::f14{}, 0.0, 1.0, {}, {}, {},
-                   exp(1) * sqrt(stan::math::pi()) * stan::math::erf(1.0));
+  integrate_1d_de_test::test_integration(
+      integrate_1d_de_test::f12{}, 0.0, std::numeric_limits<double>::infinity(),
+      {}, {}, {}, 2.0);
+  integrate_1d_de_test::test_integration(
+      integrate_1d_de_test::f13{}, 0.0, std::numeric_limits<double>::infinity(),
+      {}, {}, {}, 1.0);
+  integrate_1d_de_test::test_integration(
+      integrate_1d_de_test::f14{}, 0.0, 1.0, {}, {}, {},
+      exp(1) * sqrt(stan::math::pi()) * stan::math::erf(1.0));
 
   // Integrals from http://crd-legacy.lbl.gov/~dhbailey/dhbpapers/quadrature.pdf
   // works normally but not to tolerance when limits of integration are flipped
-  //  test_integration(f15{}, 0.0, 1.0, {}, {}, {},
+  //  integrate_1d_de_test::test_integration(f15{}, 0.0, 1.0, {}, {}, {},
   //                   stan::math::square(stan::math::pi()) * (2 - sqrt(2.0)) /
   //                   32);
-  test_integration(integrate_1d_de_test::f16{}, 0.0, stan::math::pi(), {}, {},
-                   {}, stan::math::square(stan::math::pi()) / 4);
+  integrate_1d_de_test::test_integration(
+      integrate_1d_de_test::f16{}, 0.0, stan::math::pi(), {}, {}, {},
+      stan::math::square(stan::math::pi()) / 4);
 
   // Make sure bounds working right
-  test_integration(integrate_1d_de_test::f17{},
-                   -std::numeric_limits<double>::infinity(), -1.5, {0.0, 1.0},
-                   {}, {}, 0.066807201268858071);
+  integrate_1d_de_test::test_integration(
+      integrate_1d_de_test::f17{}, -std::numeric_limits<double>::infinity(),
+      -1.5, {0.0, 1.0}, {}, {}, 0.066807201268858071);
 }
 
 TEST(StanMath_integrate_1d_de_prim, TestTolerance) {
