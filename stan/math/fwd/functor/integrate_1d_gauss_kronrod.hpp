@@ -95,9 +95,8 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_gauss_kronrod_tol(
 template <typename F, typename T_a, typename T_b, typename... Args,
           require_any_st_fvar<T_a, T_b, Args...> * = nullptr>
 inline return_type_t<T_a, T_b, Args...> integrate_1d_gauss_kronrod(
-    const F &f, const T_a &a, const T_b &b, double relative_tolerance,
-    double absolute_tolerance, int max_depth, std::ostream *msgs,
-    const Args &... args) {
+    const F &f, const T_a &a, const T_b &b, std::ostream *msgs,
+    const Args &...args) {
   return integrate_1d_gauss_kronrod_tol(f, a, b, std::sqrt(EPSILON), 0.0,
                                         INTEGRATE_1D_GAUSS_KRONROD_MAX_DEPTH,
                                         msgs, args...);
