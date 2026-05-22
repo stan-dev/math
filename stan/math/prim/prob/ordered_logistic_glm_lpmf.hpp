@@ -165,12 +165,10 @@ inline return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
     Array<T_partials_return, Dynamic, 1> exp_m_abs_cut1 = (-cut1.abs()).exp();
     Array<T_partials_return, Dynamic, 1> exp_m_abs_cut2 = (-cut2.abs()).exp();
     Array<T_partials_return, Dynamic, 1> exp_cuts_diff = exp(cuts_y2 - cuts_y1);
-    Array<T_partials_return, Dynamic, 1> inv_logit_neg_cut2
-        = (cut2 > 0).select(exp_m_abs_cut2 / (1 + exp_m_abs_cut2),
-                            1 / (1 + exp_m_abs_cut2));
-    Array<T_partials_return, Dynamic, 1> inv_logit_neg_cut1
-        = (cut1 > 0).select(exp_m_abs_cut1 / (1 + exp_m_abs_cut1),
-                            1 / (1 + exp_m_abs_cut1));
+    Array<T_partials_return, Dynamic, 1> inv_logit_neg_cut2 = (cut2 > 0).select(
+        exp_m_abs_cut2 / (1 + exp_m_abs_cut2), 1 / (1 + exp_m_abs_cut2));
+    Array<T_partials_return, Dynamic, 1> inv_logit_neg_cut1 = (cut1 > 0).select(
+        exp_m_abs_cut1 / (1 + exp_m_abs_cut1), 1 / (1 + exp_m_abs_cut1));
     Array<T_partials_return, Dynamic, 1> d1
         = inv_logit_neg_cut2 - exp_cuts_diff / (exp_cuts_diff - 1);
     Array<T_partials_return, Dynamic, 1> d2

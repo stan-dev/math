@@ -661,7 +661,7 @@ TEST_F(AgradRev, ProbDistributionsOrdLog_scalar_top_category_higher_order_ad) {
 
   fvar<fvar<var>> lam_ffv;
   lam_ffv.val_ = 0.7;
-  lam_ffv.d_ = 0.0;          // zero outer tangent (compute_s2 pattern)
+  lam_ffv.d_ = 0.0;  // zero outer tangent (compute_s2 pattern)
   lam_ffv.val_.d_ = 1.0;
 
   vector_ffv c_ffv(2);

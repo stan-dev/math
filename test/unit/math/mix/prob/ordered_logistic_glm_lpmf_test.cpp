@@ -72,8 +72,8 @@ TEST_F(AgradRev,
   for (int i = 0; i < N; i++) {
     for (int j = 0; j < D; j++) {
       EXPECT_TRUE(std::isfinite(x_ffv(i, j).val_.val_.adj()))
-          << "x_ffv(" << i << "," << j
-          << ").val_.val_.adj() non-finite (y[" << i << "]=" << y[i] << ")";
+          << "x_ffv(" << i << "," << j << ").val_.val_.adj() non-finite (y["
+          << i << "]=" << y[i] << ")";
     }
   }
   for (int j = 0; j < D; j++) {
