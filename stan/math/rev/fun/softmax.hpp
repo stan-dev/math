@@ -6,6 +6,7 @@
 #include <stan/math/rev/core/reverse_pass_callback.hpp>
 #include <stan/math/rev/core/arena_matrix.hpp>
 #include <stan/math/rev/fun/to_arena.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/softmax.hpp>
 #include <stan/math/prim/functor/apply_vector_unary.hpp>
@@ -19,15 +20,14 @@ namespace math {
  * @tparam T a `var_value` or Eigen vector/row_vector with `var` scalar
  * @param x input
  * @return softmax of the input
+ * @throw std::invalid_argument if the input size is 0
  */
 template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline auto softmax(T&& x) {
+  check_nonzero_size("softmax", "x", x);
   auto x_arena = to_arena(std::forward<T>(x));
   using return_t
       = return_var_matrix_t<plain_type_t<decltype(x_arena.val())>, T>;
-  if (x_arena.size() == 0) {
-    return x_arena;
-  }
   arena_t<return_t> res = softmax(x_arena.val());
   reverse_pass_callback([x_arena, res]() mutable {
     x_arena.adj().array()
@@ -42,6 +42,7 @@ inline auto softmax(T&& x) {
  * @tparam T `std::vector` whose scalar type is `var`
  * @param x array of vectors to transform
  * @return array of softmax results
+ * @throw std::invalid_argument if any input vector is empty
  */
 template <typename T, require_std_vector_st<is_var, T>* = nullptr>
 inline auto softmax(T&& x) {

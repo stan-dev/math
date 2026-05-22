@@ -19,7 +19,7 @@ namespace math {
  * @tparam T a `var_value` or Eigen vector/row_vector with `var` scalar
  * @param x input
  * @return log softmax of the input
- * @throw std::domain_error if the input size is 0
+ * @throw std::invalid_argument if the input size is 0
  */
 template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline auto log_softmax(T&& x) {
@@ -42,7 +42,7 @@ inline auto log_softmax(T&& x) {
  * @tparam T `std::vector` whose scalar type is `var`
  * @param x array of vectors to transform
  * @return array of log softmax results
- * @throw std::domain_error if any element size is 0
+ * @throw std::invalid_argument if any input vector is empty
  */
 template <typename T, require_std_vector_st<is_var, T>* = nullptr>
 inline auto log_softmax(T&& x) {

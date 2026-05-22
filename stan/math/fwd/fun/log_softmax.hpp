@@ -19,6 +19,7 @@ namespace math {
  * @tparam T `std::vector` whose scalar type is `fvar`
  * @param x container of vectors to transform
  * @return container of log softmax results
+ * @throw std::invalid_argument if any input vector is empty
  */
 template <typename T, require_std_vector_st<is_fvar, T>* = nullptr>
 inline auto log_softmax(T&& x) {
@@ -33,14 +34,14 @@ inline auto log_softmax(T&& x) {
  * @tparam Vec Eigen vector with `fvar` scalar
  * @param x vector to transform
  * @return log softmax of the vector
- * @throw std::domain_error if the input size is 0
+ * @throw std::invalid_argument if the input size is 0
  */
 template <typename Vec, require_eigen_vector_vt<is_fvar, Vec>* = nullptr>
 inline auto log_softmax(Vec&& x) {
   using vec = std::decay_t<Vec>;
   constexpr int Rows = vec::RowsAtCompileTime;
   constexpr int Cols = vec::ColsAtCompileTime;
-  using T = typename value_type_t<Vec>::Scalar;
+  using T = typename value_type_t<vec>::Scalar;
   check_nonzero_size("log_softmax", "x", x);
   decltype(auto) x_ref = to_ref(std::forward<Vec>(x));
   const auto s = softmax(value_of(x_ref));

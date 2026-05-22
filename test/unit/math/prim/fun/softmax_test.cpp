@@ -46,6 +46,13 @@ TEST(MathMatrixPrimMat, softmax_neg_inf) {
   EXPECT_FLOAT_EQ(1.0, theta.sum());
 }
 
+TEST(MathMatrixPrimMat, softmax_exception) {
+  using stan::math::softmax;
+  Eigen::Matrix<double, Eigen::Dynamic, 1> v0;  // size == 0
+
+  EXPECT_THROW(softmax(v0), std::invalid_argument);
+}
+
 TEST(MathMatrixPrimMat, softmax_row_vector) {
   using Eigen::Dynamic;
   using Eigen::Matrix;

@@ -37,9 +37,9 @@ namespace math {
  *
  * @tparam Container type of input: an Eigen vector, `std::vector` of doubles,
  *   or nested container whose scalar type is arithmetic
- * @param[in] x vector or container of vectors to transform
+ * @param x vector or container of vectors to transform
  * @return log softmax of the input, preserving the container structure
- * @throw std::domain_error if any input vector is empty
+ * @throw std::invalid_argument if any input vector is empty
  */
 template <typename Container, require_st_arithmetic<Container>* = nullptr,
           require_container_t<Container>* = nullptr,
@@ -51,8 +51,10 @@ inline auto log_softmax(Container&& x) {
   return make_holder(
       [](auto&& a) {
         return apply_vector_unary<ref_type_t<Container>>::apply(
-            std::forward<decltype(a)>(a),
-            [](auto&& v) { return v.array() - log_sum_exp(v); });
+            std::forward<decltype(a)>(a), [](auto&& v) {
+              check_nonzero_size("log_softmax", "v", v);
+              return v.array() - log_sum_exp(v);
+            });
       },
       to_ref(std::forward<Container>(x)));
 }

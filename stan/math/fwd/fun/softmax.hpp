@@ -4,6 +4,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/fun/value_of.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/softmax.hpp>
 #include <stan/math/prim/functor/apply_vector_unary.hpp>
@@ -17,6 +18,7 @@ namespace math {
  * @tparam T `std::vector` whose scalar type is `fvar`
  * @param x container of vectors to transform
  * @return container of softmax results
+ * @throw std::invalid_argument if any input vector is empty
  */
 template <typename T, require_std_vector_st<is_fvar, T>* = nullptr>
 inline auto softmax(T&& x) {
@@ -31,6 +33,7 @@ inline auto softmax(T&& x) {
  * @tparam Vec Eigen vector with `fvar` scalar
  * @param x vector to transform
  * @return softmax of the vector
+ * @throw std::domain_error if the input size is 0
  */
 template <typename Vec, require_eigen_vector_vt<is_fvar, Vec>* = nullptr>
 inline auto softmax(Vec&& x) {
@@ -38,9 +41,7 @@ inline auto softmax(Vec&& x) {
   constexpr int Rows = vec::RowsAtCompileTime;
   constexpr int Cols = vec::ColsAtCompileTime;
   using T = typename value_type_t<vec>::Scalar;
-  if (x.size() == 0) {
-    return Eigen::Matrix<fvar<T>, Rows, Cols>();
-  }
+  check_nonzero_size("softmax", "x", x);
   decltype(auto) x_ref = to_ref(std::forward<Vec>(x));
   const auto s = softmax(value_of(x_ref));
   const auto d_in = x_ref.d();

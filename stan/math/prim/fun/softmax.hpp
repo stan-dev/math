@@ -1,19 +1,18 @@
 #ifndef STAN_MATH_PRIM_FUN_SOFTMAX_HPP
 #define STAN_MATH_PRIM_FUN_SOFTMAX_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/functor/apply_vector_unary.hpp>
-#include <cmath>
 
 namespace stan {
 namespace math {
 
 /**
- * Return the softmax of the specified vector.
+ * Return the softmax of the specified vector, or of each vector in a container.
  *
- * <p>
  * \f$
  * \mbox{softmax}(y)
  * = \frac{\exp(y)}
@@ -39,36 +38,31 @@ namespace math {
  * \end{array}
  * \f$
  *
- * @tparam Vec type of the input vector
- * @param[in] v Vector to transform.
- * @return Unit simplex result of the softmax transform of the vector.
+ * @tparam Container type of input: an Eigen vector, `std::vector` of doubles,
+ *   or nested container whose scalar type is arithmetic
+ * @param x vector or container of vectors to transform
+ * @return softmax of the input, preserving the container structure
+ * @throw std::invalid_argument if any input vector is empty
  */
-template <typename Vec,
-          require_eigen_vector_vt<std::is_arithmetic, Vec>* = nullptr>
-inline plain_type_t<Vec> softmax(Vec&& v) {
-  if (v.size() == 0) {
-    return v;
-  }
-  decltype(auto) v_ref = to_ref(std::forward<Vec>(v));
-  const auto theta = (v_ref.array() - v_ref.maxCoeff()).exp();
-  return (theta / theta.sum()).matrix();
-}
-
-/**
- * Return the softmax of each vector in an array.
- *
- * @tparam T `std::vector` whose scalar type is arithmetic
- * @param[in] x Array of vectors to transform.
- * @return Array of unit simplex results.
- */
-template <typename T, require_std_vector_st<std::is_arithmetic, T>* = nullptr>
-inline auto softmax(T&& x) {
-  return apply_vector_unary<T>::apply(std::forward<T>(x), [](auto&& v) {
-    return softmax(std::forward<decltype(v)>(v));
-  });
+template <typename Container, require_st_arithmetic<Container>* = nullptr,
+          require_container_t<Container>* = nullptr,
+          require_not_t<bool_constant<
+              is_eigen<std::decay_t<Container>>::value
+              && !is_eigen_vector<std::decay_t<Container>>::value>>* = nullptr>
+inline auto softmax(Container&& x) {
+  check_nonzero_size("softmax", "x", x);
+  return make_holder(
+      [](auto&& a) {
+        return apply_vector_unary<ref_type_t<Container>>::apply(
+            std::forward<decltype(a)>(a), [](auto&& v) {
+              check_nonzero_size("softmax", "v", v);
+              const auto theta = (v.array() - v.maxCoeff()).exp();
+              return (theta / theta.sum()).matrix();
+            });
+      },
+      to_ref(std::forward<Container>(x)));
 }
 
 }  // namespace math
 }  // namespace stan
-
 #endif

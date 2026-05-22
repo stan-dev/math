@@ -10,7 +10,7 @@ TEST(MathMixMatFun, softmax) {
   tols.hessian_fvar_hessian_ = 1e-2;
 
   // Column vectors
-  Eigen::VectorXd a(0);
+  Eigen::VectorXd a(0);  // error case
   stan::test::expect_ad(tols, f, a);
   expect_ad_matvar(f, a);
   Eigen::VectorXd b(1);
@@ -44,7 +44,7 @@ TEST(MathMixMatFun, softmax) {
   expect_ad_matvar(f, d4);
 
   // Row vectors
-  Eigen::RowVectorXd ra(0);
+  Eigen::RowVectorXd ra(0);  // error case
   stan::test::expect_ad(tols, f, ra);
   expect_ad_matvar(f, ra);
 
