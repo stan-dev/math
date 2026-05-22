@@ -33,7 +33,7 @@ inline auto softmax(T&& x) {
  * @tparam Vec Eigen vector with `fvar` scalar
  * @param x vector to transform
  * @return softmax of the vector
- * @throw std::domain_error if the input size is 0
+ * @throw std::invalid_argument if the input size is 0
  */
 template <typename Vec, require_eigen_vector_vt<is_fvar, Vec>* = nullptr>
 inline auto softmax(Vec&& x) {
