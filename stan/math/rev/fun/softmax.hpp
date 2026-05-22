@@ -3,44 +3,51 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/rev/core/reverse_pass_callback.hpp>
 #include <stan/math/rev/core/arena_matrix.hpp>
-#include <stan/math/prim/fun/typedefs.hpp>
+#include <stan/math/rev/fun/to_arena.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/softmax.hpp>
-#include <tuple>
-#include <vector>
+#include <stan/math/prim/functor/apply_vector_unary.hpp>
 
 namespace stan {
 namespace math {
 
 /**
- * Return the softmax of the specified Eigen vector.  Softmax is
- * guaranteed to return a simplex.
+ * Return the softmax of the specified vector or row vector.
  *
- * @param alpha Unconstrained input vector.
- * @return Softmax of the input.
- * @throw std::domain_error If the input vector is size 0.
+ * @tparam T a `var_value` or Eigen vector/row_vector with `var` scalar
+ * @param x input
+ * @return softmax of the input
  */
-template <typename Mat, require_rev_matrix_t<Mat>* = nullptr>
-inline auto softmax(const Mat& alpha) {
-  using mat_plain = plain_type_t<Mat>;
-  using ret_type = return_var_matrix_t<Mat>;
-  if (alpha.size() == 0) {
-    return ret_type(alpha);
+template <typename T, require_rev_matrix_t<T>* = nullptr>
+inline auto softmax(T&& x) {
+  auto x_arena = to_arena(std::forward<T>(x));
+  using return_t
+      = return_var_matrix_t<plain_type_t<decltype(x_arena.val())>, T>;
+  if (x_arena.size() == 0) {
+    return x_arena;
   }
-  arena_t<mat_plain> alpha_arena = alpha;
-  arena_t<Eigen::VectorXd> res_val = softmax(value_of(alpha_arena));
-  arena_t<ret_type> res = res_val;
-
-  reverse_pass_callback([res_val, res, alpha_arena]() mutable {
-    const auto& res_adj = to_ref(res.adj());
-    alpha_arena.adj()
-        += -res_val * res_adj.dot(res_val) + res_val.cwiseProduct(res_adj);
+  arena_t<return_t> res = softmax(x_arena.val());
+  reverse_pass_callback([x_arena, res]() mutable {
+    x_arena.adj().array()
+        += res.val().array() * (res.adj().array() - res.val().dot(res.adj()));
   });
+  return res;
+}
 
-  return ret_type(res);
+/**
+ * Return the softmax of each vector in an array.
+ *
+ * @tparam T `std::vector` whose scalar type is `var`
+ * @param x array of vectors to transform
+ * @return array of softmax results
+ */
+template <typename T, require_std_vector_st<is_var, T>* = nullptr>
+inline auto softmax(T&& x) {
+  return apply_vector_unary<T>::apply(std::forward<T>(x), [](auto&& v) {
+    return softmax(std::forward<decltype(v)>(v));
+  });
 }
 
 }  // namespace math
