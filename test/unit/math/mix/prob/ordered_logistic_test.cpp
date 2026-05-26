@@ -554,3 +554,171 @@ TEST_F(AgradRev, ProbDistributionsOrdLog_fv_d_stvec) {
   EXPECT_FLOAT_EQ(std_c_ffv[3][1].d_.val_.adj(), 0.0);
   EXPECT_FLOAT_EQ(std_c_ffv[3][2].d_.val_.adj(), -0.704745697998091);
 }
+
+// Regression test for the higher-order-AD NaN bug reported 2026-05-21:
+// `ordered_logistic_lpmf` returned NaN under `laplace_marginal_tol` when y
+// contained the top category K. Root cause: the partials block materialized
+// `exp(-cut1)` and `exp(cut1)` (in an unselected branch of Eigen .select),
+// which for y == K (cut1 = -INF) and y == 1 (cut2 = +INF) pushed an orphan
+// `vari` with val == +INFINITY onto the autodiff stack. `stan::math::grad()`
+// then ran the standard `exp_vari::chain` body
+//   a.adj() += vi.adj() * vi.val();
+// with vi.adj() == 0 for the orphan (e.g. in laplace_marginal_density's
+// compute_s2 where most tangent seeds are zero), producing 0 * INF = NaN on
+// the val-side adjoint chain of the input. The pre-fix mix tests only
+// asserted `.d_.adj()` (tangent-side) with all `.d_` seeds equal to 1, so
+// they hit 1 * INF = +INF (finite-ish, escaping the EXPECT_FLOAT_EQ) and
+// never inspected the val-side adjoint where the NaN actually lands.
+//
+// The tests below specifically exercise:
+//   1. y contains K (top category): triggers cut1 = -INF.
+//   2. y contains 1 (bottom category): triggers cut2 = +INF.
+//   3. Some .d_ tangent seeds are zero: triggers 0 * INF = NaN in chain().
+//   4. Val-side adjoints (`.val_.val_.adj()` for fvar<fvar<var>>) are
+//      asserted finite \u2014 these are the adjoints that Laplace reads.
+TEST_F(AgradRev, ProbDistributionsOrdLog_top_category_higher_order_ad) {
+  using stan::math::fvar;
+  using stan::math::ordered_logistic_lpmf;
+  using stan::math::var;
+  using stan::math::vector_ffv;
+
+  // K = 3 (cutpoints has size 2). y contains both 1 (bottom) and K=3 (top).
+  std::vector<int> y{1, 2, 3, 2, 1};
+
+  vector_ffv lam_ffv(5);
+  lam_ffv << -0.5, 0.2, 0.7, 0.1, -0.3;
+  // Mixed tangent seeds: some zero, some non-zero. This matches Laplace's
+  // compute_s2 pattern where v(j) = 0 for most indices when
+  // hessian_block_size > 1. Zero seeds combined with an orphan +INF vari
+  // produce 0 * INF = NaN in the buggy version.
+  lam_ffv[0].d_ = 1.0;
+  lam_ffv[0].val_.d_ = 1.0;
+  lam_ffv[1].d_ = 0.0;  // zero outer tangent
+  lam_ffv[1].val_.d_ = 1.0;
+  lam_ffv[2].d_ = 1.0;
+  lam_ffv[2].val_.d_ = 0.0;  // zero inner tangent
+  lam_ffv[3].d_ = 0.0;
+  lam_ffv[3].val_.d_ = 0.0;  // both zero
+  lam_ffv[4].d_ = 1.0;
+  lam_ffv[4].val_.d_ = 1.0;
+
+  vector_ffv c_ffv(2);
+  c_ffv << 0.0, 1.0;
+  for (int i = 0; i < 2; i++) {
+    c_ffv[i].d_ = 1.0;
+    c_ffv[i].val_.d_ = 1.0;
+  }
+
+  fvar<fvar<var>> out_ffv = ordered_logistic_lpmf(y, lam_ffv, c_ffv);
+
+  // Value must be finite.
+  EXPECT_TRUE(std::isfinite(out_ffv.val_.val_.val()))
+      << "Forward value is non-finite when y contains top category K";
+  EXPECT_TRUE(std::isfinite(out_ffv.d_.val_.val()))
+      << "First-order tangent value is non-finite";
+  EXPECT_TRUE(std::isfinite(out_ffv.val_.d_.val()))
+      << "Inner tangent value is non-finite";
+  EXPECT_TRUE(std::isfinite(out_ffv.d_.d_.val()))
+      << "Second-order tangent value is non-finite";
+
+  // Hessian-style grad: differentiate the second-order tangent. This is the
+  // exact code path used by laplace_likelihood::compute_s2 /
+  // laplace_likelihood::third_diff.
+  out_ffv.d_.d_.grad();
+
+  for (int i = 0; i < 5; i++) {
+    // VAL-SIDE adjoints (the ones the pre-fix tests never checked):
+    EXPECT_TRUE(std::isfinite(lam_ffv[i].val_.val_.adj()))
+        << "lam_ffv[" << i << "].val_.val_.adj() is NaN/INF -- "
+        << "regression: orphan exp(+INF) vari injected NaN into val-side "
+        << "chain. y[i]=" << y[i] << ", lam.d_=" << lam_ffv[i].d_.val_.val()
+        << ", lam.val_.d_=" << lam_ffv[i].val_.d_.val();
+    EXPECT_TRUE(std::isfinite(lam_ffv[i].d_.val_.adj()));
+    EXPECT_TRUE(std::isfinite(lam_ffv[i].val_.d_.adj()));
+    EXPECT_TRUE(std::isfinite(lam_ffv[i].d_.d_.adj()));
+  }
+  for (int i = 0; i < 2; i++) {
+    EXPECT_TRUE(std::isfinite(c_ffv[i].val_.val_.adj()))
+        << "c_ffv[" << i << "].val_.val_.adj() is NaN/INF";
+    EXPECT_TRUE(std::isfinite(c_ffv[i].d_.val_.adj()));
+    EXPECT_TRUE(std::isfinite(c_ffv[i].val_.d_.adj()));
+    EXPECT_TRUE(std::isfinite(c_ffv[i].d_.d_.adj()));
+  }
+}
+
+// Same regression test but for scalar y, scalar lambda \u2014 mirrors the
+// production failure pattern in mixtureis/test_ordered_logistic_laplace_bug
+// where ordered_logistic_lpmf is called once per observation with y == K.
+TEST_F(AgradRev, ProbDistributionsOrdLog_scalar_top_category_higher_order_ad) {
+  using stan::math::fvar;
+  using stan::math::ordered_logistic_lpmf;
+  using stan::math::var;
+  using stan::math::vector_ffv;
+
+  // K = 3, y = K (top category) \u2014 the case that produced NaN.
+  int y_top = 3;
+  int y_bot = 1;
+
+  fvar<fvar<var>> lam_ffv;
+  lam_ffv.val_ = 0.7;
+  lam_ffv.d_ = 0.0;  // zero outer tangent (compute_s2 pattern)
+  lam_ffv.val_.d_ = 1.0;
+
+  vector_ffv c_ffv(2);
+  c_ffv << 0.0, 1.0;
+  for (int i = 0; i < 2; i++) {
+    c_ffv[i].d_ = 0.0;
+    c_ffv[i].val_.d_ = 1.0;
+  }
+
+  fvar<fvar<var>> out_top = ordered_logistic_lpmf(y_top, lam_ffv, c_ffv);
+  EXPECT_TRUE(std::isfinite(out_top.val_.val_.val()));
+  EXPECT_TRUE(std::isfinite(out_top.d_.val_.val()));
+  EXPECT_TRUE(std::isfinite(out_top.val_.d_.val()));
+  EXPECT_TRUE(std::isfinite(out_top.d_.d_.val()));
+
+  out_top.d_.d_.grad();
+  EXPECT_TRUE(std::isfinite(lam_ffv.val_.val_.adj()))
+      << "scalar y == K: val-side adjoint of lambda is non-finite";
+  EXPECT_TRUE(std::isfinite(c_ffv[0].val_.val_.adj()));
+  EXPECT_TRUE(std::isfinite(c_ffv[1].val_.val_.adj()));
+
+  // Same for y == 1 (bottom category), which triggers cut2 = +INF.
+  stan::math::set_zero_all_adjoints();
+  fvar<fvar<var>> out_bot = ordered_logistic_lpmf(y_bot, lam_ffv, c_ffv);
+  EXPECT_TRUE(std::isfinite(out_bot.val_.val_.val()));
+  out_bot.d_.d_.grad();
+  EXPECT_TRUE(std::isfinite(lam_ffv.val_.val_.adj()))
+      << "scalar y == 1: val-side adjoint of lambda is non-finite";
+  EXPECT_TRUE(std::isfinite(c_ffv[0].val_.val_.adj()));
+  EXPECT_TRUE(std::isfinite(c_ffv[1].val_.val_.adj()));
+}
+
+// Numerical-value regression: verify that the value AND first-order
+// gradients are unchanged by the fix when y contains K. The reference
+// values are computed from the algebraically-equivalent hand-rolled form
+//   log p(y = K | lambda, c) = log_inv_logit(lambda - c[K-2])
+// and its gradient
+//   dlog p/dlambda = inv_logit(c[K-2] - lambda)
+//   dlog p/dc[K-2] = -inv_logit(c[K-2] - lambda)
+TEST_F(AgradRev, ProbDistributionsOrdLog_top_category_value_and_gradient) {
+  using stan::math::ordered_logistic_lpmf;
+  using stan::math::var;
+
+  // K = 3, y = K. lambda = 0.7, c = (0.0, 1.0). c[K-2] = c[1] = 1.0.
+  // sigmoid(c[K-2] - lambda) = sigmoid(0.3) = 0.574442516811659
+  // log p = log_inv_logit(lambda - c[K-2]) = log_inv_logit(-0.3)
+  //       = -log(1 + exp(0.3)) = -0.854355244468526
+  int y = 3;
+  var lam = 0.7;
+  Eigen::Matrix<var, Eigen::Dynamic, 1> c(2);
+  c << 0.0, 1.0;
+
+  var out = ordered_logistic_lpmf(y, lam, c);
+  EXPECT_FLOAT_EQ(out.val(), -0.854355244468526);
+
+  out.grad();
+  EXPECT_FLOAT_EQ(lam.adj(), 0.574442516811659);
+  EXPECT_FLOAT_EQ(c[0].adj(), 0.0);
+  EXPECT_FLOAT_EQ(c[1].adj(), -0.574442516811659);
+}
