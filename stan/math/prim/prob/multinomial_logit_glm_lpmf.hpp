@@ -137,8 +137,9 @@ inline return_type_t<T_x, T_alpha, T_beta> multinomial_logit_glm_lpmf(
               .array();
   } else {
     eta = (x_val.template cast<T_partials_return>()
-           * beta_val.template cast<T_partials_return>()
-           + value_of(alpha_ref).template cast<T_partials_return>()).array();
+               * beta_val.template cast<T_partials_return>()
+           + value_of(alpha_ref).template cast<T_partials_return>())
+              .array();
   }
 
   // Row-max shift for numerical stability; cancels in log-softmax.
