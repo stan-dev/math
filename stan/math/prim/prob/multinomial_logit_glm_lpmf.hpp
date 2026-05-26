@@ -11,6 +11,7 @@
 #include <stan/math/prim/fun/to_matrix.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/fun/value_of_rec.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 #include <vector>
@@ -82,16 +83,15 @@ template <bool propto, typename T_x, typename T_alpha, typename T_beta,
           require_matrix_t<T_alpha>* = nullptr,
           require_matrix_t<T_beta>* = nullptr>
 inline return_type_t<T_x, T_alpha, T_beta> multinomial_logit_glm_lpmf(
-    const std::vector<std::vector<int>>& y, const T_x& x, const T_alpha& alpha,
-    const T_beta& beta) {
+    const std::vector<std::vector<int>>& y, T_x&& x, T_alpha&& alpha,
+    T_beta&& beta) {
   using T_partials_return = partials_return_t<T_x, T_alpha, T_beta>;
   using Eigen::Array;
   using Eigen::Dynamic;
   using T_x_ref = ref_type_if_not_constant_t<T_x>;
   using T_alpha_ref = ref_type_if_not_constant_t<T_alpha>;
   using T_beta_ref = ref_type_if_not_constant_t<T_beta>;
-  constexpr int T_alpha_rows = T_alpha::RowsAtCompileTime;
-  constexpr bool need_delta = is_any_autodiff_v<T_x, T_alpha, T_beta>;
+  constexpr int T_alpha_rows = std::decay_t<T_alpha>::RowsAtCompileTime;
 
   const size_t N_instances = x.rows();
   const size_t N_classes = beta.cols();
@@ -121,12 +121,12 @@ inline return_type_t<T_x, T_alpha, T_beta> multinomial_logit_glm_lpmf(
     return 0;
   }
 
-  T_x_ref x_ref = x;
-  T_alpha_ref alpha_ref = alpha;
-  T_beta_ref beta_ref = beta;
+  T_x_ref x_ref = std::forward<T_x>(x);
+  T_alpha_ref alpha_ref = std::forward<T_alpha>(alpha);
+  T_beta_ref beta_ref = std::forward<T_beta>(beta);
 
-  const auto& x_val = to_ref_if<is_autodiff_v<T_beta>>(value_of(x_ref));
-  const auto& beta_val = to_ref_if<is_autodiff_v<T_x>>(value_of(beta_ref));
+  const auto& x_val = to_ref_if<is_autodiff_v<T_beta>>(value_of_rec(x_ref));
+  const auto& beta_val = to_ref_if<is_autodiff_v<T_x>>(value_of_rec(beta_ref));
 
   Array<T_partials_return, Dynamic, Dynamic> eta;
   if constexpr (T_alpha_rows == 1) {
@@ -136,9 +136,8 @@ inline return_type_t<T_x, T_alpha, T_beta> multinomial_logit_glm_lpmf(
   }
 
   // Row-max shift for numerical stability; cancels in log-softmax.
-  const Array<T_partials_return, Dynamic, Dynamic> shifted_eta
-      = (eta.colwise() - eta.rowwise().maxCoeff()).eval();
-  const Array<T_partials_return, Dynamic, Dynamic> exp_eta = exp(shifted_eta);
+  const Array<T_partials_return, Dynamic, Dynamic> exp_eta
+      = exp((eta.colwise() - eta.rowwise().maxCoeff()).eval());
   const Array<T_partials_return, Dynamic, Dynamic> softmax_mat
       = exp_eta.colwise() / exp_eta.rowwise().sum();
 
@@ -152,20 +151,24 @@ inline return_type_t<T_x, T_alpha, T_beta> multinomial_logit_glm_lpmf(
     logp += lgamma(instance_totals + 1.0).sum() - lgamma(y_mat + 1.0).sum();
   }
 
-  if (!std::isfinite(logp)) {
+  if (!std::isfinite(value_of_rec(logp))) {
+    check_finite(function, "Matrix of independent variables", x_ref);
     check_finite(function, "Weight matrix", beta_ref);
     check_finite(function, "Intercept", alpha_ref);
-    check_finite(function, "Matrix of independent variables", x_ref);
   }
 
   auto ops_partials = make_partials_propagator(x_ref, alpha_ref, beta_ref);
-  if constexpr (need_delta) {
-    // δ[n,k] = y[n,k] - S_n·p[n,k]
+  if constexpr (is_any_autodiff_v<T_x, T_alpha, T_beta>) {
     const Array<T_partials_return, Dynamic, Dynamic> delta
         = y_mat.template cast<T_partials_return>()
           - softmax_mat.colwise()
                 * instance_totals.template cast<T_partials_return>();
 
+    if constexpr (is_autodiff_v<T_x>) {
+      partials<0>(ops_partials)
+          = delta.matrix()
+            * beta_val.transpose().template cast<T_partials_return>();
+    }
     if constexpr (is_autodiff_v<T_alpha>) {
       if constexpr (T_alpha_rows == 1)
         partials<1>(ops_partials) = delta.colwise().sum();
@@ -177,18 +180,17 @@ inline return_type_t<T_x, T_alpha, T_beta> multinomial_logit_glm_lpmf(
           = x_val.transpose().template cast<T_partials_return>()
             * delta.matrix();
     }
-    if constexpr (is_autodiff_v<T_x>) {
-      edge<0>(ops_partials).partials_ = delta.matrix() * beta_val.transpose();
-    }
   }
   return ops_partials.build(logp);
 }
 
 template <typename T_x, typename T_alpha, typename T_beta>
 inline return_type_t<T_x, T_alpha, T_beta> multinomial_logit_glm_lpmf(
-    const std::vector<std::vector<int>>& y, const T_x& x, const T_alpha& alpha,
-    const T_beta& beta) {
-  return multinomial_logit_glm_lpmf<false>(y, x, alpha, beta);
+    const std::vector<std::vector<int>>& y, T_x&& x, T_alpha&& alpha,
+    T_beta&& beta) {
+  return multinomial_logit_glm_lpmf<false>(y, std::forward<T_x>(x),
+                                           std::forward<T_alpha>(alpha),
+                                           std::forward<T_beta>(beta));
 }
 
 }  // namespace math

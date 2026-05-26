@@ -47,8 +47,8 @@ template <bool propto, typename T_x, typename T_alpha, typename T_beta,
           require_all_prim_or_rev_kernel_expression_t<T_x, T_alpha,
                                                       T_beta>* = nullptr>
 inline return_type_t<T_x, T_alpha, T_beta> multinomial_logit_glm_lpmf(
-    const std::vector<std::vector<int>>& y, const T_x& x, const T_alpha& alpha,
-    const T_beta& beta) {
+    const std::vector<std::vector<int>>& y, T_x&& x, T_alpha&& alpha,
+    T_beta&& beta) {
   using T_partials_return = partials_return_t<T_x, T_alpha, T_beta>;
   static constexpr const char* function = "multinomial_logit_glm_lpmf";
 
@@ -82,16 +82,15 @@ inline return_type_t<T_x, T_alpha, T_beta> multinomial_logit_glm_lpmf(
     return 0;
   }
 
-  // Flatten nested y into an N×K matrix for upload.
   Eigen::MatrixXi y_mat(N_instances, N_classes);
   for (int n = 0; n < N_instances; ++n)
     for (int k = 0; k < N_classes; ++k)
       y_mat(n, k) = y[n][k];
   matrix_cl<int> y_cl(y_mat);
 
-  const auto& x_val = eval(value_of(x));
-  const auto& alpha_val = eval(value_of(alpha));
-  const auto& beta_val = eval(value_of(beta));
+  auto x_val = eval(value_of(x));
+  auto alpha_val = eval(value_of(alpha));
+  auto beta_val = eval(value_of(beta));
 
   matrix_cl<double> x_beta_cl = x_val * beta_val;
 
@@ -124,10 +123,10 @@ inline return_type_t<T_x, T_alpha, T_beta> multinomial_logit_glm_lpmf(
         = isfinite(beta_val);
   }
 
-  auto ops_partials = make_partials_propagator(x, alpha, beta);
+  auto ops_partials = make_partials_propagator(std::forward<T_x>(x),
+                                               std::forward<T_alpha>(alpha),
+                                               std::forward<T_beta>(beta));
   if constexpr (need_delta) {
-    // dlogp/deta[n,k] = delta[n,k]; chain rule: dx = delta*beta^T,
-    // dalpha = delta (or colwise_sum when 1xK), dbeta = x^T*delta.
     if constexpr (is_autodiff_v<T_x>)
       partials<0>(ops_partials) = delta_cl * transpose(beta_val);
     if constexpr (is_autodiff_v<T_alpha>)
