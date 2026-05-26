@@ -125,14 +125,20 @@ inline return_type_t<T_x, T_alpha, T_beta> multinomial_logit_glm_lpmf(
   T_alpha_ref alpha_ref = std::forward<T_alpha>(alpha);
   T_beta_ref beta_ref = std::forward<T_beta>(beta);
 
-  const auto& x_val = to_ref_if<is_autodiff_v<T_beta>>(value_of_rec(x_ref));
-  const auto& beta_val = to_ref_if<is_autodiff_v<T_x>>(value_of_rec(beta_ref));
+  const auto& x_val = to_ref_if<is_autodiff_v<T_beta>>(value_of(x_ref));
+  const auto& beta_val = to_ref_if<is_autodiff_v<T_x>>(value_of(beta_ref));
 
   Array<T_partials_return, Dynamic, Dynamic> eta;
   if constexpr (T_alpha_rows == 1) {
-    eta = ((x_val * beta_val).rowwise() + value_of(alpha_ref)).array();
+    eta = ((x_val.template cast<T_partials_return>()
+            * beta_val.template cast<T_partials_return>())
+               .rowwise()
+           + value_of(alpha_ref).template cast<T_partials_return>())
+              .array();
   } else {
-    eta = (x_val * beta_val + value_of(alpha_ref)).array();
+    eta = (x_val.template cast<T_partials_return>()
+           * beta_val.template cast<T_partials_return>()
+           + value_of(alpha_ref).template cast<T_partials_return>()).array();
   }
 
   // Row-max shift for numerical stability; cancels in log-softmax.
