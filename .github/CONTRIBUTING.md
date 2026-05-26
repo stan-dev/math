@@ -3,6 +3,8 @@
 Thanks for reading! We love contributions from everyone in the form of good discussion, issues, and pull requests.
 
 This is the short version. There's more information on the [documentation site](https://mc-stan.org/math/developer_guide.html).
+
+All contributions must follow the [Stan AI Contribution Policy](https://github.com/stan-dev/stan/wiki/AI-Contribution-Policy).
 ## Issues
 
 We reserve [issues](https://github.com/stan-dev/math/issues) for bugs and feature requests that are defined well enough for a developer to tackle. If you have general questions about the Math library, please see the [Discussion](#discussion) section.
