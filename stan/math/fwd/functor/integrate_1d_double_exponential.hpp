@@ -49,24 +49,12 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_double_exponential_tol(
         max_refinements, msgs, args_var...);
   };
   FvarT ret = finite_diff(func, args...);
-
   if constexpr (is_fvar<T_a>::value || is_fvar<T_b>::value) {
-    auto val_args = std::make_tuple(value_of(args)...);
     if constexpr (is_fvar<T_a>::value) {
-      ret.d_ += a.d_
-                * math::apply(
-                    [&](auto &&... tuple_args) {
-                      return -f(a_val, 0.0, msgs, tuple_args...);
-                    },
-                    val_args);
+      ret.d_ += a.d_ *  -f(a_val, 0.0, msgs, value_of(args)...);
     }
     if constexpr (is_fvar<T_b>::value) {
-      ret.d_ += b.d_
-                * math::apply(
-                    [&](auto &&... tuple_args) {
-                      return f(b_val, 0.0, msgs, tuple_args...);
-                    },
-                    val_args);
+      ret.d_ += b.d_ * f(b_val, 0.0, msgs, value_of(args)...);
     }
   }
   return ret;
