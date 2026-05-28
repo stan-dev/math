@@ -1,24 +1,15 @@
 #ifndef STAN_MATH_REV_FUNCTOR_INTEGRATE_1D_ADJOINT_HPP
 #define STAN_MATH_REV_FUNCTOR_INTEGRATE_1D_ADJOINT_HPP
 
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/rev/core/var.hpp>
-#include <stan/math/rev/core/nested_rev_autodiff.hpp>
-#include <stan/math/rev/core/reverse_pass_callback.hpp>
-#include <stan/math/rev/core/make_zeroed_arena.hpp>
-#include <stan/math/rev/core/collect_adjoints.hpp>
-#include <stan/math/rev/core/filter_var_scalar_types.hpp>
+#include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/to_arena.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/rev/functor/conditional_copy_and_promote.hpp>
 #include <stan/math/rev/functor/reverse_pass_collect_adjoints.hpp>
-#include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/is_inf.hpp>
 #include <stan/math/prim/fun/is_nan.hpp>
-#include <stan/math/prim/functor/apply.hpp>
-#include <stan/math/prim/functor/iter_tuple_nested.hpp>
 #include <cstddef>
 #include <ostream>
 #include <tuple>
