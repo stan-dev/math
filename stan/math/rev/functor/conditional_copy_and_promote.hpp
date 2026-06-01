@@ -1,9 +1,10 @@
-#ifndef STAN_MATH_MIX_FUNCTOR_CONDITIONAL_COPY_AND_PROMOTE_HPP
-#define STAN_MATH_MIX_FUNCTOR_CONDITIONAL_COPY_AND_PROMOTE_HPP
+#ifndef STAN_MATH_REV_FUNCTOR_CONDITIONAL_COPY_AND_PROMOTE_HPP
+#define STAN_MATH_REV_FUNCTOR_CONDITIONAL_COPY_AND_PROMOTE_HPP
 
-#include <stan/math/mix/functor/hessian_block_diag.hpp>
+#include <stan/math/rev/core.hpp>
 #include <stan/math/prim/functor.hpp>
 #include <stan/math/prim/fun.hpp>
+#include <cstdint>
 
 namespace stan::math::internal {
 
