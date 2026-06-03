@@ -57,6 +57,28 @@ inline return_type_t<T_x, T_alpha, T_beta> multinomial_logit_glm_lpmf(
       std::forward<T_alpha>(alpha), std::forward<T_beta>(beta));
 }
 
+/** \ingroup opencl
+ * Returns the log PMF of the Generalized Linear Model (GLM)
+ * with multinomial distribution and softmax (logit) link function.
+ * This is an OpenCL overload of
+ * `prim/prob/multinomial_logit_glm_lpmf.hpp`.
+ * Alpha can be either a shared 1×K row vector or an N×K per-instance matrix.
+ * @tparam T_y expression of the outcome count matrix (N×K kernel expression)
+ * @tparam T_x expression of the design matrix (N×M kernel expression)
+ * @tparam T_alpha expression of the intercept (1×K or N×K kernel expression)
+ * @tparam T_beta expression of the weight matrix (M×K kernel expression)
+ * @param y outcome count matrix. Each row is of length-K non-negative
+ *   integer counts for instance n
+ * @param x design matrix (N×M) on OpenCL device
+ * @param alpha intercept: 1×K broadcast row or N×K per-instance matrix
+ * @param beta weight matrix (M×K) on OpenCL device
+ * @return log sum of multinomial log PMFs over all N instances
+ * @throw std::domain_error if any element of x or beta is infinite or NaN,
+ * or if alpha contains `+inf` or NaN (`-inf` forces the corresponding softmax
+ * probability to zero and is allowed)
+ * @throw std::domain_error if any count in y is negative
+ * @throw std::invalid_argument if container sizes mismatch
+ */
 template <bool propto = false, typename T_y, typename T_x, typename T_alpha,
           typename T_beta,
           require_all_prim_or_rev_kernel_expression_t<T_y, T_x, T_alpha,

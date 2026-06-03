@@ -126,10 +126,6 @@ inline return_type_t<T_x, T_alpha, T_beta> multinomial_logit_glm_lpmf(
 
   decltype(auto) x_val = to_ref_if<is_autodiff_v<T_beta>>(value_of(x_ref));
   decltype(auto) beta_val = to_ref_if<is_autodiff_v<T_x>>(value_of(beta_ref));
-  // partials_return_t strips one autodiff level from each argument, matching
-  // x_val/beta_val/value_of(alpha_ref). Pass alpha's full type T_alpha here:
-  // value_of(alpha_ref) is already stripped once, so passing it would strip
-  // alpha twice and under-type eta (e.g. var instead of fvar<var>).
   using eta_ret_t = partials_return_t<T_x, T_beta, T_alpha>;
   Array<eta_ret_t, Dynamic, Dynamic> eta;
   if constexpr (T_alpha_rows == 1) {
