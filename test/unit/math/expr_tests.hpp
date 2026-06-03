@@ -72,7 +72,7 @@ constexpr const char*
  */
 template <typename ScalarType, std::size_t N>
 inline void expect_all_used_only_once(std::array<int, N>& arg_evals,
-                                      std::array<int, N>& size_of_arg) {
+                                      std::array<Eigen::Index, N>& size_of_arg) {
   for (int i = 0; i < N; ++i) {
     EXPECT_LE(arg_evals[i], size_of_arg[i])
         << "(" << char_scalar_type<ScalarType>::scalar << ")"
@@ -140,8 +140,8 @@ inline constexpr auto make_expr_args(std::array<int, N>& expr_evals,
  * For non-eigen types return 0.
  */
 template <typename T, stan::require_not_eigen_t<T>* = nullptr>
-inline constexpr int eigen_size(T&& x) {
-  return 0;
+inline constexpr Eigen::Index eigen_size(T&& x) {
+  return static_cast<Eigen::Index>(0);
 }
 
 /**
@@ -162,9 +162,9 @@ inline constexpr Eigen::Index eigen_size(EigMat&& x) {
  *  an Eigen type then the value is be zero.
  */
 template <typename... Args>
-inline constexpr std::array<int, sizeof...(Args)> eigen_arg_sizes(
+inline constexpr std::array<Eigen::Index, sizeof...(Args)> eigen_arg_sizes(
     Args&&... args) {
-  return std::array<int, sizeof...(Args)>{eigen_size(args)...};
+  return std::array<Eigen::Index, sizeof...(Args)>{static_cast<Eigen::Index>(eigen_size(args))...};
 }
 
 /**
@@ -207,7 +207,7 @@ inline void check_expr_test(F&& f, Args&&... args) {
   for (int i = 0; i < sizeof...(args); ++i) {
     expr_eval_counts[i] = 0;
   }
-  std::array<int, sizeof...(args)> size_of_eigen_args
+  std::array<Eigen::Index, sizeof...(args)> size_of_eigen_args
       = eigen_arg_sizes(args...);
   // returns tuple of unary count expressions
   auto promoted_args = std::make_tuple(
