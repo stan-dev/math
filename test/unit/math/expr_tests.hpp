@@ -71,8 +71,8 @@ constexpr const char*
  *  the associated array will be zero.
  */
 template <typename ScalarType, std::size_t N>
-inline void expect_all_used_only_once(std::array<int, N>& arg_evals,
-                                      std::array<Eigen::Index, N>& size_of_arg) {
+inline void expect_all_used_only_once(
+    std::array<int, N>& arg_evals, std::array<Eigen::Index, N>& size_of_arg) {
   for (int i = 0; i < N; ++i) {
     EXPECT_LE(arg_evals[i], size_of_arg[i])
         << "(" << char_scalar_type<ScalarType>::scalar << ")"
@@ -164,7 +164,8 @@ inline constexpr Eigen::Index eigen_size(EigMat&& x) {
 template <typename... Args>
 inline constexpr std::array<Eigen::Index, sizeof...(Args)> eigen_arg_sizes(
     Args&&... args) {
-  return std::array<Eigen::Index, sizeof...(Args)>{static_cast<Eigen::Index>(eigen_size(args))...};
+  return std::array<Eigen::Index, sizeof...(Args)>{
+      static_cast<Eigen::Index>(eigen_size(args))...};
 }
 
 /**
