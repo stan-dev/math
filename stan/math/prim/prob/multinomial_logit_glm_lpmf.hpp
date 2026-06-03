@@ -82,7 +82,8 @@ template <bool propto, typename T_x, typename T_alpha, typename T_beta,
           require_matrix_t<T_x>* = nullptr,
           require_matrix_t<T_alpha>* = nullptr,
           require_matrix_t<T_beta>* = nullptr,
-          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<T_x, T_alpha, T_beta>* = nullptr>
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_x, T_alpha, T_beta>* = nullptr>
 inline return_type_t<T_x, T_alpha, T_beta> multinomial_logit_glm_lpmf(
     const std::vector<std::vector<int>>& y, T_x&& x, T_alpha&& alpha,
     T_beta&& beta) {
@@ -138,8 +139,7 @@ inline return_type_t<T_x, T_alpha, T_beta> multinomial_logit_glm_lpmf(
   }
 
   // Row-max shift for numerical stability; cancels in log-softmax.
-  const auto exp_eta
-      = exp((eta.colwise() - eta.rowwise().maxCoeff()));
+  const auto exp_eta = exp((eta.colwise() - eta.rowwise().maxCoeff()));
   const Array<eta_ret_t, Dynamic, Dynamic> softmax_mat
       = exp_eta.colwise() / exp_eta.rowwise().sum();
 
@@ -167,7 +167,8 @@ inline return_type_t<T_x, T_alpha, T_beta> multinomial_logit_glm_lpmf(
               .eval();
 
     if constexpr (is_autodiff_v<T_x>) {
-      partials<0>(ops_partials) = multiply(delta.matrix(), beta_val.transpose());
+      partials<0>(ops_partials)
+          = multiply(delta.matrix(), beta_val.transpose());
     }
     if constexpr (is_autodiff_v<T_beta>) {
       partials<2>(ops_partials) = multiply(x_val.transpose(), delta.matrix());
@@ -184,7 +185,8 @@ inline return_type_t<T_x, T_alpha, T_beta> multinomial_logit_glm_lpmf(
 }
 
 template <typename T_x, typename T_alpha, typename T_beta,
-          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<T_x, T_alpha, T_beta>* = nullptr>
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_x, T_alpha, T_beta>* = nullptr>
 inline return_type_t<T_x, T_alpha, T_beta> multinomial_logit_glm_lpmf(
     const std::vector<std::vector<int>>& y, T_x&& x, T_alpha&& alpha,
     T_beta&& beta) {

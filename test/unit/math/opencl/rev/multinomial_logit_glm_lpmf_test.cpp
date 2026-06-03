@@ -328,9 +328,8 @@ TEST(ProbDistributionsMultinomialLogitGLM, opencl_matrix_cl_y_broadcast_alpha) {
   };
   stan::math::test::compare_cpu_opencl_prim_rev_separate(f_cpu, f_cl, x, alpha,
                                                          beta);
-  stan::math::test::compare_cpu_opencl_prim_rev_separate(f_cpu_propto,
-                                                         f_cl_propto, x, alpha,
-                                                         beta);
+  stan::math::test::compare_cpu_opencl_prim_rev_separate(
+      f_cpu_propto, f_cl_propto, x, alpha, beta);
 }
 
 TEST(ProbDistributionsMultinomialLogitGLM, opencl_matrix_cl_y_matrix_alpha) {
@@ -358,9 +357,8 @@ TEST(ProbDistributionsMultinomialLogitGLM, opencl_matrix_cl_y_matrix_alpha) {
   };
   stan::math::test::compare_cpu_opencl_prim_rev_separate(f_cpu, f_cl, x, alpha,
                                                          beta);
-  stan::math::test::compare_cpu_opencl_prim_rev_separate(f_cpu_propto,
-                                                         f_cl_propto, x, alpha,
-                                                         beta);
+  stan::math::test::compare_cpu_opencl_prim_rev_separate(
+      f_cpu_propto, f_cl_propto, x, alpha, beta);
 }
 
 TEST(ProbDistributionsMultinomialLogitGLM, opencl_matrix_cl_y_large) {

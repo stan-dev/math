@@ -53,8 +53,8 @@ inline return_type_t<T_x, T_alpha, T_beta> multinomial_logit_glm_lpmf(
     return 0;
   }
   return multinomial_logit_glm_lpmf<propto>(
-      matrix_cl<int>(as_array_or_scalar(y)), std::forward<T_x>(x), std::forward<T_alpha>(alpha),
-      std::forward<T_beta>(beta));
+      matrix_cl<int>(as_array_or_scalar(y)), std::forward<T_x>(x),
+      std::forward<T_alpha>(alpha), std::forward<T_beta>(beta));
 }
 
 template <bool propto = false, typename T_y, typename T_x, typename T_alpha,
