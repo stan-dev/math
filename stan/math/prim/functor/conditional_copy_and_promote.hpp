@@ -11,6 +11,7 @@
 #include <stan/math/prim/meta/is_var.hpp>
 #include <stan/math/prim/meta/is_vector.hpp>
 #include <stan/math/prim/meta/scalar_type.hpp>
+#include <cstdint>
 #include <utility>
 #include <vector>
 

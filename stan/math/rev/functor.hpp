@@ -13,7 +13,12 @@
 #include <stan/math/rev/functor/cvodes_integrator.hpp>
 #include <stan/math/rev/functor/cvodes_utils.hpp>
 #include <stan/math/rev/functor/gradient.hpp>
+#include <stan/math/prim/functor/conditional_copy_and_promote.hpp>
+#include <stan/math/rev/functor/reverse_pass_collect_adjoints.hpp>
+#include <stan/math/rev/functor/integrate_1d_adjoint.hpp>
 #include <stan/math/rev/functor/integrate_1d.hpp>
+#include <stan/math/rev/functor/integrate_1d_double_exponential.hpp>
+#include <stan/math/rev/functor/integrate_1d_gauss_kronrod.hpp>
 #include <stan/math/rev/functor/dae.hpp>
 #include <stan/math/rev/functor/integrate_ode_adams.hpp>
 #include <stan/math/rev/functor/integrate_ode_bdf.hpp>
