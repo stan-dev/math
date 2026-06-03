@@ -6,6 +6,8 @@
 #include <stan/math/fwd/functor/finite_diff.hpp>
 #include <stan/math/fwd/functor/hessian.hpp>
 #include <stan/math/fwd/functor/integrate_1d.hpp>
+#include <stan/math/fwd/functor/integrate_1d_double_exponential.hpp>
+#include <stan/math/fwd/functor/integrate_1d_gauss_kronrod.hpp>
 #include <stan/math/fwd/functor/jacobian.hpp>
 #include <stan/math/fwd/functor/operands_and_partials.hpp>
 #include <stan/math/fwd/functor/partials_propagator.hpp>
