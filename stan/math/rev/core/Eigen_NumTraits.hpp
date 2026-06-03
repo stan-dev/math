@@ -58,7 +58,9 @@ struct NumTraits<stan::math::var> : GenericNumTraits<stan::math::var> {
     IsSigned = 1,
 
     /**
-     * stan::math::var does not require initialization.
+     * stan::math::var requires initialization. Technically, it is valid with
+     * a `nullptr` for `vi_`, but for the contents of a matrix of `var`
+     * to be valid the `vi_` pointer must be initialized.
      */
     RequireInitialization = 0,
 
