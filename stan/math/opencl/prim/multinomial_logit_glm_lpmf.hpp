@@ -43,20 +43,35 @@ namespace math {
  * @throw std::domain_error if any count in y is negative
  * @throw std::invalid_argument if container sizes mismatch
  */
-template <bool propto, typename T_x, typename T_alpha, typename T_beta,
+template <bool propto = false, typename T_x, typename T_alpha, typename T_beta,
           require_all_prim_or_rev_kernel_expression_t<T_x, T_alpha,
                                                       T_beta>* = nullptr>
 inline return_type_t<T_x, T_alpha, T_beta> multinomial_logit_glm_lpmf(
     const std::vector<std::vector<int>>& y, T_x&& x, T_alpha&& alpha,
     T_beta&& beta) {
+  if (size_zero(y)) {
+    return 0;
+  }
+  return multinomial_logit_glm_lpmf<propto>(
+      matrix_cl<int>(as_array_or_scalar(y)), std::forward<T_x>(x), std::forward<T_alpha>(alpha),
+      std::forward<T_beta>(beta));
+}
+
+template <bool propto = false, typename T_y, typename T_x, typename T_alpha,
+          typename T_beta,
+          require_all_prim_or_rev_kernel_expression_t<T_y, T_x, T_alpha,
+                                                      T_beta>* = nullptr>
+inline return_type_t<T_x, T_alpha, T_beta> multinomial_logit_glm_lpmf(
+    T_y&& y, T_x&& x, T_alpha&& alpha, T_beta&& beta) {
   using T_partials_return = partials_return_t<T_x, T_alpha, T_beta>;
   static constexpr const char* function = "multinomial_logit_glm_lpmf";
 
   const int N_instances = x.rows();
   const int N_classes = beta.cols();
-
-  check_size_match(function, "Rows of", "x", N_instances, "size of", "y",
-                   y.size());
+  check_size_match(function, "Rows of", "y", y.rows(), "rows of", "x",
+                   N_instances);
+  check_size_match(function, "Columns of", "y", y.cols(), "columns of", "beta",
+                   N_classes);
   check_size_match(function, "Columns of", "beta", N_classes, "columns of",
                    "alpha", alpha.cols());
   check_size_match(function, "Columns of", "x", x.cols(), "rows of", "beta",
@@ -72,25 +87,15 @@ inline return_type_t<T_x, T_alpha, T_beta> multinomial_logit_glm_lpmf(
   if (N_instances == 0) {
     return 0;
   }
-  for (int n = 0; n < N_instances; ++n) {
-    check_size_match(function, "Size of outcome vector", y[n].size(),
-                     "number of classes", N_classes);
-    check_nonnegative(function, "outcome counts", y[n]);
-  }
 
   if constexpr (!include_summand<propto, T_x, T_alpha, T_beta>::value) {
     return 0;
   }
 
-  Eigen::MatrixXi y_mat(N_instances, N_classes);
-  for (int n = 0; n < N_instances; ++n)
-    for (int k = 0; k < N_classes; ++k)
-      y_mat(n, k) = y[n][k];
-  matrix_cl<int> y_cl(y_mat);
-
-  auto x_val = eval(value_of(x));
-  auto alpha_val = eval(value_of(alpha));
-  auto beta_val = eval(value_of(beta));
+  decltype(auto) y_val = eval(value_of(y));
+  decltype(auto) x_val = eval(value_of(x));
+  decltype(auto) alpha_val = eval(value_of(alpha));
+  decltype(auto) beta_val = eval(value_of(beta));
 
   matrix_cl<double> x_beta_cl = x_val * beta_val;
 
@@ -102,13 +107,14 @@ inline return_type_t<T_x, T_alpha, T_beta> multinomial_logit_glm_lpmf(
 
   matrix_cl<double> logp_cl(wgs, 1);
   matrix_cl<double> delta_cl(0, 0);
-  if constexpr (need_delta)
+  if constexpr (need_delta) {
     delta_cl = matrix_cl<double>(N_instances, N_classes);
+  }
 
   try {
     opencl_kernels::multinomial_logit_glm(
         cl::NDRange(local_size * wgs), cl::NDRange(local_size), logp_cl,
-        delta_cl, y_cl, x_beta_cl, alpha_val, N_instances, N_classes,
+        delta_cl, y_val, x_beta_cl, alpha_val, N_instances, N_classes,
         is_alpha_vector, need_delta, !propto);
   } catch (const cl::Error& e) {
     check_opencl_error(function, e);
@@ -117,6 +123,7 @@ inline return_type_t<T_x, T_alpha, T_beta> multinomial_logit_glm_lpmf(
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
 
   if (!std::isfinite(logp)) {
+    check_cl(function, "outcome counts", y_val, "nonnegative") = y_val >= 0;
     check_cl(function, "Design matrix", x_val, "finite") = isfinite(x_val);
     check_cl(function, "Intercept", alpha_val, "finite") = isfinite(alpha_val);
     check_cl(function, "Weight matrix", beta_val, "finite")
@@ -127,13 +134,16 @@ inline return_type_t<T_x, T_alpha, T_beta> multinomial_logit_glm_lpmf(
                                                std::forward<T_alpha>(alpha),
                                                std::forward<T_beta>(beta));
   if constexpr (need_delta) {
-    if constexpr (is_autodiff_v<T_x>)
+    if constexpr (is_autodiff_v<T_x>) {
       partials<0>(ops_partials) = delta_cl * transpose(beta_val);
-    if constexpr (is_autodiff_v<T_alpha>)
+    }
+    if constexpr (is_autodiff_v<T_alpha>) {
       partials<1>(ops_partials)
           = is_alpha_vector ? colwise_sum(delta_cl) : delta_cl;
-    if constexpr (is_autodiff_v<T_beta>)
+    }
+    if constexpr (is_autodiff_v<T_beta>) {
       partials<2>(ops_partials) = transpose(x_val) * delta_cl;
+    }
   }
   return ops_partials.build(logp);
 }

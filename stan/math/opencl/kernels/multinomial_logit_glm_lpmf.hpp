@@ -59,13 +59,12 @@ static constexpr const char* multinomial_logit_glm_kernel_code = STRINGIFY(
       double logp = 0;
       if (gid < N_instances) {
         // Pass 1: row-wise max of eta for numerical stability.
-        double eta_max = -INFINITY;
+        double eta_max = -DBL_MAX;
         for (int k = 0; k < N_classes; k++) {
           int nk = k * N_instances + gid;
-          int alpha_idx = is_alpha_vector ? k : nk;
+          int alpha_idx = is_alpha_vector * k + !is_alpha_vector * nk;
           double eta_k = x_beta_global[nk] + alpha_global[alpha_idx];
-          if (eta_k > eta_max)
-            eta_max = eta_k;
+          eta_max = fmax(eta_k, eta_max);
         }
 
         // Pass 2: sum_exp, S_n, logp; if need_delta stash exp_k in
@@ -74,32 +73,33 @@ static constexpr const char* multinomial_logit_glm_kernel_code = STRINGIFY(
         int S_n = 0;
         for (int k = 0; k < N_classes; k++) {
           int nk = k * N_instances + gid;
-          int alpha_idx = is_alpha_vector ? k : nk;
+          int alpha_idx = is_alpha_vector * k + !is_alpha_vector * nk;
           double shifted_eta_k
               = x_beta_global[nk] + alpha_global[alpha_idx] - eta_max;
           double exp_k = exp(shifted_eta_k);
           sum_exp += exp_k;
           int y_nk = y_global[nk];
           S_n += y_nk;
-          if (y_nk != 0)
-            logp += y_nk * shifted_eta_k;
-          if (need_delta)
+          logp += (y_nk != 0) ? y_nk * shifted_eta_k : 0;
+          if (need_delta) {
             delta_global[nk] = exp_k;
+          }
         }
         logp -= S_n * log(sum_exp);
 
-        if (need_logp_gamma)
+        if (need_logp_gamma) {
           logp += lgamma(S_n + 1.0);
+        }
 
         // Normalize delta and/or subtract lgamma(y_nk+1) in one pass.
         if (need_delta || need_logp_gamma) {
           for (int k = 0; k < N_classes; k++) {
             int nk = k * N_instances + gid;
             int y_nk = y_global[nk];
-            if (need_logp_gamma)
-              logp -= lgamma(y_nk + 1.0);
-            if (need_delta)
+            logp -= need_logp_gamma * lgamma(y_nk + 1.0);
+            if (need_delta) {
               delta_global[nk] = y_nk - S_n * delta_global[nk] / sum_exp;
+            }
           }
         }
       }

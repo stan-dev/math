@@ -288,4 +288,131 @@ TEST(ProbDistributionsMultinomialLogitGLM, opencl_neg_inf_alpha) {
   EXPECT_FLOAT_EQ(logp_cpu, logp_cl);
 }
 
+// ---------------------------------------------------------------------------
+// Signature 2: outcome counts supplied as an N x K matrix_cl<int> already on
+// the device. The CPU reference uses the std::vector<std::vector<int>>
+// signature (signature 1); the OpenCL side uses the matrix_cl<int> signature.
+// ---------------------------------------------------------------------------
+namespace {
+matrix_cl<int> y_to_matrix_cl(const vector<vector<int>>& y, int N, int K) {
+  Eigen::MatrixXi y_mat(N, K);
+  for (int n = 0; n < N; ++n)
+    for (int k = 0; k < K; ++k)
+      y_mat(n, k) = y[n][k];
+  return matrix_cl<int>(y_mat);
+}
+}  // namespace
+
+TEST(ProbDistributionsMultinomialLogitGLM, opencl_matrix_cl_y_broadcast_alpha) {
+  int N = 3, M = 2, K = 3;
+  vector<vector<int>> y{{1, 2, 0}, {0, 3, 1}, {2, 0, 2}};
+  Matrix<double, Dynamic, Dynamic> x(N, M);
+  x << 1.0, -0.5, 0.3, 0.7, -0.2, 1.1;
+  Matrix<double, 1, Dynamic> alpha(1, K);
+  alpha << 0.1, -0.3, 0.2;
+  Matrix<double, Dynamic, Dynamic> beta(M, K);
+  beta << 0.3, -0.2, 0.1, -0.1, 0.4, -0.3;
+
+  matrix_cl<int> y_cl = y_to_matrix_cl(y, N, K);
+  auto f_cpu = [&y](const auto& x_, const auto& a_, const auto& b_) {
+    return stan::math::multinomial_logit_glm_lpmf(y, x_, a_, b_);
+  };
+  auto f_cl = [&y_cl](const auto& x_, const auto& a_, const auto& b_) {
+    return stan::math::multinomial_logit_glm_lpmf(y_cl, x_, a_, b_);
+  };
+  auto f_cpu_propto = [&y](const auto& x_, const auto& a_, const auto& b_) {
+    return stan::math::multinomial_logit_glm_lpmf<true>(y, x_, a_, b_);
+  };
+  auto f_cl_propto = [&y_cl](const auto& x_, const auto& a_, const auto& b_) {
+    return stan::math::multinomial_logit_glm_lpmf<true>(y_cl, x_, a_, b_);
+  };
+  stan::math::test::compare_cpu_opencl_prim_rev_separate(f_cpu, f_cl, x, alpha,
+                                                         beta);
+  stan::math::test::compare_cpu_opencl_prim_rev_separate(f_cpu_propto,
+                                                         f_cl_propto, x, alpha,
+                                                         beta);
+}
+
+TEST(ProbDistributionsMultinomialLogitGLM, opencl_matrix_cl_y_matrix_alpha) {
+  int N = 3, M = 2, K = 3;
+  vector<vector<int>> y{{1, 2, 0}, {0, 3, 1}, {2, 0, 2}};
+  Matrix<double, Dynamic, Dynamic> x(N, M);
+  x << 1.0, -0.5, 0.3, 0.7, -0.2, 1.1;
+  Matrix<double, Dynamic, Dynamic> alpha(N, K);
+  alpha << 0.1, -0.3, 0.2, -0.2, 0.1, 0.3, 0.0, 0.2, -0.1;
+  Matrix<double, Dynamic, Dynamic> beta(M, K);
+  beta << 0.3, -0.2, 0.1, -0.1, 0.4, -0.3;
+
+  matrix_cl<int> y_cl = y_to_matrix_cl(y, N, K);
+  auto f_cpu = [&y](const auto& x_, const auto& a_, const auto& b_) {
+    return stan::math::multinomial_logit_glm_lpmf(y, x_, a_, b_);
+  };
+  auto f_cl = [&y_cl](const auto& x_, const auto& a_, const auto& b_) {
+    return stan::math::multinomial_logit_glm_lpmf(y_cl, x_, a_, b_);
+  };
+  auto f_cpu_propto = [&y](const auto& x_, const auto& a_, const auto& b_) {
+    return stan::math::multinomial_logit_glm_lpmf<true>(y, x_, a_, b_);
+  };
+  auto f_cl_propto = [&y_cl](const auto& x_, const auto& a_, const auto& b_) {
+    return stan::math::multinomial_logit_glm_lpmf<true>(y_cl, x_, a_, b_);
+  };
+  stan::math::test::compare_cpu_opencl_prim_rev_separate(f_cpu, f_cl, x, alpha,
+                                                         beta);
+  stan::math::test::compare_cpu_opencl_prim_rev_separate(f_cpu_propto,
+                                                         f_cl_propto, x, alpha,
+                                                         beta);
+}
+
+TEST(ProbDistributionsMultinomialLogitGLM, opencl_matrix_cl_y_large) {
+  int N = 153, M = 17, K = 11;
+  vector<vector<int>> y(N, vector<int>(K));
+  for (int n = 0; n < N; ++n)
+    for (int k = 0; k < K; ++k)
+      y[n][k] = (n * K + k) % 5;
+
+  Matrix<double, Dynamic, Dynamic> x
+      = Matrix<double, Dynamic, Dynamic>::Random(N, M);
+  Matrix<double, 1, Dynamic> alpha = Matrix<double, 1, Dynamic>::Random(1, K);
+  Matrix<double, Dynamic, Dynamic> beta
+      = Matrix<double, Dynamic, Dynamic>::Random(M, K);
+
+  matrix_cl<int> y_cl = y_to_matrix_cl(y, N, K);
+  auto f_cpu = [&y](const auto& x_, const auto& a_, const auto& b_) {
+    return stan::math::multinomial_logit_glm_lpmf(y, x_, a_, b_);
+  };
+  auto f_cl = [&y_cl](const auto& x_, const auto& a_, const auto& b_) {
+    return stan::math::multinomial_logit_glm_lpmf(y_cl, x_, a_, b_);
+  };
+  stan::math::test::compare_cpu_opencl_prim_rev_separate(f_cpu, f_cl, x, alpha,
+                                                         beta);
+}
+
+TEST(ProbDistributionsMultinomialLogitGLM, error_checking_matrix_cl_y) {
+  int N = 3, M = 2, K = 3;
+  vector<vector<int>> y{{1, 2, 0}, {0, 3, 1}, {2, 0, 2}};
+
+  Matrix<double, Dynamic, Dynamic> x(N, M);
+  x << 1.0, -0.5, 0.3, 0.7, -0.2, 1.1;
+  Matrix<double, 1, Dynamic> alpha(1, K);
+  alpha << 0.1, -0.3, 0.2;
+  Matrix<double, Dynamic, Dynamic> beta(M, K);
+  beta << 0.3, -0.2, 0.1, -0.1, 0.4, -0.3;
+
+  matrix_cl<double> x_cl(x), alpha_cl(alpha), beta_cl(beta);
+  matrix_cl<int> y_cl = y_to_matrix_cl(y, N, K);
+  matrix_cl<int> y_bad_n_cl(Eigen::MatrixXi::Zero(N + 1, K));
+  matrix_cl<int> y_bad_k_cl(Eigen::MatrixXi::Zero(N, K + 1));
+
+  EXPECT_NO_THROW(
+      stan::math::multinomial_logit_glm_lpmf(y_cl, x_cl, alpha_cl, beta_cl));
+  // y rows must match the number of instances (rows of x).
+  EXPECT_THROW(stan::math::multinomial_logit_glm_lpmf(y_bad_n_cl, x_cl,
+                                                      alpha_cl, beta_cl),
+               std::invalid_argument);
+  // y cols must match the number of classes (cols of beta).
+  EXPECT_THROW(stan::math::multinomial_logit_glm_lpmf(y_bad_k_cl, x_cl,
+                                                      alpha_cl, beta_cl),
+               std::invalid_argument);
+}
+
 #endif
