@@ -2,7 +2,7 @@
 #define STAN_MATH_MIX_FUNCTOR_LAPLACE_LIKELIHOOD_HPP
 
 #include <stan/math/mix/functor/hessian_block_diag.hpp>
-#include <stan/math/mix/functor/conditional_copy_and_promote.hpp>
+#include <stan/math/rev/functor/conditional_copy_and_promote.hpp>
 #include <stan/math/prim/functor.hpp>
 #include <stan/math/prim/fun.hpp>
 
