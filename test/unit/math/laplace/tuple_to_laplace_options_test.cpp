@@ -14,7 +14,8 @@ TEST(laplace_utils, tuple_to_laplace_options) {
   EXPECT_EQ(laplace_opts.line_search.max_iterations, 2);
   EXPECT_EQ(laplace_opts.allow_fallthrough, false);
   EXPECT_EQ(laplace_opts.theta_0, Eigen::VectorXd::Zero(3));
-  static_assert(std::is_same_v<decltype(laplace_opts), laplace_options_user_supplied>);
+  static_assert(
+      std::is_same_v<decltype(laplace_opts), laplace_options_user_supplied>);
 }
 
 TEST(laplace_utils, tuple_to_laplace_options_move) {
@@ -30,5 +31,6 @@ TEST(laplace_utils, tuple_to_laplace_options_move) {
   EXPECT_EQ(laplace_opts.line_search.max_iterations, 2);
   EXPECT_EQ(laplace_opts.allow_fallthrough, true);
   EXPECT_EQ(laplace_opts.theta_0, Eigen::VectorXd::Zero(3));
-  static_assert(std::is_same_v<decltype(laplace_opts), laplace_options_user_supplied>);
+  static_assert(
+      std::is_same_v<decltype(laplace_opts), laplace_options_user_supplied>);
 }
