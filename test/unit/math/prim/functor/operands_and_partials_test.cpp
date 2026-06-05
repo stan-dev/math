@@ -8,10 +8,10 @@ TEST(MathMetaPrim, OperandsAndPartials) {
   operands_and_partials<double, double, double, double> o2(2.0, 3.0, 4.0, 5.0);
 
   /**
-   * This is size 1 because of two empty broadcasts arrays use Empty base optimization
-   * to only take up 1 byte for both of them.
+   * This is size 1 because of two empty broadcasts arrays use Empty base
+   * optimization to only take up 1 byte for both of them.
    */
-   EXPECT_EQ(1, sizeof(o2));
+  EXPECT_EQ(1, sizeof(o2));
 
   EXPECT_FLOAT_EQ(27.1, o1.build(27.1));
 }
