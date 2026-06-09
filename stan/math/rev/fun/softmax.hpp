@@ -19,13 +19,13 @@ namespace math {
  *
  * @tparam T a `var_value` or Eigen vector/row_vector with `var` scalar
  * @param x input
- * @return softmax of the input
- * @throw std::invalid_argument if the input size is 0
+ * @return softmax of the input, or an empty result if the input is empty
  */
 template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline auto softmax(T&& x) {
-  check_nonzero_size("softmax", "x", x);
   auto x_arena = to_arena(std::forward<T>(x));
+  if (x_arena.size() == 0)
+    return x_arena;
   using return_t
       = return_var_matrix_t<plain_type_t<decltype(x_arena.val())>, T>;
   arena_t<return_t> res = softmax(x_arena.val());

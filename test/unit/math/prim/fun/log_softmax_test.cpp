@@ -84,9 +84,8 @@ TEST(MathMatrixPrimMat, log_softmax_neg_inf) {
   EXPECT_FLOAT_EQ(2.0 - lse_finite, result[2]);
 }
 
-TEST(MathMatrixPrimMat, log_softmax_exception) {
+TEST(MathMatrixPrimMat, log_softmax_empty) {
   using stan::math::log_softmax;
-  stan::math::vector_d v0;  // size == 0
-
-  EXPECT_THROW(log_softmax(v0), std::invalid_argument);
+  stan::math::vector_d v0;
+  EXPECT_EQ(0, log_softmax(v0).size());
 }

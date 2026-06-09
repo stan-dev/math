@@ -12,9 +12,9 @@ TEST(OpenCLSoftmax, prim_rev_values_small) {
   stan::math::test::compare_cpu_opencl_prim_rev(softmax_functor, a);
 }
 
-TEST(OpenCLSoftmax, prim_rev_size_0_throws) {
+TEST(OpenCLSoftmax, prim_rev_size_0) {
   Eigen::VectorXd a(0);
-  EXPECT_THROW(stan::math::softmax(a), std::invalid_argument);
+  EXPECT_EQ(0, stan::math::softmax(a).size());
 }
 
 TEST(OpenCLSoftmax, prim_rev_values_large) {

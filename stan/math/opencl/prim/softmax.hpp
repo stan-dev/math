@@ -23,7 +23,8 @@ template <typename T,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
 inline matrix_cl<double> softmax(const T& a) {
   check_vector("softmax (OpenCL)", "a", a);
-  check_nonzero_size("softmax", "a", a);
+  if (a.size() == 0)
+    return matrix_cl<double>(a.rows(), a.cols());
   matrix_cl<double> theta;
   if constexpr (stan::internal::is_trivial_kg_expression<T>::value) {
     matrix_cl<double> a_max = max_2d(a);

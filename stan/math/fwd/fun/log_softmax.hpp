@@ -33,8 +33,7 @@ inline auto log_softmax(T&& x) {
  *
  * @tparam Vec Eigen vector with `fvar` scalar
  * @param x vector to transform
- * @return log softmax of the vector
- * @throw std::invalid_argument if the input size is 0
+ * @return log softmax of the vector, or an empty result if the input is empty
  */
 template <typename Vec, require_eigen_vector_vt<is_fvar, Vec>* = nullptr>
 inline auto log_softmax(Vec&& x) {
@@ -42,8 +41,9 @@ inline auto log_softmax(Vec&& x) {
   constexpr int Rows = vec::RowsAtCompileTime;
   constexpr int Cols = vec::ColsAtCompileTime;
   using T = typename value_type_t<vec>::Scalar;
-  check_nonzero_size("log_softmax", "x", x);
   decltype(auto) x_ref = to_ref(std::forward<Vec>(x));
+  if (x_ref.size() == 0)
+    return Eigen::Matrix<fvar<T>, Rows, Cols>{};
   const auto s = softmax(value_of(x_ref));
   const auto d_in = x_ref.d();
   const auto dot_sd = s.dot(d_in);
