@@ -42,7 +42,6 @@ inline auto softmax(T&& x) {
  * @tparam T `std::vector` whose scalar type is `var`
  * @param x array of vectors to transform
  * @return array of softmax results
- * @throw std::invalid_argument if any input vector is empty
  */
 template <typename T, require_std_vector_st<is_var, T>* = nullptr>
 inline auto softmax(T&& x) {

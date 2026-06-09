@@ -18,7 +18,6 @@ namespace math {
  * @tparam T `std::vector` whose scalar type is `fvar`
  * @param x container of vectors to transform
  * @return container of softmax results
- * @throw std::invalid_argument if any input vector is empty
  */
 template <typename T, require_std_vector_st<is_fvar, T>* = nullptr>
 inline auto softmax(T&& x) {
