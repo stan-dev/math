@@ -3,7 +3,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/mix/functor/laplace_likelihood.hpp>
 #include <stan/math/mix/functor/laplace_marginal_density_estimator.hpp>
-#include <stan/math/mix/functor/conditional_copy_and_promote.hpp>
+#include <stan/math/rev/functor/conditional_copy_and_promote.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun.hpp>
@@ -133,40 +133,6 @@ inline constexpr void copy_compute_s2(Output&& output, Input&& input) {
         }
       },
       std::forward<Output>(output), std::forward<Input>(input));
-}
-
-/**
- * Collects adjoints from a tuple or std::vector of tuples
- * @tparam Output A tuple or std::vector of tuples where all scalar types are
- * `var` types
- * @tparam Input A tuple or std::vector of tuples where all scalar types are
- * `arithmetic` types
- * @param ret The vari object containing the adjoint to be added
- * @param output The output to which the adjoints will be added
- * @param input The input from which the adjoints will be collected
- */
-template <typename Output, typename Input>
-inline void reverse_pass_collect_adjoints(var ret, Output&& output,
-                                          Input&& input) {
-  if constexpr (is_tuple_v<Output>) {
-    stan::math::for_each(
-        [ret](auto&& inner_arg, auto&& inner_input) mutable {
-          reverse_pass_collect_adjoints(
-              ret, std::forward<decltype(inner_arg)>(inner_arg),
-              std::forward<decltype(inner_input)>(inner_input));
-        },
-        std::forward<Output>(output), std::forward<Input>(input));
-  } else if constexpr (is_std_vector_containing_tuple_v<Output>) {
-    for (std::size_t i = 0; i < output.size(); ++i) {
-      reverse_pass_collect_adjoints(ret, output[i], input[i]);
-    }
-  } else {
-    reverse_pass_callback(
-        [vi = ret.vi_, arg_arena = to_arena(std::forward<Output>(output)),
-         input_arena = to_arena(std::forward<Input>(input))]() mutable {
-          collect_adjoints(arg_arena, vi, input_arena);
-        });
-  }
 }
 
 }  // namespace internal
