@@ -50,27 +50,26 @@ struct lazy_select_evaluator
   using CoeffReturnType = typename XprType::CoeffReturnType;
   using CondScalar = typename Arg3::Scalar;
   enum {
-    CoeffReadCost =
-          static_cast<int>(Eigen::internal::evaluator<Arg1>::CoeffReadCost)
-          + static_cast<int>(Eigen::internal::evaluator<Arg2>::CoeffReadCost)
-          + static_cast<int>(Eigen::internal::evaluator<Arg3>::CoeffReadCost)
-          + static_cast<int>(Eigen::internal::functor_traits<TernaryOp>::Cost),
+    CoeffReadCost
+    = static_cast<int>(Eigen::internal::evaluator<Arg1>::CoeffReadCost)
+      + static_cast<int>(Eigen::internal::evaluator<Arg2>::CoeffReadCost)
+      + static_cast<int>(Eigen::internal::evaluator<Arg3>::CoeffReadCost)
+      + static_cast<int>(Eigen::internal::functor_traits<TernaryOp>::Cost),
 
     Arg1Flags = Eigen::internal::evaluator<Arg1>::Flags,
     Arg2Flags = Eigen::internal::evaluator<Arg2>::Flags,
     Arg3Flags = Eigen::internal::evaluator<Arg3>::Flags,
-    StorageOrdersAgree = (static_cast<int>(Arg1Flags) & Eigen::RowMajorBit)
-                    == (static_cast<int>(Arg2Flags) & Eigen::RowMajorBit)
-                    && (static_cast<int>(Arg1Flags) & Eigen::RowMajorBit)
-                    == (static_cast<int>(Arg3Flags) & Eigen::RowMajorBit),
-    Flags0 = (static_cast<int>(Arg1Flags)
-      | static_cast<int>(Arg2Flags)
-      | static_cast<int>(Arg3Flags))
-      & (Eigen::HereditaryBits
-        | (static_cast<int>(Arg1Flags)
-        & static_cast<int>(Arg2Flags)
-        & static_cast<int>(Arg3Flags)
-        & (StorageOrdersAgree ? Eigen::LinearAccessBit : 0))),
+    StorageOrdersAgree
+    = (static_cast<int>(Arg1Flags) & Eigen::RowMajorBit)
+          == (static_cast<int>(Arg2Flags) & Eigen::RowMajorBit)
+      && (static_cast<int>(Arg1Flags) & Eigen::RowMajorBit)
+             == (static_cast<int>(Arg3Flags) & Eigen::RowMajorBit),
+    Flags0 = (static_cast<int>(Arg1Flags) | static_cast<int>(Arg2Flags)
+              | static_cast<int>(Arg3Flags))
+             & (Eigen::HereditaryBits
+                | (static_cast<int>(Arg1Flags) & static_cast<int>(Arg2Flags)
+                   & static_cast<int>(Arg3Flags)
+                   & (StorageOrdersAgree ? Eigen::LinearAccessBit : 0))),
     Flags = (Flags0 & ~Eigen::RowMajorBit) | (Arg1Flags & Eigen::RowMajorBit),
     Alignment = Eigen::internal::plain_enum_min(
         Eigen::internal::plain_enum_min(
