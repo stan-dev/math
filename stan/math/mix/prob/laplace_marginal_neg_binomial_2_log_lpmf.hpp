@@ -53,6 +53,115 @@ struct neg_binomial_2_log_likelihood {
                elt_multiply(multiply(n_per_group, eta),
                             subtract(log_eta, lse))));
   }
+
+  /**
+   * Compute gradient and negative Hessian of the neg_binomial_2_log
+   * likelihood analytically, avoiding nested autodiff.
+   *
+   * @param theta Latent Gaussian variable (double).
+   * @param hessian_block_size Size of each diagonal block (typically 1).
+   * @param eta Dispersion parameter (scalar or 1-element vector).
+   * @param y Observed counts.
+   * @param y_index Group index for each observation.
+   * @param mean Mean offset for theta.
+   * @return pair of (gradient, negative Hessian) as (VectorXd, SparseMatrix).
+   */
+  template <typename Mean>
+  inline auto diff(const Eigen::VectorXd& theta, int hessian_block_size,
+                   const Eigen::VectorXd& eta, const std::vector<int>& y,
+                   const std::vector<int>& y_index, Mean&& mean) const {
+    const int theta_size = theta.size();
+    const double eta_scalar = eta(0);
+
+    Eigen::VectorXd sums = Eigen::VectorXd::Zero(theta_size);
+    Eigen::VectorXd n_samples = Eigen::VectorXd::Zero(theta_size);
+    for (size_t i = 0; i < y.size(); i++) {
+      n_samples(y_index[i] - 1) += 1;
+      sums(y_index[i] - 1) += y[i];
+    }
+
+    // theta + mean
+    Eigen::VectorXd theta_offset = add(theta, value_of(mean));
+
+    // exp(-theta_offset)
+    Eigen::VectorXd exp_neg_theta = exp(-theta_offset);
+    // sums + eta * n_samples
+    Eigen::VectorXd sums_plus_n_eta = sums + eta_scalar * n_samples;
+    // 1 + eta * exp(-theta_offset)
+    Eigen::VectorXd one_plus_exp
+        = Eigen::VectorXd::Ones(theta_size) + eta_scalar * exp_neg_theta;
+
+    // Gradient: sums - (sums + eta * n) / (1 + eta * exp(-theta))
+    Eigen::VectorXd gradient
+        = sums - sums_plus_n_eta.cwiseQuotient(one_plus_exp);
+
+    // Negative Hessian diagonal:
+    //   eta * (sums + eta * n) * exp(-theta) / (1 + eta * exp(-theta))^2
+    Eigen::VectorXd hessian_diag
+        = eta_scalar
+          * sums_plus_n_eta.cwiseProduct(exp_neg_theta.cwiseQuotient(
+              one_plus_exp.cwiseProduct(one_plus_exp)));
+
+    Eigen::SparseMatrix<double> hessian(theta_size, theta_size);
+    hessian.reserve(Eigen::VectorXi::Constant(theta_size, hessian_block_size));
+    for (int i = 0; i < theta_size; i++) {
+      hessian.insert(i, i) = hessian_diag(i);
+    }
+
+    return std::make_pair(std::move(gradient), std::move(hessian));
+  }
+
+  /**
+   * Compute the third derivative of the neg_binomial_2_log likelihood
+   * w.r.t. theta analytically, avoiding fvar<fvar<var>> autodiff.
+   *
+   * The third derivative is:
+   *   d^3/dtheta^3 log p(y|theta,eta) =
+   *     -(sums + eta*n) * eta * exp(theta) * (eta - exp(theta))
+   *     / (eta + exp(theta))^3
+   *
+   * @param theta Latent Gaussian variable (double).
+   * @param eta Dispersion parameter (scalar or 1-element vector).
+   * @param y Observed counts.
+   * @param y_index Group index for each observation.
+   * @param mean Mean offset for theta.
+   * @return Third derivative as a VectorXd.
+   */
+  template <typename Mean>
+  inline Eigen::VectorXd third_diff(const Eigen::VectorXd& theta,
+                                    const Eigen::VectorXd& eta,
+                                    const std::vector<int>& y,
+                                    const std::vector<int>& y_index,
+                                    Mean&& mean) const {
+    const int theta_size = theta.size();
+    const double eta_scalar = eta(0);
+
+    Eigen::VectorXd sums = Eigen::VectorXd::Zero(theta_size);
+    Eigen::VectorXd n_samples = Eigen::VectorXd::Zero(theta_size);
+    for (size_t i = 0; i < y.size(); i++) {
+      n_samples(y_index[i] - 1) += 1;
+      sums(y_index[i] - 1) += y[i];
+    }
+
+    // theta + mean
+    Eigen::VectorXd theta_offset = add(theta, value_of(mean));
+
+    Eigen::VectorXd exp_theta = exp(theta_offset);
+    Eigen::VectorXd eta_vec = Eigen::VectorXd::Constant(theta_size, eta_scalar);
+    Eigen::VectorXd eta_plus_exp_theta = eta_vec + exp_theta;
+
+    // -(sums + eta*n) * eta * exp(theta) * (eta - exp(theta))
+    //   / (eta + exp(theta))^3
+    Eigen::VectorXd eta_plus_exp_theta_sq
+        = eta_plus_exp_theta.cwiseProduct(eta_plus_exp_theta);
+    Eigen::VectorXd eta_plus_exp_theta_cubed
+        = eta_plus_exp_theta_sq.cwiseProduct(eta_plus_exp_theta);
+
+    return -((sums + eta_scalar * n_samples) * eta_scalar)
+                .cwiseProduct(exp_theta.cwiseProduct(
+                    (eta_vec - exp_theta)
+                        .cwiseQuotient(eta_plus_exp_theta_cubed)));
+  }
 };
 
 /**

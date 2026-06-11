@@ -5,6 +5,7 @@
 #include <stan/math/rev/functor/conditional_copy_and_promote.hpp>
 #include <stan/math/prim/functor.hpp>
 #include <stan/math/prim/fun.hpp>
+#include <type_traits>
 
 namespace stan {
 namespace math {
@@ -16,6 +17,41 @@ namespace math {
 namespace laplace_likelihood {
 
 namespace internal {
+
+/**
+ * Type trait to detect if a likelihood functor `F` provides a custom
+ * `diff` method that computes the gradient and negative Hessian
+ * analytically, avoiding the cost of embedded reverse-mode autodiff.
+ *
+ * A functor with a custom `diff` method should provide:
+ *   auto diff(theta, hessian_block_size, args...) const
+ * returning std::pair<gradient, sparse_hessian>.
+ */
+template <typename F, typename = void>
+struct has_custom_diff : std::false_type {};
+
+template <typename F>
+struct has_custom_diff<F, std::void_t<decltype(std::declval<const F&>().diff(
+                              std::declval<const Eigen::VectorXd&>(), 1))>>
+    : std::true_type {};
+
+template <typename F>
+inline constexpr bool has_custom_diff_v = has_custom_diff<F>::value;
+
+/**
+ * Type trait to detect if a likelihood functor `F` provides a custom
+ * `third_diff` method for the third derivative w.r.t. theta.
+ */
+template <typename F, typename = void>
+struct has_custom_third_diff : std::false_type {};
+
+template <typename F>
+struct has_custom_third_diff<
+    F, std::void_t<decltype(std::declval<const F&>().third_diff(
+           std::declval<const Eigen::VectorXd&>()))>> : std::true_type {};
+
+template <typename F>
+inline constexpr bool has_custom_third_diff_v = has_custom_third_diff<F>::value;
 /**
  * @tparam F A functor with `opertor()(Args&&...)` returning a scalar
  * @tparam Theta A class assignable to an Eigen vector type
@@ -158,6 +194,8 @@ inline auto block_hessian(F&& f, Theta&& theta,
  * `theta` and `args...`
  * @note If `Args` contains \ref var types then their adjoints will be
  * calculated as a side effect.
+ * @note If `F` provides a custom `diff` method, it will be used instead
+ * of the generic autodiff path for better performance.
  * @tparam F A functor with `opertor()(Args&&...)` returning a scalar
  * @tparam Theta A class assignable to an Eigen vector type
  * @tparam Stream Type of stream for messages.
@@ -174,33 +212,41 @@ template <typename F, typename Theta, typename Stream, typename... Args,
           require_eigen_vector_vt<std::is_arithmetic, Theta>* = nullptr>
 inline auto diff(F&& f, Theta&& theta, const Eigen::Index hessian_block_size,
                  Stream* msgs, Args&&... args) {
-  using Eigen::Dynamic;
-  using Eigen::Matrix;
-  const Eigen::Index theta_size = theta.size();
-  auto theta_gradient = [&theta, &f, &msgs](auto&&... args) {
-    nested_rev_autodiff nested;
-    Matrix<var, Dynamic, 1> theta_var = theta;
-    var f_var = f(theta_var, args..., msgs);
-    grad(f_var.vi_);
-    return theta_var.adj().eval();
-  }(args...);
-  if (hessian_block_size == 1) {
-    auto v = Eigen::VectorXd::Ones(theta_size);
-    Eigen::VectorXd hessian_v = Eigen::VectorXd::Zero(theta_size);
-    hessian_times_vector(f, hessian_v, std::forward<Theta>(theta), std::move(v),
-                         value_of(args)..., msgs);
-    Eigen::SparseMatrix<double> hessian_theta(theta_size, theta_size);
-    hessian_theta.reserve(Eigen::VectorXi::Constant(theta_size, 1));
-    for (Eigen::Index i = 0; i < theta_size; i++) {
-      hessian_theta.insert(i, i) = hessian_v(i);
-    }
-    return std::make_pair(std::move(theta_gradient), (-hessian_theta).eval());
+  using F_t = std::decay_t<F>;
+  if constexpr (has_custom_diff_v<F_t>) {
+    // Use the functor's specialized analytic derivatives
+    return f.diff(std::forward<Theta>(theta), hessian_block_size,
+                  std::forward<Args>(args)...);
   } else {
-    return std::make_pair(
-        std::move(theta_gradient),
-        (-hessian_block_diag(f, std::forward<Theta>(theta), hessian_block_size,
-                             value_of(args)..., msgs))
-            .eval());
+    // Fall back to generic autodiff
+    using Eigen::Dynamic;
+    using Eigen::Matrix;
+    const Eigen::Index theta_size = theta.size();
+    auto theta_gradient = [&theta, &f, &msgs](auto&&... args) {
+      nested_rev_autodiff nested;
+      Matrix<var, Dynamic, 1> theta_var = theta;
+      var f_var = f(theta_var, args..., msgs);
+      grad(f_var.vi_);
+      return theta_var.adj().eval();
+    }(args...);
+    if (hessian_block_size == 1) {
+      auto v = Eigen::VectorXd::Ones(theta_size);
+      Eigen::VectorXd hessian_v = Eigen::VectorXd::Zero(theta_size);
+      hessian_times_vector(f, hessian_v, std::forward<Theta>(theta),
+                           std::move(v), value_of(args)..., msgs);
+      Eigen::SparseMatrix<double> hessian_theta(theta_size, theta_size);
+      hessian_theta.reserve(Eigen::VectorXi::Constant(theta_size, 1));
+      for (Eigen::Index i = 0; i < theta_size; i++) {
+        hessian_theta.insert(i, i) = hessian_v(i);
+      }
+      return std::make_pair(std::move(theta_gradient), (-hessian_theta).eval());
+    } else {
+      return std::make_pair(
+          std::move(theta_gradient),
+          (-hessian_block_diag(f, std::forward<Theta>(theta),
+                               hessian_block_size, value_of(args)..., msgs))
+              .eval());
+    }
   }
 }
 
@@ -208,6 +254,8 @@ inline auto diff(F&& f, Theta&& theta, const Eigen::Index hessian_block_size,
  * Compute third order derivative of `f` wrt `theta` and `args...`
  * @note If `Args` contains \ref var types then their adjoints will be
  * calculated as a side effect.
+ * @note If `F` provides a custom `third_diff` method, it will be used
+ * instead of the generic `fvar<fvar<var>>` autodiff path.
  * @tparam F A functor with `opertor()(Args&&...)` returning a scalar
  * @tparam Theta A class assignable to an Eigen vector type
  * @tparam Stream Type of stream for messages.
@@ -221,18 +269,26 @@ template <typename F, typename Theta, typename Stream, typename... Args,
           require_eigen_vector_t<Theta>* = nullptr>
 inline Eigen::VectorXd third_diff(F&& f, Theta&& theta, Stream&& msgs,
                                   Args&&... args) {
-  nested_rev_autodiff nested;
-  const Eigen::Index theta_size = theta.size();
-  arena_t<Eigen::Matrix<var, Eigen::Dynamic, 1>> theta_var
-      = std::forward<Theta>(theta);
-  arena_t<Eigen::Matrix<fvar<fvar<var>>, Eigen::Dynamic, 1>> theta_ffvar(
-      theta_size);
-  for (Eigen::Index i = 0; i < theta_size; ++i) {
-    theta_ffvar(i) = fvar<fvar<var>>(fvar<var>(theta_var(i), 1.0), 1.0);
+  using F_t = std::decay_t<F>;
+  if constexpr (has_custom_third_diff_v<F_t>) {
+    // Use the functor's specialized analytic third derivative
+    return f.third_diff(std::forward<Theta>(theta),
+                        std::forward<Args>(args)...);
+  } else {
+    // Fall back to generic fvar<fvar<var>> autodiff
+    nested_rev_autodiff nested;
+    const Eigen::Index theta_size = theta.size();
+    arena_t<Eigen::Matrix<var, Eigen::Dynamic, 1>> theta_var
+        = std::forward<Theta>(theta);
+    arena_t<Eigen::Matrix<fvar<fvar<var>>, Eigen::Dynamic, 1>> theta_ffvar(
+        theta_size);
+    for (Eigen::Index i = 0; i < theta_size; ++i) {
+      theta_ffvar(i) = fvar<fvar<var>>(fvar<var>(theta_var(i), 1.0), 1.0);
+    }
+    fvar<fvar<var>> ftheta_ffvar = f(theta_ffvar, args..., msgs);
+    grad(ftheta_ffvar.d_.d_.vi_);
+    return theta_var.adj().eval();
   }
-  fvar<fvar<var>> ftheta_ffvar = f(theta_ffvar, args..., msgs);
-  grad(ftheta_ffvar.d_.d_.vi_);
-  return theta_var.adj().eval();
 }
 
 /**
