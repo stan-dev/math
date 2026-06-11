@@ -6,7 +6,7 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/to_arena.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
-#include <stan/math/rev/functor/conditional_copy_and_promote.hpp>
+#include <stan/math/prim/functor/conditional_copy_and_promote.hpp>
 #include <stan/math/rev/functor/reverse_pass_collect_adjoints.hpp>
 #include <stan/math/prim/fun/is_inf.hpp>
 #include <stan/math/prim/fun/is_nan.hpp>

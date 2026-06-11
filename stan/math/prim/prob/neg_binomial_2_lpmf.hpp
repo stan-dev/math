@@ -11,6 +11,7 @@
 #include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/select.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
@@ -51,67 +52,43 @@ inline return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
   T_partials_return logp(0.0);
   auto ops_partials = make_partials_propagator(mu_ref, phi_ref);
 
-  scalar_seq_view<T_n_ref> n_vec(n_ref);
-  scalar_seq_view<T_mu_ref> mu_vec(mu_ref);
-  scalar_seq_view<T_phi_ref> phi_vec(phi_ref);
-  size_t size_mu = stan::math::size(mu);
-  size_t size_phi = stan::math::size(phi);
-  size_t size_mu_phi = max_size(mu, phi);
-  size_t size_n_phi = max_size(n, phi);
-  size_t size_all = max_size(n, mu, phi);
-
-  VectorBuilder<true, T_partials_return, T_location> mu_val(size_mu);
-  for (size_t i = 0; i < size_mu; ++i) {
-    mu_val[i] = mu_vec.val(i);
-  }
-
-  VectorBuilder<true, T_partials_return, T_precision> phi_val(size_phi);
-  VectorBuilder<true, T_partials_return, T_precision> log_phi(size_phi);
-  for (size_t i = 0; i < size_phi; ++i) {
-    phi_val[i] = phi_vec.val(i);
-    log_phi[i] = log(phi_val[i]);
-  }
-
-  VectorBuilder<true, T_partials_return, T_location, T_precision> mu_plus_phi(
-      size_mu_phi);
-  VectorBuilder<true, T_partials_return, T_location, T_precision>
-      log_mu_plus_phi(size_mu_phi);
-  for (size_t i = 0; i < size_mu_phi; ++i) {
-    mu_plus_phi[i] = mu_val[i] + phi_val[i];
-    log_mu_plus_phi[i] = log(mu_plus_phi[i]);
-  }
-
-  VectorBuilder<true, T_partials_return, T_n, T_precision> n_plus_phi(
-      size_n_phi);
-  for (size_t i = 0; i < size_n_phi; ++i) {
-    n_plus_phi[i] = n_vec[i] + phi_val[i];
-  }
-
-  for (size_t i = 0; i < size_all; i++) {
-    if constexpr (include_summand<propto, T_precision>::value) {
-      logp += binomial_coefficient_log(n_plus_phi[i] - 1, n_vec[i]);
+  auto n_vec = as_array_or_scalar(as_column_vector_or_scalar(n_ref));
+  auto mu_vec = as_array_or_scalar(as_column_vector_or_scalar(mu_ref));
+  auto phi_vec = as_array_or_scalar(as_column_vector_or_scalar(phi_ref));
+  decltype(auto) mu_val = value_of(mu_vec);
+  decltype(auto) phi_val = value_of(phi_vec);
+  auto log_phi = log(phi_val);
+  auto mu_plus_phi = mu_val + phi_val;
+  auto log_mu_plus_phi = log(mu_plus_phi);
+  auto n_plus_phi = value_of(n_vec) + phi_val;
+  constexpr bool include_precision
+      = include_summand<propto, T_precision>::value;
+  constexpr bool include_location = include_summand<propto, T_location>::value;
+  auto logp_calc = [&]() {
+    return -phi_val * (log1p(mu_val / phi_val))
+           - value_of(n_vec) * log_mu_plus_phi;
+  };
+  if constexpr (include_precision || include_location) {
+    if constexpr (include_precision && include_location) {
+      logp += sum(binomial_coefficient_log(n_plus_phi - 1, n_vec)
+                  + multiply_log(n_vec, mu_val) + logp_calc());
+    } else if constexpr (include_precision) {
+      logp
+          += sum(binomial_coefficient_log(n_plus_phi - 1, n_vec) + logp_calc());
+    } else if constexpr (include_location) {
+      logp += sum(multiply_log(n_vec, mu_val) + logp_calc());
     }
-    if constexpr (include_summand<propto, T_location>::value) {
-      logp += multiply_log(n_vec[i], mu_val[i]);
-    }
-    logp += -phi_val[i] * (log1p(mu_val[i] / phi_val[i]))
-            - n_vec[i] * log_mu_plus_phi[i];
-
-    if constexpr (is_autodiff_v<T_location>) {
-      partials<0>(ops_partials)[i]
-          += n_vec[i] / mu_val[i] - (n_vec[i] + phi_val[i]) / mu_plus_phi[i];
-    }
-    if constexpr (is_autodiff_v<T_precision>) {
-      T_partials_return log_term;
-      if (mu_val[i] < phi_val[i]) {
-        log_term = log1p(-mu_val[i] / mu_plus_phi[i]);
-      } else {
-        log_term = log_phi[i] - log_mu_plus_phi[i];
-      }
-      partials<1>(ops_partials)[i] += (mu_val[i] - n_vec[i]) / mu_plus_phi[i]
-                                      + log_term - digamma(phi_val[i])
-                                      + digamma(n_plus_phi[i]);
-    }
+  }
+  if constexpr (is_autodiff_v<T_location>) {
+    partials<0>(ops_partials)
+        = n_vec / mu_val - (n_vec + phi_val) / mu_plus_phi;
+  }
+  if constexpr (is_autodiff_v<T_precision>) {
+    auto log_term = select(mu_val < phi_val, log1p(-mu_val / mu_plus_phi),
+                           log_phi - log_mu_plus_phi);
+    partials<1>(ops_partials) = (mu_val - value_of(n_vec)) / mu_plus_phi
+                                + log_term - digamma(phi_val)
+                                + digamma(n_plus_phi);
   }
   return ops_partials.build(logp);
 }

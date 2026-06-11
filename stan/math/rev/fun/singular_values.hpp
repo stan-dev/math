@@ -29,7 +29,7 @@ inline auto singular_values(const EigMat& m) {
   auto arena_m = to_arena(m);
 
   Eigen::JacobiSVD<Eigen::MatrixXd> svd(
-      arena_m.val(), Eigen::ComputeThinU | Eigen::ComputeThinV);
+      arena_m.val_op(), Eigen::ComputeThinU | Eigen::ComputeThinV);
 
   arena_t<ret_type> singular_values = svd.singularValues();
 
@@ -37,8 +37,8 @@ inline auto singular_values(const EigMat& m) {
   auto arena_V = to_arena(svd.matrixV());
 
   reverse_pass_callback([arena_m, arena_U, singular_values, arena_V]() mutable {
-    arena_m.adj()
-        += arena_U * singular_values.adj().asDiagonal() * arena_V.transpose();
+    arena_m.adj() += arena_U * singular_values.adj_op().asDiagonal()
+                     * arena_V.transpose();
   });
 
   return ret_type(singular_values);

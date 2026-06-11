@@ -5,7 +5,7 @@
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/typedefs.hpp>
 #include <stan/math/rev/functor/operands_and_partials.hpp>
-#include <stan/math/prim/functor/partials_propagator.hpp>
+#include <stan/math/rev/functor/broadcast_array.hpp>
 #include <stan/math/prim/functor/for_each.hpp>
 #include <vector>
 #include <tuple>
@@ -14,6 +14,9 @@ namespace stan {
 namespace math {
 
 namespace internal {
+
+template <typename ReturnType, typename Enable, typename... Ops>
+class partials_propagator;
 
 /** \ingroup type_trait
  * \callergraph

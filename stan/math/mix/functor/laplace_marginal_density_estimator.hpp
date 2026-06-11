@@ -4,11 +4,8 @@
 #include <stan/math/prim/fun/generate_laplace_options.hpp>
 #include <stan/math/mix/functor/laplace_likelihood.hpp>
 #include <stan/math/mix/functor/wolfe_line_search.hpp>
-#include <stan/math/rev/meta.hpp>
-#include <stan/math/rev/core.hpp>
-#include <stan/math/rev/fun.hpp>
-#include <stan/math/rev/functor.hpp>
 #include <stan/math/mix/functor/barzilai_borwein_step_size.hpp>
+#include <stan/math/mix/meta.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/quad_form_diag.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
@@ -16,6 +13,7 @@
 #include <unsupported/Eigen/MatrixFunctions>
 #include <cmath>
 #include <mutex>
+#include <iomanip>
 
 /**
  * @file

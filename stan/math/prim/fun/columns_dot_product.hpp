@@ -24,10 +24,13 @@ namespace math {
 template <typename Mat1, typename Mat2,
           require_all_eigen_t<Mat1, Mat2>* = nullptr,
           require_all_not_eigen_vt<is_var, Mat1, Mat2>* = nullptr>
-inline Eigen::Matrix<return_type_t<Mat1, Mat2>, 1, Mat1::ColsAtCompileTime>
-columns_dot_product(const Mat1& v1, const Mat2& v2) {
+inline auto columns_dot_product(Mat1&& v1, Mat2&& v2) {
   check_matching_dims("columns_dot_product", "v1", v1, "v2", v2);
-  return v1.cwiseProduct(v2).colwise().sum();
+  return make_holder(
+      [](auto&& v1_, auto&& v2_) {
+        return v1_.cwiseProduct(v2_).colwise().sum();
+      },
+      to_ref(std::forward<Mat1>(v1)), to_ref(std::forward<Mat2>(v2)));
 }
 
 }  // namespace math

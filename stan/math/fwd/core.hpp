@@ -20,5 +20,6 @@
 #include <stan/math/fwd/core/std_complex.hpp>
 #include <stan/math/fwd/core/std_numeric_limits.hpp>
 #include <stan/math/fwd/core/std_iterator_traits.hpp>
+#include <stan/math/fwd/fun/Eigen_NumTraits.hpp>
 
 #endif

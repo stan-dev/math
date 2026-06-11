@@ -37,9 +37,9 @@ inline var trace_inv_quad_form_ldlt(LDLT_factor<T1>& A, const T2& B) {
     return 0.0;
 
   if constexpr (is_autodiff_v<T1> && is_autodiff_v<T2>) {
-    arena_t<promote_scalar_t<var, T1>> arena_A = A.matrix();
-    arena_t<promote_scalar_t<var, T2>> arena_B = B;
-    auto AsolveB = to_arena(A.ldlt().solve(arena_B.val()));
+    arena_t<T1> arena_A = A.matrix();
+    arena_t<T2> arena_B = B;
+    auto AsolveB = to_arena(A.ldlt().solve(arena_B.val_op()));
 
     var res = (arena_B.val_op().transpose() * AsolveB).trace();
 
@@ -50,7 +50,7 @@ inline var trace_inv_quad_form_ldlt(LDLT_factor<T1>& A, const T2& B) {
 
     return res;
   } else if constexpr (is_autodiff_v<T1>) {
-    arena_t<promote_scalar_t<var, T1>> arena_A = A.matrix();
+    arena_t<T1> arena_A = A.matrix();
     const auto& B_ref = to_ref(B);
 
     auto AsolveB = to_arena(A.ldlt().solve(value_of(B_ref)));
@@ -63,8 +63,8 @@ inline var trace_inv_quad_form_ldlt(LDLT_factor<T1>& A, const T2& B) {
 
     return res;
   } else {
-    arena_t<promote_scalar_t<var, T2>> arena_B = B;
-    auto AsolveB = to_arena(A.ldlt().solve(arena_B.val()));
+    arena_t<T2> arena_B = B;
+    auto AsolveB = to_arena(A.ldlt().solve(arena_B.val_op()));
 
     var res = (arena_B.val_op().transpose() * AsolveB).trace();
 

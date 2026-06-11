@@ -39,7 +39,7 @@ inline auto mdivide_left_ldlt(LDLT_factor<T1>& A, const T2& B) {
   if constexpr (is_autodiff_v<T1> && is_autodiff_v<T2>) {
     arena_t<promote_scalar_t<var, T2>> arena_B = B;
     arena_t<promote_scalar_t<var, T1>> arena_A = A.matrix();
-    arena_t<ret_type> res = A.ldlt().solve(arena_B.val());
+    arena_t<ret_type> res = A.ldlt().solve(arena_B.val_op());
     const auto* ldlt_ptr = make_chainable_ptr(A.ldlt());
 
     reverse_pass_callback([arena_A, arena_B, ldlt_ptr, res]() mutable {
@@ -62,7 +62,7 @@ inline auto mdivide_left_ldlt(LDLT_factor<T1>& A, const T2& B) {
     return ret_type(res);
   } else {
     arena_t<promote_scalar_t<var, T2>> arena_B = B;
-    arena_t<ret_type> res = A.ldlt().solve(arena_B.val());
+    arena_t<ret_type> res = A.ldlt().solve(arena_B.val_op());
     const auto* ldlt_ptr = make_chainable_ptr(A.ldlt());
 
     reverse_pass_callback([arena_B, ldlt_ptr, res]() mutable {

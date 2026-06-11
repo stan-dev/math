@@ -8,6 +8,7 @@
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/log1p.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/promote_scalar.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
@@ -80,10 +81,12 @@ inline return_type_t<T_prob> bernoulli_logit_lpmf(const T_n& n,
   if constexpr (is_autodiff_v<T_prob>) {
     edge<0>(ops_partials).partials_
         = (ntheta > cutoff)
-              .select(-exp_m_ntheta,
-                      (ntheta >= -cutoff)
-                          .select(signs * exp_m_ntheta / (exp_m_ntheta + 1),
-                                  signs));
+              .select(
+                  -exp_m_ntheta,
+                  (ntheta >= -cutoff)
+                      .select(promote_scalar<T_partials_return>(
+                                  signs * exp_m_ntheta / (exp_m_ntheta + 1)),
+                              promote_scalar<T_partials_return>(signs)));
   }
   return ops_partials.build(logp);
 }

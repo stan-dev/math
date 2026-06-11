@@ -48,31 +48,29 @@ using forward_return_t = std::conditional_t<std::is_const<std::remove_reference_
  * EIGEN_STRONG_INLINE; see: https://eigen.tuxfamily.org/dox/XprHelper_8h_source.html
  */
 struct val_Op{
-  EIGEN_EMPTY_STRUCT_CTOR(val_Op);
 
   //Returns value from a vari*
-  template<typename T = Scalar>
+  template<typename T = Scalar, std::enable_if_t<std::is_pointer<T>::value>* = nullptr>
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-    std::enable_if_t<std::is_pointer<T>::value, const double&>
+    auto&&
       operator()(T &v) const { return v->val_; }
 
   //Returns value from a var
-  template<typename T = Scalar>
+  template<typename T = Scalar, std::enable_if_t<(!std::is_pointer<T>::value && !is_fvar<T>::value
+                      && !std::is_arithmetic<T>::value)>* = nullptr>
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-    std::enable_if_t<(!std::is_pointer<T>::value && !is_fvar<T>::value
-                      && !std::is_arithmetic<T>::value), const double&>
-      operator()(T &v) const { return v.vi_->val_; }
+    auto&& operator()(T &v) const { return v.vi_->val_; }
 
   //Returns value from an fvar
-  template<typename T = Scalar>
+  template<typename T = Scalar, std::enable_if_t<is_fvar<T>::value>* = nullptr>
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-    std::enable_if_t<is_fvar<T>::value, forward_return_t<T>>
+    auto&&
       operator()(T &v) const { return v.val_; }
 
   //Returns double unchanged from input (by value)
-  template<typename T = Scalar>
+  template<typename T = Scalar, std::enable_if_t<std::is_arithmetic<T>::value>* = nullptr>
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-    std::enable_if_t<std::is_arithmetic<T>::value, double_return_t<T>>
+    auto&&
       operator()(T v) const { return v; }
 
   //Returns double unchanged from input (by reference)
@@ -95,6 +93,14 @@ val() const { return CwiseUnaryOp<val_Op, const Derived>(derived());
 
 /**
  * Coefficient-wise function applying val_Op struct to a matrix of var
+ * or vari* and returning a view to the values
+ */
+inline CwiseUnaryView<val_Op, Derived>
+val() { return CwiseUnaryView<val_Op, Derived>(derived());
+}
+
+/**
+ * Coefficient-wise function applying val_Op struct to a matrix of var
  * or vari* and returning a view to the matrix of doubles containing
  * the values
  */
@@ -103,18 +109,9 @@ val_op() { return CwiseUnaryOp<val_Op, Derived>(derived());
 }
 
 /**
- * Coefficient-wise function applying val_Op struct to a matrix of var
- * or vari* and returning a view to the values
- */
-inline CwiseUnaryView<val_Op, Derived>
-val() { return CwiseUnaryView<val_Op, Derived>(derived());
-}
-
-/**
  * Structure to return tangent from an fvar.
  */
 struct d_Op {
-  EIGEN_EMPTY_STRUCT_CTOR(d_Op);
 
   //Returns tangent from an fvar
   template<typename T = Scalar>
@@ -145,7 +142,6 @@ d() { return CwiseUnaryView<d_Op, Derived>(derived());
  * first point to the underlying vari* (in the case of var).
  */
 struct adj_Op {
-  EIGEN_EMPTY_STRUCT_CTOR(adj_Op);
 
   //Returns adjoint from a vari*
   template<typename T = Scalar>
@@ -190,7 +186,6 @@ adj() { return CwiseUnaryView<adj_Op, Derived>(derived());
  * Structure to return vari* from a var.
  */
 struct vi_Op {
-  EIGEN_EMPTY_STRUCT_CTOR(vi_Op);
 
   //Returns vari* from a var
   template<typename T = Scalar>

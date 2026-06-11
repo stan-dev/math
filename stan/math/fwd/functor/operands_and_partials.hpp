@@ -4,15 +4,15 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/size.hpp>
+#include <stan/math/fwd/functor/broadcast_array.hpp>
 #include <stan/math/fwd/core/fvar.hpp>
 #include <stan/math/fwd/meta.hpp>
+#include <stan/math/fwd/fun/sum.hpp>
 #include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/fun/elt_multiply.hpp>
-#include <stan/math/prim/fun/sum.hpp>
-#include <stan/math/prim/functor/broadcast_array.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
 #include <stan/math/prim/functor/apply.hpp>
 #include <stan/math/prim/functor/for_each.hpp>
+#include <stan/math/prim/functor/operands_and_partials.hpp>
 #include <vector>
 
 namespace stan {
@@ -25,16 +25,6 @@ namespace internal {
 static constexpr auto sum_dx() { return static_cast<double>(0.0); }
 
 /**
- * End of recursion for summing `.dx()` for `fvar<T>` ops and partials.
- * @tparam T1 a type with a `.dx()` method.
- * @param a an edge from `operands_and_partials_impl`
- */
-template <typename T1>
-inline auto sum_dx(T1& a) {
-  return a.dx();
-}
-
-/**
  * Accumulate the `.dx()` from each of the edges in `ops_and_partials_impl`.
  * @tparam T1 a type with a `.dx()` method.
  * @tparam T2 a type with a `.dx()` method.
@@ -43,9 +33,9 @@ inline auto sum_dx(T1& a) {
  * @param b an edge from `operands_and_partials_impl`
  * @param args edges from `operands_and_partials_impl`
  */
-template <typename T1, typename T2, typename... Types>
-inline auto sum_dx(T1& a, T2& b, Types&... args) {
-  return a.dx() + b.dx() + sum_dx(args...);
+template <typename... Types>
+inline constexpr auto sum_dx(Types&... args) {
+  return (args.dx() + ...);
 }
 
 template <typename InnerType, typename T>

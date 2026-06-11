@@ -1,7 +1,7 @@
 #ifndef TEST_PROB_TEST_FIXTURE_CDF_LOG_HPP
 #define TEST_PROB_TEST_FIXTURE_CDF_LOG_HPP
 
-#include <stan/math/rev.hpp>
+#include <stan/math/mix.hpp>
 #include <test/prob/utility.hpp>
 #include <type_traits>
 

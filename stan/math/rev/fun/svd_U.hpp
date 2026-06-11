@@ -32,8 +32,8 @@ inline auto svd_U(const EigMat& m) {
   const int M = std::min(m.rows(), m.cols());
   auto arena_m = to_arena(m);
 
-  Eigen::JacobiSVD<Eigen::MatrixXd> svd(
-      arena_m.val(), Eigen::ComputeThinU | Eigen::ComputeThinV);
+  Eigen::JacobiSVD<promote_scalar_t<double, EigMat>> svd(
+      arena_m.val_op().eval(), Eigen::ComputeThinU | Eigen::ComputeThinV);
 
   auto arena_D = to_arena(svd.singularValues());
 

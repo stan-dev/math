@@ -50,8 +50,13 @@ template <typename EigVec1, typename EigVec2,
 inline return_type_t<EigVec1, EigVec2> squared_distance(const EigVec1& v1,
                                                         const EigVec2& v2) {
   check_matching_sizes("squared_distance", "v1", v1, "v2", v2);
-  return (as_column_vector_or_scalar(v1) - as_column_vector_or_scalar(v2))
-      .squaredNorm();
+  return make_holder(
+      [](auto&& v1_, auto&& v2_) {
+        return (as_column_vector_or_scalar(v1_)
+                - as_column_vector_or_scalar(v2_))
+            .squaredNorm();
+      },
+      std::forward<decltype(v1)>(v1), std::forward<decltype(v2)>(v2));
 }
 
 }  // namespace math

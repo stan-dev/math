@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/core.hpp>
+#include <stan/math/prim/meta/lazy_select_evaluator.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/gevv_vvv_vari.hpp>
@@ -57,7 +58,9 @@ struct NumTraits<stan::math::var> : GenericNumTraits<stan::math::var> {
     IsSigned = 1,
 
     /**
-     * stan::math::var does not require initialization.
+     * stan::math::var requires initialization. Technically, it is valid with
+     * a `nullptr` for `vi_`, but for the contents of a matrix of `var`
+     * to be valid the `vi_` pointer must be initialized.
      */
     RequireInitialization = 0,
 
@@ -265,6 +268,37 @@ struct ScalarBinaryOpTraits<std::complex<stan::math::var>,
 };
 
 namespace internal {
+
+/**
+ * Partial specialization of Eigen's ternary evaluator for `.select()`
+ * expressions on matrices of `var`, restoring the lazy (Eigen 3.x)
+ * semantics where only the branch chosen by the condition is evaluated
+ * for each coefficient. Eigen 5's eager evaluator computes both branches,
+ * and for `var` that has the side effect of allocating orphan varis on
+ * the autodiff stack; an orphan with a non-finite value whose chain rule
+ * multiplies its (zero) adjoint by a value-derived quantity injects
+ * `0 * INF = NaN` into the adjoints of live inputs. See
+ * stan/math/prim/meta/lazy_select_evaluator.hpp for details.
+ *
+ * This also covers `(a < b).select(c, d)` expressions: Eigen's fused
+ * comparison-select evaluator derives from `ternary_evaluator` after
+ * rebuilding the expression, so it picks up this specialization.
+ */
+template <typename CondScalar, typename Arg1, typename Arg2, typename Arg3>
+struct ternary_evaluator<
+    CwiseTernaryOp<
+        scalar_boolean_select_op<stan::math::var, stan::math::var, CondScalar>,
+        Arg1, Arg2, Arg3>,
+    IndexBased, IndexBased>
+    : stan::math::internal::lazy_select_evaluator<
+          scalar_boolean_select_op<stan::math::var, stan::math::var,
+                                   CondScalar>,
+          Arg1, Arg2, Arg3> {
+  using Base = stan::math::internal::lazy_select_evaluator<
+      scalar_boolean_select_op<stan::math::var, stan::math::var, CondScalar>,
+      Arg1, Arg2, Arg3>;
+  using Base::Base;
+};
 
 /**
  * Enable linear access of inputs when using read_vi_val_adj.

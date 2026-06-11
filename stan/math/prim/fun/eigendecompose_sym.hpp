@@ -22,16 +22,17 @@ template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
           require_not_st_var<EigMat>* = nullptr>
 std::tuple<Eigen::Matrix<value_type_t<EigMat>, -1, -1>,
            Eigen::Matrix<value_type_t<EigMat>, -1, 1>>
-eigendecompose_sym(const EigMat& m) {
+eigendecompose_sym(EigMat&& m) {
   if (unlikely(m.size() == 0)) {
     return std::make_tuple(Eigen::Matrix<value_type_t<EigMat>, -1, -1>(0, 0),
                            Eigen::Matrix<value_type_t<EigMat>, -1, 1>(0, 1));
   }
   using PlainMat = plain_type_t<EigMat>;
-  const PlainMat& m_eval = m;
-  check_symmetric("eigendecompose_sym", "m", m_eval);
+  decltype(auto) m_ref = to_ref(std::forward<EigMat>(m));
+  check_symmetric("eigendecompose_sym", "m", m_ref);
 
-  Eigen::SelfAdjointEigenSolver<PlainMat> solver(m_eval);
+  Eigen::SelfAdjointEigenSolver<PlainMat> solver(
+      std::forward<decltype(m_ref)>(m_ref));
   return std::make_tuple(std::move(solver.eigenvectors()),
                          std::move(solver.eigenvalues()));
 }
