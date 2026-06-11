@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(MathMixMatFun, distance) {
+TEST_F(mathMix, distance) {
   auto f
       = [](const auto& x, const auto& y) { return stan::math::distance(x, y); };
   stan::test::ad_tolerances tols;

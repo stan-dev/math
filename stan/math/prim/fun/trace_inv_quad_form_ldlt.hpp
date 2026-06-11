@@ -32,8 +32,8 @@ inline return_type_t<T, EigMat2> trace_inv_quad_form_ldlt(LDLT_factor<T>& A,
   if (A.matrix().size() == 0) {
     return 0;
   }
-
-  return B.cwiseProduct(mdivide_left_ldlt(A, B)).sum();
+  auto&& B_ref = to_ref(B);
+  return B_ref.cwiseProduct(mdivide_left_ldlt(A, B_ref)).sum();
 }
 
 }  // namespace math

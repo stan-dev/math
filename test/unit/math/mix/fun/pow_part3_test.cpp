@@ -1,9 +1,10 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <cmath>
 #include <limits>
 #include <vector>
 
-TEST(mathMixScalFun, pow_varmat) {
+TEST_F(mathMix, pow_varmat) {
   auto f = [](const auto& x1, const auto& x2) {
     using stan::math::pow;
     using std::pow;

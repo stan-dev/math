@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <vector>
 
-TEST(MathMixMatFun, dotSelf) {
+TEST_F(mathMix, dotSelf) {
   auto f = [](const auto& y) { return stan::math::dot_self(y); };
 
   Eigen::VectorXd x0(0);

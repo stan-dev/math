@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(MathMixMatFun, columnsDotProduct) {
+TEST_F(mathMix, columnsDotProduct) {
   auto f = [](const auto& x, const auto& y) {
     return stan::math::columns_dot_product(x, y);
   };

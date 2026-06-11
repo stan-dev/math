@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(mathMixMatFun, multiplyLowerTriSelfTranspose) {
+TEST_F(mathMix, multiplyLowerTriSelfTranspose) {
   auto f = [](const auto& x) {
     return stan::math::multiply_lower_tri_self_transpose(x);
   };

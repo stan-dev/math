@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(MathMixMatFun, subtract_transpose_test) {
+TEST_F(mathMix, subtract_transpose_test) {
   auto f = [](const auto& x) { return x - x.transpose(); };
 
   Eigen::MatrixXd x(2, 2);
@@ -8,7 +9,7 @@ TEST(MathMixMatFun, subtract_transpose_test) {
   stan::test::expect_ad_matvar(f, x);
 }
 
-TEST(MathMixMatFun, subtract_block_test) {
+TEST_F(mathMix, subtract_block_test) {
   auto f = [](const auto& y, const auto& x) {
     return stan::math::subtract(y, x.block(0, 0, 2, 2));
   };
@@ -18,7 +19,7 @@ TEST(MathMixMatFun, subtract_block_test) {
   stan::test::expect_ad_matvar(f, 1.0, x);
 }
 
-TEST(MathMixMatFun, subtract_1) {
+TEST_F(mathMix, subtract_1) {
   auto f
       = [](const auto& x, const auto& y) { return stan::math::subtract(x, y); };
 
@@ -46,7 +47,7 @@ TEST(MathMixMatFun, subtract_1) {
   stan::test::expect_ad(f, m11, m11b);
 }
 
-TEST(MathMixMatFun, subtract_scal) {
+TEST_F(mathMix, subtract_scal) {
   auto f
       = [](const auto& x, const auto& y) { return stan::math::subtract(x, y); };
 
@@ -56,7 +57,7 @@ TEST(MathMixMatFun, subtract_scal) {
   stan::test::expect_ad(f, 2.0, 5.0);
 }
 
-TEST(MathMixMatFun, subtract_empty) {
+TEST_F(mathMix, subtract_empty) {
   auto f
       = [](const auto& x, const auto& y) { return stan::math::subtract(x, y); };
 
@@ -78,7 +79,7 @@ TEST(MathMixMatFun, subtract_empty) {
   stan::test::expect_ad(f, m00, m00b);
 }
 
-TEST(MathMixMatFun, subtract_scalar_mat) {
+TEST_F(mathMix, subtract_scalar_mat) {
   auto f
       = [](const auto& x, const auto& y) { return stan::math::subtract(x, y); };
 
@@ -106,7 +107,7 @@ TEST(MathMixMatFun, subtract_scalar_mat) {
   stan::test::expect_ad(f, m22b, m22b);
 }
 
-TEST(MathMixMatFun, subtract_vec_mat) {
+TEST_F(mathMix, subtract_vec_mat) {
   auto f
       = [](const auto& x, const auto& y) { return stan::math::subtract(x, y); };
 
@@ -122,7 +123,7 @@ TEST(MathMixMatFun, subtract_vec_mat) {
   stan::test::expect_ad(f, rv5, rv5b);
 }
 
-TEST(MathMixMatFun, subtract_mat_mat) {
+TEST_F(mathMix, subtract_mat_mat) {
   auto f
       = [](const auto& x, const auto& y) { return stan::math::subtract(x, y); };
 
@@ -140,7 +141,7 @@ TEST(MathMixMatFun, subtract_mat_mat) {
 }
 
 // these will throw
-TEST(MathMixMatFun, subtract_throw) {
+TEST_F(mathMix, subtract_throw) {
   auto f
       = [](const auto& x, const auto& y) { return stan::math::subtract(x, y); };
 

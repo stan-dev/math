@@ -18,27 +18,27 @@
  */
 template <typename T_omega, typename T_Gamma, typename T_rho>
 inline stan::return_type_t<T_omega, T_Gamma, T_rho> hmm_marginal_test_wrapper(
-    const Eigen::Matrix<T_omega, Eigen::Dynamic, Eigen::Dynamic>& log_omegas,
-    const Eigen::Matrix<T_Gamma, Eigen::Dynamic, Eigen::Dynamic>&
-        Gamma_unconstrained,
-    const std::vector<T_rho>& rho_unconstrained) {
+    const T_omega& log_omegas, const T_Gamma& Gamma_unconstrained,
+    const T_rho& rho_unconstrained) {
   using stan::math::row;
   using stan::math::sum;
   int n_states = log_omegas.rows();
+  auto&& Gamma_ref = stan::math::to_ref(Gamma_unconstrained);
+  auto&& rho_ref = stan::math::to_ref(rho_unconstrained);
 
-  Eigen::Matrix<T_Gamma, Eigen::Dynamic, Eigen::Dynamic> Gamma(n_states,
-                                                               n_states);
+  Eigen::Matrix<stan::scalar_type_t<T_Gamma>, Eigen::Dynamic, Eigen::Dynamic>
+      Gamma(n_states, n_states);
   for (int i = 0; i < n_states; i++) {
-    Gamma(i, n_states - 1) = 1 - sum(row(Gamma_unconstrained, i + 1));
+    Gamma(i, n_states - 1) = 1 - sum(row(Gamma_ref, i + 1));
     for (int j = 0; j < n_states - 1; j++) {
-      Gamma(i, j) = Gamma_unconstrained(i, j);
+      Gamma(i, j) = Gamma_ref(i, j);
     }
   }
 
-  Eigen::Matrix<T_rho, Eigen::Dynamic, 1> rho(n_states);
+  Eigen::Matrix<stan::scalar_type_t<T_rho>, Eigen::Dynamic, 1> rho(n_states);
   rho(1) = 1 - sum(rho_unconstrained);
   for (int i = 0; i < n_states - 1; i++)
-    rho(i) = rho_unconstrained[i];
+    rho(i) = rho_ref[i];
 
   return stan::math::hmm_marginal(log_omegas, Gamma, rho);
 }

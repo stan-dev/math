@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(mathMixMatFun, round) {
+TEST_F(mathMix, round) {
   auto f = [](const auto& x1) { return stan::math::round(x1); };
   // can't autodiff round through integers
   for (auto x : stan::test::internal::common_nonzero_args())

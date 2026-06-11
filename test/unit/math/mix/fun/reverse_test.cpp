@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <vector>
 
-TEST(MathMixMatFun, reverse_vector) {
+TEST_F(mathMix, reverse_vector) {
   auto f = [](const auto& x) { return stan::math::reverse(x); };
 
   // 0 x 0
@@ -19,7 +20,7 @@ TEST(MathMixMatFun, reverse_vector) {
   stan::test::expect_ad(f, x);
 }
 
-TEST(MathMixMatFun, reverse_row_vector) {
+TEST_F(mathMix, reverse_row_vector) {
   auto f = [](const auto& x) { return stan::math::reverse(x); };
 
   // 0 x 0
@@ -37,7 +38,7 @@ TEST(MathMixMatFun, reverse_row_vector) {
   stan::test::expect_ad(f, x);
 }
 
-TEST(MathMixMatFun, reverse_array) {
+TEST_F(mathMix, reverse_array) {
   auto f = [](const auto& x) { return stan::math::reverse(x); };
 
   // 0 x 0

@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <limits>
 
-TEST(mathMixScalFun, sign) {
+TEST_F(mathMix, sign) {
   auto f = [](const auto& x) { return stan::math::sign(x); };
 
   stan::test::expect_ad(f, -13.2);

@@ -118,20 +118,13 @@ TEST_P(laplace_types, poisson_log_phi_dim_2_tuple_extended) {
   using stan::math::var;
   // logger->current_test_name_ = "poisson_log_phi_dim_2";
   constexpr int dim_phi = 2;
-  Eigen::Matrix<double, Eigen::Dynamic, 1> phi_dbl(dim_phi);
-  phi_dbl << 1.6, 0.45;
+  Eigen::Matrix<double, Eigen::Dynamic, 1> phi_dbl{{1.6, 0.45}};
 
   int dim_theta = 2;
-  Eigen::VectorXd theta_0(dim_theta);
-  theta_0 << 0, 0;
+  Eigen::VectorXd theta_0{{0, 0}};
 
-  std::vector<Eigen::VectorXd> x(dim_theta);
-  Eigen::VectorXd x_0{{0.05100797, 0.16086164}};
-  Eigen::VectorXd x_1{{-0.59823393, 0.98701425}};
-  x[0] = x_0;
-  x[1] = x_1;
-
-  Eigen::VectorXd y_dummy;
+  std::vector<Eigen::VectorXd> x{Eigen::VectorXd{{0.05100797, 0.16086164}},
+                                 Eigen::VectorXd{{-0.59823393, 0.98701425}}};
 
   std::vector<int> n_samples = {1, 1};
   std::vector<int> sums = {1, 0};
@@ -150,25 +143,30 @@ TEST_P(laplace_types, poisson_log_phi_dim_2_tuple_extended) {
       stan::test::ad_gradient_tols{1e-8, 1e-2}};
   //  stan::test::ad_tolerances tols;
   //  tols.gradient_grad_ = 1e-1;
-  auto f_ll = [&](auto&& eta1, auto&& eta2, auto&& eta3) {
+  auto f_ll = [&](auto&& phi, auto&& eta1, auto&& eta2) {
+    auto phi_ref = stan::math::eval(stan::math::to_ref(phi));
     try {
-      auto eta1_tuple = std::make_tuple(eta1(0), eta1(1));
+      auto phi_tuple = std::make_tuple(phi_ref(0), phi_ref(1));
       return laplace_marginal_tol<false>(
           poisson_log_likelihood_tuple_expanded{},
-          std::forward_as_tuple(sums, eta1_tuple, eta2, eta3),
+          std::forward_as_tuple(sums, phi_tuple, eta1, eta2),
           hessian_block_size, stan::math::test::squared_kernel_functor{},
-          std::forward_as_tuple(x, std::make_tuple(phi_dbl(0), phi_dbl(1))),
+          std::forward_as_tuple(x, std::make_tuple(phi_ref(0), phi_ref(1))),
           std::make_tuple(theta_0, tolerance, max_num_steps, solver_num,
                           max_steps_line_search, true),
           &output_stream);
     } catch (const std::exception& e) {
       std::stringstream fail_msg;
       using stan::math::test::test_type_name;
-      fail_msg << "Exception thrown with eta1("
-               << test_type_name<decltype(eta1)>() << ")=" << eta1[0]
-               << ", eta2(" << test_type_name<decltype(eta2)>()
-               << ")=" << eta2[0] << ", eta3("
-               << test_type_name<decltype(eta3)>() << ")=" << eta3[0] << ". ";
+      auto eta1_ref = stan::math::eval(stan::math::to_ref(eta1));
+      auto eta2_ref = stan::math::eval(stan::math::to_ref(eta2));
+      fail_msg << "Exception thrown with phi("
+               << test_type_name<decltype(phi_ref)>() << ")=" << phi_ref[0]
+               << ", phi(" << test_type_name<decltype(phi_ref)>()
+               << ")=" << phi_ref[0] << ", eta1("
+               << test_type_name<decltype(eta1_ref)>() << ")=" << eta1_ref[0]
+               << ", eta2(" << test_type_name<decltype(eta2_ref)>()
+               << ")=" << eta2_ref[0] << ". ";
       ADD_FAILURE() << fail_msg.str() << "\n Error message: " << e.what();
       throw;
     }
@@ -198,8 +196,6 @@ TEST_P(laplace_types, poisson_log_phi_dim_2_tuple) {
   Eigen::VectorXd x_1{{-0.59823393, 0.98701425}};
   x[0] = x_0;
   x[1] = x_1;
-
-  Eigen::VectorXd y_dummy;
 
   std::vector<int> n_samples = {1, 1};
   std::vector<int> sums = {1, 0};
@@ -283,21 +279,11 @@ TEST_P(laplace_types, poisson_log_phi_dim_2_array_tuple) {
   using stan::math::var;
   // logger->current_test_name_ = "poisson_log_phi_dim_2";
   constexpr int dim_phi = 2;
-  Eigen::Matrix<double, Eigen::Dynamic, 1> phi_dbl(dim_phi);
-  phi_dbl << 1.6, 0.45;
-
+  Eigen::Matrix<double, Eigen::Dynamic, 1> phi_dbl{{1.6, 0.45}};
   constexpr int dim_theta = 2;
-  Eigen::VectorXd theta_0(dim_theta);
-  theta_0 << 0, 0;
-
-  std::vector<Eigen::VectorXd> x(dim_theta);
-  Eigen::VectorXd x_0{{0.05100797, 0.16086164}};
-  Eigen::VectorXd x_1{{-0.59823393, 0.98701425}};
-  x[0] = x_0;
-  x[1] = x_1;
-
-  Eigen::VectorXd y_dummy;
-
+  Eigen::VectorXd theta_0{{0, 0}};
+  std::vector<Eigen::VectorXd> x{Eigen::VectorXd{{0.05100797, 0.16086164}},
+                                 Eigen::VectorXd{{-0.59823393, 0.98701425}}};
   std::vector<int> n_samples = {1, 1};
   std::vector<int> sums = {1, 0};
   const auto test_params = GetParam();

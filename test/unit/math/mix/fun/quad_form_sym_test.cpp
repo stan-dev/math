@@ -1,10 +1,12 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <test/unit/math/ad_tolerances.hpp>
 
-TEST(MathMixMatFun, quadFormSym) {
+TEST_F(mathMix, quadFormSym) {
   auto f = [](const auto& x, const auto& y) {
+    auto&& x_ref = stan::math::to_ref(x);
     // symmetrize the input matrix
-    auto x_sym = ((x + x.transpose()) * 0.5).eval();
+    auto x_sym = ((x_ref + x_ref.transpose()) * 0.5).eval();
     return stan::math::quad_form_sym(x_sym, y);
   };
 
@@ -65,7 +67,7 @@ TEST(MathMixMatFun, quadFormSym) {
   stan::test::expect_ad(g, u, v);
 }
 
-TEST(MathMixMatFun, quad_form_sym_2095) {
+TEST_F(mathMix, quad_form_sym_2095) {
   Eigen::Matrix<stan::math::var, -1, -1> av(2, 2);
   Eigen::Matrix<stan::math::var, -1, -1> bv(2, 2);
 
@@ -96,7 +98,9 @@ TEST(MathMixMatFun, quad_form_sym_2095) {
   auto f = [](const auto& x, const auto& y) {
     // symmetrize the input matrix;
     // expect_ad will perturb elements and cause it not to be symmetric
-    auto x_sym = ((x + x.transpose()) * 0.5).eval();
+    auto&& x_ref = stan::math::to_ref(x);
+    // symmetrize the input matrix
+    auto x_sym = ((x_ref + x_ref.transpose()) * 0.5).eval();
     return stan::math::quad_form_sym(x_sym, y);
   };
   stan::test::expect_ad(f, ad, bd);

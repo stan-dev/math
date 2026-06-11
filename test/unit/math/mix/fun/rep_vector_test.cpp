@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(MathMixMatFun, repVector) {
+TEST_F(mathMix, repVector) {
   auto f = [](int n) {
     return [=](const auto& y) { return stan::math::rep_vector(y, n); };
   };

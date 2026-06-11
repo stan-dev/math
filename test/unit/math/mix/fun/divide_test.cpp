@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <limits>
 
-TEST(MathMixMatFun, divide) {
+TEST_F(mathMix, divide) {
   auto f
       = [](const auto& x, const auto& y) { return stan::math::divide(x, y); };
 

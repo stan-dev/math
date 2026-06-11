@@ -1,6 +1,7 @@
 #include <stan/math/mix.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/fun/util.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <vector>
 
 namespace finite_diff_hessian_auto_test {
@@ -21,7 +22,7 @@ struct sum_functor {
   }
 };
 
-TEST(AgradFiniteDiff, gradient) {
+TEST_F(mathMix, finite_diff_func_gradient) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
 
@@ -57,7 +58,7 @@ TEST(AgradFiniteDiff, gradient) {
   }
 }
 
-TEST(AgradFiniteDiff, hessian) {
+TEST_F(mathMix, finite_diff_func_hessian) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   third_order_mixed f;
@@ -110,7 +111,7 @@ TEST(AgradFiniteDiff, hessian) {
   }
 }
 
-TEST(AgradFiniteDiff, gradHessianResizingTest) {
+TEST_F(mathMix, finite_diff_func_gradHessianResizingTest) {
   // failed in 2.19 before grad_hess_fx.clear() was added
   norm_functor f;
   Eigen::VectorXd x(3);
@@ -126,7 +127,7 @@ TEST(AgradFiniteDiff, gradHessianResizingTest) {
   EXPECT_EQ(x.size(), hess.cols());
 }
 
-TEST(AgradFiniteDiff, grad_hessian) {
+TEST_F(mathMix, finite_diff_func_grad_hessian) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   norm_functor norm;
@@ -188,7 +189,7 @@ TEST(AgradFiniteDiff, grad_hessian) {
   }
 }
 
-TEST(AgradFiniteDiff, gradientZeroOneArg) {
+TEST_F(mathMix, finite_diff_func_gradientZeroOneArg) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::sum;
@@ -223,7 +224,7 @@ TEST(AgradFiniteDiff, gradientZeroOneArg) {
                                    f_z_grad_sum);
 }
 
-TEST(AgradFiniteDiff, hessianZeroOneArg) {
+TEST_F(mathMix, finite_diff_func_hessianZeroOneArg) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::sum;

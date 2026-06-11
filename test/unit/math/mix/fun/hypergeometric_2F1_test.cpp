@@ -1,7 +1,8 @@
 #include <stan/math/rev/fun/hypergeometric_2F1.hpp>
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(mathMixScalFun, hypergeometric2F1_1) {
+TEST_F(mathMix, hypergeometric2F1_1) {
   using stan::math::fvar;
   fvar<double> a1 = 3.70975;
   fvar<double> a2 = 1;
@@ -20,7 +21,7 @@ TEST(mathMixScalFun, hypergeometric2F1_1) {
                   res.d_);
 }
 
-TEST(mathMixScalFun, hypergeometric2F1_2) {
+TEST_F(mathMix, hypergeometric2F1_2) {
   using stan::math::fvar;
   using stan::math::var;
   fvar<var> a1 = 2;
@@ -37,7 +38,7 @@ TEST(mathMixScalFun, hypergeometric2F1_2) {
   EXPECT_FLOAT_EQ(2.77777777777778, z.val().adj());
 }
 
-TEST(mathMixScalFun, hypergeometric2F1_3_euler) {
+TEST_F(mathMix, hypergeometric2F1_3_euler) {
   using stan::math::fvar;
   fvar<double> a1 = 1;
   fvar<double> a2 = 1;

@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(MathMixMatFun, columnsDotSelf) {
+TEST_F(mathMix, columnsDotSelf) {
   auto f = [](const auto& x) { return stan::math::columns_dot_self(x); };
   Eigen::MatrixXd a11(1, 1);
   a11 << 2;

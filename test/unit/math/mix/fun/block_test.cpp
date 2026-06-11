@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(MathMixMatFun, block) {
+TEST_F(mathMix, block) {
   auto f = [](int i, int j, int m, int n) {
     return [=](const auto& y) { return stan::math::block(y, i, j, m, n); };
   };

@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <vector>
 
-TEST(mathMixScalFun, logModifiedBesselFirstKind) {
+TEST_F(mathMix, logModifiedBesselFirstKind) {
   auto f = [](const auto& x1, const auto& x2) {
     return stan::math::log_modified_bessel_first_kind(x1, x2);
   };
@@ -15,7 +16,7 @@ TEST(mathMixScalFun, logModifiedBesselFirstKind) {
       stan::test::expect_ad(f, x1, x2);
 }
 
-TEST(mathMixScalFun, logModifiedBesselFirstKind_vec) {
+TEST_F(mathMix, logModifiedBesselFirstKind_vec) {
   auto f = [](const auto& x1, const auto& x2) {
     using stan::math::log_modified_bessel_first_kind;
     return log_modified_bessel_first_kind(x1, x2);

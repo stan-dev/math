@@ -1,5 +1,6 @@
 #include <stan/math/prim/meta.hpp>
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <test/unit/math/mix/functor/reduce_sum_util.hpp>
 #include <test/unit/math/rev/util.hpp>
 
@@ -9,7 +10,7 @@
 // Reduce sum tests are broken up into four files to avoid windows compiler
 // error
 
-TEST_F(AgradRev, reduce_sum_eigen_three_args_with_ints3) {
+TEST_F(mathMix, reduce_sum_eigen_three_args_with_ints3) {
   using stan::math::test::reduce_sum_int_sum_lpdf;
   using stan::math::test::reduce_sum_static_int_sum_lpdf;
   double arg1 = 1.0;
@@ -31,7 +32,7 @@ TEST_F(AgradRev, reduce_sum_eigen_three_args_with_ints3) {
       arg1, arg2, arg3);
 }
 
-TEST_F(AgradRev, reduce_sum_eigen_three_args_with_doubles1) {
+TEST_F(mathMix, reduce_sum_eigen_three_args_with_doubles1) {
   using stan::math::test::reduce_sum_static_sum_lpdf;
   using stan::math::test::reduce_sum_sum_lpdf;
   Eigen::VectorXd arg1 = Eigen::VectorXd::Ones(2);
@@ -54,7 +55,7 @@ TEST_F(AgradRev, reduce_sum_eigen_three_args_with_doubles1) {
       arg1, arg2, arg3);
 }
 
-TEST_F(AgradRev, reduce_sum_eigen_three_args_with_doubles2) {
+TEST_F(mathMix, reduce_sum_eigen_three_args_with_doubles2) {
   using stan::math::test::reduce_sum_static_sum_lpdf;
   using stan::math::test::reduce_sum_sum_lpdf;
   double arg1 = 1.0;
@@ -78,7 +79,7 @@ TEST_F(AgradRev, reduce_sum_eigen_three_args_with_doubles2) {
       arg1, arg2, arg3);
 }
 
-TEST_F(AgradRev, reduce_sum_eigen_three_args_with_doubles3) {
+TEST_F(mathMix, reduce_sum_eigen_three_args_with_doubles3) {
   using stan::math::test::reduce_sum_static_sum_lpdf;
   using stan::math::test::reduce_sum_sum_lpdf;
   double arg1 = 1.0;
@@ -103,7 +104,7 @@ TEST_F(AgradRev, reduce_sum_eigen_three_args_with_doubles3) {
 }
 
 #ifdef STAN_THREADS
-TEST_F(AgradRev, reduce_sum_static_check) {
+TEST_F(mathMix, reduce_sum_static_check) {
   using stan::math::test::get_new_msg;
   using stan::math::test::static_check_lpdf;
 

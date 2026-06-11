@@ -1,9 +1,10 @@
 #include <stan/math/rev.hpp>
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <gtest/gtest.h>
 #include <limits>
 
-TEST(MathMatrixPower, ad_tests) {
+TEST_F(mathMix, ad_tests) {
   using Eigen::MatrixXd;
   using stan::math::matrix_power;
   using stan::test::expect_ad;

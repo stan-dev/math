@@ -1,15 +1,18 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(MathMixMatFun, elt_divide_transpose_test) {
-  auto f
-      = [](const auto& x) { return stan::math::elt_divide(x, x.transpose()); };
+TEST_F(mathMix, elt_divide_transpose_test) {
+  auto f = [](const auto& x) {
+    auto&& x_ref = stan::math::to_ref(x);
+    return stan::math::elt_divide(x_ref, x_ref.transpose());
+  };
 
   Eigen::MatrixXd x(2, 2);
 
   stan::test::expect_ad_matvar(f, x);
 }
 
-TEST(MathMixMatFun, elt_divide_block_test) {
+TEST_F(mathMix, elt_divide_block_test) {
   auto f = [](const auto& y, const auto& x) {
     return stan::math::elt_divide(y.block(1, 1, 2, 2), x.block(0, 0, 2, 2));
   };
@@ -19,7 +22,7 @@ TEST(MathMixMatFun, elt_divide_block_test) {
   stan::test::expect_ad_matvar(f, x, x);
 }
 
-TEST(MathMixMatFun, eltDivide) {
+TEST_F(mathMix, eltDivide) {
   auto f = [](const auto& x, const auto& y) {
     return stan::math::elt_divide(x, y);
   };

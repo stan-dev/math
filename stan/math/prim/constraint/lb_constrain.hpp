@@ -161,8 +161,9 @@ inline auto lb_constrain(const T& x, const L& lb, Lp& lp) {
 template <typename T, typename L, require_not_std_vector_t<L>* = nullptr>
 inline auto lb_constrain(const std::vector<T>& x, const L& lb) {
   std::vector<plain_type_t<decltype(lb_constrain(x[0], lb))>> ret(x.size());
+  auto&& lb_ref = to_ref(lb);
   for (size_t i = 0; i < x.size(); ++i) {
-    ret[i] = lb_constrain(x[i], lb);
+    ret[i] = lb_constrain(x[i], lb_ref);
   }
   return ret;
 }
@@ -184,8 +185,9 @@ template <typename T, typename L, typename Lp,
           require_convertible_t<return_type_t<T, L>, Lp>* = nullptr>
 inline auto lb_constrain(const std::vector<T>& x, const L& lb, Lp& lp) {
   std::vector<plain_type_t<decltype(lb_constrain(x[0], lb))>> ret(x.size());
+  auto&& lb_ref = to_ref(lb);
   for (size_t i = 0; i < x.size(); ++i) {
-    ret[i] = lb_constrain(x[i], lb, lp);
+    ret[i] = lb_constrain(x[i], lb_ref, lp);
   }
   return ret;
 }

@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <vector>
 
-TEST(MathMixMatFun, csr_matrix_times_vector_vals) {
+TEST_F(mathMix, csr_matrix_times_vector_vals) {
   using stan::math::csr_matrix_times_vector;
   std::vector<int> v{1, 2, 3, 1, 2};
   std::vector<int> u{1, 2, 3, 4, 5, 6};
@@ -21,7 +22,7 @@ TEST(MathMixMatFun, csr_matrix_times_vector_vals) {
   EXPECT_MATRIX_EQ(dbl_res, var_res_bw);
 }
 
-TEST(MathMixMatFun, csr_matrix_times_vector1) {
+TEST_F(mathMix, csr_matrix_times_vector1) {
   auto f = [](const auto& w, const auto& b) {
     using stan::math::csr_matrix_times_vector;
     std::vector<int> v{1, 2, 3, 1, 2};
@@ -37,7 +38,7 @@ TEST(MathMixMatFun, csr_matrix_times_vector1) {
   stan::test::expect_ad(f, w, b);
 }
 
-TEST(MathMixMatFun, csr_matrix_times_vector2) {
+TEST_F(mathMix, csr_matrix_times_vector2) {
   auto f = [](const auto& w, const auto& b) {
     using stan::math::csr_matrix_times_vector;
     std::vector<int> v{1, 2, 3, 1, 2};

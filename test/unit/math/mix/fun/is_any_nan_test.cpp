@@ -1,9 +1,10 @@
 #include <stan/math/mix.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/fun/util.hpp>
 #include <limits>
 
-TEST(AgradMixIsAnyNan, Fvar) {
+TEST_F(mathMix, is_any_nan_Fvar) {
   using stan::math::fvar;
   using stan::math::is_any_nan;
   using stan::math::var;
@@ -28,7 +29,7 @@ TEST(AgradMixIsAnyNan, Fvar) {
   EXPECT_FALSE(is_any_nan(fv_dbl, fv_inf, 6, min));
 }
 
-TEST(AgradMixIsAnyNan, FvarFvar) {
+TEST_F(mathMix, is_any_nan_FvarFvar) {
   using stan::math::fvar;
   using stan::math::is_any_nan;
   using stan::math::var;

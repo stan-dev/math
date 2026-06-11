@@ -1,9 +1,10 @@
 #include <stan/math/mix.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/fun/util.hpp>
 #include <limits>
 
-TEST(AgradMix, primitiveValueRevNested) {
+TEST_F(mathMix, primitiveValueRevNested) {
   using stan::math::fvar;
   using stan::math::primitive_value;
   using stan::math::var;
@@ -16,7 +17,7 @@ TEST(AgradMix, primitiveValueRevNested) {
   EXPECT_EQ(3, primitive_value(3));
 }
 
-TEST(AgradMix, primitiveValueNanRevNested) {
+TEST_F(mathMix, primitiveValueNanRevNested) {
   using stan::math::fvar;
   using stan::math::primitive_value;
   using stan::math::var;

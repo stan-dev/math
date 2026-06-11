@@ -1,8 +1,9 @@
 #include <stan/math/mix.hpp>
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <gtest/gtest.h>
 
-TEST_F(AgradRev, ProbDistributionsGaussianDLM_LoglikeUU_fvar_var) {
+TEST_F(mathMix, ProbDistributionsGaussianDLM_LoglikeUU_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::MatrixXd;
@@ -35,7 +36,7 @@ TEST_F(AgradRev, ProbDistributionsGaussianDLM_LoglikeUU_fvar_var) {
   EXPECT_FLOAT_EQ(-3.8427677, lp_ref.d_.val());
 }
 
-TEST_F(AgradRev, ProbDistributionsGaussianDLM_LoglikeMM_fvar_var) {
+TEST_F(mathMix, ProbDistributionsGaussianDLM_LoglikeMM_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::MatrixXd;
@@ -88,7 +89,7 @@ TEST_F(AgradRev, ProbDistributionsGaussianDLM_LoglikeMM_fvar_var) {
   EXPECT_NEAR(18.89044287309947, lp_ref.d_.val(), 1e-4);
 }
 
-TEST_F(AgradRev, ProbDistributionsGaussianDLM_LoglikeUU_fvar_fvar_var) {
+TEST_F(mathMix, ProbDistributionsGaussianDLM_LoglikeUU_fvar_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::MatrixXd;
@@ -126,7 +127,7 @@ TEST_F(AgradRev, ProbDistributionsGaussianDLM_LoglikeUU_fvar_fvar_var) {
   EXPECT_FLOAT_EQ(-3.8427677, lp_ref.d_.val_.val());
 }
 
-TEST_F(AgradRev, ProbDistributionsGaussianDLM_LoglikeMM_fvar_fvar_var) {
+TEST_F(mathMix, ProbDistributionsGaussianDLM_LoglikeMM_fvar_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::MatrixXd;

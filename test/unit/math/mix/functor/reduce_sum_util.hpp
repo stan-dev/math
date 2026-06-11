@@ -4,6 +4,7 @@
 #include <stan/math.hpp>
 #include <test/unit/math/prim/functor/reduce_sum_util.hpp>
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
 #include <sstream>

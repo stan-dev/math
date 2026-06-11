@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <stdexcept>
 
-TEST(MathMixMatFun, svd_V) {
+TEST_F(mathMix, svd_V) {
   auto f = [](const auto& x) { return stan::math::svd_V(x); };
 
   Eigen::MatrixXd m00(0, 0);

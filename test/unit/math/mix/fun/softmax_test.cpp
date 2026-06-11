@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <test/unit/util.hpp>
 
-TEST(MathMixMatFun, softmax) {
+TEST_F(mathMix, softmax) {
   using stan::test::expect_ad_matvar;
   auto f = [](const auto& x) { return stan::math::softmax(x); };
 

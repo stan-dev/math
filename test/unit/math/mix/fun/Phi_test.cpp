@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(mathMixMatFun, Phi) {
+TEST_F(mathMix, Phi) {
   auto f = [](const auto& x1) { return stan::math::Phi(x1); };
   stan::test::expect_common_unary_vectorized(f);
   stan::test::expect_unary_vectorized(f, -27.5, 27.5);
@@ -8,7 +9,7 @@ TEST(mathMixMatFun, Phi) {
     stan::test::expect_unary_vectorized(x);
 }
 
-TEST(mathMixMatFun, Phi_varmat) {
+TEST_F(mathMix, Phi_varmat) {
   using stan::math::vec_concat;
   using stan::test::expect_ad_vector_matvar;
   using stan::test::internal::common_nonzero_args;

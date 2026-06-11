@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(mathMixCore, operatorMultiplyEqual) {
+TEST_F(mathMix, operatorMultiplyEqual) {
   auto f = [](const auto& x1, const auto& x2) {
     decltype(x1 + x2) y = x1;
     y *= x2;

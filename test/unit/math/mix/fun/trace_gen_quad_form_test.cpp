@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(mathMixMatFun, traceGenQuadForm) {
+TEST_F(mathMix, traceGenQuadForm) {
   using stan::test::relative_tolerance;
   auto f = [](const auto& x1, const auto& x2, const auto& x3) {
     return stan::math::trace_gen_quad_form(x1, x2, x3);

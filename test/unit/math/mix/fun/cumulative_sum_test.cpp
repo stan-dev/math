@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <vector>
 
 inline void expect_cumulative_sum(std::vector<double>& x) {
@@ -12,7 +13,7 @@ inline void expect_cumulative_sum(std::vector<double>& x) {
   stan::test::expect_ad_matvar(f, rv);
 }
 
-TEST(MathMixMatFun, cumulativeSum) {
+TEST_F(mathMix, cumulativeSum) {
   std::vector<double> a;
   expect_cumulative_sum(a);
 

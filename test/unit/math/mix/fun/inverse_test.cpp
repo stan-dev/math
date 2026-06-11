@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <limits>
 
-TEST(mathMixMatFun, inverse) {
+TEST_F(mathMix, inverse) {
   auto f = [](const auto& x) { return stan::math::inverse(x); };
 
   Eigen::MatrixXd t(0, 0);

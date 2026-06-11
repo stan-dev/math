@@ -1,13 +1,15 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
-
-TEST_F(AgradRev, ProbDistributionsWishartCholesky_matvar) {
+TEST_F(mathMix, ProbDistributionsWishartCholesky_matvar) {
   auto f = [](const auto& Y, const auto& dof, const auto& Sigma) {
-    auto symmetric_Y = ((Y + Y.transpose()) * 0.5).eval();
-    auto symmetric_Sigma = ((Sigma + Sigma.transpose()) * 0.5).eval();
+    auto Y_ref = stan::math::to_ref(Y);
+    auto Sigma_ref = stan::math::to_ref(Sigma);
+    auto symmetric_Y = ((Y_ref + Y_ref.transpose()) * 0.5).eval();
+    auto symmetric_Sigma = ((Sigma_ref + Sigma_ref.transpose()) * 0.5).eval();
 
-    auto L_Y = stan::math::cholesky_decompose(symmetric_Y);
-    auto L_S = stan::math::cholesky_decompose(symmetric_Sigma);
+    auto L_Y = stan::math::cholesky_decompose(symmetric_Y).eval();
+    auto L_S = stan::math::cholesky_decompose(symmetric_Sigma).eval();
 
     return stan::math::wishart_cholesky_lpdf(L_Y, dof, L_S);
   };
@@ -39,7 +41,7 @@ TEST_F(AgradRev, ProbDistributionsWishartCholesky_matvar) {
   stan::test::expect_ad_matvar(f, Y11, dof, Sigma00);
 }
 
-TEST_F(AgradRev, ProbDistributionsWishartCholesky_fvar_var) {
+TEST_F(mathMix, ProbDistributionsWishartCholesky_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;
@@ -72,7 +74,7 @@ TEST_F(AgradRev, ProbDistributionsWishartCholesky_fvar_var) {
   stan::math::recover_memory();
 }
 
-TEST_F(AgradRev, ProbDistributionsWishartCholesky_fvar_fvar_var) {
+TEST_F(mathMix, ProbDistributionsWishartCholesky_fvar_fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::fvar;

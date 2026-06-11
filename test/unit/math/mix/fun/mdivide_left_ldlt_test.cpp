@@ -1,8 +1,10 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(MathMixMatFun, mdivideLeftLdlt) {
+TEST_F(mathMix, mdivideLeftLdlt) {
   auto f = [](const auto& x, const auto& y) {
-    auto x_sym = stan::math::multiply(0.5, x + x.transpose());
+    auto&& x_ref = stan::math::to_ref(x);
+    auto x_sym = stan::math::multiply(0.5, x_ref + x_ref.transpose());
     auto ldlt = stan::math::make_ldlt_factor(x_sym);
     return stan::math::mdivide_left_ldlt(ldlt, y);
   };

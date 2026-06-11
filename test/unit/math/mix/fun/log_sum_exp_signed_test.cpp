@@ -1,8 +1,9 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <limits>
 #include <vector>
 
-TEST(mathMixScalFun, logSumExp_signed) {
+TEST_F(mathMix, logSumExp_signed) {
   auto f = [](const int x1_sign, const int x2_sign) {
     return [=](const auto& x1, const auto& x2) {
       stan::return_type_t<decltype(x1), decltype(x2)> ret_val;

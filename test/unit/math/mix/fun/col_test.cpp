@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <vector>
 
-TEST(MathMixMatFun, col) {
+TEST_F(mathMix, col) {
   auto f = [](int j) {
     return [=](const auto& y) { return stan::math::col(y, j); };
   };

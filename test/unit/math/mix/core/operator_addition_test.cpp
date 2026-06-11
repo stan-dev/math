@@ -1,15 +1,16 @@
 #include <stan/math/mix.hpp>
 #include <stan/math/prim/core/operator_addition.hpp>
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 
-TEST(mathMixCore, operatorAddition) {
+TEST_F(mathMix, operatorAddition) {
   auto f = [](const auto& x1, const auto& x2) { return x1 + x2; };
   bool disable_lhs_int = true;
   stan::test::expect_common_binary(f, disable_lhs_int);
   stan::test::expect_complex_common_binary(f);
 }
 
-TEST(mathMixCore, operatorAdditionMatrixSmall) {
+TEST_F(mathMix, operatorAdditionMatrixSmall) {
   // This calls operator+ under the hood
   auto f
       = [](const auto& x1, const auto& x2) { return stan::math::add(x1, x2); };
@@ -48,7 +49,7 @@ TEST(mathMixCore, operatorAdditionMatrixSmall) {
   stan::test::expect_ad_matvar(tols, f, matrix_m11, matrix_m11);
 }
 
-TEST(mathMixCore, operatorAdditionMatrixZeroSize) {
+TEST_F(mathMix, operatorAdditionMatrixZeroSize) {
   auto f
       = [](const auto& x1, const auto& x2) { return stan::math::add(x1, x2); };
   stan::test::ad_tolerances tols;
@@ -79,7 +80,7 @@ TEST(mathMixCore, operatorAdditionMatrixZeroSize) {
   stan::test::expect_ad_matvar(f, matrix_m00, matrix_m00);
 }
 
-TEST(mathMixCore, operatorAdditionMatrixNormal) {
+TEST_F(mathMix, operatorAdditionMatrixNormal) {
   auto f
       = [](const auto& x1, const auto& x2) { return stan::math::add(x1, x2); };
   stan::test::ad_tolerances tols;
@@ -113,7 +114,7 @@ TEST(mathMixCore, operatorAdditionMatrixNormal) {
   stan::test::expect_ad_matvar(tols, f, matrix_m, matrix_m);
 }
 
-TEST(mathMixCore, operatorAdditionMatrixFailures) {
+TEST_F(mathMix, operatorAdditionMatrixFailures) {
   auto f
       = [](const auto& x1, const auto& x2) { return stan::math::add(x1, x2); };
   stan::test::ad_tolerances tols;
@@ -139,7 +140,7 @@ TEST(mathMixCore, operatorAdditionMatrixFailures) {
   stan::test::expect_ad_matvar(tols, f, u, vv);
   stan::test::expect_ad_matvar(tols, f, rvv, u);
 }
-TEST(mathMixCore, operatorAdditionMatrixLinearAccess) {
+TEST_F(mathMix, operatorAdditionMatrixLinearAccess) {
   Eigen::MatrixXd matrix_m11(3, 3);
   for (Eigen::Index i = 0; i < matrix_m11.size(); ++i) {
     matrix_m11(i) = i;
