@@ -41,8 +41,9 @@ inline auto log_softmax(Vec&& x) {
   constexpr int Cols = vec::ColsAtCompileTime;
   using T = typename value_type_t<vec>::Scalar;
   decltype(auto) x_ref = to_ref(std::forward<Vec>(x));
-  if (x_ref.size() == 0)
+  if (x_ref.size() == 0) {
     return Eigen::Matrix<fvar<T>, Rows, Cols>{};
+  }
   const auto s = softmax(value_of(x_ref));
   const auto d_in = x_ref.d();
   const auto dot_sd = s.dot(d_in);

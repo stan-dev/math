@@ -55,8 +55,9 @@ inline auto softmax(Container&& x) {
         return apply_vector_unary<ref_type_t<Container>>::apply(
             std::forward<decltype(a)>(a),
             [](auto&& v) -> plain_type_t<decltype(v)> {
-              if (v.size() == 0)
+              if (v.size() == 0) {
                 return v;
+              }
               const auto theta = (v.array() - v.maxCoeff()).exp();
               return (theta / theta.sum()).matrix();
             });
