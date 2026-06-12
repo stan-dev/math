@@ -6,6 +6,7 @@
 #include <stan/math/rev/core/reverse_pass_callback.hpp>
 #include <stan/math/rev/core/arena_matrix.hpp>
 #include <stan/math/rev/fun/to_arena.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/softmax.hpp>
 #include <stan/math/prim/functor/apply_vector_unary.hpp>
@@ -18,16 +19,16 @@ namespace math {
  *
  * @tparam T a `var_value` or Eigen vector/row_vector with `var` scalar
  * @param x input
- * @return softmax of the input
+ * @return softmax of the input, or an empty result if the input is empty
  */
 template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline auto softmax(T&& x) {
   auto x_arena = to_arena(std::forward<T>(x));
-  using return_t
-      = return_var_matrix_t<plain_type_t<decltype(x_arena.val())>, T>;
   if (x_arena.size() == 0) {
     return x_arena;
   }
+  using return_t
+      = return_var_matrix_t<plain_type_t<decltype(x_arena.val())>, T>;
   arena_t<return_t> res = softmax(x_arena.val());
   reverse_pass_callback([x_arena, res]() mutable {
     x_arena.adj().array()

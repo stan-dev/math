@@ -4,6 +4,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/fun/value_of.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/softmax.hpp>
 #include <stan/math/prim/functor/apply_vector_unary.hpp>
@@ -30,7 +31,7 @@ inline auto softmax(T&& x) {
  *
  * @tparam Vec Eigen vector with `fvar` scalar
  * @param x vector to transform
- * @return softmax of the vector
+ * @return softmax of the vector, or an empty result if the input is empty
  */
 template <typename Vec, require_eigen_vector_vt<is_fvar, Vec>* = nullptr>
 inline auto softmax(Vec&& x) {
@@ -38,10 +39,10 @@ inline auto softmax(Vec&& x) {
   constexpr int Rows = vec::RowsAtCompileTime;
   constexpr int Cols = vec::ColsAtCompileTime;
   using T = typename value_type_t<vec>::Scalar;
-  if (x.size() == 0) {
-    return Eigen::Matrix<fvar<T>, Rows, Cols>();
-  }
   decltype(auto) x_ref = to_ref(std::forward<Vec>(x));
+  if (x_ref.size() == 0) {
+    return Eigen::Matrix<fvar<T>, Rows, Cols>{};
+  }
   const auto s = softmax(value_of(x_ref));
   const auto d_in = x_ref.d();
   const auto dot_sd = s.dot(d_in);
