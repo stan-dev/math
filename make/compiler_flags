@@ -118,10 +118,13 @@ endif
 ##
 O ?= 3
 
+## Replace with -I if running into system conflicts
+INC_FLAG ?= -isystem
+
 ## setup includes
-INC ?= $(INC_FIRST) -I $(if $(MATH),$(MATH),.) -I $(EIGEN) -I $(BOOST) $(INC_SUNDIALS)
-INC_SUNDIALS ?= -I $(SUNDIALS)/include -I $(SUNDIALS)/src/sundials
-INC_GTEST ?= -I $(GTEST)/include -I $(GTEST)
+INC ?= $(INC_FIRST) -I $(if $(MATH),$(MATH),.) $(INC_FLAG) $(EIGEN) $(INC_FLAG) $(BOOST) $(INC_SUNDIALS)
+INC_SUNDIALS ?= $(INC_FLAG) $(SUNDIALS)/include $(INC_FLAG) $(SUNDIALS)/src/sundials
+INC_GTEST ?= $(INC_FLAG) $(GTEST)/include $(INC_FLAG) $(GTEST)
 
 ## setup precompiler options
 CPPFLAGS_BOOST ?= -DBOOST_DISABLE_ASSERTS
@@ -254,7 +257,7 @@ ifdef STAN_OPENCL
   CPPFLAGS_OPENCL ?= -DSTAN_OPENCL -DOPENCL_DEVICE_ID=$(OPENCL_DEVICE_ID) -DOPENCL_PLATFORM_ID=$(OPENCL_PLATFORM_ID)
   CPPFLAGS_OPENCL += -DCL_HPP_TARGET_OPENCL_VERSION=120 -DCL_HPP_MINIMUM_OPENCL_VERSION=120
   CPPFLAGS_OPENCL += -DCL_HPP_ENABLE_EXCEPTIONS -Wno-ignored-attributes
-  CXXFLAGS_OPENCL ?= -I $(OPENCL)
+  CXXFLAGS_OPENCL ?= $(INC_FLAG) $(OPENCL)
 
 	ifdef INTEGRATED_OPENCL
 		CPPFLAGS_OPENCL += -DINTEGRATED_OPENCL=1
@@ -288,9 +291,9 @@ endif
 ifdef TBB_LIB
 
 ifdef TBB_INC
-CXXFLAGS_TBB ?= -I $(TBB_INC)
+CXXFLAGS_TBB ?= $(INC_FLAG) $(TBB_INC)
 else
-CXXFLAGS_TBB ?= -I $(TBB)/include
+CXXFLAGS_TBB ?= $(INC_FLAG) $(TBB)/include
 endif
 
 # MacOS ld does not support --disable-new-dtags
@@ -321,7 +324,7 @@ ifeq ($(OS),Linux)
   TBB_TARGETS ?= $(addprefix $(TBB_BIN)/lib,$(addsuffix $(LIBRARY_SUFFIX).2,$(TBB_LIBRARIES)))
 endif
 
-CXXFLAGS_TBB ?= -I $(TBB)/include
+CXXFLAGS_TBB ?= $(INC_FLAG) $(TBB)/include
 LDFLAGS_TBB ?= -Wl,-L,"$(TBB_BIN_ABSOLUTE_PATH)" $(LDFLAGS_FLTO_FLTO) $(LDFLAGS_OPTIM_TBB)
 
 # Windows LLVM/Clang does not support -rpath, but is not needed on Windows anyway
