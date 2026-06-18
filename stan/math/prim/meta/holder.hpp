@@ -479,9 +479,13 @@ inline auto make_holder_impl(F&& func, std::index_sequence<Is...>,
 template <typename F, typename... Args,
           require_not_plain_type_t<std::invoke_result_t<F, Args&&...>>*>
 inline auto make_holder(F&& func, Args&&... args) {
-  return internal::make_holder_impl(std::forward<F>(func),
-                                    std::make_index_sequence<sizeof...(Args)>(),
-                                    std::forward<Args>(args)...);
+  if constexpr (is_var_matrix_v<std::invoke_result_t<F, Args&&...>>) {
+    return std::forward<F>(func)(std::forward<Args>(args)...);
+  } else {
+    return internal::make_holder_impl(
+        std::forward<F>(func), std::make_index_sequence<sizeof...(Args)>(),
+        std::forward<Args>(args)...);
+  }
 }
 
 /**
