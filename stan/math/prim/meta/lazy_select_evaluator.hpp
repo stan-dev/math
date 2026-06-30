@@ -71,11 +71,11 @@ struct lazy_select_evaluator
                    & static_cast<int>(Arg3Flags)
                    & (StorageOrdersAgree ? Eigen::LinearAccessBit : 0))),
     Flags = (Flags0 & ~Eigen::RowMajorBit) | (Arg1Flags & Eigen::RowMajorBit),
-    Alignment = Eigen::internal::plain_enum_min(
-        Eigen::internal::plain_enum_min(
-            Eigen::internal::evaluator<Arg1>::Alignment,
-            Eigen::internal::evaluator<Arg2>::Alignment),
-        Eigen::internal::evaluator<Arg3>::Alignment)
+    Alignment = std::min({
+      static_cast<int>(Eigen::internal::evaluator<Arg1>::Alignment),
+      static_cast<int>(Eigen::internal::evaluator<Arg2>::Alignment),
+      static_cast<int>(Eigen::internal::evaluator<Arg3>::Alignment)
+    })
   };
 
   EIGEN_DEVICE_FUNC explicit lazy_select_evaluator(const XprType& xpr)
