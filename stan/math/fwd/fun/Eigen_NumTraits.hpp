@@ -218,6 +218,7 @@ struct ScalarBinaryOpTraits<std::complex<stan::math::fvar<T>>,
 
 namespace internal {
 
+#if EIGEN_VERSION_AT_LEAST(5, 0, 0)
 /**
  * Partial specialization of Eigen's ternary evaluator for `.select()`
  * expressions on matrices of `fvar<T>`, restoring the lazy (Eigen 3.x)
@@ -247,6 +248,7 @@ struct ternary_evaluator<
       Arg1, Arg2, Arg3>;
   using Base::Base;
 };
+#endif
 
 }  // namespace internal
 

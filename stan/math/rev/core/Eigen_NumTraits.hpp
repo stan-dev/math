@@ -269,6 +269,7 @@ struct ScalarBinaryOpTraits<std::complex<stan::math::var>,
 
 namespace internal {
 
+#if EIGEN_VERSION_AT_LEAST(5, 0, 0)
 /**
  * Partial specialization of Eigen's ternary evaluator for `.select()`
  * expressions on matrices of `var`, restoring the lazy (Eigen 3.x)
@@ -299,6 +300,7 @@ struct ternary_evaluator<
       Arg1, Arg2, Arg3>;
   using Base::Base;
 };
+#endif
 
 /**
  * Enable linear access of inputs when using read_vi_val_adj.
