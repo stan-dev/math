@@ -202,3 +202,18 @@ TEST(MathFunctions, select_array_bool) {
   EXPECT_THROW(select(val < 0, b_array_short, b_array_short),
                std::invalid_argument);
 }
+
+TEST(MathFunction, select_same_expression) {
+  using stan::math::select;
+  using VecReplT = Eigen::Replicate<Eigen::VectorXd, -1, -1>;
+  using VecTransT = Eigen::Transpose<Eigen::VectorXd>;
+
+  Eigen::VectorXd v(3);
+  v << 1.0, 4.0, 9.0;
+
+  VecReplT repl_expr = stan::math::rep_matrix(v, 3);
+  VecTransT trans_expr = stan::math::transpose(v);
+
+  VecReplT replicated_v = select(true, repl_expr, repl_expr);
+  VecTransT transp_v = select(false, trans_expr, trans_expr);
+}
