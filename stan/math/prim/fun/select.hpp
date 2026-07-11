@@ -14,18 +14,22 @@ namespace math {
  *
  * `select(c, y1, y0) = c ? y1 : y0`.
  *
- * @tparam ArgT Argument type, can be any type
+ * @tparam T_true Type of first argument, can be any type
+ * @tparam T_false Type of second argument, can be any type
+ *   convertible with the first
  * @param c Boolean condition value.
  * @param y_true Value to return if condition is true.
  * @param y_false Value to return if condition is false.
  */
-template <typename ArgT>
-inline auto select(const bool c, ArgT&& y_true, ArgT&& y_false) {
-  if constexpr (is_container_v<ArgT>) {
+template <typename T_true, typename T_false,
+          typename CommonT = std::common_type_t<T_true, T_false>,
+          require_not_t<std::is_void<CommonT>>* = nullptr>
+inline auto select(const bool c, T_true&& y_true, T_false&& y_false) {
+  if constexpr (is_container_v<CommonT>) {
     check_matching_dims("select", "left hand side", y_true, "right hand side",
                         y_false);
   }
-  return c ? std::forward<ArgT>(y_true) : std::forward<ArgT>(y_false);
+  return c ? std::forward<T_true>(y_true) : std::forward<T_false>(y_false);
 }
 
 /**
@@ -49,7 +53,7 @@ template <
     typename T_return = return_type_t<T_true, T_false>,
     typename T_true_plain = promote_scalar_t<T_return, plain_type_t<T_true>>,
     typename T_false_plain = promote_scalar_t<T_return, plain_type_t<T_false>>,
-    require_all_not_same_t<T_true, T_false>* = nullptr,
+    require_t<std::is_void<std::common_type_t<T_true, T_false>>>* = nullptr,
     require_all_same_t<T_true_plain, T_false_plain>* = nullptr>
 inline T_true_plain select(const bool c, T_true&& y_true, T_false&& y_false) {
   if constexpr (is_container_v<T_true_plain>) {
