@@ -204,8 +204,8 @@ TEST(MathFunctions, select_array_bool) {
 }
 
 TEST(MathFunction, select_same_expression) {
-  using stan::math::select;
   using stan::math::rep_matrix;
+  using stan::math::select;
   using VecReplT = Eigen::Replicate<Eigen::VectorXd, -1, -1>;
   using VecTransT = Eigen::Transpose<Eigen::VectorXd>;
 

@@ -8,15 +8,16 @@
 
 namespace stan {
 namespace math {
-  namespace internal {
-    template <typename T_true, typename T_false, typename = void>
-    struct is_default_ternary : std::false_type {};
+namespace internal {
+template <typename T_true, typename T_false, typename = void>
+struct is_default_ternary : std::false_type {};
 
-    template <typename T_true, typename T_false>
-    struct is_default_ternary<T_true, T_false, std::void_t<
-        decltype(true ? std::declval<T_true>() : std::declval<T_false>())
-    >> : std::true_type {};
-  }
+template <typename T_true, typename T_false>
+struct is_default_ternary<T_true, T_false,
+                          std::void_t<decltype(true ? std::declval<T_true>()
+                                                    : std::declval<T_false>())>>
+    : std::true_type {};
+}  // namespace internal
 
 /**
  * If first argument is true return the second argument,
@@ -63,10 +64,9 @@ template <
     typename T_true_plain = promote_scalar_t<T_return, plain_type_t<T_true>>,
     typename T_false_plain = promote_scalar_t<T_return, plain_type_t<T_false>>,
     require_not_t<internal::is_default_ternary<T_true, T_false>>* = nullptr,
-    require_any_t<
-      conjunction<is_container<T_true>, is_container<T_false>>,
-      conjunction<is_stan_scalar<T_true>, is_stan_scalar<T_false>>
-    >* = nullptr,
+    require_any_t<conjunction<is_container<T_true>, is_container<T_false>>,
+                  conjunction<is_stan_scalar<T_true>,
+                              is_stan_scalar<T_false>>>* = nullptr,
     require_all_same_t<T_true_plain, T_false_plain>* = nullptr>
 inline T_true_plain select(const bool c, T_true&& y_true, T_false&& y_false) {
   if constexpr (is_container_v<T_true_plain>) {
