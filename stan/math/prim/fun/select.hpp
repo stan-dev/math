@@ -4,9 +4,19 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/functor/apply_scalar_binary.hpp>
+#include <stan/math/prim/meta/conjunction.hpp>
 
 namespace stan {
 namespace math {
+  namespace internal {
+    template <typename T_true, typename T_false, typename = void>
+    struct is_default_ternary : std::false_type {};
+
+    template <typename T_true, typename T_false>
+    struct is_default_ternary<T_true, T_false, std::void_t<
+        decltype(true ? std::declval<T_true>() : std::declval<T_false>())
+    >> : std::true_type {};
+  }
 
 /**
  * If first argument is true return the second argument,
@@ -22,10 +32,9 @@ namespace math {
  * @param y_false Value to return if condition is false.
  */
 template <typename T_true, typename T_false,
-          typename CommonT = std::common_type_t<T_true, T_false>,
-          require_not_t<std::is_void<CommonT>>* = nullptr>
+          require_t<internal::is_default_ternary<T_true, T_false>>* = nullptr>
 inline auto select(const bool c, T_true&& y_true, T_false&& y_false) {
-  if constexpr (is_container_v<CommonT>) {
+  if constexpr (is_container_v<T_true> || is_container_v<T_false>) {
     check_matching_dims("select", "left hand side", y_true, "right hand side",
                         y_false);
   }
@@ -53,7 +62,11 @@ template <
     typename T_return = return_type_t<T_true, T_false>,
     typename T_true_plain = promote_scalar_t<T_return, plain_type_t<T_true>>,
     typename T_false_plain = promote_scalar_t<T_return, plain_type_t<T_false>>,
-    require_t<std::is_void<std::common_type_t<T_true, T_false>>>* = nullptr,
+    require_not_t<internal::is_default_ternary<T_true, T_false>>* = nullptr,
+    require_any_t<
+      conjunction<is_container<T_true>, is_container<T_false>>,
+      conjunction<is_stan_scalar<T_true>, is_stan_scalar<T_false>>
+    >* = nullptr,
     require_all_same_t<T_true_plain, T_false_plain>* = nullptr>
 inline T_true_plain select(const bool c, T_true&& y_true, T_false&& y_false) {
   if constexpr (is_container_v<T_true_plain>) {

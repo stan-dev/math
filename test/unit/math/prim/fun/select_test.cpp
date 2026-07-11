@@ -205,13 +205,18 @@ TEST(MathFunctions, select_array_bool) {
 
 TEST(MathFunction, select_same_expression) {
   using stan::math::select;
+  using stan::math::rep_matrix;
   using VecReplT = Eigen::Replicate<Eigen::VectorXd, -1, -1>;
   using VecTransT = Eigen::Transpose<Eigen::VectorXd>;
 
   Eigen::VectorXd v(3);
   v << 1.0, 4.0, 9.0;
+  Eigen::RowVectorXd rv(3);
+  rv << 1.0, 4.0, 9.0;
 
-  VecReplT repl_expr = stan::math::rep_matrix(v, 3);
+  Eigen::MatrixXd rtn = select(true, rep_matrix(v, 3), rep_matrix(rv, 3));
+
+  VecReplT repl_expr = rep_matrix(v, 3);
   VecTransT trans_expr = stan::math::transpose(v);
 
   VecReplT replicated_v = select(true, repl_expr, repl_expr);
