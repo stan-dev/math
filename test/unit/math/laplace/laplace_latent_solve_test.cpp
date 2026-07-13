@@ -20,10 +20,10 @@ struct poisson_log_likelihood {
 
 TEST_F(laplace_count_two_dim_diag_test, latent_solve_mean_and_cov) {
   using stan::math::laplace_latent_solve;
-  auto [mean_est, chol_est] = laplace_latent_solve(
-      poisson_log_likelihood{}, std::forward_as_tuple(y), 1,
-      stan::math::test::diagonal_kernel_functor{},
-      std::forward_as_tuple(phi(0), phi(1)), rng, nullptr);
+  auto [mean_est, chol_est]
+      = laplace_latent_solve(poisson_log_likelihood{}, std::forward_as_tuple(y),
+                             1, stan::math::test::diagonal_kernel_functor{},
+                             std::forward_as_tuple(phi(0), phi(1)), nullptr);
   constexpr double tol = 1e-6;
   EXPECT_EQ(2, mean_est.size());
   EXPECT_NEAR(theta_root(0), mean_est(0), tol);
@@ -49,7 +49,7 @@ TEST_F(laplace_count_two_dim_diag_test, latent_tol_solve_mean_and_cov) {
       std::forward_as_tuple(phi(0), phi(1)),
       std::make_tuple(theta_0, tolerance, max_num_steps, solver,
                       max_steps_line_search, true),
-      rng, nullptr);
+      nullptr);
   constexpr double tol = 1e-6;
   EXPECT_EQ(2, mean_est.size());
   EXPECT_NEAR(theta_root(0), mean_est(0), tol);
@@ -70,7 +70,7 @@ TEST_F(laplace_count_two_dim_diag_test,
                      poisson_log_likelihood{}, std::forward_as_tuple(y), 1,
                      stan::math::test::diagonal_kernel_functor{},
                      std::forward_as_tuple(0.0, phi(1)),  // singular covariance
-                     rng, nullptr);
+                     nullptr);
                }),
                std::domain_error);
 }

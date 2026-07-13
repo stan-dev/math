@@ -6,6 +6,14 @@
 namespace stan {
 namespace math {
 
+namespace internal {
+// Placeholder RNG type: used whenever laplace_base_rng's
+// sampling branch is compiled out via `if constexpr`. In this case
+// no rng is needed as no sampling is performed.
+struct laplace_unused_rng {};
+
+}  // namespace internal
+
 /**
  * In a latent gaussian model,
  *
@@ -23,23 +31,24 @@ namespace math {
  * @param[in] hessian_block_size Block size for the Hessian approximation with
  * respect to the latent gaussian variable theta.
  * \laplace_options
- * \rng_arg
  * \msg_arg
  */
 template <typename LLFunc, typename LLArgs, typename CovarFun,
-          typename CovarArgs, typename RNG, typename OpsTuple>
+          typename CovarArgs, typename OpsTuple>
 inline auto laplace_latent_tol_solve(LLFunc&& ll_fun, LLArgs&& ll_args,
                                      int hessian_block_size,
                                      CovarFun&& covariance_function,
                                      CovarArgs&& covar_args, OpsTuple&& ops,
-                                     RNG& rng, std::ostream* msgs) {
+                                     std::ostream* msgs) {
   auto options
       = internal::tuple_to_laplace_options(std::forward<OpsTuple>(ops));
   options.hessian_block_size = hessian_block_size;
-  return laplace_base_rng<true>(
-      std::forward<LLFunc>(ll_fun), std::forward<LLArgs>(ll_args),
-      std::forward<CovarFun>(covariance_function),
-      std::forward<CovarArgs>(covar_args), std::move(options), rng, msgs);
+  internal::laplace_unused_rng unused_rng;
+  return laplace_base_rng<true>(std::forward<LLFunc>(ll_fun),
+                                std::forward<LLArgs>(ll_args),
+                                std::forward<CovarFun>(covariance_function),
+                                std::forward<CovarArgs>(covar_args),
+                                std::move(options), unused_rng, msgs);
 }
 
 /**
@@ -59,21 +68,21 @@ inline auto laplace_latent_tol_solve(LLFunc&& ll_fun, LLArgs&& ll_args,
  * \laplace_common_args
  * @param[in] hessian_block_size Block size for the Hessian approximation with
  * respect to the latent gaussian variable theta.
- * \rng_arg
  * \msg_arg
  */
 template <typename LLFunc, typename LLArgs, typename CovarFun,
-          typename CovarArgs, typename RNG>
+          typename CovarArgs>
 inline auto laplace_latent_solve(LLFunc&& ll_fun, LLArgs&& ll_args,
                                  int hessian_block_size,
                                  CovarFun&& covariance_function,
-                                 CovarArgs&& covar_args, RNG& rng,
-                                 std::ostream* msgs) {
+                                 CovarArgs&& covar_args, std::ostream* msgs) {
   auto options = laplace_options_default{hessian_block_size};
-  return laplace_base_rng<true>(
-      std::forward<LLFunc>(ll_fun), std::forward<LLArgs>(ll_args),
-      std::forward<CovarFun>(covariance_function),
-      std::forward<CovarArgs>(covar_args), std::move(options), rng, msgs);
+  internal::laplace_unused_rng unused_rng;
+  return laplace_base_rng<true>(std::forward<LLFunc>(ll_fun),
+                                std::forward<LLArgs>(ll_args),
+                                std::forward<CovarFun>(covariance_function),
+                                std::forward<CovarArgs>(covar_args),
+                                std::move(options), unused_rng, msgs);
 }
 
 }  // namespace math
