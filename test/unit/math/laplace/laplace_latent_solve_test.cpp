@@ -36,14 +36,14 @@ TEST_F(laplace_count_two_dim_diag_test, latent_solve_mean_and_cov) {
   EXPECT_NEAR(K_laplace(1, 0), Sigma_est(1, 0), tol);
 }
 
-TEST_F(laplace_count_two_dim_diag_test, latent_tol_solve_mean_and_cov) {
-  using stan::math::laplace_latent_tol_solve;
+TEST_F(laplace_count_two_dim_diag_test, latent_solve_tol_mean_and_cov) {
+  using stan::math::laplace_latent_solve_tol;
   constexpr double tolerance = 1e-12;
   constexpr int max_num_steps = 1000;
   constexpr int hessian_block_size = 1;
   constexpr int solver = 1;
   constexpr int max_steps_line_search = 0;
-  auto [mean_est, chol_est] = laplace_latent_tol_solve(
+  auto [mean_est, chol_est] = laplace_latent_solve_tol(
       poisson_log_likelihood{}, std::forward_as_tuple(y), hessian_block_size,
       stan::math::test::diagonal_kernel_functor{},
       std::forward_as_tuple(phi(0), phi(1)),

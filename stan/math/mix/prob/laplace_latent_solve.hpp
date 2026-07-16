@@ -35,7 +35,7 @@ struct laplace_unused_rng {};
  */
 template <typename LLFunc, typename LLArgs, typename CovarFun,
           typename CovarArgs, typename OpsTuple>
-inline auto laplace_latent_tol_solve(LLFunc&& ll_fun, LLArgs&& ll_args,
+inline auto laplace_latent_solve_tol(LLFunc&& ll_fun, LLArgs&& ll_args,
                                      int hessian_block_size,
                                      CovarFun&& covariance_function,
                                      CovarArgs&& covar_args, OpsTuple&& ops,
