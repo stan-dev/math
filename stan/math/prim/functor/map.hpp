@@ -286,8 +286,8 @@ inline auto row_mapN(F&& f, Types&&... args) {
   std::tuple<ref_type_t<Types&&>...> m_refs{
       to_ref(std::forward<Types>(args))...};
   const Eigen::Index n_rows = std::get<0>(m_refs).rows();
-  using T_return = scalar_type_t<plain_type_t<decltype(f(
-      (std::declval<ref_type_t<Types&&>>().row(0))...))>>;
+  using T_return = scalar_type_t<plain_type_t<decltype(
+      f((std::declval<ref_type_t<Types&&>>().row(0))...))>>;
   using matrix_t = Eigen::Matrix<T_return, Eigen::Dynamic, Eigen::Dynamic>;
 
   if (n_rows == 0) {
@@ -341,8 +341,8 @@ inline auto col_mapN(F&& f, Types&&... args) {
   std::tuple<ref_type_t<Types&&>...> m_refs{
       to_ref(std::forward<Types>(args))...};
   const Eigen::Index n_cols = std::get<0>(m_refs).cols();
-  using T_return = scalar_type_t<plain_type_t<decltype(f(
-      (std::declval<ref_type_t<Types&&>>().col(0))...))>>;
+  using T_return = scalar_type_t<plain_type_t<decltype(
+      f((std::declval<ref_type_t<Types&&>>().col(0))...))>>;
   using matrix_t = Eigen::Matrix<T_return, Eigen::Dynamic, Eigen::Dynamic>;
 
   if (n_cols == 0) {
